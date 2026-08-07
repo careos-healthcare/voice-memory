@@ -68,51 +68,64 @@ abstract final class FreezeDriftScanner {
     ReleaseCandidateFreezeInput input, {
     required bool freezeActive,
     FreezeDriftCategory? category,
-  }) =>
-      scan(
-        FreezeDriftScannerInput(
-          freezeActive: freezeActive,
-          category: category ?? categoryForChangeType(input.changeType),
-          fixesFirstJourneyComprehension: input.fixesFirstJourneyComprehension,
-          fixesCriticalProofTrust: input.fixesCriticalProofTrust,
-          addsNewUserFacingSurface: input.addsNewUserFacingSurface,
-          blocksRelease: input.blocksRelease,
-          blocksPurchase: input.blocksPurchase,
-          blocksRestore: input.blocksRestore,
-          blocksEntitlement: input.blocksEntitlement,
-          causesCrash: input.causesCrash,
-          risksAppStoreRejection: input.risksAppStoreRejection,
-          affectsSecuritySecrets: input.affectsSecuritySecrets,
-          changesPricingOrPaywall: input.changesPricingOrPaywall,
-          changesProofThresholds: input.changesProofThresholds,
-          changesRecordLayout: input.changesRecordLayout,
-        ),
-      );
+  }) => scan(
+    FreezeDriftScannerInput(
+      freezeActive: freezeActive,
+      category: category ?? categoryForChangeType(input.changeType),
+      fixesFirstJourneyComprehension: input.fixesFirstJourneyComprehension,
+      fixesCriticalProofTrust: input.fixesCriticalProofTrust,
+      addsNewUserFacingSurface: input.addsNewUserFacingSurface,
+      blocksRelease: input.blocksRelease,
+      blocksPurchase: input.blocksPurchase,
+      blocksRestore: input.blocksRestore,
+      blocksEntitlement: input.blocksEntitlement,
+      causesCrash: input.causesCrash,
+      risksAppStoreRejection: input.risksAppStoreRejection,
+      affectsSecuritySecrets: input.affectsSecuritySecrets,
+      changesPricingOrPaywall: input.changesPricingOrPaywall,
+      changesProofThresholds: input.changesProofThresholds,
+      changesRecordLayout: input.changesRecordLayout,
+    ),
+  );
 
-  static ReleaseCandidateFreezeInput toFreezeInput(FreezeDriftScannerInput input) {
+  static ReleaseCandidateFreezeInput toFreezeInput(
+    FreezeDriftScannerInput input,
+  ) {
     final changeType = _changeTypeForCategory(input.category);
     return ReleaseCandidateFreezeInput(
       changeType: changeType,
-      blocksRelease: input.blocksRelease || _storeReadinessCategory(input.category),
-      blocksPurchase: input.blocksPurchase || input.category == FreezeDriftCategory.purchase,
-      blocksRestore: input.blocksRestore || input.category == FreezeDriftCategory.restore,
+      blocksRelease:
+          input.blocksRelease || _storeReadinessCategory(input.category),
+      blocksPurchase:
+          input.blocksPurchase ||
+          input.category == FreezeDriftCategory.purchase,
+      blocksRestore:
+          input.blocksRestore || input.category == FreezeDriftCategory.restore,
       blocksEntitlement:
-          input.blocksEntitlement || input.category == FreezeDriftCategory.entitlement,
-      causesCrash: input.causesCrash || input.category == FreezeDriftCategory.crashFix,
+          input.blocksEntitlement ||
+          input.category == FreezeDriftCategory.entitlement,
+      causesCrash:
+          input.causesCrash || input.category == FreezeDriftCategory.crashFix,
       risksAppStoreRejection: input.risksAppStoreRejection,
       affectsSecuritySecrets:
           input.affectsSecuritySecrets ||
           input.category == FreezeDriftCategory.securitySecrets,
-      fixesFirstJourneyComprehension: input.fixesFirstJourneyComprehension ||
-          input.category == FreezeDriftCategory.firstJourneyComprehensionBlocker,
-      fixesCriticalProofTrust: input.fixesCriticalProofTrust ||
+      fixesFirstJourneyComprehension:
+          input.fixesFirstJourneyComprehension ||
+          input.category ==
+              FreezeDriftCategory.firstJourneyComprehensionBlocker,
+      fixesCriticalProofTrust:
+          input.fixesCriticalProofTrust ||
           input.category == FreezeDriftCategory.criticalProofTrustBug,
-      addsNewUserFacingSurface: input.addsNewUserFacingSurface ||
+      addsNewUserFacingSurface:
+          input.addsNewUserFacingSurface ||
           input.category == FreezeDriftCategory.newFeatureSurface,
       changesPricingOrPaywall: input.changesPricingOrPaywall,
-      changesProofThresholds: input.changesProofThresholds ||
+      changesProofThresholds:
+          input.changesProofThresholds ||
           input.category == FreezeDriftCategory.anchorThresholdChange,
-      changesRecordLayout: input.changesRecordLayout ||
+      changesRecordLayout:
+          input.changesRecordLayout ||
           input.category == FreezeDriftCategory.recordLayoutChange,
     );
   }
@@ -125,89 +138,87 @@ abstract final class FreezeDriftScanner {
 
   static FreezeDriftCategory categoryForChangeType(
     ReleaseCandidateChangeType changeType,
-  ) =>
-      switch (changeType) {
-        ReleaseCandidateChangeType.newFeatureSurface ||
-        ReleaseCandidateChangeType.newProductFeature =>
-          FreezeDriftCategory.newFeatureSurface,
-        ReleaseCandidateChangeType.newDashboard => FreezeDriftCategory.newDashboard,
-        ReleaseCandidateChangeType.newReport => FreezeDriftCategory.newReport,
-        ReleaseCandidateChangeType.newRanking => FreezeDriftCategory.newRanking,
-        ReleaseCandidateChangeType.newActionItems =>
-          FreezeDriftCategory.actionItemExpansion,
-        ReleaseCandidateChangeType.newContextExpansion =>
-          FreezeDriftCategory.contextExpansion,
-        ReleaseCandidateChangeType.newChatMode => FreezeDriftCategory.chatMode,
-        ReleaseCandidateChangeType.newProBenefit =>
-          FreezeDriftCategory.extraProPromise,
-        ReleaseCandidateChangeType.proofVolumeExpansion =>
-          FreezeDriftCategory.proofVolumeExpansion,
-        ReleaseCandidateChangeType.recordLayoutChange =>
-          FreezeDriftCategory.recordLayoutChange,
-        ReleaseCandidateChangeType.anchorThresholdChange =>
-          FreezeDriftCategory.anchorThresholdChange,
-        ReleaseCandidateChangeType.crash => FreezeDriftCategory.crashFix,
-        ReleaseCandidateChangeType.storeReadinessBlocker ||
-        ReleaseCandidateChangeType.buildSigningBlocker ||
-        ReleaseCandidateChangeType.testFlightBlocker =>
-          FreezeDriftCategory.storeReadiness,
-        ReleaseCandidateChangeType.purchaseBlocker => FreezeDriftCategory.purchase,
-        ReleaseCandidateChangeType.restoreBlocker => FreezeDriftCategory.restore,
-        ReleaseCandidateChangeType.entitlementBlocker =>
-          FreezeDriftCategory.entitlement,
-        ReleaseCandidateChangeType.metadataBlocker => FreezeDriftCategory.metadata,
-        ReleaseCandidateChangeType.privacySupportBlocker =>
-          FreezeDriftCategory.privacySupport,
-        ReleaseCandidateChangeType.securitySecretsBlocker =>
-          FreezeDriftCategory.securitySecrets,
-        ReleaseCandidateChangeType.firstJourneyComprehensionFailure =>
-          FreezeDriftCategory.firstJourneyComprehensionBlocker,
-        ReleaseCandidateChangeType.criticalProofTrustBug =>
-          FreezeDriftCategory.criticalProofTrustBug,
-        _ => FreezeDriftCategory.newFeatureSurface,
-      };
+  ) => switch (changeType) {
+    ReleaseCandidateChangeType.newFeatureSurface ||
+    ReleaseCandidateChangeType.newProductFeature =>
+      FreezeDriftCategory.newFeatureSurface,
+    ReleaseCandidateChangeType.newDashboard => FreezeDriftCategory.newDashboard,
+    ReleaseCandidateChangeType.newReport => FreezeDriftCategory.newReport,
+    ReleaseCandidateChangeType.newRanking => FreezeDriftCategory.newRanking,
+    ReleaseCandidateChangeType.newActionItems =>
+      FreezeDriftCategory.actionItemExpansion,
+    ReleaseCandidateChangeType.newContextExpansion =>
+      FreezeDriftCategory.contextExpansion,
+    ReleaseCandidateChangeType.newChatMode => FreezeDriftCategory.chatMode,
+    ReleaseCandidateChangeType.newProBenefit =>
+      FreezeDriftCategory.extraProPromise,
+    ReleaseCandidateChangeType.proofVolumeExpansion =>
+      FreezeDriftCategory.proofVolumeExpansion,
+    ReleaseCandidateChangeType.recordLayoutChange =>
+      FreezeDriftCategory.recordLayoutChange,
+    ReleaseCandidateChangeType.anchorThresholdChange =>
+      FreezeDriftCategory.anchorThresholdChange,
+    ReleaseCandidateChangeType.crash => FreezeDriftCategory.crashFix,
+    ReleaseCandidateChangeType.storeReadinessBlocker ||
+    ReleaseCandidateChangeType.buildSigningBlocker ||
+    ReleaseCandidateChangeType.testFlightBlocker =>
+      FreezeDriftCategory.storeReadiness,
+    ReleaseCandidateChangeType.purchaseBlocker => FreezeDriftCategory.purchase,
+    ReleaseCandidateChangeType.restoreBlocker => FreezeDriftCategory.restore,
+    ReleaseCandidateChangeType.entitlementBlocker =>
+      FreezeDriftCategory.entitlement,
+    ReleaseCandidateChangeType.metadataBlocker => FreezeDriftCategory.metadata,
+    ReleaseCandidateChangeType.privacySupportBlocker =>
+      FreezeDriftCategory.privacySupport,
+    ReleaseCandidateChangeType.securitySecretsBlocker =>
+      FreezeDriftCategory.securitySecrets,
+    ReleaseCandidateChangeType.firstJourneyComprehensionFailure =>
+      FreezeDriftCategory.firstJourneyComprehensionBlocker,
+    ReleaseCandidateChangeType.criticalProofTrustBug =>
+      FreezeDriftCategory.criticalProofTrustBug,
+    _ => FreezeDriftCategory.newFeatureSurface,
+  };
 
   static ReleaseCandidateChangeType _changeTypeForCategory(
     FreezeDriftCategory category,
-  ) =>
-      switch (category) {
-        FreezeDriftCategory.newFeatureSurface =>
-          ReleaseCandidateChangeType.newFeatureSurface,
-        FreezeDriftCategory.newDashboard => ReleaseCandidateChangeType.newDashboard,
-        FreezeDriftCategory.newReport => ReleaseCandidateChangeType.newReport,
-        FreezeDriftCategory.newRanking => ReleaseCandidateChangeType.newRanking,
-        FreezeDriftCategory.actionItemExpansion =>
-          ReleaseCandidateChangeType.newActionItems,
-        FreezeDriftCategory.contextExpansion =>
-          ReleaseCandidateChangeType.newContextExpansion,
-        FreezeDriftCategory.chatMode => ReleaseCandidateChangeType.newChatMode,
-        FreezeDriftCategory.storagePositioning =>
-          ReleaseCandidateChangeType.newProBenefit,
-        FreezeDriftCategory.extraProPromise =>
-          ReleaseCandidateChangeType.newProBenefit,
-        FreezeDriftCategory.proofVolumeExpansion =>
-          ReleaseCandidateChangeType.proofVolumeExpansion,
-        FreezeDriftCategory.recordLayoutChange =>
-          ReleaseCandidateChangeType.recordLayoutChange,
-        FreezeDriftCategory.anchorThresholdChange =>
-          ReleaseCandidateChangeType.anchorThresholdChange,
-        FreezeDriftCategory.crashFix => ReleaseCandidateChangeType.crash,
-        FreezeDriftCategory.storeReadiness =>
-          ReleaseCandidateChangeType.storeReadinessBlocker,
-        FreezeDriftCategory.purchase => ReleaseCandidateChangeType.purchaseBlocker,
-        FreezeDriftCategory.restore => ReleaseCandidateChangeType.restoreBlocker,
-        FreezeDriftCategory.entitlement =>
-          ReleaseCandidateChangeType.entitlementBlocker,
-        FreezeDriftCategory.metadata => ReleaseCandidateChangeType.metadataBlocker,
-        FreezeDriftCategory.privacySupport =>
-          ReleaseCandidateChangeType.privacySupportBlocker,
-        FreezeDriftCategory.securitySecrets =>
-          ReleaseCandidateChangeType.securitySecretsBlocker,
-        FreezeDriftCategory.firstJourneyComprehensionBlocker =>
-          ReleaseCandidateChangeType.firstJourneyComprehensionFailure,
-        FreezeDriftCategory.criticalProofTrustBug =>
-          ReleaseCandidateChangeType.criticalProofTrustBug,
-      };
+  ) => switch (category) {
+    FreezeDriftCategory.newFeatureSurface =>
+      ReleaseCandidateChangeType.newFeatureSurface,
+    FreezeDriftCategory.newDashboard => ReleaseCandidateChangeType.newDashboard,
+    FreezeDriftCategory.newReport => ReleaseCandidateChangeType.newReport,
+    FreezeDriftCategory.newRanking => ReleaseCandidateChangeType.newRanking,
+    FreezeDriftCategory.actionItemExpansion =>
+      ReleaseCandidateChangeType.newActionItems,
+    FreezeDriftCategory.contextExpansion =>
+      ReleaseCandidateChangeType.newContextExpansion,
+    FreezeDriftCategory.chatMode => ReleaseCandidateChangeType.newChatMode,
+    FreezeDriftCategory.storagePositioning =>
+      ReleaseCandidateChangeType.newProBenefit,
+    FreezeDriftCategory.extraProPromise =>
+      ReleaseCandidateChangeType.newProBenefit,
+    FreezeDriftCategory.proofVolumeExpansion =>
+      ReleaseCandidateChangeType.proofVolumeExpansion,
+    FreezeDriftCategory.recordLayoutChange =>
+      ReleaseCandidateChangeType.recordLayoutChange,
+    FreezeDriftCategory.anchorThresholdChange =>
+      ReleaseCandidateChangeType.anchorThresholdChange,
+    FreezeDriftCategory.crashFix => ReleaseCandidateChangeType.crash,
+    FreezeDriftCategory.storeReadiness =>
+      ReleaseCandidateChangeType.storeReadinessBlocker,
+    FreezeDriftCategory.purchase => ReleaseCandidateChangeType.purchaseBlocker,
+    FreezeDriftCategory.restore => ReleaseCandidateChangeType.restoreBlocker,
+    FreezeDriftCategory.entitlement =>
+      ReleaseCandidateChangeType.entitlementBlocker,
+    FreezeDriftCategory.metadata => ReleaseCandidateChangeType.metadataBlocker,
+    FreezeDriftCategory.privacySupport =>
+      ReleaseCandidateChangeType.privacySupportBlocker,
+    FreezeDriftCategory.securitySecrets =>
+      ReleaseCandidateChangeType.securitySecretsBlocker,
+    FreezeDriftCategory.firstJourneyComprehensionBlocker =>
+      ReleaseCandidateChangeType.firstJourneyComprehensionFailure,
+    FreezeDriftCategory.criticalProofTrustBug =>
+      ReleaseCandidateChangeType.criticalProofTrustBug,
+  };
 
   static bool _storeReadinessCategory(FreezeDriftCategory category) =>
       category == FreezeDriftCategory.storeReadiness;
@@ -238,11 +249,7 @@ enum FreezeDriftCategory {
   criticalProofTrustBug,
 }
 
-enum FreezeDriftDecision {
-  freezeInactive,
-  allowed,
-  blocked,
-}
+enum FreezeDriftDecision { freezeInactive, allowed, blocked }
 
 class FreezeDriftScannerInput {
   const FreezeDriftScannerInput({

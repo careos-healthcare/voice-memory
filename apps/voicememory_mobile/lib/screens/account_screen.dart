@@ -9,37 +9,19 @@ import '../product/consumer_ui_copy.dart';
 import '../config/screenshot_mode.dart';
 import '../config/screenshot_sample_data.dart';
 import '../services/app_services.dart';
-import '../services/ai/ai_accuracy_feedback_store.dart';
-import '../features/ai_engines/models/ai_accuracy_feedback.dart';
 import '../features/pro_packaging/pro_value_copy.dart';
 import '../features/pro_packaging/pro_value_engine.dart';
 import '../features/privacy_trust/privacy_trust_copy.dart';
-import '../features/curiosity_loop/presentation/widgets/weekly_growth_preview_card.dart';
 import '../l10n/generated/app_localizations.dart';
 import '../widgets/account/account_privacy_controls_section.dart';
 import '../widgets/account/archive_me_pro_value_section.dart';
-import '../widgets/account/pro_utility_expansion_section.dart';
-import '../features/beta_feedback/beta_feedback_copy.dart';
-import '../features/beta_feedback/beta_feedback_engine.dart';
-import '../widgets/account/beta_feedback_sheet.dart';
 import '../widgets/account_archive_stats_card.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_spacing.dart';
 import '../widgets/accessibility/accessible_primary_surface.dart';
-import '../widgets/llm/llama_model_download_card.dart';
 
 class AccountScreen extends StatefulWidget {
-  const AccountScreen({
-    super.key,
-    this.weeklyGrowthPreviewCard,
-    this.modelDownloadCard,
-  });
-
-  /// Test hook to inject a fixed weekly growth preview card.
-  final Widget? weeklyGrowthPreviewCard;
-
-  /// Test and composition hook for the shared model download surface.
-  final Widget? modelDownloadCard;
+  const AccountScreen({super.key});
 
   @override
   State<AccountScreen> createState() => _AccountScreenState();
@@ -51,22 +33,11 @@ class _AccountScreenState extends State<AccountScreen> {
   String _status = '';
   bool _busy = false;
   bool _showSignIn = false;
-  int _entryCount = 0;
 
   @override
   void initState() {
     super.initState();
     _refresh();
-    _loadEntryCount();
-  }
-
-  Future<void> _loadEntryCount() async {
-    if (ScreenshotMode.enabled || !AppServices.isInitialized) return;
-    final entries = await AppServices.instance.journal.loadAll();
-    if (!mounted) return;
-    setState(
-      () => _entryCount = const BetaFeedbackEngine().realEntryCount(entries),
-    );
   }
 
   Future<void> _refresh() async {
@@ -161,19 +132,7 @@ class _AccountScreenState extends State<AccountScreen> {
                     compact: true,
                   ),
                   const SizedBox(height: AppSpacing.md),
-                  ProUtilityExpansionSection(
-                    entryCount: _entryCount,
-                    hasMeaningfulProof: _entryCount >= 3,
-                    compact: true,
-                  ),
-                  const SizedBox(height: AppSpacing.md),
                 ],
-                widget.modelDownloadCard ??
-                    const LlamaModelDownloadCard(source: 'account'),
-                const SizedBox(height: AppSpacing.md),
-                widget.weeklyGrowthPreviewCard ??
-                    const WeeklyGrowthPreviewCard(),
-                const SizedBox(height: AppSpacing.md),
                 if (RevenueCatConfiguration.purchasesEnabledAtBuildTime)
                   _sectionTile(
                     title: ProPackagingCopy.title,
@@ -190,15 +149,6 @@ class _AccountScreenState extends State<AccountScreen> {
                           child: const Text('Sync now'),
                         )
                       : null,
-                ),
-                _sectionTile(
-                  key: const Key('account_beta_feedback_tile'),
-                  title: BetaFeedbackCopy.sheetLinkLabel,
-                  onTap: () => BetaFeedbackSheet.show(
-                    context,
-                    source: 'account',
-                    entryCount: _entryCount,
-                  ),
                 ),
                 _sectionTile(
                   key: const Key('account_privacy_trust_centre_tile'),
@@ -273,33 +223,6 @@ class _AccountScreenState extends State<AccountScreen> {
                     stats: ScreenshotSampleData.beliefsSnapshot.stats,
                   ),
                   const SizedBox(height: AppSpacing.lg),
-                ],
-                if (AppServices.isInitialized) ...[
-                  FutureBuilder<AiAccuracyMetrics>(
-                    future: AiAccuracyFeedbackStore(
-                      AppServices.instance.prefs,
-                    ).metrics(),
-                    builder: (context, snapshot) {
-                      final metrics = snapshot.data;
-                      if (metrics == null || metrics.verified == 0) {
-                        return const SizedBox.shrink();
-                      }
-                      return Card(
-                        key: const Key('account_ai_accuracy_metrics'),
-                        child: ListTile(
-                          leading: const Icon(Icons.verified_outlined),
-                          title: Text(
-                            '${metrics.accuracyPercentage.toStringAsFixed(1)}% '
-                            'AI Accuracy',
-                          ),
-                          subtitle: Text(
-                            'Across ${metrics.verified} verified insights',
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                  const SizedBox(height: AppSpacing.md),
                 ],
                 Text(
                   ConsumerUiCopy.accountPrivacyNote,

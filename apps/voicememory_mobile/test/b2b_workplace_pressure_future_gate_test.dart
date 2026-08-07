@@ -13,48 +13,57 @@ B2bWorkplacePressureFutureGateInput _input({
   bool? testFlightUploaded = true,
   bool? paidIntentBetaComplete = true,
   bool? v1B2bUiRequested,
-}) =>
-    B2bWorkplacePressureFutureGateInput(
-      testFlightUploaded: testFlightUploaded,
-      paidIntentBetaComplete: paidIntentBetaComplete,
-      v1B2bUiRequested: v1B2bUiRequested,
-    );
+}) => B2bWorkplacePressureFutureGateInput(
+  testFlightUploaded: testFlightUploaded,
+  paidIntentBetaComplete: paidIntentBetaComplete,
+  v1B2bUiRequested: v1B2bUiRequested,
+);
 
 B2bWorkplacePressureFuturePrereq _prereq(
   B2bWorkplacePressureFutureGateResult result,
   B2bWorkplacePressureFuturePrereqId id,
-) =>
-    result.prereqs.firstWhere((prereq) => prereq.id == id);
+) => result.prereqs.firstWhere((prereq) => prereq.id == id);
 
 B2bWorkplacePressureAudience _audience(
   B2bWorkplacePressureFutureGateResult result,
   B2bWorkplacePressureAudienceId id,
-) =>
-    result.audiences.firstWhere((audience) => audience.id == id);
+) => result.audiences.firstWhere((audience) => audience.id == id);
 
 B2bWorkplacePressureFutureRule _rule(
   B2bWorkplacePressureFutureGateResult result,
   B2bWorkplacePressureFutureRuleId id,
-) =>
-    result.rules.firstWhere((rule) => rule.id == id);
+) => result.rules.firstWhere((rule) => rule.id == id);
 
 void main() {
   group('B2bWorkplacePressureFutureGate.build', () {
     test('gate tracks six audiences, two prerequisites, and five rules', () {
       final result = B2bWorkplacePressureFutureGate.build(_input());
-      expect(result.audiences.length, B2bWorkplacePressureFutureGate.audienceCount);
+      expect(
+        result.audiences.length,
+        B2bWorkplacePressureFutureGate.audienceCount,
+      );
       expect(result.prereqs.length, B2bWorkplacePressureFutureGate.prereqCount);
       expect(result.rules.length, B2bWorkplacePressureFutureGate.ruleCount);
-      expect(result.audienceOrder, B2bWorkplacePressureFutureGate.canonicalAudienceOrder);
-      expect(result.prereqOrder, B2bWorkplacePressureFutureGate.canonicalPrereqOrder);
-      expect(result.ruleOrder, B2bWorkplacePressureFutureGate.canonicalRuleOrder);
+      expect(
+        result.audienceOrder,
+        B2bWorkplacePressureFutureGate.canonicalAudienceOrder,
+      );
+      expect(
+        result.prereqOrder,
+        B2bWorkplacePressureFutureGate.canonicalPrereqOrder,
+      );
+      expect(
+        result.ruleOrder,
+        B2bWorkplacePressureFutureGate.canonicalRuleOrder,
+      );
     });
 
     test('beta proof complete -> futureLandingPositioningDocumented', () {
       final result = B2bWorkplacePressureFutureGate.build(_input());
       expect(
         result.decision,
-        B2bWorkplacePressureFutureGateDecision.futureLandingPositioningDocumented,
+        B2bWorkplacePressureFutureGateDecision
+            .futureLandingPositioningDocumented,
       );
       expect(result.betaProofComplete, isTrue);
       expect(result.v1LiveB2bUiBlocked, isTrue);
@@ -90,18 +99,17 @@ void main() {
       );
       expect(result.decision, B2bWorkplacePressureFutureGateDecision.b2bFrozen);
       expect(
-        _prereq(result, B2bWorkplacePressureFuturePrereqId.paidIntentBetaComplete)
-            .status,
+        _prereq(
+          result,
+          B2bWorkplacePressureFuturePrereqId.paidIntentBetaComplete,
+        ).status,
         B2bWorkplacePressureFuturePrereqStatus.fail,
       );
     });
 
     test('v1 B2B UI requested without beta proof fails noLiveB2bUi', () {
       final result = B2bWorkplacePressureFutureGate.build(
-        _input(
-          testFlightUploaded: false,
-          v1B2bUiRequested: true,
-        ),
+        _input(testFlightUploaded: false, v1B2bUiRequested: true),
       );
       expect(
         _rule(result, B2bWorkplacePressureFutureRuleId.noLiveB2bUi).status,
@@ -112,12 +120,17 @@ void main() {
     test('audiences map to audience wedge ids', () {
       final result = B2bWorkplacePressureFutureGate.build(_input());
       expect(
-        _audience(result, B2bWorkplacePressureAudienceId.founders).audienceWedgeId,
+        _audience(
+          result,
+          B2bWorkplacePressureAudienceId.founders,
+        ).audienceWedgeId,
         'founders',
       );
       expect(
-        _audience(result, B2bWorkplacePressureAudienceId.peopleWhoSayYesWithNoCapacity)
-            .audienceWedgeId,
+        _audience(
+          result,
+          B2bWorkplacePressureAudienceId.peopleWhoSayYesWithNoCapacity,
+        ).audienceWedgeId,
         'peopleWhoSayYesWithNoCapacity',
       );
     });
@@ -125,7 +138,11 @@ void main() {
     test('canonical rules pass for gate copy', () {
       final result = B2bWorkplacePressureFutureGate.build(_input());
       for (final rule in result.rules) {
-        expect(rule.status, B2bWorkplacePressureFutureRuleStatus.pass, reason: rule.id.name);
+        expect(
+          rule.status,
+          B2bWorkplacePressureFutureRuleStatus.pass,
+          reason: rule.id.name,
+        );
       }
     });
 

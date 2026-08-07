@@ -32,53 +32,50 @@ LowEffortArchiveCaptureSummary _summary({
   int wouldPayYesCount = 2,
   int wouldPayMaybeCount = 1,
   int wouldPayNoCount = 2,
-}) =>
-    LowEffortArchiveCaptureSummary(
-      totalTesters: totalTesters,
-      understoodNoDailyRequirementCount: understoodNoDailyRequirementCount,
-      understoodOneSentenceEnoughCount: understoodOneSentenceEnoughCount,
-      understoodNoMindMapMaintenanceCount: understoodNoMindMapMaintenanceCount,
-      understoodSaveWhenRealRepeatCount: understoodSaveWhenRealRepeatCount,
-      thoughtDailyHomeworkCount: thoughtDailyHomeworkCount,
-      thoughtManualMindMapMaintenanceCount: thoughtManualMindMapMaintenanceCount,
-      preferredChatGptBecauseLessWorkCount: preferredChatGptBecauseLessWorkCount,
-      wouldPayYesCount: wouldPayYesCount,
-      wouldPayMaybeCount: wouldPayMaybeCount,
-      wouldPayNoCount: wouldPayNoCount,
-    );
+}) => LowEffortArchiveCaptureSummary(
+  totalTesters: totalTesters,
+  understoodNoDailyRequirementCount: understoodNoDailyRequirementCount,
+  understoodOneSentenceEnoughCount: understoodOneSentenceEnoughCount,
+  understoodNoMindMapMaintenanceCount: understoodNoMindMapMaintenanceCount,
+  understoodSaveWhenRealRepeatCount: understoodSaveWhenRealRepeatCount,
+  thoughtDailyHomeworkCount: thoughtDailyHomeworkCount,
+  thoughtManualMindMapMaintenanceCount: thoughtManualMindMapMaintenanceCount,
+  preferredChatGptBecauseLessWorkCount: preferredChatGptBecauseLessWorkCount,
+  wouldPayYesCount: wouldPayYesCount,
+  wouldPayMaybeCount: wouldPayMaybeCount,
+  wouldPayNoCount: wouldPayNoCount,
+);
 
 LowEffortArchiveCaptureSummary _fullComprehensionSummary({
   int totalTesters = 30,
-}) =>
-    _summary(
-      totalTesters: totalTesters,
-      understoodNoDailyRequirementCount: totalTesters == 20 ? 5 : 7,
-      understoodOneSentenceEnoughCount: totalTesters == 20 ? 5 : 7,
-      understoodNoMindMapMaintenanceCount: totalTesters == 20 ? 5 : 7,
-      understoodSaveWhenRealRepeatCount: totalTesters == 20 ? 5 : 7,
-      thoughtDailyHomeworkCount: 0,
-      thoughtManualMindMapMaintenanceCount: 0,
-      preferredChatGptBecauseLessWorkCount: 0,
-    );
+}) => _summary(
+  totalTesters: totalTesters,
+  understoodNoDailyRequirementCount: totalTesters == 20 ? 5 : 7,
+  understoodOneSentenceEnoughCount: totalTesters == 20 ? 5 : 7,
+  understoodNoMindMapMaintenanceCount: totalTesters == 20 ? 5 : 7,
+  understoodSaveWhenRealRepeatCount: totalTesters == 20 ? 5 : 7,
+  thoughtDailyHomeworkCount: 0,
+  thoughtManualMindMapMaintenanceCount: 0,
+  preferredChatGptBecauseLessWorkCount: 0,
+);
 
-BetaRepairLabVisibilityInput _repairInput() =>
-    BetaRepairLabVisibilityInput(
-      mode: BetaRepairLabMode.evidenceTrailTimelineClarity,
-      entryCount: 4,
-      source: 'test',
-      isPro: false,
-      isRecording: false,
-      isDegradedTranscriptState: false,
-      whatChangedQuestionActive: false,
-      patternReviewInboxHasActiveItems: false,
-      hasTimelineProofVisible: true,
-      hasConfirmedRepeat: true,
-      confidenceLevel: ProofConfidenceLevel.watchOnly,
-      hasUsefulProofFeedback: false,
-      feedbackType: null,
-      isNegativeFeedback: false,
-      betaMissionEnabled: true,
-    );
+BetaRepairLabVisibilityInput _repairInput() => BetaRepairLabVisibilityInput(
+  mode: BetaRepairLabMode.evidenceTrailTimelineClarity,
+  entryCount: 4,
+  source: 'test',
+  isPro: false,
+  isRecording: false,
+  isDegradedTranscriptState: false,
+  whatChangedQuestionActive: false,
+  patternReviewInboxHasActiveItems: false,
+  hasTimelineProofVisible: true,
+  hasConfirmedRepeat: true,
+  confidenceLevel: ProofConfidenceLevel.watchOnly,
+  hasUsefulProofFeedback: false,
+  feedbackType: null,
+  isNegativeFeedback: false,
+  betaMissionEnabled: true,
+);
 
 void main() {
   group('LowEffortArchiveCapture.resolve', () {
@@ -112,19 +109,16 @@ void main() {
       },
     );
 
-    test(
-      'one sentence understanding low returns clarifyOneSentenceEnough',
-      () {
-        expect(
-          LowEffortArchiveCapture.resolve(
-            _fullComprehensionSummary().copyWith(
-              understoodOneSentenceEnoughCount: 4,
-            ),
+    test('one sentence understanding low returns clarifyOneSentenceEnough', () {
+      expect(
+        LowEffortArchiveCapture.resolve(
+          _fullComprehensionSummary().copyWith(
+            understoodOneSentenceEnoughCount: 4,
           ),
-          LowEffortArchiveCaptureDecision.clarifyOneSentenceEnough,
-        );
-      },
-    );
+        ),
+        LowEffortArchiveCaptureDecision.clarifyOneSentenceEnough,
+      );
+    });
 
     test(
       'mind-map maintenance confusion high returns clarifyNoMindMapMaintenance',
@@ -194,23 +188,17 @@ void main() {
       },
     );
 
-    test(
-      'all comprehension and payment pass returns releaseCandidate',
-      () {
-        expect(
-          LowEffortArchiveCapture.resolve(_fullComprehensionSummary()),
-          LowEffortArchiveCaptureDecision.releaseCandidate,
-        );
-      },
-    );
+    test('all comprehension and payment pass returns releaseCandidate', () {
+      expect(
+        LowEffortArchiveCapture.resolve(_fullComprehensionSummary()),
+        LowEffortArchiveCaptureDecision.releaseCandidate,
+      );
+    });
   });
 
   group('LowEffortArchiveCaptureCopy', () {
     test('headline says No daily homework', () {
-      expect(
-        LowEffortArchiveCaptureCopy.headline,
-        'No daily homework',
-      );
+      expect(LowEffortArchiveCaptureCopy.headline, 'No daily homework');
     });
 
     test('body says does not need constant chatting', () {
@@ -255,13 +243,15 @@ void main() {
       );
     });
 
-    test('noMaintenanceLine says ArchiveMe builds the trail from saved moments',
-        () {
-      expect(
-        LowEffortArchiveCaptureCopy.noMaintenanceLine,
-        contains('ArchiveMe builds the trail from saved moments'),
-      );
-    });
+    test(
+      'noMaintenanceLine says ArchiveMe builds the trail from saved moments',
+      () {
+        expect(
+          LowEffortArchiveCaptureCopy.noMaintenanceLine,
+          contains('ArchiveMe builds the trail from saved moments'),
+        );
+      },
+    );
 
     test('whenToUseLine gives real repeat examples', () {
       final line = LowEffortArchiveCaptureCopy.whenToUseLine.toLowerCase();
@@ -301,18 +291,9 @@ void main() {
     });
 
     test('guardrail blocks daily task/streak/homework/manual maintenance', () {
-      expect(
-        LowEffortArchiveCaptureCopy.guardrail,
-        contains('daily task'),
-      );
-      expect(
-        LowEffortArchiveCaptureCopy.guardrail,
-        contains('streak'),
-      );
-      expect(
-        LowEffortArchiveCaptureCopy.guardrail,
-        contains('homework'),
-      );
+      expect(LowEffortArchiveCaptureCopy.guardrail, contains('daily task'));
+      expect(LowEffortArchiveCaptureCopy.guardrail, contains('streak'));
+      expect(LowEffortArchiveCaptureCopy.guardrail, contains('homework'));
       expect(
         LowEffortArchiveCaptureCopy.guardrail,
         contains('manual mind-map maintenance'),
@@ -504,43 +485,47 @@ void main() {
       );
     });
 
-    test('record screen remains capture-first without stacking extra cards', () {
-      final audit = SurfacePriorityEngine.auditRecordReady(
-        entryCount: 4,
-        source: 'record',
-        candidates: SurfacePriorityCandidates.recordReady(
-          firstMomentCapture: false,
-          secondMomentReturn: false,
-          lowFrictionReturn: false,
-          whatToNoticeNext: false,
-          betaTodaySummary: false,
-          openCapturePromptChips: false,
-          captureFreedomLine: false,
-          timelineProofMoment: true,
-          archiveTimelineSpine: false,
-          timelinePositioning: false,
-          currentRelevance: false,
-          correctionMemory: false,
-          notRelevantRecovery: false,
-          proofQualityResponse: false,
-          evidenceWeighting: false,
-          proofSpecificity: false,
-          presentDayRelevance: false,
-          patternConfidence: false,
-          betaTesterReport: false,
-          proEvidenceValue: false,
-          privateReportProBridge: false,
-          suppressLegacyEducation: false,
-          betaProofLift: true,
-        ),
-      );
-      expect(audit.proofCardKey, 'timelineProofMoment');
-      expect(audit.guidanceCardKey, isNull);
-    });
+    test(
+      'record screen remains capture-first without stacking extra cards',
+      () {
+        final audit = SurfacePriorityEngine.auditRecordReady(
+          entryCount: 4,
+          source: 'record',
+          candidates: SurfacePriorityCandidates.recordReady(
+            firstMomentCapture: false,
+            secondMomentReturn: false,
+            lowFrictionReturn: false,
+            whatToNoticeNext: false,
+            betaTodaySummary: false,
+            openCapturePromptChips: false,
+            captureFreedomLine: false,
+            timelineProofMoment: true,
+            archiveTimelineSpine: false,
+            timelinePositioning: false,
+            currentRelevance: false,
+            correctionMemory: false,
+            notRelevantRecovery: false,
+            proofQualityResponse: false,
+            evidenceWeighting: false,
+            proofSpecificity: false,
+            presentDayRelevance: false,
+            patternConfidence: false,
+            betaTesterReport: false,
+            proEvidenceValue: false,
+            privateReportProBridge: false,
+            suppressLegacyEducation: false,
+            betaProofLift: true,
+          ),
+        );
+        expect(audit.proofCardKey, 'timelineProofMoment');
+        expect(audit.guidanceCardKey, isNull);
+      },
+    );
   });
 }
 
-ChangeTrailClaritySummary _fullTrailSummary() => const ChangeTrailClaritySummary(
+ChangeTrailClaritySummary _fullTrailSummary() =>
+    const ChangeTrailClaritySummary(
       totalTesters: 30,
       understoodFirstProofCount: 7,
       understoodProKeepsTrailCount: 6,
@@ -585,31 +570,30 @@ extension on LowEffortArchiveCaptureSummary {
     int? wouldPayYesCount,
     int? wouldPayMaybeCount,
     int? wouldPayNoCount,
-  }) =>
-      LowEffortArchiveCaptureSummary(
-        totalTesters: totalTesters ?? this.totalTesters,
-        understoodNoDailyRequirementCount:
-            understoodNoDailyRequirementCount ??
-            this.understoodNoDailyRequirementCount,
-        understoodOneSentenceEnoughCount:
-            understoodOneSentenceEnoughCount ??
-            this.understoodOneSentenceEnoughCount,
-        understoodNoMindMapMaintenanceCount:
-            understoodNoMindMapMaintenanceCount ??
-            this.understoodNoMindMapMaintenanceCount,
-        understoodSaveWhenRealRepeatCount:
-            understoodSaveWhenRealRepeatCount ??
-            this.understoodSaveWhenRealRepeatCount,
-        thoughtDailyHomeworkCount:
-            thoughtDailyHomeworkCount ?? this.thoughtDailyHomeworkCount,
-        thoughtManualMindMapMaintenanceCount:
-            thoughtManualMindMapMaintenanceCount ??
-            this.thoughtManualMindMapMaintenanceCount,
-        preferredChatGptBecauseLessWorkCount:
-            preferredChatGptBecauseLessWorkCount ??
-            this.preferredChatGptBecauseLessWorkCount,
-        wouldPayYesCount: wouldPayYesCount ?? this.wouldPayYesCount,
-        wouldPayMaybeCount: wouldPayMaybeCount ?? this.wouldPayMaybeCount,
-        wouldPayNoCount: wouldPayNoCount ?? this.wouldPayNoCount,
-      );
+  }) => LowEffortArchiveCaptureSummary(
+    totalTesters: totalTesters ?? this.totalTesters,
+    understoodNoDailyRequirementCount:
+        understoodNoDailyRequirementCount ??
+        this.understoodNoDailyRequirementCount,
+    understoodOneSentenceEnoughCount:
+        understoodOneSentenceEnoughCount ??
+        this.understoodOneSentenceEnoughCount,
+    understoodNoMindMapMaintenanceCount:
+        understoodNoMindMapMaintenanceCount ??
+        this.understoodNoMindMapMaintenanceCount,
+    understoodSaveWhenRealRepeatCount:
+        understoodSaveWhenRealRepeatCount ??
+        this.understoodSaveWhenRealRepeatCount,
+    thoughtDailyHomeworkCount:
+        thoughtDailyHomeworkCount ?? this.thoughtDailyHomeworkCount,
+    thoughtManualMindMapMaintenanceCount:
+        thoughtManualMindMapMaintenanceCount ??
+        this.thoughtManualMindMapMaintenanceCount,
+    preferredChatGptBecauseLessWorkCount:
+        preferredChatGptBecauseLessWorkCount ??
+        this.preferredChatGptBecauseLessWorkCount,
+    wouldPayYesCount: wouldPayYesCount ?? this.wouldPayYesCount,
+    wouldPayMaybeCount: wouldPayMaybeCount ?? this.wouldPayMaybeCount,
+    wouldPayNoCount: wouldPayNoCount ?? this.wouldPayNoCount,
+  );
 }

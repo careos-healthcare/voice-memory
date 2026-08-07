@@ -124,7 +124,9 @@ void main() {
     });
 
     test('neutral non-pro copy is aligned', () {
-      final result = ProPromiseCopyAudit.audit('Save one repeat when it happens.');
+      final result = ProPromiseCopyAudit.audit(
+        'Save one repeat when it happens.',
+      );
       expect(result.decision, ProPromiseCopyAuditDecision.aligned);
     });
   });
@@ -134,7 +136,8 @@ void main() {
       final batch = ProPromiseCopyAudit.auditAll([
         const ProPromiseCopyAuditEntry(
           id: 'good',
-          copy: 'Free shows the first useful proof. Pro keeps the longer proof trail.',
+          copy:
+              'Free shows the first useful proof. Pro keeps the longer proof trail.',
         ),
         const ProPromiseCopyAuditEntry(
           id: 'bad',
@@ -337,7 +340,8 @@ void main() {
   });
 }
 
-ChangeTrailClaritySummary _fullTrailSummary() => const ChangeTrailClaritySummary(
+ChangeTrailClaritySummary _fullTrailSummary() =>
+    const ChangeTrailClaritySummary(
       totalTesters: 30,
       understoodFirstProofCount: 7,
       understoodProKeepsTrailCount: 6,

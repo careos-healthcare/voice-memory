@@ -25,43 +25,42 @@ JournalEntry _entry({
   required String id,
   required String transcript,
   DateTime? createdAt,
-}) =>
-    JournalEntry(
-      id: id,
-      createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
-      transcript: transcript,
-      durationSeconds: 30,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 2,
-        recurringThemes: ['work'],
-        exactLanguagePattern: '',
-        concreteObservation: 'Work pressure showed up in this moment.',
-        repeatedSignal: '',
-      ),
-    );
+}) => JournalEntry(
+  id: id,
+  createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
+  transcript: transcript,
+  durationSeconds: 30,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 2,
+    recurringThemes: ['work'],
+    exactLanguagePattern: '',
+    concreteObservation: 'Work pressure showed up in this moment.',
+    repeatedSignal: '',
+  ),
+);
 
 List<JournalEntry> _threeRelatedRepeatEntries() => [
-      _entry(
-        id: 'e1',
-        transcript:
-            'I had no capacity but I said yes again to the extra meeting today.',
-        createdAt: DateTime(2026, 6, 10, 12),
-      ),
-      _entry(
-        id: 'e2',
-        transcript:
-            'Same thing — said yes when I had no capacity for one more thing.',
-        createdAt: DateTime(2026, 6, 11, 12),
-      ),
-      _entry(
-        id: 'e3',
-        transcript:
-            'I said yes again even though I had no capacity for one more ask.',
-        createdAt: DateTime(2026, 6, 12, 12),
-      ),
-    ];
+  _entry(
+    id: 'e1',
+    transcript:
+        'I had no capacity but I said yes again to the extra meeting today.',
+    createdAt: DateTime(2026, 6, 10, 12),
+  ),
+  _entry(
+    id: 'e2',
+    transcript:
+        'Same thing — said yes when I had no capacity for one more thing.',
+    createdAt: DateTime(2026, 6, 11, 12),
+  ),
+  _entry(
+    id: 'e3',
+    transcript:
+        'I said yes again even though I had no capacity for one more ask.',
+    createdAt: DateTime(2026, 6, 12, 12),
+  ),
+];
 
 void main() {
   group('ArchiveJourneyExplainerGates', () {
@@ -178,10 +177,7 @@ void main() {
     });
 
     test('pro step mentions longer proof trail continuity', () {
-      expect(
-        ArchiveJourneyCopy.step5Body,
-        contains('longer proof trail'),
-      );
+      expect(ArchiveJourneyCopy.step5Body, contains('longer proof trail'));
       expect(
         ArchiveJourneyCopy.step5Title,
         'Free shows the first useful proof. Pro keeps the longer trail.',
@@ -199,8 +195,9 @@ void main() {
     });
 
     test('visible copy avoids transcript phrase and user entry text', () {
-      final joined =
-          ArchiveJourneyExplainer.full().visibleCopyBlocks.join('\n').toLowerCase();
+      final joined = ArchiveJourneyExplainer.full().visibleCopyBlocks
+          .join('\n')
+          .toLowerCase();
       expect(joined, isNot(contains('transcript')));
       expect(joined, isNot(contains('said yes')));
     });
@@ -223,9 +220,18 @@ void main() {
         findsOneWidget,
       );
       expect(find.text(ArchiveJourneyCopy.title), findsOneWidget);
-      expect(find.text('1. ${ArchiveJourneyCopy.compactStep1Title}'), findsOneWidget);
-      expect(find.text('2. ${ArchiveJourneyCopy.compactStep2Title}'), findsOneWidget);
-      expect(find.text('3. ${ArchiveJourneyCopy.compactStep3Title}'), findsOneWidget);
+      expect(
+        find.text('1. ${ArchiveJourneyCopy.compactStep1Title}'),
+        findsOneWidget,
+      );
+      expect(
+        find.text('2. ${ArchiveJourneyCopy.compactStep2Title}'),
+        findsOneWidget,
+      );
+      expect(
+        find.text('3. ${ArchiveJourneyCopy.compactStep3Title}'),
+        findsOneWidget,
+      );
       expect(find.text(ArchiveJourneyCopy.compactHelper), findsOneWidget);
       expect(find.text(ArchiveJourneyCopy.step5Title), findsNothing);
       expect(find.byType(FilledButton), findsNothing);
@@ -255,8 +261,9 @@ void main() {
   });
 
   group('Record first-use integration', () {
-    testWidgets('journey strip appears inside first-use capture section',
-        (tester) async {
+    testWidgets('journey strip appears inside first-use capture section', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -276,7 +283,10 @@ void main() {
         findsOneWidget,
       );
       expect(find.text(FirstProofJourneyCopy.strip), findsOneWidget);
-      expect(find.text(VisibleArchiveProofCopy.firstUseCaptureCta), findsOneWidget);
+      expect(
+        find.text(VisibleArchiveProofCopy.firstUseCaptureCta),
+        findsOneWidget,
+      );
       expect(find.byKey(const Key('capture_entry_record_cta')), findsOneWidget);
     });
 
@@ -306,9 +316,7 @@ void main() {
     testWidgets('shows full journey explainer', (tester) async {
       await tester.pumpWidget(
         const MaterialApp(
-          home: Scaffold(
-            body: PatternsEmptyView(fillViewport: false),
-          ),
+          home: Scaffold(body: PatternsEmptyView(fillViewport: false)),
         ),
       );
 
@@ -347,7 +355,11 @@ void main() {
       for (final line in emptyStateCopy) {
         final lower = line.toLowerCase();
         for (final banned in bannedPhrases) {
-          expect(lower, isNot(contains(banned)), reason: '$line contains $banned');
+          expect(
+            lower,
+            isNot(contains(banned)),
+            reason: '$line contains $banned',
+          );
         }
         expect(lower, isNot(contains('chat')));
         expect(lower, isNot(equals('empty')));
@@ -363,15 +375,24 @@ void main() {
         VisibleArchiveProofCopy.patternsMindMapEmptyBody,
         contains('what repeats'),
       );
-      expect(RecordFirstUsePromptCopy.footer, contains('Ten seconds is enough'));
-    });
-    test('compact helper avoids duplicating ten seconds from first-use footer', () {
       expect(
-        ArchiveJourneyCopy.compactHelper.toLowerCase(),
-        isNot(contains('ten seconds')),
+        RecordFirstUsePromptCopy.footer,
+        contains('Ten seconds is enough'),
       );
-      expect(RecordFirstUsePromptCopy.footer, contains('Ten seconds is enough'));
     });
+    test(
+      'compact helper avoids duplicating ten seconds from first-use footer',
+      () {
+        expect(
+          ArchiveJourneyCopy.compactHelper.toLowerCase(),
+          isNot(contains('ten seconds')),
+        );
+        expect(
+          RecordFirstUsePromptCopy.footer,
+          contains('Ten seconds is enough'),
+        );
+      },
+    );
 
     test('post-save handoff tells user to return when similar happens', () {
       expect(
@@ -387,33 +408,36 @@ void main() {
   });
 
   group('Pro value preview copy', () {
-    test('pro preview mentions first repeat free and longer proof trail value', () {
-      expect(
-        ArchiveBeliefThreadCopy.fullArchiveHistoryBody,
-        allOf(
-          contains('Your first repeat is free'),
-          contains('longer proof trail'),
-          contains('returns'),
-          contains('changes'),
-        ),
-      );
-      expect(
-        ArchiveBeliefThreadCopy.fullArchiveHistoryBullets,
-        containsAll([
-          'Longer proof trail',
-          'What returned and changed',
-          'Correction history',
-          'Continuity over time',
-        ]),
-      );
-      expect(
-        ArchiveBeliefThreadCopy.whyPro,
-        'ArchiveMe becomes more useful as the evidence trail grows.',
-      );
-      expect(
-        PrivateArchiveReportCopy.previewBody.toLowerCase(),
-        contains('your first repeat'),
-      );
-    });
+    test(
+      'pro preview mentions first repeat free and longer proof trail value',
+      () {
+        expect(
+          ArchiveBeliefThreadCopy.fullArchiveHistoryBody,
+          allOf(
+            contains('Your first repeat is free'),
+            contains('longer proof trail'),
+            contains('returns'),
+            contains('changes'),
+          ),
+        );
+        expect(
+          ArchiveBeliefThreadCopy.fullArchiveHistoryBullets,
+          containsAll([
+            'Longer proof trail',
+            'What returned and changed',
+            'Correction history',
+            'Continuity over time',
+          ]),
+        );
+        expect(
+          ArchiveBeliefThreadCopy.whyPro,
+          'ArchiveMe becomes more useful as the evidence trail grows.',
+        );
+        expect(
+          PrivateArchiveReportCopy.previewBody.toLowerCase(),
+          contains('your first repeat'),
+        );
+      },
+    );
   });
 }

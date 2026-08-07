@@ -82,16 +82,17 @@ abstract final class SafeSharingFutureGate {
     );
   }
 
-  static SafeSharingFutureGateReport report(SafeSharingFutureGateResult result) =>
-      SafeSharingFutureGateReport(
-        headline: SafeSharingFutureCopy.headline,
-        body: SafeSharingFutureCopy.body,
-        positioning: SafeSharingFutureCopy.positioning,
-        orderLine: SafeSharingFutureCopy.orderLine,
-        prereqOrderLine: SafeSharingFutureCopy.prereqOrderLine,
-        guardrail: SafeSharingFutureCopy.guardrail,
-        result: result,
-      );
+  static SafeSharingFutureGateReport report(
+    SafeSharingFutureGateResult result,
+  ) => SafeSharingFutureGateReport(
+    headline: SafeSharingFutureCopy.headline,
+    body: SafeSharingFutureCopy.body,
+    positioning: SafeSharingFutureCopy.positioning,
+    orderLine: SafeSharingFutureCopy.orderLine,
+    prereqOrderLine: SafeSharingFutureCopy.prereqOrderLine,
+    guardrail: SafeSharingFutureCopy.guardrail,
+    result: result,
+  );
 
   static SafeSharingFutureGateInput composeInput({
     bool? firstUsefulProofSeen,
@@ -101,17 +102,17 @@ abstract final class SafeSharingFutureGate {
     bool? v1SharingExpansionRequested,
     SingleLaunchChecklistInput? launchChecklist,
     PaidIntentBetaProofResult? paidIntentBeta,
-  }) =>
-      SafeSharingFutureGateInput(
-        firstUsefulProofSeen: firstUsefulProofSeen ??
-            _firstUsefulProofSeenFrom(paidIntentBeta),
-        paidIntentBetaComplete: paidIntentBetaComplete ??
-            launchChecklist?.paidIntentBetaComplete ??
-            _paidIntentBetaCompleteFrom(paidIntentBeta),
-        withinFirstFiveMinutes: withinFirstFiveMinutes,
-        sharingPromptRequested: sharingPromptRequested,
-        v1SharingExpansionRequested: v1SharingExpansionRequested,
-      );
+  }) => SafeSharingFutureGateInput(
+    firstUsefulProofSeen:
+        firstUsefulProofSeen ?? _firstUsefulProofSeenFrom(paidIntentBeta),
+    paidIntentBetaComplete:
+        paidIntentBetaComplete ??
+        launchChecklist?.paidIntentBetaComplete ??
+        _paidIntentBetaCompleteFrom(paidIntentBeta),
+    withinFirstFiveMinutes: withinFirstFiveMinutes,
+    sharingPromptRequested: sharingPromptRequested,
+    v1SharingExpansionRequested: v1SharingExpansionRequested,
+  );
 
   static SafeSharingFutureGateInput fromRepoSignals({
     required String safeSharingFutureDocSource,
@@ -121,16 +122,15 @@ abstract final class SafeSharingFutureGate {
     bool? withinFirstFiveMinutes,
     bool? sharingPromptRequested,
     bool? v1SharingExpansionRequested,
-  }) =>
-      SafeSharingFutureGateInput(
-        firstUsefulProofSeen: firstUsefulProofSeen,
-        paidIntentBetaComplete: paidIntentBetaComplete,
-        withinFirstFiveMinutes: withinFirstFiveMinutes,
-        sharingPromptRequested: sharingPromptRequested,
-        v1SharingExpansionRequested: v1SharingExpansionRequested,
-        docListsRules: detectDocListsRules(safeSharingFutureDocSource),
-        guardrailPresentInCopy: detectGuardrailPresentInCopy(gateCopySource),
-      );
+  }) => SafeSharingFutureGateInput(
+    firstUsefulProofSeen: firstUsefulProofSeen,
+    paidIntentBetaComplete: paidIntentBetaComplete,
+    withinFirstFiveMinutes: withinFirstFiveMinutes,
+    sharingPromptRequested: sharingPromptRequested,
+    v1SharingExpansionRequested: v1SharingExpansionRequested,
+    docListsRules: detectDocListsRules(safeSharingFutureDocSource),
+    guardrailPresentInCopy: detectGuardrailPresentInCopy(gateCopySource),
+  );
 
   static bool detectDocListsRules(String docSource) {
     const markers = [
@@ -160,8 +160,7 @@ abstract final class SafeSharingFutureGate {
   }
 
   static bool evaluateCopyPassesRules(String copy) =>
-      !_violatesRawPrivateTextLeak(copy) &&
-      !_violatesArchiveContentShare(copy);
+      !_violatesRawPrivateTextLeak(copy) && !_violatesArchiveContentShare(copy);
 
   static bool? _paidIntentBetaCompleteFrom(PaidIntentBetaProofResult? result) {
     if (result == null) return null;
@@ -201,7 +200,8 @@ abstract final class SafeSharingFutureGate {
     return [
       _rule(
         id: SafeSharingFutureRuleId.noRawPrivateTextByDefault,
-        passes: evaluateCopyPassesRules(copyBundle) &&
+        passes:
+            evaluateCopyPassesRules(copyBundle) &&
             guardrailLower.contains('never share raw private text by default'),
       ),
       _rule(
@@ -210,23 +210,27 @@ abstract final class SafeSharingFutureGate {
       ),
       _rule(
         id: SafeSharingFutureRuleId.shareProductInsightNotArchive,
-        passes: evaluateCopyPassesRules(copyBundle) &&
+        passes:
+            evaluateCopyPassesRules(copyBundle) &&
             guardrailLower.contains('product insight') &&
             guardrailLower.contains('not archive content'),
       ),
       _rule(
         id: SafeSharingFutureRuleId.noSharingInFirstFiveMinutes,
-        passes: guardrailLower.contains('first five minutes') &&
+        passes:
+            guardrailLower.contains('first five minutes') &&
             (!withinFirstFiveMinutes || !sharingPromptRequested),
       ),
       _rule(
         id: SafeSharingFutureRuleId.noSharingBeforeFirstUsefulProof,
-        passes: guardrailLower.contains('first useful proof') &&
+        passes:
+            guardrailLower.contains('first useful proof') &&
             (!sharingPromptRequested || firstUsefulProofSeen),
       ),
       _rule(
         id: SafeSharingFutureRuleId.noLiveV1SharingExpansion,
-        passes: guardrailLower.contains('no new live v1 sharing') &&
+        passes:
+            guardrailLower.contains('no new live v1 sharing') &&
             (!(input.v1SharingExpansionRequested ?? false) ||
                 sharingProofComplete),
       ),
@@ -235,17 +239,16 @@ abstract final class SafeSharingFutureGate {
 
   static List<SafeSharingFuturePrereq> _buildPrereqs(
     SafeSharingFutureGateInput input,
-  ) =>
-      [
-        _prereq(
-          id: SafeSharingFuturePrereqId.firstUsefulProofSeen,
-          value: input.firstUsefulProofSeen,
-        ),
-        _prereq(
-          id: SafeSharingFuturePrereqId.paidIntentBetaComplete,
-          value: input.paidIntentBetaComplete,
-        ),
-      ];
+  ) => [
+    _prereq(
+      id: SafeSharingFuturePrereqId.firstUsefulProofSeen,
+      value: input.firstUsefulProofSeen,
+    ),
+    _prereq(
+      id: SafeSharingFuturePrereqId.paidIntentBetaComplete,
+      value: input.paidIntentBetaComplete,
+    ),
+  ];
 
   static bool _violatesRawPrivateTextLeak(String copy) {
     final lower = copy.toLowerCase();
@@ -276,7 +279,8 @@ abstract final class SafeSharingFutureGate {
     return false;
   }
 
-  static SafeSharingFuturePrereqStatus _statusFor(bool? value) => switch (value) {
+  static SafeSharingFuturePrereqStatus _statusFor(bool? value) =>
+      switch (value) {
         true => SafeSharingFuturePrereqStatus.pass,
         false => SafeSharingFuturePrereqStatus.fail,
         null => SafeSharingFuturePrereqStatus.pending,
@@ -303,17 +307,16 @@ abstract final class SafeSharingFutureGate {
   static SafeSharingFutureRule _rule({
     required SafeSharingFutureRuleId id,
     required bool passes,
-  }) =>
-      SafeSharingFutureRule(
-        id: id,
-        label: SafeSharingFutureCopy.ruleLabelFor(id),
-        status: passes
-            ? SafeSharingFutureRuleStatus.pass
-            : SafeSharingFutureRuleStatus.fail,
-        detailLabel: passes
-            ? SafeSharingFutureCopy.detailPass
-            : SafeSharingFutureCopy.detailFail,
-      );
+  }) => SafeSharingFutureRule(
+    id: id,
+    label: SafeSharingFutureCopy.ruleLabelFor(id),
+    status: passes
+        ? SafeSharingFutureRuleStatus.pass
+        : SafeSharingFutureRuleStatus.fail,
+    detailLabel: passes
+        ? SafeSharingFutureCopy.detailPass
+        : SafeSharingFutureCopy.detailFail,
+  );
 }
 
 class SafeSharingFutureGateInput {

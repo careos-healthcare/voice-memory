@@ -45,7 +45,7 @@ class RoutineAnchorChooser extends StatefulWidget {
 }
 
 class _RoutineAnchorChooserState extends State<RoutineAnchorChooser> {
-  static const Color _warmBorder = Color(0xFFF5E6D3);
+  static const Color _warmBorder = AppColors.warmBorder;
 
   final TextEditingController _customController = TextEditingController();
   bool _customOpen = false;
@@ -153,7 +153,7 @@ class _AnchorChip extends StatelessWidget {
       ).copyWith(fontSize: 13, fontWeight: FontWeight.w600),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
-        side: const BorderSide(color: Color(0xFFF5E6D3)),
+        side: const BorderSide(color: AppColors.warmBorder),
       ),
     );
   }

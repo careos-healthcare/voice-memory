@@ -1,21 +1,15 @@
-import 'present_day_relevance_copy.dart';
 import '../pattern_match_quality/pattern_match_quality_model.dart';
 
 /// Present-day relevance weight — not a proof verdict.
-enum PresentDayRelevanceState {
-  current,
-  fading,
-  softened,
-  unclear,
-}
+enum PresentDayRelevanceState { current, fading, softened, unclear }
 
 extension PresentDayRelevanceStateAnalytics on PresentDayRelevanceState {
   String get analyticsValue => switch (this) {
-        PresentDayRelevanceState.current => 'current',
-        PresentDayRelevanceState.fading => 'fading',
-        PresentDayRelevanceState.softened => 'softened',
-        PresentDayRelevanceState.unclear => 'unclear',
-      };
+    PresentDayRelevanceState.current => 'current',
+    PresentDayRelevanceState.fading => 'fading',
+    PresentDayRelevanceState.softened => 'softened',
+    PresentDayRelevanceState.unclear => 'unclear',
+  };
 }
 
 /// Resolved present-day relevance summary from existing signals only.

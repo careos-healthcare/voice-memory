@@ -54,7 +54,9 @@ class _QuietSignalRecordCardState extends State<QuietSignalRecordCard> {
     if (!widget.skipPersist || widget.store != null) {
       final store = widget.store ?? ComeBackTomorrowV2Store.instance();
       unawaited(
-        store.recordQuietDetection(lastSeenDateKey: widget.signal.lastSeenDateKey),
+        store.recordQuietDetection(
+          lastSeenDateKey: widget.signal.lastSeenDateKey,
+        ),
       );
     }
     QuietSignalAnalytics.seen(
@@ -79,9 +81,9 @@ class _QuietSignalRecordCardState extends State<QuietSignalRecordCard> {
 
   @override
   Widget build(BuildContext context) {
-    final bodyStyle = ArchiveMobileTypography.explanationBody(context).copyWith(
-      color: AppColors.textSecondary,
-    );
+    final bodyStyle = ArchiveMobileTypography.explanationBody(
+      context,
+    ).copyWith(color: AppColors.textSecondary);
 
     return Container(
       key: const Key('quiet_signal_record_card'),
@@ -125,11 +127,12 @@ class _QuietSignalRecordCardState extends State<QuietSignalRecordCard> {
               ),
               child: Text(
                 widget.signal.ctaKeepWatching,
-                style: ArchiveMobileTypography.responsiveHelper(context).copyWith(
-                  color: AppColors.accentPrimary,
-                  fontWeight: FontWeight.w600,
-                  fontSize: 13,
-                ),
+                style: ArchiveMobileTypography.responsiveHelper(context)
+                    .copyWith(
+                      color: AppColors.accentPrimary,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 13,
+                    ),
               ),
             ),
           ),

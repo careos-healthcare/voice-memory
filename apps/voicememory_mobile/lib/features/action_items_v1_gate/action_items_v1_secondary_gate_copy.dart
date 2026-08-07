@@ -38,21 +38,21 @@ abstract final class ActionItemsV1SecondaryGateCopy {
       'No task manager positioning.';
 
   static String labelFor(ActionItemsV1SecondaryGateCheckId id) => switch (id) {
-        ActionItemsV1SecondaryGateCheckId.actionItemsSecondary =>
-          checkSecondaryScope,
-        ActionItemsV1SecondaryGateCheckId.notInFirstFiveMinutes =>
-          checkNotInFirstFiveMinutes,
-        ActionItemsV1SecondaryGateCheckId.notInProPromise => checkNotInProPromise,
-        ActionItemsV1SecondaryGateCheckId.notBlockingFirstProof =>
-          checkNotBlockingFirstProof,
-        ActionItemsV1SecondaryGateCheckId.notRequiredOnboarding =>
-          checkNotRequiredOnboarding,
-        ActionItemsV1SecondaryGateCheckId.notTaskManagementPositioning =>
-          checkNotTaskManagement,
-        ActionItemsV1SecondaryGateCheckId.userConfirmedAccessOnly =>
-          checkUserConfirmedAccess,
-        ActionItemsV1SecondaryGateCheckId.noExpansionGuarded => checkNoExpansion,
-      };
+    ActionItemsV1SecondaryGateCheckId.actionItemsSecondary =>
+      checkSecondaryScope,
+    ActionItemsV1SecondaryGateCheckId.notInFirstFiveMinutes =>
+      checkNotInFirstFiveMinutes,
+    ActionItemsV1SecondaryGateCheckId.notInProPromise => checkNotInProPromise,
+    ActionItemsV1SecondaryGateCheckId.notBlockingFirstProof =>
+      checkNotBlockingFirstProof,
+    ActionItemsV1SecondaryGateCheckId.notRequiredOnboarding =>
+      checkNotRequiredOnboarding,
+    ActionItemsV1SecondaryGateCheckId.notTaskManagementPositioning =>
+      checkNotTaskManagement,
+    ActionItemsV1SecondaryGateCheckId.userConfirmedAccessOnly =>
+      checkUserConfirmedAccess,
+    ActionItemsV1SecondaryGateCheckId.noExpansionGuarded => checkNoExpansion,
+  };
 
   static Iterable<String> allVisibleStrings() sync* {
     yield headline;

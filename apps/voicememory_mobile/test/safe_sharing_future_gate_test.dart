@@ -15,26 +15,23 @@ SafeSharingFutureGateInput _input({
   bool? withinFirstFiveMinutes,
   bool? sharingPromptRequested,
   bool? v1SharingExpansionRequested,
-}) =>
-    SafeSharingFutureGateInput(
-      firstUsefulProofSeen: firstUsefulProofSeen,
-      paidIntentBetaComplete: paidIntentBetaComplete,
-      withinFirstFiveMinutes: withinFirstFiveMinutes,
-      sharingPromptRequested: sharingPromptRequested,
-      v1SharingExpansionRequested: v1SharingExpansionRequested,
-    );
+}) => SafeSharingFutureGateInput(
+  firstUsefulProofSeen: firstUsefulProofSeen,
+  paidIntentBetaComplete: paidIntentBetaComplete,
+  withinFirstFiveMinutes: withinFirstFiveMinutes,
+  sharingPromptRequested: sharingPromptRequested,
+  v1SharingExpansionRequested: v1SharingExpansionRequested,
+);
 
 SafeSharingFutureRule _rule(
   SafeSharingFutureGateResult result,
   SafeSharingFutureRuleId id,
-) =>
-    result.rules.firstWhere((rule) => rule.id == id);
+) => result.rules.firstWhere((rule) => rule.id == id);
 
 SafeSharingFuturePrereq _prereq(
   SafeSharingFutureGateResult result,
   SafeSharingFuturePrereqId id,
-) =>
-    result.prereqs.firstWhere((prereq) => prereq.id == id);
+) => result.prereqs.firstWhere((prereq) => prereq.id == id);
 
 void main() {
   group('SafeSharingFutureGate.build', () {
@@ -67,10 +64,7 @@ void main() {
 
     test('proof and beta complete -> futureGrowthSharingDocumented', () {
       final result = SafeSharingFutureGate.build(
-        _input(
-          firstUsefulProofSeen: true,
-          paidIntentBetaComplete: true,
-        ),
+        _input(firstUsefulProofSeen: true, paidIntentBetaComplete: true),
       );
       expect(
         result.decision,
@@ -89,7 +83,10 @@ void main() {
         ),
       );
       expect(
-        _rule(result, SafeSharingFutureRuleId.noSharingInFirstFiveMinutes).status,
+        _rule(
+          result,
+          SafeSharingFutureRuleId.noSharingInFirstFiveMinutes,
+        ).status,
         SafeSharingFutureRuleStatus.fail,
       );
       expect(result.decision, SafeSharingFutureGateDecision.sharingFrozen);
@@ -97,36 +94,45 @@ void main() {
 
     test('sharing prompt before first useful proof fails proof rule', () {
       final result = SafeSharingFutureGate.build(
-        _input(
-          firstUsefulProofSeen: false,
-          sharingPromptRequested: true,
-        ),
+        _input(firstUsefulProofSeen: false, sharingPromptRequested: true),
       );
       expect(
-        _rule(result, SafeSharingFutureRuleId.noSharingBeforeFirstUsefulProof)
-            .status,
+        _rule(
+          result,
+          SafeSharingFutureRuleId.noSharingBeforeFirstUsefulProof,
+        ).status,
         SafeSharingFutureRuleStatus.fail,
       );
     });
 
-    test('v1 sharing expansion without proof fails noLiveV1SharingExpansion', () {
-      final result = SafeSharingFutureGate.build(
-        _input(
-          firstUsefulProofSeen: false,
-          paidIntentBetaComplete: false,
-          v1SharingExpansionRequested: true,
-        ),
-      );
-      expect(
-        _rule(result, SafeSharingFutureRuleId.noLiveV1SharingExpansion).status,
-        SafeSharingFutureRuleStatus.fail,
-      );
-    });
+    test(
+      'v1 sharing expansion without proof fails noLiveV1SharingExpansion',
+      () {
+        final result = SafeSharingFutureGate.build(
+          _input(
+            firstUsefulProofSeen: false,
+            paidIntentBetaComplete: false,
+            v1SharingExpansionRequested: true,
+          ),
+        );
+        expect(
+          _rule(
+            result,
+            SafeSharingFutureRuleId.noLiveV1SharingExpansion,
+          ).status,
+          SafeSharingFutureRuleStatus.fail,
+        );
+      },
+    );
 
     test('canonical rules pass for gate copy', () {
       final result = SafeSharingFutureGate.build(_input());
       for (final rule in result.rules) {
-        expect(rule.status, SafeSharingFutureRuleStatus.pass, reason: rule.id.name);
+        expect(
+          rule.status,
+          SafeSharingFutureRuleStatus.pass,
+          reason: rule.id.name,
+        );
       }
     });
 

@@ -1,38 +1,30 @@
 import 'core_value_feedback_copy.dart';
 
-enum CoreValueFeedbackAnswer {
-  yes,
-  notYet,
-  generic,
-}
+enum CoreValueFeedbackAnswer { yes, notYet, generic }
 
-enum CoreValueFeedbackSource {
-  recordPostFirstProof,
-  patternsArchive,
-}
+enum CoreValueFeedbackSource { recordPostFirstProof, patternsArchive }
 
 extension CoreValueFeedbackAnswerStorage on CoreValueFeedbackAnswer {
   String get storageValue => switch (this) {
-        CoreValueFeedbackAnswer.yes => 'yes',
-        CoreValueFeedbackAnswer.notYet => 'not_yet',
-        CoreValueFeedbackAnswer.generic => 'generic',
-      };
+    CoreValueFeedbackAnswer.yes => 'yes',
+    CoreValueFeedbackAnswer.notYet => 'not_yet',
+    CoreValueFeedbackAnswer.generic => 'generic',
+  };
 
   String get analyticsValue => storageValue;
 
   String get diagnosticsLabel => switch (this) {
-        CoreValueFeedbackAnswer.yes => CoreValueFeedbackCopy.answerYes,
-        CoreValueFeedbackAnswer.notYet => CoreValueFeedbackCopy.answerNotYet,
-        CoreValueFeedbackAnswer.generic => CoreValueFeedbackCopy.answerGeneric,
-      };
+    CoreValueFeedbackAnswer.yes => CoreValueFeedbackCopy.answerYes,
+    CoreValueFeedbackAnswer.notYet => CoreValueFeedbackCopy.answerNotYet,
+    CoreValueFeedbackAnswer.generic => CoreValueFeedbackCopy.answerGeneric,
+  };
 }
 
 extension CoreValueFeedbackSourceStorage on CoreValueFeedbackSource {
   String get storageValue => switch (this) {
-        CoreValueFeedbackSource.recordPostFirstProof =>
-          'record_post_first_proof',
-        CoreValueFeedbackSource.patternsArchive => 'patterns_archive',
-      };
+    CoreValueFeedbackSource.recordPostFirstProof => 'record_post_first_proof',
+    CoreValueFeedbackSource.patternsArchive => 'patterns_archive',
+  };
 
   String get analyticsValue => storageValue;
 }
@@ -74,11 +66,11 @@ class CoreValueFeedbackRecord {
   }
 
   Map<String, dynamic> toJson() => {
-        if (answer != null) 'answer': answer!.storageValue,
-        if (timestamp != null) 'timestamp': timestamp!.toUtc().toIso8601String(),
-        if (entryCount != null) 'entryCount': entryCount,
-        if (source != null) 'source': source!.storageValue,
-      };
+    if (answer != null) 'answer': answer!.storageValue,
+    if (timestamp != null) 'timestamp': timestamp!.toUtc().toIso8601String(),
+    if (entryCount != null) 'entryCount': entryCount,
+    if (source != null) 'source': source!.storageValue,
+  };
 
   factory CoreValueFeedbackRecord.fromJson(Map<String, dynamic>? json) {
     if (json == null || json.isEmpty) return empty;

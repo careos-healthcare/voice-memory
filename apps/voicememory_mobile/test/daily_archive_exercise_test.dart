@@ -51,36 +51,34 @@ DailyArchiveExerciseInput _input({
   bool betaFeedbackCaptured = false,
   bool sampleMode = false,
   int dayIndex = 1,
-}) =>
-    DailyArchiveExerciseInput(
-      realSavedMomentCount: realSavedMomentCount,
-      hasWatchTheme: hasWatchTheme,
-      betaFeedbackCaptured: betaFeedbackCaptured,
-      sampleMode: sampleMode,
-      dayIndex: dayIndex,
-    );
+}) => DailyArchiveExerciseInput(
+  realSavedMomentCount: realSavedMomentCount,
+  hasWatchTheme: hasWatchTheme,
+  betaFeedbackCaptured: betaFeedbackCaptured,
+  sampleMode: sampleMode,
+  dayIndex: dayIndex,
+);
 
 JournalEntry _entry(String id, {String? transcript}) => JournalEntry(
-      id: id,
-      createdAt: DateTime(2026, 6, 12, 12),
-      transcript: transcript ??
-          'I noticed the same work pressure pattern when I said yes again today.',
-      durationSeconds: 30,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 2,
-        recurringThemes: ['work'],
-        exactLanguagePattern: '',
-        concreteObservation: 'Work pressure showed up in this moment.',
-        repeatedSignal: '',
-      ),
-    );
+  id: id,
+  createdAt: DateTime(2026, 6, 12, 12),
+  transcript:
+      transcript ??
+      'I noticed the same work pressure pattern when I said yes again today.',
+  durationSeconds: 30,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 2,
+    recurringThemes: ['work'],
+    exactLanguagePattern: '',
+    concreteObservation: 'Work pressure showed up in this moment.',
+    repeatedSignal: '',
+  ),
+);
 
-List<JournalEntry> _realEntries(int count) => List.generate(
-      count,
-      (i) => _entry('real_$i'),
-    );
+List<JournalEntry> _realEntries(int count) =>
+    List.generate(count, (i) => _entry('real_$i'));
 
 void _expectNoBannedCopy(
   Iterable<String> visible, {
@@ -126,10 +124,7 @@ void main() {
       addTearDown(ArchiveBetaMissionGate.resetForTest);
 
       final result = engine.build(
-        _input(
-          realSavedMomentCount: 3,
-          betaFeedbackCaptured: false,
-        ),
+        _input(realSavedMomentCount: 3, betaFeedbackCaptured: false),
       );
 
       expect(result.kind, DailyArchiveExerciseKind.betaFeedback);
@@ -167,10 +162,7 @@ void main() {
     });
 
     test('sample entries are excluded from real counts', () {
-      final entries = [
-        ..._realEntries(2),
-        ...SampleArchiveEntries.build(),
-      ];
+      final entries = [..._realEntries(2), ...SampleArchiveEntries.build()];
       expect(engine.realSavedMomentCount(entries), 2);
     });
 
@@ -186,8 +178,9 @@ void main() {
     });
 
     test('copy uses ArchiveMe and avoids banned language', () {
-      final copy =
-          DailyArchiveExerciseCopy.allVisibleStrings.join(' ').toLowerCase();
+      final copy = DailyArchiveExerciseCopy.allVisibleStrings
+          .join(' ')
+          .toLowerCase();
       expect(copy, contains('archiveme'));
       expect(copy, contains("today's map prompt"));
       _expectNoBannedCopy(
@@ -196,12 +189,15 @@ void main() {
       );
     });
 
-    test('record tab map prompt copy avoids exercise and clinical language', () {
-      _expectNoBannedCopy(
-        DailyArchiveExerciseCopy.recordVisibleStrings,
-        banned: _recordBannedWords,
-      );
-    });
+    test(
+      'record tab map prompt copy avoids exercise and clinical language',
+      () {
+        _expectNoBannedCopy(
+          DailyArchiveExerciseCopy.recordVisibleStrings,
+          banned: _recordBannedWords,
+        );
+      },
+    );
 
     test('adaptive prompts match mind-map framing', () {
       expect(
@@ -213,7 +209,9 @@ void main() {
         DailyArchiveExerciseCopy.comparisonPrompt,
       );
       expect(
-        engine.build(_input(realSavedMomentCount: 4, hasWatchTheme: true)).prompt,
+        engine
+            .build(_input(realSavedMomentCount: 4, hasWatchTheme: true))
+            .prompt,
         DailyArchiveExerciseCopy.watchThemePrompt,
       );
       final rotatingBase = _input(
@@ -221,30 +219,42 @@ void main() {
         betaFeedbackCaptured: true,
       );
       expect(
-        engine.build(DailyArchiveExerciseInput(
-          realSavedMomentCount: rotatingBase.realSavedMomentCount,
-          hasWatchTheme: rotatingBase.hasWatchTheme,
-          betaFeedbackCaptured: rotatingBase.betaFeedbackCaptured,
-          dayIndex: 0,
-        )).prompt,
+        engine
+            .build(
+              DailyArchiveExerciseInput(
+                realSavedMomentCount: rotatingBase.realSavedMomentCount,
+                hasWatchTheme: rotatingBase.hasWatchTheme,
+                betaFeedbackCaptured: rotatingBase.betaFeedbackCaptured,
+                dayIndex: 0,
+              ),
+            )
+            .prompt,
         DailyArchiveExerciseCopy.patternRepeatedPrompt,
       );
       expect(
-        engine.build(DailyArchiveExerciseInput(
-          realSavedMomentCount: rotatingBase.realSavedMomentCount,
-          hasWatchTheme: rotatingBase.hasWatchTheme,
-          betaFeedbackCaptured: rotatingBase.betaFeedbackCaptured,
-          dayIndex: 1,
-        )).prompt,
+        engine
+            .build(
+              DailyArchiveExerciseInput(
+                realSavedMomentCount: rotatingBase.realSavedMomentCount,
+                hasWatchTheme: rotatingBase.hasWatchTheme,
+                betaFeedbackCaptured: rotatingBase.betaFeedbackCaptured,
+                dayIndex: 1,
+              ),
+            )
+            .prompt,
         DailyArchiveExerciseCopy.feltDifferentPrompt,
       );
       expect(
-        engine.build(DailyArchiveExerciseInput(
-          realSavedMomentCount: rotatingBase.realSavedMomentCount,
-          hasWatchTheme: rotatingBase.hasWatchTheme,
-          betaFeedbackCaptured: rotatingBase.betaFeedbackCaptured,
-          dayIndex: 2,
-        )).prompt,
+        engine
+            .build(
+              DailyArchiveExerciseInput(
+                realSavedMomentCount: rotatingBase.realSavedMomentCount,
+                hasWatchTheme: rotatingBase.hasWatchTheme,
+                betaFeedbackCaptured: rotatingBase.betaFeedbackCaptured,
+                dayIndex: 2,
+              ),
+            )
+            .prompt,
         DailyArchiveExerciseCopy.checkConcernPrompt,
       );
     });
@@ -295,7 +305,9 @@ void main() {
       );
 
       expect(
-        plan.primarySections.contains(ArchiveHomeSectionId.dailyArchiveExercise) ||
+        plan.primarySections.contains(
+              ArchiveHomeSectionId.dailyArchiveExercise,
+            ) ||
             plan.secondarySections.contains(
               ArchiveHomeSectionId.dailyArchiveExercise,
             ),
@@ -314,7 +326,10 @@ void main() {
         ),
       );
 
-      expect(find.byKey(const Key('daily_archive_exercise_card')), findsOneWidget);
+      expect(
+        find.byKey(const Key('daily_archive_exercise_card')),
+        findsOneWidget,
+      );
       expect(
         find.text(DailyArchiveExerciseCopy.comparisonPrompt),
         findsOneWidget,
@@ -356,8 +371,7 @@ void main() {
 
   group('Routing', () {
     test('router registers daily archive exercise route', () {
-      final router =
-          File('lib/router/app_router.dart').readAsStringSync();
+      final router = File('lib/router/app_router.dart').readAsStringSync();
       expect(router, contains("path: '/daily-archive-exercise'"));
     });
   });

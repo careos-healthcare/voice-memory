@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/features/come_back_tomorrow/come_back_tomorrow_v2_model.dart';
 import 'package:voicememory_mobile/features/come_back_tomorrow/come_back_tomorrow_v2_store.dart';
-import 'package:voicememory_mobile/features/early_archive/early_first_signal_engine.dart';
 import 'package:voicememory_mobile/features/helped_tracking/helped_tracking_model.dart';
 import 'package:voicememory_mobile/features/helped_tracking/helped_tracking_store.dart';
 import 'package:voicememory_mobile/features/monthly_private_report/monthly_private_report_analytics.dart';
@@ -11,16 +10,15 @@ import 'package:voicememory_mobile/features/monthly_private_report/monthly_priva
 import 'package:voicememory_mobile/features/monthly_private_report/monthly_private_report_engine.dart';
 import 'package:voicememory_mobile/features/monthly_private_report/monthly_private_report_model.dart';
 import 'package:voicememory_mobile/features/private_report/private_report_copy.dart';
-import 'package:voicememory_mobile/features/repeat_return_check/repeat_return_check_models.dart';
 import 'package:voicememory_mobile/features/what_changed/what_changed_v2_model.dart';
 import 'package:voicememory_mobile/features/what_changed/what_changed_v2_store.dart';
 import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
-import 'package:voicememory_mobile/services/capture_save_messages.dart';
 import 'package:voicememory_mobile/theme/app_theme.dart';
 import 'package:voicememory_mobile/widgets/pro/monthly_private_report_preview_card.dart';
 import 'package:voicememory_mobile/widgets/pro/monthly_private_report_preview_sheet.dart';
+import 'support/test_storage_sandbox.dart';
 
 const _strongRepeat =
     'I had no capacity but I said yes again to the extra meeting today.';
@@ -29,80 +27,51 @@ JournalEntry _entry({
   required String id,
   required String transcript,
   DateTime? createdAt,
-}) =>
-    JournalEntry(
-      id: id,
-      createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
-      transcript: transcript,
-      durationSeconds: 30,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 2,
-        recurringThemes: ['work'],
-        exactLanguagePattern: '',
-        concreteObservation: 'Work pressure showed up in this moment.',
-        repeatedSignal: '',
-      ),
-    );
+}) => JournalEntry(
+  id: id,
+  createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
+  transcript: transcript,
+  durationSeconds: 30,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 2,
+    recurringThemes: ['work'],
+    exactLanguagePattern: '',
+    concreteObservation: 'Work pressure showed up in this moment.',
+    repeatedSignal: '',
+  ),
+);
 
 List<JournalEntry> _threeRelatedEntries() => [
-      _entry(
-        id: 'e1',
-        transcript: _strongRepeat,
-        createdAt: DateTime(2026, 6, 10, 12),
-      ),
-      _entry(
-        id: 'e2',
-        transcript:
-            'Same thing — said yes when I had no capacity for one more thing.',
-        createdAt: DateTime(2026, 6, 11, 12),
-      ),
-      _entry(
-        id: 'e3',
-        transcript:
-            'I said yes again even though I had no capacity for one more ask.',
-        createdAt: DateTime(2026, 6, 12, 12),
-      ),
-    ];
+  _entry(
+    id: 'e1',
+    transcript: _strongRepeat,
+    createdAt: DateTime(2026, 6, 10, 12),
+  ),
+  _entry(
+    id: 'e2',
+    transcript:
+        'Same thing — said yes when I had no capacity for one more thing.',
+    createdAt: DateTime(2026, 6, 11, 12),
+  ),
+  _entry(
+    id: 'e3',
+    transcript:
+        'I said yes again even though I had no capacity for one more ask.',
+    createdAt: DateTime(2026, 6, 12, 12),
+  ),
+];
 
 List<JournalEntry> _fourRelatedEntries() => [
-      ..._threeRelatedEntries(),
-      _entry(
-        id: 'e4',
-        transcript:
-            'I said yes again even though I had no capacity for one more ask today.',
-        createdAt: DateTime(2026, 6, 13, 12),
-      ),
-    ];
-
-JournalEntry _degradedVoiceEntry({String id = 'v1'}) => JournalEntry(
-      id: id,
-      createdAt: DateTime(2026, 6, 12, 12),
-      transcript:
-          '[draft] ${CaptureSaveMessages.recordingSavedLocally} — transcribe when connected',
-      durationSeconds: 20,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 0,
-        recurringThemes: [],
-        exactLanguagePattern: '',
-        concreteObservation: '',
-        repeatedSignal: '',
-      ),
-    );
-
-RepeatReturnCheckRecord _answeredRecord({
-  required String entryId,
-  required RepeatReturnCheckChoice choice,
-}) =>
-    RepeatReturnCheckRecord(
-      entryId: entryId,
-      choice: choice,
-      entryCountAtCapture: 5,
-      createdAt: DateTime(2026, 6, 14),
-    );
+  ..._threeRelatedEntries(),
+  _entry(
+    id: 'e4',
+    transcript:
+        'I said yes again even though I had no capacity for one more ask today.',
+    createdAt: DateTime(2026, 6, 13, 12),
+  ),
+];
 
 void _seedWatch({required String createdDateKey}) {
   ComeBackTomorrowV2Store.seedForTest(
@@ -145,7 +114,6 @@ MonthlyPrivateReportContext _context({
   bool isPostSaveDegradedState = false,
   bool firstProofTruthQuestionActive = false,
   bool whatChangedQuestionActive = false,
-  bool patternReviewInboxHasActiveItems = false,
   bool proLockMomentVisible = false,
   bool proEvidenceValueVisible = false,
   MonthlyPrivateReportPreview? preview,
@@ -169,11 +137,13 @@ MonthlyPrivateReportContext _context({
 }
 
 void main() {
+  late TestStorageSandbox sandbox;
   TestWidgetsFlutterBinding.ensureInitialized();
 
   final analyticsEvents = <({String event, Map<String, Object> props})>[];
 
   setUp(() async {
+    sandbox = TestStorageSandbox.create();
     analyticsEvents.clear();
     MonthlyPrivateReportAnalytics.resetForTest();
     MonthlyPrivateReportAnalytics.captureForTest = (event, props) {
@@ -183,15 +153,14 @@ void main() {
     await WhatChangedV2Store.resetForTest();
     await HelpedTrackingStore.resetForTest();
     await AppServices.resetForTest(
-      journalPath:
-          'test/tmp/monthly_private_report/${DateTime.now().microsecondsSinceEpoch}_journal.json',
-      prefsPath:
-          'test/tmp/monthly_private_report/${DateTime.now().microsecondsSinceEpoch}_prefs.json',
+      journalPath: sandbox.journalPath,
+      prefsPath: sandbox.prefsPath,
       skipRevenueCat: true,
     );
     await MonthlyPrivateReportDismissStore.resetForTest();
   });
 
+  tearDown(() => sandbox.dispose());
   tearDown(() {
     MonthlyPrivateReportAnalytics.resetForTest();
     analyticsEvents.clear();
@@ -215,8 +184,9 @@ void main() {
     });
 
     test('copy says private report and evidence over time', () {
-      final blob =
-          MonthlyPrivateReportCopy.allVisibleStrings().join(' ').toLowerCase();
+      final blob = MonthlyPrivateReportCopy.allVisibleStrings()
+          .join(' ')
+          .toLowerCase();
       expect(blob, contains('private'));
       expect(blob, contains('report'));
       expect(blob, contains('evidence'));
@@ -339,10 +309,7 @@ void main() {
     test('hidden for one entry without repeat evidence', () {
       expect(
         MonthlyPrivateReportEngine.shouldShowCard(
-          _context(
-            entries: [_threeRelatedEntries().first],
-            entryCount: 1,
-          ),
+          _context(entries: [_threeRelatedEntries().first], entryCount: 1),
         ),
         isFalse,
       );
@@ -361,11 +328,7 @@ void main() {
       final entries = _threeRelatedEntries();
       expect(
         MonthlyPrivateReportEngine.shouldShowCard(
-          _context(
-            entries: entries,
-            entryCount: entries.length,
-            isPro: true,
-          ),
+          _context(entries: entries, entryCount: entries.length, isPro: true),
         ),
         isFalse,
       );
@@ -451,10 +414,7 @@ void main() {
       final entries = _threeRelatedEntries();
       expect(
         MonthlyPrivateReportEngine.shouldShowCard(
-          _context(
-            entries: entries,
-            entryCount: entries.length,
-          ),
+          _context(entries: entries, entryCount: entries.length),
         ),
         isFalse,
       );
@@ -525,13 +485,15 @@ void main() {
       );
       await tester.pump();
 
-      expect(find.byKey(const Key('monthly_private_report_preview_card')), findsOneWidget);
       expect(
-        find.text(MonthlyPrivateReportCopy.cardTitle),
+        find.byKey(const Key('monthly_private_report_preview_card')),
         findsOneWidget,
       );
+      expect(find.text(MonthlyPrivateReportCopy.cardTitle), findsOneWidget);
 
-      await tester.tap(find.byKey(const Key('monthly_private_report_preview_cta')));
+      await tester.tap(
+        find.byKey(const Key('monthly_private_report_preview_cta')),
+      );
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 300));
 
@@ -542,8 +504,7 @@ void main() {
       expect(
         analyticsEvents.any(
           (event) =>
-              event.event ==
-              MonthlyPrivateReportAnalytics.ctaTappedEvent,
+              event.event == MonthlyPrivateReportAnalytics.ctaTappedEvent,
         ),
         isTrue,
       );
@@ -611,10 +572,7 @@ void main() {
         find.text(MonthlyPrivateReportCopy.chatDifferentiation),
         findsOneWidget,
       );
-      expect(
-        find.text(MonthlyPrivateReportCopy.proReason),
-        findsOneWidget,
-      );
+      expect(find.text(MonthlyPrivateReportCopy.proReason), findsOneWidget);
     });
   });
 }

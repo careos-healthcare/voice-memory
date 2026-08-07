@@ -20,6 +20,7 @@ import 'package:voicememory_mobile/widgets/memory/treat_as_new_control.dart';
 
 import 'support/expand_advanced_save_options.dart';
 import 'support/memory_pressure_stores.dart';
+import 'support/test_storage_sandbox.dart';
 
 const _threadEngine = ThreadReturnEvidenceEngine();
 const _weeklyEngine = WeeklyThreadReviewEngine();
@@ -159,9 +160,15 @@ void main() {
       tester,
     ) async {
       await pumpRecordScreen(tester);
-      expect(find.byKey(const Key('entry_memory_scope_picker')), findsOneWidget);
+      expect(
+        find.byKey(const Key('entry_memory_scope_picker')),
+        findsOneWidget,
+      );
       expect(find.text(EntryMemoryModeCopy.treatAsNewLabel), findsOneWidget);
-      expect(EntryMemoryModeSession.selectedMode, EntryMemoryMode.useArchiveContext);
+      expect(
+        EntryMemoryModeSession.selectedMode,
+        EntryMemoryMode.useArchiveContext,
+      );
       expect(
         _eventsNamed(ActivationFunnelAnalytics.entryMemoryScopeSeen),
         hasLength(1),
@@ -171,7 +178,10 @@ void main() {
 
     testWidgets('control appears for later saves too', (tester) async {
       await pumpRecordScreen(tester, seededEntries: 2);
-      expect(find.byKey(const Key('entry_memory_scope_picker')), findsOneWidget);
+      expect(
+        find.byKey(const Key('entry_memory_scope_picker')),
+        findsOneWidget,
+      );
       expect(find.text(EntryMemoryModeCopy.treatAsNewLabel), findsOneWidget);
       expect(tester.takeException(), isNull);
     });
@@ -217,14 +227,14 @@ void main() {
   });
 
   group('Save metadata', () {
-    late Directory tempDir;
+    late TestStorageSandbox sandbox;
 
     setUp(() async {
-      tempDir = Directory.systemTemp.createTempSync('vm_treat_save_');
-      await AppServices.resetForTest(
-        journalPath: '${tempDir.path}/journal.json',
-      );
+      sandbox = TestStorageSandbox.create();
+      await AppServices.resetForTest(journalPath: sandbox.journalPath);
     });
+
+    tearDown(() => sandbox.dispose());
 
     test('selected save writes the safe metadata flag only', () async {
       final store = AppServices.instance.journalStore;

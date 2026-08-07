@@ -6,7 +6,7 @@ import 'package:voicememory_mobile/features/pressure_retention/pressure_check_in
 import 'package:voicememory_mobile/features/pressure_retention/pressure_check_in_service.dart';
 import 'package:voicememory_mobile/features/pressure_retention/pressure_check_in_store.dart';
 import 'package:voicememory_mobile/features/pressure_retention/pressure_context.dart';
-import 'package:voicememory_mobile/screens/pressure_check_in_screen.dart';
+import 'package:archiveme_research/screens/pressure_check_in_screen.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
 import 'package:voicememory_mobile/storage/journal_store.dart';
 import 'package:voicememory_mobile/storage/mobile_prefs_store.dart';
@@ -25,7 +25,11 @@ Future<_Stores> _openStores(String stamp) async {
   }
   final journalPath = '${dir.path}/journal_$stamp.json';
   final prefsPath = '${dir.path}/prefs_$stamp.json';
-  for (final path in [journalPath, prefsPath, '${journalPath.replaceFirst(RegExp(r'\.json$'), '.enc')}']) {
+  for (final path in [
+    journalPath,
+    prefsPath,
+    (journalPath.replaceFirst(RegExp(r'\.json$'), '.enc')),
+  ]) {
     final file = File(path);
     if (await file.exists()) await file.delete();
   }

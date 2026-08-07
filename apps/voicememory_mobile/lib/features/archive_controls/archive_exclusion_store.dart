@@ -28,8 +28,7 @@ class ArchiveExclusionStore {
   static String _storageKey({
     required String entryId,
     required String patternKey,
-  }) =>
-      '${patternKey.trim()}|${entryId.trim()}';
+  }) => '${patternKey.trim()}|${entryId.trim()}';
 
   Future<Set<String>> loadAll() async {
     final raw = await _prefs.readJsonMap(_prefsKey);
@@ -78,6 +77,8 @@ class ArchiveExclusionStore {
     if (!AppServices.isInitialized) return;
     await AppServices.instance.prefs.writeJsonMap(_prefsKey, {});
   }
+
+  static void invalidateAfterRestore() => invalidateCache();
 
   @visibleForTesting
   static void invalidateCache() {

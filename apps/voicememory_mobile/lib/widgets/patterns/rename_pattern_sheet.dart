@@ -33,10 +33,7 @@ class RenamePatternSheet extends StatefulWidget {
         padding: EdgeInsets.only(
           bottom: MediaQuery.viewInsetsOf(context).bottom,
         ),
-        child: RenamePatternSheet(
-          initialName: initialName,
-          onSave: onSave,
-        ),
+        child: RenamePatternSheet(initialName: initialName, onSave: onSave),
       ),
     );
   }
@@ -61,7 +58,7 @@ class _RenamePatternSheetState extends State<RenamePatternSheet> {
   }
 
   void _save() {
-    final normalized = PatternNameStore.normalizeCustomName(_controller.text);
+    final normalized = PatternNameStore.sanitizeCustomName(_controller.text);
     if (normalized == null) return;
     widget.onSave(normalized);
     Navigator.of(context).pop(true);
@@ -69,10 +66,9 @@ class _RenamePatternSheetState extends State<RenamePatternSheet> {
 
   @override
   Widget build(BuildContext context) {
-    final bodyStyle = ArchiveMobileTypography.explanationBody(context).copyWith(
-      color: AppColors.textSecondary,
-      height: 1.4,
-    );
+    final bodyStyle = ArchiveMobileTypography.explanationBody(
+      context,
+    ).copyWith(color: AppColors.textSecondary, height: 1.4);
 
     return SafeArea(
       child: Padding(

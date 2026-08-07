@@ -10,7 +10,8 @@ import '../../features/purchase_smoke_test/purchase_smoke_test_model.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_theme.dart';
 
-typedef PurchaseSmokeTestOpenPaywallCallback = void Function(BuildContext context);
+typedef PurchaseSmokeTestOpenPaywallCallback =
+    void Function(BuildContext context);
 
 /// Beta-only purchase verification card — read-only checks, manual paywall open.
 class PurchaseSmokeTestCard extends StatefulWidget {
@@ -94,16 +95,12 @@ class _PurchaseSmokeTestCardState extends State<PurchaseSmokeTestCard> {
     if (!PurchaseSmokeTestEngine.shouldShow(
       betaMissionEnabled: ArchiveBetaMissionGate.isEnabled,
     )) {
-      return const SizedBox.shrink(
-        key: Key('purchase_smoke_test_hidden'),
-      );
+      return const SizedBox.shrink(key: Key('purchase_smoke_test_hidden'));
     }
 
     final snapshot = _snapshot;
     if (snapshot == null) {
-      return const SizedBox.shrink(
-        key: Key('purchase_smoke_test_loading'),
-      );
+      return const SizedBox.shrink(key: Key('purchase_smoke_test_loading'));
     }
 
     return Container(
@@ -120,9 +117,9 @@ class _PurchaseSmokeTestCardState extends State<PurchaseSmokeTestCard> {
           Text(
             snapshot.title,
             key: const Key('purchase_smoke_test_title'),
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: 6),
           Text(

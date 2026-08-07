@@ -10,15 +10,12 @@ abstract final class BetaReadinessAnalytics {
 
   @visibleForTesting
   static void Function(String event, Map<String, Object> properties)?
-      captureForTest;
+  captureForTest;
 
   static void opened({required String source}) {
     final props = <String, Object>{'source': source};
     captureForTest?.call(openedEvent, props);
-    ActivationFunnelAnalytics.track(
-      openedEvent,
-      source: source,
-    );
+    ActivationFunnelAnalytics.track(openedEvent, source: source);
     if (kDebugMode) {
       debugPrint('ARCHIVEME_BETA_READINESS event=$openedEvent source=$source');
     }

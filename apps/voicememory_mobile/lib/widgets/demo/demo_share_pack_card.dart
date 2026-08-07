@@ -9,10 +9,7 @@ import '../../theme/app_spacing.dart';
 
 /// Explicit share/copy actions for the sample archive demo summary only.
 class DemoSharePackCard extends StatelessWidget {
-  const DemoSharePackCard({
-    super.key,
-    required this.pack,
-  });
+  const DemoSharePackCard({super.key, required this.pack});
 
   final DemoSharePack pack;
 
@@ -28,10 +25,7 @@ class DemoSharePackCard extends StatelessWidget {
   }
 
   Future<void> _copy(BuildContext context) async {
-    await ArchiveShareActions.copyShareText(
-      context,
-      text: pack.plainText,
-    );
+    await ArchiveShareActions.copyShareText(context, text: pack.plainText);
   }
 
   @override

@@ -80,16 +80,15 @@ abstract final class TimelinePositioningEngine {
     required bool firstProofPayoffVisible,
     required bool whatChangedQuestionActive,
     required bool patternReviewInboxHasActiveItems,
-  }) =>
-      shouldShow(
-        result: result,
-        otherEducationCardCount: otherEducationCardCount,
-        isDegradedTranscriptState: isDegradedTranscriptState,
-        isPostSaveDegradedState: false,
-        firstProofPayoffVisible: firstProofPayoffVisible,
-        whatChangedQuestionActive: whatChangedQuestionActive,
-        patternReviewInboxHasActiveItems: patternReviewInboxHasActiveItems,
-      );
+  }) => shouldShow(
+    result: result,
+    otherEducationCardCount: otherEducationCardCount,
+    isDegradedTranscriptState: isDegradedTranscriptState,
+    isPostSaveDegradedState: false,
+    firstProofPayoffVisible: firstProofPayoffVisible,
+    whatChangedQuestionActive: whatChangedQuestionActive,
+    patternReviewInboxHasActiveItems: patternReviewInboxHasActiveItems,
+  );
 
   static bool shouldShowOnWeeklyReview({
     required TimelinePositioningResult? result,
@@ -128,9 +127,8 @@ abstract final class TimelinePositioningEngine {
   static bool patternReviewInboxHasActiveItems({
     required List<JournalEntry> entries,
     List<RepeatReturnCheckRecord> returnChecks = const [],
-  }) =>
-      ProEvidenceValueEngine.patternReviewInboxHasActiveItems(
-        entries: entries,
-        returnChecks: returnChecks,
-      );
+  }) => ProEvidenceValueEngine.patternReviewInboxHasActiveItems(
+    entries: entries,
+    returnChecks: returnChecks,
+  );
 }

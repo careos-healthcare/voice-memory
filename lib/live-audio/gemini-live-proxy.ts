@@ -97,7 +97,7 @@ export class GeminiLiveProxy {
         modelId: this.options.modelId,
         voiceName: this.options.voiceName,
       });
-      this.sendUpstream(setup);
+      this.sendUpstream(setup as unknown as Record<string, unknown>);
       this._setupSent = true;
       this.setState("awaiting_setup_complete", handlers.onStateChange);
       logLiveAudio(
@@ -192,5 +192,3 @@ async function connectNativeWebSocket(url: string): Promise<GeminiLiveWebSocket>
     },
   };
 }
-
-export type { GeminiLiveProxyState };

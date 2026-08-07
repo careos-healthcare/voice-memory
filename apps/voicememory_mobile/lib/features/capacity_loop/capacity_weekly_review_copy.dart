@@ -40,8 +40,7 @@ abstract final class CapacityWeeklyReviewCopy {
       'Some moments show the pattern may have changed.';
   static const patternMostlyRepeating =
       'This week mostly shows the pattern repeating.';
-  static const patternForming =
-      'A few more moments will make this clearer.';
+  static const patternForming = 'A few more moments will make this clearer.';
 
   static const watchNextBody =
       'Before agreeing, save the moment when you feel the pull to say yes.';
@@ -50,22 +49,22 @@ abstract final class CapacityWeeklyReviewCopy {
       'Later cost is still forming across saved moments.';
 
   static List<String> allVisibleStrings() => [
-        title,
-        subtitle,
-        sectionWhatRepeated,
-        sectionWhatChanged,
-        sectionLaterCost,
-        sectionWhatPulledYouIn,
-        sectionWatchNext,
-        reviewThisWeekCta,
-        saveNextYesMomentCta,
-        cardEyebrow,
-        whatRepeatedForming,
-        whatRepeatedStrong,
-        patternMayHaveChanged,
-        patternMostlyRepeating,
-        patternForming,
-        watchNextBody,
-        laterCostForming,
-      ];
+    title,
+    subtitle,
+    sectionWhatRepeated,
+    sectionWhatChanged,
+    sectionLaterCost,
+    sectionWhatPulledYouIn,
+    sectionWatchNext,
+    reviewThisWeekCta,
+    saveNextYesMomentCta,
+    cardEyebrow,
+    whatRepeatedForming,
+    whatRepeatedStrong,
+    patternMayHaveChanged,
+    patternMostlyRepeating,
+    patternForming,
+    watchNextBody,
+    laterCostForming,
+  ];
 }

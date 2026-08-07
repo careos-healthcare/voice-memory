@@ -23,17 +23,16 @@ ActionItemsV1SecondaryGateInput _input({
   bool notTaskManagementPositioning = true,
   bool userConfirmedAccessOnly = true,
   bool noExpansionGuarded = true,
-}) =>
-    ActionItemsV1SecondaryGateInput(
-      actionItemsSecondary: actionItemsSecondary,
-      hiddenInFirstFiveMinutes: hiddenInFirstFiveMinutes,
-      notInProPromise: notInProPromise,
-      notBlockingFirstProof: notBlockingFirstProof,
-      notRequiredOnboarding: notRequiredOnboarding,
-      notTaskManagementPositioning: notTaskManagementPositioning,
-      userConfirmedAccessOnly: userConfirmedAccessOnly,
-      noExpansionGuarded: noExpansionGuarded,
-    );
+}) => ActionItemsV1SecondaryGateInput(
+  actionItemsSecondary: actionItemsSecondary,
+  hiddenInFirstFiveMinutes: hiddenInFirstFiveMinutes,
+  notInProPromise: notInProPromise,
+  notBlockingFirstProof: notBlockingFirstProof,
+  notRequiredOnboarding: notRequiredOnboarding,
+  notTaskManagementPositioning: notTaskManagementPositioning,
+  userConfirmedAccessOnly: userConfirmedAccessOnly,
+  noExpansionGuarded: noExpansionGuarded,
+);
 
 void main() {
   group('ActionItemsV1SecondaryGate.build', () {
@@ -62,15 +61,18 @@ void main() {
       expect(result.violatesGate, isTrue);
     });
 
-    test('shown in first five minutes by default -> actionItemsViolatesGate', () {
-      final result = ActionItemsV1SecondaryGate.build(
-        _input(hiddenInFirstFiveMinutes: false),
-      );
-      expect(
-        result.decision,
-        ActionItemsV1SecondaryGateDecision.actionItemsViolatesGate,
-      );
-    });
+    test(
+      'shown in first five minutes by default -> actionItemsViolatesGate',
+      () {
+        final result = ActionItemsV1SecondaryGate.build(
+          _input(hiddenInFirstFiveMinutes: false),
+        );
+        expect(
+          result.decision,
+          ActionItemsV1SecondaryGateDecision.actionItemsViolatesGate,
+        );
+      },
+    );
 
     test('part of Pro promise -> actionItemsViolatesGate', () {
       final result = ActionItemsV1SecondaryGate.build(
@@ -150,10 +152,7 @@ void main() {
       final result = ActionItemsV1SecondaryGate.evaluateCopy(
         'ArchiveMe is your task manager for life.',
       );
-      expect(
-        result.action,
-        ActionItemsV1SecondaryGateCopyAction.block,
-      );
+      expect(result.action, ActionItemsV1SecondaryGateCopyAction.block);
       expect(
         result.reason,
         ActionItemsV1SecondaryGateCopyReason.blockedTaskManagement,
@@ -188,32 +187,33 @@ void main() {
     late String archiveActionItemSource;
 
     setUpAll(() {
-      v1ScopeSource =
-          File('lib/features/v1_surface_scope/v1_surface_scope_audit.dart')
-              .readAsStringSync();
-      firstFiveSource =
-          File('lib/features/first_five_minutes/first_five_minutes_simplification.dart')
-              .readAsStringSync();
-      proPromiseSource =
-          File('lib/features/pro_single_promise/pro_single_promise_copy.dart')
-              .readAsStringSync();
-      featureNoiseSource =
-          File('lib/features/feature_noise_reduction/feature_noise_reduction.dart')
-              .readAsStringSync();
-      onboardingSource =
-          File('lib/onboarding/onboarding_pages.dart').readAsStringSync();
-      rememberThisSource =
-          File('lib/widgets/action_items/remember_this_button.dart')
-              .readAsStringSync();
-      freezeCopySource =
-          File('lib/features/freeze_drift_scanner/freeze_drift_scanner_copy.dart')
-              .readAsStringSync();
-      releaseFreezeCopySource =
-          File('lib/features/release_candidate_freeze/release_candidate_freeze_copy.dart')
-              .readAsStringSync();
-      archiveActionItemSource =
-          File('lib/features/action_items/archive_action_item.dart')
-              .readAsStringSync();
+      v1ScopeSource = File(
+        'lib/features/v1_surface_scope/v1_surface_scope_audit.dart',
+      ).readAsStringSync();
+      firstFiveSource = File(
+        'lib/features/first_five_minutes/first_five_minutes_simplification.dart',
+      ).readAsStringSync();
+      proPromiseSource = File(
+        'lib/features/pro_single_promise/pro_single_promise_copy.dart',
+      ).readAsStringSync();
+      featureNoiseSource = File(
+        'lib/features/feature_noise_reduction/feature_noise_reduction.dart',
+      ).readAsStringSync();
+      onboardingSource = File(
+        'lib/onboarding/onboarding_pages.dart',
+      ).readAsStringSync();
+      rememberThisSource = File(
+        'lib/widgets/action_items/remember_this_button.dart',
+      ).readAsStringSync();
+      freezeCopySource = File(
+        'lib/features/freeze_drift_scanner/freeze_drift_scanner_copy.dart',
+      ).readAsStringSync();
+      releaseFreezeCopySource = File(
+        'lib/features/release_candidate_freeze/release_candidate_freeze_copy.dart',
+      ).readAsStringSync();
+      archiveActionItemSource = File(
+        'lib/features/action_items/archive_action_item.dart',
+      ).readAsStringSync();
     });
 
     test('repo signals detect secondary scope', () {
@@ -261,7 +261,9 @@ void main() {
 
     test('repo signals detect first-proof non-blocker', () {
       expect(
-        ActionItemsV1SecondaryGate.detectNotBlockingFirstProof(featureNoiseSource),
+        ActionItemsV1SecondaryGate.detectNotBlockingFirstProof(
+          featureNoiseSource,
+        ),
         isTrue,
       );
       expect(
@@ -286,7 +288,9 @@ void main() {
 
     test('repo signals detect onboarding exclusion', () {
       expect(
-        ActionItemsV1SecondaryGate.detectNotRequiredOnboarding(onboardingSource),
+        ActionItemsV1SecondaryGate.detectNotRequiredOnboarding(
+          onboardingSource,
+        ),
         isTrue,
       );
     });
@@ -387,9 +391,9 @@ void main() {
     });
 
     test('proof_surface_advice_guard registers action items gate copy', () {
-      final source =
-          File('lib/features/archive_proof/proof_surface_advice_guard.dart')
-              .readAsStringSync();
+      final source = File(
+        'lib/features/archive_proof/proof_surface_advice_guard.dart',
+      ).readAsStringSync();
       expect(source, contains('action_items_v1_secondary_gate_copy.dart'));
       expect(
         source,
@@ -397,17 +401,21 @@ void main() {
       );
     });
 
-    test('main proof surface copy does not block on task management framing', () {
-      final offenders = <String>[];
-      for (final text in ProofSurfaceAdviceGuard.mainProofSurfaceCopyBlocks()) {
-        if (text.contains('never appear as a task manager')) continue;
-        final result = ActionItemsV1SecondaryGate.evaluateCopy(text);
-        if (result.action == ActionItemsV1SecondaryGateCopyAction.block) {
-          offenders.add('${result.matchedPhrase}: $text');
+    test(
+      'main proof surface copy does not block on task management framing',
+      () {
+        final offenders = <String>[];
+        for (final text
+            in ProofSurfaceAdviceGuard.mainProofSurfaceCopyBlocks()) {
+          if (text.contains('never appear as a task manager')) continue;
+          final result = ActionItemsV1SecondaryGate.evaluateCopy(text);
+          if (result.action == ActionItemsV1SecondaryGateCopyAction.block) {
+            offenders.add('${result.matchedPhrase}: $text');
+          }
         }
-      }
-      expect(offenders, isEmpty, reason: offenders.join('\n'));
-    });
+        expect(offenders, isEmpty, reason: offenders.join('\n'));
+      },
+    );
 
     test('no dashboard positioning guard regressions unchanged', () {
       expect(
@@ -442,38 +450,41 @@ void main() {
       expect(ProofSelectionPrinciple.allowsRankingUi(), isFalse);
     });
 
-    test('record screen remains capture-first without stacking extra cards', () {
-      final audit = SurfacePriorityEngine.auditRecordReady(
-        entryCount: 4,
-        source: 'record',
-        candidates: SurfacePriorityCandidates.recordReady(
-          firstMomentCapture: false,
-          secondMomentReturn: false,
-          lowFrictionReturn: false,
-          whatToNoticeNext: false,
-          betaTodaySummary: false,
-          openCapturePromptChips: false,
-          captureFreedomLine: false,
-          timelineProofMoment: true,
-          archiveTimelineSpine: false,
-          timelinePositioning: false,
-          currentRelevance: false,
-          correctionMemory: false,
-          notRelevantRecovery: false,
-          proofQualityResponse: false,
-          evidenceWeighting: false,
-          proofSpecificity: false,
-          presentDayRelevance: false,
-          patternConfidence: false,
-          betaTesterReport: false,
-          proEvidenceValue: false,
-          privateReportProBridge: false,
-          suppressLegacyEducation: false,
-          betaProofLift: true,
-        ),
-      );
-      expect(audit.proofCardKey, 'timelineProofMoment');
-      expect(audit.guidanceCardKey, isNull);
-    });
+    test(
+      'record screen remains capture-first without stacking extra cards',
+      () {
+        final audit = SurfacePriorityEngine.auditRecordReady(
+          entryCount: 4,
+          source: 'record',
+          candidates: SurfacePriorityCandidates.recordReady(
+            firstMomentCapture: false,
+            secondMomentReturn: false,
+            lowFrictionReturn: false,
+            whatToNoticeNext: false,
+            betaTodaySummary: false,
+            openCapturePromptChips: false,
+            captureFreedomLine: false,
+            timelineProofMoment: true,
+            archiveTimelineSpine: false,
+            timelinePositioning: false,
+            currentRelevance: false,
+            correctionMemory: false,
+            notRelevantRecovery: false,
+            proofQualityResponse: false,
+            evidenceWeighting: false,
+            proofSpecificity: false,
+            presentDayRelevance: false,
+            patternConfidence: false,
+            betaTesterReport: false,
+            proEvidenceValue: false,
+            privateReportProBridge: false,
+            suppressLegacyEducation: false,
+            betaProofLift: true,
+          ),
+        );
+        expect(audit.proofCardKey, 'timelineProofMoment');
+        expect(audit.guidanceCardKey, isNull);
+      },
+    );
   });
 }

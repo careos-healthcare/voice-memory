@@ -113,19 +113,19 @@ class FirstWeekPathEngine {
       );
 
   static FirstWeekPathResult _screenshotPreview() => const FirstWeekPathResult(
-        currentStep: FirstWeekPathStep.day2,
-        completedStepCount: 1,
-        totalStepCount: totalSteps,
-        progressLabel: 'Step 1 of 7 complete',
-        rewardText: FirstWeekPathCopy.day1Reward,
-        nextStepText: FirstWeekPathCopy.day2Next,
-        primaryCtaLabel: FirstWeekPathCopy.saveMomentCta,
-        primaryRoute: FirstWeekPathCopy.recordRoute,
-        isComplete: false,
-        cardTitle: FirstWeekPathCopy.screenshotCardTitle,
-        cardBody: FirstWeekPathCopy.screenshotCardBody,
-        showOnArchiveHome: false,
-      );
+    currentStep: FirstWeekPathStep.day2,
+    completedStepCount: 1,
+    totalStepCount: totalSteps,
+    progressLabel: 'Step 1 of 7 complete',
+    rewardText: FirstWeekPathCopy.day1Reward,
+    nextStepText: FirstWeekPathCopy.day2Next,
+    primaryCtaLabel: FirstWeekPathCopy.saveMomentCta,
+    primaryRoute: FirstWeekPathCopy.recordRoute,
+    isComplete: false,
+    cardTitle: FirstWeekPathCopy.screenshotCardTitle,
+    cardBody: FirstWeekPathCopy.screenshotCardBody,
+    showOnArchiveHome: false,
+  );
 
   static int _completedStepCount(int count, FirstWeekPathInput input) {
     if (count >= totalSteps) return totalSteps;

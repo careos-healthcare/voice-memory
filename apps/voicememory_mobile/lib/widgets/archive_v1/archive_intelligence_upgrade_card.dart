@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 import '../../billing/archive_paywall_copy.dart';
 import '../../billing/archive_paywall_stats.dart';
 import '../../features/archive_v1/archive_v1_models.dart';
-import '../../theme/app_theme.dart';
 import '../../theme/voicememory_colors.dart';
 import '../../theme/voicememory_typography.dart';
 import '../archive_paywall/archive_intelligence_proof_section.dart';

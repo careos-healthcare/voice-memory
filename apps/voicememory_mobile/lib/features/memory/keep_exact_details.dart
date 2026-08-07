@@ -61,28 +61,7 @@ abstract class KeepExactDetails {
       enabled: true,
       memoryScope: MemoryScopePolicy.scope.id,
     );
-    return JournalEntry(
-      id: entry.id,
-      createdAt: entry.createdAt,
-      transcript: entry.transcript,
-      durationSeconds: entry.durationSeconds,
-      reflection: entry.reflection,
-      syncStatus: entry.syncStatus,
-      localAudioPath: entry.localAudioPath,
-      treatAsNew: entry.treatAsNew,
-      connectionApproved: entry.connectionApproved,
-      keepExactDetails: true,
-      keepSeparate: entry.keepSeparate,
-      archiveThreadId: entry.archiveThreadId,
-      archivePackId: entry.archivePackId,
-      isPinned: entry.isPinned,
-      pinnedAt: entry.pinnedAt,
-      isArchived: entry.isArchived,
-      archivedAt: entry.archivedAt,
-      entryAboutness: entry.entryAboutness,
-      memorySurfacing: entry.memorySurfacing,
-      preserveOriginal: true,
-    );
+    return entry.copyWith(keepExactDetails: true, preserveOriginal: true);
   }
 
   @visibleForTesting

@@ -6,7 +6,6 @@ import 'package:voicememory_mobile/features/freeze_drift_scanner/freeze_drift_sc
 import 'package:voicememory_mobile/features/pro_access_enforcement/pro_access_enforcement_audit_copy.dart';
 import 'package:voicememory_mobile/features/proof_detail_repair/proof_detail_repair_copy.dart';
 import 'package:voicememory_mobile/features/proof_selection/proof_selection_principle.dart';
-import 'package:voicememory_mobile/features/release_candidate_freeze/release_candidate_freeze.dart';
 import 'package:voicememory_mobile/features/widget_release_risk/widget_release_risk_gate.dart';
 import 'package:voicememory_mobile/features/widget_release_risk/widget_release_risk_gate_copy.dart';
 import 'package:voicememory_mobile/features/surface_priority/surface_priority_engine.dart';
@@ -23,61 +22,67 @@ WidgetReleaseRiskGateInput _input({
   bool signingPasses = true,
   bool noCrashOnLaunch = true,
   bool noStaleBrokenDefaultState = true,
-}) =>
-    WidgetReleaseRiskGateInput(
-      extensionTargetPresent: extensionTargetPresent,
-      appGroupConfigured: appGroupConfigured,
-      widgetOpensCorrectRoute: widgetOpensCorrectRoute,
-      noPrivateTranscriptShown: noPrivateTranscriptShown,
-      testFlightInstallWorks: testFlightInstallWorks,
-      signingPasses: signingPasses,
-      noCrashOnLaunch: noCrashOnLaunch,
-      noStaleBrokenDefaultState: noStaleBrokenDefaultState,
-    );
+}) => WidgetReleaseRiskGateInput(
+  extensionTargetPresent: extensionTargetPresent,
+  appGroupConfigured: appGroupConfigured,
+  widgetOpensCorrectRoute: widgetOpensCorrectRoute,
+  noPrivateTranscriptShown: noPrivateTranscriptShown,
+  testFlightInstallWorks: testFlightInstallWorks,
+  signingPasses: signingPasses,
+  noCrashOnLaunch: noCrashOnLaunch,
+  noStaleBrokenDefaultState: noStaleBrokenDefaultState,
+);
 
 WidgetReleaseRiskGateCheck _check(
   WidgetReleaseRiskGateResult result,
   WidgetReleaseRiskGateCheckId id,
-) =>
-    result.checks.firstWhere((check) => check.id == id);
+) => result.checks.firstWhere((check) => check.id == id);
 
 void main() {
   group('WidgetReleaseRiskGate.build', () {
     test('gate has eight canonical checks', () {
       final result = WidgetReleaseRiskGate.build(_input());
       expect(result.checks.length, WidgetReleaseRiskGate.checkCount);
-      expect(
-        result.checks.map((check) => check.id).toList(),
-        [
-          WidgetReleaseRiskGateCheckId.extensionTargetPresent,
-          WidgetReleaseRiskGateCheckId.appGroupConfigured,
-          WidgetReleaseRiskGateCheckId.widgetOpensCorrectRoute,
-          WidgetReleaseRiskGateCheckId.noPrivateTranscriptShown,
-          WidgetReleaseRiskGateCheckId.testFlightInstallWorks,
-          WidgetReleaseRiskGateCheckId.signingPasses,
-          WidgetReleaseRiskGateCheckId.noCrashOnLaunch,
-          WidgetReleaseRiskGateCheckId.noStaleBrokenDefaultState,
-        ],
-      );
+      expect(result.checks.map((check) => check.id).toList(), [
+        WidgetReleaseRiskGateCheckId.extensionTargetPresent,
+        WidgetReleaseRiskGateCheckId.appGroupConfigured,
+        WidgetReleaseRiskGateCheckId.widgetOpensCorrectRoute,
+        WidgetReleaseRiskGateCheckId.noPrivateTranscriptShown,
+        WidgetReleaseRiskGateCheckId.testFlightInstallWorks,
+        WidgetReleaseRiskGateCheckId.signingPasses,
+        WidgetReleaseRiskGateCheckId.noCrashOnLaunch,
+        WidgetReleaseRiskGateCheckId.noStaleBrokenDefaultState,
+      ]);
     });
 
-    test('missing extension target -> widgetDisableForRelease not TF blocker', () {
-      final result = WidgetReleaseRiskGate.build(_input());
-      expect(result.decision, WidgetReleaseRiskGateDecision.widgetDisableForRelease);
-      expect(result.testFlightBlockedByWidget, isFalse);
-      expect(result.widgetShouldBeDisabled, isTrue);
-      expect(
-        _check(result, WidgetReleaseRiskGateCheckId.extensionTargetPresent)
-            .detailLabel,
-        WidgetReleaseRiskGateCopy.detailDefer,
-      );
-    });
+    test(
+      'missing extension target -> widgetDisableForRelease not TF blocker',
+      () {
+        final result = WidgetReleaseRiskGate.build(_input());
+        expect(
+          result.decision,
+          WidgetReleaseRiskGateDecision.widgetDisableForRelease,
+        );
+        expect(result.testFlightBlockedByWidget, isFalse);
+        expect(result.widgetShouldBeDisabled, isTrue);
+        expect(
+          _check(
+            result,
+            WidgetReleaseRiskGateCheckId.extensionTargetPresent,
+          ).detailLabel,
+          WidgetReleaseRiskGateCopy.detailDefer,
+        );
+      },
+    );
 
     test('extension present with signing failure -> widgetBlocksRelease', () {
       final result = WidgetReleaseRiskGate.build(
         _input(extensionTargetPresent: true, signingPasses: false),
       );
-      expect(result.decision, WidgetReleaseRiskGateDecision.widgetBlocksRelease);
+      expect(
+        result.decision,
+        WidgetReleaseRiskGateDecision.widgetBlocksRelease,
+      );
       expect(result.testFlightBlockedByWidget, isTrue);
     });
 
@@ -85,30 +90,39 @@ void main() {
       final result = WidgetReleaseRiskGate.build(
         _input(extensionTargetPresent: true, noCrashOnLaunch: false),
       );
-      expect(result.decision, WidgetReleaseRiskGateDecision.widgetBlocksRelease);
-    });
-
-    test('extension present but App Group missing -> widgetDisableForRelease', () {
-      final result = WidgetReleaseRiskGate.build(
-        _input(extensionTargetPresent: true, appGroupConfigured: false),
-      );
-      expect(result.decision, WidgetReleaseRiskGateDecision.widgetDisableForRelease);
-      expect(result.testFlightBlockedByWidget, isFalse);
-    });
-
-    test('extension configured but route policy fails -> manual Xcode check', () {
-      final result = WidgetReleaseRiskGate.build(
-        _input(
-          extensionTargetPresent: true,
-          widgetOpensCorrectRoute: false,
-        ),
-      );
       expect(
         result.decision,
-        WidgetReleaseRiskGateDecision.widgetNeedsManualXcodeCheck,
+        WidgetReleaseRiskGateDecision.widgetBlocksRelease,
       );
-      expect(result.testFlightBlockedByWidget, isFalse);
     });
+
+    test(
+      'extension present but App Group missing -> widgetDisableForRelease',
+      () {
+        final result = WidgetReleaseRiskGate.build(
+          _input(extensionTargetPresent: true, appGroupConfigured: false),
+        );
+        expect(
+          result.decision,
+          WidgetReleaseRiskGateDecision.widgetDisableForRelease,
+        );
+        expect(result.testFlightBlockedByWidget, isFalse);
+      },
+    );
+
+    test(
+      'extension configured but route policy fails -> manual Xcode check',
+      () {
+        final result = WidgetReleaseRiskGate.build(
+          _input(extensionTargetPresent: true, widgetOpensCorrectRoute: false),
+        );
+        expect(
+          result.decision,
+          WidgetReleaseRiskGateDecision.widgetNeedsManualXcodeCheck,
+        );
+        expect(result.testFlightBlockedByWidget, isFalse);
+      },
+    );
 
     test('all checks pass with extension present -> widgetSafe', () {
       final result = WidgetReleaseRiskGate.build(
@@ -120,10 +134,11 @@ void main() {
     });
 
     test('signing failure without extension does not block TestFlight', () {
-      final result = WidgetReleaseRiskGate.build(
-        _input(signingPasses: false),
+      final result = WidgetReleaseRiskGate.build(_input(signingPasses: false));
+      expect(
+        result.decision,
+        WidgetReleaseRiskGateDecision.widgetDisableForRelease,
       );
-      expect(result.decision, WidgetReleaseRiskGateDecision.widgetDisableForRelease);
       expect(result.testFlightBlockedByWidget, isFalse);
     });
   });
@@ -138,17 +153,19 @@ void main() {
     late String widgetPrep;
 
     setUpAll(() {
-      pbxproj =
-          File('ios/Runner.xcodeproj/project.pbxproj').readAsStringSync();
-      runnerEntitlements =
-          File('ios/Runner/Runner.entitlements').readAsStringSync();
+      pbxproj = File('ios/Runner.xcodeproj/project.pbxproj').readAsStringSync();
+      runnerEntitlements = File(
+        'ios/Runner/Runner.entitlements',
+      ).readAsStringSync();
       extensionEntitlements = File(
         'ios/TodayCheckWidget/TodayCheckWidgetExtension.entitlements',
       ).readAsStringSync();
-      objectiveStorage =
-          File('ios/Runner/ObjectiveWidgetStorage.swift').readAsStringSync();
-      todayCheckWidget =
-          File('ios/TodayCheckWidget/TodayCheckWidget.swift').readAsStringSync();
+      objectiveStorage = File(
+        'ios/Runner/ObjectiveWidgetStorage.swift',
+      ).readAsStringSync();
+      todayCheckWidget = File(
+        'ios/TodayCheckWidget/TodayCheckWidget.swift',
+      ).readAsStringSync();
       widgetExporter = File(
         'lib/features/objective/current_objective_widget_exporter.dart',
       ).readAsStringSync();
@@ -156,7 +173,10 @@ void main() {
     });
 
     test('repo signals detect missing iOS extension target', () {
-      expect(WidgetReleaseRiskGate.detectExtensionTargetPresent(pbxproj), isFalse);
+      expect(
+        WidgetReleaseRiskGate.detectExtensionTargetPresent(pbxproj),
+        isFalse,
+      );
       final result = WidgetReleaseRiskGate.build(
         WidgetReleaseRiskGate.fromRepoSignals(
           pbxprojContents: pbxproj,
@@ -168,7 +188,10 @@ void main() {
           widgetPrepDoc: widgetPrep,
         ),
       );
-      expect(result.decision, WidgetReleaseRiskGateDecision.widgetDisableForRelease);
+      expect(
+        result.decision,
+        WidgetReleaseRiskGateDecision.widgetDisableForRelease,
+      );
     });
 
     test('repo signals detect App Group parity', () {
@@ -271,38 +294,41 @@ void main() {
       );
     });
 
-    test('record screen remains capture-first without stacking extra cards', () {
-      final audit = SurfacePriorityEngine.auditRecordReady(
-        entryCount: 4,
-        source: 'record',
-        candidates: SurfacePriorityCandidates.recordReady(
-          firstMomentCapture: false,
-          secondMomentReturn: false,
-          lowFrictionReturn: false,
-          whatToNoticeNext: false,
-          betaTodaySummary: false,
-          openCapturePromptChips: false,
-          captureFreedomLine: false,
-          timelineProofMoment: true,
-          archiveTimelineSpine: false,
-          timelinePositioning: false,
-          currentRelevance: false,
-          correctionMemory: false,
-          notRelevantRecovery: false,
-          proofQualityResponse: false,
-          evidenceWeighting: false,
-          proofSpecificity: false,
-          presentDayRelevance: false,
-          patternConfidence: false,
-          betaTesterReport: false,
-          proEvidenceValue: false,
-          privateReportProBridge: false,
-          suppressLegacyEducation: false,
-          betaProofLift: true,
-        ),
-      );
-      expect(audit.proofCardKey, 'timelineProofMoment');
-      expect(audit.guidanceCardKey, isNull);
-    });
+    test(
+      'record screen remains capture-first without stacking extra cards',
+      () {
+        final audit = SurfacePriorityEngine.auditRecordReady(
+          entryCount: 4,
+          source: 'record',
+          candidates: SurfacePriorityCandidates.recordReady(
+            firstMomentCapture: false,
+            secondMomentReturn: false,
+            lowFrictionReturn: false,
+            whatToNoticeNext: false,
+            betaTodaySummary: false,
+            openCapturePromptChips: false,
+            captureFreedomLine: false,
+            timelineProofMoment: true,
+            archiveTimelineSpine: false,
+            timelinePositioning: false,
+            currentRelevance: false,
+            correctionMemory: false,
+            notRelevantRecovery: false,
+            proofQualityResponse: false,
+            evidenceWeighting: false,
+            proofSpecificity: false,
+            presentDayRelevance: false,
+            patternConfidence: false,
+            betaTesterReport: false,
+            proEvidenceValue: false,
+            privateReportProBridge: false,
+            suppressLegacyEducation: false,
+            betaProofLift: true,
+          ),
+        );
+        expect(audit.proofCardKey, 'timelineProofMoment');
+        expect(audit.guidanceCardKey, isNull);
+      },
+    );
   });
 }

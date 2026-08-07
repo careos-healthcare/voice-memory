@@ -11,8 +11,7 @@ abstract final class RevenueCatLiveProofCopy {
   static const manualNote =
       'Steps 3–13 require a sandbox Apple ID on a physical iPhone or iPad.';
 
-  static const guardrail =
-      'Do not treat automated tests as purchase proof.';
+  static const guardrail = 'Do not treat automated tests as purchase proof.';
 
   static const statusPass = 'Pass';
   static const statusFail = 'Fail';
@@ -192,15 +191,12 @@ enum RevenueCatLiveProofStatus {
   skipped;
 
   String get label => switch (this) {
-        RevenueCatLiveProofStatus.pass => RevenueCatLiveProofCopy.statusPass,
-        RevenueCatLiveProofStatus.fail => RevenueCatLiveProofCopy.statusFail,
-        RevenueCatLiveProofStatus.pending =>
-          RevenueCatLiveProofCopy.statusPending,
-        RevenueCatLiveProofStatus.blocked =>
-          RevenueCatLiveProofCopy.statusBlocked,
-        RevenueCatLiveProofStatus.skipped =>
-          RevenueCatLiveProofCopy.statusSkipped,
-      };
+    RevenueCatLiveProofStatus.pass => RevenueCatLiveProofCopy.statusPass,
+    RevenueCatLiveProofStatus.fail => RevenueCatLiveProofCopy.statusFail,
+    RevenueCatLiveProofStatus.pending => RevenueCatLiveProofCopy.statusPending,
+    RevenueCatLiveProofStatus.blocked => RevenueCatLiveProofCopy.statusBlocked,
+    RevenueCatLiveProofStatus.skipped => RevenueCatLiveProofCopy.statusSkipped,
+  };
 }
 
 enum RevenueCatLiveProofDecision {

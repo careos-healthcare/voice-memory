@@ -78,9 +78,7 @@ class _ArchiveBeliefSurfaceCardState extends State<ArchiveBeliefSurfaceCard> {
       ),
     );
     ArchiveBeliefCorrectionStore.markSaved(thread.suggestionId);
-    setState(
-      () => _statusMessage = ArchiveBeliefThreadCopy.saveThreadThanks,
-    );
+    setState(() => _statusMessage = ArchiveBeliefThreadCopy.saveThreadThanks);
   }
 
   void _dismiss(String thanks) {
@@ -96,10 +94,9 @@ class _ArchiveBeliefSurfaceCardState extends State<ArchiveBeliefSurfaceCard> {
     if (_hidden) return const SizedBox.shrink();
 
     final surface = widget.surface;
-    final bodyStyle = ArchiveMobileTypography.body(context).copyWith(
-      color: AppColors.textPrimary,
-      height: 1.4,
-    );
+    final bodyStyle = ArchiveMobileTypography.body(
+      context,
+    ).copyWith(color: AppColors.textPrimary, height: 1.4);
     final labelStyle = ArchiveMobileTypography.cardLabel(context);
     final evidencePhrases = surface.evidencePhrases;
 
@@ -174,7 +171,9 @@ class _ArchiveBeliefSurfaceCardState extends State<ArchiveBeliefSurfaceCard> {
                   Expanded(
                     child: Text(
                       '“$phrase”',
-                      key: Key('archive_belief_surface_evidence_phrase_$phrase'),
+                      key: Key(
+                        'archive_belief_surface_evidence_phrase_$phrase',
+                      ),
                       style: bodyStyle,
                     ),
                   ),
@@ -184,10 +183,7 @@ class _ArchiveBeliefSurfaceCardState extends State<ArchiveBeliefSurfaceCard> {
             ],
           ] else if (surface.evidenceSummary.isNotEmpty) ...[
             const SizedBox(height: AppSpacing.md),
-            Text(
-              ArchiveBeliefSurfaceCopy.evidenceLabel,
-              style: labelStyle,
-            ),
+            Text(ArchiveBeliefSurfaceCopy.evidenceLabel, style: labelStyle),
             const SizedBox(height: AppSpacing.xs),
             Text(
               surface.evidenceSummary,
@@ -225,10 +221,7 @@ class _ArchiveBeliefSurfaceCardState extends State<ArchiveBeliefSurfaceCard> {
           ],
           if (surface.confidenceLabel case final confidence?) ...[
             const SizedBox(height: AppSpacing.md),
-            Text(
-              ArchiveBeliefSurfaceCopy.confidenceLabel,
-              style: labelStyle,
-            ),
+            Text(ArchiveBeliefSurfaceCopy.confidenceLabel, style: labelStyle),
             const SizedBox(height: AppSpacing.xs),
             Text(
               confidence,

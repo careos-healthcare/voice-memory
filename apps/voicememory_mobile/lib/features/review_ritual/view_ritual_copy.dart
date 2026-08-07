@@ -37,8 +37,7 @@ abstract final class ReviewRitualCopy {
   static const insufficientHelper =
       'Save more moments first. Your ritual will be ready when there is enough to compare.';
 
-  static const cardHeadlineUnset =
-      'Give your archive a weekly review rhythm.';
+  static const cardHeadlineUnset = 'Give your archive a weekly review rhythm.';
   static const cardSummaryUnset =
       'Choose when you usually review and what to look for.';
   static const cardHeadlineSet =
@@ -59,10 +58,10 @@ abstract final class ReviewRitualCopy {
       'Example review rhythm only — no private data.';
 
   static String daypartLabel(ReviewRitualDaypart daypart) => switch (daypart) {
-        ReviewRitualDaypart.morning => daypartMorning,
-        ReviewRitualDaypart.afternoon => daypartAfternoon,
-        ReviewRitualDaypart.evening => daypartEvening,
-      };
+    ReviewRitualDaypart.morning => daypartMorning,
+    ReviewRitualDaypart.afternoon => daypartAfternoon,
+    ReviewRitualDaypart.evening => daypartEvening,
+  };
 
   static String focusSummary({
     required bool focusRepeated,
@@ -84,47 +83,43 @@ abstract final class ReviewRitualCopy {
     required bool focusChanged,
     required bool focusWatchNext,
   }) =>
-      '${daypartLabel(daypart)} · ${focusSummary(
-        focusRepeated: focusRepeated,
-        focusChanged: focusChanged,
-        focusWatchNext: focusWatchNext,
-      )}';
+      '${daypartLabel(daypart)} · ${focusSummary(focusRepeated: focusRepeated, focusChanged: focusChanged, focusWatchNext: focusWatchNext)}';
 
   static List<String> get allVisibleStrings => [
-        eyebrow,
-        screenTitle,
-        chooseIntro,
-        noRemindersLine,
-        focusIntro,
-        savedLocally,
-        changeAnytime,
-        chooseReviewTimeCta,
-        openReviewRitualCta,
-        saveRitualCta,
-        openWeeklyReviewCta,
-        openArchiveHomeCta,
-        focusRepeated,
-        focusChanged,
-        focusWatchNext,
-        daySunday,
-        daypartMorning,
-        daypartAfternoon,
-        daypartEvening,
-        insufficientHelper,
-        cardHeadlineUnset,
-        cardSummaryUnset,
-        cardHeadlineSet,
-        cardSummarySet,
-        supportSectionTitle,
-        supportSectionBody,
-        helpSectionTitle,
-        helpSectionBullet,
-        screenshotSummary,
-        ritualSummary(
-          daypart: ReviewRitualDaypart.evening,
-          focusRepeated: true,
-          focusChanged: true,
-          focusWatchNext: true,
-        ),
-      ];
+    eyebrow,
+    screenTitle,
+    chooseIntro,
+    noRemindersLine,
+    focusIntro,
+    savedLocally,
+    changeAnytime,
+    chooseReviewTimeCta,
+    openReviewRitualCta,
+    saveRitualCta,
+    openWeeklyReviewCta,
+    openArchiveHomeCta,
+    focusRepeated,
+    focusChanged,
+    focusWatchNext,
+    daySunday,
+    daypartMorning,
+    daypartAfternoon,
+    daypartEvening,
+    insufficientHelper,
+    cardHeadlineUnset,
+    cardSummaryUnset,
+    cardHeadlineSet,
+    cardSummarySet,
+    supportSectionTitle,
+    supportSectionBody,
+    helpSectionTitle,
+    helpSectionBullet,
+    screenshotSummary,
+    ritualSummary(
+      daypart: ReviewRitualDaypart.evening,
+      focusRepeated: true,
+      focusChanged: true,
+      focusWatchNext: true,
+    ),
+  ];
 }

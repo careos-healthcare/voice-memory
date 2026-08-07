@@ -28,7 +28,8 @@ class ArchiveBeliefThreadCard extends StatefulWidget {
   final VoidCallback? onDismissed;
 
   @override
-  State<ArchiveBeliefThreadCard> createState() => _ArchiveBeliefThreadCardState();
+  State<ArchiveBeliefThreadCard> createState() =>
+      _ArchiveBeliefThreadCardState();
 }
 
 class _ArchiveBeliefThreadCardState extends State<ArchiveBeliefThreadCard> {
@@ -194,10 +195,7 @@ class _ArchiveBeliefThreadCardState extends State<ArchiveBeliefThreadCard> {
             style: ArchiveMobileTypography.cardLabel(context),
           ),
           const SizedBox(height: AppSpacing.xs),
-          Text(
-            thread.whatToTest,
-            style: ArchiveMobileTypography.body(context),
-          ),
+          Text(thread.whatToTest, style: ArchiveMobileTypography.body(context)),
           const SizedBox(height: AppSpacing.lg),
           ArchiveEvidenceTimeline(steps: thread.timeline),
           const SizedBox(height: AppSpacing.lg),

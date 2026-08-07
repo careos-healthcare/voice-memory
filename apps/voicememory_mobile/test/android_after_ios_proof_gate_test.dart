@@ -6,7 +6,6 @@ import 'package:voicememory_mobile/features/android_after_ios_proof/android_afte
 import 'package:voicememory_mobile/features/archive_proof/proof_surface_advice_guard.dart';
 import 'package:voicememory_mobile/features/paid_intent_beta_proof/paid_intent_beta_proof.dart';
 import 'package:voicememory_mobile/features/secrets_rotation_gate/secrets_rotation_launch_gate.dart';
-import 'package:voicememory_mobile/features/secrets_rotation_gate/secrets_rotation_launch_gate_copy.dart';
 import 'package:voicememory_mobile/features/single_launch_checklist/single_launch_checklist.dart';
 
 const _docsPath = 'docs/ANDROID_AFTER_IOS_PROOF.md';
@@ -21,30 +20,27 @@ AndroidAfterIosProofGateInput _input({
   bool? noProductionSecretsBlocker = true,
   bool? androidWorkRequested,
   bool? androidPrioritisationRequested,
-}) =>
-    AndroidAfterIosProofGateInput(
-      iosTestFlightUploaded: iosTestFlightUploaded,
-      iosRevenueCatProductsLoad: iosRevenueCatProductsLoad,
-      iosSandboxPurchaseWorks: iosSandboxPurchaseWorks,
-      iosRestoreWorks: iosRestoreWorks,
-      iosEntitlementPersists: iosEntitlementPersists,
-      paidIntentBetaPromising: paidIntentBetaPromising,
-      noProductionSecretsBlocker: noProductionSecretsBlocker,
-      androidWorkRequested: androidWorkRequested,
-      androidPrioritisationRequested: androidPrioritisationRequested,
-    );
+}) => AndroidAfterIosProofGateInput(
+  iosTestFlightUploaded: iosTestFlightUploaded,
+  iosRevenueCatProductsLoad: iosRevenueCatProductsLoad,
+  iosSandboxPurchaseWorks: iosSandboxPurchaseWorks,
+  iosRestoreWorks: iosRestoreWorks,
+  iosEntitlementPersists: iosEntitlementPersists,
+  paidIntentBetaPromising: paidIntentBetaPromising,
+  noProductionSecretsBlocker: noProductionSecretsBlocker,
+  androidWorkRequested: androidWorkRequested,
+  androidPrioritisationRequested: androidPrioritisationRequested,
+);
 
 AndroidAfterIosProofPrereq _prereq(
   AndroidAfterIosProofGateResult result,
   AndroidAfterIosProofPrereqId id,
-) =>
-    result.prereqs.firstWhere((prereq) => prereq.id == id);
+) => result.prereqs.firstWhere((prereq) => prereq.id == id);
 
 AndroidAfterIosProofRule _rule(
   AndroidAfterIosProofGateResult result,
   AndroidAfterIosProofRuleId id,
-) =>
-    result.rules.firstWhere((rule) => rule.id == id);
+) => result.rules.firstWhere((rule) => rule.id == id);
 
 void main() {
   group('AndroidAfterIosProofGate.build', () {
@@ -60,10 +56,7 @@ void main() {
       final result = AndroidAfterIosProofGate.build(
         const AndroidAfterIosProofGateInput(),
       );
-      expect(
-        result.decision,
-        AndroidAfterIosProofGateDecision.androidFrozen,
-      );
+      expect(result.decision, AndroidAfterIosProofGateDecision.androidFrozen);
       expect(result.iosProofComplete, isFalse);
       expect(result.androidWorkBlocked, isTrue);
       expect(result.androidPrioritisationBlocked, isTrue);
@@ -97,8 +90,10 @@ void main() {
       );
       expect(result.decision, AndroidAfterIosProofGateDecision.androidFrozen);
       expect(
-        _prereq(result, AndroidAfterIosProofPrereqId.iosSandboxPurchaseWorks)
-            .status,
+        _prereq(
+          result,
+          AndroidAfterIosProofPrereqId.iosSandboxPurchaseWorks,
+        ).status,
         AndroidAfterIosProofPrereqStatus.fail,
       );
     });
@@ -109,18 +104,17 @@ void main() {
       );
       expect(result.decision, AndroidAfterIosProofGateDecision.androidFrozen);
       expect(
-        _prereq(result, AndroidAfterIosProofPrereqId.noProductionSecretsBlocker)
-            .status,
+        _prereq(
+          result,
+          AndroidAfterIosProofPrereqId.noProductionSecretsBlocker,
+        ).status,
         AndroidAfterIosProofPrereqStatus.fail,
       );
     });
 
     test('android work requested before proof fails work rule', () {
       final result = AndroidAfterIosProofGate.build(
-        _input(
-          iosTestFlightUploaded: false,
-          androidWorkRequested: true,
-        ),
+        _input(iosTestFlightUploaded: false, androidWorkRequested: true),
       );
       expect(
         _rule(
@@ -150,7 +144,11 @@ void main() {
     test('canonical rules pass for gate copy', () {
       final result = AndroidAfterIosProofGate.build(_input());
       for (final rule in result.rules) {
-        expect(rule.status, AndroidAfterIosProofRuleStatus.pass, reason: rule.id.name);
+        expect(
+          rule.status,
+          AndroidAfterIosProofRuleStatus.pass,
+          reason: rule.id.name,
+        );
       }
     });
 
@@ -203,24 +201,26 @@ void main() {
       expect(input.paidIntentBetaPromising, isTrue);
     });
 
-    test('bridges secrets rotation not blocked as no production secrets blocker',
-        () {
-      final input = AndroidAfterIosProofGate.composeInput(
-        secretsRotation: SecretsRotationLaunchGate.build(
-          const SecretsRotationLaunchGateInput(
-            stripeSecretKeyRotated: null,
-            stripeWebhookSecretRotated: null,
-            productionEnvUpdated: null,
-            oldWebhookDisabled: null,
-            vercelEnvProductionVerified: null,
-            revenueCatApiKeySeparatedFromDocsLogs: true,
-            noSecretValuesCommitted: true,
-            noSecretValuesPrintedInLogs: true,
+    test(
+      'bridges secrets rotation not blocked as no production secrets blocker',
+      () {
+        final input = AndroidAfterIosProofGate.composeInput(
+          secretsRotation: SecretsRotationLaunchGate.build(
+            const SecretsRotationLaunchGateInput(
+              stripeSecretKeyRotated: null,
+              stripeWebhookSecretRotated: null,
+              productionEnvUpdated: null,
+              oldWebhookDisabled: null,
+              vercelEnvProductionVerified: null,
+              revenueCatApiKeySeparatedFromDocsLogs: true,
+              noSecretValuesCommitted: true,
+              noSecretValuesPrintedInLogs: true,
+            ),
           ),
-        ),
-      );
-      expect(input.noProductionSecretsBlocker, isTrue);
-    });
+        );
+        expect(input.noProductionSecretsBlocker, isTrue);
+      },
+    );
   });
 
   group('AndroidAfterIosProofGate.fromRepoSignals', () {
@@ -254,8 +254,10 @@ void main() {
       );
       expect(result.decision, AndroidAfterIosProofGateDecision.androidFrozen);
       expect(
-        _prereq(result, AndroidAfterIosProofPrereqId.iosTestFlightUploaded)
-            .status,
+        _prereq(
+          result,
+          AndroidAfterIosProofPrereqId.iosTestFlightUploaded,
+        ).status,
         AndroidAfterIosProofPrereqStatus.pending,
       );
     });
@@ -279,7 +281,10 @@ void main() {
     test('guardrail blocks Android work before iOS proof', () {
       final guardrail = AndroidAfterIosProofCopy.guardrail.toLowerCase();
       expect(guardrail, contains('android after ios proof'));
-      expect(guardrail, contains('android work blocked until prerequisites pass'));
+      expect(
+        guardrail,
+        contains('android work blocked until prerequisites pass'),
+      );
       expect(guardrail, contains('documented but not prioritised'));
       expect(guardrail, contains('ios purchase, restore, and paid intent'));
     });

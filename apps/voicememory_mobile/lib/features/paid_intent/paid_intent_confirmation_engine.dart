@@ -64,8 +64,7 @@ class PaidIntentConfirmationEngine {
   }
 
   static bool _isEligible(PaidIntentConfirmationInput input) {
-    if (input.capacityMomentCount <
-        CapacityThreeMomentGates.activationTarget) {
+    if (input.capacityMomentCount < CapacityThreeMomentGates.activationTarget) {
       return false;
     }
     if (!input.fitIsPositive) return false;
@@ -122,8 +121,7 @@ class PaidIntentConfirmationEngine {
       return PaidIntentConfirmationResult.hidden;
     }
 
-    final momentCount =
-        loopEngine.eligibleCapacityEntryIds(realEntries).length;
+    final momentCount = loopEngine.eligibleCapacityEntryIds(realEntries).length;
 
     return build(
       PaidIntentConfirmationInput(

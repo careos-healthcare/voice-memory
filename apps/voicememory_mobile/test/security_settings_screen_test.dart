@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:voicememory_mobile/api/api_client.dart';
+import 'helpers/fake_auth_api_client.dart';
 import 'package:voicememory_mobile/models/session.dart';
 import 'package:voicememory_mobile/screens/security_settings_screen.dart';
 import 'package:voicememory_mobile/screens/settings_screen.dart';
@@ -15,7 +15,7 @@ import 'package:voicememory_mobile/storage/secure_storage.dart';
 import 'package:voicememory_mobile/storage/session_cookie_store.dart';
 
 class _FakeBiometrics implements BiometricAuthenticator {
-  _FakeBiometrics({this.isAvailable = false});
+  _FakeBiometrics() : isAvailable = false;
 
   bool isAvailable;
 
@@ -24,22 +24,6 @@ class _FakeBiometrics implements BiometricAuthenticator {
 
   @override
   Future<bool> authenticate(String reason) async => false;
-}
-
-class _FakeApi extends ApiClient {
-  _FakeApi({this.session}) : super(baseUrl: 'http://test.invalid');
-
-  UserSession? session;
-  int signOutCalls = 0;
-
-  @override
-  Future<UserSession?> getSession() async => session;
-
-  @override
-  Future<void> signOut() async {
-    signOutCalls++;
-    session = null;
-  }
 }
 
 class _MemorySecure extends SecureStorageService {
@@ -63,21 +47,21 @@ void main() {
   late MemoryAppLockStore memory;
   late _FakeBiometrics biometrics;
   late AppLockService appLock;
-  late _FakeApi api;
+  late FakeAuthApiClient fakeAuth;
   late AuthService auth;
 
   setUp(() {
     ActivationFunnelAnalytics.resetForTest();
-    ActivationFunnelAnalytics.captureForTest((_, __) {});
+    ActivationFunnelAnalytics.captureForTest((_, _) {});
     memory = MemoryAppLockStore();
     biometrics = _FakeBiometrics();
     appLock = AppLockService(
       store: AppLockStore(store: memory),
       biometrics: biometrics,
     );
-    api = _FakeApi();
+    fakeAuth = FakeAuthApiClient();
     final secure = _MemorySecure();
-    auth = AuthService(api, secure, SessionCookieStore(secure));
+    auth = createTestAuthService(api: fakeAuth, secure: secure);
   });
 
   tearDown(ActivationFunnelAnalytics.resetForTest);
@@ -210,7 +194,8 @@ void main() {
     });
 
     testWidgets('signed in: Signed in with sign-out only', (tester) async {
-      api.session = const UserSession(userId: 'u1', email: 'p@example.com');
+      fakeAuth.session = const UserSession(userId: 'u1', email: 'p@example.com');
+      await auth.refreshSession();
       await pumpSecurity(tester);
 
       expect(find.text(SecuritySettingsCopy.signedIn), findsOneWidget);
@@ -222,14 +207,15 @@ void main() {
     });
 
     testWidgets('sign out flips the status to Not signed in', (tester) async {
-      api.session = const UserSession(userId: 'u1', email: 'p@example.com');
+      fakeAuth.session = const UserSession(userId: 'u1', email: 'p@example.com');
+      await auth.refreshSession();
       await pumpSecurity(tester);
 
       await tester.tap(find.byKey(const Key('security_sign_out')));
       await tester.pump();
       await tester.pump();
 
-      expect(api.signOutCalls, 1);
+      expect(fakeAuth.signOutCalls, 1);
       expect(find.text(SecuritySettingsCopy.notSignedIn), findsOneWidget);
     });
   });
@@ -247,7 +233,10 @@ void main() {
       expect(find.text('Restore purchases'), findsOneWidget);
       expect(find.byKey(const Key('security_export')), findsOneWidget);
       expect(find.byKey(const Key('security_wipe_local')), findsOneWidget);
-      expect(find.byKey(const Key('security_hide_app_switcher')), findsOneWidget);
+      expect(
+        find.byKey(const Key('security_hide_app_switcher')),
+        findsOneWidget,
+      );
       expect(find.byKey(const Key('security_delete')), findsOneWidget);
     });
   });

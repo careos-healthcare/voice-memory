@@ -13,30 +13,26 @@ PremiumTiersFutureGateInput _input({
   bool? simpleProPurchaseProofComplete,
   bool? tierUiRequested,
   bool? higherTierExpansionRequested,
-}) =>
-    PremiumTiersFutureGateInput(
-      simpleProPurchaseProofComplete: simpleProPurchaseProofComplete,
-      tierUiRequested: tierUiRequested,
-      higherTierExpansionRequested: higherTierExpansionRequested,
-    );
+}) => PremiumTiersFutureGateInput(
+  simpleProPurchaseProofComplete: simpleProPurchaseProofComplete,
+  tierUiRequested: tierUiRequested,
+  higherTierExpansionRequested: higherTierExpansionRequested,
+);
 
 PremiumTiersFuturePrereq _prereq(
   PremiumTiersFutureGateResult result,
   PremiumTiersFuturePrereqId id,
-) =>
-    result.prereqs.firstWhere((prereq) => prereq.id == id);
+) => result.prereqs.firstWhere((prereq) => prereq.id == id);
 
 PremiumTierFuture _tier(
   PremiumTiersFutureGateResult result,
   PremiumTierFutureId id,
-) =>
-    result.tiers.firstWhere((tier) => tier.id == id);
+) => result.tiers.firstWhere((tier) => tier.id == id);
 
 PremiumTiersFutureRule _rule(
   PremiumTiersFutureGateResult result,
   PremiumTiersFutureRuleId id,
-) =>
-    result.rules.firstWhere((rule) => rule.id == id);
+) => result.rules.firstWhere((rule) => rule.id == id);
 
 void main() {
   group('PremiumTiersFutureGate.build', () {
@@ -93,10 +89,7 @@ void main() {
 
     test('tier UI requested without purchase proof fails noTierUi', () {
       final result = PremiumTiersFutureGate.build(
-        _input(
-          simpleProPurchaseProofComplete: false,
-          tierUiRequested: true,
-        ),
+        _input(simpleProPurchaseProofComplete: false, tierUiRequested: true),
       );
       expect(
         _rule(result, PremiumTiersFutureRuleId.noTierUi).status,
@@ -123,7 +116,11 @@ void main() {
     test('canonical rules pass for gate copy', () {
       final result = PremiumTiersFutureGate.build(_input());
       for (final rule in result.rules) {
-        expect(rule.status, PremiumTiersFutureRuleStatus.pass, reason: rule.id.name);
+        expect(
+          rule.status,
+          PremiumTiersFutureRuleStatus.pass,
+          reason: rule.id.name,
+        );
       }
     });
 
@@ -159,7 +156,10 @@ void main() {
         PremiumTiersFutureGate.build(_input()),
       );
       expect(report.headline, PremiumTiersFutureCopy.headline);
-      expect(report.futureTierIdeasLine, PremiumTiersFutureCopy.futureTierIdeasLine);
+      expect(
+        report.futureTierIdeasLine,
+        PremiumTiersFutureCopy.futureTierIdeasLine,
+      );
       expect(report.guardrail, PremiumTiersFutureCopy.guardrail);
     });
   });

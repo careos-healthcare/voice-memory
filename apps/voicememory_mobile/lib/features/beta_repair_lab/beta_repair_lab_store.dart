@@ -13,7 +13,8 @@ abstract final class BetaRepairLabStore {
   static const prefsKey = 'betaRepairLabMode_v1';
   static const buildRepairModeDefineKey = 'ARCHIVEME_BETA_REPAIR_MODE';
 
-  static const defaultBetaBaselineMode = BetaRepairLabMode.proofSpecificityCaution;
+  static const defaultBetaBaselineMode =
+      BetaRepairLabMode.proofSpecificityCaution;
 
   static const _repairModeFromEnvironment = String.fromEnvironment(
     buildRepairModeDefineKey,

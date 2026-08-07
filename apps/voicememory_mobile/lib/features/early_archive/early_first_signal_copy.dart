@@ -107,7 +107,8 @@ abstract final class EarlyFirstSignalCopy {
       'What helped you handle it differently this time?';
 
   // Payoff after saving from the helpful-action guided prompt.
-  static const helpfulActionPayoffTitle = 'ArchiveMe captured helpful evidence.';
+  static const helpfulActionPayoffTitle =
+      'ArchiveMe captured helpful evidence.';
 
   static const helpfulActionPayoffBody =
       'You mentioned something that may have softened the loop. Your archive is watching whether it shows up again.';

@@ -18,23 +18,21 @@ NoDashboardReleaseModeInput _input({
   bool proofValueSeen = false,
   bool userExplicitlyAsked = false,
   bool proofThresholdStillThree = true,
-}) =>
-    NoDashboardReleaseModeInput(
-      releaseMode: releaseMode,
-      postSaveImmediate: postSaveImmediate,
-      firstProofSafe: firstProofSafe,
-      afterFirstProof: afterFirstProof,
-      confirmedRepeatOrEligibleMoment: confirmedRepeatOrEligibleMoment,
-      proofValueSeen: proofValueSeen,
-      userExplicitlyAsked: userExplicitlyAsked,
-      proofThresholdStillThree: proofThresholdStillThree,
-    );
+}) => NoDashboardReleaseModeInput(
+  releaseMode: releaseMode,
+  postSaveImmediate: postSaveImmediate,
+  firstProofSafe: firstProofSafe,
+  afterFirstProof: afterFirstProof,
+  confirmedRepeatOrEligibleMoment: confirmedRepeatOrEligibleMoment,
+  proofValueSeen: proofValueSeen,
+  userExplicitlyAsked: userExplicitlyAsked,
+  proofThresholdStillThree: proofThresholdStillThree,
+);
 
 NoDashboardReleaseSurfaceResult _surface(
   NoDashboardReleaseModeResult result,
   NoDashboardReleaseSurface surface,
-) =>
-    result.surface(surface);
+) => result.surface(surface);
 
 void main() {
   group('NoDashboardReleaseMode.build', () {
@@ -78,11 +76,7 @@ void main() {
         NoDashboardReleaseSurface.whatChanged,
         NoDashboardReleaseSurface.proLongerTrail,
       ]) {
-        expect(
-          _surface(result, surface).visible,
-          isTrue,
-          reason: surface.name,
-        );
+        expect(_surface(result, surface).visible, isTrue, reason: surface.name);
       }
     });
 
@@ -112,13 +106,17 @@ void main() {
         _input(postSaveImmediate: true),
       );
       expect(
-        _surface(hidden, NoDashboardReleaseSurface.postSaveReinforcement)
-            .visible,
+        _surface(
+          hidden,
+          NoDashboardReleaseSurface.postSaveReinforcement,
+        ).visible,
         isFalse,
       );
       expect(
-        _surface(shown, NoDashboardReleaseSurface.postSaveReinforcement)
-            .visible,
+        _surface(
+          shown,
+          NoDashboardReleaseSurface.postSaveReinforcement,
+        ).visible,
         isTrue,
       );
     });
@@ -147,9 +145,7 @@ void main() {
         isFalse,
       );
       expect(
-        NoDashboardReleaseMode.passesReleaseCopy(
-          'ArchiveMe is your life OS.',
-        ),
+        NoDashboardReleaseMode.passesReleaseCopy('ArchiveMe is your life OS.'),
         isFalse,
       );
       expect(
@@ -196,8 +192,9 @@ void main() {
 
   group('protected regression', () {
     test('no record layout changes', () {
-      final recordSource =
-          File('lib/screens/record_screen.dart').readAsStringSync();
+      final recordSource = File(
+        'lib/screens/record_screen.dart',
+      ).readAsStringSync();
       expect(
         NoDashboardReleaseMode.detectRecordLayoutUnchanged(recordSource),
         isTrue,
@@ -209,8 +206,9 @@ void main() {
     });
 
     test('release mode hook exists in production navigation', () {
-      final source =
-          File('lib/config/production_navigation.dart').readAsStringSync();
+      final source = File(
+        'lib/config/production_navigation.dart',
+      ).readAsStringSync();
       expect(NoDashboardReleaseMode.detectReleaseModeHook(source), isTrue);
     });
 

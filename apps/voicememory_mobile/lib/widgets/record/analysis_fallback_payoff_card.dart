@@ -8,28 +8,22 @@ import '../../theme/voicememory_cards.dart';
 
 /// Local archive payoff when transcription succeeded but analysis is offline.
 class AnalysisFallbackPayoffCard extends StatelessWidget {
-  const AnalysisFallbackPayoffCard({
-    super.key,
-    required this.payoff,
-  });
+  const AnalysisFallbackPayoffCard({super.key, required this.payoff});
 
   final AnalysisFallbackPayoff payoff;
 
   @override
   Widget build(BuildContext context) {
     final titleStyle = ArchiveMobileTypography.responsiveSectionTitle(context);
-    final bodyStyle = ArchiveMobileTypography.responsiveHelper(context).copyWith(
-      color: AppColors.textPrimary,
-      height: 1.45,
-    );
-    final labelStyle = ArchiveMobileTypography.responsiveHelper(context).copyWith(
-      color: AppColors.textSecondary,
-      fontWeight: FontWeight.w600,
-    );
-    final footnoteStyle = ArchiveMobileTypography.responsiveHelper(context).copyWith(
-      color: AppColors.textSecondary,
-      height: 1.4,
-    );
+    final bodyStyle = ArchiveMobileTypography.responsiveHelper(
+      context,
+    ).copyWith(color: AppColors.textPrimary, height: 1.45);
+    final labelStyle = ArchiveMobileTypography.responsiveHelper(
+      context,
+    ).copyWith(color: AppColors.textSecondary, fontWeight: FontWeight.w600);
+    final footnoteStyle = ArchiveMobileTypography.responsiveHelper(
+      context,
+    ).copyWith(color: AppColors.textSecondary, height: 1.4);
 
     return Container(
       key: const Key('analysis_fallback_payoff_card'),
@@ -67,10 +61,7 @@ class AnalysisFallbackPayoffCard extends StatelessWidget {
             ),
           ],
           const SizedBox(height: AppSpacing.sm),
-          Text(
-            'Next:',
-            style: labelStyle,
-          ),
+          Text('Next:', style: labelStyle),
           const SizedBox(height: 4),
           Text(
             payoff.nextActionLine,

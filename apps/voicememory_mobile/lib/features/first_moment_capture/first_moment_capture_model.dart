@@ -6,10 +6,7 @@ enum FirstMomentCaptureExampleType {
   dontWantToForget,
 }
 
-enum FirstMomentCaptureActionType {
-  saveOneSentence,
-  recordInstead,
-}
+enum FirstMomentCaptureActionType { saveOneSentence, recordInstead }
 
 /// Card payload for zero-entry first save guidance.
 class FirstMomentCaptureResult {
@@ -39,10 +36,7 @@ class FirstMomentCaptureResult {
 }
 
 class FirstMomentCaptureExample {
-  const FirstMomentCaptureExample({
-    required this.type,
-    required this.text,
-  });
+  const FirstMomentCaptureExample({required this.type, required this.text});
 
   final FirstMomentCaptureExampleType type;
   final String text;

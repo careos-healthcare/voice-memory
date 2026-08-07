@@ -5,7 +5,6 @@ import '../../design/archive_mobile_typography.dart';
 import '../../features/archive_controls/archive_control_copy.dart';
 import '../../features/contextual_privacy/contextual_privacy_analytics.dart';
 import '../../features/privacy_trust/privacy_trust_copy.dart';
-import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
 
 /// Quick access to archive controls and the Privacy & Trust Centre.

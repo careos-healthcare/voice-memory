@@ -30,16 +30,16 @@ abstract final class ArchiveBackupBridgeCopy {
   static const sheetSeeProCta = 'See what Pro keeps';
 
   static List<String> allVisibleStrings() => [
-        cardTitle,
-        cardBody,
-        plannedProAreas,
-        deviceBackupToday,
-        proPreservation,
-        cta,
-        secondary,
-        sheetTitle,
-        sheetIntro,
-        sheetLocalBackupLine,
-        sheetSeeProCta,
-      ];
+    cardTitle,
+    cardBody,
+    plannedProAreas,
+    deviceBackupToday,
+    proPreservation,
+    cta,
+    secondary,
+    sheetTitle,
+    sheetIntro,
+    sheetLocalBackupLine,
+    sheetSeeProCta,
+  ];
 }

@@ -29,27 +29,27 @@ abstract final class ArchiveHistoryFilterEngine {
   ];
 
   static String label(ArchiveHistoryFilter filter) => switch (filter) {
-        ArchiveHistoryFilter.all => ArchiveHistoryCopy.filterAll,
-        ArchiveHistoryFilter.usedAsEvidence =>
-          ArchiveHistoryCopy.filterUsedAsEvidence,
-        ArchiveHistoryFilter.savedOnly => ArchiveHistoryCopy.filterSavedOnly,
-        ArchiveHistoryFilter.needsYourWords =>
-          ArchiveHistoryCopy.filterNeedsYourWords,
-        ArchiveHistoryFilter.quietDays => ArchiveHistoryCopy.filterQuietDays,
-        ArchiveHistoryFilter.ignoredForPatterns =>
-          ArchiveHistoryCopy.filterIgnoredForPatterns,
-        ArchiveHistoryFilter.helped => ArchiveHistoryCopy.filterHelped,
-      };
+    ArchiveHistoryFilter.all => ArchiveHistoryCopy.filterAll,
+    ArchiveHistoryFilter.usedAsEvidence =>
+      ArchiveHistoryCopy.filterUsedAsEvidence,
+    ArchiveHistoryFilter.savedOnly => ArchiveHistoryCopy.filterSavedOnly,
+    ArchiveHistoryFilter.needsYourWords =>
+      ArchiveHistoryCopy.filterNeedsYourWords,
+    ArchiveHistoryFilter.quietDays => ArchiveHistoryCopy.filterQuietDays,
+    ArchiveHistoryFilter.ignoredForPatterns =>
+      ArchiveHistoryCopy.filterIgnoredForPatterns,
+    ArchiveHistoryFilter.helped => ArchiveHistoryCopy.filterHelped,
+  };
 
   static String filterKey(ArchiveHistoryFilter filter) => switch (filter) {
-        ArchiveHistoryFilter.all => 'all',
-        ArchiveHistoryFilter.usedAsEvidence => 'used_as_evidence',
-        ArchiveHistoryFilter.savedOnly => 'saved_only',
-        ArchiveHistoryFilter.needsYourWords => 'needs_your_words',
-        ArchiveHistoryFilter.quietDays => 'quiet_days',
-        ArchiveHistoryFilter.ignoredForPatterns => 'ignored_for_patterns',
-        ArchiveHistoryFilter.helped => 'helped',
-      };
+    ArchiveHistoryFilter.all => 'all',
+    ArchiveHistoryFilter.usedAsEvidence => 'used_as_evidence',
+    ArchiveHistoryFilter.savedOnly => 'saved_only',
+    ArchiveHistoryFilter.needsYourWords => 'needs_your_words',
+    ArchiveHistoryFilter.quietDays => 'quiet_days',
+    ArchiveHistoryFilter.ignoredForPatterns => 'ignored_for_patterns',
+    ArchiveHistoryFilter.helped => 'helped',
+  };
 
   static List<ArchiveHistoryItem> apply({
     required List<ArchiveHistoryItem> items,
@@ -65,18 +65,17 @@ abstract final class ArchiveHistoryFilterEngine {
   static bool matches({
     required ArchiveHistoryItem item,
     required ArchiveHistoryFilter filter,
-  }) =>
-      switch (filter) {
-        ArchiveHistoryFilter.all => true,
-        ArchiveHistoryFilter.usedAsEvidence =>
-          item.status == ArchiveHistoryStatus.usedAsEvidence,
-        ArchiveHistoryFilter.savedOnly =>
-          item.status == ArchiveHistoryStatus.savedOnly,
-        ArchiveHistoryFilter.needsYourWords =>
-          item.status == ArchiveHistoryStatus.needsYourWords,
-        ArchiveHistoryFilter.quietDays => item.isQuietDay,
-        ArchiveHistoryFilter.ignoredForPatterns =>
-          item.status == ArchiveHistoryStatus.ignoredForPatterns,
-        ArchiveHistoryFilter.helped => item.helpedNote != null,
-      };
+  }) => switch (filter) {
+    ArchiveHistoryFilter.all => true,
+    ArchiveHistoryFilter.usedAsEvidence =>
+      item.status == ArchiveHistoryStatus.usedAsEvidence,
+    ArchiveHistoryFilter.savedOnly =>
+      item.status == ArchiveHistoryStatus.savedOnly,
+    ArchiveHistoryFilter.needsYourWords =>
+      item.status == ArchiveHistoryStatus.needsYourWords,
+    ArchiveHistoryFilter.quietDays => item.isQuietDay,
+    ArchiveHistoryFilter.ignoredForPatterns =>
+      item.status == ArchiveHistoryStatus.ignoredForPatterns,
+    ArchiveHistoryFilter.helped => item.helpedNote != null,
+  };
 }

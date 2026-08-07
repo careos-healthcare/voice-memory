@@ -13,7 +13,8 @@ import 'live_audio_socket_connection.dart';
 class LiveAudioWebSocketClient {
   LiveAudioWebSocketClient({
     LiveAudioSocketConnectionFactory? connectionFactory,
-  }) : _connectionFactory = connectionFactory ?? defaultLiveAudioSocketConnection;
+  }) : _connectionFactory =
+           connectionFactory ?? defaultLiveAudioSocketConnection;
 
   final LiveAudioSocketConnectionFactory _connectionFactory;
 
@@ -48,9 +49,10 @@ class LiveAudioWebSocketClient {
       proxyWebSocketUrl: uri.toString(),
     );
 
-    _connection = _connectionFactory(uri, headers: const {
-      'Accept': 'application/json',
-    });
+    _connection = _connectionFactory(
+      uri,
+      headers: const {'Accept': 'application/json'},
+    );
 
     await _connection!.ready;
 
@@ -114,7 +116,9 @@ class LiveAudioWebSocketClient {
   }
 
   Uri _buildProxyUri(LiveAudioSessionConfig config) {
-    final base = Uri.parse(normalizeProxyWebSocketUrl(config.proxyWebSocketUrl));
+    final base = Uri.parse(
+      normalizeProxyWebSocketUrl(config.proxyWebSocketUrl),
+    );
     return base.replace(
       queryParameters: {
         ...base.queryParameters,

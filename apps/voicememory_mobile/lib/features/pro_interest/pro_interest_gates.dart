@@ -6,6 +6,5 @@ abstract final class ProInterestGates {
     required int entryCount,
     required int watchlistCount,
     required bool sampleMode,
-  }) =>
-      !sampleMode && (entryCount >= 10 || watchlistCount >= 3);
+  }) => !sampleMode && (entryCount >= 10 || watchlistCount >= 3);
 }

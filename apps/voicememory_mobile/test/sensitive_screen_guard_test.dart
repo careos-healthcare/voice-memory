@@ -43,9 +43,7 @@ void main() {
       ],
     );
 
-    await tester.pumpWidget(
-      MaterialApp.router(routerConfig: router),
-    );
+    await tester.pumpWidget(MaterialApp.router(routerConfig: router));
     await tester.pumpAndSettle();
 
     expect(find.byKey(const Key('record_tab')), findsOneWidget);
@@ -66,8 +64,9 @@ void main() {
       routes: [
         GoRoute(
           path: '/record',
-          builder: (context, state) =>
-              const Scaffold(body: Text('record route', key: Key('record_route'))),
+          builder: (context, state) => const Scaffold(
+            body: Text('record route', key: Key('record_route')),
+          ),
         ),
       ],
     );
@@ -75,9 +74,8 @@ void main() {
     await tester.pumpWidget(
       MaterialApp.router(
         routerConfig: router,
-        builder: (context, child) => AppPrivacyShell(
-          child: child ?? const SizedBox.shrink(),
-        ),
+        builder: (context, child) =>
+            AppPrivacyShell(child: child ?? const SizedBox.shrink()),
       ),
     );
     await tester.pumpAndSettle();
@@ -99,13 +97,19 @@ void main() {
     );
 
     expect(find.byKey(const Key('secret_body')), findsOneWidget);
-    expect(find.byKey(const Key('sensitive_screen_privacy_overlay')), findsNothing);
+    expect(
+      find.byKey(const Key('sensitive_screen_privacy_overlay')),
+      findsNothing,
+    );
 
     final binding = tester.binding;
     binding.handleAppLifecycleStateChanged(AppLifecycleState.inactive);
     await tester.pump();
 
-    expect(find.byKey(const Key('sensitive_screen_privacy_overlay')), findsOneWidget);
+    expect(
+      find.byKey(const Key('sensitive_screen_privacy_overlay')),
+      findsOneWidget,
+    );
   });
 
   testWidgets('hides overlay again on resume', (tester) async {
@@ -120,11 +124,17 @@ void main() {
 
     tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.paused);
     await tester.pump();
-    expect(find.byKey(const Key('sensitive_screen_privacy_overlay')), findsOneWidget);
+    expect(
+      find.byKey(const Key('sensitive_screen_privacy_overlay')),
+      findsOneWidget,
+    );
 
     tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
     await tester.pump();
-    expect(find.byKey(const Key('sensitive_screen_privacy_overlay')), findsNothing);
+    expect(
+      find.byKey(const Key('sensitive_screen_privacy_overlay')),
+      findsNothing,
+    );
   });
 
   test('SensitiveRoutes flags private screens', () {

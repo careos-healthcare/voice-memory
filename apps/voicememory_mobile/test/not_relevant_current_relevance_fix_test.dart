@@ -28,10 +28,11 @@ import 'package:voicememory_mobile/models/sync_status.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
 import 'package:voicememory_mobile/storage/mobile_prefs_store.dart';
 import 'package:voicememory_mobile/widgets/patterns/not_relevant_recovery_card.dart';
+import 'support/test_storage_sandbox.dart';
 
 class _MemoryPrefs extends MobilePrefsStore {
   _MemoryPrefs()
-      : super(file: File('test/tmp/not_relevant_recovery/unused.json'));
+    : super(file: File('test/tmp/not_relevant_recovery/unused.json'));
 
   final Map<String, Map<String, dynamic>> maps = {};
 
@@ -48,11 +49,7 @@ const _strongRepeat =
     'I had no capacity but I said yes again to the extra meeting today.';
 final _now = DateTime(2026, 6, 12, 12);
 
-JournalEntry _entry(
-  String id,
-  String transcript, {
-  DateTime? createdAt,
-}) =>
+JournalEntry _entry(String id, String transcript, {DateTime? createdAt}) =>
     JournalEntry(
       id: id,
       createdAt: createdAt ?? _now,
@@ -113,16 +110,16 @@ Future<void> _pumpCard(
 }
 
 void main() {
+  late TestStorageSandbox sandbox;
   final analyticsEvents = <({String event, Map<String, Object> props})>[];
   late _MemoryPrefs prefs;
 
   setUp(() async {
+    sandbox = TestStorageSandbox.create();
     prefs = _MemoryPrefs();
     await AppServices.resetForTest(
-      journalPath:
-          'test/tmp/not_relevant_recovery/${DateTime.now().microsecondsSinceEpoch}_journal.json',
-      prefsPath:
-          'test/tmp/not_relevant_recovery/${DateTime.now().microsecondsSinceEpoch}_prefs.json',
+      journalPath: sandbox.journalPath,
+      prefsPath: sandbox.prefsPath,
       skipRevenueCat: true,
     );
     NotRelevantRecoveryAnalytics.resetForTest();
@@ -136,8 +133,11 @@ void main() {
     await CorrectionMemoryStore.resetForTest();
   });
 
+  tearDown(() => sandbox.dispose());
+
   tearDown(NotRelevantRecoveryAnalytics.resetForTest);
 
+  tearDown(() => sandbox.dispose());
   group('NotRelevantRecoveryCopy', () {
     test('passes proof surface advice guard', () {
       for (final line in NotRelevantRecoveryCopy.allVisibleStrings) {
@@ -172,8 +172,10 @@ void main() {
         CorrectionMemoryState.faded,
       );
       expect(
-        NotRelevantRecoveryEngine.build(entries: entries, source: 'test')
-            .shouldShow,
+        NotRelevantRecoveryEngine.build(
+          entries: entries,
+          source: 'test',
+        ).shouldShow,
         isTrue,
       );
     });
@@ -192,8 +194,10 @@ void main() {
       );
 
       expect(
-        NotRelevantRecoveryEngine.build(entries: entries, source: 'test')
-            .shouldShow,
+        NotRelevantRecoveryEngine.build(
+          entries: entries,
+          source: 'test',
+        ).shouldShow,
         isTrue,
       );
     });
@@ -201,14 +205,15 @@ void main() {
     test('hidden without correction state', () {
       final entries = _threeRelatedEntries();
       expect(
-        NotRelevantRecoveryEngine.build(entries: entries, source: 'test')
-            .shouldShow,
+        NotRelevantRecoveryEngine.build(
+          entries: entries,
+          source: 'test',
+        ).shouldShow,
         isFalse,
       );
     });
 
     test('hidden during recording', () {
-      final entries = _threeRelatedEntries();
       final result = NotRelevantRecoveryResult(
         shouldShow: true,
         proofKey: '1|2|3',
@@ -272,31 +277,39 @@ void main() {
   });
 
   group('NotRelevantRecoveryCard', () {
-    NotRelevantRecoveryResult _visibleResult() => NotRelevantRecoveryResult(
-          shouldShow: true,
-          proofKey: '1|2|3',
-          entryCount: 3,
-          source: 'test',
-          hasConfirmedRepeat: true,
-          hasFreshReturn: false,
-          title: NotRelevantRecoveryCopy.title,
-          body: NotRelevantRecoveryCopy.body,
-          correctionLine: NotRelevantRecoveryCopy.correctionLine,
-          returnLine: NotRelevantRecoveryCopy.returnLine,
-          returnedAfterCorrectionLine:
-              NotRelevantRecoveryCopy.returnedAfterCorrectionLine,
-        );
+    NotRelevantRecoveryResult visibleResult() => NotRelevantRecoveryResult(
+      shouldShow: true,
+      proofKey: '1|2|3',
+      entryCount: 3,
+      source: 'test',
+      hasConfirmedRepeat: true,
+      hasFreshReturn: false,
+      title: NotRelevantRecoveryCopy.title,
+      body: NotRelevantRecoveryCopy.body,
+      correctionLine: NotRelevantRecoveryCopy.correctionLine,
+      returnLine: NotRelevantRecoveryCopy.returnLine,
+      returnedAfterCorrectionLine:
+          NotRelevantRecoveryCopy.returnedAfterCorrectionLine,
+    );
 
     testWidgets('renders title and background copy', (tester) async {
-      await _pumpCard(tester, _visibleResult());
+      await _pumpCard(tester, visibleResult());
 
-      expect(find.byKey(const Key('not_relevant_recovery_card')), findsOneWidget);
+      expect(
+        find.byKey(const Key('not_relevant_recovery_card')),
+        findsOneWidget,
+      );
       expect(find.text(NotRelevantRecoveryCopy.title), findsOneWidget);
-      expect(find.textContaining('background unless it returns'), findsOneWidget);
+      expect(
+        find.textContaining('background unless it returns'),
+        findsOneWidget,
+      );
     });
 
-    testWidgets('renders correction changes timeline weighting', (tester) async {
-      await _pumpCard(tester, _visibleResult());
+    testWidgets('renders correction changes timeline weighting', (
+      tester,
+    ) async {
+      await _pumpCard(tester, visibleResult());
 
       expect(find.text(NotRelevantRecoveryCopy.correctionLine), findsOneWidget);
     });
@@ -304,7 +317,7 @@ void main() {
     testWidgets('Keep as background persists background state', (tester) async {
       final entries = _threeRelatedEntries();
       final store = NotRelevantRecoveryStore.forPrefs(prefs);
-      await _pumpCard(tester, _visibleResult(), store: store);
+      await _pumpCard(tester, visibleResult(), store: store);
 
       await tester.tap(
         find.byKey(const Key('not_relevant_recovery_keep_as_background')),
@@ -325,7 +338,7 @@ void main() {
     testWidgets('Watch lightly persists light watch state', (tester) async {
       final entries = _threeRelatedEntries();
       final store = NotRelevantRecoveryStore.forPrefs(prefs);
-      await _pumpCard(tester, _visibleResult(), store: store);
+      await _pumpCard(tester, visibleResult(), store: store);
 
       await tester.tap(
         find.byKey(const Key('not_relevant_recovery_watch_lightly')),
@@ -343,10 +356,12 @@ void main() {
       );
     });
 
-    testWidgets('It is relevant again persists stillCurrent state', (tester) async {
+    testWidgets('It is relevant again persists stillCurrent state', (
+      tester,
+    ) async {
       final entries = _threeRelatedEntries();
       final store = NotRelevantRecoveryStore.forPrefs(prefs);
-      await _pumpCard(tester, _visibleResult(), store: store);
+      await _pumpCard(tester, visibleResult(), store: store);
 
       await tester.tap(
         find.byKey(const Key('not_relevant_recovery_relevant_again')),
@@ -365,7 +380,7 @@ void main() {
     });
 
     testWidgets('no transcript/body/private text or Pro CTA', (tester) async {
-      await _pumpCard(tester, _visibleResult());
+      await _pumpCard(tester, visibleResult());
 
       expect(find.textContaining(_strongRepeat), findsNothing);
       expect(find.textContaining('See Pro'), findsNothing);
@@ -374,7 +389,7 @@ void main() {
   });
 
   group('Downstream weighting integration', () {
-    Future<void> _saveFaded(List<JournalEntry> entries) async {
+    Future<void> saveFaded(List<JournalEntry> entries) async {
       await BetaProofFeedbackStore.forPrefs(prefs).saveAnswer(
         surface: BetaProofFeedbackSurface.timelineProofMoment,
         feedbackType: BetaProofFeedbackType.notRelevant,
@@ -409,7 +424,7 @@ void main() {
         feedbackType: BetaProofFeedbackType.notRelevant,
         entryCount: entries.length,
       );
-      await _saveFaded(entries);
+      await saveFaded(entries);
 
       final present = PresentDayRelevanceEngine.build(
         entries: entries,
@@ -421,7 +436,7 @@ void main() {
 
     test('EvidenceWeighting uses recovery state', () async {
       final entries = _threeRelatedEntries();
-      await _saveFaded(entries);
+      await saveFaded(entries);
 
       final weighting = EvidenceWeightingEngine.build(
         entries: entries,
@@ -433,7 +448,7 @@ void main() {
 
     test('ArchiveTimelineSpine current weight changes', () async {
       final entries = _threeRelatedEntries();
-      await _saveFaded(entries);
+      await saveFaded(entries);
 
       final spine = ArchiveTimelineSpineEngine.build(
         entries: entries,
@@ -447,7 +462,7 @@ void main() {
 
     test('TimelineProofMoment shows correction row', () async {
       final entries = _threeRelatedEntries();
-      await _saveFaded(entries);
+      await saveFaded(entries);
 
       final moment = TimelineProofMomentEngine.build(
         entries: entries,
@@ -464,14 +479,16 @@ void main() {
 
     test('fresh return is not permanently suppressed', () async {
       final entries = [
-        ..._threeRelatedEntries(anchor: _now.subtract(const Duration(days: 10))),
+        ..._threeRelatedEntries(
+          anchor: _now.subtract(const Duration(days: 10)),
+        ),
         _entry(
           '4',
           'I said yes again even though I had no capacity for one more ask.',
           createdAt: _now,
         ),
       ];
-      await _saveFaded(entries.sublist(0, 3));
+      await saveFaded(entries.sublist(0, 3));
       final proofKey = CurrentRelevanceStore.proofKeyFor(entries.sublist(0, 3));
       await CorrectionMemoryStore.instance().saveFromAnswer(
         proofKey: proofKey,
@@ -486,7 +503,10 @@ void main() {
         source: 'test',
         now: _now,
       );
-      expect(spine?.currentWeight, isNot(ArchiveTimelineSpineCurrentWeight.corrected));
+      expect(
+        spine?.currentWeight,
+        isNot(ArchiveTimelineSpineCurrentWeight.corrected),
+      );
       expect(
         EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(entries),
         isTrue,
@@ -529,7 +549,10 @@ void main() {
         expect(event.props.containsKey('entry_count'), isTrue);
         expect(event.props.containsKey('has_confirmed_repeat'), isTrue);
         expect(event.props.containsKey('has_fresh_return'), isTrue);
-        expect(event.props.keys.any((key) => key.contains('transcript')), isFalse);
+        expect(
+          event.props.keys.any((key) => key.contains('transcript')),
+          isFalse,
+        );
       }
       expect(analyticsEvents.last.props['action_type'], 'keep_as_background');
     });
@@ -537,31 +560,14 @@ void main() {
 }
 
 extension _TestResultHelpers on NotRelevantRecoveryResult {
-  NotRelevantRecoveryResult copyWithHiddenAsVisible() => NotRelevantRecoveryResult(
+  NotRelevantRecoveryResult copyWithHiddenAsVisible() =>
+      NotRelevantRecoveryResult(
         shouldShow: true,
         proofKey: proofKey.isEmpty ? '1|2|3' : proofKey,
         entryCount: entryCount == 0 ? 3 : entryCount,
         source: source,
         hasConfirmedRepeat: true,
         hasFreshReturn: hasFreshReturn,
-        title: title,
-        body: body,
-        correctionLine: correctionLine,
-        returnLine: returnLine,
-        returnedAfterCorrectionLine: returnedAfterCorrectionLine,
-      );
-
-  NotRelevantRecoveryResult copyWithForcedVisible({
-    required String proofKey,
-    required int entryCount,
-  }) =>
-      NotRelevantRecoveryResult(
-        shouldShow: true,
-        proofKey: proofKey,
-        entryCount: entryCount,
-        source: source,
-        hasConfirmedRepeat: true,
-        hasFreshReturn: false,
         title: title,
         body: body,
         correctionLine: correctionLine,

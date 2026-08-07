@@ -13,24 +13,23 @@ class SampleArchiveStarterPromptsCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final titleStyle = ArchiveMobileTypography.cardLabel(context).copyWith(
-      fontWeight: FontWeight.w600,
-    );
-    final bodyStyle = ArchiveMobileTypography.responsiveHelper(context).copyWith(
-      color: AppColors.textSecondary,
-      height: 1.4,
-    );
-    final promptStyle = ArchiveMobileTypography.explanationBody(context).copyWith(
-      color: AppColors.textPrimary,
-      height: 1.4,
-      fontSize: 14,
-    );
+    final titleStyle = ArchiveMobileTypography.cardLabel(
+      context,
+    ).copyWith(fontWeight: FontWeight.w600);
+    final bodyStyle = ArchiveMobileTypography.responsiveHelper(
+      context,
+    ).copyWith(color: AppColors.textSecondary, height: 1.4);
+    final promptStyle = ArchiveMobileTypography.explanationBody(
+      context,
+    ).copyWith(color: AppColors.textPrimary, height: 1.4, fontSize: 14);
 
     return Container(
       key: const Key('sample_archive_starter_prompts_card'),
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.md),
-      decoration: VoiceMemoryCards.standard(background: const Color(0xFFFAFAF8)),
+      decoration: VoiceMemoryCards.standard(
+        background: const Color(0xFFFAFAF8),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [

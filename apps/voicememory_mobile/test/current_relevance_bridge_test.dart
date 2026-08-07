@@ -13,20 +13,14 @@ import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/models/sync_status.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
-import 'package:voicememory_mobile/services/capture_save_messages.dart';
 import 'package:voicememory_mobile/widgets/patterns/current_relevance_card.dart';
 import 'dart:io';
+import 'support/test_storage_sandbox.dart';
 
-const _placeholder =
-    '[draft] ${CaptureSaveMessages.recordingSavedLocally} — transcribe when connected';
 const _strongRepeat =
     'I had no capacity but I said yes again to the extra meeting today.';
 
-JournalEntry _entry(
-  String id,
-  String transcript, {
-  DateTime? createdAt,
-}) =>
+JournalEntry _entry(String id, String transcript, {DateTime? createdAt}) =>
     JournalEntry(
       id: id,
       createdAt: createdAt ?? DateTime(2026, 6, 12, 10),
@@ -45,22 +39,18 @@ JournalEntry _entry(
     );
 
 List<JournalEntry> _threeRelatedEntries() => [
-      _entry(
-        '1',
-        _strongRepeat,
-        createdAt: DateTime(2026, 6, 10, 12),
-      ),
-      _entry(
-        '2',
-        'Same thing — said yes when I had no capacity for one more thing.',
-        createdAt: DateTime(2026, 6, 11, 12),
-      ),
-      _entry(
-        '3',
-        'I said yes again even though I had no capacity for one more ask.',
-        createdAt: DateTime(2026, 6, 12, 12),
-      ),
-    ];
+  _entry('1', _strongRepeat, createdAt: DateTime(2026, 6, 10, 12)),
+  _entry(
+    '2',
+    'Same thing — said yes when I had no capacity for one more thing.',
+    createdAt: DateTime(2026, 6, 11, 12),
+  ),
+  _entry(
+    '3',
+    'I said yes again even though I had no capacity for one more ask.',
+    createdAt: DateTime(2026, 6, 12, 12),
+  ),
+];
 
 CurrentRelevanceState _stateForEntries(List<JournalEntry> entries) {
   final built = CurrentRelevanceEngine.build(
@@ -72,24 +62,25 @@ CurrentRelevanceState _stateForEntries(List<JournalEntry> entries) {
 }
 
 void main() {
+  late TestStorageSandbox sandbox;
   final analyticsEvents = <({String event, Map<String, Object> props})>[];
 
   setUp(() async {
+    sandbox = TestStorageSandbox.create();
     CurrentRelevanceAnalytics.resetForTest();
     CurrentRelevanceAnalytics.captureForTest = (event, props) {
       analyticsEvents.add((event: event, props: props));
     };
     await AppServices.resetForTest(
-      journalPath:
-          'test/tmp/current_relevance/${DateTime.now().microsecondsSinceEpoch}_journal.json',
-      prefsPath:
-          'test/tmp/current_relevance/${DateTime.now().microsecondsSinceEpoch}_prefs.json',
+      journalPath: sandbox.journalPath,
+      prefsPath: sandbox.prefsPath,
       skipRevenueCat: true,
     );
     await CurrentRelevanceStore.resetForTest();
     analyticsEvents.clear();
   });
 
+  tearDown(() => sandbox.dispose());
   tearDown(() async {
     CurrentRelevanceAnalytics.resetForTest();
     await CurrentRelevanceStore.resetForTest();
@@ -98,10 +89,7 @@ void main() {
   group('CurrentRelevanceCopy', () {
     test('defines question, options, responses, and differentiation line', () {
       expect(CurrentRelevanceCopy.title, 'Does this still affect today?');
-      expect(
-        CurrentRelevanceCopy.body,
-        contains('appeared before'),
-      );
+      expect(CurrentRelevanceCopy.body, contains('appeared before'));
       expect(
         CurrentRelevanceCopy.differentiationLine,
         contains('ChatGPT can respond to one conversation'),
@@ -190,10 +178,7 @@ void main() {
     test('hidden during first proof payoff', () {
       final entries = _threeRelatedEntries();
       final state = _stateForEntries(entries);
-      expect(
-        FirstProofPayoffEngine.build(entries: entries),
-        isNotNull,
-      );
+      expect(FirstProofPayoffEngine.build(entries: entries), isNotNull);
       expect(
         CurrentRelevanceEngine.shouldShow(
           state: state,
@@ -254,34 +239,28 @@ void main() {
         isFalse,
       );
       expect(
-        CurrentRelevanceEngine.isQuestionActive(
-          state: state,
-          visible: true,
-        ),
+        CurrentRelevanceEngine.isQuestionActive(state: state, visible: true),
         isTrue,
       );
     });
   });
 
   group('CurrentRelevanceCard', () {
-    Future<void> _pumpCard(
+    Future<void> pumpCard(
       WidgetTester tester,
       CurrentRelevanceState state,
     ) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: CurrentRelevanceCard.test(
-              state: state,
-              source: 'test',
-            ),
+            body: CurrentRelevanceCard.test(state: state, source: 'test'),
           ),
         ),
       );
       await tester.pump();
     }
 
-    CurrentRelevanceState _answeredState(CurrentRelevanceAnswer answer) {
+    CurrentRelevanceState answeredState(CurrentRelevanceAnswer answer) {
       final entries = _threeRelatedEntries();
       final base = _stateForEntries(entries);
       return CurrentRelevanceState(
@@ -293,7 +272,7 @@ void main() {
     }
 
     testWidgets('copy renders question and options', (tester) async {
-      await _pumpCard(tester, _stateForEntries(_threeRelatedEntries()));
+      await pumpCard(tester, _stateForEntries(_threeRelatedEntries()));
 
       expect(find.byKey(const Key('current_relevance_card')), findsOneWidget);
       expect(find.text(CurrentRelevanceCopy.title), findsOneWidget);
@@ -305,7 +284,7 @@ void main() {
     });
 
     testWidgets('answer yes shows current response', (tester) async {
-      await _pumpCard(tester, _answeredState(CurrentRelevanceAnswer.yes));
+      await pumpCard(tester, answeredState(CurrentRelevanceAnswer.yes));
 
       expect(
         find.byKey(const Key('current_relevance_response_card')),
@@ -322,7 +301,7 @@ void main() {
     });
 
     testWidgets('answer a little shows soft signal response', (tester) async {
-      await _pumpCard(tester, _answeredState(CurrentRelevanceAnswer.little));
+      await pumpCard(tester, answeredState(CurrentRelevanceAnswer.little));
 
       expect(
         find.text(
@@ -333,7 +312,7 @@ void main() {
     });
 
     testWidgets('answer not really shows not urgent response', (tester) async {
-      await _pumpCard(tester, _answeredState(CurrentRelevanceAnswer.notReally));
+      await pumpCard(tester, answeredState(CurrentRelevanceAnswer.notReally));
 
       expect(
         find.text(
@@ -344,7 +323,7 @@ void main() {
     });
 
     testWidgets('answer not sure shows watch lightly response', (tester) async {
-      await _pumpCard(tester, _answeredState(CurrentRelevanceAnswer.notSure));
+      await pumpCard(tester, answeredState(CurrentRelevanceAnswer.notSure));
 
       expect(
         find.text(
@@ -355,7 +334,7 @@ void main() {
     });
 
     testWidgets('differentiation line appears after answer', (tester) async {
-      await _pumpCard(tester, _answeredState(CurrentRelevanceAnswer.yes));
+      await pumpCard(tester, answeredState(CurrentRelevanceAnswer.yes));
 
       expect(
         find.byKey(const Key('current_relevance_differentiation_line')),
@@ -383,7 +362,9 @@ void main() {
         CurrentRelevanceAnswer.yes,
       );
       expect(
-        analyticsEvents.any((event) => event.event == 'current_relevance_answered'),
+        analyticsEvents.any(
+          (event) => event.event == 'current_relevance_answered',
+        ),
         isTrue,
       );
     });
@@ -408,7 +389,10 @@ void main() {
 
       expect(analyticsEvents, hasLength(2));
       for (final record in analyticsEvents) {
-        expect(record.event, anyOf('current_relevance_seen', 'current_relevance_answered'));
+        expect(
+          record.event,
+          anyOf('current_relevance_seen', 'current_relevance_answered'),
+        );
         expect(record.props.keys, contains('source'));
         expect(record.props.keys, contains('entry_count'));
         expect(record.props.keys, contains('has_confirmed_repeat'));
@@ -424,21 +408,29 @@ void main() {
   });
 
   group('Current relevance placement', () {
-    test('patterns screen renders relevance card before post-proof Pro bridge', () {
-      final source =
-          File('lib/screens/archive_belief_screen.dart').readAsStringSync();
-      final relevanceIndex = source.indexOf('CurrentRelevanceCard(');
-      final proBridgeIndex = source.indexOf(
-        "analyticsSource: 'patterns_post_proof_pro_evidence_value'",
-      );
-      expect(relevanceIndex, greaterThan(0));
-      expect(proBridgeIndex, greaterThan(relevanceIndex));
-    });
+    test(
+      'patterns screen renders relevance card before post-proof Pro bridge',
+      () {
+        final source = File(
+          'lib/screens/archive_belief_screen.dart',
+        ).readAsStringSync();
+        final relevanceIndex = source.indexOf('CurrentRelevanceCard(');
+        final proBridgeIndex = source.indexOf(
+          "analyticsSource: 'patterns_post_proof_pro_evidence_value'",
+        );
+        expect(relevanceIndex, greaterThan(0));
+        expect(proBridgeIndex, greaterThan(relevanceIndex));
+      },
+    );
 
     test('record screen renders relevance card before Pro evidence bridge', () {
       final source = File('lib/screens/record_screen.dart').readAsStringSync();
-      final relevanceIndex = source.indexOf('showCurrentRelevanceOnRecordReady');
-      final proBridgeIndex = source.indexOf('showProEvidenceValueOnRecordReady');
+      final relevanceIndex = source.indexOf(
+        'showCurrentRelevanceOnRecordReady',
+      );
+      final proBridgeIndex = source.indexOf(
+        'showProEvidenceValueOnRecordReady',
+      );
       expect(relevanceIndex, greaterThan(0));
       expect(proBridgeIndex, greaterThan(relevanceIndex));
     });

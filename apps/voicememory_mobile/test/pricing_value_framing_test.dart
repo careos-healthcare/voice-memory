@@ -28,24 +28,23 @@ BetaRepairLabVisibilityInput _input({
   BetaProofFeedbackType? feedbackType = BetaProofFeedbackType.useful,
   bool isNegativeFeedback = false,
   bool isPro = false,
-}) =>
-    BetaRepairLabVisibilityInput(
-      mode: mode,
-      entryCount: entryCount,
-      source: 'test',
-      isPro: isPro,
-      isRecording: false,
-      isDegradedTranscriptState: false,
-      whatChangedQuestionActive: false,
-      patternReviewInboxHasActiveItems: false,
-      hasTimelineProofVisible: hasTimelineProofVisible,
-      hasConfirmedRepeat: hasConfirmedRepeat,
-      confidenceLevel: confidenceLevel,
-      hasUsefulProofFeedback: feedbackType == BetaProofFeedbackType.useful,
-      feedbackType: feedbackType,
-      isNegativeFeedback: isNegativeFeedback,
-      betaMissionEnabled: betaMissionEnabled,
-    );
+}) => BetaRepairLabVisibilityInput(
+  mode: mode,
+  entryCount: entryCount,
+  source: 'test',
+  isPro: isPro,
+  isRecording: false,
+  isDegradedTranscriptState: false,
+  whatChangedQuestionActive: false,
+  patternReviewInboxHasActiveItems: false,
+  hasTimelineProofVisible: hasTimelineProofVisible,
+  hasConfirmedRepeat: hasConfirmedRepeat,
+  confidenceLevel: confidenceLevel,
+  hasUsefulProofFeedback: feedbackType == BetaProofFeedbackType.useful,
+  feedbackType: feedbackType,
+  isNegativeFeedback: isNegativeFeedback,
+  betaMissionEnabled: betaMissionEnabled,
+);
 
 Future<void> _pumpCard(
   WidgetTester tester, {
@@ -56,10 +55,7 @@ Future<void> _pumpCard(
       theme: AppTheme.light(),
       home: Scaffold(
         body: SingleChildScrollView(
-          child: PricingValueFramingCard.test(
-            result: result,
-            onSeePro: () {},
-          ),
+          child: PricingValueFramingCard.test(result: result, onSeePro: () {}),
         ),
       ),
     ),
@@ -119,10 +115,7 @@ void main() {
       await BetaRepairLabStore.setModeForTest(
         BetaRepairLabMode.pricingValueFraming,
       );
-      expect(
-        PricingValueFramingEngine.shouldShow(input: _input()),
-        isTrue,
-      );
+      expect(PricingValueFramingEngine.shouldShow(input: _input()), isTrue);
       final result = PricingValueFramingEngine.build(input: _input());
       expect(result.shouldShow, isTrue);
       expect(result.title, PricingValueFramingCopy.title);
@@ -131,9 +124,7 @@ void main() {
     });
 
     test('blocked when repair mode is not pricingValueFraming', () async {
-      await BetaRepairLabStore.setModeForTest(
-        BetaRepairLabMode.paywallValue,
-      );
+      await BetaRepairLabStore.setModeForTest(BetaRepairLabMode.paywallValue);
       expect(PricingValueFramingEngine.shouldShow(input: _input()), isFalse);
     });
 
@@ -164,10 +155,7 @@ void main() {
       ]) {
         expect(
           PricingValueFramingEngine.shouldShow(
-            input: _input(
-              feedbackType: null,
-              confidenceLevel: level,
-            ),
+            input: _input(feedbackType: null, confidenceLevel: level),
           ),
           isFalse,
         );
@@ -254,7 +242,8 @@ void main() {
         feedback: PricingValueFramingFeedbackType.yes,
       );
 
-      final props = captured[PricingValueFramingAnalytics.feedbackSelectedEvent];
+      final props =
+          captured[PricingValueFramingAnalytics.feedbackSelectedEvent];
       expect(props, isNotNull);
       expect(props!['source'], 'test');
       expect(props['entry_count'], 4);
@@ -285,7 +274,10 @@ void main() {
       final result = PricingValueFramingEngine.build(input: _input());
       await _pumpCard(tester, result: result);
 
-      expect(find.byKey(const Key('pricing_value_framing_card')), findsOneWidget);
+      expect(
+        find.byKey(const Key('pricing_value_framing_card')),
+        findsOneWidget,
+      );
       expect(find.text(PricingValueFramingCopy.title), findsOneWidget);
       expect(find.text(PricingValueFramingCopy.body), findsOneWidget);
       expect(
@@ -308,11 +300,15 @@ void main() {
       };
 
       await _pumpCard(tester, result: result);
-      await tester.tap(find.byKey(const Key('pricing_value_framing_feedback_yes')));
+      await tester.tap(
+        find.byKey(const Key('pricing_value_framing_feedback_yes')),
+      );
       await tester.pump();
 
       expect(
-        captured.containsKey(PricingValueFramingAnalytics.feedbackSelectedEvent),
+        captured.containsKey(
+          PricingValueFramingAnalytics.feedbackSelectedEvent,
+        ),
         isTrue,
       );
     });
@@ -320,7 +316,9 @@ void main() {
 
   group('protected areas', () {
     test('no fake locked content or paywall screen changes', () {
-      final recordScreen = File('lib/screens/record_screen.dart').readAsStringSync();
+      final recordScreen = File(
+        'lib/screens/record_screen.dart',
+      ).readAsStringSync();
       expect(recordScreen, isNot(contains('RevenueCat')));
       expect(recordScreen, isNot(contains('purchasePackage')));
       expect(recordScreen, isNot(contains('restorePurchases')));

@@ -3,7 +3,6 @@ import '../early_archive/early_first_signal_engine.dart';
 import '../repeat_return_check/repeat_return_check_change_proof.dart';
 import '../repeat_return_check/repeat_return_check_models.dart';
 import 'pattern_detail_engine.dart';
-import 'pattern_detail_model.dart';
 
 /// Inputs needed to rebuild pattern detail after a moment delete.
 class PatternDetailBuildInput {
@@ -26,14 +25,14 @@ class PatternDetailBuildInput {
   final bool viewingConfirmedRepeatOrTimeline;
 
   PatternDetailResult? buildDetail() => PatternDetailEngine.build(
-        entries: entries,
-        confirmedRepeat: confirmedRepeat,
-        changeProof: changeProof,
-        returnChecks: returnChecks,
-        triggerCapturedMilestone: triggerCapturedMilestone,
-        helpfulActionCapturedMilestone: helpfulActionCapturedMilestone,
-        viewingConfirmedRepeatOrTimeline: viewingConfirmedRepeatOrTimeline,
-      );
+    entries: entries,
+    confirmedRepeat: confirmedRepeat,
+    changeProof: changeProof,
+    returnChecks: returnChecks,
+    triggerCapturedMilestone: triggerCapturedMilestone,
+    helpfulActionCapturedMilestone: helpfulActionCapturedMilestone,
+    viewingConfirmedRepeatOrTimeline: viewingConfirmedRepeatOrTimeline,
+  );
 }
 
 /// One saved moment row in pattern detail — no internal ids in UI.

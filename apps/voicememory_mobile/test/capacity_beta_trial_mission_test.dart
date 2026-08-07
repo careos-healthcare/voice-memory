@@ -50,38 +50,38 @@ CapacityBetaMissionInput _input({
   bool activationFitComplete = false,
   bool proInterestCaptured = false,
   CapacityBetaMissionRecord missionRecord = CapacityBetaMissionRecord.empty,
-}) =>
-    CapacityBetaMissionInput(
-      sampleMode: sampleMode,
-      capacityWedgeActive: capacityWedgeActive,
-      capacityMomentCount: capacityMomentCount,
-      activationTarget: 3,
-      pullReasonRecordCount: pullReasonRecordCount,
-      outcomeRecordCount: outcomeRecordCount,
-      laterCostRecordCount: laterCostRecordCount,
-      weeklyReviewAvailable: weeklyReviewAvailable,
-      boundaryResponseSelected: boundaryResponseSelected,
-      activationFitComplete: activationFitComplete,
-      proInterestCaptured: proInterestCaptured,
-      missionRecord: missionRecord,
-    );
+}) => CapacityBetaMissionInput(
+  sampleMode: sampleMode,
+  capacityWedgeActive: capacityWedgeActive,
+  capacityMomentCount: capacityMomentCount,
+  activationTarget: 3,
+  pullReasonRecordCount: pullReasonRecordCount,
+  outcomeRecordCount: outcomeRecordCount,
+  laterCostRecordCount: laterCostRecordCount,
+  weeklyReviewAvailable: weeklyReviewAvailable,
+  boundaryResponseSelected: boundaryResponseSelected,
+  activationFitComplete: activationFitComplete,
+  proInterestCaptured: proInterestCaptured,
+  missionRecord: missionRecord,
+);
 
 JournalEntry _capacityEntry(String id, {String? transcript}) => JournalEntry(
-      id: id,
-      createdAt: DateTime(2026, 6, 12, 12),
-      transcript: transcript ??
-          'I $_privateSnippet again and said yes with no capacity left.',
-      durationSeconds: 30,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 2,
-        recurringThemes: ['work'],
-        exactLanguagePattern: '',
-        concreteObservation: 'Work pressure showed up in this moment.',
-        repeatedSignal: '',
-      ),
-    );
+  id: id,
+  createdAt: DateTime(2026, 6, 12, 12),
+  transcript:
+      transcript ??
+      'I $_privateSnippet again and said yes with no capacity left.',
+  durationSeconds: 30,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 2,
+    recurringThemes: ['work'],
+    exactLanguagePattern: '',
+    concreteObservation: 'Work pressure showed up in this moment.',
+    repeatedSignal: '',
+  ),
+);
 
 List<JournalEntry> _entries(int count) =>
     List.generate(count, (i) => _capacityEntry('e$i'));
@@ -126,10 +126,7 @@ void main() {
   group('CapacityBetaMissionEngine', () {
     test('hidden with no capacity or beta context', () {
       final result = engine.build(
-        _input(
-          capacityWedgeActive: false,
-          capacityMomentCount: 0,
-        ),
+        _input(capacityWedgeActive: false, capacityMomentCount: 0),
       );
       expect(result.hasMission, isFalse);
       expect(result.showOnArchiveHome, isFalse);
@@ -155,31 +152,31 @@ void main() {
       expect(result.hasMission, isFalse);
     });
 
-    test('showOnArchiveHome only for active wedge with incomplete core tasks', () {
-      final active = engine.build(_input(capacityWedgeActive: true));
-      expect(active.showOnArchiveHome, isTrue);
+    test(
+      'showOnArchiveHome only for active wedge with incomplete core tasks',
+      () {
+        final active = engine.build(_input(capacityWedgeActive: true));
+        expect(active.showOnArchiveHome, isTrue);
 
-      final complete = engine.build(
-        _input(
-          capacityWedgeActive: true,
-          capacityMomentCount: 3,
-          pullReasonRecordCount: 1,
-          outcomeRecordCount: 1,
-          laterCostRecordCount: 1,
-          weeklyReviewAvailable: true,
-          boundaryResponseSelected: true,
-          activationFitComplete: true,
-        ),
-      );
-      expect(complete.showOnArchiveHome, isFalse);
-    });
+        final complete = engine.build(
+          _input(
+            capacityWedgeActive: true,
+            capacityMomentCount: 3,
+            pullReasonRecordCount: 1,
+            outcomeRecordCount: 1,
+            laterCostRecordCount: 1,
+            weeklyReviewAvailable: true,
+            boundaryResponseSelected: true,
+            activationFitComplete: true,
+          ),
+        );
+        expect(complete.showOnArchiveHome, isFalse);
+      },
+    );
 
     test('progress uses steps not percentage', () {
       final result = engine.build(
-        _input(
-          capacityWedgeActive: true,
-          capacityMomentCount: 1,
-        ),
+        _input(capacityWedgeActive: true, capacityMomentCount: 1),
       );
       expect(result.progressLabel, '1 of 9 steps complete');
       expect(result.progressLabel, isNot(contains('%')));
@@ -383,28 +380,35 @@ void main() {
     test('links to capacity beta signals', () {
       final result = engine.build(_input(capacityWedgeActive: true));
       expect(result.betaSignalsRoute, CapacityBetaSignalCopy.route);
-      expect(result.viewBetaSignalsCta, CapacityBetaMissionCopy.ctaViewBetaSignals);
+      expect(
+        result.viewBetaSignalsCta,
+        CapacityBetaMissionCopy.ctaViewBetaSignals,
+      );
     });
 
-    test('buildFromJournal excludes private transcript from visible strings', () {
-      final result = engine.buildFromJournal(
-        entries: _entries(3),
-        capacityLoopActive: true,
-        capacityCohortActive: false,
-        fitRecord: _fitRecord(CapacityActivationFitResponseIds.partly),
-        proInterestState: ProInterestState.empty,
-      );
-      for (final task in result.tasks) {
-        expect(task.label, isNot(contains(_privateSnippet)));
-      }
-      expect(result.subtitle, isNot(contains(_privateSnippet)));
-      expect(result.progressLabel, isNot(contains(_privateSnippet)));
-    });
+    test(
+      'buildFromJournal excludes private transcript from visible strings',
+      () {
+        final result = engine.buildFromJournal(
+          entries: _entries(3),
+          capacityLoopActive: true,
+          capacityCohortActive: false,
+          fitRecord: _fitRecord(CapacityActivationFitResponseIds.partly),
+          proInterestState: ProInterestState.empty,
+        );
+        for (final task in result.tasks) {
+          expect(task.label, isNot(contains(_privateSnippet)));
+        }
+        expect(result.subtitle, isNot(contains(_privateSnippet)));
+        expect(result.progressLabel, isNot(contains(_privateSnippet)));
+      },
+    );
 
     test('copy passes language guard', () {
       _expectNoBannedCopy(CapacityBetaMissionCopy.allVisibleStrings());
       _expectNoBannedCopy([
-        engine.build(_input(capacityWedgeActive: true, capacityMomentCount: 2))
+        engine
+            .build(_input(capacityWedgeActive: true, capacityMomentCount: 2))
             .progressLabel,
       ]);
     });
@@ -443,7 +447,9 @@ void main() {
         MaterialApp(
           theme: AppTheme.light(),
           home: Scaffold(
-            body: CapacityBetaMissionCard(result: CapacityBetaMissionResult.hidden),
+            body: CapacityBetaMissionCard(
+              result: CapacityBetaMissionResult.hidden,
+            ),
           ),
         ),
       );
@@ -461,7 +467,10 @@ void main() {
           home: Scaffold(body: CapacityBetaMissionCard(result: result)),
         ),
       );
-      expect(find.byKey(const Key('capacity_beta_mission_card')), findsOneWidget);
+      expect(
+        find.byKey(const Key('capacity_beta_mission_card')),
+        findsOneWidget,
+      );
       expect(find.text(CapacityBetaMissionCopy.title), findsOneWidget);
       expect(find.text(CapacityBetaMissionCopy.openMissionCta), findsOneWidget);
     });
@@ -479,30 +488,37 @@ void main() {
     });
 
     test('appears in Beta Invite Pack', () {
-      final invite =
-          File('lib/screens/beta_invite_pack_screen.dart').readAsStringSync();
+      final invite = File(
+        'packages/archiveme_research/lib/screens/beta_invite_pack_screen.dart',
+      ).readAsStringSync();
       expect(invite, contains('CapacityBetaMissionCard'));
       expect(invite, contains('capacityWedgeActive: true'));
     });
 
     test('appears in Support and Feedback beta tools', () {
-      final support =
-          File('lib/screens/support_feedback_screen.dart').readAsStringSync();
+      final support = File(
+        'lib/screens/support_feedback_screen.dart',
+      ).readAsStringSync();
       expect(support, contains('support_feedback_capacity_beta_mission'));
       expect(support, contains('support_feedback_open_capacity_beta_mission'));
       expect(support, contains('CapacityBetaMissionCopy.route'));
     });
 
     test('beta signal dashboard links back to mission', () {
-      final screen =
-          File('lib/screens/capacity_beta_signal_screen.dart').readAsStringSync();
+      final screen = File(
+        'packages/archiveme_research/lib/screens/capacity_beta_signal_screen.dart',
+      ).readAsStringSync();
       expect(screen, contains('capacity_beta_signal_open_mission'));
-      expect(screen, contains('CapacityBetaMissionCopy.betaSignalsMissionLink'));
+      expect(
+        screen,
+        contains('CapacityBetaMissionCopy.betaSignalsMissionLink'),
+      );
     });
 
     test('archive home uses compact card when showOnArchiveHome', () {
-      final archive =
-          File('lib/screens/archive_belief_screen.dart').readAsStringSync();
+      final archive = File(
+        'lib/screens/archive_belief_screen.dart',
+      ).readAsStringSync();
       expect(archive, contains('archive_home_capacity_beta_mission'));
       expect(archive, contains('showOnArchiveHome'));
       expect(archive, contains('compact: true'));
@@ -522,7 +538,10 @@ void main() {
         find.byKey(const Key('support_feedback_open_capacity_beta_mission')),
         findsOneWidget,
       );
-      expect(find.text(CapacityBetaMissionCopy.startMissionCta), findsOneWidget);
+      expect(
+        find.text(CapacityBetaMissionCopy.startMissionCta),
+        findsOneWidget,
+      );
     });
   });
 }

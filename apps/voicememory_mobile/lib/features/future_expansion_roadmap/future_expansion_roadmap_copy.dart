@@ -42,38 +42,38 @@ abstract final class FutureExpansionRoadmapCopy {
   static const detailReadyForPostV1Planning = 'Ready for post-V1 planning';
 
   static String labelFor(FutureExpansionIdeaId id) => switch (id) {
-        FutureExpansionIdeaId.loopPacks => 'Loop packs',
-        FutureExpansionIdeaId.threeDayProofChallenge => 'Three-day proof challenge',
-        FutureExpansionIdeaId.privateReportsAfterProof =>
-          'Private reports after proof',
-        FutureExpansionIdeaId.safeExports => 'Safe exports',
-        FutureExpansionIdeaId.referralsAfterProof => 'Referrals after proof',
-        FutureExpansionIdeaId.crossDeviceContinuity => 'Cross-device continuity',
-        FutureExpansionIdeaId.b2bWorkPressure => 'B2B work pressure',
-        FutureExpansionIdeaId.returnTomorrowRitual => 'Return-tomorrow ritual',
-        FutureExpansionIdeaId.contradictionChangeDetection =>
-          'Contradiction change detection',
-        FutureExpansionIdeaId.safeSharing => 'Safe sharing',
-        FutureExpansionIdeaId.androidAfterIosProof => 'Android after iOS proof',
-        FutureExpansionIdeaId.archiveMemoryAfterV1 => 'Archive memory after V1',
-        FutureExpansionIdeaId.premiumLongerTrailTiers =>
-          'Premium longer-trail tiers',
-        FutureExpansionIdeaId.partnerLedNiches => 'Partner-led niches',
-      };
+    FutureExpansionIdeaId.loopPacks => 'Loop packs',
+    FutureExpansionIdeaId.threeDayProofChallenge => 'Three-day proof challenge',
+    FutureExpansionIdeaId.privateReportsAfterProof =>
+      'Private reports after proof',
+    FutureExpansionIdeaId.safeExports => 'Safe exports',
+    FutureExpansionIdeaId.referralsAfterProof => 'Referrals after proof',
+    FutureExpansionIdeaId.crossDeviceContinuity => 'Cross-device continuity',
+    FutureExpansionIdeaId.b2bWorkPressure => 'B2B work pressure',
+    FutureExpansionIdeaId.returnTomorrowRitual => 'Return-tomorrow ritual',
+    FutureExpansionIdeaId.contradictionChangeDetection =>
+      'Contradiction change detection',
+    FutureExpansionIdeaId.safeSharing => 'Safe sharing',
+    FutureExpansionIdeaId.androidAfterIosProof => 'Android after iOS proof',
+    FutureExpansionIdeaId.archiveMemoryAfterV1 => 'Archive memory after V1',
+    FutureExpansionIdeaId.premiumLongerTrailTiers =>
+      'Premium longer-trail tiers',
+    FutureExpansionIdeaId.partnerLedNiches => 'Partner-led niches',
+  };
 
   static String prereqLabelFor(FutureExpansionPrereqId id) => switch (id) {
-        FutureExpansionPrereqId.testFlightUploaded => 'TestFlight uploaded',
-        FutureExpansionPrereqId.purchaseWorks => 'Purchase works',
-        FutureExpansionPrereqId.restoreWorks => 'Restore works',
-        FutureExpansionPrereqId.entitlementPersists => 'Entitlement persists',
-        FutureExpansionPrereqId.paidIntentBetaComplete =>
-          'Paid-intent beta complete',
-        FutureExpansionPrereqId.firstProofSuccessRateAcceptable =>
-          'First proof success rate acceptable',
-        FutureExpansionPrereqId.noReleaseBlockers => 'No release blockers',
-        FutureExpansionPrereqId.noSecretsProductionBlockerForProductionLaunch =>
-          'No secrets production blocker for production launch',
-      };
+    FutureExpansionPrereqId.testFlightUploaded => 'TestFlight uploaded',
+    FutureExpansionPrereqId.purchaseWorks => 'Purchase works',
+    FutureExpansionPrereqId.restoreWorks => 'Restore works',
+    FutureExpansionPrereqId.entitlementPersists => 'Entitlement persists',
+    FutureExpansionPrereqId.paidIntentBetaComplete =>
+      'Paid-intent beta complete',
+    FutureExpansionPrereqId.firstProofSuccessRateAcceptable =>
+      'First proof success rate acceptable',
+    FutureExpansionPrereqId.noReleaseBlockers => 'No release blockers',
+    FutureExpansionPrereqId.noSecretsProductionBlockerForProductionLaunch =>
+      'No secrets production blocker for production launch',
+  };
 
   static String messageFor(FutureExpansionGateDecision decision) =>
       switch (decision) {
@@ -83,15 +83,16 @@ abstract final class FutureExpansionRoadmapCopy {
           postV1PlanningAllowedLine,
       };
 
-  static String recommendationFor(FutureExpansionGateDecision decision) =>
-      switch (decision) {
-        FutureExpansionGateDecision.expansionFrozen =>
-          'Complete release proof prerequisites before documenting expansion in product UI.',
-        FutureExpansionGateDecision.documentedOnly =>
-          'Keep expansion in docs and internal planning only. Do not add V1 surfaces.',
-        FutureExpansionGateDecision.postV1PlanningAllowed =>
-          'Plan post-V1 expansion branches one at a time. Keep V1 surfaces unchanged.',
-      };
+  static String recommendationFor(
+    FutureExpansionGateDecision decision,
+  ) => switch (decision) {
+    FutureExpansionGateDecision.expansionFrozen =>
+      'Complete release proof prerequisites before documenting expansion in product UI.',
+    FutureExpansionGateDecision.documentedOnly =>
+      'Keep expansion in docs and internal planning only. Do not add V1 surfaces.',
+    FutureExpansionGateDecision.postV1PlanningAllowed =>
+      'Plan post-V1 expansion branches one at a time. Keep V1 surfaces unchanged.',
+  };
 
   static Iterable<String> allVisibleStrings() sync* {
     yield headline;
@@ -149,11 +150,7 @@ enum FutureExpansionPrereqId {
   noSecretsProductionBlockerForProductionLaunch,
 }
 
-enum FutureExpansionPrereqStatus {
-  pass,
-  pending,
-  fail,
-}
+enum FutureExpansionPrereqStatus { pass, pending, fail }
 
 enum FutureExpansionIdeaStatus {
   blockedBeforeReleaseProof,

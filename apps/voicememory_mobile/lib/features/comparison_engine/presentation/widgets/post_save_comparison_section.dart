@@ -48,10 +48,7 @@ class PostSaveComparisonSection extends StatelessWidget {
 
               return FadeTransition(
                 opacity: animation,
-                child: SlideTransition(
-                  position: offsetAnimation,
-                  child: child,
-                ),
+                child: SlideTransition(position: offsetAnimation, child: child),
               );
             },
             child: _buildContent(state),
@@ -64,9 +61,7 @@ class PostSaveComparisonSection extends StatelessWidget {
   Widget _buildContent(PostSaveComparisonUiState state) {
     switch (state) {
       case ComparisonLoading():
-        return const _PulsingLoadingShell(
-          key: ValueKey('comparison_loading'),
-        );
+        return const _PulsingLoadingShell(key: ValueKey('comparison_loading'));
 
       case ComparisonSuccess(:final viewState):
         if (viewState.state == PatternState.notEnoughEvidence ||
@@ -109,9 +104,10 @@ class _PulsingLoadingShellState extends State<_PulsingLoadingShell>
       vsync: this,
     )..repeat(reverse: true);
 
-    _opacityAnimation = Tween<double>(begin: 0.4, end: 0.85).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
-    );
+    _opacityAnimation = Tween<double>(
+      begin: 0.4,
+      end: 0.85,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
   }
 
   @override
@@ -162,10 +158,7 @@ class _PulsingLoadingShellState extends State<_PulsingLoadingShell>
 }
 
 class _TextPlaceholder extends StatelessWidget {
-  const _TextPlaceholder({
-    required this.width,
-    required this.height,
-  });
+  const _TextPlaceholder({required this.width, required this.height});
 
   final double width;
   final double height;

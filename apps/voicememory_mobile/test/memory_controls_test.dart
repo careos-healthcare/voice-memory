@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/billing/archive_entitlement_reader.dart';
@@ -9,7 +7,6 @@ import 'package:voicememory_mobile/features/memory/memory_authority_framing_engi
 import 'package:voicememory_mobile/features/memory/memory_connection_rules.dart';
 import 'package:voicememory_mobile/features/memory/memory_priority_decision.dart';
 import 'package:voicememory_mobile/features/memory/memory_priority_governance.dart';
-import 'package:voicememory_mobile/features/memory/memory_scope.dart';
 import 'package:voicememory_mobile/features/memory/memory_scope_policy.dart';
 import 'package:voicememory_mobile/features/memory/next_entry_fresh_mode.dart';
 import 'package:voicememory_mobile/features/memory/wrong_thread_feedback.dart';
@@ -36,6 +33,7 @@ import 'package:voicememory_mobile/widgets/pressure_retention/weekly_thread_revi
 
 import 'support/expand_advanced_save_options.dart';
 import 'support/memory_pressure_stores.dart';
+import 'support/test_storage_sandbox.dart';
 
 const _threadEngine = ThreadReturnEvidenceEngine();
 const _weeklyEngine = WeeklyThreadReviewEngine();
@@ -180,14 +178,14 @@ void main() {
   });
 
   group('Treat this as new', () {
-    late Directory tempDir;
+    late TestStorageSandbox sandbox;
 
     setUp(() async {
-      tempDir = Directory.systemTemp.createTempSync('vm_memory_controls_');
-      await AppServices.resetForTest(
-        journalPath: '${tempDir.path}/journal.json',
-      );
+      sandbox = TestStorageSandbox.create();
+      await AppServices.resetForTest(journalPath: sandbox.journalPath);
     });
+
+    tearDown(() => sandbox.dispose());
 
     testWidgets('appears on the record screen before save', (tester) async {
       await _pumpRecordWithEntries(tester, entries: 1);
@@ -337,7 +335,9 @@ void main() {
       await _pumpCard(tester, BeliefDistanceCard(belief: belief));
       await tester.tap(
         find.descendant(
-          of: find.byKey(const Key('memory_connection_actions_belief_distance')),
+          of: find.byKey(
+            const Key('memory_connection_actions_belief_distance'),
+          ),
           matching: find.text(MemoryControlCopy.notRelatedLabel),
         ),
       );
@@ -550,7 +550,9 @@ void main() {
       await tester.pumpAndSettle();
       // Close the sheet so the not-related action is reachable.
       Navigator.of(
-        tester.element(find.byKey(const Key('memory_priority_explanation_sheet'))),
+        tester.element(
+          find.byKey(const Key('memory_priority_explanation_sheet')),
+        ),
       ).pop();
       await tester.pumpAndSettle();
       await tester.tap(find.text(MemoryControlCopy.notRelatedLabel));

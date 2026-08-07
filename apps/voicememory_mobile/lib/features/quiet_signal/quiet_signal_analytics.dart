@@ -11,7 +11,7 @@ abstract final class QuietSignalAnalytics {
 
   @visibleForTesting
   static void Function(String event, Map<String, Object> properties)?
-      captureForTest;
+  captureForTest;
 
   static void seen({
     required String source,
@@ -49,8 +49,8 @@ abstract final class QuietSignalAnalytics {
     final props = <String, Object>{
       'source': source,
       'entry_count': entryCount,
-      if (daysSinceSeen != null) 'days_since_seen': daysSinceSeen,
-      if (actionType != null) 'action_type': actionType,
+      'days_since_seen': ?daysSinceSeen,
+      'action_type': ?actionType,
     };
 
     captureForTest?.call(event, props);
@@ -71,8 +71,10 @@ abstract final class QuietSignalAnalytics {
     }
   }
 
-  @visibleForTesting
-  static void resetForTest() {
+  static void resetPersistedState() {
     captureForTest = null;
   }
+
+  @visibleForTesting
+  static void resetForTest() => resetPersistedState();
 }

@@ -51,7 +51,9 @@ void main() {
     expect(RevenueCatDiagnosticsLog.keyFingerprint(null), 'missing');
     expect(RevenueCatDiagnosticsLog.keyFingerprint(''), 'missing');
     expect(
-      RevenueCatDiagnosticsLog.keyFingerprint('appl_pOUlWdiVXlWpFLvaZscgayWhfpH'),
+      RevenueCatDiagnosticsLog.keyFingerprint(
+        'appl_pOUlWdiVXlWpFLvaZscgayWhfpH',
+      ),
       'appl_pOU…',
     );
   });

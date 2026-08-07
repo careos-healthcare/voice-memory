@@ -4,14 +4,12 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/features/beta/archive_beta_mission_gate.dart';
 import 'package:voicememory_mobile/features/beta_proof_feedback/beta_proof_feedback_model.dart';
 import 'package:voicememory_mobile/features/beta_proof_feedback/beta_proof_feedback_store.dart';
-import 'package:voicememory_mobile/features/beta_repair_lab/beta_repair_lab_engine.dart';
 import 'package:voicememory_mobile/features/beta_repair_lab/beta_repair_lab_model.dart';
 import 'package:voicememory_mobile/features/beta_repair_lab/beta_repair_lab_store.dart';
 import 'package:voicememory_mobile/features/evidence_anchors/evidence_anchor_engine.dart';
 import 'package:voicememory_mobile/features/evidence_trail_clarity/evidence_trail_clarity_engine.dart';
 import 'package:voicememory_mobile/features/evidence_weighting/evidence_weighting_copy.dart';
 import 'package:voicememory_mobile/features/pattern_match_quality/pattern_match_quality_engine.dart';
-import 'package:voicememory_mobile/features/pattern_match_quality/pattern_match_quality_model.dart';
 import 'package:voicememory_mobile/features/pricing_validation/pricing_validation_engine.dart';
 import 'package:voicememory_mobile/features/proof_confidence_calibration/proof_confidence_calibration_engine.dart';
 import 'package:voicememory_mobile/features/proof_confidence_calibration/proof_confidence_calibration_model.dart';
@@ -26,10 +24,11 @@ import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/models/sync_status.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
 import 'package:voicememory_mobile/storage/mobile_prefs_store.dart';
+import 'support/test_storage_sandbox.dart';
 
 class _MemoryPrefs extends MobilePrefsStore {
   _MemoryPrefs()
-      : super(file: File('test/tmp/tighten_anchors_again/unused.json'));
+    : super(file: File('test/tmp/tighten_anchors_again/unused.json'));
 
   final Map<String, Map<String, dynamic>> maps = {};
 
@@ -52,23 +51,22 @@ JournalEntry _entry(
   DateTime? createdAt,
   String mood = 'thoughtful',
   String concreteObservation = 'Work pressure showed up again today.',
-}) =>
-    JournalEntry(
-      id: id,
-      createdAt: createdAt ?? _now,
-      transcript: transcript,
-      durationSeconds: 24,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: Reflection(
-        mood: mood,
-        emotionalIntensity: 2,
-        recurringThemes: const ['work'],
-        exactLanguagePattern: '',
-        concreteObservation: concreteObservation,
-        repeatedSignal: '',
-      ),
-      syncStatus: SyncStatus.localOnly,
-    );
+}) => JournalEntry(
+  id: id,
+  createdAt: createdAt ?? _now,
+  transcript: transcript,
+  durationSeconds: 24,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: Reflection(
+    mood: mood,
+    emotionalIntensity: 2,
+    recurringThemes: const ['work'],
+    exactLanguagePattern: '',
+    concreteObservation: concreteObservation,
+    repeatedSignal: '',
+  ),
+  syncStatus: SyncStatus.localOnly,
+);
 
 List<JournalEntry> _specificRepeatEntries({DateTime? anchor}) {
   final base = anchor ?? _now;
@@ -142,44 +140,45 @@ List<JournalEntry> _genericEmotionalEntries() {
 BetaRepairLabVisibilityInput _repairInput({
   ProofConfidenceLevel confidenceLevel = ProofConfidenceLevel.watchOnly,
   BetaProofFeedbackType? feedbackType,
-}) =>
-    BetaRepairLabVisibilityInput(
-      mode: BetaRepairLabMode.evidenceTrailTimelineClarity,
-      entryCount: 4,
-      source: 'test',
-      isPro: false,
-      isRecording: false,
-      isDegradedTranscriptState: false,
-      whatChangedQuestionActive: false,
-      patternReviewInboxHasActiveItems: false,
-      hasTimelineProofVisible: true,
-      hasConfirmedRepeat: true,
-      confidenceLevel: confidenceLevel,
-      hasUsefulProofFeedback: feedbackType == BetaProofFeedbackType.useful,
-      feedbackType: feedbackType,
-      isNegativeFeedback: feedbackType == BetaProofFeedbackType.tooVague ||
-          feedbackType == BetaProofFeedbackType.notRelevant,
-      betaMissionEnabled: true,
-    );
+}) => BetaRepairLabVisibilityInput(
+  mode: BetaRepairLabMode.evidenceTrailTimelineClarity,
+  entryCount: 4,
+  source: 'test',
+  isPro: false,
+  isRecording: false,
+  isDegradedTranscriptState: false,
+  whatChangedQuestionActive: false,
+  patternReviewInboxHasActiveItems: false,
+  hasTimelineProofVisible: true,
+  hasConfirmedRepeat: true,
+  confidenceLevel: confidenceLevel,
+  hasUsefulProofFeedback: feedbackType == BetaProofFeedbackType.useful,
+  feedbackType: feedbackType,
+  isNegativeFeedback:
+      feedbackType == BetaProofFeedbackType.tooVague ||
+      feedbackType == BetaProofFeedbackType.notRelevant,
+  betaMissionEnabled: true,
+);
 
 void main() {
+  late TestStorageSandbox sandbox;
   late _MemoryPrefs prefs;
 
   setUp(() async {
+    sandbox = TestStorageSandbox.create();
     prefs = _MemoryPrefs();
     ArchiveBetaMissionGate.enabledOverride = true;
     await BetaRepairLabStore.resetForTest(prefs);
     await AppServices.resetForTest(
-      journalPath:
-          'test/tmp/tighten_anchors_again/${DateTime.now().microsecondsSinceEpoch}_journal.json',
-      prefsPath:
-          'test/tmp/tighten_anchors_again/${DateTime.now().microsecondsSinceEpoch}_prefs.json',
+      journalPath: sandbox.journalPath,
+      prefsPath: sandbox.prefsPath,
       skipRevenueCat: true,
     );
     ArchiveBetaMissionGate.enabledOverride = true;
     await BetaProofFeedbackStore.resetForTest(prefs);
   });
 
+  tearDown(() => sandbox.dispose());
   tearDown(() async {
     ArchiveBetaMissionGate.resetForTest();
     await BetaRepairLabStore.resetForTest(prefs);
@@ -201,7 +200,9 @@ void main() {
         isFalse,
       );
       expect(
-        AnchorSpecificityGuard.isProofLevelEligible('saved privately on device'),
+        AnchorSpecificityGuard.isProofLevelEligible(
+          'saved privately on device',
+        ),
         isFalse,
       );
       expect(
@@ -290,10 +291,7 @@ void main() {
       expect(calibration.hasSafeAnchor, isTrue);
       expect(
         calibration.level,
-        anyOf(
-          ProofConfidenceLevel.useful,
-          ProofConfidenceLevel.strong,
-        ),
+        anyOf(ProofConfidenceLevel.useful, ProofConfidenceLevel.strong),
       );
       final timeline = TimelineProofMomentEngine.build(
         entries: _specificRepeatEntries(),
@@ -383,9 +381,7 @@ void main() {
     test('evidence trail pricing modes cannot override rejected anchor', () {
       expect(
         EvidenceTrailClarityEngine.shouldShow(
-          input: _repairInput(
-            confidenceLevel: ProofConfidenceLevel.watchOnly,
-          ),
+          input: _repairInput(confidenceLevel: ProofConfidenceLevel.watchOnly),
           hasSafeAnchor: false,
         ),
         isFalse,

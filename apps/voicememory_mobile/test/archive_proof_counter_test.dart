@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/billing/archive_entitlement_reader.dart';
@@ -8,7 +6,7 @@ import 'package:voicememory_mobile/features/pressure_retention/archive_proof_cou
 import 'package:voicememory_mobile/features/pressure_retention/archive_proof_counter_model.dart';
 import 'package:voicememory_mobile/features/pressure_retention/pressure_check_in_record.dart';
 import 'package:voicememory_mobile/features/pressure_retention/thread_return_evidence_engine.dart';
-import 'package:voicememory_mobile/screens/pressure_insights_screen.dart';
+import 'package:archiveme_research/screens/pressure_insights_screen.dart';
 import 'package:voicememory_mobile/screens/record_screen.dart';
 import 'package:voicememory_mobile/services/activation_funnel_analytics.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
@@ -17,6 +15,7 @@ import 'package:voicememory_mobile/widgets/pressure_retention/archive_proof_coun
 import 'package:voicememory_mobile/widgets/pressure_retention/value_accuracy_feedback_row.dart';
 
 import 'support/memory_pressure_stores.dart';
+import 'support/test_storage_sandbox.dart';
 
 final DateTime _base = DateTime(2026, 6, 9, 12);
 
@@ -323,17 +322,17 @@ void main() {
   });
 
   group('Record screen integration', () {
-    late Directory tempDir;
+    late TestStorageSandbox sandbox;
 
     setUp(() async {
-      tempDir = Directory.systemTemp.createTempSync('vm_archive_proof_');
-      await AppServices.resetForTest(
-        journalPath: '${tempDir.path}/journal.json',
-      );
+      sandbox = TestStorageSandbox.create();
+      await AppServices.resetForTest(journalPath: sandbox.journalPath);
       VisualAuditOverrides.setRecordPresentation(
         const RecordAuditPresentation(ui: RecordUiState.ready),
       );
     });
+
+    tearDown(() => sandbox.dispose());
 
     tearDown(() {
       VisualAuditOverrides.setRecordPresentation(null);

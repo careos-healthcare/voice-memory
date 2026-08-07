@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../../design/archive_mobile_typography.dart';
 import '../../features/archive_packs/archive_pack.dart';
-import '../../features/archive_packs/archive_pack_store.dart';
 import '../../features/archive_packs/entry_pack_scope.dart';
 import '../../services/activation_funnel_analytics.dart';
 import '../../theme/app_colors.dart';

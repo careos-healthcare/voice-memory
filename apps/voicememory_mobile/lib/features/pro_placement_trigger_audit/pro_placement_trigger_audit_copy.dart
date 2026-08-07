@@ -41,7 +41,8 @@ abstract final class ProPlacementTriggerAuditCopy {
   static const blockedAlreadyShownBody =
       'The Pro card was already shown once. Do not stack Pro cards.';
 
-  static const blockedNotBetaRepairModeTitle = 'Pro placement repair not active';
+  static const blockedNotBetaRepairModeTitle =
+      'Pro placement repair not active';
   static const blockedNotBetaRepairModeBody =
       'This build is not testing Pro placement.';
 
@@ -49,41 +50,43 @@ abstract final class ProPlacementTriggerAuditCopy {
   static const unknownBody =
       'The audit could not determine why Pro was hidden.';
 
-  static String titleFor(ProPlacementTriggerAuditOutcome outcome) =>
-      switch (outcome) {
-        ProPlacementTriggerAuditOutcome.inactive => inactiveTitle,
-        ProPlacementTriggerAuditOutcome.eligibleAndShown => eligibleAndShownTitle,
-        ProPlacementTriggerAuditOutcome.blockedNoUsefulProof =>
-          blockedNoUsefulProofTitle,
-        ProPlacementTriggerAuditOutcome.blockedWeakProof => blockedWeakProofTitle,
-        ProPlacementTriggerAuditOutcome.blockedNegativeFeedback =>
-          blockedNegativeFeedbackTitle,
-        ProPlacementTriggerAuditOutcome.blockedNoStrongAnchor =>
-          blockedNoStrongAnchorTitle,
-        ProPlacementTriggerAuditOutcome.blockedAlreadyShown =>
-          blockedAlreadyShownTitle,
-        ProPlacementTriggerAuditOutcome.blockedNotBetaRepairMode =>
-          blockedNotBetaRepairModeTitle,
-        ProPlacementTriggerAuditOutcome.unknown => unknownTitle,
-      };
+  static String titleFor(
+    ProPlacementTriggerAuditOutcome outcome,
+  ) => switch (outcome) {
+    ProPlacementTriggerAuditOutcome.inactive => inactiveTitle,
+    ProPlacementTriggerAuditOutcome.eligibleAndShown => eligibleAndShownTitle,
+    ProPlacementTriggerAuditOutcome.blockedNoUsefulProof =>
+      blockedNoUsefulProofTitle,
+    ProPlacementTriggerAuditOutcome.blockedWeakProof => blockedWeakProofTitle,
+    ProPlacementTriggerAuditOutcome.blockedNegativeFeedback =>
+      blockedNegativeFeedbackTitle,
+    ProPlacementTriggerAuditOutcome.blockedNoStrongAnchor =>
+      blockedNoStrongAnchorTitle,
+    ProPlacementTriggerAuditOutcome.blockedAlreadyShown =>
+      blockedAlreadyShownTitle,
+    ProPlacementTriggerAuditOutcome.blockedNotBetaRepairMode =>
+      blockedNotBetaRepairModeTitle,
+    ProPlacementTriggerAuditOutcome.unknown => unknownTitle,
+  };
 
-  static String bodyFor(ProPlacementTriggerAuditOutcome outcome) =>
-      switch (outcome) {
-        ProPlacementTriggerAuditOutcome.inactive => inactiveBody,
-        ProPlacementTriggerAuditOutcome.eligibleAndShown => eligibleAndShownBody,
-        ProPlacementTriggerAuditOutcome.blockedNoUsefulProof =>
-          blockedNoUsefulProofBody,
-        ProPlacementTriggerAuditOutcome.blockedWeakProof => blockedWeakProofBody,
-        ProPlacementTriggerAuditOutcome.blockedNegativeFeedback =>
-          blockedNegativeFeedbackBody,
-        ProPlacementTriggerAuditOutcome.blockedNoStrongAnchor =>
-          blockedNoStrongAnchorBody,
-        ProPlacementTriggerAuditOutcome.blockedAlreadyShown =>
-          blockedAlreadyShownBody,
-        ProPlacementTriggerAuditOutcome.blockedNotBetaRepairMode =>
-          blockedNotBetaRepairModeBody,
-        ProPlacementTriggerAuditOutcome.unknown => unknownBody,
-      };
+  static String bodyFor(
+    ProPlacementTriggerAuditOutcome outcome,
+  ) => switch (outcome) {
+    ProPlacementTriggerAuditOutcome.inactive => inactiveBody,
+    ProPlacementTriggerAuditOutcome.eligibleAndShown => eligibleAndShownBody,
+    ProPlacementTriggerAuditOutcome.blockedNoUsefulProof =>
+      blockedNoUsefulProofBody,
+    ProPlacementTriggerAuditOutcome.blockedWeakProof => blockedWeakProofBody,
+    ProPlacementTriggerAuditOutcome.blockedNegativeFeedback =>
+      blockedNegativeFeedbackBody,
+    ProPlacementTriggerAuditOutcome.blockedNoStrongAnchor =>
+      blockedNoStrongAnchorBody,
+    ProPlacementTriggerAuditOutcome.blockedAlreadyShown =>
+      blockedAlreadyShownBody,
+    ProPlacementTriggerAuditOutcome.blockedNotBetaRepairMode =>
+      blockedNotBetaRepairModeBody,
+    ProPlacementTriggerAuditOutcome.unknown => unknownBody,
+  };
 
   static String blockReasonFor(ProPlacementTriggerAuditOutcome outcome) =>
       switch (outcome) {

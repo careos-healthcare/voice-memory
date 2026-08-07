@@ -33,13 +33,11 @@ abstract final class BetaFixPlaybookEngine {
 
   static BetaFixPlaybookResult fromValidationResult(
     BetaValidationDecisionMatrixResult result,
-  ) =>
-      buildForOutcome(result.outcome);
+  ) => buildForOutcome(result.outcome);
 
   static BetaFixPlaybookResult fromRevenueInput(
     RevenueReadinessDashboardV2Input input,
-  ) =>
-      fromValidationResult(
-        BetaValidationDecisionMatrixEngine.fromRevenueInput(input),
-      );
+  ) => fromValidationResult(
+    BetaValidationDecisionMatrixEngine.fromRevenueInput(input),
+  );
 }

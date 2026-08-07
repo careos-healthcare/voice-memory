@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:voicememory_mobile/api/api_client.dart';
 import 'package:voicememory_mobile/config/archive_me_demo_state.dart';
 import 'package:voicememory_mobile/config/screenshot_mode.dart';
 import 'package:voicememory_mobile/features/archive_proof/archive_belief_surface.dart';
@@ -12,6 +11,8 @@ import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/services/product_analytics.dart';
 import 'package:voicememory_mobile/services/sync_service.dart';
+import 'helpers/fake_sync_api_client.dart';
+import 'helpers/test_sync_service.dart';
 import 'package:voicememory_mobile/storage/journal_store.dart';
 import 'package:voicememory_mobile/storage/mobile_prefs_store.dart';
 
@@ -79,21 +80,26 @@ void main() {
   });
 
   group('JournalStore demo isolation', () {
-    test('loadAll returns demo entries without reading poisoned disk', () async {
-      ArchiveMeDemoState.debugForceEnabledForTest = true;
-      final dir = Directory.systemTemp.createTempSync('archive_me_demo');
-      addTearDown(() => dir.deleteSync(recursive: true));
-      final file = File('${dir.path}/journal.json')
-        ..writeAsStringSync('not valid json — would throw if parsed');
-      final store = JournalStore(file: file);
+    test(
+      'loadAll returns demo entries without reading poisoned disk',
+      () async {
+        ArchiveMeDemoState.debugForceEnabledForTest = true;
+        final dir = Directory.systemTemp.createTempSync('archive_me_demo');
+        addTearDown(() => dir.deleteSync(recursive: true));
+        final file = File('${dir.path}/journal.json')
+          ..writeAsStringSync('not valid json — would throw if parsed');
+        final store = JournalStore(file: file);
 
-      final loaded = await store.loadAll();
-      expect(loaded, hasLength(3));
-      expect(
-        loaded.every((e) => e.id.startsWith(ArchiveMeDemoState.entryIdPrefix)),
-        isTrue,
-      );
-    });
+        final loaded = await store.loadAll();
+        expect(loaded, hasLength(3));
+        expect(
+          loaded.every(
+            (e) => e.id.startsWith(ArchiveMeDemoState.entryIdPrefix),
+          ),
+          isTrue,
+        );
+      },
+    );
 
     test('save is a no-op while demo is active', () async {
       ArchiveMeDemoState.debugForceEnabledForTest = true;
@@ -113,7 +119,7 @@ void main() {
           reflection: const Reflection(
             mood: 'neutral',
             emotionalIntensity: 1,
-            recurringThemes: const [],
+            recurringThemes: [],
             exactLanguagePattern: '',
             concreteObservation: '',
             repeatedSignal: '',
@@ -135,7 +141,11 @@ void main() {
         file: File('${dir.path}/journal.json')..writeAsStringSync('broken'),
       );
       final prefs = MobilePrefsStore(file: File('${dir.path}/prefs.json'));
-      final sync = SyncService(ApiClient(baseUrl: ''), journal, prefs);
+      final sync = await createTestSyncService(
+        syncApi: FakeSyncApiClient(),
+        journal: journal,
+        prefs: prefs,
+      );
 
       final result = await sync.syncNow();
       expect(result.pushed, 0);

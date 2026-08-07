@@ -6,10 +6,10 @@ enum ArchiveTimelineTruthFeedback {
   notReally;
 
   String get storageId => switch (this) {
-        yes => 'yes',
-        partly => 'partly',
-        notReally => 'notReally',
-      };
+    yes => 'yes',
+    partly => 'partly',
+    notReally => 'notReally',
+  };
 
   static ArchiveTimelineTruthFeedback? fromStorage(String? raw) {
     if (raw == null || raw.isEmpty) return null;

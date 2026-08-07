@@ -12,18 +12,14 @@ import 'package:voicememory_mobile/features/memory/memory_scope.dart';
 import 'package:voicememory_mobile/features/memory/memory_scope_policy.dart';
 import 'package:voicememory_mobile/features/memory/not_important_feedback.dart';
 import 'package:voicememory_mobile/features/memory/wrong_thread_feedback.dart';
-import 'package:voicememory_mobile/features/pressure_retention/belief_distance_engine.dart';
 import 'package:voicememory_mobile/features/pressure_retention/pressure_check_in_record.dart';
 import 'package:voicememory_mobile/features/pressure_retention/thread_return_evidence_engine.dart';
-import 'package:voicememory_mobile/features/pressure_retention/weekly_thread_review_engine.dart';
 import 'package:voicememory_mobile/services/activation_funnel_analytics.dart';
 import 'package:voicememory_mobile/theme/app_theme.dart';
 import 'package:voicememory_mobile/widgets/aha/aha_moment_feedback_row.dart';
 import 'package:voicememory_mobile/widgets/aha/first_aha_moment_card.dart';
 import 'package:voicememory_mobile/widgets/memory/memory_evidence_inspect_sheet.dart';
-import 'package:voicememory_mobile/widgets/pressure_retention/belief_distance_card.dart';
 import 'package:voicememory_mobile/widgets/pressure_retention/thread_return_evidence_card.dart';
-import 'package:voicememory_mobile/widgets/pressure_retention/weekly_thread_review_card.dart';
 
 class _Event {
   const _Event(this.name, this.properties);

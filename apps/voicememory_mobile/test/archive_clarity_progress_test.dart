@@ -48,32 +48,32 @@ ArchiveClarityInput _input({
   bool betaFeedbackCaptured = false,
   bool weeklyReviewAvailable = false,
   bool sampleMode = false,
-}) =>
-    ArchiveClarityInput(
-      realSavedMomentCount: realSavedMomentCount,
-      usableEvidenceCount: usableEvidenceCount,
-      hasWatchTheme: hasWatchTheme,
-      betaFeedbackCaptured: betaFeedbackCaptured,
-      weeklyReviewAvailable: weeklyReviewAvailable,
-      sampleMode: sampleMode,
-    );
+}) => ArchiveClarityInput(
+  realSavedMomentCount: realSavedMomentCount,
+  usableEvidenceCount: usableEvidenceCount,
+  hasWatchTheme: hasWatchTheme,
+  betaFeedbackCaptured: betaFeedbackCaptured,
+  weeklyReviewAvailable: weeklyReviewAvailable,
+  sampleMode: sampleMode,
+);
 
 JournalEntry _entry(String id, {String? transcript}) => JournalEntry(
-      id: id,
-      createdAt: DateTime(2026, 6, 12, 12),
-      transcript: transcript ??
-          'I noticed the same work pressure pattern when I said yes again today.',
-      durationSeconds: 30,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 2,
-        recurringThemes: ['work'],
-        exactLanguagePattern: '',
-        concreteObservation: 'Work pressure showed up in this moment.',
-        repeatedSignal: '',
-      ),
-    );
+  id: id,
+  createdAt: DateTime(2026, 6, 12, 12),
+  transcript:
+      transcript ??
+      'I noticed the same work pressure pattern when I said yes again today.',
+  durationSeconds: 30,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 2,
+    recurringThemes: ['work'],
+    exactLanguagePattern: '',
+    concreteObservation: 'Work pressure showed up in this moment.',
+    repeatedSignal: '',
+  ),
+);
 
 List<JournalEntry> _realEntries(int count) =>
     List.generate(count, (i) => _entry('real_$i'));
@@ -179,10 +179,7 @@ void main() {
     });
 
     test('sample entries are excluded from real counts', () {
-      final entries = [
-        ..._realEntries(2),
-        ...SampleArchiveEntries.build(),
-      ];
+      final entries = [..._realEntries(2), ...SampleArchiveEntries.build()];
       expect(engine.realSavedMomentCount(entries), 2);
     });
 
@@ -209,8 +206,7 @@ void main() {
     });
 
     test('copy uses ArchiveMe and avoids banned language', () {
-      final copy =
-          ArchiveClarityCopy.allVisibleStrings.join(' ').toLowerCase();
+      final copy = ArchiveClarityCopy.allVisibleStrings.join(' ').toLowerCase();
       expect(copy, contains('archiveme'));
       _expectNoBannedCopy(ArchiveClarityCopy.allVisibleStrings);
     });
@@ -247,12 +243,20 @@ void main() {
         ),
       );
 
-      expect(plan.primarySections, contains(ArchiveHomeSectionId.firstWeekPath));
-      expect(plan.primarySections, contains(ArchiveHomeSectionId.dailyArchiveExercise));
+      expect(
+        plan.primarySections,
+        contains(ArchiveHomeSectionId.firstWeekPath),
+      );
+      expect(
+        plan.primarySections,
+        contains(ArchiveHomeSectionId.dailyArchiveExercise),
+      );
       expect(
         plan.primarySections.indexOf(ArchiveHomeSectionId.firstWeekPath),
         lessThan(
-          plan.primarySections.indexOf(ArchiveHomeSectionId.dailyArchiveExercise),
+          plan.primarySections.indexOf(
+            ArchiveHomeSectionId.dailyArchiveExercise,
+          ),
         ),
       );
       final ranked = [...plan.primarySections, ...plan.secondarySections];
@@ -275,8 +279,14 @@ void main() {
         ),
       );
 
-      expect(find.byKey(const Key('archive_clarity_progress_card')), findsOneWidget);
-      expect(find.text(ArchiveClarityCopy.stageComparisonForming), findsOneWidget);
+      expect(
+        find.byKey(const Key('archive_clarity_progress_card')),
+        findsOneWidget,
+      );
+      expect(
+        find.text(ArchiveClarityCopy.stageComparisonForming),
+        findsOneWidget,
+      );
     });
   });
 
@@ -289,9 +299,7 @@ void main() {
           theme: AppTheme.light(),
           home: Scaffold(
             body: ArchiveHomeMoreToolsSection(
-              children: const [
-                Text('Secondary archive tool'),
-              ],
+              children: const [Text('Secondary archive tool')],
             ),
           ),
         ),
@@ -305,7 +313,9 @@ void main() {
       );
       expect(find.text('Secondary archive tool'), findsNothing);
 
-      await tester.tap(find.text(ArchiveHomePriorityCopy.moreArchiveToolsTitle));
+      await tester.tap(
+        find.text(ArchiveHomePriorityCopy.moreArchiveToolsTitle),
+      );
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 250));
 
@@ -332,8 +342,9 @@ void main() {
     });
 
     test('support feedback links to archive clarity when implemented', () {
-      final support =
-          File('lib/screens/support_feedback_screen.dart').readAsStringSync();
+      final support = File(
+        'lib/screens/support_feedback_screen.dart',
+      ).readAsStringSync();
       expect(support, contains('support_feedback_open_archive_clarity'));
       expect(support, contains('ArchiveClarityCopy.route'));
     });

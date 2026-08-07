@@ -47,7 +47,8 @@ abstract final class RevenueReadinessDashboardV2Copy {
   static const statusWatch = 'Watch';
   static const statusFailing = 'Failing';
 
-  static const noDiagnosesLine = 'No conversion breaks flagged from local counts yet.';
+  static const noDiagnosesLine =
+      'No conversion breaks flagged from local counts yet.';
   static const nextActionPrefix = 'Next action';
 
   static const diagnosisLowFirstSave = 'Low first save';
@@ -66,7 +67,8 @@ abstract final class RevenueReadinessDashboardV2Copy {
   static const actionFixReturnPrompt = 'Fix return prompt';
   static const actionFixReasonToReturn = 'Fix reason to come back';
   static const actionFixProofWeak = 'Proof too weak/cautious';
-  static const actionFixAnchorCalibration = 'Anchor/relevance calibration issue';
+  static const actionFixAnchorCalibration =
+      'Anchor/relevance calibration issue';
   static const actionFixReturnLoop = 'Return loop weak';
   static const actionFixProBridgeHidden = 'Pro bridge too hidden';
   static const actionFixPaywallValue = 'Paywall value unclear';
@@ -81,11 +83,13 @@ abstract final class RevenueReadinessDashboardV2Copy {
   static const diagnosisFirstSessionCaptureWeak = 'First-session capture weak';
   static const diagnosisProUnderstandingWeak = 'Pro understanding weak';
 
-  static const actionPaywallCtaLift = 'Sharpen paywall CTA copy and purchase line';
+  static const actionPaywallCtaLift =
+      'Sharpen paywall CTA copy and purchase line';
   static const actionFirstSaveLift = 'Sharpen first save lift copy';
   static const actionFirstSessionLift = 'Show first session lift card';
   static const actionProUnderstandingLift = 'Show Pro understanding lift card';
-  static const actionReturnAfterProofLift = 'Sharpen return-after-proof reason copy';
+  static const actionReturnAfterProofLift =
+      'Sharpen return-after-proof reason copy';
   static const actionProVisibilityLift = 'Sharpen Pro visibility bridge copy';
 
   static Iterable<String> allVisibleStrings() sync* {

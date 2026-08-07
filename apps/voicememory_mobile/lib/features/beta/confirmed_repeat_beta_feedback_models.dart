@@ -3,11 +3,7 @@ library;
 
 import 'confirmed_repeat_beta_feedback_copy.dart';
 
-enum ConfirmedRepeatBetaFeedbackChoice {
-  yes,
-  somewhat,
-  notReally,
-}
+enum ConfirmedRepeatBetaFeedbackChoice { yes, somewhat, notReally }
 
 enum ConfirmedRepeatBetaFeedbackReason {
   tooGeneric,
@@ -19,10 +15,10 @@ enum ConfirmedRepeatBetaFeedbackReason {
 extension ConfirmedRepeatBetaFeedbackChoiceAnalytics
     on ConfirmedRepeatBetaFeedbackChoice {
   String get analyticsAnswer => switch (this) {
-        ConfirmedRepeatBetaFeedbackChoice.yes => 'yes',
-        ConfirmedRepeatBetaFeedbackChoice.somewhat => 'somewhat',
-        ConfirmedRepeatBetaFeedbackChoice.notReally => 'not_really',
-      };
+    ConfirmedRepeatBetaFeedbackChoice.yes => 'yes',
+    ConfirmedRepeatBetaFeedbackChoice.somewhat => 'somewhat',
+    ConfirmedRepeatBetaFeedbackChoice.notReally => 'not_really',
+  };
 
   bool get showsFollowUp => this != ConfirmedRepeatBetaFeedbackChoice.yes;
 }
@@ -30,22 +26,22 @@ extension ConfirmedRepeatBetaFeedbackChoiceAnalytics
 extension ConfirmedRepeatBetaFeedbackReasonAnalytics
     on ConfirmedRepeatBetaFeedbackReason {
   String get analyticsReason => switch (this) {
-        ConfirmedRepeatBetaFeedbackReason.tooGeneric => 'too_generic',
-        ConfirmedRepeatBetaFeedbackReason.wrongPattern => 'wrong_pattern',
-        ConfirmedRepeatBetaFeedbackReason.repeatedTooMuch => 'repeated_too_much',
-        ConfirmedRepeatBetaFeedbackReason.missingContext => 'missing_context',
-      };
+    ConfirmedRepeatBetaFeedbackReason.tooGeneric => 'too_generic',
+    ConfirmedRepeatBetaFeedbackReason.wrongPattern => 'wrong_pattern',
+    ConfirmedRepeatBetaFeedbackReason.repeatedTooMuch => 'repeated_too_much',
+    ConfirmedRepeatBetaFeedbackReason.missingContext => 'missing_context',
+  };
 
   String get label => switch (this) {
-        ConfirmedRepeatBetaFeedbackReason.tooGeneric =>
-          ConfirmedRepeatBetaFeedbackCopy.tooGeneric,
-        ConfirmedRepeatBetaFeedbackReason.wrongPattern =>
-          ConfirmedRepeatBetaFeedbackCopy.wrongPattern,
-        ConfirmedRepeatBetaFeedbackReason.repeatedTooMuch =>
-          ConfirmedRepeatBetaFeedbackCopy.repeatedTooMuch,
-        ConfirmedRepeatBetaFeedbackReason.missingContext =>
-          ConfirmedRepeatBetaFeedbackCopy.missingContext,
-      };
+    ConfirmedRepeatBetaFeedbackReason.tooGeneric =>
+      ConfirmedRepeatBetaFeedbackCopy.tooGeneric,
+    ConfirmedRepeatBetaFeedbackReason.wrongPattern =>
+      ConfirmedRepeatBetaFeedbackCopy.wrongPattern,
+    ConfirmedRepeatBetaFeedbackReason.repeatedTooMuch =>
+      ConfirmedRepeatBetaFeedbackCopy.repeatedTooMuch,
+    ConfirmedRepeatBetaFeedbackReason.missingContext =>
+      ConfirmedRepeatBetaFeedbackCopy.missingContext,
+  };
 }
 
 class ConfirmedRepeatBetaFeedbackState {
@@ -88,14 +84,16 @@ class ConfirmedRepeatBetaFeedbackState {
   }
 
   Map<String, dynamic> toJson() => {
-        if (choice != null) 'choice': choice!.name,
-        if (reason != null) 'reason': reason!.name,
-        if (note != null && note!.isNotEmpty) 'note': note,
-        'dismissed': dismissed,
-        if (updatedAt != null) 'updatedAt': updatedAt!.toUtc().toIso8601String(),
-      };
+    if (choice != null) 'choice': choice!.name,
+    if (reason != null) 'reason': reason!.name,
+    if (note != null && note!.isNotEmpty) 'note': note,
+    'dismissed': dismissed,
+    if (updatedAt != null) 'updatedAt': updatedAt!.toUtc().toIso8601String(),
+  };
 
-  factory ConfirmedRepeatBetaFeedbackState.fromJson(Map<String, dynamic>? json) {
+  factory ConfirmedRepeatBetaFeedbackState.fromJson(
+    Map<String, dynamic>? json,
+  ) {
     if (json == null || json.isEmpty) return empty;
     return ConfirmedRepeatBetaFeedbackState(
       choice: _choiceFromRaw(json['choice'] as String?),
@@ -128,7 +126,8 @@ class ConfirmedRepeatBetaFeedbackState {
   String toReviewSummary() {
     if (dismissed && choice == null) return 'Dismissed without answering';
     final choiceLabel = switch (choice) {
-      ConfirmedRepeatBetaFeedbackChoice.yes => ConfirmedRepeatBetaFeedbackCopy.yes,
+      ConfirmedRepeatBetaFeedbackChoice.yes =>
+        ConfirmedRepeatBetaFeedbackCopy.yes,
       ConfirmedRepeatBetaFeedbackChoice.somewhat =>
         ConfirmedRepeatBetaFeedbackCopy.somewhat,
       ConfirmedRepeatBetaFeedbackChoice.notReally =>

@@ -10,7 +10,6 @@ import 'package:voicememory_mobile/features/capacity_loop/capacity_decision_outc
 import 'package:voicememory_mobile/features/capacity_loop/capacity_pull_reason_models.dart';
 import 'package:voicememory_mobile/features/paid_intent/paid_intent_confirmation_copy.dart';
 import 'package:voicememory_mobile/features/paid_intent/paid_intent_confirmation_models.dart';
-import 'package:voicememory_mobile/features/pro_interest/pro_interest_models.dart';
 import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/security/sensitive_screen_guard.dart';
@@ -42,21 +41,22 @@ const _bannedWords = [
 const _privateSnippet = 'felt pressure at work before saying yes';
 
 JournalEntry _capacityEntry(String id, {String? transcript}) => JournalEntry(
-      id: id,
-      createdAt: DateTime(2026, 6, 12, 12),
-      transcript: transcript ??
-          'I $_privateSnippet again and said yes with no capacity left.',
-      durationSeconds: 30,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 2,
-        recurringThemes: ['work'],
-        exactLanguagePattern: '',
-        concreteObservation: 'Work pressure showed up in this moment.',
-        repeatedSignal: '',
-      ),
-    );
+  id: id,
+  createdAt: DateTime(2026, 6, 12, 12),
+  transcript:
+      transcript ??
+      'I $_privateSnippet again and said yes with no capacity left.',
+  durationSeconds: 30,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 2,
+    recurringThemes: ['work'],
+    exactLanguagePattern: '',
+    concreteObservation: 'Work pressure showed up in this moment.',
+    repeatedSignal: '',
+  ),
+);
 
 CapacityBetaSignalInput _input({
   int capacityMomentCount = 0,
@@ -76,37 +76,36 @@ CapacityBetaSignalInput _input({
   bool paidIntentSoftWtp = false,
   bool dailyChangeAvailable = false,
   bool trackPaymentSignal = true,
-}) =>
-    CapacityBetaSignalInput(
-      capacityMomentCount: capacityMomentCount,
-      capacityEvidenceCount: capacityEvidenceCount,
-      capacityWedgeActive: capacityWedgeActive,
-      activationTarget: 3,
-      fitResponseLabel: fitResponseLabel,
-      fitIsPositive: fitIsPositive,
-      fitIsUnclear: fitIsUnclear,
-      pullReasonRecordCount: pullReasonRecordCount,
-      outcomeRecordCount: outcomeRecordCount,
-      laterCostRecordCount: laterCostRecordCount,
-      weeklyReviewAvailable: weeklyReviewAvailable,
-      boundaryResponseSelected: boundaryResponseSelected,
-      boundaryResponseCopied: boundaryResponseCopied,
-      proInterestCaptured: proInterestCaptured,
-      paidIntentRecord: paidIntentStrongWtp
-          ? const PaidIntentConfirmationRecord(
-              responseId: PaidIntentConfirmationResponseIds.yes999,
-              status: PaidIntentConfirmationStatus.answered,
-            )
-          : paidIntentSoftWtp
-              ? const PaidIntentConfirmationRecord(
-                  responseId: PaidIntentConfirmationResponseIds.maybe,
-                  status: PaidIntentConfirmationStatus.answered,
-                )
-              : null,
-      dailyChangeAvailable: dailyChangeAvailable,
-      trackPaymentSignal: trackPaymentSignal,
-      quickCaptureFrictionRecord: null,
-    );
+}) => CapacityBetaSignalInput(
+  capacityMomentCount: capacityMomentCount,
+  capacityEvidenceCount: capacityEvidenceCount,
+  capacityWedgeActive: capacityWedgeActive,
+  activationTarget: 3,
+  fitResponseLabel: fitResponseLabel,
+  fitIsPositive: fitIsPositive,
+  fitIsUnclear: fitIsUnclear,
+  pullReasonRecordCount: pullReasonRecordCount,
+  outcomeRecordCount: outcomeRecordCount,
+  laterCostRecordCount: laterCostRecordCount,
+  weeklyReviewAvailable: weeklyReviewAvailable,
+  boundaryResponseSelected: boundaryResponseSelected,
+  boundaryResponseCopied: boundaryResponseCopied,
+  proInterestCaptured: proInterestCaptured,
+  paidIntentRecord: paidIntentStrongWtp
+      ? const PaidIntentConfirmationRecord(
+          responseId: PaidIntentConfirmationResponseIds.yes999,
+          status: PaidIntentConfirmationStatus.answered,
+        )
+      : paidIntentSoftWtp
+      ? const PaidIntentConfirmationRecord(
+          responseId: PaidIntentConfirmationResponseIds.maybe,
+          status: PaidIntentConfirmationStatus.answered,
+        )
+      : null,
+  dailyChangeAvailable: dailyChangeAvailable,
+  trackPaymentSignal: trackPaymentSignal,
+  quickCaptureFrictionRecord: null,
+);
 
 CapacityActivationFitRecord _fitRecord(String responseId) =>
     CapacityActivationFitRecord(
@@ -326,46 +325,52 @@ void main() {
         capacityCohortActive: false,
         fitRecord: _fitRecord(CapacityActivationFitResponseIds.partly),
       );
-      expect(snapshot.exportSummary.toLowerCase(), isNot(contains(_privateSnippet)));
+      expect(
+        snapshot.exportSummary.toLowerCase(),
+        isNot(contains(_privateSnippet)),
+      );
     });
 
-    test('payment signal uses pro interest when tracked and no paid intent', () {
-      final captured = engine.build(
-        _input(
-          capacityMomentCount: 3,
-          capacityEvidenceCount: 3,
-          proInterestCaptured: true,
-        ),
-      );
-      expect(
-        captured.paymentSignalLabel,
-        CapacityBetaSignalCopy.proInterestFallbackLabel,
-      );
+    test(
+      'payment signal uses pro interest when tracked and no paid intent',
+      () {
+        final captured = engine.build(
+          _input(
+            capacityMomentCount: 3,
+            capacityEvidenceCount: 3,
+            proInterestCaptured: true,
+          ),
+        );
+        expect(
+          captured.paymentSignalLabel,
+          CapacityBetaSignalCopy.proInterestFallbackLabel,
+        );
 
-      final paidIntent = engine.build(
-        _input(
-          capacityMomentCount: 3,
-          capacityEvidenceCount: 3,
-          paidIntentStrongWtp: true,
-        ),
-      );
-      expect(
-        paidIntent.paymentSignalLabel,
-        PaidIntentConfirmationCopy.paymentSignalStrong,
-      );
+        final paidIntent = engine.build(
+          _input(
+            capacityMomentCount: 3,
+            capacityEvidenceCount: 3,
+            paidIntentStrongWtp: true,
+          ),
+        );
+        expect(
+          paidIntent.paymentSignalLabel,
+          PaidIntentConfirmationCopy.paymentSignalStrong,
+        );
 
-      final notTracked = engine.build(
-        _input(
-          capacityMomentCount: 3,
-          capacityEvidenceCount: 3,
-          trackPaymentSignal: false,
-        ),
-      );
-      expect(
-        notTracked.paymentSignalLabel,
-        CapacityBetaSignalCopy.paymentNotTrackedLabel,
-      );
-    });
+        final notTracked = engine.build(
+          _input(
+            capacityMomentCount: 3,
+            capacityEvidenceCount: 3,
+            trackPaymentSignal: false,
+          ),
+        );
+        expect(
+          notTracked.paymentSignalLabel,
+          CapacityBetaSignalCopy.paymentNotTrackedLabel,
+        );
+      },
+    );
 
     test('copy passes language guard', () {
       _expectNoBannedCopy(CapacityBetaSignalCopy.allVisibleStrings());
@@ -393,10 +398,16 @@ void main() {
         ),
       );
 
-      expect(find.byKey(const Key('capacity_beta_signal_card')), findsOneWidget);
+      expect(
+        find.byKey(const Key('capacity_beta_signal_card')),
+        findsOneWidget,
+      );
       expect(find.text(CapacityBetaSignalCopy.cardTitle), findsOneWidget);
       expect(find.text(CapacityBetaSignalCopy.cardBody), findsOneWidget);
-      expect(find.text(CapacityBetaSignalCopy.openDashboardButton), findsOneWidget);
+      expect(
+        find.text(CapacityBetaSignalCopy.openDashboardButton),
+        findsOneWidget,
+      );
     });
   });
 

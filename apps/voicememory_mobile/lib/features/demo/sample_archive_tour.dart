@@ -4,10 +4,7 @@ import 'sample_archive_copy.dart';
 
 /// One step in the sample archive guided tour.
 class SampleArchiveTourStep {
-  const SampleArchiveTourStep({
-    required this.title,
-    required this.body,
-  });
+  const SampleArchiveTourStep({required this.title, required this.body});
 
   final String title;
   final String body;

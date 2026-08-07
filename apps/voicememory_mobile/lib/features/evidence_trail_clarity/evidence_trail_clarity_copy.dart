@@ -59,7 +59,8 @@ abstract final class EvidenceTrailClarityCopy {
       switch (option) {
         EvidenceTrailClarityFeedbackOption.yes => feedbackYes,
         EvidenceTrailClarityFeedbackOption.notYet => feedbackNotYet,
-        EvidenceTrailClarityFeedbackOption.needMoreProof => feedbackNeedMoreProof,
+        EvidenceTrailClarityFeedbackOption.needMoreProof =>
+          feedbackNeedMoreProof,
       };
 
   static Iterable<String> allVisibleStrings() sync* {

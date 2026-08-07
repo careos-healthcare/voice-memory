@@ -1,11 +1,10 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/billing/archive_entitlement_reader.dart';
 import 'package:voicememory_mobile/features/pattern_map/pattern_map_model.dart';
-import 'package:voicememory_mobile/screens/pattern_map_screen.dart';
+import 'package:archiveme_research/screens/pattern_map_screen.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
+import 'support/test_storage_sandbox.dart';
 
 PatternMap _map() => PatternMap(
   patternTitle: 'Taking responsibility before asking for help',
@@ -46,29 +45,25 @@ PatternMapScreen _screen({
   bool firstLoopClosed = false,
   int momentCount = 4,
   bool pro = true,
-}) =>
-    PatternMapScreen(
-      loader: loader,
-      onUseCheck: onUseCheck ?? (_) async {},
-      entitlementReader: FakeArchiveEntitlementReader(pro: pro),
-      firstLoopClosed: firstLoopClosed,
-      momentCountLoader: () async => momentCount,
-    );
+}) => PatternMapScreen(
+  loader: loader,
+  onUseCheck: onUseCheck ?? (_) async {},
+  entitlementReader: FakeArchiveEntitlementReader(pro: pro),
+  firstLoopClosed: firstLoopClosed,
+  momentCountLoader: () async => momentCount,
+);
 
 void main() {
-  late Directory tempDir;
-
+  late TestStorageSandbox sandbox;
   setUp(() async {
-    tempDir = Directory.systemTemp.createTempSync('pattern_map_test_');
+    sandbox = TestStorageSandbox.create();
     await AppServices.resetForTest(
-      journalPath: '${tempDir.path}/journal.json',
+      journalPath: sandbox.journalPath,
       skipRevenueCat: true,
     );
   });
 
-  tearDown(() {
-    if (tempDir.existsSync()) tempDir.deleteSync(recursive: true);
-  });
+  tearDown(() => sandbox.dispose());
 
   testWidgets('shows the map sections and title', (tester) async {
     await _pumpMap(

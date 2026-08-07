@@ -66,12 +66,7 @@ class ArchiveWatchlistEngine {
   }) {
     final saved = _realEntries(entries);
     final itemResults = items
-        .map(
-          (item) => evaluateItem(
-            item: item,
-            entries: saved,
-          ),
-        )
+        .map((item) => evaluateItem(item: item, entries: saved))
         .toList();
 
     return ArchiveWatchlistCardResult(
@@ -127,10 +122,10 @@ class ArchiveWatchlistEngine {
   static String _entrySearchText(JournalEntry entry) {
     final parts = <String>[
       entry.transcript,
-      entry.reflection?.concreteObservation ?? '',
-      entry.reflection?.repeatedSignal ?? '',
-      entry.reflection?.exactLanguagePattern ?? '',
-      ...(entry.reflection?.recurringThemes ?? const []),
+      entry.reflection.concreteObservation,
+      entry.reflection.repeatedSignal,
+      entry.reflection.exactLanguagePattern,
+      ...entry.reflection.recurringThemes,
     ];
     return parts.join(' ').toLowerCase();
   }

@@ -78,16 +78,20 @@ class _ProLockMomentCardState extends State<ProLockMomentCard> {
   Widget build(BuildContext context) {
     _trackSeenOnce();
     final display = ProLockMomentEngine.buildDisplay();
-    final bodyStyle = ArchiveMobileTypography.explanationBody(context).copyWith(
-      color: AppColors.textSecondary,
-      height: 1.45,
-    );
+    // Locked/Pro-gated surface: use the locked-state tokens (not
+    // textSecondary-on-surfaceAlt) so body copy keeps WCAG AA contrast —
+    // see the gray-on-gray fix documented on AppColors.lockedText.
+    final bodyStyle = ArchiveMobileTypography.explanationBody(
+      context,
+    ).copyWith(color: AppColors.lockedText, height: 1.45);
 
     return Container(
       key: const Key('pro_lock_moment_card'),
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.md),
-      decoration: VoiceMemoryCards.standard(background: AppColors.surfaceAlt),
+      decoration: VoiceMemoryCards.standard(
+        background: AppColors.lockedSurface,
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [

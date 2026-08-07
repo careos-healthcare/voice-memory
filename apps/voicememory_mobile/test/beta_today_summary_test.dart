@@ -18,16 +18,13 @@ import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/models/sync_status.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
 import 'package:voicememory_mobile/widgets/beta/beta_today_summary_card.dart';
+import 'support/test_storage_sandbox.dart';
 
 const _strongRepeat =
     'I had no capacity but I said yes again to the extra meeting today.';
 final _now = DateTime(2026, 6, 12, 12);
 
-JournalEntry _entry(
-  String id,
-  String transcript, {
-  DateTime? createdAt,
-}) =>
+JournalEntry _entry(String id, String transcript, {DateTime? createdAt}) =>
     JournalEntry(
       id: id,
       createdAt: createdAt ?? _now,
@@ -67,18 +64,18 @@ List<JournalEntry> _threeRelatedEntries({DateTime? anchor}) {
 }
 
 List<JournalEntry> _staleRepeatEntries() => [
-      _entry('1', _strongRepeat, createdAt: DateTime(2026, 5, 1, 12)),
-      _entry(
-        '2',
-        'Same thing — said yes when I had no capacity for one more thing.',
-        createdAt: DateTime(2026, 5, 3, 12),
-      ),
-      _entry(
-        '3',
-        'I said yes again even though I had no capacity for one more ask.',
-        createdAt: DateTime(2026, 5, 5, 12),
-      ),
-    ];
+  _entry('1', _strongRepeat, createdAt: DateTime(2026, 5, 1, 12)),
+  _entry(
+    '2',
+    'Same thing — said yes when I had no capacity for one more thing.',
+    createdAt: DateTime(2026, 5, 3, 12),
+  ),
+  _entry(
+    '3',
+    'I said yes again even though I had no capacity for one more ask.',
+    createdAt: DateTime(2026, 5, 5, 12),
+  ),
+];
 
 Future<void> _saveCorrection(
   List<JournalEntry> entries,
@@ -94,8 +91,9 @@ Future<void> _saveCorrection(
     proofKey: proofKey,
     answer: answer,
     entryCountAtCapture: entries.length,
-    hasConfirmedRepeat:
-        EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(entries),
+    hasConfirmedRepeat: EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(
+      entries,
+    ),
     source: 'test',
   );
 }
@@ -104,18 +102,19 @@ BetaTodaySummaryResult _buildSummary(
   List<JournalEntry> entries, {
   bool beliefSurfaceVisible = false,
   DateTime? now,
-}) =>
-    BetaTodaySummaryEngine.build(
-      entries: entries,
-      beliefSurfaceVisible: beliefSurfaceVisible,
-      source: 'test',
-      now: now,
-    );
+}) => BetaTodaySummaryEngine.build(
+  entries: entries,
+  beliefSurfaceVisible: beliefSurfaceVisible,
+  source: 'test',
+  now: now,
+);
 
 void main() {
+  late TestStorageSandbox sandbox;
   final analyticsEvents = <({String event, Map<String, Object> props})>[];
 
   setUp(() async {
+    sandbox = TestStorageSandbox.create();
     ArchiveBetaMissionGate.resetForTest();
     BetaTodaySummaryAnalytics.resetForTest();
     BetaTodaySummaryAnalytics.captureForTest = (event, props) {
@@ -123,16 +122,15 @@ void main() {
     };
     analyticsEvents.clear();
     await AppServices.resetForTest(
-      journalPath:
-          'test/tmp/beta_today_summary/${DateTime.now().microsecondsSinceEpoch}_journal.json',
-      prefsPath:
-          'test/tmp/beta_today_summary/${DateTime.now().microsecondsSinceEpoch}_prefs.json',
+      journalPath: sandbox.journalPath,
+      prefsPath: sandbox.prefsPath,
       skipRevenueCat: true,
     );
     await CurrentRelevanceStore.resetForTest();
     await CorrectionMemoryStore.resetForTest();
   });
 
+  tearDown(() => sandbox.dispose());
   tearDown(() {
     ArchiveBetaMissionGate.resetForTest();
     BetaTodaySummaryAnalytics.resetForTest();
@@ -143,7 +141,10 @@ void main() {
       final result = _buildSummary(const []);
       expect(result.usesFallbackBody, isTrue);
       expect(result.body, BetaTodaySummaryCopy.fallbackBody);
-      expect(result.summaryRows, contains(BetaTodaySummaryCopy.noStrongPatternRow));
+      expect(
+        result.summaryRows,
+        contains(BetaTodaySummaryCopy.noStrongPatternRow),
+      );
     });
 
     test('uses primary body with enough evidence', () {
@@ -154,7 +155,10 @@ void main() {
 
     test('includes active pattern row when signal exists', () {
       final result = _buildSummary(_threeRelatedEntries(), now: _now);
-      expect(result.summaryRows, contains(BetaTodaySummaryCopy.activePatternRow));
+      expect(
+        result.summaryRows,
+        contains(BetaTodaySummaryCopy.activePatternRow),
+      );
       expect(result.hasActivePattern, isTrue);
     });
 
@@ -372,14 +376,17 @@ void main() {
       final seen = analyticsEvents.firstWhere(
         (event) => event.event == BetaTodaySummaryAnalytics.seenEvent,
       );
-      expect(seen.props.keys, containsAll([
-        'source',
-        'entry_count',
-        'has_confirmed_repeat',
-        'has_correction',
-        'has_active_pattern',
-        'has_fading_signal',
-      ]));
+      expect(
+        seen.props.keys,
+        containsAll([
+          'source',
+          'entry_count',
+          'has_confirmed_repeat',
+          'has_correction',
+          'has_active_pattern',
+          'has_fading_signal',
+        ]),
+      );
       expect(seen.props.keys, isNot(contains('transcript')));
       expect(seen.props.keys, isNot(contains('body')));
       expect(seen.props.keys, isNot(contains('entry_id')));
@@ -388,15 +395,17 @@ void main() {
 
   group('Beta today summary copy guard', () {
     test('no streak pressure copy', () {
-      final blob =
-          BetaTodaySummaryCopy.allVisibleStrings().join(' ').toLowerCase();
+      final blob = BetaTodaySummaryCopy.allVisibleStrings()
+          .join(' ')
+          .toLowerCase();
       expect(blob, isNot(contains('streak')));
       expect(blob, isNot(contains('day in a row')));
     });
 
     test('no daily requirement copy', () {
-      final blob =
-          BetaTodaySummaryCopy.allVisibleStrings().join(' ').toLowerCase();
+      final blob = BetaTodaySummaryCopy.allVisibleStrings()
+          .join(' ')
+          .toLowerCase();
       expect(blob, isNot(contains('must record every day')));
       expect(blob, contains('do not need to record today'));
       expect(blob, contains('does not need to be daily'));
@@ -426,26 +435,31 @@ void main() {
   });
 
   group('Beta today summary placement', () {
-    test('card sits below low-friction return and above capture freedom line', () {
-      final source = File('lib/screens/record_screen.dart').readAsStringSync();
-      final lowFrictionIndex = source.indexOf(
-        'if (showLowFrictionReturnCard &&\n'
-        '                        !firstUseSimplifiedRecord &&\n'
-        '                        !showReturningWatchTargetFocusedUi) ...[',
-      );
-      final summaryIndex = source.indexOf(
-        'if (showBetaTodaySummaryCard &&\n'
-        '                        ReturningRecordWatchTargetUiGates.showBetaRecordSurfaces() &&\n'
-        '                        !firstUseSimplifiedRecord) ...[',
-      );
-      final freedomIndex = source.indexOf(
-        'if (showCaptureFreedomLine &&\n'
-        '                        !firstUseSimplifiedRecord &&\n'
-        '                        !showReturningWatchTargetFocusedUi) ...[',
-      );
-      expect(lowFrictionIndex, greaterThan(0));
-      expect(summaryIndex, greaterThan(lowFrictionIndex));
-      expect(freedomIndex, greaterThan(summaryIndex));
-    });
+    test(
+      'card sits below low-friction return and above capture freedom line',
+      () {
+        final source = File(
+          'lib/screens/record_screen.dart',
+        ).readAsStringSync();
+        final lowFrictionIndex = source.indexOf(
+          'if (showLowFrictionReturnCard &&\n'
+          '                        !firstUseSimplifiedRecord &&\n'
+          '                        !showReturningWatchTargetFocusedUi) ...[',
+        );
+        final summaryIndex = source.indexOf(
+          'if (showBetaTodaySummaryCard &&\n'
+          '                        ReturningRecordWatchTargetUiGates.showBetaRecordSurfaces() &&\n'
+          '                        !firstUseSimplifiedRecord) ...[',
+        );
+        final freedomIndex = source.indexOf(
+          'if (showCaptureFreedomLine &&\n'
+          '                        !firstUseSimplifiedRecord &&\n'
+          '                        !showReturningWatchTargetFocusedUi) ...[',
+        );
+        expect(lowFrictionIndex, greaterThan(0));
+        expect(summaryIndex, greaterThan(lowFrictionIndex));
+        expect(freedomIndex, greaterThan(summaryIndex));
+      },
+    );
   });
 }

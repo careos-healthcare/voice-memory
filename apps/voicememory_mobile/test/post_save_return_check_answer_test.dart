@@ -40,47 +40,46 @@ JournalEntry _entry({
 }
 
 List<JournalEntry> _threeRelatedRepeatEntries() => [
-      _entry(
-        id: 'e1',
-        transcript:
-            'I had no capacity but I said yes again to the extra meeting today.',
-        createdAt: DateTime(2026, 6, 10, 12),
-      ),
-      _entry(
-        id: 'e2',
-        transcript:
-            'Same thing — said yes when I had no capacity for one more thing.',
-        createdAt: DateTime(2026, 6, 11, 12),
-      ),
-      _entry(
-        id: 'e3',
-        transcript:
-            'I said yes again even though I had no capacity for one more ask.',
-        createdAt: DateTime(2026, 6, 12, 12),
-      ),
-    ];
+  _entry(
+    id: 'e1',
+    transcript:
+        'I had no capacity but I said yes again to the extra meeting today.',
+    createdAt: DateTime(2026, 6, 10, 12),
+  ),
+  _entry(
+    id: 'e2',
+    transcript:
+        'Same thing — said yes when I had no capacity for one more thing.',
+    createdAt: DateTime(2026, 6, 11, 12),
+  ),
+  _entry(
+    id: 'e3',
+    transcript:
+        'I said yes again even though I had no capacity for one more ask.',
+    createdAt: DateTime(2026, 6, 12, 12),
+  ),
+];
 
 List<JournalEntry> _fourRelatedRepeatEntries() => [
-      ..._threeRelatedRepeatEntries(),
-      _entry(
-        id: 'e4',
-        transcript:
-            'I said yes again even though I had no capacity for one more ask today.',
-        createdAt: DateTime(2026, 6, 13, 12),
-      ),
-    ];
+  ..._threeRelatedRepeatEntries(),
+  _entry(
+    id: 'e4',
+    transcript:
+        'I said yes again even though I had no capacity for one more ask today.',
+    createdAt: DateTime(2026, 6, 13, 12),
+  ),
+];
 
 RepeatReturnCheckRecord _choiceRecord({
   required String entryId,
   required RepeatReturnCheckChoice choice,
   int entryCountAtCapture = 4,
-}) =>
-    RepeatReturnCheckRecord(
-      entryId: entryId,
-      choice: choice,
-      entryCountAtCapture: entryCountAtCapture,
-      createdAt: DateTime(2026, 6, 13, 12),
-    );
+}) => RepeatReturnCheckRecord(
+  entryId: entryId,
+  choice: choice,
+  entryCountAtCapture: entryCountAtCapture,
+  createdAt: DateTime(2026, 6, 13, 12),
+);
 
 void _expectNoDiagnosticLanguage(String copy) {
   final lower = copy.toLowerCase();
@@ -107,8 +106,10 @@ void main() {
     ActivationFunnelAnalytics.resetForTest();
     await RepeatReturnCheckStore.resetForTest();
     await AppServices.resetForTest(
-      journalPath: '${(await Directory.systemTemp.createTemp('vm_psrca_')).path}/journal.json',
-      prefsPath: '${(await Directory.systemTemp.createTemp('vm_psrca_prefs_')).path}/prefs.json',
+      journalPath:
+          '${(await Directory.systemTemp.createTemp('vm_psrca_')).path}/journal.json',
+      prefsPath:
+          '${(await Directory.systemTemp.createTemp('vm_psrca_prefs_')).path}/prefs.json',
       skipRevenueCat: true,
     );
   });
@@ -137,7 +138,10 @@ void main() {
         PostSaveReturnCheckAnswerEngine.build(
           entries: _fourRelatedRepeatEntries(),
           returnChecks: [
-            _choiceRecord(entryId: 'e4', choice: RepeatReturnCheckChoice.softer),
+            _choiceRecord(
+              entryId: 'e4',
+              choice: RepeatReturnCheckChoice.softer,
+            ),
           ],
         ),
         isNull,
@@ -411,7 +415,10 @@ void main() {
       }
 
       final tapped = captured.last;
-      expect(tapped.event, EarlyArchiveProofAnalytics.postSaveReturnCheckAnswerTappedEvent);
+      expect(
+        tapped.event,
+        EarlyArchiveProofAnalytics.postSaveReturnCheckAnswerTappedEvent,
+      );
       expect(tapped.properties['answer'], 'softer');
     });
   });
@@ -435,14 +442,17 @@ void main() {
   });
 
   group('Record screen isolation', () {
-    test('record screen does not import post save return check answer card', () {
-      final source = File(
-        'lib/screens/record_screen.dart',
-      ).readAsStringSync();
-      expect(source.contains('post_save_return_check_answer'), isFalse);
-      expect(source.contains('PostSaveReturnCheckAnswerCard'), isFalse);
-      expect(source.contains('what_changed_v2_card'), isTrue);
-    });
+    test(
+      'record screen does not import post save return check answer card',
+      () {
+        final source = File(
+          'lib/screens/record_screen.dart',
+        ).readAsStringSync();
+        expect(source.contains('post_save_return_check_answer'), isFalse);
+        expect(source.contains('PostSaveReturnCheckAnswerCard'), isFalse);
+        expect(source.contains('what_changed_v2_card'), isTrue);
+      },
+    );
   });
 
   group('Billing isolation', () {

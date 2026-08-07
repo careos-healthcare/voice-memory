@@ -29,10 +29,10 @@ abstract final class PaywallAlignmentCopy {
       'Pro is built around keeping the longer proof trail.';
 
   static List<String> allPaywallStrings() => [
-        headline,
-        body,
-        secondaryReassurance,
-        PaywallValueSharpeningCopy.proofConnectedLine,
-        ...benefitBullets,
-      ];
+    headline,
+    body,
+    secondaryReassurance,
+    PaywallValueSharpeningCopy.proofConnectedLine,
+    ...benefitBullets,
+  ];
 }

@@ -62,18 +62,19 @@ abstract final class FeatureNoiseReduction {
     }
   }
 
-  static FeatureNoiseReductionReport report(FeatureNoiseReductionResult result) =>
-      FeatureNoiseReductionReport(
-        headline: FeatureNoiseReductionCopy.headline,
-        body: FeatureNoiseReductionCopy.body,
-        coreJourneyLine: FeatureNoiseReductionCopy.coreJourneyLine,
-        hideEarlyLine: FeatureNoiseReductionCopy.hideEarlyLine,
-        notDeletedLine: FeatureNoiseReductionCopy.notDeletedLine,
-        lowEffortLine: FeatureNoiseReductionCopy.lowEffortLine,
-        proLine: FeatureNoiseReductionCopy.proLine,
-        guardrail: FeatureNoiseReductionCopy.guardrail,
-        result: result,
-      );
+  static FeatureNoiseReductionReport report(
+    FeatureNoiseReductionResult result,
+  ) => FeatureNoiseReductionReport(
+    headline: FeatureNoiseReductionCopy.headline,
+    body: FeatureNoiseReductionCopy.body,
+    coreJourneyLine: FeatureNoiseReductionCopy.coreJourneyLine,
+    hideEarlyLine: FeatureNoiseReductionCopy.hideEarlyLine,
+    notDeletedLine: FeatureNoiseReductionCopy.notDeletedLine,
+    lowEffortLine: FeatureNoiseReductionCopy.lowEffortLine,
+    proLine: FeatureNoiseReductionCopy.proLine,
+    guardrail: FeatureNoiseReductionCopy.guardrail,
+    result: result,
+  );
 
   static FeatureNoiseReductionResult _evaluateContextDetail(
     FeatureNoiseReductionInput input,
@@ -213,11 +214,13 @@ abstract final class FeatureNoiseReduction {
   static bool _userAskedWithEvidence(FeatureNoiseReductionInput input) =>
       input.userAskedForSurface && input.eligibleEntryCount >= 3;
 
-  static FeatureNoiseReductionResult _show(FeatureNoiseReductionReason reason) =>
-      FeatureNoiseReductionResult(shouldShow: true, reason: reason);
+  static FeatureNoiseReductionResult _show(
+    FeatureNoiseReductionReason reason,
+  ) => FeatureNoiseReductionResult(shouldShow: true, reason: reason);
 
-  static FeatureNoiseReductionResult _hide(FeatureNoiseReductionReason reason) =>
-      FeatureNoiseReductionResult(shouldShow: false, reason: reason);
+  static FeatureNoiseReductionResult _hide(
+    FeatureNoiseReductionReason reason,
+  ) => FeatureNoiseReductionResult(shouldShow: false, reason: reason);
 }
 
 enum FeatureSurfaceType {

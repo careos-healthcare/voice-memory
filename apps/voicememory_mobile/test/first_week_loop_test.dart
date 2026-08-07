@@ -39,19 +39,19 @@ JournalEntry _entry(String id, String transcript) {
 }
 
 List<JournalEntry> _threeRelatedRepeatEntries() => [
-      _entry(
-        '1',
-        'I had no capacity but I said yes again to the extra meeting today.',
-      ),
-      _entry(
-        '2',
-        'Same thing — said yes when I had no capacity for one more thing.',
-      ),
-      _entry(
-        '3',
-        'I said yes again even though I had no capacity for one more ask.',
-      ),
-    ];
+  _entry(
+    '1',
+    'I had no capacity but I said yes again to the extra meeting today.',
+  ),
+  _entry(
+    '2',
+    'Same thing — said yes when I had no capacity for one more thing.',
+  ),
+  _entry(
+    '3',
+    'I said yes again even though I had no capacity for one more ask.',
+  ),
+];
 
 RepeatReturnCheckRecord _answeredRecord(RepeatReturnCheckChoice choice) =>
     RepeatReturnCheckRecord(
@@ -76,8 +76,10 @@ void main() {
     EarlyArchiveProofAnalytics.resetForTest();
     ActivationFunnelAnalytics.resetForTest();
     await AppServices.resetForTest(
-      journalPath: '${(await Directory.systemTemp.createTemp('vm_fwl_')).path}/journal.json',
-      prefsPath: '${(await Directory.systemTemp.createTemp('vm_fwl_prefs_')).path}/prefs.json',
+      journalPath:
+          '${(await Directory.systemTemp.createTemp('vm_fwl_')).path}/journal.json',
+      prefsPath:
+          '${(await Directory.systemTemp.createTemp('vm_fwl_prefs_')).path}/prefs.json',
       skipRevenueCat: true,
     );
   });
@@ -117,7 +119,10 @@ void main() {
         FirstWeekLoopEngine.build(
           entries: [
             ..._threeRelatedRepeatEntries(),
-            _entry('4', 'I said yes again even though I had no capacity today.'),
+            _entry(
+              '4',
+              'I said yes again even though I had no capacity today.',
+            ),
           ],
           returnChecks: [_answeredRecord(RepeatReturnCheckChoice.stronger)],
         ),
@@ -306,34 +311,37 @@ void main() {
       expect(decision.showArchiveSummary, isTrue);
     });
 
-    test('keeps first week loop when higher-priority cards absorb cap overflow', () {
-      final decision = RecordProofStackPolicy.decide(
-        loaded: true,
-        entryCount: 5,
-        isReady: true,
-        isPostSave: false,
-        isRecording: false,
-        archiveSummaryVisible: true,
-        hasEarlyFirstSignal: false,
-        hasEarlyEvidenceTimeline: false,
-        patternChangedVisible: true,
-        dailyReturnReasonEligible: true,
-        weeklyReviewEligible: false,
-        privateReportEligible: false,
-        whyMattersEligible: false,
-        thoughtMapEligible: false,
-        positiveReinforcementEligible: false,
-        changeProofEligible: false,
-        firstWeekLoopEligible: true,
-        proBridgeEligible: true,
-      );
+    test(
+      'keeps first week loop when higher-priority cards absorb cap overflow',
+      () {
+        final decision = RecordProofStackPolicy.decide(
+          loaded: true,
+          entryCount: 5,
+          isReady: true,
+          isPostSave: false,
+          isRecording: false,
+          archiveSummaryVisible: true,
+          hasEarlyFirstSignal: false,
+          hasEarlyEvidenceTimeline: false,
+          patternChangedVisible: true,
+          dailyReturnReasonEligible: true,
+          weeklyReviewEligible: false,
+          privateReportEligible: false,
+          whyMattersEligible: false,
+          thoughtMapEligible: false,
+          positiveReinforcementEligible: false,
+          changeProofEligible: false,
+          firstWeekLoopEligible: true,
+          proBridgeEligible: true,
+        );
 
-      expect(decision.proofCardCount, lessThanOrEqualTo(3));
-      expect(decision.showPatternChanged, isTrue);
-      expect(decision.showArchiveSummary, isFalse);
-      expect(decision.showFirstWeekLoop, isTrue);
-      expect(decision.showProBridge, isFalse);
-    });
+        expect(decision.proofCardCount, lessThanOrEqualTo(3));
+        expect(decision.showPatternChanged, isTrue);
+        expect(decision.showArchiveSummary, isFalse);
+        expect(decision.showFirstWeekLoop, isTrue);
+        expect(decision.showProBridge, isFalse);
+      },
+    );
   });
 
   group('FirstWeekLoopCard', () {
@@ -391,7 +399,8 @@ void main() {
     setUp(() {
       captured = [];
       ActivationFunnelAnalytics.captureForTest(
-        (event, properties) => captured.add((event: event, properties: properties)),
+        (event, properties) =>
+            captured.add((event: event, properties: properties)),
       );
     });
 
@@ -406,12 +415,18 @@ void main() {
 
       expect(captured, hasLength(1));
       final payload = captured.single.properties;
-      expect(captured.single.event, EarlyArchiveProofAnalytics.firstWeekLoopSeenEvent);
+      expect(
+        captured.single.event,
+        EarlyArchiveProofAnalytics.firstWeekLoopSeenEvent,
+      );
       expect(payload['entry_count'], 3);
       expect(payload['source'], 'record');
       expect(payload['has_phrase'], 1);
       expect(payload['has_confirmed_repeat'], 1);
-      expect(payload.values.whereType<String>(), isNot(contains('said yes again')));
+      expect(
+        payload.values.whereType<String>(),
+        isNot(contains('said yes again')),
+      );
     });
 
     test('record tapped metadata omits transcript and phrase text', () {
@@ -429,7 +444,10 @@ void main() {
       );
       expect(payload['entry_count'], 4);
       expect(payload['source'], 'record');
-      expect(payload.values.whereType<String>(), isNot(contains('said yes again')));
+      expect(
+        payload.values.whereType<String>(),
+        isNot(contains('said yes again')),
+      );
     });
   });
 
@@ -466,8 +484,18 @@ void main() {
       expect(joined, contains('first proof'));
       expect(joined, contains('short moment'));
       expect(joined, contains('compare'));
-      expect(joined, anyOf(contains('softer'), contains('about the same'), contains('compare')));
-      expect(joined, anyOf(contains('comes back'), contains('when it happens')));
+      expect(
+        joined,
+        anyOf(
+          contains('softer'),
+          contains('about the same'),
+          contains('compare'),
+        ),
+      );
+      expect(
+        joined,
+        anyOf(contains('comes back'), contains('when it happens')),
+      );
       expect(joined, isNot(contains('you are')));
       expect(joined, isNot(contains('you should')));
     });
@@ -486,7 +514,9 @@ void main() {
 
   group('Patterns screen isolation', () {
     test('archive belief screen does not import first week loop card', () {
-      final source = File('lib/screens/archive_belief_screen.dart').readAsStringSync();
+      final source = File(
+        'lib/screens/archive_belief_screen.dart',
+      ).readAsStringSync();
       expect(source.contains('first_week_loop'), isFalse);
       expect(source.contains('FirstWeekLoopCard'), isFalse);
     });

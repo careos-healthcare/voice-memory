@@ -1,6 +1,4 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:voicememory_mobile/features/archive_evidence/archive_evidence_heuristics.dart';
-import 'package:voicememory_mobile/features/patterns/evidence_first_pattern_copy.dart';
 import 'package:voicememory_mobile/features/patterns/pattern_copy_quality_gate.dart';
 import 'package:voicememory_mobile/features/patterns/pattern_display_cache_cleanup.dart';
 import 'package:voicememory_mobile/features/patterns/pattern_display_copy_gate.dart';
@@ -8,7 +6,6 @@ import 'package:voicememory_mobile/features/patterns/pattern_intelligence_pipeli
 import 'package:voicememory_mobile/features/patterns/patterns_human_copy.dart';
 import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
-import 'package:voicememory_mobile/models/sync_status.dart';
 
 JournalEntry _pressureEntry({
   required String id,
@@ -81,7 +78,10 @@ void main() {
 
       expect(copy.kind, PatternHumanCopyKind.fallback);
       expect(copy.heroTitle, PatternHumanCopy.fallbackEvidenceFirstHeroTitle);
-      expect(copy.mainObservation, PatternHumanCopy.fallbackMainObservationEvidence);
+      expect(
+        copy.mainObservation,
+        PatternHumanCopy.fallbackMainObservationEvidence,
+      );
     });
 
     test('allows natural short evidence words in isolation', () {
@@ -123,8 +123,14 @@ void main() {
         ),
       ]);
 
-      expect(bundle.belief.currentBelief, isNot(contains('follow a heavy should')));
-      expect(bundle.belief.currentBelief, isNot(contains('You may do more when')));
+      expect(
+        bundle.belief.currentBelief,
+        isNot(contains('follow a heavy should')),
+      );
+      expect(
+        bundle.belief.currentBelief,
+        isNot(contains('You may do more when')),
+      );
       expect(bundle.humanCopy?.exactEvidencePhrases, isNotEmpty);
     });
   });

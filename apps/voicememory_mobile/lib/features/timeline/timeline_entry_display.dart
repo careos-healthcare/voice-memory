@@ -34,10 +34,7 @@ extension EntryDisplayTextSourceLabel on EntryDisplayTextSource {
 }
 
 class EntryDisplayResolution {
-  const EntryDisplayResolution({
-    required this.text,
-    required this.source,
-  });
+  const EntryDisplayResolution({required this.text, required this.source});
 
   final String text;
   final EntryDisplayTextSource source;
@@ -92,10 +89,7 @@ bool isDraftOrSystemTranscriptPlaceholder(String text) {
 
 bool _isTransportErrorTranscript(String text) {
   final lower = text.toLowerCase();
-  const blocked = [
-    'connection refused',
-    'backend url not configured',
-  ];
+  const blocked = ['connection refused', 'backend url not configured'];
   for (final phrase in blocked) {
     if (lower.contains(phrase)) return true;
   }
@@ -108,7 +102,8 @@ bool hasPersistedCaptureText(JournalEntry entry) {
   final hasTranscript =
       transcript.isNotEmpty &&
       !isDraftOrSystemTranscriptPlaceholder(transcript);
-  final hasBody = body.isNotEmpty && !ConsumerCopyGuard.isSystemObservation(body);
+  final hasBody =
+      body.isNotEmpty && !ConsumerCopyGuard.isSystemObservation(body);
   return hasTranscript || hasBody;
 }
 
@@ -149,35 +144,11 @@ JournalEntry applyFinalTranscriptToVoiceEntry(
       return entry;
     }
     if (existing != null) return entry;
-    return JournalEntry(
-      id: entry.id,
-      createdAt: entry.createdAt,
-      transcript: draftPlaceholder,
-      durationSeconds: entry.durationSeconds,
-      reflection: entry.reflection,
-      syncStatus: entry.syncStatus,
-      localAudioPath: entry.localAudioPath,
-      treatAsNew: entry.treatAsNew,
-      connectionApproved: entry.connectionApproved,
-      keepExactDetails: entry.keepExactDetails,
-      keepSeparate: entry.keepSeparate,
-      archiveThreadId: entry.archiveThreadId,
-      archivePackId: entry.archivePackId,
-      isPinned: entry.isPinned,
-      pinnedAt: entry.pinnedAt,
-      isArchived: entry.isArchived,
-      archivedAt: entry.archivedAt,
-      entryAboutness: entry.entryAboutness,
-      memorySurfacing: entry.memorySurfacing,
-      preserveOriginal: entry.preserveOriginal,
-    );
+    return entry.copyWith(transcript: draftPlaceholder);
   }
 
-  return JournalEntry(
-    id: entry.id,
-    createdAt: entry.createdAt,
+  return entry.copyWith(
     transcript: resolved,
-    durationSeconds: entry.durationSeconds,
     reflection: Reflection(
       mood: entry.reflection.mood,
       emotionalIntensity: entry.reflection.emotionalIntensity,
@@ -190,21 +161,6 @@ JournalEntry applyFinalTranscriptToVoiceEntry(
       nextSmallAction: entry.reflection.nextSmallAction,
       patternObservations: entry.reflection.patternObservations,
     ),
-    syncStatus: entry.syncStatus,
-    localAudioPath: entry.localAudioPath,
-    treatAsNew: entry.treatAsNew,
-    connectionApproved: entry.connectionApproved,
-    keepExactDetails: entry.keepExactDetails,
-    keepSeparate: entry.keepSeparate,
-    archiveThreadId: entry.archiveThreadId,
-    archivePackId: entry.archivePackId,
-    isPinned: entry.isPinned,
-    pinnedAt: entry.pinnedAt,
-    isArchived: entry.isArchived,
-    archivedAt: entry.archivedAt,
-    entryAboutness: entry.entryAboutness,
-    memorySurfacing: entry.memorySurfacing,
-    preserveOriginal: entry.preserveOriginal,
   );
 }
 

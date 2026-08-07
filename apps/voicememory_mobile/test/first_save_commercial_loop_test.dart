@@ -5,18 +5,16 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:voicememory_mobile/features/first_session/two_day_activation_engine.dart';
 import 'package:voicememory_mobile/features/onboarding/first_save_loop_state.dart';
-import 'package:voicememory_mobile/features/onboarding/record_return_pro_state.dart';
 import 'package:voicememory_mobile/features/onboarding/first_save_loop_store.dart';
 import 'package:voicememory_mobile/features/retention/repeat_recording_nudge_state.dart';
 import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
-import 'package:voicememory_mobile/screens/journal_screen.dart';
+import 'package:archiveme_research/screens/journal_screen.dart';
 import 'package:voicememory_mobile/services/activation_funnel_analytics.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
 import 'package:voicememory_mobile/storage/mobile_prefs_store.dart';
 import 'package:voicememory_mobile/theme/app_theme.dart';
 import 'package:voicememory_mobile/widgets/onboarding/day2_change_bridge_card.dart';
-import 'package:voicememory_mobile/widgets/onboarding/first_archive_value_card.dart';
 import 'package:voicememory_mobile/widgets/onboarding/first_save_evidence_card.dart';
 import 'package:voicememory_mobile/widgets/onboarding/pro_archive_continuity_bridge.dart';
 import 'package:voicememory_mobile/widgets/onboarding/tomorrow_return_cue_card.dart';
@@ -469,10 +467,15 @@ void main() {
         await Future<void>.delayed(const Duration(milliseconds: 200));
       });
       await tester.pump();
-      for (var i = 0;
-          i < 40 &&
-              find.byKey(const Key('first_archive_value_card')).evaluate().isEmpty;
-          i++) {
+      for (
+        var i = 0;
+        i < 40 &&
+            find
+                .byKey(const Key('first_archive_value_card'))
+                .evaluate()
+                .isEmpty;
+        i++
+      ) {
         await tester.pump(const Duration(milliseconds: 50));
         await tester.runAsync(
           () => Future<void>.delayed(const Duration(milliseconds: 25)),

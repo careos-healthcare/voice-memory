@@ -13,22 +13,18 @@ abstract final class ProofRelevanceRepairEngine {
     required String primaryCopy,
   }) {
     if (!_shouldUseRelevanceCopy(level: level, hasSafeAnchor: hasSafeAnchor)) {
-      return _fallbackDisplayCopy(
-        leadCopy: leadCopy,
-        primaryCopy: primaryCopy,
-      );
+      return _fallbackDisplayCopy(leadCopy: leadCopy, primaryCopy: primaryCopy);
     }
 
     final phrase = behaviorPhrase?.trim();
     if (phrase == null || phrase.isEmpty) {
-      return _fallbackDisplayCopy(
-        leadCopy: leadCopy,
-        primaryCopy: primaryCopy,
-      );
+      return _fallbackDisplayCopy(leadCopy: leadCopy, primaryCopy: primaryCopy);
     }
 
     final lead = leadFor(level: level);
-    final formattedPhrase = ProofRelevanceRepairCopy.formatBehaviorPhrase(phrase);
+    final formattedPhrase = ProofRelevanceRepairCopy.formatBehaviorPhrase(
+      phrase,
+    );
     final whyLine = ProofRelevanceRepairCopy.whyAppearedLine;
     final prefix = leadCopy?.trim();
     if (prefix != null && prefix.isNotEmpty) {
@@ -42,8 +38,7 @@ abstract final class ProofRelevanceRepairEngine {
       ProofConfidenceLevel.emerging => ProofRelevanceRepairCopy.softerLead,
       ProofConfidenceLevel.useful ||
       ProofConfidenceLevel.strong ||
-      ProofConfidenceLevel.freshReturn =>
-        ProofRelevanceRepairCopy.strongLead,
+      ProofConfidenceLevel.freshReturn => ProofRelevanceRepairCopy.strongLead,
       _ => ProofRelevanceRepairCopy.softerLead,
     };
   }

@@ -64,11 +64,11 @@ class BetaTesterOutcome {
       has(BetaDecisionSignal.sawFirstProof);
 
   Map<String, dynamic> toJson() => {
-        'testerId': testerId,
-        'signals': signals.map((signal) => signal.name).toList(),
-        if (notes != null && notes!.isNotEmpty) 'notes': notes,
-        if (loggedAt != null) 'loggedAt': loggedAt!.toUtc().toIso8601String(),
-      };
+    'testerId': testerId,
+    'signals': signals.map((signal) => signal.name).toList(),
+    if (notes != null && notes!.isNotEmpty) 'notes': notes,
+    if (loggedAt != null) 'loggedAt': loggedAt!.toUtc().toIso8601String(),
+  };
 
   factory BetaTesterOutcome.fromJson(Map<String, dynamic> json) {
     final rawSignals = json['signals'];

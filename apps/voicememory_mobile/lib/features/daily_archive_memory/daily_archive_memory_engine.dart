@@ -100,7 +100,8 @@ abstract final class DailyArchiveMemoryEngine {
       isRecording: isRecording,
       isPostSave: isPostSave,
     );
-    final canShowPatternDetail = viewingConfirmedRepeatOrTimeline &&
+    final canShowPatternDetail =
+        viewingConfirmedRepeatOrTimeline &&
         PatternDetailEngine.canShow(
           entries: entries,
           confirmedRepeat: confirmedRepeat,

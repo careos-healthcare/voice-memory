@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:go_router/go_router.dart';
 import 'package:voicememory_mobile/billing/archive_entitlement_reader.dart';
 import 'package:voicememory_mobile/dev/visual_audit_overrides.dart';
 import 'package:voicememory_mobile/features/archive_proof/low_effort_capture_copy_guard.dart';
@@ -15,12 +14,11 @@ import 'package:voicememory_mobile/features/beta/tester_mission_engine.dart';
 import 'package:voicememory_mobile/features/beta/tester_mission_gates.dart';
 import 'package:voicememory_mobile/features/beta/tester_mission_model.dart';
 import 'package:voicememory_mobile/features/beta/tester_mission_store.dart';
-import 'package:voicememory_mobile/features/voice_capture/record_microphone_permission_ui.dart';
 import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/product/consumer_ui_copy.dart';
 import 'package:voicememory_mobile/screens/record_screen.dart';
-import 'package:voicememory_mobile/screens/testing_archiveme_screen.dart';
+import 'package:archiveme_research/screens/testing_archiveme_screen.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
 import 'package:voicememory_mobile/storage/mobile_prefs_store.dart';
 import 'package:voicememory_mobile/theme/app_theme.dart';
@@ -29,6 +27,7 @@ import 'package:voicememory_mobile/widgets/beta/tester_mission_card.dart';
 import 'package:voicememory_mobile/widgets/capture_entry_actions.dart';
 
 import 'support/memory_pressure_stores.dart';
+import 'support/test_storage_sandbox.dart';
 
 class _MemoryPrefs extends MobilePrefsStore {
   _MemoryPrefs() : super(file: File('test/tmp/tester_mission/unused.json'));
@@ -44,47 +43,44 @@ class _MemoryPrefs extends MobilePrefsStore {
   }
 }
 
-JournalEntry _entry({
-  required String id,
-  String? transcript,
-}) =>
-    JournalEntry(
-      id: id,
-      createdAt: DateTime(2026, 6, 1, 12),
-      transcript: transcript ??
-          'A long enough transcript to count as a saved reflection for tests.',
-      durationSeconds: 30,
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 2,
-        recurringThemes: ['work'],
-        exactLanguagePattern: '',
-        concreteObservation: 'You mentioned pressure in this moment.',
-        repeatedSignal: '',
-      ),
-    );
+JournalEntry _entry({required String id, String? transcript}) => JournalEntry(
+  id: id,
+  createdAt: DateTime(2026, 6, 1, 12),
+  transcript:
+      transcript ??
+      'A long enough transcript to count as a saved reflection for tests.',
+  durationSeconds: 30,
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 2,
+    recurringThemes: ['work'],
+    exactLanguagePattern: '',
+    concreteObservation: 'You mentioned pressure in this moment.',
+    repeatedSignal: '',
+  ),
+);
 
 List<JournalEntry> _relatedPair() => [
-      _entry(
-        id: 'e1',
-        transcript:
-            'I had no capacity but I said yes again to the extra meeting today.',
-      ),
-      _entry(
-        id: 'e2',
-        transcript:
-            'Same thing — said yes when I had no capacity for one more thing.',
-      ),
-    ];
+  _entry(
+    id: 'e1',
+    transcript:
+        'I had no capacity but I said yes again to the extra meeting today.',
+  ),
+  _entry(
+    id: 'e2',
+    transcript:
+        'Same thing — said yes when I had no capacity for one more thing.',
+  ),
+];
 
 List<JournalEntry> _relatedThree() => [
-      ..._relatedPair(),
-      _entry(
-        id: 'e3',
-        transcript:
-            'I said yes again even though I had no capacity for one more ask.',
-      ),
-    ];
+  ..._relatedPair(),
+  _entry(
+    id: 'e3',
+    transcript:
+        'I said yes again even though I had no capacity for one more ask.',
+  ),
+];
 
 void main() {
   group('TesterMissionCopy canonical onboarding', () {
@@ -318,12 +314,7 @@ void main() {
 
   group('TesterMissionCopy guard', () {
     test('no transcript or phrase text in analytics copy', () {
-      const blocked = [
-        'transcript',
-        'phrase',
-        'therapy',
-        'diagnosis',
-      ];
+      const blocked = ['transcript', 'phrase', 'therapy', 'diagnosis'];
       final corpus = [
         TesterMissionCopy.title,
         TesterMissionCopy.mission,
@@ -363,10 +354,16 @@ void main() {
     });
 
     test('progress states stay distinct from guide steps', () {
-      expect(TesterMissionCopy.entry0Body, isNot(equals(TesterMissionCopy.step1)));
+      expect(
+        TesterMissionCopy.entry0Body,
+        isNot(equals(TesterMissionCopy.step1)),
+      );
       expect(TesterMissionCopy.entry1Body, contains('Step 1 complete'));
       expect(TesterMissionCopy.entry2RelatedBody, contains('Step 2 complete'));
-      expect(TesterMissionCopy.entry3ConfirmedBody, contains('First proof reached'));
+      expect(
+        TesterMissionCopy.entry3ConfirmedBody,
+        contains('First proof reached'),
+      );
     });
 
     test('avoids chatbot and high-friction capture language', () {
@@ -388,18 +385,21 @@ void main() {
   });
 
   group('TesterMissionStore', () {
+    late TestStorageSandbox sandbox;
+
     late _MemoryPrefs prefs;
-    late Directory tempDir;
 
     setUp(() async {
-      tempDir = Directory.systemTemp.createTempSync('vm_tester_mission_store_');
+      sandbox = TestStorageSandbox.create();
       await AppServices.resetForTest(
-        journalPath: '${tempDir.path}/journal.json',
+        journalPath: sandbox.journalPath,
         skipRevenueCat: true,
       );
       prefs = _MemoryPrefs();
       await TesterMissionStore.resetForTest();
     });
+
+    tearDown(() => sandbox.dispose());
 
     tearDown(() async {
       await TesterMissionStore.resetForTest();
@@ -433,9 +433,7 @@ void main() {
 
       await tester.pumpWidget(
         MaterialApp(
-          home: Scaffold(
-            body: TesterMissionCard.test(mission: mission),
-          ),
+          home: Scaffold(body: TesterMissionCard.test(mission: mission)),
         ),
       );
 
@@ -443,7 +441,10 @@ void main() {
       expect(find.text(TesterMissionCopy.mission), findsOneWidget);
       await tester.tap(find.text(TesterMissionCopy.hideForNowCta));
       await tester.pump();
-      expect(find.byKey(const Key('tester_mission_card_hidden')), findsOneWidget);
+      expect(
+        find.byKey(const Key('tester_mission_card_hidden')),
+        findsOneWidget,
+      );
     });
   });
 
@@ -456,9 +457,7 @@ void main() {
       ArchiveBetaMissionGate.enabledOverride = true;
 
       await tester.pumpWidget(
-        const MaterialApp(
-          home: TestingArchiveMeScreen(),
-        ),
+        const MaterialApp(home: TestingArchiveMeScreen()),
       );
 
       expect(find.byKey(const Key('testing_archiveme_screen')), findsOneWidget);
@@ -475,12 +474,12 @@ void main() {
   });
 
   group('Record screen integration', () {
-    late Directory tempDir;
+    late TestStorageSandbox sandbox;
 
     setUp(() async {
-      tempDir = Directory.systemTemp.createTempSync('vm_tester_mission_');
+      sandbox = TestStorageSandbox.create();
       await AppServices.resetForTest(
-        journalPath: '${tempDir.path}/journal.json',
+        journalPath: sandbox.journalPath,
         skipRevenueCat: true,
       );
       await TesterMissionStore.resetForTest();
@@ -489,6 +488,8 @@ void main() {
         const RecordAuditPresentation(ui: RecordUiState.ready),
       );
     });
+
+    tearDown(() => sandbox.dispose());
 
     tearDown(() async {
       ArchiveBetaMissionGate.resetForTest();
@@ -500,9 +501,7 @@ void main() {
       if (entryCount > 0) {
         await tester.runAsync(() async {
           for (var i = 0; i < entryCount; i++) {
-            await AppServices.instance.journalStore.save(
-              _entry(id: 'e$i'),
-            );
+            await AppServices.instance.journalStore.save(_entry(id: 'e$i'));
           }
         });
       }
@@ -527,7 +526,10 @@ void main() {
       for (var i = 0; i < 30; i++) {
         await tester.pump(const Duration(milliseconds: 50));
         if (entryCount == 0 &&
-            find.byKey(const Key('record_first_run_screen_card')).evaluate().isNotEmpty) {
+            find
+                .byKey(const Key('record_first_run_screen_card'))
+                .evaluate()
+                .isNotEmpty) {
           return;
         }
         if (entryCount > 0 &&
@@ -541,19 +543,28 @@ void main() {
       ArchiveBetaMissionGate.enabledOverride = false;
       await pumpRecord(tester, entryCount: 1);
       expect(find.byKey(const Key('tester_mission_card')), findsNothing);
-      expect(find.byKey(const Key('tester_mission_compact_strip')), findsNothing);
+      expect(
+        find.byKey(const Key('tester_mission_compact_strip')),
+        findsNothing,
+      );
     });
 
-    testWidgets('entry 0 first-use simplified hides tester mission', (tester) async {
-      await pumpRecord(tester);
-      expect(find.byKey(const Key('tester_mission_compact_strip')), findsNothing);
-      expect(find.byKey(const Key('tester_mission_card')), findsNothing);
-      expect(find.byKey(const Key('record_first_run_screen_card')), findsOneWidget);
-    });
-
-    testWidgets('entry 1 shows mission when beta gate enabled', (
+    testWidgets('entry 0 first-use simplified hides tester mission', (
       tester,
     ) async {
+      await pumpRecord(tester);
+      expect(
+        find.byKey(const Key('tester_mission_compact_strip')),
+        findsNothing,
+      );
+      expect(find.byKey(const Key('tester_mission_card')), findsNothing);
+      expect(
+        find.byKey(const Key('record_first_run_screen_card')),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets('entry 1 shows mission when beta gate enabled', (tester) async {
       await pumpRecord(tester, entryCount: 1);
       expect(find.byKey(const Key('tester_mission_card')), findsOneWidget);
       expect(find.text(TesterMissionCopy.entry1Body), findsOneWidget);

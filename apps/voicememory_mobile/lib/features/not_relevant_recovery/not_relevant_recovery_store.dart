@@ -43,8 +43,9 @@ class NotRelevantRecoveryStore {
     if (answers is! Map) return;
     for (final entry in answers.entries) {
       if (entry.value is Map<String, dynamic>) {
-        _cached[entry.key] =
-            NotRelevantRecoveryRecord.fromJson(entry.value as Map<String, dynamic>);
+        _cached[entry.key] = NotRelevantRecoveryRecord.fromJson(
+          entry.value as Map<String, dynamic>,
+        );
       } else if (entry.value is Map) {
         _cached[entry.key] = NotRelevantRecoveryRecord.fromJson(
           Map<String, dynamic>.from(entry.value),

@@ -13,8 +13,7 @@ abstract final class LiveVoiceSessionCopy {
   static const savingBody =
       'Turning what you said into a journal entry. This usually takes a moment.';
   static const transcriptTitle = 'Live transcript';
-  static const transcriptEmpty =
-      'Your words will appear here as you speak.';
+  static const transcriptEmpty = 'Your words will appear here as you speak.';
   static const cancel = 'Cancel';
   static const stopAndSave = 'Stop & save';
   static const discardTitle = 'Discard live voice?';
@@ -26,6 +25,7 @@ abstract final class LiveVoiceSessionCopy {
   static const connectionLive = 'Live';
   static const connectionConnecting = 'Connecting';
   static const connectionReconnecting = 'Reconnecting';
-  static const helperListening = 'Speak naturally. Tap Stop & save when you are done.';
+  static const helperListening =
+      'Speak naturally. Tap Stop & save when you are done.';
   static const helperSpeaking = 'Listening to the reply…';
 }

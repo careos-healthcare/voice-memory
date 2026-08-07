@@ -13,16 +13,14 @@ import 'live_voice_lifecycle_policy.dart';
 /// Watches native audio focus / interruption events for live voice sessions.
 class LiveAudioFocusGateway {
   LiveAudioFocusGateway({
-    required LiveVoiceCaptureService captureService,
+    required this._captureService,
     Future<AudioSession> Function()? resolveSession,
-    Stream<AudioInterruptionEvent>? interruptionEventsForTest,
+    this._interruptionEventsForTest,
     NativeAudioLifecycleBridge? nativeLifecycleBridge,
     AppLifecycleState initialAppLifecycle = AppLifecycleState.resumed,
-  })  : _captureService = captureService,
-        _resolveSession = resolveSession ?? (() => AudioSession.instance),
-        _interruptionEventsForTest = interruptionEventsForTest,
-        _nativeLifecycleBridgeOverride = nativeLifecycleBridge,
-        _appLifecycleState = initialAppLifecycle;
+  }) : _resolveSession = resolveSession ?? (() => AudioSession.instance),
+       _nativeLifecycleBridgeOverride = nativeLifecycleBridge,
+       _appLifecycleState = initialAppLifecycle;
 
   final LiveVoiceCaptureService _captureService;
   final Future<AudioSession> Function() _resolveSession;
@@ -50,7 +48,8 @@ class LiveAudioFocusGateway {
     _interruptSubscription = stream.listen(_handleInterruption);
 
     if (!kIsWeb && Platform.isIOS) {
-      _nativeLifecycleBridge = _nativeLifecycleBridgeOverride ??
+      _nativeLifecycleBridge =
+          _nativeLifecycleBridgeOverride ??
           NativeAudioLifecycleBridge(_captureService);
     }
   }

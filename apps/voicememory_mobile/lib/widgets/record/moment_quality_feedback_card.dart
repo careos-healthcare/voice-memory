@@ -9,10 +9,7 @@ import '../../theme/voicememory_cards.dart';
 
 /// Gentle post-save guidance on whether a moment can be compared later.
 class MomentQualityFeedbackCard extends StatelessWidget {
-  const MomentQualityFeedbackCard({
-    super.key,
-    required this.entry,
-  });
+  const MomentQualityFeedbackCard({super.key, required this.entry});
 
   final JournalEntry entry;
 
@@ -23,13 +20,12 @@ class MomentQualityFeedbackCard extends StatelessWidget {
       return const SizedBox.shrink(key: Key('moment_quality_feedback_hidden'));
     }
 
-    final titleStyle = ArchiveMobileTypography.cardLabel(context).copyWith(
-      fontWeight: FontWeight.w600,
-    );
-    final bodyStyle = ArchiveMobileTypography.responsiveHelper(context).copyWith(
-      color: AppColors.textSecondary,
-      height: 1.45,
-    );
+    final titleStyle = ArchiveMobileTypography.cardLabel(
+      context,
+    ).copyWith(fontWeight: FontWeight.w600);
+    final bodyStyle = ArchiveMobileTypography.responsiveHelper(
+      context,
+    ).copyWith(color: AppColors.textSecondary, height: 1.45);
 
     return Padding(
       padding: const EdgeInsets.only(top: AppSpacing.sm),
@@ -37,7 +33,9 @@ class MomentQualityFeedbackCard extends StatelessWidget {
         key: Key('moment_quality_feedback_card_${result.kind.name}'),
         width: double.infinity,
         padding: const EdgeInsets.all(AppSpacing.md),
-        decoration: VoiceMemoryCards.standard(background: const Color(0xFFFAFAF8)),
+        decoration: VoiceMemoryCards.standard(
+          background: const Color(0xFFFAFAF8),
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

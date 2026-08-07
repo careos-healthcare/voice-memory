@@ -28,7 +28,9 @@ class ArchiveCalendarCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (ScreenshotMode.enabled || !result.hasCard || !result.showOnArchiveHome) {
+    if (ScreenshotMode.enabled ||
+        !result.hasCard ||
+        !result.showOnArchiveHome) {
       return const SizedBox.shrink(key: Key('archive_calendar_card_hidden'));
     }
 
@@ -82,7 +84,8 @@ class ArchiveCalendarCard extends StatelessWidget {
           const SizedBox(height: AppSpacing.sm),
           FilledButton(
             key: const Key('archive_calendar_card_primary_button'),
-            onPressed: onPrimaryAction ?? () => context.push(result.primaryRoute),
+            onPressed:
+                onPrimaryAction ?? () => context.push(result.primaryRoute),
             child: Text(result.primaryCtaLabel),
           ),
         ],

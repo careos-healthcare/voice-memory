@@ -39,20 +39,12 @@ class ArchiveDailyChangeStore {
   }
 
   Future<void> markSeen(DateTime seenAt) async {
-    await save(
-      _cached.copyWith(
-        lastSeenAt: seenAt,
-        clearDismissedAt: true,
-      ),
-    );
+    await save(_cached.copyWith(lastSeenAt: seenAt, clearDismissedAt: true));
   }
 
   Future<void> dismiss(DateTime dismissedAt) async {
     await save(
-      _cached.copyWith(
-        dismissedAt: dismissedAt,
-        lastSeenAt: dismissedAt,
-      ),
+      _cached.copyWith(dismissedAt: dismissedAt, lastSeenAt: dismissedAt),
     );
   }
 

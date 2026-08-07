@@ -54,25 +54,19 @@ class CapacityBoundaryResponseEngine {
   static bool showOnCapacityLoop({
     required bool hasFeature,
     required bool sampleMode,
-  }) =>
-      hasFeature && !sampleMode;
+  }) => hasFeature && !sampleMode;
 
   static bool showOnWeeklyReview({
     required bool hasFeature,
     required bool sampleMode,
-  }) =>
-      hasFeature && !sampleMode;
+  }) => hasFeature && !sampleMode;
 
   static bool showOnRecord({
     required bool hasFeature,
     required bool sampleMode,
     required bool capacityWedgeActive,
     required bool hasSelection,
-  }) =>
-      hasFeature &&
-      !sampleMode &&
-      capacityWedgeActive &&
-      hasSelection;
+  }) => hasFeature && !sampleMode && capacityWedgeActive && hasSelection;
 
   CapacityBoundaryResponseResult build(CapacityBoundaryResponseInput input) {
     if (input.sampleMode) return CapacityBoundaryResponseResult.hidden;
@@ -91,8 +85,9 @@ class CapacityBoundaryResponseEngine {
     }
 
     final selection = input.selection;
-    final selectedId =
-        selection != null && selection.hasSelection ? selection.responseId : '';
+    final selectedId = selection != null && selection.hasSelection
+        ? selection.responseId
+        : '';
     final selectedText =
         CapacityBoundaryResponseCopy.textForId(selectedId) ?? '';
     final cardSummary = selectedText.isNotEmpty
@@ -110,14 +105,14 @@ class CapacityBoundaryResponseEngine {
     );
     final showOnCapacityLoopFlag =
         CapacityBoundaryResponseEngine.showOnCapacityLoop(
-      hasFeature: true,
-      sampleMode: false,
-    );
+          hasFeature: true,
+          sampleMode: false,
+        );
     final showOnWeeklyReviewFlag =
         CapacityBoundaryResponseEngine.showOnWeeklyReview(
-      hasFeature: true,
-      sampleMode: false,
-    );
+          hasFeature: true,
+          sampleMode: false,
+        );
     final showOnRecordFlag = CapacityBoundaryResponseEngine.showOnRecord(
       hasFeature: true,
       sampleMode: false,
@@ -127,8 +122,8 @@ class CapacityBoundaryResponseEngine {
 
     final recommendedNote =
         input.mostCommonPullReasonId == CapacityPullReasonIds.soundedUrgent
-            ? CapacityPullReasonCopy.boundaryUrgentFitNote
-            : '';
+        ? CapacityPullReasonCopy.boundaryUrgentFitNote
+        : '';
 
     return CapacityBoundaryResponseResult(
       hasFeature: true,
@@ -169,18 +164,21 @@ class CapacityBoundaryResponseEngine {
 
     final realEntries = SampleArchiveMode.excludeSampleEntries(entries);
     final realSavedCount = BetaFeedbackEngine.realEntryCountFor(realEntries);
-    final capacityMomentCount =
-        loopEngine.eligibleCapacityEntryIds(realEntries).length;
+    final capacityMomentCount = loopEngine
+        .eligibleCapacityEntryIds(realEntries)
+        .length;
     final capacityEvidenceCount = loopEngine.countCapacityEvidence(realEntries);
     final outcomes = outcomeRecords ?? CapacityDecisionOutcomeStore.cached;
     final costs = costRecords ?? CapacityCostStore.cached;
     final outcomeOrCostCount =
         CapacityDecisionOutcomeStore.countWithOutcome(outcomes) +
-            CapacityCostStore.countWithLaterCost(costs);
+        CapacityCostStore.countWithLaterCost(costs);
     final storedSelection = selection ?? CapacityBoundaryResponseStore.cached;
 
     final pullReasons = pullReasonRecords ?? CapacityPullReasonStore.cached;
-    final mostCommonPull = CapacityPullReasonStore.mostCommonReasonId(pullReasons);
+    final mostCommonPull = CapacityPullReasonStore.mostCommonReasonId(
+      pullReasons,
+    );
 
     return build(
       CapacityBoundaryResponseInput(

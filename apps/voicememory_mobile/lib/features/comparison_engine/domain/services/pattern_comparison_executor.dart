@@ -12,11 +12,10 @@ class PatternComparisonExecutor {
   final int maxHistoricalContextItems;
 
   const PatternComparisonExecutor({
-    ComparisonEngineConfig config = const ComparisonEngineConfig(),
-    ComparisonOutputParser parser = const ComparisonOutputParser(),
+    this._config = const ComparisonEngineConfig(),
+    this._parser = const ComparisonOutputParser(),
     this.maxHistoricalContextItems = 30,
-  })  : _config = config,
-        _parser = parser;
+  });
 
   /// System prompt from [ComparisonEngineConfig] for model evaluation.
   String get systemPrompt => _config.buildSystemPrompt();
@@ -39,10 +38,11 @@ class PatternComparisonExecutor {
     required bool hasDismissedProTrailPrompt,
     int? totalMomentCount,
   }) {
-    final prunedHistoricalMoments = historical_context_pruner.pruneHistoricalContext(
-      historicalMoments,
-      maxContextItems: maxHistoricalContextItems,
-    );
+    final prunedHistoricalMoments = historical_context_pruner
+        .pruneHistoricalContext(
+          historicalMoments,
+          maxContextItems: maxHistoricalContextItems,
+        );
     final visibleHistoricalMoments = ProTrailGate.visibleHistoricalMoments(
       moments: prunedHistoricalMoments,
       isPro: isPro,
@@ -54,6 +54,7 @@ class PatternComparisonExecutor {
         currentMoment: currentMoment,
         historicalMoments: visibleHistoricalMoments,
       ),
+      currentMoment: currentMoment,
       visibleHistoricalMoments: visibleHistoricalMoments,
       totalMomentCount: totalMomentCount ?? (historicalMoments.length + 1),
       isPro: isPro,
@@ -74,10 +75,7 @@ class PatternComparisonExecutor {
       isPro: isPro,
       hasDismissedProTrailPrompt: hasDismissedProTrailPrompt,
     );
-    return (
-      systemPrompt: plan.systemPrompt,
-      userPrompt: plan.userPrompt,
-    );
+    return (systemPrompt: plan.systemPrompt, userPrompt: plan.userPrompt);
   }
 
   /// Parses the raw LLM response into structured comparison output.
@@ -85,7 +83,7 @@ class PatternComparisonExecutor {
       _parser.parse(rawOutput);
 
   /// Maps parsed comparison output plus plan context into passive UI state.
-  PatternEvidenceViewState buildEvidenceViewState({
+  PatternEvidenceViewState _buildVerifiedEvidenceViewState({
     required PatternComparisonPlan plan,
     required ParsedComparisonOutput parsed,
   }) {
@@ -103,8 +101,9 @@ class PatternComparisonExecutor {
       currentQuote: parsed.currentQuote,
       whatChangedText: parsed.whatChangedText,
       showProTrailPrompt: showProTrailPrompt,
-      conversionHeadline:
-          showProTrailPrompt ? ProTrailGate.conversionHeadline : null,
+      conversionHeadline: showProTrailPrompt
+          ? ProTrailGate.conversionHeadline
+          : null,
     );
   }
 
@@ -117,6 +116,12 @@ class PatternComparisonExecutor {
     required String currentQuote,
     required String whatChangedText,
   }) {
+    _verifyExactComparisonEvidence(
+      plan: plan,
+      pastQuote: pastQuote,
+      currentQuote: currentQuote,
+      state: state,
+    );
     final showProTrailPrompt = ProTrailGate.shouldShowProTrailPrompt(
       isPro: plan.isPro,
       hasDismissedProTrailPrompt: plan.hasDismissedProTrailPrompt,
@@ -131,8 +136,9 @@ class PatternComparisonExecutor {
       currentQuote: currentQuote,
       whatChangedText: whatChangedText,
       showProTrailPrompt: showProTrailPrompt,
-      conversionHeadline:
-          showProTrailPrompt ? ProTrailGate.conversionHeadline : null,
+      conversionHeadline: showProTrailPrompt
+          ? ProTrailGate.conversionHeadline
+          : null,
     );
   }
 
@@ -141,11 +147,47 @@ class PatternComparisonExecutor {
     required PatternComparisonPlan plan,
     required String rawModelOutput,
   }) {
-    return buildEvidenceViewState(
+    final parsed = parseModelOutput(rawModelOutput);
+    _verifyExactComparisonEvidence(
       plan: plan,
-      parsed: parseModelOutput(rawModelOutput),
+      pastQuote: parsed.pastQuote,
+      currentQuote: parsed.currentQuote,
+      state: parsed.state,
     );
+    return _buildVerifiedEvidenceViewState(plan: plan, parsed: parsed);
   }
+
+  void _verifyExactComparisonEvidence({
+    required PatternComparisonPlan plan,
+    required String pastQuote,
+    required String currentQuote,
+    required PatternState state,
+  }) {
+    if (state == PatternState.notEnoughEvidence) return;
+    if (pastQuote.isEmpty || currentQuote.isEmpty) {
+      throw const FormatException('Comparison evidence is missing.');
+    }
+    final pastMatches = plan.visibleHistoricalMoments
+        .where((moment) => _hasOneExactMatch(moment.savedWords, pastQuote))
+        .toList();
+    if (pastMatches.length != 1 ||
+        !_hasOneExactMatch(plan.currentMoment.savedWords, currentQuote)) {
+      throw const FormatException(
+        'Comparison quotes do not match canonical source words exactly.',
+      );
+    }
+    final past = pastMatches.single;
+    if (past.id == plan.currentMoment.id ||
+        !past.createdAt.isBefore(plan.currentMoment.createdAt) ||
+        pastQuote == currentQuote) {
+      throw const FormatException(
+        'Comparison requires distinct chronological evidence.',
+      );
+    }
+  }
+
+  bool _hasOneExactMatch(String source, String quote) =>
+      RegExp(RegExp.escape(quote)).allMatches(source).length == 1;
 
   /// Formats historical context and current words into the user prompt payload.
   String buildUserPrompt({
@@ -168,7 +210,9 @@ class PatternComparisonExecutor {
 
     buffer.writeln('\nNEW MOMENT TO EVALUATE:');
     buffer.writeln('"${currentMoment.savedWords}"');
-    buffer.writeln('\nEvaluate the link cautiously based strictly on the provided words.');
+    buffer.writeln(
+      '\nEvaluate the link cautiously based strictly on the provided words.',
+    );
 
     return buffer.toString();
   }

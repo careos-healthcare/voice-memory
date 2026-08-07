@@ -38,21 +38,21 @@ abstract final class ActionItemsV1SecondaryGate {
       recommendation: _recommendationFor(decision),
       checks: checks,
       earliestViolation: _earliestViolation(checks),
-      violatesGate: decision ==
+      violatesGate:
+          decision ==
           ActionItemsV1SecondaryGateDecision.actionItemsViolatesGate,
     );
   }
 
   static ActionItemsV1SecondaryGateReport report(
     ActionItemsV1SecondaryGateResult result,
-  ) =>
-      ActionItemsV1SecondaryGateReport(
-        headline: ActionItemsV1SecondaryGateCopy.headline,
-        body: ActionItemsV1SecondaryGateCopy.body,
-        orderLine: ActionItemsV1SecondaryGateCopy.orderLine,
-        guardrail: ActionItemsV1SecondaryGateCopy.guardrail,
-        result: result,
-      );
+  ) => ActionItemsV1SecondaryGateReport(
+    headline: ActionItemsV1SecondaryGateCopy.headline,
+    body: ActionItemsV1SecondaryGateCopy.body,
+    orderLine: ActionItemsV1SecondaryGateCopy.orderLine,
+    guardrail: ActionItemsV1SecondaryGateCopy.guardrail,
+    result: result,
+  );
 
   static ActionItemsV1SecondaryGateCopyResult evaluateCopy(String copy) {
     final lower = copy.toLowerCase().trim();
@@ -96,10 +96,10 @@ abstract final class ActionItemsV1SecondaryGate {
   static bool detectHiddenInFirstFiveMinutes(
     String firstFiveMinutesSimplificationSource,
   ) =>
-      firstFiveMinutesSimplificationSource
-          .contains('FirstFiveMinutesSurface.actionItems') &&
-      firstFiveMinutesSimplificationSource
-          .contains('hideActionItemsTooEarly');
+      firstFiveMinutesSimplificationSource.contains(
+        'FirstFiveMinutesSurface.actionItems',
+      ) &&
+      firstFiveMinutesSimplificationSource.contains('hideActionItemsTooEarly');
 
   static bool detectNotInProPromise(String proSinglePromiseCopySource) {
     final lower = proSinglePromiseCopySource.toLowerCase();
@@ -108,8 +108,7 @@ abstract final class ActionItemsV1SecondaryGate {
 
   static bool detectNotBlockingFirstProof(String featureNoiseReductionSource) =>
       featureNoiseReductionSource.contains('FeatureSurfaceType.actionItems') &&
-      featureNoiseReductionSource
-          .contains('hideActionItemsUntilUserIntent');
+      featureNoiseReductionSource.contains('hideActionItemsUntilUserIntent');
 
   static bool detectNotRequiredOnboarding(String onboardingPagesSource) {
     final lower = onboardingPagesSource.toLowerCase();
@@ -150,70 +149,72 @@ abstract final class ActionItemsV1SecondaryGate {
     bool actionItemsBlockFirstProof = false,
     bool actionItemsRequiredInOnboarding = false,
     bool remindersExpansionRequested = false,
-  }) =>
-      ActionItemsV1SecondaryGateInput(
-        actionItemsSecondary: detectSecondaryScope(v1SurfaceScopeAuditSource) &&
-            !actionItemsInCoreTab,
-        hiddenInFirstFiveMinutes:
-            detectHiddenInFirstFiveMinutes(firstFiveMinutesSimplificationSource) &&
-                !actionItemsInFirstFiveMinutesByDefault,
-        notInProPromise:
-            detectNotInProPromise(proSinglePromiseCopySource) &&
-                !actionItemsInProPromise,
-        notBlockingFirstProof:
-            detectNotBlockingFirstProof(featureNoiseReductionSource) &&
-                !actionItemsBlockFirstProof,
-        notRequiredOnboarding:
-            detectNotRequiredOnboarding(onboardingPagesSource) &&
-                !actionItemsRequiredInOnboarding,
-        notTaskManagementPositioning:
-            detectActionItemsCopySafe(archiveActionItemSource),
-        userConfirmedAccessOnly:
-            detectUserConfirmedAccessOnly(rememberThisButtonSource),
-        noExpansionGuarded: detectNoExpansionGuarded(
-              freezeDriftScannerCopySource: freezeDriftScannerCopySource,
-              releaseCandidateFreezeCopySource: releaseCandidateFreezeCopySource,
-            ) &&
-            !remindersExpansionRequested,
-      );
+  }) => ActionItemsV1SecondaryGateInput(
+    actionItemsSecondary:
+        detectSecondaryScope(v1SurfaceScopeAuditSource) &&
+        !actionItemsInCoreTab,
+    hiddenInFirstFiveMinutes:
+        detectHiddenInFirstFiveMinutes(firstFiveMinutesSimplificationSource) &&
+        !actionItemsInFirstFiveMinutesByDefault,
+    notInProPromise:
+        detectNotInProPromise(proSinglePromiseCopySource) &&
+        !actionItemsInProPromise,
+    notBlockingFirstProof:
+        detectNotBlockingFirstProof(featureNoiseReductionSource) &&
+        !actionItemsBlockFirstProof,
+    notRequiredOnboarding:
+        detectNotRequiredOnboarding(onboardingPagesSource) &&
+        !actionItemsRequiredInOnboarding,
+    notTaskManagementPositioning: detectActionItemsCopySafe(
+      archiveActionItemSource,
+    ),
+    userConfirmedAccessOnly: detectUserConfirmedAccessOnly(
+      rememberThisButtonSource,
+    ),
+    noExpansionGuarded:
+        detectNoExpansionGuarded(
+          freezeDriftScannerCopySource: freezeDriftScannerCopySource,
+          releaseCandidateFreezeCopySource: releaseCandidateFreezeCopySource,
+        ) &&
+        !remindersExpansionRequested,
+  );
 
   static List<ActionItemsV1SecondaryGateCheck> _buildChecks(
     ActionItemsV1SecondaryGateInput input,
-  ) =>
-      [
-        _check(
-          id: ActionItemsV1SecondaryGateCheckId.actionItemsSecondary,
-          passes: input.actionItemsSecondary,
-        ),
-        _check(
-          id: ActionItemsV1SecondaryGateCheckId.notInFirstFiveMinutes,
-          passes: input.hiddenInFirstFiveMinutes,
-        ),
-        _check(
-          id: ActionItemsV1SecondaryGateCheckId.notInProPromise,
-          passes: input.notInProPromise,
-        ),
-        _check(
-          id: ActionItemsV1SecondaryGateCheckId.notBlockingFirstProof,
-          passes: input.notBlockingFirstProof,
-        ),
-        _check(
-          id: ActionItemsV1SecondaryGateCheckId.notRequiredOnboarding,
-          passes: input.notRequiredOnboarding,
-        ),
-        _check(
-          id: ActionItemsV1SecondaryGateCheckId.notTaskManagementPositioning,
-          passes: input.notTaskManagementPositioning,
-        ),
-        _check(
-          id: ActionItemsV1SecondaryGateCheckId.userConfirmedAccessOnly,
-          passes: input.userConfirmedAccessOnly,
-        ),
-        _check(
-          id: ActionItemsV1SecondaryGateCheckId.noExpansionGuarded,
-          passes: input.noExpansionGuarded,
-        ),
-      ];
+  ) => [
+    _check(
+      id: ActionItemsV1SecondaryGateCheckId.actionItemsSecondary,
+      passes: input.actionItemsSecondary,
+    ),
+    _check(
+      id: ActionItemsV1SecondaryGateCheckId.notInFirstFiveMinutes,
+      passes: input.hiddenInFirstFiveMinutes,
+    ),
+    _check(
+      id: ActionItemsV1SecondaryGateCheckId.notInProPromise,
+      passes: input.notInProPromise,
+    ),
+    _check(
+      id: ActionItemsV1SecondaryGateCheckId.notBlockingFirstProof,
+      passes: input.notBlockingFirstProof,
+    ),
+    _check(
+      id: ActionItemsV1SecondaryGateCheckId.notRequiredOnboarding,
+      passes: input.notRequiredOnboarding,
+    ),
+    _check(
+      id: ActionItemsV1SecondaryGateCheckId.notTaskManagementPositioning,
+      passes: input.notTaskManagementPositioning,
+    ),
+    _check(
+      id: ActionItemsV1SecondaryGateCheckId.userConfirmedAccessOnly,
+      passes: input.userConfirmedAccessOnly,
+    ),
+    _check(
+      id: ActionItemsV1SecondaryGateCheckId.noExpansionGuarded,
+      passes: input.noExpansionGuarded,
+    ),
+  ];
 
   static ActionItemsV1SecondaryGateDecision _resolveDecision(
     List<ActionItemsV1SecondaryGateCheck> checks,
@@ -223,7 +224,9 @@ abstract final class ActionItemsV1SecondaryGate {
       return ActionItemsV1SecondaryGateDecision.actionItemsSecondaryOk;
     }
 
-    final hardFailures = failures.where((check) => check.isHardFailure).toList();
+    final hardFailures = failures
+        .where((check) => check.isHardFailure)
+        .toList();
     if (hardFailures.isNotEmpty) {
       return ActionItemsV1SecondaryGateDecision.actionItemsViolatesGate;
     }
@@ -243,16 +246,15 @@ abstract final class ActionItemsV1SecondaryGate {
   static ActionItemsV1SecondaryGateCheck _check({
     required ActionItemsV1SecondaryGateCheckId id,
     required bool passes,
-  }) =>
-      ActionItemsV1SecondaryGateCheck(
-        id: id,
-        label: ActionItemsV1SecondaryGateCopy.labelFor(id),
-        passes: passes,
-        detailLabel: passes
-            ? ActionItemsV1SecondaryGateCopy.detailPass
-            : ActionItemsV1SecondaryGateCopy.detailFail,
-        isHardFailure: _isHardFailure(id),
-      );
+  }) => ActionItemsV1SecondaryGateCheck(
+    id: id,
+    label: ActionItemsV1SecondaryGateCopy.labelFor(id),
+    passes: passes,
+    detailLabel: passes
+        ? ActionItemsV1SecondaryGateCopy.detailPass
+        : ActionItemsV1SecondaryGateCopy.detailFail,
+    isHardFailure: _isHardFailure(id),
+  );
 
   static bool _isHardFailure(ActionItemsV1SecondaryGateCheckId id) =>
       switch (id) {
@@ -262,8 +264,7 @@ abstract final class ActionItemsV1SecondaryGate {
         ActionItemsV1SecondaryGateCheckId.notBlockingFirstProof ||
         ActionItemsV1SecondaryGateCheckId.notRequiredOnboarding ||
         ActionItemsV1SecondaryGateCheckId.notTaskManagementPositioning ||
-        ActionItemsV1SecondaryGateCheckId.noExpansionGuarded =>
-          true,
+        ActionItemsV1SecondaryGateCheckId.noExpansionGuarded => true,
         ActionItemsV1SecondaryGateCheckId.userConfirmedAccessOnly => false,
       };
 
@@ -279,15 +280,14 @@ abstract final class ActionItemsV1SecondaryGate {
 
   static String _recommendationFor(
     ActionItemsV1SecondaryGateDecision decision,
-  ) =>
-      switch (decision) {
-        ActionItemsV1SecondaryGateDecision.actionItemsSecondaryOk =>
-          'Keep action items in settings, entry detail, and other user-confirmed paths only.',
-        ActionItemsV1SecondaryGateDecision.actionItemsWarnReview =>
-          'Review action-item access paths before release. Do not widen visibility.',
-        ActionItemsV1SecondaryGateDecision.actionItemsViolatesGate =>
-          'Move action items back behind secondary surfaces. Do not delete the feature.',
-      };
+  ) => switch (decision) {
+    ActionItemsV1SecondaryGateDecision.actionItemsSecondaryOk =>
+      'Keep action items in settings, entry detail, and other user-confirmed paths only.',
+    ActionItemsV1SecondaryGateDecision.actionItemsWarnReview =>
+      'Review action-item access paths before release. Do not widen visibility.',
+    ActionItemsV1SecondaryGateDecision.actionItemsViolatesGate =>
+      'Move action items back behind secondary surfaces. Do not delete the feature.',
+  };
 
   static Iterable<String> _actionItemsCopyLines(String source) sync* {
     final pattern = RegExp(r"static const String \w+ = '([^']*)';");
@@ -331,10 +331,7 @@ enum ActionItemsV1SecondaryGateDecision {
   actionItemsViolatesGate,
 }
 
-enum ActionItemsV1SecondaryGateCopyAction {
-  allowed,
-  block,
-}
+enum ActionItemsV1SecondaryGateCopyAction { allowed, block }
 
 enum ActionItemsV1SecondaryGateCopyReason {
   allowedSecondaryLanguage,

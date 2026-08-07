@@ -71,6 +71,27 @@ export async function removeMobilePushDevice(deviceId: string): Promise<void> {
   memoryMap().delete(deviceId);
 }
 
+/** Removes every registered device for a user. Idempotent. */
+export async function deleteMobilePushDevicesForUser(userId: string): Promise<number> {
+  if (shouldUsePostgresStorage()) {
+    const result = await dbQuery(`DELETE FROM mobile_push_devices WHERE user_id = $1`, [userId]);
+    return result.rowCount ?? 0;
+  }
+  let removed = 0;
+  for (const [deviceId, row] of memoryMap()) {
+    if (row.userId === userId) {
+      memoryMap().delete(deviceId);
+      removed += 1;
+    }
+  }
+  return removed;
+}
+
+/** Non-Postgres push-device storage has no filesystem persistence — always memory. */
+export function currentPushDeviceStorageMode(): "postgres" | "memory" {
+  return shouldUsePostgresStorage() ? "postgres" : "memory";
+}
+
 /** Drop tokens not refreshed within STALE_DAYS. */
 export async function pruneStaleMobilePushDevices(): Promise<number> {
   if (shouldUsePostgresStorage()) {

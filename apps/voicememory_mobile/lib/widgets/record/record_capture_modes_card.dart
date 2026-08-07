@@ -8,10 +8,7 @@ import '../../theme/app_spacing.dart';
 
 /// Permissive capture mode chips below Record capture CTAs.
 class RecordCaptureModesCard extends StatelessWidget {
-  const RecordCaptureModesCard({
-    super.key,
-    required this.onModeTap,
-  });
+  const RecordCaptureModesCard({super.key, required this.onModeTap});
 
   final ValueChanged<RecordCaptureMode> onModeTap;
 
@@ -24,18 +21,17 @@ class RecordCaptureModesCard extends StatelessWidget {
         Text(
           RecordCaptureModeCopy.cardTitle,
           key: const Key('record_capture_modes_title'),
-          style: ArchiveMobileTypography.cardLabel(context).copyWith(
-            color: AppColors.textPrimary,
-            fontWeight: FontWeight.w600,
-          ),
+          style: ArchiveMobileTypography.cardLabel(
+            context,
+          ).copyWith(color: AppColors.textPrimary, fontWeight: FontWeight.w600),
         ),
         const SizedBox(height: 4),
         Text(
           RecordCaptureModeCopy.cardSubtitle,
           key: const Key('record_capture_modes_subtitle'),
-          style: ArchiveMobileTypography.explanationBody(context).copyWith(
-            color: AppColors.textSecondary,
-          ),
+          style: ArchiveMobileTypography.explanationBody(
+            context,
+          ).copyWith(color: AppColors.textSecondary),
         ),
         const SizedBox(height: AppSpacing.sm),
         Wrap(
@@ -56,11 +52,7 @@ class RecordCaptureModesCard extends StatelessWidget {
 }
 
 class _CaptureModeChip extends StatelessWidget {
-  const _CaptureModeChip({
-    super.key,
-    required this.label,
-    required this.onTap,
-  });
+  const _CaptureModeChip({super.key, required this.label, required this.onTap});
 
   final String label;
   final VoidCallback onTap;

@@ -68,10 +68,7 @@ void main() {
     test('flags standalone what changed without evidence context', () {
       final result = ArchiveCopyRepetitionAudit.checkScreen(
         screenName: 'what_changed_screen',
-        visiblePhrases: [
-          'What changed',
-          'What changed',
-        ],
+        visiblePhrases: ['What changed', 'What changed'],
       );
 
       expect(result.approved, isFalse);

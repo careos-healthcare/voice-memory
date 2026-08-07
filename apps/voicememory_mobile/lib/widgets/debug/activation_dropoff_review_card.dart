@@ -7,10 +7,7 @@ import '../../theme/app_theme.dart';
 
 /// Internal-only activation funnel summary for beta QA — counts only.
 class ActivationDropoffReviewCard extends StatelessWidget {
-  const ActivationDropoffReviewCard({
-    super.key,
-    required this.review,
-  });
+  const ActivationDropoffReviewCard({super.key, required this.review});
 
   final ActivationDropoffReview review;
 
@@ -36,9 +33,9 @@ class ActivationDropoffReviewCard extends StatelessWidget {
           Text(
             review.title,
             key: const Key('activation_dropoff_review_title'),
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: 12),
           for (final row in review.rows) ...[

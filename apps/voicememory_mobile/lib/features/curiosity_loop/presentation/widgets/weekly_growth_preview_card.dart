@@ -14,18 +14,14 @@ import '../../weekly_productivity_report_copy.dart';
 
 /// Compact account/profile entry into the weekly curiosity check-in report.
 class WeeklyGrowthPreviewCard extends StatefulWidget {
-  const WeeklyGrowthPreviewCard({
-    super.key,
-    this.engine,
-    this.initialReport,
-  });
+  const WeeklyGrowthPreviewCard({super.key, this.engine, this.initialReport});
 
   /// Test hook to render a fixed report without async loading.
   const WeeklyGrowthPreviewCard.test({
     super.key,
     required WeeklyProductivityReport report,
-  })  : engine = null,
-        initialReport = report;
+  }) : engine = null,
+       initialReport = report;
 
   final ProductivityReportEngine? engine;
   final WeeklyProductivityReport? initialReport;
@@ -123,10 +119,7 @@ class _WeeklyGrowthPreviewCardState extends State<WeeklyGrowthPreviewCard> {
                     style: ArchiveMobileTypography.listSubtitle(context),
                   ),
                 ),
-                const Icon(
-                  Icons.chevron_right,
-                  color: AppColors.textSecondary,
-                ),
+                const Icon(Icons.chevron_right, color: AppColors.textSecondary),
               ],
             ),
           ),

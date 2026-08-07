@@ -23,91 +23,104 @@ CuriosityReactionRecord _record({
 
 void main() {
   group('ProductivityReportEngine', () {
-    test('returns empty aggregates when no reactions exist in the window', () async {
-      final relativeTo = DateTime.utc(2026, 6, 18, 12);
-      final repository = InMemoryCuriosityReactionRepository([
-        _record(
-          id: 'old',
-          timestamp: relativeTo.subtract(const Duration(days: 8)),
-          reactionType: YesterdaysSnapshotReaction.stuck,
-          primaryAnchor: 'said yes again',
-        ),
-      ]);
-      final engine = ProductivityReportEngine(repository);
+    test(
+      'returns empty aggregates when no reactions exist in the window',
+      () async {
+        final relativeTo = DateTime.utc(2026, 6, 18, 12);
+        final repository = InMemoryCuriosityReactionRepository([
+          _record(
+            id: 'old',
+            timestamp: relativeTo.subtract(const Duration(days: 8)),
+            reactionType: YesterdaysSnapshotReaction.stuck,
+            primaryAnchor: 'said yes again',
+          ),
+        ]);
+        final engine = ProductivityReportEngine(repository);
 
-      final report = await engine.generateWeeklyReport(relativeTo: relativeTo);
+        final report = await engine.generateWeeklyReport(
+          relativeTo: relativeTo,
+        );
 
-      expect(report.totalReactions, 0);
-      expect(report.reactionBreakdown, isEmpty);
-      expect(report.stuckAnchors, isEmpty);
-      expect(report.momentumAnchors, isEmpty);
-    });
+        expect(report.totalReactions, 0);
+        expect(report.reactionBreakdown, isEmpty);
+        expect(report.stuckAnchors, isEmpty);
+        expect(report.momentumAnchors, isEmpty);
+      },
+    );
 
-    test('calculates reaction percentages for the rolling seven-day window', () async {
-      final relativeTo = DateTime.utc(2026, 6, 18, 12);
-      final repository = InMemoryCuriosityReactionRepository([
-        _record(
-          id: 'r1',
-          timestamp: DateTime.utc(2026, 6, 18, 10),
-          reactionType: YesterdaysSnapshotReaction.progressed,
-          primaryAnchor: 'finished the draft',
-        ),
-        _record(
-          id: 'r2',
-          timestamp: DateTime.utc(2026, 6, 17, 10),
-          reactionType: YesterdaysSnapshotReaction.progressed,
-          primaryAnchor: 'finished the draft',
-        ),
-        _record(
-          id: 'r3',
-          timestamp: DateTime.utc(2026, 6, 16, 10),
-          reactionType: YesterdaysSnapshotReaction.progressed,
-          primaryAnchor: 'shipped the fix',
-        ),
-        _record(
-          id: 'r4',
-          timestamp: DateTime.utc(2026, 6, 15, 10),
-          reactionType: YesterdaysSnapshotReaction.stuck,
-          primaryAnchor: 'said yes again',
-        ),
-        _record(
-          id: 'r5',
-          timestamp: DateTime.utc(2026, 6, 14, 10),
-          reactionType: YesterdaysSnapshotReaction.stuck,
-          primaryAnchor: 'avoided the conversation',
-        ),
-        _record(
-          id: 'r6',
-          timestamp: DateTime.utc(2026, 6, 13, 10),
-          reactionType: YesterdaysSnapshotReaction.stuck,
-          primaryAnchor: 'said yes again',
-        ),
-        _record(
-          id: 'r7',
-          timestamp: DateTime.utc(2026, 6, 12, 10),
-          reactionType: YesterdaysSnapshotReaction.pivot,
-          primaryAnchor: 'changed the plan',
-        ),
-        _record(
-          id: 'outside_window',
-          timestamp: DateTime.utc(2026, 6, 11, 11, 59),
-          reactionType: YesterdaysSnapshotReaction.stuck,
-          primaryAnchor: 'outside window',
-        ),
-      ]);
-      final engine = ProductivityReportEngine(repository);
+    test(
+      'calculates reaction percentages for the rolling seven-day window',
+      () async {
+        final relativeTo = DateTime.utc(2026, 6, 18, 12);
+        final repository = InMemoryCuriosityReactionRepository([
+          _record(
+            id: 'r1',
+            timestamp: DateTime.utc(2026, 6, 18, 10),
+            reactionType: YesterdaysSnapshotReaction.progressed,
+            primaryAnchor: 'finished the draft',
+          ),
+          _record(
+            id: 'r2',
+            timestamp: DateTime.utc(2026, 6, 17, 10),
+            reactionType: YesterdaysSnapshotReaction.progressed,
+            primaryAnchor: 'finished the draft',
+          ),
+          _record(
+            id: 'r3',
+            timestamp: DateTime.utc(2026, 6, 16, 10),
+            reactionType: YesterdaysSnapshotReaction.progressed,
+            primaryAnchor: 'shipped the fix',
+          ),
+          _record(
+            id: 'r4',
+            timestamp: DateTime.utc(2026, 6, 15, 10),
+            reactionType: YesterdaysSnapshotReaction.stuck,
+            primaryAnchor: 'said yes again',
+          ),
+          _record(
+            id: 'r5',
+            timestamp: DateTime.utc(2026, 6, 14, 10),
+            reactionType: YesterdaysSnapshotReaction.stuck,
+            primaryAnchor: 'avoided the conversation',
+          ),
+          _record(
+            id: 'r6',
+            timestamp: DateTime.utc(2026, 6, 13, 10),
+            reactionType: YesterdaysSnapshotReaction.stuck,
+            primaryAnchor: 'said yes again',
+          ),
+          _record(
+            id: 'r7',
+            timestamp: DateTime.utc(2026, 6, 12, 10),
+            reactionType: YesterdaysSnapshotReaction.pivot,
+            primaryAnchor: 'changed the plan',
+          ),
+          _record(
+            id: 'outside_window',
+            timestamp: DateTime.utc(2026, 6, 11, 11, 59),
+            reactionType: YesterdaysSnapshotReaction.stuck,
+            primaryAnchor: 'outside window',
+          ),
+        ]);
+        final engine = ProductivityReportEngine(repository);
 
-      final report = await engine.generateWeeklyReport(relativeTo: relativeTo);
+        final report = await engine.generateWeeklyReport(
+          relativeTo: relativeTo,
+        );
 
-      expect(report.totalReactions, 7);
-      expect(report.reactionBreakdown['progressed'], closeTo(3 / 7, 0.0001));
-      expect(report.reactionBreakdown['stuck'], closeTo(3 / 7, 0.0001));
-      expect(report.reactionBreakdown['pivot'], closeTo(1 / 7, 0.0001));
-      expect(
-        report.reactionBreakdown.values.fold<double>(0, (sum, value) => sum + value),
-        closeTo(1.0, 0.0001),
-      );
-    });
+        expect(report.totalReactions, 7);
+        expect(report.reactionBreakdown['progressed'], closeTo(3 / 7, 0.0001));
+        expect(report.reactionBreakdown['stuck'], closeTo(3 / 7, 0.0001));
+        expect(report.reactionBreakdown['pivot'], closeTo(1 / 7, 0.0001));
+        expect(
+          report.reactionBreakdown.values.fold<double>(
+            0,
+            (sum, value) => sum + value,
+          ),
+          closeTo(1.0, 0.0001),
+        );
+      },
+    );
 
     test('ranks stuck and momentum anchors by frequency', () async {
       final relativeTo = DateTime.utc(2026, 6, 18, 12);
@@ -182,10 +195,7 @@ void main() {
         'avoided the conversation',
         'late nights',
       ]);
-      expect(report.momentumAnchors, [
-        'finished the draft',
-        'shipped the fix',
-      ]);
+      expect(report.momentumAnchors, ['finished the draft', 'shipped the fix']);
     });
   });
 }

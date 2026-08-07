@@ -60,9 +60,9 @@ class ComparisonEngine {
     final previous = eligible.length >= 2
         ? eligible[eligible.length - 2]
         : entries[entries.length - 2];
-    final latest = eligible.isNotEmpty ? eligible.last : entries.last;
 
-    final rawRepeated = _usableLine(signal.whatRepeated) ??
+    final rawRepeated =
+        _usableLine(signal.whatRepeated) ??
         'something similar across your last two moments';
     final rawChanged = _usableLine(signal.whatChanged);
 
@@ -74,7 +74,8 @@ class ComparisonEngine {
         ? null
         : ComparisonEnginePrompt.sanitizeLine(
             rawChanged,
-            fallback: 'The latest moment may sit differently from the one before it.',
+            fallback:
+                'The latest moment may sit differently from the one before it.',
           );
 
     final confidence = _resolveConfidence(

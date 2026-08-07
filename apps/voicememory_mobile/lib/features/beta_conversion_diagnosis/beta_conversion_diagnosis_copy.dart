@@ -6,8 +6,7 @@ abstract final class BetaConversionDiagnosisCopy {
 
   static const body = 'Use this to see where the loop is breaking.';
 
-  static const noIssuesLine =
-      'No loop breaks flagged from local counts yet.';
+  static const noIssuesLine = 'No loop breaks flagged from local counts yet.';
 
   static const localCountsNote =
       'Local device counts only. No transcripts, entry IDs, or user identifiers.';
@@ -17,12 +16,10 @@ abstract final class BetaConversionDiagnosisCopy {
   static const targetPrefix = 'Target';
   static const fixPrefix = 'Fix';
 
-  static const firstCaptureUnclear =
-      'First capture is still unclear';
+  static const firstCaptureUnclear = 'First capture is still unclear';
   static const returnReasonWeak = 'Return reason is weak';
   static const notReachingProof = 'Users are not reaching enough proof';
-  static const timelineNotUseful =
-      'Timeline proof is not useful enough yet';
+  static const timelineNotUseful = 'Timeline proof is not useful enough yet';
   static const specificityWeak = 'Specificity is weak';
   static const changeDeltaWeak = 'Change/delta is weak';
   static const relevanceWeak = 'Relevance/correction is weak';

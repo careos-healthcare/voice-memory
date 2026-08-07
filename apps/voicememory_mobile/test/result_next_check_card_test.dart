@@ -231,10 +231,7 @@ void main() {
     );
 
     expect(find.text('Make the next check more concrete'), findsOneWidget);
-    expect(
-      find.text('What exact moment did this show up?'),
-      findsOneWidget,
-    );
+    expect(find.text('What exact moment did this show up?'), findsOneWidget);
   });
 
   test(

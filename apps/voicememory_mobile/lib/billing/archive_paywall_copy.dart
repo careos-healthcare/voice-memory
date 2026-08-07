@@ -11,7 +11,8 @@ abstract class ArchivePaywallCopy {
 
   static const String subheadline = ConsumerUiCopy.paywallSubhead;
   static const String subheadlineBParagraph1 = subheadline;
-  static const String subheadlineBParagraph2 = ConsumerUiCopy.paywallDifferentiation;
+  static const String subheadlineBParagraph2 =
+      ConsumerUiCopy.paywallDifferentiation;
 
   static const String differentiation = ConsumerUiCopy.paywallDifferentiation;
   static const String trust = ConsumerUiCopy.paywallTrust;

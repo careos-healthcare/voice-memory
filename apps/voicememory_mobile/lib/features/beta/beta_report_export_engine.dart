@@ -11,9 +11,7 @@ import 'proof_of_value_engine.dart';
 abstract final class BetaReportExportEngine {
   BetaReportExportEngine._();
 
-  static BetaReportExport build({
-    BetaActivationLoopCounts? betaCounts,
-  }) {
+  static BetaReportExport build({BetaActivationLoopCounts? betaCounts}) {
     final counters = ActivationDropoffReviewEngine.fromBetaCounts(betaCounts);
     final metricsInput = BetaMetricsDecisionEngine.fromBetaCounts(
       betaCounts: betaCounts,
@@ -60,8 +58,6 @@ abstract final class BetaReportExportEngine {
         BetaMetricsDecisionRowId.firstProof,
     };
 
-    return report.rows
-        .firstWhere((row) => row.id == rowId)
-        .fixArea;
+    return report.rows.firstWhere((row) => row.id == rowId).fixArea;
   }
 }

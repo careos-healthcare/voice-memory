@@ -100,16 +100,12 @@ class ArchiveDemoPreviewCard extends StatelessWidget {
       children: [
         Text(
           label,
-          style: ArchiveMobileTypography.cardLabel(context).copyWith(
-            color: AppColors.textSecondary,
-          ),
+          style: ArchiveMobileTypography.cardLabel(
+            context,
+          ).copyWith(color: AppColors.textSecondary),
         ),
         const SizedBox(height: 4),
-        Text(
-          body,
-          key: bodyKey,
-          style: ArchiveMobileTypography.body(context),
-        ),
+        Text(body, key: bodyKey, style: ArchiveMobileTypography.body(context)),
       ],
     );
   }

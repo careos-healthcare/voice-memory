@@ -34,23 +34,22 @@ ReleaseCandidateFreezeInput _input({
   bool changesPricingOrPaywall = false,
   bool changesProofThresholds = false,
   bool changesRecordLayout = false,
-}) =>
-    ReleaseCandidateFreezeInput(
-      changeType: changeType,
-      blocksRelease: blocksRelease,
-      blocksPurchase: blocksPurchase,
-      blocksRestore: blocksRestore,
-      blocksEntitlement: blocksEntitlement,
-      causesCrash: causesCrash,
-      risksAppStoreRejection: risksAppStoreRejection,
-      affectsSecuritySecrets: affectsSecuritySecrets,
-      fixesFirstJourneyComprehension: fixesFirstJourneyComprehension,
-      fixesCriticalProofTrust: fixesCriticalProofTrust,
-      addsNewUserFacingSurface: addsNewUserFacingSurface,
-      changesPricingOrPaywall: changesPricingOrPaywall,
-      changesProofThresholds: changesProofThresholds,
-      changesRecordLayout: changesRecordLayout,
-    );
+}) => ReleaseCandidateFreezeInput(
+  changeType: changeType,
+  blocksRelease: blocksRelease,
+  blocksPurchase: blocksPurchase,
+  blocksRestore: blocksRestore,
+  blocksEntitlement: blocksEntitlement,
+  causesCrash: causesCrash,
+  risksAppStoreRejection: risksAppStoreRejection,
+  affectsSecuritySecrets: affectsSecuritySecrets,
+  fixesFirstJourneyComprehension: fixesFirstJourneyComprehension,
+  fixesCriticalProofTrust: fixesCriticalProofTrust,
+  addsNewUserFacingSurface: addsNewUserFacingSurface,
+  changesPricingOrPaywall: changesPricingOrPaywall,
+  changesProofThresholds: changesProofThresholds,
+  changesRecordLayout: changesRecordLayout,
+);
 
 void main() {
   group('ReleaseCandidateFreeze.build', () {
@@ -62,15 +61,15 @@ void main() {
         ),
       );
       expect(result.allowed, isTrue);
-      expect(result.reason, ReleaseCandidateFreezeReason.allowSecuritySecretsFix);
+      expect(
+        result.reason,
+        ReleaseCandidateFreezeReason.allowSecuritySecretsFix,
+      );
     });
 
     test('crash allowed', () {
       final result = ReleaseCandidateFreeze.build(
-        _input(
-          changeType: ReleaseCandidateChangeType.crash,
-          causesCrash: true,
-        ),
+        _input(changeType: ReleaseCandidateChangeType.crash, causesCrash: true),
       );
       expect(result.allowed, isTrue);
       expect(result.reason, ReleaseCandidateFreezeReason.allowCrashFix);
@@ -143,7 +142,10 @@ void main() {
         _input(changeType: ReleaseCandidateChangeType.entitlementBlocker),
       );
       expect(result.allowed, isTrue);
-      expect(result.reason, ReleaseCandidateFreezeReason.allowEntitlementBlocker);
+      expect(
+        result.reason,
+        ReleaseCandidateFreezeReason.allowEntitlementBlocker,
+      );
     });
 
     test('App Store rejection risk allowed', () {
@@ -160,7 +162,8 @@ void main() {
     test('first journey comprehension fix allowed', () {
       final result = ReleaseCandidateFreeze.build(
         _input(
-          changeType: ReleaseCandidateChangeType.firstJourneyComprehensionFailure,
+          changeType:
+              ReleaseCandidateChangeType.firstJourneyComprehensionFailure,
           fixesFirstJourneyComprehension: true,
         ),
       );
@@ -185,7 +188,10 @@ void main() {
     test('new product feature blocked', () {
       final result = ReleaseCandidateFreeze.build(_input());
       expect(result.allowed, isFalse);
-      expect(result.reason, ReleaseCandidateFreezeReason.blockNewProductFeature);
+      expect(
+        result.reason,
+        ReleaseCandidateFreezeReason.blockNewProductFeature,
+      );
     });
 
     test('new Pro benefit blocked', () {
@@ -225,7 +231,10 @@ void main() {
         _input(changeType: ReleaseCandidateChangeType.newContextExpansion),
       );
       expect(result.allowed, isFalse);
-      expect(result.reason, ReleaseCandidateFreezeReason.blockNewContextExpansion);
+      expect(
+        result.reason,
+        ReleaseCandidateFreezeReason.blockNewContextExpansion,
+      );
     });
 
     test('action items blocked', () {
@@ -241,7 +250,10 @@ void main() {
         _input(changeType: ReleaseCandidateChangeType.newOnboardingFlow),
       );
       expect(result.allowed, isFalse);
-      expect(result.reason, ReleaseCandidateFreezeReason.blockNewOnboardingFlow);
+      expect(
+        result.reason,
+        ReleaseCandidateFreezeReason.blockNewOnboardingFlow,
+      );
     });
 
     test('new chat mode always blocked', () {
@@ -268,7 +280,10 @@ void main() {
         _input(changeType: ReleaseCandidateChangeType.newFeatureSurface),
       );
       expect(result.allowed, isFalse);
-      expect(result.reason, ReleaseCandidateFreezeReason.blockNewFeatureSurface);
+      expect(
+        result.reason,
+        ReleaseCandidateFreezeReason.blockNewFeatureSurface,
+      );
     });
 
     test('proof volume expansion blocked', () {
@@ -276,7 +291,10 @@ void main() {
         _input(changeType: ReleaseCandidateChangeType.proofVolumeExpansion),
       );
       expect(result.allowed, isFalse);
-      expect(result.reason, ReleaseCandidateFreezeReason.blockProofVolumeExpansion);
+      expect(
+        result.reason,
+        ReleaseCandidateFreezeReason.blockProofVolumeExpansion,
+      );
     });
 
     test('anchor/threshold change blocked unless critical proof trust bug', () {
@@ -301,59 +319,80 @@ void main() {
       );
     });
 
-    test('record layout change blocked unless first journey comprehension failure',
-        () {
-      final blocked = ReleaseCandidateFreeze.build(
-        _input(changeType: ReleaseCandidateChangeType.recordLayoutChange),
-      );
-      final allowed = ReleaseCandidateFreeze.build(
-        _input(
-          changeType: ReleaseCandidateChangeType.recordLayoutChange,
-          fixesFirstJourneyComprehension: true,
-        ),
-      );
-      expect(blocked.allowed, isFalse);
-      expect(blocked.reason, ReleaseCandidateFreezeReason.blockRecordLayoutChange);
-      expect(allowed.allowed, isTrue);
-      expect(allowed.reason, ReleaseCandidateFreezeReason.allowFirstJourneyFix);
-    });
+    test(
+      'record layout change blocked unless first journey comprehension failure',
+      () {
+        final blocked = ReleaseCandidateFreeze.build(
+          _input(changeType: ReleaseCandidateChangeType.recordLayoutChange),
+        );
+        final allowed = ReleaseCandidateFreeze.build(
+          _input(
+            changeType: ReleaseCandidateChangeType.recordLayoutChange,
+            fixesFirstJourneyComprehension: true,
+          ),
+        );
+        expect(blocked.allowed, isFalse);
+        expect(
+          blocked.reason,
+          ReleaseCandidateFreezeReason.blockRecordLayoutChange,
+        );
+        expect(allowed.allowed, isTrue);
+        expect(
+          allowed.reason,
+          ReleaseCandidateFreezeReason.allowFirstJourneyFix,
+        );
+      },
+    );
 
-    test('paywall mechanics change blocked unless purchase/restore/entitlement blocker',
-        () {
-      final blocked = ReleaseCandidateFreeze.build(
-        _input(changeType: ReleaseCandidateChangeType.paywallMechanicsChange),
-      );
-      final allowed = ReleaseCandidateFreeze.build(
-        _input(
-          changeType: ReleaseCandidateChangeType.paywallMechanicsChange,
-          blocksPurchase: true,
-        ),
-      );
-      expect(blocked.allowed, isFalse);
-      expect(
-        blocked.reason,
-        ReleaseCandidateFreezeReason.blockPaywallMechanicsChange,
-      );
-      expect(allowed.allowed, isTrue);
-      expect(allowed.reason, ReleaseCandidateFreezeReason.allowPurchaseBlocker);
-    });
+    test(
+      'paywall mechanics change blocked unless purchase/restore/entitlement blocker',
+      () {
+        final blocked = ReleaseCandidateFreeze.build(
+          _input(changeType: ReleaseCandidateChangeType.paywallMechanicsChange),
+        );
+        final allowed = ReleaseCandidateFreeze.build(
+          _input(
+            changeType: ReleaseCandidateChangeType.paywallMechanicsChange,
+            blocksPurchase: true,
+          ),
+        );
+        expect(blocked.allowed, isFalse);
+        expect(
+          blocked.reason,
+          ReleaseCandidateFreezeReason.blockPaywallMechanicsChange,
+        );
+        expect(allowed.allowed, isTrue);
+        expect(
+          allowed.reason,
+          ReleaseCandidateFreezeReason.allowPurchaseBlocker,
+        );
+      },
+    );
 
-    test('RevenueCat change blocked unless store/purchase/restore/entitlement blocker',
-        () {
-      final blocked = ReleaseCandidateFreeze.build(
-        _input(changeType: ReleaseCandidateChangeType.revenueCatChange),
-      );
-      final allowed = ReleaseCandidateFreeze.build(
-        _input(
-          changeType: ReleaseCandidateChangeType.revenueCatChange,
-          blocksRestore: true,
-        ),
-      );
-      expect(blocked.allowed, isFalse);
-      expect(blocked.reason, ReleaseCandidateFreezeReason.blockRevenueCatChange);
-      expect(allowed.allowed, isTrue);
-      expect(allowed.reason, ReleaseCandidateFreezeReason.allowRestoreBlocker);
-    });
+    test(
+      'RevenueCat change blocked unless store/purchase/restore/entitlement blocker',
+      () {
+        final blocked = ReleaseCandidateFreeze.build(
+          _input(changeType: ReleaseCandidateChangeType.revenueCatChange),
+        );
+        final allowed = ReleaseCandidateFreeze.build(
+          _input(
+            changeType: ReleaseCandidateChangeType.revenueCatChange,
+            blocksRestore: true,
+          ),
+        );
+        expect(blocked.allowed, isFalse);
+        expect(
+          blocked.reason,
+          ReleaseCandidateFreezeReason.blockRevenueCatChange,
+        );
+        expect(allowed.allowed, isTrue);
+        expect(
+          allowed.reason,
+          ReleaseCandidateFreezeReason.allowRestoreBlocker,
+        );
+      },
+    );
 
     test('backend/sync change blocked unless release blocker', () {
       final blocked = ReleaseCandidateFreeze.build(
@@ -366,7 +405,10 @@ void main() {
         ),
       );
       expect(blocked.allowed, isFalse);
-      expect(blocked.reason, ReleaseCandidateFreezeReason.blockBackendSyncChange);
+      expect(
+        blocked.reason,
+        ReleaseCandidateFreezeReason.blockBackendSyncChange,
+      );
       expect(allowed.allowed, isTrue);
       expect(
         allowed.reason,
@@ -377,20 +419,21 @@ void main() {
     test('fallback blocked', () {
       final result = ReleaseCandidateFreeze.build(
         _input(
-          changeType: ReleaseCandidateChangeType.firstJourneyComprehensionFailure,
+          changeType:
+              ReleaseCandidateChangeType.firstJourneyComprehensionFailure,
         ),
       );
       expect(result.allowed, isFalse);
-      expect(result.reason, ReleaseCandidateFreezeReason.blockReleaseFreezeDefault);
+      expect(
+        result.reason,
+        ReleaseCandidateFreezeReason.blockReleaseFreezeDefault,
+      );
     });
   });
 
   group('ReleaseCandidateFreezeCopy', () {
     test('headline says Release candidate freeze', () {
-      expect(
-        ReleaseCandidateFreezeCopy.headline,
-        'Release candidate freeze',
-      );
+      expect(ReleaseCandidateFreezeCopy.headline, 'Release candidate freeze');
     });
 
     test('body says stop adding product features', () {
@@ -400,56 +443,64 @@ void main() {
       );
     });
 
-    test('body says only fix blockers affecting release/purchase/restore/trust/safety/first journey',
-        () {
-      final lower = ReleaseCandidateFreezeCopy.body.toLowerCase();
-      expect(lower, contains('release'));
-      expect(lower, contains('purchase'));
-      expect(lower, contains('restore'));
-      expect(lower, contains('trust'));
-      expect(lower, contains('safety'));
-      expect(lower, contains('first journey'));
-    });
+    test(
+      'body says only fix blockers affecting release/purchase/restore/trust/safety/first journey',
+      () {
+        final lower = ReleaseCandidateFreezeCopy.body.toLowerCase();
+        expect(lower, contains('release'));
+        expect(lower, contains('purchase'));
+        expect(lower, contains('restore'));
+        expect(lower, contains('trust'));
+        expect(lower, contains('safety'));
+        expect(lower, contains('first journey'));
+      },
+    );
 
-    test('allowedLine includes store readiness/purchase/restore/entitlement/crash/signing/TestFlight/metadata/privacy/support/security/App Store risk',
-        () {
-      final lower = ReleaseCandidateFreezeCopy.allowedLine.toLowerCase();
-      expect(lower, contains('store readiness'));
-      expect(lower, contains('purchase'));
-      expect(lower, contains('restore'));
-      expect(lower, contains('entitlement'));
-      expect(lower, contains('crash'));
-      expect(lower, contains('signing'));
-      expect(lower, contains('testflight'));
-      expect(lower, contains('metadata'));
-      expect(lower, contains('privacy'));
-      expect(lower, contains('support'));
-      expect(lower, contains('security'));
-      expect(lower, contains('app store risk'));
-    });
+    test(
+      'allowedLine includes store readiness/purchase/restore/entitlement/crash/signing/TestFlight/metadata/privacy/support/security/App Store risk',
+      () {
+        final lower = ReleaseCandidateFreezeCopy.allowedLine.toLowerCase();
+        expect(lower, contains('store readiness'));
+        expect(lower, contains('purchase'));
+        expect(lower, contains('restore'));
+        expect(lower, contains('entitlement'));
+        expect(lower, contains('crash'));
+        expect(lower, contains('signing'));
+        expect(lower, contains('testflight'));
+        expect(lower, contains('metadata'));
+        expect(lower, contains('privacy'));
+        expect(lower, contains('support'));
+        expect(lower, contains('security'));
+        expect(lower, contains('app store risk'));
+      },
+    );
 
-    test('blockedLine includes new features/dashboards/rankings/reports/action items/context expansion/chat/storage/extra Pro promises',
-        () {
-      final lower = ReleaseCandidateFreezeCopy.blockedLine.toLowerCase();
-      expect(lower, contains('new features'));
-      expect(lower, contains('dashboards'));
-      expect(lower, contains('rankings'));
-      expect(lower, contains('reports'));
-      expect(lower, contains('action items'));
-      expect(lower, contains('context expansion'));
-      expect(lower, contains('chat mode'));
-      expect(lower, contains('storage positioning'));
-      expect(lower, contains('extra pro promises'));
-    });
+    test(
+      'blockedLine includes new features/dashboards/rankings/reports/action items/context expansion/chat/storage/extra Pro promises',
+      () {
+        final lower = ReleaseCandidateFreezeCopy.blockedLine.toLowerCase();
+        expect(lower, contains('new features'));
+        expect(lower, contains('dashboards'));
+        expect(lower, contains('rankings'));
+        expect(lower, contains('reports'));
+        expect(lower, contains('action items'));
+        expect(lower, contains('context expansion'));
+        expect(lower, contains('chat mode'));
+        expect(lower, contains('storage positioning'));
+        expect(lower, contains('extra pro promises'));
+      },
+    );
 
-    test('firstJourneyLine includes save one repeat / feel it mattered / compares later / first useful proof',
-        () {
-      final lower = ReleaseCandidateFreezeCopy.firstJourneyLine.toLowerCase();
-      expect(lower, contains('save one repeat'));
-      expect(lower, contains('feel it mattered'));
-      expect(lower, contains('compares later'));
-      expect(lower, contains('first useful proof'));
-    });
+    test(
+      'firstJourneyLine includes save one repeat / feel it mattered / compares later / first useful proof',
+      () {
+        final lower = ReleaseCandidateFreezeCopy.firstJourneyLine.toLowerCase();
+        expect(lower, contains('save one repeat'));
+        expect(lower, contains('feel it mattered'));
+        expect(lower, contains('compares later'));
+        expect(lower, contains('first useful proof'));
+      },
+    );
 
     test('proLine says Free shows first useful proof', () {
       expect(
@@ -638,57 +689,61 @@ void main() {
       );
     });
 
-    test('record screen remains capture-first without stacking extra cards', () {
-      final audit = SurfacePriorityEngine.auditRecordReady(
-        entryCount: 4,
-        source: 'record',
-        candidates: SurfacePriorityCandidates.recordReady(
-          firstMomentCapture: false,
-          secondMomentReturn: false,
-          lowFrictionReturn: false,
-          whatToNoticeNext: false,
-          betaTodaySummary: false,
-          openCapturePromptChips: false,
-          captureFreedomLine: false,
-          timelineProofMoment: true,
-          archiveTimelineSpine: false,
-          timelinePositioning: false,
-          currentRelevance: false,
-          correctionMemory: false,
-          notRelevantRecovery: false,
-          proofQualityResponse: false,
-          evidenceWeighting: false,
-          proofSpecificity: false,
-          presentDayRelevance: false,
-          patternConfidence: false,
-          betaTesterReport: false,
-          proEvidenceValue: false,
-          privateReportProBridge: false,
-          suppressLegacyEducation: false,
-          betaProofLift: true,
-        ),
-      );
-      expect(audit.proofCardKey, 'timelineProofMoment');
-      expect(audit.guidanceCardKey, isNull);
-    });
+    test(
+      'record screen remains capture-first without stacking extra cards',
+      () {
+        final audit = SurfacePriorityEngine.auditRecordReady(
+          entryCount: 4,
+          source: 'record',
+          candidates: SurfacePriorityCandidates.recordReady(
+            firstMomentCapture: false,
+            secondMomentReturn: false,
+            lowFrictionReturn: false,
+            whatToNoticeNext: false,
+            betaTodaySummary: false,
+            openCapturePromptChips: false,
+            captureFreedomLine: false,
+            timelineProofMoment: true,
+            archiveTimelineSpine: false,
+            timelinePositioning: false,
+            currentRelevance: false,
+            correctionMemory: false,
+            notRelevantRecovery: false,
+            proofQualityResponse: false,
+            evidenceWeighting: false,
+            proofSpecificity: false,
+            presentDayRelevance: false,
+            patternConfidence: false,
+            betaTesterReport: false,
+            proEvidenceValue: false,
+            privateReportProBridge: false,
+            suppressLegacyEducation: false,
+            betaProofLift: true,
+          ),
+        );
+        expect(audit.proofCardKey, 'timelineProofMoment');
+        expect(audit.guidanceCardKey, isNull);
+      },
+    );
   });
 }
 
 ProSinglePromiseInput _proInput() => const ProSinglePromiseInput(
-      userUnderstandsFirstProof: true,
-      userUnderstandsProKeepsLongerTrail: true,
-      userThinksProMeansMoreAi: false,
-      userThinksProMeansStorage: false,
-      userThinksProMeansMoreFeatures: false,
-      userThinksProMeansReports: false,
-      userThinksProMeansRanking: false,
-      userUnderstandsContinuityValue: true,
-      userFeelsPressureOrManipulation: false,
-      wouldPayYes: true,
-      wouldPayMaybe: false,
-    );
+  userUnderstandsFirstProof: true,
+  userUnderstandsProKeepsLongerTrail: true,
+  userThinksProMeansMoreAi: false,
+  userThinksProMeansStorage: false,
+  userThinksProMeansMoreFeatures: false,
+  userThinksProMeansReports: false,
+  userThinksProMeansRanking: false,
+  userUnderstandsContinuityValue: true,
+  userFeelsPressureOrManipulation: false,
+  wouldPayYes: true,
+  wouldPayMaybe: false,
+);
 
-StoreReadinessProofInput _storeReadinessInput() => const StoreReadinessProofInput(
+StoreReadinessProofInput _storeReadinessInput() =>
+    const StoreReadinessProofInput(
       revenueCatApiKeyProvided: true,
       revenueCatConfigured: true,
       productsLoaded: true,
@@ -707,7 +762,8 @@ StoreReadinessProofInput _storeReadinessInput() => const StoreReadinessProofInpu
       secretsRotated: true,
     );
 
-ChangeTrailClaritySummary _fullTrailSummary() => const ChangeTrailClaritySummary(
+ChangeTrailClaritySummary _fullTrailSummary() =>
+    const ChangeTrailClaritySummary(
       totalTesters: 30,
       understoodFirstProofCount: 7,
       understoodProKeepsTrailCount: 6,
@@ -722,4 +778,3 @@ ChangeTrailClaritySummary _fullTrailSummary() => const ChangeTrailClaritySummary
       wouldPayMaybeCount: 1,
       wouldPayNoCount: 1,
     );
-

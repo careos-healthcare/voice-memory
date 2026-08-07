@@ -1,7 +1,8 @@
 import 'dart:async';
 import 'dart:io';
 
-import '../../../api/api_client.dart';
+import '../../../security/account_session_guard.dart';
+import '../../../security/remote_processing_consent_gate.dart';
 import '../domain/models/offline_vault_manifest.dart';
 import '../infrastructure/live_audio_pipeline_log.dart';
 import '../infrastructure/local_audio_vault.dart';
@@ -12,24 +13,20 @@ import 'offline_vault_recovery_service.dart';
 /// Monitors network restoration and sweeps pending vault files for upload + ack.
 class LiveVoiceRecoveryGateway {
   LiveVoiceRecoveryGateway({
-    required LocalAudioVault vault,
-    required ApiClient apiClient,
-    required NetworkConnectivitySource connectivity,
-    required OfflineVaultRecoveryStore recoveryStore,
-    required OfflineVaultRecoveryService recoveryService,
-  })  : _vault = vault,
-        _apiClient = apiClient,
-        _connectivity = connectivity,
-        _recoveryStore = recoveryStore,
-        _recoveryService = recoveryService {
+    required this._vault,
+    required this._connectivity,
+    required this._recoveryStore,
+    required this._recoveryService,
+    required RemoteProcessingConsentGate consentGate,
+  }) : _consentGate = consentGate {
     _initRecoveryListener();
   }
 
   final LocalAudioVault _vault;
-  final ApiClient _apiClient;
   final NetworkConnectivitySource _connectivity;
   final OfflineVaultRecoveryStore _recoveryStore;
   final OfflineVaultRecoveryService _recoveryService;
+  final RemoteProcessingConsentGate _consentGate;
 
   StreamSubscription<void>? _connectivitySub;
   var _sweepInFlight = false;
@@ -43,15 +40,21 @@ class LiveVoiceRecoveryGateway {
   /// Called on app resume when network may have returned.
   void notifyConnectivityRestored() {
     if (_connectivity is LifecycleNetworkConnectivitySource) {
-      (_connectivity as LifecycleNetworkConnectivitySource)
-          .notifyConnectivityRestored();
+      (_connectivity).notifyConnectivityRestored();
     }
   }
 
   Future<void> checkForPendingRecovery() async {
     if (_sweepInFlight) return;
     _sweepInFlight = true;
+    final session = AccountSessionGuard.capture();
     try {
+      final consent = await _consentGate.evaluate();
+      if (!consent.permitted) {
+        // Vault files stay on-device until the customer opts in again.
+        return;
+      }
+
       final pendingVaults = await _vault.discoverPendingVaults();
       if (pendingVaults.isEmpty) {
         await _recoveryStore.discoverOrphans();
@@ -63,6 +66,7 @@ class LiveVoiceRecoveryGateway {
 
       final pending = await _recoveryStore.listPending();
       for (final manifest in pending) {
+        session.assertActive();
         await _recoverManifest(manifest);
       }
     } finally {
@@ -106,7 +110,9 @@ class LiveVoiceRecoveryGateway {
 
     try {
       await _recoveryService.recoverVault(manifest);
-      LiveAudioPipelineLog.vaultRecoveryFinalized(sessionId: metadata.sessionId);
+      LiveAudioPipelineLog.vaultRecoveryFinalized(
+        sessionId: metadata.sessionId,
+      );
     } catch (error) {
       LiveAudioPipelineLog.vaultRecoveryFailed(
         sessionId: metadata.sessionId,

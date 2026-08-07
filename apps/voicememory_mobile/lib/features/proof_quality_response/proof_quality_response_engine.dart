@@ -13,7 +13,6 @@ import '../anchor_calibration/anchor_calibration_engine.dart';
 import '../evidence_anchors/evidence_anchor_engine.dart';
 import '../pattern_match_quality/pattern_match_quality_analytics.dart';
 import '../pattern_match_quality/pattern_match_quality_engine.dart';
-import '../proof_confidence_calibration/proof_confidence_calibration_analytics.dart';
 import '../proof_confidence_calibration/proof_confidence_calibration_engine.dart';
 import '../proof_confidence_calibration/proof_confidence_calibration_model.dart';
 import '../repeat_return_check/repeat_return_check_models.dart';
@@ -109,86 +108,89 @@ abstract final class ProofQualityResponseEngine {
 
     return switch (feedbackState) {
       ProofQualityFeedbackState.tooVague => ProofQualityResponseResult(
-          shouldShow: true,
-          feedbackState: feedbackState,
-          surface: surface,
-          proofKey: proofKey,
-          entryCount: entries.length,
-          source: source,
-          hasConfirmedRepeat: hasConfirmedRepeat,
-          hasSafeAnchor: calibratedAnchors.hasSafeAnchor &&
-              patternMatchQuality.shouldShowAsProof,
-          hasFreshReturn: hasFreshReturn,
-          title: ProofQualityResponseCopy.tooVagueTitle,
-          body: stillTooVague
-              ? ProofQualityResponseCopy.stillTooVagueFollowUp
-              : '${proofConfidenceCalibration.primaryCopy}\n\n${ProofQualityResponseCopy.tooVagueBody}',
-          footer: ProofQualityResponseCopy.footer,
-          rows: ProofQualityResponseCopy.tooVagueRows,
-          evidenceAnchors: calibratedAnchors.safeSummaries,
-          usesFallbackEvidenceLine: calibratedAnchors.usesFallback,
-          deltaLine: proofConfidenceCalibration.leadCopy,
-          returnedAfterCorrectionLine:
-              ProofQualityResponseCopy.returnedAfterCorrectionLine,
-          stillTooVagueFollowUp: stillTooVague,
-        ),
+        shouldShow: true,
+        feedbackState: feedbackState,
+        surface: surface,
+        proofKey: proofKey,
+        entryCount: entries.length,
+        source: source,
+        hasConfirmedRepeat: hasConfirmedRepeat,
+        hasSafeAnchor:
+            calibratedAnchors.hasSafeAnchor &&
+            patternMatchQuality.shouldShowAsProof,
+        hasFreshReturn: hasFreshReturn,
+        title: ProofQualityResponseCopy.tooVagueTitle,
+        body: stillTooVague
+            ? ProofQualityResponseCopy.stillTooVagueFollowUp
+            : '${proofConfidenceCalibration.primaryCopy}\n\n${ProofQualityResponseCopy.tooVagueBody}',
+        footer: ProofQualityResponseCopy.footer,
+        rows: ProofQualityResponseCopy.tooVagueRows,
+        evidenceAnchors: calibratedAnchors.safeSummaries,
+        usesFallbackEvidenceLine: calibratedAnchors.usesFallback,
+        deltaLine: proofConfidenceCalibration.leadCopy,
+        returnedAfterCorrectionLine:
+            ProofQualityResponseCopy.returnedAfterCorrectionLine,
+        stillTooVagueFollowUp: stillTooVague,
+      ),
       ProofQualityFeedbackState.alreadyKnewThis => ProofQualityResponseResult(
-          shouldShow: true,
-          feedbackState: feedbackState,
-          surface: surface,
-          proofKey: proofKey,
-          entryCount: entries.length,
-          source: source,
-          hasConfirmedRepeat: hasConfirmedRepeat,
-          hasSafeAnchor: calibratedAnchors.hasSafeAnchor &&
-              patternMatchQuality.shouldShowAsProof,
-          hasFreshReturn: hasFreshReturn,
-          title: ProofQualityResponseCopy.alreadyKnewTitle,
-          body:
-              '${proofConfidenceCalibration.primaryCopy}\n\n${ProofQualityResponseCopy.alreadyKnewBody}',
-          footer: ProofQualityResponseCopy.footer,
-          rows: ProofQualityResponseCopy.alreadyKnewRows,
-          evidenceAnchors: const [],
-          usesFallbackEvidenceLine: false,
-          deltaLine: proofConfidenceCalibration.leadCopy ??
-              ProofQualityResponseCopy.alreadyKnewDeltaLine,
-          returnedAfterCorrectionLine:
-              ProofQualityResponseCopy.returnedAfterCorrectionLine,
-          stillTooVagueFollowUp: false,
-        ),
+        shouldShow: true,
+        feedbackState: feedbackState,
+        surface: surface,
+        proofKey: proofKey,
+        entryCount: entries.length,
+        source: source,
+        hasConfirmedRepeat: hasConfirmedRepeat,
+        hasSafeAnchor:
+            calibratedAnchors.hasSafeAnchor &&
+            patternMatchQuality.shouldShowAsProof,
+        hasFreshReturn: hasFreshReturn,
+        title: ProofQualityResponseCopy.alreadyKnewTitle,
+        body:
+            '${proofConfidenceCalibration.primaryCopy}\n\n${ProofQualityResponseCopy.alreadyKnewBody}',
+        footer: ProofQualityResponseCopy.footer,
+        rows: ProofQualityResponseCopy.alreadyKnewRows,
+        evidenceAnchors: const [],
+        usesFallbackEvidenceLine: false,
+        deltaLine:
+            proofConfidenceCalibration.leadCopy ??
+            ProofQualityResponseCopy.alreadyKnewDeltaLine,
+        returnedAfterCorrectionLine:
+            ProofQualityResponseCopy.returnedAfterCorrectionLine,
+        stillTooVagueFollowUp: false,
+      ),
       ProofQualityFeedbackState.notRelevant => ProofQualityResponseResult(
-          shouldShow: true,
-          feedbackState: feedbackState,
-          surface: surface,
-          proofKey: proofKey,
-          entryCount: entries.length,
-          source: source,
-          hasConfirmedRepeat: hasConfirmedRepeat,
-          hasSafeAnchor: calibratedAnchors.hasSafeAnchor &&
-              patternMatchQuality.shouldShowAsProof,
-          hasFreshReturn: hasFreshReturn,
-          title: ProofQualityResponseCopy.notRelevantTitle,
-          body: switch (proofConfidenceCalibration.level) {
-            ProofConfidenceLevel.freshReturn ||
-            ProofConfidenceLevel.corrected =>
-              proofConfidenceCalibration.primaryCopy,
-            _ => ProofQualityResponseCopy.notRelevantBody,
-          },
-          footer: ProofQualityResponseCopy.footer,
-          rows: const [],
-          evidenceAnchors: const [],
-          usesFallbackEvidenceLine: false,
-          deltaLine: proofConfidenceCalibration.leadCopy,
-          returnedAfterCorrectionLine: hasFreshReturn
-              ? proofConfidenceCalibration.primaryCopy
-              : ProofQualityResponseCopy.returnedAfterCorrectionLine,
-          stillTooVagueFollowUp: false,
-        ),
+        shouldShow: true,
+        feedbackState: feedbackState,
+        surface: surface,
+        proofKey: proofKey,
+        entryCount: entries.length,
+        source: source,
+        hasConfirmedRepeat: hasConfirmedRepeat,
+        hasSafeAnchor:
+            calibratedAnchors.hasSafeAnchor &&
+            patternMatchQuality.shouldShowAsProof,
+        hasFreshReturn: hasFreshReturn,
+        title: ProofQualityResponseCopy.notRelevantTitle,
+        body: switch (proofConfidenceCalibration.level) {
+          ProofConfidenceLevel.freshReturn || ProofConfidenceLevel.corrected =>
+            proofConfidenceCalibration.primaryCopy,
+          _ => ProofQualityResponseCopy.notRelevantBody,
+        },
+        footer: ProofQualityResponseCopy.footer,
+        rows: const [],
+        evidenceAnchors: const [],
+        usesFallbackEvidenceLine: false,
+        deltaLine: proofConfidenceCalibration.leadCopy,
+        returnedAfterCorrectionLine: hasFreshReturn
+            ? proofConfidenceCalibration.primaryCopy
+            : ProofQualityResponseCopy.returnedAfterCorrectionLine,
+        stillTooVagueFollowUp: false,
+      ),
       _ => ProofQualityResponseResult.hidden(
-          surface: surface,
-          source: source,
-          entryCount: entries.length,
-        ),
+        surface: surface,
+        source: source,
+        entryCount: entries.length,
+      ),
     };
   }
 
@@ -218,17 +220,16 @@ abstract final class ProofQualityResponseEngine {
 
   static BetaProofFeedbackSurface betaSurfaceFor(
     ProofQualityResponseSurface surface,
-  ) =>
-      switch (surface) {
-        ProofQualityResponseSurface.timelineProofMoment =>
-          BetaProofFeedbackSurface.timelineProofMoment,
-        ProofQualityResponseSurface.firstProofPayoff =>
-          BetaProofFeedbackSurface.firstProofPayoff,
-        ProofQualityResponseSurface.patterns =>
-          BetaProofFeedbackSurface.timelineProofMoment,
-        ProofQualityResponseSurface.archiveTimelineSpine =>
-          BetaProofFeedbackSurface.archiveTimelineSpine,
-      };
+  ) => switch (surface) {
+    ProofQualityResponseSurface.timelineProofMoment =>
+      BetaProofFeedbackSurface.timelineProofMoment,
+    ProofQualityResponseSurface.firstProofPayoff =>
+      BetaProofFeedbackSurface.firstProofPayoff,
+    ProofQualityResponseSurface.patterns =>
+      BetaProofFeedbackSurface.timelineProofMoment,
+    ProofQualityResponseSurface.archiveTimelineSpine =>
+      BetaProofFeedbackSurface.archiveTimelineSpine,
+  };
 
   static bool _isActionable(ProofQualityFeedbackState state) =>
       state == ProofQualityFeedbackState.tooVague ||
@@ -237,16 +238,14 @@ abstract final class ProofQualityResponseEngine {
 
   static BetaProofFeedbackType? _feedbackTypeFor(
     ProofQualityFeedbackState state,
-  ) =>
-      switch (state) {
-        ProofQualityFeedbackState.tooVague => BetaProofFeedbackType.tooVague,
-        ProofQualityFeedbackState.alreadyKnewThis =>
-          BetaProofFeedbackType.alreadyKnew,
-        ProofQualityFeedbackState.notRelevant =>
-          BetaProofFeedbackType.notRelevant,
-        ProofQualityFeedbackState.useful => BetaProofFeedbackType.useful,
-        ProofQualityFeedbackState.none => null,
-      };
+  ) => switch (state) {
+    ProofQualityFeedbackState.tooVague => BetaProofFeedbackType.tooVague,
+    ProofQualityFeedbackState.alreadyKnewThis =>
+      BetaProofFeedbackType.alreadyKnew,
+    ProofQualityFeedbackState.notRelevant => BetaProofFeedbackType.notRelevant,
+    ProofQualityFeedbackState.useful => BetaProofFeedbackType.useful,
+    ProofQualityFeedbackState.none => null,
+  };
 
   static bool coversLegacyBoost({
     required ProofQualityResponseResult result,
@@ -467,58 +466,54 @@ abstract final class ProofQualityResponseEngine {
 
   static NotRelevantRecoveryResult _notRelevantResultFrom(
     ProofQualityResponseResult result,
-  ) =>
-      NotRelevantRecoveryResult(
-        shouldShow: true,
-        proofKey: result.proofKey,
-        entryCount: result.entryCount,
-        source: result.source,
-        hasConfirmedRepeat: result.hasConfirmedRepeat,
-        hasFreshReturn: result.hasFreshReturn,
-        title: ProofQualityResponseCopy.notRelevantTitle,
-        body: ProofQualityResponseCopy.notRelevantBody,
-        correctionLine: ProofQualityResponseCopy.footer,
-        returnLine: ProofQualityResponseCopy.returnedAfterCorrectionLine,
-        returnedAfterCorrectionLine: result.returnedAfterCorrectionLine,
-      );
+  ) => NotRelevantRecoveryResult(
+    shouldShow: true,
+    proofKey: result.proofKey,
+    entryCount: result.entryCount,
+    source: result.source,
+    hasConfirmedRepeat: result.hasConfirmedRepeat,
+    hasFreshReturn: result.hasFreshReturn,
+    title: ProofQualityResponseCopy.notRelevantTitle,
+    body: ProofQualityResponseCopy.notRelevantBody,
+    correctionLine: ProofQualityResponseCopy.footer,
+    returnLine: ProofQualityResponseCopy.returnedAfterCorrectionLine,
+    returnedAfterCorrectionLine: result.returnedAfterCorrectionLine,
+  );
 
   static ProofQualityResponseAnswerType _answerTypeForAlreadyKnew(
     ProofQualityAlreadyKnewAnswer answer,
-  ) =>
-      switch (answer) {
-        ProofQualityAlreadyKnewAnswer.cameBackStronger =>
-          ProofQualityResponseAnswerType.cameBackStronger,
-        ProofQualityAlreadyKnewAnswer.feltLighter =>
-          ProofQualityResponseAnswerType.feltLighter,
-        ProofQualityAlreadyKnewAnswer.somethingHelped =>
-          ProofQualityResponseAnswerType.somethingHelped,
-        ProofQualityAlreadyKnewAnswer.noChange =>
-          ProofQualityResponseAnswerType.noChange,
-      };
+  ) => switch (answer) {
+    ProofQualityAlreadyKnewAnswer.cameBackStronger =>
+      ProofQualityResponseAnswerType.cameBackStronger,
+    ProofQualityAlreadyKnewAnswer.feltLighter =>
+      ProofQualityResponseAnswerType.feltLighter,
+    ProofQualityAlreadyKnewAnswer.somethingHelped =>
+      ProofQualityResponseAnswerType.somethingHelped,
+    ProofQualityAlreadyKnewAnswer.noChange =>
+      ProofQualityResponseAnswerType.noChange,
+  };
 
   static ProofQualityResponseAnswerType _answerTypeForNotRelevant(
     ProofQualityNotRelevantAction action,
-  ) =>
-      switch (action) {
-        ProofQualityNotRelevantAction.keepAsBackground =>
-          ProofQualityResponseAnswerType.keepAsBackground,
-        ProofQualityNotRelevantAction.watchLightly =>
-          ProofQualityResponseAnswerType.watchLightly,
-        ProofQualityNotRelevantAction.relevantAgain =>
-          ProofQualityResponseAnswerType.relevantAgain,
-      };
+  ) => switch (action) {
+    ProofQualityNotRelevantAction.keepAsBackground =>
+      ProofQualityResponseAnswerType.keepAsBackground,
+    ProofQualityNotRelevantAction.watchLightly =>
+      ProofQualityResponseAnswerType.watchLightly,
+    ProofQualityNotRelevantAction.relevantAgain =>
+      ProofQualityResponseAnswerType.relevantAgain,
+  };
 
   static NotRelevantRecoveryActionType _recoveryActionFor(
     ProofQualityNotRelevantAction action,
-  ) =>
-      switch (action) {
-        ProofQualityNotRelevantAction.keepAsBackground =>
-          NotRelevantRecoveryActionType.keepAsBackground,
-        ProofQualityNotRelevantAction.watchLightly =>
-          NotRelevantRecoveryActionType.watchLightly,
-        ProofQualityNotRelevantAction.relevantAgain =>
-          NotRelevantRecoveryActionType.relevantAgain,
-      };
+  ) => switch (action) {
+    ProofQualityNotRelevantAction.keepAsBackground =>
+      NotRelevantRecoveryActionType.keepAsBackground,
+    ProofQualityNotRelevantAction.watchLightly =>
+      NotRelevantRecoveryActionType.watchLightly,
+    ProofQualityNotRelevantAction.relevantAgain =>
+      NotRelevantRecoveryActionType.relevantAgain,
+  };
 
   static String followUpFor({
     required ProofQualityResponseResult result,
@@ -530,44 +525,45 @@ abstract final class ProofQualityResponseEngine {
     return switch (result.feedbackState) {
       ProofQualityFeedbackState.tooVague =>
         ProofQualityResponseCopy.stillTooVagueFollowUp,
-      ProofQualityFeedbackState.alreadyKnewThis =>
-        _alreadyKnewFollowUp(answerType),
-      ProofQualityFeedbackState.notRelevant =>
-        _notRelevantFollowUp(answerType),
+      ProofQualityFeedbackState.alreadyKnewThis => _alreadyKnewFollowUp(
+        answerType,
+      ),
+      ProofQualityFeedbackState.notRelevant => _notRelevantFollowUp(answerType),
       _ => '',
     };
   }
 
-  static String _alreadyKnewFollowUp(ProofQualityResponseAnswerType answerType) =>
-      switch (answerType) {
-        ProofQualityResponseAnswerType.cameBackStronger =>
-          ProofQualityResponseCopy.cameBackStrongerFollowUp,
-        ProofQualityResponseAnswerType.feltLighter =>
-          ProofQualityResponseCopy.feltLighterFollowUp,
-        ProofQualityResponseAnswerType.somethingHelped =>
-          ProofQualityResponseCopy.somethingHelpedFollowUp,
-        ProofQualityResponseAnswerType.noChange =>
-          ProofQualityResponseCopy.noChangeFollowUp,
-        _ => '',
-      };
+  static String _alreadyKnewFollowUp(
+    ProofQualityResponseAnswerType answerType,
+  ) => switch (answerType) {
+    ProofQualityResponseAnswerType.cameBackStronger =>
+      ProofQualityResponseCopy.cameBackStrongerFollowUp,
+    ProofQualityResponseAnswerType.feltLighter =>
+      ProofQualityResponseCopy.feltLighterFollowUp,
+    ProofQualityResponseAnswerType.somethingHelped =>
+      ProofQualityResponseCopy.somethingHelpedFollowUp,
+    ProofQualityResponseAnswerType.noChange =>
+      ProofQualityResponseCopy.noChangeFollowUp,
+    _ => '',
+  };
 
-  static String _notRelevantFollowUp(ProofQualityResponseAnswerType answerType) =>
-      switch (answerType) {
-        ProofQualityResponseAnswerType.keepAsBackground =>
-          ProofQualityResponseCopy.keepAsBackgroundFollowUp,
-        ProofQualityResponseAnswerType.watchLightly =>
-          ProofQualityResponseCopy.watchLightlyFollowUp,
-        ProofQualityResponseAnswerType.relevantAgain =>
-          ProofQualityResponseCopy.relevantAgainFollowUp,
-        _ => '',
-      };
+  static String _notRelevantFollowUp(
+    ProofQualityResponseAnswerType answerType,
+  ) => switch (answerType) {
+    ProofQualityResponseAnswerType.keepAsBackground =>
+      ProofQualityResponseCopy.keepAsBackgroundFollowUp,
+    ProofQualityResponseAnswerType.watchLightly =>
+      ProofQualityResponseCopy.watchLightlyFollowUp,
+    ProofQualityResponseAnswerType.relevantAgain =>
+      ProofQualityResponseCopy.relevantAgainFollowUp,
+    _ => '',
+  };
 
   static bool patternReviewInboxHasActiveItems({
     required List<JournalEntry> entries,
     List<RepeatReturnCheckRecord> returnChecks = const [],
-  }) =>
-      ProEvidenceValueEngine.patternReviewInboxHasActiveItems(
-        entries: entries,
-        returnChecks: returnChecks,
-      );
+  }) => ProEvidenceValueEngine.patternReviewInboxHasActiveItems(
+    entries: entries,
+    returnChecks: returnChecks,
+  );
 }

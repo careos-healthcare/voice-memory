@@ -12,15 +12,15 @@ enum RevenueReadinessDashboardV2Status {
   noData;
 
   String get label => switch (this) {
-        RevenueReadinessDashboardV2Status.healthy =>
-          RevenueReadinessDashboardV2Copy.statusHealthy,
-        RevenueReadinessDashboardV2Status.watch =>
-          RevenueReadinessDashboardV2Copy.statusWatch,
-        RevenueReadinessDashboardV2Status.failing =>
-          RevenueReadinessDashboardV2Copy.statusFailing,
-        RevenueReadinessDashboardV2Status.noData =>
-          RevenueReadinessDashboardV2Copy.statusPending,
-      };
+    RevenueReadinessDashboardV2Status.healthy =>
+      RevenueReadinessDashboardV2Copy.statusHealthy,
+    RevenueReadinessDashboardV2Status.watch =>
+      RevenueReadinessDashboardV2Copy.statusWatch,
+    RevenueReadinessDashboardV2Status.failing =>
+      RevenueReadinessDashboardV2Copy.statusFailing,
+    RevenueReadinessDashboardV2Status.noData =>
+      RevenueReadinessDashboardV2Copy.statusPending,
+  };
 }
 
 enum RevenueReadinessDashboardV2SectionId {
@@ -216,36 +216,36 @@ class RevenueReadinessDashboardV2Dashboard {
       sections.expand((section) => section.rows).toList();
 
   List<String> get allDisplayedText => [
-        title,
-        subtitle,
-        liftFocus.label,
-        proofFloorRescueFocus?.label ?? repairFocus.label,
-        if (proofFloorRescueFocus != null) proofFloorRescueFocus!.body,
-        for (final section in sections) ...[
-          section.title,
-          for (final row in section.rows) ...[
-            row.label,
-            row.valueLabel,
-            if (row.nextActionLabel != null) row.nextActionLabel!,
-            row.status.label,
-          ],
-        ],
-        for (final diagnosis in diagnoses) ...[
-          diagnosis.title,
-          if (diagnosis.metricLabel != null) diagnosis.metricLabel!,
-          if (diagnosis.metricValueLabel != null) diagnosis.metricValueLabel!,
-          diagnosis.nextActionLabel,
-        ],
-        decisionRule.title,
-        decisionRule.body,
-        decisionRule.reason,
-        decisionRule.cta,
-        validationDecision.title,
-        validationDecision.body,
-        validationDecision.reason,
-        validationDecision.cta,
-        RevenueReadinessDashboardV2Copy.localCountsNote,
-      ];
+    title,
+    subtitle,
+    liftFocus.label,
+    proofFloorRescueFocus?.label ?? repairFocus.label,
+    if (proofFloorRescueFocus != null) proofFloorRescueFocus!.body,
+    for (final section in sections) ...[
+      section.title,
+      for (final row in section.rows) ...[
+        row.label,
+        row.valueLabel,
+        if (row.nextActionLabel != null) row.nextActionLabel!,
+        row.status.label,
+      ],
+    ],
+    for (final diagnosis in diagnoses) ...[
+      diagnosis.title,
+      if (diagnosis.metricLabel != null) diagnosis.metricLabel!,
+      if (diagnosis.metricValueLabel != null) diagnosis.metricValueLabel!,
+      diagnosis.nextActionLabel,
+    ],
+    decisionRule.title,
+    decisionRule.body,
+    decisionRule.reason,
+    decisionRule.cta,
+    validationDecision.title,
+    validationDecision.body,
+    validationDecision.reason,
+    validationDecision.cta,
+    RevenueReadinessDashboardV2Copy.localCountsNote,
+  ];
 
   bool get hasDiagnoses => diagnoses.isNotEmpty;
 }

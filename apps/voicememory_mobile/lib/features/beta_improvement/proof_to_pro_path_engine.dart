@@ -29,9 +29,7 @@ abstract final class ProofToProPathEngine {
         branch == BetaImprovementBranch.proPackaging;
   }
 
-  static bool allowsProPackaging({
-    List<BetaTesterOutcome>? outcomesOverride,
-  }) {
+  static bool allowsProPackaging({List<BetaTesterOutcome>? outcomesOverride}) {
     if (isProofToProOverride()) return true;
     return BetaImprovementRecommendationGate.isBranchActive(
       BetaImprovementBranch.proPackaging,
@@ -42,8 +40,7 @@ abstract final class ProofToProPathEngine {
   static bool _hasMeaningfulProof({
     required int entryCount,
     required bool hasMeaningfulProof,
-  }) =>
-      hasMeaningfulProof || entryCount >= minEntryCount;
+  }) => hasMeaningfulProof || entryCount >= minEntryCount;
 
   static bool _proofClarityShowable({
     required int entryCount,
@@ -137,7 +134,8 @@ abstract final class ProofToProPathEngine {
       outcomesOverride: outcomesOverride,
     );
 
-    final showProBridge = meaningful &&
+    final showProBridge =
+        meaningful &&
         showClarity &&
         allowsProPackaging(outcomesOverride: outcomesOverride) &&
         _proPackagingApplies(
@@ -146,11 +144,12 @@ abstract final class ProofToProPathEngine {
           outcomesOverride: outcomesOverride,
         );
 
-    final showPaywallCopy = allowsProPackaging(outcomesOverride: outcomesOverride);
+    final showPaywallCopy = allowsProPackaging(
+      outcomesOverride: outcomesOverride,
+    );
 
-    final suppressStandalone = showProBridge &&
-        showClarity &&
-        firstProofPayoffVisible;
+    final suppressStandalone =
+        showProBridge && showClarity && firstProofPayoffVisible;
 
     return ProofToProPathModel(
       showProofEmotionalClarity: showClarity,
@@ -170,26 +169,24 @@ abstract final class ProofToProPathEngine {
     required bool hasMeaningfulProof,
     bool proofClarityRenderable = false,
     List<BetaTesterOutcome>? outcomesOverride,
-  }) =>
-      build(
-        entryCount: entryCount,
-        hasMeaningfulProof: hasMeaningfulProof,
-        proofClarityRenderable: proofClarityRenderable,
-        outcomesOverride: outcomesOverride,
-      ).showProofEmotionalClarity;
+  }) => build(
+    entryCount: entryCount,
+    hasMeaningfulProof: hasMeaningfulProof,
+    proofClarityRenderable: proofClarityRenderable,
+    outcomesOverride: outcomesOverride,
+  ).showProofEmotionalClarity;
 
   static bool shouldShowProPackagingBridge({
     required int entryCount,
     required bool hasMeaningfulProof,
     bool proofClarityRenderable = false,
     List<BetaTesterOutcome>? outcomesOverride,
-  }) =>
-      build(
-        entryCount: entryCount,
-        hasMeaningfulProof: hasMeaningfulProof,
-        proofClarityRenderable: proofClarityRenderable,
-        outcomesOverride: outcomesOverride,
-      ).showProPackagingBridge;
+  }) => build(
+    entryCount: entryCount,
+    hasMeaningfulProof: hasMeaningfulProof,
+    proofClarityRenderable: proofClarityRenderable,
+    outcomesOverride: outcomesOverride,
+  ).showProPackagingBridge;
 
   static bool shouldSuppressStandaloneProBridgeCard({
     required int entryCount,
@@ -197,14 +194,13 @@ abstract final class ProofToProPathEngine {
     required bool firstProofPayoffVisible,
     bool proofClarityRenderable = false,
     List<BetaTesterOutcome>? outcomesOverride,
-  }) =>
-      build(
-        entryCount: entryCount,
-        hasMeaningfulProof: hasMeaningfulProof,
-        proofClarityRenderable: proofClarityRenderable,
-        firstProofPayoffVisible: firstProofPayoffVisible,
-        outcomesOverride: outcomesOverride,
-      ).suppressStandaloneProBridgeCard;
+  }) => build(
+    entryCount: entryCount,
+    hasMeaningfulProof: hasMeaningfulProof,
+    proofClarityRenderable: proofClarityRenderable,
+    firstProofPayoffVisible: firstProofPayoffVisible,
+    outcomesOverride: outcomesOverride,
+  ).suppressStandaloneProBridgeCard;
 
   static String _reason({
     required bool showClarity,
@@ -217,7 +213,8 @@ abstract final class ProofToProPathEngine {
           ? 'proofToPro override — clarity then quiet Pro bridge'
           : 'Proof clarity shown — quiet Pro bridge after meaningful proof';
     }
-    if (showClarity) return 'Proof clarity first — Pro bridge gated until packaging branch';
+    if (showClarity)
+      return 'Proof clarity first — Pro bridge gated until packaging branch';
     return 'Proof-to-Pro path inactive';
   }
 }

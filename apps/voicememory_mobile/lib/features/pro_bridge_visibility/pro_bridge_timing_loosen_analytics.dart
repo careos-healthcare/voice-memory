@@ -12,7 +12,7 @@ abstract final class ProBridgeTimingLoosenAnalytics {
 
   @visibleForTesting
   static void Function(String event, Map<String, Object> properties)?
-      captureForTest;
+  captureForTest;
 
   static void seen({
     required String source,
@@ -85,9 +85,9 @@ abstract final class ProBridgeTimingLoosenAnalytics {
       'entry_count': entryCount,
       'source': source,
       'surface': surface,
-      if (triggerReason != null) 'trigger_reason': triggerReason,
-      if (blockedReason != null) 'blocked_reason': blockedReason,
-      if (confidenceLevel != null) 'confidence_level': confidenceLevel,
+      'trigger_reason': ?triggerReason,
+      'blocked_reason': ?blockedReason,
+      'confidence_level': ?confidenceLevel,
       'has_safe_anchor': hasSafeAnchor ? 1 : 0,
     };
 

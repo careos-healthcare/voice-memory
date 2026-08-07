@@ -22,26 +22,26 @@ class ConfirmedRepeatThoughtMapCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final questionStyle = ArchiveMobileTypography.responsiveHelper(context).copyWith(
-      color: AppColors.textSecondary,
-      fontSize: 12,
-      height: 1.35,
-    );
-    final knownStyle = ArchiveMobileTypography.explanationBody(context).copyWith(
-      color: AppColors.textPrimary,
-      height: 1.45,
-    );
-    final unknownStyle = ArchiveMobileTypography.explanationBody(context).copyWith(
-      color: AppColors.textSecondary,
-      fontStyle: FontStyle.italic,
-      height: 1.45,
-    );
+    final questionStyle = ArchiveMobileTypography.responsiveHelper(
+      context,
+    ).copyWith(color: AppColors.textSecondary, fontSize: 12, height: 1.35);
+    final knownStyle = ArchiveMobileTypography.explanationBody(
+      context,
+    ).copyWith(color: AppColors.textPrimary, height: 1.45);
+    final unknownStyle = ArchiveMobileTypography.explanationBody(context)
+        .copyWith(
+          color: AppColors.textSecondary,
+          fontStyle: FontStyle.italic,
+          height: 1.45,
+        );
 
     return Container(
       key: const Key('confirmed_repeat_thought_map_card'),
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.md),
-      decoration: VoiceMemoryCards.standard(background: const Color(0xFFF8FAF8)),
+      decoration: VoiceMemoryCards.standard(
+        background: const Color(0xFFF8FAF8),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -73,11 +73,16 @@ class ConfirmedRepeatThoughtMapCard extends StatelessWidget {
                 style: TextButton.styleFrom(
                   foregroundColor: AppColors.accentPrimary,
                   visualDensity: VisualDensity.compact,
-                  padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 2),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 0,
+                    vertical: 2,
+                  ),
                   minimumSize: Size.zero,
                   tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 ),
-                child: Text(ConfirmedRepeatThoughtMapCopy.recordMissingPieceCta),
+                child: Text(
+                  ConfirmedRepeatThoughtMapCopy.recordMissingPieceCta,
+                ),
               ),
             ),
           ],

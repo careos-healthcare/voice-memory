@@ -155,11 +155,15 @@ abstract final class ReleaseCandidateComprehension {
       summary.understoodNotVoiceChatCount >=
       understoodNotVoiceChatTargetFor(summary.totalTesters);
 
-  static bool _firstProofUnderstood(ReleaseCandidateComprehensionSummary summary) =>
+  static bool _firstProofUnderstood(
+    ReleaseCandidateComprehensionSummary summary,
+  ) =>
       summary.understoodFirstProofCount >=
       understoodFirstProofTargetFor(summary.totalTesters);
 
-  static bool _whyAppearedUnderstood(ReleaseCandidateComprehensionSummary summary) =>
+  static bool _whyAppearedUnderstood(
+    ReleaseCandidateComprehensionSummary summary,
+  ) =>
       summary.understoodWhyAppearedCount >=
       understoodWhyAppearedTargetFor(summary.totalTesters);
 
@@ -169,7 +173,9 @@ abstract final class ReleaseCandidateComprehension {
       summary.understoodConfirmCorrectCount >=
       understoodConfirmCorrectTargetFor(summary.totalTesters);
 
-  static bool _proTrailUnderstood(ReleaseCandidateComprehensionSummary summary) =>
+  static bool _proTrailUnderstood(
+    ReleaseCandidateComprehensionSummary summary,
+  ) =>
       summary.understoodProKeepsTrailCount >=
       understoodProKeepsTrailTargetFor(summary.totalTesters);
 
@@ -185,8 +191,9 @@ abstract final class ReleaseCandidateComprehension {
       summary.thoughtItWasVoiceChatCount >=
       thoughtItWasVoiceChatHighTargetFor(summary.totalTesters);
 
-  static int _wouldPayYesMaybeCount(ReleaseCandidateComprehensionSummary summary) =>
-      summary.wouldPayYesCount + summary.wouldPayMaybeCount;
+  static int _wouldPayYesMaybeCount(
+    ReleaseCandidateComprehensionSummary summary,
+  ) => summary.wouldPayYesCount + summary.wouldPayMaybeCount;
 
   static bool _wouldPayYesMaybePasses(
     ReleaseCandidateComprehensionSummary summary,
@@ -207,13 +214,12 @@ abstract final class ReleaseCandidateComprehension {
   static ReleaseCandidateComprehensionReport report(
     ReleaseCandidateComprehensionSummary summary,
     ReleaseCandidateComprehensionDecision decision,
-  ) =>
-      ReleaseCandidateComprehensionReport(
-        headline: ReleaseCandidateComprehensionCopy.headline,
-        body: ReleaseCandidateComprehensionCopy.body,
-        decision: decision,
-        guardrail: ReleaseCandidateComprehensionCopy.guardrail,
-      );
+  ) => ReleaseCandidateComprehensionReport(
+    headline: ReleaseCandidateComprehensionCopy.headline,
+    body: ReleaseCandidateComprehensionCopy.body,
+    decision: decision,
+    guardrail: ReleaseCandidateComprehensionCopy.guardrail,
+  );
 
   static bool copyPassesPositioningGuard(String text) {
     final lower = text.toLowerCase();
@@ -227,8 +233,7 @@ abstract final class ReleaseCandidateComprehension {
     required int totalTesters,
     required int numerator,
     required int denominator,
-  }) =>
-      ((numerator * totalTesters) / denominator).ceil();
+  }) => ((numerator * totalTesters) / denominator).ceil();
 }
 
 enum ReleaseCandidateComprehensionDecision {

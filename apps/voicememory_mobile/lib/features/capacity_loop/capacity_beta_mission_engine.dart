@@ -5,7 +5,6 @@ import 'capacity_activation_fit_models.dart';
 import 'capacity_activation_fit_store.dart';
 import 'capacity_beta_mission_copy.dart';
 import 'capacity_beta_mission_models.dart';
-import 'capacity_beta_mission_store.dart';
 import 'capacity_beta_signal_copy.dart';
 import 'capacity_boundary_response_models.dart';
 import 'capacity_cost_store.dart';
@@ -40,13 +39,15 @@ class CapacityBetaMissionEngine {
     }
 
     final tasks = _buildTasks(input);
-    final completedCore =
-        tasks.where((task) => !task.isOptional && task.isDone).length;
+    final completedCore = tasks
+        .where((task) => !task.isOptional && task.isDone)
+        .length;
     final allCoreDone = completedCore >= coreTaskCount;
 
     return CapacityBetaMissionResult(
       hasMission: true,
-      showOnArchiveHome: (input.capacityWedgeActive) &&
+      showOnArchiveHome:
+          (input.capacityWedgeActive) &&
           !allCoreDone &&
           !input.missionRecord.isDismissed,
       title: CapacityBetaMissionCopy.title,
@@ -85,13 +86,15 @@ class CapacityBetaMissionEngine {
     }
 
     final momentCount = loopEngine.eligibleCapacityEntryIds(realEntries).length;
-    final pullCount =
-        CapacityPullReasonStore.countWithReason(CapacityPullReasonStore.cached);
+    final pullCount = CapacityPullReasonStore.countWithReason(
+      CapacityPullReasonStore.cached,
+    );
     final outcomeCount = CapacityDecisionOutcomeStore.countWithOutcome(
       CapacityDecisionOutcomeStore.cached,
     );
-    final costCount =
-        CapacityCostStore.countWithLaterCost(CapacityCostStore.cached);
+    final costCount = CapacityCostStore.countWithLaterCost(
+      CapacityCostStore.cached,
+    );
 
     final weeklyReview = weeklyReviewEngine.buildFromJournal(
       entries: entries,
@@ -224,14 +227,15 @@ class CapacityBetaMissionEngine {
     final status = done
         ? CapacityBetaMissionTaskStatus.done
         : isOptional
-            ? CapacityBetaMissionTaskStatus.optional
-            : ready
-                ? CapacityBetaMissionTaskStatus.ready
-                : CapacityBetaMissionTaskStatus.notStarted;
+        ? CapacityBetaMissionTaskStatus.optional
+        : ready
+        ? CapacityBetaMissionTaskStatus.ready
+        : CapacityBetaMissionTaskStatus.notStarted;
 
     final statusLabel = switch (status) {
       CapacityBetaMissionTaskStatus.done => CapacityBetaMissionCopy.statusDone,
-      CapacityBetaMissionTaskStatus.ready => CapacityBetaMissionCopy.statusReady,
+      CapacityBetaMissionTaskStatus.ready =>
+        CapacityBetaMissionCopy.statusReady,
       CapacityBetaMissionTaskStatus.optional =>
         CapacityBetaMissionCopy.statusOptional,
       CapacityBetaMissionTaskStatus.notStarted =>

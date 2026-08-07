@@ -29,18 +29,19 @@ abstract final class RevenueCatSandboxProof {
     );
   }
 
-  static RevenueCatSandboxProofReport report(RevenueCatSandboxProofResult result) =>
-      RevenueCatSandboxProofReport(
-        headline: RevenueCatSandboxProofCopy.headline,
-        body: RevenueCatSandboxProofCopy.body,
-        manualNote: RevenueCatSandboxProofCopy.manualNote,
-        provedLine: RevenueCatSandboxProofCopy.provedLine,
-        manualRequiredLine: RevenueCatSandboxProofCopy.manualRequiredLine,
-        fallbackVerifiedLine: RevenueCatSandboxProofCopy.fallbackVerifiedLine,
-        blockedLine: RevenueCatSandboxProofCopy.blockedLine,
-        guardrail: RevenueCatSandboxProofCopy.guardrail,
-        result: result,
-      );
+  static RevenueCatSandboxProofReport report(
+    RevenueCatSandboxProofResult result,
+  ) => RevenueCatSandboxProofReport(
+    headline: RevenueCatSandboxProofCopy.headline,
+    body: RevenueCatSandboxProofCopy.body,
+    manualNote: RevenueCatSandboxProofCopy.manualNote,
+    provedLine: RevenueCatSandboxProofCopy.provedLine,
+    manualRequiredLine: RevenueCatSandboxProofCopy.manualRequiredLine,
+    fallbackVerifiedLine: RevenueCatSandboxProofCopy.fallbackVerifiedLine,
+    blockedLine: RevenueCatSandboxProofCopy.blockedLine,
+    guardrail: RevenueCatSandboxProofCopy.guardrail,
+    result: result,
+  );
 
   static RevenueCatSandboxProofInput fromDiagnostics(
     RevenueCatDiagnostics diagnostics, {
@@ -53,22 +54,22 @@ abstract final class RevenueCatSandboxProof {
     bool? entitlementPersistsAfterRestart,
     bool? missingKeyNoCrash,
     List<String> activeEntitlementIds = const [],
-  }) =>
-      RevenueCatSandboxProofInput(
-        iosApiKeyPresent:
-            diagnostics.revenueCatConfigured && !diagnostics.apiKeyMissing,
-        offeringLoads: diagnostics.offeringsLoaded,
-        productTitlePriceVisible: productTitlePriceVisible,
-        storeKitSheetAppears: storeKitSheetAppears,
-        sandboxPurchaseSucceeds: sandboxPurchaseSucceeds,
-        proEntitlementActive: proEntitlementActive ??
-            (recognizesProEntitlement(activeEntitlementIds) ? true : null),
-        proGateUnlocks: proGateUnlocks,
-        restorePurchasesSucceeds: restorePurchasesSucceeds,
-        entitlementPersistsAfterRestart: entitlementPersistsAfterRestart,
-        missingKeyNoCrash: missingKeyNoCrash,
-        activeEntitlementIds: activeEntitlementIds,
-      );
+  }) => RevenueCatSandboxProofInput(
+    iosApiKeyPresent:
+        diagnostics.revenueCatConfigured && !diagnostics.apiKeyMissing,
+    offeringLoads: diagnostics.offeringsLoaded,
+    productTitlePriceVisible: productTitlePriceVisible,
+    storeKitSheetAppears: storeKitSheetAppears,
+    sandboxPurchaseSucceeds: sandboxPurchaseSucceeds,
+    proEntitlementActive:
+        proEntitlementActive ??
+        (recognizesProEntitlement(activeEntitlementIds) ? true : null),
+    proGateUnlocks: proGateUnlocks,
+    restorePurchasesSucceeds: restorePurchasesSucceeds,
+    entitlementPersistsAfterRestart: entitlementPersistsAfterRestart,
+    missingKeyNoCrash: missingKeyNoCrash,
+    activeEntitlementIds: activeEntitlementIds,
+  );
 
   static RevenueCatSandboxProofInput fromPurchaseJourney(
     RevenueCatPurchaseJourney journey, {
@@ -79,26 +80,23 @@ abstract final class RevenueCatSandboxProof {
     bool? proGateUnlocks,
     bool? entitlementPersistsAfterRestart,
     bool? missingKeyNoCrash,
-  }) =>
-      RevenueCatSandboxProofInput(
-        iosApiKeyPresent: iosApiKeyPresent && !diagnostics.apiKeyMissing,
-        offeringLoads: journey.offeringLoaded || diagnostics.offeringsLoaded,
-        productTitlePriceVisible: productTitlePriceVisible,
-        storeKitSheetAppears: storeKitSheetAppears,
-        sandboxPurchaseSucceeds:
-            journey.purchaseCompleted ? true : null,
-        proEntitlementActive: journey.entitlementReceived
-            ? true
-            : recognizesProEntitlement(journey.entitlementIds)
-                ? true
-                : null,
-        proGateUnlocks: proGateUnlocks,
-        restorePurchasesSucceeds:
-            journey.restoreCompleted ? true : null,
-        entitlementPersistsAfterRestart: entitlementPersistsAfterRestart,
-        missingKeyNoCrash: missingKeyNoCrash,
-        activeEntitlementIds: journey.entitlementIds,
-      );
+  }) => RevenueCatSandboxProofInput(
+    iosApiKeyPresent: iosApiKeyPresent && !diagnostics.apiKeyMissing,
+    offeringLoads: journey.offeringLoaded || diagnostics.offeringsLoaded,
+    productTitlePriceVisible: productTitlePriceVisible,
+    storeKitSheetAppears: storeKitSheetAppears,
+    sandboxPurchaseSucceeds: journey.purchaseCompleted ? true : null,
+    proEntitlementActive: journey.entitlementReceived
+        ? true
+        : recognizesProEntitlement(journey.entitlementIds)
+        ? true
+        : null,
+    proGateUnlocks: proGateUnlocks,
+    restorePurchasesSucceeds: journey.restoreCompleted ? true : null,
+    entitlementPersistsAfterRestart: entitlementPersistsAfterRestart,
+    missingKeyNoCrash: missingKeyNoCrash,
+    activeEntitlementIds: journey.entitlementIds,
+  );
 
   static bool recognizesProEntitlement(List<String> entitlementIds) {
     for (final id in entitlementIds) {
@@ -146,15 +144,12 @@ abstract final class RevenueCatSandboxProof {
       RevenueCatSandboxProofCheck(
         id: RevenueCatSandboxProofCheckId.offeringLoads,
         label: RevenueCatSandboxProofCopy.checkOfferingLoads,
-        status: gatedStatus(
-          prerequisite: keyOk,
-          value: input.offeringLoads,
-        ),
+        status: gatedStatus(prerequisite: keyOk, value: input.offeringLoads),
         detailLabel: !keyOk
             ? RevenueCatSandboxProofCopy.detailBlocked
             : input.offeringLoads
-                ? RevenueCatSandboxProofCopy.detailOfferingLoaded
-                : RevenueCatSandboxProofCopy.detailOfferingMissing,
+            ? RevenueCatSandboxProofCopy.detailOfferingLoaded
+            : RevenueCatSandboxProofCopy.detailOfferingMissing,
       ),
       RevenueCatSandboxProofCheck(
         id: RevenueCatSandboxProofCheckId.productTitlePriceVisible,
@@ -166,8 +161,8 @@ abstract final class RevenueCatSandboxProof {
         detailLabel: !offeringOk
             ? RevenueCatSandboxProofCopy.detailBlocked
             : input.productTitlePriceVisible
-                ? RevenueCatSandboxProofCopy.detailProductVisible
-                : RevenueCatSandboxProofCopy.detailProductMissing,
+            ? RevenueCatSandboxProofCopy.detailProductVisible
+            : RevenueCatSandboxProofCopy.detailProductMissing,
       ),
       RevenueCatSandboxProofCheck(
         id: RevenueCatSandboxProofCheckId.storeKitSheetAppears,
@@ -179,10 +174,10 @@ abstract final class RevenueCatSandboxProof {
         detailLabel: !productOk
             ? RevenueCatSandboxProofCopy.detailBlocked
             : input.storeKitSheetAppears == true
-                ? RevenueCatSandboxProofCopy.detailSheetSeen
-                : input.storeKitSheetAppears == false
-                    ? RevenueCatSandboxProofCopy.detailSheetNotSeen
-                    : RevenueCatSandboxProofCopy.detailPending,
+            ? RevenueCatSandboxProofCopy.detailSheetSeen
+            : input.storeKitSheetAppears == false
+            ? RevenueCatSandboxProofCopy.detailSheetNotSeen
+            : RevenueCatSandboxProofCopy.detailPending,
       ),
       RevenueCatSandboxProofCheck(
         id: RevenueCatSandboxProofCheckId.sandboxPurchaseSucceeds,
@@ -194,10 +189,10 @@ abstract final class RevenueCatSandboxProof {
         detailLabel: !productOk
             ? RevenueCatSandboxProofCopy.detailBlocked
             : input.sandboxPurchaseSucceeds == true
-                ? RevenueCatSandboxProofCopy.detailPurchaseOk
-                : input.sandboxPurchaseSucceeds == false
-                    ? RevenueCatSandboxProofCopy.detailPurchaseFailed
-                    : RevenueCatSandboxProofCopy.detailPending,
+            ? RevenueCatSandboxProofCopy.detailPurchaseOk
+            : input.sandboxPurchaseSucceeds == false
+            ? RevenueCatSandboxProofCopy.detailPurchaseFailed
+            : RevenueCatSandboxProofCopy.detailPending,
       ),
       RevenueCatSandboxProofCheck(
         id: RevenueCatSandboxProofCheckId.proEntitlementActive,
@@ -209,10 +204,10 @@ abstract final class RevenueCatSandboxProof {
         detailLabel: !purchaseOk
             ? RevenueCatSandboxProofCopy.detailBlocked
             : input.proEntitlementActive == true
-                ? RevenueCatSandboxProofCopy.detailEntitlementOk
-                : input.proEntitlementActive == false
-                    ? RevenueCatSandboxProofCopy.detailEntitlementMissing
-                    : RevenueCatSandboxProofCopy.detailPending,
+            ? RevenueCatSandboxProofCopy.detailEntitlementOk
+            : input.proEntitlementActive == false
+            ? RevenueCatSandboxProofCopy.detailEntitlementMissing
+            : RevenueCatSandboxProofCopy.detailPending,
       ),
       RevenueCatSandboxProofCheck(
         id: RevenueCatSandboxProofCheckId.proGateUnlocks,
@@ -224,10 +219,10 @@ abstract final class RevenueCatSandboxProof {
         detailLabel: !entitlementOk
             ? RevenueCatSandboxProofCopy.detailBlocked
             : input.proGateUnlocks == true
-                ? RevenueCatSandboxProofCopy.detailGateUnlocked
-                : input.proGateUnlocks == false
-                    ? RevenueCatSandboxProofCopy.detailGateLocked
-                    : RevenueCatSandboxProofCopy.detailPending,
+            ? RevenueCatSandboxProofCopy.detailGateUnlocked
+            : input.proGateUnlocks == false
+            ? RevenueCatSandboxProofCopy.detailGateLocked
+            : RevenueCatSandboxProofCopy.detailPending,
       ),
       RevenueCatSandboxProofCheck(
         id: RevenueCatSandboxProofCheckId.restorePurchasesSucceeds,
@@ -239,10 +234,10 @@ abstract final class RevenueCatSandboxProof {
         detailLabel: !entitlementOk
             ? RevenueCatSandboxProofCopy.detailBlocked
             : input.restorePurchasesSucceeds == true
-                ? RevenueCatSandboxProofCopy.detailRestoreOk
-                : input.restorePurchasesSucceeds == false
-                    ? RevenueCatSandboxProofCopy.detailRestoreFailed
-                    : RevenueCatSandboxProofCopy.detailPending,
+            ? RevenueCatSandboxProofCopy.detailRestoreOk
+            : input.restorePurchasesSucceeds == false
+            ? RevenueCatSandboxProofCopy.detailRestoreFailed
+            : RevenueCatSandboxProofCopy.detailPending,
       ),
       RevenueCatSandboxProofCheck(
         id: RevenueCatSandboxProofCheckId.entitlementPersistsAfterRestart,
@@ -254,10 +249,10 @@ abstract final class RevenueCatSandboxProof {
         detailLabel: !restoreOk
             ? RevenueCatSandboxProofCopy.detailBlocked
             : input.entitlementPersistsAfterRestart == true
-                ? RevenueCatSandboxProofCopy.detailPersistOk
-                : input.entitlementPersistsAfterRestart == false
-                    ? RevenueCatSandboxProofCopy.detailPersistFailed
-                    : RevenueCatSandboxProofCopy.detailPending,
+            ? RevenueCatSandboxProofCopy.detailPersistOk
+            : input.entitlementPersistsAfterRestart == false
+            ? RevenueCatSandboxProofCopy.detailPersistFailed
+            : RevenueCatSandboxProofCopy.detailPending,
       ),
       RevenueCatSandboxProofCheck(
         id: RevenueCatSandboxProofCheckId.missingKeyNoCrash,
@@ -268,10 +263,10 @@ abstract final class RevenueCatSandboxProof {
         detailLabel: input.iosApiKeyPresent
             ? RevenueCatSandboxProofCopy.detailSkipped
             : input.missingKeyNoCrash == true
-                ? RevenueCatSandboxProofCopy.detailNoCrashOk
-                : input.missingKeyNoCrash == false
-                    ? RevenueCatSandboxProofCopy.detailNoCrashFailed
-                    : RevenueCatSandboxProofCopy.detailPending,
+            ? RevenueCatSandboxProofCopy.detailNoCrashOk
+            : input.missingKeyNoCrash == false
+            ? RevenueCatSandboxProofCopy.detailNoCrashFailed
+            : RevenueCatSandboxProofCopy.detailPending,
       ),
     ];
   }
@@ -347,17 +342,15 @@ enum RevenueCatSandboxProofStatus {
   skipped;
 
   String get label => switch (this) {
-        RevenueCatSandboxProofStatus.pass =>
-          RevenueCatSandboxProofCopy.statusPass,
-        RevenueCatSandboxProofStatus.fail =>
-          RevenueCatSandboxProofCopy.statusFail,
-        RevenueCatSandboxProofStatus.pending =>
-          RevenueCatSandboxProofCopy.statusPending,
-        RevenueCatSandboxProofStatus.blocked =>
-          RevenueCatSandboxProofCopy.statusBlocked,
-        RevenueCatSandboxProofStatus.skipped =>
-          RevenueCatSandboxProofCopy.statusSkipped,
-      };
+    RevenueCatSandboxProofStatus.pass => RevenueCatSandboxProofCopy.statusPass,
+    RevenueCatSandboxProofStatus.fail => RevenueCatSandboxProofCopy.statusFail,
+    RevenueCatSandboxProofStatus.pending =>
+      RevenueCatSandboxProofCopy.statusPending,
+    RevenueCatSandboxProofStatus.blocked =>
+      RevenueCatSandboxProofCopy.statusBlocked,
+    RevenueCatSandboxProofStatus.skipped =>
+      RevenueCatSandboxProofCopy.statusSkipped,
+  };
 }
 
 enum RevenueCatSandboxProofDecision {
@@ -449,18 +442,18 @@ class RevenueCatSandboxProofReport {
   final RevenueCatSandboxProofResult result;
 
   List<String> get allDisplayedText => [
-        headline,
-        body,
-        manualNote,
-        provedLine,
-        manualRequiredLine,
-        fallbackVerifiedLine,
-        blockedLine,
-        for (final check in result.checks) ...[
-          check.label,
-          check.detailLabel,
-          check.status.label,
-        ],
-        result.message,
-      ];
+    headline,
+    body,
+    manualNote,
+    provedLine,
+    manualRequiredLine,
+    fallbackVerifiedLine,
+    blockedLine,
+    for (final check in result.checks) ...[
+      check.label,
+      check.detailLabel,
+      check.status.label,
+    ],
+    result.message,
+  ];
 }

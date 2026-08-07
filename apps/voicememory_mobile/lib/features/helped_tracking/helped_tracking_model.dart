@@ -10,31 +10,31 @@ enum HelpedTrackingOption {
 
 extension HelpedTrackingOptionLabels on HelpedTrackingOption {
   String get label => switch (this) {
-        HelpedTrackingOption.paused => 'I paused',
-        HelpedTrackingOption.saidNo => 'I said no',
-        HelpedTrackingOption.askedForTime => 'I asked for time',
-        HelpedTrackingOption.talkedToSomeone => 'I talked to someone',
-        HelpedTrackingOption.nothingHelped => 'Nothing helped',
-        HelpedTrackingOption.somethingElse => 'Something else',
-      };
+    HelpedTrackingOption.paused => 'I paused',
+    HelpedTrackingOption.saidNo => 'I said no',
+    HelpedTrackingOption.askedForTime => 'I asked for time',
+    HelpedTrackingOption.talkedToSomeone => 'I talked to someone',
+    HelpedTrackingOption.nothingHelped => 'Nothing helped',
+    HelpedTrackingOption.somethingElse => 'Something else',
+  };
 
   String get analyticsValue => switch (this) {
-        HelpedTrackingOption.paused => 'paused',
-        HelpedTrackingOption.saidNo => 'said_no',
-        HelpedTrackingOption.askedForTime => 'asked_for_time',
-        HelpedTrackingOption.talkedToSomeone => 'talked_to_someone',
-        HelpedTrackingOption.nothingHelped => 'nothing_helped',
-        HelpedTrackingOption.somethingElse => 'something_else',
-      };
+    HelpedTrackingOption.paused => 'paused',
+    HelpedTrackingOption.saidNo => 'said_no',
+    HelpedTrackingOption.askedForTime => 'asked_for_time',
+    HelpedTrackingOption.talkedToSomeone => 'talked_to_someone',
+    HelpedTrackingOption.nothingHelped => 'nothing_helped',
+    HelpedTrackingOption.somethingElse => 'something_else',
+  };
 
   String get summaryVerb => switch (this) {
-        HelpedTrackingOption.paused => 'paused',
-        HelpedTrackingOption.saidNo => 'said no',
-        HelpedTrackingOption.askedForTime => 'asked for time',
-        HelpedTrackingOption.talkedToSomeone => 'talked to someone',
-        HelpedTrackingOption.nothingHelped => 'marked nothing as helpful',
-        HelpedTrackingOption.somethingElse => 'noted something else',
-      };
+    HelpedTrackingOption.paused => 'paused',
+    HelpedTrackingOption.saidNo => 'said no',
+    HelpedTrackingOption.askedForTime => 'asked for time',
+    HelpedTrackingOption.talkedToSomeone => 'talked to someone',
+    HelpedTrackingOption.nothingHelped => 'marked nothing as helpful',
+    HelpedTrackingOption.somethingElse => 'noted something else',
+  };
 
   bool get countsAsHelped => this != HelpedTrackingOption.nothingHelped;
 }
@@ -58,13 +58,13 @@ class HelpedTrackingRecord {
   bool get hasFreeText => freeText != null && freeText!.trim().isNotEmpty;
 
   Map<String, dynamic> toJson() => {
-        'entryId': entryId,
-        'option': option.analyticsValue,
-        if (freeText != null && freeText!.trim().isNotEmpty)
-          'freeText': freeText!.trim(),
-        'entryCountAtCapture': entryCountAtCapture,
-        'createdAt': createdAt.toUtc().toIso8601String(),
-      };
+    'entryId': entryId,
+    'option': option.analyticsValue,
+    if (freeText != null && freeText!.trim().isNotEmpty)
+      'freeText': freeText!.trim(),
+    'entryCountAtCapture': entryCountAtCapture,
+    'createdAt': createdAt.toUtc().toIso8601String(),
+  };
 
   factory HelpedTrackingRecord.fromJson(Map<String, dynamic> json) {
     final optionRaw = json['option']?.toString() ?? '';
@@ -76,7 +76,8 @@ class HelpedTrackingRecord {
       ),
       freeText: json['freeText']?.toString(),
       entryCountAtCapture: json['entryCountAtCapture'] as int? ?? 0,
-      createdAt: DateTime.tryParse(json['createdAt']?.toString() ?? '') ??
+      createdAt:
+          DateTime.tryParse(json['createdAt']?.toString() ?? '') ??
           DateTime.now().toUtc(),
     );
   }

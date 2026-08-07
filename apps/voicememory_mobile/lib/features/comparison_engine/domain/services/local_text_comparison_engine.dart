@@ -23,9 +23,7 @@ class LocalTextComparisonResult {
 
 /// Deterministic local comparison over pruned [ArchiveMomentRecord] history.
 class LocalTextComparisonEngine {
-  const LocalTextComparisonEngine({
-    ComparisonEngine engine = const ComparisonEngine(),
-  }) : _engine = engine;
+  const LocalTextComparisonEngine({this._engine = const ComparisonEngine()});
 
   final ComparisonEngine _engine;
 

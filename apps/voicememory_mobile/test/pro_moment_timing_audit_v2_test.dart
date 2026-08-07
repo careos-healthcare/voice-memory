@@ -16,7 +16,7 @@ import 'package:voicememory_mobile/features/pro_moment_timing/pro_moment_timing_
 import 'package:voicememory_mobile/features/proof_quality_response/proof_quality_response_model.dart';
 import 'package:voicememory_mobile/features/surface_priority/surface_priority_engine.dart';
 import 'package:voicememory_mobile/features/surface_priority/surface_priority_model.dart';
-import 'package:voicememory_mobile/screens/testing_archiveme_screen.dart';
+import 'package:archiveme_research/screens/testing_archiveme_screen.dart';
 import 'package:voicememory_mobile/theme/app_theme.dart';
 import 'package:voicememory_mobile/widgets/beta/pro_moment_timing_audit_v2_card.dart';
 
@@ -26,8 +26,7 @@ const _privateTranscript =
 ProMomentTimingAuditV2Check _check(
   ProMomentTimingAuditV2Snapshot snapshot,
   ProMomentTimingAuditV2CheckId id,
-) =>
-    snapshot.checks.firstWhere((check) => check.id == id);
+) => snapshot.checks.firstWhere((check) => check.id == id);
 
 Future<void> _pumpCard(
   WidgetTester tester, {
@@ -57,8 +56,10 @@ void main() {
     test('verifies Pro blocked before proof', () {
       final snapshot = ProMomentTimingAuditV2Engine.build();
       expect(
-        _check(snapshot, ProMomentTimingAuditV2CheckId.neverBeforeFirstProof)
-            .status,
+        _check(
+          snapshot,
+          ProMomentTimingAuditV2CheckId.neverBeforeFirstProof,
+        ).status,
         ProMomentTimingAuditV2Status.ready,
       );
       expect(
@@ -127,8 +128,10 @@ void main() {
     test('verifies Pro blocked after not relevant', () {
       final snapshot = ProMomentTimingAuditV2Engine.build();
       expect(
-        _check(snapshot, ProMomentTimingAuditV2CheckId.blockedNotRelevant)
-            .status,
+        _check(
+          snapshot,
+          ProMomentTimingAuditV2CheckId.blockedNotRelevant,
+        ).status,
         ProMomentTimingAuditV2Status.ready,
       );
     });
@@ -136,8 +139,10 @@ void main() {
     test('verifies Already knew requires delta', () {
       final snapshot = ProMomentTimingAuditV2Engine.build();
       expect(
-        _check(snapshot, ProMomentTimingAuditV2CheckId.alreadyKnewNeedsDelta)
-            .status,
+        _check(
+          snapshot,
+          ProMomentTimingAuditV2CheckId.alreadyKnewNeedsDelta,
+        ).status,
         ProMomentTimingAuditV2Status.ready,
       );
       expect(
@@ -197,8 +202,10 @@ void main() {
     test('verifies only one Pro card', () {
       final snapshot = ProMomentTimingAuditV2Engine.build();
       expect(
-        _check(snapshot, ProMomentTimingAuditV2CheckId.oneProCardPerSurface)
-            .status,
+        _check(
+          snapshot,
+          ProMomentTimingAuditV2CheckId.oneProCardPerSurface,
+        ).status,
         ProMomentTimingAuditV2Status.ready,
       );
 
@@ -292,7 +299,10 @@ void main() {
     testWidgets('renders checks and correct diagnosis', (tester) async {
       await _pumpCard(tester);
 
-      expect(find.byKey(const Key('pro_moment_timing_audit_v2_card')), findsOneWidget);
+      expect(
+        find.byKey(const Key('pro_moment_timing_audit_v2_card')),
+        findsOneWidget,
+      );
       expect(
         find.text(ProMomentTimingAuditV2Copy.checkNeverBeforeFirstProof),
         findsOneWidget,
@@ -308,9 +318,7 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           theme: AppTheme.light(),
-          home: const Scaffold(
-            body: ProMomentTimingAuditV2Card(),
-          ),
+          home: const Scaffold(body: ProMomentTimingAuditV2Card()),
         ),
       );
       await tester.pump();

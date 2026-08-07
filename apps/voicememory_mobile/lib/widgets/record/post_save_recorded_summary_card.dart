@@ -77,18 +77,15 @@ class PostSaveRecordedSummaryCard extends StatelessWidget {
 
     final summary = postSaveRecordedSummary(entry);
     final result = _isLowSignal ? null : _mirror;
-    final labelStyle = ArchiveMobileTypography.responsiveHelper(context).copyWith(
-      color: AppColors.textSecondary,
-      fontWeight: FontWeight.w600,
-    );
-    final bodyStyle = ArchiveMobileTypography.responsiveHelper(context).copyWith(
-      color: AppColors.textPrimary,
-      height: 1.45,
-    );
-    final footnoteStyle = ArchiveMobileTypography.responsiveHelper(context).copyWith(
-      color: AppColors.textSecondary,
-      height: 1.4,
-    );
+    final labelStyle = ArchiveMobileTypography.responsiveHelper(
+      context,
+    ).copyWith(color: AppColors.textSecondary, fontWeight: FontWeight.w600);
+    final bodyStyle = ArchiveMobileTypography.responsiveHelper(
+      context,
+    ).copyWith(color: AppColors.textPrimary, height: 1.45);
+    final footnoteStyle = ArchiveMobileTypography.responsiveHelper(
+      context,
+    ).copyWith(color: AppColors.textSecondary, height: 1.4);
 
     return Container(
       key: const Key('post_save_recorded_summary_card'),
@@ -305,7 +302,8 @@ class _DegradedTranscriptionCard extends StatefulWidget {
       _DegradedTranscriptionCardState();
 }
 
-class _DegradedTranscriptionCardState extends State<_DegradedTranscriptionCard> {
+class _DegradedTranscriptionCardState
+    extends State<_DegradedTranscriptionCard> {
   bool _moreOptionsExpanded = false;
 
   String? get _audioPath {
@@ -316,10 +314,9 @@ class _DegradedTranscriptionCardState extends State<_DegradedTranscriptionCard> 
   @override
   Widget build(BuildContext context) {
     final titleStyle = ArchiveMobileTypography.responsiveSectionTitle(context);
-    final bodyStyle = ArchiveMobileTypography.responsiveHelper(context).copyWith(
-      color: AppColors.textPrimary,
-      height: 1.45,
-    );
+    final bodyStyle = ArchiveMobileTypography.responsiveHelper(
+      context,
+    ).copyWith(color: AppColors.textPrimary, height: 1.45);
     final noteStyle = bodyStyle.copyWith(color: AppColors.textSecondary);
 
     return Container(
@@ -364,9 +361,8 @@ class _DegradedTranscriptionCardState extends State<_DegradedTranscriptionCard> 
             alignment: Alignment.centerLeft,
             child: TextButton(
               key: const Key('post_save_degraded_more_options'),
-              onPressed: () => setState(
-                () => _moreOptionsExpanded = !_moreOptionsExpanded,
-              ),
+              onPressed: () =>
+                  setState(() => _moreOptionsExpanded = !_moreOptionsExpanded),
               child: Text(PendingTranscriptRecoveryCopy.moreOptionsLabel),
             ),
           ),

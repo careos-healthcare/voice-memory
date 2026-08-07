@@ -24,8 +24,7 @@ class CapacityActivationFitEngine {
       return CapacityActivationFitResult.hidden;
     }
 
-    if (input.capacityMomentCount <
-        CapacityThreeMomentGates.activationTarget) {
+    if (input.capacityMomentCount < CapacityThreeMomentGates.activationTarget) {
       return CapacityActivationFitResult.hidden;
     }
 
@@ -41,8 +40,9 @@ class CapacityActivationFitEngine {
           body: CapacityActivationFitCopy.cardBody,
           primaryCtaLabel: CapacityActivationFitCopy.saveFeedbackCta,
           secondaryCtaLabel: CapacityActivationFitCopy.skipCta,
-          answeredSummaryLine:
-              CapacityActivationFitCopy.loopMarkedLine(record.responseId),
+          answeredSummaryLine: CapacityActivationFitCopy.loopMarkedLine(
+            record.responseId,
+          ),
           activationEntryCount: input.capacityMomentCount,
         );
       }
@@ -80,8 +80,7 @@ class CapacityActivationFitEngine {
       return CapacityActivationFitResult.hidden;
     }
 
-    final momentCount =
-        loopEngine.eligibleCapacityEntryIds(realEntries).length;
+    final momentCount = loopEngine.eligibleCapacityEntryIds(realEntries).length;
     final capacityCount = loopEngine.countCapacityEvidence(realEntries);
 
     return build(
@@ -102,12 +101,11 @@ class CapacityActivationFitEngine {
   static bool _isEligible({
     required bool capacityWedgeActive,
     required int capacityEvidenceCount,
-  }) =>
-      CapacityThreeMomentGates.isEligible(
-        sampleMode: false,
-        capacityWedgeActive: capacityWedgeActive,
-        capacityEvidenceCount: capacityEvidenceCount,
-      );
+  }) => CapacityThreeMomentGates.isEligible(
+    sampleMode: false,
+    capacityWedgeActive: capacityWedgeActive,
+    capacityEvidenceCount: capacityEvidenceCount,
+  );
 
   static bool _showOnArchiveHome(CapacityActivationFitInput input) =>
       !input.pendingPullReasonOnHome &&

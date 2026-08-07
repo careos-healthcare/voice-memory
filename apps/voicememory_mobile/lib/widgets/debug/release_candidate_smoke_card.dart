@@ -7,19 +7,14 @@ import '../../theme/app_theme.dart';
 
 /// Internal release candidate smoke test — developer diagnostics only.
 class ReleaseCandidateSmokeCard extends StatelessWidget {
-  const ReleaseCandidateSmokeCard({
-    super.key,
-    required this.report,
-  });
+  const ReleaseCandidateSmokeCard({super.key, required this.report});
 
   final ReleaseCandidateSmokeReport report;
 
   @override
   Widget build(BuildContext context) {
     if (!DeveloperSettingsGate.canShowDeveloperSettings) {
-      return const SizedBox.shrink(
-        key: Key('release_candidate_smoke_hidden'),
-      );
+      return const SizedBox.shrink(key: Key('release_candidate_smoke_hidden'));
     }
 
     return Container(
@@ -36,9 +31,9 @@ class ReleaseCandidateSmokeCard extends StatelessWidget {
           Text(
             report.title,
             key: const Key('release_candidate_smoke_title'),
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: 8),
           Text(
@@ -61,9 +56,9 @@ class ReleaseCandidateSmokeCard extends StatelessWidget {
           Text(
             report.manualChecklistTitle,
             key: const Key('release_candidate_smoke_manual_checklist_title'),
-            style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: 8),
           for (var i = 0; i < report.manualChecklistSteps.length; i++)
@@ -105,10 +100,7 @@ class _RowTile extends StatelessWidget {
         Text(
           row.status.label,
           key: Key('release_candidate_smoke_row_status_${row.id.name}'),
-          style: const TextStyle(
-            fontSize: 13,
-            fontWeight: FontWeight.w600,
-          ),
+          style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
         ),
       ],
     );

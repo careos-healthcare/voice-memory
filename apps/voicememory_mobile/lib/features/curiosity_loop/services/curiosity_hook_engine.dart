@@ -144,7 +144,9 @@ abstract final class CuriosityHookEngine {
     return switch (hookType) {
       CuriosityHookType.blocker => _CuriosityHookCopy.blockerPrompt(anchor),
       CuriosityHookType.momentum => _CuriosityHookCopy.momentumPrompt(anchor),
-      CuriosityHookType.returnWatch => _CuriosityHookCopy.returnWatchPrompt(anchor),
+      CuriosityHookType.returnWatch => _CuriosityHookCopy.returnWatchPrompt(
+        anchor,
+      ),
       CuriosityHookType.anchorFollowUp =>
         _CuriosityHookCopy.anchorFollowUpPrompt(anchor),
     };

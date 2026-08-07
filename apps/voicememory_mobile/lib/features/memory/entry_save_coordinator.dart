@@ -12,7 +12,6 @@ import 'memory_scope.dart';
 import 'memory_scope_policy.dart';
 import 'next_entry_fresh_mode.dart';
 import 'treat_as_new.dart';
-import '../pressure_retention/pressure_check_in_record.dart';
 import '../pressure_retention/pressure_check_in_store.dart';
 import '../../models/journal_entry.dart';
 import '../../services/app_services.dart';
@@ -92,7 +91,11 @@ abstract class EntrySaveCoordinator {
 
   static Future<JournalEntry> _applyThreadAssignment(JournalEntry entry) async {
     if (entry.keepSeparate) {
-      return _withFlags(entry, archiveThreadId: null);
+      // Explicitly clear the thread assignment. `_withFlags` cannot express
+      // this (it treats a null argument as "leave unchanged"), so this
+      // goes straight to the lossless `copyWith`, which does support
+      // explicitly clearing a nullable field.
+      return entry.copyWith(archiveThreadId: null);
     }
     if (!AppServices.isInitialized) return entry;
     try {
@@ -138,6 +141,11 @@ abstract class EntrySaveCoordinator {
     } catch (_) {}
   }
 
+  /// Only ever used to *assign* (never clear) these fields — every other
+  /// field, including biomarkers, parentHookId, wasGrounded, verifiedProof,
+  /// ownerKey and all synchronization metadata, passes through untouched
+  /// via the lossless [JournalEntry.copyWith]. To explicitly clear a
+  /// nullable field, call `entry.copyWith(field: null)` directly instead.
   static JournalEntry _withFlags(
     JournalEntry entry, {
     bool? treatAsNew,
@@ -147,28 +155,13 @@ abstract class EntrySaveCoordinator {
     String? entryAboutness,
     String? memorySurfacing,
     bool? preserveOriginal,
-  }) => JournalEntry(
-    id: entry.id,
-    createdAt: entry.createdAt,
-    transcript: entry.transcript,
-    durationSeconds: entry.durationSeconds,
-    reflection: entry.reflection,
-    syncStatus: entry.syncStatus,
-    localAudioPath: entry.localAudioPath,
-    treatAsNew: treatAsNew ?? entry.treatAsNew,
-    connectionApproved: entry.connectionApproved,
-    keepExactDetails: entry.keepExactDetails,
-    keepSeparate: keepSeparate ?? entry.keepSeparate,
+  }) => entry.copyWith(
+    treatAsNew: treatAsNew,
+    keepSeparate: keepSeparate,
     archiveThreadId: archiveThreadId ?? entry.archiveThreadId,
     archivePackId: archivePackId ?? entry.archivePackId,
-    isPinned: entry.isPinned,
-    pinnedAt: entry.pinnedAt,
-    isArchived: entry.isArchived,
-    archivedAt: entry.archivedAt,
-    entryAboutness: entryAboutness ?? entry.entryAboutness,
-    memorySurfacing: memorySurfacing ?? entry.memorySurfacing,
-    preserveOriginal: preserveOriginal ?? entry.preserveOriginal,
-    captureContextTag: entry.captureContextTag,
-    biomarkers: entry.biomarkers,
+    entryAboutness: entryAboutness,
+    memorySurfacing: memorySurfacing,
+    preserveOriginal: preserveOriginal,
   );
 }

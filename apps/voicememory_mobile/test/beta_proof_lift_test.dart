@@ -20,11 +20,9 @@ import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/models/sync_status.dart';
 import 'package:voicememory_mobile/storage/mobile_prefs_store.dart';
 import 'package:voicememory_mobile/widgets/patterns/beta_proof_lift_card.dart';
-import 'package:voicememory_mobile/widgets/patterns/timeline_proof_moment_card.dart';
 
 class _MemoryPrefs extends MobilePrefsStore {
-  _MemoryPrefs()
-      : super(file: File('test/tmp/beta_proof_lift/unused.json'));
+  _MemoryPrefs() : super(file: File('test/tmp/beta_proof_lift/unused.json'));
 
   final Map<String, Map<String, dynamic>> maps = {};
 
@@ -41,11 +39,7 @@ const _strongRepeat =
     'I had no capacity but I said yes again to the extra meeting today.';
 final _now = DateTime(2026, 6, 12, 12);
 
-JournalEntry _entry(
-  String id,
-  String transcript, {
-  DateTime? createdAt,
-}) =>
+JournalEntry _entry(String id, String transcript, {DateTime? createdAt}) =>
     JournalEntry(
       id: id,
       createdAt: createdAt ?? _now,
@@ -144,9 +138,21 @@ void main() {
     test('renders all four sections and fallback copy', () {
       final result = _visibleResult(
         entries: [
-          _entry('a', 'short one', createdAt: _now.subtract(const Duration(days: 10))),
-          _entry('b', 'short two', createdAt: _now.subtract(const Duration(days: 9))),
-          _entry('c', 'short three', createdAt: _now.subtract(const Duration(days: 8))),
+          _entry(
+            'a',
+            'short one',
+            createdAt: _now.subtract(const Duration(days: 10)),
+          ),
+          _entry(
+            'b',
+            'short two',
+            createdAt: _now.subtract(const Duration(days: 9)),
+          ),
+          _entry(
+            'c',
+            'short three',
+            createdAt: _now.subtract(const Duration(days: 8)),
+          ),
         ],
       );
       expect(result.title, BetaProofLiftCopy.title);
@@ -158,19 +164,19 @@ void main() {
         );
       } else {
         expect(result.body, contains('This is not a label'));
-        expect(result.sections.first.body, BetaProofLiftCopy.fallbackWhatRepeated);
+        expect(
+          result.sections.first.body,
+          BetaProofLiftCopy.fallbackWhatRepeated,
+        );
       }
       expect(result.hasSafeAnchor, isFalse);
       expect(result.sections.length, 4);
-      expect(
-        result.sections.map((section) => section.heading).toList(),
-        [
-          BetaProofLiftCopy.sectionWhatRepeated,
-          BetaProofLiftCopy.sectionWhatChanged,
-          BetaProofLiftCopy.sectionWhyItMattersNow,
-          BetaProofLiftCopy.sectionYourCorrection,
-        ],
-      );
+      expect(result.sections.map((section) => section.heading).toList(), [
+        BetaProofLiftCopy.sectionWhatRepeated,
+        BetaProofLiftCopy.sectionWhatChanged,
+        BetaProofLiftCopy.sectionWhyItMattersNow,
+        BetaProofLiftCopy.sectionYourCorrection,
+      ]);
     });
 
     test('renders delta rows when safe signals exist', () {
@@ -236,14 +242,14 @@ void main() {
             parentVisible: true,
             timelineProofVisible: true,
             firstProofPayoffVisible: false,
-            isRecording: override['isRecording'] as bool? ?? false,
+            isRecording: override['isRecording'] ?? false,
             isDegradedTranscriptState:
-                override['isDegradedTranscriptState'] as bool? ?? false,
+                override['isDegradedTranscriptState'] ?? false,
             isPostSaveDegradedState: false,
             whatChangedQuestionActive:
-                override['whatChangedQuestionActive'] as bool? ?? false,
+                override['whatChangedQuestionActive'] ?? false,
             patternReviewInboxHasActiveItems:
-                override['patternReviewInboxHasActiveItems'] as bool? ?? false,
+                override['patternReviewInboxHasActiveItems'] ?? false,
           ),
           isFalse,
         );
@@ -422,8 +428,14 @@ void main() {
           suppressLegacyEducation: false,
         ),
       );
-      expect(result.correctionSlot, SurfacePriorityCardKey.proofQualityResponse);
-      expect(result.isVisible(SurfacePriorityCardKey.betaProofLift, candidate: true), isFalse);
+      expect(
+        result.correctionSlot,
+        SurfacePriorityCardKey.proofQualityResponse,
+      );
+      expect(
+        result.isVisible(SurfacePriorityCardKey.betaProofLift, candidate: true),
+        isFalse,
+      );
     });
 
     test('betaProofLift can win when no proof quality response', () {
@@ -457,12 +469,20 @@ void main() {
         ),
       );
       expect(result.correctionSlot, SurfacePriorityCardKey.betaProofLift);
-      expect(result.isVisible(SurfacePriorityCardKey.notRelevantRecovery, candidate: true), isFalse);
+      expect(
+        result.isVisible(
+          SurfacePriorityCardKey.notRelevantRecovery,
+          candidate: true,
+        ),
+        isFalse,
+      );
     });
   });
 
   group('BetaProofLiftCard', () {
-    testWidgets('renders title and body when proof lift is visible', (tester) async {
+    testWidgets('renders title and body when proof lift is visible', (
+      tester,
+    ) async {
       final entries = _threeRelatedEntries();
       final built = _visibleResult(entries: entries);
       final lift = BetaProofLiftResult(
@@ -502,8 +522,14 @@ void main() {
       );
       expect(find.text(BetaProofLiftCopy.sectionWhatRepeated), findsOneWidget);
       expect(find.text(BetaProofLiftCopy.sectionWhatChanged), findsOneWidget);
-      expect(find.text(BetaProofLiftCopy.sectionWhyItMattersNow), findsOneWidget);
-      expect(find.text(BetaProofLiftCopy.sectionYourCorrection), findsOneWidget);
+      expect(
+        find.text(BetaProofLiftCopy.sectionWhyItMattersNow),
+        findsOneWidget,
+      );
+      expect(
+        find.text(BetaProofLiftCopy.sectionYourCorrection),
+        findsOneWidget,
+      );
     });
   });
 }

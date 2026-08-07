@@ -39,11 +39,7 @@ class _MemoryPrefs extends MobilePrefsStore {
   }
 }
 
-JournalEntry _entry(
-  String id,
-  String transcript, {
-  DateTime? createdAt,
-}) =>
+JournalEntry _entry(String id, String transcript, {DateTime? createdAt}) =>
     JournalEntry(
       id: id,
       createdAt: createdAt ?? DateTime(2026, 6, 12, 10),
@@ -64,37 +60,22 @@ JournalEntry _voiceEntry({
   required String id,
   String transcript = '',
   DateTime? createdAt,
-}) =>
-    JournalEntry(
-      id: id,
-      createdAt: createdAt ?? DateTime(2026, 6, 12, 10),
-      transcript: transcript,
-      durationSeconds: 24,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 2,
-        recurringThemes: const [],
-        exactLanguagePattern: '',
-        concreteObservation: '',
-        repeatedSignal: '',
-      ),
-      syncStatus: SyncStatus.localOnly,
-    );
-
-List<JournalEntry> _threeRelatedEntries({DateTime? lastCreatedAt}) => [
-      _entry('1', _strongRepeat, createdAt: DateTime(2026, 6, 10, 12)),
-      _entry(
-        '2',
-        'Same thing — said yes when I had no capacity for one more thing.',
-        createdAt: DateTime(2026, 6, 11, 12),
-      ),
-      _entry(
-        '3',
-        'I said yes again even though I had no capacity for one more ask.',
-        createdAt: lastCreatedAt ?? DateTime(2026, 6, 12, 12),
-      ),
-    ];
+}) => JournalEntry(
+  id: id,
+  createdAt: createdAt ?? DateTime(2026, 6, 12, 10),
+  transcript: transcript,
+  durationSeconds: 24,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 2,
+    recurringThemes: [],
+    exactLanguagePattern: '',
+    concreteObservation: '',
+    repeatedSignal: '',
+  ),
+  syncStatus: SyncStatus.localOnly,
+);
 
 void main() {
   tearDown(() async {
@@ -107,7 +88,11 @@ void main() {
       final now = DateTime.now();
       final yesterday = now.subtract(const Duration(days: 1));
       final entries = [
-        _entry('1', _strongRepeat, createdAt: yesterday.subtract(const Duration(days: 2))),
+        _entry(
+          '1',
+          _strongRepeat,
+          createdAt: yesterday.subtract(const Duration(days: 2)),
+        ),
         _entry(
           '2',
           'Same thing — said yes when I had no capacity for one more thing.',
@@ -144,7 +129,11 @@ void main() {
       final now = DateTime.now();
       final yesterday = now.subtract(const Duration(days: 1));
       final entries = [
-        _entry('1', _strongRepeat, createdAt: yesterday.subtract(const Duration(days: 1))),
+        _entry(
+          '1',
+          _strongRepeat,
+          createdAt: yesterday.subtract(const Duration(days: 1)),
+        ),
         _entry(
           '2',
           'Same thing — said yes when I had no capacity for one more thing.',
@@ -155,7 +144,10 @@ void main() {
 
       expect(watch, isNotNull);
       expect(watch!.hasGroundedPhrase, isTrue);
-      expect(watch.title, YesterdayWatchCopy.titleWithPhrase(watch.watchingPhrase!));
+      expect(
+        watch.title,
+        YesterdayWatchCopy.titleWithPhrase(watch.watchingPhrase!),
+      );
       expect(watch.body, YesterdayWatchCopy.phraseBody);
     });
 
@@ -194,7 +186,11 @@ void main() {
       expect(
         YesterdayWatchEngine.build(
           entries: [
-            _voiceEntry(id: 'p', transcript: _placeholder, createdAt: yesterday),
+            _voiceEntry(
+              id: 'p',
+              transcript: _placeholder,
+              createdAt: yesterday,
+            ),
           ],
         ),
         isNull,
@@ -240,7 +236,11 @@ void main() {
         YesterdayWatchEngine.build(
           entries: [
             _entry('1', _strongRepeat, createdAt: yesterday),
-            _entry('2', 'Another moment saved earlier today.', createdAt: today),
+            _entry(
+              '2',
+              'Another moment saved earlier today.',
+              createdAt: today,
+            ),
           ],
           now: now,
         ),
@@ -253,7 +253,10 @@ void main() {
       final yesterday = now.subtract(const Duration(days: 1));
       final entries = [_entry('1', _strongRepeat, createdAt: yesterday)];
       final watch = YesterdayWatchEngine.build(entries: entries, now: now);
-      final returnCue = ReturnTomorrowCueEngine.buildReady(entries: entries, now: now);
+      final returnCue = ReturnTomorrowCueEngine.buildReady(
+        entries: entries,
+        now: now,
+      );
 
       expect(watch, isNotNull);
       expect(returnCue, isNotNull);
@@ -264,7 +267,8 @@ void main() {
         watch: watch,
         dismissedToday: false,
       );
-      final showReturnTomorrow = ReturnTomorrowCueGates.shouldShowReady(
+      final showReturnTomorrow =
+          ReturnTomorrowCueGates.shouldShowReady(
             isReady: true,
             isRecording: false,
             isPostSave: false,
@@ -294,7 +298,9 @@ void main() {
   });
 
   group('YesterdayWatchCard', () {
-    testWidgets('Yes, it came back shows helper and prefill callback', (tester) async {
+    testWidgets('Yes, it came back shows helper and prefill callback', (
+      tester,
+    ) async {
       var cameBack = false;
       const watch = YesterdayWatch(
         title: YesterdayWatchCopy.defaultTitle,
@@ -350,7 +356,9 @@ void main() {
       expect(find.byKey(const Key('yesterday_watch_card')), findsNothing);
     });
 
-    testWidgets('Different this time shows helper and callback', (tester) async {
+    testWidgets('Different this time shows helper and callback', (
+      tester,
+    ) async {
       var different = false;
       final watch = YesterdayWatch(
         title: YesterdayWatchCopy.titleWithPhrase('said yes again'),
@@ -402,7 +410,8 @@ void main() {
     testWidgets('analytics excludes phrase text', (tester) async {
       final captured = <({String event, Map<String, Object> properties})>[];
       ActivationFunnelAnalytics.captureForTest(
-        (event, properties) => captured.add((event: event, properties: properties)),
+        (event, properties) =>
+            captured.add((event: event, properties: properties)),
       );
 
       final watch = YesterdayWatch(

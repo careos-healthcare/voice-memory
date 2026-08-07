@@ -32,10 +32,7 @@ void main() {
     emotionalVolatility: 0.20,
   );
 
-  JournalEntry entry({
-    required String id,
-    CognitiveBiomarkers? biomarkers,
-  }) {
+  JournalEntry entry({required String id, CognitiveBiomarkers? biomarkers}) {
     return JournalEntry(
       id: id,
       createdAt: DateTime.utc(2026, 6, 12, 12),
@@ -87,20 +84,23 @@ void main() {
       expect(await store.saveSnapshot(snapshot), isTrue);
     });
 
-    test('stores encrypted payloads without plaintext biomarker values', () async {
-      final snapshot = CognitiveBaselineSnapshot(
-        baseline: firstBiomarkers,
-        lastEntryId: 'entry_1',
-        updatedAt: DateTime.utc(2026, 6, 12, 12),
-        observationCount: 1,
-      );
+    test(
+      'stores encrypted payloads without plaintext biomarker values',
+      () async {
+        final snapshot = CognitiveBaselineSnapshot(
+          baseline: firstBiomarkers,
+          lastEntryId: 'entry_1',
+          updatedAt: DateTime.utc(2026, 6, 12, 12),
+          observationCount: 1,
+        );
 
-      await store.saveSnapshot(snapshot);
+        await store.saveSnapshot(snapshot);
 
-      final rawPrefs = await prefs.file.readAsString();
-      expect(rawPrefs.contains('0.4'), isFalse);
-      expect(rawPrefs.contains('cipher'), isTrue);
-    });
+        final rawPrefs = await prefs.file.readAsString();
+        expect(rawPrefs.contains('0.4'), isFalse);
+        expect(rawPrefs.contains('cipher'), isTrue);
+      },
+    );
 
     test('returns null when encrypted payload cannot be decrypted', () async {
       await prefs.writeString(
@@ -137,10 +137,7 @@ void main() {
       return CognitiveBaselineInterceptor(
         baselineStore: store,
         telemetry: CognitiveBaselineTelemetry(
-          sink: (event, meta) => telemetryEvents.add({
-            'event': event,
-            ...meta,
-          }),
+          sink: (event, meta) => telemetryEvents.add({'event': event, ...meta}),
         ),
         onBaselineUpdated: updates.add,
         clock: () => DateTime.utc(2026, 6, 12, 16),
@@ -167,8 +164,10 @@ void main() {
       expect(snapshot?.baseline, firstBiomarkers);
       expect(snapshot?.observationCount, 1);
       expect(snapshot?.lastEntryId, 'entry_1');
-      expect(telemetryEvents.single['event'],
-          CognitiveBaselineTelemetry.baselineUpdatedEvent);
+      expect(
+        telemetryEvents.single['event'],
+        CognitiveBaselineTelemetry.baselineUpdatedEvent,
+      );
       expect(updates.single.previousBaseline, isNull);
     });
 

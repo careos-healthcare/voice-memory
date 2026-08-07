@@ -25,6 +25,5 @@ abstract final class TesterMissionGates {
   static bool useCompactPresentation({
     required int entryCount,
     required bool firstUseSimplifiedRecord,
-  }) =>
-      entryCount == 0 && firstUseSimplifiedRecord;
+  }) => entryCount == 0 && firstUseSimplifiedRecord;
 }

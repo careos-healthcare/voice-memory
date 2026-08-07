@@ -48,28 +48,36 @@ abstract final class ReleaseFragilityAudit {
       risks: risks,
       riskOrder: canonicalRiskOrder,
       earliestBlocker: risks
-          .where((risk) => risk.level == ReleaseFragilityRiskLevel.releaseBlocked)
+          .where(
+            (risk) => risk.level == ReleaseFragilityRiskLevel.releaseBlocked,
+          )
           .map((risk) => risk.id)
           .firstOrNull,
-      lowRiskCount:
-          risks.where((risk) => risk.level == ReleaseFragilityRiskLevel.lowRisk).length,
+      lowRiskCount: risks
+          .where((risk) => risk.level == ReleaseFragilityRiskLevel.lowRisk)
+          .length,
       manualCheckCount: risks
-          .where((risk) => risk.level == ReleaseFragilityRiskLevel.manualCheckNeeded)
+          .where(
+            (risk) => risk.level == ReleaseFragilityRiskLevel.manualCheckNeeded,
+          )
           .length,
       blockedCount: risks
-          .where((risk) => risk.level == ReleaseFragilityRiskLevel.releaseBlocked)
+          .where(
+            (risk) => risk.level == ReleaseFragilityRiskLevel.releaseBlocked,
+          )
           .length,
     );
   }
 
-  static ReleaseFragilityAuditReport report(ReleaseFragilityAuditResult result) =>
-      ReleaseFragilityAuditReport(
-        headline: ReleaseFragilityCopy.headline,
-        body: ReleaseFragilityCopy.body,
-        orderLine: ReleaseFragilityCopy.orderLine,
-        guardrail: ReleaseFragilityCopy.guardrail,
-        result: result,
-      );
+  static ReleaseFragilityAuditReport report(
+    ReleaseFragilityAuditResult result,
+  ) => ReleaseFragilityAuditReport(
+    headline: ReleaseFragilityCopy.headline,
+    body: ReleaseFragilityCopy.body,
+    orderLine: ReleaseFragilityCopy.orderLine,
+    guardrail: ReleaseFragilityCopy.guardrail,
+    result: result,
+  );
 
   static ReleaseFragilityAuditInput fromRepoSignals({
     required String appConfigSource,
@@ -135,25 +143,27 @@ abstract final class ReleaseFragilityAudit {
         appConfigSource: appConfigSource,
         pbxprojSource: pbxprojSource,
       ),
-      displayNameCanonical:
-          PhysicalDeviceSmokeProof.detectAppNameArchiveMe(infoPlistSource),
+      displayNameCanonical: PhysicalDeviceSmokeProof.detectAppNameArchiveMe(
+        infoPlistSource,
+      ),
       iosDeploymentTargetAligned: detectIosDeploymentTargetAligned(
         pbxprojSource: pbxprojSource,
       ),
-      revenueCatKeySeparated: SecretsRotationLaunchGate
-          .detectRevenueCatApiKeySeparatedFromDocsLogs(
-        revenueCatServiceSource: revenueCatServiceSource,
-        revenueCatReleaseChecklistSource: revenueCatReleaseChecklistSource,
-        revenueCatArchiveLoopLogsSource: revenueCatArchiveLoopLogsSource,
-      ),
+      revenueCatKeySeparated:
+          SecretsRotationLaunchGate.detectRevenueCatApiKeySeparatedFromDocsLogs(
+            revenueCatServiceSource: revenueCatServiceSource,
+            revenueCatReleaseChecklistSource: revenueCatReleaseChecklistSource,
+            revenueCatArchiveLoopLogsSource: revenueCatArchiveLoopLogsSource,
+          ),
       appStoreProductsConfigured: detectAppStoreProductsConfigured(
         revenueCatLiveProofRunnerSource,
       ),
       entitlementIdConfigured: detectEntitlementIdConfigured(
         archiveLoopEntitlementIdsSource,
       ),
-      restorePathPresent:
-          PhysicalDeviceSmokeProof.detectRestorePath(securitySettingsSource),
+      restorePathPresent: PhysicalDeviceSmokeProof.detectRestorePath(
+        securitySettingsSource,
+      ),
       supportUrlConfigured: detectSupportUrlConfigured(appConfigSource),
       privacyUrlConfigured: detectPrivacyUrlConfigured(appConfigSource),
       termsRouteConfigured: detectTermsRouteConfigured(
@@ -166,7 +176,9 @@ abstract final class ReleaseFragilityAudit {
       secretsRotationInput: secretsInput,
       screenshotsReady: screenshotsReady,
       testFlightUploaded: testFlightUploaded,
-      staleProductCopyRisk: detectStaleProductCopyRisk(proSinglePromiseCopySource),
+      staleProductCopyRisk: detectStaleProductCopyRisk(
+        proSinglePromiseCopySource,
+      ),
       signingRepoSignal: detectSigningConfigured(pbxprojSource),
     );
   }
@@ -183,10 +195,9 @@ abstract final class ReleaseFragilityAudit {
 
   static bool detectIosDeploymentTargetAligned({
     required String pbxprojSource,
-  }) =>
-      pbxprojSource.contains(
-        'IPHONEOS_DEPLOYMENT_TARGET = $canonicalDeploymentTarget;',
-      );
+  }) => pbxprojSource.contains(
+    'IPHONEOS_DEPLOYMENT_TARGET = $canonicalDeploymentTarget;',
+  );
 
   static bool detectAppStoreProductsConfigured(
     String revenueCatLiveProofRunnerSource,
@@ -236,9 +247,12 @@ abstract final class ReleaseFragilityAudit {
     return result.action == ProductLanguageConsistencyAction.highRiskBlocked;
   }
 
-  static List<ReleaseFragilityRisk> _buildRisks(ReleaseFragilityAuditInput input) {
-    final secretsResult =
-        SecretsRotationLaunchGate.build(input.secretsRotationInput);
+  static List<ReleaseFragilityRisk> _buildRisks(
+    ReleaseFragilityAuditInput input,
+  ) {
+    final secretsResult = SecretsRotationLaunchGate.build(
+      input.secretsRotationInput,
+    );
 
     return [
       _risk(
@@ -292,8 +306,8 @@ abstract final class ReleaseFragilityAudit {
         id: ReleaseFragilityRiskId.widgetExtension,
         level: input.widgetExtensionSafe
             ? (input.widgetExtensionNeedsReview
-                ? ReleaseFragilityRiskLevel.manualCheckNeeded
-                : ReleaseFragilityRiskLevel.lowRisk)
+                  ? ReleaseFragilityRiskLevel.manualCheckNeeded
+                  : ReleaseFragilityRiskLevel.lowRisk)
             : ReleaseFragilityRiskLevel.releaseBlocked,
       ),
       _risk(
@@ -331,7 +345,9 @@ abstract final class ReleaseFragilityAudit {
   static ReleaseFragilityDecision _resolveDecision(
     List<ReleaseFragilityRisk> risks,
   ) {
-    if (risks.any((risk) => risk.level == ReleaseFragilityRiskLevel.releaseBlocked)) {
+    if (risks.any(
+      (risk) => risk.level == ReleaseFragilityRiskLevel.releaseBlocked,
+    )) {
       return ReleaseFragilityDecision.releaseBlocked;
     }
     if (risks.any(
@@ -342,12 +358,12 @@ abstract final class ReleaseFragilityAudit {
     return ReleaseFragilityDecision.lowRisk;
   }
 
-  static ReleaseFragilityRiskLevel _repoOnly(bool repoOk) =>
-      repoOk
-          ? ReleaseFragilityRiskLevel.lowRisk
-          : ReleaseFragilityRiskLevel.releaseBlocked;
+  static ReleaseFragilityRiskLevel _repoOnly(bool repoOk) => repoOk
+      ? ReleaseFragilityRiskLevel.lowRisk
+      : ReleaseFragilityRiskLevel.releaseBlocked;
 
-  static ReleaseFragilityRiskLevel _manualOnly(bool? manual) => switch (manual) {
+  static ReleaseFragilityRiskLevel _manualOnly(bool? manual) =>
+      switch (manual) {
         true => ReleaseFragilityRiskLevel.lowRisk,
         false => ReleaseFragilityRiskLevel.releaseBlocked,
         null => ReleaseFragilityRiskLevel.manualCheckNeeded,
@@ -369,19 +385,18 @@ abstract final class ReleaseFragilityAudit {
   static ReleaseFragilityRisk _risk({
     required ReleaseFragilityRiskId id,
     required ReleaseFragilityRiskLevel level,
-  }) =>
-      ReleaseFragilityRisk(
-        id: id,
-        label: ReleaseFragilityCopy.labelFor(id),
-        level: level,
-        detailLabel: switch (level) {
-          ReleaseFragilityRiskLevel.lowRisk => ReleaseFragilityCopy.detailLowRisk,
-          ReleaseFragilityRiskLevel.manualCheckNeeded =>
-            ReleaseFragilityCopy.detailManualCheck,
-          ReleaseFragilityRiskLevel.releaseBlocked =>
-            ReleaseFragilityCopy.detailReleaseBlocked,
-        },
-      );
+  }) => ReleaseFragilityRisk(
+    id: id,
+    label: ReleaseFragilityCopy.labelFor(id),
+    level: level,
+    detailLabel: switch (level) {
+      ReleaseFragilityRiskLevel.lowRisk => ReleaseFragilityCopy.detailLowRisk,
+      ReleaseFragilityRiskLevel.manualCheckNeeded =>
+        ReleaseFragilityCopy.detailManualCheck,
+      ReleaseFragilityRiskLevel.releaseBlocked =>
+        ReleaseFragilityCopy.detailReleaseBlocked,
+    },
+  );
 }
 
 class ReleaseFragilityAuditInput {

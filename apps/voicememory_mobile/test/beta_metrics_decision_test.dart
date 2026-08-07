@@ -15,17 +15,16 @@ BetaMetricsDecisionInput _input({
   int? proofUsefulCount,
   int? wouldKeepUsing,
   int? wouldPay,
-}) =>
-    BetaMetricsDecisionInput(
-      totalTesters: totalTesters,
-      firstMomentSaved: firstMomentSaved,
-      secondMomentSaved: secondMomentSaved,
-      firstProofReached: firstProofReached,
-      proofFeltSpecific: proofFeltSpecific,
-      proofUsefulCount: proofUsefulCount,
-      wouldKeepUsing: wouldKeepUsing,
-      wouldPay: wouldPay,
-    );
+}) => BetaMetricsDecisionInput(
+  totalTesters: totalTesters,
+  firstMomentSaved: firstMomentSaved,
+  secondMomentSaved: secondMomentSaved,
+  firstProofReached: firstProofReached,
+  proofFeltSpecific: proofFeltSpecific,
+  proofUsefulCount: proofUsefulCount,
+  wouldKeepUsing: wouldKeepUsing,
+  wouldPay: wouldPay,
+);
 
 void main() {
   tearDown(DeveloperSettingsGate.resetForTest);
@@ -102,24 +101,27 @@ void main() {
       expect(row.fixArea, BetaMetricsDecisionCopy.fixEvidence);
     });
 
-    test('useful proof but no keep-using signal diagnoses retention problem', () {
-      final report = BetaMetricsDecisionEngine.build(
-        input: _input(
-          firstMomentSaved: 8,
-          secondMomentSaved: 6,
-          firstProofReached: 4,
-          proofFeltSpecific: 3,
-          proofUsefulCount: 3,
-          wouldKeepUsing: 0,
-        ),
-      );
-      expect(report.summary, BetaMetricsDecisionCopy.summaryRetention);
-      final row = report.rows.firstWhere(
-        (item) => item.id == BetaMetricsDecisionRowId.wouldContinue,
-      );
-      expect(row.status, BetaMetricsDecisionRowStatus.belowTarget);
-      expect(row.fixArea, BetaMetricsDecisionCopy.fixRetention);
-    });
+    test(
+      'useful proof but no keep-using signal diagnoses retention problem',
+      () {
+        final report = BetaMetricsDecisionEngine.build(
+          input: _input(
+            firstMomentSaved: 8,
+            secondMomentSaved: 6,
+            firstProofReached: 4,
+            proofFeltSpecific: 3,
+            proofUsefulCount: 3,
+            wouldKeepUsing: 0,
+          ),
+        );
+        expect(report.summary, BetaMetricsDecisionCopy.summaryRetention);
+        final row = report.rows.firstWhere(
+          (item) => item.id == BetaMetricsDecisionRowId.wouldContinue,
+        );
+        expect(row.status, BetaMetricsDecisionRowStatus.belowTarget);
+        expect(row.fixArea, BetaMetricsDecisionCopy.fixRetention);
+      },
+    );
 
     test('useful proof but no pay signal diagnoses monetisation problem', () {
       final report = BetaMetricsDecisionEngine.build(
@@ -153,8 +155,14 @@ void main() {
           wouldPay: 0,
         ),
       );
-      expect(report.primaryBottleneck, isNot(BetaMetricsDecisionBottleneck.monetisation));
-      expect(report.summary, isNot(BetaMetricsDecisionCopy.summaryMonetisation));
+      expect(
+        report.primaryBottleneck,
+        isNot(BetaMetricsDecisionBottleneck.monetisation),
+      );
+      expect(
+        report.summary,
+        isNot(BetaMetricsDecisionCopy.summaryMonetisation),
+      );
     });
 
     test('monetisation is not diagnosed before evidence works', () {
@@ -169,8 +177,14 @@ void main() {
           wouldPay: 0,
         ),
       );
-      expect(report.primaryBottleneck, BetaMetricsDecisionBottleneck.evidenceSpecificity);
-      expect(report.summary, isNot(BetaMetricsDecisionCopy.summaryMonetisation));
+      expect(
+        report.primaryBottleneck,
+        BetaMetricsDecisionBottleneck.evidenceSpecificity,
+      );
+      expect(
+        report.summary,
+        isNot(BetaMetricsDecisionCopy.summaryMonetisation),
+      );
     });
 
     test('healthy signal when targets are met', () {
@@ -251,7 +265,10 @@ void main() {
         ),
       );
 
-      expect(find.byKey(const Key('beta_metrics_decision_hidden')), findsOneWidget);
+      expect(
+        find.byKey(const Key('beta_metrics_decision_hidden')),
+        findsOneWidget,
+      );
       expect(find.byKey(const Key('beta_metrics_decision_card')), findsNothing);
     });
 
@@ -272,7 +289,10 @@ void main() {
         ),
       );
 
-      expect(find.byKey(const Key('beta_metrics_decision_card')), findsOneWidget);
+      expect(
+        find.byKey(const Key('beta_metrics_decision_card')),
+        findsOneWidget,
+      );
       expect(find.text(BetaMetricsDecisionCopy.cardTitle), findsOneWidget);
       expect(
         find.text(BetaMetricsDecisionCopy.summaryFirstScreen),

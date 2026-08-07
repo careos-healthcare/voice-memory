@@ -18,21 +18,14 @@ abstract class PostSaveStabilityGate {
   static bool shouldSkipArchiveCards({required int entryCount}) =>
       disableArchiveCards || entryCount <= simpleUiMaxEntryCount;
 
-  static void logGate({
-    required bool enabled,
-    required int entryCount,
-  }) {
+  static void logGate({required bool enabled, required int entryCount}) {
     debugPrint(
       'ARCHIVEME_POST_SAVE_STABILITY_GATE enabled=$enabled entryCount=$entryCount',
     );
   }
 
-  static void logSkipped({
-    String reason = 'first_entries_or_debug_gate',
-  }) {
-    debugPrint(
-      'ARCHIVEME_POST_SAVE_ARCHIVE_CARDS_SKIPPED reason=$reason',
-    );
+  static void logSkipped({String reason = 'first_entries_or_debug_gate'}) {
+    debugPrint('ARCHIVEME_POST_SAVE_ARCHIVE_CARDS_SKIPPED reason=$reason');
   }
 
   static void logStarted() {
@@ -44,8 +37,6 @@ abstract class PostSaveStabilityGate {
   }
 
   static void logFailed(Object reason) {
-    debugPrint(
-      'ARCHIVEME_POST_SAVE_ARCHIVE_CARDS_FAILED reason=$reason',
-    );
+    debugPrint('ARCHIVEME_POST_SAVE_ARCHIVE_CARDS_FAILED reason=$reason');
   }
 }

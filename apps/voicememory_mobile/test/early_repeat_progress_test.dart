@@ -23,7 +23,6 @@ import 'package:voicememory_mobile/widgets/record/post_save_return_handoff_card.
 import 'package:voicememory_mobile/features/early_archive/post_save_return_handoff_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/post_save_return_handoff_engine.dart';
 import 'package:voicememory_mobile/features/early_archive/post_save_return_handoff_gates.dart';
-import 'package:voicememory_mobile/features/early_archive/first_proof_moment_analytics.dart';
 import 'package:voicememory_mobile/features/early_archive/first_proof_moment_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/first_proof_moment_engine.dart';
 import 'package:voicememory_mobile/features/early_archive/first_proof_moment_gates.dart';
@@ -69,23 +68,26 @@ void main() {
       );
     });
 
-    test('entryCount 1 uses concrete phrase in next moment cue when available', () {
-      final result = EarlyRepeatProgressEngine.build(
-        entries: [
-          _entry(
-            '1',
-            'I had no capacity but I said yes again to the extra meeting today.',
-          ),
-        ],
-      );
+    test(
+      'entryCount 1 uses concrete phrase in next moment cue when available',
+      () {
+        final result = EarlyRepeatProgressEngine.build(
+          entries: [
+            _entry(
+              '1',
+              'I had no capacity but I said yes again to the extra meeting today.',
+            ),
+          ],
+        );
 
-      expect(result!.nextMomentCue.body, contains('said yes again'));
-      expect(result.nextMomentCue.body, isNot(contains(result.body)));
-      expect(
-        result.nextMomentCue.body.split(RegExp(r'\s+')).length,
-        lessThan(30),
-      );
-    });
+        expect(result!.nextMomentCue.body, contains('said yes again'));
+        expect(result.nextMomentCue.body, isNot(contains(result.body)));
+        expect(
+          result.nextMomentCue.body.split(RegExp(r'\s+')).length,
+          lessThan(30),
+        );
+      },
+    );
 
     test('entryCount 1 without concrete phrase uses fallback cue', () {
       final result = EarlyRepeatProgressEngine.build(
@@ -139,8 +141,9 @@ void main() {
           'Same thing — said yes when I had no capacity for one more thing.',
         ),
       ];
-      final shared =
-          ConfirmedRepeatEvidencePhraseEngine.sharedConcretePhrase(entries);
+      final shared = ConfirmedRepeatEvidencePhraseEngine.sharedConcretePhrase(
+        entries,
+      );
       final result = EarlyRepeatProgressEngine.build(entries: entries);
 
       expect(shared, isNotNull);
@@ -161,7 +164,10 @@ void main() {
 
       expect(result!.kind, EarlyRepeatProgressKind.twoUnrelated);
       expect(result.title, EarlyRepeatProgressCopy.twoUnrelatedTitle);
-      expect(result.progressLabel, EarlyRepeatProgressCopy.twoUnrelatedProgress);
+      expect(
+        result.progressLabel,
+        EarlyRepeatProgressCopy.twoUnrelatedProgress,
+      );
       expect(result.claimsRepeatForming, isFalse);
       expect(result.body.toLowerCase(), contains('okay'));
       expect(result.body.toLowerCase(), isNot(contains('unlocks')));
@@ -177,7 +183,10 @@ void main() {
         result.nextMomentCue.footer,
         EarlyRepeatProgressCopy.twoUnrelatedCueFooter,
       );
-      expect(result.nextMomentCue.body.toLowerCase(), isNot(contains('repeat may be forming')));
+      expect(
+        result.nextMomentCue.body.toLowerCase(),
+        isNot(contains('repeat may be forming')),
+      );
     });
 
     test('next moment cue avoids abstract labels not in user words', () {
@@ -187,7 +196,8 @@ void main() {
         ],
       );
 
-      for (final term in ConfirmedRepeatEvidencePhraseEngine.bannedGenericLabels) {
+      for (final term
+          in ConfirmedRepeatEvidencePhraseEngine.bannedGenericLabels) {
         expect(
           result!.nextMomentCue.body.toLowerCase(),
           isNot(contains(term)),
@@ -234,7 +244,10 @@ void main() {
         EarlyRepeatProgressEngine.build(
           entries: [
             _entry('1', 'First moment with enough words to count as evidence.'),
-            _entry('2', 'Second moment with enough words to count as evidence.'),
+            _entry(
+              '2',
+              'Second moment with enough words to count as evidence.',
+            ),
             _entry('3', 'Third moment with enough words to count as evidence.'),
           ],
         ),
@@ -246,7 +259,9 @@ void main() {
   group('EarlyRepeatProgressGates', () {
     test('shows only on ready record for entryCount 1–2', () {
       final progress = EarlyRepeatProgressEngine.build(
-        entries: [_entry('1', 'A saved moment with enough words for evidence.')],
+        entries: [
+          _entry('1', 'A saved moment with enough words for evidence.'),
+        ],
       );
 
       expect(
@@ -331,9 +346,7 @@ void main() {
 
       await tester.pumpWidget(
         const MaterialApp(
-          home: Scaffold(
-            body: EarlyRepeatProgressCard(progress: progress),
-          ),
+          home: Scaffold(body: EarlyRepeatProgressCard(progress: progress)),
         ),
       );
       await tester.pump();
@@ -342,9 +355,18 @@ void main() {
         find.byKey(const Key('early_repeat_progress_card_oneMoment')),
         findsOneWidget,
       );
-      expect(find.byKey(const Key('early_repeat_progress_title')), findsOneWidget);
-      expect(find.byKey(const Key('early_repeat_progress_body')), findsOneWidget);
-      expect(find.byKey(const Key('early_repeat_progress_label')), findsNothing);
+      expect(
+        find.byKey(const Key('early_repeat_progress_title')),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(const Key('early_repeat_progress_body')),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(const Key('early_repeat_progress_label')),
+        findsNothing,
+      );
       expect(
         find.byKey(const Key('early_repeat_progress_next_moment_cue_label')),
         findsOneWidget,
@@ -371,11 +393,16 @@ void main() {
   group('PostSaveReturnHandoffEngine', () {
     test('entry 1 post-save shows come back title', () {
       final handoff = PostSaveReturnHandoffEngine.build(
-        entries: [_entry('1', 'I felt pressure before saying yes again today.')],
+        entries: [
+          _entry('1', 'I felt pressure before saying yes again today.'),
+        ],
       );
 
       expect(handoff!.title, PostSaveReturnHandoffCopy.afterFirstSaveTitle);
-      expect(handoff.relationState, PostSaveReturnHandoffRelationState.oneMoment);
+      expect(
+        handoff.relationState,
+        PostSaveReturnHandoffRelationState.oneMoment,
+      );
     });
 
     test('entry 1 with phrase uses phrase in body', () {
@@ -392,13 +419,17 @@ void main() {
       expect(handoff.body, contains('said yes again'));
       expect(
         handoff.body,
-        PostSaveReturnHandoffCopy.afterFirstSaveBodyWithPhrase('said yes again'),
+        PostSaveReturnHandoffCopy.afterFirstSaveBodyWithPhrase(
+          'said yes again',
+        ),
       );
     });
 
     test('entry 1 without phrase uses fallback copy', () {
       final handoff = PostSaveReturnHandoffEngine.build(
-        entries: [_entry('1', 'A quiet moment about lunch with a friend today.')],
+        entries: [
+          _entry('1', 'A quiet moment about lunch with a friend today.'),
+        ],
       );
 
       expect(handoff!.hasPhrase, isFalse);
@@ -422,11 +453,11 @@ void main() {
         ],
       );
 
-      expect(handoff!.title, PostSaveReturnHandoffCopy.afterSecondSaveRelatedTitle);
       expect(
-        handoff.stage,
-        PostSaveReturnHandoffStage.afterSecondSaveRelated,
+        handoff!.title,
+        PostSaveReturnHandoffCopy.afterSecondSaveRelatedTitle,
       );
+      expect(handoff.stage, PostSaveReturnHandoffStage.afterSecondSaveRelated);
     });
 
     test('entry 2 unrelated does not claim repeat', () {
@@ -437,7 +468,10 @@ void main() {
         ],
       );
 
-      expect(handoff!.title, PostSaveReturnHandoffCopy.afterSecondSaveUnrelatedTitle);
+      expect(
+        handoff!.title,
+        PostSaveReturnHandoffCopy.afterSecondSaveUnrelatedTitle,
+      );
       expect(
         handoff.body,
         PostSaveReturnHandoffCopy.afterSecondSaveUnrelatedBody,
@@ -450,7 +484,10 @@ void main() {
         PostSaveReturnHandoffEngine.build(
           entries: [
             _entry('1', 'First moment with enough words to count as evidence.'),
-            _entry('2', 'Second moment with enough words to count as evidence.'),
+            _entry(
+              '2',
+              'Second moment with enough words to count as evidence.',
+            ),
             _entry('3', 'Third moment with enough words to count as evidence.'),
           ],
         ),
@@ -485,7 +522,9 @@ void main() {
   group('PostSaveReturnHandoffGates', () {
     test('shows only on successful post-save for entryCount 1–2', () {
       final handoff = PostSaveReturnHandoffEngine.build(
-        entries: [_entry('1', 'A saved moment with enough words for evidence.')],
+        entries: [
+          _entry('1', 'A saved moment with enough words for evidence.'),
+        ],
       );
 
       expect(
@@ -535,7 +574,8 @@ void main() {
       ActivationFunnelAnalytics.resetForTest();
       EarlyArchiveProofAnalytics.resetForTest();
       ActivationFunnelAnalytics.captureForTest(
-        (event, properties) => captured.add((event: event, properties: properties)),
+        (event, properties) =>
+            captured.add((event: event, properties: properties)),
       );
     });
 
@@ -564,35 +604,41 @@ void main() {
 
       expect(captured, hasLength(1));
       final payload = captured.single.properties;
-      expect(captured.single.event, EarlyArchiveProofAnalytics.postSaveReturnHandoffSeenEvent);
+      expect(
+        captured.single.event,
+        EarlyArchiveProofAnalytics.postSaveReturnHandoffSeenEvent,
+      );
       expect(payload['entry_count'], 1);
       expect(payload['source'], 'record');
       expect(payload['stage'], 'after_first_save');
       expect(payload['has_phrase'], 1);
       expect(payload['relation_state'], 'one_moment');
-      expect(payload.values.whereType<String>(), isNot(contains('said yes again')));
+      expect(
+        payload.values.whereType<String>(),
+        isNot(contains('said yes again')),
+      );
       expect(payload.values.whereType<String>(), isNot(contains(handoff.body)));
     });
   });
 
   group('FirstProofMomentEngine', () {
-    List<JournalEntry> _threeRelated() => [
-          _entry(
-            '1',
-            'I had no capacity but I said yes again to the extra meeting today.',
-          ),
-          _entry(
-            '2',
-            'Same thing — said yes when I had no capacity for one more thing.',
-          ),
-          _entry(
-            '3',
-            'I said yes again even though I had no capacity for one more ask.',
-          ),
-        ];
+    List<JournalEntry> threeRelated() => [
+      _entry(
+        '1',
+        'I had no capacity but I said yes again to the extra meeting today.',
+      ),
+      _entry(
+        '2',
+        'Same thing — said yes when I had no capacity for one more thing.',
+      ),
+      _entry(
+        '3',
+        'I said yes again even though I had no capacity for one more ask.',
+      ),
+    ];
 
     test('third related post-save builds first repeat title', () {
-      final moment = FirstProofMomentEngine.build(entries: _threeRelated());
+      final moment = FirstProofMomentEngine.build(entries: threeRelated());
       expect(moment!.title, FirstProofMomentCopy.title);
       expect(moment.usesPhraseBody, isTrue);
       expect(moment.body, FirstProofMomentCopy.bodyStrong);
@@ -600,7 +646,7 @@ void main() {
     });
 
     test('evidence chips come from user words', () {
-      final moment = FirstProofMomentEngine.build(entries: _threeRelated());
+      final moment = FirstProofMomentEngine.build(entries: threeRelated());
       expect(moment!.evidencePhrases, isNotEmpty);
       for (final phrase in moment.evidencePhrases) {
         expect(phrase.split(RegExp(r'\s+')).length, lessThanOrEqualTo(6));
@@ -729,7 +775,8 @@ void main() {
       ActivationFunnelAnalytics.resetForTest();
       EarlyArchiveProofAnalytics.resetForTest();
       ActivationFunnelAnalytics.captureForTest(
-        (event, properties) => captured.add((event: event, properties: properties)),
+        (event, properties) =>
+            captured.add((event: event, properties: properties)),
       );
     });
 
@@ -810,7 +857,9 @@ void main() {
           isRecording: false,
           showEarlyRepeatProgress: true,
           progress: EarlyRepeatProgressEngine.build(
-            entries: [_entry('1', 'A saved moment with enough words for evidence.')],
+            entries: [
+              _entry('1', 'A saved moment with enough words for evidence.'),
+            ],
           ),
         ),
         isFalse,
@@ -819,7 +868,9 @@ void main() {
 
     test('visible at entryCount 1 or 2 before first proof', () {
       final progressOne = EarlyRepeatProgressEngine.build(
-        entries: [_entry('1', 'I felt pressure before saying yes again today.')],
+        entries: [
+          _entry('1', 'I felt pressure before saying yes again today.'),
+        ],
       );
       final progressTwo = EarlyRepeatProgressEngine.build(
         entries: [
@@ -856,7 +907,9 @@ void main() {
 
     test('hidden after first proof stack replaces early progress', () {
       final progress = EarlyRepeatProgressEngine.build(
-        entries: [_entry('1', 'I felt pressure before saying yes again today.')],
+        entries: [
+          _entry('1', 'I felt pressure before saying yes again today.'),
+        ],
       );
 
       expect(
@@ -949,10 +1002,7 @@ void main() {
       )!;
 
       expect(content.comparisonBody, isNull);
-      expect(
-        content.nextActionBody,
-        EarlySavedMomentsCopy.nextActionOneEntry,
-      );
+      expect(content.nextActionBody, EarlySavedMomentsCopy.nextActionOneEntry);
     });
 
     test('related pair uses related comparison and unlock copy', () {
@@ -974,10 +1024,7 @@ void main() {
 
       expect(content.hasConfirmedRepeat, isTrue);
       expect(content.hasNoClearMatch, isFalse);
-      expect(
-        content.comparisonBody,
-        EarlySavedMomentsCopy.comparingRelated,
-      );
+      expect(content.comparisonBody, EarlySavedMomentsCopy.comparingRelated);
       expect(
         content.nextActionBody,
         EarlySavedMomentsCopy.nextActionTwoRelated,
@@ -986,70 +1033,86 @@ void main() {
   });
 
   group('EarlySavedMomentsSheet', () {
-    testWidgets('shows saved moments comparing and next sections without actions', (
-      tester,
-    ) async {
-      final content = EarlySavedMomentsSheetContent(
-        moments: [
-          EarlySavedMomentPreview(
-            index: 1,
-            label: 'Moment 1',
-            previewText: 'Work pressure showed up again today.',
-            savedAt: DateTime(2026, 6, 12, 10),
-          ),
-          EarlySavedMomentPreview(
-            index: 2,
-            label: 'Moment 2',
-            previewText: 'Another saved reflection for the early loop.',
-            savedAt: DateTime(2026, 6, 13, 10),
-          ),
-        ],
-        comparisonBody: EarlySavedMomentsCopy.comparingNoClearMatch,
-        nextActionBody: EarlySavedMomentsCopy.nextActionTwoUnrelated,
-        hasConfirmedRepeat: false,
-        hasNoClearMatch: true,
-      );
+    testWidgets(
+      'shows saved moments comparing and next sections without actions',
+      (tester) async {
+        final content = EarlySavedMomentsSheetContent(
+          moments: [
+            EarlySavedMomentPreview(
+              index: 1,
+              label: 'Moment 1',
+              previewText: 'Work pressure showed up again today.',
+              savedAt: DateTime(2026, 6, 12, 10),
+            ),
+            EarlySavedMomentPreview(
+              index: 2,
+              label: 'Moment 2',
+              previewText: 'Another saved reflection for the early loop.',
+              savedAt: DateTime(2026, 6, 13, 10),
+            ),
+          ],
+          comparisonBody: EarlySavedMomentsCopy.comparingNoClearMatch,
+          nextActionBody: EarlySavedMomentsCopy.nextActionTwoUnrelated,
+          hasConfirmedRepeat: false,
+          hasNoClearMatch: true,
+        );
 
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: EarlySavedMomentsSheet(content: content, entryCount: 2),
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Scaffold(
+              body: EarlySavedMomentsSheet(content: content, entryCount: 2),
+            ),
           ),
-        ),
-      );
-      await tester.pump();
+        );
+        await tester.pump();
 
-      expect(find.byKey(const Key('early_saved_moments_sheet')), findsOneWidget);
-      expect(find.byKey(const Key('early_saved_moments_sheet_title')), findsOneWidget);
-      expect(find.text(EarlySavedMomentsCopy.sheetSubtitle), findsOneWidget);
-      expect(find.byKey(const Key('early_saved_moments_section_saved')), findsOneWidget);
-      expect(
-        find.text(EarlySavedMomentsCopy.comparingSectionTitle),
-        findsOneWidget,
-      );
-      expect(
-        find.text(EarlySavedMomentsCopy.nextRecordSectionTitle),
-        findsOneWidget,
-      );
-      expect(find.text('Moment 1'), findsOneWidget);
-      expect(find.text('Moment 2'), findsOneWidget);
-      expect(
-        find.text(EarlySavedMomentsCopy.comparingNoClearMatch),
-        findsOneWidget,
-      );
-      expect(
-        find.text(EarlySavedMomentsCopy.nextActionTwoUnrelated),
-        findsOneWidget,
-      );
-      expect(find.byKey(const Key('early_saved_moment_preview_1')), findsOneWidget);
-      expect(find.byKey(const Key('early_saved_moment_preview_2')), findsOneWidget);
-      expect(find.byType(IconButton), findsNothing);
-      expect(find.text('Delete'), findsNothing);
-      expect(find.text('Share'), findsNothing);
-      expect(find.text('Edit'), findsNothing);
-      expect(find.byType(ElevatedButton), findsNothing);
-      expect(find.byType(FilledButton), findsNothing);
-    });
+        expect(
+          find.byKey(const Key('early_saved_moments_sheet')),
+          findsOneWidget,
+        );
+        expect(
+          find.byKey(const Key('early_saved_moments_sheet_title')),
+          findsOneWidget,
+        );
+        expect(find.text(EarlySavedMomentsCopy.sheetSubtitle), findsOneWidget);
+        expect(
+          find.byKey(const Key('early_saved_moments_section_saved')),
+          findsOneWidget,
+        );
+        expect(
+          find.text(EarlySavedMomentsCopy.comparingSectionTitle),
+          findsOneWidget,
+        );
+        expect(
+          find.text(EarlySavedMomentsCopy.nextRecordSectionTitle),
+          findsOneWidget,
+        );
+        expect(find.text('Moment 1'), findsOneWidget);
+        expect(find.text('Moment 2'), findsOneWidget);
+        expect(
+          find.text(EarlySavedMomentsCopy.comparingNoClearMatch),
+          findsOneWidget,
+        );
+        expect(
+          find.text(EarlySavedMomentsCopy.nextActionTwoUnrelated),
+          findsOneWidget,
+        );
+        expect(
+          find.byKey(const Key('early_saved_moment_preview_1')),
+          findsOneWidget,
+        );
+        expect(
+          find.byKey(const Key('early_saved_moment_preview_2')),
+          findsOneWidget,
+        );
+        expect(find.byType(IconButton), findsNothing);
+        expect(find.text('Delete'), findsNothing);
+        expect(find.text('Share'), findsNothing);
+        expect(find.text('Edit'), findsNothing);
+        expect(find.byType(ElevatedButton), findsNothing);
+        expect(find.byType(FilledButton), findsNothing);
+      },
+    );
 
     testWidgets('related state shows related comparison copy', (tester) async {
       final content = EarlySavedMomentsSheetContent(
@@ -1082,10 +1145,7 @@ void main() {
       );
       await tester.pump();
 
-      expect(
-        find.text(EarlySavedMomentsCopy.comparingRelated),
-        findsOneWidget,
-      );
+      expect(find.text(EarlySavedMomentsCopy.comparingRelated), findsOneWidget);
       expect(
         find.text(EarlySavedMomentsCopy.nextActionTwoRelated),
         findsOneWidget,
@@ -1193,15 +1253,22 @@ void main() {
       await tester.pump();
 
       expect(
-        find.byKey(const Key('early_repeat_progress_view_saved_moments_button')),
+        find.byKey(
+          const Key('early_repeat_progress_view_saved_moments_button'),
+        ),
         findsOneWidget,
       );
-      expect(find.text(EarlySavedMomentsCopy.viewSavedMomentsCta), findsOneWidget);
+      expect(
+        find.text(EarlySavedMomentsCopy.viewSavedMomentsCta),
+        findsOneWidget,
+      );
       expect(find.byType(ElevatedButton), findsNothing);
       expect(find.byType(FilledButton), findsNothing);
 
       await tester.tap(
-        find.byKey(const Key('early_repeat_progress_view_saved_moments_button')),
+        find.byKey(
+          const Key('early_repeat_progress_view_saved_moments_button'),
+        ),
       );
       expect(tapped, isTrue);
     });
@@ -1209,7 +1276,10 @@ void main() {
 
   group('EarlySavedMoments analytics', () {
     test('viewed event uses safe metadata only', () {
-      expect(EarlySavedMomentsAnalytics.viewedEvent, 'early_saved_moments_viewed');
+      expect(
+        EarlySavedMomentsAnalytics.viewedEvent,
+        'early_saved_moments_viewed',
+      );
       expect(
         EarlySavedMomentsAnalytics.viewedEvent.toLowerCase(),
         isNot(contains('transcript')),

@@ -13,11 +13,7 @@ abstract final class PaywallValueRepairCopy {
   static const primaryCta = 'See Pro timeline';
   static const secondaryCta = 'Not now';
 
-  static const bullets = [
-    bulletKeepTracking,
-    bulletSeeChanges,
-    bulletCorrect,
-  ];
+  static const bullets = [bulletKeepTracking, bulletSeeChanges, bulletCorrect];
 
   static Iterable<String> allVisibleStrings() sync* {
     yield title;

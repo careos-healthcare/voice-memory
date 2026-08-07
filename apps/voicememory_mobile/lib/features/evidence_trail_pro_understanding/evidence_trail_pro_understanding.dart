@@ -118,8 +118,9 @@ abstract final class EvidenceTrailProUnderstanding {
     return EvidenceTrailProUnderstandingDecision.explainLongerTrail;
   }
 
-  static bool _usefulProofPasses(EvidenceTrailProUnderstandingSummary summary) =>
-      summary.usefulProofCount >= usefulProofTargetFor(summary.totalTesters);
+  static bool _usefulProofPasses(
+    EvidenceTrailProUnderstandingSummary summary,
+  ) => summary.usefulProofCount >= usefulProofTargetFor(summary.totalTesters);
 
   static bool _longerTrailUnderstood(
     EvidenceTrailProUnderstandingSummary summary,
@@ -127,7 +128,9 @@ abstract final class EvidenceTrailProUnderstanding {
       summary.understoodLongerTrailCount >=
       understoodLongerTrailTargetFor(summary.totalTesters);
 
-  static bool _proChangesUnderstood(EvidenceTrailProUnderstandingSummary summary) =>
+  static bool _proChangesUnderstood(
+    EvidenceTrailProUnderstandingSummary summary,
+  ) =>
       summary.understoodProKeepsChangesCount >=
       understoodProKeepsChangesTargetFor(summary.totalTesters);
 
@@ -137,7 +140,9 @@ abstract final class EvidenceTrailProUnderstanding {
       summary.thoughtProWasMoreAiCount >=
       thoughtProWasMoreAiHighTargetFor(summary.totalTesters);
 
-  static bool _wantedRankingHigh(EvidenceTrailProUnderstandingSummary summary) =>
+  static bool _wantedRankingHigh(
+    EvidenceTrailProUnderstandingSummary summary,
+  ) =>
       summary.wantedRankingCount >=
       wantedRankingHighTargetFor(summary.totalTesters);
 
@@ -161,21 +166,19 @@ abstract final class EvidenceTrailProUnderstanding {
   static EvidenceTrailProUnderstandingReport report(
     EvidenceTrailProUnderstandingSummary summary,
     EvidenceTrailProUnderstandingDecision decision,
-  ) =>
-      EvidenceTrailProUnderstandingReport(
-        title: EvidenceTrailProUnderstandingCopy.title,
-        body: EvidenceTrailProUnderstandingCopy.body,
-        supportingLine: EvidenceTrailProUnderstandingCopy.supportingLine,
-        decision: decision,
-        guardrail: EvidenceTrailProUnderstandingCopy.guardrail,
-      );
+  ) => EvidenceTrailProUnderstandingReport(
+    title: EvidenceTrailProUnderstandingCopy.title,
+    body: EvidenceTrailProUnderstandingCopy.body,
+    supportingLine: EvidenceTrailProUnderstandingCopy.supportingLine,
+    decision: decision,
+    guardrail: EvidenceTrailProUnderstandingCopy.guardrail,
+  );
 
   static int _scaledTarget({
     required int totalTesters,
     required int numerator,
     required int denominator,
-  }) =>
-      ((numerator * totalTesters) / denominator).ceil();
+  }) => ((numerator * totalTesters) / denominator).ceil();
 }
 
 enum EvidenceTrailProUnderstandingDecision {

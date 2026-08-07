@@ -3,7 +3,6 @@ import 'package:voicememory_mobile/features/archive_daily_change/archive_daily_c
 import 'package:voicememory_mobile/features/archive_daily_change/archive_daily_change_engine.dart';
 import 'package:voicememory_mobile/features/archive_daily_change/archive_daily_change_models.dart';
 import 'package:voicememory_mobile/features/capacity_loop/capacity_activation_fit_models.dart';
-import 'package:voicememory_mobile/features/capacity_loop/capacity_boundary_response_copy.dart';
 import 'package:voicememory_mobile/features/capacity_loop/capacity_boundary_response_models.dart';
 import 'package:voicememory_mobile/features/capacity_loop/capacity_cost_models.dart';
 import 'package:voicememory_mobile/features/capacity_loop/capacity_decision_outcome_models.dart';
@@ -54,54 +53,52 @@ const _forbiddenOnboardingTerms = [
 const _privateSnippet = 'felt pressure at work before saying yes';
 
 JournalEntry _capacityEntry(String id, {DateTime? createdAt}) => JournalEntry(
-      id: id,
-      createdAt: createdAt ?? DateTime(2026, 6, 15, 12),
-      transcript:
-          'I said yes again with no capacity left even though I was tired today.',
-      durationSeconds: 30,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 2,
-        recurringThemes: ['work'],
-        exactLanguagePattern: '',
-        concreteObservation: 'Work pressure showed up in this moment.',
-        repeatedSignal: '',
-      ),
-    );
+  id: id,
+  createdAt: createdAt ?? DateTime(2026, 6, 15, 12),
+  transcript:
+      'I said yes again with no capacity left even though I was tired today.',
+  durationSeconds: 30,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 2,
+    recurringThemes: ['work'],
+    exactLanguagePattern: '',
+    concreteObservation: 'Work pressure showed up in this moment.',
+    repeatedSignal: '',
+  ),
+);
 
 CapacityPullReasonRecord _pullReason(
   String entryId,
   List<String> reasonIds, {
   DateTime? updatedAt,
-}) =>
-    CapacityPullReasonRecord(
-      sourceEntryId: entryId,
-      reasonIds: reasonIds,
-      status: CapacityPullReasonStatus.answered,
-      createdAt: updatedAt ?? DateTime(2026, 6, 15, 12),
-      updatedAt: updatedAt ?? DateTime(2026, 6, 15, 12),
-    );
+}) => CapacityPullReasonRecord(
+  sourceEntryId: entryId,
+  reasonIds: reasonIds,
+  status: CapacityPullReasonStatus.answered,
+  createdAt: updatedAt ?? DateTime(2026, 6, 15, 12),
+  updatedAt: updatedAt ?? DateTime(2026, 6, 15, 12),
+);
 
 CapacityCostRecord _laterCostRecord(String entryId) => CapacityCostRecord(
-      sourceEntryId: entryId,
-      costTypeIds: const [CapacityCostTypeIds.energy],
-      status: CapacityCostRecordStatus.answered,
-      createdAt: DateTime(2026, 6, 15, 12),
-      updatedAt: DateTime(2026, 6, 15, 12),
-    );
+  sourceEntryId: entryId,
+  costTypeIds: const [CapacityCostTypeIds.energy],
+  status: CapacityCostRecordStatus.answered,
+  createdAt: DateTime(2026, 6, 15, 12),
+  updatedAt: DateTime(2026, 6, 15, 12),
+);
 
 CapacityDecisionOutcomeRecord _outcomeRecord(
   String entryId,
   String outcomeId,
-) =>
-    CapacityDecisionOutcomeRecord(
-      sourceEntryId: entryId,
-      outcomeId: outcomeId,
-      status: CapacityDecisionOutcomeStatus.answered,
-      createdAt: DateTime(2026, 6, 15, 12),
-      updatedAt: DateTime(2026, 6, 15, 12),
-    );
+) => CapacityDecisionOutcomeRecord(
+  sourceEntryId: entryId,
+  outcomeId: outcomeId,
+  status: CapacityDecisionOutcomeStatus.answered,
+  createdAt: DateTime(2026, 6, 15, 12),
+  updatedAt: DateTime(2026, 6, 15, 12),
+);
 
 void _expectNoBannedCopy(Iterable<String> visible) {
   for (final text in visible) {
@@ -150,14 +147,11 @@ void main() {
         'Come back when it repeats',
         'See what appeared and returned',
       ]);
-      expect(
-        LoopAcquisitionCopy.capacityYes.bullets,
-        [
-          'Save a yes moment',
-          'See what pulled you in',
-          'Review what changed',
-        ],
-      );
+      expect(LoopAcquisitionCopy.capacityYes.bullets, [
+        'Save a yes moment',
+        'See what pulled you in',
+        'Review what changed',
+      ]);
     });
 
     test('avoids internal terms in normal-user onboarding copy', () {
@@ -215,10 +209,7 @@ void main() {
         ),
       );
       expect(one.title, 'First moment saved.');
-      expect(
-        one.body,
-        CapacityReturnTriggerCopy.archiveHomeBody(1, target: 3),
-      );
+      expect(one.body, CapacityReturnTriggerCopy.archiveHomeBody(1, target: 3));
 
       final integrated = threeMomentEngine.build(
         const CapacityThreeMomentInput(
@@ -271,11 +262,9 @@ void main() {
           ],
           pullReasonRecords: [
             _pullReason('real_0', [CapacityPullReasonIds.soundedUrgent]),
-            _pullReason(
-              'real_1',
-              [CapacityPullReasonIds.soundedUrgent],
-              updatedAt: DateTime(2026, 6, 16, 13),
-            ),
+            _pullReason('real_1', [
+              CapacityPullReasonIds.soundedUrgent,
+            ], updatedAt: DateTime(2026, 6, 16, 13)),
           ],
           costRecords: [_laterCostRecord('real_0')],
           outcomeRecords: const [],
@@ -285,11 +274,11 @@ void main() {
         ),
       );
 
-      expect(result.changeLine, ArchiveDailyChangeCopy.urgencyWithLaterCostLine);
       expect(
-        result.alternativeNextMove,
-        ArchiveDailyChangeCopy.altUrgency,
+        result.changeLine,
+        ArchiveDailyChangeCopy.urgencyWithLaterCostLine,
       );
+      expect(result.alternativeNextMove, ArchiveDailyChangeCopy.altUrgency);
     });
 
     test('responsibility + said yes uses sharper combined copy', () {
@@ -405,7 +394,10 @@ void main() {
         result.responseType,
         ArchiveDailyChangeResponseType.quickCaptureStillWork,
       );
-      expect(result.changeLine, ArchiveDailyChangeCopy.quickCaptureStillWorkLine);
+      expect(
+        result.changeLine,
+        ArchiveDailyChangeCopy.quickCaptureStillWorkLine,
+      );
       expect(
         result.alternativeNextMove,
         ArchiveDailyChangeCopy.altQuickCaptureStillWork,
@@ -487,7 +479,10 @@ void main() {
         result.alternativeNextMove,
         'I cannot answer properly right now — I will come back to you.',
       );
-      expect(result.alternativeLabel, ArchiveDailyChangeCopy.labelUseDefaultPause);
+      expect(
+        result.alternativeLabel,
+        ArchiveDailyChangeCopy.labelUseDefaultPause,
+      );
     });
 
     test('daily change copy passes language guard', () {

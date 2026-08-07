@@ -7,8 +7,8 @@ import 'package:voicememory_mobile/onboarding/onboarding_pages.dart';
 import 'package:voicememory_mobile/product/consumer_ui_copy.dart';
 import 'package:voicememory_mobile/product/loop_mode_copy.dart';
 import 'package:voicememory_mobile/router/onboarding_gate.dart';
-import 'package:voicememory_mobile/screens/onboarding_intent_screen.dart';
-import 'package:voicememory_mobile/screens/onboarding_loop_screen.dart';
+import 'package:archiveme_research/screens/onboarding_intent_screen.dart';
+import 'package:archiveme_research/screens/onboarding_loop_screen.dart';
 import 'package:voicememory_mobile/screens/onboarding_screen.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
 
@@ -73,7 +73,9 @@ void main() {
     expect(find.byKey(const Key('onboarding_primary_cta')), findsOneWidget);
   });
 
-  testWidgets('onboarding final page shows Start my archive CTA', (tester) async {
+  testWidgets('onboarding final page shows Start my archive CTA', (
+    tester,
+  ) async {
     final router = _onboardingRouter();
     await tester.pumpWidget(MaterialApp.router(routerConfig: router));
     await _pumpFrames(tester);
@@ -87,19 +89,22 @@ void main() {
     expect(find.text(ConsumerUiCopy.onboardingStep3Title), findsOneWidget);
   });
 
-  test('loop screen finish path stores prove_enough and marks onboarding complete', () async {
-    final stamp = DateTime.now().microsecondsSinceEpoch.toString();
-    await _reset(stamp);
+  test(
+    'loop screen finish path stores prove_enough and marks onboarding complete',
+    () async {
+      final stamp = DateTime.now().microsecondsSinceEpoch.toString();
+      await _reset(stamp);
 
-    await LoopModeCoordinator.activate(LoopModeIds.proveEnough);
-    await AppServices.instance.prefs.setOnboardingCompleted(true);
-    onboardingGate.markComplete();
+      await LoopModeCoordinator.activate(LoopModeIds.proveEnough);
+      await AppServices.instance.prefs.setOnboardingCompleted(true);
+      onboardingGate.markComplete();
 
-    final active = await LoopModeCoordinator.loadActive();
-    expect(active?.id, LoopModeIds.proveEnough);
-    expect(await AppServices.instance.prefs.onboardingCompleted, isTrue);
-    expect(onboardingGate.complete, isTrue);
-  });
+      final active = await LoopModeCoordinator.loadActive();
+      expect(active?.id, LoopModeIds.proveEnough);
+      expect(await AppServices.instance.prefs.onboardingCompleted, isTrue);
+      expect(onboardingGate.complete, isTrue);
+    },
+  );
 
   testWidgets('loop screen shows enabled start CTA with prove_enough default', (
     tester,

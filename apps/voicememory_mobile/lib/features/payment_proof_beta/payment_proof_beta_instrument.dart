@@ -45,26 +45,23 @@ abstract final class PaymentProofBetaInstrument {
     bool proofCorrected = false,
     bool restoreCompleted = false,
     bool entitlementActive = false,
-  }) =>
-      PaymentProofBetaInput(
-        firstSave: input.firstSaveCompleted,
-        secondSave: secondSave || input.firstUsefulProofSeen,
-        firstUsefulProofSeen: input.firstUsefulProofSeen,
-        proofAccepted: input.proofAcceptedOrCorrected && !proofCorrected,
-        proofCorrected: proofCorrected,
-        proPromiseSeen: input.proPromiseSeen,
-        proTapped: input.proTapped,
-        purchaseStarted: input.purchaseAttempted,
-        purchaseCompleted: input.purchaseCompleted,
-        restoreStarted: input.restoreAttempted,
-        restoreCompleted: restoreCompleted,
-        entitlementActive: entitlementActive || input.purchaseCompleted,
-        testerWouldPayYes:
-            input.testerWouldPay == PaidIntentBetaWouldPay.yes,
-        testerWouldPayMaybe:
-            input.testerWouldPay == PaidIntentBetaWouldPay.maybe,
-        testerWouldPayNo: input.testerWouldPay == PaidIntentBetaWouldPay.no,
-      );
+  }) => PaymentProofBetaInput(
+    firstSave: input.firstSaveCompleted,
+    secondSave: secondSave || input.firstUsefulProofSeen,
+    firstUsefulProofSeen: input.firstUsefulProofSeen,
+    proofAccepted: input.proofAcceptedOrCorrected && !proofCorrected,
+    proofCorrected: proofCorrected,
+    proPromiseSeen: input.proPromiseSeen,
+    proTapped: input.proTapped,
+    purchaseStarted: input.purchaseAttempted,
+    purchaseCompleted: input.purchaseCompleted,
+    restoreStarted: input.restoreAttempted,
+    restoreCompleted: restoreCompleted,
+    entitlementActive: entitlementActive || input.purchaseCompleted,
+    testerWouldPayYes: input.testerWouldPay == PaidIntentBetaWouldPay.yes,
+    testerWouldPayMaybe: input.testerWouldPay == PaidIntentBetaWouldPay.maybe,
+    testerWouldPayNo: input.testerWouldPay == PaidIntentBetaWouldPay.no,
+  );
 
   static bool _hasActionSignals(PaymentProofBetaInput input) =>
       input.proTapped ||
@@ -102,9 +99,7 @@ abstract final class PaymentProofBetaInstrument {
       return PaymentProofBetaDecision.proofNotReached;
     }
 
-    if (_proofUseful(input) &&
-        input.proPromiseSeen &&
-        !input.proTapped) {
+    if (_proofUseful(input) && input.proPromiseSeen && !input.proTapped) {
       if (input.testerWouldPayYes) {
         return PaymentProofBetaDecision.paidIntentPromising;
       }
@@ -140,8 +135,8 @@ abstract final class PaymentProofBetaInstrument {
         !input.firstSave
             ? PaymentProofBetaSignalId.firstSave
             : !input.secondSave
-                ? PaymentProofBetaSignalId.secondSave
-                : PaymentProofBetaSignalId.firstUsefulProofSeen,
+            ? PaymentProofBetaSignalId.secondSave
+            : PaymentProofBetaSignalId.firstUsefulProofSeen,
       PaymentProofBetaDecision.interestOnly =>
         PaymentProofBetaSignalId.firstUsefulProofSeen,
       PaymentProofBetaDecision.proofReachedNoProTap =>
@@ -172,23 +167,20 @@ abstract final class PaymentProofBetaInstrument {
           : PaymentProofBetaSignalStatus.fail;
     }
 
-    PaymentProofBetaSignalStatus trackedStatus(bool value) =>
-        value
-            ? PaymentProofBetaSignalStatus.pass
-            : PaymentProofBetaSignalStatus.tracked;
+    PaymentProofBetaSignalStatus trackedStatus(bool value) => value
+        ? PaymentProofBetaSignalStatus.pass
+        : PaymentProofBetaSignalStatus.tracked;
 
     String detailFor(PaymentProofBetaSignalStatus status) => switch (status) {
-          PaymentProofBetaSignalStatus.pass =>
-            PaymentProofBetaCopy.detailObserved,
-          PaymentProofBetaSignalStatus.fail =>
-            PaymentProofBetaCopy.detailMissing,
-          PaymentProofBetaSignalStatus.blocked =>
-            PaymentProofBetaCopy.detailBlocked,
-          PaymentProofBetaSignalStatus.interestOnly =>
-            PaymentProofBetaCopy.detailInterestOnly,
-          PaymentProofBetaSignalStatus.tracked =>
-            PaymentProofBetaCopy.detailTracked,
-        };
+      PaymentProofBetaSignalStatus.pass => PaymentProofBetaCopy.detailObserved,
+      PaymentProofBetaSignalStatus.fail => PaymentProofBetaCopy.detailMissing,
+      PaymentProofBetaSignalStatus.blocked =>
+        PaymentProofBetaCopy.detailBlocked,
+      PaymentProofBetaSignalStatus.interestOnly =>
+        PaymentProofBetaCopy.detailInterestOnly,
+      PaymentProofBetaSignalStatus.tracked =>
+        PaymentProofBetaCopy.detailTracked,
+    };
 
     final saveOk = input.firstSave;
     final secondSaveOk = saveOk && input.secondSave;
@@ -200,8 +192,6 @@ abstract final class PaymentProofBetaInstrument {
     final purchaseCompletedOk = purchaseStartedOk && input.purchaseCompleted;
     final restoreStartedOk = proTappedOk && input.restoreStarted;
     final restoreCompletedOk = restoreStartedOk && input.restoreCompleted;
-    final entitlementOk =
-        (purchaseCompletedOk || restoreCompletedOk) && input.entitlementActive;
 
     return [
       _signal(
@@ -220,7 +210,10 @@ abstract final class PaymentProofBetaInstrument {
       ),
       _signal(
         id: PaymentProofBetaSignalId.firstUsefulProofSeen,
-        status: statusFor(prerequisite: secondSaveOk, value: input.firstUsefulProofSeen),
+        status: statusFor(
+          prerequisite: secondSaveOk,
+          value: input.firstUsefulProofSeen,
+        ),
         detailLabel: detailFor(
           statusFor(
             prerequisite: secondSaveOk,
@@ -230,7 +223,10 @@ abstract final class PaymentProofBetaInstrument {
       ),
       _signal(
         id: PaymentProofBetaSignalId.proofAccepted,
-        status: statusFor(prerequisite: proofSeenOk, value: input.proofAccepted),
+        status: statusFor(
+          prerequisite: proofSeenOk,
+          value: input.proofAccepted,
+        ),
         detailLabel: detailFor(
           statusFor(prerequisite: proofSeenOk, value: input.proofAccepted),
         ),
@@ -247,7 +243,10 @@ abstract final class PaymentProofBetaInstrument {
       ),
       _signal(
         id: PaymentProofBetaSignalId.proPromiseSeen,
-        status: statusFor(prerequisite: proofUsefulOk, value: input.proPromiseSeen),
+        status: statusFor(
+          prerequisite: proofUsefulOk,
+          value: input.proPromiseSeen,
+        ),
         detailLabel: detailFor(
           statusFor(prerequisite: proofUsefulOk, value: input.proPromiseSeen),
         ),
@@ -348,13 +347,12 @@ abstract final class PaymentProofBetaInstrument {
     required PaymentProofBetaSignalId id,
     required PaymentProofBetaSignalStatus status,
     required String detailLabel,
-  }) =>
-      PaymentProofBetaSignal(
-        id: id,
-        label: PaymentProofBetaCopy.labelFor(id),
-        status: status,
-        detailLabel: detailLabel,
-      );
+  }) => PaymentProofBetaSignal(
+    id: id,
+    label: PaymentProofBetaCopy.labelFor(id),
+    status: status,
+    detailLabel: detailLabel,
+  );
 }
 
 class PaymentProofBetaInput {

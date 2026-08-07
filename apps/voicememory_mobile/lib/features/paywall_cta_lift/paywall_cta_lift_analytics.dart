@@ -10,7 +10,7 @@ abstract final class PaywallCtaLiftAnalytics {
 
   @visibleForTesting
   static void Function(String event, Map<String, Object> properties)?
-      captureForTest;
+  captureForTest;
 
   static void seen({required PaywallCtaLiftResult result}) {
     final props = <String, Object>{
@@ -18,10 +18,7 @@ abstract final class PaywallCtaLiftAnalytics {
       'proof_connected': result.proofConnected ? 1 : 0,
     };
     captureForTest?.call(seenEvent, props);
-    ActivationFunnelAnalytics.track(
-      seenEvent,
-      source: result.source,
-    );
+    ActivationFunnelAnalytics.track(seenEvent, source: result.source);
     if (kDebugMode) {
       debugPrint(
         'ARCHIVEME_PAYWALL_CTA_LIFT event=$seenEvent source=${result.source} '

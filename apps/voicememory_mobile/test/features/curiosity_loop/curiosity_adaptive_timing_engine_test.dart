@@ -12,10 +12,7 @@ const _reflection = Reflection(
   repeatedSignal: '',
 );
 
-JournalEntry _entry({
-  required String id,
-  required DateTime createdAt,
-}) =>
+JournalEntry _entry({required String id, required DateTime createdAt}) =>
     JournalEntry(
       id: id,
       createdAt: createdAt,
@@ -29,44 +26,50 @@ void main() {
   const engine = CuriosityAdaptiveTimingEngine();
 
   group('CuriosityAdaptiveTimingEngine', () {
-    test('returns twenty-four hours when history has fewer than three entries', () {
-      final currentEntryTime = DateTime(2026, 6, 12, 15, 30);
-      final history = [
-        _entry(id: 'e1', createdAt: DateTime(2026, 6, 10, 8)),
-        _entry(id: 'e2', createdAt: DateTime(2026, 6, 11, 9)),
-      ];
+    test(
+      'returns twenty-four hours when history has fewer than three entries',
+      () {
+        final currentEntryTime = DateTime(2026, 6, 12, 15, 30);
+        final history = [
+          _entry(id: 'e1', createdAt: DateTime(2026, 6, 10, 8)),
+          _entry(id: 'e2', createdAt: DateTime(2026, 6, 11, 9)),
+        ];
 
-      final delay = engine.calculateOptimalDelay(
-        history: history,
-        currentEntryTime: currentEntryTime,
-      );
+        final delay = engine.calculateOptimalDelay(
+          history: history,
+          currentEntryTime: currentEntryTime,
+        );
 
-      expect(delay, CuriosityAdaptiveTimingEngine.fallbackDelay);
-    });
+        expect(delay, CuriosityAdaptiveTimingEngine.fallbackDelay);
+      },
+    );
 
-    test('targets next calendar day at the average hour from recent entries', () {
-      final currentEntryTime = DateTime(2026, 6, 12, 15, 30);
-      final history = [
-        _entry(id: 'e1', createdAt: DateTime(2026, 6, 8, 8)),
-        _entry(id: 'e2', createdAt: DateTime(2026, 6, 9, 9)),
-        _entry(id: 'e3', createdAt: DateTime(2026, 6, 10, 10)),
-        _entry(id: 'e4', createdAt: DateTime(2026, 6, 11, 11)),
-        _entry(id: 'e5', createdAt: DateTime(2026, 6, 12, 12)),
-      ];
+    test(
+      'targets next calendar day at the average hour from recent entries',
+      () {
+        final currentEntryTime = DateTime(2026, 6, 12, 15, 30);
+        final history = [
+          _entry(id: 'e1', createdAt: DateTime(2026, 6, 8, 8)),
+          _entry(id: 'e2', createdAt: DateTime(2026, 6, 9, 9)),
+          _entry(id: 'e3', createdAt: DateTime(2026, 6, 10, 10)),
+          _entry(id: 'e4', createdAt: DateTime(2026, 6, 11, 11)),
+          _entry(id: 'e5', createdAt: DateTime(2026, 6, 12, 12)),
+        ];
 
-      final delay = engine.calculateOptimalDelay(
-        history: history,
-        currentEntryTime: currentEntryTime,
-      );
+        final delay = engine.calculateOptimalDelay(
+          history: history,
+          currentEntryTime: currentEntryTime,
+        );
 
-      final target = currentEntryTime.add(delay);
-      expect(target.year, 2026);
-      expect(target.month, 6);
-      expect(target.day, 13);
-      expect(target.hour, 10);
-      expect(target.minute, 0);
-      expect(delay, const Duration(hours: 18, minutes: 30));
-    });
+        final target = currentEntryTime.add(delay);
+        expect(target.year, 2026);
+        expect(target.month, 6);
+        expect(target.day, 13);
+        expect(target.hour, 10);
+        expect(target.minute, 0);
+        expect(delay, const Duration(hours: 18, minutes: 30));
+      },
+    );
 
     test('uses only the last five entries when history is longer', () {
       final currentEntryTime = DateTime(2026, 6, 12, 20, 0);

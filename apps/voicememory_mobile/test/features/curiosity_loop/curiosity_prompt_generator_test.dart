@@ -52,133 +52,161 @@ void main() {
   }
 
   group('CuriosityPromptGenerator', () {
-    test('memory recall with low lexical diversity uses low-cognitive-load syntax',
-        () async {
-      final prompt = await generator.generatePrompt(
-        hook: hook(
-          id: 'recall_low',
-          isMemoryRecallCheck: true,
-          primaryAnchor: 'work pressure',
-        ),
-        sourceEntry: sourceEntry(
-          id: 'source_recall_low',
-          biomarkers: const CognitiveBiomarkers(
-            lexicalDiversity: 0.42,
-            cohesionDrift: 0.2,
-            emotionalVolatility: 0.3,
+    test(
+      'memory recall with low lexical diversity uses low-cognitive-load syntax',
+      () async {
+        final prompt = await generator.generatePrompt(
+          hook: hook(
+            id: 'recall_low',
+            isMemoryRecallCheck: true,
+            primaryAnchor: 'work pressure',
           ),
-        ),
-      );
-
-      expect(prompt, contains(DefaultCuriosityPromptGenerator.lowCognitiveLoadLeadIn));
-      expect(prompt, contains('work pressure'));
-      expect(prompt, contains('recently'));
-      expect(prompt, contains('How does it look right now?'));
-      expect(prompt, contains(DefaultCuriosityPromptGenerator.lowCognitiveLoadTail));
-      expect(
-        prompt,
-        isNot(contains(DefaultCuriosityPromptGenerator.advancedRecallLeadIn)),
-      );
-    });
-
-    test('memory recall with stable biomarkers uses advanced recall bridge', () async {
-      final prompt = await generator.generatePrompt(
-        hook: hook(
-          id: 'recall_stable',
-          isMemoryRecallCheck: true,
-          primaryAnchor: 'work pressure',
-        ),
-        sourceEntry: sourceEntry(
-          id: 'source_recall_stable',
-          biomarkers: const CognitiveBiomarkers(
-            lexicalDiversity: 0.72,
-            cohesionDrift: 0.18,
-            emotionalVolatility: 0.41,
+          sourceEntry: sourceEntry(
+            id: 'source_recall_low',
+            biomarkers: const CognitiveBiomarkers(
+              lexicalDiversity: 0.42,
+              cohesionDrift: 0.2,
+              emotionalVolatility: 0.3,
+            ),
           ),
-        ),
-      );
+        );
 
-      expect(
-        prompt,
-        contains(DefaultCuriosityPromptGenerator.advancedRecallLeadIn),
-      );
-      expect(prompt, contains('work pressure'));
-      expect(
-        prompt,
-        contains(DefaultCuriosityPromptGenerator.advancedRecallTail),
-      );
-    });
+        expect(
+          prompt,
+          contains(DefaultCuriosityPromptGenerator.lowCognitiveLoadLeadIn),
+        );
+        expect(prompt, contains('work pressure'));
+        expect(prompt, contains('recently'));
+        expect(prompt, contains('How does it look right now?'));
+        expect(
+          prompt,
+          contains(DefaultCuriosityPromptGenerator.lowCognitiveLoadTail),
+        );
+        expect(
+          prompt,
+          isNot(contains(DefaultCuriosityPromptGenerator.advancedRecallLeadIn)),
+        );
+      },
+    );
 
-    test('standard hook with high cohesion drift produces grounding prompt', () async {
-      final prompt = await generator.generatePrompt(
-        hook: hook(id: 'grounding'),
-        sourceEntry: sourceEntry(
-          id: 'source_grounding',
-          biomarkers: const CognitiveBiomarkers(
-            lexicalDiversity: 0.7,
-            cohesionDrift: 0.81,
-            emotionalVolatility: 0.4,
+    test(
+      'memory recall with stable biomarkers uses advanced recall bridge',
+      () async {
+        final prompt = await generator.generatePrompt(
+          hook: hook(
+            id: 'recall_stable',
+            isMemoryRecallCheck: true,
+            primaryAnchor: 'work pressure',
           ),
-        ),
-      );
-
-      expect(prompt, contains(DefaultCuriosityPromptGenerator.groundingLeadIn));
-      expect(prompt, contains(DefaultCuriosityPromptGenerator.groundingQuestion));
-    });
-
-    test('standard hook defaults to forward-looking curiosity question', () async {
-      final prompt = await generator.generatePrompt(
-        hook: hook(
-          id: 'forward',
-          primaryAnchor: 'said yes again',
-          hookType: CuriosityHookType.blocker,
-        ),
-        sourceEntry: sourceEntry(
-          id: 'source_forward',
-          biomarkers: const CognitiveBiomarkers(
-            lexicalDiversity: 0.7,
-            cohesionDrift: 0.2,
-            emotionalVolatility: 0.3,
+          sourceEntry: sourceEntry(
+            id: 'source_recall_stable',
+            biomarkers: const CognitiveBiomarkers(
+              lexicalDiversity: 0.72,
+              cohesionDrift: 0.18,
+              emotionalVolatility: 0.41,
+            ),
           ),
-        ),
-      );
+        );
 
-      expect(prompt, contains('said yes again'));
-      expect(prompt.toLowerCase(), contains('watch for'));
-      expect(
-        prompt,
-        isNot(contains(DefaultCuriosityPromptGenerator.groundingLeadIn)),
-      );
-    });
+        expect(
+          prompt,
+          contains(DefaultCuriosityPromptGenerator.advancedRecallLeadIn),
+        );
+        expect(prompt, contains('work pressure'));
+        expect(
+          prompt,
+          contains(DefaultCuriosityPromptGenerator.advancedRecallTail),
+        );
+      },
+    );
 
-    test('memory recall without source entry falls back to hook prompt', () async {
-      const fallbackPrompt =
-          'Before "work pressure" showed up again, what got in the way?';
+    test(
+      'standard hook with high cohesion drift produces grounding prompt',
+      () async {
+        final prompt = await generator.generatePrompt(
+          hook: hook(id: 'grounding'),
+          sourceEntry: sourceEntry(
+            id: 'source_grounding',
+            biomarkers: const CognitiveBiomarkers(
+              lexicalDiversity: 0.7,
+              cohesionDrift: 0.81,
+              emotionalVolatility: 0.4,
+            ),
+          ),
+        );
 
-      final prompt = await generator.generatePrompt(
-        hook: hook(
-          id: 'recall_fallback',
-          isMemoryRecallCheck: true,
-          dynamicPrompt: fallbackPrompt,
-        ),
-      );
+        expect(
+          prompt,
+          contains(DefaultCuriosityPromptGenerator.groundingLeadIn),
+        );
+        expect(
+          prompt,
+          contains(DefaultCuriosityPromptGenerator.groundingQuestion),
+        );
+      },
+    );
 
-      expect(prompt, fallbackPrompt);
-    });
+    test(
+      'standard hook defaults to forward-looking curiosity question',
+      () async {
+        final prompt = await generator.generatePrompt(
+          hook: hook(
+            id: 'forward',
+            primaryAnchor: 'said yes again',
+            hookType: CuriosityHookType.blocker,
+          ),
+          sourceEntry: sourceEntry(
+            id: 'source_forward',
+            biomarkers: const CognitiveBiomarkers(
+              lexicalDiversity: 0.7,
+              cohesionDrift: 0.2,
+              emotionalVolatility: 0.3,
+            ),
+          ),
+        );
 
-    test('memory recall without source entry or dynamic prompt uses forward fallback',
-        () async {
-      final prompt = await generator.generatePrompt(
-        hook: hook(
-          id: 'recall_empty',
-          isMemoryRecallCheck: true,
-          primaryAnchor: 'work pressure',
-          hookType: CuriosityHookType.anchorFollowUp,
-        ),
-      );
+        expect(prompt, contains('said yes again'));
+        expect(prompt.toLowerCase(), contains('watch for'));
+        expect(
+          prompt,
+          isNot(contains(DefaultCuriosityPromptGenerator.groundingLeadIn)),
+        );
+      },
+    );
 
-      expect(prompt, contains('work pressure'));
-      expect(prompt.toLowerCase(), contains('notice'));
-    });
+    test(
+      'memory recall without source entry falls back to hook prompt',
+      () async {
+        const fallbackPrompt =
+            'Before "work pressure" showed up again, what got in the way?';
+
+        final prompt = await generator.generatePrompt(
+          hook: hook(
+            id: 'recall_fallback',
+            isMemoryRecallCheck: true,
+            dynamicPrompt: fallbackPrompt,
+          ),
+        );
+
+        expect(prompt, fallbackPrompt);
+      },
+    );
+
+    test(
+      'memory recall without source entry or dynamic prompt uses forward fallback',
+      () async {
+        final prompt = await generator.generatePrompt(
+          hook: hook(
+            id: 'recall_empty',
+            isMemoryRecallCheck: true,
+            primaryAnchor: 'work pressure',
+            hookType: CuriosityHookType.anchorFollowUp,
+          ),
+        );
+
+        expect(prompt, contains('work pressure'));
+        expect(prompt.toLowerCase(), contains('notice'));
+      },
+    );
   });
 }

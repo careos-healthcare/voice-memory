@@ -63,7 +63,8 @@ abstract final class ReferralAfterProofGate {
       privateContentSharingBlocked: true,
       paidPromiseBlocked: true,
       firstFiveMinutesSurfacingBlocked: true,
-      v1LiveUiBlocked: !(input.existingReferralRoutePresent ?? false) ||
+      v1LiveUiBlocked:
+          !(input.existingReferralRoutePresent ?? false) ||
           !(input.referralRouteGated ?? false),
       existingReferralRoutePresent: input.existingReferralRoutePresent ?? false,
       referralRouteGated: input.referralRouteGated ?? false,
@@ -76,15 +77,14 @@ abstract final class ReferralAfterProofGate {
 
   static ReferralAfterProofGateReport report(
     ReferralAfterProofGateResult result,
-  ) =>
-      ReferralAfterProofGateReport(
-        headline: ReferralAfterProofCopy.headline,
-        body: ReferralAfterProofCopy.body,
-        positioning: ReferralAfterProofCopy.positioning,
-        orderLine: ReferralAfterProofCopy.orderLine,
-        guardrail: ReferralAfterProofCopy.guardrail,
-        result: result,
-      );
+  ) => ReferralAfterProofGateReport(
+    headline: ReferralAfterProofCopy.headline,
+    body: ReferralAfterProofCopy.body,
+    positioning: ReferralAfterProofCopy.positioning,
+    orderLine: ReferralAfterProofCopy.orderLine,
+    guardrail: ReferralAfterProofCopy.guardrail,
+    result: result,
+  );
 
   static ReferralAfterProofGateInput composeInput({
     bool? usefulProofAccepted,
@@ -97,16 +97,19 @@ abstract final class ReferralAfterProofGate {
     FirstProofSuccessBetaInput? firstProofSuccessBeta,
     PaidIntentBetaProofResult? paidIntentBeta,
   }) {
-    final resolvedUsefulProofAccepted = usefulProofAccepted ??
+    final resolvedUsefulProofAccepted =
+        usefulProofAccepted ??
         firstProofSuccessBeta?.proofAccepted ??
         _usefulProofAcceptedFromPaidIntent(paidIntentBeta);
-    final resolvedProPromiseUnderstood = proPromiseUnderstood ??
+    final resolvedProPromiseUnderstood =
+        proPromiseUnderstood ??
         _proPromiseUnderstoodFromFirstProof(firstProofSuccessBeta) ??
         _proPromiseUnderstoodFromPaidIntent(paidIntentBeta);
     return ReferralAfterProofGateInput(
       usefulProofAccepted: resolvedUsefulProofAccepted,
       proPromiseUnderstood: resolvedProPromiseUnderstood,
-      proofValueReached: proofValueReached ??
+      proofValueReached:
+          proofValueReached ??
           (resolvedUsefulProofAccepted == true ||
               resolvedProPromiseUnderstood == true),
       withinFirstFiveMinutes: withinFirstFiveMinutes,
@@ -126,20 +129,21 @@ abstract final class ReferralAfterProofGate {
     bool? proofValueReached,
     bool? withinFirstFiveMinutes,
     bool? referralPromptRequested,
-  }) =>
-      ReferralAfterProofGateInput(
-        usefulProofAccepted: usefulProofAccepted,
-        proPromiseUnderstood: proPromiseUnderstood,
-        proofValueReached: proofValueReached,
-        withinFirstFiveMinutes: withinFirstFiveMinutes,
-        referralPromptRequested: referralPromptRequested,
-        existingReferralRoutePresent:
-            detectExistingReferralRouteInRouter(appRouterSource),
-        referralRouteGated:
-            detectReferralRouteGatedInImplementation(referralImplementationSource),
-        docListsRules: detectDocListsRules(referralAfterProofDocSource),
-        guardrailPresentInCopy: detectGuardrailPresentInCopy(gateCopySource),
-      );
+  }) => ReferralAfterProofGateInput(
+    usefulProofAccepted: usefulProofAccepted,
+    proPromiseUnderstood: proPromiseUnderstood,
+    proofValueReached: proofValueReached,
+    withinFirstFiveMinutes: withinFirstFiveMinutes,
+    referralPromptRequested: referralPromptRequested,
+    existingReferralRoutePresent: detectExistingReferralRouteInRouter(
+      appRouterSource,
+    ),
+    referralRouteGated: detectReferralRouteGatedInImplementation(
+      referralImplementationSource,
+    ),
+    docListsRules: detectDocListsRules(referralAfterProofDocSource),
+    guardrailPresentInCopy: detectGuardrailPresentInCopy(gateCopySource),
+  );
 
   static bool detectDocListsRules(String docSource) {
     const markers = [
@@ -184,13 +188,14 @@ abstract final class ReferralAfterProofGate {
 
   static bool? _usefulProofAcceptedFromPaidIntent(
     PaidIntentBetaProofResult? result,
-  ) =>
-      _signalPassed(result, PaidIntentBetaProofSignalId.proofAcceptedOrCorrected);
+  ) => _signalPassed(
+    result,
+    PaidIntentBetaProofSignalId.proofAcceptedOrCorrected,
+  );
 
   static bool? _proPromiseUnderstoodFromPaidIntent(
     PaidIntentBetaProofResult? result,
-  ) =>
-      _signalPassed(result, PaidIntentBetaProofSignalId.proPromiseSeen);
+  ) => _signalPassed(result, PaidIntentBetaProofSignalId.proPromiseSeen);
 
   static bool? _signalPassed(
     PaidIntentBetaProofResult? result,
@@ -226,34 +231,40 @@ abstract final class ReferralAfterProofGate {
     return [
       _rule(
         id: ReferralAfterProofRuleId.onlyAfterProofValue,
-        passes: guardrailLower.contains('proof value') &&
+        passes:
+            guardrailLower.contains('proof value') &&
             guardrailLower.contains('useful proof accepted') &&
             (!promptRequested || (input.proofValueReached ?? false)),
       ),
       _rule(
         id: ReferralAfterProofRuleId.neverSharePrivateContent,
-        passes: evaluateCopyPassesRules(copyBundle) &&
+        passes:
+            evaluateCopyPassesRules(copyBundle) &&
             guardrailLower.contains('never share private content'),
       ),
       _rule(
         id: ReferralAfterProofRuleId.inviteSharesProductNotArchive,
-        passes: evaluateCopyPassesRules(copyBundle) &&
+        passes:
+            evaluateCopyPassesRules(copyBundle) &&
             guardrailLower.contains('invite shares product') &&
             guardrailLower.contains('not user archive'),
       ),
       _rule(
         id: ReferralAfterProofRuleId.notShownInFirstFiveMinutes,
-        passes: guardrailLower.contains('not shown in first five minutes') &&
+        passes:
+            guardrailLower.contains('not shown in first five minutes') &&
             (!withinFirstFiveMinutes || !promptRequested),
       ),
       _rule(
         id: ReferralAfterProofRuleId.notPartOfPaidPromise,
-        passes: evaluateCopyPassesRules(copyBundle) &&
+        passes:
+            evaluateCopyPassesRules(copyBundle) &&
             guardrailLower.contains('not part of paid promise'),
       ),
       _rule(
         id: ReferralAfterProofRuleId.noLiveReferralUiUnlessGated,
-        passes: guardrailLower.contains('no live referral ui') &&
+        passes:
+            guardrailLower.contains('no live referral ui') &&
             (!(input.existingReferralRoutePresent ?? false) ||
                 (input.referralRouteGated ?? false)),
       ),
@@ -272,17 +283,16 @@ abstract final class ReferralAfterProofGate {
   static ReferralAfterProofRule _rule({
     required ReferralAfterProofRuleId id,
     required bool passes,
-  }) =>
-      ReferralAfterProofRule(
-        id: id,
-        label: ReferralAfterProofCopy.ruleLabelFor(id),
-        status: passes
-            ? ReferralAfterProofRuleStatus.pass
-            : ReferralAfterProofRuleStatus.fail,
-        detailLabel: passes
-            ? ReferralAfterProofCopy.detailPass
-            : ReferralAfterProofCopy.detailFail,
-      );
+  }) => ReferralAfterProofRule(
+    id: id,
+    label: ReferralAfterProofCopy.ruleLabelFor(id),
+    status: passes
+        ? ReferralAfterProofRuleStatus.pass
+        : ReferralAfterProofRuleStatus.fail,
+    detailLabel: passes
+        ? ReferralAfterProofCopy.detailPass
+        : ReferralAfterProofCopy.detailFail,
+  );
 }
 
 class ReferralAfterProofGateInput {

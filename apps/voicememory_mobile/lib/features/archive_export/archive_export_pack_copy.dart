@@ -32,8 +32,7 @@ abstract final class ArchiveExportPackCopy {
 
   static const recentMomentsLabel = 'Recent saved moments';
 
-  static const privacyNoteDevice =
-      'This export was created on this device.';
+  static const privacyNoteDevice = 'This export was created on this device.';
 
   static const privacyNoteReview = 'Review before sharing.';
 

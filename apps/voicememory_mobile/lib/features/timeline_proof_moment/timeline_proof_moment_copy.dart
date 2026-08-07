@@ -32,7 +32,8 @@ abstract final class TimelineProofMomentCopy {
   static const currentWeightLight = 'Current weight: light';
   static const currentWeightFading = 'Current weight: fading';
   static const currentWeightCorrected = 'Current weight: corrected by you';
-  static const currentWeightNeedsFreshProof = 'Current weight: needs fresh proof';
+  static const currentWeightNeedsFreshProof =
+      'Current weight: needs fresh proof';
 
   static String correctionLabelFor({
     required CorrectionMemoryState state,
@@ -52,51 +53,50 @@ abstract final class TimelineProofMomentCopy {
 
   static String currentWeightLineFor(
     ArchiveTimelineSpineCurrentWeight weight,
-  ) =>
-      switch (weight) {
-        ArchiveTimelineSpineCurrentWeight.strong => currentWeightStrong,
-        ArchiveTimelineSpineCurrentWeight.light => currentWeightLight,
-        ArchiveTimelineSpineCurrentWeight.fading => currentWeightFading,
-        ArchiveTimelineSpineCurrentWeight.corrected => currentWeightCorrected,
-        ArchiveTimelineSpineCurrentWeight.needsFreshProof =>
-          currentWeightNeedsFreshProof,
-      };
+  ) => switch (weight) {
+    ArchiveTimelineSpineCurrentWeight.strong => currentWeightStrong,
+    ArchiveTimelineSpineCurrentWeight.light => currentWeightLight,
+    ArchiveTimelineSpineCurrentWeight.fading => currentWeightFading,
+    ArchiveTimelineSpineCurrentWeight.corrected => currentWeightCorrected,
+    ArchiveTimelineSpineCurrentWeight.needsFreshProof =>
+      currentWeightNeedsFreshProof,
+  };
 
   static List<String> allVisibleStrings() => [
-        title,
-        compactTitle,
-        body,
-        firstSeenRow,
-        returnedRow,
-        correctedRowPrefix,
-        currentWeightRow,
-        footer,
-        differentiationLine,
-        proLine,
-        currentWeightStrong,
-        currentWeightLight,
-        currentWeightFading,
-        currentWeightCorrected,
-        currentWeightNeedsFreshProof,
-        correctionLabelFor(
-          state: CorrectionMemoryState.stillCurrent,
-          returnedAfterFaded: false,
-        ),
-        correctionLabelFor(
-          state: CorrectionMemoryState.partlyCurrent,
-          returnedAfterFaded: false,
-        ),
-        correctionLabelFor(
-          state: CorrectionMemoryState.faded,
-          returnedAfterFaded: false,
-        ),
-        correctionLabelFor(
-          state: CorrectionMemoryState.unsure,
-          returnedAfterFaded: false,
-        ),
-        correctionLabelFor(
-          state: CorrectionMemoryState.faded,
-          returnedAfterFaded: true,
-        ),
-      ];
+    title,
+    compactTitle,
+    body,
+    firstSeenRow,
+    returnedRow,
+    correctedRowPrefix,
+    currentWeightRow,
+    footer,
+    differentiationLine,
+    proLine,
+    currentWeightStrong,
+    currentWeightLight,
+    currentWeightFading,
+    currentWeightCorrected,
+    currentWeightNeedsFreshProof,
+    correctionLabelFor(
+      state: CorrectionMemoryState.stillCurrent,
+      returnedAfterFaded: false,
+    ),
+    correctionLabelFor(
+      state: CorrectionMemoryState.partlyCurrent,
+      returnedAfterFaded: false,
+    ),
+    correctionLabelFor(
+      state: CorrectionMemoryState.faded,
+      returnedAfterFaded: false,
+    ),
+    correctionLabelFor(
+      state: CorrectionMemoryState.unsure,
+      returnedAfterFaded: false,
+    ),
+    correctionLabelFor(
+      state: CorrectionMemoryState.faded,
+      returnedAfterFaded: true,
+    ),
+  ];
 }

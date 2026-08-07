@@ -38,19 +38,19 @@ abstract final class ChatDifferentiationCopy {
   ];
 
   static List<String> allVisibleStrings() => [
-        firstProofLine,
-        expandLinkLabel,
-        sheetTitle,
-        sheetBody,
-        timelineFirstSavedLabel,
-        timelineCameBackLabel,
-        timelineRepeatedAgainLabel,
-        timelineEarlierFallback,
-        timelineLaterFallback,
-        timelineAgainFallback,
-        sheetCloseLine,
-        onboardingNotChatLine,
-        patternDetailWhyHeading,
-        patternDetailWhyBody,
-      ];
+    firstProofLine,
+    expandLinkLabel,
+    sheetTitle,
+    sheetBody,
+    timelineFirstSavedLabel,
+    timelineCameBackLabel,
+    timelineRepeatedAgainLabel,
+    timelineEarlierFallback,
+    timelineLaterFallback,
+    timelineAgainFallback,
+    sheetCloseLine,
+    onboardingNotChatLine,
+    patternDetailWhyHeading,
+    patternDetailWhyBody,
+  ];
 }

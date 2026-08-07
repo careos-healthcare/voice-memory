@@ -4,8 +4,7 @@ import 'archive_intelligence_tier.dart';
 
 /// Resolves archive intelligence tier from Pro status and QA overrides.
 class ArchiveIntelligenceTierResolver {
-  const ArchiveIntelligenceTierResolver({ArchiveEntitlementReader? reader})
-    : _reader = reader;
+  const ArchiveIntelligenceTierResolver({this._reader});
 
   final ArchiveEntitlementReader? _reader;
 

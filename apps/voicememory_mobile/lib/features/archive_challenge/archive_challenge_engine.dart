@@ -1,4 +1,5 @@
 import '../../models/journal_entry.dart';
+import '../archive_evidence/evidence_entry_ids.dart';
 import '../archive_evidence/archive_evidence.dart';
 import '../archive_explanations/archive_explanation_engine.dart';
 import '../archive_explanations/explanation_models.dart';
@@ -269,7 +270,7 @@ class ArchiveChallengeEngine {
     if (uncertain <= failure) return;
     if (failure < 1) return;
 
-    final ids = [...uncertainIds, ...failureIds].toSet().take(4).toList();
+    final ids = EvidenceEntryIds.merge([uncertainIds, failureIds]);
     if (ids.length < minEvidenceCount) return;
 
     out.add(

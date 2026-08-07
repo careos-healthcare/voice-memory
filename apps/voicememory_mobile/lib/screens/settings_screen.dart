@@ -8,9 +8,9 @@ import '../billing/restore_purchases_feedback.dart';
 import '../billing/restore_purchases_flow.dart';
 import '../billing/archive_entitlement_reader.dart';
 import '../billing/revenuecat_configuration.dart';
+import '../billing/revenuecat_service.dart';
 import '../billing/subscription_copy.dart';
 import '../config/developer_settings_gate.dart';
-import '../config/experimental_features.dart';
 import '../config/production_navigation.dart';
 import '../core/config/v1_capability_registry.dart';
 import '../core/config/v1_feature_flags.dart';
@@ -37,18 +37,10 @@ import '../features/archive_proof/visible_archive_proof_copy.dart';
 import '../features/pins/pinned_evidence_store.dart';
 import '../features/tomorrow_return/check_in_reminder_service.dart';
 import '../features/tomorrow_return/tomorrow_check_in_coordinator.dart';
-import '../features/theme_system/ui/theme_studio_sheet.dart';
-import '../features/persona_forge/ui/persona_studio_sheet.dart';
-import '../features/neural_sculptor/lora_adapter_trainer.dart';
-import '../features/neural_sculptor/ui/neural_studio_sheet.dart';
-import '../features/browser_extension_bridge/ui/browser_bridge_settings_sheet.dart';
-import '../features/cloud_relay_sync/ui/cloud_sync_settings_sheet.dart';
 import '../product/consumer_ui_copy.dart';
 import '../router/route_catalog.dart';
 import '../security/security_settings_copy.dart';
 import '../services/app_services.dart';
-import '../storage/app_storage_paths.dart';
-import '../subscriptions/domain/subscription_models.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_spacing.dart';
 import '../widgets/memory/memory_scope_settings_section.dart';
@@ -161,35 +153,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
     await _loadIsPro();
   }
 
-  Future<void> _openNeuralStudio() async {
-    final services = AppServices.instance;
-    final builder = services.neuralDatasetBuilder;
-    final trainer = services.loraAdapterTrainer;
-    final adapters = services.sovereignAdapterManager;
-    if (builder == null || trainer == null || adapters == null) return;
-    final clusters = await services.semanticClusterStore.list();
-    if (!mounted) return;
-    await NeuralStudioSheet.show(
-      context,
-      datasetBuilder: builder,
-      trainer: trainer,
-      adapterManager: adapters,
-      clusters: clusters,
-      trainingConfiguration: () async {
-        final state = services.llamaModelManager?.state;
-        final path = state?.installedPath;
-        final sha = state?.verifiedSha256;
-        if (path == null || sha == null) return null;
-        final temporary = await AppStoragePaths.temporaryDirectory();
-        return LoRATrainingConfiguration(
-          baseModelPath: path,
-          baseModelSha256: sha,
-          outputDirectory: await temporary.createTemp('neural_output_'),
-        );
-      },
-    );
-  }
-
   Future<void> _dismissArchiveBackupBridge() async {
     await ArchiveBackupBridgeDismissStore.dismiss();
     if (mounted) setState(() {});
@@ -197,7 +160,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   Future<void> _restorePurchases() async {
     final flow = _restoreFlow ??= RestorePurchasesFlow(
-      repository: AppServices.instance.subscriptionRepository,
+      billing: AppServices.instance.billing,
     );
     if (flow.isBusy || _restoreBusy) return;
 
@@ -219,11 +182,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
     final versionLabel = packageInfo == null
         ? '…'
         : '${packageInfo.version} (${packageInfo.buildNumber})';
-    final initializedServices = AppServices.isInitialized
-        ? AppServices.instance
-        : null;
-    final syncIdentity = initializedServices?.syncIdentity;
-    final cloudRelaySyncEngine = initializedServices?.cloudRelaySyncEngine;
     final showSettingsBetaFeedbackCard =
         ArchiveBetaMissionGate.isEnabled &&
         BetaFeedbackIntelligenceEngine.shouldShowCard(
@@ -260,115 +218,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
           children: [
             const AccountPrivacyControlsSection(),
             const SizedBox(height: AppSpacing.md),
-            ListTile(
-              key: const Key('settings_starting_context_tile'),
-              contentPadding: EdgeInsets.zero,
-              leading: const Icon(Icons.person_add_alt_1_outlined),
-              title: const Text('Starting context'),
-              subtitle: const Text(
-                'Optionally add important people, a focus, or a goal.',
-              ),
-              trailing: const Icon(Icons.chevron_right),
-              onTap: () => context.push('/cold-start/seed'),
-            ),
-            ListTile(
-              key: const Key('settings_theme_studio_tile'),
-              contentPadding: EdgeInsets.zero,
-              leading: const Icon(Icons.palette_outlined),
-              title: Text(
-                'Theme Studio',
-                style: ArchiveMobileTypography.listTitle(context),
-              ),
-              subtitle: Text(
-                'Presets, accent, glass and Memory Graph appearance',
-                style: ArchiveMobileTypography.listSubtitle(context),
-              ),
-              trailing: const Icon(Icons.chevron_right),
-              onTap: () => showThemeStudioSheet(context),
-            ),
-            if (enableExperimentalFeatures)
-              ListTile(
-                key: const Key('settings_persona_studio_tile'),
-                contentPadding: EdgeInsets.zero,
-                leading: const Icon(Icons.theater_comedy_outlined),
-                title: Text(
-                  'Persona Forge',
-                  style: ArchiveMobileTypography.listTitle(context),
-                ),
-                subtitle: Text(
-                  'Build private, cluster-scoped Cognitive Council personas',
-                  style: ArchiveMobileTypography.listSubtitle(context),
-                ),
-                trailing: const Icon(Icons.chevron_right),
-                onTap: () async {
-                  final services = AppServices.instance;
-                  final clusters = await services.semanticClusterStore.list();
-                  if (!context.mounted) return;
-                  await PersonaStudioSheet.show(
-                    context,
-                    service: services.personaForgeService,
-                    knowledgeRouter: services.personaKnowledgeRouter,
-                    clusters: clusters,
-                    onOpenNeuralStudio: _openNeuralStudio,
-                  );
-                },
-              ),
-            if (enableExperimentalFeatures)
-              ListTile(
-                key: const Key('settings_neural_studio_tile'),
-                contentPadding: EdgeInsets.zero,
-                leading: const Icon(Icons.hub_outlined),
-                title: Text(
-                  'Neural Sculptor',
-                  style: ArchiveMobileTypography.listTitle(context),
-                ),
-                subtitle: Text(
-                  'Private local datasets, LoRA training, and adapter control',
-                  style: ArchiveMobileTypography.listSubtitle(context),
-                ),
-                trailing: const Icon(Icons.chevron_right),
-                onTap: _openNeuralStudio,
-              ),
-            if (enableExperimentalFeatures)
-              ListTile(
-                key: const Key('settings_browser_bridge_tile'),
-                contentPadding: EdgeInsets.zero,
-                leading: const Icon(Icons.webhook_outlined),
-                title: Text(
-                  'Encrypted Web Clipper',
-                  style: ArchiveMobileTypography.listTitle(context),
-                ),
-                subtitle: Text(
-                  'Pair and manage local browser extensions',
-                  style: ArchiveMobileTypography.listSubtitle(context),
-                ),
-                trailing: const Icon(Icons.chevron_right),
-                onTap: () => BrowserBridgeSettingsSheet.show(
-                  context,
-                  server: AppServices.instance.vaultBridgeServer,
-                  prefs: AppServices.instance.prefs,
-                ),
-              ),
-            if (syncIdentity != null && cloudRelaySyncEngine != null)
-              ListTile(
-                key: const Key('settings_cloud_sync_tile'),
-                contentPadding: EdgeInsets.zero,
-                leading: const Icon(Icons.cloud_done_outlined),
-                title: Text(
-                  'Encrypted Cloud Relay',
-                  style: ArchiveMobileTypography.listTitle(context),
-                ),
-                subtitle: Text(
-                  'Zero-knowledge multi-device synchronization',
-                  style: ArchiveMobileTypography.listSubtitle(context),
-                ),
-                trailing: const Icon(Icons.chevron_right),
-                onTap: () => CloudSyncSettingsSheet.show(
-                  context,
-                  identity: syncIdentity,
-                  engine: cloudRelaySyncEngine,
-                ),
-              ),
             ListTile(
               key: const Key('settings_privacy_trust_centre_tile'),
               contentPadding: EdgeInsets.zero,
@@ -468,13 +317,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ConsumerUiCopy.restorePurchases,
                   style: ArchiveMobileTypography.listTitle(context),
                 ),
-                subtitle:
-                    !AppServices.isInitialized ||
-                        AppServices
-                                .instance
-                                .subscriptionRepository
-                                .availability ==
-                            SubscriptionAvailability.available
+                subtitle: RevenueCatService.instance.isConfigured
                     ? null
                     : Text(
                         SubscriptionCopy.temporarilyUnavailable,

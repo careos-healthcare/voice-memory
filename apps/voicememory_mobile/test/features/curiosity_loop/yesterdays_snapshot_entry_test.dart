@@ -11,11 +11,7 @@ import 'package:voicememory_mobile/services/app_services.dart';
 const _strongRepeat =
     'I had no capacity but I said yes again to the extra meeting today.';
 
-JournalEntry _entry(
-  String id,
-  String transcript, {
-  DateTime? createdAt,
-}) =>
+JournalEntry _entry(String id, String transcript, {DateTime? createdAt}) =>
     JournalEntry(
       id: id,
       createdAt: createdAt ?? DateTime(2026, 6, 12, 10),
@@ -35,7 +31,11 @@ JournalEntry _entry(
 List<JournalEntry> _returnDayEntries(DateTime now) {
   final yesterday = now.subtract(const Duration(days: 1));
   return [
-    _entry('1', _strongRepeat, createdAt: yesterday.subtract(const Duration(days: 2))),
+    _entry(
+      '1',
+      _strongRepeat,
+      createdAt: yesterday.subtract(const Duration(days: 2)),
+    ),
     _entry(
       '2',
       'Same thing — said yes when I had no capacity for one more thing.',
@@ -50,14 +50,14 @@ List<JournalEntry> _returnDayEntries(DateTime now) {
 }
 
 CuriosityHook _hook({required String entryId}) => CuriosityHook(
-      id: 'hook_$entryId',
-      entryId: entryId,
-      createdAt: DateTime.utc(2026, 6, 11, 12),
-      primaryAnchor: 'said yes again',
-      hookType: CuriosityHookType.blocker,
-      dynamicPrompt:
-          'Before "said yes again" showed up again, what got in the way?',
-    );
+  id: 'hook_$entryId',
+  entryId: entryId,
+  createdAt: DateTime.utc(2026, 6, 11, 12),
+  primaryAnchor: 'said yes again',
+  hookType: CuriosityHookType.blocker,
+  dynamicPrompt:
+      'Before "said yes again" showed up again, what got in the way?',
+);
 
 Future<void> _resetStores(String stamp) async {
   await AppServices.resetForTest(
@@ -117,27 +117,29 @@ void main() {
   });
 
   group('YesterdaysSnapshotCoordinator', () {
-    test('resolveReturnDayHook returns latest unconsumed hook on return day', () async {
-      final now = DateTime(2026, 6, 12, 10);
-      final entries = _returnDayEntries(now);
-      final repo = LocalCuriosityHookRepository.instance();
-      final hook = _hook(entryId: '3');
-      await repo.saveHook(hook);
+    test(
+      'resolveReturnDayHook returns latest unconsumed hook on return day',
+      () async {
+        final now = DateTime(2026, 6, 12, 10);
+        final entries = _returnDayEntries(now);
+        final repo = LocalCuriosityHookRepository.instance();
+        final hook = _hook(entryId: '3');
+        await repo.saveHook(hook);
 
-      final resolved = await YesterdaysSnapshotCoordinator.resolveReturnDayHook(
-        entries: entries,
-        repository: repo,
-        now: now,
-      );
+        final resolved =
+            await YesterdaysSnapshotCoordinator.resolveReturnDayHook(
+              entries: entries,
+              repository: repo,
+              now: now,
+            );
 
-      expect(resolved?.id, hook.id);
-    });
+        expect(resolved?.id, hook.id);
+      },
+    );
 
     test('resolveReturnDayHook returns null when not return day', () async {
       final now = DateTime(2026, 6, 12, 10);
-      final entries = [
-        _entry('1', _strongRepeat, createdAt: now),
-      ];
+      final entries = [_entry('1', _strongRepeat, createdAt: now)];
       final repo = LocalCuriosityHookRepository.instance();
       await repo.saveHook(_hook(entryId: '1'));
 

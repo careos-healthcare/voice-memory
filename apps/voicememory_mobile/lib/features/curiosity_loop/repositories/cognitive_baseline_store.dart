@@ -33,11 +33,11 @@ class CognitiveBaselineSnapshot {
       baseline.lexicalDiversity - baseline.cohesionDrift;
 
   Map<String, dynamic> toJson() => {
-        'baseline': baseline.toJson(),
-        'lastEntryId': lastEntryId,
-        'updatedAt': updatedAt.toUtc().toIso8601String(),
-        'observationCount': observationCount,
-      };
+    'baseline': baseline.toJson(),
+    'lastEntryId': lastEntryId,
+    'updatedAt': updatedAt.toUtc().toIso8601String(),
+    'observationCount': observationCount,
+  };
 
   static CognitiveBaselineSnapshot? fromJson(dynamic json) {
     if (json is! Map) return null;
@@ -86,10 +86,9 @@ abstract interface class CognitiveBaselineStore {
 
 class LocalCognitiveBaselineStore implements CognitiveBaselineStore {
   LocalCognitiveBaselineStore({
-    required MobilePrefsStore prefs,
-    required EncryptedJsonStorage cryptoStorage,
-  })  : _prefs = prefs,
-        _cryptoStorage = cryptoStorage;
+    required this._prefs,
+    required this._cryptoStorage,
+  });
 
   static const prefsKey = 'secure_cognitive_baseline_snapshot';
   static const legacyPrefsKey = 'cognitiveBaselineState_v1';
@@ -100,31 +99,31 @@ class LocalCognitiveBaselineStore implements CognitiveBaselineStore {
   CognitiveBaselineSnapshot? _cached;
 
   static LocalCognitiveBaselineStore instance() => LocalCognitiveBaselineStore(
-        prefs: AppServices.instance.prefs,
-        cryptoStorage: AppServices.instance.clinicalTelemetryEncryptedStorage,
-      );
+    prefs: AppServices.instance.prefs,
+    cryptoStorage: AppServices.instance.clinicalTelemetryEncryptedStorage,
+  );
 
   static LocalCognitiveBaselineStore forPrefs(
     MobilePrefsStore prefs, {
     EncryptedJsonStorage? cryptoStorage,
     List<int>? masterKeyBytes,
-  }) =>
-      LocalCognitiveBaselineStore(
-        prefs: prefs,
-        cryptoStorage: cryptoStorage ??
-            EncryptedJsonStorage(
-              masterKeyBytes: masterKeyBytes ??
-                  (throw ArgumentError(
-                    'Provide cryptoStorage or masterKeyBytes.',
-                  )),
-            ),
-      );
+  }) => LocalCognitiveBaselineStore(
+    prefs: prefs,
+    cryptoStorage:
+        cryptoStorage ??
+        EncryptedJsonStorage(
+          masterKeyBytes:
+              masterKeyBytes ??
+              (throw ArgumentError('Provide cryptoStorage or masterKeyBytes.')),
+        ),
+  );
 
   @override
   Future<bool> saveSnapshot(CognitiveBaselineSnapshot snapshot) async {
     try {
-      final encryptedBoxString =
-          await _cryptoStorage.encryptData(snapshot.toJson());
+      final encryptedBoxString = await _cryptoStorage.encryptData(
+        snapshot.toJson(),
+      );
       await _prefs.writeString(prefsKey, encryptedBoxString);
       _cached = snapshot;
       return true;

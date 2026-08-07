@@ -1,9 +1,17 @@
 import 'dart:io';
 
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:voicememory_mobile/api/api_client.dart';
 import 'package:voicememory_mobile/api/api_exceptions.dart';
+import 'package:voicememory_mobile/core/di/network_providers.dart';
+import 'package:voicememory_mobile/core/network/api_failure_mapper.dart';
+import 'package:voicememory_mobile/core/network/api_result.dart';
+import 'package:voicememory_mobile/core/network/network_cancel_token.dart';
+import 'package:voicememory_mobile/data/network/capture_api_client.dart';
+import 'package:voicememory_mobile/features/live_audio/domain/models/offline_vault_manifest.dart';
 import 'package:voicememory_mobile/features/timeline/timeline_entry_display.dart';
+import 'package:voicememory_mobile/features/proof_admission/proof_admission_models.dart';
+import 'package:voicememory_mobile/models/attest_result.dart';
 import 'package:voicememory_mobile/features/voice_capture/transcription/transcript_quality.dart';
 import 'package:voicememory_mobile/features/voice_capture/voice_capture_copy.dart';
 import 'package:voicememory_mobile/features/voice_capture/voice_capture_post_save.dart';
@@ -18,46 +26,72 @@ import 'package:voicememory_mobile/services/capture_save_messages.dart';
 
 const _spokenTranscript = 'I felt pressure before saying yes again today.';
 
-class _VoicePipelineFakeApi extends ApiClient {
-  _VoicePipelineFakeApi({
-    this.transcript = _spokenTranscript,
-    this.analyzeError,
-  }) : super(baseUrl: 'http://test.invalid');
+class _VoicePipelineFakeApi implements CaptureApiClient {
+  _VoicePipelineFakeApi({this.analyzeError})
+    : transcript = _spokenTranscript;
 
   final String transcript;
   final Object? analyzeError;
 
   @override
-  Future<AttestResult> postCaptureAttest(String deviceId) async {
-    return AttestResult.capture(token: 'test-token', expiresInSeconds: 3600);
+  Future<ApiResult<AttestResult>> postCaptureAttest(
+    String deviceId, {
+    NetworkCancelToken? cancelToken,
+  }) async {
+    return ApiSuccess(
+      AttestResult.capture(token: 'test-token', expiresInSeconds: 3600),
+    );
   }
 
   @override
-  Future<String> postTranscribe({
+  Future<ApiResult<String>> postTranscribe({
     required File audioFile,
     required int durationSeconds,
     required String captureToken,
     String? idempotencyKey,
-  }) async =>
-      transcript;
+    NetworkCancelToken? cancelToken,
+  }) async => ApiSuccess(transcript);
 
   @override
-  Future<Reflection> postAnalyze({
+  Future<ApiResult<RawModelResponse>> postAnalyzeRaw({
     required String transcript,
     required String captureToken,
     List<Map<String, dynamic>> priorEvidence = const [],
     String? idempotencyKey,
+    NetworkCancelToken? cancelToken,
   }) async {
     final error = analyzeError;
-    if (error != null) throw error;
-    return Reflection(
-      mood: 'neutral',
-      emotionalIntensity: 1,
-      recurringThemes: const [],
-      exactLanguagePattern: '',
-      concreteObservation: transcript,
-      repeatedSignal: '',
+    if (error != null) {
+      return ApiFailureResult(ApiFailureMapper.fromException(error));
+    }
+    return ApiSuccess(
+      RawModelResponse(
+        payload: {
+          'reflection': {
+            'mood': 'neutral',
+            'emotionalIntensity': 1,
+            'recurringThemes': <String>[],
+            'exactLanguagePattern': transcript,
+            'concreteObservation': transcript,
+            'repeatedSignal': '',
+          },
+        },
+        receivedAt: DateTime.utc(2026, 8, 4),
+      ),
     );
+  }
+
+  @override
+  Future<ApiResult<VaultRecoveryServerResult>> postVaultRecovery({
+    required File vaultFile,
+    required String sessionId,
+    required int durationSeconds,
+    required String captureToken,
+    required String idempotencyKey,
+    List<int>? recoverySecretKeyBytes,
+    NetworkCancelToken? cancelToken,
+  }) async {
+    throw UnimplementedError('postVaultRecovery');
   }
 }
 
@@ -65,23 +99,22 @@ JournalEntry _voiceEntry({
   String transcript = '',
   String observation = '',
   String? localAudioPath = '/tmp/audio.m4a',
-}) =>
-    JournalEntry(
-      id: 'v1',
-      createdAt: DateTime(2026, 6, 12, 12),
-      transcript: transcript,
-      durationSeconds: 20,
-      localAudioPath: localAudioPath,
-      reflection: Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 0,
-        recurringThemes: const [],
-        exactLanguagePattern: '',
-        concreteObservation: observation,
-        repeatedSignal: '',
-      ),
-      syncStatus: SyncStatus.pendingUpload,
-    );
+}) => JournalEntry(
+  id: 'v1',
+  createdAt: DateTime(2026, 6, 12, 12),
+  transcript: transcript,
+  durationSeconds: 20,
+  localAudioPath: localAudioPath,
+  reflection: Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 0,
+    recurringThemes: const [],
+    exactLanguagePattern: '',
+    concreteObservation: observation,
+    repeatedSignal: '',
+  ),
+  syncStatus: SyncStatus.pendingUpload,
+);
 
 void main() {
   late Directory tempDir;
@@ -90,7 +123,9 @@ void main() {
     await AppServices.resetForTest(
       journalPath:
           '${tempDir.path}/journal_${DateTime.now().microsecondsSinceEpoch}.json',
-      api: api,
+      networkOverrides: [
+        captureApiClientProvider.overrideWithValue(api),
+      ],
     );
     AppServices.instance.tokenCache.setToken(
       'test-capture-token',
@@ -101,15 +136,14 @@ void main() {
   setUp(() async {
     ApiUsageGuard.resetForTest();
     tempDir = Directory.systemTemp.createTempSync('vm_voice_quality_');
-    await AppServices.resetForTest(
-      journalPath: '${tempDir.path}/journal.json',
-    );
+    await AppServices.resetForTest(journalPath: '${tempDir.path}/journal.json');
   });
 
   group('VoiceCaptureQuality', () {
     test('rejects tiny audio files', () {
       final dir = Directory.systemTemp.createTempSync('vm_audio_');
-      final tiny = File('${dir.path}/tiny.m4a')..writeAsBytesSync(List.filled(10, 0));
+      final tiny = File('${dir.path}/tiny.m4a')
+        ..writeAsBytesSync(List.filled(10, 0));
 
       expect(VoiceCaptureQuality.audioFileUsable(tiny), isFalse);
     });
@@ -175,16 +209,19 @@ void main() {
       );
     });
 
-    test('degraded only when transcript and body are both empty placeholders', () {
-      final entry = _voiceEntry(
-        transcript:
-            '[draft] ${CaptureSaveMessages.recordingSavedLocally} — transcribe when connected',
-      );
+    test(
+      'degraded only when transcript and body are both empty placeholders',
+      () {
+        final entry = _voiceEntry(
+          transcript:
+              '[draft] ${CaptureSaveMessages.recordingSavedLocally} — transcribe when connected',
+        );
 
-      expect(hasPersistedCaptureText(entry), isFalse);
-      expect(VoiceCaptureQuality.isDegradedVoiceCapture(entry), isTrue);
-      expect(VoiceCaptureQuality.displayTextLength(entry), 0);
-    });
+        expect(hasPersistedCaptureText(entry), isFalse);
+        expect(VoiceCaptureQuality.isDegradedVoiceCapture(entry), isTrue);
+        expect(VoiceCaptureQuality.displayTextLength(entry), 0);
+      },
+    );
 
     test('typed fallback text makes entry usable', () {
       final degraded = _voiceEntry(
@@ -205,7 +242,10 @@ void main() {
     test('rejects junk transcript for evidence display', () {
       expect(TranscriptQuality.isUsableEvidence('...'), isFalse);
       expect(TranscriptQuality.isUsableEvidence('um'), isFalse);
-      expect(TranscriptQuality.isUsableEvidence('I felt pressure today'), isTrue);
+      expect(
+        TranscriptQuality.isUsableEvidence('I felt pressure today'),
+        isTrue,
+      );
     });
 
     test('degraded voice entry with junk transcript text is not usable', () {
@@ -262,13 +302,17 @@ void main() {
       );
       await AppServices.instance.journalStore.save(degraded);
 
-      final result = await AppServices.instance.pipeline.attachTypedTextToVoiceEntry(
-        entry: degraded,
-        transcript: 'I said yes when I had no capacity left.',
-      );
+      final result = await AppServices.instance.pipeline
+          .attachTypedTextToVoiceEntry(
+            entry: degraded,
+            transcript: 'I said yes when I had no capacity left.',
+          );
 
       expect(result.attachedTypedTextToVoiceEntry, isTrue);
-      expect(result.entry.transcript, 'I said yes when I had no capacity left.');
+      expect(
+        result.entry.transcript,
+        'I said yes when I had no capacity left.',
+      );
       expect(result.entry.localAudioPath, '/tmp/audio.m4a');
       expect(VoiceCaptureQuality.isDegradedVoiceCapture(result.entry), isFalse);
 
@@ -305,7 +349,7 @@ void main() {
   });
 
   group('voice capture pipeline', () {
-    Future<File> _usableAudioFile() async {
+    Future<File> usableAudioFile() async {
       final dir = Directory.systemTemp.createTempSync('vm_audio_pipeline_');
       return File('${dir.path}/voice.m4a')
         ..writeAsBytesSync(List.filled(VoiceCaptureQuality.minAudioBytes, 1));
@@ -319,7 +363,7 @@ void main() {
             analyzeError: FormatException('Unexpected HTML'),
           ),
         );
-        final audio = await _usableAudioFile();
+        final audio = await usableAudioFile();
 
         final result = await AppServices.instance.pipeline.run(
           audioFile: audio,
@@ -327,17 +371,33 @@ void main() {
         );
 
         expect(result.syncSucceeded, isFalse);
-        expect(VoiceCaptureQuality.displayTextLength(result.entry), greaterThan(0));
-        expect(VoiceCaptureQuality.isDegradedVoiceCapture(result.entry), isFalse);
-        expect(VoiceCapturePostSave.showViewPatternsPrimary(result.entry), isTrue);
-        expect(VoiceCapturePostSave.showTypedFallbackPrimary(result.entry), isFalse);
+        expect(
+          VoiceCaptureQuality.displayTextLength(result.entry),
+          greaterThan(0),
+        );
+        expect(
+          VoiceCaptureQuality.isDegradedVoiceCapture(result.entry),
+          isFalse,
+        );
+        expect(
+          VoiceCapturePostSave.showViewPatternsPrimary(result.entry),
+          isTrue,
+        );
+        expect(
+          VoiceCapturePostSave.showTypedFallbackPrimary(result.entry),
+          isFalse,
+        );
         expect(result.entry.transcript, _spokenTranscript);
         expect(result.entry.reflection.concreteObservation, _spokenTranscript);
 
-        final reloaded =
-            await AppServices.instance.journalStore.getById(result.entry.id);
+        final reloaded = await AppServices.instance.journalStore.getById(
+          result.entry.id,
+        );
         expect(reloaded, isNotNull);
-        expect(VoiceCaptureQuality.displayTextLength(reloaded!), greaterThan(0));
+        expect(
+          VoiceCaptureQuality.displayTextLength(reloaded!),
+          greaterThan(0),
+        );
         expect(hasPersistedCaptureText(reloaded), isTrue);
       },
     );
@@ -348,7 +408,7 @@ void main() {
           analyzeError: ApiException('Not found', statusCode: 404),
         ),
       );
-      final audio = await _usableAudioFile();
+      final audio = await usableAudioFile();
 
       final result = await AppServices.instance.pipeline.run(
         audioFile: audio,
@@ -356,47 +416,56 @@ void main() {
       );
 
       expect(result.syncSucceeded, isFalse);
-      expect(VoiceCaptureQuality.displayTextLength(result.entry), greaterThan(0));
+      expect(
+        VoiceCaptureQuality.displayTextLength(result.entry),
+        greaterThan(0),
+      );
       expect(VoiceCaptureQuality.isDegradedVoiceCapture(result.entry), isFalse);
-      expect(VoiceCapturePostSave.showViewPatternsPrimary(result.entry), isTrue);
+      expect(
+        VoiceCapturePostSave.showViewPatternsPrimary(result.entry),
+        isTrue,
+      );
     });
   });
 
   group('offline voice transcript persistence', () {
-    test('partial transcript persists display text and avoids degraded flag', () async {
-      final dir = Directory.systemTemp.createTempSync('vm_audio_persist_');
-      final audio = File('${dir.path}/voice.m4a')
-        ..writeAsBytesSync(List.filled(VoiceCaptureQuality.minAudioBytes, 1));
-      const spoken = 'I felt pressure before saying yes again today.';
+    test(
+      'partial transcript persists display text and avoids degraded flag',
+      () async {
+        final dir = Directory.systemTemp.createTempSync('vm_audio_persist_');
+        final audio = File('${dir.path}/voice.m4a')
+          ..writeAsBytesSync(List.filled(VoiceCaptureQuality.minAudioBytes, 1));
+        const spoken = 'I felt pressure before saying yes again today.';
 
-      final entry = JournalEntry(
-        id: 'offline-voice',
-        createdAt: DateTime(2026, 6, 12, 12),
-        transcript: spoken,
-        durationSeconds: 20,
-        localAudioPath: audio.path,
-        reflection: Reflection(
-          mood: 'neutral',
-          emotionalIntensity: 0,
-          recurringThemes: const [],
-          exactLanguagePattern: '',
-          concreteObservation: spoken,
-          repeatedSignal: '',
-        ),
-        syncStatus: SyncStatus.pendingUpload,
-      );
-      await AppServices.instance.journalStore.save(entry);
+        final entry = JournalEntry(
+          id: 'offline-voice',
+          createdAt: DateTime(2026, 6, 12, 12),
+          transcript: spoken,
+          durationSeconds: 20,
+          localAudioPath: audio.path,
+          reflection: Reflection(
+            mood: 'neutral',
+            emotionalIntensity: 0,
+            recurringThemes: const [],
+            exactLanguagePattern: '',
+            concreteObservation: spoken,
+            repeatedSignal: '',
+          ),
+          syncStatus: SyncStatus.pendingUpload,
+        );
+        await AppServices.instance.journalStore.save(entry);
 
-      expect(entrySanitizedTranscript(entry).length, greaterThan(0));
-      expect(entrySanitizedBody(entry).length, greaterThan(0));
-      expect(VoiceCaptureQuality.displayTextLength(entry), greaterThan(0));
-      expect(VoiceCaptureQuality.isDegradedVoiceCapture(entry), isFalse);
-      expect(hasPersistedCaptureText(entry), isTrue);
-      expect(
-        resolveEntryDisplayText(entry).source,
-        EntryDisplayTextSource.transcript,
-      );
-      expect(VoiceCapturePostSave.showViewPatternsPrimary(entry), isTrue);
-    });
+        expect(entrySanitizedTranscript(entry).length, greaterThan(0));
+        expect(entrySanitizedBody(entry).length, greaterThan(0));
+        expect(VoiceCaptureQuality.displayTextLength(entry), greaterThan(0));
+        expect(VoiceCaptureQuality.isDegradedVoiceCapture(entry), isFalse);
+        expect(hasPersistedCaptureText(entry), isTrue);
+        expect(
+          resolveEntryDisplayText(entry).source,
+          EntryDisplayTextSource.transcript,
+        );
+        expect(VoiceCapturePostSave.showViewPatternsPrimary(entry), isTrue);
+      },
+    );
   });
 }

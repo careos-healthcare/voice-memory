@@ -33,26 +33,23 @@ ChangeTrailClaritySummary _summary({
   int wouldPayYesCount = 2,
   int wouldPayMaybeCount = 1,
   int wouldPayNoCount = 2,
-}) =>
-    ChangeTrailClaritySummary(
-      totalTesters: totalTesters,
-      understoodFirstProofCount: understoodFirstProofCount,
-      understoodProKeepsTrailCount: understoodProKeepsTrailCount,
-      understoodReturnsCount: understoodReturnsCount,
-      understoodChangesCount: understoodChangesCount,
-      understoodFadesCount: understoodFadesCount,
-      understoodCorrectionsCount: understoodCorrectionsCount,
-      thoughtMoreAiCount: thoughtMoreAiCount,
-      wantedMoreProofCount: wantedMoreProofCount,
-      wantedRankingCount: wantedRankingCount,
-      wouldPayYesCount: wouldPayYesCount,
-      wouldPayMaybeCount: wouldPayMaybeCount,
-      wouldPayNoCount: wouldPayNoCount,
-    );
+}) => ChangeTrailClaritySummary(
+  totalTesters: totalTesters,
+  understoodFirstProofCount: understoodFirstProofCount,
+  understoodProKeepsTrailCount: understoodProKeepsTrailCount,
+  understoodReturnsCount: understoodReturnsCount,
+  understoodChangesCount: understoodChangesCount,
+  understoodFadesCount: understoodFadesCount,
+  understoodCorrectionsCount: understoodCorrectionsCount,
+  thoughtMoreAiCount: thoughtMoreAiCount,
+  wantedMoreProofCount: wantedMoreProofCount,
+  wantedRankingCount: wantedRankingCount,
+  wouldPayYesCount: wouldPayYesCount,
+  wouldPayMaybeCount: wouldPayMaybeCount,
+  wouldPayNoCount: wouldPayNoCount,
+);
 
-ChangeTrailClaritySummary _fullTrailSummary({
-  int totalTesters = 30,
-}) =>
+ChangeTrailClaritySummary _fullTrailSummary({int totalTesters = 30}) =>
     _summary(
       totalTesters: totalTesters,
       understoodFirstProofCount: totalTesters == 20 ? 5 : 7,
@@ -64,24 +61,23 @@ ChangeTrailClaritySummary _fullTrailSummary({
       thoughtMoreAiCount: 0,
     );
 
-BetaRepairLabVisibilityInput _repairInput() =>
-    BetaRepairLabVisibilityInput(
-      mode: BetaRepairLabMode.evidenceTrailTimelineClarity,
-      entryCount: 4,
-      source: 'test',
-      isPro: false,
-      isRecording: false,
-      isDegradedTranscriptState: false,
-      whatChangedQuestionActive: false,
-      patternReviewInboxHasActiveItems: false,
-      hasTimelineProofVisible: true,
-      hasConfirmedRepeat: true,
-      confidenceLevel: ProofConfidenceLevel.watchOnly,
-      hasUsefulProofFeedback: false,
-      feedbackType: null,
-      isNegativeFeedback: false,
-      betaMissionEnabled: true,
-    );
+BetaRepairLabVisibilityInput _repairInput() => BetaRepairLabVisibilityInput(
+  mode: BetaRepairLabMode.evidenceTrailTimelineClarity,
+  entryCount: 4,
+  source: 'test',
+  isPro: false,
+  isRecording: false,
+  isDegradedTranscriptState: false,
+  whatChangedQuestionActive: false,
+  patternReviewInboxHasActiveItems: false,
+  hasTimelineProofVisible: true,
+  hasConfirmedRepeat: true,
+  confidenceLevel: ProofConfidenceLevel.watchOnly,
+  hasUsefulProofFeedback: false,
+  feedbackType: null,
+  isNegativeFeedback: false,
+  betaMissionEnabled: true,
+);
 
 void main() {
   group('ChangeTrailClarity.resolve', () {
@@ -170,15 +166,12 @@ void main() {
       },
     );
 
-    test(
-      'all comprehension and payment pass returns releaseCandidate',
-      () {
-        expect(
-          ChangeTrailClarity.resolve(_fullTrailSummary()),
-          ChangeTrailClarityDecision.releaseCandidate,
-        );
-      },
-    );
+    test('all comprehension and payment pass returns releaseCandidate', () {
+      expect(
+        ChangeTrailClarity.resolve(_fullTrailSummary()),
+        ChangeTrailClarityDecision.releaseCandidate,
+      );
+    });
   });
 
   group('ChangeTrailClarityCopy', () {
@@ -187,10 +180,7 @@ void main() {
     });
 
     test('body says after the first proof', () {
-      expect(
-        ChangeTrailClarityCopy.body,
-        contains('After the first proof'),
-      );
+      expect(ChangeTrailClarityCopy.body, contains('After the first proof'));
     });
 
     test('body says keeps watching the same repeat', () {
@@ -200,16 +190,18 @@ void main() {
       );
     });
 
-    test('body includes comes back / changes shape / softer / stronger / fades / corrected',
-        () {
-      final body = ChangeTrailClarityCopy.body.toLowerCase();
-      expect(body, contains('comes back'));
-      expect(body, contains('changes shape'));
-      expect(body, contains('softer'));
-      expect(body, contains('stronger'));
-      expect(body, contains('fades'));
-      expect(body, contains('corrected'));
-    });
+    test(
+      'body includes comes back / changes shape / softer / stronger / fades / corrected',
+      () {
+        final body = ChangeTrailClarityCopy.body.toLowerCase();
+        expect(body, contains('comes back'));
+        expect(body, contains('changes shape'));
+        expect(body, contains('softer'));
+        expect(body, contains('stronger'));
+        expect(body, contains('fades'));
+        expect(body, contains('corrected'));
+      },
+    );
 
     test('returnsLine explains same repeat appears again', () {
       expect(
@@ -268,10 +260,7 @@ void main() {
     });
 
     test('valueLine says not for more AI', () {
-      expect(
-        ChangeTrailClarityCopy.valueLine,
-        contains('not for more AI'),
-      );
+      expect(ChangeTrailClarityCopy.valueLine, contains('not for more AI'));
     });
 
     test('guardrail blocks more proof or ranking', () {
@@ -447,39 +436,42 @@ void main() {
       );
     });
 
-    test('record screen remains capture-first without stacking extra cards', () {
-      final audit = SurfacePriorityEngine.auditRecordReady(
-        entryCount: 4,
-        source: 'record',
-        candidates: SurfacePriorityCandidates.recordReady(
-          firstMomentCapture: false,
-          secondMomentReturn: false,
-          lowFrictionReturn: false,
-          whatToNoticeNext: false,
-          betaTodaySummary: false,
-          openCapturePromptChips: false,
-          captureFreedomLine: false,
-          timelineProofMoment: true,
-          archiveTimelineSpine: false,
-          timelinePositioning: false,
-          currentRelevance: false,
-          correctionMemory: false,
-          notRelevantRecovery: false,
-          proofQualityResponse: false,
-          evidenceWeighting: false,
-          proofSpecificity: false,
-          presentDayRelevance: false,
-          patternConfidence: false,
-          betaTesterReport: false,
-          proEvidenceValue: false,
-          privateReportProBridge: false,
-          suppressLegacyEducation: false,
-          betaProofLift: true,
-        ),
-      );
-      expect(audit.proofCardKey, 'timelineProofMoment');
-      expect(audit.guidanceCardKey, isNull);
-    });
+    test(
+      'record screen remains capture-first without stacking extra cards',
+      () {
+        final audit = SurfacePriorityEngine.auditRecordReady(
+          entryCount: 4,
+          source: 'record',
+          candidates: SurfacePriorityCandidates.recordReady(
+            firstMomentCapture: false,
+            secondMomentReturn: false,
+            lowFrictionReturn: false,
+            whatToNoticeNext: false,
+            betaTodaySummary: false,
+            openCapturePromptChips: false,
+            captureFreedomLine: false,
+            timelineProofMoment: true,
+            archiveTimelineSpine: false,
+            timelinePositioning: false,
+            currentRelevance: false,
+            correctionMemory: false,
+            notRelevantRecovery: false,
+            proofQualityResponse: false,
+            evidenceWeighting: false,
+            proofSpecificity: false,
+            presentDayRelevance: false,
+            patternConfidence: false,
+            betaTesterReport: false,
+            proEvidenceValue: false,
+            privateReportProBridge: false,
+            suppressLegacyEducation: false,
+            betaProofLift: true,
+          ),
+        );
+        expect(audit.proofCardKey, 'timelineProofMoment');
+        expect(audit.guidanceCardKey, isNull);
+      },
+    );
   });
 }
 
@@ -514,27 +506,24 @@ extension on ChangeTrailClaritySummary {
     int? wouldPayYesCount,
     int? wouldPayMaybeCount,
     int? wouldPayNoCount,
-  }) =>
-      ChangeTrailClaritySummary(
-        totalTesters: totalTesters ?? this.totalTesters,
-        understoodFirstProofCount:
-            understoodFirstProofCount ?? this.understoodFirstProofCount,
-        understoodProKeepsTrailCount:
-            understoodProKeepsTrailCount ?? this.understoodProKeepsTrailCount,
-        understoodReturnsCount:
-            understoodReturnsCount ?? this.understoodReturnsCount,
-        understoodChangesCount:
-            understoodChangesCount ?? this.understoodChangesCount,
-        understoodFadesCount:
-            understoodFadesCount ?? this.understoodFadesCount,
-        understoodCorrectionsCount:
-            understoodCorrectionsCount ?? this.understoodCorrectionsCount,
-        thoughtMoreAiCount: thoughtMoreAiCount ?? this.thoughtMoreAiCount,
-        wantedMoreProofCount:
-            wantedMoreProofCount ?? this.wantedMoreProofCount,
-        wantedRankingCount: wantedRankingCount ?? this.wantedRankingCount,
-        wouldPayYesCount: wouldPayYesCount ?? this.wouldPayYesCount,
-        wouldPayMaybeCount: wouldPayMaybeCount ?? this.wouldPayMaybeCount,
-        wouldPayNoCount: wouldPayNoCount ?? this.wouldPayNoCount,
-      );
+  }) => ChangeTrailClaritySummary(
+    totalTesters: totalTesters ?? this.totalTesters,
+    understoodFirstProofCount:
+        understoodFirstProofCount ?? this.understoodFirstProofCount,
+    understoodProKeepsTrailCount:
+        understoodProKeepsTrailCount ?? this.understoodProKeepsTrailCount,
+    understoodReturnsCount:
+        understoodReturnsCount ?? this.understoodReturnsCount,
+    understoodChangesCount:
+        understoodChangesCount ?? this.understoodChangesCount,
+    understoodFadesCount: understoodFadesCount ?? this.understoodFadesCount,
+    understoodCorrectionsCount:
+        understoodCorrectionsCount ?? this.understoodCorrectionsCount,
+    thoughtMoreAiCount: thoughtMoreAiCount ?? this.thoughtMoreAiCount,
+    wantedMoreProofCount: wantedMoreProofCount ?? this.wantedMoreProofCount,
+    wantedRankingCount: wantedRankingCount ?? this.wantedRankingCount,
+    wouldPayYesCount: wouldPayYesCount ?? this.wouldPayYesCount,
+    wouldPayMaybeCount: wouldPayMaybeCount ?? this.wouldPayMaybeCount,
+    wouldPayNoCount: wouldPayNoCount ?? this.wouldPayNoCount,
+  );
 }

@@ -20,81 +20,81 @@ import 'package:voicememory_mobile/widgets/patterns/pattern_detail_sheet.dart';
 import 'package:voicememory_mobile/widgets/share_card/share_card_action_card.dart';
 import 'package:voicememory_mobile/widgets/share_card/share_card_image.dart';
 import 'package:voicememory_mobile/widgets/share_card/share_card_preview_sheet.dart';
+import 'support/test_storage_sandbox.dart';
 
 JournalEntry _voiceEntry({
   required String id,
   required String transcript,
   DateTime? createdAt,
-}) =>
-    JournalEntry(
-      id: id,
-      createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
-      transcript: transcript,
-      durationSeconds: 30,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 2,
-        recurringThemes: ['work'],
-        exactLanguagePattern: '',
-        concreteObservation: 'Work pressure showed up in this moment.',
-        repeatedSignal: '',
-      ),
-    );
+}) => JournalEntry(
+  id: id,
+  createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
+  transcript: transcript,
+  durationSeconds: 30,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 2,
+    recurringThemes: ['work'],
+    exactLanguagePattern: '',
+    concreteObservation: 'Work pressure showed up in this moment.',
+    repeatedSignal: '',
+  ),
+);
 
 List<JournalEntry> _threeSaidYesEntries() => [
-      _voiceEntry(
-        id: 'e1',
-        transcript:
-            'I had no capacity but I said yes again to the extra meeting today.',
-        createdAt: DateTime(2026, 6, 10, 12),
-      ),
-      _voiceEntry(
-        id: 'e2',
-        transcript:
-            'Same thing — said yes when I had no capacity for one more thing.',
-        createdAt: DateTime(2026, 6, 11, 12),
-      ),
-      _voiceEntry(
-        id: 'e3',
-        transcript:
-            'I said yes again even though I had no capacity for one more ask.',
-        createdAt: DateTime(2026, 6, 12, 12),
-      ),
-    ];
+  _voiceEntry(
+    id: 'e1',
+    transcript:
+        'I had no capacity but I said yes again to the extra meeting today.',
+    createdAt: DateTime(2026, 6, 10, 12),
+  ),
+  _voiceEntry(
+    id: 'e2',
+    transcript:
+        'Same thing — said yes when I had no capacity for one more thing.',
+    createdAt: DateTime(2026, 6, 11, 12),
+  ),
+  _voiceEntry(
+    id: 'e3',
+    transcript:
+        'I said yes again even though I had no capacity for one more ask.',
+    createdAt: DateTime(2026, 6, 12, 12),
+  ),
+];
 
 List<JournalEntry> _fiveSaidYesEntries() => [
-      ..._threeSaidYesEntries(),
-      _voiceEntry(
-        id: 'e4',
-        transcript:
-            'I said yes again even though I had no capacity for one more ask today.',
-        createdAt: DateTime(2026, 6, 13, 12),
-      ),
-      _voiceEntry(
-        id: 'e5',
-        transcript:
-            'Same yes pattern came back but it felt less urgent and easier to stop.',
-        createdAt: DateTime(2026, 6, 14, 12),
-      ),
-    ];
+  ..._threeSaidYesEntries(),
+  _voiceEntry(
+    id: 'e4',
+    transcript:
+        'I said yes again even though I had no capacity for one more ask today.',
+    createdAt: DateTime(2026, 6, 13, 12),
+  ),
+  _voiceEntry(
+    id: 'e5',
+    transcript:
+        'Same yes pattern came back but it felt less urgent and easier to stop.',
+    createdAt: DateTime(2026, 6, 14, 12),
+  ),
+];
 
 JournalEntry _degradedVoiceEntry({String id = 'v1'}) => JournalEntry(
-      id: id,
-      createdAt: DateTime(2026, 6, 12, 12),
-      transcript:
-          '[draft] ${CaptureSaveMessages.recordingSavedLocally} — transcribe when connected',
-      durationSeconds: 20,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 0,
-        recurringThemes: [],
-        exactLanguagePattern: '',
-        concreteObservation: '',
-        repeatedSignal: '',
-      ),
-    );
+  id: id,
+  createdAt: DateTime(2026, 6, 12, 12),
+  transcript:
+      '[draft] ${CaptureSaveMessages.recordingSavedLocally} — transcribe when connected',
+  durationSeconds: 20,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 0,
+    recurringThemes: [],
+    exactLanguagePattern: '',
+    concreteObservation: '',
+    repeatedSignal: '',
+  ),
+);
 
 ShareCardModel _modelFor(List<JournalEntry> entries) {
   return ShareCardBuilder.build(
@@ -104,16 +104,19 @@ ShareCardModel _modelFor(List<JournalEntry> entries) {
 }
 
 void main() {
+  late TestStorageSandbox sandbox;
   setUp(() async {
+    sandbox = TestStorageSandbox.create();
     ShareCardAnalytics.resetForTest();
     PatternNameStore.resetForTest();
     await AppServices.resetForTest(
-      journalPath: '${DateTime.now().microsecondsSinceEpoch}_journal.json',
-      prefsPath: '${DateTime.now().microsecondsSinceEpoch}_prefs.json',
+      journalPath: sandbox.journalPath,
+      prefsPath: sandbox.prefsPath,
       skipRevenueCat: true,
     );
   });
 
+  tearDown(() => sandbox.dispose());
   group('ShareCardCopy', () {
     test('defines privacy-safe share card copy', () {
       expect(ShareCardCopy.headline, 'ArchiveMe found a repeat');
@@ -203,10 +206,7 @@ void main() {
       PatternNameStore.setCustomName(key, 'Saying yes too fast');
       final model = _modelFor(entries);
       expect(model.displayPatternLabel, 'Saying yes too fast');
-      expect(
-        model.imageLines,
-        contains('Saying yes too fast'),
-      );
+      expect(model.imageLines, contains('Saying yes too fast'));
     });
 
     test('flags verbatim evidence phrase as sensitive until renamed', () {
@@ -226,17 +226,15 @@ void main() {
   });
 
   group('ShareCardActionCard', () {
-    testWidgets('shows create share card action for grounded pattern',
-        (tester) async {
+    testWidgets('shows create share card action for grounded pattern', (
+      tester,
+    ) async {
       final model = _modelFor(_fiveSaidYesEntries());
       await tester.pumpWidget(
         MaterialApp(
           theme: AppTheme.light(),
           home: Scaffold(
-            body: ShareCardActionCard(
-              model: model,
-              source: 'patterns',
-            ),
+            body: ShareCardActionCard(model: model, source: 'patterns'),
           ),
         ),
       );
@@ -261,10 +259,7 @@ void main() {
         MaterialApp(
           theme: AppTheme.light(),
           home: Scaffold(
-            body: ShareCardPreviewSheet(
-              model: model,
-              source: 'patterns',
-            ),
+            body: ShareCardPreviewSheet(model: model, source: 'patterns'),
           ),
         ),
       );
@@ -277,7 +272,10 @@ void main() {
         find.byKey(const Key('share_card_preview_create_image')),
         findsOneWidget,
       );
-      expect(find.byKey(const Key('share_card_preview_cancel')), findsOneWidget);
+      expect(
+        find.byKey(const Key('share_card_preview_cancel')),
+        findsOneWidget,
+      );
     });
 
     testWidgets('shows edit field when label needs review', (tester) async {
@@ -288,10 +286,7 @@ void main() {
         MaterialApp(
           theme: AppTheme.light(),
           home: Scaffold(
-            body: ShareCardPreviewSheet(
-              model: model,
-              source: 'patterns',
-            ),
+            body: ShareCardPreviewSheet(model: model, source: 'patterns'),
           ),
         ),
       );
@@ -311,9 +306,7 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           theme: AppTheme.light(),
-          home: Scaffold(
-            body: ShareCardImage(model: model),
-          ),
+          home: Scaffold(body: ShareCardImage(model: model)),
         ),
       );
       await tester.pump();
@@ -329,8 +322,9 @@ void main() {
   });
 
   group('Pattern detail integration', () {
-    testWidgets('pattern detail sheet shows share card action when available',
-        (tester) async {
+    testWidgets('pattern detail sheet shows share card action when available', (
+      tester,
+    ) async {
       final entries = _fiveSaidYesEntries();
       final detail = PatternDetailEngine.build(
         entries: entries,
@@ -346,10 +340,7 @@ void main() {
         MaterialApp(
           theme: AppTheme.light(),
           home: Scaffold(
-            body: PatternDetailSheet(
-              detail: detail,
-              shareCard: shareCard,
-            ),
+            body: PatternDetailSheet(detail: detail, shareCard: shareCard),
           ),
         ),
       );

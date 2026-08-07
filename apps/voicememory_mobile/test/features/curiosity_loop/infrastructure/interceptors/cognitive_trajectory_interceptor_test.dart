@@ -86,10 +86,7 @@ void main() {
         journalStore: journalStore,
         trajectoryHistoryStore: trajectoryHistoryStore,
         telemetry: CognitiveTrajectoryTelemetry(
-          sink: (event, meta) => telemetryEvents.add({
-            'event': event,
-            ...meta,
-          }),
+          sink: (event, meta) => telemetryEvents.add({'event': event, ...meta}),
         ),
         onAssessment: assessments.add,
         clock: () => DateTime.utc(2026, 6, 12, 16),
@@ -114,90 +111,110 @@ void main() {
       expect(assessments, isEmpty);
     });
 
-    test('records recovering trajectory when drift drops significantly', () async {
-      final interceptor = buildInterceptor();
+    test(
+      'records recovering trajectory when drift drops significantly',
+      () async {
+        final interceptor = buildInterceptor();
 
-      await interceptor.onEntrySaved(
-        entry(
-          id: 'response_entry',
-          parentHookId: 'hook_1',
-          biomarkers: const CognitiveBiomarkers(
-            lexicalDiversity: 0.42,
-            cohesionDrift: 0.60,
-            emotionalVolatility: 0.40,
+        await interceptor.onEntrySaved(
+          entry(
+            id: 'response_entry',
+            parentHookId: 'hook_1',
+            biomarkers: const CognitiveBiomarkers(
+              lexicalDiversity: 0.42,
+              cohesionDrift: 0.60,
+              emotionalVolatility: 0.40,
+            ),
           ),
-        ),
-      );
+        );
 
-      expect(assessments, hasLength(1));
-      expect(assessments.single.assessment.direction, CognitiveDirection.recovering);
-      expect(assessments.single.assessment.driftDelta, closeTo(-0.25, 0.001));
-      expect(telemetryEvents.single['event'],
-          CognitiveTrajectoryTelemetry.trajectoryAssessedEvent);
-      expect(telemetryEvents.single['direction'], 'recovering');
-      expect(telemetryEvents.single['hook_id'], 'hook_1');
-      expect(telemetryEvents.single['source_entry_id'], 'source_entry');
-      expect(trajectoryHistoryStore.records, hasLength(1));
-      expect(
-        trajectoryHistoryStore.records.single.direction,
-        CognitiveDirection.recovering,
-      );
-    });
+        expect(assessments, hasLength(1));
+        expect(
+          assessments.single.assessment.direction,
+          CognitiveDirection.recovering,
+        );
+        expect(assessments.single.assessment.driftDelta, closeTo(-0.25, 0.001));
+        expect(
+          telemetryEvents.single['event'],
+          CognitiveTrajectoryTelemetry.trajectoryAssessedEvent,
+        );
+        expect(telemetryEvents.single['direction'], 'recovering');
+        expect(telemetryEvents.single['hook_id'], 'hook_1');
+        expect(telemetryEvents.single['source_entry_id'], 'source_entry');
+        expect(trajectoryHistoryStore.records, hasLength(1));
+        expect(
+          trajectoryHistoryStore.records.single.direction,
+          CognitiveDirection.recovering,
+        );
+      },
+    );
 
-    test('records declining trajectory when drift worsens significantly', () async {
-      journalStore.entries['source_entry'] = entry(
-        id: 'source_entry',
-        biomarkers: const CognitiveBiomarkers(
-          lexicalDiversity: 0.60,
-          cohesionDrift: 0.30,
-          emotionalVolatility: 0.20,
-        ),
-      );
-      final interceptor = buildInterceptor();
-
-      await interceptor.onEntrySaved(
-        entry(
-          id: 'response_entry',
-          parentHookId: 'hook_1',
+    test(
+      'records declining trajectory when drift worsens significantly',
+      () async {
+        journalStore.entries['source_entry'] = entry(
+          id: 'source_entry',
           biomarkers: const CognitiveBiomarkers(
-            lexicalDiversity: 0.58,
-            cohesionDrift: 0.50,
-            emotionalVolatility: 0.40,
+            lexicalDiversity: 0.60,
+            cohesionDrift: 0.30,
+            emotionalVolatility: 0.20,
           ),
-        ),
-      );
+        );
+        final interceptor = buildInterceptor();
 
-      expect(assessments.single.assessment.direction, CognitiveDirection.declining);
-      expect(assessments.single.assessment.driftDelta, closeTo(0.20, 0.001));
-      expect(telemetryEvents.single['direction'], 'declining');
-    });
+        await interceptor.onEntrySaved(
+          entry(
+            id: 'response_entry',
+            parentHookId: 'hook_1',
+            biomarkers: const CognitiveBiomarkers(
+              lexicalDiversity: 0.58,
+              cohesionDrift: 0.50,
+              emotionalVolatility: 0.40,
+            ),
+          ),
+        );
 
-    test('records stagnant trajectory when deltas stay within bounds', () async {
-      journalStore.entries['source_entry'] = entry(
-        id: 'source_entry',
-        biomarkers: const CognitiveBiomarkers(
-          lexicalDiversity: 0.50,
-          cohesionDrift: 0.40,
-          emotionalVolatility: 0.30,
-        ),
-      );
-      final interceptor = buildInterceptor();
+        expect(
+          assessments.single.assessment.direction,
+          CognitiveDirection.declining,
+        );
+        expect(assessments.single.assessment.driftDelta, closeTo(0.20, 0.001));
+        expect(telemetryEvents.single['direction'], 'declining');
+      },
+    );
 
-      await interceptor.onEntrySaved(
-        entry(
-          id: 'response_entry',
-          parentHookId: 'hook_1',
+    test(
+      'records stagnant trajectory when deltas stay within bounds',
+      () async {
+        journalStore.entries['source_entry'] = entry(
+          id: 'source_entry',
           biomarkers: const CognitiveBiomarkers(
-            lexicalDiversity: 0.52,
-            cohesionDrift: 0.45,
-            emotionalVolatility: 0.32,
+            lexicalDiversity: 0.50,
+            cohesionDrift: 0.40,
+            emotionalVolatility: 0.30,
           ),
-        ),
-      );
+        );
+        final interceptor = buildInterceptor();
 
-      expect(assessments.single.assessment.direction, CognitiveDirection.stagnant);
-      expect(telemetryEvents.single['direction'], 'stagnant');
-    });
+        await interceptor.onEntrySaved(
+          entry(
+            id: 'response_entry',
+            parentHookId: 'hook_1',
+            biomarkers: const CognitiveBiomarkers(
+              lexicalDiversity: 0.52,
+              cohesionDrift: 0.45,
+              emotionalVolatility: 0.32,
+            ),
+          ),
+        );
+
+        expect(
+          assessments.single.assessment.direction,
+          CognitiveDirection.stagnant,
+        );
+        expect(telemetryEvents.single['direction'], 'stagnant');
+      },
+    );
 
     test('does not emit when source entry biomarkers are missing', () async {
       journalStore.entries['source_entry'] = entry(id: 'source_entry');
@@ -219,54 +236,59 @@ void main() {
       expect(assessments, isEmpty);
     });
 
-    test('tags grounded hook responses in telemetry and history records', () async {
-      final interceptor = buildInterceptor();
+    test(
+      'tags grounded hook responses in telemetry and history records',
+      () async {
+        final interceptor = buildInterceptor();
 
-      await interceptor.onEntrySaved(
-        entry(
-          id: 'response_entry',
-          parentHookId: 'hook_1',
-          wasGrounded: true,
-          biomarkers: const CognitiveBiomarkers(
-            lexicalDiversity: 0.42,
-            cohesionDrift: 0.60,
-            emotionalVolatility: 0.40,
+        await interceptor.onEntrySaved(
+          entry(
+            id: 'response_entry',
+            parentHookId: 'hook_1',
+            wasGrounded: true,
+            biomarkers: const CognitiveBiomarkers(
+              lexicalDiversity: 0.42,
+              cohesionDrift: 0.60,
+              emotionalVolatility: 0.40,
+            ),
           ),
-        ),
-      );
+        );
 
-      expect(telemetryEvents.single['wasGrounded'], isTrue);
-      expect(assessments.single.wasGrounded, isTrue);
-      expect(trajectoryHistoryStore.records.single.wasGrounded, isTrue);
-    });
+        expect(telemetryEvents.single['wasGrounded'], isTrue);
+        expect(assessments.single.wasGrounded, isTrue);
+        expect(trajectoryHistoryStore.records.single.wasGrounded, isTrue);
+      },
+    );
 
-    test('resolves source entry from hook entry id when sourceEntryId is absent',
-        () async {
-      hookRepository.hooks['hook_entry_only'] = CuriosityHook(
-        id: 'hook_entry_only',
-        entryId: 'source_entry',
-        createdAt: DateTime.utc(2026, 6, 12, 10),
-        primaryAnchor: 'work pressure',
-        hookType: CuriosityHookType.blocker,
-        dynamicPrompt: 'What shifted since yesterday?',
-      );
-      final interceptor = buildInterceptor();
+    test(
+      'resolves source entry from hook entry id when sourceEntryId is absent',
+      () async {
+        hookRepository.hooks['hook_entry_only'] = CuriosityHook(
+          id: 'hook_entry_only',
+          entryId: 'source_entry',
+          createdAt: DateTime.utc(2026, 6, 12, 10),
+          primaryAnchor: 'work pressure',
+          hookType: CuriosityHookType.blocker,
+          dynamicPrompt: 'What shifted since yesterday?',
+        );
+        final interceptor = buildInterceptor();
 
-      await interceptor.onEntrySaved(
-        entry(
-          id: 'response_entry',
-          parentHookId: 'hook_entry_only',
-          biomarkers: const CognitiveBiomarkers(
-            lexicalDiversity: 0.42,
-            cohesionDrift: 0.60,
-            emotionalVolatility: 0.40,
+        await interceptor.onEntrySaved(
+          entry(
+            id: 'response_entry',
+            parentHookId: 'hook_entry_only',
+            biomarkers: const CognitiveBiomarkers(
+              lexicalDiversity: 0.42,
+              cohesionDrift: 0.60,
+              emotionalVolatility: 0.40,
+            ),
           ),
-        ),
-      );
+        );
 
-      expect(assessments, hasLength(1));
-      expect(assessments.single.sourceEntryId, 'source_entry');
-    });
+        expect(assessments, hasLength(1));
+        expect(assessments.single.sourceEntryId, 'source_entry');
+      },
+    );
   });
 }
 

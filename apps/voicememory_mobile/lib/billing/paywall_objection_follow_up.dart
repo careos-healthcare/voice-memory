@@ -1,8 +1,7 @@
-import 'package:flutter/foundation.dart';
-
 import '../services/app_services.dart';
 import '../storage/mobile_prefs_store.dart';
 import 'paywall_rejection_reason.dart';
+import 'paywall_session_tracker.dart';
 
 /// Objection-specific reassurance copy for the next paywall visit, keyed by
 /// the stable rejection reason id captured last time. Calm and factual —
@@ -69,29 +68,26 @@ abstract class PaywallObjectionFollowUpCopy {
 ///   dismissal — so the same flow that captured the reason never renders it.
 /// - Never for Pro users, never without a stored reason, at most once per
 ///   app session.
-abstract class PaywallObjectionFollowUp {
-  PaywallObjectionFollowUp._();
+class PaywallObjectionFollowUp {
+  PaywallObjectionFollowUp({required PaywallSessionTracker sessionTracker})
+    : _sessionTracker = sessionTracker;
 
-  static bool shownThisSession = false;
+  final PaywallSessionTracker _sessionTracker;
 
-  static bool shouldShow({
+  bool shouldShow({
     required bool isPro,
     required PaywallRejectionReason? reason,
-  }) => !isPro && reason != null && !shownThisSession;
+  }) => !isPro && reason != null && !_sessionTracker.objectionFollowUpShown;
 
-  @visibleForTesting
-  static void resetSessionForTest() {
-    shownThisSession = false;
-  }
+  void markShown() => _sessionTracker.markShown();
 }
 
 /// Local persistence of the last paywall rejection — stable reason id,
 /// timestamp, and optional paywall source id only. No user content, no
 /// notes, no snippets; the payload is fixed-shape by construction.
 class PaywallObjectionStore {
-  PaywallObjectionStore({MobilePrefsStore? prefs, DateTime Function()? now})
-    : _prefs = prefs,
-      _now = now ?? DateTime.now;
+  PaywallObjectionStore({this._prefs, DateTime Function()? now})
+    : _now = now ?? DateTime.now;
 
   final MobilePrefsStore? _prefs;
   final DateTime Function() _now;
@@ -115,7 +111,7 @@ class PaywallObjectionStore {
       await prefs.writeMap(prefsKey, {
         'reason_id': reason.id,
         'created_at': _now().toIso8601String(),
-        if (source != null) 'source': source,
+        'source': ?source,
       });
     } catch (_) {
       // Persistence failures never surface — worst case the next paywall

@@ -42,8 +42,7 @@ abstract final class ArchiveDepthCopy {
       'Add one more moment when this pattern appears again.';
   static const nextStepTagUntagged =
       'Tag untagged moments to improve context evidence.';
-  static const nextStepReviewChanges =
-      'Review what changed since last time.';
+  static const nextStepReviewChanges = 'Review what changed since last time.';
 
   static String progressLabel({
     required int savedCount,
@@ -79,31 +78,32 @@ abstract final class ArchiveDepthCopy {
     yield progressLabel(savedCount: 1, usableCount: 1);
   }
 
-  static ({String label, String explanation}) levelCopy(ArchiveDepthLevel level) =>
-      switch (level) {
-        ArchiveDepthLevel.notStarted => (
-          label: notStartedLabel,
-          explanation: notStartedExplanation,
-        ),
-        ArchiveDepthLevel.firstEvidence => (
-          label: firstEvidenceLabel,
-          explanation: firstEvidenceExplanation,
-        ),
-        ArchiveDepthLevel.startingToCompare => (
-          label: startingToCompareLabel,
-          explanation: startingToCompareExplanation,
-        ),
-        ArchiveDepthLevel.cautiousBelief => (
-          label: cautiousBeliefLabel,
-          explanation: cautiousBeliefExplanation,
-        ),
-        ArchiveDepthLevel.weeklyReviewReady => (
-          label: weeklyReviewLabel,
-          explanation: weeklyReviewExplanation,
-        ),
-        ArchiveDepthLevel.longTermBuilding => (
-          label: longTermLabel,
-          explanation: longTermExplanation,
-        ),
-      };
+  static ({String label, String explanation}) levelCopy(
+    ArchiveDepthLevel level,
+  ) => switch (level) {
+    ArchiveDepthLevel.notStarted => (
+      label: notStartedLabel,
+      explanation: notStartedExplanation,
+    ),
+    ArchiveDepthLevel.firstEvidence => (
+      label: firstEvidenceLabel,
+      explanation: firstEvidenceExplanation,
+    ),
+    ArchiveDepthLevel.startingToCompare => (
+      label: startingToCompareLabel,
+      explanation: startingToCompareExplanation,
+    ),
+    ArchiveDepthLevel.cautiousBelief => (
+      label: cautiousBeliefLabel,
+      explanation: cautiousBeliefExplanation,
+    ),
+    ArchiveDepthLevel.weeklyReviewReady => (
+      label: weeklyReviewLabel,
+      explanation: weeklyReviewExplanation,
+    ),
+    ArchiveDepthLevel.longTermBuilding => (
+      label: longTermLabel,
+      explanation: longTermExplanation,
+    ),
+  };
 }

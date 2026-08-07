@@ -4,7 +4,7 @@ import 'package:voicememory_mobile/billing/archive_entitlement_reader.dart';
 import 'package:voicememory_mobile/features/pressure_retention/pressure_check_in_record.dart';
 import 'package:voicememory_mobile/features/pressure_retention/weekly_thread_review_engine.dart';
 import 'package:voicememory_mobile/features/pressure_retention/weekly_thread_review_model.dart';
-import 'package:voicememory_mobile/screens/pressure_insights_screen.dart';
+import 'package:archiveme_research/screens/pressure_insights_screen.dart';
 import 'package:voicememory_mobile/services/activation_funnel_analytics.dart';
 import 'package:voicememory_mobile/widgets/pressure_retention/value_accuracy_feedback_row.dart';
 import 'package:voicememory_mobile/widgets/pressure_retention/weekly_thread_review_card.dart';
@@ -547,7 +547,10 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.byKey(const Key('weekly_thread_review_card')), findsNothing);
-      expect(find.byKey(const Key('thread_return_evidence_card')), findsOneWidget);
+      expect(
+        find.byKey(const Key('thread_return_evidence_card')),
+        findsOneWidget,
+      );
       expect(
         find.byKey(const Key('archive_proof_counter_card')),
         findsOneWidget,

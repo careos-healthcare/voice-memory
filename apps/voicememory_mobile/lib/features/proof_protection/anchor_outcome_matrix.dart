@@ -56,12 +56,11 @@ abstract final class AnchorOutcomeMatrix {
     );
   }
 
-  static int paywallCtaTapTargetFor(int totalTesters) =>
-      _scaledTarget(
-        totalTesters: totalTesters,
-        numerator: paywallCtaTapNumerator,
-        denominator: scaleDenominator,
-      );
+  static int paywallCtaTapTargetFor(int totalTesters) => _scaledTarget(
+    totalTesters: totalTesters,
+    numerator: paywallCtaTapNumerator,
+    denominator: scaleDenominator,
+  );
 
   static int wouldPayTargetFor(int totalTesters) {
     if (totalTesters == 20) return wouldPayAt20;
@@ -116,8 +115,7 @@ abstract final class AnchorOutcomeMatrix {
     required int totalTesters,
     required int numerator,
     required int denominator,
-  }) =>
-      ((numerator * totalTesters) / denominator).ceil();
+  }) => ((numerator * totalTesters) / denominator).ceil();
 }
 
 enum AnchorOutcomeDecision {

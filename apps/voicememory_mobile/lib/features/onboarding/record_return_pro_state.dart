@@ -117,8 +117,7 @@ abstract class RecordReturnProGates {
     required bool resolved,
     required bool isPro,
     required bool hasArchiveProof,
-  }) =>
-      entryCount >= 2 && hasArchiveProof && !resolved && !isPro;
+  }) => entryCount >= 2 && hasArchiveProof && !resolved && !isPro;
 
   /// Archive value card: exactly one active entry.
   static bool showArchiveValue({required int entryCount}) => entryCount == 1;
@@ -180,7 +179,8 @@ abstract class RecordReturnProCopy {
   // E. Pro archive continuity.
   static const String proTitle = FirstThreeSessionCopy.proTitle;
   static const String proBody = FirstThreeSessionCopy.proBody;
-  static const String proContinuityLine = FirstThreeSessionCopy.proContinuityLine;
+  static const String proContinuityLine =
+      FirstThreeSessionCopy.proContinuityLine;
   static const String proCta = 'See Pro';
   static const String proSecondary = 'Not now';
 

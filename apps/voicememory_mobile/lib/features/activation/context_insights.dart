@@ -37,11 +37,11 @@ class ContextInsights {
   final List<ContextInsightRow> topContexts;
 
   factory ContextInsights.hidden() => const ContextInsights(
-        showCard: false,
-        title: VisibleArchiveProofCopy.contextInsightsTitle,
-        subtitle: VisibleArchiveProofCopy.contextInsightsSubtitle,
-        summaryLine: '',
-      );
+    showCard: false,
+    title: VisibleArchiveProofCopy.contextInsightsTitle,
+    subtitle: VisibleArchiveProofCopy.contextInsightsSubtitle,
+    summaryLine: '',
+  );
 }
 
 /// Builds deterministic context insight from tagged eligible moments.
@@ -51,9 +51,7 @@ abstract final class ContextInsightsEngine {
   static const _maxTopContexts = 3;
   static const _sparseTaggedCount = 2;
 
-  static ContextInsights build({
-    required List<JournalEntry> entries,
-  }) {
+  static ContextInsights build({required List<JournalEntry> entries}) {
     final counts = _tagCounts(entries);
     if (counts.isEmpty) {
       return ContextInsights.hidden();
@@ -111,20 +109,21 @@ abstract final class ContextInsightsEngine {
   }
 
   static List<ContextInsightRow> _topContexts(Map<String, int> counts) {
-    final rows = counts.entries
-        .map(
-          (entry) => ContextInsightRow(
-            tagId: entry.key,
-            label: CaptureContextTags.byId(entry.key)?.label ?? entry.key,
-            count: entry.value,
-          ),
-        )
-        .toList()
-      ..sort((a, b) {
-        final byCount = b.count.compareTo(a.count);
-        if (byCount != 0) return byCount;
-        return a.label.compareTo(b.label);
-      });
+    final rows =
+        counts.entries
+            .map(
+              (entry) => ContextInsightRow(
+                tagId: entry.key,
+                label: CaptureContextTags.byId(entry.key)?.label ?? entry.key,
+                count: entry.value,
+              ),
+            )
+            .toList()
+          ..sort((a, b) {
+            final byCount = b.count.compareTo(a.count);
+            if (byCount != 0) return byCount;
+            return a.label.compareTo(b.label);
+          });
     return rows.take(_maxTopContexts).toList();
   }
 

@@ -39,26 +39,22 @@ const _bannedWords = [
 const _privateSnippet = 'felt pressure at work before saying yes';
 
 JournalEntry _capacityEntry(String id) => JournalEntry(
-      id: id,
-      createdAt: DateTime(2026, 6, 12, 12),
-      transcript:
-          'I $_privateSnippet again and said yes with no capacity left.',
-      durationSeconds: 30,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 2,
-        recurringThemes: ['work'],
-        exactLanguagePattern: '',
-        concreteObservation: 'Work pressure showed up in this moment.',
-        repeatedSignal: '',
-      ),
-    );
+  id: id,
+  createdAt: DateTime(2026, 6, 12, 12),
+  transcript: 'I $_privateSnippet again and said yes with no capacity left.',
+  durationSeconds: 30,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 2,
+    recurringThemes: ['work'],
+    exactLanguagePattern: '',
+    concreteObservation: 'Work pressure showed up in this moment.',
+    repeatedSignal: '',
+  ),
+);
 
-CapacityDecisionOutcomeRecord _outcome(
-  String entryId,
-  String outcomeId,
-) =>
+CapacityDecisionOutcomeRecord _outcome(String entryId, String outcomeId) =>
     CapacityDecisionOutcomeRecord(
       sourceEntryId: entryId,
       outcomeId: outcomeId,
@@ -155,41 +151,44 @@ void main() {
       );
     });
 
-    test('archive home suppresses when pending pull reason/outcome/cost exists', () {
-      expect(
-        CapacityWeeklyReviewGates.showOnArchiveHome(
-          hasReview: true,
-          sampleMode: false,
-          pendingPullReason: true,
-          pendingDecisionOutcome: false,
-          pendingCostCheckin: false,
-          beforeYesPauseOnHome: false,
-        ),
-        isFalse,
-      );
-      expect(
-        CapacityWeeklyReviewGates.showOnArchiveHome(
-          hasReview: true,
-          sampleMode: false,
-          pendingPullReason: false,
-          pendingDecisionOutcome: true,
-          pendingCostCheckin: false,
-          beforeYesPauseOnHome: false,
-        ),
-        isFalse,
-      );
-      expect(
-        CapacityWeeklyReviewGates.showOnArchiveHome(
-          hasReview: true,
-          sampleMode: false,
-          pendingPullReason: false,
-          pendingDecisionOutcome: false,
-          pendingCostCheckin: true,
-          beforeYesPauseOnHome: false,
-        ),
-        isFalse,
-      );
-    });
+    test(
+      'archive home suppresses when pending pull reason/outcome/cost exists',
+      () {
+        expect(
+          CapacityWeeklyReviewGates.showOnArchiveHome(
+            hasReview: true,
+            sampleMode: false,
+            pendingPullReason: true,
+            pendingDecisionOutcome: false,
+            pendingCostCheckin: false,
+            beforeYesPauseOnHome: false,
+          ),
+          isFalse,
+        );
+        expect(
+          CapacityWeeklyReviewGates.showOnArchiveHome(
+            hasReview: true,
+            sampleMode: false,
+            pendingPullReason: false,
+            pendingDecisionOutcome: true,
+            pendingCostCheckin: false,
+            beforeYesPauseOnHome: false,
+          ),
+          isFalse,
+        );
+        expect(
+          CapacityWeeklyReviewGates.showOnArchiveHome(
+            hasReview: true,
+            sampleMode: false,
+            pendingPullReason: false,
+            pendingDecisionOutcome: false,
+            pendingCostCheckin: true,
+            beforeYesPauseOnHome: false,
+          ),
+          isFalse,
+        );
+      },
+    );
   });
 
   group('CapacityWeeklyReviewEngine', () {
@@ -254,11 +253,12 @@ void main() {
         entries: entries,
         capacityLoopActive: true,
         capacityCohortActive: false,
-        outcomeRecords: [
-          _outcome('real_0', CapacityDecisionOutcomeIds.saidNo),
-        ],
+        outcomeRecords: [_outcome('real_0', CapacityDecisionOutcomeIds.saidNo)],
       );
-      expect(result.whatChanged, CapacityWeeklyReviewCopy.patternMayHaveChanged);
+      expect(
+        result.whatChanged,
+        CapacityWeeklyReviewCopy.patternMayHaveChanged,
+      );
     });
 
     test('shows pattern repeated copy when all outcomes are said_yes', () {
@@ -284,7 +284,11 @@ void main() {
 
     test('does not expose transcript text', () {
       final result = engine.buildFromJournal(
-        entries: [_capacityEntry('real_0'), _capacityEntry('real_1'), _capacityEntry('real_2')],
+        entries: [
+          _capacityEntry('real_0'),
+          _capacityEntry('real_1'),
+          _capacityEntry('real_2'),
+        ],
         capacityLoopActive: true,
         capacityCohortActive: false,
         outcomeRecords: [

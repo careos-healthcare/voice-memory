@@ -12,7 +12,7 @@ abstract final class EvidenceAnchorAnalytics {
 
   @visibleForTesting
   static void Function(String event, Map<String, Object> properties)?
-      captureForTest;
+  captureForTest;
 
   static void trackExtraction({
     required EvidenceAnchorExtractionResult result,
@@ -32,10 +32,7 @@ abstract final class EvidenceAnchorAnalytics {
       return;
     }
 
-    empty(
-      source: result.source,
-      entryCount: result.entryCount,
-    );
+    empty(source: result.source, entryCount: result.entryCount);
   }
 
   static void seen({
@@ -73,10 +70,7 @@ abstract final class EvidenceAnchorAnalytics {
     }
   }
 
-  static void empty({
-    required String source,
-    required int entryCount,
-  }) {
+  static void empty({required String source, required int entryCount}) {
     final props = <String, Object>{
       'entry_count': entryCount,
       'source': source,

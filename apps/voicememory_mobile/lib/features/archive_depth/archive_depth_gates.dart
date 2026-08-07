@@ -8,6 +8,5 @@ abstract final class ArchiveDepthGates {
     required bool loaded,
     required int entryCount,
     required bool isPostSave,
-  }) =>
-      loaded && entryCount >= 2 && !isPostSave;
+  }) => loaded && entryCount >= 2 && !isPostSave;
 }

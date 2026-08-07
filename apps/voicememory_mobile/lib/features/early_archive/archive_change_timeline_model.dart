@@ -41,14 +41,14 @@ class ArchiveChangeTimeline {
   bool get hasContent => items.isNotEmpty;
 
   List<String> get visibleCopyBlocks => [
-        title,
-        subtitle,
-        for (final item in items) ...[
-          item.label,
-          item.body,
-          if (item.hasPhrase) item.phrase!,
-        ],
-      ];
+    title,
+    subtitle,
+    for (final item in items) ...[
+      item.label,
+      item.body,
+      if (item.hasPhrase) item.phrase!,
+    ],
+  ];
 
   static const expectedLabelOrder = [
     ArchiveChangeTimelineCopy.firstSeenLabel,

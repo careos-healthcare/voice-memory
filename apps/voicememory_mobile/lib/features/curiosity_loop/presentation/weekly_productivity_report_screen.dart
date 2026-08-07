@@ -40,9 +40,9 @@ class WeeklyProductivityReportScreen extends StatefulWidget {
     this.initialTrajectoryPoints = const [],
     this.exporter,
     this.markdownCopyHandler,
-  })  : engine = null,
-        initialReport = report,
-        trajectoryHistoryStore = null;
+  }) : engine = null,
+       initialReport = report,
+       trajectoryHistoryStore = null;
 
   final ProductivityReportEngine? engine;
   final WeeklyProductivityReport? initialReport;
@@ -299,9 +299,9 @@ class _HeroHeader extends StatelessWidget {
         children: [
           Text(
             WeeklyProductivityReportCopy.heroEyebrow,
-            style: ArchiveMobileTypography.cardLabel(context).copyWith(
-              color: AppColors.textSecondary,
-            ),
+            style: ArchiveMobileTypography.cardLabel(
+              context,
+            ).copyWith(color: AppColors.textSecondary),
           ),
           const SizedBox(height: AppSpacing.xs),
           Text(
@@ -367,10 +367,7 @@ class _ReactionBreakdownCard extends StatelessWidget {
 }
 
 class _ReactionBreakdownRow extends StatelessWidget {
-  const _ReactionBreakdownRow({
-    required this.reaction,
-    required this.share,
-  });
+  const _ReactionBreakdownRow({required this.reaction, required this.share});
 
   final YesterdaysSnapshotReaction reaction;
   final double share;
@@ -413,16 +410,18 @@ class _ReactionBreakdownRow extends StatelessWidget {
               Expanded(
                 child: Text(
                   reaction.label,
-                  key: Key('weekly_productivity_report_reaction_${reaction.name}'),
+                  key: Key(
+                    'weekly_productivity_report_reaction_${reaction.name}',
+                  ),
                   style: ArchiveMobileTypography.cardLabel(context),
                 ),
               ),
               Text(
                 percentLabel,
                 key: Key('weekly_productivity_report_percent_${reaction.name}'),
-                style: ArchiveMobileTypography.cardLabel(context).copyWith(
-                  color: AppColors.textSecondary,
-                ),
+                style: ArchiveMobileTypography.cardLabel(
+                  context,
+                ).copyWith(color: AppColors.textSecondary),
               ),
             ],
           ),
@@ -477,7 +476,9 @@ class _AnchorSection extends StatelessWidget {
                 child: Text(
                   title,
                   key: Key('weekly_productivity_report_section_$title'),
-                  style: ArchiveMobileTypography.responsiveSectionTitle(context),
+                  style: ArchiveMobileTypography.responsiveSectionTitle(
+                    context,
+                  ),
                 ),
               ),
             ],

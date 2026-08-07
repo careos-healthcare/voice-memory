@@ -11,8 +11,6 @@ import '../archive_packs/cross_pack_confirmation.dart';
 import 'archive_retrieval_policy.dart';
 import 'archive_retrieval_score.dart';
 import 'memory_authority_frame.dart';
-import 'cross_thread_confirmation.dart';
-import 'memory_authority_framing_engine.dart';
 import 'memory_connection_rules.dart';
 import 'memory_control_model.dart';
 import 'wrong_thread_feedback.dart';

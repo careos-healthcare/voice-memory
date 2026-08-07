@@ -17,18 +17,23 @@ abstract final class FirstProofActionLoopEngine {
     required List<JournalEntry> entries,
     required FirstProofPayoff payoff,
   }) {
-    final patternKey = ArchiveExclusionEngine.activePatternKeyForEntries(entries);
+    final patternKey = ArchiveExclusionEngine.activePatternKeyForEntries(
+      entries,
+    );
     final patternPrompt = PatternNameEngine.buildPrompt(entries: entries);
     final latestEntry = entries.isNotEmpty ? entries.last : null;
-    final canCorrectTranscript = latestEntry != null &&
+    final canCorrectTranscript =
+        latestEntry != null &&
         TranscriptCorrectionGate.entryAllowsCorrection(latestEntry);
     final canRemoveFromPattern =
         patternKey != null && latestEntry != null && latestEntry.id.isNotEmpty;
     final canRenamePattern =
-        patternPrompt != null || (patternKey != null && payoff.groundedPhrase.isNotEmpty);
+        patternPrompt != null ||
+        (patternKey != null && payoff.groundedPhrase.isNotEmpty);
     final canShowPatternDetails = payoff.canShowPatternDetail;
 
-    final canShowPatternCorrection = answer == FirstProofTruthAnswer.no &&
+    final canShowPatternCorrection =
+        answer == FirstProofTruthAnswer.no &&
         PatternCorrectionGates.shouldShowForFirstProofNo(
           entries: entries,
           payoff: payoff,
@@ -36,35 +41,35 @@ abstract final class FirstProofActionLoopEngine {
 
     return switch (answer) {
       FirstProofTruthAnswer.yes => FirstProofActionLoopContent(
-          answer: answer,
-          title: FirstProofActionLoopCopy.yesTitle,
-          actions: [
-            FirstProofActionType.watchThisNext,
-            if (canShowPatternDetails) FirstProofActionType.viewPatternDetails,
-          ],
-          canShowPatternDetails: canShowPatternDetails,
-        ),
+        answer: answer,
+        title: FirstProofActionLoopCopy.yesTitle,
+        actions: [
+          FirstProofActionType.watchThisNext,
+          if (canShowPatternDetails) FirstProofActionType.viewPatternDetails,
+        ],
+        canShowPatternDetails: canShowPatternDetails,
+      ),
       FirstProofTruthAnswer.sortOf => FirstProofActionLoopContent(
-          answer: answer,
-          title: FirstProofActionLoopCopy.sortOfTitle,
-          actions: [
-            if (canRenamePattern) FirstProofActionType.renamePattern,
-            FirstProofActionType.keepRecording,
-          ],
-          canRenamePattern: canRenamePattern,
-        ),
+        answer: answer,
+        title: FirstProofActionLoopCopy.sortOfTitle,
+        actions: [
+          if (canRenamePattern) FirstProofActionType.renamePattern,
+          FirstProofActionType.keepRecording,
+        ],
+        canRenamePattern: canRenamePattern,
+      ),
       FirstProofTruthAnswer.no => FirstProofActionLoopContent(
-          answer: answer,
-          title: FirstProofActionLoopCopy.noTitle,
-          actions: [
-            if (canCorrectTranscript) FirstProofActionType.correctTranscript,
-            if (canRemoveFromPattern) FirstProofActionType.removeFromPattern,
-            FirstProofActionType.keepRecording,
-          ],
-          canCorrectTranscript: canCorrectTranscript,
-          canRemoveFromPattern: canRemoveFromPattern,
-          canShowPatternCorrection: canShowPatternCorrection,
-        ),
+        answer: answer,
+        title: FirstProofActionLoopCopy.noTitle,
+        actions: [
+          if (canCorrectTranscript) FirstProofActionType.correctTranscript,
+          if (canRemoveFromPattern) FirstProofActionType.removeFromPattern,
+          FirstProofActionType.keepRecording,
+        ],
+        canCorrectTranscript: canCorrectTranscript,
+        canRemoveFromPattern: canRemoveFromPattern,
+        canShowPatternCorrection: canShowPatternCorrection,
+      ),
     };
   }
 }

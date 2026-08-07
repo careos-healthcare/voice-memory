@@ -29,7 +29,10 @@ What Changed: The repeat showed up around work again with similar wording.
         parsed.connectionText,
         'This may connect to saying yes before checking capacity.',
       );
-      expect(parsed.pastQuote, 'I said yes again before I checked my calendar.');
+      expect(
+        parsed.pastQuote,
+        'I said yes again before I checked my calendar.',
+      );
       expect(parsed.currentQuote, 'I said yes at work without thinking.');
       expect(
         parsed.whatChangedText,
@@ -54,10 +57,7 @@ What Changed: The repeat showed up around work again with similar wording.
         parser.parse('Label: Not enough evidence').state,
         PatternState.notEnoughEvidence,
       );
-      expect(
-        parser.parse('Label: Softened').state,
-        PatternState.softened,
-      );
+      expect(parser.parse('Label: Softened').state, PatternState.softened);
     });
 
     test('uses cautious fallbacks when sections are missing', () {
@@ -65,7 +65,10 @@ What Changed: The repeat showed up around work again with similar wording.
 
       expect(parsed.state, PatternState.notEnoughEvidence);
       expect(parsed.connectionText, 'A repeating thread may be forming.');
-      expect(parsed.whatChangedText, 'ArchiveMe needs more moments to be sure.');
+      expect(
+        parsed.whatChangedText,
+        'ArchiveMe needs more moments to be sure.',
+      );
     });
   });
 
@@ -87,8 +90,10 @@ What Changed: The repeat showed up around work again with similar wording.
       expect(result.currentQuote, 'Too many chores today');
     });
 
-    test('should strip accidental markdown backticks and code fence shells', () {
-      const blockyInput = '''
+    test(
+      'should strip accidental markdown backticks and code fence shells',
+      () {
+        const blockyInput = '''
       ```markdown
       LABEL: Softened
       CONNECTION: Thought shifting away from stress.
@@ -99,16 +104,18 @@ What Changed: The repeat showed up around work again with similar wording.
       ```
       ''';
 
-      final result = parser.parse(blockyInput);
+        final result = parser.parse(blockyInput);
 
-      expect(result.state, PatternState.softened);
-      expect(result.pastQuote, 'I hate commuting');
-      expect(result.currentQuote, 'The train ride was peaceful');
-    });
+        expect(result.state, PatternState.softened);
+        expect(result.pastQuote, 'I hate commuting');
+        expect(result.currentQuote, 'The train ride was peaceful');
+      },
+    );
 
-    test('should capture long multi-line paragraphs in the What Changed block',
-        () {
-      const longInput = '''
+    test(
+      'should capture long multi-line paragraphs in the What Changed block',
+      () {
+        const longInput = '''
       Label: Changed
       Connection: Distinct focus shift detected.
       Evidence:
@@ -120,10 +127,14 @@ What Changed: The repeat showed up around work again with similar wording.
       Third line finishing out the block.
       ''';
 
-      final result = parser.parse(longInput);
+        final result = parser.parse(longInput);
 
-      expect(result.whatChangedText, contains('First line'));
-      expect(result.whatChangedText, contains('Third line finishing out the block.'));
-    });
+        expect(result.whatChangedText, contains('First line'));
+        expect(
+          result.whatChangedText,
+          contains('Third line finishing out the block.'),
+        );
+      },
+    );
   });
 }

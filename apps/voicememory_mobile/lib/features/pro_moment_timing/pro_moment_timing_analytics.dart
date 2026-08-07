@@ -12,7 +12,7 @@ abstract final class ProMomentTimingAnalytics {
 
   @visibleForTesting
   static void Function(String event, Map<String, Object> properties)?
-      captureForTest;
+  captureForTest;
 
   static void allowed({
     required String source,
@@ -85,8 +85,8 @@ abstract final class ProMomentTimingAnalytics {
       'source': source,
       'surface': surface,
       'entry_count': entryCount,
-      if (reason != null) 'reason': reason,
-      if (blockedReason != null) 'blocked_reason': blockedReason,
+      'reason': ?reason,
+      'blocked_reason': ?blockedReason,
       'has_timeline_proof': hasTimelineProof ? 1 : 0,
       'feedback_state': feedbackState,
     };

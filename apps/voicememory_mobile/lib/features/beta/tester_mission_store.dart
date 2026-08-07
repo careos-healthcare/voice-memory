@@ -63,12 +63,14 @@ class TesterMissionStore {
         '${now.day.toString().padLeft(2, '0')}';
   }
 
-  @visibleForTesting
-  static Future<void> resetForTest() async {
+  static Future<void> resetPersistedState() async {
     _sessionDismissed = false;
     _dismissedUntilDay = null;
     _loaded = false;
     if (!AppServices.isInitialized) return;
     await AppServices.instance.prefs.writeMap(prefsKey, {});
   }
+
+  @visibleForTesting
+  static Future<void> resetForTest() => resetPersistedState();
 }

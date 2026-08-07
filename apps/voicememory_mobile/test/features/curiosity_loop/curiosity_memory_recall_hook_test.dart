@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/features/curiosity_loop/domain/models/cognitive_biomarkers.dart';
 import 'package:voicememory_mobile/features/curiosity_loop/infrastructure/interceptors/curiosity_loop_trigger_interceptor.dart';
@@ -15,6 +13,7 @@ import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
 import 'package:voicememory_mobile/storage/mobile_prefs_store.dart';
+import '../../support/test_storage_sandbox.dart';
 
 JournalEntry _entry({
   required String id,
@@ -61,7 +60,8 @@ List<JournalEntry> _confirmedRepeatEntries(int count) {
   );
 }
 
-class _FakeCuriosityNotificationScheduler extends CuriosityNotificationScheduler {
+class _FakeCuriosityNotificationScheduler
+    extends CuriosityNotificationScheduler {
   _FakeCuriosityNotificationScheduler();
 
   int initializeCalls = 0;
@@ -81,7 +81,8 @@ class _FakeCuriosityNotificationScheduler extends CuriosityNotificationScheduler
   @override
   Future<bool> scheduleCuriosityNotification(
     CuriosityHook hook, {
-    Duration scheduleAfter = CuriosityNotificationScheduler.defaultScheduleAfter,
+    Duration scheduleAfter =
+        CuriosityNotificationScheduler.defaultScheduleAfter,
     String? promptBody,
   }) async {
     scheduleCalls++;
@@ -121,15 +122,15 @@ class _FakePromptGenerator implements CuriosityPromptGenerator {
 }
 
 void main() {
-  late Directory tempDir;
+  late TestStorageSandbox sandbox;
   late MobilePrefsStore prefs;
   late LocalCuriosityLoopRepository curiosityLoopRepository;
 
   setUp(() async {
-    tempDir = Directory.systemTemp.createTempSync('vm_memory_recall_hook_');
+    sandbox = TestStorageSandbox.create();
     await AppServices.resetForTest(
-      journalPath: '${tempDir.path}/journal.json',
-      prefsPath: '${tempDir.path}/prefs.json',
+      journalPath: sandbox.journalPath,
+      prefsPath: sandbox.prefsPath,
       skipRevenueCat: true,
     );
     prefs = AppServices.instance.prefs;
@@ -140,6 +141,7 @@ void main() {
     CuriosityNotificationScheduler.resetForTest();
   });
 
+  tearDown(() => sandbox.dispose());
   group('CuriosityMemoryRecallHookEnricher', () {
     test('applies pending seed to a later hook and clears it', () async {
       final enricher = CuriosityMemoryRecallHookEnricher(
@@ -157,14 +159,18 @@ void main() {
         createdAt: DateTime.utc(2026, 6, 12, 12),
         primaryAnchor: 'said yes again',
         hookType: CuriosityHookType.blocker,
-        dynamicPrompt: 'Before "said yes again" showed up again, what got in the way?',
+        dynamicPrompt:
+            'Before "said yes again" showed up again, what got in the way?',
       );
 
       final enriched = await enricher.applyPendingSeed(hook);
 
       expect(enriched.sourceEntryId, 'repeat_0');
       expect(enriched.isMemoryRecallCheck, isTrue);
-      expect(await curiosityLoopRepository.fetchPendingMemoryRecallSeed(), isNull);
+      expect(
+        await curiosityLoopRepository.fetchPendingMemoryRecallSeed(),
+        isNull,
+      );
     });
 
     test('keeps pending seed when hook targets the same entry', () async {
@@ -182,7 +188,8 @@ void main() {
         createdAt: DateTime.utc(2026, 6, 12, 12),
         primaryAnchor: 'said yes again',
         hookType: CuriosityHookType.blocker,
-        dynamicPrompt: 'Before "said yes again" showed up again, what got in the way?',
+        dynamicPrompt:
+            'Before "said yes again" showed up again, what got in the way?',
       );
 
       final enriched = await enricher.applyPendingSeed(hook);
@@ -230,41 +237,47 @@ void main() {
   });
 
   group('CuriosityHookCoordinator', () {
-    test('applies pending memory recall seed to the next generated hook', () async {
-      final entries = _confirmedRepeatEntries(3);
-      await curiosityLoopRepository.seedMemoryRecallCheck(
-        sourceEntryId: entries.first.id,
-        seededAt: DateTime.utc(2026, 6, 12, 10),
-      );
+    test(
+      'applies pending memory recall seed to the next generated hook',
+      () async {
+        final entries = _confirmedRepeatEntries(3);
+        await curiosityLoopRepository.seedMemoryRecallCheck(
+          sourceEntryId: entries.first.id,
+          seededAt: DateTime.utc(2026, 6, 12, 10),
+        );
 
-      final scheduler = _FakeCuriosityNotificationScheduler();
-      final coordinator = CuriosityHookCoordinator(
-        scheduler: scheduler,
-        memoryRecallEnricher: CuriosityMemoryRecallHookEnricher(
-          repository: curiosityLoopRepository,
-        ),
-        journalStore: _FakeJournalStore({
-          for (final entry in entries) entry.id: entry,
-        }),
-        promptGenerator: const DefaultCuriosityPromptGenerator(),
-      );
+        final scheduler = _FakeCuriosityNotificationScheduler();
+        final coordinator = CuriosityHookCoordinator(
+          scheduler: scheduler,
+          memoryRecallEnricher: CuriosityMemoryRecallHookEnricher(
+            repository: curiosityLoopRepository,
+          ),
+          journalStore: _FakeJournalStore({
+            for (final entry in entries) entry.id: entry,
+          }),
+          promptGenerator: const DefaultCuriosityPromptGenerator(),
+        );
 
-      final hook = await coordinator.persistAfterVoiceSave(
-        savedEntry: entries.last,
-        allEntries: entries,
-      );
+        final hook = await coordinator.persistAfterVoiceSave(
+          savedEntry: entries.last,
+          allEntries: entries,
+        );
 
-      expect(hook, isNotNull);
-      expect(hook!.entryId, entries.last.id);
-      expect(hook.sourceEntryId, entries.first.id);
-      expect(hook.isMemoryRecallCheck, isTrue);
+        expect(hook, isNotNull);
+        expect(hook!.entryId, entries.last.id);
+        expect(hook.sourceEntryId, entries.first.id);
+        expect(hook.isMemoryRecallCheck, isTrue);
 
-      final stored = await LocalCuriosityHookRepository.instance()
-          .fetchLatestUnconsumed();
-      expect(stored?.sourceEntryId, entries.first.id);
-      expect(stored?.isMemoryRecallCheck, isTrue);
-      expect(await curiosityLoopRepository.fetchPendingMemoryRecallSeed(), isNull);
-    });
+        final stored = await LocalCuriosityHookRepository.instance()
+            .fetchLatestUnconsumed();
+        expect(stored?.sourceEntryId, entries.first.id);
+        expect(stored?.isMemoryRecallCheck, isTrue);
+        expect(
+          await curiosityLoopRepository.fetchPendingMemoryRecallSeed(),
+          isNull,
+        );
+      },
+    );
 
     test('looks up source entry and persists synthesized prompt', () async {
       final entries = _confirmedRepeatEntries(3);

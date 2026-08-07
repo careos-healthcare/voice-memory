@@ -34,14 +34,13 @@ abstract final class ProAccessEnforcementAudit {
 
   static ProAccessEnforcementAuditReport report(
     ProAccessEnforcementAuditResult result,
-  ) =>
-      ProAccessEnforcementAuditReport(
-        headline: ProAccessEnforcementAuditCopy.headline,
-        body: ProAccessEnforcementAuditCopy.body,
-        orderLine: ProAccessEnforcementAuditCopy.orderLine,
-        guardrail: ProAccessEnforcementAuditCopy.guardrail,
-        result: result,
-      );
+  ) => ProAccessEnforcementAuditReport(
+    headline: ProAccessEnforcementAuditCopy.headline,
+    body: ProAccessEnforcementAuditCopy.body,
+    orderLine: ProAccessEnforcementAuditCopy.orderLine,
+    guardrail: ProAccessEnforcementAuditCopy.guardrail,
+    result: result,
+  );
 
   static ProAccessEnforcementAuditInput fromStoreReadinessInput(
     StoreReadinessSingleSourceInput input, {
@@ -49,35 +48,34 @@ abstract final class ProAccessEnforcementAudit {
     bool localCachePreventsStalePro = true,
     bool serverSideEntitlementCheckPresent = true,
     bool privacyLockIndependentOfPro = true,
-  }) =>
-      ProAccessEnforcementAuditInput(
-        revenueCatConfigured:
-            input.revenueCatApiKeyProvided && input.revenueCatConfigured,
-        proEntitlementReadable: input.proStateCanBeRead &&
-            input.proEntitlementConfigured &&
-            input.productsLoaded,
-        restorePurchasesReachable: input.restorePurchasesReachable,
-        restoreNoCrashVerified: input.restoreNoCrashVerified,
-        localCachePreventsStalePro: localCachePreventsStalePro,
-        entitlementPersistsAfterRestart: input.entitlementPersistsAfterRestart,
-        revenueCatLinkedToAccount: revenueCatLinkedToAccount,
-        serverSideEntitlementCheckPresent: serverSideEntitlementCheckPresent,
-        privacyLockIndependentOfPro: privacyLockIndependentOfPro,
-      );
+  }) => ProAccessEnforcementAuditInput(
+    revenueCatConfigured:
+        input.revenueCatApiKeyProvided && input.revenueCatConfigured,
+    proEntitlementReadable:
+        input.proStateCanBeRead &&
+        input.proEntitlementConfigured &&
+        input.productsLoaded,
+    restorePurchasesReachable: input.restorePurchasesReachable,
+    restoreNoCrashVerified: input.restoreNoCrashVerified,
+    localCachePreventsStalePro: localCachePreventsStalePro,
+    entitlementPersistsAfterRestart: input.entitlementPersistsAfterRestart,
+    revenueCatLinkedToAccount: revenueCatLinkedToAccount,
+    serverSideEntitlementCheckPresent: serverSideEntitlementCheckPresent,
+    privacyLockIndependentOfPro: privacyLockIndependentOfPro,
+  );
 
   static List<ProAccessEnforcementAuditItem> _buildItems(
     ProAccessEnforcementAuditInput input,
-  ) =>
-      [
-        _revenueCatEntitlementItem(input),
-        _restoreEntitlementItem(input),
-        _localCacheItem(input),
-        _reinstallBehaviorItem(input),
-        _accountIdentityItem(input),
-        _deviceSharingItem(input),
-        _serverSideEntitlementItem(input),
-        _privacyLockSeparateItem(input),
-      ];
+  ) => [
+    _revenueCatEntitlementItem(input),
+    _restoreEntitlementItem(input),
+    _localCacheItem(input),
+    _reinstallBehaviorItem(input),
+    _accountIdentityItem(input),
+    _deviceSharingItem(input),
+    _serverSideEntitlementItem(input),
+    _privacyLockSeparateItem(input),
+  ];
 
   static ProAccessEnforcementAuditItem _revenueCatEntitlementItem(
     ProAccessEnforcementAuditInput input,
@@ -85,7 +83,8 @@ abstract final class ProAccessEnforcementAudit {
     if (!input.revenueCatConfigured) {
       return _item(
         id: ProAccessEnforcementAuditItemId.revenueCatEntitlement,
-        classification: ProAccessEnforcementClassification.acceptableForTestFlight,
+        classification:
+            ProAccessEnforcementClassification.acceptableForTestFlight,
         detailLabel: ProAccessEnforcementAuditCopy.detailNotApplicableYet,
       );
     }
@@ -109,7 +108,8 @@ abstract final class ProAccessEnforcementAudit {
     if (!input.revenueCatConfigured) {
       return _item(
         id: ProAccessEnforcementAuditItemId.restoreEntitlement,
-        classification: ProAccessEnforcementClassification.acceptableForTestFlight,
+        classification:
+            ProAccessEnforcementClassification.acceptableForTestFlight,
         detailLabel: ProAccessEnforcementAuditCopy.detailNotApplicableYet,
       );
     }
@@ -148,7 +148,8 @@ abstract final class ProAccessEnforcementAudit {
     }
     return _item(
       id: ProAccessEnforcementAuditItemId.localCache,
-      classification: ProAccessEnforcementClassification.acceptableForTestFlight,
+      classification:
+          ProAccessEnforcementClassification.acceptableForTestFlight,
       detailLabel: ProAccessEnforcementAuditCopy.detailDocumentedGap,
     );
   }
@@ -164,8 +165,8 @@ abstract final class ProAccessEnforcementAudit {
       );
     }
 
-    final restoreVerified = input.restorePurchasesReachable &&
-        input.restoreNoCrashVerified;
+    final restoreVerified =
+        input.restorePurchasesReachable && input.restoreNoCrashVerified;
     if (input.revenueCatConfigured && restoreVerified) {
       return _item(
         id: ProAccessEnforcementAuditItemId.reinstallBehavior,
@@ -206,16 +207,15 @@ abstract final class ProAccessEnforcementAudit {
 
   static ProAccessEnforcementAuditItem _deviceSharingItem(
     ProAccessEnforcementAuditInput input,
-  ) =>
-      _item(
-        id: ProAccessEnforcementAuditItemId.deviceSharing,
-        classification: input.deviceSharingPrevented
-            ? ProAccessEnforcementClassification.enforcedLocally
-            : ProAccessEnforcementClassification.notEnforcedYet,
-        detailLabel: input.deviceSharingPrevented
-            ? ProAccessEnforcementAuditCopy.detailVerified
-            : ProAccessEnforcementAuditCopy.detailDocumentedGap,
-      );
+  ) => _item(
+    id: ProAccessEnforcementAuditItemId.deviceSharing,
+    classification: input.deviceSharingPrevented
+        ? ProAccessEnforcementClassification.enforcedLocally
+        : ProAccessEnforcementClassification.notEnforcedYet,
+    detailLabel: input.deviceSharingPrevented
+        ? ProAccessEnforcementAuditCopy.detailVerified
+        : ProAccessEnforcementAuditCopy.detailDocumentedGap,
+  );
 
   static ProAccessEnforcementAuditItem _serverSideEntitlementItem(
     ProAccessEnforcementAuditInput input,
@@ -257,15 +257,15 @@ abstract final class ProAccessEnforcementAudit {
     required ProAccessEnforcementAuditItemId id,
     required ProAccessEnforcementClassification classification,
     required String detailLabel,
-  }) =>
-      ProAccessEnforcementAuditItem(
-        id: id,
-        label: ProAccessEnforcementAuditCopy.labelFor(id),
-        classification: classification,
-        classificationLabel:
-            ProAccessEnforcementAuditCopy.classificationLabel(classification),
-        detailLabel: detailLabel,
-      );
+  }) => ProAccessEnforcementAuditItem(
+    id: id,
+    label: ProAccessEnforcementAuditCopy.labelFor(id),
+    classification: classification,
+    classificationLabel: ProAccessEnforcementAuditCopy.classificationLabel(
+      classification,
+    ),
+    detailLabel: detailLabel,
+  );
 
   static ProAccessEnforcementAuditDecision _resolveDecision(
     List<ProAccessEnforcementAuditItem> items,

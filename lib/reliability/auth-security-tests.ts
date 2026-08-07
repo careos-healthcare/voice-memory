@@ -204,5 +204,25 @@ export async function runAuthSecurityTests(): Promise<{ failures: string[] }> {
     assert.ok(env.includes("isAuthSecretStrong"));
   });
 
+  await check("production postgres TLS verifies certificates", () => {
+    const db = readSource("lib/server/db.ts");
+    assert.ok(db.includes("rejectUnauthorized: true"), "production must verify TLS");
+    assert.ok(
+      db.includes("DATABASE_SSL_REJECT_UNAUTHORIZED=false is forbidden in production"),
+      "insecure TLS override must fail production validation",
+    );
+    assert.ok(db.includes("DATABASE_SSL_CA_BUNDLE"), "optional CA bundle must be supported");
+  });
+
+  await check("encrypted sync push rejects oversized bodies and validates envelopes", () => {
+    const route = readSource("app/api/sync/push/route.ts");
+    assert.ok(route.includes("MAX_SYNC_PUSH_BLOBS"));
+    assert.ok(route.includes("MAX_SYNC_PUSH_BODY_BYTES"));
+    assert.ok(route.includes("MAX_SYNC_BLOB_BYTES"));
+    assert.ok(route.includes("INVALID_REMOTE_TIMESTAMP"));
+    assert.ok(route.includes("UNSUPPORTED_ENCRYPTION_VERSION"));
+    assert.ok(!route.includes("console.log"), "sync push must not log envelope content");
+  });
+
   return { failures };
 }

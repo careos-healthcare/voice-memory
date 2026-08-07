@@ -7,10 +7,7 @@ import 'context_aware_archive_copy.dart';
 import 'next_moment_prompt.dart';
 
 /// Navigation action for archive health action plan CTAs.
-enum ArchiveHealthActionPlanCta {
-  addMoment,
-  viewEvidence,
-}
+enum ArchiveHealthActionPlanCta { addMoment, viewEvidence }
 
 /// Local-only action plan derived from archive health status.
 class ArchiveHealthActionPlan {
@@ -39,13 +36,13 @@ class ArchiveHealthActionPlan {
   final String? contextAwareDetailLine;
 
   factory ArchiveHealthActionPlan.hidden() => const ArchiveHealthActionPlan(
-        showCard: false,
-        title: VisibleArchiveProofCopy.archiveHealthActionPlanTitle,
-        subtitle: VisibleArchiveProofCopy.archiveHealthActionPlanSubtitle,
-        actionItems: [],
-        primaryCta: VisibleArchiveProofCopy.firstSavePrimaryCta,
-        primaryAction: ArchiveHealthActionPlanCta.addMoment,
-      );
+    showCard: false,
+    title: VisibleArchiveProofCopy.archiveHealthActionPlanTitle,
+    subtitle: VisibleArchiveProofCopy.archiveHealthActionPlanSubtitle,
+    actionItems: [],
+    primaryCta: VisibleArchiveProofCopy.firstSavePrimaryCta,
+    primaryAction: ArchiveHealthActionPlanCta.addMoment,
+  );
 }
 
 /// Builds a compact action plan from archive health and local feedback.
@@ -54,9 +51,7 @@ abstract final class ArchiveHealthActionPlanEngine {
 
   static const _maxActionItems = 3;
 
-  static ArchiveHealthActionPlan build({
-    required List<JournalEntry> entries,
-  }) {
+  static ArchiveHealthActionPlan build({required List<JournalEntry> entries}) {
     final health = ArchiveHealthScoreEngine.build(entries: entries);
     if (!health.showCard) {
       return ArchiveHealthActionPlan.hidden();
@@ -77,7 +72,9 @@ abstract final class ArchiveHealthActionPlanEngine {
       items.add(VisibleArchiveProofCopy.archiveHealthActionCorrection);
     }
 
-    final actionItems = _dedupePreserveOrder(items).take(_maxActionItems).toList();
+    final actionItems = _dedupePreserveOrder(
+      items,
+    ).take(_maxActionItems).toList();
     final nextPrompt = NextMomentPromptEngine.build(entries: entries);
     final ctas = _ctasFor(
       usableCount: health.usableMomentCount,
@@ -150,7 +147,8 @@ abstract final class ArchiveHealthActionPlanEngine {
     required int usableCount,
     required NextMomentPrompt? nextPrompt,
   }) {
-    final primary = nextPrompt?.primaryCta ??
+    final primary =
+        nextPrompt?.primaryCta ??
         VisibleArchiveProofCopy.archiveHealthActionPlanPrimaryCta;
     if (usableCount >= 4) {
       return (

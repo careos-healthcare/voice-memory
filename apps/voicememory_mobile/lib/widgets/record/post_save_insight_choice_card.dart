@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
-import 'package:go_router/go_router.dart';
 
 import '../../design/archive_mobile_typography.dart';
 import '../../design/archive_responsive_layout.dart';
@@ -8,7 +7,6 @@ import '../../features/acquisition/audience_wedge_model.dart';
 import '../../features/loop_mode/loop_mode_coordinator.dart';
 import '../../features/loop_mode/loop_mode_engine.dart';
 import '../../features/loop_mode/loop_mode_model.dart';
-import '../../product/loop_mode_copy.dart';
 import '../../features/first_session/first_session_pattern_model.dart';
 import '../../features/quality/first_insight_specificity_store.dart';
 import '../../features/signal_archive/signal_archive_navigation.dart';

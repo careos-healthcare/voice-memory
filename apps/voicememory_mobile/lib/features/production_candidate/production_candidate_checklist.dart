@@ -102,27 +102,26 @@ class ProductionCandidateChecklist {
       testFlightBuildUploaded;
 
   bool _valueFor(_ChecklistItem item) => switch (item) {
-        _ChecklistItem.betaResultsPassed => betaResultsPassed,
-        _ChecklistItem.proofProtectionBaselineActive =>
-          proofProtectionBaselineActive,
-        _ChecklistItem.usefulProofStable => usefulProofStable,
-        _ChecklistItem.tooVagueNotRelevantLow => tooVagueNotRelevantLow,
-        _ChecklistItem.firstSessionTargetMet => firstSessionTargetMet,
-        _ChecklistItem.evidenceTrailClearTargetMet =>
-          evidenceTrailClearTargetMet,
-        _ChecklistItem.proUnderstandingTargetMet => proUnderstandingTargetMet,
-        _ChecklistItem.pricingSignalAcceptable => pricingSignalAcceptable,
-        _ChecklistItem.restorePurchasesVerified => restorePurchasesVerified,
-        _ChecklistItem.revenueCatProductsVerified => revenueCatProductsVerified,
-        _ChecklistItem.appStoreSupportUrlReady => appStoreSupportUrlReady,
-        _ChecklistItem.privacyPolicyReady => privacyPolicyReady,
-        _ChecklistItem.appStoreScreenshotsReady => appStoreScreenshotsReady,
-        _ChecklistItem.appStoreMetadataReady => appStoreMetadataReady,
-        _ChecklistItem.productionSecretsRotated => productionSecretsRotated,
-        _ChecklistItem.physicalDeviceSmokeTestPassed =>
-          physicalDeviceSmokeTestPassed,
-        _ChecklistItem.testFlightBuildUploaded => testFlightBuildUploaded,
-      };
+    _ChecklistItem.betaResultsPassed => betaResultsPassed,
+    _ChecklistItem.proofProtectionBaselineActive =>
+      proofProtectionBaselineActive,
+    _ChecklistItem.usefulProofStable => usefulProofStable,
+    _ChecklistItem.tooVagueNotRelevantLow => tooVagueNotRelevantLow,
+    _ChecklistItem.firstSessionTargetMet => firstSessionTargetMet,
+    _ChecklistItem.evidenceTrailClearTargetMet => evidenceTrailClearTargetMet,
+    _ChecklistItem.proUnderstandingTargetMet => proUnderstandingTargetMet,
+    _ChecklistItem.pricingSignalAcceptable => pricingSignalAcceptable,
+    _ChecklistItem.restorePurchasesVerified => restorePurchasesVerified,
+    _ChecklistItem.revenueCatProductsVerified => revenueCatProductsVerified,
+    _ChecklistItem.appStoreSupportUrlReady => appStoreSupportUrlReady,
+    _ChecklistItem.privacyPolicyReady => privacyPolicyReady,
+    _ChecklistItem.appStoreScreenshotsReady => appStoreScreenshotsReady,
+    _ChecklistItem.appStoreMetadataReady => appStoreMetadataReady,
+    _ChecklistItem.productionSecretsRotated => productionSecretsRotated,
+    _ChecklistItem.physicalDeviceSmokeTestPassed =>
+      physicalDeviceSmokeTestPassed,
+    _ChecklistItem.testFlightBuildUploaded => testFlightBuildUploaded,
+  };
 }
 
 enum ProductionCandidateStatus {

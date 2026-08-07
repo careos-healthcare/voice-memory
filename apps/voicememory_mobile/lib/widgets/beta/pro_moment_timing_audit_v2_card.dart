@@ -46,9 +46,9 @@ class ProMomentTimingAuditV2Card extends StatelessWidget {
           Text(
             snapshot.title,
             key: const Key('pro_moment_timing_audit_v2_title'),
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: 6),
           Text(
@@ -101,10 +101,10 @@ class _CheckRow extends StatelessWidget {
   final ProMomentTimingAuditV2Check check;
 
   Color _statusColor() => switch (check.status) {
-        ProMomentTimingAuditV2Status.ready => AppColors.success,
-        ProMomentTimingAuditV2Status.watch => AppColors.warning,
-        ProMomentTimingAuditV2Status.blocked => AppColors.error,
-      };
+    ProMomentTimingAuditV2Status.ready => AppColors.success,
+    ProMomentTimingAuditV2Status.watch => AppColors.warning,
+    ProMomentTimingAuditV2Status.blocked => AppColors.error,
+  };
 
   @override
   Widget build(BuildContext context) {
@@ -137,9 +137,7 @@ class _CheckRow extends StatelessWidget {
               const SizedBox(height: 2),
               Text(
                 '${check.status.label} · ${check.detailLabel}',
-                key: Key(
-                  'pro_moment_timing_audit_v2_detail_${check.id.name}',
-                ),
+                key: Key('pro_moment_timing_audit_v2_detail_${check.id.name}'),
                 style: const TextStyle(
                   color: AppTheme.muted,
                   fontSize: 12,
@@ -179,10 +177,7 @@ class _DiagnosisBlock extends StatelessWidget {
                 key: Key(
                   'pro_moment_timing_audit_v2_diagnosis_${diagnosis.id.name}',
                 ),
-                style: const TextStyle(
-                  fontSize: 13,
-                  height: 1.4,
-                ),
+                style: const TextStyle(fontSize: 13, height: 1.4),
               ),
             ),
         ],

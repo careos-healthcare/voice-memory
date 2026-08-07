@@ -23,10 +23,12 @@ abstract class BetaActivationLoopTracker {
 
   static final Set<String> _sessionSeen = <String>{};
 
-  @visibleForTesting
-  static void resetSessionForTest() {
+  static void resetSessionState() {
     _sessionSeen.clear();
   }
+
+  @visibleForTesting
+  static void resetSessionForTest() => resetSessionState();
 
   static Future<void> trackAppOpened() =>
       _increment('appOpened', sessionDedupe: true);
@@ -37,8 +39,7 @@ abstract class BetaActivationLoopTracker {
   static Future<void> trackFirstUsePromptSeen() =>
       _increment('firstUsePromptSeen', sessionDedupe: true);
 
-  static Future<void> trackFirstMomentSaved() =>
-      _increment('firstMomentSaved');
+  static Future<void> trackFirstMomentSaved() => _increment('firstMomentSaved');
 
   static Future<void> trackOneEntryReturnScreenSeen() =>
       _increment('oneEntryReturnScreenSeen', sessionDedupe: true);
@@ -52,8 +53,7 @@ abstract class BetaActivationLoopTracker {
   static Future<void> trackTwoEntryUnrelatedSeen() =>
       _increment('twoEntryUnrelatedSeen', sessionDedupe: true);
 
-  static Future<void> trackThirdMomentSaved() =>
-      _increment('thirdMomentSaved');
+  static Future<void> trackThirdMomentSaved() => _increment('thirdMomentSaved');
 
   static Future<void> trackConfirmedRepeatSeen() =>
       _increment('confirmedRepeatSeen', sessionDedupe: true);
@@ -95,7 +95,9 @@ abstract class BetaActivationLoopTracker {
     if (sessionDedupe && _sessionDedupeKeys.contains(field)) {
       if (!_sessionSeen.add(field)) return;
     }
-    final counts = await BetaActivationLoopStore.fromAppServices().increment(field);
+    final counts = await BetaActivationLoopStore.fromAppServices().increment(
+      field,
+    );
     if (kDebugMode) {
       debugPrint(
         'ARCHIVEME_BETA_ACTIVATION_LOOP event=$field '

@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import '../config/screenshot_mode.dart';
 import '../design/archive_mobile_typography.dart';
 import '../features/capacity_loop/capacity_cost_copy.dart';
-import '../features/capacity_loop/capacity_cost_copy.dart';
 import '../features/capacity_loop/capacity_cost_models.dart';
 import '../features/capacity_loop/capacity_cost_store.dart';
 import '../theme/app_colors.dart';
@@ -24,9 +23,9 @@ class CapacityCostLaterCard extends StatefulWidget {
     super.key,
     required this.result,
     this.onSaved,
-    CapacityCostStore? store,
+    this.store,
     this.sampleMode = false,
-  }) : store = store;
+  });
 
   final CapacityCostCheckinResult result;
   final VoidCallback? onSaved;
@@ -42,8 +41,7 @@ class _CapacityCostLaterCardState extends State<CapacityCostLaterCard> {
   final Set<String> _selected = {};
   bool _saving = false;
 
-  CapacityCostStore get _store =>
-      widget.store ?? CapacityCostStore.instance();
+  CapacityCostStore get _store => widget.store ?? CapacityCostStore.instance();
 
   @override
   Widget build(BuildContext context) {

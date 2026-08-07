@@ -27,7 +27,8 @@ abstract final class PurchaseSmokeTestCopy {
   static const checkRestoreVisible = 'Restore purchases visible';
   static const checkEntitlementReadable = 'Current entitlement status readable';
   static const checkProUnlockReadable = 'Pro unlock state readable';
-  static const checkLastPurchaseError = 'Last purchase error visible as safe debug text';
+  static const checkLastPurchaseError =
+      'Last purchase error visible as safe debug text';
 
   static const detailNotCheckedYet = 'Not checked yet';
   static const detailConfigured = 'Configured';

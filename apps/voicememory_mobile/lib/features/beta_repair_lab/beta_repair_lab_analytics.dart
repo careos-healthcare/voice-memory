@@ -13,7 +13,7 @@ abstract final class BetaRepairLabAnalytics {
 
   @visibleForTesting
   static void Function(String event, Map<String, Object> properties)?
-      captureForTest;
+  captureForTest;
 
   static void seen({required String source}) {
     _emit(
@@ -62,10 +62,7 @@ abstract final class BetaRepairLabAnalytics {
       props['previous_mode'] = previousMode;
     }
     captureForTest?.call(event, props);
-    ActivationFunnelAnalytics.track(
-      event,
-      source: source,
-    );
+    ActivationFunnelAnalytics.track(event, source: source);
     if (kDebugMode) {
       debugPrint(
         'ARCHIVEME_BETA_REPAIR_LAB event=$event source=$source '

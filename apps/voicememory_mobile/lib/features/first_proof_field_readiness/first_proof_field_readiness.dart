@@ -30,20 +30,21 @@ abstract final class FirstProofFieldReadiness {
 
   static FirstProofFieldReadinessReport report(
     FirstProofFieldReadinessResult result,
-  ) =>
-      FirstProofFieldReadinessReport(
-        headline: FirstProofFieldReadinessCopy.headline,
-        body: FirstProofFieldReadinessCopy.body,
-        orderLine: FirstProofFieldReadinessCopy.orderLine,
-        guardrail: FirstProofFieldReadinessCopy.guardrail,
-        result: result,
-      );
+  ) => FirstProofFieldReadinessReport(
+    headline: FirstProofFieldReadinessCopy.headline,
+    body: FirstProofFieldReadinessCopy.body,
+    orderLine: FirstProofFieldReadinessCopy.orderLine,
+    guardrail: FirstProofFieldReadinessCopy.guardrail,
+    result: result,
+  );
 
   static bool detectProofThresholdStillThree(String gateSource) =>
       gateSource.contains('static const minProofEntryCount = 3;');
 
   static bool detectBetaReadinessStillGuardsThree(String betaReadinessSource) =>
-      betaReadinessSource.contains('ArchiveEvidenceQualityGate.minProofEntryCount != 3');
+      betaReadinessSource.contains(
+        'ArchiveEvidenceQualityGate.minProofEntryCount != 3',
+      );
 
   static FirstProofFieldReadinessInput fromRepoSignals({
     required String archiveEvidenceQualityGateSource,
@@ -56,26 +57,24 @@ abstract final class FirstProofFieldReadiness {
     bool proofCorrected = false,
     bool? understoodWhyAppeared,
     bool? understoodWhatToSaveNext,
-  }) =>
-      FirstProofFieldReadinessInput(
-        usableMomentCount: usableMomentCount,
-        confidenceLevel: confidenceLevel,
-        hasSafeAnchor: hasSafeAnchor,
-        feedbackType: feedbackType,
-        truthAnswer: truthAnswer,
-        proofCorrected: proofCorrected,
-        understoodWhyAppeared: understoodWhyAppeared,
-        understoodWhatToSaveNext: understoodWhatToSaveNext,
-        proofThresholdStillThree: detectProofThresholdStillThree(
-          archiveEvidenceQualityGateSource,
-        ),
-        betaReadinessStillGuardsThree: detectBetaReadinessStillGuardsThree(
-          betaReadinessEngineSource,
-        ),
-      );
+  }) => FirstProofFieldReadinessInput(
+    usableMomentCount: usableMomentCount,
+    confidenceLevel: confidenceLevel,
+    hasSafeAnchor: hasSafeAnchor,
+    feedbackType: feedbackType,
+    truthAnswer: truthAnswer,
+    proofCorrected: proofCorrected,
+    understoodWhyAppeared: understoodWhyAppeared,
+    understoodWhatToSaveNext: understoodWhatToSaveNext,
+    proofThresholdStillThree: detectProofThresholdStillThree(
+      archiveEvidenceQualityGateSource,
+    ),
+    betaReadinessStillGuardsThree: detectBetaReadinessStillGuardsThree(
+      betaReadinessEngineSource,
+    ),
+  );
 
-  static bool _thresholdsUnchanged() =>
-      requiredUsableMoments == 3;
+  static bool _thresholdsUnchanged() => requiredUsableMoments == 3;
 
   static bool _hasReachedProofAttempt(FirstProofFieldReadinessInput input) =>
       input.usableMomentCount >= requiredUsableMoments;
@@ -112,7 +111,8 @@ abstract final class FirstProofFieldReadiness {
     FirstProofFieldReadinessInput input,
   ) {
     final reachedProof = _hasReachedProofAttempt(input);
-    final feedbackGiven = input.feedbackType != null || input.truthAnswer != null;
+    final feedbackGiven =
+        input.feedbackType != null || input.truthAnswer != null;
 
     return [
       _signal(
@@ -126,24 +126,24 @@ abstract final class FirstProofFieldReadiness {
         status: !reachedProof
             ? FirstProofFieldReadinessSignalStatus.notObserved
             : _isStrongProof(input.confidenceLevel)
-                ? FirstProofFieldReadinessSignalStatus.pass
-                : FirstProofFieldReadinessSignalStatus.concern,
+            ? FirstProofFieldReadinessSignalStatus.pass
+            : FirstProofFieldReadinessSignalStatus.concern,
       ),
       _signal(
         id: FirstProofFieldReadinessSignalId.watchOnlyAppearedInstead,
         status: !reachedProof
             ? FirstProofFieldReadinessSignalStatus.notObserved
             : _isWatchOnlyProof(input.confidenceLevel)
-                ? FirstProofFieldReadinessSignalStatus.concern
-                : FirstProofFieldReadinessSignalStatus.pass,
+            ? FirstProofFieldReadinessSignalStatus.concern
+            : FirstProofFieldReadinessSignalStatus.pass,
       ),
       _signal(
         id: FirstProofFieldReadinessSignalId.noSafeAnchor,
         status: !reachedProof
             ? FirstProofFieldReadinessSignalStatus.notObserved
             : input.hasSafeAnchor
-                ? FirstProofFieldReadinessSignalStatus.pass
-                : FirstProofFieldReadinessSignalStatus.concern,
+            ? FirstProofFieldReadinessSignalStatus.pass
+            : FirstProofFieldReadinessSignalStatus.concern,
       ),
       _signal(
         id: FirstProofFieldReadinessSignalId.proofAccepted,
@@ -153,49 +153,49 @@ abstract final class FirstProofFieldReadiness {
                 feedbackType: input.feedbackType,
                 truthAnswer: input.truthAnswer,
               )
-                ? FirstProofFieldReadinessSignalStatus.pass
-                : FirstProofFieldReadinessSignalStatus.concern,
+            ? FirstProofFieldReadinessSignalStatus.pass
+            : FirstProofFieldReadinessSignalStatus.concern,
       ),
       _signal(
         id: FirstProofFieldReadinessSignalId.proofCorrected,
         status: !reachedProof
             ? FirstProofFieldReadinessSignalStatus.notObserved
             : input.proofCorrected ||
-                    input.confidenceLevel == ProofConfidenceLevel.corrected
-                ? FirstProofFieldReadinessSignalStatus.pass
-                : FirstProofFieldReadinessSignalStatus.notObserved,
+                  input.confidenceLevel == ProofConfidenceLevel.corrected
+            ? FirstProofFieldReadinessSignalStatus.pass
+            : FirstProofFieldReadinessSignalStatus.notObserved,
       ),
       _signal(
         id: FirstProofFieldReadinessSignalId.proofTooVague,
         status: !reachedProof || input.feedbackType == null
             ? FirstProofFieldReadinessSignalStatus.notObserved
             : input.feedbackType == BetaProofFeedbackType.tooVague
-                ? FirstProofFieldReadinessSignalStatus.concern
-                : FirstProofFieldReadinessSignalStatus.pass,
+            ? FirstProofFieldReadinessSignalStatus.concern
+            : FirstProofFieldReadinessSignalStatus.pass,
       ),
       _signal(
         id: FirstProofFieldReadinessSignalId.proofNotRelevant,
         status: !reachedProof || input.feedbackType == null
             ? FirstProofFieldReadinessSignalStatus.notObserved
             : input.feedbackType == BetaProofFeedbackType.notRelevant
-                ? FirstProofFieldReadinessSignalStatus.concern
-                : FirstProofFieldReadinessSignalStatus.pass,
+            ? FirstProofFieldReadinessSignalStatus.concern
+            : FirstProofFieldReadinessSignalStatus.pass,
       ),
       _signal(
         id: FirstProofFieldReadinessSignalId.userUnderstoodWhyAppeared,
         status: input.understoodWhyAppeared == null
             ? FirstProofFieldReadinessSignalStatus.notObserved
             : input.understoodWhyAppeared!
-                ? FirstProofFieldReadinessSignalStatus.pass
-                : FirstProofFieldReadinessSignalStatus.concern,
+            ? FirstProofFieldReadinessSignalStatus.pass
+            : FirstProofFieldReadinessSignalStatus.concern,
       ),
       _signal(
         id: FirstProofFieldReadinessSignalId.userUnderstoodWhatToSaveNext,
         status: input.understoodWhatToSaveNext == null
             ? FirstProofFieldReadinessSignalStatus.notObserved
             : input.understoodWhatToSaveNext!
-                ? FirstProofFieldReadinessSignalStatus.pass
-                : FirstProofFieldReadinessSignalStatus.concern,
+            ? FirstProofFieldReadinessSignalStatus.pass
+            : FirstProofFieldReadinessSignalStatus.concern,
       ),
     ];
   }
@@ -204,7 +204,8 @@ abstract final class FirstProofFieldReadiness {
     FirstProofFieldReadinessInput input,
     List<FirstProofFieldReadinessSignal> signals,
   ) {
-    if (!input.proofThresholdStillThree || !input.betaReadinessStillGuardsThree) {
+    if (!input.proofThresholdStillThree ||
+        !input.betaReadinessStillGuardsThree) {
       return FirstProofFieldReadinessDecision.needsManualReview;
     }
 
@@ -272,8 +273,7 @@ abstract final class FirstProofFieldReadiness {
         .every(
           (signal) =>
               signal.status == FirstProofFieldReadinessSignalStatus.pass ||
-              signal.status ==
-                  FirstProofFieldReadinessSignalStatus.notObserved,
+              signal.status == FirstProofFieldReadinessSignalStatus.notObserved,
         );
   }
 
@@ -291,20 +291,19 @@ abstract final class FirstProofFieldReadiness {
   static FirstProofFieldReadinessSignal _signal({
     required FirstProofFieldReadinessSignalId id,
     required FirstProofFieldReadinessSignalStatus status,
-  }) =>
-      FirstProofFieldReadinessSignal(
-        id: id,
-        label: FirstProofFieldReadinessCopy.labelFor(id),
-        status: status,
-        detailLabel: switch (status) {
-          FirstProofFieldReadinessSignalStatus.pass =>
-            FirstProofFieldReadinessCopy.detailPass,
-          FirstProofFieldReadinessSignalStatus.concern =>
-            FirstProofFieldReadinessCopy.detailConcern,
-          FirstProofFieldReadinessSignalStatus.notObserved =>
-            FirstProofFieldReadinessCopy.detailNotObserved,
-        },
-      );
+  }) => FirstProofFieldReadinessSignal(
+    id: id,
+    label: FirstProofFieldReadinessCopy.labelFor(id),
+    status: status,
+    detailLabel: switch (status) {
+      FirstProofFieldReadinessSignalStatus.pass =>
+        FirstProofFieldReadinessCopy.detailPass,
+      FirstProofFieldReadinessSignalStatus.concern =>
+        FirstProofFieldReadinessCopy.detailConcern,
+      FirstProofFieldReadinessSignalStatus.notObserved =>
+        FirstProofFieldReadinessCopy.detailNotObserved,
+    },
+  );
 }
 
 class FirstProofFieldReadinessInput {

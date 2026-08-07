@@ -28,18 +28,20 @@ abstract final class BetaFeedbackIntelligenceEngine {
     bool proEvidenceSheetOpenedThisSession = false,
   }) {
     final state = BetaFeedbackIntelligenceStore.cached;
-    final firstProofPayoffSeen = firstProofPayoffVisible ||
+    final firstProofPayoffSeen =
+        firstProofPayoffVisible ||
         ProEvidenceValueEngine.firstProofPayoffSeenForEntries(entries);
     return BetaFeedbackIntelligenceContext(
       surface: surface,
       entryCount: entryCount,
       betaMissionEnabled: ArchiveBetaMissionGate.isEnabled,
-      submittedForSession: BetaFeedbackIntelligenceStore.isSubmittedForSession(),
+      submittedForSession:
+          BetaFeedbackIntelligenceStore.isSubmittedForSession(),
       firstProofPayoffSeen: firstProofPayoffSeen,
       proEvidenceSheetOpenedThisSession:
           proEvidenceSheetOpenedThisSession ||
-              state.hasOpenedProEvidenceSheet ||
-              BetaFeedbackIntelligenceStore.sessionProEvidenceSheetOpened,
+          state.hasOpenedProEvidenceSheet ||
+          BetaFeedbackIntelligenceStore.sessionProEvidenceSheetOpened,
       isZeroEntryState: isZeroEntryState,
       isRecordingState: isRecordingState,
       isDegradedTranscriptState: isDegradedTranscriptState,
@@ -48,9 +50,9 @@ abstract final class BetaFeedbackIntelligenceEngine {
       whatChangedQuestionActive: whatChangedQuestionActive,
       patternReviewInboxHasActiveItems:
           ProEvidenceValueEngine.patternReviewInboxHasActiveItems(
-        entries: entries,
-        returnChecks: returnChecks,
-      ),
+            entries: entries,
+            returnChecks: returnChecks,
+          ),
     );
   }
 
@@ -88,7 +90,7 @@ abstract final class BetaFeedbackIntelligenceEngine {
     final hasSavedFirstMoment = entries.isNotEmpty;
     final hasReachedFirstProof =
         ProEvidenceValueEngine.firstProofPayoffSeenForEntries(entries) ||
-            EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(entries);
+        EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(entries);
     final next = state.copyWith(
       hasSavedFirstMoment: hasSavedFirstMoment || state.hasSavedFirstMoment,
       hasReachedFirstProof: hasReachedFirstProof || state.hasReachedFirstProof,
@@ -107,13 +109,13 @@ abstract final class BetaFeedbackIntelligenceEngine {
     final state = BetaFeedbackIntelligenceStore.cached;
     final firstProofReached =
         state.hasReachedFirstProof ||
-            ProEvidenceValueEngine.firstProofPayoffSeenForEntries(entries);
+        ProEvidenceValueEngine.firstProofPayoffSeenForEntries(entries);
     final chatGptLabel = _chatGptLabel(state.chatGptDifferenceAnswer);
     final proValueLabel = _wouldPayLabel(state.wouldPayAnswer);
-    final mainConfusionLabel =
-        _mainConfusionLabel(state.mainConfusionBucket);
-    final strongestMomentLabel =
-        _strongestMomentLabel(state.strongestMomentBucket);
+    final mainConfusionLabel = _mainConfusionLabel(state.mainConfusionBucket);
+    final strongestMomentLabel = _strongestMomentLabel(
+      state.strongestMomentBucket,
+    );
     final feedbackSubmittedLabel = state.hasSubmittedBetaFeedback
         ? BetaFeedbackIntelligenceCopy.summaryYes
         : BetaFeedbackIntelligenceCopy.summaryNo;

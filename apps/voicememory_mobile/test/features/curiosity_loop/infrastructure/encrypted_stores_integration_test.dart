@@ -22,71 +22,75 @@ void main() {
     });
 
     test(
-        'Baseline store lifecycle ensures data cannot be read as raw plaintext strings',
-        () async {
-      final targetStore = LocalCognitiveBaselineStore(
-        prefs: prefs,
-        cryptoStorage: secureCryptoStorage,
-      );
+      'Baseline store lifecycle ensures data cannot be read as raw plaintext strings',
+      () async {
+        final targetStore = LocalCognitiveBaselineStore(
+          prefs: prefs,
+          cryptoStorage: secureCryptoStorage,
+        );
 
-      final snapshot = CognitiveBaselineSnapshot(
-        biomarkers: const CognitiveBiomarkers(
-          lexicalDiversity: 0.72,
-          cohesionDrift: 0.18,
-          emotionalVolatility: 0.12,
-        ),
-        updatedAt: DateTime.utc(2026, 7, 18),
-      );
-
-      final writeSuccess = await targetStore.saveSnapshot(snapshot);
-      expect(writeSuccess, isTrue);
-
-      final rawPrefsString =
-          await prefs.readString(LocalCognitiveBaselineStore.prefsKey);
-      expect(rawPrefsString, isNotNull);
-      expect(
-        rawPrefsString!.contains('lexicalDiversity'),
-        isFalse,
-        reason: 'Plaintext fields leaked directly to disk storage strings!',
-      );
-      expect(rawPrefsString.contains('cipher'), isTrue);
-
-      final retrievedSnapshot = await targetStore.loadSnapshot();
-      expect(retrievedSnapshot, isNotNull);
-      expect(retrievedSnapshot!.biomarkers.lexicalDiversity, equals(0.72));
-    });
-
-    test('Baseline store drops keys gracefully if a tampered key context is passed',
-        () async {
-      final storeWithValidKey = LocalCognitiveBaselineStore(
-        prefs: prefs,
-        cryptoStorage: secureCryptoStorage,
-      );
-
-      await storeWithValidKey.saveSnapshot(
-        CognitiveBaselineSnapshot(
+        final snapshot = CognitiveBaselineSnapshot(
           biomarkers: const CognitiveBiomarkers(
-            lexicalDiversity: 0.5,
-            cohesionDrift: 0.5,
-            emotionalVolatility: 0.5,
+            lexicalDiversity: 0.72,
+            cohesionDrift: 0.18,
+            emotionalVolatility: 0.12,
           ),
-          updatedAt: DateTime.now(),
-        ),
-      );
+          updatedAt: DateTime.utc(2026, 7, 18),
+        );
 
-      final brokenKeyBytes = List<int>.generate(32, (i) => i + 1);
-      final compromisedStore = LocalCognitiveBaselineStore(
-        prefs: prefs,
-        cryptoStorage: EncryptedJsonStorage(masterKeyBytes: brokenKeyBytes),
-      );
+        final writeSuccess = await targetStore.saveSnapshot(snapshot);
+        expect(writeSuccess, isTrue);
 
-      final result = await compromisedStore.loadSnapshot();
-      expect(
-        result,
-        isNull,
-        reason:
-            'System decryption failed to capture authentication tag anomalies.',
-      );
-    });
+        final rawPrefsString = await prefs.readString(
+          LocalCognitiveBaselineStore.prefsKey,
+        );
+        expect(rawPrefsString, isNotNull);
+        expect(
+          rawPrefsString!.contains('lexicalDiversity'),
+          isFalse,
+          reason: 'Plaintext fields leaked directly to disk storage strings!',
+        );
+        expect(rawPrefsString.contains('cipher'), isTrue);
+
+        final retrievedSnapshot = await targetStore.loadSnapshot();
+        expect(retrievedSnapshot, isNotNull);
+        expect(retrievedSnapshot!.biomarkers.lexicalDiversity, equals(0.72));
+      },
+    );
+
+    test(
+      'Baseline store drops keys gracefully if a tampered key context is passed',
+      () async {
+        final storeWithValidKey = LocalCognitiveBaselineStore(
+          prefs: prefs,
+          cryptoStorage: secureCryptoStorage,
+        );
+
+        await storeWithValidKey.saveSnapshot(
+          CognitiveBaselineSnapshot(
+            biomarkers: const CognitiveBiomarkers(
+              lexicalDiversity: 0.5,
+              cohesionDrift: 0.5,
+              emotionalVolatility: 0.5,
+            ),
+            updatedAt: DateTime.now(),
+          ),
+        );
+
+        final brokenKeyBytes = List<int>.generate(32, (i) => i + 1);
+        final compromisedStore = LocalCognitiveBaselineStore(
+          prefs: prefs,
+          cryptoStorage: EncryptedJsonStorage(masterKeyBytes: brokenKeyBytes),
+        );
+
+        final result = await compromisedStore.loadSnapshot();
+        expect(
+          result,
+          isNull,
+          reason:
+              'System decryption failed to capture authentication tag anomalies.',
+        );
+      },
+    );
   });
 }

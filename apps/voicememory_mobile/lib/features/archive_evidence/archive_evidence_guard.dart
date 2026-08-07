@@ -25,11 +25,10 @@ abstract class ArchiveEvidenceGuard {
   static List<JournalEntry> eligibleEntries(
     List<JournalEntry> entries, {
     String analyticsSource = 'archive_evidence_guard',
-  }) =>
-      ArchiveEvidenceQualityGate.usableEntries(
-        entries,
-        analyticsSource: analyticsSource,
-      );
+  }) => ArchiveEvidenceQualityGate.usableEntries(
+    entries,
+    analyticsSource: analyticsSource,
+  );
 
   static List<JournalEntry> strongEntries(List<JournalEntry> entries) =>
       ArchiveEvidenceQualityGate.strongEntries(entries);

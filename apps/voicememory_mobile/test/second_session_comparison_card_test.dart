@@ -43,8 +43,9 @@ void main() {
     expect(find.text(ConsumerUiCopy.secondSessionWhatRepeated), findsOneWidget);
   });
 
-  testWidgets('fallback possible repeat card shows screenshot-ready copy',
-      (tester) async {
+  testWidgets('fallback possible repeat card shows screenshot-ready copy', (
+    tester,
+  ) async {
     const comparison = SecondSessionComparison(
       hasEnoughData: true,
       title: ConsumerUiCopy.secondSessionPossibleRepeatTitle,

@@ -11,7 +11,7 @@ abstract final class SurfacePriorityAnalytics {
 
   @visibleForTesting
   static void Function(String event, Map<String, Object> properties)?
-      captureForTest;
+  captureForTest;
 
   static void seen({required SurfacePriorityResult result}) {
     final props = <String, Object>{

@@ -145,9 +145,7 @@ abstract class PrivacyCopyPolicy {
 
     if (_encryptPattern.hasMatch(line) &&
         !_allowedEncryptedContexts.any((pattern) => pattern.hasMatch(line))) {
-      violations.add(
-        'encryption claim without supported backup/sync context',
-      );
+      violations.add('encryption claim without supported backup/sync context');
     }
 
     return violations;
@@ -165,7 +163,8 @@ abstract class PrivacyCopyPolicy {
       case 'therapy':
         return lower.contains('not therapy');
       case 'medical':
-        return lower.contains('not medical') || lower.contains('medical advice');
+        return lower.contains('not medical') ||
+            lower.contains('medical advice');
       case 'treatment':
         return lower.contains('not treatment');
       case 'diagnosis':

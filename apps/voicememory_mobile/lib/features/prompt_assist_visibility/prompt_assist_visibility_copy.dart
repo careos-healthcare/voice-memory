@@ -18,7 +18,8 @@ abstract final class PromptAssistVisibilityCopy {
       'When possible, prompts come from safe archive signals — not private raw '
       'journal text.';
 
-  static const lowEffortLine = 'No need to explain everything. One sentence is enough.';
+  static const lowEffortLine =
+      'No need to explain everything. One sentence is enough.';
 
   static const notChatLine =
       'This is not a conversation. It is a quick way to save proof.';

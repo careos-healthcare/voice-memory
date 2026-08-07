@@ -12,11 +12,10 @@ enum ProofSpecificityBoostSurface {
 
 extension ProofSpecificityBoostSurfaceStorage on ProofSpecificityBoostSurface {
   String get storageValue => switch (this) {
-        ProofSpecificityBoostSurface.timelineProofMoment =>
-          'timeline_proof_moment',
-        ProofSpecificityBoostSurface.firstProofPayoff => 'first_proof_payoff',
-        ProofSpecificityBoostSurface.patterns => 'patterns',
-      };
+    ProofSpecificityBoostSurface.timelineProofMoment => 'timeline_proof_moment',
+    ProofSpecificityBoostSurface.firstProofPayoff => 'first_proof_payoff',
+    ProofSpecificityBoostSurface.patterns => 'patterns',
+  };
 
   String get analyticsValue => storageValue;
 }
@@ -46,17 +45,16 @@ class ProofSpecificityBoostResult {
   factory ProofSpecificityBoostResult.hidden({
     required String source,
     int entryCount = 0,
-  }) =>
-      ProofSpecificityBoostResult(
-        shouldShow: false,
-        entryCount: entryCount,
-        source: source,
-        hasConfirmedRepeat: false,
-        hasBeliefSurface: false,
-        evidenceAnchors: const [],
-        usesFallbackEvidenceLine: true,
-        hasSafeAnchor: false,
-      );
+  }) => ProofSpecificityBoostResult(
+    shouldShow: false,
+    entryCount: entryCount,
+    source: source,
+    hasConfirmedRepeat: false,
+    hasBeliefSurface: false,
+    evidenceAnchors: const [],
+    usesFallbackEvidenceLine: true,
+    hasSafeAnchor: false,
+  );
 }
 
 class ProofSpecificityBoostRecord {
@@ -77,20 +75,18 @@ class ProofSpecificityBoostRecord {
   bool get answered => answerType != null;
 
   Map<String, dynamic> toJson() => {
-        if (answerType != null) 'answerType': answerType!.storageValue,
-        if (surface != null) 'surface': surface!.storageValue,
-        if (entryCount != null) 'entryCount': entryCount,
-        if (answeredAt != null)
-          'answeredAt': answeredAt!.toUtc().toIso8601String(),
-      };
+    if (answerType != null) 'answerType': answerType!.storageValue,
+    if (surface != null) 'surface': surface!.storageValue,
+    if (entryCount != null) 'entryCount': entryCount,
+    if (answeredAt != null) 'answeredAt': answeredAt!.toUtc().toIso8601String(),
+  };
 
   factory ProofSpecificityBoostRecord.fromJson(Map<String, dynamic>? json) {
     if (json == null || json.isEmpty) return empty;
     return ProofSpecificityBoostRecord(
       answerType: _answerFromRaw(json['answerType'] as String?),
       surface: _surfaceFromRaw(json['surface'] as String?),
-      entryCount:
-          json['entryCount'] is int ? json['entryCount'] as int : null,
+      entryCount: json['entryCount'] is int ? json['entryCount'] as int : null,
       answeredAt: _timestampFromRaw(json['answeredAt'] as String?),
     );
   }
@@ -126,13 +122,12 @@ class ProofSpecificityBoostStore {
   final MobilePrefsStore _prefs;
 
   static final Map<ProofSpecificityBoostSurface, ProofSpecificityBoostRecord>
-      _cached = {};
+  _cached = {};
   static bool _loaded = false;
 
   static ProofSpecificityBoostRecord recordFor(
     ProofSpecificityBoostSurface surface,
-  ) =>
-      _cached[surface] ?? ProofSpecificityBoostRecord.empty;
+  ) => _cached[surface] ?? ProofSpecificityBoostRecord.empty;
 
   static bool isAnswered(ProofSpecificityBoostSurface surface) =>
       recordFor(surface).answered;

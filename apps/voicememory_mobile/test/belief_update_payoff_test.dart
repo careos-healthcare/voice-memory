@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/billing/archive_entitlement_reader.dart';
@@ -17,102 +15,102 @@ import 'package:voicememory_mobile/services/app_services.dart';
 import 'package:voicememory_mobile/services/capture_save_messages.dart';
 import 'package:voicememory_mobile/theme/app_theme.dart';
 import 'package:voicememory_mobile/widgets/record/belief_update_payoff_card.dart';
+import 'support/test_storage_sandbox.dart';
 
 JournalEntry _voiceEntry({
   required String id,
   required String transcript,
   DateTime? createdAt,
-}) =>
-    JournalEntry(
-      id: id,
-      createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
-      transcript: transcript,
-      durationSeconds: 30,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 2,
-        recurringThemes: ['work'],
-        exactLanguagePattern: '',
-        concreteObservation: 'Work pressure showed up in this moment.',
-        repeatedSignal: '',
-      ),
-    );
+}) => JournalEntry(
+  id: id,
+  createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
+  transcript: transcript,
+  durationSeconds: 30,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 2,
+    recurringThemes: ['work'],
+    exactLanguagePattern: '',
+    concreteObservation: 'Work pressure showed up in this moment.',
+    repeatedSignal: '',
+  ),
+);
 
 JournalEntry _degradedVoiceEntry({String id = 'v1'}) => JournalEntry(
-      id: id,
-      createdAt: DateTime(2026, 6, 12, 12),
-      transcript:
-          '[draft] ${CaptureSaveMessages.recordingSavedLocally} — transcribe when connected',
-      durationSeconds: 20,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 0,
-        recurringThemes: [],
-        exactLanguagePattern: '',
-        concreteObservation: '',
-        repeatedSignal: '',
-      ),
-    );
+  id: id,
+  createdAt: DateTime(2026, 6, 12, 12),
+  transcript:
+      '[draft] ${CaptureSaveMessages.recordingSavedLocally} — transcribe when connected',
+  durationSeconds: 20,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 0,
+    recurringThemes: [],
+    exactLanguagePattern: '',
+    concreteObservation: '',
+    repeatedSignal: '',
+  ),
+);
 
 List<JournalEntry> _threeRepeatCapacityEntries() => [
-      _voiceEntry(
-        id: 'e1',
-        transcript:
-            'I had no capacity but I said yes again to the extra meeting today.',
-        createdAt: DateTime(2026, 6, 10, 12),
-      ),
-      _voiceEntry(
-        id: 'e2',
-        transcript:
-            'Same thing — said yes when I had no capacity for one more thing.',
-        createdAt: DateTime(2026, 6, 11, 12),
-      ),
-      _voiceEntry(
-        id: 'e3',
-        transcript:
-            'I said yes again even though I had no capacity for one more ask.',
-        createdAt: DateTime(2026, 6, 12, 12),
-      ),
-    ];
+  _voiceEntry(
+    id: 'e1',
+    transcript:
+        'I had no capacity but I said yes again to the extra meeting today.',
+    createdAt: DateTime(2026, 6, 10, 12),
+  ),
+  _voiceEntry(
+    id: 'e2',
+    transcript:
+        'Same thing — said yes when I had no capacity for one more thing.',
+    createdAt: DateTime(2026, 6, 11, 12),
+  ),
+  _voiceEntry(
+    id: 'e3',
+    transcript:
+        'I said yes again even though I had no capacity for one more ask.',
+    createdAt: DateTime(2026, 6, 12, 12),
+  ),
+];
 
 List<JournalEntry> _fourRepeatCapacityEntries() => [
-      ..._threeRepeatCapacityEntries(),
-      _voiceEntry(
-        id: 'e4',
-        transcript:
-            'The same yes-with-no-capacity pattern showed up again at work today.',
-        createdAt: DateTime(2026, 6, 13, 12),
-      ),
-    ];
+  ..._threeRepeatCapacityEntries(),
+  _voiceEntry(
+    id: 'e4',
+    transcript:
+        'The same yes-with-no-capacity pattern showed up again at work today.',
+    createdAt: DateTime(2026, 6, 13, 12),
+  ),
+];
 
 List<JournalEntry> _fourDistinctWorkEntries() => [
-      _voiceEntry(
-        id: 'e1',
-        transcript:
-            'I felt pressure at work before saying yes again even when I was tired.',
-        createdAt: DateTime(2026, 6, 9, 12),
-      ),
-      _voiceEntry(
-        id: 'e2',
-        transcript:
-            'Work kept pulling me back after I wanted to stop for the day at the office.',
-        createdAt: DateTime(2026, 6, 10, 12),
-      ),
-      _voiceEntry(
-        id: 'e3',
-        transcript:
-            'I noticed the same hurry showing up before I answered anyone at work.',
-        createdAt: DateTime(2026, 6, 11, 12),
-      ),
-      _voiceEntry(
-        id: 'e4',
-        transcript:
-            'The deadline pressure returned again during the morning meeting at work.',
-        createdAt: DateTime(2026, 6, 12, 12),
-      ),
-    ];
+  _voiceEntry(
+    id: 'e1',
+    transcript:
+        'I felt pressure at work before saying yes again even when I was tired.',
+    createdAt: DateTime(2026, 6, 9, 12),
+  ),
+  _voiceEntry(
+    id: 'e2',
+    transcript:
+        'Work kept pulling me back after I wanted to stop for the day at the office.',
+    createdAt: DateTime(2026, 6, 10, 12),
+  ),
+  _voiceEntry(
+    id: 'e3',
+    transcript:
+        'I noticed the same hurry showing up before I answered anyone at work.',
+    createdAt: DateTime(2026, 6, 11, 12),
+  ),
+  _voiceEntry(
+    id: 'e4',
+    transcript:
+        'The deadline pressure returned again during the morning meeting at work.',
+    createdAt: DateTime(2026, 6, 12, 12),
+  ),
+];
 
 const _bannedCertaintyWords = [
   'you always',
@@ -216,16 +214,13 @@ void main() {
       expect(payoff.evidenceRows.length, greaterThanOrEqualTo(2));
       expect(payoff.primaryCta, 'Record if it happens again');
       expect(payoff.secondaryCta, 'View evidence');
-      _expectNoBannedCopy(
-        [
-          payoff.title,
-          payoff.body,
-          payoff.currentBelief,
-          payoff.whatChangedLine,
-          ...payoff.evidenceRows,
-        ],
-        _bannedCertaintyWords,
-      );
+      _expectNoBannedCopy([
+        payoff.title,
+        payoff.body,
+        payoff.currentBelief,
+        payoff.whatChangedLine,
+        ...payoff.evidenceRows,
+      ], _bannedCertaintyWords);
     });
 
     test('weak duplicate four-entry evidence shows still building copy', () {
@@ -233,8 +228,16 @@ void main() {
           'I felt pressure at work before saying yes again even when I was tired.';
       final payoff = BeliefUpdatePayoffEngine.build(
         entries: [
-          _voiceEntry(id: 'e1', transcript: shared, createdAt: DateTime(2026, 6, 9)),
-          _voiceEntry(id: 'e2', transcript: shared, createdAt: DateTime(2026, 6, 10)),
+          _voiceEntry(
+            id: 'e1',
+            transcript: shared,
+            createdAt: DateTime(2026, 6, 9),
+          ),
+          _voiceEntry(
+            id: 'e2',
+            transcript: shared,
+            createdAt: DateTime(2026, 6, 10),
+          ),
           _voiceEntry(
             id: 'e3',
             transcript:
@@ -324,29 +327,43 @@ void main() {
       );
       await tester.pump();
 
-      expect(find.byKey(const Key('belief_update_payoff_card')), findsOneWidget);
+      expect(
+        find.byKey(const Key('belief_update_payoff_card')),
+        findsOneWidget,
+      );
       expect(find.text(BeliefUpdatePayoffCopy.title), findsOneWidget);
-      expect(find.text(BeliefUpdatePayoffCopy.currentBeliefLabel), findsOneWidget);
+      expect(
+        find.text(BeliefUpdatePayoffCopy.currentBeliefLabel),
+        findsOneWidget,
+      );
       expect(find.text('Evidence'), findsOneWidget);
       expect(find.text('What changed'), findsOneWidget);
       expect(find.text('Record if it happens again'), findsOneWidget);
       expect(find.text('View evidence'), findsOneWidget);
-      expect(find.byKey(const Key('belief_update_payoff_evidence_0')), findsOneWidget);
-      expect(find.byKey(const Key('belief_update_payoff_evidence_1')), findsOneWidget);
+      expect(
+        find.byKey(const Key('belief_update_payoff_evidence_0')),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(const Key('belief_update_payoff_evidence_1')),
+        findsOneWidget,
+      );
       _expectNoBannedCopy(_visibleText(tester), _bannedCertaintyWords);
     });
   });
 
   group('RecordScreen belief update payoff', () {
-    late Directory tempDir;
+    late TestStorageSandbox sandbox;
 
     setUp(() async {
-      tempDir = Directory.systemTemp.createTempSync('vm_belief_update_');
+      sandbox = TestStorageSandbox.create();
       await AppServices.resetForTest(
-        journalPath: '${tempDir.path}/journal.json',
+        journalPath: sandbox.journalPath,
         skipRevenueCat: true,
       );
     });
+
+    tearDown(() => sandbox.dispose());
 
     tearDown(() {
       VisualAuditOverrides.setRecordPresentation(null);
@@ -393,15 +410,30 @@ void main() {
         entriesAfterSave: _threeRepeatCapacityEntries(),
       );
 
-      expect(find.byKey(const Key('post_save_archive_home_nudge_card')), findsNothing);
-      expect(find.byKey(const Key('third_entry_belief_payoff_card')), findsNothing);
+      expect(
+        find.byKey(const Key('post_save_archive_home_nudge_card')),
+        findsNothing,
+      );
+      expect(
+        find.byKey(const Key('third_entry_belief_payoff_card')),
+        findsNothing,
+      );
       expect(find.byKey(const Key('belief_update_payoff_card')), findsNothing);
-      expect(find.byKey(const Key('belief_history_timeline_card')), findsNothing);
-      expect(find.byKey(const Key('weekly_archive_review_compact_card')), findsNothing);
+      expect(
+        find.byKey(const Key('belief_history_timeline_card')),
+        findsNothing,
+      );
+      expect(
+        find.byKey(const Key('weekly_archive_review_compact_card')),
+        findsNothing,
+      );
       expect(find.byKey(const Key('weekly_archive_review_card')), findsNothing);
       expect(find.byKey(const Key('first_proof_payoff_card')), findsOneWidget);
       expect(find.text(FirstProofPayoffCopy.headline), findsOneWidget);
-      expect(find.byKey(const Key('post_save_focused_actions_bar')), findsNothing);
+      expect(
+        find.byKey(const Key('post_save_focused_actions_bar')),
+        findsNothing,
+      );
       expect(find.text(PostSaveRecordedSummaryCopy.title), findsOneWidget);
     });
 
@@ -415,12 +447,23 @@ void main() {
 
       expect(find.byKey(const Key('belief_update_payoff_card')), findsNothing);
       expect(find.byKey(const Key('repeat_post_save_card')), findsOneWidget);
-      expect(find.text(PostSaveRecordedSummaryCopy.whatThisAddedTitle), findsNothing);
-      expect(find.byKey(const Key('belief_history_timeline_card')), findsNothing);
-      expect(find.byKey(const Key('post_save_focused_actions_bar')), findsNothing);
+      expect(
+        find.text(PostSaveRecordedSummaryCopy.whatThisAddedTitle),
+        findsNothing,
+      );
+      expect(
+        find.byKey(const Key('belief_history_timeline_card')),
+        findsNothing,
+      );
+      expect(
+        find.byKey(const Key('post_save_focused_actions_bar')),
+        findsNothing,
+      );
     });
 
-    testWidgets('two unrelated entries keep focused post-save actions', (tester) async {
+    testWidgets('two unrelated entries keep focused post-save actions', (
+      tester,
+    ) async {
       await pumpDoneState(
         tester,
         entriesAfterSave: [
@@ -437,9 +480,18 @@ void main() {
         ],
       );
 
-      expect(find.byKey(const Key('post_save_add_one_more_moment_cta')), findsOneWidget);
-      expect(find.byKey(const Key('post_save_view_evidence_cta')), findsOneWidget);
-      expect(find.byKey(const Key('post_save_view_patterns_cta')), findsOneWidget);
+      expect(
+        find.byKey(const Key('post_save_add_one_more_moment_cta')),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(const Key('post_save_view_evidence_cta')),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(const Key('post_save_view_patterns_cta')),
+        findsOneWidget,
+      );
     });
   });
 }

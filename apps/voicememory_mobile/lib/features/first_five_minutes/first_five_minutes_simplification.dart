@@ -93,28 +93,27 @@ abstract final class FirstFiveMinutesSimplification {
     }
   }
 
-  static FirstFiveMinutesReport report(FirstFiveMinutesResult result) =>
-      FirstFiveMinutesReport(
-        headline: FirstFiveMinutesSimplificationCopy.headline,
-        body: FirstFiveMinutesSimplificationCopy.body,
-        oneLinePositioning:
-            FirstFiveMinutesSimplificationCopy.oneLinePositioning,
-        whenToUseLine: FirstFiveMinutesSimplificationCopy.whenToUseLine,
-        oneSentenceLine: FirstFiveMinutesSimplificationCopy.oneSentenceLine,
-        savedMattersLine: FirstFiveMinutesSimplificationCopy.savedMattersLine,
-        whatHappensNextLine:
-            FirstFiveMinutesSimplificationCopy.whatHappensNextLine,
-        notNowLine: FirstFiveMinutesSimplificationCopy.notNowLine,
-        notChatLine: FirstFiveMinutesSimplificationCopy.notChatLine,
-        notStorageLine: FirstFiveMinutesSimplificationCopy.notStorageLine,
-        guardrail: FirstFiveMinutesSimplificationCopy.guardrail,
-        result: result,
-      );
+  static FirstFiveMinutesReport report(
+    FirstFiveMinutesResult result,
+  ) => FirstFiveMinutesReport(
+    headline: FirstFiveMinutesSimplificationCopy.headline,
+    body: FirstFiveMinutesSimplificationCopy.body,
+    oneLinePositioning: FirstFiveMinutesSimplificationCopy.oneLinePositioning,
+    whenToUseLine: FirstFiveMinutesSimplificationCopy.whenToUseLine,
+    oneSentenceLine: FirstFiveMinutesSimplificationCopy.oneSentenceLine,
+    savedMattersLine: FirstFiveMinutesSimplificationCopy.savedMattersLine,
+    whatHappensNextLine: FirstFiveMinutesSimplificationCopy.whatHappensNextLine,
+    notNowLine: FirstFiveMinutesSimplificationCopy.notNowLine,
+    notChatLine: FirstFiveMinutesSimplificationCopy.notChatLine,
+    notStorageLine: FirstFiveMinutesSimplificationCopy.notStorageLine,
+    guardrail: FirstFiveMinutesSimplificationCopy.guardrail,
+    result: result,
+  );
 
   static String previewCopyFor(FirstFiveMinutesResult result) =>
       result.reason == FirstFiveMinutesReason.showFirstProofPreviewAfterSave
-          ? FirstFiveMinutesSimplificationCopy.firstProofPreviewLine
-          : '';
+      ? FirstFiveMinutesSimplificationCopy.firstProofPreviewLine
+      : '';
 
   static bool _inFirstFiveMinutes(FirstFiveMinutesInput input) =>
       input.minuteIndex < firstFiveMinuteLimit;
@@ -124,8 +123,7 @@ abstract final class FirstFiveMinutesSimplification {
     return switch (input.surface) {
       FirstFiveMinutesSurface.contextDetail ||
       FirstFiveMinutesSurface.actionItems ||
-      FirstFiveMinutesSurface.workspace =>
-        _inFirstFiveMinutes(input),
+      FirstFiveMinutesSurface.workspace => _inFirstFiveMinutes(input),
       _ => false,
     };
   }

@@ -1,16 +1,12 @@
-enum PricingValueFramingFeedbackType {
-  yes,
-  maybe,
-  no,
-}
+enum PricingValueFramingFeedbackType { yes, maybe, no }
 
 extension PricingValueFramingFeedbackTypeAnalytics
     on PricingValueFramingFeedbackType {
   String get analyticsValue => switch (this) {
-        PricingValueFramingFeedbackType.yes => 'yes',
-        PricingValueFramingFeedbackType.maybe => 'maybe',
-        PricingValueFramingFeedbackType.no => 'no',
-      };
+    PricingValueFramingFeedbackType.yes => 'yes',
+    PricingValueFramingFeedbackType.maybe => 'maybe',
+    PricingValueFramingFeedbackType.no => 'no',
+  };
 }
 
 class PricingValueFramingResult {

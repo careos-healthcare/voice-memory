@@ -27,153 +27,156 @@ void main() {
   test(
     'archive quality validation — capture engine outputs',
     () async {
-    final scenarios = <Map<String, dynamic>>[];
-    final allBeliefStatements = <String>[];
+      final scenarios = <Map<String, dynamic>>[];
+      final allBeliefStatements = <String>[];
 
-    for (final persona in ArchiveQualityPersona.values) {
-      for (final size in [50, 100, 200]) {
-        final dir = await Directory.systemTemp.createTemp(
-          'aq_${persona.name}_$size',
-        );
-        final prefs = await MobilePrefsStore.open('${dir.path}/prefs.json');
-        final evolution = BeliefEvolutionService.fromPrefs(prefs);
-        final entries = buildPersonaArchive(persona, count: size);
-        final baseline = _simulatedReviewBaseline(entries);
+      for (final persona in ArchiveQualityPersona.values) {
+        for (final size in [50, 100, 200]) {
+          final dir = await Directory.systemTemp.createTemp(
+            'aq_${persona.name}_$size',
+          );
+          final prefs = await MobilePrefsStore.open('${dir.path}/prefs.json');
+          final evolution = BeliefEvolutionService.fromPrefs(prefs);
+          final entries = buildPersonaArchive(persona, count: size);
+          final baseline = _simulatedReviewBaseline(entries);
 
-        final v1 = await const ArchiveV1Builder().build(
-          entries: entries,
-          evolutionService: evolution,
-          baseline: baseline,
-        );
-        final dive = const ArchiveDeepDiveEngine().build(v1: v1);
-        final analyst = await const ArchiveAnalystEngine().build(
-          entries: entries,
-          evolutionService: evolution,
-        );
+          final v1 = await const ArchiveV1Builder().build(
+            entries: entries,
+            evolutionService: evolution,
+            baseline: baseline,
+          );
+          final dive = const ArchiveDeepDiveEngine().build(v1: v1);
+          final analyst = await const ArchiveAnalystEngine().build(
+            entries: entries,
+            evolutionService: evolution,
+          );
 
-        for (final b in analyst.currentBeliefs) {
-          allBeliefStatements.add(b.statement.trim().toLowerCase());
+          for (final b in analyst.currentBeliefs) {
+            allBeliefStatements.add(b.statement.trim().toLowerCase());
+          }
+
+          final pack = ArchiveSynthesisPackBuilder.build(
+            view: v1,
+            monthKey: '2026-05',
+            milestonesReached: const {},
+          );
+          final packTheory =
+              (pack['theory'] as Map<String, dynamic>?)?['statement']
+                  as String?;
+
+          scenarios.add({
+            'persona': persona.name,
+            'reflectionCount': size,
+            'eligibleCount': analyst.eligibleReflectionCount,
+            'analystLevel': analyst.level.toString().split('.').last,
+            'hasAnalystReport': analyst.hasReport,
+            'baselineSimulated': baseline != null,
+            'baselineReviewAt': baseline?.timestamp,
+            'v1': _serializeV1(v1),
+            'theory': _serializeTheory(v1.theory),
+            'lifecycle': _serializeLifecycle(v1.lifecycle),
+            'changeFeed': _serializeChangeFeed(v1.changeFeed),
+            'deepDive': _serializeDeepDive(dive),
+            'analyst': _serializeAnalyst(analyst),
+            'metrics': _metrics(analyst, dive, v1, packTheory, persona.name),
+            'unifiedPrimary': {
+              'rankingPrimary': v1.theoryRanking?.primaryStatement,
+              'theoryStatement': v1.theory?.statement,
+              'packTheoryStatement': packTheory,
+            },
+          });
         }
-
-        final pack = ArchiveSynthesisPackBuilder.build(
-          view: v1,
-          monthKey: '2026-05',
-          milestonesReached: const {},
-        );
-        final packTheory =
-            (pack['theory'] as Map<String, dynamic>?)?['statement'] as String?;
-
-        scenarios.add({
-          'persona': persona.name,
-          'reflectionCount': size,
-          'eligibleCount': analyst.eligibleReflectionCount,
-          'analystLevel': analyst.level.toString().split('.').last,
-          'hasAnalystReport': analyst.hasReport,
-          'baselineSimulated': baseline != null,
-          'baselineReviewAt': baseline?.timestamp,
-          'v1': _serializeV1(v1),
-          'theory': _serializeTheory(v1.theory),
-          'lifecycle': _serializeLifecycle(v1.lifecycle),
-          'changeFeed': _serializeChangeFeed(v1.changeFeed),
-          'deepDive': _serializeDeepDive(dive),
-          'analyst': _serializeAnalyst(analyst),
-          'metrics': _metrics(analyst, dive, v1, packTheory, persona.name),
-          'unifiedPrimary': {
-            'rankingPrimary': v1.theoryRanking?.primaryStatement,
-            'theoryStatement': v1.theory?.statement,
-            'packTheoryStatement': packTheory,
-          },
-        });
       }
-    }
 
-    final crossPersonaDupes = _duplicateStatements(allBeliefStatements);
+      final crossPersonaDupes = _duplicateStatements(allBeliefStatements);
 
-    final payload = {
-      'generatedAt': DateTime.now().toUtc().toIso8601String(),
-      'validationVersion': 2,
-      'scenarioCount': scenarios.length,
-      'crossPersonaDuplicateBeliefs': crossPersonaDupes,
-      'scenarios': scenarios,
-    };
+      final payload = {
+        'generatedAt': DateTime.now().toUtc().toIso8601String(),
+        'validationVersion': 2,
+        'scenarioCount': scenarios.length,
+        'crossPersonaDuplicateBeliefs': crossPersonaDupes,
+        'scenarios': scenarios,
+      };
 
-    final outDir = Directory('tool/output');
-    if (!outDir.existsSync()) outDir.createSync(recursive: true);
-    final relevance = _counterEvidenceRelevance(scenarios);
-    payload['counterEvidenceRelevance'] = relevance;
+      final outDir = Directory('tool/output');
+      if (!outDir.existsSync()) outDir.createSync(recursive: true);
+      final relevance = _counterEvidenceRelevance(scenarios);
+      payload['counterEvidenceRelevance'] = relevance;
 
-    final outFile = File('tool/output/archive_quality_raw.json');
-    await outFile.writeAsString(
-      const JsonEncoder.withIndent('  ').convert(payload),
-    );
+      final outFile = File('tool/output/archive_quality_raw.json');
+      await outFile.writeAsString(
+        const JsonEncoder.withIndent('  ').convert(payload),
+      );
 
-    expect(scenarios.length, 15);
-    expect(outFile.existsSync(), isTrue);
-    expect(
-      relevance['relevanceRate'] as double,
-      greaterThan(0.85),
-      reason:
-          'Topical counter-evidence relevance must exceed 85% '
-          '(was ${relevance['relevant']}/${relevance['total']})',
-    );
+      expect(scenarios.length, 15);
+      expect(outFile.existsSync(), isTrue);
+      expect(
+        relevance['relevanceRate'] as double,
+        greaterThan(0.85),
+        reason:
+            'Topical counter-evidence relevance must exceed 85% '
+            '(was ${relevance['relevant']}/${relevance['total']})',
+      );
 
-    final primaryFailures = <String>[];
-    for (final s in scenarios) {
-      final m = s['metrics'] as Map<String, dynamic>;
-      if (m['theoryMatchesPrimary'] != true) {
-        primaryFailures.add(
-          '${s['persona']}@${s['reflectionCount']}: hero≠analyst',
-        );
+      final primaryFailures = <String>[];
+      for (final s in scenarios) {
+        final m = s['metrics'] as Map<String, dynamic>;
+        if (m['theoryMatchesPrimary'] != true) {
+          primaryFailures.add(
+            '${s['persona']}@${s['reflectionCount']}: hero≠analyst',
+          );
+        }
+        if (m['theoryZeroEvidenceHero'] == true) {
+          primaryFailures.add(
+            '${s['persona']}@${s['reflectionCount']}: 0-ev hero',
+          );
+        }
+        if (m['relationshipWorkHero'] == true) {
+          primaryFailures.add(
+            '${s['persona']}@${s['reflectionCount']}: work hero',
+          );
+        }
+        if (m['unifiedSurfaceMismatch'] == true) {
+          primaryFailures.add(
+            '${s['persona']}@${s['reflectionCount']}: surface mismatch',
+          );
+        }
+        if (m['heroEqualsTopRankedTheory'] != true &&
+            s['theory']?['present'] == true) {
+          primaryFailures.add(
+            '${s['persona']}@${s['reflectionCount']}: hero≠top ranked',
+          );
+        }
       }
-      if (m['theoryZeroEvidenceHero'] == true) {
-        primaryFailures.add(
-          '${s['persona']}@${s['reflectionCount']}: 0-ev hero',
-        );
-      }
-      if (m['relationshipWorkHero'] == true) {
-        primaryFailures.add(
-          '${s['persona']}@${s['reflectionCount']}: work hero',
-        );
-      }
-      if (m['unifiedSurfaceMismatch'] == true) {
-        primaryFailures.add(
-          '${s['persona']}@${s['reflectionCount']}: surface mismatch',
-        );
-      }
-      if (m['heroEqualsTopRankedTheory'] != true &&
-          s['theory']?['present'] == true) {
-        primaryFailures.add(
-          '${s['persona']}@${s['reflectionCount']}: hero≠top ranked',
-        );
-      }
-    }
-    expect(
-      primaryFailures,
-      isEmpty,
-      reason: 'Unified primary theory:\n${primaryFailures.join('\n')}',
-    );
+      expect(
+        primaryFailures,
+        isEmpty,
+        reason: 'Unified primary theory:\n${primaryFailures.join('\n')}',
+      );
 
-    final pollutionFailures = <String>[];
-    for (final s in scenarios) {
-      final m = s['metrics'] as Map<String, dynamic>;
-      final label = '${s['persona']}@${s['reflectionCount']}';
-      if ((m['visibleZeroConfidenceCount'] as int) > 0) {
-        pollutionFailures.add('$label: ${m['zeroConfidenceListed']}');
+      final pollutionFailures = <String>[];
+      for (final s in scenarios) {
+        final m = s['metrics'] as Map<String, dynamic>;
+        final label = '${s['persona']}@${s['reflectionCount']}';
+        if ((m['visibleZeroConfidenceCount'] as int) > 0) {
+          pollutionFailures.add('$label: ${m['zeroConfidenceListed']}');
+        }
+        if ((m['visibleZeroEvidenceCount'] as int) > 0) {
+          pollutionFailures.add('$label: zero-ev ${m['zeroEvidenceListed']}');
+        }
+        if ((m['visibleTraitTemplateCount'] as int) > 0) {
+          pollutionFailures.add('$label: traits ${m['traitTemplatesListed']}');
+        }
       }
-      if ((m['visibleZeroEvidenceCount'] as int) > 0) {
-        pollutionFailures.add('$label: zero-ev ${m['zeroEvidenceListed']}');
-      }
-      if ((m['visibleTraitTemplateCount'] as int) > 0) {
-        pollutionFailures.add('$label: traits ${m['traitTemplatesListed']}');
-      }
-    }
-    expect(
-      pollutionFailures,
-      isEmpty,
-      reason:
-          'Trait pollution in visible UI rows:\n${pollutionFailures.join('\n')}',
-    );
-  }, timeout: const Timeout(Duration(minutes: 3)));
+      expect(
+        pollutionFailures,
+        isEmpty,
+        reason:
+            'Trait pollution in visible UI rows:\n${pollutionFailures.join('\n')}',
+      );
+    },
+    timeout: const Timeout(Duration(minutes: 3)),
+  );
 }
 
 void _appendTraitTemplate(String statement, List<String> traits) {
@@ -260,9 +263,9 @@ ArchiveStateSnapshot? _simulatedReviewBaseline(List<JournalEntry> entries) {
   if (eligible.length < 20) return null;
   final idx = (eligible.length * 0.45).floor().clamp(8, eligible.length - 8);
   final pivot = eligible[idx];
-  final obs = pivot.reflection?.concreteObservation.trim();
+  final obs = pivot.reflection.concreteObservation.trim();
   return ArchiveStateSnapshot(
-    belief: (obs != null && obs.isNotEmpty) ? obs : pivot.transcript,
+    belief: (obs.isNotEmpty) ? obs : pivot.transcript,
     confidence: 55,
     reputation: 'developing',
     evidenceCount: idx + 1,

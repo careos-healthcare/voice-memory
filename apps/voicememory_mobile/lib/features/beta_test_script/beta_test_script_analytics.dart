@@ -13,17 +13,10 @@ abstract final class BetaTestScriptAnalytics {
 
   @visibleForTesting
   static void Function(String event, Map<String, Object> properties)?
-      captureForTest;
+  captureForTest;
 
-  static void opened({
-    required String source,
-    required int entryCount,
-  }) {
-    _emit(
-      openedEvent,
-      source: source,
-      entryCount: entryCount,
-    );
+  static void opened({required String source, required int entryCount}) {
+    _emit(openedEvent, source: source, entryCount: entryCount);
   }
 
   static void stepSeen({
@@ -31,12 +24,7 @@ abstract final class BetaTestScriptAnalytics {
     required String step,
     required int entryCount,
   }) {
-    _emit(
-      stepSeenEvent,
-      source: source,
-      step: step,
-      entryCount: entryCount,
-    );
+    _emit(stepSeenEvent, source: source, step: step, entryCount: entryCount);
   }
 
   static void progressReset({required String source}) {
@@ -47,11 +35,7 @@ abstract final class BetaTestScriptAnalytics {
     required String source,
     required int entryCount,
   }) {
-    _emit(
-      feedbackCtaTappedEvent,
-      source: source,
-      entryCount: entryCount,
-    );
+    _emit(feedbackCtaTappedEvent, source: source, entryCount: entryCount);
   }
 
   static void _emit(
@@ -62,8 +46,8 @@ abstract final class BetaTestScriptAnalytics {
   }) {
     final props = <String, Object>{
       'source': source,
-      if (entryCount != null) 'entry_count': entryCount,
-      if (step != null) 'step': step,
+      'entry_count': ?entryCount,
+      'step': ?step,
     };
 
     captureForTest?.call(event, props);

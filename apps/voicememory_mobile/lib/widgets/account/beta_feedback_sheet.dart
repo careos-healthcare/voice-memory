@@ -84,9 +84,9 @@ class _BetaFeedbackSheetState extends State<BetaFeedbackSheet> {
 
   @override
   Widget build(BuildContext context) {
-    final bodyStyle = ArchiveMobileTypography.explanationBody(context).copyWith(
-      color: AppColors.textSecondary,
-    );
+    final bodyStyle = ArchiveMobileTypography.explanationBody(
+      context,
+    ).copyWith(color: AppColors.textSecondary);
 
     return SafeArea(
       child: Padding(

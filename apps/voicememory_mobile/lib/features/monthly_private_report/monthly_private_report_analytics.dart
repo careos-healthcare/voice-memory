@@ -13,7 +13,7 @@ abstract final class MonthlyPrivateReportAnalytics {
 
   @visibleForTesting
   static void Function(String event, Map<String, Object> properties)?
-      captureForTest;
+  captureForTest;
 
   static void seen({
     required String source,
@@ -91,7 +91,7 @@ abstract final class MonthlyPrivateReportAnalytics {
       'has_change_signal': hasChangeSignal ? 1 : 0,
       'has_helped_signal': hasHelpedSignal ? 1 : 0,
       'has_quiet_signal': hasQuietSignal ? 1 : 0,
-      if (actionType != null) 'action_type': actionType,
+      'action_type': ?actionType,
     };
 
     captureForTest?.call(event, props);

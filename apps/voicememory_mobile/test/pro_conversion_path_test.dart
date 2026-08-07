@@ -13,7 +13,6 @@ import 'package:voicememory_mobile/features/pro_evidence_value/pro_evidence_valu
 import 'package:voicememory_mobile/features/pro_evidence_value/pro_evidence_value_engine.dart';
 import 'package:voicememory_mobile/features/pro_evidence_value/pro_evidence_value_model.dart';
 import 'package:voicememory_mobile/features/pro_lock_moment/pro_lock_moment_copy.dart';
-import 'package:voicememory_mobile/features/pro_lock_moment/pro_lock_moment_engine.dart';
 import 'package:voicememory_mobile/features/pro_value/pro_value_copy.dart';
 import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
@@ -27,6 +26,7 @@ import 'package:voicememory_mobile/widgets/pro/pro_evidence_value_card.dart';
 import 'package:voicememory_mobile/widgets/pro/pro_evidence_value_sheet.dart';
 import 'package:voicememory_mobile/widgets/pro/pro_lock_moment_card.dart';
 import 'package:voicememory_mobile/widgets/pro/pro_lock_moment_sheet.dart';
+import 'support/test_storage_sandbox.dart';
 
 const _strongRepeat =
     'I had no capacity but I said yes again to the extra meeting today.';
@@ -35,49 +35,46 @@ JournalEntry _entry({
   required String id,
   required String transcript,
   DateTime? createdAt,
-}) =>
-    JournalEntry(
-      id: id,
-      createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
-      transcript: transcript,
-      durationSeconds: 30,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 2,
-        recurringThemes: ['work'],
-        exactLanguagePattern: '',
-        concreteObservation: 'Work pressure showed up in this moment.',
-        repeatedSignal: '',
-      ),
-    );
+}) => JournalEntry(
+  id: id,
+  createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
+  transcript: transcript,
+  durationSeconds: 30,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 2,
+    recurringThemes: ['work'],
+    exactLanguagePattern: '',
+    concreteObservation: 'Work pressure showed up in this moment.',
+    repeatedSignal: '',
+  ),
+);
 
 List<JournalEntry> _threeRelatedEntries() => [
-      _entry(
-        id: 'e1',
-        transcript: _strongRepeat,
-        createdAt: DateTime(2026, 6, 10, 12),
-      ),
-      _entry(
-        id: 'e2',
-        transcript:
-            'Same thing — said yes when I had no capacity for one more thing.',
-        createdAt: DateTime(2026, 6, 11, 12),
-      ),
-      _entry(
-        id: 'e3',
-        transcript:
-            'I said yes again even though I had no capacity for one more ask.',
-        createdAt: DateTime(2026, 6, 12, 12),
-      ),
-    ];
+  _entry(
+    id: 'e1',
+    transcript: _strongRepeat,
+    createdAt: DateTime(2026, 6, 10, 12),
+  ),
+  _entry(
+    id: 'e2',
+    transcript:
+        'Same thing — said yes when I had no capacity for one more thing.',
+    createdAt: DateTime(2026, 6, 11, 12),
+  ),
+  _entry(
+    id: 'e3',
+    transcript:
+        'I said yes again even though I had no capacity for one more ask.',
+    createdAt: DateTime(2026, 6, 12, 12),
+  ),
+];
 
 MonthlyPrivateReportPreview _preview() =>
     MonthlyPrivateReportEngine.build(entries: _threeRelatedEntries())!;
 
-ArchiveBackupBridgeContext _backupContext({
-  bool isPro = false,
-}) =>
+ArchiveBackupBridgeContext _backupContext({bool isPro = false}) =>
     ArchiveBackupBridgeContext(
       surface: ArchiveBackupBridgeSurface.settings,
       entryCount: 3,
@@ -96,18 +93,19 @@ ArchiveBackupBridgeContext _backupContext({
     );
 
 void main() {
+  late TestStorageSandbox sandbox;
   TestWidgetsFlutterBinding.ensureInitialized();
 
   setUp(() async {
+    sandbox = TestStorageSandbox.create();
     await AppServices.resetForTest(
-      journalPath:
-          'test/tmp/pro_conversion_path/${DateTime.now().microsecondsSinceEpoch}_journal.json',
-      prefsPath:
-          'test/tmp/pro_conversion_path/${DateTime.now().microsecondsSinceEpoch}_prefs.json',
+      journalPath: sandbox.journalPath,
+      prefsPath: sandbox.prefsPath,
       skipRevenueCat: true,
     );
   });
 
+  tearDown(() => sandbox.dispose());
   group('ProConversionAuditCopy', () {
     test('core paid reason is defined', () {
       expect(
@@ -124,10 +122,7 @@ void main() {
 
   group('ProConversionSurface routes', () {
     test('revenue bridges target subscription or value preview', () {
-      expect(
-        ProConversionSurface.proLockMoment.primaryRoute,
-        '/subscription',
-      );
+      expect(ProConversionSurface.proLockMoment.primaryRoute, '/subscription');
       expect(
         ProConversionSurface.monthlyPrivateReportPreview.primaryRoute,
         '/subscription',
@@ -147,9 +142,14 @@ void main() {
     });
 
     test('sheet-first surfaces are flagged', () {
-      expect(ProConversionSurface.proLockMoment.opensSheetBeforeSubscribe, isTrue);
       expect(
-        ProConversionSurface.monthlyPrivateReportPreview.opensSheetBeforeSubscribe,
+        ProConversionSurface.proLockMoment.opensSheetBeforeSubscribe,
+        isTrue,
+      );
+      expect(
+        ProConversionSurface
+            .monthlyPrivateReportPreview
+            .opensSheetBeforeSubscribe,
         isTrue,
       );
       expect(
@@ -192,8 +192,9 @@ void main() {
     });
 
     test('no more AI framing in revenue copy', () {
-      final blob =
-          ProConversionAuditEngine.revenueFeatureCopy().join(' ').toLowerCase();
+      final blob = ProConversionAuditEngine.revenueFeatureCopy()
+          .join(' ')
+          .toLowerCase();
       expect(blob, isNot(contains('more ai')));
       expect(blob, isNot(contains('better chat answers')));
       expect(blob, isNot(contains('smarter chat')));
@@ -226,7 +227,9 @@ void main() {
 
     test('confirmed repeat required before bridges show', () {
       expect(
-        EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(_threeRelatedEntries()),
+        EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(
+          _threeRelatedEntries(),
+        ),
         isTrue,
       );
     });
@@ -278,7 +281,10 @@ void main() {
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 300));
 
-      expect(find.byKey(const Key('pro_lock_moment_sheet_title')), findsOneWidget);
+      expect(
+        find.byKey(const Key('pro_lock_moment_sheet_title')),
+        findsOneWidget,
+      );
     });
   });
 
@@ -334,7 +340,9 @@ void main() {
       );
       await tester.pump();
 
-      await tester.tap(find.byKey(const Key('monthly_private_report_preview_cta')));
+      await tester.tap(
+        find.byKey(const Key('monthly_private_report_preview_cta')),
+      );
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 300));
 
@@ -390,7 +398,9 @@ void main() {
         ),
       );
 
-      await tester.tap(find.byKey(const Key('archive_backup_bridge_sheet_see_pro')));
+      await tester.tap(
+        find.byKey(const Key('archive_backup_bridge_sheet_see_pro')),
+      );
       await tester.pump();
 
       expect(openedSubscription, isTrue);
@@ -462,7 +472,10 @@ void main() {
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 300));
 
-      expect(find.byKey(const Key('pro_evidence_value_sheet_title')), findsOneWidget);
+      expect(
+        find.byKey(const Key('pro_evidence_value_sheet_title')),
+        findsOneWidget,
+      );
     });
 
     test('hidden for Pro users', () {

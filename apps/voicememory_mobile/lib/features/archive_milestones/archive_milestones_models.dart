@@ -11,11 +11,7 @@ enum ArchiveMilestoneId {
 }
 
 /// Row state label shown beside each milestone.
-enum ArchiveMilestoneRowState {
-  done,
-  now,
-  next,
-}
+enum ArchiveMilestoneRowState { done, now, next }
 
 /// One milestone row in the compact card.
 class ArchiveMilestoneRow {

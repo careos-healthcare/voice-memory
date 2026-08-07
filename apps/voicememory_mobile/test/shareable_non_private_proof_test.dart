@@ -13,7 +13,7 @@ import 'package:voicememory_mobile/widgets/share/shareable_proof_card.dart';
 
 class _MemoryPrefs extends MobilePrefsStore {
   _MemoryPrefs()
-      : super(file: File('test/tmp/shareable_non_private_proof/unused.json'));
+    : super(file: File('test/tmp/shareable_non_private_proof/unused.json'));
 
   final Map<String, Map<String, dynamic>> maps = {};
 
@@ -34,23 +34,19 @@ ShareableProofVisibilityInput _input({
   bool whatChangedQuestionActive = false,
   bool patternReviewInboxHasActiveItems = false,
   int entryCount = 3,
-}) =>
-    ShareableProofVisibilityInput(
-      entryCount: entryCount,
-      timelineProofMomentSeen: timelineProofMomentSeen,
-      betaTesterReportSeen: betaTesterReportSeen,
-      isRecording: isRecording,
-      isDegradedTranscript: isDegradedTranscript,
-      whatChangedQuestionActive: whatChangedQuestionActive,
-      patternReviewInboxHasActiveItems: patternReviewInboxHasActiveItems,
-    );
+}) => ShareableProofVisibilityInput(
+  entryCount: entryCount,
+  timelineProofMomentSeen: timelineProofMomentSeen,
+  betaTesterReportSeen: betaTesterReportSeen,
+  isRecording: isRecording,
+  isDegradedTranscript: isDegradedTranscript,
+  whatChangedQuestionActive: whatChangedQuestionActive,
+  patternReviewInboxHasActiveItems: patternReviewInboxHasActiveItems,
+);
 
 ShareableProofResult _visibleResult({int entryCount = 3}) =>
     ShareableProofEngine.build(
-      input: _input(
-        timelineProofMomentSeen: true,
-        entryCount: entryCount,
-      ),
+      input: _input(timelineProofMomentSeen: true, entryCount: entryCount),
     );
 
 void main() {
@@ -112,27 +108,20 @@ void main() {
 
   group('ShareableProofEngine', () {
     test('hidden before timeline proof or other positive triggers', () {
-      expect(
-        ShareableProofEngine.shouldShow(_input()),
-        isFalse,
-      );
+      expect(ShareableProofEngine.shouldShow(_input()), isFalse);
       expect(ShareableProofEngine.build(input: _input()).shouldShow, isFalse);
     });
 
     test('visible after timeline proof seen', () {
       expect(
-        ShareableProofEngine.shouldShow(
-          _input(timelineProofMomentSeen: true),
-        ),
+        ShareableProofEngine.shouldShow(_input(timelineProofMomentSeen: true)),
         isTrue,
       );
     });
 
     test('visible after beta tester report seen', () {
       expect(
-        ShareableProofEngine.shouldShow(
-          _input(betaTesterReportSeen: true),
-        ),
+        ShareableProofEngine.shouldShow(_input(betaTesterReportSeen: true)),
         isTrue,
       );
     });
@@ -155,9 +144,7 @@ void main() {
         entryCount: 3,
       );
       expect(
-        ShareableProofEngine.shouldShow(
-          _input(timelineProofMomentSeen: true),
-        ),
+        ShareableProofEngine.shouldShow(_input(timelineProofMomentSeen: true)),
         isFalse,
       );
     });
@@ -170,9 +157,7 @@ void main() {
         entryCount: 3,
       );
       expect(
-        ShareableProofEngine.shouldShow(
-          _input(betaTesterReportSeen: true),
-        ),
+        ShareableProofEngine.shouldShow(_input(betaTesterReportSeen: true)),
         isFalse,
       );
     });
@@ -271,7 +256,7 @@ void main() {
   });
 
   group('ShareableProofCard', () {
-    Future<void> _pumpCard(
+    Future<void> pumpCard(
       WidgetTester tester, {
       required ShareableProofResult result,
       Future<void> Function(String text)? onCopy,
@@ -294,11 +279,8 @@ void main() {
     }
 
     testWidgets('renders title and privacy warning', (tester) async {
-      await _pumpCard(tester, result: _visibleResult());
-      expect(
-        find.text('Share the idea, not your archive'),
-        findsOneWidget,
-      );
+      await pumpCard(tester, result: _visibleResult());
+      expect(find.text('Share the idea, not your archive'), findsOneWidget);
       expect(
         find.text('Your saved moments are never included.'),
         findsOneWidget,
@@ -306,17 +288,20 @@ void main() {
     });
 
     testWidgets('hidden when engine says not to show', (tester) async {
-      await _pumpCard(
+      await pumpCard(
         tester,
         result: ShareableProofEngine.build(input: _input()),
       );
-      expect(find.byKey(const Key('shareable_non_private_proof_card')), findsNothing);
+      expect(
+        find.byKey(const Key('shareable_non_private_proof_card')),
+        findsNothing,
+      );
     });
 
     testWidgets('copy and share require explicit tap', (tester) async {
       String? copied;
       String? shared;
-      await _pumpCard(
+      await pumpCard(
         tester,
         result: _visibleResult(),
         onCopy: (text) async {
@@ -332,7 +317,9 @@ void main() {
       expect(analyticsEvents.where((e) => e.event.contains('copied')), isEmpty);
       expect(analyticsEvents.where((e) => e.event.contains('shared')), isEmpty);
 
-      await tester.tap(find.byKey(const Key('shareable_non_private_proof_copy')));
+      await tester.tap(
+        find.byKey(const Key('shareable_non_private_proof_copy')),
+      );
       await tester.pump();
       expect(copied, isNotNull);
       expect(
@@ -342,7 +329,9 @@ void main() {
         isTrue,
       );
 
-      await tester.tap(find.byKey(const Key('shareable_non_private_proof_share')));
+      await tester.tap(
+        find.byKey(const Key('shareable_non_private_proof_share')),
+      );
       await tester.pump();
       expect(shared, isNotNull);
       expect(
@@ -353,9 +342,11 @@ void main() {
       );
     });
 
-    testWidgets('selected template stays generic in share text', (tester) async {
+    testWidgets('selected template stays generic in share text', (
+      tester,
+    ) async {
       String? shared;
-      await _pumpCard(
+      await pumpCard(
         tester,
         result: _visibleResult(),
         onShare: (text) async {
@@ -365,15 +356,22 @@ void main() {
 
       await tester.tap(
         find.byKey(
-          const Key('shareable_non_private_proof_template_chatgpt_differentiation'),
+          const Key(
+            'shareable_non_private_proof_template_chatgpt_differentiation',
+          ),
         ),
       );
       await tester.pump();
 
-      await tester.tap(find.byKey(const Key('shareable_non_private_proof_share')));
+      await tester.tap(
+        find.byKey(const Key('shareable_non_private_proof_share')),
+      );
       await tester.pump();
 
-      expect(shared, contains(ShareableProofCopy.templateChatGptDifferentiation));
+      expect(
+        shared,
+        contains(ShareableProofCopy.templateChatGptDifferentiation),
+      );
       expect(shared, contains(ShareableProofCopy.privacyWarning));
       expect(shared!.toLowerCase(), isNot(contains('transcript')));
       expect(shared!.toLowerCase(), isNot(contains('entry_id')));

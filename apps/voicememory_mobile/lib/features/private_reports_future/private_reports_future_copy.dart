@@ -35,31 +35,34 @@ abstract final class PrivateReportsFutureCopy {
   static const detailFutureProAddOnDocumented = 'Future Pro add-on documented';
 
   static String ruleLabelFor(PrivateReportsFutureRuleId id) => switch (id) {
-        PrivateReportsFutureRuleId.onlyAfterFirstProof => 'Only after first proof',
-        PrivateReportsFutureRuleId.notTherapy => 'No treatment-style framing',
-        PrivateReportsFutureRuleId.notDiagnosis => 'No clinical-label framing',
-        PrivateReportsFutureRuleId.notMedical => 'No medical claims',
-        PrivateReportsFutureRuleId.notTherapistReadyClaim =>
-          'No therapist-ready claims',
-        PrivateReportsFutureRuleId.notPrimaryProPromise => 'Not primary Pro promise',
-        PrivateReportsFutureRuleId.futureProAddOnAfterTrailConverts =>
-          'Future Pro add-on after trail converts',
-      };
+    PrivateReportsFutureRuleId.onlyAfterFirstProof => 'Only after first proof',
+    PrivateReportsFutureRuleId.notTherapy => 'No treatment-style framing',
+    PrivateReportsFutureRuleId.notDiagnosis => 'No clinical-label framing',
+    PrivateReportsFutureRuleId.notMedical => 'No medical claims',
+    PrivateReportsFutureRuleId.notTherapistReadyClaim =>
+      'No therapist-ready claims',
+    PrivateReportsFutureRuleId.notPrimaryProPromise =>
+      'Not primary Pro promise',
+    PrivateReportsFutureRuleId.futureProAddOnAfterTrailConverts =>
+      'Future Pro add-on after trail converts',
+  };
 
   static String messageFor(PrivateReportsFutureGateDecision decision) =>
       switch (decision) {
-        PrivateReportsFutureGateDecision.laterUpgradeOnly => laterUpgradeOnlyLine,
+        PrivateReportsFutureGateDecision.laterUpgradeOnly =>
+          laterUpgradeOnlyLine,
         PrivateReportsFutureGateDecision.futureProAddOnAllowed =>
           futureProAddOnAllowedLine,
       };
 
-  static String recommendationFor(PrivateReportsFutureGateDecision decision) =>
-      switch (decision) {
-        PrivateReportsFutureGateDecision.laterUpgradeOnly =>
-          'Keep private reports out of launch headlines and primary Pro promise copy.',
-        PrivateReportsFutureGateDecision.futureProAddOnAllowed =>
-          'Document private reports as a future Pro add-on only. Keep proof trail as the primary promise.',
-      };
+  static String recommendationFor(
+    PrivateReportsFutureGateDecision decision,
+  ) => switch (decision) {
+    PrivateReportsFutureGateDecision.laterUpgradeOnly =>
+      'Keep private reports out of launch headlines and primary Pro promise copy.',
+    PrivateReportsFutureGateDecision.futureProAddOnAllowed =>
+      'Document private reports as a future Pro add-on only. Keep proof trail as the primary promise.',
+  };
 
   static Iterable<String> allVisibleStrings() sync* {
     yield headline;
@@ -93,10 +96,7 @@ enum PrivateReportsFutureRuleId {
   futureProAddOnAfterTrailConverts,
 }
 
-enum PrivateReportsFutureRuleStatus {
-  pass,
-  fail,
-}
+enum PrivateReportsFutureRuleStatus { pass, fail }
 
 enum PrivateReportsFutureGateDecision {
   laterUpgradeOnly,

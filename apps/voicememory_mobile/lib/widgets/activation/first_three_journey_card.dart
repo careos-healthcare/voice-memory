@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../product/consumer_ui_copy.dart';
-import '../../features/activation/first_three_session_copy.dart';
 import '../../features/activation/first_three_journey_model.dart';
 import '../../widgets/activation/first_three_session_journey_indicator.dart';
 import '../../theme/app_colors.dart';
@@ -24,7 +23,7 @@ class FirstThreeJourneyCard extends StatelessWidget {
   final VoidCallback? onCta;
 
   static const Color _warmSurface = Color(0xFFFFFBF5);
-  static const Color _warmBorder = Color(0xFFF5E6D3);
+  static const Color _warmBorder = AppColors.warmBorder;
   static const Color _stepActive = Color(0xFFE8A87C);
   static const Color _stepInactive = Color(0xFFE8DFD4);
 

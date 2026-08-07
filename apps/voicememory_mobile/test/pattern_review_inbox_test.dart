@@ -13,22 +13,21 @@ JournalEntry _entry({
   required String id,
   required String transcript,
   DateTime? createdAt,
-}) =>
-    JournalEntry(
-      id: id,
-      createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
-      transcript: transcript,
-      durationSeconds: 30,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 2,
-        recurringThemes: ['work'],
-        exactLanguagePattern: '',
-        concreteObservation: 'Work pressure showed up in this moment.',
-        repeatedSignal: '',
-      ),
-    );
+}) => JournalEntry(
+  id: id,
+  createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
+  transcript: transcript,
+  durationSeconds: 30,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 2,
+    recurringThemes: ['work'],
+    exactLanguagePattern: '',
+    concreteObservation: 'Work pressure showed up in this moment.',
+    repeatedSignal: '',
+  ),
+);
 
 void main() {
   group('PatternReviewInboxCopy', () {
@@ -38,12 +37,16 @@ void main() {
         PatternReviewInboxCopy.sheetSubtitle,
         'Things ArchiveMe needs your judgement on.',
       );
-      expect(PatternReviewInboxCopy.emptyTitle, 'Nothing needs review right now');
+      expect(
+        PatternReviewInboxCopy.emptyTitle,
+        'Nothing needs review right now',
+      );
     });
 
     test('does not use banned journal or progress language', () {
-      final blob =
-          PatternReviewInboxCopy.allVisibleStrings().join(' ').toLowerCase();
+      final blob = PatternReviewInboxCopy.allVisibleStrings()
+          .join(' ')
+          .toLowerCase();
       expect(blob, isNot(contains('journal')));
       expect(blob, isNot(contains('progress')));
       expect(blob, isNot(contains('streak')));
@@ -60,9 +63,7 @@ void main() {
 
     test('returns empty inbox for placeholder-only entries', () {
       final result = PatternReviewInboxEngine.build(
-        entries: [
-          _entry(id: 'e1', transcript: _placeholder),
-        ],
+        entries: [_entry(id: 'e1', transcript: _placeholder)],
       );
       expect(result.isEmpty, isTrue);
     });

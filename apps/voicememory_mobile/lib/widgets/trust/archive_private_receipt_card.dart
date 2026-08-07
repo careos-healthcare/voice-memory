@@ -7,7 +7,6 @@ import '../../features/memory/memory_scope_policy.dart';
 import '../../features/trust/archive_trust_receipt.dart';
 import '../../features/trust/pro_trust_copy.dart';
 import '../../services/activation_funnel_analytics.dart';
-import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
 import '../../theme/voicememory_cards.dart';
 

@@ -101,29 +101,7 @@ abstract class EntryAboutnessSession {
   }
 
   static JournalEntry _copy(JournalEntry entry, {required String aboutness}) =>
-      JournalEntry(
-        id: entry.id,
-        createdAt: entry.createdAt,
-        transcript: entry.transcript,
-        durationSeconds: entry.durationSeconds,
-        reflection: entry.reflection,
-        syncStatus: entry.syncStatus,
-        localAudioPath: entry.localAudioPath,
-        treatAsNew: entry.treatAsNew,
-        connectionApproved: entry.connectionApproved,
-        keepExactDetails: entry.keepExactDetails,
-        keepSeparate: entry.keepSeparate,
-        archiveThreadId: entry.archiveThreadId,
-        archivePackId: entry.archivePackId,
-        isPinned: entry.isPinned,
-        pinnedAt: entry.pinnedAt,
-        isArchived: entry.isArchived,
-        archivedAt: entry.archivedAt,
-    entryAboutness: aboutness,
-    memorySurfacing: entry.memorySurfacing,
-    preserveOriginal: entry.preserveOriginal,
-    captureContextTag: entry.captureContextTag,
-  );
+      entry.copyWith(entryAboutness: aboutness);
 
   static void resetAfterSave() {
     selected = EntryAboutness.aboutMe;
@@ -133,12 +111,14 @@ abstract class EntryAboutnessSession {
     lastSaveWasNonPersonal = false;
   }
 
-  @visibleForTesting
-  static void resetSessionForTest() {
+  static void resetSessionState() {
     selected = EntryAboutness.aboutMe;
     lastSaveWasNonPersonal = false;
     pickerSeenThisSession = false;
   }
+
+  @visibleForTesting
+  static void resetSessionForTest() => resetSessionState();
 }
 
 abstract class EntryAboutnessCopy {

@@ -9,8 +9,7 @@ abstract final class FirstWeekLoopGates {
   static bool isProRequirementGated({
     required bool valueMomentProBridgeVisible,
     required bool purchaseIntentReturnCueVisible,
-  }) =>
-      valueMomentProBridgeVisible || purchaseIntentReturnCueVisible;
+  }) => valueMomentProBridgeVisible || purchaseIntentReturnCueVisible;
 
   static bool shouldShow({
     required bool loaded,
@@ -35,10 +34,9 @@ abstract final class FirstWeekLoopGates {
     required RecordCtaPolicyResolution policy,
     required bool hideCardRecordButtons,
     required bool promoteMicCaptureActions,
-  }) =>
-      !ArchiveBetaMissionGates.capturePrimaryCtaVisible(
-        policy: policy,
-        hideCardRecordButtons: hideCardRecordButtons,
-        promoteMicCaptureActions: promoteMicCaptureActions,
-      );
+  }) => !ArchiveBetaMissionGates.capturePrimaryCtaVisible(
+    policy: policy,
+    hideCardRecordButtons: hideCardRecordButtons,
+    promoteMicCaptureActions: promoteMicCaptureActions,
+  );
 }

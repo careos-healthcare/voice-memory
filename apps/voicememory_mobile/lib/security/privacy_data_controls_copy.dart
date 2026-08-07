@@ -1,4 +1,6 @@
 /// Settings copy for local privacy and data controls.
+library;
+
 import 'privacy_copy_policy.dart';
 
 abstract final class PrivacyDataControlsCopy {

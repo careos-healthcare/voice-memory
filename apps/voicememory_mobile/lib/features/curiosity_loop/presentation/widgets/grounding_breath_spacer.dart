@@ -70,8 +70,9 @@ class _GroundingBreathSpacerState extends State<GroundingBreathSpacer> {
             borderRadius: BorderRadius.circular(999),
             child: LinearProgressIndicator(
               minHeight: 4,
-              backgroundColor:
-                  theme.colorScheme.outlineVariant.withValues(alpha: 0.35),
+              backgroundColor: theme.colorScheme.outlineVariant.withValues(
+                alpha: 0.35,
+              ),
             ),
           ),
         ],

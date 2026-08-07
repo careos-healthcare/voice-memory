@@ -1,4 +1,5 @@
-import '../../../api/api_client.dart';
+import '../../../core/network/api_failure.dart';
+import '../../../data/repositories/live_audio_repository.dart';
 import '../domain/models/live_audio_session_config.dart';
 
 abstract class LiveAudioSessionApiClient {
@@ -8,19 +9,23 @@ abstract class LiveAudioSessionApiClient {
   });
 }
 
-class ApiLiveAudioSessionClient implements LiveAudioSessionApiClient {
-  const ApiLiveAudioSessionClient(this._api);
+class RepositoryLiveAudioSessionClient implements LiveAudioSessionApiClient {
+  const RepositoryLiveAudioSessionClient(this._repository);
 
-  final ApiClient _api;
+  final LiveAudioRepository _repository;
 
   @override
   Future<LiveAudioSessionConfig> mintSession({
     required String captureToken,
     String? idempotencyKey,
-  }) {
-    return _api.postLiveAudioSession(
+  }) async {
+    final result = await _repository.mintSession(
       captureToken: captureToken,
       idempotencyKey: idempotencyKey,
+    );
+    return result.when(
+      success: (config) => config,
+      onFailure: (failure) => throw failure.toApiException(),
     );
   }
 }

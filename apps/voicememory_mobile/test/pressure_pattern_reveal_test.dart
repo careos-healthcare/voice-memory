@@ -7,7 +7,7 @@ import 'package:voicememory_mobile/features/pressure_retention/pressure_check_in
 import 'package:voicememory_mobile/features/pressure_retention/pressure_micro_experiment_store.dart';
 import 'package:voicememory_mobile/features/pressure_retention/pressure_pattern_reveal_engine.dart';
 import 'package:voicememory_mobile/features/pressure_retention/pressure_pattern_reveal_model.dart';
-import 'package:voicememory_mobile/screens/pressure_insights_screen.dart';
+import 'package:archiveme_research/screens/pressure_insights_screen.dart';
 import 'package:voicememory_mobile/storage/mobile_prefs_store.dart';
 import 'package:voicememory_mobile/widgets/pressure_retention/pressure_micro_experiment_card.dart';
 import 'package:voicememory_mobile/widgets/pressure_retention/pressure_pattern_reveal_card.dart';

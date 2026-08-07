@@ -16,28 +16,24 @@ AnnualPlanFutureGateInput _input({
   bool? paywallChangeRequested,
   bool? annualPlanRequested,
   bool? annualCopyMissingYearTrailFocus,
-}) =>
-    AnnualPlanFutureGateInput(
-      monthlySandboxPurchaseProofComplete:
-          monthlySandboxPurchaseProofComplete,
-      paidIntentBetaShowsValue: paidIntentBetaShowsValue,
-      annualRevenueCatProductRequested: annualRevenueCatProductRequested,
-      paywallChangeRequested: paywallChangeRequested,
-      annualPlanRequested: annualPlanRequested,
-      annualCopyMissingYearTrailFocus: annualCopyMissingYearTrailFocus,
-    );
+}) => AnnualPlanFutureGateInput(
+  monthlySandboxPurchaseProofComplete: monthlySandboxPurchaseProofComplete,
+  paidIntentBetaShowsValue: paidIntentBetaShowsValue,
+  annualRevenueCatProductRequested: annualRevenueCatProductRequested,
+  paywallChangeRequested: paywallChangeRequested,
+  annualPlanRequested: annualPlanRequested,
+  annualCopyMissingYearTrailFocus: annualCopyMissingYearTrailFocus,
+);
 
 AnnualPlanFuturePrereq _prereq(
   AnnualPlanFutureGateResult result,
   AnnualPlanFuturePrereqId id,
-) =>
-    result.prereqs.firstWhere((prereq) => prereq.id == id);
+) => result.prereqs.firstWhere((prereq) => prereq.id == id);
 
 AnnualPlanFutureRule _rule(
   AnnualPlanFutureGateResult result,
   AnnualPlanFutureRuleId id,
-) =>
-    result.rules.firstWhere((rule) => rule.id == id);
+) => result.rules.firstWhere((rule) => rule.id == id);
 
 void main() {
   group('AnnualPlanFutureGate.build', () {
@@ -55,10 +51,7 @@ void main() {
       expect(result.annualRevenueCatProductBlocked, isTrue);
       expect(result.paywallChangesBlocked, isTrue);
       expect(result.rulesPass, isTrue);
-      expect(
-        result.plan.status,
-        AnnualPlanFuturePlanStatus.blockedBeforeProof,
-      );
+      expect(result.plan.status, AnnualPlanFuturePlanStatus.blockedBeforeProof);
     });
 
     test('both prereqs complete -> annualPlanDocumented', () {
@@ -135,10 +128,7 @@ void main() {
 
     test('annual plan requested without beta value fails value rule', () {
       final result = AnnualPlanFutureGate.build(
-        _input(
-          paidIntentBetaShowsValue: false,
-          annualPlanRequested: true,
-        ),
+        _input(paidIntentBetaShowsValue: false, annualPlanRequested: true),
       );
       expect(
         _rule(
@@ -165,7 +155,11 @@ void main() {
     test('canonical rules pass for gate copy', () {
       final result = AnnualPlanFutureGate.build(_input());
       for (final rule in result.rules) {
-        expect(rule.status, AnnualPlanFutureRuleStatus.pass, reason: rule.id.name);
+        expect(
+          rule.status,
+          AnnualPlanFutureRuleStatus.pass,
+          reason: rule.id.name,
+        );
       }
     });
 
@@ -192,7 +186,10 @@ void main() {
         AnnualPlanFutureGate.build(_input()),
       );
       expect(report.headline, AnnualPlanFutureCopy.headline);
-      expect(report.futureAnnualPlanLine, AnnualPlanFutureCopy.futureAnnualPlanLine);
+      expect(
+        report.futureAnnualPlanLine,
+        AnnualPlanFutureCopy.futureAnnualPlanLine,
+      );
       expect(report.guardrail, AnnualPlanFutureCopy.guardrail);
     });
   });
@@ -321,10 +318,7 @@ void main() {
       final guardSource = File(
         'lib/features/archive_proof/proof_surface_advice_guard.dart',
       ).readAsStringSync();
-      expect(
-        guardSource,
-        contains('AnnualPlanFutureCopy.allVisibleStrings()'),
-      );
+      expect(guardSource, contains('AnnualPlanFutureCopy.allVisibleStrings()'));
     });
   });
 }

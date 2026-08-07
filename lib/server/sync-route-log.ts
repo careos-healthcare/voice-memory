@@ -14,6 +14,7 @@ export interface SyncRouteLogContext {
   encryptionVersions: number[];
   blobCount: number;
   blobIds: string[];
+  changeCount?: number;
   ok: boolean;
   errorCode: string | null;
 }

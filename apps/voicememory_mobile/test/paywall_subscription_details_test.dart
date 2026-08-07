@@ -11,9 +11,7 @@ void main() {
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
-            body: PaywallSubscriptionDetailsSection(
-              plansAvailable: false,
-            ),
+            body: PaywallSubscriptionDetailsSection(plansAvailable: false),
           ),
         ),
       );
@@ -32,9 +30,18 @@ void main() {
         findsOneWidget,
       );
       expect(find.text(ArchiveLoopPaywallCopy.eulaLabel), findsOneWidget);
-      expect(find.text(ArchiveLoopPaywallCopy.privacyPolicyLabel), findsOneWidget);
-      expect(find.byKey(const Key('paywall_terms_of_use_link')), findsOneWidget);
-      expect(find.byKey(const Key('paywall_privacy_policy_link')), findsOneWidget);
+      expect(
+        find.text(ArchiveLoopPaywallCopy.privacyPolicyLabel),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(const Key('paywall_terms_of_use_link')),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(const Key('paywall_privacy_policy_link')),
+        findsOneWidget,
+      );
     });
 
     testWidgets('shows prices when plans are available', (tester) async {
@@ -63,10 +70,7 @@ void main() {
         ArchiveLoopPaywallCopy.eulaUrl,
         'https://www.apple.com/legal/internet-services/itunes/dev/stdeula/',
       );
-      expect(
-        ArchiveLoopPaywallCopy.privacyPolicyUrl,
-        AppConfig.privacyUrl,
-      );
+      expect(ArchiveLoopPaywallCopy.privacyPolicyUrl, AppConfig.privacyUrl);
     });
   });
 }

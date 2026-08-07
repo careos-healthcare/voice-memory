@@ -41,9 +41,7 @@ class _BetaDecisionRuleCardState extends State<BetaDecisionRuleCard> {
   Future<void> _loadResult() async {
     final input = await RevenueReadinessDashboardV2Engine.loadInput();
     if (!mounted) return;
-    setState(
-      () => _result = BetaDecisionRuleEngine.fromRevenueInput(input),
-    );
+    setState(() => _result = BetaDecisionRuleEngine.fromRevenueInput(input));
   }
 
   @override
@@ -73,16 +71,16 @@ class _BetaDecisionRuleCardState extends State<BetaDecisionRuleCard> {
           Text(
             BetaDecisionRuleCopy.cardTitle,
             key: const Key('beta_decision_rule_card_heading'),
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: 8),
           Text(
             BetaDecisionRuleCopy.inputsTitle,
-            style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: 6),
           for (final line in result.inputLines)
@@ -95,9 +93,9 @@ class _BetaDecisionRuleCardState extends State<BetaDecisionRuleCard> {
           Text(
             result.title,
             key: const Key('beta_decision_rule_title'),
-            style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: 6),
           Text(
@@ -112,9 +110,9 @@ class _BetaDecisionRuleCardState extends State<BetaDecisionRuleCard> {
           const SizedBox(height: 10),
           Text(
             BetaDecisionRuleCopy.reasonTitle,
-            style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: 4),
           Text(

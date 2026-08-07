@@ -11,11 +11,7 @@ const _supportUrl = 'https://careosapp.co.uk/archiveme-support';
 const _bundleId = 'com.voicememory.mobile';
 const _legacyBundleId = 'com.voicememory.app';
 
-const _forbiddenPurchaseCtas = [
-  'Buy now',
-  'Subscribe now',
-  'Pro is active',
-];
+const _forbiddenPurchaseCtas = ['Buy now', 'Subscribe now', 'Pro is active'];
 
 void main() {
   late String pack;
@@ -83,15 +79,18 @@ void main() {
       expect(storeCopy, isNot(contains('VoiceMemory')));
     });
 
-    test('APP_REVIEW_NOTES contains reviewer path, review code, and support URL', () {
-      expect(reviewNotes, contains('ArchiveMe'));
-      expect(reviewNotes, contains(_bundleId));
-      expect(reviewNotes, contains(_supportUrl));
-      expect(reviewNotes, contains('ARCHIVEME-REVIEW-2026'));
-      expect(reviewNotes, contains('App Review Access'));
-      expect(reviewNotes, contains('Sample Archive'));
-      expect(reviewNotes, contains('Support'));
-    });
+    test(
+      'APP_REVIEW_NOTES contains reviewer path, review code, and support URL',
+      () {
+        expect(reviewNotes, contains('ArchiveMe'));
+        expect(reviewNotes, contains(_bundleId));
+        expect(reviewNotes, contains(_supportUrl));
+        expect(reviewNotes, contains('ARCHIVEME-REVIEW-2026'));
+        expect(reviewNotes, contains('App Review Access'));
+        expect(reviewNotes, contains('Sample Archive'));
+        expect(reviewNotes, contains('Support'));
+      },
+    );
 
     test('IOS_RELEASE_CHECKLIST contains bundle ID and workspace', () {
       expect(iosChecklist, contains(_bundleId));

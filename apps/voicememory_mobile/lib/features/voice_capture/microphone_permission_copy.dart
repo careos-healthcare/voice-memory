@@ -1,4 +1,6 @@
 /// User-facing copy when microphone permission blocks voice capture.
+library;
+
 import '../archive_proof/visible_archive_proof_copy.dart';
 import '../trust/capture_recovery_copy.dart';
 

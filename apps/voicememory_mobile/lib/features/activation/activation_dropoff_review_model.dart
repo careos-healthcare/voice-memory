@@ -47,10 +47,10 @@ enum ActivationDropoffRowStatus {
   reached;
 
   String get label => switch (this) {
-        ActivationDropoffRowStatus.notReached => 'Not reached',
-        ActivationDropoffRowStatus.started => 'Started',
-        ActivationDropoffRowStatus.reached => 'Reached',
-      };
+    ActivationDropoffRowStatus.notReached => 'Not reached',
+    ActivationDropoffRowStatus.started => 'Started',
+    ActivationDropoffRowStatus.reached => 'Reached',
+  };
 }
 
 class ActivationDropoffRow {

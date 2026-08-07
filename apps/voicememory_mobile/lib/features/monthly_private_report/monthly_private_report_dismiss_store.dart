@@ -48,10 +48,12 @@ abstract final class MonthlyPrivateReportDismissStore {
     _loaded = false;
   }
 
-  @visibleForTesting
-  static Future<void> resetForTest() async {
+  static Future<void> resetPersistedState() async {
     invalidateSessionForTest();
     if (!AppServices.isInitialized) return;
     await AppServices.instance.prefs.writeString(prefsKey, '');
   }
+
+  @visibleForTesting
+  static Future<void> resetForTest() => resetPersistedState();
 }

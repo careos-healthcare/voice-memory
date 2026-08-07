@@ -77,21 +77,19 @@ class _PatternNameConfirmationCardState
   Widget build(BuildContext context) {
     _trackSeenOnce();
 
-    final bodyStyle = ArchiveMobileTypography.explanationBody(context).copyWith(
-      color: AppColors.textPrimary,
-      height: 1.4,
-    );
+    final bodyStyle = ArchiveMobileTypography.explanationBody(
+      context,
+    ).copyWith(color: AppColors.textPrimary, height: 1.4);
 
     if (_statusMessage != null) {
       return Container(
         key: const Key('pattern_name_saved_message'),
         width: double.infinity,
         padding: const EdgeInsets.all(AppSpacing.md),
-        decoration: VoiceMemoryCards.standard(background: const Color(0xFFF8FAF8)),
-        child: Text(
-          _statusMessage!,
-          style: bodyStyle,
+        decoration: VoiceMemoryCards.standard(
+          background: const Color(0xFFF8FAF8),
         ),
+        child: Text(_statusMessage!, style: bodyStyle),
       );
     }
 
@@ -99,9 +97,7 @@ class _PatternNameConfirmationCardState
       return const SizedBox.shrink();
     }
 
-    final labelStyle = bodyStyle.copyWith(
-      fontWeight: FontWeight.w600,
-    );
+    final labelStyle = bodyStyle.copyWith(fontWeight: FontWeight.w600);
 
     return Container(
       key: const Key('pattern_name_confirmation_card'),

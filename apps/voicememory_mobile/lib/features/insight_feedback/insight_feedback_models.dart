@@ -1,17 +1,8 @@
 /// Local feedback choice for archive insights — never synced.
-enum InsightFeedbackChoice {
-  fits,
-  notQuite,
-  tooEarly,
-  saveAsWatchTheme,
-}
+enum InsightFeedbackChoice { fits, notQuite, tooEarly, saveAsWatchTheme }
 
 /// Safe insight surface type — metadata only.
-enum InsightFeedbackType {
-  thenVsNow,
-  archiveClarity,
-  weeklyReview,
-}
+enum InsightFeedbackType { thenVsNow, archiveClarity, weeklyReview }
 
 /// One local feedback record — no raw journal text.
 class InsightFeedbackRecord {
@@ -30,12 +21,12 @@ class InsightFeedbackRecord {
   final String sourceRoute;
 
   Map<String, dynamic> toJson() => {
-        'insightId': insightId,
-        'insightType': insightType.name,
-        'choice': choice.name,
-        'createdAt': createdAt.toUtc().toIso8601String(),
-        'sourceRoute': sourceRoute,
-      };
+    'insightId': insightId,
+    'insightType': insightType.name,
+    'choice': choice.name,
+    'createdAt': createdAt.toUtc().toIso8601String(),
+    'sourceRoute': sourceRoute,
+  };
 
   factory InsightFeedbackRecord.fromJson(Map<String, dynamic> json) {
     final createdRaw = json['createdAt'] as String?;

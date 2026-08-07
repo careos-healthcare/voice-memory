@@ -44,23 +44,25 @@ const _forbiddenPurchaseCtas = [
 ];
 
 JournalEntry _entry(String id, {String? transcript}) => JournalEntry(
-      id: id,
-      createdAt: DateTime(2026, 6, 12, 12),
-      transcript: transcript ??
-          'I felt pressure at work before saying yes again even when I was tired today.',
-      durationSeconds: 30,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 2,
-        recurringThemes: ['work'],
-        exactLanguagePattern: '',
-        concreteObservation: 'Work pressure showed up in this moment.',
-        repeatedSignal: '',
-      ),
-    );
+  id: id,
+  createdAt: DateTime(2026, 6, 12, 12),
+  transcript:
+      transcript ??
+      'I felt pressure at work before saying yes again even when I was tired today.',
+  durationSeconds: 30,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 2,
+    recurringThemes: ['work'],
+    exactLanguagePattern: '',
+    concreteObservation: 'Work pressure showed up in this moment.',
+    repeatedSignal: '',
+  ),
+);
 
-List<JournalEntry> _entries(int count) => List.generate(count, (i) => _entry('e$i'));
+List<JournalEntry> _entries(int count) =>
+    List.generate(count, (i) => _entry('e$i'));
 
 BetaOutcomesInput _input({
   int savedMomentCount = 0,
@@ -71,17 +73,16 @@ BetaOutcomesInput _input({
   BetaFeedbackState feedbackState = BetaFeedbackState.empty,
   bool shareProofReady = false,
   ProInterestState proInterestState = ProInterestState.empty,
-}) =>
-    BetaOutcomesInput(
-      savedMomentCount: savedMomentCount,
-      usableEvidenceCount: usableEvidenceCount,
-      depthLevelLabel: depthLevelLabel,
-      watchThemesCount: watchThemesCount,
-      returnRitualSet: returnRitualSet,
-      feedbackState: feedbackState,
-      shareProofReady: shareProofReady,
-      proInterestState: proInterestState,
-    );
+}) => BetaOutcomesInput(
+  savedMomentCount: savedMomentCount,
+  usableEvidenceCount: usableEvidenceCount,
+  depthLevelLabel: depthLevelLabel,
+  watchThemesCount: watchThemesCount,
+  returnRitualSet: returnRitualSet,
+  feedbackState: feedbackState,
+  shareProofReady: shareProofReady,
+  proInterestState: proInterestState,
+);
 
 void _expectNoBannedCopy(Iterable<String> visible) {
   for (final text in visible) {
@@ -222,7 +223,10 @@ void main() {
       const privateText = 'Private journal moment about my boss';
       const privateNote = 'This note should never appear in summary';
       final snapshot = engine.buildFromJournal(
-        entries: [_entry('e1', transcript: privateText), ..._entries(3)],
+        entries: [
+          _entry('e1', transcript: privateText),
+          ..._entries(3),
+        ],
         watchThemesCount: 1,
         returnRitualSet: false,
         feedbackState: const BetaFeedbackState(
@@ -259,13 +263,15 @@ void main() {
   });
 
   group('Beta outcomes privacy', () {
+    late Directory tempDir;
     test('dashboard engine does not write to JournalStore', () async {
       final tempDir = await Directory.systemTemp.createTemp('beta_outcomes_');
       addTearDown(() async {
         if (await tempDir.exists()) await tempDir.delete(recursive: true);
       });
-      final journalStore =
-          await JournalStore.open('${tempDir.path}/journal.json');
+      final journalStore = await JournalStore.open(
+        '${tempDir.path}/journal.json',
+      );
       await journalStore.save(_entry('j1', transcript: 'Private text stays'));
       final before = await journalStore.loadAll();
 
@@ -296,23 +302,28 @@ void main() {
     });
 
     test('share-safe proof excludes beta outcomes copy', () {
-      final proof = const ShareableArchiveProofEngine()
-          .buildFromJournal(entries: _entries(5));
+      final proof = const ShareableArchiveProofEngine().buildFromJournal(
+        entries: _entries(5),
+      );
       expect(proof.shareText, isNot(contains(BetaOutcomesCopy.screenTitle)));
       expect(proof.shareText, isNot(contains('Beta outcomes')));
     });
   });
 
   group('Beta outcomes routing', () {
-    test('route is registered, sensitive, and linked from Support & feedback', () {
-      final router = File('lib/router/app_router.dart').readAsStringSync();
-      final support =
-          File('lib/screens/support_feedback_screen.dart').readAsStringSync();
-      expect(router, contains("path: '/beta-outcomes'"));
-      expect(SensitiveRoutes.isSensitiveRoute('/beta-outcomes'), isTrue);
-      expect(support, contains("context.push('/beta-outcomes')"));
-      expect(support, contains('support_feedback_open_beta_outcomes'));
-    });
+    test(
+      'route is registered, sensitive, and linked from Support & feedback',
+      () {
+        final router = File('lib/router/app_router.dart').readAsStringSync();
+        final support = File(
+          'lib/screens/support_feedback_screen.dart',
+        ).readAsStringSync();
+        expect(router, contains("path: '/beta-outcomes'"));
+        expect(SensitiveRoutes.isSensitiveRoute('/beta-outcomes'), isTrue);
+        expect(support, contains("context.push('/beta-outcomes')"));
+        expect(support, contains('support_feedback_open_beta_outcomes'));
+      },
+    );
 
     testWidgets('Support & feedback shows Open beta outcomes button', (
       tester,
@@ -328,7 +339,10 @@ void main() {
         find.byKey(const Key('support_feedback_open_beta_outcomes')),
         findsOneWidget,
       );
-      expect(find.text(BetaOutcomesCopy.openBetaOutcomesButton), findsOneWidget);
+      expect(
+        find.text(BetaOutcomesCopy.openBetaOutcomesButton),
+        findsOneWidget,
+      );
     });
   });
 }
@@ -339,7 +353,9 @@ class _FakeProofEngine extends ShareableArchiveProofEngine {
   final bool hasProof;
 
   @override
-  ShareableArchiveProof buildFromJournal({required List<JournalEntry> entries}) {
+  ShareableArchiveProof buildFromJournal({
+    required List<JournalEntry> entries,
+  }) {
     return ShareableArchiveProof(hasProof: hasProof);
   }
 }

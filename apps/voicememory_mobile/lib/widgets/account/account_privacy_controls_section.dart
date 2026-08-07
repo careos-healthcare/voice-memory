@@ -73,9 +73,7 @@ class _AccountPrivacyControlsSectionState
       await _controls.clearLocalArchive();
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(PrivacyDataControlsCopy.clearArchiveDone),
-        ),
+        const SnackBar(content: Text(PrivacyDataControlsCopy.clearArchiveDone)),
       );
     } finally {
       if (mounted) setState(() => _clearBusy = false);
@@ -97,17 +95,21 @@ class _AccountPrivacyControlsSectionState
         _button(
           key: const Key('account_control_delete_entry_button'),
           label: AccountPrivacyControlsCopy.deleteEntry,
-          onPressed: widget.onDeleteEntryTap ?? () => unawaited(_openArchiveHistory()),
+          onPressed:
+              widget.onDeleteEntryTap ?? () => unawaited(_openArchiveHistory()),
         ),
         _button(
           key: const Key('account_control_correct_entry_button'),
           label: AccountPrivacyControlsCopy.correctEntry,
-          onPressed: widget.onCorrectEntryTap ?? () => unawaited(_openArchiveHistory()),
+          onPressed:
+              widget.onCorrectEntryTap ??
+              () => unawaited(_openArchiveHistory()),
         ),
         _button(
           key: const Key('account_control_export_button'),
           label: AccountPrivacyControlsCopy.export,
-          onPressed: widget.onExportTap ?? () => context.push('/archive-export'),
+          onPressed:
+              widget.onExportTap ?? () => context.push('/archive-export'),
         ),
         _button(
           key: const Key('account_control_clear_archive_button'),
@@ -116,17 +118,20 @@ class _AccountPrivacyControlsSectionState
           busy: _clearArchiveBusy,
           onPressed: _clearArchiveBusy
               ? null
-              : widget.onClearArchiveTap ?? () => unawaited(_clearLocalArchive()),
+              : widget.onClearArchiveTap ??
+                    () => unawaited(_clearLocalArchive()),
         ),
         _button(
           key: const Key('account_control_privacy_policy_button'),
           label: AccountPrivacyControlsCopy.privacyPolicy,
-          onPressed: widget.onPrivacyPolicyTap ?? () => context.push('/privacy'),
+          onPressed:
+              widget.onPrivacyPolicyTap ?? () => context.push('/privacy'),
         ),
         _button(
           key: const Key('account_control_support_button'),
           label: AccountPrivacyControlsCopy.support,
-          onPressed: widget.onSupportTap ?? () => context.push('/support-feedback'),
+          onPressed:
+              widget.onSupportTap ?? () => context.push('/support-feedback'),
         ),
       ],
     );
@@ -168,9 +173,9 @@ class _AccountPrivacyControlsSectionState
                 )
               : Text(
                   label,
-                  style: ArchiveMobileTypography.listTitle(context).copyWith(
-                    color: color,
-                  ),
+                  style: ArchiveMobileTypography.listTitle(
+                    context,
+                  ).copyWith(color: color),
                 ),
         ),
       ),

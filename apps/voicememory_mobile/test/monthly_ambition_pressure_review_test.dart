@@ -7,7 +7,7 @@ import 'package:voicememory_mobile/features/prove_enough/prove_enough_contradict
 import 'package:voicememory_mobile/models/entitlement.dart';
 import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
-import 'package:voicememory_mobile/screens/monthly_ambition_pressure_review_screen.dart';
+import 'package:archiveme_research/screens/monthly_ambition_pressure_review_screen.dart';
 import 'package:voicememory_mobile/widgets/prove_enough/monthly_ambition_pressure_review_card.dart';
 
 Future<void> _pumpFrames(WidgetTester tester, {int frames = 8}) async {

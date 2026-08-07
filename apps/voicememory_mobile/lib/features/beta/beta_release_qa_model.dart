@@ -20,11 +20,10 @@ enum BetaReleaseQaStatus {
   checkManually;
 
   String get label => switch (this) {
-        BetaReleaseQaStatus.ready => BetaReleaseQaCopy.statusReady,
-        BetaReleaseQaStatus.missing => BetaReleaseQaCopy.statusMissing,
-        BetaReleaseQaStatus.checkManually =>
-          BetaReleaseQaCopy.statusCheckManually,
-      };
+    BetaReleaseQaStatus.ready => BetaReleaseQaCopy.statusReady,
+    BetaReleaseQaStatus.missing => BetaReleaseQaCopy.statusMissing,
+    BetaReleaseQaStatus.checkManually => BetaReleaseQaCopy.statusCheckManually,
+  };
 }
 
 class BetaReleaseQaRow {
@@ -67,18 +66,18 @@ class BetaReleaseQaReport {
   final String coreValueFeedbackAnswer;
 
   List<String> get visibleCopyBlocks => [
-        title,
-        summary,
-        for (final row in rows) ...[
-          row.label,
-          row.status.label,
-          if (row.detail != null) row.detail!,
-        ],
-        manualChecklistTitle,
-        ...manualChecklistSteps,
-        coreValueQuestionTitle,
-        coreValueQuestion,
-        coreValueFeedbackLabel,
-        coreValueFeedbackAnswer,
-      ];
+    title,
+    summary,
+    for (final row in rows) ...[
+      row.label,
+      row.status.label,
+      if (row.detail != null) row.detail!,
+    ],
+    manualChecklistTitle,
+    ...manualChecklistSteps,
+    coreValueQuestionTitle,
+    coreValueQuestion,
+    coreValueFeedbackLabel,
+    coreValueFeedbackAnswer,
+  ];
 }

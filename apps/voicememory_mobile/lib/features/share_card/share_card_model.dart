@@ -27,12 +27,12 @@ class ShareCardModel {
       ShareCardCopy.relatedMoments(relatedMomentCount);
 
   List<String> get imageLines => [
-        ShareCardCopy.headline,
-        displayPatternLabel.trim(),
-        relatedMomentsLine,
-        if (hasChangeNoticed) ShareCardCopy.changeNoticedLine,
-        ShareCardCopy.footer,
-      ];
+    ShareCardCopy.headline,
+    displayPatternLabel.trim(),
+    relatedMomentsLine,
+    if (hasChangeNoticed) ShareCardCopy.changeNoticedLine,
+    ShareCardCopy.footer,
+  ];
 
   String get pngFilename =>
       'archiveme_share_card_${DateTime.now().millisecondsSinceEpoch}.png';

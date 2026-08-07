@@ -1,9 +1,6 @@
 /// One titled bullet list in the Pro packaging surface.
 class ProPackagingSection {
-  const ProPackagingSection({
-    required this.title,
-    required this.bullets,
-  });
+  const ProPackagingSection({required this.title, required this.bullets});
 
   final String title;
   final List<String> bullets;

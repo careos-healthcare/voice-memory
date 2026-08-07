@@ -7,10 +7,7 @@ class LiveSetupCompleteEvent extends LiveServerEvent {
 }
 
 class LiveAudioOutputEvent extends LiveServerEvent {
-  const LiveAudioOutputEvent({
-    required this.pcmBytes,
-    this.mimeType,
-  });
+  const LiveAudioOutputEvent({required this.pcmBytes, this.mimeType});
 
   final List<int> pcmBytes;
   final String? mimeType;

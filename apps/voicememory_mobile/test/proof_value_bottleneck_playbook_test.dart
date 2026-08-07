@@ -21,20 +21,19 @@ ProofOfValueInput _input({
   int? coreValueGeneric,
   int? wouldKeepUsing,
   int? wouldPay,
-}) =>
-    ProofOfValueInput(
-      totalTesters: totalTesters,
-      appOpened: appOpened,
-      firstMomentSaved: firstMomentSaved,
-      secondMomentSaved: secondMomentSaved,
-      firstProofReached: firstProofReached,
-      returnCheckAnswered: returnCheckAnswered,
-      proTapped: proTapped,
-      coreValueYes: coreValueYes,
-      coreValueGeneric: coreValueGeneric,
-      wouldKeepUsing: wouldKeepUsing,
-      wouldPay: wouldPay,
-    );
+}) => ProofOfValueInput(
+  totalTesters: totalTesters,
+  appOpened: appOpened,
+  firstMomentSaved: firstMomentSaved,
+  secondMomentSaved: secondMomentSaved,
+  firstProofReached: firstProofReached,
+  returnCheckAnswered: returnCheckAnswered,
+  proTapped: proTapped,
+  coreValueYes: coreValueYes,
+  coreValueGeneric: coreValueGeneric,
+  wouldKeepUsing: wouldKeepUsing,
+  wouldPay: wouldPay,
+);
 
 ProofValueBottleneckPlaybookReport _playbookFor(ProofOfValueInput input) {
   final proofReport = ProofOfValueEngine.build(input: input);
@@ -53,10 +52,7 @@ void main() {
         proofReport: proofReport,
       );
 
-      expect(
-        playbook.activeRecommendation,
-        proofReport.recommendation,
-      );
+      expect(playbook.activeRecommendation, proofReport.recommendation);
       expect(
         playbook.activeRecommendation,
         ProofOfValueCopy.recommendationRunMoreTesters,
@@ -75,8 +71,14 @@ void main() {
       final entry = playbook.entry;
 
       expect(entry.id, ProofValueBottleneckPlaybookId.runMoreTesters);
-      expect(entry.meaning, ProofValueBottleneckPlaybookCopy.runMoreTestersMeaning);
-      expect(entry.fixArea, ProofValueBottleneckPlaybookCopy.runMoreTestersFixArea);
+      expect(
+        entry.meaning,
+        ProofValueBottleneckPlaybookCopy.runMoreTestersMeaning,
+      );
+      expect(
+        entry.fixArea,
+        ProofValueBottleneckPlaybookCopy.runMoreTestersFixArea,
+      );
       expect(entry.inspectSurfaces, contains('Beta Report Export'));
       expect(entry.guardrail, contains('No product changes'));
       expect(
@@ -91,8 +93,14 @@ void main() {
       final entry = playbook.entry;
 
       expect(entry.id, ProofValueBottleneckPlaybookId.fixFirstUse);
-      expect(entry.meaning, ProofValueBottleneckPlaybookCopy.fixFirstUseMeaning);
-      expect(entry.fixArea, ProofValueBottleneckPlaybookCopy.fixFirstUseFixArea);
+      expect(
+        entry.meaning,
+        ProofValueBottleneckPlaybookCopy.fixFirstUseMeaning,
+      );
+      expect(
+        entry.fixArea,
+        ProofValueBottleneckPlaybookCopy.fixFirstUseFixArea,
+      );
       expect(entry.inspectSurfaces, contains('Record first-use capture'));
       expect(entry.guardrail, contains('Do not add new cards'));
       expect(
@@ -108,8 +116,14 @@ void main() {
       final entry = playbook.entry;
 
       expect(entry.id, ProofValueBottleneckPlaybookId.fixReturnLoop);
-      expect(entry.meaning, ProofValueBottleneckPlaybookCopy.fixReturnLoopMeaning);
-      expect(entry.fixArea, ProofValueBottleneckPlaybookCopy.fixReturnLoopFixArea);
+      expect(
+        entry.meaning,
+        ProofValueBottleneckPlaybookCopy.fixReturnLoopMeaning,
+      );
+      expect(
+        entry.fixArea,
+        ProofValueBottleneckPlaybookCopy.fixReturnLoopFixArea,
+      );
       expect(entry.inspectSurfaces, contains('PostSaveReturnHandoffCopy'));
       expect(entry.guardrail, contains('No notifications yet'));
       expect(entry.suggestedTestFiles, contains('tester_mission_test.dart'));
@@ -117,17 +131,19 @@ void main() {
 
     test('fix first proof playbook content', () {
       final playbook = _playbookFor(
-        _input(
-          firstMomentSaved: 8,
-          secondMomentSaved: 6,
-          firstProofReached: 2,
-        ),
+        _input(firstMomentSaved: 8, secondMomentSaved: 6, firstProofReached: 2),
       );
       final entry = playbook.entry;
 
       expect(entry.id, ProofValueBottleneckPlaybookId.fixFirstProof);
-      expect(entry.meaning, ProofValueBottleneckPlaybookCopy.fixFirstProofMeaning);
-      expect(entry.fixArea, ProofValueBottleneckPlaybookCopy.fixFirstProofFixArea);
+      expect(
+        entry.meaning,
+        ProofValueBottleneckPlaybookCopy.fixFirstProofMeaning,
+      );
+      expect(
+        entry.fixArea,
+        ProofValueBottleneckPlaybookCopy.fixFirstProofFixArea,
+      );
       expect(entry.inspectSurfaces, contains('FirstProofMoment gates'));
       expect(entry.guardrail, contains('Do not lower proof quality'));
       expect(
@@ -149,8 +165,14 @@ void main() {
       final entry = playbook.entry;
 
       expect(entry.id, ProofValueBottleneckPlaybookId.fixEvidence);
-      expect(entry.meaning, ProofValueBottleneckPlaybookCopy.fixEvidenceMeaning);
-      expect(entry.fixArea, ProofValueBottleneckPlaybookCopy.fixEvidenceFixArea);
+      expect(
+        entry.meaning,
+        ProofValueBottleneckPlaybookCopy.fixEvidenceMeaning,
+      );
+      expect(
+        entry.fixArea,
+        ProofValueBottleneckPlaybookCopy.fixEvidenceFixArea,
+      );
       expect(
         entry.inspectSurfaces,
         contains('ConfirmedRepeatEvidencePhraseEngine'),
@@ -205,8 +227,14 @@ void main() {
       final entry = playbook.entry;
 
       expect(entry.id, ProofValueBottleneckPlaybookId.strengthenPro);
-      expect(entry.meaning, ProofValueBottleneckPlaybookCopy.strengthenProMeaning);
-      expect(entry.fixArea, ProofValueBottleneckPlaybookCopy.strengthenProFixArea);
+      expect(
+        entry.meaning,
+        ProofValueBottleneckPlaybookCopy.strengthenProMeaning,
+      );
+      expect(
+        entry.fixArea,
+        ProofValueBottleneckPlaybookCopy.strengthenProFixArea,
+      );
       expect(entry.inspectSurfaces, contains('Restore purchases visibility'));
       expect(entry.guardrail, contains('RevenueCat'));
       expect(entry.guardrail, contains('product IDs'));
@@ -311,7 +339,10 @@ void main() {
         find.text(ProofValueBottleneckPlaybookCopy.cardSubtitle),
         findsOneWidget,
       );
-      expect(find.textContaining(playbook.activeRecommendation), findsOneWidget);
+      expect(
+        find.textContaining(playbook.activeRecommendation),
+        findsOneWidget,
+      );
       expect(
         find.text(ProofValueBottleneckPlaybookCopy.sectionMeaning),
         findsOneWidget,

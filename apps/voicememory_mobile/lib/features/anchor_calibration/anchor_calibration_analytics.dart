@@ -13,7 +13,7 @@ abstract final class AnchorCalibrationAnalytics {
 
   @visibleForTesting
   static void Function(String event, Map<String, Object> properties)?
-      captureForTest;
+  captureForTest;
 
   static void applied({
     required int entryCount,
@@ -27,8 +27,10 @@ abstract final class AnchorCalibrationAnalytics {
       'entry_count': entryCount,
       'source': source,
       if (feedbackType != null) 'feedback_type': feedbackType.analyticsValue,
-      if (oldAnchorType != null) 'old_anchor_type': oldAnchorType.analyticsValue,
-      if (newAnchorType != null) 'new_anchor_type': newAnchorType.analyticsValue,
+      if (oldAnchorType != null)
+        'old_anchor_type': oldAnchorType.analyticsValue,
+      if (newAnchorType != null)
+        'new_anchor_type': newAnchorType.analyticsValue,
       'calibration_action': calibrationAction.analyticsValue,
     };
 

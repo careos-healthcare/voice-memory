@@ -5,10 +5,9 @@ import '../../repositories/curiosity_loop_repository.dart';
 /// Seeds curiosity loop memory-recall state after verified biomarker processing.
 class CuriosityLoopTriggerInterceptor implements JournalSaveInterceptor {
   CuriosityLoopTriggerInterceptor({
-    CuriosityLoopRepository? repository,
+    this._repository,
     DateTime Function()? clock,
-  })  : _repository = repository,
-        _clock = clock ?? DateTime.now;
+  }) : _clock = clock ?? DateTime.now;
 
   final CuriosityLoopRepository? _repository;
   final DateTime Function() _clock;

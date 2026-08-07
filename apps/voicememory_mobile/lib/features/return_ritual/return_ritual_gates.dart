@@ -9,9 +9,5 @@ abstract final class ReturnRitualGates {
     required int entryCount,
     required bool isPostSave,
     required bool isReadyOrIdle,
-  }) =>
-      loaded &&
-      entryCount >= 1 &&
-      !isPostSave &&
-      isReadyOrIdle;
+  }) => loaded && entryCount >= 1 && !isPostSave && isReadyOrIdle;
 }

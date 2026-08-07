@@ -24,7 +24,8 @@ abstract final class ArchivePositioningCopy {
       'up later.';
   static const wedgeHeadline = 'Catch the yes before it costs you.';
   static const capacityCta = 'Start with yes moments';
-  static const mapLine = 'Every saved moment adds to the same private timeline.';
+  static const mapLine =
+      'Every saved moment adds to the same private timeline.';
 
   // ——— First-use onboarding (capacity start) ———
   static const firstUseTitle = LandingAppContinuityCopy.hero;
@@ -75,40 +76,40 @@ abstract final class ArchivePositioningCopy {
   ];
 
   static List<String> allVisibleStrings() => [
-        umbrellaHeadline,
-        umbrellaShort,
-        umbrellaBody,
-        firstPathLabel,
-        firstPathHeadline,
-        firstPathIntro,
-        firstPathBody,
-        capacityPathContext,
-        capacityTimingFlex,
-        wedgeHeadline,
-        capacityCta,
-        genericCta,
-        recordAnyMoment,
-        quickYesMoment,
-        quickCaptureTimingFlex,
-        firstUseTitle,
-        firstUseBody,
-        firstUseFirstPath,
-        firstUseTimingMicro,
-        firstUseCta,
-        howItWorksCta,
-        ...howItWorksSteps,
-        mapLine,
-        yesCaptureModesIntro,
-        ...yesCaptureTimingLabels,
-        ...yesCaptureTimingBodies,
-      ];
+    umbrellaHeadline,
+    umbrellaShort,
+    umbrellaBody,
+    firstPathLabel,
+    firstPathHeadline,
+    firstPathIntro,
+    firstPathBody,
+    capacityPathContext,
+    capacityTimingFlex,
+    wedgeHeadline,
+    capacityCta,
+    genericCta,
+    recordAnyMoment,
+    quickYesMoment,
+    quickCaptureTimingFlex,
+    firstUseTitle,
+    firstUseBody,
+    firstUseFirstPath,
+    firstUseTimingMicro,
+    firstUseCta,
+    howItWorksCta,
+    ...howItWorksSteps,
+    mapLine,
+    yesCaptureModesIntro,
+    ...yesCaptureTimingLabels,
+    ...yesCaptureTimingBodies,
+  ];
 
   /// Public/general surfaces scanned by positioning tests.
   static const publicSurfacePaths = [
     'lib/product/archive_positioning_copy.dart',
     'lib/product/acquisition_start_copy.dart',
     'lib/screens/about_screen.dart',
-    'lib/screens/loop_start_screen.dart',
+    'packages/archiveme_research/lib/screens/loop_start_screen.dart',
     'lib/features/demo/sample_archive_copy.dart',
     'docs/APP_STORE_COPY.md',
     'docs/PLAY_STORE_COPY.md',

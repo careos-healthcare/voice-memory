@@ -1,4 +1,3 @@
-import '../activation/archive_evidence_map.dart';
 import '../activation/weekly_archive_review.dart';
 import 'archive_return_changes_copy.dart';
 import 'archive_return_snapshot.dart';
@@ -42,7 +41,8 @@ class ArchiveReturnChangesEngine {
 
     final weeklyNew =
         current.weeklyReviewAvailable && !lastSeen.weeklyReviewAvailable;
-    final beliefChanged = current.beliefSummaryHash.isNotEmpty &&
+    final beliefChanged =
+        current.beliefSummaryHash.isNotEmpty &&
         lastSeen.beliefSummaryHash.isNotEmpty &&
         current.beliefSummaryHash != lastSeen.beliefSummaryHash;
     final newEvidence = current.entryCount > lastSeen.entryCount;
@@ -55,10 +55,10 @@ class ArchiveReturnChangesEngine {
     final type = weeklyNew
         ? ArchiveReturnChangeType.weeklyReviewReady
         : beliefChanged
-            ? ArchiveReturnChangeType.beliefUpdated
-            : newEvidence
-                ? ArchiveReturnChangeType.newEvidence
-                : ArchiveReturnChangeType.contextChanged;
+        ? ArchiveReturnChangeType.beliefUpdated
+        : newEvidence
+        ? ArchiveReturnChangeType.newEvidence
+        : ArchiveReturnChangeType.contextChanged;
 
     final newMoments = newEvidence
         ? current.entryCount - lastSeen.entryCount
@@ -78,10 +78,10 @@ class ArchiveReturnChangesEngine {
   }
 
   String _reviewRouteFor(ArchiveReturnChangeType type) => switch (type) {
-        ArchiveReturnChangeType.weeklyReviewReady =>
-          WeeklyArchiveReviewNavigation.route,
-        ArchiveReturnChangeType.beliefUpdated => '/belief-changes',
-        ArchiveReturnChangeType.newEvidence => '/archive-belief',
-        ArchiveReturnChangeType.contextChanged => '/archive-belief',
-      };
+    ArchiveReturnChangeType.weeklyReviewReady =>
+      WeeklyArchiveReviewNavigation.route,
+    ArchiveReturnChangeType.beliefUpdated => '/belief-changes',
+    ArchiveReturnChangeType.newEvidence => '/archive-belief',
+    ArchiveReturnChangeType.contextChanged => '/archive-belief',
+  };
 }

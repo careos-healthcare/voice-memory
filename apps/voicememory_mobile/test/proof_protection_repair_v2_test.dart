@@ -17,7 +17,6 @@ import 'package:voicememory_mobile/features/proof_confidence_calibration/proof_c
 import 'package:voicememory_mobile/features/proof_confidence_calibration/proof_confidence_calibration_model.dart';
 import 'package:voicememory_mobile/features/proof_floor_rescue/proof_floor_rescue_engine.dart';
 import 'package:voicememory_mobile/features/proof_floor_rescue/proof_floor_rescue_model.dart';
-import 'package:voicememory_mobile/features/proof_quality_response/proof_quality_response_model.dart';
 import 'package:voicememory_mobile/features/surface_priority/surface_priority_engine.dart';
 import 'package:voicememory_mobile/features/surface_priority/surface_priority_model.dart';
 import 'package:voicememory_mobile/features/timeline_proof_moment/timeline_proof_moment_engine.dart';
@@ -26,10 +25,11 @@ import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/models/sync_status.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
 import 'package:voicememory_mobile/storage/mobile_prefs_store.dart';
+import 'support/test_storage_sandbox.dart';
 
 class _MemoryPrefs extends MobilePrefsStore {
   _MemoryPrefs()
-      : super(file: File('test/tmp/proof_protection_repair_v2/unused.json'));
+    : super(file: File('test/tmp/proof_protection_repair_v2/unused.json'));
 
   final Map<String, Map<String, dynamic>> maps = {};
 
@@ -46,11 +46,7 @@ const _strongRepeat =
     'I had no capacity but I said yes again to the extra meeting today.';
 final _now = DateTime(2026, 6, 12, 12);
 
-JournalEntry _entry(
-  String id,
-  String transcript, {
-  DateTime? createdAt,
-}) =>
+JournalEntry _entry(String id, String transcript, {DateTime? createdAt}) =>
     JournalEntry(
       id: id,
       createdAt: createdAt ?? _now,
@@ -93,66 +89,66 @@ BetaRepairLabVisibilityInput _repairInput({
   ProofConfidenceLevel confidenceLevel = ProofConfidenceLevel.watchOnly,
   BetaProofFeedbackType? feedbackType,
   bool hasTimelineProofVisible = true,
-}) =>
-    BetaRepairLabVisibilityInput(
-      mode: BetaRepairLabMode.evidenceTrailTimelineClarity,
-      entryCount: 4,
-      source: 'test',
-      isPro: false,
-      isRecording: false,
-      isDegradedTranscriptState: false,
-      whatChangedQuestionActive: false,
-      patternReviewInboxHasActiveItems: false,
-      hasTimelineProofVisible: hasTimelineProofVisible,
-      hasConfirmedRepeat: true,
-      confidenceLevel: confidenceLevel,
-      hasUsefulProofFeedback: feedbackType == BetaProofFeedbackType.useful,
-      feedbackType: feedbackType,
-      isNegativeFeedback: feedbackType == BetaProofFeedbackType.tooVague ||
-          feedbackType == BetaProofFeedbackType.notRelevant,
-      betaMissionEnabled: true,
-    );
+}) => BetaRepairLabVisibilityInput(
+  mode: BetaRepairLabMode.evidenceTrailTimelineClarity,
+  entryCount: 4,
+  source: 'test',
+  isPro: false,
+  isRecording: false,
+  isDegradedTranscriptState: false,
+  whatChangedQuestionActive: false,
+  patternReviewInboxHasActiveItems: false,
+  hasTimelineProofVisible: hasTimelineProofVisible,
+  hasConfirmedRepeat: true,
+  confidenceLevel: confidenceLevel,
+  hasUsefulProofFeedback: feedbackType == BetaProofFeedbackType.useful,
+  feedbackType: feedbackType,
+  isNegativeFeedback:
+      feedbackType == BetaProofFeedbackType.tooVague ||
+      feedbackType == BetaProofFeedbackType.notRelevant,
+  betaMissionEnabled: true,
+);
 
 ProofFloorRescueInput _floorInput({
   ProofConfidenceLevel confidenceLevel = ProofConfidenceLevel.watchOnly,
   bool hasSafeAnchor = false,
   BetaProofFeedbackType? latestFeedbackType,
-}) =>
-    ProofFloorRescueInput(
-      entryCount: 4,
-      source: 'test',
-      isPro: false,
-      hasTimelineProofVisible: true,
-      hasConfirmedRepeat: true,
-      confidenceLevel: confidenceLevel,
-      hasSafeAnchor: hasSafeAnchor,
-      hasLowMatchQuality: true,
-      usefulFeedbackCount: 0,
-      latestFeedbackType: latestFeedbackType,
-      feedbackAnsweredToday: false,
-      isRecording: false,
-      isDegradedTranscriptState: false,
-      whatChangedQuestionActive: false,
-      patternReviewInboxHasActiveItems: false,
-    );
+}) => ProofFloorRescueInput(
+  entryCount: 4,
+  source: 'test',
+  isPro: false,
+  hasTimelineProofVisible: true,
+  hasConfirmedRepeat: true,
+  confidenceLevel: confidenceLevel,
+  hasSafeAnchor: hasSafeAnchor,
+  hasLowMatchQuality: true,
+  usefulFeedbackCount: 0,
+  latestFeedbackType: latestFeedbackType,
+  feedbackAnsweredToday: false,
+  isRecording: false,
+  isDegradedTranscriptState: false,
+  whatChangedQuestionActive: false,
+  patternReviewInboxHasActiveItems: false,
+);
 
 void main() {
+  late TestStorageSandbox sandbox;
   late _MemoryPrefs prefs;
 
   setUp(() async {
+    sandbox = TestStorageSandbox.create();
     prefs = _MemoryPrefs();
     await BetaRepairLabStore.resetForTest(prefs);
     await AppServices.resetForTest(
-      journalPath:
-          'test/tmp/proof_protection_repair_v2/${DateTime.now().microsecondsSinceEpoch}_journal.json',
-      prefsPath:
-          'test/tmp/proof_protection_repair_v2/${DateTime.now().microsecondsSinceEpoch}_prefs.json',
+      journalPath: sandbox.journalPath,
+      prefsPath: sandbox.prefsPath,
       skipRevenueCat: true,
     );
     ArchiveBetaMissionGate.enabledOverride = true;
     await BetaProofFeedbackStore.resetForTest(prefs);
   });
 
+  tearDown(() => sandbox.dispose());
   tearDown(() async {
     ArchiveBetaMissionGate.resetForTest();
     await BetaRepairLabStore.resetForTest(prefs);
@@ -285,10 +281,7 @@ void main() {
       expect(calibration.hasSafeAnchor, isTrue);
       expect(
         calibration.level,
-        anyOf(
-          ProofConfidenceLevel.useful,
-          ProofConfidenceLevel.strong,
-        ),
+        anyOf(ProofConfidenceLevel.useful, ProofConfidenceLevel.strong),
       );
       if (calibration.isProofLevel) {
         expect(timeline?.shouldShow, isTrue);
@@ -354,7 +347,8 @@ void main() {
         ),
         isFalse,
       );
-      BetaRepairLabStore.repairModeOverrideForTest = 'proof_specificity_caution';
+      BetaRepairLabStore.repairModeOverrideForTest =
+          'proof_specificity_caution';
       expect(
         BetaRepairLabEngine.blocksProWhenProofProtectionActive(
           input: _repairInput(

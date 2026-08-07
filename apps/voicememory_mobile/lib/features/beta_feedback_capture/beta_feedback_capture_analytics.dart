@@ -13,7 +13,7 @@ abstract final class BetaFeedbackCaptureAnalytics {
 
   @visibleForTesting
   static void Function(String event, Map<String, Object> properties)?
-      captureForTest;
+  captureForTest;
 
   static void seen({required BetaFeedbackCaptureResult result}) {
     _emit(seenEvent, result: result);
@@ -23,11 +23,7 @@ abstract final class BetaFeedbackCaptureAnalytics {
     required BetaFeedbackCaptureResult result,
     required String answerId,
   }) {
-    _emit(
-      answeredEvent,
-      result: result,
-      answerId: answerId,
-    );
+    _emit(answeredEvent, result: result, answerId: answerId);
   }
 
   static void dismissed({required BetaFeedbackCaptureResult result}) {

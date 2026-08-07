@@ -79,10 +79,10 @@ class _InstantArchiveBeliefCardState extends State<InstantArchiveBeliefCard> {
               Text(
                 learning
                     ? ConsumerUiCopy.instantStillLearning
-                    : '“${card!.statement}”',
+                    : '“${card.statement}”',
                 style: const TextStyle(fontSize: 16, height: 1.4),
               ),
-              if (!learning && card != null) ...[
+              if (!learning) ...[
                 const SizedBox(height: 10),
                 Text(
                   WarmArchiveCopy.confidenceStrengthLine(

@@ -47,22 +47,22 @@ abstract final class ProEvidenceValueCopy {
       LandingAppContinuityCopy.chatGptDifferentiation;
 
   static List<String> allVisibleStrings({required bool exportReportsLive}) => [
-        title,
-        body,
-        cta,
-        secondary,
-        chatGptDifferentiationLine,
-        evidenceLine,
-        comparesMomentsLine,
-        sheetTitle,
-        freeSectionTitle,
-        ...freeBullets,
-        proSectionTitle,
-        ...proBulletsForDisplay(exportReportsLive: exportReportsLive),
-        sheetFooter,
-        productPromise,
-        positioningChatGptToday,
-      ];
+    title,
+    body,
+    cta,
+    secondary,
+    chatGptDifferentiationLine,
+    evidenceLine,
+    comparesMomentsLine,
+    sheetTitle,
+    freeSectionTitle,
+    ...freeBullets,
+    proSectionTitle,
+    ...proBulletsForDisplay(exportReportsLive: exportReportsLive),
+    sheetFooter,
+    productPromise,
+    positioningChatGptToday,
+  ];
 
   static List<String> proBulletsForDisplay({required bool exportReportsLive}) {
     if (exportReportsLive) return proBulletsLive;

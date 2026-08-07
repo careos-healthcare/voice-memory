@@ -24,7 +24,9 @@ class EarlyRepeatProgressCard extends StatelessWidget {
       key: Key('early_repeat_progress_card_${progress.kind.name}'),
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.md),
-      decoration: VoiceMemoryCards.standard(background: const Color(0xFFFFFBF5)),
+      decoration: VoiceMemoryCards.standard(
+        background: const Color(0xFFFFFBF5),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -37,51 +39,52 @@ class EarlyRepeatProgressCard extends StatelessWidget {
           Text(
             progress.body,
             key: const Key('early_repeat_progress_body'),
-            style: ArchiveMobileTypography.explanationBody(context).copyWith(
-              color: AppColors.textSecondary,
-            ),
+            style: ArchiveMobileTypography.explanationBody(
+              context,
+            ).copyWith(color: AppColors.textSecondary),
           ),
           if (progress.progressLabel.isNotEmpty) ...[
             const SizedBox(height: AppSpacing.sm),
             Text(
               progress.progressLabel,
               key: const Key('early_repeat_progress_label'),
-              style: ArchiveMobileTypography.cardLabel(context).copyWith(
-                color: AppColors.textPrimary,
-              ),
+              style: ArchiveMobileTypography.cardLabel(
+                context,
+              ).copyWith(color: AppColors.textPrimary),
             ),
           ],
           const SizedBox(height: AppSpacing.sm),
           Text(
             progress.nextMomentCue.label,
             key: const Key('early_repeat_progress_next_moment_cue_label'),
-            style: ArchiveMobileTypography.cardLabel(context).copyWith(
-              color: AppColors.textSecondary,
-            ),
+            style: ArchiveMobileTypography.cardLabel(
+              context,
+            ).copyWith(color: AppColors.textSecondary),
           ),
           const SizedBox(height: AppSpacing.xs),
           Text(
             progress.nextMomentCue.body,
             key: const Key('early_repeat_progress_next_moment_cue_body'),
-            style: ArchiveMobileTypography.explanationBody(context).copyWith(
-              color: AppColors.textSecondary,
-            ),
+            style: ArchiveMobileTypography.explanationBody(
+              context,
+            ).copyWith(color: AppColors.textSecondary),
           ),
           const SizedBox(height: AppSpacing.xs),
           Text(
             progress.nextMomentCue.footer,
             key: const Key('early_repeat_progress_next_moment_cue_footer'),
-            style: ArchiveMobileTypography.explanationBody(context).copyWith(
-              color: AppColors.textSecondary,
-              fontSize: 13,
-            ),
+            style: ArchiveMobileTypography.explanationBody(
+              context,
+            ).copyWith(color: AppColors.textSecondary, fontSize: 13),
           ),
           if (onViewSavedMoments != null) ...[
             const SizedBox(height: AppSpacing.sm),
             Align(
               alignment: Alignment.centerLeft,
               child: TextButton(
-                key: const Key('early_repeat_progress_view_saved_moments_button'),
+                key: const Key(
+                  'early_repeat_progress_view_saved_moments_button',
+                ),
                 onPressed: onViewSavedMoments,
                 child: const Text(EarlySavedMomentsCopy.viewSavedMomentsCta),
               ),

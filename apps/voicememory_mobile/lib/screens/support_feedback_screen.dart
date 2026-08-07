@@ -373,10 +373,7 @@ class SupportFeedbackScreen extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            title,
-            style: ArchiveMobileTypography.cardLabel(context),
-          ),
+          Text(title, style: ArchiveMobileTypography.cardLabel(context)),
           const SizedBox(height: AppSpacing.xs),
           Text(
             body,
@@ -402,10 +399,7 @@ class SupportFeedbackScreen extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            title,
-            style: ArchiveMobileTypography.cardLabel(context),
-          ),
+          Text(title, style: ArchiveMobileTypography.cardLabel(context)),
           const SizedBox(height: AppSpacing.xs),
           for (final bullet in bullets)
             Padding(

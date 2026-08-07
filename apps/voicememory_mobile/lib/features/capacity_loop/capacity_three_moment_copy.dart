@@ -2,8 +2,7 @@
 abstract final class CapacityThreeMomentCopy {
   CapacityThreeMomentCopy._();
 
-  static const activationPromise =
-      'Save 3 yes moments. See what returned.';
+  static const activationPromise = 'Save 3 yes moments. See what returned.';
 
   static const cardTitle = 'Save 3 yes moments';
   static const cardSubtitle =
@@ -37,19 +36,19 @@ abstract final class CapacityThreeMomentCopy {
       'Beta task: save 3 real moments when something stands out, then see what returned.';
 
   static List<String> allVisibleStrings() => [
-        activationPromise,
-        cardTitle,
-        cardSubtitle,
-        emptyBody,
-        saveYesMomentCta,
-        reviewLoopCta,
-        progressLabel(0, target: 3),
-        progressLabel(1, target: 3),
-        progressLabel(2, target: 3),
-        progressLabel(3, target: 3),
-        recordProgressLine(1, target: 3),
-        loopGuidanceTitle,
-        loopGuidanceBody,
-        betaTaskLine,
-      ];
+    activationPromise,
+    cardTitle,
+    cardSubtitle,
+    emptyBody,
+    saveYesMomentCta,
+    reviewLoopCta,
+    progressLabel(0, target: 3),
+    progressLabel(1, target: 3),
+    progressLabel(2, target: 3),
+    progressLabel(3, target: 3),
+    recordProgressLine(1, target: 3),
+    loopGuidanceTitle,
+    loopGuidanceBody,
+    betaTaskLine,
+  ];
 }

@@ -17,19 +17,17 @@ abstract final class PricingOutcomeDecisionMatrix {
     PricingOutcomeDecision.insufficientData,
   ];
 
-  static int usefulProofTargetFor(int totalTesters) =>
-      _scaledTarget(
-        totalTesters: totalTesters,
-        numerator: usefulProofNumerator,
-        denominator: usefulProofDenominator,
-      );
+  static int usefulProofTargetFor(int totalTesters) => _scaledTarget(
+    totalTesters: totalTesters,
+    numerator: usefulProofNumerator,
+    denominator: usefulProofDenominator,
+  );
 
-  static int wouldPayTargetFor(int totalTesters) =>
-      _scaledTarget(
-        totalTesters: totalTesters,
-        numerator: wouldPayNumerator,
-        denominator: wouldPayDenominator,
-      );
+  static int wouldPayTargetFor(int totalTesters) => _scaledTarget(
+    totalTesters: totalTesters,
+    numerator: wouldPayNumerator,
+    denominator: wouldPayDenominator,
+  );
 
   static PricingOutcomeDecision resolve(PricingValidationSummary summary) {
     if (summary.totalTesters < minimumTesterCount) {
@@ -41,46 +39,33 @@ abstract final class PricingOutcomeDecisionMatrix {
 
     final candidates = <PricingOutcomeDecision>{};
 
-    if (_isLargest(
+    if (_isLargest(summary.wouldNotPayMonthlyCount, [
+      summary.price299Count,
+      summary.price499Count,
+      summary.price799Count,
       summary.wouldNotPayMonthlyCount,
-      [
-        summary.price299Count,
-        summary.price499Count,
-        summary.price799Count,
-        summary.wouldNotPayMonthlyCount,
-      ],
-    )) {
+    ])) {
       candidates.add(PricingOutcomeDecision.subscriptionRisk);
     }
 
-    if (_isLargest(
-      summary.moreProofOverTimeCount,
-      _reasonCounts(summary),
-    )) {
+    if (_isLargest(summary.moreProofOverTimeCount, _reasonCounts(summary))) {
       candidates.add(PricingOutcomeDecision.evidenceTrailFocus);
     }
 
-    if (_isLargest(
-      summary.clearerTimelineCount,
-      _reasonCounts(summary),
-    )) {
+    if (_isLargest(summary.clearerTimelineCount, _reasonCounts(summary))) {
       candidates.add(PricingOutcomeDecision.timelineClarity);
     }
 
     if (_isLargest(summary.lowerPriceCount, _reasonCounts(summary)) ||
-        _isLargest(
+        _isLargest(summary.price299Count, [
           summary.price299Count,
-          [
-            summary.price299Count,
-            summary.price499Count,
-            summary.price799Count,
-          ],
-        )) {
+          summary.price499Count,
+          summary.price799Count,
+        ])) {
       candidates.add(PricingOutcomeDecision.lowerPriceTest);
     }
 
-    final premiumPriceInterest =
-        summary.price499Count + summary.price799Count;
+    final premiumPriceInterest = summary.price499Count + summary.price799Count;
     if (premiumPriceInterest > summary.price299Count &&
         premiumPriceInterest > summary.wouldNotPayMonthlyCount &&
         summary.wouldPayYesMaybeCount >=
@@ -105,15 +90,14 @@ abstract final class PricingOutcomeDecisionMatrix {
     required int totalTesters,
     required int numerator,
     required int denominator,
-  }) =>
-      ((numerator * totalTesters) / denominator).ceil();
+  }) => ((numerator * totalTesters) / denominator).ceil();
 
   static List<int> _reasonCounts(PricingValidationSummary summary) => [
-        summary.moreProofOverTimeCount,
-        summary.betterCorrectionsCount,
-        summary.clearerTimelineCount,
-        summary.lowerPriceCount,
-      ];
+    summary.moreProofOverTimeCount,
+    summary.betterCorrectionsCount,
+    summary.clearerTimelineCount,
+    summary.lowerPriceCount,
+  ];
 
   static bool _isLargest(int value, List<int> counts) {
     if (counts.every((count) => count == 0)) return false;

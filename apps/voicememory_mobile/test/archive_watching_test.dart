@@ -20,57 +20,56 @@ JournalEntry _entry({
   required String id,
   required String transcript,
   DateTime? createdAt,
-}) =>
-    JournalEntry(
-      id: id,
-      createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
-      transcript: transcript,
-      durationSeconds: 30,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 2,
-        recurringThemes: ['work'],
-        exactLanguagePattern: '',
-        concreteObservation: 'Work pressure showed up in this moment.',
-        repeatedSignal: '',
-      ),
-    );
+}) => JournalEntry(
+  id: id,
+  createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
+  transcript: transcript,
+  durationSeconds: 30,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 2,
+    recurringThemes: ['work'],
+    exactLanguagePattern: '',
+    concreteObservation: 'Work pressure showed up in this moment.',
+    repeatedSignal: '',
+  ),
+);
 
 List<JournalEntry> _threeRelatedRepeatEntries() => [
-      _entry(
-        id: 'e1',
-        transcript:
-            'I had no capacity but I said yes again to the extra meeting today.',
-        createdAt: DateTime(2026, 6, 10, 12),
-      ),
-      _entry(
-        id: 'e2',
-        transcript:
-            'Same thing — said yes when I had no capacity for one more thing.',
-        createdAt: DateTime(2026, 6, 11, 12),
-      ),
-      _entry(
-        id: 'e3',
-        transcript:
-            'I said yes again even though I had no capacity for one more ask.',
-        createdAt: DateTime(2026, 6, 12, 12),
-      ),
-    ];
+  _entry(
+    id: 'e1',
+    transcript:
+        'I had no capacity but I said yes again to the extra meeting today.',
+    createdAt: DateTime(2026, 6, 10, 12),
+  ),
+  _entry(
+    id: 'e2',
+    transcript:
+        'Same thing — said yes when I had no capacity for one more thing.',
+    createdAt: DateTime(2026, 6, 11, 12),
+  ),
+  _entry(
+    id: 'e3',
+    transcript:
+        'I said yes again even though I had no capacity for one more ask.',
+    createdAt: DateTime(2026, 6, 12, 12),
+  ),
+];
 
 List<JournalEntry> _mixedRepeatAndWalkEntries() => [
-      ..._threeRelatedRepeatEntries(),
-      _entry(
-        id: 'w4',
-        transcript: 'I walked outside before replying and it helped.',
-        createdAt: DateTime(2026, 6, 13, 12),
-      ),
-      _entry(
-        id: 'w5',
-        transcript: 'Same week I walked outside again before the hard email.',
-        createdAt: DateTime(2026, 6, 14, 12),
-      ),
-    ];
+  ..._threeRelatedRepeatEntries(),
+  _entry(
+    id: 'w4',
+    transcript: 'I walked outside before replying and it helped.',
+    createdAt: DateTime(2026, 6, 13, 12),
+  ),
+  _entry(
+    id: 'w5',
+    transcript: 'Same week I walked outside again before the hard email.',
+    createdAt: DateTime(2026, 6, 14, 12),
+  ),
+];
 
 RepeatReturnCheckChangeProof _changeProof(RepeatReturnCheckChoice choice) =>
     RepeatReturnCheckChangeProof(
@@ -229,9 +228,7 @@ void main() {
 
       await tester.pumpWidget(
         MaterialApp(
-          home: Scaffold(
-            body: ArchiveWatchingMicroState(watching: watching!),
-          ),
+          home: Scaffold(body: ArchiveWatchingMicroState(watching: watching!)),
         ),
       );
 
@@ -251,21 +248,18 @@ void main() {
 
       await tester.pumpWidget(
         MaterialApp(
-          home: Scaffold(
-            body: ArchiveWatchingMicroState(watching: watching!),
-          ),
+          home: Scaffold(body: ArchiveWatchingMicroState(watching: watching!)),
         ),
       );
 
-      expect(
-        find.textContaining(entries.first.transcript),
-        findsNothing,
-      );
+      expect(find.textContaining(entries.first.transcript), findsNothing);
     });
   });
 
   group('ArchiveSummaryCard placement', () {
-    testWidgets('renders watching micro-state inside summary card', (tester) async {
+    testWidgets('renders watching micro-state inside summary card', (
+      tester,
+    ) async {
       final entries = _threeRelatedRepeatEntries();
       final summary = ArchiveSummaryEngine.build(
         entries: entries,
@@ -294,7 +288,10 @@ void main() {
       );
 
       expect(find.text(ArchiveSummaryCopy.title), findsOneWidget);
-      expect(find.byKey(const Key('archive_watching_micro_state')), findsOneWidget);
+      expect(
+        find.byKey(const Key('archive_watching_micro_state')),
+        findsOneWidget,
+      );
       expect(find.text(watching!.line), findsOneWidget);
     });
   });

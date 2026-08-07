@@ -84,7 +84,10 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(evidenceOpened, isTrue);
-      expect(find.byKey(const Key('belief_evidence_screen_title')), findsOneWidget);
+      expect(
+        find.byKey(const Key('belief_evidence_screen_title')),
+        findsOneWidget,
+      );
     });
   });
 }

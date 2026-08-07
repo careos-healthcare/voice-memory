@@ -22,17 +22,17 @@ abstract final class LocalBackupCopy {
   static const invalidBackup = 'This does not look like an ArchiveMe backup.';
 
   static List<String> allVisibleStrings() => [
-        exportControl,
-        restoreControl,
-        exportTitle,
-        exportBody,
-        exportPrimary,
-        cancel,
-        restoreTitle,
-        restoreBody,
-        restorePrimary,
-        exportSuccess,
-        restoreSuccess,
-        invalidBackup,
-      ];
+    exportControl,
+    restoreControl,
+    exportTitle,
+    exportBody,
+    exportPrimary,
+    cancel,
+    restoreTitle,
+    restoreBody,
+    restorePrimary,
+    exportSuccess,
+    restoreSuccess,
+    invalidBackup,
+  ];
 }

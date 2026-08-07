@@ -1,6 +1,5 @@
 import '../../models/journal_entry.dart';
 import '../archive_evidence/archive_evidence_guard.dart';
-import '../voice_capture/voice_capture_quality.dart';
 import 'archive_depth_copy.dart';
 import 'archive_depth_models.dart';
 
@@ -35,14 +34,13 @@ class ArchiveDepthEngine {
     );
   }
 
-  static List<JournalEntry> _realEntries(List<JournalEntry> entries) =>
-      entries
-          .where(
-            (e) =>
-                e.transcript.trim().isNotEmpty &&
-                !e.transcript.startsWith('[draft]'),
-          )
-          .toList();
+  static List<JournalEntry> _realEntries(List<JournalEntry> entries) => entries
+      .where(
+        (e) =>
+            e.transcript.trim().isNotEmpty &&
+            !e.transcript.startsWith('[draft]'),
+      )
+      .toList();
 
   static ArchiveDepthLevel _levelFor(int savedCount) {
     if (savedCount <= 0) return ArchiveDepthLevel.notStarted;
@@ -53,14 +51,12 @@ class ArchiveDepthEngine {
     return ArchiveDepthLevel.longTermBuilding;
   }
 
-  static int _untaggedEligibleCount(List<JournalEntry> eligible) =>
-      eligible
-          .where(
-            (e) =>
-                e.captureContextTag == null ||
-                e.captureContextTag!.trim().isEmpty,
-          )
-          .length;
+  static int _untaggedEligibleCount(List<JournalEntry> eligible) => eligible
+      .where(
+        (e) =>
+            e.captureContextTag == null || e.captureContextTag!.trim().isEmpty,
+      )
+      .length;
 
   static String _nextStep({
     required int savedCount,

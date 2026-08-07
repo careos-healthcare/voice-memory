@@ -160,8 +160,7 @@ abstract final class BetaRepairLabEngine {
   static bool blocksProWhenProofRepairActive({
     required BetaRepairLabVisibilityInput input,
     required bool showProofRepair,
-  }) =>
-      blocksProWhenProofProtectionActive(input: input);
+  }) => blocksProWhenProofProtectionActive(input: input);
 
   static bool blocksProWhenProofProtectionActive({
     required BetaRepairLabVisibilityInput input,

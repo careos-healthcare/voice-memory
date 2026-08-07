@@ -43,14 +43,14 @@ abstract final class BeliefChangeMomentCopy {
   }
 
   static List<String> allVisibleStrings() => [
-        title,
-        body,
-        beliefLine,
-        changeLine,
-        evidenceHeading,
-        earlierLabel,
-        laterLabel,
-        footer,
-        viewChangeTimelineCta,
-      ];
+    title,
+    body,
+    beliefLine,
+    changeLine,
+    evidenceHeading,
+    earlierLabel,
+    laterLabel,
+    footer,
+    viewChangeTimelineCta,
+  ];
 }

@@ -15,10 +15,7 @@ import 'archive_daily_change_copy.dart';
 import 'archive_daily_change_models.dart';
 
 class _DetectedChange {
-  const _DetectedChange({
-    required this.at,
-    required this.kind,
-  });
+  const _DetectedChange({required this.at, required this.kind});
 
   final DateTime at;
   final ArchiveDailyChangeKind kind;
@@ -43,10 +40,7 @@ class _SharpenedResponse {
 }
 
 class _ResolvedAlternative {
-  const _ResolvedAlternative({
-    required this.label,
-    required this.body,
-  });
+  const _ResolvedAlternative({required this.label, required this.body});
 
   final String label;
   final String body;
@@ -123,8 +117,9 @@ class ArchiveDailyChangeEngine {
     bool sampleMode = false,
   }) {
     final realEntries = SampleArchiveMode.excludeSampleEntries(entries);
-    final capacityMomentCount =
-        loopEngine.eligibleCapacityEntryIds(realEntries).length;
+    final capacityMomentCount = loopEngine
+        .eligibleCapacityEntryIds(realEntries)
+        .length;
     final capacityEvidenceCount = loopEngine.countCapacityEvidence(realEntries);
     final mostCommonPull = _mostCommonReasonId(pullReasonRecords);
     final pullReasonCount = pullReasonRecords.where((r) => r.hasReasons).length;
@@ -173,15 +168,17 @@ class ArchiveDailyChangeEngine {
       (record) => record.showsPatternChange,
     );
     final fitRecord = input.activationFitRecord;
-    final fitPartly = fitRecord != null &&
+    final fitPartly =
+        fitRecord != null &&
         fitRecord.isAnswered &&
         fitRecord.responseId == CapacityActivationFitResponseIds.partly;
-    final fitConfirmed = fitRecord != null &&
+    final fitConfirmed =
+        fitRecord != null &&
         fitRecord.isAnswered &&
         fitRecord.responseId == CapacityActivationFitResponseIds.fits;
     final noPullReason = input.pullReasonRecordCount == 0;
-    final stillForming = input.capacityMomentCount <
-        CapacityThreeMomentGates.activationTarget;
+    final stillForming =
+        input.capacityMomentCount < CapacityThreeMomentGates.activationTarget;
     final friction = input.quickCaptureFrictionRecord;
     final hasNewMoment = _hasNewMomentSince(input, since);
 
@@ -196,7 +193,8 @@ class ArchiveDailyChangeEngine {
       );
     }
 
-    final boundarySelectedRecently = input.boundarySelection != null &&
+    final boundarySelectedRecently =
+        input.boundarySelection != null &&
         input.boundarySelection!.hasSelection &&
         _isAfter(input.boundarySelection!.selectedAt, since);
     if (boundarySelectedRecently) {
@@ -274,7 +272,6 @@ class ArchiveDailyChangeEngine {
     }
 
     if (fitConfirmed) {
-      final alternative = _resolveAlternative(input, pullId);
       return _SharpenedResponse(
         type: ArchiveDailyChangeResponseType.fitConfirmed,
         changeLine: ArchiveDailyChangeCopy.fitConfirmedLine,
@@ -330,7 +327,8 @@ class ArchiveDailyChangeEngine {
   ) {
     final change = _latestChange(input, since);
     final changeLine = switch (change?.kind) {
-      ArchiveDailyChangeKind.laterCost => ArchiveDailyChangeCopy.changeLaterCost,
+      ArchiveDailyChangeKind.laterCost =>
+        ArchiveDailyChangeCopy.changeLaterCost,
       ArchiveDailyChangeKind.boundarySelected =>
         ArchiveDailyChangeCopy.boundaryResponseSelectedLine,
       ArchiveDailyChangeKind.yesLoopReady =>
@@ -390,7 +388,9 @@ class ArchiveDailyChangeEngine {
   ) {
     final changes = <_DetectedChange>[];
     final realEntries = SampleArchiveMode.excludeSampleEntries(input.entries);
-    final eligibleIds = loopEngine.eligibleCapacityEntryIds(realEntries).toSet();
+    final eligibleIds = loopEngine
+        .eligibleCapacityEntryIds(realEntries)
+        .toSet();
 
     for (final entry in realEntries) {
       if (!eligibleIds.contains(entry.id)) continue;
@@ -406,7 +406,8 @@ class ArchiveDailyChangeEngine {
 
     for (final record in input.pullReasonRecords) {
       if (!record.hasReasons || !_isAfter(record.updatedAt, since)) continue;
-      final kind = record.reasonIds.contains(CapacityPullReasonIds.soundedUrgent)
+      final kind =
+          record.reasonIds.contains(CapacityPullReasonIds.soundedUrgent)
           ? ArchiveDailyChangeKind.urgencyPull
           : ArchiveDailyChangeKind.newYesMoment;
       changes.add(_DetectedChange(at: record.updatedAt, kind: kind));
@@ -447,9 +448,7 @@ class ArchiveDailyChangeEngine {
     }
 
     final fit = input.activationFitRecord;
-    if (fit != null &&
-        fit.isAnswered &&
-        _isAfter(fit.updatedAt, since)) {
+    if (fit != null && fit.isAnswered && _isAfter(fit.updatedAt, since)) {
       changes.add(
         _DetectedChange(
           at: fit.updatedAt,

@@ -4,7 +4,6 @@ import '../../models/journal_entry.dart';
 import '../early_archive/private_archive_report_model.dart';
 import '../repeat_return_check/repeat_return_check_models.dart';
 import '../../widgets/private_report/private_report_sheet.dart';
-import 'private_report_analytics.dart';
 import 'private_report_builder.dart';
 import 'private_report_copy.dart';
 import 'private_report_model.dart';
@@ -86,10 +85,7 @@ abstract final class PrivateReportEngine {
     );
   }
 
-  static bool _sectionHasEvidence(
-    PrivateArchiveReport report,
-    String heading,
-  ) {
+  static bool _sectionHasEvidence(PrivateArchiveReport report, String heading) {
     for (final section in report.sections) {
       if (section.heading == heading) return section.hasEvidence;
     }

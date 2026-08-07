@@ -67,15 +67,14 @@ abstract final class ArchiveMemoryAfterV1Gate {
 
   static ArchiveMemoryAfterV1GateReport report(
     ArchiveMemoryAfterV1GateResult result,
-  ) =>
-      ArchiveMemoryAfterV1GateReport(
-        headline: ArchiveMemoryAfterV1Copy.headline,
-        body: ArchiveMemoryAfterV1Copy.body,
-        positioning: ArchiveMemoryAfterV1Copy.positioning,
-        orderLine: ArchiveMemoryAfterV1Copy.orderLine,
-        guardrail: ArchiveMemoryAfterV1Copy.guardrail,
-        result: result,
-      );
+  ) => ArchiveMemoryAfterV1GateReport(
+    headline: ArchiveMemoryAfterV1Copy.headline,
+    body: ArchiveMemoryAfterV1Copy.body,
+    positioning: ArchiveMemoryAfterV1Copy.positioning,
+    orderLine: ArchiveMemoryAfterV1Copy.orderLine,
+    guardrail: ArchiveMemoryAfterV1Copy.guardrail,
+    result: result,
+  );
 
   static ArchiveMemoryAfterV1GateInput composeInput({
     bool? paidIntentBetaComplete,
@@ -84,15 +83,15 @@ abstract final class ArchiveMemoryAfterV1Gate {
     bool? v1ArchiveMemoryUiRequested,
     SingleLaunchChecklistInput? launchChecklist,
     PaidIntentBetaProofResult? paidIntentBeta,
-  }) =>
-      ArchiveMemoryAfterV1GateInput(
-        paidIntentBetaComplete: paidIntentBetaComplete ??
-            launchChecklist?.paidIntentBetaComplete ??
-            _paidIntentBetaCompleteFrom(paidIntentBeta),
-        withinFirstFiveMinutes: withinFirstFiveMinutes,
-        memorySurfacingRequested: memorySurfacingRequested,
-        v1ArchiveMemoryUiRequested: v1ArchiveMemoryUiRequested,
-      );
+  }) => ArchiveMemoryAfterV1GateInput(
+    paidIntentBetaComplete:
+        paidIntentBetaComplete ??
+        launchChecklist?.paidIntentBetaComplete ??
+        _paidIntentBetaCompleteFrom(paidIntentBeta),
+    withinFirstFiveMinutes: withinFirstFiveMinutes,
+    memorySurfacingRequested: memorySurfacingRequested,
+    v1ArchiveMemoryUiRequested: v1ArchiveMemoryUiRequested,
+  );
 
   static ArchiveMemoryAfterV1GateInput fromRepoSignals({
     required String archiveMemoryAfterV1DocSource,
@@ -101,15 +100,14 @@ abstract final class ArchiveMemoryAfterV1Gate {
     bool? withinFirstFiveMinutes,
     bool? memorySurfacingRequested,
     bool? v1ArchiveMemoryUiRequested,
-  }) =>
-      ArchiveMemoryAfterV1GateInput(
-        paidIntentBetaComplete: paidIntentBetaComplete,
-        withinFirstFiveMinutes: withinFirstFiveMinutes,
-        memorySurfacingRequested: memorySurfacingRequested,
-        v1ArchiveMemoryUiRequested: v1ArchiveMemoryUiRequested,
-        docListsRules: detectDocListsRules(archiveMemoryAfterV1DocSource),
-        guardrailPresentInCopy: detectGuardrailPresentInCopy(gateCopySource),
-      );
+  }) => ArchiveMemoryAfterV1GateInput(
+    paidIntentBetaComplete: paidIntentBetaComplete,
+    withinFirstFiveMinutes: withinFirstFiveMinutes,
+    memorySurfacingRequested: memorySurfacingRequested,
+    v1ArchiveMemoryUiRequested: v1ArchiveMemoryUiRequested,
+    docListsRules: detectDocListsRules(archiveMemoryAfterV1DocSource),
+    guardrailPresentInCopy: detectGuardrailPresentInCopy(gateCopySource),
+  );
 
   static bool detectDocListsRules(String docSource) {
     const markers = [
@@ -161,28 +159,33 @@ abstract final class ArchiveMemoryAfterV1Gate {
     return [
       _rule(
         id: ArchiveMemoryAfterV1RuleId.futureEnhancementOnly,
-        passes: guardrailLower.contains('future enhancement') &&
+        passes:
+            guardrailLower.contains('future enhancement') &&
             guardrailLower.contains('archive memory after v1'),
       ),
       _rule(
         id: ArchiveMemoryAfterV1RuleId.notPartOfFirstFiveMinutes,
-        passes: guardrailLower.contains('not part of first five minutes') &&
+        passes:
+            guardrailLower.contains('not part of first five minutes') &&
             (!withinFirstFiveMinutes || !memorySurfacingRequested),
       ),
       _rule(
         id: ArchiveMemoryAfterV1RuleId.notPrimaryProPromise,
-        passes: evaluateCopyPassesRules(copyBundle) &&
+        passes:
+            evaluateCopyPassesRules(copyBundle) &&
             guardrailLower.contains('not the primary pro promise'),
       ),
       _rule(
         id: ArchiveMemoryAfterV1RuleId.supportsProofTrailNotStorage,
-        passes: evaluateCopyPassesRules(copyBundle) &&
+        passes:
+            evaluateCopyPassesRules(copyBundle) &&
             guardrailLower.contains('proof trail') &&
             guardrailLower.contains('not storage'),
       ),
       _rule(
         id: ArchiveMemoryAfterV1RuleId.noNewLiveV1Ui,
-        passes: guardrailLower.contains('no new live v1 ui') &&
+        passes:
+            guardrailLower.contains('no new live v1 ui') &&
             (!(input.v1ArchiveMemoryUiRequested ?? false) || betaProofComplete),
       ),
     ];
@@ -220,17 +223,16 @@ abstract final class ArchiveMemoryAfterV1Gate {
   static ArchiveMemoryAfterV1Rule _rule({
     required ArchiveMemoryAfterV1RuleId id,
     required bool passes,
-  }) =>
-      ArchiveMemoryAfterV1Rule(
-        id: id,
-        label: ArchiveMemoryAfterV1Copy.ruleLabelFor(id),
-        status: passes
-            ? ArchiveMemoryAfterV1RuleStatus.pass
-            : ArchiveMemoryAfterV1RuleStatus.fail,
-        detailLabel: passes
-            ? ArchiveMemoryAfterV1Copy.detailPass
-            : ArchiveMemoryAfterV1Copy.detailFail,
-      );
+  }) => ArchiveMemoryAfterV1Rule(
+    id: id,
+    label: ArchiveMemoryAfterV1Copy.ruleLabelFor(id),
+    status: passes
+        ? ArchiveMemoryAfterV1RuleStatus.pass
+        : ArchiveMemoryAfterV1RuleStatus.fail,
+    detailLabel: passes
+        ? ArchiveMemoryAfterV1Copy.detailPass
+        : ArchiveMemoryAfterV1Copy.detailFail,
+  );
 }
 
 class ArchiveMemoryAfterV1GateInput {

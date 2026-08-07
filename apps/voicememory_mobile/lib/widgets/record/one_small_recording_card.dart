@@ -105,10 +105,7 @@ class OneSmallRecordingCard extends StatelessWidget {
               child: FilledButton(
                 key: const Key('one_small_recording_record_cta'),
                 onPressed: () => onRecordThis(recording.prompt),
-                child: Text(
-                  ctaLabel,
-                  overflow: TextOverflow.ellipsis,
-                ),
+                child: Text(ctaLabel, overflow: TextOverflow.ellipsis),
               ),
             ),
             const SizedBox(height: AppSpacing.xs),

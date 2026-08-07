@@ -9,12 +9,7 @@ enum ArchiveThoughtMapNodeKind {
 }
 
 /// Relationship labels between consecutive nodes.
-enum ArchiveThoughtMapConnector {
-  because,
-  so,
-  but,
-  next,
-}
+enum ArchiveThoughtMapConnector { because, so, but, next }
 
 /// One saved-moment excerpt supporting a thought map node — exact transcript text.
 class ArchiveThoughtMapEvidenceSnippet {

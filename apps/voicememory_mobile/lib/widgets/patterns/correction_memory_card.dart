@@ -44,16 +44,17 @@ class _CorrectionMemoryCardState extends State<CorrectionMemoryCard> {
   Widget build(BuildContext context) {
     _trackSeenOnce();
 
-    final bodyStyle = ArchiveMobileTypography.explanationBody(context).copyWith(
-      color: AppColors.textSecondary,
-      height: 1.45,
-    );
+    final bodyStyle = ArchiveMobileTypography.explanationBody(
+      context,
+    ).copyWith(color: AppColors.textSecondary, height: 1.45);
 
     return Container(
       key: const Key('correction_memory_card'),
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.md),
-      decoration: VoiceMemoryCards.standard(background: const Color(0xFFF8FAF8)),
+      decoration: VoiceMemoryCards.standard(
+        background: const Color(0xFFF8FAF8),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -78,9 +79,9 @@ class _CorrectionMemoryCardState extends State<CorrectionMemoryCard> {
           Text(
             widget.result.differentiationLine,
             key: const Key('correction_memory_differentiation_line'),
-            style: ArchiveMobileTypography.cardLabel(context).copyWith(
-              color: AppColors.textSecondary,
-            ),
+            style: ArchiveMobileTypography.cardLabel(
+              context,
+            ).copyWith(color: AppColors.textSecondary),
           ),
         ],
       ),

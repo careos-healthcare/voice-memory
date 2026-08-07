@@ -53,35 +53,32 @@ const _forbiddenPurchaseCtas = [
   'Limited time',
 ];
 
-JournalEntry _entry(
-  String id, {
-  String? transcript,
-}) =>
-    JournalEntry(
-      id: id,
-      createdAt: DateTime(2026, 6, 12, 12),
-      transcript: transcript ??
-          'I felt pressure at work before saying yes again even when I was tired today.',
-      durationSeconds: 30,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 2,
-        recurringThemes: ['work'],
-        exactLanguagePattern: '',
-        concreteObservation: 'Work pressure showed up in this moment.',
-        repeatedSignal: '',
-      ),
-    );
+JournalEntry _entry(String id, {String? transcript}) => JournalEntry(
+  id: id,
+  createdAt: DateTime(2026, 6, 12, 12),
+  transcript:
+      transcript ??
+      'I felt pressure at work before saying yes again even when I was tired today.',
+  durationSeconds: 30,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 2,
+    recurringThemes: ['work'],
+    exactLanguagePattern: '',
+    concreteObservation: 'Work pressure showed up in this moment.',
+    repeatedSignal: '',
+  ),
+);
 
 List<JournalEntry> _entries(int count) => List.generate(
-      count,
-      (i) => _entry(
-        'e$i',
-        transcript:
-            'I felt pressure at work before saying yes again even when I was tired today $i.',
-      ),
-    );
+  count,
+  (i) => _entry(
+    'e$i',
+    transcript:
+        'I felt pressure at work before saying yes again even when I was tired today $i.',
+  ),
+);
 
 void _expectNoBannedCopy(Iterable<String> visible) {
   for (final text in visible) {
@@ -237,7 +234,9 @@ void main() {
         clarity: BetaFeedbackClarity.confused,
         note: 'Still learning',
       );
-      final journalRaw = await File('${tempDir.path}/journal.json').readAsString();
+      final journalRaw = await File(
+        '${tempDir.path}/journal.json',
+      ).readAsString();
       final prefsRaw = await File('${tempDir.path}/prefs.json').readAsString();
       expect(journalRaw, contains('Private moment text'));
       expect(prefsRaw, isNot(contains('Private moment text')));
@@ -321,14 +320,15 @@ void main() {
           MaterialApp(
             theme: AppTheme.light(),
             home: Scaffold(
-              body: BetaFeedbackCard.test(
-                entries: _entries(count),
-              ),
+              body: BetaFeedbackCard.test(entries: _entries(count)),
             ),
           ),
         );
         await tester.pump();
-        expect(find.byKey(const Key('beta_feedback_card_hidden')), findsOneWidget);
+        expect(
+          find.byKey(const Key('beta_feedback_card_hidden')),
+          findsOneWidget,
+        );
         await tester.pumpWidget(const SizedBox.shrink());
       }
     });
@@ -337,9 +337,7 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           theme: AppTheme.light(),
-          home: Scaffold(
-            body: BetaFeedbackCard.test(entries: _entries(3)),
-          ),
+          home: Scaffold(body: BetaFeedbackCard.test(entries: _entries(3))),
         ),
       );
       await tester.pump();
@@ -352,15 +350,15 @@ void main() {
         MaterialApp(
           theme: AppTheme.light(),
           home: Scaffold(
-            body: BetaFeedbackCard.test(
-              entries: _entries(5),
-              sampleMode: true,
-            ),
+            body: BetaFeedbackCard.test(entries: _entries(5), sampleMode: true),
           ),
         ),
       );
       await tester.pump();
-      expect(find.byKey(const Key('beta_feedback_card_hidden')), findsOneWidget);
+      expect(
+        find.byKey(const Key('beta_feedback_card_hidden')),
+        findsOneWidget,
+      );
     });
 
     testWidgets('user can select useful, not yet, understood, and confused', (
@@ -369,9 +367,7 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           theme: AppTheme.light(),
-          home: Scaffold(
-            body: BetaFeedbackCard.test(entries: _entries(3)),
-          ),
+          home: Scaffold(body: BetaFeedbackCard.test(entries: _entries(3))),
         ),
       );
       await tester.pump();
@@ -379,7 +375,9 @@ void main() {
       await tester.tap(find.byKey(const Key('beta_feedback_useful')));
       await tester.pump();
       expect(
-        tester.widget<FilledButton>(find.byKey(const Key('beta_feedback_save'))).onPressed,
+        tester
+            .widget<FilledButton>(find.byKey(const Key('beta_feedback_save')))
+            .onPressed,
         isNotNull,
       );
 
@@ -407,7 +405,10 @@ void main() {
         ),
       );
       await tester.pump();
-      expect(find.byKey(const Key('beta_feedback_card_hidden')), findsOneWidget);
+      expect(
+        find.byKey(const Key('beta_feedback_card_hidden')),
+        findsOneWidget,
+      );
     });
 
     testWidgets('dismissed state hides card', (tester) async {
@@ -423,7 +424,10 @@ void main() {
         ),
       );
       await tester.pump();
-      expect(find.byKey(const Key('beta_feedback_card_hidden')), findsOneWidget);
+      expect(
+        find.byKey(const Key('beta_feedback_card_hidden')),
+        findsOneWidget,
+      );
     });
   });
 
@@ -438,8 +442,9 @@ void main() {
     });
 
     test('share-safe proof excludes beta feedback copy', () {
-      final proof = const ShareableArchiveProofEngine()
-          .buildFromJournal(entries: _entries(5));
+      final proof = const ShareableArchiveProofEngine().buildFromJournal(
+        entries: _entries(5),
+      );
       expect(proof.shareText, isNot(contains(BetaFeedbackCopy.cardTitle)));
       expect(proof.shareText, isNot(contains('Beta feedback')));
     });
@@ -448,8 +453,9 @@ void main() {
       expect(SensitiveRoutes.isSensitiveRoute('/beta-feedback'), isTrue);
       final src = File('lib/router/app_router.dart').readAsStringSync();
       expect(src, contains("path: '/beta-feedback'"));
-      final belief =
-          File('lib/screens/archive_belief_screen.dart').readAsStringSync();
+      final belief = File(
+        'lib/screens/archive_belief_screen.dart',
+      ).readAsStringSync();
       expect(belief, contains('ArchiveHomeSectionId.betaFeedback'));
       expect(belief, contains('BetaFeedbackCard'));
     });
@@ -499,7 +505,11 @@ void main() {
       expect(find.text(ConsumerUiCopy.accountTitle), findsOneWidget);
 
       final tile = find.byKey(const Key('account_beta_feedback_tile'));
-      await tester.dragUntilVisible(tile, find.byType(ListView), const Offset(0, -300));
+      await tester.dragUntilVisible(
+        tile,
+        find.byType(ListView),
+        const Offset(0, -300),
+      );
       await tester.pump();
       expect(find.text(BetaFeedbackCopy.sheetLinkLabel), findsOneWidget);
     });
@@ -561,7 +571,7 @@ void main() {
                   controller: BetaFeedbackController(
                     loadAppVersion: _fixedVersion,
                     launchEmail: (_) async => false,
-                    copyText: (_, __) async => ArchiveShareOutcome.copied,
+                    copyText: (_, _) async => ArchiveShareOutcome.copied,
                   ),
                 ),
                 child: const Text('open'),
@@ -585,8 +595,8 @@ void main() {
 
     testWidgets('analytics excludes note text', (tester) async {
       final captured = <({String event, Map<String, Object> properties})>[];
-      BetaFeedbackAnalytics.captureForTest =
-          (event, properties) => captured.add((event: event, properties: properties));
+      BetaFeedbackAnalytics.captureForTest = (event, properties) =>
+          captured.add((event: event, properties: properties));
 
       await tester.pumpWidget(
         MaterialApp(
@@ -646,7 +656,9 @@ void main() {
       );
     });
 
-    testWidgets('email fallback copies feedback when launcher fails', (tester) async {
+    testWidgets('email fallback copies feedback when launcher fails', (
+      tester,
+    ) async {
       await tester.binding.setSurfaceSize(const Size(800, 1200));
       addTearDown(() => tester.binding.setSurfaceSize(null));
 
@@ -691,11 +703,16 @@ void main() {
         'Needs clearer next step.',
       );
       await tester.pump();
-      await tester.ensureVisible(find.byKey(const Key('beta_feedback_sheet_send')).last);
+      await tester.ensureVisible(
+        find.byKey(const Key('beta_feedback_sheet_send')).last,
+      );
       await tester.tap(find.byKey(const Key('beta_feedback_sheet_send')).last);
       await tester.pumpAndSettle();
 
-      expect(find.byKey(const Key('beta_feedback_preview_dialog')), findsOneWidget);
+      expect(
+        find.byKey(const Key('beta_feedback_preview_dialog')),
+        findsOneWidget,
+      );
       await tester.tap(find.byKey(const Key('beta_feedback_preview_send')));
       await tester.pumpAndSettle();
 
@@ -742,11 +759,16 @@ void main() {
       await tester.pumpAndSettle();
       await tester.tap(find.byKey(const Key('beta_feedback_option_useful')));
       await tester.pump();
-      await tester.ensureVisible(find.byKey(const Key('beta_feedback_sheet_send')).last);
+      await tester.ensureVisible(
+        find.byKey(const Key('beta_feedback_sheet_send')).last,
+      );
       await tester.tap(find.byKey(const Key('beta_feedback_sheet_send')).last);
       await tester.pumpAndSettle();
 
-      expect(find.byKey(const Key('beta_feedback_preview_message')), findsOneWidget);
+      expect(
+        find.byKey(const Key('beta_feedback_preview_message')),
+        findsOneWidget,
+      );
       expect(emailLaunched, isFalse);
       await tester.tap(find.byKey(const Key('beta_feedback_preview_send')));
       await tester.pumpAndSettle();
@@ -760,7 +782,9 @@ Future<String> _fixedVersion() async => '9.9.9 (99)';
 Future<void> _resetServicesForAccount() async {
   final stamp = DateTime.now().microsecondsSinceEpoch.toString();
   await AppServices.resetForTest(
-    journalPath: '${Directory.systemTemp.path}/vm_beta_feedback_journal_$stamp.json',
-    prefsPath: '${Directory.systemTemp.path}/vm_beta_feedback_prefs_$stamp.json',
+    journalPath:
+        '${Directory.systemTemp.path}/vm_beta_feedback_journal_$stamp.json',
+    prefsPath:
+        '${Directory.systemTemp.path}/vm_beta_feedback_prefs_$stamp.json',
   );
 }

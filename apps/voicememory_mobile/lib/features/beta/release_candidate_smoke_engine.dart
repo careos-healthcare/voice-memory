@@ -76,7 +76,8 @@ abstract final class ReleaseCandidateSmokeEngine {
   }
 
   static ReleaseCandidateSmokeRow _firstUseCaptureRow() {
-    final available = RecordFirstUsePromptCopy.title.isNotEmpty &&
+    final available =
+        RecordFirstUsePromptCopy.title.isNotEmpty &&
         RecordFirstUsePromptCopy.body.isNotEmpty;
     return ReleaseCandidateSmokeRow(
       id: ReleaseCandidateSmokeRowId.firstUseCapture,
@@ -99,7 +100,8 @@ abstract final class ReleaseCandidateSmokeEngine {
   }
 
   static ReleaseCandidateSmokeRow _secondMomentGuidanceRow() {
-    final available = (ArchiveJourneyCopy.compactStep2Title.isNotEmpty &&
+    final available =
+        (ArchiveJourneyCopy.compactStep2Title.isNotEmpty &&
             ArchiveJourneyCopy.compactHelper.isNotEmpty) ||
         (TesterMissionCopy.entry1Body.isNotEmpty &&
             TesterMissionCopy.entry1StepLabel.isNotEmpty);
@@ -113,7 +115,8 @@ abstract final class ReleaseCandidateSmokeEngine {
   }
 
   static ReleaseCandidateSmokeRow _firstProofPathRow() {
-    final available = FirstProofMomentCopy.title.isNotEmpty &&
+    final available =
+        FirstProofMomentCopy.title.isNotEmpty &&
         FirstProofMomentCopy.whyLine.isNotEmpty;
     return ReleaseCandidateSmokeRow(
       id: ReleaseCandidateSmokeRowId.firstProofPath,
@@ -125,7 +128,8 @@ abstract final class ReleaseCandidateSmokeEngine {
   }
 
   static ReleaseCandidateSmokeRow _coreValueFeedbackRow() {
-    final available = ArchiveBetaMissionGate.isEnabled &&
+    final available =
+        ArchiveBetaMissionGate.isEnabled &&
         CoreValueFeedbackCopy.question.isNotEmpty &&
         CoreValueFeedbackCopy.title.isNotEmpty;
     return ReleaseCandidateSmokeRow(
@@ -139,7 +143,8 @@ abstract final class ReleaseCandidateSmokeEngine {
 
   static ReleaseCandidateSmokeRow _patternsArchiveRow() {
     final available =
-        ReleaseCandidateSmokeCopy.patternsRoute == DeveloperRouteGuard.patternsHome;
+        ReleaseCandidateSmokeCopy.patternsRoute ==
+        DeveloperRouteGuard.patternsHome;
     return ReleaseCandidateSmokeRow(
       id: ReleaseCandidateSmokeRowId.patternsArchive,
       label: ReleaseCandidateSmokeCopy.rowPatternsArchive,
@@ -150,7 +155,8 @@ abstract final class ReleaseCandidateSmokeEngine {
   }
 
   static ReleaseCandidateSmokeRow _evidenceTimelineRow() {
-    final available = EarlyEvidenceTimelineCopy.title.isNotEmpty &&
+    final available =
+        EarlyEvidenceTimelineCopy.title.isNotEmpty &&
         EarlyEvidenceTimelineCopy.repeatConfirmedTitle.isNotEmpty;
     return ReleaseCandidateSmokeRow(
       id: ReleaseCandidateSmokeRowId.evidenceTimeline,
@@ -162,7 +168,8 @@ abstract final class ReleaseCandidateSmokeEngine {
   }
 
   static ReleaseCandidateSmokeRow _privateReportPreviewRow() {
-    final available = PrivateArchiveReportCopy.previewTitle.isNotEmpty &&
+    final available =
+        PrivateArchiveReportCopy.previewTitle.isNotEmpty &&
         PrivateArchiveReportCopy.previewBody.isNotEmpty;
     return ReleaseCandidateSmokeRow(
       id: ReleaseCandidateSmokeRowId.privateReportPreview,
@@ -187,7 +194,7 @@ abstract final class ReleaseCandidateSmokeEngine {
   static ReleaseCandidateSmokeRow _restorePurchasesRouteRow() {
     final available =
         ReleaseCandidateSmokeCopy.restorePurchasesRoute.isNotEmpty &&
-            RestorePurchasesCopy.restorePurchases.isNotEmpty;
+        RestorePurchasesCopy.restorePurchases.isNotEmpty;
     return ReleaseCandidateSmokeRow(
       id: ReleaseCandidateSmokeRowId.restorePurchasesRoute,
       label: ReleaseCandidateSmokeCopy.rowRestorePurchasesRoute,
@@ -216,8 +223,9 @@ abstract final class ReleaseCandidateSmokeEngine {
       );
     }
 
-    final guarded = DeveloperRouteGuard.developerOnlyPaths
-        .contains(ReleaseCandidateSmokeCopy.developerDiagnosticsRoute);
+    final guarded = DeveloperRouteGuard.developerOnlyPaths.contains(
+      ReleaseCandidateSmokeCopy.developerDiagnosticsRoute,
+    );
     if (!guarded) {
       return const ReleaseCandidateSmokeRow(
         id: ReleaseCandidateSmokeRowId.developerDiagnosticsLocked,
@@ -242,7 +250,8 @@ abstract final class ReleaseCandidateSmokeEngine {
   }
 
   static ReleaseCandidateSmokeRow _microphonePermissionCopyRow() {
-    final available = MicrophonePermissionCopy.neededTitle.isNotEmpty &&
+    final available =
+        MicrophonePermissionCopy.neededTitle.isNotEmpty &&
         MicrophonePermissionCopy.deniedBody.isNotEmpty;
     return ReleaseCandidateSmokeRow(
       id: ReleaseCandidateSmokeRowId.microphonePermissionCopy,
@@ -254,7 +263,8 @@ abstract final class ReleaseCandidateSmokeEngine {
   }
 
   static ReleaseCandidateSmokeRow _saveFailureCopyRow() {
-    final available = VoiceCaptureCopy.saveFailed.isNotEmpty &&
+    final available =
+        VoiceCaptureCopy.saveFailed.isNotEmpty &&
         VoiceCaptureCopy.recordingFailed.isNotEmpty;
     return ReleaseCandidateSmokeRow(
       id: ReleaseCandidateSmokeRowId.saveFailureCopy,
@@ -266,7 +276,8 @@ abstract final class ReleaseCandidateSmokeEngine {
   }
 
   static ReleaseCandidateSmokeRow _privacySupportLinkRow() {
-    final available = AppConfig.supportUrl.contains('archiveme-support') &&
+    final available =
+        AppConfig.supportUrl.contains('archiveme-support') &&
         TrustReliabilityCopy.sectionTitle.isNotEmpty;
     return ReleaseCandidateSmokeRow(
       id: ReleaseCandidateSmokeRowId.privacySupportLink,
@@ -280,7 +291,7 @@ abstract final class ReleaseCandidateSmokeEngine {
   static ReleaseCandidateSmokeRow _resetArchiveControlRow() {
     final available =
         PrivacyDataControlsCopy.clearLocalArchiveTitle.isNotEmpty &&
-            PrivacyDataControlsCopy.clearLocalArchiveConfirmTitle.isNotEmpty;
+        PrivacyDataControlsCopy.clearLocalArchiveConfirmTitle.isNotEmpty;
     return ReleaseCandidateSmokeRow(
       id: ReleaseCandidateSmokeRowId.resetArchiveControl,
       label: ReleaseCandidateSmokeCopy.rowResetArchiveControl,
@@ -291,7 +302,8 @@ abstract final class ReleaseCandidateSmokeEngine {
   }
 
   static ReleaseCandidateSmokeRow _reportCopyRow() {
-    final available = PrivateArchiveReportCopy.copyReportCta.isNotEmpty &&
+    final available =
+        PrivateArchiveReportCopy.copyReportCta.isNotEmpty &&
         PrivateArchiveReportCopy.intro.isNotEmpty;
     return ReleaseCandidateSmokeRow(
       id: ReleaseCandidateSmokeRowId.reportCopy,

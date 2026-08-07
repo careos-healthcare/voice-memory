@@ -1,4 +1,5 @@
 /// GPT-5 synthesis V2 — narrative layer on deterministic archive engines.
+library;
 
 enum ArchiveSynthesisType { monthly, milestone, deepDive, historian }
 
@@ -411,4 +412,22 @@ class ArchiveHistorianReport {
       uncertaintyNote: note,
     );
   }
+}
+
+class ArchiveSynthesisApiResponse {
+  const ArchiveSynthesisApiResponse({
+    required this.synthesisType,
+    required this.cached,
+    this.monthlyReview,
+    this.milestoneReview,
+    this.deepDiveNarrative,
+    this.historianReport,
+  });
+
+  final String synthesisType;
+  final bool cached;
+  final ArchiveMonthlyReview? monthlyReview;
+  final ArchiveMilestoneReview? milestoneReview;
+  final ArchiveDeepDiveNarrative? deepDiveNarrative;
+  final ArchiveHistorianReport? historianReport;
 }

@@ -13,8 +13,7 @@ abstract final class ThreeMomentActivationCopy {
   static const cautionLine =
       'ArchiveMe usually needs a few real moments before the first useful repeat can appear.';
 
-  static const combinedBody =
-      '$momentOneLine $momentTwoLine $momentThreeLine';
+  static const combinedBody = '$momentOneLine $momentTwoLine $momentThreeLine';
 
   static bool usesCautiousLanguage(String text) {
     final lower = text.toLowerCase();

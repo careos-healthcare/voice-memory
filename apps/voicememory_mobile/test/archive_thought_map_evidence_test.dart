@@ -26,48 +26,51 @@ JournalEntry _entry({
   required String id,
   required String transcript,
   DateTime? createdAt,
-}) =>
-    JournalEntry(
-      id: id,
-      createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
-      transcript: transcript,
-      durationSeconds: 30,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 2,
-        recurringThemes: ['work'],
-        exactLanguagePattern: '',
-        concreteObservation: 'Work pressure showed up in this moment.',
-        repeatedSignal: '',
-      ),
-    );
+}) => JournalEntry(
+  id: id,
+  createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
+  transcript: transcript,
+  durationSeconds: 30,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 2,
+    recurringThemes: ['work'],
+    exactLanguagePattern: '',
+    concreteObservation: 'Work pressure showed up in this moment.',
+    repeatedSignal: '',
+  ),
+);
 
 List<JournalEntry> _repeatEntries() => [
-      _entry(
-        id: 'a',
-        transcript:
-            'I had no capacity but I said yes again to the extra meeting today.',
-        createdAt: DateTime(2026, 6, 10, 12),
-      ),
-      _entry(
-        id: 'b',
-        transcript:
-            'Same thing — said yes when I had no capacity for one more thing.',
-        createdAt: DateTime(2026, 6, 11, 12),
-      ),
-      _entry(
-        id: 'c',
-        transcript:
-            'I said yes again even though I had no capacity for one more ask.',
-        createdAt: DateTime(2026, 6, 12, 12),
-      ),
-    ];
+  _entry(
+    id: 'a',
+    transcript:
+        'I had no capacity but I said yes again to the extra meeting today.',
+    createdAt: DateTime(2026, 6, 10, 12),
+  ),
+  _entry(
+    id: 'b',
+    transcript:
+        'Same thing — said yes when I had no capacity for one more thing.',
+    createdAt: DateTime(2026, 6, 11, 12),
+  ),
+  _entry(
+    id: 'c',
+    transcript:
+        'I said yes again even though I had no capacity for one more ask.',
+    createdAt: DateTime(2026, 6, 12, 12),
+  ),
+];
 
 ArchiveThoughtMapPreview _preview() {
   const engine = ArchiveThoughtMapEngine();
   final preview = engine.build(_repeatEntries());
-  expect(preview.shouldShow, isTrue, reason: 'fixture should have enough evidence');
+  expect(
+    preview.shouldShow,
+    isTrue,
+    reason: 'fixture should have enough evidence',
+  );
   return preview;
 }
 
@@ -85,7 +88,11 @@ void _expectNoBannedCopy(Iterable<String> visible) {
         reason: 'must not contain "$phrase" in "$text"',
       );
     }
-    expect(lower, isNot(contains('diagnosis')), reason: 'unexpected diagnosis in "$text"');
+    expect(
+      lower,
+      isNot(contains('diagnosis')),
+      reason: 'unexpected diagnosis in "$text"',
+    );
   }
 }
 
@@ -110,10 +117,7 @@ void main() {
       expect(preview.threadTitle, isNotEmpty);
       expect(preview.nodes.length, inInclusiveRange(3, 5));
       expect(preview.connectors.length, preview.nodes.length - 1);
-      expect(
-        preview.connectors,
-        contains(ArchiveThoughtMapConnector.because),
-      );
+      expect(preview.connectors, contains(ArchiveThoughtMapConnector.because));
       expect(preview.savedMomentCount, 3);
       expect(preview.stageLabel, isNotNull);
       expect(preview.stageLabel, isNot(contains('%')));
@@ -149,15 +153,20 @@ void main() {
 
     test('named thread nodes include at least two snippets total', () {
       final preview = _preview();
-      final snippetCount = preview.nodes
-          .fold<int>(0, (sum, node) => sum + node.snippets.length);
+      final snippetCount = preview.nodes.fold<int>(
+        0,
+        (sum, node) => sum + node.snippets.length,
+      );
       expect(snippetCount, greaterThanOrEqualTo(2));
     });
 
     test('change line uses safe summary tag when available', () {
       final preview = _preview();
       if (preview.changeLine != null) {
-        expect(preview.changeLine, startsWith(ArchiveThoughtMapCopy.changePrefix));
+        expect(
+          preview.changeLine,
+          startsWith(ArchiveThoughtMapCopy.changePrefix),
+        );
         expect(preview.changeLine, isNot(contains('therapy')));
       }
     });
@@ -213,7 +222,8 @@ void main() {
       );
       expect(
         _repeatEntries().any(
-          (entry) => entry.transcript.contains(behaviour.snippets.first.excerpt) ||
+          (entry) =>
+              entry.transcript.contains(behaviour.snippets.first.excerpt) ||
               entry.transcript.startsWith(
                 behaviour.snippets.first.excerpt.replaceAll('…', ''),
               ),
@@ -245,9 +255,14 @@ void main() {
 
     test('normalizeRenamedTitle trims long titles', () {
       final long = 'A' * 200;
-      final normalized = ArchiveBeliefCorrectionStore.normalizeRenamedTitle(long);
+      final normalized = ArchiveBeliefCorrectionStore.normalizeRenamedTitle(
+        long,
+      );
       expect(normalized, isNotNull);
-      expect(normalized!.length, ArchiveBeliefCorrectionStore.maxRenamedThreadTitleLength);
+      expect(
+        normalized!.length,
+        ArchiveBeliefCorrectionStore.maxRenamedThreadTitleLength,
+      );
     });
 
     test('renameThread persists through toJson and applyLoaded', () {
@@ -306,10 +321,15 @@ void main() {
       await tester.pumpAndSettle();
     }
 
-    testWidgets('renders nodes, edge labels, and evidence line', (tester) async {
+    testWidgets('renders nodes, edge labels, and evidence line', (
+      tester,
+    ) async {
       await pumpPreviewCard(tester, _preview());
 
-      expect(find.byKey(const Key('patterns_thought_map_preview_card')), findsOneWidget);
+      expect(
+        find.byKey(const Key('patterns_thought_map_preview_card')),
+        findsOneWidget,
+      );
       expect(find.text(ArchiveThoughtMapCopy.sectionTitle), findsOneWidget);
       expect(find.textContaining('Built from 3 saved moments'), findsOneWidget);
       expect(find.text(ArchiveThoughtMapCopy.connectorBecause), findsOneWidget);
@@ -326,8 +346,12 @@ void main() {
     testWidgets('This feels right shows confirmation state', (tester) async {
       await pumpPreviewCard(tester, _preview());
 
-      await tester.ensureVisible(find.byKey(const Key('patterns_thought_map_feels_right')));
-      await tester.tap(find.byKey(const Key('patterns_thought_map_feels_right')));
+      await tester.ensureVisible(
+        find.byKey(const Key('patterns_thought_map_feels_right')),
+      );
+      await tester.tap(
+        find.byKey(const Key('patterns_thought_map_feels_right')),
+      );
       await tester.pumpAndSettle();
 
       expect(
@@ -337,19 +361,27 @@ void main() {
       expect(find.text(ArchiveThoughtMapCopy.feelsRightCta), findsNothing);
     });
 
-    testWidgets('Rename thread persists and shows confirmation', (tester) async {
+    testWidgets('Rename thread persists and shows confirmation', (
+      tester,
+    ) async {
       final preview = _preview();
       await pumpPreviewCard(tester, preview);
 
-      await tester.ensureVisible(find.byKey(const Key('patterns_thought_map_rename_thread')));
-      await tester.tap(find.byKey(const Key('patterns_thought_map_rename_thread')));
+      await tester.ensureVisible(
+        find.byKey(const Key('patterns_thought_map_rename_thread')),
+      );
+      await tester.tap(
+        find.byKey(const Key('patterns_thought_map_rename_thread')),
+      );
       await tester.pumpAndSettle();
 
       await tester.enterText(
         find.byKey(const Key('patterns_thought_map_rename_field')),
         'Work yes loop',
       );
-      await tester.tap(find.byKey(const Key('patterns_thought_map_rename_save')));
+      await tester.tap(
+        find.byKey(const Key('patterns_thought_map_rename_save')),
+      );
       await tester.pumpAndSettle();
 
       expect(find.text('Work yes loop'), findsOneWidget);
@@ -358,7 +390,9 @@ void main() {
         findsOneWidget,
       );
       expect(
-        ArchiveBeliefCorrectionStore.getRenamedThreadTitle(preview.suggestionId),
+        ArchiveBeliefCorrectionStore.getRenamedThreadTitle(
+          preview.suggestionId,
+        ),
         'Work yes loop',
       );
 
@@ -368,7 +402,10 @@ void main() {
 
       await pumpPreviewCard(tester, rebuilt);
       expect(find.text('Work yes loop'), findsOneWidget);
-      expect(find.byKey(const Key('patterns_thought_map_rename_field')), findsNothing);
+      expect(
+        find.byKey(const Key('patterns_thought_map_rename_field')),
+        findsNothing,
+      );
     });
 
     testWidgets('empty rename is ignored', (tester) async {
@@ -376,15 +413,21 @@ void main() {
       final originalTitle = preview.threadTitle;
       await pumpPreviewCard(tester, preview);
 
-      await tester.ensureVisible(find.byKey(const Key('patterns_thought_map_rename_thread')));
-      await tester.tap(find.byKey(const Key('patterns_thought_map_rename_thread')));
+      await tester.ensureVisible(
+        find.byKey(const Key('patterns_thought_map_rename_thread')),
+      );
+      await tester.tap(
+        find.byKey(const Key('patterns_thought_map_rename_thread')),
+      );
       await tester.pumpAndSettle();
 
       await tester.enterText(
         find.byKey(const Key('patterns_thought_map_rename_field')),
         '   ',
       );
-      await tester.tap(find.byKey(const Key('patterns_thought_map_rename_save')));
+      await tester.tap(
+        find.byKey(const Key('patterns_thought_map_rename_save')),
+      );
       await tester.pumpAndSettle();
 
       expect(find.text(originalTitle), findsOneWidget);
@@ -393,7 +436,9 @@ void main() {
         findsNothing,
       );
       expect(
-        ArchiveBeliefCorrectionStore.getRenamedThreadTitle(preview.suggestionId),
+        ArchiveBeliefCorrectionStore.getRenamedThreadTitle(
+          preview.suggestionId,
+        ),
         isNull,
       );
     });
@@ -401,23 +446,33 @@ void main() {
     testWidgets('long rename is trimmed to store limit', (tester) async {
       final preview = _preview();
       final longTitle = 'B' * 200;
-      final expected = ArchiveBeliefCorrectionStore.normalizeRenamedTitle(longTitle)!;
+      final expected = ArchiveBeliefCorrectionStore.normalizeRenamedTitle(
+        longTitle,
+      )!;
 
       await pumpPreviewCard(tester, preview);
-      await tester.ensureVisible(find.byKey(const Key('patterns_thought_map_rename_thread')));
-      await tester.tap(find.byKey(const Key('patterns_thought_map_rename_thread')));
+      await tester.ensureVisible(
+        find.byKey(const Key('patterns_thought_map_rename_thread')),
+      );
+      await tester.tap(
+        find.byKey(const Key('patterns_thought_map_rename_thread')),
+      );
       await tester.pumpAndSettle();
 
       await tester.enterText(
         find.byKey(const Key('patterns_thought_map_rename_field')),
         longTitle,
       );
-      await tester.tap(find.byKey(const Key('patterns_thought_map_rename_save')));
+      await tester.tap(
+        find.byKey(const Key('patterns_thought_map_rename_save')),
+      );
       await tester.pumpAndSettle();
 
       expect(find.text(expected), findsOneWidget);
       expect(
-        ArchiveBeliefCorrectionStore.getRenamedThreadTitle(preview.suggestionId),
+        ArchiveBeliefCorrectionStore.getRenamedThreadTitle(
+          preview.suggestionId,
+        ),
         expected,
       );
     });
@@ -425,7 +480,9 @@ void main() {
     testWidgets('Not quite shows wait-for-more-evidence copy', (tester) async {
       await pumpPreviewCard(tester, _preview());
 
-      await tester.ensureVisible(find.byKey(const Key('patterns_thought_map_not_quite')));
+      await tester.ensureVisible(
+        find.byKey(const Key('patterns_thought_map_not_quite')),
+      );
       await tester.tap(find.byKey(const Key('patterns_thought_map_not_quite')));
       await tester.pumpAndSettle();
 
@@ -438,22 +495,33 @@ void main() {
     ) async {
       await pumpPreviewCard(tester, _preview());
 
-      expect(find.byKey(const Key('patterns_thought_map_evidence_panel')), findsNothing);
+      expect(
+        find.byKey(const Key('patterns_thought_map_evidence_panel')),
+        findsNothing,
+      );
       await tester.ensureVisible(
         find.byKey(const Key('patterns_thought_map_node_tap_trigger')),
       );
-      await tester.tap(find.byKey(const Key('patterns_thought_map_node_tap_trigger')));
+      await tester.tap(
+        find.byKey(const Key('patterns_thought_map_node_tap_trigger')),
+      );
       await tester.pumpAndSettle();
 
-      expect(find.text(ArchiveThoughtMapCopy.whyNodeAppearsTitle), findsOneWidget);
-      expect(find.byKey(const Key('patterns_thought_map_evidence_panel')), findsOneWidget);
+      expect(
+        find.text(ArchiveThoughtMapCopy.whyNodeAppearsTitle),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(const Key('patterns_thought_map_evidence_panel')),
+        findsOneWidget,
+      );
       expect(find.text(ArchiveThoughtMapCopy.triggerLabel), findsWidgets);
       expect(find.textContaining('Built from'), findsWidgets);
+      expect(find.textContaining('said yes'), findsWidgets);
       expect(
-        find.textContaining('said yes'),
-        findsWidgets,
+        find.text(ArchiveThoughtMapCopy.patternSignalDisclaimer),
+        findsOneWidget,
       );
-      expect(find.text(ArchiveThoughtMapCopy.patternSignalDisclaimer), findsOneWidget);
       _expectNoBannedCopy(
         tester.widgetList<Text>(find.byType(Text)).map((w) => w.data ?? ''),
       );
@@ -462,14 +530,23 @@ void main() {
     testWidgets('switching nodes updates evidence panel', (tester) async {
       await pumpPreviewCard(tester, _preview());
 
-      await tester.tap(find.byKey(const Key('patterns_thought_map_node_tap_trigger')));
-      await tester.pumpAndSettle();
-      expect(find.byKey(const Key('patterns_thought_map_evidence_panel')), findsOneWidget);
-
-      await tester.tap(find.byKey(const Key('patterns_thought_map_node_tap_behaviour')));
+      await tester.tap(
+        find.byKey(const Key('patterns_thought_map_node_tap_trigger')),
+      );
       await tester.pumpAndSettle();
       expect(
-        find.byKey(const Key('patterns_thought_map_evidence_node_label_behaviour')),
+        find.byKey(const Key('patterns_thought_map_evidence_panel')),
+        findsOneWidget,
+      );
+
+      await tester.tap(
+        find.byKey(const Key('patterns_thought_map_node_tap_behaviour')),
+      );
+      await tester.pumpAndSettle();
+      expect(
+        find.byKey(
+          const Key('patterns_thought_map_evidence_node_label_behaviour'),
+        ),
         findsOneWidget,
       );
     });
@@ -480,19 +557,31 @@ void main() {
       await tester.ensureVisible(
         find.byKey(const Key('patterns_thought_map_node_tap_trigger')),
       );
-      await tester.tap(find.byKey(const Key('patterns_thought_map_node_tap_trigger')));
+      await tester.tap(
+        find.byKey(const Key('patterns_thought_map_node_tap_trigger')),
+      );
       await tester.pumpAndSettle();
-      expect(find.byKey(const Key('patterns_thought_map_evidence_panel')), findsOneWidget);
+      expect(
+        find.byKey(const Key('patterns_thought_map_evidence_panel')),
+        findsOneWidget,
+      );
 
       await tester.ensureVisible(
         find.byKey(const Key('patterns_thought_map_evidence_close')),
       );
-      await tester.tap(find.byKey(const Key('patterns_thought_map_evidence_close')));
+      await tester.tap(
+        find.byKey(const Key('patterns_thought_map_evidence_close')),
+      );
       await tester.pumpAndSettle();
-      expect(find.byKey(const Key('patterns_thought_map_evidence_panel')), findsNothing);
+      expect(
+        find.byKey(const Key('patterns_thought_map_evidence_panel')),
+        findsNothing,
+      );
     });
 
-    testWidgets('node with no snippets shows cautious fallback', (tester) async {
+    testWidgets('node with no snippets shows cautious fallback', (
+      tester,
+    ) async {
       final base = _preview();
       final emptyNode = ArchiveThoughtMapNode(
         id: 'test_empty_relief',
@@ -512,11 +601,19 @@ void main() {
       );
 
       await pumpPreviewCard(tester, preview);
-      await tester.tap(find.byKey(const Key('patterns_thought_map_node_tap_relief')));
+      await tester.tap(
+        find.byKey(const Key('patterns_thought_map_node_tap_relief')),
+      );
       await tester.pumpAndSettle();
 
-      expect(find.text(ArchiveThoughtMapCopy.nodeEvidenceFallback), findsOneWidget);
-      expect(find.text(ArchiveThoughtMapCopy.patternSignalDisclaimer), findsOneWidget);
+      expect(
+        find.text(ArchiveThoughtMapCopy.nodeEvidenceFallback),
+        findsOneWidget,
+      );
+      expect(
+        find.text(ArchiveThoughtMapCopy.patternSignalDisclaimer),
+        findsOneWidget,
+      );
     });
 
     testWidgets('Record another moment routes to record not evidence', (
@@ -556,10 +653,13 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      await tester.tap(find.byKey(const Key('patterns_thought_map_node_tap_trigger')));
+      await tester.tap(
+        find.byKey(const Key('patterns_thought_map_node_tap_trigger')),
+      );
       await tester.pumpAndSettle();
-      final recordCta =
-          find.byKey(const Key('patterns_thought_map_record_another_moment'));
+      final recordCta = find.byKey(
+        const Key('patterns_thought_map_record_another_moment'),
+      );
       await tester.ensureVisible(recordCta);
       await tester.tap(recordCta);
       await tester.pumpAndSettle();

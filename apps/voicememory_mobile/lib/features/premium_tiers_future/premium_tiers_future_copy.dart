@@ -35,44 +35,45 @@ abstract final class PremiumTiersFutureCopy {
   static const detailPending = 'Pending';
   static const detailFail = 'Fail';
 
-  static const detailBlockedBeforeProProof = 'Blocked before simple Pro purchase proof';
+  static const detailBlockedBeforeProProof =
+      'Blocked before simple Pro purchase proof';
   static const detailFutureTierDocumented = 'Future tier documented only';
 
   static String labelFor(PremiumTierFutureId id) => switch (id) {
-        PremiumTierFutureId.longerHistory => 'Longer history',
-        PremiumTierFutureId.reportsExport => 'Reports/export',
-        PremiumTierFutureId.crossDeviceSync => 'Cross-device sync',
-        PremiumTierFutureId.privateBackup => 'Private backup',
-        PremiumTierFutureId.advancedSearch => 'Advanced search',
-      };
+    PremiumTierFutureId.longerHistory => 'Longer history',
+    PremiumTierFutureId.reportsExport => 'Reports/export',
+    PremiumTierFutureId.crossDeviceSync => 'Cross-device sync',
+    PremiumTierFutureId.privateBackup => 'Private backup',
+    PremiumTierFutureId.advancedSearch => 'Advanced search',
+  };
 
   static String positioningFor(PremiumTierFutureId id) => switch (id) {
-        PremiumTierFutureId.longerHistory =>
-          'Future longer history tier — after simple Pro converts.',
-        PremiumTierFutureId.reportsExport =>
-          'Future reports/export tier — after simple Pro converts.',
-        PremiumTierFutureId.crossDeviceSync =>
-          'Future cross-device sync tier — after simple Pro converts.',
-        PremiumTierFutureId.privateBackup =>
-          'Future private backup tier — after simple Pro converts.',
-        PremiumTierFutureId.advancedSearch =>
-          'Future advanced search tier — after simple Pro converts.',
-      };
+    PremiumTierFutureId.longerHistory =>
+      'Future longer history tier — after simple Pro converts.',
+    PremiumTierFutureId.reportsExport =>
+      'Future reports/export tier — after simple Pro converts.',
+    PremiumTierFutureId.crossDeviceSync =>
+      'Future cross-device sync tier — after simple Pro converts.',
+    PremiumTierFutureId.privateBackup =>
+      'Future private backup tier — after simple Pro converts.',
+    PremiumTierFutureId.advancedSearch =>
+      'Future advanced search tier — after simple Pro converts.',
+  };
 
   static String prereqLabelFor(PremiumTiersFuturePrereqId id) => switch (id) {
-        PremiumTiersFuturePrereqId.simpleProPurchaseProofComplete =>
-          'Simple Pro purchase proof complete',
-      };
+    PremiumTiersFuturePrereqId.simpleProPurchaseProofComplete =>
+      'Simple Pro purchase proof complete',
+  };
 
   static String ruleLabelFor(PremiumTiersFutureRuleId id) => switch (id) {
-        PremiumTiersFutureRuleId.noNewProductsOrPricesNow =>
-          'No new products or prices now',
-        PremiumTiersFutureRuleId.noRevenueCatProductChanges =>
-          'No RevenueCat product changes',
-        PremiumTiersFutureRuleId.noTierUi => 'No tier UI',
-        PremiumTiersFutureRuleId.higherTiersRequireSimpleProPurchaseProof =>
-          'Higher tiers require simple Pro purchase proof first',
-      };
+    PremiumTiersFutureRuleId.noNewProductsOrPricesNow =>
+      'No new products or prices now',
+    PremiumTiersFutureRuleId.noRevenueCatProductChanges =>
+      'No RevenueCat product changes',
+    PremiumTiersFutureRuleId.noTierUi => 'No tier UI',
+    PremiumTiersFutureRuleId.higherTiersRequireSimpleProPurchaseProof =>
+      'Higher tiers require simple Pro purchase proof first',
+  };
 
   static String messageFor(PremiumTiersFutureGateDecision decision) =>
       switch (decision) {
@@ -81,13 +82,14 @@ abstract final class PremiumTiersFutureCopy {
           futureTiersDocumentedLine,
       };
 
-  static String recommendationFor(PremiumTiersFutureGateDecision decision) =>
-      switch (decision) {
-        PremiumTiersFutureGateDecision.tiersFrozen =>
-          'Keep one simple Pro offer until purchase proof lands. Do not add products, prices, or tier UI.',
-        PremiumTiersFutureGateDecision.futureTiersDocumented =>
-          'Document premium tiers as future ideas only. Keep RevenueCat products unchanged until tier strategy is proven.',
-      };
+  static String recommendationFor(
+    PremiumTiersFutureGateDecision decision,
+  ) => switch (decision) {
+    PremiumTiersFutureGateDecision.tiersFrozen =>
+      'Keep one simple Pro offer until purchase proof lands. Do not add products, prices, or tier UI.',
+    PremiumTiersFutureGateDecision.futureTiersDocumented =>
+      'Document premium tiers as future ideas only. Keep RevenueCat products unchanged until tier strategy is proven.',
+  };
 
   static Iterable<String> allVisibleStrings() sync* {
     yield headline;
@@ -129,20 +131,11 @@ enum PremiumTierFutureId {
   advancedSearch,
 }
 
-enum PremiumTierFutureStatus {
-  blockedBeforeProProof,
-  futureTierDocumented,
-}
+enum PremiumTierFutureStatus { blockedBeforeProProof, futureTierDocumented }
 
-enum PremiumTiersFuturePrereqId {
-  simpleProPurchaseProofComplete,
-}
+enum PremiumTiersFuturePrereqId { simpleProPurchaseProofComplete }
 
-enum PremiumTiersFuturePrereqStatus {
-  pass,
-  pending,
-  fail,
-}
+enum PremiumTiersFuturePrereqStatus { pass, pending, fail }
 
 enum PremiumTiersFutureRuleId {
   noNewProductsOrPricesNow,
@@ -151,12 +144,6 @@ enum PremiumTiersFutureRuleId {
   higherTiersRequireSimpleProPurchaseProof,
 }
 
-enum PremiumTiersFutureRuleStatus {
-  pass,
-  fail,
-}
+enum PremiumTiersFutureRuleStatus { pass, fail }
 
-enum PremiumTiersFutureGateDecision {
-  tiersFrozen,
-  futureTiersDocumented,
-}
+enum PremiumTiersFutureGateDecision { tiersFrozen, futureTiersDocumented }

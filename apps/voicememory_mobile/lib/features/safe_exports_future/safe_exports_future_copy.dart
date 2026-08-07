@@ -37,40 +37,40 @@ abstract final class SafeExportsFutureCopy {
       'Future paid expansion documented only';
 
   static String labelFor(SafeExportFutureId id) => switch (id) {
-        SafeExportFutureId.proofTrailPdf => 'Proof trail PDF',
-        SafeExportFutureId.markdownArchive => 'Markdown archive',
-        SafeExportFutureId.localBackup => 'Local backup',
-        SafeExportFutureId.whatChangedMonthlyReport =>
-          'What changed monthly report',
-        SafeExportFutureId.evidenceTrailExport => 'Evidence trail export',
-      };
+    SafeExportFutureId.proofTrailPdf => 'Proof trail PDF',
+    SafeExportFutureId.markdownArchive => 'Markdown archive',
+    SafeExportFutureId.localBackup => 'Local backup',
+    SafeExportFutureId.whatChangedMonthlyReport =>
+      'What changed monthly report',
+    SafeExportFutureId.evidenceTrailExport => 'Evidence trail export',
+  };
 
   static String positioningFor(SafeExportFutureId id) => switch (id) {
-        SafeExportFutureId.proofTrailPdf =>
-          'Future PDF export of proof trail summaries — explicit user action only.',
-        SafeExportFutureId.markdownArchive =>
-          'Future markdown archive export — explicit user action only.',
-        SafeExportFutureId.localBackup =>
-          'Future on-device backup export — explicit user action only.',
-        SafeExportFutureId.whatChangedMonthlyReport =>
-          'Future monthly what-changed report export — explicit user action only.',
-        SafeExportFutureId.evidenceTrailExport =>
-          'Future evidence trail export — explicit user action only.',
-      };
+    SafeExportFutureId.proofTrailPdf =>
+      'Future PDF export of proof trail summaries — explicit user action only.',
+    SafeExportFutureId.markdownArchive =>
+      'Future markdown archive export — explicit user action only.',
+    SafeExportFutureId.localBackup =>
+      'Future on-device backup export — explicit user action only.',
+    SafeExportFutureId.whatChangedMonthlyReport =>
+      'Future monthly what-changed report export — explicit user action only.',
+    SafeExportFutureId.evidenceTrailExport =>
+      'Future evidence trail export — explicit user action only.',
+  };
 
   static String prereqLabelFor(SafeExportFuturePrereqId id) => switch (id) {
-        SafeExportFuturePrereqId.exportTestsPass => 'Export tests pass',
-        SafeExportFuturePrereqId.paidIntentBetaComplete =>
-          'Paid-intent beta complete',
-      };
+    SafeExportFuturePrereqId.exportTestsPass => 'Export tests pass',
+    SafeExportFuturePrereqId.paidIntentBetaComplete =>
+      'Paid-intent beta complete',
+  };
 
   static String ruleLabelFor(SafeExportsFutureRuleId id) => switch (id) {
-        SafeExportsFutureRuleId.notPrimaryProPromise => 'Not primary Pro promise',
-        SafeExportsFutureRuleId.noPrivateRawTextLeak =>
-          'No private raw text leak without explicit export',
-        SafeExportsFutureRuleId.testedBeforeMarketing => 'Tested before marketing',
-        SafeExportsFutureRuleId.noNewExportUiForV1 => 'No new export UI for V1',
-      };
+    SafeExportsFutureRuleId.notPrimaryProPromise => 'Not primary Pro promise',
+    SafeExportsFutureRuleId.noPrivateRawTextLeak =>
+      'No private raw text leak without explicit export',
+    SafeExportsFutureRuleId.testedBeforeMarketing => 'Tested before marketing',
+    SafeExportsFutureRuleId.noNewExportUiForV1 => 'No new export UI for V1',
+  };
 
   static String messageFor(SafeExportsFutureGateDecision decision) =>
       switch (decision) {
@@ -79,13 +79,14 @@ abstract final class SafeExportsFutureCopy {
           futurePaidExpansionDocumentedLine,
       };
 
-  static String recommendationFor(SafeExportsFutureGateDecision decision) =>
-      switch (decision) {
-        SafeExportsFutureGateDecision.exportsFrozen =>
-          'Finish export tests and paid-intent beta before using exports in paid expansion planning.',
-        SafeExportsFutureGateDecision.futurePaidExpansionDocumented =>
-          'Document exports as future paid expansion only. Keep proof trail as the primary promise. No V1 export UI.',
-      };
+  static String recommendationFor(
+    SafeExportsFutureGateDecision decision,
+  ) => switch (decision) {
+    SafeExportsFutureGateDecision.exportsFrozen =>
+      'Finish export tests and paid-intent beta before using exports in paid expansion planning.',
+    SafeExportsFutureGateDecision.futurePaidExpansionDocumented =>
+      'Document exports as future paid expansion only. Keep proof trail as the primary promise. No V1 export UI.',
+  };
 
   static Iterable<String> allVisibleStrings() sync* {
     yield headline;
@@ -126,16 +127,9 @@ enum SafeExportFutureId {
   evidenceTrailExport,
 }
 
-enum SafeExportFuturePrereqId {
-  exportTestsPass,
-  paidIntentBetaComplete,
-}
+enum SafeExportFuturePrereqId { exportTestsPass, paidIntentBetaComplete }
 
-enum SafeExportFuturePrereqStatus {
-  pass,
-  pending,
-  fail,
-}
+enum SafeExportFuturePrereqStatus { pass, pending, fail }
 
 enum SafeExportFutureStatus {
   blockedBeforeExportProof,
@@ -149,10 +143,7 @@ enum SafeExportsFutureRuleId {
   noNewExportUiForV1,
 }
 
-enum SafeExportsFutureRuleStatus {
-  pass,
-  fail,
-}
+enum SafeExportsFutureRuleStatus { pass, fail }
 
 enum SafeExportsFutureGateDecision {
   exportsFrozen,

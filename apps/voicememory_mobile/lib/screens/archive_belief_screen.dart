@@ -1,166 +1,194 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../features/activation/belief_evidence_trail.dart';
-import '../features/activation/weekly_archive_review.dart';
-import '../features/archive_beliefs/archive_belief_providers.dart';
-import '../features/archive_home/archive_intelligence_home.dart';
-import '../features/archive_home/archive_intelligence_presentation.dart';
-import '../features/first25/first25_user_metrics.dart';
-import '../features/retention/retention_analytics.dart';
-import '../router/primary_destination.dart';
-import '../router/primary_navigation_controller.dart';
-import '../router/route_catalog.dart';
+import '../features/archive/v1/archive_belief_load_state.dart';
+import '../features/archive/v1/archive_belief_repository.dart';
+import '../features/archive/v1/archive_belief_view_model.dart';
+import '../core/di/v1_account_dependencies.dart';
+import '../storage/journal_store.dart';
 import '../theme/app_colors.dart';
-import '../widgets/accessibility/accessible_primary_surface.dart';
+import '../widgets/archive/archive_empty_state.dart';
+import '../widgets/archive/archive_entry_card.dart';
+import '../widgets/archive/archive_search_field.dart';
+import '../widgets/archive/archive_status_banner.dart';
+import '../widgets/archive/archive_verified_changes_section.dart';
 
-/// Archive Intelligence home: coordinates archive state and delegates rendering.
-class ArchiveBeliefScreen extends StatelessWidget {
-  const ArchiveBeliefScreen({super.key});
+/// Archive: the user's original saved moments, plus verified changes when the
+/// canonical proof pipeline admits one. See `docs/ARCHIVE_SCREEN_SPEC_V1.md`.
+class ArchiveBeliefScreen extends StatefulWidget {
+  const ArchiveBeliefScreen({
+    super.key,
+    this.journalStore,
+    this.accountDependencies,
+  });
+
+  final JournalStore? journalStore;
+
+  /// When set, journal (and future archive deps) resolve from this bundle.
+  final V1AccountDependencies? accountDependencies;
 
   @override
-  Widget build(BuildContext context) {
-    return const ProviderScope(child: _ArchiveBeliefView());
-  }
+  State<ArchiveBeliefScreen> createState() => _ArchiveBeliefScreenState();
 }
 
-class _ArchiveBeliefView extends ConsumerStatefulWidget {
-  const _ArchiveBeliefView();
+class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
+  late final V1AccountDependencies _accountDeps =
+      widget.accountDependencies ?? V1AccountDependencies.fromAppServices();
 
-  @override
-  ConsumerState<_ArchiveBeliefView> createState() => _ArchiveBeliefViewState();
-}
+  late final ArchiveBeliefViewModel _viewModel = ArchiveBeliefViewModel(
+    repository: ArchiveBeliefRepository(
+      journalStore: widget.journalStore ?? _accountDeps.journalStore,
+    ),
+  );
 
-class _ArchiveBeliefViewState extends ConsumerState<_ArchiveBeliefView> {
   @override
   void initState() {
     super.initState();
-    primaryNavigationController.addListener(_handlePrimaryActivation);
-    First25UserMetrics.trackArchiveOpened(surface: 'archive_intelligence_home');
+    unawaited(_reload());
   }
 
-  @override
-  void dispose() {
-    primaryNavigationController.removeListener(_handlePrimaryActivation);
-    super.dispose();
+  Future<void> _reload() async {
+    await _viewModel.reload();
+    if (!mounted) return;
+    setState(() {});
   }
 
-  void _handlePrimaryActivation() {
-    if (!mounted ||
-        primaryNavigationController.activeDestination !=
-            PrimaryDestination.archive) {
-      return;
-    }
-    ref.read(archiveBootstrapProvider.notifier).refresh();
+  Future<void> _openEntry(String entryId) async {
+    await context.push('/entry/$entryId');
+    await _reload();
+  }
+
+  void _onQueryChanged(String value) {
+    setState(() => _viewModel.search.updateQuery(value));
   }
 
   @override
   Widget build(BuildContext context) {
-    final archive = ref.watch(archiveBootstrapProvider);
-    return AccessiblePrimarySurface(
-      label: 'Archive Intelligence screen',
-      child: Scaffold(
-        backgroundColor: AppColors.backgroundPrimary,
-        appBar: AppBar(
-          title: const Text('Archive'),
-          actions: [
-            TextButton.icon(
-              key: const Key('archive_open_memory_graph'),
-              onPressed: () => context.push(RouteCatalog.graphHome),
-              icon: const Icon(Icons.hub_outlined),
-              label: const Text('Memory graph'),
-            ),
-          ],
-        ),
-        body: archive.when(
-          loading: () => const _ArchiveLoadingState(),
-          error: (error, _) => _ArchiveErrorState(
-            onRetry: () =>
-                ref.read(archiveBootstrapProvider.notifier).refresh(),
+    final theme = Theme.of(context);
+    final entries = _viewModel.entries;
+    final visibleEntries = _viewModel.visibleEntries;
+    final loadState = _viewModel.loadState;
+
+    return Scaffold(
+      backgroundColor: AppColors.backgroundPrimary,
+      appBar: AppBar(title: const Text('Archive')),
+      body: SafeArea(
+        child: RefreshIndicator(
+          onRefresh: _reload,
+          child: CustomScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            slivers: [
+              SliverPadding(
+                padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+                sliver: SliverList(
+                  delegate: SliverChildListDelegate([
+                    Text(
+                      'Your original recordings, typed moments and transcripts.',
+                      style: theme.textTheme.bodyLarge?.copyWith(
+                        color: theme.colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                    if (loadState == ArchiveBeliefLoadState.offline) ...[
+                      const SizedBox(height: 12),
+                      const ArchiveStatusBanner(
+                        key: Key('archive_offline_banner'),
+                        icon: Icons.cloud_off_outlined,
+                        message:
+                            "You're offline. Your saved moments are stored on this "
+                            'device, so they are still shown below.',
+                      ),
+                    ] else if (loadState == ArchiveBeliefLoadState.error) ...[
+                      const SizedBox(height: 12),
+                      Semantics(
+                        liveRegion: true,
+                        child: Text(
+                          'Your archive could not be opened right now.',
+                          key: const Key('archive_error_text'),
+                          style: TextStyle(color: theme.colorScheme.error),
+                        ),
+                      ),
+                    ],
+                    const SizedBox(height: 16),
+                  ]),
+                ),
+              ),
+              if (loadState == ArchiveBeliefLoadState.loading &&
+                  entries == null)
+                const SliverFillRemaining(
+                  hasScrollBody: false,
+                  child: Center(
+                    key: Key('archive_loading_indicator'),
+                    child: CircularProgressIndicator(),
+                  ),
+                )
+              else if (entries != null && entries.isEmpty)
+                SliverPadding(
+                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 96),
+                  sliver: SliverToBoxAdapter(
+                    child: ArchiveEmptyState(
+                      onCapture: () => context.go('/record'),
+                    ),
+                  ),
+                )
+              else ...[
+                if (_viewModel.showSearchField)
+                  SliverPadding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    sliver: SliverToBoxAdapter(
+                      child: Column(
+                        children: [
+                          ArchiveSearchField(onQueryChanged: _onQueryChanged),
+                          const SizedBox(height: 16),
+                        ],
+                      ),
+                    ),
+                  ),
+                SliverPadding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  sliver: SliverToBoxAdapter(
+                    child: ArchiveVerifiedChangesSection(entries: entries!),
+                  ),
+                ),
+                SliverPadding(
+                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+                  sliver: SliverToBoxAdapter(
+                    child: Text(
+                      'Original moments',
+                      style: theme.textTheme.titleMedium,
+                    ),
+                  ),
+                ),
+                if (_viewModel.showsNoSearchResults)
+                  SliverPadding(
+                    padding: const EdgeInsets.fromLTRB(16, 12, 16, 96),
+                    sliver: SliverToBoxAdapter(
+                      child: Text(
+                        'No saved moments match "${_viewModel.search.query}".',
+                        key: const Key('archive_search_no_results'),
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: AppColors.textMuted,
+                        ),
+                      ),
+                    ),
+                  )
+                else
+                  SliverPadding(
+                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 96),
+                    sliver: SliverList(
+                      delegate: SliverChildBuilderDelegate((context, index) {
+                        final entry = visibleEntries[index];
+                        return ArchiveEntryCard(
+                          entry: entry,
+                          onTap: () => unawaited(_openEntry(entry.id)),
+                        );
+                      }, childCount: visibleEntries.length),
+                    ),
+                  ),
+              ],
+            ],
           ),
-          data: (snapshot) {
-            final presentation = ArchiveIntelligencePresentation.build(
-              entries: snapshot.entries,
-              beliefs: snapshot.beliefs,
-            );
-            return ArchiveIntelligenceHome(
-              presentation: presentation,
-              onRefresh: () =>
-                  ref.read(archiveBootstrapProvider.notifier).refresh(),
-              onOpenMoment: (entryId) => _openMoment(context, entryId),
-              onAction: (action) => _handleAction(context, action),
-            );
-          },
-        ),
-      ),
-    );
-  }
-
-  void _openMoment(BuildContext context, String entryId) {
-    RetentionAnalytics.evidenceRecordOpened(
-      surface: 'archive_intelligence_home',
-    );
-    context.push('/entry/$entryId');
-  }
-
-  void _handleAction(BuildContext context, ArchiveIntelligenceAction action) {
-    switch (action) {
-      case ArchiveIntelligenceAction.recordMoment:
-        context.go('/record');
-      case ArchiveIntelligenceAction.viewEvidence:
-        context.push(BeliefEvidenceNavigation.route);
-      case ArchiveIntelligenceAction.viewReview:
-        context.push(WeeklyArchiveReviewNavigation.route);
-      case ArchiveIntelligenceAction.none:
-        break;
-    }
-  }
-}
-
-class _ArchiveLoadingState extends StatelessWidget {
-  const _ArchiveLoadingState();
-
-  @override
-  Widget build(BuildContext context) {
-    return const Center(
-      key: Key('archive_intelligence_loading'),
-      child: CircularProgressIndicator(),
-    );
-  }
-}
-
-class _ArchiveErrorState extends StatelessWidget {
-  const _ArchiveErrorState({required this.onRetry});
-
-  final Future<void> Function() onRetry;
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      key: const Key('archive_intelligence_error'),
-      child: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              'Archive Intelligence could not load.',
-              style: Theme.of(context).textTheme.titleMedium,
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 8),
-            const Text(
-              'Your saved moments are still on this device. Try again.',
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 16),
-            FilledButton(
-              key: const Key('archive_intelligence_retry'),
-              onPressed: onRetry,
-              child: const Text('Try again'),
-            ),
-          ],
         ),
       ),
     );

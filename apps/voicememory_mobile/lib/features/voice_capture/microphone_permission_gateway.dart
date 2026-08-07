@@ -6,7 +6,8 @@ abstract class MicrophonePermissionGateway {
   Future<PermissionStatus> request();
 }
 
-class PermissionHandlerMicrophoneGateway implements MicrophonePermissionGateway {
+class PermissionHandlerMicrophoneGateway
+    implements MicrophonePermissionGateway {
   @override
   Future<PermissionStatus> get status => Permission.microphone.status;
 

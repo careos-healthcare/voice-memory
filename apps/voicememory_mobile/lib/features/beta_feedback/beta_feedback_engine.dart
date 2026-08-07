@@ -37,7 +37,9 @@ class BetaFeedbackEngine {
       momentsSavedCount: realEntries.length,
       depthLevelLabel: depth.levelLabel,
       watchThemesCount: watchThemesCount,
-      usefulnessLabel: BetaFeedbackCopy.usefulnessLabel(feedbackState.usefulness),
+      usefulnessLabel: BetaFeedbackCopy.usefulnessLabel(
+        feedbackState.usefulness,
+      ),
       clarityLabel: BetaFeedbackCopy.clarityLabel(feedbackState.clarity),
       hasPrivateEntries: false,
       feedbackState: feedbackState,

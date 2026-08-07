@@ -42,7 +42,8 @@ class CuriosityHookPresentation {
       final hasLowLoadTail = hook.dynamicPrompt.contains(
         DefaultCuriosityPromptGenerator.lowCognitiveLoadTail,
       );
-      final isRestrictedSource = hook.isMemoryRecallCheck &&
+      final isRestrictedSource =
+          hook.isMemoryRecallCheck &&
           sourceLexicalDiversity != null &&
           sourceLexicalDiversity <
               DefaultCuriosityPromptGenerator().lowLexicalDiversityThreshold;

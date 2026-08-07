@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/config/developer_settings_gate.dart';
@@ -7,18 +5,20 @@ import 'package:voicememory_mobile/product/consumer_ui_copy.dart';
 import 'package:voicememory_mobile/screens/settings_screen.dart';
 import 'package:voicememory_mobile/security/privacy_data_controls_copy.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
+import 'support/test_storage_sandbox.dart';
 
 void main() {
-  late Directory tempDir;
+  late TestStorageSandbox sandbox;
 
   setUp(() async {
-    tempDir = Directory.systemTemp.createTempSync('vm_settings_widget_');
+    sandbox = TestStorageSandbox.create();
     await AppServices.resetForTest(
-      journalPath: '${tempDir.path}/journal.json',
+      journalPath: sandbox.journalPath,
       skipRevenueCat: true,
     );
   });
 
+  tearDown(() => sandbox.dispose());
   tearDown(() {
     DeveloperSettingsGate.resetForTest();
     DeveloperSettingsGate.suppressDebugBuildForTests = false;
@@ -50,7 +50,10 @@ void main() {
       const Offset(0, -300),
     );
     await tester.pump();
-    expect(find.text(PrivacyDataControlsCopy.exportArchiveTitle), findsOneWidget);
+    expect(
+      find.text(PrivacyDataControlsCopy.exportArchiveTitle),
+      findsOneWidget,
+    );
     expect(find.text('Developer'), findsNothing);
     expect(find.text('RevenueCat verification'), findsNothing);
     expect(find.text('API base URL'), findsNothing);

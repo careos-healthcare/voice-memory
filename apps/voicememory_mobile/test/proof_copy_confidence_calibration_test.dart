@@ -26,10 +26,11 @@ import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/models/sync_status.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
 import 'package:voicememory_mobile/storage/mobile_prefs_store.dart';
+import 'support/test_storage_sandbox.dart';
 
 class _MemoryPrefs extends MobilePrefsStore {
   _MemoryPrefs()
-      : super(file: File('test/tmp/proof_confidence_calibration/unused.json'));
+    : super(file: File('test/tmp/proof_confidence_calibration/unused.json'));
 
   final Map<String, Map<String, dynamic>> maps = {};
 
@@ -46,11 +47,7 @@ const _strongRepeat =
     'I had no capacity but I said yes again to the extra meeting today.';
 final _now = DateTime(2026, 6, 12, 12);
 
-JournalEntry _entry(
-  String id,
-  String transcript, {
-  DateTime? createdAt,
-}) =>
+JournalEntry _entry(String id, String transcript, {DateTime? createdAt}) =>
     JournalEntry(
       id: id,
       createdAt: createdAt ?? _now,
@@ -89,26 +86,16 @@ List<JournalEntry> _threeRelatedEntries({DateTime? anchor}) {
   ];
 }
 
-List<JournalEntry> _softeningEntries() => [
-      ..._threeRelatedEntries(anchor: _now.subtract(const Duration(days: 4))),
-      _entry(
-        '4',
-        'Same capacity pressure came back but it felt easier to stop this time.',
-        createdAt: _now.subtract(const Duration(days: 1)),
-      ),
-    ];
-
 ProofConfidenceCalibrationResult _calibrate(
   List<JournalEntry> entries, {
   bool beliefSurfaceVisible = true,
   String source = 'test',
-}) =>
-    ProofConfidenceCalibrationEngine.build(
-      entries: entries,
-      beliefSurfaceVisible: beliefSurfaceVisible,
-      source: source,
-      now: _now,
-    );
+}) => ProofConfidenceCalibrationEngine.build(
+  entries: entries,
+  beliefSurfaceVisible: beliefSurfaceVisible,
+  source: source,
+  now: _now,
+);
 
 Future<void> _saveCorrection(
   List<JournalEntry> entries,
@@ -124,17 +111,20 @@ Future<void> _saveCorrection(
     proofKey: proofKey,
     answer: answer,
     entryCountAtCapture: entries.length,
-    hasConfirmedRepeat:
-        EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(entries),
+    hasConfirmedRepeat: EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(
+      entries,
+    ),
     source: 'test',
   );
 }
 
 void main() {
+  late TestStorageSandbox sandbox;
   final analyticsEvents = <({String event, Map<String, Object> props})>[];
   late _MemoryPrefs prefs;
 
   setUp(() async {
+    sandbox = TestStorageSandbox.create();
     prefs = _MemoryPrefs();
     ArchiveBetaMissionGate.enabledOverride = true;
     ProofConfidenceCalibrationAnalytics.resetForTest();
@@ -142,10 +132,8 @@ void main() {
       analyticsEvents.add((event: event, props: props));
     };
     await AppServices.resetForTest(
-      journalPath:
-          'test/tmp/proof_confidence_calibration/${DateTime.now().microsecondsSinceEpoch}_journal.json',
-      prefsPath:
-          'test/tmp/proof_confidence_calibration/${DateTime.now().microsecondsSinceEpoch}_prefs.json',
+      journalPath: sandbox.journalPath,
+      prefsPath: sandbox.prefsPath,
       skipRevenueCat: true,
     );
     await CurrentRelevanceStore.resetForTest();
@@ -154,6 +142,7 @@ void main() {
     analyticsEvents.clear();
   });
 
+  tearDown(() => sandbox.dispose());
   tearDown(() async {
     ProofConfidenceCalibrationAnalytics.resetForTest();
     ArchiveBetaMissionGate.resetForTest();
@@ -190,10 +179,10 @@ void main() {
 
     test('useful match uses returned copy', () {
       final result = _calibrate(_threeRelatedEntries());
-      expect(result.level, anyOf(
-        ProofConfidenceLevel.useful,
-        ProofConfidenceLevel.strong,
-      ));
+      expect(
+        result.level,
+        anyOf(ProofConfidenceLevel.useful, ProofConfidenceLevel.strong),
+      );
       if (result.level == ProofConfidenceLevel.useful) {
         expect(result.primaryCopy, ProofConfidenceCalibrationCopy.useful);
       }
@@ -223,7 +212,11 @@ void main() {
     test('fresh return after correction uses freshReturn copy', () async {
       final now = _now;
       final entries = [
-        _entry('1', _strongRepeat, createdAt: now.subtract(const Duration(days: 2))),
+        _entry(
+          '1',
+          _strongRepeat,
+          createdAt: now.subtract(const Duration(days: 2)),
+        ),
         _entry(
           '2',
           'Same thing — said yes when I had no capacity for one more thing.',
@@ -250,14 +243,11 @@ void main() {
     });
 
     test('missing safe anchors avoid strong copy', () {
-      final result = _calibrate(
-        [
-          _entry('1', 'Alpha note.'),
-          _entry('2', 'Beta note.'),
-          _entry('3', 'Gamma note.'),
-        ],
-        beliefSurfaceVisible: true,
-      );
+      final result = _calibrate([
+        _entry('1', 'Alpha note.'),
+        _entry('2', 'Beta note.'),
+        _entry('3', 'Gamma note.'),
+      ], beliefSurfaceVisible: true);
       expect(result.level, isNot(ProofConfidenceLevel.strong));
     });
 
@@ -298,7 +288,10 @@ void main() {
         expect(result.isWatchOnly, isTrue);
         return;
       }
-      expect(result.leadCopy, ProofConfidenceCalibrationCopy.helpedSoftenedLead);
+      expect(
+        result.leadCopy,
+        ProofConfidenceCalibrationCopy.helpedSoftenedLead,
+      );
       expect(
         result.displayCopy,
         startsWith(ProofConfidenceCalibrationCopy.helpedSoftenedLead),
@@ -380,17 +373,22 @@ void main() {
       ProofConfidenceCalibrationAnalytics.calibrated(
         result: _calibrate(_threeRelatedEntries()),
       );
-      expect(analyticsEvents.single.event,
-          ProofConfidenceCalibrationAnalytics.calibratedEvent);
-      expect(analyticsEvents.single.props.keys, containsAll([
-        'entry_count',
-        'source',
-        'confidence_level',
-        'has_safe_anchor',
-        'has_match_quality',
-        'has_correction',
-        'has_fresh_return',
-      ]));
+      expect(
+        analyticsEvents.single.event,
+        ProofConfidenceCalibrationAnalytics.calibratedEvent,
+      );
+      expect(
+        analyticsEvents.single.props.keys,
+        containsAll([
+          'entry_count',
+          'source',
+          'confidence_level',
+          'has_safe_anchor',
+          'has_match_quality',
+          'has_correction',
+          'has_fresh_return',
+        ]),
+      );
     });
 
     test('no billing changes', () {

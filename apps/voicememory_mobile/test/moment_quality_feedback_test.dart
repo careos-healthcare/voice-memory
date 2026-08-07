@@ -15,6 +15,7 @@ import 'package:voicememory_mobile/services/capture_save_messages.dart';
 import 'package:voicememory_mobile/theme/app_theme.dart';
 import 'package:voicememory_mobile/widgets/record/moment_quality_feedback_card.dart';
 import 'package:voicememory_mobile/widgets/record/post_save_recorded_summary_card.dart';
+import 'support/test_storage_sandbox.dart';
 
 const _placeholder =
     '[draft] ${CaptureSaveMessages.recordingSavedLocally} — transcribe when connected';
@@ -23,10 +24,7 @@ const _specificMoment =
     'I felt pressure to say yes again before checking my capacity today.';
 const _shortMoment = 'tired';
 
-JournalEntry _textEntry({
-  required String id,
-  required String transcript,
-}) =>
+JournalEntry _textEntry({required String id, required String transcript}) =>
     JournalEntry(
       id: id,
       createdAt: DateTime(2026, 6, 12, 12),
@@ -62,32 +60,35 @@ JournalEntry _pendingVoiceEntry({String transcript = _placeholder}) =>
     );
 
 List<JournalEntry> _threeRelatedRepeatEntries() => [
-      _textEntry(
-        id: 'e1',
-        transcript:
-            'I had no capacity but I said yes again to the extra meeting today.',
-      ),
-      _textEntry(
-        id: 'e2',
-        transcript:
-            'Same thing — said yes when I had no capacity for one more thing.',
-      ),
-      _textEntry(
-        id: 'e3',
-        transcript:
-            'I said yes again even though I had no capacity for one more ask.',
-      ),
-    ];
+  _textEntry(
+    id: 'e1',
+    transcript:
+        'I had no capacity but I said yes again to the extra meeting today.',
+  ),
+  _textEntry(
+    id: 'e2',
+    transcript:
+        'Same thing — said yes when I had no capacity for one more thing.',
+  ),
+  _textEntry(
+    id: 'e3',
+    transcript:
+        'I said yes again even though I had no capacity for one more ask.',
+  ),
+];
 
 void main() {
+  late TestStorageSandbox sandbox;
   setUp(() async {
+    sandbox = TestStorageSandbox.create();
     await AppServices.resetForTest(
-      journalPath: '${DateTime.now().microsecondsSinceEpoch}_journal.json',
-      prefsPath: '${DateTime.now().microsecondsSinceEpoch}_prefs.json',
+      journalPath: sandbox.journalPath,
+      prefsPath: sandbox.prefsPath,
       skipRevenueCat: true,
     );
   });
 
+  tearDown(() => sandbox.dispose());
   group('MomentQualityFeedbackCopy', () {
     test('spec copy is stable', () {
       expect(
@@ -98,10 +99,7 @@ void main() {
         MomentQualityFeedbackCopy.tooShortBody,
         contains('too short for patterns'),
       );
-      expect(
-        MomentQualityFeedbackCopy.quietDayTitle,
-        'Saved as a quiet day',
-      );
+      expect(MomentQualityFeedbackCopy.quietDayTitle, 'Saved as a quiet day');
       expect(
         MomentQualityFeedbackCopy.genericTestBody,
         'Saved, but not used for patterns.',
@@ -113,8 +111,9 @@ void main() {
     });
 
     test('no advice therapy or internal quality labels', () {
-      final joined =
-          MomentQualityFeedbackCopy.allVisibleCopy().join(' ').toLowerCase();
+      final joined = MomentQualityFeedbackCopy.allVisibleCopy()
+          .join(' ')
+          .toLowerCase();
       expect(joined, isNot(contains('weak')));
       expect(joined, isNot(contains('unusable')));
       expect(joined, isNot(contains('bad')));
@@ -265,7 +264,10 @@ void main() {
         ),
       );
 
-      expect(find.byKey(const Key('post_save_recorded_summary_card')), findsOneWidget);
+      expect(
+        find.byKey(const Key('post_save_recorded_summary_card')),
+        findsOneWidget,
+      );
       expect(
         find.byKey(const Key('moment_quality_feedback_card_specificUsable')),
         findsOneWidget,

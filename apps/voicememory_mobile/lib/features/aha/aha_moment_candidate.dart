@@ -5,7 +5,6 @@ library;
 
 import '../memory/memory_authority_frame.dart';
 import '../memory/memory_control_model.dart';
-import '../memory/memory_priority_decision.dart';
 
 /// Stable analytics id for the aha card surface.
 abstract class AhaMomentCardType {

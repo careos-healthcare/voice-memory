@@ -7,9 +7,6 @@ abstract final class TestFlightFeedbackAnalytics {
   static const tappedEvent = 'testflight_feedback_tapped';
 
   static void tapped({required String surface}) {
-    ActivationFunnelAnalytics.track(
-      tappedEvent,
-      source: surface,
-    );
+    ActivationFunnelAnalytics.track(tappedEvent, source: surface);
   }
 }

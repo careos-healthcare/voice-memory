@@ -35,9 +35,8 @@ class ConfirmedRepeatBetaFeedbackCard extends StatefulWidget {
     required this.isRecording,
     this.store,
     this.onChanged,
-    ConfirmedRepeatBetaFeedbackState? initialState,
-  })  : skipPrefsLoad = true,
-        initialState = initialState;
+    this.initialState,
+  }) : skipPrefsLoad = true;
 
   final int entryCount;
   final String surface;
@@ -148,10 +147,9 @@ class _ConfirmedRepeatBetaFeedbackCardState
           child: Text(
             ConfirmedRepeatBetaFeedbackCopy.thanks,
             key: const Key('confirmed_repeat_beta_feedback_thanks'),
-            style: ArchiveMobileTypography.responsiveHelper(context).copyWith(
-              color: AppColors.textSecondary,
-              fontSize: 12,
-            ),
+            style: ArchiveMobileTypography.responsiveHelper(
+              context,
+            ).copyWith(color: AppColors.textSecondary, fontSize: 12),
           ),
         );
       }
@@ -220,9 +218,8 @@ class _ConfirmedRepeatBetaFeedbackCardState
                 ),
                 OutlinedButton(
                   key: const Key('confirmed_repeat_beta_feedback_somewhat'),
-                  onPressed: () => _selectChoice(
-                    ConfirmedRepeatBetaFeedbackChoice.somewhat,
-                  ),
+                  onPressed: () =>
+                      _selectChoice(ConfirmedRepeatBetaFeedbackChoice.somewhat),
                   child: const Text(ConfirmedRepeatBetaFeedbackCopy.somewhat),
                 ),
                 OutlinedButton(

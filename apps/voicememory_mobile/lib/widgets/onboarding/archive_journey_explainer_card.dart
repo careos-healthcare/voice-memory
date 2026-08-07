@@ -9,10 +9,7 @@ import '../../theme/voicememory_cards.dart';
 
 /// Evidence-first journey explainer — no CTAs, no blocking modals.
 class ArchiveJourneyExplainerCard extends StatelessWidget {
-  const ArchiveJourneyExplainerCard({
-    super.key,
-    required this.explainer,
-  });
+  const ArchiveJourneyExplainerCard({super.key, required this.explainer});
 
   final ArchiveJourneyExplainer explainer;
 
@@ -35,21 +32,21 @@ class _CompactLayout extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final titleStyle = ArchiveMobileTypography.responsiveHelper(context).copyWith(
-      fontWeight: FontWeight.w600,
-      fontSize: 13,
-      color: AppColors.textSecondary,
-    );
-    final stepStyle = ArchiveMobileTypography.responsiveHelper(context).copyWith(
-      fontWeight: FontWeight.w600,
-      fontSize: 13,
-      color: AppColors.textPrimary,
-    );
-    final helperStyle = ArchiveMobileTypography.responsiveHelper(context).copyWith(
-      color: AppColors.textSecondary,
-      fontSize: 12,
-      height: 1.35,
-    );
+    final titleStyle = ArchiveMobileTypography.responsiveHelper(context)
+        .copyWith(
+          fontWeight: FontWeight.w600,
+          fontSize: 13,
+          color: AppColors.textSecondary,
+        );
+    final stepStyle = ArchiveMobileTypography.responsiveHelper(context)
+        .copyWith(
+          fontWeight: FontWeight.w600,
+          fontSize: 13,
+          color: AppColors.textPrimary,
+        );
+    final helperStyle = ArchiveMobileTypography.responsiveHelper(
+      context,
+    ).copyWith(color: AppColors.textSecondary, fontSize: 12, height: 1.35);
 
     return Container(
       key: const Key('archive_journey_explainer_card_compact'),
@@ -108,11 +105,9 @@ class _FullLayout extends StatelessWidget {
           fontSize: 14,
           color: AppColors.textPrimary,
         );
-    final bodyStyle = ArchiveMobileTypography.explanationBody(context).copyWith(
-      color: AppColors.textSecondary,
-      fontSize: 14,
-      height: 1.4,
-    );
+    final bodyStyle = ArchiveMobileTypography.explanationBody(
+      context,
+    ).copyWith(color: AppColors.textSecondary, fontSize: 14, height: 1.4);
 
     return Container(
       key: const Key('archive_journey_explainer_card_full'),

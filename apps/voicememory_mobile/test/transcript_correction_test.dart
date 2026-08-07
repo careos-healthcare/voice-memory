@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/features/archive_evidence/archive_evidence_quality.dart';
@@ -22,6 +20,7 @@ import 'package:voicememory_mobile/theme/app_theme.dart';
 import 'package:voicememory_mobile/widgets/archive_history/archive_history_sheet.dart';
 import 'package:voicememory_mobile/widgets/record/correct_transcript_sheet.dart';
 import 'package:voicememory_mobile/widgets/record/post_save_recorded_summary_card.dart';
+import 'support/test_storage_sandbox.dart';
 
 const _placeholder =
     '[draft] ${CaptureSaveMessages.recordingSavedLocally} — transcribe when connected';
@@ -30,51 +29,51 @@ JournalEntry _textEntry({
   required String id,
   required String transcript,
   DateTime? createdAt,
-}) =>
-    JournalEntry(
-      id: id,
-      createdAt: createdAt ?? DateTime(2026, 6, 12, 10),
-      transcript: transcript,
-      durationSeconds: 24,
-      reflection: const Reflection(
-        mood: 'thoughtful',
-        emotionalIntensity: 2,
-        recurringThemes: ['work'],
-        exactLanguagePattern: '',
-        concreteObservation: 'Work pressure showed up again today.',
-        repeatedSignal: '',
-      ),
-      syncStatus: SyncStatus.localOnly,
-    );
+}) => JournalEntry(
+  id: id,
+  createdAt: createdAt ?? DateTime(2026, 6, 12, 10),
+  transcript: transcript,
+  durationSeconds: 24,
+  reflection: const Reflection(
+    mood: 'thoughtful',
+    emotionalIntensity: 2,
+    recurringThemes: ['work'],
+    exactLanguagePattern: '',
+    concreteObservation: 'Work pressure showed up again today.',
+    repeatedSignal: '',
+  ),
+  syncStatus: SyncStatus.localOnly,
+);
 
 JournalEntry _degradedVoiceEntry({
   String id = 'v1',
   String transcript = _placeholder,
-}) =>
-    JournalEntry(
-      id: id,
-      createdAt: DateTime(2026, 6, 12, 12),
-      transcript: transcript,
-      durationSeconds: 20,
-      localAudioPath: '/tmp/audio.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 0,
-        recurringThemes: [],
-        exactLanguagePattern: '',
-        concreteObservation: '',
-        repeatedSignal: '',
-      ),
-      syncStatus: SyncStatus.pendingUpload,
-    );
+}) => JournalEntry(
+  id: id,
+  createdAt: DateTime(2026, 6, 12, 12),
+  transcript: transcript,
+  durationSeconds: 20,
+  localAudioPath: '/tmp/audio.m4a',
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 0,
+    recurringThemes: [],
+    exactLanguagePattern: '',
+    concreteObservation: '',
+    repeatedSignal: '',
+  ),
+  syncStatus: SyncStatus.pendingUpload,
+);
 
 void main() {
+  late TestStorageSandbox sandbox;
   final analyticsEvents = <({String event, Map<String, Object> props})>[];
 
   setUp(() async {
+    sandbox = TestStorageSandbox.create();
     await AppServices.resetForTest(
-      journalPath: '${DateTime.now().microsecondsSinceEpoch}_journal.json',
-      prefsPath: '${DateTime.now().microsecondsSinceEpoch}_prefs.json',
+      journalPath: sandbox.journalPath,
+      prefsPath: sandbox.prefsPath,
       skipRevenueCat: true,
     );
     ActivationFunnelAnalytics.resetForTest();
@@ -83,6 +82,7 @@ void main() {
     });
   });
 
+  tearDown(() => sandbox.dispose());
   tearDown(() {
     ActivationFunnelAnalytics.resetForTest();
     analyticsEvents.clear();
@@ -92,10 +92,7 @@ void main() {
     test('spec copy is stable', () {
       expect(TranscriptCorrectionCopy.actionLabel, 'Correct transcript');
       expect(TranscriptCorrectionCopy.sheetTitle, 'Correct transcript');
-      expect(
-        TranscriptCorrectionCopy.sheetHelper,
-        contains('future patterns'),
-      );
+      expect(TranscriptCorrectionCopy.sheetHelper, contains('future patterns'));
       expect(TranscriptCorrectionCopy.inputLabel, 'What you meant to say');
       expect(TranscriptCorrectionCopy.saveButton, 'Save correction');
       expect(TranscriptCorrectionCopy.cancelButton, 'Cancel');
@@ -164,10 +161,7 @@ void main() {
 
       final reloaded = await AppServices.instance.journalStore.getById('fix1');
       expect(reloaded!.transcript, corrected);
-      expect(
-        ComparableEvidenceText.userText(reloaded),
-        corrected,
-      );
+      expect(ComparableEvidenceText.userText(reloaded), corrected);
     });
 
     test('corrected real text can ground repeat evidence', () async {
@@ -224,7 +218,10 @@ void main() {
       );
 
       final updated = await TranscriptCorrectionController.apply(
-        entry: _textEntry(id: 'g', transcript: 'A real moment about work pressure.'),
+        entry: _textEntry(
+          id: 'g',
+          transcript: 'A real moment about work pressure.',
+        ),
         correctedText: 'hello checking mic test',
       );
 
@@ -241,7 +238,9 @@ void main() {
   });
 
   group('CorrectTranscriptSheet', () {
-    testWidgets('shows correction copy with prefilled transcript', (tester) async {
+    testWidgets('shows correction copy with prefilled transcript', (
+      tester,
+    ) async {
       const misheard =
           "I said yes when I didn't have the cockpit's capability left today.";
       final entry = _textEntry(id: 'sheet1', transcript: misheard);
@@ -267,7 +266,12 @@ void main() {
       expect(find.text(TranscriptCorrectionCopy.saveButton), findsOneWidget);
       expect(find.text(TranscriptCorrectionCopy.cancelButton), findsOneWidget);
       expect(
-        tester.widget<TextField>(find.byKey(const Key('correct_transcript_input'))).controller!.text,
+        tester
+            .widget<TextField>(
+              find.byKey(const Key('correct_transcript_input')),
+            )
+            .controller!
+            .text,
         misheard,
       );
     });
@@ -294,7 +298,10 @@ void main() {
 
       expect(find.text(PostSaveRecordedSummaryCopy.title), findsOneWidget);
       expect(find.text(TranscriptCorrectionCopy.actionLabel), findsOneWidget);
-      expect(find.byKey(const Key('post_save_correct_transcript_button')), findsOneWidget);
+      expect(
+        find.byKey(const Key('post_save_correct_transcript_button')),
+        findsOneWidget,
+      );
     });
 
     testWidgets('tapping Correct transcript opens sheet', (tester) async {
@@ -323,7 +330,9 @@ void main() {
       );
       await tester.pump();
 
-      await tester.tap(find.byKey(const Key('post_save_correct_transcript_button')));
+      await tester.tap(
+        find.byKey(const Key('post_save_correct_transcript_button')),
+      );
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 400));
 
@@ -348,7 +357,10 @@ void main() {
       await tester.pump();
 
       expect(find.text(TranscriptCorrectionCopy.actionLabel), findsNothing);
-      expect(find.byKey(const Key('post_save_degraded_transcription_card')), findsOneWidget);
+      expect(
+        find.byKey(const Key('post_save_degraded_transcription_card')),
+        findsOneWidget,
+      );
     });
   });
 
@@ -370,7 +382,9 @@ void main() {
       expect(content.items.single.showAddWordsCta, isFalse);
     });
 
-    testWidgets('saved entry row shows Correct transcript button', (tester) async {
+    testWidgets('saved entry row shows Correct transcript button', (
+      tester,
+    ) async {
       final content = ArchiveHistoryEngine.build(
         entries: [
           _textEntry(

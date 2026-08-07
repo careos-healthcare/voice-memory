@@ -18,7 +18,8 @@ abstract final class SyncExpectationSafetyGuard {
     'cross-device sync': SyncExpectationSafetyBlockReason.crossDeviceSync,
     'cross device sync': SyncExpectationSafetyBlockReason.crossDeviceSync,
     'access everywhere': SyncExpectationSafetyBlockReason.accessEverywhere,
-    'never lose your archive': SyncExpectationSafetyBlockReason.neverLoseArchive,
+    'never lose your archive':
+        SyncExpectationSafetyBlockReason.neverLoseArchive,
     'backed up automatically':
         SyncExpectationSafetyBlockReason.backedUpAutomatically,
     'account keeps your trail safe':
@@ -86,10 +87,7 @@ abstract final class SyncExpectationSafetyGuard {
     );
   }
 
-  static bool passes(
-    String copy, {
-    bool syncProven = false,
-  }) =>
+  static bool passes(String copy, {bool syncProven = false}) =>
       evaluate(copy, syncProven: syncProven).action !=
       SyncExpectationSafetyAction.blocked;
 
@@ -105,15 +103,14 @@ abstract final class SyncExpectationSafetyGuard {
 
   static SyncExpectationSafetyGuardSnapshot snapshot({
     bool syncProven = false,
-  }) =>
-      SyncExpectationSafetyGuardSnapshot(
-        headline: SyncExpectationSafetyCopy.headline,
-        body: SyncExpectationSafetyCopy.body,
-        allowedLanguageLine: SyncExpectationSafetyCopy.allowedLanguageLine,
-        blockedLanguageLine: SyncExpectationSafetyCopy.blockedLanguageLine,
-        guardrail: SyncExpectationSafetyCopy.guardrail,
-        syncProven: syncProven,
-      );
+  }) => SyncExpectationSafetyGuardSnapshot(
+    headline: SyncExpectationSafetyCopy.headline,
+    body: SyncExpectationSafetyCopy.body,
+    allowedLanguageLine: SyncExpectationSafetyCopy.allowedLanguageLine,
+    blockedLanguageLine: SyncExpectationSafetyCopy.blockedLanguageLine,
+    guardrail: SyncExpectationSafetyCopy.guardrail,
+    syncProven: syncProven,
+  );
 
   static bool detectNoBackendImports(String guardSource) {
     const forbiddenImportPrefixes = [

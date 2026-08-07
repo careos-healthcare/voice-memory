@@ -37,11 +37,14 @@ abstract final class RevenueLiftExperimentV2Copy {
 
   // G) Dashboard lift focus
   static const liftFocusSectionTitle = 'Current lift focus';
-  static const liftFocusPaywallCta = 'Sharpen paywall CTA copy and purchase line';
+  static const liftFocusPaywallCta =
+      'Sharpen paywall CTA copy and purchase line';
   static const liftFocusFirstSave = 'Sharpen first save lift copy';
-  static const liftFocusUsefulProof = 'Sharpen proof payoff copy after useful proof';
+  static const liftFocusUsefulProof =
+      'Sharpen proof payoff copy after useful proof';
   static const liftFocusProVisibility = 'Sharpen Pro visibility bridge copy';
-  static const liftFocusReturnAfterProof = 'Sharpen return-after-proof reason copy';
+  static const liftFocusReturnAfterProof =
+      'Sharpen return-after-proof reason copy';
   static const liftFocusReadyForMoreTesters = 'Ready for more testers';
 
   static const bannedPrivateMarkers = [
@@ -57,7 +60,8 @@ abstract final class RevenueLiftExperimentV2Copy {
         RevenueLiftExperimentV2Focus.firstSave => liftFocusFirstSave,
         RevenueLiftExperimentV2Focus.usefulProof => liftFocusUsefulProof,
         RevenueLiftExperimentV2Focus.proVisibility => liftFocusProVisibility,
-        RevenueLiftExperimentV2Focus.returnAfterProof => liftFocusReturnAfterProof,
+        RevenueLiftExperimentV2Focus.returnAfterProof =>
+          liftFocusReturnAfterProof,
         RevenueLiftExperimentV2Focus.readyForMoreTesters =>
           liftFocusReadyForMoreTesters,
       };
@@ -98,12 +102,12 @@ enum RevenueLiftExperimentV2Area {
 
 extension RevenueLiftExperimentV2AreaStorage on RevenueLiftExperimentV2Area {
   String get analyticsValue => switch (this) {
-        RevenueLiftExperimentV2Area.firstSave => 'first_save',
-        RevenueLiftExperimentV2Area.returnReason => 'return_reason',
-        RevenueLiftExperimentV2Area.proofPayoff => 'proof_payoff',
-        RevenueLiftExperimentV2Area.proVisibility => 'pro_visibility',
-        RevenueLiftExperimentV2Area.paywallCta => 'paywall_cta',
-      };
+    RevenueLiftExperimentV2Area.firstSave => 'first_save',
+    RevenueLiftExperimentV2Area.returnReason => 'return_reason',
+    RevenueLiftExperimentV2Area.proofPayoff => 'proof_payoff',
+    RevenueLiftExperimentV2Area.proVisibility => 'pro_visibility',
+    RevenueLiftExperimentV2Area.paywallCta => 'paywall_cta',
+  };
 }
 
 enum RevenueLiftExperimentV2Focus {
@@ -117,12 +121,12 @@ enum RevenueLiftExperimentV2Focus {
 
 extension RevenueLiftExperimentV2FocusStorage on RevenueLiftExperimentV2Focus {
   String get analyticsValue => switch (this) {
-        RevenueLiftExperimentV2Focus.paywallCta => 'paywall_cta',
-        RevenueLiftExperimentV2Focus.firstSave => 'first_save',
-        RevenueLiftExperimentV2Focus.usefulProof => 'useful_proof',
-        RevenueLiftExperimentV2Focus.proVisibility => 'pro_visibility',
-        RevenueLiftExperimentV2Focus.returnAfterProof => 'return_after_proof',
-        RevenueLiftExperimentV2Focus.readyForMoreTesters =>
-          'ready_for_more_testers',
-      };
+    RevenueLiftExperimentV2Focus.paywallCta => 'paywall_cta',
+    RevenueLiftExperimentV2Focus.firstSave => 'first_save',
+    RevenueLiftExperimentV2Focus.usefulProof => 'useful_proof',
+    RevenueLiftExperimentV2Focus.proVisibility => 'pro_visibility',
+    RevenueLiftExperimentV2Focus.returnAfterProof => 'return_after_proof',
+    RevenueLiftExperimentV2Focus.readyForMoreTesters =>
+      'ready_for_more_testers',
+  };
 }

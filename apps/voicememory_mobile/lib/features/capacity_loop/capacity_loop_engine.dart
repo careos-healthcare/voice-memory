@@ -59,7 +59,8 @@ class CapacityLoopEngine {
     }
 
     final isFull =
-        input.realSavedMomentCount >= CapacityLoopGates.minRealMomentsForFullCard;
+        input.realSavedMomentCount >=
+        CapacityLoopGates.minRealMomentsForFullCard;
     final count = input.realSavedMomentCount;
 
     if (!isFull) {
@@ -114,8 +115,14 @@ class CapacityLoopEngine {
     final outcomes = outcomeRecords ?? CapacityDecisionOutcomeStore.cached;
     final pullReasons = pullReasonRecords ?? CapacityPullReasonStore.cached;
     final checkinCount = CapacityCostStore.countWithLaterCost(records);
-    final outcomeCount = CapacityDecisionOutcomeStore.countWithOutcome(outcomes);
-    final pendingCheckin = _findPendingCostCheckin(realEntries, records, outcomes);
+    final outcomeCount = CapacityDecisionOutcomeStore.countWithOutcome(
+      outcomes,
+    );
+    final pendingCheckin = _findPendingCostCheckin(
+      realEntries,
+      records,
+      outcomes,
+    );
     final pendingOutcome = _findPendingOutcome(realEntries, outcomes);
     final pendingPullReason = _findPendingPullReason(realEntries, pullReasons);
 
@@ -136,8 +143,9 @@ class CapacityLoopEngine {
         hasPatternChangeOutcomes:
             CapacityDecisionOutcomeStore.hasAnyPatternChange(outcomes),
         hasPendingPullReason: pendingPullReason != null,
-        pullReasonSummary:
-            CapacityPullReasonEngine.loopPullSummary(pullReasons),
+        pullReasonSummary: CapacityPullReasonEngine.loopPullSummary(
+          pullReasons,
+        ),
       ),
     );
   }
@@ -242,36 +250,37 @@ class CapacityLoopEngine {
   }
 
   static CapacityLoopResult _screenshotPreview() => const CapacityLoopResult(
-        hasCard: false,
-        isEmpty: false,
-        showOnArchiveHome: false,
-        title: CapacityLoopCopy.screenshotTitle,
-        subtitle: CapacityLoopCopy.screenshotSubtitle,
-        evidenceCountLabel: CapacityLoopCopy.screenshotEvidence,
-        whatRepeated: CapacityLoopCopy.screenshotWhatRepeated,
-        costLater: CapacityLoopCopy.screenshotCostLater,
-        watchNext: CapacityLoopCopy.screenshotWatchNext,
-        primaryCtaLabel: CapacityLoopCopy.saveYesMomentCta,
-        secondaryCtaLabel: CapacityLoopCopy.reviewLoopCta,
-        primaryRoute: CapacityLoopCopy.recordRoute,
-        secondaryRoute: CapacityLoopCopy.route,
-        shareCopy: CapacityLoopCopy.shareCopy,
-        triggerLabel: CapacityLoopCopy.loopDiagramTrigger,
-        saidYesLabel: CapacityLoopCopy.loopDiagramSaidYes,
-        costLaterLabel: CapacityLoopCopy.loopDiagramCostLater,
-        repeatedLabel: CapacityLoopCopy.loopDiagramRepeated,
-        watchNextLabel: CapacityLoopCopy.loopDiagramWatchNext,
-        costEvidenceLabel: '',
-        outcomeEvidenceLabel: '',
-        pullReasonSummary: '',
-      );
+    hasCard: false,
+    isEmpty: false,
+    showOnArchiveHome: false,
+    title: CapacityLoopCopy.screenshotTitle,
+    subtitle: CapacityLoopCopy.screenshotSubtitle,
+    evidenceCountLabel: CapacityLoopCopy.screenshotEvidence,
+    whatRepeated: CapacityLoopCopy.screenshotWhatRepeated,
+    costLater: CapacityLoopCopy.screenshotCostLater,
+    watchNext: CapacityLoopCopy.screenshotWatchNext,
+    primaryCtaLabel: CapacityLoopCopy.saveYesMomentCta,
+    secondaryCtaLabel: CapacityLoopCopy.reviewLoopCta,
+    primaryRoute: CapacityLoopCopy.recordRoute,
+    secondaryRoute: CapacityLoopCopy.route,
+    shareCopy: CapacityLoopCopy.shareCopy,
+    triggerLabel: CapacityLoopCopy.loopDiagramTrigger,
+    saidYesLabel: CapacityLoopCopy.loopDiagramSaidYes,
+    costLaterLabel: CapacityLoopCopy.loopDiagramCostLater,
+    repeatedLabel: CapacityLoopCopy.loopDiagramRepeated,
+    watchNextLabel: CapacityLoopCopy.loopDiagramWatchNext,
+    costEvidenceLabel: '',
+    outcomeEvidenceLabel: '',
+    pullReasonSummary: '',
+  );
 
   String _whatRepeated(CapacityLoopInput input) {
     final theme = input.topRecurringTheme?.trim();
     if (theme != null && theme.isNotEmpty) {
       return CapacityLoopCopy.whatRepeatedWithTheme(theme);
     }
-    if (input.capacityEvidenceCount >= CapacityLoopGates.minRealMomentsForFullCard) {
+    if (input.capacityEvidenceCount >=
+        CapacityLoopGates.minRealMomentsForFullCard) {
       return CapacityLoopCopy.whatRepeatedStrong;
     }
     return CapacityLoopCopy.whatRepeatedGeneric;
@@ -370,7 +379,7 @@ class CapacityLoopEngine {
   String? _topRecurringTheme(List<JournalEntry> eligible) {
     final counts = <String, int>{};
     for (final entry in eligible) {
-      for (final theme in entry.reflection?.recurringThemes ?? const []) {
+      for (final theme in entry.reflection.recurringThemes) {
         final normalized = theme.trim().toLowerCase();
         if (normalized.isEmpty) continue;
         counts[normalized] = (counts[normalized] ?? 0) + 1;

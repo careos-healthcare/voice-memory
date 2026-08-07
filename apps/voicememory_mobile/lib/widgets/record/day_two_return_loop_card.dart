@@ -57,14 +57,12 @@ class _DayTwoReturnLoopCardState extends State<DayTwoReturnLoopCard> {
 
   @override
   Widget build(BuildContext context) {
-    final bodyStyle = ArchiveMobileTypography.responsiveHelper(context).copyWith(
-      color: AppColors.textPrimary,
-      height: 1.45,
-    );
-    final footnoteStyle = ArchiveMobileTypography.responsiveHelper(context).copyWith(
-      color: AppColors.textSecondary,
-      height: 1.4,
-    );
+    final bodyStyle = ArchiveMobileTypography.responsiveHelper(
+      context,
+    ).copyWith(color: AppColors.textPrimary, height: 1.45);
+    final footnoteStyle = ArchiveMobileTypography.responsiveHelper(
+      context,
+    ).copyWith(color: AppColors.textSecondary, height: 1.4);
 
     return Container(
       key: const Key('day_two_return_loop_card'),

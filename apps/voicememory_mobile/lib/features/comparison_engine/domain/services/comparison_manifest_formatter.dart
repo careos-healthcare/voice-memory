@@ -1,6 +1,5 @@
 import '../../../archive_evidence/comparable_evidence_text.dart';
 import '../../../../models/journal_entry.dart';
-import '../../comparison_engine.dart';
 import '../../comparison_engine_model.dart';
 
 abstract final class ComparisonManifestFormatter {
@@ -25,8 +24,7 @@ abstract final class ComparisonManifestFormatter {
     final changed = output.whatChanged?.trim();
     return _manifesto(
       label: output.confidenceLabel.label,
-      connection:
-          'This may connect to ${output.whatAppearsRepeated.trim()}.',
+      connection: 'This may connect to ${output.whatAppearsRepeated.trim()}.',
       pastQuote: _quote(pastEntry),
       presentQuote: _quote(currentEntry),
       whatChanged: changed == null || changed.isEmpty

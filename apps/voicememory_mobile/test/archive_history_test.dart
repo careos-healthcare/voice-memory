@@ -16,6 +16,7 @@ import 'package:voicememory_mobile/services/app_services.dart';
 import 'package:voicememory_mobile/services/capture_save_messages.dart';
 import 'package:voicememory_mobile/theme/app_theme.dart';
 import 'package:voicememory_mobile/widgets/archive_history/archive_history_sheet.dart';
+import 'support/test_storage_sandbox.dart';
 
 const _placeholder =
     '[draft] ${CaptureSaveMessages.recordingSavedLocally} — transcribe when connected';
@@ -26,54 +27,55 @@ JournalEntry _textEntry({
   required String id,
   required String transcript,
   DateTime? createdAt,
-}) =>
-    JournalEntry(
-      id: id,
-      createdAt: createdAt ?? DateTime(2026, 6, 12, 10),
-      transcript: transcript,
-      durationSeconds: 24,
-      reflection: const Reflection(
-        mood: 'thoughtful',
-        emotionalIntensity: 2,
-        recurringThemes: ['work'],
-        exactLanguagePattern: '',
-        concreteObservation: 'Work pressure showed up again today.',
-        repeatedSignal: '',
-      ),
-      syncStatus: SyncStatus.localOnly,
-    );
+}) => JournalEntry(
+  id: id,
+  createdAt: createdAt ?? DateTime(2026, 6, 12, 10),
+  transcript: transcript,
+  durationSeconds: 24,
+  reflection: const Reflection(
+    mood: 'thoughtful',
+    emotionalIntensity: 2,
+    recurringThemes: ['work'],
+    exactLanguagePattern: '',
+    concreteObservation: 'Work pressure showed up again today.',
+    repeatedSignal: '',
+  ),
+  syncStatus: SyncStatus.localOnly,
+);
 
 JournalEntry _degradedVoiceEntry({
   String id = 'v1',
   String transcript = _placeholder,
   DateTime? createdAt,
-}) =>
-    JournalEntry(
-      id: id,
-      createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
-      transcript: transcript,
-      durationSeconds: 20,
-      localAudioPath: '/tmp/audio.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 0,
-        recurringThemes: [],
-        exactLanguagePattern: '',
-        concreteObservation: '',
-        repeatedSignal: '',
-      ),
-      syncStatus: SyncStatus.pendingUpload,
-    );
+}) => JournalEntry(
+  id: id,
+  createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
+  transcript: transcript,
+  durationSeconds: 20,
+  localAudioPath: '/tmp/audio.m4a',
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 0,
+    recurringThemes: [],
+    exactLanguagePattern: '',
+    concreteObservation: '',
+    repeatedSignal: '',
+  ),
+  syncStatus: SyncStatus.pendingUpload,
+);
 
 void main() {
+  late TestStorageSandbox sandbox;
   setUp(() async {
+    sandbox = TestStorageSandbox.create();
     await AppServices.resetForTest(
-      journalPath: '${DateTime.now().microsecondsSinceEpoch}_journal.json',
-      prefsPath: '${DateTime.now().microsecondsSinceEpoch}_prefs.json',
+      journalPath: sandbox.journalPath,
+      prefsPath: sandbox.prefsPath,
       skipRevenueCat: true,
     );
   });
 
+  tearDown(() => sandbox.dispose());
   group('ArchiveHistoryEngine', () {
     test('empty state when no entries', () {
       final content = ArchiveHistoryEngine.build(entries: []);
@@ -104,9 +106,7 @@ void main() {
 
     test('first real entry shows saved only', () {
       final content = ArchiveHistoryEngine.build(
-        entries: [
-          _textEntry(id: 'one', transcript: _realMoment),
-        ],
+        entries: [_textEntry(id: 'one', transcript: _realMoment)],
       );
 
       expect(content.items.single.status, ArchiveHistoryStatus.savedOnly);
@@ -302,7 +302,10 @@ void main() {
         find.byKey(const Key('archive_history_chip_ignored_for_patterns')),
         findsOneWidget,
       );
-      expect(find.text(ArchiveHistoryCopy.noteIgnoredForPatterns), findsOneWidget);
+      expect(
+        find.text(ArchiveHistoryCopy.noteIgnoredForPatterns),
+        findsOneWidget,
+      );
       expect(find.text(ArchiveHistoryCopy.addWordsCta), findsNothing);
     });
 
@@ -338,7 +341,10 @@ void main() {
         find.byKey(const Key('archive_history_chip_used_as_evidence')),
         findsNWidgets(2),
       );
-      expect(find.text(ArchiveHistoryCopy.noteUsedAsEvidence), findsNWidgets(2));
+      expect(
+        find.text(ArchiveHistoryCopy.noteUsedAsEvidence),
+        findsNWidgets(2),
+      );
       expect(find.text(ArchiveHistoryCopy.addWordsCta), findsNothing);
     });
   });

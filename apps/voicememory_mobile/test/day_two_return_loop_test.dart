@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/billing/archive_entitlement_reader.dart';
@@ -13,27 +11,27 @@ import 'package:voicememory_mobile/services/app_services.dart';
 import 'package:voicememory_mobile/features/post_save/post_save_focused_actions_copy.dart';
 import 'package:voicememory_mobile/theme/app_theme.dart';
 import 'package:voicememory_mobile/widgets/record/day_two_return_loop_card.dart';
+import 'support/test_storage_sandbox.dart';
 
 JournalEntry _voiceEntry({
   required String id,
   required String transcript,
   DateTime? createdAt,
-}) =>
-    JournalEntry(
-      id: id,
-      createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
-      transcript: transcript,
-      durationSeconds: 30,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 2,
-        recurringThemes: ['work'],
-        exactLanguagePattern: '',
-        concreteObservation: 'Work pressure showed up in this moment.',
-        repeatedSignal: '',
-      ),
-    );
+}) => JournalEntry(
+  id: id,
+  createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
+  transcript: transcript,
+  durationSeconds: 30,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 2,
+    recurringThemes: ['work'],
+    exactLanguagePattern: '',
+    concreteObservation: 'Work pressure showed up in this moment.',
+    repeatedSignal: '',
+  ),
+);
 
 const _bannedOneEntryWords = [
   'loop',
@@ -178,15 +176,17 @@ void main() {
   });
 
   group('RecordScreen return loop', () {
-    late Directory tempDir;
+    late TestStorageSandbox sandbox;
 
     setUp(() async {
-      tempDir = Directory.systemTemp.createTempSync('vm_return_loop_');
+      sandbox = TestStorageSandbox.create();
       await AppServices.resetForTest(
-        journalPath: '${tempDir.path}/journal.json',
+        journalPath: sandbox.journalPath,
         skipRevenueCat: true,
       );
     });
+
+    tearDown(() => sandbox.dispose());
 
     tearDown(() {
       VisualAuditOverrides.setRecordPresentation(null);
@@ -239,9 +239,15 @@ void main() {
       );
 
       expect(find.byKey(const Key('day_two_return_loop_card')), findsOneWidget);
-      expect(find.textContaining('Come back when this shows up again'), findsOneWidget);
+      expect(
+        find.textContaining('Come back when this shows up again'),
+        findsOneWidget,
+      );
       expect(find.text('Record if it happens again'), findsWidgets);
-      expect(find.byKey(const Key('day_two_return_preview_card')), findsNothing);
+      expect(
+        find.byKey(const Key('day_two_return_preview_card')),
+        findsNothing,
+      );
       expect(find.byKey(const Key('day_two_reminder_card')), findsNothing);
       _expectNoBannedCopy(_visibleText(tester), _bannedOneEntryWords);
       _expectNoBannedCopy(_visibleText(tester), _bannedPressureWords);
@@ -271,7 +277,10 @@ void main() {
         ),
         findsOneWidget,
       );
-      expect(find.byKey(const Key('day_two_return_preview_card')), findsNothing);
+      expect(
+        find.byKey(const Key('day_two_return_preview_card')),
+        findsNothing,
+      );
     });
 
     testWidgets('third save uses belief payoff without duplicate return loop', (
@@ -301,12 +310,24 @@ void main() {
         ],
       );
 
-      expect(find.byKey(const Key('post_save_archive_home_nudge_card')), findsNothing);
-      expect(find.byKey(const Key('third_entry_belief_payoff_card')), findsNothing);
-      expect(find.byKey(const Key('post_save_focused_actions_bar')), findsOneWidget);
+      expect(
+        find.byKey(const Key('post_save_archive_home_nudge_card')),
+        findsNothing,
+      );
+      expect(
+        find.byKey(const Key('third_entry_belief_payoff_card')),
+        findsNothing,
+      );
+      expect(
+        find.byKey(const Key('post_save_focused_actions_bar')),
+        findsOneWidget,
+      );
       expect(find.byKey(const Key('day_two_return_loop_card')), findsNothing);
       expect(find.text('Record if it happens again'), findsOneWidget);
-      expect(find.text(PostSaveFocusedActionsCopy.viewPatterns), findsOneWidget);
+      expect(
+        find.text(PostSaveFocusedActionsCopy.viewPatterns),
+        findsOneWidget,
+      );
     });
   });
 }

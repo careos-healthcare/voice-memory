@@ -19,20 +19,22 @@ abstract final class FirstProofSuccessBetaGuard {
       recommendation: FirstProofSuccessBetaCopy.recommendationFor(decision),
       signals: signals,
       earliestConcern: _earliestConcern(signals),
-      proofWorking: decision == FirstProofSuccessBetaDecision.proofWorking ||
+      proofWorking:
+          decision == FirstProofSuccessBetaDecision.proofWorking ||
           decision == FirstProofSuccessBetaDecision.proofStrongEnoughForPro,
       thresholdsUnchanged: _thresholdsUnchanged(input),
     );
   }
 
-  static FirstProofSuccessBetaReport report(FirstProofSuccessBetaResult result) =>
-      FirstProofSuccessBetaReport(
-        headline: FirstProofSuccessBetaCopy.headline,
-        body: FirstProofSuccessBetaCopy.body,
-        orderLine: FirstProofSuccessBetaCopy.orderLine,
-        guardrail: FirstProofSuccessBetaCopy.guardrail,
-        result: result,
-      );
+  static FirstProofSuccessBetaReport report(
+    FirstProofSuccessBetaResult result,
+  ) => FirstProofSuccessBetaReport(
+    headline: FirstProofSuccessBetaCopy.headline,
+    body: FirstProofSuccessBetaCopy.body,
+    orderLine: FirstProofSuccessBetaCopy.orderLine,
+    guardrail: FirstProofSuccessBetaCopy.guardrail,
+    result: result,
+  );
 
   static bool detectProofThresholdStillThree(String gateSource) =>
       gateSource.contains('static const minProofEntryCount = 3;');
@@ -57,27 +59,26 @@ abstract final class FirstProofSuccessBetaGuard {
     bool userUnderstoodWhy = false,
     bool userSavedAnotherAfterProof = false,
     bool proPromiseSeen = false,
-  }) =>
-      FirstProofSuccessBetaInput(
-        usableMomentCount: usableMomentCount,
-        hasSafeAnchor: hasSafeAnchor,
-        hasMatchQuality: hasMatchQuality,
-        proofConfidence: proofConfidence,
-        proofShown: proofShown,
-        proofAccepted: proofAccepted,
-        proofCorrected: proofCorrected,
-        tooVagueSelected: tooVagueSelected,
-        notRelevantSelected: notRelevantSelected,
-        userUnderstoodWhy: userUnderstoodWhy,
-        userSavedAnotherAfterProof: userSavedAnotherAfterProof,
-        proPromiseSeen: proPromiseSeen,
-        proofThresholdStillThree: detectProofThresholdStillThree(
-          archiveEvidenceQualityGateSource,
-        ),
-        betaReadinessStillGuardsThree: detectBetaReadinessStillGuardsThree(
-          betaReadinessEngineSource,
-        ),
-      );
+  }) => FirstProofSuccessBetaInput(
+    usableMomentCount: usableMomentCount,
+    hasSafeAnchor: hasSafeAnchor,
+    hasMatchQuality: hasMatchQuality,
+    proofConfidence: proofConfidence,
+    proofShown: proofShown,
+    proofAccepted: proofAccepted,
+    proofCorrected: proofCorrected,
+    tooVagueSelected: tooVagueSelected,
+    notRelevantSelected: notRelevantSelected,
+    userUnderstoodWhy: userUnderstoodWhy,
+    userSavedAnotherAfterProof: userSavedAnotherAfterProof,
+    proPromiseSeen: proPromiseSeen,
+    proofThresholdStillThree: detectProofThresholdStillThree(
+      archiveEvidenceQualityGateSource,
+    ),
+    betaReadinessStillGuardsThree: detectBetaReadinessStillGuardsThree(
+      betaReadinessEngineSource,
+    ),
+  );
 
   static bool _thresholdsUnchanged(FirstProofSuccessBetaInput input) =>
       requiredUsableMoments == 3 &&
@@ -129,80 +130,80 @@ abstract final class FirstProofSuccessBetaGuard {
         status: !reachedProof
             ? FirstProofSuccessBetaSignalStatus.notObserved
             : input.hasSafeAnchor
-                ? FirstProofSuccessBetaSignalStatus.pass
-                : FirstProofSuccessBetaSignalStatus.concern,
+            ? FirstProofSuccessBetaSignalStatus.pass
+            : FirstProofSuccessBetaSignalStatus.concern,
       ),
       _signal(
         id: FirstProofSuccessBetaSignalId.matchQualityPresent,
         status: !reachedProof
             ? FirstProofSuccessBetaSignalStatus.notObserved
             : input.hasMatchQuality
-                ? FirstProofSuccessBetaSignalStatus.pass
-                : FirstProofSuccessBetaSignalStatus.concern,
+            ? FirstProofSuccessBetaSignalStatus.pass
+            : FirstProofSuccessBetaSignalStatus.concern,
       ),
       _signal(
         id: FirstProofSuccessBetaSignalId.proofConfidenceStrong,
         status: !reachedProof
             ? FirstProofSuccessBetaSignalStatus.notObserved
             : _isStrongConfidence(input.proofConfidence)
-                ? FirstProofSuccessBetaSignalStatus.pass
-                : FirstProofSuccessBetaSignalStatus.concern,
+            ? FirstProofSuccessBetaSignalStatus.pass
+            : FirstProofSuccessBetaSignalStatus.concern,
       ),
       _signal(
         id: FirstProofSuccessBetaSignalId.proofShown,
         status: !reachedProof
             ? FirstProofSuccessBetaSignalStatus.notObserved
             : input.proofShown
-                ? FirstProofSuccessBetaSignalStatus.pass
-                : FirstProofSuccessBetaSignalStatus.concern,
+            ? FirstProofSuccessBetaSignalStatus.pass
+            : FirstProofSuccessBetaSignalStatus.concern,
       ),
       _signal(
         id: FirstProofSuccessBetaSignalId.proofAccepted,
         status: !reachedProof || !input.proofShown
             ? FirstProofSuccessBetaSignalStatus.notObserved
             : input.proofAccepted
-                ? FirstProofSuccessBetaSignalStatus.pass
-                : FirstProofSuccessBetaSignalStatus.notObserved,
+            ? FirstProofSuccessBetaSignalStatus.pass
+            : FirstProofSuccessBetaSignalStatus.notObserved,
       ),
       _signal(
         id: FirstProofSuccessBetaSignalId.proofCorrected,
         status: !reachedProof || !input.proofShown
             ? FirstProofSuccessBetaSignalStatus.notObserved
             : input.proofCorrected
-                ? FirstProofSuccessBetaSignalStatus.pass
-                : FirstProofSuccessBetaSignalStatus.notObserved,
+            ? FirstProofSuccessBetaSignalStatus.pass
+            : FirstProofSuccessBetaSignalStatus.notObserved,
       ),
       _signal(
         id: FirstProofSuccessBetaSignalId.tooVagueSelected,
         status: !reachedProof || !input.proofShown
             ? FirstProofSuccessBetaSignalStatus.notObserved
             : input.tooVagueSelected
-                ? FirstProofSuccessBetaSignalStatus.concern
-                : FirstProofSuccessBetaSignalStatus.pass,
+            ? FirstProofSuccessBetaSignalStatus.concern
+            : FirstProofSuccessBetaSignalStatus.pass,
       ),
       _signal(
         id: FirstProofSuccessBetaSignalId.notRelevantSelected,
         status: !reachedProof || !input.proofShown
             ? FirstProofSuccessBetaSignalStatus.notObserved
             : input.notRelevantSelected
-                ? FirstProofSuccessBetaSignalStatus.concern
-                : FirstProofSuccessBetaSignalStatus.pass,
+            ? FirstProofSuccessBetaSignalStatus.concern
+            : FirstProofSuccessBetaSignalStatus.pass,
       ),
       _signal(
         id: FirstProofSuccessBetaSignalId.userUnderstoodWhy,
         status: !reachedProof || !input.proofShown
             ? FirstProofSuccessBetaSignalStatus.notObserved
             : input.userUnderstoodWhy
-                ? FirstProofSuccessBetaSignalStatus.pass
-                : FirstProofSuccessBetaSignalStatus.concern,
+            ? FirstProofSuccessBetaSignalStatus.pass
+            : FirstProofSuccessBetaSignalStatus.concern,
       ),
       _signal(
         id: FirstProofSuccessBetaSignalId.userSavedAnotherAfterProof,
         status: !reachedProof || !input.proofShown
             ? FirstProofSuccessBetaSignalStatus.notObserved
             : input.userSavedAnotherAfterProof
-                ? FirstProofSuccessBetaSignalStatus.pass
-                : FirstProofSuccessBetaSignalStatus.notObserved,
+            ? FirstProofSuccessBetaSignalStatus.pass
+            : FirstProofSuccessBetaSignalStatus.notObserved,
       ),
     ];
   }
@@ -263,20 +264,19 @@ abstract final class FirstProofSuccessBetaGuard {
   static FirstProofSuccessBetaSignal _signal({
     required FirstProofSuccessBetaSignalId id,
     required FirstProofSuccessBetaSignalStatus status,
-  }) =>
-      FirstProofSuccessBetaSignal(
-        id: id,
-        label: FirstProofSuccessBetaCopy.labelFor(id),
-        status: status,
-        detailLabel: switch (status) {
-          FirstProofSuccessBetaSignalStatus.pass =>
-            FirstProofSuccessBetaCopy.detailPass,
-          FirstProofSuccessBetaSignalStatus.concern =>
-            FirstProofSuccessBetaCopy.detailConcern,
-          FirstProofSuccessBetaSignalStatus.notObserved =>
-            FirstProofSuccessBetaCopy.detailNotObserved,
-        },
-      );
+  }) => FirstProofSuccessBetaSignal(
+    id: id,
+    label: FirstProofSuccessBetaCopy.labelFor(id),
+    status: status,
+    detailLabel: switch (status) {
+      FirstProofSuccessBetaSignalStatus.pass =>
+        FirstProofSuccessBetaCopy.detailPass,
+      FirstProofSuccessBetaSignalStatus.concern =>
+        FirstProofSuccessBetaCopy.detailConcern,
+      FirstProofSuccessBetaSignalStatus.notObserved =>
+        FirstProofSuccessBetaCopy.detailNotObserved,
+    },
+  );
 }
 
 class FirstProofSuccessBetaInput {

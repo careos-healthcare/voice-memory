@@ -129,7 +129,10 @@ abstract class TranscriptEvidenceExtractor {
     return signals.any(blob.contains);
   }
 
-  static String _displayFromTranscripts(String candidate, List<String> transcripts) {
+  static String _displayFromTranscripts(
+    String candidate,
+    List<String> transcripts,
+  ) {
     final lowerCandidate = candidate.toLowerCase();
     for (final transcript in transcripts) {
       final lower = transcript.toLowerCase();

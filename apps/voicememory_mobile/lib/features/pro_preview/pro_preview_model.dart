@@ -1,15 +1,11 @@
-enum ProPreviewSurface {
-  recordPostSave,
-  archivePatterns,
-  testing,
-}
+enum ProPreviewSurface { recordPostSave, archivePatterns, testing }
 
 extension ProPreviewSurfaceAnalytics on ProPreviewSurface {
   String get analyticsValue => switch (this) {
-        ProPreviewSurface.recordPostSave => 'record_post_save',
-        ProPreviewSurface.archivePatterns => 'archive_patterns',
-        ProPreviewSurface.testing => 'testing',
-      };
+    ProPreviewSurface.recordPostSave => 'record_post_save',
+    ProPreviewSurface.archivePatterns => 'archive_patterns',
+    ProPreviewSurface.testing => 'testing',
+  };
 }
 
 enum ProPreviewRowId {
@@ -23,10 +19,7 @@ enum ProPreviewRowId {
 }
 
 class ProPreviewRow {
-  const ProPreviewRow({
-    required this.id,
-    required this.label,
-  });
+  const ProPreviewRow({required this.id, required this.label});
 
   final ProPreviewRowId id;
   final String label;

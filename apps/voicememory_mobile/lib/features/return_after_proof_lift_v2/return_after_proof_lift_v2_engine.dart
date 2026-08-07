@@ -46,7 +46,8 @@ abstract final class ReturnAfterProofLiftV2Engine {
       );
     }
 
-    final proofConfidence = calibration ??
+    final proofConfidence =
+        calibration ??
         ProofConfidenceCalibrationEngine.build(
           entries: entries,
           beliefSurfaceVisible: timelineProofVisible || firstProofSeen,

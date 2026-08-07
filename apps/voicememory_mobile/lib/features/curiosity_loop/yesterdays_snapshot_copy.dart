@@ -20,6 +20,5 @@ abstract final class YesterdaysSnapshotCopy {
   static const fallbackBulletTwo = 'ArchiveMe kept the thread for today.';
   static const fallbackBulletThree = 'One quick check-in is enough.';
 
-  static String anchorBullet(String anchor) =>
-      'You were tracking: "$anchor".';
+  static String anchorBullet(String anchor) => 'You were tracking: "$anchor".';
 }

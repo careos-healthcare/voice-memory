@@ -1,29 +1,22 @@
 /// Surfaces where the beta invite loop card can appear.
-enum BetaInviteLoopSurface {
-  recordPostSave,
-  archivePatterns,
-  testing,
-}
+enum BetaInviteLoopSurface { recordPostSave, archivePatterns, testing }
 
 extension BetaInviteLoopSurfaceAnalytics on BetaInviteLoopSurface {
   String get analyticsValue => switch (this) {
-        BetaInviteLoopSurface.recordPostSave => 'record_post_save',
-        BetaInviteLoopSurface.archivePatterns => 'archive_patterns',
-        BetaInviteLoopSurface.testing => 'testing',
-      };
+    BetaInviteLoopSurface.recordPostSave => 'record_post_save',
+    BetaInviteLoopSurface.archivePatterns => 'archive_patterns',
+    BetaInviteLoopSurface.testing => 'testing',
+  };
 }
 
 /// Why the beta invite loop became eligible.
-enum BetaInviteLoopTrigger {
-  usefulFeedback,
-  strongProof,
-}
+enum BetaInviteLoopTrigger { usefulFeedback, strongProof }
 
 extension BetaInviteLoopTriggerAnalytics on BetaInviteLoopTrigger {
   String get analyticsValue => switch (this) {
-        BetaInviteLoopTrigger.usefulFeedback => 'useful_feedback',
-        BetaInviteLoopTrigger.strongProof => 'strong_proof',
-      };
+    BetaInviteLoopTrigger.usefulFeedback => 'useful_feedback',
+    BetaInviteLoopTrigger.strongProof => 'strong_proof',
+  };
 }
 
 class BetaInviteLoopContext {

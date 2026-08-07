@@ -26,8 +26,7 @@ abstract final class BetaTestScriptGates {
   }) {
     if (!isBetaEnabled || dismissed) return false;
     if (!isReady || isRecording) return false;
-    if (isPostSave &&
-        (firstProofLoopActive || showWhatChangedV2Display)) {
+    if (isPostSave && (firstProofLoopActive || showWhatChangedV2Display)) {
       return false;
     }
     if (showReturnDayFlow) return false;

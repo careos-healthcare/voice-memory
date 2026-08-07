@@ -1,4 +1,6 @@
 /// User-facing copy for voice capture quality and transcription fallback.
+library;
+
 import '../trust/capture_recovery_copy.dart';
 import '../archive_evidence/transcript_pending_copy.dart';
 
@@ -63,6 +65,14 @@ abstract class VoiceCaptureCopy {
 
   static const String degradedRecoveryBody = transcriptUnavailable;
 
+  /// Shown when a capture is saved locally without remote analysis because
+  /// remote processing consent is currently off — a deliberate customer
+  /// choice, not a failure, so the wording stays neutral rather than
+  /// apologetic.
+  static const String remoteProcessingConsentPausedNote =
+      'This moment is saved on your device only. Turn on remote analysis in '
+      'Privacy settings to get a reflection for it.';
+
   static const List<String> all = [
     recordingFailed,
     saveFailed,
@@ -79,5 +89,6 @@ abstract class VoiceCaptureCopy {
     typeWhatYouSaid,
     degradedRecoveryTitle,
     degradedRecoveryBody,
+    remoteProcessingConsentPausedNote,
   ];
 }

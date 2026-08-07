@@ -96,19 +96,19 @@ abstract final class AnnualPlanFutureGate {
     bool? annualCopyMissingYearTrailFocus,
     SingleLaunchChecklistInput? launchChecklist,
     PaidIntentBetaProofResult? paidIntentBeta,
-  }) =>
-      AnnualPlanFutureGateInput(
-        monthlySandboxPurchaseProofComplete:
-            monthlySandboxPurchaseProofComplete ??
-                launchChecklist?.sandboxPurchaseWorks ??
-                _monthlyPurchaseProofFrom(paidIntentBeta),
-        paidIntentBetaShowsValue: paidIntentBetaShowsValue ??
-            _paidIntentBetaShowsValueFrom(paidIntentBeta),
-        annualRevenueCatProductRequested: annualRevenueCatProductRequested,
-        paywallChangeRequested: paywallChangeRequested,
-        annualPlanRequested: annualPlanRequested,
-        annualCopyMissingYearTrailFocus: annualCopyMissingYearTrailFocus,
-      );
+  }) => AnnualPlanFutureGateInput(
+    monthlySandboxPurchaseProofComplete:
+        monthlySandboxPurchaseProofComplete ??
+        launchChecklist?.sandboxPurchaseWorks ??
+        _monthlyPurchaseProofFrom(paidIntentBeta),
+    paidIntentBetaShowsValue:
+        paidIntentBetaShowsValue ??
+        _paidIntentBetaShowsValueFrom(paidIntentBeta),
+    annualRevenueCatProductRequested: annualRevenueCatProductRequested,
+    paywallChangeRequested: paywallChangeRequested,
+    annualPlanRequested: annualPlanRequested,
+    annualCopyMissingYearTrailFocus: annualCopyMissingYearTrailFocus,
+  );
 
   static AnnualPlanFutureGateInput fromRepoSignals({
     required String annualPlanFutureDocSource,
@@ -119,20 +119,19 @@ abstract final class AnnualPlanFutureGate {
     bool? paywallChangeRequested,
     bool? annualPlanRequested,
     bool? annualCopyMissingYearTrailFocus,
-  }) =>
-      AnnualPlanFutureGateInput(
-        monthlySandboxPurchaseProofComplete:
-            monthlySandboxPurchaseProofComplete,
-        paidIntentBetaShowsValue: paidIntentBetaShowsValue,
-        annualRevenueCatProductRequested: annualRevenueCatProductRequested,
-        paywallChangeRequested: paywallChangeRequested,
-        annualPlanRequested: annualPlanRequested,
-        annualCopyMissingYearTrailFocus: annualCopyMissingYearTrailFocus,
-        docListsRules: detectDocListsRules(annualPlanFutureDocSource),
-        guardrailPresentInCopy: detectGuardrailPresentInCopy(gateCopySource),
-        yearTrailFocusPresentInCopy:
-            detectYearTrailFocusPresentInCopy(gateCopySource),
-      );
+  }) => AnnualPlanFutureGateInput(
+    monthlySandboxPurchaseProofComplete: monthlySandboxPurchaseProofComplete,
+    paidIntentBetaShowsValue: paidIntentBetaShowsValue,
+    annualRevenueCatProductRequested: annualRevenueCatProductRequested,
+    paywallChangeRequested: paywallChangeRequested,
+    annualPlanRequested: annualPlanRequested,
+    annualCopyMissingYearTrailFocus: annualCopyMissingYearTrailFocus,
+    docListsRules: detectDocListsRules(annualPlanFutureDocSource),
+    guardrailPresentInCopy: detectGuardrailPresentInCopy(gateCopySource),
+    yearTrailFocusPresentInCopy: detectYearTrailFocusPresentInCopy(
+      gateCopySource,
+    ),
+  );
 
   static bool detectDocListsRules(String docSource) {
     const markers = [
@@ -160,24 +159,29 @@ abstract final class AnnualPlanFutureGate {
 
   static bool detectYearTrailFocusPresentInCopy(String gateCopySource) {
     final lower = gateCopySource.toLowerCase();
-    return lower.contains(AnnualPlanFutureCopy.yearTrailFocusCopy.toLowerCase());
+    return lower.contains(
+      AnnualPlanFutureCopy.yearTrailFocusCopy.toLowerCase(),
+    );
   }
 
   static bool evaluateCopyPassesRules(String copy) =>
-      !_violatesAnnualRevenueCatProduct(copy) &&
-      !_violatesPaywallChanges(copy);
+      !_violatesAnnualRevenueCatProduct(copy) && !_violatesPaywallChanges(copy);
 
   static bool? _monthlyPurchaseProofFrom(PaidIntentBetaProofResult? result) =>
       _signalPassed(result, PaidIntentBetaProofSignalId.purchaseCompleted);
 
-  static bool? _paidIntentBetaShowsValueFrom(PaidIntentBetaProofResult? result) {
+  static bool? _paidIntentBetaShowsValueFrom(
+    PaidIntentBetaProofResult? result,
+  ) {
     if (result == null) return null;
-    final proofSeen = _signalPassed(
+    final proofSeen =
+        _signalPassed(
           result,
           PaidIntentBetaProofSignalId.firstUsefulProofSeen,
         ) ??
         false;
-    final proofUseful = _signalPassed(
+    final proofUseful =
+        _signalPassed(
           result,
           PaidIntentBetaProofSignalId.proofAcceptedOrCorrected,
         ) ??
@@ -231,29 +235,37 @@ abstract final class AnnualPlanFutureGate {
     return [
       _rule(
         id: AnnualPlanFutureRuleId.noAnnualRevenueCatProductNow,
-        passes: guardrailLower.contains('do not add annual revenuecat product now') &&
+        passes:
+            guardrailLower.contains(
+              'do not add annual revenuecat product now',
+            ) &&
             evaluateCopyPassesRules(copyBundle) &&
             !(input.annualRevenueCatProductRequested ?? false),
       ),
       _rule(
         id: AnnualPlanFutureRuleId.noPaywallChangesNow,
-        passes: guardrailLower.contains('do not change paywall now') &&
+        passes:
+            guardrailLower.contains('do not change paywall now') &&
             evaluateCopyPassesRules(copyBundle) &&
             !(input.paywallChangeRequested ?? false),
       ),
       _rule(
-        id: AnnualPlanFutureRuleId.annualPlanRequiresMonthlySandboxPurchaseProof,
-        passes: guardrailLower.contains('monthly sandbox purchase proof first') &&
+        id: AnnualPlanFutureRuleId
+            .annualPlanRequiresMonthlySandboxPurchaseProof,
+        passes:
+            guardrailLower.contains('monthly sandbox purchase proof first') &&
             (!(input.annualPlanRequested ?? false) || monthlyProofComplete),
       ),
       _rule(
         id: AnnualPlanFutureRuleId.annualPlanRequiresPaidIntentBetaValue,
-        passes: guardrailLower.contains('paid-intent beta showing value') &&
+        passes:
+            guardrailLower.contains('paid-intent beta showing value') &&
             (!(input.annualPlanRequested ?? false) || paidIntentValue),
       ),
       _rule(
         id: AnnualPlanFutureRuleId.copyFocusesOnLongerProofTrailForYear,
-        passes: guardrailLower.contains('longer proof trail for the year') &&
+        passes:
+            guardrailLower.contains('longer proof trail for the year') &&
             copyBundle.contains(AnnualPlanFutureCopy.yearTrailFocusCopy) &&
             !(input.annualCopyMissingYearTrailFocus ?? false),
       ),
@@ -262,17 +274,16 @@ abstract final class AnnualPlanFutureGate {
 
   static List<AnnualPlanFuturePrereq> _buildPrereqs(
     AnnualPlanFutureGateInput input,
-  ) =>
-      [
-        _prereq(
-          id: AnnualPlanFuturePrereqId.monthlySandboxPurchaseProofComplete,
-          value: input.monthlySandboxPurchaseProofComplete,
-        ),
-        _prereq(
-          id: AnnualPlanFuturePrereqId.paidIntentBetaShowsValue,
-          value: input.paidIntentBetaShowsValue,
-        ),
-      ];
+  ) => [
+    _prereq(
+      id: AnnualPlanFuturePrereqId.monthlySandboxPurchaseProofComplete,
+      value: input.monthlySandboxPurchaseProofComplete,
+    ),
+    _prereq(
+      id: AnnualPlanFuturePrereqId.paidIntentBetaShowsValue,
+      value: input.paidIntentBetaShowsValue,
+    ),
+  ];
 
   static bool _violatesAnnualRevenueCatProduct(String copy) {
     final lower = copy.toLowerCase();
@@ -304,7 +315,14 @@ abstract final class AnnualPlanFutureGate {
 
   static bool _markerInProhibitionContext(String lower, int markerStart) {
     final prefix = lower.substring(0, markerStart);
-    const prohibitionMarkers = ['avoid ', 'without ', 'never ', 'no ', 'not ', 'do not '];
+    const prohibitionMarkers = [
+      'avoid ',
+      'without ',
+      'never ',
+      'no ',
+      'not ',
+      'do not ',
+    ];
     for (final marker in prohibitionMarkers) {
       final index = prefix.lastIndexOf(marker);
       if (index < 0) continue;
@@ -342,17 +360,16 @@ abstract final class AnnualPlanFutureGate {
   static AnnualPlanFutureRule _rule({
     required AnnualPlanFutureRuleId id,
     required bool passes,
-  }) =>
-      AnnualPlanFutureRule(
-        id: id,
-        label: AnnualPlanFutureCopy.ruleLabelFor(id),
-        status: passes
-            ? AnnualPlanFutureRuleStatus.pass
-            : AnnualPlanFutureRuleStatus.fail,
-        detailLabel: passes
-            ? AnnualPlanFutureCopy.detailPass
-            : AnnualPlanFutureCopy.detailFail,
-      );
+  }) => AnnualPlanFutureRule(
+    id: id,
+    label: AnnualPlanFutureCopy.ruleLabelFor(id),
+    status: passes
+        ? AnnualPlanFutureRuleStatus.pass
+        : AnnualPlanFutureRuleStatus.fail,
+    detailLabel: passes
+        ? AnnualPlanFutureCopy.detailPass
+        : AnnualPlanFutureCopy.detailFail,
+  );
 }
 
 class AnnualPlanFutureGateInput {

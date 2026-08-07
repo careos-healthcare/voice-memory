@@ -40,8 +40,14 @@ void main() {
         V1RevenueFocusPolicy.firstUserJourney,
         contains('Record one real moment'),
       );
-      expect(V1RevenueFocusPolicy.firstUserJourney, contains('Return when it happens again'));
-      expect(V1RevenueFocusPolicy.firstUserJourney, contains('Pro keeps the longer trail'));
+      expect(
+        V1RevenueFocusPolicy.firstUserJourney,
+        contains('Return when it happens again'),
+      );
+      expect(
+        V1RevenueFocusPolicy.firstUserJourney,
+        contains('Pro keeps the longer trail'),
+      );
     });
 
     test('allowed pillars and blocked surfaces are defined', () {
@@ -70,7 +76,10 @@ void main() {
       expect(doc, contains(V1RevenueFocusPolicy.manifestoLine));
       expect(doc.toLowerCase(), contains('what is allowed now'));
       expect(doc.toLowerCase(), contains('what is deferred'));
-      expect(doc.toLowerCase(), contains('what must be proven before expansion'));
+      expect(
+        doc.toLowerCase(),
+        contains('what must be proven before expansion'),
+      );
     });
   });
 
@@ -121,7 +130,8 @@ void main() {
     });
 
     test('first five minutes does not imply proof already exists', () {
-      for (final line in FirstFiveMinutesSimplificationCopy.allVisibleStrings()) {
+      for (final line
+          in FirstFiveMinutesSimplificationCopy.allVisibleStrings()) {
         expect(
           FirstFiveMinutesSimplificationCopy.previewImpliesProofExists(line),
           isFalse,
@@ -156,14 +166,8 @@ void main() {
     ];
 
     test('pro strings avoid banned AI and medical claims', () {
-      expect(
-        ProConversionAuditCopy.hasNoBannedLiveClaims(proStrings),
-        isTrue,
-      );
-      expect(
-        ProConversionAuditCopy.hasNoMedicalClaims(proStrings),
-        isTrue,
-      );
+      expect(ProConversionAuditCopy.hasNoBannedLiveClaims(proStrings), isTrue);
+      expect(ProConversionAuditCopy.hasNoMedicalClaims(proStrings), isTrue);
       expect(
         ProConversionAuditCopy.mentionsPaidMemoryReason(proStrings),
         isTrue,
@@ -264,8 +268,14 @@ void main() {
         LoopAcquisitionCopy.wedgeRoutePromise,
         'Save the moments where this happens. See whether it repeats.',
       );
-      expect(LoopAcquisitionCopy.proveEnough.subheadline, LoopAcquisitionCopy.wedgeRoutePromise);
-      expect(LoopAcquisitionCopy.capacityYes.subheadline, LoopAcquisitionCopy.wedgeRoutePromise);
+      expect(
+        LoopAcquisitionCopy.proveEnough.subheadline,
+        LoopAcquisitionCopy.wedgeRoutePromise,
+      );
+      expect(
+        LoopAcquisitionCopy.capacityYes.subheadline,
+        LoopAcquisitionCopy.wedgeRoutePromise,
+      );
     });
 
     test('habit copy teaches save-compare loop', () {
@@ -301,15 +311,23 @@ void main() {
 
   group('Beta expansion proof gate', () {
     test('lists required thresholds before expansion', () {
-      expect(BetaExpansionProofCopy.requiredBeforeExpansion, contains('20 invites'));
-      expect(BetaExpansionProofCopy.requiredBeforeExpansion, contains('10 installs'));
+      expect(
+        BetaExpansionProofCopy.requiredBeforeExpansion,
+        contains('20 invites'),
+      );
+      expect(
+        BetaExpansionProofCopy.requiredBeforeExpansion,
+        contains('10 installs'),
+      );
       expect(
         BetaExpansionProofCopy.requiredBeforeExpansion,
         contains('5 users with 3 real moments'),
       );
       expect(
         BetaExpansionProofCopy.requiredBeforeExpansion,
-        contains('2 willingness-to-pay signals for keeping the longer proof trail'),
+        contains(
+          '2 willingness-to-pay signals for keeping the longer proof trail',
+        ),
       );
     });
 

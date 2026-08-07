@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 import 'package:uuid/uuid.dart';
 
+import '../../../storage/account_namespace.dart';
 import '../domain/models/offline_vault_manifest.dart';
 import '../live_audio_constants.dart';
 import 'live_audio_pipeline_log.dart';
@@ -11,14 +12,25 @@ import 'live_audio_pipeline_log.dart';
 typedef VaultStorageDirectoryResolver = Future<Directory> Function();
 
 /// Persists pending offline vault manifests and discovers orphan vault files.
+///
+/// Optionally namespace-scoped (see [namespace]): pending offline vaults
+/// contain real recording content and metadata (session id, duration,
+/// recovery secret) that is per-account-sensitive, so a namespace-scoped
+/// instance stores its manifest file and vault directory under
+/// `accounts/<namespace.key>/...` rather than one shared device-wide
+/// location. Passing no [namespace] preserves the exact legacy, unscoped
+/// location — see the `AppServices` field-group comment for why this
+/// class is not (yet) wired into the account-scoped rewiring by default.
 class OfflineVaultRecoveryStore {
   OfflineVaultRecoveryStore({
     File? manifestFile,
     VaultStorageDirectoryResolver? resolveVaultDirectory,
     Uuid? uuid,
-  })  : _uuid = uuid ?? const Uuid(),
-        _resolveVaultDirectory =
-            resolveVaultDirectory ?? _defaultVaultDirectory {
+    AccountNamespace? namespace,
+  }) : _uuid = uuid ?? const Uuid(),
+       _namespace = namespace,
+       _resolveVaultDirectory =
+           resolveVaultDirectory ?? (() => _defaultVaultDirectory(namespace)) {
     if (manifestFile != null) {
       _manifestFile = manifestFile;
     }
@@ -29,19 +41,29 @@ class OfflineVaultRecoveryStore {
   static const minFreeBytesForVault = 5 * 1024 * 1024;
 
   final Uuid _uuid;
+  final AccountNamespace? _namespace;
   final VaultStorageDirectoryResolver _resolveVaultDirectory;
   File? _manifestFile;
   List<OfflineVaultManifest>? _cache;
 
   Future<File> _manifestPath() async {
+    final ns = _namespace;
     return _manifestFile ??= File(
-      '${(await getApplicationSupportDirectory()).path}/$_manifestFileName',
+      ns == null
+          ? '${(await getApplicationSupportDirectory()).path}/$_manifestFileName'
+          : '${(await getApplicationSupportDirectory()).path}/accounts/${ns.key}/$_manifestFileName',
     );
   }
 
-  static Future<Directory> _defaultVaultDirectory() async {
+  static Future<Directory> _defaultVaultDirectory(
+    AccountNamespace? namespace,
+  ) async {
     final supportDir = await getApplicationSupportDirectory();
-    final vaultDir = Directory('${supportDir.path}/$_vaultDirectoryName');
+    final vaultDir = Directory(
+      namespace == null
+          ? '${supportDir.path}/$_vaultDirectoryName'
+          : '${supportDir.path}/accounts/${namespace.key}/$_vaultDirectoryName',
+    );
     if (!await vaultDir.exists()) {
       await vaultDir.create(recursive: true);
     }
@@ -50,7 +72,9 @@ class OfflineVaultRecoveryStore {
 
   Future<Directory> vaultDirectory() => _resolveVaultDirectory();
 
-  Future<bool> hasAdequateStorage({int requiredBytes = minFreeBytesForVault}) async {
+  Future<bool> hasAdequateStorage({
+    int requiredBytes = minFreeBytesForVault,
+  }) async {
     try {
       final dir = await vaultDirectory();
       final stat = await dir.stat();
@@ -105,9 +129,10 @@ class OfflineVaultRecoveryStore {
 
     final recoverySecretBase64Url =
         OfflineVaultManifest.encodeRecoverySecretBase64Url(
-      recoverySecretKeyBytes,
-    );
-    final resolvedServerRecoverable = serverRecoverable ??
+          recoverySecretKeyBytes,
+        );
+    final resolvedServerRecoverable =
+        serverRecoverable ??
         OfflineVaultManifest.isServerRecoverable(
           sessionId: sessionId,
           recoverySecretKeyBytes: recoverySecretKeyBytes,
@@ -188,9 +213,7 @@ class OfflineVaultRecoveryStore {
   Future<void> discard(OfflineVaultManifest manifest) async {
     await removeVaultArtifacts(manifest);
     final manifests = await listManifests();
-    manifests.removeWhere(
-      (entry) => entry.manifestId == manifest.manifestId,
-    );
+    manifests.removeWhere((entry) => entry.manifestId == manifest.manifestId);
     await _writeManifests(manifests);
     LiveAudioPipelineLog.offlineVaultDiscarded(sessionId: manifest.sessionId);
   }
@@ -201,9 +224,7 @@ class OfflineVaultRecoveryStore {
       await file.delete();
     }
     final manifests = await listManifests();
-    manifests.removeWhere(
-      (entry) => entry.manifestId == manifest.manifestId,
-    );
+    manifests.removeWhere((entry) => entry.manifestId == manifest.manifestId);
     await _writeManifests(manifests);
   }
 
@@ -287,7 +308,9 @@ class OfflineVaultRecoveryStore {
     _cache = List<OfflineVaultManifest>.from(manifests);
     final file = await _manifestPath();
     await file.parent.create(recursive: true);
-    final encoded = jsonEncode(manifests.map((entry) => entry.toJson()).toList());
+    final encoded = jsonEncode(
+      manifests.map((entry) => entry.toJson()).toList(),
+    );
     await file.writeAsString(encoded, flush: true);
   }
 }

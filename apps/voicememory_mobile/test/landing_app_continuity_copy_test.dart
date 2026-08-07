@@ -28,29 +28,26 @@ const _bannedTerms = [
 ];
 
 List<String> _continuityCopyBlob() => [
-      ...LandingAppContinuityCopy.allVisibleStrings(),
-      ThreeDayChallengeCopy.title,
-      ThreeDayChallengeCopy.day1Title,
-      ThreeDayChallengeCopy.day2Title,
-      ThreeDayChallengeCopy.day3Title,
-      ConsumerUiCopy.paywallHeadline,
-      ConsumerUiCopy.paywallPrimaryCta,
-      ConsumerUiCopy.paywallPrimaryValueBlock,
-      ArchivePaywallCopy.proActiveConfirmation,
-      ConsumerUiCopy.paywallDifferentiation,
-      ConsumerUiCopy.paywallTrust,
-      ConsumerUiCopy.paywallBackupLine,
-      RevenueValueCopy.chatGptDifferentiationLine,
-      ProEvidenceValueCopy.chatGptDifferentiationLine,
-    ];
+  ...LandingAppContinuityCopy.allVisibleStrings(),
+  ThreeDayChallengeCopy.title,
+  ThreeDayChallengeCopy.day1Title,
+  ThreeDayChallengeCopy.day2Title,
+  ThreeDayChallengeCopy.day3Title,
+  ConsumerUiCopy.paywallHeadline,
+  ConsumerUiCopy.paywallPrimaryCta,
+  ConsumerUiCopy.paywallPrimaryValueBlock,
+  ArchivePaywallCopy.proActiveConfirmation,
+  ConsumerUiCopy.paywallDifferentiation,
+  ConsumerUiCopy.paywallTrust,
+  ConsumerUiCopy.paywallBackupLine,
+  RevenueValueCopy.chatGptDifferentiationLine,
+  ProEvidenceValueCopy.chatGptDifferentiationLine,
+];
 
 void main() {
   group('Landing and app continuity copy alignment', () {
     test('website and app promises stay aligned', () {
-      expect(
-        LandingAppContinuityCopy.hero,
-        'When it repeats, save it',
-      );
+      expect(LandingAppContinuityCopy.hero, 'When it repeats, save it');
       expect(
         LandingAppContinuityCopy.subheadline,
         'No daily journal. No streak. No dashboard to maintain.',
@@ -67,24 +64,33 @@ void main() {
         LandingAppContinuityCopy.freePositioning,
         'Free shows the first useful proof. Pro keeps the longer proof trail.',
       );
-      expect(
-        LandingAppContinuityCopy.howItWorksStepTitles,
-        [
-          'Save one real moment',
-          'Come back when it repeats',
-          'See what appeared and returned',
-          'Correct what is not relevant',
-          LandingAppContinuityCopy.step5Title,
-        ],
-      );
+      expect(LandingAppContinuityCopy.howItWorksStepTitles, [
+        'Save one real moment',
+        'Come back when it repeats',
+        'See what appeared and returned',
+        'Correct what is not relevant',
+        LandingAppContinuityCopy.step5Title,
+      ]);
 
       expect(ThreeDayChallengeCopy.title, LandingAppContinuityCopy.hero);
-      expect(ThreeDayChallengeCopy.day1Title, LandingAppContinuityCopy.step1Title);
-      expect(ThreeDayChallengeCopy.day2Title, LandingAppContinuityCopy.step2Title);
-      expect(ThreeDayChallengeCopy.day3Title, LandingAppContinuityCopy.step3Title);
+      expect(
+        ThreeDayChallengeCopy.day1Title,
+        LandingAppContinuityCopy.step1Title,
+      );
+      expect(
+        ThreeDayChallengeCopy.day2Title,
+        LandingAppContinuityCopy.step2Title,
+      );
+      expect(
+        ThreeDayChallengeCopy.day3Title,
+        LandingAppContinuityCopy.step3Title,
+      );
 
       expect(ConsumerUiCopy.paywallHeadline, PaywallAlignmentCopy.headline);
-      expect(ConsumerUiCopy.paywallHeadline, 'You saw the first useful repeat.');
+      expect(
+        ConsumerUiCopy.paywallHeadline,
+        'You saw the first useful repeat.',
+      );
       expect(ConsumerUiCopy.paywallPrimaryCta, 'Keep the longer trail');
       expect(
         ConsumerUiCopy.paywallPrimaryValueBlock,
@@ -108,7 +114,11 @@ void main() {
       final blob = _continuityCopyBlob().join(' ').toLowerCase();
       for (final banned in _bannedTerms) {
         if (banned == 'therapy') continue;
-        expect(blob, isNot(contains(banned)), reason: 'must not contain $banned');
+        expect(
+          blob,
+          isNot(contains(banned)),
+          reason: 'must not contain $banned',
+        );
       }
       expect(blob, contains('not therapy'));
       expect(blob, contains('do not rely on this build as cloud backup'));
@@ -116,10 +126,14 @@ void main() {
     });
 
     test('continuity checklist doc exists with required promises', () {
-      final doc = File('docs/release/LANDING_APP_CONTINUITY_CHECKLIST.md')
-          .readAsStringSync();
+      final doc = File(
+        'docs/release/LANDING_APP_CONTINUITY_CHECKLIST.md',
+      ).readAsStringSync();
       expect(doc, contains('When it repeats, save it'));
-      expect(doc, contains('No daily journal. No streak. No dashboard to maintain.'));
+      expect(
+        doc,
+        contains('No daily journal. No streak. No dashboard to maintain.'),
+      );
       expect(doc, contains('Save one real moment'));
       expect(doc, contains('Come back when it repeats'));
       expect(doc, contains('See what appeared and returned'));
@@ -131,10 +145,7 @@ void main() {
           'ChatGPT can suggest what to do. ArchiveMe shows what you already said before.',
         ),
       );
-      expect(
-        doc,
-        contains('Headline: `${ProSinglePromiseCopy.headline}`'),
-      );
+      expect(doc, contains('Headline: `${ProSinglePromiseCopy.headline}`'));
       expect(doc, contains(LandingAppContinuityCopy.freePositioning));
       expect(doc.toLowerCase(), contains('not therapy'));
       expect(doc.toLowerCase(), contains('cloud backup'));

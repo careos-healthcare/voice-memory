@@ -5,7 +5,8 @@ abstract final class LandingAppContinuityCopy {
   static const publicPromise =
       'When something repeats, save one real moment. ArchiveMe compares it later.';
 
-  static const subheadline = 'No daily journal. No streak. No dashboard to maintain.';
+  static const subheadline =
+      'No daily journal. No streak. No dashboard to maintain.';
 
   static const hero = 'When it repeats, save it';
 
@@ -36,7 +37,8 @@ abstract final class LandingAppContinuityCopy {
       'After a few saves, see what appeared, returned, changed, faded, or got corrected.';
 
   static const step4Title = 'Correct what is not relevant';
-  static const step4Body = 'Mark what does not fit. Your proof trail stays yours.';
+  static const step4Body =
+      'Mark what does not fit. Your proof trail stays yours.';
 
   static const step5Title = 'Keep the longer proof trail with Pro';
   static const step5Body = freePositioning;
@@ -50,23 +52,23 @@ abstract final class LandingAppContinuityCopy {
   ];
 
   static List<String> allVisibleStrings() => [
-        publicPromise,
-        subheadline,
-        hero,
-        heroBody,
-        chatGptDifferentiation,
-        notesDifferentiation,
-        proPaidReason,
-        freePositioning,
-        step1Title,
-        step1Body,
-        step2Title,
-        step2Body,
-        step3Title,
-        step3Body,
-        step4Title,
-        step4Body,
-        step5Title,
-        step5Body,
-      ];
+    publicPromise,
+    subheadline,
+    hero,
+    heroBody,
+    chatGptDifferentiation,
+    notesDifferentiation,
+    proPaidReason,
+    freePositioning,
+    step1Title,
+    step1Body,
+    step2Title,
+    step2Body,
+    step3Title,
+    step3Body,
+    step4Title,
+    step4Body,
+    step5Title,
+    step5Body,
+  ];
 }

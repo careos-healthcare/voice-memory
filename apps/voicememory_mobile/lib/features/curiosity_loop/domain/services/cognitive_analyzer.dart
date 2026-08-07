@@ -7,7 +7,7 @@ import 'jargon_aware_analyzer.dart';
 /// Passive biomarker processing from voice journal transcripts.
 class CognitiveAnalyzer {
   const CognitiveAnalyzer({JargonAwareAnalyzer? jargonAnalyzer})
-      : _jargonAnalyzer = jargonAnalyzer ?? const JargonAwareAnalyzer();
+    : _jargonAnalyzer = jargonAnalyzer ?? const JargonAwareAnalyzer();
 
   final JargonAwareAnalyzer _jargonAnalyzer;
 
@@ -50,15 +50,17 @@ class CognitiveAnalyzer {
         .toList();
     if (sentences.length < 2) return 0.0;
 
-    final sentenceWordCounts =
-        sentences.map((sentence) => _tokenize(sentence).length).toList();
+    final sentenceWordCounts = sentences
+        .map((sentence) => _tokenize(sentence).length)
+        .toList();
     if (sentenceWordCounts.every((count) => count == 0)) return 0.0;
 
-    final mean = sentenceWordCounts.reduce((a, b) => a + b) /
-        sentenceWordCounts.length;
+    final mean =
+        sentenceWordCounts.reduce((a, b) => a + b) / sentenceWordCounts.length;
     if (mean == 0) return 0.0;
 
-    final variance = sentenceWordCounts
+    final variance =
+        sentenceWordCounts
             .map((count) {
               final delta = count - mean;
               return delta * delta;
@@ -75,8 +77,8 @@ class CognitiveAnalyzer {
 
     final wordCount = tokens.isEmpty ? 1 : tokens.length;
 
-    final exclamationScore =
-        ('!'.allMatches(transcript).length / wordCount * 2).clamp(0.0, 1.0);
+    final exclamationScore = ('!'.allMatches(transcript).length / wordCount * 2)
+        .clamp(0.0, 1.0);
 
     final letterMatches = RegExp(r'[A-Za-z]').allMatches(transcript);
     var capsIntensity = 0.0;
@@ -88,16 +90,17 @@ class CognitiveAnalyzer {
           uppercaseLetters++;
         }
       }
-      capsIntensity =
-          (uppercaseLetters / letterMatches.length).clamp(0.0, 1.0);
+      capsIntensity = (uppercaseLetters / letterMatches.length).clamp(0.0, 1.0);
     }
 
-    final emphasisMatches =
-        RegExp(r'[!?]{2,}|\b[A-Z]{2,}\b').allMatches(transcript).length;
-    final emphasisScore =
-        (emphasisMatches / wordCount * 3).clamp(0.0, 1.0);
+    final emphasisMatches = RegExp(
+      r'[!?]{2,}|\b[A-Z]{2,}\b',
+    ).allMatches(transcript).length;
+    final emphasisScore = (emphasisMatches / wordCount * 3).clamp(0.0, 1.0);
 
-    return ((exclamationScore + capsIntensity + emphasisScore) / 3)
-        .clamp(0.0, 1.0);
+    return ((exclamationScore + capsIntensity + emphasisScore) / 3).clamp(
+      0.0,
+      1.0,
+    );
   }
 }

@@ -40,33 +40,33 @@ const _bannedWords = [
 const _privateSnippet = 'felt pressure at work before saying yes';
 
 JournalEntry _capacityEntry(String id, {String? transcript}) => JournalEntry(
-      id: id,
-      createdAt: DateTime(2026, 6, 12, 12),
-      transcript: transcript ??
-          'I $_privateSnippet again and said yes with no capacity left.',
-      durationSeconds: 30,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 2,
-        recurringThemes: ['work'],
-        exactLanguagePattern: '',
-        concreteObservation: 'Work pressure showed up in this moment.',
-        repeatedSignal: '',
-      ),
-    );
+  id: id,
+  createdAt: DateTime(2026, 6, 12, 12),
+  transcript:
+      transcript ??
+      'I $_privateSnippet again and said yes with no capacity left.',
+  durationSeconds: 30,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 2,
+    recurringThemes: ['work'],
+    exactLanguagePattern: '',
+    concreteObservation: 'Work pressure showed up in this moment.',
+    repeatedSignal: '',
+  ),
+);
 
 CapacityDecisionOutcomeRecord _answeredOutcome(
   String entryId,
   String outcomeId,
-) =>
-    CapacityDecisionOutcomeRecord(
-      sourceEntryId: entryId,
-      outcomeId: outcomeId,
-      status: CapacityDecisionOutcomeStatus.answered,
-      createdAt: DateTime(2026, 6, 12),
-      updatedAt: DateTime(2026, 6, 12),
-    );
+) => CapacityDecisionOutcomeRecord(
+  sourceEntryId: entryId,
+  outcomeId: outcomeId,
+  status: CapacityDecisionOutcomeStatus.answered,
+  createdAt: DateTime(2026, 6, 12),
+  updatedAt: DateTime(2026, 6, 12),
+);
 
 CapacityDecisionOutcomeResult _visibleResult({String pendingId = 'real_0'}) =>
     CapacityDecisionOutcomeResult(
@@ -132,13 +132,15 @@ void main() {
 
     test('appears for capacity-yes user after pull reason recorded', () {
       final entries = [_capacityEntry('real_0')];
-      CapacityPullReasonStore.seedForTest([CapacityPullReasonRecord(
-        sourceEntryId: 'real_0',
-        reasonIds: const [CapacityPullReasonIds.soundedUrgent],
-        status: CapacityPullReasonStatus.answered,
-        createdAt: DateTime(2026, 6, 12),
-        updatedAt: DateTime(2026, 6, 12),
-      )]);
+      CapacityPullReasonStore.seedForTest([
+        CapacityPullReasonRecord(
+          sourceEntryId: 'real_0',
+          reasonIds: const [CapacityPullReasonIds.soundedUrgent],
+          status: CapacityPullReasonStatus.answered,
+          createdAt: DateTime(2026, 6, 12),
+          updatedAt: DateTime(2026, 6, 12),
+        ),
+      ]);
       final result = outcomeEngine.buildFromJournal(
         entries: entries,
         capacityLoopActive: true,
@@ -228,8 +230,9 @@ void main() {
         outcomeId: CapacityDecisionOutcomeIds.delayed,
       );
 
-      final json =
-          (await CapacityDecisionOutcomeStore.instance().loadAll()).first.toJson();
+      final json = (await CapacityDecisionOutcomeStore.instance().loadAll())
+          .first
+          .toJson();
       expect(json.keys, containsAll(['sourceEntryId', 'outcomeId', 'status']));
       expect(json.toString(), isNot(contains(_privateSnippet)));
       expect(json.toString(), isNot(contains('transcript')));
@@ -242,8 +245,8 @@ void main() {
       await CapacityDecisionOutcomeStore.instance().saveSkipped(
         sourceEntryId: 'entry_c',
       );
-      final record =
-          await CapacityDecisionOutcomeStore.instance().recordForEntry('entry_c');
+      final record = await CapacityDecisionOutcomeStore.instance()
+          .recordForEntry('entry_c');
       expect(record?.status, CapacityDecisionOutcomeStatus.skipped);
     });
   });
@@ -287,8 +290,14 @@ void main() {
     });
 
     test('share copy does not include outcome details', () {
-      expect(CapacityLoopCopy.shareCopy.toLowerCase(), isNot(contains('said no')));
-      expect(CapacityLoopCopy.shareCopy.toLowerCase(), isNot(contains('transcript')));
+      expect(
+        CapacityLoopCopy.shareCopy.toLowerCase(),
+        isNot(contains('said no')),
+      );
+      expect(
+        CapacityLoopCopy.shareCopy.toLowerCase(),
+        isNot(contains('transcript')),
+      );
     });
   });
 

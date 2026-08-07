@@ -86,20 +86,20 @@ class OfflineVaultManifest {
       uploadState == OfflineVaultUploadState.failed;
 
   Map<String, dynamic> toJson() => {
-        'manifestId': manifestId,
-        'sessionId': sessionId,
-        'vaultPath': vaultPath,
-        'frameCount': frameCount,
-        'durationSeconds': durationSeconds,
-        'createdAt': createdAt.toUtc().toIso8601String(),
-        'idempotencyKey': idempotencyKey,
-        'uploadState': uploadState.name,
-        if (recoveryAckId != null) 'recoveryAckId': recoveryAckId,
-        if (lastError != null) 'lastError': lastError,
-        if (recoverySecretBase64Url != null)
-          'recoverySecretBase64Url': recoverySecretBase64Url,
-        'serverRecoverable': serverRecoverable,
-      };
+    'manifestId': manifestId,
+    'sessionId': sessionId,
+    'vaultPath': vaultPath,
+    'frameCount': frameCount,
+    'durationSeconds': durationSeconds,
+    'createdAt': createdAt.toUtc().toIso8601String(),
+    'idempotencyKey': idempotencyKey,
+    'uploadState': uploadState.name,
+    if (recoveryAckId != null) 'recoveryAckId': recoveryAckId,
+    if (lastError != null) 'lastError': lastError,
+    if (recoverySecretBase64Url != null)
+      'recoverySecretBase64Url': recoverySecretBase64Url,
+    'serverRecoverable': serverRecoverable,
+  };
 
   OfflineVaultManifest copyWith({
     String? vaultPath,

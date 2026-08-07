@@ -34,8 +34,7 @@ abstract final class CapacityWeeklyReviewGates {
   static bool showOnCapacityLoop({
     required bool hasReview,
     required bool sampleMode,
-  }) =>
-      hasReview && !sampleMode;
+  }) => hasReview && !sampleMode;
 
   static bool _hasWedgeOrEvidence(CapacityWeeklyReviewGateInput input) {
     if (input.capacityWedgeActive) return true;

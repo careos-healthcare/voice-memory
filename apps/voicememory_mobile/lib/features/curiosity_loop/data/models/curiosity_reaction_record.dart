@@ -20,13 +20,13 @@ class CuriosityReactionRecord {
   final CuriosityHookType hookType;
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'hookId': hookId,
-        'timestamp': timestamp.toUtc().toIso8601String(),
-        'reactionType': reactionType.name,
-        'primaryAnchor': primaryAnchor,
-        'hookType': hookType.name,
-      };
+    'id': id,
+    'hookId': hookId,
+    'timestamp': timestamp.toUtc().toIso8601String(),
+    'reactionType': reactionType.name,
+    'primaryAnchor': primaryAnchor,
+    'hookType': hookType.name,
+  };
 
   static CuriosityReactionRecord? fromJson(Map<String, dynamic>? json) {
     if (json == null || json.isEmpty) return null;

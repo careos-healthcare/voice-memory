@@ -15,7 +15,8 @@ abstract final class DayTwoReturnLoopPayoffCopy {
 
   static const twoEntryBody = VisibleArchiveProofCopy.returnLoopTwoEntryBody;
 
-  static const threeEntryBody = VisibleArchiveProofCopy.returnLoopThreeEntryBody;
+  static const threeEntryBody =
+      VisibleArchiveProofCopy.returnLoopThreeEntryBody;
 
   static const primaryCta = VisibleArchiveProofCopy.returnLoopPrimaryCta;
 
@@ -53,19 +54,19 @@ abstract final class DayTwoReturnLoopPayoffEngine {
     final eligible = ArchiveEvidenceGuard.eligibleEntries(entries);
     return switch (eligible.length) {
       1 => DayTwoReturnLoopPayoff(
-          body: DayTwoReturnLoopPayoffCopy.oneEntryBody,
-          primaryCta: DayTwoReturnLoopPayoffCopy.primaryCta,
-          eligibleEntryCount: 1,
-          offerReminder: reminderAvailable,
-        ),
+        body: DayTwoReturnLoopPayoffCopy.oneEntryBody,
+        primaryCta: DayTwoReturnLoopPayoffCopy.primaryCta,
+        eligibleEntryCount: 1,
+        offerReminder: reminderAvailable,
+      ),
       2 => DayTwoReturnLoopPayoff(
-          body: _signalEngine.hasGroundedRepeatMatch(eligible)
-              ? DayTwoReturnLoopPayoffCopy.twoEntryRelatedBody
-              : DayTwoReturnLoopPayoffCopy.twoEntryUnrelatedBody,
-          primaryCta: DayTwoReturnLoopPayoffCopy.primaryCta,
-          secondaryCta: DayTwoReturnLoopPayoffCopy.secondaryCta,
-          eligibleEntryCount: 2,
-        ),
+        body: _signalEngine.hasGroundedRepeatMatch(eligible)
+            ? DayTwoReturnLoopPayoffCopy.twoEntryRelatedBody
+            : DayTwoReturnLoopPayoffCopy.twoEntryUnrelatedBody,
+        primaryCta: DayTwoReturnLoopPayoffCopy.primaryCta,
+        secondaryCta: DayTwoReturnLoopPayoffCopy.secondaryCta,
+        eligibleEntryCount: 2,
+      ),
       _ => null,
     };
   }

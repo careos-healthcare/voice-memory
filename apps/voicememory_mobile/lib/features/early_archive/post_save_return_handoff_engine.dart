@@ -12,17 +12,15 @@ abstract final class PostSaveReturnHandoffEngine {
 
   static const _signalEngine = SecondSessionSignalEngine();
 
-  static PostSaveReturnHandoff? build({
-    required List<JournalEntry> entries,
-  }) {
+  static PostSaveReturnHandoff? build({required List<JournalEntry> entries}) {
     final eligible = ArchiveEvidenceGuard.eligibleEntries(entries);
     if (eligible.isEmpty || eligible.length > 2) return null;
 
     if (eligible.length == 1) {
       final phrase =
           ConfirmedRepeatEvidencePhraseEngine.singleEntryConcretePhrase(
-        eligible.first,
-      );
+            eligible.first,
+          );
       return PostSaveReturnHandoff(
         stage: PostSaveReturnHandoffStage.afterFirstSave,
         relationState: PostSaveReturnHandoffRelationState.oneMoment,
@@ -33,15 +31,17 @@ abstract final class PostSaveReturnHandoffEngine {
         body: phrase != null
             ? PostSaveReturnHandoffCopy.afterFirstSaveBodyWithPhrase(phrase)
             : PostSaveReturnHandoffCopy.afterFirstSaveBodyFallback,
-        footer: BetaImprovementPackEngine.returnOptionalFraming(entryCount: 1) ??
+        footer:
+            BetaImprovementPackEngine.returnOptionalFraming(entryCount: 1) ??
             PostSaveReturnHandoffCopy.afterFirstSaveFooter,
         hasPhrase: phrase != null,
       );
     }
 
     if (_signalEngine.hasGroundedRepeatMatch(eligible)) {
-      final phrase =
-          ConfirmedRepeatEvidencePhraseEngine.sharedConcretePhrase(eligible);
+      final phrase = ConfirmedRepeatEvidencePhraseEngine.sharedConcretePhrase(
+        eligible,
+      );
       return PostSaveReturnHandoff(
         stage: PostSaveReturnHandoffStage.afterSecondSaveRelated,
         relationState: PostSaveReturnHandoffRelationState.twoRelated,

@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/features/archive_proof/proof_surface_advice_guard.dart';
-import 'package:voicememory_mobile/features/beta_repair_lab/beta_repair_lab_engine.dart';
 import 'package:voicememory_mobile/features/beta_repair_lab/beta_repair_lab_model.dart';
 import 'package:voicememory_mobile/features/beta_repair_lab/beta_repair_lab_store.dart';
 import 'package:voicememory_mobile/features/evidence_trail_clarity/evidence_trail_clarity_engine.dart';
@@ -10,40 +9,37 @@ import 'package:voicememory_mobile/features/pattern_match_quality/pattern_match_
 import 'package:voicememory_mobile/features/pricing_validation/pricing_validation_engine.dart';
 import 'package:voicememory_mobile/features/proof_caution_guard/proof_caution_guard_model.dart';
 import 'package:voicememory_mobile/features/proof_confidence_calibration/proof_confidence_calibration_model.dart';
-import 'package:voicememory_mobile/features/proof_detail_repair/proof_detail_repair_copy.dart';
 import 'package:voicememory_mobile/features/proof_detail_repair/proof_detail_repair_engine.dart';
 import 'package:voicememory_mobile/features/proof_selection/proof_selection_principle.dart';
 import 'package:voicememory_mobile/features/proof_selection/proof_selection_principle_copy.dart';
 import 'package:voicememory_mobile/features/surface_priority/surface_priority_engine.dart';
 import 'package:voicememory_mobile/features/surface_priority/surface_priority_model.dart';
 
-const _behaviorPhrase =
-    'said yes when I had no capacity for one more thing';
+const _behaviorPhrase = 'said yes when I had no capacity for one more thing';
 
 ProofDetailRepairResult _strongDetail() => ProofDetailRepairEngine.build(
-      level: ProofConfidenceLevel.strong,
-      hasSafeAnchor: true,
-      behaviorPhrase: _behaviorPhrase,
-    );
+  level: ProofConfidenceLevel.strong,
+  hasSafeAnchor: true,
+  behaviorPhrase: _behaviorPhrase,
+);
 
-BetaRepairLabVisibilityInput _repairInput() =>
-    BetaRepairLabVisibilityInput(
-      mode: BetaRepairLabMode.evidenceTrailTimelineClarity,
-      entryCount: 4,
-      source: 'test',
-      isPro: false,
-      isRecording: false,
-      isDegradedTranscriptState: false,
-      whatChangedQuestionActive: false,
-      patternReviewInboxHasActiveItems: false,
-      hasTimelineProofVisible: true,
-      hasConfirmedRepeat: true,
-      confidenceLevel: ProofConfidenceLevel.watchOnly,
-      hasUsefulProofFeedback: false,
-      feedbackType: null,
-      isNegativeFeedback: false,
-      betaMissionEnabled: true,
-    );
+BetaRepairLabVisibilityInput _repairInput() => BetaRepairLabVisibilityInput(
+  mode: BetaRepairLabMode.evidenceTrailTimelineClarity,
+  entryCount: 4,
+  source: 'test',
+  isPro: false,
+  isRecording: false,
+  isDegradedTranscriptState: false,
+  whatChangedQuestionActive: false,
+  patternReviewInboxHasActiveItems: false,
+  hasTimelineProofVisible: true,
+  hasConfirmedRepeat: true,
+  confidenceLevel: ProofConfidenceLevel.watchOnly,
+  hasUsefulProofFeedback: false,
+  feedbackType: null,
+  isNegativeFeedback: false,
+  betaMissionEnabled: true,
+);
 
 void main() {
   group('ProofSelectionPrincipleCopy', () {
@@ -116,7 +112,11 @@ void main() {
     test('copy avoids therapy diagnosis coaching advice language', () {
       for (final text in ProofSelectionPrincipleCopy.allVisibleStrings()) {
         expect(ProofSurfaceAdviceGuard.passes(text), isTrue, reason: text);
-        expect(ProofSelectionPrinciple.copyPassesGuard(text), isTrue, reason: text);
+        expect(
+          ProofSelectionPrinciple.copyPassesGuard(text),
+          isTrue,
+          reason: text,
+        );
       }
     });
   });
@@ -153,7 +153,10 @@ void main() {
     });
 
     test('More detail copy still says not ranking every past mention yet', () {
-      expect(_strongDetail().body, contains('not ranking every past mention yet'));
+      expect(
+        _strongDetail().body,
+        contains('not ranking every past mention yet'),
+      );
     });
 
     test('More detail copy still keeps Too vague Not relevant correction', () {
@@ -249,38 +252,41 @@ void main() {
       );
     });
 
-    test('record screen remains capture-first without stacking extra cards', () {
-      final audit = SurfacePriorityEngine.auditRecordReady(
-        entryCount: 4,
-        source: 'record',
-        candidates: SurfacePriorityCandidates.recordReady(
-          firstMomentCapture: false,
-          secondMomentReturn: false,
-          lowFrictionReturn: false,
-          whatToNoticeNext: false,
-          betaTodaySummary: false,
-          openCapturePromptChips: false,
-          captureFreedomLine: false,
-          timelineProofMoment: true,
-          archiveTimelineSpine: false,
-          timelinePositioning: false,
-          currentRelevance: false,
-          correctionMemory: false,
-          notRelevantRecovery: false,
-          proofQualityResponse: false,
-          evidenceWeighting: false,
-          proofSpecificity: false,
-          presentDayRelevance: false,
-          patternConfidence: false,
-          betaTesterReport: false,
-          proEvidenceValue: false,
-          privateReportProBridge: false,
-          suppressLegacyEducation: false,
-          betaProofLift: true,
-        ),
-      );
-      expect(audit.proofCardKey, 'timelineProofMoment');
-      expect(audit.guidanceCardKey, isNull);
-    });
+    test(
+      'record screen remains capture-first without stacking extra cards',
+      () {
+        final audit = SurfacePriorityEngine.auditRecordReady(
+          entryCount: 4,
+          source: 'record',
+          candidates: SurfacePriorityCandidates.recordReady(
+            firstMomentCapture: false,
+            secondMomentReturn: false,
+            lowFrictionReturn: false,
+            whatToNoticeNext: false,
+            betaTodaySummary: false,
+            openCapturePromptChips: false,
+            captureFreedomLine: false,
+            timelineProofMoment: true,
+            archiveTimelineSpine: false,
+            timelinePositioning: false,
+            currentRelevance: false,
+            correctionMemory: false,
+            notRelevantRecovery: false,
+            proofQualityResponse: false,
+            evidenceWeighting: false,
+            proofSpecificity: false,
+            presentDayRelevance: false,
+            patternConfidence: false,
+            betaTesterReport: false,
+            proEvidenceValue: false,
+            privateReportProBridge: false,
+            suppressLegacyEducation: false,
+            betaProofLift: true,
+          ),
+        );
+        expect(audit.proofCardKey, 'timelineProofMoment');
+        expect(audit.guidanceCardKey, isNull);
+      },
+    );
   });
 }

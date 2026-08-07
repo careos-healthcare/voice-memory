@@ -21,10 +21,9 @@ class ArchiveMeProValueSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bodyStyle = ArchiveMobileTypography.body(context).copyWith(
-      color: AppColors.textPrimary,
-      height: 1.35,
-    );
+    final bodyStyle = ArchiveMobileTypography.body(
+      context,
+    ).copyWith(color: AppColors.textPrimary, height: 1.35);
     final sectionTitleStyle = ArchiveMobileTypography.listTitle(context);
 
     return Container(
@@ -32,43 +31,46 @@ class ArchiveMeProValueSection extends StatelessWidget {
       width: double.infinity,
       padding: EdgeInsets.all(compact ? AppSpacing.sm : AppSpacing.md),
       decoration: VoiceMemoryCards.standard(
-        background: compact ? AppColors.surfaceAlt : const Color(0xFFF8FAF8),
+        background: compact ? AppColors.surfaceAlt : AppColors.surfaceHighlight,
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          if (showTitle) ...[
-            Text(
-              packaging.title,
-              key: const Key('archive_me_pro_value_title'),
-              style: ArchiveMobileTypography.responsiveSectionTitle(context),
-            ),
-            const SizedBox(height: AppSpacing.xs),
-            Text(
-              packaging.subtitle,
-              key: const Key('archive_me_pro_value_subtitle'),
-              style: bodyStyle,
+      child: Semantics(
+        container: true,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            if (showTitle) ...[
+              Text(
+                packaging.title,
+                key: const Key('archive_me_pro_value_title'),
+                style: ArchiveMobileTypography.responsiveSectionTitle(context),
+              ),
+              const SizedBox(height: AppSpacing.xs),
+              Text(
+                packaging.subtitle,
+                key: const Key('archive_me_pro_value_subtitle'),
+                style: bodyStyle,
+              ),
+              SizedBox(height: compact ? AppSpacing.sm : AppSpacing.md),
+            ],
+            _section(
+              context,
+              key: const Key('archive_me_pro_free_section'),
+              title: packaging.free.title,
+              bullets: packaging.free.bullets,
+              titleStyle: sectionTitleStyle,
+              bodyStyle: bodyStyle,
             ),
             SizedBox(height: compact ? AppSpacing.sm : AppSpacing.md),
+            _section(
+              context,
+              key: const Key('archive_me_pro_pro_section'),
+              title: packaging.pro.title,
+              bullets: packaging.pro.bullets,
+              titleStyle: sectionTitleStyle,
+              bodyStyle: bodyStyle,
+            ),
           ],
-          _section(
-            context,
-            key: const Key('archive_me_pro_free_section'),
-            title: packaging.free.title,
-            bullets: packaging.free.bullets,
-            titleStyle: sectionTitleStyle,
-            bodyStyle: bodyStyle,
-          ),
-          SizedBox(height: compact ? AppSpacing.sm : AppSpacing.md),
-          _section(
-            context,
-            key: const Key('archive_me_pro_pro_section'),
-            title: packaging.pro.title,
-            bullets: packaging.pro.bullets,
-            titleStyle: sectionTitleStyle,
-            bodyStyle: bodyStyle,
-          ),
-        ],
+        ),
       ),
     );
   }

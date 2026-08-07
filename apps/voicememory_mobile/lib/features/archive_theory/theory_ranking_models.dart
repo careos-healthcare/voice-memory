@@ -1,5 +1,4 @@
 import '../../models/journal_entry.dart';
-import '../archive_analyst/archive_analyst_models.dart';
 
 /// Result of unified primary theory ranking.
 class TheoryRankingResult {

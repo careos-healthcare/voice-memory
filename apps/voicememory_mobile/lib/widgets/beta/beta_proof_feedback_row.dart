@@ -48,8 +48,8 @@ class BetaProofFeedbackRow extends StatefulWidget {
     this.onNotRelevantAnswered,
     this.store,
     bool answered = false,
-  })  : skipPrefsLoad = true,
-        initialAnswered = answered;
+  }) : skipPrefsLoad = true,
+       initialAnswered = answered;
 
   final BetaProofFeedbackSurface surface;
   final String source;
@@ -92,15 +92,15 @@ class _BetaProofFeedbackRowState extends State<BetaProofFeedbackRow> {
   }
 
   bool get _visible => BetaProofFeedbackEngine.shouldShow(
-        surface: widget.surface,
-        parentVisible: widget.parentVisible,
-        entryCount: widget.entryCount,
-        hasConfirmedRepeat: widget.hasConfirmedRepeat,
-        isRecording: widget.isRecording,
-        isPostSaveDegraded: widget.isPostSaveDegraded,
-        whatChangedQuestionActive: widget.whatChangedQuestionActive,
-        patternReviewInboxHasActiveItems: widget.patternReviewInboxHasActiveItems,
-      );
+    surface: widget.surface,
+    parentVisible: widget.parentVisible,
+    entryCount: widget.entryCount,
+    hasConfirmedRepeat: widget.hasConfirmedRepeat,
+    isRecording: widget.isRecording,
+    isPostSaveDegraded: widget.isPostSaveDegraded,
+    whatChangedQuestionActive: widget.whatChangedQuestionActive,
+    patternReviewInboxHasActiveItems: widget.patternReviewInboxHasActiveItems,
+  );
 
   void _logSeenIfNeeded() {
     if (_seenLogged || _answered || !_visible) return;
@@ -149,10 +149,9 @@ class _BetaProofFeedbackRowState extends State<BetaProofFeedbackRow> {
       );
     }
 
-    final helperStyle = ArchiveMobileTypography.responsiveHelper(context).copyWith(
-      color: AppColors.textSecondary,
-      height: 1.4,
-    );
+    final helperStyle = ArchiveMobileTypography.responsiveHelper(
+      context,
+    ).copyWith(color: AppColors.textSecondary, height: 1.4);
 
     if (_answered) {
       return Padding(
@@ -195,7 +194,8 @@ class _BetaProofFeedbackRowState extends State<BetaProofFeedbackRow> {
             spacing: AppSpacing.xs,
             runSpacing: AppSpacing.xs,
             children: [
-              for (final type in ProofRelevanceRepairCopy.relevanceFeedbackTypes)
+              for (final type
+                  in ProofRelevanceRepairCopy.relevanceFeedbackTypes)
                 TextButton(
                   key: _optionKey(type),
                   style: TextButton.styleFrom(

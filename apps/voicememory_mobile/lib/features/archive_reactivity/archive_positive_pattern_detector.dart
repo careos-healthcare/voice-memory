@@ -1,4 +1,3 @@
-
 import 'archive_display_copy_guard.dart';
 
 enum ArchivePositivePatternSignalType {
@@ -160,43 +159,44 @@ abstract class ArchivePositivePatternDetector {
     final quote = _guardQuote(evidencePhrase);
     return switch (type) {
       ArchivePositivePatternSignalType.pause => _PositiveCopy(
-          title: 'A helpful pattern appeared',
-          nextPrompt: 'Record what helped you wait.',
-          confidenceLabel: 'Based on your words',
-          evidenceTemplate: "The strongest clue is: '$quote'.",
-        ),
+        title: 'A helpful pattern appeared',
+        nextPrompt: 'Record what helped you wait.',
+        confidenceLabel: 'Based on your words',
+        evidenceTemplate: "The strongest clue is: '$quote'.",
+      ),
       ArchivePositivePatternSignalType.reducedUrgency => _PositiveCopy(
-          title: 'Urgency may be easing',
-          nextPrompt: 'Record whether this calmer tone comes back next time.',
-          confidenceLabel: 'Early signal',
-          evidenceTemplate: "Your latest recording sounded less urgent: '$quote'.",
-        ),
+        title: 'Urgency may be easing',
+        nextPrompt: 'Record whether this calmer tone comes back next time.',
+        confidenceLabel: 'Early signal',
+        evidenceTemplate:
+            "Your latest recording sounded less urgent: '$quote'.",
+      ),
       ArchivePositivePatternSignalType.stoppedSooner => _PositiveCopy(
-          title: 'A helpful pattern appeared',
-          nextPrompt: 'Record what helped you stop sooner.',
-          confidenceLabel: 'Based on your words',
-          evidenceTemplate: "The strongest clue is: '$quote'.",
-        ),
+        title: 'A helpful pattern appeared',
+        nextPrompt: 'Record what helped you stop sooner.',
+        confidenceLabel: 'Based on your words',
+        evidenceTemplate: "The strongest clue is: '$quote'.",
+      ),
       ArchivePositivePatternSignalType.choseDifferentAction => _PositiveCopy(
-          title: 'Something helped',
-          nextPrompt: 'Record what made the different action possible.',
-          confidenceLabel: 'Based on your words',
-          evidenceTemplate:
-              'Your recording mentioned a pause, delay, or different action: '
-              "'$quote'.",
-        ),
+        title: 'Something helped',
+        nextPrompt: 'Record what made the different action possible.',
+        confidenceLabel: 'Based on your words',
+        evidenceTemplate:
+            'Your recording mentioned a pause, delay, or different action: '
+            "'$quote'.",
+      ),
       ArchivePositivePatternSignalType.completedAction => _PositiveCopy(
-          title: 'A helpful pattern appeared',
-          nextPrompt: 'Record what helped you follow through.',
-          confidenceLabel: 'Early signal',
-          evidenceTemplate: "The strongest clue is: '$quote'.",
-        ),
+        title: 'A helpful pattern appeared',
+        nextPrompt: 'Record what helped you follow through.',
+        confidenceLabel: 'Early signal',
+        evidenceTemplate: "The strongest clue is: '$quote'.",
+      ),
       ArchivePositivePatternSignalType.askedForSupport => _PositiveCopy(
-          title: 'Something helped',
-          nextPrompt: 'Record what made reaching out possible.',
-          confidenceLabel: 'Based on your words',
-          evidenceTemplate: "Your recording mentioned support: '$quote'.",
-        ),
+        title: 'Something helped',
+        nextPrompt: 'Record what made reaching out possible.',
+        confidenceLabel: 'Based on your words',
+        evidenceTemplate: "Your recording mentioned support: '$quote'.",
+      ),
       ArchivePositivePatternSignalType.unclearHelpfulSignal => null,
     };
   }

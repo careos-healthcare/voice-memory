@@ -9,7 +9,6 @@ import 'package:voicememory_mobile/features/low_evidence/low_evidence_model.dart
 import 'package:voicememory_mobile/features/post_save/post_save_recorded_summary_copy.dart';
 import 'package:voicememory_mobile/features/record_capture_modes/record_capture_mode_copy.dart';
 import 'package:voicememory_mobile/features/record_capture_modes/record_capture_mode_engine.dart';
-import 'package:voicememory_mobile/features/voice_capture/record_microphone_permission_ui.dart';
 import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/product/consumer_ui_copy.dart';
@@ -21,6 +20,7 @@ import 'package:voicememory_mobile/widgets/record/low_evidence_guidance_card.dar
 import 'package:voicememory_mobile/widgets/record/post_save_recorded_summary_card.dart';
 
 import 'support/memory_pressure_stores.dart';
+import 'support/test_storage_sandbox.dart';
 
 JournalEntry _entry({
   required String id,
@@ -30,7 +30,8 @@ JournalEntry _entry({
   return JournalEntry(
     id: id,
     createdAt: createdAt ?? DateTime(2026, 6, 12, 10),
-    transcript: transcript ??
+    transcript:
+        transcript ??
         'A long enough transcript to count as a saved reflection for tests.',
     durationSeconds: 30,
     reflection: const Reflection(
@@ -44,10 +45,12 @@ JournalEntry _entry({
   );
 }
 
+late TestStorageSandbox _sandbox;
+
 Future<void> _resetServices() async {
   await AppServices.resetForTest(
-    journalPath: '${DateTime.now().microsecondsSinceEpoch}_journal.json',
-    prefsPath: '${DateTime.now().microsecondsSinceEpoch}_prefs.json',
+    journalPath: _sandbox.journalPath,
+    prefsPath: _sandbox.prefsPath,
     skipRevenueCat: true,
   );
 }
@@ -87,19 +90,15 @@ Future<void> _pumpRecordReady(
 
 void main() {
   setUp(() async {
+    _sandbox = TestStorageSandbox.create();
     await _resetServices();
   });
 
+  tearDown(() => _sandbox.dispose());
   group('LowEvidenceEngine', () {
     test('zero entries returns null', () {
-      expect(
-        LowEvidenceEngine.buildForRecordReady(entries: const []),
-        isNull,
-      );
-      expect(
-        LowEvidenceEngine.buildForPatternsTab(entries: const []),
-        isNull,
-      );
+      expect(LowEvidenceEngine.buildForRecordReady(entries: const []), isNull);
+      expect(LowEvidenceEngine.buildForPatternsTab(entries: const []), isNull);
     });
 
     test('one real entry shows archive started copy', () {
@@ -203,10 +202,7 @@ void main() {
       );
 
       expect(FirstProofMomentEngine.build(entries: entries), isNotNull);
-      expect(
-        LowEvidenceEngine.buildForRecordReady(entries: entries),
-        isNull,
-      );
+      expect(LowEvidenceEngine.buildForRecordReady(entries: entries), isNull);
     });
 
     test('copy does not expose internal quality labels', () {
@@ -244,9 +240,7 @@ void main() {
 
       await tester.pumpWidget(
         const MaterialApp(
-          home: Scaffold(
-            body: LowEvidenceGuidanceCard(guidance: guidance),
-          ),
+          home: Scaffold(body: LowEvidenceGuidanceCard(guidance: guidance)),
         ),
       );
 
@@ -292,9 +286,7 @@ void main() {
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
-            body: PatternsEvidenceQualityFallbackView(
-              lowEvidence: guidance,
-            ),
+            body: PatternsEvidenceQualityFallbackView(lowEvidence: guidance),
           ),
         ),
       );
@@ -315,10 +307,7 @@ void main() {
     testWidgets('one entry ready shows archive started card and mic CTA', (
       tester,
     ) async {
-      await _pumpRecordReady(
-        tester,
-        entries: [_entry(id: 'a')],
-      );
+      await _pumpRecordReady(tester, entries: [_entry(id: 'a')]);
 
       expect(
         find.byKey(const Key('low_evidence_guidance_card_oneRealEntry')),

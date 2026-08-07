@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
-import 'package:voicememory_mobile/api/api_client.dart';
+import 'helpers/test_billing_service.dart';
 import 'package:voicememory_mobile/billing/billing_service.dart';
 import 'package:voicememory_mobile/billing/paywall_rejection_reason.dart';
 import 'package:voicememory_mobile/billing/paywall_unavailable_state.dart';
@@ -58,20 +58,25 @@ class _FakeStoreBilling implements StoreBillingPort {
 
 void main() {
   group('PaywallUnavailableState', () {
-    test('primary dismiss label is Continue without Pro when benefits hidden', () {
-      expect(
-        PaywallUnavailableState.primaryDismissLabel(hideBenefits: true),
-        PaywallUnavailableState.continueWithoutProLabel,
-      );
-      expect(
-        PaywallUnavailableState.primaryDismissLabel(hideBenefits: false),
-        PaywallUnavailableState.doneLabel,
-      );
-    });
+    test(
+      'primary dismiss label is Continue without Pro when benefits hidden',
+      () {
+        expect(
+          PaywallUnavailableState.primaryDismissLabel(hideBenefits: true),
+          PaywallUnavailableState.continueWithoutProLabel,
+        );
+        expect(
+          PaywallUnavailableState.primaryDismissLabel(hideBenefits: false),
+          PaywallUnavailableState.doneLabel,
+        );
+      },
+    );
   });
 
   group('PaywallUnavailableFallback widget', () {
-    testWidgets('Continue without Pro dismisses without purchase', (tester) async {
+    testWidgets('Continue without Pro dismisses without purchase', (
+      tester,
+    ) async {
       var dismissed = false;
       await tester.pumpWidget(
         MaterialApp(
@@ -137,7 +142,9 @@ void main() {
       expect(retried, isTrue);
     });
 
-    testWidgets('Try again shows inline spinner while retrying', (tester) async {
+    testWidgets('Try again shows inline spinner while retrying', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -188,13 +195,14 @@ void main() {
       PaywallRejectionCapture.resetSessionForTest();
       PaywallRejectionCapture.promptShownThisSession = true;
       RevenueCatService.fetchOfferingsOverrideForTest = () async => null;
-      tempDir = await Directory.systemTemp.createTemp('paywall_unavailable_btns');
+      tempDir = await Directory.systemTemp.createTemp(
+        'paywall_unavailable_btns',
+      );
       store = _FakeStoreBilling(configured: true);
       restoreFlow = RestorePurchasesFlow(
-        billing: BillingService(
-          ApiClient(baseUrl: 'http://test.invalid'),
-          await EntitlementCache.open('${tempDir.path}/entitlements.json'),
-          store,
+        billing: createBillingServiceForTest(
+          cache: await EntitlementCache.open('${tempDir.path}/entitlements.json'),
+          revenueCat: store,
         ),
         isBillingConfigured: () => true,
       );
@@ -241,8 +249,12 @@ void main() {
       await tester.pump();
       for (var i = 0; i < 300; i++) {
         await tester.pump(const Duration(milliseconds: 50));
-        final loading = find.byType(CircularProgressIndicator).evaluate().isNotEmpty;
-        final unavailable = find
+        final loading = find
+            .byType(CircularProgressIndicator)
+            .evaluate()
+            .isNotEmpty;
+        final unavailable =
+            find
                 .byKey(const Key('paywall_unavailable_body'))
                 .evaluate()
                 .isNotEmpty ||
@@ -272,10 +284,7 @@ void main() {
         final unavailableBody = tester
             .widget<Text>(find.byKey(const Key('paywall_unavailable_body')))
             .data!;
-        expect(
-          unavailableBody,
-          contains(SubscriptionCopy.paywallNoOfferings),
-        );
+        expect(unavailableBody, contains(SubscriptionCopy.paywallNoOfferings));
         expect(
           unavailableBody,
           contains(ConsumerUiCopy.paywallUnavailablePlansLoading),
@@ -322,11 +331,17 @@ void main() {
       await tester.pump();
       for (var i = 0; i < 300; i++) {
         await tester.pump(const Duration(milliseconds: 50));
-        if (find.text(PaywallUnavailableState.continueWithoutProLabel).evaluate().isNotEmpty) {
+        if (find
+            .text(PaywallUnavailableState.continueWithoutProLabel)
+            .evaluate()
+            .isNotEmpty) {
           break;
         }
       }
-      expect(find.text(PaywallUnavailableState.continueWithoutProLabel), findsOneWidget);
+      expect(
+        find.text(PaywallUnavailableState.continueWithoutProLabel),
+        findsOneWidget,
+      );
 
       await tester.tap(
         find.byKey(const Key('paywall_unavailable_continue_without_pro')),
@@ -355,11 +370,16 @@ void main() {
       expect(store.purchaseCalls, 0);
     });
 
-    testWidgets('Try again reloads offerings without purchasing', (tester) async {
+    testWidgets('Try again reloads offerings without purchasing', (
+      tester,
+    ) async {
       RevenueCatService.fetchOfferingsOverrideForTest = () async => null;
       await pumpUnavailablePaywall(tester, billingReady: true);
 
-      expect(find.byKey(const Key('paywall_unavailable_try_again')), findsOneWidget);
+      expect(
+        find.byKey(const Key('paywall_unavailable_try_again')),
+        findsOneWidget,
+      );
       await tester.tap(find.byKey(const Key('paywall_unavailable_try_again')));
       await tester.pump();
       await tester.pump(const Duration(seconds: 25));
@@ -392,10 +412,7 @@ void main() {
     ) async {
       await pumpUnavailablePaywall(tester, billingReady: false);
 
-      expect(
-        find.byKey(const Key('paywall_unavailable_body')),
-        findsOneWidget,
-      );
+      expect(find.byKey(const Key('paywall_unavailable_body')), findsOneWidget);
       final unavailableBody = tester
           .widget<Text>(find.byKey(const Key('paywall_unavailable_body')))
           .data!;
@@ -411,7 +428,10 @@ void main() {
         find.text(PaywallUnavailableState.continueWithoutProLabel),
         findsOneWidget,
       );
-      expect(find.byKey(const Key('paywall_unavailable_try_again')), findsNothing);
+      expect(
+        find.byKey(const Key('paywall_unavailable_try_again')),
+        findsNothing,
+      );
     });
 
     test('ProPackagingCopy exposes continue without Pro label', () {
@@ -426,9 +446,15 @@ void main() {
     ) async {
       await pumpUnavailablePaywall(tester, billingReady: false);
 
-      expect(find.byKey(const Key('paywall_subscription_details')), findsOneWidget);
+      expect(
+        find.byKey(const Key('paywall_subscription_details')),
+        findsOneWidget,
+      );
       expect(find.text(ArchiveLoopPaywallCopy.eulaLabel), findsOneWidget);
-      expect(find.text(ArchiveLoopPaywallCopy.privacyPolicyLabel), findsOneWidget);
+      expect(
+        find.text(ArchiveLoopPaywallCopy.privacyPolicyLabel),
+        findsOneWidget,
+      );
       expect(
         find.text(ArchiveLoopPaywallCopy.subscriptionPlansUnavailable),
         findsOneWidget,

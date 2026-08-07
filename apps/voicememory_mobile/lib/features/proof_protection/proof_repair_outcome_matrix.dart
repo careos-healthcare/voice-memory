@@ -33,33 +33,29 @@ abstract final class ProofRepairOutcomeMatrix {
     );
   }
 
-  static int evidenceTrailClearTargetFor(int totalTesters) =>
-      _scaledTarget(
-        totalTesters: totalTesters,
-        numerator: evidenceTrailClearNumerator,
-        denominator: scaleDenominator,
-      );
+  static int evidenceTrailClearTargetFor(int totalTesters) => _scaledTarget(
+    totalTesters: totalTesters,
+    numerator: evidenceTrailClearNumerator,
+    denominator: scaleDenominator,
+  );
 
-  static int understandsProTargetFor(int totalTesters) =>
-      _scaledTarget(
-        totalTesters: totalTesters,
-        numerator: understandsProNumerator,
-        denominator: scaleDenominator,
-      );
+  static int understandsProTargetFor(int totalTesters) => _scaledTarget(
+    totalTesters: totalTesters,
+    numerator: understandsProNumerator,
+    denominator: scaleDenominator,
+  );
 
-  static int paywallCtaTapTargetFor(int totalTesters) =>
-      _scaledTarget(
-        totalTesters: totalTesters,
-        numerator: paywallCtaTapNumerator,
-        denominator: scaleDenominator,
-      );
+  static int paywallCtaTapTargetFor(int totalTesters) => _scaledTarget(
+    totalTesters: totalTesters,
+    numerator: paywallCtaTapNumerator,
+    denominator: scaleDenominator,
+  );
 
-  static int wouldPayTargetFor(int totalTesters) =>
-      _scaledTarget(
-        totalTesters: totalTesters,
-        numerator: wouldPayNumerator,
-        denominator: scaleDenominator,
-      );
+  static int wouldPayTargetFor(int totalTesters) => _scaledTarget(
+    totalTesters: totalTesters,
+    numerator: wouldPayNumerator,
+    denominator: scaleDenominator,
+  );
 
   static ProofRepairOutcomeDecision resolve(ProofRepairOutcomeSummary summary) {
     if (summary.totalTesters < minimumTesterCount) {
@@ -103,8 +99,7 @@ abstract final class ProofRepairOutcomeMatrix {
     required int totalTesters,
     required int numerator,
     required int denominator,
-  }) =>
-      ((numerator * totalTesters) / denominator).ceil();
+  }) => ((numerator * totalTesters) / denominator).ceil();
 }
 
 enum ProofRepairOutcomeDecision {

@@ -27,12 +27,31 @@ export interface SyncManifest {
   userId: string;
   version: number;
   updatedAt: string;
+  /** Monotonic change-log head — clients store this as the incremental pull cursor. */
+  latestSequence: number;
   blobs: Array<{
     id: string;
     type: SyncBlobType;
     updatedAt: string;
     byteLength: number;
   }>;
+}
+
+export type SyncChangeKind = "upsert" | "delete";
+
+export interface SyncChangeRecord {
+  sequence: number;
+  blobType: SyncBlobType;
+  blobId: string;
+  changeKind: SyncChangeKind;
+  updatedAt: string;
+  tombstone: boolean;
+}
+
+export interface SyncChangesResponse {
+  latestSequence: number;
+  changes: SyncChangeRecord[];
+  blobs: SyncBlobRecord[];
 }
 
 /** Legacy v1 bundle — upgraded to SyncContinuityModel on read. */

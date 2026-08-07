@@ -40,6 +40,7 @@ extension _RecordingTranscriptionStateActions on _RecordScreenState {
 
   Future<void> _openPendingTranscriptRecoveryForLastVoiceEntry() async {
     if (_entriesAfterSave.isEmpty) return;
+    _recoveryController.showPendingTranscriptRecovery();
     final entry = _lastSavedEntry!;
     final result = await PendingTranscriptRecovery.open(
       context,
@@ -47,6 +48,7 @@ extension _RecordingTranscriptionStateActions on _RecordScreenState {
       source: 'record_post_save',
       entryCount: _entriesAfterSave.length,
     );
+    _recoveryController.hidePendingTranscriptRecovery();
     if (result == null || !mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text(PendingTranscriptRecoveryCopy.savedSuccess)),
@@ -86,7 +88,7 @@ extension _RecordingTranscriptionStateActions on _RecordScreenState {
   }
 
   Future<void> _refreshAfterTranscriptCorrection(JournalEntry corrected) async {
-    final all = await AppServices.instance.journalStore.loadAll();
+    final all = await _accountDeps.journalStore.loadAll();
     if (!mounted) return;
     _setRecordingState(() {
       _journalEntries = all;
@@ -97,6 +99,9 @@ extension _RecordingTranscriptionStateActions on _RecordScreenState {
       }
     });
   }
+
+  JournalEntry? get _lastSavedEntry =>
+      _entriesAfterSave.isNotEmpty ? _entriesAfterSave.first : null;
 
   bool get _auditDegradedVoicePostSave {
     if (!VisualAuditOverrides.active) return false;
@@ -138,39 +143,28 @@ extension _RecordingTranscriptionStateActions on _RecordScreenState {
       if (!recordingExists ||
           await result.file.length() < VoiceCaptureQuality.minAudioBytes) {
         if (recordingExists) {
-          final vault = AppServices.instance.journalAudioVault;
-          if (vault != null) {
-            await vault.secureDeletePlaintext(result.file);
-          } else {
-            await result.file.delete();
-          }
+          await result.file.delete();
         }
         throw CapturePipelineFailure(VoiceCaptureCopy.notEnoughAudio);
       }
-      _setRecordingState(() => _stageLabel = 'Saving audio safely…');
-      final job = await AppServices.instance.transcriptionLedger.enqueue(
-        result.file,
+      final pipelineResult = await _accountDeps.pipeline.run(
+        audioFile: result.file,
         durationSeconds: result.durationSeconds,
+        onStage: (stage) {
+          if (!mounted) return;
+          _setRecordingState(() {
+            _stageLabel = switch (stage) {
+              PipelineStage.attesting => 'Uploading audio…',
+              PipelineStage.transcribing => 'Transcribing…',
+              PipelineStage.analyzing => 'Finding patterns…',
+              PipelineStage.saving => 'Saving…',
+              PipelineStage.done => 'Done',
+            };
+          });
+        },
       );
-      _pendingForegroundEntryIds.add(job.entryId);
-      _pendingForegroundMedia[job.entryId] = List.of(_captureAttachments);
       if (!mounted) return;
-      _setRecordingState(() {
-        _captureAttachments = const [];
-        _ui = RecordUiState.ready;
-        _recordingState.resetTimer();
-        _stageLabel = '';
-        _error = null;
-      });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            appLocalizationsOf(context).recordingSavedBackgroundTranscription,
-          ),
-        ),
-      );
-      unawaited(AppServices.instance.transcriptionQueueExecutor.drain());
-      unawaited(AppServices.instance.transcriptionWorkScheduler.schedule());
+      await _finishSuccessfulCapture(pipelineResult);
     } on CapturePipelineFailure catch (e) {
       if (e.message == VoiceCaptureCopy.notEnoughAudio) {
         _setRecordingState(() {
@@ -206,39 +200,9 @@ extension _RecordingTranscriptionStateActions on _RecordScreenState {
     }
   }
 
-  Future<void> _handleForegroundTranscriptionCompletion(
-    TranscriptionQueueCompletion completion,
-  ) async {
-    if (!_pendingForegroundEntryIds.remove(completion.job.entryId) ||
-        !mounted) {
-      return;
-    }
-    final attachments = _pendingForegroundMedia.remove(completion.job.entryId);
-    if (_ui != RecordUiState.ready) {
-      if (attachments?.isNotEmpty == true) {
-        await AppServices.instance.journalStore.save(
-          completion.result.entry.copyWith(
-            mediaAttachments: [
-              ...completion.result.entry.mediaAttachments,
-              ...attachments!,
-            ],
-          ),
-          first25Source: 'record_media_attachment',
-        );
-      }
-      await _loadJournalEntryCount();
-      return;
-    }
-    await _finishSuccessfulCapture(
-      completion.result,
-      mediaAttachments: attachments,
-    );
-  }
-
   Future<void> _finishSuccessfulCapture(
-    CapturePipelineResult pipelineResult, {
-    List<MediaAttachment>? mediaAttachments,
-  }) async {
+    CapturePipelineResult pipelineResult,
+  ) async {
     final savedFromTriggerPrompt = ConfirmedRepeatTriggerCapture.resolveSave(
       capturePrompt: _selectedPromptLine,
     );
@@ -248,28 +212,8 @@ extension _RecordingTranscriptionStateActions on _RecordScreenState {
             capturePrompt: _selectedPromptLine,
           );
     final cloudOk = pipelineResult.syncSucceeded;
-    var savedEntry = pipelineResult.entry;
-    final pendingAttachments = List<MediaAttachment>.of(
-      mediaAttachments ?? _captureAttachments,
-    );
-    if (pendingAttachments.isNotEmpty) {
-      savedEntry = savedEntry.copyWith(
-        mediaAttachments: [
-          ...savedEntry.mediaAttachments,
-          ...pendingAttachments,
-        ],
-      );
-      await AppServices.instance.journalStore.save(
-        savedEntry,
-        first25Source: 'record_media_attachment',
-      );
-      if (mediaAttachments == null && mounted) {
-        _setRecordingState(() => _captureAttachments = const []);
-      } else if (mediaAttachments == null) {
-        _captureAttachments = const [];
-      }
-    }
-    final all = await AppServices.instance.journal.loadAll();
+    final savedEntry = pipelineResult.entry;
+    final all = await _accountDeps.journal.loadAll();
     final hasSavedTranscript = VoiceCaptureQuality.hasUsableSpokenText(
       savedEntry,
     );
@@ -282,7 +226,7 @@ extension _RecordingTranscriptionStateActions on _RecordScreenState {
       priorEntries: priorEntries,
     );
 
-    final prefs = AppServices.instance.prefs;
+    final prefs = _accountDeps.prefs;
     final discoveryFuture = const DailyDiscoveryEngine()
         .detectImmediateDiscovery(
           store: DailyDiscoveryStore(prefs),
@@ -330,14 +274,12 @@ extension _RecordingTranscriptionStateActions on _RecordScreenState {
     final languageCode = detected.uiLanguageCode;
     unawaited(
       ReflectionLanguageStore(
-        AppServices.instance.prefs,
+        _accountDeps.prefs,
       ).recordDetection(detected, originalText: latestReflectionText),
     );
     final inputQuality = assessReflectionQuality(latestReflectionText);
     unawaited(
-      InputQualityStore(
-        AppServices.instance.prefs,
-      ).recordAssessment(inputQuality),
+      InputQualityStore(_accountDeps.prefs).recordAssessment(inputQuality),
     );
 
     if (!mounted) return;
@@ -505,11 +447,9 @@ extension _RecordingTranscriptionStateActions on _RecordScreenState {
         all.last,
         alternativeIndex: _firstSessionAlternativeIndex,
       );
-      if (firstPattern != null) {
-        await FirstLoopActivationCoordinator.markFirstPatternShown(
-          firstPattern.title,
-        );
-      }
+      await FirstLoopActivationCoordinator.markFirstPatternShown(
+        firstPattern.title,
+      );
     }
 
     ReturnComparison? comparison;
@@ -613,7 +553,6 @@ extension _RecordingTranscriptionStateActions on _RecordScreenState {
     });
     await _loadFirstThreeJourney();
     unawaited(_loadSignalArchive());
-    unawaited(_handlePostSavePatternComparison(all));
   }
 
   void _trackInstantReflectionSurfaced(InstantReflectionResponse? response) {
@@ -633,9 +572,7 @@ extension _RecordingTranscriptionStateActions on _RecordScreenState {
 
   void _onInputQualityUseAnyway() {
     _setRecordingState(() => _inputQualityResolved = true);
-    unawaited(
-      InputQualityStore(AppServices.instance.prefs).recordAcceptedWeak(),
-    );
+    unawaited(InputQualityStore(_accountDeps.prefs).recordAcceptedWeak());
   }
 
   void _onLanguageSelected(String code) {
@@ -643,16 +580,14 @@ extension _RecordingTranscriptionStateActions on _RecordScreenState {
     _setRecordingState(() => _languageCode = code);
     if (AppServices.isInitialized) {
       unawaited(
-        ReflectionLanguageStore(
-          AppServices.instance.prefs,
-        ).recordOverride(code),
+        ReflectionLanguageStore(_accountDeps.prefs).recordOverride(code),
       );
     }
   }
 
   Future<void> _onInputQualityAddSentence(String combinedText) async {
     final quality = assessReflectionQuality(combinedText);
-    final store = InputQualityStore(AppServices.instance.prefs);
+    final store = InputQualityStore(_accountDeps.prefs);
     await store.recordSharpened();
     await store.recordAssessment(quality);
     if (!mounted) return;

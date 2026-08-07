@@ -15,10 +15,7 @@ import 'package:voicememory_mobile/widgets/beta/beta_conversion_diagnosis_card.d
 BetaConversionDiagnosisResult _resultFrom(BetaConversionDiagnosisInput input) =>
     BetaConversionDiagnosisEngine.buildFromInput(input);
 
-bool _hasDiagnosis(
-  BetaConversionDiagnosisResult result,
-  String message,
-) =>
+bool _hasDiagnosis(BetaConversionDiagnosisResult result, String message) =>
     result.diagnoses.any((item) => item.message == message);
 
 Future<void> _pumpCard(
@@ -29,11 +26,7 @@ Future<void> _pumpCard(
   await tester.pumpWidget(
     MaterialApp(
       theme: AppTheme.light(),
-      home: Scaffold(
-        body: BetaConversionDiagnosisCard(
-          resultOverride: result,
-        ),
-      ),
+      home: Scaffold(body: BetaConversionDiagnosisCard(resultOverride: result)),
     ),
   );
   await tester.pump();
@@ -215,30 +208,36 @@ void main() {
       );
     });
 
-    test('return after proof below threshold shows return-after-proof diagnosis', () {
-      final result = _resultFrom(
-        const BetaConversionDiagnosisInput(
-          recordScreenSeen: 10,
-          firstMomentSaved: 10,
-          secondMomentSaved: 10,
-          thirdMomentSaved: 10,
-          confirmedRepeatSeen: 10,
-          returnedAfterFirstProof: 1,
-        ),
-      );
-      expect(
-        _hasDiagnosis(result, BetaConversionDiagnosisCopy.returnAfterProofWeak),
-        isTrue,
-      );
-      expect(
-        result.diagnoses.any(
-          (item) =>
-              item.recommendedFixLabel ==
-              BetaConversionDiagnosisCopy.fixReturnAfterProof,
-        ),
-        isTrue,
-      );
-    });
+    test(
+      'return after proof below threshold shows return-after-proof diagnosis',
+      () {
+        final result = _resultFrom(
+          const BetaConversionDiagnosisInput(
+            recordScreenSeen: 10,
+            firstMomentSaved: 10,
+            secondMomentSaved: 10,
+            thirdMomentSaved: 10,
+            confirmedRepeatSeen: 10,
+            returnedAfterFirstProof: 1,
+          ),
+        );
+        expect(
+          _hasDiagnosis(
+            result,
+            BetaConversionDiagnosisCopy.returnAfterProofWeak,
+          ),
+          isTrue,
+        );
+        expect(
+          result.diagnoses.any(
+            (item) =>
+                item.recommendedFixLabel ==
+                BetaConversionDiagnosisCopy.fixReturnAfterProof,
+          ),
+          isTrue,
+        );
+      },
+    );
 
     test('paywall seen below threshold shows Pro bridge diagnosis', () {
       final result = _resultFrom(
@@ -265,31 +264,34 @@ void main() {
       );
     });
 
-    test('purchase CTA below threshold shows paywall paid reason diagnosis', () {
-      final result = _resultFrom(
-        const BetaConversionDiagnosisInput(
-          recordScreenSeen: 10,
-          firstMomentSaved: 10,
-          secondMomentSaved: 10,
-          thirdMomentSaved: 10,
-          confirmedRepeatSeen: 10,
-          paywallSeenAfterProof: 10,
-          purchaseTappedAfterProof: 0,
-        ),
-      );
-      expect(
-        _hasDiagnosis(result, BetaConversionDiagnosisCopy.paidReasonWeak),
-        isTrue,
-      );
-      expect(
-        result.diagnoses.any(
-          (item) =>
-              item.recommendedFixLabel ==
-              BetaConversionDiagnosisCopy.fixPaywallPaidReason,
-        ),
-        isTrue,
-      );
-    });
+    test(
+      'purchase CTA below threshold shows paywall paid reason diagnosis',
+      () {
+        final result = _resultFrom(
+          const BetaConversionDiagnosisInput(
+            recordScreenSeen: 10,
+            firstMomentSaved: 10,
+            secondMomentSaved: 10,
+            thirdMomentSaved: 10,
+            confirmedRepeatSeen: 10,
+            paywallSeenAfterProof: 10,
+            purchaseTappedAfterProof: 0,
+          ),
+        );
+        expect(
+          _hasDiagnosis(result, BetaConversionDiagnosisCopy.paidReasonWeak),
+          isTrue,
+        );
+        expect(
+          result.diagnoses.any(
+            (item) =>
+                item.recommendedFixLabel ==
+                BetaConversionDiagnosisCopy.fixPaywallPaidReason,
+          ),
+          isTrue,
+        );
+      },
+    );
 
     test('each diagnosis includes metric current and target values', () {
       final result = _resultFrom(
@@ -301,11 +303,15 @@ void main() {
         ),
       );
       final diagnosis = result.diagnoses.firstWhere(
-        (item) => item.metricId == BetaConversionDiagnosisMetricId.firstSaveRate,
+        (item) =>
+            item.metricId == BetaConversionDiagnosisMetricId.firstSaveRate,
       );
       expect(diagnosis.currentValueLabel, '20%');
       expect(diagnosis.targetValueLabel, '50%');
-      expect(diagnosis.metricLabel, BetaConversionDiagnosisCopy.metricFirstSaveRate);
+      expect(
+        diagnosis.metricLabel,
+        BetaConversionDiagnosisCopy.metricFirstSaveRate,
+      );
     });
   });
 
@@ -351,7 +357,10 @@ void main() {
       );
       await tester.pump();
 
-      expect(find.byKey(const Key('beta_conversion_diagnosis_hidden')), findsOneWidget);
+      expect(
+        find.byKey(const Key('beta_conversion_diagnosis_hidden')),
+        findsOneWidget,
+      );
       expect(find.text('Beta diagnosis'), findsNothing);
     });
 

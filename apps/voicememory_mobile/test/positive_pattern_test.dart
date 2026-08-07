@@ -21,75 +21,74 @@ JournalEntry _entry({
   required String id,
   required String transcript,
   DateTime? createdAt,
-}) =>
-    JournalEntry(
-      id: id,
-      createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
-      transcript: transcript,
-      durationSeconds: 30,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 2,
-        recurringThemes: ['work'],
-        exactLanguagePattern: '',
-        concreteObservation: 'Work pressure showed up in this moment.',
-        repeatedSignal: '',
-      ),
-    );
+}) => JournalEntry(
+  id: id,
+  createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
+  transcript: transcript,
+  durationSeconds: 30,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 2,
+    recurringThemes: ['work'],
+    exactLanguagePattern: '',
+    concreteObservation: 'Work pressure showed up in this moment.',
+    repeatedSignal: '',
+  ),
+);
 
 List<JournalEntry> _threeWalkEntries() => [
-      _entry(
-        id: 'w1',
-        transcript: 'I walked outside before starting and felt clearer.',
-        createdAt: DateTime(2026, 6, 10, 12),
-      ),
-      _entry(
-        id: 'w2',
-        transcript: 'Work was heavy but I walked outside at lunch.',
-        createdAt: DateTime(2026, 6, 11, 12),
-      ),
-      _entry(
-        id: 'w3',
-        transcript: 'Another stuck day — walked outside when I needed air.',
-        createdAt: DateTime(2026, 6, 12, 12),
-      ),
-    ];
+  _entry(
+    id: 'w1',
+    transcript: 'I walked outside before starting and felt clearer.',
+    createdAt: DateTime(2026, 6, 10, 12),
+  ),
+  _entry(
+    id: 'w2',
+    transcript: 'Work was heavy but I walked outside at lunch.',
+    createdAt: DateTime(2026, 6, 11, 12),
+  ),
+  _entry(
+    id: 'w3',
+    transcript: 'Another stuck day — walked outside when I needed air.',
+    createdAt: DateTime(2026, 6, 12, 12),
+  ),
+];
 
 List<JournalEntry> _threeRelatedRepeatEntries() => [
-      _entry(
-        id: 'e1',
-        transcript:
-            'I had no capacity but I said yes again to the extra meeting today.',
-        createdAt: DateTime(2026, 6, 10, 12),
-      ),
-      _entry(
-        id: 'e2',
-        transcript:
-            'Same thing — said yes when I had no capacity for one more thing.',
-        createdAt: DateTime(2026, 6, 11, 12),
-      ),
-      _entry(
-        id: 'e3',
-        transcript:
-            'I said yes again even though I had no capacity for one more ask.',
-        createdAt: DateTime(2026, 6, 12, 12),
-      ),
-    ];
+  _entry(
+    id: 'e1',
+    transcript:
+        'I had no capacity but I said yes again to the extra meeting today.',
+    createdAt: DateTime(2026, 6, 10, 12),
+  ),
+  _entry(
+    id: 'e2',
+    transcript:
+        'Same thing — said yes when I had no capacity for one more thing.',
+    createdAt: DateTime(2026, 6, 11, 12),
+  ),
+  _entry(
+    id: 'e3',
+    transcript:
+        'I said yes again even though I had no capacity for one more ask.',
+    createdAt: DateTime(2026, 6, 12, 12),
+  ),
+];
 
 List<JournalEntry> _mixedRepeatAndWalkEntries() => [
-      ..._threeRelatedRepeatEntries(),
-      _entry(
-        id: 'w4',
-        transcript: 'I walked outside before replying and it helped.',
-        createdAt: DateTime(2026, 6, 13, 12),
-      ),
-      _entry(
-        id: 'w5',
-        transcript: 'Same week I walked outside again before the hard email.',
-        createdAt: DateTime(2026, 6, 14, 12),
-      ),
-    ];
+  ..._threeRelatedRepeatEntries(),
+  _entry(
+    id: 'w4',
+    transcript: 'I walked outside before replying and it helped.',
+    createdAt: DateTime(2026, 6, 13, 12),
+  ),
+  _entry(
+    id: 'w5',
+    transcript: 'Same week I walked outside again before the hard email.',
+    createdAt: DateTime(2026, 6, 14, 12),
+  ),
+];
 
 void _expectNoDiagnosticLanguage(String copy) {
   final lower = copy.toLowerCase();
@@ -115,9 +114,7 @@ void main() {
 
     test('returns null without enough entries', () {
       expect(
-        PositivePatternEngine.build(
-          entries: _threeWalkEntries().sublist(0, 2),
-        ),
+        PositivePatternEngine.build(entries: _threeWalkEntries().sublist(0, 2)),
         isNull,
       );
     });
@@ -134,15 +131,12 @@ void main() {
         entries: _mixedRepeatAndWalkEntries(),
       );
       expect(result, isNotNull);
-      final repeatPhrases =
-          ConfirmedRepeatEvidencePhraseEngine.extract(_threeRelatedRepeatEntries())
-              .phrases;
+      final repeatPhrases = ConfirmedRepeatEvidencePhraseEngine.extract(
+        _threeRelatedRepeatEntries(),
+      ).phrases;
       for (final evidence in result!.evidencePhrases) {
         for (final repeat in repeatPhrases) {
-          expect(
-            evidence.toLowerCase(),
-            isNot(contains(repeat.toLowerCase())),
-          );
+          expect(evidence.toLowerCase(), isNot(contains(repeat.toLowerCase())));
         }
       }
     });
@@ -267,7 +261,9 @@ void main() {
   });
 
   group('PositivePatternCard', () {
-    testWidgets('renders title, body, evidence, and subtle CTA', (tester) async {
+    testWidgets('renders title, body, evidence, and subtle CTA', (
+      tester,
+    ) async {
       final result = PositivePatternEngine.build(entries: _threeWalkEntries());
       expect(result, isNotNull);
 

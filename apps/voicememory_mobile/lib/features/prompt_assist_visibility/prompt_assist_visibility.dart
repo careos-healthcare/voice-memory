@@ -49,19 +49,20 @@ abstract final class PromptAssistVisibility {
     return _hidden(PromptAssistVisibilityReason.hideNoSafeSignal);
   }
 
-  static PromptAssistVisibilityReport report(PromptAssistVisibilityResult result) =>
-      PromptAssistVisibilityReport(
-        headline: PromptAssistVisibilityCopy.headline,
-        body: PromptAssistVisibilityCopy.body,
-        safeRepeatLine: PromptAssistVisibilityCopy.safeRepeatLine,
-        fallbackLine: PromptAssistVisibilityCopy.fallbackLine,
-        whyLine: PromptAssistVisibilityCopy.whyLine,
-        archiveSignalLine: PromptAssistVisibilityCopy.archiveSignalLine,
-        lowEffortLine: PromptAssistVisibilityCopy.lowEffortLine,
-        notChatLine: PromptAssistVisibilityCopy.notChatLine,
-        guardrail: PromptAssistVisibilityCopy.guardrail,
-        result: result,
-      );
+  static PromptAssistVisibilityReport report(
+    PromptAssistVisibilityResult result,
+  ) => PromptAssistVisibilityReport(
+    headline: PromptAssistVisibilityCopy.headline,
+    body: PromptAssistVisibilityCopy.body,
+    safeRepeatLine: PromptAssistVisibilityCopy.safeRepeatLine,
+    fallbackLine: PromptAssistVisibilityCopy.fallbackLine,
+    whyLine: PromptAssistVisibilityCopy.whyLine,
+    archiveSignalLine: PromptAssistVisibilityCopy.archiveSignalLine,
+    lowEffortLine: PromptAssistVisibilityCopy.lowEffortLine,
+    notChatLine: PromptAssistVisibilityCopy.notChatLine,
+    guardrail: PromptAssistVisibilityCopy.guardrail,
+    result: result,
+  );
 
   static bool _hasSafeRepeatPrompt(PromptAssistVisibilityInput input) =>
       input.hasSafeRepeat &&
@@ -88,21 +89,19 @@ abstract final class PromptAssistVisibility {
   static PromptAssistVisibilityResult _shown({
     required String promptText,
     required PromptAssistVisibilityReason reason,
-  }) =>
-      PromptAssistVisibilityResult(
-        shouldShow: true,
-        promptText: promptText,
-        reason: reason,
-      );
+  }) => PromptAssistVisibilityResult(
+    shouldShow: true,
+    promptText: promptText,
+    reason: reason,
+  );
 
   static PromptAssistVisibilityResult _hidden(
     PromptAssistVisibilityReason reason,
-  ) =>
-      PromptAssistVisibilityResult(
-        shouldShow: false,
-        promptText: '',
-        reason: reason,
-      );
+  ) => PromptAssistVisibilityResult(
+    shouldShow: false,
+    promptText: '',
+    reason: reason,
+  );
 }
 
 enum PromptAssistVisibilitySurface {

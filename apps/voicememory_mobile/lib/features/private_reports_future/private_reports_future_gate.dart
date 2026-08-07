@@ -55,7 +55,9 @@ abstract final class PrivateReportsFutureGate {
     'pro gives you private reports',
   ];
 
-  static PrivateReportsFutureGateResult build(PrivateReportsFutureGateInput input) {
+  static PrivateReportsFutureGateResult build(
+    PrivateReportsFutureGateInput input,
+  ) {
     final rules = _buildRules(input);
     final rulesPass = rules.every(
       (rule) => rule.status == PrivateReportsFutureRuleStatus.pass,
@@ -85,43 +87,44 @@ abstract final class PrivateReportsFutureGate {
     );
   }
 
-  static PrivateReportsFutureGateReport report(PrivateReportsFutureGateResult result) =>
-      PrivateReportsFutureGateReport(
-        headline: PrivateReportsFutureCopy.headline,
-        body: PrivateReportsFutureCopy.body,
-        positioning: PrivateReportsFutureCopy.positioning,
-        orderLine: PrivateReportsFutureCopy.orderLine,
-        guardrail: PrivateReportsFutureCopy.guardrail,
-        result: result,
-      );
+  static PrivateReportsFutureGateReport report(
+    PrivateReportsFutureGateResult result,
+  ) => PrivateReportsFutureGateReport(
+    headline: PrivateReportsFutureCopy.headline,
+    body: PrivateReportsFutureCopy.body,
+    positioning: PrivateReportsFutureCopy.positioning,
+    orderLine: PrivateReportsFutureCopy.orderLine,
+    guardrail: PrivateReportsFutureCopy.guardrail,
+    result: result,
+  );
 
   static PrivateReportsFutureGateInput composeInput({
     bool? firstProofSeen,
     bool? longerProofTrailConverts,
     FirstProofSuccessBetaResult? firstProofSuccessBeta,
     PaidIntentBetaProofResult? paidIntentBeta,
-  }) =>
-      PrivateReportsFutureGateInput(
-        firstProofSeen: firstProofSeen ??
-            _firstProofSeenFrom(firstProofSuccessBeta) ??
-            _firstProofSeenFromPaidIntent(paidIntentBeta),
-        longerProofTrailConverts: longerProofTrailConverts ??
-            _trailConvertsFromFirstProof(firstProofSuccessBeta) ??
-            _trailConvertsFromPaidIntent(paidIntentBeta),
-      );
+  }) => PrivateReportsFutureGateInput(
+    firstProofSeen:
+        firstProofSeen ??
+        _firstProofSeenFrom(firstProofSuccessBeta) ??
+        _firstProofSeenFromPaidIntent(paidIntentBeta),
+    longerProofTrailConverts:
+        longerProofTrailConverts ??
+        _trailConvertsFromFirstProof(firstProofSuccessBeta) ??
+        _trailConvertsFromPaidIntent(paidIntentBeta),
+  );
 
   static PrivateReportsFutureGateInput fromRepoSignals({
     required String privateReportsFutureDocSource,
     required String gateCopySource,
     bool? firstProofSeen,
     bool? longerProofTrailConverts,
-  }) =>
-      PrivateReportsFutureGateInput(
-        firstProofSeen: firstProofSeen,
-        longerProofTrailConverts: longerProofTrailConverts,
-        docListsRules: detectDocListsRules(privateReportsFutureDocSource),
-        guardrailPresentInCopy: detectGuardrailPresentInCopy(gateCopySource),
-      );
+  }) => PrivateReportsFutureGateInput(
+    firstProofSeen: firstProofSeen,
+    longerProofTrailConverts: longerProofTrailConverts,
+    docListsRules: detectDocListsRules(privateReportsFutureDocSource),
+    guardrailPresentInCopy: detectGuardrailPresentInCopy(gateCopySource),
+  );
 
   static bool detectDocListsRules(String docSource) {
     const markers = [
@@ -156,13 +159,17 @@ abstract final class PrivateReportsFutureGate {
     return result.proofWorking;
   }
 
-  static bool? _trailConvertsFromFirstProof(FirstProofSuccessBetaResult? result) {
+  static bool? _trailConvertsFromFirstProof(
+    FirstProofSuccessBetaResult? result,
+  ) {
     if (result == null) return null;
     return result.decision ==
         FirstProofSuccessBetaDecision.proofStrongEnoughForPro;
   }
 
-  static bool? _firstProofSeenFromPaidIntent(PaidIntentBetaProofResult? result) {
+  static bool? _firstProofSeenFromPaidIntent(
+    PaidIntentBetaProofResult? result,
+  ) {
     if (result == null) return null;
     return result.decision != PaidIntentBetaProofDecision.insufficientData &&
         result.decision != PaidIntentBetaProofDecision.proofNotReached;
@@ -184,9 +191,9 @@ abstract final class PrivateReportsFutureGate {
     return [
       _rule(
         id: PrivateReportsFutureRuleId.onlyAfterFirstProof,
-        passes: PrivateReportsFutureCopy.guardrail
-            .toLowerCase()
-            .contains('only after first proof'),
+        passes: PrivateReportsFutureCopy.guardrail.toLowerCase().contains(
+          'only after first proof',
+        ),
       ),
       _rule(
         id: PrivateReportsFutureRuleId.notTherapy,
@@ -206,14 +213,16 @@ abstract final class PrivateReportsFutureGate {
       ),
       _rule(
         id: PrivateReportsFutureRuleId.notPrimaryProPromise,
-        passes: evaluateCopyPassesRules(copyBundle) &&
-            PrivateReportsFutureCopy.guardrail
-                .toLowerCase()
-                .contains('not the primary pro promise'),
+        passes:
+            evaluateCopyPassesRules(copyBundle) &&
+            PrivateReportsFutureCopy.guardrail.toLowerCase().contains(
+              'not the primary pro promise',
+            ),
       ),
       _rule(
         id: PrivateReportsFutureRuleId.futureProAddOnAfterTrailConverts,
-        passes: !(input.longerProofTrailConverts ?? false) ||
+        passes:
+            !(input.longerProofTrailConverts ?? false) ||
             (input.firstProofSeen ?? false),
       ),
     ];
@@ -260,17 +269,16 @@ abstract final class PrivateReportsFutureGate {
   static PrivateReportsFutureRule _rule({
     required PrivateReportsFutureRuleId id,
     required bool passes,
-  }) =>
-      PrivateReportsFutureRule(
-        id: id,
-        label: PrivateReportsFutureCopy.ruleLabelFor(id),
-        status: passes
-            ? PrivateReportsFutureRuleStatus.pass
-            : PrivateReportsFutureRuleStatus.fail,
-        detailLabel: passes
-            ? PrivateReportsFutureCopy.detailPass
-            : PrivateReportsFutureCopy.detailFail,
-      );
+  }) => PrivateReportsFutureRule(
+    id: id,
+    label: PrivateReportsFutureCopy.ruleLabelFor(id),
+    status: passes
+        ? PrivateReportsFutureRuleStatus.pass
+        : PrivateReportsFutureRuleStatus.fail,
+    detailLabel: passes
+        ? PrivateReportsFutureCopy.detailPass
+        : PrivateReportsFutureCopy.detailFail,
+  );
 }
 
 class PrivateReportsFutureGateInput {

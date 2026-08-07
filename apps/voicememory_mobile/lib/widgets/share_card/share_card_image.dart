@@ -131,7 +131,8 @@ class ShareCardImage extends StatelessWidget {
     required String filename,
   }) async {
     final boundary =
-        boundaryKey.currentContext?.findRenderObject() as RenderRepaintBoundary?;
+        boundaryKey.currentContext?.findRenderObject()
+            as RenderRepaintBoundary?;
     if (boundary == null) {
       throw StateError('Share card not ready to render');
     }
@@ -153,8 +154,6 @@ class ShareCardImage extends StatelessWidget {
       boundaryKey: boundaryKey,
       filename: model.pngFilename,
     );
-    await Share.shareXFiles([
-      XFile(file.path, mimeType: 'image/png'),
-    ]);
+    await Share.shareXFiles([XFile(file.path, mimeType: 'image/png')]);
   }
 }

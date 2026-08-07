@@ -5,13 +5,11 @@ abstract final class EarlyArchiveInsightQualityCopy {
   static const repeatFallback =
       'ArchiveMe has seen this come back across 3 moments.';
 
-  static const twoEntryRepeatFallback =
-      'ArchiveMe noticed this came up again.';
+  static const twoEntryRepeatFallback = 'ArchiveMe noticed this came up again.';
 
   static const timelineRepeatFallback = 'Seen across 3 moments.';
 
-  static const triggerFallback =
-      'You recorded what happened right before it.';
+  static const triggerFallback = 'You recorded what happened right before it.';
 
   static const softeningFallback = 'One later entry sounded less urgent.';
 

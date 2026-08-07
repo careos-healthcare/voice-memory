@@ -57,7 +57,8 @@ abstract final class BeliefChangeMomentEngine {
     final earlierPhrase = _foundationPhrase(foundation, eligible);
     if (earlierPhrase == null) return null;
 
-    final resolvedChangeProof = changeProof ??
+    final resolvedChangeProof =
+        changeProof ??
         RepeatReturnCheckEngine.changeProofForReady(
           entryCount: entries.length,
           viewingConfirmedRepeat: viewingConfirmedRepeatOrTimeline,
@@ -65,7 +66,9 @@ abstract final class BeliefChangeMomentEngine {
           isPostSave: isPostSave,
           records: returnChecks,
         );
-    final latestChoice = RepeatReturnCheckTrendEngine.latestChoice(returnChecks);
+    final latestChoice = RepeatReturnCheckTrendEngine.latestChoice(
+      returnChecks,
+    );
     final whatChanged = _latestWhatChangedMarker(entries);
     final patternChanged = PatternChangedEngine.build(
       changeProof: resolvedChangeProof,
@@ -77,7 +80,9 @@ abstract final class BeliefChangeMomentEngine {
       returnChecks: returnChecks,
       helpfulActionCapturedMilestone: helpfulActionCapturedMilestone,
     );
-    final changeNotice = EarlyFirstSignalEngine.buildChangeNotice(entries: entries);
+    final changeNotice = EarlyFirstSignalEngine.buildChangeNotice(
+      entries: entries,
+    );
 
     final changeType = _resolveChangeType(
       latestChoice: latestChoice,
@@ -96,7 +101,8 @@ abstract final class BeliefChangeMomentEngine {
       eligible: eligible,
       latestChoice: latestChoice,
     );
-    if (laterPhrase == null || !_phrasesMeaningfullyDiffer(earlierPhrase, laterPhrase)) {
+    if (laterPhrase == null ||
+        !_phrasesMeaningfullyDiffer(earlierPhrase, laterPhrase)) {
       return null;
     }
 
@@ -115,8 +121,9 @@ abstract final class BeliefChangeMomentEngine {
 
     return BeliefChangeMoment(
       changeType: changeType,
-      earlierBeliefExample:
-          BeliefChangeMomentCopy.formatBeliefExample(earlierPhrase),
+      earlierBeliefExample: BeliefChangeMomentCopy.formatBeliefExample(
+        earlierPhrase,
+      ),
       changeExample: BeliefChangeMomentCopy.formatChangeExample(laterPhrase),
       earlierSnippet: BeliefChangeEvidenceSnippet(
         label: BeliefChangeMomentCopy.earlierLabel,
@@ -185,11 +192,15 @@ abstract final class BeliefChangeMomentEngine {
       if (joined.contains('less urgent')) return true;
     }
     if (eligible.isEmpty) return false;
-    final latestText = ComparableEvidenceText.userText(eligible.last).toLowerCase();
+    final latestText = ComparableEvidenceText.userText(
+      eligible.last,
+    ).toLowerCase();
     return latestText.contains('less urgent');
   }
 
-  static WhatChangedV2Option? _latestWhatChangedMarker(List<JournalEntry> entries) {
+  static WhatChangedV2Option? _latestWhatChangedMarker(
+    List<JournalEntry> entries,
+  ) {
     final ids = entries.map((entry) => entry.id).toSet();
     final marker = WhatChangedV2Store.cached
         .where((record) => ids.contains(record.entryId))
@@ -201,14 +212,16 @@ abstract final class BeliefChangeMomentEngine {
     List<JournalEntry> foundation,
     List<JournalEntry> eligible,
   ) {
-    final shared =
-        ConfirmedRepeatEvidencePhraseEngine.sharedConcretePhrase(foundation);
+    final shared = ConfirmedRepeatEvidencePhraseEngine.sharedConcretePhrase(
+      foundation,
+    );
     if (shared != null && _isGroundedPhrase(shared, eligible)) {
       return PatternNameEngine.displayLabelForGroundedPhrase(shared);
     }
 
-    for (final phrase
-        in ConfirmedRepeatEvidencePhraseEngine.extract(foundation).phrases) {
+    for (final phrase in ConfirmedRepeatEvidencePhraseEngine.extract(
+      foundation,
+    ).phrases) {
       if (_isGroundedPhrase(phrase, eligible)) {
         return PatternNameEngine.displayLabelForGroundedPhrase(phrase);
       }

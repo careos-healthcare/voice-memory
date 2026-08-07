@@ -5,7 +5,6 @@ import 'package:voicememory_mobile/features/archive_home/archive_home_priority_m
 import 'package:voicememory_mobile/features/archive_depth/archive_depth_models.dart';
 import 'package:voicememory_mobile/features/capacity_loop/before_yes_copy.dart';
 import 'package:voicememory_mobile/features/capacity_loop/before_yes_engine.dart';
-import 'package:voicememory_mobile/features/capacity_loop/capacity_cost_models.dart';
 import 'package:voicememory_mobile/features/capacity_loop/capacity_loop_engine.dart';
 import 'package:voicememory_mobile/features/demo/sample_archive_entries.dart';
 import 'package:voicememory_mobile/models/journal_entry.dart';
@@ -34,33 +33,34 @@ const _bannedWords = [
 const _privateSnippet = 'felt pressure at work before saying yes';
 
 JournalEntry _capacityEntry(String id, {String? transcript}) => JournalEntry(
-      id: id,
-      createdAt: DateTime(2026, 6, 12, 12),
-      transcript: transcript ??
-          'I $_privateSnippet again and said yes with no capacity left.',
-      durationSeconds: 30,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 2,
-        recurringThemes: ['work'],
-        exactLanguagePattern: '',
-        concreteObservation: 'Work pressure showed up in this moment.',
-        repeatedSignal: '',
-      ),
-    );
+  id: id,
+  createdAt: DateTime(2026, 6, 12, 12),
+  transcript:
+      transcript ??
+      'I $_privateSnippet again and said yes with no capacity left.',
+  durationSeconds: 30,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 2,
+    recurringThemes: ['work'],
+    exactLanguagePattern: '',
+    concreteObservation: 'Work pressure showed up in this moment.',
+    repeatedSignal: '',
+  ),
+);
 
 BeforeYesPauseResult _visibleResult() => const BeforeYesPauseEngine().build(
-      const BeforeYesPauseInput(
-        capacityWedgeActive: true,
-        sampleMode: false,
-        realSavedMomentCount: 3,
-        capacityEvidenceCount: 3,
-        capacityLoopHasCard: true,
-        costLaterCheckinVisible: false,
-        recordedCostCount: 0,
-      ),
-    );
+  const BeforeYesPauseInput(
+    capacityWedgeActive: true,
+    sampleMode: false,
+    realSavedMomentCount: 3,
+    capacityEvidenceCount: 3,
+    capacityLoopHasCard: true,
+    costLaterCheckinVisible: false,
+    recordedCostCount: 0,
+  ),
+);
 
 void _expectNoBannedCopy(Iterable<String> visible) {
   for (final text in visible) {
@@ -196,7 +196,9 @@ void main() {
     });
 
     test('record handoff uses capacity-specific prompt', () {
-      final route = BeforeYesCopy.recordRouteWithPrompt(BeforeYesCopy.recordPrompt);
+      final route = BeforeYesCopy.recordRouteWithPrompt(
+        BeforeYesCopy.recordPrompt,
+      );
       expect(route, contains(Uri.encodeComponent(BeforeYesCopy.recordPrompt)));
       expect(BeforeYesCopy.recordPrompt, contains('hard to pause'));
     });
@@ -252,7 +254,10 @@ void main() {
       );
       await tester.pump();
 
-      expect(find.byKey(const Key('before_you_say_yes_card_hidden')), findsOneWidget);
+      expect(
+        find.byKey(const Key('before_you_say_yes_card_hidden')),
+        findsOneWidget,
+      );
     });
 
     testWidgets('compact archive card hides inline prompt', (tester) async {
@@ -271,7 +276,10 @@ void main() {
       );
       await tester.pump();
 
-      expect(find.byKey(const Key('before_you_say_yes_card_prompt')), findsNothing);
+      expect(
+        find.byKey(const Key('before_you_say_yes_card_prompt')),
+        findsNothing,
+      );
     });
   });
 
@@ -308,7 +316,10 @@ void main() {
       );
       final ranked = [...plan.primarySections, ...plan.secondarySections];
       expect(ranked, contains(ArchiveHomeSectionId.capacityCostLaterCheckin));
-      expect(ranked, isNot(contains(ArchiveHomeSectionId.beforeYouSayYesPause)));
+      expect(
+        ranked,
+        isNot(contains(ArchiveHomeSectionId.beforeYouSayYesPause)),
+      );
     });
 
     test('before yes ranks after cost check-in when both eligible', () {

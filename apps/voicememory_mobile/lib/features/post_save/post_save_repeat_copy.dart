@@ -18,13 +18,13 @@ class PostSaveRepeatDisplay {
   });
 
   const PostSaveRepeatDisplay.hidden()
-      : show = false,
-        body = '',
-        evidenceLine = null,
-        tomorrowLine = '',
-        confidence = 0,
-        phrase = '',
-        shownKind = 'generic';
+    : show = false,
+      body = '',
+      evidenceLine = null,
+      tomorrowLine = '',
+      confidence = 0,
+      phrase = '',
+      shownKind = 'generic';
 
   final bool show;
   final String body;
@@ -41,8 +41,7 @@ abstract class PostSaveRepeatCopy {
   static const genericBody =
       'This may connect to something you mentioned before.';
   static const similarThemeBody = 'You mentioned a similar theme before.';
-  static const genericTomorrow =
-      'Tomorrow, check whether this comes up again.';
+  static const genericTomorrow = 'Tomorrow, check whether this comes up again.';
 
   static const _priorityPhrases = {
     'said yes again',
@@ -136,9 +135,12 @@ abstract class PostSaveRepeatCopy {
     required String phrase,
     required double confidence,
   }) {
-    final useSpecific = confidence >= 0.75 && _isKnownTheme(phrase, mirror.heroBody);
+    final useSpecific =
+        confidence >= 0.75 && _isKnownTheme(phrase, mirror.heroBody);
     final body = useSpecific ? similarThemeBody : genericBody;
-    final evidence = useSpecific ? _safeEvidenceLine(mirror.evidenceLine) : null;
+    final evidence = useSpecific
+        ? _safeEvidenceLine(mirror.evidenceLine)
+        : null;
     final shownKind = evidence != null ? 'specific' : 'generic';
     final tomorrow = _tomorrowLine(
       mirror.nextQuestion,
@@ -146,11 +148,7 @@ abstract class PostSaveRepeatCopy {
       phrase: phrase,
     );
 
-    _log(
-      confidence: confidence,
-      phrase: phrase,
-      shown: shownKind,
-    );
+    _log(confidence: confidence, phrase: phrase, shown: shownKind);
 
     return PostSaveRepeatDisplay(
       show: true,

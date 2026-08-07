@@ -3,15 +3,11 @@ import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/features/revenue_foundation/revenue_value_copy.dart';
 import 'package:voicememory_mobile/features/revenue_foundation/revenue_value_engine.dart';
-import 'package:voicememory_mobile/features/revenue_foundation/revenue_value_model.dart';
 
 void main() {
   group('RevenueValueCopy', () {
     test('differentiates from chat', () {
-      expect(
-        RevenueValueCopy.chatGptDifferentiationLine,
-        contains('ChatGPT'),
-      );
+      expect(RevenueValueCopy.chatGptDifferentiationLine, contains('ChatGPT'));
       expect(RevenueValueCopy.comparesMomentsLine, contains('not a chat'));
       expect(
         RevenueValueCopy.positioningHeadline,
@@ -111,23 +107,25 @@ void main() {
   });
 
   group('Protected areas', () {
-    test('revenue foundation files do not touch billing or protected integrations',
-        () {
-      const paths = [
-        'lib/features/revenue_foundation/revenue_value_copy.dart',
-        'lib/features/revenue_foundation/revenue_value_model.dart',
-        'lib/features/revenue_foundation/revenue_value_engine.dart',
-      ];
-      for (final path in paths) {
-        final source = File(path).readAsStringSync().toLowerCase();
-        expect(source.contains('revenuecat'), isFalse, reason: path);
-        expect(source.contains('restorepurchases'), isFalse, reason: path);
-        expect(source.contains('productid'), isFalse, reason: path);
-        expect(source.contains('entitlement'), isFalse, reason: path);
-        expect(source.contains('journalstore.save'), isFalse, reason: path);
-        expect(source.contains('backend'), isFalse, reason: path);
-        expect(source.contains('firebase'), isFalse, reason: path);
-      }
-    });
+    test(
+      'revenue foundation files do not touch billing or protected integrations',
+      () {
+        const paths = [
+          'lib/features/revenue_foundation/revenue_value_copy.dart',
+          'lib/features/revenue_foundation/revenue_value_model.dart',
+          'lib/features/revenue_foundation/revenue_value_engine.dart',
+        ];
+        for (final path in paths) {
+          final source = File(path).readAsStringSync().toLowerCase();
+          expect(source.contains('revenuecat'), isFalse, reason: path);
+          expect(source.contains('restorepurchases'), isFalse, reason: path);
+          expect(source.contains('productid'), isFalse, reason: path);
+          expect(source.contains('entitlement'), isFalse, reason: path);
+          expect(source.contains('journalstore.save'), isFalse, reason: path);
+          expect(source.contains('backend'), isFalse, reason: path);
+          expect(source.contains('firebase'), isFalse, reason: path);
+        }
+      },
+    );
   });
 }

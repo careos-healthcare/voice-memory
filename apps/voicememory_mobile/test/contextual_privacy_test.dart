@@ -27,58 +27,58 @@ import 'package:voicememory_mobile/widgets/common/contextual_privacy_reassurance
 import 'package:voicememory_mobile/widgets/patterns/belief_change_moment_card.dart';
 import 'package:voicememory_mobile/widgets/patterns/pattern_detail_sheet.dart';
 import 'package:voicememory_mobile/widgets/record/first_proof_payoff_card.dart';
+import 'support/test_storage_sandbox.dart';
 
 JournalEntry _entry({
   required String id,
   required String transcript,
   DateTime? createdAt,
-}) =>
-    JournalEntry(
-      id: id,
-      createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
-      transcript: transcript,
-      durationSeconds: 30,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 2,
-        recurringThemes: ['work'],
-        exactLanguagePattern: '',
-        concreteObservation: 'Work pressure showed up in this moment.',
-        repeatedSignal: '',
-      ),
-    );
+}) => JournalEntry(
+  id: id,
+  createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
+  transcript: transcript,
+  durationSeconds: 30,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 2,
+    recurringThemes: ['work'],
+    exactLanguagePattern: '',
+    concreteObservation: 'Work pressure showed up in this moment.',
+    repeatedSignal: '',
+  ),
+);
 
 List<JournalEntry> _threeRelatedRepeatEntries() => [
-      _entry(
-        id: 'e1',
-        transcript:
-            'I had no capacity but I said yes again to the extra meeting today.',
-        createdAt: DateTime(2026, 6, 10, 12),
-      ),
-      _entry(
-        id: 'e2',
-        transcript:
-            'Same thing — said yes when I had no capacity for one more thing.',
-        createdAt: DateTime(2026, 6, 11, 12),
-      ),
-      _entry(
-        id: 'e3',
-        transcript:
-            'I said yes again even though I had no capacity for one more ask.',
-        createdAt: DateTime(2026, 6, 12, 12),
-      ),
-    ];
+  _entry(
+    id: 'e1',
+    transcript:
+        'I had no capacity but I said yes again to the extra meeting today.',
+    createdAt: DateTime(2026, 6, 10, 12),
+  ),
+  _entry(
+    id: 'e2',
+    transcript:
+        'Same thing — said yes when I had no capacity for one more thing.',
+    createdAt: DateTime(2026, 6, 11, 12),
+  ),
+  _entry(
+    id: 'e3',
+    transcript:
+        'I said yes again even though I had no capacity for one more ask.',
+    createdAt: DateTime(2026, 6, 12, 12),
+  ),
+];
 
 List<JournalEntry> _fourWithDifferentLatestPhrase() => [
-      ..._threeRelatedRepeatEntries(),
-      _entry(
-        id: 'e4',
-        transcript:
-            'I checked my calendar before answering when they asked me to take on more work.',
-        createdAt: DateTime(2026, 6, 13, 12),
-      ),
-    ];
+  ..._threeRelatedRepeatEntries(),
+  _entry(
+    id: 'e4',
+    transcript:
+        'I checked my calendar before answering when they asked me to take on more work.',
+    createdAt: DateTime(2026, 6, 13, 12),
+  ),
+];
 
 BeliefChangeMoment _requireBeliefChangeMoment() {
   final moment = BeliefChangeMomentEngine.build(
@@ -107,16 +107,19 @@ PatternDetailResult _patternDetailFor(List<JournalEntry> entries) {
 }
 
 void main() {
+  late TestStorageSandbox sandbox;
   setUp(() async {
+    sandbox = TestStorageSandbox.create();
     ContextualPrivacyAnalytics.resetForTest();
     ActivationFunnelAnalytics.resetForTest();
     await AppServices.resetForTest(
-      journalPath: '${DateTime.now().microsecondsSinceEpoch}_journal.json',
-      prefsPath: '${DateTime.now().microsecondsSinceEpoch}_prefs.json',
+      journalPath: sandbox.journalPath,
+      prefsPath: sandbox.prefsPath,
       skipRevenueCat: true,
     );
   });
 
+  tearDown(() => sandbox.dispose());
   group('ContextualPrivacyCopy', () {
     test('copy avoids encryption and cloud claims', () {
       for (final line in ContextualPrivacyCopy.allVisibleStrings()) {
@@ -148,18 +151,18 @@ void main() {
       );
       ContextualPrivacyAnalytics.controlsOpened(source: 'pattern_detail');
 
-      expect(events.keys, containsAll([
-        ContextualPrivacyAnalytics.seenEvent,
-        ContextualPrivacyAnalytics.openedEvent,
-      ]));
+      expect(
+        events.keys,
+        containsAll([
+          ContextualPrivacyAnalytics.seenEvent,
+          ContextualPrivacyAnalytics.openedEvent,
+        ]),
+      );
       expect(
         events[ContextualPrivacyAnalytics.seenEvent]!.keys,
         containsAll(['source', 'entry_count']),
       );
-      expect(
-        events[ContextualPrivacyAnalytics.openedEvent]!.keys,
-        ['source'],
-      );
+      expect(events[ContextualPrivacyAnalytics.openedEvent]!.keys, ['source']);
     });
   });
 
@@ -184,7 +187,10 @@ void main() {
       );
       await tester.pump();
 
-      expect(find.byKey(const Key('contextual_privacy_reassurance')), findsOneWidget);
+      expect(
+        find.byKey(const Key('contextual_privacy_reassurance')),
+        findsOneWidget,
+      );
       expect(find.text(ContextualPrivacyCopy.compactLine), findsOneWidget);
       expect(find.text(ContextualPrivacyCopy.yourControlsLink), findsOneWidget);
     });
@@ -209,7 +215,10 @@ void main() {
       );
       await tester.pump();
 
-      expect(find.byKey(const Key('contextual_privacy_reassurance')), findsOneWidget);
+      expect(
+        find.byKey(const Key('contextual_privacy_reassurance')),
+        findsOneWidget,
+      );
       expect(find.text(ContextualPrivacyCopy.compactLine), findsOneWidget);
     });
 
@@ -227,7 +236,10 @@ void main() {
       );
       await tester.pump();
 
-      expect(find.byKey(const Key('contextual_privacy_reassurance')), findsOneWidget);
+      expect(
+        find.byKey(const Key('contextual_privacy_reassurance')),
+        findsOneWidget,
+      );
       expect(find.text(ContextualPrivacyCopy.fullLine), findsOneWidget);
       expect(find.text(ContextualPrivacyCopy.yourControlsLink), findsOneWidget);
       expect(find.text(PatternDetailCopy.sheetTitle), findsOneWidget);
@@ -254,17 +266,19 @@ void main() {
       );
 
       await tester.pumpWidget(
-        MaterialApp.router(
-          theme: AppTheme.light(),
-          routerConfig: router,
-        ),
+        MaterialApp.router(theme: AppTheme.light(), routerConfig: router),
       );
       await tester.pump();
 
-      await tester.tap(find.byKey(const Key('contextual_privacy_your_controls_link')));
+      await tester.tap(
+        find.byKey(const Key('contextual_privacy_your_controls_link')),
+      );
       await tester.pumpAndSettle();
 
-      expect(find.byKey(const Key('contextual_privacy_controls_sheet')), findsOneWidget);
+      expect(
+        find.byKey(const Key('contextual_privacy_controls_sheet')),
+        findsOneWidget,
+      );
       expect(find.text(PrivacyTrustCopy.title), findsOneWidget);
       expect(
         find.byKey(const Key('contextual_privacy_control_privacy_centre')),
@@ -276,7 +290,10 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.byKey(const Key('privacy_trust_centre_screen')), findsOneWidget);
+      expect(
+        find.byKey(const Key('privacy_trust_centre_screen')),
+        findsOneWidget,
+      );
     });
 
     testWidgets('controls sheet reuses archive control labels', (tester) async {
@@ -286,10 +303,8 @@ void main() {
           home: Scaffold(
             body: Builder(
               builder: (context) => TextButton(
-                onPressed: () => ContextualPrivacyReassurance(
-                  source: 'test',
-                  entryCount: 1,
-                ),
+                onPressed: () =>
+                    ContextualPrivacyReassurance(source: 'test', entryCount: 1),
                 child: const Text('open'),
               ),
             ),
@@ -302,20 +317,16 @@ void main() {
         MaterialApp(
           theme: AppTheme.light(),
           home: const Scaffold(
-            body: ContextualPrivacyReassurance(
-              source: 'test',
-              entryCount: 1,
-            ),
+            body: ContextualPrivacyReassurance(source: 'test', entryCount: 1),
           ),
         ),
       );
-      await tester.tap(find.byKey(const Key('contextual_privacy_your_controls_link')));
+      await tester.tap(
+        find.byKey(const Key('contextual_privacy_your_controls_link')),
+      );
       await tester.pumpAndSettle();
 
-      expect(
-        find.text(ArchiveControlCopy.deleteMomentButton),
-        findsNothing,
-      );
+      expect(find.text(ArchiveControlCopy.deleteMomentButton), findsNothing);
       expect(
         find.text(ArchiveControlCopy.excludeFromPatternButton),
         findsNothing,

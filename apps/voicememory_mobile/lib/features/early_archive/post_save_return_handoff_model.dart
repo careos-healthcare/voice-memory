@@ -6,11 +6,7 @@ enum PostSaveReturnHandoffStage {
 }
 
 /// Stable relation metadata for analytics — never user text.
-enum PostSaveReturnHandoffRelationState {
-  oneMoment,
-  twoRelated,
-  twoUnrelated,
-}
+enum PostSaveReturnHandoffRelationState { oneMoment, twoRelated, twoUnrelated }
 
 /// Lightweight post-save return guidance after entry 1 or 2.
 class PostSaveReturnHandoff {
@@ -31,16 +27,16 @@ class PostSaveReturnHandoff {
   final bool hasPhrase;
 
   String get analyticsStage => switch (stage) {
-        PostSaveReturnHandoffStage.afterFirstSave => 'after_first_save',
-        PostSaveReturnHandoffStage.afterSecondSaveRelated =>
-          'after_second_save_related',
-        PostSaveReturnHandoffStage.afterSecondSaveUnrelated =>
-          'after_second_save_unrelated',
-      };
+    PostSaveReturnHandoffStage.afterFirstSave => 'after_first_save',
+    PostSaveReturnHandoffStage.afterSecondSaveRelated =>
+      'after_second_save_related',
+    PostSaveReturnHandoffStage.afterSecondSaveUnrelated =>
+      'after_second_save_unrelated',
+  };
 
   String get analyticsRelationState => switch (relationState) {
-        PostSaveReturnHandoffRelationState.oneMoment => 'one_moment',
-        PostSaveReturnHandoffRelationState.twoRelated => 'two_related',
-        PostSaveReturnHandoffRelationState.twoUnrelated => 'two_unrelated',
-      };
+    PostSaveReturnHandoffRelationState.oneMoment => 'one_moment',
+    PostSaveReturnHandoffRelationState.twoRelated => 'two_related',
+    PostSaveReturnHandoffRelationState.twoUnrelated => 'two_unrelated',
+  };
 }

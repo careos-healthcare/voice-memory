@@ -17,23 +17,21 @@ V1VisibleSurfaceReducerInput _input({
   bool userExplicitlyAsked = false,
   bool developerMode = false,
   bool proofThresholdStillThree = true,
-}) =>
-    V1VisibleSurfaceReducerInput(
-      postSaveImmediate: postSaveImmediate,
-      firstProofSafe: firstProofSafe,
-      afterFirstProof: afterFirstProof,
-      confirmedRepeatOrEligibleMoment: confirmedRepeatOrEligibleMoment,
-      proofValueSeen: proofValueSeen,
-      userExplicitlyAsked: userExplicitlyAsked,
-      developerMode: developerMode,
-      proofThresholdStillThree: proofThresholdStillThree,
-    );
+}) => V1VisibleSurfaceReducerInput(
+  postSaveImmediate: postSaveImmediate,
+  firstProofSafe: firstProofSafe,
+  afterFirstProof: afterFirstProof,
+  confirmedRepeatOrEligibleMoment: confirmedRepeatOrEligibleMoment,
+  proofValueSeen: proofValueSeen,
+  userExplicitlyAsked: userExplicitlyAsked,
+  developerMode: developerMode,
+  proofThresholdStillThree: proofThresholdStillThree,
+);
 
 V1VisibleSurfaceReducerSurfaceResult _surface(
   V1VisibleSurfaceReducerResult result,
   V1Surface surface,
-) =>
-    result.surface(surface);
+) => result.surface(surface);
 
 void main() {
   group('V1VisibleSurfaceReducer.build', () {
@@ -71,10 +69,7 @@ void main() {
         _surface(hidden, V1Surface.postSaveReinforcement).visible,
         isFalse,
       );
-      expect(
-        _surface(shown, V1Surface.postSaveReinforcement).visible,
-        isTrue,
-      );
+      expect(_surface(shown, V1Surface.postSaveReinforcement).visible, isTrue);
     });
 
     test('restore and privacy allowed as release essentials', () {
@@ -114,8 +109,16 @@ void main() {
         V1Surface.whyProofAppeared,
         V1Surface.confirmCorrect,
       ]) {
-        expect(_surface(blocked, surface).visible, isFalse, reason: surface.name);
-        expect(_surface(allowed, surface).visible, isTrue, reason: surface.name);
+        expect(
+          _surface(blocked, surface).visible,
+          isFalse,
+          reason: surface.name,
+        );
+        expect(
+          _surface(allowed, surface).visible,
+          isTrue,
+          reason: surface.name,
+        );
       }
     });
 
@@ -124,10 +127,7 @@ void main() {
         _input(afterFirstProof: true),
       );
       final allowed = V1VisibleSurfaceReducer.build(
-        _input(
-          afterFirstProof: true,
-          confirmedRepeatOrEligibleMoment: true,
-        ),
+        _input(afterFirstProof: true, confirmedRepeatOrEligibleMoment: true),
       );
       expect(_surface(blocked, V1Surface.whatChanged).visible, isFalse);
       expect(_surface(allowed, V1Surface.whatChanged).visible, isTrue);
@@ -204,21 +204,13 @@ void main() {
 
     test('developer diagnostics developerOnly', () {
       final hidden = V1VisibleSurfaceReducer.build(_input());
-      final shown = V1VisibleSurfaceReducer.build(
-        _input(developerMode: true),
-      );
+      final shown = V1VisibleSurfaceReducer.build(_input(developerMode: true));
       expect(
         _surface(hidden, V1Surface.developerDiagnostics).decision,
         V1SurfaceDecision.developerOnly,
       );
-      expect(
-        _surface(hidden, V1Surface.developerDiagnostics).visible,
-        isFalse,
-      );
-      expect(
-        _surface(shown, V1Surface.developerDiagnostics).visible,
-        isTrue,
-      );
+      expect(_surface(hidden, V1Surface.developerDiagnostics).visible, isFalse);
+      expect(_surface(shown, V1Surface.developerDiagnostics).visible, isTrue);
     });
 
     test('share proof only when user explicitly asks', () {
@@ -269,8 +261,10 @@ void main() {
         'lib/features/v1_visible_surface_reducer/v1_visible_surface_reducer.dart',
       ).readAsStringSync();
       expect(
-        RegExp(r'^\s*static const minProofEntryCount', multiLine: true)
-            .hasMatch(source),
+        RegExp(
+          r'^\s*static const minProofEntryCount',
+          multiLine: true,
+        ).hasMatch(source),
         isFalse,
       );
       expect(
@@ -291,8 +285,9 @@ void main() {
       final reducerSource = File(
         'lib/features/v1_visible_surface_reducer/v1_visible_surface_reducer.dart',
       ).readAsStringSync();
-      final recordSource =
-          File('lib/screens/record_screen.dart').readAsStringSync();
+      final recordSource = File(
+        'lib/screens/record_screen.dart',
+      ).readAsStringSync();
       expect(reducerSource.contains('screens/record_screen.dart'), isFalse);
       expect(
         V1VisibleSurfaceReducer.detectRecordLayoutUnchanged(recordSource),
@@ -316,8 +311,9 @@ void main() {
     });
 
     test('copy uses proof trail language', () {
-      final joined =
-          V1VisibleSurfaceReducerCopy.allVisibleStrings().join('\n').toLowerCase();
+      final joined = V1VisibleSurfaceReducerCopy.allVisibleStrings()
+          .join('\n')
+          .toLowerCase();
       expect(joined, contains('proof trail'));
       expect(joined, contains('first proof'));
       expect(joined, contains('save one repeat'));

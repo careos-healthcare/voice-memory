@@ -32,7 +32,9 @@ class ArchiveDailyChangeCard extends StatelessWidget {
     if (ScreenshotMode.enabled ||
         !result.hasFeature ||
         !result.showOnArchiveHome) {
-      return const SizedBox.shrink(key: Key('archive_daily_change_card_hidden'));
+      return const SizedBox.shrink(
+        key: Key('archive_daily_change_card_hidden'),
+      );
     }
 
     return Container(
@@ -155,8 +157,9 @@ class ArchiveDailyChangeSection extends StatelessWidget {
       );
     }
 
-    final sectionTitle =
-        useWeeklyTitle ? result.weeklySectionTitle : result.loopSectionTitle;
+    final sectionTitle = useWeeklyTitle
+        ? result.weeklySectionTitle
+        : result.loopSectionTitle;
 
     return Column(
       key: const Key('archive_daily_change_section'),

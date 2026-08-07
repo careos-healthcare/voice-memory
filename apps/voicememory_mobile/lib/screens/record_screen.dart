@@ -1,4 +1,15 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../core/config/v1_feature_flags.dart';
 import '../features/recording/recording_dependencies.dart';
+import '../core/di/v1_account_dependencies.dart';
+import '../features/recording/v1/recording_session_controller.dart';
+import '../features/recording/v1/microphone_permission_controller.dart';
+import '../features/recording/v1/capture_processing_controller.dart';
+import '../features/recording/v1/post_save_result_controller.dart';
+import '../features/recording/v1/recording_recovery_controller.dart';
+import '../features/recording/v1/record_screen_view_model.dart';
+import '../features/recording/v1/record_view_state.dart';
 import '../features/weekly_review/weekly_archive_review_engine.dart'
     as weekly_review_surface;
 import '../widgets/weekly_review/weekly_archive_review_card.dart'
@@ -10,7 +21,9 @@ export '../features/voice_capture/record_microphone_permission_ui.dart'
 part '../features/recording/recording_state_controller.dart';
 part '../features/recording/recording_audio_visualizer.dart';
 part '../features/recording/recording_transcription_view.dart';
-part '../features/recording/recording_metadata_sheet.dart';
+
+/// Warm light record surface — background token applied in recording_state_controller.
+const Color recordScreenBackground = AppColors.backgroundPrimary;
 
 void _recordLog(String message) {
   debugPrint('RECORD: $message');
@@ -24,15 +37,7 @@ void _recordCtaLog(String message) {
   debugPrint('${RecordMicrophonePermissionUi.recordCtaLogPrefix} $message');
 }
 
-final class _RecordScreenLogger {
-  const _RecordScreenLogger();
-
-  void info(String message) {
-    RecordPipelineLog.log(message);
-  }
-}
-
-class RecordScreen extends StatefulWidget {
+class RecordScreen extends ConsumerStatefulWidget {
   const RecordScreen({
     super.key,
     this.initialPrompt,
@@ -43,14 +48,12 @@ class RecordScreen extends StatefulWidget {
     this.purchaseIntentStore,
     this.inviteAttributionStore,
     this.paywallPresenter,
-    this.subscriptionService,
     this.liveVoiceCapture,
     this.microphonePermissionGateway,
     this.onboardingMicStateStore,
     this.openAppSettings,
-    this.encryptedImageEngine,
-    this.mediaPicker,
     this.navigationActivityController,
+    this.accountDependencies,
   });
 
   /// Optional conversation starter from deep links / empty-state chips.
@@ -76,7 +79,6 @@ class RecordScreen extends StatefulWidget {
 
   /// Injectable for tests; defaults to the live RevenueCat UI presenter.
   final RevenueCatPaywallPresenter? paywallPresenter;
-  final SubscriptionService? subscriptionService;
 
   /// Injectable live voice service; defaults from [AppServices] when enabled.
   final LiveVoiceCaptureService? liveVoiceCapture;
@@ -90,13 +92,12 @@ class RecordScreen extends StatefulWidget {
   /// Injectable settings launcher; defaults to permission_handler.
   final Future<bool> Function()? openAppSettings;
 
-  /// Injectable encrypted media boundaries; production falls back to AppServices.
-  final EncryptedImageEngine? encryptedImageEngine;
-  final MediaPickerGateway? mediaPicker;
-
   /// Shared with the primary shell to prevent hidden active capture.
   final RecordNavigationActivityController? navigationActivityController;
 
+  /// Account-scoped services for capture/save; defaults from [AppServices].
+  final V1AccountDependencies? accountDependencies;
+
   @override
-  State<RecordScreen> createState() => _RecordScreenState();
+  ConsumerState<RecordScreen> createState() => _RecordScreenState();
 }

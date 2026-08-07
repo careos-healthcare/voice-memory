@@ -22,18 +22,15 @@ class ThirdEntryBeliefPayoffCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final titleStyle = ArchiveMobileTypography.responsiveSectionTitle(context);
-    final bodyStyle = ArchiveMobileTypography.responsiveHelper(context).copyWith(
-      color: AppColors.textPrimary,
-      height: 1.45,
-    );
-    final labelStyle = ArchiveMobileTypography.responsiveHelper(context).copyWith(
-      color: AppColors.textSecondary,
-      fontWeight: FontWeight.w600,
-    );
-    final footnoteStyle = ArchiveMobileTypography.responsiveHelper(context).copyWith(
-      color: AppColors.textSecondary,
-      height: 1.4,
-    );
+    final bodyStyle = ArchiveMobileTypography.responsiveHelper(
+      context,
+    ).copyWith(color: AppColors.textPrimary, height: 1.45);
+    final labelStyle = ArchiveMobileTypography.responsiveHelper(
+      context,
+    ).copyWith(color: AppColors.textSecondary, fontWeight: FontWeight.w600);
+    final footnoteStyle = ArchiveMobileTypography.responsiveHelper(
+      context,
+    ).copyWith(color: AppColors.textSecondary, height: 1.4);
 
     return Container(
       key: const Key('third_entry_belief_payoff_card'),

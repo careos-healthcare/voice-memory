@@ -21,12 +21,12 @@ abstract final class ProLockMomentCopy {
   static const sheetTitle = 'First proof';
 
   static List<String> allVisibleStrings() => [
-        title,
-        body,
-        paidReason,
-        chatDifferentiation,
-        cta,
-        secondary,
-        sheetTitle,
-      ];
+    title,
+    body,
+    paidReason,
+    chatDifferentiation,
+    cta,
+    secondary,
+    sheetTitle,
+  ];
 }

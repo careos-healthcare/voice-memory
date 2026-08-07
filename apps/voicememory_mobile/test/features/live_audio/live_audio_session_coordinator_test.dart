@@ -1,10 +1,17 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:voicememory_mobile/api/api_client.dart';
+import 'package:voicememory_mobile/core/network/api_result.dart';
+import 'package:voicememory_mobile/core/network/network_cancel_token.dart';
+import 'package:voicememory_mobile/data/network/capture_api_client.dart';
+import 'package:voicememory_mobile/data/repositories/capture_repository.dart';
 import 'package:voicememory_mobile/features/live_audio/application/live_audio_session_coordinator.dart';
 import 'package:voicememory_mobile/features/live_audio/domain/models/live_audio_session_config.dart';
+import 'package:voicememory_mobile/features/live_audio/domain/models/offline_vault_manifest.dart';
+import 'package:voicememory_mobile/features/proof_admission/proof_admission_models.dart';
+import 'package:voicememory_mobile/models/attest_result.dart';
 import 'package:voicememory_mobile/features/live_audio/domain/models/live_session_state.dart';
 import 'package:voicememory_mobile/features/live_audio/domain/services/live_pcm16_capture_source.dart';
 import 'package:voicememory_mobile/features/live_audio/infrastructure/live_audio_session_api_client.dart';
@@ -26,49 +33,46 @@ void main() {
       sessionApi = _FakeSessionApi();
       usageGuard = ApiUsageGuard(maxAttemptsPerScope: 3);
       ApiUsageGuard.resetForTest(replacement: usageGuard);
-      attest = CaptureAttestService(
-        api: _FakeApiClientWithAttest(),
-        deviceIds: _FakeDeviceIdStore(),
-        tokenCache: CaptureTokenCache()
-          ..setToken('capture-token', expiresInSeconds: 3600),
-      );
+      attest = _attestForTest();
     });
 
     tearDown(() {
       ApiUsageGuard.resetForTest();
     });
 
-    test('connect mints session, waits for setupComplete, then streams PCM',
-        () async {
-      final sinkController = StreamController<dynamic>();
-      final webSocketClient = LiveAudioWebSocketClient(
-        connectionFactory: (_, {headers}) =>
-            _FakeSocketConnection(sinkController),
-      );
+    test(
+      'connect mints session, waits for setupComplete, then streams PCM',
+      () async {
+        final sinkController = StreamController<dynamic>();
+        final webSocketClient = LiveAudioWebSocketClient(
+          connectionFactory: (_, {headers}) =>
+              _FakeSocketConnection(sinkController),
+        );
 
-      final coordinator = LiveAudioSessionCoordinator(
-        sessionApi: sessionApi,
-        attest: attest,
-        webSocketClient: webSocketClient,
-        captureSource: _FakeCaptureForCoordinator(),
-        usageGuard: usageGuard,
-      );
+        final coordinator = LiveAudioSessionCoordinator(
+          sessionApi: sessionApi,
+          attest: attest,
+          webSocketClient: webSocketClient,
+          captureSource: _FakeCaptureForCoordinator(),
+          usageGuard: usageGuard,
+        );
 
-      final connectFuture = coordinator.connect();
-      await Future<void>.delayed(Duration.zero);
-      sinkController.add(jsonEncode({'setupComplete': {}}));
-      await connectFuture;
+        final connectFuture = coordinator.connect();
+        await Future<void>.delayed(Duration.zero);
+        sinkController.add(jsonEncode({'setupComplete': {}}));
+        await connectFuture;
 
-      expect(coordinator.state, LiveSessionState.ready);
-      expect(sessionApi.mintCalls, 1);
+        expect(coordinator.state, LiveSessionState.ready);
+        expect(sessionApi.mintCalls, 1);
 
-      coordinator.streamPcm16kChunk(const [5, 6, 7]);
-      expect(coordinator.state, LiveSessionState.streaming);
+        coordinator.streamPcm16kChunk(const [5, 6, 7]);
+        expect(coordinator.state, LiveSessionState.streaming);
 
-      await coordinator.disconnect();
-      await coordinator.dispose();
-      await sinkController.close();
-    });
+        await coordinator.disconnect();
+        await coordinator.dispose();
+        await sinkController.close();
+      },
+    );
 
     test('reconnectSession re-mints and resumes microphone capture', () async {
       StreamController<dynamic>? activeSink;
@@ -93,8 +97,9 @@ void main() {
       await connectFuture;
       await coordinator.startMicrophoneCapture();
 
-      final reconnectFuture =
-          coordinator.reconnectSession(reason: 'socket_closed');
+      final reconnectFuture = coordinator.reconnectSession(
+        reason: 'socket_closed',
+      );
       await Future<void>.delayed(Duration.zero);
       activeSink!.add(jsonEncode({'setupComplete': {}}));
       await reconnectFuture;
@@ -185,19 +190,69 @@ class _FakeSessionApi implements LiveAudioSessionApiClient {
   }
 }
 
-class _FakeApiClientWithAttest extends ApiClient {
-  _FakeApiClientWithAttest() : super(baseUrl: 'http://test.invalid');
+class _FakeCaptureApiClient implements CaptureApiClient {
+  @override
+  Future<ApiResult<AttestResult>> postCaptureAttest(
+    String deviceId, {
+    NetworkCancelToken? cancelToken,
+  }) async {
+    return ApiSuccess(
+      AttestResult.capture(token: 'capture-token', expiresInSeconds: 3600),
+    );
+  }
 
   @override
-  Future<AttestResult> postCaptureAttest(String deviceId) async {
-    return AttestResult.capture(token: 'capture-token', expiresInSeconds: 3600);
+  Future<ApiResult<RawModelResponse>> postAnalyzeRaw({
+    required String transcript,
+    required String captureToken,
+    List<Map<String, dynamic>> priorEvidence = const [],
+    String? idempotencyKey,
+    NetworkCancelToken? cancelToken,
+  }) async {
+    throw UnimplementedError('postAnalyzeRaw');
   }
+
+  @override
+  Future<ApiResult<String>> postTranscribe({
+    required File audioFile,
+    required int durationSeconds,
+    required String captureToken,
+    String? idempotencyKey,
+    NetworkCancelToken? cancelToken,
+  }) async {
+    throw UnimplementedError('postTranscribe');
+  }
+
+  @override
+  Future<ApiResult<VaultRecoveryServerResult>> postVaultRecovery({
+    required File vaultFile,
+    required String sessionId,
+    required int durationSeconds,
+    required String captureToken,
+    required String idempotencyKey,
+    List<int>? recoverySecretKeyBytes,
+    NetworkCancelToken? cancelToken,
+  }) async {
+    throw UnimplementedError('postVaultRecovery');
+  }
+}
+
+CaptureAttestService _attestForTest() {
+  final api = _FakeCaptureApiClient();
+  return CaptureAttestService(
+    captureRepository: CaptureRepository(
+      api: api,
+      requestScope: NetworkRequestScope(),
+    ),
+    deviceIds: _FakeDeviceIdStore(),
+    tokenCache: CaptureTokenCache()
+      ..setToken('capture-token', expiresInSeconds: 3600),
+  );
 }
 
 class _FakeDeviceIdStore extends DeviceIdStore {
   @override
-  Future<String> getOrCreate() async =>
-      '00000000-0000-4000-8000-000000000001';
+  Future<String> getOrCreate() async => '00000000-0000-4000-8000-000000000001';
 }
 
 class _FakeCaptureForCoordinator implements LivePcm16CaptureSource {

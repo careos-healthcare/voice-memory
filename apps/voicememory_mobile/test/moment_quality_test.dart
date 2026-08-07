@@ -15,6 +15,7 @@ import 'package:voicememory_mobile/screens/quick_text_capture_screen.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
 import 'package:voicememory_mobile/storage/journal_store.dart';
 import 'package:voicememory_mobile/theme/app_theme.dart';
+import 'support/test_storage_sandbox.dart';
 
 const _bannedWords = [
   'diagnosis',
@@ -39,21 +40,21 @@ const _detailedText =
     'I felt pressure at work before saying yes again even when I was tired.';
 
 JournalEntry _entry(String id, {required String transcript}) => JournalEntry(
-      id: id,
-      createdAt: DateTime(2026, 6, 12, 12),
-      transcript: transcript,
-      durationSeconds: 30,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 2,
-        recurringThemes: ['work'],
-        exactLanguagePattern: '',
-        concreteObservation: 'Work pressure showed up in this moment.',
-        repeatedSignal: '',
-      ),
-      syncStatus: SyncStatus.localOnly,
-    );
+  id: id,
+  createdAt: DateTime(2026, 6, 12, 12),
+  transcript: transcript,
+  durationSeconds: 30,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 2,
+    recurringThemes: ['work'],
+    exactLanguagePattern: '',
+    concreteObservation: 'Work pressure showed up in this moment.',
+    repeatedSignal: '',
+  ),
+  syncStatus: SyncStatus.localOnly,
+);
 
 void _expectNoBannedCopy(Iterable<String> visible) {
   for (final text in visible) {
@@ -126,6 +127,7 @@ void main() {
   });
 
   group('Moment quality isolation', () {
+    late Directory tempDir;
     test('not included in share-safe proof or export pack', () {
       final entries = [
         _entry('e1', transcript: _detailedText),
@@ -159,18 +161,14 @@ void main() {
   });
 
   group('Moment quality UI', () {
-    late Directory tempDir;
+    late TestStorageSandbox sandbox;
 
     setUp(() async {
-      tempDir = Directory.systemTemp.createTempSync('moment_quality_ui_');
-      await AppServices.resetForTest(
-        journalPath: '${tempDir.path}/journal.json',
-      );
+      sandbox = TestStorageSandbox.create();
+      await AppServices.resetForTest(journalPath: sandbox.journalPath);
     });
 
-    tearDown(() {
-      tempDir.deleteSync(recursive: true);
-    });
+    tearDown(() => sandbox.dispose());
 
     testWidgets('hidden when no draft text on quick capture', (tester) async {
       await tester.binding.setSurfaceSize(const Size(402, 874));
@@ -185,7 +183,10 @@ void main() {
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 200));
 
-      expect(find.byKey(const Key('moment_quality_card_hidden')), findsOneWidget);
+      expect(
+        find.byKey(const Key('moment_quality_card_hidden')),
+        findsOneWidget,
+      );
       expect(find.text(MomentQualityCopy.helperLabel), findsNothing);
     });
 

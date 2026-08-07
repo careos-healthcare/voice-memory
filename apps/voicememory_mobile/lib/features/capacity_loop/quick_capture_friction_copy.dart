@@ -20,12 +20,12 @@ abstract final class QuickCaptureFrictionCopy {
   static const dashboardSkipped = 'skipped';
 
   static String labelForResponse(String id) => switch (id) {
-        QuickCaptureFrictionResponseIds.quickEnough => 'Yes — quick enough',
-        QuickCaptureFrictionResponseIds.mostly => 'Mostly',
-        QuickCaptureFrictionResponseIds.stillWork => 'Still felt like work',
-        QuickCaptureFrictionResponseIds.notSure => 'Not sure yet',
-        _ => '',
-      };
+    QuickCaptureFrictionResponseIds.quickEnough => 'Yes — quick enough',
+    QuickCaptureFrictionResponseIds.mostly => 'Mostly',
+    QuickCaptureFrictionResponseIds.stillWork => 'Still felt like work',
+    QuickCaptureFrictionResponseIds.notSure => 'Not sure yet',
+    _ => '',
+  };
 
   static String dashboardValueForRecord(QuickCaptureFrictionRecord? record) {
     if (record == null || !record.isComplete) {
@@ -45,17 +45,17 @@ abstract final class QuickCaptureFrictionCopy {
       '$dashboardLabel: ${dashboardValueForRecord(record)}';
 
   static List<String> allVisibleStrings() => [
-        title,
-        body,
-        saveAnswerCta,
-        skipCta,
-        dashboardLabel,
-        dashboardNotAnswered,
-        dashboardQuickEnough,
-        dashboardMostly,
-        dashboardStillWork,
-        dashboardNotSure,
-        dashboardSkipped,
-        ...QuickCaptureFrictionResponseIds.all.map(labelForResponse),
-      ];
+    title,
+    body,
+    saveAnswerCta,
+    skipCta,
+    dashboardLabel,
+    dashboardNotAnswered,
+    dashboardQuickEnough,
+    dashboardMostly,
+    dashboardStillWork,
+    dashboardNotSure,
+    dashboardSkipped,
+    ...QuickCaptureFrictionResponseIds.all.map(labelForResponse),
+  ];
 }

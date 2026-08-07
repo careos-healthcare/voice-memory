@@ -24,10 +24,12 @@ class BetaActivationSummaryStore {
   }
 
   Future<BetaActivationSummaryExtension> increment(String field) async {
-    return _prefs.updateMap(countsKey, (current) {
-      final counts = BetaActivationSummaryExtension.fromMap(current);
-      return counts.copyWithIncrement(field).toMap();
-    }).then(BetaActivationSummaryExtension.fromMap);
+    return _prefs
+        .updateMap(countsKey, (current) {
+          final counts = BetaActivationSummaryExtension.fromMap(current);
+          return counts.copyWithIncrement(field).toMap();
+        })
+        .then(BetaActivationSummaryExtension.fromMap);
   }
 
   Future<void> clear() async {

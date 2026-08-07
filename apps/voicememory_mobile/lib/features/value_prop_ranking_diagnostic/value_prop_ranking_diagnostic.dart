@@ -148,7 +148,9 @@ abstract final class ValuePropRankingDiagnostic {
   static bool _usefulProofPasses(ValuePropRankingDiagnosticSummary summary) =>
       summary.usefulProofCount >= usefulProofTargetFor(summary.totalTesters);
 
-  static bool _longerTrailUnderstood(ValuePropRankingDiagnosticSummary summary) =>
+  static bool _longerTrailUnderstood(
+    ValuePropRankingDiagnosticSummary summary,
+  ) =>
       summary.understoodLongerTrailCount >=
       understoodLongerTrailTargetFor(summary.totalTesters);
 
@@ -156,8 +158,9 @@ abstract final class ValuePropRankingDiagnostic {
       summary.understoodNotMoreAiCount >=
       understoodNotMoreAiTargetFor(summary.totalTesters);
 
-  static bool _proUnderstandingPasses(ValuePropRankingDiagnosticSummary summary) =>
-      _longerTrailUnderstood(summary) && _notMoreAiUnderstood(summary);
+  static bool _proUnderstandingPasses(
+    ValuePropRankingDiagnosticSummary summary,
+  ) => _longerTrailUnderstood(summary) && _notMoreAiUnderstood(summary);
 
   static int _payYesMaybeCount(ValuePropRankingDiagnosticSummary summary) =>
       summary.payYesCount + summary.payMaybeCount;
@@ -171,7 +174,9 @@ abstract final class ValuePropRankingDiagnostic {
   static bool _worthPayingPasses(ValuePropRankingDiagnosticSummary summary) =>
       summary.worthPayingCount >= worthPayingTargetFor(summary.totalTesters);
 
-  static bool _needStrongerProofHigh(ValuePropRankingDiagnosticSummary summary) =>
+  static bool _needStrongerProofHigh(
+    ValuePropRankingDiagnosticSummary summary,
+  ) =>
       summary.needStrongerProofCount >=
       needStrongerProofHighTargetFor(summary.totalTesters);
 
@@ -192,21 +197,19 @@ abstract final class ValuePropRankingDiagnostic {
   static ValuePropRankingDiagnosticReport report(
     ValuePropRankingDiagnosticSummary summary,
     ValuePropRankingDiagnosticDecision decision,
-  ) =>
-      ValuePropRankingDiagnosticReport(
-        title: ValuePropRankingDiagnosticCopy.title,
-        body: ValuePropRankingDiagnosticCopy.body,
-        valueLine: ValuePropRankingDiagnosticCopy.valueLine,
-        decision: decision,
-        guardrail: ValuePropRankingDiagnosticCopy.guardrail,
-      );
+  ) => ValuePropRankingDiagnosticReport(
+    title: ValuePropRankingDiagnosticCopy.title,
+    body: ValuePropRankingDiagnosticCopy.body,
+    valueLine: ValuePropRankingDiagnosticCopy.valueLine,
+    decision: decision,
+    guardrail: ValuePropRankingDiagnosticCopy.guardrail,
+  );
 
   static int _scaledTarget({
     required int totalTesters,
     required int numerator,
     required int denominator,
-  }) =>
-      ((numerator * totalTesters) / denominator).ceil();
+  }) => ((numerator * totalTesters) / denominator).ceil();
 }
 
 enum ValuePropRankingDiagnosticDecision {

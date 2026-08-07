@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
@@ -17,6 +15,7 @@ import 'package:voicememory_mobile/widgets/capture_entry_actions.dart';
 import 'package:voicememory_mobile/widgets/first_session/day_seven_continuity_card.dart';
 
 import 'support/memory_pressure_stores.dart';
+import 'support/test_storage_sandbox.dart';
 
 const _engine = DaySevenContinuityEngine();
 
@@ -324,17 +323,17 @@ void main() {
   });
 
   group('Record screen integration', () {
-    late Directory tempDir;
+    late TestStorageSandbox sandbox;
 
     setUp(() async {
-      tempDir = Directory.systemTemp.createTempSync('vm_day7_continuity_');
-      await AppServices.resetForTest(
-        journalPath: '${tempDir.path}/journal.json',
-      );
+      sandbox = TestStorageSandbox.create();
+      await AppServices.resetForTest(journalPath: sandbox.journalPath);
       VisualAuditOverrides.setRecordPresentation(
         const RecordAuditPresentation(ui: RecordUiState.ready),
       );
     });
+
+    tearDown(() => sandbox.dispose());
 
     tearDown(() {
       VisualAuditOverrides.setRecordPresentation(null);
@@ -396,15 +395,19 @@ void main() {
       expect(find.byKey(const Key('day_seven_continuity_card')), findsNothing);
     });
 
-    testWidgets('early-thread card suppressed on capture-first record at 2 entries', (
-      tester,
-    ) async {
-      await tester.runAsync(() => seedEntries(2));
-      await pumpRecordScreen(tester);
-      expect(find.byKey(const Key('day_seven_continuity_card')), findsNothing);
-      expect(find.byType(CaptureEntryActions), findsOneWidget);
-      expect(tester.takeException(), isNull);
-    });
+    testWidgets(
+      'early-thread card suppressed on capture-first record at 2 entries',
+      (tester) async {
+        await tester.runAsync(() => seedEntries(2));
+        await pumpRecordScreen(tester);
+        expect(
+          find.byKey(const Key('day_seven_continuity_card')),
+          findsNothing,
+        );
+        expect(find.byType(CaptureEntryActions), findsOneWidget);
+        expect(tester.takeException(), isNull);
+      },
+    );
 
     testWidgets('review-ready card suppressed on capture-first record', (
       tester,

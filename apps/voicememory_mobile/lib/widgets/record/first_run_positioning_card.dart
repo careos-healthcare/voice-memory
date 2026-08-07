@@ -9,20 +9,15 @@ import '../../theme/voicememory_cards.dart';
 
 /// Early revenue positioning — education only, no paywall or Pro CTA.
 class FirstRunPositioningCard extends StatefulWidget {
-  const FirstRunPositioningCard({
-    super.key,
-    required this.result,
-  });
+  const FirstRunPositioningCard({super.key, required this.result});
 
-  const FirstRunPositioningCard.test({
-    super.key,
-    required this.result,
-  });
+  const FirstRunPositioningCard.test({super.key, required this.result});
 
   final FirstRunPositioningResult result;
 
   @override
-  State<FirstRunPositioningCard> createState() => _FirstRunPositioningCardState();
+  State<FirstRunPositioningCard> createState() =>
+      _FirstRunPositioningCardState();
 }
 
 class _FirstRunPositioningCardState extends State<FirstRunPositioningCard> {
@@ -38,16 +33,17 @@ class _FirstRunPositioningCardState extends State<FirstRunPositioningCard> {
   Widget build(BuildContext context) {
     _trackSeenOnce();
 
-    final bodyStyle = ArchiveMobileTypography.explanationBody(context).copyWith(
-      color: AppColors.textSecondary,
-      height: 1.45,
-    );
+    final bodyStyle = ArchiveMobileTypography.explanationBody(
+      context,
+    ).copyWith(color: AppColors.textSecondary, height: 1.45);
 
     return Container(
       key: const Key('first_run_positioning_card'),
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.md),
-      decoration: VoiceMemoryCards.standard(background: const Color(0xFFF8FAFC)),
+      decoration: VoiceMemoryCards.standard(
+        background: const Color(0xFFF8FAFC),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [

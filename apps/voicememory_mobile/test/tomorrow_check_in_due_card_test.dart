@@ -8,7 +8,7 @@ import 'package:voicememory_mobile/product/consumer_ui_copy.dart';
 import 'package:voicememory_mobile/widgets/record/tomorrow_check_in_due_card.dart';
 
 void main() {
-  TomorrowCheckIn _checkIn({String? selectedOptionId}) {
+  TomorrowCheckIn checkIn({String? selectedOptionId}) {
     return TomorrowCheckIn(
       id: 't1',
       createdAt: DateTime(2026, 5, 25),
@@ -21,13 +21,13 @@ void main() {
     );
   }
 
-  Future<void> _pumpDueCard(WidgetTester tester, {String? selectedOptionId}) {
+  Future<void> pumpDueCard(WidgetTester tester, {String? selectedOptionId}) {
     return tester.pumpWidget(
       MaterialApp(
         home: Scaffold(
           body: SingleChildScrollView(
             child: TomorrowCheckInDueCard(
-              checkIn: _checkIn(selectedOptionId: selectedOptionId),
+              checkIn: checkIn(selectedOptionId: selectedOptionId),
               onRecord: () {},
               onSelectOption: (_) async {},
             ),
@@ -43,7 +43,7 @@ void main() {
         home: Scaffold(
           body: SingleChildScrollView(
             child: TomorrowCheckInDueCard(
-              checkIn: _checkIn(),
+              checkIn: checkIn(),
               plannedAnchor: const RoutineAnchor(
                 type: RoutineAnchorType.evening,
               ),
@@ -59,12 +59,12 @@ void main() {
   });
 
   testWidgets('hides the planned line when no anchor is set', (tester) async {
-    await _pumpDueCard(tester);
+    await pumpDueCard(tester);
     expect(find.textContaining('Planned for:'), findsNothing);
   });
 
   testWidgets('due card shows title and subtitle', (tester) async {
-    await _pumpDueCard(tester);
+    await pumpDueCard(tester);
 
     expect(find.text('Your check-in from yesterday'), findsOneWidget);
     expect(
@@ -79,7 +79,7 @@ void main() {
   });
 
   testWidgets('due card renders four answer options', (tester) async {
-    await _pumpDueCard(tester);
+    await pumpDueCard(tester);
 
     expect(find.text('It showed up again'), findsOneWidget);
     expect(find.text('It felt lighter'), findsOneWidget);
@@ -90,19 +90,19 @@ void main() {
   });
 
   testWidgets('due card offers a None of these fit answer', (tester) async {
-    await _pumpDueCard(tester);
+    await pumpDueCard(tester);
 
     expect(find.text('None of these fit'), findsOneWidget);
   });
 
   testWidgets('helper line hidden until option selected', (tester) async {
-    await _pumpDueCard(tester);
+    await pumpDueCard(tester);
 
     expect(find.text('Short is fine. One sentence is enough.'), findsNothing);
   });
 
   testWidgets('examples expand and render all four examples', (tester) async {
-    await _pumpDueCard(tester);
+    await pumpDueCard(tester);
 
     await tester.tap(find.text(ConsumerUiCopy.tomorrowCheckInNeedExamples));
     await tester.pump();
@@ -116,13 +116,13 @@ void main() {
     expect(find.textContaining('did not come up'), findsOneWidget);
   });
 
-  Future<void> _pumpGuided(WidgetTester tester) {
+  Future<void> pumpGuided(WidgetTester tester) {
     return tester.pumpWidget(
       MaterialApp(
         home: Scaffold(
           body: SingleChildScrollView(
             child: TomorrowCheckInDueCard(
-              checkIn: _checkIn(),
+              checkIn: checkIn(),
               guided: true,
               onRecord: () {},
               onSelectOption: (_) async {},
@@ -134,7 +134,7 @@ void main() {
   }
 
   testWidgets('guided card initially hides four options', (tester) async {
-    await _pumpGuided(tester);
+    await pumpGuided(tester);
 
     expect(find.text(ConsumerUiCopy.guidedCheckInAnswerCta), findsOneWidget);
     expect(find.text('It showed up again'), findsNothing);
@@ -146,7 +146,7 @@ void main() {
   testWidgets('guided card reveals two primary answers after start', (
     tester,
   ) async {
-    await _pumpGuided(tester);
+    await pumpGuided(tester);
 
     await tester.tap(find.text(ConsumerUiCopy.guidedCheckInAnswerCta));
     await tester.pump();
@@ -165,7 +165,7 @@ void main() {
   });
 
   testWidgets('selecting lighter shows follow-up and CTA', (tester) async {
-    await _pumpDueCard(tester);
+    await pumpDueCard(tester);
 
     await tester.tap(find.text('It felt lighter'));
     await tester.pump();
@@ -188,7 +188,7 @@ void main() {
         home: Scaffold(
           body: SingleChildScrollView(
             child: TomorrowCheckInDueCard(
-              checkIn: _checkIn(),
+              checkIn: checkIn(),
               languageCode: 'es',
               onRecord: () {},
               onSelectOption: (_) async {},

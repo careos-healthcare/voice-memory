@@ -13,7 +13,7 @@ abstract final class ComeBackTomorrowV2Analytics {
 
   @visibleForTesting
   static void Function(String event, Map<String, Object> properties)?
-      captureForTest;
+  captureForTest;
 
   static void watchSet({
     required String source,
@@ -79,8 +79,8 @@ abstract final class ComeBackTomorrowV2Analytics {
       'source': source,
       'entry_count': entryCount,
       if (hasWatchTarget != null) 'has_watch_target': hasWatchTarget ? 1 : 0,
-      if (daysSinceSet != null) 'days_since_set': daysSinceSet,
-      if (answerType != null) 'answer_type': answerType,
+      'days_since_set': ?daysSinceSet,
+      'answer_type': ?answerType,
     };
 
     captureForTest?.call(event, props);

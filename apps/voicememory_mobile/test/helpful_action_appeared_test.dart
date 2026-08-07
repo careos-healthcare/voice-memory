@@ -36,69 +36,67 @@ JournalEntry _entry({
 }
 
 List<JournalEntry> _threeRelatedRepeatEntries() => [
-      _entry(
-        id: 'e1',
-        transcript:
-            'I had no capacity but I said yes again to the extra meeting today.',
-        createdAt: DateTime(2026, 6, 10, 12),
-      ),
-      _entry(
-        id: 'e2',
-        transcript:
-            'Same thing — said yes when I had no capacity for one more thing.',
-        createdAt: DateTime(2026, 6, 11, 12),
-      ),
-      _entry(
-        id: 'e3',
-        transcript:
-            'I said yes again even though I had no capacity for one more ask.',
-        createdAt: DateTime(2026, 6, 12, 12),
-      ),
-    ];
+  _entry(
+    id: 'e1',
+    transcript:
+        'I had no capacity but I said yes again to the extra meeting today.',
+    createdAt: DateTime(2026, 6, 10, 12),
+  ),
+  _entry(
+    id: 'e2',
+    transcript:
+        'Same thing — said yes when I had no capacity for one more thing.',
+    createdAt: DateTime(2026, 6, 11, 12),
+  ),
+  _entry(
+    id: 'e3',
+    transcript:
+        'I said yes again even though I had no capacity for one more ask.',
+    createdAt: DateTime(2026, 6, 12, 12),
+  ),
+];
 
 List<JournalEntry> _fourRelatedRepeatWithHelpfulAction() => [
-      ..._threeRelatedRepeatEntries(),
-      _entry(
-        id: 'e4',
-        transcript:
-            'I paused before replying this time and it felt a bit softer.',
-        createdAt: DateTime(2026, 6, 13, 12),
-      ),
-    ];
+  ..._threeRelatedRepeatEntries(),
+  _entry(
+    id: 'e4',
+    transcript: 'I paused before replying this time and it felt a bit softer.',
+    createdAt: DateTime(2026, 6, 13, 12),
+  ),
+];
 
 List<JournalEntry> _threeGenericFeelingEntries() => [
-      _entry(
-        id: 'g1',
-        transcript: 'I felt grateful and happy today about everything.',
-        createdAt: DateTime(2026, 6, 10, 12),
-      ),
-      _entry(
-        id: 'g2',
-        transcript: 'Another good day — feeling good and positive.',
-        createdAt: DateTime(2026, 6, 11, 12),
-      ),
-      _entry(
-        id: 'g3',
-        transcript: 'Still feeling better and grateful this week.',
-        createdAt: DateTime(2026, 6, 12, 12),
-      ),
-      _entry(
-        id: 'g4',
-        transcript: 'Grateful again today with no concrete action.',
-        createdAt: DateTime(2026, 6, 13, 12),
-      ),
-    ];
+  _entry(
+    id: 'g1',
+    transcript: 'I felt grateful and happy today about everything.',
+    createdAt: DateTime(2026, 6, 10, 12),
+  ),
+  _entry(
+    id: 'g2',
+    transcript: 'Another good day — feeling good and positive.',
+    createdAt: DateTime(2026, 6, 11, 12),
+  ),
+  _entry(
+    id: 'g3',
+    transcript: 'Still feeling better and grateful this week.',
+    createdAt: DateTime(2026, 6, 12, 12),
+  ),
+  _entry(
+    id: 'g4',
+    transcript: 'Grateful again today with no concrete action.',
+    createdAt: DateTime(2026, 6, 13, 12),
+  ),
+];
 
 RepeatReturnCheckRecord _choiceRecord({
   required String entryId,
   required RepeatReturnCheckChoice choice,
-}) =>
-    RepeatReturnCheckRecord(
-      entryId: entryId,
-      choice: choice,
-      entryCountAtCapture: 4,
-      createdAt: DateTime(2026, 6, 13, 12),
-    );
+}) => RepeatReturnCheckRecord(
+  entryId: entryId,
+  choice: choice,
+  entryCountAtCapture: 4,
+  createdAt: DateTime(2026, 6, 13, 12),
+);
 
 void _expectNoAdviceLanguage(String copy) {
   final lower = copy.toLowerCase();
@@ -131,10 +129,7 @@ void main() {
       expect(result!.title, HelpfulActionAppearedCopy.title);
       expect(result.usesActionPhrase, isTrue);
       expect(result.actionPhrase, isNotNull);
-      expect(
-        result.body.toLowerCase(),
-        contains('paused before replying'),
-      );
+      expect(result.body.toLowerCase(), contains('paused before replying'));
     });
 
     test('concrete action phrase max 6 words', () {
@@ -192,7 +187,8 @@ void main() {
         ..._threeRelatedRepeatEntries(),
         _entry(
           id: 'e4',
-          transcript: 'I felt more confidence and growth today after the repeat.',
+          transcript:
+              'I felt more confidence and growth today after the repeat.',
         ),
       ];
       final result = HelpfulActionAppearedEngine.build(
@@ -209,10 +205,7 @@ void main() {
 
   group('HelpfulActionAppearedCopy', () {
     test('copy says Evidence, not advice', () {
-      expect(
-        HelpfulActionAppearedCopy.evidenceLabel,
-        'Evidence, not advice',
-      );
+      expect(HelpfulActionAppearedCopy.evidenceLabel, 'Evidence, not advice');
     });
 
     test('copy says this is not a suggestion', () {
@@ -310,10 +303,16 @@ void main() {
       );
 
       expect(find.text(HelpfulActionAppearedCopy.title), findsOneWidget);
-      expect(find.text(HelpfulActionAppearedCopy.evidenceLabel), findsOneWidget);
+      expect(
+        find.text(HelpfulActionAppearedCopy.evidenceLabel),
+        findsOneWidget,
+      );
       expect(find.text(HelpfulActionAppearedCopy.footer), findsOneWidget);
       expect(find.text(HelpfulActionAppearedCopy.chipLabel), findsOneWidget);
-      expect(find.byKey(const Key('helpful_action_appeared_card')), findsOneWidget);
+      expect(
+        find.byKey(const Key('helpful_action_appeared_card')),
+        findsOneWidget,
+      );
     });
   });
 
@@ -332,12 +331,15 @@ void main() {
       );
 
       expect(captured, isNotNull);
-      expect(captured!.keys, containsAll([
-        'entry_count',
-        'source',
-        'has_action_phrase',
-        'has_confirmed_repeat',
-      ]));
+      expect(
+        captured!.keys,
+        containsAll([
+          'entry_count',
+          'source',
+          'has_action_phrase',
+          'has_confirmed_repeat',
+        ]),
+      );
       expect(captured!.keys, isNot(contains('transcript')));
       expect(captured!.keys, isNot(contains('phrase')));
       expect(captured!['has_action_phrase'], 1);
@@ -350,10 +352,7 @@ void main() {
         HelpfulActionAppearedCopy.title,
         isNot(PositiveReinforcementCopy.title),
       );
-      expect(
-        HelpfulActionAppearedCopy.title,
-        isNot(PatternChangedCopy.title),
-      );
+      expect(HelpfulActionAppearedCopy.title, isNot(PatternChangedCopy.title));
     });
 
     test('record proof stack cap respected when helpful action shown', () {

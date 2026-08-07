@@ -15,10 +15,7 @@ import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/models/sync_status.dart';
 import 'package:voicememory_mobile/widgets/record/open_capture_prompt_chips.dart';
 
-JournalEntry _entry({
-  required String id,
-  required String transcript,
-}) =>
+JournalEntry _entry({required String id, required String transcript}) =>
     JournalEntry(
       id: id,
       createdAt: DateTime(2026, 6, 12, 12),
@@ -207,7 +204,7 @@ void main() {
   });
 
   group('OpenCapturePromptChips', () {
-    Future<void> _pumpChips(
+    Future<void> pumpChips(
       WidgetTester tester, {
       bool usePromptPrefill = true,
     }) async {
@@ -228,8 +225,7 @@ void main() {
               ),
               GoRoute(
                 path: '/away',
-                builder: (context, state) =>
-                    const Scaffold(body: Text('Away')),
+                builder: (context, state) => const Scaffold(body: Text('Away')),
               ),
             ],
           ),
@@ -239,7 +235,7 @@ void main() {
     }
 
     testWidgets('renders "Save anything you notice."', (tester) async {
-      await _pumpChips(tester);
+      await pumpChips(tester);
 
       expect(find.text(OpenCaptureCopy.header), findsOneWidget);
     });
@@ -247,13 +243,13 @@ void main() {
     testWidgets('renders "It does not have to be a pattern yet."', (
       tester,
     ) async {
-      await _pumpChips(tester);
+      await pumpChips(tester);
 
       expect(find.text(OpenCaptureCopy.subline), findsOneWidget);
     });
 
     testWidgets('all chips render', (tester) async {
-      await _pumpChips(tester);
+      await pumpChips(tester);
 
       for (final chip in OpenCaptureChip.all) {
         expect(find.text(chip.label), findsOneWidget);
@@ -263,7 +259,7 @@ void main() {
     testWidgets(
       'tapping chip shows "Start anywhere. ArchiveMe looks for the pattern later."',
       (tester) async {
-        await _pumpChips(tester);
+        await pumpChips(tester);
 
         await tester.tap(find.text(OpenCaptureCopy.thoughtLabel));
         await tester.pump();
@@ -275,7 +271,7 @@ void main() {
     testWidgets('tapping chip prefills prompt starter without routing away', (
       tester,
     ) async {
-      await _pumpChips(tester);
+      await pumpChips(tester);
 
       await tester.tap(find.text(OpenCaptureCopy.decisionLabel));
       await tester.pump();
@@ -285,7 +281,7 @@ void main() {
     });
 
     testWidgets('without prompt prefill shows fallback helper', (tester) async {
-      await _pumpChips(tester, usePromptPrefill: false);
+      await pumpChips(tester, usePromptPrefill: false);
 
       await tester.tap(find.text(OpenCaptureCopy.worryLabel));
       await tester.pump();
@@ -303,7 +299,7 @@ void main() {
       );
       final before = ArchiveEvidenceQuality.assess(entry);
 
-      await _pumpChips(tester);
+      await pumpChips(tester);
       await tester.tap(find.text(OpenCaptureCopy.pressureLabel));
       await tester.pump();
 
@@ -313,7 +309,7 @@ void main() {
     });
 
     testWidgets('metadata-only analytics', (tester) async {
-      await _pumpChips(tester);
+      await pumpChips(tester);
 
       await tester.tap(find.text(OpenCaptureCopy.winLabel));
       await tester.pump();
@@ -321,11 +317,10 @@ void main() {
       expect(analyticsEvents, hasLength(2));
       expect(analyticsEvents[0].event, OpenCaptureAnalytics.seenEvent);
       expect(analyticsEvents[1].event, OpenCaptureAnalytics.chipTappedEvent);
-      expect(analyticsEvents[1].props.keys, containsAll([
-        'source',
-        'entry_count',
-        'chip_type',
-      ]));
+      expect(
+        analyticsEvents[1].props.keys,
+        containsAll(['source', 'entry_count', 'chip_type']),
+      );
       expect(analyticsEvents[1].props['chip_type'], 'win');
       for (final record in analyticsEvents) {
         for (final value in record.props.values) {
@@ -336,7 +331,7 @@ void main() {
     });
 
     testWidgets('no therapy/medical copy', (tester) async {
-      await _pumpChips(tester);
+      await pumpChips(tester);
 
       final blob = OpenCaptureCopy.allVisibleStrings().join(' ').toLowerCase();
       expect(blob, isNot(contains('therapy')));
@@ -346,19 +341,21 @@ void main() {
   });
 
   group('Open capture placement', () {
-    test('chips sit under RecordCaptureModesCard on record screen when not simplified', () {
-      final source = File('lib/screens/record_screen.dart').readAsStringSync();
-      final modesIndex = source.indexOf('RecordCaptureModesCard(');
-      final chipsIndex = source.indexOf(
-        'if (showOpenCapturePromptChips && !firstUseSimplifiedRecord)',
-      );
-      expect(modesIndex, greaterThan(0));
-      expect(chipsIndex, greaterThan(modesIndex));
-      expect(
-        source,
-        contains('!firstUseSimplifiedRecord'),
-      );
-    });
+    test(
+      'chips sit under RecordCaptureModesCard on record screen when not simplified',
+      () {
+        final source = File(
+          'lib/screens/record_screen.dart',
+        ).readAsStringSync();
+        final modesIndex = source.indexOf('RecordCaptureModesCard(');
+        final chipsIndex = source.indexOf(
+          'if (showOpenCapturePromptChips && !firstUseSimplifiedRecord)',
+        );
+        expect(modesIndex, greaterThan(0));
+        expect(chipsIndex, greaterThan(modesIndex));
+        expect(source, contains('!firstUseSimplifiedRecord'));
+      },
+    );
 
     test('chip tap sets selected prompt line only', () {
       final source = File('lib/screens/record_screen.dart').readAsStringSync();

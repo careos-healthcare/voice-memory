@@ -59,11 +59,11 @@ abstract final class InsightQualityDashboardEngine {
   InsightQualityDashboardEngine._();
 
   static InsightQualitySummary buildSummary() => InsightQualitySummary(
-        feelsRightCount: ArchiveInsightFeedbackStore.totalFeelsRightCount(),
-        notQuiteCount: ArchiveInsightFeedbackStore.totalNotQuiteCount(),
-        hiddenCount: ArchiveInsightFeedbackStore.hiddenInsightCount(),
-        correctionNoteCount: ArchiveInsightFeedbackStore.correctionNoteCount(),
-      );
+    feelsRightCount: ArchiveInsightFeedbackStore.totalFeelsRightCount(),
+    notQuiteCount: ArchiveInsightFeedbackStore.totalNotQuiteCount(),
+    hiddenCount: ArchiveInsightFeedbackStore.hiddenInsightCount(),
+    correctionNoteCount: ArchiveInsightFeedbackStore.correctionNoteCount(),
+  );
 
   static List<InsightQualityEntry> buildEntries() {
     return ArchiveInsightFeedbackStore.allKnownInsightIds()
@@ -97,7 +97,10 @@ abstract final class InsightQualityDashboardEngine {
       correctionNote: ArchiveInsightFeedbackStore.correctionNote(insightId),
       cautionStatus: target == null
           ? null
-          : cautionStatusFor(target, archiveHomeStage: _archiveHomeStage(insightId)),
+          : cautionStatusFor(
+              target,
+              archiveHomeStage: _archiveHomeStage(insightId),
+            ),
     );
   }
 
@@ -109,7 +112,8 @@ abstract final class InsightQualityDashboardEngine {
         'four' => VisibleArchiveProofCopy.insightQualityLabelArchiveHomeFour,
         'fivePlus' =>
           VisibleArchiveProofCopy.insightQualityLabelArchiveHomeFivePlus,
-        _ => '${VisibleArchiveProofCopy.insightQualityLabelArchiveHome} ($stageName)',
+        _ =>
+          '${VisibleArchiveProofCopy.insightQualityLabelArchiveHome} ($stageName)',
       };
     }
     return switch (insightId) {

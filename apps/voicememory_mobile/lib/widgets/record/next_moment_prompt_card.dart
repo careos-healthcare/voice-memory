@@ -24,20 +24,20 @@ class NextMomentPromptCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final labelStyle = ArchiveMobileTypography.responsiveHelper(context).copyWith(
-      color: AppColors.textSecondary,
-      fontWeight: FontWeight.w600,
-      letterSpacing: 0.2,
-    );
+    final labelStyle = ArchiveMobileTypography.responsiveHelper(context)
+        .copyWith(
+          color: AppColors.textSecondary,
+          fontWeight: FontWeight.w600,
+          letterSpacing: 0.2,
+        );
     final titleStyle = ArchiveMobileTypography.body(context).copyWith(
       fontWeight: FontWeight.w600,
       color: AppColors.textPrimary,
       height: 1.35,
     );
-    final bodyStyle = ArchiveMobileTypography.responsiveHelper(context).copyWith(
-      color: AppColors.textSecondary,
-      height: 1.4,
-    );
+    final bodyStyle = ArchiveMobileTypography.responsiveHelper(
+      context,
+    ).copyWith(color: AppColors.textSecondary, height: 1.4);
     final padding = compact ? AppSpacing.sm : AppSpacing.sm + 4;
 
     return Container(

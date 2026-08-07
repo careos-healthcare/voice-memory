@@ -7,8 +7,6 @@ import 'package:voicememory_mobile/features/capacity_loop/low_effort_yes_capture
 import 'package:voicememory_mobile/features/demo/sample_archive_copy.dart';
 import 'package:voicememory_mobile/product/acquisition_start_copy.dart';
 import 'package:voicememory_mobile/product/archive_positioning_copy.dart';
-import 'package:voicememory_mobile/product/loop_acquisition_copy.dart';
-import 'package:voicememory_mobile/product/loop_mode_copy.dart';
 import 'package:voicememory_mobile/security/privacy_copy_policy.dart';
 
 const _bannedPhrases = [
@@ -144,16 +142,19 @@ void main() {
       );
     });
 
-    test('capacity surfaces do not require opening app before every decision', () {
-      expect(
-        AcquisitionStartCopy.capacityTimingFlex.toLowerCase(),
-        isNot(contains('before every decision')),
-      );
-      expect(
-        AcquisitionStartCopy.capacityTimingFlex.toLowerCase(),
-        allOf(contains('before'), contains('after'), contains('later')),
-      );
-    });
+    test(
+      'capacity surfaces do not require opening app before every decision',
+      () {
+        expect(
+          AcquisitionStartCopy.capacityTimingFlex.toLowerCase(),
+          isNot(contains('before every decision')),
+        );
+        expect(
+          AcquisitionStartCopy.capacityTimingFlex.toLowerCase(),
+          allOf(contains('before'), contains('after'), contains('later')),
+        );
+      },
+    );
 
     test('capacity start includes timing flex line', () {
       expect(
@@ -166,10 +167,7 @@ void main() {
   group('Capture mode wiring', () {
     test('before yes flow uses positioning labels', () {
       expect(BeforeYesCopy.title, ArchivePositioningCopy.beforeLabel);
-      expect(
-        BeforeYesCopy.body,
-        contains(ArchivePositioningCopy.beforeBody),
-      );
+      expect(BeforeYesCopy.body, contains(ArchivePositioningCopy.beforeBody));
     });
 
     test('quick yes capture includes timing flexibility copy', () {
@@ -201,7 +199,11 @@ void main() {
       test('$path avoids banned positioning language', () {
         expect(File(path).existsSync(), isTrue, reason: 'missing $path');
         final snippets = _visibleStringsForSurface(path);
-        expect(snippets, isNotEmpty, reason: 'expected positioning snippets in $path');
+        expect(
+          snippets,
+          isNotEmpty,
+          reason: 'expected positioning snippets in $path',
+        );
         _expectNoBannedCopy(snippets);
       });
     }
@@ -209,8 +211,9 @@ void main() {
 
   group('Legacy consumer positioning surfaces', () {
     test('competitive positioning constants remain in consumer_ui_copy', () {
-      final source =
-          File('lib/product/consumer_ui_copy.dart').readAsStringSync();
+      final source = File(
+        'lib/product/consumer_ui_copy.dart',
+      ).readAsStringSync();
       expect(source, contains('archivePositioningHeadline'));
     });
   });
@@ -233,7 +236,7 @@ List<String> _visibleStringsForSurface(String path) {
         ArchivePositioningCopy.umbrellaBody,
         ArchivePositioningCopy.firstPathIntro,
       ];
-    case 'lib/screens/loop_start_screen.dart':
+    case 'packages/archiveme_research/lib/screens/loop_start_screen.dart':
       return AcquisitionStartCopy.capacityVisibleStrings();
     case 'lib/features/demo/sample_archive_copy.dart':
       return [

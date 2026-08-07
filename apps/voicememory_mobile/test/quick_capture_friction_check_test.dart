@@ -63,26 +63,27 @@ Future<void> _resetStore(String stamp) async {
 }
 
 JournalEntry _quickCaptureEntry(String id) => JournalEntry(
-      id: id,
-      createdAt: DateTime(2026, 6, 15, 12),
-      transcript: '',
-      durationSeconds: 0,
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 1,
-        recurringThemes: [],
-        exactLanguagePattern: '',
-        concreteObservation: 'Quick yes moment saved.',
-        repeatedSignal: '',
-      ),
-      captureContextTag: LowEffortYesCaptureIds.contextTag,
-    );
+  id: id,
+  createdAt: DateTime(2026, 6, 15, 12),
+  transcript: '',
+  durationSeconds: 0,
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 1,
+    recurringThemes: [],
+    exactLanguagePattern: '',
+    concreteObservation: 'Quick yes moment saved.',
+    repeatedSignal: '',
+  ),
+  captureContextTag: LowEffortYesCaptureIds.contextTag,
+);
 
-QuickCaptureFrictionResult _visibleAfterSave({String entryId = 'quick_yes_1'}) =>
-    const QuickCaptureFrictionEngine().buildAfterQuickSave(
-      relatedEntryId: entryId,
-      capacityWedgeActive: true,
-    );
+QuickCaptureFrictionResult _visibleAfterSave({
+  String entryId = 'quick_yes_1',
+}) => const QuickCaptureFrictionEngine().buildAfterQuickSave(
+  relatedEntryId: entryId,
+  capacityWedgeActive: true,
+);
 
 void main() {
   const engine = QuickCaptureFrictionEngine();
@@ -133,11 +134,15 @@ void main() {
 
     test('hasQuickCaptureEntry detects quick capture entries', () {
       expect(
-        QuickCaptureFrictionEngine.hasQuickCaptureEntry([_quickCaptureEntry('q1')]),
+        QuickCaptureFrictionEngine.hasQuickCaptureEntry([
+          _quickCaptureEntry('q1'),
+        ]),
         isTrue,
       );
       expect(
-        QuickCaptureFrictionEngine.hasQuickCaptureEntry(SampleArchiveEntries.build()),
+        QuickCaptureFrictionEngine.hasQuickCaptureEntry(
+          SampleArchiveEntries.build(),
+        ),
         isFalse,
       );
     });
@@ -205,7 +210,10 @@ void main() {
         ),
       );
 
-      expect(find.byKey(const Key('quick_capture_friction_card')), findsOneWidget);
+      expect(
+        find.byKey(const Key('quick_capture_friction_card')),
+        findsOneWidget,
+      );
       expect(find.text('Was this easy enough?'), findsOneWidget);
       expect(find.text('Yes — quick enough'), findsOneWidget);
       expect(find.text('Still felt like work'), findsOneWidget);
@@ -314,7 +322,10 @@ void main() {
         result.suggestedNextFixLabel,
         BetaFeedbackResponseCopy.suggestedFixReduceCaptureWorkload,
       );
-      expect(result.recommendedResponseSummary, contains('Reduce capture workload further'));
+      expect(
+        result.recommendedResponseSummary,
+        contains('Reduce capture workload further'),
+      );
     });
   });
 

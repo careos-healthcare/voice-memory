@@ -34,11 +34,11 @@ abstract final class CurrentRelevanceCopy {
   static const optionNotSure = 'I\'m not sure';
 
   static String optionLabel(CurrentRelevanceAnswer answer) => switch (answer) {
-        CurrentRelevanceAnswer.yes => optionYes,
-        CurrentRelevanceAnswer.little => optionLittle,
-        CurrentRelevanceAnswer.notReally => optionNotReally,
-        CurrentRelevanceAnswer.notSure => optionNotSure,
-      };
+    CurrentRelevanceAnswer.yes => optionYes,
+    CurrentRelevanceAnswer.little => optionLittle,
+    CurrentRelevanceAnswer.notReally => optionNotReally,
+    CurrentRelevanceAnswer.notSure => optionNotSure,
+  };
 
   static const responseYes =
       'This looks current. ArchiveMe will keep watching how it shows up now.';
@@ -52,9 +52,9 @@ abstract final class CurrentRelevanceCopy {
       'ArchiveMe will keep this lightly in view and wait for stronger evidence.';
 
   static String responseFor(CurrentRelevanceAnswer answer) => switch (answer) {
-        CurrentRelevanceAnswer.yes => responseYes,
-        CurrentRelevanceAnswer.little => responseLittle,
-        CurrentRelevanceAnswer.notReally => responseNotReally,
-        CurrentRelevanceAnswer.notSure => responseNotSure,
-      };
+    CurrentRelevanceAnswer.yes => responseYes,
+    CurrentRelevanceAnswer.little => responseLittle,
+    CurrentRelevanceAnswer.notReally => responseNotReally,
+    CurrentRelevanceAnswer.notSure => responseNotSure,
+  };
 }

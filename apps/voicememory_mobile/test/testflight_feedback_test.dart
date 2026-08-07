@@ -8,7 +8,7 @@ import 'package:voicememory_mobile/features/support/testflight_feedback_analytic
 import 'package:voicememory_mobile/features/support/testflight_feedback_copy.dart';
 import 'package:voicememory_mobile/features/support/testflight_feedback_launcher.dart';
 import 'package:voicememory_mobile/screens/settings_screen.dart';
-import 'package:voicememory_mobile/screens/testing_archiveme_screen.dart';
+import 'package:archiveme_research/screens/testing_archiveme_screen.dart';
 import 'package:voicememory_mobile/services/activation_funnel_analytics.dart';
 
 void main() {
@@ -26,29 +26,23 @@ void main() {
       expect(uri.path, TestFlightFeedbackCopy.emailTo);
       expect(uri.query, isNotNull);
       expect(
-        Uri.decodeQueryComponent(uri.query!),
+        Uri.decodeQueryComponent(uri.query),
         contains('subject=ArchiveMe TestFlight feedback'),
       );
       expect(
-        Uri.decodeQueryComponent(uri.query!),
+        Uri.decodeQueryComponent(uri.query),
         contains('Hi ArchiveMe team'),
       );
+      expect(Uri.decodeQueryComponent(uri.query), contains('What felt clear'));
       expect(
-        Uri.decodeQueryComponent(uri.query!),
-        contains('What felt clear'),
-      );
-      expect(
-        Uri.decodeQueryComponent(uri.query!),
+        Uri.decodeQueryComponent(uri.query),
         contains('What felt confusing'),
       );
       expect(
-        Uri.decodeQueryComponent(uri.query!),
+        Uri.decodeQueryComponent(uri.query),
         contains('What I expected to happen'),
       );
-      expect(
-        Uri.decodeQueryComponent(uri.query!),
-        contains('Device'),
-      );
+      expect(Uri.decodeQueryComponent(uri.query), contains('Device'));
     });
 
     test('openFeedbackEmail uses injected launcher', () async {
@@ -67,23 +61,18 @@ void main() {
   });
 
   group('SettingsScreen TestFlight feedback', () {
-    GoRouter _router() => GoRouter(
-          routes: [
-            GoRoute(
-              path: '/',
-              builder: (context, state) => const SettingsScreen(),
-            ),
-            GoRoute(
-              path: '/testing-archiveme',
-              builder: (context, state) => const TestingArchiveMeScreen(),
-            ),
-          ],
-        );
+    GoRouter router() => GoRouter(
+      routes: [
+        GoRoute(path: '/', builder: (context, state) => const SettingsScreen()),
+        GoRoute(
+          path: '/testing-archiveme',
+          builder: (context, state) => const TestingArchiveMeScreen(),
+        ),
+      ],
+    );
 
     Future<void> pumpSettings(WidgetTester tester) async {
-      await tester.pumpWidget(
-        MaterialApp.router(routerConfig: _router()),
-      );
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router()));
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 100));
     }
@@ -118,7 +107,9 @@ void main() {
     ) async {
       ArchiveBetaMissionGate.enabledOverride = true;
       await pumpSettings(tester);
-      await tester.tap(find.byKey(const Key('settings_testflight_feedback_tile')));
+      await tester.tap(
+        find.byKey(const Key('settings_testflight_feedback_tile')),
+      );
       await tester.pumpAndSettle();
 
       expect(find.byKey(const Key('testing_archiveme_screen')), findsOneWidget);
@@ -129,52 +120,62 @@ void main() {
       expect(find.text(TesterMissionCopy.feedbackQuestion), findsOneWidget);
     });
 
-    testWidgets('send feedback from guide opens email launcher with correct mailto',
-        (tester) async {
-      ArchiveBetaMissionGate.enabledOverride = true;
-      Uri? captured;
-      TestFlightFeedbackLauncher.launchUrlForTest = (uri) async {
-        captured = uri;
-        return true;
-      };
+    testWidgets(
+      'send feedback from guide opens email launcher with correct mailto',
+      (tester) async {
+        ArchiveBetaMissionGate.enabledOverride = true;
+        Uri? captured;
+        TestFlightFeedbackLauncher.launchUrlForTest = (uri) async {
+          captured = uri;
+          return true;
+        };
 
-      await pumpSettings(tester);
-      await tester.tap(find.byKey(const Key('settings_testflight_feedback_tile')));
-      await tester.pumpAndSettle();
-      await tester.scrollUntilVisible(
-        find.byKey(const Key('testing_archiveme_send_feedback')),
-        100,
-        scrollable: find.byType(Scrollable).first,
-      );
-      await tester.tap(find.byKey(const Key('testing_archiveme_send_feedback')));
-      await tester.pump();
+        await pumpSettings(tester);
+        await tester.tap(
+          find.byKey(const Key('settings_testflight_feedback_tile')),
+        );
+        await tester.pumpAndSettle();
+        await tester.scrollUntilVisible(
+          find.byKey(const Key('testing_archiveme_send_feedback')),
+          100,
+          scrollable: find.byType(Scrollable).first,
+        );
+        await tester.tap(
+          find.byKey(const Key('testing_archiveme_send_feedback')),
+        );
+        await tester.pump();
 
-      expect(captured, isNotNull);
-      expect(captured!.scheme, 'mailto');
-      expect(captured!.path, TestFlightFeedbackCopy.emailTo);
-      expect(
-        Uri.decodeQueryComponent(captured!.query ?? ''),
-        contains(TestFlightFeedbackCopy.emailSubject),
-      );
-      expect(
-        Uri.decodeQueryComponent(captured!.query ?? ''),
-        contains('What felt confusing'),
-      );
-    });
+        expect(captured, isNotNull);
+        expect(captured!.scheme, 'mailto');
+        expect(captured!.path, TestFlightFeedbackCopy.emailTo);
+        expect(
+          Uri.decodeQueryComponent(captured!.query),
+          contains(TestFlightFeedbackCopy.emailSubject),
+        );
+        expect(
+          Uri.decodeQueryComponent(captured!.query),
+          contains('What felt confusing'),
+        );
+      },
+    );
 
     testWidgets('failure path shows fallback snackbar', (tester) async {
       ArchiveBetaMissionGate.enabledOverride = true;
       TestFlightFeedbackLauncher.launchUrlForTest = (_) async => false;
 
       await pumpSettings(tester);
-      await tester.tap(find.byKey(const Key('settings_testflight_feedback_tile')));
+      await tester.tap(
+        find.byKey(const Key('settings_testflight_feedback_tile')),
+      );
       await tester.pumpAndSettle();
       await tester.scrollUntilVisible(
         find.byKey(const Key('testing_archiveme_send_feedback')),
         100,
         scrollable: find.byType(Scrollable).first,
       );
-      await tester.tap(find.byKey(const Key('testing_archiveme_send_feedback')));
+      await tester.tap(
+        find.byKey(const Key('testing_archiveme_send_feedback')),
+      );
       await tester.pump();
 
       expect(
@@ -186,7 +187,8 @@ void main() {
     test('analytics records safe metadata only', () {
       final captured = <({String event, Map<String, Object> properties})>[];
       ActivationFunnelAnalytics.captureForTest(
-        (event, properties) => captured.add((event: event, properties: properties)),
+        (event, properties) =>
+            captured.add((event: event, properties: properties)),
       );
 
       TestFlightFeedbackAnalytics.tapped(surface: 'settings');

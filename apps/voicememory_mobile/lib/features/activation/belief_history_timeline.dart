@@ -4,7 +4,6 @@ import '../archive_evidence/archive_evidence_heuristics.dart';
 import '../archive_proof/visible_archive_proof_copy.dart';
 import '../timeline/timeline_entry_display.dart';
 import 'belief_update_payoff.dart';
-import 'capture_context_tags.dart';
 import 'context_aware_archive_copy.dart';
 
 /// User-facing copy for the five-plus entry belief history surface.
@@ -13,7 +12,8 @@ abstract final class BeliefHistoryTimelineCopy {
 
   static const bodyChanged = VisibleArchiveProofCopy.beliefHistoryBodyChanged;
 
-  static const titleBuilding = VisibleArchiveProofCopy.beliefHistoryTitleBuilding;
+  static const titleBuilding =
+      VisibleArchiveProofCopy.beliefHistoryTitleBuilding;
 
   static const bodyNotChanged =
       VisibleArchiveProofCopy.beliefHistoryBodyNotChanged;
@@ -67,9 +67,7 @@ abstract final class BeliefHistoryTimelineEngine {
   static const _heuristics = ArchiveEvidenceHeuristics();
 
   /// Returns null unless at least five eligible entries exist.
-  static BeliefHistoryTimeline? build({
-    required List<JournalEntry> entries,
-  }) {
+  static BeliefHistoryTimeline? build({required List<JournalEntry> entries}) {
     final eligible = ArchiveEvidenceGuard.eligibleEntries(entries);
     if (eligible.length < _minEligibleCount) return null;
 
@@ -92,7 +90,8 @@ abstract final class BeliefHistoryTimelineEngine {
         _normalize(priorPayoff.currentBelief) !=
         _normalize(currentPayoff.currentBelief);
 
-    final hasMeaningfulChange = !evidenceWeak &&
+    final hasMeaningfulChange =
+        !evidenceWeak &&
         (beliefsDiffer ||
             currentPayoff.beliefChanged ||
             contextExpanded ||
@@ -117,8 +116,8 @@ abstract final class BeliefHistoryTimelineEngine {
             : BeliefHistoryTimelineCopy.titleBuilding,
         body: hasMeaningfulChange
             ? (contextExpanded
-                ? BeliefHistoryTimelineCopy.bodyChanged
-                : _bodyWhenChanged(currentPayoff))
+                  ? BeliefHistoryTimelineCopy.bodyChanged
+                  : _bodyWhenChanged(currentPayoff))
             : BeliefHistoryTimelineCopy.bodyNotChanged,
         earlierBelief: earlierBelief,
         currentBelief: currentBelief,
@@ -212,7 +211,8 @@ abstract final class BeliefHistoryTimelineEngine {
   static bool _hasGroundedWhatChanged(ArchiveEvidenceAnalysis analysis) {
     final line = analysis.whatChangedLine?.trim() ?? '';
     if (line.isEmpty) return false;
-    if (line == 'Your latest moment may sit differently from the one before it.') {
+    if (line ==
+        'Your latest moment may sit differently from the one before it.') {
       return false;
     }
     return line.contains('Last time it was about') ||

@@ -1,9 +1,5 @@
 /// User choice on the return-day flow card.
-enum ReturnDayFlowAnswer {
-  cameBack,
-  notToday,
-  different,
-}
+enum ReturnDayFlowAnswer { cameBack, notToday, different }
 
 /// Return Day Flow v2 card content.
 class ReturnDayFlow {

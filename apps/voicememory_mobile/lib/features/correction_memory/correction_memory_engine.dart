@@ -3,7 +3,6 @@ import '../archive_evidence/archive_evidence_guard.dart';
 import '../current_relevance/current_relevance_model.dart';
 import '../current_relevance/current_relevance_store.dart';
 import '../early_archive/early_first_signal_engine.dart';
-import '../evidence_weighting/evidence_weighting_engine.dart';
 import '../present_day_relevance/present_day_relevance_model.dart';
 import '../pro_evidence_value/pro_evidence_value_engine.dart';
 import '../repeat_return_check/repeat_return_check_models.dart';
@@ -171,38 +170,35 @@ abstract final class CorrectionMemoryEngine {
     required bool isDegradedTranscriptState,
     required bool whatChangedQuestionActive,
     required bool patternReviewInboxHasActiveItems,
-  }) =>
-      shouldShow(
-        result: result,
-        isDegradedTranscriptState: isDegradedTranscriptState,
-        isPostSaveDegradedState: false,
-        firstProofPayoffVisible: false,
-        whatChangedQuestionActive: whatChangedQuestionActive,
-        patternReviewInboxHasActiveItems: patternReviewInboxHasActiveItems,
-      );
+  }) => shouldShow(
+    result: result,
+    isDegradedTranscriptState: isDegradedTranscriptState,
+    isPostSaveDegradedState: false,
+    firstProofPayoffVisible: false,
+    whatChangedQuestionActive: whatChangedQuestionActive,
+    patternReviewInboxHasActiveItems: patternReviewInboxHasActiveItems,
+  );
 
   static bool shouldShowOnPatterns({
     required CorrectionMemoryResult? result,
     required bool whatChangedQuestionActive,
     required bool patternReviewInboxHasActiveItems,
-  }) =>
-      shouldShow(
-        result: result,
-        isDegradedTranscriptState: false,
-        isPostSaveDegradedState: false,
-        firstProofPayoffVisible: false,
-        whatChangedQuestionActive: whatChangedQuestionActive,
-        patternReviewInboxHasActiveItems: patternReviewInboxHasActiveItems,
-      );
+  }) => shouldShow(
+    result: result,
+    isDegradedTranscriptState: false,
+    isPostSaveDegradedState: false,
+    firstProofPayoffVisible: false,
+    whatChangedQuestionActive: whatChangedQuestionActive,
+    patternReviewInboxHasActiveItems: patternReviewInboxHasActiveItems,
+  );
 
   static bool patternReviewInboxHasActiveItems({
     required List<JournalEntry> entries,
     List<RepeatReturnCheckRecord> returnChecks = const [],
-  }) =>
-      ProEvidenceValueEngine.patternReviewInboxHasActiveItems(
-        entries: entries,
-        returnChecks: returnChecks,
-      );
+  }) => ProEvidenceValueEngine.patternReviewInboxHasActiveItems(
+    entries: entries,
+    returnChecks: returnChecks,
+  );
 
   static bool _returnedAfterFaded({
     required CorrectionMemoryRecord record,

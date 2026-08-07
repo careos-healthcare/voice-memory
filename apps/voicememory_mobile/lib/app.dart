@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'config/app_config.dart';
+import 'core/di/app_provider_container.dart';
 import 'features/live_audio/presentation/widgets/offline_vault_recovery_host.dart';
 import 'router/app_router.dart';
 import 'security/app_lock_gate.dart';
@@ -12,19 +14,20 @@ class ArchiveMeApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
-      title: AppConfig.appName,
-      debugShowCheckedModeBanner: false,
-      theme: AppTheme.light(),
-      darkTheme: AppTheme.light(),
-      themeMode: ThemeMode.light,
-      routerConfig: appRouter,
-      // App lock sits above every route: when enabled and locked, only the
-      // lock screen renders — no archive content, previews, or share cards.
-      builder: (context, child) => AppLockGate(
-        child: AppPrivacyShell(
-          child: OfflineVaultRecoveryHost(
-            child: child ?? const SizedBox.shrink(),
+    return UncontrolledProviderScope(
+      container: appProviderContainer,
+      child: MaterialApp.router(
+        title: AppConfig.appName,
+        debugShowCheckedModeBanner: false,
+        theme: AppTheme.light(),
+        darkTheme: AppTheme.light(),
+        themeMode: ThemeMode.light,
+        routerConfig: appRouter,
+        builder: (context, child) => AppLockGate(
+          child: AppPrivacyShell(
+            child: OfflineVaultRecoveryHost(
+              child: child ?? const SizedBox.shrink(),
+            ),
           ),
         ),
       ),

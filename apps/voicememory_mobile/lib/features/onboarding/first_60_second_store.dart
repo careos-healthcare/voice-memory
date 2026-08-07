@@ -9,7 +9,7 @@ import 'first_60_second_state.dart';
 /// Failures resolve conservatively (treated as already answered) so the
 /// loop can never nag.
 class First60SecondStore {
-  First60SecondStore({MobilePrefsStore? prefs}) : _prefs = prefs;
+  First60SecondStore({this._prefs});
 
   static First60SecondStore instance() => First60SecondStore();
 

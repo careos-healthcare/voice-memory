@@ -30,16 +30,17 @@ abstract final class ReturnTomorrowRitualCopy {
   static const detailFail = 'Fail';
 
   static const detailRitualFrozen = 'Ritual frozen before beta proof';
-  static const detailFutureRetentionDocumented = 'Future retention documented only';
+  static const detailFutureRetentionDocumented =
+      'Future retention documented only';
 
   static String ruleLabelFor(ReturnTomorrowRitualRuleId id) => switch (id) {
-        ReturnTomorrowRitualRuleId.allowedLanguageDocumented =>
-          'Allowed language documented',
-        ReturnTomorrowRitualRuleId.noBlockedRetentionPressure =>
-          'No blocked retention pressure',
-        ReturnTomorrowRitualRuleId.futureRetentionOnly => 'Future retention only',
-        ReturnTomorrowRitualRuleId.noNewLiveV1Ui => 'No new live V1 UI',
-      };
+    ReturnTomorrowRitualRuleId.allowedLanguageDocumented =>
+      'Allowed language documented',
+    ReturnTomorrowRitualRuleId.noBlockedRetentionPressure =>
+      'No blocked retention pressure',
+    ReturnTomorrowRitualRuleId.futureRetentionOnly => 'Future retention only',
+    ReturnTomorrowRitualRuleId.noNewLiveV1Ui => 'No new live V1 UI',
+  };
 
   static String messageFor(ReturnTomorrowRitualGateDecision decision) =>
       switch (decision) {
@@ -48,13 +49,14 @@ abstract final class ReturnTomorrowRitualCopy {
           futureRetentionDocumentedLine,
       };
 
-  static String recommendationFor(ReturnTomorrowRitualGateDecision decision) =>
-      switch (decision) {
-        ReturnTomorrowRitualGateDecision.ritualFrozen =>
-          'Keep return-tomorrow language observational. Do not add streaks, homework, or recording pressure.',
-        ReturnTomorrowRitualGateDecision.futureRetentionDocumented =>
-          'Document return-tomorrow ritual as future retention only. Keep allowed language optional and calm.',
-      };
+  static String recommendationFor(
+    ReturnTomorrowRitualGateDecision decision,
+  ) => switch (decision) {
+    ReturnTomorrowRitualGateDecision.ritualFrozen =>
+      'Keep return-tomorrow language observational. Do not add streaks, homework, or recording pressure.',
+    ReturnTomorrowRitualGateDecision.futureRetentionDocumented =>
+      'Document return-tomorrow ritual as future retention only. Keep allowed language optional and calm.',
+  };
 
   static Iterable<String> allVisibleStrings() sync* {
     yield headline;
@@ -86,10 +88,7 @@ enum ReturnTomorrowRitualRuleId {
   noNewLiveV1Ui,
 }
 
-enum ReturnTomorrowRitualRuleStatus {
-  pass,
-  fail,
-}
+enum ReturnTomorrowRitualRuleStatus { pass, fail }
 
 enum ReturnTomorrowRitualGateDecision {
   ritualFrozen,

@@ -42,7 +42,8 @@ class PatternsTranscriptPendingView extends StatelessWidget {
   Widget build(BuildContext context) {
     final gap = ArchiveResponsiveLayout.gap(context);
     final entryId = savedEntryId?.trim();
-    final showRecovery = recoverableEntry != null &&
+    final showRecovery =
+        recoverableEntry != null &&
         PendingTranscriptRecoveryGate.entryNeedsRecovery(recoverableEntry!);
 
     final content = Column(

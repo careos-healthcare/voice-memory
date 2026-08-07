@@ -9,7 +9,7 @@ import 'package:voicememory_mobile/features/pressure_retention/thread_return_evi
 import 'package:voicememory_mobile/features/pressure_retention/thread_return_evidence_model.dart';
 import 'package:voicememory_mobile/features/feedback/value_testimonial_store.dart';
 import 'package:voicememory_mobile/features/pressure_retention/shareable_archive_proof_engine.dart';
-import 'package:voicememory_mobile/screens/pressure_insights_screen.dart';
+import 'package:archiveme_research/screens/pressure_insights_screen.dart';
 import 'package:voicememory_mobile/services/activation_funnel_analytics.dart';
 import 'package:voicememory_mobile/storage/mobile_prefs_store.dart';
 import 'package:voicememory_mobile/widgets/pressure_retention/thread_return_evidence_card.dart';
@@ -559,7 +559,10 @@ void main() {
       final cardFinder = find.byKey(const Key('thread_return_evidence_card'));
       expect(cardFinder, findsOneWidget);
 
-      expect(find.byKey(const Key('thread_return_follow_up_cta')), findsNothing);
+      expect(
+        find.byKey(const Key('thread_return_follow_up_cta')),
+        findsNothing,
+      );
 
       // Existing pattern reveal card is still shown, below the thread card.
       final revealFinder = find.byKey(
@@ -876,7 +879,7 @@ void main() {
       });
       // The quote never appears in any analytics payload.
       for (final e in captured) {
-        expect('${e.properties.values.join(' ')}', isNot(contains('worry')));
+        expect(e.properties.values.join(' '), isNot(contains('worry')));
       }
     });
 

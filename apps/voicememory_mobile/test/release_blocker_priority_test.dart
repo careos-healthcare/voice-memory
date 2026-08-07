@@ -25,20 +25,19 @@ ReleaseBlockerPriorityInput _input({
   bool firstJourneyComprehensionWeak = false,
   bool criticalProofTrustWeak = false,
   bool paidIntentSignalWeak = false,
-}) =>
-    ReleaseBlockerPriorityInput(
-      freezeActive: freezeActive,
-      hasSecuritySecretsBlocker: hasSecuritySecretsBlocker,
-      hasCrash: hasCrash,
-      blocksStoreReadiness: blocksStoreReadiness,
-      risksAppStoreRejection: risksAppStoreRejection,
-      blocksPurchase: blocksPurchase,
-      blocksRestore: blocksRestore,
-      blocksEntitlement: blocksEntitlement,
-      firstJourneyComprehensionWeak: firstJourneyComprehensionWeak,
-      criticalProofTrustWeak: criticalProofTrustWeak,
-      paidIntentSignalWeak: paidIntentSignalWeak,
-    );
+}) => ReleaseBlockerPriorityInput(
+  freezeActive: freezeActive,
+  hasSecuritySecretsBlocker: hasSecuritySecretsBlocker,
+  hasCrash: hasCrash,
+  blocksStoreReadiness: blocksStoreReadiness,
+  risksAppStoreRejection: risksAppStoreRejection,
+  blocksPurchase: blocksPurchase,
+  blocksRestore: blocksRestore,
+  blocksEntitlement: blocksEntitlement,
+  firstJourneyComprehensionWeak: firstJourneyComprehensionWeak,
+  criticalProofTrustWeak: criticalProofTrustWeak,
+  paidIntentSignalWeak: paidIntentSignalWeak,
+);
 
 void main() {
   group('ReleaseBlockerPriority.build', () {
@@ -122,12 +121,12 @@ void main() {
 
     test('critical proof trust weakness follows first journey', () {
       final result = ReleaseBlockerPriority.build(
-        _input(
-          criticalProofTrustWeak: true,
-          paidIntentSignalWeak: true,
-        ),
+        _input(criticalProofTrustWeak: true, paidIntentSignalWeak: true),
       );
-      expect(result.decision, ReleaseBlockerPriorityDecision.fixProofTrustFirst);
+      expect(
+        result.decision,
+        ReleaseBlockerPriorityDecision.fixProofTrustFirst,
+      );
     });
 
     test('paid intent signal weakness is last blocker before ready', () {
@@ -149,19 +148,14 @@ void main() {
     });
 
     test('freeze inactive returns resume after freeze', () {
-      final result = ReleaseBlockerPriority.build(
-        _input(freezeActive: false),
-      );
+      final result = ReleaseBlockerPriority.build(_input(freezeActive: false));
       expect(result.decision, ReleaseBlockerPriorityDecision.resumeAfterFreeze);
     });
   });
 
   group('ReleaseBlockerPriorityCopy', () {
     test('headline says Fix blockers in order', () {
-      expect(
-        ReleaseBlockerPriorityCopy.headline,
-        'Fix blockers in order',
-      );
+      expect(ReleaseBlockerPriorityCopy.headline, 'Fix blockers in order');
     });
 
     test('body says fix highest-impact blocker first', () {
@@ -178,19 +172,21 @@ void main() {
       );
     });
 
-    test('priorityLine includes security crash store purchase restore entitlement',
-        () {
-      final lower = ReleaseBlockerPriorityCopy.priorityLine.toLowerCase();
-      expect(lower, contains('security'));
-      expect(lower, contains('crash'));
-      expect(lower, contains('store readiness'));
-      expect(lower, contains('purchase'));
-      expect(lower, contains('restore'));
-      expect(lower, contains('entitlement'));
-      expect(lower, contains('first journey'));
-      expect(lower, contains('proof trust'));
-      expect(lower, contains('paid-intent beta'));
-    });
+    test(
+      'priorityLine includes security crash store purchase restore entitlement',
+      () {
+        final lower = ReleaseBlockerPriorityCopy.priorityLine.toLowerCase();
+        expect(lower, contains('security'));
+        expect(lower, contains('crash'));
+        expect(lower, contains('store readiness'));
+        expect(lower, contains('purchase'));
+        expect(lower, contains('restore'));
+        expect(lower, contains('entitlement'));
+        expect(lower, contains('first journey'));
+        expect(lower, contains('proof trust'));
+        expect(lower, contains('paid-intent beta'));
+      },
+    );
 
     test('firstJourneyLine protects save one repeat journey', () {
       final lower = ReleaseBlockerPriorityCopy.firstJourneyLine.toLowerCase();
@@ -339,7 +335,8 @@ void main() {
   });
 }
 
-ChangeTrailClaritySummary _fullTrailSummary() => const ChangeTrailClaritySummary(
+ChangeTrailClaritySummary _fullTrailSummary() =>
+    const ChangeTrailClaritySummary(
       totalTesters: 30,
       understoodFirstProofCount: 7,
       understoodProKeepsTrailCount: 6,

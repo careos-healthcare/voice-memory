@@ -35,7 +35,10 @@ abstract final class AdaptiveDailyQuestionEngine {
       helpfulActionCapturedMilestone: helpfulActionCapturedMilestone,
     );
     if (helpfulAction != null && helpfulAction.usesActionPhrase) {
-      final actionPhrase = _groundedPhrase(helpfulAction.actionPhrase, realEntries);
+      final actionPhrase = _groundedPhrase(
+        helpfulAction.actionPhrase,
+        realEntries,
+      );
       return AdaptiveDailyQuestionResult(
         kind: AdaptiveDailyQuestionKind.helpfulActionAppeared,
         questionText: actionPhrase != null
@@ -75,8 +78,9 @@ abstract final class AdaptiveDailyQuestionEngine {
     }
 
     if (EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(realEntries)) {
-      final foundation =
-          eligible.length >= 3 ? eligible.sublist(0, 3) : eligible;
+      final foundation = eligible.length >= 3
+          ? eligible.sublist(0, 3)
+          : eligible;
       final phrase = _groundedPhrase(
         ConfirmedRepeatEvidencePhraseEngine.sharedConcretePhrase(foundation),
         foundation,
@@ -127,20 +131,20 @@ abstract final class AdaptiveDailyQuestionEngine {
     final latest = RepeatReturnCheckTrendEngine.latestChoice(returnChecks);
     return switch (latest) {
       RepeatReturnCheckChoice.softer => const AdaptiveDailyQuestionResult(
-          kind: AdaptiveDailyQuestionKind.returnSofter,
-          questionText: AdaptiveDailyQuestionCopy.returnSofterQuestion,
-          helperText: AdaptiveDailyQuestionCopy.returnSofterHelper,
-        ),
+        kind: AdaptiveDailyQuestionKind.returnSofter,
+        questionText: AdaptiveDailyQuestionCopy.returnSofterQuestion,
+        helperText: AdaptiveDailyQuestionCopy.returnSofterHelper,
+      ),
       RepeatReturnCheckChoice.stronger => const AdaptiveDailyQuestionResult(
-          kind: AdaptiveDailyQuestionKind.returnStronger,
-          questionText: AdaptiveDailyQuestionCopy.returnStrongerQuestion,
-          helperText: AdaptiveDailyQuestionCopy.returnStrongerHelper,
-        ),
+        kind: AdaptiveDailyQuestionKind.returnStronger,
+        questionText: AdaptiveDailyQuestionCopy.returnStrongerQuestion,
+        helperText: AdaptiveDailyQuestionCopy.returnStrongerHelper,
+      ),
       RepeatReturnCheckChoice.same => const AdaptiveDailyQuestionResult(
-          kind: AdaptiveDailyQuestionKind.returnSame,
-          questionText: AdaptiveDailyQuestionCopy.returnSameQuestion,
-          helperText: AdaptiveDailyQuestionCopy.returnSameHelper,
-        ),
+        kind: AdaptiveDailyQuestionKind.returnSame,
+        questionText: AdaptiveDailyQuestionCopy.returnSameQuestion,
+        helperText: AdaptiveDailyQuestionCopy.returnSameHelper,
+      ),
       RepeatReturnCheckChoice.changed || null => null,
     };
   }

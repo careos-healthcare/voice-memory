@@ -24,7 +24,18 @@ interface PushBody {
     encrypted: EncryptedPayload;
     updatedAt: string;
     byteLength: number;
+    binding?: string;
   }>;
+}
+
+const MAX_SYNC_PUSH_BLOBS = 32;
+const MAX_SYNC_PUSH_BODY_BYTES = 8 * 1024 * 1024;
+const MAX_SYNC_BLOB_BYTES = 2 * 1024 * 1024;
+
+function isValidIsoTimestamp(value: string | undefined): boolean {
+  if (!value?.trim()) return false;
+  const time = new Date(value).getTime();
+  return Number.isFinite(time);
 }
 
 /** Accept encrypted blobs only — reject plaintext archive fields. */
@@ -58,7 +69,26 @@ export async function POST(request: Request) {
     return syncApiFailure("Request body must be valid JSON.", "INVALID_REMOTE_JSON", 400);
   }
 
+  if (contentLength != null && contentLength > MAX_SYNC_PUSH_BODY_BYTES) {
+    log({
+      ok: false,
+      errorCode: "SYNC_PUSH_TOO_LARGE",
+      responseShape: "body_too_large",
+    });
+    return syncApiFailure("Encrypted sync payload too large.", "SYNC_PUSH_TOO_LARGE", 413);
+  }
+
   const blobs = body.blobs ?? [];
+  if (blobs.length > MAX_SYNC_PUSH_BLOBS) {
+    log({
+      ok: false,
+      errorCode: "SYNC_PUSH_TOO_MANY_BLOBS",
+      responseShape: "too_many_blobs",
+      blobCount: blobs.length,
+    });
+    return syncApiFailure("Too many encrypted blobs in one push.", "SYNC_PUSH_TOO_MANY_BLOBS", 400);
+  }
+
   if (blobs.length === 0) {
     log({
       ok: false,
@@ -80,6 +110,22 @@ export async function POST(request: Request) {
         responseShape: "invalid_blob",
       });
       return syncApiFailure("Invalid encrypted blob envelope.", "INVALID_ENCRYPTED_ENVELOPE", 400);
+    }
+    if (blob.byteLength > MAX_SYNC_BLOB_BYTES) {
+      log({
+        ok: false,
+        errorCode: "SYNC_BLOB_TOO_LARGE",
+        responseShape: "blob_too_large",
+      });
+      return syncApiFailure("Encrypted blob exceeds size limit.", "SYNC_BLOB_TOO_LARGE", 413);
+    }
+    if (!isValidIsoTimestamp(blob.updatedAt)) {
+      log({
+        ok: false,
+        errorCode: "INVALID_REMOTE_TIMESTAMP",
+        responseShape: "invalid_timestamp",
+      });
+      return syncApiFailure("Blob updatedAt timestamp is invalid.", "INVALID_REMOTE_TIMESTAMP", 400);
     }
     if (blob.encrypted.version !== 1) {
       log({

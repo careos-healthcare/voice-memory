@@ -10,12 +10,10 @@ import '../../services/app_services.dart';
 /// Pushes the latest objective snapshot to native widgets when available.
 class CurrentObjectiveWidgetRefreshService {
   CurrentObjectiveWidgetRefreshService({
-    required CurrentObjectiveSnapshotStore snapshotStore,
-    required CurrentObjectiveWidgetBridge bridge,
-    ObjectiveWidgetPendingRouteStore? pendingRouteStore,
-  }) : _snapshotStore = snapshotStore,
-       _bridge = bridge,
-       _pendingRouteStore = pendingRouteStore;
+    required this._snapshotStore,
+    required this._bridge,
+    this._pendingRouteStore,
+  });
 
   final CurrentObjectiveSnapshotStore _snapshotStore;
   final CurrentObjectiveWidgetBridge _bridge;

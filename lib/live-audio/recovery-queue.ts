@@ -107,7 +107,10 @@ class VaultRecoveryQueue extends EventEmitter {
         }, JOB_TIMEOUT_MS);
       });
 
-      const processed = await Promise.race([processingPromise, timeoutPromise]);
+      const processed = (await Promise.race([
+        processingPromise,
+        timeoutPromise,
+      ])) as Awaited<ReturnType<typeof processVaultBuffer>>;
 
       nextJob.status = "completed";
       nextJob.result = {
@@ -120,7 +123,7 @@ class VaultRecoveryQueue extends EventEmitter {
       await fs.promises.unlink(nextJob.filePath).catch(() => {});
     } catch (err) {
       nextJob.status = "failed";
-      nextJob.error = err.message;
+      nextJob.error = err instanceof Error ? err.message : String(err);
     } finally {
       if (timeoutTimer) clearTimeout(timeoutTimer);
       nextJob.updatedAt = Date.now();

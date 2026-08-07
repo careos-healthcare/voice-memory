@@ -45,14 +45,15 @@ class CapacityBoundaryResponseSelection {
   bool get hasSelection => responseId.isNotEmpty && !dismissed;
 
   Map<String, dynamic> toJson() => {
-        'responseId': responseId,
-        'selectedAt': selectedAt.toIso8601String(),
-        if (lastCopiedAt != null)
-          'lastCopiedAt': lastCopiedAt!.toIso8601String(),
-        'dismissed': dismissed,
-      };
+    'responseId': responseId,
+    'selectedAt': selectedAt.toIso8601String(),
+    if (lastCopiedAt != null) 'lastCopiedAt': lastCopiedAt!.toIso8601String(),
+    'dismissed': dismissed,
+  };
 
-  static CapacityBoundaryResponseSelection? fromJson(Map<String, dynamic> json) {
+  static CapacityBoundaryResponseSelection? fromJson(
+    Map<String, dynamic> json,
+  ) {
     final responseId = json['responseId'];
     final selectedAtRaw = json['selectedAt'];
     if (responseId is! String || responseId.isEmpty) return null;
@@ -60,8 +61,9 @@ class CapacityBoundaryResponseSelection {
     final selectedAt = DateTime.tryParse(selectedAtRaw);
     if (selectedAt == null) return null;
     final lastCopiedRaw = json['lastCopiedAt'];
-    final lastCopiedAt =
-        lastCopiedRaw is String ? DateTime.tryParse(lastCopiedRaw) : null;
+    final lastCopiedAt = lastCopiedRaw is String
+        ? DateTime.tryParse(lastCopiedRaw)
+        : null;
     final dismissed = json['dismissed'] == true;
     return CapacityBoundaryResponseSelection(
       responseId: responseId,
@@ -76,13 +78,12 @@ class CapacityBoundaryResponseSelection {
     DateTime? selectedAt,
     DateTime? lastCopiedAt,
     bool? dismissed,
-  }) =>
-      CapacityBoundaryResponseSelection(
-        responseId: responseId ?? this.responseId,
-        selectedAt: selectedAt ?? this.selectedAt,
-        lastCopiedAt: lastCopiedAt ?? this.lastCopiedAt,
-        dismissed: dismissed ?? this.dismissed,
-      );
+  }) => CapacityBoundaryResponseSelection(
+    responseId: responseId ?? this.responseId,
+    selectedAt: selectedAt ?? this.selectedAt,
+    lastCopiedAt: lastCopiedAt ?? this.lastCopiedAt,
+    dismissed: dismissed ?? this.dismissed,
+  );
 }
 
 /// Gate inputs — metadata counts only.
@@ -141,24 +142,22 @@ class CapacityBoundaryResponseInput {
     int? capacityEvidenceCount,
     int? outcomeOrCostRecordCount,
     CapacityBoundaryResponseSelection? selection,
-  }) =>
-      CapacityBoundaryResponseInput(
-        sampleMode: sampleMode,
-        realSavedMomentCount: realSavedMomentCount,
-        capacityWedgeActive: capacityWedgeActive,
-        capacityMomentCount: capacityMomentCount ?? this.capacityMomentCount,
-        capacityEvidenceCount:
-            capacityEvidenceCount ?? this.capacityEvidenceCount,
-        outcomeOrCostRecordCount:
-            outcomeOrCostRecordCount ?? this.outcomeOrCostRecordCount,
-        pendingDecisionOutcome: pendingDecisionOutcome,
-        pendingCostCheckin: pendingCostCheckin,
-        beforeYesPauseOnHome: beforeYesPauseOnHome,
-        weeklyReviewOnHome: weeklyReviewOnHome,
-        pendingPullReasonOnHome: pendingPullReasonOnHome,
-        mostCommonPullReasonId: mostCommonPullReasonId,
-        selection: selection ?? this.selection,
-      );
+  }) => CapacityBoundaryResponseInput(
+    sampleMode: sampleMode,
+    realSavedMomentCount: realSavedMomentCount,
+    capacityWedgeActive: capacityWedgeActive,
+    capacityMomentCount: capacityMomentCount ?? this.capacityMomentCount,
+    capacityEvidenceCount: capacityEvidenceCount ?? this.capacityEvidenceCount,
+    outcomeOrCostRecordCount:
+        outcomeOrCostRecordCount ?? this.outcomeOrCostRecordCount,
+    pendingDecisionOutcome: pendingDecisionOutcome,
+    pendingCostCheckin: pendingCostCheckin,
+    beforeYesPauseOnHome: beforeYesPauseOnHome,
+    weeklyReviewOnHome: weeklyReviewOnHome,
+    pendingPullReasonOnHome: pendingPullReasonOnHome,
+    mostCommonPullReasonId: mostCommonPullReasonId,
+    selection: selection ?? this.selection,
+  );
 }
 
 /// Result for cards, screens, and loop/weekly integrations.

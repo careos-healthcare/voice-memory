@@ -15,17 +15,17 @@ class ReturnRitualCard extends StatefulWidget {
     required this.entryCount,
     this.onAddMoment,
     this.store,
-    ReturnRitualChoice? initialChoice,
-  }) : _initialChoice = initialChoice;
+    this._initialChoice,
+  });
 
   /// Test hook — skip async prefs load when set.
   const ReturnRitualCard.test({
     super.key,
     required this.entryCount,
-    required ReturnRitualChoice? initialChoice,
+    required this._initialChoice,
     this.onAddMoment,
     this.store,
-  }) : _initialChoice = initialChoice;
+  });
 
   final int entryCount;
   final VoidCallback? onAddMoment;
@@ -156,9 +156,7 @@ class _ReturnRitualCardState extends State<ReturnRitualCard> {
           _OptionButton(
             key: Key('return_ritual_option_${preset.id}'),
             label: preset.phrase,
-            onTap: () => _saveChoice(
-              ReturnRitualChoice(presetId: preset.id),
-            ),
+            onTap: () => _saveChoice(ReturnRitualChoice(presetId: preset.id)),
           ),
           const SizedBox(height: AppSpacing.xs),
         ],
@@ -203,8 +201,8 @@ class _ReturnRitualCardState extends State<ReturnRitualCard> {
             'return_ritual_saved_body_${widget.entryCount >= 5
                 ? 'weekly'
                 : widget.entryCount >= 3
-                    ? 'belief'
-                    : 'default'}',
+                ? 'belief'
+                : 'default'}',
           ),
           style: ArchiveMobileTypography.listSubtitle(context),
         ),
@@ -244,11 +242,7 @@ class _ReturnRitualCardState extends State<ReturnRitualCard> {
 }
 
 class _OptionButton extends StatelessWidget {
-  const _OptionButton({
-    super.key,
-    required this.label,
-    required this.onTap,
-  });
+  const _OptionButton({super.key, required this.label, required this.onTap});
 
   final String label;
   final VoidCallback onTap;

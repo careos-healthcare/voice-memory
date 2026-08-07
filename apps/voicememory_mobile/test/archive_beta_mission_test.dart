@@ -24,9 +24,11 @@ import 'package:voicememory_mobile/widgets/beta/archive_beta_mission_card.dart';
 import 'package:voicememory_mobile/widgets/capture_entry_actions.dart';
 
 import 'support/memory_pressure_stores.dart';
+import 'support/test_storage_sandbox.dart';
 
 class _MemoryPrefs extends MobilePrefsStore {
-  _MemoryPrefs() : super(file: File('test/tmp/archive_beta_mission/unused.json'));
+  _MemoryPrefs()
+    : super(file: File('test/tmp/archive_beta_mission/unused.json'));
 
   final Map<String, Map<String, dynamic>> maps = {};
 
@@ -170,7 +172,10 @@ void main() {
 
       await store.dismiss();
       expect(await store.loadDismissed(), isTrue);
-      expect(prefs.maps[ArchiveBetaMissionStore.prefsKey]?['dismissed'], isTrue);
+      expect(
+        prefs.maps[ArchiveBetaMissionStore.prefsKey]?['dismissed'],
+        isTrue,
+      );
     });
   });
 
@@ -192,7 +197,10 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.byKey(const Key('archive_beta_mission_card')), findsOneWidget);
+      expect(
+        find.byKey(const Key('archive_beta_mission_card')),
+        findsOneWidget,
+      );
       await tester.tap(find.text(ArchiveBetaMissionCopy.hideCta));
       await tester.pumpAndSettle();
 
@@ -224,12 +232,12 @@ void main() {
   });
 
   group('Record screen integration', () {
-    late Directory tempDir;
+    late TestStorageSandbox sandbox;
 
     setUp(() async {
-      tempDir = Directory.systemTemp.createTempSync('vm_archive_beta_mission_');
+      sandbox = TestStorageSandbox.create();
       await AppServices.resetForTest(
-        journalPath: '${tempDir.path}/journal.json',
+        journalPath: sandbox.journalPath,
         skipRevenueCat: true,
       );
       await ArchiveBetaMissionStore.resetForTest();
@@ -238,6 +246,8 @@ void main() {
         const RecordAuditPresentation(ui: RecordUiState.ready),
       );
     });
+
+    tearDown(() => sandbox.dispose());
 
     tearDown(() {
       ArchiveBetaMissionGate.resetForTest();
@@ -275,9 +285,18 @@ void main() {
       await pumpEmptyRecord(tester);
 
       expect(find.byKey(const Key('archive_beta_mission_card')), findsNothing);
-      expect(find.byKey(const Key('tester_mission_compact_strip')), findsNothing);
-      expect(find.byKey(const Key('record_first_run_screen_card')), findsOneWidget);
-      expect(find.text(MicrophonePermissionCopy.requestMicrophoneCta), findsOneWidget);
+      expect(
+        find.byKey(const Key('tester_mission_compact_strip')),
+        findsNothing,
+      );
+      expect(
+        find.byKey(const Key('record_first_run_screen_card')),
+        findsOneWidget,
+      );
+      expect(
+        find.text(MicrophonePermissionCopy.requestMicrophoneCta),
+        findsOneWidget,
+      );
     });
 
     testWidgets('entry 1 shows tester mission when beta gate enabled', (
@@ -304,7 +323,10 @@ void main() {
       await pumpEmptyRecord(tester);
 
       expect(find.byKey(const Key('tester_mission_card')), findsOneWidget);
-      expect(find.byKey(const Key('tester_mission_compact_strip')), findsNothing);
+      expect(
+        find.byKey(const Key('tester_mission_compact_strip')),
+        findsNothing,
+      );
     });
 
     testWidgets('legacy card hidden when beta gate is off', (tester) async {
@@ -312,7 +334,10 @@ void main() {
       await pumpEmptyRecord(tester);
 
       expect(find.byKey(const Key('archive_beta_mission_card')), findsNothing);
-      expect(find.byKey(const Key('tester_mission_compact_strip')), findsNothing);
+      expect(
+        find.byKey(const Key('tester_mission_compact_strip')),
+        findsNothing,
+      );
     });
   });
 }

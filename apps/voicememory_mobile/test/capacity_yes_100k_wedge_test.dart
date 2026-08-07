@@ -16,11 +16,7 @@ const _docPaths = [
   _appStorePath,
 ];
 
-const _forbiddenPurchaseCtas = [
-  'Buy now',
-  'Subscribe now',
-  'Pro is active',
-];
+const _forbiddenPurchaseCtas = ['Buy now', 'Subscribe now', 'Pro is active'];
 
 const _forbiddenClinicalTerms = [
   'therapy',
@@ -84,10 +80,7 @@ void main() {
     test('pattern and moment language', () {
       expect(
         allDocs.toLowerCase(),
-        anyOf(
-          contains('keeps returning'),
-          contains('what returned'),
-        ),
+        anyOf(contains('keeps returning'), contains('what returned')),
       );
       expect(allDocs.toLowerCase(), contains('save the moment'));
       expect(allDocs.toLowerCase(), contains('see the pattern'));
@@ -118,9 +111,7 @@ void main() {
       );
       expect(
         interview,
-        contains(
-          'Would you pay to keep a long-term archive of this pattern?',
-        ),
+        contains('Would you pay to keep a long-term archive of this pattern?'),
       );
       expect(
         interview,
@@ -140,7 +131,10 @@ void main() {
 
     test('required landing headline variants', () {
       expect(landing, contains('See why you keep saying yes.'));
-      expect(landing, contains('A private archive for overcommitment patterns.'));
+      expect(
+        landing,
+        contains('A private archive for overcommitment patterns.'),
+      );
       expect(
         landing,
         contains('Stop guessing why you keep taking on too much.'),
@@ -174,7 +168,11 @@ void main() {
     test('no fake testimonials or invented user counts', () {
       final lower = allDocs.toLowerCase();
       for (final phrase in _forbiddenHypePhrases) {
-        expect(lower, isNot(contains(phrase)), reason: 'must not contain $phrase');
+        expect(
+          lower,
+          isNot(contains(phrase)),
+          reason: 'must not contain $phrase',
+        );
       }
     });
   });

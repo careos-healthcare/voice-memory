@@ -32,22 +32,21 @@ class WhatChangedSinceLastTimeCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     _trackSeen();
-    final bodyStyle = ArchiveMobileTypography.explanationBody(context).copyWith(
-      color: AppColors.textSecondary,
-      height: 1.45,
-    );
-    final rowLabelStyle = ArchiveMobileTypography.cardLabel(context).copyWith(
-      color: AppColors.textSecondary,
-    );
-    final rowPhraseStyle = bodyStyle.copyWith(
-      color: AppColors.textPrimary,
-    );
+    final bodyStyle = ArchiveMobileTypography.explanationBody(
+      context,
+    ).copyWith(color: AppColors.textSecondary, height: 1.45);
+    final rowLabelStyle = ArchiveMobileTypography.cardLabel(
+      context,
+    ).copyWith(color: AppColors.textSecondary);
+    final rowPhraseStyle = bodyStyle.copyWith(color: AppColors.textPrimary);
 
     return Container(
       key: const Key('what_changed_since_last_time_card'),
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.md),
-      decoration: VoiceMemoryCards.standard(background: const Color(0xFFF7FAFC)),
+      decoration: VoiceMemoryCards.standard(
+        background: const Color(0xFFF7FAFC),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -59,7 +58,9 @@ class WhatChangedSinceLastTimeCard extends StatelessWidget {
           const SizedBox(height: AppSpacing.xs),
           Text(
             result.summary,
-            key: Key('what_changed_since_last_time_summary_${result.state.name}'),
+            key: Key(
+              'what_changed_since_last_time_summary_${result.state.name}',
+            ),
             style: bodyStyle.copyWith(color: AppColors.textPrimary),
           ),
           const SizedBox(height: AppSpacing.sm),

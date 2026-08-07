@@ -26,10 +26,11 @@ import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/models/sync_status.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
 import 'package:voicememory_mobile/storage/mobile_prefs_store.dart';
+import 'support/test_storage_sandbox.dart';
 
 class _MemoryPrefs extends MobilePrefsStore {
   _MemoryPrefs()
-      : super(file: File('test/tmp/pattern_match_quality/unused.json'));
+    : super(file: File('test/tmp/pattern_match_quality/unused.json'));
 
   final Map<String, Map<String, dynamic>> maps = {};
 
@@ -46,11 +47,7 @@ const _strongRepeat =
     'I had no capacity but I said yes again to the extra meeting today.';
 final _now = DateTime(2026, 6, 12, 12);
 
-JournalEntry _entry(
-  String id,
-  String transcript, {
-  DateTime? createdAt,
-}) =>
+JournalEntry _entry(String id, String transcript, {DateTime? createdAt}) =>
     JournalEntry(
       id: id,
       createdAt: createdAt ?? _now,
@@ -90,22 +87,13 @@ List<JournalEntry> _threeRelatedEntries({DateTime? anchor}) {
 }
 
 List<JournalEntry> _triggerAndBehaviourEntries() => [
-      ..._threeRelatedEntries(anchor: _now.subtract(const Duration(days: 4))),
-      _entry(
-        '4',
-        'Right before I said yes again, the extra meeting ask came in.',
-        createdAt: _now.subtract(const Duration(days: 1)),
-      ),
-    ];
-
-List<JournalEntry> _softeningEntries() => [
-      ..._threeRelatedEntries(anchor: _now.subtract(const Duration(days: 4))),
-      _entry(
-        '4',
-        'Same capacity pressure came back but it felt easier to stop this time.',
-        createdAt: _now.subtract(const Duration(days: 1)),
-      ),
-    ];
+  ..._threeRelatedEntries(anchor: _now.subtract(const Duration(days: 4))),
+  _entry(
+    '4',
+    'Right before I said yes again, the extra meeting ask came in.',
+    createdAt: _now.subtract(const Duration(days: 1)),
+  ),
+];
 
 PatternMatchQualityResult _qualityFor(
   List<JournalEntry> entries, {
@@ -113,14 +101,13 @@ PatternMatchQualityResult _qualityFor(
   List<String> beliefEvidencePhrases = const [],
   DateTime? now,
   String source = 'test',
-}) =>
-    PatternMatchQualityEngine.build(
-      entries: entries,
-      beliefSurfaceVisible: beliefSurfaceVisible,
-      source: source,
-      beliefEvidencePhrases: beliefEvidencePhrases,
-      now: now ?? _now,
-    );
+}) => PatternMatchQualityEngine.build(
+  entries: entries,
+  beliefSurfaceVisible: beliefSurfaceVisible,
+  source: source,
+  beliefEvidencePhrases: beliefEvidencePhrases,
+  now: now ?? _now,
+);
 
 Future<void> _saveCorrection(
   List<JournalEntry> entries,
@@ -136,17 +123,20 @@ Future<void> _saveCorrection(
     proofKey: proofKey,
     answer: answer,
     entryCountAtCapture: entries.length,
-    hasConfirmedRepeat:
-        EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(entries),
+    hasConfirmedRepeat: EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(
+      entries,
+    ),
     source: 'test',
   );
 }
 
 void main() {
+  late TestStorageSandbox sandbox;
   final analyticsEvents = <({String event, Map<String, Object> props})>[];
   late _MemoryPrefs prefs;
 
   setUp(() async {
+    sandbox = TestStorageSandbox.create();
     prefs = _MemoryPrefs();
     ArchiveBetaMissionGate.enabledOverride = true;
     PatternMatchQualityAnalytics.resetForTest();
@@ -154,10 +144,8 @@ void main() {
       analyticsEvents.add((event: event, props: props));
     };
     await AppServices.resetForTest(
-      journalPath:
-          'test/tmp/pattern_match_quality/${DateTime.now().microsecondsSinceEpoch}_journal.json',
-      prefsPath:
-          'test/tmp/pattern_match_quality/${DateTime.now().microsecondsSinceEpoch}_prefs.json',
+      journalPath: sandbox.journalPath,
+      prefsPath: sandbox.prefsPath,
       skipRevenueCat: true,
     );
     await CurrentRelevanceStore.resetForTest();
@@ -166,6 +154,7 @@ void main() {
     analyticsEvents.clear();
   });
 
+  tearDown(() => sandbox.dispose());
   tearDown(() async {
     PatternMatchQualityAnalytics.resetForTest();
     ArchiveBetaMissionGate.resetForTest();
@@ -243,7 +232,11 @@ void main() {
     test('fresh return after correction increases score', () async {
       final now = _now;
       final entries = [
-        _entry('1', _strongRepeat, createdAt: now.subtract(const Duration(days: 2))),
+        _entry(
+          '1',
+          _strongRepeat,
+          createdAt: now.subtract(const Duration(days: 2)),
+        ),
         _entry(
           '2',
           'Same thing — said yes when I had no capacity for one more thing.',
@@ -288,21 +281,19 @@ void main() {
     });
 
     test('stale evidence downgrades score', () {
-      final result = _qualityFor(
-        [
-          _entry('1', _strongRepeat, createdAt: DateTime(2026, 5, 1, 12)),
-          _entry(
-            '2',
-            'Same thing — said yes when I had no capacity for one more thing.',
-            createdAt: DateTime(2026, 5, 3, 12),
-          ),
-          _entry(
-            '3',
-            'I said yes again even though I had no capacity for one more ask.',
-            createdAt: DateTime(2026, 5, 5, 12),
-          ),
-        ],
-      );
+      final result = _qualityFor([
+        _entry('1', _strongRepeat, createdAt: DateTime(2026, 5, 1, 12)),
+        _entry(
+          '2',
+          'Same thing — said yes when I had no capacity for one more thing.',
+          createdAt: DateTime(2026, 5, 3, 12),
+        ),
+        _entry(
+          '3',
+          'I said yes again even though I had no capacity for one more ask.',
+          createdAt: DateTime(2026, 5, 5, 12),
+        ),
+      ]);
       expect(
         result.weakReasons,
         contains(PatternMatchWeakReason.oldEvidenceOnly),
@@ -310,14 +301,11 @@ void main() {
     });
 
     test('no safe anchor downgrades score', () {
-      final result = _qualityFor(
-        [
-          _entry('1', 'Alpha note.'),
-          _entry('2', 'Beta note.'),
-          _entry('3', 'Gamma note.'),
-        ],
-        beliefSurfaceVisible: true,
-      );
+      final result = _qualityFor([
+        _entry('1', 'Alpha note.'),
+        _entry('2', 'Beta note.'),
+        _entry('3', 'Gamma note.'),
+      ], beliefSurfaceVisible: true);
       expect(
         result.weakReasons,
         contains(PatternMatchWeakReason.noSafeAnchorAvailable),
@@ -353,10 +341,7 @@ void main() {
       expect(result.shouldShowAsProof, isTrue);
       expect(
         result.safeExplanation,
-        anyOf(
-          PatternMatchQualityCopy.solid,
-          PatternMatchQualityCopy.strong,
-        ),
+        anyOf(PatternMatchQualityCopy.solid, PatternMatchQualityCopy.strong),
       );
     });
 
@@ -431,7 +416,10 @@ void main() {
     test('no raw transcript/body/private text', () {
       final result = _qualityFor(_threeRelatedEntries());
       expect(result.safeExplanation, isNot(contains(_strongRepeat)));
-      expect(result.safeExplanation.toLowerCase(), isNot(contains('transcript')));
+      expect(
+        result.safeExplanation.toLowerCase(),
+        isNot(contains('transcript')),
+      );
     });
 
     test('no medical/therapy claims', () {
@@ -450,17 +438,22 @@ void main() {
       PatternMatchQualityAnalytics.resolved(
         result: _qualityFor(_threeRelatedEntries()),
       );
-      expect(analyticsEvents.single.event,
-          PatternMatchQualityAnalytics.resolvedEvent);
-      expect(analyticsEvents.single.props.keys, containsAll([
-        'entry_count',
-        'score_band',
-        'matched_dimension_count',
-        'weak_reason_count',
-        'should_show_as_proof',
-        'should_show_as_watch_only',
-        'source',
-      ]));
+      expect(
+        analyticsEvents.single.event,
+        PatternMatchQualityAnalytics.resolvedEvent,
+      );
+      expect(
+        analyticsEvents.single.props.keys,
+        containsAll([
+          'entry_count',
+          'score_band',
+          'matched_dimension_count',
+          'weak_reason_count',
+          'should_show_as_proof',
+          'should_show_as_watch_only',
+          'source',
+        ]),
+      );
     });
   });
 }

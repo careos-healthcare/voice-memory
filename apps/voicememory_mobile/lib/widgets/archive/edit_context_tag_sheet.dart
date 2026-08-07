@@ -8,10 +8,7 @@ import '../../theme/app_spacing.dart';
 enum EditContextTagAction { cancel, clear, save }
 
 class EditContextTagResult {
-  const EditContextTagResult({
-    required this.action,
-    this.tagId,
-  });
+  const EditContextTagResult({required this.action, this.tagId});
 
   final EditContextTagAction action;
   final String? tagId;
@@ -75,8 +72,8 @@ class _EditContextTagSheetState extends State<EditContextTagSheet> {
               VisibleArchiveProofCopy.captureContextTagHelper,
               key: const Key('edit_context_tag_helper'),
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  ),
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
             ),
             const SizedBox(height: AppSpacing.sm),
             Wrap(
@@ -88,9 +85,8 @@ class _EditContextTagSheetState extends State<EditContextTagSheet> {
                     key: Key('edit_context_tag_${tag.id}'),
                     label: Text(tag.label),
                     selected: _selectedId == tag.id,
-                    onSelected: (selected) => setState(
-                      () => _selectedId = selected ? tag.id : null,
-                    ),
+                    onSelected: (selected) =>
+                        setState(() => _selectedId = selected ? tag.id : null),
                   ),
               ],
             ),
@@ -124,11 +120,11 @@ class _EditContextTagSheetState extends State<EditContextTagSheet> {
                   onPressed: _selectedId == null
                       ? null
                       : () => Navigator.of(context).pop(
-                            EditContextTagResult(
-                              action: EditContextTagAction.save,
-                              tagId: _selectedId,
-                            ),
+                          EditContextTagResult(
+                            action: EditContextTagAction.save,
+                            tagId: _selectedId,
                           ),
+                        ),
                   child: Text(VisibleArchiveProofCopy.captureContextTagSave),
                 ),
               ],

@@ -43,7 +43,9 @@ abstract final class PricingValidationEngine {
     )) {
       return false;
     }
-    if (!BetaRepairLabEngine.isRepairActive(BetaRepairLabMode.pricingValidation)) {
+    if (!BetaRepairLabEngine.isRepairActive(
+      BetaRepairLabMode.pricingValidation,
+    )) {
       return false;
     }
     if (input.isPro) return false;
@@ -70,7 +72,9 @@ abstract final class PricingValidationEngine {
     required bool showPricingValidation,
   }) {
     if (!showPricingValidation) return false;
-    if (!BetaRepairLabEngine.shouldShowLab(betaMissionEnabled: betaMissionEnabled)) {
+    if (!BetaRepairLabEngine.shouldShowLab(
+      betaMissionEnabled: betaMissionEnabled,
+    )) {
       return false;
     }
     return BetaRepairLabStore.activeMode == BetaRepairLabMode.pricingValidation;

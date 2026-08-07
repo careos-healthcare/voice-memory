@@ -1,13 +1,5 @@
 /// First Week Path step identifiers — entry-count based, not calendar days.
-enum FirstWeekPathStep {
-  day1,
-  day2,
-  day3,
-  day4,
-  day5,
-  day6,
-  day7,
-}
+enum FirstWeekPathStep { day1, day2, day3, day4, day5, day6, day7 }
 
 /// Local inputs for the first-week return path — metadata only.
 class FirstWeekPathInput {

@@ -20,17 +20,18 @@ class WeeklyArchiveReviewCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bodyStyle = ArchiveMobileTypography.explanationBody(context).copyWith(
-      color: AppColors.textPrimary,
-      height: 1.4,
-    );
+    final bodyStyle = ArchiveMobileTypography.explanationBody(
+      context,
+    ).copyWith(color: AppColors.textPrimary, height: 1.4);
     final secondaryStyle = bodyStyle.copyWith(color: AppColors.textSecondary);
 
     return Container(
       key: const Key('weekly_archive_review_card'),
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.md),
-      decoration: VoiceMemoryCards.standard(background: const Color(0xFFF8FAF8)),
+      decoration: VoiceMemoryCards.standard(
+        background: const Color(0xFFF8FAF8),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [

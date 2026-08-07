@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:go_router/go_router.dart';
 import 'package:voicememory_mobile/features/loop_mode/loop_mode_coordinator.dart';
 import 'package:voicememory_mobile/features/loop_mode/loop_mode_engine.dart';
 import 'package:voicememory_mobile/features/loop_mode/loop_mode_model.dart';
@@ -10,10 +9,8 @@ import 'package:voicememory_mobile/features/signal_review/signal_review_model.da
 import 'package:voicememory_mobile/features/signal_review/signal_review_store.dart';
 import 'package:voicememory_mobile/models/entitlement.dart'
     show BillingTier, PremiumEntitlements;
-import 'package:voicememory_mobile/models/journal_entry.dart';
-import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/product/loop_mode_copy.dart';
-import 'package:voicememory_mobile/screens/signal_review_screen.dart';
+import 'package:archiveme_research/screens/signal_review_screen.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
 import 'package:voicememory_mobile/widgets/loop_mode/loop_paywall_teaser_card.dart';
 import 'package:voicememory_mobile/widgets/signal/signal_review_card.dart';

@@ -21,49 +21,48 @@ BetaTesterOutcome _outcome(Set<BetaDecisionSignal> signals) =>
     BetaTesterOutcome(testerId: 't1', signals: signals);
 
 List<BetaTesterOutcome> _proPackagingOutcomes() => [
-      _outcome({
-        BetaDecisionSignal.understoodPromise,
-        BetaDecisionSignal.savedFirstMoment,
-        BetaDecisionSignal.returnedDay2,
-        BetaDecisionSignal.reachedThreeMoments,
-        BetaDecisionSignal.sawFirstProof,
-        BetaDecisionSignal.proofFeltMeaningful,
-      }),
-    ];
+  _outcome({
+    BetaDecisionSignal.understoodPromise,
+    BetaDecisionSignal.savedFirstMoment,
+    BetaDecisionSignal.returnedDay2,
+    BetaDecisionSignal.reachedThreeMoments,
+    BetaDecisionSignal.sawFirstProof,
+    BetaDecisionSignal.proofFeltMeaningful,
+  }),
+];
 
 ProBridgeVisibilityInput _bridgeInput({
   required int entryCount,
   required bool hasTimelineProof,
-}) =>
-    ProBridgeVisibilityInput(
-      entryCount: entryCount,
-      source: 'test',
-      surface: ProBridgeVisibilitySurface.recordPostSaveAfterPayoff,
-      isPro: false,
-      postProofProBridgeEnabled: true,
-      hasTimelineProofVisible: hasTimelineProof,
-      hasFirstProofPayoffVisible: hasTimelineProof,
-      proSlotAvailable: true,
-      isRecording: false,
-      isZeroEntryState: entryCount == 0,
-      isFirstRecordingState: entryCount <= 1,
-      isPostSaveDegradedState: false,
-      isDegradedTranscriptState: false,
-      hasFirstProof: entryCount >= 3,
-      hasBetaTesterReportVisible: false,
-      hasCorrectionMemoryVisible: false,
-      hasMonthlyPrivateReportPreviewVisible: false,
-      hasBetaProofLiftVisible: false,
-      hasReturnAfterProofStrengthenedVisible: false,
-      whatChangedQuestionActive: false,
-      patternReviewInboxHasActiveItems: false,
-      feedbackState: ProofQualityFeedbackState.none,
-      confidenceLevel: null,
-      hasSafeAnchor: hasTimelineProof,
-      hasFreshReturnAfterCorrection: false,
-      hasSolidStrongPatternWithSafeAnchors: hasTimelineProof,
-      compact: false,
-    );
+}) => ProBridgeVisibilityInput(
+  entryCount: entryCount,
+  source: 'test',
+  surface: ProBridgeVisibilitySurface.recordPostSaveAfterPayoff,
+  isPro: false,
+  postProofProBridgeEnabled: true,
+  hasTimelineProofVisible: hasTimelineProof,
+  hasFirstProofPayoffVisible: hasTimelineProof,
+  proSlotAvailable: true,
+  isRecording: false,
+  isZeroEntryState: entryCount == 0,
+  isFirstRecordingState: entryCount <= 1,
+  isPostSaveDegradedState: false,
+  isDegradedTranscriptState: false,
+  hasFirstProof: entryCount >= 3,
+  hasBetaTesterReportVisible: false,
+  hasCorrectionMemoryVisible: false,
+  hasMonthlyPrivateReportPreviewVisible: false,
+  hasBetaProofLiftVisible: false,
+  hasReturnAfterProofStrengthenedVisible: false,
+  whatChangedQuestionActive: false,
+  patternReviewInboxHasActiveItems: false,
+  feedbackState: ProofQualityFeedbackState.none,
+  confidenceLevel: null,
+  hasSafeAnchor: hasTimelineProof,
+  hasFreshReturnAfterCorrection: false,
+  hasSolidStrongPatternWithSafeAnchors: hasTimelineProof,
+  compact: false,
+);
 
 void main() {
   final proOutcomes = _proPackagingOutcomes();
@@ -97,8 +96,9 @@ void main() {
     });
 
     test('has no banned therapy/diagnosis/coaching language', () {
-      final blob =
-          ProPackagingCopyFix.allVisibleStrings().join(' ').toLowerCase();
+      final blob = ProPackagingCopyFix.allVisibleStrings()
+          .join(' ')
+          .toLowerCase();
       for (final banned in ProPackagingCopyFix.bannedWords) {
         if (banned == 'more ai') continue;
         expect(blob, isNot(contains(banned)), reason: banned);
@@ -240,7 +240,9 @@ void main() {
 
   group('V1 guardrails', () {
     test('expansion gates doc still blocks utility expansion drift', () {
-      final doc = File(V1ExpansionGateCopy.expansionGatesDocPath).readAsStringSync();
+      final doc = File(
+        V1ExpansionGateCopy.expansionGatesDocPath,
+      ).readAsStringSync();
       expect(doc.toLowerCase(), contains('ask your archive'));
       expect(doc.toLowerCase(), contains('loop packs'));
     });

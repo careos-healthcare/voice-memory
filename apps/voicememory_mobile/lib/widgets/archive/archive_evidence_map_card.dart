@@ -9,11 +9,7 @@ import '../../theme/voicememory_cards.dart';
 
 /// Compact card showing usable archive moments by context.
 class ArchiveEvidenceMapCard extends StatelessWidget {
-  const ArchiveEvidenceMapCard({
-    super.key,
-    required this.map,
-    this.onRowTap,
-  });
+  const ArchiveEvidenceMapCard({super.key, required this.map, this.onRowTap});
 
   final ArchiveEvidenceMap map;
   final ValueChanged<String>? onRowTap;
@@ -23,14 +19,12 @@ class ArchiveEvidenceMapCard extends StatelessWidget {
     if (!map.showCard) return const SizedBox.shrink();
 
     final titleStyle = ArchiveMobileTypography.responsiveSectionTitle(context);
-    final bodyStyle = ArchiveMobileTypography.responsiveHelper(context).copyWith(
-      color: AppColors.textPrimary,
-      height: 1.45,
-    );
-    final labelStyle = ArchiveMobileTypography.responsiveHelper(context).copyWith(
-      color: AppColors.textSecondary,
-      fontWeight: FontWeight.w600,
-    );
+    final bodyStyle = ArchiveMobileTypography.responsiveHelper(
+      context,
+    ).copyWith(color: AppColors.textPrimary, height: 1.45);
+    final labelStyle = ArchiveMobileTypography.responsiveHelper(
+      context,
+    ).copyWith(color: AppColors.textSecondary, fontWeight: FontWeight.w600);
     final maxCount = map.rows.isEmpty
         ? 0
         : map.rows.map((row) => row.count).reduce((a, b) => a > b ? a : b);
@@ -60,15 +54,15 @@ class ArchiveEvidenceMapCard extends StatelessWidget {
             const SizedBox(height: AppSpacing.sm),
             for (final row in map.rows) ...[
               Material(
-                color: Colors.transparent,
+                color: AppColors.transparent,
                 child: InkWell(
                   key: Key('archive_evidence_map_row_tap_${row.rowId}'),
-                  onTap: onRowTap == null
-                      ? null
-                      : () => onRowTap!(row.rowId),
+                  onTap: onRowTap == null ? null : () => onRowTap!(row.rowId),
                   borderRadius: BorderRadius.circular(8),
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: AppSpacing.xs),
+                    padding: const EdgeInsets.symmetric(
+                      vertical: AppSpacing.xs,
+                    ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
@@ -78,7 +72,9 @@ class ArchiveEvidenceMapCard extends StatelessWidget {
                               child: Text(
                                 '${row.label}: '
                                 '${ArchiveEvidenceMapEngine.momentCountLabel(row.count)}',
-                                key: Key('archive_evidence_map_row_${row.rowId}'),
+                                key: Key(
+                                  'archive_evidence_map_row_${row.rowId}',
+                                ),
                                 style: bodyStyle,
                               ),
                             ),

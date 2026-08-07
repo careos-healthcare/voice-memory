@@ -8,11 +8,8 @@ import 'package:voicememory_mobile/theme/app_theme.dart';
 
 class _StubController extends PostSaveComparisonController {
   _StubController(PostSaveComparisonUiState initialState)
-      : _initialState = initialState,
-        super(
-          apiClient: _NoOpApiClient(),
-          prefs: _NoOpPrefs(),
-        );
+    : _initialState = initialState,
+      super(apiClient: _NoOpApiClient(), prefs: _NoOpPrefs());
 
   final PostSaveComparisonUiState _initialState;
 
@@ -25,8 +22,7 @@ class _NoOpApiClient implements ModelApiClient {
   Future<String> evaluatePrompts({
     required String systemPrompt,
     required String userPrompt,
-  }) async =>
-      '';
+  }) async => '';
 }
 
 class _NoOpPrefs implements PreferenceStore {
@@ -85,14 +81,13 @@ void main() {
         ),
       );
 
-      expect(
-        find.byKey(const ValueKey('comparison_loading')),
-        findsOneWidget,
-      );
+      expect(find.byKey(const ValueKey('comparison_loading')), findsOneWidget);
       expect(find.text('Archive Comparison'), findsNothing);
     });
 
-    testWidgets('renders evidence card for meaningful text states', (tester) async {
+    testWidgets('renders evidence card for meaningful text states', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           theme: AppTheme.light(),
@@ -145,13 +140,12 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('Archive Comparison'), findsNothing);
-      expect(
-        find.byKey(const ValueKey('comparison_empty')),
-        findsOneWidget,
-      );
+      expect(find.byKey(const ValueKey('comparison_empty')), findsOneWidget);
     });
 
-    testWidgets('transitions from loading shell to success content', (tester) async {
+    testWidgets('transitions from loading shell to success content', (
+      tester,
+    ) async {
       PostSaveComparisonUiState phase = const ComparisonLoading();
       final hostKey = GlobalKey<_TransitionHarnessState>();
 
@@ -168,10 +162,7 @@ void main() {
         ),
       );
 
-      expect(
-        find.byKey(const ValueKey('comparison_loading')),
-        findsOneWidget,
-      );
+      expect(find.byKey(const ValueKey('comparison_loading')), findsOneWidget);
 
       hostKey.currentState!.showSuccess();
       await tester.pump();
@@ -224,8 +215,6 @@ class _TransitionHarnessState extends State<_TransitionHarness> {
 
   @override
   Widget build(BuildContext context) {
-    return PostSaveComparisonSection(
-      controller: _StubController(_phase),
-    );
+    return PostSaveComparisonSection(controller: _StubController(_phase));
   }
 }

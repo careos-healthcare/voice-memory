@@ -47,7 +47,9 @@ abstract final class CoreMetricsMinimumSetV2 {
     bool proofCorrectedSeen = false,
     bool crashOrBlockerReported = false,
   }) {
-    final recorded = recordedEventNames.map((event) => event.toLowerCase()).toSet();
+    final recorded = recordedEventNames
+        .map((event) => event.toLowerCase())
+        .toSet();
     final rows = [
       _dashboardRow(
         metricId: CoreMetricsMinimumMetricId.appOpened,
@@ -63,7 +65,8 @@ abstract final class CoreMetricsMinimumSetV2 {
       ),
       _dashboardRow(
         metricId: CoreMetricsMinimumMetricId.firstUsefulProofSeen,
-        observed: testFlightInput.firstProofReached > 0 ||
+        observed:
+            testFlightInput.firstProofReached > 0 ||
             testFlightInput.confirmedRepeatSeen > 0 ||
             testFlightInput.timelineProofSeen,
       ),
@@ -77,14 +80,16 @@ abstract final class CoreMetricsMinimumSetV2 {
       ),
       _dashboardRow(
         metricId: CoreMetricsMinimumMetricId.proPromiseSeen,
-        observed: loopCounts.paywallSeen > 0 ||
+        observed:
+            loopCounts.paywallSeen > 0 ||
             loopCounts.proBoundarySeen > 0 ||
             recorded.contains('paywall_seen') ||
             recorded.contains('value_moment_pro_bridge_seen'),
       ),
       _dashboardRow(
         metricId: CoreMetricsMinimumMetricId.proTapped,
-        observed: loopCounts.purchaseTapped > 0 ||
+        observed:
+            loopCounts.purchaseTapped > 0 ||
             testFlightInput.sessionPaywallIntent ||
             recorded.contains('paywall_purchase_cta_tapped'),
       ),
@@ -98,7 +103,8 @@ abstract final class CoreMetricsMinimumSetV2 {
       ),
       _dashboardRow(
         metricId: CoreMetricsMinimumMetricId.restoreTapped,
-        observed: loopCounts.restoreTapped > 0 ||
+        observed:
+            loopCounts.restoreTapped > 0 ||
             recorded.contains('restore_started') ||
             recorded.contains('paywall_restore_tapped'),
       ),
@@ -108,12 +114,14 @@ abstract final class CoreMetricsMinimumSetV2 {
       ),
       _dashboardRow(
         metricId: CoreMetricsMinimumMetricId.entitlementActive,
-        observed: recorded.contains('entitlement_active') ||
+        observed:
+            recorded.contains('entitlement_active') ||
             recorded.contains('entitlement_received'),
       ),
       _dashboardRow(
         metricId: CoreMetricsMinimumMetricId.crashOrBlockerReported,
-        observed: crashOrBlockerReported ||
+        observed:
+            crashOrBlockerReported ||
             recorded.contains('crash_blocker_reported') ||
             recorded.contains('beta_blocker_reported'),
       ),
@@ -134,10 +142,8 @@ abstract final class CoreMetricsMinimumSetV2 {
     TestFlightMetricsDashboard dashboard,
   ) {
     final tags = <CoreMetricsMinimumTestFlightTag>[
-      for (final row in dashboard.coreMetrics)
-        classifyTestFlightRow(row),
-      for (final row in dashboard.retentionMetrics)
-        classifyTestFlightRow(row),
+      for (final row in dashboard.coreMetrics) classifyTestFlightRow(row),
+      for (final row in dashboard.retentionMetrics) classifyTestFlightRow(row),
     ];
     return tags;
   }
@@ -212,8 +218,8 @@ abstract final class CoreMetricsMinimumSetV2 {
     required bool observed,
   }) {
     final definition = CoreMetricsMinimumSet.build().metrics.firstWhere(
-          (metric) => metric.id == metricId,
-        );
+      (metric) => metric.id == metricId,
+    );
     return CoreMetricsMinimumDashboardRow(
       metricId: metricId,
       label: definition.label,

@@ -1,8 +1,12 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
 import 'package:cryptography/cryptography.dart';
+import 'package:uuid/uuid.dart';
 
+import 'encrypted_json_file_hooks.dart';
+import 'encrypted_json_file_outcome.dart';
 import 'private_data_encryption_key_store.dart';
 
 /// Result of migrating a legacy plaintext JSON file to encrypted storage.
@@ -17,27 +21,52 @@ class EncryptedJsonMigrationResult {
 }
 
 /// Authenticated encryption for private JSON blobs on disk (AES-256-GCM).
+///
+/// Writes use a crash-safe protocol: encrypt → temp file → verify decrypt →
+/// preserve last-known-good backup → atomic rename. Corruption never becomes
+/// an empty archive silently.
 class EncryptedJsonFileStore {
   EncryptedJsonFileStore({
     required this.file,
     required PrivateDataEncryptionKeyStore keyStore,
     AesGcm? algorithm,
+    EncryptedJsonFileHooks hooks = EncryptedJsonFileHooks.none,
   }) : _keyStore = keyStore,
-       _algorithm = algorithm ?? AesGcm.with256bits();
+       _algorithm = algorithm ?? AesGcm.with256bits(),
+       _hooks = hooks;
 
   final File file;
   final PrivateDataEncryptionKeyStore _keyStore;
   final AesGcm _algorithm;
+  final EncryptedJsonFileHooks _hooks;
 
   static const envelopeVersion = 1;
+  static const _uuid = Uuid();
+
+  Future<void> _mutex = Future<void>.value();
+
+  File get _backupFile => File('${file.path}.bak');
+
+  Future<T> _serialized<T>(Future<T> Function() action) {
+    final completer = Completer<void>();
+    final previous = _mutex;
+    _mutex = completer.future;
+    return previous.then((_) async {
+      try {
+        return await action();
+      } finally {
+        completer.complete();
+      }
+    });
+  }
 
   Future<void> ensureKey() async {
     if (_keyStore is SecurePrivateDataEncryptionKeyStore) {
-      await (_keyStore as SecurePrivateDataEncryptionKeyStore).ensureKey();
+      await (_keyStore).ensureKey();
       return;
     }
     if (_keyStore is InMemoryPrivateDataEncryptionKeyStore) {
-      await (_keyStore as InMemoryPrivateDataEncryptionKeyStore).ensureKey();
+      await (_keyStore).ensureKey();
       return;
     }
     final existing = await _keyStore.readKeyBytes();
@@ -52,63 +81,218 @@ class EncryptedJsonFileStore {
 
   Future<bool> exists() async => file.exists();
 
+  /// Legacy convenience — throws on unrecoverable corruption; never maps
+  /// corruption to an empty archive.
   Future<dynamic> readJson() async {
+    final outcome = await readJsonOutcome();
+    return switch (outcome) {
+      EncryptedJsonReadMissing() => null,
+      EncryptedJsonReadPrimaryValid(:final value) => value,
+      EncryptedJsonReadRecoveredFromBackup(:final value) => value,
+      EncryptedJsonReadCorruptPrimaryValidBackup(:final value) => value,
+      EncryptedJsonReadKeyUnavailable() => throw StateError(
+        'Missing encryption key for ${file.path}',
+      ),
+      EncryptedJsonReadAuthenticationFailure() => throw StateError(
+        'Encrypted JSON authentication failed',
+      ),
+      EncryptedJsonReadBothCopiesCorrupt() => throw FormatException(
+        'Encrypted JSON primary and backup are both corrupt',
+      ),
+    };
+  }
+
+  Future<EncryptedJsonReadOutcome> readJsonOutcome() async {
     await ensureKey();
-    if (!await file.exists()) return null;
-
-    final raw = await file.readAsString();
-    if (raw.trim().isEmpty) return null;
-
-    final envelope = jsonDecode(raw) as Map<String, dynamic>;
-    final version = envelope['v'] as int? ?? 0;
-    if (version != envelopeVersion) {
-      throw FormatException('Unsupported encrypted JSON envelope version: $version');
+    if (!await file.exists() && !await _backupFile.exists()) {
+      return const EncryptedJsonReadMissing();
     }
 
     final keyBytes = await _keyStore.readKeyBytes();
     if (keyBytes == null || keyBytes.isEmpty) {
-      throw StateError('Missing encryption key for ${file.path}');
+      return const EncryptedJsonReadKeyUnavailable();
     }
 
-    final secretKey = SecretKey(keyBytes);
-    final secretBox = SecretBox(
-      base64Decode(envelope['c'] as String),
-      nonce: base64Decode(envelope['n'] as String),
-      mac: Mac(base64Decode(envelope['m'] as String)),
-    );
-    final clearBytes = await _algorithm.decrypt(secretBox, secretKey: secretKey);
-    return jsonDecode(utf8.decode(clearBytes));
+    if (await file.exists()) {
+      final primary = await _tryDecryptFile(file, keyBytes);
+      if (primary case _DecryptOk(:final value)) {
+        return EncryptedJsonReadPrimaryValid(value);
+      }
+      if (await _backupFile.exists()) {
+        final backup = await _tryDecryptFile(_backupFile, keyBytes);
+        if (backup case _DecryptOk(:final value)) {
+          return EncryptedJsonReadCorruptPrimaryValidBackup(value);
+        }
+        if (primary case _DecryptAuthFail()) {
+          return const EncryptedJsonReadAuthenticationFailure();
+        }
+      } else if (primary case _DecryptAuthFail()) {
+        return const EncryptedJsonReadAuthenticationFailure();
+      }
+    }
+
+    if (await _backupFile.exists()) {
+      final backup = await _tryDecryptFile(_backupFile, keyBytes);
+      if (backup case _DecryptOk(:final value)) {
+        return EncryptedJsonReadRecoveredFromBackup(value);
+      }
+      if (backup case _DecryptAuthFail()) {
+        return const EncryptedJsonReadAuthenticationFailure();
+      }
+    }
+
+    if (!await file.exists()) {
+      return const EncryptedJsonReadMissing();
+    }
+    return const EncryptedJsonReadBothCopiesCorrupt();
   }
 
   Future<void> writeJson(dynamic value) async {
+    final outcome = await writeJsonOutcome(value);
+    switch (outcome) {
+      case EncryptedJsonWriteSuccess():
+        return;
+      case EncryptedJsonWriteKeyUnavailable():
+        throw StateError('Missing encryption key for ${file.path}');
+      case EncryptedJsonWriteDiskFailure(:final message):
+        throw FileSystemException(message);
+      case EncryptedJsonWriteVerificationFailed(:final message):
+        throw StateError(message);
+    }
+  }
+
+  Future<EncryptedJsonWriteOutcome> writeJsonOutcome(dynamic value) {
+    return _serialized(() => _writeJsonOutcomeImpl(value));
+  }
+
+  Future<EncryptedJsonWriteOutcome> _writeJsonOutcomeImpl(dynamic value) async {
     await ensureKey();
     final keyBytes = await _keyStore.readKeyBytes();
     if (keyBytes == null || keyBytes.isEmpty) {
-      throw StateError('Missing encryption key for ${file.path}');
+      return const EncryptedJsonWriteKeyUnavailable();
     }
 
+    File? tempFile;
+    try {
+      final envelope = await _encryptJson(value, keyBytes);
+      if (_hooks.failAfterEncrypt) {
+        return const EncryptedJsonWriteDiskFailure('injected_after_encrypt');
+      }
+
+      if (!await file.parent.exists()) {
+        await file.parent.create(recursive: true);
+      }
+
+      tempFile = File('${file.path}.tmp.${_uuid.v4()}');
+      await tempFile.writeAsString(envelope, flush: true);
+      if (_hooks.failAfterTempWrite) {
+        return const EncryptedJsonWriteDiskFailure('injected_after_temp_write');
+      }
+      if (_hooks.corruptTempFile) {
+        await tempFile.writeAsString('corrupt', flush: true);
+      }
+
+      final verified = await _tryDecryptFile(tempFile, keyBytes);
+      if (verified is! _DecryptOk) {
+        return const EncryptedJsonWriteVerificationFailed(
+          'temp_file_verify_failed',
+        );
+      }
+      if (_hooks.failAfterVerify) {
+        return const EncryptedJsonWriteDiskFailure('injected_after_verify');
+      }
+
+      if (!_hooks.skipBackup && await file.exists()) {
+        final primaryOk = await _tryDecryptFile(file, keyBytes);
+        if (primaryOk is _DecryptOk) {
+          await file.copy(_backupFile.path);
+        }
+      }
+
+      if (_hooks.failBeforeRename) {
+        return const EncryptedJsonWriteDiskFailure('injected_before_rename');
+      }
+
+      await tempFile.rename(file.path);
+      tempFile = null;
+      await _cleanStaleTempFiles();
+      return const EncryptedJsonWriteSuccess();
+    } on FileSystemException catch (e) {
+      return EncryptedJsonWriteDiskFailure(e.message);
+    } catch (e) {
+      return EncryptedJsonWriteDiskFailure('$e');
+    } finally {
+      if (tempFile != null && await tempFile.exists()) {
+        await _safeDelete(tempFile);
+      }
+    }
+  }
+
+  Future<String> _encryptJson(dynamic value, List<int> keyBytes) async {
     final secretKey = SecretKey(keyBytes);
     final clearBytes = utf8.encode(jsonEncode(value));
     final secretBox = await _algorithm.encrypt(
       clearBytes,
       secretKey: secretKey,
     );
-
-    final envelope = jsonEncode({
+    return jsonEncode({
       'v': envelopeVersion,
       'n': base64Encode(secretBox.nonce),
       'c': base64Encode(secretBox.cipherText),
       'm': base64Encode(secretBox.mac.bytes),
     });
-
-    if (!await file.parent.exists()) {
-      await file.parent.create(recursive: true);
-    }
-    await file.writeAsString(envelope);
   }
 
-  /// Reads [plaintextFile] once, writes encrypted data here, then removes
-  /// plaintext unless [keepPlaintextForTests] is true.
+  Future<_DecryptResult> _tryDecryptFile(
+    File target,
+    List<int> keyBytes,
+  ) async {
+    try {
+      if (!await target.exists()) return const _DecryptCorrupt();
+      final raw = await target.readAsString();
+      if (raw.trim().isEmpty) return const _DecryptCorrupt();
+
+      final envelope = jsonDecode(raw) as Map<String, dynamic>;
+      final version = envelope['v'] as int? ?? 0;
+      if (version != envelopeVersion) return const _DecryptCorrupt();
+
+      final secretKey = SecretKey(keyBytes);
+      final secretBox = SecretBox(
+        base64Decode(envelope['c'] as String),
+        nonce: base64Decode(envelope['n'] as String),
+        mac: Mac(base64Decode(envelope['m'] as String)),
+      );
+      final clearBytes = await _algorithm.decrypt(
+        secretBox,
+        secretKey: secretKey,
+      );
+      return _DecryptOk(jsonDecode(utf8.decode(clearBytes)));
+    } on SecretBoxAuthenticationError {
+      return const _DecryptAuthFail();
+    } on FormatException {
+      return const _DecryptCorrupt();
+    } catch (_) {
+      return const _DecryptCorrupt();
+    }
+  }
+
+  Future<void> _cleanStaleTempFiles() async {
+    final dir = file.parent;
+    if (!await dir.exists()) return;
+    final prefix = '${file.path}.tmp.';
+    await for (final entity in dir.list()) {
+      if (entity is! File) continue;
+      if (!entity.path.startsWith(prefix)) continue;
+      await _safeDelete(entity);
+    }
+  }
+
+  Future<void> _safeDelete(File target) async {
+    if (await target.exists()) {
+      await target.delete();
+    }
+  }
+
   Future<EncryptedJsonMigrationResult> migrateFromPlaintextFile(
     File plaintextFile, {
     bool keepPlaintextForTests = false,
@@ -145,7 +329,6 @@ class EncryptedJsonFileStore {
     );
   }
 
-  /// True when [file] on disk does not contain [needle] as plaintext.
   static Future<bool> fileOmitsPlaintextNeedle(
     File target,
     String needle,
@@ -154,4 +337,21 @@ class EncryptedJsonFileStore {
     final raw = await target.readAsString();
     return !raw.contains(needle);
   }
+}
+
+sealed class _DecryptResult {
+  const _DecryptResult();
+}
+
+final class _DecryptOk extends _DecryptResult {
+  const _DecryptOk(this.value);
+  final dynamic value;
+}
+
+final class _DecryptAuthFail extends _DecryptResult {
+  const _DecryptAuthFail();
+}
+
+final class _DecryptCorrupt extends _DecryptResult {
+  const _DecryptCorrupt();
 }

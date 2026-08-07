@@ -7,21 +7,20 @@ JournalEntry _entry({
   required String id,
   String transcript = '',
   String observation = '',
-}) =>
-    JournalEntry(
-      id: id,
-      createdAt: DateTime(2026, 6, 12, 12),
-      transcript: transcript,
-      durationSeconds: 20,
-      reflection: Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 0,
-        recurringThemes: const [],
-        exactLanguagePattern: '',
-        concreteObservation: observation,
-        repeatedSignal: '',
-      ),
-    );
+}) => JournalEntry(
+  id: id,
+  createdAt: DateTime(2026, 6, 12, 12),
+  transcript: transcript,
+  durationSeconds: 20,
+  reflection: Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 0,
+    recurringThemes: const [],
+    exactLanguagePattern: '',
+    concreteObservation: observation,
+    repeatedSignal: '',
+  ),
+);
 
 void main() {
   group('ArchiveEntrySignalGuard', () {
@@ -64,10 +63,7 @@ void main() {
 
     test('newestEntryIsLowSignal checks latest save only', () {
       final entries = [
-        _entry(
-          id: 'new',
-          transcript: 'Test',
-        ),
+        _entry(id: 'new', transcript: 'Test'),
         _entry(
           id: 'old',
           transcript:

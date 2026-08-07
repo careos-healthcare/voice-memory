@@ -60,8 +60,9 @@ FirstReflectionInsights buildFirstReflectionInsights(
     final themeId = _themeIdForName(theme.name);
     if (themeId == null) continue;
     for (final entry in working.reversed) {
-      if (!ThemeTrackerService.themesForEntry(entry).contains(themeId))
+      if (!ThemeTrackerService.themesForEntry(entry).contains(themeId)) {
         continue;
+      }
       final line = _noticedLineForTheme(themeId, entry);
       if (line != null && seenNoticed.add(line)) {
         noticed.add(line);

@@ -58,10 +58,10 @@ enum LocalArchiveBackupValidationFailure {
 }
 
 class LocalArchiveBackupValidationResult {
-  const LocalArchiveBackupValidationResult.valid(this.backup)
-      : failure = null;
+  const LocalArchiveBackupValidationResult.valid(this.backup) : failure = null;
 
-  const LocalArchiveBackupValidationResult.invalid(this.failure) : backup = null;
+  const LocalArchiveBackupValidationResult.invalid(this.failure)
+    : backup = null;
 
   final LocalArchiveBackup? backup;
   final LocalArchiveBackupValidationFailure? failure;

@@ -5,11 +5,12 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:voicememory_mobile/features/pro/pro_value_preview_copy.dart';
 import 'package:voicememory_mobile/features/pro/pro_value_preview_gates.dart';
-import 'package:voicememory_mobile/screens/pro_value_preview_screen.dart';
+import 'package:archiveme_research/screens/pro_value_preview_screen.dart';
 import 'package:voicememory_mobile/screens/settings_screen.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
 import 'package:voicememory_mobile/theme/app_theme.dart';
 import 'package:voicememory_mobile/widgets/pro_value_preview_card.dart';
+import 'support/test_storage_sandbox.dart';
 
 const _bannedWords = [
   'diagnosis',
@@ -74,30 +75,21 @@ void main() {
   group('Pro value preview gates', () {
     test('archive promo hidden before three entries', () {
       expect(
-        ProValuePreviewGates.showArchivePromo(
-          entryCount: 2,
-          dismissed: false,
-        ),
+        ProValuePreviewGates.showArchivePromo(entryCount: 2, dismissed: false),
         isFalse,
       );
     });
 
     test('archive promo shown at three or more entries', () {
       expect(
-        ProValuePreviewGates.showArchivePromo(
-          entryCount: 3,
-          dismissed: false,
-        ),
+        ProValuePreviewGates.showArchivePromo(entryCount: 3, dismissed: false),
         isTrue,
       );
     });
 
     test('archive promo hidden when dismissed', () {
       expect(
-        ProValuePreviewGates.showArchivePromo(
-          entryCount: 5,
-          dismissed: true,
-        ),
+        ProValuePreviewGates.showArchivePromo(entryCount: 5, dismissed: true),
         isFalse,
       );
     });
@@ -128,7 +120,9 @@ void main() {
       expect(find.text(ProValuePreviewCopy.headline), findsOneWidget);
     });
 
-    testWidgets('honestly says purchases are not available yet', (tester) async {
+    testWidgets('honestly says purchases are not available yet', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           theme: AppTheme.light(),
@@ -168,28 +162,30 @@ void main() {
         findsOneWidget,
       );
       expect(find.text(ProValuePreviewCopy.keepBuildingCta), findsOneWidget);
-      expect(find.text(ProValuePreviewCopy.trySampleArchiveCta), findsOneWidget);
+      expect(
+        find.text(ProValuePreviewCopy.trySampleArchiveCta),
+        findsOneWidget,
+      );
     });
   });
 
   group('Pro value preview settings', () {
-    late Directory tempDir;
+    late TestStorageSandbox sandbox;
 
     setUp(() async {
-      tempDir = Directory.systemTemp.createTempSync('vm_pro_value_preview_');
+      sandbox = TestStorageSandbox.create();
       await AppServices.resetForTest(
-        journalPath: '${tempDir.path}/journal.json',
+        journalPath: sandbox.journalPath,
         skipRevenueCat: true,
       );
     });
 
+    tearDown(() => sandbox.dispose());
+
     testWidgets('settings shows ArchiveMe Pro row', (tester) async {
       final router = GoRouter(
         routes: [
-          GoRoute(
-            path: '/',
-            builder: (_, _) => const SettingsScreen(),
-          ),
+          GoRoute(path: '/', builder: (_, _) => const SettingsScreen()),
           GoRoute(
             path: '/pro-preview',
             builder: (_, _) => const ProValuePreviewScreen(),
@@ -198,10 +194,7 @@ void main() {
       );
 
       await tester.pumpWidget(
-        MaterialApp.router(
-          theme: AppTheme.light(),
-          routerConfig: router,
-        ),
+        MaterialApp.router(theme: AppTheme.light(), routerConfig: router),
       );
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 300));
@@ -213,11 +206,16 @@ void main() {
       );
       await tester.pump();
 
-      expect(find.byKey(const Key('settings_pro_value_preview_tile')), findsOneWidget);
+      expect(
+        find.byKey(const Key('settings_pro_value_preview_tile')),
+        findsOneWidget,
+      );
       expect(find.text(ProValuePreviewCopy.settingsTitle), findsOneWidget);
       expect(find.text(ProValuePreviewCopy.settingsSubtitle), findsOneWidget);
 
-      await tester.tap(find.byKey(const Key('settings_pro_value_preview_tile')));
+      await tester.tap(
+        find.byKey(const Key('settings_pro_value_preview_tile')),
+      );
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 100));
       expect(find.byKey(const Key('pro_value_preview_screen')), findsOneWidget);
@@ -233,9 +231,7 @@ void main() {
             routes: [
               GoRoute(
                 path: '/',
-                builder: (_, _) => ProValuePreviewPromoCard(
-                  onDismiss: () {},
-                ),
+                builder: (_, _) => ProValuePreviewPromoCard(onDismiss: () {}),
               ),
               GoRoute(
                 path: '/pro-preview',

@@ -29,19 +29,18 @@ PreservedProofValueInput _input({
   bool userFeelsPressureOrManipulation = false,
   bool wouldPayYes = true,
   bool wouldPayMaybe = false,
-}) =>
-    PreservedProofValueInput(
-      userUnderstandsFirstProof: userUnderstandsFirstProof,
-      userUnderstandsProKeepsTrail: userUnderstandsProKeepsTrail,
-      userUnderstandsPreservedProof: userUnderstandsPreservedProof,
-      userUnderstandsWhatWouldBeLost: userUnderstandsWhatWouldBeLost,
-      userThinksProMeansMoreAi: userThinksProMeansMoreAi,
-      userThinksProMeansStorage: userThinksProMeansStorage,
-      userThinksPaymentFeelsOptional: userThinksPaymentFeelsOptional,
-      userFeelsPressureOrManipulation: userFeelsPressureOrManipulation,
-      wouldPayYes: wouldPayYes,
-      wouldPayMaybe: wouldPayMaybe,
-    );
+}) => PreservedProofValueInput(
+  userUnderstandsFirstProof: userUnderstandsFirstProof,
+  userUnderstandsProKeepsTrail: userUnderstandsProKeepsTrail,
+  userUnderstandsPreservedProof: userUnderstandsPreservedProof,
+  userUnderstandsWhatWouldBeLost: userUnderstandsWhatWouldBeLost,
+  userThinksProMeansMoreAi: userThinksProMeansMoreAi,
+  userThinksProMeansStorage: userThinksProMeansStorage,
+  userThinksPaymentFeelsOptional: userThinksPaymentFeelsOptional,
+  userFeelsPressureOrManipulation: userFeelsPressureOrManipulation,
+  wouldPayYes: wouldPayYes,
+  wouldPayMaybe: wouldPayMaybe,
+);
 
 void main() {
   group('PreservedProofValue.resolve', () {
@@ -208,15 +207,17 @@ void main() {
       );
     });
 
-    test('repeatLine includes stayed same/softened/strengthened/faded/corrected',
-        () {
-      final line = PreservedProofValueCopy.repeatLine.toLowerCase();
-      expect(line, contains('stayed the same'));
-      expect(line, contains('softened'));
-      expect(line, contains('strengthened'));
-      expect(line, contains('faded'));
-      expect(line, contains('corrected'));
-    });
+    test(
+      'repeatLine includes stayed same/softened/strengthened/faded/corrected',
+      () {
+        final line = PreservedProofValueCopy.repeatLine.toLowerCase();
+        expect(line, contains('stayed the same'));
+        expect(line, contains('softened'));
+        expect(line, contains('strengthened'));
+        expect(line, contains('faded'));
+        expect(line, contains('corrected'));
+      },
+    );
 
     test('guardrail blocks fear', () {
       expect(PreservedProofValueCopy.guardrail, contains('fear'));
@@ -393,39 +394,42 @@ void main() {
       );
     });
 
-    test('record screen remains capture-first without stacking extra cards', () {
-      final audit = SurfacePriorityEngine.auditRecordReady(
-        entryCount: 4,
-        source: 'record',
-        candidates: SurfacePriorityCandidates.recordReady(
-          firstMomentCapture: false,
-          secondMomentReturn: false,
-          lowFrictionReturn: false,
-          whatToNoticeNext: false,
-          betaTodaySummary: false,
-          openCapturePromptChips: false,
-          captureFreedomLine: false,
-          timelineProofMoment: true,
-          archiveTimelineSpine: false,
-          timelinePositioning: false,
-          currentRelevance: false,
-          correctionMemory: false,
-          notRelevantRecovery: false,
-          proofQualityResponse: false,
-          evidenceWeighting: false,
-          proofSpecificity: false,
-          presentDayRelevance: false,
-          patternConfidence: false,
-          betaTesterReport: false,
-          proEvidenceValue: false,
-          privateReportProBridge: false,
-          suppressLegacyEducation: false,
-          betaProofLift: true,
-        ),
-      );
-      expect(audit.proofCardKey, 'timelineProofMoment');
-      expect(audit.guidanceCardKey, isNull);
-    });
+    test(
+      'record screen remains capture-first without stacking extra cards',
+      () {
+        final audit = SurfacePriorityEngine.auditRecordReady(
+          entryCount: 4,
+          source: 'record',
+          candidates: SurfacePriorityCandidates.recordReady(
+            firstMomentCapture: false,
+            secondMomentReturn: false,
+            lowFrictionReturn: false,
+            whatToNoticeNext: false,
+            betaTodaySummary: false,
+            openCapturePromptChips: false,
+            captureFreedomLine: false,
+            timelineProofMoment: true,
+            archiveTimelineSpine: false,
+            timelinePositioning: false,
+            currentRelevance: false,
+            correctionMemory: false,
+            notRelevantRecovery: false,
+            proofQualityResponse: false,
+            evidenceWeighting: false,
+            proofSpecificity: false,
+            presentDayRelevance: false,
+            patternConfidence: false,
+            betaTesterReport: false,
+            proEvidenceValue: false,
+            privateReportProBridge: false,
+            suppressLegacyEducation: false,
+            betaProofLift: true,
+          ),
+        );
+        expect(audit.proofCardKey, 'timelineProofMoment');
+        expect(audit.guidanceCardKey, isNull);
+      },
+    );
   });
 }
 
@@ -444,7 +448,8 @@ LowEffortArchiveCaptureSummary _fullLowEffortSummary() =>
       wouldPayNoCount: 1,
     );
 
-ChangeTrailClaritySummary _fullTrailSummary() => const ChangeTrailClaritySummary(
+ChangeTrailClaritySummary _fullTrailSummary() =>
+    const ChangeTrailClaritySummary(
       totalTesters: 30,
       understoodFirstProofCount: 7,
       understoodProKeepsTrailCount: 6,

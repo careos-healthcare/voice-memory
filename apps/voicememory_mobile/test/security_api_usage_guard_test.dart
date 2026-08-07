@@ -10,10 +10,9 @@ void main() {
 
     const scope = 'entry:test-1';
     expect(
-      guard.checkAttempt(
-        scopeKey: scope,
-        operation: ApiUsageOperation.analyze,
-      ).allowed,
+      guard
+          .checkAttempt(scopeKey: scope, operation: ApiUsageOperation.analyze)
+          .allowed,
       isTrue,
     );
     guard.recordAttempt(

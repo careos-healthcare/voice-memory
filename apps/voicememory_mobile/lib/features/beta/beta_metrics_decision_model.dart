@@ -27,14 +27,14 @@ enum BetaMetricsDecisionRowStatus {
   notEnoughData;
 
   String get label => switch (this) {
-        BetaMetricsDecisionRowStatus.ready => BetaMetricsDecisionCopy.statusReady,
-        BetaMetricsDecisionRowStatus.belowTarget =>
-          BetaMetricsDecisionCopy.statusBelowTarget,
-        BetaMetricsDecisionRowStatus.checkManually =>
-          BetaMetricsDecisionCopy.statusCheckManually,
-        BetaMetricsDecisionRowStatus.notEnoughData =>
-          BetaMetricsDecisionCopy.statusNotEnoughData,
-      };
+    BetaMetricsDecisionRowStatus.ready => BetaMetricsDecisionCopy.statusReady,
+    BetaMetricsDecisionRowStatus.belowTarget =>
+      BetaMetricsDecisionCopy.statusBelowTarget,
+    BetaMetricsDecisionRowStatus.checkManually =>
+      BetaMetricsDecisionCopy.statusCheckManually,
+    BetaMetricsDecisionRowStatus.notEnoughData =>
+      BetaMetricsDecisionCopy.statusNotEnoughData,
+  };
 }
 
 /// Local tester funnel counts — automatic and optional qualitative fields.
@@ -102,17 +102,17 @@ class BetaMetricsDecisionReport {
   final String? coreValueFeedbackAnswer;
 
   List<String> get visibleCopyBlocks => [
-        title,
-        summary,
-        if (coreValueFeedbackLabel != null) coreValueFeedbackLabel!,
-        if (coreValueFeedbackAnswer != null) coreValueFeedbackAnswer!,
-        for (final row in rows) ...[
-          row.metricName,
-          row.currentValue,
-          row.targetValue,
-          row.status.label,
-          row.fixArea,
-          if (row.problemLabel != null) row.problemLabel!,
-        ],
-      ];
+    title,
+    summary,
+    ?coreValueFeedbackLabel,
+    ?coreValueFeedbackAnswer,
+    for (final row in rows) ...[
+      row.metricName,
+      row.currentValue,
+      row.targetValue,
+      row.status.label,
+      row.fixArea,
+      if (row.problemLabel != null) row.problemLabel!,
+    ],
+  ];
 }

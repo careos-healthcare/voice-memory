@@ -42,8 +42,9 @@ class _EarlyArchiveInsightFeedbackRowState
   Future<void> _loadExisting() async {
     await EarlyArchiveInsightFeedbackStore.ensureLoaded();
     if (!mounted) return;
-    final existing =
-        EarlyArchiveInsightFeedbackStore.latestForKey(_storageKey)?.value;
+    final existing = EarlyArchiveInsightFeedbackStore.latestForKey(
+      _storageKey,
+    )?.value;
     if (existing != null) {
       setState(() => _savedValue = existing);
     }
@@ -85,11 +86,9 @@ class _EarlyArchiveInsightFeedbackRowState
 
   @override
   Widget build(BuildContext context) {
-    final helperStyle = ArchiveMobileTypography.responsiveHelper(context).copyWith(
-      color: AppColors.textSecondary,
-      fontSize: 12,
-      height: 1.35,
-    );
+    final helperStyle = ArchiveMobileTypography.responsiveHelper(
+      context,
+    ).copyWith(color: AppColors.textSecondary, fontSize: 12, height: 1.35);
     final buttonStyle = TextButton.styleFrom(
       foregroundColor: AppColors.textSecondary,
       visualDensity: VisualDensity.compact,
@@ -112,14 +111,15 @@ class _EarlyArchiveInsightFeedbackRowState
     return Padding(
       padding: const EdgeInsets.only(top: AppSpacing.sm),
       child: Wrap(
-        key: Key('early_archive_insight_feedback_row_${widget.insightType.name}'),
+        key: Key(
+          'early_archive_insight_feedback_row_${widget.insightType.name}',
+        ),
         spacing: AppSpacing.xs,
         runSpacing: 2,
         children: [
           TextButton(
             key: const Key('early_archive_insight_feedback_feels_right'),
-            onPressed: () =>
-                _save(EarlyArchiveInsightFeedbackValue.feelsRight),
+            onPressed: () => _save(EarlyArchiveInsightFeedbackValue.feelsRight),
             style: buttonStyle,
             child: Text(
               EarlyArchiveInsightFeedbackCopy.feelsRight,

@@ -9,7 +9,7 @@ import 'package:voicememory_mobile/features/demo/sample_archive_entries.dart';
 import 'package:voicememory_mobile/features/demo/sample_archive_mode.dart';
 import 'package:voicememory_mobile/features/pressure_retention/shareable_archive_proof_engine.dart';
 import 'package:voicememory_mobile/features/pressure_retention/shareable_archive_proof_model.dart';
-import 'package:voicememory_mobile/screens/sample_archive_screen.dart';
+import 'package:archiveme_research/screens/sample_archive_screen.dart';
 import 'package:voicememory_mobile/storage/journal_store.dart';
 import 'package:voicememory_mobile/theme/app_theme.dart';
 import 'package:voicememory_mobile/widgets/demo/demo_share_pack_card.dart';
@@ -68,10 +68,9 @@ void main() {
   });
 
   group('Demo share pack engine', () {
+    late Directory tempDir;
     test('builds deterministic summary from sample entries only', () {
-      final pack = DemoSharePackEngine.build(
-        now: DateTime(2026, 6, 15, 12),
-      );
+      final pack = DemoSharePackEngine.build(now: DateTime(2026, 6, 15, 12));
 
       expect(pack.workMomentCount, 2);
       expect(pack.homeMomentCount, 2);
@@ -81,7 +80,10 @@ void main() {
       expect(pack.plainText, contains('Work: 2 moments'));
       expect(pack.plainText, contains('Home: 2 moments'));
       expect(pack.plainText, contains(SampleArchiveCopy.demoShareReviewLine));
-      expect(pack.plainText, contains(SampleArchiveCopy.demoSharePrivacyFooter));
+      expect(
+        pack.plainText,
+        contains(SampleArchiveCopy.demoSharePrivacyFooter),
+      );
     });
 
     test('plain text excludes raw sample transcripts', () {
@@ -132,10 +134,12 @@ void main() {
 
   group('Demo share pack wiring', () {
     test('appears only on sample archive screen source', () {
-      final sampleSrc =
-          File('lib/screens/sample_archive_screen.dart').readAsStringSync();
-      final archiveSrc =
-          File('lib/screens/archive_belief_screen.dart').readAsStringSync();
+      final sampleSrc = File(
+        'packages/archiveme_research/lib/screens/sample_archive_screen.dart',
+      ).readAsStringSync();
+      final archiveSrc = File(
+        'lib/screens/archive_belief_screen.dart',
+      ).readAsStringSync();
 
       expect(sampleSrc, contains('DemoSharePackCard'));
       expect(archiveSrc, isNot(contains('DemoSharePackCard')));
@@ -151,10 +155,7 @@ void main() {
       addTearDown(() => tester.binding.setSurfaceSize(null));
 
       await tester.pumpWidget(
-        MaterialApp(
-          theme: AppTheme.light(),
-          home: const SampleArchiveScreen(),
-        ),
+        MaterialApp(theme: AppTheme.light(), home: const SampleArchiveScreen()),
       );
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 100));
@@ -184,15 +185,19 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           theme: AppTheme.light(),
-          home: Scaffold(
-            body: DemoSharePackCard(pack: pack),
-          ),
+          home: Scaffold(body: DemoSharePackCard(pack: pack)),
         ),
       );
       await tester.pump();
 
-      expect(find.byKey(const Key('demo_share_pack_share_button')), findsOneWidget);
-      expect(find.byKey(const Key('demo_share_pack_copy_button')), findsOneWidget);
+      expect(
+        find.byKey(const Key('demo_share_pack_share_button')),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(const Key('demo_share_pack_copy_button')),
+        findsOneWidget,
+      );
     });
   });
 }

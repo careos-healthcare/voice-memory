@@ -9,34 +9,27 @@ JournalEntry _entry({
   required String id,
   required String transcript,
   DateTime? createdAt,
-}) =>
-    JournalEntry(
-      id: id,
-      createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
-      transcript: transcript,
-      durationSeconds: 30,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 2,
-        recurringThemes: ['work'],
-        exactLanguagePattern: '',
-        concreteObservation: 'Work pressure showed up in this moment.',
-        repeatedSignal: '',
-      ),
-    );
+}) => JournalEntry(
+  id: id,
+  createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
+  transcript: transcript,
+  durationSeconds: 30,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 2,
+    recurringThemes: ['work'],
+    exactLanguagePattern: '',
+    concreteObservation: 'Work pressure showed up in this moment.',
+    repeatedSignal: '',
+  ),
+);
 
 void main() {
   group('ComparisonEnginePrompt', () {
     test('system prompt lists banned phrases and allowed labels', () {
-      expect(
-        ComparisonEnginePrompt.systemPrompt,
-        contains('You always'),
-      );
-      expect(
-        ComparisonEnginePrompt.systemPrompt,
-        contains('Early signal'),
-      );
+      expect(ComparisonEnginePrompt.systemPrompt, contains('You always'));
+      expect(ComparisonEnginePrompt.systemPrompt, contains('Early signal'));
       expect(
         ComparisonEnginePrompt.systemPrompt,
         contains('Not enough evidence'),
@@ -45,10 +38,7 @@ void main() {
         ComparisonEnginePrompt.systemPrompt,
         contains('What appears to have repeated'),
       );
-      expect(
-        ComparisonEnginePrompt.allowedConfidenceLabels.length,
-        9,
-      );
+      expect(ComparisonEnginePrompt.allowedConfidenceLabels.length, 9);
     });
 
     test('violates banned comparison phrases', () {
@@ -57,11 +47,15 @@ void main() {
         isTrue,
       );
       expect(
-        ComparisonEnginePrompt.violatesBannedPhrase('This means you are afraid.'),
+        ComparisonEnginePrompt.violatesBannedPhrase(
+          'This means you are afraid.',
+        ),
         isTrue,
       );
       expect(
-        ComparisonEnginePrompt.violatesBannedPhrase('Your pattern is avoidance.'),
+        ComparisonEnginePrompt.violatesBannedPhrase(
+          'Your pattern is avoidance.',
+        ),
         isTrue,
       );
       expect(
@@ -104,7 +98,10 @@ void main() {
       expect(summary, contains('Confidence: Possible repeat'));
       expect(summary, contains('What appears to have repeated:'));
       expect(summary, contains('Connects to: 10 June 2026 · 9:15 AM'));
-      expect(summary, contains('What changed: It showed up around work again.'));
+      expect(
+        summary,
+        contains('What changed: It showed up around work again.'),
+      );
       expect(summary, contains(ComparisonEnginePrompt.thinEvidenceDefault));
     });
 
@@ -159,7 +156,8 @@ void main() {
       final result = engine.build([
         _entry(
           id: 'a',
-          transcript: 'A calm afternoon walk helped me slow down before dinner.',
+          transcript:
+              'A calm afternoon walk helped me slow down before dinner.',
         ),
         _entry(
           id: 'b',

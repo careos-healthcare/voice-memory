@@ -7,11 +7,10 @@ import 'package:voicememory_mobile/features/insight_feedback/insight_feedback_en
 import 'package:voicememory_mobile/features/insight_feedback/insight_feedback_models.dart';
 import 'package:voicememory_mobile/features/insight_feedback/insight_feedback_store.dart';
 import 'package:voicememory_mobile/features/then_now/then_now_copy.dart';
-import 'package:voicememory_mobile/features/then_now/then_now_engine.dart';
 import 'package:voicememory_mobile/features/then_now/then_now_models.dart';
 import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
-import 'package:voicememory_mobile/screens/then_vs_now_screen.dart';
+import 'package:archiveme_research/screens/then_vs_now_screen.dart';
 import 'package:voicememory_mobile/storage/journal_store.dart';
 import 'package:voicememory_mobile/storage/mobile_prefs_store.dart';
 import 'package:voicememory_mobile/theme/app_theme.dart';
@@ -51,23 +50,24 @@ const _bannedWords = [
 ];
 
 Reflection _reflection() => const Reflection(
-      mood: 'neutral',
-      emotionalIntensity: 2,
-      recurringThemes: ['work'],
-      exactLanguagePattern: '',
-      concreteObservation: 'Work pressure showed up in this moment.',
-      repeatedSignal: '',
-    );
+  mood: 'neutral',
+  emotionalIntensity: 2,
+  recurringThemes: ['work'],
+  exactLanguagePattern: '',
+  concreteObservation: 'Work pressure showed up in this moment.',
+  repeatedSignal: '',
+);
 
 JournalEntry _entry(String id, {String? transcript}) => JournalEntry(
-      id: id,
-      createdAt: DateTime(2026, 6, 12, 12),
-      transcript: transcript ??
-          'I felt pressure at work before saying yes again even when I was tired today.',
-      durationSeconds: 30,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: _reflection(),
-    );
+  id: id,
+  createdAt: DateTime(2026, 6, 12, 12),
+  transcript:
+      transcript ??
+      'I felt pressure at work before saying yes again even when I was tired today.',
+  durationSeconds: 30,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: _reflection(),
+);
 
 void _expectNoBannedCopy(Iterable<String> visible) {
   for (final text in visible) {
@@ -84,22 +84,22 @@ void _expectNoBannedCopy(Iterable<String> visible) {
 }
 
 ThenNowResult _thenNowResult() => const ThenNowResult(
-      hasCard: true,
-      headline: ThenNowCopy.comparisonHeadline,
-      thenLabel: ThenNowCopy.thenLabel,
-      thenSummary: ThenNowCopy.thenMoreOften,
-      nowLabel: ThenNowCopy.nowLabel,
-      nowSummary: ThenNowCopy.nowShifting,
-      evidenceCountLabel: '3 earlier · 4 newer · 7 saved moments',
-      helperText: ThenNowCopy.helperText,
-      cautionLabel: ThenNowCopy.cautionLabel,
-      primaryCtaLabel: ThenNowCopy.saveAnotherMomentCta,
-      primaryRoute: ThenNowCopy.recordRoute,
-      secondaryCtaLabel: ThenNowCopy.reviewChangeCta,
-      secondaryRoute: ThenNowCopy.route,
-      reasonId: ThenNowReasonId.themeComparison,
-      showOnArchiveHome: true,
-    );
+  hasCard: true,
+  headline: ThenNowCopy.comparisonHeadline,
+  thenLabel: ThenNowCopy.thenLabel,
+  thenSummary: ThenNowCopy.thenMoreOften,
+  nowLabel: ThenNowCopy.nowLabel,
+  nowSummary: ThenNowCopy.nowShifting,
+  evidenceCountLabel: '3 earlier · 4 newer · 7 saved moments',
+  helperText: ThenNowCopy.helperText,
+  cautionLabel: ThenNowCopy.cautionLabel,
+  primaryCtaLabel: ThenNowCopy.saveAnotherMomentCta,
+  primaryRoute: ThenNowCopy.recordRoute,
+  secondaryCtaLabel: ThenNowCopy.reviewChangeCta,
+  secondaryRoute: ThenNowCopy.route,
+  reasonId: ThenNowReasonId.themeComparison,
+  showOnArchiveHome: true,
+);
 
 void main() {
   const engine = InsightFeedbackEngine();
@@ -222,12 +222,18 @@ void main() {
 
     test('no raw transcript/journal text stored', () async {
       await journalStore.save(
-        _entry('j1', transcript: 'Private journal name detail should never persist'),
+        _entry(
+          'j1',
+          transcript: 'Private journal name detail should never persist',
+        ),
       );
       await saveChoice(InsightFeedbackChoice.fits);
       final prefsRaw = await File('${tempDir.path}/prefs.json').readAsString();
       expect(prefsRaw, contains('archiveInsightFeedbackRecords'));
-      expect(prefsRaw, isNot(contains('Private journal name detail should never persist')));
+      expect(
+        prefsRaw,
+        isNot(contains('Private journal name detail should never persist')),
+      );
     });
 
     test('save-as-watch-theme stores safe local choice only', () async {
@@ -243,7 +249,9 @@ void main() {
     setUp(InsightFeedbackStore.resetForTest);
 
     test('copy uses ArchiveMe and avoids banned language', () {
-      final copy = InsightFeedbackCopy.allVisibleStrings.join(' ').toLowerCase();
+      final copy = InsightFeedbackCopy.allVisibleStrings
+          .join(' ')
+          .toLowerCase();
       expect(copy, contains('archiveme'));
       _expectNoBannedCopy(InsightFeedbackCopy.allVisibleStrings);
     });
@@ -268,8 +276,9 @@ void main() {
 
   group('Support & Feedback', () {
     test('support screen mentions user-confirmed insights', () {
-      final support =
-          File('lib/screens/support_feedback_screen.dart').readAsStringSync();
+      final support = File(
+        'lib/screens/support_feedback_screen.dart',
+      ).readAsStringSync();
       expect(support, contains('InsightFeedbackCopy.supportSectionTitle'));
       expect(support, contains('support_feedback_insight_feedback'));
     });

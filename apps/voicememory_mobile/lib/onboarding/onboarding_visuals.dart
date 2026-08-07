@@ -532,7 +532,7 @@ class _AmbientGlowPainter extends CustomPainter {
     final gradient = RadialGradient(
       colors: [
         AppColors.accentPrimary.withValues(alpha: 0.08),
-        Colors.transparent,
+        AppColors.transparent,
       ],
     );
     final rect = Rect.fromCircle(center: center, radius: size.width * 0.45);

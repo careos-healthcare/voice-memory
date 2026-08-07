@@ -6,12 +6,9 @@ import 'package:go_router/go_router.dart';
 import 'package:voicememory_mobile/billing/archive_entitlement_reader.dart';
 import 'package:voicememory_mobile/config/app_config.dart';
 import 'package:voicememory_mobile/dev/visual_audit_overrides.dart';
-import 'package:voicememory_mobile/features/archive_proof/visible_archive_proof_copy.dart';
 import 'package:voicememory_mobile/features/onboarding/first_user_experience_copy.dart';
 import 'package:voicememory_mobile/features/onboarding/first_user_experience_gates.dart';
-import 'package:voicememory_mobile/features/record/daily_mirror_copy.dart';
 import 'package:voicememory_mobile/features/voice_capture/microphone_permission_copy.dart';
-import 'package:voicememory_mobile/features/voice_capture/record_microphone_permission_ui.dart';
 import 'package:voicememory_mobile/features/trust/privacy_screen_copy.dart';
 import 'package:voicememory_mobile/features/trust/terms_screen_copy.dart';
 import 'package:voicememory_mobile/product/consumer_ui_copy.dart';
@@ -26,6 +23,7 @@ import 'package:voicememory_mobile/theme/app_theme.dart';
 import 'package:voicememory_mobile/widgets/capture_entry_actions.dart';
 
 import 'support/memory_pressure_stores.dart';
+import 'support/test_storage_sandbox.dart';
 
 /// Consumer-visible copy sources scanned for internal deployment wording.
 const _consumerVisibleCopyFiles = [
@@ -85,38 +83,43 @@ void main() {
       );
     });
 
-    test('returning session survey requires saved entries or explicit flag', () {
-      expect(
-        FirstUserExperienceGates.showReturnSessionSurvey(
-          loaded: true,
-          entryCount: 1,
-        ),
-        isTrue,
-      );
-      expect(
-        FirstUserExperienceGates.showReturnSessionSurvey(
-          loaded: true,
-          entryCount: 0,
-          explicitReturningSession: true,
-        ),
-        isTrue,
-      );
-    });
+    test(
+      'returning session survey requires saved entries or explicit flag',
+      () {
+        expect(
+          FirstUserExperienceGates.showReturnSessionSurvey(
+            loaded: true,
+            entryCount: 1,
+          ),
+          isTrue,
+        );
+        expect(
+          FirstUserExperienceGates.showReturnSessionSurvey(
+            loaded: true,
+            entryCount: 0,
+            explicitReturningSession: true,
+          ),
+          isTrue,
+        );
+      },
+    );
   });
 
   group('empty first-run record screen', () {
-    late Directory tempDir;
+    late TestStorageSandbox sandbox;
 
     setUp(() async {
-      tempDir = Directory.systemTemp.createTempSync('vm_first_user_');
+      sandbox = TestStorageSandbox.create();
       await AppServices.resetForTest(
-        journalPath: '${tempDir.path}/journal.json',
+        journalPath: sandbox.journalPath,
         skipRevenueCat: true,
       );
       VisualAuditOverrides.setRecordPresentation(
         const RecordAuditPresentation(ui: RecordUiState.ready),
       );
     });
+
+    tearDown(() => sandbox.dispose());
 
     tearDown(() {
       VisualAuditOverrides.setRecordPresentation(null);
@@ -156,13 +159,22 @@ void main() {
       expect(find.textContaining('What brought you back'), findsNothing);
     });
 
-    testWidgets('shows a clear voice capture path without competing capture CTAs', (tester) async {
-      await pumpEmptyRecord(tester);
-      expect(find.text(MicrophonePermissionCopy.requestMicrophoneCta), findsOneWidget);
-      expect(find.byKey(const Key('daily_archive_exercise_record_card')), findsNothing);
-      expect(find.byKey(const Key('daily_mirror_card')), findsNothing);
-      expect(find.text(ConsumerUiCopy.recordOneMomentCta), findsNothing);
-    });
+    testWidgets(
+      'shows a clear voice capture path without competing capture CTAs',
+      (tester) async {
+        await pumpEmptyRecord(tester);
+        expect(
+          find.text(MicrophonePermissionCopy.requestMicrophoneCta),
+          findsOneWidget,
+        );
+        expect(
+          find.byKey(const Key('daily_archive_exercise_record_card')),
+          findsNothing,
+        );
+        expect(find.byKey(const Key('daily_mirror_card')), findsNothing);
+        expect(find.text(ConsumerUiCopy.recordOneMomentCta), findsNothing);
+      },
+    );
   });
 
   group('terms and trust copy', () {
@@ -185,25 +197,34 @@ void main() {
       expect(violations, isEmpty, reason: violations.join('\n'));
     });
 
-    test('privacy and legal copy avoids overclaiming encryption or therapy', () {
-      final sources = [
-        ...PrivacyScreenCopy.all,
-        RecordScreenFramingCopy.firstRunPrivacyBody,
-        FirstUserExperienceCopy.trustLine,
-        PrivacyCopyPolicy.personalNotMedicalDisclaimer,
-      ];
-      for (final line in sources) {
-        for (final reason in PrivacyCopyPolicy.violationsInLiteral(line)) {
-          fail('"$line": $reason');
+    test(
+      'privacy and legal copy avoids overclaiming encryption or therapy',
+      () {
+        final sources = [
+          ...PrivacyScreenCopy.all,
+          RecordScreenFramingCopy.firstRunPrivacyBody,
+          FirstUserExperienceCopy.trustLine,
+          PrivacyCopyPolicy.personalNotMedicalDisclaimer,
+        ];
+        for (final line in sources) {
+          for (final reason in PrivacyCopyPolicy.violationsInLiteral(line)) {
+            fail('"$line": $reason');
+          }
+          expect(
+            line.toLowerCase(),
+            isNot(contains('all journal data is encrypted')),
+          );
+          expect(
+            line.toLowerCase(),
+            isNot(contains('your journal is encrypted')),
+          );
         }
-        expect(line.toLowerCase(), isNot(contains('all journal data is encrypted')));
-        expect(line.toLowerCase(), isNot(contains('your journal is encrypted')));
-      }
-      expect(
-        PrivacyScreenCopy.doesNotDoBody.toLowerCase(),
-        contains('not therapy'),
-      );
-    });
+        expect(
+          PrivacyScreenCopy.doesNotDoBody.toLowerCase(),
+          contains('not therapy'),
+        );
+      },
+    );
 
     testWidgets('settings opens in-app terms route', (tester) async {
       final router = GoRouter(

@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:voicememory_mobile/billing/paywall_source.dart';
 import 'package:voicememory_mobile/billing/restore_purchases_copy.dart';
 import 'package:voicememory_mobile/billing/revenuecat_service.dart';
 import 'package:voicememory_mobile/features/app_review/archive_app_review_access_gate.dart';
@@ -28,11 +27,9 @@ import 'package:voicememory_mobile/widgets/pro/pro_understanding_lift_card.dart'
 
 class _MemoryPrefs extends MobilePrefsStore {
   _MemoryPrefs()
-      : super(
-          file: File(
-            'test/tmp/first_session_pro_understanding_lift/unused.json',
-          ),
-        );
+    : super(
+        file: File('test/tmp/first_session_pro_understanding_lift/unused.json'),
+      );
 
   final Map<String, Map<String, dynamic>> maps = {};
 
@@ -52,24 +49,23 @@ ProUnderstandingLiftVisibilityInput _proInput({
   ProofQualityFeedbackState feedbackState = ProofQualityFeedbackState.useful,
   bool hasProEngagement = false,
   bool isRecording = false,
-}) =>
-    ProUnderstandingLiftVisibilityInput(
-      surface: ProUnderstandingLiftSurface.recordReady,
-      source: 'test',
-      entryCount: 4,
-      isPro: isPro,
-      hasUsefulProof: hasUsefulProof,
-      confidenceLevel: confidenceLevel,
-      feedbackState: feedbackState,
-      hasProEngagement: hasProEngagement,
-      hasFreshReturnAfterCorrection: false,
-      hasChangeAnchor: false,
-      isRecording: isRecording,
-      isDegradedTranscriptState: false,
-      isPostSaveDegradedState: false,
-      whatChangedQuestionActive: false,
-      patternReviewInboxHasActiveItems: false,
-    );
+}) => ProUnderstandingLiftVisibilityInput(
+  surface: ProUnderstandingLiftSurface.recordReady,
+  source: 'test',
+  entryCount: 4,
+  isPro: isPro,
+  hasUsefulProof: hasUsefulProof,
+  confidenceLevel: confidenceLevel,
+  feedbackState: feedbackState,
+  hasProEngagement: hasProEngagement,
+  hasFreshReturnAfterCorrection: false,
+  hasChangeAnchor: false,
+  isRecording: isRecording,
+  isDegradedTranscriptState: false,
+  isPostSaveDegradedState: false,
+  whatChangedQuestionActive: false,
+  patternReviewInboxHasActiveItems: false,
+);
 
 SurfacePriorityCandidates _recordCandidates({
   bool firstSessionLift = false,
@@ -79,39 +75,38 @@ SurfacePriorityCandidates _recordCandidates({
   bool proVisibilityLift = false,
   bool proPreview = false,
   bool proBridgeVisibility = false,
-}) =>
-    SurfacePriorityCandidates.recordReady(
-      firstSessionLift: firstSessionLift,
-      firstSaveLift: firstSaveLift,
-      betaActivationPath: betaActivationPath,
-      threeMomentCompletion: false,
-      firstMomentCapture: false,
-      secondMomentReturn: false,
-      lowFrictionReturn: false,
-      whatToNoticeNext: false,
-      betaTodaySummary: false,
-      openCapturePromptChips: false,
-      captureFreedomLine: false,
-      timelineProofMoment: false,
-      archiveTimelineSpine: false,
-      timelinePositioning: false,
-      currentRelevance: false,
-      correctionMemory: false,
-      notRelevantRecovery: false,
-      proofQualityResponse: false,
-      evidenceWeighting: false,
-      proofSpecificity: false,
-      presentDayRelevance: false,
-      patternConfidence: false,
-      betaTesterReport: false,
-      proUnderstandingLift: proUnderstandingLift,
-      proVisibilityLift: proVisibilityLift,
-      proPreview: proPreview,
-      proBridgeVisibility: proBridgeVisibility,
-      proEvidenceValue: false,
-      privateReportProBridge: false,
-      suppressLegacyEducation: false,
-    );
+}) => SurfacePriorityCandidates.recordReady(
+  firstSessionLift: firstSessionLift,
+  firstSaveLift: firstSaveLift,
+  betaActivationPath: betaActivationPath,
+  threeMomentCompletion: false,
+  firstMomentCapture: false,
+  secondMomentReturn: false,
+  lowFrictionReturn: false,
+  whatToNoticeNext: false,
+  betaTodaySummary: false,
+  openCapturePromptChips: false,
+  captureFreedomLine: false,
+  timelineProofMoment: false,
+  archiveTimelineSpine: false,
+  timelinePositioning: false,
+  currentRelevance: false,
+  correctionMemory: false,
+  notRelevantRecovery: false,
+  proofQualityResponse: false,
+  evidenceWeighting: false,
+  proofSpecificity: false,
+  presentDayRelevance: false,
+  patternConfidence: false,
+  betaTesterReport: false,
+  proUnderstandingLift: proUnderstandingLift,
+  proVisibilityLift: proVisibilityLift,
+  proPreview: proPreview,
+  proBridgeVisibility: proBridgeVisibility,
+  proEvidenceValue: false,
+  privateReportProBridge: false,
+  suppressLegacyEducation: false,
+);
 
 void main() {
   setUp(() async {
@@ -138,7 +133,10 @@ void main() {
 
   group('FirstSessionLiftEngine', () {
     test('shows at zero entries when beta enabled', () {
-      final result = FirstSessionLiftEngine.build(entryCount: 0, source: 'test');
+      final result = FirstSessionLiftEngine.build(
+        entryCount: 0,
+        source: 'test',
+      );
       expect(
         FirstSessionLiftEngine.shouldShow(
           result: result,
@@ -155,12 +153,18 @@ void main() {
     });
 
     test('hidden after first save', () {
-      final result = FirstSessionLiftEngine.build(entryCount: 1, source: 'test');
+      final result = FirstSessionLiftEngine.build(
+        entryCount: 1,
+        source: 'test',
+      );
       expect(result.shouldShow, isFalse);
     });
 
     test('hidden while recording', () {
-      final result = FirstSessionLiftEngine.build(entryCount: 0, source: 'test');
+      final result = FirstSessionLiftEngine.build(
+        entryCount: 0,
+        source: 'test',
+      );
       expect(
         FirstSessionLiftEngine.shouldShow(
           result: result,
@@ -259,7 +263,9 @@ void main() {
 
     test('hidden for Pro users', () {
       expect(
-        ProUnderstandingLiftEngine.shouldShowCard(input: _proInput(isPro: true)),
+        ProUnderstandingLiftEngine.shouldShowCard(
+          input: _proInput(isPro: true),
+        ),
         isFalse,
       );
     });
@@ -334,10 +340,7 @@ void main() {
 
       expect(result.guidanceSlot, SurfacePriorityCardKey.firstSessionLift);
       expect(
-        result.isVisible(
-          SurfacePriorityCardKey.firstSaveLift,
-          candidate: true,
-        ),
+        result.isVisible(SurfacePriorityCardKey.firstSaveLift, candidate: true),
         isFalse,
       );
       expect(
@@ -347,7 +350,10 @@ void main() {
         ),
         isFalse,
       );
-      expect(result.hiddenReasons, contains(SurfacePriorityCopy.hiddenReasonGuidanceCap));
+      expect(
+        result.hiddenReasons,
+        contains(SurfacePriorityCopy.hiddenReasonGuidanceCap),
+      );
     });
 
     test('pro understanding lift wins single pro slot', () {
@@ -386,8 +392,10 @@ void main() {
         properties.add(props);
       };
 
-      final result =
-          FirstSessionLiftEngine.build(entryCount: 0, source: 'record');
+      final result = FirstSessionLiftEngine.build(
+        entryCount: 0,
+        source: 'record',
+      );
       FirstSessionLiftAnalytics.seen(result: result);
       FirstSessionLiftAnalytics.ctaTapped(
         result: result,
@@ -431,12 +439,15 @@ void main() {
         ProUnderstandingLiftAnalytics.dismissedEvent,
       ]);
       for (final props in properties) {
-        expect(props.keys, containsAll([
-          'source',
-          'entry_count',
-          'has_useful_proof',
-          'has_paywall_seen',
-        ]));
+        expect(
+          props.keys,
+          containsAll([
+            'source',
+            'entry_count',
+            'has_useful_proof',
+            'has_paywall_seen',
+          ]),
+        );
         expect(props.containsKey('transcript'), isFalse);
       }
     });
@@ -481,31 +492,38 @@ void main() {
   });
 
   group('Integration wiring', () {
-    test('record screen opens valueMoment paywall for pro understanding lift', () {
-      final source = File('lib/screens/record_screen.dart').readAsStringSync();
-      expect(source, contains('FirstSessionLiftCard'));
-      expect(source, contains('ProUnderstandingLiftCard'));
-      expect(source, contains('record_pro_understanding_lift'));
-      expect(source, contains('PaywallSource.valueMoment'));
-    });
+    test(
+      'record screen opens valueMoment paywall for pro understanding lift',
+      () {
+        final source = File(
+          'lib/screens/record_screen.dart',
+        ).readAsStringSync();
+        expect(source, contains('FirstSessionLiftCard'));
+        expect(source, contains('ProUnderstandingLiftCard'));
+        expect(source, contains('record_pro_understanding_lift'));
+        expect(source, contains('PaywallSource.valueMoment'));
+      },
+    );
 
     test('testing screen renders compact previews', () {
-      final source =
-          File('lib/screens/testing_archiveme_screen.dart').readAsStringSync();
+      final source = File(
+        'packages/archiveme_research/lib/screens/testing_archiveme_screen.dart',
+      ).readAsStringSync();
       expect(source, contains('FirstSessionLiftCard.test'));
       expect(source, contains('ProUnderstandingLiftCard.test'));
-      expect(
-        source,
-        contains('_FirstSessionProUnderstandingLiftTestingPanel'),
-      );
+      expect(source, contains('_FirstSessionProUnderstandingLiftTestingPanel'));
       expect(source, contains('first_session_lift_status'));
       expect(source, contains('pro_understanding_lift_status'));
-      expect(source, contains('first_session_pro_understanding_lift_diagnosis'));
+      expect(
+        source,
+        contains('first_session_pro_understanding_lift_diagnosis'),
+      );
     });
 
     test('archive belief integrates pro understanding lift', () {
-      final source =
-          File('lib/screens/archive_belief_screen.dart').readAsStringSync();
+      final source = File(
+        'lib/screens/archive_belief_screen.dart',
+      ).readAsStringSync();
       expect(source, contains('ProUnderstandingLiftCard'));
       expect(source, contains('patterns_pro_understanding_lift'));
     });
@@ -520,10 +538,15 @@ void main() {
       expect(RestorePurchasesCopy.restorePurchases, 'Restore purchases');
     });
 
-    test('pro understanding lift opens valueMoment paywall via record screen', () {
-      final source = File('lib/screens/record_screen.dart').readAsStringSync();
-      expect(source, contains('_openProEvidenceValueSubscription'));
-      expect(source, contains('source: PaywallSource.valueMoment'));
-    });
+    test(
+      'pro understanding lift opens valueMoment paywall via record screen',
+      () {
+        final source = File(
+          'lib/screens/record_screen.dart',
+        ).readAsStringSync();
+        expect(source, contains('_openProEvidenceValueSubscription'));
+        expect(source, contains('source: PaywallSource.valueMoment'));
+      },
+    );
   });
 }

@@ -107,6 +107,26 @@ export async function peekOpenAiSpend(
   return memorySpendMap().get(memoryKey(subject, day)) ?? 0;
 }
 
+/** Removes every day's recorded spend for a subject (e.g. `user:<id>`). Idempotent. */
+export async function deleteOpenAiSpendForSubject(subject: string): Promise<number> {
+  if (shouldUsePostgresStorage()) {
+    const result = await dbQuery(`DELETE FROM openai_daily_spend WHERE subject_key = $1`, [
+      subject,
+    ]);
+    return result.rowCount ?? 0;
+  }
+
+  let removed = 0;
+  const prefix = `${subject}:`;
+  for (const key of [...memorySpendMap().keys()]) {
+    if (key.startsWith(prefix)) {
+      memorySpendMap().delete(key);
+      removed += 1;
+    }
+  }
+  return removed;
+}
+
 export function usesDurableOpenAiSpend(): boolean {
   return shouldUsePostgresStorage();
 }

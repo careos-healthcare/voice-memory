@@ -75,7 +75,7 @@ class _CheckInCompletedCardState extends State<CheckInCompletedCard> {
   String? _moreUsefulReason;
 
   static const Color _warmSurface = Color(0xFFFFFBF5);
-  static const Color _warmBorder = Color(0xFFF5E6D3);
+  static const Color _warmBorder = AppColors.warmBorder;
 
   String? get _effectiveReason => _moreUsefulReason ?? widget.notUsefulReason;
 

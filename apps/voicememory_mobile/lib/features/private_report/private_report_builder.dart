@@ -48,7 +48,8 @@ abstract final class PrivateReportBuilder {
     if (ArchiveEvidenceQualityGate.showsPendingTranscriptFallback(entries)) {
       return null;
     }
-    if (!EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(entries)) return null;
+    if (!EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(entries))
+      return null;
     if (!ArchiveEvidenceQualityGate.allowsFirstProof(entries)) return null;
 
     final eligible = ArchiveEvidenceGuard.strongEntries(entries);
@@ -124,7 +125,9 @@ abstract final class PrivateReportBuilder {
     String phrase,
     int count,
   ) {
-    final displayPhrase = PatternNameEngine.displayLabelForGroundedPhrase(phrase);
+    final displayPhrase = PatternNameEngine.displayLabelForGroundedPhrase(
+      phrase,
+    );
     return PrivateArchiveReportSection(
       heading: PrivateReportCopy.whatRepeatedHeading,
       lines: [PrivateReportCopy.whatRepeatedBody(displayPhrase, count)],
@@ -157,7 +160,9 @@ abstract final class PrivateReportBuilder {
       );
     }
 
-    final changeNotice = EarlyFirstSignalEngine.buildChangeNotice(entries: entries);
+    final changeNotice = EarlyFirstSignalEngine.buildChangeNotice(
+      entries: entries,
+    );
     if (changeNotice != null && changeNotice.body.trim().isNotEmpty) {
       return PrivateArchiveReportSection(
         heading: PrivateReportCopy.whatChangedHeading,
@@ -242,7 +247,7 @@ abstract final class PrivateReportBuilder {
       returnChecks: returnChecks,
       viewingConfirmedRepeatOrTimeline: viewingConfirmedRepeatOrTimeline,
     );
-    final prompt = dailyReason?.prompt?.trim();
+    final prompt = dailyReason?.prompt.trim();
     if (prompt != null && prompt.isNotEmpty) {
       return PrivateArchiveReportSection(
         heading: PrivateReportCopy.whatToWatchNextHeading,
@@ -296,7 +301,7 @@ abstract final class PrivateReportBuilder {
         text,
         maxChars: _maxSnippetChars,
       );
-      if (snippet == null || snippet.trim().isEmpty) continue;
+      if (snippet.trim().isEmpty) continue;
       if (bullets.any((bullet) => bullet.contains(snippet))) continue;
 
       bullets.add(
@@ -324,12 +329,14 @@ abstract final class PrivateReportBuilder {
       );
 
   static String? _groundedPhrase(List<JournalEntry> entries) {
-    final shared =
-        ConfirmedRepeatEvidencePhraseEngine.sharedConcretePhrase(entries);
+    final shared = ConfirmedRepeatEvidencePhraseEngine.sharedConcretePhrase(
+      entries,
+    );
     if (shared != null && _isGroundedPhrase(shared, entries)) return shared;
 
-    for (final phrase
-        in ConfirmedRepeatEvidencePhraseEngine.extract(entries).phrases) {
+    for (final phrase in ConfirmedRepeatEvidencePhraseEngine.extract(
+      entries,
+    ).phrases) {
       if (_isGroundedPhrase(phrase, entries)) return phrase;
     }
     return null;

@@ -75,7 +75,9 @@ abstract final class ProofClarityImportanceDiagnostic {
     return ProofClarityImportanceDecision.repairProofExplanation;
   }
 
-  static bool _tooVagueOrNotRelevantHigh(ProofClarityImportanceSummary summary) =>
+  static bool _tooVagueOrNotRelevantHigh(
+    ProofClarityImportanceSummary summary,
+  ) =>
       summary.tooVagueOrNotRelevantCount >=
       tooVagueHighTargetFor(summary.totalTesters);
 
@@ -83,7 +85,9 @@ abstract final class ProofClarityImportanceDiagnostic {
       summary.proofExplanationClearCount <
       proofExplanationClearTargetFor(summary.totalTesters);
 
-  static bool _wantsRankingImportanceHigh(ProofClarityImportanceSummary summary) =>
+  static bool _wantsRankingImportanceHigh(
+    ProofClarityImportanceSummary summary,
+  ) =>
       summary.wantsRankingImportanceCount >=
       wantsRankingImportanceTargetFor(summary.totalTesters);
 
@@ -104,8 +108,7 @@ abstract final class ProofClarityImportanceDiagnostic {
     required int totalTesters,
     required int numerator,
     required int denominator,
-  }) =>
-      ((numerator * totalTesters) / denominator).ceil();
+  }) => ((numerator * totalTesters) / denominator).ceil();
 }
 
 enum ProofClarityImportanceDecision {

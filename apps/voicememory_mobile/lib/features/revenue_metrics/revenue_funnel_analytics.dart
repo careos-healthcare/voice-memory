@@ -8,14 +8,14 @@ abstract final class RevenueFunnelAnalytics {
   RevenueFunnelAnalytics._();
 
   static final List<({RevenueFunnelEvent event, Map<String, Object> metadata})>
-      _events = [];
+  _events = [];
 
   @visibleForTesting
   static List<({RevenueFunnelEvent event, Map<String, Object> metadata})>
-      get eventsForTest => recordedEvents;
+  get eventsForTest => recordedEvents;
 
   static List<({RevenueFunnelEvent event, Map<String, Object> metadata})>
-      get recordedEvents => List.unmodifiable(_events);
+  get recordedEvents => List.unmodifiable(_events);
 
   static RevenueFunnelSnapshot debugSummary() =>
       RevenueFunnelSnapshot.fromEvents(_events);
@@ -230,7 +230,7 @@ abstract final class RevenueFunnelAnalytics {
     String? surface,
   }) {
     final metadata = <String, Object>{
-      if (entryCount != null) 'entry_count': entryCount,
+      'entry_count': ?entryCount,
       if (source != null) 'source': _sanitizeId(source),
       if (hasConfirmedRepeat != null)
         'has_confirmed_repeat': hasConfirmedRepeat ? 1 : 0,
@@ -259,9 +259,7 @@ abstract final class RevenueFunnelAnalytics {
     final trimmed = value.trim().toLowerCase();
     if (trimmed.isEmpty) return 'unknown';
     final sanitized = trimmed.replaceAll(RegExp(r'[^a-z0-9_]'), '_');
-    return sanitized.length <= 40
-        ? sanitized
-        : sanitized.substring(0, 40);
+    return sanitized.length <= 40 ? sanitized : sanitized.substring(0, 40);
   }
 
   @visibleForTesting

@@ -28,7 +28,7 @@ class FirstLoopStartCard extends StatelessWidget {
   ];
 
   static const Color _warmSurface = Color(0xFFFFFBF5);
-  static const Color _warmBorder = Color(0xFFF5E6D3);
+  static const Color _warmBorder = AppColors.warmBorder;
 
   @override
   Widget build(BuildContext context) {

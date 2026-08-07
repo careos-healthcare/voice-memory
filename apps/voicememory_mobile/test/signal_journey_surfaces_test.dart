@@ -3,7 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:voicememory_mobile/features/signal_journey/signal_journey_model.dart';
 import 'package:voicememory_mobile/product/consumer_ui_copy.dart';
-import 'package:voicememory_mobile/screens/signal_journey_screen.dart';
+import 'package:archiveme_research/screens/signal_journey_screen.dart';
 import 'package:voicememory_mobile/widgets/signal/signal_journey_card.dart';
 import 'package:voicememory_mobile/widgets/signal/signal_journey_completion_card.dart';
 
@@ -110,12 +110,12 @@ void main() {
           routes: [
             GoRoute(
               path: '/',
-              builder: (_, __) =>
+              builder: (_, _) =>
                   SignalJourneyCard(journey: _journey(), compact: true),
             ),
             GoRoute(
               path: '/record',
-              builder: (_, __) => const Scaffold(body: Text('Record tab')),
+              builder: (_, _) => const Scaffold(body: Text('Record tab')),
             ),
           ],
         ),

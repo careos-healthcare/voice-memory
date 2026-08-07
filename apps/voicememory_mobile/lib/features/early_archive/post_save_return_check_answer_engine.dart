@@ -23,9 +23,7 @@ abstract final class PostSaveReturnCheckAnswerEngine {
     if (!RepeatReturnCheckGates.hasRelatedRepeatSave(entries)) return null;
 
     final eligible = ArchiveEvidenceGuard.eligibleEntries(entries);
-    final foundation = eligible.length >= 3
-        ? eligible.sublist(0, 3)
-        : eligible;
+    final foundation = eligible.length >= 3 ? eligible.sublist(0, 3) : eligible;
     final evidence = ConfirmedRepeatEvidencePhraseEngine.extract(foundation);
     if (!evidence.isStrong) return null;
 
@@ -35,9 +33,11 @@ abstract final class PostSaveReturnCheckAnswerEngine {
         .firstOrNull;
     if (existing?.choice != null) return null;
 
-    final phrase =
-        ConfirmedRepeatEvidencePhraseEngine.sharedConcretePhrase(foundation);
-    final usesPhraseBody = phrase != null &&
+    final phrase = ConfirmedRepeatEvidencePhraseEngine.sharedConcretePhrase(
+      foundation,
+    );
+    final usesPhraseBody =
+        phrase != null &&
         ConfirmedRepeatEvidencePhraseEngine.isConcretePhrase(phrase) &&
         !ConfirmedRepeatEvidencePhraseEngine.isAbstractOnlyPhrase(phrase) &&
         !ConfirmedRepeatEvidencePhraseEngine.usesUngroundedGenericLabel(
@@ -50,7 +50,7 @@ abstract final class PostSaveReturnCheckAnswerEngine {
       label: PostSaveReturnCheckAnswerCopy.label,
       title: PostSaveReturnCheckAnswerCopy.title,
       body: usesPhraseBody
-          ? PostSaveReturnCheckAnswerCopy.bodyWithPhrase(phrase!)
+          ? PostSaveReturnCheckAnswerCopy.bodyWithPhrase(phrase)
           : PostSaveReturnCheckAnswerCopy.bodyFallback,
       footer: PostSaveReturnCheckAnswerCopy.footer,
       hasPhrase: usesPhraseBody,

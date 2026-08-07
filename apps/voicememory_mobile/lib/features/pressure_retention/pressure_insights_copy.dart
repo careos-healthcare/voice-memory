@@ -22,13 +22,11 @@ class PressureInsightsCopy {
   static const String weeklyRecapTitleEarly = 'This week so far';
   static const String addMomentCtaEarly = 'Add another moment';
 
-  static String screenTitle(int entryCount) => hasStrongLoopEvidence(entryCount)
-      ? screenTitleStrong
-      : screenTitleEarly;
+  static String screenTitle(int entryCount) =>
+      hasStrongLoopEvidence(entryCount) ? screenTitleStrong : screenTitleEarly;
 
-  static String pageTitle(int entryCount) => hasStrongLoopEvidence(entryCount)
-      ? pageTitleStrong
-      : pageTitleEarly;
+  static String pageTitle(int entryCount) =>
+      hasStrongLoopEvidence(entryCount) ? pageTitleStrong : pageTitleEarly;
 
   static String visibilityCardTitle(int entryCount) =>
       hasStrongLoopEvidence(entryCount)

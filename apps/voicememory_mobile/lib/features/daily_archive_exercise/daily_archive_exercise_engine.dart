@@ -16,7 +16,6 @@ class DailyArchiveExerciseEngine {
       return _screenshotPreview();
     }
 
-    final count = input.realSavedMomentCount;
     final kind = _kindFor(input);
     final copy = _copyFor(kind);
 
@@ -94,12 +93,12 @@ class DailyArchiveExerciseEngine {
   static _DailyArchiveExerciseCopy _copyFor(DailyArchiveExerciseKind kind) {
     return switch (kind) {
       DailyArchiveExerciseKind.firstMoment => const _DailyArchiveExerciseCopy(
-            title: DailyArchiveExerciseCopy.firstMomentTitle,
-            prompt: DailyArchiveExerciseCopy.firstMomentPrompt,
-            hint: DailyArchiveExerciseCopy.firstMomentHint,
-            ctaLabel: DailyArchiveExerciseCopy.saveMomentCta,
-            route: DailyArchiveExerciseCopy.recordRoute,
-          ),
+        title: DailyArchiveExerciseCopy.firstMomentTitle,
+        prompt: DailyArchiveExerciseCopy.firstMomentPrompt,
+        hint: DailyArchiveExerciseCopy.firstMomentHint,
+        ctaLabel: DailyArchiveExerciseCopy.saveMomentCta,
+        route: DailyArchiveExerciseCopy.recordRoute,
+      ),
       DailyArchiveExerciseKind.comparisonMaterial =>
         const _DailyArchiveExerciseCopy(
           title: DailyArchiveExerciseCopy.comparisonTitle,
@@ -109,47 +108,48 @@ class DailyArchiveExerciseEngine {
           route: DailyArchiveExerciseCopy.recordRoute,
         ),
       DailyArchiveExerciseKind.watchTheme => const _DailyArchiveExerciseCopy(
-            title: DailyArchiveExerciseCopy.watchThemeTitle,
-            prompt: DailyArchiveExerciseCopy.watchThemePrompt,
-            hint: DailyArchiveExerciseCopy.watchThemeHint,
-            ctaLabel: DailyArchiveExerciseCopy.saveMomentCta,
-            route: DailyArchiveExerciseCopy.recordRoute,
-          ),
+        title: DailyArchiveExerciseCopy.watchThemeTitle,
+        prompt: DailyArchiveExerciseCopy.watchThemePrompt,
+        hint: DailyArchiveExerciseCopy.watchThemeHint,
+        ctaLabel: DailyArchiveExerciseCopy.saveMomentCta,
+        route: DailyArchiveExerciseCopy.recordRoute,
+      ),
       DailyArchiveExerciseKind.betaFeedback => const _DailyArchiveExerciseCopy(
-            title: DailyArchiveExerciseCopy.betaFeedbackTitle,
-            prompt: DailyArchiveExerciseCopy.betaFeedbackPrompt,
-            hint: DailyArchiveExerciseCopy.betaFeedbackHint,
-            ctaLabel: DailyArchiveExerciseCopy.openBetaFeedbackCta,
-            route: DailyArchiveExerciseCopy.betaFeedbackRoute,
-          ),
-      DailyArchiveExerciseKind.patternRepeated => const _DailyArchiveExerciseCopy(
-            title: DailyArchiveExerciseCopy.varietyTitle,
-            prompt: DailyArchiveExerciseCopy.patternRepeatedPrompt,
-            hint: DailyArchiveExerciseCopy.varietyHint,
-            ctaLabel: DailyArchiveExerciseCopy.saveMomentCta,
-            route: DailyArchiveExerciseCopy.recordRoute,
-          ),
+        title: DailyArchiveExerciseCopy.betaFeedbackTitle,
+        prompt: DailyArchiveExerciseCopy.betaFeedbackPrompt,
+        hint: DailyArchiveExerciseCopy.betaFeedbackHint,
+        ctaLabel: DailyArchiveExerciseCopy.openBetaFeedbackCta,
+        route: DailyArchiveExerciseCopy.betaFeedbackRoute,
+      ),
+      DailyArchiveExerciseKind.patternRepeated =>
+        const _DailyArchiveExerciseCopy(
+          title: DailyArchiveExerciseCopy.varietyTitle,
+          prompt: DailyArchiveExerciseCopy.patternRepeatedPrompt,
+          hint: DailyArchiveExerciseCopy.varietyHint,
+          ctaLabel: DailyArchiveExerciseCopy.saveMomentCta,
+          route: DailyArchiveExerciseCopy.recordRoute,
+        ),
       DailyArchiveExerciseKind.feltDifferent => const _DailyArchiveExerciseCopy(
-            title: DailyArchiveExerciseCopy.varietyTitle,
-            prompt: DailyArchiveExerciseCopy.feltDifferentPrompt,
-            hint: DailyArchiveExerciseCopy.varietyHint,
-            ctaLabel: DailyArchiveExerciseCopy.saveMomentCta,
-            route: DailyArchiveExerciseCopy.recordRoute,
-          ),
+        title: DailyArchiveExerciseCopy.varietyTitle,
+        prompt: DailyArchiveExerciseCopy.feltDifferentPrompt,
+        hint: DailyArchiveExerciseCopy.varietyHint,
+        ctaLabel: DailyArchiveExerciseCopy.saveMomentCta,
+        route: DailyArchiveExerciseCopy.recordRoute,
+      ),
       DailyArchiveExerciseKind.checkConcern => const _DailyArchiveExerciseCopy(
-            title: DailyArchiveExerciseCopy.varietyTitle,
-            prompt: DailyArchiveExerciseCopy.checkConcernPrompt,
-            hint: DailyArchiveExerciseCopy.varietyHint,
-            ctaLabel: DailyArchiveExerciseCopy.saveMomentCta,
-            route: DailyArchiveExerciseCopy.recordRoute,
-          ),
+        title: DailyArchiveExerciseCopy.varietyTitle,
+        prompt: DailyArchiveExerciseCopy.checkConcernPrompt,
+        hint: DailyArchiveExerciseCopy.varietyHint,
+        ctaLabel: DailyArchiveExerciseCopy.saveMomentCta,
+        route: DailyArchiveExerciseCopy.recordRoute,
+      ),
       DailyArchiveExerciseKind.saveUseful => const _DailyArchiveExerciseCopy(
-            title: DailyArchiveExerciseCopy.varietyTitle,
-            prompt: DailyArchiveExerciseCopy.saveUsefulPrompt,
-            hint: DailyArchiveExerciseCopy.varietyHint,
-            ctaLabel: DailyArchiveExerciseCopy.saveMomentCta,
-            route: DailyArchiveExerciseCopy.recordRoute,
-          ),
+        title: DailyArchiveExerciseCopy.varietyTitle,
+        prompt: DailyArchiveExerciseCopy.saveUsefulPrompt,
+        hint: DailyArchiveExerciseCopy.varietyHint,
+        ctaLabel: DailyArchiveExerciseCopy.saveMomentCta,
+        route: DailyArchiveExerciseCopy.recordRoute,
+      ),
     };
   }
 }

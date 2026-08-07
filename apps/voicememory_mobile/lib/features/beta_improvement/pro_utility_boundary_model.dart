@@ -32,18 +32,17 @@ class ProUtilityBoundaryModel {
     String? reason,
     bool? exportLinkLive,
     bool? privateReportLive,
-  }) =>
-      ProUtilityBoundaryModel(
-        showHistory: showHistory ?? this.showHistory,
-        showExport: showExport ?? this.showExport,
-        showPrivateReportPreview:
-            showPrivateReportPreview ?? this.showPrivateReportPreview,
-        isPreviewOnly: isPreviewOnly ?? this.isPreviewOnly,
-        shouldShowProBridge: shouldShowProBridge ?? this.shouldShowProBridge,
-        reason: reason ?? this.reason,
-        exportLinkLive: exportLinkLive ?? this.exportLinkLive,
-        privateReportLive: privateReportLive ?? this.privateReportLive,
-      );
+  }) => ProUtilityBoundaryModel(
+    showHistory: showHistory ?? this.showHistory,
+    showExport: showExport ?? this.showExport,
+    showPrivateReportPreview:
+        showPrivateReportPreview ?? this.showPrivateReportPreview,
+    isPreviewOnly: isPreviewOnly ?? this.isPreviewOnly,
+    shouldShowProBridge: shouldShowProBridge ?? this.shouldShowProBridge,
+    reason: reason ?? this.reason,
+    exportLinkLive: exportLinkLive ?? this.exportLinkLive,
+    privateReportLive: privateReportLive ?? this.privateReportLive,
+  );
 
   static const hidden = ProUtilityBoundaryModel(
     showHistory: false,

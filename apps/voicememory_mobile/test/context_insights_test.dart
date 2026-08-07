@@ -15,45 +15,43 @@ JournalEntry _voiceEntry({
   required String transcript,
   DateTime? createdAt,
   String? captureContextTag,
-}) =>
-    JournalEntry(
-      id: id,
-      createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
-      transcript: transcript,
-      durationSeconds: 30,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 2,
-        recurringThemes: ['work'],
-        exactLanguagePattern: '',
-        concreteObservation: 'Work pressure showed up in this moment.',
-        repeatedSignal: '',
-      ),
-      captureContextTag: captureContextTag,
-    );
+}) => JournalEntry(
+  id: id,
+  createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
+  transcript: transcript,
+  durationSeconds: 30,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 2,
+    recurringThemes: ['work'],
+    exactLanguagePattern: '',
+    concreteObservation: 'Work pressure showed up in this moment.',
+    repeatedSignal: '',
+  ),
+  captureContextTag: captureContextTag,
+);
 
 JournalEntry _degradedVoiceEntry({
   String id = 'd1',
   String? captureContextTag,
-}) =>
-    JournalEntry(
-      id: id,
-      createdAt: DateTime(2026, 6, 12, 12),
-      transcript:
-          '[draft] ${CaptureSaveMessages.recordingSavedLocally} — transcribe when connected',
-      durationSeconds: 20,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 0,
-        recurringThemes: [],
-        exactLanguagePattern: '',
-        concreteObservation: '',
-        repeatedSignal: '',
-      ),
-      captureContextTag: captureContextTag,
-    );
+}) => JournalEntry(
+  id: id,
+  createdAt: DateTime(2026, 6, 12, 12),
+  transcript:
+      '[draft] ${CaptureSaveMessages.recordingSavedLocally} — transcribe when connected',
+  durationSeconds: 20,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 0,
+    recurringThemes: [],
+    exactLanguagePattern: '',
+    concreteObservation: '',
+    repeatedSignal: '',
+  ),
+  captureContextTag: captureContextTag,
+);
 
 const _bannedWords = [
   'diagnosis',
@@ -145,7 +143,10 @@ void main() {
         insights.detailLine,
         VisibleArchiveProofCopy.contextInsightsAddDifferentContext,
       );
-      expect(insights.cautionLine, VisibleArchiveProofCopy.contextInsightsStillThin);
+      expect(
+        insights.cautionLine,
+        VisibleArchiveProofCopy.contextInsightsStillThin,
+      );
     });
 
     test('mixed tags show across more than one context', () {
@@ -390,7 +391,10 @@ void main() {
 
       expect(find.byKey(const Key('context_insights_card')), findsOneWidget);
       expect(find.text('Where this shows up'), findsOneWidget);
-      expect(find.byKey(const Key('context_insights_top_work')), findsOneWidget);
+      expect(
+        find.byKey(const Key('context_insights_top_work')),
+        findsOneWidget,
+      );
       expect(find.textContaining('Work: 2 moments'), findsOneWidget);
       expect(find.textContaining('Home: 1 moment'), findsOneWidget);
     });

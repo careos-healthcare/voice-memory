@@ -4,12 +4,7 @@ import '../../billing/archive_entitlement_reader.dart';
 import '../../config/app_config.dart';
 import '../../storage/mobile_prefs_store.dart';
 
-enum ArchiveLoopEntitlementFeature {
-  map,
-  evidence,
-  edit,
-  returnCheck,
-}
+enum ArchiveLoopEntitlementFeature { map, evidence, edit, returnCheck }
 
 extension ArchiveLoopEntitlementFeatureIds on ArchiveLoopEntitlementFeature {
   String get id => name;
@@ -143,10 +138,7 @@ class ArchiveLoopEntitlementStore {
 
   Future<ArchiveLoopEntitlementState> markFirstLoopCompleted() {
     return _mutate(
-      (s) => s.copyWith(
-        hasCompletedFirstLoop: true,
-        freeLoopMapUsed: true,
-      ),
+      (s) => s.copyWith(hasCompletedFirstLoop: true, freeLoopMapUsed: true),
     );
   }
 
@@ -171,9 +163,7 @@ class ArchiveLoopEntitlementStore {
   }
 
   Future<ArchiveLoopEntitlementState> incrementReturnCheckCount() {
-    return _mutate(
-      (s) => s.copyWith(returnCheckCount: s.returnCheckCount + 1),
-    );
+    return _mutate((s) => s.copyWith(returnCheckCount: s.returnCheckCount + 1));
   }
 
   Future<ArchiveLoopEntitlementState> setPro(bool value) {
@@ -208,8 +198,7 @@ abstract class ArchiveLoopPaywallCopy {
   static const subheadline =
       'You built a map from your own words. Pro keeps tracking what repeats, '
       'what changes, and what helps you stop the loop sooner.';
-  static const priceFallback =
-      'Pro keeps tracking this loop over time.';
+  static const priceFallback = 'Pro keeps tracking this loop over time.';
   static const priceUnavailable =
       'Purchases are not available right now. You can keep using your first map.';
   static const unavailableHint =
@@ -229,8 +218,7 @@ abstract class ArchiveLoopPaywallCopy {
   static const subscriptionAutoRenewingSummary =
       'Monthly or yearly auto-renewing subscription.';
   static const subscriptionMonthlyTitle = 'ArchiveMe Pro Monthly';
-  static const subscriptionMonthlyDuration =
-      'Monthly plan renews every month.';
+  static const subscriptionMonthlyDuration = 'Monthly plan renews every month.';
   static const subscriptionYearlyTitle = 'ArchiveMe Pro Yearly';
   static const subscriptionYearlyDuration = 'Yearly plan renews every year.';
   static const subscriptionPriceUnavailable =
@@ -257,8 +245,7 @@ abstract class ArchiveLoopPaywallCopy {
 
   static String featureHeadline(ArchiveLoopEntitlementFeature? feature) {
     return switch (feature) {
-      ArchiveLoopEntitlementFeature.returnCheck =>
-        'Keep testing what changed',
+      ArchiveLoopEntitlementFeature.returnCheck => 'Keep testing what changed',
       ArchiveLoopEntitlementFeature.edit => 'Keep your loop map alive',
       ArchiveLoopEntitlementFeature.evidence => 'Keep your loop map alive',
       ArchiveLoopEntitlementFeature.map => 'Keep your loop map alive',
@@ -270,13 +257,12 @@ abstract class ArchiveLoopPaywallCopy {
     return switch (feature) {
       ArchiveLoopEntitlementFeature.returnCheck =>
         'Free shows the first loop. Pro tracks whether it comes back or '
-        'changes over time.',
+            'changes over time.',
       ArchiveLoopEntitlementFeature.evidence =>
         'Pro saves the evidence trail so the map can change with you.',
-      ArchiveLoopEntitlementFeature.edit ||
-      ArchiveLoopEntitlementFeature.map =>
+      ArchiveLoopEntitlementFeature.edit || ArchiveLoopEntitlementFeature.map =>
         'Your first loop map is free. Pro keeps future tests, edits, and '
-        'changes connected to the same map.',
+            'changes connected to the same map.',
       null => '',
     };
   }
@@ -295,7 +281,9 @@ abstract class ArchiveLoopEntitlementGate {
         : await entitlementStore.load();
     final entitlementReader =
         reader ?? ArchiveEntitlementReader.forAccessCheck();
-    final billingPro = entitlementStore != null ? await entitlementReader.isPro : false;
+    final billingPro = entitlementStore != null
+        ? await entitlementReader.isPro
+        : false;
     final isPro = billingPro || state.isPro;
     if (billingPro && store != null && !state.isPro) {
       await store.setPro(true);
@@ -412,8 +400,7 @@ abstract class ArchiveLoopEntitlementGate {
       ArchiveLoopEntitlementFeature.map => !canCreateNewMap(snap),
       ArchiveLoopEntitlementFeature.evidence => !canSaveEvidence(snap),
       ArchiveLoopEntitlementFeature.edit => !canEditNode(snap),
-      ArchiveLoopEntitlementFeature.returnCheck =>
-        !canCreateReturnCheck(snap),
+      ArchiveLoopEntitlementFeature.returnCheck => !canCreateReturnCheck(snap),
     };
   }
 
@@ -506,11 +493,8 @@ abstract class ArchiveLoopPaywallLog {
     required String trigger,
     ArchiveLoopEntitlementFeature? feature,
   }) {
-    final featurePart =
-        feature == null ? '' : ' feature=${feature.id}';
-    debugPrint(
-      'ARCHIVEME_PAYWALL_SHOWN trigger=$trigger$featurePart',
-    );
+    final featurePart = feature == null ? '' : ' feature=${feature.id}';
+    debugPrint('ARCHIVEME_PAYWALL_SHOWN trigger=$trigger$featurePart');
   }
 
   static void logCtaTapped() {

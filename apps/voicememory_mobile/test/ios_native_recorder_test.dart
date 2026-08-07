@@ -9,16 +9,19 @@ void main() {
     MicrophonePermissionEnvironment.resetForTest();
   });
 
-  test('shouldUseOnDevice is true for physical iOS when platform available', () async {
-    MicrophonePermissionEnvironment.setIosPhysicalForTest(true);
-    IosNativeRecorder.platformIsIosOverride = true;
-    IosNativeRecorder.testPlatform = _AlwaysAvailableNativePlatform();
+  test(
+    'shouldUseOnDevice is true for physical iOS when platform available',
+    () async {
+      MicrophonePermissionEnvironment.setIosPhysicalForTest(true);
+      IosNativeRecorder.platformIsIosOverride = true;
+      IosNativeRecorder.testPlatform = _AlwaysAvailableNativePlatform();
 
-    expect(
-      await IosNativeRecorder.shouldUseOnDevice(enabledOverride: true),
-      isTrue,
-    );
-  });
+      expect(
+        await IosNativeRecorder.shouldUseOnDevice(enabledOverride: true),
+        isTrue,
+      );
+    },
+  );
 
   test('stop result maps to audio level summary', () {
     const result = NativeRecordingStopResult(

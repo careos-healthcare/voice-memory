@@ -28,30 +28,30 @@ PaidIntentBetaProofInput _input({
   bool restoreAttempted = false,
   bool purchaseMechanicsBlocked = false,
   PaidIntentBetaWouldPay? testerWouldPay,
-}) =>
-    PaidIntentBetaProofInput(
-      firstSaveCompleted: firstSaveCompleted,
-      firstUsefulProofSeen: firstUsefulProofSeen,
-      proofAcceptedOrCorrected: proofAcceptedOrCorrected,
-      proPromiseSeen: proPromiseSeen,
-      proTapped: proTapped,
-      purchaseAttempted: purchaseAttempted,
-      purchaseCompleted: purchaseCompleted,
-      restoreAttempted: restoreAttempted,
-      purchaseMechanicsBlocked: purchaseMechanicsBlocked,
-      testerWouldPay: testerWouldPay,
-    );
+}) => PaidIntentBetaProofInput(
+  firstSaveCompleted: firstSaveCompleted,
+  firstUsefulProofSeen: firstUsefulProofSeen,
+  proofAcceptedOrCorrected: proofAcceptedOrCorrected,
+  proPromiseSeen: proPromiseSeen,
+  proTapped: proTapped,
+  purchaseAttempted: purchaseAttempted,
+  purchaseCompleted: purchaseCompleted,
+  restoreAttempted: restoreAttempted,
+  purchaseMechanicsBlocked: purchaseMechanicsBlocked,
+  testerWouldPay: testerWouldPay,
+);
 
 PaidIntentBetaProofSignal _signal(
   PaidIntentBetaProofResult result,
   PaidIntentBetaProofSignalId id,
-) =>
-    result.signals.firstWhere((signal) => signal.id == id);
+) => result.signals.firstWhere((signal) => signal.id == id);
 
 void main() {
   group('PaidIntentBetaProof.build', () {
     test('no signals -> insufficientData', () {
-      final result = PaidIntentBetaProof.build(const PaidIntentBetaProofInput());
+      final result = PaidIntentBetaProof.build(
+        const PaidIntentBetaProofInput(),
+      );
       expect(result.decision, PaidIntentBetaProofDecision.insufficientData);
       expect(result.paidIntentSignalWeak, isTrue);
       expect(
@@ -71,8 +71,10 @@ void main() {
       );
       expect(result.decision, PaidIntentBetaProofDecision.proofNotReached);
       expect(
-        _signal(result, PaidIntentBetaProofSignalId.firstUsefulProofSeen)
-            .status,
+        _signal(
+          result,
+          PaidIntentBetaProofSignalId.firstUsefulProofSeen,
+        ).status,
         PaidIntentBetaProofSignalStatus.fail,
       );
     });
@@ -87,8 +89,10 @@ void main() {
       );
       expect(result.decision, PaidIntentBetaProofDecision.proofNotUseful);
       expect(
-        _signal(result, PaidIntentBetaProofSignalId.proofAcceptedOrCorrected)
-            .status,
+        _signal(
+          result,
+          PaidIntentBetaProofSignalId.proofAcceptedOrCorrected,
+        ).status,
         PaidIntentBetaProofSignalStatus.fail,
       );
     });
@@ -107,18 +111,13 @@ void main() {
 
     test('purchase attempted but mechanics blocked -> purchaseBlocked', () {
       final result = PaidIntentBetaProof.build(
-        _input(
-          purchaseAttempted: true,
-          purchaseMechanicsBlocked: true,
-        ),
+        _input(purchaseAttempted: true, purchaseMechanicsBlocked: true),
       );
       expect(result.decision, PaidIntentBetaProofDecision.purchaseBlocked);
     });
 
     test('purchase attempted and abandoned -> paidIntentWeak', () {
-      final result = PaidIntentBetaProof.build(
-        _input(purchaseAttempted: true),
-      );
+      final result = PaidIntentBetaProof.build(_input(purchaseAttempted: true));
       expect(result.decision, PaidIntentBetaProofDecision.paidIntentWeak);
     });
 
@@ -147,10 +146,7 @@ void main() {
 
     test('purchase completed -> paidIntentPromising', () {
       final result = PaidIntentBetaProof.build(
-        _input(
-          purchaseAttempted: true,
-          purchaseCompleted: true,
-        ),
+        _input(purchaseAttempted: true, purchaseCompleted: true),
       );
       expect(result.decision, PaidIntentBetaProofDecision.paidIntentPromising);
     });
@@ -158,10 +154,7 @@ void main() {
     test('pro tapped with no would-pay answer -> insufficientData', () {
       final result = PaidIntentBetaProof.build(_input());
       expect(result.decision, PaidIntentBetaProofDecision.insufficientData);
-      expect(
-        result.earliestGap,
-        PaidIntentBetaProofSignalId.testerWouldPay,
-      );
+      expect(result.earliestGap, PaidIntentBetaProofSignalId.testerWouldPay);
     });
 
     test('restore attempted is tracked but not required', () {

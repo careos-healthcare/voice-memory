@@ -51,10 +51,7 @@ void main() {
     test('surfaces thread at 3+ eligible entries', () {
       final thread = const ArchiveBeliefThreadEngine().build(_repeatEntries);
       expect(thread.hasEnoughData, isTrue);
-      expect(
-        thread.currentBelief.toLowerCase(),
-        contains('may'),
-      );
+      expect(thread.currentBelief.toLowerCase(), contains('may'));
     });
 
     test('surfaces thread at 2 entries when repeat evidence exists', () {
@@ -74,7 +71,9 @@ void main() {
 
   group('WeeklyWhatChangedReviewEngine', () {
     test('shows review at 3+ entries', () {
-      final review = const WeeklyWhatChangedReviewEngine().build(_repeatEntries);
+      final review = const WeeklyWhatChangedReviewEngine().build(
+        _repeatEntries,
+      );
       expect(review.hasReview, isTrue);
     });
 
@@ -83,10 +82,7 @@ void main() {
         _repeatEntries.take(2).toList(),
       );
       expect(review.hasReview, isFalse);
-      expect(
-        FirstThreeSessionGates.minEntriesForUsefulArchive,
-        3,
-      );
+      expect(FirstThreeSessionGates.minEntriesForUsefulArchive, 3);
     });
   });
 
@@ -98,7 +94,8 @@ void main() {
         currentBelief: 'You may be doing more to avoid feeling behind.',
         evidenceLine: '3 entries point toward this.',
         whatChanged: 'This time, it showed up around saying yes too quickly.',
-        whatToTest: 'Before agreeing, check whether you actually have capacity.',
+        whatToTest:
+            'Before agreeing, check whether you actually have capacity.',
         worthWatchingLine: ArchiveBeliefThreadCopy.worthWatching,
         timeline: [
           ArchiveEvidenceTimelineStep(
@@ -122,10 +119,7 @@ void main() {
       );
       await tester.pump();
 
-      expect(
-        find.text(ArchiveBeliefThreadCopy.threadTitle),
-        findsOneWidget,
-      );
+      expect(find.text(ArchiveBeliefThreadCopy.threadTitle), findsOneWidget);
       expect(find.text(ArchiveBeliefThreadCopy.notMe), findsOneWidget);
       expect(
         find.text(ArchiveBeliefThreadCopy.closeButDifferent),
@@ -168,10 +162,7 @@ void main() {
       );
       await tester.pump();
 
-      expect(
-        find.text(ArchiveBeliefThreadCopy.timelineTitle),
-        findsOneWidget,
-      );
+      expect(find.text(ArchiveBeliefThreadCopy.timelineTitle), findsOneWidget);
     });
   });
 
@@ -186,9 +177,7 @@ void main() {
 
       await tester.pumpWidget(
         const MaterialApp(
-          home: Scaffold(
-            body: WeeklyWhatChangedReviewCard(review: review),
-          ),
+          home: Scaffold(body: WeeklyWhatChangedReviewCard(review: review)),
         ),
       );
       await tester.pump();
@@ -201,9 +190,7 @@ void main() {
     testWidgets('shows three one-tap starters', (tester) async {
       await tester.pumpWidget(
         MaterialApp(
-          home: Scaffold(
-            body: EntryDirectionStarters(onSelect: (_) {}),
-          ),
+          home: Scaffold(body: EntryDirectionStarters(onSelect: (_) {})),
         ),
       );
       await tester.pump();
@@ -227,9 +214,7 @@ void main() {
     testWidgets('shows trust copy', (tester) async {
       await tester.pumpWidget(
         MaterialApp(
-          home: Scaffold(
-            body: ArchivePrivacyTrustCard(onPrivacyTap: () {}),
-          ),
+          home: Scaffold(body: ArchivePrivacyTrustCard(onPrivacyTap: () {})),
         ),
       );
       await tester.pump();
@@ -237,7 +222,10 @@ void main() {
       expect(find.text(ArchiveBeliefThreadCopy.trustTitle), findsOneWidget);
       expect(find.text(ArchiveBeliefThreadCopy.trustDelete), findsOneWidget);
       expect(find.text(ArchiveBeliefThreadCopy.trustControl), findsOneWidget);
-      expect(find.text(ArchiveBeliefThreadCopy.trustNotTherapy), findsOneWidget);
+      expect(
+        find.text(ArchiveBeliefThreadCopy.trustNotTherapy),
+        findsOneWidget,
+      );
     });
   });
 

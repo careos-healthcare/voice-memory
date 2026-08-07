@@ -36,13 +36,19 @@ void main() {
       );
       await tester.pump();
 
-      expect(find.byKey(const Key('archive_first_comparison_card')), findsOneWidget);
+      expect(
+        find.byKey(const Key('archive_first_comparison_card')),
+        findsOneWidget,
+      );
       expect(
         find.text(VisibleArchiveProofCopy.archiveFirstComparisonTitle),
         findsOneWidget,
       );
       expect(find.text(connectBody), findsOneWidget);
-      expect(find.text(PostSaveFocusedActionsCopy.viewEvidence), findsOneWidget);
+      expect(
+        find.text(PostSaveFocusedActionsCopy.viewEvidence),
+        findsOneWidget,
+      );
       expect(
         find.text(PostSaveFocusedActionsCopy.addOneMoreMoment),
         findsOneWidget,
@@ -57,7 +63,9 @@ void main() {
       expect(addTapped, isTrue);
     });
 
-    testWidgets('ungrounded display uses add moment as primary', (tester) async {
+    testWidgets('ungrounded display uses add moment as primary', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           theme: AppTheme.light(),
@@ -79,7 +87,10 @@ void main() {
       await tester.pump();
 
       expect(find.text(PostSaveFocusedActionsCopy.viewEvidence), findsNothing);
-      expect(find.byKey(const Key('archive_first_comparison_add_moment_cta')), findsOneWidget);
+      expect(
+        find.byKey(const Key('archive_first_comparison_add_moment_cta')),
+        findsOneWidget,
+      );
     });
   });
 }

@@ -51,7 +51,7 @@ class _MissedCheckInReasonPromptState extends State<MissedCheckInReasonPrompt> {
       decoration: BoxDecoration(
         color: const Color(0xFFFFFBF5),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: const Color(0xFFF5E6D3)),
+        border: Border.all(color: AppColors.warmBorder),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -86,7 +86,7 @@ class _MissedCheckInReasonPromptState extends State<MissedCheckInReasonPrompt> {
       label: Text(label),
       onPressed: () => _onReason(reason),
       backgroundColor: Colors.white,
-      side: const BorderSide(color: Color(0xFFF5E6D3)),
+      side: const BorderSide(color: AppColors.warmBorder),
       labelStyle: VoiceMemoryTypography.bodyStyle(
         color: AppColors.textSecondary,
       ).copyWith(fontSize: 13),

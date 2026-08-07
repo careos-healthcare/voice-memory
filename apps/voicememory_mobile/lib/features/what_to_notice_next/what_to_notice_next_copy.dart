@@ -14,8 +14,7 @@ abstract final class WhatToNoticeNextCopy {
   static String promptTextFor(WhatToNoticeNextPromptType type) =>
       switch (type) {
         WhatToNoticeNextPromptType.doesThisComeBack => 'Does this come back?',
-        WhatToNoticeNextPromptType.doesItFeelLighter =>
-          'Does it feel lighter?',
+        WhatToNoticeNextPromptType.doesItFeelLighter => 'Does it feel lighter?',
         WhatToNoticeNextPromptType.didAnythingHelp => 'Did anything help?',
         WhatToNoticeNextPromptType.didYouAvoidItAgain =>
           'Did you avoid it again?',
@@ -48,10 +47,9 @@ abstract final class WhatToNoticeNextCopy {
   ];
 
   static List<String> allVisibleStrings() => [
-        title,
-        body,
-        closingLine,
-        for (final type in WhatToNoticeNextPromptType.values)
-          promptTextFor(type),
-      ];
+    title,
+    body,
+    closingLine,
+    for (final type in WhatToNoticeNextPromptType.values) promptTextFor(type),
+  ];
 }

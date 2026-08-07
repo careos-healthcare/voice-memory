@@ -1,4 +1,6 @@
 /// In-app privacy and trust copy — ArchiveMe product voice only.
+library;
+
 import '../../security/privacy_copy_policy.dart';
 
 abstract class PrivacyScreenCopy {
@@ -11,7 +13,8 @@ abstract class PrivacyScreenCopy {
       'default. Some features send audio or text for transcription or analysis '
       'when you use them.';
 
-  static const String privateByDefaultTitle = PrivacyCopyPolicy.privateByDefault;
+  static const String privateByDefaultTitle =
+      PrivacyCopyPolicy.privateByDefault;
   static const String privateByDefaultBody =
       PrivacyCopyPolicy.journalEncryptedAtRest;
 
@@ -21,7 +24,7 @@ abstract class PrivacyScreenCopy {
       'memory controls, packs, pins, and collections are stored locally by default. '
       'Archive metadata and prefs remain on this device in plaintext JSON.';
 
-  static const String aiProcessingTitle = 'AI transcription and analysis';
+  static const String aiProcessingTitle = 'Cloud transcription and analysis';
   static const String aiProcessingBody =
       'When you record, ArchiveMe may send audio or transcript text to the app '
       'backend so it can transcribe and organize what you said. The result is '
@@ -30,7 +33,8 @@ abstract class PrivacyScreenCopy {
   static const String encryptedBackupTitle = 'Optional encrypted backup';
   static const String encryptedBackupBody =
       'If you sign in and enable sync, backup data is encrypted before it is '
-      'stored. Sync is optional.';
+      'uploaded. The server stores ciphertext only — it cannot read your '
+      'transcripts or reflections. Sync is optional.';
 
   static const String doesNotDoTitle = 'What ArchiveMe does not do';
   static const String doesNotDoBody =
@@ -51,6 +55,21 @@ abstract class PrivacyScreenCopy {
       'appear in the full privacy policy where required.';
 
   static const String fullPolicyLink = 'Full privacy policy online';
+
+  static const String remoteProcessingSectionTitle = 'Remote analysis';
+  static const String remoteProcessingSwitchLabel =
+      'Send new moments for reflection';
+  static const String remoteProcessingSwitchBodyOn =
+      "On — a new moment's transcript is sent to compare it against what "
+      "you've said before. Turn this off any time; anything already saved "
+      'stays exactly as it is.';
+  static const String remoteProcessingSwitchBodyOff =
+      'Off — new moments are saved on this device only. Turn this on to '
+      'get a reflection for what you record next.';
+  static const String remoteProcessingConsentedAtPrefix = 'Last turned on ';
+  static const String remoteProcessingWithdrawnFootnote =
+      'Withdrawing here only changes what happens next — moments already '
+      'analyzed keep their existing reflection.';
 
   static const List<PrivacySection> sections = [
     PrivacySection(title: privateByDefaultTitle, body: privateByDefaultBody),
@@ -79,6 +98,12 @@ abstract class PrivacyScreenCopy {
     processingProvidersTitle,
     processingProvidersBody,
     fullPolicyLink,
+    remoteProcessingSectionTitle,
+    remoteProcessingSwitchLabel,
+    remoteProcessingSwitchBodyOn,
+    remoteProcessingSwitchBodyOff,
+    remoteProcessingConsentedAtPrefix,
+    remoteProcessingWithdrawnFootnote,
   ];
 }
 

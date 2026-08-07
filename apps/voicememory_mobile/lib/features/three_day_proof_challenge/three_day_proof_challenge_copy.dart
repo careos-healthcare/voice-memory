@@ -34,12 +34,12 @@ abstract final class ThreeDayProofChallengeCopy {
   static const detailV1SurfacingAllowed = 'V1 surfacing allowed';
 
   static String ruleLabelFor(ThreeDayProofChallengeRuleId id) => switch (id) {
-        ThreeDayProofChallengeRuleId.futureAcquisitionOnly =>
-          'Future acquisition only',
-        ThreeDayProofChallengeRuleId.noStreaks => 'No streaks',
-        ThreeDayProofChallengeRuleId.noDailyPressure => 'No daily pressure',
-        ThreeDayProofChallengeRuleId.noRequiredCheckIn => 'No required check-in',
-      };
+    ThreeDayProofChallengeRuleId.futureAcquisitionOnly =>
+      'Future acquisition only',
+    ThreeDayProofChallengeRuleId.noStreaks => 'No streaks',
+    ThreeDayProofChallengeRuleId.noDailyPressure => 'No daily pressure',
+    ThreeDayProofChallengeRuleId.noRequiredCheckIn => 'No required check-in',
+  };
 
   static String messageFor(ThreeDayProofChallengeGateDecision decision) =>
       switch (decision) {
@@ -49,13 +49,14 @@ abstract final class ThreeDayProofChallengeCopy {
           v1SurfacingAllowedLine,
       };
 
-  static String recommendationFor(ThreeDayProofChallengeGateDecision decision) =>
-      switch (decision) {
-        ThreeDayProofChallengeGateDecision.futureAcquisitionOnly =>
-          'Keep the challenge promise in docs and campaigns. Leave V1 surfaces unchanged.',
-        ThreeDayProofChallengeGateDecision.v1SurfacingAllowed =>
-          'If surfacing, keep the canonical promise and all no-pressure rules intact.',
-      };
+  static String recommendationFor(
+    ThreeDayProofChallengeGateDecision decision,
+  ) => switch (decision) {
+    ThreeDayProofChallengeGateDecision.futureAcquisitionOnly =>
+      'Keep the challenge promise in docs and campaigns. Leave V1 surfaces unchanged.',
+    ThreeDayProofChallengeGateDecision.v1SurfacingAllowed =>
+      'If surfacing, keep the canonical promise and all no-pressure rules intact.',
+  };
 
   static Iterable<String> allVisibleStrings() sync* {
     yield headline;
@@ -86,10 +87,7 @@ enum ThreeDayProofChallengeRuleId {
   noRequiredCheckIn,
 }
 
-enum ThreeDayProofChallengeRuleStatus {
-  pass,
-  fail,
-}
+enum ThreeDayProofChallengeRuleStatus { pass, fail }
 
 enum ThreeDayProofChallengeGateDecision {
   futureAcquisitionOnly,

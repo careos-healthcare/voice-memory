@@ -12,8 +12,8 @@ class LocalAudioVaultReader {
   LocalAudioVaultReader({
     PrivateDataEncryptionKeyStore? keyStore,
     AesGcm? algorithm,
-  })  : _keyStore = keyStore ?? SecurePrivateDataEncryptionKeyStore(),
-        _algorithm = algorithm ?? AesGcm.with256bits();
+  }) : _keyStore = keyStore ?? SecurePrivateDataEncryptionKeyStore(),
+       _algorithm = algorithm ?? AesGcm.with256bits();
 
   static const _magic = [0x41, 0x56, 0x4d, 0x45];
   static const _formatVersion = 1;
@@ -34,9 +34,9 @@ class LocalAudioVaultReader {
 
   Future<List<int>> _deviceKeyBytes() async {
     if (_keyStore is SecurePrivateDataEncryptionKeyStore) {
-      await (_keyStore as SecurePrivateDataEncryptionKeyStore).ensureKey();
+      await (_keyStore).ensureKey();
     } else if (_keyStore is InMemoryPrivateDataEncryptionKeyStore) {
-      await (_keyStore as InMemoryPrivateDataEncryptionKeyStore).ensureKey();
+      await (_keyStore).ensureKey();
     }
     final keyBytes = await _keyStore.readKeyBytes();
     if (keyBytes == null || keyBytes.length != 32) {
@@ -57,7 +57,10 @@ class LocalAudioVaultReader {
     final pcm = BytesBuilder(copy: false);
     while (offset < bytes.length) {
       if (offset + 4 > bytes.length) break;
-      final cipherLength = bytes.buffer.asByteData().getUint32(offset, Endian.little);
+      final cipherLength = bytes.buffer.asByteData().getUint32(
+        offset,
+        Endian.little,
+      );
       offset += 4;
       const nonceLength = 12;
       const macLength = 16;

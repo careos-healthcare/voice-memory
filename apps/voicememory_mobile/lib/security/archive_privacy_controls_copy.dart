@@ -1,4 +1,6 @@
 /// Consumer-facing copy for archive privacy / trust controls.
+library;
+
 import 'privacy_copy_policy.dart';
 
 abstract class ArchivePrivacyControlsCopy {

@@ -78,14 +78,12 @@ class _ShareableArchiveProofCardState extends State<ShareableArchiveProofCard> {
     final proof = widget.proof;
     if (!proof.hasProof) return const SizedBox.shrink();
 
-    final bodyStyle = ArchiveMobileTypography.responsiveHelper(context).copyWith(
-      color: AppColors.textPrimary,
-      height: 1.45,
-    );
-    final footnoteStyle = ArchiveMobileTypography.responsiveHelper(context).copyWith(
-      color: AppColors.textSecondary,
-      height: 1.4,
-    );
+    final bodyStyle = ArchiveMobileTypography.responsiveHelper(
+      context,
+    ).copyWith(color: AppColors.textPrimary, height: 1.45);
+    final footnoteStyle = ArchiveMobileTypography.responsiveHelper(
+      context,
+    ).copyWith(color: AppColors.textSecondary, height: 1.4);
 
     return Container(
       key: const Key('shareable_archive_proof_card'),

@@ -28,8 +28,8 @@ class TesterMissionCard extends StatefulWidget {
     this.onDismissed,
     this.store,
     bool dismissed = false,
-  })  : skipPrefsLoad = true,
-        initialDismissed = dismissed;
+  }) : skipPrefsLoad = true,
+       initialDismissed = dismissed;
 
   final TesterMissionResult mission;
   final VoidCallback? onDismissed;
@@ -176,10 +176,9 @@ class _FullCard extends StatelessWidget {
             Text(
               mission.footer,
               key: const Key('tester_mission_footer'),
-              style: ArchiveMobileTypography.responsiveHelper(context).copyWith(
-                color: AppColors.textSecondary,
-                height: 1.4,
-              ),
+              style: ArchiveMobileTypography.responsiveHelper(
+                context,
+              ).copyWith(color: AppColors.textSecondary, height: 1.4),
             ),
           ],
           const SizedBox(height: AppSpacing.xs),
@@ -240,14 +239,18 @@ class _CompactStrip extends StatelessWidget {
                       Text(
                         mission.stepLabel,
                         key: const Key('tester_mission_compact_step_label'),
-                        style: ArchiveMobileTypography.responsiveHelper(context),
+                        style: ArchiveMobileTypography.responsiveHelper(
+                          context,
+                        ),
                       ),
                     ] else if (mission.body.isNotEmpty) ...[
                       const SizedBox(height: 2),
                       Text(
                         mission.body,
                         key: const Key('tester_mission_compact_body'),
-                        style: ArchiveMobileTypography.responsiveHelper(context),
+                        style: ArchiveMobileTypography.responsiveHelper(
+                          context,
+                        ),
                       ),
                     ],
                   ],

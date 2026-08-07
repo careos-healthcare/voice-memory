@@ -28,73 +28,84 @@ void main() {
       final result = CoreMetricsMinimumSet.build();
       expect(result.coreMetricCount, 14);
       expect(result.metrics.length, 14);
-      expect(
-        result.metrics.map((metric) => metric.id).toSet().length,
-        14,
-      );
+      expect(result.metrics.map((metric) => metric.id).toSet().length, 14);
     });
 
     test('nine metrics are used for paid-intent decisions', () {
       final result = CoreMetricsMinimumSet.build();
       expect(result.paidIntentMetrics.length, 9);
-      expect(
-        result.paidIntentMetrics.map((metric) => metric.id).toSet(),
-        {
-          CoreMetricsMinimumMetricId.firstSave,
-          CoreMetricsMinimumMetricId.firstUsefulProofSeen,
-          CoreMetricsMinimumMetricId.proofAccepted,
-          CoreMetricsMinimumMetricId.proofCorrected,
-          CoreMetricsMinimumMetricId.proPromiseSeen,
-          CoreMetricsMinimumMetricId.proTapped,
-          CoreMetricsMinimumMetricId.purchaseStarted,
-          CoreMetricsMinimumMetricId.purchaseCompleted,
-          CoreMetricsMinimumMetricId.restoreTapped,
-        },
-      );
+      expect(result.paidIntentMetrics.map((metric) => metric.id).toSet(), {
+        CoreMetricsMinimumMetricId.firstSave,
+        CoreMetricsMinimumMetricId.firstUsefulProofSeen,
+        CoreMetricsMinimumMetricId.proofAccepted,
+        CoreMetricsMinimumMetricId.proofCorrected,
+        CoreMetricsMinimumMetricId.proPromiseSeen,
+        CoreMetricsMinimumMetricId.proTapped,
+        CoreMetricsMinimumMetricId.purchaseStarted,
+        CoreMetricsMinimumMetricId.purchaseCompleted,
+        CoreMetricsMinimumMetricId.restoreTapped,
+      });
     });
   });
 
   group('CoreMetricsMinimumSet.classify core beta metrics', () {
-    final coreCases = <(String, CoreMetricsMinimumMetricId, Map<String, Object>?)>[
-      ('app_opened', CoreMetricsMinimumMetricId.appOpened, null),
-      ('first_recording_saved', CoreMetricsMinimumMetricId.firstSave, null),
-      ('second_save', CoreMetricsMinimumMetricId.secondSave, null),
-      (
-        'first_proof_moment_seen',
-        CoreMetricsMinimumMetricId.firstUsefulProofSeen,
-        null,
-      ),
-      (
-        'beta_proof_feedback_answered',
-        CoreMetricsMinimumMetricId.proofAccepted,
-        {'feedback_type': 'useful'},
-      ),
-      (
-        'correction_memory_saved',
-        CoreMetricsMinimumMetricId.proofCorrected,
-        null,
-      ),
-      (
-        'value_moment_pro_bridge_seen',
-        CoreMetricsMinimumMetricId.proPromiseSeen,
-        null,
-      ),
-      (
-        'paywall_purchase_cta_tapped',
-        CoreMetricsMinimumMetricId.proTapped,
-        null,
-      ),
-      ('purchase_started', CoreMetricsMinimumMetricId.purchaseStarted, null),
-      ('purchase_completed', CoreMetricsMinimumMetricId.purchaseCompleted, null),
-      ('restore_started', CoreMetricsMinimumMetricId.restoreTapped, null),
-      ('restore_completed', CoreMetricsMinimumMetricId.restoreSucceeded, null),
-      ('entitlement_active', CoreMetricsMinimumMetricId.entitlementActive, null),
-      (
-        'crash_blocker_reported',
-        CoreMetricsMinimumMetricId.crashOrBlockerReported,
-        null,
-      ),
-    ];
+    final coreCases =
+        <(String, CoreMetricsMinimumMetricId, Map<String, Object>?)>[
+          ('app_opened', CoreMetricsMinimumMetricId.appOpened, null),
+          ('first_recording_saved', CoreMetricsMinimumMetricId.firstSave, null),
+          ('second_save', CoreMetricsMinimumMetricId.secondSave, null),
+          (
+            'first_proof_moment_seen',
+            CoreMetricsMinimumMetricId.firstUsefulProofSeen,
+            null,
+          ),
+          (
+            'beta_proof_feedback_answered',
+            CoreMetricsMinimumMetricId.proofAccepted,
+            {'feedback_type': 'useful'},
+          ),
+          (
+            'correction_memory_saved',
+            CoreMetricsMinimumMetricId.proofCorrected,
+            null,
+          ),
+          (
+            'value_moment_pro_bridge_seen',
+            CoreMetricsMinimumMetricId.proPromiseSeen,
+            null,
+          ),
+          (
+            'paywall_purchase_cta_tapped',
+            CoreMetricsMinimumMetricId.proTapped,
+            null,
+          ),
+          (
+            'purchase_started',
+            CoreMetricsMinimumMetricId.purchaseStarted,
+            null,
+          ),
+          (
+            'purchase_completed',
+            CoreMetricsMinimumMetricId.purchaseCompleted,
+            null,
+          ),
+          ('restore_started', CoreMetricsMinimumMetricId.restoreTapped, null),
+          (
+            'restore_completed',
+            CoreMetricsMinimumMetricId.restoreSucceeded,
+            null,
+          ),
+          (
+            'entitlement_active',
+            CoreMetricsMinimumMetricId.entitlementActive,
+            null,
+          ),
+          (
+            'crash_blocker_reported',
+            CoreMetricsMinimumMetricId.crashOrBlockerReported,
+            null,
+          ),
+        ];
 
     for (final (event, metricId, properties) in coreCases) {
       test('$event -> core beta $metricId', () {
@@ -163,8 +174,10 @@ void main() {
         'beta_feedback_submitted',
         properties: {'option_type': 'wrong'},
       );
-      expect(result.coreMetricId,
-          CoreMetricsMinimumMetricId.crashOrBlockerReported);
+      expect(
+        result.coreMetricId,
+        CoreMetricsMinimumMetricId.crashOrBlockerReported,
+      );
       expect(result.notUsedForPaidIntentDecision, isTrue);
     });
   });
@@ -181,11 +194,14 @@ void main() {
       expect(result.notUsedForPaidIntentDecision, isTrue);
     });
 
-    test('entitlement_active is core but not used for paid-intent decisions', () {
-      final result = CoreMetricsMinimumSet.classify('entitlement_active');
-      expect(result.isCoreBeta, isTrue);
-      expect(result.notUsedForPaidIntentDecision, isTrue);
-    });
+    test(
+      'entitlement_active is core but not used for paid-intent decisions',
+      () {
+        final result = CoreMetricsMinimumSet.classify('entitlement_active');
+        expect(result.isCoreBeta, isTrue);
+        expect(result.notUsedForPaidIntentDecision, isTrue);
+      },
+    );
   });
 
   group('CoreMetricsMinimumSetV2', () {
@@ -223,7 +239,9 @@ void main() {
       final dashboard = TestFlightMetricsEngine.buildFromInput(
         const TestFlightMetricsInput(thirdMomentSaved: 1),
       );
-      final tags = CoreMetricsMinimumSetV2.classifyTestFlightDashboard(dashboard);
+      final tags = CoreMetricsMinimumSetV2.classifyTestFlightDashboard(
+        dashboard,
+      );
       final thirdSave = tags.firstWhere(
         (tag) => tag.metricId == TestFlightMetricId.thirdSave,
       );
@@ -235,13 +253,17 @@ void main() {
       final dashboard = TestFlightMetricsEngine.buildFromInput(
         const TestFlightMetricsInput(firstMomentSaved: 1),
       );
-      final tags = CoreMetricsMinimumSetV2.classifyTestFlightDashboard(dashboard);
+      final tags = CoreMetricsMinimumSetV2.classifyTestFlightDashboard(
+        dashboard,
+      );
       final firstSave = tags.firstWhere(
         (tag) => tag.metricId == TestFlightMetricId.firstSave,
       );
       expect(firstSave.classification.isCoreBeta, isTrue);
-      expect(firstSave.classification.coreMetricId,
-          CoreMetricsMinimumMetricId.firstSave);
+      expect(
+        firstSave.classification.coreMetricId,
+        CoreMetricsMinimumMetricId.firstSave,
+      );
     });
 
     test('auditEventCatalog splits core and diagnostic events', () {
@@ -259,9 +281,10 @@ void main() {
 
     test('ci test bundle lists proof regression files', () {
       expect(CoreMetricsMinimumSetV2.ciTestBundle, hasLength(3));
-      expect(CoreMetricsMinimumSetV2.ciTestBundle, contains(
-        'test/core_metrics_minimum_set_test.dart',
-      ));
+      expect(
+        CoreMetricsMinimumSetV2.ciTestBundle,
+        contains('test/core_metrics_minimum_set_test.dart'),
+      );
     });
   });
 
@@ -282,10 +305,7 @@ void main() {
 
   group('CoreMetricsMinimumSetCopy', () {
     test('headline says Core metrics minimum set', () {
-      expect(
-        CoreMetricsMinimumSetCopy.headline,
-        'Core metrics minimum set',
-      );
+      expect(CoreMetricsMinimumSetCopy.headline, 'Core metrics minimum set');
     });
 
     test('coreLine lists fourteen release-beta metrics', () {

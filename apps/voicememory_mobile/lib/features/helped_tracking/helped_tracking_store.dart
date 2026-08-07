@@ -35,9 +35,8 @@ class HelpedTrackingStore {
     return recordsRaw
         .whereType<Map>()
         .map(
-          (entry) => HelpedTrackingRecord.fromJson(
-            Map<String, dynamic>.from(entry),
-          ),
+          (entry) =>
+              HelpedTrackingRecord.fromJson(Map<String, dynamic>.from(entry)),
         )
         .where((record) => record.entryId.isNotEmpty)
         .toList()
@@ -80,6 +79,8 @@ class HelpedTrackingStore {
     );
   }
 
+  static String? sanitizeFreeText(String? raw) => normalizeFreeText(raw);
+
   @visibleForTesting
   static String? normalizeFreeText(String? raw) {
     if (raw == null) return null;
@@ -96,14 +97,18 @@ class HelpedTrackingStore {
     await AppServices.instance.prefs.writeJsonMap(_prefsKey, {});
   }
 
+  static void invalidateAfterRestore() => invalidateCache();
+
   @visibleForTesting
   static void invalidateCache() {
     _cached = const [];
     _loaded = false;
   }
 
-  @visibleForTesting
-  static Future<void> resetForTest() async {
+  static Future<void> resetPersistedState() async {
     await clearAll();
   }
+
+  @visibleForTesting
+  static Future<void> resetForTest() => resetPersistedState();
 }

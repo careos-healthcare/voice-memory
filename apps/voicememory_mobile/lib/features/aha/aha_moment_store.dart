@@ -1,7 +1,6 @@
 import 'package:flutter/foundation.dart';
 
 import '../../services/app_services.dart';
-import '../../storage/mobile_prefs_store.dart';
 
 /// Session-scoped seen/dismiss for the first-aha card — one per session.
 class AhaMomentSession {

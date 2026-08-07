@@ -53,12 +53,12 @@ class ArchiveReturnSnapshot {
   }
 
   Map<String, dynamic> toJson() => {
-        'entryCount': entryCount,
-        'usableEvidenceCount': usableEvidenceCount,
-        'beliefSummaryHash': beliefSummaryHash,
-        'contextCount': contextCount,
-        'weeklyReviewAvailable': weeklyReviewAvailable,
-      };
+    'entryCount': entryCount,
+    'usableEvidenceCount': usableEvidenceCount,
+    'beliefSummaryHash': beliefSummaryHash,
+    'contextCount': contextCount,
+    'weeklyReviewAvailable': weeklyReviewAvailable,
+  };
 
   factory ArchiveReturnSnapshot.fromJson(Map<String, dynamic>? json) {
     if (json == null || json.isEmpty) return empty;
@@ -79,10 +79,7 @@ class ArchiveReturnSnapshot {
     final payoff = BeliefUpdatePayoffEngine.build(entries: entries);
     final beliefLine = payoff?.currentBelief.trim().isNotEmpty == true
         ? payoff!.currentBelief.trim()
-        : const ArchiveEvidenceHeuristics()
-            .analyze(entries)
-            .beliefLine
-            .trim();
+        : const ArchiveEvidenceHeuristics().analyze(entries).beliefLine.trim();
     if (beliefLine.isEmpty) return '';
     return _stableHash(beliefLine).toString();
   }

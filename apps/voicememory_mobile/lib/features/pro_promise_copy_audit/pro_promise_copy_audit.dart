@@ -119,7 +119,10 @@ abstract final class ProPromiseCopyAudit {
   ) {
     final results = [for (final entry in entries) audit(entry.copy)];
     final conflicts = results
-        .where((result) => result.decision == ProPromiseCopyAuditDecision.conflictFound)
+        .where(
+          (result) =>
+              result.decision == ProPromiseCopyAuditDecision.conflictFound,
+        )
         .toList();
     return ProPromiseCopyAuditBatchResult(
       results: results,
@@ -130,16 +133,15 @@ abstract final class ProPromiseCopyAudit {
 
   static ProPromiseCopyAuditReport report({
     ProPromiseCopyAuditBatchResult? batch,
-  }) =>
-      ProPromiseCopyAuditReport(
-        headline: ProPromiseCopyAuditCopy.headline,
-        body: ProPromiseCopyAuditCopy.body,
-        preferredFreeLine: ProPromiseCopyAuditCopy.preferredFreeLine,
-        preferredProLine: ProPromiseCopyAuditCopy.preferredProLine,
-        preferredContinuityLine: ProPromiseCopyAuditCopy.preferredContinuityLine,
-        guardrail: ProPromiseCopyAuditCopy.guardrail,
-        batch: batch,
-      );
+  }) => ProPromiseCopyAuditReport(
+    headline: ProPromiseCopyAuditCopy.headline,
+    body: ProPromiseCopyAuditCopy.body,
+    preferredFreeLine: ProPromiseCopyAuditCopy.preferredFreeLine,
+    preferredProLine: ProPromiseCopyAuditCopy.preferredProLine,
+    preferredContinuityLine: ProPromiseCopyAuditCopy.preferredContinuityLine,
+    guardrail: ProPromiseCopyAuditCopy.guardrail,
+    batch: batch,
+  );
 
   static bool containsPreferredLanguage(String copy) {
     final lower = copy.toLowerCase();
@@ -261,11 +263,7 @@ abstract final class ProPromiseCopyAudit {
       };
 }
 
-enum ProPromiseCopyAuditDecision {
-  aligned,
-  conflictFound,
-  needsReview,
-}
+enum ProPromiseCopyAuditDecision { aligned, conflictFound, needsReview }
 
 enum ProPromiseCopyConflict {
   fullTimelinePromise,
@@ -279,10 +277,7 @@ enum ProPromiseCopyConflict {
 }
 
 class ProPromiseCopyAuditEntry {
-  const ProPromiseCopyAuditEntry({
-    required this.id,
-    required this.copy,
-  });
+  const ProPromiseCopyAuditEntry({required this.id, required this.copy});
 
   final String id;
   final String copy;

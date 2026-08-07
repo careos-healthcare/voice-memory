@@ -64,36 +64,39 @@ void main() {
     });
 
     test(
-        'uses anomaly detector regardless of prompt copy when metrics are provided',
-        () {
-      final presentation = CuriosityHookPresentation.fromDomain(
-        _hook(
-          prompt: 'What feels most worth noticing right now?',
-          isMemoryRecallCheck: false,
-        ),
-        currentMetrics: const CognitiveBiomarkers(
-          lexicalDiversity: 0.54,
-          cohesionDrift: 0.52,
-          emotionalVolatility: 0.41,
-        ),
-        baselineMetrics: baselineMetrics,
-      );
+      'uses anomaly detector regardless of prompt copy when metrics are provided',
+      () {
+        final presentation = CuriosityHookPresentation.fromDomain(
+          _hook(
+            prompt: 'What feels most worth noticing right now?',
+            isMemoryRecallCheck: false,
+          ),
+          currentMetrics: const CognitiveBiomarkers(
+            lexicalDiversity: 0.54,
+            cohesionDrift: 0.52,
+            emotionalVolatility: 0.41,
+          ),
+          baselineMetrics: baselineMetrics,
+        );
 
-      expect(presentation.isLowCognitiveLoad, isTrue);
-    });
+        expect(presentation.isLowCognitiveLoad, isTrue);
+      },
+    );
 
-    test('falls back to legacy lexical diversity rule when baseline is missing',
-        () {
-      final presentation = CuriosityHookPresentation.fromDomain(
-        _hook(
-          prompt: 'You touched on work pressure recently.',
-          isMemoryRecallCheck: true,
-        ),
-        sourceLexicalDiversity: 0.42,
-      );
+    test(
+      'falls back to legacy lexical diversity rule when baseline is missing',
+      () {
+        final presentation = CuriosityHookPresentation.fromDomain(
+          _hook(
+            prompt: 'You touched on work pressure recently.',
+            isMemoryRecallCheck: true,
+          ),
+          sourceLexicalDiversity: 0.42,
+        );
 
-      expect(presentation.isLowCognitiveLoad, isTrue);
-    });
+        expect(presentation.isLowCognitiveLoad, isTrue);
+      },
+    );
 
     test('falls back to legacy prompt tail when baseline is missing', () {
       final presentation = CuriosityHookPresentation.fromDomain(
@@ -108,17 +111,19 @@ void main() {
       expect(presentation.isLowCognitiveLoad, isTrue);
     });
 
-    test('falls back to legacy checks when only baseline metrics are provided',
-        () {
-      final presentation = CuriosityHookPresentation.fromDomain(
-        _hook(
-          prompt: 'What feels most worth noticing right now?',
-          isMemoryRecallCheck: false,
-        ),
-        baselineMetrics: baselineMetrics,
-      );
+    test(
+      'falls back to legacy checks when only baseline metrics are provided',
+      () {
+        final presentation = CuriosityHookPresentation.fromDomain(
+          _hook(
+            prompt: 'What feels most worth noticing right now?',
+            isMemoryRecallCheck: false,
+          ),
+          baselineMetrics: baselineMetrics,
+        );
 
-      expect(presentation.isLowCognitiveLoad, isFalse);
-    });
+        expect(presentation.isLowCognitiveLoad, isFalse);
+      },
+    );
   });
 }

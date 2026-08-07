@@ -55,20 +55,20 @@ abstract final class EvidenceWeightingCopy {
       'ArchiveMe should wait for newer evidence before treating this as current.';
 
   static String labelFor(EvidenceWeightState state) => switch (state) {
-        EvidenceWeightState.fresh => labelFresh,
-        EvidenceWeightState.repeated => labelRepeated,
-        EvidenceWeightState.fading => labelFading,
-        EvidenceWeightState.softened => labelSoftened,
-        EvidenceWeightState.oldSignal => labelOldSignal,
-        EvidenceWeightState.needsFreshProof => labelNeedsFreshProof,
-      };
+    EvidenceWeightState.fresh => labelFresh,
+    EvidenceWeightState.repeated => labelRepeated,
+    EvidenceWeightState.fading => labelFading,
+    EvidenceWeightState.softened => labelSoftened,
+    EvidenceWeightState.oldSignal => labelOldSignal,
+    EvidenceWeightState.needsFreshProof => labelNeedsFreshProof,
+  };
 
   static String explanationFor(EvidenceWeightState state) => switch (state) {
-        EvidenceWeightState.fresh => explanationFresh,
-        EvidenceWeightState.repeated => explanationRepeated,
-        EvidenceWeightState.fading => explanationFading,
-        EvidenceWeightState.softened => explanationSoftened,
-        EvidenceWeightState.oldSignal => explanationOldSignal,
-        EvidenceWeightState.needsFreshProof => explanationNeedsFreshProof,
-      };
+    EvidenceWeightState.fresh => explanationFresh,
+    EvidenceWeightState.repeated => explanationRepeated,
+    EvidenceWeightState.fading => explanationFading,
+    EvidenceWeightState.softened => explanationSoftened,
+    EvidenceWeightState.oldSignal => explanationOldSignal,
+    EvidenceWeightState.needsFreshProof => explanationNeedsFreshProof,
+  };
 }

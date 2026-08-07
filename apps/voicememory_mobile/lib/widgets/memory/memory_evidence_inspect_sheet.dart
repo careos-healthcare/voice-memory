@@ -11,7 +11,6 @@ import '../../features/memory/memory_connection_rules.dart';
 import '../../features/memory/memory_control_model.dart';
 import '../../features/memory/memory_control_store.dart';
 import '../../features/memory/memory_surfacing_mode.dart';
-import '../../features/memory/sensitive_surfacing_policy.dart';
 import '../../features/fact_ledger/fact_ledger_store.dart';
 import '../../models/journal_entry.dart';
 import '../../services/activation_funnel_analytics.dart';

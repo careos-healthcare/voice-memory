@@ -24,7 +24,8 @@ abstract class AppStoragePaths {
   /// Defer [AppServices.initialize] until after the first frame on debug iOS simulators.
   static Future<bool> shouldDeferLocalStorageUntilFirstFrame() async {
     if (kReleaseMode || kIsWeb || !Platform.isIOS) return false;
-    return looksLikeIosSimulatorEnvironment() || !(await _isPhysicalIosDevice());
+    return looksLikeIosSimulatorEnvironment() ||
+        !(await _isPhysicalIosDevice());
   }
 
   /// Call before resolving storage paths when [shouldDeferLocalStorageUntilFirstFrame] is true.

@@ -31,10 +31,12 @@ dependencies:
   purchases_flutter: ^8.1.0
   flutter_local_notifications: ^21.0.0
   timezone: ^0.11.0
+  intl: ^0.20.2
   local_auth: ^3.0.1
   purchases_ui_flutter: ^8.1.0
   web_socket_channel: ^3.0.3
   audio_session: ^0.2.4
+  flutter_riverpod: ^2.6.1
 
 dev_dependencies:
   flutter_test:
@@ -42,7 +44,11 @@ dev_dependencies:
   integration_test:
     sdk: flutter
   flutter_lints: ^6.0.0
+  archiveme_research:
+    path: ../../packages/archiveme_research
 
+  path_provider_platform_interface: any
+  plugin_platform_interface: any
 flutter:
   uses-material-design: true
   assets:

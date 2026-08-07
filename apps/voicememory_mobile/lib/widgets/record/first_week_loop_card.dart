@@ -41,24 +41,26 @@ class FirstWeekLoopCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     _trackSeen();
-    final bodyStyle = ArchiveMobileTypography.explanationBody(context).copyWith(
-      color: AppColors.textSecondary,
-    );
+    final bodyStyle = ArchiveMobileTypography.explanationBody(
+      context,
+    ).copyWith(color: AppColors.textSecondary);
 
     return Container(
       key: const Key('first_week_loop_card'),
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.md),
-      decoration: VoiceMemoryCards.standard(background: const Color(0xFFFFFBF5)),
+      decoration: VoiceMemoryCards.standard(
+        background: const Color(0xFFFFFBF5),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(
             loop.label,
             key: const Key('first_week_loop_label'),
-            style: ArchiveMobileTypography.cardLabel(context).copyWith(
-              color: AppColors.textSecondary,
-            ),
+            style: ArchiveMobileTypography.cardLabel(
+              context,
+            ).copyWith(color: AppColors.textSecondary),
           ),
           const SizedBox(height: AppSpacing.xs),
           Text(
@@ -91,7 +93,10 @@ class FirstWeekLoopCard extends StatelessWidget {
                 style: TextButton.styleFrom(
                   foregroundColor: AppColors.accentPrimary,
                   visualDensity: VisualDensity.compact,
-                  padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 2),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 0,
+                    vertical: 2,
+                  ),
                   minimumSize: Size.zero,
                   tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 ),

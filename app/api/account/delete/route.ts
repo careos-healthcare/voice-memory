@@ -40,15 +40,33 @@ export async function POST(request: Request) {
   const cookieStore = await cookies();
   const token = cookieStore.get(SESSION_COOKIE)?.value ?? "";
 
-  const removed = await deleteUserServerData(session.userId, session.email);
-  await revokeAllSessionsForUser(session.userId, token);
+  const result = await deleteUserServerData(session.userId, session.email);
 
+  // Session revocation must never prevent the session cookie from being
+  // cleared below — a throw here is reported honestly instead of aborting
+  // the response before the cookie clear runs.
+  let sessionRevokeError: string | null = null;
+  try {
+    await revokeAllSessionsForUser(session.userId, token);
+  } catch (error) {
+    sessionRevokeError = error instanceof Error ? error.message : "Session revocation failed.";
+  }
+
+  const ok = result.ok && !sessionRevokeError;
   const response = NextResponse.json({
-    ok: true,
-    removed,
-    message:
-      "Server account data removed. Clear local data on this device from Settings if you have not already.",
+    ok,
+    stores: result.stores,
+    sessionRevokeError,
+    error: ok
+      ? undefined
+      : "Server account data deletion was only partially completed. Some data may remain — contact support if this persists.",
+    message: ok
+      ? "Server account data removed. Clear local data on this device from Settings if you have not already."
+      : "Server account data deletion was only partially completed. Some data may remain — contact support if this persists.",
   });
+  // Cleared unconditionally, regardless of any deletion/revocation failure above —
+  // a partial server-side failure must never leave the client believing it still
+  // has a valid, authenticated session.
   response.cookies.set(clearSessionCookie());
 
   return response;

@@ -11,7 +11,6 @@ import 'package:voicememory_mobile/features/first_five_minutes/first_five_minute
 import 'package:voicememory_mobile/features/post_save_reinforcement/post_save_reinforcement_placement.dart';
 import 'package:voicememory_mobile/features/preserved_proof_value/preserved_proof_value.dart';
 import 'package:voicememory_mobile/features/pricing_offer_validation/pricing_offer_validation_v2.dart';
-import 'package:voicememory_mobile/features/pricing_offer_validation/pricing_offer_validation_v2_copy.dart';
 import 'package:voicememory_mobile/features/pricing_validation/pricing_validation_copy.dart';
 import 'package:voicememory_mobile/features/prompt_assist_visibility/prompt_assist_visibility.dart';
 import 'package:voicememory_mobile/features/pro_single_promise/pro_single_promise.dart';
@@ -20,8 +19,6 @@ import 'package:voicememory_mobile/features/proof_detail_repair/proof_detail_rep
 import 'package:voicememory_mobile/features/proof_selection/proof_selection_principle.dart';
 import 'package:voicememory_mobile/features/surface_priority/surface_priority_engine.dart';
 import 'package:voicememory_mobile/features/surface_priority/surface_priority_model.dart';
-
-const _safePhrase = 'said yes when I had no capacity';
 
 ProSinglePromiseInput _input({
   bool userUnderstandsFirstProof = true,
@@ -35,20 +32,19 @@ ProSinglePromiseInput _input({
   bool userFeelsPressureOrManipulation = false,
   bool wouldPayYes = false,
   bool wouldPayMaybe = false,
-}) =>
-    ProSinglePromiseInput(
-      userUnderstandsFirstProof: userUnderstandsFirstProof,
-      userUnderstandsProKeepsLongerTrail: userUnderstandsProKeepsLongerTrail,
-      userThinksProMeansMoreAi: userThinksProMeansMoreAi,
-      userThinksProMeansStorage: userThinksProMeansStorage,
-      userThinksProMeansMoreFeatures: userThinksProMeansMoreFeatures,
-      userThinksProMeansReports: userThinksProMeansReports,
-      userThinksProMeansRanking: userThinksProMeansRanking,
-      userUnderstandsContinuityValue: userUnderstandsContinuityValue,
-      userFeelsPressureOrManipulation: userFeelsPressureOrManipulation,
-      wouldPayYes: wouldPayYes,
-      wouldPayMaybe: wouldPayMaybe,
-    );
+}) => ProSinglePromiseInput(
+  userUnderstandsFirstProof: userUnderstandsFirstProof,
+  userUnderstandsProKeepsLongerTrail: userUnderstandsProKeepsLongerTrail,
+  userThinksProMeansMoreAi: userThinksProMeansMoreAi,
+  userThinksProMeansStorage: userThinksProMeansStorage,
+  userThinksProMeansMoreFeatures: userThinksProMeansMoreFeatures,
+  userThinksProMeansReports: userThinksProMeansReports,
+  userThinksProMeansRanking: userThinksProMeansRanking,
+  userUnderstandsContinuityValue: userUnderstandsContinuityValue,
+  userFeelsPressureOrManipulation: userFeelsPressureOrManipulation,
+  wouldPayYes: wouldPayYes,
+  wouldPayMaybe: wouldPayMaybe,
+);
 
 void main() {
   group('ProSinglePromise.build', () {
@@ -130,12 +126,15 @@ void main() {
   });
 
   group('ProSinglePromiseCopy', () {
-    test('headline says Free shows the first useful proof. Pro keeps the longer trail.', () {
-      expect(
-        ProSinglePromiseCopy.headline,
-        'Free shows the first useful proof. Pro keeps the longer trail.',
-      );
-    });
+    test(
+      'headline says Free shows the first useful proof. Pro keeps the longer trail.',
+      () {
+        expect(
+          ProSinglePromiseCopy.headline,
+          'Free shows the first useful proof. Pro keeps the longer trail.',
+        );
+      },
+    );
 
     test('body says Free shows first useful proof', () {
       expect(
@@ -167,12 +166,15 @@ void main() {
       expect(ProSinglePromiseCopy.proLine, 'Pro: longer proof trail.');
     });
 
-    test('whyPayLine says keep seeing what happens to same repeat over time', () {
-      expect(
-        ProSinglePromiseCopy.whyPayLine.toLowerCase(),
-        contains('keep seeing what happens to the same repeat over time'),
-      );
-    });
+    test(
+      'whyPayLine says keep seeing what happens to same repeat over time',
+      () {
+        expect(
+          ProSinglePromiseCopy.whyPayLine.toLowerCase(),
+          contains('keep seeing what happens to the same repeat over time'),
+        );
+      },
+    );
 
     test('notMoreAiLine says not more chat or more AI', () {
       expect(
@@ -479,10 +481,7 @@ void main() {
         ),
         PricingOfferValidationDecision.pricingAcceptedProductionCandidate,
       );
-      expect(
-        PricingValidationCopy.title,
-        'What would feel fair?',
-      );
+      expect(PricingValidationCopy.title, 'What would feel fair?');
       expect(
         EvidenceTrailProUnderstanding.resolve(
           EvidenceTrailProUnderstandingSummary(
@@ -532,43 +531,47 @@ void main() {
       );
     });
 
-    test('record screen remains capture-first without stacking extra cards', () {
-      final audit = SurfacePriorityEngine.auditRecordReady(
-        entryCount: 4,
-        source: 'record',
-        candidates: SurfacePriorityCandidates.recordReady(
-          firstMomentCapture: false,
-          secondMomentReturn: false,
-          lowFrictionReturn: false,
-          whatToNoticeNext: false,
-          betaTodaySummary: false,
-          openCapturePromptChips: false,
-          captureFreedomLine: false,
-          timelineProofMoment: true,
-          archiveTimelineSpine: false,
-          timelinePositioning: false,
-          currentRelevance: false,
-          correctionMemory: false,
-          notRelevantRecovery: false,
-          proofQualityResponse: false,
-          evidenceWeighting: false,
-          proofSpecificity: false,
-          presentDayRelevance: false,
-          patternConfidence: false,
-          betaTesterReport: false,
-          proEvidenceValue: false,
-          privateReportProBridge: false,
-          suppressLegacyEducation: false,
-          betaProofLift: true,
-        ),
-      );
-      expect(audit.proofCardKey, 'timelineProofMoment');
-      expect(audit.guidanceCardKey, isNull);
-    });
+    test(
+      'record screen remains capture-first without stacking extra cards',
+      () {
+        final audit = SurfacePriorityEngine.auditRecordReady(
+          entryCount: 4,
+          source: 'record',
+          candidates: SurfacePriorityCandidates.recordReady(
+            firstMomentCapture: false,
+            secondMomentReturn: false,
+            lowFrictionReturn: false,
+            whatToNoticeNext: false,
+            betaTodaySummary: false,
+            openCapturePromptChips: false,
+            captureFreedomLine: false,
+            timelineProofMoment: true,
+            archiveTimelineSpine: false,
+            timelinePositioning: false,
+            currentRelevance: false,
+            correctionMemory: false,
+            notRelevantRecovery: false,
+            proofQualityResponse: false,
+            evidenceWeighting: false,
+            proofSpecificity: false,
+            presentDayRelevance: false,
+            patternConfidence: false,
+            betaTesterReport: false,
+            proEvidenceValue: false,
+            privateReportProBridge: false,
+            suppressLegacyEducation: false,
+            betaProofLift: true,
+          ),
+        );
+        expect(audit.proofCardKey, 'timelineProofMoment');
+        expect(audit.guidanceCardKey, isNull);
+      },
+    );
   });
 }
 
-ChangeTrailClaritySummary _fullTrailSummary() => const ChangeTrailClaritySummary(
+ChangeTrailClaritySummary _fullTrailSummary() =>
+    const ChangeTrailClaritySummary(
       totalTesters: 30,
       understoodFirstProofCount: 7,
       understoodProKeepsTrailCount: 6,

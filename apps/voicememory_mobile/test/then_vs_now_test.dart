@@ -44,39 +44,36 @@ const _bannedWords = [
   'pro is active',
 ];
 
-Reflection _reflection({List<String> themes = const ['work']}) =>
-    Reflection(
-      mood: 'neutral',
-      emotionalIntensity: 2,
-      recurringThemes: themes,
-      exactLanguagePattern: '',
-      concreteObservation: 'Work pressure showed up in this moment.',
-      repeatedSignal: '',
-    );
+Reflection _reflection({List<String> themes = const ['work']}) => Reflection(
+  mood: 'neutral',
+  emotionalIntensity: 2,
+  recurringThemes: themes,
+  exactLanguagePattern: '',
+  concreteObservation: 'Work pressure showed up in this moment.',
+  repeatedSignal: '',
+);
 
 JournalEntry _entry(
   String id, {
   required DateTime createdAt,
   List<String> themes = const ['work'],
   String? transcript,
-}) =>
-    JournalEntry(
-      id: id,
-      createdAt: createdAt,
-      transcript: transcript ??
-          'I noticed the same work pressure pattern when I said yes again today.',
-      durationSeconds: 30,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: _reflection(themes: themes),
-    );
+}) => JournalEntry(
+  id: id,
+  createdAt: createdAt,
+  transcript:
+      transcript ??
+      'I noticed the same work pressure pattern when I said yes again today.',
+  durationSeconds: 30,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: _reflection(themes: themes),
+);
 
 List<JournalEntry> _entriesWithThemes(int count) => List.generate(
-      count,
-      (i) => _entry(
-        'real_$i',
-        createdAt: DateTime(2026, 1, 1).add(Duration(days: i)),
-      ),
-    );
+  count,
+  (i) =>
+      _entry('real_$i', createdAt: DateTime(2026, 1, 1).add(Duration(days: i))),
+);
 
 void _expectNoBannedCopy(Iterable<String> visible) {
   for (final text in visible) {
@@ -179,56 +176,68 @@ void main() {
   group('Archive Home integration', () {
     test('shows card only when meaningful', () {
       final withCard = engine.buildFromJournal(entries: _entriesWithThemes(7));
-      final withoutCard = engine.buildFromJournal(entries: _entriesWithThemes(2));
+      final withoutCard = engine.buildFromJournal(
+        entries: _entriesWithThemes(2),
+      );
 
       expect(withCard.hasCard, isTrue);
       expect(withoutCard.hasCard, isFalse);
     });
 
-    test('does not displace First Week Path / Daily Exercise / Archive Clarity', () {
-      final plan = const ArchiveHomePriorityEngine().build(
-        ArchiveHomePriorityInput(
-          savedEntryCount: 8,
-          usableEvidenceCount: 8,
-          depthLevel: ArchiveDepthLevel.weeklyReviewReady,
-          returnChangesAvailable: true,
-          weeklyReviewAvailable: true,
-          sampleMode: false,
-          proPreviewPromoVisible: false,
-          showEmptySample: false,
-          firstWeekPathVisible: true,
-          dailyArchiveExerciseVisible: true,
-          archiveClarityProgressVisible: true,
-          capacityLoopVisible: false,
-          capacityThreeMomentActivationVisible: false,
-          capacityPullReasonVisible: false,
-          capacityDecisionOutcomeVisible: false,
-          capacityCostLaterCheckinVisible: false,
-          capacityActivationFitVisible: false,
-          beforeYouSayYesPauseVisible: false,
-          capacityWeeklyReviewVisible: false,
-          capacityBoundaryResponseVisible: false,
-          thenVsNowVisible: true,
-          archiveCalendarVisible: false,
-          reviewRitualVisible: false,
-          milestoneShareVisible: false,
-        ),
-      );
+    test(
+      'does not displace First Week Path / Daily Exercise / Archive Clarity',
+      () {
+        final plan = const ArchiveHomePriorityEngine().build(
+          ArchiveHomePriorityInput(
+            savedEntryCount: 8,
+            usableEvidenceCount: 8,
+            depthLevel: ArchiveDepthLevel.weeklyReviewReady,
+            returnChangesAvailable: true,
+            weeklyReviewAvailable: true,
+            sampleMode: false,
+            proPreviewPromoVisible: false,
+            showEmptySample: false,
+            firstWeekPathVisible: true,
+            dailyArchiveExerciseVisible: true,
+            archiveClarityProgressVisible: true,
+            capacityLoopVisible: false,
+            capacityThreeMomentActivationVisible: false,
+            capacityPullReasonVisible: false,
+            capacityDecisionOutcomeVisible: false,
+            capacityCostLaterCheckinVisible: false,
+            capacityActivationFitVisible: false,
+            beforeYouSayYesPauseVisible: false,
+            capacityWeeklyReviewVisible: false,
+            capacityBoundaryResponseVisible: false,
+            thenVsNowVisible: true,
+            archiveCalendarVisible: false,
+            reviewRitualVisible: false,
+            milestoneShareVisible: false,
+          ),
+        );
 
-      expect(plan.secondarySections, contains(ArchiveHomeSectionId.thenVsNow));
-      expect(
-        plan.secondarySections.indexOf(ArchiveHomeSectionId.thenVsNow),
-        greaterThan(
-          plan.secondarySections.indexOf(ArchiveHomeSectionId.dailyArchiveExercise),
-        ),
-      );
-      expect(
-        plan.secondarySections.indexOf(ArchiveHomeSectionId.thenVsNow),
-        greaterThan(
-          plan.secondarySections.indexOf(ArchiveHomeSectionId.archiveClarityProgress),
-        ),
-      );
-    });
+        expect(
+          plan.secondarySections,
+          contains(ArchiveHomeSectionId.thenVsNow),
+        );
+        expect(
+          plan.secondarySections.indexOf(ArchiveHomeSectionId.thenVsNow),
+          greaterThan(
+            plan.secondarySections.indexOf(
+              ArchiveHomeSectionId.dailyArchiveExercise,
+            ),
+          ),
+        );
+        expect(
+          plan.secondarySections.indexOf(ArchiveHomeSectionId.thenVsNow),
+          greaterThan(
+            plan.secondarySections.indexOf(
+              ArchiveHomeSectionId.archiveClarityProgress,
+            ),
+          ),
+        );
+      },
+    );
   });
 
   group('ThenVsNowCard', () {
@@ -238,10 +247,7 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           theme: AppTheme.light(),
-          home: ThenVsNowCard(
-            entries: _entriesWithThemes(7),
-            result: result,
-          ),
+          home: ThenVsNowCard(entries: _entriesWithThemes(7), result: result),
         ),
       );
 

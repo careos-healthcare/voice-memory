@@ -41,7 +41,8 @@ abstract final class PositiveReinforcementEngine {
     if (primaryCue.isEmpty) return null;
 
     final cueEntryCount = _entriesWithCue(entries, primaryCue);
-    final appearedAgain = helpfulActionCapturedMilestone ||
+    final appearedAgain =
+        helpfulActionCapturedMilestone ||
         cueEntryCount >= minEntriesForCompletion;
 
     if (appearedAgain) {

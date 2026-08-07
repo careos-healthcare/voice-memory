@@ -11,7 +11,6 @@ import 'package:voicememory_mobile/features/private_report/private_report_builde
 import 'package:voicememory_mobile/features/private_report/private_report_copy.dart';
 import 'package:voicememory_mobile/features/private_report/private_report_engine.dart';
 import 'package:voicememory_mobile/features/repeat_return_check/repeat_return_check_models.dart';
-import 'package:voicememory_mobile/features/transcript_correction/transcript_correction_controller.dart';
 import 'package:voicememory_mobile/features/what_changed/what_changed_v2_copy.dart';
 import 'package:voicememory_mobile/features/what_changed/what_changed_v2_model.dart';
 import 'package:voicememory_mobile/features/what_changed/what_changed_v2_store.dart';
@@ -21,103 +20,102 @@ import 'package:voicememory_mobile/services/app_services.dart';
 import 'package:voicememory_mobile/services/capture_save_messages.dart';
 import 'package:voicememory_mobile/widgets/private_report/private_report_sheet.dart';
 import 'package:voicememory_mobile/widgets/record/private_archive_report_card.dart';
-
-const _placeholder =
-    '[draft] ${CaptureSaveMessages.recordingSavedLocally} — transcribe when connected';
+import 'support/test_storage_sandbox.dart';
 
 JournalEntry _entry({
   required String id,
   required String transcript,
   DateTime? createdAt,
   String? localAudioPath,
-}) =>
-    JournalEntry(
-      id: id,
-      createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
-      transcript: transcript,
-      durationSeconds: 30,
-      localAudioPath: localAudioPath ?? '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 2,
-        recurringThemes: ['work'],
-        exactLanguagePattern: '',
-        concreteObservation: 'Work pressure showed up in this moment.',
-        repeatedSignal: '',
-      ),
-    );
+}) => JournalEntry(
+  id: id,
+  createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
+  transcript: transcript,
+  durationSeconds: 30,
+  localAudioPath: localAudioPath ?? '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 2,
+    recurringThemes: ['work'],
+    exactLanguagePattern: '',
+    concreteObservation: 'Work pressure showed up in this moment.',
+    repeatedSignal: '',
+  ),
+);
 
 List<JournalEntry> _threeRelatedRepeatEntries() => [
-      _entry(
-        id: 'e1',
-        transcript:
-            'I had no capacity but I said yes again to the extra meeting today.',
-        createdAt: DateTime(2026, 6, 10, 12),
-      ),
-      _entry(
-        id: 'e2',
-        transcript:
-            'Same thing — said yes when I had no capacity for one more thing.',
-        createdAt: DateTime(2026, 6, 11, 12),
-      ),
-      _entry(
-        id: 'e3',
-        transcript:
-            'I said yes again even though I had no capacity for one more ask.',
-        createdAt: DateTime(2026, 6, 12, 12),
-      ),
-    ];
+  _entry(
+    id: 'e1',
+    transcript:
+        'I had no capacity but I said yes again to the extra meeting today.',
+    createdAt: DateTime(2026, 6, 10, 12),
+  ),
+  _entry(
+    id: 'e2',
+    transcript:
+        'Same thing — said yes when I had no capacity for one more thing.',
+    createdAt: DateTime(2026, 6, 11, 12),
+  ),
+  _entry(
+    id: 'e3',
+    transcript:
+        'I said yes again even though I had no capacity for one more ask.',
+    createdAt: DateTime(2026, 6, 12, 12),
+  ),
+];
 
 List<JournalEntry> _fourRelatedRepeatEntries() => [
-      ..._threeRelatedRepeatEntries(),
-      _entry(
-        id: 'e4',
-        transcript:
-            'I said yes again even though I had no capacity for one more ask today.',
-        createdAt: DateTime(2026, 6, 13, 12),
-      ),
-    ];
+  ..._threeRelatedRepeatEntries(),
+  _entry(
+    id: 'e4',
+    transcript:
+        'I said yes again even though I had no capacity for one more ask today.',
+    createdAt: DateTime(2026, 6, 13, 12),
+  ),
+];
 
 JournalEntry _degradedVoiceEntry({String id = 'v1'}) => JournalEntry(
-      id: id,
-      createdAt: DateTime(2026, 6, 12, 12),
-      transcript:
-          '[draft] ${CaptureSaveMessages.recordingSavedLocally} — transcribe when connected',
-      durationSeconds: 20,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 0,
-        recurringThemes: [],
-        exactLanguagePattern: '',
-        concreteObservation: '',
-        repeatedSignal: '',
-      ),
-    );
+  id: id,
+  createdAt: DateTime(2026, 6, 12, 12),
+  transcript:
+      '[draft] ${CaptureSaveMessages.recordingSavedLocally} — transcribe when connected',
+  durationSeconds: 20,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 0,
+    recurringThemes: [],
+    exactLanguagePattern: '',
+    concreteObservation: '',
+    repeatedSignal: '',
+  ),
+);
 
 RepeatReturnCheckRecord _answeredRecord({
   required String entryId,
   required RepeatReturnCheckChoice choice,
-}) =>
-    RepeatReturnCheckRecord(
-      entryId: entryId,
-      choice: choice,
-      entryCountAtCapture: 5,
-      createdAt: DateTime(2026, 6, 14),
-    );
+}) => RepeatReturnCheckRecord(
+  entryId: entryId,
+  choice: choice,
+  entryCountAtCapture: 5,
+  createdAt: DateTime(2026, 6, 14),
+);
 
 void main() {
+  late TestStorageSandbox sandbox;
   setUp(() async {
+    sandbox = TestStorageSandbox.create();
     PrivateReportAnalytics.resetForTest();
     await WhatChangedV2Store.resetForTest();
     await HelpedTrackingStore.resetForTest();
     await AppServices.resetForTest(
-      journalPath: '${DateTime.now().microsecondsSinceEpoch}_journal.json',
-      prefsPath: '${DateTime.now().microsecondsSinceEpoch}_prefs.json',
+      journalPath: sandbox.journalPath,
+      prefsPath: sandbox.prefsPath,
       skipRevenueCat: true,
     );
   });
 
+  tearDown(() => sandbox.dispose());
   tearDown(() async {
     await WhatChangedV2Store.resetForTest();
     await HelpedTrackingStore.resetForTest();
@@ -135,10 +133,7 @@ void main() {
         PrivateReportCopy.insufficientEvidence,
         'ArchiveMe needs more evidence before creating a private report.',
       );
-      expect(
-        PrivateReportCopy.footer,
-        contains('not advice or a diagnosis'),
-      );
+      expect(PrivateReportCopy.footer, contains('not advice or a diagnosis'));
     });
   });
 
@@ -173,7 +168,10 @@ void main() {
       final result = PrivateReportEngine.build(
         entries: _fourRelatedRepeatEntries(),
         returnChecks: [
-          _answeredRecord(entryId: 'e4', choice: RepeatReturnCheckChoice.softer),
+          _answeredRecord(
+            entryId: 'e4',
+            choice: RepeatReturnCheckChoice.softer,
+          ),
         ],
         viewingConfirmedRepeatOrTimeline: true,
       )!;
@@ -217,16 +215,13 @@ void main() {
         entries: _fourRelatedRepeatEntries(),
         viewingConfirmedRepeatOrTimeline: true,
       )!;
-      expect(
-        report.sections.map((section) => section.heading).toList(),
-        [
-          PrivateReportCopy.whatRepeatedHeading,
-          PrivateReportCopy.whatChangedHeading,
-          PrivateReportCopy.whatHelpedHeading,
-          PrivateReportCopy.evidenceHeading,
-          PrivateReportCopy.whatToWatchNextHeading,
-        ],
-      );
+      expect(report.sections.map((section) => section.heading).toList(), [
+        PrivateReportCopy.whatRepeatedHeading,
+        PrivateReportCopy.whatChangedHeading,
+        PrivateReportCopy.whatHelpedHeading,
+        PrivateReportCopy.evidenceHeading,
+        PrivateReportCopy.whatToWatchNextHeading,
+      ]);
     });
 
     test('report includes grounded repeated phrase', () {
@@ -253,10 +248,7 @@ void main() {
       )!;
       final changed = report.sections[1];
       expect(changed.hasEvidence, isTrue);
-      expect(
-        changed.lines.first,
-        WhatChangedV2Copy.payoffSofter,
-      );
+      expect(changed.lines.first, WhatChangedV2Copy.payoffSofter);
     });
 
     test('report includes helped marker if available', () async {
@@ -269,7 +261,10 @@ void main() {
       final report = PrivateReportBuilder.build(
         entries: _fourRelatedRepeatEntries(),
         returnChecks: [
-          _answeredRecord(entryId: 'e4', choice: RepeatReturnCheckChoice.softer),
+          _answeredRecord(
+            entryId: 'e4',
+            choice: RepeatReturnCheckChoice.softer,
+          ),
         ],
         viewingConfirmedRepeatOrTimeline: true,
       )!;
@@ -340,11 +335,14 @@ void main() {
         hasHelped: false,
       );
 
-      expect(events.keys, containsAll([
-        PrivateReportAnalytics.openedEvent,
-        PrivateReportAnalytics.copiedEvent,
-        PrivateReportAnalytics.sharedEvent,
-      ]));
+      expect(
+        events.keys,
+        containsAll([
+          PrivateReportAnalytics.openedEvent,
+          PrivateReportAnalytics.copiedEvent,
+          PrivateReportAnalytics.sharedEvent,
+        ]),
+      );
       for (final props in events.values) {
         expect(props.keys, containsAll(['source', 'entry_count']));
         expect(props, isNot(contains('transcript')));
@@ -424,7 +422,9 @@ void main() {
       await tester.ensureVisible(
         find.byKey(const Key('private_archive_report_copy_cta')),
       );
-      await tester.tap(find.byKey(const Key('private_archive_report_copy_cta')));
+      await tester.tap(
+        find.byKey(const Key('private_archive_report_copy_cta')),
+      );
       await tester.pump();
 
       expect(copiedText, contains(PrivateReportCopy.title));

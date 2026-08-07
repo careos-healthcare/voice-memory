@@ -13,12 +13,9 @@ abstract final class LowFrictionReturnAnalytics {
 
   @visibleForTesting
   static void Function(String event, Map<String, Object> properties)?
-      captureForTest;
+  captureForTest;
 
-  static void seen({
-    required String source,
-    required int entryCount,
-  }) {
+  static void seen({required String source, required int entryCount}) {
     _emit(
       seenEvent,
       source: source,

@@ -82,7 +82,9 @@ class ArchiveBeliefThreadEngine {
       hasEnoughData: true,
       suggestionId: _suggestionId(belief),
       currentBelief: belief,
-      evidenceLine: analysis.evidenceLine ?? '${eligible.length} entries point toward this.',
+      evidenceLine:
+          analysis.evidenceLine ??
+          '${eligible.length} entries point toward this.',
       whatChanged: whatChanged,
       whatToTest: whatToTest,
       timeline: _timeline(analysis, tier),
@@ -99,22 +101,23 @@ class ArchiveBeliefThreadEngine {
       confidenceBand: analysis.confidenceBand,
       evidenceSnippets: tier == ArchiveIntelligenceTier.proMax
           ? (analysis.evidenceSnippets.isNotEmpty
-              ? analysis.evidenceSnippets
-              : ArchiveEvidenceThreshold.meaningfulEntries(entries)
-                  .take(3)
-                  .map((e) {
-                    final t = resolveEntryDisplayText(e).text.trim();
-                    if (ArchivePatternCopyGuard.isBlockedPatternText(t)) {
-                      return '';
-                    }
-                    return t.length <= 96 ? t : '${t.substring(0, 95)}…';
-                  })
-                  .where(
-                    (s) =>
-                        s.length >= ArchiveEvidenceThreshold.minSnippetChars &&
-                        !ArchivePatternCopyGuard.isBlockedPatternText(s),
-                  )
-                  .toList())
+                ? analysis.evidenceSnippets
+                : ArchiveEvidenceThreshold.meaningfulEntries(entries)
+                      .take(3)
+                      .map((e) {
+                        final t = resolveEntryDisplayText(e).text.trim();
+                        if (ArchivePatternCopyGuard.isBlockedPatternText(t)) {
+                          return '';
+                        }
+                        return t.length <= 96 ? t : '${t.substring(0, 95)}…';
+                      })
+                      .where(
+                        (s) =>
+                            s.length >=
+                                ArchiveEvidenceThreshold.minSnippetChars &&
+                            !ArchivePatternCopyGuard.isBlockedPatternText(s),
+                      )
+                      .toList())
           : const [],
       isProDepth: tier == ArchiveIntelligenceTier.proMax,
     );
@@ -226,12 +229,12 @@ class ArchiveBeliefThreadEngine {
   }
 
   String _suggestionId(String belief) {
-    final normalized =
-        belief.toLowerCase().replaceAll(RegExp(r'\s+'), '_').trim();
+    final normalized = belief
+        .toLowerCase()
+        .replaceAll(RegExp(r'\s+'), '_')
+        .trim();
     if (normalized.isEmpty) return 'archive_belief';
-    return normalized.length <= 48
-        ? normalized
-        : normalized.substring(0, 48);
+    return normalized.length <= 48 ? normalized : normalized.substring(0, 48);
   }
 
   ArchiveBeliefThread _preview(ArchiveIntelligenceTier tier) {

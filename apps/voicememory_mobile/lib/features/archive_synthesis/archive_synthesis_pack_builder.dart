@@ -270,7 +270,10 @@ abstract class ArchiveSynthesisPackBuilder {
 
   static Map<String, String> _excerpt(JournalEntry entry) {
     final text = UserContentSafety.redactSecrets(entry.transcript.trim());
-    final quote = UserContentSafety.safeSnippet(text, maxChars: maxExcerptChars);
+    final quote = UserContentSafety.safeSnippet(
+      text,
+      maxChars: maxExcerptChars,
+    );
     return {'entryId': entry.id, 'quote': quote};
   }
 

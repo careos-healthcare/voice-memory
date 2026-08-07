@@ -10,47 +10,51 @@ void main() {
       expect(result, isNull);
     });
 
-    test('should return the exact initial entry when history contains a single data point',
-        () {
-      const calculator = MovingBaselineCalculator();
-      const singleLog = CognitiveBiomarkers(
-        lexicalDiversity: 0.45,
-        cohesionDrift: 0.35,
-        emotionalVolatility: 0.25,
-      );
+    test(
+      'should return the exact initial entry when history contains a single data point',
+      () {
+        const calculator = MovingBaselineCalculator();
+        const singleLog = CognitiveBiomarkers(
+          lexicalDiversity: 0.45,
+          cohesionDrift: 0.35,
+          emotionalVolatility: 0.25,
+        );
 
-      final result = calculator.calculateMacroBaseline([singleLog]);
+        final result = calculator.calculateMacroBaseline([singleLog]);
 
-      expect(result, isNotNull);
-      expect(result!.lexicalDiversity, equals(0.45));
-      expect(result.cohesionDrift, equals(0.35));
-      expect(result.emotionalVolatility, equals(0.25));
-    });
+        expect(result, isNotNull);
+        expect(result!.lexicalDiversity, equals(0.45));
+        expect(result.cohesionDrift, equals(0.35));
+        expect(result.emotionalVolatility, equals(0.25));
+      },
+    );
 
-    test('should mathematically compute smoothed values across a chronological list',
-        () {
-      const calculator = MovingBaselineCalculator(alpha: 0.50);
+    test(
+      'should mathematically compute smoothed values across a chronological list',
+      () {
+        const calculator = MovingBaselineCalculator(alpha: 0.50);
 
-      const chronologicalHistory = [
-        CognitiveBiomarkers(
-          lexicalDiversity: 0.40,
-          cohesionDrift: 0.60,
-          emotionalVolatility: 0.20,
-        ),
-        CognitiveBiomarkers(
-          lexicalDiversity: 0.60,
-          cohesionDrift: 0.20,
-          emotionalVolatility: 0.60,
-        ),
-      ];
+        const chronologicalHistory = [
+          CognitiveBiomarkers(
+            lexicalDiversity: 0.40,
+            cohesionDrift: 0.60,
+            emotionalVolatility: 0.20,
+          ),
+          CognitiveBiomarkers(
+            lexicalDiversity: 0.60,
+            cohesionDrift: 0.20,
+            emotionalVolatility: 0.60,
+          ),
+        ];
 
-      final result = calculator.calculateMacroBaseline(chronologicalHistory);
+        final result = calculator.calculateMacroBaseline(chronologicalHistory);
 
-      expect(result, isNotNull);
-      expect(result!.lexicalDiversity, closeTo(0.50, 0.001));
-      expect(result.cohesionDrift, closeTo(0.40, 0.001));
-      expect(result.emotionalVolatility, closeTo(0.40, 0.001));
-    });
+        expect(result, isNotNull);
+        expect(result!.lexicalDiversity, closeTo(0.50, 0.001));
+        expect(result.cohesionDrift, closeTo(0.40, 0.001));
+        expect(result.emotionalVolatility, closeTo(0.40, 0.001));
+      },
+    );
 
     test('should maintain stability over multiple sequential updates', () {
       const calculator = MovingBaselineCalculator(alpha: 0.30);

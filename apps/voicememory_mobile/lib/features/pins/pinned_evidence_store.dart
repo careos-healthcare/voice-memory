@@ -50,25 +50,12 @@ class PinnedEvidenceStore {
     final entry = await _journal.getById(entryId);
     if (entry == null) return null;
     if (entry.isPinned == pinned) return entry;
-    final updated = JournalEntry(
-      id: entry.id,
-      createdAt: entry.createdAt,
-      transcript: entry.transcript,
-      durationSeconds: entry.durationSeconds,
-      reflection: entry.reflection,
-      syncStatus: entry.syncStatus,
-      localAudioPath: entry.localAudioPath,
-      treatAsNew: entry.treatAsNew,
-      connectionApproved: entry.connectionApproved,
-      keepExactDetails: entry.keepExactDetails,
+    final updated = entry.copyWith(
       isPinned: pinned,
+      // Explicit null clears the timestamp on unpin; the sentinel design
+      // means omitting this argument would instead leave the old
+      // pinnedAt in place.
       pinnedAt: pinned ? (now ?? DateTime.now()) : null,
-      isArchived: entry.isArchived,
-      archivedAt: entry.archivedAt,
-      entryAboutness: entry.entryAboutness,
-      memorySurfacing: entry.memorySurfacing,
-      preserveOriginal: entry.preserveOriginal,
-      captureContextTag: entry.captureContextTag,
     );
     await _journal.save(updated, first25Source: 'pin_toggle');
     return updated;

@@ -9,15 +9,12 @@ void main() {
   group('LiveAudioProtocol', () {
     test('buildAudioInputMessage uses realtimeInput.audio at 16kHz', () {
       final frame = LiveAudioProtocol.buildAudioInputMessage([1, 2, 3, 4]);
-      expect(
-        frame['realtimeInput'],
-        {
-          'audio': {
-            'mimeType': liveInputAudioMime,
-            'data': base64Encode([1, 2, 3, 4]),
-          },
+      expect(frame['realtimeInput'], {
+        'audio': {
+          'mimeType': liveInputAudioMime,
+          'data': base64Encode([1, 2, 3, 4]),
         },
-      );
+      });
       final validation = LiveAudioProtocol.validateClientMessage(frame);
       expect(validation.ok, isTrue);
     });

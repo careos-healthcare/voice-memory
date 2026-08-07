@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -30,46 +29,47 @@ import 'package:voicememory_mobile/services/app_services.dart';
 import 'package:voicememory_mobile/theme/app_theme.dart';
 import 'package:voicememory_mobile/widgets/account/local_backup_restore_sheet.dart';
 import 'package:voicememory_mobile/widgets/account/privacy_trust_centre_screen.dart';
+import 'support/test_storage_sandbox.dart';
 
 JournalEntry _entry({
   required String id,
   required String transcript,
   DateTime? createdAt,
   String? localAudioPath,
-}) =>
-    JournalEntry(
-      id: id,
-      createdAt: createdAt ?? DateTime(2026, 6, 12, 10),
-      transcript: transcript,
-      durationSeconds: 30,
-      localAudioPath: localAudioPath ?? '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'thoughtful',
-        emotionalIntensity: 2,
-        recurringThemes: ['work'],
-        exactLanguagePattern: '',
-        concreteObservation: 'Work pressure showed up again today.',
-        repeatedSignal: '',
-      ),
-    );
+}) => JournalEntry(
+  id: id,
+  createdAt: createdAt ?? DateTime(2026, 6, 12, 10),
+  transcript: transcript,
+  durationSeconds: 30,
+  localAudioPath: localAudioPath ?? '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'thoughtful',
+    emotionalIntensity: 2,
+    recurringThemes: ['work'],
+    exactLanguagePattern: '',
+    concreteObservation: 'Work pressure showed up again today.',
+    repeatedSignal: '',
+  ),
+);
 
 void main() {
+  late TestStorageSandbox sandbox;
   final analyticsEvents = <({String event, Map<String, Object> props})>[];
 
   setUp(() async {
+    sandbox = TestStorageSandbox.create();
     LocalBackupAnalytics.resetForTest();
     LocalBackupAnalytics.captureForTest = (event, props) {
       analyticsEvents.add((event: event, props: props));
     };
     await AppServices.resetForTest(
-      journalPath:
-          'test/tmp/local_backup/${DateTime.now().microsecondsSinceEpoch}_journal.json',
-      prefsPath:
-          'test/tmp/local_backup/${DateTime.now().microsecondsSinceEpoch}_prefs.json',
+      journalPath: sandbox.journalPath,
+      prefsPath: sandbox.prefsPath,
       skipRevenueCat: true,
     );
   });
 
+  tearDown(() => sandbox.dispose());
   tearDown(() {
     LocalBackupAnalytics.resetForTest();
     analyticsEvents.clear();
@@ -133,10 +133,7 @@ void main() {
       );
       final entries = payload['journal_entries'] as List<dynamic>;
       expect(entries, isNotEmpty);
-      expect(
-        entries.first,
-        isNot(containsPair('localAudioPath', anything)),
-      );
+      expect(entries.first, isNot(containsPair('localAudioPath', anything)));
       expect(
         (entries.first as Map)['transcript'],
         'Corrected transcript text stays in the archive.',
@@ -150,50 +147,32 @@ void main() {
         prefs: AppServices.instance.prefs,
       );
       final prefs = payload['prefs'] as Map<String, dynamic>;
-      expect(
-        prefs.keys,
-        containsAll(LocalArchiveBackupPrefsKeys.included),
-      );
-      expect(
-        prefs[LocalArchiveBackupPrefsKeys.patternNames],
-        isNotNull,
-      );
-      expect(
-        prefs[LocalArchiveBackupPrefsKeys.helpedTracking],
-        isNotNull,
-      );
-      expect(
-        prefs[LocalArchiveBackupPrefsKeys.whatChanged],
-        isNotNull,
-      );
-      expect(
-        prefs[LocalArchiveBackupPrefsKeys.firstProofTruth],
-        isNotNull,
-      );
-      expect(
-        prefs[LocalArchiveBackupPrefsKeys.archiveExclusions],
-        isNotNull,
-      );
-      expect(
-        prefs[LocalArchiveBackupPrefsKeys.entryImportance],
-        isNotNull,
-      );
+      expect(prefs.keys, containsAll(LocalArchiveBackupPrefsKeys.included));
+      expect(prefs[LocalArchiveBackupPrefsKeys.patternNames], isNotNull);
+      expect(prefs[LocalArchiveBackupPrefsKeys.helpedTracking], isNotNull);
+      expect(prefs[LocalArchiveBackupPrefsKeys.whatChanged], isNotNull);
+      expect(prefs[LocalArchiveBackupPrefsKeys.firstProofTruth], isNotNull);
+      expect(prefs[LocalArchiveBackupPrefsKeys.archiveExclusions], isNotNull);
+      expect(prefs[LocalArchiveBackupPrefsKeys.entryImportance], isNotNull);
     });
 
-    test('export excludes analytics counters beta feedback billing and debug', () async {
-      await seedArchive();
-      final json = await LocalBackupBuilder.buildJson(
-        journal: AppServices.instance.journalStore,
-        prefs: AppServices.instance.prefs,
-      );
-      expect(json.contains('archiveBetaFeedback'), isFalse);
-      expect(json.contains('beta_activation_summary_counts_v1'), isFalse);
-      expect(json.contains('archiveActivationFunnel'), isFalse);
-      expect(json.contains('debug_logs'), isFalse);
-      expect(json.contains('RevenueCat'), isFalse);
-      expect(json.contains('deviceId'), isFalse);
-      expect(json.contains('device_id'), isFalse);
-    });
+    test(
+      'export excludes analytics counters beta feedback billing and debug',
+      () async {
+        await seedArchive();
+        final json = await LocalBackupBuilder.buildJson(
+          journal: AppServices.instance.journalStore,
+          prefs: AppServices.instance.prefs,
+        );
+        expect(json.contains('archiveBetaFeedback'), isFalse);
+        expect(json.contains('beta_activation_summary_counts_v1'), isFalse);
+        expect(json.contains('archiveActivationFunnel'), isFalse);
+        expect(json.contains('debug_logs'), isFalse);
+        expect(json.contains('RevenueCat'), isFalse);
+        expect(json.contains('deviceId'), isFalse);
+        expect(json.contains('device_id'), isFalse);
+      },
+    );
 
     test('validate rejects invalid backup', () {
       final result = LocalBackupBuilder.validateJson('{"foo":1}');
@@ -244,7 +223,10 @@ void main() {
         rawJson: '{"archive_backup_version":99}',
       );
       expect(result.failure, LocalBackupRestoreFailure.invalidBackup);
-      expect(analyticsEvents.single.event, LocalBackupAnalytics.restoreFailedEvent);
+      expect(
+        analyticsEvents.single.event,
+        LocalBackupAnalytics.restoreFailedEvent,
+      );
     });
 
     test('restore recomputes archive surfaces', () async {
@@ -301,7 +283,11 @@ void main() {
 
       final event = analyticsEvents.single;
       expect(event.event, LocalBackupAnalytics.exportedEvent);
-      expect(event.props.keys.toSet(), {'source', 'has_entries', 'schema_version'});
+      expect(event.props.keys.toSet(), {
+        'source',
+        'has_entries',
+        'schema_version',
+      });
       expect(event.props['source'], 'test');
       expect(event.props['schema_version'], archiveBackupVersion);
       for (final value in event.props.values) {
@@ -368,7 +354,9 @@ void main() {
       expect(await dialogFuture, isFalse);
     });
 
-    testWidgets('restore confirmation blocks replace until confirmed', (tester) async {
+    testWidgets('restore confirmation blocks replace until confirmed', (
+      tester,
+    ) async {
       late String backupJson;
       await tester.runAsync(() async {
         await seedArchive();
@@ -394,7 +382,10 @@ void main() {
       await tester.runAsync(() async {
         beforeCancelRestore = await AppServices.instance.journalStore.loadAll();
       });
-      expect(beforeCancelRestore.any((e) => e.id == 'keep-until-restore'), isTrue);
+      expect(
+        beforeCancelRestore.any((e) => e.id == 'keep-until-restore'),
+        isTrue,
+      );
 
       final service = LocalBackupRestoreService();
       final confirmFuture = showRestoreLocalBackupDialog(context);
@@ -471,7 +462,11 @@ void main() {
       for (final path in files) {
         final text = File(path).readAsStringSync();
         for (final token in banned) {
-          expect(text.contains(token), isFalse, reason: '$path must not reference $token');
+          expect(
+            text.contains(token),
+            isFalse,
+            reason: '$path must not reference $token',
+          );
         }
       }
     });

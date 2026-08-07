@@ -24,7 +24,8 @@ abstract final class CommercialReadinessGateCopy {
   static const checkEntitlementPersists = 'Entitlement persists';
   static const checkTestFlightBuildUploaded = 'TestFlight build uploaded';
   static const checkPaidIntentBetaComplete = 'Paid-intent beta complete';
-  static const checkSecretsRotationDone = 'Secrets rotation done before production';
+  static const checkSecretsRotationDone =
+      'Secrets rotation done before production';
 
   static const detailPass = 'Verified';
   static const detailFail = 'Blocked';
@@ -67,63 +68,64 @@ abstract final class CommercialReadinessGateCopy {
       'blocker.';
 
   static String labelFor(CommercialReadinessGateCheckId id) => switch (id) {
-        CommercialReadinessGateCheckId.productPromiseClear =>
-          checkProductPromiseClear,
-        CommercialReadinessGateCheckId.firstJourneyStable =>
-          checkFirstJourneyStable,
-        CommercialReadinessGateCheckId.firstProofUsefulEnough =>
-          checkFirstProofUsefulEnough,
-        CommercialReadinessGateCheckId.proPromiseClear => checkProPromiseClear,
-        CommercialReadinessGateCheckId.revenueCatProductLoads =>
-          checkRevenueCatProductLoads,
-        CommercialReadinessGateCheckId.paywallPriceVisible =>
-          checkPaywallPriceVisible,
-        CommercialReadinessGateCheckId.sandboxPurchaseWorks =>
-          checkSandboxPurchaseWorks,
-        CommercialReadinessGateCheckId.restoreWorks => checkRestoreWorks,
-        CommercialReadinessGateCheckId.entitlementPersists =>
-          checkEntitlementPersists,
-        CommercialReadinessGateCheckId.testFlightBuildUploaded =>
-          checkTestFlightBuildUploaded,
-        CommercialReadinessGateCheckId.paidIntentBetaComplete =>
-          checkPaidIntentBetaComplete,
-        CommercialReadinessGateCheckId.secretsRotationDone =>
-          checkSecretsRotationDone,
-      };
+    CommercialReadinessGateCheckId.productPromiseClear =>
+      checkProductPromiseClear,
+    CommercialReadinessGateCheckId.firstJourneyStable =>
+      checkFirstJourneyStable,
+    CommercialReadinessGateCheckId.firstProofUsefulEnough =>
+      checkFirstProofUsefulEnough,
+    CommercialReadinessGateCheckId.proPromiseClear => checkProPromiseClear,
+    CommercialReadinessGateCheckId.revenueCatProductLoads =>
+      checkRevenueCatProductLoads,
+    CommercialReadinessGateCheckId.paywallPriceVisible =>
+      checkPaywallPriceVisible,
+    CommercialReadinessGateCheckId.sandboxPurchaseWorks =>
+      checkSandboxPurchaseWorks,
+    CommercialReadinessGateCheckId.restoreWorks => checkRestoreWorks,
+    CommercialReadinessGateCheckId.entitlementPersists =>
+      checkEntitlementPersists,
+    CommercialReadinessGateCheckId.testFlightBuildUploaded =>
+      checkTestFlightBuildUploaded,
+    CommercialReadinessGateCheckId.paidIntentBetaComplete =>
+      checkPaidIntentBetaComplete,
+    CommercialReadinessGateCheckId.secretsRotationDone =>
+      checkSecretsRotationDone,
+  };
 
-  static String messageFor(CommercialReadinessGateStatus status) =>
-      switch (status) {
-        CommercialReadinessGateStatus.productReadyOnly => productReadyOnlyLine,
-        CommercialReadinessGateStatus.storeBlocked => storeBlockedLine,
-        CommercialReadinessGateStatus.purchaseBlocked => purchaseBlockedLine,
-        CommercialReadinessGateStatus.restoreBlocked => restoreBlockedLine,
-        CommercialReadinessGateStatus.entitlementBlocked =>
-          entitlementBlockedLine,
-        CommercialReadinessGateStatus.betaBlocked => betaBlockedLine,
-        CommercialReadinessGateStatus.productionBlockedBySecrets =>
-          productionBlockedBySecretsLine,
-        CommercialReadinessGateStatus.commerciallyReady => commerciallyReadyLine,
-      };
+  static String messageFor(
+    CommercialReadinessGateStatus status,
+  ) => switch (status) {
+    CommercialReadinessGateStatus.productReadyOnly => productReadyOnlyLine,
+    CommercialReadinessGateStatus.storeBlocked => storeBlockedLine,
+    CommercialReadinessGateStatus.purchaseBlocked => purchaseBlockedLine,
+    CommercialReadinessGateStatus.restoreBlocked => restoreBlockedLine,
+    CommercialReadinessGateStatus.entitlementBlocked => entitlementBlockedLine,
+    CommercialReadinessGateStatus.betaBlocked => betaBlockedLine,
+    CommercialReadinessGateStatus.productionBlockedBySecrets =>
+      productionBlockedBySecretsLine,
+    CommercialReadinessGateStatus.commerciallyReady => commerciallyReadyLine,
+  };
 
-  static String recommendationFor(CommercialReadinessGateStatus status) =>
-      switch (status) {
-        CommercialReadinessGateStatus.productReadyOnly =>
-          'Repair product promise, first journey, first proof, or Pro promise copy only.',
-        CommercialReadinessGateStatus.storeBlocked =>
-          'Finish store readiness: RevenueCat products and TestFlight upload.',
-        CommercialReadinessGateStatus.purchaseBlocked =>
-          'Fix purchase mechanics: paywall price visibility and sandbox purchase path.',
-        CommercialReadinessGateStatus.restoreBlocked =>
-          'Fix restore purchases path without changing paywall positioning.',
-        CommercialReadinessGateStatus.entitlementBlocked =>
-          'Fix entitlement persistence after purchase and restore.',
-        CommercialReadinessGateStatus.betaBlocked =>
-          'Complete paid-intent beta validation on TestFlight.',
-        CommercialReadinessGateStatus.productionBlockedBySecrets =>
-          'Rotate production secrets before App Store submission.',
-        CommercialReadinessGateStatus.commerciallyReady =>
-          'Commercial readiness passes. Proceed to production submission.',
-      };
+  static String recommendationFor(
+    CommercialReadinessGateStatus status,
+  ) => switch (status) {
+    CommercialReadinessGateStatus.productReadyOnly =>
+      'Repair product promise, first journey, first proof, or Pro promise copy only.',
+    CommercialReadinessGateStatus.storeBlocked =>
+      'Finish store readiness: RevenueCat products and TestFlight upload.',
+    CommercialReadinessGateStatus.purchaseBlocked =>
+      'Fix purchase mechanics: paywall price visibility and sandbox purchase path.',
+    CommercialReadinessGateStatus.restoreBlocked =>
+      'Fix restore purchases path without changing paywall positioning.',
+    CommercialReadinessGateStatus.entitlementBlocked =>
+      'Fix entitlement persistence after purchase and restore.',
+    CommercialReadinessGateStatus.betaBlocked =>
+      'Complete paid-intent beta validation on TestFlight.',
+    CommercialReadinessGateStatus.productionBlockedBySecrets =>
+      'Rotate production secrets before App Store submission.',
+    CommercialReadinessGateStatus.commerciallyReady =>
+      'Commercial readiness passes. Proceed to production submission.',
+  };
 
   static Iterable<String> allVisibleStrings() sync* {
     yield headline;
@@ -176,11 +178,7 @@ enum CommercialReadinessGateCheckId {
   secretsRotationDone,
 }
 
-enum CommercialReadinessGateCheckStatus {
-  pass,
-  fail,
-  blocked,
-}
+enum CommercialReadinessGateCheckStatus { pass, fail, blocked }
 
 enum CommercialReadinessGateStatus {
   productReadyOnly,

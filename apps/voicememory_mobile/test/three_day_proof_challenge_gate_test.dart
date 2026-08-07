@@ -4,7 +4,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/features/archive_proof/proof_surface_advice_guard.dart';
 import 'package:voicememory_mobile/features/first_proof_success_beta/first_proof_success_beta_guard.dart';
 import 'package:voicememory_mobile/features/paid_intent_beta_proof/paid_intent_beta_proof.dart';
-import 'package:voicememory_mobile/features/proof_confidence_calibration/proof_confidence_calibration_model.dart';
 import 'package:voicememory_mobile/features/single_launch_checklist/single_launch_checklist.dart';
 import 'package:voicememory_mobile/features/three_day_proof_challenge/three_day_proof_challenge_copy.dart';
 import 'package:voicememory_mobile/features/three_day_proof_challenge/three_day_proof_challenge_gate.dart';
@@ -14,17 +13,10 @@ const _docsPath = 'docs/THREE_DAY_PROOF_CHALLENGE.md';
 ThreeDayProofChallengeGateInput _input({
   bool? paidIntentBetaComplete,
   bool? usersNeedThreeDayChallenge,
-}) =>
-    ThreeDayProofChallengeGateInput(
-      paidIntentBetaComplete: paidIntentBetaComplete,
-      usersNeedThreeDayChallenge: usersNeedThreeDayChallenge,
-    );
-
-ThreeDayProofChallengeRule _rule(
-  ThreeDayProofChallengeGateResult result,
-  ThreeDayProofChallengeRuleId id,
-) =>
-    result.rules.firstWhere((rule) => rule.id == id);
+}) => ThreeDayProofChallengeGateInput(
+  paidIntentBetaComplete: paidIntentBetaComplete,
+  usersNeedThreeDayChallenge: usersNeedThreeDayChallenge,
+);
 
 void main() {
   group('ThreeDayProofChallengeGate.build', () {
@@ -49,26 +41,26 @@ void main() {
       expect(result.promise, ThreeDayProofChallengeCopy.promise);
     });
 
-    test('paid-intent beta complete without user need -> futureAcquisitionOnly', () {
-      final result = ThreeDayProofChallengeGate.build(
-        _input(
-          paidIntentBetaComplete: true,
-          usersNeedThreeDayChallenge: false,
-        ),
-      );
-      expect(
-        result.decision,
-        ThreeDayProofChallengeGateDecision.futureAcquisitionOnly,
-      );
-      expect(result.v1SurfacingBlocked, isTrue);
-    });
+    test(
+      'paid-intent beta complete without user need -> futureAcquisitionOnly',
+      () {
+        final result = ThreeDayProofChallengeGate.build(
+          _input(
+            paidIntentBetaComplete: true,
+            usersNeedThreeDayChallenge: false,
+          ),
+        );
+        expect(
+          result.decision,
+          ThreeDayProofChallengeGateDecision.futureAcquisitionOnly,
+        );
+        expect(result.v1SurfacingBlocked, isTrue);
+      },
+    );
 
     test('paid-intent beta and user need -> v1SurfacingAllowed', () {
       final result = ThreeDayProofChallengeGate.build(
-        _input(
-          paidIntentBetaComplete: true,
-          usersNeedThreeDayChallenge: true,
-        ),
+        _input(paidIntentBetaComplete: true, usersNeedThreeDayChallenge: true),
       );
       expect(
         result.decision,
@@ -79,10 +71,7 @@ void main() {
 
     test('user need without paid-intent beta -> futureAcquisitionOnly', () {
       final result = ThreeDayProofChallengeGate.build(
-        _input(
-          paidIntentBetaComplete: false,
-          usersNeedThreeDayChallenge: true,
-        ),
+        _input(paidIntentBetaComplete: false, usersNeedThreeDayChallenge: true),
       );
       expect(
         result.decision,
@@ -94,7 +83,11 @@ void main() {
     test('canonical rules pass for gate copy', () {
       final result = ThreeDayProofChallengeGate.build(_input());
       for (final rule in result.rules) {
-        expect(rule.status, ThreeDayProofChallengeRuleStatus.pass, reason: rule.id.name);
+        expect(
+          rule.status,
+          ThreeDayProofChallengeRuleStatus.pass,
+          reason: rule.id.name,
+        );
       }
     });
 

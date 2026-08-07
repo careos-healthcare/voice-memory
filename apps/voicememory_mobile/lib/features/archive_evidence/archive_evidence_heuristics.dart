@@ -5,19 +5,10 @@ import 'archive_intelligence_tier.dart';
 import 'archive_pattern_copy_guard.dart';
 
 /// Humble confidence band for Pro surfaces — never diagnostic.
-enum ArchiveConfidenceBand {
-  earlySignal,
-  returningThread,
-  strongerEvidence,
-}
+enum ArchiveConfidenceBand { earlySignal, returningThread, strongerEvidence }
 
 /// Strongest “oh wow” moment type when evidence supports it.
-enum ArchiveOhWowKind {
-  returned,
-  changed,
-  faded,
-  currentBelief,
-}
+enum ArchiveOhWowKind { returned, changed, faded, currentBelief }
 
 /// Local heuristic read of repeated evidence — no network AI.
 class ArchiveEvidenceAnalysis {
@@ -95,7 +86,15 @@ class ArchiveEvidenceHeuristics {
   };
 
   static const Map<String, List<String>> _contextKeywords = {
-    'work': ['work', 'office', 'deadline', 'boss', 'project', 'job', 'colleague'],
+    'work': [
+      'work',
+      'office',
+      'deadline',
+      'boss',
+      'project',
+      'job',
+      'colleague',
+    ],
     'family': ['family', 'kids', 'child', 'partner', 'parent', 'home'],
     'rest': ['rest', 'tired', 'sleep', 'exhausted', 'burned out', 'burnout'],
     'saying yes': ['yes', 'agree', 'help', 'capacity', 'commit'],
@@ -168,17 +167,24 @@ class ArchiveEvidenceHeuristics {
 
     final phraseOverlap = _repeatedPhraseAcross(texts);
     final possibleRepeat =
-        pressureHits.length >= 1 ||
+        pressureHits.isNotEmpty ||
         phraseOverlap != null ||
         _sharedTokenOverlap(texts.first, texts.last) >= 0.35;
 
     final earlierAwareness = _awarenessWords.any(texts.last.contains);
     final repeatedAvoidance =
         _avoidanceWords.any(texts.last.contains) &&
-        _avoidanceWords.any((w) => texts.length >= 2 && texts[texts.length - 2].contains(w));
+        _avoidanceWords.any(
+          (w) => texts.length >= 2 && texts[texts.length - 2].contains(w),
+        );
 
-    final beliefLine = _beliefLine(dominantPressure, pressureHits, possibleRepeat);
-    final previousBeliefLine = tier == ArchiveIntelligenceTier.proMax &&
+    final beliefLine = _beliefLine(
+      dominantPressure,
+      pressureHits,
+      possibleRepeat,
+    );
+    final previousBeliefLine =
+        tier == ArchiveIntelligenceTier.proMax &&
             eligible.length >= 3 &&
             previousContext != latestContext
         ? 'Your archive used to point toward $previousContext.'
@@ -245,7 +251,9 @@ class ArchiveEvidenceHeuristics {
       whatToTestLine: _whatToTestLine(dominantPressure, pressureHits),
       whatReturnedLine: whatReturned,
       whatFadedLine: whatFaded,
-      confidenceBand: tier == ArchiveIntelligenceTier.proMax ? confidenceBand : null,
+      confidenceBand: tier == ArchiveIntelligenceTier.proMax
+          ? confidenceBand
+          : null,
       evidenceSnippets: snippets,
       repeatedPressurePhrases: pressureHits,
       ohWowKind: ohWow?.kind,
@@ -283,9 +291,7 @@ class ArchiveEvidenceHeuristics {
     required String? dominantPressure,
     required String? phraseOverlap,
   }) {
-    if (contextShifted &&
-        previousContext != null &&
-        latestContext != null) {
+    if (contextShifted && previousContext != null && latestContext != null) {
       return 'Last time it was about $previousContext. This time it showed up around $latestContext.';
     }
     if (earlierAwareness) {
@@ -378,12 +384,15 @@ class ArchiveEvidenceHeuristics {
     for (final w in words) {
       counts[w] = (counts[w] ?? 0) + 1;
     }
-    final repeated = counts.entries
-        .where((e) => e.value >= 2)
-        .map((e) => e.key)
-        .where((word) => !ArchivePatternCopyGuard.isBlockedPatternText(word))
-        .toList()
-      ..sort((a, b) => b.length.compareTo(a.length));
+    final repeated =
+        counts.entries
+            .where((e) => e.value >= 2)
+            .map((e) => e.key)
+            .where(
+              (word) => !ArchivePatternCopyGuard.isBlockedPatternText(word),
+            )
+            .toList()
+          ..sort((a, b) => b.length.compareTo(a.length));
     if (repeated.isEmpty) return null;
     final phrase = repeated.first;
     if (ArchivePatternCopyGuard.isBlockedPatternText(phrase)) return null;
@@ -431,7 +440,9 @@ class ArchiveEvidenceHeuristics {
       return _OhWowCandidate(
         kind: ArchiveOhWowKind.changed,
         title: 'Something changed.',
-        body: whatChanged ?? 'The same pressure returned, but you noticed it earlier this time.',
+        body:
+            whatChanged ??
+            'The same pressure returned, but you noticed it earlier this time.',
         score: 90,
       );
     }

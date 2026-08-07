@@ -14,7 +14,8 @@ abstract final class PaidIntentBetaProof {
       signals: signals,
       earliestGap: _earliestGap(input),
       paidIntentSignalWeak: isPaidIntentSignalWeak(decision),
-      paidIntentSignalPromising: decision == PaidIntentBetaProofDecision.paidIntentPromising,
+      paidIntentSignalPromising:
+          decision == PaidIntentBetaProofDecision.paidIntentPromising,
     );
   }
 
@@ -54,19 +55,18 @@ abstract final class PaidIntentBetaProof {
     bool restoreAttempted = false,
     bool purchaseMechanicsBlocked = false,
     PaidIntentBetaWouldPay? testerWouldPay,
-  }) =>
-      PaidIntentBetaProofInput(
-        firstSaveCompleted: firstSaveCompleted,
-        firstUsefulProofSeen: firstUsefulProofSeen,
-        proofAcceptedOrCorrected: proofAcceptedOrCorrected,
-        proPromiseSeen: proPromiseSeen,
-        proTapped: proTapped,
-        purchaseAttempted: purchaseAttempted,
-        purchaseCompleted: purchaseCompleted,
-        restoreAttempted: restoreAttempted,
-        purchaseMechanicsBlocked: purchaseMechanicsBlocked,
-        testerWouldPay: testerWouldPay,
-      );
+  }) => PaidIntentBetaProofInput(
+    firstSaveCompleted: firstSaveCompleted,
+    firstUsefulProofSeen: firstUsefulProofSeen,
+    proofAcceptedOrCorrected: proofAcceptedOrCorrected,
+    proPromiseSeen: proPromiseSeen,
+    proTapped: proTapped,
+    purchaseAttempted: purchaseAttempted,
+    purchaseCompleted: purchaseCompleted,
+    restoreAttempted: restoreAttempted,
+    purchaseMechanicsBlocked: purchaseMechanicsBlocked,
+    testerWouldPay: testerWouldPay,
+  );
 
   static bool isPaidIntentSignalWeak(PaidIntentBetaProofDecision decision) =>
       switch (decision) {
@@ -118,12 +118,15 @@ abstract final class PaidIntentBetaProof {
       PaidIntentBetaProofSignal(
         id: PaidIntentBetaProofSignalId.firstUsefulProofSeen,
         label: PaidIntentBetaProofCopy.signalFirstUsefulProofSeen,
-        status: statusFor(prerequisite: saveOk, value: input.firstUsefulProofSeen),
+        status: statusFor(
+          prerequisite: saveOk,
+          value: input.firstUsefulProofSeen,
+        ),
         detailLabel: !saveOk
             ? PaidIntentBetaProofCopy.detailBlocked
             : input.firstUsefulProofSeen
-                ? PaidIntentBetaProofCopy.detailPass
-                : PaidIntentBetaProofCopy.detailPending,
+            ? PaidIntentBetaProofCopy.detailPass
+            : PaidIntentBetaProofCopy.detailPending,
       ),
       PaidIntentBetaProofSignal(
         id: PaidIntentBetaProofSignalId.proofAcceptedOrCorrected,
@@ -135,18 +138,21 @@ abstract final class PaidIntentBetaProof {
         detailLabel: !proofSeenOk
             ? PaidIntentBetaProofCopy.detailBlocked
             : input.proofAcceptedOrCorrected
-                ? PaidIntentBetaProofCopy.detailPass
-                : PaidIntentBetaProofCopy.detailFail,
+            ? PaidIntentBetaProofCopy.detailPass
+            : PaidIntentBetaProofCopy.detailFail,
       ),
       PaidIntentBetaProofSignal(
         id: PaidIntentBetaProofSignalId.proPromiseSeen,
         label: PaidIntentBetaProofCopy.signalProPromiseSeen,
-        status: statusFor(prerequisite: proofUsefulOk, value: input.proPromiseSeen),
+        status: statusFor(
+          prerequisite: proofUsefulOk,
+          value: input.proPromiseSeen,
+        ),
         detailLabel: !proofUsefulOk
             ? PaidIntentBetaProofCopy.detailBlocked
             : input.proPromiseSeen
-                ? PaidIntentBetaProofCopy.detailPass
-                : PaidIntentBetaProofCopy.detailPending,
+            ? PaidIntentBetaProofCopy.detailPass
+            : PaidIntentBetaProofCopy.detailPending,
       ),
       PaidIntentBetaProofSignal(
         id: PaidIntentBetaProofSignalId.proTapped,
@@ -155,18 +161,21 @@ abstract final class PaidIntentBetaProof {
         detailLabel: !proSeenOk
             ? PaidIntentBetaProofCopy.detailBlocked
             : input.proTapped
-                ? PaidIntentBetaProofCopy.detailPass
-                : PaidIntentBetaProofCopy.detailPending,
+            ? PaidIntentBetaProofCopy.detailPass
+            : PaidIntentBetaProofCopy.detailPending,
       ),
       PaidIntentBetaProofSignal(
         id: PaidIntentBetaProofSignalId.purchaseAttempted,
         label: PaidIntentBetaProofCopy.signalPurchaseAttempted,
-        status: statusFor(prerequisite: proTappedOk, value: input.purchaseAttempted),
+        status: statusFor(
+          prerequisite: proTappedOk,
+          value: input.purchaseAttempted,
+        ),
         detailLabel: !proTappedOk
             ? PaidIntentBetaProofCopy.detailBlocked
             : input.purchaseAttempted
-                ? PaidIntentBetaProofCopy.detailPass
-                : PaidIntentBetaProofCopy.detailPending,
+            ? PaidIntentBetaProofCopy.detailPass
+            : PaidIntentBetaProofCopy.detailPending,
       ),
       PaidIntentBetaProofSignal(
         id: PaidIntentBetaProofSignalId.purchaseCompleted,
@@ -178,8 +187,8 @@ abstract final class PaidIntentBetaProof {
         detailLabel: !purchaseAttemptedOk
             ? PaidIntentBetaProofCopy.detailBlocked
             : input.purchaseCompleted
-                ? PaidIntentBetaProofCopy.detailPass
-                : PaidIntentBetaProofCopy.detailPending,
+            ? PaidIntentBetaProofCopy.detailPass
+            : PaidIntentBetaProofCopy.detailPending,
       ),
       PaidIntentBetaProofSignal(
         id: PaidIntentBetaProofSignalId.restoreAttempted,
@@ -208,10 +217,10 @@ abstract final class PaidIntentBetaProof {
     final response = input.testerWouldPay;
     if (response == null) return PaidIntentBetaProofSignalStatus.pending;
     return switch (response) {
-      PaidIntentBetaWouldPay.yes || PaidIntentBetaWouldPay.maybe =>
-        PaidIntentBetaProofSignalStatus.pass,
-      PaidIntentBetaWouldPay.no || PaidIntentBetaWouldPay.notYet =>
-        PaidIntentBetaProofSignalStatus.fail,
+      PaidIntentBetaWouldPay.yes ||
+      PaidIntentBetaWouldPay.maybe => PaidIntentBetaProofSignalStatus.pass,
+      PaidIntentBetaWouldPay.no ||
+      PaidIntentBetaWouldPay.notYet => PaidIntentBetaProofSignalStatus.fail,
     };
   }
 
@@ -364,12 +373,7 @@ enum PaidIntentBetaProofSignalStatus {
   notRequired,
 }
 
-enum PaidIntentBetaWouldPay {
-  yes,
-  maybe,
-  no,
-  notYet,
-}
+enum PaidIntentBetaWouldPay { yes, maybe, no, notYet }
 
 enum PaidIntentBetaProofDecision {
   insufficientData,
@@ -456,13 +460,10 @@ class PaidIntentBetaProofReport {
   final PaidIntentBetaProofResult result;
 
   List<String> get allDisplayedText => [
-        headline,
-        body,
-        trackedLine,
-        for (final signal in result.signals) ...[
-          signal.label,
-          signal.detailLabel,
-        ],
-        result.message,
-      ];
+    headline,
+    body,
+    trackedLine,
+    for (final signal in result.signals) ...[signal.label, signal.detailLabel],
+    result.message,
+  ];
 }

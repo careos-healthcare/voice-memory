@@ -31,21 +31,20 @@ class NotRelevantRecoveryResult {
   factory NotRelevantRecoveryResult.hidden({
     required String source,
     int entryCount = 0,
-  }) =>
-      NotRelevantRecoveryResult(
-        shouldShow: false,
-        proofKey: '',
-        entryCount: entryCount,
-        source: source,
-        hasConfirmedRepeat: false,
-        hasFreshReturn: false,
-        title: NotRelevantRecoveryCopy.title,
-        body: NotRelevantRecoveryCopy.body,
-        correctionLine: NotRelevantRecoveryCopy.correctionLine,
-        returnLine: NotRelevantRecoveryCopy.returnLine,
-        returnedAfterCorrectionLine:
-            NotRelevantRecoveryCopy.returnedAfterCorrectionLine,
-      );
+  }) => NotRelevantRecoveryResult(
+    shouldShow: false,
+    proofKey: '',
+    entryCount: entryCount,
+    source: source,
+    hasConfirmedRepeat: false,
+    hasFreshReturn: false,
+    title: NotRelevantRecoveryCopy.title,
+    body: NotRelevantRecoveryCopy.body,
+    correctionLine: NotRelevantRecoveryCopy.correctionLine,
+    returnLine: NotRelevantRecoveryCopy.returnLine,
+    returnedAfterCorrectionLine:
+        NotRelevantRecoveryCopy.returnedAfterCorrectionLine,
+  );
 }
 
 class NotRelevantRecoveryRecord {
@@ -66,20 +65,18 @@ class NotRelevantRecoveryRecord {
   bool get answered => actionType != null;
 
   Map<String, dynamic> toJson() => {
-        if (actionType != null) 'actionType': actionType!.storageValue,
-        if (proofKey != null) 'proofKey': proofKey,
-        if (entryCount != null) 'entryCount': entryCount,
-        if (answeredAt != null)
-          'answeredAt': answeredAt!.toUtc().toIso8601String(),
-      };
+    if (actionType != null) 'actionType': actionType!.storageValue,
+    if (proofKey != null) 'proofKey': proofKey,
+    if (entryCount != null) 'entryCount': entryCount,
+    if (answeredAt != null) 'answeredAt': answeredAt!.toUtc().toIso8601String(),
+  };
 
   factory NotRelevantRecoveryRecord.fromJson(Map<String, dynamic>? json) {
     if (json == null || json.isEmpty) return empty;
     return NotRelevantRecoveryRecord(
       actionType: _actionFromRaw(json['actionType'] as String?),
       proofKey: json['proofKey'] is String ? json['proofKey'] as String : null,
-      entryCount:
-          json['entryCount'] is int ? json['entryCount'] as int : null,
+      entryCount: json['entryCount'] is int ? json['entryCount'] as int : null,
       answeredAt: _timestampFromRaw(json['answeredAt'] as String?),
     );
   }

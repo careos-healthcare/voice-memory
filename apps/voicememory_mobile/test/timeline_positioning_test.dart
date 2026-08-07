@@ -15,31 +15,30 @@ const _strongRepeat =
     'I had no capacity but I said yes again to the extra meeting today.';
 
 JournalEntry _entry(String id, String transcript) => JournalEntry(
-      id: id,
-      createdAt: DateTime(2026, 6, 12, 12),
-      transcript: transcript,
-      durationSeconds: 24,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'thoughtful',
-        emotionalIntensity: 2,
-        recurringThemes: ['work'],
-        exactLanguagePattern: '',
-        concreteObservation: 'Work pressure showed up again today.',
-        repeatedSignal: '',
-      ),
-      syncStatus: SyncStatus.localOnly,
-    );
+  id: id,
+  createdAt: DateTime(2026, 6, 12, 12),
+  transcript: transcript,
+  durationSeconds: 24,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'thoughtful',
+    emotionalIntensity: 2,
+    recurringThemes: ['work'],
+    exactLanguagePattern: '',
+    concreteObservation: 'Work pressure showed up again today.',
+    repeatedSignal: '',
+  ),
+  syncStatus: SyncStatus.localOnly,
+);
 
 TimelinePositioningResult _resultFor(
   List<JournalEntry> entries, {
   bool beliefSurfaceVisible = false,
-}) =>
-    TimelinePositioningEngine.build(
-      entries: entries,
-      beliefSurfaceVisible: beliefSurfaceVisible,
-      source: 'test',
-    );
+}) => TimelinePositioningEngine.build(
+  entries: entries,
+  beliefSurfaceVisible: beliefSurfaceVisible,
+  source: 'test',
+);
 
 void main() {
   final analyticsEvents = <({String event, Map<String, Object> props})>[];
@@ -121,26 +120,29 @@ void main() {
       );
     });
 
-    test('shows for early record user with at most one other education card', () {
-      final result = _resultFor([_entry('1', _strongRepeat)]);
-      expect(
-        TimelinePositioningEngine.shouldShowOnRecordReady(
-          result: result,
-          entryCount: 2,
-          otherEducationCardCount: 1,
-          isDegradedTranscriptState: false,
-          isPostSaveDegradedState: false,
-          firstProofPayoffVisible: false,
-          whatChangedQuestionActive: false,
-          patternReviewInboxHasActiveItems: false,
-        ),
-        isTrue,
-      );
-    });
+    test(
+      'shows for early record user with at most one other education card',
+      () {
+        final result = _resultFor([_entry('1', _strongRepeat)]);
+        expect(
+          TimelinePositioningEngine.shouldShowOnRecordReady(
+            result: result,
+            entryCount: 2,
+            otherEducationCardCount: 1,
+            isDegradedTranscriptState: false,
+            isPostSaveDegradedState: false,
+            firstProofPayoffVisible: false,
+            whatChangedQuestionActive: false,
+            patternReviewInboxHasActiveItems: false,
+          ),
+          isTrue,
+        );
+      },
+    );
   });
 
   group('TimelinePositioningCard', () {
-    Future<void> _pumpCard(
+    Future<void> pumpCard(
       WidgetTester tester,
       TimelinePositioningResult result, {
       bool compact = false,
@@ -160,14 +162,17 @@ void main() {
     }
 
     testWidgets('renders "Not a chat. A timeline."', (tester) async {
-      await _pumpCard(tester, _resultFor([_entry('1', _strongRepeat)]));
+      await pumpCard(tester, _resultFor([_entry('1', _strongRepeat)]));
 
-      expect(find.byKey(const Key('timeline_positioning_card')), findsOneWidget);
+      expect(
+        find.byKey(const Key('timeline_positioning_card')),
+        findsOneWidget,
+      );
       expect(find.text(TimelinePositioningCopy.title), findsOneWidget);
     });
 
     testWidgets('renders ChatGPT differentiation line', (tester) async {
-      await _pumpCard(tester, _resultFor([_entry('1', _strongRepeat)]));
+      await pumpCard(tester, _resultFor([_entry('1', _strongRepeat)]));
 
       expect(
         find.byKey(const Key('timeline_positioning_differentiation_line')),
@@ -180,7 +185,7 @@ void main() {
     });
 
     testWidgets('renders timeline bullets', (tester) async {
-      await _pumpCard(tester, _resultFor([_entry('1', _strongRepeat)]));
+      await pumpCard(tester, _resultFor([_entry('1', _strongRepeat)]));
 
       for (final bullet in TimelinePositioningCopy.timelineBullets) {
         expect(
@@ -191,7 +196,7 @@ void main() {
     });
 
     testWidgets('does not expose transcript/body/private text', (tester) async {
-      await _pumpCard(tester, _resultFor([_entry('1', _strongRepeat)]));
+      await pumpCard(tester, _resultFor([_entry('1', _strongRepeat)]));
 
       expect(find.textContaining(_strongRepeat), findsNothing);
       expect(find.textContaining('localAudioPath'), findsNothing);
@@ -199,7 +204,7 @@ void main() {
     });
 
     testWidgets('does not include subscription CTA', (tester) async {
-      await _pumpCard(tester, _resultFor([_entry('1', _strongRepeat)]));
+      await pumpCard(tester, _resultFor([_entry('1', _strongRepeat)]));
 
       expect(find.textContaining('Subscribe'), findsNothing);
       expect(find.byKey(const Key('pro_evidence_value_cta')), findsNothing);
@@ -207,17 +212,20 @@ void main() {
     });
 
     testWidgets('metadata-only analytics', (tester) async {
-      await _pumpCard(tester, _resultFor([_entry('1', _strongRepeat)]));
+      await pumpCard(tester, _resultFor([_entry('1', _strongRepeat)]));
 
       expect(analyticsEvents, hasLength(1));
       final record = analyticsEvents.single;
       expect(record.event, 'timeline_positioning_seen');
-      expect(record.props.keys, containsAll([
-        'source',
-        'entry_count',
-        'has_confirmed_repeat',
-        'has_belief_surface',
-      ]));
+      expect(
+        record.props.keys,
+        containsAll([
+          'source',
+          'entry_count',
+          'has_confirmed_repeat',
+          'has_belief_surface',
+        ]),
+      );
       for (final value in record.props.values) {
         final text = value.toString().toLowerCase();
         expect(text, isNot(contains('transcript')));
@@ -230,14 +238,17 @@ void main() {
     test('record screen renders card before Pro evidence bridge', () {
       final source = File('lib/screens/record_screen.dart').readAsStringSync();
       final cardIndex = source.indexOf('showTimelinePositioningOnRecordReady');
-      final proBridgeIndex = source.indexOf('showProEvidenceValueOnRecordReady');
+      final proBridgeIndex = source.indexOf(
+        'showProEvidenceValueOnRecordReady',
+      );
       expect(cardIndex, greaterThan(0));
       expect(proBridgeIndex, greaterThan(cardIndex));
     });
 
     test('patterns card sits above current relevance card', () {
-      final source =
-          File('lib/screens/archive_belief_screen.dart').readAsStringSync();
+      final source = File(
+        'lib/screens/archive_belief_screen.dart',
+      ).readAsStringSync();
       final timelineIndex = source.indexOf('TimelinePositioningCard(');
       final relevanceIndex = source.indexOf('CurrentRelevanceCard(');
       expect(timelineIndex, greaterThan(0));
@@ -249,7 +260,9 @@ void main() {
       final freedomIndex = source.indexOf(
         'if (showCaptureFreedomLine && !firstUseSimplifiedRecord) ...[',
       );
-      final timelineIndex = source.indexOf('showTimelinePositioningOnRecordReady)');
+      final timelineIndex = source.indexOf(
+        'showTimelinePositioningOnRecordReady)',
+      );
       expect(freedomIndex, greaterThan(0));
       expect(timelineIndex, greaterThan(freedomIndex));
     });

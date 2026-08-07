@@ -63,8 +63,7 @@ ProMomentTimingContext _baseContext({
     confidenceLevel: confidenceLevel,
     hasSafeAnchor: hasSafeAnchor,
     hasFreshReturnAfterCorrection: hasFreshReturnAfterCorrection,
-    hasSolidStrongPatternWithSafeAnchors:
-        hasSolidStrongPatternWithSafeAnchors,
+    hasSolidStrongPatternWithSafeAnchors: hasSolidStrongPatternWithSafeAnchors,
   );
 }
 
@@ -74,10 +73,7 @@ void main() {
   group('ProMomentTimingCopy', () {
     test('uses longer proof trail language', () {
       expect(ProMomentTimingCopy.headline, 'You saw the first useful repeat.');
-      expect(
-        ProMomentTimingCopy.body,
-        PaywallAlignmentCopy.body,
-      );
+      expect(ProMomentTimingCopy.body, PaywallAlignmentCopy.body);
       expect(
         ProMomentTimingCopy.compactLine,
         'Pro keeps the longer proof trail over time.',
@@ -92,7 +88,11 @@ void main() {
   group('ProMomentTimingEngine blocked moments', () {
     test('blocks before first save', () {
       final result = ProMomentTimingEngine.evaluate(
-        _baseContext(entryCount: 0, isZeroEntryState: true, hasFirstProof: false),
+        _baseContext(
+          entryCount: 0,
+          isZeroEntryState: true,
+          hasFirstProof: false,
+        ),
       );
       expect(result.allowed, isFalse);
       expect(
@@ -178,10 +178,7 @@ void main() {
 
     test('blocks when Pro slot already used', () {
       final result = ProMomentTimingEngine.evaluate(
-        _baseContext(
-          hasFirstProofPayoffVisible: true,
-          proSlotAvailable: false,
-        ),
+        _baseContext(hasFirstProofPayoffVisible: true, proSlotAvailable: false),
       );
       expect(result.allowed, isFalse);
       expect(
@@ -328,9 +325,9 @@ void main() {
     });
 
     test('billing constants not referenced by timing module', () {
-      final source =
-          File('lib/features/pro_moment_timing/pro_moment_timing_engine.dart')
-              .readAsStringSync();
+      final source = File(
+        'lib/features/pro_moment_timing/pro_moment_timing_engine.dart',
+      ).readAsStringSync();
       expect(source, isNot(contains('proEntitlementId')));
       expect(source, isNot(contains('archive_loop_pro_monthly')));
     });

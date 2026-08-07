@@ -21,10 +21,7 @@ abstract final class CapacityPullReasonIds {
   ];
 }
 
-enum CapacityPullReasonStatus {
-  answered,
-  skipped,
-}
+enum CapacityPullReasonStatus { answered, skipped }
 
 /// One local pull reason linked to a saved moment — ids only.
 class CapacityPullReasonRecord {
@@ -46,12 +43,12 @@ class CapacityPullReasonRecord {
       status == CapacityPullReasonStatus.answered && reasonIds.isNotEmpty;
 
   Map<String, dynamic> toJson() => {
-        'sourceEntryId': sourceEntryId,
-        'reasonIds': reasonIds,
-        'status': status.name,
-        'createdAt': createdAt.toUtc().toIso8601String(),
-        'updatedAt': updatedAt.toUtc().toIso8601String(),
-      };
+    'sourceEntryId': sourceEntryId,
+    'reasonIds': reasonIds,
+    'status': status.name,
+    'createdAt': createdAt.toUtc().toIso8601String(),
+    'updatedAt': updatedAt.toUtc().toIso8601String(),
+  };
 
   static CapacityPullReasonRecord? fromJson(Map<String, dynamic>? map) {
     if (map == null || map.isEmpty) return null;

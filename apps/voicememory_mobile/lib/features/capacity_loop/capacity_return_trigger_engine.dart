@@ -22,11 +22,22 @@ class CapacityReturnTriggerEngine {
     final target = CapacityReturnTriggerCopy.activationTarget;
 
     return switch (input.surface) {
-      CapacityReturnTriggerSurface.completion => _buildCompletion(count, target),
-      CapacityReturnTriggerSurface.archiveHome => _buildArchiveHome(count, target),
-      CapacityReturnTriggerSurface.recordLine => _buildRecordLine(count, target),
-      CapacityReturnTriggerSurface.betaMissionHint =>
-        _buildBetaMissionHint(count, target),
+      CapacityReturnTriggerSurface.completion => _buildCompletion(
+        count,
+        target,
+      ),
+      CapacityReturnTriggerSurface.archiveHome => _buildArchiveHome(
+        count,
+        target,
+      ),
+      CapacityReturnTriggerSurface.recordLine => _buildRecordLine(
+        count,
+        target,
+      ),
+      CapacityReturnTriggerSurface.betaMissionHint => _buildBetaMissionHint(
+        count,
+        target,
+      ),
     };
   }
 
@@ -45,8 +56,7 @@ class CapacityReturnTriggerEngine {
       return CapacityReturnTriggerResult.hidden;
     }
 
-    final momentCount =
-        loopEngine.eligibleCapacityEntryIds(realEntries).length;
+    final momentCount = loopEngine.eligibleCapacityEntryIds(realEntries).length;
 
     return build(
       CapacityReturnTriggerInput(
@@ -105,7 +115,9 @@ class CapacityReturnTriggerEngine {
       primaryCtaLabel: CapacityReturnTriggerCopy.archiveHomePrimaryCta,
       primaryRoute: '',
       primaryDismisses: true,
-      secondaryCtaLabel: CapacityReturnTriggerCopy.archiveHomeSecondaryCta(count),
+      secondaryCtaLabel: CapacityReturnTriggerCopy.archiveHomeSecondaryCta(
+        count,
+      ),
       secondaryRoute: CapacityReturnTriggerCopy.recordRoute,
       showSecondary: true,
       recordProgressLine: '',

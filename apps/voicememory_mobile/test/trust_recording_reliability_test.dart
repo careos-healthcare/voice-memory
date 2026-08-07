@@ -1,9 +1,15 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:voicememory_mobile/api/api_client.dart';
 import 'package:voicememory_mobile/config/app_config.dart';
+import 'package:voicememory_mobile/core/di/network_providers.dart';
+import 'package:voicememory_mobile/core/network/api_failure_mapper.dart';
+import 'package:voicememory_mobile/core/network/api_result.dart';
+import 'package:voicememory_mobile/core/network/network_cancel_token.dart';
+import 'package:voicememory_mobile/data/network/capture_api_client.dart';
+import 'package:voicememory_mobile/features/live_audio/domain/models/offline_vault_manifest.dart';
 import 'package:voicememory_mobile/features/beta/tester_mission_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/early_repeat_progress_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/post_save_return_handoff_copy.dart';
@@ -12,6 +18,8 @@ import 'package:voicememory_mobile/features/support/support_feedback_copy.dart';
 import 'package:voicememory_mobile/features/trust/capture_recovery_copy.dart';
 import 'package:voicememory_mobile/features/trust/capture_recovery_gates.dart';
 import 'package:voicememory_mobile/features/trust/trust_reliability_copy.dart';
+import 'package:voicememory_mobile/features/proof_admission/proof_admission_models.dart';
+import 'package:voicememory_mobile/models/attest_result.dart';
 import 'package:voicememory_mobile/features/voice_capture/microphone_permission_copy.dart';
 import 'package:voicememory_mobile/features/voice_capture/record_cta_policy.dart';
 import 'package:voicememory_mobile/features/voice_capture/record_microphone_permission_ui.dart';
@@ -27,22 +35,54 @@ import 'package:voicememory_mobile/widgets/record/capture_recovery_hint_strip.da
 import 'package:voicememory_mobile/widgets/record/microphone_permission_blocked_panel.dart';
 import 'package:voicememory_mobile/widgets/settings/privacy_data_controls_dialogs.dart';
 
-class _RecoveryFailingAnalyzeApi extends ApiClient {
-  _RecoveryFailingAnalyzeApi() : super(baseUrl: 'http://test.invalid');
-
+class _RecoveryFailingAnalyzeApi implements CaptureApiClient {
   @override
-  Future<AttestResult> postCaptureAttest(String deviceId) async {
-    return AttestResult.capture(token: 'test-token', expiresInSeconds: 3600);
+  Future<ApiResult<AttestResult>> postCaptureAttest(
+    String deviceId, {
+    NetworkCancelToken? cancelToken,
+  }) async {
+    return ApiSuccess(
+      AttestResult.capture(token: 'test-token', expiresInSeconds: 3600),
+    );
   }
 
   @override
-  Future<Reflection> postAnalyze({
+  Future<ApiResult<RawModelResponse>> postAnalyzeRaw({
     required String transcript,
     required String captureToken,
     List<Map<String, dynamic>> priorEvidence = const [],
     String? idempotencyKey,
+    NetworkCancelToken? cancelToken,
   }) async {
-    throw const SocketException('Network unavailable');
+    return ApiFailureResult(
+      ApiFailureMapper.fromException(
+        const SocketException('Network unavailable'),
+      ),
+    );
+  }
+
+  @override
+  Future<ApiResult<String>> postTranscribe({
+    required File audioFile,
+    required int durationSeconds,
+    required String captureToken,
+    String? idempotencyKey,
+    NetworkCancelToken? cancelToken,
+  }) async {
+    throw UnimplementedError('postTranscribe');
+  }
+
+  @override
+  Future<ApiResult<VaultRecoveryServerResult>> postVaultRecovery({
+    required File vaultFile,
+    required String sessionId,
+    required int durationSeconds,
+    required String captureToken,
+    required String idempotencyKey,
+    List<int>? recoverySecretKeyBytes,
+    NetworkCancelToken? cancelToken,
+  }) async {
+    throw UnimplementedError('postVaultRecovery');
   }
 }
 
@@ -123,8 +163,14 @@ void main() {
         MicrophonePermissionCopy.deniedBody,
         contains('use text if available'),
       );
-      expect(MicrophonePermissionCopy.deniedBody.toLowerCase(), isNot(contains('ai listens')));
-      expect(MicrophonePermissionCopy.deniedBody.toLowerCase(), isNot(contains('therapy')));
+      expect(
+        MicrophonePermissionCopy.deniedBody.toLowerCase(),
+        isNot(contains('ai listens')),
+      );
+      expect(
+        MicrophonePermissionCopy.deniedBody.toLowerCase(),
+        isNot(contains('therapy')),
+      );
     });
 
     testWidgets('blocked panel shows denied guidance', (tester) async {
@@ -145,6 +191,7 @@ void main() {
   });
 
   group('Recording and save failure copy', () {
+    late Directory tempDir;
     test('recording failure offers text fallback path', () {
       expect(
         VoiceCaptureCopy.recordingFailed,
@@ -169,8 +216,14 @@ void main() {
     test('save failure does not claim saved', () {
       expect(VoiceCaptureCopy.saveFailed, CaptureRecoveryCopy.saveFailed);
       expect(VoiceCaptureCopy.saveFailed, contains('not saved'));
-      expect(VoiceCaptureCopy.saveFailed.toLowerCase(), isNot(contains('saved privately')));
-      expect(VoiceCaptureCopy.saveFailed.toLowerCase(), isNot(contains('moment saved')));
+      expect(
+        VoiceCaptureCopy.saveFailed.toLowerCase(),
+        isNot(contains('saved privately')),
+      );
+      expect(
+        VoiceCaptureCopy.saveFailed.toLowerCase(),
+        isNot(contains('moment saved')),
+      );
     });
 
     test('transcript unavailable confirms save without dumping text', () {
@@ -186,7 +239,10 @@ void main() {
         VoiceCaptureCopy.transcriptUnavailable,
         contains('transcript may need another try'),
       );
-      expect(VoiceCaptureCopy.transcriptUnavailable, isNot(contains('transcript:')));
+      expect(
+        VoiceCaptureCopy.transcriptUnavailable,
+        isNot(contains('transcript:')),
+      );
     });
 
     test('local text save failure throws not saved copy', () async {
@@ -195,7 +251,11 @@ void main() {
       await AppServices.resetForTest(
         journalPath: journalPath,
         skipRevenueCat: true,
-        api: _RecoveryFailingAnalyzeApi(),
+        networkOverrides: [
+          captureApiClientProvider.overrideWithValue(
+            _RecoveryFailingAnalyzeApi(),
+          ),
+        ],
       );
       Process.runSync('chmod', ['444', journalPath]);
 
@@ -228,12 +288,12 @@ void main() {
       );
     });
 
-    testWidgets('returned-after-delay strip renders welcome back', (tester) async {
+    testWidgets('returned-after-delay strip renders welcome back', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         const MaterialApp(
-          home: Scaffold(
-            body: CaptureRecoveryHintStrip.returnedAfterDelay(),
-          ),
+          home: Scaffold(body: CaptureRecoveryHintStrip.returnedAfterDelay()),
         ),
       );
 
@@ -241,8 +301,14 @@ void main() {
         find.byKey(const Key('capture_recovery_returned_after_delay')),
         findsOneWidget,
       );
-      expect(find.text(CaptureRecoveryCopy.returnedAfterDelayTitle), findsOneWidget);
-      expect(find.text(CaptureRecoveryCopy.returnedAfterDelayBody), findsOneWidget);
+      expect(
+        find.text(CaptureRecoveryCopy.returnedAfterDelayTitle),
+        findsOneWidget,
+      );
+      expect(
+        find.text(CaptureRecoveryCopy.returnedAfterDelayBody),
+        findsOneWidget,
+      );
     });
 
     test('return gate opens after several days away', () {
@@ -291,16 +357,23 @@ void main() {
   group('Privacy and support trust copy', () {
     testWidgets('About trust section is visible', (tester) async {
       await tester.pumpWidget(
-        const MaterialApp(
-          home: Scaffold(body: PrivacyTrustSection()),
-        ),
+        const MaterialApp(home: Scaffold(body: PrivacyTrustSection())),
       );
 
       expect(find.text(TrustReliabilityCopy.sectionTitle), findsOneWidget);
-      expect(find.text(TrustReliabilityCopy.archivePrivateTitle), findsOneWidget);
+      expect(
+        find.text(TrustReliabilityCopy.archivePrivateTitle),
+        findsOneWidget,
+      );
       expect(find.text(TrustReliabilityCopy.resetArchiveTitle), findsOneWidget);
-      expect(find.text(TrustReliabilityCopy.copyPrivateReportsTitle), findsOneWidget);
-      expect(find.text(TrustReliabilityCopy.supportAvailableTitle), findsOneWidget);
+      expect(
+        find.text(TrustReliabilityCopy.copyPrivateReportsTitle),
+        findsOneWidget,
+      );
+      expect(
+        find.text(TrustReliabilityCopy.supportAvailableTitle),
+        findsOneWidget,
+      );
     });
 
     test('support URL is configured', () {
@@ -349,7 +422,10 @@ void main() {
         findsOneWidget,
       );
       expect(find.text(PrivacyDataControlsCopy.cancel), findsOneWidget);
-      expect(find.text(PrivacyDataControlsCopy.clearArchiveConfirm), findsOneWidget);
+      expect(
+        find.text(PrivacyDataControlsCopy.clearArchiveConfirm),
+        findsOneWidget,
+      );
       expect(
         PrivacyDataControlsCopy.clearLocalArchiveConfirmBody,
         contains('cannot be undone'),
@@ -359,10 +435,7 @@ void main() {
 
   group('Export and report copy', () {
     test('private report copy does not imply audio sharing', () {
-      expect(
-        PrivateArchiveReportCopy.copyReportCta,
-        'Copy report',
-      );
+      expect(PrivateArchiveReportCopy.copyReportCta, 'Copy report');
       expect(
         PrivateArchiveReportCopy.intro,
         contains('private summary from your saved moments'),

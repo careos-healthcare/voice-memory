@@ -1,4 +1,6 @@
 /// User-facing copy for the next evidence plan — no pressure or certainty.
+library;
+
 import '../pro_value/pro_value_copy.dart';
 
 abstract final class NextEvidencePlanCopy {
@@ -13,8 +15,7 @@ abstract final class NextEvidencePlanCopy {
   static const introBody =
       'Your archive will become clearer if you add one moment when this shows up again.';
 
-  static const oneEntryBody =
-      'Add one more moment when this shows up again.';
+  static const oneEntryBody = 'Add one more moment when this shows up again.';
   static const twoEntriesBody =
       'Add the moment that confirms, changes, or challenges this pattern.';
   static const beliefTestBody =
@@ -37,7 +38,8 @@ abstract final class NextEvidencePlanCopy {
   static const addMomentRoute = '/record';
   static const proPreviewRoute = ProValueCopy.proPreviewRoute;
 
-  static String watchingForLine(String label) => 'You are watching for: $label.';
+  static String watchingForLine(String label) =>
+      'You are watching for: $label.';
 
   static String watchlistPlanBody(String label) =>
       'Add a moment when \'$label\' shows up again.';

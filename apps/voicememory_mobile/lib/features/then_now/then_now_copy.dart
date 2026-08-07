@@ -20,8 +20,7 @@ abstract final class ThenNowCopy {
 
   static const helperText =
       'Based on saved moments. Open entries to review the evidence.';
-  static const cautionLabel =
-      'Based on saved moments from your local archive.';
+  static const cautionLabel = 'Based on saved moments from your local archive.';
 
   static const earlyHeadline =
       'ArchiveMe is starting to compare earlier and newer moments.';
@@ -49,8 +48,7 @@ abstract final class ThenNowCopy {
   static const enoughEvidenceLine =
       'ArchiveMe has enough evidence to compare earlier and newer moments.';
 
-  static const insufficientTitle =
-      'Then vs Now needs more saved moments.';
+  static const insufficientTitle = 'Then vs Now needs more saved moments.';
   static const insufficientBody =
       'Save a few more useful moments so ArchiveMe can compare what showed up '
       'earlier with what appears now.';
@@ -69,24 +67,23 @@ abstract final class ThenNowCopy {
   static const betaOutcomesNo = 'No';
 
   static const screenshotHeadline = 'Then vs now (sample)';
-  static const screenshotThenSummary = 'Example theme signal in earlier moments.';
-  static const screenshotNowSummary =
-      'Example only — no private data.';
+  static const screenshotThenSummary =
+      'Example theme signal in earlier moments.';
+  static const screenshotNowSummary = 'Example only — no private data.';
 
   static String evidenceCountLabel({
     required int earlierCount,
     required int newerCount,
     required int total,
-  }) =>
-      '$earlierCount earlier · $newerCount newer · $total saved moments';
+  }) => '$earlierCount earlier · $newerCount newer · $total saved moments';
 
   static String themeEvidenceLabel(String theme) =>
       'Repeated theme: ${_formatTheme(theme)}';
 
   static String weeklyReviewRoute({required bool weeklyReviewAvailable}) =>
       weeklyReviewAvailable
-          ? WeeklyArchiveReviewNavigation.route
-          : archiveHomeRoute;
+      ? WeeklyArchiveReviewNavigation.route
+      : archiveHomeRoute;
 
   static String _formatTheme(String theme) {
     final trimmed = theme.trim();
@@ -98,42 +95,42 @@ abstract final class ThenNowCopy {
   static String formatThemeForDisplay(String theme) => _formatTheme(theme);
 
   static List<String> get allVisibleStrings => [
-        eyebrow,
-        thenLabel,
-        nowLabel,
-        reviewChangeCta,
-        saveAnotherMomentCta,
-        saveMomentCta,
-        reviewWeeklyArchiveCta,
-        viewThenVsNowCta,
-        helperText,
-        cautionLabel,
-        earlyHeadline,
-        earlyThenSummary,
-        earlyNowSummary,
-        earlyWhatThisMeans,
-        comparisonHeadline,
-        thenMoreOften,
-        nowShifting,
-        thenAppeared,
-        nowStillAppears,
-        thenLessOften,
-        nowAppearingMore,
-        comparisonWhatThisMeans,
-        enoughEvidenceLine,
-        insufficientTitle,
-        insufficientBody,
-        noClearChangeTitle,
-        noClearChangeBody,
-        supportSectionTitle,
-        supportSectionBody,
-        betaOutcomesLabel,
-        betaOutcomesYes,
-        betaOutcomesNo,
-        screenshotHeadline,
-        screenshotThenSummary,
-        screenshotNowSummary,
-        evidenceCountLabel(earlierCount: 2, newerCount: 3, total: 5),
-        themeEvidenceLabel('work'),
-      ];
+    eyebrow,
+    thenLabel,
+    nowLabel,
+    reviewChangeCta,
+    saveAnotherMomentCta,
+    saveMomentCta,
+    reviewWeeklyArchiveCta,
+    viewThenVsNowCta,
+    helperText,
+    cautionLabel,
+    earlyHeadline,
+    earlyThenSummary,
+    earlyNowSummary,
+    earlyWhatThisMeans,
+    comparisonHeadline,
+    thenMoreOften,
+    nowShifting,
+    thenAppeared,
+    nowStillAppears,
+    thenLessOften,
+    nowAppearingMore,
+    comparisonWhatThisMeans,
+    enoughEvidenceLine,
+    insufficientTitle,
+    insufficientBody,
+    noClearChangeTitle,
+    noClearChangeBody,
+    supportSectionTitle,
+    supportSectionBody,
+    betaOutcomesLabel,
+    betaOutcomesYes,
+    betaOutcomesNo,
+    screenshotHeadline,
+    screenshotThenSummary,
+    screenshotNowSummary,
+    evidenceCountLabel(earlierCount: 2, newerCount: 3, total: 5),
+    themeEvidenceLabel('work'),
+  ];
 }

@@ -12,7 +12,7 @@ class TrialFirstMomentCard extends StatelessWidget {
   final VoidCallback onStartRecording;
 
   static const Color _warmSurface = Color(0xFFFFFBF5);
-  static const Color _warmBorder = Color(0xFFF5E6D3);
+  static const Color _warmBorder = AppColors.warmBorder;
 
   static const _bullets = [
     'Say what happened.',

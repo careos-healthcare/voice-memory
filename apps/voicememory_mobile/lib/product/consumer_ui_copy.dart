@@ -1,5 +1,4 @@
 import '../features/archive_proof/visible_archive_proof_copy.dart';
-import '../features/early_archive/early_first_signal_copy.dart';
 import '../features/landing_continuity/landing_app_continuity_copy.dart';
 import '../features/paywall_alignment/paywall_alignment_copy.dart';
 import '../features/paywall_value_sharpening/paywall_value_sharpening_copy.dart';
@@ -7,6 +6,10 @@ import '../features/paywall_value_sharpening/paywall_value_sharpening_copy.dart'
 /// Consumer-facing UI copy — calm, human, App Store-ready.
 abstract class ConsumerUiCopy {
   ConsumerUiCopy._();
+
+  static const String startupLocalStorageFailedBody =
+      'ArchiveMe could not open your private archive on this device. '
+      'Try restarting the app. If this keeps happening, reinstall from the App Store.';
 
   // ——— ArchiveMe competitive positioning ———
   static const String archivePositioningHeadline =
@@ -37,11 +40,14 @@ abstract class ConsumerUiCopy {
       LandingAppContinuityCopy.heroBody;
 
   // ——— Launch onboarding (promise + 3 steps) ———
-  static const String onboardingStep1Title = LandingAppContinuityCopy.step1Title;
+  static const String onboardingStep1Title =
+      LandingAppContinuityCopy.step1Title;
   static const String onboardingStep1Body = LandingAppContinuityCopy.step1Body;
-  static const String onboardingStep2Title = LandingAppContinuityCopy.step2Title;
+  static const String onboardingStep2Title =
+      LandingAppContinuityCopy.step2Title;
   static const String onboardingStep2Body = LandingAppContinuityCopy.step2Body;
-  static const String onboardingStep3Title = LandingAppContinuityCopy.step3Title;
+  static const String onboardingStep3Title =
+      LandingAppContinuityCopy.step3Title;
   static const String onboardingStep3Body = LandingAppContinuityCopy.step3Body;
   static const String onboardingPage2Title = onboardingStep1Title;
   static const String onboardingPage2Body = onboardingStep1Body;
@@ -132,8 +138,7 @@ abstract class ConsumerUiCopy {
   // ——— Positioning comprehension rescue ———
   static const String firstRecordPositioningLine =
       'Each moment helps ArchiveMe remember the pattern.';
-  static const String archiveMemoryDemoTitle =
-      'How ArchiveMe builds evidence';
+  static const String archiveMemoryDemoTitle = 'How ArchiveMe builds evidence';
   static const List<String> archiveMemoryDemoRows = [
     'Day 1: “I said yes before checking what I needed.”',
     'Day 3: “It showed up again before a work message.”',
@@ -142,8 +147,7 @@ abstract class ConsumerUiCopy {
   static const String archiveMemoryDemoRememberLine =
       'ArchiveMe watches what repeats — from your own words.';
   static const String archiveMemoryDemoCta = recordOneMomentCta;
-  static const String archiveMemoryPreviewTitle =
-      'What your archive will show';
+  static const String archiveMemoryPreviewTitle = 'What your archive will show';
   static const String archiveMemoryPreviewBody =
       'Over time, ArchiveMe can show what returned, what changed, and what helped.';
   static const List<String> archiveMemoryPreviewBullets = [
@@ -603,8 +607,7 @@ abstract class ConsumerUiCopy {
       'are available on this device.';
   static const String paywallSetupUnavailableBody =
       'Purchases are not available right now.';
-  static const String paywallBillingNotConfigured =
-      paywallSetupUnavailableBody;
+  static const String paywallBillingNotConfigured = paywallSetupUnavailableBody;
   static const String paywallUnavailablePlansLoading =
       'Monthly and yearly plans will appear when App Store products finish loading.';
   static const String plansUnavailable = paywallUnavailablePlansLoading;
@@ -968,5 +971,4 @@ abstract class ConsumerUiCopy {
 
   static const String patternsNoClearPatternBody =
       'Keep recording short reflections. Patterns become clearer after a few entries.';
-
 }

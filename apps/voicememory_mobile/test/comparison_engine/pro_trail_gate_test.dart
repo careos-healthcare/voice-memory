@@ -4,10 +4,10 @@ import 'package:voicememory_mobile/features/comparison_engine/domain/services/pr
 import 'package:voicememory_mobile/features/pro_conversion_audit/pro_conversion_audit_copy.dart';
 
 ArchiveMomentRecord _moment(String id, String words) => ArchiveMomentRecord(
-      id: id,
-      createdAt: DateTime.utc(2026, 6, 10),
-      savedWords: words,
-    );
+  id: id,
+  createdAt: DateTime.utc(2026, 6, 10),
+  savedWords: words,
+);
 
 void main() {
   group('ProTrailGate', () {

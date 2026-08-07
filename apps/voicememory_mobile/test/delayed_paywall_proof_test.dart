@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
@@ -11,37 +9,22 @@ import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/screens/paywall_screen.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
-import 'package:voicememory_mobile/storage/mobile_prefs_store.dart';
-
-class _MemoryPrefs extends MobilePrefsStore {
-  _MemoryPrefs()
-      : super(file: File('test/tmp/delayed_paywall_proof/unused.json'));
-
-  final Map<String, Map<String, dynamic>> maps = {};
-
-  @override
-  Future<Map<String, dynamic>?> readMap(String key) async => maps[key];
-
-  @override
-  Future<void> writeMap(String key, Map<String, dynamic> value) async {
-    maps[key] = value;
-  }
-}
+import 'support/test_storage_sandbox.dart';
 
 JournalEntry _entry(String id) => JournalEntry(
-      id: id,
-      createdAt: DateTime(2026, 6, 12, 10),
-      transcript: 'Saved moment $id with enough words to count.',
-      durationSeconds: 20,
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 2,
-        recurringThemes: ['work'],
-        exactLanguagePattern: '',
-        concreteObservation: 'Work pressure showed up.',
-        repeatedSignal: '',
-      ),
-    );
+  id: id,
+  createdAt: DateTime(2026, 6, 12, 10),
+  transcript: 'Saved moment $id with enough words to count.',
+  durationSeconds: 20,
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 2,
+    recurringThemes: ['work'],
+    exactLanguagePattern: '',
+    concreteObservation: 'Work pressure showed up.',
+    repeatedSignal: '',
+  ),
+);
 
 Future<void> _seedTwoMoments() async {
   await AppServices.instance.journalStore.save(_entry('e1'));
@@ -52,30 +35,32 @@ ProBridgeVisibilityInput _allowedInput({
   bool hasSeenFirstRepeat = true,
   bool hasOpenedEvidenceTrail = true,
   int entryCount = 2,
-}) =>
-    ProBridgeVisibilityInput(
-      surface: ProBridgeVisibilitySurface.recordReady,
-      source: 'test',
-      entryCount: entryCount,
-      isPro: false,
-      postProofProBridgeEnabled: true,
-      hasFirstProof: true,
-      hasTimelineProofVisible: true,
-      hasSeenFirstRepeat: hasSeenFirstRepeat,
-      hasOpenedEvidenceTrail: hasOpenedEvidenceTrail,
-    );
+}) => ProBridgeVisibilityInput(
+  surface: ProBridgeVisibilitySurface.recordReady,
+  source: 'test',
+  entryCount: entryCount,
+  isPro: false,
+  postProofProBridgeEnabled: true,
+  hasFirstProof: true,
+  hasTimelineProofVisible: true,
+  hasSeenFirstRepeat: hasSeenFirstRepeat,
+  hasOpenedEvidenceTrail: hasOpenedEvidenceTrail,
+);
 
 void main() {
+  late TestStorageSandbox sandbox;
   setUp(() async {
+    sandbox = TestStorageSandbox.create();
     await AppServices.resetForTest(
-      journalPath: '${DateTime.now().microsecondsSinceEpoch}_journal.json',
-      prefsPath: '${DateTime.now().microsecondsSinceEpoch}_prefs.json',
+      journalPath: sandbox.journalPath,
+      prefsPath: sandbox.prefsPath,
       skipRevenueCat: true,
     );
     DelayedPaywallProofStore.bypassGateForTest = false;
     await DelayedPaywallProofStore.resetForTest();
   });
 
+  tearDown(() => sandbox.dispose());
   group('DelayedPaywallProofStore', () {
     test('starts false until all proof milestones are recorded', () async {
       expect(DelayedPaywallProofStore.hasSeenFirstRepeat, isFalse);
@@ -179,9 +164,8 @@ void main() {
           ),
           GoRoute(
             path: '/subscription',
-            builder: (context, state) => PaywallScreen(
-              billingReadyOverride: () => false,
-            ),
+            builder: (context, state) =>
+                PaywallScreen(billingReadyOverride: () => false),
           ),
         ],
       );

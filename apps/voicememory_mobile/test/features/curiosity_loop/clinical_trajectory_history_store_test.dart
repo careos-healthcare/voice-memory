@@ -37,9 +37,7 @@ void main() {
         ),
       );
 
-      final points = await store.loadRecent(
-        now: DateTime.utc(2026, 6, 12, 12),
-      );
+      final points = await store.loadRecent(now: DateTime.utc(2026, 6, 12, 12));
 
       expect(points, hasLength(1));
       expect(points.single.direction, CognitiveDirection.recovering);
@@ -74,34 +72,38 @@ void main() {
         ),
       );
 
-      final points = await store.loadRecent(
-        now: DateTime.utc(2026, 6, 12, 12),
-      );
+      final points = await store.loadRecent(now: DateTime.utc(2026, 6, 12, 12));
 
       expect(points, hasLength(1));
       expect(points.single.lexicalDelta, closeTo(0.15, 0.0001));
     });
 
-    test('stores encrypted payloads without plaintext trajectory values', () async {
-      await store.appendRecord(
-        StoredTrajectoryRecord.fromAssessment(
-          date: DateTime.utc(2026, 6, 11, 12),
-          entryId: 'entry_new',
-          hookId: 'hook_new',
-          assessment: const TrajectoryAssessment(
-            lexicalDelta: 0.15,
-            driftDelta: -0.20,
-            volatilityDelta: -0.05,
-            direction: CognitiveDirection.recovering,
+    test(
+      'stores encrypted payloads without plaintext trajectory values',
+      () async {
+        await store.appendRecord(
+          StoredTrajectoryRecord.fromAssessment(
+            date: DateTime.utc(2026, 6, 11, 12),
+            entryId: 'entry_new',
+            hookId: 'hook_new',
+            assessment: const TrajectoryAssessment(
+              lexicalDelta: 0.15,
+              driftDelta: -0.20,
+              volatilityDelta: -0.05,
+              direction: CognitiveDirection.recovering,
+            ),
           ),
-        ),
-      );
+        );
 
-      final rawPrefs = await prefs.file.readAsString();
-      expect(rawPrefs.contains('entry_new'), isFalse);
-      expect(rawPrefs.contains('secure_clinical_trajectory_history_records'), isTrue);
-      expect(rawPrefs.contains('cipher'), isTrue);
-    });
+        final rawPrefs = await prefs.file.readAsString();
+        expect(rawPrefs.contains('entry_new'), isFalse);
+        expect(
+          rawPrefs.contains('secure_clinical_trajectory_history_records'),
+          isTrue,
+        );
+        expect(rawPrefs.contains('cipher'), isTrue);
+      },
+    );
 
     test('appendRecord returns true on successful encrypted write', () async {
       expect(
@@ -122,19 +124,24 @@ void main() {
       );
     });
 
-    test('returns empty history when encrypted payload cannot be decrypted',
-        () async {
-      await prefs.writeString(
-        LocalClinicalTrajectoryHistoryStore.prefsKey,
-        '{"cipher":"AAAA","nonce":"AAAA","mac":"AAAA"}',
-      );
+    test(
+      'returns empty history when encrypted payload cannot be decrypted',
+      () async {
+        await prefs.writeString(
+          LocalClinicalTrajectoryHistoryStore.prefsKey,
+          '{"cipher":"AAAA","nonce":"AAAA","mac":"AAAA"}',
+        );
 
-      expect(await store.loadRecent(now: DateTime.utc(2026, 6, 12, 12)), isEmpty);
-      expect(
-        await prefs.readString(LocalClinicalTrajectoryHistoryStore.prefsKey),
-        '',
-      );
-    });
+        expect(
+          await store.loadRecent(now: DateTime.utc(2026, 6, 12, 12)),
+          isEmpty,
+        );
+        expect(
+          await prefs.readString(LocalClinicalTrajectoryHistoryStore.prefsKey),
+          '',
+        );
+      },
+    );
 
     test('serializes wasGrounded in trajectory record json', () {
       final record = StoredTrajectoryRecord(
@@ -190,7 +197,9 @@ void main() {
 
       expect(points, hasLength(1));
       expect(
-        await prefs.readJsonMap(LocalClinicalTrajectoryHistoryStore.legacyPrefsKey),
+        await prefs.readJsonMap(
+          LocalClinicalTrajectoryHistoryStore.legacyPrefsKey,
+        ),
         isEmpty,
       );
       expect(

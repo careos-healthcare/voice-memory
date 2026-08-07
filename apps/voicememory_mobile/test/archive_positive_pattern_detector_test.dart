@@ -1,31 +1,5 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/features/archive_reactivity/archive_positive_pattern_detector.dart';
-import 'package:voicememory_mobile/models/journal_entry.dart';
-import 'package:voicememory_mobile/models/reflection.dart';
-import 'package:voicememory_mobile/models/sync_status.dart';
-
-JournalEntry _entry(
-  String transcript, {
-  String id = 'entry-1',
-  DateTime? createdAt,
-}) {
-  return JournalEntry(
-    id: id,
-    createdAt: createdAt ?? DateTime.utc(2026, 6, 10, 12),
-    transcript: transcript,
-    durationSeconds: 42,
-    reflection: const Reflection(
-      mood: 'neutral',
-      emotionalIntensity: 0,
-      recurringThemes: [],
-      exactLanguagePattern: '',
-      concreteObservation: '',
-      repeatedSignal: '',
-    ),
-    syncStatus: SyncStatus.localOnly,
-  );
-}
 
 void main() {
   group('ArchivePositivePatternDetector', () {

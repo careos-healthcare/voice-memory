@@ -3,19 +3,13 @@ import '../chat_differentiation/chat_differentiation_model.dart';
 
 /// One quoted line pulled from a saved entry — never invented.
 class FirstProofEvidenceSnippet {
-  const FirstProofEvidenceSnippet({
-    required this.label,
-    required this.quote,
-  });
+  const FirstProofEvidenceSnippet({required this.label, required this.quote});
 
   final String label;
   final String quote;
 }
 
-enum FirstProofPayoffVariant {
-  strongWithSnippets,
-  fallbackPhraseOnly,
-}
+enum FirstProofPayoffVariant { strongWithSnippets, fallbackPhraseOnly }
 
 /// Emotional payoff after the third related save — metadata for UI only.
 class FirstProofPayoff {

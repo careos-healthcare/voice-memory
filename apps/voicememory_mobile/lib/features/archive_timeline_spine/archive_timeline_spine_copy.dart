@@ -29,8 +29,7 @@ abstract final class ArchiveTimelineSpineCopy {
       'ArchiveMe still treats this as live context.';
 
   static const correctedLabel = 'Corrected';
-  static const correctedDetail =
-      'You adjusted how much this still matters.';
+  static const correctedDetail = 'You adjusted how much this still matters.';
 
   static const weightChangedLabel = 'Reweighted';
   static const weightChangedDetail =
@@ -48,58 +47,57 @@ abstract final class ArchiveTimelineSpineCopy {
       'Current weight: needs fresh proof';
 
   static String labelFor(ArchiveTimelineSpineRowId row) => switch (row) {
-        ArchiveTimelineSpineRowId.firstSeen => firstSeenLabel,
-        ArchiveTimelineSpineRowId.returned => returnedLabel,
-        ArchiveTimelineSpineRowId.stillCurrent => stillCurrentLabel,
-        ArchiveTimelineSpineRowId.correctedByYou => correctedLabel,
-        ArchiveTimelineSpineRowId.weightChanged => weightChangedLabel,
-        ArchiveTimelineSpineRowId.needsFreshProof => needsFreshProofLabel,
-      };
+    ArchiveTimelineSpineRowId.firstSeen => firstSeenLabel,
+    ArchiveTimelineSpineRowId.returned => returnedLabel,
+    ArchiveTimelineSpineRowId.stillCurrent => stillCurrentLabel,
+    ArchiveTimelineSpineRowId.correctedByYou => correctedLabel,
+    ArchiveTimelineSpineRowId.weightChanged => weightChangedLabel,
+    ArchiveTimelineSpineRowId.needsFreshProof => needsFreshProofLabel,
+  };
 
   static String detailFor(ArchiveTimelineSpineRowId row) => switch (row) {
-        ArchiveTimelineSpineRowId.firstSeen => firstSeenDetail,
-        ArchiveTimelineSpineRowId.returned => returnedDetail,
-        ArchiveTimelineSpineRowId.stillCurrent => stillCurrentDetail,
-        ArchiveTimelineSpineRowId.correctedByYou => correctedDetail,
-        ArchiveTimelineSpineRowId.weightChanged => weightChangedDetail,
-        ArchiveTimelineSpineRowId.needsFreshProof => needsFreshProofDetail,
-      };
+    ArchiveTimelineSpineRowId.firstSeen => firstSeenDetail,
+    ArchiveTimelineSpineRowId.returned => returnedDetail,
+    ArchiveTimelineSpineRowId.stillCurrent => stillCurrentDetail,
+    ArchiveTimelineSpineRowId.correctedByYou => correctedDetail,
+    ArchiveTimelineSpineRowId.weightChanged => weightChangedDetail,
+    ArchiveTimelineSpineRowId.needsFreshProof => needsFreshProofDetail,
+  };
 
   static String currentWeightLabelFor(
     ArchiveTimelineSpineCurrentWeight weight,
-  ) =>
-      switch (weight) {
-        ArchiveTimelineSpineCurrentWeight.strong => currentWeightStrong,
-        ArchiveTimelineSpineCurrentWeight.light => currentWeightLight,
-        ArchiveTimelineSpineCurrentWeight.fading => currentWeightFading,
-        ArchiveTimelineSpineCurrentWeight.corrected => currentWeightCorrected,
-        ArchiveTimelineSpineCurrentWeight.needsFreshProof =>
-          currentWeightNeedsFreshProof,
-      };
+  ) => switch (weight) {
+    ArchiveTimelineSpineCurrentWeight.strong => currentWeightStrong,
+    ArchiveTimelineSpineCurrentWeight.light => currentWeightLight,
+    ArchiveTimelineSpineCurrentWeight.fading => currentWeightFading,
+    ArchiveTimelineSpineCurrentWeight.corrected => currentWeightCorrected,
+    ArchiveTimelineSpineCurrentWeight.needsFreshProof =>
+      currentWeightNeedsFreshProof,
+  };
 
   static List<String> allVisibleStrings() => [
-        title,
-        subtitle,
-        explanation,
-        footer,
-        differentiationLine,
-        proBridgeCopy,
-        firstSeenLabel,
-        firstSeenDetail,
-        returnedLabel,
-        returnedDetail,
-        stillCurrentLabel,
-        stillCurrentDetail,
-        correctedLabel,
-        correctedDetail,
-        weightChangedLabel,
-        weightChangedDetail,
-        needsFreshProofLabel,
-        needsFreshProofDetail,
-        currentWeightStrong,
-        currentWeightLight,
-        currentWeightFading,
-        currentWeightCorrected,
-        currentWeightNeedsFreshProof,
-      ];
+    title,
+    subtitle,
+    explanation,
+    footer,
+    differentiationLine,
+    proBridgeCopy,
+    firstSeenLabel,
+    firstSeenDetail,
+    returnedLabel,
+    returnedDetail,
+    stillCurrentLabel,
+    stillCurrentDetail,
+    correctedLabel,
+    correctedDetail,
+    weightChangedLabel,
+    weightChangedDetail,
+    needsFreshProofLabel,
+    needsFreshProofDetail,
+    currentWeightStrong,
+    currentWeightLight,
+    currentWeightFading,
+    currentWeightCorrected,
+    currentWeightNeedsFreshProof,
+  ];
 }

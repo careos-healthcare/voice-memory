@@ -1,91 +1,45 @@
-import 'package:flutter/foundation.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../api/api_client.dart';
-import '../auth/account_auth.dart';
+import '../features/auth/application/auth_session_notifier.dart';
 import '../models/session.dart';
-import '../storage/session_cookie_store.dart';
-import '../storage/secure_storage.dart';
-import 'activation_funnel_analytics.dart';
 
+export '../models/session.dart' show UserSession;
+
+/// Facade over [AuthSessionNotifier] — preserves the legacy [AppServices.auth] surface.
 class AuthService {
-  AuthService(this._api, this._secure, this._cookies);
+  AuthService(this._notifier);
 
-  final ApiClient _api;
-  final SecureStorageService _secure;
-  final SessionCookieStore _cookies;
+  final AuthSessionNotifier _notifier;
 
-  Future<void> Function()? onSignedIn;
-  Future<void> Function()? onSignedOut;
+  Future<void> Function()? get onSignedIn => _notifier.onSignedIn;
+  set onSignedIn(Future<void> Function()? callback) =>
+      _notifier.onSignedIn = callback;
 
-  UserSession? _cached;
+  Future<void> Function()? get onSignedOut => _notifier.onSignedOut;
+  set onSignedOut(Future<void> Function()? callback) =>
+      _notifier.onSignedOut = callback;
 
-  UserSession? get currentSession => _cached;
+  UserSession? get currentSession => _notifier.currentSession;
 
-  Future<void> loadPersistedSession() async {
-    try {
-      final cookie = await _cookies.read();
-      if (cookie != null && cookie.isNotEmpty) {
-        _api.setSessionCookie(cookie);
-        _cached = await _api.getSession();
-      }
-    } catch (e, st) {
-      debugPrint(
-        'Auth: persisted session refresh failed — continuing startup: $e',
-      );
-      if (kDebugMode) {
-        debugPrint('$st');
-      }
-      _cached = null;
-    }
-  }
+  Future<void> loadPersistedSession() => _notifier.loadPersistedSession();
 
-  Future<UserSession?> refreshSession() async {
-    try {
-      _cached = await _api.getSession();
-      if (_cached != null) {
-        await _secure.write('last_email', _cached!.email);
-      }
-    } catch (e, st) {
-      debugPrint('Auth: refreshSession failed — continuing: $e');
-      if (kDebugMode) debugPrint('$st');
-      _cached = null;
-    }
-    return _cached;
-  }
+  Future<UserSession?> refreshSession() => _notifier.refreshSession();
 
-  Future<void> sendAuthCode(String email) async {
-    await _api.sendAuthCode(email);
-    await _secure.write('last_email', email.trim());
-  }
+  Future<void> sendAuthCode(String email) => _notifier.sendAuthCode(email);
 
   Future<UserSession> verifyAuthCode({
     required String email,
     required String code,
-  }) async {
-    final session = await _api.verifyAuthCode(email: email, code: code);
-    _cached = session;
-    final cookie = _api.sessionCookie;
-    if (cookie != null) await _cookies.write(cookie);
-    await _secure.write('last_email', email.trim());
-    await onSignedIn?.call();
-    return session;
-  }
+  }) => _notifier.verifyAuthCode(email: email, code: code);
 
-  /// Ends the server session and clears the local cookie. Never touches
-  /// the local journal — recordings stay on this device after sign-out.
-  Future<void> signOut() async {
-    try {
-      await _api.signOut();
-    } catch (_) {}
-    _cached = null;
-    _api.setSessionCookie(null);
-    await _cookies.clear();
-    await onSignedOut?.call();
-    ActivationFunnelAnalytics.track(
-      ActivationFunnelAnalytics.accountSignout,
-      method: AccountAuth.method,
-    );
-  }
+  Future<void> signOut() => _notifier.signOut();
 
-  Future<String?> lastEmail() => _secure.read('last_email');
+  Future<String?> lastEmail() => _notifier.lastEmail();
+}
+
+/// Test helper — builds an [AuthService] backed by an overridden repository.
+AuthService createAuthServiceForTest({
+  required ProviderContainer container,
+}) {
+  return AuthService(container.read(authSessionProvider.notifier));
 }

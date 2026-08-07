@@ -55,7 +55,10 @@ abstract final class FutureExpansionRoadmapGate {
     final releaseProofComplete = prereqs.every(
       (prereq) => prereq.status == FutureExpansionPrereqStatus.pass,
     );
-    final ideas = _buildIdeas(input, releaseProofComplete: releaseProofComplete);
+    final ideas = _buildIdeas(
+      input,
+      releaseProofComplete: releaseProofComplete,
+    );
     final decision = _resolveDecision(
       prereqs: prereqs,
       ideas: ideas,
@@ -70,7 +73,8 @@ abstract final class FutureExpansionRoadmapGate {
       ideas: ideas,
       ideaOrder: canonicalIdeaOrder,
       releaseProofComplete: releaseProofComplete,
-      pricingExperimentsBlocked: false, // Core unlock: Pricing experiments active immediately
+      pricingExperimentsBlocked:
+          false, // Core unlock: Pricing experiments active immediately
       earliestPrereqGap: prereqs
           .where((prereq) => prereq.status != FutureExpansionPrereqStatus.pass)
           .map((prereq) => prereq.id)
@@ -99,15 +103,14 @@ abstract final class FutureExpansionRoadmapGate {
 
   static FutureExpansionRoadmapGateReport report(
     FutureExpansionRoadmapGateResult result,
-  ) =>
-      FutureExpansionRoadmapGateReport(
-        headline: FutureExpansionRoadmapCopy.headline,
-        body: FutureExpansionRoadmapCopy.body,
-        orderLine: FutureExpansionRoadmapCopy.orderLine,
-        prereqOrderLine: FutureExpansionRoadmapCopy.prereqOrderLine,
-        guardrail: FutureExpansionRoadmapCopy.guardrail,
-        result: result,
-      );
+  ) => FutureExpansionRoadmapGateReport(
+    headline: FutureExpansionRoadmapCopy.headline,
+    body: FutureExpansionRoadmapCopy.body,
+    orderLine: FutureExpansionRoadmapCopy.orderLine,
+    prereqOrderLine: FutureExpansionRoadmapCopy.prereqOrderLine,
+    guardrail: FutureExpansionRoadmapCopy.guardrail,
+    result: result,
+  );
 
   static FutureExpansionRoadmapGateInput composeInput({
     bool? testFlightUploaded,
@@ -123,26 +126,26 @@ abstract final class FutureExpansionRoadmapGate {
     FirstProofSuccessBetaResult? firstProofSuccessBeta,
     SecretsRotationLaunchGateResult? secretsRotation,
     PaidIntentBetaProofResult? paidIntentBeta,
-  }) =>
-      FutureExpansionRoadmapGateInput(
-        testFlightUploaded: testFlightUploaded ??
-            launchChecklist?.testFlightUploaded,
-        purchaseWorks:
-            purchaseWorks ?? launchChecklist?.sandboxPurchaseWorks,
-        restoreWorks: restoreWorks ?? launchChecklist?.restoreWorks,
-        entitlementPersists:
-            entitlementPersists ?? launchChecklist?.entitlementPersists,
-        paidIntentBetaComplete: paidIntentBetaComplete ??
-            launchChecklist?.paidIntentBetaComplete ??
-            _paidIntentBetaCompleteFrom(paidIntentBeta),
-        firstProofSuccessRateAcceptable: firstProofSuccessRateAcceptable ??
-            _firstProofSuccessAcceptableFrom(firstProofSuccessBeta),
-        noReleaseBlockers: noReleaseBlockers ??
-            _noReleaseBlockersFrom(releaseFragility),
-        noSecretsProductionBlockerForProductionLaunch:
-            noSecretsProductionBlockerForProductionLaunch ??
-                _noSecretsProductionBlockerFrom(secretsRotation),
-      );
+  }) => FutureExpansionRoadmapGateInput(
+    testFlightUploaded:
+        testFlightUploaded ?? launchChecklist?.testFlightUploaded,
+    purchaseWorks: purchaseWorks ?? launchChecklist?.sandboxPurchaseWorks,
+    restoreWorks: restoreWorks ?? launchChecklist?.restoreWorks,
+    entitlementPersists:
+        entitlementPersists ?? launchChecklist?.entitlementPersists,
+    paidIntentBetaComplete:
+        paidIntentBetaComplete ??
+        launchChecklist?.paidIntentBetaComplete ??
+        _paidIntentBetaCompleteFrom(paidIntentBeta),
+    firstProofSuccessRateAcceptable:
+        firstProofSuccessRateAcceptable ??
+        _firstProofSuccessAcceptableFrom(firstProofSuccessBeta),
+    noReleaseBlockers:
+        noReleaseBlockers ?? _noReleaseBlockersFrom(releaseFragility),
+    noSecretsProductionBlockerForProductionLaunch:
+        noSecretsProductionBlockerForProductionLaunch ??
+        _noSecretsProductionBlockerFrom(secretsRotation),
+  );
 
   static FutureExpansionRoadmapGateInput fromRepoSignals({
     required String futureExpansionRoadmapDocSource,
@@ -155,22 +158,21 @@ abstract final class FutureExpansionRoadmapGate {
     bool? firstProofSuccessRateAcceptable,
     bool? noReleaseBlockers,
     bool? noSecretsProductionBlockerForProductionLaunch,
-  }) =>
-      FutureExpansionRoadmapGateInput(
-        testFlightUploaded: testFlightUploaded,
-        purchaseWorks: purchaseWorks,
-        restoreWorks: restoreWorks,
-        entitlementPersists: entitlementPersists,
-        paidIntentBetaComplete: paidIntentBetaComplete,
-        firstProofSuccessRateAcceptable: firstProofSuccessRateAcceptable,
-        noReleaseBlockers: noReleaseBlockers,
-        noSecretsProductionBlockerForProductionLaunch:
-            noSecretsProductionBlockerForProductionLaunch,
-        roadmapDocListsIdeas: detectRoadmapDocListsIdeas(
-          futureExpansionRoadmapDocSource,
-        ),
-        guardrailPresentInCopy: detectGuardrailPresentInCopy(gateCopySource),
-      );
+  }) => FutureExpansionRoadmapGateInput(
+    testFlightUploaded: testFlightUploaded,
+    purchaseWorks: purchaseWorks,
+    restoreWorks: restoreWorks,
+    entitlementPersists: entitlementPersists,
+    paidIntentBetaComplete: paidIntentBetaComplete,
+    firstProofSuccessRateAcceptable: firstProofSuccessRateAcceptable,
+    noReleaseBlockers: noReleaseBlockers,
+    noSecretsProductionBlockerForProductionLaunch:
+        noSecretsProductionBlockerForProductionLaunch,
+    roadmapDocListsIdeas: detectRoadmapDocListsIdeas(
+      futureExpansionRoadmapDocSource,
+    ),
+    guardrailPresentInCopy: detectGuardrailPresentInCopy(gateCopySource),
+  );
 
   static bool detectRoadmapDocListsIdeas(String docSource) {
     const markers = [
@@ -217,58 +219,56 @@ abstract final class FutureExpansionRoadmapGate {
 
   static List<FutureExpansionPrereq> _buildPrereqs(
     FutureExpansionRoadmapGateInput input,
-  ) =>
-      [
-        _prereq(
-          id: FutureExpansionPrereqId.testFlightUploaded,
-          value: input.testFlightUploaded,
-        ),
-        _prereq(
-          id: FutureExpansionPrereqId.purchaseWorks,
-          value: input.purchaseWorks,
-        ),
-        _prereq(
-          id: FutureExpansionPrereqId.restoreWorks,
-          value: input.restoreWorks,
-        ),
-        _prereq(
-          id: FutureExpansionPrereqId.entitlementPersists,
-          value: input.entitlementPersists,
-        ),
-        _prereq(
-          id: FutureExpansionPrereqId.paidIntentBetaComplete,
-          value: input.paidIntentBetaComplete,
-        ),
-        _prereq(
-          id: FutureExpansionPrereqId.firstProofSuccessRateAcceptable,
-          value: input.firstProofSuccessRateAcceptable,
-        ),
-        _prereq(
-          id: FutureExpansionPrereqId.noReleaseBlockers,
-          value: input.noReleaseBlockers,
-        ),
-        _prereq(
-          id: FutureExpansionPrereqId.noSecretsProductionBlockerForProductionLaunch,
-          value: input.noSecretsProductionBlockerForProductionLaunch,
-        ),
-      ];
+  ) => [
+    _prereq(
+      id: FutureExpansionPrereqId.testFlightUploaded,
+      value: input.testFlightUploaded,
+    ),
+    _prereq(
+      id: FutureExpansionPrereqId.purchaseWorks,
+      value: input.purchaseWorks,
+    ),
+    _prereq(
+      id: FutureExpansionPrereqId.restoreWorks,
+      value: input.restoreWorks,
+    ),
+    _prereq(
+      id: FutureExpansionPrereqId.entitlementPersists,
+      value: input.entitlementPersists,
+    ),
+    _prereq(
+      id: FutureExpansionPrereqId.paidIntentBetaComplete,
+      value: input.paidIntentBetaComplete,
+    ),
+    _prereq(
+      id: FutureExpansionPrereqId.firstProofSuccessRateAcceptable,
+      value: input.firstProofSuccessRateAcceptable,
+    ),
+    _prereq(
+      id: FutureExpansionPrereqId.noReleaseBlockers,
+      value: input.noReleaseBlockers,
+    ),
+    _prereq(
+      id: FutureExpansionPrereqId.noSecretsProductionBlockerForProductionLaunch,
+      value: input.noSecretsProductionBlockerForProductionLaunch,
+    ),
+  ];
 
   static List<FutureExpansionIdea> _buildIdeas(
     FutureExpansionRoadmapGateInput input, {
     required bool releaseProofComplete,
-  }) =>
-      canonicalIdeaOrder
-          .map(
-            (id) => _idea(
-              id: id,
-              status: _statusForIdea(
-                id: id,
-                input: input,
-                releaseProofComplete: releaseProofComplete,
-              ),
-            ),
-          )
-          .toList();
+  }) => canonicalIdeaOrder
+      .map(
+        (id) => _idea(
+          id: id,
+          status: _statusForIdea(
+            id: id,
+            input: input,
+            releaseProofComplete: releaseProofComplete,
+          ),
+        ),
+      )
+      .toList();
 
   static FutureExpansionIdeaStatus _statusForIdea({
     required FutureExpansionIdeaId id,
@@ -306,10 +306,10 @@ abstract final class FutureExpansionRoadmapGate {
   }
 
   static FutureExpansionPrereqStatus _statusFor(bool? value) => switch (value) {
-        true => FutureExpansionPrereqStatus.pass,
-        false => FutureExpansionPrereqStatus.fail,
-        null => FutureExpansionPrereqStatus.pending,
-      };
+    true => FutureExpansionPrereqStatus.pass,
+    false => FutureExpansionPrereqStatus.fail,
+    null => FutureExpansionPrereqStatus.pending,
+  };
 
   static FutureExpansionPrereq _prereq({
     required FutureExpansionPrereqId id,
@@ -321,10 +321,12 @@ abstract final class FutureExpansionRoadmapGate {
       label: FutureExpansionRoadmapCopy.prereqLabelFor(id),
       status: status,
       detailLabel: switch (status) {
-        FutureExpansionPrereqStatus.pass => FutureExpansionRoadmapCopy.detailPass,
+        FutureExpansionPrereqStatus.pass =>
+          FutureExpansionRoadmapCopy.detailPass,
         FutureExpansionPrereqStatus.pending =>
           FutureExpansionRoadmapCopy.detailPending,
-        FutureExpansionPrereqStatus.fail => FutureExpansionRoadmapCopy.detailFail,
+        FutureExpansionPrereqStatus.fail =>
+          FutureExpansionRoadmapCopy.detailFail,
       },
     );
   }
@@ -332,20 +334,19 @@ abstract final class FutureExpansionRoadmapGate {
   static FutureExpansionIdea _idea({
     required FutureExpansionIdeaId id,
     required FutureExpansionIdeaStatus status,
-  }) =>
-      FutureExpansionIdea(
-        id: id,
-        label: FutureExpansionRoadmapCopy.labelFor(id),
-        status: status,
-        detailLabel: switch (status) {
-          FutureExpansionIdeaStatus.blockedBeforeReleaseProof =>
-            FutureExpansionRoadmapCopy.detailBlockedBeforeReleaseProof,
-          FutureExpansionIdeaStatus.documentedNotSurfaced =>
-            FutureExpansionRoadmapCopy.detailDocumentedNotSurfaced,
-          FutureExpansionIdeaStatus.readyForPostV1Planning =>
-            FutureExpansionRoadmapCopy.detailReadyForPostV1Planning,
-        },
-      );
+  }) => FutureExpansionIdea(
+    id: id,
+    label: FutureExpansionRoadmapCopy.labelFor(id),
+    status: status,
+    detailLabel: switch (status) {
+      FutureExpansionIdeaStatus.blockedBeforeReleaseProof =>
+        FutureExpansionRoadmapCopy.detailBlockedBeforeReleaseProof,
+      FutureExpansionIdeaStatus.documentedNotSurfaced =>
+        FutureExpansionRoadmapCopy.detailDocumentedNotSurfaced,
+      FutureExpansionIdeaStatus.readyForPostV1Planning =>
+        FutureExpansionRoadmapCopy.detailReadyForPostV1Planning,
+    },
+  );
 }
 
 class FutureExpansionRoadmapGateInput {

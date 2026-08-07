@@ -23,10 +23,7 @@ Future<void> _pumpCard(
     MaterialApp(
       home: Scaffold(
         body: FirstSaveLiftCard.test(
-          result: FirstSaveLiftEngine.build(
-            entryCount: 0,
-            source: 'test',
-          ),
+          result: FirstSaveLiftEngine.build(entryCount: 0, source: 'test'),
           onTypeOneSentence: onTypeOneSentence,
           onRecordInstead: onRecordInstead,
           onExampleSelected: (_) {},
@@ -40,34 +37,33 @@ Future<void> _pumpCard(
 SurfacePriorityCandidates _recordCandidates({
   bool firstSaveLift = false,
   bool betaActivationPath = false,
-}) =>
-    SurfacePriorityCandidates.recordReady(
-      firstSaveLift: firstSaveLift,
-      betaActivationPath: betaActivationPath,
-      threeMomentCompletion: false,
-      firstMomentCapture: false,
-      secondMomentReturn: false,
-      lowFrictionReturn: false,
-      whatToNoticeNext: false,
-      betaTodaySummary: false,
-      openCapturePromptChips: false,
-      captureFreedomLine: false,
-      timelineProofMoment: false,
-      archiveTimelineSpine: false,
-      timelinePositioning: false,
-      currentRelevance: false,
-      correctionMemory: false,
-      notRelevantRecovery: false,
-      proofQualityResponse: false,
-      evidenceWeighting: false,
-      proofSpecificity: false,
-      presentDayRelevance: false,
-      patternConfidence: false,
-      betaTesterReport: false,
-      proEvidenceValue: false,
-      privateReportProBridge: false,
-      suppressLegacyEducation: false,
-    );
+}) => SurfacePriorityCandidates.recordReady(
+  firstSaveLift: firstSaveLift,
+  betaActivationPath: betaActivationPath,
+  threeMomentCompletion: false,
+  firstMomentCapture: false,
+  secondMomentReturn: false,
+  lowFrictionReturn: false,
+  whatToNoticeNext: false,
+  betaTodaySummary: false,
+  openCapturePromptChips: false,
+  captureFreedomLine: false,
+  timelineProofMoment: false,
+  archiveTimelineSpine: false,
+  timelinePositioning: false,
+  currentRelevance: false,
+  correctionMemory: false,
+  notRelevantRecovery: false,
+  proofQualityResponse: false,
+  evidenceWeighting: false,
+  proofSpecificity: false,
+  presentDayRelevance: false,
+  patternConfidence: false,
+  betaTesterReport: false,
+  proEvidenceValue: false,
+  privateReportProBridge: false,
+  suppressLegacyEducation: false,
+);
 
 void main() {
   setUp(() {
@@ -78,14 +74,20 @@ void main() {
 
   group('FirstSaveLiftCopy', () {
     test('uses zero-entry lift copy', () {
-      expect(FirstSaveLiftCopy.title, 'Save the moment that keeps pulling at you');
+      expect(
+        FirstSaveLiftCopy.title,
+        'Save the moment that keeps pulling at you',
+      );
       expect(
         FirstSaveLiftCopy.body,
         'One sentence is enough. ArchiveMe needs one real moment before it can show what comes back.',
       );
       expect(FirstSaveLiftCopy.primaryCta, 'Type one sentence');
       expect(FirstSaveLiftCopy.secondaryCta, 'Record instead');
-      expect(FirstSaveLiftCopy.exampleKeptCheckingAgain, 'I kept checking again');
+      expect(
+        FirstSaveLiftCopy.exampleKeptCheckingAgain,
+        'I kept checking again',
+      );
     });
   });
 
@@ -199,7 +201,10 @@ void main() {
         ),
         isFalse,
       );
-      expect(result.hiddenReasons, contains(SurfacePriorityCopy.hiddenReasonGuidanceCap));
+      expect(
+        result.hiddenReasons,
+        contains(SurfacePriorityCopy.hiddenReasonGuidanceCap),
+      );
     });
   });
 
@@ -220,8 +225,9 @@ void main() {
     });
 
     test('testing screen includes compact preview', () {
-      final source =
-          File('lib/screens/testing_archiveme_screen.dart').readAsStringSync();
+      final source = File(
+        'packages/archiveme_research/lib/screens/testing_archiveme_screen.dart',
+      ).readAsStringSync();
       expect(source, contains('FirstSaveLiftCard.test'));
     });
   });

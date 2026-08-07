@@ -32,9 +32,9 @@ class MilestoneShareHomeCard extends StatefulWidget {
     this.initialWatchlistCount = 0,
     this.engine = const MilestoneShareEngine(),
     this.onPrimaryAction,
-  })  : watchlistStore = null,
-        sampleMode = false,
-        skipPrefsLoad = true;
+  }) : watchlistStore = null,
+       sampleMode = false,
+       skipPrefsLoad = true;
 
   final List<JournalEntry> entries;
   final ArchiveWatchlistStore? watchlistStore;
@@ -68,7 +68,8 @@ class _MilestoneShareHomeCardState extends State<MilestoneShareHomeCard> {
   }
 
   Future<void> _load() async {
-    final store = widget.watchlistStore ??
+    final store =
+        widget.watchlistStore ??
         ArchiveWatchlistStore(AppServices.instance.prefs);
     final items = await store.loadItems();
     if (!mounted) return;
@@ -140,7 +141,8 @@ class _MilestoneShareHomeCardState extends State<MilestoneShareHomeCard> {
           FilledButton(
             key: const Key('milestone_share_card_primary_button'),
             onPressed:
-                widget.onPrimaryAction ?? () => context.push(result.primaryRoute),
+                widget.onPrimaryAction ??
+                () => context.push(result.primaryRoute),
             child: Text(result.primaryCtaLabel),
           ),
         ],

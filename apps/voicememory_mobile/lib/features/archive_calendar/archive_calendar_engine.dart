@@ -54,8 +54,10 @@ class ArchiveCalendarEngine {
       final local = day.date;
       return !local.isBefore(weekStart) && local.isBefore(weekEnd);
     }).toList();
-    final weekCount =
-        weekDays.fold<int>(0, (sum, day) => sum + day.momentCount);
+    final weekCount = weekDays.fold<int>(
+      0,
+      (sum, day) => sum + day.momentCount,
+    );
     final monthCount = days
         .where(
           (day) =>
@@ -183,7 +185,8 @@ class ArchiveCalendarEngine {
       }
 
       final localNow = now.toLocal();
-      final isToday = day.year == localNow.year &&
+      final isToday =
+          day.year == localNow.year &&
           day.month == localNow.month &&
           day.day == localNow.day;
 
@@ -195,8 +198,7 @@ class ArchiveCalendarEngine {
         isToday: isToday,
         isMostActiveDay: count == maxCount && maxCount > 0,
       );
-    }).toList()
-      ..sort((a, b) => b.date.compareTo(a.date));
+    }).toList()..sort((a, b) => b.date.compareTo(a.date));
   }
 
   static ArchiveCalendarResult _emptyResult() {
@@ -232,9 +234,7 @@ class ArchiveCalendarEngine {
       date: sampleDay,
       dayLabel: _dayLabel(sampleDay),
       momentCount: 2,
-      markerLabels: const [
-        ArchiveCalendarCopy.markerMultipleMoments,
-      ],
+      markerLabels: const [ArchiveCalendarCopy.markerMultipleMoments],
       isToday: true,
       isMostActiveDay: true,
     );
@@ -246,8 +246,10 @@ class ArchiveCalendarEngine {
       activeDayCount: 1,
       monthLabel: _monthYearLabel(now),
       days: [day],
-      weekSummaryLabel:
-          ArchiveCalendarCopy.weekSummaryLabel(count: 2, dayCount: 1),
+      weekSummaryLabel: ArchiveCalendarCopy.weekSummaryLabel(
+        count: 2,
+        dayCount: 1,
+      ),
       monthlyTotalLabel: ArchiveCalendarCopy.monthlyTotalLabel(
         count: 2,
         monthLabel: _monthYearLabel(now),
@@ -274,8 +276,11 @@ class ArchiveCalendarEngine {
   static DateTime _startOfWeek(DateTime date) {
     final local = date.toLocal();
     final weekday = local.weekday;
-    return DateTime(local.year, local.month, local.day)
-        .subtract(Duration(days: weekday - DateTime.monday));
+    return DateTime(
+      local.year,
+      local.month,
+      local.day,
+    ).subtract(Duration(days: weekday - DateTime.monday));
   }
 
   static String _dayLabel(DateTime day) {

@@ -1,3 +1,5 @@
+import '../archive_evidence/evidence_entry_ids.dart';
+
 /// Kind of insight that can be explained.
 enum ArchiveInsightKind {
   belief,
@@ -280,10 +282,10 @@ class ArchiveExplanation {
   final String? beliefStatement;
   final bool hasDeeperContent;
 
-  List<String> get allEntryIds => [
-    ...supportingEvidence.map((e) => e.entryId),
-    ...contradictingEvidence.map((e) => e.entryId),
-  ].toSet().toList();
+  List<String> get allEntryIds => EvidenceEntryIds.merge([
+    supportingEvidence.map((e) => e.entryId),
+    contradictingEvidence.map((e) => e.entryId),
+  ], max: 999);
 }
 
 /// Surprise pattern for "Your Archive Noticed".

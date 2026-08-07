@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/features/beta/archive_beta_mission_gate.dart';
-import 'package:voicememory_mobile/features/beta_feedback/beta_feedback_models.dart';
 import 'package:voicememory_mobile/features/beta_feedback/beta_feedback_store.dart';
 import 'package:voicememory_mobile/features/beta_test_script/beta_test_script_analytics.dart';
 import 'package:voicememory_mobile/features/beta_test_script/beta_test_script_copy.dart';
@@ -15,12 +14,10 @@ import 'package:voicememory_mobile/features/first_proof_truth/first_proof_truth_
 import 'package:voicememory_mobile/features/first_proof_truth/first_proof_truth_store.dart';
 import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
-import 'package:voicememory_mobile/screens/testing_archiveme_screen.dart';
+import 'package:archiveme_research/screens/testing_archiveme_screen.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
-import 'package:voicememory_mobile/services/capture_save_messages.dart';
 import 'package:voicememory_mobile/storage/mobile_prefs_store.dart';
 import 'package:voicememory_mobile/theme/app_theme.dart';
-import 'package:voicememory_mobile/widgets/account/beta_test_script_sheet.dart';
 import 'package:voicememory_mobile/widgets/record/beta_test_script_card.dart';
 
 const _strongRepeat =
@@ -40,11 +37,7 @@ class _MemoryPrefs extends MobilePrefsStore {
   }
 }
 
-JournalEntry _entry(
-  String id,
-  String transcript, {
-  DateTime? createdAt,
-}) =>
+JournalEntry _entry(String id, String transcript, {DateTime? createdAt}) =>
     JournalEntry(
       id: id,
       createdAt: createdAt ?? DateTime(2026, 6, 12, 10),
@@ -62,18 +55,18 @@ JournalEntry _entry(
     );
 
 List<JournalEntry> _threeRelatedEntries() => [
-      _entry('1', _strongRepeat, createdAt: DateTime(2026, 6, 10, 12)),
-      _entry(
-        '2',
-        'Same thing — said yes when I had no capacity for one more thing.',
-        createdAt: DateTime(2026, 6, 11, 12),
-      ),
-      _entry(
-        '3',
-        'I said yes again even though I had no capacity for one more ask.',
-        createdAt: DateTime(2026, 6, 12, 12),
-      ),
-    ];
+  _entry('1', _strongRepeat, createdAt: DateTime(2026, 6, 10, 12)),
+  _entry(
+    '2',
+    'Same thing — said yes when I had no capacity for one more thing.',
+    createdAt: DateTime(2026, 6, 11, 12),
+  ),
+  _entry(
+    '3',
+    'I said yes again even though I had no capacity for one more ask.',
+    createdAt: DateTime(2026, 6, 12, 12),
+  ),
+];
 
 void main() {
   setUp(() async {
@@ -218,7 +211,10 @@ void main() {
       final progress = BetaTestScriptEngine.buildProgressSummary(
         entries: _threeRelatedEntries(),
       );
-      expect(FirstProofPayoffEngine.build(entries: _threeRelatedEntries()), isNotNull);
+      expect(
+        FirstProofPayoffEngine.build(entries: _threeRelatedEntries()),
+        isNotNull,
+      );
       expect(progress.firstProofLabel, BetaTestScriptCopy.firstProofReached);
     });
 
@@ -242,7 +238,9 @@ void main() {
         BetaTestScriptCopy.compactBodyDay1,
       );
       expect(
-        BetaTestScriptEngine.buildCompactCard(entries: [_entry('1', _strongRepeat)])?.body,
+        BetaTestScriptEngine.buildCompactCard(
+          entries: [_entry('1', _strongRepeat)],
+        )?.body,
         BetaTestScriptCopy.compactBodyDay2,
       );
       expect(
@@ -255,7 +253,9 @@ void main() {
         BetaTestScriptCopy.compactBodyDay3,
       );
       expect(
-        BetaTestScriptEngine.buildCompactCard(entries: _threeRelatedEntries())?.body,
+        BetaTestScriptEngine.buildCompactCard(
+          entries: _threeRelatedEntries(),
+        )?.body,
         BetaTestScriptCopy.compactBodyFirstProof,
       );
     });
@@ -264,7 +264,10 @@ void main() {
       ArchiveBetaMissionGate.enabledOverride = true;
       BetaTestScriptEngine.buildPlan(entries: const []);
       BetaTestScriptEngine.buildCompactCard(entries: const []);
-      expect(BetaTestScriptEngine.buildProgressSummary(entries: const []).entryCount, 0);
+      expect(
+        BetaTestScriptEngine.buildProgressSummary(entries: const []).entryCount,
+        0,
+      );
     });
   });
 
@@ -311,7 +314,10 @@ void main() {
     testWidgets('tile appears when beta flag enabled', (tester) async {
       ArchiveBetaMissionGate.enabledOverride = true;
       await pumpScreen(tester);
-      expect(find.byKey(const Key('testing_archiveme_beta_test_tile')), findsOneWidget);
+      expect(
+        find.byKey(const Key('testing_archiveme_beta_test_tile')),
+        findsOneWidget,
+      );
       expect(find.text(BetaTestScriptCopy.settingsTileTitle), findsOneWidget);
       expect(find.text(BetaTestScriptCopy.settingsTileBody), findsOneWidget);
     });
@@ -319,7 +325,10 @@ void main() {
     testWidgets('tile hidden when beta flag disabled', (tester) async {
       ArchiveBetaMissionGate.enabledOverride = false;
       await pumpScreen(tester);
-      expect(find.byKey(const Key('testing_archiveme_beta_test_tile')), findsNothing);
+      expect(
+        find.byKey(const Key('testing_archiveme_beta_test_tile')),
+        findsNothing,
+      );
     });
 
     testWidgets('sheet opens with early archive plan', (tester) async {
@@ -355,7 +364,9 @@ void main() {
         120,
         scrollable: find.byType(Scrollable).last,
       );
-      await tester.tap(find.byKey(const Key('beta_test_script_reset_progress')));
+      await tester.tap(
+        find.byKey(const Key('beta_test_script_reset_progress')),
+      );
       await tester.pumpAndSettle();
 
       expect(find.text(BetaTestScriptCopy.resetTitle), findsOneWidget);
@@ -377,10 +388,7 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: BetaTestScriptCard(
-              card: card,
-              onViewSteps: () {},
-            ),
+            body: BetaTestScriptCard(card: card, onViewSteps: () {}),
           ),
         ),
       );
@@ -395,10 +403,13 @@ void main() {
   group('Analytics safety', () {
     test('metadata only without transcript phrase text', () {
       final captured = <({String event, Map<String, Object> props})>[];
-      BetaTestScriptAnalytics.captureForTest =
-          (event, props) => captured.add((event: event, props: props));
+      BetaTestScriptAnalytics.captureForTest = (event, props) =>
+          captured.add((event: event, props: props));
 
-      BetaTestScriptAnalytics.opened(source: 'testing_archiveme_screen', entryCount: 2);
+      BetaTestScriptAnalytics.opened(
+        source: 'testing_archiveme_screen',
+        entryCount: 2,
+      );
       BetaTestScriptAnalytics.stepSeen(
         source: 'testing_archiveme_screen',
         step: 'day_1',
@@ -426,29 +437,36 @@ void main() {
   });
 
   group('Protected areas', () {
-    test('beta test script files avoid billing signing and backend surfaces', () {
-      const banned = [
-        'RevenueCat',
-        'Purchases.',
-        'CFBundleVersion',
-        'signing',
-        'product_id',
-        'api.archive',
-      ];
-      final files = [
-        'lib/features/beta_test_script/beta_test_script_engine.dart',
-        'lib/features/beta_test_script/beta_test_script_store.dart',
-        'lib/widgets/account/beta_test_script_sheet.dart',
-        'lib/widgets/record/beta_test_script_card.dart',
-      ];
-      for (final path in files) {
-        final text = File(path).readAsStringSync();
-        for (final token in banned) {
-          expect(text.contains(token), isFalse, reason: '$path must not reference $token');
+    test(
+      'beta test script files avoid billing signing and backend surfaces',
+      () {
+        const banned = [
+          'RevenueCat',
+          'Purchases.',
+          'CFBundleVersion',
+          'signing',
+          'product_id',
+          'api.archive',
+        ];
+        final files = [
+          'lib/features/beta_test_script/beta_test_script_engine.dart',
+          'lib/features/beta_test_script/beta_test_script_store.dart',
+          'lib/widgets/account/beta_test_script_sheet.dart',
+          'lib/widgets/record/beta_test_script_card.dart',
+        ];
+        for (final path in files) {
+          final text = File(path).readAsStringSync();
+          for (final token in banned) {
+            expect(
+              text.contains(token),
+              isFalse,
+              reason: '$path must not reference $token',
+            );
+          }
+          expect(text.contains('journal.delete'), isFalse);
+          expect(text.contains('deleteAll'), isFalse);
         }
-        expect(text.contains('journal.delete'), isFalse);
-        expect(text.contains('deleteAll'), isFalse);
-      }
-    });
+      },
+    );
   });
 }

@@ -98,16 +98,16 @@ class WeeklyArchiveReviewSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bodyStyle = ArchiveMobileTypography.explanationBody(context).copyWith(
-      color: AppColors.textPrimary,
-      height: 1.45,
-    );
+    final bodyStyle = ArchiveMobileTypography.explanationBody(
+      context,
+    ).copyWith(color: AppColors.textPrimary, height: 1.45);
     final monthlyPrivateReportPreview = MonthlyPrivateReportEngine.build(
       entries: entries,
       returnChecks: RepeatReturnCheckStore.cached,
       viewingConfirmedRepeatOrTimeline: true,
     );
-    final showMonthlyPrivateReportPreview = !isPro &&
+    final showMonthlyPrivateReportPreview =
+        !isPro &&
         onSeePro != null &&
         ProMemoryBoundaryEngine.hasGatedWeeklyReviewSections(
           review: review,
@@ -139,11 +139,9 @@ class WeeklyArchiveReviewSheet extends StatelessWidget {
       color: AppColors.textSecondary,
       fontStyle: FontStyle.italic,
     );
-    final evidenceStyle = ArchiveMobileTypography.responsiveHelper(context).copyWith(
-      color: AppColors.textSecondary,
-      height: 1.35,
-      fontSize: 12,
-    );
+    final evidenceStyle = ArchiveMobileTypography.responsiveHelper(
+      context,
+    ).copyWith(color: AppColors.textSecondary, height: 1.35, fontSize: 12);
 
     return SafeArea(
       child: Padding(
@@ -169,9 +167,9 @@ class WeeklyArchiveReviewSheet extends StatelessWidget {
                 Text(
                   review.subtitle!,
                   key: const Key('weekly_archive_review_sheet_subtitle'),
-                  style: ArchiveMobileTypography.explanationBody(context).copyWith(
-                    color: AppColors.textSecondary,
-                  ),
+                  style: ArchiveMobileTypography.explanationBody(
+                    context,
+                  ).copyWith(color: AppColors.textSecondary),
                 ),
               ],
               if (patternLifecycle != null) ...[
@@ -237,7 +235,9 @@ class WeeklyArchiveReviewSheet extends StatelessWidget {
                         Text(
                           section.body,
                           key: const Key('weekly_archive_review_repeated_body'),
-                          style: section.isSupported ? bodyStyle : fallbackStyle,
+                          style: section.isSupported
+                              ? bodyStyle
+                              : fallbackStyle,
                         ),
                         for (final phrase in section.evidencePhrases.skip(1))
                           Padding(
@@ -297,8 +297,8 @@ class WeeklyArchiveReviewSheet extends StatelessWidget {
                   ),
                 ],
                 if (ProMemoryBoundaryEngine.showWeeklyReviewPreviewNote(
-                  isPro: isPro,
-                ) &&
+                      isPro: isPro,
+                    ) &&
                     ProMemoryBoundaryEngine.hasGatedWeeklyReviewSections(
                       review: review,
                       isPro: isPro,
@@ -307,9 +307,9 @@ class WeeklyArchiveReviewSheet extends StatelessWidget {
                   Text(
                     ProMemoryBoundaryCopy.weeklyReviewPreviewTitle,
                     key: const Key('weekly_archive_review_preview_title'),
-                    style: ArchiveMobileTypography.listTitle(context).copyWith(
-                      fontSize: 16,
-                    ),
+                    style: ArchiveMobileTypography.listTitle(
+                      context,
+                    ).copyWith(fontSize: 16),
                   ),
                   const SizedBox(height: AppSpacing.xs),
                   Text(
@@ -351,9 +351,8 @@ class WeeklyArchiveReviewSheet extends StatelessWidget {
                       entryCount: entryCount,
                       preview: monthlyPrivateReportPreview,
                       onSeePro: onSeePro!,
-                      onDismiss: () => unawaited(
-                        MonthlyPrivateReportDismissStore.dismiss(),
-                      ),
+                      onDismiss: () =>
+                          unawaited(MonthlyPrivateReportDismissStore.dismiss()),
                     )
                   else
                     ProMemoryUpgradeBridge(
@@ -376,7 +375,8 @@ class WeeklyArchiveReviewSheet extends StatelessWidget {
                   ),
                   onPressed: () async {
                     if (!AppServices.isInitialized) return;
-                    final entries = await AppServices.instance.journal.loadAll();
+                    final entries = await AppServices.instance.journal
+                        .loadAll();
                     if (!context.mounted) return;
                     await PrivateReportEngine.showSheet(
                       context,
@@ -391,17 +391,14 @@ class WeeklyArchiveReviewSheet extends StatelessWidget {
                     PrivateReportCopy.openReportCta,
                     style: ArchiveMobileTypography.responsiveHelper(context)
                         .copyWith(
-                      color: AppColors.textSecondary,
-                      decoration: TextDecoration.underline,
-                    ),
+                          color: AppColors.textSecondary,
+                          decoration: TextDecoration.underline,
+                        ),
                   ),
                 ),
               ),
               const SizedBox(height: AppSpacing.sm),
-              BetaFeedbackLink(
-                source: 'weekly_review',
-                entryCount: entryCount,
-              ),
+              BetaFeedbackLink(source: 'weekly_review', entryCount: entryCount),
               const SizedBox(height: AppSpacing.sm),
               ContextualPrivacyReassurance(
                 source: 'weekly_review',

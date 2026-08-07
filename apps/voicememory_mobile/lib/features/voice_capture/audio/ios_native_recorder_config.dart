@@ -3,10 +3,7 @@ import 'package:flutter/foundation.dart';
 import '../microphone_permission_environment.dart';
 
 /// Native iOS capture file format for physical-device debugging.
-enum IosRecordingFormat {
-  wav,
-  aac,
-}
+enum IosRecordingFormat { wav, aac }
 
 /// Feature flags for native iOS AVAudioRecorder capture on physical devices.
 abstract class IosNativeRecorderConfig {

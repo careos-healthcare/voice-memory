@@ -12,8 +12,7 @@ abstract final class ProUnderstandingLiftCopy {
 
   static const bulletFree = 'Free: the first useful proof';
   static const bulletPro = 'Pro: the longer evidence trail';
-  static const bulletControl =
-      'You stay in control: delete or correct entries';
+  static const bulletControl = 'You stay in control: delete or correct entries';
 
   static const bullets = [bulletFree, bulletPro, bulletControl];
 
@@ -44,8 +43,8 @@ enum ProUnderstandingLiftSurface {
 
 extension ProUnderstandingLiftSurfaceStorage on ProUnderstandingLiftSurface {
   String get analyticsValue => switch (this) {
-        ProUnderstandingLiftSurface.recordReady => 'record_ready',
-        ProUnderstandingLiftSurface.recordPostSave => 'record_post_save',
-        ProUnderstandingLiftSurface.archivePatterns => 'archive_patterns',
-      };
+    ProUnderstandingLiftSurface.recordReady => 'record_ready',
+    ProUnderstandingLiftSurface.recordPostSave => 'record_post_save',
+    ProUnderstandingLiftSurface.archivePatterns => 'archive_patterns',
+  };
 }

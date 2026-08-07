@@ -5,7 +5,7 @@ import 'package:voicememory_mobile/billing/pro_value_preview_engine.dart';
 import 'package:voicememory_mobile/billing/paywall_trigger_model.dart';
 import 'package:voicememory_mobile/features/moments/key_moment_model.dart';
 import 'package:voicememory_mobile/product/consumer_ui_copy.dart';
-import 'package:voicememory_mobile/screens/key_moments_screen.dart';
+import 'package:archiveme_research/screens/key_moments_screen.dart';
 
 KeyMoment _moment(String id, DateTime date, {String title = 'Moment'}) =>
     KeyMoment(
@@ -50,7 +50,6 @@ Future<void> _pump(
     }
   }
 }
-
 
 void main() {
   testWidgets('memory-limit card appears when more than 7 moments', (

@@ -111,18 +111,17 @@ abstract final class ReturnAfterProofEngine {
     required bool firstProofSeen,
     required bool timelineProofVisible,
     required bool dismissedForToday,
-  }) =>
-      ReturnAfterProofStrengtheningEngine.shouldShowOnRecordReady(
-        result: result.strengthened,
-        isReady: isReady,
-        isRecording: isRecording,
-        isDegradedTranscriptState: isDegradedTranscriptState,
-        whatChangedQuestionActive: whatChangedQuestionActive,
-        patternReviewInboxHasActiveItems: patternReviewInboxHasActiveItems,
-        firstProofSeen: firstProofSeen,
-        timelineProofVisible: timelineProofVisible,
-        dismissedForToday: dismissedForToday,
-      );
+  }) => ReturnAfterProofStrengtheningEngine.shouldShowOnRecordReady(
+    result: result.strengthened,
+    isReady: isReady,
+    isRecording: isRecording,
+    isDegradedTranscriptState: isDegradedTranscriptState,
+    whatChangedQuestionActive: whatChangedQuestionActive,
+    patternReviewInboxHasActiveItems: patternReviewInboxHasActiveItems,
+    firstProofSeen: firstProofSeen,
+    timelineProofVisible: timelineProofVisible,
+    dismissedForToday: dismissedForToday,
+  );
 
   static bool shouldShowAnyOnRecordReady({
     required ReturnAfterProofResult result,
@@ -186,9 +185,7 @@ abstract final class ReturnAfterProofEngine {
     if (whatChangedQuestionActive) return false;
     if (patternReviewInboxHasActiveItems) return false;
     if (dismissedForToday) return false;
-    if (!firstProofSeen &&
-        !timelineProofVisible &&
-        !betaTesterReportVisible) {
+    if (!firstProofSeen && !timelineProofVisible && !betaTesterReportVisible) {
       return false;
     }
     if (isPostSave) {
@@ -265,21 +262,20 @@ abstract final class ReturnAfterProofEngine {
     required bool whatChangedQuestionActive,
     required bool patternReviewInboxHasActiveItems,
     required bool dismissedForToday,
-  }) =>
-      shouldShow(
-        result: result,
-        isReady: false,
-        isRecording: isRecording,
-        isPostSave: true,
-        isPostSaveDegraded: isPostSaveDegraded,
-        firstProofPayoffVisible: showFirstProofPayoff,
-        whatChangedQuestionActive: whatChangedQuestionActive,
-        patternReviewInboxHasActiveItems: patternReviewInboxHasActiveItems,
-        firstProofSeen: true,
-        timelineProofVisible: false,
-        betaTesterReportVisible: false,
-        dismissedForToday: dismissedForToday,
-      );
+  }) => shouldShow(
+    result: result,
+    isReady: false,
+    isRecording: isRecording,
+    isPostSave: true,
+    isPostSaveDegraded: isPostSaveDegraded,
+    firstProofPayoffVisible: showFirstProofPayoff,
+    whatChangedQuestionActive: whatChangedQuestionActive,
+    patternReviewInboxHasActiveItems: patternReviewInboxHasActiveItems,
+    firstProofSeen: true,
+    timelineProofVisible: false,
+    betaTesterReportVisible: false,
+    dismissedForToday: dismissedForToday,
+  );
 
   static bool shouldShowStrengthenedOnFirstProofPayoffPostSave({
     required ReturnAfterProofResult result,
@@ -331,9 +327,8 @@ abstract final class ReturnAfterProofEngine {
   static bool patternReviewInboxHasActiveItems({
     required List<JournalEntry> entries,
     List<RepeatReturnCheckRecord> returnChecks = const [],
-  }) =>
-      OpenCaptureEngine.patternReviewInboxHasActiveItems(
-        entries: entries,
-        returnChecks: returnChecks,
-      );
+  }) => OpenCaptureEngine.patternReviewInboxHasActiveItems(
+    entries: entries,
+    returnChecks: returnChecks,
+  );
 }

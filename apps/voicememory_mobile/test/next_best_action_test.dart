@@ -34,56 +34,54 @@ JournalEntry _entry({
 }
 
 List<JournalEntry> _threeRelatedRepeatEntries() => [
-      _entry(
-        id: 'e1',
-        transcript:
-            'I had no capacity but I said yes again to the extra meeting today.',
-        createdAt: DateTime(2026, 6, 10, 12),
-      ),
-      _entry(
-        id: 'e2',
-        transcript:
-            'Same thing — said yes when I had no capacity for one more thing.',
-        createdAt: DateTime(2026, 6, 11, 12),
-      ),
-      _entry(
-        id: 'e3',
-        transcript:
-            'I said yes again even though I had no capacity for one more ask.',
-        createdAt: DateTime(2026, 6, 12, 12),
-      ),
-    ];
+  _entry(
+    id: 'e1',
+    transcript:
+        'I had no capacity but I said yes again to the extra meeting today.',
+    createdAt: DateTime(2026, 6, 10, 12),
+  ),
+  _entry(
+    id: 'e2',
+    transcript:
+        'Same thing — said yes when I had no capacity for one more thing.',
+    createdAt: DateTime(2026, 6, 11, 12),
+  ),
+  _entry(
+    id: 'e3',
+    transcript:
+        'I said yes again even though I had no capacity for one more ask.',
+    createdAt: DateTime(2026, 6, 12, 12),
+  ),
+];
 
 List<JournalEntry> _fourRelatedRepeatEntries() => [
-      ..._threeRelatedRepeatEntries(),
-      _entry(
-        id: 'e4',
-        transcript:
-            'I said yes again even though I had no capacity for one more ask today.',
-        createdAt: DateTime(2026, 6, 13, 12),
-      ),
-    ];
+  ..._threeRelatedRepeatEntries(),
+  _entry(
+    id: 'e4',
+    transcript:
+        'I said yes again even though I had no capacity for one more ask today.',
+    createdAt: DateTime(2026, 6, 13, 12),
+  ),
+];
 
 List<JournalEntry> _fourRelatedRepeatWithHelpfulAction() => [
-      ..._threeRelatedRepeatEntries(),
-      _entry(
-        id: 'e4',
-        transcript:
-            'I paused before replying this time and it felt a bit softer.',
-        createdAt: DateTime(2026, 6, 13, 12),
-      ),
-    ];
+  ..._threeRelatedRepeatEntries(),
+  _entry(
+    id: 'e4',
+    transcript: 'I paused before replying this time and it felt a bit softer.',
+    createdAt: DateTime(2026, 6, 13, 12),
+  ),
+];
 
 RepeatReturnCheckRecord _choiceRecord({
   required String entryId,
   required RepeatReturnCheckChoice choice,
-}) =>
-    RepeatReturnCheckRecord(
-      entryId: entryId,
-      choice: choice,
-      entryCountAtCapture: 4,
-      createdAt: DateTime(2026, 6, 13, 12),
-    );
+}) => RepeatReturnCheckRecord(
+  entryId: entryId,
+  choice: choice,
+  entryCountAtCapture: 4,
+  createdAt: DateTime(2026, 6, 13, 12),
+);
 
 void _expectNoAdviceLanguage(String copy) {
   for (final phrase in ProofSurfaceAdviceGuard.bannedAdvicePhrases) {
@@ -110,7 +108,12 @@ void main() {
 
     test('1 entry shows come back when similar happens', () {
       final result = NextBestActionEngine.build(
-        entries: [_entry(id: '1', transcript: 'I felt pressure before saying yes again today.')],
+        entries: [
+          _entry(
+            id: '1',
+            transcript: 'I felt pressure before saying yes again today.',
+          ),
+        ],
       );
 
       expect(result.kind, NextBestActionKind.oneEntry);
@@ -121,8 +124,14 @@ void main() {
     test('2 unrelated shows record next real moment', () {
       final result = NextBestActionEngine.build(
         entries: [
-          _entry(id: '1', transcript: 'A quiet moment about lunch with a friend today.'),
-          _entry(id: '2', transcript: 'Another unrelated note about errands this afternoon.'),
+          _entry(
+            id: '1',
+            transcript: 'A quiet moment about lunch with a friend today.',
+          ),
+          _entry(
+            id: '2',
+            transcript: 'Another unrelated note about errands this afternoon.',
+          ),
         ],
       );
 
@@ -176,10 +185,7 @@ void main() {
       final result = NextBestActionEngine.build(
         entries: _fourRelatedRepeatEntries(),
         returnChecks: [
-          _choiceRecord(
-            entryId: 'e4',
-            choice: RepeatReturnCheckChoice.softer,
-          ),
+          _choiceRecord(entryId: 'e4', choice: RepeatReturnCheckChoice.softer),
         ],
       );
 
@@ -201,10 +207,7 @@ void main() {
       final result = NextBestActionEngine.build(
         entries: entries,
         returnChecks: [
-          _choiceRecord(
-            entryId: 'e4',
-            choice: RepeatReturnCheckChoice.changed,
-          ),
+          _choiceRecord(entryId: 'e4', choice: RepeatReturnCheckChoice.changed),
         ],
       );
 
@@ -253,7 +256,12 @@ void main() {
   group('NextBestActionGates', () {
     test('hides early stage when early repeat progress card is visible', () {
       final action = NextBestActionEngine.build(
-        entries: [_entry(id: '1', transcript: 'I felt pressure before saying yes again today.')],
+        entries: [
+          _entry(
+            id: '1',
+            transcript: 'I felt pressure before saying yes again today.',
+          ),
+        ],
       );
 
       expect(
@@ -306,10 +314,7 @@ void main() {
       final action = NextBestActionEngine.build(
         entries: _fourRelatedRepeatEntries(),
         returnChecks: [
-          _choiceRecord(
-            entryId: 'e4',
-            choice: RepeatReturnCheckChoice.same,
-          ),
+          _choiceRecord(entryId: 'e4', choice: RepeatReturnCheckChoice.same),
         ],
       );
 
@@ -349,7 +354,10 @@ void main() {
       );
       await tester.pump();
 
-      expect(find.byKey(const Key('next_best_action_line_record_noEntries')), findsOneWidget);
+      expect(
+        find.byKey(const Key('next_best_action_line_record_noEntries')),
+        findsOneWidget,
+      );
       expect(find.text(NextBestActionCopy.noEntriesTitle), findsOneWidget);
       expect(find.byType(ElevatedButton), findsNothing);
       expect(find.byType(FilledButton), findsNothing);

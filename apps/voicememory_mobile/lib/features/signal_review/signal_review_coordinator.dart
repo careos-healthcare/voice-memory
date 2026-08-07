@@ -208,8 +208,9 @@ abstract class SignalReviewCoordinator {
   }
 
   static String keepWatchingBannerFor(SignalReview review) {
-    if (review.isLoopSpecificReview)
+    if (review.isLoopSpecificReview) {
       return LoopModeCopy.reviewKeepWatchingSaved;
+    }
     return '';
   }
 

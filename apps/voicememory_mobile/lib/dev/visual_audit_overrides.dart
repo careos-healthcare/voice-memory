@@ -57,6 +57,7 @@ class RecordAuditPresentation {
   final String? syncNote;
   final String? stageLabel;
   final bool degradedVoicePostSave;
+
   /// When true with [entriesAfterSave], simulates first-save post-save UI.
   final bool justSavedFirst;
   final List<JournalEntry>? entriesAfterSave;

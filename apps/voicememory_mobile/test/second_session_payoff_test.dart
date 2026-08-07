@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/billing/archive_entitlement_reader.dart';
@@ -15,27 +13,27 @@ import 'package:voicememory_mobile/theme/app_theme.dart';
 import 'package:voicememory_mobile/features/post_save/post_save_focused_actions_copy.dart';
 import 'package:voicememory_mobile/features/post_save/post_save_recorded_summary_copy.dart';
 import 'package:voicememory_mobile/widgets/record/second_session_payoff_card.dart';
+import 'support/test_storage_sandbox.dart';
 
 JournalEntry _voiceEntry({
   required String id,
   required String transcript,
   DateTime? createdAt,
-}) =>
-    JournalEntry(
-      id: id,
-      createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
-      transcript: transcript,
-      durationSeconds: 30,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 2,
-        recurringThemes: ['work'],
-        exactLanguagePattern: '',
-        concreteObservation: 'Work pressure showed up in this moment.',
-        repeatedSignal: '',
-      ),
-    );
+}) => JournalEntry(
+  id: id,
+  createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
+  transcript: transcript,
+  durationSeconds: 30,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 2,
+    recurringThemes: ['work'],
+    exactLanguagePattern: '',
+    concreteObservation: 'Work pressure showed up in this moment.',
+    repeatedSignal: '',
+  ),
+);
 
 const _bannedOneEntryWords = [
   'loop',
@@ -162,26 +160,30 @@ void main() {
       _expectNoBannedCopy([payoff.title, payoff.body], _bannedPatternClaims);
     });
 
-    test('analysis failure adds deferred footnote without claiming insight', () {
-      final payoff = SecondSessionPayoffEngine.build(
-        entries: [
-          _voiceEntry(
-            id: 'e1',
-            transcript: 'A quiet moment about lunch with a friend today.',
-            createdAt: DateTime(2026, 6, 11, 12),
-          ),
-          _voiceEntry(
-            id: 'e2',
-            transcript: 'Another unrelated note about errands this afternoon.',
-            createdAt: DateTime(2026, 6, 12, 12),
-          ),
-        ],
-        analysisSucceeded: false,
-      );
+    test(
+      'analysis failure adds deferred footnote without claiming insight',
+      () {
+        final payoff = SecondSessionPayoffEngine.build(
+          entries: [
+            _voiceEntry(
+              id: 'e1',
+              transcript: 'A quiet moment about lunch with a friend today.',
+              createdAt: DateTime(2026, 6, 11, 12),
+            ),
+            _voiceEntry(
+              id: 'e2',
+              transcript:
+                  'Another unrelated note about errands this afternoon.',
+              createdAt: DateTime(2026, 6, 12, 12),
+            ),
+          ],
+          analysisSucceeded: false,
+        );
 
-      expect(payoff!.footnoteLine, isNotNull);
-      expect(payoff.footnoteLine, contains('This moment is saved'));
-    });
+        expect(payoff!.footnoteLine, isNotNull);
+        expect(payoff.footnoteLine, contains('This moment is saved'));
+      },
+    );
   });
 
   group('SecondSessionPayoffCard', () {
@@ -210,7 +212,10 @@ void main() {
       );
       await tester.pump();
 
-      expect(find.byKey(const Key('second_session_payoff_card')), findsOneWidget);
+      expect(
+        find.byKey(const Key('second_session_payoff_card')),
+        findsOneWidget,
+      );
       expect(
         find.text('ArchiveMe has two moments to compare.'),
         findsOneWidget,
@@ -223,15 +228,17 @@ void main() {
   });
 
   group('RecordScreen second session payoff', () {
-    late Directory tempDir;
+    late TestStorageSandbox sandbox;
 
     setUp(() async {
-      tempDir = Directory.systemTemp.createTempSync('vm_second_session_');
+      sandbox = TestStorageSandbox.create();
       await AppServices.resetForTest(
-        journalPath: '${tempDir.path}/journal.json',
+        journalPath: sandbox.journalPath,
         skipRevenueCat: true,
       );
     });
+
+    tearDown(() => sandbox.dispose());
 
     tearDown(() {
       VisualAuditOverrides.setRecordPresentation(null);
@@ -270,33 +277,53 @@ void main() {
       }
     }
 
-    testWidgets('two entries post-save stays focused without duplicate payoff cards', (
-      tester,
-    ) async {
-      await pumpTwoEntryDone(
-        tester,
-        entriesAfterSave: [
-          _voiceEntry(
-            id: 'e1',
-            transcript: 'A quiet moment about lunch with a friend today.',
-            createdAt: DateTime(2026, 6, 11, 12),
-          ),
-          _voiceEntry(
-            id: 'e2',
-            transcript: 'Another unrelated note about errands this afternoon.',
-            createdAt: DateTime(2026, 6, 12, 12),
-          ),
-        ],
-      );
+    testWidgets(
+      'two entries post-save stays focused without duplicate payoff cards',
+      (tester) async {
+        await pumpTwoEntryDone(
+          tester,
+          entriesAfterSave: [
+            _voiceEntry(
+              id: 'e1',
+              transcript: 'A quiet moment about lunch with a friend today.',
+              createdAt: DateTime(2026, 6, 11, 12),
+            ),
+            _voiceEntry(
+              id: 'e2',
+              transcript:
+                  'Another unrelated note about errands this afternoon.',
+              createdAt: DateTime(2026, 6, 12, 12),
+            ),
+          ],
+        );
 
-      expect(find.byKey(const Key('post_save_archive_home_nudge_card')), findsNothing);
-      expect(find.byKey(const Key('second_session_payoff_card')), findsNothing);
-      expect(find.byKey(const Key('post_save_focused_actions_bar')), findsOneWidget);
-      expect(find.text(PostSaveRecordedSummaryCopy.title), findsOneWidget);
-      expect(find.byKey(const Key('post_save_add_one_more_moment_cta')), findsOneWidget);
-      expect(find.text(PostSaveFocusedActionsCopy.viewPatterns), findsOneWidget);
-      expect(find.byKey(const Key('analysis_fallback_payoff_card')), findsNothing);
-    });
+        expect(
+          find.byKey(const Key('post_save_archive_home_nudge_card')),
+          findsNothing,
+        );
+        expect(
+          find.byKey(const Key('second_session_payoff_card')),
+          findsNothing,
+        );
+        expect(
+          find.byKey(const Key('post_save_focused_actions_bar')),
+          findsOneWidget,
+        );
+        expect(find.text(PostSaveRecordedSummaryCopy.title), findsOneWidget);
+        expect(
+          find.byKey(const Key('post_save_add_one_more_moment_cta')),
+          findsOneWidget,
+        );
+        expect(
+          find.text(PostSaveFocusedActionsCopy.viewPatterns),
+          findsOneWidget,
+        );
+        expect(
+          find.byKey(const Key('analysis_fallback_payoff_card')),
+          findsNothing,
+        );
+      },
+    );
 
     testWidgets('grounded two entries keep one primary result on record screen', (
       tester,
@@ -319,9 +346,15 @@ void main() {
         ],
       );
 
-      expect(find.byKey(const Key('post_save_archive_home_nudge_card')), findsNothing);
+      expect(
+        find.byKey(const Key('post_save_archive_home_nudge_card')),
+        findsNothing,
+      );
       expect(find.byKey(const Key('second_session_payoff_card')), findsNothing);
-      expect(find.byKey(const Key('post_save_focused_actions_bar')), findsOneWidget);
+      expect(
+        find.byKey(const Key('post_save_focused_actions_bar')),
+        findsOneWidget,
+      );
       expect(find.textContaining('pattern found'), findsNothing);
     });
 

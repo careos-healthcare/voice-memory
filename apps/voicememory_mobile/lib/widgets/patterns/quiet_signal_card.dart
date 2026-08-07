@@ -67,7 +67,9 @@ class _QuietSignalCardState extends State<QuietSignalCard> {
     if (!widget.skipPersist || widget.store != null) {
       final store = widget.store ?? ComeBackTomorrowV2Store.instance();
       unawaited(
-        store.recordQuietDetection(lastSeenDateKey: widget.signal.lastSeenDateKey),
+        store.recordQuietDetection(
+          lastSeenDateKey: widget.signal.lastSeenDateKey,
+        ),
       );
     }
     QuietSignalAnalytics.seen(
@@ -150,11 +152,12 @@ class _QuietSignalCardState extends State<QuietSignalCard> {
                 ),
                 child: Text(
                   widget.signal.ctaKeepWatching,
-                  style: ArchiveMobileTypography.responsiveHelper(context).copyWith(
-                    color: AppColors.accentPrimary,
-                    fontWeight: FontWeight.w600,
-                    fontSize: 13,
-                  ),
+                  style: ArchiveMobileTypography.responsiveHelper(context)
+                      .copyWith(
+                        color: AppColors.accentPrimary,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 13,
+                      ),
                 ),
               ),
               if (widget.showViewPatternDetails &&
@@ -171,11 +174,12 @@ class _QuietSignalCardState extends State<QuietSignalCard> {
                   ),
                   child: Text(
                     QuietSignalCopy.ctaViewPatternDetails,
-                    style: ArchiveMobileTypography.responsiveHelper(context).copyWith(
-                      color: AppColors.accentPrimary,
-                      fontWeight: FontWeight.w600,
-                      fontSize: 13,
-                    ),
+                    style: ArchiveMobileTypography.responsiveHelper(context)
+                        .copyWith(
+                          color: AppColors.accentPrimary,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 13,
+                        ),
                   ),
                 ),
             ],

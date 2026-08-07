@@ -46,14 +46,11 @@ class PostSaveComparisonController extends ChangeNotifier {
   PostSaveComparisonUiState get uiState => _uiState;
 
   PostSaveComparisonController({
-    required ModelApiClient apiClient,
-    required PreferenceStore prefs,
-    PatternComparisonExecutor executor = const PatternComparisonExecutor(),
-    LocalTextComparisonEngine localEngine = const LocalTextComparisonEngine(),
-  })  : _apiClient = apiClient,
-        _prefs = prefs,
-        _executor = executor,
-        _localEngine = localEngine;
+    required this._apiClient,
+    required this._prefs,
+    this._executor = const PatternComparisonExecutor(),
+    this._localEngine = const LocalTextComparisonEngine(),
+  });
 
   /// Runs the full end-to-end evaluation flow when a new moment is submitted.
   Future<void> processMomentComparison({
@@ -115,7 +112,8 @@ class PostSaveComparisonController extends ChangeNotifier {
           connectionText: localResult.connectionSummary,
           pastQuote: localResult.matchedPastQuote,
           currentQuote: localResult.matchedCurrentQuote,
-          whatChangedText: 'Evaluated locally. ${localResult.evolutionAnalysis}',
+          whatChangedText:
+              'Evaluated locally. ${localResult.evolutionAnalysis}',
         );
 
         _uiState = ComparisonSuccess(fallbackViewState);

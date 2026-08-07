@@ -14,9 +14,9 @@ class CuriosityMemoryRecallSeed {
   final DateTime seededAt;
 
   Map<String, dynamic> toJson() => {
-        'sourceEntryId': sourceEntryId,
-        'seededAt': seededAt.toUtc().toIso8601String(),
-      };
+    'sourceEntryId': sourceEntryId,
+    'seededAt': seededAt.toUtc().toIso8601String(),
+  };
 
   static CuriosityMemoryRecallSeed? fromJson(dynamic json) {
     if (json is! Map) return null;
@@ -85,9 +85,7 @@ class LocalCuriosityLoopRepository implements CuriosityLoopRepository {
       sourceEntryId: trimmed,
       seededAt: seededAt.toUtc(),
     );
-    await _prefs.writeJsonMap(prefsKey, {
-      'pendingMemoryRecall': seed.toJson(),
-    });
+    await _prefs.writeJsonMap(prefsKey, {'pendingMemoryRecall': seed.toJson()});
     _cachedSeed = seed;
   }
 
@@ -96,7 +94,9 @@ class LocalCuriosityLoopRepository implements CuriosityLoopRepository {
     if (_cachedSeed != null) return _cachedSeed;
 
     final raw = await _prefs.readJsonMap(prefsKey);
-    final seed = CuriosityMemoryRecallSeed.fromJson(raw?['pendingMemoryRecall']);
+    final seed = CuriosityMemoryRecallSeed.fromJson(
+      raw?['pendingMemoryRecall'],
+    );
     _cachedSeed = seed;
     return seed;
   }

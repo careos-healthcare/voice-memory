@@ -7,7 +7,6 @@ import 'package:voicememory_mobile/product/consumer_ui_copy.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
 import 'package:voicememory_mobile/widgets/record/check_in_completed_card.dart';
 import 'package:voicememory_mobile/widgets/record/result_next_check_card.dart';
-import 'package:voicememory_mobile/widgets/trial/check_in_result_rating_prompt.dart';
 
 Future<void> _reset(String stamp) async {
   await AppServices.resetForTest(

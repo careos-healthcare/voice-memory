@@ -8,7 +8,6 @@ import 'package:voicememory_mobile/features/archive_home/archive_home_priority_m
 import 'package:voicememory_mobile/features/daily_archive_exercise/daily_archive_exercise_copy.dart';
 import 'package:voicememory_mobile/features/milestone_share/milestone_share_copy.dart';
 import 'package:voicememory_mobile/features/milestone_share/milestone_share_engine.dart';
-import 'package:voicememory_mobile/features/milestone_share/milestone_share_models.dart';
 import 'package:voicememory_mobile/features/review_ritual/view_ritual_copy.dart';
 import 'package:voicememory_mobile/features/todays_question/todays_question_copy.dart';
 import 'package:voicememory_mobile/features/todays_question/todays_question_engine.dart';
@@ -40,26 +39,25 @@ const _bannedWords = [
 const _privateSnippet = 'felt pressure at work before saying yes';
 
 JournalEntry _entry(String id, {DateTime? createdAt}) => JournalEntry(
-      id: id,
-      createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
-      transcript:
-          'I $_privateSnippet again even when I was tired today.',
-      durationSeconds: 30,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 2,
-        recurringThemes: ['work'],
-        exactLanguagePattern: '',
-        concreteObservation: 'Work pressure showed up in this moment.',
-        repeatedSignal: '',
-      ),
-    );
+  id: id,
+  createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
+  transcript: 'I $_privateSnippet again even when I was tired today.',
+  durationSeconds: 30,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 2,
+    recurringThemes: ['work'],
+    exactLanguagePattern: '',
+    concreteObservation: 'Work pressure showed up in this moment.',
+    repeatedSignal: '',
+  ),
+);
 
 List<JournalEntry> _entries(int count) => List.generate(
-      count,
-      (i) => _entry('e$i', createdAt: DateTime(2026, 6, 1 + i, 12)),
-    );
+  count,
+  (i) => _entry('e$i', createdAt: DateTime(2026, 6, 1 + i, 12)),
+);
 
 ArchiveHomePriorityInput _priorityInput({
   int savedEntryCount = 0,
@@ -82,33 +80,32 @@ ArchiveHomePriorityInput _priorityInput({
   bool archiveCalendarVisible = false,
   bool reviewRitualVisible = false,
   bool milestoneShareVisible = false,
-}) =>
-    ArchiveHomePriorityInput(
-      savedEntryCount: savedEntryCount,
-      usableEvidenceCount: savedEntryCount,
-      depthLevel: ArchiveDepthLevel.notStarted,
-      returnChangesAvailable: returnChangesAvailable,
-      weeklyReviewAvailable: weeklyReviewAvailable,
-      sampleMode: sampleMode,
-      proPreviewPromoVisible: false,
-      showEmptySample: savedEntryCount == 0,
-      firstWeekPathVisible: firstWeekPathVisible && savedEntryCount < 7,
-      dailyArchiveExerciseVisible: dailyArchiveExerciseVisible,
-      archiveClarityProgressVisible: archiveClarityProgressVisible,
-      capacityLoopVisible: capacityLoopVisible,
-      capacityThreeMomentActivationVisible: capacityThreeMomentActivationVisible,
-      capacityPullReasonVisible: capacityPullReasonVisible,
-      capacityDecisionOutcomeVisible: capacityDecisionOutcomeVisible,
-      capacityCostLaterCheckinVisible: capacityCostLaterCheckinVisible,
-      capacityActivationFitVisible: capacityActivationFitVisible,
-      beforeYouSayYesPauseVisible: beforeYouSayYesPauseVisible,
-      capacityWeeklyReviewVisible: capacityWeeklyReviewVisible,
-      capacityBoundaryResponseVisible: capacityBoundaryResponseVisible,
-      thenVsNowVisible: thenVsNowVisible,
-      archiveCalendarVisible: archiveCalendarVisible,
-      reviewRitualVisible: reviewRitualVisible,
-      milestoneShareVisible: milestoneShareVisible,
-    );
+}) => ArchiveHomePriorityInput(
+  savedEntryCount: savedEntryCount,
+  usableEvidenceCount: savedEntryCount,
+  depthLevel: ArchiveDepthLevel.notStarted,
+  returnChangesAvailable: returnChangesAvailable,
+  weeklyReviewAvailable: weeklyReviewAvailable,
+  sampleMode: sampleMode,
+  proPreviewPromoVisible: false,
+  showEmptySample: savedEntryCount == 0,
+  firstWeekPathVisible: firstWeekPathVisible && savedEntryCount < 7,
+  dailyArchiveExerciseVisible: dailyArchiveExerciseVisible,
+  archiveClarityProgressVisible: archiveClarityProgressVisible,
+  capacityLoopVisible: capacityLoopVisible,
+  capacityThreeMomentActivationVisible: capacityThreeMomentActivationVisible,
+  capacityPullReasonVisible: capacityPullReasonVisible,
+  capacityDecisionOutcomeVisible: capacityDecisionOutcomeVisible,
+  capacityCostLaterCheckinVisible: capacityCostLaterCheckinVisible,
+  capacityActivationFitVisible: capacityActivationFitVisible,
+  beforeYouSayYesPauseVisible: beforeYouSayYesPauseVisible,
+  capacityWeeklyReviewVisible: capacityWeeklyReviewVisible,
+  capacityBoundaryResponseVisible: capacityBoundaryResponseVisible,
+  thenVsNowVisible: thenVsNowVisible,
+  archiveCalendarVisible: archiveCalendarVisible,
+  reviewRitualVisible: reviewRitualVisible,
+  milestoneShareVisible: milestoneShareVisible,
+);
 
 void _expectNoBannedCopy(Iterable<String> visible) {
   for (final text in visible) {
@@ -130,7 +127,11 @@ void _expectStickyLoopOrder(List<ArchiveHomeSectionId> ranked) {
   var last = -1;
   for (final id in sticky) {
     final index = ranked.indexOf(id);
-    expect(index, greaterThan(last), reason: '$id should follow sticky loop order');
+    expect(
+      index,
+      greaterThan(last),
+      reason: '$id should follow sticky loop order',
+    );
     last = index;
   }
 }
@@ -141,7 +142,10 @@ void main() {
   group('Archive Home sticky loop priority', () {
     test('0 entries: first-week path primary, mature cards hidden', () {
       final plan = priorityEngine.build(_priorityInput(savedEntryCount: 0));
-      expect(plan.primarySections, contains(ArchiveHomeSectionId.firstWeekPath));
+      expect(
+        plan.primarySections,
+        contains(ArchiveHomeSectionId.firstWeekPath),
+      );
       expect(plan.isHidden(ArchiveHomeSectionId.milestones), isTrue);
       expect(plan.isHidden(ArchiveHomeSectionId.reviewHistory), isTrue);
       expect(plan.isHidden(ArchiveHomeSectionId.thenVsNow), isTrue);
@@ -154,11 +158,17 @@ void main() {
         ArchiveHomeSectionId.firstWeekPath,
         ArchiveHomeSectionId.dailyArchiveExercise,
       ]);
-      expect(one.secondarySections, contains(ArchiveHomeSectionId.nextEvidencePlan));
+      expect(
+        one.secondarySections,
+        contains(ArchiveHomeSectionId.nextEvidencePlan),
+      );
 
       final two = priorityEngine.build(_priorityInput(savedEntryCount: 2));
       expect(two.primarySections, contains(ArchiveHomeSectionId.firstWeekPath));
-      expect(two.primarySections, contains(ArchiveHomeSectionId.dailyArchiveExercise));
+      expect(
+        two.primarySections,
+        contains(ArchiveHomeSectionId.dailyArchiveExercise),
+      );
       expect(two.isHidden(ArchiveHomeSectionId.betaFeedback), isTrue);
     });
 
@@ -178,30 +188,41 @@ void main() {
         ),
       );
       final ranked = [...plan.primarySections, ...plan.secondarySections];
-      expect(ranked.indexOf(ArchiveHomeSectionId.firstWeekPath),
-          lessThan(ranked.indexOf(ArchiveHomeSectionId.archiveClarityProgress)));
-      expect(plan.primarySections, contains(ArchiveHomeSectionId.firstWeekPath));
-      expect(plan.primarySections, isNot(contains(ArchiveHomeSectionId.reviewHistory)));
+      expect(
+        ranked.indexOf(ArchiveHomeSectionId.firstWeekPath),
+        lessThan(ranked.indexOf(ArchiveHomeSectionId.archiveClarityProgress)),
+      );
+      expect(
+        plan.primarySections,
+        contains(ArchiveHomeSectionId.firstWeekPath),
+      );
+      expect(
+        plan.primarySections,
+        isNot(contains(ArchiveHomeSectionId.reviewHistory)),
+      );
     });
 
-    test('7+ entries: weekly review and mature tools available but secondary', () {
-      final plan = priorityEngine.build(
-        _priorityInput(
-          savedEntryCount: 8,
-          weeklyReviewAvailable: true,
-          thenVsNowVisible: true,
-          archiveCalendarVisible: true,
-          reviewRitualVisible: true,
-          milestoneShareVisible: true,
-          firstWeekPathVisible: false,
-        ),
-      );
-      final ranked = [...plan.primarySections, ...plan.secondarySections];
-      expect(ranked, contains(ArchiveHomeSectionId.reviewHistory));
-      expect(ranked, contains(ArchiveHomeSectionId.reviewRitual));
-      expect(ranked, contains(ArchiveHomeSectionId.milestoneShare));
-      _expectStickyLoopOrder(ranked);
-    });
+    test(
+      '7+ entries: weekly review and mature tools available but secondary',
+      () {
+        final plan = priorityEngine.build(
+          _priorityInput(
+            savedEntryCount: 8,
+            weeklyReviewAvailable: true,
+            thenVsNowVisible: true,
+            archiveCalendarVisible: true,
+            reviewRitualVisible: true,
+            milestoneShareVisible: true,
+            firstWeekPathVisible: false,
+          ),
+        );
+        final ranked = [...plan.primarySections, ...plan.secondarySections];
+        expect(ranked, contains(ArchiveHomeSectionId.reviewHistory));
+        expect(ranked, contains(ArchiveHomeSectionId.reviewRitual));
+        expect(ranked, contains(ArchiveHomeSectionId.milestoneShare));
+        _expectStickyLoopOrder(ranked);
+      },
+    );
 
     test('sample mode hides live-user sticky cards', () {
       final plan = priorityEngine.build(
@@ -244,7 +265,10 @@ void main() {
         hasWatchTheme: false,
       );
       for (final card in result.cards) {
-        expect(card.safeShareText.toLowerCase(), isNot(contains(_privateSnippet)));
+        expect(
+          card.safeShareText.toLowerCase(),
+          isNot(contains(_privateSnippet)),
+        );
       }
     });
 
@@ -254,7 +278,10 @@ void main() {
         hasWatchTheme: false,
       );
       for (final card in result.cards) {
-        expect(card.safeShareText.toLowerCase(), isNot(contains(_privateSnippet)));
+        expect(
+          card.safeShareText.toLowerCase(),
+          isNot(contains(_privateSnippet)),
+        );
         expect(card.isShareable, isTrue);
       }
     });
@@ -267,7 +294,10 @@ void main() {
         hasWatchTheme: false,
         betaFeedbackCaptured: false,
       );
-      expect(result.questionText.toLowerCase(), isNot(contains(_privateSnippet)));
+      expect(
+        result.questionText.toLowerCase(),
+        isNot(contains(_privateSnippet)),
+      );
       expect(result.showOnRecord, isTrue);
     });
   });

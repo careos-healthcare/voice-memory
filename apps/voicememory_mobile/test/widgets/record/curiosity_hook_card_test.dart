@@ -4,7 +4,6 @@ import 'package:voicememory_mobile/features/curiosity_loop/domain/models/cogniti
 import 'package:voicememory_mobile/features/curiosity_loop/domain/models/curiosity_hook.dart'
     as domain;
 import 'package:voicememory_mobile/features/curiosity_loop/domain/services/curiosity_prompt_generator.dart';
-import 'package:voicememory_mobile/features/curiosity_loop/presentation/models/curiosity_hook_presentation.dart';
 import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/theme/app_theme.dart';
@@ -73,68 +72,72 @@ void main() {
       expect(presentation.isLowCognitiveLoad, isTrue);
     });
 
-    test('uses anomaly detector when current and baseline metrics are provided',
-        () {
-      const baselineMetrics = CognitiveBiomarkers(
-        lexicalDiversity: 0.55,
-        cohesionDrift: 0.35,
-        emotionalVolatility: 0.40,
-      );
-
-      final overloadPresentation = CuriosityHookPresentation.fromDomain(
-        _hook(
-          prompt:
-              'Reflecting back on your notes regarding work pressure—what changed?',
-          isMemoryRecallCheck: false,
-        ),
-        currentMetrics: const CognitiveBiomarkers(
-          lexicalDiversity: 0.42,
-          cohesionDrift: 0.36,
-          emotionalVolatility: 0.41,
-        ),
-        baselineMetrics: baselineMetrics,
-      );
-
-      expect(overloadPresentation.isLowCognitiveLoad, isTrue);
-
-      final normalPresentation = CuriosityHookPresentation.fromDomain(
-        _hook(
-          prompt:
-              'Reflecting back on your notes regarding work pressure—what changed?',
-          isMemoryRecallCheck: false,
-        ),
-        currentMetrics: const CognitiveBiomarkers(
-          lexicalDiversity: 0.50,
-          cohesionDrift: 0.42,
-          emotionalVolatility: 0.43,
-        ),
-        baselineMetrics: baselineMetrics,
-      );
-
-      expect(normalPresentation.isLowCognitiveLoad, isFalse);
-    });
-
-    test('maps drift overload to low cognitive load regardless of prompt copy',
-        () {
-      final presentation = CuriosityHookPresentation.fromDomain(
-        _hook(
-          prompt: 'What feels most worth noticing right now?',
-          isMemoryRecallCheck: false,
-        ),
-        currentMetrics: const CognitiveBiomarkers(
-          lexicalDiversity: 0.54,
-          cohesionDrift: 0.52,
-          emotionalVolatility: 0.41,
-        ),
-        baselineMetrics: const CognitiveBiomarkers(
+    test(
+      'uses anomaly detector when current and baseline metrics are provided',
+      () {
+        const baselineMetrics = CognitiveBiomarkers(
           lexicalDiversity: 0.55,
           cohesionDrift: 0.35,
           emotionalVolatility: 0.40,
-        ),
-      );
+        );
 
-      expect(presentation.isLowCognitiveLoad, isTrue);
-    });
+        final overloadPresentation = CuriosityHookPresentation.fromDomain(
+          _hook(
+            prompt:
+                'Reflecting back on your notes regarding work pressure—what changed?',
+            isMemoryRecallCheck: false,
+          ),
+          currentMetrics: const CognitiveBiomarkers(
+            lexicalDiversity: 0.42,
+            cohesionDrift: 0.36,
+            emotionalVolatility: 0.41,
+          ),
+          baselineMetrics: baselineMetrics,
+        );
+
+        expect(overloadPresentation.isLowCognitiveLoad, isTrue);
+
+        final normalPresentation = CuriosityHookPresentation.fromDomain(
+          _hook(
+            prompt:
+                'Reflecting back on your notes regarding work pressure—what changed?',
+            isMemoryRecallCheck: false,
+          ),
+          currentMetrics: const CognitiveBiomarkers(
+            lexicalDiversity: 0.50,
+            cohesionDrift: 0.42,
+            emotionalVolatility: 0.43,
+          ),
+          baselineMetrics: baselineMetrics,
+        );
+
+        expect(normalPresentation.isLowCognitiveLoad, isFalse);
+      },
+    );
+
+    test(
+      'maps drift overload to low cognitive load regardless of prompt copy',
+      () {
+        final presentation = CuriosityHookPresentation.fromDomain(
+          _hook(
+            prompt: 'What feels most worth noticing right now?',
+            isMemoryRecallCheck: false,
+          ),
+          currentMetrics: const CognitiveBiomarkers(
+            lexicalDiversity: 0.54,
+            cohesionDrift: 0.52,
+            emotionalVolatility: 0.41,
+          ),
+          baselineMetrics: const CognitiveBiomarkers(
+            lexicalDiversity: 0.55,
+            cohesionDrift: 0.35,
+            emotionalVolatility: 0.40,
+          ),
+        );
+
+        expect(presentation.isLowCognitiveLoad, isTrue);
+      },
+    );
   });
 
   group('CuriosityHookCard.fromDomain', () {
@@ -167,7 +170,9 @@ void main() {
       expect(find.byKey(const Key('grounding_breath_spacer')), findsOneWidget);
     });
 
-    testWidgets('renders immediate input for standard recall hooks', (tester) async {
+    testWidgets('renders immediate input for standard recall hooks', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           theme: AppTheme.light(),
@@ -192,13 +197,17 @@ void main() {
         ),
       );
 
-      expect(find.byKey(const Key('curiosity_hook_response_input')), findsOneWidget);
+      expect(
+        find.byKey(const Key('curiosity_hook_response_input')),
+        findsOneWidget,
+      );
       expect(find.text('Commit Response Telemetry'), findsOneWidget);
       expect(find.text('Follow the Breath to Unlock Input'), findsNothing);
     });
 
-    testWidgets('disables submit button when callback is not provided',
-        (tester) async {
+    testWidgets('disables submit button when callback is not provided', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           theme: AppTheme.light(),
@@ -211,7 +220,10 @@ void main() {
       );
 
       expect(find.byKey(const Key('curiosity_hook_prompt')), findsOneWidget);
-      expect(find.byKey(const Key('curiosity_hook_submit_action')), findsOneWidget);
+      expect(
+        find.byKey(const Key('curiosity_hook_submit_action')),
+        findsOneWidget,
+      );
       final button = tester.widget<FilledButton>(
         find.byKey(const Key('curiosity_hook_submit_action')),
       );

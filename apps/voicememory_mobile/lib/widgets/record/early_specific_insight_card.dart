@@ -19,7 +19,9 @@ class EarlySpecificInsightCard extends StatelessWidget {
       key: const Key('early_specific_insight_card'),
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.md),
-      decoration: VoiceMemoryCards.standard(background: const Color(0xFFFFFBF5)),
+      decoration: VoiceMemoryCards.standard(
+        background: const Color(0xFFFFFBF5),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -60,10 +62,9 @@ class EarlySpecificInsightCard extends StatelessWidget {
           const SizedBox(height: AppSpacing.xs),
           Text(
             insight.confidenceLabel,
-            style: ArchiveMobileTypography.responsiveHelper(context).copyWith(
-              color: AppColors.textSecondary,
-              fontSize: 12,
-            ),
+            style: ArchiveMobileTypography.responsiveHelper(
+              context,
+            ).copyWith(color: AppColors.textSecondary, fontSize: 12),
           ),
         ],
       ),

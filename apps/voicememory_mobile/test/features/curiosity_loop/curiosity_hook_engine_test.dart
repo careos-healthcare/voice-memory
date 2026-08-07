@@ -3,6 +3,7 @@ import 'package:voicememory_mobile/features/curiosity_loop/models/curiosity_hook
 import 'package:voicememory_mobile/features/curiosity_loop/repositories/curiosity_hook_repository.dart';
 import 'package:voicememory_mobile/features/curiosity_loop/services/curiosity_hook_engine.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
+import '../../support/test_storage_sandbox.dart';
 
 const _anchor = 'said yes again';
 
@@ -45,7 +46,9 @@ void _expectPromptAvoidsForbiddenLoops(String prompt) {
     );
   }
   expect(
-    RegExp('"$RegExp.escape(_anchor)".*"$RegExp.escape(_anchor)"').hasMatch(prompt),
+    RegExp(
+      '"$RegExp.escape(_anchor)".*"$RegExp.escape(_anchor)"',
+    ).hasMatch(prompt),
     isFalse,
     reason: 'prompt must not repeat the anchor twice: "$prompt"',
   );
@@ -56,7 +59,8 @@ CuriosityHook _hook({
   required DateTime createdAt,
   required bool isConsumed,
   CuriosityHookType hookType = CuriosityHookType.anchorFollowUp,
-  String dynamicPrompt = 'Next time "$_anchor" comes up, what do you want to notice first?',
+  String dynamicPrompt =
+      'Next time "$_anchor" comes up, what do you want to notice first?',
 }) {
   return CuriosityHook(
     id: id,
@@ -70,17 +74,18 @@ CuriosityHook _hook({
 }
 
 void main() {
+  late TestStorageSandbox sandbox;
   setUp(() async {
+    sandbox = TestStorageSandbox.create();
     await AppServices.resetForTest(
-      journalPath: '${DateTime.now().microsecondsSinceEpoch}_journal.json',
-      prefsPath: '${DateTime.now().microsecondsSinceEpoch}_prefs.json',
+      journalPath: sandbox.journalPath,
+      prefsPath: sandbox.prefsPath,
       skipRevenueCat: true,
     );
-    await LocalCuriosityHookRepository.resetForTest(
-      AppServices.instance.prefs,
-    );
+    await LocalCuriosityHookRepository.resetForTest(AppServices.instance.prefs);
   });
 
+  tearDown(() => sandbox.dispose());
   group('CuriosityHookEngine', () {
     test('test_notification_payload_generation_excludes_forbidden_loops', () {
       final prompts = <String>[];
@@ -174,14 +179,16 @@ void main() {
         createdAt: DateTime.utc(2026, 6, 11),
         isConsumed: false,
         hookType: CuriosityHookType.momentum,
-        dynamicPrompt: 'You named "$_anchor" — what felt different about it this time?',
+        dynamicPrompt:
+            'You named "$_anchor" — what felt different about it this time?',
       );
       final freshest = _hook(
         id: 'freshest',
         createdAt: DateTime.utc(2026, 6, 12),
         isConsumed: false,
         hookType: CuriosityHookType.blocker,
-        dynamicPrompt: 'Before "$_anchor" showed up again, what got in the way?',
+        dynamicPrompt:
+            'Before "$_anchor" showed up again, what got in the way?',
       );
 
       await repo.saveHook(oldest);

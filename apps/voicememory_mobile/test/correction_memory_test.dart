@@ -11,7 +11,6 @@ import 'package:voicememory_mobile/features/current_relevance/current_relevance_
 import 'package:voicememory_mobile/features/current_relevance/current_relevance_store.dart';
 import 'package:voicememory_mobile/features/early_archive/early_first_signal_engine.dart';
 import 'package:voicememory_mobile/features/evidence_weighting/evidence_weighting_engine.dart';
-import 'package:voicememory_mobile/features/evidence_weighting/evidence_weighting_model.dart';
 import 'package:voicememory_mobile/features/present_day_relevance/present_day_relevance_engine.dart';
 import 'package:voicememory_mobile/features/present_day_relevance/present_day_relevance_model.dart';
 import 'package:voicememory_mobile/models/journal_entry.dart';
@@ -19,16 +18,13 @@ import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/models/sync_status.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
 import 'package:voicememory_mobile/widgets/patterns/correction_memory_card.dart';
+import 'support/test_storage_sandbox.dart';
 
 const _strongRepeat =
     'I had no capacity but I said yes again to the extra meeting today.';
 final _now = DateTime(2026, 6, 12, 12);
 
-JournalEntry _entry(
-  String id,
-  String transcript, {
-  DateTime? createdAt,
-}) =>
+JournalEntry _entry(String id, String transcript, {DateTime? createdAt}) =>
     JournalEntry(
       id: id,
       createdAt: createdAt ?? _now,
@@ -81,25 +77,26 @@ Future<void> _saveCorrection(
     proofKey: proofKey,
     answer: answer,
     entryCountAtCapture: entries.length,
-    hasConfirmedRepeat:
-        EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(entries),
+    hasConfirmedRepeat: EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(
+      entries,
+    ),
     source: 'test',
   );
 }
 
 void main() {
+  late TestStorageSandbox sandbox;
   final analyticsEvents = <({String event, Map<String, Object> props})>[];
 
   setUp(() async {
+    sandbox = TestStorageSandbox.create();
     CorrectionMemoryAnalytics.resetForTest();
     CorrectionMemoryAnalytics.captureForTest = (event, props) {
       analyticsEvents.add((event: event, props: props));
     };
     await AppServices.resetForTest(
-      journalPath:
-          'test/tmp/correction_memory/${DateTime.now().microsecondsSinceEpoch}_journal.json',
-      prefsPath:
-          'test/tmp/correction_memory/${DateTime.now().microsecondsSinceEpoch}_prefs.json',
+      journalPath: sandbox.journalPath,
+      prefsPath: sandbox.prefsPath,
       skipRevenueCat: true,
     );
     await CurrentRelevanceStore.resetForTest();
@@ -107,6 +104,7 @@ void main() {
     analyticsEvents.clear();
   });
 
+  tearDown(() => sandbox.dispose());
   tearDown(() async {
     CorrectionMemoryAnalytics.resetForTest();
     await CorrectionMemoryStore.resetForTest();
@@ -207,60 +205,60 @@ void main() {
       expect(result.body, CorrectionMemoryCopy.returnedAfterFadedBody);
     });
 
-    test('correction affects PresentDayRelevance state/copy where possible', () async {
-      final entries = _threeRelatedEntries();
-      await _saveCorrection(entries, CurrentRelevanceAnswer.notReally);
-      final result = PresentDayRelevanceEngine.build(
-        entries: entries,
-        beliefSurfaceVisible: true,
-        source: 'test',
-        now: _now,
-      );
-      expect(result, isNotNull);
-      expect(result!.relevanceState, PresentDayRelevanceState.fading);
-      expect(
-        result.stateBody,
-        contains('background unless it returns'),
-      );
-    });
+    test(
+      'correction affects PresentDayRelevance state/copy where possible',
+      () async {
+        final entries = _threeRelatedEntries();
+        await _saveCorrection(entries, CurrentRelevanceAnswer.notReally);
+        final result = PresentDayRelevanceEngine.build(
+          entries: entries,
+          beliefSurfaceVisible: true,
+          source: 'test',
+          now: _now,
+        );
+        expect(result, isNotNull);
+        expect(result!.relevanceState, PresentDayRelevanceState.fading);
+        expect(result.stateBody, contains('background unless it returns'));
+      },
+    );
 
-    test('correction affects EvidenceWeighting explanation where possible', () async {
-      final entries = _threeRelatedEntries();
-      await _saveCorrection(entries, CurrentRelevanceAnswer.little);
-      final result = EvidenceWeightingEngine.build(
-        entries: entries,
-        beliefSurfaceVisible: true,
-        now: _now,
-      );
-      expect(result, isNotNull);
-      final explanation = CorrectionMemoryEngine.evidenceExplanationFor(
-        correction: result!.correctionMemory,
-        fallback: 'Appeared across more than one saved moment.',
-        isRepeatedState: true,
-      );
-      expect(explanation, contains('not as the whole story'));
-    });
+    test(
+      'correction affects EvidenceWeighting explanation where possible',
+      () async {
+        final entries = _threeRelatedEntries();
+        await _saveCorrection(entries, CurrentRelevanceAnswer.little);
+        final result = EvidenceWeightingEngine.build(
+          entries: entries,
+          beliefSurfaceVisible: true,
+          now: _now,
+        );
+        expect(result, isNotNull);
+        final explanation = CorrectionMemoryEngine.evidenceExplanationFor(
+          correction: result!.correctionMemory,
+          fallback: 'Appeared across more than one saved moment.',
+          isRepeatedState: true,
+        );
+        expect(explanation, contains('not as the whole story'));
+      },
+    );
   });
 
   group('CorrectionMemoryCard', () {
-    Future<void> _pumpCard(
+    Future<void> pumpCard(
       WidgetTester tester,
       CorrectionMemoryResult result,
     ) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: CorrectionMemoryCard.test(
-              result: result,
-              source: 'test',
-            ),
+            body: CorrectionMemoryCard.test(result: result, source: 'test'),
           ),
         ),
       );
       await tester.pump();
     }
 
-    CorrectionMemoryResult _resultForState(CorrectionMemoryState state) =>
+    CorrectionMemoryResult resultForState(CorrectionMemoryState state) =>
         CorrectionMemoryResult(
           shouldShow: true,
           proofKey: '1|2|3',
@@ -276,52 +274,70 @@ void main() {
         );
 
     testWidgets('renders "Archive correction saved"', (tester) async {
-      await _pumpCard(tester, _resultForState(CorrectionMemoryState.stillCurrent));
+      await pumpCard(
+        tester,
+        resultForState(CorrectionMemoryState.stillCurrent),
+      );
       expect(find.text(CorrectionMemoryCopy.title), findsOneWidget);
     });
 
     testWidgets('still current copy says fresh returns stronger evidence', (
       tester,
     ) async {
-      await _pumpCard(tester, _resultForState(CorrectionMemoryState.stillCurrent));
-      expect(
-        find.textContaining('fresh returns'),
-        findsOneWidget,
+      await pumpCard(
+        tester,
+        resultForState(CorrectionMemoryState.stillCurrent),
       );
+      expect(find.textContaining('fresh returns'), findsOneWidget);
     });
 
     testWidgets('partly copy says not the whole story', (tester) async {
-      await _pumpCard(tester, _resultForState(CorrectionMemoryState.partlyCurrent));
+      await pumpCard(
+        tester,
+        resultForState(CorrectionMemoryState.partlyCurrent),
+      );
       expect(find.textContaining('whole story'), findsOneWidget);
     });
 
     testWidgets('faded copy says background unless it returns', (tester) async {
-      await _pumpCard(tester, _resultForState(CorrectionMemoryState.faded));
-      expect(find.textContaining('background unless it returns'), findsOneWidget);
+      await pumpCard(tester, resultForState(CorrectionMemoryState.faded));
+      expect(
+        find.textContaining('background unless it returns'),
+        findsOneWidget,
+      );
     });
 
     testWidgets('unsure copy says lightly in view', (tester) async {
-      await _pumpCard(tester, _resultForState(CorrectionMemoryState.unsure));
+      await pumpCard(tester, resultForState(CorrectionMemoryState.unsure));
       expect(find.textContaining('lightly in view'), findsOneWidget);
     });
 
     testWidgets('does not expose transcript/body/private text', (tester) async {
-      await _pumpCard(tester, _resultForState(CorrectionMemoryState.stillCurrent));
+      await pumpCard(
+        tester,
+        resultForState(CorrectionMemoryState.stillCurrent),
+      );
       expect(find.textContaining(_strongRepeat), findsNothing);
       expect(find.textContaining('transcript'), findsNothing);
     });
 
     testWidgets('metadata-only analytics', (tester) async {
-      await _pumpCard(tester, _resultForState(CorrectionMemoryState.stillCurrent));
+      await pumpCard(
+        tester,
+        resultForState(CorrectionMemoryState.stillCurrent),
+      );
       expect(analyticsEvents, hasLength(1));
       final record = analyticsEvents.single;
       expect(record.event, 'correction_memory_seen');
-      expect(record.props.keys, containsAll([
-        'source',
-        'entry_count',
-        'correction_state',
-        'has_confirmed_repeat',
-      ]));
+      expect(
+        record.props.keys,
+        containsAll([
+          'source',
+          'entry_count',
+          'correction_state',
+          'has_confirmed_repeat',
+        ]),
+      );
     });
   });
 

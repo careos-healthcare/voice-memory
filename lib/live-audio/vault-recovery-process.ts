@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import type { File } from "node:buffer";
+import { File as NodeFile } from "node:buffer";
 
 import { parseReflectionResponse } from "@/lib/analyze/parse-reflection-response";
 import { buildEvidencePacket } from "@/lib/evidence/evidence-pipeline";
@@ -128,11 +128,13 @@ export async function processVaultRecoveryUpload(
   );
 
   const openai = getOpenAIClient();
-  const wavFile = new File([wavBytes], "vault-recovery.wav", {
+  const wavFile = new NodeFile([wavBytes], "vault-recovery.wav", {
     type: "audio/wav",
   });
   const transcription = await openai.audio.transcriptions.create({
-    file: wavFile,
+    file: wavFile as unknown as Parameters<
+      typeof openai.audio.transcriptions.create
+    >[0]["file"],
     model: "whisper-1",
     language: "en",
   });
@@ -205,4 +207,30 @@ export class VaultRecoveryProcessError extends Error {
     super(message);
     this.name = "VaultRecoveryProcessError";
   }
+}
+
+/** Queue worker entry — decrypts vault bytes with an inline recovery secret. */
+export async function processVaultBuffer(input: {
+  sessionId: string;
+  vaultBuffer: Buffer;
+  recoverySecret: Buffer;
+}): Promise<{
+  transcript: string;
+  reflection: string;
+  durationSeconds: number;
+  frameCount: number;
+}> {
+  const result = await processVaultRecoveryUpload({
+    subject: `queue:${input.sessionId}`,
+    sessionId: input.sessionId,
+    idempotencyKey: input.sessionId,
+    vaultBytes: input.vaultBuffer,
+    inlineRecoverySecret: input.recoverySecret,
+  });
+  return {
+    transcript: result.transcript,
+    reflection: JSON.stringify(result.reflection),
+    durationSeconds: result.durationSeconds,
+    frameCount: result.frameCount,
+  };
 }

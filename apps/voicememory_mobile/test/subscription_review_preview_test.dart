@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/features/paywall/archive_loop_entitlements.dart';
 import 'package:voicememory_mobile/product/consumer_ui_copy.dart';
-import 'package:voicememory_mobile/screens/subscription_review_preview.dart';
+import 'package:archiveme_research/screens/subscription_review_preview.dart';
 
 void main() {
   testWidgets('subscription review preview at iPhone 15 Pro size', (
@@ -38,7 +38,10 @@ void main() {
     expect(find.text('£39.99/year'), findsOneWidget);
     expect(find.text('Save 33%'), findsOneWidget);
     expect(find.text(ArchiveLoopPaywallCopy.eulaLabel), findsOneWidget);
-    expect(find.text(ArchiveLoopPaywallCopy.privacyPolicyLabel), findsOneWidget);
+    expect(
+      find.text(ArchiveLoopPaywallCopy.privacyPolicyLabel),
+      findsOneWidget,
+    );
     expect(find.text(ConsumerUiCopy.paywallPrimaryCta), findsOneWidget);
   });
 }

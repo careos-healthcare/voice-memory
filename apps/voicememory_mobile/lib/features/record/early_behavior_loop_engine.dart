@@ -18,8 +18,7 @@ class EarlyBehaviorLoopEngine {
           'Pressure shows up, then you say yes before checking your capacity.',
       triggerLine: 'Trigger: someone needs something from you.',
       behaviorLine: 'What you do: agree first, deal with the cost later.',
-      costLine:
-          'Cost: you end up carrying more than you had space for.',
+      costLine: 'Cost: you end up carrying more than you had space for.',
       nextCheckLine: 'Tomorrow, notice the moment before you agree.',
       signals: [
         'said yes',
@@ -49,7 +48,8 @@ class EarlyBehaviorLoopEngine {
           'Work pressure builds, then your mind stays with it after the moment has passed.',
       triggerLine: 'Trigger: deadlines, messages, or work demands pile up.',
       behaviorLine: 'What you do: stay switched on even after the task ends.',
-      costLine: 'Cost: work keeps running in your head when you wanted to stop.',
+      costLine:
+          'Cost: work keeps running in your head when you wanted to stop.',
       nextCheckLine:
           'Tomorrow, notice whether work is still in your head after the task ends.',
       signals: [
@@ -71,12 +71,7 @@ class EarlyBehaviorLoopEngine {
         ['deadline', 'pressure'],
         ['manager', 'email'],
       ],
-      evidencePriority: [
-        'work pressure',
-        'deadline',
-        'pressure',
-        'urgent',
-      ],
+      evidencePriority: ['work pressure', 'deadline', 'pressure', 'urgent'],
     ),
     _LoopDefinition(
       id: 'avoidance',
@@ -163,12 +158,7 @@ class EarlyBehaviorLoopEngine {
         ['pretended', 'fine'],
         ['bottled', 'held it in'],
       ],
-      evidencePriority: [
-        'kept quiet',
-        "didn't say",
-        'held it in',
-        'pretended',
-      ],
+      evidencePriority: ['kept quiet', "didn't say", 'held it in', 'pretended'],
     ),
   ];
 
@@ -214,12 +204,13 @@ class EarlyBehaviorLoopEngine {
 
   String _entryText(JournalEntry entry) {
     final parts = <String>[
-      if (ConsumerCopyGuard.userFacingObservation(entry.reflection.concreteObservation) case final observation?)
-        observation,
-      if (ConsumerCopyGuard.userFacingObservation(entry.reflection.exactLanguagePattern) case final pattern?)
-        pattern,
-      if (_cleanTranscript(entry.transcript) case final transcript?)
-        transcript,
+      ?ConsumerCopyGuard.userFacingObservation(
+        entry.reflection.concreteObservation,
+      ),
+      ?ConsumerCopyGuard.userFacingObservation(
+        entry.reflection.exactLanguagePattern,
+      ),
+      ?_cleanTranscript(entry.transcript),
     ];
     return parts.join(' ').replaceAll(RegExp(r'\s+'), ' ').trim();
   }
@@ -240,12 +231,13 @@ class EarlyBehaviorLoopEngine {
     if (entryMatches.isEmpty) return null;
 
     final supportingEntries = entryMatches.length;
-    final hasStrongEntry =
-        entryMatches.values.any((m) => m.isStrong);
-    final hasAdjacentPair = supportingEntries >= 2 &&
+    final hasStrongEntry = entryMatches.values.any((m) => m.isStrong);
+    final hasAdjacentPair =
+        supportingEntries >= 2 &&
         entryMatches.values.any((m) => m.isStrong || m.nonWeakCount >= 2);
 
-    final qualifies = supportingEntries >= 2 ||
+    final qualifies =
+        supportingEntries >= 2 ||
         (hasStrongEntry &&
             supportingEntries >= 1 &&
             texts.length >= 2 &&
@@ -262,7 +254,8 @@ class EarlyBehaviorLoopEngine {
     final evidencePhrases = _pickEvidencePhrases(def, allPhrases);
     if (evidencePhrases.isEmpty) return null;
 
-    final score = supportingEntries * 10 +
+    final score =
+        supportingEntries * 10 +
         (hasStrongEntry ? 20 : 0) +
         allPhrases.length +
         (hasAdjacentPair ? 5 : 0);
@@ -281,7 +274,10 @@ class EarlyBehaviorLoopEngine {
   ) {
     if (entryMatches.length >= 2) return true;
     final strongIndex = entryMatches.entries
-        .firstWhere((e) => e.value.isStrong, orElse: () => entryMatches.entries.first)
+        .firstWhere(
+          (e) => e.value.isStrong,
+          orElse: () => entryMatches.entries.first,
+        )
         .key;
     for (var i = 0; i < texts.length; i++) {
       if (i == strongIndex) continue;
@@ -302,8 +298,9 @@ class EarlyBehaviorLoopEngine {
     final isStrong = def.strongPairs.any(
       (pair) => pair.every((s) => lower.contains(s)),
     );
-    final nonWeak =
-        matched.where((s) => !def.weakSingletons.contains(s)).toList();
+    final nonWeak = matched
+        .where((s) => !def.weakSingletons.contains(s))
+        .toList();
 
     if (!isStrong && matched.every(def.weakSingletons.contains)) {
       return null;

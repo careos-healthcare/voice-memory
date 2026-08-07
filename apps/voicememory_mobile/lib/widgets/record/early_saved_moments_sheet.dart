@@ -39,10 +39,8 @@ class EarlySavedMomentsSheet extends StatelessWidget {
       context: context,
       isScrollControlled: true,
       showDragHandle: true,
-      builder: (sheetContext) => EarlySavedMomentsSheet(
-        content: content,
-        entryCount: entryCount,
-      ),
+      builder: (sheetContext) =>
+          EarlySavedMomentsSheet(content: content, entryCount: entryCount),
     );
   }
 
@@ -71,11 +69,9 @@ class EarlySavedMomentsSheet extends StatelessWidget {
               Text(
                 EarlySavedMomentsCopy.sheetSubtitle,
                 key: const Key('early_saved_moments_sheet_subtitle'),
-                style:
-                    ArchiveMobileTypography.responsiveHelper(context).copyWith(
-                  color: AppColors.textSecondary,
-                  height: 1.4,
-                ),
+                style: ArchiveMobileTypography.responsiveHelper(
+                  context,
+                ).copyWith(color: AppColors.textSecondary, height: 1.4),
               ),
               const SizedBox(height: AppSpacing.md),
               _SheetSection(
@@ -85,10 +81,7 @@ class EarlySavedMomentsSheet extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     for (final moment in content.moments) ...[
-                      _SavedMomentRow(
-                        moment: moment,
-                        entryCount: entryCount,
-                      ),
+                      _SavedMomentRow(moment: moment, entryCount: entryCount),
                       if (moment != content.moments.last)
                         const SizedBox(height: AppSpacing.sm),
                     ],
@@ -103,10 +96,9 @@ class EarlySavedMomentsSheet extends StatelessWidget {
                   child: Text(
                     comparisonBody,
                     key: const Key('early_saved_moments_comparing_body'),
-                    style: ArchiveMobileTypography.explanationBody(context)
-                        .copyWith(
-                      color: AppColors.textSecondary,
-                    ),
+                    style: ArchiveMobileTypography.explanationBody(
+                      context,
+                    ).copyWith(color: AppColors.textSecondary),
                   ),
                 ),
               ],
@@ -117,10 +109,9 @@ class EarlySavedMomentsSheet extends StatelessWidget {
                 child: Text(
                   content.nextActionBody,
                   key: const Key('early_saved_moments_next_action_body'),
-                  style: ArchiveMobileTypography.explanationBody(context)
-                      .copyWith(
-                    color: AppColors.textSecondary,
-                  ),
+                  style: ArchiveMobileTypography.explanationBody(
+                    context,
+                  ).copyWith(color: AppColors.textSecondary),
                 ),
               ),
             ],
@@ -150,9 +141,9 @@ class _SheetSection extends StatelessWidget {
         Text(
           label,
           key: Key(labelKey),
-          style: ArchiveMobileTypography.cardLabel(context).copyWith(
-            color: AppColors.textPrimary,
-          ),
+          style: ArchiveMobileTypography.cardLabel(
+            context,
+          ).copyWith(color: AppColors.textPrimary),
         ),
         const SizedBox(height: AppSpacing.xs),
         child,
@@ -162,10 +153,7 @@ class _SheetSection extends StatelessWidget {
 }
 
 class _SavedMomentRow extends StatelessWidget {
-  const _SavedMomentRow({
-    required this.moment,
-    required this.entryCount,
-  });
+  const _SavedMomentRow({required this.moment, required this.entryCount});
 
   final EarlySavedMomentPreview moment;
   final int entryCount;
@@ -183,9 +171,7 @@ class _SavedMomentRow extends StatelessWidget {
     );
     if (result == null || !context.mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text(PendingTranscriptRecoveryCopy.savedSuccess),
-      ),
+      const SnackBar(content: Text(PendingTranscriptRecoveryCopy.savedSuccess)),
     );
   }
 
@@ -198,18 +184,18 @@ class _SavedMomentRow extends StatelessWidget {
         Text(
           moment.label,
           key: Key('early_saved_moment_label_${moment.index}'),
-          style: ArchiveMobileTypography.cardLabel(context).copyWith(
-            color: AppColors.textPrimary,
-          ),
+          style: ArchiveMobileTypography.cardLabel(
+            context,
+          ).copyWith(color: AppColors.textPrimary),
         ),
         const SizedBox(height: AppSpacing.xs),
         if (moment.isPendingTranscript) ...[
           Text(
             PendingTranscriptRecoveryCopy.title,
             key: Key('early_saved_moment_pending_title_${moment.index}'),
-            style: ArchiveMobileTypography.explanationBody(context).copyWith(
-              color: AppColors.textPrimary,
-            ),
+            style: ArchiveMobileTypography.explanationBody(
+              context,
+            ).copyWith(color: AppColors.textPrimary),
           ),
           const SizedBox(height: AppSpacing.xs),
         ],
@@ -218,18 +204,17 @@ class _SavedMomentRow extends StatelessWidget {
           key: Key('early_saved_moment_preview_${moment.index}'),
           maxLines: 2,
           overflow: TextOverflow.ellipsis,
-          style: ArchiveMobileTypography.explanationBody(context).copyWith(
-            color: AppColors.textSecondary,
-          ),
+          style: ArchiveMobileTypography.explanationBody(
+            context,
+          ).copyWith(color: AppColors.textSecondary),
         ),
         const SizedBox(height: AppSpacing.xs),
         Text(
           formatUserFacingDate(moment.savedAt),
           key: Key('early_saved_moment_saved_at_${moment.index}'),
-          style: ArchiveMobileTypography.explanationBody(context).copyWith(
-            color: AppColors.textSecondary,
-            fontSize: 13,
-          ),
+          style: ArchiveMobileTypography.explanationBody(
+            context,
+          ).copyWith(color: AppColors.textSecondary, fontSize: 13),
         ),
         if (moment.isPendingTranscript) ...[
           const SizedBox(height: AppSpacing.sm),

@@ -7,19 +7,14 @@ import '../../theme/app_theme.dart';
 
 /// Developer-only release-beta metrics dashboard — classification wiring.
 class CoreMetricsMinimumSetCard extends StatelessWidget {
-  const CoreMetricsMinimumSetCard({
-    super.key,
-    required this.dashboard,
-  });
+  const CoreMetricsMinimumSetCard({super.key, required this.dashboard});
 
   final CoreMetricsMinimumDashboard dashboard;
 
   @override
   Widget build(BuildContext context) {
     if (!DeveloperSettingsGate.canShowDeveloperSettings) {
-      return const SizedBox.shrink(
-        key: Key('core_metrics_minimum_set_hidden'),
-      );
+      return const SizedBox.shrink(key: Key('core_metrics_minimum_set_hidden'));
     }
 
     return Container(
@@ -36,9 +31,9 @@ class CoreMetricsMinimumSetCard extends StatelessWidget {
           Text(
             dashboard.headline,
             key: const Key('core_metrics_minimum_set_title'),
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: 8),
           Text(
@@ -54,18 +49,15 @@ class CoreMetricsMinimumSetCard extends StatelessWidget {
           Text(
             '${dashboard.observedCoreCount}/${dashboard.rows.length} core metrics observed',
             key: const Key('core_metrics_minimum_set_summary'),
-            style: const TextStyle(
-              fontWeight: FontWeight.w600,
-              fontSize: 13,
-            ),
+            style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
           ),
           const SizedBox(height: 12),
           Text(
             'Core beta metrics',
             key: const Key('core_metrics_minimum_set_section_title'),
-            style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: 8),
           for (final row in dashboard.rows) ...[
@@ -101,10 +93,7 @@ class _MetricTile extends StatelessWidget {
               ),
               Text(
                 row.canonicalEvent,
-                style: const TextStyle(
-                  color: AppTheme.muted,
-                  fontSize: 12,
-                ),
+                style: const TextStyle(color: AppTheme.muted, fontSize: 12),
               ),
             ],
           ),
@@ -124,10 +113,7 @@ class _MetricTile extends StatelessWidget {
             if (row.usedForPaidIntentDecision)
               const Text(
                 'Paid-intent signal',
-                style: TextStyle(
-                  color: AppTheme.muted,
-                  fontSize: 11,
-                ),
+                style: TextStyle(color: AppTheme.muted, fontSize: 11),
               ),
           ],
         ),

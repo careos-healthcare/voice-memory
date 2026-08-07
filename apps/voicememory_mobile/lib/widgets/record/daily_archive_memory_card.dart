@@ -99,22 +99,23 @@ class _DailyArchiveMemoryCardState extends State<DailyArchiveMemoryCard> {
   Widget build(BuildContext context) {
     if (_dismissedToday) return const SizedBox.shrink();
 
-    final bodyStyle = ArchiveMobileTypography.explanationBody(context).copyWith(
-      color: AppColors.textPrimary,
-      height: 1.45,
-    );
+    final bodyStyle = ArchiveMobileTypography.explanationBody(
+      context,
+    ).copyWith(color: AppColors.textPrimary, height: 1.45);
     final secondaryStyle = bodyStyle.copyWith(color: AppColors.textSecondary);
     final phraseStyle = bodyStyle.copyWith(
       fontWeight: FontWeight.w600,
       fontStyle: FontStyle.italic,
     );
-    final actionStyle = ArchiveMobileTypography.responsiveHelper(context).copyWith(
-      color: AppColors.accentPrimary,
-      fontWeight: FontWeight.w600,
-      fontSize: 13,
-    );
+    final actionStyle = ArchiveMobileTypography.responsiveHelper(context)
+        .copyWith(
+          color: AppColors.accentPrimary,
+          fontWeight: FontWeight.w600,
+          fontSize: 13,
+        );
 
-    final focused = widget.showFocusedCaptureActions && widget.memory.hasWatchTarget;
+    final focused =
+        widget.showFocusedCaptureActions && widget.memory.hasWatchTarget;
     final watchPhrase = widget.memory.watchPhrase;
 
     return Container(
@@ -137,9 +138,9 @@ class _DailyArchiveMemoryCardState extends State<DailyArchiveMemoryCard> {
             Text(
               widget.memory.title,
               key: const Key('daily_archive_memory_title'),
-              style: ArchiveMobileTypography.cardLabel(context).copyWith(
-                fontWeight: FontWeight.w600,
-              ),
+              style: ArchiveMobileTypography.cardLabel(
+                context,
+              ).copyWith(fontWeight: FontWeight.w600),
             ),
             const SizedBox(height: AppSpacing.xs),
             Text(

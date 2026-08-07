@@ -21,29 +21,25 @@ abstract final class ArchiveHomeCardPriority {
     required bool capacityWedgeActive,
     required int capacityMomentCount,
     required int activationTarget,
-  }) =>
-      capacityWedgeActive && capacityMomentCount < activationTarget;
+  }) => capacityWedgeActive && capacityMomentCount < activationTarget;
 
   static bool suppressArchiveDailyChange({
     required bool capacityWedgeActive,
     required int capacityMomentCount,
     required int activationTarget,
-  }) =>
-      calmCapacityActivationMode(
-        capacityWedgeActive: capacityWedgeActive,
-        capacityMomentCount: capacityMomentCount,
-        activationTarget: activationTarget,
-      );
+  }) => calmCapacityActivationMode(
+    capacityWedgeActive: capacityWedgeActive,
+    capacityMomentCount: capacityMomentCount,
+    activationTarget: activationTarget,
+  );
 
-  static int primaryCardLimit({
-    required bool calmCapacityActivationMode,
-  }) =>
+  static int primaryCardLimit({required bool calmCapacityActivationMode}) =>
       calmCapacityActivationMode ? 1 : 3;
 
-  static int capacityPrimaryCardCount(ArchiveHomePriorityPlan plan) =>
-      plan.primarySections
-          .where((id) => capacitySectionIds.contains(id))
-          .length;
+  static int capacityPrimaryCardCount(ArchiveHomePriorityPlan plan) => plan
+      .primarySections
+      .where((id) => capacitySectionIds.contains(id))
+      .length;
 
   static bool onlyOneCapacityPrimaryCard(ArchiveHomePriorityPlan plan) =>
       capacityPrimaryCardCount(plan) <= 1;
@@ -54,9 +50,7 @@ abstract final class ArchiveHomeCardPriority {
   ) {
     if (!input.calmCapacityActivationMode) return visibleStickySections;
     return visibleStickySections
-        .where(
-          (id) => id == ArchiveHomeSectionId.capacityThreeMomentActivation,
-        )
+        .where((id) => id == ArchiveHomeSectionId.capacityThreeMomentActivation)
         .toList(growable: false);
   }
 }

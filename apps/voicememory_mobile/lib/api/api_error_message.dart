@@ -1,10 +1,17 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:flutter/services.dart';
+import 'package:purchases_flutter/purchases_flutter.dart';
+
 import '../audio/recording_service.dart';
-import '../config/app_config.dart';
+import '../billing/billing_async_guard.dart';
+import '../billing/restore_purchases_copy.dart';
 import '../billing/subscription_copy.dart';
+import '../config/app_config.dart';
+import '../core/network/api_failure.dart';
 import '../services/capture_pipeline_service.dart';
+import 'api_error_copy.dart';
 import 'api_exceptions.dart';
 
 /// Shown when cloud/API features need a configured backend URL.
@@ -14,14 +21,20 @@ const String cloudBackendUnavailableMessage =
 /// Maps errors to calm, user-facing copy — never stack traces or ApiException(...) formatting.
 String userFacingErrorMessage(
   Object error, {
-  String fallback = 'Something went wrong. Please try again.',
+  String fallback = ApiErrorCopy.genericFallback,
 }) {
+  if (error is ApiFailure) {
+    return error.toUserMessage(fallback: fallback);
+  }
   if (error is BackendNotConfiguredException) {
     return cloudBackendUnavailableMessage;
   }
   if (error is ApiException) {
     if (error.code == 'BACKEND_NOT_CONFIGURED') {
       return cloudBackendUnavailableMessage;
+    }
+    if (error is BillingUnavailableException) {
+      return _messageForApiException(error);
     }
     if (_shouldUseApiExceptionMessage(error)) {
       return error.message.trim();
@@ -36,37 +49,103 @@ String userFacingErrorMessage(
     final msg = error.message.trim();
     return msg.isNotEmpty ? msg : fallback;
   }
+  if (error is BillingOperationException) {
+    return _messageForBillingOperation(error, fallback);
+  }
+  if (error is PlatformException) {
+    return _messageForPlatformException(error, fallback);
+  }
   if (error is SocketException) {
-    return 'Could not reach the server. Check your connection and try again.';
+    return _messageForSocketException(error);
   }
   if (error is TimeoutException) {
-    return 'The request timed out. Please try again.';
-  }
-  if (error is StateError) {
-    final msg = error.message.toLowerCase();
-    if (msg.contains('revenuecat') || msg.contains('not configured')) {
-      return SubscriptionCopy.temporarilyUnavailable;
-    }
-    return fallback;
+    return ApiErrorCopy.requestTimedOut;
   }
   if (error is String) {
     final msg = error.trim();
     return msg.isNotEmpty && !_looksLikeInternalErrorText(msg) ? msg : fallback;
   }
 
-  final text = error.toString().trim();
-  if (text.isEmpty || _looksLikeInternalErrorText(text)) {
-    return fallback;
-  }
-  if (text.contains('Connection refused') ||
-      text.contains('connection refused')) {
-    return _connectionRefusedMessage();
-  }
   return fallback;
 }
 
 /// Legacy alias — prefer [userFacingErrorMessage] in UI.
 String formatApiErrorMessage(Object error) => userFacingErrorMessage(error);
+
+String _messageForBillingOperation(
+  BillingOperationException error,
+  String fallback,
+) {
+  final cause = error.cause;
+  if (cause != null) {
+    return userFacingErrorMessage(cause, fallback: fallback);
+  }
+  return RestorePurchasesCopy.restoreError;
+}
+
+String _messageForPlatformException(PlatformException error, String fallback) {
+  final purchasesCode = _purchasesErrorCodeFromPlatform(error);
+  if (purchasesCode != null) {
+    return _messageForPurchasesErrorCode(purchasesCode, fallback);
+  }
+
+  switch (error.code) {
+    case 'UNAVAILABLE':
+    case 'billing_unavailable':
+      return SubscriptionCopy.temporarilyUnavailable;
+    default:
+      return fallback;
+  }
+}
+
+PurchasesErrorCode? _purchasesErrorCodeFromPlatform(PlatformException error) {
+  if (int.tryParse(error.code) == null) {
+    return null;
+  }
+  try {
+    return PurchasesErrorHelper.getErrorCode(error);
+  } on FormatException {
+    return null;
+  }
+}
+
+String _messageForPurchasesErrorCode(PurchasesErrorCode code, String fallback) {
+  switch (code) {
+    case PurchasesErrorCode.purchaseCancelledError:
+      return ApiErrorCopy.purchaseCancelled;
+    case PurchasesErrorCode.networkError:
+    case PurchasesErrorCode.offlineConnectionError:
+    case PurchasesErrorCode.productRequestTimeout:
+      return ApiErrorCopy.networkUnreachable;
+    case PurchasesErrorCode.configurationError:
+    case PurchasesErrorCode.invalidCredentialsError:
+    case PurchasesErrorCode.storeProblemError:
+    case PurchasesErrorCode.unexpectedBackendResponseError:
+    case PurchasesErrorCode.unknownBackendError:
+    case PurchasesErrorCode.apiEndpointBlocked:
+      return SubscriptionCopy.temporarilyUnavailable;
+    case PurchasesErrorCode.productNotAvailableForPurchaseError:
+    case PurchasesErrorCode.productDiscountMissingIdentifierError:
+    case PurchasesErrorCode
+        .productDiscountMissingSubscriptionGroupIdentifierError:
+      return SubscriptionCopy.paywallNoOfferings;
+    case PurchasesErrorCode.purchaseNotAllowedError:
+    case PurchasesErrorCode.insufficientPermissionsError:
+      return SubscriptionCopy.paywallNoOfferings;
+    default:
+      return RestorePurchasesCopy.restoreError;
+  }
+}
+
+String _messageForSocketException(SocketException error) {
+  if (!AppConfig.isBackendConfigured) {
+    return cloudBackendUnavailableMessage;
+  }
+  if (AppConfig.looksLikeLocalhost) {
+    return ApiErrorCopy.localDeviceConnectionHint;
+  }
+  return ApiErrorCopy.networkUnreachable;
+}
 
 bool _shouldUseApiExceptionMessage(ApiException error) {
   final msg = error.message.trim();
@@ -100,44 +179,33 @@ bool _looksLikeInternalErrorText(String text) {
 
 String _messageForApiException(ApiException error) {
   if (error is AuthRequiredException) {
-    return 'Sign in to continue.';
+    return ApiErrorCopy.signInRequired;
   }
   if (error is NetworkOfflineException) {
     return error.message;
   }
   if (error is BillingUnavailableException) {
-    return error.message;
+    return SubscriptionCopy.temporarilyUnavailable;
   }
   if (error is NotImplementedNativeException) {
     return error.message;
   }
   switch (error.statusCode) {
     case 401:
-      return 'Sign in to continue.';
+      return ApiErrorCopy.signInRequired;
     case 413:
-      return 'This file is too large. Try a shorter recording.';
+      return ApiErrorCopy.fileTooLarge;
     case 422:
-      return 'No speech detected. Try speaking a little longer.';
+      return ApiErrorCopy.noSpeechDetected;
     case 429:
       return error.message.isNotEmpty
           ? error.message
-          : 'Too many requests. Please wait a moment.';
+          : ApiErrorCopy.tooManyRequests;
     case 503:
       return error.message.isNotEmpty
           ? error.message
-          : 'Service is temporarily unavailable.';
+          : ApiErrorCopy.serviceUnavailable;
     default:
-      return 'Something went wrong. Please try again.';
+      return ApiErrorCopy.genericFallback;
   }
-}
-
-String _connectionRefusedMessage() {
-  if (!AppConfig.isBackendConfigured) {
-    return cloudBackendUnavailableMessage;
-  }
-  if (AppConfig.looksLikeLocalhost) {
-    return 'Could not reach the server. On a physical device, set '
-        '--dart-define=${AppConfig.apiBaseUrlDefineKey}=http://YOUR_LAN_IP:3000';
-  }
-  return 'Could not reach the server. Check your connection and try again.';
 }

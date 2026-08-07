@@ -30,8 +30,7 @@ abstract class PatternCopyQualityGate {
 
   static const possibleThread =
       'Your archive is starting to show a possible thread.';
-  static const similarDirection =
-      'A few moments point in a similar direction.';
+  static const similarDirection = 'A few moments point in a similar direction.';
   static const needsMoreEvidence =
       'Record a few more ordinary moments before ArchiveMe names this pattern.';
   static const currentBeliefFallback =
@@ -148,7 +147,11 @@ abstract class PatternCopyQualityGate {
           original: trimmed,
         );
       }
-      _log(trimmed, decision: PatternCopyQualityDecision.approved, reason: 'natural');
+      _log(
+        trimmed,
+        decision: PatternCopyQualityDecision.approved,
+        reason: 'natural',
+      );
       return PatternCopyQualityResult(
         copy: trimmed,
         decision: PatternCopyQualityDecision.approved,
@@ -166,7 +169,11 @@ abstract class PatternCopyQualityGate {
           original: trimmed,
         );
       }
-      _log(trimmed, decision: PatternCopyQualityDecision.approved, reason: 'natural');
+      _log(
+        trimmed,
+        decision: PatternCopyQualityDecision.approved,
+        reason: 'natural',
+      );
       return PatternCopyQualityResult(
         copy: trimmed,
         decision: PatternCopyQualityDecision.approved,
@@ -180,7 +187,11 @@ abstract class PatternCopyQualityGate {
       return _fallback(role, reason: phraseReason, original: trimmed);
     }
 
-    _log(trimmed, decision: PatternCopyQualityDecision.approved, reason: 'natural');
+    _log(
+      trimmed,
+      decision: PatternCopyQualityDecision.approved,
+      reason: 'natural',
+    );
     return PatternCopyQualityResult(
       copy: trimmed,
       decision: PatternCopyQualityDecision.approved,
@@ -294,8 +305,9 @@ abstract class PatternCopyQualityGate {
 
     if (!_hasSemanticAnchor(meaningful)) return 'no_clear_meaning';
 
-    if (RegExp(r'\b(a|an|the)\s+(heavy|light|big|small)\s+\w+\s*$')
-        .hasMatch(normalized)) {
+    if (RegExp(
+      r'\b(a|an|the)\s+(heavy|light|big|small)\s+\w+\s*$',
+    ).hasMatch(normalized)) {
       return 'malformed_fragment';
     }
 
@@ -346,7 +358,9 @@ abstract class PatternCopyQualityGate {
   static bool _looksLikeCompleteSentence(String belief) {
     final trimmed = belief.trim();
     if (trimmed.length < 24) return false;
-    if (!trimmed.endsWith('.') && !trimmed.endsWith('!') && !trimmed.endsWith('?')) {
+    if (!trimmed.endsWith('.') &&
+        !trimmed.endsWith('!') &&
+        !trimmed.endsWith('?')) {
       return false;
     }
     final lower = trimmed.toLowerCase();
@@ -368,10 +382,7 @@ abstract class PatternCopyQualityGate {
     final patterns = [
       RegExp(r'\bwhen\s+(.+?)[.?!]?$', caseSensitive: false),
       RegExp(r'\baround\s+(.+?)[.?!]?$', caseSensitive: false),
-      RegExp(
-        r'\bwhether\s+(.+?)\s+shows up again',
-        caseSensitive: false,
-      ),
+      RegExp(r'\bwhether\s+(.+?)\s+shows up again', caseSensitive: false),
       RegExp(r'\babout\s+(.+?)[.?!]?$', caseSensitive: false),
       RegExp(r'\bnotice\s+whether\s+(.+?)[.?!]?$', caseSensitive: false),
     ];
@@ -396,7 +407,9 @@ abstract class PatternCopyQualityGate {
     required String reason,
     required String original,
   }) {
-    debugPrint('ARCHIVEME_PATTERN_COPY_FALLBACK reason=low_confidence_or_bad_grammar');
+    debugPrint(
+      'ARCHIVEME_PATTERN_COPY_FALLBACK reason=low_confidence_or_bad_grammar',
+    );
     _log(
       original.isEmpty ? '(empty)' : original,
       decision: PatternCopyQualityDecision.rejected,
@@ -416,8 +429,9 @@ abstract class PatternCopyQualityGate {
     required String reason,
   }) {
     final normalized = ArchiveLogHygiene.normalizedLogPhrase(phrase);
-    final clipped =
-        normalized.length <= 96 ? normalized : '${normalized.substring(0, 93)}…';
+    final clipped = normalized.length <= 96
+        ? normalized
+        : '${normalized.substring(0, 93)}…';
     debugPrint(
       'ARCHIVEME_PATTERN_COPY_QUALITY phrase="$clipped" decision=${decision.name} reason=$reason',
     );

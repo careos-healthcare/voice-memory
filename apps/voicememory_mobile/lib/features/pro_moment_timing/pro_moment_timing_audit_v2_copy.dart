@@ -12,16 +12,12 @@ abstract final class ProMomentTimingAuditV2Copy {
 
   static const checkNeverBeforeFirstProof =
       'Pro bridge never appears before first proof';
-  static const checkAfterUsefulProof =
-      'Pro bridge appears after useful proof';
-  static const checkAfterStrongProof =
-      'Pro bridge appears after strong proof';
-  static const checkAfterFreshReturn =
-      'Pro bridge appears after fresh return';
+  static const checkAfterUsefulProof = 'Pro bridge appears after useful proof';
+  static const checkAfterStrongProof = 'Pro bridge appears after strong proof';
+  static const checkAfterFreshReturn = 'Pro bridge appears after fresh return';
   static const checkAfterCorrectionRelevant =
       'Pro bridge appears after correction that becomes relevant again';
-  static const checkBlockedTooVague =
-      'Pro bridge is blocked after Too vague';
+  static const checkBlockedTooVague = 'Pro bridge is blocked after Too vague';
   static const checkBlockedNotRelevant =
       'Pro bridge is blocked after Not relevant';
   static const checkAlreadyKnewNeedsDelta =
@@ -39,15 +35,15 @@ abstract final class ProMomentTimingAuditV2Copy {
   static const detailAllowedAfterProof = 'Allowed after proof signal';
   static const detailBlockedAfterFeedback = 'Blocked after negative feedback';
   static const detailAlreadyKnewWithoutDelta = 'Blocked without change/delta';
-  static const detailAlreadyKnewWithDelta = 'Allowed when correction/delta exists';
+  static const detailAlreadyKnewWithDelta =
+      'Allowed when correction/delta exists';
   static const detailVisibleWithGuidance = 'Visible alongside guidance slot';
   static const detailValueMomentSource = 'Uses value_moment paywall source';
   static const detailProofConnectedHeadline = 'Uses proof-connected headline';
   static const detailSingleProSlot = 'Surface priority caps Pro to one card';
   static const detailFailed = 'Timing rule check failed';
 
-  static const diagnosisTooEarly =
-      'Too early: user has not seen proof yet';
+  static const diagnosisTooEarly = 'Too early: user has not seen proof yet';
   static const diagnosisTooHidden =
       'Too hidden: useful proof exists but no Pro bridge';
   static const diagnosisWrongSource =

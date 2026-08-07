@@ -14,8 +14,7 @@ abstract class PaywallTimingGates {
     required bool resolved,
     required bool isPro,
     required bool hasArchiveProof,
-  }) =>
-      entryCount >= 2 && hasArchiveProof && !resolved && !isPro;
+  }) => entryCount >= 2 && hasArchiveProof && !resolved && !isPro;
 
   /// Full archive history Pro boundary — after confirmed repeat, Archive Summary,
   /// Weekly Review, Private Report preview, or Pattern Changed; never on first save.
@@ -55,30 +54,29 @@ abstract class PaywallTimingGates {
     bool hasPatternChanged = false,
     bool hasPrivateArchiveReportPreview = false,
     bool hasReturnCheckAnswered = false,
-  }) =>
-      showFullArchiveHistoryProBoundary(
-        entryCount: entryCount,
-        resolved: resolved,
-        isPro: isPro,
-        isPostSave: isPostSave,
-        hasConfirmedRepeat: viewingConfirmedRepeatOrTimeline &&
-            (hasConfirmedRepeatProof(
-                  hasArchiveProof: hasArchiveProof,
-                  hasChangeOverTimeProof: hasChangeOverTimeProof,
-                ) ||
-                hasArchiveProof),
-        hasArchiveSummary: hasArchiveSummary,
-        hasWeeklyArchiveReview: hasWeeklyArchiveReview,
-        hasPatternChanged: hasPatternChanged,
-        hasPrivateArchiveReportPreview: hasPrivateArchiveReportPreview,
-        hasReturnCheckAnswered: hasReturnCheckAnswered,
-      );
+  }) => showFullArchiveHistoryProBoundary(
+    entryCount: entryCount,
+    resolved: resolved,
+    isPro: isPro,
+    isPostSave: isPostSave,
+    hasConfirmedRepeat:
+        viewingConfirmedRepeatOrTimeline &&
+        (hasConfirmedRepeatProof(
+              hasArchiveProof: hasArchiveProof,
+              hasChangeOverTimeProof: hasChangeOverTimeProof,
+            ) ||
+            hasArchiveProof),
+    hasArchiveSummary: hasArchiveSummary,
+    hasWeeklyArchiveReview: hasWeeklyArchiveReview,
+    hasPatternChanged: hasPatternChanged,
+    hasPrivateArchiveReportPreview: hasPrivateArchiveReportPreview,
+    hasReturnCheckAnswered: hasReturnCheckAnswered,
+  );
 
   static bool hasConfirmedRepeatProof({
     required bool hasArchiveProof,
     required bool hasChangeOverTimeProof,
-  }) =>
-      hasArchiveProof || hasChangeOverTimeProof;
+  }) => hasArchiveProof || hasChangeOverTimeProof;
 
   /// True when the archive has shown confirmed repeat, timeline, belief, or
   /// grounded pattern insight — not merely a second unrelated save.

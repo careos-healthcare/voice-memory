@@ -14,21 +14,18 @@ ProofRelevanceOutcomeSummary _summary({
   int didNotFeelLikeVagueAiCount = 8,
   int specificProofExampleRememberedCount = 5,
   int wouldPayYesMaybeCount = 4,
-}) =>
-    ProofRelevanceOutcomeSummary(
-      totalTesters: totalTesters,
-      usefulProofCount: usefulProofCount,
-      tooVagueOrNotRelevantCount: tooVagueOrNotRelevantCount,
-      understoodWhatItNoticedCount: understoodWhatItNoticedCount,
-      couldTellIfRightCount: couldTellIfRightCount,
-      didNotFeelLikeVagueAiCount: didNotFeelLikeVagueAiCount,
-      specificProofExampleRememberedCount: specificProofExampleRememberedCount,
-      wouldPayYesMaybeCount: wouldPayYesMaybeCount,
-    );
+}) => ProofRelevanceOutcomeSummary(
+  totalTesters: totalTesters,
+  usefulProofCount: usefulProofCount,
+  tooVagueOrNotRelevantCount: tooVagueOrNotRelevantCount,
+  understoodWhatItNoticedCount: understoodWhatItNoticedCount,
+  couldTellIfRightCount: couldTellIfRightCount,
+  didNotFeelLikeVagueAiCount: didNotFeelLikeVagueAiCount,
+  specificProofExampleRememberedCount: specificProofExampleRememberedCount,
+  wouldPayYesMaybeCount: wouldPayYesMaybeCount,
+);
 
-ProofRelevanceOutcomeSummary _stableSummary({
-  int totalTesters = 30,
-}) =>
+ProofRelevanceOutcomeSummary _stableSummary({int totalTesters = 30}) =>
     _summary(
       totalTesters: totalTesters,
       usefulProofCount: totalTesters == 20 ? 5 : 7,
@@ -40,11 +37,10 @@ ProofRelevanceOutcomeSummary _stableSummary({
 
 ProofRelevanceOutcomeSummary _productionPassingSummary({
   int totalTesters = 30,
-}) =>
-    _stableSummary(totalTesters: totalTesters).copyWith(
-      specificProofExampleRememberedCount: totalTesters == 20 ? 4 : 5,
-      wouldPayYesMaybeCount: totalTesters == 20 ? 2 : 3,
-    );
+}) => _stableSummary(totalTesters: totalTesters).copyWith(
+  specificProofExampleRememberedCount: totalTesters == 20 ? 4 : 5,
+  wouldPayYesMaybeCount: totalTesters == 20 ? 2 : 3,
+);
 
 extension on ProofRelevanceOutcomeSummary {
   ProofRelevanceOutcomeSummary copyWith({
@@ -55,24 +51,21 @@ extension on ProofRelevanceOutcomeSummary {
     int? didNotFeelLikeVagueAiCount,
     int? specificProofExampleRememberedCount,
     int? wouldPayYesMaybeCount,
-  }) =>
-      ProofRelevanceOutcomeSummary(
-        totalTesters: totalTesters,
-        usefulProofCount: usefulProofCount ?? this.usefulProofCount,
-        tooVagueOrNotRelevantCount:
-            tooVagueOrNotRelevantCount ?? this.tooVagueOrNotRelevantCount,
-        understoodWhatItNoticedCount:
-            understoodWhatItNoticedCount ?? this.understoodWhatItNoticedCount,
-        couldTellIfRightCount:
-            couldTellIfRightCount ?? this.couldTellIfRightCount,
-        didNotFeelLikeVagueAiCount:
-            didNotFeelLikeVagueAiCount ?? this.didNotFeelLikeVagueAiCount,
-        specificProofExampleRememberedCount:
-            specificProofExampleRememberedCount ??
-                this.specificProofExampleRememberedCount,
-        wouldPayYesMaybeCount:
-            wouldPayYesMaybeCount ?? this.wouldPayYesMaybeCount,
-      );
+  }) => ProofRelevanceOutcomeSummary(
+    totalTesters: totalTesters,
+    usefulProofCount: usefulProofCount ?? this.usefulProofCount,
+    tooVagueOrNotRelevantCount:
+        tooVagueOrNotRelevantCount ?? this.tooVagueOrNotRelevantCount,
+    understoodWhatItNoticedCount:
+        understoodWhatItNoticedCount ?? this.understoodWhatItNoticedCount,
+    couldTellIfRightCount: couldTellIfRightCount ?? this.couldTellIfRightCount,
+    didNotFeelLikeVagueAiCount:
+        didNotFeelLikeVagueAiCount ?? this.didNotFeelLikeVagueAiCount,
+    specificProofExampleRememberedCount:
+        specificProofExampleRememberedCount ??
+        this.specificProofExampleRememberedCount,
+    wouldPayYesMaybeCount: wouldPayYesMaybeCount ?? this.wouldPayYesMaybeCount,
+  );
 }
 
 void main() {
@@ -85,10 +78,7 @@ void main() {
         6,
       );
       expect(ProofRelevanceOutcomeMatrix.couldTellIfRightTargetFor(30), 6);
-      expect(
-        ProofRelevanceOutcomeMatrix.didNotFeelLikeVagueAiTargetFor(30),
-        6,
-      );
+      expect(ProofRelevanceOutcomeMatrix.didNotFeelLikeVagueAiTargetFor(30), 6);
       expect(
         ProofRelevanceOutcomeMatrix.specificProofExampleRememberedTargetFor(30),
         5,
@@ -104,10 +94,7 @@ void main() {
         4,
       );
       expect(ProofRelevanceOutcomeMatrix.couldTellIfRightTargetFor(20), 4);
-      expect(
-        ProofRelevanceOutcomeMatrix.didNotFeelLikeVagueAiTargetFor(20),
-        4,
-      );
+      expect(ProofRelevanceOutcomeMatrix.didNotFeelLikeVagueAiTargetFor(20), 4);
       expect(
         ProofRelevanceOutcomeMatrix.specificProofExampleRememberedTargetFor(20),
         4,
@@ -136,10 +123,7 @@ void main() {
     test('low understoodWhatItNoticed returns proofNotUnderstood', () {
       expect(
         ProofRelevanceOutcomeMatrix.resolve(
-          _summary(
-            totalTesters: 30,
-            understoodWhatItNoticedCount: 5,
-          ),
+          _summary(totalTesters: 30, understoodWhatItNoticedCount: 5),
         ),
         ProofRelevanceOutcomeDecision.proofNotUnderstood,
       );
@@ -148,10 +132,7 @@ void main() {
     test('low couldTellIfRight returns proofNotUnderstood', () {
       expect(
         ProofRelevanceOutcomeMatrix.resolve(
-          _summary(
-            totalTesters: 30,
-            couldTellIfRightCount: 5,
-          ),
+          _summary(totalTesters: 30, couldTellIfRightCount: 5),
         ),
         ProofRelevanceOutcomeDecision.proofNotUnderstood,
       );
@@ -247,10 +228,7 @@ void main() {
               'blindly.',
         ),
         (
-          _summary(
-            totalTesters: 30,
-            understoodWhatItNoticedCount: 5,
-          ),
+          _summary(totalTesters: 30, understoodWhatItNoticedCount: 5),
           'Make the proof explanation clearer before returning to Pro or pricing.',
         ),
         (

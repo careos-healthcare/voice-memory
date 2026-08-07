@@ -12,42 +12,46 @@ import 'package:voicememory_mobile/screens/quick_text_capture_screen.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
 import 'package:voicememory_mobile/services/capture_save_messages.dart';
 import 'package:voicememory_mobile/theme/app_theme.dart';
+import 'support/test_storage_sandbox.dart';
 
 /// iPhone 17 Pro logical size — tight enough to reproduce fallback overflow.
 const _iphone17Pro = Size(402, 874);
+
 /// Huawei LYA-L29 class logical width with a short usable body when keyboard open.
 const _smallAndroid = Size(360, 640);
 const _keyboardInset = EdgeInsets.only(bottom: 336);
 const _largeKeyboardInset = EdgeInsets.only(bottom: 400);
 
 JournalEntry _degradedVoiceEntry({String id = 'v1'}) => JournalEntry(
-      id: id,
-      createdAt: DateTime(2026, 6, 12, 12),
-      transcript:
-          '[draft] ${CaptureSaveMessages.recordingSavedLocally} — transcribe when connected',
-      durationSeconds: 20,
-      localAudioPath: '/tmp/test-audio.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 0,
-        recurringThemes: [],
-        exactLanguagePattern: '',
-        concreteObservation: '',
-        repeatedSignal: '',
-      ),
-      syncStatus: SyncStatus.pendingUpload,
-    );
+  id: id,
+  createdAt: DateTime(2026, 6, 12, 12),
+  transcript:
+      '[draft] ${CaptureSaveMessages.recordingSavedLocally} — transcribe when connected',
+  durationSeconds: 20,
+  localAudioPath: '/tmp/test-audio.m4a',
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 0,
+    recurringThemes: [],
+    exactLanguagePattern: '',
+    concreteObservation: '',
+    repeatedSignal: '',
+  ),
+  syncStatus: SyncStatus.pendingUpload,
+);
 
 void main() {
-  late Directory tempDir;
+  late TestStorageSandbox sandbox;
 
   setUp(() async {
-    tempDir = Directory.systemTemp.createTempSync('vm_quick_text_');
+    sandbox = TestStorageSandbox.create();
     await AppServices.resetForTest(
-      journalPath: '${tempDir.path}/journal.json',
+      journalPath: sandbox.journalPath,
       skipRevenueCat: true,
     );
   });
+
+  tearDown(() => sandbox.dispose());
 
   Future<void> pumpScreen(
     WidgetTester tester, {
@@ -63,10 +67,7 @@ void main() {
       MaterialApp(
         theme: AppTheme.light(),
         home: MediaQuery(
-          data: MediaQueryData(
-            size: surfaceSize,
-            viewInsets: viewInsets,
-          ),
+          data: MediaQueryData(size: surfaceSize, viewInsets: viewInsets),
           child: QuickTextCaptureScreen(
             initialText: initialText,
             entryId: entryId,
@@ -83,6 +84,7 @@ void main() {
 
   final saveButton = find.byKey(const Key('quick_text_capture_save_button'));
 
+  tearDown(() => sandbox.dispose());
   group('QuickTextCaptureScreen prompt handling', () {
     testWidgets('opens with empty text field', (tester) async {
       await pumpScreen(tester);
@@ -123,7 +125,10 @@ void main() {
       const prompt = 'When did you feel pressure to do more to feel okay?';
       await pumpScreen(tester, initialText: prompt);
 
-      await tester.enterText(find.byType(TextField), 'I did more because I felt behind.');
+      await tester.enterText(
+        find.byType(TextField),
+        'I did more because I felt behind.',
+      );
       await tester.pump();
 
       expect(find.text(ConsumerUiCopy.trySayingLabel), findsNothing);
@@ -188,17 +193,16 @@ void main() {
         await AppServices.instance.journalStore.save(_degradedVoiceEntry());
       });
 
-      await pumpScreen(
-        tester,
-        entryId: 'v1',
-        viewInsets: _keyboardInset,
-      );
+      await pumpScreen(tester, entryId: 'v1', viewInsets: _keyboardInset);
       await tester.pump(const Duration(milliseconds: 200));
 
       expect(tester.takeException(), isNull);
       expect(saveButton, findsOneWidget);
 
-      await tester.drag(find.byType(SingleChildScrollView), const Offset(0, -120));
+      await tester.drag(
+        find.byType(SingleChildScrollView),
+        const Offset(0, -120),
+      );
       await tester.pump();
 
       expect(tester.takeException(), isNull);
@@ -216,15 +220,24 @@ void main() {
 
         expect(tester.takeException(), isNull);
         expect(find.text('Type a thought'), findsOneWidget);
-        expect(find.byKey(const Key('quick_text_capture_field')), findsOneWidget);
+        expect(
+          find.byKey(const Key('quick_text_capture_field')),
+          findsOneWidget,
+        );
         expect(find.byType(AppBar), findsOneWidget);
         expect(saveButton, findsOneWidget);
 
-        await tester.drag(find.byType(SingleChildScrollView), const Offset(0, -160));
+        await tester.drag(
+          find.byType(SingleChildScrollView),
+          const Offset(0, -160),
+        );
         await tester.pump();
 
         expect(tester.takeException(), isNull);
-        expect(find.byKey(const Key('quick_text_capture_field')), findsOneWidget);
+        expect(
+          find.byKey(const Key('quick_text_capture_field')),
+          findsOneWidget,
+        );
       },
     );
 
@@ -239,7 +252,10 @@ void main() {
 
         expect(tester.takeException(), isNull);
         expect(find.text('Type a thought'), findsOneWidget);
-        expect(find.byKey(const Key('quick_text_capture_field')), findsOneWidget);
+        expect(
+          find.byKey(const Key('quick_text_capture_field')),
+          findsOneWidget,
+        );
         expect(find.byType(AppBar), findsOneWidget);
       },
     );
@@ -289,7 +305,9 @@ void main() {
       await tester.pump(const Duration(milliseconds: 200));
     }
 
-    testWidgets('shows calm card with one field and Save moment', (tester) async {
+    testWidgets('shows calm card with one field and Save moment', (
+      tester,
+    ) async {
       await pumpFocused(tester);
 
       expect(find.byKey(const Key('focused_type_entry_card')), findsOneWidget);
@@ -314,8 +332,7 @@ void main() {
     });
 
     testWidgets('ignores route prompt hints on focused path', (tester) async {
-      const routePrompt =
-          'When did you feel pressure to do more to feel okay?';
+      const routePrompt = 'When did you feel pressure to do more to feel okay?';
       await pumpFocused(
         tester,
         promptHint: routePrompt,
@@ -330,24 +347,30 @@ void main() {
     });
 
     testWidgets('uses compact card on tall iPad surface', (tester) async {
-      await pumpFocused(
-        tester,
-        surfaceSize: const Size(1024, 1366),
-      );
+      await pumpFocused(tester, surfaceSize: const Size(1024, 1366));
 
-      final card = tester.getRect(find.byKey(const Key('focused_type_entry_card')));
+      final card = tester.getRect(
+        find.byKey(const Key('focused_type_entry_card')),
+      );
       expect(card.height, lessThan(500));
       expect(tester.takeException(), isNull);
     });
 
-    testWidgets('hides prompt starters until Examples is tapped', (tester) async {
+    testWidgets('hides prompt starters until Examples is tapped', (
+      tester,
+    ) async {
       await pumpFocused(tester);
 
-      expect(find.byKey(const Key('first_use_wording_capture_panel')), findsNothing);
+      expect(
+        find.byKey(const Key('first_use_wording_capture_panel')),
+        findsNothing,
+      );
       expect(find.text('Today I noticed...'), findsOneWidget);
       expect(find.text('I kept thinking about...'), findsNothing);
 
-      await tester.tap(find.byKey(const Key('focused_type_entry_examples_toggle')));
+      await tester.tap(
+        find.byKey(const Key('focused_type_entry_examples_toggle')),
+      );
       await tester.pump();
 
       expect(find.text('I kept thinking about...'), findsOneWidget);
@@ -361,11 +384,11 @@ void main() {
     ) async {
       await pumpFocused(tester);
 
-      await tester.tap(find.byKey(const Key('focused_type_entry_examples_toggle')));
-      await tester.pump();
       await tester.tap(
-        find.byKey(const Key('focused_type_entry_example_1')),
+        find.byKey(const Key('focused_type_entry_examples_toggle')),
       );
+      await tester.pump();
+      await tester.tap(find.byKey(const Key('focused_type_entry_example_1')));
       await tester.pump();
 
       final field = tester.widget<TextField>(
@@ -401,7 +424,9 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.byKey(const Key('focused_type_entry_card')), findsOneWidget);
-      await tester.tap(find.byKey(const Key('focused_type_entry_use_voice_link')));
+      await tester.tap(
+        find.byKey(const Key('focused_type_entry_use_voice_link')),
+      );
       await tester.pumpAndSettle();
       expect(find.byKey(const Key('focused_type_entry_card')), findsNothing);
     });

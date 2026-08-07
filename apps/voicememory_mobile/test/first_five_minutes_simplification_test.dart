@@ -29,18 +29,17 @@ FirstFiveMinutesInput _input({
   bool isStoreReadinessMode = false,
   bool isPostSave = false,
   bool userFeelsConfused = false,
-}) =>
-    FirstFiveMinutesInput(
-      surface: surface,
-      minuteIndex: minuteIndex,
-      hasSavedFirstMoment: hasSavedFirstMoment,
-      hasSavedSecondMoment: hasSavedSecondMoment,
-      hasFirstUsefulProof: hasFirstUsefulProof,
-      hasUserAskedForSurface: hasUserAskedForSurface,
-      isStoreReadinessMode: isStoreReadinessMode,
-      isPostSave: isPostSave,
-      userFeelsConfused: userFeelsConfused,
-    );
+}) => FirstFiveMinutesInput(
+  surface: surface,
+  minuteIndex: minuteIndex,
+  hasSavedFirstMoment: hasSavedFirstMoment,
+  hasSavedSecondMoment: hasSavedSecondMoment,
+  hasFirstUsefulProof: hasFirstUsefulProof,
+  hasUserAskedForSurface: hasUserAskedForSurface,
+  isStoreReadinessMode: isStoreReadinessMode,
+  isPostSave: isPostSave,
+  userFeelsConfused: userFeelsConfused,
+);
 
 void main() {
   group('FirstFiveMinutesSimplification.build', () {
@@ -237,10 +236,7 @@ void main() {
 
   group('FirstFiveMinutesSimplificationCopy', () {
     test('headline says Save one repeat', () {
-      expect(
-        FirstFiveMinutesSimplificationCopy.headline,
-        'Save one repeat',
-      );
+      expect(FirstFiveMinutesSimplificationCopy.headline, 'Save one repeat');
     });
 
     test('body says when something repeats, save one real sentence', () {
@@ -265,7 +261,8 @@ void main() {
     });
 
     test('whenToUseLine includes felt/done/avoided/checked before', () {
-      final line = FirstFiveMinutesSimplificationCopy.whenToUseLine.toLowerCase();
+      final line = FirstFiveMinutesSimplificationCopy.whenToUseLine
+          .toLowerCase();
       expect(line, contains('felt this before'));
       expect(line, contains('done this before'));
       expect(line, contains('avoided this before'));
@@ -279,23 +276,27 @@ void main() {
       );
     });
 
-    test('savedMattersLine says saved moments give archive something real to compare',
-        () {
-      expect(
-        FirstFiveMinutesSimplificationCopy.savedMattersLine,
-        contains('give your archive something real to compare'),
-      );
-    });
+    test(
+      'savedMattersLine says saved moments give archive something real to compare',
+      () {
+        expect(
+          FirstFiveMinutesSimplificationCopy.savedMattersLine,
+          contains('give your archive something real to compare'),
+        );
+      },
+    );
 
-    test('whatHappensNextLine says after enough real moments ArchiveMe can show first useful proof',
-        () {
-      expect(
-        FirstFiveMinutesSimplificationCopy.whatHappensNextLine,
-        contains(
-          'After enough real moments, ArchiveMe can show the first useful proof',
-        ),
-      );
-    });
+    test(
+      'whatHappensNextLine says after enough real moments ArchiveMe can show first useful proof',
+      () {
+        expect(
+          FirstFiveMinutesSimplificationCopy.whatHappensNextLine,
+          contains(
+            'After enough real moments, ArchiveMe can show the first useful proof',
+          ),
+        );
+      },
+    );
 
     test('notNowLine blocks reports/dashboards/action items/context work', () {
       final line = FirstFiveMinutesSimplificationCopy.notNowLine.toLowerCase();
@@ -330,20 +331,23 @@ void main() {
       );
     });
 
-    test('guardrail says first five minutes focus only on saving one repeat and comparing later',
-        () {
-      expect(
-        FirstFiveMinutesSimplificationCopy.guardrail,
-        contains('focus only on saving one repeat'),
-      );
-      expect(
-        FirstFiveMinutesSimplificationCopy.guardrail,
-        contains('compares it later'),
-      );
-    });
+    test(
+      'guardrail says first five minutes focus only on saving one repeat and comparing later',
+      () {
+        expect(
+          FirstFiveMinutesSimplificationCopy.guardrail,
+          contains('focus only on saving one repeat'),
+        );
+        expect(
+          FirstFiveMinutesSimplificationCopy.guardrail,
+          contains('compares it later'),
+        );
+      },
+    );
 
     test('copy does not say better than ChatGPT', () {
-      for (final text in FirstFiveMinutesSimplificationCopy.allVisibleStrings()) {
+      for (final text
+          in FirstFiveMinutesSimplificationCopy.allVisibleStrings()) {
         final lower = text.toLowerCase();
         expect(lower.contains('better than chatgpt'), isFalse, reason: text);
         expect(lower.contains('better chatgpt'), isFalse, reason: text);
@@ -351,7 +355,8 @@ void main() {
     });
 
     test('copy does not position ArchiveMe as voice chat', () {
-      for (final text in FirstFiveMinutesSimplificationCopy.allVisibleStrings()) {
+      for (final text
+          in FirstFiveMinutesSimplificationCopy.allVisibleStrings()) {
         final lower = text.toLowerCase();
         expect(lower.contains('voice chat'), isFalse, reason: text);
         expect(lower.contains('voice assistant'), isFalse, reason: text);
@@ -359,7 +364,8 @@ void main() {
     });
 
     test('copy does not introduce ranking or importance scoring', () {
-      for (final text in FirstFiveMinutesSimplificationCopy.allVisibleStrings()) {
+      for (final text
+          in FirstFiveMinutesSimplificationCopy.allVisibleStrings()) {
         final lower = text.toLowerCase();
         expect(lower.contains('ranking'), isFalse, reason: text);
         expect(lower.contains('importance score'), isFalse, reason: text);
@@ -367,7 +373,8 @@ void main() {
     });
 
     test('copy avoids therapy diagnosis coaching and advice claims', () {
-      for (final text in FirstFiveMinutesSimplificationCopy.allVisibleStrings()) {
+      for (final text
+          in FirstFiveMinutesSimplificationCopy.allVisibleStrings()) {
         expect(ProofSurfaceAdviceGuard.passes(text), isTrue, reason: text);
         final lower = text.toLowerCase();
         expect(lower.contains('advice'), isFalse, reason: text);
@@ -542,43 +549,47 @@ void main() {
       );
     });
 
-    test('record screen remains capture-first without stacking extra cards', () {
-      final audit = SurfacePriorityEngine.auditRecordReady(
-        entryCount: 4,
-        source: 'record',
-        candidates: SurfacePriorityCandidates.recordReady(
-          firstMomentCapture: false,
-          secondMomentReturn: false,
-          lowFrictionReturn: false,
-          whatToNoticeNext: false,
-          betaTodaySummary: false,
-          openCapturePromptChips: false,
-          captureFreedomLine: false,
-          timelineProofMoment: true,
-          archiveTimelineSpine: false,
-          timelinePositioning: false,
-          currentRelevance: false,
-          correctionMemory: false,
-          notRelevantRecovery: false,
-          proofQualityResponse: false,
-          evidenceWeighting: false,
-          proofSpecificity: false,
-          presentDayRelevance: false,
-          patternConfidence: false,
-          betaTesterReport: false,
-          proEvidenceValue: false,
-          privateReportProBridge: false,
-          suppressLegacyEducation: false,
-          betaProofLift: true,
-        ),
-      );
-      expect(audit.proofCardKey, 'timelineProofMoment');
-      expect(audit.guidanceCardKey, isNull);
-    });
+    test(
+      'record screen remains capture-first without stacking extra cards',
+      () {
+        final audit = SurfacePriorityEngine.auditRecordReady(
+          entryCount: 4,
+          source: 'record',
+          candidates: SurfacePriorityCandidates.recordReady(
+            firstMomentCapture: false,
+            secondMomentReturn: false,
+            lowFrictionReturn: false,
+            whatToNoticeNext: false,
+            betaTodaySummary: false,
+            openCapturePromptChips: false,
+            captureFreedomLine: false,
+            timelineProofMoment: true,
+            archiveTimelineSpine: false,
+            timelinePositioning: false,
+            currentRelevance: false,
+            correctionMemory: false,
+            notRelevantRecovery: false,
+            proofQualityResponse: false,
+            evidenceWeighting: false,
+            proofSpecificity: false,
+            presentDayRelevance: false,
+            patternConfidence: false,
+            betaTesterReport: false,
+            proEvidenceValue: false,
+            privateReportProBridge: false,
+            suppressLegacyEducation: false,
+            betaProofLift: true,
+          ),
+        );
+        expect(audit.proofCardKey, 'timelineProofMoment');
+        expect(audit.guidanceCardKey, isNull);
+      },
+    );
   });
 }
 
-ChangeTrailClaritySummary _fullTrailSummary() => const ChangeTrailClaritySummary(
+ChangeTrailClaritySummary _fullTrailSummary() =>
+    const ChangeTrailClaritySummary(
       totalTesters: 30,
       understoodFirstProofCount: 7,
       understoodProKeepsTrailCount: 6,

@@ -31,20 +31,19 @@ PromptAssistVisibilityInput _input({
   bool userAskedForHelpWhatToSay = false,
   bool isDailyPrompt = false,
   bool isChatLike = false,
-}) =>
-    PromptAssistVisibilityInput(
-      surface: surface,
-      hasSafeRepeat: hasSafeRepeat,
-      hasSafeRepeatPhrase: hasSafeRepeatPhrase,
-      hasEnoughArchiveSignal: hasEnoughArchiveSignal,
-      userHasSavedFirstMoment: userHasSavedFirstMoment,
-      userHasFirstUsefulProof: userHasFirstUsefulProof,
-      userRecentlyCorrectedProof: userRecentlyCorrectedProof,
-      isPrivateRawText: isPrivateRawText,
-      userAskedForHelpWhatToSay: userAskedForHelpWhatToSay,
-      isDailyPrompt: isDailyPrompt,
-      isChatLike: isChatLike,
-    );
+}) => PromptAssistVisibilityInput(
+  surface: surface,
+  hasSafeRepeat: hasSafeRepeat,
+  hasSafeRepeatPhrase: hasSafeRepeatPhrase,
+  hasEnoughArchiveSignal: hasEnoughArchiveSignal,
+  userHasSavedFirstMoment: userHasSavedFirstMoment,
+  userHasFirstUsefulProof: userHasFirstUsefulProof,
+  userRecentlyCorrectedProof: userRecentlyCorrectedProof,
+  isPrivateRawText: isPrivateRawText,
+  userAskedForHelpWhatToSay: userAskedForHelpWhatToSay,
+  isDailyPrompt: isDailyPrompt,
+  isChatLike: isChatLike,
+);
 
 void main() {
   group('PromptAssistVisibility.build', () {
@@ -65,17 +64,13 @@ void main() {
     });
 
     test('daily prompt hides prompt', () {
-      final result = PromptAssistVisibility.build(
-        _input(isDailyPrompt: true),
-      );
+      final result = PromptAssistVisibility.build(_input(isDailyPrompt: true));
       expect(result.shouldShow, isFalse);
       expect(result.reason, PromptAssistVisibilityReason.hideDailyPrompt);
     });
 
     test('chat-like prompt hides prompt', () {
-      final result = PromptAssistVisibility.build(
-        _input(isChatLike: true),
-      );
+      final result = PromptAssistVisibility.build(_input(isChatLike: true));
       expect(result.shouldShow, isFalse);
       expect(result.reason, PromptAssistVisibilityReason.hideChatLike);
     });
@@ -108,11 +103,17 @@ void main() {
       expect(result.reason, PromptAssistVisibilityReason.showUserAskedForHelp);
     });
 
-    test('safe repeat with phrase and enough signal shows safe repeat prompt', () {
-      final result = PromptAssistVisibility.build(_input());
-      expect(result.shouldShow, isTrue);
-      expect(result.reason, PromptAssistVisibilityReason.showSafeRepeatPrompt);
-    });
+    test(
+      'safe repeat with phrase and enough signal shows safe repeat prompt',
+      () {
+        final result = PromptAssistVisibility.build(_input());
+        expect(result.shouldShow, isTrue);
+        expect(
+          result.reason,
+          PromptAssistVisibilityReason.showSafeRepeatPrompt,
+        );
+      },
+    );
 
     test('safe repeat prompt starts with Try one sentence about', () {
       final result = PromptAssistVisibility.build(_input());
@@ -136,18 +137,21 @@ void main() {
         ),
       );
       expect(result.shouldShow, isTrue);
-      expect(result.reason, PromptAssistVisibilityReason.showFirstSessionFallback);
+      expect(
+        result.reason,
+        PromptAssistVisibilityReason.showFirstSessionFallback,
+      );
     });
 
     test('record ready shows fallback', () {
       final result = PromptAssistVisibility.build(
-        _input(
-          hasSafeRepeat: false,
-          hasEnoughArchiveSignal: false,
-        ),
+        _input(hasSafeRepeat: false, hasEnoughArchiveSignal: false),
       );
       expect(result.shouldShow, isTrue);
-      expect(result.reason, PromptAssistVisibilityReason.showRecordReadyFallback);
+      expect(
+        result.reason,
+        PromptAssistVisibilityReason.showRecordReadyFallback,
+      );
     });
 
     test('fallback prompt says What repeated today', () {
@@ -161,26 +165,25 @@ void main() {
       expect(result.promptText, PromptAssistVisibilityCopy.fallbackLine);
     });
 
-    test('no safe signal fallback hides outside first/record/user-help contexts',
-        () {
-      final result = PromptAssistVisibility.build(
-        _input(
-          surface: PromptAssistVisibilitySurface.returningUser,
-          hasSafeRepeat: false,
-          hasEnoughArchiveSignal: false,
-        ),
-      );
-      expect(result.shouldShow, isFalse);
-      expect(result.reason, PromptAssistVisibilityReason.hideNoSafeSignal);
-    });
+    test(
+      'no safe signal fallback hides outside first/record/user-help contexts',
+      () {
+        final result = PromptAssistVisibility.build(
+          _input(
+            surface: PromptAssistVisibilitySurface.returningUser,
+            hasSafeRepeat: false,
+            hasEnoughArchiveSignal: false,
+          ),
+        );
+        expect(result.shouldShow, isFalse);
+        expect(result.reason, PromptAssistVisibilityReason.hideNoSafeSignal);
+      },
+    );
   });
 
   group('PromptAssistVisibilityCopy', () {
     test('headline says Not sure what to say', () {
-      expect(
-        PromptAssistVisibilityCopy.headline,
-        'Not sure what to say?',
-      );
+      expect(PromptAssistVisibilityCopy.headline, 'Not sure what to say?');
     });
 
     test('body says suggest one small prompt', () {
@@ -191,10 +194,7 @@ void main() {
     });
 
     test('body says one real sentence', () {
-      expect(
-        PromptAssistVisibilityCopy.body,
-        contains('one real sentence'),
-      );
+      expect(PromptAssistVisibilityCopy.body, contains('one real sentence'));
     });
 
     test('safeRepeatLine says Try one sentence about', () {
@@ -205,10 +205,7 @@ void main() {
     });
 
     test('fallbackLine says What repeated today', () {
-      expect(
-        PromptAssistVisibilityCopy.fallbackLine,
-        'What repeated today?',
-      );
+      expect(PromptAssistVisibilityCopy.fallbackLine, 'What repeated today?');
     });
 
     test('whyLine says save the repeat without turning into chat', () {
@@ -255,7 +252,10 @@ void main() {
 
     test('guardrail blocks chat', () {
       expect(PromptAssistVisibilityCopy.guardrail, contains('chat'));
-      expect(PromptAssistVisibilityCopy.guardrail, contains('without becoming chat'));
+      expect(
+        PromptAssistVisibilityCopy.guardrail,
+        contains('without becoming chat'),
+      );
     });
 
     test('guardrail blocks advice', () {
@@ -423,43 +423,47 @@ void main() {
       );
     });
 
-    test('record screen remains capture-first without stacking extra cards', () {
-      final audit = SurfacePriorityEngine.auditRecordReady(
-        entryCount: 4,
-        source: 'record',
-        candidates: SurfacePriorityCandidates.recordReady(
-          firstMomentCapture: false,
-          secondMomentReturn: false,
-          lowFrictionReturn: false,
-          whatToNoticeNext: false,
-          betaTodaySummary: false,
-          openCapturePromptChips: false,
-          captureFreedomLine: false,
-          timelineProofMoment: true,
-          archiveTimelineSpine: false,
-          timelinePositioning: false,
-          currentRelevance: false,
-          correctionMemory: false,
-          notRelevantRecovery: false,
-          proofQualityResponse: false,
-          evidenceWeighting: false,
-          proofSpecificity: false,
-          presentDayRelevance: false,
-          patternConfidence: false,
-          betaTesterReport: false,
-          proEvidenceValue: false,
-          privateReportProBridge: false,
-          suppressLegacyEducation: false,
-          betaProofLift: true,
-        ),
-      );
-      expect(audit.proofCardKey, 'timelineProofMoment');
-      expect(audit.guidanceCardKey, isNull);
-    });
+    test(
+      'record screen remains capture-first without stacking extra cards',
+      () {
+        final audit = SurfacePriorityEngine.auditRecordReady(
+          entryCount: 4,
+          source: 'record',
+          candidates: SurfacePriorityCandidates.recordReady(
+            firstMomentCapture: false,
+            secondMomentReturn: false,
+            lowFrictionReturn: false,
+            whatToNoticeNext: false,
+            betaTodaySummary: false,
+            openCapturePromptChips: false,
+            captureFreedomLine: false,
+            timelineProofMoment: true,
+            archiveTimelineSpine: false,
+            timelinePositioning: false,
+            currentRelevance: false,
+            correctionMemory: false,
+            notRelevantRecovery: false,
+            proofQualityResponse: false,
+            evidenceWeighting: false,
+            proofSpecificity: false,
+            presentDayRelevance: false,
+            patternConfidence: false,
+            betaTesterReport: false,
+            proEvidenceValue: false,
+            privateReportProBridge: false,
+            suppressLegacyEducation: false,
+            betaProofLift: true,
+          ),
+        );
+        expect(audit.proofCardKey, 'timelineProofMoment');
+        expect(audit.guidanceCardKey, isNull);
+      },
+    );
   });
 }
 
-ChangeTrailClaritySummary _fullTrailSummary() => const ChangeTrailClaritySummary(
+ChangeTrailClaritySummary _fullTrailSummary() =>
+    const ChangeTrailClaritySummary(
       totalTesters: 30,
       understoodFirstProofCount: 7,
       understoodProKeepsTrailCount: 6,

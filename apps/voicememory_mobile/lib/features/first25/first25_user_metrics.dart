@@ -82,7 +82,7 @@ abstract class First25UserMetrics {
     await BetaActivationLoopTracker.trackPaywallSeen();
     await ProductAnalytics.trackStrings(paywallSeen, {
       'surface': surface,
-      if (variant != null) 'variant': variant,
+      'variant': ?variant,
     });
   }
 
@@ -99,7 +99,7 @@ abstract class First25UserMetrics {
     await BetaActivationLoopTracker.trackPurchaseTapped();
     await ProductAnalytics.trackStrings(paywallStarted, {
       'surface': surface,
-      if (period != null) 'period': period,
+      'period': ?period,
     });
   }
 
@@ -109,7 +109,7 @@ abstract class First25UserMetrics {
   }) {
     return ProductAnalytics.trackStrings(paywallPurchased, {
       'surface': surface,
-      if (period != null) 'period': period,
+      'period': ?period,
     });
   }
 

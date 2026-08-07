@@ -42,9 +42,7 @@ void main() {
   group('ProofRepairPlaybookPlan content', () {
     test('each playbook returns required title problem and action', () {
       for (final playbook in ProofRepairPlaybook.values) {
-        final plan = ProofRepairPlaybooks.fromOutcome(
-          _decisionFor(playbook),
-        );
+        final plan = ProofRepairPlaybooks.fromOutcome(_decisionFor(playbook));
         expect(plan.title, ProofRepairPlaybooksCopy.titleFor(playbook));
         expect(plan.problem, ProofRepairPlaybooksCopy.problemFor(playbook));
         expect(plan.action, ProofRepairPlaybooksCopy.actionFor(playbook));
@@ -59,7 +57,9 @@ void main() {
         final metric = ProofRepairPlaybooksCopy.successMetricFor(playbook);
         expect(metric.trim(), isNotEmpty);
         expect(
-          ProofRepairPlaybooks.fromOutcome(_decisionFor(playbook)).successMetric,
+          ProofRepairPlaybooks.fromOutcome(
+            _decisionFor(playbook),
+          ).successMetric,
           metric,
         );
       }

@@ -11,16 +11,16 @@ enum ProofSelectionPrincipleRule {
 
 extension ProofSelectionPrincipleRuleLabel on ProofSelectionPrincipleRule {
   String get label => switch (this) {
-        ProofSelectionPrincipleRule.clearestSafeRepeatNow =>
-          'Clearest safe repeat right now',
-        ProofSelectionPrincipleRule.notNecessarilyMostImportant =>
-          'Not necessarily the most important thing',
-        ProofSelectionPrincipleRule.confirmableOrCorrectable =>
-          'Confirmable or correctable by the user',
-        ProofSelectionPrincipleRule.notRankedList => 'Not a ranked list',
-        ProofSelectionPrincipleRule.notDiagnosisCoachingOrAdvice =>
-          'Not a diagnosis, coaching insight, or advice',
-      };
+    ProofSelectionPrincipleRule.clearestSafeRepeatNow =>
+      'Clearest safe repeat right now',
+    ProofSelectionPrincipleRule.notNecessarilyMostImportant =>
+      'Not necessarily the most important thing',
+    ProofSelectionPrincipleRule.confirmableOrCorrectable =>
+      'Confirmable or correctable by the user',
+    ProofSelectionPrincipleRule.notRankedList => 'Not a ranked list',
+    ProofSelectionPrincipleRule.notDiagnosisCoachingOrAdvice =>
+      'Not a diagnosis, coaching insight, or advice',
+  };
 }
 
 /// Decision helpers that reinforce proof selection over ranking.

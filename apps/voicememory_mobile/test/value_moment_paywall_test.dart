@@ -13,8 +13,7 @@ import 'package:voicememory_mobile/features/memory/memory_governance_policy.dart
 import 'package:voicememory_mobile/features/memory/memory_priority_governance.dart';
 import 'package:voicememory_mobile/features/memory/memory_scope_policy.dart';
 import 'package:voicememory_mobile/features/pro_bridge_visibility/delayed_paywall_proof_store.dart';
-import 'package:voicememory_mobile/product/consumer_ui_copy.dart';
-import 'package:voicememory_mobile/screens/pressure_insights_screen.dart';
+import 'package:archiveme_research/screens/pressure_insights_screen.dart';
 import 'package:voicememory_mobile/services/activation_funnel_analytics.dart';
 import 'package:voicememory_mobile/widgets/billing/value_moment_pro_bridge.dart';
 
@@ -49,12 +48,6 @@ List<PressureCheckInRecord> _workThread3() => [
 List<PressureCheckInRecord> _workThread2() => [
   _record(id: 'a', daysAgo: 5, contextIds: const ['work']),
   _record(id: 'b', daysAgo: 0, contextIds: const ['work']),
-];
-
-/// Two entries with repeated belief-like language and no shared context.
-List<PressureCheckInRecord> _checkingBelief2() => [
-  _record(id: 'd0', daysAgo: 4, fear: 'I have to keep checking messages'),
-  _record(id: 'd1', daysAgo: 0, fear: 'Checking messages again tonight'),
 ];
 
 /// Enough archive depth for governance, without a 3-entry thread return.
@@ -165,10 +158,7 @@ void main() {
     test('thread return evidence uses the thread-specific body', () {
       final bridge = trigger.build(_workThread3(), isPro: false, now: _base);
       expect(bridge.show, isTrue);
-      expect(
-        bridge.body,
-        ValueMomentBridge.threadReturnBody,
-      );
+      expect(bridge.body, ValueMomentBridge.threadReturnBody);
       expect(bridge.cardType, 'thread_return');
     });
 
@@ -179,20 +169,14 @@ void main() {
         now: _base,
       );
       expect(bridge.show, isTrue);
-      expect(
-        bridge.body,
-        ValueMomentBridge.beliefBody,
-      );
+      expect(bridge.body, ValueMomentBridge.beliefBody);
       expect(bridge.cardType, 'belief_distance');
     });
 
     test('2+ connected recordings use the proof-counter body', () {
       final bridge = trigger.build(_workThread2(), isPro: false, now: _base);
       expect(bridge.show, isTrue);
-      expect(
-        bridge.body,
-        ValueMomentBridge.proofCounterBody,
-      );
+      expect(bridge.body, ValueMomentBridge.proofCounterBody);
       expect(bridge.cardType, 'archive_proof_counter');
     });
 
@@ -203,19 +187,13 @@ void main() {
         now: _base,
       );
       expect(bridge.show, isTrue);
-      expect(
-        bridge.body,
-        ValueMomentBridge.weeklyBody,
-      );
+      expect(bridge.body, ValueMomentBridge.weeklyBody);
       expect(bridge.cardType, 'weekly_thread_review');
     });
 
     test('the fallback body still works as the default', () {
       const bridge = ValueMomentBridge(show: true);
-      expect(
-        bridge.body,
-        ValueMomentBridge.fallbackBody,
-      );
+      expect(bridge.body, ValueMomentBridge.fallbackBody);
       expect(bridge.cardType, isEmpty);
     });
 
@@ -339,10 +317,7 @@ void main() {
       expect(find.byKey(const Key('value_moment_pro_bridge')), findsOneWidget);
       expect(find.text(ValueMomentBridge.title), findsOneWidget);
       // The body is the moment-specific one — not the generic fallback.
-      expect(
-        find.text(ValueMomentBridge.threadReturnBody),
-        findsOneWidget,
-      );
+      expect(find.text(ValueMomentBridge.threadReturnBody), findsOneWidget);
       expect(
         find.textContaining('ArchiveMe has started connecting'),
         findsNothing,

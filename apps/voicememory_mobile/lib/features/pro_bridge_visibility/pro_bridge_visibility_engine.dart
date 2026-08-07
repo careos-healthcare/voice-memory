@@ -19,7 +19,8 @@ abstract final class ProBridgeVisibilityEngine {
     final loosen = ProBridgeTimingLoosenEngine.evaluate(
       input: ProBridgeTimingLoosenEngine.fromVisibilityInput(input),
     );
-    final triggerReason = loosen.trigger?.analyticsValue ?? loosen.blockedReason?.analyticsValue;
+    final triggerReason =
+        loosen.trigger?.analyticsValue ?? loosen.blockedReason?.analyticsValue;
 
     final proBridgeLine = BetaImprovementPackEngine.proBridgeLine(
       entryCount: input.entryCount,
@@ -42,10 +43,10 @@ abstract final class ProBridgeVisibilityEngine {
       if (branchBody != null)
         branchBody
       else ...[
-        if (freeLine != null) freeLine,
-        if (paidLine != null) paidLine,
+        ?freeLine,
+        ?paidLine,
         if (freeLine == null && paidLine == null) baseBody,
-        if (proBridgeLine != null) proBridgeLine,
+        ?proBridgeLine,
       ],
     ];
 
@@ -66,17 +67,14 @@ abstract final class ProBridgeVisibilityEngine {
     );
   }
 
-  static bool shouldShow({
-    required ProBridgeVisibilityInput input,
-  }) {
+  static bool shouldShow({required ProBridgeVisibilityInput input}) {
     if (input.isPro) return false;
     if (!input.postProofProBridgeEnabled) return false;
     if (ProEvidenceValueDismissStore.isDismissed()) return false;
     if (input.entryCount < minEntryCount) return false;
 
     if (input.hasFirstProofPayoffVisible &&
-        input.surface ==
-            ProBridgeVisibilitySurface.recordPostSaveAfterPayoff) {
+        input.surface == ProBridgeVisibilitySurface.recordPostSaveAfterPayoff) {
       return false;
     }
 
@@ -95,7 +93,9 @@ abstract final class ProBridgeVisibilityEngine {
     ).allowed;
   }
 
-  static ProMomentTimingContext toTimingContext(ProBridgeVisibilityInput input) {
+  static ProMomentTimingContext toTimingContext(
+    ProBridgeVisibilityInput input,
+  ) {
     return ProMomentTimingContext(
       surface: _proMomentSurface(input.surface),
       source: input.source,
@@ -137,13 +137,12 @@ abstract final class ProBridgeVisibilityEngine {
 
   static ProMomentTimingSurface _proMomentSurface(
     ProBridgeVisibilitySurface surface,
-  ) =>
-      switch (surface) {
-        ProBridgeVisibilitySurface.recordReady =>
-          ProMomentTimingSurface.recordReady,
-        ProBridgeVisibilitySurface.recordPostSaveAfterPayoff =>
-          ProMomentTimingSurface.recordPostSave,
-        ProBridgeVisibilitySurface.archivePatterns =>
-          ProMomentTimingSurface.archivePatterns,
-      };
+  ) => switch (surface) {
+    ProBridgeVisibilitySurface.recordReady =>
+      ProMomentTimingSurface.recordReady,
+    ProBridgeVisibilitySurface.recordPostSaveAfterPayoff =>
+      ProMomentTimingSurface.recordPostSave,
+    ProBridgeVisibilitySurface.archivePatterns =>
+      ProMomentTimingSurface.archivePatterns,
+  };
 }

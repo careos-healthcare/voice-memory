@@ -93,10 +93,7 @@ class ShareableProofResult {
   final ShareableProofTemplate selectedTemplate;
 
   String shareTextFor(ShareableProofTemplate template) {
-    final body = [
-      template.text,
-      ShareableProofCopy.privacyWarning,
-    ].join('\n');
+    final body = [template.text, ShareableProofCopy.privacyWarning].join('\n');
     assert(ShareableProofCopy.isSafeShareText(body));
     return body;
   }

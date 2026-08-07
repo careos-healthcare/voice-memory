@@ -1,9 +1,5 @@
 /// User choice on the yesterday-watch card.
-enum YesterdayWatchAnswer {
-  cameBack,
-  notToday,
-  different,
-}
+enum YesterdayWatchAnswer { cameBack, notToday, different }
 
 /// Yesterday-watch return loop card content.
 class YesterdayWatch {

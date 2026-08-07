@@ -108,6 +108,23 @@ class MobilePrefsStore {
     await _update((data) => data['lastSyncAt'] = at?.toIso8601String());
   }
 
+  Future<int?> get lastSyncSequence async {
+    final raw = (await _read())['lastSyncSequence'];
+    if (raw is int) return raw;
+    if (raw is num) return raw.toInt();
+    return null;
+  }
+
+  Future<void> setLastSyncSequence(int? sequence) async {
+    await _update((data) {
+      if (sequence == null) {
+        data.remove('lastSyncSequence');
+      } else {
+        data['lastSyncSequence'] = sequence;
+      }
+    });
+  }
+
   Future<Map<String, dynamic>?> get discoverBaseline async {
     final raw = (await _read())['discoverBaseline'];
     if (raw is Map<String, dynamic>) return raw;

@@ -71,10 +71,7 @@ class BetaInviteStore {
       existing.copyWith(lastCopiedAt: DateTime.now().toUtc()),
     );
     await save(
-      current.copyWith(
-        records: nextRecords,
-        lastVariantId: variantId,
-      ),
+      current.copyWith(records: nextRecords, lastVariantId: variantId),
     );
   }
 
@@ -98,8 +95,7 @@ abstract final class BetaInviteLoopDismissStore {
 
   static Future<void> ensureLoaded() async {
     if (_loaded || !AppServices.isInitialized) return;
-    _loadedDateKey =
-        await AppServices.instance.prefs.readString(prefsKey);
+    _loadedDateKey = await AppServices.instance.prefs.readString(prefsKey);
     _loaded = true;
   }
 

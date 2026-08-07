@@ -3,8 +3,7 @@ import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
-import 'package:voicememory_mobile/api/api_client.dart';
-import 'package:voicememory_mobile/billing/billing_async_guard.dart';
+import 'helpers/test_billing_service.dart';
 import 'package:voicememory_mobile/billing/billing_service.dart';
 import 'package:voicememory_mobile/billing/restore_purchases_copy.dart';
 import 'package:voicememory_mobile/billing/restore_purchases_feedback.dart';
@@ -21,9 +20,9 @@ class _FakeStoreBilling implements StoreBillingPort {
     this.restoreError,
     PremiumEntitlements? refreshResult,
     this.restoreDelay = Duration.zero,
-  })  : _restoreResult = restoreResult ?? PremiumEntitlements.free(),
-        _refreshResult =
-            refreshResult ?? restoreResult ?? PremiumEntitlements.free();
+  }) : _restoreResult = restoreResult ?? PremiumEntitlements.free(),
+       _refreshResult =
+           refreshResult ?? restoreResult ?? PremiumEntitlements.free();
 
   final bool configured;
   final PremiumEntitlements _restoreResult;
@@ -60,21 +59,17 @@ class _FakeStoreBilling implements StoreBillingPort {
 }
 
 PremiumEntitlements _proEntitlements() => const PremiumEntitlements(
-      tier: BillingTier.pro,
-      entitlementIds: ['pro'],
-      billingConnected: true,
-      source: 'revenuecat',
-    );
+  tier: BillingTier.pro,
+  entitlementIds: ['pro'],
+  billingConnected: true,
+  source: 'revenuecat',
+);
 
 Future<({BillingService billing, EntitlementCache cache, Directory dir})>
-    _openBillingHarness(_FakeStoreBilling store) async {
+_openBillingHarness(_FakeStoreBilling store) async {
   final dir = await Directory.systemTemp.createTemp('restore_flow_test');
   final cache = await EntitlementCache.open('${dir.path}/entitlements.json');
-  final billing = BillingService(
-    ApiClient(baseUrl: 'http://test.invalid'),
-    cache,
-    store,
-  );
+  final billing = createBillingServiceForTest(cache: cache, revenueCat: store);
   return (billing: billing, cache: cache, dir: dir);
 }
 
@@ -82,7 +77,10 @@ void main() {
   group('RestorePurchasesCopy', () {
     test('uses App Store-safe restore messaging', () {
       expect(RestorePurchasesCopy.restorePurchases, 'Restore purchases');
-      expect(RestorePurchasesCopy.purchaseRestored, 'Purchase restored. Pro is active.');
+      expect(
+        RestorePurchasesCopy.purchaseRestored,
+        'Purchase restored. Pro is active.',
+      );
       expect(
         RestorePurchasesCopy.noActivePurchase,
         'No previous Pro purchase was found on this Apple ID.',
@@ -194,19 +192,22 @@ void main() {
       );
     });
 
-    test('missing RevenueCat API key shows unavailable without crashing', () async {
-      store = _FakeStoreBilling(configured: false);
-      flow = RestorePurchasesFlow(
-        billing: billing,
-        isBillingConfigured: () => store.configured,
-      );
+    test(
+      'missing RevenueCat API key shows unavailable without crashing',
+      () async {
+        store = _FakeStoreBilling(configured: false);
+        flow = RestorePurchasesFlow(
+          billing: billing,
+          isBillingConfigured: () => store.configured,
+        );
 
-      final result = await flow.restore();
+        final result = await flow.restore();
 
-      expect(result.outcome, RestorePurchasesOutcome.unavailable);
-      expect(store.restoreCalls, 0);
-      expect(result.userMessage, RestorePurchasesCopy.restoreError);
-    });
+        expect(result.outcome, RestorePurchasesOutcome.unavailable);
+        expect(store.restoreCalls, 0);
+        expect(result.userMessage, RestorePurchasesCopy.restoreError);
+      },
+    );
 
     test('restore button cannot be double tapped while loading', () async {
       store = _FakeStoreBilling(
@@ -242,11 +243,7 @@ void main() {
       tempDir = await Directory.systemTemp.createTemp('billing_restore_test');
       cache = await EntitlementCache.open('${tempDir.path}/entitlements.json');
       store = _FakeStoreBilling();
-      billing = BillingService(
-        ApiClient(baseUrl: 'http://test.invalid'),
-        cache,
-        store,
-      );
+      billing = createBillingServiceForTest(cache: cache, revenueCat: store);
     });
 
     tearDown(() async {
@@ -260,11 +257,7 @@ void main() {
         restoreResult: _proEntitlements(),
         refreshResult: _proEntitlements(),
       );
-      billing = BillingService(
-        ApiClient(baseUrl: 'http://test.invalid'),
-        cache,
-        store,
-      );
+      billing = createBillingServiceForTest(cache: cache, revenueCat: store);
 
       final ent = await billing.restoreNative();
 
@@ -280,11 +273,7 @@ void main() {
         restoreResult: PremiumEntitlements.free(),
         refreshResult: PremiumEntitlements.free(),
       );
-      billing = BillingService(
-        ApiClient(baseUrl: 'http://test.invalid'),
-        cache,
-        store,
-      );
+      billing = createBillingServiceForTest(cache: cache, revenueCat: store);
 
       final ent = await billing.restoreNative();
 

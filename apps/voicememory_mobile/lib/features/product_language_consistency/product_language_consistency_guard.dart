@@ -35,7 +35,8 @@ abstract final class ProductLanguageConsistencyGuard {
     'extra storage': ProductLanguageConsistencyReason.blockedStorage,
     'unlimited storage': ProductLanguageConsistencyReason.blockedStorage,
     'storage app': ProductLanguageConsistencyReason.blockedStorage,
-    'unlock reports': ProductLanguageConsistencyReason.blockedReportPrimaryValue,
+    'unlock reports':
+        ProductLanguageConsistencyReason.blockedReportPrimaryValue,
     'reports are what pro':
         ProductLanguageConsistencyReason.blockedReportPrimaryValue,
     'main benefit: reports':
@@ -43,7 +44,8 @@ abstract final class ProductLanguageConsistencyGuard {
   };
 
   static const warnedRiskyPhrases = {
-    'full pattern timeline': ProductLanguageConsistencyReason.warnedFullTimeline,
+    'full pattern timeline':
+        ProductLanguageConsistencyReason.warnedFullTimeline,
     'full memory': ProductLanguageConsistencyReason.warnedStorage,
     'private monthly report':
         ProductLanguageConsistencyReason.warnedReportPrimaryValue,
@@ -51,8 +53,7 @@ abstract final class ProductLanguageConsistencyGuard {
         ProductLanguageConsistencyReason.warnedReportPrimaryValue,
     'your dashboard': ProductLanguageConsistencyReason.warnedDashboard,
     'analytics dashboard': ProductLanguageConsistencyReason.warnedDashboard,
-    'dashboard to maintain':
-        ProductLanguageConsistencyReason.warnedDashboard,
+    'dashboard to maintain': ProductLanguageConsistencyReason.warnedDashboard,
   };
 
   static ProductLanguageConsistencyResult evaluate(String copy) {
@@ -130,25 +131,25 @@ abstract final class ProductLanguageConsistencyGuard {
   }
 
   static List<String> firstJourneyCopyBlocks() => [
-        ...FirstFiveMinutesSimplificationCopy.allVisibleStrings(),
-        ...LandingAppContinuityCopy.allVisibleStrings(),
-        FirstSessionOnboardingCopy.title,
-        FirstSessionOnboardingCopy.body,
-        FirstSessionOnboardingCopy.step1Title,
-        FirstSessionOnboardingCopy.step1Body,
-        FirstSessionOnboardingCopy.step2Title,
-        FirstSessionOnboardingCopy.step2Body,
-        FirstSessionOnboardingCopy.step3Title,
-        FirstSessionOnboardingCopy.step3Body,
-        FirstSessionOnboardingCopy.startCta,
-        FirstSessionOnboardingCopy.exploreCta,
-        FirstSessionOnboardingCopy.notChatFootnote,
-      ];
+    ...FirstFiveMinutesSimplificationCopy.allVisibleStrings(),
+    ...LandingAppContinuityCopy.allVisibleStrings(),
+    FirstSessionOnboardingCopy.title,
+    FirstSessionOnboardingCopy.body,
+    FirstSessionOnboardingCopy.step1Title,
+    FirstSessionOnboardingCopy.step1Body,
+    FirstSessionOnboardingCopy.step2Title,
+    FirstSessionOnboardingCopy.step2Body,
+    FirstSessionOnboardingCopy.step3Title,
+    FirstSessionOnboardingCopy.step3Body,
+    FirstSessionOnboardingCopy.startCta,
+    FirstSessionOnboardingCopy.exploreCta,
+    FirstSessionOnboardingCopy.notChatFootnote,
+  ];
 
   static List<String> proPromiseCopyBlocks() => [
-        ...ProSinglePromiseCopy.allVisibleStrings(),
-        ...PaywallAlignmentCopy.allPaywallStrings(),
-      ];
+    ...ProSinglePromiseCopy.allVisibleStrings(),
+    ...PaywallAlignmentCopy.allPaywallStrings(),
+  ];
 
   static ProductLanguageConsistencySnapshot snapshot() =>
       const ProductLanguageConsistencySnapshot(
@@ -156,7 +157,8 @@ abstract final class ProductLanguageConsistencyGuard {
         body: ProductLanguageConsistencyGuardCopy.body,
         preferredLanguageLine:
             ProductLanguageConsistencyGuardCopy.preferredLanguageLine,
-        riskyLanguageLine: ProductLanguageConsistencyGuardCopy.riskyLanguageLine,
+        riskyLanguageLine:
+            ProductLanguageConsistencyGuardCopy.riskyLanguageLine,
         blockLine: ProductLanguageConsistencyGuardCopy.blockLine,
         warnLine: ProductLanguageConsistencyGuardCopy.warnLine,
         guardrail: ProductLanguageConsistencyGuardCopy.guardrail,

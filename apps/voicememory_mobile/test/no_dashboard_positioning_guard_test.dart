@@ -224,20 +224,22 @@ void main() {
       );
     });
 
-    test('preferredLanguageLine includes proof trail and one sentence is enough',
-        () {
-      final line =
-          NoDashboardPositioningGuardCopy.preferredLanguageLine.toLowerCase();
-      expect(line, contains('proof trail'));
-      expect(line, contains('one repeat'));
-      expect(line, contains('first useful proof'));
-      expect(line, contains('longer proof trail'));
-      expect(line, contains('one sentence is enough'));
-    });
+    test(
+      'preferredLanguageLine includes proof trail and one sentence is enough',
+      () {
+        final line = NoDashboardPositioningGuardCopy.preferredLanguageLine
+            .toLowerCase();
+        expect(line, contains('proof trail'));
+        expect(line, contains('one repeat'));
+        expect(line, contains('first useful proof'));
+        expect(line, contains('longer proof trail'));
+        expect(line, contains('one sentence is enough'));
+      },
+    );
 
     test('avoidLanguageLine blocks dashboard positioning frames', () {
-      final line =
-          NoDashboardPositioningGuardCopy.avoidLanguageLine.toLowerCase();
+      final line = NoDashboardPositioningGuardCopy.avoidLanguageLine
+          .toLowerCase();
       expect(line, contains('dashboard'));
       expect(line, contains('command center'));
       expect(line, contains('life operating system'));
@@ -308,13 +310,19 @@ void main() {
       }
     });
 
-    test('proof_surface_advice_guard registers no dashboard positioning copy', () {
-      final source =
-          File('lib/features/archive_proof/proof_surface_advice_guard.dart')
-              .readAsStringSync();
-      expect(source, contains('no_dashboard_positioning_guard_copy.dart'));
-      expect(source, contains('NoDashboardPositioningGuardCopy.allVisibleStrings()'));
-    });
+    test(
+      'proof_surface_advice_guard registers no dashboard positioning copy',
+      () {
+        final source = File(
+          'lib/features/archive_proof/proof_surface_advice_guard.dart',
+        ).readAsStringSync();
+        expect(source, contains('no_dashboard_positioning_guard_copy.dart'));
+        expect(
+          source,
+          contains('NoDashboardPositioningGuardCopy.allVisibleStrings()'),
+        );
+      },
+    );
 
     test('existing modules behaviour unchanged', () {
       expect(
@@ -440,39 +448,42 @@ void main() {
       );
     });
 
-    test('record screen remains capture-first without stacking extra cards', () {
-      final audit = SurfacePriorityEngine.auditRecordReady(
-        entryCount: 4,
-        source: 'record',
-        candidates: SurfacePriorityCandidates.recordReady(
-          firstMomentCapture: false,
-          secondMomentReturn: false,
-          lowFrictionReturn: false,
-          whatToNoticeNext: false,
-          betaTodaySummary: false,
-          openCapturePromptChips: false,
-          captureFreedomLine: false,
-          timelineProofMoment: true,
-          archiveTimelineSpine: false,
-          timelinePositioning: false,
-          currentRelevance: false,
-          correctionMemory: false,
-          notRelevantRecovery: false,
-          proofQualityResponse: false,
-          evidenceWeighting: false,
-          proofSpecificity: false,
-          presentDayRelevance: false,
-          patternConfidence: false,
-          betaTesterReport: false,
-          proEvidenceValue: false,
-          privateReportProBridge: false,
-          suppressLegacyEducation: false,
-          betaProofLift: true,
-        ),
-      );
-      expect(audit.proofCardKey, 'timelineProofMoment');
-      expect(audit.guidanceCardKey, isNull);
-    });
+    test(
+      'record screen remains capture-first without stacking extra cards',
+      () {
+        final audit = SurfacePriorityEngine.auditRecordReady(
+          entryCount: 4,
+          source: 'record',
+          candidates: SurfacePriorityCandidates.recordReady(
+            firstMomentCapture: false,
+            secondMomentReturn: false,
+            lowFrictionReturn: false,
+            whatToNoticeNext: false,
+            betaTodaySummary: false,
+            openCapturePromptChips: false,
+            captureFreedomLine: false,
+            timelineProofMoment: true,
+            archiveTimelineSpine: false,
+            timelinePositioning: false,
+            currentRelevance: false,
+            correctionMemory: false,
+            notRelevantRecovery: false,
+            proofQualityResponse: false,
+            evidenceWeighting: false,
+            proofSpecificity: false,
+            presentDayRelevance: false,
+            patternConfidence: false,
+            betaTesterReport: false,
+            proEvidenceValue: false,
+            privateReportProBridge: false,
+            suppressLegacyEducation: false,
+            betaProofLift: true,
+          ),
+        );
+        expect(audit.proofCardKey, 'timelineProofMoment');
+        expect(audit.guidanceCardKey, isNull);
+      },
+    );
   });
 }
 
@@ -491,7 +502,8 @@ LowEffortArchiveCaptureSummary _fullLowEffortSummary() =>
       wouldPayNoCount: 1,
     );
 
-ChangeTrailClaritySummary _fullTrailSummary() => const ChangeTrailClaritySummary(
+ChangeTrailClaritySummary _fullTrailSummary() =>
+    const ChangeTrailClaritySummary(
       totalTesters: 30,
       understoodFirstProofCount: 7,
       understoodProKeepsTrailCount: 6,

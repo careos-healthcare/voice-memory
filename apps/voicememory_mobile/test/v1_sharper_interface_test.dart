@@ -15,12 +15,15 @@ import 'package:voicememory_mobile/record/record_screen_framing_copy.dart';
 void main() {
   group('V1 core product sentence', () {
     test('matches required V1 sentence', () {
+      expect(V1CoreProductSentence.line, contains('Record one real moment'));
       expect(
         V1CoreProductSentence.line,
-        contains('Record one real moment'),
+        contains('Return when it happens again'),
       );
-      expect(V1CoreProductSentence.line, contains('Return when it happens again'));
-      expect(V1CoreProductSentence.line, contains('Pro keeps the longer trail'));
+      expect(
+        V1CoreProductSentence.line,
+        contains('Pro keeps the longer trail'),
+      );
       expect(V1RevenueFocusPolicy.firstUserJourney, V1CoreProductSentence.line);
     });
   });
@@ -42,7 +45,10 @@ void main() {
       expect(RecordScreenFramingCopy.seeExampleLink, 'See an example');
       expect(RecordScreenFramingCopy.seeExampleFirstLink, 'See an example');
       expect(SampleArchiveCopy.emptyStateTitle, 'See an example first');
-      expect(SampleArchiveCopy.emptyStateSubtitle.toLowerCase(), contains('example'));
+      expect(
+        SampleArchiveCopy.emptyStateSubtitle.toLowerCase(),
+        contains('example'),
+      );
       expect(SampleArchiveCopy.emptyStateSubtitle, contains('Day 1'));
       expect(SampleArchiveCopy.emptyStateSubtitle, contains('Day 3'));
     });
@@ -50,8 +56,13 @@ void main() {
 
   group('First-proof journey strip', () {
     test('strip copy avoids streak homework framing', () {
-      final blob = FirstProofJourneyCopy.allVisibleStrings().join(' ').toLowerCase();
-      expect(FirstProofJourneyCopy.strip, '1 Save → 2 Compare → 3 First thread');
+      final blob = FirstProofJourneyCopy.allVisibleStrings()
+          .join(' ')
+          .toLowerCase();
+      expect(
+        FirstProofJourneyCopy.strip,
+        '1 Save → 2 Compare → 3 First thread',
+      );
       expect(blob, isNot(contains('streak')));
       expect(blob, isNot(contains('daily')));
       expect(blob, isNot(contains('must record')));
@@ -61,15 +72,30 @@ void main() {
 
   group('Progressive evidence states', () {
     test('states follow entry count thresholds', () {
-      expect(ProgressiveEvidenceStateCopy.titleForCount(0), contains('Record one'));
-      expect(ProgressiveEvidenceStateCopy.titleForCount(1), contains('started'));
-      expect(ProgressiveEvidenceStateCopy.titleForCount(2), contains('compare'));
+      expect(
+        ProgressiveEvidenceStateCopy.titleForCount(0),
+        contains('Record one'),
+      );
+      expect(
+        ProgressiveEvidenceStateCopy.titleForCount(1),
+        contains('started'),
+      );
+      expect(
+        ProgressiveEvidenceStateCopy.titleForCount(2),
+        contains('compare'),
+      );
       expect(ProgressiveEvidenceStateCopy.titleForCount(3), contains('thread'));
     });
 
     test('archive secondary links gated until 5 entries', () {
-      expect(ArchiveSecondaryNavGates.showSecondaryLinks(entryCount: 4), isFalse);
-      expect(ArchiveSecondaryNavGates.showSecondaryLinks(entryCount: 5), isTrue);
+      expect(
+        ArchiveSecondaryNavGates.showSecondaryLinks(entryCount: 4),
+        isFalse,
+      );
+      expect(
+        ArchiveSecondaryNavGates.showSecondaryLinks(entryCount: 5),
+        isTrue,
+      );
       expect(
         ArchiveSecondaryNavGates.showRicherDiscoverSections(entryCount: 20),
         isFalse,
@@ -86,17 +112,21 @@ void main() {
       expect(ConsumerUiCopy.patternsTabLabel, 'Archive');
     });
 
-    test('secondary archive links exist for merged discover/timeline/search', () {
-      expect(ConsumerUiCopy.archiveDiscoverPatternsLink, 'See all patterns');
-      expect(ConsumerUiCopy.archiveTimelineLink, 'Timeline');
-      expect(ConsumerUiCopy.archiveSearchLink, 'Find saved moments');
-    });
+    test(
+      'secondary archive links exist for merged discover/timeline/search',
+      () {
+        expect(ConsumerUiCopy.archiveDiscoverPatternsLink, 'See all patterns');
+        expect(ConsumerUiCopy.archiveTimelineLink, 'Timeline');
+        expect(ConsumerUiCopy.archiveSearchLink, 'Find saved moments');
+      },
+    );
   });
 
   group('Expansion and wedge gates', () {
     test('expansion gates doc contains core V1 sentence and gated ideas', () {
-      final doc =
-          File(V1ExpansionGateCopy.expansionGatesDocPath).readAsStringSync();
+      final doc = File(
+        V1ExpansionGateCopy.expansionGatesDocPath,
+      ).readAsStringSync();
       expect(doc, contains(V1ExpansionGateCopy.expansionBlockedLine));
       expect(doc, contains(V1CoreProductSentence.line));
       for (final surface in V1ExpansionGateCopy.blockedExpansionIdeas) {

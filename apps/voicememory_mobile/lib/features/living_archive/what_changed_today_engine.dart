@@ -96,7 +96,7 @@ class WhatChangedTodayEngine {
       const Duration(days: 30),
       excludeRecentDays: 7,
     );
-    if (recent.length < 1 || prior.length < 2) return;
+    if (recent.isEmpty || prior.length < 2) return;
 
     for (final entry in _keywordThemes.entries) {
       final key = entry.key;

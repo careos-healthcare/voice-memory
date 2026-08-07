@@ -68,9 +68,9 @@ class EvidenceAttentionFilters {
   final List<EvidenceAttentionFilter> filters;
 
   factory EvidenceAttentionFilters.hidden() => const EvidenceAttentionFilters(
-        showCard: false,
-        title: VisibleArchiveProofCopy.evidenceAttentionFiltersTitle,
-      );
+    showCard: false,
+    title: VisibleArchiveProofCopy.evidenceAttentionFiltersTitle,
+  );
 }
 
 /// Builds local-only attention filters from eligible evidence and feedback.
@@ -85,8 +85,10 @@ abstract final class EvidenceAttentionFiltersEngine {
 
     final eligible = ArchiveEvidenceGuard.eligibleEntries(entries);
     final taggedCounts = CaptureContextTagAnalysis.tagCounts(entries);
-    final taggedCount =
-        taggedCounts.values.fold<int>(0, (sum, count) => sum + count);
+    final taggedCount = taggedCounts.values.fold<int>(
+      0,
+      (sum, count) => sum + count,
+    );
     final distinctTags = taggedCounts.length;
     final untaggedCount = _untaggedCount(eligible);
 
@@ -173,12 +175,13 @@ abstract final class EvidenceAttentionFiltersEngine {
   }
 
   static String? _thinnestContextTagId(Map<String, int> taggedCounts) {
-    final thin = taggedCounts.entries.where((entry) => entry.value == 1).toList()
-      ..sort((a, b) {
-        final aLabel = CaptureContextTags.byId(a.key)?.label ?? a.key;
-        final bLabel = CaptureContextTags.byId(b.key)?.label ?? b.key;
-        return aLabel.compareTo(bLabel);
-      });
+    final thin =
+        taggedCounts.entries.where((entry) => entry.value == 1).toList()
+          ..sort((a, b) {
+            final aLabel = CaptureContextTags.byId(a.key)?.label ?? a.key;
+            final bLabel = CaptureContextTags.byId(b.key)?.label ?? b.key;
+            return aLabel.compareTo(bLabel);
+          });
     if (thin.isEmpty) return null;
     return thin.first.key;
   }

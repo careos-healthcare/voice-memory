@@ -45,13 +45,13 @@ class BetaDecisionRuleResult {
   String get outcomeLabel => BetaDecisionRuleCopy.titleFor(outcome);
 
   List<String> get inputLines => [
-        '${BetaDecisionRuleCopy.testerCountLabel}: ${input.testerCount}/10',
-        '${BetaDecisionRuleCopy.firstSessionSaveLabel}: '
-            '${input.firstSessionSaveCount}/10',
-        '${BetaDecisionRuleCopy.sawProLabel}: ${input.sawProCount}/10',
-        '${BetaDecisionRuleCopy.understandsProLabel}: '
-            '${input.understandsProYesMaybeCount}/10',
-        '${BetaDecisionRuleCopy.usefulProofLabel}: '
-            '${input.usefulProofCount}/10',
-      ];
+    '${BetaDecisionRuleCopy.testerCountLabel}: ${input.testerCount}/10',
+    '${BetaDecisionRuleCopy.firstSessionSaveLabel}: '
+        '${input.firstSessionSaveCount}/10',
+    '${BetaDecisionRuleCopy.sawProLabel}: ${input.sawProCount}/10',
+    '${BetaDecisionRuleCopy.understandsProLabel}: '
+        '${input.understandsProYesMaybeCount}/10',
+    '${BetaDecisionRuleCopy.usefulProofLabel}: '
+        '${input.usefulProofCount}/10',
+  ];
 }

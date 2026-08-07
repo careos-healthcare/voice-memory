@@ -6,6 +6,8 @@ import 'package:purchases_flutter/purchases_flutter.dart';
 
 import '../config/app_config.dart';
 import '../models/entitlement.dart';
+import 'archive_loop_entitlement_ids.dart';
+import '../api/api_exceptions.dart';
 import 'billing_async_guard.dart';
 import 'revenuecat_diagnostics.dart';
 import 'revenuecat_diagnostics_log.dart';
@@ -31,7 +33,6 @@ class RevenueCatService implements StoreBillingPort {
   Stream<PremiumEntitlements> get entitlementStream =>
       _entitlementController.stream;
 
-  @override
   PremiumEntitlements get latestEntitlements => _latest;
 
   @override
@@ -42,6 +43,12 @@ class RevenueCatService implements StoreBillingPort {
   /// Injectable delay/override for paywall timeout tests.
   @visibleForTesting
   static Future<Offerings?> Function()? fetchOfferingsOverrideForTest;
+
+  /// Exposes entitlement mapping for tests without requiring a configured
+  /// RevenueCat SDK instance.
+  @visibleForTesting
+  PremiumEntitlements mapCustomerInfoForTest(CustomerInfo info) =>
+      _mapCustomerInfo(info);
 
   bool get apiKeyMissing => _diagnostics.apiKeyMissing;
 
@@ -172,11 +179,20 @@ class RevenueCatService implements StoreBillingPort {
       source: 'mapCustomerInfo',
     );
     final active = info.entitlements.active;
-    final pro = active[proEntitlementId];
-    final isPro = pro != null && pro.isActive;
+    // P0 fix — billing entitlement ID conflict: the RevenueCat dashboard's
+    // primary product entitlement is `archive_loop_pro`
+    // (ArchiveLoopEntitlementIds.archiveLoopPro), but this mapper used to
+    // only ever check the legacy `pro` id (proEntitlementId), so a customer
+    // correctly entitled under the newer id appeared free. Accept either —
+    // whichever the dashboard actually reports as active — rather than
+    // hard-coding a single "authoritative" id.
+    final matchedIds = ArchiveLoopEntitlementIds.revenueCatEntitlementIds
+        .where((id) => active[id]?.isActive == true)
+        .toList(growable: false);
+    final isPro = matchedIds.isNotEmpty;
     return PremiumEntitlements(
       tier: isPro ? BillingTier.pro : BillingTier.free,
-      entitlementIds: isPro ? [proEntitlementId] : [],
+      entitlementIds: matchedIds,
       billingConnected: _configured,
       source: 'revenuecat',
     );
@@ -232,7 +248,8 @@ class RevenueCatService implements StoreBillingPort {
         RevenueCatDiagnosticsLog.fetchOfferingsFinished(
           success: false,
           offerings: null,
-          error: 'fetchOfferings_override_timeout_${billingOperationTimeout.inSeconds}s',
+          error:
+              'fetchOfferings_override_timeout_${billingOperationTimeout.inSeconds}s',
         );
         return null;
       } catch (e) {
@@ -303,7 +320,7 @@ class RevenueCatService implements StoreBillingPort {
   @override
   Future<PremiumEntitlements> purchasePackage(Package package) async {
     if (!_configured) {
-      throw StateError('RevenueCat not configured');
+      throw BillingUnavailableException();
     }
     final result = await Purchases.purchasePackage(package);
     final mapped = _mapCustomerInfo(result);
@@ -314,7 +331,7 @@ class RevenueCatService implements StoreBillingPort {
   @override
   Future<PremiumEntitlements> restorePurchases() async {
     if (!_configured) {
-      throw StateError('RevenueCat not configured');
+      throw BillingUnavailableException();
     }
     final info = await withBillingTimeoutRequired(
       Purchases.restorePurchases(),

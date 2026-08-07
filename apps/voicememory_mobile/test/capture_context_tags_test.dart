@@ -20,50 +20,49 @@ JournalEntry _voiceEntry({
   required String transcript,
   DateTime? createdAt,
   String? captureContextTag,
-}) =>
-    JournalEntry(
-      id: id,
-      createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
-      transcript: transcript,
-      durationSeconds: 30,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 2,
-        recurringThemes: ['work'],
-        exactLanguagePattern: '',
-        concreteObservation: 'Work pressure showed up in this moment.',
-        repeatedSignal: '',
-      ),
-      captureContextTag: captureContextTag,
-    );
+}) => JournalEntry(
+  id: id,
+  createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
+  transcript: transcript,
+  durationSeconds: 30,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 2,
+    recurringThemes: ['work'],
+    exactLanguagePattern: '',
+    concreteObservation: 'Work pressure showed up in this moment.',
+    repeatedSignal: '',
+  ),
+  captureContextTag: captureContextTag,
+);
 
 JournalEntry _degradedVoiceEntry({String id = 'v1'}) => JournalEntry(
-      id: id,
-      createdAt: DateTime(2026, 6, 12, 12),
-      transcript:
-          '[draft] ${CaptureSaveMessages.recordingSavedLocally} — transcribe when connected',
-      durationSeconds: 20,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 0,
-        recurringThemes: [],
-        exactLanguagePattern: '',
-        concreteObservation: '',
-        repeatedSignal: '',
-      ),
-    );
+  id: id,
+  createdAt: DateTime(2026, 6, 12, 12),
+  transcript:
+      '[draft] ${CaptureSaveMessages.recordingSavedLocally} — transcribe when connected',
+  durationSeconds: 20,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 0,
+    recurringThemes: [],
+    exactLanguagePattern: '',
+    concreteObservation: '',
+    repeatedSignal: '',
+  ),
+);
 
 List<JournalEntry> _distinctEntries(int count) => List.generate(
-      count,
-      (i) => _voiceEntry(
-        id: 'e$i',
-        transcript:
-            'I felt pressure at work before saying yes again even when I was tired moment $i.',
-        createdAt: DateTime(2026, 6, 9 + i, 12),
-      ),
-    );
+  count,
+  (i) => _voiceEntry(
+    id: 'e$i',
+    transcript:
+        'I felt pressure at work before saying yes again even when I was tired moment $i.',
+    createdAt: DateTime(2026, 6, 9 + i, 12),
+  ),
+);
 
 const _bannedWords = [
   'diagnosis',
@@ -124,11 +123,7 @@ void main() {
 
     testWidgets('user can skip tags', (tester) async {
       var skipped = false;
-      await _pumpCard(
-        tester,
-        onSaveTag: (_) {},
-        onSkip: () => skipped = true,
-      );
+      await _pumpCard(tester, onSaveTag: (_) {}, onSkip: () => skipped = true);
 
       await tester.tap(find.byKey(const Key('capture_context_tag_skip')));
       await tester.pump();
@@ -168,7 +163,9 @@ void main() {
             'I felt pressure at work before saying yes again even when I was tired.',
       );
       await store.save(entry);
-      await store.save(CaptureContextTags.applyTag(entry, CaptureContextTagIds.family));
+      await store.save(
+        CaptureContextTags.applyTag(entry, CaptureContextTagIds.family),
+      );
 
       final loaded = await store.getById('e1');
       expect(loaded?.captureContextTag, CaptureContextTagIds.family);
@@ -213,7 +210,9 @@ void main() {
     test('tags do not appear in share-safe proof', () {
       final proof = const ShareableArchiveProofEngine().buildFromJournal(
         entries: _distinctEntries(5)
-            .map((e) => e.copyWith(captureContextTag: CaptureContextTagIds.family))
+            .map(
+              (e) => e.copyWith(captureContextTag: CaptureContextTagIds.family),
+            )
             .toList(),
       );
       final shareText = proof.lines.join('\n').toLowerCase();
@@ -340,10 +339,7 @@ void main() {
         review.uncertaintyLine,
         VisibleArchiveProofCopy.contextAwareAcrossContexts,
       );
-      expect(
-        review.contextAwareDetailLine,
-        contains('Home'),
-      );
+      expect(review.contextAwareDetailLine, contains('Home'));
     });
 
     test('copy avoids banned language', () {

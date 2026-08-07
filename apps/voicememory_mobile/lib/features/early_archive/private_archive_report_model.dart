@@ -60,10 +60,7 @@ class PrivateArchiveReport {
     return blocks.join('\n\n');
   }
 
-  String visiblePlainText({
-    required bool isPro,
-    int previewSectionCount = 1,
-  }) {
+  String visiblePlainText({required bool isPro, int previewSectionCount = 1}) {
     final visibleSections = <PrivateArchiveReportSection>[];
     for (var i = 0; i < sections.length; i++) {
       if (isPro || i < previewSectionCount) {

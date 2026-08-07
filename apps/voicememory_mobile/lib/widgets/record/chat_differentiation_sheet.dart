@@ -8,10 +8,7 @@ import '../../theme/app_spacing.dart';
 
 /// Small bottom sheet explaining ArchiveMe vs chat — timeline from saved dates only.
 class ChatDifferentiationSheet extends StatelessWidget {
-  const ChatDifferentiationSheet({
-    super.key,
-    required this.timelineRows,
-  });
+  const ChatDifferentiationSheet({super.key, required this.timelineRows});
 
   final List<ChatDifferentiationTimelineRow> timelineRows;
 
@@ -36,10 +33,9 @@ class ChatDifferentiationSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     final titleStyle = ArchiveMobileTypography.responsiveSectionTitle(context);
     final labelStyle = ArchiveMobileTypography.cardLabel(context);
-    final bodyStyle = ArchiveMobileTypography.explanationBody(context).copyWith(
-      color: AppColors.textPrimary,
-      height: 1.45,
-    );
+    final bodyStyle = ArchiveMobileTypography.explanationBody(
+      context,
+    ).copyWith(color: AppColors.textPrimary, height: 1.45);
     final secondaryStyle = bodyStyle.copyWith(color: AppColors.textSecondary);
 
     return SafeArea(
@@ -71,7 +67,9 @@ class ChatDifferentiationSheet extends StatelessWidget {
                 for (final row in timelineRows) ...[
                   Text(
                     row.label,
-                    key: Key('chat_differentiation_timeline_label_${row.label}'),
+                    key: Key(
+                      'chat_differentiation_timeline_label_${row.label}',
+                    ),
                     style: labelStyle,
                   ),
                   const SizedBox(height: 2),

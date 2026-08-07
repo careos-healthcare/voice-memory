@@ -16,56 +16,55 @@ import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/models/sync_status.dart';
 import 'package:voicememory_mobile/screens/quick_text_capture_screen.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
-import 'package:voicememory_mobile/services/capture_pipeline_service.dart';
 import 'package:voicememory_mobile/theme/app_theme.dart';
 import 'package:voicememory_mobile/widgets/record/navigate_to_capture_mode.dart';
 import 'package:voicememory_mobile/widgets/record/record_capture_modes_card.dart';
+import 'support/test_storage_sandbox.dart';
 
 JournalEntry _entry({
   required String id,
   required String transcript,
   DateTime? createdAt,
-}) =>
-    JournalEntry(
-      id: id,
-      createdAt: createdAt ?? DateTime(2026, 6, 12, 10),
-      transcript: transcript,
-      durationSeconds: 20,
-      reflection: const Reflection(
-        mood: 'thoughtful',
-        emotionalIntensity: 2,
-        recurringThemes: ['work'],
-        exactLanguagePattern: '',
-        concreteObservation: 'Work pressure showed up again today.',
-        repeatedSignal: '',
-      ),
-      syncStatus: SyncStatus.localOnly,
-    );
+}) => JournalEntry(
+  id: id,
+  createdAt: createdAt ?? DateTime(2026, 6, 12, 10),
+  transcript: transcript,
+  durationSeconds: 20,
+  reflection: const Reflection(
+    mood: 'thoughtful',
+    emotionalIntensity: 2,
+    recurringThemes: ['work'],
+    exactLanguagePattern: '',
+    concreteObservation: 'Work pressure showed up again today.',
+    repeatedSignal: '',
+  ),
+  syncStatus: SyncStatus.localOnly,
+);
 
 void main() {
+  late TestStorageSandbox sandbox;
   setUp(() async {
+    sandbox = TestStorageSandbox.create();
     await AppServices.resetForTest(
-      journalPath: '${DateTime.now().microsecondsSinceEpoch}_journal.json',
-      prefsPath: '${DateTime.now().microsecondsSinceEpoch}_prefs.json',
+      journalPath: sandbox.journalPath,
+      prefsPath: sandbox.prefsPath,
       skipRevenueCat: true,
     );
   });
 
+  tearDown(() => sandbox.dispose());
   group('RecordCaptureModeCopy', () {
     test('spec copy is stable', () {
       expect(RecordCaptureModeCopy.cardTitle, 'Start with anything real');
       expect(RecordCaptureModeCopy.cardSubtitle, contains('big moment'));
       expect(RecordCaptureMode.all, hasLength(5));
-      expect(
-        RecordCaptureMode.all.map((m) => m.label).toList(),
-        [
-          RecordCaptureModeCopy.somethingHappenedLabel,
-          RecordCaptureModeCopy.keptThinkingLabel,
-          RecordCaptureModeCopy.smallWinLabel,
-          RecordCaptureModeCopy.pressureMomentLabel,
-          RecordCaptureModeCopy.nothingMuchTodayLabel,
-        ],
-      );
+      expect(RecordCaptureMode.all.map((m) => m.label).toList(), [
+        RecordCaptureModeCopy.somethingHappenedLabel,
+        RecordCaptureModeCopy.keptThinkingLabel,
+        RecordCaptureModeCopy.smallWinLabel,
+        RecordCaptureModeCopy.pressureMomentLabel,
+        RecordCaptureModeCopy.nothingMuchTodayLabel,
+      ]);
     });
   });
 
@@ -98,7 +97,10 @@ void main() {
       expect(RecordCaptureModeEngine.entryIsQuietDay(entry), isTrue);
       final verdict = ArchiveEvidenceQuality.assess(entry);
       expect(verdict.allowsInsights, isFalse);
-      expect(FirstProofMomentEngine.build(entries: [entry, entry, entry]), isNull);
+      expect(
+        FirstProofMomentEngine.build(entries: [entry, entry, entry]),
+        isNull,
+      );
     });
 
     test('generic test text remains ignored', () {
@@ -115,9 +117,7 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           theme: AppTheme.light(),
-          home: Scaffold(
-            body: RecordCaptureModesCard(onModeTap: (_) {}),
-          ),
+          home: Scaffold(body: RecordCaptureModesCard(onModeTap: (_) {})),
         ),
       );
       await tester.pump();
@@ -131,14 +131,11 @@ void main() {
   });
 
   group('QuickTextCaptureScreen capture modes', () {
-    Future<void> _pumpCaptureScreen(WidgetTester tester, Widget child) async {
+    Future<void> pumpCaptureScreen(WidgetTester tester, Widget child) async {
       await tester.binding.setSurfaceSize(const Size(420, 1200));
       addTearDown(() => tester.binding.setSurfaceSize(null));
       await tester.pumpWidget(
-        MaterialApp(
-          theme: AppTheme.light(),
-          home: child,
-        ),
+        MaterialApp(theme: AppTheme.light(), home: child),
       );
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 200));
@@ -154,7 +151,7 @@ void main() {
         prompt: RecordCaptureModeCopy.somethingHappenedPrompt,
       );
 
-      await _pumpCaptureScreen(
+      await pumpCaptureScreen(
         tester,
         QuickTextCaptureScreen(
           promptHint: mode.prompt,
@@ -177,15 +174,19 @@ void main() {
       );
       expect(
         tester
-            .widget<TextField>(find.byKey(const Key('quick_text_capture_field')))
+            .widget<TextField>(
+              find.byKey(const Key('quick_text_capture_field')),
+            )
             .controller!
             .text,
         isEmpty,
       );
     });
 
-    testWidgets('quiet-day mode shows save-as-quiet-day action', (tester) async {
-      await _pumpCaptureScreen(
+    testWidgets('quiet-day mode shows save-as-quiet-day action', (
+      tester,
+    ) async {
+      await pumpCaptureScreen(
         tester,
         const QuickTextCaptureScreen(
           promptHint: RecordCaptureModeCopy.nothingMuchTodayPrompt,
@@ -198,7 +199,10 @@ void main() {
         find.byKey(const Key('quick_text_capture_quiet_day_save')),
         findsOneWidget,
       );
-      expect(find.text(RecordCaptureModeCopy.quietDaySaveButton), findsOneWidget);
+      expect(
+        find.text(RecordCaptureModeCopy.quietDaySaveButton),
+        findsOneWidget,
+      );
     });
 
     test('quiet-day save stores default phrase only', () async {
@@ -208,7 +212,10 @@ void main() {
 
       final all = await AppServices.instance.journalStore.loadAll();
       expect(all, hasLength(1));
-      expect(all.single.transcript, RecordCaptureModeCopy.quietDayDefaultSaveText);
+      expect(
+        all.single.transcript,
+        RecordCaptureModeCopy.quietDayDefaultSaveText,
+      );
       expect(
         all.single.transcript,
         isNot(contains(RecordCaptureModeCopy.nothingMuchTodayHelper)),
@@ -269,7 +276,10 @@ void main() {
         await tester.pump(const Duration(milliseconds: 200));
 
         expect(find.text(mode.helper), findsOneWidget);
-        expect(find.byKey(const Key('quick_text_capture_mode_helper')), findsOneWidget);
+        expect(
+          find.byKey(const Key('quick_text_capture_mode_helper')),
+          findsOneWidget,
+        );
         expect(find.text(mode.prompt), findsOneWidget);
       }
     });

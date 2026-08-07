@@ -30,16 +30,14 @@ abstract final class WhatChangedSinceLastTimeEngine {
     final eligible = ArchiveEvidenceGuard.eligibleEntries(entries);
     if (eligible.isEmpty) return null;
 
-    final foundation = eligible.length >= 3
-        ? eligible.sublist(0, 3)
-        : eligible;
+    final foundation = eligible.length >= 3 ? eligible.sublist(0, 3) : eligible;
     final latestEntry = eligible.last;
 
     final firstProofPhrase = _groundedPhrase(foundation);
     final latestPhrase =
         ConfirmedRepeatEvidencePhraseEngine.singleEntryConcretePhrase(
-      latestEntry,
-    );
+          latestEntry,
+        );
     final hasPhrase = firstProofPhrase != null || latestPhrase != null;
 
     final evidenceRows = [
@@ -70,8 +68,9 @@ abstract final class WhatChangedSinceLastTimeEngine {
   }
 
   static String? _groundedPhrase(List<JournalEntry> entries) {
-    final shared =
-        ConfirmedRepeatEvidencePhraseEngine.sharedConcretePhrase(entries);
+    final shared = ConfirmedRepeatEvidencePhraseEngine.sharedConcretePhrase(
+      entries,
+    );
     if (shared != null &&
         ConfirmedRepeatEvidencePhraseEngine.isConcretePhrase(shared) &&
         !ConfirmedRepeatEvidencePhraseEngine.isAbstractOnlyPhrase(shared) &&
@@ -82,8 +81,9 @@ abstract final class WhatChangedSinceLastTimeEngine {
       return shared;
     }
 
-    final extracted =
-        ConfirmedRepeatEvidencePhraseEngine.extract(entries).phrases;
+    final extracted = ConfirmedRepeatEvidencePhraseEngine.extract(
+      entries,
+    ).phrases;
     for (final phrase in extracted) {
       if (!ConfirmedRepeatEvidencePhraseEngine.isConcretePhrase(phrase)) {
         continue;

@@ -31,7 +31,7 @@ class ProofQualityResponseCard extends StatefulWidget {
     this.store,
     this.onChanged,
     this.initialRecord,
-  })  : skipPrefsLoad = true;
+  }) : skipPrefsLoad = true;
 
   final ProofQualityResponseResult result;
   final String source;
@@ -52,18 +52,19 @@ class _ProofQualityResponseCardState extends State<ProofQualityResponseCard> {
   @override
   void initState() {
     super.initState();
-    _record = widget.initialRecord ??
+    _record =
+        widget.initialRecord ??
         (widget.skipPrefsLoad
             ? null
             : ProofQualityResponseStore.recordFor(
                 surface: widget.result.surface,
                 proofKey: widget.result.proofKey,
               ).answered
-                ? ProofQualityResponseStore.recordFor(
-                    surface: widget.result.surface,
-                    proofKey: widget.result.proofKey,
-                  )
-                : null);
+            ? ProofQualityResponseStore.recordFor(
+                surface: widget.result.surface,
+                proofKey: widget.result.proofKey,
+              )
+            : null);
     if (!widget.skipPrefsLoad) {
       unawaited(_load());
     }
@@ -209,10 +210,9 @@ class _ProofQualityResponseCardState extends State<ProofQualityResponseCard> {
   Widget build(BuildContext context) {
     _trackSeenOnce();
 
-    final bodyStyle = ArchiveMobileTypography.explanationBody(context).copyWith(
-      color: AppColors.textSecondary,
-      height: 1.45,
-    );
+    final bodyStyle = ArchiveMobileTypography.explanationBody(
+      context,
+    ).copyWith(color: AppColors.textSecondary, height: 1.45);
     final record = _record;
 
     if (record != null && record.answerType != null) {
@@ -224,8 +224,9 @@ class _ProofQualityResponseCardState extends State<ProofQualityResponseCard> {
         key: const Key('proof_quality_response_answered_card'),
         width: double.infinity,
         padding: const EdgeInsets.all(AppSpacing.md),
-        decoration:
-            VoiceMemoryCards.standard(background: const Color(0xFFF8FAF8)),
+        decoration: VoiceMemoryCards.standard(
+          background: const Color(0xFFF8FAF8),
+        ),
         child: Text(
           followUp,
           key: Key(
@@ -240,7 +241,9 @@ class _ProofQualityResponseCardState extends State<ProofQualityResponseCard> {
       key: const Key('proof_quality_response_card'),
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.md),
-      decoration: VoiceMemoryCards.standard(background: const Color(0xFFF8FAF8)),
+      decoration: VoiceMemoryCards.standard(
+        background: const Color(0xFFF8FAF8),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -259,7 +262,9 @@ class _ProofQualityResponseCardState extends State<ProofQualityResponseCard> {
             const SizedBox(height: AppSpacing.sm),
             Text(
               widget.result.returnedAfterCorrectionLine,
-              key: const Key('proof_quality_response_returned_after_correction'),
+              key: const Key(
+                'proof_quality_response_returned_after_correction',
+              ),
               style: bodyStyle.copyWith(color: AppColors.textPrimary),
             ),
           ],
@@ -278,7 +283,9 @@ class _ProofQualityResponseCardState extends State<ProofQualityResponseCard> {
                   padding: const EdgeInsets.only(bottom: 4),
                   child: Text(
                     anchor,
-                    key: Key('proof_quality_response_anchor_${anchor.hashCode}'),
+                    key: Key(
+                      'proof_quality_response_anchor_${anchor.hashCode}',
+                    ),
                     style: bodyStyle.copyWith(color: AppColors.textPrimary),
                   ),
                 ),
@@ -319,56 +326,56 @@ class _ProofQualityResponseCardState extends State<ProofQualityResponseCard> {
   Widget _buildActions(BuildContext context) {
     return switch (widget.result.feedbackState) {
       ProofQualityFeedbackState.tooVague => Wrap(
-          spacing: AppSpacing.xs,
-          runSpacing: AppSpacing.xs,
-          children: [
+        spacing: AppSpacing.xs,
+        runSpacing: AppSpacing.xs,
+        children: [
+          TextButton(
+            key: _actionKey('still_too_vague'),
+            style: TextButton.styleFrom(
+              visualDensity: VisualDensity.compact,
+              textStyle: const TextStyle(fontSize: 13),
+            ),
+            onPressed: () => unawaited(_selectStillTooVague()),
+            child: const Text(ProofQualityResponseCopy.stillTooVagueLabel),
+          ),
+        ],
+      ),
+      ProofQualityFeedbackState.alreadyKnewThis => Wrap(
+        spacing: AppSpacing.xs,
+        runSpacing: AppSpacing.xs,
+        children: [
+          for (final answer in ProofQualityAlreadyKnewAnswer.values)
             TextButton(
-              key: _actionKey('still_too_vague'),
+              key: _actionKey(answer.storageValue),
               style: TextButton.styleFrom(
                 visualDensity: VisualDensity.compact,
                 textStyle: const TextStyle(fontSize: 13),
               ),
-              onPressed: () => unawaited(_selectStillTooVague()),
-              child: const Text(ProofQualityResponseCopy.stillTooVagueLabel),
+              onPressed: () => unawaited(_selectAlreadyKnew(answer)),
+              child: Text(
+                ProofQualityResponseCopy.alreadyKnewAnswerLabel(answer),
+              ),
             ),
-          ],
-        ),
-      ProofQualityFeedbackState.alreadyKnewThis => Wrap(
-          spacing: AppSpacing.xs,
-          runSpacing: AppSpacing.xs,
-          children: [
-            for (final answer in ProofQualityAlreadyKnewAnswer.values)
-              TextButton(
-                key: _actionKey(answer.storageValue),
-                style: TextButton.styleFrom(
-                  visualDensity: VisualDensity.compact,
-                  textStyle: const TextStyle(fontSize: 13),
-                ),
-                onPressed: () => unawaited(_selectAlreadyKnew(answer)),
-                child: Text(
-                  ProofQualityResponseCopy.alreadyKnewAnswerLabel(answer),
-                ),
-              ),
-          ],
-        ),
+        ],
+      ),
       ProofQualityFeedbackState.notRelevant => Wrap(
-          spacing: AppSpacing.xs,
-          runSpacing: AppSpacing.xs,
-          children: [
-            for (final action in ProofQualityNotRelevantAction.values)
-              TextButton(
-                key: _actionKey(action.storageValue),
-                style: TextButton.styleFrom(
-                  visualDensity: VisualDensity.compact,
-                  textStyle: const TextStyle(fontSize: 13),
-                ),
-                onPressed: () => unawaited(_selectNotRelevant(action)),
-                child: Text(
-                  ProofQualityResponseCopy.notRelevantActionLabel(action),
-                ),
+        spacing: AppSpacing.xs,
+        runSpacing: AppSpacing.xs,
+        children: [
+          for (final action in ProofQualityNotRelevantAction.values)
+            TextButton(
+              key: _actionKey(action.storageValue),
+              style: TextButton.styleFrom(
+                visualDensity: VisualDensity.compact,
+                textStyle: const TextStyle(fontSize: 13),
               ),
-          ],
-        ),
+              onPressed: () => unawaited(_selectNotRelevant(action)),
+              child: Text(
+                ProofQualityResponseCopy.notRelevantActionLabel(action),
+              ),
+            ),
+        ],
+      ),
       _ => const SizedBox.shrink(),
     };
   }

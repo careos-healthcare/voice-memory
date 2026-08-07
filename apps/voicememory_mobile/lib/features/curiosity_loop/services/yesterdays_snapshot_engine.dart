@@ -32,7 +32,8 @@ abstract final class YesterdaysSnapshotEngine {
       );
       _addIfPresent(bullets, reflection.tensionOrContradiction);
       _addIfPresent(bullets, reflection.nextSmallAction);
-      if (reflection.mood.trim().isNotEmpty && reflection.recurringThemes.isNotEmpty) {
+      if (reflection.mood.trim().isNotEmpty &&
+          reflection.recurringThemes.isNotEmpty) {
         _addIfPresent(
           bullets,
           '${reflection.mood.trim()} around ${reflection.recurringThemes.first.trim()}',

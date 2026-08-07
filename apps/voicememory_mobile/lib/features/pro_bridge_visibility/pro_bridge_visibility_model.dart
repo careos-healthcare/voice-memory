@@ -9,11 +9,11 @@ enum ProBridgeVisibilitySurface {
 
 extension ProBridgeVisibilitySurfaceStorage on ProBridgeVisibilitySurface {
   String get analyticsValue => switch (this) {
-        ProBridgeVisibilitySurface.recordReady => 'record_ready',
-        ProBridgeVisibilitySurface.recordPostSaveAfterPayoff =>
-          'record_post_save_after_payoff',
-        ProBridgeVisibilitySurface.archivePatterns => 'archive_patterns',
-      };
+    ProBridgeVisibilitySurface.recordReady => 'record_ready',
+    ProBridgeVisibilitySurface.recordPostSaveAfterPayoff =>
+      'record_post_save_after_payoff',
+    ProBridgeVisibilitySurface.archivePatterns => 'archive_patterns',
+  };
 }
 
 class ProBridgeVisibilityInput {

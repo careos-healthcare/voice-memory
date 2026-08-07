@@ -41,14 +41,12 @@ enum ProofOfValueRowStatus {
   notEnoughData;
 
   String get label => switch (this) {
-        ProofOfValueRowStatus.proven => ProofOfValueCopy.statusProven,
-        ProofOfValueRowStatus.notProven => ProofOfValueCopy.statusNotProven,
-        ProofOfValueRowStatus.warning => ProofOfValueCopy.statusWarning,
-        ProofOfValueRowStatus.checkManually =>
-          ProofOfValueCopy.statusCheckManually,
-        ProofOfValueRowStatus.notEnoughData =>
-          ProofOfValueCopy.statusNotEnoughData,
-      };
+    ProofOfValueRowStatus.proven => ProofOfValueCopy.statusProven,
+    ProofOfValueRowStatus.notProven => ProofOfValueCopy.statusNotProven,
+    ProofOfValueRowStatus.warning => ProofOfValueCopy.statusWarning,
+    ProofOfValueRowStatus.checkManually => ProofOfValueCopy.statusCheckManually,
+    ProofOfValueRowStatus.notEnoughData => ProofOfValueCopy.statusNotEnoughData,
+  };
 }
 
 /// Local and optional manual beta proof inputs — counts only, no journal text.
@@ -126,17 +124,17 @@ class ProofOfValueReport {
   final String? localCoreValueNote;
 
   List<String> get visibleCopyBlocks => [
-        title,
-        primaryQuestion,
-        summary,
-        recommendation,
-        if (localCoreValueNote != null) localCoreValueNote!,
-        for (final row in rows) ...[
-          row.label,
-          row.question,
-          row.currentValue,
-          row.targetValue,
-          row.status.label,
-        ],
-      ];
+    title,
+    primaryQuestion,
+    summary,
+    recommendation,
+    ?localCoreValueNote,
+    for (final row in rows) ...[
+      row.label,
+      row.question,
+      row.currentValue,
+      row.targetValue,
+      row.status.label,
+    ],
+  ];
 }

@@ -45,19 +45,17 @@ abstract final class WidgetReleaseRiskGateCopy {
       'features, sizes, or analytics.';
 
   static String labelFor(WidgetReleaseRiskGateCheckId id) => switch (id) {
-        WidgetReleaseRiskGateCheckId.extensionTargetPresent =>
-          checkExtensionTarget,
-        WidgetReleaseRiskGateCheckId.appGroupConfigured => checkAppGroup,
-        WidgetReleaseRiskGateCheckId.widgetOpensCorrectRoute => checkWidgetRoute,
-        WidgetReleaseRiskGateCheckId.noPrivateTranscriptShown =>
-          checkNoPrivateTranscript,
-        WidgetReleaseRiskGateCheckId.testFlightInstallWorks =>
-          checkTestFlightInstall,
-        WidgetReleaseRiskGateCheckId.signingPasses => checkSigning,
-        WidgetReleaseRiskGateCheckId.noCrashOnLaunch => checkNoLaunchCrash,
-        WidgetReleaseRiskGateCheckId.noStaleBrokenDefaultState =>
-          checkDefaultState,
-      };
+    WidgetReleaseRiskGateCheckId.extensionTargetPresent => checkExtensionTarget,
+    WidgetReleaseRiskGateCheckId.appGroupConfigured => checkAppGroup,
+    WidgetReleaseRiskGateCheckId.widgetOpensCorrectRoute => checkWidgetRoute,
+    WidgetReleaseRiskGateCheckId.noPrivateTranscriptShown =>
+      checkNoPrivateTranscript,
+    WidgetReleaseRiskGateCheckId.testFlightInstallWorks =>
+      checkTestFlightInstall,
+    WidgetReleaseRiskGateCheckId.signingPasses => checkSigning,
+    WidgetReleaseRiskGateCheckId.noCrashOnLaunch => checkNoLaunchCrash,
+    WidgetReleaseRiskGateCheckId.noStaleBrokenDefaultState => checkDefaultState,
+  };
 
   static Iterable<String> allVisibleStrings() sync* {
     yield headline;

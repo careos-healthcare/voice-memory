@@ -69,7 +69,8 @@ abstract final class PaymentProofNotInterestGateCopy {
           signalTesterSeesFirstUsefulProof,
         PaymentProofNotInterestGateSignalId.testerSeesProPromise =>
           signalTesterSeesProPromise,
-        PaymentProofNotInterestGateSignalId.testerTapsPro => signalTesterTapsPro,
+        PaymentProofNotInterestGateSignalId.testerTapsPro =>
+          signalTesterTapsPro,
         PaymentProofNotInterestGateSignalId.testerStartsPurchase =>
           signalTesterStartsPurchase,
         PaymentProofNotInterestGateSignalId.testerCompletesSandboxPurchase =>
@@ -88,30 +89,32 @@ abstract final class PaymentProofNotInterestGateCopy {
         PaymentProofNotInterestGateDecision.comprehensionOnly =>
           comprehensionOnlyLine,
         PaymentProofNotInterestGateDecision.proCuriosity => proCuriosityLine,
-        PaymentProofNotInterestGateDecision.purchaseIntent => purchaseIntentLine,
+        PaymentProofNotInterestGateDecision.purchaseIntent =>
+          purchaseIntentLine,
         PaymentProofNotInterestGateDecision.purchaseProof => purchaseProofLine,
         PaymentProofNotInterestGateDecision.restoreProof => restoreProofLine,
         PaymentProofNotInterestGateDecision.notEnoughPaymentEvidence =>
           notEnoughPaymentEvidenceLine,
       };
 
-  static String recommendationFor(PaymentProofNotInterestGateDecision decision) =>
-      switch (decision) {
-        PaymentProofNotInterestGateDecision.interestOnly =>
-          'Keep measuring. Maybe and idea-interest are not payment proof.',
-        PaymentProofNotInterestGateDecision.comprehensionOnly =>
-          'Proof landed. Watch for Pro tap or purchase start before calling paid intent.',
-        PaymentProofNotInterestGateDecision.proCuriosity =>
-          'Pro curiosity is not payment proof. Watch for purchase start or completion.',
-        PaymentProofNotInterestGateDecision.purchaseIntent =>
-          'Purchase intent is promising. Finish sandbox purchase or restore proof.',
-        PaymentProofNotInterestGateDecision.purchaseProof =>
-          'Sandbox purchase counts as payment proof.',
-        PaymentProofNotInterestGateDecision.restoreProof =>
-          'Sandbox restore counts as payment proof.',
-        PaymentProofNotInterestGateDecision.notEnoughPaymentEvidence =>
-          'Collect more tester signals before classifying payment proof.',
-      };
+  static String recommendationFor(
+    PaymentProofNotInterestGateDecision decision,
+  ) => switch (decision) {
+    PaymentProofNotInterestGateDecision.interestOnly =>
+      'Keep measuring. Maybe and idea-interest are not payment proof.',
+    PaymentProofNotInterestGateDecision.comprehensionOnly =>
+      'Proof landed. Watch for Pro tap or purchase start before calling paid intent.',
+    PaymentProofNotInterestGateDecision.proCuriosity =>
+      'Pro curiosity is not payment proof. Watch for purchase start or completion.',
+    PaymentProofNotInterestGateDecision.purchaseIntent =>
+      'Purchase intent is promising. Finish sandbox purchase or restore proof.',
+    PaymentProofNotInterestGateDecision.purchaseProof =>
+      'Sandbox purchase counts as payment proof.',
+    PaymentProofNotInterestGateDecision.restoreProof =>
+      'Sandbox restore counts as payment proof.',
+    PaymentProofNotInterestGateDecision.notEnoughPaymentEvidence =>
+      'Collect more tester signals before classifying payment proof.',
+  };
 
   static Iterable<String> allVisibleStrings() sync* {
     yield headline;

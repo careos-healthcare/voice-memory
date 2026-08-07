@@ -45,8 +45,8 @@ void main() {
       primaryCta: 'Record',
       hasGroundedEvidence: true,
       hasChange: false,
-      evidenceTerms: const ['said yes', 'no capacity'],
-      evidenceEntryIds: const ['a', 'b'],
+      evidenceTerms: ['said yes', 'no capacity'],
+      evidenceEntryIds: ['a', 'b'],
     );
 
     testWidgets('shows calm repeat proof card with one primary CTA', (
@@ -103,7 +103,10 @@ void main() {
         find.text(VisibleArchiveProofCopy.repeatPostSaveBody),
         findsOneWidget,
       );
-      expect(find.text(PostSaveFocusedActionsCopy.viewEvidence), findsOneWidget);
+      expect(
+        find.text(PostSaveFocusedActionsCopy.viewEvidence),
+        findsOneWidget,
+      );
       expect(
         find.text(PostSaveFocusedActionsCopy.addOneMoreMoment),
         findsOneWidget,
@@ -113,9 +116,18 @@ void main() {
         findsOneWidget,
       );
       expect(find.text(PostSaveRecordedSummaryCopy.title), findsOneWidget);
-      expect(find.text(PostSaveRecordedSummaryCopy.whatThisAddedTitle), findsNothing);
-      expect(find.text(PostSaveRecordedSummaryCopy.connectToRepeatLabel), findsNothing);
-      expect(find.text(PostSaveRecordedSummaryCopy.tomorrowCheckThisLabel), findsNothing);
+      expect(
+        find.text(PostSaveRecordedSummaryCopy.whatThisAddedTitle),
+        findsNothing,
+      );
+      expect(
+        find.text(PostSaveRecordedSummaryCopy.connectToRepeatLabel),
+        findsNothing,
+      );
+      expect(
+        find.text(PostSaveRecordedSummaryCopy.tomorrowCheckThisLabel),
+        findsNothing,
+      );
       expect(find.text(PostSaveFocusedActionsCopy.viewPatterns), findsNothing);
 
       await tester.tap(find.text(PostSaveFocusedActionsCopy.viewEvidence));
@@ -126,7 +138,9 @@ void main() {
       await tester.pump();
       expect(addMomentTapped, isTrue);
 
-      await tester.tap(find.text(VisibleArchiveProofCopy.firstSaveDoneForTodayCta));
+      await tester.tap(
+        find.text(VisibleArchiveProofCopy.firstSaveDoneForTodayCta),
+      );
       await tester.pump();
       expect(doneTapped, isTrue);
     });
@@ -143,7 +157,10 @@ void main() {
                 createdAt: DateTime(2026, 6, 2, 12),
               ),
               allEntries: [
-                _entry(id: 'a', transcript: 'I said yes when I had no capacity.'),
+                _entry(
+                  id: 'a',
+                  transcript: 'I said yes when I had no capacity.',
+                ),
                 _entry(
                   id: 'b',
                   transcript: 'I said yes again even though I was tired.',
@@ -161,23 +178,25 @@ void main() {
       );
       await tester.pump();
 
-      expect(find.byKey(const Key('repeat_post_save_heard_body')), findsNothing);
       expect(
-        find.text(TranscriptCorrectionCopy.actionLabel),
+        find.byKey(const Key('repeat_post_save_heard_body')),
         findsNothing,
       );
+      expect(find.text(TranscriptCorrectionCopy.actionLabel), findsNothing);
 
       await tester.tap(find.byKey(const Key('repeat_post_save_heard_toggle')));
       await tester.pump();
 
-      expect(find.byKey(const Key('repeat_post_save_heard_body')), findsOneWidget);
       expect(
-        find.text(TranscriptCorrectionCopy.actionLabel),
+        find.byKey(const Key('repeat_post_save_heard_body')),
         findsOneWidget,
       );
+      expect(find.text(TranscriptCorrectionCopy.actionLabel), findsOneWidget);
     });
 
-    testWidgets('shows thought map only when callback provided', (tester) async {
+    testWidgets('shows thought map only when callback provided', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           theme: AppTheme.light(),
@@ -199,7 +218,10 @@ void main() {
       );
       await tester.pump();
 
-      expect(find.text(PostSaveFocusedActionsCopy.viewPatterns), findsOneWidget);
+      expect(
+        find.text(PostSaveFocusedActionsCopy.viewPatterns),
+        findsOneWidget,
+      );
     });
   });
 }

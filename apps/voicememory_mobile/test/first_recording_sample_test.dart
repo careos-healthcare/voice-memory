@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/billing/archive_entitlement_reader.dart';
@@ -15,6 +13,7 @@ import 'package:voicememory_mobile/widgets/capture_entry_actions.dart';
 import 'package:voicememory_mobile/widgets/first_session/first_recording_sample_card.dart';
 
 import 'support/memory_pressure_stores.dart';
+import 'support/test_storage_sandbox.dart';
 
 JournalEntry _entry({String id = 'e1', DateTime? createdAt}) {
   return JournalEntry(
@@ -198,14 +197,14 @@ void main() {
   });
 
   group('Saved attribution', () {
-    late Directory tempDir;
+    late TestStorageSandbox sandbox;
 
     setUp(() async {
-      tempDir = Directory.systemTemp.createTempSync('vm_sample_saved_');
-      await AppServices.resetForTest(
-        journalPath: '${tempDir.path}/journal.json',
-      );
+      sandbox = TestStorageSandbox.create();
+      await AppServices.resetForTest(journalPath: sandbox.journalPath);
     });
+
+    tearDown(() => sandbox.dispose());
 
     test(
       'saved fires only when the first save followed the sample CTA',
@@ -246,17 +245,17 @@ void main() {
   });
 
   group('Record screen integration', () {
-    late Directory tempDir;
+    late TestStorageSandbox sandbox;
 
     setUp(() async {
-      tempDir = Directory.systemTemp.createTempSync('vm_sample_screen_');
-      await AppServices.resetForTest(
-        journalPath: '${tempDir.path}/journal.json',
-      );
+      sandbox = TestStorageSandbox.create();
+      await AppServices.resetForTest(journalPath: sandbox.journalPath);
       VisualAuditOverrides.setRecordPresentation(
         const RecordAuditPresentation(ui: RecordUiState.ready),
       );
     });
+
+    tearDown(() => sandbox.dispose());
 
     tearDown(() {
       VisualAuditOverrides.setRecordPresentation(null);
@@ -304,17 +303,18 @@ void main() {
       expect(find.text(FirstRecordingSample.title), findsNothing);
     });
 
-    testWidgets('record screen keeps standard capture path without legacy sample', (
-      tester,
-    ) async {
-      await pumpRecordScreen(tester);
-      expect(find.byType(CaptureEntryActions), findsOneWidget);
-      expect(
-        find.byKey(const Key('first_recording_sample_card')),
-        findsNothing,
-      );
-      expect(tester.takeException(), isNull);
-    });
+    testWidgets(
+      'record screen keeps standard capture path without legacy sample',
+      (tester) async {
+        await pumpRecordScreen(tester);
+        expect(find.byType(CaptureEntryActions), findsOneWidget);
+        expect(
+          find.byKey(const Key('first_recording_sample_card')),
+          findsNothing,
+        );
+        expect(tester.takeException(), isNull);
+      },
+    );
 
     testWidgets('normal recording path stays unchanged', (tester) async {
       await pumpRecordScreen(tester);

@@ -17,9 +17,9 @@ class ArchiveThoughtMapEngine {
     ArchiveBeliefThreadEngine? beliefEngine,
     ArchiveEvidenceHeuristics? heuristics,
     FirstSessionPatternEngine? patternEngine,
-  })  : _beliefEngine = beliefEngine ?? const ArchiveBeliefThreadEngine(),
-        _heuristics = heuristics ?? const ArchiveEvidenceHeuristics(),
-        _patternEngine = patternEngine ?? const FirstSessionPatternEngine();
+  }) : _beliefEngine = beliefEngine ?? const ArchiveBeliefThreadEngine(),
+       _heuristics = heuristics ?? const ArchiveEvidenceHeuristics(),
+       _patternEngine = patternEngine ?? const FirstSessionPatternEngine();
 
   final ArchiveBeliefThreadEngine _beliefEngine;
   final ArchiveEvidenceHeuristics _heuristics;
@@ -260,7 +260,10 @@ class ArchiveThoughtMapEngine {
     return null;
   }
 
-  String? _costValue(ArchiveEvidenceAnalysis analysis, ArchiveBeliefThread thread) {
+  String? _costValue(
+    ArchiveEvidenceAnalysis analysis,
+    ArchiveBeliefThread thread,
+  ) {
     if (analysis.repeatedPressurePhrases.any((p) => p.contains('rest'))) {
       return 'Rest felt harder to take';
     }

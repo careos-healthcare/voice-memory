@@ -21,8 +21,9 @@ BetaTesterOutcome _outcome(Set<BetaDecisionSignal> signals) =>
 void main() {
   group('Record/onboarding copy fix', () {
     test('is clear and not broad journal/chatbot/therapy', () {
-      final blob =
-          RecordOnboardingCopyFix.allVisibleStrings().join(' ').toLowerCase();
+      final blob = RecordOnboardingCopyFix.allVisibleStrings()
+          .join(' ')
+          .toLowerCase();
       expect(blob, contains('save one real moment'));
       expect(blob, contains('not a diary'));
       expect(blob, isNot(contains('therapy')));
@@ -92,8 +93,9 @@ void main() {
 
   group('Return plan', () {
     test('says no streak and only if it happens again', () {
-      final blob =
-          ReturnReasonCopyFix.allVisibleStrings().join(' ').toLowerCase();
+      final blob = ReturnReasonCopyFix.allVisibleStrings()
+          .join(' ')
+          .toLowerCase();
       expect(blob, contains('no streak'));
       expect(blob, contains('only if it happens again'));
       expect(blob, isNot(contains('homework')));
@@ -136,8 +138,9 @@ void main() {
 
   group('Pro packaging', () {
     test('says longer trail not more AI', () {
-      final blob =
-          ProPackagingCopyFix.allVisibleStrings().join(' ').toLowerCase();
+      final blob = ProPackagingCopyFix.allVisibleStrings()
+          .join(' ')
+          .toLowerCase();
       expect(blob, contains('longer trail'));
       expect(blob, contains('first useful repeat'));
       expect(blob, contains('older evidence'));
@@ -230,7 +233,10 @@ void main() {
         isNotNull,
       );
       expect(ProUtilityCopyFix.privateReportTitle, 'Private report preview');
-      expect(ProUtilityCopyFix.plannedSuffix.toLowerCase(), contains('preview'));
+      expect(
+        ProUtilityCopyFix.plannedSuffix.toLowerCase(),
+        contains('preview'),
+      );
       expect(ProUtilityCopyFix.headline, 'Keep more of the trail.');
     });
   });
@@ -264,7 +270,9 @@ void main() {
 
   group('Expansion guardrails', () {
     test('expansion branches blocked before beta evidence', () {
-      final doc = File(V1ExpansionGateCopy.expansionGatesDocPath).readAsStringSync();
+      final doc = File(
+        V1ExpansionGateCopy.expansionGatesDocPath,
+      ).readAsStringSync();
       expect(doc.toLowerCase(), contains('ask your archive'));
       expect(doc.toLowerCase(), contains('loop packs'));
       final result = BetaDecisionEngine.build(
@@ -275,7 +283,10 @@ void main() {
           }),
         ],
       );
-      expect(result.primaryRecommendation, BetaNextBuildRecommendation.holdDoNotExpand);
+      expect(
+        result.primaryRecommendation,
+        BetaNextBuildRecommendation.holdDoNotExpand,
+      );
     });
 
     test('BETA_IMPROVEMENT_PACK doc lists six branches and gating rules', () {

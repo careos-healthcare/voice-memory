@@ -13,12 +13,9 @@ abstract final class ProEvidenceValueAnalytics {
 
   @visibleForTesting
   static void Function(String event, Map<String, Object> properties)?
-      captureForTest;
+  captureForTest;
 
-  static void seen({
-    required String source,
-    required int entryCount,
-  }) {
+  static void seen({required String source, required int entryCount}) {
     _emit(seenEvent, source: source, entryCount: entryCount);
   }
 
@@ -35,10 +32,7 @@ abstract final class ProEvidenceValueAnalytics {
     );
   }
 
-  static void dismissed({
-    required String source,
-    required int entryCount,
-  }) {
+  static void dismissed({required String source, required int entryCount}) {
     _emit(dismissedEvent, source: source, entryCount: entryCount);
   }
 
@@ -51,7 +45,7 @@ abstract final class ProEvidenceValueAnalytics {
     final props = <String, Object>{
       'source': source,
       'entry_count': entryCount,
-      if (actionType != null) 'action_type': actionType,
+      'action_type': ?actionType,
     };
 
     captureForTest?.call(event, props);

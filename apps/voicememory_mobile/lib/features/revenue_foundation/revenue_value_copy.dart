@@ -43,13 +43,13 @@ abstract final class RevenueValueCopy {
   static const exportBodyPlanned =
       'Exports are planned — coming after Pro proof. Pro is still for keeping the longer proof trail.';
 
-  static const safeSharingHeadline = 'Talk about patterns with someone you trust';
+  static const safeSharingHeadline =
+      'Talk about patterns with someone you trust';
 
   static const safeSharingBody =
       'Private sharing may help you talk about patterns with someone you trust.';
 
-  static const safeSharingDisclaimer =
-      'ArchiveMe is not a healthcare product.';
+  static const safeSharingDisclaimer = 'ArchiveMe is not a healthcare product.';
 
   static const safeSharingChoice = 'Only share what you choose.';
 
@@ -79,27 +79,27 @@ abstract final class RevenueValueCopy {
     required bool exportReportsLive,
     required bool safeSharingLive,
   }) => [
-        positioningHeadline,
-        positioningSubhead,
-        memoryJob,
-        paidReasonHeadline,
-        paidReasonBody,
-        paidReasonEvidenceLine,
-        chatGptDifferentiationLine,
-        comparesMomentsLine,
-        longTermHistoryHeadline,
-        longTermHistoryBody,
-        privateReportHeadline,
-        privateReportBody,
-        exportHeadline,
-        exportBodyForDisplay(exportReportsLive: exportReportsLive),
-        if (!safeSharingLive) safeSharingFutureNote,
-        safeSharingHeadline,
-        safeSharingBody,
-        safeSharingDisclaimer,
-        safeSharingChoice,
-        syncFutureNote,
-      ];
+    positioningHeadline,
+    positioningSubhead,
+    memoryJob,
+    paidReasonHeadline,
+    paidReasonBody,
+    paidReasonEvidenceLine,
+    chatGptDifferentiationLine,
+    comparesMomentsLine,
+    longTermHistoryHeadline,
+    longTermHistoryBody,
+    privateReportHeadline,
+    privateReportBody,
+    exportHeadline,
+    exportBodyForDisplay(exportReportsLive: exportReportsLive),
+    if (!safeSharingLive) safeSharingFutureNote,
+    safeSharingHeadline,
+    safeSharingBody,
+    safeSharingDisclaimer,
+    safeSharingChoice,
+    syncFutureNote,
+  ];
 
   static String exportBodyForDisplay({required bool exportReportsLive}) =>
       exportReportsLive ? exportBodyLive : exportBodyPlanned;

@@ -3,7 +3,6 @@ import '../archive_evidence/archive_evidence_guard.dart';
 import '../archive_evidence/archive_evidence_quality_gate.dart';
 import '../archive_evidence/comparable_evidence_text.dart';
 import '../early_archive/early_first_signal_engine.dart';
-import '../early_archive/positive_pattern_engine.dart';
 import '../early_archive/positive_pattern_models.dart';
 import '../record_capture_modes/record_capture_mode_engine.dart';
 import '../repeat_return_check/repeat_return_check_models.dart';
@@ -51,8 +50,9 @@ abstract final class HelpedTrackingEngine {
       return null;
     }
 
-    if (HelpedTrackingStore.cached
-        .any((record) => record.entryId == latestEntryId)) {
+    if (HelpedTrackingStore.cached.any(
+      (record) => record.entryId == latestEntryId,
+    )) {
       return null;
     }
 
@@ -92,21 +92,19 @@ abstract final class HelpedTrackingEngine {
     final sameOptionCount = markers
         .where((record) => record.option == latestHelpful.option)
         .length;
-    final softerSignal = RepeatReturnCheckTrendEngine.latestChoice(
-          returnChecks,
-        ) ==
+    final softerSignal =
+        RepeatReturnCheckTrendEngine.latestChoice(returnChecks) ==
         RepeatReturnCheckChoice.softer;
 
-    final body = latestHelpful.option == HelpedTrackingOption.somethingElse &&
+    final body =
+        latestHelpful.option == HelpedTrackingOption.somethingElse &&
             latestHelpful.hasFreeText
         ? latestHelpful.freeText!.trim()
         : sameOptionCount >= minMarkersForStrongerClaim && softerSignal
-            ? HelpedTrackingCopy.strongerWithSofter(
-                latestHelpful.option.summaryVerb,
-              )
-            : HelpedTrackingCopy.singleReported(
-                latestHelpful.option.summaryVerb,
-              );
+        ? HelpedTrackingCopy.strongerWithSofter(
+            latestHelpful.option.summaryVerb,
+          )
+        : HelpedTrackingCopy.singleReported(latestHelpful.option.summaryVerb);
 
     return WeeklyArchiveReviewSection(
       label: WeeklyArchiveReviewCopy.whatHelpedLabel,
@@ -143,7 +141,8 @@ abstract final class HelpedTrackingEngine {
     }
     if (ArchiveEvidenceQualityGate.usableCount(entries) == 0) return false;
 
-    final latest = ArchiveEvidenceGuard.eligibleEntries(entries).lastOrNull ??
+    final latest =
+        ArchiveEvidenceGuard.eligibleEntries(entries).lastOrNull ??
         entries.last;
     final text = ComparableEvidenceText.userText(latest);
     if (text.trim().isEmpty) return false;

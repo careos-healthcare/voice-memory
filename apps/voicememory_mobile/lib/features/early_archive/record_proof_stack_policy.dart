@@ -141,7 +141,8 @@ abstract final class RecordProofStackPolicy {
         dailyReturnReasonEligible && !useSummaryOverview;
     var showFirstWeekLoop = firstWeekLoopEligible;
     var showProBridge = proBridgeEligible;
-    var dailyReturnCompetesForCap = dailyReturnReasonEligible &&
+    var dailyReturnCompetesForCap =
+        dailyReturnReasonEligible &&
         useSummaryOverview &&
         firstWeekLoopEligible;
 
@@ -198,20 +199,16 @@ abstract final class RecordProofStackPolicy {
       showArchiveSummary: showArchiveSummary,
       showArchiveCurrentBelief: showArchiveCurrentBelief,
       showDailyReturnReason: showDailyReturnReason,
-      showWeeklyArchiveWeekReview:
-          weeklyReviewEligible && !useSummaryOverview,
-      showPrivateArchiveReport:
-          privateReportEligible && !useSummaryOverview,
-      showConfirmedRepeatWhyMatters:
-          whyMattersEligible && !useSummaryOverview,
-      showConfirmedRepeatThoughtMap:
-          thoughtMapEligible && !useSummaryOverview,
-      showPositiveReinforcement: showPositiveReinforcement && !useSummaryOverview,
+      showWeeklyArchiveWeekReview: weeklyReviewEligible && !useSummaryOverview,
+      showPrivateArchiveReport: privateReportEligible && !useSummaryOverview,
+      showConfirmedRepeatWhyMatters: whyMattersEligible && !useSummaryOverview,
+      showConfirmedRepeatThoughtMap: thoughtMapEligible && !useSummaryOverview,
+      showPositiveReinforcement:
+          showPositiveReinforcement && !useSummaryOverview,
       showHelpfulActionAppeared:
           showHelpfulActionAppeared && !useSummaryOverview,
-      showChangeProof: changeProofEligible &&
-          !useSummaryOverview &&
-          !showPatternChanged,
+      showChangeProof:
+          changeProofEligible && !useSummaryOverview && !showPatternChanged,
       showFirstWeekLoop: showFirstWeekLoop,
       showProBridge: showProBridge,
       proofCardCount: _countVisible(
@@ -219,8 +216,10 @@ abstract final class RecordProofStackPolicy {
         showArchiveSummary: showArchiveSummary,
         showArchiveCurrentBelief: showArchiveCurrentBelief,
         showDailyReturnReason: showDailyReturnReason,
-        showHelpfulActionAppeared: showHelpfulActionAppeared && !useSummaryOverview,
-        showPositiveReinforcement: showPositiveReinforcement && !useSummaryOverview,
+        showHelpfulActionAppeared:
+            showHelpfulActionAppeared && !useSummaryOverview,
+        showPositiveReinforcement:
+            showPositiveReinforcement && !useSummaryOverview,
         showFirstWeekLoop: showFirstWeekLoop,
         showProBridge: showProBridge,
       ),

@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/dev/visual_audit_overrides.dart';
@@ -14,27 +12,27 @@ import 'package:voicememory_mobile/services/app_services.dart';
 import 'package:voicememory_mobile/services/capture_save_messages.dart';
 import 'package:voicememory_mobile/theme/app_theme.dart';
 import 'package:voicememory_mobile/widgets/record/post_save_recorded_summary_card.dart';
+import 'support/test_storage_sandbox.dart';
 
 JournalEntry _degradedVoiceEntry({
   String id = 'v1',
   String? localAudioPath = '/tmp/audio.m4a',
-}) =>
-    JournalEntry(
-      id: id,
-      createdAt: DateTime(2026, 6, 12, 12),
-      transcript:
-          '[draft] ${CaptureSaveMessages.recordingSavedLocally} — transcribe when connected',
-      durationSeconds: 20,
-      localAudioPath: localAudioPath,
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 0,
-        recurringThemes: [],
-        exactLanguagePattern: '',
-        concreteObservation: '',
-        repeatedSignal: '',
-      ),
-    );
+}) => JournalEntry(
+  id: id,
+  createdAt: DateTime(2026, 6, 12, 12),
+  transcript:
+      '[draft] ${CaptureSaveMessages.recordingSavedLocally} — transcribe when connected',
+  durationSeconds: 20,
+  localAudioPath: localAudioPath,
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 0,
+    recurringThemes: [],
+    exactLanguagePattern: '',
+    concreteObservation: '',
+    repeatedSignal: '',
+  ),
+);
 
 void main() {
   group('DegradedTranscriptPostSaveUiGates', () {
@@ -127,7 +125,9 @@ void main() {
         findsNothing,
       );
 
-      await tester.tap(find.byKey(const Key('post_save_degraded_more_options')));
+      await tester.tap(
+        find.byKey(const Key('post_save_degraded_more_options')),
+      );
       await tester.pumpAndSettle();
 
       expect(find.byKey(const Key('post_save_play_recording')), findsOneWidget);
@@ -140,17 +140,17 @@ void main() {
   });
 
   group('Record screen degraded transcript post-save', () {
-    late Directory tempDir;
+    late TestStorageSandbox sandbox;
 
     setUp(() async {
-      tempDir = Directory.systemTemp.createTempSync('vm_degraded_post_save_');
-      await AppServices.resetForTest(
-        journalPath: '${tempDir.path}/journal.json',
-      );
+      sandbox = TestStorageSandbox.create();
+      await AppServices.resetForTest(journalPath: sandbox.journalPath);
       VisualAuditOverrides.setRecordPresentation(
         const RecordAuditPresentation(ui: RecordUiState.ready),
       );
     });
+
+    tearDown(() => sandbox.dispose());
 
     tearDown(() {
       VisualAuditOverrides.setRecordPresentation(null);
@@ -209,7 +209,10 @@ void main() {
         find.byKey(const Key('post_save_add_one_more_moment_cta')),
         findsNothing,
       );
-      expect(find.byKey(const Key('done_for_today_receipt_card')), findsNothing);
+      expect(
+        find.byKey(const Key('done_for_today_receipt_card')),
+        findsNothing,
+      );
       expect(find.text('Done for today'), findsNothing);
     });
   });

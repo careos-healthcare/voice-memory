@@ -103,9 +103,9 @@ Future<void> runRestoreLocalBackupFlow(
 
   if (!pickResult.succeeded) return;
 
-  ScaffoldMessenger.of(context).showSnackBar(
-    const SnackBar(content: Text(LocalBackupCopy.restoreSuccess)),
-  );
+  ScaffoldMessenger.of(
+    context,
+  ).showSnackBar(const SnackBar(content: Text(LocalBackupCopy.restoreSuccess)));
   onComplete();
 }
 
@@ -129,16 +129,16 @@ Future<void> runRestoreLocalBackupFlowWithConfirmation(
   if (!context.mounted) return;
 
   if (result.failure == LocalBackupRestoreFailure.invalidBackup) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(LocalBackupCopy.invalidBackup)),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(LocalBackupCopy.invalidBackup)));
     return;
   }
 
   if (!result.succeeded) return;
 
-  ScaffoldMessenger.of(context).showSnackBar(
-    const SnackBar(content: Text(LocalBackupCopy.restoreSuccess)),
-  );
+  ScaffoldMessenger.of(
+    context,
+  ).showSnackBar(const SnackBar(content: Text(LocalBackupCopy.restoreSuccess)));
   onComplete();
 }

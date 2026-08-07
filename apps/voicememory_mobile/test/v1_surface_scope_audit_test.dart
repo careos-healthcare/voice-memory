@@ -16,13 +16,12 @@ V1SurfaceScopeAuditInput _input({
   bool requestsProductDeletion = false,
   bool requestsLayoutChange = false,
   bool isReleaseBlocker = false,
-}) =>
-    V1SurfaceScopeAuditInput(
-      surface: surface,
-      requestsProductDeletion: requestsProductDeletion,
-      requestsLayoutChange: requestsLayoutChange,
-      isReleaseBlocker: isReleaseBlocker,
-    );
+}) => V1SurfaceScopeAuditInput(
+  surface: surface,
+  requestsProductDeletion: requestsProductDeletion,
+  requestsLayoutChange: requestsLayoutChange,
+  isReleaseBlocker: isReleaseBlocker,
+);
 
 void main() {
   group('V1SurfaceScopeAudit.scopeFor', () {
@@ -61,7 +60,11 @@ void main() {
     test('core surfaces remain allowed and required for release', () {
       for (final surface in V1SurfaceScopeAudit.coreSurfaces) {
         final result = V1SurfaceScopeAudit.audit(_input(surface: surface));
-        expect(result.decision, V1ScopeDecision.coreAllowed, reason: surface.name);
+        expect(
+          result.decision,
+          V1ScopeDecision.coreAllowed,
+          reason: surface.name,
+        );
         expect(result.requiredForRelease, isTrue, reason: surface.name);
         expect(result.visibleInV1, isTrue, reason: surface.name);
       }
@@ -103,10 +106,7 @@ void main() {
 
     test('layout change blocked unless release blocker', () {
       final blocked = V1SurfaceScopeAudit.audit(
-        _input(
-          surface: V1VisibleSurface.record,
-          requestsLayoutChange: true,
-        ),
+        _input(surface: V1VisibleSurface.record, requestsLayoutChange: true),
       );
       final allowed = V1SurfaceScopeAudit.audit(
         _input(
@@ -115,10 +115,7 @@ void main() {
           isReleaseBlocker: true,
         ),
       );
-      expect(
-        blocked.decision,
-        V1ScopeDecision.blockLayoutChangeUnlessBlocker,
-      );
+      expect(blocked.decision, V1ScopeDecision.blockLayoutChangeUnlessBlocker);
       expect(allowed.decision, V1ScopeDecision.releaseBlockerAllowed);
     });
   });

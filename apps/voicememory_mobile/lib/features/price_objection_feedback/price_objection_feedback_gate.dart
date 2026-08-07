@@ -85,16 +85,15 @@ abstract final class PriceObjectionFeedbackGate {
 
   static PriceObjectionFeedbackGateReport report(
     PriceObjectionFeedbackGateResult result,
-  ) =>
-      PriceObjectionFeedbackGateReport(
-        headline: PriceObjectionFeedbackCopy.headline,
-        body: PriceObjectionFeedbackCopy.body,
-        positioning: PriceObjectionFeedbackCopy.positioning,
-        reasonOrderLine: PriceObjectionFeedbackCopy.reasonOrderLine,
-        orderLine: PriceObjectionFeedbackCopy.orderLine,
-        guardrail: PriceObjectionFeedbackCopy.guardrail,
-        result: result,
-      );
+  ) => PriceObjectionFeedbackGateReport(
+    headline: PriceObjectionFeedbackCopy.headline,
+    body: PriceObjectionFeedbackCopy.body,
+    positioning: PriceObjectionFeedbackCopy.positioning,
+    reasonOrderLine: PriceObjectionFeedbackCopy.reasonOrderLine,
+    orderLine: PriceObjectionFeedbackCopy.orderLine,
+    guardrail: PriceObjectionFeedbackCopy.guardrail,
+    result: result,
+  );
 
   static bool shouldShowFeedback(PriceObjectionFeedbackGateInput input) {
     if (input.isPro ?? false) return false;
@@ -113,25 +112,23 @@ abstract final class PriceObjectionFeedbackGate {
     bool? newFeatureRequested,
     bool? nonBetaInterpretationRequested,
     PaidIntentBetaProofResult? paidIntentBeta,
-  }) =>
-      PriceObjectionFeedbackGateInput(
-        proTapped: proTapped ??
-            _signalPassed(
-              paidIntentBeta,
-              PaidIntentBetaProofSignalId.proTapped,
-            ),
-        purchaseCompleted: purchaseCompleted ??
-            _signalPassed(
-              paidIntentBeta,
-              PaidIntentBetaProofSignalId.purchaseCompleted,
-            ),
-        isPro: isPro,
-        feedbackRequested: feedbackRequested,
-        priceChangeRequested: priceChangeRequested,
-        discountRequested: discountRequested,
-        newFeatureRequested: newFeatureRequested,
-        nonBetaInterpretationRequested: nonBetaInterpretationRequested,
-      );
+  }) => PriceObjectionFeedbackGateInput(
+    proTapped:
+        proTapped ??
+        _signalPassed(paidIntentBeta, PaidIntentBetaProofSignalId.proTapped),
+    purchaseCompleted:
+        purchaseCompleted ??
+        _signalPassed(
+          paidIntentBeta,
+          PaidIntentBetaProofSignalId.purchaseCompleted,
+        ),
+    isPro: isPro,
+    feedbackRequested: feedbackRequested,
+    priceChangeRequested: priceChangeRequested,
+    discountRequested: discountRequested,
+    newFeatureRequested: newFeatureRequested,
+    nonBetaInterpretationRequested: nonBetaInterpretationRequested,
+  );
 
   static PriceObjectionFeedbackGateInput fromRepoSignals({
     required String priceObjectionFeedbackDocSource,
@@ -144,20 +141,19 @@ abstract final class PriceObjectionFeedbackGate {
     bool? discountRequested,
     bool? newFeatureRequested,
     bool? nonBetaInterpretationRequested,
-  }) =>
-      PriceObjectionFeedbackGateInput(
-        proTapped: proTapped,
-        purchaseCompleted: purchaseCompleted,
-        isPro: isPro,
-        feedbackRequested: feedbackRequested,
-        priceChangeRequested: priceChangeRequested,
-        discountRequested: discountRequested,
-        newFeatureRequested: newFeatureRequested,
-        nonBetaInterpretationRequested: nonBetaInterpretationRequested,
-        docListsRules: detectDocListsRules(priceObjectionFeedbackDocSource),
-        guardrailPresentInCopy: detectGuardrailPresentInCopy(gateCopySource),
-        reasonsPresentInCopy: detectReasonsPresentInCopy(gateCopySource),
-      );
+  }) => PriceObjectionFeedbackGateInput(
+    proTapped: proTapped,
+    purchaseCompleted: purchaseCompleted,
+    isPro: isPro,
+    feedbackRequested: feedbackRequested,
+    priceChangeRequested: priceChangeRequested,
+    discountRequested: discountRequested,
+    newFeatureRequested: newFeatureRequested,
+    nonBetaInterpretationRequested: nonBetaInterpretationRequested,
+    docListsRules: detectDocListsRules(priceObjectionFeedbackDocSource),
+    guardrailPresentInCopy: detectGuardrailPresentInCopy(gateCopySource),
+    reasonsPresentInCopy: detectReasonsPresentInCopy(gateCopySource),
+  );
 
   static bool detectDocListsRules(String docSource) {
     const markers = [
@@ -192,7 +188,8 @@ abstract final class PriceObjectionFeedbackGate {
   static bool detectReasonsPresentInCopy(String gateCopySource) {
     final lower = gateCopySource.toLowerCase();
     return canonicalReasonOrder.every(
-      (id) => lower.contains(PriceObjectionFeedbackCopy.labelFor(id).toLowerCase()),
+      (id) =>
+          lower.contains(PriceObjectionFeedbackCopy.labelFor(id).toLowerCase()),
     );
   }
 
@@ -214,16 +211,15 @@ abstract final class PriceObjectionFeedbackGate {
     return null;
   }
 
-  static List<PriceObjectionReason> _buildReasons() =>
-      canonicalReasonOrder
-          .map(
-            (id) => PriceObjectionReason(
-              id: id,
-              label: PriceObjectionFeedbackCopy.labelFor(id),
-              positioning: PriceObjectionFeedbackCopy.positioningFor(id),
-            ),
-          )
-          .toList();
+  static List<PriceObjectionReason> _buildReasons() => canonicalReasonOrder
+      .map(
+        (id) => PriceObjectionReason(
+          id: id,
+          label: PriceObjectionFeedbackCopy.labelFor(id),
+          positioning: PriceObjectionFeedbackCopy.positioningFor(id),
+        ),
+      )
+      .toList();
 
   static List<PriceObjectionFeedbackRule> _buildRules(
     PriceObjectionFeedbackGateInput input,
@@ -240,31 +236,39 @@ abstract final class PriceObjectionFeedbackGate {
     return [
       _rule(
         id: PriceObjectionFeedbackRuleId.showOnlyAfterProTapWithoutPurchase,
-        passes: guardrailLower.contains('show only after pro tap without purchase') &&
+        passes:
+            guardrailLower.contains(
+              'show only after pro tap without purchase',
+            ) &&
             (!feedbackRequested || showEligible),
       ),
       _rule(
         id: PriceObjectionFeedbackRuleId.doNotChangePrice,
-        passes: guardrailLower.contains('do not change price') &&
+        passes:
+            guardrailLower.contains('do not change price') &&
             evaluateCopyPassesRules(copyBundle) &&
             !(input.priceChangeRequested ?? false),
       ),
       _rule(
         id: PriceObjectionFeedbackRuleId.doNotAddDiscounts,
-        passes: guardrailLower.contains('do not add discounts') &&
+        passes:
+            guardrailLower.contains('do not add discounts') &&
             evaluateCopyPassesRules(copyBundle) &&
             !(input.discountRequested ?? false),
       ),
       _rule(
         id: PriceObjectionFeedbackRuleId.doNotAddNewFeatures,
-        passes: guardrailLower.contains('do not add new features') &&
+        passes:
+            guardrailLower.contains('do not add new features') &&
             evaluateCopyPassesRules(copyBundle) &&
             !(input.newFeatureRequested ?? false),
       ),
       _rule(
         id: PriceObjectionFeedbackRuleId.feedPaidIntentBetaInterpretationOnly,
-        passes: guardrailLower
-                .contains('feed paid-intent beta interpretation only') &&
+        passes:
+            guardrailLower.contains(
+              'feed paid-intent beta interpretation only',
+            ) &&
             !(input.nonBetaInterpretationRequested ?? false),
       ),
     ];
@@ -314,7 +318,14 @@ abstract final class PriceObjectionFeedbackGate {
 
   static bool _markerInProhibitionContext(String lower, int markerStart) {
     final prefix = lower.substring(0, markerStart);
-    const prohibitionMarkers = ['avoid ', 'without ', 'never ', 'no ', 'not ', 'do not '];
+    const prohibitionMarkers = [
+      'avoid ',
+      'without ',
+      'never ',
+      'no ',
+      'not ',
+      'do not ',
+    ];
     for (final marker in prohibitionMarkers) {
       final index = prefix.lastIndexOf(marker);
       if (index < 0) continue;
@@ -327,17 +338,16 @@ abstract final class PriceObjectionFeedbackGate {
   static PriceObjectionFeedbackRule _rule({
     required PriceObjectionFeedbackRuleId id,
     required bool passes,
-  }) =>
-      PriceObjectionFeedbackRule(
-        id: id,
-        label: PriceObjectionFeedbackCopy.ruleLabelFor(id),
-        status: passes
-            ? PriceObjectionFeedbackRuleStatus.pass
-            : PriceObjectionFeedbackRuleStatus.fail,
-        detailLabel: passes
-            ? PriceObjectionFeedbackCopy.detailPass
-            : PriceObjectionFeedbackCopy.detailFail,
-      );
+  }) => PriceObjectionFeedbackRule(
+    id: id,
+    label: PriceObjectionFeedbackCopy.ruleLabelFor(id),
+    status: passes
+        ? PriceObjectionFeedbackRuleStatus.pass
+        : PriceObjectionFeedbackRuleStatus.fail,
+    detailLabel: passes
+        ? PriceObjectionFeedbackCopy.detailPass
+        : PriceObjectionFeedbackCopy.detailFail,
+  );
 }
 
 class PriceObjectionFeedbackGateInput {

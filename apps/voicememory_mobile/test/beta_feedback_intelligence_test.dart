@@ -10,10 +10,10 @@ import 'package:voicememory_mobile/features/first_proof_payoff/first_proof_payof
 import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
-import 'package:voicememory_mobile/services/capture_save_messages.dart';
 import 'package:voicememory_mobile/theme/app_theme.dart';
 import 'package:voicememory_mobile/widgets/beta/beta_feedback_intelligence_card.dart';
 import 'package:voicememory_mobile/widgets/beta/beta_feedback_intelligence_sheet.dart';
+import 'support/test_storage_sandbox.dart';
 
 const _strongRepeat =
     'I had no capacity but I said yes again to the extra meeting today.';
@@ -22,42 +22,41 @@ JournalEntry _entry({
   required String id,
   required String transcript,
   DateTime? createdAt,
-}) =>
-    JournalEntry(
-      id: id,
-      createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
-      transcript: transcript,
-      durationSeconds: 30,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 2,
-        recurringThemes: ['work'],
-        exactLanguagePattern: '',
-        concreteObservation: 'Work pressure showed up in this moment.',
-        repeatedSignal: '',
-      ),
-    );
+}) => JournalEntry(
+  id: id,
+  createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
+  transcript: transcript,
+  durationSeconds: 30,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 2,
+    recurringThemes: ['work'],
+    exactLanguagePattern: '',
+    concreteObservation: 'Work pressure showed up in this moment.',
+    repeatedSignal: '',
+  ),
+);
 
 List<JournalEntry> _threeRelatedEntries() => [
-      _entry(
-        id: 'e1',
-        transcript: _strongRepeat,
-        createdAt: DateTime(2026, 6, 10, 12),
-      ),
-      _entry(
-        id: 'e2',
-        transcript:
-            'Same thing — said yes when I had no capacity for one more thing.',
-        createdAt: DateTime(2026, 6, 11, 12),
-      ),
-      _entry(
-        id: 'e3',
-        transcript:
-            'I said yes again even though I had no capacity for one more ask.',
-        createdAt: DateTime(2026, 6, 12, 12),
-      ),
-    ];
+  _entry(
+    id: 'e1',
+    transcript: _strongRepeat,
+    createdAt: DateTime(2026, 6, 10, 12),
+  ),
+  _entry(
+    id: 'e2',
+    transcript:
+        'Same thing — said yes when I had no capacity for one more thing.',
+    createdAt: DateTime(2026, 6, 11, 12),
+  ),
+  _entry(
+    id: 'e3',
+    transcript:
+        'I said yes again even though I had no capacity for one more ask.',
+    createdAt: DateTime(2026, 6, 12, 12),
+  ),
+];
 
 BetaFeedbackIntelligenceContext _context({
   required BetaFeedbackIntelligenceSurface surface,
@@ -77,7 +76,8 @@ BetaFeedbackIntelligenceContext _context({
     entryCount: entryCount,
     betaMissionEnabled: ArchiveBetaMissionGate.isEnabled,
     submittedForSession: BetaFeedbackIntelligenceStore.isSubmittedForSession(),
-    firstProofPayoffSeen: firstProofPayoffVisible ||
+    firstProofPayoffSeen:
+        firstProofPayoffVisible ||
         FirstProofPayoffEngine.build(entries: entries) != null,
     proEvidenceSheetOpenedThisSession: proEvidenceSheetOpenedThisSession,
     isZeroEntryState: isZeroEntryState,
@@ -91,11 +91,13 @@ BetaFeedbackIntelligenceContext _context({
 }
 
 void main() {
+  late TestStorageSandbox sandbox;
   TestWidgetsFlutterBinding.ensureInitialized();
 
   final analyticsEvents = <({String event, Map<String, Object> props})>[];
 
   setUp(() async {
+    sandbox = TestStorageSandbox.create();
     analyticsEvents.clear();
     BetaFeedbackIntelligenceAnalytics.resetForTest();
     BetaFeedbackIntelligenceAnalytics.captureForTest = (event, props) {
@@ -103,15 +105,14 @@ void main() {
     };
     ArchiveBetaMissionGate.resetForTest();
     await AppServices.resetForTest(
-      journalPath:
-          'test/tmp/beta_feedback_intelligence/${DateTime.now().microsecondsSinceEpoch}_journal.json',
-      prefsPath:
-          'test/tmp/beta_feedback_intelligence/${DateTime.now().microsecondsSinceEpoch}_prefs.json',
+      journalPath: sandbox.journalPath,
+      prefsPath: sandbox.prefsPath,
       skipRevenueCat: true,
     );
     await BetaFeedbackIntelligenceStore.resetForTest();
   });
 
+  tearDown(() => sandbox.dispose());
   tearDown(() {
     BetaFeedbackIntelligenceAnalytics.resetForTest();
     ArchiveBetaMissionGate.resetForTest();
@@ -267,8 +268,10 @@ void main() {
       expect(state.testerUnderstoodArchiveMe, isTrue);
       expect(state.testerWouldPay, BetaWouldPayAnswer.yes);
       expect(state.testerMainConfusion, BetaMainConfusionBucket.pro);
-      expect(state.testerMostValuableMoment,
-          BetaStrongestMomentBucket.proExplanation);
+      expect(
+        state.testerMostValuableMoment,
+        BetaStrongestMomentBucket.proExplanation,
+      );
       expect(state.testerPriceSignal, BetaWouldPayAnswer.yes);
 
       final raw = await AppServices.instance.prefs.readMap(
@@ -289,12 +292,11 @@ void main() {
         strongestMomentBucket: BetaStrongestMomentBucket.nothingYet,
       );
       await BetaFeedbackIntelligenceStore.resetForTest();
-      expect(BetaFeedbackIntelligenceStore.cached.hasSubmittedBetaFeedback,
-          isFalse);
       expect(
-        BetaFeedbackIntelligenceStore.isSubmittedForSession(),
+        BetaFeedbackIntelligenceStore.cached.hasSubmittedBetaFeedback,
         isFalse,
       );
+      expect(BetaFeedbackIntelligenceStore.isSubmittedForSession(), isFalse);
     });
 
     test('feedback does not change journal entries', () async {
@@ -375,7 +377,10 @@ void main() {
         ),
       );
 
-      expect(find.text(BetaFeedbackIntelligenceCopy.sheetTitle), findsOneWidget);
+      expect(
+        find.text(BetaFeedbackIntelligenceCopy.sheetTitle),
+        findsOneWidget,
+      );
       expect(
         find.text(BetaFeedbackIntelligenceCopy.chatGptDifferenceQuestion),
         findsOneWidget,
@@ -415,15 +420,23 @@ void main() {
       final summary = BetaFeedbackIntelligenceEngine.buildSummary(
         entries: _threeRelatedEntries(),
       );
-      expect(summary.chatGptDifferenceLabel,
-          BetaFeedbackIntelligenceCopy.summaryYes);
+      expect(
+        summary.chatGptDifferenceLabel,
+        BetaFeedbackIntelligenceCopy.summaryYes,
+      );
       expect(summary.proValueLabel, BetaFeedbackIntelligenceCopy.summaryMaybe);
-      expect(summary.mainConfusionLabel,
-          BetaFeedbackIntelligenceCopy.confusionPatterns);
-      expect(summary.strongestMomentLabel,
-          BetaFeedbackIntelligenceCopy.strongestQuietSignal);
-      expect(summary.feedbackSubmittedLabel,
-          BetaFeedbackIntelligenceCopy.summaryYes);
+      expect(
+        summary.mainConfusionLabel,
+        BetaFeedbackIntelligenceCopy.confusionPatterns,
+      );
+      expect(
+        summary.strongestMomentLabel,
+        BetaFeedbackIntelligenceCopy.strongestQuietSignal,
+      );
+      expect(
+        summary.feedbackSubmittedLabel,
+        BetaFeedbackIntelligenceCopy.summaryYes,
+      );
       expect(summary.stillToTestItems, isNot(contains('Submit beta feedback')));
     });
   });

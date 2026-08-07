@@ -14,7 +14,7 @@ abstract final class EvidenceTrailClarityAnalytics {
 
   @visibleForTesting
   static void Function(String event, Map<String, Object> properties)?
-      captureForTest;
+  captureForTest;
 
   static void seen({required EvidenceTrailClarityResult result}) {
     _emit(seenEvent, result: result);

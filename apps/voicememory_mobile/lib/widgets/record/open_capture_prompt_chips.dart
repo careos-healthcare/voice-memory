@@ -61,14 +61,12 @@ class _OpenCapturePromptChipsState extends State<OpenCapturePromptChips> {
   Widget build(BuildContext context) {
     _trackSeenOnce();
 
-    final bodyStyle = ArchiveMobileTypography.explanationBody(context).copyWith(
-      color: AppColors.textSecondary,
-      height: 1.4,
-    );
-    final labelStyle = ArchiveMobileTypography.cardLabel(context).copyWith(
-      color: AppColors.textPrimary,
-      fontWeight: FontWeight.w600,
-    );
+    final bodyStyle = ArchiveMobileTypography.explanationBody(
+      context,
+    ).copyWith(color: AppColors.textSecondary, height: 1.4);
+    final labelStyle = ArchiveMobileTypography.cardLabel(
+      context,
+    ).copyWith(color: AppColors.textPrimary, fontWeight: FontWeight.w600);
 
     return Column(
       key: const Key('open_capture_prompt_chips'),

@@ -15,7 +15,6 @@ import 'package:voicememory_mobile/features/curiosity_loop/services/curiosity_no
 import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
-import 'package:voicememory_mobile/storage/mobile_prefs_store.dart';
 
 JournalEntry _entry({
   required String id,
@@ -32,7 +31,8 @@ JournalEntry _entry({
     durationSeconds: 30,
     localAudioPath: localAudioPath ?? '/tmp/$id.m4a',
     biomarkers: biomarkers,
-    reflection: reflection ??
+    reflection:
+        reflection ??
         const Reflection(
           mood: 'thoughtful',
           emotionalIntensity: 2,
@@ -65,12 +65,8 @@ Future<void> _resetStores(String stamp) async {
     journalPath: '/tmp/vm_curiosity_journal_$stamp.json',
     prefsPath: '/tmp/vm_curiosity_prefs_$stamp.json',
   );
-  await LocalCuriosityHookRepository.resetForTest(
-    AppServices.instance.prefs,
-  );
-  await LocalCuriosityLoopRepository.resetForTest(
-    AppServices.instance.prefs,
-  );
+  await LocalCuriosityHookRepository.resetForTest(AppServices.instance.prefs);
+  await LocalCuriosityLoopRepository.resetForTest(AppServices.instance.prefs);
 }
 
 void main() {
@@ -82,7 +78,8 @@ void main() {
         createdAt: DateTime.utc(2026, 6, 12, 12),
         primaryAnchor: 'said yes again',
         hookType: CuriosityHookType.blocker,
-        dynamicPrompt: 'Before "said yes again" showed up again, what got in the way?',
+        dynamicPrompt:
+            'Before "said yes again" showed up again, what got in the way?',
         sourceEntryId: 'e0',
         isMemoryRecallCheck: true,
       );
@@ -116,16 +113,19 @@ void main() {
       expect(metadata.extractedAnchors, isNotEmpty);
     });
 
-    test('uses grounded repeat phrases when archive has three related entries', () {
-      final entries = _confirmedRepeatEntries(3);
-      final metadata = CuriosityHookMetadataExtractor.fromEntry(
-        entry: entries.last,
-        allEntries: entries,
-      );
+    test(
+      'uses grounded repeat phrases when archive has three related entries',
+      () {
+        final entries = _confirmedRepeatEntries(3);
+        final metadata = CuriosityHookMetadataExtractor.fromEntry(
+          entry: entries.last,
+          allEntries: entries,
+        );
 
-      expect(metadata.entryCount, 3);
-      expect(metadata.extractedAnchors.length, greaterThan(1));
-    });
+        expect(metadata.entryCount, 3);
+        expect(metadata.extractedAnchors.length, greaterThan(1));
+      },
+    );
   });
 
   group('CuriosityHookEngine', () {
@@ -231,7 +231,8 @@ void main() {
 
       expect(hook, isNotNull);
       expect(hook!.entryId, entries.last.id);
-      final stored = await LocalCuriosityHookRepository.instance().fetchLatestUnconsumed();
+      final stored = await LocalCuriosityHookRepository.instance()
+          .fetchLatestUnconsumed();
       expect(stored, isNotNull);
       expect(stored!.id, hook.id);
       await pumpEventQueue();
@@ -242,7 +243,9 @@ void main() {
 
     test('returns hook when notification scheduling fails', () async {
       final entries = _confirmedRepeatEntries(3);
-      final scheduler = _FakeCuriosityNotificationScheduler(throwOnSchedule: true);
+      final scheduler = _FakeCuriosityNotificationScheduler(
+        throwOnSchedule: true,
+      );
       final coordinator = CuriosityHookCoordinator(scheduler: scheduler);
       final hook = await coordinator.persistAfterVoiceSave(
         savedEntry: entries.last,
@@ -256,7 +259,9 @@ void main() {
 
     test('returns hook when notification permission is denied', () async {
       final entries = _confirmedRepeatEntries(3);
-      final scheduler = _FakeCuriosityNotificationScheduler(grantPermissions: false);
+      final scheduler = _FakeCuriosityNotificationScheduler(
+        grantPermissions: false,
+      );
       final coordinator = CuriosityHookCoordinator(scheduler: scheduler);
       final hook = await coordinator.persistAfterVoiceSave(
         savedEntry: entries.last,
@@ -278,7 +283,10 @@ void main() {
           emotionalVolatility: 0.3,
         ),
       );
-      final allEntries = [...entries.sublist(0, entries.length - 1), savedEntry];
+      final allEntries = [
+        ...entries.sublist(0, entries.length - 1),
+        savedEntry,
+      ];
       final scheduler = _FakeCuriosityNotificationScheduler();
       final coordinator = CuriosityHookCoordinator(
         scheduler: scheduler,
@@ -300,16 +308,14 @@ void main() {
         hook!.dynamicPrompt,
         contains(DefaultCuriosityPromptGenerator.groundingLeadIn),
       );
-      expect(
-        scheduler.lastScheduledPromptBody,
-        hook.dynamicPrompt,
-      );
+      expect(scheduler.lastScheduledPromptBody, hook.dynamicPrompt);
     });
 
     test('skips degraded voice saves', () async {
       final degraded = _entry(
         id: 'draft',
-        transcript: '[draft] Recording saved locally — transcribe when connected',
+        transcript:
+            '[draft] Recording saved locally — transcribe when connected',
         localAudioPath: '/tmp/draft.m4a',
         reflection: const Reflection(
           mood: 'neutral',
@@ -339,7 +345,8 @@ void main() {
         createdAt: DateTime.utc(2026, 6, 12),
         primaryAnchor: 'said yes again',
         hookType: CuriosityHookType.returnWatch,
-        dynamicPrompt: 'Come back when "said yes again" shows up again and say what changed.',
+        dynamicPrompt:
+            'Come back when "said yes again" shows up again and say what changed.',
       );
 
       expect(
@@ -362,7 +369,8 @@ void main() {
   });
 }
 
-class _FakeCuriosityNotificationScheduler extends CuriosityNotificationScheduler {
+class _FakeCuriosityNotificationScheduler
+    extends CuriosityNotificationScheduler {
   _FakeCuriosityNotificationScheduler({
     this.grantPermissions = true,
     this.throwOnSchedule = false,
@@ -394,7 +402,8 @@ class _FakeCuriosityNotificationScheduler extends CuriosityNotificationScheduler
   @override
   Future<bool> scheduleCuriosityNotification(
     CuriosityHook hook, {
-    Duration scheduleAfter = CuriosityNotificationScheduler.defaultScheduleAfter,
+    Duration scheduleAfter =
+        CuriosityNotificationScheduler.defaultScheduleAfter,
     String? promptBody,
   }) async {
     scheduleCalls++;

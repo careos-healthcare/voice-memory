@@ -1,8 +1,6 @@
 import 'package:flutter/foundation.dart';
 
 import '../../models/journal_entry.dart';
-import '../memory/memory_scope.dart';
-import '../memory/memory_scope_policy.dart';
 import '../memory/not_about_me_policy.dart';
 import '../memory/sensitive_surfacing_policy.dart';
 import 'pro_trust_copy.dart';

@@ -11,9 +11,9 @@ abstract final class YesCaptureTimingIds {
   static const all = [beforeYes, afterYes, laterCost];
 
   static String labelFor(String id) => switch (id) {
-        beforeYes => ArchivePositioningCopy.beforeLabel,
-        afterYes => ArchivePositioningCopy.afterLabel,
-        laterCost => ArchivePositioningCopy.laterLabel,
-        _ => id,
-      };
+    beforeYes => ArchivePositioningCopy.beforeLabel,
+    afterYes => ArchivePositioningCopy.afterLabel,
+    laterCost => ArchivePositioningCopy.laterLabel,
+    _ => id,
+  };
 }

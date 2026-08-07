@@ -24,10 +24,9 @@ abstract final class PositivePatternGates {
     required RecordCtaPolicyResolution policy,
     required bool hideCardRecordButtons,
     required bool promoteMicCaptureActions,
-  }) =>
-      !ArchiveBetaMissionGates.capturePrimaryCtaVisible(
-        policy: policy,
-        hideCardRecordButtons: hideCardRecordButtons,
-        promoteMicCaptureActions: promoteMicCaptureActions,
-      );
+  }) => !ArchiveBetaMissionGates.capturePrimaryCtaVisible(
+    policy: policy,
+    hideCardRecordButtons: hideCardRecordButtons,
+    promoteMicCaptureActions: promoteMicCaptureActions,
+  );
 }

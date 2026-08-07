@@ -60,9 +60,8 @@ abstract class PurchaseIntentReturnCue {
 /// source/plan ids, and the completed flag only. No user content; the
 /// payload is fixed-shape by construction.
 class PurchaseIntentStore {
-  PurchaseIntentStore({MobilePrefsStore? prefs, DateTime Function()? now})
-    : _prefs = prefs,
-      _now = now ?? DateTime.now;
+  PurchaseIntentStore({this._prefs, DateTime Function()? now})
+    : _now = now ?? DateTime.now;
 
   final MobilePrefsStore? _prefs;
   final DateTime Function() _now;

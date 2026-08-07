@@ -10,16 +10,10 @@ abstract final class FirstUseWordingAnalytics {
 
   @visibleForTesting
   static void Function(String event, Map<String, Object> properties)?
-      captureForTest;
+  captureForTest;
 
-  static void selected({
-    required String source,
-    required String promptType,
-  }) {
-    final props = <String, Object>{
-      'source': source,
-      'prompt_type': promptType,
-    };
+  static void selected({required String source, required String promptType}) {
+    final props = <String, Object>{'source': source, 'prompt_type': promptType};
     captureForTest?.call(selectedEvent, props);
     ActivationFunnelAnalytics.track(
       selectedEvent,

@@ -10,22 +10,21 @@ JournalEntry _entry({
   required String id,
   required String transcript,
   DateTime? createdAt,
-}) =>
-    JournalEntry(
-      id: id,
-      createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
-      transcript: transcript,
-      durationSeconds: 30,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 2,
-        recurringThemes: ['work'],
-        exactLanguagePattern: '',
-        concreteObservation: 'Work pressure showed up in this moment.',
-        repeatedSignal: '',
-      ),
-    );
+}) => JournalEntry(
+  id: id,
+  createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
+  transcript: transcript,
+  durationSeconds: 30,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 2,
+    recurringThemes: ['work'],
+    exactLanguagePattern: '',
+    concreteObservation: 'Work pressure showed up in this moment.',
+    repeatedSignal: '',
+  ),
+);
 
 void main() {
   group('ArchiveFirstComparisonUiGates', () {
@@ -52,27 +51,30 @@ void main() {
   });
 
   group('ArchiveFirstComparisonDisplay', () {
-    test('ungrounded two entries use weak fallback without faking a repeat', () {
-      final display = ArchiveFirstComparisonDisplay.resolve([
-        _entry(
-          id: 'a',
-          transcript: 'A quiet moment about lunch with a friend today.',
-        ),
-        _entry(
-          id: 'b',
-          transcript: 'Another unrelated note about errands this afternoon.',
-          createdAt: DateTime(2026, 6, 13, 12),
-        ),
-      ]);
+    test(
+      'ungrounded two entries use weak fallback without faking a repeat',
+      () {
+        final display = ArchiveFirstComparisonDisplay.resolve([
+          _entry(
+            id: 'a',
+            transcript: 'A quiet moment about lunch with a friend today.',
+          ),
+          _entry(
+            id: 'b',
+            transcript: 'Another unrelated note about errands this afternoon.',
+            createdAt: DateTime(2026, 6, 13, 12),
+          ),
+        ]);
 
-      expect(display.show, isTrue);
-      expect(display.title, VisibleArchiveProofCopy.twoEntryCompareTitle);
-      expect(display.body, VisibleArchiveProofCopy.twoEntryBodyUngrounded);
-      expect(display.evidenceLine, isNull);
-      expect(display.whatChangedLine, isNull);
-      expect(display.primaryIsViewEvidence, isFalse);
-      expect(display.hasGroundedPattern, isFalse);
-    });
+        expect(display.show, isTrue);
+        expect(display.title, VisibleArchiveProofCopy.twoEntryCompareTitle);
+        expect(display.body, VisibleArchiveProofCopy.twoEntryBodyUngrounded);
+        expect(display.evidenceLine, isNull);
+        expect(display.whatChangedLine, isNull);
+        expect(display.primaryIsViewEvidence, isFalse);
+        expect(display.hasGroundedPattern, isFalse);
+      },
+    );
 
     test('grounded two entries use connect format with view evidence', () {
       final display = ArchiveFirstComparisonDisplay.resolve([
@@ -90,7 +92,10 @@ void main() {
       ]);
 
       expect(display.show, isTrue);
-      expect(display.title, VisibleArchiveProofCopy.archiveFirstComparisonTitle);
+      expect(
+        display.title,
+        VisibleArchiveProofCopy.archiveFirstComparisonTitle,
+      );
       expect(display.body, startsWith('This may connect to:'));
       expect(display.body, contains('What changed:'));
       expect(display.primaryIsViewEvidence, isTrue);
@@ -118,7 +123,10 @@ void main() {
       ]);
 
       expect(display.show, isTrue);
-      expect(display.title, VisibleArchiveProofCopy.archiveFirstComparisonTitle);
+      expect(
+        display.title,
+        VisibleArchiveProofCopy.archiveFirstComparisonTitle,
+      );
       expect(
         display.body,
         VisibleArchiveProofCopy.archiveFirstComparisonCautionThin,

@@ -252,8 +252,9 @@ class BeliefChangeDetector {
         .split(RegExp(r'\s+'))
         .where((w) => w.length >= 4)
         .toSet();
-    if (keywords.isEmpty)
+    if (keywords.isEmpty) {
       return eligible.reversed.take(4).map((e) => e.id).toList();
+    }
 
     final ids = <String>[];
     for (final e in eligible.reversed) {

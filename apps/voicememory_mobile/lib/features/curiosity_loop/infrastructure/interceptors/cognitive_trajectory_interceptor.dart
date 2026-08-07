@@ -8,27 +8,22 @@ import '../../repositories/clinical_trajectory_history_store.dart';
 import '../../repositories/curiosity_hook_repository.dart';
 import '../../services/cognitive_trajectory_telemetry.dart';
 
-typedef CognitiveTrajectoryAssessmentHandler = void Function(
-  CognitiveTrajectoryRecord record,
-);
+typedef CognitiveTrajectoryAssessmentHandler =
+    void Function(CognitiveTrajectoryRecord record);
 
 /// Evaluates hook-response recovery vectors after journal persistence.
 class CognitiveTrajectoryInterceptor implements JournalSaveInterceptor {
   CognitiveTrajectoryInterceptor({
-    CuriosityHookRepository? hookRepository,
-    CuriosityHookJournalStore? journalStore,
-    ClinicalTrajectoryHistoryStore? trajectoryHistoryStore,
+    this._hookRepository,
+    this._journalStore,
+    this._trajectoryHistoryStore,
     CognitiveTrajectoryEvaluator? evaluator,
     CognitiveTrajectoryTelemetry? telemetry,
-    CognitiveTrajectoryAssessmentHandler? onAssessment,
+    this._onAssessment,
     DateTime Function()? clock,
-  })  : _hookRepository = hookRepository,
-        _journalStore = journalStore,
-        _trajectoryHistoryStore = trajectoryHistoryStore,
-        _evaluator = evaluator ?? const CognitiveTrajectoryEvaluator(),
-        _telemetry = telemetry ?? const CognitiveTrajectoryTelemetry(),
-        _onAssessment = onAssessment,
-        _clock = clock ?? DateTime.now;
+  }) : _evaluator = evaluator ?? const CognitiveTrajectoryEvaluator(),
+       _telemetry = telemetry ?? const CognitiveTrajectoryTelemetry(),
+       _clock = clock ?? DateTime.now;
 
   final CuriosityHookRepository? _hookRepository;
   final CuriosityHookJournalStore? _journalStore;
@@ -46,8 +41,7 @@ class CognitiveTrajectoryInterceptor implements JournalSaveInterceptor {
       JournalStoreCuriosityHookJournalStore(AppServices.instance.journalStore);
 
   ClinicalTrajectoryHistoryStore get _resolvedTrajectoryHistoryStore =>
-      _trajectoryHistoryStore ??
-      LocalClinicalTrajectoryHistoryStore.instance();
+      _trajectoryHistoryStore ?? LocalClinicalTrajectoryHistoryStore.instance();
 
   String _resolvedSourceEntryId(CuriosityHook hook) {
     final sourceEntryId = hook.sourceEntryId?.trim();

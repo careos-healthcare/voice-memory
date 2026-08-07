@@ -24,13 +24,9 @@ abstract final class TrailLanguageGuard {
     'mind-map maintenance',
   ];
 
-  static const blockedDashboardPhrases = [
-    'dashboard to maintain',
-  ];
+  static const blockedDashboardPhrases = ['dashboard to maintain'];
 
-  static const blockedDailyTrackerPhrases = [
-    'daily tracker',
-  ];
+  static const blockedDailyTrackerPhrases = ['daily tracker'];
 
   static const blockedStreakPhrases = [
     'keep your streak',
@@ -38,26 +34,13 @@ abstract final class TrailLanguageGuard {
     'streak counter',
   ];
 
-  static const blockedStoragePhrases = [
-    'storage app',
-    'second brain',
-  ];
+  static const blockedStoragePhrases = ['storage app', 'second brain'];
 
-  static const blockedRankingPhrases = [
-    'ranked patterns',
-  ];
+  static const blockedRankingPhrases = ['ranked patterns'];
 
-  static const blockedTherapyPhrases = [
-    'therapy',
-    'diagnosis',
-    'coach',
-  ];
+  static const blockedTherapyPhrases = ['therapy', 'diagnosis', 'coach'];
 
-  static const blockedChatPhrases = [
-    'voice chat',
-    'chat box',
-    'ai companion',
-  ];
+  static const blockedChatPhrases = ['voice chat', 'chat box', 'ai companion'];
 
   static TrailLanguageGuardResult isAllowedCopy(String copy) {
     final lower = copy.toLowerCase();
@@ -193,8 +176,7 @@ class TrailLanguageGuardResult {
 
   factory TrailLanguageGuardResult.blocked({
     required TrailLanguageGuardReason reason,
-  }) =>
-      TrailLanguageGuardResult(isAllowed: false, reason: reason);
+  }) => TrailLanguageGuardResult(isAllowed: false, reason: reason);
 
   final bool isAllowed;
   final TrailLanguageGuardReason reason;

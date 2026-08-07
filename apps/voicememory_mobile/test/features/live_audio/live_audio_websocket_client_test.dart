@@ -10,46 +10,48 @@ import 'dart:convert';
 
 void main() {
   group('LiveAudioWebSocketClient', () {
-    test('connect appends sessionToken query param and waits for setupComplete',
-        () async {
-      Uri? capturedUri;
-      final sinkController = StreamController<dynamic>();
-      final client = LiveAudioWebSocketClient(
-        connectionFactory: (uri, {headers}) {
-          capturedUri = uri;
-          return _FakeSocketConnection(sinkController);
-        },
-      );
+    test(
+      'connect appends sessionToken query param and waits for setupComplete',
+      () async {
+        Uri? capturedUri;
+        final sinkController = StreamController<dynamic>();
+        final client = LiveAudioWebSocketClient(
+          connectionFactory: (uri, {headers}) {
+            capturedUri = uri;
+            return _FakeSocketConnection(sinkController);
+          },
+        );
 
-      final config = LiveAudioSessionConfig(
-        sessionId: 'session_1',
-        sessionToken: 'token_abc',
-        proxyWebSocketUrl: 'wss://example.test/api/live-audio/ws',
-        expiresAt: DateTime.now().add(const Duration(minutes: 5)),
-        model: 'gemini-2.5-flash-native-audio-preview-12-2025',
-        inputAudioMimeType: liveInputAudioMime,
-        outputAudioMimeType: liveOutputAudioMime,
-      );
+        final config = LiveAudioSessionConfig(
+          sessionId: 'session_1',
+          sessionToken: 'token_abc',
+          proxyWebSocketUrl: 'wss://example.test/api/live-audio/ws',
+          expiresAt: DateTime.now().add(const Duration(minutes: 5)),
+          model: 'gemini-2.5-flash-native-audio-preview-12-2025',
+          inputAudioMimeType: liveInputAudioMime,
+          outputAudioMimeType: liveOutputAudioMime,
+        );
 
-      final connectFuture = client.connect(config);
-      await Future<void>.delayed(Duration.zero);
-      await connectFuture;
+        final connectFuture = client.connect(config);
+        await Future<void>.delayed(Duration.zero);
+        await connectFuture;
 
-      expect(
-        capturedUri?.queryParameters[liveSessionTokenQueryParam],
-        'token_abc',
-      );
-      expect(client.setupComplete, isFalse);
+        expect(
+          capturedUri?.queryParameters[liveSessionTokenQueryParam],
+          'token_abc',
+        );
+        expect(client.setupComplete, isFalse);
 
-      sinkController.add(jsonEncode({'setupComplete': {}}));
-      await Future<void>.delayed(Duration.zero);
-      expect(client.setupComplete, isTrue);
+        sinkController.add(jsonEncode({'setupComplete': {}}));
+        await Future<void>.delayed(Duration.zero);
+        expect(client.setupComplete, isTrue);
 
-      client.sendPcm16kChunk(const [1, 2, 3, 4]);
-      await client.disconnect();
-      await client.dispose();
-      await sinkController.close();
-    });
+        client.sendPcm16kChunk(const [1, 2, 3, 4]);
+        await client.disconnect();
+        await client.dispose();
+        await sinkController.close();
+      },
+    );
 
     test('normalizes http proxy url to ws on connect', () async {
       Uri? capturedUri;
@@ -81,7 +83,8 @@ void main() {
     test('blocks audio before setupComplete', () async {
       final sinkController = StreamController<dynamic>();
       final client = LiveAudioWebSocketClient(
-        connectionFactory: (_, {headers}) => _FakeSocketConnection(sinkController),
+        connectionFactory: (_, {headers}) =>
+            _FakeSocketConnection(sinkController),
       );
 
       await client.connect(
@@ -108,7 +111,8 @@ void main() {
     test('emits LiveSocketClosedEvent when stream closes', () async {
       final sinkController = StreamController<dynamic>();
       final client = LiveAudioWebSocketClient(
-        connectionFactory: (_, {headers}) => _FakeSocketConnection(sinkController),
+        connectionFactory: (_, {headers}) =>
+            _FakeSocketConnection(sinkController),
       );
 
       await client.connect(
@@ -137,7 +141,8 @@ void main() {
     test('emits parsed server events', () async {
       final sinkController = StreamController<dynamic>();
       final client = LiveAudioWebSocketClient(
-        connectionFactory: (_, {headers}) => _FakeSocketConnection(sinkController),
+        connectionFactory: (_, {headers}) =>
+            _FakeSocketConnection(sinkController),
       );
 
       await client.connect(

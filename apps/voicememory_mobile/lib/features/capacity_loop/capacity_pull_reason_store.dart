@@ -105,8 +105,7 @@ class CapacityPullReasonStore {
   static bool hasRecordFor(
     String entryId, [
     List<CapacityPullReasonRecord>? records,
-  ]) =>
-      (records ?? _cached).any((record) => record.sourceEntryId == entryId);
+  ]) => (records ?? _cached).any((record) => record.sourceEntryId == entryId);
 
   static String? mostCommonReasonId([List<CapacityPullReasonRecord>? records]) {
     final counts = <String, int>{};

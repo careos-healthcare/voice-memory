@@ -11,7 +11,7 @@ import 'package:voicememory_mobile/storage/mobile_prefs_store.dart';
 Reflection _reflection() => const Reflection(
   mood: 'neutral',
   emotionalIntensity: 0,
-  recurringThemes: const [],
+  recurringThemes: [],
   exactLanguagePattern: '',
   concreteObservation: 'You sounded tired.',
   repeatedSignal: '',
@@ -37,16 +37,13 @@ void main() {
     );
   });
 
-  test('purgeRetryRecordings no-ops when temp directory is unavailable', () async {
-    await expectLater(
-      TempRecordingCleanup.purgeRetryRecordings(),
-      completes,
-    );
-    await expectLater(
-      TempRecordingCleanup.purgeTempRecordings(),
-      completes,
-    );
-  });
+  test(
+    'purgeRetryRecordings no-ops when temp directory is unavailable',
+    () async {
+      await expectLater(TempRecordingCleanup.purgeRetryRecordings(), completes);
+      await expectLater(TempRecordingCleanup.purgeTempRecordings(), completes);
+    },
+  );
 
   test('deleteEntrySecurely removes entry and audio file', () async {
     await journal.save(
@@ -83,7 +80,9 @@ void main() {
         localAudioPath: tempRecording.path,
       ),
     );
-    await prefs.writeMap('archiveCollections', {'packs': ['a']});
+    await prefs.writeMap('archiveCollections', {
+      'packs': ['a'],
+    });
 
     await service.wipeAllLocalArchive(
       confirmationPhrase: PrivateDataService.wipeConfirmationPhrase,

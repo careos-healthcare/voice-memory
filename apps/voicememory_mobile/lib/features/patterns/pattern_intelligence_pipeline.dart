@@ -25,7 +25,10 @@ abstract class PatternIntelligencePipeline {
     final weeklyRaw = weeklyEngine.build(entries, tier: tier);
     final ohWowRaw = beliefEngine.buildOhWow(entries, tier: tier);
 
-    final input = PatternHumanCopyInput.fromEntries(entries, analysis: analysis);
+    final input = PatternHumanCopyInput.fromEntries(
+      entries,
+      analysis: analysis,
+    );
     final humanCopy = PatternHumanCopyResolver.resolve(input);
 
     final belief = _beliefFromHumanCopy(humanCopy, beliefRaw);
@@ -177,9 +180,11 @@ abstract class PatternIntelligencePipeline {
     final steps = <ArchiveEvidenceTimelineStep>[];
     for (final step in raw.timeline) {
       final label = switch (step.label) {
-        ArchiveBeliefThreadCopy.timelineFirstAppeared => copy.firstAppearedLabel,
+        ArchiveBeliefThreadCopy.timelineFirstAppeared =>
+          copy.firstAppearedLabel,
         ArchiveBeliefThreadCopy.timelineReturned => copy.returnedLabel,
-        ArchiveBeliefThreadCopy.timelineCurrentSignal => copy.currentSignalLabel,
+        ArchiveBeliefThreadCopy.timelineCurrentSignal =>
+          copy.currentSignalLabel,
         _ => step.label,
       };
       final body = switch (step.label) {

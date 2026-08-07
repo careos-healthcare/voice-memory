@@ -63,10 +63,7 @@ void main() {
     });
 
     test('defines trail-focused body and differentiation line', () {
-      expect(
-        PaywallValueSharpeningCopy.body,
-        ProValueCopy.headline,
-      );
+      expect(PaywallValueSharpeningCopy.body, ProValueCopy.headline);
       expect(
         PaywallValueSharpeningCopy.proofConnectedLine,
         ProValueCopy.subheadline,
@@ -95,8 +92,9 @@ void main() {
     });
 
     test('avoids fake testimonials and medical claims', () {
-      final blob =
-          PaywallValueSharpeningCopy.allPaywallStrings().join(' ').toLowerCase();
+      final blob = PaywallValueSharpeningCopy.allPaywallStrings()
+          .join(' ')
+          .toLowerCase();
       for (final banned in PaywallValueSharpeningCopy.bannedFakeClaims) {
         expect(blob, isNot(contains(banned)));
       }
@@ -199,11 +197,17 @@ void main() {
       expect(source, contains('_PaywallBusyKind.restore'));
       expect(source, contains('ArchivePaywallCopy.purchaseStarting'));
       expect(source, contains('ArchivePaywallCopy.restoreChecking'));
-      expect(source, contains('sourceCopy?.cta ?? ConsumerUiCopy.paywallPrimaryCta'));
+      expect(
+        source,
+        contains('sourceCopy?.cta ?? ConsumerUiCopy.paywallPrimaryCta'),
+      );
     });
 
     test('RevenueCat purchase copy constants unchanged', () {
-      expect(ArchivePaywallCopy.restoreSuccess, 'Purchase restored. Pro is active.');
+      expect(
+        ArchivePaywallCopy.restoreSuccess,
+        'Purchase restored. Pro is active.',
+      );
       expect(
         ArchivePaywallCopy.restoreEmpty,
         'No previous Pro purchase was found on this Apple ID.',

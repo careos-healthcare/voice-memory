@@ -93,7 +93,8 @@ abstract final class ArchiveSummaryEngine {
     if (timeline != null) {
       final repeatItem = timeline.items
           .where(
-            (item) => item.kind == EarlyEvidenceTimelineItemKind.repeatConfirmed,
+            (item) =>
+                item.kind == EarlyEvidenceTimelineItemKind.repeatConfirmed,
           )
           .firstOrNull;
       if (repeatItem != null) {
@@ -131,10 +132,7 @@ abstract final class ArchiveSummaryEngine {
     if (changeProof != null && changeProof.body.trim().isNotEmpty) {
       return (line: changeProof.body.trim(), isFallback: false);
     }
-    return (
-      line: ArchiveSummaryCopy.changingFallback,
-      isFallback: true,
-    );
+    return (line: ArchiveSummaryCopy.changingFallback, isFallback: true);
   }
 
   static ({String line, bool isFallback}) _whatHelpsLine(
@@ -149,10 +147,7 @@ abstract final class ArchiveSummaryEngine {
         isFallback: false,
       );
     }
-    return (
-      line: ArchiveSummaryCopy.whatHelpsFallback,
-      isFallback: true,
-    );
+    return (line: ArchiveSummaryCopy.whatHelpsFallback, isFallback: true);
   }
 
   static ArchiveSummaryRecordNext _recordNext({
@@ -191,15 +186,10 @@ abstract final class ArchiveSummaryEngine {
     );
   }
 
-  static String _promptForSection(ThoughtMapSectionId id) =>
-      switch (id) {
-        ThoughtMapSectionId.trigger =>
-          ArchiveSummaryCopy.recordNextTriggerUnknown,
-        ThoughtMapSectionId.thought =>
-          ArchiveSummaryCopy.recordNextThoughtUnknown,
-        ThoughtMapSectionId.action =>
-          ArchiveSummaryCopy.recordNextActionUnknown,
-        ThoughtMapSectionId.result =>
-          ArchiveSummaryCopy.recordNextResultUnknown,
-      };
+  static String _promptForSection(ThoughtMapSectionId id) => switch (id) {
+    ThoughtMapSectionId.trigger => ArchiveSummaryCopy.recordNextTriggerUnknown,
+    ThoughtMapSectionId.thought => ArchiveSummaryCopy.recordNextThoughtUnknown,
+    ThoughtMapSectionId.action => ArchiveSummaryCopy.recordNextActionUnknown,
+    ThoughtMapSectionId.result => ArchiveSummaryCopy.recordNextResultUnknown,
+  };
 }

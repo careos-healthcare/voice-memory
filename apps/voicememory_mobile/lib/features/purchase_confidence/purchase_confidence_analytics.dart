@@ -10,7 +10,7 @@ abstract final class PurchaseConfidenceAnalytics {
 
   @visibleForTesting
   static void Function(String event, Map<String, Object> properties)?
-      captureForTest;
+  captureForTest;
 
   static void seen({
     required String source,
@@ -20,7 +20,7 @@ abstract final class PurchaseConfidenceAnalytics {
     final props = <String, Object>{
       'source': source,
       'surface': surface,
-      if (entryCount != null) 'entry_count': entryCount,
+      'entry_count': ?entryCount,
     };
     captureForTest?.call(seenEvent, props);
     ActivationFunnelAnalytics.track(

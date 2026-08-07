@@ -12,11 +12,9 @@ abstract final class WhatToNoticeNextAnalytics {
 
   @visibleForTesting
   static void Function(String event, Map<String, Object> properties)?
-      captureForTest;
+  captureForTest;
 
-  static void seen({
-    required WhatToNoticeNextResult result,
-  }) {
+  static void seen({required WhatToNoticeNextResult result}) {
     _emit(
       seenEvent,
       source: result.source,

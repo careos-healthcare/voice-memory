@@ -8,19 +8,16 @@ enum TesterMissionStep {
   feedbackSaved;
 
   String get analyticsValue => switch (this) {
-        TesterMissionStep.step1Of3 => 'step_1_of_3',
-        TesterMissionStep.step2Of3 => 'step_2_of_3',
-        TesterMissionStep.step3Of3 => 'step_3_of_3',
-        TesterMissionStep.stillLooking => 'still_looking',
-        TesterMissionStep.firstProofReached => 'first_proof_reached',
-        TesterMissionStep.feedbackSaved => 'feedback_saved',
-      };
+    TesterMissionStep.step1Of3 => 'step_1_of_3',
+    TesterMissionStep.step2Of3 => 'step_2_of_3',
+    TesterMissionStep.step3Of3 => 'step_3_of_3',
+    TesterMissionStep.stillLooking => 'still_looking',
+    TesterMissionStep.firstProofReached => 'first_proof_reached',
+    TesterMissionStep.feedbackSaved => 'feedback_saved',
+  };
 }
 
-enum TesterMissionPresentation {
-  full,
-  compact,
-}
+enum TesterMissionPresentation { full, compact }
 
 class TesterMissionResult {
   const TesterMissionResult({

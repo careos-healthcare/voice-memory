@@ -38,21 +38,20 @@ class CapacityActivationFitRecord {
   final DateTime updatedAt;
 
   bool get isAnswered =>
-      status == CapacityActivationFitStatus.answered &&
-      responseId.isNotEmpty;
+      status == CapacityActivationFitStatus.answered && responseId.isNotEmpty;
 
   bool get isSkipped => status == CapacityActivationFitStatus.skipped;
 
   bool get isComplete => isAnswered || isSkipped;
 
   Map<String, dynamic> toJson() => {
-        'responseId': responseId,
-        'source': source,
-        'activationEntryCount': activationEntryCount,
-        'status': status.name,
-        'createdAt': createdAt.toIso8601String(),
-        'updatedAt': updatedAt.toIso8601String(),
-      };
+    'responseId': responseId,
+    'source': source,
+    'activationEntryCount': activationEntryCount,
+    'status': status.name,
+    'createdAt': createdAt.toIso8601String(),
+    'updatedAt': updatedAt.toIso8601String(),
+  };
 
   static CapacityActivationFitRecord? fromJson(Map<String, dynamic> json) {
     final source = json['source'];
@@ -76,8 +75,9 @@ class CapacityActivationFitRecord {
     return CapacityActivationFitRecord(
       responseId: responseId is String ? responseId : '',
       source: source,
-      activationEntryCount:
-          activationEntryCount is int ? activationEntryCount : 0,
+      activationEntryCount: activationEntryCount is int
+          ? activationEntryCount
+          : 0,
       status: status,
       createdAt: createdAt,
       updatedAt: updatedAt,

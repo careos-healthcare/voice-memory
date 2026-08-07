@@ -10,15 +10,9 @@ import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
 
 class PaywallCtaLiftBlock extends StatefulWidget {
-  const PaywallCtaLiftBlock({
-    super.key,
-    required this.result,
-  });
+  const PaywallCtaLiftBlock({super.key, required this.result});
 
-  const PaywallCtaLiftBlock.test({
-    super.key,
-    required this.result,
-  });
+  const PaywallCtaLiftBlock.test({super.key, required this.result});
 
   final PaywallCtaLiftResult result;
 
@@ -52,10 +46,9 @@ class _PaywallCtaLiftBlockState extends State<PaywallCtaLiftBlock> {
     _trackSeenOnce();
 
     final titleStyle = ArchiveMobileTypography.responsiveSectionTitle(context);
-    final bodyStyle = ArchiveMobileTypography.explanationBody(context).copyWith(
-      color: AppColors.textSecondary,
-      height: 1.45,
-    );
+    final bodyStyle = ArchiveMobileTypography.explanationBody(
+      context,
+    ).copyWith(color: AppColors.textSecondary, height: 1.45);
 
     return Column(
       key: const Key('paywall_cta_lift_block'),

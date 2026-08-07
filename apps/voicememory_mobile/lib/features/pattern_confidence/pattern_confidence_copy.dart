@@ -11,8 +11,7 @@ abstract final class PatternConfidenceCopy {
 
   static const repeatedPatternLabel = 'Repeated pattern';
 
-  static const repeatedPatternBody =
-      'Seen across 3+ related saved moments.';
+  static const repeatedPatternBody = 'Seen across 3+ related saved moments.';
 
   static const changingPatternLabel = 'Changing pattern';
 
@@ -30,34 +29,34 @@ abstract final class PatternConfidenceCopy {
       'ArchiveMe needs more real moments before showing a pattern.';
 
   static String labelFor(PatternConfidenceState state) => switch (state) {
-        PatternConfidenceState.earlySignal => earlySignalLabel,
-        PatternConfidenceState.repeatedPattern => repeatedPatternLabel,
-        PatternConfidenceState.changingPattern => changingPatternLabel,
-        PatternConfidenceState.softeningPattern => softeningPatternLabel,
-        PatternConfidenceState.notEnoughYet => notEnoughYetLabel,
-      };
+    PatternConfidenceState.earlySignal => earlySignalLabel,
+    PatternConfidenceState.repeatedPattern => repeatedPatternLabel,
+    PatternConfidenceState.changingPattern => changingPatternLabel,
+    PatternConfidenceState.softeningPattern => softeningPatternLabel,
+    PatternConfidenceState.notEnoughYet => notEnoughYetLabel,
+  };
 
   static String bodyFor(PatternConfidenceState state) => switch (state) {
-        PatternConfidenceState.earlySignal => earlySignalBody,
-        PatternConfidenceState.repeatedPattern => repeatedPatternBody,
-        PatternConfidenceState.changingPattern => changingPatternBody,
-        PatternConfidenceState.softeningPattern => softeningPatternBody,
-        PatternConfidenceState.notEnoughYet => notEnoughYetBody,
-      };
+    PatternConfidenceState.earlySignal => earlySignalBody,
+    PatternConfidenceState.repeatedPattern => repeatedPatternBody,
+    PatternConfidenceState.changingPattern => changingPatternBody,
+    PatternConfidenceState.softeningPattern => softeningPatternBody,
+    PatternConfidenceState.notEnoughYet => notEnoughYetBody,
+  };
 
   static List<String> allVisibleStrings() => [
-        earlySignalLabel,
-        earlySignalBody,
-        repeatedPatternLabel,
-        repeatedPatternBody,
-        changingPatternLabel,
-        changingPatternBody,
-        softeningPatternLabel,
-        softeningPatternBody,
-        notEnoughYetLabel,
-        notEnoughYetBody,
-        ...allExplanationStrings(),
-      ];
+    earlySignalLabel,
+    earlySignalBody,
+    repeatedPatternLabel,
+    repeatedPatternBody,
+    changingPatternLabel,
+    changingPatternBody,
+    softeningPatternLabel,
+    softeningPatternBody,
+    notEnoughYetLabel,
+    notEnoughYetBody,
+    ...allExplanationStrings(),
+  ];
 
   static const explanationTitle = 'Why ArchiveMe is showing this';
 
@@ -124,23 +123,23 @@ abstract final class PatternConfidenceCopy {
       };
 
   static List<String> allExplanationStrings() => [
-        explanationTitle,
-        explanationIntro,
-        explanationFooter,
-        explanationDifferentiation,
-        explanationEarlySignalLabel,
-        explanationEarlySignalBody,
-        explanationRepeatedLabel,
-        explanationRepeatedBody,
-        explanationCurrentLabel,
-        explanationCurrentBody,
-        explanationFadingLabel,
-        explanationFadingBody,
-        explanationSoftenedLabel,
-        explanationSoftenedBody,
-        explanationChangedLabel,
-        explanationChangedBody,
-        explanationNeedsFreshProofLabel,
-        explanationNeedsFreshProofBody,
-      ];
+    explanationTitle,
+    explanationIntro,
+    explanationFooter,
+    explanationDifferentiation,
+    explanationEarlySignalLabel,
+    explanationEarlySignalBody,
+    explanationRepeatedLabel,
+    explanationRepeatedBody,
+    explanationCurrentLabel,
+    explanationCurrentBody,
+    explanationFadingLabel,
+    explanationFadingBody,
+    explanationSoftenedLabel,
+    explanationSoftenedBody,
+    explanationChangedLabel,
+    explanationChangedBody,
+    explanationNeedsFreshProofLabel,
+    explanationNeedsFreshProofBody,
+  ];
 }

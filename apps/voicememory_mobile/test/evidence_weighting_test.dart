@@ -11,18 +11,13 @@ import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/models/sync_status.dart';
 import 'package:voicememory_mobile/product/consumer_ui_copy.dart';
-import 'package:voicememory_mobile/services/capture_save_messages.dart';
 import 'package:voicememory_mobile/widgets/patterns/evidence_weighting_card.dart';
 
 const _strongRepeat =
     'I had no capacity but I said yes again to the extra meeting today.';
 final _now = DateTime(2026, 6, 12, 12);
 
-JournalEntry _entry(
-  String id,
-  String transcript, {
-  DateTime? createdAt,
-}) =>
+JournalEntry _entry(String id, String transcript, {DateTime? createdAt}) =>
     JournalEntry(
       id: id,
       createdAt: createdAt ?? _now,
@@ -62,27 +57,27 @@ List<JournalEntry> _threeRelatedEntries({DateTime? anchor}) {
 }
 
 List<JournalEntry> _staleRepeatEntries() => [
-      _entry('1', _strongRepeat, createdAt: DateTime(2026, 5, 1, 12)),
-      _entry(
-        '2',
-        'Same thing — said yes when I had no capacity for one more thing.',
-        createdAt: DateTime(2026, 5, 3, 12),
-      ),
-      _entry(
-        '3',
-        'I said yes again even though I had no capacity for one more ask.',
-        createdAt: DateTime(2026, 5, 5, 12),
-      ),
-    ];
+  _entry('1', _strongRepeat, createdAt: DateTime(2026, 5, 1, 12)),
+  _entry(
+    '2',
+    'Same thing — said yes when I had no capacity for one more thing.',
+    createdAt: DateTime(2026, 5, 3, 12),
+  ),
+  _entry(
+    '3',
+    'I said yes again even though I had no capacity for one more ask.',
+    createdAt: DateTime(2026, 5, 5, 12),
+  ),
+];
 
 List<JournalEntry> _softeningEntries() => [
-      ..._threeRelatedEntries(anchor: _now.subtract(const Duration(days: 4))),
-      _entry(
-        '4',
-        'Same capacity pressure came back but it felt easier to stop this time.',
-        createdAt: _now.subtract(const Duration(days: 1)),
-      ),
-    ];
+  ..._threeRelatedEntries(anchor: _now.subtract(const Duration(days: 4))),
+  _entry(
+    '4',
+    'Same capacity pressure came back but it felt easier to stop this time.',
+    createdAt: _now.subtract(const Duration(days: 1)),
+  ),
+];
 
 EvidenceWeightingResult _resultFor(
   List<JournalEntry> entries, {
@@ -254,17 +249,14 @@ void main() {
   });
 
   group('EvidenceWeightingCard', () {
-    Future<void> _pumpCard(
+    Future<void> pumpCard(
       WidgetTester tester,
       EvidenceWeightingResult result,
     ) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: EvidenceWeightingCard.test(
-              result: result,
-              source: 'test',
-            ),
+            body: EvidenceWeightingCard.test(result: result, source: 'test'),
           ),
         ),
       );
@@ -272,7 +264,7 @@ void main() {
     }
 
     testWidgets('renders title, body, and footer', (tester) async {
-      await _pumpCard(tester, _resultFor(_threeRelatedEntries()));
+      await pumpCard(tester, _resultFor(_threeRelatedEntries()));
 
       expect(find.byKey(const Key('evidence_weighting_card')), findsOneWidget);
       expect(find.text(EvidenceWeightingCopy.title), findsOneWidget);
@@ -281,14 +273,14 @@ void main() {
     });
 
     testWidgets('renders Fresh state for recent evidence', (tester) async {
-      await _pumpCard(tester, _resultFor(_threeRelatedEntries()));
+      await pumpCard(tester, _resultFor(_threeRelatedEntries()));
 
       expect(find.text(EvidenceWeightingCopy.labelFresh), findsOneWidget);
       expect(find.text(EvidenceWeightingCopy.explanationFresh), findsOneWidget);
     });
 
     testWidgets('renders Repeated state for confirmed repeat', (tester) async {
-      await _pumpCard(tester, _resultFor(_threeRelatedEntries()));
+      await pumpCard(tester, _resultFor(_threeRelatedEntries()));
 
       expect(find.text(EvidenceWeightingCopy.labelRepeated), findsOneWidget);
       expect(
@@ -300,16 +292,19 @@ void main() {
     testWidgets('renders Fading state when quiet or stale signal exists', (
       tester,
     ) async {
-      await _pumpCard(tester, _resultFor(_staleRepeatEntries()));
+      await pumpCard(tester, _resultFor(_staleRepeatEntries()));
 
       expect(find.text(EvidenceWeightingCopy.labelFading), findsOneWidget);
-      expect(find.text(EvidenceWeightingCopy.explanationFading), findsOneWidget);
+      expect(
+        find.text(EvidenceWeightingCopy.explanationFading),
+        findsOneWidget,
+      );
     });
 
     testWidgets('renders Softened state when softening signal exists', (
       tester,
     ) async {
-      await _pumpCard(tester, _resultFor(_softeningEntries()));
+      await pumpCard(tester, _resultFor(_softeningEntries()));
 
       expect(find.text(EvidenceWeightingCopy.labelSoftened), findsOneWidget);
       expect(
@@ -318,23 +313,24 @@ void main() {
       );
     });
 
-    testWidgets('renders Needs fresh proof for older repeat without recent save', (
-      tester,
-    ) async {
-      await _pumpCard(tester, _resultFor(_staleRepeatEntries()));
+    testWidgets(
+      'renders Needs fresh proof for older repeat without recent save',
+      (tester) async {
+        await pumpCard(tester, _resultFor(_staleRepeatEntries()));
 
-      expect(
-        find.text(EvidenceWeightingCopy.labelNeedsFreshProof),
-        findsOneWidget,
-      );
-      expect(
-        find.text(EvidenceWeightingCopy.explanationNeedsFreshProof),
-        findsOneWidget,
-      );
-    });
+        expect(
+          find.text(EvidenceWeightingCopy.labelNeedsFreshProof),
+          findsOneWidget,
+        );
+        expect(
+          find.text(EvidenceWeightingCopy.explanationNeedsFreshProof),
+          findsOneWidget,
+        );
+      },
+    );
 
     testWidgets('differentiation line appears', (tester) async {
-      await _pumpCard(tester, _resultFor(_threeRelatedEntries()));
+      await pumpCard(tester, _resultFor(_threeRelatedEntries()));
 
       expect(
         find.byKey(const Key('evidence_weighting_differentiation_line')),
@@ -347,7 +343,7 @@ void main() {
     });
 
     testWidgets('does not include Pro CTA', (tester) async {
-      await _pumpCard(tester, _resultFor(_threeRelatedEntries()));
+      await pumpCard(tester, _resultFor(_threeRelatedEntries()));
 
       expect(find.byType(FilledButton), findsNothing);
       expect(find.text(ConsumerUiCopy.paywallPrimaryCta), findsNothing);
@@ -381,8 +377,9 @@ void main() {
 
   group('Evidence weighting placement', () {
     test('patterns screen renders card before post-proof Pro bridge', () {
-      final source =
-          File('lib/screens/archive_belief_screen.dart').readAsStringSync();
+      final source = File(
+        'lib/screens/archive_belief_screen.dart',
+      ).readAsStringSync();
       final cardIndex = source.indexOf('EvidenceWeightingCard(');
       final proBridgeIndex = source.indexOf(
         "analyticsSource: 'patterns_post_proof_pro_evidence_value'",
@@ -394,14 +391,17 @@ void main() {
     test('record screen renders card before Pro evidence bridge', () {
       final source = File('lib/screens/record_screen.dart').readAsStringSync();
       final cardIndex = source.indexOf('showEvidenceWeightingOnRecordReady');
-      final proBridgeIndex = source.indexOf('showProEvidenceValueOnRecordReady');
+      final proBridgeIndex = source.indexOf(
+        'showProEvidenceValueOnRecordReady',
+      );
       expect(cardIndex, greaterThan(0));
       expect(proBridgeIndex, greaterThan(cardIndex));
     });
 
     test('patterns card sits after current relevance card', () {
-      final source =
-          File('lib/screens/archive_belief_screen.dart').readAsStringSync();
+      final source = File(
+        'lib/screens/archive_belief_screen.dart',
+      ).readAsStringSync();
       final relevanceIndex = source.indexOf('CurrentRelevanceCard(');
       final weightingIndex = source.indexOf('EvidenceWeightingCard(');
       expect(relevanceIndex, greaterThan(0));

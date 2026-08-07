@@ -5,7 +5,7 @@ import 'package:voicememory_mobile/features/pressure_retention/pressure_check_in
 import 'package:voicememory_mobile/features/pressure_retention/pressure_insights_copy.dart';
 import 'package:voicememory_mobile/features/pressure_retention/pressure_loop_visibility_model.dart';
 import 'package:voicememory_mobile/features/pressure_retention/pressure_weekly_recap_model.dart';
-import 'package:voicememory_mobile/screens/pressure_insights_screen.dart';
+import 'package:archiveme_research/screens/pressure_insights_screen.dart';
 import 'package:voicememory_mobile/widgets/pressure_retention/pressure_loop_visibility_card.dart';
 import 'package:voicememory_mobile/widgets/pressure_retention/pressure_weekly_recap_card.dart';
 
@@ -90,7 +90,10 @@ void main() {
     testWidgets('uses stronger pressure-loop copy', (tester) async {
       await _pumpScreen(
         tester,
-        records: [_record(id: 'a'), _record(id: 'b')],
+        records: [
+          _record(id: 'a'),
+          _record(id: 'b'),
+        ],
       );
 
       expect(find.text('Your pressure loop'), findsOneWidget);

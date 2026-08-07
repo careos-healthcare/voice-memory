@@ -27,45 +27,50 @@ JournalEntry _voiceEntry({
   required String id,
   String transcript = '',
   String observation = '',
-}) =>
-    JournalEntry(
-      id: id,
-      createdAt: DateTime(2026, 6, 12, 10),
-      transcript: transcript,
-      durationSeconds: 24,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 2,
-        recurringThemes: const [],
-        exactLanguagePattern: '',
-        concreteObservation: observation,
-        repeatedSignal: '',
-      ),
-      syncStatus: SyncStatus.localOnly,
-    );
+}) => JournalEntry(
+  id: id,
+  createdAt: DateTime(2026, 6, 12, 10),
+  transcript: transcript,
+  durationSeconds: 24,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 2,
+    recurringThemes: const [],
+    exactLanguagePattern: '',
+    concreteObservation: observation,
+    repeatedSignal: '',
+  ),
+  syncStatus: SyncStatus.localOnly,
+);
 
 JournalEntry _textEntry(String id, String transcript) => JournalEntry(
-      id: id,
-      createdAt: DateTime(2026, 6, 12, 10 + id.hashCode % 5),
-      transcript: transcript,
-      durationSeconds: 24,
-      reflection: const Reflection(
-        mood: 'thoughtful',
-        emotionalIntensity: 2,
-        recurringThemes: ['work'],
-        exactLanguagePattern: '',
-        concreteObservation: 'Work pressure showed up again today.',
-        repeatedSignal: '',
-      ),
-      syncStatus: SyncStatus.localOnly,
-    );
+  id: id,
+  createdAt: DateTime(2026, 6, 12, 10 + id.hashCode % 5),
+  transcript: transcript,
+  durationSeconds: 24,
+  reflection: const Reflection(
+    mood: 'thoughtful',
+    emotionalIntensity: 2,
+    recurringThemes: ['work'],
+    exactLanguagePattern: '',
+    concreteObservation: 'Work pressure showed up again today.',
+    repeatedSignal: '',
+  ),
+  syncStatus: SyncStatus.localOnly,
+);
 
 List<JournalEntry> _threeStrongRepeatEntries() => [
-      _textEntry('e1', _strongRepeat),
-      _textEntry('e2', 'Same thing — said yes when I had no capacity for one more thing.'),
-      _textEntry('e3', 'I said yes again even though I was already behind on work.'),
-    ];
+  _textEntry('e1', _strongRepeat),
+  _textEntry(
+    'e2',
+    'Same thing — said yes when I had no capacity for one more thing.',
+  ),
+  _textEntry(
+    'e3',
+    'I said yes again even though I was already behind on work.',
+  ),
+];
 
 void main() {
   group('ArchiveEvidenceQuality', () {
@@ -86,7 +91,11 @@ void main() {
 
     test('pending transcript is unusable', () {
       final verdict = ArchiveEvidenceQuality.assess(
-        _voiceEntry(id: 'p', transcript: _placeholder, observation: _realMoment),
+        _voiceEntry(
+          id: 'p',
+          transcript: _placeholder,
+          observation: _realMoment,
+        ),
       );
       expect(verdict.level, ArchiveEvidenceQualityLevel.unusable);
       expect(verdict.allowsInsights, isFalse);
@@ -116,7 +125,9 @@ void main() {
     });
 
     test('real moment is usable or strong', () {
-      final verdict = ArchiveEvidenceQuality.assess(_textEntry('r', _realMoment));
+      final verdict = ArchiveEvidenceQuality.assess(
+        _textEntry('r', _realMoment),
+      );
       expect(verdict.allowsInsights, isTrue);
       expect(
         verdict.level,
@@ -139,7 +150,11 @@ void main() {
   group('ArchiveEvidenceQualityGate', () {
     test('mixed entries use only real evidence', () {
       final entries = [
-        _voiceEntry(id: 'p', transcript: _placeholder, observation: _realMoment),
+        _voiceEntry(
+          id: 'p',
+          transcript: _placeholder,
+          observation: _realMoment,
+        ),
         _textEntry('2', _realMoment),
         _textEntry('3', 'I said yes again when I had no capacity left today.'),
       ];
@@ -149,10 +164,7 @@ void main() {
     });
 
     test('no early signal from weak-only evidence', () {
-      final entries = [
-        _textEntry('1', 'hello'),
-        _textEntry('2', 'testing'),
-      ];
+      final entries = [_textEntry('1', 'hello'), _textEntry('2', 'testing')];
       expect(ArchiveEvidenceQualityGate.allowsEarlySignals(entries), isFalse);
       expect(EarlyFirstSignalEngine.build(entries: entries), isNull);
     });
@@ -220,19 +232,31 @@ void main() {
         (i) => _voiceEntry(id: 'p$i', transcript: _placeholder),
       );
       final question = AdaptiveDailyQuestionEngine.build(entries: entries);
-      expect(question?.usesPhrase, isNot(true));
+      expect(question.usesPhrase, isNot(true));
     });
 
     test('shows weak evidence fallback state', () {
       final entries = [_textEntry('1', 'hello testing mic')];
-      expect(ArchiveEvidenceQualityGate.showsWeakEvidenceFallback(entries), isTrue);
-      expect(ArchiveEvidenceQualityGate.showsPendingTranscriptFallback(entries), isFalse);
+      expect(
+        ArchiveEvidenceQualityGate.showsWeakEvidenceFallback(entries),
+        isTrue,
+      );
+      expect(
+        ArchiveEvidenceQualityGate.showsPendingTranscriptFallback(entries),
+        isFalse,
+      );
     });
 
     test('shows pending transcript fallback state', () {
       final entries = [_voiceEntry(id: 'p', transcript: _placeholder)];
-      expect(ArchiveEvidenceQualityGate.showsPendingTranscriptFallback(entries), isTrue);
-      expect(ArchiveEvidenceQualityGate.showsWeakEvidenceFallback(entries), isFalse);
+      expect(
+        ArchiveEvidenceQualityGate.showsPendingTranscriptFallback(entries),
+        isTrue,
+      );
+      expect(
+        ArchiveEvidenceQualityGate.showsWeakEvidenceFallback(entries),
+        isFalse,
+      );
       expect(
         ArchiveEvidenceQualityGate.showsGenericTestEvidenceFallback(entries),
         isFalse,
@@ -242,21 +266,29 @@ void main() {
     test('simulator harness strings block pattern hypothesis', () {
       const testOne = 'This is a test to check function';
       const testTwo = 'This is a second test for pressure';
-      final entries = [
-        _textEntry('1', testOne),
-        _textEntry('2', testTwo),
-      ];
+      final entries = [_textEntry('1', testOne), _textEntry('2', testTwo)];
       for (final text in [testOne, testTwo]) {
         expect(ArchiveEvidenceQuality.isGenericTestText(text), isTrue);
-        expect(ArchiveEvidenceQuality.assess(_textEntry('x', text)).allowsInsights, isFalse);
+        expect(
+          ArchiveEvidenceQuality.assess(_textEntry('x', text)).allowsInsights,
+          isFalse,
+        );
       }
-      expect(ArchiveEvidenceQualityGate.allowsPatternHypothesis(entries), isFalse);
-      expect(ArchiveEvidenceQualityGate.showsGenericTestEvidenceFallback(entries), isTrue);
+      expect(
+        ArchiveEvidenceQualityGate.allowsPatternHypothesis(entries),
+        isFalse,
+      );
+      expect(
+        ArchiveEvidenceQualityGate.showsGenericTestEvidenceFallback(entries),
+        isTrue,
+      );
     });
   });
 
   group('UI fallback copy', () {
-    testWidgets('weak evidence fallback card shows quality copy', (tester) async {
+    testWidgets('weak evidence fallback card shows quality copy', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -292,16 +324,15 @@ void main() {
         find.text(ArchiveEvidenceQualityCopy.patternsNeedClearerMomentsBody),
         findsOneWidget,
       );
-      expect(
-        find.text(ArchiveEvidenceQualityCopy.savedTitle),
-        findsNothing,
-      );
+      expect(find.text(ArchiveEvidenceQualityCopy.savedTitle), findsNothing);
     });
   });
 
   test('ArchiveEvidenceGuard delegates to quality gate', () {
     expect(
-      ArchiveEvidenceGuard.hasUsableReflectionText(_textEntry('r', _realMoment)),
+      ArchiveEvidenceGuard.hasUsableReflectionText(
+        _textEntry('r', _realMoment),
+      ),
       isTrue,
     );
     expect(
@@ -311,7 +342,9 @@ void main() {
       isFalse,
     );
     expect(
-      ArchiveEvidenceGuard.hasStrongReflectionText(_textEntry('s', _strongRepeat)),
+      ArchiveEvidenceGuard.hasStrongReflectionText(
+        _textEntry('s', _strongRepeat),
+      ),
       isTrue,
     );
   });

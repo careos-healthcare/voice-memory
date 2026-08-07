@@ -15,6 +15,7 @@ export const REQUIRED_TABLES = [
   "resurfacing_events",
   "resurfacing_feedback",
   "stripe_webhook_events",
+  "mobile_push_devices",
 ] as const;
 
 export const REQUIRED_INDEXES = [

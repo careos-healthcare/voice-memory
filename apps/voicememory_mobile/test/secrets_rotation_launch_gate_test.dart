@@ -16,24 +16,21 @@ SecretsRotationLaunchGateInput _input({
   bool noSecretValuesCommitted = true,
   bool noSecretValuesPrintedInLogs = true,
   bool? vercelEnvProductionVerified = true,
-}) =>
-    SecretsRotationLaunchGateInput(
-      stripeSecretKeyRotated: stripeSecretKeyRotated,
-      stripeWebhookSecretRotated: stripeWebhookSecretRotated,
-      productionEnvUpdated: productionEnvUpdated,
-      oldWebhookDisabled: oldWebhookDisabled,
-      revenueCatApiKeySeparatedFromDocsLogs:
-          revenueCatApiKeySeparatedFromDocsLogs,
-      noSecretValuesCommitted: noSecretValuesCommitted,
-      noSecretValuesPrintedInLogs: noSecretValuesPrintedInLogs,
-      vercelEnvProductionVerified: vercelEnvProductionVerified,
-    );
+}) => SecretsRotationLaunchGateInput(
+  stripeSecretKeyRotated: stripeSecretKeyRotated,
+  stripeWebhookSecretRotated: stripeWebhookSecretRotated,
+  productionEnvUpdated: productionEnvUpdated,
+  oldWebhookDisabled: oldWebhookDisabled,
+  revenueCatApiKeySeparatedFromDocsLogs: revenueCatApiKeySeparatedFromDocsLogs,
+  noSecretValuesCommitted: noSecretValuesCommitted,
+  noSecretValuesPrintedInLogs: noSecretValuesPrintedInLogs,
+  vercelEnvProductionVerified: vercelEnvProductionVerified,
+);
 
 SecretsRotationLaunchGateCheck _check(
   SecretsRotationLaunchGateResult result,
   SecretsRotationLaunchGateCheckId id,
-) =>
-    result.checks.firstWhere((check) => check.id == id);
+) => result.checks.firstWhere((check) => check.id == id);
 
 String _readIfExists(String path) {
   final file = File(path);
@@ -64,40 +61,40 @@ void main() {
     test('gate has nine canonical checks', () {
       final result = SecretsRotationLaunchGate.build(_input());
       expect(result.checks.length, SecretsRotationLaunchGate.checkCount);
-      expect(
-        result.checks.map((check) => check.id).toList(),
-        [
-          SecretsRotationLaunchGateCheckId.stripeSecretKeyRotated,
-          SecretsRotationLaunchGateCheckId.stripeWebhookSecretRotated,
-          SecretsRotationLaunchGateCheckId.productionEnvUpdated,
-          SecretsRotationLaunchGateCheckId.oldWebhookDisabled,
-          SecretsRotationLaunchGateCheckId.revenueCatApiKeySeparatedFromDocsLogs,
-          SecretsRotationLaunchGateCheckId.noSecretValuesCommitted,
-          SecretsRotationLaunchGateCheckId.noSecretValuesPrintedInLogs,
-          SecretsRotationLaunchGateCheckId.vercelEnvProductionVerified,
-          SecretsRotationLaunchGateCheckId.launchBlockedUntilRotationConfirmed,
-        ],
-      );
+      expect(result.checks.map((check) => check.id).toList(), [
+        SecretsRotationLaunchGateCheckId.stripeSecretKeyRotated,
+        SecretsRotationLaunchGateCheckId.stripeWebhookSecretRotated,
+        SecretsRotationLaunchGateCheckId.productionEnvUpdated,
+        SecretsRotationLaunchGateCheckId.oldWebhookDisabled,
+        SecretsRotationLaunchGateCheckId.revenueCatApiKeySeparatedFromDocsLogs,
+        SecretsRotationLaunchGateCheckId.noSecretValuesCommitted,
+        SecretsRotationLaunchGateCheckId.noSecretValuesPrintedInLogs,
+        SecretsRotationLaunchGateCheckId.vercelEnvProductionVerified,
+        SecretsRotationLaunchGateCheckId.launchBlockedUntilRotationConfirmed,
+      ]);
     });
 
-    test('all rotation confirmed and repo safe -> readyForProductionSubmission',
-        () {
-      final result = SecretsRotationLaunchGate.build(_input());
-      expect(
-        result.status,
-        SecretsRotationLaunchGateStatus.readyForProductionSubmission,
-      );
-      expect(result.productionSubmissionReady, isTrue);
-      expect(result.testFlightAllowed, isTrue);
-      expect(result.earliestBlocker, isNull);
-      expect(
-        _check(
-          result,
-          SecretsRotationLaunchGateCheckId.launchBlockedUntilRotationConfirmed,
-        ).status,
-        SecretsRotationLaunchGateCheckStatus.pass,
-      );
-    });
+    test(
+      'all rotation confirmed and repo safe -> readyForProductionSubmission',
+      () {
+        final result = SecretsRotationLaunchGate.build(_input());
+        expect(
+          result.status,
+          SecretsRotationLaunchGateStatus.readyForProductionSubmission,
+        );
+        expect(result.productionSubmissionReady, isTrue);
+        expect(result.testFlightAllowed, isTrue);
+        expect(result.earliestBlocker, isNull);
+        expect(
+          _check(
+            result,
+            SecretsRotationLaunchGateCheckId
+                .launchBlockedUntilRotationConfirmed,
+          ).status,
+          SecretsRotationLaunchGateCheckStatus.pass,
+        );
+      },
+    );
 
     test('repo safe but rotation pending -> safeForInternalTestFlight', () {
       final result = SecretsRotationLaunchGate.build(
@@ -116,8 +113,10 @@ void main() {
       expect(result.productionSubmissionReady, isFalse);
       expect(result.testFlightAllowed, isTrue);
       expect(
-        _check(result, SecretsRotationLaunchGateCheckId.stripeSecretKeyRotated)
-            .status,
+        _check(
+          result,
+          SecretsRotationLaunchGateCheckId.stripeSecretKeyRotated,
+        ).status,
         SecretsRotationLaunchGateCheckStatus.pending,
       );
     });
@@ -163,14 +162,13 @@ void main() {
 
     test('repo safety failure blocks rotation checks', () {
       final result = SecretsRotationLaunchGate.build(
-        _input(
-          noSecretValuesCommitted: false,
-          stripeSecretKeyRotated: null,
-        ),
+        _input(noSecretValuesCommitted: false, stripeSecretKeyRotated: null),
       );
       expect(
-        _check(result, SecretsRotationLaunchGateCheckId.stripeSecretKeyRotated)
-            .status,
+        _check(
+          result,
+          SecretsRotationLaunchGateCheckId.stripeSecretKeyRotated,
+        ).status,
         SecretsRotationLaunchGateCheckStatus.blocked,
       );
     });
@@ -187,7 +185,14 @@ void main() {
   group('SecretsRotationLaunchGate detectors', () {
     test('detectNoSecretValuesCommitted rejects live Stripe prefixes', () {
       final stripePrefix = String.fromCharCodes([
-        115, 107, 95, 108, 105, 118, 101, 95,
+        115,
+        107,
+        95,
+        108,
+        105,
+        118,
+        101,
+        95,
       ]);
       final fixture = 'STRIPE_SECRET_KEY=$stripePrefix${'x' * 24}';
       expect(
@@ -226,16 +231,18 @@ void main() {
 
     setUpAll(() {
       mobileLibAndDocsScanSource = _aggregateMobileLibAndDocs();
-      revenueCatServiceSource =
-          File('lib/billing/revenuecat_service.dart').readAsStringSync();
-      revenueCatArchiveLoopLogsSource =
-          File('lib/billing/revenuecat_archive_loop_logs.dart')
-              .readAsStringSync();
-      revenueCatOfferingsDebugLogSource =
-          File('lib/billing/revenuecat_offerings_debug_log.dart')
-              .readAsStringSync();
-      revenueCatReleaseChecklistSource =
-          File('docs/REVENUECAT_RELEASE_CHECKLIST.md').readAsStringSync();
+      revenueCatServiceSource = File(
+        'lib/billing/revenuecat_service.dart',
+      ).readAsStringSync();
+      revenueCatArchiveLoopLogsSource = File(
+        'lib/billing/revenuecat_archive_loop_logs.dart',
+      ).readAsStringSync();
+      revenueCatOfferingsDebugLogSource = File(
+        'lib/billing/revenuecat_offerings_debug_log.dart',
+      ).readAsStringSync();
+      revenueCatReleaseChecklistSource = File(
+        'docs/REVENUECAT_RELEASE_CHECKLIST.md',
+      ).readAsStringSync();
       deploySecretsCheckSource = _readIfExists(
         '../../lib/server/deploy-secrets-check.ts',
       );
@@ -268,38 +275,42 @@ void main() {
       );
     });
 
-    test('fromRepoSignals returns safeForInternalTestFlight with repo checks passing',
-        () {
-      final result = SecretsRotationLaunchGate.build(
-        SecretsRotationLaunchGate.fromRepoSignals(
-          mobileLibAndDocsScanSource: mobileLibAndDocsScanSource,
-          revenueCatServiceSource: revenueCatServiceSource,
-          revenueCatArchiveLoopLogsSource: revenueCatArchiveLoopLogsSource,
-          revenueCatOfferingsDebugLogSource: revenueCatOfferingsDebugLogSource,
-          revenueCatReleaseChecklistSource: revenueCatReleaseChecklistSource,
-          deploySecretsCheckSource: deploySecretsCheckSource,
-          envExampleSource: envExampleSource,
-        ),
-      );
-      expect(
-        result.status,
-        SecretsRotationLaunchGateStatus.safeForInternalTestFlight,
-      );
-      expect(
-        _check(
-          result,
-          SecretsRotationLaunchGateCheckId.noSecretValuesCommitted,
-        ).status,
-        SecretsRotationLaunchGateCheckStatus.pass,
-      );
-      expect(
-        _check(
-          result,
-          SecretsRotationLaunchGateCheckId.revenueCatApiKeySeparatedFromDocsLogs,
-        ).status,
-        SecretsRotationLaunchGateCheckStatus.pass,
-      );
-    });
+    test(
+      'fromRepoSignals returns safeForInternalTestFlight with repo checks passing',
+      () {
+        final result = SecretsRotationLaunchGate.build(
+          SecretsRotationLaunchGate.fromRepoSignals(
+            mobileLibAndDocsScanSource: mobileLibAndDocsScanSource,
+            revenueCatServiceSource: revenueCatServiceSource,
+            revenueCatArchiveLoopLogsSource: revenueCatArchiveLoopLogsSource,
+            revenueCatOfferingsDebugLogSource:
+                revenueCatOfferingsDebugLogSource,
+            revenueCatReleaseChecklistSource: revenueCatReleaseChecklistSource,
+            deploySecretsCheckSource: deploySecretsCheckSource,
+            envExampleSource: envExampleSource,
+          ),
+        );
+        expect(
+          result.status,
+          SecretsRotationLaunchGateStatus.safeForInternalTestFlight,
+        );
+        expect(
+          _check(
+            result,
+            SecretsRotationLaunchGateCheckId.noSecretValuesCommitted,
+          ).status,
+          SecretsRotationLaunchGateCheckStatus.pass,
+        );
+        expect(
+          _check(
+            result,
+            SecretsRotationLaunchGateCheckId
+                .revenueCatApiKeySeparatedFromDocsLogs,
+          ).status,
+          SecretsRotationLaunchGateCheckStatus.pass,
+        );
+      },
+    );
   });
 
   group('protected regression', () {
@@ -318,8 +329,7 @@ void main() {
     });
 
     test('all visible strings pass proof surface advice guard', () {
-      for (final copy
-          in SecretsRotationLaunchGateCopy.allVisibleStrings()) {
+      for (final copy in SecretsRotationLaunchGateCopy.allVisibleStrings()) {
         expect(
           ProofSurfaceAdviceGuard.passes(copy),
           isTrue,
@@ -329,8 +339,9 @@ void main() {
     });
 
     test('visible copy never contains secret prefixes', () {
-      final joined =
-          SecretsRotationLaunchGateCopy.allVisibleStrings().join('\n');
+      final joined = SecretsRotationLaunchGateCopy.allVisibleStrings().join(
+        '\n',
+      );
       expect(joined, isNot(contains('sk_live_')));
       expect(joined, isNot(contains('sk_test_')));
       expect(joined, isNot(contains('whsec_')));

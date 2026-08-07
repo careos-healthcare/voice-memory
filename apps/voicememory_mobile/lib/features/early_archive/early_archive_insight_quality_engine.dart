@@ -125,11 +125,15 @@ abstract final class EarlyArchiveInsightQualityEngine {
   };
 
   static const _helpfulActionCuePhrases = {
-    'waited two minutes': 'Waiting two minutes may have helped interrupt the loop.',
-    'waiting two minutes': 'Waiting two minutes may have helped interrupt the loop.',
-    'wait two minutes': 'Waiting two minutes may have helped interrupt the loop.',
+    'waited two minutes':
+        'Waiting two minutes may have helped interrupt the loop.',
+    'waiting two minutes':
+        'Waiting two minutes may have helped interrupt the loop.',
+    'wait two minutes':
+        'Waiting two minutes may have helped interrupt the loop.',
     'asked for help': 'Asking for help may have softened the loop.',
-    'paused before': 'Pausing before responding may have helped interrupt the loop.',
+    'paused before':
+        'Pausing before responding may have helped interrupt the loop.',
     'made it easier': 'What you tried may have made the loop easier to stop.',
     'what helped': 'What you recorded may have helped soften the loop.',
   };
@@ -202,7 +206,8 @@ abstract final class EarlyArchiveInsightQualityEngine {
         repeatTheme: cleanedTheme,
         hasTrigger: triggerSummary != null || triggerCapturedMilestone,
         hasSoftening: softeningSummary != null,
-        hasHelpful: helpfulActionSummary != null || helpfulActionCapturedMilestone,
+        hasHelpful:
+            helpfulActionSummary != null || helpfulActionCapturedMilestone,
       ),
     );
 
@@ -316,11 +321,9 @@ abstract final class EarlyArchiveInsightQualityEngine {
         counts[cleaned] = (counts[cleaned] ?? 0) + 1;
       }
     }
-    final repeated = counts.entries
-        .where((e) => e.value >= 2)
-        .map((e) => e.key)
-        .toList()
-      ..sort((a, b) => b.length.compareTo(a.length));
+    final repeated =
+        counts.entries.where((e) => e.value >= 2).map((e) => e.key).toList()
+          ..sort((a, b) => b.length.compareTo(a.length));
     return repeated.isEmpty ? null : repeated.first;
   }
 
@@ -337,7 +340,8 @@ abstract final class EarlyArchiveInsightQualityEngine {
   static String? _cleanTheme(String? theme, {List<JournalEntry>? entries}) {
     if (theme == null) return null;
     var cleaned = theme.trim();
-    if (cleaned.isEmpty || ArchivePatternCopyGuard.isBlockedPatternText(cleaned)) {
+    if (cleaned.isEmpty ||
+        ArchivePatternCopyGuard.isBlockedPatternText(cleaned)) {
       return null;
     }
     if (entries != null &&
@@ -440,7 +444,9 @@ abstract final class EarlyArchiveInsightQualityEngine {
     for (var i = eligible.length - 1; i >= 3; i--) {
       final pair = eligible.sublist(i - 1, i + 1);
       if (!_signalEngine.hasGroundedRepeatMatch(pair)) continue;
-      if (EarlyFirstSignalEngine.hasSofteningLanguage(_entryText(eligible[i]))) {
+      if (EarlyFirstSignalEngine.hasSofteningLanguage(
+        _entryText(eligible[i]),
+      )) {
         return eligible[i];
       }
     }
@@ -612,10 +618,7 @@ abstract final class EarlyArchiveInsightQualityEngine {
       case EarlyArchiveInsightType.softeningNotice:
         if (_softeningEntry(eligible) == null) return const [];
         reasons.addAll(_repeatWhyReasons(eligible));
-        _addUniqueReason(
-          reasons,
-          EarlyArchiveInsightWhyCopy.latestLessUrgent,
-        );
+        _addUniqueReason(reasons, EarlyArchiveInsightWhyCopy.latestLessUrgent);
       case EarlyArchiveInsightType.helpfulActionPayoff:
         if (_helpfulEntry(
               eligible,
@@ -632,16 +635,10 @@ abstract final class EarlyArchiveInsightQualityEngine {
             EarlyArchiveInsightWhyCopy.latestLessUrgent,
           );
         }
-        _addUniqueReason(
-          reasons,
-          EarlyArchiveInsightWhyCopy.helpfulActionOnce,
-        );
+        _addUniqueReason(reasons, EarlyArchiveInsightWhyCopy.helpfulActionOnce);
     }
 
-    return reasons
-        .map(_sanitize)
-        .whereType<String>()
-        .toList(growable: false);
+    return reasons.map(_sanitize).whereType<String>().toList(growable: false);
   }
 
   static List<String> _repeatWhyReasons(List<JournalEntry> eligible) {
@@ -670,7 +667,8 @@ abstract final class EarlyArchiveInsightQualityEngine {
         .map((entry) => _entryText(entry).toLowerCase())
         .where(
           (text) =>
-              text.isNotEmpty && !ArchivePatternCopyGuard.isBlockedPatternText(text),
+              text.isNotEmpty &&
+              !ArchivePatternCopyGuard.isBlockedPatternText(text),
         )
         .toList();
     if (texts.isEmpty) return const [];

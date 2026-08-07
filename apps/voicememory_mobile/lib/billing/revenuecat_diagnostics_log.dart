@@ -32,13 +32,8 @@ abstract final class RevenueCatDiagnosticsLog {
     );
   }
 
-  static void configureFinished({
-    required bool success,
-    String? reason,
-  }) {
-    _log(
-      'configure finished success=$success reason=${reason ?? 'none'}',
-    );
+  static void configureFinished({required bool success, String? reason}) {
+    _log('configure finished success=$success reason=${reason ?? 'none'}');
   }
 
   static void fetchOfferingsStarted({required bool billingConfigured}) {

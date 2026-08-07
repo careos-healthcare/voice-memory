@@ -28,50 +28,47 @@ ValuePropRankingDiagnosticSummary _summary({
   int needRankingBeforePayingCount = 1,
   int priceTooHighCount = 1,
   int worthPayingCount = 1,
-}) =>
-    ValuePropRankingDiagnosticSummary(
-      totalTesters: totalTesters,
-      usefulProofCount: usefulProofCount,
-      understoodLongerTrailCount: understoodLongerTrailCount,
-      understoodNotMoreAiCount: understoodNotMoreAiCount,
-      payYesCount: payYesCount,
-      payMaybeCount: payMaybeCount,
-      payNoCount: payNoCount,
-      needStrongerProofCount: needStrongerProofCount,
-      needSeeOverTimeCount: needSeeOverTimeCount,
-      needRankingBeforePayingCount: needRankingBeforePayingCount,
-      priceTooHighCount: priceTooHighCount,
-      worthPayingCount: worthPayingCount,
-    );
+}) => ValuePropRankingDiagnosticSummary(
+  totalTesters: totalTesters,
+  usefulProofCount: usefulProofCount,
+  understoodLongerTrailCount: understoodLongerTrailCount,
+  understoodNotMoreAiCount: understoodNotMoreAiCount,
+  payYesCount: payYesCount,
+  payMaybeCount: payMaybeCount,
+  payNoCount: payNoCount,
+  needStrongerProofCount: needStrongerProofCount,
+  needSeeOverTimeCount: needSeeOverTimeCount,
+  needRankingBeforePayingCount: needRankingBeforePayingCount,
+  priceTooHighCount: priceTooHighCount,
+  worthPayingCount: worthPayingCount,
+);
 
 ValuePropRankingDiagnosticSummary _corePassingSummary({
   int totalTesters = 30,
-}) =>
-    _summary(
-      totalTesters: totalTesters,
-      usefulProofCount: totalTesters == 20 ? 5 : 7,
-      understoodLongerTrailCount: totalTesters == 20 ? 4 : 6,
-      understoodNotMoreAiCount: totalTesters == 20 ? 4 : 6,
-    );
+}) => _summary(
+  totalTesters: totalTesters,
+  usefulProofCount: totalTesters == 20 ? 5 : 7,
+  understoodLongerTrailCount: totalTesters == 20 ? 4 : 6,
+  understoodNotMoreAiCount: totalTesters == 20 ? 4 : 6,
+);
 
-BetaRepairLabVisibilityInput _repairInput() =>
-    BetaRepairLabVisibilityInput(
-      mode: BetaRepairLabMode.evidenceTrailTimelineClarity,
-      entryCount: 4,
-      source: 'test',
-      isPro: false,
-      isRecording: false,
-      isDegradedTranscriptState: false,
-      whatChangedQuestionActive: false,
-      patternReviewInboxHasActiveItems: false,
-      hasTimelineProofVisible: true,
-      hasConfirmedRepeat: true,
-      confidenceLevel: ProofConfidenceLevel.watchOnly,
-      hasUsefulProofFeedback: false,
-      feedbackType: null,
-      isNegativeFeedback: false,
-      betaMissionEnabled: true,
-    );
+BetaRepairLabVisibilityInput _repairInput() => BetaRepairLabVisibilityInput(
+  mode: BetaRepairLabMode.evidenceTrailTimelineClarity,
+  entryCount: 4,
+  source: 'test',
+  isPro: false,
+  isRecording: false,
+  isDegradedTranscriptState: false,
+  whatChangedQuestionActive: false,
+  patternReviewInboxHasActiveItems: false,
+  hasTimelineProofVisible: true,
+  hasConfirmedRepeat: true,
+  confidenceLevel: ProofConfidenceLevel.watchOnly,
+  hasUsefulProofFeedback: false,
+  feedbackType: null,
+  isNegativeFeedback: false,
+  betaMissionEnabled: true,
+);
 
 void main() {
   group('ValuePropRankingDiagnostic thresholds', () {
@@ -81,10 +78,7 @@ void main() {
       expect(ValuePropRankingDiagnostic.understoodNotMoreAiTargetFor(30), 6);
       expect(ValuePropRankingDiagnostic.payYesMaybeTargetFor(30), 3);
       expect(ValuePropRankingDiagnostic.worthPayingTargetFor(30), 3);
-      expect(
-        ValuePropRankingDiagnostic.needStrongerProofHighTargetFor(30),
-        6,
-      );
+      expect(ValuePropRankingDiagnostic.needStrongerProofHighTargetFor(30), 6);
       expect(ValuePropRankingDiagnostic.needSeeOverTimeHighTargetFor(30), 6);
       expect(
         ValuePropRankingDiagnostic.needRankingBeforePayingHighTargetFor(30),
@@ -99,10 +93,7 @@ void main() {
       expect(ValuePropRankingDiagnostic.understoodNotMoreAiTargetFor(20), 4);
       expect(ValuePropRankingDiagnostic.payYesMaybeTargetFor(20), 2);
       expect(ValuePropRankingDiagnostic.worthPayingTargetFor(20), 2);
-      expect(
-        ValuePropRankingDiagnostic.needStrongerProofHighTargetFor(20),
-        4,
-      );
+      expect(ValuePropRankingDiagnostic.needStrongerProofHighTargetFor(20), 4);
       expect(ValuePropRankingDiagnostic.needSeeOverTimeHighTargetFor(20), 4);
       expect(
         ValuePropRankingDiagnostic.needRankingBeforePayingHighTargetFor(20),
@@ -207,25 +198,22 @@ void main() {
       },
     );
 
-    test(
-      'pay yes/maybe and worth paying pass returns productionCandidate',
-      () {
-        expect(
-          ValuePropRankingDiagnostic.resolve(
-            _corePassingSummary().copyWith(
-              payYesCount: 2,
-              payMaybeCount: 1,
-              worthPayingCount: 3,
-              needSeeOverTimeCount: 1,
-              needStrongerProofCount: 1,
-              needRankingBeforePayingCount: 1,
-              priceTooHighCount: 1,
-            ),
+    test('pay yes/maybe and worth paying pass returns productionCandidate', () {
+      expect(
+        ValuePropRankingDiagnostic.resolve(
+          _corePassingSummary().copyWith(
+            payYesCount: 2,
+            payMaybeCount: 1,
+            worthPayingCount: 3,
+            needSeeOverTimeCount: 1,
+            needStrongerProofCount: 1,
+            needRankingBeforePayingCount: 1,
+            priceTooHighCount: 1,
           ),
-          ValuePropRankingDiagnosticDecision.productionCandidate,
-        );
-      },
-    );
+        ),
+        ValuePropRankingDiagnosticDecision.productionCandidate,
+      );
+    });
 
     test('conservative fallback returns sharpenValueProposition', () {
       expect(
@@ -269,17 +257,19 @@ void main() {
       expect(body, contains('over time'));
     });
 
-    test('strongerProofLine tells users to keep using free until clearer repeat',
-        () {
-      expect(
-        ValuePropRankingDiagnosticCopy.strongerProofLine,
-        contains('keep using free'),
-      );
-      expect(
-        ValuePropRankingDiagnosticCopy.strongerProofLine,
-        contains('clearer repeat'),
-      );
-    });
+    test(
+      'strongerProofLine tells users to keep using free until clearer repeat',
+      () {
+        expect(
+          ValuePropRankingDiagnosticCopy.strongerProofLine,
+          contains('keep using free'),
+        );
+        expect(
+          ValuePropRankingDiagnosticCopy.strongerProofLine,
+          contains('clearer repeat'),
+        );
+      },
+    );
 
     test('rankingLine says confirm whether prioritisation would help pay', () {
       expect(
@@ -296,10 +286,7 @@ void main() {
     });
 
     test('valueLine says value is not more AI', () {
-      expect(
-        ValuePropRankingDiagnosticCopy.valueLine,
-        contains('not more AI'),
-      );
+      expect(ValuePropRankingDiagnosticCopy.valueLine, contains('not more AI'));
     });
 
     test('valueLine says same proof changing over time', () {
@@ -344,16 +331,19 @@ void main() {
       );
     });
 
-    test('guardrail blocks ranked lists until longer-trail value validated', () {
-      expect(
-        ValuePropRankingDiagnosticCopy.guardrail,
-        contains('Do not build ranked lists'),
-      );
-      expect(
-        ValuePropRankingDiagnosticCopy.guardrail,
-        contains('longer-trail value has been validated'),
-      );
-    });
+    test(
+      'guardrail blocks ranked lists until longer-trail value validated',
+      () {
+        expect(
+          ValuePropRankingDiagnosticCopy.guardrail,
+          contains('Do not build ranked lists'),
+        );
+        expect(
+          ValuePropRankingDiagnosticCopy.guardrail,
+          contains('longer-trail value has been validated'),
+        );
+      },
+    );
 
     test('copy avoids therapy diagnosis coaching and advice claims', () {
       for (final text in [
@@ -444,39 +434,42 @@ void main() {
       );
     });
 
-    test('record screen remains capture-first without stacking extra cards', () {
-      final audit = SurfacePriorityEngine.auditRecordReady(
-        entryCount: 4,
-        source: 'record',
-        candidates: SurfacePriorityCandidates.recordReady(
-          firstMomentCapture: false,
-          secondMomentReturn: false,
-          lowFrictionReturn: false,
-          whatToNoticeNext: false,
-          betaTodaySummary: false,
-          openCapturePromptChips: false,
-          captureFreedomLine: false,
-          timelineProofMoment: true,
-          archiveTimelineSpine: false,
-          timelinePositioning: false,
-          currentRelevance: false,
-          correctionMemory: false,
-          notRelevantRecovery: false,
-          proofQualityResponse: false,
-          evidenceWeighting: false,
-          proofSpecificity: false,
-          presentDayRelevance: false,
-          patternConfidence: false,
-          betaTesterReport: false,
-          proEvidenceValue: false,
-          privateReportProBridge: false,
-          suppressLegacyEducation: false,
-          betaProofLift: true,
-        ),
-      );
-      expect(audit.proofCardKey, 'timelineProofMoment');
-      expect(audit.guidanceCardKey, isNull);
-    });
+    test(
+      'record screen remains capture-first without stacking extra cards',
+      () {
+        final audit = SurfacePriorityEngine.auditRecordReady(
+          entryCount: 4,
+          source: 'record',
+          candidates: SurfacePriorityCandidates.recordReady(
+            firstMomentCapture: false,
+            secondMomentReturn: false,
+            lowFrictionReturn: false,
+            whatToNoticeNext: false,
+            betaTodaySummary: false,
+            openCapturePromptChips: false,
+            captureFreedomLine: false,
+            timelineProofMoment: true,
+            archiveTimelineSpine: false,
+            timelinePositioning: false,
+            currentRelevance: false,
+            correctionMemory: false,
+            notRelevantRecovery: false,
+            proofQualityResponse: false,
+            evidenceWeighting: false,
+            proofSpecificity: false,
+            presentDayRelevance: false,
+            patternConfidence: false,
+            betaTesterReport: false,
+            proEvidenceValue: false,
+            privateReportProBridge: false,
+            suppressLegacyEducation: false,
+            betaProofLift: true,
+          ),
+        );
+        expect(audit.proofCardKey, 'timelineProofMoment');
+        expect(audit.guidanceCardKey, isNull);
+      },
+    );
   });
 }
 
@@ -494,24 +487,22 @@ extension on ValuePropRankingDiagnosticSummary {
     int? needRankingBeforePayingCount,
     int? priceTooHighCount,
     int? worthPayingCount,
-  }) =>
-      ValuePropRankingDiagnosticSummary(
-        totalTesters: totalTesters ?? this.totalTesters,
-        usefulProofCount: usefulProofCount ?? this.usefulProofCount,
-        understoodLongerTrailCount:
-            understoodLongerTrailCount ?? this.understoodLongerTrailCount,
-        understoodNotMoreAiCount:
-            understoodNotMoreAiCount ?? this.understoodNotMoreAiCount,
-        payYesCount: payYesCount ?? this.payYesCount,
-        payMaybeCount: payMaybeCount ?? this.payMaybeCount,
-        payNoCount: payNoCount ?? this.payNoCount,
-        needStrongerProofCount:
-            needStrongerProofCount ?? this.needStrongerProofCount,
-        needSeeOverTimeCount:
-            needSeeOverTimeCount ?? this.needSeeOverTimeCount,
-        needRankingBeforePayingCount:
-            needRankingBeforePayingCount ?? this.needRankingBeforePayingCount,
-        priceTooHighCount: priceTooHighCount ?? this.priceTooHighCount,
-        worthPayingCount: worthPayingCount ?? this.worthPayingCount,
-      );
+  }) => ValuePropRankingDiagnosticSummary(
+    totalTesters: totalTesters ?? this.totalTesters,
+    usefulProofCount: usefulProofCount ?? this.usefulProofCount,
+    understoodLongerTrailCount:
+        understoodLongerTrailCount ?? this.understoodLongerTrailCount,
+    understoodNotMoreAiCount:
+        understoodNotMoreAiCount ?? this.understoodNotMoreAiCount,
+    payYesCount: payYesCount ?? this.payYesCount,
+    payMaybeCount: payMaybeCount ?? this.payMaybeCount,
+    payNoCount: payNoCount ?? this.payNoCount,
+    needStrongerProofCount:
+        needStrongerProofCount ?? this.needStrongerProofCount,
+    needSeeOverTimeCount: needSeeOverTimeCount ?? this.needSeeOverTimeCount,
+    needRankingBeforePayingCount:
+        needRankingBeforePayingCount ?? this.needRankingBeforePayingCount,
+    priceTooHighCount: priceTooHighCount ?? this.priceTooHighCount,
+    worthPayingCount: worthPayingCount ?? this.worthPayingCount,
+  );
 }

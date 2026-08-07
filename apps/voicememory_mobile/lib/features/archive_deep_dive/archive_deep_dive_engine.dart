@@ -394,19 +394,4 @@ class ArchiveDeepDiveEngine {
     if (t.length <= 160) return t;
     return '${t.substring(0, 160).trim()}…';
   }
-
-  int _overlapScore(String transcript, Set<String> keywords) {
-    if (keywords.isEmpty) return 0;
-    final lower = transcript.toLowerCase();
-    return keywords.where(lower.contains).length;
-  }
-
-  Set<String> _keywordsFrom(String belief) {
-    return belief
-        .toLowerCase()
-        .replaceAll(RegExp(r'[^a-z0-9\s]'), ' ')
-        .split(RegExp(r'\s+'))
-        .where((w) => w.length >= 4)
-        .toSet();
-  }
 }

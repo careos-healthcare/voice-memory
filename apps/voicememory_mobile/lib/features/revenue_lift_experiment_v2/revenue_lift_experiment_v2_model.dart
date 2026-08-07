@@ -26,7 +26,8 @@ class RevenueLiftExperimentV2SeenContext {
   final RevenueLiftExperimentV2Area area;
 }
 
-class RevenueLiftExperimentV2CtaContext extends RevenueLiftExperimentV2SeenContext {
+class RevenueLiftExperimentV2CtaContext
+    extends RevenueLiftExperimentV2SeenContext {
   const RevenueLiftExperimentV2CtaContext({
     required super.source,
     required super.surface,
@@ -96,8 +97,10 @@ class RevenueLiftExperimentV2Rates {
     return RevenueLiftExperimentV2Rates(
       firstSaveRate: rate(input.firstMomentSaved, input.recordScreenSeen),
       usefulProofRate: rate(input.usefulCount, input.totalFeedbackCount),
-      returnAfterProofRate:
-          rate(input.returnedAfterFirstProof, input.confirmedRepeatSeen),
+      returnAfterProofRate: rate(
+        input.returnedAfterFirstProof,
+        input.confirmedRepeatSeen,
+      ),
       paywallSeenRate: rate(input.paywallSeen, input.confirmedRepeatSeen),
       paywallCtaRate: rate(input.paywallCtaTapped, input.paywallSeen),
       hasPaywallCtaData: input.paywallSeen > 0,

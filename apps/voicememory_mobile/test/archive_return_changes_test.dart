@@ -37,60 +37,59 @@ JournalEntry _entry(
   required String transcript,
   DateTime? createdAt,
   List<String> themes = const ['work'],
-}) =>
-    JournalEntry(
-      id: id,
-      createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
-      transcript: transcript,
-      durationSeconds: 30,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 2,
-        recurringThemes: themes,
-        exactLanguagePattern: '',
-        concreteObservation: 'Work pressure showed up in this moment.',
-        repeatedSignal: '',
-      ),
-    );
+}) => JournalEntry(
+  id: id,
+  createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
+  transcript: transcript,
+  durationSeconds: 30,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 2,
+    recurringThemes: themes,
+    exactLanguagePattern: '',
+    concreteObservation: 'Work pressure showed up in this moment.',
+    repeatedSignal: '',
+  ),
+);
 
 List<JournalEntry> _fourWorkEntries() => [
-      _entry(
-        'e1',
-        transcript:
-            'I felt pressure at work before saying yes again even when I was tired.',
-        createdAt: DateTime(2026, 6, 9, 12),
-      ),
-      _entry(
-        'e2',
-        transcript:
-            'Work kept pulling me back after I wanted to stop for the day at the office.',
-        createdAt: DateTime(2026, 6, 10, 12),
-      ),
-      _entry(
-        'e3',
-        transcript:
-            'I noticed the same hurry showing up before I answered anyone at work.',
-        createdAt: DateTime(2026, 6, 11, 12),
-      ),
-      _entry(
-        'e4',
-        transcript:
-            'The deadline pressure returned, but I caught it earlier this time.',
-        createdAt: DateTime(2026, 6, 12, 12),
-      ),
-    ];
+  _entry(
+    'e1',
+    transcript:
+        'I felt pressure at work before saying yes again even when I was tired.',
+    createdAt: DateTime(2026, 6, 9, 12),
+  ),
+  _entry(
+    'e2',
+    transcript:
+        'Work kept pulling me back after I wanted to stop for the day at the office.',
+    createdAt: DateTime(2026, 6, 10, 12),
+  ),
+  _entry(
+    'e3',
+    transcript:
+        'I noticed the same hurry showing up before I answered anyone at work.',
+    createdAt: DateTime(2026, 6, 11, 12),
+  ),
+  _entry(
+    'e4',
+    transcript:
+        'The deadline pressure returned, but I caught it earlier this time.',
+    createdAt: DateTime(2026, 6, 12, 12),
+  ),
+];
 
 List<JournalEntry> _fiveWorkEntries() => [
-      ..._fourWorkEntries(),
-      _entry(
-        'e5',
-        transcript:
-            'At home after work I still replayed the meeting and what I said to my team.',
-        createdAt: DateTime(2026, 6, 13, 12),
-        themes: const ['work', 'home'],
-      ),
-    ];
+  ..._fourWorkEntries(),
+  _entry(
+    'e5',
+    transcript:
+        'At home after work I still replayed the meeting and what I said to my team.',
+    createdAt: DateTime(2026, 6, 13, 12),
+    themes: const ['work', 'home'],
+  ),
+];
 
 void _expectNoBannedCopy(Iterable<String> visible) {
   for (final text in visible) {
@@ -156,10 +155,7 @@ void main() {
   group('Archive return changes engine', () {
     test('hidden when no meaningful change since last seen', () {
       final current = ArchiveReturnSnapshot.fromEntries(_fourWorkEntries());
-      expect(
-        engine.evaluate(lastSeen: current, current: current),
-        isNull,
-      );
+      expect(engine.evaluate(lastSeen: current, current: current), isNull);
     });
 
     test('shows new evidence when entry count increased', () {
@@ -232,14 +228,19 @@ void main() {
       expect(result?.showProLine, isTrue);
 
       final small = engine.evaluate(
-        lastSeen: ArchiveReturnSnapshot.fromEntries(_fourWorkEntries().take(2).toList()),
-        current: ArchiveReturnSnapshot.fromEntries(_fourWorkEntries().take(3).toList()),
+        lastSeen: ArchiveReturnSnapshot.fromEntries(
+          _fourWorkEntries().take(2).toList(),
+        ),
+        current: ArchiveReturnSnapshot.fromEntries(
+          _fourWorkEntries().take(3).toList(),
+        ),
       );
       expect(small?.showProLine, isFalse);
     });
   });
 
   group('Archive return changes snapshot', () {
+    late Directory tempDir;
     test('does not store raw entry text', () async {
       final entries = _fourWorkEntries();
       final snapshot = ArchiveReturnSnapshot.fromEntries(entries);
@@ -264,7 +265,9 @@ void main() {
 
   group('Archive return changes store resolve', () {
     test('seeds baseline on first visit with two or more entries', () async {
-      final tempDir = Directory.systemTemp.createTempSync('return_changes_seed_');
+      final tempDir = Directory.systemTemp.createTempSync(
+        'return_changes_seed_',
+      );
       final store = await ArchiveReturnChangesStore.open(
         '${tempDir.path}/prefs.json',
       );
@@ -289,10 +292,8 @@ void main() {
         routes: [
           GoRoute(
             path: '/',
-            builder: (_, _) => ArchiveReturnChangesCard(
-              result: result,
-              onMarkSeen: () {},
-            ),
+            builder: (_, _) =>
+                ArchiveReturnChangesCard(result: result, onMarkSeen: () {}),
           ),
           GoRoute(
             path: WeeklyArchiveReviewNavigation.route,
@@ -310,14 +311,13 @@ void main() {
       );
 
       await tester.pumpWidget(
-        MaterialApp.router(
-          theme: AppTheme.light(),
-          routerConfig: router,
-        ),
+        MaterialApp.router(theme: AppTheme.light(), routerConfig: router),
       );
       await tester.pump();
 
-      await tester.tap(find.byKey(const Key('archive_return_changes_review_button')));
+      await tester.tap(
+        find.byKey(const Key('archive_return_changes_review_button')),
+      );
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 100));
       expect(find.text('weekly-review'), findsOneWidget);
@@ -341,16 +341,15 @@ void main() {
       }
     });
 
-    testWidgets('does not include Buy now or Subscribe now copy', (tester) async {
+    testWidgets('does not include Buy now or Subscribe now copy', (
+      tester,
+    ) async {
       final result = _sampleResult();
       await tester.pumpWidget(
         MaterialApp(
           theme: AppTheme.light(),
           home: Scaffold(
-            body: ArchiveReturnChangesCard(
-              result: result,
-              onMarkSeen: () {},
-            ),
+            body: ArchiveReturnChangesCard(result: result, onMarkSeen: () {}),
           ),
         ),
       );
@@ -362,10 +361,10 @@ void main() {
 }
 
 ArchiveReturnChangesResult _sampleResult() => const ArchiveReturnChangesResult(
-      type: ArchiveReturnChangeType.newEvidence,
-      title: ArchiveReturnChangesCopy.newEvidenceTitle,
-      body: 'You added 1 more moment since your last review.',
-      reviewRoute: '/archive-belief',
-      showProLine: false,
-      newMomentsCount: 1,
-    );
+  type: ArchiveReturnChangeType.newEvidence,
+  title: ArchiveReturnChangesCopy.newEvidenceTitle,
+  body: 'You added 1 more moment since your last review.',
+  reviewRoute: '/archive-belief',
+  showProLine: false,
+  newMomentsCount: 1,
+);

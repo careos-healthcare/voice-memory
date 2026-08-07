@@ -56,13 +56,12 @@ class ArchiveEvidenceContextList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final titleStyle = ArchiveMobileTypography.cardLabel(context);
-    final bodyStyle = ArchiveMobileTypography.responsiveHelper(context).copyWith(
-      color: AppColors.textPrimary,
-      height: 1.45,
-    );
-    final metaStyle = ArchiveMobileTypography.responsiveHelper(context).copyWith(
-      color: AppColors.textSecondary,
-    );
+    final bodyStyle = ArchiveMobileTypography.responsiveHelper(
+      context,
+    ).copyWith(color: AppColors.textPrimary, height: 1.45);
+    final metaStyle = ArchiveMobileTypography.responsiveHelper(
+      context,
+    ).copyWith(color: AppColors.textSecondary);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,

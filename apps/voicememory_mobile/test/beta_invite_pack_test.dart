@@ -9,7 +9,6 @@ import 'package:voicememory_mobile/features/beta_invite/beta_invite_copy.dart';
 import 'package:voicememory_mobile/features/beta_invite/beta_invite_engine.dart';
 import 'package:voicememory_mobile/features/beta_invite/beta_invite_models.dart';
 import 'package:voicememory_mobile/features/beta_invite/beta_invite_store.dart';
-import 'package:voicememory_mobile/features/beta_outcomes/beta_outcomes_copy.dart';
 import 'package:voicememory_mobile/features/beta_outcomes/beta_outcomes_engine.dart';
 import 'package:voicememory_mobile/features/beta_outcomes/beta_outcomes_models.dart';
 import 'package:voicememory_mobile/features/pressure_retention/shareable_archive_proof_engine.dart';
@@ -49,21 +48,22 @@ const _forbiddenPurchaseCtas = [
 ];
 
 JournalEntry _entry(String id, {String? transcript}) => JournalEntry(
-      id: id,
-      createdAt: DateTime(2026, 6, 12, 12),
-      transcript: transcript ??
-          'I felt pressure at work before saying yes again even when I was tired today.',
-      durationSeconds: 30,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 2,
-        recurringThemes: ['work'],
-        exactLanguagePattern: '',
-        concreteObservation: 'Work pressure showed up in this moment.',
-        repeatedSignal: '',
-      ),
-    );
+  id: id,
+  createdAt: DateTime(2026, 6, 12, 12),
+  transcript:
+      transcript ??
+      'I felt pressure at work before saying yes again even when I was tired today.',
+  durationSeconds: 30,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 2,
+    recurringThemes: ['work'],
+    exactLanguagePattern: '',
+    concreteObservation: 'Work pressure showed up in this moment.',
+    repeatedSignal: '',
+  ),
+);
 
 List<JournalEntry> _entries(int count) =>
     List.generate(count, (i) => _entry('e$i'));
@@ -92,10 +92,7 @@ void main() {
         BetaInviteCopy.allVisibleCopy(),
         contains(BetaInviteCopy.corePositioning),
       );
-      expect(
-        BetaInviteCopy.corePositioning,
-        contains('keeps returning'),
-      );
+      expect(BetaInviteCopy.corePositioning, contains('keeps returning'));
     });
 
     test('all five invite variants exist', () {
@@ -127,7 +124,10 @@ void main() {
         BetaInviteCopy.allVisibleCopy(),
         contains(BetaInviteCopy.privacyReminder),
       );
-      expect(BetaInviteCopy.privacyReminder, contains('Do not share private entries'));
+      expect(
+        BetaInviteCopy.privacyReminder,
+        contains('Do not share private entries'),
+      );
     });
 
     test('copy does not include raw journal text', () {
@@ -136,7 +136,10 @@ void main() {
         expect(text, isNot(contains(privateSnippet)));
       }
       for (final variant in BetaInviteVariantId.values) {
-        expect(BetaInviteCopy.fullInvite(variant), isNot(contains(privateSnippet)));
+        expect(
+          BetaInviteCopy.fullInvite(variant),
+          isNot(contains(privateSnippet)),
+        );
       }
     });
 
@@ -153,9 +156,12 @@ void main() {
       }
     });
 
-    test('avoids therapy diagnosis certainty streak guilt pressure language', () {
-      _expectNoBannedCopy(BetaInviteCopy.allVisibleCopy());
-    });
+    test(
+      'avoids therapy diagnosis certainty streak guilt pressure language',
+      () {
+        _expectNoBannedCopy(BetaInviteCopy.allVisibleCopy());
+      },
+    );
   });
 
   group('Beta invite store', () {
@@ -181,14 +187,8 @@ void main() {
       await store.recordTaskCopy(BetaInviteVariantId.workPatterns);
 
       final loaded = await store.load();
-      expect(
-        loaded.statsFor(BetaInviteVariantId.general).shortCopiedCount,
-        1,
-      );
-      expect(
-        loaded.statsFor(BetaInviteVariantId.general).fullCopiedCount,
-        1,
-      );
+      expect(loaded.statsFor(BetaInviteVariantId.general).shortCopiedCount, 1);
+      expect(loaded.statsFor(BetaInviteVariantId.general).fullCopiedCount, 1);
       expect(
         loaded.statsFor(BetaInviteVariantId.workPatterns).taskCopiedCount,
         1,
@@ -256,8 +256,9 @@ void main() {
     });
 
     test('share-safe proof excludes beta invite content', () {
-      final proof = const ShareableArchiveProofEngine()
-          .buildFromJournal(entries: _entries(5));
+      final proof = const ShareableArchiveProofEngine().buildFromJournal(
+        entries: _entries(5),
+      );
       expect(proof.shareText, isNot(contains(BetaInviteCopy.screenTitle)));
       expect(proof.shareText, isNot(contains('Invite a beta tester')));
     });
@@ -266,10 +267,12 @@ void main() {
   group('Beta invite routing and links', () {
     test('route is sensitive and linked from Support and Beta Outcomes', () {
       final router = File('lib/router/app_router.dart').readAsStringSync();
-      final support =
-          File('lib/screens/support_feedback_screen.dart').readAsStringSync();
-      final outcomes =
-          File('lib/screens/beta_outcomes_screen.dart').readAsStringSync();
+      final support = File(
+        'lib/screens/support_feedback_screen.dart',
+      ).readAsStringSync();
+      final outcomes = File(
+        'packages/archiveme_research/lib/screens/beta_outcomes_screen.dart',
+      ).readAsStringSync();
       expect(router, contains("path: '/beta-invite-pack'"));
       expect(SensitiveRoutes.isSensitiveRoute('/beta-invite-pack'), isTrue);
       expect(support, contains("context.push('/beta-invite-pack')"));
@@ -292,8 +295,9 @@ void main() {
     });
 
     test('invite screen includes positioning variants and copy actions', () {
-      final screen =
-          File('lib/screens/beta_invite_pack_screen.dart').readAsStringSync();
+      final screen = File(
+        'packages/archiveme_research/lib/screens/beta_invite_pack_screen.dart',
+      ).readAsStringSync();
       expect(screen, contains('beta_invite_pack_screen'));
       expect(screen, contains('beta_invite_pack_positioning'));
       expect(screen, contains('BetaInviteCopy.corePositioning'));
@@ -302,12 +306,14 @@ void main() {
       expect(screen, contains('beta_invite_copy_task'));
       expect(screen, contains('beta_invite_pack_privacy_reminder'));
       for (final variant in BetaInviteVariantId.values) {
-        expect(screen, contains('beta_invite_variant_\${variant.name}'));
+        expect(screen, contains('beta_invite_variant_${variant.name}'));
       }
     });
 
     test('copy short invite action works', () async {
-      final tempDir = await Directory.systemTemp.createTemp('beta_invite_copy_');
+      final tempDir = await Directory.systemTemp.createTemp(
+        'beta_invite_copy_',
+      );
       final prefs = await MobilePrefsStore.open('${tempDir.path}/prefs.json');
       final store = BetaInviteStore(prefs);
       final text = BetaInviteCopy.shortInvite(BetaInviteVariantId.general);
@@ -315,15 +321,14 @@ void main() {
       await Clipboard.setData(ClipboardData(text: text));
       await store.recordShortCopy(BetaInviteVariantId.general);
       final loaded = await store.load();
-      expect(
-        loaded.statsFor(BetaInviteVariantId.general).shortCopiedCount,
-        1,
-      );
+      expect(loaded.statsFor(BetaInviteVariantId.general).shortCopiedCount, 1);
       await tempDir.delete(recursive: true);
     });
 
     test('copy full invite action works', () async {
-      final tempDir = await Directory.systemTemp.createTemp('beta_invite_copy_');
+      final tempDir = await Directory.systemTemp.createTemp(
+        'beta_invite_copy_',
+      );
       final prefs = await MobilePrefsStore.open('${tempDir.path}/prefs.json');
       final store = BetaInviteStore(prefs);
       final text = BetaInviteCopy.fullInvite(BetaInviteVariantId.general);
@@ -332,15 +337,14 @@ void main() {
       await Clipboard.setData(ClipboardData(text: text));
       await store.recordFullCopy(BetaInviteVariantId.general);
       final loaded = await store.load();
-      expect(
-        loaded.statsFor(BetaInviteVariantId.general).fullCopiedCount,
-        1,
-      );
+      expect(loaded.statsFor(BetaInviteVariantId.general).fullCopiedCount, 1);
       await tempDir.delete(recursive: true);
     });
 
     test('copy tester task action works', () async {
-      final tempDir = await Directory.systemTemp.createTemp('beta_invite_copy_');
+      final tempDir = await Directory.systemTemp.createTemp(
+        'beta_invite_copy_',
+      );
       final prefs = await MobilePrefsStore.open('${tempDir.path}/prefs.json');
       final store = BetaInviteStore(prefs);
       const text = BetaInviteCopy.testerTask;
@@ -349,10 +353,7 @@ void main() {
       await Clipboard.setData(ClipboardData(text: text));
       await store.recordTaskCopy(BetaInviteVariantId.general);
       final loaded = await store.load();
-      expect(
-        loaded.statsFor(BetaInviteVariantId.general).taskCopiedCount,
-        1,
-      );
+      expect(loaded.statsFor(BetaInviteVariantId.general).taskCopiedCount, 1);
       await tempDir.delete(recursive: true);
     });
   });

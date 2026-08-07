@@ -1,4 +1,5 @@
 import type { Pool, QueryResult, QueryResultRow } from "pg";
+import { readFileSync } from "node:fs";
 import { Pool as PgPool } from "pg";
 
 /** Bundled schema — must not rely on docs/ at runtime (Vercel serverless omits it). */
@@ -118,6 +119,17 @@ export const AUTH_SYNC_SCHEMA_STATEMENTS = [
 )`,
   `CREATE INDEX IF NOT EXISTS mobile_push_devices_user_id_idx ON mobile_push_devices (user_id)`,
   `CREATE INDEX IF NOT EXISTS mobile_push_devices_updated_at_idx ON mobile_push_devices (updated_at DESC)`,
+  `CREATE TABLE IF NOT EXISTS sync_change_log (
+  user_id text NOT NULL,
+  sequence bigint NOT NULL,
+  blob_type text NOT NULL,
+  blob_id text NOT NULL,
+  change_kind text NOT NULL,
+  updated_at timestamptz NOT NULL,
+  tombstone boolean NOT NULL DEFAULT false,
+  PRIMARY KEY (user_id, sequence)
+)`,
+  `CREATE INDEX IF NOT EXISTS sync_change_log_user_sequence_idx ON sync_change_log (user_id, sequence DESC)`,
 ] as const;
 
 let lastConnectionError: string | null = null;
@@ -158,23 +170,41 @@ export function shouldUseFilesystemStorage(): boolean {
   return !isProductionRuntime();
 }
 
-function resolvePoolSsl(connectionString: string): boolean | { rejectUnauthorized: boolean } | undefined {
+function resolvePoolSsl(connectionString: string): boolean | { rejectUnauthorized: boolean; ca?: string } | undefined {
   const lower = connectionString.toLowerCase();
+  const explicitInsecure = process.env.DATABASE_SSL_REJECT_UNAUTHORIZED === "false";
   if (lower.includes("sslmode=disable") || lower.includes("ssl=false")) {
+    if (isProductionRuntime()) {
+      throw new Error(
+        "Production DATABASE_URL disables TLS — set sslmode=require and DATABASE_SSL_REJECT_UNAUTHORIZED=true.",
+      );
+    }
+    console.warn("[ArchiveMe db] WARNING: PostgreSQL TLS disabled for development.");
     return undefined;
   }
-  if (lower.includes("sslmode=require") || lower.includes("sslmode=verify-full")) {
-    return { rejectUnauthorized: false };
+
+  const caBundlePath = process.env.DATABASE_SSL_CA_BUNDLE?.trim();
+  const caBundle = caBundlePath ? readFileSync(caBundlePath, "utf8") : undefined;
+
+  if (lower.includes("sslmode=verify-full") || lower.includes("sslmode=verify-ca")) {
+    return { rejectUnauthorized: true, ...(caBundle ? { ca: caBundle } : {}) };
   }
-  if (
-    lower.includes("neon.tech") ||
-    lower.includes("supabase.co") ||
-    lower.includes("pooler.supabase") ||
-    lower.includes("vercel-storage.com") ||
-    isProductionRuntime()
-  ) {
-    return { rejectUnauthorized: false };
+
+  if (lower.includes("sslmode=require") || isProductionRuntime()) {
+    if (explicitInsecure) {
+      if (isProductionRuntime()) {
+        throw new Error(
+          "DATABASE_SSL_REJECT_UNAUTHORIZED=false is forbidden in production.",
+        );
+      }
+      console.warn(
+        "[ArchiveMe db] WARNING: PostgreSQL certificate verification disabled (development override).",
+      );
+      return { rejectUnauthorized: false };
+    }
+    return { rejectUnauthorized: true, ...(caBundle ? { ca: caBundle } : {}) };
   }
+
   return undefined;
 }
 

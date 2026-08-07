@@ -58,15 +58,13 @@ abstract final class PatternChangedEngine {
     final eligible = ArchiveEvidenceGuard.eligibleEntries(entries);
     if (eligible.isEmpty) return null;
 
-    final foundation = eligible.length >= 3
-        ? eligible.sublist(0, 3)
-        : eligible;
+    final foundation = eligible.length >= 3 ? eligible.sublist(0, 3) : eligible;
     final latestEntry = eligible.last;
     final earlierPhrase = _groundedPhrase(foundation);
     final thisTimePhrase =
         ConfirmedRepeatEvidencePhraseEngine.singleEntryConcretePhrase(
-      latestEntry,
-    );
+          latestEntry,
+        );
 
     if (!_isMeaningfulChange(
       latestChoice: changeProof.latestChoice,
@@ -101,11 +99,11 @@ abstract final class PatternChangedEngine {
   }) {
     return switch (latestChoice) {
       RepeatReturnCheckChoice.changed => true,
-      RepeatReturnCheckChoice.softer =>
-        _phrasesMeaningfullyDiffer(earlierPhrase, thisTimePhrase),
-      RepeatReturnCheckChoice.stronger ||
-      RepeatReturnCheckChoice.same =>
-        false,
+      RepeatReturnCheckChoice.softer => _phrasesMeaningfullyDiffer(
+        earlierPhrase,
+        thisTimePhrase,
+      ),
+      RepeatReturnCheckChoice.stronger || RepeatReturnCheckChoice.same => false,
     };
   }
 
@@ -125,14 +123,16 @@ abstract final class PatternChangedEngine {
   }
 
   static String? _groundedPhrase(List<JournalEntry> entries) {
-    final shared =
-        ConfirmedRepeatEvidencePhraseEngine.sharedConcretePhrase(entries);
+    final shared = ConfirmedRepeatEvidencePhraseEngine.sharedConcretePhrase(
+      entries,
+    );
     if (shared != null && _isGroundedPhrase(shared, entries)) {
       return shared;
     }
 
-    for (final phrase
-        in ConfirmedRepeatEvidencePhraseEngine.extract(entries).phrases) {
+    for (final phrase in ConfirmedRepeatEvidencePhraseEngine.extract(
+      entries,
+    ).phrases) {
       if (_isGroundedPhrase(phrase, entries)) return phrase;
     }
     return null;

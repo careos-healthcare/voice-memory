@@ -92,8 +92,9 @@ class ComparisonOutputParser {
 
     return ParsedComparisonOutput(
       state: state,
-      connectionText:
-          connection.isEmpty ? 'A repeating thread may be forming.' : connection,
+      connectionText: connection.isEmpty
+          ? 'A repeating thread may be forming.'
+          : connection,
       pastQuote: past,
       currentQuote: current,
       whatChangedText: whatChanged.isEmpty
@@ -114,7 +115,10 @@ class ComparisonOutputParser {
   }
 
   PatternState _mapLabelToState(String label) {
-    final cleaned = label.toLowerCase().replaceAll(RegExp(r'[^a-z ]'), '').trim();
+    final cleaned = label
+        .toLowerCase()
+        .replaceAll(RegExp(r'[^a-z ]'), '')
+        .trim();
     switch (cleaned) {
       case 'early signal':
         return PatternState.earlySignal;

@@ -25,11 +25,8 @@ import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/services/activation_funnel_analytics.dart';
 import 'package:voicememory_mobile/theme/app_theme.dart';
-import 'package:voicememory_mobile/widgets/memory/memory_card_visibility_controls.dart';
 import 'package:voicememory_mobile/widgets/memory/memory_governance_notice.dart';
-import 'package:voicememory_mobile/widgets/pressure_retention/belief_distance_card.dart';
 import 'package:voicememory_mobile/widgets/pressure_retention/thread_return_evidence_card.dart';
-import 'package:voicememory_mobile/widgets/pressure_retention/weekly_thread_review_card.dart';
 
 class _Event {
   const _Event(this.name, this.properties);

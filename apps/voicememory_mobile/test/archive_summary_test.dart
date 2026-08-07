@@ -9,7 +9,6 @@ import 'package:voicememory_mobile/features/early_archive/archive_summary_gates.
 import 'package:voicememory_mobile/features/early_archive/confirmed_repeat_thought_map_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/confirmed_repeat_thought_map_models.dart';
 import 'package:voicememory_mobile/features/early_archive/confirmed_repeat_why_matters_copy.dart';
-import 'package:voicememory_mobile/features/early_archive/early_first_signal_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/early_first_signal_engine.dart';
 import 'package:voicememory_mobile/features/early_archive/positive_pattern_copy.dart';
 import 'package:voicememory_mobile/features/repeat_return_check/repeat_return_check_change_proof.dart';
@@ -27,57 +26,56 @@ JournalEntry _entry({
   required String id,
   required String transcript,
   DateTime? createdAt,
-}) =>
-    JournalEntry(
-      id: id,
-      createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
-      transcript: transcript,
-      durationSeconds: 30,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 2,
-        recurringThemes: ['work'],
-        exactLanguagePattern: '',
-        concreteObservation: 'Work pressure showed up in this moment.',
-        repeatedSignal: '',
-      ),
-    );
+}) => JournalEntry(
+  id: id,
+  createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
+  transcript: transcript,
+  durationSeconds: 30,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 2,
+    recurringThemes: ['work'],
+    exactLanguagePattern: '',
+    concreteObservation: 'Work pressure showed up in this moment.',
+    repeatedSignal: '',
+  ),
+);
 
 List<JournalEntry> _threeRelatedRepeatEntries() => [
-      _entry(
-        id: 'e1',
-        transcript:
-            'I had no capacity but I said yes again to the extra meeting today.',
-        createdAt: DateTime(2026, 6, 10, 12),
-      ),
-      _entry(
-        id: 'e2',
-        transcript:
-            'Same thing — said yes when I had no capacity for one more thing.',
-        createdAt: DateTime(2026, 6, 11, 12),
-      ),
-      _entry(
-        id: 'e3',
-        transcript:
-            'I said yes again even though I had no capacity for one more ask.',
-        createdAt: DateTime(2026, 6, 12, 12),
-      ),
-    ];
+  _entry(
+    id: 'e1',
+    transcript:
+        'I had no capacity but I said yes again to the extra meeting today.',
+    createdAt: DateTime(2026, 6, 10, 12),
+  ),
+  _entry(
+    id: 'e2',
+    transcript:
+        'Same thing — said yes when I had no capacity for one more thing.',
+    createdAt: DateTime(2026, 6, 11, 12),
+  ),
+  _entry(
+    id: 'e3',
+    transcript:
+        'I said yes again even though I had no capacity for one more ask.',
+    createdAt: DateTime(2026, 6, 12, 12),
+  ),
+];
 
 List<JournalEntry> _mixedRepeatAndWalkEntries() => [
-      ..._threeRelatedRepeatEntries(),
-      _entry(
-        id: 'w4',
-        transcript: 'I walked outside before replying and it helped.',
-        createdAt: DateTime(2026, 6, 13, 12),
-      ),
-      _entry(
-        id: 'w5',
-        transcript: 'Same week I walked outside again before the hard email.',
-        createdAt: DateTime(2026, 6, 14, 12),
-      ),
-    ];
+  ..._threeRelatedRepeatEntries(),
+  _entry(
+    id: 'w4',
+    transcript: 'I walked outside before replying and it helped.',
+    createdAt: DateTime(2026, 6, 13, 12),
+  ),
+  _entry(
+    id: 'w5',
+    transcript: 'Same week I walked outside again before the hard email.',
+    createdAt: DateTime(2026, 6, 14, 12),
+  ),
+];
 
 RepeatReturnCheckChangeProof _changeProof(RepeatReturnCheckChoice choice) =>
     RepeatReturnCheckChangeProof(
@@ -181,7 +179,8 @@ void main() {
       expect(summary!.title, ArchiveSummaryCopy.title);
       expect(
         summary.keepsRepeating.bodyLines.any(
-          (line) => line.contains('evidence') || line.contains('ArchiveMe found'),
+          (line) =>
+              line.contains('evidence') || line.contains('ArchiveMe found'),
         ),
         isTrue,
       );
@@ -242,10 +241,7 @@ void main() {
         (row) => row.sectionId == ThoughtMapSectionId.trigger,
       );
       expect(trigger.isKnown, isFalse);
-      expect(
-        trigger.displayText,
-        ConfirmedRepeatThoughtMapCopy.triggerUnknown,
-      );
+      expect(trigger.displayText, ConfirmedRepeatThoughtMapCopy.triggerUnknown);
     });
 
     test('includes change-over-time copy when available', () {
@@ -286,10 +282,7 @@ void main() {
         viewingConfirmedRepeatOrTimeline: true,
       );
       expect(summary, isNotNull);
-      expect(
-        summary!.whatHelpsLine,
-        contains('A helpful action appeared'),
-      );
+      expect(summary!.whatHelpsLine, contains('A helpful action appeared'));
       expect(summary.whatHelpsLine.toLowerCase(), contains('walked outside'));
       expect(summary.whatHelpsLine.toLowerCase(), contains('watching'));
       expect(summary.whatHelpsIsFallback, isFalse);
@@ -438,7 +431,9 @@ void main() {
   });
 
   group('ArchiveSummaryCard', () {
-    testWidgets('renders unified sections on Record-style surface', (tester) async {
+    testWidgets('renders unified sections on Record-style surface', (
+      tester,
+    ) async {
       final summary = ArchiveSummaryEngine.build(
         entries: _threeRelatedRepeatEntries(),
         confirmedRepeat: EarlyFirstSignalEngine.build(
@@ -498,10 +493,7 @@ void main() {
         ),
       );
 
-      expect(
-        find.textContaining(entries.first.transcript),
-        findsNothing,
-      );
+      expect(find.textContaining(entries.first.transcript), findsNothing);
     });
   });
 
@@ -558,18 +550,21 @@ void main() {
       expect(layout.effectiveConfirmedRepeatCardVisible, isFalse);
     });
 
-    test('current belief surface replaces archive summary as main overview', () {
-      const layout = ArchiveProofSurfaceLayout(
-        confirmedRepeatCardVisible: true,
-        timelineVisible: true,
-        changeProofVisible: true,
-        proBridgeVisible: true,
-        archiveSummaryVisible: true,
-        archiveCurrentBeliefVisible: true,
-      );
-      expect(layout.effectiveArchiveSummaryVisible, isFalse);
-      expect(layout.effectiveConfirmedRepeatCardVisible, isFalse);
-      expect(layout.recordTimelineVisible(surfaceIsRecord: true), isFalse);
-    });
+    test(
+      'current belief surface replaces archive summary as main overview',
+      () {
+        const layout = ArchiveProofSurfaceLayout(
+          confirmedRepeatCardVisible: true,
+          timelineVisible: true,
+          changeProofVisible: true,
+          proBridgeVisible: true,
+          archiveSummaryVisible: true,
+          archiveCurrentBeliefVisible: true,
+        );
+        expect(layout.effectiveArchiveSummaryVisible, isFalse);
+        expect(layout.effectiveConfirmedRepeatCardVisible, isFalse);
+        expect(layout.recordTimelineVisible(surfaceIsRecord: true), isFalse);
+      },
+    );
   });
 }

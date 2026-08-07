@@ -1,5 +1,3 @@
-import 'timeline_positioning_model.dart';
-
 /// Copy for not-a-chat timeline positioning — differentiation only, no attacks.
 abstract final class TimelinePositioningCopy {
   TimelinePositioningCopy._();
@@ -53,5 +51,6 @@ abstract final class TimelinePositioningCopy {
     supportingProTimeline,
   ];
 
-  static String bulletKey(String bullet) => 'timeline_positioning_bullet_$bullet';
+  static String bulletKey(String bullet) =>
+      'timeline_positioning_bullet_$bullet';
 }

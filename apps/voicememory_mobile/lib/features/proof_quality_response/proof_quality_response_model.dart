@@ -10,13 +10,12 @@ enum ProofQualityResponseSurface {
 
 extension ProofQualityResponseSurfaceStorage on ProofQualityResponseSurface {
   String get storageValue => switch (this) {
-        ProofQualityResponseSurface.timelineProofMoment =>
-          'timeline_proof_moment',
-        ProofQualityResponseSurface.firstProofPayoff => 'first_proof_payoff',
-        ProofQualityResponseSurface.patterns => 'patterns',
-        ProofQualityResponseSurface.archiveTimelineSpine =>
-          'archive_timeline_spine',
-      };
+    ProofQualityResponseSurface.timelineProofMoment => 'timeline_proof_moment',
+    ProofQualityResponseSurface.firstProofPayoff => 'first_proof_payoff',
+    ProofQualityResponseSurface.patterns => 'patterns',
+    ProofQualityResponseSurface.archiveTimelineSpine =>
+      'archive_timeline_spine',
+  };
 }
 
 /// Resolved feedback state driving the response card.
@@ -30,12 +29,12 @@ enum ProofQualityFeedbackState {
 
 extension ProofQualityFeedbackStateStorage on ProofQualityFeedbackState {
   String get analyticsValue => switch (this) {
-        ProofQualityFeedbackState.useful => 'useful',
-        ProofQualityFeedbackState.tooVague => 'too_vague',
-        ProofQualityFeedbackState.alreadyKnewThis => 'already_knew_this',
-        ProofQualityFeedbackState.notRelevant => 'not_relevant',
-        ProofQualityFeedbackState.none => 'none',
-      };
+    ProofQualityFeedbackState.useful => 'useful',
+    ProofQualityFeedbackState.tooVague => 'too_vague',
+    ProofQualityFeedbackState.alreadyKnewThis => 'already_knew_this',
+    ProofQualityFeedbackState.notRelevant => 'not_relevant',
+    ProofQualityFeedbackState.none => 'none',
+  };
 }
 
 /// Unified answer type for analytics — metadata only.
@@ -53,15 +52,15 @@ enum ProofQualityResponseAnswerType {
 extension ProofQualityResponseAnswerTypeStorage
     on ProofQualityResponseAnswerType {
   String get analyticsValue => switch (this) {
-        ProofQualityResponseAnswerType.stillTooVague => 'still_too_vague',
-        ProofQualityResponseAnswerType.cameBackStronger => 'came_back_stronger',
-        ProofQualityResponseAnswerType.feltLighter => 'felt_lighter',
-        ProofQualityResponseAnswerType.somethingHelped => 'something_helped',
-        ProofQualityResponseAnswerType.noChange => 'no_change',
-        ProofQualityResponseAnswerType.keepAsBackground => 'keep_as_background',
-        ProofQualityResponseAnswerType.watchLightly => 'watch_lightly',
-        ProofQualityResponseAnswerType.relevantAgain => 'relevant_again',
-      };
+    ProofQualityResponseAnswerType.stillTooVague => 'still_too_vague',
+    ProofQualityResponseAnswerType.cameBackStronger => 'came_back_stronger',
+    ProofQualityResponseAnswerType.feltLighter => 'felt_lighter',
+    ProofQualityResponseAnswerType.somethingHelped => 'something_helped',
+    ProofQualityResponseAnswerType.noChange => 'no_change',
+    ProofQualityResponseAnswerType.keepAsBackground => 'keep_as_background',
+    ProofQualityResponseAnswerType.watchLightly => 'watch_lightly',
+    ProofQualityResponseAnswerType.relevantAgain => 'relevant_again',
+  };
 }
 
 /// Resolved proof quality response — safe metadata only, no journal text.
@@ -110,28 +109,27 @@ class ProofQualityResponseResult {
     required ProofQualityResponseSurface surface,
     required String source,
     int entryCount = 0,
-  }) =>
-      ProofQualityResponseResult(
-        shouldShow: false,
-        feedbackState: ProofQualityFeedbackState.none,
-        surface: surface,
-        proofKey: '',
-        entryCount: entryCount,
-        source: source,
-        hasConfirmedRepeat: false,
-        hasSafeAnchor: false,
-        hasFreshReturn: false,
-        title: '',
-        body: '',
-        footer: ProofQualityResponseCopy.footer,
-        rows: const [],
-        evidenceAnchors: const [],
-        usesFallbackEvidenceLine: true,
-        deltaLine: null,
-        returnedAfterCorrectionLine:
-            ProofQualityResponseCopy.returnedAfterCorrectionLine,
-        stillTooVagueFollowUp: false,
-      );
+  }) => ProofQualityResponseResult(
+    shouldShow: false,
+    feedbackState: ProofQualityFeedbackState.none,
+    surface: surface,
+    proofKey: '',
+    entryCount: entryCount,
+    source: source,
+    hasConfirmedRepeat: false,
+    hasSafeAnchor: false,
+    hasFreshReturn: false,
+    title: '',
+    body: '',
+    footer: ProofQualityResponseCopy.footer,
+    rows: const [],
+    evidenceAnchors: const [],
+    usesFallbackEvidenceLine: true,
+    deltaLine: null,
+    returnedAfterCorrectionLine:
+        ProofQualityResponseCopy.returnedAfterCorrectionLine,
+    stillTooVagueFollowUp: false,
+  );
 }
 
 class ProofQualityResponseRecord {
@@ -158,16 +156,14 @@ class ProofQualityResponseRecord {
   bool get answered => answerType != null;
 
   Map<String, dynamic> toJson() => {
-        if (answerType != null) 'answerType': answerType!.analyticsValue,
-        if (feedbackState != null)
-          'feedbackState': feedbackState!.analyticsValue,
-        if (proofKey != null) 'proofKey': proofKey,
-        if (surface != null) 'surface': surface!.storageValue,
-        if (entryCount != null) 'entryCount': entryCount,
-        if (answeredAt != null)
-          'answeredAt': answeredAt!.toUtc().toIso8601String(),
-        if (stillTooVague) 'stillTooVague': true,
-      };
+    if (answerType != null) 'answerType': answerType!.analyticsValue,
+    if (feedbackState != null) 'feedbackState': feedbackState!.analyticsValue,
+    if (proofKey != null) 'proofKey': proofKey,
+    if (surface != null) 'surface': surface!.storageValue,
+    if (entryCount != null) 'entryCount': entryCount,
+    if (answeredAt != null) 'answeredAt': answeredAt!.toUtc().toIso8601String(),
+    if (stillTooVague) 'stillTooVague': true,
+  };
 
   factory ProofQualityResponseRecord.fromJson(Map<String, dynamic>? json) {
     if (json == null || json.isEmpty) return empty;
@@ -176,8 +172,7 @@ class ProofQualityResponseRecord {
       feedbackState: _feedbackFromRaw(json['feedbackState'] as String?),
       proofKey: json['proofKey'] is String ? json['proofKey'] as String : null,
       surface: _surfaceFromRaw(json['surface'] as String?),
-      entryCount:
-          json['entryCount'] is int ? json['entryCount'] as int : null,
+      entryCount: json['entryCount'] is int ? json['entryCount'] as int : null,
       answeredAt: _timestampFromRaw(json['answeredAt'] as String?),
       stillTooVague: json['stillTooVague'] == true,
     );

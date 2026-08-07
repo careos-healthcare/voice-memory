@@ -6,19 +6,13 @@ ArchiveMomentRecord _moment({
   required String id,
   required String words,
   required DateTime createdAt,
-}) =>
-    ArchiveMomentRecord(
-      id: id,
-      createdAt: createdAt,
-      savedWords: words,
-    );
+}) => ArchiveMomentRecord(id: id, createdAt: createdAt, savedWords: words);
 
 void main() {
   group('LocalTextComparisonEngine', () {
     const engine = LocalTextComparisonEngine();
 
-    test('buildFromRawTextHistory returns structured result for grounded text',
-        () {
+    test('buildFromRawTextHistory returns structured result for grounded text', () {
       final result = engine.buildFromRawTextHistory(
         current: _moment(
           id: 'e2',
@@ -42,25 +36,27 @@ void main() {
       expect(result.evolutionAnalysis, isNotEmpty);
     });
 
-    test('buildFromRawTextHistory returns notEnoughEvidence for unrelated text',
-        () {
-      final result = engine.buildFromRawTextHistory(
-        current: _moment(
-          id: 'b',
-          words: 'I reorganized my bookshelf today.',
-          createdAt: DateTime.utc(2026, 6, 12, 12),
-        ),
-        history: [
-          _moment(
-            id: 'a',
-            words: 'A calm afternoon walk helped me slow down.',
-            createdAt: DateTime.utc(2026, 6, 11, 12),
+    test(
+      'buildFromRawTextHistory returns notEnoughEvidence for unrelated text',
+      () {
+        final result = engine.buildFromRawTextHistory(
+          current: _moment(
+            id: 'b',
+            words: 'I reorganized my bookshelf today.',
+            createdAt: DateTime.utc(2026, 6, 12, 12),
           ),
-        ],
-      );
+          history: [
+            _moment(
+              id: 'a',
+              words: 'A calm afternoon walk helped me slow down.',
+              createdAt: DateTime.utc(2026, 6, 11, 12),
+            ),
+          ],
+        );
 
-      expect(result.alignmentState, PatternState.notEnoughEvidence);
-      expect(result.connectionSummary, 'A repeating thread may be forming.');
-    });
+        expect(result.alignmentState, PatternState.notEnoughEvidence);
+        expect(result.connectionSummary, 'A repeating thread may be forming.');
+      },
+    );
   });
 }

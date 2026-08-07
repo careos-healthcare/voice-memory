@@ -41,45 +41,45 @@ JournalEntry _entry({
 }
 
 List<JournalEntry> _threeRelatedRepeatEntries() => [
-      _entry(
-        id: 'e1',
-        transcript:
-            'I had no capacity but I said yes again to the extra meeting today.',
-        createdAt: DateTime(2026, 6, 10, 12),
-      ),
-      _entry(
-        id: 'e2',
-        transcript:
-            'Same thing — said yes when I had no capacity for one more thing.',
-        createdAt: DateTime(2026, 6, 11, 12),
-      ),
-      _entry(
-        id: 'e3',
-        transcript:
-            'I said yes again even though I had no capacity for one more ask.',
-        createdAt: DateTime(2026, 6, 12, 12),
-      ),
-    ];
+  _entry(
+    id: 'e1',
+    transcript:
+        'I had no capacity but I said yes again to the extra meeting today.',
+    createdAt: DateTime(2026, 6, 10, 12),
+  ),
+  _entry(
+    id: 'e2',
+    transcript:
+        'Same thing — said yes when I had no capacity for one more thing.',
+    createdAt: DateTime(2026, 6, 11, 12),
+  ),
+  _entry(
+    id: 'e3',
+    transcript:
+        'I said yes again even though I had no capacity for one more ask.',
+    createdAt: DateTime(2026, 6, 12, 12),
+  ),
+];
 
 List<JournalEntry> _fourEntriesWithRelatedReturn() => [
-      ..._threeRelatedRepeatEntries(),
-      _entry(
-        id: 'e4',
-        transcript:
-            'I said yes again even though I had no capacity for one more ask today.',
-        createdAt: DateTime(2026, 6, 13, 12),
-      ),
-    ];
+  ..._threeRelatedRepeatEntries(),
+  _entry(
+    id: 'e4',
+    transcript:
+        'I said yes again even though I had no capacity for one more ask today.',
+    createdAt: DateTime(2026, 6, 13, 12),
+  ),
+];
 
 List<JournalEntry> _fourEntriesWithUnrelatedReturn() => [
-      ..._threeRelatedRepeatEntries(),
-      _entry(
-        id: 'e4',
-        transcript:
-            'Weather was nice on my walk through the park and felt calmer outside.',
-        createdAt: DateTime(2026, 6, 13, 12),
-      ),
-    ];
+  ..._threeRelatedRepeatEntries(),
+  _entry(
+    id: 'e4',
+    transcript:
+        'Weather was nice on my walk through the park and felt calmer outside.',
+    createdAt: DateTime(2026, 6, 13, 12),
+  ),
+];
 
 RepeatReturnCheckRecord _answeredRecord({
   required String entryId,
@@ -103,7 +103,8 @@ RepeatReturnCheckChangeProof _proofForChoice(RepeatReturnCheckChoice choice) {
 }
 
 class _MemoryPrefs extends MobilePrefsStore {
-  _MemoryPrefs() : super(file: File('test/tmp/repeat_return_check/unused.json'));
+  _MemoryPrefs()
+    : super(file: File('test/tmp/repeat_return_check/unused.json'));
 
   final Map<String, Map<String, dynamic>> jsonMaps = {};
 
@@ -127,8 +128,10 @@ void main() {
           captured.add((event: event, properties: properties)),
     );
     await AppServices.resetForTest(
-      journalPath: '${(await Directory.systemTemp.createTemp('vm_repeat_return_')).path}/journal.json',
-      prefsPath: '${(await Directory.systemTemp.createTemp('vm_repeat_return_prefs_')).path}/prefs.json',
+      journalPath:
+          '${(await Directory.systemTemp.createTemp('vm_repeat_return_')).path}/journal.json',
+      prefsPath:
+          '${(await Directory.systemTemp.createTemp('vm_repeat_return_prefs_')).path}/prefs.json',
       skipRevenueCat: true,
     );
     await RepeatReturnCheckStore.resetForTest();
@@ -139,13 +142,12 @@ void main() {
   group('RepeatReturnCheckGates', () {
     test('does not offer during first-three activation', () {
       expect(
-        RepeatReturnCheckGates.hasRelatedRepeatSave(_threeRelatedRepeatEntries()),
+        RepeatReturnCheckGates.hasRelatedRepeatSave(
+          _threeRelatedRepeatEntries(),
+        ),
         isFalse,
       );
-      expect(
-        FirstThreeSessionGates.minEntriesForUsefulArchive,
-        3,
-      );
+      expect(FirstThreeSessionGates.minEntriesForUsefulArchive, 3);
     });
 
     test('offers after confirmed repeat when fourth entry is related', () {
@@ -260,7 +262,12 @@ void main() {
           viewingConfirmedRepeat: true,
           isRecording: false,
           isPostSave: false,
-          records: [_answeredRecord(entryId: 'e3', choice: RepeatReturnCheckChoice.stronger)],
+          records: [
+            _answeredRecord(
+              entryId: 'e3',
+              choice: RepeatReturnCheckChoice.stronger,
+            ),
+          ],
         ),
         isFalse,
       );
@@ -273,7 +280,12 @@ void main() {
           viewingConfirmedRepeat: true,
           isRecording: true,
           isPostSave: false,
-          records: [_answeredRecord(entryId: 'e4', choice: RepeatReturnCheckChoice.same)],
+          records: [
+            _answeredRecord(
+              entryId: 'e4',
+              choice: RepeatReturnCheckChoice.same,
+            ),
+          ],
         ),
         isFalse,
       );
@@ -286,24 +298,37 @@ void main() {
           viewingConfirmedRepeat: true,
           isRecording: false,
           isPostSave: true,
-          records: [_answeredRecord(entryId: 'e4', choice: RepeatReturnCheckChoice.same)],
+          records: [
+            _answeredRecord(
+              entryId: 'e4',
+              choice: RepeatReturnCheckChoice.same,
+            ),
+          ],
         ),
         isFalse,
       );
     });
 
-    test('shows when answered check exists on confirmed repeat ready surface', () {
-      expect(
-        RepeatReturnCheckGates.shouldShowChangeProofCard(
-          entryCount: 4,
-          viewingConfirmedRepeat: true,
-          isRecording: false,
-          isPostSave: false,
-          records: [_answeredRecord(entryId: 'e4', choice: RepeatReturnCheckChoice.softer)],
-        ),
-        isTrue,
-      );
-    });
+    test(
+      'shows when answered check exists on confirmed repeat ready surface',
+      () {
+        expect(
+          RepeatReturnCheckGates.shouldShowChangeProofCard(
+            entryCount: 4,
+            viewingConfirmedRepeat: true,
+            isRecording: false,
+            isPostSave: false,
+            records: [
+              _answeredRecord(
+                entryId: 'e4',
+                choice: RepeatReturnCheckChoice.softer,
+              ),
+            ],
+          ),
+          isTrue,
+        );
+      },
+    );
   });
 
   group('RepeatReturnCheckEngine change proof', () {
@@ -326,7 +351,12 @@ void main() {
         viewingConfirmedRepeat: true,
         isRecording: false,
         isPostSave: false,
-        records: [_answeredRecord(entryId: 'e4', choice: RepeatReturnCheckChoice.stronger)],
+        records: [
+          _answeredRecord(
+            entryId: 'e4',
+            choice: RepeatReturnCheckChoice.stronger,
+          ),
+        ],
       );
       expect(proof, isNotNull);
       expect(proof!.body, RepeatReturnCheckCopy.trendGettingLouder);
@@ -340,7 +370,12 @@ void main() {
         viewingConfirmedRepeat: true,
         isRecording: false,
         isPostSave: false,
-        records: [_answeredRecord(entryId: 'e4', choice: RepeatReturnCheckChoice.softer)],
+        records: [
+          _answeredRecord(
+            entryId: 'e4',
+            choice: RepeatReturnCheckChoice.softer,
+          ),
+        ],
       );
       expect(proof!.body, RepeatReturnCheckCopy.trendSofterThanBefore);
     });
@@ -351,7 +386,9 @@ void main() {
         viewingConfirmedRepeat: true,
         isRecording: false,
         isPostSave: false,
-        records: [_answeredRecord(entryId: 'e4', choice: RepeatReturnCheckChoice.same)],
+        records: [
+          _answeredRecord(entryId: 'e4', choice: RepeatReturnCheckChoice.same),
+        ],
       );
       expect(proof!.body, RepeatReturnCheckCopy.trendSteady);
     });
@@ -363,7 +400,12 @@ void main() {
           viewingConfirmedRepeat: true,
           isRecording: false,
           isPostSave: false,
-          records: [_answeredRecord(entryId: 'e3', choice: RepeatReturnCheckChoice.stronger)],
+          records: [
+            _answeredRecord(
+              entryId: 'e3',
+              choice: RepeatReturnCheckChoice.stronger,
+            ),
+          ],
         ),
         isNull,
       );
@@ -376,7 +418,12 @@ void main() {
           viewingConfirmedRepeat: true,
           isRecording: true,
           isPostSave: false,
-          records: [_answeredRecord(entryId: 'e4', choice: RepeatReturnCheckChoice.same)],
+          records: [
+            _answeredRecord(
+              entryId: 'e4',
+              choice: RepeatReturnCheckChoice.same,
+            ),
+          ],
         ),
         isNull,
       );
@@ -387,7 +434,10 @@ void main() {
     test('maps single stronger answer to louder copy', () {
       expect(
         RepeatReturnCheckTrendEngine.changeProofBody([
-          _answeredRecord(entryId: 'e4', choice: RepeatReturnCheckChoice.stronger),
+          _answeredRecord(
+            entryId: 'e4',
+            choice: RepeatReturnCheckChoice.stronger,
+          ),
         ]),
         RepeatReturnCheckCopy.trendGettingLouder,
       );
@@ -396,7 +446,10 @@ void main() {
     test('maps single softer answer to softer copy', () {
       expect(
         RepeatReturnCheckTrendEngine.changeProofBody([
-          _answeredRecord(entryId: 'e4', choice: RepeatReturnCheckChoice.softer),
+          _answeredRecord(
+            entryId: 'e4',
+            choice: RepeatReturnCheckChoice.softer,
+          ),
         ]),
         RepeatReturnCheckCopy.trendSofterThanBefore,
       );
@@ -413,7 +466,9 @@ void main() {
   });
 
   group('RepeatReturnCheckChangeProofCard', () {
-    testWidgets('renders change proof copy and record-next link', (tester) async {
+    testWidgets('renders change proof copy and record-next link', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -428,11 +483,23 @@ void main() {
       );
       await tester.pump();
 
-      expect(find.byKey(const Key('repeat_return_check_change_proof_card')), findsOneWidget);
+      expect(
+        find.byKey(const Key('repeat_return_check_change_proof_card')),
+        findsOneWidget,
+      );
       expect(find.text(RepeatReturnCheckCopy.changeProofTitle), findsOneWidget);
-      expect(find.text(RepeatReturnCheckCopy.trendGettingLouder), findsOneWidget);
-      expect(find.text(RepeatReturnCheckCopy.changeProofSupportLine), findsNothing);
-      expect(find.text(RepeatReturnCheckCopy.changeProofRecordNextCta), findsOneWidget);
+      expect(
+        find.text(RepeatReturnCheckCopy.trendGettingLouder),
+        findsOneWidget,
+      );
+      expect(
+        find.text(RepeatReturnCheckCopy.changeProofSupportLine),
+        findsNothing,
+      );
+      expect(
+        find.text(RepeatReturnCheckCopy.changeProofRecordNextCta),
+        findsOneWidget,
+      );
     });
 
     testWidgets('shows softer body copy', (tester) async {
@@ -450,7 +517,10 @@ void main() {
       );
       await tester.pump();
 
-      expect(find.text(RepeatReturnCheckCopy.trendSofterThanBefore), findsOneWidget);
+      expect(
+        find.text(RepeatReturnCheckCopy.trendSofterThanBefore),
+        findsOneWidget,
+      );
     });
 
     testWidgets('shows same body copy', (tester) async {
@@ -480,7 +550,10 @@ void main() {
         surface: 'record',
       );
       expect(captured, hasLength(1));
-      expect(captured.single.event, RepeatReturnCheckAnalytics.changeProofSeenEvent);
+      expect(
+        captured.single.event,
+        RepeatReturnCheckAnalytics.changeProofSeenEvent,
+      );
       expect(captured.single.properties['reason'], 'stronger');
       expect(captured.single.properties.containsKey('transcript'), isFalse);
     });

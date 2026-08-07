@@ -24,19 +24,19 @@ class FirstWeekPathCard extends StatefulWidget {
     this.engine = const FirstWeekPathEngine(),
     this.hasWeeklyReviewAvailable = false,
     this.sampleMode = false,
-    FirstWeekPathResult? initialResult,
-  }) : _initialResult = initialResult;
+    this._initialResult,
+  });
 
   const FirstWeekPathCard.test({
     super.key,
     required this.entries,
-    required FirstWeekPathResult initialResult,
+    required FirstWeekPathResult this._initialResult,
     this.onPrimaryAction,
     this.watchlistStore,
     this.engine = const FirstWeekPathEngine(),
     this.hasWeeklyReviewAvailable = false,
     this.sampleMode = false,
-  }) : _initialResult = initialResult;
+  });
 
   final List<JournalEntry> entries;
   final VoidCallback? onPrimaryAction;
@@ -84,7 +84,8 @@ class _FirstWeekPathCardState extends State<FirstWeekPathCard> {
     }
 
     final watchlist =
-        widget.watchlistStore ?? ArchiveWatchlistStore(AppServices.instance.prefs);
+        widget.watchlistStore ??
+        ArchiveWatchlistStore(AppServices.instance.prefs);
     await BetaFeedbackStore.ensureLoaded();
     final watchItems = await watchlist.loadItems();
     if (!mounted) return;
@@ -154,7 +155,8 @@ class _FirstWeekPathCardState extends State<FirstWeekPathCard> {
             children: [
               FilledButton(
                 key: const Key('first_week_path_primary_button'),
-                onPressed: widget.onPrimaryAction ??
+                onPressed:
+                    widget.onPrimaryAction ??
                     () => context.push(result.primaryRoute),
                 child: Text(result.primaryCtaLabel),
               ),

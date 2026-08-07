@@ -97,10 +97,7 @@ void main() {
       expect(notes, contains('ARCHIVEME-REVIEW-2026'));
       expect(notes, contains('App Review Access'));
       expect(notes, contains('pre-populated sample archive'));
-      expect(
-        notes,
-        contains('https://careosapp.co.uk/archiveme-privacy'),
-      );
+      expect(notes, contains('https://careosapp.co.uk/archiveme-privacy'));
     });
   });
 }

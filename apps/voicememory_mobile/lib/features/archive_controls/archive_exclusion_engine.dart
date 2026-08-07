@@ -59,7 +59,9 @@ abstract final class ArchiveExclusionEngine {
     return patternKeyFromGroundedPhrases(grounded);
   }
 
-  static List<JournalEntry> eligibleForActivePattern(List<JournalEntry> entries) {
+  static List<JournalEntry> eligibleForActivePattern(
+    List<JournalEntry> entries,
+  ) {
     final patternKey = activePatternKeyForEntries(entries);
     final eligible = ArchiveEvidenceGuard.eligibleEntries(entries);
     if (patternKey == null) return eligible;
@@ -105,8 +107,9 @@ abstract final class ArchiveExclusionEngine {
       return ArchivePatternExclusionResult(
         excluded: false,
         entryCount: entries.length,
-        hasConfirmedRepeat:
-            EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(entries),
+        hasConfirmedRepeat: EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(
+          entries,
+        ),
       );
     }
 

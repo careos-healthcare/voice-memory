@@ -46,7 +46,9 @@ void main() {
   group('secret detection', () {
     test('flags likely API keys', () {
       expect(
-        UserContentSafety.containsPossibleSecret('my key sk-abcdefghijklmnopqrstuvwxyz'),
+        UserContentSafety.containsPossibleSecret(
+          'my key sk-abcdefghijklmnopqrstuvwxyz',
+        ),
         isTrue,
       );
     });

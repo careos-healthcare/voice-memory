@@ -12,9 +12,9 @@ Future<void> showRecordHowItWorksSheet(BuildContext context) {
     isScrollControlled: true,
     showDragHandle: true,
     builder: (sheetContext) {
-      final bodyStyle = ArchiveMobileTypography.body(sheetContext).copyWith(
-        height: 1.45,
-      );
+      final bodyStyle = ArchiveMobileTypography.body(
+        sheetContext,
+      ).copyWith(height: 1.45);
       final stepTitleStyle = ArchiveMobileTypography.cardLabel(sheetContext);
       final secondaryStyle = bodyStyle.copyWith(color: AppColors.textSecondary);
 

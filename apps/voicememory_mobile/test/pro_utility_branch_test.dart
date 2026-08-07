@@ -8,77 +8,40 @@ import 'package:voicememory_mobile/features/beta_improvement/beta_improvement_pa
 import 'package:voicememory_mobile/features/beta_improvement/beta_improvement_recommendation_gate.dart';
 import 'package:voicememory_mobile/features/beta_improvement/pro_utility_branch_engine.dart';
 import 'package:voicememory_mobile/features/beta_improvement/pro_utility_copy_fix.dart';
-import 'package:voicememory_mobile/features/pro_bridge_visibility/pro_bridge_visibility_engine.dart';
-import 'package:voicememory_mobile/features/pro_bridge_visibility/pro_bridge_visibility_model.dart';
-import 'package:voicememory_mobile/features/proof_quality_response/proof_quality_response_model.dart';
 import 'package:voicememory_mobile/features/v1_interface/v1_expansion_gate_copy.dart';
 
 BetaTesterOutcome _outcome(Set<BetaDecisionSignal> signals) =>
     BetaTesterOutcome(testerId: 't1', signals: signals);
 
 List<BetaTesterOutcome> _proUtilityOutcomes() => [
-      _outcome({
-        BetaDecisionSignal.understoodPromise,
-        BetaDecisionSignal.savedFirstMoment,
-        BetaDecisionSignal.returnedDay2,
-        BetaDecisionSignal.reachedThreeMoments,
-        BetaDecisionSignal.proofFeltMeaningful,
-        BetaDecisionSignal.willingToPayForLongerTrail,
-        BetaDecisionSignal.askedForExport,
-      }),
-      _outcome({
-        BetaDecisionSignal.understoodPromise,
-        BetaDecisionSignal.savedFirstMoment,
-        BetaDecisionSignal.returnedDay2,
-        BetaDecisionSignal.reachedThreeMoments,
-        BetaDecisionSignal.proofFeltMeaningful,
-        BetaDecisionSignal.willingToPayForLongerTrail,
-        BetaDecisionSignal.askedForHistory,
-      }),
-      _outcome({
-        BetaDecisionSignal.understoodPromise,
-        BetaDecisionSignal.savedFirstMoment,
-        BetaDecisionSignal.returnedDay2,
-        BetaDecisionSignal.reachedThreeMoments,
-        BetaDecisionSignal.proofFeltMeaningful,
-        BetaDecisionSignal.willingToPayForLongerTrail,
-        BetaDecisionSignal.askedForReport,
-      }),
-    ];
-
-ProBridgeVisibilityInput _bridgeInput({
-  required int entryCount,
-  required bool hasTimelineProof,
-}) =>
-    ProBridgeVisibilityInput(
-      entryCount: entryCount,
-      source: 'test',
-      surface: ProBridgeVisibilitySurface.recordPostSaveAfterPayoff,
-      isPro: false,
-      postProofProBridgeEnabled: true,
-      hasTimelineProofVisible: hasTimelineProof,
-      hasFirstProofPayoffVisible: hasTimelineProof,
-      proSlotAvailable: true,
-      isRecording: false,
-      isZeroEntryState: entryCount == 0,
-      isFirstRecordingState: entryCount <= 1,
-      isPostSaveDegradedState: false,
-      isDegradedTranscriptState: false,
-      hasFirstProof: entryCount >= 3,
-      hasBetaTesterReportVisible: false,
-      hasCorrectionMemoryVisible: false,
-      hasMonthlyPrivateReportPreviewVisible: false,
-      hasBetaProofLiftVisible: false,
-      hasReturnAfterProofStrengthenedVisible: false,
-      whatChangedQuestionActive: false,
-      patternReviewInboxHasActiveItems: false,
-      feedbackState: ProofQualityFeedbackState.none,
-      confidenceLevel: null,
-      hasSafeAnchor: hasTimelineProof,
-      hasFreshReturnAfterCorrection: false,
-      hasSolidStrongPatternWithSafeAnchors: hasTimelineProof,
-      compact: false,
-    );
+  _outcome({
+    BetaDecisionSignal.understoodPromise,
+    BetaDecisionSignal.savedFirstMoment,
+    BetaDecisionSignal.returnedDay2,
+    BetaDecisionSignal.reachedThreeMoments,
+    BetaDecisionSignal.proofFeltMeaningful,
+    BetaDecisionSignal.willingToPayForLongerTrail,
+    BetaDecisionSignal.askedForExport,
+  }),
+  _outcome({
+    BetaDecisionSignal.understoodPromise,
+    BetaDecisionSignal.savedFirstMoment,
+    BetaDecisionSignal.returnedDay2,
+    BetaDecisionSignal.reachedThreeMoments,
+    BetaDecisionSignal.proofFeltMeaningful,
+    BetaDecisionSignal.willingToPayForLongerTrail,
+    BetaDecisionSignal.askedForHistory,
+  }),
+  _outcome({
+    BetaDecisionSignal.understoodPromise,
+    BetaDecisionSignal.savedFirstMoment,
+    BetaDecisionSignal.returnedDay2,
+    BetaDecisionSignal.reachedThreeMoments,
+    BetaDecisionSignal.proofFeltMeaningful,
+    BetaDecisionSignal.willingToPayForLongerTrail,
+    BetaDecisionSignal.askedForReport,
+  }),
+];
 
 void main() {
   final utilityOutcomes = _proUtilityOutcomes();
@@ -119,8 +82,9 @@ void main() {
     });
 
     test('has no banned therapy/diagnosis/coaching language', () {
-      final blob =
-          ProUtilityCopyFix.allVisibleStrings().join(' ').toLowerCase();
+      final blob = ProUtilityCopyFix.allVisibleStrings()
+          .join(' ')
+          .toLowerCase();
       for (final banned in ProUtilityCopyFix.bannedWords) {
         if (banned == 'more ai') continue;
         expect(blob, isNot(contains(banned)), reason: banned);
@@ -131,8 +95,9 @@ void main() {
     });
 
     test('does not mention blocked expansion surfaces', () {
-      final blob =
-          ProUtilityCopyFix.allVisibleStrings().join(' ').toLowerCase();
+      final blob = ProUtilityCopyFix.allVisibleStrings()
+          .join(' ')
+          .toLowerCase();
       expect(blob, isNot(contains('ask archive')));
       expect(blob, isNot(contains('loop packs')));
       expect(blob, isNot(contains('annual plan')));
@@ -218,13 +183,11 @@ void main() {
         outcomesOverride: utilityOutcomes,
         config: const ProUtilityBranchConfig(exportSurfaceLive: false),
       );
-      final previewExport =
-          previewRows.firstWhere((row) => row.title.contains('Export'));
-      expect(previewExport.route, isNull);
-      expect(
-        previewExport.body,
-        ProUtilityCopyFix.exportPlannedBody,
+      final previewExport = previewRows.firstWhere(
+        (row) => row.title.contains('Export'),
       );
+      expect(previewExport.route, isNull);
+      expect(previewExport.body, ProUtilityCopyFix.exportPlannedBody);
     });
 
     test('private report remains preview unless config enables live', () {
@@ -241,8 +204,9 @@ void main() {
         hasMeaningfulProof: true,
         outcomesOverride: utilityOutcomes,
       );
-      final reportRow =
-          rows.firstWhere((row) => row.title.contains('Private report'));
+      final reportRow = rows.firstWhere(
+        (row) => row.title.contains('Private report'),
+      );
       expect(reportRow.previewOnly, isTrue);
       expect(reportRow.route, isNull);
       expect(reportRow.body, contains(ProUtilityCopyFix.plannedSuffix));
@@ -291,8 +255,9 @@ void main() {
 
   group('V1 guardrails', () {
     test('expansion gates doc still blocks utility expansion drift', () {
-      final doc =
-          File(V1ExpansionGateCopy.expansionGatesDocPath).readAsStringSync();
+      final doc = File(
+        V1ExpansionGateCopy.expansionGatesDocPath,
+      ).readAsStringSync();
       expect(doc.toLowerCase(), contains('ask your archive'));
       expect(doc.toLowerCase(), contains('loop packs'));
     });

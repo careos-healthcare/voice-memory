@@ -32,9 +32,7 @@ void main() {
   late Map<String, String> docs;
 
   setUpAll(() {
-    docs = {
-      for (final path in _docPaths) path: File(path).readAsStringSync(),
-    };
+    docs = {for (final path in _docPaths) path: File(path).readAsStringSync()};
   });
 
   group('TestFlight beta launch pack docs exist', () {
@@ -76,10 +74,7 @@ void main() {
     setUp(() => message = docs[_testerMessagePath]!);
 
     test('contains required tester wording', () {
-      expect(
-        message,
-        contains('When it repeats, save it'),
-      );
+      expect(message, contains('When it repeats, save it'));
       expect(
         message,
         contains(
@@ -88,7 +83,10 @@ void main() {
       );
       expect(message, contains('Use it for 7 days'));
       expect(message, contains('Save 3 real moments'));
-      expect(message, contains('Then review your yes loop and tell me if it fits'));
+      expect(
+        message,
+        contains('Then review your yes loop and tell me if it fits'),
+      );
       expect(message, contains('Skip anything that does not apply'));
       expect(message, contains('Catch the yes before it costs you'));
     });
@@ -100,7 +98,10 @@ void main() {
     setUp(() => script = docs[_interviewScriptPath]!);
 
     test('contains 10 interview questions', () {
-      expect(script, contains('What did you think the app was for in the first 30 seconds'));
+      expect(
+        script,
+        contains('What did you think the app was for in the first 30 seconds'),
+      );
       expect(script, contains('Catch the yes before it costs you'));
       expect(script, contains('Did you save a real yes moment'));
       expect(script, contains('What stopped you if not'));
@@ -127,7 +128,10 @@ void main() {
 
     test('does not instruct opening Runner.xcodeproj', () {
       expect(checklist.toLowerCase(), isNot(contains('open runner.xcodeproj')));
-      expect(checklist.toLowerCase(), isNot(contains('open `runner.xcodeproj`')));
+      expect(
+        checklist.toLowerCase(),
+        isNot(contains('open `runner.xcodeproj`')),
+      );
     });
 
     test('contains identity and payment pause checks', () {

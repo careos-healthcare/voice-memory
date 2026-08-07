@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:record/record.dart';
 
 import 'audio_diag_log.dart';

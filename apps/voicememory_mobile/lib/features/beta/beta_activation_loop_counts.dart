@@ -179,24 +179,24 @@ class BetaActivationLoopCounts {
   }
 
   Map<String, dynamic> toMap() => {
-        'appOpened': appOpened,
-        'recordScreenSeen': recordScreenSeen,
-        'firstUsePromptSeen': firstUsePromptSeen,
-        'firstMomentSaved': firstMomentSaved,
-        'oneEntryReturnScreenSeen': oneEntryReturnScreenSeen,
-        'secondMomentSaved': secondMomentSaved,
-        'twoEntryRelatedSeen': twoEntryRelatedSeen,
-        'twoEntryUnrelatedSeen': twoEntryUnrelatedSeen,
-        'thirdMomentSaved': thirdMomentSaved,
-        'confirmedRepeatSeen': confirmedRepeatSeen,
-        'returnedAfterFirstProof': returnedAfterFirstProof,
-        'fourthMomentSaved': fourthMomentSaved,
-        'returnCheckAnswered': returnCheckAnswered,
-        'proBoundarySeen': proBoundarySeen,
-        'paywallSeen': paywallSeen,
-        'restoreTapped': restoreTapped,
-        'purchaseTapped': purchaseTapped,
-      };
+    'appOpened': appOpened,
+    'recordScreenSeen': recordScreenSeen,
+    'firstUsePromptSeen': firstUsePromptSeen,
+    'firstMomentSaved': firstMomentSaved,
+    'oneEntryReturnScreenSeen': oneEntryReturnScreenSeen,
+    'secondMomentSaved': secondMomentSaved,
+    'twoEntryRelatedSeen': twoEntryRelatedSeen,
+    'twoEntryUnrelatedSeen': twoEntryUnrelatedSeen,
+    'thirdMomentSaved': thirdMomentSaved,
+    'confirmedRepeatSeen': confirmedRepeatSeen,
+    'returnedAfterFirstProof': returnedAfterFirstProof,
+    'fourthMomentSaved': fourthMomentSaved,
+    'returnCheckAnswered': returnCheckAnswered,
+    'proBoundarySeen': proBoundarySeen,
+    'paywallSeen': paywallSeen,
+    'restoreTapped': restoreTapped,
+    'purchaseTapped': purchaseTapped,
+  };
 
   factory BetaActivationLoopCounts.fromMap(Map<String, dynamic>? map) {
     if (map == null || map.isEmpty) return const BetaActivationLoopCounts();

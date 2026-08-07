@@ -8,10 +8,7 @@ import '../../theme/app_theme.dart';
 
 /// Developer-only bottleneck playbook — read-only, no network or purchases.
 class ProofValueBottleneckPlaybookCard extends StatelessWidget {
-  const ProofValueBottleneckPlaybookCard({
-    super.key,
-    required this.report,
-  });
+  const ProofValueBottleneckPlaybookCard({super.key, required this.report});
 
   final ProofValueBottleneckPlaybookReport report;
 
@@ -39,9 +36,9 @@ class ProofValueBottleneckPlaybookCard extends StatelessWidget {
           Text(
             report.title,
             key: const Key('proof_value_bottleneck_playbook_title'),
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: 6),
           Text(
@@ -57,11 +54,10 @@ class ProofValueBottleneckPlaybookCard extends StatelessWidget {
           Text(
             '${ProofValueBottleneckPlaybookCopy.activeRecommendationPrefix} '
             '${report.activeRecommendation}',
-            key: const Key('proof_value_bottleneck_playbook_active_recommendation'),
-            style: const TextStyle(
-              fontSize: 13,
-              fontWeight: FontWeight.w600,
+            key: const Key(
+              'proof_value_bottleneck_playbook_active_recommendation',
             ),
+            style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: 12),
           _Section(

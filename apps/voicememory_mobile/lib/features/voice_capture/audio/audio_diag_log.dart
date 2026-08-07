@@ -27,13 +27,17 @@ abstract class AudioDiagLog {
     required String mimeGuess,
     required String firstBytesHex,
   }) {
+    if (kReleaseMode) {
+      debugPrint(
+        'ARCHIVEME_AUDIO_DIAG exists=$exists bytesBucket=${_bytesBucket(bytes)}',
+      );
+      return;
+    }
     debugPrint('ARCHIVEME_AUDIO_DIAG path=$path');
     debugPrint('ARCHIVEME_AUDIO_DIAG exists=$exists');
     debugPrint('ARCHIVEME_AUDIO_DIAG bytes=$bytes');
     debugPrint('ARCHIVEME_AUDIO_DIAG extension=$extension');
-    debugPrint(
-      'ARCHIVEME_AUDIO_DIAG durationMs=${durationMs ?? 'unknown'}',
-    );
+    debugPrint('ARCHIVEME_AUDIO_DIAG durationMs=${durationMs ?? 'unknown'}');
     debugPrint('ARCHIVEME_AUDIO_DIAG mimeGuess=$mimeGuess');
     debugPrint('ARCHIVEME_AUDIO_DIAG firstBytes=$firstBytesHex');
   }
@@ -43,6 +47,12 @@ abstract class AudioDiagLog {
     required String contentType,
     required int bytes,
   }) {
+    if (kReleaseMode) {
+      debugPrint(
+        'ARCHIVEME_TRANSCRIPTION_UPLOAD bytesBucket=${_bytesBucket(bytes)}',
+      );
+      return;
+    }
     debugPrint(
       'ARCHIVEME_TRANSCRIPTION_UPLOAD fileName=$fileName '
       'contentType=$contentType bytes=$bytes',
@@ -76,22 +86,15 @@ abstract class AudioDiagLog {
     );
   }
 
-  static void iosAudioRoute({
-    required String inputs,
-    required String outputs,
-  }) {
-    debugPrint(
-      'ARCHIVEME_IOS_AUDIO_ROUTE inputs=$inputs outputs=$outputs',
-    );
+  static void iosAudioRoute({required String inputs, required String outputs}) {
+    debugPrint('ARCHIVEME_IOS_AUDIO_ROUTE inputs=$inputs outputs=$outputs');
   }
 
   static void iosAudioInput({
     required String portName,
     required String portType,
   }) {
-    debugPrint(
-      'ARCHIVEME_IOS_AUDIO_INPUT selected=$portName type=$portType',
-    );
+    debugPrint('ARCHIVEME_IOS_AUDIO_INPUT selected=$portName type=$portType');
   }
 
   static void iosAudioAvailableInputs({
@@ -128,10 +131,7 @@ abstract class AudioDiagLog {
     );
   }
 
-  static void silenceRetry({
-    required String reason,
-    required double oldMaxDb,
-  }) {
+  static void silenceRetry({required String reason, required double oldMaxDb}) {
     debugPrint(
       'ARCHIVEME_AUDIO_SILENCE_RETRY reason=$reason oldMaxDb=$oldMaxDb',
     );
@@ -146,6 +146,12 @@ abstract class AudioDiagLog {
     required bool exists,
     required int bytes,
   }) {
+    if (kReleaseMode) {
+      debugPrint(
+        'ARCHIVEME_AUDIO_SHARE exists=$exists bytesBucket=${_bytesBucket(bytes)}',
+      );
+      return;
+    }
     debugPrint('ARCHIVEME_AUDIO_SHARE path=$path exists=$exists bytes=$bytes');
   }
 
@@ -158,5 +164,12 @@ abstract class AudioDiagLog {
       'ARCHIVEME_NATIVE_RECORDER_FAILED step=$step reason=$reason'
       '${format == null ? '' : ' format=$format'}',
     );
+  }
+
+  static String _bytesBucket(int bytes) {
+    if (bytes < 1024) return 'lt_1kb';
+    if (bytes < 64 * 1024) return 'lt_64kb';
+    if (bytes < 1024 * 1024) return 'lt_1mb';
+    return 'gte_1mb';
   }
 }

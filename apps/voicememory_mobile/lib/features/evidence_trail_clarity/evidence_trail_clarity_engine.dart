@@ -82,7 +82,9 @@ abstract final class EvidenceTrailClarityEngine {
     required bool showEvidenceTrailClarity,
   }) {
     if (!showEvidenceTrailClarity) return false;
-    if (!BetaRepairLabEngine.shouldShowLab(betaMissionEnabled: betaMissionEnabled)) {
+    if (!BetaRepairLabEngine.shouldShowLab(
+      betaMissionEnabled: betaMissionEnabled,
+    )) {
       return false;
     }
     return BetaRepairLabStore.activeMode ==

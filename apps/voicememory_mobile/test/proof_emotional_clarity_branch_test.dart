@@ -1,83 +1,79 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/features/archive_proof/proof_surface_advice_guard.dart';
 import 'package:voicememory_mobile/features/beta_decision/beta_decision_model.dart';
-import 'package:voicememory_mobile/features/beta_improvement/beta_improvement_model.dart';
-import 'package:voicememory_mobile/features/beta_improvement/beta_improvement_recommendation_gate.dart';
 import 'package:voicememory_mobile/features/beta_improvement/proof_emotional_clarity_copy_fix.dart';
 import 'package:voicememory_mobile/features/beta_improvement/proof_emotional_clarity_engine.dart';
-import 'package:voicememory_mobile/features/beta_improvement/proof_emotional_clarity_model.dart';
 import 'package:voicememory_mobile/features/first_proof_payoff/first_proof_payoff_engine.dart';
 import 'package:voicememory_mobile/features/proof_confidence_calibration/proof_confidence_calibration_model.dart';
 import 'package:voicememory_mobile/features/what_changed/what_changed_v2_model.dart';
 import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
-import 'package:voicememory_mobile/services/capture_save_messages.dart';
 
 BetaTesterOutcome _proofClarityOutcome() => BetaTesterOutcome(
-      testerId: 'proof',
-      signals: {
-        BetaDecisionSignal.understoodPromise,
-        BetaDecisionSignal.savedFirstMoment,
-        BetaDecisionSignal.returnedDay2,
-        BetaDecisionSignal.reachedThreeMoments,
-        BetaDecisionSignal.sawFirstProof,
-      },
-    );
+  testerId: 'proof',
+  signals: {
+    BetaDecisionSignal.understoodPromise,
+    BetaDecisionSignal.savedFirstMoment,
+    BetaDecisionSignal.returnedDay2,
+    BetaDecisionSignal.reachedThreeMoments,
+    BetaDecisionSignal.sawFirstProof,
+  },
+);
 
 JournalEntry _entry({
   required String id,
   required String transcript,
   DateTime? createdAt,
-}) =>
-    JournalEntry(
-      id: id,
-      createdAt: createdAt ?? DateTime(2026, 6, 12, 10),
-      transcript: transcript,
-      durationSeconds: 30,
-      reflection: const Reflection(
-        mood: 'thoughtful',
-        emotionalIntensity: 2,
-        recurringThemes: ['work'],
-        exactLanguagePattern: '',
-        concreteObservation: 'Work pressure showed up again today.',
-        repeatedSignal: '',
-      ),
-    );
+}) => JournalEntry(
+  id: id,
+  createdAt: createdAt ?? DateTime(2026, 6, 12, 10),
+  transcript: transcript,
+  durationSeconds: 30,
+  reflection: const Reflection(
+    mood: 'thoughtful',
+    emotionalIntensity: 2,
+    recurringThemes: ['work'],
+    exactLanguagePattern: '',
+    concreteObservation: 'Work pressure showed up again today.',
+    repeatedSignal: '',
+  ),
+);
 
 List<JournalEntry> _threeRelatedEntries() => [
-      _entry(
-        id: 'e1',
-        transcript:
-            'I had no capacity but I said yes again to the extra meeting today.',
-        createdAt: DateTime(2026, 6, 10, 12),
-      ),
-      _entry(
-        id: 'e2',
-        transcript:
-            'Same thing — said yes when I had no capacity for one more thing.',
-        createdAt: DateTime(2026, 6, 11, 12),
-      ),
-      _entry(
-        id: 'e3',
-        transcript:
-            'I said yes again even though I had no capacity for one more ask.',
-        createdAt: DateTime(2026, 6, 12, 12),
-      ),
-    ];
+  _entry(
+    id: 'e1',
+    transcript:
+        'I had no capacity but I said yes again to the extra meeting today.',
+    createdAt: DateTime(2026, 6, 10, 12),
+  ),
+  _entry(
+    id: 'e2',
+    transcript:
+        'Same thing — said yes when I had no capacity for one more thing.',
+    createdAt: DateTime(2026, 6, 11, 12),
+  ),
+  _entry(
+    id: 'e3',
+    transcript:
+        'I said yes again even though I had no capacity for one more ask.',
+    createdAt: DateTime(2026, 6, 12, 12),
+  ),
+];
 
-ProofConfidenceCalibrationResult _strongCalibration({required int entryCount}) =>
-    ProofConfidenceCalibrationResult(
-      shouldCalibrate: true,
-      entryCount: entryCount,
-      source: 'test',
-      level: ProofConfidenceLevel.strong,
-      primaryCopy: 'This has a clearer timeline now.',
-      displayCopy: 'This has a clearer timeline now.',
-      hasSafeAnchor: true,
-      hasMatchQuality: true,
-      hasCorrection: false,
-      hasFreshReturn: false,
-    );
+ProofConfidenceCalibrationResult _strongCalibration({
+  required int entryCount,
+}) => ProofConfidenceCalibrationResult(
+  shouldCalibrate: true,
+  entryCount: entryCount,
+  source: 'test',
+  level: ProofConfidenceLevel.strong,
+  primaryCopy: 'This has a clearer timeline now.',
+  displayCopy: 'This has a clearer timeline now.',
+  hasSafeAnchor: true,
+  hasMatchQuality: true,
+  hasCorrection: false,
+  hasFreshReturn: false,
+);
 
 ProofConfidenceCalibrationResult _watchCalibration({required int entryCount}) =>
     ProofConfidenceCalibrationResult(
@@ -104,7 +100,10 @@ void main() {
         ProofEmotionalClarityCopyFix.whyItMightMatterLabel,
         'Why this might matter',
       );
-      expect(ProofEmotionalClarityCopyFix.correctionFeelsRight, 'This feels right');
+      expect(
+        ProofEmotionalClarityCopyFix.correctionFeelsRight,
+        'This feels right',
+      );
       expect(ProofEmotionalClarityCopyFix.correctionNotQuite, 'Not quite');
       expect(ProofEmotionalClarityCopyFix.correctionItChanged, 'It changed');
     });
@@ -155,9 +154,9 @@ void main() {
     test('changed proof shows pattern changed headline', () {
       final display = ProofEmotionalClarityEngine.build(
         entries: _threeRelatedEntries(),
-        calibration: _strongCalibration(entryCount: 3).copyWith(
-          leadCopy: 'Something changed between these saved moments.',
-        ),
+        calibration: _strongCalibration(
+          entryCount: 3,
+        ).copyWith(leadCopy: 'Something changed between these saved moments.'),
         hasStrongEvidence: true,
         whatChangedOption: WhatChangedV2Option.differentResponse,
         outcomesOverride: proofOutcomes,
@@ -219,9 +218,7 @@ void main() {
 }
 
 extension on ProofConfidenceCalibrationResult {
-  ProofConfidenceCalibrationResult copyWith({
-    String? leadCopy,
-  }) =>
+  ProofConfidenceCalibrationResult copyWith({String? leadCopy}) =>
       ProofConfidenceCalibrationResult(
         shouldCalibrate: shouldCalibrate,
         entryCount: entryCount,

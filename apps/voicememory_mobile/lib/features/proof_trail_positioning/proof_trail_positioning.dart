@@ -21,7 +21,9 @@ abstract final class ProofTrailPositioning {
       return _result(ProofTrailPositioningDecision.clarifyProofTrail);
     }
     if (!input.userUnderstandsMeaningfulResurfacing) {
-      return _result(ProofTrailPositioningDecision.clarifyMeaningfulResurfacing);
+      return _result(
+        ProofTrailPositioningDecision.clarifyMeaningfulResurfacing,
+      );
     }
     if (!input.userUnderstandsSaveARepeat) {
       return _result(ProofTrailPositioningDecision.clarifySaveARepeat);
@@ -38,20 +40,21 @@ abstract final class ProofTrailPositioning {
     return _result(ProofTrailPositioningDecision.clarifyProofTrail);
   }
 
-  static ProofTrailPositioningReport report(ProofTrailPositioningResult result) =>
-      ProofTrailPositioningReport(
-        headline: ProofTrailPositioningCopy.headline,
-        body: ProofTrailPositioningCopy.body,
-        notChatLine: ProofTrailPositioningCopy.notChatLine,
-        notStorageLine: ProofTrailPositioningCopy.notStorageLine,
-        proofTrailLine: ProofTrailPositioningCopy.proofTrailLine,
-        resurfacingLine: ProofTrailPositioningCopy.resurfacingLine,
-        saveRepeatLine: ProofTrailPositioningCopy.saveRepeatLine,
-        lowEffortLine: ProofTrailPositioningCopy.lowEffortLine,
-        proLine: ProofTrailPositioningCopy.proLine,
-        guardrail: ProofTrailPositioningCopy.guardrail,
-        result: result,
-      );
+  static ProofTrailPositioningReport report(
+    ProofTrailPositioningResult result,
+  ) => ProofTrailPositioningReport(
+    headline: ProofTrailPositioningCopy.headline,
+    body: ProofTrailPositioningCopy.body,
+    notChatLine: ProofTrailPositioningCopy.notChatLine,
+    notStorageLine: ProofTrailPositioningCopy.notStorageLine,
+    proofTrailLine: ProofTrailPositioningCopy.proofTrailLine,
+    resurfacingLine: ProofTrailPositioningCopy.resurfacingLine,
+    saveRepeatLine: ProofTrailPositioningCopy.saveRepeatLine,
+    lowEffortLine: ProofTrailPositioningCopy.lowEffortLine,
+    proLine: ProofTrailPositioningCopy.proLine,
+    guardrail: ProofTrailPositioningCopy.guardrail,
+    result: result,
+  );
 
   static bool _comprehensionPasses(ProofTrailPositioningInput input) =>
       !input.userThinksChatBox &&
@@ -68,11 +71,10 @@ abstract final class ProofTrailPositioning {
 
   static ProofTrailPositioningResult _result(
     ProofTrailPositioningDecision decision,
-  ) =>
-      ProofTrailPositioningResult(
-        decision: decision,
-        message: _messageFor(decision),
-      );
+  ) => ProofTrailPositioningResult(
+    decision: decision,
+    message: _messageFor(decision),
+  );
 
   static String _messageFor(ProofTrailPositioningDecision decision) =>
       switch (decision) {

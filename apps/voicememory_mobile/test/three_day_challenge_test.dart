@@ -17,11 +17,7 @@ const _placeholder =
 const _strongRepeat =
     'I had no capacity but I said yes again to the extra meeting today.';
 
-JournalEntry _entry(
-  String id,
-  String transcript, {
-  DateTime? createdAt,
-}) =>
+JournalEntry _entry(String id, String transcript, {DateTime? createdAt}) =>
     JournalEntry(
       id: id,
       createdAt: createdAt ?? DateTime(2026, 6, 12, 10),
@@ -39,22 +35,18 @@ JournalEntry _entry(
     );
 
 List<JournalEntry> _threeRelatedEntries() => [
-      _entry(
-        '1',
-        _strongRepeat,
-        createdAt: DateTime(2026, 6, 10, 12),
-      ),
-      _entry(
-        '2',
-        'Same thing — said yes when I had no capacity for one more thing.',
-        createdAt: DateTime(2026, 6, 11, 12),
-      ),
-      _entry(
-        '3',
-        'I said yes again even though I had no capacity for one more ask.',
-        createdAt: DateTime(2026, 6, 12, 12),
-      ),
-    ];
+  _entry('1', _strongRepeat, createdAt: DateTime(2026, 6, 10, 12)),
+  _entry(
+    '2',
+    'Same thing — said yes when I had no capacity for one more thing.',
+    createdAt: DateTime(2026, 6, 11, 12),
+  ),
+  _entry(
+    '3',
+    'I said yes again even though I had no capacity for one more ask.',
+    createdAt: DateTime(2026, 6, 12, 12),
+  ),
+];
 
 void main() {
   group('ThreeDayChallengeEngine day states', () {
@@ -130,29 +122,32 @@ void main() {
       );
     });
 
-    test('comparison-ready repeat foundation completes without faking proof', () {
-      final entries = _threeRelatedEntries();
-      expect(
-        EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(entries),
-        isTrue,
-      );
+    test(
+      'comparison-ready repeat foundation completes without faking proof',
+      () {
+        final entries = _threeRelatedEntries();
+        expect(
+          EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(entries),
+          isTrue,
+        );
 
-      final challenge = ThreeDayChallengeEngine.build(entries: entries);
-      expect(challenge?.isComplete, isTrue);
-      expect(challenge?.body, ThreeDayChallengeCopy.completionBody);
-      expect(challenge!.entryCount, 3);
-      expect(
-        ThreeDayChallengeGates.shouldShow(
-          isReady: true,
-          isRecording: false,
-          isPostSave: false,
-          isDegradedTranscriptState: false,
-          firstProofPayoffVisible: false,
-          challenge: challenge,
-        ),
-        isFalse,
-      );
-    });
+        final challenge = ThreeDayChallengeEngine.build(entries: entries);
+        expect(challenge?.isComplete, isTrue);
+        expect(challenge?.body, ThreeDayChallengeCopy.completionBody);
+        expect(challenge!.entryCount, 3);
+        expect(
+          ThreeDayChallengeGates.shouldShow(
+            isReady: true,
+            isRecording: false,
+            isPostSave: false,
+            isDegradedTranscriptState: false,
+            firstProofPayoffVisible: false,
+            challenge: challenge,
+          ),
+          isFalse,
+        );
+      },
+    );
   });
 
   group('ThreeDayChallengeGates', () {
@@ -194,10 +189,7 @@ void main() {
         ThreeDayChallengeEngine.shouldHideForDegradedTranscript([degraded]),
         isTrue,
       );
-      expect(
-        ThreeDayChallengeEngine.build(entries: [degraded]),
-        isNull,
-      );
+      expect(ThreeDayChallengeEngine.build(entries: [degraded]), isNull);
       expect(
         ThreeDayChallengeGates.shouldShow(
           isReady: true,
@@ -260,9 +252,7 @@ void main() {
 
       await tester.pumpWidget(
         const MaterialApp(
-          home: Scaffold(
-            body: ThreeDayChallengeCard(challenge: challenge),
-          ),
+          home: Scaffold(body: ThreeDayChallengeCard(challenge: challenge)),
         ),
       );
 

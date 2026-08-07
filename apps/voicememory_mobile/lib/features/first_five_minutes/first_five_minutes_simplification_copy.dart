@@ -1,4 +1,6 @@
 /// First-five-minutes simplification copy — save one repeat, compare later.
+library;
+
 import '../release_candidate/v1_revenue_focus_policy.dart';
 import '../three_moment_activation/three_moment_activation_copy.dart';
 
@@ -13,8 +15,7 @@ abstract final class FirstFiveMinutesSimplificationCopy {
       'ArchiveMe is simple: when something repeats, save one real sentence. Your '
       'archive compares it later.';
 
-  static const oneLinePositioning =
-      'ArchiveMe shows what keeps coming back.';
+  static const oneLinePositioning = 'ArchiveMe shows what keeps coming back.';
 
   static const whenToUseLine =
       'Use it when you notice: I have felt this before, done this before, avoided '

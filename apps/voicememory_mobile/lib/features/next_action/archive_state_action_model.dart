@@ -22,10 +22,7 @@ enum ArchiveStateActionDestination {
 }
 
 /// Surface used to resolve context-dependent destinations.
-enum ArchiveStateActionSurface {
-  record,
-  patterns,
-}
+enum ArchiveStateActionSurface { record, patterns }
 
 /// One archive state with a single canonical action and routing target.
 class ArchiveStateActionResult {

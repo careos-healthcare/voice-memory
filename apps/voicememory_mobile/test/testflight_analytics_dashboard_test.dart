@@ -7,7 +7,6 @@ import 'package:voicememory_mobile/billing/revenuecat_service.dart';
 import 'package:voicememory_mobile/features/beta/archive_beta_mission_gate.dart';
 import 'package:voicememory_mobile/features/revenue_metrics/revenue_funnel_analytics.dart';
 import 'package:voicememory_mobile/features/testflight_metrics/testflight_metrics_analytics.dart';
-import 'package:voicememory_mobile/features/core_metrics_minimum/core_metrics_minimum_set.dart';
 import 'package:voicememory_mobile/features/core_metrics_minimum/core_metrics_minimum_set_copy.dart';
 import 'package:voicememory_mobile/features/core_metrics_minimum/core_metrics_minimum_set_v2.dart';
 import 'package:voicememory_mobile/features/testflight_metrics/testflight_metrics_copy.dart';
@@ -132,7 +131,10 @@ void main() {
       );
       await tester.pump();
 
-      expect(find.byKey(const Key('testflight_metrics_dashboard_hidden')), findsOneWidget);
+      expect(
+        find.byKey(const Key('testflight_metrics_dashboard_hidden')),
+        findsOneWidget,
+      );
       expect(find.text('TestFlight beta metrics'), findsNothing);
     });
 
@@ -153,7 +155,10 @@ void main() {
       );
       await tester.pump();
 
-      expect(find.byKey(const Key('testflight_metrics_dashboard_card')), findsOneWidget);
+      expect(
+        find.byKey(const Key('testflight_metrics_dashboard_card')),
+        findsOneWidget,
+      );
       expect(find.text('TestFlight beta metrics'), findsOneWidget);
       expect(
         find.text('Track whether users reach the ArchiveMe proof moment.'),
@@ -202,7 +207,9 @@ void main() {
       );
       await tester.pump();
 
-      final blob = TestFlightMetricsCopy.coreMetricLabels.join(' ').toLowerCase();
+      final blob = TestFlightMetricsCopy.coreMetricLabels
+          .join(' ')
+          .toLowerCase();
       expect(blob, isNot(contains('therapy')));
       expect(blob, isNot(contains('diagnosis')));
       expect(blob, isNot(contains('medical')));
@@ -234,12 +241,12 @@ void main() {
     });
 
     test('dashboard module does not touch billing constants', () {
-      final engineSource =
-          File('lib/features/testflight_metrics/testflight_metrics_engine.dart')
-              .readAsStringSync();
-      final widgetSource =
-          File('lib/widgets/beta/testflight_metrics_dashboard_card.dart')
-              .readAsStringSync();
+      final engineSource = File(
+        'lib/features/testflight_metrics/testflight_metrics_engine.dart',
+      ).readAsStringSync();
+      final widgetSource = File(
+        'lib/widgets/beta/testflight_metrics_dashboard_card.dart',
+      ).readAsStringSync();
       expect(engineSource, isNot(contains('proEntitlementId')));
       expect(widgetSource, isNot(contains('RevenueCat')));
     });

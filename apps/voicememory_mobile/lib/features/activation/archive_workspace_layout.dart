@@ -13,20 +13,11 @@ import 'evidence_attention_filters.dart';
 import 'weekly_archive_review.dart';
 
 /// Workspace ladder stage from usable entry count.
-enum ArchiveWorkspaceStage {
-  empty,
-  one,
-  two,
-  evidenceReady,
-  reviewReady,
-}
+enum ArchiveWorkspaceStage { empty, one, two, evidenceReady, reviewReady }
 
 /// One grouped section in the Archive/Patterns workspace.
 class ArchiveWorkspaceSectionLayout {
-  const ArchiveWorkspaceSectionLayout({
-    required this.show,
-    this.heading,
-  });
+  const ArchiveWorkspaceSectionLayout({required this.show, this.heading});
 
   final bool show;
   final String? heading;
@@ -94,10 +85,11 @@ abstract final class ArchiveWorkspaceLayoutEngine {
     final stage = _stageForCount(eligibleCount);
 
     final showActionPlan = actionPlan.showCard && eligibleCount >= 2;
-    final showAttentionFilters = attentionFilters.showCard && eligibleCount >= 2;
+    final showAttentionFilters =
+        attentionFilters.showCard && eligibleCount >= 2;
 
-    final needsAttentionHeading = showAttentionFilters ||
-            (showActionPlan && eligibleCount >= 2)
+    final needsAttentionHeading =
+        showAttentionFilters || (showActionPlan && eligibleCount >= 2)
         ? VisibleArchiveProofCopy.archiveWorkspaceNeedsAttentionHeading
         : null;
 
@@ -128,9 +120,10 @@ abstract final class ArchiveWorkspaceLayoutEngine {
           : null,
     );
 
-    final showInsightQualityLink = eligibleCount >= 2 ||
-        ArchiveInsightFeedbackStore.hasAnyFeedback();
-    final showStandaloneShareProof = !archiveHome.showShareProof &&
+    final showInsightQualityLink =
+        eligibleCount >= 2 || ArchiveInsightFeedbackStore.hasAnyFeedback();
+    final showStandaloneShareProof =
+        !archiveHome.showShareProof &&
         eligibleCount >= 5 &&
         (shareProof?.hasProof ?? false);
 

@@ -1,26 +1,43 @@
 part of '../../screens/record_screen.dart';
 
-class _RecordingStatusCard extends StatelessWidget {
-  const _RecordingStatusCard({
-    required this.seconds,
-    required this.stageLabel,
-    required this.audioDecibels,
-  });
+const _recordingStatusFallback = 'Recording';
+const _recordingReadyStatusFallback = 'Ready to record';
+const _recordingProcessingStatusFallback = 'Processing';
+const _recordingSavedStatusFallback = 'Saved';
+const _recordingStopAndSaveHintFallback =
+    'Tap Stop and save when you are finished.';
 
-  final int seconds;
+String _recordingInProgressSecondsFallback(int seconds) {
+  if (seconds == 1) return 'Recording in progress, 1 second';
+  return 'Recording in progress, $seconds seconds';
+}
+
+AppLocalizations? _appLocalizations(BuildContext context) =>
+    Localizations.of<AppLocalizations>(context, AppLocalizations);
+
+class _RecordingStatusCard extends ConsumerWidget {
+  const _RecordingStatusCard({required this.stageLabel});
+
   final String stageLabel;
-  final Stream<double> audioDecibels;
 
   @override
-  Widget build(BuildContext context) {
-    final l10n = appLocalizationsOf(context);
+  Widget build(BuildContext context, WidgetRef ref) {
+    final seconds = ref.watch(recordingDurationSecondsProvider);
+    final l10n = _appLocalizations(context);
     final minutes = seconds ~/ 60;
     final secs = seconds % 60;
     final timer =
         '${minutes.toString().padLeft(2, '0')}:${secs.toString().padLeft(2, '0')}';
+    final semanticsLabel = l10n?.recordingInProgressSeconds(seconds) ??
+        _recordingInProgressSecondsFallback(seconds);
+    final statusText = stageLabel.isEmpty
+        ? (l10n?.recordingStatus ?? _recordingStatusFallback)
+        : stageLabel;
+    final stopHint =
+        l10n?.recordingStopAndSaveHint ?? _recordingStopAndSaveHintFallback;
 
     return Semantics(
-      label: l10n.recordingInProgressSeconds(seconds),
+      label: semanticsLabel,
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 20),
         decoration: BoxDecoration(
@@ -42,10 +59,8 @@ class _RecordingStatusCard extends StatelessWidget {
           children: [
             Icon(Icons.mic, size: 44, color: VoiceMemoryColors.primaryIndigo),
             const SizedBox(height: 14),
-            AudioVisualizer(decibels: audioDecibels),
-            const SizedBox(height: 12),
             RecordingTranscriptionView(
-              text: stageLabel.isEmpty ? l10n.recordingStatus : stageLabel,
+              text: statusText,
               isLive: true,
             ),
             const SizedBox(height: 8),
@@ -59,7 +74,7 @@ class _RecordingStatusCard extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             Text(
-              l10n.recordingStopAndSaveHint,
+              stopHint,
               textAlign: TextAlign.center,
               style: const TextStyle(
                 fontSize: 12,
@@ -76,35 +91,6 @@ class _RecordingStatusCard extends StatelessWidget {
 
 /// Screen actions owned by the audio responsibility.
 extension _RecordingAudioStateActions on _RecordScreenState {
-  Future<bool> _hasRecordingSubscriptionAccess() async {
-    final service =
-        widget.subscriptionService ??
-        (AppServices.isInitialized
-            ? AppServices.instance.subscriptionService
-            : null);
-    if (service == null || !service.canOfferWebCheckout) return true;
-
-    try {
-      if (await service.hasActiveSubscription()) return true;
-    } on Object {
-      if (AppServices.isInitialized &&
-          AppServices.instance.subscriptionRepository.currentState?.isPro ==
-              true) {
-        return true;
-      }
-    }
-
-    if (!mounted) return false;
-    await context.push(
-      '/subscription',
-      extra: PaywallRouteArgs(
-        source: PaywallSource.generalPro,
-        sourceRoute: '/record',
-      ),
-    );
-    return false;
-  }
-
   Future<void> _beginRecording() async {
     if (AppConfig.enableLiveVoiceCapture && _liveVoice != null) {
       await _openLiveVoiceSession();
@@ -114,19 +100,7 @@ extension _RecordingAudioStateActions on _RecordScreenState {
     _stopAndProcessInFlight = false;
     _navigationActivity.update(RecordNavigationActivity.recording);
     try {
-      var isPro = false;
-      try {
-        isPro = await ArchiveEntitlementReader.forAccessCheck().isPro;
-      } on Object {
-        // Fail closed to the free duration when billing is unavailable.
-      }
-      _activeRecordingMaxSeconds = RecordingDurationPolicy.maxSecondsFor(
-        isPro: isPro,
-      );
-      await _recording.startRecording(
-        permissionVerified: true,
-        maxDurationSeconds: _activeRecordingMaxSeconds,
-      );
+      await _recording.startRecording(permissionVerified: true);
       if (!mounted) return;
       _setRecordingState(() {
         _ui = RecordUiState.recording;
@@ -176,7 +150,25 @@ extension _RecordingAudioStateActions on _RecordScreenState {
       );
 
   String _statusTextFor(RecordUiState ui, String? localSaveTitle) {
-    final l10n = appLocalizationsOf(context);
+    final l10n = _appLocalizations(context);
+    if (l10n == null) {
+      switch (ui) {
+        case RecordUiState.permissionBlocked:
+          return MicrophonePermissionCopy.statusBlocked;
+        case RecordUiState.requestingPermission:
+          return MicrophonePermissionCopy.statusRequesting;
+        case RecordUiState.ready:
+          return _recordingReadyStatusFallback;
+        case RecordUiState.recording:
+          return _recordingStatusFallback;
+        case RecordUiState.processing:
+          return _recordingProcessingStatusFallback;
+        case RecordUiState.done:
+          return localSaveTitle ?? _recordingSavedStatusFallback;
+        default:
+          return _recordingStatusFallback;
+      }
+    }
     switch (ui) {
       case RecordUiState.permissionBlocked:
         return MicrophonePermissionCopy.statusBlocked;

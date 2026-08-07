@@ -101,8 +101,7 @@ class _BeliefEvidenceScreenState extends State<BeliefEvidenceScreen> {
               const SizedBox(height: AppSpacing.lg),
               BeliefEvidenceTrailCard(
                 trail: trail,
-                onAddAnother:
-                    trail.hasEnoughEvidence ? _goToRecord : null,
+                onAddAnother: trail.hasEnoughEvidence ? _goToRecord : null,
               ),
               if (_shareProof?.hasProof == true) ...[
                 const SizedBox(height: AppSpacing.lg),

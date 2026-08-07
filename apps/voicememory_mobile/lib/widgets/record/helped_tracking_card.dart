@@ -29,7 +29,7 @@ class HelpedTrackingCard extends StatefulWidget {
     required this.source,
     this.store,
     this.onChanged,
-  })  : skipPrefsLoad = true;
+  }) : skipPrefsLoad = true;
 
   final HelpedTrackingPrompt prompt;
   final String source;
@@ -51,9 +51,9 @@ class _HelpedTrackingCardState extends State<HelpedTrackingCard> {
   HelpedTrackingStore get _resolvedStore =>
       _store ??= widget.store ?? HelpedTrackingStore.instance();
 
-  bool get _hasStoredAnswer =>
-      HelpedTrackingStore.cached
-          .any((record) => record.entryId == widget.prompt.entryId);
+  bool get _hasStoredAnswer => HelpedTrackingStore.cached.any(
+    (record) => record.entryId == widget.prompt.entryId,
+  );
 
   @override
   void initState() {
@@ -127,17 +127,18 @@ class _HelpedTrackingCardState extends State<HelpedTrackingCard> {
   Widget build(BuildContext context) {
     _trackSeenOnce();
 
-    final bodyStyle = ArchiveMobileTypography.explanationBody(context).copyWith(
-      color: AppColors.textSecondary,
-      height: 1.4,
-    );
+    final bodyStyle = ArchiveMobileTypography.explanationBody(
+      context,
+    ).copyWith(color: AppColors.textSecondary, height: 1.4);
 
     if (_statusMessage != null) {
       return Container(
         key: const Key('helped_tracking_saved_message'),
         width: double.infinity,
         padding: const EdgeInsets.all(AppSpacing.md),
-        decoration: VoiceMemoryCards.standard(background: const Color(0xFFF8FAF8)),
+        decoration: VoiceMemoryCards.standard(
+          background: const Color(0xFFF8FAF8),
+        ),
         child: Text(
           _statusMessage!,
           style: bodyStyle.copyWith(color: AppColors.textPrimary),
@@ -153,7 +154,9 @@ class _HelpedTrackingCardState extends State<HelpedTrackingCard> {
       key: const Key('helped_tracking_card'),
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.md),
-      decoration: VoiceMemoryCards.standard(background: const Color(0xFFFFFBF5)),
+      decoration: VoiceMemoryCards.standard(
+        background: const Color(0xFFFFFBF5),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [

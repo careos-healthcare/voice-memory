@@ -103,17 +103,16 @@ abstract final class ProofSpecificityEngine {
     required bool isDegradedTranscriptState,
     required bool whatChangedQuestionActive,
     required bool patternReviewInboxHasActiveItems,
-  }) =>
-      shouldShow(
-        result: result,
-        isZeroEntryState: isZeroEntryState,
-        isFirstRecordingState: isFirstRecordingState,
-        isDegradedTranscriptState: isDegradedTranscriptState,
-        isPostSaveDegradedState: false,
-        whatChangedQuestionActive: whatChangedQuestionActive,
-        patternReviewInboxHasActiveItems: patternReviewInboxHasActiveItems,
-        firstProofPayoffVisible: false,
-      );
+  }) => shouldShow(
+    result: result,
+    isZeroEntryState: isZeroEntryState,
+    isFirstRecordingState: isFirstRecordingState,
+    isDegradedTranscriptState: isDegradedTranscriptState,
+    isPostSaveDegradedState: false,
+    whatChangedQuestionActive: whatChangedQuestionActive,
+    patternReviewInboxHasActiveItems: patternReviewInboxHasActiveItems,
+    firstProofPayoffVisible: false,
+  );
 
   static bool shouldShowOnPatterns({
     required ProofSpecificityResult result,
@@ -122,17 +121,16 @@ abstract final class ProofSpecificityEngine {
     required bool isDegradedTranscriptState,
     required bool whatChangedQuestionActive,
     required bool patternReviewInboxHasActiveItems,
-  }) =>
-      shouldShow(
-        result: result,
-        isZeroEntryState: isZeroEntryState,
-        isFirstRecordingState: isFirstRecordingState,
-        isDegradedTranscriptState: isDegradedTranscriptState,
-        isPostSaveDegradedState: false,
-        whatChangedQuestionActive: whatChangedQuestionActive,
-        patternReviewInboxHasActiveItems: patternReviewInboxHasActiveItems,
-        firstProofPayoffVisible: false,
-      );
+  }) => shouldShow(
+    result: result,
+    isZeroEntryState: isZeroEntryState,
+    isFirstRecordingState: isFirstRecordingState,
+    isDegradedTranscriptState: isDegradedTranscriptState,
+    isPostSaveDegradedState: false,
+    whatChangedQuestionActive: whatChangedQuestionActive,
+    patternReviewInboxHasActiveItems: patternReviewInboxHasActiveItems,
+    firstProofPayoffVisible: false,
+  );
 
   static bool shouldShowOnFirstProofPayoff({
     required ProofSpecificityResult result,
@@ -167,11 +165,10 @@ abstract final class ProofSpecificityEngine {
   static bool patternReviewInboxHasActiveItems({
     required List<JournalEntry> entries,
     List<RepeatReturnCheckRecord> returnChecks = const [],
-  }) =>
-      ProEvidenceValueEngine.patternReviewInboxHasActiveItems(
-        entries: entries,
-        returnChecks: returnChecks,
-      );
+  }) => ProEvidenceValueEngine.patternReviewInboxHasActiveItems(
+    entries: entries,
+    returnChecks: returnChecks,
+  );
 
   static bool _passesEvidenceQuality(List<JournalEntry> entries) {
     if (!ArchiveEvidenceQualityGate.allowsBeliefSurfaces(entries)) {

@@ -44,33 +44,33 @@ const _bannedWords = [
 const _privateSnippet = 'felt pressure at work before saying yes';
 
 JournalEntry _capacityEntry(String id, {String? transcript}) => JournalEntry(
-      id: id,
-      createdAt: DateTime(2026, 6, 12, 12),
-      transcript: transcript ??
-          'I $_privateSnippet again and said yes with no capacity left.',
-      durationSeconds: 30,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 2,
-        recurringThemes: ['work'],
-        exactLanguagePattern: '',
-        concreteObservation: 'Work pressure showed up in this moment.',
-        repeatedSignal: '',
-      ),
-    );
+  id: id,
+  createdAt: DateTime(2026, 6, 12, 12),
+  transcript:
+      transcript ??
+      'I $_privateSnippet again and said yes with no capacity left.',
+  durationSeconds: 30,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 2,
+    recurringThemes: ['work'],
+    exactLanguagePattern: '',
+    concreteObservation: 'Work pressure showed up in this moment.',
+    repeatedSignal: '',
+  ),
+);
 
 CapacityPullReasonRecord _answeredPullReason(
   String entryId,
   List<String> reasonIds,
-) =>
-    CapacityPullReasonRecord(
-      sourceEntryId: entryId,
-      reasonIds: reasonIds,
-      status: CapacityPullReasonStatus.answered,
-      createdAt: DateTime(2026, 6, 12),
-      updatedAt: DateTime(2026, 6, 12),
-    );
+) => CapacityPullReasonRecord(
+  sourceEntryId: entryId,
+  reasonIds: reasonIds,
+  status: CapacityPullReasonStatus.answered,
+  createdAt: DateTime(2026, 6, 12),
+  updatedAt: DateTime(2026, 6, 12),
+);
 
 CapacityPullReasonRecord _skippedPullReason(String entryId) =>
     CapacityPullReasonRecord(
@@ -225,8 +225,9 @@ void main() {
         reasonIds: [CapacityPullReasonIds.squeezeItIn],
       );
 
-      final record =
-          CapacityPullReasonStore.instance().cachedRecordForEntry('entry_b');
+      final record = CapacityPullReasonStore.instance().cachedRecordForEntry(
+        'entry_b',
+      );
       expect(record?.sourceEntryId, 'entry_b');
     });
 
@@ -239,8 +240,8 @@ void main() {
         reasonIds: [CapacityPullReasonIds.answeredTooQuickly],
       );
 
-      final json =
-          (await CapacityPullReasonStore.instance().loadAll()).first.toJson();
+      final json = (await CapacityPullReasonStore.instance().loadAll()).first
+          .toJson();
       expect(json.keys, containsAll(['sourceEntryId', 'reasonIds', 'status']));
       expect(json.toString(), isNot(contains(_privateSnippet)));
       expect(json.toString(), isNot(contains('transcript')));
@@ -253,8 +254,9 @@ void main() {
       await CapacityPullReasonStore.instance().saveSkipped(
         sourceEntryId: 'entry_d',
       );
-      final record =
-          CapacityPullReasonStore.instance().cachedRecordForEntry('entry_d');
+      final record = CapacityPullReasonStore.instance().cachedRecordForEntry(
+        'entry_d',
+      );
       expect(record?.status, CapacityPullReasonStatus.skipped);
     });
   });
@@ -282,7 +284,10 @@ void main() {
         result.pullReasonSummary,
         contains('Most common pull: It sounded urgent'),
       );
-      expect(result.pullReasonSummary.toLowerCase(), isNot(contains(_privateSnippet)));
+      expect(
+        result.pullReasonSummary.toLowerCase(),
+        isNot(contains(_privateSnippet)),
+      );
     });
 
     test('loop strengthen prompt when no reasons recorded', () {

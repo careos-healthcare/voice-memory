@@ -1,19 +1,13 @@
 import 'archive_journey_copy.dart';
 
 class ArchiveJourneyStep {
-  const ArchiveJourneyStep({
-    required this.title,
-    required this.body,
-  });
+  const ArchiveJourneyStep({required this.title, required this.body});
 
   final String title;
   final String body;
 }
 
-enum ArchiveJourneyExplainerVariant {
-  compact,
-  full,
-}
+enum ArchiveJourneyExplainerVariant { compact, full }
 
 class ArchiveJourneyExplainer {
   const ArchiveJourneyExplainer({
@@ -67,19 +61,19 @@ class ArchiveJourneyExplainer {
   );
 
   static ArchiveJourneyExplainer compact() => const ArchiveJourneyExplainer(
-        title: ArchiveJourneyCopy.title,
-        steps: [compactStep1, compactStep2, compactStep3],
-        variant: ArchiveJourneyExplainerVariant.compact,
-      );
+    title: ArchiveJourneyCopy.title,
+    steps: [compactStep1, compactStep2, compactStep3],
+    variant: ArchiveJourneyExplainerVariant.compact,
+  );
 
   static ArchiveJourneyExplainer full() => const ArchiveJourneyExplainer(
-        title: ArchiveJourneyCopy.title,
-        steps: [step1, step2, step3, step4, step5],
-        variant: ArchiveJourneyExplainerVariant.full,
-      );
+    title: ArchiveJourneyCopy.title,
+    steps: [step1, step2, step3, step4, step5],
+    variant: ArchiveJourneyExplainerVariant.full,
+  );
 
   List<String> get visibleCopyBlocks => [
-        title,
-        for (final step in steps) ...[step.title, step.body],
-      ];
+    title,
+    for (final step in steps) ...[step.title, step.body],
+  ];
 }

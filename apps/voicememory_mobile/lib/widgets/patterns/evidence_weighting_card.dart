@@ -5,7 +5,6 @@ import '../../features/correction_memory/correction_memory_engine.dart';
 import '../../features/evidence_weighting/evidence_weighting_analytics.dart';
 import '../../features/evidence_weighting/evidence_weighting_copy.dart';
 import '../../features/evidence_weighting/evidence_weighting_model.dart';
-import '../../features/evidence_weighting/evidence_weighting_model.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
 import '../../theme/voicememory_cards.dart';
@@ -47,20 +46,20 @@ class _EvidenceWeightingCardState extends State<EvidenceWeightingCard> {
   Widget build(BuildContext context) {
     _trackSeenOnce();
 
-    final bodyStyle = ArchiveMobileTypography.explanationBody(context).copyWith(
-      color: AppColors.textSecondary,
-      height: 1.45,
-    );
-    final labelStyle = ArchiveMobileTypography.cardLabel(context).copyWith(
-      color: AppColors.textPrimary,
-      fontWeight: FontWeight.w600,
-    );
+    final bodyStyle = ArchiveMobileTypography.explanationBody(
+      context,
+    ).copyWith(color: AppColors.textSecondary, height: 1.45);
+    final labelStyle = ArchiveMobileTypography.cardLabel(
+      context,
+    ).copyWith(color: AppColors.textPrimary, fontWeight: FontWeight.w600);
 
     return Container(
       key: const Key('evidence_weighting_card'),
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.md),
-      decoration: VoiceMemoryCards.standard(background: const Color(0xFFF7FAFC)),
+      decoration: VoiceMemoryCards.standard(
+        background: const Color(0xFFF7FAFC),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -103,9 +102,9 @@ class _EvidenceWeightingCardState extends State<EvidenceWeightingCard> {
           Text(
             EvidenceWeightingCopy.differentiationLine,
             key: const Key('evidence_weighting_differentiation_line'),
-            style: ArchiveMobileTypography.cardLabel(context).copyWith(
-              color: AppColors.textSecondary,
-            ),
+            style: ArchiveMobileTypography.cardLabel(
+              context,
+            ).copyWith(color: AppColors.textSecondary),
           ),
         ],
       ),

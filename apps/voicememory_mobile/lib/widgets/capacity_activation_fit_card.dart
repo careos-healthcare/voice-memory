@@ -25,11 +25,11 @@ class CapacityActivationFitCard extends StatefulWidget {
     super.key,
     required this.result,
     this.onSaved,
-    CapacityActivationFitStore? store,
+    this.store,
     this.sampleMode = false,
     this.compact = false,
     this.showOnSurface = true,
-  }) : store = store;
+  });
 
   final CapacityActivationFitResult result;
   final VoidCallback? onSaved;
@@ -108,8 +108,9 @@ class _CapacityActivationFitCardState extends State<CapacityActivationFitCard> {
             const SizedBox(height: AppSpacing.sm),
             FilledButton(
               key: const Key('capacity_activation_fit_save_button'),
-              onPressed:
-                  _saving || _selectedResponseId == null ? null : _saveAnswer,
+              onPressed: _saving || _selectedResponseId == null
+                  ? null
+                  : _saveAnswer,
               child: Text(widget.result.primaryCtaLabel),
             ),
             const SizedBox(height: AppSpacing.xs),

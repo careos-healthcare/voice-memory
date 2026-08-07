@@ -23,19 +23,18 @@ abstract final class QuietSignalCopy {
   static const weeklyReviewBody =
       'This pattern was being watched, but it has not appeared in your recent saved moments.';
 
-  static const privateReportLine =
-      'This pattern has not shown up recently.';
+  static const privateReportLine = 'This pattern has not shown up recently.';
 
   static List<String> allVisibleStrings() => [
-        title,
-        body,
-        footer,
-        ctaKeepWatching,
-        ctaViewPatternDetails,
-        patternDetailHeading,
-        patternDetailBody,
-        weeklyReviewHeading,
-        weeklyReviewBody,
-        privateReportLine,
-      ];
+    title,
+    body,
+    footer,
+    ctaKeepWatching,
+    ctaViewPatternDetails,
+    patternDetailHeading,
+    patternDetailBody,
+    weeklyReviewHeading,
+    weeklyReviewBody,
+    privateReportLine,
+  ];
 }

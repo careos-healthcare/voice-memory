@@ -9,8 +9,5 @@ abstract final class CuriosityHookGates {
     required CuriosityHook? hook,
     required bool isDegradedPostSave,
   }) =>
-      isPostSaveDone &&
-      hook != null &&
-      !hook.isConsumed &&
-      !isDegradedPostSave;
+      isPostSaveDone && hook != null && !hook.isConsumed && !isDegradedPostSave;
 }

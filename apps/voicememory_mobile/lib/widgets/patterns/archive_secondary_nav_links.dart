@@ -7,10 +7,7 @@ import '../../theme/app_spacing.dart';
 
 /// Secondary Archive links — Discover, Timeline, Search. Hidden until enough evidence.
 class ArchiveSecondaryNavLinks extends StatelessWidget {
-  const ArchiveSecondaryNavLinks({
-    super.key,
-    required this.entryCount,
-  });
+  const ArchiveSecondaryNavLinks({super.key, required this.entryCount});
 
   final int entryCount;
 

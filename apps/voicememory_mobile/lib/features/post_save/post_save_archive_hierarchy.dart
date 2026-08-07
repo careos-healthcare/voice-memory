@@ -1,6 +1,5 @@
 import '../../models/journal_entry.dart';
 import '../activation/belief_update_payoff.dart';
-import '../archive_evidence/archive_entry_signal_guard.dart';
 import '../record/daily_mirror_engine.dart';
 import '../record/daily_mirror_model.dart';
 import '../record/daily_mirror_stage.dart';
@@ -32,7 +31,8 @@ class PostSaveArchiveHierarchy {
   final DailyMirrorResult? mirror;
   final BeliefUpdatePayoff? beliefUpdatePayoff;
 
-  bool get showBeliefUpdateCard => kind == PostSavePrimaryArchiveKind.beliefUpdate;
+  bool get showBeliefUpdateCard =>
+      kind == PostSavePrimaryArchiveKind.beliefUpdate;
 
   bool get showMomentQualityFeedback =>
       kind != PostSavePrimaryArchiveKind.firstProofUnlocked;
@@ -65,8 +65,7 @@ class PostSaveArchiveHierarchy {
       );
     }
 
-    final resolvedMirror =
-        mirror ?? const DailyMirrorEngine().build(entries);
+    final resolvedMirror = mirror ?? const DailyMirrorEngine().build(entries);
 
     if (firstProofUnlocked) {
       return PostSaveArchiveHierarchy(
@@ -123,7 +122,8 @@ class PostSaveArchiveHierarchy {
     return false;
   }
 
-  static bool _isFirstSavedEntry(List<JournalEntry> entries) => entries.length == 1;
+  static bool _isFirstSavedEntry(List<JournalEntry> entries) =>
+      entries.length == 1;
 
   static bool _hasHeardText(JournalEntry entry) {
     final resolution = resolveEntryDisplayText(entry);

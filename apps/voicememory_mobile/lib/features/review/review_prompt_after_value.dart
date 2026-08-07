@@ -149,7 +149,7 @@ class NoopReviewLauncher implements ReviewLauncher {
 /// Local persistence for the asked-once flag. Stores a single boolean —
 /// no timestamps, counts, or content.
 class ReviewPromptStore {
-  ReviewPromptStore({MobilePrefsStore? prefs}) : _prefs = prefs;
+  ReviewPromptStore({this._prefs});
 
   final MobilePrefsStore? _prefs;
 

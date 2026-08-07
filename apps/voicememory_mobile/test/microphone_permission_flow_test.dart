@@ -7,7 +7,7 @@ import 'package:go_router/go_router.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:voicememory_mobile/audio/recording_service.dart';
 import 'package:voicememory_mobile/dev/visual_audit_overrides.dart';
-import 'package:voicememory_mobile/features/voice_capture/audio/native_audio_recorder.dart';
+import 'package:voicememory_mobile/features/voice_capture/audio/ios_native_recorder.dart';
 import 'package:voicememory_mobile/features/voice_capture/microphone_permission_copy.dart';
 import 'package:voicememory_mobile/features/voice_capture/microphone_permission_environment.dart';
 import 'package:voicememory_mobile/features/voice_capture/microphone_permission_gateway.dart';
@@ -245,7 +245,7 @@ void main() {
           statusValue: PermissionStatus.permanentlyDenied,
           hasRecorder: true,
         );
-        final recording = RecordingService(
+        final recording = RecordingService.create(
           testMode: true,
           permissionGateway: gateway,
         );
@@ -264,7 +264,7 @@ void main() {
           statusValue: PermissionStatus.denied,
           hasRecorder: true,
         );
-        final recording = RecordingService(
+        final recording = RecordingService.create(
           testMode: true,
           permissionGateway: gateway,
         );
@@ -279,7 +279,7 @@ void main() {
         statusValue: PermissionStatus.denied,
         hasRecorder: false,
       );
-      final recording = RecordingService(
+      final recording = RecordingService.create(
         testMode: true,
         permissionGateway: gateway,
       );
@@ -296,7 +296,7 @@ void main() {
         statusValue: PermissionStatus.denied,
         hasRecorder: true,
       );
-      final recording = RecordingService(
+      final recording = RecordingService.create(
         testMode: true,
         permissionGateway: gateway,
       );
@@ -314,7 +314,7 @@ void main() {
           statusValue: PermissionStatus.denied,
           hasRecorder: true,
         );
-        final recording = RecordingService(
+        final recording = RecordingService.create(
           testMode: true,
           permissionGateway: gateway,
         );
@@ -333,7 +333,7 @@ void main() {
           statusValue: PermissionStatus.permanentlyDenied,
           hasRecorder: true,
         );
-        final recording = RecordingService(
+        final recording = RecordingService.create(
           testMode: true,
           permissionGateway: gateway,
         );
@@ -352,7 +352,7 @@ void main() {
           statusValue: PermissionStatus.denied,
           hasRecorder: true,
         );
-        final recording = RecordingService(
+        final recording = RecordingService.create(
           testMode: true,
           permissionGateway: gateway,
         );
@@ -375,7 +375,7 @@ void main() {
           statusValue: PermissionStatus.permanentlyDenied,
           hasRecorder: false,
         );
-        final recording = RecordingService(
+        final recording = RecordingService.create(
           testMode: true,
           permissionGateway: gateway,
         );
@@ -394,7 +394,7 @@ void main() {
           statusValue: PermissionStatus.denied,
           hasRecorder: true,
         );
-        final recording = RecordingService(
+        final recording = RecordingService.create(
           testMode: true,
           permissionGateway: gateway,
         );
@@ -415,7 +415,7 @@ void main() {
           statusValue: PermissionStatus.denied,
           hasRecorder: true,
         );
-        final recording = RecordingService(
+        final recording = RecordingService.create(
           testMode: true,
           permissionGateway: gateway,
         );
@@ -430,7 +430,7 @@ void main() {
         statusValue: PermissionStatus.granted,
         hasRecorder: true,
       );
-      final recording = RecordingService(
+      final recording = RecordingService.create(
         testMode: true,
         permissionGateway: gateway,
       );
@@ -446,7 +446,7 @@ void main() {
         requestResult: PermissionStatus.granted,
         hasRecorder: true,
       );
-      final recording = RecordingService(
+      final recording = RecordingService.create(
         testMode: true,
         permissionGateway: gateway,
       );
@@ -463,7 +463,7 @@ void main() {
           statusValue: PermissionStatus.denied,
           hasRecorder: true,
         );
-        final recording = RecordingService(
+        final recording = RecordingService.create(
           testMode: true,
           permissionGateway: gateway,
         );
@@ -480,7 +480,7 @@ void main() {
           statusValue: PermissionStatus.granted,
           hasRecorder: true,
         );
-        final recording = RecordingService(
+        final recording = RecordingService.create(
           testMode: true,
           permissionGateway: gateway,
         );
@@ -894,7 +894,7 @@ void main() {
           requestResult: PermissionStatus.granted,
           hasRecorder: true,
         );
-        final recording = RecordingService(
+        final recording = RecordingService.create(
           testMode: true,
           permissionGateway: gateway,
         );
@@ -912,7 +912,7 @@ void main() {
         requestResult: PermissionStatus.denied,
         hasRecorder: true,
       );
-      final recording = RecordingService(
+      final recording = RecordingService.create(
         testMode: true,
         permissionGateway: gateway,
       );
@@ -971,38 +971,6 @@ void main() {
         find.text(MicrophonePermissionCopy.typeInsteadBlockedHelper),
         findsOneWidget,
       );
-    });
-
-    testWidgets('shows shielded mic and expandable privacy details', (
-      tester,
-    ) async {
-      tester.view.physicalSize = const Size(800, 1200);
-      tester.view.devicePixelRatio = 1;
-      addTearDown(tester.view.reset);
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: MicrophonePermissionBlockedPanel(
-              onOpenSettings: () {},
-              onTypeInstead: () async {},
-            ),
-          ),
-        ),
-      );
-
-      expect(
-        find.byKey(const Key('microphone_recovery_shield_icon')),
-        findsOneWidget,
-      );
-      await tester.tap(
-        find.byKey(const Key('microphone_recovery_why_expansion')),
-      );
-      await tester.pumpAndSettle();
-      expect(
-        find.text(MicrophonePermissionCopy.localWhisperDetail),
-        findsOneWidget,
-      );
-      expect(find.text(MicrophonePermissionCopy.privacyDetail), findsOneWidget);
     });
 
     testWidgets('simulator layout keeps Open Settings as the primary action', (

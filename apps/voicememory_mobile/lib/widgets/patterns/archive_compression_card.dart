@@ -27,7 +27,7 @@ class ArchiveCompressionCard extends StatefulWidget {
   final VoidCallback? onOpenAll;
 
   static const Color warmSurface = Color(0xFFFFFBF5);
-  static const Color warmBorder = Color(0xFFF5E6D3);
+  static const Color warmBorder = AppColors.warmBorder;
 
   @override
   State<ArchiveCompressionCard> createState() => _ArchiveCompressionCardState();

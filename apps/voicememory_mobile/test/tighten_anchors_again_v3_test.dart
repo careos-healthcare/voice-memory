@@ -5,7 +5,6 @@ import 'package:voicememory_mobile/features/beta/archive_beta_mission_gate.dart'
 import 'package:voicememory_mobile/features/beta_proof_feedback/beta_proof_feedback_model.dart';
 import 'package:voicememory_mobile/features/beta_proof_lift/beta_proof_lift_engine.dart';
 import 'package:voicememory_mobile/features/beta_proof_lift/beta_proof_lift_model.dart';
-import 'package:voicememory_mobile/features/beta_repair_lab/beta_repair_lab_engine.dart';
 import 'package:voicememory_mobile/features/beta_repair_lab/beta_repair_lab_model.dart';
 import 'package:voicememory_mobile/features/beta_repair_lab/beta_repair_lab_store.dart';
 import 'package:voicememory_mobile/features/evidence_anchors/evidence_anchor_engine.dart';
@@ -26,10 +25,11 @@ import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/models/sync_status.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
 import 'package:voicememory_mobile/storage/mobile_prefs_store.dart';
+import 'support/test_storage_sandbox.dart';
 
 class _MemoryPrefs extends MobilePrefsStore {
   _MemoryPrefs()
-      : super(file: File('test/tmp/tighten_anchors_again_v3/unused.json'));
+    : super(file: File('test/tmp/tighten_anchors_again_v3/unused.json'));
 
   final Map<String, Map<String, dynamic>> maps = {};
 
@@ -51,23 +51,22 @@ JournalEntry _entry(
   String transcript, {
   DateTime? createdAt,
   String concreteObservation = 'Work pressure showed up again today.',
-}) =>
-    JournalEntry(
-      id: id,
-      createdAt: createdAt ?? _now,
-      transcript: transcript,
-      durationSeconds: 24,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: Reflection(
-        mood: 'thoughtful',
-        emotionalIntensity: 2,
-        recurringThemes: const ['work'],
-        exactLanguagePattern: '',
-        concreteObservation: concreteObservation,
-        repeatedSignal: '',
-      ),
-      syncStatus: SyncStatus.localOnly,
-    );
+}) => JournalEntry(
+  id: id,
+  createdAt: createdAt ?? _now,
+  transcript: transcript,
+  durationSeconds: 24,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: Reflection(
+    mood: 'thoughtful',
+    emotionalIntensity: 2,
+    recurringThemes: const ['work'],
+    exactLanguagePattern: '',
+    concreteObservation: concreteObservation,
+    repeatedSignal: '',
+  ),
+  syncStatus: SyncStatus.localOnly,
+);
 
 List<JournalEntry> _specificRepeatEntries({DateTime? anchor}) {
   final base = anchor ?? _now;
@@ -141,43 +140,44 @@ List<JournalEntry> _emotionalContextEntries() {
 BetaRepairLabVisibilityInput _repairInput({
   ProofConfidenceLevel confidenceLevel = ProofConfidenceLevel.watchOnly,
   BetaProofFeedbackType? feedbackType,
-}) =>
-    BetaRepairLabVisibilityInput(
-      mode: BetaRepairLabMode.evidenceTrailTimelineClarity,
-      entryCount: 4,
-      source: 'test',
-      isPro: false,
-      isRecording: false,
-      isDegradedTranscriptState: false,
-      whatChangedQuestionActive: false,
-      patternReviewInboxHasActiveItems: false,
-      hasTimelineProofVisible: true,
-      hasConfirmedRepeat: true,
-      confidenceLevel: confidenceLevel,
-      hasUsefulProofFeedback: feedbackType == BetaProofFeedbackType.useful,
-      feedbackType: feedbackType,
-      isNegativeFeedback: feedbackType == BetaProofFeedbackType.tooVague ||
-          feedbackType == BetaProofFeedbackType.notRelevant,
-      betaMissionEnabled: true,
-    );
+}) => BetaRepairLabVisibilityInput(
+  mode: BetaRepairLabMode.evidenceTrailTimelineClarity,
+  entryCount: 4,
+  source: 'test',
+  isPro: false,
+  isRecording: false,
+  isDegradedTranscriptState: false,
+  whatChangedQuestionActive: false,
+  patternReviewInboxHasActiveItems: false,
+  hasTimelineProofVisible: true,
+  hasConfirmedRepeat: true,
+  confidenceLevel: confidenceLevel,
+  hasUsefulProofFeedback: feedbackType == BetaProofFeedbackType.useful,
+  feedbackType: feedbackType,
+  isNegativeFeedback:
+      feedbackType == BetaProofFeedbackType.tooVague ||
+      feedbackType == BetaProofFeedbackType.notRelevant,
+  betaMissionEnabled: true,
+);
 
 void main() {
+  late TestStorageSandbox sandbox;
   late _MemoryPrefs prefs;
 
   setUp(() async {
+    sandbox = TestStorageSandbox.create();
     prefs = _MemoryPrefs();
     ArchiveBetaMissionGate.enabledOverride = true;
     await BetaRepairLabStore.resetForTest(prefs);
     await AppServices.resetForTest(
-      journalPath:
-          'test/tmp/tighten_anchors_again_v3/${DateTime.now().microsecondsSinceEpoch}_journal.json',
-      prefsPath:
-          'test/tmp/tighten_anchors_again_v3/${DateTime.now().microsecondsSinceEpoch}_prefs.json',
+      journalPath: sandbox.journalPath,
+      prefsPath: sandbox.prefsPath,
       skipRevenueCat: true,
     );
     ArchiveBetaMissionGate.enabledOverride = true;
   });
 
+  tearDown(() => sandbox.dispose());
   tearDown(() async {
     ArchiveBetaMissionGate.resetForTest();
     await BetaRepairLabStore.resetForTest(prefs);
@@ -376,94 +376,97 @@ void main() {
       );
       expect(
         calibration.level,
-        anyOf(
-          ProofConfidenceLevel.watchOnly,
-          ProofConfidenceLevel.corrected,
-        ),
+        anyOf(ProofConfidenceLevel.watchOnly, ProofConfidenceLevel.corrected),
       );
     });
 
-    test('rejected anchor does not show What Changed or first proof payoff', () {
-      final entries = _keptCheckingEntries();
-      final lift = BetaProofLiftEngine.build(
-        entries: entries,
-        surface: BetaProofLiftSurface.timelineProofMoment,
-        source: 'test',
-        beliefSurfaceVisible: true,
-        now: _now,
-      );
-      expect(lift.hasSafeAnchor, isFalse);
-      expect(lift.shouldShow, isFalse);
-      expect(
-        BetaProofLiftEngine.shouldShow(
-          result: lift,
-          parentVisible: true,
-          timelineProofVisible: true,
-          firstProofPayoffVisible: true,
-          isRecording: false,
-          isDegradedTranscriptState: false,
-          isPostSaveDegradedState: false,
-          whatChangedQuestionActive: false,
-          patternReviewInboxHasActiveItems: false,
-        ),
-        isFalse,
-      );
-
-      final payoff = BetaProofLiftEngine.build(
-        entries: entries,
-        surface: BetaProofLiftSurface.firstProofPayoff,
-        source: 'test',
-        beliefSurfaceVisible: true,
-        now: _now,
-      );
-      expect(payoff.hasSafeAnchor, isFalse);
-      expect(payoff.shouldShow, isFalse);
-    });
-
-    test('pro evidence-trail pricing modes cannot override rejected anchor', () {
-      expect(
-        EvidenceTrailClarityEngine.shouldShow(
-          input: _repairInput(
-            confidenceLevel: ProofConfidenceLevel.watchOnly,
-          ),
-          hasSafeAnchor: false,
-        ),
-        isFalse,
-      );
-      BetaRepairLabStore.repairModeOverrideForTest = 'pricingValidation';
-      expect(
-        PricingValidationEngine.shouldShow(
-          input: _repairInput(
-            confidenceLevel: ProofConfidenceLevel.watchOnly,
-            feedbackType: BetaProofFeedbackType.tooVague,
-          ),
-          hasProEngagement: true,
-        ),
-        isFalse,
-      );
-      expect(
-        ProofFloorRescueEngine.blocksProMonetization(
-          ProofFloorRescueInput(
-            entryCount: 4,
-            source: 'test',
-            isPro: false,
-            hasTimelineProofVisible: true,
-            hasConfirmedRepeat: true,
-            confidenceLevel: ProofConfidenceLevel.watchOnly,
-            hasSafeAnchor: false,
-            hasLowMatchQuality: true,
-            usefulFeedbackCount: 0,
-            latestFeedbackType: BetaProofFeedbackType.tooVague,
-            feedbackAnsweredToday: true,
+    test(
+      'rejected anchor does not show What Changed or first proof payoff',
+      () {
+        final entries = _keptCheckingEntries();
+        final lift = BetaProofLiftEngine.build(
+          entries: entries,
+          surface: BetaProofLiftSurface.timelineProofMoment,
+          source: 'test',
+          beliefSurfaceVisible: true,
+          now: _now,
+        );
+        expect(lift.hasSafeAnchor, isFalse);
+        expect(lift.shouldShow, isFalse);
+        expect(
+          BetaProofLiftEngine.shouldShow(
+            result: lift,
+            parentVisible: true,
+            timelineProofVisible: true,
+            firstProofPayoffVisible: true,
             isRecording: false,
             isDegradedTranscriptState: false,
+            isPostSaveDegradedState: false,
             whatChangedQuestionActive: false,
             patternReviewInboxHasActiveItems: false,
           ),
-        ),
-        isTrue,
-      );
-    });
+          isFalse,
+        );
+
+        final payoff = BetaProofLiftEngine.build(
+          entries: entries,
+          surface: BetaProofLiftSurface.firstProofPayoff,
+          source: 'test',
+          beliefSurfaceVisible: true,
+          now: _now,
+        );
+        expect(payoff.hasSafeAnchor, isFalse);
+        expect(payoff.shouldShow, isFalse);
+      },
+    );
+
+    test(
+      'pro evidence-trail pricing modes cannot override rejected anchor',
+      () {
+        expect(
+          EvidenceTrailClarityEngine.shouldShow(
+            input: _repairInput(
+              confidenceLevel: ProofConfidenceLevel.watchOnly,
+            ),
+            hasSafeAnchor: false,
+          ),
+          isFalse,
+        );
+        BetaRepairLabStore.repairModeOverrideForTest = 'pricingValidation';
+        expect(
+          PricingValidationEngine.shouldShow(
+            input: _repairInput(
+              confidenceLevel: ProofConfidenceLevel.watchOnly,
+              feedbackType: BetaProofFeedbackType.tooVague,
+            ),
+            hasProEngagement: true,
+          ),
+          isFalse,
+        );
+        expect(
+          ProofFloorRescueEngine.blocksProMonetization(
+            ProofFloorRescueInput(
+              entryCount: 4,
+              source: 'test',
+              isPro: false,
+              hasTimelineProofVisible: true,
+              hasConfirmedRepeat: true,
+              confidenceLevel: ProofConfidenceLevel.watchOnly,
+              hasSafeAnchor: false,
+              hasLowMatchQuality: true,
+              usefulFeedbackCount: 0,
+              latestFeedbackType: BetaProofFeedbackType.tooVague,
+              feedbackAnsweredToday: true,
+              isRecording: false,
+              isDegradedTranscriptState: false,
+              whatChangedQuestionActive: false,
+              patternReviewInboxHasActiveItems: false,
+            ),
+          ),
+          isTrue,
+        );
+      },
+    );
 
     test('existing specific confirmed-repeat proof path still passes', () {
       final calibration = ProofConfidenceCalibrationEngine.build(
@@ -475,10 +478,7 @@ void main() {
       expect(calibration.hasSafeAnchor, isTrue);
       expect(
         calibration.level,
-        anyOf(
-          ProofConfidenceLevel.useful,
-          ProofConfidenceLevel.strong,
-        ),
+        anyOf(ProofConfidenceLevel.useful, ProofConfidenceLevel.strong),
       );
       final timeline = TimelineProofMomentEngine.build(
         entries: _specificRepeatEntries(),
@@ -492,38 +492,41 @@ void main() {
       }
     });
 
-    test('record screen remains capture-first without stacking extra cards', () {
-      final audit = SurfacePriorityEngine.auditRecordReady(
-        entryCount: 4,
-        source: 'record',
-        candidates: SurfacePriorityCandidates.recordReady(
-          firstMomentCapture: false,
-          secondMomentReturn: false,
-          lowFrictionReturn: false,
-          whatToNoticeNext: false,
-          betaTodaySummary: false,
-          openCapturePromptChips: false,
-          captureFreedomLine: false,
-          timelineProofMoment: true,
-          archiveTimelineSpine: false,
-          timelinePositioning: false,
-          currentRelevance: false,
-          correctionMemory: false,
-          notRelevantRecovery: false,
-          proofQualityResponse: false,
-          evidenceWeighting: false,
-          proofSpecificity: false,
-          presentDayRelevance: false,
-          patternConfidence: false,
-          betaTesterReport: false,
-          proEvidenceValue: false,
-          privateReportProBridge: false,
-          suppressLegacyEducation: false,
-          betaProofLift: true,
-        ),
-      );
-      expect(audit.proofCardKey, 'timelineProofMoment');
-      expect(audit.guidanceCardKey, isNull);
-    });
+    test(
+      'record screen remains capture-first without stacking extra cards',
+      () {
+        final audit = SurfacePriorityEngine.auditRecordReady(
+          entryCount: 4,
+          source: 'record',
+          candidates: SurfacePriorityCandidates.recordReady(
+            firstMomentCapture: false,
+            secondMomentReturn: false,
+            lowFrictionReturn: false,
+            whatToNoticeNext: false,
+            betaTodaySummary: false,
+            openCapturePromptChips: false,
+            captureFreedomLine: false,
+            timelineProofMoment: true,
+            archiveTimelineSpine: false,
+            timelinePositioning: false,
+            currentRelevance: false,
+            correctionMemory: false,
+            notRelevantRecovery: false,
+            proofQualityResponse: false,
+            evidenceWeighting: false,
+            proofSpecificity: false,
+            presentDayRelevance: false,
+            patternConfidence: false,
+            betaTesterReport: false,
+            proEvidenceValue: false,
+            privateReportProBridge: false,
+            suppressLegacyEducation: false,
+            betaProofLift: true,
+          ),
+        );
+        expect(audit.proofCardKey, 'timelineProofMoment');
+        expect(audit.guidanceCardKey, isNull);
+      },
+    );
   });
 }

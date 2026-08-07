@@ -8,8 +8,7 @@ abstract final class ArchiveReturnChangesGates {
     required int entryCount,
     required bool sampleMode,
     required ArchiveReturnChangesResult? result,
-  }) =>
-      entryCount >= 2 && !sampleMode && result != null;
+  }) => entryCount >= 2 && !sampleMode && result != null;
 
   static bool showOnRecord({
     required bool loaded,
@@ -18,9 +17,5 @@ abstract final class ArchiveReturnChangesGates {
     required bool sampleMode,
     required ArchiveReturnChangesResult? result,
   }) =>
-      loaded &&
-      entryCount >= 2 &&
-      !isPostSave &&
-      !sampleMode &&
-      result != null;
+      loaded && entryCount >= 2 && !isPostSave && !sampleMode && result != null;
 }

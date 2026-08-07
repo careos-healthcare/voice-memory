@@ -1,6 +1,5 @@
 import '../../design/user_facing_date.dart';
 import '../../models/journal_entry.dart';
-import '../archive_evidence/archive_evidence_guard.dart';
 import '../archive_evidence/archive_evidence_quality.dart';
 import '../archive_evidence/comparable_evidence_text.dart';
 import '../early_archive/early_first_signal_engine.dart';
@@ -23,9 +22,7 @@ abstract final class ArchiveHistoryEngine {
   static const _previewMaxChars = 120;
   static const _signalEngine = SecondSessionSignalEngine();
 
-  static ArchiveHistoryContent build({
-    required List<JournalEntry> entries,
-  }) {
+  static ArchiveHistoryContent build({required List<JournalEntry> entries}) {
     if (entries.isEmpty) {
       return const ArchiveHistoryContent(items: [], isEmpty: true);
     }
@@ -36,11 +33,7 @@ abstract final class ArchiveHistoryEngine {
 
     final items = EntryImportanceEngine.prioritizeHistoryItems([
       for (final entry in sorted)
-        _buildItem(
-          entry: entry,
-          entries: sorted,
-          evidenceIds: evidenceIds,
-        ),
+        _buildItem(entry: entry, entries: sorted, evidenceIds: evidenceIds),
     ]);
 
     return ArchiveHistoryContent(items: items, isEmpty: false);
@@ -52,7 +45,8 @@ abstract final class ArchiveHistoryEngine {
     required Set<String> evidenceIds,
   }) {
     final status = _statusFor(entry, evidenceIds, entries);
-    final needsAddWords = status == ArchiveHistoryStatus.needsYourWords &&
+    final needsAddWords =
+        status == ArchiveHistoryStatus.needsYourWords &&
         PendingTranscriptRecoveryGate.entryNeedsRecovery(entry);
     return ArchiveHistoryItem(
       entryId: entry.id,
@@ -64,7 +58,8 @@ abstract final class ArchiveHistoryEngine {
       isQuietDay: RecordCaptureModeEngine.entryIsQuietDay(entry),
       isImportant: EntryImportanceStore.isImportant(entry.id),
       showAddWordsCta: needsAddWords,
-      showCorrectTranscriptCta: !needsAddWords &&
+      showCorrectTranscriptCta:
+          !needsAddWords &&
           TranscriptCorrectionGate.entryAllowsCorrection(entry),
     );
   }
@@ -140,23 +135,20 @@ abstract final class ArchiveHistoryEngine {
   }
 
   static String? _evidenceNote(ArchiveHistoryStatus status) => switch (status) {
-        ArchiveHistoryStatus.usedAsEvidence =>
-          ArchiveHistoryCopy.noteUsedAsEvidence,
-        ArchiveHistoryStatus.needsYourWords =>
-          ArchiveHistoryCopy.noteNeedsYourWords,
-        ArchiveHistoryStatus.ignoredForPatterns =>
-          ArchiveHistoryCopy.noteIgnoredForPatterns,
-        ArchiveHistoryStatus.excludedFromPattern =>
-          ArchiveHistoryCopy.noteExcludedFromPattern,
-        ArchiveHistoryStatus.transcriptPending =>
-          ArchiveHistoryCopy.noteNeedsYourWords,
-        ArchiveHistoryStatus.savedOnly => null,
-      };
+    ArchiveHistoryStatus.usedAsEvidence =>
+      ArchiveHistoryCopy.noteUsedAsEvidence,
+    ArchiveHistoryStatus.needsYourWords =>
+      ArchiveHistoryCopy.noteNeedsYourWords,
+    ArchiveHistoryStatus.ignoredForPatterns =>
+      ArchiveHistoryCopy.noteIgnoredForPatterns,
+    ArchiveHistoryStatus.excludedFromPattern =>
+      ArchiveHistoryCopy.noteExcludedFromPattern,
+    ArchiveHistoryStatus.transcriptPending =>
+      ArchiveHistoryCopy.noteNeedsYourWords,
+    ArchiveHistoryStatus.savedOnly => null,
+  };
 
-  static String _previewText(
-    JournalEntry entry,
-    ArchiveHistoryStatus status,
-  ) {
+  static String _previewText(JournalEntry entry, ArchiveHistoryStatus status) {
     if (status == ArchiveHistoryStatus.needsYourWords ||
         status == ArchiveHistoryStatus.transcriptPending) {
       return ArchiveHistoryCopy.pendingPreview;

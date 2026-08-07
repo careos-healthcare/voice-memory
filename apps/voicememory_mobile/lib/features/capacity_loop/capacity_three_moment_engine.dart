@@ -76,23 +76,21 @@ class CapacityThreeMomentEngine {
           : CapacityThreeMomentCopy.cardSubtitle,
       progressLabel: useReturnTrigger
           ? ''
-          : CapacityThreeMomentCopy.progressLabel(
-              count,
-              target: target,
-            ),
+          : CapacityThreeMomentCopy.progressLabel(count, target: target),
       emptyBody: count <= 0 ? CapacityThreeMomentCopy.emptyBody : '',
       primaryCtaLabel: atTarget
           ? CapacityThreeMomentCopy.reviewLoopCta
           : useReturnTrigger
-              ? returnTrigger.primaryCtaLabel
-              : CapacityThreeMomentCopy.saveYesMomentCta,
+          ? returnTrigger.primaryCtaLabel
+          : CapacityThreeMomentCopy.saveYesMomentCta,
       primaryRoute: atTarget
           ? CapacityThreeMomentCopy.loopRoute
           : useReturnTrigger
-              ? returnTrigger.primaryRoute
-              : CapacityThreeMomentCopy.recordRoute,
+          ? returnTrigger.primaryRoute
+          : CapacityThreeMomentCopy.recordRoute,
       primaryDismisses: useReturnTrigger && returnTrigger.primaryDismisses,
-      showQuickSaveSecondary: !atTarget && !useReturnTrigger && quickCapture.showCard,
+      showQuickSaveSecondary:
+          !atTarget && !useReturnTrigger && quickCapture.showCard,
       quickSaveRoute: LowEffortYesCaptureCopy.route,
       showReviewSecondary: useReturnTrigger && returnTrigger.showSecondary,
       reviewSecondaryLabel: returnTrigger.secondaryCtaLabel,
@@ -113,8 +111,7 @@ class CapacityThreeMomentEngine {
       return CapacityThreeMomentResult.hidden;
     }
     final capacityCount = loopEngine.countCapacityEvidence(realEntries);
-    final momentCount =
-        loopEngine.eligibleCapacityEntryIds(realEntries).length;
+    final momentCount = loopEngine.eligibleCapacityEntryIds(realEntries).length;
 
     return build(
       CapacityThreeMomentInput(

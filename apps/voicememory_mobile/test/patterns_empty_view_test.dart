@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
-import 'package:voicememory_mobile/features/archive_proof/visible_archive_proof_copy.dart';
-import 'package:voicememory_mobile/product/consumer_ui_copy.dart';
 import 'package:voicememory_mobile/widgets/patterns/patterns_empty_view.dart';
-import 'package:voicememory_mobile/widgets/patterns/patterns_first_archive_view.dart';
 
 const _mindMapBannedPhrases = [
   'therapy',
@@ -42,48 +39,44 @@ void _expectNoMindMapBannedCopy(Iterable<String> visible) {
 }
 
 void main() {
-  testWidgets('patterns empty state shows archive four-state copy and record CTA', (
-    tester,
-  ) async {
-    await tester.pumpWidget(
-      const MaterialApp(
-        home: Scaffold(body: PatternsEmptyView(fillViewport: false)),
-      ),
-    );
-    await tester.pumpAndSettle();
+  testWidgets(
+    'patterns empty state shows archive four-state copy and record CTA',
+    (tester) async {
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: Scaffold(body: PatternsEmptyView(fillViewport: false)),
+        ),
+      );
+      await tester.pumpAndSettle();
 
-    expect(
-      find.textContaining('Nothing saved yet'),
-      findsOneWidget,
-    );
-    expect(find.text('Record a moment'), findsOneWidget);
-    expect(find.text('Patterns'), findsNothing);
-    expect(find.text('Changes'), findsNothing);
-    expect(find.text('Next to watch'), findsNothing);
-    expect(find.text('Type instead'), findsNothing);
-    expect(
-      find.byKey(const Key('archive_tab_record_moment_cta')),
-      findsOneWidget,
-    );
-    expect(find.text('Current belief'), findsNothing);
-    expect(find.text('Not enough evidence yet'), findsNothing);
-    expect(find.text('Start your first week'), findsNothing);
-    expect(find.textContaining('Step 0 of 7'), findsNothing);
-    expect(find.textContaining('Save seven moments'), findsNothing);
-    expect(find.text('Record one moment'), findsNothing);
-    expect(find.text('Record first moment'), findsNothing);
-    expect(find.textContaining('VoiceMemory'), findsNothing);
-    _expectNoMindMapBannedCopy(_visibleTextOnScreen(tester));
-  });
+      expect(find.textContaining('Nothing saved yet'), findsOneWidget);
+      expect(find.text('Record a moment'), findsOneWidget);
+      expect(find.text('Patterns'), findsNothing);
+      expect(find.text('Changes'), findsNothing);
+      expect(find.text('Next to watch'), findsNothing);
+      expect(find.text('Type instead'), findsNothing);
+      expect(
+        find.byKey(const Key('archive_tab_record_moment_cta')),
+        findsOneWidget,
+      );
+      expect(find.text('Current belief'), findsNothing);
+      expect(find.text('Not enough evidence yet'), findsNothing);
+      expect(find.text('Start your first week'), findsNothing);
+      expect(find.textContaining('Step 0 of 7'), findsNothing);
+      expect(find.textContaining('Save seven moments'), findsNothing);
+      expect(find.text('Record one moment'), findsNothing);
+      expect(find.text('Record first moment'), findsNothing);
+      expect(find.textContaining('VoiceMemory'), findsNothing);
+      _expectNoMindMapBannedCopy(_visibleTextOnScreen(tester));
+    },
+  );
 
   testWidgets('fillViewport scroll view renders without layout exceptions', (
     tester,
   ) async {
     await tester.pumpWidget(
       const MaterialApp(
-        home: Scaffold(
-          body: PatternsEmptyView(fillViewport: true),
-        ),
+        home: Scaffold(body: PatternsEmptyView(fillViewport: true)),
       ),
     );
     await tester.pumpAndSettle();
@@ -103,8 +96,7 @@ void main() {
         ),
         GoRoute(
           path: '/record',
-          builder: (context, state) =>
-              const Scaffold(body: Text('RECORD_TAB')),
+          builder: (context, state) => const Scaffold(body: Text('RECORD_TAB')),
         ),
       ],
     );
@@ -116,37 +108,6 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('RECORD_TAB'), findsOneWidget);
-  });
-
-  testWidgets('patterns first-archive view shows one-entry saved copy', (
-    tester,
-  ) async {
-    await tester.pumpWidget(
-      const MaterialApp(
-        home: Scaffold(
-          body: PatternsFirstArchiveView(
-            fillViewport: false,
-            savedEntryId: 'e1',
-          ),
-        ),
-      ),
-    );
-    await tester.pumpAndSettle();
-
-    expect(
-      find.text(ConsumerUiCopy.patternsFirstEntrySavedTitle),
-      findsOneWidget,
-    );
-    expect(
-      find.text(ConsumerUiCopy.patternsFirstEntrySavedBody),
-      findsOneWidget,
-    );
-    expect(
-      find.text(ConsumerUiCopy.patternsFirstEntrySavedCta),
-      findsOneWidget,
-    );
-    expect(find.text(ConsumerUiCopy.patternsEmptyPageTitle), findsNothing);
-    expect(find.text(ConsumerUiCopy.patternsEmptyCta), findsNothing);
   });
 
   testWidgets('patterns empty is readable on iPad width', (tester) async {
@@ -162,9 +123,7 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    final body = tester.widget<Text>(
-      find.textContaining('Nothing saved yet'),
-    );
+    final body = tester.widget<Text>(find.textContaining('Nothing saved yet'));
     expect(body.style?.fontSize ?? 0, greaterThanOrEqualTo(14));
   });
 }

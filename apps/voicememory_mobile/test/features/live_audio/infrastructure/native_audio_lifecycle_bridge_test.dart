@@ -4,24 +4,32 @@ import 'dart:io';
 
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:voicememory_mobile/api/api_client.dart';
+import 'package:voicememory_mobile/core/network/api_result.dart';
+import 'package:voicememory_mobile/core/network/network_cancel_token.dart';
+import 'package:voicememory_mobile/data/network/capture_api_client.dart';
+import 'package:voicememory_mobile/data/repositories/capture_repository.dart';
 import 'package:voicememory_mobile/features/live_audio/application/live_audio_session_coordinator.dart';
 import 'package:voicememory_mobile/features/live_audio/application/live_voice_capture_service.dart';
+import 'package:voicememory_mobile/features/live_audio/domain/models/offline_vault_manifest.dart';
+import 'package:voicememory_mobile/features/proof_admission/proof_admission_models.dart';
+import 'package:voicememory_mobile/models/attest_result.dart';
 import 'package:voicememory_mobile/features/live_audio/domain/models/live_audio_session_config.dart';
 import 'package:voicememory_mobile/features/live_audio/domain/services/live_pcm16_capture_source.dart';
 import 'package:voicememory_mobile/features/live_audio/infrastructure/live_audio_session_api_client.dart';
 import 'package:voicememory_mobile/features/live_audio/infrastructure/live_audio_socket_connection.dart';
 import 'package:voicememory_mobile/features/live_audio/infrastructure/live_audio_websocket_client.dart';
-import 'package:voicememory_mobile/features/live_audio/infrastructure/live_pcm24_playback_engine.dart';
 import 'package:voicememory_mobile/features/live_audio/infrastructure/native_audio_lifecycle_bridge.dart';
 import 'package:voicememory_mobile/features/live_audio/live_audio_constants.dart';
 import 'package:voicememory_mobile/features/live_audio/presentation/controllers/live_audio_session_controller.dart';
+import '../../../helpers/silent_playback_service.dart';
 import 'package:voicememory_mobile/security/api_usage_guard.dart';
+import 'package:voicememory_mobile/features/proof_admission/remote_processing_consent_store.dart';
 import 'package:voicememory_mobile/services/capture_attest_service.dart';
 import 'package:voicememory_mobile/services/capture_pipeline_service.dart';
 import 'package:voicememory_mobile/storage/capture_token_cache.dart';
 import 'package:voicememory_mobile/storage/device_id.dart';
 import 'package:voicememory_mobile/storage/journal_store.dart';
+import 'package:voicememory_mobile/storage/mobile_prefs_store.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -32,7 +40,9 @@ void main() {
     late File journalFile;
 
     setUp(() {
-      ApiUsageGuard.resetForTest(replacement: ApiUsageGuard(maxAttemptsPerScope: 3));
+      ApiUsageGuard.resetForTest(
+        replacement: ApiUsageGuard(maxAttemptsPerScope: 3),
+      );
       sinkController = StreamController<dynamic>();
       journalFile = File(
         '${Directory.systemTemp.path}/native_lifecycle_${DateTime.now().microsecondsSinceEpoch}.json',
@@ -41,12 +51,7 @@ void main() {
         controller: LiveAudioSessionController(
           LiveAudioSessionCoordinator(
             sessionApi: _FakeSessionApi(),
-            attest: CaptureAttestService(
-              api: _FakeApi(),
-              deviceIds: _FakeDeviceIdStore(),
-              tokenCache: CaptureTokenCache()
-                ..setToken('capture-token', expiresInSeconds: 3600),
-            ),
+            attest: _attestForTest(),
             webSocketClient: LiveAudioWebSocketClient(
               connectionFactory: (_, {headers}) => _FakeSocket(sinkController),
             ),
@@ -55,7 +60,7 @@ void main() {
           ),
         ),
         pipeline: _NoopPipeline(journalFile: journalFile),
-        playback: _SilentPlayback(),
+        playback: silentPlaybackService(),
       );
     });
 
@@ -72,32 +77,38 @@ void main() {
       await startFuture;
     }
 
-    test('onAudioInterruptionBegan pauses microphone capture for focus', () async {
-      await startConnected();
-      final bridge = NativeAudioLifecycleBridge(service);
+    test(
+      'onAudioInterruptionBegan pauses microphone capture for focus',
+      () async {
+        await startConnected();
+        final bridge = NativeAudioLifecycleBridge(service);
 
-      await bridge.handleNativeEvent(
-        const MethodCall('onAudioInterruptionBegan'),
-      );
+        await bridge.handleNativeEvent(
+          const MethodCall('onAudioInterruptionBegan'),
+        );
 
-      expect(service.isPausedByAudioFocus, isTrue);
-      await bridge.dispose();
-    });
+        expect(service.isPausedByAudioFocus, isTrue);
+        await bridge.dispose();
+      },
+    );
 
-    test('onAudioInterruptionEnded resumes capture when session is healthy', () async {
-      await startConnected();
-      final bridge = NativeAudioLifecycleBridge(service);
-      await bridge.handleNativeEvent(
-        const MethodCall('onAudioInterruptionBegan'),
-      );
+    test(
+      'onAudioInterruptionEnded resumes capture when session is healthy',
+      () async {
+        await startConnected();
+        final bridge = NativeAudioLifecycleBridge(service);
+        await bridge.handleNativeEvent(
+          const MethodCall('onAudioInterruptionBegan'),
+        );
 
-      await bridge.handleNativeEvent(
-        const MethodCall('onAudioInterruptionEnded'),
-      );
+        await bridge.handleNativeEvent(
+          const MethodCall('onAudioInterruptionEnded'),
+        );
 
-      expect(service.isPausedByAudioFocus, isFalse);
-      await bridge.dispose();
-    });
+        expect(service.isPausedByAudioFocus, isFalse);
+        await bridge.dispose();
+      },
+    );
   });
 }
 
@@ -155,41 +166,87 @@ class _FakeSocket implements LiveAudioSocketConnection {
   Future<void> close([int? code, String? reason]) async {}
 }
 
-class _SilentPlayback extends LivePcm24PlaybackEngine {
-  @override
-  Future<void> prepare() async {}
-
-  @override
-  Future<void> stop() async {}
-
-  @override
-  Future<void> dispose() async {}
-}
-
 class _NoopPipeline extends CapturePipelineService {
   _NoopPipeline({required File journalFile})
-      : super(
-          api: _FakeApi(),
-          attest: CaptureAttestService(
-            api: _FakeApi(),
-            deviceIds: _FakeDeviceIdStore(),
-            tokenCache: CaptureTokenCache(),
-          ),
-          journalStore: JournalStore(file: journalFile),
-        );
+    : super(
+        captureRepository: CaptureRepository(
+          api: _FakeCaptureApi(),
+          requestScope: NetworkRequestScope(),
+        ),
+        attest: _attestForTest(),
+        journalStore: JournalStore(file: journalFile),
+        consentStore: RemoteProcessingConsentStore(_prefsFor(journalFile)),
+      );
 }
 
-class _FakeApi extends ApiClient {
-  _FakeApi() : super(baseUrl: 'http://test.invalid');
+class _FakeCaptureApi implements CaptureApiClient {
+  @override
+  Future<ApiResult<AttestResult>> postCaptureAttest(
+    String deviceId, {
+    NetworkCancelToken? cancelToken,
+  }) async {
+    return ApiSuccess(
+      AttestResult.capture(token: 'capture-token', expiresInSeconds: 3600),
+    );
+  }
 
   @override
-  Future<AttestResult> postCaptureAttest(String deviceId) async {
-    return AttestResult.capture(token: 'capture-token', expiresInSeconds: 3600);
+  Future<ApiResult<RawModelResponse>> postAnalyzeRaw({
+    required String transcript,
+    required String captureToken,
+    List<Map<String, dynamic>> priorEvidence = const [],
+    String? idempotencyKey,
+    NetworkCancelToken? cancelToken,
+  }) async {
+    throw UnimplementedError('postAnalyzeRaw');
   }
+
+  @override
+  Future<ApiResult<String>> postTranscribe({
+    required File audioFile,
+    required int durationSeconds,
+    required String captureToken,
+    String? idempotencyKey,
+    NetworkCancelToken? cancelToken,
+  }) async {
+    throw UnimplementedError('postTranscribe');
+  }
+
+  @override
+  Future<ApiResult<VaultRecoveryServerResult>> postVaultRecovery({
+    required File vaultFile,
+    required String sessionId,
+    required int durationSeconds,
+    required String captureToken,
+    required String idempotencyKey,
+    List<int>? recoverySecretKeyBytes,
+    NetworkCancelToken? cancelToken,
+  }) async {
+    throw UnimplementedError('postVaultRecovery');
+  }
+}
+
+CaptureAttestService _attestForTest() {
+  return CaptureAttestService(
+    captureRepository: CaptureRepository(
+      api: _FakeCaptureApi(),
+      requestScope: NetworkRequestScope(),
+    ),
+    deviceIds: _FakeDeviceIdStore(),
+    tokenCache: CaptureTokenCache()
+      ..setToken('capture-token', expiresInSeconds: 3600),
+  );
 }
 
 class _FakeDeviceIdStore extends DeviceIdStore {
   @override
-  Future<String> getOrCreate() async =>
-      '00000000-0000-4000-8000-000000000001';
+  Future<String> getOrCreate() async => '00000000-0000-4000-8000-000000000001';
+}
+
+MobilePrefsStore _prefsFor(File journalFile) {
+  final prefsFile = File('${journalFile.path}.prefs.json');
+  if (!prefsFile.existsSync()) {
+    prefsFile.writeAsStringSync('{}');
+  }
+  return MobilePrefsStore(file: prefsFile);
 }

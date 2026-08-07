@@ -66,11 +66,12 @@ class _EntryImportanceButtonState extends State<EntryImportanceButton> {
 
   @override
   Widget build(BuildContext context) {
-    final chipStyle = ArchiveMobileTypography.responsiveHelper(context).copyWith(
-      color: AppColors.accentPrimary,
-      fontSize: 11,
-      fontWeight: FontWeight.w600,
-    );
+    final chipStyle = ArchiveMobileTypography.responsiveHelper(context)
+        .copyWith(
+          color: AppColors.accentPrimary,
+          fontSize: 11,
+          fontWeight: FontWeight.w600,
+        );
 
     if (_isImportant) {
       return Wrap(
@@ -89,10 +90,7 @@ class _EntryImportanceButtonState extends State<EntryImportanceButton> {
               color: AppColors.accentPrimary.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(999),
             ),
-            child: Text(
-              EntryImportanceCopy.importantLabel,
-              style: chipStyle,
-            ),
+            child: Text(EntryImportanceCopy.importantLabel, style: chipStyle),
           ),
           TextButton(
             key: Key('entry_importance_remove_${widget.entryId}'),

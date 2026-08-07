@@ -116,7 +116,8 @@ class _MemoryConnectionActionsRowState
 
   @override
   Widget build(BuildContext context) {
-    final thanksLine = _thanksLine ??
+    final thanksLine =
+        _thanksLine ??
         (MemoryControlStore.isSuppressed(widget.cardType)
             ? MemoryControlCopy.notRelatedThanks
             : null);

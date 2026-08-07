@@ -5,7 +5,6 @@ import 'package:voicememory_mobile/features/beta/archive_beta_mission_gate.dart'
 import 'package:voicememory_mobile/features/daily_archive_memory/daily_archive_memory_copy.dart';
 import 'package:voicememory_mobile/features/daily_archive_memory/daily_archive_memory_model.dart';
 import 'package:voicememory_mobile/features/record/returning_record_watch_target_ui_gates.dart';
-import 'package:voicememory_mobile/features/early_archive/first_week_loop_copy.dart';
 import 'package:voicememory_mobile/features/record_capture_modes/record_capture_mode_copy.dart';
 import 'package:voicememory_mobile/product/consumer_ui_copy.dart';
 import 'package:voicememory_mobile/theme/app_theme.dart';
@@ -106,23 +105,35 @@ void main() {
       );
     });
 
-    test('beta record surfaces require beta mission and exclude app review', () {
-      ArchiveBetaMissionGate.enabledOverride = true;
-      ArchiveAppReviewAccessGate.enabledOverride = false;
-      addTearDown(() {
-        ArchiveBetaMissionGate.resetForTest();
-        ArchiveAppReviewAccessGate.resetForTest();
-      });
+    test(
+      'beta record surfaces require beta mission and exclude app review',
+      () {
+        ArchiveBetaMissionGate.enabledOverride = true;
+        ArchiveAppReviewAccessGate.enabledOverride = false;
+        addTearDown(() {
+          ArchiveBetaMissionGate.resetForTest();
+          ArchiveAppReviewAccessGate.resetForTest();
+        });
 
-      expect(ReturningRecordWatchTargetUiGates.showBetaRecordSurfaces(), isTrue);
+        expect(
+          ReturningRecordWatchTargetUiGates.showBetaRecordSurfaces(),
+          isTrue,
+        );
 
-      ArchiveBetaMissionGate.enabledOverride = false;
-      expect(ReturningRecordWatchTargetUiGates.showBetaRecordSurfaces(), isFalse);
+        ArchiveBetaMissionGate.enabledOverride = false;
+        expect(
+          ReturningRecordWatchTargetUiGates.showBetaRecordSurfaces(),
+          isFalse,
+        );
 
-      ArchiveBetaMissionGate.enabledOverride = true;
-      ArchiveAppReviewAccessGate.enabledOverride = true;
-      expect(ReturningRecordWatchTargetUiGates.showBetaRecordSurfaces(), isFalse);
-    });
+        ArchiveBetaMissionGate.enabledOverride = true;
+        ArchiveAppReviewAccessGate.enabledOverride = true;
+        expect(
+          ReturningRecordWatchTargetUiGates.showBetaRecordSurfaces(),
+          isFalse,
+        );
+      },
+    );
   });
 
   group('DailyArchiveMemoryCard focused returning UI', () {
@@ -167,7 +178,10 @@ void main() {
       expect(find.text(DailyArchiveMemoryCopy.notTodayCta), findsOneWidget);
       expect(find.byKey(const Key('daily_archive_memory_title')), findsNothing);
       expect(find.text(ConsumerUiCopy.recordTitle), findsNothing);
-      expect(find.text(RecordCaptureModeCopy.somethingHappenedLabel), findsNothing);
+      expect(
+        find.text(RecordCaptureModeCopy.somethingHappenedLabel),
+        findsNothing,
+      );
       expect(find.text('Log pressure moment'), findsNothing);
 
       await tester.tap(find.text('Record what happened'));

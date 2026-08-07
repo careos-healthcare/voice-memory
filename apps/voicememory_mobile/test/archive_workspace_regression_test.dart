@@ -20,51 +20,50 @@ import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
 import 'package:voicememory_mobile/services/capture_save_messages.dart';
+import 'support/test_storage_sandbox.dart';
 
 JournalEntry _voiceEntry({
   required String id,
   required String transcript,
   DateTime? createdAt,
   String? captureContextTag,
-}) =>
-    JournalEntry(
-      id: id,
-      createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
-      transcript: transcript,
-      durationSeconds: 30,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 2,
-        recurringThemes: ['work'],
-        exactLanguagePattern: '',
-        concreteObservation: 'Work pressure showed up in this moment.',
-        repeatedSignal: '',
-      ),
-      captureContextTag: captureContextTag,
-    );
+}) => JournalEntry(
+  id: id,
+  createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
+  transcript: transcript,
+  durationSeconds: 30,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 2,
+    recurringThemes: ['work'],
+    exactLanguagePattern: '',
+    concreteObservation: 'Work pressure showed up in this moment.',
+    repeatedSignal: '',
+  ),
+  captureContextTag: captureContextTag,
+);
 
 JournalEntry _degradedVoiceEntry({
   String id = 'd1',
   String? captureContextTag,
-}) =>
-    JournalEntry(
-      id: id,
-      createdAt: DateTime(2026, 6, 12, 12),
-      transcript:
-          '[draft] ${CaptureSaveMessages.recordingSavedLocally} — transcribe when connected',
-      durationSeconds: 20,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 0,
-        recurringThemes: [],
-        exactLanguagePattern: '',
-        concreteObservation: '',
-        repeatedSignal: '',
-      ),
-      captureContextTag: captureContextTag,
-    );
+}) => JournalEntry(
+  id: id,
+  createdAt: DateTime(2026, 6, 12, 12),
+  transcript:
+      '[draft] ${CaptureSaveMessages.recordingSavedLocally} — transcribe when connected',
+  durationSeconds: 20,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 0,
+    recurringThemes: [],
+    exactLanguagePattern: '',
+    concreteObservation: '',
+    repeatedSignal: '',
+  ),
+  captureContextTag: captureContextTag,
+);
 
 List<JournalEntry> _distinctWorkEntries(int count) {
   final transcripts = [
@@ -89,12 +88,15 @@ List<JournalEntry> _distinctWorkEntries(int count) {
 
 ArchiveWorkspaceLayout _layout(List<JournalEntry> entries) {
   final archiveHome = ArchiveHomeSummaryEngine.build(entries: entries);
-  final beliefHistory =
-      entries.length >= 5 ? BeliefHistoryTimelineEngine.build(entries: entries) : null;
-  final weeklyReview =
-      entries.length >= 5 ? WeeklyArchiveReviewEngine.build(entries: entries) : null;
-  final shareProof =
-      const ShareableArchiveProofEngine().buildFromJournal(entries: entries);
+  final beliefHistory = entries.length >= 5
+      ? BeliefHistoryTimelineEngine.build(entries: entries)
+      : null;
+  final weeklyReview = entries.length >= 5
+      ? WeeklyArchiveReviewEngine.build(entries: entries)
+      : null;
+  final shareProof = const ShareableArchiveProofEngine().buildFromJournal(
+    entries: entries,
+  );
 
   return ArchiveWorkspaceLayoutEngine.build(
     entries: entries,
@@ -117,10 +119,12 @@ ArchiveWorkspaceQuickActions _quickActions(List<JournalEntry> entries) {
   final archiveHome = ArchiveHomeSummaryEngine.build(entries: entries);
   final layout = _layout(entries);
   final evidenceMap = ArchiveEvidenceMapEngine.build(entries: entries);
-  final weeklyReview =
-      entries.length >= 5 ? WeeklyArchiveReviewEngine.build(entries: entries) : null;
-  final shareProof =
-      const ShareableArchiveProofEngine().buildFromJournal(entries: entries);
+  final weeklyReview = entries.length >= 5
+      ? WeeklyArchiveReviewEngine.build(entries: entries)
+      : null;
+  final shareProof = const ShareableArchiveProofEngine().buildFromJournal(
+    entries: entries,
+  );
 
   return ArchiveWorkspaceQuickActionsEngine.build(
     entries: entries,
@@ -160,16 +164,19 @@ void _expectNoBannedCopy(Iterable<String> visible) {
 }
 
 void main() {
+  late TestStorageSandbox sandbox;
   setUp(() async {
+    sandbox = TestStorageSandbox.create();
     ArchiveInsightFeedbackStore.resetForTest();
     ArchiveWorkspaceHintStore.resetForTest();
     await AppServices.resetForTest(
-      journalPath: '${DateTime.now().microsecondsSinceEpoch}_journal.json',
-      prefsPath: '${DateTime.now().microsecondsSinceEpoch}_prefs.json',
+      journalPath: sandbox.journalPath,
+      prefsPath: sandbox.prefsPath,
       skipRevenueCat: true,
     );
   });
 
+  tearDown(() => sandbox.dispose());
   group('Archive workspace entry-count ladder', () {
     test('zero-entry workspace is not noisy', () {
       final layout = _layout(const []);
@@ -219,22 +226,25 @@ void main() {
       _expectNoBannedCopy([home.title, home.body]);
     });
 
-    test('3-entry workspace unlocks evidence quality but not weekly review', () {
-      final entries = _distinctWorkEntries(3);
-      final layout = _layout(entries);
-      final quickActions = _quickActions(entries);
+    test(
+      '3-entry workspace unlocks evidence quality but not weekly review',
+      () {
+        final entries = _distinctWorkEntries(3);
+        final layout = _layout(entries);
+        final quickActions = _quickActions(entries);
 
-      expect(layout.evidenceQuality.show, isTrue);
-      expect(layout.showEvidenceMap, isTrue);
-      expect(layout.reviewHistory.show, isFalse);
-      expect(layout.showWeeklyReview, isFalse);
-      expect(
-        quickActions.actions
-            .map((action) => action.kind)
-            .contains(ArchiveWorkspaceQuickActionKind.viewWeeklyReview),
-        isFalse,
-      );
-    });
+        expect(layout.evidenceQuality.show, isTrue);
+        expect(layout.showEvidenceMap, isTrue);
+        expect(layout.reviewHistory.show, isFalse);
+        expect(layout.showWeeklyReview, isFalse);
+        expect(
+          quickActions.actions
+              .map((action) => action.kind)
+              .contains(ArchiveWorkspaceQuickActionKind.viewWeeklyReview),
+          isFalse,
+        );
+      },
+    );
 
     test('4-entry workspace still hides review/history', () {
       final layout = _layout(_distinctWorkEntries(4));
@@ -251,8 +261,10 @@ void main() {
       expect(layout.showBeliefHistory, isTrue);
       expect(layout.showWeeklyReview, isTrue);
       expect(
-        quickActions.actions
-            .any((action) => action.kind == ArchiveWorkspaceQuickActionKind.viewWeeklyReview),
+        quickActions.actions.any(
+          (action) =>
+              action.kind == ArchiveWorkspaceQuickActionKind.viewWeeklyReview,
+        ),
         isTrue,
       );
     });
@@ -322,7 +334,9 @@ void main() {
     });
 
     test('dismissed section hints stay hidden when section is visible', () {
-      ArchiveWorkspaceHintStore.dismiss(ArchiveWorkspaceHintIds.evidenceQuality);
+      ArchiveWorkspaceHintStore.dismiss(
+        ArchiveWorkspaceHintIds.evidenceQuality,
+      );
       final hints = ArchiveWorkspaceHintsEngine.build(
         layout: _layout(_distinctWorkEntries(3)),
       );
@@ -333,14 +347,18 @@ void main() {
 
   group('Archive workspace evidence map and tags', () {
     test('map drilldown routes still work', () {
-      final map = ArchiveEvidenceMapEngine.build(entries: _distinctWorkEntries(3));
+      final map = ArchiveEvidenceMapEngine.build(
+        entries: _distinctWorkEntries(3),
+      );
       expect(map.showCard, isTrue);
       expect(
         ArchiveEvidenceMapNavigation.contextPath(CaptureContextTagIds.work),
         '/archive-evidence-map/context/${CaptureContextTagIds.work}',
       );
       expect(
-        ArchiveEvidenceMapNavigation.contextPath(ArchiveEvidenceMapRowIds.untagged),
+        ArchiveEvidenceMapNavigation.contextPath(
+          ArchiveEvidenceMapRowIds.untagged,
+        ),
         '/archive-evidence-map/context/${ArchiveEvidenceMapRowIds.untagged}',
       );
     });
@@ -408,15 +426,14 @@ void main() {
       );
       expect(
         untagged.resolveRoute(),
-        ArchiveEvidenceMapNavigation.contextPath(ArchiveEvidenceMapRowIds.untagged),
+        ArchiveEvidenceMapNavigation.contextPath(
+          ArchiveEvidenceMapRowIds.untagged,
+        ),
       );
     });
 
     test('degraded entries do not inflate workspace counts', () {
-      final mixed = [
-        ..._distinctWorkEntries(2),
-        _degradedVoiceEntry(id: 'd1'),
-      ];
+      final mixed = [..._distinctWorkEntries(2), _degradedVoiceEntry(id: 'd1')];
       final layout = _layout(mixed);
       expect(layout.eligibleCount, 2);
       expect(layout.stage, ArchiveWorkspaceStage.two);
@@ -452,43 +469,48 @@ void main() {
       final quickActions = _quickActions(_distinctWorkEntries(3));
       expect(quickActions.showCard, isTrue);
       expect(
-        quickActions.actions
-            .any((action) => action.kind == ArchiveWorkspaceQuickActionKind.reviewCorrections),
+        quickActions.actions.any(
+          (action) =>
+              action.kind == ArchiveWorkspaceQuickActionKind.reviewCorrections,
+        ),
         isTrue,
       );
     });
   });
 
   group('Archive workspace share-safe privacy', () {
-    test('share-safe proof excludes tags/map/filter data and raw transcripts', () {
-      const engine = ShareableArchiveProofEngine();
-      const sensitive =
-          'Maria told me about the divorce paperwork at the hospital again';
-      final entries = List.generate(
-        5,
-        (i) => _voiceEntry(
-          id: 'e$i',
-          transcript: sensitive,
-          createdAt: DateTime(2026, 6, 9 + i, 12),
-          captureContextTag: i.isEven
-              ? CaptureContextTagIds.work
-              : CaptureContextTagIds.home,
-        ),
-      );
-      final proof = engine.buildFromJournal(entries: entries);
-      final shareText = proof.shareText.toLowerCase();
+    test(
+      'share-safe proof excludes tags/map/filter data and raw transcripts',
+      () {
+        const engine = ShareableArchiveProofEngine();
+        const sensitive =
+            'Maria told me about the divorce paperwork at the hospital again';
+        final entries = List.generate(
+          5,
+          (i) => _voiceEntry(
+            id: 'e$i',
+            transcript: sensitive,
+            createdAt: DateTime(2026, 6, 9 + i, 12),
+            captureContextTag: i.isEven
+                ? CaptureContextTagIds.work
+                : CaptureContextTagIds.home,
+          ),
+        );
+        final proof = engine.buildFromJournal(entries: entries);
+        final shareText = proof.shareText.toLowerCase();
 
-      expect(proof.hasProof, isTrue);
-      expect(shareText, isNot(contains('maria')));
-      expect(shareText, isNot(contains('divorce')));
-      expect(shareText, isNot(contains('hospital')));
-      expect(shareText, isNot(contains('work')));
-      expect(shareText, isNot(contains('home')));
-      expect(shareText, isNot(contains('untagged')));
-      expect(shareText, isNot(contains('filter')));
-      expect(shareText, isNot(contains('map')));
-      expect(shareText, contains('no private entries shared.'));
-    });
+        expect(proof.hasProof, isTrue);
+        expect(shareText, isNot(contains('maria')));
+        expect(shareText, isNot(contains('divorce')));
+        expect(shareText, isNot(contains('hospital')));
+        expect(shareText, isNot(contains('work')));
+        expect(shareText, isNot(contains('home')));
+        expect(shareText, isNot(contains('untagged')));
+        expect(shareText, isNot(contains('filter')));
+        expect(shareText, isNot(contains('map')));
+        expect(shareText, contains('no private entries shared.'));
+      },
+    );
   });
 
   group('Archive workspace copy guardrails', () {

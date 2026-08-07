@@ -33,10 +33,7 @@ void main() {
     );
   }
 
-  JournalEntry entry({
-    required String id,
-    CognitiveBiomarkers? biomarkers,
-  }) {
+  JournalEntry entry({required String id, CognitiveBiomarkers? biomarkers}) {
     return JournalEntry(
       id: id,
       createdAt: DateTime.utc(2026, 6, 11, 12),
@@ -82,14 +79,16 @@ void main() {
       expect(prompt, contains('Short thoughts are perfect.'));
     });
 
-    test('falls back to stored hook prompt when synthesis context is missing',
-        () async {
-      const fallback = 'Stored prompt fallback.';
-      final prompt = await resolver.resolveDisplayPrompt(
-        hook: hook(isMemoryRecallCheck: true, dynamicPrompt: fallback),
-      );
+    test(
+      'falls back to stored hook prompt when synthesis context is missing',
+      () async {
+        const fallback = 'Stored prompt fallback.';
+        final prompt = await resolver.resolveDisplayPrompt(
+          hook: hook(isMemoryRecallCheck: true, dynamicPrompt: fallback),
+        );
 
-      expect(prompt, fallback);
-    });
+        expect(prompt, fallback);
+      },
+    );
   });
 }

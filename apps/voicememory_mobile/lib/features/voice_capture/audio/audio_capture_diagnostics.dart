@@ -13,9 +13,7 @@ abstract class AudioCaptureDiagnostics {
     sampleRate: 44100,
     numChannels: 1,
     bitRate: 128000,
-    iosConfig: IosRecordConfig(
-      manageAudioSession: false,
-    ),
+    iosConfig: IosRecordConfig(manageAudioSession: false),
   );
 
   static void logRecorderConfig({
@@ -31,10 +29,7 @@ abstract class AudioCaptureDiagnostics {
     );
   }
 
-  static void logCapturedFile(
-    File file, {
-    int? durationMs,
-  }) {
+  static void logCapturedFile(File file, {int? durationMs}) {
     final path = file.path;
     final exists = file.existsSync();
     final bytes = exists ? file.lengthSync() : 0;

@@ -76,8 +76,8 @@ class CapacityBoundaryResponseCard extends StatelessWidget {
           const SizedBox(height: AppSpacing.sm),
           FilledButton(
             key: const Key('capacity_boundary_response_card_primary_button'),
-            onPressed: onPrimaryAction ??
-                () => context.push(result.primaryRoute),
+            onPressed:
+                onPrimaryAction ?? () => context.push(result.primaryRoute),
             child: Text(result.primaryCtaLabel),
           ),
         ],
@@ -129,9 +129,9 @@ class _CapacityBoundaryResponsePickerState
     await Clipboard.setData(ClipboardData(text: text));
     await CapacityBoundaryResponseStore.instance().recordCopied();
     if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Response copied')),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('Response copied')));
   }
 
   @override

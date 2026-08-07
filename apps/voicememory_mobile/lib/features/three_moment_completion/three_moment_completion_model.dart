@@ -1,15 +1,11 @@
-enum ThreeMomentCompletionStage {
-  start,
-  second,
-  third,
-}
+enum ThreeMomentCompletionStage { start, second, third }
 
 extension ThreeMomentCompletionStageStorage on ThreeMomentCompletionStage {
   String get analyticsValue => switch (this) {
-        ThreeMomentCompletionStage.start => 'start',
-        ThreeMomentCompletionStage.second => 'second',
-        ThreeMomentCompletionStage.third => 'third',
-      };
+    ThreeMomentCompletionStage.start => 'start',
+    ThreeMomentCompletionStage.second => 'second',
+    ThreeMomentCompletionStage.third => 'third',
+  };
 }
 
 enum ThreeMomentCompletionActionType {
@@ -22,11 +18,11 @@ enum ThreeMomentCompletionActionType {
 extension ThreeMomentCompletionActionTypeStorage
     on ThreeMomentCompletionActionType {
   String get analyticsValue => switch (this) {
-        ThreeMomentCompletionActionType.saveOneSentence => 'save_one_sentence',
-        ThreeMomentCompletionActionType.noticedSomething => 'noticed_something',
-        ThreeMomentCompletionActionType.saveOneMoreMoment => 'save_one_more_moment',
-        ThreeMomentCompletionActionType.notToday => 'not_today',
-      };
+    ThreeMomentCompletionActionType.saveOneSentence => 'save_one_sentence',
+    ThreeMomentCompletionActionType.noticedSomething => 'noticed_something',
+    ThreeMomentCompletionActionType.saveOneMoreMoment => 'save_one_more_moment',
+    ThreeMomentCompletionActionType.notToday => 'not_today',
+  };
 }
 
 class ThreeMomentCompletionResult {

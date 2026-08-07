@@ -22,17 +22,18 @@ class ReturningUserTodayCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final labelStyle = ArchiveMobileTypography.responsiveHelper(context).copyWith(
-      color: AppColors.textSecondary,
-      fontWeight: FontWeight.w600,
-      letterSpacing: 0.3,
-    );
-    final titleStyle = ArchiveMobileTypography.responsiveSectionTitle(context)
-        .copyWith(fontSize: 17);
-    final bodyStyle = ArchiveMobileTypography.body(context).copyWith(
-      color: AppColors.textPrimary,
-      height: 1.4,
-    );
+    final labelStyle = ArchiveMobileTypography.responsiveHelper(context)
+        .copyWith(
+          color: AppColors.textSecondary,
+          fontWeight: FontWeight.w600,
+          letterSpacing: 0.3,
+        );
+    final titleStyle = ArchiveMobileTypography.responsiveSectionTitle(
+      context,
+    ).copyWith(fontSize: 17);
+    final bodyStyle = ArchiveMobileTypography.body(
+      context,
+    ).copyWith(color: AppColors.textPrimary, height: 1.4);
 
     return Container(
       key: const Key('returning_user_today_card'),
@@ -65,18 +66,14 @@ class ReturningUserTodayCard extends StatelessWidget {
           FilledButton.tonal(
             key: const Key('returning_user_today_primary_cta'),
             onPressed: onPrimary,
-            style: FilledButton.styleFrom(
-              visualDensity: VisualDensity.compact,
-            ),
+            style: FilledButton.styleFrom(visualDensity: VisualDensity.compact),
             child: Text(model.primaryCta),
           ),
           const SizedBox(height: AppSpacing.xs),
           TextButton(
             key: const Key('returning_user_today_secondary_cta'),
             onPressed: onSecondary,
-            style: TextButton.styleFrom(
-              visualDensity: VisualDensity.compact,
-            ),
+            style: TextButton.styleFrom(visualDensity: VisualDensity.compact),
             child: Text(model.secondaryCta),
           ),
         ],

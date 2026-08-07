@@ -7,10 +7,11 @@ class MovingBaselineCalculator {
   /// Closer to 1.0 weights recent entries heavily; closer to 0.0 prioritizes long-term history.
   final double alpha;
 
-  const MovingBaselineCalculator({
-    this.alpha = 0.30,
-  }) : assert(alpha > 0.0 && alpha <= 1.0,
-            'Alpha smoothing factor must fall within (0.0, 1.0]');
+  const MovingBaselineCalculator({this.alpha = 0.30})
+    : assert(
+        alpha > 0.0 && alpha <= 1.0,
+        'Alpha smoothing factor must fall within (0.0, 1.0]',
+      );
 
   /// Computes a cumulative historical baseline across a chronological sequence of logs.
   ///
@@ -39,13 +40,16 @@ class MovingBaselineCalculator {
     CognitiveBiomarkers previousBaseline,
     CognitiveBiomarkers newObservation,
   ) {
-    final updatedLexical = (alpha * newObservation.lexicalDiversity) +
+    final updatedLexical =
+        (alpha * newObservation.lexicalDiversity) +
         ((1.0 - alpha) * previousBaseline.lexicalDiversity);
 
-    final updatedCohesion = (alpha * newObservation.cohesionDrift) +
+    final updatedCohesion =
+        (alpha * newObservation.cohesionDrift) +
         ((1.0 - alpha) * previousBaseline.cohesionDrift);
 
-    final updatedVolatility = (alpha * newObservation.emotionalVolatility) +
+    final updatedVolatility =
+        (alpha * newObservation.emotionalVolatility) +
         ((1.0 - alpha) * previousBaseline.emotionalVolatility);
 
     return CognitiveBiomarkers(

@@ -12,18 +12,10 @@ abstract final class OpenCaptureAnalytics {
 
   @visibleForTesting
   static void Function(String event, Map<String, Object> properties)?
-      captureForTest;
+  captureForTest;
 
-  static void seen({
-    required String source,
-    required int entryCount,
-  }) {
-    _emit(
-      seenEvent,
-      source: source,
-      entryCount: entryCount,
-      chipType: null,
-    );
+  static void seen({required String source, required int entryCount}) {
+    _emit(seenEvent, source: source, entryCount: entryCount, chipType: null);
   }
 
   static void chipTapped({

@@ -23,8 +23,8 @@ import 'package:voicememory_mobile/features/prove_enough/prove_enough_pattern_re
 import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/models/sync_status.dart';
-import 'package:voicememory_mobile/screens/collection_detail_screen.dart';
-import 'package:voicememory_mobile/screens/pinned_evidence_screen.dart';
+import 'package:archiveme_research/screens/collection_detail_screen.dart';
+import 'package:archiveme_research/screens/pinned_evidence_screen.dart';
 import 'package:voicememory_mobile/services/activation_funnel_analytics.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
 import 'package:voicememory_mobile/storage/journal_store.dart';
@@ -698,9 +698,11 @@ void main() {
 
         await waitForJournalEntryCount(tester, 0);
         var names = _events.map((e) => e.name).toList();
-        for (var i = 0;
-            i < 50 && !names.contains('archive_bulk_action_completed');
-            i++) {
+        for (
+          var i = 0;
+          i < 50 && !names.contains('archive_bulk_action_completed');
+          i++
+        ) {
           await tester.pump(const Duration(milliseconds: 20));
           await tester.runAsync(
             () => Future<void>.delayed(const Duration(milliseconds: 20)),
@@ -752,9 +754,11 @@ void main() {
         expect(a.transcript, 'Pinned reflection alpha');
       });
       var names = _events.map((e) => e.name).toList();
-      for (var i = 0;
-          i < 50 && !names.contains('archive_bulk_archive_completed');
-          i++) {
+      for (
+        var i = 0;
+        i < 50 && !names.contains('archive_bulk_archive_completed');
+        i++
+      ) {
         await tester.pump(const Duration(milliseconds: 20));
         await tester.runAsync(
           () => Future<void>.delayed(const Duration(milliseconds: 20)),

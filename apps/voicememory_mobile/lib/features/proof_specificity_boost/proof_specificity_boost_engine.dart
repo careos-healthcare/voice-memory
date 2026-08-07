@@ -34,7 +34,8 @@ abstract final class ProofSpecificityBoostEngine {
       beliefEvidencePhrases: beliefEvidencePhrases,
     );
 
-    final anchors = specificity.shouldShow && !specificity.usesFallbackEvidenceLine
+    final anchors =
+        specificity.shouldShow && !specificity.usesFallbackEvidenceLine
         ? List<String>.from(specificity.evidenceAnchors)
         : const <String>[];
     final usesFallback = anchors.isEmpty;
@@ -62,7 +63,8 @@ abstract final class ProofSpecificityBoostEngine {
 
     final betaSurface = _betaSurfaceFor(surface);
     final betaRecord = BetaProofFeedbackStore.recordFor(betaSurface);
-    final betaTooVague = betaRecord.answered &&
+    final betaTooVague =
+        betaRecord.answered &&
         betaRecord.feedbackType == BetaProofFeedbackType.tooVague;
 
     if (surface == ProofSpecificityBoostSurface.patterns) {
@@ -116,8 +118,7 @@ abstract final class ProofSpecificityBoostEngine {
 
   static bool shouldShowAnsweredFollowUp({
     required ProofSpecificityBoostSurface surface,
-  }) =>
-      ProofSpecificityBoostStore.isAnswered(surface);
+  }) => ProofSpecificityBoostStore.isAnswered(surface);
 
   static bool shouldRender({
     required ProofSpecificityBoostResult result,
@@ -156,22 +157,20 @@ abstract final class ProofSpecificityBoostEngine {
 
   static BetaProofFeedbackSurface _betaSurfaceFor(
     ProofSpecificityBoostSurface surface,
-  ) =>
-      switch (surface) {
-        ProofSpecificityBoostSurface.timelineProofMoment =>
-          BetaProofFeedbackSurface.timelineProofMoment,
-        ProofSpecificityBoostSurface.firstProofPayoff =>
-          BetaProofFeedbackSurface.firstProofPayoff,
-        ProofSpecificityBoostSurface.patterns =>
-          BetaProofFeedbackSurface.timelineProofMoment,
-      };
+  ) => switch (surface) {
+    ProofSpecificityBoostSurface.timelineProofMoment =>
+      BetaProofFeedbackSurface.timelineProofMoment,
+    ProofSpecificityBoostSurface.firstProofPayoff =>
+      BetaProofFeedbackSurface.firstProofPayoff,
+    ProofSpecificityBoostSurface.patterns =>
+      BetaProofFeedbackSurface.timelineProofMoment,
+  };
 
   static bool patternReviewInboxHasActiveItems({
     required List<JournalEntry> entries,
     List<RepeatReturnCheckRecord> returnChecks = const [],
-  }) =>
-      ProEvidenceValueEngine.patternReviewInboxHasActiveItems(
-        entries: entries,
-        returnChecks: returnChecks,
-      );
+  }) => ProEvidenceValueEngine.patternReviewInboxHasActiveItems(
+    entries: entries,
+    returnChecks: returnChecks,
+  );
 }

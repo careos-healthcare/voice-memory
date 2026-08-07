@@ -20,9 +20,7 @@ abstract final class LiveAudioProtocol {
 
   static Map<String, dynamic> buildAudioStreamEndMessage() {
     return {
-      'realtimeInput': {
-        'audioStreamEnd': true,
-      },
+      'realtimeInput': {'audioStreamEnd': true},
     };
   }
 
@@ -51,9 +49,7 @@ abstract final class LiveAudioProtocol {
 
     if (message.containsKey('goAway')) {
       final goAway = _asMap(message['goAway']);
-      events.add(LiveGoAwayEvent(
-        timeLeft: goAway?['timeLeft'] as String?,
-      ));
+      events.add(LiveGoAwayEvent(timeLeft: goAway?['timeLeft'] as String?));
     }
 
     final serverContent = _asMap(message['serverContent']);
@@ -65,14 +61,16 @@ abstract final class LiveAudioProtocol {
         events.add(const LiveTurnCompleteEvent());
       }
 
-      final inputTranscription =
-          _readTranscription(serverContent['inputTranscription']);
+      final inputTranscription = _readTranscription(
+        serverContent['inputTranscription'],
+      );
       if (inputTranscription != null) {
         events.add(LiveInputTranscriptionEvent(text: inputTranscription));
       }
 
-      final outputTranscription =
-          _readTranscription(serverContent['outputTranscription']);
+      final outputTranscription = _readTranscription(
+        serverContent['outputTranscription'],
+      );
       if (outputTranscription != null) {
         events.add(LiveOutputTranscriptionEvent(text: outputTranscription));
       }
@@ -89,7 +87,8 @@ abstract final class LiveAudioProtocol {
 
     final error = _asMap(message['error']);
     if (error != null) {
-      final messageText = error['message'] as String? ??
+      final messageText =
+          error['message'] as String? ??
           error['status'] as String? ??
           'live_server_error';
       events.add(LiveServerErrorEvent(message: messageText));
@@ -117,7 +116,9 @@ abstract final class LiveAudioProtocol {
     const allowed = {'setup', 'clientContent', 'realtimeInput', 'toolResponse'};
     final key = message.keys.first;
     if (!allowed.contains(key)) {
-      return const ClientMessageValidation.invalid('unsupported_client_message_key');
+      return const ClientMessageValidation.invalid(
+        'unsupported_client_message_key',
+      );
     }
 
     if (key == 'realtimeInput') {
@@ -136,7 +137,9 @@ abstract final class LiveAudioProtocol {
           return const ClientMessageValidation.invalid('invalid_audio_blob');
         }
         if (audio['mimeType'] != liveInputAudioMime) {
-          return const ClientMessageValidation.invalid('invalid_input_audio_mime');
+          return const ClientMessageValidation.invalid(
+            'invalid_input_audio_mime',
+          );
         }
       }
     }
@@ -176,10 +179,10 @@ final class ClientMessageValidation {
   });
 
   const ClientMessageValidation.valid(Map<String, dynamic> message)
-      : this._(ok: true, message: message);
+    : this._(ok: true, message: message);
 
   const ClientMessageValidation.invalid(String reason)
-      : this._(ok: false, reason: reason);
+    : this._(ok: false, reason: reason);
 
   final bool ok;
   final String? reason;

@@ -48,17 +48,21 @@ class PatternsEvidenceQualityFallbackView extends StatelessWidget {
   Widget build(BuildContext context) {
     final gap = ArchiveResponsiveLayout.gap(context);
     final entryId = savedEntryId?.trim();
-    final showRecovery = recoverableEntry != null &&
+    final showRecovery =
+        recoverableEntry != null &&
         PendingTranscriptRecoveryGate.entryNeedsRecovery(recoverableEntry!);
-    final title = lowEvidence?.title ??
+    final title =
+        lowEvidence?.title ??
         (genericTestOnly
             ? LowEvidenceCopy.genericTestTitle
             : ArchiveEvidenceQualityCopy.savedTitle);
-    final body = lowEvidence?.body ??
+    final body =
+        lowEvidence?.body ??
         (genericTestOnly
             ? LowEvidenceCopy.genericTestBody
             : ArchiveEvidenceQualityCopy.needsClearerWordsBody);
-    final isGenericTestForming = genericTestOnly ||
+    final isGenericTestForming =
+        genericTestOnly ||
         lowEvidence?.kind == LowEvidenceStateKind.genericTestOnly;
     final isQuietDayForming =
         lowEvidence?.kind == LowEvidenceStateKind.quietDayOnly;
@@ -84,8 +88,9 @@ class PatternsEvidenceQualityFallbackView extends StatelessWidget {
                 SizedBox(height: gap),
                 Text(
                   ArchiveEvidenceQualityCopy.needsClearerWordsBody,
-                  style: ArchiveMobileTypography.explanationBody(context)
-                      .copyWith(color: AppColors.textSecondary),
+                  style: ArchiveMobileTypography.explanationBody(
+                    context,
+                  ).copyWith(color: AppColors.textSecondary),
                 ),
               ] else ...[
                 Text(
@@ -93,8 +98,8 @@ class PatternsEvidenceQualityFallbackView extends StatelessWidget {
                   key: isGenericTestForming
                       ? const Key('patterns_generic_test_forming_title')
                       : isQuietDayForming
-                          ? const Key('patterns_quiet_day_forming_title')
-                          : null,
+                      ? const Key('patterns_quiet_day_forming_title')
+                      : null,
                   style: ArchiveMobileTypography.responsivePageTitle(context),
                 ),
                 SizedBox(height: gap),
@@ -103,8 +108,8 @@ class PatternsEvidenceQualityFallbackView extends StatelessWidget {
                   key: isGenericTestForming
                       ? const Key('patterns_generic_test_forming_body')
                       : isQuietDayForming
-                          ? const Key('patterns_quiet_day_forming_body')
-                          : null,
+                      ? const Key('patterns_quiet_day_forming_body')
+                      : null,
                   style: ArchiveMobileTypography.explanationBody(context),
                 ),
               ],

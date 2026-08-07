@@ -7,10 +7,7 @@ abstract final class TesterMissionAnalytics {
   static const seenEvent = 'tester_mission_seen';
   static const dismissedEvent = 'tester_mission_dismissed';
 
-  static void seen({
-    required int entryCount,
-    required String missionStep,
-  }) {
+  static void seen({required int entryCount, required String missionStep}) {
     ActivationFunnelAnalytics.track(
       seenEvent,
       entryCount: entryCount,

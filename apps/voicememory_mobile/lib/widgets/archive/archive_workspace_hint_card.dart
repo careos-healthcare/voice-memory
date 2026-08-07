@@ -21,10 +21,9 @@ class ArchiveWorkspaceHintCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final titleStyle = ArchiveMobileTypography.responsiveSectionTitle(context);
-    final bodyStyle = ArchiveMobileTypography.responsiveHelper(context).copyWith(
-      color: AppColors.textPrimary,
-      height: 1.45,
-    );
+    final bodyStyle = ArchiveMobileTypography.responsiveHelper(
+      context,
+    ).copyWith(color: AppColors.textPrimary, height: 1.45);
     final compactBodyStyle = bodyStyle.copyWith(
       color: AppColors.textSecondary,
       fontSize: (bodyStyle.fontSize ?? 14) - 1,
@@ -56,7 +55,8 @@ class ArchiveWorkspaceHintCard extends StatelessWidget {
                       const SizedBox(height: AppSpacing.xs),
                     ] else if (hint.compact) ...[
                       Text(
-                        VisibleArchiveProofCopy.archiveWorkspaceHintSectionPrompt,
+                        VisibleArchiveProofCopy
+                            .archiveWorkspaceHintSectionPrompt,
                         key: Key(
                           'archive_workspace_hint_section_prompt_${hint.hintId}',
                         ),

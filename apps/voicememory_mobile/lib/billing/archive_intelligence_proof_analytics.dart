@@ -15,9 +15,9 @@ abstract class ArchiveIntelligenceProofAnalytics {
       parameters: {
         'surface': surface,
         'used_fallback': usedFallback ? 1 : 0,
-        if (themeCount != null) 'theme_count': themeCount,
-        if (theoryCount != null) 'theory_count': theoryCount,
-        if (changeCount != null) 'change_count': changeCount,
+        'theme_count': ?themeCount,
+        'theory_count': ?theoryCount,
+        'change_count': ?changeCount,
       },
     );
   }

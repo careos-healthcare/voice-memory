@@ -9,13 +9,12 @@ abstract final class EarlySavedMomentsAnalytics {
   static Future<void> viewed({
     required int entryCount,
     required bool hasConfirmedRepeat,
-  }) =>
-      ProductAnalytics.track(
-        viewedEvent,
-        parameters: {
-          'entry_count': entryCount,
-          'source': 'record',
-          'has_confirmed_repeat': hasConfirmedRepeat,
-        },
-      );
+  }) => ProductAnalytics.track(
+    viewedEvent,
+    parameters: {
+      'entry_count': entryCount,
+      'source': 'record',
+      'has_confirmed_repeat': hasConfirmedRepeat,
+    },
+  );
 }

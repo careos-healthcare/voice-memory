@@ -1,32 +1,6 @@
 part of '../../screens/record_screen.dart';
 
-/// Owns recording-duration state and its stream lifecycle independently from
-/// the screen's presentation state.
-class RecordingStateController {
-  int _seconds = 0;
-  StreamSubscription<int>? _durationSubscription;
-
-  int get seconds => _seconds;
-
-  void bindDuration(Stream<int> duration, {required ValueChanged<int> onTick}) {
-    unawaited(_durationSubscription?.cancel());
-    _durationSubscription = duration.listen((value) {
-      _seconds = value;
-      onTick(value);
-    });
-  }
-
-  void resetTimer() {
-    _seconds = 0;
-  }
-
-  Future<void> dispose() async {
-    await _durationSubscription?.cancel();
-    _durationSubscription = null;
-  }
-}
-
-class _RecordScreenState extends State<RecordScreen>
+class _RecordScreenState extends ConsumerState<RecordScreen>
     with WidgetsBindingObserver {
   RecordNavigationActivityController get _navigationActivity =>
       widget.navigationActivityController ?? recordNavigationActivityController;
@@ -37,11 +11,14 @@ class _RecordScreenState extends State<RecordScreen>
   }
 
   void _syncNavigationActivity() {
-    final activity = switch (_ui) {
-      RecordUiState.requestingPermission =>
+    _recordView.ui = _ui;
+    _recordView.errorMessage = _error;
+    final phase = _recordView.viewState.phase;
+    final activity = switch (phase) {
+      RecordViewPhase.requestingPermission =>
         RecordNavigationActivity.requestingPermission,
-      RecordUiState.recording => RecordNavigationActivity.recording,
-      RecordUiState.processing => RecordNavigationActivity.processing,
+      RecordViewPhase.recording => RecordNavigationActivity.recording,
+      RecordViewPhase.processing => RecordNavigationActivity.processing,
       _ when _stopAndProcessInFlight => RecordNavigationActivity.processing,
       _ => RecordNavigationActivity.idle,
     };
@@ -49,21 +26,60 @@ class _RecordScreenState extends State<RecordScreen>
   }
 
   RecordUiState _ui = RecordUiState.idle;
-  RecordingPhase _mic = RecordingPhase.idle;
-  MicrophonePermissionState _micPermissionState =
-      MicrophonePermissionState.unknown;
-  bool _micPermissionUserDenied = false;
-  bool _micSessionRequiresOpenSettings = false;
   bool _showMicPermissionSimulatorHelper = false;
   bool _ignoreStaleMicRefreshAfterGrant = false;
   final GlobalKey _permissionPanelKey = GlobalKey();
-  final RecordingStateController _recordingState = RecordingStateController();
-  int get _seconds => _recordingState.seconds;
+  final RecordingSessionController _recordingState =
+      RecordingSessionController();
+  final MicrophonePermissionController _micPermission =
+      MicrophonePermissionController();
+  final CaptureProcessingController _captureProcessing =
+      CaptureProcessingController();
+  final PostSaveResultController _postSaveResult = PostSaveResultController();
+  final RecordingRecoveryController _recoveryController =
+      RecordingRecoveryController();
+  late final RecordScreenViewModel _recordView = RecordScreenViewModel(
+    session: _recordingState,
+    microphone: _micPermission,
+    capture: _captureProcessing,
+    postSave: _postSaveResult,
+    recovery: _recoveryController,
+  );
+  late final V1AccountDependencies _accountDeps =
+      widget.accountDependencies ?? V1AccountDependencies.fromAppServices();
+
+  RecordingPhase get _mic => _micPermission.phase;
+  set _mic(RecordingPhase value) => _micPermission.phase = value;
+
+  MicrophonePermissionState get _micPermissionState =>
+      _micPermission.permissionState;
+  set _micPermissionState(MicrophonePermissionState value) =>
+      _micPermission.permissionState = value;
+
+  bool get _micPermissionUserDenied => _micPermission.userDeniedThisSession;
+  set _micPermissionUserDenied(bool value) =>
+      _micPermission.userDeniedThisSession = value;
+
+  bool get _micSessionRequiresOpenSettings =>
+      _micPermission.sessionRequiresOpenSettings;
+  set _micSessionRequiresOpenSettings(bool value) =>
+      _micPermission.sessionRequiresOpenSettings = value;
+
+  String? get _localSaveTitle => _postSaveResult.localSaveTitle;
+  set _localSaveTitle(String? value) => _postSaveResult.localSaveTitle = value;
+  String? get _syncNote => _captureProcessing.syncNote;
+  set _syncNote(String? value) => _captureProcessing.syncNote = value;
+  bool get _showPostSaveLoop => _postSaveResult.showPostSave;
+  set _showPostSaveLoop(bool value) => _postSaveResult.showPostSave = value;
+  bool get _stopAndProcessInFlight => _captureProcessing.processing;
+  set _stopAndProcessInFlight(bool value) =>
+      _captureProcessing.processing = value;
+  String get _stageLabel => _captureProcessing.stageLabel ?? '';
+  set _stageLabel(String value) =>
+      _captureProcessing.stageLabel = value.isEmpty ? null : value;
+
   String? _error;
-  String? _localSaveTitle;
-  String? _syncNote;
   int _journalEntryCount = 0;
-  ColdStartSeedData? _coldStartSeedData;
   bool _journalEntryCountLoaded = false;
   ArchiveReturnChangesResult? _archiveReturnChangesResult;
   ArchiveReturnSnapshot? _archiveReturnCurrentSnapshot;
@@ -77,13 +93,11 @@ class _RecordScreenState extends State<RecordScreen>
   List<DateTime> _entryDates = const [];
   bool _autostartWithPromptAttempted = false;
   bool _yesterdaysSnapshotPresentAttempted = false;
-  String _stageLabel = '';
   String? _selectedPromptLine;
   AudienceWedge? _audienceWedge;
   LoopMode? _activeLoop;
   String? _defaultBoundaryPauseLabel;
   String? _postSaveFollowUp;
-  bool _showPostSaveLoop = false;
   bool _savedFromConfirmedRepeatTrigger = false;
   bool _savedFromHelpfulAction = false;
   bool _earlyEvidenceTriggerCaptured = false;
@@ -132,9 +146,6 @@ class _RecordScreenState extends State<RecordScreen>
   bool _retentionNextCheckJustChosen = false;
   bool _retentionDismissed = false;
   SecondSessionComparison? _secondSessionComparison;
-  PostSaveComparisonController? _postSaveComparisonController;
-  final _logger = const _RecordScreenLogger();
-  late final RevenueCatPaywallPresenter _paywallPresenter;
   PatternHypothesis? _patternHypothesis;
   bool _patternHypothesisDismissed = false;
   String? _nextEvidencePrompt;
@@ -165,64 +176,25 @@ class _RecordScreenState extends State<RecordScreen>
   String _detectedLanguageCode = ScreenshotMode.languageCode;
 
   late final RecordingService _recording;
-  late final StreamSubscription<TranscriptionQueueCompletion>
-  _transcriptionCompletionSubscription;
-  final Set<String> _pendingForegroundEntryIds = <String>{};
-  final Map<String, List<MediaAttachment>> _pendingForegroundMedia = {};
-  bool _stopAndProcessInFlight = false;
-  List<MediaAttachment> _captureAttachments = const [];
-  bool _showRecordingLimitPaywall = true;
-  int _activeRecordingMaxSeconds = RecordingDurationPolicy.freeMaxSeconds;
   LiveVoiceCaptureService? _liveVoice;
   late final MicrophonePermissionGateway _microphonePermissionGateway;
   late final OnboardingMicStateStore _onboardingMicStateStore;
-
-  EncryptedImageEngine? get _imageEngine =>
-      widget.encryptedImageEngine ??
-      (AppServices.isInitialized
-          ? AppServices.instance.encryptedImageEngine
-          : null);
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    _paywallPresenter =
-        widget.paywallPresenter ?? const RevenueCatPaywallPresenter();
     CleanSlatePromptStore.noteSessionStart();
-    final s = AppServices.instance;
-    unawaited(
-      ColdStartSeedStore(s.prefs).load().then((value) {
-        if (mounted) setState(() => _coldStartSeedData = value);
-      }),
-    );
+    final s = _accountDeps;
     _microphonePermissionGateway =
         widget.microphonePermissionGateway ??
         PermissionHandlerMicrophoneGateway();
     _onboardingMicStateStore =
         widget.onboardingMicStateStore ?? OnboardingMicStateStore(s.prefs);
     _recording = s.recording;
-    _transcriptionCompletionSubscription = s
-        .transcriptionQueueExecutor
-        .completions
-        .listen(_handleForegroundTranscriptionCompletion);
     if (AppConfig.enableLiveVoiceCapture) {
       _liveVoice = widget.liveVoiceCapture ?? s.liveVoiceCapture;
     }
-    _recordingState.bindDuration(
-      _recording.durationSeconds,
-      onTick: (seconds) {
-        if (!mounted) return;
-        setState(() {});
-        if (_ui == RecordUiState.recording &&
-            RecordingDurationPolicy.shouldAutoStop(
-              seconds,
-              maxDurationSeconds: _activeRecordingMaxSeconds,
-            )) {
-          unawaited(_stopAndProcess(reachedDurationLimit: true));
-        }
-      },
-    );
     _refreshMic();
     unawaited(_loadMicPermissionSimulatorHelper());
     unawaited(
@@ -298,12 +270,14 @@ class _RecordScreenState extends State<RecordScreen>
         if (mounted) setState(() {});
       }),
     );
-    unawaited(
-      CurrentRelevanceStore.ensureLoaded().then((_) async {
-        await CorrectionMemoryStore.ensureLoaded();
-        if (mounted) setState(() {});
-      }),
-    );
+    if (!V1FeatureFlags.enableV1Only) {
+      unawaited(
+        CurrentRelevanceStore.ensureLoaded().then((_) async {
+          await CorrectionMemoryStore.ensureLoaded();
+          if (mounted) setState(() {});
+        }),
+      );
+    }
     unawaited(
       HelpedTrackingStore.ensureLoaded().then((_) {
         if (mounted) setState(() {});
@@ -379,11 +353,13 @@ class _RecordScreenState extends State<RecordScreen>
         if (mounted) setState(() {});
       }),
     );
-    unawaited(
-      BetaActivationLoopTracker.readCounts().then((counts) {
-        if (mounted) setState(() => _betaActivationLoopCounts = counts);
-      }),
-    );
+    if (!V1FeatureFlags.enableV1Only) {
+      unawaited(
+        BetaActivationLoopTracker.readCounts().then((counts) {
+          if (mounted) setState(() => _betaActivationLoopCounts = counts);
+        }),
+      );
+    }
     unawaited(
       FirstProofTruthStore.ensureLoaded().then((_) {
         if (mounted) setState(() {});
@@ -464,13 +440,6 @@ class _RecordScreenState extends State<RecordScreen>
       await _refreshMic();
       if (!mounted || !wasBlocked || _mic != RecordingPhase.ready) return;
       unawaited(HapticFeedback.lightImpact());
-      ScaffoldMessenger.of(context)
-        ..hideCurrentSnackBar()
-        ..showSnackBar(
-          const SnackBar(
-            content: Text(MicrophonePermissionCopy.connectedMessage),
-          ),
-        );
       return;
     }
     if (status.isPermanentlyDenied || status.isRestricted || status.isLimited) {
@@ -510,7 +479,7 @@ class _RecordScreenState extends State<RecordScreen>
       setState(() => _patternMemory = null);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(appLocalizationsOf(context).savedForNextCheckIn),
+          content: Text(AppLocalizations.of(context).savedForNextCheckIn),
         ),
       );
       await _promptRoutineAnchorForDate(checkIn.targetDate);
@@ -524,7 +493,7 @@ class _RecordScreenState extends State<RecordScreen>
       setState(() => _patternNextAction = null);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(appLocalizationsOf(context).savedForTomorrowCheck),
+          content: Text(AppLocalizations.of(context).savedForTomorrowCheck),
         ),
       );
       await _promptRoutineAnchorForDate(checkIn.targetDate);
@@ -538,7 +507,7 @@ class _RecordScreenState extends State<RecordScreen>
     if (checkIn != null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(appLocalizationsOf(context).savedForTomorrowCheck),
+          content: Text(AppLocalizations.of(context).savedForTomorrowCheck),
         ),
       );
     }
@@ -548,7 +517,7 @@ class _RecordScreenState extends State<RecordScreen>
     await PatternShareService.copyToClipboard(recap);
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(appLocalizationsOf(context).recapCopied)),
+      SnackBar(content: Text(AppLocalizations.of(context).recapCopied)),
     );
   }
 
@@ -559,7 +528,7 @@ class _RecordScreenState extends State<RecordScreen>
     if (checkIn != null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(appLocalizationsOf(context).savedForTomorrowCheck),
+          content: Text(AppLocalizations.of(context).savedForTomorrowCheck),
         ),
       );
     }
@@ -583,100 +552,8 @@ class _RecordScreenState extends State<RecordScreen>
     unawaited(
       ReturnDayFrictionCoordinator.trackAbandonedAfterAnswerIfPending(),
     );
-    _disposePostSaveComparisonController();
-    if (_imageEngine != null) {
-      for (final attachment in _captureAttachments) {
-        unawaited(_imageEngine!.delete(attachment));
-      }
-      for (final attachments in _pendingForegroundMedia.values) {
-        for (final attachment in attachments) {
-          unawaited(_imageEngine!.delete(attachment));
-        }
-      }
-    }
     unawaited(_recordingState.dispose());
-    unawaited(_transcriptionCompletionSubscription.cancel());
     super.dispose();
-  }
-
-  void _onPostSaveComparisonChanged() {
-    if (mounted) setState(() {});
-  }
-
-  void _disposePostSaveComparisonController() {
-    _postSaveComparisonController?.removeListener(_onPostSaveComparisonChanged);
-    _postSaveComparisonController?.dispose();
-    _postSaveComparisonController = null;
-  }
-
-  /// Text-first post-save comparison — no clinical SignalEngine or health gates.
-  /// Only requires at least one prior saved moment; parser assigns evidence state.
-  Future<void> _handlePostSavePatternComparison(List<JournalEntry> all) async {
-    final moments = ArchiveMomentRecordMapper.fromJournalEntries(all);
-    if (moments.length < 2) {
-      RecordPipelineLog.postSaveComparisonSkipped(
-        reason: 'no historical text context exists yet',
-      );
-      return;
-    }
-
-    final currentMoment = moments.last;
-    final historicalMoments = moments.sublist(0, moments.length - 1);
-    if (historicalMoments.isEmpty) {
-      RecordPipelineLog.postSaveComparisonSkipped(
-        reason: 'no historical text context exists yet',
-      );
-      return;
-    }
-
-    _disposePostSaveComparisonController();
-
-    final prefs = ComparisonPreferenceStore(AppServices.instance.prefs);
-    await prefs.ensureLoaded();
-    if (!mounted) return;
-
-    final reader =
-        widget.entitlementReader ?? ArchiveEntitlementReader.forAccessCheck();
-    final isPro = await reader.isPro;
-    if (!mounted) return;
-
-    final controller = PostSaveComparisonController(
-      apiClient: JournalComparisonModelApiClient(entries: all),
-      prefs: prefs,
-    );
-    controller.addListener(_onPostSaveComparisonChanged);
-    setState(() => _postSaveComparisonController = controller);
-
-    await controller.processMomentComparison(
-      currentMoment: currentMoment,
-      historicalMoments: historicalMoments,
-      isProUser: isPro,
-    );
-  }
-
-  Widget _buildPostSaveSection() {
-    final controller = _postSaveComparisonController;
-    if (controller == null) {
-      return const SizedBox.shrink();
-    }
-
-    final uiState = controller.uiState;
-    if (uiState is! ComparisonLoading && uiState is! ComparisonSuccess) {
-      return const SizedBox.shrink();
-    }
-
-    return PostSaveComparisonSection(
-      key: const Key('post_save_pattern_comparison_section'),
-      controller: controller,
-      onProUpgradeTapped: () async {
-        _logger.info(
-          'User tapped paywall CTA within the value moment evidence card.',
-        );
-        await _paywallPresenter.triggerNativePaywallSheet(
-          requiredEntitlementId: SubscriptionEntitlements.pro,
-        );
-      },
-    );
   }
 
   Future<void> _loadActivePatternThread() async {
@@ -1121,17 +998,17 @@ class _RecordScreenState extends State<RecordScreen>
       // Widget tests do not run initState file I/O unless wrapped in runAsync.
       // Use the journal cache so empty-gate UI can render deterministically.
       _applyLoadedJournalEntryCount(
-        AppServices.instance.journalStore.loadAllSync(),
+        _accountDeps.journalStore.loadAllSync(),
         hasWatchTheme: false,
         betaFeedbackCaptured: BetaFeedbackStore.cached.hasResponse,
       );
       return;
     }
 
-    final all = await AppServices.instance.journal.loadAll();
+    final all = await _accountDeps.journal.loadAll();
     await BetaFeedbackStore.ensureLoaded();
     final watchItems = await ArchiveWatchlistStore(
-      AppServices.instance.prefs,
+      _accountDeps.prefs,
     ).loadItems();
     if (!mounted) return;
     _applyLoadedJournalEntryCount(
@@ -1179,14 +1056,14 @@ class _RecordScreenState extends State<RecordScreen>
     });
     unawaited(_refreshArchiveReturnChanges(all));
     _logRecordEmptyGate('journal_loaded');
-    unawaited(BetaActivationLoopTracker.trackRecordScreenSeen());
-    unawaited(_maybePresentYesterdaysSnapshot());
+    if (!V1FeatureFlags.enableV1Only) {
+      unawaited(BetaActivationLoopTracker.trackRecordScreenSeen());
+      unawaited(_maybePresentYesterdaysSnapshot());
+    }
   }
 
   Future<void> _refreshArchiveReturnChanges(List<JournalEntry> entries) async {
-    final store = ArchiveReturnChangesStore.fromAppPrefs(
-      AppServices.instance.prefs,
-    );
+    final store = ArchiveReturnChangesStore.fromAppPrefs(_accountDeps.prefs);
     final resolved = await resolveArchiveReturnChanges(
       entries: entries,
       store: store,
@@ -1202,7 +1079,7 @@ class _RecordScreenState extends State<RecordScreen>
     final snapshot = _archiveReturnCurrentSnapshot;
     if (snapshot == null) return;
     await ArchiveReturnChangesStore.fromAppPrefs(
-      AppServices.instance.prefs,
+      _accountDeps.prefs,
     ).markSeen(snapshot);
     if (!mounted) return;
     setState(() => _archiveReturnChangesResult = null);
@@ -1256,9 +1133,71 @@ class _RecordScreenState extends State<RecordScreen>
   /// The post-save Pro nudge shows at most once per app session.
   static bool _suggestionProNudgeShownThisSession = false;
 
+  SuggestionAttributionStore? get _suggestionAttribution =>
+      widget.suggestionAttributionStore ??
+      (AppServices.isInitialized
+          ? SuggestionAttributionStore.instance()
+          : null);
+
+  void _onDailySuggestionTapped(
+    DailyReturnSuggestion suggestion,
+    bool isPrimary,
+  ) {
+    final source = isPrimary
+        ? PaywallSource.startHereToday
+        : PaywallSource.dailySuggestion;
+    _pendingSuggestionSource = source;
+    _pendingTappedSuggestion = suggestion;
+    final store = _suggestionAttribution;
+    if (store == null) return;
+    unawaited(
+      store.record(
+        SuggestionAttributionEventType.tappedFor(source),
+        suggestionId: suggestion.id,
+      ),
+    );
+  }
+
   /// Records the saved-from-suggestion event and shows the "Saved to your
   /// archive" receipt for suggestion-sourced saves. Runs only after the save
   /// fully succeeded — generic prompt saves never reach the receipt.
+  Future<void> _handleSuggestionAttributionAfterSave(int entryCount) async {
+    final source = _pendingSuggestionSource;
+    final tapped = _pendingTappedSuggestion;
+    if (source == null) return;
+    _pendingSuggestionSource = null;
+    _pendingTappedSuggestion = null;
+
+    final store = _suggestionAttribution;
+    if (store != null) {
+      unawaited(store.record(SuggestionAttributionEventType.savedFor(source)));
+    }
+
+    final receipt = const StartHereSaveReceiptEngine().build(
+      source: source,
+      suggestion: tapped,
+    );
+    if (receipt != null) {
+      if (!mounted) return;
+      setState(() => _saveReceipt = receipt);
+      return;
+    }
+
+    // Fallback when no tapped suggestion was retained: the gentle Pro nudge.
+    final reader =
+        widget.entitlementReader ?? ArchiveEntitlementReader.forAccessCheck();
+    final isPro = await reader.isPro;
+    if (!SuggestionProTrigger.shouldShow(
+      isPro: isPro,
+      entryCount: entryCount,
+      alreadyShownThisSession: _suggestionProNudgeShownThisSession,
+    )) {
+      return;
+    }
+    _suggestionProNudgeShownThisSession = true;
+    if (!mounted) return;
+    setState(() => _suggestionProNudgeSource = source);
+  }
 
   Future<void> _loadReturnTriggerAccepted() async {
     if (!AppServices.isInitialized) return;
@@ -1449,18 +1388,8 @@ class _RecordScreenState extends State<RecordScreen>
       loop: _tomorrowReturnLoop,
       signals: phrase != null ? [phrase] : _postSaveSignals(),
     );
-    final acceptance = await WatchForCoordinator.acceptSuggestedWatchFor(
-      watch,
-      entitlementReader: widget.entitlementReader,
-    );
+    await WatchForCoordinator.acceptSuggestedWatchFor(watch);
     if (!mounted) return;
-    if (acceptance.requiresPro) {
-      await WatchTargetProBridgeSheet.show(
-        context,
-        onSeePro: () => context.push('/subscription'),
-      );
-      return;
-    }
     if (phrase != null && phrase.trim().isNotEmpty) {
       setState(() => _selectedPromptLine = 'Watch for: $phrase');
     }
@@ -1777,9 +1706,135 @@ class _RecordScreenState extends State<RecordScreen>
 
   /// Builds the "Done for today" closure receipt — only ever called after a
   /// save succeeded, so a failed save can never surface it.
+  Future<void> _buildDoneForTodayReceipt() async {
+    List<PressureCheckInRecord> records = const [];
+    if (widget.pressureCheckInStore != null || AppServices.isInitialized) {
+      final store =
+          widget.pressureCheckInStore ?? PressureCheckInStore.instance();
+      records = await store.loadAll();
+    }
+    final reader =
+        widget.entitlementReader ?? ArchiveEntitlementReader.forAccessCheck();
+    final isPro = await reader.isPro;
+    // Day 2 gentle reminder: offered once, only right after the very first
+    // successful save — value exists before anything is asked.
+    final offerDayTwoReminder = await DayTwoReminderCoordinator().shouldOffer(
+      entryCount: _journalEntryCount,
+    );
+    // First 60 Seconds: load the persisted return-cue / Pro-bridge answers
+    // so neither card ever re-asks after being resolved.
+    final recordReturnProState = await RecordReturnProStore.instance().load();
+    if (!mounted) return;
+    setState(() {
+      _offerDayTwoReminder = offerDayTwoReminder;
+      _recordReturnProState = recordReturnProState;
+      _recordReturnProIsPro = isPro;
+      _doneForTodayReceipt = const DoneForTodayReceiptEngine().build(
+        saved: true,
+        entryCount: _journalEntryCount,
+        records: records,
+      );
+      // Same evidence, one more honest count: the save that just happened.
+      _archiveProofCounter = const ArchiveProofCounterEngine().build(
+        records,
+        savedToday: true,
+      );
+      // Anonymous share card built from the same counts — never user text.
+      _shareableProof = const ShareableArchiveProofEngine().build(
+        records,
+        savedToday: true,
+        entryCount: _journalEntryCount,
+      );
+      // Pro bridge only after a real value moment — and the save is already
+      // done, so it can never block recording or saving.
+      _valueMomentBridge = const ValueMomentPaywallTrigger().build(
+        records,
+        isPro: isPro,
+      );
+      // Optional, skippable context tag — only reachable after a real save.
+      _showEvidenceContextTag = _entriesAfterSave.isNotEmpty;
+      // Tomorrow's-check preview — safe labels only, never user text.
+      _dayTwoReturnPreview = const DayTwoReturnPreviewEngine().build(
+        entryCount: _journalEntryCount,
+        contextTagIds: [for (final r in records) ...r.contextIds],
+        entryDates: [for (final r in records) r.createdAt],
+      );
+    });
+  }
 
   /// Persists a one-tap low-effort check-in as a real lightweight evidence
   /// record. The card only confirms "Saved" after this completes.
+  Future<void> _saveLowEffortCheckIn(LowEffortCheckInOption option) async {
+    if (widget.pressureCheckInStore == null && !AppServices.isInitialized) {
+      return;
+    }
+    final store =
+        widget.pressureCheckInStore ?? PressureCheckInStore.instance();
+    final existing = await store.loadAll();
+    await store.save(
+      const LowEffortCheckInEngine().buildRecord(option, existing),
+    );
+  }
+
+  Future<void> _saveEvidenceContextTag(String tagId) async {
+    setState(() => _showEvidenceContextTag = false);
+    final entry = _lastSavedEntry;
+    if (entry == null) return;
+    if (!AppServices.isInitialized) return;
+    final tagged = CaptureContextTags.applyTag(entry, tagId);
+    await _accountDeps.journalStore.save(
+      tagged,
+      first25Source: 'capture_context_tag',
+    );
+    if (!mounted) return;
+    setState(() {
+      if (_entriesAfterSave.isNotEmpty &&
+          _entriesAfterSave.first.id == tagged.id) {
+        _entriesAfterSave = [tagged, ..._entriesAfterSave.skip(1)];
+      }
+    });
+  }
+
+  Future<void> _saveCuriosityHookResponse({
+    required CuriosityHook hook,
+    required String responseText,
+    required bool wasGrounded,
+  }) async {
+    final trimmed = responseText.trim();
+    if (trimmed.isEmpty || !AppServices.isInitialized) return;
+
+    const uuid = Uuid();
+    final entry = JournalEntry(
+      id: uuid.v4(),
+      createdAt: DateTime.now().toUtc(),
+      transcript: trimmed,
+      durationSeconds: (trimmed.length / 15).ceil().clamp(1, 120),
+      reflection: Reflection(
+        mood: 'neutral',
+        emotionalIntensity: 0,
+        recurringThemes: const [],
+        exactLanguagePattern: trimmed,
+        concreteObservation: trimmed,
+        repeatedSignal: '',
+      ),
+      syncStatus: SyncStatus.localOnly,
+      parentHookId: hook.id,
+      wasGrounded: wasGrounded,
+    );
+
+    await _accountDeps.journalStore.save(
+      entry,
+      first25Source: 'curiosity_hook_response',
+    );
+    unawaited(CuriosityHookCoordinator.instance().markConsumed(hook.id));
+
+    if (!mounted) return;
+    setState(() {
+      _postSaveCuriosityHook = null;
+      _entriesAfterSave = [entry, ..._entriesAfterSave];
+      _journalEntryCount += 1;
+    });
+  }
 
   Future<void> _loadFirstThreeJourney() async {
     if (!_journalEntryCountReady || _journalEntryCount < 2) return;
@@ -1933,14 +1988,6 @@ class _RecordScreenState extends State<RecordScreen>
       if (mounted) await _routeToPermissionPanel();
       return false;
     }
-    if (funnelState == OnboardingMicState.softPromptAccepted) {
-      return true;
-    }
-    if (!mounted) return false;
-
-    final accepted = await showMicrophoneSoftPrompt(context);
-    if (!accepted || !mounted) return false;
-    await _onboardingMicStateStore.write(OnboardingMicState.softPromptAccepted);
     return true;
   }
 
@@ -2068,10 +2115,13 @@ class _RecordScreenState extends State<RecordScreen>
     });
     _recordLog('state ui=$_ui mic=$cap (refresh)');
     _maybeAutostartWithPrompt();
-    unawaited(_maybePresentYesterdaysSnapshot());
+    if (!V1FeatureFlags.enableV1Only) {
+      unawaited(_maybePresentYesterdaysSnapshot());
+    }
   }
 
   Future<void> _maybePresentYesterdaysSnapshot() async {
+    if (V1FeatureFlags.enableV1Only) return;
     if (_yesterdaysSnapshotPresentAttempted) return;
     if (!mounted) return;
     if (ScreenshotMode.enabled) return;
@@ -2152,7 +2202,7 @@ class _RecordScreenState extends State<RecordScreen>
 
   Future<void> _dismissReturningWatchTargetPrompt() async {
     if (_pendingWatchForToday != null) {
-      await WatchForCoordinator.snoozePendingForSevenDays();
+      await WatchForCoordinator.skipPendingForToday();
       _pendingWatchForToday = null;
       await LowFrictionReturnStore.instance().dismissForDay();
     } else if (ComeBackTomorrowV2Store.hasActive) {
@@ -2162,18 +2212,6 @@ class _RecordScreenState extends State<RecordScreen>
     } else {
       await LowFrictionReturnStore.instance().dismissForDay();
     }
-    if (!mounted) return;
-    setState(() {});
-  }
-
-  Future<void> _disableReturningWatchTargetReminders() async {
-    final pending = _pendingWatchForToday;
-    if (pending == null) return;
-    await ThreadReturnNotificationService.suppressThreadPermanently(
-      pending.sourceReflectionId,
-    );
-    _pendingWatchForToday = null;
-    await LowFrictionReturnStore.instance().dismissForDay();
     if (!mounted) return;
     setState(() {});
   }
@@ -2214,11 +2252,6 @@ class _RecordScreenState extends State<RecordScreen>
           micPhase: _mic,
           userDeniedThisSession: _micPermissionUserDenied,
         );
-    if ((action == RecordCtaAction.startRecording ||
-            action == RecordCtaAction.requestPermission) &&
-        !await _hasRecordingSubscriptionAccess()) {
-      return;
-    }
     switch (action) {
       case RecordCtaAction.startRecording:
         _recordCtaLog('start_recording=true');
@@ -2812,7 +2845,6 @@ class _RecordScreenState extends State<RecordScreen>
       _postSavePattern = null;
       _postSaveCuriosityHook = null;
       _secondSessionComparison = null;
-      _disposePostSaveComparisonController();
       _patternHypothesis = null;
       _patternHypothesisDismissed = false;
       _firstSessionAlternativeIndex = 0;
@@ -2979,6 +3011,17 @@ class _RecordScreenState extends State<RecordScreen>
 
   @override
   Widget build(BuildContext context) {
+    ref.listen(recordingServiceProvider, (previous, next) {
+      if (!mounted) return;
+      final seconds = next.currentDuration.inSeconds;
+      if (previous?.currentDuration == next.currentDuration) return;
+      _recordingState.syncDurationSeconds(seconds);
+      if (_ui == RecordUiState.recording &&
+          RecordingDurationPolicy.shouldAutoStop(seconds)) {
+        unawaited(_stopAndProcess(reachedDurationLimit: true));
+      }
+    });
+
     var ui = _ui;
     var policyMic = _mic;
     var policyUserDenied = _micPermissionUserDenied;
@@ -2988,10 +3031,6 @@ class _RecordScreenState extends State<RecordScreen>
           loaded: _journalEntryCountReady,
           entryCount: _journalEntryCount,
         );
-    final guidedSpark = GuidedSparkPrompts.forEntryCount(
-      _journalEntryCount,
-      seed: _coldStartSeedData,
-    );
     var error = _error;
     var localSaveTitle = _localSaveTitle;
     var syncNote = ConsumerCopyGuard.userFacingSyncNote(_syncNote);
@@ -3641,8 +3680,9 @@ class _RecordScreenState extends State<RecordScreen>
         recordProofStack.showArchiveCurrentBelief;
     final showEarlyEvidenceTimelineOnRecord =
         recordProofStack.showEarlyEvidenceTimeline;
-    final showWeeklyArchiveReviewOnRecord =
-        recordProofStack.showWeeklyArchiveWeekReview;
+    final showWeeklyArchiveReviewOnRecord = V1FeatureFlags.enableV1Only
+        ? false
+        : recordProofStack.showWeeklyArchiveWeekReview;
     final showPrivateArchiveReportOnRecord =
         recordProofStack.showPrivateArchiveReport;
     final showDailyReturnReasonOnRecord =
@@ -6194,7 +6234,6 @@ class _RecordScreenState extends State<RecordScreen>
             !_isPostSaveSurface
         ? DailyArchiveMemoryEngine.build(
             entries: _journalEntries,
-            pendingWatchFor: _pendingWatchForToday,
             confirmedRepeat: earlyFirstSignalOnRecord,
             changeProof: repeatReturnChangeProof,
             returnChecks: RepeatReturnCheckStore.cached,
@@ -6207,20 +6246,22 @@ class _RecordScreenState extends State<RecordScreen>
         : null;
     final firstProofLoopActive =
         showFirstProofPayoff || showFirstProofTruth || showFirstProofActionLoop;
-    final showDailyArchiveMemory = DailyArchiveMemoryGates.shouldShow(
-      loaded: _journalEntryCountReady,
-      entryCount: _journalEntryCount,
-      isReady: ui == RecordUiState.ready,
-      isRecording: ui == RecordUiState.recording,
-      isPostSave: _isPostSaveSurface,
-      memory: dailyArchiveMemoryCandidate,
-      showReturnDayFlow: showReturnDayFlow,
-      showReturnTomorrowCueReady: showReturnTomorrowCueReady,
-      showLowEvidenceGuidance: showLowEvidenceGuidanceOnRecord,
-      showWeeklyArchiveReview: showWeeklyArchiveReviewOnRecord,
-      firstProofLoopActive: firstProofLoopActive,
-      showComeBackTomorrowQuietSignal: showQuietSignalOnRecord,
-    );
+    final showDailyArchiveMemory = V1FeatureFlags.enableV1Only
+        ? false
+        : DailyArchiveMemoryGates.shouldShow(
+            loaded: _journalEntryCountReady,
+            entryCount: _journalEntryCount,
+            isReady: ui == RecordUiState.ready,
+            isRecording: ui == RecordUiState.recording,
+            isPostSave: _isPostSaveSurface,
+            memory: dailyArchiveMemoryCandidate,
+            showReturnDayFlow: showReturnDayFlow,
+            showReturnTomorrowCueReady: showReturnTomorrowCueReady,
+            showLowEvidenceGuidance: showLowEvidenceGuidanceOnRecord,
+            showWeeklyArchiveReview: showWeeklyArchiveReviewOnRecord,
+            firstProofLoopActive: firstProofLoopActive,
+            showComeBackTomorrowQuietSignal: showQuietSignalOnRecord,
+          );
     final showReturningWatchTargetFocusedUi =
         ReturningRecordWatchTargetUiGates.showFocusedSurface(
           showDailyArchiveMemory: showDailyArchiveMemory,
@@ -7093,950 +7134,800 @@ class _RecordScreenState extends State<RecordScreen>
           isRecordCluttered: _isPostSaveSurface,
         );
     final showCloseButton = RecordScreenCloseButton.shouldShow(context);
-    return LiveRecorderScreen(
-      child: ColoredBox(
-        color: AppColors.backgroundPrimary,
-        child: SafeArea(
-          top: true,
-          bottom: false,
-          child: Stack(
-            children: [
-              LayoutBuilder(
-                builder: (context, constraints) {
-                  return SingleChildScrollView(
-                    key: const Key('record_screen_scroll'),
-                    keyboardDismissBehavior:
-                        ScrollViewKeyboardDismissBehavior.onDrag,
-                    padding: EdgeInsets.fromLTRB(
-                      24,
-                      firstUseSimplifiedRecord ? 0 : 8,
-                      24,
-                      (compact ? 12 : 16) + bottomInset,
+    return ColoredBox(
+      color: recordScreenBackground,
+      child: SafeArea(
+        top: true,
+        bottom: false,
+        child: Stack(
+          children: [
+            LayoutBuilder(
+              builder: (context, constraints) {
+                return SingleChildScrollView(
+                  key: const Key('record_screen_scroll'),
+                  keyboardDismissBehavior:
+                      ScrollViewKeyboardDismissBehavior.onDrag,
+                  padding: EdgeInsets.fromLTRB(
+                    24,
+                    firstUseSimplifiedRecord ? 0 : 8,
+                    24,
+                    (compact ? 12 : 16) + bottomInset,
+                  ),
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(
+                      minHeight: firstUseSimplifiedRecord
+                          ? 0
+                          : constraints.maxHeight,
                     ),
-                    child: ConstrainedBox(
-                      constraints: BoxConstraints(
-                        minHeight: firstUseSimplifiedRecord
-                            ? 0
-                            : constraints.maxHeight,
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          if (kDebugMode)
-                            SizedBox(
-                              key: ValueKey(
-                                'record_empty_gate_${_journalEntryCount}_'
-                                '$_journalEntryCountLoaded',
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        if (kDebugMode)
+                          SizedBox(
+                            key: ValueKey(
+                              'record_empty_gate_${_journalEntryCount}_'
+                              '$_journalEntryCountLoaded',
+                            ),
+                            width: 0,
+                            height: 0,
+                          ),
+                        if (firstUseSimplifiedRecord &&
+                            ui == RecordUiState.ready &&
+                            _journalEntryCountReady) ...[
+                          RecordFirstRunScreenCard(
+                            onRecord: () =>
+                                unawaited(_onRecordPressed(source: 'main')),
+                            recordButtonLabel: _recordEntryCtaLabel(
+                              readyCapturePolicy,
+                            ),
+                            onTextThoughtSaved: _finishSuccessfulCapture,
+                          ),
+                        ] else if (showFirstSessionOnboarding) ...[
+                          FirstSessionOnboardingCard(
+                            onStartMoment: () =>
+                                unawaited(_onRecordPressed(source: 'main')),
+                            onExploreFirst: () =>
+                                unawaited(_dismissFirstSessionOnboarding()),
+                          ),
+                          const SizedBox(height: 16),
+                        ] else if (showFraming &&
+                            ui == RecordUiState.ready &&
+                            _journalEntryCountReady &&
+                            _journalEntryCount == 0) ...[
+                          const RecordTopArchivePromiseHero(),
+                          const SizedBox(height: 16),
+                        ],
+                        if (showTesterMissionFull &&
+                            testerMission != null &&
+                            !showReturningWatchTargetFocusedUi) ...[
+                          TesterMissionCard(
+                            mission: testerMission,
+                            onDismissed: () => setState(() {}),
+                          ),
+                          const SizedBox(height: 12),
+                        ],
+                        if (recordHomeSurface.showDailyMapPrompt &&
+                            dailyArchiveExercise != null &&
+                            !showReturningWatchTargetFocusedUi) ...[
+                          DailyArchiveExerciseRecordCard(
+                            exercise: dailyArchiveExercise,
+                            onPrimary: () => _handleDailyArchiveExerciseAction(
+                              dailyArchiveExercise.primaryRoute,
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                        ],
+                        if (showReturningWatchTargetFocusedUi &&
+                            dailyArchiveMemoryCandidate != null) ...[
+                          DailyArchiveMemoryCard(
+                            memory: dailyArchiveMemoryCandidate,
+                            entryCount: _journalEntryCount,
+                            source: 'record',
+                            showFocusedCaptureActions: true,
+                            onRecord: () => unawaited(
+                              _onRecordPressed(source: 'daily_archive_memory'),
+                            ),
+                            onTypeInstead: () => unawaited(
+                              navigateToTypeInsteadCapture(
+                                context,
+                                onSaved: _finishSuccessfulCapture,
                               ),
-                              width: 0,
-                              height: 0,
                             ),
-                          if (firstUseSimplifiedRecord &&
-                              ui == RecordUiState.ready &&
-                              _journalEntryCountReady) ...[
-                            RecordFirstRunScreenCard(
-                              onRecord: () =>
-                                  unawaited(_onRecordPressed(source: 'main')),
-                              recordButtonLabel: _recordEntryCtaLabel(
-                                readyCapturePolicy,
-                              ),
-                              onTextThoughtSaved: _finishSuccessfulCapture,
-                              onFuturePreview: () =>
-                                  context.push('/future-preview'),
+                            onNotToday: () =>
+                                unawaited(_dismissReturningWatchTargetPrompt()),
+                          ),
+                          const SizedBox(height: 12),
+                        ],
+                        if (showReturningWatchTargetFocusedUi &&
+                            _journalEntryCountReady &&
+                            ReturningRecordWatchTargetUiGates.showProUpgradePromptOnReturn(
+                              entryCount: _journalEntryCount,
+                            ) &&
+                            showProBridgeBelowProofOnRecord &&
+                            proBridgeVisibilityRecordResult != null) ...[
+                          ProBridgeVisibilityCard(
+                            result: proBridgeVisibilityRecordResult,
+                            onSeePro: () => _openProEvidenceValueSubscription(
+                              analyticsSource: 'record_return_watch_pro_bridge',
                             ),
-                          ] else if (showFirstSessionOnboarding) ...[
-                            FirstSessionOnboardingCard(
-                              onStartMoment: () =>
-                                  unawaited(_onRecordPressed(source: 'main')),
-                              onExploreFirst: () =>
-                                  unawaited(_dismissFirstSessionOnboarding()),
-                            ),
-                            const SizedBox(height: 16),
-                          ] else if (showFraming &&
-                              ui == RecordUiState.ready &&
+                            onDismiss: () =>
+                                unawaited(_dismissProEvidenceValueBridge()),
+                          ),
+                          const SizedBox(height: 12),
+                        ],
+                        if (RecordEmptyArchiveGates.showArchiveEducationStackOnRecord(
+                              loaded: _journalEntryCountReady,
+                              entryCount: _journalEntryCount,
+                            ) &&
+                            !ReturningRecordWatchTargetUiGates.suppressArchiveEducationStack(
+                              showFocusedSurface:
+                                  showReturningWatchTargetFocusedUi,
+                            )) ...[
+                          if (ui == RecordUiState.ready &&
                               _journalEntryCountReady &&
-                              _journalEntryCount == 0) ...[
-                            const RecordTopArchivePromiseHero(),
-                            const SizedBox(height: 16),
-                          ],
-                          if (showTesterMissionFull &&
-                              testerMission != null &&
-                              !showReturningWatchTargetFocusedUi) ...[
-                            TesterMissionCard(
-                              mission: testerMission,
-                              onDismissed: () => setState(() {}),
-                            ),
+                              _journalEntryCount == 0 &&
+                              _showFirstRunPrivacyReassurance &&
+                              !firstUseSimplifiedRecord) ...[
+                            const RecordFirstRunPrivacyReassurance(),
                             const SizedBox(height: 12),
                           ],
-                          if (recordHomeSurface.showDailyMapPrompt &&
-                              dailyArchiveExercise != null &&
-                              !showReturningWatchTargetFocusedUi) ...[
-                            DailyArchiveExerciseRecordCard(
-                              exercise: dailyArchiveExercise,
-                              onPrimary: () =>
-                                  _handleDailyArchiveExerciseAction(
-                                    dailyArchiveExercise.primaryRoute,
+                          if (showFraming &&
+                              stack.showFramingTitle &&
+                              !showReturningWatchTargetFocusedUi &&
+                              !ReturningRecordWatchTargetUiGates.suppressDailyStreakPressureToday()) ...[
+                            Text(
+                              RecordScreenFramingCopy.title,
+                              key: const Key('record_screen_framing_title'),
+                              style: ArchiveMobileTypography.recordPageTitle(
+                                context,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              RecordScreenFramingCopy.guidance,
+                              style: Theme.of(context).textTheme.bodyMedium
+                                  ?.copyWith(
+                                    color: VoiceMemoryColors.textSecondary,
+                                    fontSize:
+                                        ArchiveMobileTypography.responsiveBody(
+                                          context,
+                                        ).fontSize,
                                   ),
                             ),
                             const SizedBox(height: 12),
                           ],
-                          if (showReturningWatchTargetFocusedUi &&
+                          if (recordHomeSurface.showReturningUserToday &&
+                              returningUserToday != null &&
+                              !showReturningWatchTargetFocusedUi) ...[
+                            ReturningUserTodayCard(
+                              model: returningUserToday,
+                              onPrimary: () => _handleReturningUserTodayAction(
+                                returningUserToday.primaryAction,
+                              ),
+                              onSecondary: () =>
+                                  _handleReturningUserTodayAction(
+                                    returningUserToday.secondaryAction,
+                                  ),
+                            ),
+                            const SizedBox(height: 12),
+                          ],
+                          if (recordHomeSurface.showNextMomentPrompt &&
+                              nextMomentPrompt != null &&
+                              !showReturningWatchTargetFocusedUi) ...[
+                            NextMomentPromptCard(
+                              prompt: nextMomentPrompt,
+                              onPrimary: () => _handleNextMomentPromptAction(
+                                nextMomentPrompt.primaryAction,
+                              ),
+                              onSecondary: nextMomentPrompt.secondaryCta != null
+                                  ? () => _handleNextMomentPromptAction(
+                                      nextMomentPrompt.secondaryAction,
+                                    )
+                                  : null,
+                            ),
+                            const SizedBox(height: 12),
+                          ],
+                          if (recordHomeSurface.showTodaysOneQuestion &&
+                              todaysOneQuestion != null &&
+                              !showReturningWatchTargetFocusedUi) ...[
+                            TodaysOneQuestionCard(
+                              question: todaysOneQuestion,
+                              onPrimary: () => _handleTodaysOneQuestionAction(
+                                todaysOneQuestion,
+                              ),
+                              onViewFull: _openTodaysOneQuestionScreen,
+                            ),
+                            const SizedBox(height: 12),
+                          ],
+                          if (showFirstUseWordingHelper &&
+                              !firstUseSimplifiedRecord) ...[
+                            FirstUseWordingHelperCard(
+                              onUseOpening: (prompt) => unawaited(
+                                _openFirstUseWordingOpening(prompt),
+                              ),
+                            ),
+                            const SizedBox(height: 12),
+                          ],
+                          if (ui == RecordUiState.ready &&
+                              !firstUseSimplifiedRecord) ...[
+                            if (ArchiveJourneyExplainerGates.showFirstProofJourneyStripOnRecord(
+                                  loaded: _journalEntryCountReady,
+                                  entryCount: _journalEntryCount,
+                                  isPostSave: _isPostSaveSurface,
+                                  entries: _journalEntries,
+                                ) &&
+                                !recordReadySuppressStreakPressure) ...[
+                              const FirstProofJourneyStripCard(),
+                              const SizedBox(height: 12),
+                            ],
+                            if (!showReturningWatchTargetFocusedUi)
+                              Builder(
+                                builder: (context) {
+                                  final readyPolicy = readyCapturePolicy;
+                                  if (!_shouldPromoteMicCaptureActions(
+                                    readyPolicy,
+                                  )) {
+                                    return const SizedBox.shrink();
+                                  }
+                                  return Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.stretch,
+                                    children: [
+                                      _buildCaptureEntryActions(
+                                        context: context,
+                                        selectedPrompt: _selectedPromptLine,
+                                        policy: readyPolicy,
+                                        suppressLogPressureMoment:
+                                            showReturningWatchTargetFocusedUi,
+                                      ),
+                                      const SizedBox(height: 12),
+                                    ],
+                                  );
+                                },
+                              ),
+                          ],
+                          if (ui == RecordUiState.ready &&
+                              RecordCaptureModeEngine.shouldShow(
+                                loaded: _journalEntryCountReady,
+                                isReady: true,
+                                isPostSave: _isPostSaveSurface,
+                              ) &&
+                              !firstUseSimplifiedRecord &&
+                              !showReturningWatchTargetFocusedUi) ...[
+                            RecordCaptureModesCard(
+                              onModeTap: (mode) =>
+                                  unawaited(_openCaptureMode(mode)),
+                            ),
+                            const SizedBox(height: 8),
+                          ],
+                          if (recordReadySurfacePriority != null) ...[
+                            SurfacePriorityDebugBadge(
+                              result: recordReadySurfacePriority,
+                            ),
+                          ],
+                          if (showFirstSessionCaptureRepairCard &&
+                              !firstUseSimplifiedRecord) ...[
+                            FirstSessionCaptureRepairCard(
+                              result: firstSessionCaptureRepairCandidate,
+                              onTypeOneSentence: () => unawaited(
+                                navigateToTypeInsteadCapture(
+                                  context,
+                                  prompt: firstSessionCaptureRepairCandidate
+                                      .typedCapturePrompt,
+                                  onSaved: _finishSuccessfulCapture,
+                                ),
+                              ),
+                              onUseVoice: () => unawaited(
+                                _onRecordPressed(
+                                  source: 'first_session_capture_repair',
+                                ),
+                              ),
+                              onChipSelected: (prompt) {
+                                setState(() => _selectedPromptLine = prompt);
+                                unawaited(
+                                  navigateToTypeInsteadCapture(
+                                    context,
+                                    prompt: prompt,
+                                    onSaved: _finishSuccessfulCapture,
+                                  ),
+                                );
+                              },
+                            ),
+                            const SizedBox(height: 8),
+                          ],
+                          if (showFirstSessionLiftCard &&
+                              !firstUseSimplifiedRecord) ...[
+                            FirstSessionLiftCard(
+                              result: firstSessionLiftCandidate,
+                              onTypeOneSentence: () => unawaited(
+                                navigateToTypeInsteadCapture(
+                                  context,
+                                  prompt: _selectedPromptLine,
+                                  onSaved: _finishSuccessfulCapture,
+                                ),
+                              ),
+                              onUseVoiceInstead: () => unawaited(
+                                _onRecordPressed(source: 'first_session_lift'),
+                              ),
+                              onChipSelected: (prompt) {
+                                setState(() => _selectedPromptLine = prompt);
+                                unawaited(
+                                  navigateToTypeInsteadCapture(
+                                    context,
+                                    prompt: prompt,
+                                    onSaved: _finishSuccessfulCapture,
+                                  ),
+                                );
+                              },
+                            ),
+                            const SizedBox(height: 8),
+                          ],
+                          if (showFirstSaveLiftCard &&
+                              !firstUseSimplifiedRecord) ...[
+                            FirstSaveLiftCard(
+                              result: firstSaveLiftCandidate,
+                              onTypeOneSentence: () => unawaited(
+                                navigateToTypeInsteadCapture(
+                                  context,
+                                  prompt: _selectedPromptLine,
+                                  onSaved: _finishSuccessfulCapture,
+                                ),
+                              ),
+                              onRecordInstead: () => unawaited(
+                                _onRecordPressed(source: 'first_save_lift'),
+                              ),
+                              onExampleSelected: (prompt) {
+                                setState(() => _selectedPromptLine = prompt);
+                                unawaited(
+                                  navigateToTypeInsteadCapture(
+                                    context,
+                                    prompt: prompt,
+                                    onSaved: _finishSuccessfulCapture,
+                                  ),
+                                );
+                              },
+                            ),
+                            const SizedBox(height: 8),
+                          ],
+                          if (showBetaActivationPathCard &&
+                              ReturningRecordWatchTargetUiGates.showBetaRecordSurfaces() &&
+                              betaActivationPathResult != null &&
+                              !firstUseSimplifiedRecord) ...[
+                            BetaActivationPathCard(
+                              result: betaActivationPathResult,
+                              onPrimaryCta: () =>
+                                  _handleBetaActivationPathPrimaryCta(
+                                    betaActivationPathResult!,
+                                  ),
+                            ),
+                            const SizedBox(height: 8),
+                          ],
+                          if (showThreeMomentCompletionCard &&
+                              !firstUseSimplifiedRecord) ...[
+                            ThreeMomentCompletionCard(
+                              result: threeMomentCompletionCandidate,
+                              onPrimaryCta: () => unawaited(
+                                navigateToTypeInsteadCapture(
+                                  context,
+                                  prompt: _selectedPromptLine,
+                                  onSaved: _finishSuccessfulCapture,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                          ],
+                          if (showSecondMomentReturnCard &&
+                              !firstUseSimplifiedRecord) ...[
+                            SecondMomentReturnCard(
+                              result: secondMomentReturnCandidate,
+                              onNoticedSomething: () {
+                                setState(() {});
+                              },
+                              onPromptSelected: (prompt) {
+                                setState(() => _selectedPromptLine = prompt);
+                              },
+                              onSaveOneSentence: () => unawaited(
+                                navigateToTypeInsteadCapture(
+                                  context,
+                                  prompt: _selectedPromptLine,
+                                  onSaved: _finishSuccessfulCapture,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                          ],
+                          if (showFirstMomentCaptureCard &&
+                              !firstUseSimplifiedRecord) ...[
+                            FirstMomentCaptureCard(
+                              result: firstMomentCaptureCandidate,
+                              onSaveOneSentence: () => unawaited(
+                                navigateToTypeInsteadCapture(
+                                  context,
+                                  prompt: _selectedPromptLine,
+                                  onSaved: _finishSuccessfulCapture,
+                                ),
+                              ),
+                              onRecordInstead: () => unawaited(
+                                _onRecordPressed(
+                                  source: 'first_moment_capture',
+                                ),
+                              ),
+                              onExampleSelected: (prompt) {
+                                setState(() => _selectedPromptLine = prompt);
+                              },
+                            ),
+                            const SizedBox(height: 8),
+                          ],
+                          if (showFirstRunPositioningCard &&
+                              !firstUseSimplifiedRecord) ...[
+                            FirstRunPositioningCard(
+                              result: firstRunPositioningCandidate,
+                            ),
+                            const SizedBox(height: 8),
+                          ],
+                          if (showOpenCapturePromptChips &&
+                              !firstUseSimplifiedRecord &&
+                              !showReturningWatchTargetFocusedUi) ...[
+                            OpenCapturePromptChips(
+                              source: 'record',
+                              entryCount: _journalEntryCount,
+                              onChipTap: (chip) {
+                                setState(
+                                  () =>
+                                      _selectedPromptLine = chip.promptStarter,
+                                );
+                              },
+                            ),
+                            const SizedBox(height: 8),
+                          ],
+                          if (showReturnAfterProofLiftV2InGuidanceStack &&
+                              !firstUseSimplifiedRecord) ...[
+                            ReturnAfterProofLiftV2Card(
+                              result: returnAfterProofLiftV2Candidate,
+                              onPrimaryCta: () => unawaited(
+                                navigateToTypeInsteadCapture(
+                                  context,
+                                  prompt: _selectedPromptLine,
+                                  onSaved: _finishSuccessfulCapture,
+                                ),
+                              ),
+                              onPromptSelected: (prompt) {
+                                setState(() => _selectedPromptLine = prompt);
+                              },
+                            ),
+                            const SizedBox(height: 8),
+                          ],
+                          if (showReturnAfterProofInGuidanceStack &&
+                              !firstUseSimplifiedRecord) ...[
+                            ReturnAfterProofCard(
+                              result: returnAfterProofRecordCandidate,
+                              useStrengthenedLayout:
+                                  showReturnAfterProofStrengthenedOnRecordReady,
+                              onPromptSelected: (prompt) {
+                                setState(() => _selectedPromptLine = prompt);
+                              },
+                            ),
+                            const SizedBox(height: 8),
+                          ],
+                          if (showLowFrictionReturnCard &&
+                              !firstUseSimplifiedRecord &&
+                              !showReturningWatchTargetFocusedUi &&
+                              !ReturningRecordWatchTargetUiGates.watchPromptSkippedToday()) ...[
+                            LowFrictionReturnCard(
+                              source: 'record',
+                              entryCount: _journalEntryCount,
+                              onSaveOneSentence: () => unawaited(
+                                navigateToTypeInsteadCapture(
+                                  context,
+                                  prompt: _selectedPromptLine,
+                                  onSaved: _finishSuccessfulCapture,
+                                ),
+                              ),
+                              onPromptSelected: (prompt) {
+                                setState(() => _selectedPromptLine = prompt);
+                              },
+                            ),
+                            const SizedBox(height: 8),
+                          ],
+                          if (showBetaTodaySummaryCard &&
+                              ReturningRecordWatchTargetUiGates.showBetaRecordSurfaces() &&
+                              !firstUseSimplifiedRecord) ...[
+                            BetaTodaySummaryCard(
+                              result: betaTodaySummaryCandidate,
+                            ),
+                            const SizedBox(height: 8),
+                          ],
+                          if (showWhatToNoticeNextCard &&
+                              !firstUseSimplifiedRecord &&
+                              !recordReadySuppressStreakPressure) ...[
+                            WhatToNoticeNextCard(
+                              result: whatToNoticeNextCandidate,
+                              onPromptSelected: (prompt) {
+                                setState(() => _selectedPromptLine = prompt);
+                              },
+                            ),
+                            const SizedBox(height: 8),
+                          ],
+                          if (showCaptureFreedomLine &&
+                              !firstUseSimplifiedRecord &&
+                              !showReturningWatchTargetFocusedUi) ...[
+                            CaptureFreedomLine(
+                              source: 'record',
+                              entryCount: _journalEntryCount,
+                              compact: _journalEntryCount > 0,
+                            ),
+                            const SizedBox(height: 12),
+                          ],
+                          if (!suppressLegacyEducationCardsForSpineOnRecord &&
+                              showTimelinePositioningOnRecordReady &&
+                              !firstUseSimplifiedRecord) ...[
+                            TimelinePositioningCard(
+                              result: timelinePositioningCandidate,
+                              source: 'record',
+                            ),
+                            const SizedBox(height: 12),
+                          ],
+                          if (showThreeDayChallengeOnRecord &&
+                              threeDayChallengeCandidate != null &&
+                              !firstUseSimplifiedRecord &&
+                              !recordReadySuppressStreakPressure) ...[
+                            ThreeDayChallengeCard(
+                              challenge: threeDayChallengeCandidate,
+                            ),
+                            const SizedBox(height: 12),
+                          ],
+                          if (ui == RecordUiState.ready &&
+                              showNextBestActionOnRecord &&
+                              nextBestActionCandidate != null &&
+                              !firstUseSimplifiedRecord &&
+                              !showReturningWatchTargetFocusedUi) ...[
+                            NextBestActionLine(
+                              action: nextBestActionCandidate,
+                              surface: NextBestActionSurface.record,
+                            ),
+                            const SizedBox(height: 8),
+                          ],
+                          if (ui == RecordUiState.ready &&
+                              recordHomeSurface.showStartHereTodayPrompt &&
+                              _dailyReturnSuggestions.hasSuggestions &&
+                              !recordReadySuppressStreakPressure) ...[
+                            DailyReturnSuggestionsCard(
+                              startHereOnly: true,
+                              suggestionSet: _dailyReturnSuggestions,
+                              selectedPrompt: _selectedPromptLine,
+                              onSuggestionTap: _onDailySuggestionTapped,
+                              onSelectPrompt: (p) {
+                                ActivationTracker.trackActivationStarterPromptSelected();
+                                setState(() => _selectedPromptLine = p);
+                              },
+                            ),
+                            const SizedBox(height: 12),
+                          ],
+                          if (showReturnedAfterDelayRecovery &&
+                              !recordReadySuppressStreakPressure) ...[
+                            const CaptureRecoveryHintStrip.returnedAfterDelay(),
+                            const SizedBox(height: 12),
+                          ],
+                          if (showReturnDayFlow &&
+                              returnDayFlowCandidate != null &&
+                              !recordReadySuppressStreakPressure) ...[
+                            ReturnDayFlowCard(
+                              flow: returnDayFlowCandidate,
+                              entryCount: _journalEntryCount,
+                              onCameBack: () => setState(
+                                () => _selectedPromptLine =
+                                    ComeBackTomorrowV2Copy.cameBackRecordPrompt,
+                              ),
+                              onDifferent: () => setState(
+                                () =>
+                                    _selectedPromptLine = ComeBackTomorrowV2Copy
+                                        .differentRecordPrompt,
+                              ),
+                              onAnswered: () {
+                                if (mounted) setState(() {});
+                              },
+                            ),
+                            const SizedBox(height: 12),
+                          ],
+                          if (showQuietSignalOnRecord &&
+                              quietSignalCandidate != null &&
+                              !recordReadySuppressStreakPressure) ...[
+                            QuietSignalRecordCard(
+                              signal: quietSignalCandidate,
+                              entryCount: _journalEntryCount,
+                              onKeepWatching: () {
+                                if (mounted) setState(() {});
+                              },
+                            ),
+                            const SizedBox(height: 12),
+                          ],
+                          if (showReturnTomorrowCueReady &&
+                              returnTomorrowCueReady != null &&
+                              !recordReadySuppressStreakPressure) ...[
+                            ReturnTomorrowCueCard(
+                              cue: returnTomorrowCueReady,
+                              entryCount: _journalEntryCount,
+                              surface: 'record_ready',
+                            ),
+                            const SizedBox(height: 12),
+                          ],
+                          if (showFirstWeekProgressReady &&
+                              firstWeekProgressReady != null &&
+                              !recordReadySuppressStreakPressure) ...[
+                            FirstWeekProgressLine(
+                              progress: firstWeekProgressReady,
+                              entryCount: _journalEntryCount,
+                              surface: 'record_ready',
+                            ),
+                            const SizedBox(height: 8),
+                          ],
+                          if (showLowEvidenceGuidanceOnRecord &&
+                              !recordReadyShowsWatchTargetOnly) ...[
+                            LowEvidenceGuidanceCard(
+                              guidance: lowEvidenceGuidance,
+                            ),
+                            const SizedBox(height: 12),
+                          ],
+                          if (showDailyArchiveMemory &&
+                              !showReturningWatchTargetFocusedUi &&
                               dailyArchiveMemoryCandidate != null) ...[
                             DailyArchiveMemoryCard(
                               memory: dailyArchiveMemoryCandidate,
                               entryCount: _journalEntryCount,
                               source: 'record',
-                              showFocusedCaptureActions: true,
                               onRecord: () => unawaited(
                                 _onRecordPressed(
                                   source: 'daily_archive_memory',
                                 ),
                               ),
-                              onTypeInstead: () => unawaited(
-                                navigateToTypeInsteadCapture(
-                                  context,
-                                  onSaved: _finishSuccessfulCapture,
-                                ),
-                              ),
-                              onNotToday: () => unawaited(
-                                _dismissReturningWatchTargetPrompt(),
-                              ),
-                              onDontRemindAgain: () => unawaited(
-                                _disableReturningWatchTargetReminders(),
-                              ),
-                              onViewed: () => unawaited(
-                                ThreadReturnNotificationService.markThreadViewed(
-                                  _pendingWatchForToday?.sourceReflectionId,
-                                ),
-                              ),
+                              onViewPatternDetails:
+                                  dailyArchiveMemoryCandidate
+                                      .canShowPatternDetail
+                                  ? _openPatternDetailFromRecord
+                                  : null,
                             ),
                             const SizedBox(height: 12),
                           ],
-                          if (showReturningWatchTargetFocusedUi &&
+                          if (ui == RecordUiState.ready &&
                               _journalEntryCountReady &&
-                              ReturningRecordWatchTargetUiGates.showProUpgradePromptOnReturn(
-                                entryCount: _journalEntryCount,
-                              ) &&
-                              showProBridgeBelowProofOnRecord &&
-                              proBridgeVisibilityRecordResult != null) ...[
-                            ProBridgeVisibilityCard(
-                              result: proBridgeVisibilityRecordResult,
-                              onSeePro: () => _openProEvidenceValueSubscription(
-                                analyticsSource:
-                                    'record_return_watch_pro_bridge',
-                              ),
-                              onDismiss: () =>
-                                  unawaited(_dismissProEvidenceValueBridge()),
-                            ),
-                            const SizedBox(height: 12),
-                          ],
-                          if (RecordEmptyArchiveGates.showArchiveEducationStackOnRecord(
-                                loaded: _journalEntryCountReady,
-                                entryCount: _journalEntryCount,
-                              ) &&
-                              !ReturningRecordWatchTargetUiGates.suppressArchiveEducationStack(
-                                showFocusedSurface:
-                                    showReturningWatchTargetFocusedUi,
-                              )) ...[
-                            if (ui == RecordUiState.ready &&
-                                _journalEntryCountReady &&
-                                _journalEntryCount == 0 &&
-                                _showFirstRunPrivacyReassurance &&
-                                !firstUseSimplifiedRecord) ...[
-                              const RecordFirstRunPrivacyReassurance(),
-                              const SizedBox(height: 12),
-                            ],
-                            if (showFraming &&
-                                stack.showFramingTitle &&
-                                !showReturningWatchTargetFocusedUi &&
-                                !ReturningRecordWatchTargetUiGates.suppressDailyStreakPressureToday()) ...[
-                              Text(
-                                RecordScreenFramingCopy.title,
-                                key: const Key('record_screen_framing_title'),
-                                style: ArchiveMobileTypography.recordPageTitle(
-                                  context,
-                                ),
-                              ),
-                              const SizedBox(height: 8),
-                              Text(
-                                RecordScreenFramingCopy.guidance,
-                                style: Theme.of(context).textTheme.bodyMedium
-                                    ?.copyWith(
-                                      color: VoiceMemoryColors.textSecondary,
-                                      fontSize:
-                                          ArchiveMobileTypography.responsiveBody(
-                                            context,
-                                          ).fontSize,
+                              recordProofStack.showEarlyFirstSignalCard &&
+                              !showEarlyEvidenceTimelineOnRecord) ...[
+                            if (EarlyFirstSignalEngine.build(
+                                  entries: _journalEntries,
+                                )
+                                case final signal?) ...[
+                              EarlyFirstSignalCard(
+                                signal: signal,
+                                showPrimaryCta:
+                                    !_shouldHideCardRecordButtons(ui) &&
+                                    FirstThreeSessionGates.showEarlyFirstSignalCardPrimaryCta(
+                                      signal.kind,
                                     ),
-                              ),
-                              const SizedBox(height: 12),
-                            ],
-                            if (recordHomeSurface.showReturningUserToday &&
-                                returningUserToday != null &&
-                                !showReturningWatchTargetFocusedUi) ...[
-                              ReturningUserTodayCard(
-                                model: returningUserToday,
+                                showInsightFeedback:
+                                    !suppressConfirmedRepeatInlineFeedback,
+                                analyticsSurface: 'record',
+                                entryCount: _journalEntryCount,
+                                entriesForWhy: _journalEntries,
                                 onPrimary: () =>
-                                    _handleReturningUserTodayAction(
-                                      returningUserToday.primaryAction,
-                                    ),
-                                onSecondary: () =>
-                                    _handleReturningUserTodayAction(
-                                      returningUserToday.secondaryAction,
-                                    ),
-                              ),
-                              const SizedBox(height: 12),
-                            ],
-                            if (recordHomeSurface.showNextMomentPrompt &&
-                                nextMomentPrompt != null &&
-                                !showReturningWatchTargetFocusedUi) ...[
-                              NextMomentPromptCard(
-                                prompt: nextMomentPrompt,
-                                onPrimary: () => _handleNextMomentPromptAction(
-                                  nextMomentPrompt.primaryAction,
-                                ),
-                                onSecondary:
-                                    nextMomentPrompt.secondaryCta != null
-                                    ? () => _handleNextMomentPromptAction(
-                                        nextMomentPrompt.secondaryAction,
+                                    unawaited(_onRecordPressed(source: 'main')),
+                                onViewEvidence: signal.showsConfirmedRepeat
+                                    ? () => context.push(
+                                        BeliefEvidenceNavigation.route,
                                       )
                                     : null,
-                              ),
-                              const SizedBox(height: 12),
-                            ],
-                            if (recordHomeSurface.showTodaysOneQuestion &&
-                                todaysOneQuestion != null &&
-                                !showReturningWatchTargetFocusedUi) ...[
-                              TodaysOneQuestionCard(
-                                question: todaysOneQuestion,
-                                onPrimary: () => _handleTodaysOneQuestionAction(
-                                  todaysOneQuestion,
-                                ),
-                                onViewFull: _openTodaysOneQuestionScreen,
-                              ),
-                              const SizedBox(height: 12),
-                            ],
-                            if (showFirstUseWordingHelper &&
-                                !firstUseSimplifiedRecord) ...[
-                              FirstUseWordingHelperCard(
-                                onUseOpening: (prompt) => unawaited(
-                                  _openFirstUseWordingOpening(prompt),
-                                ),
-                              ),
-                              const SizedBox(height: 12),
-                            ],
-                            if (ui == RecordUiState.ready &&
-                                !firstUseSimplifiedRecord) ...[
-                              if (ArchiveJourneyExplainerGates.showFirstProofJourneyStripOnRecord(
-                                    loaded: _journalEntryCountReady,
-                                    entryCount: _journalEntryCount,
-                                    isPostSave: _isPostSaveSurface,
-                                    entries: _journalEntries,
-                                  ) &&
-                                  !recordReadySuppressStreakPressure) ...[
-                                const FirstProofJourneyStripCard(),
-                                const SizedBox(height: 12),
-                              ],
-                              if (!showReturningWatchTargetFocusedUi)
-                                Builder(
-                                  builder: (context) {
-                                    final readyPolicy = readyCapturePolicy;
-                                    if (!_shouldPromoteMicCaptureActions(
-                                      readyPolicy,
-                                    )) {
-                                      return const SizedBox.shrink();
-                                    }
-                                    return Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.stretch,
-                                      children: [
-                                        _buildCaptureEntryActions(
-                                          context: context,
-                                          selectedPrompt: _selectedPromptLine,
-                                          policy: readyPolicy,
-                                          suppressLogPressureMoment:
-                                              showReturningWatchTargetFocusedUi,
-                                        ),
-                                        const SizedBox(height: 12),
-                                      ],
-                                    );
-                                  },
-                                ),
-                            ],
-                            if (ui == RecordUiState.ready &&
-                                RecordCaptureModeEngine.shouldShow(
-                                  loaded: _journalEntryCountReady,
-                                  isReady: true,
-                                  isPostSave: _isPostSaveSurface,
-                                ) &&
-                                !firstUseSimplifiedRecord &&
-                                !showReturningWatchTargetFocusedUi) ...[
-                              RecordCaptureModesCard(
-                                onModeTap: (mode) =>
-                                    unawaited(_openCaptureMode(mode)),
-                              ),
-                              const SizedBox(height: 8),
-                            ],
-                            if (recordReadySurfacePriority != null) ...[
-                              SurfacePriorityDebugBadge(
-                                result: recordReadySurfacePriority,
-                              ),
-                            ],
-                            if (showFirstSessionCaptureRepairCard &&
-                                !firstUseSimplifiedRecord) ...[
-                              FirstSessionCaptureRepairCard(
-                                result: firstSessionCaptureRepairCandidate,
-                                onTypeOneSentence: () => unawaited(
-                                  navigateToTypeInsteadCapture(
-                                    context,
-                                    prompt: firstSessionCaptureRepairCandidate
-                                        .typedCapturePrompt,
-                                    onSaved: _finishSuccessfulCapture,
-                                  ),
-                                ),
-                                onUseVoice: () => unawaited(
-                                  _onRecordPressed(
-                                    source: 'first_session_capture_repair',
-                                  ),
-                                ),
-                                onChipSelected: (prompt) {
-                                  setState(() => _selectedPromptLine = prompt);
-                                  unawaited(
-                                    navigateToTypeInsteadCapture(
-                                      context,
-                                      prompt: prompt,
-                                      onSaved: _finishSuccessfulCapture,
-                                    ),
-                                  );
-                                },
-                              ),
-                              const SizedBox(height: 8),
-                            ],
-                            if (showFirstSessionLiftCard &&
-                                !firstUseSimplifiedRecord) ...[
-                              FirstSessionLiftCard(
-                                result: firstSessionLiftCandidate,
-                                onTypeOneSentence: () => unawaited(
-                                  navigateToTypeInsteadCapture(
-                                    context,
-                                    prompt: _selectedPromptLine,
-                                    onSaved: _finishSuccessfulCapture,
-                                  ),
-                                ),
-                                onUseVoiceInstead: () => unawaited(
-                                  _onRecordPressed(
-                                    source: 'first_session_lift',
-                                  ),
-                                ),
-                                onChipSelected: (prompt) {
-                                  setState(() => _selectedPromptLine = prompt);
-                                  unawaited(
-                                    navigateToTypeInsteadCapture(
-                                      context,
-                                      prompt: prompt,
-                                      onSaved: _finishSuccessfulCapture,
-                                    ),
-                                  );
-                                },
-                              ),
-                              const SizedBox(height: 8),
-                            ],
-                            if (showFirstSaveLiftCard &&
-                                !firstUseSimplifiedRecord) ...[
-                              FirstSaveLiftCard(
-                                result: firstSaveLiftCandidate,
-                                onTypeOneSentence: () => unawaited(
-                                  navigateToTypeInsteadCapture(
-                                    context,
-                                    prompt: _selectedPromptLine,
-                                    onSaved: _finishSuccessfulCapture,
-                                  ),
-                                ),
-                                onRecordInstead: () => unawaited(
-                                  _onRecordPressed(source: 'first_save_lift'),
-                                ),
-                                onExampleSelected: (prompt) {
-                                  setState(() => _selectedPromptLine = prompt);
-                                  unawaited(
-                                    navigateToTypeInsteadCapture(
-                                      context,
-                                      prompt: prompt,
-                                      onSaved: _finishSuccessfulCapture,
-                                    ),
-                                  );
-                                },
-                              ),
-                              const SizedBox(height: 8),
-                            ],
-                            if (showBetaActivationPathCard &&
-                                ReturningRecordWatchTargetUiGates.showBetaRecordSurfaces() &&
-                                betaActivationPathResult != null &&
-                                !firstUseSimplifiedRecord) ...[
-                              BetaActivationPathCard(
-                                result: betaActivationPathResult,
-                                onPrimaryCta: () =>
-                                    _handleBetaActivationPathPrimaryCta(
-                                      betaActivationPathResult!,
-                                    ),
-                              ),
-                              const SizedBox(height: 8),
-                            ],
-                            if (showThreeMomentCompletionCard &&
-                                !firstUseSimplifiedRecord) ...[
-                              ThreeMomentCompletionCard(
-                                result: threeMomentCompletionCandidate,
-                                onPrimaryCta: () => unawaited(
-                                  navigateToTypeInsteadCapture(
-                                    context,
-                                    prompt: _selectedPromptLine,
-                                    onSaved: _finishSuccessfulCapture,
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(height: 8),
-                            ],
-                            if (showSecondMomentReturnCard &&
-                                !firstUseSimplifiedRecord) ...[
-                              SecondMomentReturnCard(
-                                result: secondMomentReturnCandidate,
-                                onNoticedSomething: () {
-                                  setState(() {});
-                                },
-                                onPromptSelected: (prompt) {
-                                  setState(() => _selectedPromptLine = prompt);
-                                },
-                                onSaveOneSentence: () => unawaited(
-                                  navigateToTypeInsteadCapture(
-                                    context,
-                                    prompt: _selectedPromptLine,
-                                    onSaved: _finishSuccessfulCapture,
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(height: 8),
-                            ],
-                            if (showFirstMomentCaptureCard &&
-                                !firstUseSimplifiedRecord) ...[
-                              FirstMomentCaptureCard(
-                                result: firstMomentCaptureCandidate,
-                                onSaveOneSentence: () => unawaited(
-                                  navigateToTypeInsteadCapture(
-                                    context,
-                                    prompt: _selectedPromptLine,
-                                    onSaved: _finishSuccessfulCapture,
-                                  ),
-                                ),
-                                onRecordInstead: () => unawaited(
-                                  _onRecordPressed(
-                                    source: 'first_moment_capture',
-                                  ),
-                                ),
-                                onExampleSelected: (prompt) {
-                                  setState(() => _selectedPromptLine = prompt);
-                                },
-                              ),
-                              const SizedBox(height: 8),
-                            ],
-                            if (showFirstRunPositioningCard &&
-                                !firstUseSimplifiedRecord) ...[
-                              FirstRunPositioningCard(
-                                result: firstRunPositioningCandidate,
-                              ),
-                              const SizedBox(height: 8),
-                            ],
-                            if (_journalEntryCountReady &&
-                                !_isPostSaveSurface &&
-                                !showReturningWatchTargetFocusedUi &&
-                                guidedSpark != null) ...[
-                              SparkCard(
-                                spark: guidedSpark,
-                                onSelected: (selected) {
-                                  setState(
-                                    () => _selectedPromptLine = selected.prompt,
-                                  );
-                                },
-                              ),
-                              const SizedBox(height: 8),
-                            ],
-                            if (showOpenCapturePromptChips &&
-                                !firstUseSimplifiedRecord &&
-                                !showReturningWatchTargetFocusedUi) ...[
-                              OpenCapturePromptChips(
-                                source: 'record',
-                                entryCount: _journalEntryCount,
-                                onChipTap: (chip) {
-                                  setState(
-                                    () => _selectedPromptLine =
-                                        chip.promptStarter,
-                                  );
-                                },
-                              ),
-                              const SizedBox(height: 8),
-                            ],
-                            if (showReturnAfterProofLiftV2InGuidanceStack &&
-                                !firstUseSimplifiedRecord) ...[
-                              ReturnAfterProofLiftV2Card(
-                                result: returnAfterProofLiftV2Candidate,
-                                onPrimaryCta: () => unawaited(
-                                  navigateToTypeInsteadCapture(
-                                    context,
-                                    prompt: _selectedPromptLine,
-                                    onSaved: _finishSuccessfulCapture,
-                                  ),
-                                ),
-                                onPromptSelected: (prompt) {
-                                  setState(() => _selectedPromptLine = prompt);
-                                },
-                              ),
-                              const SizedBox(height: 8),
-                            ],
-                            if (showReturnAfterProofInGuidanceStack &&
-                                !firstUseSimplifiedRecord) ...[
-                              ReturnAfterProofCard(
-                                result: returnAfterProofRecordCandidate,
-                                useStrengthenedLayout:
-                                    showReturnAfterProofStrengthenedOnRecordReady,
-                                onPromptSelected: (prompt) {
-                                  setState(() => _selectedPromptLine = prompt);
-                                },
-                              ),
-                              const SizedBox(height: 8),
-                            ],
-                            if (showLowFrictionReturnCard &&
-                                !firstUseSimplifiedRecord &&
-                                !showReturningWatchTargetFocusedUi &&
-                                !ReturningRecordWatchTargetUiGates.watchPromptSkippedToday()) ...[
-                              LowFrictionReturnCard(
-                                source: 'record',
-                                entryCount: _journalEntryCount,
-                                onSaveOneSentence: () => unawaited(
-                                  navigateToTypeInsteadCapture(
-                                    context,
-                                    prompt: _selectedPromptLine,
-                                    onSaved: _finishSuccessfulCapture,
-                                  ),
-                                ),
-                                onPromptSelected: (prompt) {
-                                  setState(() => _selectedPromptLine = prompt);
-                                },
-                              ),
-                              const SizedBox(height: 8),
-                            ],
-                            if (showBetaTodaySummaryCard &&
-                                ReturningRecordWatchTargetUiGates.showBetaRecordSurfaces() &&
-                                !firstUseSimplifiedRecord) ...[
-                              BetaTodaySummaryCard(
-                                result: betaTodaySummaryCandidate,
-                              ),
-                              const SizedBox(height: 8),
-                            ],
-                            if (showWhatToNoticeNextCard &&
-                                !firstUseSimplifiedRecord &&
-                                !recordReadySuppressStreakPressure) ...[
-                              WhatToNoticeNextCard(
-                                result: whatToNoticeNextCandidate,
-                                onPromptSelected: (prompt) {
-                                  setState(() => _selectedPromptLine = prompt);
-                                },
-                              ),
-                              const SizedBox(height: 8),
-                            ],
-                            if (showCaptureFreedomLine &&
-                                !firstUseSimplifiedRecord &&
-                                !showReturningWatchTargetFocusedUi) ...[
-                              CaptureFreedomLine(
-                                source: 'record',
-                                entryCount: _journalEntryCount,
-                                compact: _journalEntryCount > 0,
-                              ),
-                              const SizedBox(height: 12),
-                            ],
-                            if (!suppressLegacyEducationCardsForSpineOnRecord &&
-                                showTimelinePositioningOnRecordReady &&
-                                !firstUseSimplifiedRecord) ...[
-                              TimelinePositioningCard(
-                                result: timelinePositioningCandidate,
-                                source: 'record',
-                              ),
-                              const SizedBox(height: 12),
-                            ],
-                            if (showThreeDayChallengeOnRecord &&
-                                threeDayChallengeCandidate != null &&
-                                !firstUseSimplifiedRecord &&
-                                !recordReadySuppressStreakPressure) ...[
-                              ThreeDayChallengeCard(
-                                challenge: threeDayChallengeCandidate,
-                              ),
-                              const SizedBox(height: 12),
-                            ],
-                            if (ui == RecordUiState.ready &&
-                                showNextBestActionOnRecord &&
-                                nextBestActionCandidate != null &&
-                                !firstUseSimplifiedRecord &&
-                                !showReturningWatchTargetFocusedUi) ...[
-                              NextBestActionLine(
-                                action: nextBestActionCandidate,
-                                surface: NextBestActionSurface.record,
-                              ),
-                              const SizedBox(height: 8),
-                            ],
-                            if (ui == RecordUiState.ready &&
-                                recordHomeSurface.showStartHereTodayPrompt &&
-                                _dailyReturnSuggestions.hasSuggestions &&
-                                !recordReadySuppressStreakPressure) ...[
-                              DailyReturnSuggestionsCard(
-                                startHereOnly: true,
-                                suggestionSet: _dailyReturnSuggestions,
-                                selectedPrompt: _selectedPromptLine,
-                                onSuggestionTap: _onDailySuggestionTapped,
-                                onSelectPrompt: (p) {
-                                  ActivationTracker.trackActivationStarterPromptSelected();
-                                  setState(() => _selectedPromptLine = p);
-                                },
-                              ),
-                              const SizedBox(height: 12),
-                            ],
-                            if (showReturnedAfterDelayRecovery &&
-                                !recordReadySuppressStreakPressure) ...[
-                              const CaptureRecoveryHintStrip.returnedAfterDelay(),
-                              const SizedBox(height: 12),
-                            ],
-                            if (showReturnDayFlow &&
-                                returnDayFlowCandidate != null &&
-                                !recordReadySuppressStreakPressure) ...[
-                              ReturnDayFlowCard(
-                                flow: returnDayFlowCandidate,
-                                entryCount: _journalEntryCount,
-                                onCameBack: () => setState(
-                                  () => _selectedPromptLine =
-                                      ComeBackTomorrowV2Copy
-                                          .cameBackRecordPrompt,
-                                ),
-                                onDifferent: () => setState(
-                                  () => _selectedPromptLine =
-                                      ComeBackTomorrowV2Copy
-                                          .differentRecordPrompt,
-                                ),
-                                onAnswered: () {
-                                  if (mounted) setState(() {});
-                                },
-                              ),
-                              const SizedBox(height: 12),
-                            ],
-                            if (showQuietSignalOnRecord &&
-                                quietSignalCandidate != null &&
-                                !recordReadySuppressStreakPressure) ...[
-                              QuietSignalRecordCard(
-                                signal: quietSignalCandidate,
-                                entryCount: _journalEntryCount,
-                                onKeepWatching: () {
-                                  if (mounted) setState(() {});
-                                },
-                              ),
-                              const SizedBox(height: 12),
-                            ],
-                            if (showReturnTomorrowCueReady &&
-                                returnTomorrowCueReady != null &&
-                                !recordReadySuppressStreakPressure) ...[
-                              ReturnTomorrowCueCard(
-                                cue: returnTomorrowCueReady,
-                                entryCount: _journalEntryCount,
-                                surface: 'record_ready',
-                              ),
-                              const SizedBox(height: 12),
-                            ],
-                            if (showFirstWeekProgressReady &&
-                                firstWeekProgressReady != null &&
-                                !recordReadySuppressStreakPressure) ...[
-                              FirstWeekProgressLine(
-                                progress: firstWeekProgressReady,
-                                entryCount: _journalEntryCount,
-                                surface: 'record_ready',
-                              ),
-                              const SizedBox(height: 8),
-                            ],
-                            if (showLowEvidenceGuidanceOnRecord &&
-                                !recordReadyShowsWatchTargetOnly) ...[
-                              LowEvidenceGuidanceCard(
-                                guidance: lowEvidenceGuidance,
-                              ),
-                              const SizedBox(height: 12),
-                            ],
-                            if (showDailyArchiveMemory &&
-                                !showReturningWatchTargetFocusedUi &&
-                                dailyArchiveMemoryCandidate != null) ...[
-                              DailyArchiveMemoryCard(
-                                memory: dailyArchiveMemoryCandidate,
-                                entryCount: _journalEntryCount,
-                                source: 'record',
-                                onRecord: () => unawaited(
-                                  _onRecordPressed(
-                                    source: 'daily_archive_memory',
-                                  ),
-                                ),
-                                onViewPatternDetails:
-                                    dailyArchiveMemoryCandidate
-                                        .canShowPatternDetail
-                                    ? _openPatternDetailFromRecord
+                                onReturnPrompt: signal.returnPrompt != null
+                                    ? () {
+                                        ConfirmedRepeatTriggerCapture.armForNextSave();
+                                        setState(
+                                          () => _selectedPromptLine = signal
+                                              .returnPrompt!
+                                              .guidedRecordPrompt,
+                                        );
+                                      }
                                     : null,
                               ),
                               const SizedBox(height: 12),
                             ],
-                            if (ui == RecordUiState.ready &&
-                                _journalEntryCountReady &&
-                                recordProofStack.showEarlyFirstSignalCard &&
-                                !showEarlyEvidenceTimelineOnRecord) ...[
-                              if (EarlyFirstSignalEngine.build(
-                                    entries: _journalEntries,
-                                  )
-                                  case final signal?) ...[
-                                EarlyFirstSignalCard(
-                                  signal: signal,
-                                  showPrimaryCta:
-                                      !_shouldHideCardRecordButtons(ui) &&
-                                      FirstThreeSessionGates.showEarlyFirstSignalCardPrimaryCta(
-                                        signal.kind,
-                                      ),
-                                  showInsightFeedback:
-                                      !suppressConfirmedRepeatInlineFeedback,
-                                  analyticsSurface: 'record',
-                                  entryCount: _journalEntryCount,
-                                  entriesForWhy: _journalEntries,
-                                  onPrimary: () => unawaited(
-                                    _onRecordPressed(source: 'main'),
-                                  ),
-                                  onViewEvidence: signal.showsConfirmedRepeat
-                                      ? () => context.push(
-                                          BeliefEvidenceNavigation.route,
-                                        )
-                                      : null,
-                                  onReturnPrompt: signal.returnPrompt != null
-                                      ? () {
-                                          ConfirmedRepeatTriggerCapture.armForNextSave();
-                                          setState(
-                                            () => _selectedPromptLine = signal
-                                                .returnPrompt!
-                                                .guidedRecordPrompt,
-                                          );
-                                        }
-                                      : null,
-                                ),
-                                const SizedBox(height: 12),
-                              ],
-                            ],
-                            if (showPatternChanged &&
-                                patternChangedCandidate != null) ...[
-                              PatternChangedCard(
-                                result: patternChangedCandidate,
-                                entryCount: _journalEntryCount,
-                                surface: 'record',
-                                showRecordCta: showPatternChangedRecordCta,
-                                onRecord: () => _handlePatternChangedRecord(
-                                  patternChangedCandidate,
-                                ),
-                                onDismissed: () => setState(() {}),
+                          ],
+                          if (showPatternChanged &&
+                              patternChangedCandidate != null) ...[
+                            PatternChangedCard(
+                              result: patternChangedCandidate,
+                              entryCount: _journalEntryCount,
+                              surface: 'record',
+                              showRecordCta: showPatternChangedRecordCta,
+                              onRecord: () => _handlePatternChangedRecord(
+                                patternChangedCandidate,
                               ),
-                              const SizedBox(height: 12),
-                            ],
-                            if (showArchiveCurrentBeliefOnRecord &&
-                                ui == RecordUiState.ready &&
-                                archiveBeliefSurfaceCandidate.shouldShow) ...[
-                              ArchiveBeliefSurfaceCard(
-                                surface: archiveBeliefSurfaceCandidate,
-                                onRecordNext: () => unawaited(
-                                  _onRecordPressed(
-                                    source: 'archive_current_belief',
-                                  ),
+                              onDismissed: () => setState(() {}),
+                            ),
+                            const SizedBox(height: 12),
+                          ],
+                          if (showArchiveCurrentBeliefOnRecord &&
+                              ui == RecordUiState.ready &&
+                              archiveBeliefSurfaceCandidate.shouldShow) ...[
+                            ArchiveBeliefSurfaceCard(
+                              surface: archiveBeliefSurfaceCandidate,
+                              onRecordNext: () => unawaited(
+                                _onRecordPressed(
+                                  source: 'archive_current_belief',
                                 ),
                               ),
-                              if (patternNamePrompt != null) ...[
-                                const SizedBox(height: 12),
-                                PatternNameConfirmationCard(
-                                  prompt: patternNamePrompt,
-                                  source: 'record',
-                                  entryCount: _journalEntryCount,
-                                  onChanged: () => setState(() {}),
-                                ),
-                              ],
+                            ),
+                            if (patternNamePrompt != null) ...[
                               const SizedBox(height: 12),
-                            ],
-                            if (showTimelineProofMomentOnRecord &&
-                                timelineProofMomentCandidate != null) ...[
-                              TimelineProofMomentCard(
-                                result: timelineProofMomentCandidate,
+                              PatternNameConfirmationCard(
+                                prompt: patternNamePrompt,
                                 source: 'record',
-                              ),
-                              if (showBetaProofLiftUnderTimelineProof &&
-                                  ReturningRecordWatchTargetUiGates.showBetaRecordSurfaces()) ...[
-                                const SizedBox(height: 12),
-                                BetaProofLiftCard(
-                                  result: betaProofLiftTimelineCandidate,
-                                  source: 'record',
-                                  surface: 'record_ready',
-                                ),
-                              ],
-                              if (showBetaRepairLabProofOnRecord &&
-                                  ReturningRecordWatchTargetUiGates.showBetaRecordSurfaces() &&
-                                  betaRepairLabProofResult.shouldShow) ...[
-                                const SizedBox(height: 12),
-                                BetaRepairLabProofCard(
-                                  result: betaRepairLabProofResult,
-                                  onNotRelevantAnswered: () =>
-                                      NotRelevantRecoveryEngine.syncBackgroundCorrectionIfNeeded(
-                                        entries: _journalEntries,
-                                        source: 'record',
-                                      ),
-                                  onChanged: () => setState(() {}),
-                                ),
-                              ] else if (showProofFloorRescueOnRecord &&
-                                  proofFloorRescueResult.shouldShow) ...[
-                                const SizedBox(height: 12),
-                                ProofFloorRescueCard(
-                                  result: proofFloorRescueResult,
-                                  onPrimaryCta: () => unawaited(
-                                    navigateToTypeInsteadCapture(
-                                      context,
-                                      prompt: _selectedPromptLine,
-                                      onSaved: _finishSuccessfulCapture,
-                                    ),
-                                  ),
-                                  onNotRelevantAnswered: () =>
-                                      NotRelevantRecoveryEngine.syncBackgroundCorrectionIfNeeded(
-                                        entries: _journalEntries,
-                                        source: 'record',
-                                      ),
-                                  onChanged: () => setState(() {}),
-                                ),
-                              ] else if (showProofQualityRepairOnRecord &&
-                                  proofQualityRepairResult.shouldShow) ...[
-                                const SizedBox(height: 12),
-                                ProofQualityRepairCard(
-                                  result: proofQualityRepairResult,
-                                  onNotRelevantAnswered: () =>
-                                      NotRelevantRecoveryEngine.syncBackgroundCorrectionIfNeeded(
-                                        entries: _journalEntries,
-                                        source: 'record',
-                                      ),
-                                  onChanged: () => setState(() {}),
-                                ),
-                              ] else if (!showProofFloorRescueOnRecord) ...[
-                                BetaProofFeedbackRow(
-                                  surface: BetaProofFeedbackSurface
-                                      .timelineProofMoment,
-                                  source: 'record',
-                                  entryCount: _journalEntryCount,
-                                  hasConfirmedRepeat:
-                                      EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(
-                                        _journalEntries,
-                                      ),
-                                  parentVisible: true,
-                                  isRecording: ui == RecordUiState.recording,
-                                  isPostSaveDegraded: false,
-                                  whatChangedQuestionActive: showWhatChangedV2,
-                                  patternReviewInboxHasActiveItems:
-                                      patternReviewInboxActiveOnRecord,
-                                  onNotRelevantAnswered: () =>
-                                      NotRelevantRecoveryEngine.syncBackgroundCorrectionIfNeeded(
-                                        entries: _journalEntries,
-                                        source: 'record',
-                                      ),
-                                  onChanged: () => setState(() {}),
-                                ),
-                              ],
-                              if (showProofQualityResponseUnderTimelineProof) ...[
-                                const SizedBox(height: 12),
-                                ProofQualityResponseCard(
-                                  result: proofQualityResponseTimelineCandidate,
-                                  source: 'record',
-                                  onChanged: () => setState(() {}),
-                                ),
-                              ] else ...[
-                                if (showNotRelevantRecoveryUnderTimelineProof) ...[
-                                  const SizedBox(height: 12),
-                                  NotRelevantRecoveryCard(
-                                    result: notRelevantRecoveryCandidate,
-                                    source: 'record',
-                                    onChanged: () => setState(() {}),
-                                  ),
-                                ],
-                                if (showProofSpecificityBoostOnTimelineProof) ...[
-                                  const SizedBox(height: 12),
-                                  ProofSpecificityBoostCard(
-                                    result: proofSpecificityBoostCandidate,
-                                    surface: ProofSpecificityBoostSurface
-                                        .timelineProofMoment,
-                                    source: 'record',
-                                    hasConfirmedRepeat:
-                                        EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(
-                                          _journalEntries,
-                                        ),
-                                    proofKey: CurrentRelevanceStore.proofKeyFor(
-                                      _journalEntries,
-                                    ),
-                                    onChanged: () => setState(() {}),
-                                  ),
-                                ],
-                              ],
-                              const SizedBox(height: 12),
-                            ],
-                            if (showReturnAfterProofLiftV2BelowProofOnRecord &&
-                                showTimelineProofMomentOnRecord &&
-                                timelineProofMomentCandidate != null) ...[
-                              ReturnAfterProofLiftV2Card(
-                                result: returnAfterProofLiftV2Candidate,
-                                onPrimaryCta: () => unawaited(
-                                  navigateToTypeInsteadCapture(
-                                    context,
-                                    prompt: _selectedPromptLine,
-                                    onSaved: _finishSuccessfulCapture,
-                                  ),
-                                ),
-                                onPromptSelected: (prompt) {
-                                  setState(() => _selectedPromptLine = prompt);
-                                },
-                              ),
-                              const SizedBox(height: 12),
-                            ] else if (showReturnAfterProofBelowProofOnRecord &&
-                                showTimelineProofMomentOnRecord &&
-                                timelineProofMomentCandidate != null) ...[
-                              ReturnAfterProofCard(
-                                result: returnAfterProofRecordCandidate,
-                                useStrengthenedLayout:
-                                    showReturnAfterProofStrengthenedOnRecordReady,
-                                onPromptSelected: (prompt) {
-                                  setState(() => _selectedPromptLine = prompt);
-                                },
-                              ),
-                              const SizedBox(height: 12),
-                            ],
-                            if (showBetaFeedbackCaptureRecordReady &&
-                                ReturningRecordWatchTargetUiGates.showBetaRecordSurfaces() &&
-                                !showReturningWatchTargetFocusedUi &&
-                                betaFeedbackCaptureRecordReadyResult !=
-                                    null) ...[
-                              BetaFeedbackCaptureCard(
-                                result: betaFeedbackCaptureRecordReadyResult,
-                                proofFeedbackSurface:
-                                    betaFeedbackCaptureRecordReadyResult
-                                            .moment ==
-                                        BetaFeedbackCaptureMoment
-                                            .afterTimelineProof
-                                    ? BetaProofFeedbackSurface
-                                          .timelineProofMoment
-                                    : null,
+                                entryCount: _journalEntryCount,
                                 onChanged: () => setState(() {}),
                               ),
-                              const SizedBox(height: 12),
                             ],
-                            if (showArchiveTimelineSpineOnRecord &&
-                                archiveTimelineSpineCandidate != null) ...[
-                              ArchiveTimelineSpineCard(
-                                result: archiveTimelineSpineCandidate,
+                            const SizedBox(height: 12),
+                          ],
+                          if (showTimelineProofMomentOnRecord &&
+                              timelineProofMomentCandidate != null) ...[
+                            TimelineProofMomentCard(
+                              result: timelineProofMomentCandidate,
+                              source: 'record',
+                            ),
+                            if (showBetaProofLiftUnderTimelineProof &&
+                                ReturningRecordWatchTargetUiGates.showBetaRecordSurfaces()) ...[
+                              const SizedBox(height: 12),
+                              BetaProofLiftCard(
+                                result: betaProofLiftTimelineCandidate,
                                 source: 'record',
+                                surface: 'record_ready',
                               ),
+                            ],
+                            if (showBetaRepairLabProofOnRecord &&
+                                ReturningRecordWatchTargetUiGates.showBetaRecordSurfaces() &&
+                                betaRepairLabProofResult.shouldShow) ...[
+                              const SizedBox(height: 12),
+                              BetaRepairLabProofCard(
+                                result: betaRepairLabProofResult,
+                                onNotRelevantAnswered: () =>
+                                    NotRelevantRecoveryEngine.syncBackgroundCorrectionIfNeeded(
+                                      entries: _journalEntries,
+                                      source: 'record',
+                                    ),
+                                onChanged: () => setState(() {}),
+                              ),
+                            ] else if (showProofFloorRescueOnRecord &&
+                                proofFloorRescueResult.shouldShow) ...[
+                              const SizedBox(height: 12),
+                              ProofFloorRescueCard(
+                                result: proofFloorRescueResult,
+                                onPrimaryCta: () => unawaited(
+                                  navigateToTypeInsteadCapture(
+                                    context,
+                                    prompt: _selectedPromptLine,
+                                    onSaved: _finishSuccessfulCapture,
+                                  ),
+                                ),
+                                onNotRelevantAnswered: () =>
+                                    NotRelevantRecoveryEngine.syncBackgroundCorrectionIfNeeded(
+                                      entries: _journalEntries,
+                                      source: 'record',
+                                    ),
+                                onChanged: () => setState(() {}),
+                              ),
+                            ] else if (showProofQualityRepairOnRecord &&
+                                proofQualityRepairResult.shouldShow) ...[
+                              const SizedBox(height: 12),
+                              ProofQualityRepairCard(
+                                result: proofQualityRepairResult,
+                                onNotRelevantAnswered: () =>
+                                    NotRelevantRecoveryEngine.syncBackgroundCorrectionIfNeeded(
+                                      entries: _journalEntries,
+                                      source: 'record',
+                                    ),
+                                onChanged: () => setState(() {}),
+                              ),
+                            ] else if (!showProofFloorRescueOnRecord) ...[
                               BetaProofFeedbackRow(
                                 surface: BetaProofFeedbackSurface
-                                    .archiveTimelineSpine,
+                                    .timelineProofMoment,
                                 source: 'record',
                                 entryCount: _journalEntryCount,
                                 hasConfirmedRepeat:
@@ -8056,2917 +7947,2887 @@ class _RecordScreenState extends State<RecordScreen>
                                     ),
                                 onChanged: () => setState(() {}),
                               ),
-                              if (showProofQualityResponseUnderArchiveSpine) ...[
-                                const SizedBox(height: 12),
-                                ProofQualityResponseCard(
-                                  result: proofQualityResponseSpineCandidate,
-                                  source: 'record',
-                                  onChanged: () => setState(() {}),
-                                ),
-                              ],
-                              const SizedBox(height: 12),
                             ],
-                            if (showBetaTesterReportOnRecord &&
-                                ReturningRecordWatchTargetUiGates.showBetaRecordSurfaces()) ...[
-                              BetaTesterReportCard(
-                                result: betaTesterReportCandidate,
-                              ),
+                            if (showProofQualityResponseUnderTimelineProof) ...[
                               const SizedBox(height: 12),
-                            ],
-                            if (showReturnAfterProofLiftV2BelowProofOnRecord) ...[
-                              ReturnAfterProofLiftV2Card(
-                                result: returnAfterProofLiftV2Candidate,
-                                onPrimaryCta: () => unawaited(
-                                  navigateToTypeInsteadCapture(
-                                    context,
-                                    prompt: _selectedPromptLine,
-                                    onSaved: _finishSuccessfulCapture,
-                                  ),
-                                ),
-                                onPromptSelected: (prompt) {
-                                  setState(() => _selectedPromptLine = prompt);
-                                },
-                              ),
-                              const SizedBox(height: 12),
-                            ] else if (showReturnAfterProofBelowProofOnRecord &&
-                                !showTimelineProofMomentOnRecord &&
-                                showBetaTesterReportOnRecord) ...[
-                              ReturnAfterProofCard(
-                                result: returnAfterProofRecordCandidate,
-                                useStrengthenedLayout:
-                                    showReturnAfterProofStrengthenedOnRecordReady,
-                                onPromptSelected: (prompt) {
-                                  setState(() => _selectedPromptLine = prompt);
-                                },
-                              ),
-                              const SizedBox(height: 12),
-                            ],
-                            if (showBetaRepairLabEvidenceTrailClarityBelowProofOnRecord &&
-                                ReturningRecordWatchTargetUiGates.showBetaRecordSurfaces()) ...[
-                              EvidenceTrailClarityCard(
-                                result: betaRepairLabEvidenceTrailClarityResult,
-                                compact: proofSurfaceLayout.proBridgeCompact,
-                                onSeePro: () => _openProEvidenceValueSubscription(
-                                  analyticsSource:
-                                      'record_beta_repair_lab_evidence_trail_clarity',
-                                ),
-                              ),
-                              const SizedBox(height: 12),
-                            ] else if (showBetaRepairLabPricingValidationBelowProofOnRecord &&
-                                ReturningRecordWatchTargetUiGates.showBetaRecordSurfaces()) ...[
-                              PricingValidationCard(
-                                result: betaRepairLabPricingValidationResult,
-                                compact: proofSurfaceLayout.proBridgeCompact,
-                                onSeePro: () => _openProEvidenceValueSubscription(
-                                  analyticsSource:
-                                      'record_beta_repair_lab_pricing_validation',
-                                ),
-                              ),
-                              const SizedBox(height: 12),
-                            ] else if (showBetaRepairLabPricingValueFramingBelowProofOnRecord &&
-                                ReturningRecordWatchTargetUiGates.showBetaRecordSurfaces()) ...[
-                              PricingValueFramingCard(
-                                result: betaRepairLabPricingValueFramingResult,
-                                compact: proofSurfaceLayout.proBridgeCompact,
-                                onSeePro: () => _openProEvidenceValueSubscription(
-                                  analyticsSource:
-                                      'record_beta_repair_lab_pricing_value_framing',
-                                ),
-                              ),
-                              const SizedBox(height: 12),
-                            ] else if (showBetaRepairLabPaywallValueBelowProofOnRecord &&
-                                ReturningRecordWatchTargetUiGates.showBetaRecordSurfaces()) ...[
-                              PaywallValueRepairCard(
-                                result: betaRepairLabPaywallValueResult,
-                                compact: proofSurfaceLayout.proBridgeCompact,
-                                onSeePro: () =>
-                                    _openProEvidenceValueSubscription(
-                                      analyticsSource:
-                                          'record_beta_repair_lab_paywall_value',
-                                    ),
-                              ),
-                              const SizedBox(height: 12),
-                            ] else if (showBetaRepairLabProPlacementBelowProofOnRecord &&
-                                ReturningRecordWatchTargetUiGates.showBetaRecordSurfaces()) ...[
-                              BetaRepairLabProPlacementCard(
-                                result: betaRepairLabProPlacementResult,
-                                compact: proofSurfaceLayout.proBridgeCompact,
-                                onSeePro: () =>
-                                    _openProEvidenceValueSubscription(
-                                      analyticsSource:
-                                          'record_beta_repair_lab_pro_placement',
-                                    ),
-                              ),
-                              const SizedBox(height: 12),
-                            ] else if (showProUnderstandingLiftBelowProofOnRecord &&
-                                proUnderstandingLiftRecordReadyResult !=
-                                    null) ...[
-                              ProUnderstandingLiftCard(
-                                result: proUnderstandingLiftRecordReadyResult,
-                                compact: proofSurfaceLayout.proBridgeCompact,
-                                onSeePro: () =>
-                                    _openProEvidenceValueSubscription(
-                                      analyticsSource:
-                                          'record_pro_understanding_lift',
-                                    ),
-                              ),
-                              const SizedBox(height: 12),
-                            ] else if (showProVisibilityLiftBelowProofOnRecord &&
-                                proVisibilityLiftRecordReadyResult != null) ...[
-                              ProVisibilityLiftCard(
-                                result: proVisibilityLiftRecordReadyResult,
-                                compact: proofSurfaceLayout.proBridgeCompact,
-                                onSeePro: () =>
-                                    _openProEvidenceValueSubscription(
-                                      analyticsSource:
-                                          'record_pro_visibility_lift',
-                                    ),
-                              ),
-                              const SizedBox(height: 12),
-                            ] else if (showProBridgeBelowProofOnRecord &&
-                                proBridgeVisibilityRecordResult != null) ...[
-                              ProBridgeVisibilityCard(
-                                result: proBridgeVisibilityRecordResult,
-                                onSeePro: () =>
-                                    _openProEvidenceValueSubscription(
-                                      analyticsSource:
-                                          'record_pro_bridge_visibility',
-                                    ),
-                                onDismiss: () =>
-                                    unawaited(_dismissProEvidenceValueBridge()),
-                              ),
-                              const SizedBox(height: 12),
-                            ],
-                            if (showShareableNonPrivateProofOnRecord) ...[
-                              ShareableProofCard(
-                                result: shareableNonPrivateProofResult,
-                                source: 'record',
-                                surface: 'record_ready',
-                              ),
-                              const SizedBox(height: 12),
-                            ],
-                            if (!suppressLegacyEducationCardsForSpineOnRecord &&
-                                showCurrentRelevanceOnRecordReady &&
-                                currentRelevanceCandidate != null) ...[
-                              CurrentRelevanceCard(
-                                state: currentRelevanceCandidate,
-                                source: 'record',
-                                onChanged: () => setState(() {}),
-                              ),
-                              const SizedBox(height: 12),
-                            ],
-                            if (!suppressLegacyEducationCardsForSpineOnRecord &&
-                                showCorrectionMemoryOnRecordReady &&
-                                correctionMemoryCandidate != null) ...[
-                              CorrectionMemoryCard(
-                                result: correctionMemoryCandidate,
-                                source: 'record',
-                              ),
-                              const SizedBox(height: 12),
-                            ],
-                            if (showProofQualityResponseOnRecordReady &&
-                                !showProofQualityResponseUnderTimelineProof &&
-                                !showProofQualityResponseUnderArchiveSpine &&
-                                proofQualityResponseTimelineCandidate
-                                    .shouldShow) ...[
                               ProofQualityResponseCard(
                                 result: proofQualityResponseTimelineCandidate,
                                 source: 'record',
                                 onChanged: () => setState(() {}),
                               ),
+                            ] else ...[
+                              if (showNotRelevantRecoveryUnderTimelineProof) ...[
+                                const SizedBox(height: 12),
+                                NotRelevantRecoveryCard(
+                                  result: notRelevantRecoveryCandidate,
+                                  source: 'record',
+                                  onChanged: () => setState(() {}),
+                                ),
+                              ],
+                              if (showProofSpecificityBoostOnTimelineProof) ...[
+                                const SizedBox(height: 12),
+                                ProofSpecificityBoostCard(
+                                  result: proofSpecificityBoostCandidate,
+                                  surface: ProofSpecificityBoostSurface
+                                      .timelineProofMoment,
+                                  source: 'record',
+                                  hasConfirmedRepeat:
+                                      EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(
+                                        _journalEntries,
+                                      ),
+                                  proofKey: CurrentRelevanceStore.proofKeyFor(
+                                    _journalEntries,
+                                  ),
+                                  onChanged: () => setState(() {}),
+                                ),
+                              ],
+                            ],
+                            const SizedBox(height: 12),
+                          ],
+                          if (showReturnAfterProofLiftV2BelowProofOnRecord &&
+                              showTimelineProofMomentOnRecord &&
+                              timelineProofMomentCandidate != null) ...[
+                            ReturnAfterProofLiftV2Card(
+                              result: returnAfterProofLiftV2Candidate,
+                              onPrimaryCta: () => unawaited(
+                                navigateToTypeInsteadCapture(
+                                  context,
+                                  prompt: _selectedPromptLine,
+                                  onSaved: _finishSuccessfulCapture,
+                                ),
+                              ),
+                              onPromptSelected: (prompt) {
+                                setState(() => _selectedPromptLine = prompt);
+                              },
+                            ),
+                            const SizedBox(height: 12),
+                          ] else if (showReturnAfterProofBelowProofOnRecord &&
+                              showTimelineProofMomentOnRecord &&
+                              timelineProofMomentCandidate != null) ...[
+                            ReturnAfterProofCard(
+                              result: returnAfterProofRecordCandidate,
+                              useStrengthenedLayout:
+                                  showReturnAfterProofStrengthenedOnRecordReady,
+                              onPromptSelected: (prompt) {
+                                setState(() => _selectedPromptLine = prompt);
+                              },
+                            ),
+                            const SizedBox(height: 12),
+                          ],
+                          if (showBetaFeedbackCaptureRecordReady &&
+                              ReturningRecordWatchTargetUiGates.showBetaRecordSurfaces() &&
+                              !showReturningWatchTargetFocusedUi &&
+                              betaFeedbackCaptureRecordReadyResult != null) ...[
+                            BetaFeedbackCaptureCard(
+                              result: betaFeedbackCaptureRecordReadyResult,
+                              proofFeedbackSurface:
+                                  betaFeedbackCaptureRecordReadyResult.moment ==
+                                      BetaFeedbackCaptureMoment
+                                          .afterTimelineProof
+                                  ? BetaProofFeedbackSurface.timelineProofMoment
+                                  : null,
+                              onChanged: () => setState(() {}),
+                            ),
+                            const SizedBox(height: 12),
+                          ],
+                          if (showArchiveTimelineSpineOnRecord &&
+                              archiveTimelineSpineCandidate != null) ...[
+                            ArchiveTimelineSpineCard(
+                              result: archiveTimelineSpineCandidate,
+                              source: 'record',
+                            ),
+                            BetaProofFeedbackRow(
+                              surface:
+                                  BetaProofFeedbackSurface.archiveTimelineSpine,
+                              source: 'record',
+                              entryCount: _journalEntryCount,
+                              hasConfirmedRepeat:
+                                  EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(
+                                    _journalEntries,
+                                  ),
+                              parentVisible: true,
+                              isRecording: ui == RecordUiState.recording,
+                              isPostSaveDegraded: false,
+                              whatChangedQuestionActive: showWhatChangedV2,
+                              patternReviewInboxHasActiveItems:
+                                  patternReviewInboxActiveOnRecord,
+                              onNotRelevantAnswered: () =>
+                                  NotRelevantRecoveryEngine.syncBackgroundCorrectionIfNeeded(
+                                    entries: _journalEntries,
+                                    source: 'record',
+                                  ),
+                              onChanged: () => setState(() {}),
+                            ),
+                            if (showProofQualityResponseUnderArchiveSpine) ...[
                               const SizedBox(height: 12),
-                            ] else if (showNotRelevantRecoveryOnRecordReady &&
-                                !showNotRelevantRecoveryUnderTimelineProof &&
-                                notRelevantRecoveryCandidate.shouldShow) ...[
-                              NotRelevantRecoveryCard(
-                                result: notRelevantRecoveryCandidate,
+                              ProofQualityResponseCard(
+                                result: proofQualityResponseSpineCandidate,
                                 source: 'record',
                                 onChanged: () => setState(() {}),
                               ),
-                              const SizedBox(height: 12),
                             ],
-                            if (!suppressLegacyEducationCardsForSpineOnRecord &&
-                                showEvidenceWeightingOnRecordReady &&
-                                evidenceWeightingCandidate != null) ...[
-                              EvidenceWeightingCard(
-                                result: evidenceWeightingCandidate,
-                                source: 'record',
-                              ),
-                              const SizedBox(height: 12),
-                            ],
-                            if (!suppressLegacyEducationCardsForSpineOnRecord &&
-                                showProofSpecificityOnRecordReady &&
-                                proofSpecificityCandidate.shouldShow) ...[
-                              ProofSpecificityCard(
-                                result: proofSpecificityCandidate,
-                              ),
-                              const SizedBox(height: 12),
-                            ],
-                            if (!suppressLegacyEducationCardsForSpineOnRecord &&
-                                showPresentDayRelevanceOnRecordReady &&
-                                presentDayRelevanceCandidate != null) ...[
-                              PresentDayRelevanceCard(
-                                result: presentDayRelevanceCandidate,
-                                source: 'record',
-                              ),
-                              const SizedBox(height: 12),
-                            ],
-                            if (!suppressLegacyEducationCardsForSpineOnRecord &&
-                                showPatternConfidenceExplanationOnRecordReady &&
-                                patternConfidenceExplanationCandidate !=
-                                    null) ...[
-                              PatternConfidenceCard(
-                                result: patternConfidenceExplanationCandidate,
-                                source: 'record',
-                                compact: true,
-                              ),
-                              const SizedBox(height: 12),
-                            ],
-                            if (!showReturningWatchTargetFocusedUi &&
-                                showArchiveSummaryOnRecord &&
-                                ui == RecordUiState.ready &&
-                                archiveSummary != null) ...[
-                              ArchiveSummaryCard(
-                                summary: archiveSummary,
-                                showRecordNextCta: showArchiveSummaryRecordCta,
-                                watching: archiveWatching,
-                                onRecordNext: () =>
-                                    _handleArchiveSummaryRecordNext(
-                                      archiveSummary,
-                                    ),
-                              ),
-                              const SizedBox(height: 12),
-                            ],
-                            if (showDailyReturnReasonOnRecord &&
-                                dailyReturnReason != null) ...[
-                              DailyReturnReasonCard(
-                                reason: dailyReturnReason,
-                                showRecordCta: showDailyReturnReasonRecordCta,
-                                onRecord: () =>
-                                    _handleDailyReturnReason(dailyReturnReason),
-                              ),
-                              const SizedBox(height: 12),
-                            ],
-                            if (showEarlyEvidenceTimelineOnRecord) ...[
-                              EarlyEvidenceTimelineCard(
-                                timeline: earlyEvidenceTimeline!,
-                                compact: true,
-                                nearbyConfirmedRepeat:
-                                    proofSurfaceLayout.timelineNearby,
-                                suppressEvidencePhrases: proofSurfaceLayout
-                                    .suppressTimelineEvidencePhrases,
-                                analyticsSurface: 'record',
-                                entryCount: _journalEntryCount,
-                                entriesForWhy: _journalEntries,
-                                onRecordWhatHelped:
-                                    earlyEvidenceTimeline.showsSofterReturn &&
-                                        !earlyEvidenceTimeline
-                                            .showsHelpfulAction
-                                    ? () {
-                                        ConfirmedRepeatHelpfulActionCapture.armForNextSave();
-                                        setState(
-                                          () => _selectedPromptLine =
-                                              EarlyFirstSignalCopy
-                                                  .recordWhatHelpedGuidedPrompt,
-                                        );
-                                      }
-                                    : null,
-                              ),
-                              const SizedBox(height: 12),
-                            ],
-                            if (showWeeklyArchiveReviewOnRecord &&
-                                weeklyArchiveReview != null) ...[
-                              weekly_review_surface.WeeklyArchiveReviewCard(
-                                review: weeklyArchiveReview,
-                                onViewReview: () => _openWeeklyArchiveReview(
-                                  weeklyArchiveReview,
+                            const SizedBox(height: 12),
+                          ],
+                          if (showBetaTesterReportOnRecord &&
+                              ReturningRecordWatchTargetUiGates.showBetaRecordSurfaces()) ...[
+                            BetaTesterReportCard(
+                              result: betaTesterReportCandidate,
+                            ),
+                            const SizedBox(height: 12),
+                          ],
+                          if (showReturnAfterProofLiftV2BelowProofOnRecord) ...[
+                            ReturnAfterProofLiftV2Card(
+                              result: returnAfterProofLiftV2Candidate,
+                              onPrimaryCta: () => unawaited(
+                                navigateToTypeInsteadCapture(
+                                  context,
+                                  prompt: _selectedPromptLine,
+                                  onSaved: _finishSuccessfulCapture,
                                 ),
                               ),
-                              const SizedBox(height: 12),
-                            ],
-                            if (showPrivateArchiveReportOnRecord &&
-                                privateArchiveReportCandidate != null) ...[
-                              PrivateArchiveReportCard(
-                                report: privateArchiveReportCandidate,
-                                entryCount: _journalEntryCount,
-                                surface: 'record',
-                                isPro: _recordReturnProIsPro,
-                                onSeePro: _recordReturnProIsPro
-                                    ? null
-                                    : () => unawaited(
-                                        _resolveRecordReturnProBridge(
-                                          seePro: true,
-                                        ),
-                                      ),
+                              onPromptSelected: (prompt) {
+                                setState(() => _selectedPromptLine = prompt);
+                              },
+                            ),
+                            const SizedBox(height: 12),
+                          ] else if (showReturnAfterProofBelowProofOnRecord &&
+                              !showTimelineProofMomentOnRecord &&
+                              showBetaTesterReportOnRecord) ...[
+                            ReturnAfterProofCard(
+                              result: returnAfterProofRecordCandidate,
+                              useStrengthenedLayout:
+                                  showReturnAfterProofStrengthenedOnRecordReady,
+                              onPromptSelected: (prompt) {
+                                setState(() => _selectedPromptLine = prompt);
+                              },
+                            ),
+                            const SizedBox(height: 12),
+                          ],
+                          if (showBetaRepairLabEvidenceTrailClarityBelowProofOnRecord &&
+                              ReturningRecordWatchTargetUiGates.showBetaRecordSurfaces()) ...[
+                            EvidenceTrailClarityCard(
+                              result: betaRepairLabEvidenceTrailClarityResult,
+                              compact: proofSurfaceLayout.proBridgeCompact,
+                              onSeePro: () => _openProEvidenceValueSubscription(
+                                analyticsSource:
+                                    'record_beta_repair_lab_evidence_trail_clarity',
                               ),
-                              if (BetaProofFeedbackEngine.shouldShowOnPrivateArchiveReportPreview(
-                                privateArchiveReportVisible: true,
-                                isPro: _recordReturnProIsPro,
+                            ),
+                            const SizedBox(height: 12),
+                          ] else if (showBetaRepairLabPricingValidationBelowProofOnRecord &&
+                              ReturningRecordWatchTargetUiGates.showBetaRecordSurfaces()) ...[
+                            PricingValidationCard(
+                              result: betaRepairLabPricingValidationResult,
+                              compact: proofSurfaceLayout.proBridgeCompact,
+                              onSeePro: () => _openProEvidenceValueSubscription(
+                                analyticsSource:
+                                    'record_beta_repair_lab_pricing_validation',
+                              ),
+                            ),
+                            const SizedBox(height: 12),
+                          ] else if (showBetaRepairLabPricingValueFramingBelowProofOnRecord &&
+                              ReturningRecordWatchTargetUiGates.showBetaRecordSurfaces()) ...[
+                            PricingValueFramingCard(
+                              result: betaRepairLabPricingValueFramingResult,
+                              compact: proofSurfaceLayout.proBridgeCompact,
+                              onSeePro: () => _openProEvidenceValueSubscription(
+                                analyticsSource:
+                                    'record_beta_repair_lab_pricing_value_framing',
+                              ),
+                            ),
+                            const SizedBox(height: 12),
+                          ] else if (showBetaRepairLabPaywallValueBelowProofOnRecord &&
+                              ReturningRecordWatchTargetUiGates.showBetaRecordSurfaces()) ...[
+                            PaywallValueRepairCard(
+                              result: betaRepairLabPaywallValueResult,
+                              compact: proofSurfaceLayout.proBridgeCompact,
+                              onSeePro: () => _openProEvidenceValueSubscription(
+                                analyticsSource:
+                                    'record_beta_repair_lab_paywall_value',
+                              ),
+                            ),
+                            const SizedBox(height: 12),
+                          ] else if (showBetaRepairLabProPlacementBelowProofOnRecord &&
+                              ReturningRecordWatchTargetUiGates.showBetaRecordSurfaces()) ...[
+                            BetaRepairLabProPlacementCard(
+                              result: betaRepairLabProPlacementResult,
+                              compact: proofSurfaceLayout.proBridgeCompact,
+                              onSeePro: () => _openProEvidenceValueSubscription(
+                                analyticsSource:
+                                    'record_beta_repair_lab_pro_placement',
+                              ),
+                            ),
+                            const SizedBox(height: 12),
+                          ] else if (showProUnderstandingLiftBelowProofOnRecord &&
+                              proUnderstandingLiftRecordReadyResult !=
+                                  null) ...[
+                            ProUnderstandingLiftCard(
+                              result: proUnderstandingLiftRecordReadyResult,
+                              compact: proofSurfaceLayout.proBridgeCompact,
+                              onSeePro: () => _openProEvidenceValueSubscription(
+                                analyticsSource:
+                                    'record_pro_understanding_lift',
+                              ),
+                            ),
+                            const SizedBox(height: 12),
+                          ] else if (showProVisibilityLiftBelowProofOnRecord &&
+                              proVisibilityLiftRecordReadyResult != null) ...[
+                            ProVisibilityLiftCard(
+                              result: proVisibilityLiftRecordReadyResult,
+                              compact: proofSurfaceLayout.proBridgeCompact,
+                              onSeePro: () => _openProEvidenceValueSubscription(
+                                analyticsSource: 'record_pro_visibility_lift',
+                              ),
+                            ),
+                            const SizedBox(height: 12),
+                          ] else if (showProBridgeBelowProofOnRecord &&
+                              proBridgeVisibilityRecordResult != null) ...[
+                            ProBridgeVisibilityCard(
+                              result: proBridgeVisibilityRecordResult,
+                              onSeePro: () => _openProEvidenceValueSubscription(
+                                analyticsSource: 'record_pro_bridge_visibility',
+                              ),
+                              onDismiss: () =>
+                                  unawaited(_dismissProEvidenceValueBridge()),
+                            ),
+                            const SizedBox(height: 12),
+                          ],
+                          if (showShareableNonPrivateProofOnRecord) ...[
+                            ShareableProofCard(
+                              result: shareableNonPrivateProofResult,
+                              source: 'record',
+                              surface: 'record_ready',
+                            ),
+                            const SizedBox(height: 12),
+                          ],
+                          if (!suppressLegacyEducationCardsForSpineOnRecord &&
+                              showCurrentRelevanceOnRecordReady &&
+                              currentRelevanceCandidate != null) ...[
+                            CurrentRelevanceCard(
+                              state: currentRelevanceCandidate,
+                              source: 'record',
+                              onChanged: () => setState(() {}),
+                            ),
+                            const SizedBox(height: 12),
+                          ],
+                          if (!suppressLegacyEducationCardsForSpineOnRecord &&
+                              showCorrectionMemoryOnRecordReady &&
+                              correctionMemoryCandidate != null) ...[
+                            CorrectionMemoryCard(
+                              result: correctionMemoryCandidate,
+                              source: 'record',
+                            ),
+                            const SizedBox(height: 12),
+                          ],
+                          if (showProofQualityResponseOnRecordReady &&
+                              !showProofQualityResponseUnderTimelineProof &&
+                              !showProofQualityResponseUnderArchiveSpine &&
+                              proofQualityResponseTimelineCandidate
+                                  .shouldShow) ...[
+                            ProofQualityResponseCard(
+                              result: proofQualityResponseTimelineCandidate,
+                              source: 'record',
+                              onChanged: () => setState(() {}),
+                            ),
+                            const SizedBox(height: 12),
+                          ] else if (showNotRelevantRecoveryOnRecordReady &&
+                              !showNotRelevantRecoveryUnderTimelineProof &&
+                              notRelevantRecoveryCandidate.shouldShow) ...[
+                            NotRelevantRecoveryCard(
+                              result: notRelevantRecoveryCandidate,
+                              source: 'record',
+                              onChanged: () => setState(() {}),
+                            ),
+                            const SizedBox(height: 12),
+                          ],
+                          if (!suppressLegacyEducationCardsForSpineOnRecord &&
+                              showEvidenceWeightingOnRecordReady &&
+                              evidenceWeightingCandidate != null) ...[
+                            EvidenceWeightingCard(
+                              result: evidenceWeightingCandidate,
+                              source: 'record',
+                            ),
+                            const SizedBox(height: 12),
+                          ],
+                          if (!suppressLegacyEducationCardsForSpineOnRecord &&
+                              showProofSpecificityOnRecordReady &&
+                              proofSpecificityCandidate.shouldShow) ...[
+                            ProofSpecificityCard(
+                              result: proofSpecificityCandidate,
+                            ),
+                            const SizedBox(height: 12),
+                          ],
+                          if (!suppressLegacyEducationCardsForSpineOnRecord &&
+                              showPresentDayRelevanceOnRecordReady &&
+                              presentDayRelevanceCandidate != null) ...[
+                            PresentDayRelevanceCard(
+                              result: presentDayRelevanceCandidate,
+                              source: 'record',
+                            ),
+                            const SizedBox(height: 12),
+                          ],
+                          if (!suppressLegacyEducationCardsForSpineOnRecord &&
+                              showPatternConfidenceExplanationOnRecordReady &&
+                              patternConfidenceExplanationCandidate !=
+                                  null) ...[
+                            PatternConfidenceCard(
+                              result: patternConfidenceExplanationCandidate,
+                              source: 'record',
+                              compact: true,
+                            ),
+                            const SizedBox(height: 12),
+                          ],
+                          if (!showReturningWatchTargetFocusedUi &&
+                              showArchiveSummaryOnRecord &&
+                              ui == RecordUiState.ready &&
+                              archiveSummary != null) ...[
+                            ArchiveSummaryCard(
+                              summary: archiveSummary,
+                              showRecordNextCta: showArchiveSummaryRecordCta,
+                              watching: archiveWatching,
+                              onRecordNext: () =>
+                                  _handleArchiveSummaryRecordNext(
+                                    archiveSummary,
+                                  ),
+                            ),
+                            const SizedBox(height: 12),
+                          ],
+                          if (showDailyReturnReasonOnRecord &&
+                              dailyReturnReason != null) ...[
+                            DailyReturnReasonCard(
+                              reason: dailyReturnReason,
+                              showRecordCta: showDailyReturnReasonRecordCta,
+                              onRecord: () =>
+                                  _handleDailyReturnReason(dailyReturnReason),
+                            ),
+                            const SizedBox(height: 12),
+                          ],
+                          if (showEarlyEvidenceTimelineOnRecord) ...[
+                            EarlyEvidenceTimelineCard(
+                              timeline: earlyEvidenceTimeline!,
+                              compact: true,
+                              nearbyConfirmedRepeat:
+                                  proofSurfaceLayout.timelineNearby,
+                              suppressEvidencePhrases: proofSurfaceLayout
+                                  .suppressTimelineEvidencePhrases,
+                              analyticsSurface: 'record',
+                              entryCount: _journalEntryCount,
+                              entriesForWhy: _journalEntries,
+                              onRecordWhatHelped:
+                                  earlyEvidenceTimeline.showsSofterReturn &&
+                                      !earlyEvidenceTimeline.showsHelpfulAction
+                                  ? () {
+                                      ConfirmedRepeatHelpfulActionCapture.armForNextSave();
+                                      setState(
+                                        () => _selectedPromptLine =
+                                            EarlyFirstSignalCopy
+                                                .recordWhatHelpedGuidedPrompt,
+                                      );
+                                    }
+                                  : null,
+                            ),
+                            const SizedBox(height: 12),
+                          ],
+                          if (showWeeklyArchiveReviewOnRecord &&
+                              weeklyArchiveReview != null) ...[
+                            weekly_review_surface.WeeklyArchiveReviewCard(
+                              review: weeklyArchiveReview,
+                              onViewReview: () =>
+                                  _openWeeklyArchiveReview(weeklyArchiveReview),
+                            ),
+                            const SizedBox(height: 12),
+                          ],
+                          if (showPrivateArchiveReportOnRecord &&
+                              privateArchiveReportCandidate != null) ...[
+                            PrivateArchiveReportCard(
+                              report: privateArchiveReportCandidate,
+                              entryCount: _journalEntryCount,
+                              surface: 'record',
+                              isPro: _recordReturnProIsPro,
+                              onSeePro: _recordReturnProIsPro
+                                  ? null
+                                  : () => unawaited(
+                                      _resolveRecordReturnProBridge(
+                                        seePro: true,
+                                      ),
+                                    ),
+                            ),
+                            if (BetaProofFeedbackEngine.shouldShowOnPrivateArchiveReportPreview(
+                              privateArchiveReportVisible: true,
+                              isPro: _recordReturnProIsPro,
+                              entryCount: _journalEntryCount,
+                              hasConfirmedRepeat:
+                                  EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(
+                                    _journalEntries,
+                                  ),
+                              isRecording: ui == RecordUiState.recording,
+                              isPostSaveDegraded: false,
+                              whatChangedQuestionActive: showWhatChangedV2,
+                              patternReviewInboxHasActiveItems:
+                                  patternReviewInboxActiveOnRecord,
+                            ))
+                              BetaProofFeedbackRow(
+                                surface: BetaProofFeedbackSurface
+                                    .privateArchiveReportPreview,
+                                source: 'record',
                                 entryCount: _journalEntryCount,
                                 hasConfirmedRepeat:
                                     EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(
                                       _journalEntries,
                                     ),
+                                parentVisible: true,
                                 isRecording: ui == RecordUiState.recording,
                                 isPostSaveDegraded: false,
                                 whatChangedQuestionActive: showWhatChangedV2,
                                 patternReviewInboxHasActiveItems:
                                     patternReviewInboxActiveOnRecord,
-                              ))
-                                BetaProofFeedbackRow(
-                                  surface: BetaProofFeedbackSurface
-                                      .privateArchiveReportPreview,
-                                  source: 'record',
-                                  entryCount: _journalEntryCount,
-                                  hasConfirmedRepeat:
-                                      EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(
-                                        _journalEntries,
-                                      ),
-                                  parentVisible: true,
-                                  isRecording: ui == RecordUiState.recording,
-                                  isPostSaveDegraded: false,
-                                  whatChangedQuestionActive: showWhatChangedV2,
-                                  patternReviewInboxHasActiveItems:
-                                      patternReviewInboxActiveOnRecord,
-                                  onChanged: () => setState(() {}),
-                                ),
-                              const SizedBox(height: 12),
-                            ],
-                            if (showProEvidenceValuePrivateReportOnRecord) ...[
-                              ProEvidenceValueCard(
-                                surface: ProEvidenceValueSurface
-                                    .privateReportPreview,
-                                entryCount: _journalEntryCount,
-                                compact: true,
-                                onSeePro: () => _openProEvidenceValueSubscription(
-                                  analyticsSource:
-                                      'record_private_report_pro_evidence_value',
-                                ),
-                                onDismiss: () =>
-                                    unawaited(_dismissProEvidenceValueBridge()),
-                              ),
-                              const SizedBox(height: 12),
-                            ],
-                            if (showConfirmedRepeatWhyMattersOnRecord) ...[
-                              ConfirmedRepeatWhyMattersCard(
-                                onDismissed: () => setState(() {}),
-                              ),
-                              const SizedBox(height: 12),
-                            ],
-                            if (showConfirmedRepeatThoughtMapOnRecord &&
-                                confirmedRepeatThoughtMap != null) ...[
-                              ConfirmedRepeatThoughtMapCard(
-                                result: confirmedRepeatThoughtMap,
-                                showRecordMissingPieceCta:
-                                    showThoughtMapRecordCta,
-                                onRecordMissingPiece: () =>
-                                    _handleThoughtMapMissingPiece(
-                                      confirmedRepeatThoughtMap,
-                                    ),
-                              ),
-                              const SizedBox(height: 12),
-                            ],
-                            if (showHelpfulActionAppearedOnRecord &&
-                                helpfulActionAppearedCandidate != null) ...[
-                              HelpfulActionAppearedCard(
-                                result: helpfulActionAppearedCandidate,
-                                entryCount: _journalEntryCount,
-                                source: 'record',
-                              ),
-                              const SizedBox(height: 12),
-                            ],
-                            if (showPositiveReinforcementOnRecord &&
-                                positiveReinforcement != null) ...[
-                              PositiveReinforcementCard(
-                                reinforcement: positiveReinforcement,
-                                showRecordAgainCta:
-                                    showPositiveReinforcementRecordCta,
-                                onRecordAgain: () =>
-                                    _handlePositiveReinforcementRecordAgain(
-                                      positiveReinforcement,
-                                    ),
-                              ),
-                              const SizedBox(height: 12),
-                            ],
-                            if (showChangeProofOnRecord &&
-                                repeatReturnChangeProof != null) ...[
-                              RepeatReturnCheckChangeProofCard(
-                                proof: repeatReturnChangeProof,
-                                entryCount: _journalEntryCount,
-                                surface: 'record',
-                                onRecordNext: () => unawaited(
-                                  _onRecordPressed(
-                                    source: 'repeat_return_proof',
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(height: 12),
-                            ],
-                            if (showConfirmedRepeatBetaFeedback &&
-                                !showReturningWatchTargetFocusedUi &&
-                                !showArchiveSummaryOnRecord) ...[
-                              ConfirmedRepeatBetaFeedbackCard(
-                                entryCount: _journalEntryCount,
-                                surface: 'record',
-                                viewingConfirmedRepeat:
-                                    viewingConfirmedRepeatOnRecord,
-                                isRecording: ui == RecordUiState.recording,
                                 onChanged: () => setState(() {}),
                               ),
-                              const SizedBox(height: 12),
-                            ],
-                            if (showFirstWeekLoopOnRecord &&
-                                firstWeekLoopCandidate != null &&
-                                !recordReadySuppressStreakPressure) ...[
-                              FirstWeekLoopCard(
-                                loop: firstWeekLoopCandidate,
-                                entryCount: _journalEntryCount,
-                                showRecordCta: showFirstWeekLoopRecordCta,
-                                onRecord: () => unawaited(
-                                  _onRecordPressed(source: 'first_week_loop'),
-                                ),
+                            const SizedBox(height: 12),
+                          ],
+                          if (showProEvidenceValuePrivateReportOnRecord) ...[
+                            ProEvidenceValueCard(
+                              surface:
+                                  ProEvidenceValueSurface.privateReportPreview,
+                              entryCount: _journalEntryCount,
+                              compact: true,
+                              onSeePro: () => _openProEvidenceValueSubscription(
+                                analyticsSource:
+                                    'record_private_report_pro_evidence_value',
                               ),
-                              const SizedBox(height: 12),
-                            ],
-                            if (showBetaTestScriptCard &&
-                                ReturningRecordWatchTargetUiGates.showBetaRecordSurfaces() &&
-                                !showReturningWatchTargetFocusedUi &&
-                                betaTestScriptCardCandidate != null) ...[
-                              BetaTestScriptCard(
-                                card: betaTestScriptCardCandidate,
-                                onViewSteps: () {
-                                  BetaTestScriptSheet.show(
-                                    context,
-                                    entries: _journalEntries,
-                                    source: 'record',
-                                    onReset: () {
-                                      if (mounted) setState(() {});
-                                    },
-                                  );
-                                },
-                                onSendFeedback:
-                                    betaTestScriptCardCandidate
-                                        .showSendFeedbackSecondary
-                                    ? () {
-                                        BetaFeedbackSheet.show(
-                                          context,
-                                          source: 'record_beta_test_script',
-                                          entryCount: _journalEntryCount,
-                                        );
-                                      }
-                                    : null,
+                              onDismiss: () =>
+                                  unawaited(_dismissProEvidenceValueBridge()),
+                            ),
+                            const SizedBox(height: 12),
+                          ],
+                          if (showConfirmedRepeatWhyMattersOnRecord) ...[
+                            ConfirmedRepeatWhyMattersCard(
+                              onDismissed: () => setState(() {}),
+                            ),
+                            const SizedBox(height: 12),
+                          ],
+                          if (showConfirmedRepeatThoughtMapOnRecord &&
+                              confirmedRepeatThoughtMap != null) ...[
+                            ConfirmedRepeatThoughtMapCard(
+                              result: confirmedRepeatThoughtMap,
+                              showRecordMissingPieceCta:
+                                  showThoughtMapRecordCta,
+                              onRecordMissingPiece: () =>
+                                  _handleThoughtMapMissingPiece(
+                                    confirmedRepeatThoughtMap,
+                                  ),
+                            ),
+                            const SizedBox(height: 12),
+                          ],
+                          if (showHelpfulActionAppearedOnRecord &&
+                              helpfulActionAppearedCandidate != null) ...[
+                            HelpfulActionAppearedCard(
+                              result: helpfulActionAppearedCandidate,
+                              entryCount: _journalEntryCount,
+                              source: 'record',
+                            ),
+                            const SizedBox(height: 12),
+                          ],
+                          if (showPositiveReinforcementOnRecord &&
+                              positiveReinforcement != null) ...[
+                            PositiveReinforcementCard(
+                              reinforcement: positiveReinforcement,
+                              showRecordAgainCta:
+                                  showPositiveReinforcementRecordCta,
+                              onRecordAgain: () =>
+                                  _handlePositiveReinforcementRecordAgain(
+                                    positiveReinforcement,
+                                  ),
+                            ),
+                            const SizedBox(height: 12),
+                          ],
+                          if (showChangeProofOnRecord &&
+                              repeatReturnChangeProof != null) ...[
+                            RepeatReturnCheckChangeProofCard(
+                              proof: repeatReturnChangeProof,
+                              entryCount: _journalEntryCount,
+                              surface: 'record',
+                              onRecordNext: () => unawaited(
+                                _onRecordPressed(source: 'repeat_return_proof'),
                               ),
-                              const SizedBox(height: 12),
-                            ],
-                            if (showProUnderstandingLiftInProSectionOnRecord &&
-                                proUnderstandingLiftRecordReadyResult !=
-                                    null) ...[
-                              ProUnderstandingLiftCard(
-                                result: proUnderstandingLiftRecordReadyResult,
-                                compact: proofSurfaceLayout.proBridgeCompact,
-                                onSeePro: () =>
-                                    _openProEvidenceValueSubscription(
-                                      analyticsSource:
-                                          'record_pro_understanding_lift',
-                                    ),
+                            ),
+                            const SizedBox(height: 12),
+                          ],
+                          if (showConfirmedRepeatBetaFeedback &&
+                              !showReturningWatchTargetFocusedUi &&
+                              !showArchiveSummaryOnRecord) ...[
+                            ConfirmedRepeatBetaFeedbackCard(
+                              entryCount: _journalEntryCount,
+                              surface: 'record',
+                              viewingConfirmedRepeat:
+                                  viewingConfirmedRepeatOnRecord,
+                              isRecording: ui == RecordUiState.recording,
+                              onChanged: () => setState(() {}),
+                            ),
+                            const SizedBox(height: 12),
+                          ],
+                          if (showFirstWeekLoopOnRecord &&
+                              firstWeekLoopCandidate != null &&
+                              !recordReadySuppressStreakPressure) ...[
+                            FirstWeekLoopCard(
+                              loop: firstWeekLoopCandidate,
+                              entryCount: _journalEntryCount,
+                              showRecordCta: showFirstWeekLoopRecordCta,
+                              onRecord: () => unawaited(
+                                _onRecordPressed(source: 'first_week_loop'),
                               ),
-                              const SizedBox(height: 12),
-                            ] else if (showProVisibilityLiftInProSectionOnRecord &&
-                                proVisibilityLiftRecordReadyResult != null) ...[
-                              ProVisibilityLiftCard(
-                                result: proVisibilityLiftRecordReadyResult,
-                                compact: proofSurfaceLayout.proBridgeCompact,
-                                onSeePro: () =>
-                                    _openProEvidenceValueSubscription(
-                                      analyticsSource:
-                                          'record_pro_visibility_lift',
-                                    ),
-                              ),
-                              const SizedBox(height: 12),
-                            ] else if (showProBridgeInProSectionOnRecord &&
-                                proBridgeVisibilityRecordResult != null) ...[
-                              ProBridgeVisibilityCard(
-                                result: proBridgeVisibilityRecordResult,
-                                onSeePro: () =>
-                                    _openProEvidenceValueSubscription(
-                                      analyticsSource:
-                                          'record_pro_bridge_visibility',
-                                    ),
-                                onDismiss: () =>
-                                    unawaited(_dismissProEvidenceValueBridge()),
-                              ),
-                              const SizedBox(height: 12),
-                            ] else if (showProEvidenceValueOnRecordReady) ...[
-                              ProEvidenceValueCard(
-                                surface: ProEvidenceValueSurface.recordReady,
-                                entryCount: _journalEntryCount,
-                                compact: proofSurfaceLayout.proBridgeCompact,
-                                onSeePro: () =>
-                                    _openProEvidenceValueSubscription(
-                                      analyticsSource:
-                                          'record_pro_evidence_value',
-                                    ),
-                                onDismiss: () =>
-                                    unawaited(_dismissProEvidenceValueBridge()),
-                              ),
-                              const SizedBox(height: 12),
-                            ],
-                            if (betaFeedbackIntelligenceSurfaceOnRecordReady !=
-                                    null &&
-                                ReturningRecordWatchTargetUiGates.showBetaRecordSurfaces() &&
-                                !showReturningWatchTargetFocusedUi) ...[
-                              BetaFeedbackIntelligenceCard(
-                                surface:
-                                    betaFeedbackIntelligenceSurfaceOnRecordReady,
-                                entryCount: _journalEntryCount,
-                                reachedFirstProof: firstProofPayoffSeenOnRecord,
-                                compact: proofSurfaceLayout.proBridgeCompact,
-                                onSubmitted: () {
-                                  if (mounted) setState(() {});
-                                },
-                              ),
-                              const SizedBox(height: 12),
-                            ],
-                            if (ui == RecordUiState.ready &&
-                                _journalEntryCountReady &&
-                                RecordEmptyArchiveGates.showConfirmedRepeatChangeNoticeCard(
-                                  loaded: _journalEntryCountReady,
-                                  entryCount: _journalEntryCount,
-                                  isPostSave: _isPostSaveSurface,
-                                ) &&
-                                !showEarlyEvidenceTimelineOnRecord &&
-                                !showArchiveSummaryOnRecord) ...[
-                              if (EarlyFirstSignalEngine.buildChangeNotice(
-                                    entries: _journalEntries,
-                                  )
-                                  case final notice?) ...[
-                                ConfirmedRepeatChangeNoticeCard(
-                                  notice: notice,
-                                  analyticsSurface: 'record',
-                                  entryCount: _journalEntryCount,
-                                  entriesForWhy: _journalEntries,
-                                  onRecordWhatHelped: () {
-                                    ConfirmedRepeatHelpfulActionCapture.armForNextSave();
-                                    setState(
-                                      () => _selectedPromptLine =
-                                          notice.guidedRecordPrompt,
-                                    );
+                            ),
+                            const SizedBox(height: 12),
+                          ],
+                          if (showBetaTestScriptCard &&
+                              ReturningRecordWatchTargetUiGates.showBetaRecordSurfaces() &&
+                              !showReturningWatchTargetFocusedUi &&
+                              betaTestScriptCardCandidate != null) ...[
+                            BetaTestScriptCard(
+                              card: betaTestScriptCardCandidate,
+                              onViewSteps: () {
+                                BetaTestScriptSheet.show(
+                                  context,
+                                  entries: _journalEntries,
+                                  source: 'record',
+                                  onReset: () {
+                                    if (mounted) setState(() {});
                                   },
-                                  onViewEvidence: () => context.push(
-                                    BeliefEvidenceNavigation.route,
-                                  ),
-                                ),
-                                const SizedBox(height: 12),
-                              ],
-                            ],
-                            if (showEarlyReturnReminder) ...[
-                              EarlyArchiveReturnReminderCard(
-                                source: 'record',
-                                onDismiss: () => setState(
-                                  () => _earlyReturnReminderHidden = true,
-                                ),
-                              ),
-                              const SizedBox(height: 12),
-                            ],
-                            // Zero-entry intro card removed — [RecordTopArchivePromiseHero]
-                            // carries the first-open promise without a second competing card.
-                            if (ui == RecordUiState.ready &&
-                                recordHomeSurface.showDailyMirrorCard &&
-                                !(_journalEntryCountReady &&
-                                    _journalEntryCount == 0)) ...[
-                              DailyMirrorRecordCard(
-                                mirror: _dailyMirror,
-                                onPrimaryCta: () => unawaited(
-                                  _onRecordPressed(source: 'moment'),
-                                ),
-                                showRecordCta: !_shouldHideCardRecordButtons(
-                                  ui,
-                                ),
-                              ),
-                              if (_showFirstRunPrivacyReassurance) ...[
-                                const SizedBox(height: 8),
-                                const RecordFirstRunPrivacyReassurance(),
-                              ],
-                              const SizedBox(height: 12),
-                            ],
-                            if (_missedCheckInForDiagnosis != null &&
-                                ui == RecordUiState.ready &&
-                                _showBottomRetentionCards) ...[
-                              MissedCheckInReasonPrompt(
-                                checkIn: _missedCheckInForDiagnosis!,
-                                onAnswered: () => setState(
-                                  () => _missedCheckInForDiagnosis = null,
-                                ),
-                              ),
-                              const SizedBox(height: 16),
-                            ],
-                            if ((_showCurrentObjectiveOnRecord &&
-                                    (ui == RecordUiState.ready
-                                        ? recordHomeSurface
-                                              .showCurrentObjectiveCard
-                                        : stack.showCurrentObjectiveCard) &&
-                                    !_shouldHideCompetingRecordCtas(ui)) ||
-                                (ScreenshotMode.enabled &&
-                                    ScreenshotMode.objective != null)) ...[
-                              _currentObjectiveWidget(stack)!,
-                              const SizedBox(height: 16),
-                            ],
-                            if ((ui == RecordUiState.ready
-                                    ? recordHomeSurface.showRetentionStateCard
-                                    : stack.showRetentionStateCard) &&
-                                showArchiveProgressCards) ...[
-                              _retentionCardWidget(stack)!,
-                              const SizedBox(height: 16),
-                            ],
-                            if (stack.showDueCheckCard &&
-                                _journalEntryCountReady &&
-                                _journalEntryCount >= 1) ...[
-                              Builder(
-                                builder: (context) {
-                                  final guided =
-                                      _hookRescue?.includes(
-                                        HookRescueAction.guidedCheckIn,
-                                      ) ??
-                                      false;
-                                  return TomorrowCheckInDueCard(
-                                    checkIn: _dueCheckInToday!,
-                                    plannedAnchor: _dueRoutineAnchor,
-                                    guided: guided,
-                                    // Fast path by default; only the gated guided flow opts
-                                    // out so confused users still get the step-by-step card.
-                                    oneTapMode: !guided,
-                                    onRecord: () => unawaited(
-                                      _onRecordPressed(source: 'moment'),
-                                    ),
-                                    onSelectOption: (option) async {
-                                      final checkInId = _dueCheckInToday!.id;
-                                      final updated =
-                                          await TomorrowCheckInCoordinator.selectOption(
-                                            checkInId: checkInId,
-                                            optionId: option.id,
-                                          );
-                                      await ReturnDayFrictionCoordinator.markAnswerSelected(
-                                        checkInId,
-                                        option.id,
+                                );
+                              },
+                              onSendFeedback:
+                                  betaTestScriptCardCandidate
+                                      .showSendFeedbackSecondary
+                                  ? () {
+                                      BetaFeedbackSheet.show(
+                                        context,
+                                        source: 'record_beta_test_script',
+                                        entryCount: _journalEntryCount,
                                       );
-                                      if (!mounted) return;
-                                      setState(() {
-                                        _dueCheckInToday = updated;
-                                      });
-                                    },
-                                  );
-                                },
+                                    }
+                                  : null,
+                            ),
+                            const SizedBox(height: 12),
+                          ],
+                          if (showProUnderstandingLiftInProSectionOnRecord &&
+                              proUnderstandingLiftRecordReadyResult !=
+                                  null) ...[
+                            ProUnderstandingLiftCard(
+                              result: proUnderstandingLiftRecordReadyResult,
+                              compact: proofSurfaceLayout.proBridgeCompact,
+                              onSeePro: () => _openProEvidenceValueSubscription(
+                                analyticsSource:
+                                    'record_pro_understanding_lift',
                               ),
-                              const SizedBox(height: 16),
-                            ],
-                            if (stack.showReturnDayJourneyCard &&
-                                showArchiveProgressCards &&
-                                _signalJourney != null &&
-                                ui == RecordUiState.ready) ...[
-                              ReturnDayJourneyCard(
-                                journey: _signalJourney!,
-                                recordedToday: const ReturnDayJourneyEngine()
-                                    .evaluate(
-                                      journey: _signalJourney,
-                                      reflectionCount: _journalEntryCount,
-                                      now: DateTime.now(),
-                                      lastReflectionAt: _lastReflectionAt,
-                                    )
-                                    .recordedToday,
-                                onViewChanged: () =>
-                                    context.push('/signal-journey'),
+                            ),
+                            const SizedBox(height: 12),
+                          ] else if (showProVisibilityLiftInProSectionOnRecord &&
+                              proVisibilityLiftRecordReadyResult != null) ...[
+                            ProVisibilityLiftCard(
+                              result: proVisibilityLiftRecordReadyResult,
+                              compact: proofSurfaceLayout.proBridgeCompact,
+                              onSeePro: () => _openProEvidenceValueSubscription(
+                                analyticsSource: 'record_pro_visibility_lift',
                               ),
-                              const SizedBox(height: 12),
-                            ],
-                            if (!_shouldHideCompetingRecordCtas(ui) &&
-                                _activeLoop?.isCapacityYes == true &&
-                                CapacityLoopGates.showRecordPrompt(
-                                  capacityWedgeActive: true,
-                                  sampleMode: ScreenshotMode.enabled,
-                                ) &&
-                                ui == RecordUiState.ready &&
-                                _mic == RecordingPhase.ready &&
-                                _postSavePattern == null) ...[
-                              BeforeYouSayYesCard(
-                                result: const BeforeYesPauseEngine().build(
-                                  BeforeYesPauseInput(
-                                    capacityWedgeActive: true,
-                                    sampleMode: ScreenshotMode.enabled,
-                                    realSavedMomentCount: 0,
-                                    capacityEvidenceCount: 0,
-                                    capacityLoopHasCard: false,
-                                    costLaterCheckinVisible: false,
-                                    recordedCostCount: 0,
-                                  ),
-                                ),
-                                onPauseBeforeYes: () {
+                            ),
+                            const SizedBox(height: 12),
+                          ] else if (showProBridgeInProSectionOnRecord &&
+                              proBridgeVisibilityRecordResult != null) ...[
+                            ProBridgeVisibilityCard(
+                              result: proBridgeVisibilityRecordResult,
+                              onSeePro: () => _openProEvidenceValueSubscription(
+                                analyticsSource: 'record_pro_bridge_visibility',
+                              ),
+                              onDismiss: () =>
+                                  unawaited(_dismissProEvidenceValueBridge()),
+                            ),
+                            const SizedBox(height: 12),
+                          ] else if (showProEvidenceValueOnRecordReady) ...[
+                            ProEvidenceValueCard(
+                              surface: ProEvidenceValueSurface.recordReady,
+                              entryCount: _journalEntryCount,
+                              compact: proofSurfaceLayout.proBridgeCompact,
+                              onSeePro: () => _openProEvidenceValueSubscription(
+                                analyticsSource: 'record_pro_evidence_value',
+                              ),
+                              onDismiss: () =>
+                                  unawaited(_dismissProEvidenceValueBridge()),
+                            ),
+                            const SizedBox(height: 12),
+                          ],
+                          if (betaFeedbackIntelligenceSurfaceOnRecordReady !=
+                                  null &&
+                              ReturningRecordWatchTargetUiGates.showBetaRecordSurfaces() &&
+                              !showReturningWatchTargetFocusedUi) ...[
+                            BetaFeedbackIntelligenceCard(
+                              surface:
+                                  betaFeedbackIntelligenceSurfaceOnRecordReady,
+                              entryCount: _journalEntryCount,
+                              reachedFirstProof: firstProofPayoffSeenOnRecord,
+                              compact: proofSurfaceLayout.proBridgeCompact,
+                              onSubmitted: () {
+                                if (mounted) setState(() {});
+                              },
+                            ),
+                            const SizedBox(height: 12),
+                          ],
+                          if (ui == RecordUiState.ready &&
+                              _journalEntryCountReady &&
+                              RecordEmptyArchiveGates.showConfirmedRepeatChangeNoticeCard(
+                                loaded: _journalEntryCountReady,
+                                entryCount: _journalEntryCount,
+                                isPostSave: _isPostSaveSurface,
+                              ) &&
+                              !showEarlyEvidenceTimelineOnRecord &&
+                              !showArchiveSummaryOnRecord) ...[
+                            if (EarlyFirstSignalEngine.buildChangeNotice(
+                                  entries: _journalEntries,
+                                )
+                                case final notice?) ...[
+                              ConfirmedRepeatChangeNoticeCard(
+                                notice: notice,
+                                analyticsSurface: 'record',
+                                entryCount: _journalEntryCount,
+                                entriesForWhy: _journalEntries,
+                                onRecordWhatHelped: () {
+                                  ConfirmedRepeatHelpfulActionCapture.armForNextSave();
                                   setState(
                                     () => _selectedPromptLine =
-                                        BeforeYesCopy.recordPrompt,
-                                  );
-                                  unawaited(
-                                    _onRecordPressed(
-                                      source: 'before_yes_pause',
-                                    ),
+                                        notice.guidedRecordPrompt,
                                   );
                                 },
-                                onAlreadySaidYes: () {
-                                  setState(
-                                    () => _selectedPromptLine =
-                                        LoopModeCopy.capacityHandoffPrompt,
-                                  );
-                                  unawaited(
-                                    _onRecordPressed(source: 'capacity_loop'),
-                                  );
-                                },
-                                onQuickSave: () =>
-                                    context.push(LowEffortYesCaptureCopy.route),
-                              ),
-                              const SizedBox(height: 12),
-                              LowEffortYesCaptureCard(
-                                result: const LowEffortYesCaptureEngine().build(
-                                  const LowEffortYesCaptureInput(
-                                    capacityWedgeActive: true,
-                                    sampleMode: false,
-                                    screenshotMode: false,
-                                  ),
+                                onViewEvidence: () => context.push(
+                                  BeliefEvidenceNavigation.route,
                                 ),
-                              ),
-                              const SizedBox(height: 12),
-                              Builder(
-                                builder: (context) {
-                                  final threeMoment =
-                                      const CapacityThreeMomentEngine()
-                                          .buildFromJournal(
-                                            entries: _journalEntries,
-                                            capacityLoopActive:
-                                                _activeLoop?.isCapacityYes ??
-                                                false,
-                                            capacityCohortActive: false,
-                                            sampleMode: false,
-                                          );
-                                  final progressLine =
-                                      CapacityThreeMomentEngine.recordProgressLine(
-                                        threeMoment,
-                                      );
-                                  if (progressLine.isEmpty) {
-                                    return const SizedBox.shrink();
-                                  }
-                                  return Column(
-                                    children: [
-                                      Text(
-                                        progressLine,
-                                        key: const Key(
-                                          'record_screen_capacity_three_moment_progress',
-                                        ),
-                                        style: const TextStyle(
-                                          fontSize: 13,
-                                          color:
-                                              VoiceMemoryColors.textSecondary,
-                                          height: 1.5,
-                                        ),
-                                      ),
-                                      const SizedBox(height: 12),
-                                    ],
-                                  );
-                                },
-                              ),
-                            ],
-                            if (_showDefaultBoundaryPauseOnRecord(ui)) ...[
-                              Text(
-                                _defaultBoundaryPauseLabel!,
-                                key: const Key(
-                                  'record_screen_default_boundary_pause',
-                                ),
-                                style: const TextStyle(
-                                  fontSize: 13,
-                                  color: VoiceMemoryColors.textSecondary,
-                                  height: 1.5,
-                                ),
-                              ),
-                              const SizedBox(height: 12),
-                            ],
-                            if (!_shouldHideCompetingRecordCtas(ui) &&
-                                stack.showFirstRecordingHandoff &&
-                                _activeLoop != null) ...[
-                              LoopModeFirstHandoffCard(
-                                loop: _activeLoop!,
-                                onStartRecording: () =>
-                                    _onRecordPressed(source: 'main'),
-                                showRecordCta: !_shouldHideCardRecordButtons(
-                                  ui,
-                                ),
-                              ),
-                              const SizedBox(height: 12),
-                            ] else if (!_shouldHideCompetingRecordCtas(ui) &&
-                                stack.showFirstRecordingHandoff) ...[
-                              FirstRecordingHandoffCard(
-                                onStartRecording: () =>
-                                    _onRecordPressed(source: 'main'),
-                                wedgePrompt: _selectedPromptLine,
-                                showRecordCta: !_shouldHideCardRecordButtons(
-                                  ui,
-                                ),
-                              ),
-                              const SizedBox(height: 12),
-                            ] else if (!_shouldHideCompetingRecordCtas(ui) &&
-                                _activeLoop != null &&
-                                showArchiveProgressCards &&
-                                _postSavePattern == null &&
-                                !stack.showReturnDayJourneyCard) ...[
-                              LoopModeProgressCard(
-                                loop: _activeLoop!,
-                                onRecordNext: () =>
-                                    unawaited(_onRecordPressed(source: 'loop')),
-                                showRecordCta: !_shouldHideCardRecordButtons(
-                                  ui,
-                                ),
-                              ),
-                              const SizedBox(height: 12),
-                            ] else if (!_shouldHideCompetingRecordCtas(ui) &&
-                                stack.showArchiveMemoryDemo) ...[
-                              ArchiveMemoryDemoCard(
-                                onRecord: () =>
-                                    unawaited(_onRecordPressed(source: 'main')),
-                              ),
-                              const SizedBox(height: 12),
-                            ],
-                            if (stack.showFirstLoopStartCard &&
-                                !_shouldHideCompetingRecordCtas(ui)) ...[
-                              FirstLoopStartCard(
-                                onRecord: () =>
-                                    unawaited(_onRecordPressed(source: 'loop')),
-                                showRecordCta: !_shouldHideCardRecordButtons(
-                                  ui,
-                                ),
-                              ),
-                              const SizedBox(height: 12),
-                            ],
-                            if (stack.showTrialFirstMomentCard &&
-                                !_shouldHideCompetingRecordCtas(ui)) ...[
-                              TrialFirstMomentCard(
-                                onStartRecording: () =>
-                                    unawaited(_onRecordPressed(source: 'main')),
                               ),
                               const SizedBox(height: 12),
                             ],
                           ],
-                          AnimatedSwitcher(
-                            key: const Key(
-                              'microphone_recovery_animated_switcher',
+                          if (showEarlyReturnReminder) ...[
+                            EarlyArchiveReturnReminderCard(
+                              source: 'record',
+                              onDismiss: () => setState(
+                                () => _earlyReturnReminderHidden = true,
+                              ),
                             ),
-                            duration: const Duration(milliseconds: 280),
-                            reverseDuration: const Duration(milliseconds: 220),
-                            transitionBuilder: (child, animation) =>
-                                FadeTransition(
-                                  opacity: animation,
-                                  child: SizeTransition(
-                                    sizeFactor: animation,
-                                    child: child,
+                            const SizedBox(height: 12),
+                          ],
+                          // Zero-entry intro card removed — [RecordTopArchivePromiseHero]
+                          // carries the first-open promise without a second competing card.
+                          if (ui == RecordUiState.ready &&
+                              recordHomeSurface.showDailyMirrorCard &&
+                              !(_journalEntryCountReady &&
+                                  _journalEntryCount == 0)) ...[
+                            DailyMirrorRecordCard(
+                              mirror: _dailyMirror,
+                              onPrimaryCta: () =>
+                                  unawaited(_onRecordPressed(source: 'moment')),
+                              showRecordCta: !_shouldHideCardRecordButtons(ui),
+                            ),
+                            if (_showFirstRunPrivacyReassurance) ...[
+                              const SizedBox(height: 8),
+                              const RecordFirstRunPrivacyReassurance(),
+                            ],
+                            const SizedBox(height: 12),
+                          ],
+                          if (_missedCheckInForDiagnosis != null &&
+                              ui == RecordUiState.ready &&
+                              _showBottomRetentionCards) ...[
+                            MissedCheckInReasonPrompt(
+                              checkIn: _missedCheckInForDiagnosis!,
+                              onAnswered: () => setState(
+                                () => _missedCheckInForDiagnosis = null,
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+                          ],
+                          if ((_showCurrentObjectiveOnRecord &&
+                                  (ui == RecordUiState.ready
+                                      ? recordHomeSurface
+                                            .showCurrentObjectiveCard
+                                      : stack.showCurrentObjectiveCard) &&
+                                  !_shouldHideCompetingRecordCtas(ui)) ||
+                              (ScreenshotMode.enabled &&
+                                  ScreenshotMode.objective != null)) ...[
+                            _currentObjectiveWidget(stack)!,
+                            const SizedBox(height: 16),
+                          ],
+                          if ((ui == RecordUiState.ready
+                                  ? recordHomeSurface.showRetentionStateCard
+                                  : stack.showRetentionStateCard) &&
+                              showArchiveProgressCards) ...[
+                            _retentionCardWidget(stack)!,
+                            const SizedBox(height: 16),
+                          ],
+                          if (stack.showDueCheckCard &&
+                              _journalEntryCountReady &&
+                              _journalEntryCount >= 1) ...[
+                            Builder(
+                              builder: (context) {
+                                final guided =
+                                    _hookRescue?.includes(
+                                      HookRescueAction.guidedCheckIn,
+                                    ) ??
+                                    false;
+                                return TomorrowCheckInDueCard(
+                                  checkIn: _dueCheckInToday!,
+                                  plannedAnchor: _dueRoutineAnchor,
+                                  guided: guided,
+                                  // Fast path by default; only the gated guided flow opts
+                                  // out so confused users still get the step-by-step card.
+                                  oneTapMode: !guided,
+                                  onRecord: () => unawaited(
+                                    _onRecordPressed(source: 'moment'),
                                   ),
+                                  onSelectOption: (option) async {
+                                    final checkInId = _dueCheckInToday!.id;
+                                    final updated =
+                                        await TomorrowCheckInCoordinator.selectOption(
+                                          checkInId: checkInId,
+                                          optionId: option.id,
+                                        );
+                                    await ReturnDayFrictionCoordinator.markAnswerSelected(
+                                      checkInId,
+                                      option.id,
+                                    );
+                                    if (!mounted) return;
+                                    setState(() {
+                                      _dueCheckInToday = updated;
+                                    });
+                                  },
+                                );
+                              },
+                            ),
+                            const SizedBox(height: 16),
+                          ],
+                          if (stack.showReturnDayJourneyCard &&
+                              showArchiveProgressCards &&
+                              _signalJourney != null &&
+                              ui == RecordUiState.ready) ...[
+                            ReturnDayJourneyCard(
+                              journey: _signalJourney!,
+                              recordedToday: const ReturnDayJourneyEngine()
+                                  .evaluate(
+                                    journey: _signalJourney,
+                                    reflectionCount: _journalEntryCount,
+                                    now: DateTime.now(),
+                                    lastReflectionAt: _lastReflectionAt,
+                                  )
+                                  .recordedToday,
+                              onViewChanged: () =>
+                                  context.push('/signal-journey'),
+                            ),
+                            const SizedBox(height: 12),
+                          ],
+                          if (!_shouldHideCompetingRecordCtas(ui) &&
+                              _activeLoop?.isCapacityYes == true &&
+                              CapacityLoopGates.showRecordPrompt(
+                                capacityWedgeActive: true,
+                                sampleMode: ScreenshotMode.enabled,
+                              ) &&
+                              ui == RecordUiState.ready &&
+                              _mic == RecordingPhase.ready &&
+                              _postSavePattern == null) ...[
+                            BeforeYouSayYesCard(
+                              result: const BeforeYesPauseEngine().build(
+                                BeforeYesPauseInput(
+                                  capacityWedgeActive: true,
+                                  sampleMode: ScreenshotMode.enabled,
+                                  realSavedMomentCount: 0,
+                                  capacityEvidenceCount: 0,
+                                  capacityLoopHasCard: false,
+                                  costLaterCheckinVisible: false,
+                                  recordedCostCount: 0,
                                 ),
-                            child:
-                                RecordMicrophonePermissionUi.shouldRenderBlockedPanel(
-                                  ui: ui,
-                                  micPhase: _mic,
-                                  userDeniedThisSession:
-                                      _micPermissionUserDenied,
-                                )
-                                ? Padding(
-                                    key: const ValueKey(
-                                      'microphone_recovery_visible',
-                                    ),
-                                    padding: const EdgeInsets.only(bottom: 16),
-                                    child: KeyedSubtree(
-                                      key: _permissionPanelKey,
-                                      child: MicAccessRecoveryCard(
-                                        showSimulatorHelper:
-                                            _showMicPermissionSimulatorHelper,
-                                        onOpenSettings: _openMicSettings,
-                                        onTypeInstead:
-                                            _typeInsteadFromPermission,
+                              ),
+                              onPauseBeforeYes: () {
+                                setState(
+                                  () => _selectedPromptLine =
+                                      BeforeYesCopy.recordPrompt,
+                                );
+                                unawaited(
+                                  _onRecordPressed(source: 'before_yes_pause'),
+                                );
+                              },
+                              onAlreadySaidYes: () {
+                                setState(
+                                  () => _selectedPromptLine =
+                                      LoopModeCopy.capacityHandoffPrompt,
+                                );
+                                unawaited(
+                                  _onRecordPressed(source: 'capacity_loop'),
+                                );
+                              },
+                              onQuickSave: () =>
+                                  context.push(LowEffortYesCaptureCopy.route),
+                            ),
+                            const SizedBox(height: 12),
+                            LowEffortYesCaptureCard(
+                              result: const LowEffortYesCaptureEngine().build(
+                                const LowEffortYesCaptureInput(
+                                  capacityWedgeActive: true,
+                                  sampleMode: false,
+                                  screenshotMode: false,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 12),
+                            Builder(
+                              builder: (context) {
+                                final threeMoment =
+                                    const CapacityThreeMomentEngine()
+                                        .buildFromJournal(
+                                          entries: _journalEntries,
+                                          capacityLoopActive:
+                                              _activeLoop?.isCapacityYes ??
+                                              false,
+                                          capacityCohortActive: false,
+                                          sampleMode: false,
+                                        );
+                                final progressLine =
+                                    CapacityThreeMomentEngine.recordProgressLine(
+                                      threeMoment,
+                                    );
+                                if (progressLine.isEmpty) {
+                                  return const SizedBox.shrink();
+                                }
+                                return Column(
+                                  children: [
+                                    Text(
+                                      progressLine,
+                                      key: const Key(
+                                        'record_screen_capacity_three_moment_progress',
+                                      ),
+                                      style: const TextStyle(
+                                        fontSize: 13,
+                                        color: VoiceMemoryColors.textSecondary,
+                                        height: 1.5,
                                       ),
                                     ),
-                                  )
-                                : const SizedBox.shrink(
-                                    key: ValueKey('microphone_recovery_hidden'),
-                                  ),
+                                    const SizedBox(height: 12),
+                                  ],
+                                );
+                              },
+                            ),
+                          ],
+                          if (_showDefaultBoundaryPauseOnRecord(ui)) ...[
+                            Text(
+                              _defaultBoundaryPauseLabel!,
+                              key: const Key(
+                                'record_screen_default_boundary_pause',
+                              ),
+                              style: const TextStyle(
+                                fontSize: 13,
+                                color: VoiceMemoryColors.textSecondary,
+                                height: 1.5,
+                              ),
+                            ),
+                            const SizedBox(height: 12),
+                          ],
+                          if (!_shouldHideCompetingRecordCtas(ui) &&
+                              stack.showFirstRecordingHandoff &&
+                              _activeLoop != null) ...[
+                            LoopModeFirstHandoffCard(
+                              loop: _activeLoop!,
+                              onStartRecording: () =>
+                                  _onRecordPressed(source: 'main'),
+                              showRecordCta: !_shouldHideCardRecordButtons(ui),
+                            ),
+                            const SizedBox(height: 12),
+                          ] else if (!_shouldHideCompetingRecordCtas(ui) &&
+                              stack.showFirstRecordingHandoff) ...[
+                            FirstRecordingHandoffCard(
+                              onStartRecording: () =>
+                                  _onRecordPressed(source: 'main'),
+                              wedgePrompt: _selectedPromptLine,
+                              showRecordCta: !_shouldHideCardRecordButtons(ui),
+                            ),
+                            const SizedBox(height: 12),
+                          ] else if (!_shouldHideCompetingRecordCtas(ui) &&
+                              _activeLoop != null &&
+                              showArchiveProgressCards &&
+                              _postSavePattern == null &&
+                              !stack.showReturnDayJourneyCard) ...[
+                            LoopModeProgressCard(
+                              loop: _activeLoop!,
+                              onRecordNext: () =>
+                                  unawaited(_onRecordPressed(source: 'loop')),
+                              showRecordCta: !_shouldHideCardRecordButtons(ui),
+                            ),
+                            const SizedBox(height: 12),
+                          ] else if (!_shouldHideCompetingRecordCtas(ui) &&
+                              stack.showArchiveMemoryDemo) ...[
+                            ArchiveMemoryDemoCard(
+                              onRecord: () =>
+                                  unawaited(_onRecordPressed(source: 'main')),
+                            ),
+                            const SizedBox(height: 12),
+                          ],
+                          if (stack.showFirstLoopStartCard &&
+                              !_shouldHideCompetingRecordCtas(ui)) ...[
+                            FirstLoopStartCard(
+                              onRecord: () =>
+                                  unawaited(_onRecordPressed(source: 'loop')),
+                              showRecordCta: !_shouldHideCardRecordButtons(ui),
+                            ),
+                            const SizedBox(height: 12),
+                          ],
+                          if (stack.showTrialFirstMomentCard &&
+                              !_shouldHideCompetingRecordCtas(ui)) ...[
+                            TrialFirstMomentCard(
+                              onStartRecording: () =>
+                                  unawaited(_onRecordPressed(source: 'main')),
+                            ),
+                            const SizedBox(height: 12),
+                          ],
+                        ],
+                        AnimatedSwitcher(
+                          key: const Key(
+                            'microphone_recovery_animated_switcher',
                           ),
-                          if (V1CapabilityRegistry.cameraAndPhotos &&
+                          duration: const Duration(milliseconds: 280),
+                          reverseDuration: const Duration(milliseconds: 220),
+                          transitionBuilder: (child, animation) =>
+                              FadeTransition(
+                                opacity: animation,
+                                child: SizeTransition(
+                                  sizeFactor: animation,
+                                  child: child,
+                                ),
+                              ),
+                          child:
+                              RecordMicrophonePermissionUi.shouldRenderBlockedPanel(
+                                ui: ui,
+                                micPhase: _mic,
+                                userDeniedThisSession: _micPermissionUserDenied,
+                              )
+                              ? Padding(
+                                  key: const ValueKey(
+                                    'microphone_recovery_visible',
+                                  ),
+                                  padding: const EdgeInsets.only(bottom: 16),
+                                  child: KeyedSubtree(
+                                    key: _permissionPanelKey,
+                                    child: MicrophonePermissionBlockedPanel(
+                                      showSimulatorHelper:
+                                          _showMicPermissionSimulatorHelper,
+                                      onOpenSettings: _openMicSettings,
+                                      onTypeInstead: _typeInsteadFromPermission,
+                                    ),
+                                  ),
+                                )
+                              : const SizedBox.shrink(
+                                  key: ValueKey('microphone_recovery_hidden'),
+                                ),
+                        ),
+                        if (ui == RecordUiState.recording) ...[
+                          _RecordingStatusCard(
+                            stageLabel: stageLabel,
+                          ),
+                          if (_selectedPromptLine != null) ...[
+                            const SizedBox(height: 12),
+                            Text(
+                              _selectedPromptLine!,
+                              maxLines: 3,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                fontSize: 13,
+                                color: VoiceMemoryColors.textSecondary,
+                                height: 1.5,
+                              ),
+                            ),
+                          ],
+                        ] else ...[
+                          if (ui == RecordUiState.ready &&
+                              _showReadyToRecordStatus &&
+                              !showReturningWatchTargetFocusedUi) ...[
+                            Semantics(
+                              label: 'Recording status',
+                              child: Text(
+                                stageLabel.isEmpty
+                                    ? _statusTextFor(ui, localSaveTitle)
+                                    : stageLabel,
+                                style: Theme.of(context).textTheme.titleMedium,
+                              ),
+                            ),
+                          ],
+                          if (ui == RecordUiState.processing) ...[
+                            const SizedBox(height: 12),
+                            PostSaveListeningCard(stageLabel: stageLabel),
+                          ],
+                          if (_selectedPromptLine != null &&
+                              _showBottomRetentionCards &&
+                              !showReturningWatchTargetFocusedUi &&
                               (ui == RecordUiState.ready ||
                                   ui == RecordUiState.recording)) ...[
                             const SizedBox(height: 12),
-                            MediaAttachmentBar(
-                              key: const Key('record-media-attachments'),
-                              attachments: _captureAttachments,
-                              onChanged: (attachments) {
-                                setState(() {
-                                  _captureAttachments = attachments;
-                                });
-                              },
-                              imageEngine: _imageEngine,
-                              picker: widget.mediaPicker,
-                              enabled: ui == RecordUiState.ready,
+                            Text(
+                              ConsumerUiCopy.trySayingLabel,
+                              style: const TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                                color: VoiceMemoryColors.textSecondary,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              _selectedPromptLine!,
+                              style: const TextStyle(
+                                fontSize: 13,
+                                color: VoiceMemoryColors.textSecondary,
+                                height: 1.5,
+                              ),
                             ),
                           ],
-                          if (ui == RecordUiState.recording) ...[
-                            _RecordingStatusCard(
-                              seconds: _seconds,
-                              stageLabel: stageLabel,
-                              audioDecibels: _recording.audioDecibels,
+                          if (ui == RecordUiState.ready &&
+                              !showReturningWatchTargetFocusedUi &&
+                              recordHomeSurface.showNextEvidencePrompt &&
+                              _nextEvidencePrompt != null) ...[
+                            const SizedBox(height: 12),
+                            Container(
+                              width: double.infinity,
+                              padding: const EdgeInsets.all(14),
+                              decoration: BoxDecoration(
+                                color: AppColors.warmSurface,
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(
+                                  color: AppColors.borderSubtle,
+                                ),
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    ConsumerUiCopy
+                                        .postSaveInsightRecordThisNext,
+                                    style: ArchiveMobileTypography.cardLabel(
+                                      context,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 6),
+                                  Text(
+                                    _nextEvidencePrompt!,
+                                    style:
+                                        ArchiveMobileTypography.explanationBody(
+                                          context,
+                                        ),
+                                  ),
+                                ],
+                              ),
                             ),
-                            if (_selectedPromptLine != null) ...[
+                          ],
+                          if (ui == RecordUiState.ready &&
+                              !showReturningWatchTargetFocusedUi &&
+                              showArchiveProgressCards &&
+                              stack.showActivePatternThread &&
+                              _activePatternThread != null) ...[
+                            const SizedBox(height: 12),
+                            ActivePatternThreadPromptCard(
+                              thread: _activePatternThread!,
+                              onAddMoment: () =>
+                                  unawaited(_onRecordPressed(source: 'moment')),
+                              onPause: () async {
+                                await ActivePatternThreadCoordinator.pauseThread();
+                                if (!mounted) return;
+                                setState(() => _activePatternThread = null);
+                              },
+                            ),
+                          ],
+                          if (ui == RecordUiState.ready &&
+                              !showReturningWatchTargetFocusedUi &&
+                              showArchiveProgressCards &&
+                              stack.showFirstThreeJourney &&
+                              _firstThreeJourney != null &&
+                              _firstThreeJourney!.showOnRecord &&
+                              _showFirstThreeJourneyOnRecord) ...[
+                            const SizedBox(height: 12),
+                            FirstThreeJourneyCard(model: _firstThreeJourney!),
+                          ],
+                          if (ui == RecordUiState.ready &&
+                              !showReturningWatchTargetFocusedUi &&
+                              showArchiveProgressCards &&
+                              _postSavePattern == null &&
+                              !stack.showReturnDayJourneyCard &&
+                              _showRetentionJourneyCards &&
+                              _signalJourney != null &&
+                              _signalJourney!.isActive) ...[
+                            const SizedBox(height: 12),
+                            SignalJourneyCard(
+                              journey: _signalJourney!,
+                              activeLoop: _activeLoop,
+                              compact: true,
+                            ),
+                          ] else if (ui == RecordUiState.ready &&
+                              !showReturningWatchTargetFocusedUi &&
+                              showArchiveProgressCards &&
+                              _postSavePattern == null &&
+                              _showRetentionJourneyCards &&
+                              _signalJourney != null &&
+                              _signalJourney!.showCompletion &&
+                              !_journeyCompletionDismissed &&
+                              _signalReview != null &&
+                              _signalReview!.isShowable) ...[
+                            const SizedBox(height: 12),
+                            SignalReviewCard(
+                              review: _signalReview!,
+                              onConfirm: () async {
+                                await SignalReviewCoordinator.confirm(
+                                  reviewId: _signalReview!.id,
+                                );
+                                if (!mounted) return;
+                                setState(
+                                  () => _journeyCompletionDismissed = true,
+                                );
+                                unawaited(_loadSignalArchive());
+                              },
+                              onCorrect: () {
+                                SignalReviewNavigation.openFullReview(context);
+                              },
+                              onKeepWatching: () async {
+                                await SignalReviewCoordinator.keepWatching(
+                                  reviewId: _signalReview!.id,
+                                );
+                                final journey =
+                                    await SignalJourneyCoordinator.loadActive();
+                                if (journey != null) {
+                                  unawaited(
+                                    NextEvidenceReminderService.schedule(
+                                      journeyId: journey.id,
+                                      prompt: _signalReview!.nextEvidencePrompt,
+                                    ),
+                                  );
+                                }
+                                if (!context.mounted) return;
+                                setState(
+                                  () => _journeyCompletionDismissed = true,
+                                );
+                                unawaited(_loadSignalArchive());
+                                SignalReviewNavigation.recordNextEvidence(
+                                  context,
+                                  prompt: _signalReview!.nextEvidencePrompt,
+                                );
+                              },
+                            ),
+                          ] else if (ui == RecordUiState.ready &&
+                              !showReturningWatchTargetFocusedUi &&
+                              showArchiveProgressCards &&
+                              _postSavePattern == null &&
+                              _showRetentionJourneyCards &&
+                              _signalJourney != null &&
+                              _signalJourney!.showCompletion &&
+                              !_journeyCompletionDismissed) ...[
+                            const SizedBox(height: 12),
+                            SignalJourneyCompletionCard(
+                              journey: _signalJourney!,
+                              onKeepWatching: () async {
+                                await SignalJourneyCoordinator.acknowledgeCompletion();
+                                if (!mounted) return;
+                                setState(
+                                  () => _journeyCompletionDismissed = true,
+                                );
+                                unawaited(_loadSignalArchive());
+                              },
+                              onViewPattern: () =>
+                                  context.go('/archive-belief'),
+                            ),
+                          ] else if (ui == RecordUiState.ready &&
+                              !showReturningWatchTargetFocusedUi &&
+                              showArchiveProgressCards &&
+                              _postSavePattern == null &&
+                              _showRetentionJourneyCards &&
+                              _signalArchiveSnapshot?.hasActiveSignal ==
+                                  true) ...[
+                            const SizedBox(height: 12),
+                            ArchiveWatchingCard(
+                              snapshot: _signalArchiveSnapshot!,
+                              compact: true,
+                            ),
+                          ],
+                          if (ui == RecordUiState.ready &&
+                              !showReturningWatchTargetFocusedUi &&
+                              showArchiveProgressCards &&
+                              stack.showPendingWatchFor &&
+                              _pendingWatchForToday != null) ...[
+                            const SizedBox(height: 12),
+                            TodaysWatchForCard(
+                              pending: _pendingWatchForToday!,
+                              onRecord: () =>
+                                  unawaited(_onRecordPressed(source: 'moment')),
+                              onSkip: () async {
+                                await WatchForCoordinator.skipPendingForToday();
+                                if (!mounted) return;
+                                setState(() => _pendingWatchForToday = null);
+                              },
+                            ),
+                          ],
+                          if (ui == RecordUiState.ready &&
+                              !showReturningWatchTargetFocusedUi &&
+                              recordHomeSurface.showOneSmallRecordingCard &&
+                              stack.showStarterPrompts &&
+                              recordHomeSurface.showWorthCheckingToday) ...[
+                            if (_oneSmallRecording.hasRecording) ...[
                               const SizedBox(height: 12),
-                              Text(
-                                _selectedPromptLine!,
-                                maxLines: 3,
-                                overflow: TextOverflow.ellipsis,
-                                style: const TextStyle(
-                                  fontSize: 13,
-                                  color: VoiceMemoryColors.textSecondary,
-                                  height: 1.5,
+                              OneSmallRecordingCard(
+                                recording: _oneSmallRecording,
+                                showRecordCta: !_shouldHideCardRecordButtons(
+                                  ui,
                                 ),
-                              ),
-                            ],
-                          ] else ...[
-                            if (ui == RecordUiState.ready &&
-                                _showReadyToRecordStatus &&
-                                !showReturningWatchTargetFocusedUi) ...[
-                              Semantics(
-                                label: 'Recording status',
-                                child: Text(
-                                  stageLabel.isEmpty
-                                      ? _statusTextFor(ui, localSaveTitle)
-                                      : stageLabel,
-                                  style: Theme.of(
-                                    context,
-                                  ).textTheme.titleMedium,
-                                ),
-                              ),
-                            ],
-                            if (ui == RecordUiState.processing) ...[
-                              const SizedBox(height: 12),
-                              PostSaveListeningCard(stageLabel: stageLabel),
-                            ],
-                            if (ui == RecordUiState.ready &&
-                                _showRecordingLimitPaywall) ...[
-                              const SizedBox(height: 12),
-                              ValueMomentPaywall(
-                                reason: ValueMomentPaywallReason.recordingLimit,
-                                onDismissed: () {
-                                  setState(
-                                    () => _showRecordingLimitPaywall = false,
+                                ctaLabel:
+                                    _recordCtaPolicy(
+                                      ui,
+                                      micPhase: policyMic,
+                                      userDeniedThisSession: policyUserDenied,
+                                    ).primaryLabel ??
+                                    OneSmallRecording.recordCtaLabel,
+                                onRecordThis: (p) {
+                                  ActivationTracker.trackActivationStarterPromptSelected();
+                                  setState(() => _selectedPromptLine = p);
+                                  unawaited(
+                                    _onRecordPressed(
+                                      source: 'one_small_recording',
+                                    ),
                                   );
                                 },
                               ),
-                            ],
-                            if (_selectedPromptLine != null &&
-                                _showBottomRetentionCards &&
-                                !showReturningWatchTargetFocusedUi &&
-                                (ui == RecordUiState.ready ||
-                                    ui == RecordUiState.recording)) ...[
-                              const SizedBox(height: 12),
-                              Text(
-                                ConsumerUiCopy.trySayingLabel,
-                                style: const TextStyle(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w600,
-                                  color: VoiceMemoryColors.textSecondary,
-                                ),
-                              ),
-                              const SizedBox(height: 4),
-                              Text(
-                                _selectedPromptLine!,
-                                style: const TextStyle(
-                                  fontSize: 13,
-                                  color: VoiceMemoryColors.textSecondary,
-                                  height: 1.5,
-                                ),
+                              const SizedBox(height: 8),
+                              LowEffortCheckInCard(
+                                onSelect: _saveLowEffortCheckIn,
                               ),
                             ],
-                            if (ui == RecordUiState.ready &&
-                                !showReturningWatchTargetFocusedUi &&
-                                recordHomeSurface.showNextEvidencePrompt &&
-                                _nextEvidencePrompt != null) ...[
+                            if (_dailyReturnSuggestions.hasSuggestions &&
+                                recordHomeSurface.showWorthCheckingToday) ...[
                               const SizedBox(height: 12),
-                              Container(
-                                width: double.infinity,
-                                padding: const EdgeInsets.all(14),
-                                decoration: BoxDecoration(
-                                  color: const Color(0xFFFFFBF5),
-                                  borderRadius: BorderRadius.circular(12),
-                                  border: Border.all(
-                                    color: AppColors.borderSubtle,
-                                  ),
-                                ),
-                                child: Column(
+                              DailyReturnSuggestionsCard(
+                                suggestionSet: _dailyReturnSuggestions,
+                                selectedPrompt: _selectedPromptLine,
+                                onSuggestionTap: _onDailySuggestionTapped,
+                                onSelectPrompt: (p) {
+                                  ActivationTracker.trackActivationStarterPromptSelected();
+                                  setState(() => _selectedPromptLine = p);
+                                },
+                              ),
+                            ],
+                            if (recordHomeSurface.showTrySayingPrompts) ...[
+                              const SizedBox(height: 12),
+                              ConsumerRecordPromptsSection(
+                                selectedPrompt: _selectedPromptLine,
+                                personalPrompts: _personalReturnPrompts,
+                                deemphasized: _oneSmallRecording.hasRecording,
+                                onSelectPrompt: (p) {
+                                  ActivationTracker.trackActivationStarterPromptSelected();
+                                  _pendingSuggestionSource = null;
+                                  _pendingTappedSuggestion = null;
+                                  setState(() => _selectedPromptLine = p);
+                                },
+                              ),
+                              const SizedBox(height: 6),
+                              Text(
+                                AppLocalizations.of(
+                                  context,
+                                ).recordingPlainLanguageHint,
+                                style: VoiceMemoryTypography.metadataStyle(
+                                  color: AppColors.textSecondary,
+                                ).copyWith(fontSize: 12, height: 1.4),
+                              ),
+                              const SizedBox(height: 6),
+                              QuickHelpButton(
+                                languageCode: _languageCode,
+                                patternTitle: _activePatternThread?.title,
+                                onStartRecording: () =>
+                                    _onRecordPressed(source: 'main'),
+                              ),
+                            ],
+                          ],
+                          if (ui == RecordUiState.done &&
+                              entriesAfterSave.isNotEmpty) ...[
+                            if (justSavedFirstEntry &&
+                                !showDegradedTranscriptFocusedPostSave) ...[
+                              const SizedBox(height: 16),
+                              PostSaveRecordedSummaryCard(
+                                entry: entriesAfterSave.first,
+                                allEntries: entriesAfterSave,
+                                showAnalysisPendingNote: false,
+                                mirror: postSaveDailyMirror,
+                                primaryArchiveResult: PostSavePrimaryArchiveKind
+                                    .firstEntryFootnote,
+                                onCorrectTranscript:
+                                    _lastSavedEntry != null &&
+                                        TranscriptCorrectionGate.entryAllowsCorrection(
+                                          _lastSavedEntry!,
+                                        )
+                                    ? () => unawaited(
+                                        _openCorrectTranscriptForEntry(
+                                          _lastSavedEntry!,
+                                        ),
+                                      )
+                                    : null,
+                                onBackToRecord: _resetPostSaveToReady,
+                              ),
+                            ],
+                            if (!suppressNoisyFirstSaveCards &&
+                                    !suppressNoisyRepeatPostSaveCards ||
+                                showDegradedTranscriptFocusedPostSave) ...[
+                              if (!VoiceCaptureQuality.isDegradedVoiceCapture(
+                                entriesAfterSave.first,
+                              )) ...[
+                                const SizedBox(height: 16),
+                                Row(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text(
-                                      ConsumerUiCopy
-                                          .postSaveInsightRecordThisNext,
-                                      style: ArchiveMobileTypography.cardLabel(
-                                        context,
-                                      ),
+                                    Icon(
+                                      Icons.check_circle_outline,
+                                      color: VoiceMemoryColors.captureSuccess,
+                                      size: 22,
                                     ),
-                                    const SizedBox(height: 6),
-                                    Text(
-                                      _nextEvidencePrompt!,
-                                      style:
-                                          ArchiveMobileTypography.explanationBody(
-                                            context,
-                                          ),
+                                    const SizedBox(width: 8),
+                                    Expanded(
+                                      child: Text(
+                                        BeliefProductCopy.reflectionSavedTitle,
+                                        style:
+                                            VoiceMemoryTypography.cardTitleStyle(
+                                              color: VoiceMemoryColors
+                                                  .captureSuccess,
+                                            ),
+                                      ),
                                     ),
                                   ],
                                 ),
-                              ),
-                            ],
-                            if (ui == RecordUiState.ready &&
-                                !showReturningWatchTargetFocusedUi &&
-                                showArchiveProgressCards &&
-                                stack.showActivePatternThread &&
-                                _activePatternThread != null) ...[
-                              const SizedBox(height: 12),
-                              ActivePatternThreadPromptCard(
-                                thread: _activePatternThread!,
-                                onAddMoment: () => unawaited(
-                                  _onRecordPressed(source: 'moment'),
-                                ),
-                                onPause: () async {
-                                  await ActivePatternThreadCoordinator.pauseThread();
-                                  if (!mounted) return;
-                                  setState(() => _activePatternThread = null);
-                                },
-                              ),
-                            ],
-                            if (ui == RecordUiState.ready &&
-                                !showReturningWatchTargetFocusedUi &&
-                                showArchiveProgressCards &&
-                                stack.showFirstThreeJourney &&
-                                _firstThreeJourney != null &&
-                                _firstThreeJourney!.showOnRecord &&
-                                _showFirstThreeJourneyOnRecord) ...[
-                              const SizedBox(height: 12),
-                              FirstThreeJourneyCard(model: _firstThreeJourney!),
-                            ],
-                            if (ui == RecordUiState.ready &&
-                                !showReturningWatchTargetFocusedUi &&
-                                showArchiveProgressCards &&
-                                _postSavePattern == null &&
-                                !stack.showReturnDayJourneyCard &&
-                                _showRetentionJourneyCards &&
-                                _signalJourney != null &&
-                                _signalJourney!.isActive) ...[
-                              const SizedBox(height: 12),
-                              SignalJourneyCard(
-                                journey: _signalJourney!,
-                                activeLoop: _activeLoop,
-                                compact: true,
-                              ),
-                            ] else if (ui == RecordUiState.ready &&
-                                !showReturningWatchTargetFocusedUi &&
-                                showArchiveProgressCards &&
-                                _postSavePattern == null &&
-                                _showRetentionJourneyCards &&
-                                _signalJourney != null &&
-                                _signalJourney!.showCompletion &&
-                                !_journeyCompletionDismissed &&
-                                _signalReview != null &&
-                                _signalReview!.isShowable) ...[
-                              const SizedBox(height: 12),
-                              SignalReviewCard(
-                                review: _signalReview!,
-                                onConfirm: () async {
-                                  await SignalReviewCoordinator.confirm(
-                                    reviewId: _signalReview!.id,
-                                  );
-                                  if (!mounted) return;
-                                  setState(
-                                    () => _journeyCompletionDismissed = true,
-                                  );
-                                  unawaited(_loadSignalArchive());
-                                },
-                                onCorrect: () {
-                                  SignalReviewNavigation.openFullReview(
-                                    context,
-                                  );
-                                },
-                                onKeepWatching: () async {
-                                  await SignalReviewCoordinator.keepWatching(
-                                    reviewId: _signalReview!.id,
-                                  );
-                                  final journey =
-                                      await SignalJourneyCoordinator.loadActive();
-                                  if (journey != null) {
-                                    unawaited(
-                                      NextEvidenceReminderService.schedule(
-                                        journeyId: journey.id,
-                                        prompt:
-                                            _signalReview!.nextEvidencePrompt,
-                                      ),
-                                    );
-                                  }
-                                  if (!context.mounted) return;
-                                  setState(
-                                    () => _journeyCompletionDismissed = true,
-                                  );
-                                  unawaited(_loadSignalArchive());
-                                  SignalReviewNavigation.recordNextEvidence(
-                                    context,
-                                    prompt: _signalReview!.nextEvidencePrompt,
-                                  );
-                                },
-                              ),
-                            ] else if (ui == RecordUiState.ready &&
-                                !showReturningWatchTargetFocusedUi &&
-                                showArchiveProgressCards &&
-                                _postSavePattern == null &&
-                                _showRetentionJourneyCards &&
-                                _signalJourney != null &&
-                                _signalJourney!.showCompletion &&
-                                !_journeyCompletionDismissed) ...[
-                              const SizedBox(height: 12),
-                              SignalJourneyCompletionCard(
-                                journey: _signalJourney!,
-                                onKeepWatching: () async {
-                                  await SignalJourneyCoordinator.acknowledgeCompletion();
-                                  if (!mounted) return;
-                                  setState(
-                                    () => _journeyCompletionDismissed = true,
-                                  );
-                                  unawaited(_loadSignalArchive());
-                                },
-                                onViewPattern: () =>
-                                    context.go('/archive-belief'),
-                              ),
-                            ] else if (ui == RecordUiState.ready &&
-                                !showReturningWatchTargetFocusedUi &&
-                                showArchiveProgressCards &&
-                                _postSavePattern == null &&
-                                _showRetentionJourneyCards &&
-                                _signalArchiveSnapshot?.hasActiveSignal ==
-                                    true) ...[
-                              const SizedBox(height: 12),
-                              ArchiveWatchingCard(
-                                snapshot: _signalArchiveSnapshot!,
-                                compact: true,
-                              ),
-                            ],
-                            if (ui == RecordUiState.ready &&
-                                !showReturningWatchTargetFocusedUi &&
-                                showArchiveProgressCards &&
-                                stack.showPendingWatchFor &&
-                                _pendingWatchForToday != null) ...[
-                              const SizedBox(height: 12),
-                              TodaysWatchForCard(
-                                pending: _pendingWatchForToday!,
-                                onRecord: () => unawaited(
-                                  _onRecordPressed(source: 'moment'),
-                                ),
-                                onSkip: () async {
-                                  await WatchForCoordinator.skipPendingForToday();
-                                  if (!mounted) return;
-                                  setState(() => _pendingWatchForToday = null);
-                                },
-                              ),
-                            ],
-                            if (ui == RecordUiState.ready &&
-                                !showReturningWatchTargetFocusedUi &&
-                                recordHomeSurface.showOneSmallRecordingCard &&
-                                stack.showStarterPrompts &&
-                                recordHomeSurface.showWorthCheckingToday) ...[
-                              if (_oneSmallRecording.hasRecording) ...[
-                                const SizedBox(height: 12),
-                                OneSmallRecordingCard(
-                                  recording: _oneSmallRecording,
-                                  showRecordCta: !_shouldHideCardRecordButtons(
-                                    ui,
-                                  ),
-                                  ctaLabel:
-                                      _recordCtaPolicy(
-                                        ui,
-                                        micPhase: policyMic,
-                                        userDeniedThisSession: policyUserDenied,
-                                      ).primaryLabel ??
-                                      OneSmallRecording.recordCtaLabel,
-                                  onRecordThis: (p) {
-                                    ActivationTracker.trackActivationStarterPromptSelected();
-                                    setState(() => _selectedPromptLine = p);
-                                    unawaited(
-                                      _onRecordPressed(
-                                        source: 'one_small_recording',
-                                      ),
-                                    );
-                                  },
-                                ),
-                                const SizedBox(height: 8),
-                                LowEffortCheckInCard(
-                                  onSelect: _saveLowEffortCheckIn,
-                                ),
-                              ],
-                              if (_dailyReturnSuggestions.hasSuggestions &&
-                                  recordHomeSurface.showWorthCheckingToday) ...[
-                                const SizedBox(height: 12),
-                                DailyReturnSuggestionsCard(
-                                  suggestionSet: _dailyReturnSuggestions,
-                                  selectedPrompt: _selectedPromptLine,
-                                  onSuggestionTap: _onDailySuggestionTapped,
-                                  onSelectPrompt: (p) {
-                                    ActivationTracker.trackActivationStarterPromptSelected();
-                                    setState(() => _selectedPromptLine = p);
-                                  },
-                                ),
-                              ],
-                              if (recordHomeSurface.showTrySayingPrompts) ...[
-                                const SizedBox(height: 12),
-                                ConsumerRecordPromptsSection(
-                                  selectedPrompt: _selectedPromptLine,
-                                  personalPrompts: _personalReturnPrompts,
-                                  deemphasized: _oneSmallRecording.hasRecording,
-                                  onSelectPrompt: (p) {
-                                    ActivationTracker.trackActivationStarterPromptSelected();
-                                    _pendingSuggestionSource = null;
-                                    _pendingTappedSuggestion = null;
-                                    setState(() => _selectedPromptLine = p);
-                                  },
-                                ),
-                                const SizedBox(height: 6),
-                                Text(
-                                  appLocalizationsOf(
-                                    context,
-                                  ).recordingPlainLanguageHint,
-                                  style: VoiceMemoryTypography.metadataStyle(
-                                    color: AppColors.textSecondary,
-                                  ).copyWith(fontSize: 12, height: 1.4),
-                                ),
-                                const SizedBox(height: 6),
-                                QuickHelpButton(
-                                  languageCode: _languageCode,
-                                  patternTitle: _activePatternThread?.title,
-                                  onStartRecording: () =>
-                                      _onRecordPressed(source: 'main'),
-                                ),
-                              ],
-                            ],
-                            if (ui == RecordUiState.done &&
-                                entriesAfterSave.isNotEmpty) ...[
-                              if (justSavedFirstEntry &&
-                                  !showDegradedTranscriptFocusedPostSave) ...[
                                 const SizedBox(height: 16),
-                                PostSaveRecordedSummaryCard(
-                                  entry: entriesAfterSave.first,
-                                  allEntries: entriesAfterSave,
-                                  showAnalysisPendingNote: false,
-                                  mirror: postSaveDailyMirror,
-                                  primaryArchiveResult:
-                                      PostSavePrimaryArchiveKind
-                                          .firstEntryFootnote,
-                                  onCorrectTranscript:
-                                      _lastSavedEntry != null &&
-                                          TranscriptCorrectionGate.entryAllowsCorrection(
-                                            _lastSavedEntry!,
-                                          )
-                                      ? () => unawaited(
-                                          _openCorrectTranscriptForEntry(
-                                            _lastSavedEntry!,
-                                          ),
-                                        )
-                                      : null,
-                                  onAddContext: () =>
-                                      context.push('/cold-start/seed'),
-                                  onBackToRecord: _resetPostSaveToReady,
-                                ),
+                              ] else ...[
+                                const SizedBox(height: 16),
                               ],
-                              if (!suppressNoisyFirstSaveCards &&
-                                      !suppressNoisyRepeatPostSaveCards ||
-                                  showDegradedTranscriptFocusedPostSave) ...[
-                                if (!VoiceCaptureQuality.isDegradedVoiceCapture(
-                                  entriesAfterSave.first,
+                              PostSaveRecordedSummaryCard(
+                                entry: entriesAfterSave.first,
+                                allEntries: entriesAfterSave,
+                                degradedBodyCopy:
+                                    _lastCaptureLowQualityTranscript
+                                    ? VoiceCaptureCopy.lowQualityTranscriptIssue
+                                    : null,
+                                showSilentInputWarning:
+                                    _lastCaptureLikelySilentInput,
+                                showAnalysisPendingNote: false,
+                                mirror: postSaveDailyMirror,
+                                primaryArchiveResult:
+                                    postSaveArchiveHierarchy?.kind,
+                                onAddWhatYouSaid: _lastSavedEntryIsDegraded
+                                    ? () => unawaited(
+                                        _openPendingTranscriptRecoveryForLastVoiceEntry(),
+                                      )
+                                    : null,
+                                onCorrectTranscript:
+                                    _lastSavedEntry != null &&
+                                        !_lastSavedEntryIsDegraded &&
+                                        TranscriptCorrectionGate.entryAllowsCorrection(
+                                          _lastSavedEntry!,
+                                        )
+                                    ? () => unawaited(
+                                        _openCorrectTranscriptForEntry(
+                                          _lastSavedEntry!,
+                                        ),
+                                      )
+                                    : null,
+                                onAddMoreDetail:
+                                    suppressLatestSaveArchiveInsight
+                                    ? () => unawaited(
+                                        navigateToTypeInsteadCapture(
+                                          context,
+                                          onSaved: _finishSuccessfulCapture,
+                                        ),
+                                      )
+                                    : null,
+                                onBackToRecord:
+                                    showDegradedTranscriptFocusedPostSave
+                                    ? _resetPostSaveToReady
+                                    : entriesAfterSave.length == 1
+                                    ? _resetPostSaveToReady
+                                    : suppressLatestSaveArchiveInsight
+                                    ? _resetPostSaveToReady
+                                    : null,
+                              ),
+                              const SizedBox(height: 16),
+                              if (!suppressDegradedTranscriptPostSaveCompetitors) ...[
+                                if (MomentQualityFeedbackGates.shouldShow(
+                                  entry: entriesAfterSave.first,
+                                  showFirstProofMoment: showFirstProofMoment,
+                                  hierarchyAllowsFeedback:
+                                      (postSaveArchiveHierarchy
+                                              ?.showMomentQualityFeedback ??
+                                          true) &&
+                                      !showComeBackTomorrowV2PostSave,
                                 )) ...[
-                                  const SizedBox(height: 16),
-                                  Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Icon(
-                                        Icons.check_circle_outline,
-                                        color: VoiceMemoryColors.captureSuccess,
-                                        size: 22,
-                                      ),
-                                      const SizedBox(width: 8),
-                                      Expanded(
-                                        child: Text(
-                                          BeliefProductCopy
-                                              .reflectionSavedTitle,
-                                          style:
-                                              VoiceMemoryTypography.cardTitleStyle(
-                                                color: VoiceMemoryColors
-                                                    .captureSuccess,
-                                              ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 16),
-                                ] else ...[
-                                  const SizedBox(height: 16),
-                                ],
-                                PostSaveRecordedSummaryCard(
-                                  entry: entriesAfterSave.first,
-                                  allEntries: entriesAfterSave,
-                                  degradedBodyCopy:
-                                      _lastCaptureLowQualityTranscript
-                                      ? VoiceCaptureCopy
-                                            .lowQualityTranscriptIssue
-                                      : null,
-                                  showSilentInputWarning:
-                                      _lastCaptureLikelySilentInput,
-                                  showAnalysisPendingNote: false,
-                                  mirror: postSaveDailyMirror,
-                                  primaryArchiveResult:
-                                      postSaveArchiveHierarchy?.kind,
-                                  onAddWhatYouSaid: _lastSavedEntryIsDegraded
-                                      ? () => unawaited(
-                                          _openPendingTranscriptRecoveryForLastVoiceEntry(),
-                                        )
-                                      : null,
-                                  onCorrectTranscript:
-                                      _lastSavedEntry != null &&
-                                          !_lastSavedEntryIsDegraded &&
-                                          TranscriptCorrectionGate.entryAllowsCorrection(
-                                            _lastSavedEntry!,
-                                          )
-                                      ? () => unawaited(
-                                          _openCorrectTranscriptForEntry(
-                                            _lastSavedEntry!,
-                                          ),
-                                        )
-                                      : null,
-                                  onAddMoreDetail:
-                                      suppressLatestSaveArchiveInsight
-                                      ? () => unawaited(
-                                          navigateToTypeInsteadCapture(
-                                            context,
-                                            onSaved: _finishSuccessfulCapture,
-                                          ),
-                                        )
-                                      : null,
-                                  onAddContext: entriesAfterSave.length == 1
-                                      ? () => context.push('/cold-start/seed')
-                                      : null,
-                                  onBackToRecord:
-                                      showDegradedTranscriptFocusedPostSave
-                                      ? _resetPostSaveToReady
-                                      : entriesAfterSave.length == 1
-                                      ? _resetPostSaveToReady
-                                      : suppressLatestSaveArchiveInsight
-                                      ? _resetPostSaveToReady
-                                      : null,
-                                ),
-                                const SizedBox(height: 16),
-                                if (!_lastSavedEntryIsDegraded &&
-                                    !_lastCaptureLowQualityTranscript) ...[
-                                  ContextualFeatureDiscoveryBanner(
-                                    service: FeatureDiscoveryService(
-                                      prefs: AppServices.instance.prefs,
-                                    ),
-                                    discoveryContext: FeatureDiscoveryContext(
-                                      moment: FeatureDiscoveryMoment
-                                          .afterEntryProcessed,
-                                      entryCount: entriesAfterSave.length,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 16),
-                                ],
-                                PostSaveLifeOsInsightsCard(
-                                  entries: entriesAfterSave,
-                                  entryId: entriesAfterSave.first.id,
-                                ),
-                                if (!suppressDegradedTranscriptPostSaveCompetitors) ...[
-                                  if (MomentQualityFeedbackGates.shouldShow(
+                                  MomentQualityFeedbackCard(
                                     entry: entriesAfterSave.first,
-                                    showFirstProofMoment: showFirstProofMoment,
-                                    hierarchyAllowsFeedback:
-                                        (postSaveArchiveHierarchy
-                                                ?.showMomentQualityFeedback ??
-                                            true) &&
-                                        !showComeBackTomorrowV2PostSave,
-                                  )) ...[
-                                    MomentQualityFeedbackCard(
-                                      entry: entriesAfterSave.first,
+                                  ),
+                                ],
+                                if (showFirstProofPayoff &&
+                                    firstProofPayoffCandidate != null) ...[
+                                  const SizedBox(height: 16),
+                                  FirstProofPayoffCard(
+                                    payoff: firstProofPayoffCandidate,
+                                    entryCount: postSaveEntryCount,
+                                    patternConfidence:
+                                        firstProofPatternConfidence,
+                                    suppressCtas:
+                                        firstProofActionLoopContent != null,
+                                    showProPackagingBridge:
+                                        !showProBridgeVisibilityPostSave &&
+                                        !showProEvidenceValuePostSave,
+                                    onWatchThisNext:
+                                        _handleFirstProofWatchThisNext,
+                                    onViewPatternDetails:
+                                        firstProofPayoffCandidate
+                                            .canShowPatternDetail
+                                        ? _openFirstProofPatternDetail
+                                        : null,
+                                  ),
+                                  if (showBetaProofLiftOnFirstProofPayoff &&
+                                      ReturningRecordWatchTargetUiGates.showBetaRecordSurfaces()) ...[
+                                    const SizedBox(height: 12),
+                                    BetaProofLiftCard(
+                                      result: betaProofLiftFirstProofCandidate,
+                                      source: 'record_post_save',
+                                      surface: 'record_post_save_first_proof',
                                     ),
                                   ],
-                                  if (showFirstProofPayoff &&
-                                      firstProofPayoffCandidate != null) ...[
-                                    const SizedBox(height: 16),
-                                    FirstProofPayoffCard(
-                                      payoff: firstProofPayoffCandidate,
-                                      entryCount: postSaveEntryCount,
-                                      patternConfidence:
-                                          firstProofPatternConfidence,
-                                      suppressCtas:
-                                          firstProofActionLoopContent != null,
-                                      showProPackagingBridge:
-                                          !showProBridgeVisibilityPostSave &&
-                                          !showProEvidenceValuePostSave,
-                                      onWatchThisNext:
-                                          _handleFirstProofWatchThisNext,
-                                      onViewPatternDetails:
-                                          firstProofPayoffCandidate
-                                              .canShowPatternDetail
-                                          ? _openFirstProofPatternDetail
-                                          : null,
+                                  if (showReturnAfterProofLiftV2OnPostSave) ...[
+                                    const SizedBox(height: 12),
+                                    ReturnAfterProofLiftV2Card(
+                                      result:
+                                          returnAfterProofLiftV2PostSaveCandidate,
+                                      onPrimaryCta: () => unawaited(
+                                        navigateToTypeInsteadCapture(
+                                          context,
+                                          prompt: _selectedPromptLine,
+                                          onSaved: _finishSuccessfulCapture,
+                                        ),
+                                      ),
+                                      onPromptSelected: (prompt) {
+                                        setState(
+                                          () => _selectedPromptLine = prompt,
+                                        );
+                                      },
                                     ),
-                                    if (showBetaProofLiftOnFirstProofPayoff &&
-                                        ReturningRecordWatchTargetUiGates.showBetaRecordSurfaces()) ...[
-                                      const SizedBox(height: 12),
-                                      BetaProofLiftCard(
-                                        result:
-                                            betaProofLiftFirstProofCandidate,
-                                        source: 'record_post_save',
-                                        surface: 'record_post_save_first_proof',
-                                      ),
-                                    ],
-                                    if (showReturnAfterProofLiftV2OnPostSave) ...[
-                                      const SizedBox(height: 12),
-                                      ReturnAfterProofLiftV2Card(
-                                        result:
-                                            returnAfterProofLiftV2PostSaveCandidate,
-                                        onPrimaryCta: () => unawaited(
-                                          navigateToTypeInsteadCapture(
-                                            context,
-                                            prompt: _selectedPromptLine,
-                                            onSaved: _finishSuccessfulCapture,
-                                          ),
-                                        ),
-                                        onPromptSelected: (prompt) {
-                                          setState(
-                                            () => _selectedPromptLine = prompt,
-                                          );
-                                        },
-                                      ),
-                                    ] else if (showReturnAfterProofOnFirstProofPayoff) ...[
-                                      const SizedBox(height: 12),
-                                      ReturnAfterProofCard(
-                                        result:
-                                            returnAfterProofPostSaveCandidate,
-                                        useStrengthenedLayout:
-                                            showReturnAfterProofStrengthenedOnFirstProofPayoff,
-                                        onPromptSelected: (prompt) {
-                                          setState(
-                                            () => _selectedPromptLine = prompt,
-                                          );
-                                        },
-                                      ),
-                                    ],
-                                    if (showProUnderstandingLiftOnPostSave &&
-                                        proUnderstandingLiftPostSaveResult !=
-                                            null) ...[
-                                      const SizedBox(height: 12),
-                                      ProUnderstandingLiftCard(
-                                        result:
-                                            proUnderstandingLiftPostSaveResult,
-                                        onSeePro: () =>
-                                            _openProEvidenceValueSubscription(
-                                              analyticsSource:
-                                                  'record_post_save_pro_understanding_lift',
-                                            ),
-                                      ),
-                                    ] else if (showProVisibilityLiftOnPostSave &&
-                                        proVisibilityLiftPostSaveResult !=
-                                            null) ...[
-                                      const SizedBox(height: 12),
-                                      ProVisibilityLiftCard(
-                                        result: proVisibilityLiftPostSaveResult,
-                                        onSeePro: () =>
-                                            _openProEvidenceValueSubscription(
-                                              analyticsSource:
-                                                  'record_post_save_pro_visibility_lift',
-                                            ),
-                                      ),
-                                    ] else if (showProPreviewPostSave &&
-                                        proPreviewPostSaveResult != null) ...[
-                                      const SizedBox(height: 12),
-                                      ProPreviewCard(
-                                        result: proPreviewPostSaveResult,
-                                        onSeePro: () =>
-                                            _openProEvidenceValueSubscription(
-                                              analyticsSource:
-                                                  'record_post_save_pro_preview',
-                                            ),
-                                        onDismiss: () => unawaited(
-                                          _dismissProEvidenceValueBridge(),
-                                        ),
-                                      ),
-                                    ] else if (showProBridgeVisibilityPostSave &&
-                                        proBridgeVisibilityPostSaveResult !=
-                                            null) ...[
-                                      const SizedBox(height: 12),
-                                      ProBridgeVisibilityCard(
-                                        result:
-                                            proBridgeVisibilityPostSaveResult,
-                                        onSeePro: () =>
-                                            _openProEvidenceValueSubscription(
-                                              analyticsSource:
-                                                  'record_post_save_pro_bridge_visibility',
-                                            ),
-                                        onDismiss: () => unawaited(
-                                          _dismissProEvidenceValueBridge(),
-                                        ),
-                                      ),
-                                    ],
-                                    if (BetaProofFeedbackEngine.shouldShowOnFirstProofPayoff(
-                                      showFirstProofPayoff:
-                                          showFirstProofPayoff,
-                                      firstProofPayoffVisible: true,
-                                      entryCount: postSaveEntryCount,
-                                      hasConfirmedRepeat:
-                                          EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(
-                                            entriesAfterSave,
-                                          ),
-                                      isRecording:
-                                          ui == RecordUiState.recording,
-                                      isPostSaveDegraded:
-                                          entriesAfterSave.isNotEmpty &&
-                                          VoiceCaptureQuality.isDegradedVoiceCapture(
-                                            entriesAfterSave.last,
-                                          ),
-                                      whatChangedQuestionActive:
-                                          showWhatChangedV2,
-                                      patternReviewInboxHasActiveItems:
-                                          patternReviewInboxActivePostSave,
-                                    ))
-                                      BetaProofFeedbackRow(
-                                        surface: BetaProofFeedbackSurface
-                                            .firstProofPayoff,
-                                        source: 'record_post_save',
-                                        entryCount: postSaveEntryCount,
-                                        hasConfirmedRepeat:
-                                            EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(
-                                              entriesAfterSave,
-                                            ),
-                                        parentVisible: true,
-                                        isRecording:
-                                            ui == RecordUiState.recording,
-                                        isPostSaveDegraded:
-                                            entriesAfterSave.isNotEmpty &&
-                                            VoiceCaptureQuality.isDegradedVoiceCapture(
-                                              entriesAfterSave.last,
-                                            ),
-                                        whatChangedQuestionActive:
-                                            showWhatChangedV2,
-                                        patternReviewInboxHasActiveItems:
-                                            patternReviewInboxActivePostSave,
-                                        onChanged: () => setState(() {}),
-                                      ),
-                                    if (showProofQualityResponseOnFirstProofPayoff) ...[
-                                      const SizedBox(height: 12),
-                                      ProofQualityResponseCard(
-                                        result:
-                                            proofQualityResponseFirstProofCandidate,
-                                        source: 'record_post_save',
-                                        onChanged: () => setState(() {}),
-                                      ),
-                                    ] else if (showProofSpecificityBoostOnFirstProofPayoff) ...[
-                                      const SizedBox(height: 12),
-                                      ProofSpecificityBoostCard(
-                                        result:
-                                            proofSpecificityBoostPostSaveCandidate,
-                                        surface: ProofSpecificityBoostSurface
-                                            .firstProofPayoff,
-                                        source: 'record_post_save',
-                                        hasConfirmedRepeat:
-                                            EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(
-                                              entriesAfterSave,
-                                            ),
-                                        proofKey:
-                                            CurrentRelevanceStore.proofKeyFor(
-                                              entriesAfterSave,
-                                            ),
-                                        onChanged: () => setState(() {}),
-                                      ),
-                                    ],
+                                  ] else if (showReturnAfterProofOnFirstProofPayoff) ...[
+                                    const SizedBox(height: 12),
+                                    ReturnAfterProofCard(
+                                      result: returnAfterProofPostSaveCandidate,
+                                      useStrengthenedLayout:
+                                          showReturnAfterProofStrengthenedOnFirstProofPayoff,
+                                      onPromptSelected: (prompt) {
+                                        setState(
+                                          () => _selectedPromptLine = prompt,
+                                        );
+                                      },
+                                    ),
                                   ],
-                                  if (showTimelineProofMomentOnFirstProofPayoff &&
-                                      timelineProofMomentPostSaveCandidate !=
+                                  if (showProUnderstandingLiftOnPostSave &&
+                                      proUnderstandingLiftPostSaveResult !=
                                           null) ...[
                                     const SizedBox(height: 12),
-                                    TimelineProofMomentCard(
+                                    ProUnderstandingLiftCard(
                                       result:
-                                          timelineProofMomentPostSaveCandidate,
-                                      source: 'record_post_save_first_proof',
-                                    ),
-                                    if (showBetaProofLiftUnderTimelineProofPostSave &&
-                                        ReturningRecordWatchTargetUiGates.showBetaRecordSurfaces()) ...[
-                                      const SizedBox(height: 12),
-                                      BetaProofLiftCard(
-                                        result:
-                                            betaProofLiftTimelinePostSaveCandidate,
-                                        source: 'record_post_save_first_proof',
-                                        surface: 'record_post_save_first_proof',
-                                      ),
-                                    ],
-                                    if (BetaProofFeedbackEngine.shouldShow(
-                                      surface: BetaProofFeedbackSurface
-                                          .timelineProofMoment,
-                                      parentVisible: true,
-                                      entryCount: postSaveEntryCount,
-                                      hasConfirmedRepeat:
-                                          EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(
-                                            entriesAfterSave,
-                                          ),
-                                      isRecording:
-                                          ui == RecordUiState.recording,
-                                      isPostSaveDegraded:
-                                          entriesAfterSave.isNotEmpty &&
-                                          VoiceCaptureQuality.isDegradedVoiceCapture(
-                                            entriesAfterSave.last,
-                                          ),
-                                      whatChangedQuestionActive:
-                                          showWhatChangedV2,
-                                      patternReviewInboxHasActiveItems:
-                                          patternReviewInboxActivePostSave,
-                                    ))
-                                      BetaProofFeedbackRow(
-                                        surface: BetaProofFeedbackSurface
-                                            .timelineProofMoment,
-                                        source: 'record_post_save_first_proof',
-                                        entryCount: postSaveEntryCount,
-                                        hasConfirmedRepeat:
-                                            EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(
-                                              entriesAfterSave,
-                                            ),
-                                        parentVisible: true,
-                                        isRecording:
-                                            ui == RecordUiState.recording,
-                                        isPostSaveDegraded:
-                                            entriesAfterSave.isNotEmpty &&
-                                            VoiceCaptureQuality.isDegradedVoiceCapture(
-                                              entriesAfterSave.last,
-                                            ),
-                                        whatChangedQuestionActive:
-                                            showWhatChangedV2,
-                                        patternReviewInboxHasActiveItems:
-                                            patternReviewInboxActivePostSave,
-                                        onChanged: () => setState(() {}),
-                                      ),
-                                    if (showProofQualityResponseOnTimelineProofPostSave) ...[
-                                      const SizedBox(height: 12),
-                                      ProofQualityResponseCard(
-                                        result:
-                                            proofQualityResponseTimelinePostSaveCandidate,
-                                        source: 'record_post_save_first_proof',
-                                        onChanged: () => setState(() {}),
-                                      ),
-                                    ] else if (showProofSpecificityBoostOnTimelineProofPostSave) ...[
-                                      const SizedBox(height: 12),
-                                      ProofSpecificityBoostCard(
-                                        result:
-                                            proofSpecificityBoostPostSaveCandidate,
-                                        surface: ProofSpecificityBoostSurface
-                                            .timelineProofMoment,
-                                        source: 'record_post_save_first_proof',
-                                        hasConfirmedRepeat:
-                                            EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(
-                                              entriesAfterSave,
-                                            ),
-                                        proofKey:
-                                            CurrentRelevanceStore.proofKeyFor(
-                                              entriesAfterSave,
-                                            ),
-                                        onChanged: () => setState(() {}),
-                                      ),
-                                    ],
-                                    if (showBetaInviteLoopPostSave &&
-                                        ReturningRecordWatchTargetUiGates.showBetaRecordSurfaces() &&
-                                        betaInviteLoopPostSaveResult !=
-                                            null) ...[
-                                      const SizedBox(height: 12),
-                                      BetaInviteCard(
-                                        result: betaInviteLoopPostSaveResult,
-                                        onDismiss: () =>
-                                            unawaited(_dismissBetaInviteLoop()),
-                                      ),
-                                    ],
-                                  ],
-                                  if (showProofSpecificityOnFirstProofPayoff &&
-                                      proofSpecificityPostSaveCandidate
-                                          .shouldShow) ...[
-                                    const SizedBox(height: 12),
-                                    ProofSpecificityCard(
-                                      result: proofSpecificityPostSaveCandidate,
-                                    ),
-                                  ] else if (showProEvidenceValuePostSave) ...[
-                                    const SizedBox(height: 12),
-                                    ProEvidenceValueCard(
-                                      surface: ProEvidenceValueSurface
-                                          .recordPostSaveAfterPayoff,
-                                      entryCount: postSaveEntryCount,
+                                          proUnderstandingLiftPostSaveResult,
                                       onSeePro: () =>
                                           _openProEvidenceValueSubscription(
                                             analyticsSource:
-                                                'record_post_save_pro_evidence_value',
+                                                'record_post_save_pro_understanding_lift',
+                                          ),
+                                    ),
+                                  ] else if (showProVisibilityLiftOnPostSave &&
+                                      proVisibilityLiftPostSaveResult !=
+                                          null) ...[
+                                    const SizedBox(height: 12),
+                                    ProVisibilityLiftCard(
+                                      result: proVisibilityLiftPostSaveResult,
+                                      onSeePro: () =>
+                                          _openProEvidenceValueSubscription(
+                                            analyticsSource:
+                                                'record_post_save_pro_visibility_lift',
+                                          ),
+                                    ),
+                                  ] else if (showProPreviewPostSave &&
+                                      proPreviewPostSaveResult != null) ...[
+                                    const SizedBox(height: 12),
+                                    ProPreviewCard(
+                                      result: proPreviewPostSaveResult,
+                                      onSeePro: () =>
+                                          _openProEvidenceValueSubscription(
+                                            analyticsSource:
+                                                'record_post_save_pro_preview',
                                           ),
                                       onDismiss: () => unawaited(
                                         _dismissProEvidenceValueBridge(),
                                       ),
                                     ),
-                                  ] else if (showProLockMomentPostSave) ...[
+                                  ] else if (showProBridgeVisibilityPostSave &&
+                                      proBridgeVisibilityPostSaveResult !=
+                                          null) ...[
                                     const SizedBox(height: 12),
-                                    ProLockMomentCard(
+                                    ProBridgeVisibilityCard(
+                                      result: proBridgeVisibilityPostSaveResult,
+                                      onSeePro: () =>
+                                          _openProEvidenceValueSubscription(
+                                            analyticsSource:
+                                                'record_post_save_pro_bridge_visibility',
+                                          ),
+                                      onDismiss: () => unawaited(
+                                        _dismissProEvidenceValueBridge(),
+                                      ),
+                                    ),
+                                  ],
+                                  if (BetaProofFeedbackEngine.shouldShowOnFirstProofPayoff(
+                                    showFirstProofPayoff: showFirstProofPayoff,
+                                    firstProofPayoffVisible: true,
+                                    entryCount: postSaveEntryCount,
+                                    hasConfirmedRepeat:
+                                        EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(
+                                          entriesAfterSave,
+                                        ),
+                                    isRecording: ui == RecordUiState.recording,
+                                    isPostSaveDegraded:
+                                        entriesAfterSave.isNotEmpty &&
+                                        VoiceCaptureQuality.isDegradedVoiceCapture(
+                                          entriesAfterSave.last,
+                                        ),
+                                    whatChangedQuestionActive:
+                                        showWhatChangedV2,
+                                    patternReviewInboxHasActiveItems:
+                                        patternReviewInboxActivePostSave,
+                                  ))
+                                    BetaProofFeedbackRow(
+                                      surface: BetaProofFeedbackSurface
+                                          .firstProofPayoff,
+                                      source: 'record_post_save',
                                       entryCount: postSaveEntryCount,
-                                      hasFirstProof: true,
                                       hasConfirmedRepeat:
                                           EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(
                                             entriesAfterSave,
                                           ),
-                                      onSeePro: () =>
-                                          _openProEvidenceValueSubscription(
-                                            analyticsSource:
-                                                'record_post_save_pro_lock_moment',
+                                      parentVisible: true,
+                                      isRecording:
+                                          ui == RecordUiState.recording,
+                                      isPostSaveDegraded:
+                                          entriesAfterSave.isNotEmpty &&
+                                          VoiceCaptureQuality.isDegradedVoiceCapture(
+                                            entriesAfterSave.last,
                                           ),
-                                      onDismiss: () =>
-                                          unawaited(_dismissProLockMoment()),
+                                      whatChangedQuestionActive:
+                                          showWhatChangedV2,
+                                      patternReviewInboxHasActiveItems:
+                                          patternReviewInboxActivePostSave,
+                                      onChanged: () => setState(() {}),
                                     ),
-                                  ] else if (showMonthlyPrivateReportPreviewPostSave &&
-                                      monthlyPrivateReportPreviewPostSave !=
-                                          null) ...[
+                                  if (showProofQualityResponseOnFirstProofPayoff) ...[
                                     const SizedBox(height: 12),
-                                    MonthlyPrivateReportPreviewCard(
-                                      surface: MonthlyPrivateReportSurface
-                                          .recordPostSaveAfterProof,
-                                      entryCount: postSaveEntryCount,
-                                      preview:
-                                          monthlyPrivateReportPreviewPostSave,
-                                      onSeePro: () =>
-                                          _openProEvidenceValueSubscription(
-                                            analyticsSource:
-                                                'record_post_save_monthly_private_report_preview',
+                                    ProofQualityResponseCard(
+                                      result:
+                                          proofQualityResponseFirstProofCandidate,
+                                      source: 'record_post_save',
+                                      onChanged: () => setState(() {}),
+                                    ),
+                                  ] else if (showProofSpecificityBoostOnFirstProofPayoff) ...[
+                                    const SizedBox(height: 12),
+                                    ProofSpecificityBoostCard(
+                                      result:
+                                          proofSpecificityBoostPostSaveCandidate,
+                                      surface: ProofSpecificityBoostSurface
+                                          .firstProofPayoff,
+                                      source: 'record_post_save',
+                                      hasConfirmedRepeat:
+                                          EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(
+                                            entriesAfterSave,
                                           ),
-                                      onDismiss: () => unawaited(
-                                        _dismissMonthlyPrivateReportPreview(),
-                                      ),
-                                    ),
-                                  ],
-                                  if (betaFeedbackIntelligenceSurfacePostSave !=
-                                          null &&
-                                      ReturningRecordWatchTargetUiGates.showBetaRecordSurfaces()) ...[
-                                    const SizedBox(height: 12),
-                                    BetaFeedbackIntelligenceCard(
-                                      surface:
-                                          betaFeedbackIntelligenceSurfacePostSave,
-                                      entryCount: postSaveEntryCount,
-                                      reachedFirstProof:
-                                          showFirstProofPayoff &&
-                                          firstProofPayoffCandidate != null,
-                                      onSubmitted: () {
-                                        if (mounted) setState(() {});
-                                      },
-                                    ),
-                                  ],
-                                  if (showBetaFeedbackCapturePostSave &&
-                                      ReturningRecordWatchTargetUiGates.showBetaRecordSurfaces() &&
-                                      betaFeedbackCapturePostSaveResult !=
-                                          null) ...[
-                                    const SizedBox(height: 12),
-                                    BetaFeedbackCaptureCard(
-                                      result: betaFeedbackCapturePostSaveResult,
-                                      proofFeedbackSurface:
-                                          betaFeedbackCapturePostSaveResult
-                                                  .moment ==
-                                              BetaFeedbackCaptureMoment
-                                                  .afterTimelineProof
-                                          ? (showTimelineProofMomentOnFirstProofPayoff &&
-                                                    timelineProofMomentPostSaveCandidate !=
-                                                        null
-                                                ? BetaProofFeedbackSurface
-                                                      .timelineProofMoment
-                                                : null)
-                                          : null,
+                                      proofKey:
+                                          CurrentRelevanceStore.proofKeyFor(
+                                            entriesAfterSave,
+                                          ),
                                       onChanged: () => setState(() {}),
                                     ),
                                   ],
-                                  if (showFirstProofTruth) ...[
-                                    const SizedBox(height: 12),
-                                    FirstProofTruthCard(
-                                      proofKey: firstProofTruthProofKey,
-                                      entryCount: postSaveEntryCount,
-                                      hasSnippets: firstProofPayoffCandidate!
-                                          .hasSnippets,
-                                      onAnswered: () {
-                                        if (mounted) setState(() {});
-                                      },
-                                    ),
-                                  ],
-                                  if (firstProofActionLoopContent != null) ...[
-                                    const SizedBox(height: 12),
-                                    FirstProofActionLoopCard(
-                                      content: firstProofActionLoopContent,
-                                      entryCount: postSaveEntryCount,
-                                      onWatchThisNext:
-                                          _handleFirstProofWatchThisNext,
-                                      onViewPatternDetails:
-                                          firstProofActionLoopContent
-                                              .canShowPatternDetails
-                                          ? _openFirstProofPatternDetail
-                                          : null,
-                                      onRenamePattern:
-                                          firstProofActionLoopContent
-                                              .canRenamePattern
-                                          ? _openFirstProofRenamePattern
-                                          : null,
-                                      onKeepRecording: _keepRecording,
-                                      onCorrectTranscript:
-                                          firstProofActionLoopContent
-                                              .canCorrectTranscript
-                                          ? () {
-                                              final entry =
-                                                  entriesAfterSave.last;
-                                              unawaited(
-                                                _openCorrectTranscriptForEntry(
-                                                  entry,
-                                                ),
-                                              );
-                                            }
-                                          : null,
-                                      onRemoveFromPattern:
-                                          firstProofActionLoopContent
-                                              .canRemoveFromPattern
-                                          ? () => unawaited(
-                                              _excludeLatestFromFirstProofPattern(),
-                                            )
-                                          : null,
-                                      onOpenPatternCorrection:
-                                          firstProofActionLoopContent
-                                              .canShowPatternCorrection
-                                          ? () => unawaited(
-                                              _openFirstProofPatternCorrection(),
-                                            )
-                                          : null,
-                                    ),
-                                  ],
-                                  if (confirmedRepeatTriggerPayoff != null) ...[
-                                    const SizedBox(height: 16),
-                                    ConfirmedRepeatTriggerPayoffCard(
-                                      payoff: confirmedRepeatTriggerPayoff,
-                                      analyticsSurface: 'record',
-                                      entryCount: entriesAfterSave.length,
-                                      entriesForWhy: entriesAfterSave,
-                                      onKeepWatching: _resetPostSaveToReady,
-                                      onViewEvidence: () => context.push(
-                                        BeliefEvidenceNavigation.route,
-                                      ),
-                                    ),
-                                  ],
-                                  if (confirmedRepeatHelpfulActionPayoff !=
-                                      null) ...[
-                                    const SizedBox(height: 16),
-                                    ConfirmedRepeatHelpfulActionPayoffCard(
-                                      payoff:
-                                          confirmedRepeatHelpfulActionPayoff,
-                                      analyticsSurface: 'record',
-                                      entryCount: entriesAfterSave.length,
-                                      entriesForWhy: entriesAfterSave,
-                                      onKeepWatching: _resetPostSaveToReady,
-                                      onViewEvidence: () => context.push(
-                                        BeliefEvidenceNavigation.route,
-                                      ),
-                                    ),
-                                  ],
-                                  if (confirmedRepeatChangeNotice != null) ...[
-                                    const SizedBox(height: 16),
-                                    ConfirmedRepeatChangeNoticeCard(
-                                      notice: confirmedRepeatChangeNotice,
-                                      analyticsSurface: 'record',
-                                      entryCount: entriesAfterSave.length,
-                                      entriesForWhy: entriesAfterSave,
-                                      onRecordWhatHelped: () {
-                                        ConfirmedRepeatHelpfulActionCapture.armForNextSave();
-                                        setState(
-                                          () => _selectedPromptLine =
-                                              confirmedRepeatChangeNotice
-                                                  .guidedRecordPrompt,
-                                        );
-                                        _resetPostSaveToReady();
-                                      },
-                                      onViewEvidence: () => context.push(
-                                        BeliefEvidenceNavigation.route,
-                                      ),
-                                    ),
-                                  ],
-                                  if (repeatReturnCheckOffer != null &&
-                                      !showReturnCheckPayoff &&
-                                      !showWhatChangedV2) ...[
-                                    const SizedBox(height: 12),
-                                    RepeatReturnCheckCard(
-                                      entryId: repeatReturnCheckOffer.entryId,
-                                      entryCount:
-                                          repeatReturnCheckOffer.entryCount,
-                                      surface: 'record',
-                                      onChanged: () {
-                                        if (mounted) setState(() {});
-                                      },
-                                    ),
-                                  ],
-                                  if (postSaveArchiveHierarchy
-                                          ?.showMomentQualityFeedback ??
-                                      true)
-                                    Builder(
-                                      builder: (context) {
-                                        if (suppressLatestSaveArchiveInsight) {
-                                          return const SizedBox.shrink();
-                                        }
-                                        final returnTrigger =
-                                            const CapacityReturnTriggerEngine()
-                                                .buildFromJournal(
-                                                  entries: entriesAfterSave,
-                                                  capacityLoopActive:
-                                                      _activeLoop
-                                                          ?.isCapacityYes ??
-                                                      false,
-                                                  capacityCohortActive: false,
-                                                  surface:
-                                                      CapacityReturnTriggerSurface
-                                                          .completion,
-                                                  sampleMode: false,
-                                                  screenshotMode:
-                                                      ScreenshotMode.enabled,
-                                                );
-                                        if (!returnTrigger.showCard) {
-                                          return const SizedBox.shrink();
-                                        }
-                                        return Column(
-                                          children: [
-                                            const SizedBox(height: 16),
-                                            CapacityReturnTriggerCard(
-                                              result: returnTrigger,
-                                              onPrimaryDismiss:
-                                                  _resetPostSaveToReady,
-                                            ),
-                                          ],
-                                        );
-                                      },
-                                    ),
                                 ],
-                              ],
-                              if (postSaveArchiveHierarchy
-                                          ?.showBeliefUpdateCard ==
-                                      true &&
-                                  beliefUpdatePayoff != null &&
-                                  !suppressDegradedTranscriptPostSaveCompetitors &&
-                                  !showFirstProofMoment &&
-                                  !showReturnCheckPayoff &&
-                                  !showWhatChangedV2) ...[
-                                const SizedBox(height: 16),
-                                BeliefUpdatePayoffCard(
-                                  payoff: beliefUpdatePayoff,
-                                  showInlineActions: false,
-                                  onAddAnother: _goToRecordTab,
-                                  onViewEvidence: () => context.push(
-                                    BeliefEvidenceNavigation.route,
+                                if (showTimelineProofMomentOnFirstProofPayoff &&
+                                    timelineProofMomentPostSaveCandidate !=
+                                        null) ...[
+                                  const SizedBox(height: 12),
+                                  TimelineProofMomentCard(
+                                    result:
+                                        timelineProofMomentPostSaveCandidate,
+                                    source: 'record_post_save_first_proof',
                                   ),
-                                ),
-                              ],
-                              if (postSaveArchiveHierarchy != null &&
-                                  postSaveArchiveHierarchy
-                                      .showFocusedActionsBar &&
-                                  !suppressDegradedTranscriptPostSaveCompetitors &&
-                                  !suppressNoisyFirstSaveCards &&
-                                  !suppressNoisyRepeatPostSaveCards &&
-                                  !suppressEarlyRepeatPayoffCompetitors &&
-                                  !showFirstProofMoment &&
-                                  !showReturnCheckPayoff &&
-                                  !showWhatChangedV2) ...[
-                                const SizedBox(height: 16),
-                                PostSaveFocusedActionsBar(
-                                  onViewEvidence: () => context.push(
-                                    BeliefEvidenceNavigation.route,
-                                  ),
-                                  onViewPatterns: () =>
-                                      context.go('/archive-belief'),
-                                  onAddOneMoreMoment: _goToRecordTab,
-                                ),
-                              ],
-                              if (returnLoopPayoff != null &&
-                                  !suppressDegradedTranscriptPostSaveCompetitors &&
-                                  !suppressNoisyFirstSaveCards &&
-                                  !suppressNoisyRepeatPostSaveCards) ...[
-                                const SizedBox(height: 16),
-                                DayTwoReturnLoopCard(
-                                  payoff: returnLoopPayoff,
-                                  onAddAnother: () => unawaited(
-                                    _onRecordPressed(source: 'main'),
-                                  ),
-                                  onViewArchive: () =>
-                                      context.go('/archive-belief'),
-                                  onReminderAccepted: () async {
-                                    await RecordReturnProStore.instance()
-                                        .markReturnCueResolved(
-                                          RecordReturnProReturnCueMethod
-                                              .reminder,
-                                        );
-                                    if (!mounted) return;
-                                    setState(() {
-                                      _offerDayTwoReminder = false;
-                                      _recordReturnProState =
-                                          _recordReturnProState?.copyWith(
-                                            returnCueResolved: true,
-                                            returnCueMethod:
-                                                RecordReturnProReturnCueMethod
-                                                    .reminder,
-                                          );
-                                    });
-                                  },
-                                  onReminderDeclined: () async {
-                                    await RecordReturnProStore.instance()
-                                        .markReturnCueResolved(
-                                          RecordReturnProReturnCueMethod
-                                              .localCue,
-                                        );
-                                    if (!mounted) return;
-                                    setState(() {
-                                      _offerDayTwoReminder = false;
-                                      _recordReturnProState =
-                                          _recordReturnProState?.copyWith(
-                                            returnCueResolved: true,
-                                            returnCueMethod:
-                                                RecordReturnProReturnCueMethod
-                                                    .localCue,
-                                          );
-                                    });
-                                  },
-                                ),
-                              ],
-                              if (_languageCode != 'en') ...[
-                                const SizedBox(height: 12),
-                                LanguageIndicatorChip(
-                                  languageCode: _languageCode,
-                                  detectedCode: _detectedLanguageCode,
-                                  onSelected: _onLanguageSelected,
-                                ),
-                              ],
-                              // Record → Return → Pro: evidence, return cue,
-                              // Pro bridge — after the save succeeded, never blocking.
-                              if (suppressNoisyRepeatPostSaveCards &&
-                                  !suppressDegradedTranscriptPostSaveCompetitors &&
-                                  postSaveDailyMirror != null &&
-                                  entriesAfterSave.isNotEmpty) ...[
-                                const SizedBox(height: 16),
-                                RepeatPostSaveCard(
-                                  entry: entriesAfterSave.first,
-                                  allEntries: entriesAfterSave,
-                                  mirror: postSaveDailyMirror,
-                                  onViewEvidence: () => context.push(
-                                    BeliefEvidenceNavigation.route,
-                                  ),
-                                  onAddOneMoreMoment: _goToRecordTab,
-                                  onDoneForToday: _resetPostSaveToReady,
-                                  onCorrectTranscript:
-                                      _lastSavedEntry != null &&
-                                          !_lastSavedEntryIsDegraded &&
-                                          TranscriptCorrectionGate.entryAllowsCorrection(
-                                            _lastSavedEntry!,
-                                          )
-                                      ? () => unawaited(
-                                          _openCorrectTranscriptForEntry(
-                                            _lastSavedEntry!,
+                                  if (showBetaProofLiftUnderTimelineProofPostSave &&
+                                      ReturningRecordWatchTargetUiGates.showBetaRecordSurfaces()) ...[
+                                    const SizedBox(height: 12),
+                                    BetaProofLiftCard(
+                                      result:
+                                          betaProofLiftTimelinePostSaveCandidate,
+                                      source: 'record_post_save_first_proof',
+                                      surface: 'record_post_save_first_proof',
+                                    ),
+                                  ],
+                                  if (BetaProofFeedbackEngine.shouldShow(
+                                    surface: BetaProofFeedbackSurface
+                                        .timelineProofMoment,
+                                    parentVisible: true,
+                                    entryCount: postSaveEntryCount,
+                                    hasConfirmedRepeat:
+                                        EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(
+                                          entriesAfterSave,
+                                        ),
+                                    isRecording: ui == RecordUiState.recording,
+                                    isPostSaveDegraded:
+                                        entriesAfterSave.isNotEmpty &&
+                                        VoiceCaptureQuality.isDegradedVoiceCapture(
+                                          entriesAfterSave.last,
+                                        ),
+                                    whatChangedQuestionActive:
+                                        showWhatChangedV2,
+                                    patternReviewInboxHasActiveItems:
+                                        patternReviewInboxActivePostSave,
+                                  ))
+                                    BetaProofFeedbackRow(
+                                      surface: BetaProofFeedbackSurface
+                                          .timelineProofMoment,
+                                      source: 'record_post_save_first_proof',
+                                      entryCount: postSaveEntryCount,
+                                      hasConfirmedRepeat:
+                                          EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(
+                                            entriesAfterSave,
                                           ),
-                                        )
-                                      : null,
-                                  onViewThoughtMap:
-                                      repeatPostSaveThoughtMapPreview
-                                              ?.shouldShow ==
-                                          true
-                                      ? () => context.go('/archive-belief')
-                                      : null,
-                                ),
-                              ],
-                              if (_saveReceipt != null &&
-                                  !suppressDegradedTranscriptPostSaveCompetitors &&
-                                  !suppressNoisyFirstSaveCards &&
-                                  !suppressNoisyRepeatPostSaveCards) ...[
-                                const SizedBox(height: 16),
-                                StartHereSaveReceiptCard(
-                                  receipt: _saveReceipt!,
-                                  onDismiss: () =>
-                                      setState(() => _saveReceipt = null),
-                                ),
-                              ] else if (_suggestionProNudgeSource != null &&
-                                  !suppressDegradedTranscriptPostSaveCompetitors &&
-                                  !suppressNoisyFirstSaveCards &&
-                                  !suppressNoisyRepeatPostSaveCards) ...[
-                                const SizedBox(height: 16),
-                                _SuggestionProNudgeCard(
-                                  onUnlock: () {
-                                    final source = _suggestionProNudgeSource!;
-                                    setState(
-                                      () => _suggestionProNudgeSource = null,
-                                    );
-                                    context.push(
-                                      '/subscription',
-                                      extra: PaywallRouteArgs(
-                                        source: source,
-                                        sourceRoute: '/record',
-                                      ),
-                                    );
-                                  },
-                                  onDismiss: () => setState(
-                                    () => _suggestionProNudgeSource = null,
+                                      parentVisible: true,
+                                      isRecording:
+                                          ui == RecordUiState.recording,
+                                      isPostSaveDegraded:
+                                          entriesAfterSave.isNotEmpty &&
+                                          VoiceCaptureQuality.isDegradedVoiceCapture(
+                                            entriesAfterSave.last,
+                                          ),
+                                      whatChangedQuestionActive:
+                                          showWhatChangedV2,
+                                      patternReviewInboxHasActiveItems:
+                                          patternReviewInboxActivePostSave,
+                                      onChanged: () => setState(() {}),
+                                    ),
+                                  if (showProofQualityResponseOnTimelineProofPostSave) ...[
+                                    const SizedBox(height: 12),
+                                    ProofQualityResponseCard(
+                                      result:
+                                          proofQualityResponseTimelinePostSaveCandidate,
+                                      source: 'record_post_save_first_proof',
+                                      onChanged: () => setState(() {}),
+                                    ),
+                                  ] else if (showProofSpecificityBoostOnTimelineProofPostSave) ...[
+                                    const SizedBox(height: 12),
+                                    ProofSpecificityBoostCard(
+                                      result:
+                                          proofSpecificityBoostPostSaveCandidate,
+                                      surface: ProofSpecificityBoostSurface
+                                          .timelineProofMoment,
+                                      source: 'record_post_save_first_proof',
+                                      hasConfirmedRepeat:
+                                          EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(
+                                            entriesAfterSave,
+                                          ),
+                                      proofKey:
+                                          CurrentRelevanceStore.proofKeyFor(
+                                            entriesAfterSave,
+                                          ),
+                                      onChanged: () => setState(() {}),
+                                    ),
+                                  ],
+                                  if (showBetaInviteLoopPostSave &&
+                                      ReturningRecordWatchTargetUiGates.showBetaRecordSurfaces() &&
+                                      betaInviteLoopPostSaveResult != null) ...[
+                                    const SizedBox(height: 12),
+                                    BetaInviteCard(
+                                      result: betaInviteLoopPostSaveResult,
+                                      onDismiss: () =>
+                                          unawaited(_dismissBetaInviteLoop()),
+                                    ),
+                                  ],
+                                ],
+                                if (showProofSpecificityOnFirstProofPayoff &&
+                                    proofSpecificityPostSaveCandidate
+                                        .shouldShow) ...[
+                                  const SizedBox(height: 12),
+                                  ProofSpecificityCard(
+                                    result: proofSpecificityPostSaveCandidate,
                                   ),
-                                ),
-                              ],
-                              if (_doneForTodayReceipt != null &&
-                                  _doneForTodayReceipt!.hasReceipt &&
-                                  !suppressDegradedTranscriptPostSaveCompetitors &&
-                                  !suppressNoisyFirstSaveCards &&
-                                  !suppressNoisyRepeatPostSaveCards) ...[
-                                const SizedBox(height: 16),
-                                DoneForTodayReceiptCard(
-                                  receipt: showFirstProofMoment
-                                      ? _doneForTodayReceipt!.copyWith(
-                                          archiveLine: '',
-                                        )
-                                      : _doneForTodayReceipt!,
-                                ),
-                                // 2-day path day-1 closure: only after the very
-                                // first save, alongside (never instead of) the
-                                // Done for today receipt.
-                                Builder(
-                                  builder: (context) {
-                                    final path = const TwoDayActivationEngine()
-                                        .buildPostSave(
-                                          entryCount: _journalEntryCount,
-                                        );
-                                    if (!path.show ||
-                                        returnLoopPayoff != null) {
-                                      return const SizedBox.shrink();
-                                    }
-                                    return Padding(
-                                      padding: const EdgeInsets.only(top: 16),
-                                      child: TwoDayActivationCard(path: path),
-                                    );
-                                  },
-                                ),
-                                // One optional day-2 reminder offer — first save
-                                // only, below (never instead of) the receipt. The
-                                // First 60 return cue carries the same single
-                                // reminder offer, so the two never show together.
-                                if (_offerDayTwoReminder &&
-                                    !_recordReturnCueVisible &&
-                                    returnLoopPayoff == null)
-                                  const Padding(
-                                    padding: EdgeInsets.only(top: 16),
-                                    child: DayTwoReminderCard(),
-                                  ),
-                                // Tomorrow's-check preview — passive, no CTA,
-                                // safe labels only.
-                                if (_dayTwoReturnPreview != null &&
-                                    _dayTwoReturnPreview!.show &&
-                                    returnLoopPayoff == null &&
-                                    !justSavedFirstEntry &&
-                                    !suppressNoisyFirstSaveCards)
-                                  Padding(
-                                    padding: const EdgeInsets.only(top: 16),
-                                    child: DayTwoReturnPreviewCard(
-                                      preview: _dayTwoReturnPreview!,
-                                      entryCount: _journalEntryCount,
+                                ] else if (showProEvidenceValuePostSave) ...[
+                                  const SizedBox(height: 12),
+                                  ProEvidenceValueCard(
+                                    surface: ProEvidenceValueSurface
+                                        .recordPostSaveAfterPayoff,
+                                    entryCount: postSaveEntryCount,
+                                    onSeePro: () =>
+                                        _openProEvidenceValueSubscription(
+                                          analyticsSource:
+                                              'record_post_save_pro_evidence_value',
+                                        ),
+                                    onDismiss: () => unawaited(
+                                      _dismissProEvidenceValueBridge(),
                                     ),
                                   ),
-                              ],
-                              if (_archiveProofCounter != null &&
-                                  !suppressDegradedTranscriptPostSaveCompetitors &&
-                                  PostSaveCompletionCopyGates.showArchiveProofCounter(
-                                    counterHasProof:
-                                        _archiveProofCounter!.hasProof,
-                                    doneReceiptVisible:
-                                        _doneForTodayReceipt != null &&
-                                        _doneForTodayReceipt!.hasReceipt,
-                                    suppressNoisyFirstSaveCards:
-                                        suppressNoisyFirstSaveCards ||
-                                        suppressNoisyRepeatPostSaveCards,
-                                  )) ...[
-                                const SizedBox(height: 16),
-                                ArchiveProofCounterCard(
-                                  counter: _archiveProofCounter!,
-                                ),
-                              ],
-                              if (shareableProof != null &&
-                                  shareableProof.hasProof &&
-                                  !suppressDegradedTranscriptPostSaveCompetitors &&
-                                  !suppressNoisyFirstSaveCards &&
-                                  !suppressNoisyRepeatPostSaveCards) ...[
-                                const SizedBox(height: 16),
-                                ShareableArchiveProofCard(
-                                  proof: shareableProof,
-                                ),
-                              ],
-                              if (_valueMomentBridge != null &&
-                                  _valueMomentBridge!.show &&
-                                  !suppressDegradedTranscriptPostSaveCompetitors &&
-                                  !suppressNoisyFirstSaveCards &&
-                                  !suppressNoisyRepeatPostSaveCards) ...[
-                                const SizedBox(height: 16),
-                                ValueMomentProBridge(
-                                  bridge: _valueMomentBridge!,
-                                  onSeePro: () {
-                                    setState(() => _valueMomentBridge = null);
-                                    context.push(
-                                      '/subscription',
-                                      extra: PaywallRouteArgs(
-                                        source: PaywallSource.valueMoment,
-                                        sourceRoute: '/record',
-                                      ),
-                                    );
-                                  },
-                                  onDismiss: () => setState(() {
-                                    ValueMomentPaywallTrigger
-                                            .dismissedThisSession =
-                                        true;
-                                    _valueMomentBridge = null;
-                                  }),
-                                ),
-                              ],
-                              if (_showEvidenceContextTag &&
-                                  !suppressDegradedTranscriptPostSaveCompetitors &&
-                                  !suppressNoisyFirstSaveCards &&
-                                  !suppressNoisyRepeatPostSaveCards) ...[
-                                const SizedBox(height: 16),
-                                RecordingMetadataSheet(
-                                  onSaveTag: _saveEvidenceContextTag,
-                                  onSkip: () => setState(
-                                    () => _showEvidenceContextTag = false,
+                                ] else if (showProLockMomentPostSave) ...[
+                                  const SizedBox(height: 12),
+                                  ProLockMomentCard(
+                                    entryCount: postSaveEntryCount,
+                                    hasFirstProof: true,
+                                    hasConfirmedRepeat:
+                                        EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(
+                                          entriesAfterSave,
+                                        ),
+                                    onSeePro: () =>
+                                        _openProEvidenceValueSubscription(
+                                          analyticsSource:
+                                              'record_post_save_pro_lock_moment',
+                                        ),
+                                    onDismiss: () =>
+                                        unawaited(_dismissProLockMoment()),
                                   ),
-                                ),
-                              ],
-                              if (stack.showInputQualityCoach &&
-                                  !suppressDegradedTranscriptPostSaveCompetitors &&
-                                  !suppressNoisyFirstSaveCards &&
-                                  !suppressNoisyRepeatPostSaveCards) ...[
-                                const SizedBox(height: 16),
-                                InputQualityCoachCard(
-                                  result: _inputQuality!,
-                                  originalText: _inputQualityText,
-                                  onAddSentence: _onInputQualityAddSentence,
-                                  onUseAnyway: _onInputQualityUseAnyway,
-                                  languageCode: _languageCode,
-                                ),
-                              ],
-                              if (!stack.showInputQualityCoach &&
-                                  stack.showCompletedResult &&
-                                  _returnDayJustClosed &&
-                                  !suppressDegradedTranscriptPostSaveCompetitors &&
-                                  !suppressNoisyFirstSaveCards &&
-                                  !suppressNoisyRepeatPostSaveCards) ...[
-                                const SizedBox(height: 16),
-                                ReturnDayClosedCard(
-                                  resultHeadline:
-                                      _completedCheckInToday!.resultHeadline,
-                                  usefulLine:
-                                      _completedCheckInToday!.whatThisMeans,
-                                  nextCheck: _completedCheckInToday!
-                                      .tomorrowsBetterQuestion,
-                                  onDone: () => setState(
-                                    () => _returnDayJustClosed = false,
-                                  ),
-                                  onRecordAnother: _keepRecording,
-                                ),
-                                // First session never reaches here; only surface a fresh
-                                // progress moment so the payoff stays one card deep.
-                                if (stack.showArchiveProofCards &&
-                                    _patternProgress != null) ...[
-                                  const SizedBox(height: 16),
-                                  PatternProgressAfterSaveCard(
-                                    progress: _patternProgress!,
+                                ] else if (showMonthlyPrivateReportPreviewPostSave &&
+                                    monthlyPrivateReportPreviewPostSave !=
+                                        null) ...[
+                                  const SizedBox(height: 12),
+                                  MonthlyPrivateReportPreviewCard(
+                                    surface: MonthlyPrivateReportSurface
+                                        .recordPostSaveAfterProof,
+                                    entryCount: postSaveEntryCount,
+                                    preview:
+                                        monthlyPrivateReportPreviewPostSave,
+                                    onSeePro: () =>
+                                        _openProEvidenceValueSubscription(
+                                          analyticsSource:
+                                              'record_post_save_monthly_private_report_preview',
+                                        ),
+                                    onDismiss: () => unawaited(
+                                      _dismissMonthlyPrivateReportPreview(),
+                                    ),
                                   ),
                                 ],
-                              ] else if (!stack.showInputQualityCoach &&
-                                  stack.showCompletedResult &&
-                                  !suppressDegradedTranscriptPostSaveCompetitors &&
-                                  !suppressNoisyFirstSaveCards &&
-                                  !suppressNoisyRepeatPostSaveCards) ...[
-                                const SizedBox(height: 16),
-                                CheckInCompletedCard(
-                                  checkIn: _completedCheckInToday!,
-                                  weakInput: _weakInput,
-                                  languageCode: _languageCode,
-                                  betterResultIntensity:
-                                      ScreenshotMode.screenshotBetterResult
-                                      ? ScreenshotMode
-                                            .screenshotBetterResultIntensity
-                                      : ScreenshotMode.completedCheckInPreview
-                                      ? HookRescueIntensity.elevated
-                                      : _hookRescue?.intensityFor(
-                                              HookRescueAction.betterResult,
-                                            ) ??
-                                            HookRescueIntensity.normal,
-                                  notUsefulReason: _hookRescueNotUsefulReason,
-                                  nextCheckSlot: stack.showResultNextCheck
-                                      ? ResultNextCheckCard(
-                                          checkIn: _completedCheckInToday!,
-                                          notUsefulReason:
-                                              _hookRescueNotUsefulReason,
-                                          feedbackHint: _feedbackHint,
-                                          showFeedback: stack.showFeedback,
-                                          routineAnchorPicker:
-                                              stack.showRoutineAnchor
-                                              ? () => RoutineAnchorChooser.show(
-                                                  context,
-                                                )
-                                              : null,
-                                          onRoutineAnchorChosen:
-                                              stack.showRoutineAnchor
-                                              ? (anchor) =>
-                                                    RoutineAnchorStore.instance()
-                                                        .saveForDate(
-                                                          _tomorrowDateKey,
-                                                          anchor,
-                                                        )
-                                              : null,
-                                          onCreateCheckIn: (question) async {
-                                            await TomorrowCheckInCoordinator.createForTomorrow(
-                                              patternTitle:
-                                                  _completedCheckInToday!
-                                                      .patternTitle,
-                                              specificPrompt:
-                                                  _completedCheckInToday!
-                                                      .prompt,
-                                              checkInQuestion: question,
-                                            );
-                                            final anchor =
-                                                await RoutineAnchorStore.instance()
-                                                    .loadForDate(
-                                                      _tomorrowDateKey,
-                                                    );
-                                            final active =
-                                                await TomorrowCheckInCoordinator.loadActive();
-                                            if (active != null) {
-                                              await RetentionReminderCoordinator.maybeScheduleAfterNextCheckChosen(
-                                                active,
-                                                hasRoutineAnchor:
-                                                    anchor != null,
-                                              );
-                                            }
-                                            if (!mounted) return;
-                                            setState(() {
-                                              _retentionNextCheckJustChosen =
-                                                  true;
-                                              _retentionDismissed = false;
-                                              _activeCheckInForTomorrow =
-                                                  active;
-                                            });
-                                          },
-                                        )
-                                      : null,
-                                ),
-                                const SizedBox(height: 16),
-                                if (shouldShowKinderAngle(
-                                  _inputQualityText,
-                                  resultHint:
-                                      _completedCheckInToday!
-                                          .selectedOptionId ??
-                                      'same',
-                                ))
-                                  KinderAngleCard(
-                                    reflectionText: _inputQualityText,
-                                    resultHint:
-                                        _completedCheckInToday!
-                                            .selectedOptionId ??
-                                        'same',
-                                    patternTitle:
-                                        _completedCheckInToday!.patternTitle,
-                                    specificPrompt:
-                                        _completedCheckInToday!.prompt,
-                                    languageCode: _languageCode,
-                                    compact: true,
-                                  )
-                                else
-                                  PerspectiveShiftCard(
-                                    reflectionText: _inputQualityText,
-                                    resultHint:
-                                        _completedCheckInToday!
-                                            .selectedOptionId ??
-                                        'same',
-                                    checkInQuestion:
-                                        _completedCheckInToday!.question,
-                                    patternTitle:
-                                        _completedCheckInToday!.patternTitle,
-                                    specificPrompt:
-                                        _completedCheckInToday!.prompt,
-                                    languageCode: _languageCode,
-                                    compact: true,
+                                if (betaFeedbackIntelligenceSurfacePostSave !=
+                                        null &&
+                                    ReturningRecordWatchTargetUiGates.showBetaRecordSurfaces()) ...[
+                                  const SizedBox(height: 12),
+                                  BetaFeedbackIntelligenceCard(
+                                    surface:
+                                        betaFeedbackIntelligenceSurfacePostSave,
+                                    entryCount: postSaveEntryCount,
+                                    reachedFirstProof:
+                                        showFirstProofPayoff &&
+                                        firstProofPayoffCandidate != null,
+                                    onSubmitted: () {
+                                      if (mounted) setState(() {});
+                                    },
                                   ),
-                                if (stack.showArchiveProofCards &&
-                                    _patternMemory != null) ...[
-                                  const SizedBox(height: 16),
-                                  PatternMemoryAfterSaveCard(
-                                    memory: _patternMemory!,
-                                    onUseNext:
-                                        _patternNextAction == null &&
-                                            !suppressPostResultNextCheckCompetitors
-                                        ? () => _usePatternMemoryNext(
-                                            _patternMemory!,
+                                ],
+                                if (showBetaFeedbackCapturePostSave &&
+                                    ReturningRecordWatchTargetUiGates.showBetaRecordSurfaces() &&
+                                    betaFeedbackCapturePostSaveResult !=
+                                        null) ...[
+                                  const SizedBox(height: 12),
+                                  BetaFeedbackCaptureCard(
+                                    result: betaFeedbackCapturePostSaveResult,
+                                    proofFeedbackSurface:
+                                        betaFeedbackCapturePostSaveResult
+                                                .moment ==
+                                            BetaFeedbackCaptureMoment
+                                                .afterTimelineProof
+                                        ? (showTimelineProofMomentOnFirstProofPayoff &&
+                                                  timelineProofMomentPostSaveCandidate !=
+                                                      null
+                                              ? BetaProofFeedbackSurface
+                                                    .timelineProofMoment
+                                              : null)
+                                        : null,
+                                    onChanged: () => setState(() {}),
+                                  ),
+                                ],
+                                if (showFirstProofTruth) ...[
+                                  const SizedBox(height: 12),
+                                  FirstProofTruthCard(
+                                    proofKey: firstProofTruthProofKey,
+                                    entryCount: postSaveEntryCount,
+                                    hasSnippets:
+                                        firstProofPayoffCandidate!.hasSnippets,
+                                    onAnswered: () {
+                                      if (mounted) setState(() {});
+                                    },
+                                  ),
+                                ],
+                                if (firstProofActionLoopContent != null) ...[
+                                  const SizedBox(height: 12),
+                                  FirstProofActionLoopCard(
+                                    content: firstProofActionLoopContent,
+                                    entryCount: postSaveEntryCount,
+                                    onWatchThisNext:
+                                        _handleFirstProofWatchThisNext,
+                                    onViewPatternDetails:
+                                        firstProofActionLoopContent
+                                            .canShowPatternDetails
+                                        ? _openFirstProofPatternDetail
+                                        : null,
+                                    onRenamePattern:
+                                        firstProofActionLoopContent
+                                            .canRenamePattern
+                                        ? _openFirstProofRenamePattern
+                                        : null,
+                                    onKeepRecording: _keepRecording,
+                                    onCorrectTranscript:
+                                        firstProofActionLoopContent
+                                            .canCorrectTranscript
+                                        ? () {
+                                            final entry = entriesAfterSave.last;
+                                            unawaited(
+                                              _openCorrectTranscriptForEntry(
+                                                entry,
+                                              ),
+                                            );
+                                          }
+                                        : null,
+                                    onRemoveFromPattern:
+                                        firstProofActionLoopContent
+                                            .canRemoveFromPattern
+                                        ? () => unawaited(
+                                            _excludeLatestFromFirstProofPattern(),
+                                          )
+                                        : null,
+                                    onOpenPatternCorrection:
+                                        firstProofActionLoopContent
+                                            .canShowPatternCorrection
+                                        ? () => unawaited(
+                                            _openFirstProofPatternCorrection(),
                                           )
                                         : null,
                                   ),
                                 ],
-                                if (stack.showArchiveProofCards &&
-                                    _patternProgress != null) ...[
+                                if (confirmedRepeatTriggerPayoff != null) ...[
                                   const SizedBox(height: 16),
-                                  PatternProgressAfterSaveCard(
-                                    progress: _patternProgress!,
-                                  ),
-                                ],
-                                if (stack.showArchiveProofCards &&
-                                    _patternNextAction != null &&
-                                    !suppressPostResultNextCheckCompetitors) ...[
-                                  const SizedBox(height: 16),
-                                  PatternNextActionCard(
-                                    action: _patternNextAction!,
-                                    onUse: () => _usePatternNextAction(
-                                      _patternNextAction!,
+                                  ConfirmedRepeatTriggerPayoffCard(
+                                    payoff: confirmedRepeatTriggerPayoff,
+                                    analyticsSurface: 'record',
+                                    entryCount: entriesAfterSave.length,
+                                    entriesForWhy: entriesAfterSave,
+                                    onKeepWatching: _resetPostSaveToReady,
+                                    onViewEvidence: () => context.push(
+                                      BeliefEvidenceNavigation.route,
                                     ),
                                   ),
                                 ],
-                                if (stack.showArchiveProofCards &&
-                                    _habitProof != null &&
-                                    !suppressPostResultNextCheckCompetitors) ...[
+                                if (confirmedRepeatHelpfulActionPayoff !=
+                                    null) ...[
                                   const SizedBox(height: 16),
-                                  HabitProofCard(
-                                    proof: _habitProof!,
-                                    onKeepGoing: () =>
-                                        _keepHabitProofGoing(_habitProof!),
-                                  ),
-                                ],
-                                if (stack.showArchiveProofCards &&
-                                    _weeklyRecap != null) ...[
-                                  const SizedBox(height: 16),
-                                  WeeklyPatternRecapCard(
-                                    recap: _weeklyRecap!,
-                                    onUseNext:
-                                        suppressPostResultNextCheckCompetitors
-                                        ? null
-                                        : () => _useWeeklyRecapNext(
-                                            _weeklyRecap!,
-                                          ),
-                                  ),
-                                ],
-                                if (stack.showArchiveProofCards &&
-                                    _shareRecap != null) ...[
-                                  Align(
-                                    alignment: Alignment.centerLeft,
-                                    child: TextButton.icon(
-                                      onPressed: () =>
-                                          _copyShareRecap(_shareRecap!),
-                                      icon: const Icon(
-                                        Icons.copy_rounded,
-                                        size: 18,
-                                      ),
-                                      label: Text(
-                                        appLocalizationsOf(
-                                          context,
-                                        ).recordingCopyRecap,
-                                      ),
+                                  ConfirmedRepeatHelpfulActionPayoffCard(
+                                    payoff: confirmedRepeatHelpfulActionPayoff,
+                                    analyticsSurface: 'record',
+                                    entryCount: entriesAfterSave.length,
+                                    entriesForWhy: entriesAfterSave,
+                                    onKeepWatching: _resetPostSaveToReady,
+                                    onViewEvidence: () => context.push(
+                                      BeliefEvidenceNavigation.route,
                                     ),
                                   ),
                                 ],
-                              ],
-                              if (!stack.showInputQualityCoach &&
-                                  _tomorrowReturnLoop != null &&
-                                  !_returnDayJustClosed &&
-                                  !suppressNoisyFirstSaveCards &&
-                                  !suppressNoisyRepeatPostSaveCards &&
-                                  !suppressEarlyPatternClaimCards &&
-                                  !suppressEarlyRepeatPayoffCompetitors &&
-                                  !showFirstProofMoment &&
-                                  !showReturnCheckPayoff &&
-                                  !showWhatChangedV2) ...[
-                                if (_secondSessionComparison?.hasEnoughData ==
-                                        true &&
-                                    secondSessionPayoff == null &&
-                                    _postSaveComparisonController?.uiState
-                                        is! ComparisonSuccess) ...[
-                                  const SizedBox(height: 12),
-                                  SecondSessionComparisonCard(
-                                    comparison: _secondSessionComparison!,
-                                    onGoDeeper: () {
-                                      final prompt = _secondSessionComparison!
-                                          .whatToTestNext;
-                                      if (prompt == null || prompt.isEmpty) {
-                                        return;
-                                      }
-                                      unawaited(
-                                        _onSecondSessionEvidence(prompt),
-                                      );
-                                    },
-                                    onRecordNextEvidence: () {
-                                      final prompt = _secondSessionComparison!
-                                          .whatToTestNext;
-                                      if (prompt == null || prompt.isEmpty) {
-                                        return;
-                                      }
-                                      unawaited(
-                                        _onSecondSessionEvidence(prompt),
-                                      );
-                                    },
-                                    onNotTheSame: () => setState(
-                                      () => _secondSessionComparison = null,
-                                    ),
-                                  ),
-                                ],
-                                if (!_patternHypothesisDismissed &&
-                                    _patternHypothesis?.hasEnoughData ==
-                                        true) ...[
-                                  const SizedBox(height: 12),
-                                  PatternHypothesisCard(
-                                    hypothesis: _patternHypothesis!,
-                                    onFeelsRight: () async {
-                                      final selected =
-                                          await SelectedSignalCoordinator.loadCurrent();
-                                      if (selected != null) {
-                                        await SignalFeedbackCoordinator.track(
-                                          action: PostSaveSignalAction.accepted,
-                                          signalId: selected.id,
-                                          signalTitle: selected.title,
-                                          categoryId: selected.categoryId,
-                                        );
-                                      }
-                                      if (!mounted) return;
+                                if (confirmedRepeatChangeNotice != null) ...[
+                                  const SizedBox(height: 16),
+                                  ConfirmedRepeatChangeNoticeCard(
+                                    notice: confirmedRepeatChangeNotice,
+                                    analyticsSurface: 'record',
+                                    entryCount: entriesAfterSave.length,
+                                    entriesForWhy: entriesAfterSave,
+                                    onRecordWhatHelped: () {
+                                      ConfirmedRepeatHelpfulActionCapture.armForNextSave();
                                       setState(
-                                        () =>
-                                            _patternHypothesisDismissed = true,
+                                        () => _selectedPromptLine =
+                                            confirmedRepeatChangeNotice
+                                                .guidedRecordPrompt,
                                       );
+                                      _resetPostSaveToReady();
                                     },
-                                    onNotMe: () async {
-                                      final selected =
-                                          await SelectedSignalCoordinator.loadCurrent();
-                                      if (selected != null) {
-                                        await SignalFeedbackCoordinator.track(
-                                          action: PostSaveSignalAction.rejected,
-                                          signalId: selected.id,
-                                          signalTitle: selected.title,
-                                          categoryId: selected.categoryId,
-                                        );
-                                      }
-                                      if (!mounted) return;
-                                      setState(
-                                        () =>
-                                            _patternHypothesisDismissed = true,
-                                      );
-                                    },
-                                    onRecordNext: () => _keepRecording(
-                                      nextEvidencePrompt:
-                                          _patternHypothesis!.watchNext,
+                                    onViewEvidence: () => context.push(
+                                      BeliefEvidenceNavigation.route,
                                     ),
-                                    onViewArchive: () =>
-                                        context.go('/archive-belief'),
                                   ),
                                 ],
-                                if (_postSavePattern != null) ...[
+                                if (repeatReturnCheckOffer != null &&
+                                    !showReturnCheckPayoff &&
+                                    !showWhatChangedV2) ...[
                                   const SizedBox(height: 12),
-                                  PostSaveInsightChoiceCard(
-                                    pattern: _postSavePattern!,
-                                    entry: _lastSavedEntry,
-                                    priorEntries: _entriesAfterSave.length > 1
-                                        ? _entriesAfterSave.sublist(1)
-                                        : const [],
-                                    feedback: _postSaveInsightFeedback,
-                                    selectedSignal: _postSaveSelectedSignal,
-                                    audienceWedge: _audienceWedge,
-                                    activeLoop: _activeLoop,
-                                    reflectionCount: _entriesAfterSave.length
-                                        .clamp(1, 3),
-                                    categoryRepeated:
-                                        _secondSessionComparison
-                                            ?.possibleRepeat ==
-                                        true,
-                                    entryId: _lastSavedEntry?.id,
-                                    onSaveSignal: (pattern) async {
-                                      if (_isFirstSessionPostSave) {
-                                        final thread =
-                                            await FirstSessionCoordinator.acceptForTomorrow(
-                                              pattern,
-                                              reflectionText:
-                                                  _lastSavedEntry?.transcript ??
-                                                  '',
-                                              sourceReflectionId:
-                                                  _lastSavedEntry?.id,
-                                            );
-                                        if (!mounted) return;
-                                        if (TrialMode.enabled) {
-                                          _watchForAcceptPending = false;
-                                          await ActivationTracker.clearWatchForAcceptPending();
-                                        }
-                                        setState(
-                                          () => _activePatternThread = thread,
-                                        );
-                                      }
+                                  RepeatReturnCheckCard(
+                                    entryId: repeatReturnCheckOffer.entryId,
+                                    entryCount:
+                                        repeatReturnCheckOffer.entryCount,
+                                    surface: 'record',
+                                    onChanged: () {
+                                      if (mounted) setState(() {});
                                     },
-                                    onUsePrompt: _saveNextEvidencePrompt,
-                                    onRecordNext: _keepRecording,
-                                    onRecordNextEvidence: (prompt) =>
-                                        _keepRecording(
-                                          nextEvidencePrompt: prompt,
-                                        ),
-                                    onViewPatterns: () =>
-                                        context.go('/archive-belief'),
                                   ),
-                                ] else if (_isFirstSessionPostSave) ...[
-                                  const SizedBox(height: 12),
-                                  FirstReflectionResultCard(
-                                    onRecordAnother: _keepRecording,
-                                    onViewPatterns: () =>
-                                        context.go('/archive-belief'),
-                                  ),
-                                ] else ...[
-                                  if (_activePatternThread != null &&
-                                      _completedWatchForToday != null) ...[
-                                    const SizedBox(height: 12),
-                                    ActivePatternThreadCard(
-                                      thread: _activePatternThread!,
-                                      compact: true,
-                                    ),
-                                  ],
-                                  if (_completedWatchForToday != null) ...[
-                                    const SizedBox(height: 12),
-                                    WatchForResultCard(
-                                      completed: _completedWatchForToday!,
-                                      headline: ScreenshotMode.enabled
-                                          ? ScreenshotSampleData
-                                                .watchForCompletedHeadline
-                                          : null,
-                                      body: ScreenshotMode.enabled
-                                          ? ScreenshotSampleData
-                                                .watchForCompletedBody
-                                          : null,
-                                    ),
-                                  ],
-                                  if (_postSavePattern == null) ...[
-                                    const SizedBox(height: 12),
-                                    PotentialSignalsCard(
-                                      signals: _postSaveSignals(),
-                                      noticedToday:
-                                          _tomorrowReturnLoop!.noticedToday,
-                                      showPatternHint:
-                                          _postSaveShowsPossiblePattern(),
-                                    ),
-                                  ],
-                                  if (_firstThreeJourney != null &&
-                                      !_firstThreeJourney!.completed &&
-                                      _showFirstThreeJourneyOnRecord) ...[
-                                    const SizedBox(height: 12),
-                                    FirstThreeJourneyCard(
-                                      model: _firstThreeJourney!,
-                                      compact: true,
-                                    ),
-                                  ],
-                                  if (_showAdvancedRetentionPostSave) ...[
-                                    if (_returnComparison != null) ...[
-                                      const SizedBox(height: 12),
-                                      ReturnComparisonCard(
-                                        comparison: _returnComparison!,
-                                      ),
-                                    ],
-                                    if (_returnStreak != null &&
-                                        _journalEntryCount >= 2 &&
-                                        _returnStreak!.currentStreakDays >=
-                                            2) ...[
-                                      const SizedBox(height: 12),
-                                      ReturnStreakCard(
-                                        streak: _returnStreak!,
-                                        showCta: false,
-                                      ),
-                                    ],
-                                  ],
-                                  const SizedBox(height: 12),
-                                  TomorrowReturnCard(
-                                    loop: _tomorrowReturnLoop!,
-                                  ),
-                                  if (_suggestedWatchForTomorrow != null) ...[
-                                    const SizedBox(height: 12),
-                                    WatchForTomorrowCard(
-                                      suggestion: _suggestedWatchForTomorrow!,
-                                      onChooseAnother: () {
-                                        setState(() {
-                                          _watchForAlternativeIndex =
-                                              (_watchForAlternativeIndex + 1) %
-                                              3;
-                                          _suggestedWatchForTomorrow =
-                                              WatchForCoordinator.buildSuggestedWatchForAfterSave(
-                                                entries: _entriesAfterSave,
-                                                loop: _tomorrowReturnLoop,
-                                                signals: _postSaveSignals(),
-                                                alternativeIndex:
-                                                    _watchForAlternativeIndex,
+                                ],
+                                if (postSaveArchiveHierarchy
+                                        ?.showMomentQualityFeedback ??
+                                    true)
+                                  Builder(
+                                    builder: (context) {
+                                      if (suppressLatestSaveArchiveInsight) {
+                                        return const SizedBox.shrink();
+                                      }
+                                      final returnTrigger =
+                                          const CapacityReturnTriggerEngine()
+                                              .buildFromJournal(
+                                                entries: entriesAfterSave,
+                                                capacityLoopActive:
+                                                    _activeLoop
+                                                        ?.isCapacityYes ??
+                                                    false,
+                                                capacityCohortActive: false,
+                                                surface:
+                                                    CapacityReturnTriggerSurface
+                                                        .completion,
+                                                sampleMode: false,
+                                                screenshotMode:
+                                                    ScreenshotMode.enabled,
                                               );
-                                        });
-                                      },
-                                    ),
-                                  ],
-                                  if (_showAdvancedRetentionPostSave) ...[
-                                    const SizedBox(height: 16),
-                                    TomorrowCommitmentCard(
-                                      loop: _tomorrowReturnLoop!,
-                                    ),
-                                  ],
-                                ],
-                              ],
-                            ],
-                            if (_localSaveTitle != null &&
-                                !_lastSavedEntryIsDegraded) ...[
-                              const SizedBox(height: 12),
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Icon(
-                                    Icons.check_circle_outline,
-                                    color: VoiceMemoryColors.captureSuccess,
-                                    size: 22,
-                                  ),
-                                  const SizedBox(width: 8),
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          localSaveTitle!,
-                                          style:
-                                              VoiceMemoryTypography.cardTitleStyle(
-                                                color: VoiceMemoryColors
-                                                    .captureSuccess,
-                                              ),
-                                        ),
-                                        if (syncNote != null) ...[
-                                          const SizedBox(height: 6),
-                                          Text(
-                                            syncNote,
-                                            style: const TextStyle(
-                                              color: VoiceMemoryColors
-                                                  .textSecondary,
-                                              height: 1.45,
-                                            ),
+                                      if (!returnTrigger.showCard) {
+                                        return const SizedBox.shrink();
+                                      }
+                                      return Column(
+                                        children: [
+                                          const SizedBox(height: 16),
+                                          CapacityReturnTriggerCard(
+                                            result: returnTrigger,
+                                            onPrimaryDismiss:
+                                                _resetPostSaveToReady,
                                           ),
                                         ],
-                                      ],
-                                    ),
+                                      );
+                                    },
                                   ),
-                                ],
-                              ),
+                              ],
                             ],
-                            if (error != null) ...[
-                              const SizedBox(height: 12),
-                              Text(
-                                error,
-                                style: TextStyle(
-                                  color: Theme.of(context).colorScheme.error,
+                            if (postSaveArchiveHierarchy
+                                        ?.showBeliefUpdateCard ==
+                                    true &&
+                                beliefUpdatePayoff != null &&
+                                !suppressDegradedTranscriptPostSaveCompetitors &&
+                                !showFirstProofMoment &&
+                                !showReturnCheckPayoff &&
+                                !showWhatChangedV2) ...[
+                              const SizedBox(height: 16),
+                              BeliefUpdatePayoffCard(
+                                payoff: beliefUpdatePayoff,
+                                showInlineActions: false,
+                                onAddAnother: _goToRecordTab,
+                                onViewEvidence: () => context.push(
+                                  BeliefEvidenceNavigation.route,
                                 ),
                               ),
                             ],
-                          ],
-                          const SizedBox(height: 8),
-                          if (showCoreValueFeedbackOnRecordPostFirstProof) ...[
-                            CoreValueFeedbackCard(
-                              source:
-                                  CoreValueFeedbackSource.recordPostFirstProof,
-                              entryCount: postSaveEntryCount,
-                              hasConfirmedRepeat: postSaveHasConfirmedRepeat,
-                              hasFirstProof: postSaveHasFirstProof,
-                              onChanged: () {
-                                if (mounted) setState(() {});
-                              },
-                            ),
-                            const SizedBox(height: 16),
-                          ],
-                          if (showWhatChangedV2Display &&
-                              whatChangedV2Display != null) ...[
-                            WhatChangedV2Card(
-                              key: ValueKey(whatChangedV2Display.entryId),
-                              prompt: whatChangedV2Display,
-                              source: 'record_post_save',
-                              onSomethingHelped: () {
-                                if (mounted) setState(() {});
-                              },
-                              onChanged: () {
-                                if (mounted) setState(() {});
-                              },
-                            ),
-                            const SizedBox(height: 16),
-                          ],
-                          if (showHelpedTracking) ...[
-                            HelpedTrackingCard(
-                              key: ValueKey(helpedTrackingPrompt.entryId),
-                              prompt: helpedTrackingPrompt,
-                              source: 'record_post_save',
-                              onChanged: () {
-                                if (mounted) setState(() {});
-                              },
-                            ),
-                            const SizedBox(height: 16),
-                          ],
-                          if (showReturnCheckPayoff &&
-                              returnCheckPayoffCandidate != null) ...[
-                            ReturnCheckPayoffCard(
-                              payoff: returnCheckPayoffCandidate,
-                              entryCount: postSaveEntryCount,
-                            ),
-                            const SizedBox(height: 16),
-                          ],
-                          if (showFirstWeekProgressPostSave &&
-                              firstWeekProgressPostSave != null) ...[
-                            FirstWeekProgressLine(
-                              progress: firstWeekProgressPostSave,
-                              entryCount: postSaveEntryCount,
-                              surface: 'record_post_save',
-                            ),
-                            const SizedBox(height: 12),
-                          ],
-                          if (showPostSaveCuriosityHook &&
-                              _postSaveCuriosityHook != null) ...[
-                            ConnectedCuriosityHookCard.fromDomain(
-                              hook: _postSaveCuriosityHook!,
-                              sourceEntry: _lastSavedEntry,
-                              onSubmit:
-                                  (responseText, {required wasGrounded}) =>
-                                      _saveCuriosityHookResponse(
-                                        hook: _postSaveCuriosityHook!,
-                                        responseText: responseText,
-                                        wasGrounded: wasGrounded,
+                            if (postSaveArchiveHierarchy != null &&
+                                postSaveArchiveHierarchy
+                                    .showFocusedActionsBar &&
+                                !suppressDegradedTranscriptPostSaveCompetitors &&
+                                !suppressNoisyFirstSaveCards &&
+                                !suppressNoisyRepeatPostSaveCards &&
+                                !suppressEarlyRepeatPayoffCompetitors &&
+                                !showFirstProofMoment &&
+                                !showReturnCheckPayoff &&
+                                !showWhatChangedV2) ...[
+                              const SizedBox(height: 16),
+                              PostSaveFocusedActionsBar(
+                                onViewEvidence: () => context.push(
+                                  BeliefEvidenceNavigation.route,
+                                ),
+                                onViewPatterns: () =>
+                                    context.go('/archive-belief'),
+                                onAddOneMoreMoment: _goToRecordTab,
+                              ),
+                            ],
+                            if (returnLoopPayoff != null &&
+                                !suppressDegradedTranscriptPostSaveCompetitors &&
+                                !suppressNoisyFirstSaveCards &&
+                                !suppressNoisyRepeatPostSaveCards) ...[
+                              const SizedBox(height: 16),
+                              DayTwoReturnLoopCard(
+                                payoff: returnLoopPayoff,
+                                onAddAnother: () =>
+                                    unawaited(_onRecordPressed(source: 'main')),
+                                onViewArchive: () =>
+                                    context.go('/archive-belief'),
+                                onReminderAccepted: () async {
+                                  await RecordReturnProStore.instance()
+                                      .markReturnCueResolved(
+                                        RecordReturnProReturnCueMethod.reminder,
+                                      );
+                                  if (!mounted) return;
+                                  setState(() {
+                                    _offerDayTwoReminder = false;
+                                    _recordReturnProState =
+                                        _recordReturnProState?.copyWith(
+                                          returnCueResolved: true,
+                                          returnCueMethod:
+                                              RecordReturnProReturnCueMethod
+                                                  .reminder,
+                                        );
+                                  });
+                                },
+                                onReminderDeclined: () async {
+                                  await RecordReturnProStore.instance()
+                                      .markReturnCueResolved(
+                                        RecordReturnProReturnCueMethod.localCue,
+                                      );
+                                  if (!mounted) return;
+                                  setState(() {
+                                    _offerDayTwoReminder = false;
+                                    _recordReturnProState =
+                                        _recordReturnProState?.copyWith(
+                                          returnCueResolved: true,
+                                          returnCueMethod:
+                                              RecordReturnProReturnCueMethod
+                                                  .localCue,
+                                        );
+                                  });
+                                },
+                              ),
+                            ],
+                            if (_languageCode != 'en') ...[
+                              const SizedBox(height: 12),
+                              LanguageIndicatorChip(
+                                languageCode: _languageCode,
+                                detectedCode: _detectedLanguageCode,
+                                onSelected: _onLanguageSelected,
+                              ),
+                            ],
+                            // Record → Return → Pro: evidence, return cue,
+                            // Pro bridge — after the save succeeded, never blocking.
+                            if (suppressNoisyRepeatPostSaveCards &&
+                                !suppressDegradedTranscriptPostSaveCompetitors &&
+                                postSaveDailyMirror != null &&
+                                entriesAfterSave.isNotEmpty) ...[
+                              const SizedBox(height: 16),
+                              RepeatPostSaveCard(
+                                entry: entriesAfterSave.first,
+                                allEntries: entriesAfterSave,
+                                mirror: postSaveDailyMirror,
+                                onViewEvidence: () => context.push(
+                                  BeliefEvidenceNavigation.route,
+                                ),
+                                onAddOneMoreMoment: _goToRecordTab,
+                                onDoneForToday: _resetPostSaveToReady,
+                                onCorrectTranscript:
+                                    _lastSavedEntry != null &&
+                                        !_lastSavedEntryIsDegraded &&
+                                        TranscriptCorrectionGate.entryAllowsCorrection(
+                                          _lastSavedEntry!,
+                                        )
+                                    ? () => unawaited(
+                                        _openCorrectTranscriptForEntry(
+                                          _lastSavedEntry!,
+                                        ),
+                                      )
+                                    : null,
+                                onViewThoughtMap:
+                                    repeatPostSaveThoughtMapPreview
+                                            ?.shouldShow ==
+                                        true
+                                    ? () => context.go('/archive-belief')
+                                    : null,
+                              ),
+                            ],
+                            if (_saveReceipt != null &&
+                                !suppressDegradedTranscriptPostSaveCompetitors &&
+                                !suppressNoisyFirstSaveCards &&
+                                !suppressNoisyRepeatPostSaveCards) ...[
+                              const SizedBox(height: 16),
+                              StartHereSaveReceiptCard(
+                                receipt: _saveReceipt!,
+                                onDismiss: () =>
+                                    setState(() => _saveReceipt = null),
+                              ),
+                            ] else if (_suggestionProNudgeSource != null &&
+                                !suppressDegradedTranscriptPostSaveCompetitors &&
+                                !suppressNoisyFirstSaveCards &&
+                                !suppressNoisyRepeatPostSaveCards) ...[
+                              const SizedBox(height: 16),
+                              _SuggestionProNudgeCard(
+                                onUnlock: () {
+                                  final source = _suggestionProNudgeSource!;
+                                  setState(
+                                    () => _suggestionProNudgeSource = null,
+                                  );
+                                  context.push(
+                                    '/subscription',
+                                    extra: PaywallRouteArgs(
+                                      source: source,
+                                      sourceRoute: '/record',
+                                    ),
+                                  );
+                                },
+                                onDismiss: () => setState(
+                                  () => _suggestionProNudgeSource = null,
+                                ),
+                              ),
+                            ],
+                            if (_doneForTodayReceipt != null &&
+                                _doneForTodayReceipt!.hasReceipt &&
+                                !suppressDegradedTranscriptPostSaveCompetitors &&
+                                !suppressNoisyFirstSaveCards &&
+                                !suppressNoisyRepeatPostSaveCards) ...[
+                              const SizedBox(height: 16),
+                              DoneForTodayReceiptCard(
+                                receipt: showFirstProofMoment
+                                    ? _doneForTodayReceipt!.copyWith(
+                                        archiveLine: '',
+                                      )
+                                    : _doneForTodayReceipt!,
+                              ),
+                              // 2-day path day-1 closure: only after the very
+                              // first save, alongside (never instead of) the
+                              // Done for today receipt.
+                              Builder(
+                                builder: (context) {
+                                  final path = const TwoDayActivationEngine()
+                                      .buildPostSave(
+                                        entryCount: _journalEntryCount,
+                                      );
+                                  if (!path.show || returnLoopPayoff != null) {
+                                    return const SizedBox.shrink();
+                                  }
+                                  return Padding(
+                                    padding: const EdgeInsets.only(top: 16),
+                                    child: TwoDayActivationCard(path: path),
+                                  );
+                                },
+                              ),
+                              // One optional day-2 reminder offer — first save
+                              // only, below (never instead of) the receipt. The
+                              // First 60 return cue carries the same single
+                              // reminder offer, so the two never show together.
+                              if (_offerDayTwoReminder &&
+                                  !_recordReturnCueVisible &&
+                                  returnLoopPayoff == null)
+                                const Padding(
+                                  padding: EdgeInsets.only(top: 16),
+                                  child: DayTwoReminderCard(),
+                                ),
+                              // Tomorrow's-check preview — passive, no CTA,
+                              // safe labels only.
+                              if (_dayTwoReturnPreview != null &&
+                                  _dayTwoReturnPreview!.show &&
+                                  returnLoopPayoff == null &&
+                                  !justSavedFirstEntry &&
+                                  !suppressNoisyFirstSaveCards)
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 16),
+                                  child: DayTwoReturnPreviewCard(
+                                    preview: _dayTwoReturnPreview!,
+                                    entryCount: _journalEntryCount,
+                                  ),
+                                ),
+                            ],
+                            if (_archiveProofCounter != null &&
+                                !suppressDegradedTranscriptPostSaveCompetitors &&
+                                PostSaveCompletionCopyGates.showArchiveProofCounter(
+                                  counterHasProof:
+                                      _archiveProofCounter!.hasProof,
+                                  doneReceiptVisible:
+                                      _doneForTodayReceipt != null &&
+                                      _doneForTodayReceipt!.hasReceipt,
+                                  suppressNoisyFirstSaveCards:
+                                      suppressNoisyFirstSaveCards ||
+                                      suppressNoisyRepeatPostSaveCards,
+                                )) ...[
+                              const SizedBox(height: 16),
+                              ArchiveProofCounterCard(
+                                counter: _archiveProofCounter!,
+                              ),
+                            ],
+                            if (shareableProof != null &&
+                                shareableProof.hasProof &&
+                                !suppressDegradedTranscriptPostSaveCompetitors &&
+                                !suppressNoisyFirstSaveCards &&
+                                !suppressNoisyRepeatPostSaveCards) ...[
+                              const SizedBox(height: 16),
+                              ShareableArchiveProofCard(proof: shareableProof),
+                            ],
+                            if (_valueMomentBridge != null &&
+                                _valueMomentBridge!.show &&
+                                !suppressDegradedTranscriptPostSaveCompetitors &&
+                                !suppressNoisyFirstSaveCards &&
+                                !suppressNoisyRepeatPostSaveCards) ...[
+                              const SizedBox(height: 16),
+                              ValueMomentProBridge(
+                                bridge: _valueMomentBridge!,
+                                onSeePro: () {
+                                  setState(() => _valueMomentBridge = null);
+                                  context.push(
+                                    '/subscription',
+                                    extra: PaywallRouteArgs(
+                                      source: PaywallSource.valueMoment,
+                                      sourceRoute: '/record',
+                                    ),
+                                  );
+                                },
+                                onDismiss: () => setState(() {
+                                  ValueMomentPaywallTrigger
+                                          .dismissedThisSession =
+                                      true;
+                                  _valueMomentBridge = null;
+                                }),
+                              ),
+                            ],
+                            if (_showEvidenceContextTag &&
+                                !suppressDegradedTranscriptPostSaveCompetitors &&
+                                !suppressNoisyFirstSaveCards &&
+                                !suppressNoisyRepeatPostSaveCards) ...[
+                              const SizedBox(height: 16),
+                              CaptureContextTagCard(
+                                onSaveTag: _saveEvidenceContextTag,
+                                onSkip: () => setState(
+                                  () => _showEvidenceContextTag = false,
+                                ),
+                              ),
+                            ],
+                            if (stack.showInputQualityCoach &&
+                                !suppressDegradedTranscriptPostSaveCompetitors &&
+                                !suppressNoisyFirstSaveCards &&
+                                !suppressNoisyRepeatPostSaveCards) ...[
+                              const SizedBox(height: 16),
+                              InputQualityCoachCard(
+                                result: _inputQuality!,
+                                originalText: _inputQualityText,
+                                onAddSentence: _onInputQualityAddSentence,
+                                onUseAnyway: _onInputQualityUseAnyway,
+                                languageCode: _languageCode,
+                              ),
+                            ],
+                            if (!stack.showInputQualityCoach &&
+                                stack.showCompletedResult &&
+                                _returnDayJustClosed &&
+                                !suppressDegradedTranscriptPostSaveCompetitors &&
+                                !suppressNoisyFirstSaveCards &&
+                                !suppressNoisyRepeatPostSaveCards) ...[
+                              const SizedBox(height: 16),
+                              ReturnDayClosedCard(
+                                resultHeadline:
+                                    _completedCheckInToday!.resultHeadline,
+                                usefulLine:
+                                    _completedCheckInToday!.whatThisMeans,
+                                nextCheck: _completedCheckInToday!
+                                    .tomorrowsBetterQuestion,
+                                onDone: () => setState(
+                                  () => _returnDayJustClosed = false,
+                                ),
+                                onRecordAnother: _keepRecording,
+                              ),
+                              // First session never reaches here; only surface a fresh
+                              // progress moment so the payoff stays one card deep.
+                              if (stack.showArchiveProofCards &&
+                                  _patternProgress != null) ...[
+                                const SizedBox(height: 16),
+                                PatternProgressAfterSaveCard(
+                                  progress: _patternProgress!,
+                                ),
+                              ],
+                            ] else if (!stack.showInputQualityCoach &&
+                                stack.showCompletedResult &&
+                                !suppressDegradedTranscriptPostSaveCompetitors &&
+                                !suppressNoisyFirstSaveCards &&
+                                !suppressNoisyRepeatPostSaveCards) ...[
+                              const SizedBox(height: 16),
+                              CheckInCompletedCard(
+                                checkIn: _completedCheckInToday!,
+                                weakInput: _weakInput,
+                                languageCode: _languageCode,
+                                betterResultIntensity:
+                                    ScreenshotMode.screenshotBetterResult
+                                    ? ScreenshotMode
+                                          .screenshotBetterResultIntensity
+                                    : ScreenshotMode.completedCheckInPreview
+                                    ? HookRescueIntensity.elevated
+                                    : _hookRescue?.intensityFor(
+                                            HookRescueAction.betterResult,
+                                          ) ??
+                                          HookRescueIntensity.normal,
+                                notUsefulReason: _hookRescueNotUsefulReason,
+                                nextCheckSlot: stack.showResultNextCheck
+                                    ? ResultNextCheckCard(
+                                        checkIn: _completedCheckInToday!,
+                                        notUsefulReason:
+                                            _hookRescueNotUsefulReason,
+                                        feedbackHint: _feedbackHint,
+                                        showFeedback: stack.showFeedback,
+                                        routineAnchorPicker:
+                                            stack.showRoutineAnchor
+                                            ? () => RoutineAnchorChooser.show(
+                                                context,
+                                              )
+                                            : null,
+                                        onRoutineAnchorChosen:
+                                            stack.showRoutineAnchor
+                                            ? (anchor) =>
+                                                  RoutineAnchorStore.instance()
+                                                      .saveForDate(
+                                                        _tomorrowDateKey,
+                                                        anchor,
+                                                      )
+                                            : null,
+                                        onCreateCheckIn: (question) async {
+                                          await TomorrowCheckInCoordinator.createForTomorrow(
+                                            patternTitle:
+                                                _completedCheckInToday!
+                                                    .patternTitle,
+                                            specificPrompt:
+                                                _completedCheckInToday!.prompt,
+                                            checkInQuestion: question,
+                                          );
+                                          final anchor =
+                                              await RoutineAnchorStore.instance()
+                                                  .loadForDate(
+                                                    _tomorrowDateKey,
+                                                  );
+                                          final active =
+                                              await TomorrowCheckInCoordinator.loadActive();
+                                          if (active != null) {
+                                            await RetentionReminderCoordinator.maybeScheduleAfterNextCheckChosen(
+                                              active,
+                                              hasRoutineAnchor: anchor != null,
+                                            );
+                                          }
+                                          if (!mounted) return;
+                                          setState(() {
+                                            _retentionNextCheckJustChosen =
+                                                true;
+                                            _retentionDismissed = false;
+                                            _activeCheckInForTomorrow = active;
+                                          });
+                                        },
+                                      )
+                                    : null,
+                              ),
+                              const SizedBox(height: 16),
+                              if (shouldShowKinderAngle(
+                                _inputQualityText,
+                                resultHint:
+                                    _completedCheckInToday!.selectedOptionId ??
+                                    'same',
+                              ))
+                                KinderAngleCard(
+                                  reflectionText: _inputQualityText,
+                                  resultHint:
+                                      _completedCheckInToday!
+                                          .selectedOptionId ??
+                                      'same',
+                                  patternTitle:
+                                      _completedCheckInToday!.patternTitle,
+                                  specificPrompt:
+                                      _completedCheckInToday!.prompt,
+                                  languageCode: _languageCode,
+                                  compact: true,
+                                )
+                              else
+                                PerspectiveShiftCard(
+                                  reflectionText: _inputQualityText,
+                                  resultHint:
+                                      _completedCheckInToday!
+                                          .selectedOptionId ??
+                                      'same',
+                                  checkInQuestion:
+                                      _completedCheckInToday!.question,
+                                  patternTitle:
+                                      _completedCheckInToday!.patternTitle,
+                                  specificPrompt:
+                                      _completedCheckInToday!.prompt,
+                                  languageCode: _languageCode,
+                                  compact: true,
+                                ),
+                              if (stack.showArchiveProofCards &&
+                                  _patternMemory != null) ...[
+                                const SizedBox(height: 16),
+                                PatternMemoryAfterSaveCard(
+                                  memory: _patternMemory!,
+                                  onUseNext:
+                                      _patternNextAction == null &&
+                                          !suppressPostResultNextCheckCompetitors
+                                      ? () => _usePatternMemoryNext(
+                                          _patternMemory!,
+                                        )
+                                      : null,
+                                ),
+                              ],
+                              if (stack.showArchiveProofCards &&
+                                  _patternProgress != null) ...[
+                                const SizedBox(height: 16),
+                                PatternProgressAfterSaveCard(
+                                  progress: _patternProgress!,
+                                ),
+                              ],
+                              if (stack.showArchiveProofCards &&
+                                  _patternNextAction != null &&
+                                  !suppressPostResultNextCheckCompetitors) ...[
+                                const SizedBox(height: 16),
+                                PatternNextActionCard(
+                                  action: _patternNextAction!,
+                                  onUse: () => _usePatternNextAction(
+                                    _patternNextAction!,
+                                  ),
+                                ),
+                              ],
+                              if (stack.showArchiveProofCards &&
+                                  _habitProof != null &&
+                                  !suppressPostResultNextCheckCompetitors) ...[
+                                const SizedBox(height: 16),
+                                HabitProofCard(
+                                  proof: _habitProof!,
+                                  onKeepGoing: () =>
+                                      _keepHabitProofGoing(_habitProof!),
+                                ),
+                              ],
+                              if (stack.showArchiveProofCards &&
+                                  _weeklyRecap != null) ...[
+                                const SizedBox(height: 16),
+                                WeeklyPatternRecapCard(
+                                  recap: _weeklyRecap!,
+                                  onUseNext:
+                                      suppressPostResultNextCheckCompetitors
+                                      ? null
+                                      : () =>
+                                            _useWeeklyRecapNext(_weeklyRecap!),
+                                ),
+                              ],
+                              if (stack.showArchiveProofCards &&
+                                  _shareRecap != null) ...[
+                                Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: TextButton.icon(
+                                    onPressed: () =>
+                                        _copyShareRecap(_shareRecap!),
+                                    icon: const Icon(
+                                      Icons.copy_rounded,
+                                      size: 18,
+                                    ),
+                                    label: Text(
+                                      AppLocalizations.of(
+                                        context,
+                                      ).recordingCopyRecap,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ],
+                            if (!stack.showInputQualityCoach &&
+                                _tomorrowReturnLoop != null &&
+                                !_returnDayJustClosed &&
+                                !suppressNoisyFirstSaveCards &&
+                                !suppressNoisyRepeatPostSaveCards &&
+                                !suppressEarlyPatternClaimCards &&
+                                !suppressEarlyRepeatPayoffCompetitors &&
+                                !showFirstProofMoment &&
+                                !showReturnCheckPayoff &&
+                                !showWhatChangedV2) ...[
+                              if (_secondSessionComparison?.hasEnoughData ==
+                                      true &&
+                                  secondSessionPayoff == null) ...[
+                                const SizedBox(height: 12),
+                                SecondSessionComparisonCard(
+                                  comparison: _secondSessionComparison!,
+                                  onGoDeeper: () {
+                                    final prompt = _secondSessionComparison!
+                                        .whatToTestNext;
+                                    if (prompt == null || prompt.isEmpty) {
+                                      return;
+                                    }
+                                    unawaited(_onSecondSessionEvidence(prompt));
+                                  },
+                                  onRecordNextEvidence: () {
+                                    final prompt = _secondSessionComparison!
+                                        .whatToTestNext;
+                                    if (prompt == null || prompt.isEmpty) {
+                                      return;
+                                    }
+                                    unawaited(_onSecondSessionEvidence(prompt));
+                                  },
+                                  onNotTheSame: () => setState(
+                                    () => _secondSessionComparison = null,
+                                  ),
+                                ),
+                              ],
+                              if (!_patternHypothesisDismissed &&
+                                  _patternHypothesis?.hasEnoughData ==
+                                      true) ...[
+                                const SizedBox(height: 12),
+                                PatternHypothesisCard(
+                                  hypothesis: _patternHypothesis!,
+                                  onFeelsRight: () async {
+                                    final selected =
+                                        await SelectedSignalCoordinator.loadCurrent();
+                                    if (selected != null) {
+                                      await SignalFeedbackCoordinator.track(
+                                        action: PostSaveSignalAction.accepted,
+                                        signalId: selected.id,
+                                        signalTitle: selected.title,
+                                        categoryId: selected.categoryId,
+                                      );
+                                    }
+                                    if (!mounted) return;
+                                    setState(
+                                      () => _patternHypothesisDismissed = true,
+                                    );
+                                  },
+                                  onNotMe: () async {
+                                    final selected =
+                                        await SelectedSignalCoordinator.loadCurrent();
+                                    if (selected != null) {
+                                      await SignalFeedbackCoordinator.track(
+                                        action: PostSaveSignalAction.rejected,
+                                        signalId: selected.id,
+                                        signalTitle: selected.title,
+                                        categoryId: selected.categoryId,
+                                      );
+                                    }
+                                    if (!mounted) return;
+                                    setState(
+                                      () => _patternHypothesisDismissed = true,
+                                    );
+                                  },
+                                  onRecordNext: () => _keepRecording(
+                                    nextEvidencePrompt:
+                                        _patternHypothesis!.watchNext,
+                                  ),
+                                  onViewArchive: () =>
+                                      context.go('/archive-belief'),
+                                ),
+                              ],
+                              if (_postSavePattern != null) ...[
+                                const SizedBox(height: 12),
+                                PostSaveInsightChoiceCard(
+                                  pattern: _postSavePattern!,
+                                  entry: _lastSavedEntry,
+                                  priorEntries: _entriesAfterSave.length > 1
+                                      ? _entriesAfterSave.sublist(1)
+                                      : const [],
+                                  feedback: _postSaveInsightFeedback,
+                                  selectedSignal: _postSaveSelectedSignal,
+                                  audienceWedge: _audienceWedge,
+                                  activeLoop: _activeLoop,
+                                  reflectionCount: _entriesAfterSave.length
+                                      .clamp(1, 3),
+                                  categoryRepeated:
+                                      _secondSessionComparison
+                                          ?.possibleRepeat ==
+                                      true,
+                                  entryId: _lastSavedEntry?.id,
+                                  onSaveSignal: (pattern) async {
+                                    if (_isFirstSessionPostSave) {
+                                      final thread =
+                                          await FirstSessionCoordinator.acceptForTomorrow(
+                                            pattern,
+                                            reflectionText:
+                                                _lastSavedEntry?.transcript ??
+                                                '',
+                                            sourceReflectionId:
+                                                _lastSavedEntry?.id,
+                                          );
+                                      if (!mounted) return;
+                                      if (TrialMode.enabled) {
+                                        _watchForAcceptPending = false;
+                                        await ActivationTracker.clearWatchForAcceptPending();
+                                      }
+                                      setState(
+                                        () => _activePatternThread = thread,
+                                      );
+                                    }
+                                  },
+                                  onUsePrompt: _saveNextEvidencePrompt,
+                                  onRecordNext: _keepRecording,
+                                  onRecordNextEvidence: (prompt) =>
+                                      _keepRecording(
+                                        nextEvidencePrompt: prompt,
                                       ),
+                                  onViewPatterns: () =>
+                                      context.go('/archive-belief'),
+                                ),
+                              ] else if (_isFirstSessionPostSave) ...[
+                                const SizedBox(height: 12),
+                                FirstReflectionResultCard(
+                                  onRecordAnother: _keepRecording,
+                                  onViewPatterns: () =>
+                                      context.go('/archive-belief'),
+                                ),
+                              ] else ...[
+                                if (_activePatternThread != null &&
+                                    _completedWatchForToday != null) ...[
+                                  const SizedBox(height: 12),
+                                  ActivePatternThreadCard(
+                                    thread: _activePatternThread!,
+                                    compact: true,
+                                  ),
+                                ],
+                                if (_completedWatchForToday != null) ...[
+                                  const SizedBox(height: 12),
+                                  WatchForResultCard(
+                                    completed: _completedWatchForToday!,
+                                    headline: ScreenshotMode.enabled
+                                        ? ScreenshotSampleData
+                                              .watchForCompletedHeadline
+                                        : null,
+                                    body: ScreenshotMode.enabled
+                                        ? ScreenshotSampleData
+                                              .watchForCompletedBody
+                                        : null,
+                                  ),
+                                ],
+                                if (_postSavePattern == null) ...[
+                                  const SizedBox(height: 12),
+                                  PotentialSignalsCard(
+                                    signals: _postSaveSignals(),
+                                    noticedToday:
+                                        _tomorrowReturnLoop!.noticedToday,
+                                    showPatternHint:
+                                        _postSaveShowsPossiblePattern(),
+                                  ),
+                                ],
+                                if (_firstThreeJourney != null &&
+                                    !_firstThreeJourney!.completed &&
+                                    _showFirstThreeJourneyOnRecord) ...[
+                                  const SizedBox(height: 12),
+                                  FirstThreeJourneyCard(
+                                    model: _firstThreeJourney!,
+                                    compact: true,
+                                  ),
+                                ],
+                                if (_showAdvancedRetentionPostSave) ...[
+                                  if (_returnComparison != null) ...[
+                                    const SizedBox(height: 12),
+                                    ReturnComparisonCard(
+                                      comparison: _returnComparison!,
+                                    ),
+                                  ],
+                                  if (_returnStreak != null &&
+                                      _journalEntryCount >= 2 &&
+                                      _returnStreak!.currentStreakDays >=
+                                          2) ...[
+                                    const SizedBox(height: 12),
+                                    ReturnStreakCard(
+                                      streak: _returnStreak!,
+                                      showCta: false,
+                                    ),
+                                  ],
+                                ],
+                                const SizedBox(height: 12),
+                                TomorrowReturnCard(loop: _tomorrowReturnLoop!),
+                                if (_suggestedWatchForTomorrow != null) ...[
+                                  const SizedBox(height: 12),
+                                  WatchForTomorrowCard(
+                                    suggestion: _suggestedWatchForTomorrow!,
+                                    onChooseAnother: () {
+                                      setState(() {
+                                        _watchForAlternativeIndex =
+                                            (_watchForAlternativeIndex + 1) % 3;
+                                        _suggestedWatchForTomorrow =
+                                            WatchForCoordinator.buildSuggestedWatchForAfterSave(
+                                              entries: _entriesAfterSave,
+                                              loop: _tomorrowReturnLoop,
+                                              signals: _postSaveSignals(),
+                                              alternativeIndex:
+                                                  _watchForAlternativeIndex,
+                                            );
+                                      });
+                                    },
+                                  ),
+                                ],
+                                if (_showAdvancedRetentionPostSave) ...[
+                                  const SizedBox(height: 16),
+                                  TomorrowCommitmentCard(
+                                    loop: _tomorrowReturnLoop!,
+                                  ),
+                                ],
+                              ],
+                            ],
+                          ],
+                          if (_localSaveTitle != null &&
+                              !_lastSavedEntryIsDegraded) ...[
+                            const SizedBox(height: 12),
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Icon(
+                                  Icons.check_circle_outline,
+                                  color: VoiceMemoryColors.captureSuccess,
+                                  size: 22,
+                                ),
+                                const SizedBox(width: 8),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        localSaveTitle!,
+                                        style:
+                                            VoiceMemoryTypography.cardTitleStyle(
+                                              color: VoiceMemoryColors
+                                                  .captureSuccess,
+                                            ),
+                                      ),
+                                      if (syncNote != null) ...[
+                                        const SizedBox(height: 6),
+                                        Text(
+                                          syncNote,
+                                          style: const TextStyle(
+                                            color:
+                                                VoiceMemoryColors.textSecondary,
+                                            height: 1.45,
+                                          ),
+                                        ),
+                                      ],
+                                    ],
+                                  ),
+                                ),
+                              ],
                             ),
-                            const SizedBox(height: 16),
                           ],
-                          if (!stack.showInputQualityCoach &&
-                              _postSaveComparisonController != null &&
-                              (_postSaveComparisonController!.uiState
-                                      is ComparisonLoading ||
-                                  _postSaveComparisonController!.uiState
-                                      is ComparisonSuccess)) ...[
-                            _buildPostSaveSection(),
-                            const SizedBox(height: 16),
-                          ],
-                          if (showComeBackTomorrowV2PostSave &&
-                              !suppressNoisyRepeatPostSaveCards &&
-                              !suppressDegradedTranscriptPostSaveCompetitors &&
-                              comeBackTomorrowV2PostSaveWatch != null) ...[
-                            ComeBackTomorrowCard(
-                              watch: comeBackTomorrowV2PostSaveWatch,
-                              entryCount: postSaveEntryCount,
+                          if (error != null) ...[
+                            const SizedBox(height: 12),
+                            Text(
+                              error,
+                              style: TextStyle(
+                                color: Theme.of(context).colorScheme.error,
+                              ),
                             ),
-                            const SizedBox(height: 16),
                           ],
-                          if (showReturnTomorrowCuePostSave &&
-                              !suppressNoisyRepeatPostSaveCards &&
-                              !suppressDegradedTranscriptPostSaveCompetitors &&
-                              returnTomorrowCuePostSave != null) ...[
-                            ReturnTomorrowCueCard(
-                              cue: returnTomorrowCuePostSave,
-                              entryCount: postSaveEntryCount,
-                              surface: 'record_post_save',
-                            ),
-                            const SizedBox(height: 16),
-                          ],
-                          if (showPostSaveReturnHandoff &&
-                              !suppressNoisyRepeatPostSaveCards &&
-                              !suppressDegradedTranscriptPostSaveCompetitors &&
-                              postSaveReturnHandoffCandidate != null) ...[
-                            PostSaveReturnHandoffCard(
-                              handoff: postSaveReturnHandoffCandidate,
-                              entryCount: postSaveEntryCount,
-                            ),
-                            const SizedBox(height: 16),
-                          ],
-                          ..._buildBottomActions(
-                            context,
-                            ui: ui,
-                            canRecord: canRecord,
-                            localSaveTitle: localSaveTitle,
-                            selectedPrompt: _selectedPromptLine,
-                            suppressDuplicateRecordCtas:
-                                stack.suppressDuplicateRecordCtas ||
-                                suppressNoisyFirstSaveCards ||
-                                (suppressNoisyRepeatPostSaveCards &&
-                                    !showWhatChangedV2 &&
-                                    !showWhatChangedV2Display) ||
-                                showDegradedTranscriptFocusedPostSave,
-                            showReturningWatchTargetFocusedUi:
-                                showReturningWatchTargetFocusedUi,
-                            policyMicPhase: policyMic,
-                            policyUserDenied: policyUserDenied,
-                            recordHomeSurface: recordHomeSurface,
-                          ),
                         ],
-                      ),
+                        const SizedBox(height: 8),
+                        if (showCoreValueFeedbackOnRecordPostFirstProof) ...[
+                          CoreValueFeedbackCard(
+                            source:
+                                CoreValueFeedbackSource.recordPostFirstProof,
+                            entryCount: postSaveEntryCount,
+                            hasConfirmedRepeat: postSaveHasConfirmedRepeat,
+                            hasFirstProof: postSaveHasFirstProof,
+                            onChanged: () {
+                              if (mounted) setState(() {});
+                            },
+                          ),
+                          const SizedBox(height: 16),
+                        ],
+                        if (showWhatChangedV2Display &&
+                            whatChangedV2Display != null) ...[
+                          WhatChangedV2Card(
+                            key: ValueKey(whatChangedV2Display.entryId),
+                            prompt: whatChangedV2Display,
+                            source: 'record_post_save',
+                            onSomethingHelped: () {
+                              if (mounted) setState(() {});
+                            },
+                            onChanged: () {
+                              if (mounted) setState(() {});
+                            },
+                          ),
+                          const SizedBox(height: 16),
+                        ],
+                        if (showHelpedTracking) ...[
+                          HelpedTrackingCard(
+                            key: ValueKey(helpedTrackingPrompt.entryId),
+                            prompt: helpedTrackingPrompt,
+                            source: 'record_post_save',
+                            onChanged: () {
+                              if (mounted) setState(() {});
+                            },
+                          ),
+                          const SizedBox(height: 16),
+                        ],
+                        if (showReturnCheckPayoff &&
+                            returnCheckPayoffCandidate != null) ...[
+                          ReturnCheckPayoffCard(
+                            payoff: returnCheckPayoffCandidate,
+                            entryCount: postSaveEntryCount,
+                          ),
+                          const SizedBox(height: 16),
+                        ],
+                        if (showFirstWeekProgressPostSave &&
+                            firstWeekProgressPostSave != null) ...[
+                          FirstWeekProgressLine(
+                            progress: firstWeekProgressPostSave,
+                            entryCount: postSaveEntryCount,
+                            surface: 'record_post_save',
+                          ),
+                          const SizedBox(height: 12),
+                        ],
+                        if (showPostSaveCuriosityHook &&
+                            _postSaveCuriosityHook != null) ...[
+                          ConnectedCuriosityHookCard.fromDomain(
+                            hook: _postSaveCuriosityHook!,
+                            sourceEntry: _lastSavedEntry,
+                            onSubmit: (responseText, {required wasGrounded}) =>
+                                _saveCuriosityHookResponse(
+                                  hook: _postSaveCuriosityHook!,
+                                  responseText: responseText,
+                                  wasGrounded: wasGrounded,
+                                ),
+                          ),
+                          const SizedBox(height: 16),
+                        ],
+                        if (showComeBackTomorrowV2PostSave &&
+                            !suppressNoisyRepeatPostSaveCards &&
+                            !suppressDegradedTranscriptPostSaveCompetitors &&
+                            comeBackTomorrowV2PostSaveWatch != null) ...[
+                          ComeBackTomorrowCard(
+                            watch: comeBackTomorrowV2PostSaveWatch,
+                            entryCount: postSaveEntryCount,
+                          ),
+                          const SizedBox(height: 16),
+                        ],
+                        if (showReturnTomorrowCuePostSave &&
+                            !suppressNoisyRepeatPostSaveCards &&
+                            !suppressDegradedTranscriptPostSaveCompetitors &&
+                            returnTomorrowCuePostSave != null) ...[
+                          ReturnTomorrowCueCard(
+                            cue: returnTomorrowCuePostSave,
+                            entryCount: postSaveEntryCount,
+                            surface: 'record_post_save',
+                          ),
+                          const SizedBox(height: 16),
+                        ],
+                        if (showPostSaveReturnHandoff &&
+                            !suppressNoisyRepeatPostSaveCards &&
+                            !suppressDegradedTranscriptPostSaveCompetitors &&
+                            postSaveReturnHandoffCandidate != null) ...[
+                          PostSaveReturnHandoffCard(
+                            handoff: postSaveReturnHandoffCandidate,
+                            entryCount: postSaveEntryCount,
+                          ),
+                          const SizedBox(height: 16),
+                        ],
+                        ..._buildBottomActions(
+                          context,
+                          ui: ui,
+                          canRecord: canRecord,
+                          localSaveTitle: localSaveTitle,
+                          selectedPrompt: _selectedPromptLine,
+                          suppressDuplicateRecordCtas:
+                              stack.suppressDuplicateRecordCtas ||
+                              suppressNoisyFirstSaveCards ||
+                              (suppressNoisyRepeatPostSaveCards &&
+                                  !showWhatChangedV2 &&
+                                  !showWhatChangedV2Display) ||
+                              showDegradedTranscriptFocusedPostSave,
+                          showReturningWatchTargetFocusedUi:
+                              showReturningWatchTargetFocusedUi,
+                          policyMicPhase: policyMic,
+                          policyUserDenied: policyUserDenied,
+                          recordHomeSurface: recordHomeSurface,
+                        ),
+                      ],
                     ),
-                  );
-                },
+                  ),
+                );
+              },
+            ),
+            if (showCloseButton)
+              const Align(
+                alignment: Alignment.topRight,
+                child: RecordScreenCloseButton(),
               ),
-              if (showCloseButton)
-                const Align(
-                  alignment: Alignment.topRight,
-                  child: RecordScreenCloseButton(),
-                ),
-            ],
-          ),
+          ],
         ),
       ),
     );
@@ -11459,7 +11320,7 @@ class _RecordScreenState extends State<RecordScreen>
           width: double.infinity,
           child: OutlinedButton(
             onPressed: _enoughForNow,
-            child: Text(appLocalizationsOf(context).recordingEnoughForNow),
+            child: Text(AppLocalizations.of(context).recordingEnoughForNow),
           ),
         ),
         const SizedBox(height: 8),
@@ -11536,5 +11397,75 @@ class _RecordScreenState extends State<RecordScreen>
       );
     }
     return actions;
+  }
+}
+
+/// Gentle post-save Pro nudge shown after a recording that started from a
+/// daily suggestion. Dismissible, shows at most once per session, and never
+/// appears for Pro users or before three saved entries.
+class _SuggestionProNudgeCard extends StatelessWidget {
+  const _SuggestionProNudgeCard({
+    required this.onUnlock,
+    required this.onDismiss,
+  });
+
+  final VoidCallback onUnlock;
+  final VoidCallback onDismiss;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      key: const Key('suggestion_pro_nudge_card'),
+      width: double.infinity,
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: VoiceMemoryColors.surface,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(
+          color: VoiceMemoryColors.primaryIndigo.withValues(alpha: 0.35),
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Keep your daily archive prompts improving',
+            style: TextStyle(fontSize: 14.5, fontWeight: FontWeight.w700),
+          ),
+          const SizedBox(height: 4),
+          const Text(
+            'ArchiveMe uses what you record to surface sharper things '
+            'worth checking each day.',
+            style: TextStyle(
+              fontSize: 13,
+              color: VoiceMemoryColors.textSecondary,
+              height: 1.4,
+            ),
+          ),
+          const SizedBox(height: 10),
+          Row(
+            children: [
+              Expanded(
+                child: FilledButton(
+                  // Compact override: the app-wide FilledButton theme is
+                  // full-width, which cannot live inside this Row.
+                  style: FilledButton.styleFrom(
+                    minimumSize: const Size(0, 40),
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                  ),
+                  onPressed: onUnlock,
+                  child: const Text(
+                    'Unlock Pro',
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8),
+              TextButton(onPressed: onDismiss, child: const Text('Not now')),
+            ],
+          ),
+        ],
+      ),
+    );
   }
 }

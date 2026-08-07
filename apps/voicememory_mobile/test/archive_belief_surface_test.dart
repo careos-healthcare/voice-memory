@@ -21,28 +21,26 @@ import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/storage/mobile_prefs_store.dart';
 import 'package:voicememory_mobile/widgets/patterns/archive_belief_surface_card.dart';
-import 'package:voicememory_mobile/widgets/patterns/archive_demo_preview_card.dart';
 import 'package:voicememory_mobile/widgets/patterns/archive_timeline_truth_feedback_card.dart';
 
 JournalEntry _entry({
   required String id,
   String transcript = '',
   DateTime? createdAt,
-}) =>
-    JournalEntry(
-      id: id,
-      createdAt: createdAt ?? DateTime(2026, 6, 1, 12),
-      transcript: transcript,
-      durationSeconds: 30,
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 2,
-        recurringThemes: [],
-        exactLanguagePattern: '',
-        concreteObservation: '',
-        repeatedSignal: '',
-      ),
-    );
+}) => JournalEntry(
+  id: id,
+  createdAt: createdAt ?? DateTime(2026, 6, 1, 12),
+  transcript: transcript,
+  durationSeconds: 30,
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 2,
+    recurringThemes: [],
+    exactLanguagePattern: '',
+    concreteObservation: '',
+    repeatedSignal: '',
+  ),
+);
 
 ArchiveBeliefThread _belief({
   String currentBelief =
@@ -51,17 +49,16 @@ ArchiveBeliefThread _belief({
       'Seen across 4 recordings. Strongest signal: work pressure.',
   String whatChanged =
       'This softened after you tried writing the first next step.',
-}) =>
-    ArchiveBeliefThread(
-      hasEnoughData: true,
-      suggestionId: 'test-belief',
-      currentBelief: currentBelief,
-      evidenceLine: evidenceLine,
-      whatChanged: whatChanged,
-      whatToTest: 'Notice before you agree.',
-      timeline: const [],
-      confidenceBand: ArchiveConfidenceBand.returningThread,
-    );
+}) => ArchiveBeliefThread(
+  hasEnoughData: true,
+  suggestionId: 'test-belief',
+  currentBelief: currentBelief,
+  evidenceLine: evidenceLine,
+  whatChanged: whatChanged,
+  whatToTest: 'Notice before you agree.',
+  timeline: const [],
+  confidenceBand: ArchiveConfidenceBand.returningThread,
+);
 
 void main() {
   group('ArchiveDisplayCopyGuard', () {
@@ -118,8 +115,7 @@ void main() {
     });
 
     test('builds belief from real capacity repeat entries', () {
-      final surface = const ArchiveBeliefSurfaceSource().resolve(
-        [
+      final surface = const ArchiveBeliefSurfaceSource().resolve([
         _entry(
           id: 'a',
           transcript:
@@ -137,9 +133,7 @@ void main() {
           transcript:
               'I said yes again even though I had no capacity for one more ask.',
         ),
-      ],
-        viewingConfirmedRepeatOrTimeline: true,
-      );
+      ], viewingConfirmedRepeatOrTimeline: true);
 
       expect(surface.shouldShow, isTrue);
       expect(surface.isPreview, isFalse);
@@ -160,10 +154,7 @@ void main() {
 
       expect(surface.shouldShow, isTrue);
       expect(surface.isPreview, isTrue);
-      expect(
-        surface.beliefSummary,
-        ArchiveDemoPreviewCopy.oneEntryPatternHint,
-      );
+      expect(surface.beliefSummary, ArchiveDemoPreviewCopy.oneEntryPatternHint);
       expect(surface.headline, ArchiveBeliefSurfaceCopy.headlineStarting);
     });
   });
@@ -172,8 +163,7 @@ void main() {
     testWidgets('shows belief, evidence, what changed, and record next', (
       tester,
     ) async {
-      final surface = ArchiveBeliefSurfaceSource().resolve(
-        [
+      final surface = ArchiveBeliefSurfaceSource().resolve([
         _entry(
           id: 'a',
           transcript:
@@ -191,9 +181,7 @@ void main() {
           transcript:
               'I said yes again even though I had no capacity for one more ask.',
         ),
-      ],
-        viewingConfirmedRepeatOrTimeline: true,
-      );
+      ], viewingConfirmedRepeatOrTimeline: true);
 
       await tester.pumpWidget(
         MaterialApp(
@@ -208,7 +196,10 @@ void main() {
         ),
       );
 
-      expect(find.byKey(const Key('archive_belief_proof_primary_card')), findsOneWidget);
+      expect(
+        find.byKey(const Key('archive_belief_proof_primary_card')),
+        findsOneWidget,
+      );
       expect(find.text(ArchiveBeliefSurfaceCopy.headline), findsOneWidget);
       expect(find.text(ArchiveBeliefSurfaceCopy.evidenceLabel), findsOneWidget);
       if (surface.evidencePhrases.isNotEmpty) {
@@ -222,9 +213,15 @@ void main() {
         );
       }
       if (surface.watchingNextLine != null) {
-        expect(find.text(ArchiveBeliefSurfaceCopy.watchingLabel), findsOneWidget);
+        expect(
+          find.text(ArchiveBeliefSurfaceCopy.watchingLabel),
+          findsOneWidget,
+        );
       }
-      expect(find.byKey(const Key('archive_belief_surface_record_next')), findsOneWidget);
+      expect(
+        find.byKey(const Key('archive_belief_surface_record_next')),
+        findsOneWidget,
+      );
     });
   });
 
@@ -250,9 +247,7 @@ void main() {
 
       await tester.pumpWidget(
         MaterialApp(
-          home: Scaffold(
-            body: ArchiveTimelineTruthFeedbackCard(store: store),
-          ),
+          home: Scaffold(body: ArchiveTimelineTruthFeedbackCard(store: store)),
         ),
       );
 
@@ -357,21 +352,21 @@ void main() {
   });
 
   group('Pattern screen back navigation', () {
-    ArchiveBeliefCardModel _detailBelief() => ArchiveBeliefCardModel(
-          id: 'belief-test',
-          statement: 'Work pressure keeps showing up before you agree.',
-          confidencePercent: 72,
-          evidenceSummary: 'Appeared in 3 reflections.',
-          whyExplanation:
-              'ArchiveMe noticed this topic repeating across months of reflections.',
-          section: ArchiveBeliefSection.hiddenPattern,
-          conclusion: 'This pattern appears consistently in what you record.',
-        );
+    ArchiveBeliefCardModel detailBelief() => ArchiveBeliefCardModel(
+      id: 'belief-test',
+      statement: 'Work pressure keeps showing up before you agree.',
+      confidencePercent: 72,
+      evidenceSummary: 'Appeared in 3 reflections.',
+      whyExplanation:
+          'ArchiveMe noticed this topic repeating across months of reflections.',
+      section: ArchiveBeliefSection.hiddenPattern,
+      conclusion: 'This pattern appears consistently in what you record.',
+    );
 
     testWidgets('BeliefDetailScreen shows back control and pattern copy', (
       tester,
     ) async {
-      final belief = _detailBelief();
+      final belief = detailBelief();
       await tester.pumpWidget(
         MaterialApp(
           theme: AppTheme.light(),
@@ -381,7 +376,10 @@ void main() {
       await tester.pump();
 
       expect(tester.takeException(), isNull);
-      expect(find.byKey(const Key('consumer_screen_back_header')), findsOneWidget);
+      expect(
+        find.byKey(const Key('consumer_screen_back_header')),
+        findsOneWidget,
+      );
       expect(find.text('Back'), findsOneWidget);
       expect(find.text(ConsumerUiCopy.labelWhy), findsOneWidget);
       expect(find.text(belief.statement), findsOneWidget);

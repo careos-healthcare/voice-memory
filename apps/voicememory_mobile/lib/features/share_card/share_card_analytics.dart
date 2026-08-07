@@ -10,7 +10,7 @@ abstract final class ShareCardAnalytics {
 
   @visibleForTesting
   static void Function(String event, Map<String, Object> properties)?
-      captureForTest;
+  captureForTest;
 
   static void created({
     required String source,

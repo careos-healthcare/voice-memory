@@ -20,11 +20,11 @@ abstract final class ProofSurfaceWhyAppearedCopy {
   static String line(String body) => '$linkLabel: $body';
 
   static List<String> get allLines => [
-        line(firstProof),
-        line(archiveBelief),
-        line(whatChanged),
-        line(patternChanged),
-        line(helpfulAction),
-        line(evidenceTimeline),
-      ];
+    line(firstProof),
+    line(archiveBelief),
+    line(whatChanged),
+    line(patternChanged),
+    line(helpfulAction),
+    line(evidenceTimeline),
+  ];
 }

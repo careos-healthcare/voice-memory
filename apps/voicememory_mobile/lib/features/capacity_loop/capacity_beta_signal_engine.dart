@@ -10,7 +10,6 @@ import 'capacity_cost_models.dart';
 import 'capacity_decision_outcome_models.dart';
 import 'capacity_pull_reason_models.dart';
 import 'capacity_beta_signal_copy.dart';
-import '../paid_intent/paid_intent_confirmation_models.dart';
 import 'capacity_beta_signal_models.dart';
 import 'capacity_cost_store.dart';
 import 'capacity_decision_outcome_store.dart';
@@ -71,9 +70,10 @@ class CapacityBetaSignalEngine {
       paidIntentStrongWtp: input.paidIntentRecord?.isStrongWtp ?? false,
       paidIntentSoftWtp: input.paidIntentRecord?.isSoftWtp ?? false,
       paymentSignalLabel: paymentSignalLabel,
-      quickCaptureFrictionLabel: QuickCaptureFrictionCopy.dashboardValueForRecord(
-        input.quickCaptureFrictionRecord,
-      ),
+      quickCaptureFrictionLabel:
+          QuickCaptureFrictionCopy.dashboardValueForRecord(
+            input.quickCaptureFrictionRecord,
+          ),
       verdict: verdict,
       verdictLabel: CapacityBetaSignalCopy.verdictLabelFor(verdict),
       exportSummary: _buildExportSummary(
@@ -136,12 +136,15 @@ class CapacityBetaSignalEngine {
         fitResponseLabel: fitMeta.label,
         fitIsPositive: fitMeta.isPositive,
         fitIsUnclear: fitMeta.isUnclear,
-        pullReasonRecordCount:
-            CapacityPullReasonStore.countWithReason(pullRecords),
-        outcomeRecordCount:
-            CapacityDecisionOutcomeStore.countWithOutcome(outcomeRecordsResolved),
-        laterCostRecordCount:
-            CapacityCostStore.countWithLaterCost(costRecordsResolved),
+        pullReasonRecordCount: CapacityPullReasonStore.countWithReason(
+          pullRecords,
+        ),
+        outcomeRecordCount: CapacityDecisionOutcomeStore.countWithOutcome(
+          outcomeRecordsResolved,
+        ),
+        laterCostRecordCount: CapacityCostStore.countWithLaterCost(
+          costRecordsResolved,
+        ),
         weeklyReviewAvailable: weeklyReview.hasReview,
         boundaryResponseSelected: boundarySelection?.hasSelection ?? false,
         boundaryResponseCopied: boundarySelection?.lastCopiedAt != null,
@@ -180,7 +183,8 @@ class CapacityBetaSignalEngine {
       return CapacityBetaSignalVerdict.weak;
     }
     if (fitIsPositive) {
-      final strong = outcomeRecordCount >= 1 &&
+      final strong =
+          outcomeRecordCount >= 1 &&
           laterCostRecordCount >= 1 &&
           boundaryResponseSelected;
       return strong
@@ -215,15 +219,17 @@ class CapacityBetaSignalEngine {
         isUnclear: true,
       );
     }
-    final shortLabel =
-        CapacityActivationFitCopy.shortLabelForResponse(record.responseId);
-    final label =
-        shortLabel.isEmpty ? CapacityBetaSignalCopy.notAnsweredLabel : shortLabel;
-    final isPositive = record.responseId ==
-            CapacityActivationFitResponseIds.fits ||
+    final shortLabel = CapacityActivationFitCopy.shortLabelForResponse(
+      record.responseId,
+    );
+    final label = shortLabel.isEmpty
+        ? CapacityBetaSignalCopy.notAnsweredLabel
+        : shortLabel;
+    final isPositive =
+        record.responseId == CapacityActivationFitResponseIds.fits ||
         record.responseId == CapacityActivationFitResponseIds.partly;
-    final isUnclear = record.responseId ==
-            CapacityActivationFitResponseIds.notYet ||
+    final isUnclear =
+        record.responseId == CapacityActivationFitResponseIds.notYet ||
         record.responseId == CapacityActivationFitResponseIds.tooEarly;
     return _FitMetadata(
       label: label,

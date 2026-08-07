@@ -17,7 +17,7 @@ abstract final class PurchaseSmokeTestAnalytics {
 
   @visibleForTesting
   static void Function(String event, Map<String, Object> properties)?
-      captureForTest;
+  captureForTest;
 
   static void opened({
     required String source,
@@ -63,10 +63,7 @@ abstract final class PurchaseSmokeTestAnalytics {
       'entitlement_known': entitlementKnown ? 1 : 0,
     };
     captureForTest?.call(event, props);
-    ActivationFunnelAnalytics.track(
-      event,
-      source: source,
-    );
+    ActivationFunnelAnalytics.track(event, source: source);
     if (kDebugMode) {
       debugPrint(
         'ARCHIVEME_PURCHASE_SMOKE_TEST event=$event source=$source '
@@ -126,7 +123,9 @@ abstract final class PurchaseSmokeTestEngine {
     );
   }
 
-  static PurchaseSmokeTestSnapshot buildFromInput(PurchaseSmokeTestInput input) {
+  static PurchaseSmokeTestSnapshot buildFromInput(
+    PurchaseSmokeTestInput input,
+  ) {
     final checks = _buildChecks(input);
     return PurchaseSmokeTestSnapshot(
       title: PurchaseSmokeTestCopy.title,
@@ -139,12 +138,14 @@ abstract final class PurchaseSmokeTestEngine {
     );
   }
 
-  static List<PurchaseSmokeTestCheck> _buildChecks(PurchaseSmokeTestInput input) {
+  static List<PurchaseSmokeTestCheck> _buildChecks(
+    PurchaseSmokeTestInput input,
+  ) {
     final paywallReady = input.billingConfigured && input.revenueCatInitialized;
     final purchaseCtaReady =
         paywallReady && input.offeringsLoaded && input.hasMonthlyPackage;
-    final restoreVisible = paywallReady &&
-        ConsumerUiCopy.restorePurchases.trim().isNotEmpty;
+    final restoreVisible =
+        paywallReady && ConsumerUiCopy.restorePurchases.trim().isNotEmpty;
 
     return [
       _check(
@@ -163,8 +164,8 @@ abstract final class PurchaseSmokeTestEngine {
         status: input.revenueCatInitialized
             ? PurchaseSmokeTestStatus.ready
             : input.billingConfigured
-                ? PurchaseSmokeTestStatus.blocked
-                : PurchaseSmokeTestStatus.unknown,
+            ? PurchaseSmokeTestStatus.blocked
+            : PurchaseSmokeTestStatus.unknown,
         detailLabel: input.revenueCatInitialized
             ? PurchaseSmokeTestCopy.detailConfigured
             : PurchaseSmokeTestCopy.detailNotConfigured,
@@ -175,8 +176,8 @@ abstract final class PurchaseSmokeTestEngine {
         status: !input.revenueCatInitialized
             ? PurchaseSmokeTestStatus.unknown
             : input.offeringsLoaded
-                ? PurchaseSmokeTestStatus.ready
-                : PurchaseSmokeTestStatus.blocked,
+            ? PurchaseSmokeTestStatus.ready
+            : PurchaseSmokeTestStatus.blocked,
         detailLabel: input.offeringsLoaded
             ? PurchaseSmokeTestCopy.detailLoaded
             : PurchaseSmokeTestCopy.detailMissing,
@@ -187,8 +188,8 @@ abstract final class PurchaseSmokeTestEngine {
         status: !input.offeringsLoaded
             ? PurchaseSmokeTestStatus.unknown
             : input.currentOfferingExists
-                ? PurchaseSmokeTestStatus.ready
-                : PurchaseSmokeTestStatus.blocked,
+            ? PurchaseSmokeTestStatus.ready
+            : PurchaseSmokeTestStatus.blocked,
         detailLabel: input.currentOfferingExists
             ? PurchaseSmokeTestCopy.detailFound
             : PurchaseSmokeTestCopy.detailNotFound,
@@ -199,8 +200,8 @@ abstract final class PurchaseSmokeTestEngine {
         status: !input.currentOfferingExists
             ? PurchaseSmokeTestStatus.unknown
             : input.hasMonthlyPackage
-                ? PurchaseSmokeTestStatus.ready
-                : PurchaseSmokeTestStatus.blocked,
+            ? PurchaseSmokeTestStatus.ready
+            : PurchaseSmokeTestStatus.blocked,
         detailLabel: input.hasMonthlyPackage
             ? PurchaseSmokeTestCopy.detailFound
             : PurchaseSmokeTestCopy.detailNotFound,
@@ -211,8 +212,8 @@ abstract final class PurchaseSmokeTestEngine {
         status: !input.currentOfferingExists
             ? PurchaseSmokeTestStatus.unknown
             : input.hasAnnualPackage
-                ? PurchaseSmokeTestStatus.ready
-                : PurchaseSmokeTestStatus.warning,
+            ? PurchaseSmokeTestStatus.ready
+            : PurchaseSmokeTestStatus.warning,
         detailLabel: input.hasAnnualPackage
             ? PurchaseSmokeTestCopy.detailFound
             : PurchaseSmokeTestCopy.detailAnnualOptionalMissing,
@@ -233,8 +234,8 @@ abstract final class PurchaseSmokeTestEngine {
         status: purchaseCtaReady
             ? PurchaseSmokeTestStatus.ready
             : paywallReady
-                ? PurchaseSmokeTestStatus.warning
-                : PurchaseSmokeTestStatus.blocked,
+            ? PurchaseSmokeTestStatus.warning
+            : PurchaseSmokeTestStatus.blocked,
         detailLabel: purchaseCtaReady
             ? PurchaseSmokeTestCopy.detailAvailable
             : PurchaseSmokeTestCopy.detailUnavailable,
@@ -267,8 +268,8 @@ abstract final class PurchaseSmokeTestEngine {
             : PurchaseSmokeTestStatus.unknown,
         detailLabel: input.entitlementReadable
             ? (input.isPro
-                ? PurchaseSmokeTestCopy.entitlementPro
-                : PurchaseSmokeTestCopy.entitlementFree)
+                  ? PurchaseSmokeTestCopy.entitlementPro
+                  : PurchaseSmokeTestCopy.entitlementFree)
             : PurchaseSmokeTestCopy.detailNotCheckedYet,
       ),
       _check(

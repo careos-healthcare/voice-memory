@@ -54,7 +54,9 @@ class ArchiveReturnChangesCard extends StatelessWidget {
               OutlinedButton(
                 key: const Key('archive_return_changes_evidence_map_button'),
                 onPressed: () => context.go('/archive-belief'),
-                child: const Text(ArchiveReturnChangesCopy.viewEvidenceMapButton),
+                child: const Text(
+                  ArchiveReturnChangesCopy.viewEvidenceMapButton,
+                ),
               ),
             ],
           ),

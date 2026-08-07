@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -23,7 +22,7 @@ class BetaFeedbackController {
 
   @visibleForTesting
   final Future<ArchiveShareOutcome> Function(BuildContext context, String text)?
-      copyText;
+  copyText;
 
   @visibleForTesting
   final Future<String> Function()? loadAppVersion;
@@ -106,7 +105,7 @@ class BetaFeedbackController {
 
   Future<bool> _launchEmail(Uri uri) async {
     if (launchEmail != null) return launchEmail!(uri);
-    final testLaunch = TestFlightFeedbackLauncher.launchUrlForTest;
+    final testLaunch = TestFlightFeedbackLauncher.resolveUrlLauncher();
     if (testLaunch != null) return testLaunch(uri);
     return launchUrl(uri, mode: LaunchMode.externalApplication);
   }

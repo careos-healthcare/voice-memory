@@ -142,13 +142,9 @@ abstract final class PatternLifecycleEngine {
     EarlyFirstSignalModel? confirmedRepeat,
     required bool viewingConfirmedRepeatOrTimeline,
     required bool helpfulActionCapturedMilestone,
-  }) =>
-      ComeBackTomorrowV2Store.hasActive;
+  }) => ComeBackTomorrowV2Store.hasActive;
 
-  static bool _isQuiet({
-    required List<JournalEntry> entries,
-    DateTime? now,
-  }) =>
+  static bool _isQuiet({required List<JournalEntry> entries, DateTime? now}) =>
       QuietSignalEngine.build(entries: entries, now: now) != null;
 
   static bool _isSoftening({

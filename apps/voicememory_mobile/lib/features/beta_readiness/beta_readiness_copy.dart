@@ -24,8 +24,7 @@ abstract final class BetaReadinessCopy {
       'First-use onboarding visible at zero entries';
   static const itemMicCtaPrimary = 'Mic CTA primary';
   static const itemTypedFallbackAvailable = 'Typed fallback available';
-  static const itemNoDailyMapBeforeFirstSave =
-      'No daily map before first save';
+  static const itemNoDailyMapBeforeFirstSave = 'No daily map before first save';
 
   // First proof
   static const itemThreeMomentsUnlockFirstProof =
@@ -41,8 +40,7 @@ abstract final class BetaReadinessCopy {
   // Trust controls
   static const itemSavedMomentsOpens = 'Saved moments opens';
   static const itemDeleteMomentAvailable = 'Delete moment available';
-  static const itemRemoveFromPatternAvailable =
-      'Remove from pattern available';
+  static const itemRemoveFromPatternAvailable = 'Remove from pattern available';
   static const itemCorrectTranscriptAvailable = 'Correct transcript available';
   static const itemPrivacyCentreOpens = 'Privacy & your archive opens';
   static const itemExportLocalBackupAvailable = 'Export local backup available';
@@ -72,42 +70,42 @@ abstract final class BetaReadinessCopy {
       'Archive is local unless user exports backup';
 
   static List<String> allVisibleStrings() => [
-        openLink,
-        sheetTitle,
-        sheetIntro,
-        statusPass,
-        statusNeedsManualCheck,
-        statusNotAvailable,
-        sectionCapture,
-        sectionFirstProof,
-        sectionTrustControls,
-        sectionReturnLoop,
-        sectionBetaFeedback,
-        sectionReleaseWarnings,
-        itemFirstUseOnboardingAtZero,
-        itemMicCtaPrimary,
-        itemTypedFallbackAvailable,
-        itemNoDailyMapBeforeFirstSave,
-        itemThreeMomentsUnlockFirstProof,
-        itemGenericEntriesNoFirstProof,
-        itemFirstProofPayoffAppears,
-        itemFirstProofTruthFollowUp,
-        itemFirstProofActionLoopAfterAnswer,
-        itemSavedMomentsOpens,
-        itemDeleteMomentAvailable,
-        itemRemoveFromPatternAvailable,
-        itemCorrectTranscriptAvailable,
-        itemPrivacyCentreOpens,
-        itemExportLocalBackupAvailable,
-        itemRestoreLocalBackupAvailable,
-        itemReturnTomorrowCue,
-        itemReturnDayFlowAvailable,
-        itemWhatChangedAfterFourthMoment,
-        itemSendBetaFeedbackAvailable,
-        itemBetaProgressSummaryAvailable,
-        itemCopySummaryWorks,
-        warningAppStoreProducts,
-        warningLocalBackupPlainJson,
-        warningArchiveLocalUnlessExport,
-      ];
+    openLink,
+    sheetTitle,
+    sheetIntro,
+    statusPass,
+    statusNeedsManualCheck,
+    statusNotAvailable,
+    sectionCapture,
+    sectionFirstProof,
+    sectionTrustControls,
+    sectionReturnLoop,
+    sectionBetaFeedback,
+    sectionReleaseWarnings,
+    itemFirstUseOnboardingAtZero,
+    itemMicCtaPrimary,
+    itemTypedFallbackAvailable,
+    itemNoDailyMapBeforeFirstSave,
+    itemThreeMomentsUnlockFirstProof,
+    itemGenericEntriesNoFirstProof,
+    itemFirstProofPayoffAppears,
+    itemFirstProofTruthFollowUp,
+    itemFirstProofActionLoopAfterAnswer,
+    itemSavedMomentsOpens,
+    itemDeleteMomentAvailable,
+    itemRemoveFromPatternAvailable,
+    itemCorrectTranscriptAvailable,
+    itemPrivacyCentreOpens,
+    itemExportLocalBackupAvailable,
+    itemRestoreLocalBackupAvailable,
+    itemReturnTomorrowCue,
+    itemReturnDayFlowAvailable,
+    itemWhatChangedAfterFourthMoment,
+    itemSendBetaFeedbackAvailable,
+    itemBetaProgressSummaryAvailable,
+    itemCopySummaryWorks,
+    warningAppStoreProducts,
+    warningLocalBackupPlainJson,
+    warningArchiveLocalUnlessExport,
+  ];
 }

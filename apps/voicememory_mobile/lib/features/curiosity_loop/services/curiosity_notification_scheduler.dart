@@ -34,7 +34,7 @@ abstract final class CuriosityNotificationPayload {
 /// scheduling — failures never propagate to callers.
 class CuriosityNotificationScheduler {
   CuriosityNotificationScheduler({FlutterLocalNotificationsPlugin? plugin})
-      : _plugin = plugin ?? FlutterLocalNotificationsPlugin();
+    : _plugin = plugin ?? FlutterLocalNotificationsPlugin();
 
   static const channelId = 'curiosity_retention_loops';
   static const channelName = 'Curiosity return loops';
@@ -97,7 +97,8 @@ class CuriosityNotificationScheduler {
 
       final androidPlugin = _activePlugin
           .resolvePlatformSpecificImplementation<
-              AndroidFlutterLocalNotificationsPlugin>();
+            AndroidFlutterLocalNotificationsPlugin
+          >();
       await androidPlugin?.createNotificationChannel(
         const AndroidNotificationChannel(
           channelId,
@@ -133,8 +134,10 @@ class CuriosityNotificationScheduler {
   Future<bool> requestPermissions() async {
     if (!_available) return false;
     try {
-      final ios = _activePlugin.resolvePlatformSpecificImplementation<
-          IOSFlutterLocalNotificationsPlugin>();
+      final ios = _activePlugin
+          .resolvePlatformSpecificImplementation<
+            IOSFlutterLocalNotificationsPlugin
+          >();
       if (ios != null) {
         return await ios.requestPermissions(
               alert: true,
@@ -144,14 +147,18 @@ class CuriosityNotificationScheduler {
             false;
       }
 
-      final android = _activePlugin.resolvePlatformSpecificImplementation<
-          AndroidFlutterLocalNotificationsPlugin>();
+      final android = _activePlugin
+          .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin
+          >();
       if (android != null) {
         return await android.requestNotificationsPermission() ?? false;
       }
 
-      final macos = _activePlugin.resolvePlatformSpecificImplementation<
-          MacOSFlutterLocalNotificationsPlugin>();
+      final macos = _activePlugin
+          .resolvePlatformSpecificImplementation<
+            MacOSFlutterLocalNotificationsPlugin
+          >();
       if (macos != null) {
         return await macos.requestPermissions(
               alert: true,

@@ -1,4 +1,3 @@
-
 import 'package:flutter/foundation.dart';
 
 /// Global Flutter / platform error logging for ArchiveMe field diagnostics.

@@ -35,26 +35,25 @@ const _bannedWords = [
 const _privateSnippet = 'felt pressure at work before saying yes';
 
 JournalEntry _capacityEntry(String id, {String? transcript}) => JournalEntry(
-      id: id,
-      createdAt: DateTime(2026, 6, 12, 12),
-      transcript: transcript ??
-          'I $_privateSnippet again and said yes with no capacity left.',
-      durationSeconds: 30,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 2,
-        recurringThemes: ['work'],
-        exactLanguagePattern: '',
-        concreteObservation: 'Work pressure showed up in this moment.',
-        repeatedSignal: '',
-      ),
-    );
+  id: id,
+  createdAt: DateTime(2026, 6, 12, 12),
+  transcript:
+      transcript ??
+      'I $_privateSnippet again and said yes with no capacity left.',
+  durationSeconds: 30,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 2,
+    recurringThemes: ['work'],
+    exactLanguagePattern: '',
+    concreteObservation: 'Work pressure showed up in this moment.',
+    repeatedSignal: '',
+  ),
+);
 
-List<JournalEntry> _entries(int count) => List.generate(
-      count,
-      (i) => _capacityEntry('real_$i'),
-    );
+List<JournalEntry> _entries(int count) =>
+    List.generate(count, (i) => _capacityEntry('real_$i'));
 
 CapacityActivationFitResult _pendingResult({int count = 3}) =>
     CapacityActivationFitResult(
@@ -92,33 +91,32 @@ ArchiveHomePriorityInput _priorityInput({
   bool capacityActivationFitVisible = false,
   bool beforeYouSayYesPauseVisible = false,
   bool capacityWeeklyReviewVisible = false,
-}) =>
-    ArchiveHomePriorityInput(
-      savedEntryCount: savedEntryCount,
-      usableEvidenceCount: savedEntryCount,
-      depthLevel: ArchiveDepthLevel.notStarted,
-      returnChangesAvailable: false,
-      weeklyReviewAvailable: false,
-      sampleMode: false,
-      proPreviewPromoVisible: false,
-      showEmptySample: false,
-      firstWeekPathVisible: savedEntryCount < 7,
-      dailyArchiveExerciseVisible: true,
-      archiveClarityProgressVisible: true,
-      capacityThreeMomentActivationVisible: false,
-      capacityLoopVisible: false,
-      capacityPullReasonVisible: false,
-      capacityDecisionOutcomeVisible: false,
-      capacityCostLaterCheckinVisible: capacityCostLaterCheckinVisible,
-      capacityActivationFitVisible: capacityActivationFitVisible,
-      beforeYouSayYesPauseVisible: beforeYouSayYesPauseVisible,
-      capacityWeeklyReviewVisible: capacityWeeklyReviewVisible,
-      capacityBoundaryResponseVisible: false,
-      thenVsNowVisible: false,
-      archiveCalendarVisible: false,
-      reviewRitualVisible: false,
-      milestoneShareVisible: false,
-    );
+}) => ArchiveHomePriorityInput(
+  savedEntryCount: savedEntryCount,
+  usableEvidenceCount: savedEntryCount,
+  depthLevel: ArchiveDepthLevel.notStarted,
+  returnChangesAvailable: false,
+  weeklyReviewAvailable: false,
+  sampleMode: false,
+  proPreviewPromoVisible: false,
+  showEmptySample: false,
+  firstWeekPathVisible: savedEntryCount < 7,
+  dailyArchiveExerciseVisible: true,
+  archiveClarityProgressVisible: true,
+  capacityThreeMomentActivationVisible: false,
+  capacityLoopVisible: false,
+  capacityPullReasonVisible: false,
+  capacityDecisionOutcomeVisible: false,
+  capacityCostLaterCheckinVisible: capacityCostLaterCheckinVisible,
+  capacityActivationFitVisible: capacityActivationFitVisible,
+  beforeYouSayYesPauseVisible: beforeYouSayYesPauseVisible,
+  capacityWeeklyReviewVisible: capacityWeeklyReviewVisible,
+  capacityBoundaryResponseVisible: false,
+  thenVsNowVisible: false,
+  archiveCalendarVisible: false,
+  reviewRitualVisible: false,
+  milestoneShareVisible: false,
+);
 
 Future<void> _resetStore(String stamp) async {
   await AppServices.resetForTest(
@@ -356,20 +354,24 @@ void main() {
 
     test('fit check follows cost check-in in sticky loop order', () {
       final ranked = [
-        ...priorityEngine.build(
-          _priorityInput(
-            capacityCostLaterCheckinVisible: true,
-            capacityActivationFitVisible: true,
-            beforeYouSayYesPauseVisible: true,
-          ),
-        ).primarySections,
-        ...priorityEngine.build(
-          _priorityInput(
-            capacityCostLaterCheckinVisible: true,
-            capacityActivationFitVisible: true,
-            beforeYouSayYesPauseVisible: true,
-          ),
-        ).secondarySections,
+        ...priorityEngine
+            .build(
+              _priorityInput(
+                capacityCostLaterCheckinVisible: true,
+                capacityActivationFitVisible: true,
+                beforeYouSayYesPauseVisible: true,
+              ),
+            )
+            .primarySections,
+        ...priorityEngine
+            .build(
+              _priorityInput(
+                capacityCostLaterCheckinVisible: true,
+                capacityActivationFitVisible: true,
+                beforeYouSayYesPauseVisible: true,
+              ),
+            )
+            .secondarySections,
       ];
 
       expect(ranked, contains(ArchiveHomeSectionId.capacityActivationFit));

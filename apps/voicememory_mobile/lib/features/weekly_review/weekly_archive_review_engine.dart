@@ -35,16 +35,13 @@ abstract final class WeeklyArchiveReviewEngine {
     List<RepeatReturnCheckRecord> returnChecks = const [],
     bool viewingConfirmedRepeatOrTimeline = false,
   }) {
-    if (!shouldShow(
-      entries: entries,
-      returnChecks: returnChecks,
-    )) {
+    if (!shouldShow(entries: entries, returnChecks: returnChecks)) {
       return null;
     }
 
     final reviewEntries = _reviewEntries(entries);
-    final repeatSource = confirmedRepeat ??
-        EarlyFirstSignalEngine.build(entries: reviewEntries);
+    final repeatSource =
+        confirmedRepeat ?? EarlyFirstSignalEngine.build(entries: reviewEntries);
     final positivePattern = PositivePatternEngine.build(entries: entries);
 
     final repeated = _repeatedSection(
@@ -69,8 +66,8 @@ abstract final class WeeklyArchiveReviewEngine {
       returnChecks: returnChecks,
       viewingConfirmedRepeatOrTimeline: viewingConfirmedRepeatOrTimeline,
     );
-    final nextToWatch = dailyReason?.prompt ??
-        WeeklyArchiveReviewCopy.watchBeforeAgree;
+    final nextToWatch =
+        dailyReason?.prompt ?? WeeklyArchiveReviewCopy.watchBeforeAgree;
 
     final usableCount = ArchiveEvidenceQualityGate.usableCount(entries);
     final fullByVolume = usableCount >= minEntriesForFullReview;
@@ -78,9 +75,8 @@ abstract final class WeeklyArchiveReviewEngine {
       entries: entries,
       returnChecks: returnChecks,
     );
-    final hasGroundedContent = repeated.isSupported ||
-        changed.isSupported ||
-        helped.isSupported;
+    final hasGroundedContent =
+        repeated.isSupported || changed.isSupported || helped.isSupported;
 
     if (!fullByVolume && !fullByProofPath && !hasGroundedContent) {
       return const WeeklyArchiveReviewResult(
@@ -151,8 +147,9 @@ abstract final class WeeklyArchiveReviewEngine {
 
     final anchor = eligible.last.createdAt;
     final weekStart = anchor.subtract(const Duration(days: weekWindowDays));
-    final weekEntries =
-        eligible.where((entry) => !entry.createdAt.isBefore(weekStart)).toList();
+    final weekEntries = eligible
+        .where((entry) => !entry.createdAt.isBefore(weekStart))
+        .toList();
     if (weekEntries.length >= 2) return weekEntries;
 
     if (eligible.length >= 3) {
@@ -187,7 +184,8 @@ abstract final class WeeklyArchiveReviewEngine {
     final eligible = ArchiveExclusionEngine.eligibleForActivePattern(entries);
     if (eligible.length < 4) return false;
 
-    final hadFirstProof = FirstProofMomentEngine.build(entries: eligible) != null ||
+    final hadFirstProof =
+        FirstProofMomentEngine.build(entries: eligible) != null ||
         (eligible.length >= 3 &&
             EarlyFirstSignalEngine.hasConfirmedRepeatAcrossThree(
               eligible.sublist(0, 3),
@@ -216,8 +214,9 @@ abstract final class WeeklyArchiveReviewEngine {
     final grounded = phrases.where((phrase) {
       final trimmed = phrase.replaceAll('"', '').trim();
       return trimmed.isNotEmpty &&
-          !ConfirmedRepeatEvidencePhraseEngine.bannedGenericLabels
-              .contains(trimmed.toLowerCase());
+          !ConfirmedRepeatEvidencePhraseEngine.bannedGenericLabels.contains(
+            trimmed.toLowerCase(),
+          );
     }).toList();
 
     if (grounded.isEmpty) {
@@ -229,7 +228,9 @@ abstract final class WeeklyArchiveReviewEngine {
     }
 
     final phrase = grounded.first.replaceAll('"', '').trim();
-    final displayPhrase = PatternNameEngine.displayLabelForGroundedPhrase(phrase);
+    final displayPhrase = PatternNameEngine.displayLabelForGroundedPhrase(
+      phrase,
+    );
     return WeeklyArchiveReviewSection(
       label: WeeklyArchiveReviewCopy.whatRepeatedLabel,
       body: "'$displayPhrase' appeared across several moments.",
@@ -246,7 +247,9 @@ abstract final class WeeklyArchiveReviewEngine {
     final v2Marker = WhatChangedV2Engine.weeklyReviewSection(entries: entries);
     if (v2Marker != null) return v2Marker;
 
-    final changeNotice = EarlyFirstSignalEngine.buildChangeNotice(entries: entries);
+    final changeNotice = EarlyFirstSignalEngine.buildChangeNotice(
+      entries: entries,
+    );
     if (changeNotice != null && changeNotice.body.trim().isNotEmpty) {
       return WeeklyArchiveReviewSection(
         label: WeeklyArchiveReviewCopy.whatChangedLabel,

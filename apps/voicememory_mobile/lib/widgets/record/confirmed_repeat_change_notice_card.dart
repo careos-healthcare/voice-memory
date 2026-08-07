@@ -42,14 +42,12 @@ class ConfirmedRepeatChangeNoticeCard extends StatelessWidget {
       );
     }
     final titleStyle = ArchiveMobileTypography.responsiveSectionTitle(context);
-    final bodyStyle = ArchiveMobileTypography.explanationBody(context).copyWith(
-      color: AppColors.textSecondary,
-      height: 1.45,
-    );
-    final evidenceStyle = ArchiveMobileTypography.responsiveHelper(context).copyWith(
-      color: AppColors.textPrimary,
-      height: 1.4,
-    );
+    final bodyStyle = ArchiveMobileTypography.explanationBody(
+      context,
+    ).copyWith(color: AppColors.textSecondary, height: 1.45);
+    final evidenceStyle = ArchiveMobileTypography.responsiveHelper(
+      context,
+    ).copyWith(color: AppColors.textPrimary, height: 1.4);
     final whyReasons = entriesForWhy != null
         ? EarlyArchiveInsightQualityEngine.whyReasonsFor(
             insightType: EarlyArchiveInsightType.softeningNotice,
@@ -61,7 +59,9 @@ class ConfirmedRepeatChangeNoticeCard extends StatelessWidget {
       key: const Key('confirmed_repeat_change_notice_card'),
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.md),
-      decoration: VoiceMemoryCards.standard(background: const Color(0xFFFFFBF5)),
+      decoration: VoiceMemoryCards.standard(
+        background: const Color(0xFFFFFBF5),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -112,8 +112,8 @@ class ConfirmedRepeatChangeNoticeCard extends StatelessWidget {
                 EarlyArchiveProofAnalytics.timelineViewEvidenceTapped(
                   entryCount: count,
                   surface: surface,
-                  hasRealTimeline:
-                      EarlyArchiveProofAnalytics.realTimelineSeenThisSession,
+                  hasRealTimeline: EarlyArchiveProofAnalytics
+                      .hasRealTimelineBeenSeenThisSession,
                 );
               }
               onViewEvidence();
@@ -130,8 +130,8 @@ class ConfirmedRepeatChangeNoticeCard extends StatelessWidget {
             ),
             EarlyArchiveInsightFeedbackRow(
               insightType: EarlyArchiveInsightType.softeningNotice,
-              surface: surface!,
-              entryCount: count!,
+              surface: surface,
+              entryCount: count,
             ),
           ],
         ],

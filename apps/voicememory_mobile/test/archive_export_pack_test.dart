@@ -11,7 +11,6 @@ import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/models/sync_status.dart';
 import 'package:voicememory_mobile/security/account_privacy_controls_copy.dart';
-import 'package:voicememory_mobile/security/privacy_data_controls_copy.dart';
 import 'package:voicememory_mobile/security/sensitive_screen_guard.dart';
 import 'package:voicememory_mobile/services/capture_save_messages.dart';
 import 'package:voicememory_mobile/theme/app_theme.dart';
@@ -22,72 +21,68 @@ JournalEntry _entry({
   required String transcript,
   DateTime? createdAt,
   String? captureContextTag,
-}) =>
-    JournalEntry(
-      id: id,
-      createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
-      transcript: transcript,
-      durationSeconds: 30,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 2,
-        recurringThemes: ['work'],
-        exactLanguagePattern: '',
-        concreteObservation: 'Work pressure showed up in this moment.',
-        repeatedSignal: '',
-      ),
-      syncStatus: SyncStatus.localOnly,
-      captureContextTag: captureContextTag,
-    );
+}) => JournalEntry(
+  id: id,
+  createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
+  transcript: transcript,
+  durationSeconds: 30,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 2,
+    recurringThemes: ['work'],
+    exactLanguagePattern: '',
+    concreteObservation: 'Work pressure showed up in this moment.',
+    repeatedSignal: '',
+  ),
+  syncStatus: SyncStatus.localOnly,
+  captureContextTag: captureContextTag,
+);
 
 JournalEntry _degradedEntry({String id = 'd1'}) => JournalEntry(
-      id: id,
-      createdAt: DateTime(2026, 6, 12, 12),
-      transcript:
-          '[draft] ${CaptureSaveMessages.recordingSavedLocally} — transcribe when connected',
-      durationSeconds: 20,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 0,
-        recurringThemes: [],
-        exactLanguagePattern: '',
-        concreteObservation: '',
-        repeatedSignal: '',
-      ),
-      syncStatus: SyncStatus.localOnly,
-    );
+  id: id,
+  createdAt: DateTime(2026, 6, 12, 12),
+  transcript:
+      '[draft] ${CaptureSaveMessages.recordingSavedLocally} — transcribe when connected',
+  durationSeconds: 20,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 0,
+    recurringThemes: [],
+    exactLanguagePattern: '',
+    concreteObservation: '',
+    repeatedSignal: '',
+  ),
+  syncStatus: SyncStatus.localOnly,
+);
 
 List<JournalEntry> _taggedEntries() => [
-      _entry(
-        id: 'e1',
-        transcript:
-            'I felt pressure at work before saying yes again even when I was tired.',
-        createdAt: DateTime(2026, 6, 9, 12),
-        captureContextTag: CaptureContextTagIds.work,
-      ),
-      _entry(
-        id: 'e2',
-        transcript:
-            'Work kept pulling me back after I wanted to stop for the day.',
-        createdAt: DateTime(2026, 6, 10, 12),
-        captureContextTag: CaptureContextTagIds.work,
-      ),
-      _entry(
-        id: 'e3',
-        transcript:
-            'Home felt loud before I could settle into the evening.',
-        createdAt: DateTime(2026, 6, 11, 12),
-        captureContextTag: CaptureContextTagIds.home,
-      ),
-      _entry(
-        id: 'e4',
-        transcript:
-            'Another untagged moment before I could leave for the day.',
-        createdAt: DateTime(2026, 6, 12, 12),
-      ),
-    ];
+  _entry(
+    id: 'e1',
+    transcript:
+        'I felt pressure at work before saying yes again even when I was tired.',
+    createdAt: DateTime(2026, 6, 9, 12),
+    captureContextTag: CaptureContextTagIds.work,
+  ),
+  _entry(
+    id: 'e2',
+    transcript: 'Work kept pulling me back after I wanted to stop for the day.',
+    createdAt: DateTime(2026, 6, 10, 12),
+    captureContextTag: CaptureContextTagIds.work,
+  ),
+  _entry(
+    id: 'e3',
+    transcript: 'Home felt loud before I could settle into the evening.',
+    createdAt: DateTime(2026, 6, 11, 12),
+    captureContextTag: CaptureContextTagIds.home,
+  ),
+  _entry(
+    id: 'e4',
+    transcript: 'Another untagged moment before I could leave for the day.',
+    createdAt: DateTime(2026, 6, 12, 12),
+  ),
+];
 
 const _bannedWords = [
   'diagnosis',
@@ -118,7 +113,9 @@ void _expectNoBannedCopy(Iterable<String> visible) {
 
 void main() {
   group('Settings export entry point', () {
-    testWidgets('shows Export button in standard archive controls', (tester) async {
+    testWidgets('shows Export button in standard archive controls', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           theme: AppTheme.light(),
@@ -128,7 +125,10 @@ void main() {
       await tester.pump();
 
       expect(find.text(AccountPrivacyControlsCopy.export), findsOneWidget);
-      expect(find.byKey(const Key('account_control_export_button')), findsOneWidget);
+      expect(
+        find.byKey(const Key('account_control_export_button')),
+        findsOneWidget,
+      );
     });
   });
 
@@ -147,7 +147,9 @@ void main() {
 
     test('non-empty export includes ArchiveMe and export date', () {
       final pack = ArchiveExportPackEngine.build(
-        entries: [_entry(id: 'e1', transcript: 'A saved private moment about work.')],
+        entries: [
+          _entry(id: 'e1', transcript: 'A saved private moment about work.'),
+        ],
         exportedAt: DateTime.utc(2026, 6, 15, 10),
       );
 
@@ -158,10 +160,7 @@ void main() {
     });
 
     test('export includes saved and usable evidence counts', () {
-      final entries = [
-        ..._taggedEntries(),
-        _degradedEntry(id: 'd1'),
-      ];
+      final entries = [..._taggedEntries(), _degradedEntry(id: 'd1')];
       final pack = ArchiveExportPackEngine.build(
         entries: entries,
         exportedAt: DateTime.utc(2026, 6, 15),
@@ -188,11 +187,16 @@ void main() {
 
     test('export includes review before sharing privacy note', () {
       final pack = ArchiveExportPackEngine.build(
-        entries: [_entry(id: 'e1', transcript: 'Private saved moment text here.')],
+        entries: [
+          _entry(id: 'e1', transcript: 'Private saved moment text here.'),
+        ],
         exportedAt: DateTime.utc(2026, 6, 15),
       );
 
-      expect(pack.plainText, contains(ArchiveExportPackCopy.reviewBeforeSharing));
+      expect(
+        pack.plainText,
+        contains(ArchiveExportPackCopy.reviewBeforeSharing),
+      );
       expect(pack.plainText, contains(ArchiveExportPackCopy.privacyNoteDevice));
       _expectNoBannedCopy([pack.plainText]);
     });
@@ -222,40 +226,46 @@ void main() {
       expect(pack.plainText, isNot(equals(proof.shareText)));
     });
 
-    test('share-safe proof remains unchanged and excludes private map/filter data', () {
-      const sensitive =
-          'Maria told me about the divorce paperwork at the hospital again';
-      final entries = List.generate(
-        5,
-        (i) => _entry(
-          id: 'e$i',
-          transcript: sensitive,
-          createdAt: DateTime(2026, 6, 9 + i, 12),
-          captureContextTag: CaptureContextTagIds.work,
-        ),
-      );
-      const engine = ShareableArchiveProofEngine();
-      final proof = engine.buildFromJournal(entries: entries);
-      final shareText = proof.shareText.toLowerCase();
+    test(
+      'share-safe proof remains unchanged and excludes private map/filter data',
+      () {
+        const sensitive =
+            'Maria told me about the divorce paperwork at the hospital again';
+        final entries = List.generate(
+          5,
+          (i) => _entry(
+            id: 'e$i',
+            transcript: sensitive,
+            createdAt: DateTime(2026, 6, 9 + i, 12),
+            captureContextTag: CaptureContextTagIds.work,
+          ),
+        );
+        const engine = ShareableArchiveProofEngine();
+        final proof = engine.buildFromJournal(entries: entries);
+        final shareText = proof.shareText.toLowerCase();
 
-      expect(proof.hasProof, isTrue);
-      expect(shareText, isNot(contains('maria')));
-      expect(shareText, isNot(contains('divorce')));
-      expect(shareText, isNot(contains('work')));
-      expect(shareText, isNot(contains('untagged')));
-      expect(shareText, isNot(contains('filter')));
-      expect(shareText, isNot(contains('map')));
-      expect(ArchiveShareText.includesBannedConsumerCopy(proof.shareText), isFalse);
-    });
+        expect(proof.hasProof, isTrue);
+        expect(shareText, isNot(contains('maria')));
+        expect(shareText, isNot(contains('divorce')));
+        expect(shareText, isNot(contains('work')));
+        expect(shareText, isNot(contains('untagged')));
+        expect(shareText, isNot(contains('filter')));
+        expect(shareText, isNot(contains('map')));
+        expect(
+          ArchiveShareText.includesBannedConsumerCopy(proof.shareText),
+          isFalse,
+        );
+      },
+    );
 
     test('export route is sensitive/guarded', () {
       expect(SensitiveRoutes.isSensitiveRoute('/archive-export'), isTrue);
     });
 
     test('standard archive controls route to archive export screen', () {
-      final section =
-          File('lib/widgets/account/account_privacy_controls_section.dart')
-              .readAsStringSync();
+      final section = File(
+        'lib/widgets/account/account_privacy_controls_section.dart',
+      ).readAsStringSync();
       expect(section, contains("context.push('/archive-export')"));
     });
 

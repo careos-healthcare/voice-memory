@@ -36,10 +36,10 @@ class FirstProofActionLoopCard extends StatelessWidget {
   final VoidCallback? onOpenPatternCorrection;
 
   String get _answerKey => switch (content.answer) {
-        FirstProofTruthAnswer.yes => 'yes',
-        FirstProofTruthAnswer.sortOf => 'sort_of',
-        FirstProofTruthAnswer.no => 'no',
-      };
+    FirstProofTruthAnswer.yes => 'yes',
+    FirstProofTruthAnswer.sortOf => 'sort_of',
+    FirstProofTruthAnswer.no => 'no',
+  };
 
   void _track(FirstProofActionType action) {
     FirstProofActionLoopAnalytics.selected(
@@ -51,37 +51,38 @@ class FirstProofActionLoopCard extends StatelessWidget {
   }
 
   String _labelFor(FirstProofActionType action) => switch (action) {
-        FirstProofActionType.watchThisNext =>
-          FirstProofActionLoopCopy.watchThisNextCta,
-        FirstProofActionType.viewPatternDetails =>
-          FirstProofActionLoopCopy.viewPatternDetailsCta,
-        FirstProofActionType.renamePattern =>
-          FirstProofActionLoopCopy.renamePatternCta,
-        FirstProofActionType.keepRecording =>
-          FirstProofActionLoopCopy.keepRecordingCta,
-        FirstProofActionType.correctTranscript =>
-          FirstProofActionLoopCopy.correctTranscriptCta,
-        FirstProofActionType.removeFromPattern =>
-          FirstProofActionLoopCopy.removeFromPatternCta,
-      };
+    FirstProofActionType.watchThisNext =>
+      FirstProofActionLoopCopy.watchThisNextCta,
+    FirstProofActionType.viewPatternDetails =>
+      FirstProofActionLoopCopy.viewPatternDetailsCta,
+    FirstProofActionType.renamePattern =>
+      FirstProofActionLoopCopy.renamePatternCta,
+    FirstProofActionType.keepRecording =>
+      FirstProofActionLoopCopy.keepRecordingCta,
+    FirstProofActionType.correctTranscript =>
+      FirstProofActionLoopCopy.correctTranscriptCta,
+    FirstProofActionType.removeFromPattern =>
+      FirstProofActionLoopCopy.removeFromPatternCta,
+  };
 
   VoidCallback? _handlerFor(FirstProofActionType action) => switch (action) {
-        FirstProofActionType.watchThisNext => onWatchThisNext,
-        FirstProofActionType.viewPatternDetails => onViewPatternDetails,
-        FirstProofActionType.renamePattern => onRenamePattern,
-        FirstProofActionType.keepRecording => onKeepRecording,
-        FirstProofActionType.correctTranscript => onCorrectTranscript,
-        FirstProofActionType.removeFromPattern => onRemoveFromPattern,
-      };
+    FirstProofActionType.watchThisNext => onWatchThisNext,
+    FirstProofActionType.viewPatternDetails => onViewPatternDetails,
+    FirstProofActionType.renamePattern => onRenamePattern,
+    FirstProofActionType.keepRecording => onKeepRecording,
+    FirstProofActionType.correctTranscript => onCorrectTranscript,
+    FirstProofActionType.removeFromPattern => onRemoveFromPattern,
+  };
 
-  Key _keyFor(FirstProofActionType action) =>
-      Key('first_proof_action_loop_${FirstProofActionLoopAnalytics.actionKey(action)}');
+  Key _keyFor(FirstProofActionType action) => Key(
+    'first_proof_action_loop_${FirstProofActionLoopAnalytics.actionKey(action)}',
+  );
 
   @override
   Widget build(BuildContext context) {
-    final bodyStyle = ArchiveMobileTypography.explanationBody(context).copyWith(
-      color: AppColors.textSecondary,
-    );
+    final bodyStyle = ArchiveMobileTypography.explanationBody(
+      context,
+    ).copyWith(color: AppColors.textSecondary);
     final actions = content.actions;
 
     return Container(
@@ -99,10 +100,7 @@ class FirstProofActionLoopCard extends StatelessWidget {
           ),
           if (actions.isEmpty) ...[
             const SizedBox(height: AppSpacing.xs),
-            Text(
-              FirstProofActionLoopCopy.keepRecordingCta,
-              style: bodyStyle,
-            ),
+            Text(FirstProofActionLoopCopy.keepRecordingCta, style: bodyStyle),
           ] else ...[
             const SizedBox(height: AppSpacing.md),
             for (var i = 0; i < actions.length; i++) ...[
@@ -137,9 +135,9 @@ class FirstProofActionLoopCard extends StatelessWidget {
                   PatternCorrectionCopy.controlLabel,
                   style: ArchiveMobileTypography.responsiveHelper(context)
                       .copyWith(
-                    color: AppColors.textSecondary,
-                    decoration: TextDecoration.underline,
-                  ),
+                        color: AppColors.textSecondary,
+                        decoration: TextDecoration.underline,
+                      ),
                 ),
               ),
             ),
@@ -172,10 +170,6 @@ class _ActionButton extends StatelessWidget {
         child: Text(label),
       );
     }
-    return TextButton(
-      key: actionKey,
-      onPressed: onPressed,
-      child: Text(label),
-    );
+    return TextButton(key: actionKey, onPressed: onPressed, child: Text(label));
   }
 }

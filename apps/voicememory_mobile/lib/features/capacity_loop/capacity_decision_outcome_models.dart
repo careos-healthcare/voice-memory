@@ -10,10 +10,7 @@ abstract final class CapacityDecisionOutcomeIds {
   static const all = [saidYes, saidNo, delayed, notSure];
 }
 
-enum CapacityDecisionOutcomeStatus {
-  answered,
-  skipped,
-}
+enum CapacityDecisionOutcomeStatus { answered, skipped }
 
 /// One local decision outcome linked to a saved moment.
 class CapacityDecisionOutcomeRecord {
@@ -32,8 +29,7 @@ class CapacityDecisionOutcomeRecord {
   final DateTime updatedAt;
 
   bool get hasOutcome =>
-      status == CapacityDecisionOutcomeStatus.answered &&
-      outcomeId.isNotEmpty;
+      status == CapacityDecisionOutcomeStatus.answered && outcomeId.isNotEmpty;
 
   bool get showsPatternChange =>
       hasOutcome &&
@@ -41,12 +37,12 @@ class CapacityDecisionOutcomeRecord {
           outcomeId == CapacityDecisionOutcomeIds.delayed);
 
   Map<String, dynamic> toJson() => {
-        'sourceEntryId': sourceEntryId,
-        'outcomeId': outcomeId,
-        'status': status.name,
-        'createdAt': createdAt.toUtc().toIso8601String(),
-        'updatedAt': updatedAt.toUtc().toIso8601String(),
-      };
+    'sourceEntryId': sourceEntryId,
+    'outcomeId': outcomeId,
+    'status': status.name,
+    'createdAt': createdAt.toUtc().toIso8601String(),
+    'updatedAt': updatedAt.toUtc().toIso8601String(),
+  };
 
   static CapacityDecisionOutcomeRecord? fromJson(Map<String, dynamic>? map) {
     if (map == null || map.isEmpty) return null;

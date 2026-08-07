@@ -10,21 +10,17 @@ enum BetaActivationPathStage {
 
 extension BetaActivationPathStageAnalytics on BetaActivationPathStage {
   String get analyticsValue => switch (this) {
-        BetaActivationPathStage.firstSave => 'first_save',
-        BetaActivationPathStage.secondSave => 'second_save',
-        BetaActivationPathStage.thirdSave => 'third_save',
-        BetaActivationPathStage.proofCheck => 'proof_check',
-        BetaActivationPathStage.valueMoment => 'value_moment',
-        BetaActivationPathStage.proReview => 'pro_review',
-        BetaActivationPathStage.paidMomentReached => 'paid_moment_reached',
-      };
+    BetaActivationPathStage.firstSave => 'first_save',
+    BetaActivationPathStage.secondSave => 'second_save',
+    BetaActivationPathStage.thirdSave => 'third_save',
+    BetaActivationPathStage.proofCheck => 'proof_check',
+    BetaActivationPathStage.valueMoment => 'value_moment',
+    BetaActivationPathStage.proReview => 'pro_review',
+    BetaActivationPathStage.paidMomentReached => 'paid_moment_reached',
+  };
 }
 
-enum BetaActivationPathSlot {
-  guidance,
-  revenue,
-  hidden,
-}
+enum BetaActivationPathSlot { guidance, revenue, hidden }
 
 enum BetaActivationPathActionType {
   saveFirstMoment,
@@ -37,17 +33,18 @@ enum BetaActivationPathActionType {
   notToday,
 }
 
-extension BetaActivationPathActionTypeAnalytics on BetaActivationPathActionType {
+extension BetaActivationPathActionTypeAnalytics
+    on BetaActivationPathActionType {
   String get analyticsValue => switch (this) {
-        BetaActivationPathActionType.saveFirstMoment => 'save_first_moment',
-        BetaActivationPathActionType.saveAnotherMoment => 'save_another_moment',
-        BetaActivationPathActionType.saveOneMoreMoment => 'save_one_more_moment',
-        BetaActivationPathActionType.viewTimelineProof => 'view_timeline_proof',
-        BetaActivationPathActionType.seeWhatProKeeps => 'see_what_pro_keeps',
-        BetaActivationPathActionType.reviewProValue => 'review_pro_value',
-        BetaActivationPathActionType.notNow => 'not_now',
-        BetaActivationPathActionType.notToday => 'not_today',
-      };
+    BetaActivationPathActionType.saveFirstMoment => 'save_first_moment',
+    BetaActivationPathActionType.saveAnotherMoment => 'save_another_moment',
+    BetaActivationPathActionType.saveOneMoreMoment => 'save_one_more_moment',
+    BetaActivationPathActionType.viewTimelineProof => 'view_timeline_proof',
+    BetaActivationPathActionType.seeWhatProKeeps => 'see_what_pro_keeps',
+    BetaActivationPathActionType.reviewProValue => 'review_pro_value',
+    BetaActivationPathActionType.notNow => 'not_now',
+    BetaActivationPathActionType.notToday => 'not_today',
+  };
 }
 
 class BetaActivationPathContext {

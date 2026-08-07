@@ -11,16 +11,13 @@ abstract final class ContextualPrivacyAnalytics {
 
   @visibleForTesting
   static void Function(String event, Map<String, Object> properties)?
-      captureForTest;
+  captureForTest;
 
   static void reassuranceSeen({
     required String source,
     required int entryCount,
   }) {
-    final props = <String, Object>{
-      'source': source,
-      'entry_count': entryCount,
-    };
+    final props = <String, Object>{'source': source, 'entry_count': entryCount};
     captureForTest?.call(seenEvent, props);
     ActivationFunnelAnalytics.track(
       seenEvent,
@@ -38,10 +35,7 @@ abstract final class ContextualPrivacyAnalytics {
   static void controlsOpened({required String source}) {
     final props = <String, Object>{'source': source};
     captureForTest?.call(openedEvent, props);
-    ActivationFunnelAnalytics.track(
-      openedEvent,
-      source: source,
-    );
+    ActivationFunnelAnalytics.track(openedEvent, source: source);
     if (kDebugMode) {
       debugPrint(
         'ARCHIVEME_CONTEXTUAL_PRIVACY event=$openedEvent source=$source',

@@ -31,11 +31,7 @@ const _privateTranscript =
     'I had no capacity but I said yes again to the extra meeting today.';
 final _now = DateTime(2026, 6, 12, 12);
 
-JournalEntry _entry(
-  String id,
-  String transcript, {
-  DateTime? createdAt,
-}) =>
+JournalEntry _entry(String id, String transcript, {DateTime? createdAt}) =>
     JournalEntry(
       id: id,
       createdAt: createdAt ?? _now,
@@ -54,22 +50,22 @@ JournalEntry _entry(
     );
 
 List<JournalEntry> _threeRelatedEntries() => [
-      _entry(
-        '1',
-        _privateTranscript,
-        createdAt: _now.subtract(const Duration(days: 2)),
-      ),
-      _entry(
-        '2',
-        'Same thing — said yes when I had no capacity for one more thing.',
-        createdAt: _now.subtract(const Duration(days: 1)),
-      ),
-      _entry(
-        '3',
-        'I said yes again even though I had no capacity for one more ask.',
-        createdAt: _now,
-      ),
-    ];
+  _entry(
+    '1',
+    _privateTranscript,
+    createdAt: _now.subtract(const Duration(days: 2)),
+  ),
+  _entry(
+    '2',
+    'Same thing — said yes when I had no capacity for one more thing.',
+    createdAt: _now.subtract(const Duration(days: 1)),
+  ),
+  _entry(
+    '3',
+    'I said yes again even though I had no capacity for one more ask.',
+    createdAt: _now,
+  ),
+];
 
 void main() {
   setUp(() {
@@ -88,8 +84,14 @@ void main() {
         RevenueLiftExperimentV2Copy.firstSaveBody,
         contains('what comes back'),
       );
-      expect(RevenueLiftExperimentV2Copy.firstSavePrimaryCta, 'Type one sentence');
-      expect(RevenueLiftExperimentV2Copy.firstSaveSecondaryCta, 'Record instead');
+      expect(
+        RevenueLiftExperimentV2Copy.firstSavePrimaryCta,
+        'Type one sentence',
+      );
+      expect(
+        RevenueLiftExperimentV2Copy.firstSaveSecondaryCta,
+        'Record instead',
+      );
     });
 
     test('pro visibility copy uses proof-connected framing', () {
@@ -97,10 +99,7 @@ void main() {
         ProVisibilityLiftCopy.title,
         RevenueLiftExperimentV2Copy.proVisibilityTitle,
       );
-      expect(
-        ProVisibilityLiftCopy.body,
-        contains('first useful proof'),
-      );
+      expect(ProVisibilityLiftCopy.body, contains('first useful proof'));
     });
 
     test('no private journal text appears in copy', () {
@@ -118,10 +117,7 @@ void main() {
         MaterialApp(
           home: Scaffold(
             body: FirstSaveLiftCard.test(
-              result: FirstSaveLiftEngine.build(
-                entryCount: 0,
-                source: 'test',
-              ),
+              result: FirstSaveLiftEngine.build(entryCount: 0, source: 'test'),
               onTypeOneSentence: () {},
               onRecordInstead: () {},
               onExampleSelected: (_) {},
@@ -149,19 +145,22 @@ void main() {
         source: 'test',
         now: _now,
       );
-      expect(result.returnReasonLine, RevenueLiftExperimentV2Copy.returnReasonLine);
+      expect(
+        result.returnReasonLine,
+        RevenueLiftExperimentV2Copy.returnReasonLine,
+      );
     });
 
     test('visible at two entries', () {
       final result = SecondMomentReturnEngine.build(
-        entries: [
-          _entry('1', 'First moment.'),
-          _entry('2', 'Second moment.'),
-        ],
+        entries: [_entry('1', 'First moment.'), _entry('2', 'Second moment.')],
         source: 'test',
         now: _now,
       );
-      expect(result.returnReasonLine, RevenueLiftExperimentV2Copy.returnReasonLine);
+      expect(
+        result.returnReasonLine,
+        RevenueLiftExperimentV2Copy.returnReasonLine,
+      );
     });
 
     testWidgets('renders return reason line on card', (tester) async {
@@ -200,14 +199,8 @@ void main() {
         now: _now,
       );
       expect(timeline, isNotNull);
-      expect(
-        timeline!.title,
-        RevenueLiftExperimentV2Copy.proofPayoffTitle,
-      );
-      expect(
-        timeline.body,
-        RevenueLiftExperimentV2Copy.proofPayoffBody,
-      );
+      expect(timeline!.title, RevenueLiftExperimentV2Copy.proofPayoffTitle);
+      expect(timeline.body, RevenueLiftExperimentV2Copy.proofPayoffBody);
     });
 
     test('engine returns sharpened copy for strong proof', () {
@@ -245,9 +238,7 @@ void main() {
       );
       await tester.pumpWidget(
         MaterialApp(
-          home: Scaffold(
-            body: PaywallCtaLiftBlock.test(result: result),
-          ),
+          home: Scaffold(body: PaywallCtaLiftBlock.test(result: result)),
         ),
       );
       await tester.pump();
@@ -260,7 +251,9 @@ void main() {
       tester,
     ) async {
       final source = File('lib/screens/paywall_screen.dart').readAsStringSync();
-      final purchaseLineIndex = source.indexOf('paywall_cta_lift_purchase_line');
+      final purchaseLineIndex = source.indexOf(
+        'paywall_cta_lift_purchase_line',
+      );
       final purchaseButtonIndex = source.indexOf(
         'onPressed: _busy ? null : _continue',
       );
@@ -388,10 +381,7 @@ void main() {
         isFalse,
       );
       expect(
-        result.isVisible(
-          SurfacePriorityCardKey.proPreview,
-          candidate: true,
-        ),
+        result.isVisible(SurfacePriorityCardKey.proPreview, candidate: true),
         isFalse,
       );
     });

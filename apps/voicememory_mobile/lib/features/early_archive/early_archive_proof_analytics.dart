@@ -53,6 +53,9 @@ abstract final class EarlyArchiveProofAnalytics {
 
   static bool _realTimelineSeenThisSession = false;
 
+  static bool get hasRealTimelineBeenSeenThisSession =>
+      _realTimelineSeenThisSession;
+
   @visibleForTesting
   static bool get realTimelineSeenThisSession => _realTimelineSeenThisSession;
 
@@ -65,10 +68,7 @@ abstract final class EarlyArchiveProofAnalytics {
     _realTimelineSeenThisSession = true;
   }
 
-  static void demoCtaSeen({
-    required int entryCount,
-    required String surface,
-  }) {
+  static void demoCtaSeen({required int entryCount, required String surface}) {
     _track(
       demoCtaSeenEvent,
       entryCount: entryCount,
@@ -79,10 +79,7 @@ abstract final class EarlyArchiveProofAnalytics {
     );
   }
 
-  static void demoOpened({
-    required int entryCount,
-    required String surface,
-  }) {
+  static void demoOpened({required int entryCount, required String surface}) {
     _track(
       demoOpenedEvent,
       entryCount: entryCount,
@@ -91,10 +88,7 @@ abstract final class EarlyArchiveProofAnalytics {
     );
   }
 
-  static void demoHidden({
-    required int entryCount,
-    required String surface,
-  }) {
+  static void demoHidden({required int entryCount, required String surface}) {
     _track(
       demoHiddenEvent,
       entryCount: entryCount,

@@ -24,8 +24,7 @@ abstract final class ArchiveJourneyCopy {
 
   static const step5Title = 'Keep the longer proof trail';
 
-  static const step5Body =
-      'Pro keeps the longer proof trail over time.';
+  static const step5Body = 'Pro keeps the longer proof trail over time.';
 
   /// Compact Record explainer — short step labels only.
   static const compactStep1Title = 'Record';

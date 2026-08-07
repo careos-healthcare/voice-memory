@@ -4,9 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/config/app_config.dart';
 
 /// Files that may mention the legacy application id for store SKU docs only.
-const _legacyIdAllowlist = {
-  'docs/REVENUECAT_RELEASE_CHECKLIST.md',
-};
+const _legacyIdAllowlist = {'docs/REVENUECAT_RELEASE_CHECKLIST.md'};
 
 const _activeConfigPaths = [
   'lib/config/app_config.dart',
@@ -57,9 +55,13 @@ void main() {
 
   group('iOS release identity', () {
     test('Runner PRODUCT_BUNDLE_IDENTIFIER is canonical', () {
-      final pbxproj =
-          File('ios/Runner.xcodeproj/project.pbxproj').readAsStringSync();
-      expect(pbxproj, contains('PRODUCT_BUNDLE_IDENTIFIER = $_canonicalBundleId;'));
+      final pbxproj = File(
+        'ios/Runner.xcodeproj/project.pbxproj',
+      ).readAsStringSync();
+      expect(
+        pbxproj,
+        contains('PRODUCT_BUNDLE_IDENTIFIER = $_canonicalBundleId;'),
+      );
       expect(
         pbxproj,
         contains(
@@ -108,8 +110,9 @@ void main() {
 
     test('release checklists document canonical ids', () {
       final ios = File('docs/IOS_RELEASE_CHECKLIST.md').readAsStringSync();
-      final android =
-          File('docs/ANDROID_RELEASE_CHECKLIST.md').readAsStringSync();
+      final android = File(
+        'docs/ANDROID_RELEASE_CHECKLIST.md',
+      ).readAsStringSync();
       expect(ios, contains(_canonicalBundleId));
       expect(ios, contains('archiveme://'));
       expect(android, contains(_canonicalBundleId));

@@ -72,19 +72,19 @@ class PrivateReportSheet extends StatelessWidget {
     );
   }
 
-  bool get _isFullExport => PrivateArchiveReportGates.showFullExport(isPro: isPro);
+  bool get _isFullExport =>
+      PrivateArchiveReportGates.showFullExport(isPro: isPro);
 
   String get _exportText => report.visiblePlainText(
-        isPro: _isFullExport,
-        previewSectionCount: report.previewSectionCount,
-      );
+    isPro: _isFullExport,
+    previewSectionCount: report.previewSectionCount,
+  );
 
   @override
   Widget build(BuildContext context) {
-    final bodyStyle = ArchiveMobileTypography.explanationBody(context).copyWith(
-      color: AppColors.textPrimary,
-      height: 1.45,
-    );
+    final bodyStyle = ArchiveMobileTypography.explanationBody(
+      context,
+    ).copyWith(color: AppColors.textPrimary, height: 1.45);
     final fallbackStyle = bodyStyle.copyWith(
       color: AppColors.textSecondary,
       fontStyle: FontStyle.italic,
@@ -134,9 +134,9 @@ class PrivateReportSheet extends StatelessWidget {
                 Text(
                   PrivateArchiveReportCopy.previewTitle,
                   key: const Key('private_report_sheet_preview_title'),
-                  style: ArchiveMobileTypography.listTitle(context).copyWith(
-                    fontSize: 16,
-                  ),
+                  style: ArchiveMobileTypography.listTitle(
+                    context,
+                  ).copyWith(fontSize: 16),
                 ),
                 const SizedBox(height: AppSpacing.xs),
                 Text(
@@ -215,10 +215,7 @@ class PrivateReportSheet extends StatelessWidget {
     );
     if (!context.mounted) return;
     if (outcome == ArchiveShareOutcome.copied) {
-      ArchiveShareActions.showFeedback(
-        context,
-        PrivateReportCopy.copySuccess,
-      );
+      ArchiveShareActions.showFeedback(context, PrivateReportCopy.copySuccess);
     }
   }
 

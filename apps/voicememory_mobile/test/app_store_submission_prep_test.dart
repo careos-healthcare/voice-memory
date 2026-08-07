@@ -70,10 +70,7 @@ void main() {
     test('reviewer notes cover Type instead, Sample Archive, and privacy', () {
       final notes = AppStoreSubmissionCopy.reviewerNotes;
       _expectNoBannedCopy(notes);
-      expect(
-        notes,
-        contains(AppStoreSubmissionCopy.reviewerNoteTypeInstead),
-      );
+      expect(notes, contains(AppStoreSubmissionCopy.reviewerNoteTypeInstead));
       expect(notes, contains(AppStoreSubmissionCopy.reviewerNoteSampleArchive));
       expect(
         notes,
@@ -93,22 +90,28 @@ void main() {
       );
     });
 
-    test('reviewer notes block includes support URL and no fake purchase claims', () {
-      final block = AppStoreSubmissionCopy.buildReviewerNotesBlock();
-      expect(block, contains(AppConfig.supportUrl));
-      expect(block, contains('archiveme-support'));
-      expect(
-        block,
-        contains(AppStoreSubmissionCopy.reviewerNoteRevenueCatPaused),
-      );
-      for (final claim in _fakePurchaseClaims) {
-        expect(block.toLowerCase(), isNot(contains(claim)));
-      }
-    });
+    test(
+      'reviewer notes block includes support URL and no fake purchase claims',
+      () {
+        final block = AppStoreSubmissionCopy.buildReviewerNotesBlock();
+        expect(block, contains(AppConfig.supportUrl));
+        expect(block, contains('archiveme-support'));
+        expect(
+          block,
+          contains(AppStoreSubmissionCopy.reviewerNoteRevenueCatPaused),
+        );
+        for (final claim in _fakePurchaseClaims) {
+          expect(block.toLowerCase(), isNot(contains(claim)));
+        }
+      },
+    );
 
     test('demo path checklist references sample-safe paths', () {
       final checklist = AppStoreSubmissionCopy.buildDemoPathChecklist();
-      expect(checklist, contains(AppStoreSubmissionCopy.demoPathChecklistTitle));
+      expect(
+        checklist,
+        contains(AppStoreSubmissionCopy.demoPathChecklistTitle),
+      );
       expect(
         checklist,
         contains(AppStoreSubmissionCopy.demoPathChecklistOpenSampleArchive),
@@ -130,7 +133,10 @@ void main() {
 
     test('build number remains 0.2.0+46', () {
       final pubspec = File('pubspec.yaml').readAsStringSync();
-      expect(pubspec, contains('version: ${AppStoreSubmissionCopy.expectedVersionLine}'));
+      expect(
+        pubspec,
+        contains('version: ${AppStoreSubmissionCopy.expectedVersionLine}'),
+      );
       expect(AppStoreSubmissionCopy.expectedVersion, '0.2.0');
       expect(AppStoreSubmissionCopy.expectedBuildNumber, 48);
     });

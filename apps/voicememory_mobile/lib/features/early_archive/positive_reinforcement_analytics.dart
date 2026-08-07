@@ -9,7 +9,7 @@ abstract final class PositiveReinforcementAnalytics {
 
   @visibleForTesting
   static void Function(String event, Map<String, Object> properties)?
-      captureForTest;
+  captureForTest;
 
   static void seen({
     required String surface,
@@ -49,8 +49,7 @@ abstract final class PositiveReinforcementAnalytics {
       'surface': surface,
       'entry_count': entryCount,
       'helpful_pattern_seen': helpfulPatternSeen,
-      if (helpfulPatternRecorded != null)
-        'helpful_pattern_recorded': helpfulPatternRecorded,
+      'helpful_pattern_recorded': ?helpfulPatternRecorded,
     };
     captureForTest?.call(event, props);
     if (kDebugMode) {

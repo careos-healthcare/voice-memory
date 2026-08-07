@@ -8,19 +8,16 @@ import '../../theme/voicememory_cards.dart';
 
 /// Lightweight early-record guidance tracker — guidance only, no extra CTAs.
 class ThreeDayChallengeCard extends StatelessWidget {
-  const ThreeDayChallengeCard({
-    super.key,
-    required this.challenge,
-  });
+  const ThreeDayChallengeCard({super.key, required this.challenge});
 
   final ThreeDayChallengeState challenge;
 
   String get _dayKey => switch (challenge.day) {
-        ThreeDayChallengeDay.day1 => 'day_1',
-        ThreeDayChallengeDay.day2 => 'day_2',
-        ThreeDayChallengeDay.day3 => 'day_3',
-        ThreeDayChallengeDay.complete => 'complete',
-      };
+    ThreeDayChallengeDay.day1 => 'day_1',
+    ThreeDayChallengeDay.day2 => 'day_2',
+    ThreeDayChallengeDay.day3 => 'day_3',
+    ThreeDayChallengeDay.complete => 'complete',
+  };
 
   @override
   Widget build(BuildContext context) {
@@ -43,9 +40,9 @@ class ThreeDayChallengeCard extends StatelessWidget {
           Text(
             challenge.body,
             key: Key('three_day_challenge_body_$_dayKey'),
-            style: ArchiveMobileTypography.explanationBody(context).copyWith(
-              color: AppColors.textSecondary,
-            ),
+            style: ArchiveMobileTypography.explanationBody(
+              context,
+            ).copyWith(color: AppColors.textSecondary),
           ),
         ],
       ),

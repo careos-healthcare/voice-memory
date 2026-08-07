@@ -41,10 +41,7 @@ abstract class LegacyPatternCopyGuard {
   }
 
   static bool hasNaturalTrailingPhrase(String text) {
-    final lower = text
-        .trim()
-        .toLowerCase()
-        .replaceAll(RegExp(r'[.?!]+$'), '');
+    final lower = text.trim().toLowerCase().replaceAll(RegExp(r'[.?!]+$'), '');
     return naturalTrailingPhrases.any(lower.endsWith);
   }
 }

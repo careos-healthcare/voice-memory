@@ -6,25 +6,33 @@ import 'package:audio_session/audio_session.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:voicememory_mobile/api/api_client.dart';
+import 'package:voicememory_mobile/core/network/api_result.dart';
+import 'package:voicememory_mobile/core/network/network_cancel_token.dart';
+import 'package:voicememory_mobile/data/network/capture_api_client.dart';
+import 'package:voicememory_mobile/data/repositories/capture_repository.dart';
 import 'package:voicememory_mobile/features/live_audio/application/live_audio_focus_gateway.dart';
 import 'package:voicememory_mobile/features/live_audio/application/live_audio_session_coordinator.dart';
 import 'package:voicememory_mobile/features/live_audio/application/live_voice_capture_service.dart';
+import 'package:voicememory_mobile/features/live_audio/domain/models/offline_vault_manifest.dart';
+import 'package:voicememory_mobile/features/proof_admission/proof_admission_models.dart';
+import 'package:voicememory_mobile/models/attest_result.dart';
 import 'package:voicememory_mobile/features/live_audio/domain/models/live_audio_session_config.dart';
 import 'package:voicememory_mobile/features/live_audio/domain/services/live_pcm16_capture_source.dart';
 import 'package:voicememory_mobile/features/live_audio/infrastructure/native_audio_lifecycle_bridge.dart';
 import 'package:voicememory_mobile/features/live_audio/infrastructure/live_audio_session_api_client.dart';
 import 'package:voicememory_mobile/features/live_audio/infrastructure/live_audio_socket_connection.dart';
 import 'package:voicememory_mobile/features/live_audio/infrastructure/live_audio_websocket_client.dart';
-import 'package:voicememory_mobile/features/live_audio/infrastructure/live_pcm24_playback_engine.dart';
 import 'package:voicememory_mobile/features/live_audio/live_audio_constants.dart';
 import 'package:voicememory_mobile/features/live_audio/presentation/controllers/live_audio_session_controller.dart';
+import '../../helpers/silent_playback_service.dart';
 import 'package:voicememory_mobile/security/api_usage_guard.dart';
+import 'package:voicememory_mobile/features/proof_admission/remote_processing_consent_store.dart';
 import 'package:voicememory_mobile/services/capture_attest_service.dart';
 import 'package:voicememory_mobile/services/capture_pipeline_service.dart';
 import 'package:voicememory_mobile/storage/capture_token_cache.dart';
 import 'package:voicememory_mobile/storage/device_id.dart';
 import 'package:voicememory_mobile/storage/journal_store.dart';
+import 'package:voicememory_mobile/storage/mobile_prefs_store.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -32,9 +40,15 @@ void main() {
   group('LiveAudioFocusGateway', () {
     test('liveVoiceAudioSessionConfiguration uses voice chat routing', () {
       const config = LiveAudioFocusGateway.liveVoiceAudioSessionConfiguration;
-      expect(config.avAudioSessionCategory, AVAudioSessionCategory.playAndRecord);
+      expect(
+        config.avAudioSessionCategory,
+        AVAudioSessionCategory.playAndRecord,
+      );
       expect(config.avAudioSessionMode, AVAudioSessionMode.voiceChat);
-      expect(config.androidAudioAttributes?.usage, AndroidAudioUsage.voiceCommunication);
+      expect(
+        config.androidAudioAttributes?.usage,
+        AndroidAudioUsage.voiceCommunication,
+      );
       expect(
         config.androidAudioFocusGainType,
         AndroidAudioFocusGainType.gainTransientExclusive,
@@ -96,81 +110,94 @@ void main() {
 
       expect(gateway.deferredFocusResume, isFalse);
       expect(service.isPausedByAudioFocus, isFalse);
-      expect(session.setActiveTrueCalls, greaterThan(callsBeforeDeferredResume));
+      expect(
+        session.setActiveTrueCalls,
+        greaterThan(callsBeforeDeferredResume),
+      );
 
       await gateway.dispose();
       await service.dispose();
       await sinkController.close();
     });
 
-    test('interruption end reactivates focus before resuming capture', () async {
-      final interruptions = StreamController<AudioInterruptionEvent>();
-      final built = _buildCaptureService();
-      final service = built.service;
-      final sinkController = built.sinkController;
-      final session = _FakeAudioSession();
-      final gateway = LiveAudioFocusGateway(
-        captureService: service,
-        resolveSession: () async => session,
-        interruptionEventsForTest: interruptions.stream,
-        initialAppLifecycle: AppLifecycleState.resumed,
-      );
+    test(
+      'interruption end reactivates focus before resuming capture',
+      () async {
+        final interruptions = StreamController<AudioInterruptionEvent>();
+        final built = _buildCaptureService();
+        final service = built.service;
+        final sinkController = built.sinkController;
+        final session = _FakeAudioSession();
+        final gateway = LiveAudioFocusGateway(
+          captureService: service,
+          resolveSession: () async => session,
+          interruptionEventsForTest: interruptions.stream,
+          initialAppLifecycle: AppLifecycleState.resumed,
+        );
 
-      await gateway.initializeAndRequestFocus();
-      await _startConnected(service, sinkController);
+        await gateway.initializeAndRequestFocus();
+        await _startConnected(service, sinkController);
 
-      interruptions.add(
-        AudioInterruptionEvent(true, AudioInterruptionType.pause),
-      );
-      await Future<void>.delayed(Duration.zero);
-      expect(service.isPausedByAudioFocus, isTrue);
-      final callsBeforeInterruptionEnd = session.setActiveTrueCalls;
+        interruptions.add(
+          AudioInterruptionEvent(true, AudioInterruptionType.pause),
+        );
+        await Future<void>.delayed(Duration.zero);
+        expect(service.isPausedByAudioFocus, isTrue);
+        final callsBeforeInterruptionEnd = session.setActiveTrueCalls;
 
-      interruptions.add(
-        AudioInterruptionEvent(false, AudioInterruptionType.pause),
-      );
-      await Future<void>.delayed(Duration.zero);
+        interruptions.add(
+          AudioInterruptionEvent(false, AudioInterruptionType.pause),
+        );
+        await Future<void>.delayed(Duration.zero);
 
-      expect(session.setActiveTrueCalls, greaterThan(callsBeforeInterruptionEnd));
-      expect(service.isPausedByAudioFocus, isFalse);
+        expect(
+          session.setActiveTrueCalls,
+          greaterThan(callsBeforeInterruptionEnd),
+        );
+        expect(service.isPausedByAudioFocus, isFalse);
 
-      await gateway.dispose();
-      await service.dispose();
-      await interruptions.close();
-      await sinkController.close();
-    });
+        await gateway.dispose();
+        await service.dispose();
+        await interruptions.close();
+        await sinkController.close();
+      },
+    );
 
-    test('native lifecycle bridge is attached during focus initialization', () async {
-      final built = _buildCaptureService();
-      final service = built.service;
-      final sinkController = built.sinkController;
-      final session = _FakeAudioSession();
-      final bridge = NativeAudioLifecycleBridge(service);
-      final gateway = LiveAudioFocusGateway(
-        captureService: service,
-        resolveSession: () async => session,
-        interruptionEventsForTest: const Stream<AudioInterruptionEvent>.empty(),
-        nativeLifecycleBridge: bridge,
-        initialAppLifecycle: AppLifecycleState.resumed,
-      );
+    test(
+      'native lifecycle bridge is attached during focus initialization',
+      () async {
+        final built = _buildCaptureService();
+        final service = built.service;
+        final sinkController = built.sinkController;
+        final session = _FakeAudioSession();
+        final bridge = NativeAudioLifecycleBridge(service);
+        final gateway = LiveAudioFocusGateway(
+          captureService: service,
+          resolveSession: () async => session,
+          interruptionEventsForTest:
+              const Stream<AudioInterruptionEvent>.empty(),
+          nativeLifecycleBridge: bridge,
+          initialAppLifecycle: AppLifecycleState.resumed,
+        );
 
-      await gateway.initializeAndRequestFocus();
-      await _startConnected(service, sinkController);
+        await gateway.initializeAndRequestFocus();
+        await _startConnected(service, sinkController);
 
-      await bridge.handleNativeEvent(
-        const MethodCall('onAudioInterruptionBegan'),
-      );
-      expect(service.isPausedByAudioFocus, isTrue);
+        await bridge.handleNativeEvent(
+          const MethodCall('onAudioInterruptionBegan'),
+        );
+        expect(service.isPausedByAudioFocus, isTrue);
 
-      await bridge.handleNativeEvent(
-        const MethodCall('onAudioInterruptionEnded'),
-      );
-      expect(service.isPausedByAudioFocus, isFalse);
+        await bridge.handleNativeEvent(
+          const MethodCall('onAudioInterruptionEnded'),
+        );
+        expect(service.isPausedByAudioFocus, isFalse);
 
-      await gateway.dispose();
-      await service.dispose();
-      await sinkController.close();
-    });
+        await gateway.dispose();
+        await service.dispose();
+        await sinkController.close();
+      },
+    );
   });
 }
 
@@ -185,8 +212,10 @@ Future<void> _startConnected(
 }
 
 ({LiveVoiceCaptureService service, StreamController<dynamic> sinkController})
-    _buildCaptureService() {
-  ApiUsageGuard.resetForTest(replacement: ApiUsageGuard(maxAttemptsPerScope: 3));
+_buildCaptureService() {
+  ApiUsageGuard.resetForTest(
+    replacement: ApiUsageGuard(maxAttemptsPerScope: 3),
+  );
   final sinkController = StreamController<dynamic>();
   final journalFile = File(
     '${Directory.systemTemp.path}/live_focus_test_${DateTime.now().microsecondsSinceEpoch}.json',
@@ -194,12 +223,7 @@ Future<void> _startConnected(
 
   final coordinator = LiveAudioSessionCoordinator(
     sessionApi: _FakeSessionApi(),
-    attest: CaptureAttestService(
-      api: _FakeApi(),
-      deviceIds: _FakeDeviceIdStore(),
-      tokenCache: CaptureTokenCache()
-        ..setToken('capture-token', expiresInSeconds: 3600),
-    ),
+    attest: _attestForTest(),
     webSocketClient: LiveAudioWebSocketClient(
       connectionFactory: (_, {headers}) => _FakeSocket(sinkController),
     ),
@@ -211,7 +235,7 @@ Future<void> _startConnected(
     service: LiveVoiceCaptureService(
       controller: LiveAudioSessionController(coordinator),
       pipeline: _NoopPipeline(journalFile: journalFile),
-      playback: _SilentPlayback(),
+      playback: silentPlaybackService(),
     ),
     sinkController: sinkController,
   );
@@ -295,42 +319,87 @@ class _FakeSocket implements LiveAudioSocketConnection {
   Future<void> close([int? code, String? reason]) async {}
 }
 
-class _SilentPlayback extends LivePcm24PlaybackEngine {
-  @override
-  Future<void> prepare() async {}
-
-  @override
-  Future<void> stop() async {}
-
-  @override
-  Future<void> dispose() async {}
-}
-
 class _NoopPipeline extends CapturePipelineService {
   _NoopPipeline({required File journalFile})
-      : super(
-          api: _FakeApi(),
-          attest: CaptureAttestService(
-            api: _FakeApi(),
-            deviceIds: _FakeDeviceIdStore(),
-            tokenCache: CaptureTokenCache(),
-          ),
-          journalStore: JournalStore(file: journalFile),
-        );
+    : super(
+        captureRepository: CaptureRepository(
+          api: _FakeCaptureApi(),
+          requestScope: NetworkRequestScope(),
+        ),
+        attest: _attestForTest(),
+        journalStore: JournalStore(file: journalFile),
+        consentStore: RemoteProcessingConsentStore(_prefsFor(journalFile)),
+      );
 }
 
-class _FakeApi extends ApiClient {
-  _FakeApi() : super(baseUrl: 'http://test.invalid');
+class _FakeCaptureApi implements CaptureApiClient {
+  @override
+  Future<ApiResult<AttestResult>> postCaptureAttest(
+    String deviceId, {
+    NetworkCancelToken? cancelToken,
+  }) async {
+    return ApiSuccess(
+      AttestResult.capture(token: 'capture-token', expiresInSeconds: 3600),
+    );
+  }
 
   @override
-  Future<AttestResult> postCaptureAttest(String deviceId) async {
-    return AttestResult.capture(token: 'capture-token', expiresInSeconds: 3600);
+  Future<ApiResult<RawModelResponse>> postAnalyzeRaw({
+    required String transcript,
+    required String captureToken,
+    List<Map<String, dynamic>> priorEvidence = const [],
+    String? idempotencyKey,
+    NetworkCancelToken? cancelToken,
+  }) async {
+    throw UnimplementedError('postAnalyzeRaw');
   }
+
+  @override
+  Future<ApiResult<String>> postTranscribe({
+    required File audioFile,
+    required int durationSeconds,
+    required String captureToken,
+    String? idempotencyKey,
+    NetworkCancelToken? cancelToken,
+  }) async {
+    throw UnimplementedError('postTranscribe');
+  }
+
+  @override
+  Future<ApiResult<VaultRecoveryServerResult>> postVaultRecovery({
+    required File vaultFile,
+    required String sessionId,
+    required int durationSeconds,
+    required String captureToken,
+    required String idempotencyKey,
+    List<int>? recoverySecretKeyBytes,
+    NetworkCancelToken? cancelToken,
+  }) async {
+    throw UnimplementedError('postVaultRecovery');
+  }
+}
+
+CaptureAttestService _attestForTest() {
+  return CaptureAttestService(
+    captureRepository: CaptureRepository(
+      api: _FakeCaptureApi(),
+      requestScope: NetworkRequestScope(),
+    ),
+    deviceIds: _FakeDeviceIdStore(),
+    tokenCache: CaptureTokenCache()
+      ..setToken('capture-token', expiresInSeconds: 3600),
+  );
 }
 
 class _FakeDeviceIdStore extends DeviceIdStore {
   @override
-  Future<String> getOrCreate() async =>
-      '00000000-0000-4000-8000-000000000001';
+  Future<String> getOrCreate() async => '00000000-0000-4000-8000-000000000001';
 }
 
+MobilePrefsStore _prefsFor(File journalFile) {
+  final prefsFile = File('${journalFile.path}.prefs.json');
+  if (!prefsFile.existsSync()) {
+    prefsFile.writeAsStringSync('{}');
+  }
+  return MobilePrefsStore(file: prefsFile);
+}

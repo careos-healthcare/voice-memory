@@ -37,11 +37,8 @@ abstract final class EvidenceWeightingEngine {
     final hasOlderEntry = _hasOlderEntry(eligible, clock);
     final hasSofteningSignal =
         EarlyFirstSignalEngine.hasSofteningReturnEvidence(entries);
-    final hasQuietSignal = QuietSignalEngine.build(
-          entries: entries,
-          now: clock,
-        ) !=
-        null;
+    final hasQuietSignal =
+        QuietSignalEngine.build(entries: entries, now: clock) != null;
 
     final secondary = <EvidenceWeightState>[];
     final correction = CorrectionMemoryEngine.snapshotFor(
@@ -58,7 +55,8 @@ abstract final class EvidenceWeightingEngine {
     if (hasRecentEntry && primary != EvidenceWeightState.fresh) {
       secondary.add(EvidenceWeightState.fresh);
     }
-    if (hasQuietSignal || (hasOlderEntry && !hasRecentEntry && hasConfirmedRepeat)) {
+    if (hasQuietSignal ||
+        (hasOlderEntry && !hasRecentEntry && hasConfirmedRepeat)) {
       _addSecondary(secondary, EvidenceWeightState.fading);
     }
     if (hasSofteningSignal) {
@@ -141,17 +139,16 @@ abstract final class EvidenceWeightingEngine {
     required bool firstProofPayoffVisible,
     required bool whatChangedQuestionActive,
     required bool patternReviewInboxHasActiveItems,
-  }) =>
-      shouldShow(
-        result: result,
-        isZeroEntryState: isZeroEntryState,
-        isFirstRecordingState: isFirstRecordingState,
-        isDegradedTranscriptState: isDegradedTranscriptState,
-        isPostSaveDegradedState: isPostSaveDegradedState,
-        firstProofPayoffVisible: firstProofPayoffVisible,
-        whatChangedQuestionActive: whatChangedQuestionActive,
-        patternReviewInboxHasActiveItems: patternReviewInboxHasActiveItems,
-      );
+  }) => shouldShow(
+    result: result,
+    isZeroEntryState: isZeroEntryState,
+    isFirstRecordingState: isFirstRecordingState,
+    isDegradedTranscriptState: isDegradedTranscriptState,
+    isPostSaveDegradedState: isPostSaveDegradedState,
+    firstProofPayoffVisible: firstProofPayoffVisible,
+    whatChangedQuestionActive: whatChangedQuestionActive,
+    patternReviewInboxHasActiveItems: patternReviewInboxHasActiveItems,
+  );
 
   static bool shouldShowOnPatterns({
     required EvidenceWeightingResult? result,
@@ -162,26 +159,24 @@ abstract final class EvidenceWeightingEngine {
     required bool firstProofPayoffVisible,
     required bool whatChangedQuestionActive,
     required bool patternReviewInboxHasActiveItems,
-  }) =>
-      shouldShow(
-        result: result,
-        isZeroEntryState: isZeroEntryState,
-        isFirstRecordingState: isFirstRecordingState,
-        isDegradedTranscriptState: isDegradedTranscriptState,
-        isPostSaveDegradedState: isPostSaveDegradedState,
-        firstProofPayoffVisible: firstProofPayoffVisible,
-        whatChangedQuestionActive: whatChangedQuestionActive,
-        patternReviewInboxHasActiveItems: patternReviewInboxHasActiveItems,
-      );
+  }) => shouldShow(
+    result: result,
+    isZeroEntryState: isZeroEntryState,
+    isFirstRecordingState: isFirstRecordingState,
+    isDegradedTranscriptState: isDegradedTranscriptState,
+    isPostSaveDegradedState: isPostSaveDegradedState,
+    firstProofPayoffVisible: firstProofPayoffVisible,
+    whatChangedQuestionActive: whatChangedQuestionActive,
+    patternReviewInboxHasActiveItems: patternReviewInboxHasActiveItems,
+  );
 
   static bool patternReviewInboxHasActiveItems({
     required List<JournalEntry> entries,
     List<RepeatReturnCheckRecord> returnChecks = const [],
-  }) =>
-      ProEvidenceValueEngine.patternReviewInboxHasActiveItems(
-        entries: entries,
-        returnChecks: returnChecks,
-      );
+  }) => ProEvidenceValueEngine.patternReviewInboxHasActiveItems(
+    entries: entries,
+    returnChecks: returnChecks,
+  );
 
   static EvidenceWeightState _resolvePrimaryState({
     required bool hasConfirmedRepeat,

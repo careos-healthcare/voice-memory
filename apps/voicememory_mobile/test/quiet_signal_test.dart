@@ -51,11 +51,7 @@ class _MemoryPrefs extends MobilePrefsStore {
   }
 }
 
-JournalEntry _entry(
-  String id,
-  String transcript, {
-  DateTime? createdAt,
-}) =>
+JournalEntry _entry(String id, String transcript, {DateTime? createdAt}) =>
     JournalEntry(
       id: id,
       createdAt: createdAt ?? DateTime(2026, 6, 12, 10),
@@ -84,18 +80,18 @@ void _seedWatch({required String createdDateKey}) {
 }
 
 List<JournalEntry> _baseWithTwoUnrelatedAfterWatch() => [
-      _entry('1', _strongRepeat, createdAt: DateTime(2026, 6, 10, 12)),
-      _entry(
-        '2',
-        'A quiet lunch with a friend — nothing about work.',
-        createdAt: DateTime(2026, 6, 13, 12),
-      ),
-      _entry(
-        '3',
-        'Went for a walk and noticed the weather.',
-        createdAt: DateTime(2026, 6, 14, 12),
-      ),
-    ];
+  _entry('1', _strongRepeat, createdAt: DateTime(2026, 6, 10, 12)),
+  _entry(
+    '2',
+    'A quiet lunch with a friend — nothing about work.',
+    createdAt: DateTime(2026, 6, 13, 12),
+  ),
+  _entry(
+    '3',
+    'Went for a walk and noticed the weather.',
+    createdAt: DateTime(2026, 6, 14, 12),
+  ),
+];
 
 void main() {
   setUp(() {
@@ -219,7 +215,10 @@ void main() {
         ),
       ];
       expect(
-        QuietSignalEngine.build(entries: entries, now: DateTime(2026, 6, 15, 12)),
+        QuietSignalEngine.build(
+          entries: entries,
+          now: DateTime(2026, 6, 15, 12),
+        ),
         isNull,
       );
     });
@@ -236,7 +235,10 @@ void main() {
         isTrue,
       );
       expect(
-        QuietSignalEngine.build(entries: entries, now: DateTime(2026, 6, 15, 12)),
+        QuietSignalEngine.build(
+          entries: entries,
+          now: DateTime(2026, 6, 15, 12),
+        ),
         isNull,
       );
     });
@@ -253,7 +255,10 @@ void main() {
         isTrue,
       );
       expect(
-        QuietSignalEngine.build(entries: entries, now: DateTime(2026, 6, 15, 12)),
+        QuietSignalEngine.build(
+          entries: entries,
+          now: DateTime(2026, 6, 15, 12),
+        ),
         isNull,
       );
     });
@@ -394,7 +399,8 @@ void main() {
       );
       expect(report, isNotNull);
       final watchSection = report!.sections.firstWhere(
-        (section) => section.heading == PrivateReportCopy.whatToWatchNextHeading,
+        (section) =>
+            section.heading == PrivateReportCopy.whatToWatchNextHeading,
       );
       expect(watchSection.lines, contains(QuietSignalCopy.privateReportLine));
       final blob = watchSection.lines.join(' ').toLowerCase();
@@ -403,7 +409,9 @@ void main() {
   });
 
   group('QuietSignalRecordCard', () {
-    testWidgets('keep watching dismisses active watch quiet state', (tester) async {
+    testWidgets('keep watching dismisses active watch quiet state', (
+      tester,
+    ) async {
       final prefs = _MemoryPrefs();
       _seedWatch(createdDateKey: '2026-06-10');
       final signal = QuietSignalEngine.build(
@@ -432,8 +440,8 @@ void main() {
 
     testWidgets('analytics metadata only', (tester) async {
       final captured = <({String event, Map<String, Object> properties})>[];
-      QuietSignalAnalytics.captureForTest =
-          (event, properties) => captured.add((event: event, properties: properties));
+      QuietSignalAnalytics.captureForTest = (event, properties) =>
+          captured.add((event: event, properties: properties));
       _seedWatch(createdDateKey: '2026-06-10');
       final signal = QuietSignalEngine.build(
         entries: _baseWithTwoUnrelatedAfterWatch(),
@@ -443,16 +451,15 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: QuietSignalRecordCard.test(
-              signal: signal,
-              entryCount: 3,
-            ),
+            body: QuietSignalRecordCard.test(signal: signal, entryCount: 3),
           ),
         ),
       );
       await tester.pump();
 
-      final seen = captured.where((e) => e.event == QuietSignalAnalytics.seenEvent);
+      final seen = captured.where(
+        (e) => e.event == QuietSignalAnalytics.seenEvent,
+      );
       expect(seen, isNotEmpty);
       expect(seen.first.properties['days_since_seen'], isA<int>());
       final blob = seen.first.properties.entries
@@ -465,8 +472,8 @@ void main() {
   group('QuietSignalCard', () {
     testWidgets('view pattern details fires analytics', (tester) async {
       final captured = <({String event, Map<String, Object> properties})>[];
-      QuietSignalAnalytics.captureForTest =
-          (event, properties) => captured.add((event: event, properties: properties));
+      QuietSignalAnalytics.captureForTest = (event, properties) =>
+          captured.add((event: event, properties: properties));
       _seedWatch(createdDateKey: '2026-06-10');
       final signal = QuietSignalEngine.build(
         entries: _baseWithTwoUnrelatedAfterWatch(),
@@ -489,7 +496,9 @@ void main() {
       );
       await tester.pump();
 
-      await tester.tap(find.byKey(const Key('quiet_signal_card_cta_view_details')));
+      await tester.tap(
+        find.byKey(const Key('quiet_signal_card_cta_view_details')),
+      );
       await tester.pump();
       expect(opened, isTrue);
       final tapped = captured
@@ -500,7 +509,9 @@ void main() {
   });
 
   group('Pattern Detail sheet', () {
-    testWidgets('shows Last seen section when quiet signal exists', (tester) async {
+    testWidgets('shows Last seen section when quiet signal exists', (
+      tester,
+    ) async {
       _seedWatch(createdDateKey: '2026-06-10');
       final entries = [
         _entry('1', _strongRepeat, createdAt: DateTime(2026, 6, 8, 12)),
@@ -549,7 +560,10 @@ void main() {
       );
       await tester.pump();
 
-      expect(find.byKey(const Key('pattern_detail_quiet_signal_heading')), findsOneWidget);
+      expect(
+        find.byKey(const Key('pattern_detail_quiet_signal_heading')),
+        findsOneWidget,
+      );
       expect(find.text(QuietSignalCopy.patternDetailHeading), findsOneWidget);
       expect(find.text(QuietSignalCopy.patternDetailBody), findsOneWidget);
     });
@@ -573,16 +587,16 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: WeeklyArchiveReviewSheet(
-              review: review,
-              quietSignal: signal,
-            ),
+            body: WeeklyArchiveReviewSheet(review: review, quietSignal: signal),
           ),
         ),
       );
       await tester.pump();
 
-      expect(find.byKey(const Key('weekly_archive_review_quiet_signal_label')), findsOneWidget);
+      expect(
+        find.byKey(const Key('weekly_archive_review_quiet_signal_label')),
+        findsOneWidget,
+      );
       expect(find.text(QuietSignalCopy.weeklyReviewHeading), findsOneWidget);
       expect(find.text(QuietSignalCopy.weeklyReviewBody), findsOneWidget);
     });
@@ -591,7 +605,9 @@ void main() {
   group('Analytics safety', () {
     test('keep_watching is allowed action_type', () {
       expect(
-        ActivationFunnelAnalytics.allowedActionTypeValues.contains('keep_watching'),
+        ActivationFunnelAnalytics.allowedActionTypeValues.contains(
+          'keep_watching',
+        ),
         isTrue,
       );
     });

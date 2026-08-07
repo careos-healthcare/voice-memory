@@ -7,10 +7,7 @@ import '../../theme/app_spacing.dart';
 
 /// Debug-only summary of which cards won each priority slot.
 class SurfacePriorityDebugBadge extends StatelessWidget {
-  const SurfacePriorityDebugBadge({
-    super.key,
-    required this.result,
-  });
+  const SurfacePriorityDebugBadge({super.key, required this.result});
 
   final SurfacePriorityResult result;
 
@@ -47,9 +44,9 @@ class SurfacePriorityDebugBadge extends StatelessWidget {
       ),
       child: Text(
         lines.join(' · '),
-        style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              color: AppColors.textSecondary,
-            ),
+        style: Theme.of(
+          context,
+        ).textTheme.labelSmall?.copyWith(color: AppColors.textSecondary),
       ),
     );
   }

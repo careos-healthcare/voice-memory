@@ -75,13 +75,14 @@ abstract final class HelpfulActionAppearedEngine {
     required List<RepeatReturnCheckRecord> returnChecks,
     bool helpfulActionCapturedMilestone = false,
   }) {
-    if (!EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(entries)) return null;
+    if (!EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(entries))
+      return null;
 
     final eligible = ArchiveEvidenceGuard.eligibleEntries(entries);
     if (eligible.length < minEntryCount) return null;
 
-    final improvementSignal = _hasImprovementSignal(returnChecks) ||
-        helpfulActionCapturedMilestone;
+    final improvementSignal =
+        _hasImprovementSignal(returnChecks) || helpfulActionCapturedMilestone;
     final laterEntries = eligible.length > foundationEntryCount
         ? eligible.sublist(foundationEntryCount)
         : <JournalEntry>[eligible.last];
@@ -114,17 +115,16 @@ abstract final class HelpfulActionAppearedEngine {
     required String body,
     required bool usesActionPhrase,
     String? actionPhrase,
-  }) =>
-      HelpfulActionAppeared(
-        title: HelpfulActionAppearedCopy.title,
-        body: body,
-        evidenceLabel: HelpfulActionAppearedCopy.evidenceLabel,
-        footer: HelpfulActionAppearedCopy.footer,
-        chipLabel: HelpfulActionAppearedCopy.chipLabel,
-        usesActionPhrase: usesActionPhrase,
-        hasConfirmedRepeat: true,
-        actionPhrase: actionPhrase,
-      );
+  }) => HelpfulActionAppeared(
+    title: HelpfulActionAppearedCopy.title,
+    body: body,
+    evidenceLabel: HelpfulActionAppearedCopy.evidenceLabel,
+    footer: HelpfulActionAppearedCopy.footer,
+    chipLabel: HelpfulActionAppearedCopy.chipLabel,
+    usesActionPhrase: usesActionPhrase,
+    hasConfirmedRepeat: true,
+    actionPhrase: actionPhrase,
+  );
 
   static bool _hasImprovementSignal(List<RepeatReturnCheckRecord> records) {
     final latest = RepeatReturnCheckTrendEngine.latestChoice(records);

@@ -71,26 +71,20 @@ abstract final class HelpReviewerGuideCopy {
   static const helpBetaTesterTitle = TesterMissionCopy.title;
   static const helpBetaTesterMission = TesterMissionCopy.mission;
   static List<String> get helpBetaTesterBullets => [
-        ...TesterMissionCopy.steps,
-        TesterMissionCopy.feedbackQuestion,
-      ];
+    ...TesterMissionCopy.steps,
+    TesterMissionCopy.feedbackQuestion,
+  ];
 
   static String get typeInsteadLabel => VisibleArchiveProofCopy.typeInsteadCta;
 
   static List<HelpReviewerGuideSection> get sections => [
     HelpReviewerGuideSection(
       title: sectionWhatTitle,
-      bullets: const [
-        sectionWhatBulletOne,
-        sectionWhatBulletTwo,
-      ],
+      bullets: const [sectionWhatBulletOne, sectionWhatBulletTwo],
     ),
     HelpReviewerGuideSection(
       title: sectionTypeInsteadTitle,
-      bullets: [
-        sectionTypeInsteadBulletOne,
-        sectionTypeInsteadBulletTwo,
-      ],
+      bullets: [sectionTypeInsteadBulletOne, sectionTypeInsteadBulletTwo],
     ),
     HelpReviewerGuideSection(
       title: sectionQuickValueTitle,
@@ -146,10 +140,7 @@ abstract final class HelpReviewerGuideCopy {
 }
 
 class HelpReviewerGuideSection {
-  const HelpReviewerGuideSection({
-    required this.title,
-    required this.bullets,
-  });
+  const HelpReviewerGuideSection({required this.title, required this.bullets});
 
   final String title;
   final List<String> bullets;

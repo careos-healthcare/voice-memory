@@ -3,19 +3,16 @@ import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/features/archive_proof/proof_surface_advice_guard.dart';
 import 'package:voicememory_mobile/features/archive_timeline_spine/archive_timeline_spine_engine.dart';
-import 'package:voicememory_mobile/features/archive_timeline_spine/archive_timeline_spine_model.dart';
 import 'package:voicememory_mobile/features/beta/archive_beta_mission_gate.dart';
 import 'package:voicememory_mobile/features/beta_proof_feedback/beta_proof_feedback_model.dart';
 import 'package:voicememory_mobile/features/beta_proof_feedback/beta_proof_feedback_store.dart';
 import 'package:voicememory_mobile/features/beta_proof_lift/beta_proof_lift_engine.dart';
 import 'package:voicememory_mobile/features/beta_proof_lift/beta_proof_lift_model.dart';
-import 'package:voicememory_mobile/features/correction_memory/correction_memory_copy.dart';
 import 'package:voicememory_mobile/features/correction_memory/correction_memory_engine.dart';
 import 'package:voicememory_mobile/features/correction_memory/correction_memory_store.dart';
 import 'package:voicememory_mobile/features/current_relevance/current_relevance_model.dart';
 import 'package:voicememory_mobile/features/current_relevance/current_relevance_store.dart';
 import 'package:voicememory_mobile/features/early_archive/early_archive_insight_quality_engine.dart';
-import 'package:voicememory_mobile/features/early_archive/early_first_signal_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/early_first_signal_engine.dart';
 import 'package:voicememory_mobile/features/evidence_anchors/evidence_anchor_analytics.dart';
 import 'package:voicememory_mobile/features/evidence_anchors/evidence_anchor_copy.dart';
@@ -31,10 +28,10 @@ import 'package:voicememory_mobile/models/sync_status.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
 
 import 'package:voicememory_mobile/storage/mobile_prefs_store.dart';
+import 'support/test_storage_sandbox.dart';
 
 class _MemoryPrefs extends MobilePrefsStore {
-  _MemoryPrefs()
-      : super(file: File('test/tmp/evidence_anchor/unused.json'));
+  _MemoryPrefs() : super(file: File('test/tmp/evidence_anchor/unused.json'));
 
   final Map<String, Map<String, dynamic>> maps = {};
 
@@ -53,11 +50,7 @@ const _strongRepeat =
     'I had no capacity but I said yes again to the extra meeting today.';
 final _now = DateTime(2026, 6, 12, 12);
 
-JournalEntry _entry(
-  String id,
-  String transcript, {
-  DateTime? createdAt,
-}) =>
+JournalEntry _entry(String id, String transcript, {DateTime? createdAt}) =>
     JournalEntry(
       id: id,
       createdAt: createdAt ?? _now,
@@ -97,27 +90,26 @@ List<JournalEntry> _threeRelatedEntries({DateTime? anchor}) {
 }
 
 List<JournalEntry> _softeningEntries() => [
-      ..._threeRelatedEntries(anchor: _now.subtract(const Duration(days: 4))),
-      _entry(
-        '4',
-        'Same capacity pressure came back but it felt easier to stop this time.',
-        createdAt: _now.subtract(const Duration(days: 1)),
-      ),
-    ];
+  ..._threeRelatedEntries(anchor: _now.subtract(const Duration(days: 4))),
+  _entry(
+    '4',
+    'Same capacity pressure came back but it felt easier to stop this time.',
+    createdAt: _now.subtract(const Duration(days: 1)),
+  ),
+];
 
 EvidenceAnchorExtractionResult _extract(
   List<JournalEntry> entries, {
   bool beliefSurfaceVisible = true,
   List<String> beliefEvidencePhrases = const [],
   DateTime? now,
-}) =>
-    EvidenceAnchorEngine.build(
-      entries: entries,
-      beliefSurfaceVisible: beliefSurfaceVisible,
-      source: 'test',
-      beliefEvidencePhrases: beliefEvidencePhrases,
-      now: now ?? _now,
-    );
+}) => EvidenceAnchorEngine.build(
+  entries: entries,
+  beliefSurfaceVisible: beliefSurfaceVisible,
+  source: 'test',
+  beliefEvidencePhrases: beliefEvidencePhrases,
+  now: now ?? _now,
+);
 
 Future<void> _saveCorrection(
   List<JournalEntry> entries,
@@ -133,17 +125,20 @@ Future<void> _saveCorrection(
     proofKey: proofKey,
     answer: answer,
     entryCountAtCapture: entries.length,
-    hasConfirmedRepeat:
-        EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(entries),
+    hasConfirmedRepeat: EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(
+      entries,
+    ),
     source: 'test',
   );
 }
 
 void main() {
+  late TestStorageSandbox sandbox;
   final analyticsEvents = <({String event, Map<String, Object> props})>[];
   late _MemoryPrefs prefs;
 
   setUp(() async {
+    sandbox = TestStorageSandbox.create();
     prefs = _MemoryPrefs();
     ArchiveBetaMissionGate.enabledOverride = true;
     EvidenceAnchorAnalytics.resetForTest();
@@ -151,10 +146,8 @@ void main() {
       analyticsEvents.add((event: event, props: props));
     };
     await AppServices.resetForTest(
-      journalPath:
-          'test/tmp/evidence_anchor/${DateTime.now().microsecondsSinceEpoch}_journal.json',
-      prefsPath:
-          'test/tmp/evidence_anchor/${DateTime.now().microsecondsSinceEpoch}_prefs.json',
+      journalPath: sandbox.journalPath,
+      prefsPath: sandbox.prefsPath,
       skipRevenueCat: true,
     );
     await CurrentRelevanceStore.resetForTest();
@@ -163,6 +156,7 @@ void main() {
     analyticsEvents.clear();
   });
 
+  tearDown(() => sandbox.dispose());
   tearDown(() async {
     EvidenceAnchorAnalytics.resetForTest();
     ArchiveBetaMissionGate.resetForTest();
@@ -176,7 +170,9 @@ void main() {
       final result = _extract(_threeRelatedEntries());
       expect(result.hasSafeAnchor, isTrue);
       expect(
-        result.anchors.any((anchor) => anchor.type == EvidenceAnchorType.repeat),
+        result.anchors.any(
+          (anchor) => anchor.type == EvidenceAnchorType.repeat,
+        ),
         isTrue,
       );
       for (final summary in result.safeSummaries) {
@@ -199,8 +195,9 @@ void main() {
       final result = _extract(_softeningEntries());
       expect(result.shouldExtract, isTrue);
       expect(
-        EarlyArchiveInsightQualityEngine.build(entries: _softeningEntries())
-            .softeningSummary,
+        EarlyArchiveInsightQualityEngine.build(
+          entries: _softeningEntries(),
+        ).softeningSummary,
         isNotNull,
       );
     });
@@ -224,7 +221,9 @@ void main() {
       );
       expect(result.hasSafeAnchor, isTrue);
       expect(
-        result.anchors.any((anchor) => anchor.type == EvidenceAnchorType.helped),
+        result.anchors.any(
+          (anchor) => anchor.type == EvidenceAnchorType.helped,
+        ),
         isTrue,
       );
     });
@@ -232,9 +231,7 @@ void main() {
     test('extracts current anchor from present-day relevance', () {
       final result = _extract(
         _threeRelatedEntries(),
-        beliefEvidencePhrases: const [
-          _behaviorAnchorPhrase,
-        ],
+        beliefEvidencePhrases: const [_behaviorAnchorPhrase],
       );
       expect(result.hasSafeAnchor, isTrue);
       expect(result.safeSummaries, isNotEmpty);
@@ -254,7 +251,11 @@ void main() {
     test('extracts fresh return after correction', () async {
       final now = _now;
       final entries = [
-        _entry('1', _strongRepeat, createdAt: now.subtract(const Duration(days: 2))),
+        _entry(
+          '1',
+          _strongRepeat,
+          createdAt: now.subtract(const Duration(days: 2)),
+        ),
         _entry(
           '2',
           'Same thing — said yes when I had no capacity for one more thing.',
@@ -278,28 +279,29 @@ void main() {
       final result = _extract(withReturn, now: now);
       expect(result.shouldExtract, isTrue);
       expect(
-        CorrectionMemoryEngine.snapshotFor(entries: withReturn, now: now)?.state,
+        CorrectionMemoryEngine.snapshotFor(
+          entries: withReturn,
+          now: now,
+        )?.state,
         isNotNull,
       );
     });
 
     test('prefers recent anchors over older anchors', () {
       final recent = _extract(_threeRelatedEntries());
-      final stale = _extract(
-        [
-          _entry('1', _strongRepeat, createdAt: DateTime(2026, 5, 1, 12)),
-          _entry(
-            '2',
-            'Same thing — said yes when I had no capacity for one more thing.',
-            createdAt: DateTime(2026, 5, 3, 12),
-          ),
-          _entry(
-            '3',
-            'I said yes again even though I had no capacity for one more ask.',
-            createdAt: DateTime(2026, 5, 5, 12),
-          ),
-        ],
-      );
+      final stale = _extract([
+        _entry('1', _strongRepeat, createdAt: DateTime(2026, 5, 1, 12)),
+        _entry(
+          '2',
+          'Same thing — said yes when I had no capacity for one more thing.',
+          createdAt: DateTime(2026, 5, 3, 12),
+        ),
+        _entry(
+          '3',
+          'I said yes again even though I had no capacity for one more ask.',
+          createdAt: DateTime(2026, 5, 5, 12),
+        ),
+      ]);
       expect(recent.hasRecentAnchor, isTrue);
       expect(stale.hasRecentAnchor, isFalse);
       expect(
@@ -344,7 +346,10 @@ void main() {
       );
       expect(result.usesFallback, isTrue);
       expect(result.hasSafeAnchor, isFalse);
-      expect(result.anchors.single.safeSummary, EvidenceAnchorCopy.fallbackSummary);
+      expect(
+        result.anchors.single.safeSummary,
+        EvidenceAnchorCopy.fallbackSummary,
+      );
     });
 
     test('TimelineProofMoment uses anchors', () {
@@ -405,10 +410,7 @@ void main() {
       expect(spine, isNotNull);
       expect(spine!.hasSafeAnchor, isTrue);
       expect(spine.evidenceAnchors, isNotEmpty);
-      expect(
-        spine.rows.any((row) => row.anchorType != null),
-        isTrue,
-      );
+      expect(spine.rows.any((row) => row.anchorType != null), isTrue);
     });
 
     test('ProofSpecificity delegates to evidence anchors', () {
@@ -427,15 +429,18 @@ void main() {
       );
       expect(analyticsEvents, isNotEmpty);
       final event = analyticsEvents.last;
-      expect(event.props.keys, containsAll([
-        'entry_count',
-        'source',
-        'anchor_count',
-        'anchor_types',
-        'has_recent_anchor',
-        'has_correction_anchor',
-        'has_change_anchor',
-      ]));
+      expect(
+        event.props.keys,
+        containsAll([
+          'entry_count',
+          'source',
+          'anchor_count',
+          'anchor_types',
+          'has_recent_anchor',
+          'has_correction_anchor',
+          'has_change_anchor',
+        ]),
+      );
       expect(event.props.keys, isNot(contains('transcript')));
       expect(event.props.keys, isNot(contains('proof_key')));
     });
@@ -452,7 +457,11 @@ void main() {
       }
       final result = _extract(_threeRelatedEntries());
       for (final summary in result.safeSummaries) {
-        expect(ProofSurfaceAdviceGuard.passes(summary), isTrue, reason: summary);
+        expect(
+          ProofSurfaceAdviceGuard.passes(summary),
+          isTrue,
+          reason: summary,
+        );
       }
     });
 
@@ -473,7 +482,9 @@ void main() {
         ],
       );
       expect(
-        result.anchors.any((anchor) => anchor.type == EvidenceAnchorType.avoided),
+        result.anchors.any(
+          (anchor) => anchor.type == EvidenceAnchorType.avoided,
+        ),
         isTrue,
       );
     });

@@ -36,29 +36,30 @@ abstract final class BetaValidationDecisionMatrixCopy {
           'Widen beta and validate pricing',
       };
 
-  static String bodyFor(BetaValidationDecisionOutcome outcome) =>
-      switch (outcome) {
-        BetaValidationDecisionOutcome.insufficientData =>
-          'Wait for at least 20 testers before deciding the next product fix.',
-        BetaValidationDecisionOutcome.protectProof =>
-          'Useful proof is below target. Do not touch Pro or paywall. '
-              'Make proof feel more specific, careful, and real.',
-        BetaValidationDecisionOutcome.fixOpeningScreenOnly =>
-          'First-session saving is below target. Do not touch proof or Pro. '
-              'Make the first save clearer and easier.',
-        BetaValidationDecisionOutcome.fixProPlacement =>
-          'Proof and first-session capture passed, but too few testers saw Pro. '
-              'Move the Pro moment closer to useful proof.',
-        BetaValidationDecisionOutcome.fixProExplanation =>
-          'Testers are seeing Pro, but not enough understand it. '
-              'Explain the longer proof trail more clearly.',
-        BetaValidationDecisionOutcome.fixPaywallValue =>
-          'The core path is working, but no one tapped the paywall CTA. '
-              'Make the paid value more concrete before changing pricing.',
-        BetaValidationDecisionOutcome.widenBetaAndValidatePricing =>
-          'The main beta signals passed. Do not build more features. '
-              'Invite more testers and start pricing/purchase validation.',
-      };
+  static String bodyFor(
+    BetaValidationDecisionOutcome outcome,
+  ) => switch (outcome) {
+    BetaValidationDecisionOutcome.insufficientData =>
+      'Wait for at least 20 testers before deciding the next product fix.',
+    BetaValidationDecisionOutcome.protectProof =>
+      'Useful proof is below target. Do not touch Pro or paywall. '
+          'Make proof feel more specific, careful, and real.',
+    BetaValidationDecisionOutcome.fixOpeningScreenOnly =>
+      'First-session saving is below target. Do not touch proof or Pro. '
+          'Make the first save clearer and easier.',
+    BetaValidationDecisionOutcome.fixProPlacement =>
+      'Proof and first-session capture passed, but too few testers saw Pro. '
+          'Move the Pro moment closer to useful proof.',
+    BetaValidationDecisionOutcome.fixProExplanation =>
+      'Testers are seeing Pro, but not enough understand it. '
+          'Explain the longer proof trail more clearly.',
+    BetaValidationDecisionOutcome.fixPaywallValue =>
+      'The core path is working, but no one tapped the paywall CTA. '
+          'Make the paid value more concrete before changing pricing.',
+    BetaValidationDecisionOutcome.widenBetaAndValidatePricing =>
+      'The main beta signals passed. Do not build more features. '
+          'Invite more testers and start pricing/purchase validation.',
+  };
 
   static String ctaFor(BetaValidationDecisionOutcome outcome) =>
       switch (outcome) {
@@ -78,20 +79,14 @@ abstract final class BetaValidationDecisionMatrixCopy {
     required String label,
     required int actual,
     required int target,
-  }) =>
-      '$label: $actual/$target';
+  }) => '$label: $actual/$target';
 
   static String wouldPayMetricLine({
     required int? actual,
     required int target,
-  }) =>
-      actual == null
-          ? '$wouldPayLabel: not yet'
-          : metricLine(
-              label: wouldPayLabel,
-              actual: actual,
-              target: target,
-            );
+  }) => actual == null
+      ? '$wouldPayLabel: not yet'
+      : metricLine(label: wouldPayLabel, actual: actual, target: target);
 
   static Iterable<String> allVisibleStrings() sync* {
     yield cardTitle;

@@ -22,8 +22,8 @@ class ConfirmedRepeatWhyMattersCard extends StatefulWidget {
     this.store,
     this.onDismissed,
     bool dismissed = false,
-  })  : skipPrefsLoad = true,
-        initialDismissed = dismissed;
+  }) : skipPrefsLoad = true,
+       initialDismissed = dismissed;
 
   final ConfirmedRepeatWhyMattersStore? store;
   final VoidCallback? onDismissed;
@@ -73,10 +73,9 @@ class _ConfirmedRepeatWhyMattersCardState
       );
     }
 
-    final bodyStyle = ArchiveMobileTypography.explanationBody(context).copyWith(
-      color: AppColors.textSecondary,
-      height: 1.45,
-    );
+    final bodyStyle = ArchiveMobileTypography.explanationBody(
+      context,
+    ).copyWith(color: AppColors.textSecondary, height: 1.45);
 
     return Container(
       key: const Key('confirmed_repeat_why_matters_card'),

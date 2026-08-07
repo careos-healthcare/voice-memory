@@ -66,63 +66,62 @@ abstract final class SingleLaunchChecklist {
       checks: checks,
       checklistOrder: canonicalChecklistOrder,
       earliestBlocker: checks
-          .where((check) => check.status == SingleLaunchChecklistCheckStatus.fail)
+          .where(
+            (check) => check.status == SingleLaunchChecklistCheckStatus.fail,
+          )
           .map((check) => check.id)
           .firstOrNull,
-      readyForTestFlight: status == SingleLaunchChecklistStatus.readyForTestFlight ||
+      readyForTestFlight:
+          status == SingleLaunchChecklistStatus.readyForTestFlight ||
           status == SingleLaunchChecklistStatus.readyForSubmission,
       readyForSubmission:
           status == SingleLaunchChecklistStatus.readyForSubmission,
     );
   }
 
-  static SingleLaunchChecklistReport report(SingleLaunchChecklistResult result) =>
-      SingleLaunchChecklistReport(
-        headline: SingleLaunchChecklistCopy.headline,
-        body: SingleLaunchChecklistCopy.body,
-        orderLine: SingleLaunchChecklistCopy.orderLine,
-        guardrail: SingleLaunchChecklistCopy.guardrail,
-        result: result,
-      );
+  static SingleLaunchChecklistReport report(
+    SingleLaunchChecklistResult result,
+  ) => SingleLaunchChecklistReport(
+    headline: SingleLaunchChecklistCopy.headline,
+    body: SingleLaunchChecklistCopy.body,
+    orderLine: SingleLaunchChecklistCopy.orderLine,
+    guardrail: SingleLaunchChecklistCopy.guardrail,
+    result: result,
+  );
 
   static SingleLaunchChecklistInput fromReleaseEvidencePackInput(
     ReleaseEvidencePackInput input, {
     bool? paywallPriceVisible,
     bool? entitlementUnlocks,
     bool? paidIntentBetaComplete,
-  }) =>
-      SingleLaunchChecklistInput(
-        cleanGit: input.cleanGitStatus,
-        versionBuildSet: input.versionBuildCaptured,
-        physicalIphoneSmoke: input.physicalIphoneSmokeTest,
-        physicalIpadSmoke: input.physicalIpadSmokeTest,
-        productionApiWorks: input.productionApiSmokeTest,
-        voiceSaveWorks: input.voiceSavePath,
-        typedSaveWorks: input.typedSavePath,
-        firstProofWorks: input.firstProofPath,
-        proPromiseVisible: input.proPaywallRoute,
-        revenueCatProductsLoad: input.revenueCatProductLoad,
-        paywallPriceVisible: paywallPriceVisible,
-        sandboxPurchaseWorks: input.sandboxPurchase,
-        entitlementUnlocks: entitlementUnlocks ?? input.entitlementPersistence,
-        restoreWorks: input.restorePurchases,
-        entitlementPersists: input.entitlementPersistence,
-        supportPrivacyTermsWork:
-            input.supportUrl && input.privacyUrl && input.termsUrl,
-        screenshotsReady: input.screenshots,
-        testFlightUploaded: input.testFlightUploaded,
-        paidIntentBetaComplete: paidIntentBetaComplete,
-        secretsRotatedBeforeProduction: input.secretsRotated,
-      );
+  }) => SingleLaunchChecklistInput(
+    cleanGit: input.cleanGitStatus,
+    versionBuildSet: input.versionBuildCaptured,
+    physicalIphoneSmoke: input.physicalIphoneSmokeTest,
+    physicalIpadSmoke: input.physicalIpadSmokeTest,
+    productionApiWorks: input.productionApiSmokeTest,
+    voiceSaveWorks: input.voiceSavePath,
+    typedSaveWorks: input.typedSavePath,
+    firstProofWorks: input.firstProofPath,
+    proPromiseVisible: input.proPaywallRoute,
+    revenueCatProductsLoad: input.revenueCatProductLoad,
+    paywallPriceVisible: paywallPriceVisible,
+    sandboxPurchaseWorks: input.sandboxPurchase,
+    entitlementUnlocks: entitlementUnlocks ?? input.entitlementPersistence,
+    restoreWorks: input.restorePurchases,
+    entitlementPersists: input.entitlementPersistence,
+    supportPrivacyTermsWork:
+        input.supportUrl && input.privacyUrl && input.termsUrl,
+    screenshotsReady: input.screenshots,
+    testFlightUploaded: input.testFlightUploaded,
+    paidIntentBetaComplete: paidIntentBetaComplete,
+    secretsRotatedBeforeProduction: input.secretsRotated,
+  );
 
   static SingleLaunchChecklistInput fromCommercialProofExecutorInput(
     CommercialProofExecutorInput input, {
     required ReleaseEvidencePackInput releaseEvidence,
-  }) =>
-      composeInput(
-        releaseEvidence: releaseEvidence,
-        commercial: input,
-      );
+  }) => composeInput(releaseEvidence: releaseEvidence, commercial: input);
 
   static SingleLaunchChecklistInput composeInput({
     required ReleaseEvidencePackInput releaseEvidence,
@@ -144,32 +143,41 @@ abstract final class SingleLaunchChecklist {
       firstProofWorks: releaseEvidence.firstProofPath,
       proPromiseVisible:
           commercialInput?.proPromiseClear ?? releaseEvidence.proPaywallRoute,
-      revenueCatProductsLoad: commercialInput?.revenueCatProductsLoad ??
+      revenueCatProductsLoad:
+          commercialInput?.revenueCatProductsLoad ??
           revenueCat?.offeringLoads ??
           releaseEvidence.revenueCatProductLoad,
       paywallPriceVisible:
           commercialInput?.paywallPriceVisible ?? revenueCat?.priceVisible,
-      sandboxPurchaseWorks: commercialInput?.sandboxPurchaseWorks ??
+      sandboxPurchaseWorks:
+          commercialInput?.sandboxPurchaseWorks ??
           revenueCat?.sandboxPurchaseSucceeds ??
           releaseEvidence.sandboxPurchase,
-      entitlementUnlocks: revenueCat?.proGateUnlocks ??
+      entitlementUnlocks:
+          revenueCat?.proGateUnlocks ??
           revenueCat?.entitlementActiveAfterPurchase ??
           releaseEvidence.entitlementPersistence,
-      restoreWorks: commercialInput?.restoreWorks ??
+      restoreWorks:
+          commercialInput?.restoreWorks ??
           revenueCat?.restorePurchasesSucceeds ??
           releaseEvidence.restorePurchases,
-      entitlementPersists: commercialInput?.entitlementPersists ??
+      entitlementPersists:
+          commercialInput?.entitlementPersists ??
           revenueCat?.appRestartKeepsEntitlement ??
           releaseEvidence.entitlementPersistence,
-      supportPrivacyTermsWork: releaseEvidence.supportUrl &&
+      supportPrivacyTermsWork:
+          releaseEvidence.supportUrl &&
           releaseEvidence.privacyUrl &&
           releaseEvidence.termsUrl,
       screenshotsReady: releaseEvidence.screenshots,
-      testFlightUploaded: commercialInput?.testFlightUploaded ??
+      testFlightUploaded:
+          commercialInput?.testFlightUploaded ??
           releaseEvidence.testFlightUploaded,
-      paidIntentBetaComplete: commercialInput?.paidIntentBetaComplete ??
+      paidIntentBetaComplete:
+          commercialInput?.paidIntentBetaComplete ??
           _paidIntentBetaCompleteFrom(paidIntentBeta),
-      secretsRotatedBeforeProduction: _secretsRotatedFrom(secretsRotation) ??
+      secretsRotatedBeforeProduction:
+          _secretsRotatedFrom(secretsRotation) ??
           commercialInput?.secretsRotationComplete ??
           releaseEvidence.secretsRotated,
     );
@@ -187,16 +195,15 @@ abstract final class SingleLaunchChecklist {
 
   static List<SingleLaunchChecklistCheck> _buildChecks(
     SingleLaunchChecklistInput input,
-  ) =>
-      [
-        for (final id in canonicalChecklistOrder)
-          SingleLaunchChecklistCheck(
-            id: id,
-            label: SingleLaunchChecklistCopy.labelFor(id),
-            status: _statusFor(_valueFor(input, id)),
-            detailLabel: _detailLabelFor(_statusFor(_valueFor(input, id))),
-          ),
-      ];
+  ) => [
+    for (final id in canonicalChecklistOrder)
+      SingleLaunchChecklistCheck(
+        id: id,
+        label: SingleLaunchChecklistCopy.labelFor(id),
+        status: _statusFor(_valueFor(input, id)),
+        detailLabel: _detailLabelFor(_statusFor(_valueFor(input, id))),
+      ),
+  ];
 
   static SingleLaunchChecklistStatus _resolveStatus(
     SingleLaunchChecklistInput input,
@@ -226,40 +233,36 @@ abstract final class SingleLaunchChecklist {
   static bool? _valueFor(
     SingleLaunchChecklistInput input,
     SingleLaunchChecklistItemId id,
-  ) =>
-      switch (id) {
-        SingleLaunchChecklistItemId.cleanGit => input.cleanGit,
-        SingleLaunchChecklistItemId.versionBuildSet => input.versionBuildSet,
-        SingleLaunchChecklistItemId.physicalIphoneSmoke =>
-          input.physicalIphoneSmoke,
-        SingleLaunchChecklistItemId.physicalIpadSmoke => input.physicalIpadSmoke,
-        SingleLaunchChecklistItemId.productionApiWorks =>
-          input.productionApiWorks,
-        SingleLaunchChecklistItemId.voiceSaveWorks => input.voiceSaveWorks,
-        SingleLaunchChecklistItemId.typedSaveWorks => input.typedSaveWorks,
-        SingleLaunchChecklistItemId.firstProofWorks => input.firstProofWorks,
-        SingleLaunchChecklistItemId.proPromiseVisible => input.proPromiseVisible,
-        SingleLaunchChecklistItemId.revenueCatProductsLoad =>
-          input.revenueCatProductsLoad,
-        SingleLaunchChecklistItemId.paywallPriceVisible =>
-          input.paywallPriceVisible,
-        SingleLaunchChecklistItemId.sandboxPurchaseWorks =>
-          input.sandboxPurchaseWorks,
-        SingleLaunchChecklistItemId.entitlementUnlocks =>
-          input.entitlementUnlocks,
-        SingleLaunchChecklistItemId.restoreWorks => input.restoreWorks,
-        SingleLaunchChecklistItemId.entitlementPersists =>
-          input.entitlementPersists,
-        SingleLaunchChecklistItemId.supportPrivacyTermsWork =>
-          input.supportPrivacyTermsWork,
-        SingleLaunchChecklistItemId.screenshotsReady => input.screenshotsReady,
-        SingleLaunchChecklistItemId.testFlightUploaded =>
-          input.testFlightUploaded,
-        SingleLaunchChecklistItemId.paidIntentBetaComplete =>
-          input.paidIntentBetaComplete,
-        SingleLaunchChecklistItemId.secretsRotatedBeforeProduction =>
-          input.secretsRotatedBeforeProduction,
-      };
+  ) => switch (id) {
+    SingleLaunchChecklistItemId.cleanGit => input.cleanGit,
+    SingleLaunchChecklistItemId.versionBuildSet => input.versionBuildSet,
+    SingleLaunchChecklistItemId.physicalIphoneSmoke =>
+      input.physicalIphoneSmoke,
+    SingleLaunchChecklistItemId.physicalIpadSmoke => input.physicalIpadSmoke,
+    SingleLaunchChecklistItemId.productionApiWorks => input.productionApiWorks,
+    SingleLaunchChecklistItemId.voiceSaveWorks => input.voiceSaveWorks,
+    SingleLaunchChecklistItemId.typedSaveWorks => input.typedSaveWorks,
+    SingleLaunchChecklistItemId.firstProofWorks => input.firstProofWorks,
+    SingleLaunchChecklistItemId.proPromiseVisible => input.proPromiseVisible,
+    SingleLaunchChecklistItemId.revenueCatProductsLoad =>
+      input.revenueCatProductsLoad,
+    SingleLaunchChecklistItemId.paywallPriceVisible =>
+      input.paywallPriceVisible,
+    SingleLaunchChecklistItemId.sandboxPurchaseWorks =>
+      input.sandboxPurchaseWorks,
+    SingleLaunchChecklistItemId.entitlementUnlocks => input.entitlementUnlocks,
+    SingleLaunchChecklistItemId.restoreWorks => input.restoreWorks,
+    SingleLaunchChecklistItemId.entitlementPersists =>
+      input.entitlementPersists,
+    SingleLaunchChecklistItemId.supportPrivacyTermsWork =>
+      input.supportPrivacyTermsWork,
+    SingleLaunchChecklistItemId.screenshotsReady => input.screenshotsReady,
+    SingleLaunchChecklistItemId.testFlightUploaded => input.testFlightUploaded,
+    SingleLaunchChecklistItemId.paidIntentBetaComplete =>
+      input.paidIntentBetaComplete,
+    SingleLaunchChecklistItemId.secretsRotatedBeforeProduction =>
+      input.secretsRotatedBeforeProduction,
+  };
 
   static SingleLaunchChecklistCheckStatus _statusFor(bool? value) =>
       switch (value) {

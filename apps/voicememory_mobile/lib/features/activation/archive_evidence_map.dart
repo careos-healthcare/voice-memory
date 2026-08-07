@@ -50,19 +50,17 @@ class ArchiveEvidenceMap {
   final int usableCount;
 
   factory ArchiveEvidenceMap.hidden() => const ArchiveEvidenceMap(
-        showCard: false,
-        title: VisibleArchiveProofCopy.archiveEvidenceMapTitle,
-        subtitle: VisibleArchiveProofCopy.archiveEvidenceMapSubtitle,
-      );
+    showCard: false,
+    title: VisibleArchiveProofCopy.archiveEvidenceMapTitle,
+    subtitle: VisibleArchiveProofCopy.archiveEvidenceMapSubtitle,
+  );
 }
 
 /// Builds a deterministic evidence map from eligible journal entries.
 abstract final class ArchiveEvidenceMapEngine {
   ArchiveEvidenceMapEngine._();
 
-  static ArchiveEvidenceMap build({
-    required List<JournalEntry> entries,
-  }) {
+  static ArchiveEvidenceMap build({required List<JournalEntry> entries}) {
     final eligible = ArchiveEvidenceGuard.eligibleEntries(entries);
     if (eligible.isEmpty) {
       return ArchiveEvidenceMap.hidden();
@@ -70,8 +68,10 @@ abstract final class ArchiveEvidenceMapEngine {
 
     final taggedCounts = CaptureContextTagAnalysis.tagCounts(entries);
     final untaggedCount = _untaggedCount(eligible);
-    final taggedCount =
-        taggedCounts.values.fold<int>(0, (sum, count) => sum + count);
+    final taggedCount = taggedCounts.values.fold<int>(
+      0,
+      (sum, count) => sum + count,
+    );
     final distinctTags = taggedCounts.length;
     final rows = _rows(taggedCounts, untaggedCount);
     final excludedCount = _excludedCount(entries, eligible);
@@ -115,7 +115,9 @@ abstract final class ArchiveEvidenceMapEngine {
     }
 
     if (distinctTags == 1) {
-      final label = rows.firstWhere((row) => row.rowId != ArchiveEvidenceMapRowIds.untagged).label;
+      final label = rows
+          .firstWhere((row) => row.rowId != ArchiveEvidenceMapRowIds.untagged)
+          .label;
       return ArchiveEvidenceMap(
         showCard: true,
         title: VisibleArchiveProofCopy.archiveEvidenceMapTitle,
@@ -181,20 +183,21 @@ abstract final class ArchiveEvidenceMapEngine {
     Map<String, int> taggedCounts,
     int untaggedCount,
   ) {
-    final rows = taggedCounts.entries
-        .map(
-          (entry) => ArchiveEvidenceMapRow(
-            rowId: entry.key,
-            label: CaptureContextTags.byId(entry.key)?.label ?? entry.key,
-            count: entry.value,
-          ),
-        )
-        .toList()
-      ..sort((a, b) {
-        final byCount = b.count.compareTo(a.count);
-        if (byCount != 0) return byCount;
-        return a.label.compareTo(b.label);
-      });
+    final rows =
+        taggedCounts.entries
+            .map(
+              (entry) => ArchiveEvidenceMapRow(
+                rowId: entry.key,
+                label: CaptureContextTags.byId(entry.key)?.label ?? entry.key,
+                count: entry.value,
+              ),
+            )
+            .toList()
+          ..sort((a, b) {
+            final byCount = b.count.compareTo(a.count);
+            if (byCount != 0) return byCount;
+            return a.label.compareTo(b.label);
+          });
 
     if (untaggedCount > 0) {
       rows.add(
@@ -213,14 +216,14 @@ abstract final class ArchiveEvidenceMapEngine {
     final maxCount = taggedCounts.values.reduce((a, b) => a > b ? a : b);
     if (maxCount < 2) return null;
 
-    final thinLabels = taggedCounts.entries
-        .where((entry) => entry.value == 1)
-        .map(
-          (entry) =>
-              CaptureContextTags.byId(entry.key)?.label ?? entry.key,
-        )
-        .toList()
-      ..sort();
+    final thinLabels =
+        taggedCounts.entries
+            .where((entry) => entry.value == 1)
+            .map(
+              (entry) => CaptureContextTags.byId(entry.key)?.label ?? entry.key,
+            )
+            .toList()
+          ..sort();
 
     if (thinLabels.isEmpty) return null;
     return VisibleArchiveProofCopy.archiveEvidenceMapThinContexts(thinLabels);
@@ -248,15 +251,10 @@ abstract final class ArchiveEvidenceMapEngine {
   }) {
     final eligible = ArchiveEvidenceGuard.eligibleEntries(entries);
     if (contextTagId == ArchiveEvidenceMapRowIds.untagged) {
-      return eligible
-          .where(
-            (entry) {
-              final tag = entry.captureContextTag;
-              return tag == null || tag.isEmpty;
-            },
-          )
-          .toList()
-        ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
+      return eligible.where((entry) {
+        final tag = entry.captureContextTag;
+        return tag == null || tag.isEmpty;
+      }).toList()..sort((a, b) => b.createdAt.compareTo(a.createdAt));
     }
 
     return eligible

@@ -1,13 +1,14 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../theme/app_colors.dart';
 import '../../../../theme/app_spacing.dart';
 import '../../domain/models/live_voice_error_state.dart';
 import '../live_voice_session_copy.dart';
 
-class LiveVoiceErrorBoundaryOverlay extends StatelessWidget {
+class LiveVoiceErrorBoundaryOverlay extends ConsumerWidget {
   const LiveVoiceErrorBoundaryOverlay({
     super.key,
     required this.errorState,
@@ -22,7 +23,7 @@ class LiveVoiceErrorBoundaryOverlay extends StatelessWidget {
   final bool busy;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     if (errorState == LiveVoiceErrorState.none) {
       return const SizedBox.shrink(key: ValueKey('live_voice_error_none'));
     }
@@ -70,7 +71,8 @@ class LiveVoiceErrorBoundaryOverlay extends StatelessWidget {
                         const SizedBox(height: 20),
                         Text(
                           _titleForError(errorState),
-                          style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                          style: Theme.of(context).textTheme.titleLarge
+                              ?.copyWith(
                                 fontWeight: FontWeight.bold,
                                 color: AppColors.textPrimary,
                               ),
@@ -79,7 +81,8 @@ class LiveVoiceErrorBoundaryOverlay extends StatelessWidget {
                         const SizedBox(height: 12),
                         Text(
                           _messageForError(errorState),
-                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          style: Theme.of(context).textTheme.bodyMedium
+                              ?.copyWith(
                                 color: AppColors.textSecondary,
                                 height: 1.4,
                               ),
@@ -93,12 +96,16 @@ class LiveVoiceErrorBoundaryOverlay extends StatelessWidget {
                                 key: const Key('live_voice_error_exit_button'),
                                 onPressed: busy ? null : onCancel,
                                 style: OutlinedButton.styleFrom(
-                                  padding: const EdgeInsets.symmetric(vertical: 14),
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 14,
+                                  ),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(12),
                                   ),
                                 ),
-                                child: const Text(LiveVoiceSessionCopy.exitSession),
+                                child: const Text(
+                                  LiveVoiceSessionCopy.exitSession,
+                                ),
                               ),
                             ),
                             const SizedBox(width: AppSpacing.sm),
@@ -109,7 +116,9 @@ class LiveVoiceErrorBoundaryOverlay extends StatelessWidget {
                                 style: FilledButton.styleFrom(
                                   backgroundColor: AppColors.accentPrimary,
                                   foregroundColor: AppColors.onAccent,
-                                  padding: const EdgeInsets.symmetric(vertical: 14),
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 14,
+                                  ),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(12),
                                   ),

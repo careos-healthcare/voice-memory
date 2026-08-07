@@ -17,13 +17,13 @@ class OfflineSyncProductionEvidence {
       final ios = await DeviceInfoPlugin().iosInfo;
       device = ios.utsname.machine;
       if (!ios.isPhysicalDevice) {
-        device = '${device} (simulator — invalid)';
+        device = '$device (simulator — invalid)';
       }
     } else if (Platform.isAndroid) {
       final android = await DeviceInfoPlugin().androidInfo;
       device = android.model;
       if (!android.isPhysicalDevice) {
-        device = '${device} (emulator — invalid)';
+        device = '$device (emulator — invalid)';
       }
     }
 

@@ -49,8 +49,7 @@ void main() {
     });
 
     test('normalizes ArchiveMeshould spacing', () {
-      const raw =
-          'ArchiveMeshould wait for one more signal before naming it.';
+      const raw = 'ArchiveMeshould wait for one more signal before naming it.';
       const fixed =
           'ArchiveMe should wait for one more signal before naming it.';
 
@@ -59,12 +58,11 @@ void main() {
     });
 
     test('normalizes thought-map glued phrases', () {
+      expect(ArchiveCopyNormalizer.normalize('anothersign'), 'another sign');
       expect(
-        ArchiveCopyNormalizer.normalize('anothersign'),
-        'another sign',
-      );
-      expect(
-        ArchiveCopyNormalizer.normalize('That thoughtturns into another check.'),
+        ArchiveCopyNormalizer.normalize(
+          'That thoughtturns into another check.',
+        ),
         'That thought turns into another check.',
       );
       expect(
@@ -157,37 +155,40 @@ void main() {
   });
 
   group('ArchiveDisplayCopyGuard grammar logging', () {
-    test('PatternDisplayCopyGate receives normalized text, not raw malformed text', () {
-      const raw =
-          'You said youreally need it to work because you keep checking.';
-      const fixed =
-          'You said you really need it to work because you keep checking.';
+    test(
+      'PatternDisplayCopyGate receives normalized text, not raw malformed text',
+      () {
+        const raw =
+            'You said youreally need it to work because you keep checking.';
+        const fixed =
+            'You said you really need it to work because you keep checking.';
 
-      final logs = <String>[];
-      final previousDebugPrint = debugPrint;
-      debugPrint = (message, {wrapWidth}) {
-        logs.add(message ?? '');
-      };
-      addTearDown(() => debugPrint = previousDebugPrint);
+        final logs = <String>[];
+        final previousDebugPrint = debugPrint;
+        debugPrint = (message, {wrapWidth}) {
+          logs.add(message ?? '');
+        };
+        addTearDown(() => debugPrint = previousDebugPrint);
 
-      ArchiveDisplayCopyGuard.passesGrammarGate(
-        field: PatternDisplayField.evidence,
-        text: raw,
-      );
+        ArchiveDisplayCopyGuard.passesGrammarGate(
+          field: PatternDisplayField.evidence,
+          text: raw,
+        );
 
-      assertNoMalformedApprovedArchiveLogs(logs);
-      expect(
-        logs.where(
-          (line) => line.contains('ARCHIVEME_PATTERN_DISPLAY_COPY_CHECK'),
-        ),
-        isNotEmpty,
-      );
-      expect(
-        logs.any((line) => line.contains('you really need it to work')),
-        isTrue,
-      );
-      expect(ArchiveCopyNormalizer.normalize(raw), fixed);
-    });
+        assertNoMalformedApprovedArchiveLogs(logs);
+        expect(
+          logs.where(
+            (line) => line.contains('ARCHIVEME_PATTERN_DISPLAY_COPY_CHECK'),
+          ),
+          isNotEmpty,
+        );
+        expect(
+          logs.any((line) => line.contains('you really need it to work')),
+          isTrue,
+        );
+        expect(ArchiveCopyNormalizer.normalize(raw), fixed);
+      },
+    );
 
     test('validateAndNormalize approves normalized contrast now line', () {
       const raw =

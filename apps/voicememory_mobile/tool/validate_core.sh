@@ -12,8 +12,8 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 APP_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 cd "$APP_DIR"
 
-echo "==> flutter analyze lib/"
-flutter analyze lib/
+echo "==> flutter analyze lib/ (errors/warnings gate + info baseline)"
+bash tool/validate_analyzer_baseline.sh
 
 echo ""
 echo "==> flutter test (core subset)"
@@ -74,6 +74,22 @@ bash tool/run_commercial_proof_executor.sh
 echo ""
 echo "==> RevenueCat live proof runner"
 bash tool/run_revenuecat_live_proof_checklist.sh
+
+echo ""
+echo "==> Stray test artifact guard"
+bash tool/validate_no_stray_test_artifacts.sh
+
+echo ""
+echo "==> Research package import guard"
+bash tool/validate_no_research_imports.sh
+
+echo ""
+echo "==> V1 production graph + permission audit"
+bash tool/validate_v1_production_graph.sh
+
+echo ""
+echo "==> Repository cleanliness (git + stray artifacts)"
+bash tool/validate_repository_cleanliness.sh
 
 echo ""
 echo "Core validation passed."

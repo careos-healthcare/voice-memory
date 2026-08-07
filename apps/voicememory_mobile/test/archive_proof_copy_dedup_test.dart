@@ -10,7 +10,6 @@ import 'package:voicememory_mobile/features/early_archive/positive_reinforcement
 import 'package:voicememory_mobile/features/early_archive/positive_pattern_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/archive_proof_surface_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/archive_proof_surface_layout.dart';
-import 'package:voicememory_mobile/features/early_archive/archive_proof_surface_layout.dart';
 import 'package:voicememory_mobile/features/early_archive/early_evidence_timeline_engine.dart';
 import 'package:voicememory_mobile/features/early_archive/early_first_signal_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/early_first_signal_engine.dart';
@@ -70,42 +69,42 @@ JournalEntry _entry({
 }
 
 List<JournalEntry> _threeRelatedRepeatEntries() => [
-      _entry(
-        id: 'e1',
-        transcript:
-            'I had no capacity but I said yes again to the extra meeting today.',
-        createdAt: DateTime(2026, 6, 10, 12),
-      ),
-      _entry(
-        id: 'e2',
-        transcript:
-            'Same thing — said yes when I had no capacity for one more thing.',
-        createdAt: DateTime(2026, 6, 11, 12),
-      ),
-      _entry(
-        id: 'e3',
-        transcript:
-            'I said yes again even though I had no capacity for one more ask.',
-        createdAt: DateTime(2026, 6, 12, 12),
-      ),
-    ];
+  _entry(
+    id: 'e1',
+    transcript:
+        'I had no capacity but I said yes again to the extra meeting today.',
+    createdAt: DateTime(2026, 6, 10, 12),
+  ),
+  _entry(
+    id: 'e2',
+    transcript:
+        'Same thing — said yes when I had no capacity for one more thing.',
+    createdAt: DateTime(2026, 6, 11, 12),
+  ),
+  _entry(
+    id: 'e3',
+    transcript:
+        'I said yes again even though I had no capacity for one more ask.',
+    createdAt: DateTime(2026, 6, 12, 12),
+  ),
+];
 
 List<JournalEntry> _fourRelatedEntries() => [
-      ..._threeRelatedRepeatEntries(),
-      _entry(
-        id: 'e4',
-        transcript:
-            'I said yes again even though I had no capacity for one more ask today.',
-        createdAt: DateTime(2026, 6, 13, 12),
-      ),
-    ];
+  ..._threeRelatedRepeatEntries(),
+  _entry(
+    id: 'e4',
+    transcript:
+        'I said yes again even though I had no capacity for one more ask today.',
+    createdAt: DateTime(2026, 6, 13, 12),
+  ),
+];
 
 RepeatReturnCheckRecord _strongerRecord() => RepeatReturnCheckRecord(
-      entryId: 'e4',
-      choice: RepeatReturnCheckChoice.stronger,
-      entryCountAtCapture: 4,
-      createdAt: DateTime(2026, 6, 13),
-    );
+  entryId: 'e4',
+  choice: RepeatReturnCheckChoice.stronger,
+  entryCountAtCapture: 4,
+  createdAt: DateTime(2026, 6, 13),
+);
 
 void main() {
   group('ArchiveProofSurfaceCopy dedup', () {
@@ -136,72 +135,87 @@ void main() {
       );
     });
 
-    test('record stack with timeline and change proof dedupes repeat phrasing', () {
-      final timeline = EarlyEvidenceTimelineEngine.build(
-        entries: _fourRelatedEntries(),
-      );
-      final changeProof = RepeatReturnCheckEngine.changeProofForReady(
-        entryCount: 4,
-        viewingConfirmedRepeat: true,
-        isRecording: false,
-        isPostSave: false,
-        records: [_strongerRecord()],
-      );
-      final layout = ArchiveProofSurfaceLayout(
-        confirmedRepeatCardVisible: false,
-        timelineVisible: true,
-        changeProofVisible: true,
-        proBridgeVisible: true,
-      );
-      final blocks = ArchiveProofSurfaceCopy.recordReadyStack(
-        layout: layout,
-        timeline: timeline,
-        changeProof: changeProof,
-      );
+    test(
+      'record stack with timeline and change proof dedupes repeat phrasing',
+      () {
+        final timeline = EarlyEvidenceTimelineEngine.build(
+          entries: _fourRelatedEntries(),
+        );
+        final changeProof = RepeatReturnCheckEngine.changeProofForReady(
+          entryCount: 4,
+          viewingConfirmedRepeat: true,
+          isRecording: false,
+          isPostSave: false,
+          records: [_strongerRecord()],
+        );
+        final layout = ArchiveProofSurfaceLayout(
+          confirmedRepeatCardVisible: false,
+          timelineVisible: true,
+          changeProofVisible: true,
+          proBridgeVisible: true,
+        );
+        final blocks = ArchiveProofSurfaceCopy.recordReadyStack(
+          layout: layout,
+          timeline: timeline,
+          changeProof: changeProof,
+        );
 
-      expect(
-        ArchiveProofCopyDedup.countPhrase(
-          blocks.join('\n'),
-          EarlyFirstSignalCopy.threeEntrySeenThreeTimes,
-        ),
-        0,
-      );
-      expect(
-        ArchiveProofCopyDedup.countPhrase(
-          blocks.join('\n'),
-          EarlyFirstSignalCopy.evidenceHeading,
-        ),
-        1,
-      );
-      expect(blocks, contains(RepeatReturnCheckCopy.changeProofTitle));
-      expect(blocks, contains(RepeatReturnCheckCopy.trendGettingLouder));
-      expect(blocks, isNot(contains(RepeatReturnCheckCopy.changeProofSupportLine)));
-      expect(blocks, contains(ArchiveBeliefThreadCopy.fullArchiveHistoryTitle));
-      expect(blocks, contains(ArchiveBeliefThreadCopy.fullArchiveHistoryBody));
-    });
-
-    test('patterns stack with confirmed repeat hides timeline evidence heading', () {
-      final confirmed = EarlyFirstSignalEngine.build(
-        entries: _threeRelatedRepeatEntries(),
-      );
-      final layout = ArchiveProofSurfaceLayout(
-        confirmedRepeatCardVisible: true,
-        timelineVisible: false,
-        changeProofVisible: false,
-        proBridgeVisible: false,
-      );
-
-      expect(
-        ArchiveProofCopyDedup.phrasesWithinLimit(
-          copyBlocks: ArchiveProofSurfaceCopy.patternsStack(
-            layout: layout,
-            confirmedRepeat: confirmed,
+        expect(
+          ArchiveProofCopyDedup.countPhrase(
+            blocks.join('\n'),
+            EarlyFirstSignalCopy.threeEntrySeenThreeTimes,
           ),
-          onceOnlyPhrases: [EarlyFirstSignalCopy.evidenceHeading],
-        ),
-        isTrue,
-      );
-    });
+          0,
+        );
+        expect(
+          ArchiveProofCopyDedup.countPhrase(
+            blocks.join('\n'),
+            EarlyFirstSignalCopy.evidenceHeading,
+          ),
+          1,
+        );
+        expect(blocks, contains(RepeatReturnCheckCopy.changeProofTitle));
+        expect(blocks, contains(RepeatReturnCheckCopy.trendGettingLouder));
+        expect(
+          blocks,
+          isNot(contains(RepeatReturnCheckCopy.changeProofSupportLine)),
+        );
+        expect(
+          blocks,
+          contains(ArchiveBeliefThreadCopy.fullArchiveHistoryTitle),
+        );
+        expect(
+          blocks,
+          contains(ArchiveBeliefThreadCopy.fullArchiveHistoryBody),
+        );
+      },
+    );
+
+    test(
+      'patterns stack with confirmed repeat hides timeline evidence heading',
+      () {
+        final confirmed = EarlyFirstSignalEngine.build(
+          entries: _threeRelatedRepeatEntries(),
+        );
+        final layout = ArchiveProofSurfaceLayout(
+          confirmedRepeatCardVisible: true,
+          timelineVisible: false,
+          changeProofVisible: false,
+          proBridgeVisible: false,
+        );
+
+        expect(
+          ArchiveProofCopyDedup.phrasesWithinLimit(
+            copyBlocks: ArchiveProofSurfaceCopy.patternsStack(
+              layout: layout,
+              confirmedRepeat: confirmed,
+            ),
+            onceOnlyPhrases: [EarlyFirstSignalCopy.evidenceHeading],
+          ),
+          isTrue,
+        );
+      },
+    );
     test('why matters copy stays distinct from proof phrases', () {
       final confirmed = EarlyFirstSignalEngine.build(
         entries: _threeRelatedRepeatEntries(),
@@ -263,29 +277,32 @@ void main() {
       );
     });
 
-    test('positive pattern copy stays distinct from confirmed repeat proof', () {
-      final confirmed = EarlyFirstSignalEngine.build(
-        entries: _threeRelatedRepeatEntries(),
-      );
-      final layout = ArchiveProofSurfaceLayout(
-        confirmedRepeatCardVisible: true,
-        timelineVisible: false,
-        changeProofVisible: false,
-        proBridgeVisible: false,
-        positivePatternVisible: true,
-      );
-      final blocks = ArchiveProofSurfaceCopy.patternsStack(
-        layout: layout,
-        confirmedRepeat: confirmed,
-      );
+    test(
+      'positive pattern copy stays distinct from confirmed repeat proof',
+      () {
+        final confirmed = EarlyFirstSignalEngine.build(
+          entries: _threeRelatedRepeatEntries(),
+        );
+        final layout = ArchiveProofSurfaceLayout(
+          confirmedRepeatCardVisible: true,
+          timelineVisible: false,
+          changeProofVisible: false,
+          proBridgeVisible: false,
+          positivePatternVisible: true,
+        );
+        final blocks = ArchiveProofSurfaceCopy.patternsStack(
+          layout: layout,
+          confirmedRepeat: confirmed,
+        );
 
-      expect(blocks, contains(PositivePatternCopy.title));
-      expect(blocks, contains(PositivePatternCopy.body));
-      expect(
-        blocks.where((block) => block == PositivePatternCopy.title),
-        hasLength(1),
-      );
-    });
+        expect(blocks, contains(PositivePatternCopy.title));
+        expect(blocks, contains(PositivePatternCopy.body));
+        expect(
+          blocks.where((block) => block == PositivePatternCopy.title),
+          hasLength(1),
+        );
+      },
+    );
 
     test('early repeat progress cue does not duplicate progress card copy', () {
       final progress = EarlyRepeatProgressEngine.build(
@@ -305,7 +322,10 @@ void main() {
       expect(progress, isNotNull);
 
       expect(progress!.nextMomentCue.body, isNot(equals(progress.title)));
-      expect(progress.nextMomentCue.body, isNot(equals(progress.progressLabel)));
+      expect(
+        progress.nextMomentCue.body,
+        isNot(equals(progress.progressLabel)),
+      );
       expect(
         ArchiveProofCopyDedup.countPhrase(
           [
@@ -463,97 +483,111 @@ void main() {
       );
     });
 
-    test('post save return check answer stays distinct from archive summary copy', () {
-      final answer = PostSaveReturnCheckAnswerEngine.build(
-        entries: _threeRelatedRepeatEntries()
-          ..add(
-            _entry(
-              id: 'e4',
-              transcript:
-                  'I said yes again even though I had no capacity for one more ask today.',
-              createdAt: DateTime(2026, 6, 13, 12),
+    test(
+      'post save return check answer stays distinct from archive summary copy',
+      () {
+        final answer = PostSaveReturnCheckAnswerEngine.build(
+          entries: _threeRelatedRepeatEntries()
+            ..add(
+              _entry(
+                id: 'e4',
+                transcript:
+                    'I said yes again even though I had no capacity for one more ask today.',
+                createdAt: DateTime(2026, 6, 13, 12),
+              ),
             ),
-          ),
-        returnChecks: const [],
-      );
-      expect(answer, isNotNull);
+          returnChecks: const [],
+        );
+        expect(answer, isNotNull);
 
-      final blocks = [answer!.label, answer.title, answer.body, answer.footer];
-      expect(blocks, isNot(contains(ArchiveSummaryCopy.title)));
-      expect(
-        ArchiveProofCopyDedup.countPhrase(
-          blocks.join('\n'),
-          PostSaveReturnCheckAnswerCopy.title,
-        ),
-        1,
-      );
-    });
-
-    test('tester mission compact copy stays distinct from first-use prompt', () {
-      final mission = TesterMissionEngine.build(
-        entryCount: 0,
-        entries: const [],
-        compactAtEntryZero: true,
-      );
-      expect(mission.presentation.name, 'compact');
-      expect(mission.body, isNot(equals(RecordFirstUsePromptCopy.body)));
-      expect(
-        ArchiveProofCopyDedup.countPhrase(
-          [
-            mission.title,
-            mission.stepLabel,
-            mission.body,
-            mission.footer,
-            RecordFirstUsePromptCopy.title,
-            RecordFirstUsePromptCopy.body,
-            RecordFirstUsePromptCopy.footer,
-          ].join('\n'),
-          TesterMissionCopy.title,
-        ),
-        1,
-      );
-    });
-
-    test('tester mission step two shares low-effort guidance with early repeat progress', () {
-      final mission = TesterMissionEngine.build(
-        entryCount: 1,
-        entries: [
-          _entry(
-            id: 'e1',
-            transcript:
-                'A long enough transcript to count as a saved reflection for tests.',
+        final blocks = [
+          answer!.label,
+          answer.title,
+          answer.body,
+          answer.footer,
+        ];
+        expect(blocks, isNot(contains(ArchiveSummaryCopy.title)));
+        expect(
+          ArchiveProofCopyDedup.countPhrase(
+            blocks.join('\n'),
+            PostSaveReturnCheckAnswerCopy.title,
           ),
-        ],
-        compactAtEntryZero: false,
-      );
-      final progress = EarlyRepeatProgressEngine.build(
-        entries: [
-          _entry(
-            id: 'e1',
-            transcript:
-                'A long enough transcript to count as a saved reflection for tests.',
+          1,
+        );
+      },
+    );
+
+    test(
+      'tester mission compact copy stays distinct from first-use prompt',
+      () {
+        final mission = TesterMissionEngine.build(
+          entryCount: 0,
+          entries: const [],
+          compactAtEntryZero: true,
+        );
+        expect(mission.presentation.name, 'compact');
+        expect(mission.body, isNot(equals(RecordFirstUsePromptCopy.body)));
+        expect(
+          ArchiveProofCopyDedup.countPhrase(
+            [
+              mission.title,
+              mission.stepLabel,
+              mission.body,
+              mission.footer,
+              RecordFirstUsePromptCopy.title,
+              RecordFirstUsePromptCopy.body,
+              RecordFirstUsePromptCopy.footer,
+            ].join('\n'),
+            TesterMissionCopy.title,
           ),
-        ],
-      );
-      expect(progress, isNotNull);
-      expect(mission.body, TesterMissionCopy.entry1Body);
-      expect(progress!.body, contains('Come back when this shows up again.'));
-      expect(mission.title, isNot(equals(progress.title)));
-      expect(
-        ArchiveProofCopyDedup.countPhrase(
-          [
-            mission.title,
-            mission.body,
-            mission.footer,
-            progress.title,
-            progress.body,
-            progress.progressLabel,
-          ].join('\n'),
-          EarlyRepeatProgressCopy.oneMomentTitle,
-        ),
-        1,
-      );
-    });
+          1,
+        );
+      },
+    );
+
+    test(
+      'tester mission step two shares low-effort guidance with early repeat progress',
+      () {
+        final mission = TesterMissionEngine.build(
+          entryCount: 1,
+          entries: [
+            _entry(
+              id: 'e1',
+              transcript:
+                  'A long enough transcript to count as a saved reflection for tests.',
+            ),
+          ],
+          compactAtEntryZero: false,
+        );
+        final progress = EarlyRepeatProgressEngine.build(
+          entries: [
+            _entry(
+              id: 'e1',
+              transcript:
+                  'A long enough transcript to count as a saved reflection for tests.',
+            ),
+          ],
+        );
+        expect(progress, isNotNull);
+        expect(mission.body, TesterMissionCopy.entry1Body);
+        expect(progress!.body, contains('Come back when this shows up again.'));
+        expect(mission.title, isNot(equals(progress.title)));
+        expect(
+          ArchiveProofCopyDedup.countPhrase(
+            [
+              mission.title,
+              mission.body,
+              mission.footer,
+              progress.title,
+              progress.body,
+              progress.progressLabel,
+            ].join('\n'),
+            EarlyRepeatProgressCopy.oneMomentTitle,
+          ),
+          1,
+        );
+      },
+    );
   });
 
   group('Pattern memory differentiation', () {
@@ -670,8 +704,9 @@ void main() {
     });
 
     test('helpful action copy is evidence-based not prescriptive', () {
-      final phraseBody =
-          HelpfulActionAppearedCopy.bodyWithPhrase('walked outside');
+      final phraseBody = HelpfulActionAppearedCopy.bodyWithPhrase(
+        'walked outside',
+      );
       final joined = [
         HelpfulActionAppearedCopy.title,
         phraseBody,
@@ -702,10 +737,7 @@ void main() {
       required bool showFirstProofPayoff,
       bool justSavedFirst = false,
     }) async {
-      final doneReceipt = doneEngine.build(
-        saved: true,
-        entryCount: entryCount,
-      );
+      final doneReceipt = doneEngine.build(saved: true, entryCount: entryCount);
       final receipt = showFirstProofPayoff
           ? doneReceipt.copyWith(archiveLine: '')
           : doneReceipt;
@@ -776,40 +808,47 @@ void main() {
         justSavedFirst: true,
       );
 
-      expect(find.byKey(const Key('done_for_today_receipt_card')), findsNothing);
+      expect(
+        find.byKey(const Key('done_for_today_receipt_card')),
+        findsNothing,
+      );
       expect(find.byKey(const Key('archive_proof_counter_card')), findsNothing);
       expect(
         find.text(VisibleArchiveProofCopy.oneEntryAddedTodayLine),
         findsNothing,
       );
-      expect(
-        find.text(ArchiveProofCounter.onePieceTodayLine),
-        findsNothing,
-      );
+      expect(find.text(ArchiveProofCounter.onePieceTodayLine), findsNothing);
     });
 
-    testWidgets('third save first-proof post-save has no duplicate completion copy', (
-      tester,
-    ) async {
-      await pumpCompletionStack(
-        tester,
-        entryCount: 3,
-        showFirstProofPayoff: true,
-      );
+    testWidgets(
+      'third save first-proof post-save has no duplicate completion copy',
+      (tester) async {
+        await pumpCompletionStack(
+          tester,
+          entryCount: 3,
+          showFirstProofPayoff: true,
+        );
 
-      expect(find.byKey(const Key('first_proof_payoff_card')), findsOneWidget);
-      expect(find.byKey(const Key('done_for_today_receipt_card')), findsOneWidget);
-      expect(find.text('That is enough for today.'), findsOneWidget);
-      expect(
-        find.text(VisibleArchiveProofCopy.oneEntryAddedTodayLine),
-        findsNothing,
-      );
-      expect(
-        find.text(ArchiveProofCounter.onePieceTodayLine),
-        findsNothing,
-      );
-      expect(find.byKey(const Key('archive_proof_counter_card')), findsNothing);
-    });
+        expect(
+          find.byKey(const Key('first_proof_payoff_card')),
+          findsOneWidget,
+        );
+        expect(
+          find.byKey(const Key('done_for_today_receipt_card')),
+          findsOneWidget,
+        );
+        expect(find.text('That is enough for today.'), findsOneWidget);
+        expect(
+          find.text(VisibleArchiveProofCopy.oneEntryAddedTodayLine),
+          findsNothing,
+        );
+        expect(find.text(ArchiveProofCounter.onePieceTodayLine), findsNothing);
+        expect(
+          find.byKey(const Key('archive_proof_counter_card')),
+          findsNothing,
+        );
+      },
+    );
 
     testWidgets('fourth related post-save has no duplicate completion copy', (
       tester,
@@ -820,15 +859,15 @@ void main() {
         showFirstProofPayoff: false,
       );
 
-      expect(find.byKey(const Key('done_for_today_receipt_card')), findsOneWidget);
+      expect(
+        find.byKey(const Key('done_for_today_receipt_card')),
+        findsOneWidget,
+      );
       expect(
         find.text(VisibleArchiveProofCopy.oneEntryAddedTodayLine),
         findsOneWidget,
       );
-      expect(
-        find.text(ArchiveProofCounter.onePieceTodayLine),
-        findsNothing,
-      );
+      expect(find.text(ArchiveProofCounter.onePieceTodayLine), findsNothing);
       expect(find.byKey(const Key('archive_proof_counter_card')), findsNothing);
     });
 
@@ -894,15 +933,18 @@ void main() {
       }
     });
 
-    test('first-use prompt promises future compare and ten seconds is enough', () {
-      expect(
-        RecordFirstUsePromptCopy.body.toLowerCase(),
-        contains('returned, changed, faded, or corrected'),
-      );
-      expect(
-        RecordFirstUsePromptCopy.footer,
-        contains('Ten seconds is enough'),
-      );
-    });
+    test(
+      'first-use prompt promises future compare and ten seconds is enough',
+      () {
+        expect(
+          RecordFirstUsePromptCopy.body.toLowerCase(),
+          contains('returned, changed, faded, or corrected'),
+        );
+        expect(
+          RecordFirstUsePromptCopy.footer,
+          contains('Ten seconds is enough'),
+        );
+      },
+    );
   });
 }

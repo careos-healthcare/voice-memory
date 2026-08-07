@@ -27,14 +27,12 @@ class PatternChangedStore {
   static bool isDismissed({
     required String entryId,
     required PatternChangedType type,
-  }) =>
-      _dismissedKeys.contains(_key(entryId: entryId, type: type));
+  }) => _dismissedKeys.contains(_key(entryId: entryId, type: type));
 
   static String dismissKey({
     required String entryId,
     required PatternChangedType type,
-  }) =>
-      _key(entryId: entryId, type: type);
+  }) => _key(entryId: entryId, type: type);
 
   Future<Set<String>> loadDismissedKeys() async {
     final raw = await _prefs.readJsonMap(_prefsKey);
@@ -49,9 +47,7 @@ class PatternChangedStore {
     required PatternChangedType type,
   }) async {
     final next = {..._dismissedKeys, _key(entryId: entryId, type: type)};
-    await _prefs.writeJsonMap(_prefsKey, {
-      'keys': next.toList(),
-    });
+    await _prefs.writeJsonMap(_prefsKey, {'keys': next.toList()});
     _dismissedKeys = next;
     _loaded = true;
   }
@@ -59,8 +55,7 @@ class PatternChangedStore {
   static String _key({
     required String entryId,
     required PatternChangedType type,
-  }) =>
-      '$entryId:${type.name}';
+  }) => '$entryId:${type.name}';
 
   @visibleForTesting
   static Future<void> resetForTest() async {

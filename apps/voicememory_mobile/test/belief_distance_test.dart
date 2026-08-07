@@ -10,7 +10,7 @@ import 'package:voicememory_mobile/features/memory/memory_scope_policy.dart';
 import 'package:voicememory_mobile/features/pressure_retention/belief_distance_engine.dart';
 import 'package:voicememory_mobile/features/pressure_retention/belief_distance_model.dart';
 import 'package:voicememory_mobile/features/pressure_retention/pressure_check_in_record.dart';
-import 'package:voicememory_mobile/screens/pressure_insights_screen.dart';
+import 'package:archiveme_research/screens/pressure_insights_screen.dart';
 import 'package:voicememory_mobile/services/activation_funnel_analytics.dart';
 import 'package:voicememory_mobile/widgets/pressure_retention/belief_distance_card.dart';
 import 'package:voicememory_mobile/widgets/pressure_retention/value_accuracy_feedback_row.dart';

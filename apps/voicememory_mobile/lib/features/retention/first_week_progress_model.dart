@@ -1,10 +1,5 @@
 /// First-week progress states in the early return loop.
-enum FirstWeekProgressState {
-  day1,
-  day2,
-  firstProof,
-  day3to7,
-}
+enum FirstWeekProgressState { day1, day2, firstProof, day3to7 }
 
 /// Lightweight first-week progress — title/body only, no CTAs.
 class FirstWeekProgress {

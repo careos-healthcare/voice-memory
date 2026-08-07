@@ -1,8 +1,16 @@
 # ArchiveMe Mobile (Flutter)
 
-Native iOS/Android app — **record → transcribe → analyze → local journal → Archive Home**.
+**This is the canonical ArchiveMe consumer product.** Native iOS/Android app —
+**record → transcribe → analyze → local journal → Archive Home**.
 
-The Next.js web app at the repo root is a separate package.
+> **Record a real moment, preserve the evidence, and safely see what changed
+> over time.**
+
+The Next.js project at the repo root is *not* a second consumer app — it's the
+backend (authenticated API endpoints this app calls, e.g. transcribe/analyze/
+account/sync/export/delete) plus privacy/terms/support/marketing web pages.
+Every consumer-facing surface — recording, Archive, proof/evidence, corrections,
+subscription — lives here.
 
 ## Core loop (implemented)
 

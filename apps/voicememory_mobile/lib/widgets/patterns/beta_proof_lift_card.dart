@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../../design/archive_mobile_typography.dart';
 import '../../features/beta_proof_lift/beta_proof_lift_analytics.dart';
-import '../../features/beta_proof_lift/beta_proof_lift_copy.dart';
 import '../../features/beta_proof_lift/beta_proof_lift_model.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
@@ -50,14 +49,12 @@ class _BetaProofLiftCardState extends State<BetaProofLiftCard> {
     if (!widget.result.shouldShow) return const SizedBox.shrink();
     _trackSeenOnce();
 
-    final sectionTitleStyle =
-        ArchiveMobileTypography.responsiveSectionTitle(context).copyWith(
-      fontSize: 15,
-    );
-    final bodyStyle = ArchiveMobileTypography.responsiveHelper(context).copyWith(
-      color: AppColors.textPrimary,
-      height: 1.45,
-    );
+    final sectionTitleStyle = ArchiveMobileTypography.responsiveSectionTitle(
+      context,
+    ).copyWith(fontSize: 15);
+    final bodyStyle = ArchiveMobileTypography.responsiveHelper(
+      context,
+    ).copyWith(color: AppColors.textPrimary, height: 1.45);
     final deltaStyle = bodyStyle.copyWith(color: AppColors.textSecondary);
 
     return Container(
@@ -97,10 +94,7 @@ class _BetaProofLiftCardState extends State<BetaProofLiftCard> {
             const SizedBox(height: AppSpacing.sm),
           ],
           if (widget.result.deltaRows.isNotEmpty) ...[
-            Text(
-              'Timeline signals',
-              style: sectionTitleStyle,
-            ),
+            Text('Timeline signals', style: sectionTitleStyle),
             const SizedBox(height: AppSpacing.xs / 2),
             for (final row in widget.result.deltaRows)
               Padding(

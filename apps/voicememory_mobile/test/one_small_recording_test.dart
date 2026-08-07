@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/billing/archive_entitlement_reader.dart';
@@ -19,6 +17,7 @@ import 'package:voicememory_mobile/widgets/record/consumer_record_prompts_sectio
 import 'package:voicememory_mobile/widgets/record/one_small_recording_card.dart';
 
 import 'support/memory_pressure_stores.dart';
+import 'support/test_storage_sandbox.dart';
 
 final DateTime _base = DateTime(2026, 6, 9, 12);
 
@@ -90,11 +89,7 @@ void main() {
       );
       expect(plan.hasPlan, isTrue);
 
-      final recording = engine.build(
-        _workThread3(),
-        now: _base,
-        entryCount: 3,
-      );
+      final recording = engine.build(_workThread3(), now: _base, entryCount: 3);
       expect(recording.hasRecording, isTrue);
       expect(recording.prompt, plan.nextPrompt);
       expect(recording.prompt, 'What happened with the work thread today?');
@@ -113,11 +108,7 @@ void main() {
       final suggestions = const DailyReturnSuggestionEngine().build(records);
       expect(suggestions.hasSuggestions, isTrue);
 
-      final recording = engine.build(
-        records,
-        now: _base,
-        entryCount: 1,
-      );
+      final recording = engine.build(records, now: _base, entryCount: 1);
       expect(recording.hasRecording, isTrue);
       expect(recording.prompt, suggestions.recommendedSuggestion!.prompt);
     });
@@ -268,17 +259,17 @@ void main() {
   });
 
   group('Record screen integration', () {
-    late Directory tempDir;
+    late TestStorageSandbox sandbox;
 
     setUp(() async {
-      tempDir = Directory.systemTemp.createTempSync('vm_one_small_recording_');
-      await AppServices.resetForTest(
-        journalPath: '${tempDir.path}/journal.json',
-      );
+      sandbox = TestStorageSandbox.create();
+      await AppServices.resetForTest(journalPath: sandbox.journalPath);
       VisualAuditOverrides.setRecordPresentation(
         const RecordAuditPresentation(ui: RecordUiState.ready),
       );
     });
+
+    tearDown(() => sandbox.dispose());
 
     tearDown(() {
       VisualAuditOverrides.setRecordPresentation(null);
@@ -362,19 +353,23 @@ void main() {
       expect(find.text(ConsumerUiCopy.recordMomentCta), findsOneWidget);
     });
 
-    testWidgets('capture-first record keeps single record CTA without duplicate card CTA', (
-      tester,
-    ) async {
-      await seedArchiveEntries(tester);
-      await pumpRecordScreen(
-        tester,
-        store: MemoryPressureCheckInStore(_workThread3()),
-      );
+    testWidgets(
+      'capture-first record keeps single record CTA without duplicate card CTA',
+      (tester) async {
+        await seedArchiveEntries(tester);
+        await pumpRecordScreen(
+          tester,
+          store: MemoryPressureCheckInStore(_workThread3()),
+        );
 
-      expect(find.byKey(const Key('one_small_recording_card')), findsNothing);
-      expect(find.byKey(const Key('one_small_recording_record_cta')), findsNothing);
-      expect(find.text(ConsumerUiCopy.recordMomentCta), findsOneWidget);
-    });
+        expect(find.byKey(const Key('one_small_recording_card')), findsNothing);
+        expect(
+          find.byKey(const Key('one_small_recording_record_cta')),
+          findsNothing,
+        );
+        expect(find.text(ConsumerUiCopy.recordMomentCta), findsOneWidget);
+      },
+    );
 
     testWidgets('no card without plan or suggestion evidence', (tester) async {
       await pumpRecordScreen(tester);

@@ -19,22 +19,21 @@ JournalEntry _entry({
   required String transcript,
   String? observation,
   DateTime? createdAt,
-}) =>
-    JournalEntry(
-      id: id,
-      createdAt: createdAt ?? DateTime(2026, 6, 1, 12),
-      transcript: transcript,
-      durationSeconds: 30,
-      reflection: Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 2,
-        recurringThemes: const ['work'],
-        exactLanguagePattern: '',
-        concreteObservation:
-            observation ?? 'You mentioned pressure in this moment.',
-        repeatedSignal: '',
-      ),
-    );
+}) => JournalEntry(
+  id: id,
+  createdAt: createdAt ?? DateTime(2026, 6, 1, 12),
+  transcript: transcript,
+  durationSeconds: 30,
+  reflection: Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 2,
+    recurringThemes: const ['work'],
+    exactLanguagePattern: '',
+    concreteObservation:
+        observation ?? 'You mentioned pressure in this moment.',
+    repeatedSignal: '',
+  ),
+);
 
 void main() {
   group('ArchivePatternCopyGuard', () {
@@ -64,7 +63,10 @@ void main() {
     test('allows real reflection content', () {
       const reflection =
           'I said yes again even though I had no capacity for one more ask.';
-      expect(ArchivePatternCopyGuard.isValidPatternCandidate(reflection), isTrue);
+      expect(
+        ArchivePatternCopyGuard.isValidPatternCandidate(reflection),
+        isTrue,
+      );
       expect(
         ArchivePatternCopyGuard.isValidPatternCandidate(
           'The deadline pressure returned before I could rest.',
@@ -74,7 +76,10 @@ void main() {
     });
 
     test('blocks subscription pro copy without blocking pressure words', () {
-      expect(ArchivePatternCopyGuard.isBlockedPatternText('Upgrade to Pro'), isTrue);
+      expect(
+        ArchivePatternCopyGuard.isBlockedPatternText('Upgrade to Pro'),
+        isTrue,
+      );
       expect(
         ArchivePatternCopyGuard.isBlockedPatternText(
           'The deadline pressure returned before I could rest.',
@@ -176,10 +181,7 @@ void main() {
       ].map((c) => c.statement);
 
       for (final statement in allStatements) {
-        expect(
-          statement.toLowerCase(),
-          isNot(contains('saved privately')),
-        );
+        expect(statement.toLowerCase(), isNot(contains('saved privately')));
       }
     });
 

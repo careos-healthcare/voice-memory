@@ -60,10 +60,7 @@ abstract final class SyncExpectationSafetyCopy {
   }
 }
 
-enum SyncExpectationSafetyAction {
-  allowed,
-  blocked,
-}
+enum SyncExpectationSafetyAction { allowed, blocked }
 
 enum SyncExpectationSafetyBlockReason {
   cloudBackup,

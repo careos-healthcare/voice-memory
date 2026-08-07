@@ -25,14 +25,13 @@ abstract final class PhysicalDeviceSmokeProof {
 
   static PhysicalDeviceSmokeProofReport report(
     PhysicalDeviceSmokeProofResult result,
-  ) =>
-      PhysicalDeviceSmokeProofReport(
-        headline: PhysicalDeviceSmokeProofCopy.headline,
-        body: PhysicalDeviceSmokeProofCopy.body,
-        manualNote: PhysicalDeviceSmokeProofCopy.manualNote,
-        guardrail: PhysicalDeviceSmokeProofCopy.guardrail,
-        result: result,
-      );
+  ) => PhysicalDeviceSmokeProofReport(
+    headline: PhysicalDeviceSmokeProofCopy.headline,
+    body: PhysicalDeviceSmokeProofCopy.body,
+    manualNote: PhysicalDeviceSmokeProofCopy.manualNote,
+    guardrail: PhysicalDeviceSmokeProofCopy.guardrail,
+    result: result,
+  );
 
   static bool detectAppNameArchiveMe(String infoPlistSource) =>
       infoPlistSource.contains('<key>CFBundleDisplayName</key>') &&
@@ -58,17 +57,18 @@ abstract final class PhysicalDeviceSmokeProof {
 
   static bool detectTranscriptCorrectionPath(
     String transcriptCorrectionCopySource,
-  ) =>
-      transcriptCorrectionCopySource.contains('Correct transcript');
+  ) => transcriptCorrectionCopySource.contains('Correct transcript');
 
   static bool detectFirstProofThreshold(String archiveEvidenceGateSource) =>
-      archiveEvidenceGateSource.contains('static const minProofEntryCount = 3;');
+      archiveEvidenceGateSource.contains(
+        'static const minProofEntryCount = 3;',
+      );
 
   static bool detectPostSaveReinforcementPath(
     String postSaveReinforcementCopySource,
-  ) =>
-      postSaveReinforcementCopySource
-          .contains('PostSaveReinforcementPlacementCopy');
+  ) => postSaveReinforcementCopySource.contains(
+    'PostSaveReinforcementPlacementCopy',
+  );
 
   static bool detectProScreenRoutes(String appRouterSource) =>
       appRouterSource.contains("path: '/pro-preview'") ||
@@ -128,48 +128,57 @@ abstract final class PhysicalDeviceSmokeProof {
     bool? restorePathOpens,
     bool? offlineLaunchSafe,
     bool? noCrash,
-  }) =>
-      PhysicalDeviceSmokeProofInput(
-        freshInstallOpens: freshInstallOpens,
-        appNameArchiveMe: detectAppNameArchiveMe(infoPlistSource),
-        launchScreenOk: launchScreenOk ??
-            detectLaunchScreenPresent(launchScreenStoryboardSource),
-        micPermissionAcceptPath: micPermissionAcceptPath ??
-            (detectMicPermissionAcceptCopy(micPermissionCopySource)
-                ? null
-                : false),
-        micPermissionDenyPath: micPermissionDenyPath ??
-            (detectMicPermissionDenyCopy(micPermissionCopySource) ? null : false),
-        typedSave: typedSave ??
-            (detectTypedSavePath(visibleArchiveProofCopySource) ? null : false),
-        voiceSave: voiceSave ??
-            (detectVoiceSavePath(recordFramingCopySource) ? null : false),
-        transcriptAppears: transcriptAppears,
-        postSaveReinforcementAppears: postSaveReinforcementAppears ??
-            (detectPostSaveReinforcementPath(postSaveReinforcementCopySource)
-                ? null
-                : false),
-        firstProofPath: firstProofPath ??
-            (detectFirstProofThreshold(archiveEvidenceGateSource) ? null : false),
-        correctionPath: correctionPath ??
-            (detectTranscriptCorrectionPath(transcriptCorrectionCopySource)
-                ? null
-                : false),
-        proScreenOpens: proScreenOpens ??
-            (detectProScreenRoutes(appRouterSource) ? null : false),
-        revenueCatProductLoad: revenueCatProductLoad,
-        purchaseUnavailableCopySafe:
-            detectPurchaseUnavailableCopy(proValueCopySource),
-        restorePathOpens: restorePathOpens ??
-            (detectRestorePath(securitySettingsSource) ? null : false),
-        privacyTermsSupportRoutesOpen:
-            detectPrivacyTermsSupportRoutes(appRouterSource),
-        offlineLaunchSafe: offlineLaunchSafe ??
-            (detectOfflineLaunchRoute(appRouterSource) ? null : false),
-        noCrash: noCrash,
-        noPrivateTextLeakedInLogs:
-            detectLogPrivacyPolicy(recordPipelineLogSource),
-      );
+  }) => PhysicalDeviceSmokeProofInput(
+    freshInstallOpens: freshInstallOpens,
+    appNameArchiveMe: detectAppNameArchiveMe(infoPlistSource),
+    launchScreenOk:
+        launchScreenOk ??
+        detectLaunchScreenPresent(launchScreenStoryboardSource),
+    micPermissionAcceptPath:
+        micPermissionAcceptPath ??
+        (detectMicPermissionAcceptCopy(micPermissionCopySource) ? null : false),
+    micPermissionDenyPath:
+        micPermissionDenyPath ??
+        (detectMicPermissionDenyCopy(micPermissionCopySource) ? null : false),
+    typedSave:
+        typedSave ??
+        (detectTypedSavePath(visibleArchiveProofCopySource) ? null : false),
+    voiceSave:
+        voiceSave ??
+        (detectVoiceSavePath(recordFramingCopySource) ? null : false),
+    transcriptAppears: transcriptAppears,
+    postSaveReinforcementAppears:
+        postSaveReinforcementAppears ??
+        (detectPostSaveReinforcementPath(postSaveReinforcementCopySource)
+            ? null
+            : false),
+    firstProofPath:
+        firstProofPath ??
+        (detectFirstProofThreshold(archiveEvidenceGateSource) ? null : false),
+    correctionPath:
+        correctionPath ??
+        (detectTranscriptCorrectionPath(transcriptCorrectionCopySource)
+            ? null
+            : false),
+    proScreenOpens:
+        proScreenOpens ??
+        (detectProScreenRoutes(appRouterSource) ? null : false),
+    revenueCatProductLoad: revenueCatProductLoad,
+    purchaseUnavailableCopySafe: detectPurchaseUnavailableCopy(
+      proValueCopySource,
+    ),
+    restorePathOpens:
+        restorePathOpens ??
+        (detectRestorePath(securitySettingsSource) ? null : false),
+    privacyTermsSupportRoutesOpen: detectPrivacyTermsSupportRoutes(
+      appRouterSource,
+    ),
+    offlineLaunchSafe:
+        offlineLaunchSafe ??
+        (detectOfflineLaunchRoute(appRouterSource) ? null : false),
+    noCrash: noCrash,
+    noPrivateTextLeakedInLogs: detectLogPrivacyPolicy(recordPipelineLogSource),
+  );
 
   static List<PhysicalDeviceSmokeProofCheck> _buildChecks(
     PhysicalDeviceSmokeProofInput input,
@@ -189,15 +198,13 @@ abstract final class PhysicalDeviceSmokeProof {
       return triState(value);
     }
 
-    PhysicalDeviceSmokeProofStatus repoBool(bool value) =>
-        value
-            ? PhysicalDeviceSmokeProofStatus.pass
-            : PhysicalDeviceSmokeProofStatus.fail;
+    PhysicalDeviceSmokeProofStatus repoBool(bool value) => value
+        ? PhysicalDeviceSmokeProofStatus.pass
+        : PhysicalDeviceSmokeProofStatus.fail;
 
     final installOk = input.freshInstallOpens != false;
     final nameOk = installOk && input.appNameArchiveMe;
     final launchOk = nameOk && input.launchScreenOk != false;
-    final micAcceptOk = launchOk && input.micPermissionAcceptPath != false;
     final micDenyOk = launchOk && input.micPermissionDenyPath != false;
     final typedOk = micDenyOk && input.typedSave != false;
     final voiceOk = typedOk && input.voiceSave != false;
@@ -209,7 +216,9 @@ abstract final class PhysicalDeviceSmokeProof {
     final proOk = correctionOk && input.proScreenOpens != false;
     final revenueCatOk = proOk && input.revenueCatProductLoad != false;
     final restoreOk =
-        revenueCatOk && input.purchaseUnavailableCopySafe && input.restorePathOpens != false;
+        revenueCatOk &&
+        input.purchaseUnavailableCopySafe &&
+        input.restorePathOpens != false;
 
     return [
       _check(
@@ -219,7 +228,10 @@ abstract final class PhysicalDeviceSmokeProof {
       ),
       _check(
         id: PhysicalDeviceSmokeProofCheckId.appNameArchiveMe,
-        status: gatedTriState(prerequisite: installOk, value: input.appNameArchiveMe),
+        status: gatedTriState(
+          prerequisite: installOk,
+          value: input.appNameArchiveMe,
+        ),
         detailLabel: _detailFor(
           gatedTriState(prerequisite: installOk, value: input.appNameArchiveMe),
         ),
@@ -327,7 +339,10 @@ abstract final class PhysicalDeviceSmokeProof {
           value: input.proScreenOpens,
         ),
         detailLabel: _detailFor(
-          gatedTriState(prerequisite: correctionOk, value: input.proScreenOpens),
+          gatedTriState(
+            prerequisite: correctionOk,
+            value: input.proScreenOpens,
+          ),
         ),
       ),
       _check(
@@ -337,7 +352,10 @@ abstract final class PhysicalDeviceSmokeProof {
           value: input.revenueCatProductLoad,
         ),
         detailLabel: _detailFor(
-          gatedTriState(prerequisite: proOk, value: input.revenueCatProductLoad),
+          gatedTriState(
+            prerequisite: proOk,
+            value: input.revenueCatProductLoad,
+          ),
         ),
       ),
       _check(
@@ -380,7 +398,10 @@ abstract final class PhysicalDeviceSmokeProof {
           value: input.offlineLaunchSafe,
         ),
         detailLabel: _detailFor(
-          gatedTriState(prerequisite: restoreOk, value: input.offlineLaunchSafe),
+          gatedTriState(
+            prerequisite: restoreOk,
+            value: input.offlineLaunchSafe,
+          ),
         ),
       ),
       _check(
@@ -444,13 +465,12 @@ abstract final class PhysicalDeviceSmokeProof {
     required PhysicalDeviceSmokeProofCheckId id,
     required PhysicalDeviceSmokeProofStatus status,
     required String detailLabel,
-  }) =>
-      PhysicalDeviceSmokeProofCheck(
-        id: id,
-        label: PhysicalDeviceSmokeProofCopy.labelFor(id),
-        status: status,
-        detailLabel: detailLabel,
-      );
+  }) => PhysicalDeviceSmokeProofCheck(
+    id: id,
+    label: PhysicalDeviceSmokeProofCopy.labelFor(id),
+    status: status,
+    detailLabel: detailLabel,
+  );
 }
 
 class PhysicalDeviceSmokeProofInput {

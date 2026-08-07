@@ -27,6 +27,7 @@ import 'package:voicememory_mobile/widgets/activation/third_session_archive_usef
 import 'package:voicememory_mobile/widgets/onboarding/first_save_evidence_card.dart';
 import 'package:voicememory_mobile/widgets/onboarding/pro_archive_continuity_card.dart';
 import 'package:voicememory_mobile/widgets/record/second_session_comparison_card.dart';
+import 'support/test_storage_sandbox.dart';
 
 JournalEntry _entry(String id, String transcript) {
   return JournalEntry(
@@ -46,35 +47,35 @@ JournalEntry _entry(String id, String transcript) {
 }
 
 void main() {
+  late TestStorageSandbox sandbox;
   setUp(() async {
+    sandbox = TestStorageSandbox.create();
     await AppServices.resetForTest(
-      journalPath: '${DateTime.now().microsecondsSinceEpoch}_journal.json',
-      prefsPath: '${DateTime.now().microsecondsSinceEpoch}_prefs.json',
+      journalPath: sandbox.journalPath,
+      prefsPath: sandbox.prefsPath,
       skipRevenueCat: true,
     );
   });
 
+  tearDown(() => sandbox.dispose());
   group('FirstThreeSessionGates', () {
-    test('early archive proof stays hidden until grounded repeat at two entries', () {
-      final entries = [
-        _entry(
-          '1',
-          'A quiet moment about lunch with a friend today.',
-        ),
-        _entry(
-          '2',
-          'Another unrelated note about errands this afternoon.',
-        ),
-      ];
-      expect(
-        FirstThreeSessionGates.suppressEarlyPatternClaimCards(
-          entryCount: 2,
-          hasGroundedRepeatMatch:
-              const SecondSessionSignalEngine().hasGroundedRepeatMatch(entries),
-        ),
-        isTrue,
-      );
-    });
+    test(
+      'early archive proof stays hidden until grounded repeat at two entries',
+      () {
+        final entries = [
+          _entry('1', 'A quiet moment about lunch with a friend today.'),
+          _entry('2', 'Another unrelated note about errands this afternoon.'),
+        ];
+        expect(
+          FirstThreeSessionGates.suppressEarlyPatternClaimCards(
+            entryCount: 2,
+            hasGroundedRepeatMatch: const SecondSessionSignalEngine()
+                .hasGroundedRepeatMatch(entries),
+          ),
+          isTrue,
+        );
+      },
+    );
   });
 
   group('FirstThreeSessionCopy', () {
@@ -95,7 +96,10 @@ void main() {
     });
 
     test('journey labels follow session path', () {
-      expect(FirstThreeSessionCopy.journeyLabelForCount(0), 'Start your archive');
+      expect(
+        FirstThreeSessionCopy.journeyLabelForCount(0),
+        'Start your archive',
+      );
       expect(
         FirstThreeSessionCopy.journeyLabelForCount(1),
         'Notice what repeats',
@@ -157,29 +161,32 @@ void main() {
       );
     });
 
-    test('suppresses early pattern claims until grounded repeat or third entry', () {
-      expect(
-        FirstThreeSessionGates.suppressEarlyPatternClaimCards(
-          entryCount: 2,
-          hasGroundedRepeatMatch: false,
-        ),
-        isTrue,
-      );
-      expect(
-        FirstThreeSessionGates.suppressEarlyPatternClaimCards(
-          entryCount: 2,
-          hasGroundedRepeatMatch: true,
-        ),
-        isFalse,
-      );
-      expect(
-        FirstThreeSessionGates.suppressEarlyPatternClaimCards(
-          entryCount: 3,
-          hasGroundedRepeatMatch: false,
-        ),
-        isFalse,
-      );
-    });
+    test(
+      'suppresses early pattern claims until grounded repeat or third entry',
+      () {
+        expect(
+          FirstThreeSessionGates.suppressEarlyPatternClaimCards(
+            entryCount: 2,
+            hasGroundedRepeatMatch: false,
+          ),
+          isTrue,
+        );
+        expect(
+          FirstThreeSessionGates.suppressEarlyPatternClaimCards(
+            entryCount: 2,
+            hasGroundedRepeatMatch: true,
+          ),
+          isFalse,
+        );
+        expect(
+          FirstThreeSessionGates.suppressEarlyPatternClaimCards(
+            entryCount: 3,
+            hasGroundedRepeatMatch: false,
+          ),
+          isFalse,
+        );
+      },
+    );
 
     test('Pro bridge waits until repeat value exists', () {
       expect(
@@ -256,14 +263,8 @@ void main() {
   group('Session 2 cautious comparison', () {
     test('ungrounded two-entry save suppresses possible-repeat headline', () {
       final entries = [
-        _entry(
-          '1',
-          'A quiet moment about lunch with a friend today.',
-        ),
-        _entry(
-          '2',
-          'Another unrelated note about errands this afternoon.',
-        ),
+        _entry('1', 'A quiet moment about lunch with a friend today.'),
+        _entry('2', 'Another unrelated note about errands this afternoon.'),
       ];
       const engine = SecondSessionSignalEngine();
       expect(engine.hasGroundedRepeatMatch(entries), isFalse);
@@ -295,10 +296,7 @@ void main() {
       ]);
 
       expect(comparison.hasEnoughData, isTrue);
-      expect(
-        comparison.title,
-        'ArchiveMe found a possible repeat',
-      );
+      expect(comparison.title, 'ArchiveMe found a possible repeat');
       expect(comparison.possibleRepeat, isTrue);
     });
 
@@ -349,18 +347,36 @@ void main() {
       expect(two.hasEnoughData, isFalse);
 
       final three = const ThirdSessionArchiveUsefulnessEngine().build([
-        _entry('1', 'I said yes again even though I was already tired from work today.'),
-        _entry('2', 'I took responsibility again before asking anyone for help today.'),
-        _entry('3', 'I kept going again before checking whether I had room today.'),
+        _entry(
+          '1',
+          'I said yes again even though I was already tired from work today.',
+        ),
+        _entry(
+          '2',
+          'I took responsibility again before asking anyone for help today.',
+        ),
+        _entry(
+          '3',
+          'I kept going again before checking whether I had room today.',
+        ),
       ]);
       expect(three.hasEnoughData, isTrue);
     });
 
     testWidgets('patterns card shows thread copy', (tester) async {
       final usefulness = const ThirdSessionArchiveUsefulnessEngine().build([
-        _entry('1', 'I said yes again even though I was already tired from work today.'),
-        _entry('2', 'I took responsibility again before asking anyone for help today.'),
-        _entry('3', 'I kept going again before checking whether I had room today.'),
+        _entry(
+          '1',
+          'I said yes again even though I was already tired from work today.',
+        ),
+        _entry(
+          '2',
+          'I took responsibility again before asking anyone for help today.',
+        ),
+        _entry(
+          '3',
+          'I kept going again before checking whether I had room today.',
+        ),
       ]);
 
       await tester.pumpWidget(
@@ -372,10 +388,7 @@ void main() {
       );
       await tester.pump();
 
-      expect(
-        find.text('ArchiveMe found a possible repeat'),
-        findsOneWidget,
-      );
+      expect(find.text('ArchiveMe found a possible repeat'), findsOneWidget);
       expect(find.text("Here's what keeps coming back."), findsOneWidget);
       expect(find.text("Here's what changed since last time."), findsOneWidget);
     });
@@ -399,7 +412,9 @@ void main() {
   });
 
   group('Pro boundary', () {
-    testWidgets('soft Pro card uses continuity copy after value', (tester) async {
+    testWidgets('soft Pro card uses continuity copy after value', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -415,7 +430,9 @@ void main() {
       await tester.pump();
 
       expect(
-        find.text('Free shows the first useful proof. Pro keeps the longer trail.'),
+        find.text(
+          'Free shows the first useful proof. Pro keeps the longer trail.',
+        ),
         findsOneWidget,
       );
       expect(
@@ -453,13 +470,16 @@ void main() {
       expect(model.journeyStepIndex, 1);
     });
 
-    test('two entries shows comparison payoff, not possible repeat headline', () {
-      final model = engine.build(reflectionCount: 2);
-      expect(model.title, 'ArchiveMe has two moments to compare.');
-      expect(model.title, isNot(FirstThreeSessionCopy.session2RepeatTitle));
-      expect(model.journeyStepIndex, 1);
-      expect(model.progressLabel, FirstThreeSessionCopy.journeyStep2);
-    });
+    test(
+      'two entries shows comparison payoff, not possible repeat headline',
+      () {
+        final model = engine.build(reflectionCount: 2);
+        expect(model.title, 'ArchiveMe has two moments to compare.');
+        expect(model.title, isNot(FirstThreeSessionCopy.session2RepeatTitle));
+        expect(model.journeyStepIndex, 1);
+        expect(model.progressLabel, FirstThreeSessionCopy.journeyStep2);
+      },
+    );
 
     test('three entries uses useful-archive title without invented repeat', () {
       final model = engine.build(
@@ -484,7 +504,9 @@ void main() {
 
     test('one entry ready explains second moment without pattern claim', () {
       final model = EarlyFirstSignalEngine.build(
-        entries: [_entry('1', 'I felt pressure before saying yes again today.')],
+        entries: [
+          _entry('1', 'I felt pressure before saying yes again today.'),
+        ],
       );
       expect(model!.kind, EarlyFirstSignalKind.oneEntryReceipt);
       expect(model.title, EarlyFirstSignalCopy.oneEntryTitle);
@@ -557,7 +579,9 @@ void main() {
 
     test('early repeat progress copy tracks first-three loop', () {
       final one = EarlyRepeatProgressEngine.build(
-        entries: [_entry('1', 'I felt pressure before saying yes again today.')],
+        entries: [
+          _entry('1', 'I felt pressure before saying yes again today.'),
+        ],
       );
       expect(one!.progressLabel, isEmpty);
 
@@ -573,7 +597,10 @@ void main() {
           ),
         ],
       );
-      expect(related!.progressLabel, EarlyRepeatProgressCopy.twoRelatedProgress);
+      expect(
+        related!.progressLabel,
+        EarlyRepeatProgressCopy.twoRelatedProgress,
+      );
       expect(related.claimsRepeatForming, isTrue);
 
       final unrelated = EarlyRepeatProgressEngine.build(
@@ -583,30 +610,33 @@ void main() {
         ],
       );
       expect(unrelated!.claimsRepeatForming, isFalse);
-      expect(
-        unrelated.progressLabel,
-        isNot(contains('first repeat proof')),
-      );
+      expect(unrelated.progressLabel, isNot(contains('first repeat proof')));
     });
 
-    test('post-save handoff mirrors first-three loop without progress card copy', () {
-      final entries = [
-        _entry(
-          '1',
-          'I had no capacity but I said yes again to the extra meeting today.',
-        ),
-        _entry(
-          '2',
-          'Same thing — said yes when I had no capacity for one more thing.',
-        ),
-      ];
-      final handoff = PostSaveReturnHandoffEngine.build(entries: entries);
-      final progress = EarlyRepeatProgressEngine.build(entries: entries);
+    test(
+      'post-save handoff mirrors first-three loop without progress card copy',
+      () {
+        final entries = [
+          _entry(
+            '1',
+            'I had no capacity but I said yes again to the extra meeting today.',
+          ),
+          _entry(
+            '2',
+            'Same thing — said yes when I had no capacity for one more thing.',
+          ),
+        ];
+        final handoff = PostSaveReturnHandoffEngine.build(entries: entries);
+        final progress = EarlyRepeatProgressEngine.build(entries: entries);
 
-      expect(handoff!.title, PostSaveReturnHandoffCopy.afterSecondSaveRelatedTitle);
-      expect(progress!.title, EarlyRepeatProgressCopy.twoRelatedTitle);
-      expect(handoff.body, isNot(equals(progress.body)));
-    });
+        expect(
+          handoff!.title,
+          PostSaveReturnHandoffCopy.afterSecondSaveRelatedTitle,
+        );
+        expect(progress!.title, EarlyRepeatProgressCopy.twoRelatedTitle);
+        expect(handoff.body, isNot(equals(progress.body)));
+      },
+    );
 
     test('first proof moment is the third-save emotional payoff', () {
       final entries = [
@@ -628,8 +658,14 @@ void main() {
       expect(moment.title, FirstProofMomentCopy.title);
       expect(moment.body, FirstProofMomentCopy.bodyStrong);
       expect(moment.nextLine, FirstProofMomentCopy.nextLine);
-      expect(EarlyRepeatProgressEngine.build(entries: entries.sublist(0, 2)), isNotNull);
-      expect(PostSaveReturnHandoffEngine.build(entries: entries.sublist(0, 2)), isNotNull);
+      expect(
+        EarlyRepeatProgressEngine.build(entries: entries.sublist(0, 2)),
+        isNotNull,
+      );
+      expect(
+        PostSaveReturnHandoffEngine.build(entries: entries.sublist(0, 2)),
+        isNotNull,
+      );
     });
 
     test('ipad smoke three related moments unlock first proof', () {
@@ -678,18 +714,9 @@ void main() {
     });
 
     test('daily map prompt suppressed during first-three loop', () {
-      expect(
-        FirstThreeSessionGates.suppressDailyMapPromptOnRecord(1),
-        isTrue,
-      );
-      expect(
-        FirstThreeSessionGates.suppressDailyMapPromptOnRecord(3),
-        isTrue,
-      );
-      expect(
-        FirstThreeSessionGates.suppressDailyMapPromptOnRecord(4),
-        isFalse,
-      );
+      expect(FirstThreeSessionGates.suppressDailyMapPromptOnRecord(1), isTrue);
+      expect(FirstThreeSessionGates.suppressDailyMapPromptOnRecord(3), isTrue);
+      expect(FirstThreeSessionGates.suppressDailyMapPromptOnRecord(4), isFalse);
     });
 
     test('first proof copy uses evidence trail language not chat memory', () {

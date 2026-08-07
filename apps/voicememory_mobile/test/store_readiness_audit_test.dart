@@ -16,18 +16,17 @@ StoreReadinessAudit _audit({
   bool restorePurchasesVerified = true,
   bool physicalDeviceSmokeTestPassed = true,
   bool productionSecretsRotated = true,
-}) =>
-    StoreReadinessAudit(
-      testFlightBuildUploaded: testFlightBuildUploaded,
-      appStoreSupportUrlReady: appStoreSupportUrlReady,
-      privacyPolicyReady: privacyPolicyReady,
-      appStoreScreenshotsReady: appStoreScreenshotsReady,
-      appStoreMetadataReady: appStoreMetadataReady,
-      revenueCatProductsVerified: revenueCatProductsVerified,
-      restorePurchasesVerified: restorePurchasesVerified,
-      physicalDeviceSmokeTestPassed: physicalDeviceSmokeTestPassed,
-      productionSecretsRotated: productionSecretsRotated,
-    );
+}) => StoreReadinessAudit(
+  testFlightBuildUploaded: testFlightBuildUploaded,
+  appStoreSupportUrlReady: appStoreSupportUrlReady,
+  privacyPolicyReady: privacyPolicyReady,
+  appStoreScreenshotsReady: appStoreScreenshotsReady,
+  appStoreMetadataReady: appStoreMetadataReady,
+  revenueCatProductsVerified: revenueCatProductsVerified,
+  restorePurchasesVerified: restorePurchasesVerified,
+  physicalDeviceSmokeTestPassed: physicalDeviceSmokeTestPassed,
+  productionSecretsRotated: productionSecretsRotated,
+);
 
 ProductionCandidateChecklist _productionChecklist({
   bool testFlightBuildUploaded = true,
@@ -39,26 +38,25 @@ ProductionCandidateChecklist _productionChecklist({
   bool restorePurchasesVerified = true,
   bool physicalDeviceSmokeTestPassed = true,
   bool productionSecretsRotated = true,
-}) =>
-    ProductionCandidateChecklist(
-      betaResultsPassed: true,
-      proofProtectionBaselineActive: true,
-      usefulProofStable: true,
-      tooVagueNotRelevantLow: true,
-      firstSessionTargetMet: true,
-      evidenceTrailClearTargetMet: true,
-      proUnderstandingTargetMet: true,
-      pricingSignalAcceptable: true,
-      restorePurchasesVerified: restorePurchasesVerified,
-      revenueCatProductsVerified: revenueCatProductsVerified,
-      appStoreSupportUrlReady: appStoreSupportUrlReady,
-      privacyPolicyReady: privacyPolicyReady,
-      appStoreScreenshotsReady: appStoreScreenshotsReady,
-      appStoreMetadataReady: appStoreMetadataReady,
-      productionSecretsRotated: productionSecretsRotated,
-      physicalDeviceSmokeTestPassed: physicalDeviceSmokeTestPassed,
-      testFlightBuildUploaded: testFlightBuildUploaded,
-    );
+}) => ProductionCandidateChecklist(
+  betaResultsPassed: true,
+  proofProtectionBaselineActive: true,
+  usefulProofStable: true,
+  tooVagueNotRelevantLow: true,
+  firstSessionTargetMet: true,
+  evidenceTrailClearTargetMet: true,
+  proUnderstandingTargetMet: true,
+  pricingSignalAcceptable: true,
+  restorePurchasesVerified: restorePurchasesVerified,
+  revenueCatProductsVerified: revenueCatProductsVerified,
+  appStoreSupportUrlReady: appStoreSupportUrlReady,
+  privacyPolicyReady: privacyPolicyReady,
+  appStoreScreenshotsReady: appStoreScreenshotsReady,
+  appStoreMetadataReady: appStoreMetadataReady,
+  productionSecretsRotated: productionSecretsRotated,
+  physicalDeviceSmokeTestPassed: physicalDeviceSmokeTestPassed,
+  testFlightBuildUploaded: testFlightBuildUploaded,
+);
 
 void main() {
   group('StoreReadinessAudit.fromProductionCandidateChecklist', () {
@@ -84,23 +82,23 @@ void main() {
         _audit(appStoreSupportUrlReady: false),
         _audit(privacyPolicyReady: false),
       ]) {
-        expect(
-          audit.resolveStatus(),
-          StoreReadinessStatus.storeAssetsMissing,
-        );
+        expect(audit.resolveStatus(), StoreReadinessStatus.storeAssetsMissing);
       }
     });
 
-    test('RevenueCat or restore missing returns revenueCatOrRestoreMissing', () {
-      expect(
-        _audit(revenueCatProductsVerified: false).resolveStatus(),
-        StoreReadinessStatus.revenueCatOrRestoreMissing,
-      );
-      expect(
-        _audit(restorePurchasesVerified: false).resolveStatus(),
-        StoreReadinessStatus.revenueCatOrRestoreMissing,
-      );
-    });
+    test(
+      'RevenueCat or restore missing returns revenueCatOrRestoreMissing',
+      () {
+        expect(
+          _audit(revenueCatProductsVerified: false).resolveStatus(),
+          StoreReadinessStatus.revenueCatOrRestoreMissing,
+        );
+        expect(
+          _audit(restorePurchasesVerified: false).resolveStatus(),
+          StoreReadinessStatus.revenueCatOrRestoreMissing,
+        );
+      },
+    );
 
     test('TestFlight or device smoke missing returns notReady', () {
       expect(
@@ -121,10 +119,7 @@ void main() {
     });
 
     test('everything true returns readyForSubmission', () {
-      expect(
-        _audit().resolveStatus(),
-        StoreReadinessStatus.readyForSubmission,
-      );
+      expect(_audit().resolveStatus(), StoreReadinessStatus.readyForSubmission);
     });
   });
 
@@ -172,10 +167,7 @@ void main() {
 
       expect(status, StoreReadinessStatus.storeAssetsMissing);
       expect(report.missingItems, contains('Privacy policy ready'));
-      expect(
-        report.missingItems,
-        contains('Restore purchases verified'),
-      );
+      expect(report.missingItems, contains('Restore purchases verified'));
     });
 
     test('returns correct nextAction for each status', () {
@@ -194,14 +186,18 @@ void main() {
 
       for (final entry in cases.entries) {
         final audit = switch (entry.key) {
-          StoreReadinessStatus.notReady =>
-            _audit(testFlightBuildUploaded: false),
-          StoreReadinessStatus.storeAssetsMissing =>
-            _audit(appStoreMetadataReady: false),
-          StoreReadinessStatus.revenueCatOrRestoreMissing =>
-            _audit(restorePurchasesVerified: false),
-          StoreReadinessStatus.secretsNotRotated =>
-            _audit(productionSecretsRotated: false),
+          StoreReadinessStatus.notReady => _audit(
+            testFlightBuildUploaded: false,
+          ),
+          StoreReadinessStatus.storeAssetsMissing => _audit(
+            appStoreMetadataReady: false,
+          ),
+          StoreReadinessStatus.revenueCatOrRestoreMissing => _audit(
+            restorePurchasesVerified: false,
+          ),
+          StoreReadinessStatus.secretsNotRotated => _audit(
+            productionSecretsRotated: false,
+          ),
           StoreReadinessStatus.readyForSubmission => _audit(),
         };
         final report = StoreReadinessCopy.report(audit, entry.key);

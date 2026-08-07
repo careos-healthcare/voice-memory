@@ -63,6 +63,21 @@ export async function recordResurfacingEvent(
   memoryEvents.__vmResurfacingEvents.push(input);
 }
 
+/** Removes every recorded resurfacing event for a user. Idempotent. */
+export async function deleteResurfacingEventsForUser(userId: string): Promise<number> {
+  if (shouldUsePostgresStorage()) {
+    const result = await dbQuery(`DELETE FROM resurfacing_events WHERE user_id = $1`, [userId]);
+    return result.rowCount ?? 0;
+  }
+
+  if (!memoryEvents.__vmResurfacingEvents) return 0;
+  const before = memoryEvents.__vmResurfacingEvents.length;
+  memoryEvents.__vmResurfacingEvents = memoryEvents.__vmResurfacingEvents.filter(
+    (event) => event.userId !== userId,
+  );
+  return before - memoryEvents.__vmResurfacingEvents.length;
+}
+
 const COUNT_KEYS: Array<keyof ResurfacingMetricsAggregate> = [
   "callback_shown",
   "callback_dismissed",

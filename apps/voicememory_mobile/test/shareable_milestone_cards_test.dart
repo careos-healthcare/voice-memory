@@ -50,44 +50,34 @@ JournalEntry _entry(
   String? transcript,
   DateTime? createdAt,
   List<String> recurringThemes = const ['work'],
-}) =>
-    JournalEntry(
-      id: id,
-      createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
-      transcript: transcript ??
-          'I $_privateSnippet again even when I was tired today.',
-      durationSeconds: 30,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 2,
-        recurringThemes: recurringThemes,
-        exactLanguagePattern: '',
-        concreteObservation: 'Work pressure showed up in this moment.',
-        repeatedSignal: '',
-      ),
-    );
+}) => JournalEntry(
+  id: id,
+  createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
+  transcript:
+      transcript ?? 'I $_privateSnippet again even when I was tired today.',
+  durationSeconds: 30,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 2,
+    recurringThemes: recurringThemes,
+    exactLanguagePattern: '',
+    concreteObservation: 'Work pressure showed up in this moment.',
+    repeatedSignal: '',
+  ),
+);
 
 List<JournalEntry> _entries(
   int count, {
   List<String> recurringThemes = const ['work'],
-}) =>
-    List.generate(
-      count,
-      (i) => _entry(
-        'e$i',
-        createdAt: DateTime(2026, 6, 9 + i, 12),
-        recurringThemes: recurringThemes,
-      ),
-    );
-
-List<JournalEntry> _entriesAcrossDays(int count) => List.generate(
-      count,
-      (i) => _entry(
-        'd$i',
-        createdAt: DateTime(2026, 6, 1 + i, 12),
-      ),
-    );
+}) => List.generate(
+  count,
+  (i) => _entry(
+    'e$i',
+    createdAt: DateTime(2026, 6, 9 + i, 12),
+    recurringThemes: recurringThemes,
+  ),
+);
 
 MilestoneShareInput _input({
   int realSavedMomentCount = 0,
@@ -99,18 +89,17 @@ MilestoneShareInput _input({
   bool hasRepeatingTheme = false,
   bool thenVsNowAvailable = false,
   bool archiveCalendarActiveAcrossDays = false,
-}) =>
-    MilestoneShareInput(
-      realSavedMomentCount: realSavedMomentCount,
-      usableEvidenceCount: usableEvidenceCount,
-      firstWeekComplete: firstWeekComplete,
-      hasWatchTheme: hasWatchTheme,
-      weeklyReviewAvailable: weeklyReviewAvailable,
-      weeklyReviewCompleted: weeklyReviewCompleted,
-      hasRepeatingTheme: hasRepeatingTheme,
-      thenVsNowAvailable: thenVsNowAvailable,
-      archiveCalendarActiveAcrossDays: archiveCalendarActiveAcrossDays,
-    );
+}) => MilestoneShareInput(
+  realSavedMomentCount: realSavedMomentCount,
+  usableEvidenceCount: usableEvidenceCount,
+  firstWeekComplete: firstWeekComplete,
+  hasWatchTheme: hasWatchTheme,
+  weeklyReviewAvailable: weeklyReviewAvailable,
+  weeklyReviewCompleted: weeklyReviewCompleted,
+  hasRepeatingTheme: hasRepeatingTheme,
+  thenVsNowAvailable: thenVsNowAvailable,
+  archiveCalendarActiveAcrossDays: archiveCalendarActiveAcrossDays,
+);
 
 void _expectNoBannedCopy(Iterable<String> visible) {
   for (final text in visible) {
@@ -126,7 +115,12 @@ void _expectNoBannedCopy(Iterable<String> visible) {
 }
 
 void _expectNoPrivateContent(MilestoneShareCard card) {
-  for (final field in [card.title, card.body, card.safeShareText, card.proofLabel]) {
+  for (final field in [
+    card.title,
+    card.body,
+    card.safeShareText,
+    card.proofLabel,
+  ]) {
     expect(field.toLowerCase(), isNot(contains(_privateSnippet)));
     expect(field.toLowerCase(), isNot(contains(_privateName.toLowerCase())));
     expect(field, isNot(contains('transcript')));
@@ -139,33 +133,32 @@ ArchiveHomePriorityInput _priorityInput({
   bool reviewRitualVisible = false,
   bool thenVsNowVisible = false,
   bool archiveCalendarVisible = false,
-}) =>
-    ArchiveHomePriorityInput(
-      savedEntryCount: savedEntryCount,
-      usableEvidenceCount: savedEntryCount,
-      depthLevel: ArchiveDepthLevel.notStarted,
-      returnChangesAvailable: false,
-      weeklyReviewAvailable: false,
-      sampleMode: false,
-      proPreviewPromoVisible: false,
-      showEmptySample: false,
-      firstWeekPathVisible: savedEntryCount < 7,
-      dailyArchiveExerciseVisible: true,
-      archiveClarityProgressVisible: true,
-      capacityLoopVisible: false,
-          capacityThreeMomentActivationVisible: false,
-          capacityPullReasonVisible: false,
-      capacityDecisionOutcomeVisible: false,
-      capacityCostLaterCheckinVisible: false,
-      capacityActivationFitVisible: false,
-      beforeYouSayYesPauseVisible: false,
-      capacityWeeklyReviewVisible: false,
-      capacityBoundaryResponseVisible: false,
-      thenVsNowVisible: thenVsNowVisible,
-      archiveCalendarVisible: archiveCalendarVisible,
-      reviewRitualVisible: reviewRitualVisible,
-      milestoneShareVisible: milestoneShareVisible,
-    );
+}) => ArchiveHomePriorityInput(
+  savedEntryCount: savedEntryCount,
+  usableEvidenceCount: savedEntryCount,
+  depthLevel: ArchiveDepthLevel.notStarted,
+  returnChangesAvailable: false,
+  weeklyReviewAvailable: false,
+  sampleMode: false,
+  proPreviewPromoVisible: false,
+  showEmptySample: false,
+  firstWeekPathVisible: savedEntryCount < 7,
+  dailyArchiveExerciseVisible: true,
+  archiveClarityProgressVisible: true,
+  capacityLoopVisible: false,
+  capacityThreeMomentActivationVisible: false,
+  capacityPullReasonVisible: false,
+  capacityDecisionOutcomeVisible: false,
+  capacityCostLaterCheckinVisible: false,
+  capacityActivationFitVisible: false,
+  beforeYouSayYesPauseVisible: false,
+  capacityWeeklyReviewVisible: false,
+  capacityBoundaryResponseVisible: false,
+  thenVsNowVisible: thenVsNowVisible,
+  archiveCalendarVisible: archiveCalendarVisible,
+  reviewRitualVisible: reviewRitualVisible,
+  milestoneShareVisible: milestoneShareVisible,
+);
 
 void main() {
   const engine = MilestoneShareEngine();
@@ -181,65 +174,78 @@ void main() {
 
     test('1 entry creates first saved moment milestone', () {
       final result = engine.build(_input(realSavedMomentCount: 1));
-      expect(result.cards.map((c) => c.milestoneId),
-          contains(MilestoneShareId.firstSavedMoment));
+      expect(
+        result.cards.map((c) => c.milestoneId),
+        contains(MilestoneShareId.firstSavedMoment),
+      );
     });
 
     test('3 entries creates 3 moments milestone', () {
       final result = engine.build(_input(realSavedMomentCount: 3));
-      expect(result.cards.map((c) => c.milestoneId),
-          contains(MilestoneShareId.threeMomentsSaved));
+      expect(
+        result.cards.map((c) => c.milestoneId),
+        contains(MilestoneShareId.threeMomentsSaved),
+      );
     });
 
     test('first week complete creates first week milestone', () {
       final result = engine.build(
         _input(realSavedMomentCount: 7, firstWeekComplete: true),
       );
-      expect(result.cards.map((c) => c.milestoneId),
-          contains(MilestoneShareId.firstWeekPathComplete));
+      expect(
+        result.cards.map((c) => c.milestoneId),
+        contains(MilestoneShareId.firstWeekPathComplete),
+      );
     });
 
     test('watch theme creates watch theme milestone', () {
       final result = engine.build(
         _input(realSavedMomentCount: 1, hasWatchTheme: true),
       );
-      expect(result.cards.map((c) => c.milestoneId),
-          contains(MilestoneShareId.firstWatchThemeChosen));
+      expect(
+        result.cards.map((c) => c.milestoneId),
+        contains(MilestoneShareId.firstWatchThemeChosen),
+      );
     });
 
     test('weekly review available creates weekly review milestone', () {
       final result = engine.build(
         _input(realSavedMomentCount: 5, weeklyReviewAvailable: true),
       );
-      expect(result.cards.map((c) => c.milestoneId),
-          contains(MilestoneShareId.firstWeeklyReview));
+      expect(
+        result.cards.map((c) => c.milestoneId),
+        contains(MilestoneShareId.firstWeeklyReview),
+      );
     });
 
     test('repeating theme creates repeating theme milestone', () {
       final result = engine.build(
         _input(realSavedMomentCount: 4, hasRepeatingTheme: true),
       );
-      expect(result.cards.map((c) => c.milestoneId),
-          contains(MilestoneShareId.firstRepeatingTheme));
+      expect(
+        result.cards.map((c) => c.milestoneId),
+        contains(MilestoneShareId.firstRepeatingTheme),
+      );
     });
 
     test('Then vs Now available creates Then vs Now milestone', () {
       final result = engine.build(
         _input(realSavedMomentCount: 5, thenVsNowAvailable: true),
       );
-      expect(result.cards.map((c) => c.milestoneId),
-          contains(MilestoneShareId.firstThenVsNowAvailable));
+      expect(
+        result.cards.map((c) => c.milestoneId),
+        contains(MilestoneShareId.firstThenVsNowAvailable),
+      );
     });
 
     test('calendar active across multiple days creates calendar milestone', () {
       final result = engine.build(
-        _input(
-          realSavedMomentCount: 4,
-          archiveCalendarActiveAcrossDays: true,
-        ),
+        _input(realSavedMomentCount: 4, archiveCalendarActiveAcrossDays: true),
       );
-      expect(result.cards.map((c) => c.milestoneId),
-          contains(MilestoneShareId.archiveCalendarActive));
+      expect(
+        result.cards.map((c) => c.milestoneId),
+        contains(MilestoneShareId.archiveCalendarActive),
+      );
     });
 
     test('primary milestone chooses strongest/latest meaningful card', () {
@@ -260,7 +266,10 @@ void main() {
 
     test('no raw journal text appears in card fields', () {
       final entries = _entries(3);
-      final result = engine.buildFromJournal(entries: entries, hasWatchTheme: false);
+      final result = engine.buildFromJournal(
+        entries: entries,
+        hasWatchTheme: false,
+      );
       for (final card in result.cards) {
         _expectNoPrivateContent(card);
       }
@@ -271,10 +280,17 @@ void main() {
         _entry('a', recurringThemes: ['pressure at work']),
         _entry('b', recurringThemes: ['pressure at work']),
       ];
-      final result = engine.buildFromJournal(entries: entries, hasWatchTheme: false);
-      final repeating = result.cards
-          .firstWhere((c) => c.milestoneId == MilestoneShareId.firstRepeatingTheme);
-      expect(repeating.safeShareText.toLowerCase(), isNot(contains('pressure at work')));
+      final result = engine.buildFromJournal(
+        entries: entries,
+        hasWatchTheme: false,
+      );
+      final repeating = result.cards.firstWhere(
+        (c) => c.milestoneId == MilestoneShareId.firstRepeatingTheme,
+      );
+      expect(
+        repeating.safeShareText.toLowerCase(),
+        isNot(contains('pressure at work')),
+      );
       _expectNoPrivateContent(repeating);
     });
 
@@ -297,9 +313,15 @@ void main() {
           ),
         ),
       ];
-      final result = engine.buildFromJournal(entries: entries, hasWatchTheme: false);
+      final result = engine.buildFromJournal(
+        entries: entries,
+        hasWatchTheme: false,
+      );
       expect(result.totalAvailableCount, 1);
-      expect(result.primaryCard?.milestoneId, MilestoneShareId.firstSavedMoment);
+      expect(
+        result.primaryCard?.milestoneId,
+        MilestoneShareId.firstSavedMoment,
+      );
     });
 
     test('copy uses ArchiveMe and avoids VoiceMemory branding', () {
@@ -351,8 +373,14 @@ void main() {
 
     test('milestone share card does not displace core sticky cards', () {
       final plan = priorityEngine.build(_priorityInput(savedEntryCount: 5));
-      expect(plan.primarySections, contains(ArchiveHomeSectionId.firstWeekPath));
-      expect(plan.primarySections, isNot(contains(ArchiveHomeSectionId.milestoneShare)));
+      expect(
+        plan.primarySections,
+        contains(ArchiveHomeSectionId.firstWeekPath),
+      );
+      expect(
+        plan.primarySections,
+        isNot(contains(ArchiveHomeSectionId.milestoneShare)),
+      );
     });
 
     test('milestone share ranks after review ritual when both visible', () {
@@ -365,10 +393,12 @@ void main() {
           archiveCalendarVisible: true,
         ),
       );
-      final reviewIndex =
-          plan.secondarySections.indexOf(ArchiveHomeSectionId.reviewRitual);
-      final shareIndex =
-          plan.secondarySections.indexOf(ArchiveHomeSectionId.milestoneShare);
+      final reviewIndex = plan.secondarySections.indexOf(
+        ArchiveHomeSectionId.reviewRitual,
+      );
+      final shareIndex = plan.secondarySections.indexOf(
+        ArchiveHomeSectionId.milestoneShare,
+      );
       expect(reviewIndex, isNot(-1));
       expect(shareIndex, isNot(-1));
       expect(reviewIndex, lessThan(shareIndex));
@@ -411,21 +441,24 @@ void main() {
       expect(shareText.toLowerCase(), isNot(contains(_privateSnippet)));
     });
 
-    testWidgets('Archive Home card renders when milestones exist', (tester) async {
+    testWidgets('Archive Home card renders when milestones exist', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           theme: AppTheme.light(),
           home: Scaffold(
-            body: MilestoneShareHomeCard.test(
-              entries: _entries(3),
-            ),
+            body: MilestoneShareHomeCard.test(entries: _entries(3)),
           ),
         ),
       );
       await tester.pumpAndSettle();
 
       expect(find.byKey(const Key('milestone_share_card')), findsOneWidget);
-      expect(find.text(MilestoneShareCopy.openMilestoneCardsCta), findsOneWidget);
+      expect(
+        find.text(MilestoneShareCopy.openMilestoneCardsCta),
+        findsOneWidget,
+      );
     });
   });
 

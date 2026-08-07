@@ -47,12 +47,12 @@ abstract final class BetaTesterReportCopy {
       };
 
   static String bodyFor(BetaTesterReportSectionId section) => switch (section) {
-        BetaTesterReportSectionId.whatReturned => whatReturnedBody,
-        BetaTesterReportSectionId.whatChanged => whatChangedBody,
-        BetaTesterReportSectionId.whatFaded => whatFadedBody,
-        BetaTesterReportSectionId.whatYouCorrected => whatYouCorrectedBody,
-        BetaTesterReportSectionId.stillUnsure => stillUnsureBody,
-      };
+    BetaTesterReportSectionId.whatReturned => whatReturnedBody,
+    BetaTesterReportSectionId.whatChanged => whatChangedBody,
+    BetaTesterReportSectionId.whatFaded => whatFadedBody,
+    BetaTesterReportSectionId.whatYouCorrected => whatYouCorrectedBody,
+    BetaTesterReportSectionId.stillUnsure => stillUnsureBody,
+  };
 
   static const sectionOrder = [
     BetaTesterReportSectionId.whatReturned,
@@ -63,20 +63,20 @@ abstract final class BetaTesterReportCopy {
   ];
 
   static List<String> allVisibleStrings() => [
-        corePositioning,
-        title,
-        subtitle,
-        whatReturnedHeading,
-        whatChangedHeading,
-        whatFadedHeading,
-        whatYouCorrectedHeading,
-        stillUnsureHeading,
-        whatReturnedBody,
-        whatChangedBody,
-        whatFadedBody,
-        whatYouCorrectedBody,
-        stillUnsureBody,
-        footer,
-        betaFeedbackLine,
-      ];
+    corePositioning,
+    title,
+    subtitle,
+    whatReturnedHeading,
+    whatChangedHeading,
+    whatFadedHeading,
+    whatYouCorrectedHeading,
+    stillUnsureHeading,
+    whatReturnedBody,
+    whatChangedBody,
+    whatFadedBody,
+    whatYouCorrectedBody,
+    stillUnsureBody,
+    footer,
+    betaFeedbackLine,
+  ];
 }

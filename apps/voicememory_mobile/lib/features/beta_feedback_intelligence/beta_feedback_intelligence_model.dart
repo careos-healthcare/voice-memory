@@ -1,9 +1,5 @@
 /// Safe answer buckets for beta feedback intelligence — no private content.
-enum BetaChatGptDifferenceAnswer {
-  yes,
-  notSure,
-  no,
-}
+enum BetaChatGptDifferenceAnswer { yes, notSure, no }
 
 enum BetaDifferentiatorAnswer {
   showedRepeats,
@@ -13,11 +9,7 @@ enum BetaDifferentiatorAnswer {
   other,
 }
 
-enum BetaWouldPayAnswer {
-  yes,
-  maybe,
-  no,
-}
+enum BetaWouldPayAnswer { yes, maybe, no }
 
 enum BetaMainConfusionBucket {
   firstRecording,
@@ -80,11 +72,11 @@ class BetaFeedbackIntelligenceState {
   final DateTime? updatedAt;
 
   bool? get testerUnderstoodArchiveMe => switch (chatGptDifferenceAnswer) {
-        BetaChatGptDifferenceAnswer.yes => true,
-        BetaChatGptDifferenceAnswer.notSure => null,
-        BetaChatGptDifferenceAnswer.no => false,
-        null => null,
-      };
+    BetaChatGptDifferenceAnswer.yes => true,
+    BetaChatGptDifferenceAnswer.notSure => null,
+    BetaChatGptDifferenceAnswer.no => false,
+    null => null,
+  };
 
   BetaWouldPayAnswer? get testerWouldPay => wouldPayAnswer;
   BetaMainConfusionBucket? get testerMainConfusion => mainConfusionBucket;
@@ -120,10 +112,9 @@ class BetaFeedbackIntelligenceState {
   }) {
     return BetaFeedbackIntelligenceState(
       hasSavedFirstMoment: hasSavedFirstMoment ?? this.hasSavedFirstMoment,
-      hasReachedFirstProof:
-          hasReachedFirstProof ?? this.hasReachedFirstProof,
-      hasSeenChatGptDifferentiation: hasSeenChatGptDifferentiation ??
-          this.hasSeenChatGptDifferentiation,
+      hasReachedFirstProof: hasReachedFirstProof ?? this.hasReachedFirstProof,
+      hasSeenChatGptDifferentiation:
+          hasSeenChatGptDifferentiation ?? this.hasSeenChatGptDifferentiation,
       hasSeenProEvidenceBridge:
           hasSeenProEvidenceBridge ?? this.hasSeenProEvidenceBridge,
       hasOpenedProEvidenceSheet:
@@ -153,25 +144,24 @@ class BetaFeedbackIntelligenceState {
   }
 
   Map<String, dynamic> toJson() => {
-        if (hasSavedFirstMoment) 'hasSavedFirstMoment': true,
-        if (hasReachedFirstProof) 'hasReachedFirstProof': true,
-        if (hasSeenChatGptDifferentiation) 'hasSeenChatGptDifferentiation': true,
-        if (hasSeenProEvidenceBridge) 'hasSeenProEvidenceBridge': true,
-        if (hasOpenedProEvidenceSheet) 'hasOpenedProEvidenceSheet': true,
-        if (hasSubmittedBetaFeedback) 'hasSubmittedBetaFeedback': true,
-        if (chatGptDifferenceAnswer != null)
-          'chatGptDifferenceAnswer': chatGptDifferenceAnswer!.name,
-        if (differentiatorAnswer != null)
-          'differentiatorAnswer': differentiatorAnswer!.name,
-        if (wouldPayAnswer != null) 'wouldPayAnswer': wouldPayAnswer!.name,
-        if (mainConfusionBucket != null)
-          'mainConfusionBucket': mainConfusionBucket!.name,
-        if (strongestMomentBucket != null)
-          'strongestMomentBucket': strongestMomentBucket!.name,
-        if (submittedDateKey != null) 'submittedDateKey': submittedDateKey,
-        if (updatedAt != null)
-          'updatedAt': updatedAt!.toUtc().toIso8601String(),
-      };
+    if (hasSavedFirstMoment) 'hasSavedFirstMoment': true,
+    if (hasReachedFirstProof) 'hasReachedFirstProof': true,
+    if (hasSeenChatGptDifferentiation) 'hasSeenChatGptDifferentiation': true,
+    if (hasSeenProEvidenceBridge) 'hasSeenProEvidenceBridge': true,
+    if (hasOpenedProEvidenceSheet) 'hasOpenedProEvidenceSheet': true,
+    if (hasSubmittedBetaFeedback) 'hasSubmittedBetaFeedback': true,
+    if (chatGptDifferenceAnswer != null)
+      'chatGptDifferenceAnswer': chatGptDifferenceAnswer!.name,
+    if (differentiatorAnswer != null)
+      'differentiatorAnswer': differentiatorAnswer!.name,
+    if (wouldPayAnswer != null) 'wouldPayAnswer': wouldPayAnswer!.name,
+    if (mainConfusionBucket != null)
+      'mainConfusionBucket': mainConfusionBucket!.name,
+    if (strongestMomentBucket != null)
+      'strongestMomentBucket': strongestMomentBucket!.name,
+    if (submittedDateKey != null) 'submittedDateKey': submittedDateKey,
+    if (updatedAt != null) 'updatedAt': updatedAt!.toUtc().toIso8601String(),
+  };
 
   static BetaFeedbackIntelligenceState fromJson(Map<String, dynamic>? json) {
     if (json == null || json.isEmpty) return empty;

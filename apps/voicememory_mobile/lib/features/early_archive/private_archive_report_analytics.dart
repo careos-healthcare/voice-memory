@@ -1,7 +1,5 @@
 import 'package:flutter/foundation.dart';
 
-import 'private_archive_report_model.dart';
-
 /// Safe analytics for private archive report — metadata only.
 abstract final class PrivateArchiveReportAnalytics {
   PrivateArchiveReportAnalytics._();
@@ -12,7 +10,7 @@ abstract final class PrivateArchiveReportAnalytics {
 
   @visibleForTesting
   static void Function(String event, Map<String, Object> properties)?
-      captureForTest;
+  captureForTest;
 
   static void seen({
     required String surface,

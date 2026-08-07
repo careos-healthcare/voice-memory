@@ -47,7 +47,7 @@ class LanguageIndicatorChip extends StatelessWidget {
         button: true,
         label: label,
         child: Material(
-          color: Colors.transparent,
+          color: AppColors.transparent,
           child: InkWell(
             onTap: () => _openSheet(context),
             borderRadius: BorderRadius.circular(999),

@@ -67,9 +67,9 @@ class _ComeBackTomorrowCardState extends State<ComeBackTomorrowCard> {
 
   @override
   Widget build(BuildContext context) {
-    final bodyStyle = ArchiveMobileTypography.explanationBody(context).copyWith(
-      color: AppColors.textSecondary,
-    );
+    final bodyStyle = ArchiveMobileTypography.explanationBody(
+      context,
+    ).copyWith(color: AppColors.textSecondary);
     final phraseStyle = bodyStyle.copyWith(
       color: AppColors.textPrimary,
       fontWeight: FontWeight.w600,

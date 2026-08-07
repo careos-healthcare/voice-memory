@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/features/moments/key_moment_model.dart';
-import 'package:voicememory_mobile/screens/key_moment_detail_screen.dart';
+import 'package:archiveme_research/screens/key_moment_detail_screen.dart';
 
 KeyMoment _moment({String? nextCheck}) => KeyMoment(
   id: 'm1',

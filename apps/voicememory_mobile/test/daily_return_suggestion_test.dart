@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/billing/archive_entitlement_reader.dart';
-import 'package:voicememory_mobile/billing/suggestion_attribution_event.dart';
 import 'package:voicememory_mobile/dev/visual_audit_overrides.dart';
 import 'package:voicememory_mobile/features/aha/aha_moment_store.dart';
 import 'package:voicememory_mobile/features/pressure_retention/daily_return_suggestion_engine.dart';
@@ -57,20 +56,20 @@ List<PressureCheckInRecord> _richRecords() => [
 ];
 
 JournalEntry _journalEntry(String id) => JournalEntry(
-      id: id,
-      createdAt: DateTime(2026, 6, 1, 12).add(Duration(days: id.hashCode % 3)),
-      transcript:
-          'A long enough transcript to count as a saved reflection for $id.',
-      durationSeconds: 30,
-      reflection: const Reflection(
-        mood: 'thoughtful',
-        emotionalIntensity: 2,
-        recurringThemes: ['work'],
-        exactLanguagePattern: 'pattern',
-        concreteObservation: 'Work pressure showed up again today.',
-        repeatedSignal: 'signal',
-      ),
-    );
+  id: id,
+  createdAt: DateTime(2026, 6, 1, 12).add(Duration(days: id.hashCode % 3)),
+  transcript:
+      'A long enough transcript to count as a saved reflection for $id.',
+  durationSeconds: 30,
+  reflection: const Reflection(
+    mood: 'thoughtful',
+    emotionalIntensity: 2,
+    recurringThemes: ['work'],
+    exactLanguagePattern: 'pattern',
+    concreteObservation: 'Work pressure showed up again today.',
+    repeatedSignal: 'signal',
+  ),
+);
 
 Future<void> _seedJournalForSuggestions(int count) async {
   for (var i = 0; i < count; i++) {
@@ -656,7 +655,9 @@ void main() {
       expect(tester.takeException(), isNull);
     });
 
-    testWidgets('capture-first record suppresses suggestion attribution', (tester) async {
+    testWidgets('capture-first record suppresses suggestion attribution', (
+      tester,
+    ) async {
       await tester.runAsync(() async {
         await _seedJournalForSuggestions(3);
       });

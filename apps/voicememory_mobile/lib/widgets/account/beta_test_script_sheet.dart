@@ -9,7 +9,6 @@ import '../../features/beta_test_script/beta_test_script_store.dart';
 import '../../models/journal_entry.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
-import '../../theme/voicememory_cards.dart';
 import '../account/beta_feedback_sheet.dart';
 
 /// Full 3-day beta tester script sheet.
@@ -129,13 +128,12 @@ class _BetaTestScriptSheetState extends State<BetaTestScriptSheet> {
   @override
   Widget build(BuildContext context) {
     final titleStyle = ArchiveMobileTypography.responsiveSectionTitle(context);
-    final bodyStyle = ArchiveMobileTypography.explanationBody(context).copyWith(
-      color: AppColors.textSecondary,
-      height: 1.45,
-    );
-    final labelStyle = ArchiveMobileTypography.cardLabel(context).copyWith(
-      color: AppColors.textSecondary,
-    );
+    final bodyStyle = ArchiveMobileTypography.explanationBody(
+      context,
+    ).copyWith(color: AppColors.textSecondary, height: 1.45);
+    final labelStyle = ArchiveMobileTypography.cardLabel(
+      context,
+    ).copyWith(color: AppColors.textSecondary);
     final progress = widget.plan.progress;
 
     return SafeArea(
@@ -276,20 +274,16 @@ class _ProgressRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final style = ArchiveMobileTypography.explanationBody(context).copyWith(
-      color: AppColors.textSecondary,
-    );
+    final style = ArchiveMobileTypography.explanationBody(
+      context,
+    ).copyWith(color: AppColors.textSecondary);
     return Padding(
       padding: const EdgeInsets.only(bottom: 2),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Expanded(
-            child: Text(
-              '$label:',
-              key: Key(labelKey),
-              style: style,
-            ),
+            child: Text('$label:', key: Key(labelKey), style: style),
           ),
           Text(value, style: style),
         ],

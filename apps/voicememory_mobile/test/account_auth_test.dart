@@ -1,9 +1,9 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:voicememory_mobile/api/api_client.dart';
 import 'package:voicememory_mobile/api/api_exceptions.dart';
+import 'package:voicememory_mobile/core/network/api_result.dart';
+import 'package:voicememory_mobile/data/network/auth_api_client.dart';
+import 'helpers/fake_auth_api_client.dart';
 import 'package:voicememory_mobile/auth/account_auth.dart';
 import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/session.dart';
@@ -16,44 +16,32 @@ import 'package:voicememory_mobile/services/auth_service.dart';
 import 'package:voicememory_mobile/storage/journal_store.dart';
 import 'package:voicememory_mobile/storage/secure_storage.dart';
 import 'package:voicememory_mobile/storage/session_cookie_store.dart';
+import 'support/test_storage_sandbox.dart';
 
 const _testEmail = 'person@example.com';
 
 /// Provider fake — records calls; no HTTP, no real backend.
-class _FakeApi extends ApiClient {
-  _FakeApi() : super(baseUrl: 'http://test.invalid');
-
-  final List<String> sendCodeCalls = [];
-  final List<String> verifyCalls = [];
-  int signOutCalls = 0;
-  Object? sendCodeError;
-  Object? verifyError;
+class _FakeAuthApi extends FakeAuthApiClient {
+  Object? sendCodeThrow;
+  Object? verifyThrow;
 
   @override
-  Future<void> sendAuthCode(String email) async {
-    final error = sendCodeError;
-    if (error != null) throw error;
-    sendCodeCalls.add(email);
+  Future<ApiResult<void>> sendAuthCode(String email) async {
+    if (sendCodeThrow != null) {
+      throw sendCodeThrow!;
+    }
+    return super.sendAuthCode(email);
   }
 
   @override
-  Future<UserSession> verifyAuthCode({
+  Future<ApiResult<AuthVerifyPayload>> verifyAuthCode({
     required String email,
     required String code,
   }) async {
-    final error = verifyError;
-    if (error != null) throw error;
-    verifyCalls.add('$email|$code');
-    setSessionCookie('vm_session=test-cookie');
-    return UserSession(userId: 'u1', email: email);
-  }
-
-  @override
-  Future<UserSession?> getSession() async => null;
-
-  @override
-  Future<void> signOut() async {
-    signOutCalls++;
+    if (verifyThrow != null) {
+      throw verifyThrow!;
+    }
+    return super.verifyAuthCode(email: email, code: code);
   }
 }
 
@@ -77,7 +65,7 @@ class _MemorySecure extends SecureStorageService {
 
 void main() {
   late List<({String event, Map<String, Object> properties})> captured;
-  late _FakeApi api;
+  late _FakeAuthApi fakeAuth;
   late _MemorySecure secure;
   late AuthService auth;
 
@@ -92,9 +80,9 @@ void main() {
       (event, properties) =>
           captured.add((event: event, properties: properties)),
     );
-    api = _FakeApi();
+    fakeAuth = _FakeAuthApi();
     secure = _MemorySecure();
-    auth = AuthService(api, secure, SessionCookieStore(secure));
+    auth = createTestAuthService(api: fakeAuth, secure: secure);
   });
 
   tearDown(ActivationFunnelAnalytics.resetForTest);
@@ -144,7 +132,7 @@ void main() {
       await enterEmailAndSubmit(tester, 'not-an-email');
 
       expect(find.text(AccountAuthCopy.invalidEmail), findsOneWidget);
-      expect(api.sendCodeCalls, isEmpty);
+      expect(fakeAuth.sendCodeCalls, isEmpty);
       final errors = eventsNamed(ActivationFunnelAnalytics.authErrorShown);
       expect(errors, hasLength(1));
       expect(errors.single.properties, {'error_type': 'invalid_email'});
@@ -190,7 +178,7 @@ void main() {
 
         await enterEmailAndSubmit(tester, _testEmail);
 
-        expect(api.sendCodeCalls, [_testEmail]);
+        expect(fakeAuth.sendCodeCalls, [_testEmail]);
         expect(find.text(AccountAuthCopy.codeTitle), findsOneWidget);
         final started = eventsNamed(
           ActivationFunnelAnalytics.accountSignupStarted,
@@ -205,7 +193,7 @@ void main() {
         await tester.tap(find.byKey(const Key('account_auth_verify_cta')));
         await tester.pump();
 
-        expect(api.verifyCalls, ['$_testEmail|123456']);
+        expect(fakeAuth.verifyCalls, ['$_testEmail|123456']);
         final completed = eventsNamed(
           ActivationFunnelAnalytics.accountSignupCompleted,
         );
@@ -221,7 +209,7 @@ void main() {
       expect(find.text(AccountAuthCopy.signInTitle), findsOneWidget);
 
       await enterEmailAndSubmit(tester, _testEmail);
-      expect(api.sendCodeCalls, [_testEmail]);
+      expect(fakeAuth.sendCodeCalls, [_testEmail]);
       expect(
         eventsNamed(ActivationFunnelAnalytics.accountSigninStarted),
         hasLength(1),
@@ -234,7 +222,7 @@ void main() {
       await tester.tap(find.byKey(const Key('account_auth_verify_cta')));
       await tester.pump();
 
-      expect(api.verifyCalls, ['$_testEmail|654321']);
+      expect(fakeAuth.verifyCalls, ['$_testEmail|654321']);
       expect(
         eventsNamed(ActivationFunnelAnalytics.accountSigninCompleted),
         hasLength(1),
@@ -246,19 +234,19 @@ void main() {
     ) async {
       await pumpAuth(tester, AccountAuthIntent.signIn);
       await enterEmailAndSubmit(tester, _testEmail);
-      expect(api.sendCodeCalls, hasLength(1));
+      expect(fakeAuth.sendCodeCalls, hasLength(1));
 
       await tester.tap(find.byKey(const Key('account_auth_resend')));
       await tester.pump();
 
-      expect(api.sendCodeCalls, hasLength(2));
+      expect(fakeAuth.sendCodeCalls, hasLength(2));
       expect(find.text(AccountAuthCopy.codeSent), findsOneWidget);
     });
 
     testWidgets('provider errors show calm copy with a stable id only', (
       tester,
     ) async {
-      api.sendCodeError = ApiException(
+      fakeAuth.sendCodeThrow = ApiException(
         'Too many requests. Please wait a moment.',
         statusCode: 429,
       );
@@ -319,7 +307,7 @@ void main() {
         await auth.signOut();
 
         expect(auth.currentSession, isNull);
-        expect(api.signOutCalls, 1);
+        expect(fakeAuth.signOutCalls, 1);
         expect(secure.values.containsKey('auth_cookie'), isFalse);
         final events = eventsNamed(ActivationFunnelAnalytics.accountSignout);
         expect(events, hasLength(1));
@@ -351,15 +339,17 @@ void main() {
   });
 
   group('Restore purchases stays available', () {
-    late Directory tempDir;
+    late TestStorageSandbox sandbox;
 
     setUp(() async {
-      tempDir = Directory.systemTemp.createTempSync('vm_account_auth_');
+      sandbox = TestStorageSandbox.create();
       await AppServices.resetForTest(
-        journalPath: '${tempDir.path}/journal.json',
+        journalPath: sandbox.journalPath,
         skipRevenueCat: true,
       );
     });
+
+    tearDown(() => sandbox.dispose());
 
     testWidgets('settings still offers Restore purchases', (tester) async {
       await tester.pumpWidget(const MaterialApp(home: SettingsScreen()));

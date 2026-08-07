@@ -63,17 +63,17 @@ class YesterdayWatchStore {
   }
 
   static YesterdayWatchAnswer? _parseAnswer(Object? raw) => switch (raw) {
-        'came_back' => YesterdayWatchAnswer.cameBack,
-        'not_today' => YesterdayWatchAnswer.notToday,
-        'different' => YesterdayWatchAnswer.different,
-        _ => null,
-      };
+    'came_back' => YesterdayWatchAnswer.cameBack,
+    'not_today' => YesterdayWatchAnswer.notToday,
+    'different' => YesterdayWatchAnswer.different,
+    _ => null,
+  };
 
   static String _answerKey(YesterdayWatchAnswer answer) => switch (answer) {
-        YesterdayWatchAnswer.cameBack => 'came_back',
-        YesterdayWatchAnswer.notToday => 'not_today',
-        YesterdayWatchAnswer.different => 'different',
-      };
+    YesterdayWatchAnswer.cameBack => 'came_back',
+    YesterdayWatchAnswer.notToday => 'not_today',
+    YesterdayWatchAnswer.different => 'different',
+  };
 
   Future<void> dismissForDay() async {
     final day = _todayUtc();

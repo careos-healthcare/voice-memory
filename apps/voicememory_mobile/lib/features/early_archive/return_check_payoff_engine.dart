@@ -1,11 +1,8 @@
 import '../../models/journal_entry.dart';
 import '../archive_evidence/archive_evidence_guard.dart';
-import '../repeat_return_check/repeat_return_check_change_proof.dart';
-import '../repeat_return_check/repeat_return_check_copy.dart';
 import '../repeat_return_check/repeat_return_check_gates.dart';
 import '../repeat_return_check/repeat_return_check_models.dart';
 import '../repeat_return_check/repeat_return_check_store.dart';
-import '../repeat_return_check/repeat_return_check_trend.dart';
 import 'confirmed_repeat_evidence_phrase_engine.dart';
 import 'early_first_signal_engine.dart';
 import 'return_check_payoff_copy.dart';
@@ -26,9 +23,7 @@ abstract final class ReturnCheckPayoffEngine {
     if (!RepeatReturnCheckGates.hasRelatedRepeatSave(entries)) return null;
 
     final eligible = ArchiveEvidenceGuard.eligibleEntries(entries);
-    final foundation = eligible.length >= 3
-        ? eligible.sublist(0, 3)
-        : eligible;
+    final foundation = eligible.length >= 3 ? eligible.sublist(0, 3) : eligible;
     final evidence = ConfirmedRepeatEvidencePhraseEngine.extract(foundation);
     if (!evidence.isStrong) return null;
 
@@ -38,9 +33,11 @@ abstract final class ReturnCheckPayoffEngine {
       latestEntryId: latestEntryId,
     );
 
-    final phrase =
-        ConfirmedRepeatEvidencePhraseEngine.sharedConcretePhrase(foundation);
-    final usesPhraseBody = state != ReturnCheckPayoffComparisonState.unknown &&
+    final phrase = ConfirmedRepeatEvidencePhraseEngine.sharedConcretePhrase(
+      foundation,
+    );
+    final usesPhraseBody =
+        state != ReturnCheckPayoffComparisonState.unknown &&
         phrase != null &&
         ConfirmedRepeatEvidencePhraseEngine.isConcretePhrase(phrase) &&
         !ConfirmedRepeatEvidencePhraseEngine.isAbstractOnlyPhrase(phrase) &&
@@ -80,11 +77,6 @@ abstract final class ReturnCheckPayoffEngine {
       return ReturnCheckPayoffComparisonState.changed;
     }
 
-    final orderedRecords = [
-      if (latestRecord != null) latestRecord,
-      ...returnChecks.where((record) => record.entryId != latestEntryId),
-    ];
-    final changeProof = _changeProofForRecords(orderedRecords);
     return switch (latestChoice) {
       RepeatReturnCheckChoice.softer => ReturnCheckPayoffComparisonState.softer,
       RepeatReturnCheckChoice.stronger =>
@@ -95,58 +87,43 @@ abstract final class ReturnCheckPayoffEngine {
     };
   }
 
-  static RepeatReturnCheckChangeProof? _changeProofForRecords(
-    List<RepeatReturnCheckRecord> records,
-  ) {
-    if (!RepeatReturnCheckTrendEngine.hasAnsweredCheck(records)) return null;
-    final body = RepeatReturnCheckTrendEngine.changeProofBody(records);
-    final latestChoice = RepeatReturnCheckTrendEngine.latestChoice(records);
-    if (body == null || latestChoice == null) return null;
-    return RepeatReturnCheckChangeProof(
-      title: RepeatReturnCheckCopy.changeProofTitle,
-      body: body,
-      latestChoice: latestChoice,
-    );
-  }
-
   static (String title, String body, String footer) _copyFor(
     ReturnCheckPayoffComparisonState state,
     String? phrase,
     bool usesPhraseBody,
-  ) =>
-      switch (state) {
-        ReturnCheckPayoffComparisonState.softer => (
-            ReturnCheckPayoffCopy.softerTitle,
-            usesPhraseBody && phrase != null
-                ? ReturnCheckPayoffCopy.softerBodyWithPhrase(phrase)
-                : ReturnCheckPayoffCopy.softerBodyFallback,
-            ReturnCheckPayoffCopy.softerFooter,
-          ),
-        ReturnCheckPayoffComparisonState.stronger => (
-            ReturnCheckPayoffCopy.strongerTitle,
-            usesPhraseBody && phrase != null
-                ? ReturnCheckPayoffCopy.strongerBodyWithPhrase(phrase)
-                : ReturnCheckPayoffCopy.strongerBodyFallback,
-            ReturnCheckPayoffCopy.strongerFooter,
-          ),
-        ReturnCheckPayoffComparisonState.same => (
-            ReturnCheckPayoffCopy.sameTitle,
-            usesPhraseBody && phrase != null
-                ? ReturnCheckPayoffCopy.sameBodyWithPhrase(phrase)
-                : ReturnCheckPayoffCopy.sameBodyFallback,
-            ReturnCheckPayoffCopy.sameFooter,
-          ),
-        ReturnCheckPayoffComparisonState.changed => (
-            ReturnCheckPayoffCopy.changedTitle,
-            usesPhraseBody && phrase != null
-                ? ReturnCheckPayoffCopy.changedBodyWithPhrase(phrase)
-                : ReturnCheckPayoffCopy.changedBodyFallback,
-            ReturnCheckPayoffCopy.changedFooter,
-          ),
-        ReturnCheckPayoffComparisonState.unknown => (
-            ReturnCheckPayoffCopy.unknownTitle,
-            ReturnCheckPayoffCopy.unknownBody,
-            ReturnCheckPayoffCopy.unknownFooter,
-          ),
-      };
+  ) => switch (state) {
+    ReturnCheckPayoffComparisonState.softer => (
+      ReturnCheckPayoffCopy.softerTitle,
+      usesPhraseBody && phrase != null
+          ? ReturnCheckPayoffCopy.softerBodyWithPhrase(phrase)
+          : ReturnCheckPayoffCopy.softerBodyFallback,
+      ReturnCheckPayoffCopy.softerFooter,
+    ),
+    ReturnCheckPayoffComparisonState.stronger => (
+      ReturnCheckPayoffCopy.strongerTitle,
+      usesPhraseBody && phrase != null
+          ? ReturnCheckPayoffCopy.strongerBodyWithPhrase(phrase)
+          : ReturnCheckPayoffCopy.strongerBodyFallback,
+      ReturnCheckPayoffCopy.strongerFooter,
+    ),
+    ReturnCheckPayoffComparisonState.same => (
+      ReturnCheckPayoffCopy.sameTitle,
+      usesPhraseBody && phrase != null
+          ? ReturnCheckPayoffCopy.sameBodyWithPhrase(phrase)
+          : ReturnCheckPayoffCopy.sameBodyFallback,
+      ReturnCheckPayoffCopy.sameFooter,
+    ),
+    ReturnCheckPayoffComparisonState.changed => (
+      ReturnCheckPayoffCopy.changedTitle,
+      usesPhraseBody && phrase != null
+          ? ReturnCheckPayoffCopy.changedBodyWithPhrase(phrase)
+          : ReturnCheckPayoffCopy.changedBodyFallback,
+      ReturnCheckPayoffCopy.changedFooter,
+    ),
+    ReturnCheckPayoffComparisonState.unknown => (
+      ReturnCheckPayoffCopy.unknownTitle,
+      ReturnCheckPayoffCopy.unknownBody,
+      ReturnCheckPayoffCopy.unknownFooter,
+    ),
+  };
 }

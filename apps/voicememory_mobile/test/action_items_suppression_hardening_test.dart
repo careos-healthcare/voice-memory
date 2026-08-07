@@ -23,36 +23,32 @@ ActionItemsSuppressionHardeningInput _input({
   bool noRemindersExpansion = true,
   bool actionItemsSecondary = true,
   bool storagePreserved = true,
-}) =>
-    ActionItemsSuppressionHardeningInput(
-      hiddenInFirstFiveMinutes: hiddenInFirstFiveMinutes,
-      notInProPromise: notInProPromise,
-      notRequiredOnboarding: notRequiredOnboarding,
-      notBlockingFirstProof: notBlockingFirstProof,
-      notTaskManagerPositioning: notTaskManagementPositioning,
-      userConfirmedAccessOnly: userConfirmedAccessOnly,
-      noRemindersExpansion: noRemindersExpansion,
-      actionItemsSecondary: actionItemsSecondary,
-      storagePreserved: storagePreserved,
-    );
+}) => ActionItemsSuppressionHardeningInput(
+  hiddenInFirstFiveMinutes: hiddenInFirstFiveMinutes,
+  notInProPromise: notInProPromise,
+  notRequiredOnboarding: notRequiredOnboarding,
+  notBlockingFirstProof: notBlockingFirstProof,
+  notTaskManagerPositioning: notTaskManagementPositioning,
+  userConfirmedAccessOnly: userConfirmedAccessOnly,
+  noRemindersExpansion: noRemindersExpansion,
+  actionItemsSecondary: actionItemsSecondary,
+  storagePreserved: storagePreserved,
+);
 
 void main() {
   group('ActionItemsSuppressionHardening.build', () {
     test('hardening has ten canonical rules', () {
       final result = ActionItemsSuppressionHardening.build(_input());
-      expect(result.rules, hasLength(ActionItemsSuppressionHardening.ruleCount));
       expect(
-        ActionItemsSuppressionHardening.canonicalRules,
-        hasLength(10),
+        result.rules,
+        hasLength(ActionItemsSuppressionHardening.ruleCount),
       );
+      expect(ActionItemsSuppressionHardening.canonicalRules, hasLength(10));
     });
 
     test('all rules pass -> hardened', () {
       final result = ActionItemsSuppressionHardening.build(_input());
-      expect(
-        result.decision,
-        ActionItemsSuppressionHardeningDecision.hardened,
-      );
+      expect(result.decision, ActionItemsSuppressionHardeningDecision.hardened);
       expect(result.hardened, isTrue);
     });
 
@@ -60,10 +56,7 @@ void main() {
       final result = ActionItemsSuppressionHardening.build(
         _input(hiddenInFirstFiveMinutes: false),
       );
-      expect(
-        result.decision,
-        ActionItemsSuppressionHardeningDecision.violated,
-      );
+      expect(result.decision, ActionItemsSuppressionHardeningDecision.violated);
     });
 
     test('remember-this soft failure -> needsReview', () {
@@ -93,17 +86,18 @@ void main() {
       proPromiseSource = File(
         'lib/features/pro_single_promise/pro_single_promise_copy.dart',
       ).readAsStringSync();
-      onboardingSource =
-          File('lib/onboarding/onboarding_pages.dart').readAsStringSync();
-      rememberThisSource =
-          File('lib/widgets/action_items/remember_this_button.dart')
-              .readAsStringSync();
-      archiveActionItemSource =
-          File('lib/features/action_items/archive_action_item.dart')
-              .readAsStringSync();
-      actionItemStoreSource =
-          File('lib/features/action_items/action_item_store.dart')
-              .readAsStringSync();
+      onboardingSource = File(
+        'lib/onboarding/onboarding_pages.dart',
+      ).readAsStringSync();
+      rememberThisSource = File(
+        'lib/widgets/action_items/remember_this_button.dart',
+      ).readAsStringSync();
+      archiveActionItemSource = File(
+        'lib/features/action_items/archive_action_item.dart',
+      ).readAsStringSync();
+      actionItemStoreSource = File(
+        'lib/features/action_items/action_item_store.dart',
+      ).readAsStringSync();
     });
 
     test('first five minutes source keeps action items hidden', () {
@@ -141,7 +135,9 @@ void main() {
 
     test('onboarding contains no required action-items step', () {
       expect(
-        ActionItemsV1SecondaryGate.detectNotRequiredOnboarding(onboardingSource),
+        ActionItemsV1SecondaryGate.detectNotRequiredOnboarding(
+          onboardingSource,
+        ),
         isTrue,
       );
       expect(onboardingSource.toLowerCase(), isNot(contains('action items')));
@@ -177,30 +173,27 @@ void main() {
     test('fromRepoSignals passes hardening for current repo', () {
       final result = ActionItemsSuppressionHardening.build(
         ActionItemsSuppressionHardening.fromRepoSignals(
-          v1SurfaceScopeAuditSource:
-              File('lib/features/v1_surface_scope/v1_surface_scope_audit.dart')
-                  .readAsStringSync(),
+          v1SurfaceScopeAuditSource: File(
+            'lib/features/v1_surface_scope/v1_surface_scope_audit.dart',
+          ).readAsStringSync(),
           firstFiveMinutesSimplificationSource: firstFiveSource,
           proSinglePromiseCopySource: proPromiseSource,
-          featureNoiseReductionSource:
-              File('lib/features/feature_noise_reduction/feature_noise_reduction.dart')
-                  .readAsStringSync(),
+          featureNoiseReductionSource: File(
+            'lib/features/feature_noise_reduction/feature_noise_reduction.dart',
+          ).readAsStringSync(),
           onboardingPagesSource: onboardingSource,
           rememberThisButtonSource: rememberThisSource,
-          freezeDriftScannerCopySource:
-              File('lib/features/freeze_drift_scanner/freeze_drift_scanner_copy.dart')
-                  .readAsStringSync(),
-          releaseCandidateFreezeCopySource:
-              File('lib/features/release_candidate_freeze/release_candidate_freeze_copy.dart')
-                  .readAsStringSync(),
+          freezeDriftScannerCopySource: File(
+            'lib/features/freeze_drift_scanner/freeze_drift_scanner_copy.dart',
+          ).readAsStringSync(),
+          releaseCandidateFreezeCopySource: File(
+            'lib/features/release_candidate_freeze/release_candidate_freeze_copy.dart',
+          ).readAsStringSync(),
           archiveActionItemSource: archiveActionItemSource,
           actionItemStoreSource: actionItemStoreSource,
         ),
       );
-      expect(
-        result.decision,
-        ActionItemsSuppressionHardeningDecision.hardened,
-      );
+      expect(result.decision, ActionItemsSuppressionHardeningDecision.hardened);
       expect(
         V1SurfaceScopeAudit.scopeFor(V1VisibleSurface.actionItems),
         V1SurfaceScope.secondaryHidden,
@@ -243,18 +236,15 @@ void main() {
     });
 
     test('storage preserved and not deleted by hardening module', () {
-      final storeSource =
-          File('lib/features/action_items/action_item_store.dart')
-              .readAsStringSync();
+      final storeSource = File(
+        'lib/features/action_items/action_item_store.dart',
+      ).readAsStringSync();
       expect(
         ActionItemsSuppressionHardening.detectStoragePreserved(storeSource),
         isTrue,
       );
       final hardeningSource = File(_hardeningPath).readAsStringSync();
-      expect(
-        hardeningSource.contains("action_item_store.dart"),
-        isFalse,
-      );
+      expect(hardeningSource.contains("action_item_store.dart"), isFalse);
     });
 
     test('docs include canonical suppression rules', () {

@@ -13,7 +13,7 @@ abstract final class FirstSessionLiftAnalytics {
 
   @visibleForTesting
   static void Function(String event, Map<String, Object> properties)?
-      captureForTest;
+  captureForTest;
 
   static void seen({required FirstSessionLiftResult result}) {
     _emit(seenEvent, result: result);
@@ -23,11 +23,7 @@ abstract final class FirstSessionLiftAnalytics {
     required FirstSessionLiftResult result,
     required FirstSessionLiftActionType actionType,
   }) {
-    _emit(
-      ctaTappedEvent,
-      result: result,
-      actionType: actionType,
-    );
+    _emit(ctaTappedEvent, result: result, actionType: actionType);
   }
 
   static void chipTapped({
@@ -48,9 +44,7 @@ abstract final class FirstSessionLiftAnalytics {
     FirstSessionLiftActionType? actionType,
     String? chipId,
   }) {
-    final props = <String, Object>{
-      'source': result.source,
-    };
+    final props = <String, Object>{'source': result.source};
     if (actionType != null) {
       props['action_type'] = actionType.analyticsValue;
     }

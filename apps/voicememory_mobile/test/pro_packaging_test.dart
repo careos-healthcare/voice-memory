@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:voicememory_mobile/billing/revenuecat_service.dart';
-import 'package:voicememory_mobile/billing/restore_purchases_flow.dart';
 import 'package:voicememory_mobile/features/belief_change/belief_change_moment_engine.dart';
 import 'package:voicememory_mobile/features/beta_decision/beta_decision_model.dart';
 import 'package:voicememory_mobile/features/beta_decision/beta_tester_outcome_store.dart';
@@ -32,50 +31,51 @@ import 'package:voicememory_mobile/services/app_services.dart';
 import 'package:voicememory_mobile/theme/app_theme.dart';
 import 'package:voicememory_mobile/widgets/account/archive_me_pro_value_section.dart';
 import 'package:voicememory_mobile/widgets/patterns/belief_change_moment_card.dart';
+import 'support/test_storage_sandbox.dart';
 
 JournalEntry _entry(String id, String transcript) => JournalEntry(
-      id: id,
-      createdAt: DateTime(2026, 6, 12, 10),
-      transcript: transcript,
-      durationSeconds: 30,
-      reflection: const Reflection(
-        mood: 'thoughtful',
-        emotionalIntensity: 2,
-        recurringThemes: ['work'],
-        exactLanguagePattern: 'pattern',
-        concreteObservation: 'Work pressure showed up again today.',
-        repeatedSignal: 'signal',
-      ),
-    );
+  id: id,
+  createdAt: DateTime(2026, 6, 12, 10),
+  transcript: transcript,
+  durationSeconds: 30,
+  reflection: const Reflection(
+    mood: 'thoughtful',
+    emotionalIntensity: 2,
+    recurringThemes: ['work'],
+    exactLanguagePattern: 'pattern',
+    concreteObservation: 'Work pressure showed up again today.',
+    repeatedSignal: 'signal',
+  ),
+);
 
 List<JournalEntry> _threeRelatedEntries() => [
-      _entry(
-        'e1',
-        'I had no capacity but I said yes again to the extra meeting today.',
-      ),
-      _entry(
-        'e2',
-        'Same thing — said yes when I had no capacity for one more thing.',
-      ),
-      _entry(
-        'e3',
-        'I said yes again even though I had no capacity for one more ask.',
-      ),
-    ];
+  _entry(
+    'e1',
+    'I had no capacity but I said yes again to the extra meeting today.',
+  ),
+  _entry(
+    'e2',
+    'Same thing — said yes when I had no capacity for one more thing.',
+  ),
+  _entry(
+    'e3',
+    'I said yes again even though I had no capacity for one more ask.',
+  ),
+];
 
 List<BetaTesterOutcome> _proPackagingOutcomes() => [
-      BetaTesterOutcome(
-        testerId: 't1',
-        signals: {
-          BetaDecisionSignal.understoodPromise,
-          BetaDecisionSignal.savedFirstMoment,
-          BetaDecisionSignal.returnedDay2,
-          BetaDecisionSignal.reachedThreeMoments,
-          BetaDecisionSignal.sawFirstProof,
-          BetaDecisionSignal.proofFeltMeaningful,
-        },
-      ),
-    ];
+  BetaTesterOutcome(
+    testerId: 't1',
+    signals: {
+      BetaDecisionSignal.understoodPromise,
+      BetaDecisionSignal.savedFirstMoment,
+      BetaDecisionSignal.returnedDay2,
+      BetaDecisionSignal.reachedThreeMoments,
+      BetaDecisionSignal.sawFirstProof,
+      BetaDecisionSignal.proofFeltMeaningful,
+    },
+  ),
+];
 
 Future<void> _pumpPaywall(
   WidgetTester tester, {
@@ -105,22 +105,22 @@ Future<void> _pumpPaywall(
 }
 
 void main() {
+  late TestStorageSandbox sandbox;
   setUp(() async {
+    sandbox = TestStorageSandbox.create();
     await AppServices.resetForTest(
-      journalPath: '${DateTime.now().microsecondsSinceEpoch}_journal.json',
-      prefsPath: '${DateTime.now().microsecondsSinceEpoch}_prefs.json',
+      journalPath: sandbox.journalPath,
+      prefsPath: sandbox.prefsPath,
       skipRevenueCat: true,
     );
     await BetaTesterOutcomeStore.resetForTest(AppServices.instance.prefs);
   });
 
+  tearDown(() => sandbox.dispose());
   group('ProPackagingCopy', () {
     test('defines longer proof trail Pro positioning', () {
       expect(ProPackagingCopy.title, 'ArchiveMe Pro');
-      expect(
-        ProPackagingCopy.subtitle,
-        PaywallAlignmentCopy.body,
-      );
+      expect(ProPackagingCopy.subtitle, PaywallAlignmentCopy.body);
       expect(ProPackagingCopy.freeSectionTitle, 'Free');
       expect(
         ProPackagingCopy.freeBullets.single,
@@ -128,18 +128,9 @@ void main() {
       );
       expect(ProPackagingCopy.proSectionTitle, 'Pro');
       expect(ProPackagingCopy.proBullets, hasLength(3));
-      expect(
-        ProPackagingCopy.proBullets,
-        contains('Longer evidence history'),
-      );
-      expect(
-        ProPackagingCopy.proBullets,
-        contains('Weekly archive reviews'),
-      );
-      expect(
-        ProPackagingCopy.proBullets,
-        contains('Timeline views over time'),
-      );
+      expect(ProPackagingCopy.proBullets, contains('Longer evidence history'));
+      expect(ProPackagingCopy.proBullets, contains('Weekly archive reviews'));
+      expect(ProPackagingCopy.proBullets, contains('Timeline views over time'));
       expect(
         ProPackagingCopy.bridgeAfterFirstProof,
         PaywallAlignmentCopy.secondaryReassurance,
@@ -162,10 +153,7 @@ void main() {
         ProEvidenceValueCopy.chatGptDifferentiationLine,
         contains('ChatGPT can suggest what to do'),
       );
-      expect(
-        ProEvidenceValueCopy.sheetFooter,
-        contains('not a chatbot'),
-      );
+      expect(ProEvidenceValueCopy.sheetFooter, contains('not a chatbot'));
       expect(
         ProEvidenceValueCopy.proBulletsForDisplay(exportReportsLive: true),
         contains('Longer evidence history'),
@@ -189,7 +177,10 @@ void main() {
         showPlanPrices: true,
       );
       expect(display.showPlanPrices, isFalse);
-      expect(display.unavailableBody, ProPackagingCopy.offeringsUnavailableBody);
+      expect(
+        display.unavailableBody,
+        ProPackagingCopy.offeringsUnavailableBody,
+      );
     });
   });
 
@@ -209,9 +200,18 @@ void main() {
         ),
       );
 
-      expect(find.byKey(const Key('archive_me_pro_value_section')), findsOneWidget);
-      expect(find.byKey(const Key('archive_me_pro_free_section')), findsOneWidget);
-      expect(find.byKey(const Key('archive_me_pro_pro_section')), findsOneWidget);
+      expect(
+        find.byKey(const Key('archive_me_pro_value_section')),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(const Key('archive_me_pro_free_section')),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(const Key('archive_me_pro_pro_section')),
+        findsOneWidget,
+      );
       expect(find.text('Free'), findsOneWidget);
       expect(find.text('Pro'), findsOneWidget);
       expect(
@@ -232,14 +232,19 @@ void main() {
 
       expect(find.text(ConsumerUiCopy.paywallHeadline), findsOneWidget);
       expect(find.byKey(const Key('paywall_unavailable_body')), findsOneWidget);
-      expect(find.byKey(const Key('paywall_primary_value_block')), findsNothing);
+      expect(
+        find.byKey(const Key('paywall_primary_value_block')),
+        findsNothing,
+      );
       expect(find.text(PurchaseConfidenceCopy.cardTitle), findsNothing);
       expect(find.text(ProPackagingCopy.continueWithoutProCta), findsOneWidget);
       expect(find.text(ConsumerUiCopy.restorePurchases), findsOneWidget);
       expect(find.byType(CircularProgressIndicator), findsNothing);
     });
 
-    testWidgets('restore purchases visible when offerings empty', (tester) async {
+    testWidgets('restore purchases visible when offerings empty', (
+      tester,
+    ) async {
       await _pumpPaywall(tester, billingReady: false);
       await tester.pumpAndSettle(const Duration(seconds: 2));
 
@@ -264,14 +269,14 @@ void main() {
   group('Account screen packaging', () {
     testWidgets('shows ArchiveMe Pro value section and tile', (tester) async {
       await tester.pumpWidget(
-        MaterialApp(
-          theme: AppTheme.light(),
-          home: const AccountScreen(),
-        ),
+        MaterialApp(theme: AppTheme.light(), home: const AccountScreen()),
       );
       await tester.pumpAndSettle();
 
-      expect(find.byKey(const Key('archive_me_pro_value_section')), findsOneWidget);
+      expect(
+        find.byKey(const Key('archive_me_pro_value_section')),
+        findsOneWidget,
+      );
       expect(find.text(ProPackagingCopy.title), findsWidgets);
       expect(find.text(ProPackagingCopy.accountTileSubtitle), findsOneWidget);
     });
@@ -381,7 +386,9 @@ void main() {
       }
     });
 
-    testWidgets('belief change moment shows keep archive bridge', (tester) async {
+    testWidgets('belief change moment shows keep archive bridge', (
+      tester,
+    ) async {
       final moment = BeliefChangeMomentEngine.build(
         entries: [
           ..._threeRelatedEntries(),

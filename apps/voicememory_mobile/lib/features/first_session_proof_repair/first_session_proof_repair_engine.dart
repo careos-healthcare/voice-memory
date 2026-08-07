@@ -104,7 +104,8 @@ abstract final class FirstSessionProofRepairEngine {
   static bool _needsProofQualityRepair(
     ProofQualityRepairVisibilityInput input,
   ) {
-    final weakConfidence = input.confidenceLevel == ProofConfidenceLevel.watchOnly ||
+    final weakConfidence =
+        input.confidenceLevel == ProofConfidenceLevel.watchOnly ||
         input.confidenceLevel == ProofConfidenceLevel.emerging;
     final weakUsefulCount =
         input.usefulFeedbackCount < usefulProofConcernThreshold;
@@ -175,11 +176,13 @@ abstract final class FirstSessionProofRepairEngine {
     return (useful: useful, negative: negative);
   }
 
-  static String captureStatusLabel({required bool visible}) =>
-      visible ? FirstSessionProofRepairCopy.statusCaptureActive : FirstSessionProofRepairCopy.statusCaptureInactive;
+  static String captureStatusLabel({required bool visible}) => visible
+      ? FirstSessionProofRepairCopy.statusCaptureActive
+      : FirstSessionProofRepairCopy.statusCaptureInactive;
 
-  static String proofStatusLabel({required bool visible}) =>
-      visible ? FirstSessionProofRepairCopy.statusProofActive : FirstSessionProofRepairCopy.statusProofInactive;
+  static String proofStatusLabel({required bool visible}) => visible
+      ? FirstSessionProofRepairCopy.statusProofActive
+      : FirstSessionProofRepairCopy.statusProofInactive;
 
   static String chipPromptFor(String chipText) =>
       '${FirstSessionProofRepairCopy.typedCapturePrompt} $chipText';

@@ -27,24 +27,23 @@ BetaRepairLabVisibilityInput _input({
   BetaProofFeedbackType? feedbackType = BetaProofFeedbackType.useful,
   bool isNegativeFeedback = false,
   bool isPro = false,
-}) =>
-    BetaRepairLabVisibilityInput(
-      mode: mode,
-      entryCount: entryCount,
-      source: 'test',
-      isPro: isPro,
-      isRecording: false,
-      isDegradedTranscriptState: false,
-      whatChangedQuestionActive: false,
-      patternReviewInboxHasActiveItems: false,
-      hasTimelineProofVisible: hasTimelineProofVisible,
-      hasConfirmedRepeat: hasConfirmedRepeat,
-      confidenceLevel: confidenceLevel,
-      hasUsefulProofFeedback: feedbackType == BetaProofFeedbackType.useful,
-      feedbackType: feedbackType,
-      isNegativeFeedback: isNegativeFeedback,
-      betaMissionEnabled: betaMissionEnabled,
-    );
+}) => BetaRepairLabVisibilityInput(
+  mode: mode,
+  entryCount: entryCount,
+  source: 'test',
+  isPro: isPro,
+  isRecording: false,
+  isDegradedTranscriptState: false,
+  whatChangedQuestionActive: false,
+  patternReviewInboxHasActiveItems: false,
+  hasTimelineProofVisible: hasTimelineProofVisible,
+  hasConfirmedRepeat: hasConfirmedRepeat,
+  confidenceLevel: confidenceLevel,
+  hasUsefulProofFeedback: feedbackType == BetaProofFeedbackType.useful,
+  feedbackType: feedbackType,
+  isNegativeFeedback: isNegativeFeedback,
+  betaMissionEnabled: betaMissionEnabled,
+);
 
 Future<void> _pumpCard(
   WidgetTester tester, {
@@ -54,10 +53,7 @@ Future<void> _pumpCard(
     MaterialApp(
       theme: AppTheme.light(),
       home: Scaffold(
-        body: PaywallValueRepairCard.test(
-          result: result,
-          onSeePro: () {},
-        ),
+        body: PaywallValueRepairCard.test(result: result, onSeePro: () {}),
       ),
     ),
   );
@@ -78,7 +74,10 @@ void main() {
   group('BetaRepairLabBuildOverride paywallValue', () {
     test('paywallValue parsed only when beta mission is true', () {
       BetaRepairLabStore.repairModeOverrideForTest = 'paywallValue';
-      expect(BetaRepairLabStore.buildOverrideMode, BetaRepairLabMode.paywallValue);
+      expect(
+        BetaRepairLabStore.buildOverrideMode,
+        BetaRepairLabMode.paywallValue,
+      );
       expect(BetaRepairLabStore.activeMode, BetaRepairLabMode.paywallValue);
       expect(
         BetaRepairLabStore.buildOverrideActiveLabel,
@@ -106,10 +105,7 @@ void main() {
   group('PaywallValueRepairEngine', () {
     test('card appears only after useful/strong proof', () async {
       await BetaRepairLabStore.setModeForTest(BetaRepairLabMode.paywallValue);
-      expect(
-        PaywallValueRepairEngine.shouldShow(input: _input()),
-        isTrue,
-      );
+      expect(PaywallValueRepairEngine.shouldShow(input: _input()), isTrue);
       final result = PaywallValueRepairEngine.build(input: _input());
       expect(result.shouldShow, isTrue);
       expect(result.title, PaywallValueRepairCopy.title);
@@ -168,9 +164,7 @@ void main() {
     });
 
     test('CTA opens existing paywall source value moment', () {
-      final source = File(
-        'lib/screens/record_screen.dart',
-      );
+      final source = File('lib/screens/record_screen.dart');
       final contents = source.readAsStringSync();
       expect(contents, contains('record_beta_repair_lab_paywall_value'));
       expect(contents, contains('PaywallSource.valueMoment'));
@@ -194,7 +188,10 @@ void main() {
       final result = PaywallValueRepairEngine.build(input: _input());
       await _pumpCard(tester, result: result);
 
-      expect(find.byKey(const Key('paywall_value_repair_card')), findsOneWidget);
+      expect(
+        find.byKey(const Key('paywall_value_repair_card')),
+        findsOneWidget,
+      );
       expect(find.text(PaywallValueRepairCopy.title), findsOneWidget);
       expect(find.text(PaywallValueRepairCopy.body), findsOneWidget);
       expect(find.text(PaywallValueRepairCopy.support), findsOneWidget);

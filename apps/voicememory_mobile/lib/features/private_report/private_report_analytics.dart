@@ -12,7 +12,7 @@ abstract final class PrivateReportAnalytics {
 
   @visibleForTesting
   static void Function(String event, Map<String, Object> properties)?
-      captureForTest;
+  captureForTest;
 
   static void opened({
     required String source,

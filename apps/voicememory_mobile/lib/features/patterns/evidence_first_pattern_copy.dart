@@ -93,8 +93,9 @@ abstract class EvidenceFirstPatternCopyResolver {
       return _fallbackBundle(input);
     }
 
-    final pressureTheme =
-        TranscriptEvidenceExtractor.hasPressureWorkTheme(repeatedPhrases);
+    final pressureTheme = TranscriptEvidenceExtractor.hasPressureWorkTheme(
+      repeatedPhrases,
+    );
     final source = _copySource(input, repeatedPhrases, pressureTheme);
 
     _log(
@@ -230,9 +231,7 @@ abstract class EvidenceFirstPatternCopyResolver {
       'ARCHIVEME_EVIDENCE_FIRST_COPY evidenceCount=$evidenceCount '
       'repeatedPhrases=$phraseList confidence=${confidence.toStringAsFixed(2)}',
     );
-    debugPrint(
-      'ARCHIVEME_PATTERN_COPY_SOURCE source=${source.name}',
-    );
+    debugPrint('ARCHIVEME_PATTERN_COPY_SOURCE source=${source.name}');
   }
 
   static void _logFallback(String reason) {

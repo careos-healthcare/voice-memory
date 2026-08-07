@@ -69,10 +69,13 @@ abstract final class PricingValueFramingEngine {
     required bool showPricingValueFraming,
   }) {
     if (!showPricingValueFraming) return false;
-    if (!BetaRepairLabEngine.shouldShowLab(betaMissionEnabled: betaMissionEnabled)) {
+    if (!BetaRepairLabEngine.shouldShowLab(
+      betaMissionEnabled: betaMissionEnabled,
+    )) {
       return false;
     }
-    return BetaRepairLabStore.activeMode == BetaRepairLabMode.pricingValueFraming;
+    return BetaRepairLabStore.activeMode ==
+        BetaRepairLabMode.pricingValueFraming;
   }
 
   static bool _hasStrongUsefulProof(BetaRepairLabVisibilityInput input) {

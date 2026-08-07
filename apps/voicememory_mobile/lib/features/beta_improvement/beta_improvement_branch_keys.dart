@@ -13,9 +13,7 @@ abstract final class BetaImprovementBranchKeys {
     required int lineCount,
     List<BetaTesterOutcome>? outcomesOverride,
   }) {
-    final prefix = _firstProofBridgePrefix(
-      outcomesOverride: outcomesOverride,
-    );
+    final prefix = _firstProofBridgePrefix(outcomesOverride: outcomesOverride);
     if (lineCount == 1) return prefix;
     return '${prefix}_$lineIndex';
   }

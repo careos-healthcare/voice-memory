@@ -24,9 +24,7 @@ class ArchivePrivacyTrustCard extends StatelessWidget {
       key: const Key('archive_privacy_trust_card'),
       width: double.infinity,
       padding: EdgeInsets.all(compact ? AppSpacing.sm : AppSpacing.md),
-      decoration: VoiceMemoryCards.flat(
-        background: const Color(0xFFF7F8FA),
-      ),
+      decoration: VoiceMemoryCards.flat(background: const Color(0xFFF7F8FA)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -53,10 +51,7 @@ class ArchivePrivacyTrustCard extends StatelessWidget {
           ),
           if (onPrivacyTap != null) ...[
             const SizedBox(height: AppSpacing.sm),
-            TextButton(
-              onPressed: onPrivacyTap,
-              child: const Text('Privacy'),
-            ),
+            TextButton(onPressed: onPrivacyTap, child: const Text('Privacy')),
           ] else ...[
             const SizedBox(height: AppSpacing.sm),
             TextButton(

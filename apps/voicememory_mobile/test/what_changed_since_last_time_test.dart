@@ -40,47 +40,46 @@ JournalEntry _entry({
 }
 
 List<JournalEntry> _threeRelatedRepeatEntries() => [
-      _entry(
-        id: 'e1',
-        transcript:
-            'I had no capacity but I said yes again to the extra meeting today.',
-        createdAt: DateTime(2026, 6, 10, 12),
-      ),
-      _entry(
-        id: 'e2',
-        transcript:
-            'Same thing — said yes when I had no capacity for one more thing.',
-        createdAt: DateTime(2026, 6, 11, 12),
-      ),
-      _entry(
-        id: 'e3',
-        transcript:
-            'I said yes again even though I had no capacity for one more ask.',
-        createdAt: DateTime(2026, 6, 12, 12),
-      ),
-    ];
+  _entry(
+    id: 'e1',
+    transcript:
+        'I had no capacity but I said yes again to the extra meeting today.',
+    createdAt: DateTime(2026, 6, 10, 12),
+  ),
+  _entry(
+    id: 'e2',
+    transcript:
+        'Same thing — said yes when I had no capacity for one more thing.',
+    createdAt: DateTime(2026, 6, 11, 12),
+  ),
+  _entry(
+    id: 'e3',
+    transcript:
+        'I said yes again even though I had no capacity for one more ask.',
+    createdAt: DateTime(2026, 6, 12, 12),
+  ),
+];
 
 List<JournalEntry> _fourRelatedRepeatEntries() => [
-      ..._threeRelatedRepeatEntries(),
-      _entry(
-        id: 'e4',
-        transcript:
-            'I said yes again even though I had no capacity for one more ask today.',
-        createdAt: DateTime(2026, 6, 13, 12),
-      ),
-    ];
+  ..._threeRelatedRepeatEntries(),
+  _entry(
+    id: 'e4',
+    transcript:
+        'I said yes again even though I had no capacity for one more ask today.',
+    createdAt: DateTime(2026, 6, 13, 12),
+  ),
+];
 
 RepeatReturnCheckRecord _choiceRecord({
   required String entryId,
   required RepeatReturnCheckChoice choice,
   int entryCountAtCapture = 4,
-}) =>
-    RepeatReturnCheckRecord(
-      entryId: entryId,
-      choice: choice,
-      entryCountAtCapture: entryCountAtCapture,
-      createdAt: DateTime(2026, 6, 13, 12),
-    );
+}) => RepeatReturnCheckRecord(
+  entryId: entryId,
+  choice: choice,
+  entryCountAtCapture: entryCountAtCapture,
+  createdAt: DateTime(2026, 6, 13, 12),
+);
 
 void _expectNoDiagnosticLanguage(String copy) {
   final lower = copy.toLowerCase();
@@ -144,7 +143,10 @@ void main() {
       final result = WhatChangedSinceLastTimeEngine.build(
         entries: _fourRelatedRepeatEntries(),
         returnChecks: [
-          _choiceRecord(entryId: 'e4', choice: RepeatReturnCheckChoice.stronger),
+          _choiceRecord(
+            entryId: 'e4',
+            choice: RepeatReturnCheckChoice.stronger,
+          ),
         ],
       );
       expect(result!.summary, WhatChangedSinceLastTimeCopy.strongerSummary);
@@ -206,11 +208,17 @@ void main() {
       final firstProof = result.evidenceRows.first;
       final latestReturn = result.evidenceRows[1];
       expect(firstProof.label, WhatChangedSinceLastTimeCopy.firstProofRowLabel);
-      expect(latestReturn.label, WhatChangedSinceLastTimeCopy.latestReturnRowLabel);
+      expect(
+        latestReturn.label,
+        WhatChangedSinceLastTimeCopy.latestReturnRowLabel,
+      );
       for (final phrase in [firstProof.phrase, latestReturn.phrase]) {
         if (phrase == null) continue;
         expect(phrase.split(RegExp(r'\s+')).length, lessThanOrEqualTo(6));
-        expect(phrase.toLowerCase(), isNot(contains('even though i had no capacity')));
+        expect(
+          phrase.toLowerCase(),
+          isNot(contains('even though i had no capacity')),
+        );
       }
     });
   });
@@ -335,7 +343,9 @@ void main() {
   });
 
   group('WhatChangedSinceLastTimeCard', () {
-    testWidgets('renders title summary evidence rows and footer', (tester) async {
+    testWidgets('renders title summary evidence rows and footer', (
+      tester,
+    ) async {
       final result = WhatChangedSinceLastTimeEngine.build(
         entries: _fourRelatedRepeatEntries(),
         returnChecks: [
@@ -346,23 +356,31 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: WhatChangedSinceLastTimeCard(
-              result: result,
-              entryCount: 4,
-            ),
+            body: WhatChangedSinceLastTimeCard(result: result, entryCount: 4),
           ),
         ),
       );
       await tester.pump();
 
-      expect(find.byKey(const Key('what_changed_since_last_time_card')), findsOneWidget);
+      expect(
+        find.byKey(const Key('what_changed_since_last_time_card')),
+        findsOneWidget,
+      );
       expect(find.text(WhatChangedSinceLastTimeCopy.title), findsOneWidget);
-      expect(find.text(WhatChangedSinceLastTimeCopy.softerSummary), findsOneWidget);
-      expect(find.text(WhatChangedSinceLastTimeCopy.evidenceLabel), findsOneWidget);
+      expect(
+        find.text(WhatChangedSinceLastTimeCopy.softerSummary),
+        findsOneWidget,
+      );
+      expect(
+        find.text(WhatChangedSinceLastTimeCopy.evidenceLabel),
+        findsOneWidget,
+      );
       expect(find.text(WhatChangedSinceLastTimeCopy.footer), findsOneWidget);
       expect(
         find.byKey(
-          const Key('proof_surface_why_appeared_link_what_changed_since_last_time'),
+          const Key(
+            'proof_surface_why_appeared_link_what_changed_since_last_time',
+          ),
         ),
         findsOneWidget,
       );
@@ -378,7 +396,8 @@ void main() {
       captured = [];
       ActivationFunnelAnalytics.resetForTest();
       ActivationFunnelAnalytics.captureForTest(
-        (event, properties) => captured.add((event: event, properties: properties)),
+        (event, properties) =>
+            captured.add((event: event, properties: properties)),
       );
     });
 
@@ -403,7 +422,10 @@ void main() {
       expect(payload['comparison_state'], 'softer');
       expect(payload['has_phrase'], 1);
       expect(payload['has_confirmed_repeat'], 1);
-      expect(payload.values.whereType<String>(), isNot(contains('said yes again')));
+      expect(
+        payload.values.whereType<String>(),
+        isNot(contains('said yes again')),
+      );
     });
   });
 
@@ -443,7 +465,9 @@ void main() {
 
   group('Patterns screen isolation', () {
     test('archive belief screen does not import ReturnCheckPayoffCard', () {
-      final source = File('lib/screens/archive_belief_screen.dart').readAsStringSync();
+      final source = File(
+        'lib/screens/archive_belief_screen.dart',
+      ).readAsStringSync();
       expect(source.contains('ReturnCheckPayoffCard'), isFalse);
       expect(source.contains('what_changed_since_last_time_card'), isTrue);
     });

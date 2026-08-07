@@ -9,12 +9,11 @@ import '../yesterdays_snapshot_reaction.dart';
 /// Portable export of curiosity loop journal moments and return-day reactions.
 class CuriosityDataExporter {
   CuriosityDataExporter({
-    required JournalService journalService,
-    required CuriosityReactionRepository reactionRepository,
+    required this._journalService,
+    required this._reactionRepository,
     CuriosityHookRepository? hookRepository,
-  })  : _journalService = journalService,
-        _reactionRepository = reactionRepository,
-        _hookRepository = hookRepository ?? LocalCuriosityHookRepository.instance();
+  }) : _hookRepository =
+           hookRepository ?? LocalCuriosityHookRepository.instance();
 
   static const schemaVersion = 'curiosity_loop_export_v1';
 
@@ -68,10 +67,14 @@ class CuriosityDataExporter {
     }
 
     for (final row in snapshot.entryRows) {
-      buffer.writeln('### ${_formatDateTime(row.createdAt)} · ${_escapeMarkdown(row.emotionalTone)}');
+      buffer.writeln(
+        '### ${_formatDateTime(row.createdAt)} · ${_escapeMarkdown(row.emotionalTone)}',
+      );
       buffer.writeln();
       buffer.writeln('- **Anchor:** ${_escapeMarkdown(row.primaryAnchor)}');
-      buffer.writeln('- **Emotional tone:** ${_escapeMarkdown(row.emotionalTone)}');
+      buffer.writeln(
+        '- **Emotional tone:** ${_escapeMarkdown(row.emotionalTone)}',
+      );
       buffer.writeln('- **Return-day reaction:** ${row.reactionLabel}');
       buffer.writeln();
       buffer.writeln('> ${_escapeMarkdown(row.entryPreview)}');
@@ -120,7 +123,9 @@ class CuriosityDataExporter {
                 ? null
                 : {
                     'id': row.reaction!.id,
-                    'timestamp': row.reaction!.timestamp.toUtc().toIso8601String(),
+                    'timestamp': row.reaction!.timestamp
+                        .toUtc()
+                        .toIso8601String(),
                     'type': row.reaction!.reactionType.name,
                     'emoji': row.reaction!.reactionType.emoji,
                     'label': row.reaction!.reactionType.label,
@@ -167,13 +172,15 @@ class CuriosityDataExporter {
     }
 
     final allEntries = await _journalService.loadAll();
-    final entries = allEntries
-        .where(
-          (entry) => !_isBefore(entry.createdAt, windowStart) &&
-              !_isAfter(entry.createdAt, windowEnd),
-        )
-        .toList()
-      ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
+    final entries =
+        allEntries
+            .where(
+              (entry) =>
+                  !_isBefore(entry.createdAt, windowStart) &&
+                  !_isAfter(entry.createdAt, windowEnd),
+            )
+            .toList()
+          ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
 
     final entryRows = entries
         .map((entry) {

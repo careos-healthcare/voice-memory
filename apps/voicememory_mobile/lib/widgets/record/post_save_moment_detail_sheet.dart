@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../../design/archive_mobile_typography.dart';
@@ -38,7 +37,8 @@ class PostSaveMomentDetailSheet extends StatefulWidget {
     required JournalEntry parentEntry,
     required PostSaveMomentDetailType detailType,
     required String detailText,
-  })? saveDetailOverride;
+  })?
+  saveDetailOverride;
 
   static Future<bool?> show(
     BuildContext context, {
@@ -176,10 +176,9 @@ class _PostSaveMomentDetailSheetState extends State<PostSaveMomentDetailSheet> {
             Text(
               helper,
               key: Key('post_save_detail_helper_${widget.detailType.name}'),
-              style: ArchiveMobileTypography.responsiveHelper(context).copyWith(
-                color: AppColors.textSecondary,
-                height: 1.4,
-              ),
+              style: ArchiveMobileTypography.responsiveHelper(
+                context,
+              ).copyWith(color: AppColors.textSecondary, height: 1.4),
             ),
             const SizedBox(height: AppSpacing.sm),
             TextField(
@@ -204,8 +203,9 @@ class _PostSaveMomentDetailSheetState extends State<PostSaveMomentDetailSheet> {
               Text(
                 _error!,
                 key: const Key('post_save_detail_error'),
-                style: ArchiveMobileTypography.responsiveHelper(context)
-                    .copyWith(color: AppColors.error),
+                style: ArchiveMobileTypography.responsiveHelper(
+                  context,
+                ).copyWith(color: AppColors.error),
               ),
             ],
             const SizedBox(height: AppSpacing.sm),
@@ -222,7 +222,9 @@ class _PostSaveMomentDetailSheetState extends State<PostSaveMomentDetailSheet> {
             ),
             TextButton(
               key: Key('post_save_detail_cancel_${widget.detailType.name}'),
-              onPressed: _saving ? null : () => Navigator.of(context).pop(false),
+              onPressed: _saving
+                  ? null
+                  : () => Navigator.of(context).pop(false),
               child: const Text(PostSaveMomentDetailCopy.cancelCta),
             ),
           ],

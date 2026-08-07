@@ -39,7 +39,11 @@ void main() {
         'Saved on this device until you export.',
       ]) {
         final result = SyncExpectationSafetyGuard.evaluate(copy);
-        expect(result.action, SyncExpectationSafetyAction.allowed, reason: copy);
+        expect(
+          result.action,
+          SyncExpectationSafetyAction.allowed,
+          reason: copy,
+        );
         expect(
           SyncExpectationSafetyGuard.containsAllowedLanguage(copy),
           isTrue,
@@ -52,10 +56,7 @@ void main() {
       const copy = 'Pro keeps the longer proof trail as your archive grows.';
       final result = SyncExpectationSafetyGuard.evaluate(copy);
       expect(result.action, SyncExpectationSafetyAction.allowed);
-      expect(
-        SyncExpectationSafetyGuard.containsAllowedLanguage(copy),
-        isTrue,
-      );
+      expect(SyncExpectationSafetyGuard.containsAllowedLanguage(copy), isTrue);
     });
 
     test('sync not available yet is honest TestFlight copy', () {
@@ -107,7 +108,11 @@ void main() {
 
       for (final (copy, reason) in cases) {
         final result = SyncExpectationSafetyGuard.evaluate(copy);
-        expect(result.action, SyncExpectationSafetyAction.blocked, reason: copy);
+        expect(
+          result.action,
+          SyncExpectationSafetyAction.blocked,
+          reason: copy,
+        );
         expect(result.reason, reason, reason: copy);
       }
     });
@@ -136,8 +141,14 @@ void main() {
     });
 
     test('no backend imports', () {
-      expect(SyncExpectationSafetyGuard.detectNoBackendImports(guardSource), isTrue);
-      expect(SyncExpectationSafetyGuard.detectCopyGuardOnly(guardSource), isTrue);
+      expect(
+        SyncExpectationSafetyGuard.detectNoBackendImports(guardSource),
+        isTrue,
+      );
+      expect(
+        SyncExpectationSafetyGuard.detectCopyGuardOnly(guardSource),
+        isTrue,
+      );
       for (final path in [
         _guardPath,
         'lib/features/sync_expectation_safety/sync_expectation_safety_copy.dart',

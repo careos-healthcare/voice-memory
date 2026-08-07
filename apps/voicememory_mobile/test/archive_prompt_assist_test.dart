@@ -4,11 +4,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/features/archive_prompt_assist/archive_prompt_assist.dart';
 import 'package:voicememory_mobile/features/archive_prompt_assist/archive_prompt_assist_copy.dart';
 import 'package:voicememory_mobile/features/archive_proof/proof_surface_advice_guard.dart';
-import 'package:voicememory_mobile/features/beta_repair_lab/beta_repair_lab_model.dart';
 import 'package:voicememory_mobile/features/change_trail_clarity/change_trail_clarity.dart';
 import 'package:voicememory_mobile/features/core_archive_journey/core_archive_journey.dart';
 import 'package:voicememory_mobile/features/low_effort_archive_capture/low_effort_archive_capture.dart';
-import 'package:voicememory_mobile/features/proof_confidence_calibration/proof_confidence_calibration_model.dart';
 import 'package:voicememory_mobile/features/proof_detail_repair/proof_detail_repair_copy.dart';
 import 'package:voicememory_mobile/features/proof_selection/proof_selection_principle.dart';
 import 'package:voicememory_mobile/features/release_candidate_comprehension/release_candidate_comprehension.dart';
@@ -25,16 +23,15 @@ ArchivePromptAssistInput _input({
   bool isWatchOnly = false,
   bool isGenericOrRejected = false,
   bool isPrivateRawText = false,
-}) =>
-    ArchivePromptAssistInput(
-      hasSafeRepeat: hasSafeRepeat,
-      safeRepeatPhrase: safeRepeatPhrase,
-      hasEnoughArchiveSignal: hasEnoughArchiveSignal,
-      userRecentlyCorrectedProof: userRecentlyCorrectedProof,
-      isWatchOnly: isWatchOnly,
-      isGenericOrRejected: isGenericOrRejected,
-      isPrivateRawText: isPrivateRawText,
-    );
+}) => ArchivePromptAssistInput(
+  hasSafeRepeat: hasSafeRepeat,
+  safeRepeatPhrase: safeRepeatPhrase,
+  hasEnoughArchiveSignal: hasEnoughArchiveSignal,
+  userRecentlyCorrectedProof: userRecentlyCorrectedProof,
+  isWatchOnly: isWatchOnly,
+  isGenericOrRejected: isGenericOrRejected,
+  isPrivateRawText: isPrivateRawText,
+);
 
 void main() {
   group('ArchivePromptAssist.build', () {
@@ -75,9 +72,7 @@ void main() {
     });
 
     test('private raw text hides prompt', () {
-      final result = ArchivePromptAssist.build(
-        _input(isPrivateRawText: true),
-      );
+      final result = ArchivePromptAssist.build(_input(isPrivateRawText: true));
       expect(result.shouldShowPrompt, isFalse);
       expect(result.reason, ArchivePromptAssistReason.hiddenPrivateRawText);
     });
@@ -97,9 +92,7 @@ void main() {
     });
 
     test('empty safe phrase falls back safely', () {
-      final result = ArchivePromptAssist.build(
-        _input(safeRepeatPhrase: '   '),
-      );
+      final result = ArchivePromptAssist.build(_input(safeRepeatPhrase: '   '));
       expect(result.shouldShowPrompt, isTrue);
       expect(result.promptText, ArchivePromptAssistCopy.fallbackPrompt);
       expect(result.reason, ArchivePromptAssistReason.fallbackRepeatPrompt);
@@ -108,10 +101,7 @@ void main() {
 
   group('ArchivePromptAssistCopy', () {
     test('headline asks Not sure what to record', () {
-      expect(
-        ArchivePromptAssistCopy.headline,
-        'Not sure what to record?',
-      );
+      expect(ArchivePromptAssistCopy.headline, 'Not sure what to record?');
     });
 
     test('body says suggest a small prompt from what already repeated', () {
@@ -122,10 +112,7 @@ void main() {
     });
 
     test('body says one sentence is enough', () {
-      expect(
-        ArchivePromptAssistCopy.body,
-        contains('One sentence is enough'),
-      );
+      expect(ArchivePromptAssistCopy.body, contains('One sentence is enough'));
     });
 
     test('oneSentenceReminder says keep it small', () {
@@ -142,17 +129,19 @@ void main() {
       );
     });
 
-    test('archiveBasedLine says safe archive signals, not private raw journal text',
-        () {
-      expect(
-        ArchivePromptAssistCopy.archiveBasedLine,
-        contains('safe archive signals'),
-      );
-      expect(
-        ArchivePromptAssistCopy.archiveBasedLine,
-        contains('not private raw journal text'),
-      );
-    });
+    test(
+      'archiveBasedLine says safe archive signals, not private raw journal text',
+      () {
+        expect(
+          ArchivePromptAssistCopy.archiveBasedLine,
+          contains('safe archive signals'),
+        );
+        expect(
+          ArchivePromptAssistCopy.archiveBasedLine,
+          contains('not private raw journal text'),
+        );
+      },
+    );
 
     test('lowPressureLine says no daily homework', () {
       expect(
@@ -288,39 +277,42 @@ void main() {
       );
     });
 
-    test('record screen remains capture-first without stacking extra cards', () {
-      final audit = SurfacePriorityEngine.auditRecordReady(
-        entryCount: 4,
-        source: 'record',
-        candidates: SurfacePriorityCandidates.recordReady(
-          firstMomentCapture: false,
-          secondMomentReturn: false,
-          lowFrictionReturn: false,
-          whatToNoticeNext: false,
-          betaTodaySummary: false,
-          openCapturePromptChips: false,
-          captureFreedomLine: false,
-          timelineProofMoment: true,
-          archiveTimelineSpine: false,
-          timelinePositioning: false,
-          currentRelevance: false,
-          correctionMemory: false,
-          notRelevantRecovery: false,
-          proofQualityResponse: false,
-          evidenceWeighting: false,
-          proofSpecificity: false,
-          presentDayRelevance: false,
-          patternConfidence: false,
-          betaTesterReport: false,
-          proEvidenceValue: false,
-          privateReportProBridge: false,
-          suppressLegacyEducation: false,
-          betaProofLift: true,
-        ),
-      );
-      expect(audit.proofCardKey, 'timelineProofMoment');
-      expect(audit.guidanceCardKey, isNull);
-    });
+    test(
+      'record screen remains capture-first without stacking extra cards',
+      () {
+        final audit = SurfacePriorityEngine.auditRecordReady(
+          entryCount: 4,
+          source: 'record',
+          candidates: SurfacePriorityCandidates.recordReady(
+            firstMomentCapture: false,
+            secondMomentReturn: false,
+            lowFrictionReturn: false,
+            whatToNoticeNext: false,
+            betaTodaySummary: false,
+            openCapturePromptChips: false,
+            captureFreedomLine: false,
+            timelineProofMoment: true,
+            archiveTimelineSpine: false,
+            timelinePositioning: false,
+            currentRelevance: false,
+            correctionMemory: false,
+            notRelevantRecovery: false,
+            proofQualityResponse: false,
+            evidenceWeighting: false,
+            proofSpecificity: false,
+            presentDayRelevance: false,
+            patternConfidence: false,
+            betaTesterReport: false,
+            proEvidenceValue: false,
+            privateReportProBridge: false,
+            suppressLegacyEducation: false,
+            betaProofLift: true,
+          ),
+        );
+        expect(audit.proofCardKey, 'timelineProofMoment');
+        expect(audit.guidanceCardKey, isNull);
+      },
+    );
   });
 }
 
@@ -339,7 +331,8 @@ LowEffortArchiveCaptureSummary _fullLowEffortSummary() =>
       wouldPayNoCount: 1,
     );
 
-ChangeTrailClaritySummary _fullTrailSummary() => const ChangeTrailClaritySummary(
+ChangeTrailClaritySummary _fullTrailSummary() =>
+    const ChangeTrailClaritySummary(
       totalTesters: 30,
       understoodFirstProofCount: 7,
       understoodProKeepsTrailCount: 6,

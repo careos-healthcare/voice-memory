@@ -37,10 +37,8 @@ void main() {
       saveInterceptorPipeline: JournalSaveInterceptorPipeline([
         CognitiveAlertInterceptor(
           telemetry: ClinicalCognitiveTelemetry(
-            sink: (event, meta) => telemetryEvents.add({
-              'event': event,
-              ...meta,
-            }),
+            sink: (event, meta) =>
+                telemetryEvents.add({'event': event, ...meta}),
           ),
           onWarning: warnings.add,
         ),
@@ -61,10 +59,7 @@ void main() {
     repeatedSignal: '',
   );
 
-  JournalEntry entry({
-    required String id,
-    required String transcript,
-  }) {
+  JournalEntry entry({required String id, required String transcript}) {
     return JournalEntry(
       id: id,
       createdAt: DateTime.utc(2026, 6, 12, 12),
@@ -75,27 +70,30 @@ void main() {
     );
   }
 
-  test('high volatility save triggers clinical drift alert interceptor', () async {
-    await store.save(
-      entry(
-        id: 'volatile_entry',
-        transcript: 'WOW!!! NO WAY!!! STOP!!! THIS IS INSANE!!!',
-      ),
-    );
+  test(
+    'high volatility save triggers clinical drift alert interceptor',
+    () async {
+      await store.save(
+        entry(
+          id: 'volatile_entry',
+          transcript: 'WOW!!! NO WAY!!! STOP!!! THIS IS INSANE!!!',
+        ),
+      );
 
-    expect(
-      telemetryEvents.map((event) => event['event']),
-      contains(ClinicalCognitiveTelemetry.clinicalDriftDetectedEvent),
-    );
-    expect(
-      warnings.any(
-        (warning) =>
-            warning.driftType ==
-            CognitiveAlertInterceptor.emotionalVolatilityDriftType,
-      ),
-      isTrue,
-    );
-  });
+      expect(
+        telemetryEvents.map((event) => event['event']),
+        contains(ClinicalCognitiveTelemetry.clinicalDriftDetectedEvent),
+      );
+      expect(
+        warnings.any(
+          (warning) =>
+              warning.driftType ==
+              CognitiveAlertInterceptor.emotionalVolatilityDriftType,
+        ),
+        isTrue,
+      );
+    },
+  );
 
   test('verified save updates curiosity loop memory recall seed', () async {
     await store.save(
@@ -130,6 +128,9 @@ void main() {
       ),
       isTrue,
     );
-    expect(await curiosityLoopRepository.fetchPendingMemoryRecallSeed(), isNotNull);
+    expect(
+      await curiosityLoopRepository.fetchPendingMemoryRecallSeed(),
+      isNotNull,
+    );
   });
 }

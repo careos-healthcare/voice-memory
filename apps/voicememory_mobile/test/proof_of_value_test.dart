@@ -23,24 +23,23 @@ ProofOfValueInput _input({
   int? proofUsefulCount,
   int? wouldKeepUsing,
   int? wouldPay,
-}) =>
-    ProofOfValueInput(
-      totalTesters: totalTesters,
-      appOpened: appOpened,
-      firstMomentSaved: firstMomentSaved,
-      secondMomentSaved: secondMomentSaved,
-      firstProofReached: firstProofReached,
-      returnCheckAnswered: returnCheckAnswered,
-      proTapped: proTapped,
-      coreValueYes: coreValueYes,
-      coreValueNotYet: coreValueNotYet,
-      coreValueGeneric: coreValueGeneric,
-      localCoreValueAnswerLabel: localCoreValueAnswerLabel,
-      proofFeltSpecific: proofFeltSpecific,
-      proofUsefulCount: proofUsefulCount,
-      wouldKeepUsing: wouldKeepUsing,
-      wouldPay: wouldPay,
-    );
+}) => ProofOfValueInput(
+  totalTesters: totalTesters,
+  appOpened: appOpened,
+  firstMomentSaved: firstMomentSaved,
+  secondMomentSaved: secondMomentSaved,
+  firstProofReached: firstProofReached,
+  returnCheckAnswered: returnCheckAnswered,
+  proTapped: proTapped,
+  coreValueYes: coreValueYes,
+  coreValueNotYet: coreValueNotYet,
+  coreValueGeneric: coreValueGeneric,
+  localCoreValueAnswerLabel: localCoreValueAnswerLabel,
+  proofFeltSpecific: proofFeltSpecific,
+  proofUsefulCount: proofUsefulCount,
+  wouldKeepUsing: wouldKeepUsing,
+  wouldPay: wouldPay,
+);
 
 void main() {
   tearDown(DeveloperSettingsGate.resetForTest);
@@ -83,10 +82,7 @@ void main() {
         input: _input(firstMomentSaved: 6),
       );
       expect(report.summary, ProofOfValueCopy.summaryActivationNotProven);
-      expect(
-        report.recommendation,
-        ProofOfValueCopy.recommendationFixFirstUse,
-      );
+      expect(report.recommendation, ProofOfValueCopy.recommendationFixFirstUse);
     });
 
     test('low second save recommends return loop', () {
@@ -126,10 +122,7 @@ void main() {
         ),
       );
       expect(report.summary, ProofOfValueCopy.summarySpecificityNotProven);
-      expect(
-        report.recommendation,
-        ProofOfValueCopy.recommendationFixEvidence,
-      );
+      expect(report.recommendation, ProofOfValueCopy.recommendationFixEvidence);
     });
 
     test('core value yes can satisfy specificity value signal', () {
@@ -217,10 +210,7 @@ void main() {
         ),
       );
       expect(report.summary, ProofOfValueCopy.summaryStrong);
-      expect(
-        report.recommendation,
-        ProofOfValueCopy.recommendationWidenBeta,
-      );
+      expect(report.recommendation, ProofOfValueCopy.recommendationWidenBeta);
     });
 
     test('pro tap satisfies payment signal', () {
@@ -234,10 +224,7 @@ void main() {
           proTapped: 1,
         ),
       );
-      expect(
-        report.recommendation,
-        ProofOfValueCopy.recommendationWidenBeta,
-      );
+      expect(report.recommendation, ProofOfValueCopy.recommendationWidenBeta);
     });
 
     test('visible copy avoids transcript phrase and user content', () {

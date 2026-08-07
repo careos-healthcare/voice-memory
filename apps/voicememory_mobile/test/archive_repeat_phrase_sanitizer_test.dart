@@ -10,21 +10,20 @@ JournalEntry _entry({
   required String id,
   required String transcript,
   DateTime? createdAt,
-}) =>
-    JournalEntry(
-      id: id,
-      createdAt: createdAt ?? DateTime(2026, 6, 1, 12),
-      transcript: transcript,
-      durationSeconds: 30,
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 2,
-        recurringThemes: const [],
-        exactLanguagePattern: '',
-        concreteObservation: '',
-        repeatedSignal: '',
-      ),
-    );
+}) => JournalEntry(
+  id: id,
+  createdAt: createdAt ?? DateTime(2026, 6, 1, 12),
+  transcript: transcript,
+  durationSeconds: 30,
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 2,
+    recurringThemes: [],
+    exactLanguagePattern: '',
+    concreteObservation: '',
+    repeatedSignal: '',
+  ),
+);
 
 void main() {
   group('ArchiveRepeatPhraseSanitizer', () {
@@ -48,7 +47,10 @@ void main() {
         ArchiveRepeatPhraseSanitizer.sanitize('to say no but'),
         'to say no',
       );
-      expect(ArchiveRepeatPhraseSanitizer.endsWithConnector('wanted to say no but'), isTrue);
+      expect(
+        ArchiveRepeatPhraseSanitizer.endsWithConnector('wanted to say no but'),
+        isTrue,
+      );
 
       final summary = ArchiveRepeatPhraseSanitizer.buildRepeatSummary(
         texts: const ['wanted to say no but agreed', 'to say no but said yes'],
@@ -75,7 +77,9 @@ void main() {
 
     test('buildEvidenceLine keeps exact snippets separate', () {
       expect(
-        ArchiveRepeatPhraseSanitizer.buildEvidenceLine(const ['wanted to say no']),
+        ArchiveRepeatPhraseSanitizer.buildEvidenceLine(const [
+          'wanted to say no',
+        ]),
         'Your words: "wanted to say no".',
       );
       expect(

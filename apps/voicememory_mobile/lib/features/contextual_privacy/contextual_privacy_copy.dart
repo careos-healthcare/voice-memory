@@ -11,8 +11,8 @@ abstract final class ContextualPrivacyCopy {
   static const yourControlsLink = 'Your controls';
 
   static List<String> allVisibleStrings() => [
-        fullLine,
-        compactLine,
-        yourControlsLink,
-      ];
+    fullLine,
+    compactLine,
+    yourControlsLink,
+  ];
 }

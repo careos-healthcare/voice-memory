@@ -57,21 +57,19 @@ abstract final class BetaValidationDecisionMatrixEngine {
 
   static BetaValidationDecisionMatrixInput inputFromRevenue(
     RevenueReadinessDashboardV2Input input,
-  ) =>
-      BetaValidationDecisionMatrixInput(
-        testerCount: input.testerCount,
-        firstSessionSaveCount: input.firstSessionSaveCount,
-        usefulProofCount: input.usefulCount,
-        sawProCount: input.sawProCount,
-        understandsProYesMaybeCount: input.understandsProYesMaybe,
-        paywallCtaTapCount: input.paywallCtaTapped,
-        wouldPayYesMaybeCount: input.wouldPayYesMaybeCount,
-      );
+  ) => BetaValidationDecisionMatrixInput(
+    testerCount: input.testerCount,
+    firstSessionSaveCount: input.firstSessionSaveCount,
+    usefulProofCount: input.usefulCount,
+    sawProCount: input.sawProCount,
+    understandsProYesMaybeCount: input.understandsProYesMaybe,
+    paywallCtaTapCount: input.paywallCtaTapped,
+    wouldPayYesMaybeCount: input.wouldPayYesMaybeCount,
+  );
 
   static BetaValidationDecisionMatrixResult fromRevenueInput(
     RevenueReadinessDashboardV2Input input,
-  ) =>
-      buildFromInput(inputFromRevenue(input));
+  ) => buildFromInput(inputFromRevenue(input));
 
   static BetaValidationDecisionOutcome resolveOutcome(
     BetaValidationDecisionMatrixInput input,
@@ -102,40 +100,39 @@ abstract final class BetaValidationDecisionMatrixEngine {
     required BetaValidationDecisionOutcome outcome,
     required BetaValidationDecisionMatrixInput input,
     required BetaValidationThresholds thresholds,
-  }) =>
-      switch (outcome) {
-        BetaValidationDecisionOutcome.insufficientData =>
-          'Only ${input.testerCount} of $minimumTesterCount testers counted. '
-              'Wait for a 20–30 tester round before choosing the next fix.',
-        BetaValidationDecisionOutcome.protectProof =>
-          'Useful proof (${input.usefulProofCount}/${thresholds.usefulProofTarget}) '
-              'is below the ${thresholds.cohortSize}-tester target. '
-              'Proof protection outranks Pro and paywall work.',
-        BetaValidationDecisionOutcome.fixOpeningScreenOnly =>
-          'Useful proof passed (${input.usefulProofCount}/${thresholds.usefulProofTarget}), '
-              'but first-session saves (${input.firstSessionSaveCount}/'
-              '${thresholds.firstSessionSaveTarget}) are still below target. '
-              'Opening screen only — do not touch proof or Pro yet.',
-        BetaValidationDecisionOutcome.fixProPlacement =>
-          'Proof (${input.usefulProofCount}/${thresholds.usefulProofTarget}) and '
-              'first-session saves (${input.firstSessionSaveCount}/'
-              '${thresholds.firstSessionSaveTarget}) passed, but Saw Pro '
-              '(${input.sawProCount}/${thresholds.sawProTarget}) is still below target.',
-        BetaValidationDecisionOutcome.fixProExplanation =>
-          'Saw Pro passed (${input.sawProCount}/${thresholds.sawProTarget}), but '
-              'Understands Pro yes/maybe (${input.understandsProYesMaybeCount}/'
-              '${thresholds.understandsProTarget}) is still below target.',
-        BetaValidationDecisionOutcome.fixPaywallValue =>
-          'Earlier gates passed, but paywall CTA taps are still 0/${thresholds.paywallCtaTapTarget}. '
-              'Clarify paid value before changing pricing.',
-        BetaValidationDecisionOutcome.widenBetaAndValidatePricing =>
-          'All core gates passed for the ${thresholds.cohortSize}-tester round: '
-              'first-session saves (${input.firstSessionSaveCount}/'
-              '${thresholds.firstSessionSaveTarget}), useful proof '
-              '(${input.usefulProofCount}/${thresholds.usefulProofTarget}), '
-              'Saw Pro (${input.sawProCount}/${thresholds.sawProTarget}), '
-              'Understands Pro (${input.understandsProYesMaybeCount}/'
-              '${thresholds.understandsProTarget}), and paywall CTA taps '
-              '(${input.paywallCtaTapCount}/${thresholds.paywallCtaTapTarget}).',
-      };
+  }) => switch (outcome) {
+    BetaValidationDecisionOutcome.insufficientData =>
+      'Only ${input.testerCount} of $minimumTesterCount testers counted. '
+          'Wait for a 20–30 tester round before choosing the next fix.',
+    BetaValidationDecisionOutcome.protectProof =>
+      'Useful proof (${input.usefulProofCount}/${thresholds.usefulProofTarget}) '
+          'is below the ${thresholds.cohortSize}-tester target. '
+          'Proof protection outranks Pro and paywall work.',
+    BetaValidationDecisionOutcome.fixOpeningScreenOnly =>
+      'Useful proof passed (${input.usefulProofCount}/${thresholds.usefulProofTarget}), '
+          'but first-session saves (${input.firstSessionSaveCount}/'
+          '${thresholds.firstSessionSaveTarget}) are still below target. '
+          'Opening screen only — do not touch proof or Pro yet.',
+    BetaValidationDecisionOutcome.fixProPlacement =>
+      'Proof (${input.usefulProofCount}/${thresholds.usefulProofTarget}) and '
+          'first-session saves (${input.firstSessionSaveCount}/'
+          '${thresholds.firstSessionSaveTarget}) passed, but Saw Pro '
+          '(${input.sawProCount}/${thresholds.sawProTarget}) is still below target.',
+    BetaValidationDecisionOutcome.fixProExplanation =>
+      'Saw Pro passed (${input.sawProCount}/${thresholds.sawProTarget}), but '
+          'Understands Pro yes/maybe (${input.understandsProYesMaybeCount}/'
+          '${thresholds.understandsProTarget}) is still below target.',
+    BetaValidationDecisionOutcome.fixPaywallValue =>
+      'Earlier gates passed, but paywall CTA taps are still 0/${thresholds.paywallCtaTapTarget}. '
+          'Clarify paid value before changing pricing.',
+    BetaValidationDecisionOutcome.widenBetaAndValidatePricing =>
+      'All core gates passed for the ${thresholds.cohortSize}-tester round: '
+          'first-session saves (${input.firstSessionSaveCount}/'
+          '${thresholds.firstSessionSaveTarget}), useful proof '
+          '(${input.usefulProofCount}/${thresholds.usefulProofTarget}), '
+          'Saw Pro (${input.sawProCount}/${thresholds.sawProTarget}), '
+          'Understands Pro (${input.understandsProYesMaybeCount}/'
+          '${thresholds.understandsProTarget}), and paywall CTA taps '
+          '(${input.paywallCtaTapCount}/${thresholds.paywallCtaTapTarget}).',
+  };
 }

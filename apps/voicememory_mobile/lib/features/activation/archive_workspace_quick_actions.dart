@@ -185,22 +185,22 @@ abstract final class ArchiveWorkspaceQuickActionsEngine {
       case ArchiveWorkspaceQuickActionKind.reviewCorrections:
         return const ArchiveWorkspaceQuickAction(
           kind: ArchiveWorkspaceQuickActionKind.reviewCorrections,
-          label:
-              VisibleArchiveProofCopy.archiveWorkspaceQuickActionReviewCorrections,
+          label: VisibleArchiveProofCopy
+              .archiveWorkspaceQuickActionReviewCorrections,
           destination: ArchiveWorkspaceQuickActionDestination.insightQuality,
         );
       case ArchiveWorkspaceQuickActionKind.viewWeeklyReview:
         return const ArchiveWorkspaceQuickAction(
           kind: ArchiveWorkspaceQuickActionKind.viewWeeklyReview,
-          label:
-              VisibleArchiveProofCopy.archiveWorkspaceQuickActionViewWeeklyReview,
+          label: VisibleArchiveProofCopy
+              .archiveWorkspaceQuickActionViewWeeklyReview,
           destination: ArchiveWorkspaceQuickActionDestination.weeklyReview,
         );
       case ArchiveWorkspaceQuickActionKind.viewEvidenceMap:
         return const ArchiveWorkspaceQuickAction(
           kind: ArchiveWorkspaceQuickActionKind.viewEvidenceMap,
-          label:
-              VisibleArchiveProofCopy.archiveWorkspaceQuickActionViewEvidenceMap,
+          label: VisibleArchiveProofCopy
+              .archiveWorkspaceQuickActionViewEvidenceMap,
           destination: ArchiveWorkspaceQuickActionDestination.archiveBelief,
         );
       case ArchiveWorkspaceQuickActionKind.addMoment:
@@ -212,8 +212,8 @@ abstract final class ArchiveWorkspaceQuickActionsEngine {
       case ArchiveWorkspaceQuickActionKind.shareProofSafely:
         return const ArchiveWorkspaceQuickAction(
           kind: ArchiveWorkspaceQuickActionKind.shareProofSafely,
-          label:
-              VisibleArchiveProofCopy.archiveWorkspaceQuickActionShareProofSafely,
+          label: VisibleArchiveProofCopy
+              .archiveWorkspaceQuickActionShareProofSafely,
           destination: ArchiveWorkspaceQuickActionDestination.shareProof,
         );
     }

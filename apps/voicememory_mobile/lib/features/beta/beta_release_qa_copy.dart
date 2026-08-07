@@ -53,15 +53,15 @@ abstract final class BetaReleaseQaCopy {
   static const proBridgeRoute = '/subscription';
 
   static List<String> get manualChecklistSteps => [
-        'Install build',
-        'Open app',
-        ...TesterMissionCopy.steps,
-        'Confirm first proof appears on Patterns',
-        'Record a fourth related moment',
-        'Answer return check',
-        'Open Patterns',
-        'Confirm belief, changed card, helpful action, and evidence timeline are visible when eligible',
-      ];
+    'Install build',
+    'Open app',
+    ...TesterMissionCopy.steps,
+    'Confirm first proof appears on Patterns',
+    'Record a fourth related moment',
+    'Answer return check',
+    'Open Patterns',
+    'Confirm belief, changed card, helpful action, and evidence timeline are visible when eligible',
+  ];
 
   static const coreValueQuestionTitle = 'Core beta value question';
 

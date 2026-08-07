@@ -22,9 +22,8 @@ class CuriosityAdaptiveTimingEngine {
     }
 
     final recent = _recentEntries(history, maxSampleSize);
-    final averageHour = recent
-            .map(_hourOfDay)
-            .reduce((sum, hour) => sum + hour) /
+    final averageHour =
+        recent.map(_hourOfDay).reduce((sum, hour) => sum + hour) /
         recent.length;
 
     final currentLocal = currentEntryTime.toLocal();
@@ -35,8 +34,7 @@ class CuriosityAdaptiveTimingEngine {
     ).add(const Duration(days: 1));
 
     final targetHour = averageHour.floor().clamp(0, 23);
-    final targetMinute =
-        ((averageHour - targetHour) * 60).round().clamp(0, 59);
+    final targetMinute = ((averageHour - targetHour) * 60).round().clamp(0, 59);
 
     final target = DateTime(
       nextDay.year,
@@ -57,7 +55,8 @@ class CuriosityAdaptiveTimingEngine {
     List<JournalEntry> history,
     int limit,
   ) {
-    final sorted = [...history]..sort((a, b) => a.createdAt.compareTo(b.createdAt));
+    final sorted = [...history]
+      ..sort((a, b) => a.createdAt.compareTo(b.createdAt));
     if (sorted.length <= limit) return sorted;
     return sorted.sublist(sorted.length - limit);
   }

@@ -11,10 +11,7 @@ abstract final class PaidIntentConfirmationResponseIds {
 }
 
 /// Local record status — answered or skipped only.
-enum PaidIntentConfirmationStatus {
-  answered,
-  skipped,
-}
+enum PaidIntentConfirmationStatus { answered, skipped }
 
 /// Value signals captured at response time — counts and flags only.
 class PaidIntentValueSignalsAtResponse {
@@ -33,14 +30,16 @@ class PaidIntentValueSignalsAtResponse {
   final bool boundaryResponseSelected;
 
   Map<String, dynamic> toJson() => {
-        'capacityMomentCount': capacityMomentCount,
-        'fitResponse': fitResponse,
-        'dailyChangeAvailable': dailyChangeAvailable,
-        'weeklyReviewAvailable': weeklyReviewAvailable,
-        'boundaryResponseSelected': boundaryResponseSelected,
-      };
+    'capacityMomentCount': capacityMomentCount,
+    'fitResponse': fitResponse,
+    'dailyChangeAvailable': dailyChangeAvailable,
+    'weeklyReviewAvailable': weeklyReviewAvailable,
+    'boundaryResponseSelected': boundaryResponseSelected,
+  };
 
-  static PaidIntentValueSignalsAtResponse? fromJson(Map<String, dynamic>? json) {
+  static PaidIntentValueSignalsAtResponse? fromJson(
+    Map<String, dynamic>? json,
+  ) {
     if (json == null || json.isEmpty) return null;
     final fit = json['fitResponse'];
     if (fit is! String || fit.isEmpty) return null;
@@ -110,20 +109,19 @@ class PaidIntentConfirmationRecord {
   }
 
   Map<String, dynamic> toJson() => {
-        if (responseId.isNotEmpty) 'responseId': responseId,
-        'source': source,
-        'status': status.name,
-        if (valueSignalsAtResponse != null)
-          'valueSignalsAtResponse': valueSignalsAtResponse!.toJson(),
-        if (createdAt != null) 'createdAt': createdAt!.toUtc().toIso8601String(),
-        if (updatedAt != null) 'updatedAt': updatedAt!.toUtc().toIso8601String(),
-      };
+    if (responseId.isNotEmpty) 'responseId': responseId,
+    'source': source,
+    'status': status.name,
+    if (valueSignalsAtResponse != null)
+      'valueSignalsAtResponse': valueSignalsAtResponse!.toJson(),
+    if (createdAt != null) 'createdAt': createdAt!.toUtc().toIso8601String(),
+    if (updatedAt != null) 'updatedAt': updatedAt!.toUtc().toIso8601String(),
+  };
 
   static PaidIntentConfirmationRecord? fromJson(Map<String, dynamic>? json) {
     if (json == null || json.isEmpty) return null;
     final statusRaw = json['status'];
-    PaidIntentConfirmationStatus status =
-        PaidIntentConfirmationStatus.answered;
+    PaidIntentConfirmationStatus status = PaidIntentConfirmationStatus.answered;
     if (statusRaw is String) {
       for (final value in PaidIntentConfirmationStatus.values) {
         if (value.name == statusRaw) {
@@ -141,7 +139,8 @@ class PaidIntentConfirmationRecord {
     final signalsRaw = json['valueSignalsAtResponse'];
     return PaidIntentConfirmationRecord(
       responseId: json['responseId'] as String? ?? '',
-      source: json['source'] as String? ??
+      source:
+          json['source'] as String? ??
           PaidIntentConfirmationSource.capacityBetaValueSignal,
       status: status,
       valueSignalsAtResponse: signalsRaw is Map<String, dynamic>

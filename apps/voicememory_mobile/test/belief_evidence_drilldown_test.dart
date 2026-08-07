@@ -16,66 +16,65 @@ JournalEntry _voiceEntry({
   required String id,
   required String transcript,
   DateTime? createdAt,
-}) =>
-    JournalEntry(
-      id: id,
-      createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
-      transcript: transcript,
-      durationSeconds: 30,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 2,
-        recurringThemes: ['work'],
-        exactLanguagePattern: '',
-        concreteObservation: 'Work pressure showed up in this moment.',
-        repeatedSignal: '',
-      ),
-    );
+}) => JournalEntry(
+  id: id,
+  createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
+  transcript: transcript,
+  durationSeconds: 30,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 2,
+    recurringThemes: ['work'],
+    exactLanguagePattern: '',
+    concreteObservation: 'Work pressure showed up in this moment.',
+    repeatedSignal: '',
+  ),
+);
 
 JournalEntry _degradedVoiceEntry({String id = 'v1'}) => JournalEntry(
-      id: id,
-      createdAt: DateTime(2026, 6, 12, 12),
-      transcript:
-          '[draft] ${CaptureSaveMessages.recordingSavedLocally} — transcribe when connected',
-      durationSeconds: 20,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 0,
-        recurringThemes: [],
-        exactLanguagePattern: '',
-        concreteObservation: '',
-        repeatedSignal: '',
-      ),
-    );
+  id: id,
+  createdAt: DateTime(2026, 6, 12, 12),
+  transcript:
+      '[draft] ${CaptureSaveMessages.recordingSavedLocally} — transcribe when connected',
+  durationSeconds: 20,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 0,
+    recurringThemes: [],
+    exactLanguagePattern: '',
+    concreteObservation: '',
+    repeatedSignal: '',
+  ),
+);
 
 List<JournalEntry> _fourRepeatCapacityEntries() => [
-      _voiceEntry(
-        id: 'e1',
-        transcript:
-            'I had no capacity but I said yes again to the extra meeting today.',
-        createdAt: DateTime(2026, 6, 10, 12),
-      ),
-      _voiceEntry(
-        id: 'e2',
-        transcript:
-            'Same thing — said yes when I had no capacity for one more thing.',
-        createdAt: DateTime(2026, 6, 11, 12),
-      ),
-      _voiceEntry(
-        id: 'e3',
-        transcript:
-            'I said yes again even though I had no capacity for one more ask.',
-        createdAt: DateTime(2026, 6, 12, 12),
-      ),
-      _voiceEntry(
-        id: 'e4',
-        transcript:
-            'The same yes-with-no-capacity pattern showed up again at work today.',
-        createdAt: DateTime(2026, 6, 13, 12),
-      ),
-    ];
+  _voiceEntry(
+    id: 'e1',
+    transcript:
+        'I had no capacity but I said yes again to the extra meeting today.',
+    createdAt: DateTime(2026, 6, 10, 12),
+  ),
+  _voiceEntry(
+    id: 'e2',
+    transcript:
+        'Same thing — said yes when I had no capacity for one more thing.',
+    createdAt: DateTime(2026, 6, 11, 12),
+  ),
+  _voiceEntry(
+    id: 'e3',
+    transcript:
+        'I said yes again even though I had no capacity for one more ask.',
+    createdAt: DateTime(2026, 6, 12, 12),
+  ),
+  _voiceEntry(
+    id: 'e4',
+    transcript:
+        'The same yes-with-no-capacity pattern showed up again at work today.',
+    createdAt: DateTime(2026, 6, 13, 12),
+  ),
+];
 
 List<JournalEntry> _fourDistinctWorkEntries() => _fourRepeatCapacityEntries();
 
@@ -131,7 +130,10 @@ void main() {
     test('four usable entries includes belief, evidence, and source copy', () {
       final trail = _trailFromEntries(_fourDistinctWorkEntries());
       expect(trail.hasEnoughEvidence, isTrue);
-      expect(trail.notConclusionLine, VisibleArchiveProofCopy.beliefEvidenceNotConclusion);
+      expect(
+        trail.notConclusionLine,
+        VisibleArchiveProofCopy.beliefEvidenceNotConclusion,
+      );
       expect(
         trail.sourceLine,
         'ArchiveMe is using your saved words, not guessing.',
@@ -166,8 +168,16 @@ void main() {
           'I felt pressure at work before saying yes again even when I was tired.';
       final trail = BeliefEvidenceTrailEngine.build(
         entries: [
-          _voiceEntry(id: 'e1', transcript: shared, createdAt: DateTime(2026, 6, 9)),
-          _voiceEntry(id: 'e2', transcript: shared, createdAt: DateTime(2026, 6, 10)),
+          _voiceEntry(
+            id: 'e1',
+            transcript: shared,
+            createdAt: DateTime(2026, 6, 9),
+          ),
+          _voiceEntry(
+            id: 'e2',
+            transcript: shared,
+            createdAt: DateTime(2026, 6, 10),
+          ),
           _voiceEntry(
             id: 'e3',
             transcript:
@@ -201,28 +211,43 @@ void main() {
           theme: AppTheme.light(),
           home: Scaffold(
             body: SingleChildScrollView(
-              child: BeliefEvidenceTrailCard(
-                trail: trail,
-                onAddAnother: () {},
-              ),
+              child: BeliefEvidenceTrailCard(trail: trail, onAddAnother: () {}),
             ),
           ),
         ),
       );
       await tester.pump();
 
-      expect(find.byKey(const Key('belief_evidence_trail_card')), findsOneWidget);
-      expect(find.text(VisibleArchiveProofCopy.beliefEvidenceNotConclusion), findsOneWidget);
+      expect(
+        find.byKey(const Key('belief_evidence_trail_card')),
+        findsOneWidget,
+      );
+      expect(
+        find.text(VisibleArchiveProofCopy.beliefEvidenceNotConclusion),
+        findsOneWidget,
+      );
       expect(
         find.text('ArchiveMe is using your saved words, not guessing.'),
         findsOneWidget,
       );
-      expect(find.text(VisibleArchiveProofCopy.beliefEvidenceCurrentBeliefLabel), findsOneWidget);
+      expect(
+        find.text(VisibleArchiveProofCopy.beliefEvidenceCurrentBeliefLabel),
+        findsOneWidget,
+      );
       expect(find.text('What changed'), findsOneWidget);
       expect(find.text('Evidence from your archive'), findsOneWidget);
-      expect(find.byKey(const Key('belief_evidence_trail_add_next_label')), findsOneWidget);
-      expect(find.byKey(const Key('belief_evidence_trail_add_cta')), findsOneWidget);
-      expect(find.byKey(const Key('belief_evidence_trail_evidence_0')), findsOneWidget);
+      expect(
+        find.byKey(const Key('belief_evidence_trail_add_next_label')),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(const Key('belief_evidence_trail_add_cta')),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(const Key('belief_evidence_trail_evidence_0')),
+        findsOneWidget,
+      );
       _expectNoBannedCopy(_visibleText(tester));
     });
 
@@ -263,10 +288,19 @@ void main() {
       );
       await tester.pump();
 
-      expect(find.byKey(const Key('belief_evidence_screen_title')), findsOneWidget);
+      expect(
+        find.byKey(const Key('belief_evidence_screen_title')),
+        findsOneWidget,
+      );
       expect(find.text('Evidence behind this belief'), findsWidgets);
-      expect(find.text(VisibleArchiveProofCopy.beliefEvidenceCurrentBeliefLabel), findsOneWidget);
-      expect(find.byKey(const Key('belief_evidence_trail_add_cta')), findsOneWidget);
+      expect(
+        find.text(VisibleArchiveProofCopy.beliefEvidenceCurrentBeliefLabel),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(const Key('belief_evidence_trail_add_cta')),
+        findsOneWidget,
+      );
       _expectNoBannedCopy(_visibleText(tester));
     });
 
@@ -283,7 +317,10 @@ void main() {
       );
       await tester.pump();
 
-      expect(find.byKey(const Key('belief_evidence_trail_insufficient_body')), findsOneWidget);
+      expect(
+        find.byKey(const Key('belief_evidence_trail_insufficient_body')),
+        findsOneWidget,
+      );
     });
   });
 
@@ -408,88 +445,94 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      final cta = find.byKey(const Key('belief_update_payoff_view_evidence_cta'));
+      final cta = find.byKey(
+        const Key('belief_update_payoff_view_evidence_cta'),
+      );
       await tester.ensureVisible(cta);
       await tester.tap(cta);
       await tester.pumpAndSettle();
 
       expect(evidenceOpened, isTrue);
-      expect(find.byKey(const Key('belief_evidence_trail_card')), findsOneWidget);
+      expect(
+        find.byKey(const Key('belief_evidence_trail_card')),
+        findsOneWidget,
+      );
       expect(find.byKey(const Key('belief_update_payoff_card')), findsNothing);
     });
 
-    testWidgets('Record if it happens again and View evidence use different routes', (
-      tester,
-    ) async {
-      const payoff = BeliefUpdatePayoff(
-        title: BeliefUpdatePayoffCopy.title,
-        body: BeliefUpdatePayoffCopy.bodyStillBuilding,
-        currentBelief: VisibleArchiveProofCopy.beliefUpdateWorkBelief,
-        evidenceRows: ['snippet one', 'snippet two'],
-        whatChangedLine: VisibleArchiveProofCopy.beliefUpdateChangeEasierCompare,
-        beliefChanged: false,
-        evidenceWeak: true,
-        primaryCta: 'Record if it happens again',
-        secondaryCta: 'View evidence',
-      );
+    testWidgets(
+      'Record if it happens again and View evidence use different routes',
+      (tester) async {
+        const payoff = BeliefUpdatePayoff(
+          title: BeliefUpdatePayoffCopy.title,
+          body: BeliefUpdatePayoffCopy.bodyStillBuilding,
+          currentBelief: VisibleArchiveProofCopy.beliefUpdateWorkBelief,
+          evidenceRows: ['snippet one', 'snippet two'],
+          whatChangedLine:
+              VisibleArchiveProofCopy.beliefUpdateChangeEasierCompare,
+          beliefChanged: false,
+          evidenceWeak: true,
+          primaryCta: 'Record if it happens again',
+          secondaryCta: 'View evidence',
+        );
 
-      String? lastRoute;
-      final router = GoRouter(
-        initialLocation: '/start',
-        routes: [
-          GoRoute(
-            path: '/start',
-            builder: (context, state) => Scaffold(
-              body: SingleChildScrollView(
-                child: BeliefUpdatePayoffCard(
-                  payoff: payoff,
-                  onAddAnother: () {
-                    lastRoute = '/record';
-                    context.go('/record');
-                  },
-                  onViewEvidence: () {
-                    lastRoute = BeliefEvidenceNavigation.route;
-                    context.push(BeliefEvidenceNavigation.route);
-                  },
+        String? lastRoute;
+        final router = GoRouter(
+          initialLocation: '/start',
+          routes: [
+            GoRoute(
+              path: '/start',
+              builder: (context, state) => Scaffold(
+                body: SingleChildScrollView(
+                  child: BeliefUpdatePayoffCard(
+                    payoff: payoff,
+                    onAddAnother: () {
+                      lastRoute = '/record';
+                      context.go('/record');
+                    },
+                    onViewEvidence: () {
+                      lastRoute = BeliefEvidenceNavigation.route;
+                      context.push(BeliefEvidenceNavigation.route);
+                    },
+                  ),
                 ),
               ),
             ),
-          ),
-          GoRoute(
-            path: '/record',
-            builder: (context, state) =>
-                const Scaffold(body: Text('RECORD_SCREEN')),
-          ),
-          GoRoute(
-            path: BeliefEvidenceNavigation.route,
-            builder: (context, state) => const Scaffold(
-              body: Text('EVIDENCE_SCREEN'),
+            GoRoute(
+              path: '/record',
+              builder: (context, state) =>
+                  const Scaffold(body: Text('RECORD_SCREEN')),
             ),
-          ),
-        ],
-      );
+            GoRoute(
+              path: BeliefEvidenceNavigation.route,
+              builder: (context, state) =>
+                  const Scaffold(body: Text('EVIDENCE_SCREEN')),
+            ),
+          ],
+        );
 
-      await tester.binding.setSurfaceSize(const Size(390, 1200));
-      addTearDown(() => tester.binding.setSurfaceSize(null));
-      await tester.pumpWidget(
-        MaterialApp.router(theme: AppTheme.light(), routerConfig: router),
-      );
-      await tester.pumpAndSettle();
+        await tester.binding.setSurfaceSize(const Size(390, 1200));
+        addTearDown(() => tester.binding.setSurfaceSize(null));
+        await tester.pumpWidget(
+          MaterialApp.router(theme: AppTheme.light(), routerConfig: router),
+        );
+        await tester.pumpAndSettle();
 
-      await tester.tap(find.byKey(const Key('belief_update_payoff_add_cta')));
-      await tester.pumpAndSettle();
-      expect(lastRoute, '/record');
+        await tester.tap(find.byKey(const Key('belief_update_payoff_add_cta')));
+        await tester.pumpAndSettle();
+        expect(lastRoute, '/record');
 
-      router.go('/start');
-      await tester.pumpAndSettle();
+        router.go('/start');
+        await tester.pumpAndSettle();
 
-      await tester.tap(
-        find.byKey(const Key('belief_update_payoff_view_evidence_cta')),
-      );
-      await tester.pumpAndSettle();
-      expect(lastRoute, BeliefEvidenceNavigation.route);
-      expect(lastRoute, isNot('/record'));
-    });
+        await tester.tap(
+          find.byKey(const Key('belief_update_payoff_view_evidence_cta')),
+        );
+        await tester.pumpAndSettle();
+        expect(lastRoute, BeliefEvidenceNavigation.route);
+        expect(lastRoute, isNot('/record'));
+      },
+    );
 
     test('belief evidence route constant is stable', () {
       expect(BeliefEvidenceNavigation.route, '/belief-evidence');

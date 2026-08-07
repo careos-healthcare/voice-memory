@@ -13,49 +13,48 @@ JournalEntry _voiceEntry({
   required String id,
   required String transcript,
   DateTime? createdAt,
-}) =>
-    JournalEntry(
-      id: id,
-      createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
-      transcript: transcript,
-      durationSeconds: 30,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 2,
-        recurringThemes: ['work'],
-        exactLanguagePattern: '',
-        concreteObservation: 'Work pressure showed up in this moment.',
-        repeatedSignal: '',
-      ),
-    );
+}) => JournalEntry(
+  id: id,
+  createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
+  transcript: transcript,
+  durationSeconds: 30,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 2,
+    recurringThemes: ['work'],
+    exactLanguagePattern: '',
+    concreteObservation: 'Work pressure showed up in this moment.',
+    repeatedSignal: '',
+  ),
+);
 
 JournalEntry _degradedVoiceEntry({String id = 'v1'}) => JournalEntry(
-      id: id,
-      createdAt: DateTime(2026, 6, 12, 12),
-      transcript:
-          '[draft] ${CaptureSaveMessages.recordingSavedLocally} — transcribe when connected',
-      durationSeconds: 20,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 0,
-        recurringThemes: [],
-        exactLanguagePattern: '',
-        concreteObservation: '',
-        repeatedSignal: '',
-      ),
-    );
+  id: id,
+  createdAt: DateTime(2026, 6, 12, 12),
+  transcript:
+      '[draft] ${CaptureSaveMessages.recordingSavedLocally} — transcribe when connected',
+  durationSeconds: 20,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 0,
+    recurringThemes: [],
+    exactLanguagePattern: '',
+    concreteObservation: '',
+    repeatedSignal: '',
+  ),
+);
 
 List<JournalEntry> _entries(int count) => List.generate(
-      count,
-      (i) => _voiceEntry(
-        id: 'e$i',
-        transcript:
-            'I felt pressure at work before saying yes again even when I was tired moment $i.',
-        createdAt: DateTime(2026, 6, 9 + i, 12),
-      ),
-    );
+  count,
+  (i) => _voiceEntry(
+    id: 'e$i',
+    transcript:
+        'I felt pressure at work before saying yes again even when I was tired moment $i.',
+    createdAt: DateTime(2026, 6, 9 + i, 12),
+  ),
+);
 
 const _bannedWords = [
   'diagnosis',
@@ -104,17 +103,20 @@ void main() {
       expect(NextMomentPromptEngine.build(entries: const []), isNull);
     });
 
-    test('1 entry prompts one more moment without repeat or pattern claims', () {
-      final prompt = NextMomentPromptEngine.build(entries: _entries(1));
-      expect(prompt, isNotNull);
-      expect(prompt!.stage, NextMomentPromptStage.one);
-      expect(prompt.title, VisibleArchiveProofCopy.secondMomentWhyLine);
-      expect(prompt.body, contains('another saved moment'));
-      expect(prompt.secondaryCta, isNull);
-      expect(prompt.primaryAction, NextMomentPromptAction.addMoment);
-      _expectNoOneEntryPatternClaims([prompt.title, prompt.body]);
-      _expectNoBannedCopy([prompt.title, prompt.body]);
-    });
+    test(
+      '1 entry prompts one more moment without repeat or pattern claims',
+      () {
+        final prompt = NextMomentPromptEngine.build(entries: _entries(1));
+        expect(prompt, isNotNull);
+        expect(prompt!.stage, NextMomentPromptStage.one);
+        expect(prompt.title, VisibleArchiveProofCopy.secondMomentWhyLine);
+        expect(prompt.body, contains('another saved moment'));
+        expect(prompt.secondaryCta, isNull);
+        expect(prompt.primaryAction, NextMomentPromptAction.addMoment);
+        _expectNoOneEntryPatternClaims([prompt.title, prompt.body]);
+        _expectNoBannedCopy([prompt.title, prompt.body]);
+      },
+    );
 
     test('2 entries prompts third moment and comparison framing', () {
       final prompt = NextMomentPromptEngine.build(entries: _entries(2));
@@ -134,25 +136,31 @@ void main() {
       _expectNoBannedCopy([prompt.title, prompt.body]);
     });
 
-    test('4 entries prompts evidence-changing moment and View evidence CTA', () {
-      final prompt = NextMomentPromptEngine.build(entries: _entries(4));
-      expect(prompt!.stage, NextMomentPromptStage.four);
-      expect(prompt.title, contains('change the evidence'));
-      expect(prompt.primaryCta, 'Record if it happens again');
-      expect(prompt.secondaryCta, 'View evidence');
-      expect(prompt.secondaryAction, NextMomentPromptAction.viewEvidence);
-      _expectNoBannedCopy([prompt.title, prompt.body]);
-    });
+    test(
+      '4 entries prompts evidence-changing moment and View evidence CTA',
+      () {
+        final prompt = NextMomentPromptEngine.build(entries: _entries(4));
+        expect(prompt!.stage, NextMomentPromptStage.four);
+        expect(prompt.title, contains('change the evidence'));
+        expect(prompt.primaryCta, 'Record if it happens again');
+        expect(prompt.secondaryCta, 'View evidence');
+        expect(prompt.secondaryAction, NextMomentPromptAction.viewEvidence);
+        _expectNoBannedCopy([prompt.title, prompt.body]);
+      },
+    );
 
-    test('5+ entries prompts weekly review contribution and View review CTA', () {
-      final prompt = NextMomentPromptEngine.build(entries: _entries(5));
-      expect(prompt!.stage, NextMomentPromptStage.fivePlus);
-      expect(prompt.title, contains('review the week'));
-      expect(prompt.body, contains('strongest thread'));
-      expect(prompt.secondaryCta, 'View review');
-      expect(prompt.secondaryAction, NextMomentPromptAction.viewReview);
-      _expectNoBannedCopy([prompt.title, prompt.body]);
-    });
+    test(
+      '5+ entries prompts weekly review contribution and View review CTA',
+      () {
+        final prompt = NextMomentPromptEngine.build(entries: _entries(5));
+        expect(prompt!.stage, NextMomentPromptStage.fivePlus);
+        expect(prompt.title, contains('review the week'));
+        expect(prompt.body, contains('strongest thread'));
+        expect(prompt.secondaryCta, 'View review');
+        expect(prompt.secondaryAction, NextMomentPromptAction.viewReview);
+        _expectNoBannedCopy([prompt.title, prompt.body]);
+      },
+    );
 
     test('degraded entries do not count toward ladder', () {
       final prompt = NextMomentPromptEngine.build(
@@ -168,13 +176,19 @@ void main() {
   group('ArchiveHomeSummaryEngine next-moment integration', () {
     test('1 entry Archive Home uses personalized next action line', () {
       final summary = ArchiveHomeSummaryEngine.build(entries: _entries(1));
-      expect(summary.nextActionLine, VisibleArchiveProofCopy.secondMomentWhyLine);
+      expect(
+        summary.nextActionLine,
+        VisibleArchiveProofCopy.secondMomentWhyLine,
+      );
     });
 
-    test('5+ Archive Home uses weekly next-moment summary without extra card', () {
-      final summary = ArchiveHomeSummaryEngine.build(entries: _entries(5));
-      expect(summary.nextActionLine, contains('review the week'));
-    });
+    test(
+      '5+ Archive Home uses weekly next-moment summary without extra card',
+      () {
+        final summary = ArchiveHomeSummaryEngine.build(entries: _entries(5));
+        expect(summary.nextActionLine, contains('review the week'));
+      },
+    );
   });
 
   group('NextMomentPromptCard', () {
@@ -202,7 +216,9 @@ void main() {
       await tester.tap(find.byKey(const Key('next_moment_prompt_primary_cta')));
       await tester.pump();
       expect(primaryTapped, isTrue);
-      await tester.tap(find.byKey(const Key('next_moment_prompt_secondary_cta')));
+      await tester.tap(
+        find.byKey(const Key('next_moment_prompt_secondary_cta')),
+      );
       await tester.pump();
       expect(secondaryTapped, isTrue);
     });

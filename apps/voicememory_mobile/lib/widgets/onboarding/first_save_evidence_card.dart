@@ -73,10 +73,9 @@ class FirstSaveEvidenceCard extends StatelessWidget {
           Text(
             RecordReturnProCopy.evidenceSecondLine,
             key: const Key('first_save_post_save_reassurance'),
-            style: ArchiveMobileTypography.responsiveHelper(context).copyWith(
-              color: AppColors.textSecondary,
-              height: 1.45,
-            ),
+            style: ArchiveMobileTypography.responsiveHelper(
+              context,
+            ).copyWith(color: AppColors.textSecondary, height: 1.45),
           ),
           const SizedBox(height: AppSpacing.sm),
           FilledButton(

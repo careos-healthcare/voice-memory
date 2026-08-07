@@ -39,8 +39,8 @@ class LocalBackupExportResult {
   }) : failure = null;
 
   const LocalBackupExportResult.failure(this.failure)
-      : entryCount = 0,
-        schemaVersion = archiveBackupVersion;
+    : entryCount = 0,
+      schemaVersion = archiveBackupVersion;
 
   final LocalBackupExportFailure? failure;
   final int entryCount;
@@ -53,21 +53,21 @@ class LocalBackupRestoreResult {
   const LocalBackupRestoreResult.success({
     required this.entryCount,
     required this.schemaVersion,
-  })  : failure = null,
-        cancelled = false;
+  }) : failure = null,
+       cancelled = false;
 
   const LocalBackupRestoreResult.cancelled()
-      : failure = null,
-        cancelled = true,
-        entryCount = 0,
-        schemaVersion = archiveBackupVersion;
+    : failure = null,
+      cancelled = true,
+      entryCount = 0,
+      schemaVersion = archiveBackupVersion;
 
   const LocalBackupRestoreResult.failure(
     this.failure, {
     int version = archiveBackupVersion,
-  })  : cancelled = false,
-        entryCount = 0,
-        schemaVersion = version;
+  }) : cancelled = false,
+       entryCount = 0,
+       schemaVersion = version;
 
   final LocalBackupRestoreFailure? failure;
   final bool cancelled;
@@ -83,16 +83,12 @@ typedef LocalBackupPickHook = Future<String?> Function();
 /// Manual local backup export and restore — never uploads backup contents.
 class LocalBackupRestoreService {
   LocalBackupRestoreService({
-    JournalStore? journal,
-    MobilePrefsStore? prefs,
-    LocalPrivacyDataControls? controls,
-    LocalBackupShareHook? shareBackupFile,
-    LocalBackupPickHook? pickBackupFile,
-  })  : _journal = journal,
-        _prefs = prefs,
-        _controls = controls,
-        shareBackupFile = shareBackupFile,
-        pickBackupFile = pickBackupFile;
+    this._journal,
+    this._prefs,
+    this._controls,
+    this.shareBackupFile,
+    this.pickBackupFile,
+  });
 
   final JournalStore? _journal;
   final MobilePrefsStore? _prefs;
@@ -105,9 +101,7 @@ class LocalBackupRestoreService {
   LocalPrivacyDataControls get controls =>
       _controls ?? LocalPrivacyDataControls.instance();
 
-  Future<LocalBackupExportResult> exportBackup({
-    required String source,
-  }) async {
+  Future<LocalBackupExportResult> exportBackup({required String source}) async {
     if (!AppServices.isInitialized) {
       return const LocalBackupExportResult.failure(
         LocalBackupExportFailure.notInitialized,
@@ -128,11 +122,11 @@ class LocalBackupRestoreService {
       final file = File('${dir.path}/archiveme_backup_$stamp.json');
       await file.writeAsString(json);
 
-      final share = shareBackupFile ??
-          (path) => Share.shareXFiles(
-                [XFile(path, mimeType: 'application/json')],
-                subject: 'ArchiveMe backup',
-              );
+      final share =
+          shareBackupFile ??
+          (path) => Share.shareXFiles([
+            XFile(path, mimeType: 'application/json'),
+          ], subject: 'ArchiveMe backup');
       await share(file.path);
 
       LocalBackupAnalytics.exported(
@@ -165,10 +159,7 @@ class LocalBackupRestoreService {
     if (raw == null) {
       return const LocalBackupRestoreResult.cancelled();
     }
-    return restoreBackup(
-      source: source,
-      rawJson: raw,
-    );
+    return restoreBackup(source: source, rawJson: raw);
   }
 
   Future<String?> pickBackupFileContent() async {
@@ -226,7 +217,7 @@ class LocalBackupRestoreService {
 
   Future<void> _replaceArchiveWithBackup(LocalArchiveBackup backup) async {
     await controls.clearLocalArchive();
-    await FirstProofTruthStore.resetForTest(prefs);
+    await FirstProofTruthStore.clearBeforeRestore(prefs);
 
     await journal.replaceAll(backup.entries);
 
@@ -245,12 +236,12 @@ class LocalBackupRestoreService {
   }
 
   static Future<void> reloadArchiveStores() async {
-    PatternNameStore.resetForTest();
-    HelpedTrackingStore.invalidateCache();
-    WhatChangedV2Store.invalidateCache();
-    ArchiveExclusionStore.invalidateCache();
-    EntryImportanceStore.invalidateCache();
-    FirstProofTruthStore.invalidateCache();
+    PatternNameStore.resetPersistedState();
+    HelpedTrackingStore.invalidateAfterRestore();
+    WhatChangedV2Store.invalidateAfterRestore();
+    ArchiveExclusionStore.invalidateAfterRestore();
+    EntryImportanceStore.invalidateAfterRestore();
+    FirstProofTruthStore.invalidateAfterRestore();
 
     await PatternNameStore.ensureLoaded();
     await HelpedTrackingStore.ensureLoaded();

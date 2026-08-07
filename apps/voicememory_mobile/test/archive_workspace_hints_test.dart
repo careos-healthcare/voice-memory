@@ -18,29 +18,29 @@ import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
 import 'package:voicememory_mobile/theme/app_theme.dart';
 import 'package:voicememory_mobile/widgets/archive/archive_workspace_hint_card.dart';
+import 'support/test_storage_sandbox.dart';
 
 JournalEntry _voiceEntry({
   required String id,
   required String transcript,
   DateTime? createdAt,
   String? captureContextTag,
-}) =>
-    JournalEntry(
-      id: id,
-      createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
-      transcript: transcript,
-      durationSeconds: 30,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 2,
-        recurringThemes: ['work'],
-        exactLanguagePattern: '',
-        concreteObservation: 'Work pressure showed up in this moment.',
-        repeatedSignal: '',
-      ),
-      captureContextTag: captureContextTag,
-    );
+}) => JournalEntry(
+  id: id,
+  createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
+  transcript: transcript,
+  durationSeconds: 30,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 2,
+    recurringThemes: ['work'],
+    exactLanguagePattern: '',
+    concreteObservation: 'Work pressure showed up in this moment.',
+    repeatedSignal: '',
+  ),
+  captureContextTag: captureContextTag,
+);
 
 List<JournalEntry> _distinctWorkEntries(int count) {
   final transcripts = [
@@ -66,8 +66,9 @@ List<JournalEntry> _distinctWorkEntries(int count) {
 ArchiveWorkspaceLayout _layoutForEntries(List<JournalEntry> entries) {
   final archiveHome = ArchiveHomeSummaryEngine.build(entries: entries);
   final evidenceMap = ArchiveEvidenceMapEngine.build(entries: entries);
-  final shareProof =
-      const ShareableArchiveProofEngine().buildFromJournal(entries: entries);
+  final shareProof = const ShareableArchiveProofEngine().buildFromJournal(
+    entries: entries,
+  );
 
   return ArchiveWorkspaceLayoutEngine.build(
     entries: entries,
@@ -114,16 +115,19 @@ void _expectNoBannedCopy(Iterable<String> visible) {
 }
 
 void main() {
+  late TestStorageSandbox sandbox;
   setUp(() async {
+    sandbox = TestStorageSandbox.create();
     ArchiveInsightFeedbackStore.resetForTest();
     ArchiveWorkspaceHintStore.resetForTest();
     await AppServices.resetForTest(
-      journalPath: '${DateTime.now().microsecondsSinceEpoch}_journal.json',
-      prefsPath: '${DateTime.now().microsecondsSinceEpoch}_prefs.json',
+      journalPath: sandbox.journalPath,
+      prefsPath: sandbox.prefsPath,
       skipRevenueCat: true,
     );
   });
 
+  tearDown(() => sandbox.dispose());
   group('ArchiveWorkspaceHintsEngine', () {
     test('intro hint appears when workspace is visible', () {
       final hints = ArchiveWorkspaceHintsEngine.build(
@@ -160,10 +164,7 @@ void main() {
         layout: _layoutForEntries(_distinctWorkEntries(5)),
       );
       expect(hints.introHint?.compact, isFalse);
-      expect(
-        hints.sectionHints.every((hint) => hint.compact),
-        isTrue,
-      );
+      expect(hints.sectionHints.every((hint) => hint.compact), isTrue);
     });
 
     test('dismissed hint does not reappear after reload', () async {
@@ -186,8 +187,8 @@ void main() {
         layout: _layoutForEntries(_distinctWorkEntries(5)),
       );
       _expectNoBannedCopy([
-        if (hints.introHint?.title case final title?) title,
-        if (hints.introHint?.body case final body?) body,
+        ?hints.introHint?.title,
+        ?hints.introHint?.body,
         ...hints.sectionHints.map((hint) => hint.body),
         VisibleArchiveProofCopy.archiveWorkspaceHintIntroTitle,
         VisibleArchiveProofCopy.archiveWorkspaceHintIntroBody,
@@ -235,8 +236,13 @@ void main() {
       );
       await tester.pump();
 
-      expect(find.byKey(const Key('archive_workspace_hint_intro')), findsOneWidget);
-      await tester.tap(find.byKey(const Key('archive_workspace_hint_dismiss_intro')));
+      expect(
+        find.byKey(const Key('archive_workspace_hint_intro')),
+        findsOneWidget,
+      );
+      await tester.tap(
+        find.byKey(const Key('archive_workspace_hint_dismiss_intro')),
+      );
       await tester.pump();
       expect(dismissed, isTrue);
     });

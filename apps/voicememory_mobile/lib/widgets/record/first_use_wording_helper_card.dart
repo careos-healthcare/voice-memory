@@ -9,38 +9,35 @@ import '../../theme/voicememory_cards.dart';
 
 /// Opening prompts for first-use Record — placeholder only, never saved.
 class FirstUseWordingHelperCard extends StatelessWidget {
-  const FirstUseWordingHelperCard({
-    super.key,
-    required this.onUseOpening,
-  });
+  const FirstUseWordingHelperCard({super.key, required this.onUseOpening});
 
   final ValueChanged<FirstUseWordingPrompt> onUseOpening;
 
   @override
   Widget build(BuildContext context) {
-    final titleStyle = ArchiveMobileTypography.cardLabel(context).copyWith(
-      fontWeight: FontWeight.w600,
-    );
-    final bodyStyle = ArchiveMobileTypography.responsiveHelper(context).copyWith(
-      color: AppColors.textSecondary,
-      height: 1.4,
-    );
-    final promptStyle = ArchiveMobileTypography.explanationBody(context).copyWith(
-      color: AppColors.textPrimary,
-      height: 1.4,
-      fontSize: 14,
-    );
-    final actionStyle = ArchiveMobileTypography.responsiveHelper(context).copyWith(
-      color: AppColors.accentPrimary,
-      fontWeight: FontWeight.w600,
-      fontSize: 13,
-    );
+    final titleStyle = ArchiveMobileTypography.cardLabel(
+      context,
+    ).copyWith(fontWeight: FontWeight.w600);
+    final bodyStyle = ArchiveMobileTypography.responsiveHelper(
+      context,
+    ).copyWith(color: AppColors.textSecondary, height: 1.4);
+    final promptStyle = ArchiveMobileTypography.explanationBody(
+      context,
+    ).copyWith(color: AppColors.textPrimary, height: 1.4, fontSize: 14);
+    final actionStyle = ArchiveMobileTypography.responsiveHelper(context)
+        .copyWith(
+          color: AppColors.accentPrimary,
+          fontWeight: FontWeight.w600,
+          fontSize: 13,
+        );
 
     return Container(
       key: const Key('first_use_wording_helper_card'),
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.md),
-      decoration: VoiceMemoryCards.standard(background: const Color(0xFFFAFAF8)),
+      decoration: VoiceMemoryCards.standard(
+        background: const Color(0xFFFAFAF8),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -109,11 +106,9 @@ class FirstUseWordingCapturePanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final labelStyle = ArchiveMobileTypography.cardLabel(context);
-    final bodyStyle = ArchiveMobileTypography.responsiveHelper(context).copyWith(
-      color: AppColors.textSecondary,
-      height: 1.35,
-      fontSize: 13,
-    );
+    final bodyStyle = ArchiveMobileTypography.responsiveHelper(
+      context,
+    ).copyWith(color: AppColors.textSecondary, height: 1.35, fontSize: 13);
     final actionStyle = bodyStyle.copyWith(
       color: AppColors.accentPrimary,
       fontWeight: FontWeight.w600,
@@ -152,7 +147,9 @@ class FirstUseWordingCapturePanel extends StatelessWidget {
                   style: bodyStyle,
                 ),
                 TextButton(
-                  key: Key('first_use_wording_capture_use_opening_${prompt.id}'),
+                  key: Key(
+                    'first_use_wording_capture_use_opening_${prompt.id}',
+                  ),
                   onPressed: () => onUseOpening(prompt),
                   style: TextButton.styleFrom(
                     foregroundColor: AppColors.accentPrimary,

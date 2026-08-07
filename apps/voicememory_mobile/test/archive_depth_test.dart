@@ -10,7 +10,7 @@ import 'package:voicememory_mobile/features/archive_depth/archive_depth_models.d
 import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/features/pro_value/pro_value_copy.dart';
-import 'package:voicememory_mobile/screens/pro_value_preview_screen.dart';
+import 'package:archiveme_research/screens/pro_value_preview_screen.dart';
 import 'package:voicememory_mobile/theme/app_theme.dart';
 import 'package:voicememory_mobile/widgets/archive_depth_card.dart';
 
@@ -46,23 +46,22 @@ JournalEntry _entry(
   String? transcript,
   String? captureContextTag,
   String? localAudioPath,
-}) =>
-    JournalEntry(
-      id: id,
-      createdAt: DateTime(2026, 6, 12, 12),
-      transcript: transcript ?? _longTranscript,
-      durationSeconds: 30,
-      localAudioPath: localAudioPath ?? '/tmp/$id.m4a',
-      captureContextTag: captureContextTag,
-      reflection: Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 2,
-        recurringThemes: const ['work'],
-        exactLanguagePattern: '',
-        concreteObservation: 'Work pressure showed up in this moment.',
-        repeatedSignal: '',
-      ),
-    );
+}) => JournalEntry(
+  id: id,
+  createdAt: DateTime(2026, 6, 12, 12),
+  transcript: transcript ?? _longTranscript,
+  durationSeconds: 30,
+  localAudioPath: localAudioPath ?? '/tmp/$id.m4a',
+  captureContextTag: captureContextTag,
+  reflection: Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 2,
+    recurringThemes: const ['work'],
+    exactLanguagePattern: '',
+    concreteObservation: 'Work pressure showed up in this moment.',
+    repeatedSignal: '',
+  ),
+);
 
 List<JournalEntry> _entries(int count) =>
     List.generate(count, (i) => _entry('e$i'));
@@ -223,10 +222,7 @@ void main() {
       );
 
       await tester.pumpWidget(
-        MaterialApp.router(
-          theme: AppTheme.light(),
-          routerConfig: router,
-        ),
+        MaterialApp.router(theme: AppTheme.light(), routerConfig: router),
       );
       await tester.pump();
 
@@ -238,7 +234,9 @@ void main() {
       expect(find.text('Buy now'), findsNothing);
       expect(find.text('Subscribe now'), findsNothing);
 
-      await tester.tap(find.byKey(const Key('archive_depth_pro_preview_button')));
+      await tester.tap(
+        find.byKey(const Key('archive_depth_pro_preview_button')),
+      );
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 100));
       expect(find.text('pro-preview'), findsOneWidget);
@@ -263,8 +261,9 @@ void main() {
 
   group('Archive depth archive home wiring', () {
     test('archive belief screen includes depth card widget', () {
-      final src =
-          File('lib/screens/archive_belief_screen.dart').readAsStringSync();
+      final src = File(
+        'lib/screens/archive_belief_screen.dart',
+      ).readAsStringSync();
       expect(src, contains('ArchiveDepthCard'));
       expect(src, contains('ArchiveDepthEngine'));
     });

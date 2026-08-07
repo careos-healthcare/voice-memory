@@ -38,14 +38,16 @@ abstract final class PaidIntentConfirmationCopy {
   static const paymentSignalNotAnswered = 'Not answered yet';
 
   static String labelForResponseId(String responseId) => switch (responseId) {
-        PaidIntentConfirmationResponseIds.yes999 => optionYes999,
-        PaidIntentConfirmationResponseIds.maybe => optionMaybe,
-        PaidIntentConfirmationResponseIds.notYet => optionNotYet,
-        PaidIntentConfirmationResponseIds.no => optionNo,
-        _ => paymentSignalNotAnswered,
-      };
+    PaidIntentConfirmationResponseIds.yes999 => optionYes999,
+    PaidIntentConfirmationResponseIds.maybe => optionMaybe,
+    PaidIntentConfirmationResponseIds.notYet => optionNotYet,
+    PaidIntentConfirmationResponseIds.no => optionNo,
+    _ => paymentSignalNotAnswered,
+  };
 
-  static String paymentSignalLabelForRecord(PaidIntentConfirmationRecord? record) {
+  static String paymentSignalLabelForRecord(
+    PaidIntentConfirmationRecord? record,
+  ) {
     if (record == null || !record.isComplete) {
       return paymentSignalNotAnswered;
     }
@@ -60,45 +62,45 @@ abstract final class PaidIntentConfirmationCopy {
   }
 
   static String answeredSummaryLine(String responseId) =>
-      '${dashboardAnsweredPrefix}: ${labelForResponseId(responseId)}';
+      '$dashboardAnsweredPrefix: ${labelForResponseId(responseId)}';
 
   static List<String> responseOptionLabels() => [
-        optionYes999,
-        optionMaybe,
-        optionNotYet,
-        optionNo,
-      ];
+    optionYes999,
+    optionMaybe,
+    optionNotYet,
+    optionNo,
+  ];
 
   static String responseIdForLabel(String label) => switch (label) {
-        optionYes999 => PaidIntentConfirmationResponseIds.yes999,
-        optionMaybe => PaidIntentConfirmationResponseIds.maybe,
-        optionNotYet => PaidIntentConfirmationResponseIds.notYet,
-        optionNo => PaidIntentConfirmationResponseIds.no,
-        _ => '',
-      };
+    optionYes999 => PaidIntentConfirmationResponseIds.yes999,
+    optionMaybe => PaidIntentConfirmationResponseIds.maybe,
+    optionNotYet => PaidIntentConfirmationResponseIds.notYet,
+    optionNo => PaidIntentConfirmationResponseIds.no,
+    _ => '',
+  };
 
   static List<String> allVisibleStrings() => [
-        title,
-        body,
-        question,
-        optionYes999,
-        optionMaybe,
-        optionNotYet,
-        optionNo,
-        saveAnswerCta,
-        skipForNowCta,
-        noPaymentNote,
-        dashboardSectionTitle,
-        dashboardNotEnoughSignal,
-        dashboardAnsweredPrefix,
-        supportSectionTitle,
-        supportSectionBody,
-        supportOpenDashboardCta,
-        paymentSignalStrong,
-        paymentSignalSoft,
-        paymentSignalNotYet,
-        paymentSignalNo,
-        paymentSignalSkipped,
-        paymentSignalNotAnswered,
-      ];
+    title,
+    body,
+    question,
+    optionYes999,
+    optionMaybe,
+    optionNotYet,
+    optionNo,
+    saveAnswerCta,
+    skipForNowCta,
+    noPaymentNote,
+    dashboardSectionTitle,
+    dashboardNotEnoughSignal,
+    dashboardAnsweredPrefix,
+    supportSectionTitle,
+    supportSectionBody,
+    supportOpenDashboardCta,
+    paymentSignalStrong,
+    paymentSignalSoft,
+    paymentSignalNotYet,
+    paymentSignalNo,
+    paymentSignalSkipped,
+    paymentSignalNotAnswered,
+  ];
 }

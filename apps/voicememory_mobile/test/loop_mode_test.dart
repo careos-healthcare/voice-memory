@@ -9,7 +9,7 @@ import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/models/sync_status.dart';
 import 'package:voicememory_mobile/product/loop_mode_copy.dart';
-import 'package:voicememory_mobile/screens/onboarding_loop_screen.dart';
+import 'package:archiveme_research/screens/onboarding_loop_screen.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
 import 'package:voicememory_mobile/widgets/record/loop_mode_first_handoff_card.dart';
 
@@ -297,10 +297,7 @@ void main() {
 
   test('paywall after loop copy aligned', () {
     expect(LoopModeCopy.paywallAfterLoopHeadline, contains('loop'));
-    expect(
-      LoopModeCopy.paywallAfterLoopBullets.first,
-      contains('yes moment'),
-    );
+    expect(LoopModeCopy.paywallAfterLoopBullets.first, contains('yes moment'));
     expect(LoopModeCopy.paywallAfterLoopBody, contains('evidence trail'));
   });
 }

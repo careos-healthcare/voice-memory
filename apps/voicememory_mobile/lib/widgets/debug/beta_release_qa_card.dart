@@ -7,19 +7,14 @@ import '../../theme/app_theme.dart';
 
 /// Internal beta release QA — developer diagnostics only.
 class BetaReleaseQaCard extends StatelessWidget {
-  const BetaReleaseQaCard({
-    super.key,
-    required this.report,
-  });
+  const BetaReleaseQaCard({super.key, required this.report});
 
   final BetaReleaseQaReport report;
 
   @override
   Widget build(BuildContext context) {
     if (!DeveloperSettingsGate.canShowDeveloperSettings) {
-      return const SizedBox.shrink(
-        key: Key('beta_release_qa_hidden'),
-      );
+      return const SizedBox.shrink(key: Key('beta_release_qa_hidden'));
     }
 
     return Container(
@@ -36,9 +31,9 @@ class BetaReleaseQaCard extends StatelessWidget {
           Text(
             report.title,
             key: const Key('beta_release_qa_title'),
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: 8),
           Text(
@@ -61,9 +56,9 @@ class BetaReleaseQaCard extends StatelessWidget {
           Text(
             report.manualChecklistTitle,
             key: const Key('beta_release_qa_manual_checklist_title'),
-            style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: 8),
           for (var i = 0; i < report.manualChecklistSteps.length; i++)
@@ -83,9 +78,9 @@ class BetaReleaseQaCard extends StatelessWidget {
           Text(
             report.coreValueQuestionTitle,
             key: const Key('beta_release_qa_core_value_title'),
-            style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: 6),
           Text(
@@ -101,9 +96,9 @@ class BetaReleaseQaCard extends StatelessWidget {
           Text(
             report.coreValueFeedbackLabel,
             key: const Key('beta_release_qa_core_value_feedback_label'),
-            style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: 6),
           Text(
@@ -142,20 +137,14 @@ class _RowTile extends StatelessWidget {
           Text(
             row.detail!,
             key: Key('beta_release_qa_row_detail_${row.id.name}'),
-            style: const TextStyle(
-              color: AppTheme.muted,
-              fontSize: 13,
-            ),
+            style: const TextStyle(color: AppTheme.muted, fontSize: 13),
           ),
           const SizedBox(width: 8),
         ],
         Text(
           row.status.label,
           key: Key('beta_release_qa_row_status_${row.id.name}'),
-          style: const TextStyle(
-            fontSize: 13,
-            fontWeight: FontWeight.w600,
-          ),
+          style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
         ),
       ],
     );

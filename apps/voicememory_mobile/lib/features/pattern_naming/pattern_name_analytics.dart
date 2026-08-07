@@ -12,7 +12,7 @@ abstract final class PatternNameAnalytics {
 
   @visibleForTesting
   static void Function(String event, Map<String, Object> properties)?
-      captureForTest;
+  captureForTest;
 
   static void promptSeen({
     required String source,

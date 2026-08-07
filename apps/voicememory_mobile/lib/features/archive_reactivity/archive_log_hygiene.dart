@@ -25,13 +25,12 @@ abstract class ArchiveLogHygiene {
   ];
 
   /// Glued tokens that are only malformed inside user-facing quoted copy fields.
-  static const displayCopyFieldMalformedTokens = [
-    'mapready',
-  ];
+  static const displayCopyFieldMalformedTokens = ['mapready'];
 
   static final strictMalformedTokens = [
-    ...ArchiveCopyNormalizer.residualMalformedTokens
-        .where((token) => !displayCopyFieldMalformedTokens.contains(token)),
+    ...ArchiveCopyNormalizer.residualMalformedTokens.where(
+      (token) => !displayCopyFieldMalformedTokens.contains(token),
+    ),
     ...strictForbiddenSubstrings,
   ];
 

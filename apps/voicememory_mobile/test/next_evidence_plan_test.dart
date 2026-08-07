@@ -6,7 +6,6 @@ import 'package:go_router/go_router.dart';
 import 'package:voicememory_mobile/features/activation/capture_context_tags.dart';
 import 'package:voicememory_mobile/features/archive_export/archive_export_pack.dart';
 import 'package:voicememory_mobile/features/archive_watchlist/archive_watchlist_models.dart';
-import 'package:voicememory_mobile/features/moment_quality/moment_quality_models.dart';
 import 'package:voicememory_mobile/features/next_evidence_plan/next_evidence_plan_copy.dart';
 import 'package:voicememory_mobile/features/next_evidence_plan/next_evidence_plan_engine.dart';
 import 'package:voicememory_mobile/features/next_evidence_plan/next_evidence_plan_gates.dart';
@@ -49,33 +48,36 @@ JournalEntry _entry(
   String? transcript,
   DateTime? createdAt,
   String? captureContextTag,
-}) =>
-    JournalEntry(
-      id: id,
-      createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
-      transcript: transcript ?? _longTranscript,
-      durationSeconds: 30,
-      localAudioPath: '/tmp/$id.m4a',
-      captureContextTag: captureContextTag,
-      reflection: Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 2,
-        recurringThemes: const ['work'],
-        exactLanguagePattern: '',
-        concreteObservation: 'Work pressure showed up in this moment.',
-        repeatedSignal: '',
-      ),
-    );
+}) => JournalEntry(
+  id: id,
+  createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
+  transcript: transcript ?? _longTranscript,
+  durationSeconds: 30,
+  localAudioPath: '/tmp/$id.m4a',
+  captureContextTag: captureContextTag,
+  reflection: Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 2,
+    recurringThemes: const ['work'],
+    exactLanguagePattern: '',
+    concreteObservation: 'Work pressure showed up in this moment.',
+    repeatedSignal: '',
+  ),
+);
 
-List<JournalEntry> _entries(int count) =>
-    List.generate(count, (i) => _entry('e$i', createdAt: DateTime(2026, 6, 10 + i)));
+List<JournalEntry> _entries(int count) => List.generate(
+  count,
+  (i) => _entry('e$i', createdAt: DateTime(2026, 6, 10 + i)),
+);
 
-ArchiveWatchlistItem _watchItem({String id = 'w1', String presetId = 'unclear_decisions'}) =>
-    ArchiveWatchlistItem(
-      id: id,
-      presetId: presetId,
-      createdAt: DateTime(2026, 6, 10),
-    );
+ArchiveWatchlistItem _watchItem({
+  String id = 'w1',
+  String presetId = 'unclear_decisions',
+}) => ArchiveWatchlistItem(
+  id: id,
+  presetId: presetId,
+  createdAt: DateTime(2026, 6, 10),
+);
 
 void _expectNoBannedCopy(Iterable<String> visible) {
   for (final text in visible) {
@@ -194,7 +196,10 @@ void main() {
         _entry('e2'),
       ];
       final result = engine.build(entries: entries, watchlistItems: const []);
-      expect(result.secondaryLine, NextEvidencePlanCopy.contextImprovementSuggestion);
+      expect(
+        result.secondaryLine,
+        NextEvidencePlanCopy.contextImprovementSuggestion,
+      );
     });
 
     test('very short recent entry suggests one extra detail', () {
@@ -208,22 +213,28 @@ void main() {
 
     test('Pro line appears only at 10+ entries or 3 watch themes', () {
       expect(
-        engine.build(entries: _entries(9), watchlistItems: [_watchItem()]).showProLine,
+        engine
+            .build(entries: _entries(9), watchlistItems: [_watchItem()])
+            .showProLine,
         isFalse,
       );
       expect(
-        engine.build(entries: _entries(10), watchlistItems: [_watchItem()]).showProLine,
+        engine
+            .build(entries: _entries(10), watchlistItems: [_watchItem()])
+            .showProLine,
         isTrue,
       );
       expect(
-        engine.build(
-          entries: _entries(3),
-          watchlistItems: [
-            _watchItem(id: 'w1'),
-            _watchItem(id: 'w2', presetId: 'work_patterns'),
-            _watchItem(id: 'w3', presetId: 'avoided_tasks'),
-          ],
-        ).showProLine,
+        engine
+            .build(
+              entries: _entries(3),
+              watchlistItems: [
+                _watchItem(id: 'w1'),
+                _watchItem(id: 'w2', presetId: 'work_patterns'),
+                _watchItem(id: 'w3', presetId: 'avoided_tasks'),
+              ],
+            )
+            .showProLine,
         isTrue,
       );
     });
@@ -274,7 +285,10 @@ void main() {
         ),
       );
       await tester.pump();
-      expect(find.byKey(const Key('next_evidence_plan_teaser')), findsOneWidget);
+      expect(
+        find.byKey(const Key('next_evidence_plan_teaser')),
+        findsOneWidget,
+      );
     });
 
     testWidgets('Pro preview routes at ten entries', (tester) async {
@@ -296,21 +310,25 @@ void main() {
       );
 
       await tester.pumpWidget(
-        MaterialApp.router(
-          theme: AppTheme.light(),
-          routerConfig: router,
-        ),
+        MaterialApp.router(theme: AppTheme.light(), routerConfig: router),
       );
       await tester.pump();
 
-      expect(find.byKey(const Key('next_evidence_plan_pro_line')), findsOneWidget);
-      await tester.tap(find.byKey(const Key('next_evidence_plan_pro_preview_button')));
+      expect(
+        find.byKey(const Key('next_evidence_plan_pro_line')),
+        findsOneWidget,
+      );
+      await tester.tap(
+        find.byKey(const Key('next_evidence_plan_pro_preview_button')),
+      );
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 100));
       expect(find.text('pro-preview'), findsOneWidget);
     });
 
-    testWidgets('does not include Buy now or Subscribe now text', (tester) async {
+    testWidgets('does not include Buy now or Subscribe now text', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           theme: AppTheme.light(),
@@ -334,9 +352,9 @@ void main() {
 
   group('Next evidence plan privacy boundaries', () {
     test('does not write to JournalStore', () {
-      final engineSrc =
-          File('lib/features/next_evidence_plan/next_evidence_plan_engine.dart')
-              .readAsStringSync();
+      final engineSrc = File(
+        'lib/features/next_evidence_plan/next_evidence_plan_engine.dart',
+      ).readAsStringSync();
       expect(engineSrc, isNot(contains('JournalStore')));
     });
 
@@ -357,8 +375,9 @@ void main() {
     });
 
     test('archive belief screen wires plan card and hides on sample mode', () {
-      final src =
-          File('lib/screens/archive_belief_screen.dart').readAsStringSync();
+      final src = File(
+        'lib/screens/archive_belief_screen.dart',
+      ).readAsStringSync();
       expect(src, contains('NextEvidencePlanCard'));
       expect(src, contains('NextEvidencePlanGates'));
       expect(src, contains('sampleMode: ScreenshotMode.enabled'));

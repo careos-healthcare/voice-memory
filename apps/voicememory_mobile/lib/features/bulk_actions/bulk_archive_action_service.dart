@@ -13,12 +13,10 @@ import '../pressure_retention/pressure_check_in_store.dart';
 /// Controls, and nothing here logs entry text or collection names.
 class BulkArchiveActionService {
   BulkArchiveActionService({
-    required JournalStore journal,
-    PressureCheckInStore? checkIns,
-    ArchiveCollectionStore? collections,
-  }) : _journal = journal,
-       _checkIns = checkIns,
-       _collections = collections;
+    required this._journal,
+    this._checkIns,
+    this._collections,
+  });
 
   final JournalStore _journal;
   final PressureCheckInStore? _checkIns;
@@ -133,20 +131,19 @@ class BulkArchiveActionService {
     bool clearPinnedAt = false,
     bool? isArchived,
     DateTime? archivedAt,
-  }) => JournalEntry(
-    id: e.id,
-    createdAt: e.createdAt,
-    transcript: e.transcript,
-    durationSeconds: e.durationSeconds,
-    reflection: e.reflection,
-    syncStatus: e.syncStatus,
-    localAudioPath: e.localAudioPath,
-    treatAsNew: treatAsNew ?? e.treatAsNew,
-    connectionApproved: e.connectionApproved,
-    keepExactDetails: keepExactDetails ?? e.keepExactDetails,
-    isPinned: isPinned ?? e.isPinned,
-    pinnedAt: clearPinnedAt ? null : (pinnedAt ?? e.pinnedAt),
-    isArchived: isArchived ?? e.isArchived,
-    archivedAt: archivedAt ?? e.archivedAt,
-  );
+  }) {
+    final updated = e.copyWith(
+      treatAsNew: treatAsNew,
+      keepExactDetails: keepExactDetails,
+      isPinned: isPinned,
+      isArchived: isArchived,
+      archivedAt: archivedAt,
+    );
+    // pinnedAt needs its own explicit-clear branch: the sentinel contract
+    // in copyWith treats a bare `null` as "clear it", so an unrequested
+    // change (neither a new value nor clearPinnedAt) must omit the
+    // argument entirely rather than pass null.
+    if (clearPinnedAt) return updated.copyWith(pinnedAt: null);
+    return pinnedAt == null ? updated : updated.copyWith(pinnedAt: pinnedAt);
+  }
 }

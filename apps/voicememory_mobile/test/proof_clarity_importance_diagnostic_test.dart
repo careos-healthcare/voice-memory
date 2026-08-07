@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/features/archive_proof/proof_surface_advice_guard.dart';
-import 'package:voicememory_mobile/features/beta_repair_lab/beta_repair_lab_engine.dart';
 import 'package:voicememory_mobile/features/beta_repair_lab/beta_repair_lab_model.dart';
 import 'package:voicememory_mobile/features/beta_repair_lab/beta_repair_lab_store.dart';
 import 'package:voicememory_mobile/features/evidence_trail_clarity/evidence_trail_clarity_engine.dart';
@@ -18,14 +17,13 @@ ProofClarityImportanceSummary _summary({
   int tooVagueOrNotRelevantCount = 2,
   int proofExplanationClearCount = 8,
   int wantsRankingImportanceCount = 2,
-}) =>
-    ProofClarityImportanceSummary(
-      totalTesters: totalTesters,
-      usefulProofCount: usefulProofCount,
-      tooVagueOrNotRelevantCount: tooVagueOrNotRelevantCount,
-      proofExplanationClearCount: proofExplanationClearCount,
-      wantsRankingImportanceCount: wantsRankingImportanceCount,
-    );
+}) => ProofClarityImportanceSummary(
+  totalTesters: totalTesters,
+  usefulProofCount: usefulProofCount,
+  tooVagueOrNotRelevantCount: tooVagueOrNotRelevantCount,
+  proofExplanationClearCount: proofExplanationClearCount,
+  wantsRankingImportanceCount: wantsRankingImportanceCount,
+);
 
 ProofClarityImportanceSummary _stableSummary({int totalTesters = 30}) =>
     _summary(
@@ -36,24 +34,23 @@ ProofClarityImportanceSummary _stableSummary({int totalTesters = 30}) =>
       wantsRankingImportanceCount: totalTesters == 20 ? 3 : 5,
     );
 
-BetaRepairLabVisibilityInput _repairInput() =>
-    BetaRepairLabVisibilityInput(
-      mode: BetaRepairLabMode.evidenceTrailTimelineClarity,
-      entryCount: 4,
-      source: 'test',
-      isPro: false,
-      isRecording: false,
-      isDegradedTranscriptState: false,
-      whatChangedQuestionActive: false,
-      patternReviewInboxHasActiveItems: false,
-      hasTimelineProofVisible: true,
-      hasConfirmedRepeat: true,
-      confidenceLevel: ProofConfidenceLevel.watchOnly,
-      hasUsefulProofFeedback: false,
-      feedbackType: null,
-      isNegativeFeedback: false,
-      betaMissionEnabled: true,
-    );
+BetaRepairLabVisibilityInput _repairInput() => BetaRepairLabVisibilityInput(
+  mode: BetaRepairLabMode.evidenceTrailTimelineClarity,
+  entryCount: 4,
+  source: 'test',
+  isPro: false,
+  isRecording: false,
+  isDegradedTranscriptState: false,
+  whatChangedQuestionActive: false,
+  patternReviewInboxHasActiveItems: false,
+  hasTimelineProofVisible: true,
+  hasConfirmedRepeat: true,
+  confidenceLevel: ProofConfidenceLevel.watchOnly,
+  hasUsefulProofFeedback: false,
+  feedbackType: null,
+  isNegativeFeedback: false,
+  betaMissionEnabled: true,
+);
 
 void main() {
   group('ProofClarityImportanceDiagnostic thresholds', () {
@@ -92,18 +89,20 @@ void main() {
       );
     });
 
-    test('high vague and ranking demand returns bothProblemsRepairExplanationFirst',
-        () {
-      expect(
-        ProofClarityImportanceDiagnostic.resolve(
-          _summary(
-            tooVagueOrNotRelevantCount: 6,
-            wantsRankingImportanceCount: 6,
+    test(
+      'high vague and ranking demand returns bothProblemsRepairExplanationFirst',
+      () {
+        expect(
+          ProofClarityImportanceDiagnostic.resolve(
+            _summary(
+              tooVagueOrNotRelevantCount: 6,
+              wantsRankingImportanceCount: 6,
+            ),
           ),
-        ),
-        ProofClarityImportanceDecision.bothProblemsRepairExplanationFirst,
-      );
-    });
+          ProofClarityImportanceDecision.bothProblemsRepairExplanationFirst,
+        );
+      },
+    );
 
     test('high vague returns repairProofExplanation', () {
       expect(
@@ -123,18 +122,20 @@ void main() {
       );
     });
 
-    test('ranking demand with clear explanation returns investigateRankingImportance',
-        () {
-      expect(
-        ProofClarityImportanceDiagnostic.resolve(
-          _summary(
-            proofExplanationClearCount: 8,
-            wantsRankingImportanceCount: 7,
+    test(
+      'ranking demand with clear explanation returns investigateRankingImportance',
+      () {
+        expect(
+          ProofClarityImportanceDiagnostic.resolve(
+            _summary(
+              proofExplanationClearCount: 8,
+              wantsRankingImportanceCount: 7,
+            ),
           ),
-        ),
-        ProofClarityImportanceDecision.investigateRankingImportance,
-      );
-    });
+          ProofClarityImportanceDecision.investigateRankingImportance,
+        );
+      },
+    );
 
     test('stable signals return proofExplanationStable', () {
       expect(
@@ -192,7 +193,8 @@ void main() {
   group('ProofClarityImportanceDiagnosticCopy', () {
     test('includes facilitator diagnostic questions', () {
       expect(
-        ProofClarityImportanceDiagnosticCopy.facilitatorQuestionExplanationClear,
+        ProofClarityImportanceDiagnosticCopy
+            .facilitatorQuestionExplanationClear,
         contains('clear enough'),
       );
       expect(
@@ -238,8 +240,10 @@ void main() {
 
       for (final (summary, expectedNextAction) in cases) {
         final decision = ProofClarityImportanceDiagnostic.resolve(summary);
-        final report =
-            ProofClarityImportanceDiagnosticCopy.report(summary, decision);
+        final report = ProofClarityImportanceDiagnosticCopy.report(
+          summary,
+          decision,
+        );
         expect(report.nextAction, expectedNextAction);
         expect(
           report.guardrail,
@@ -266,28 +270,33 @@ void main() {
         'said yes when I had no capacity',
       );
       expect(body, contains(ProofDetailRepairCopy.whyThisOneLine));
-      expect(body, contains(ProofDetailRepairCopy.notRankingOrMostImportantLine));
+      expect(
+        body,
+        contains(ProofDetailRepairCopy.notRankingOrMostImportantLine),
+      );
       expect(body, contains('not ranking every past mention yet'));
     });
   });
 
   group('Protected areas', () {
-    test('diagnostic does not import anchors pro pricing paywall or evidence trail',
-        () {
-      for (final path in [
-        'lib/features/proof_clarity_importance_diagnostic/proof_clarity_importance_diagnostic.dart',
-        'lib/features/proof_clarity_importance_diagnostic/proof_clarity_importance_diagnostic_copy.dart',
-        'lib/features/proof_detail_repair/proof_detail_repair_copy.dart',
-      ]) {
-        final source = File(path).readAsStringSync();
-        expect(source.contains('anchor_specificity_guard'), isFalse);
-        expect(source.contains('PaywallSource'), isFalse);
-        expect(source.contains('RevenueCat'), isFalse);
-        expect(source.contains('billing/'), isFalse);
-        expect(source.contains('evidence_trail_clarity'), isFalse);
-        expect(source.contains('pricing_validation'), isFalse);
-      }
-    });
+    test(
+      'diagnostic does not import anchors pro pricing paywall or evidence trail',
+      () {
+        for (final path in [
+          'lib/features/proof_clarity_importance_diagnostic/proof_clarity_importance_diagnostic.dart',
+          'lib/features/proof_clarity_importance_diagnostic/proof_clarity_importance_diagnostic_copy.dart',
+          'lib/features/proof_detail_repair/proof_detail_repair_copy.dart',
+        ]) {
+          final source = File(path).readAsStringSync();
+          expect(source.contains('anchor_specificity_guard'), isFalse);
+          expect(source.contains('PaywallSource'), isFalse);
+          expect(source.contains('RevenueCat'), isFalse);
+          expect(source.contains('billing/'), isFalse);
+          expect(source.contains('evidence_trail_clarity'), isFalse);
+          expect(source.contains('pricing_validation'), isFalse);
+        }
+      },
+    );
 
     test('pro pricing evidence trail behaviour unchanged', () {
       expect(

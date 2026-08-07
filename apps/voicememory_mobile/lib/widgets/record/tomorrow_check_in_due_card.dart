@@ -507,7 +507,7 @@ class _OneTapAnswerButton extends StatelessWidget {
               border: Border.all(
                 color: selected
                     ? AppColors.accentPrimary
-                    : const Color(0xFFF5E6D3),
+                    : AppColors.warmBorder,
                 width: selected ? 1.5 : 1,
               ),
             ),
@@ -546,7 +546,7 @@ class _OptionChip extends StatelessWidget {
       showCheckmark: false,
       selectedColor: AppColors.accentPrimary.withValues(alpha: 0.15),
       side: BorderSide(
-        color: selected ? AppColors.accentPrimary : const Color(0xFFF5E6D3),
+        color: selected ? AppColors.accentPrimary : AppColors.warmBorder,
       ),
       labelStyle: VoiceMemoryTypography.bodyStyle(
         color: selected ? AppColors.accentPrimary : AppColors.textSecondary,

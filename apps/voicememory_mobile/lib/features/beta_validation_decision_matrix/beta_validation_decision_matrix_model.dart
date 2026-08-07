@@ -76,34 +76,34 @@ class BetaValidationDecisionMatrixResult {
       '${input.testerCount}/${thresholds.cohortSize}';
 
   List<String> get metricLines => [
-        BetaValidationDecisionMatrixCopy.metricLine(
-          label: BetaValidationDecisionMatrixCopy.firstSessionSaveLabel,
-          actual: input.firstSessionSaveCount,
-          target: thresholds.firstSessionSaveTarget,
-        ),
-        BetaValidationDecisionMatrixCopy.metricLine(
-          label: BetaValidationDecisionMatrixCopy.usefulProofLabel,
-          actual: input.usefulProofCount,
-          target: thresholds.usefulProofTarget,
-        ),
-        BetaValidationDecisionMatrixCopy.metricLine(
-          label: BetaValidationDecisionMatrixCopy.sawProLabel,
-          actual: input.sawProCount,
-          target: thresholds.sawProTarget,
-        ),
-        BetaValidationDecisionMatrixCopy.metricLine(
-          label: BetaValidationDecisionMatrixCopy.understandsProLabel,
-          actual: input.understandsProYesMaybeCount,
-          target: thresholds.understandsProTarget,
-        ),
-        BetaValidationDecisionMatrixCopy.metricLine(
-          label: BetaValidationDecisionMatrixCopy.paywallCtaTapLabel,
-          actual: input.paywallCtaTapCount,
-          target: thresholds.paywallCtaTapTarget,
-        ),
-        BetaValidationDecisionMatrixCopy.wouldPayMetricLine(
-          actual: input.wouldPayYesMaybeCount,
-          target: thresholds.wouldPayTarget,
-        ),
-      ];
+    BetaValidationDecisionMatrixCopy.metricLine(
+      label: BetaValidationDecisionMatrixCopy.firstSessionSaveLabel,
+      actual: input.firstSessionSaveCount,
+      target: thresholds.firstSessionSaveTarget,
+    ),
+    BetaValidationDecisionMatrixCopy.metricLine(
+      label: BetaValidationDecisionMatrixCopy.usefulProofLabel,
+      actual: input.usefulProofCount,
+      target: thresholds.usefulProofTarget,
+    ),
+    BetaValidationDecisionMatrixCopy.metricLine(
+      label: BetaValidationDecisionMatrixCopy.sawProLabel,
+      actual: input.sawProCount,
+      target: thresholds.sawProTarget,
+    ),
+    BetaValidationDecisionMatrixCopy.metricLine(
+      label: BetaValidationDecisionMatrixCopy.understandsProLabel,
+      actual: input.understandsProYesMaybeCount,
+      target: thresholds.understandsProTarget,
+    ),
+    BetaValidationDecisionMatrixCopy.metricLine(
+      label: BetaValidationDecisionMatrixCopy.paywallCtaTapLabel,
+      actual: input.paywallCtaTapCount,
+      target: thresholds.paywallCtaTapTarget,
+    ),
+    BetaValidationDecisionMatrixCopy.wouldPayMetricLine(
+      actual: input.wouldPayYesMaybeCount,
+      target: thresholds.wouldPayTarget,
+    ),
+  ];
 }

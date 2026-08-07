@@ -266,23 +266,27 @@ class ArchiveBeliefsPresenter {
   ) {
     final sorted = [...entries]
       ..sort((a, b) => a.createdAt.compareTo(b.createdAt));
-    return sorted.take(4).map((e) {
-      final r = e.reflection;
-      final resolution = resolveEntryDisplayText(e);
-      final text = resolution.text.trim().isNotEmpty
-          ? resolution.text
-          : (r.repeatedSignal.trim().isNotEmpty
-                ? r.repeatedSignal
-                : 'Reflection captured.');
-      if (ArchivePatternCopyGuard.isBlockedPatternText(text)) {
-        return null;
-      }
-      final quote = text.length > 120 ? '${text.substring(0, 117)}…' : text;
-      return BeliefEvidenceQuote(
-        periodLabel: _monthYear(e.createdAt),
-        quote: '"$quote"',
-      );
-    }).whereType<BeliefEvidenceQuote>().toList();
+    return sorted
+        .take(4)
+        .map((e) {
+          final r = e.reflection;
+          final resolution = resolveEntryDisplayText(e);
+          final text = resolution.text.trim().isNotEmpty
+              ? resolution.text
+              : (r.repeatedSignal.trim().isNotEmpty
+                    ? r.repeatedSignal
+                    : 'Reflection captured.');
+          if (ArchivePatternCopyGuard.isBlockedPatternText(text)) {
+            return null;
+          }
+          final quote = text.length > 120 ? '${text.substring(0, 117)}…' : text;
+          return BeliefEvidenceQuote(
+            periodLabel: _monthYear(e.createdAt),
+            quote: '"$quote"',
+          );
+        })
+        .whereType<BeliefEvidenceQuote>()
+        .toList();
   }
 
   static String _idFor(String statement) =>

@@ -56,10 +56,7 @@ abstract final class ConfirmedRepeatThoughtMapEngine {
       label: ConfirmedRepeatThoughtMapCopy.resultLabel,
       question: ConfirmedRepeatThoughtMapCopy.resultQuestion,
       unknownPrompt: ConfirmedRepeatThoughtMapCopy.resultUnknown,
-      value: _resultValue(
-        insight: insight,
-        returnChecks: returnChecks,
-      ),
+      value: _resultValue(insight: insight, returnChecks: returnChecks),
     );
 
     final sections = [trigger, thought, action, result];

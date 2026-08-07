@@ -71,25 +71,22 @@ abstract final class FirstProofSuccessBetaCopy {
       'guidance only. Do not loosen minProofEntryCount, anchor rules, or proof volume.';
 
   static String labelFor(FirstProofSuccessBetaSignalId id) => switch (id) {
-        FirstProofSuccessBetaSignalId.usableMomentsReady =>
-          checkUsableMomentsReady,
-        FirstProofSuccessBetaSignalId.safeAnchorPresent =>
-          checkSafeAnchorPresent,
-        FirstProofSuccessBetaSignalId.matchQualityPresent =>
-          checkMatchQualityPresent,
-        FirstProofSuccessBetaSignalId.proofConfidenceStrong =>
-          checkProofConfidenceStrong,
-        FirstProofSuccessBetaSignalId.proofShown => checkProofShown,
-        FirstProofSuccessBetaSignalId.proofAccepted => checkProofAccepted,
-        FirstProofSuccessBetaSignalId.proofCorrected => checkProofCorrected,
-        FirstProofSuccessBetaSignalId.tooVagueSelected => checkTooVagueSelected,
-        FirstProofSuccessBetaSignalId.notRelevantSelected =>
-          checkNotRelevantSelected,
-        FirstProofSuccessBetaSignalId.userUnderstoodWhy =>
-          checkUserUnderstoodWhy,
-        FirstProofSuccessBetaSignalId.userSavedAnotherAfterProof =>
-          checkUserSavedAnotherAfterProof,
-      };
+    FirstProofSuccessBetaSignalId.usableMomentsReady => checkUsableMomentsReady,
+    FirstProofSuccessBetaSignalId.safeAnchorPresent => checkSafeAnchorPresent,
+    FirstProofSuccessBetaSignalId.matchQualityPresent =>
+      checkMatchQualityPresent,
+    FirstProofSuccessBetaSignalId.proofConfidenceStrong =>
+      checkProofConfidenceStrong,
+    FirstProofSuccessBetaSignalId.proofShown => checkProofShown,
+    FirstProofSuccessBetaSignalId.proofAccepted => checkProofAccepted,
+    FirstProofSuccessBetaSignalId.proofCorrected => checkProofCorrected,
+    FirstProofSuccessBetaSignalId.tooVagueSelected => checkTooVagueSelected,
+    FirstProofSuccessBetaSignalId.notRelevantSelected =>
+      checkNotRelevantSelected,
+    FirstProofSuccessBetaSignalId.userUnderstoodWhy => checkUserUnderstoodWhy,
+    FirstProofSuccessBetaSignalId.userSavedAnotherAfterProof =>
+      checkUserSavedAnotherAfterProof,
+  };
 
   static String messageFor(FirstProofSuccessBetaDecision decision) =>
       switch (decision) {
@@ -99,7 +96,8 @@ abstract final class FirstProofSuccessBetaCopy {
         FirstProofSuccessBetaDecision.proofNotShown => proofNotShownLine,
         FirstProofSuccessBetaDecision.proofShownNeedsFeedback =>
           proofShownNeedsFeedbackLine,
-        FirstProofSuccessBetaDecision.proofTooVagueRisk => proofTooVagueRiskLine,
+        FirstProofSuccessBetaDecision.proofTooVagueRisk =>
+          proofTooVagueRiskLine,
         FirstProofSuccessBetaDecision.proofNotRelevantRisk =>
           proofNotRelevantRiskLine,
         FirstProofSuccessBetaDecision.proofWorking => proofWorkingLine,
@@ -178,11 +176,7 @@ enum FirstProofSuccessBetaSignalId {
   userSavedAnotherAfterProof,
 }
 
-enum FirstProofSuccessBetaSignalStatus {
-  pass,
-  concern,
-  notObserved,
-}
+enum FirstProofSuccessBetaSignalStatus { pass, concern, notObserved }
 
 enum FirstProofSuccessBetaDecision {
   notEnoughMoments,

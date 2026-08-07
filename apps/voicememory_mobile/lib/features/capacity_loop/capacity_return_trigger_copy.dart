@@ -42,26 +42,25 @@ abstract final class CapacityReturnTriggerCopy {
   static const recordProgressLine =
       'Use this when a real yes moment happens again.';
 
-  static const betaMissionHint =
-      'Come back when the next yes moment happens.';
+  static const betaMissionHint = 'Come back when the next yes moment happens.';
 
   static const recordRoute = '/record';
   static const loopRoute = '/capacity-loop';
 
   static List<String> allVisibleStrings() => [
-        completionTitle,
-        completionBody,
-        completionPrimaryCta,
-        completionSecondaryCta,
-        archiveHomeTitle(1),
-        archiveHomeTitle(2),
-        archiveHomeBody(1, target: activationTarget),
-        archiveHomeBody(2, target: activationTarget),
-        archiveHomePrimaryCta,
-        archiveHomeSecondaryCta(1),
-        archiveHomeSecondaryCta(2),
-        archiveHomeReviewCta,
-        recordProgressLine,
-        betaMissionHint,
-      ];
+    completionTitle,
+    completionBody,
+    completionPrimaryCta,
+    completionSecondaryCta,
+    archiveHomeTitle(1),
+    archiveHomeTitle(2),
+    archiveHomeBody(1, target: activationTarget),
+    archiveHomeBody(2, target: activationTarget),
+    archiveHomePrimaryCta,
+    archiveHomeSecondaryCta(1),
+    archiveHomeSecondaryCta(2),
+    archiveHomeReviewCta,
+    recordProgressLine,
+    betaMissionHint,
+  ];
 }

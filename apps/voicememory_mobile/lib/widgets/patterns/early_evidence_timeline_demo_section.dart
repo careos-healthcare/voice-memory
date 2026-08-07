@@ -41,9 +41,9 @@ class EarlyEvidenceTimelineDemoCta extends StatelessWidget {
         ),
         child: Text(
           EarlyEvidenceTimelineDemoCopy.cta,
-          style: ArchiveMobileTypography.cardLabel(context).copyWith(
-            color: AppColors.accentPrimary,
-          ),
+          style: ArchiveMobileTypography.cardLabel(
+            context,
+          ).copyWith(color: AppColors.accentPrimary),
         ),
       ),
     );

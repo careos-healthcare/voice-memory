@@ -33,9 +33,7 @@ class CapacityReturnTriggerCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (sampleMode ||
-        ScreenshotMode.enabled ||
-        !result.showCard) {
+    if (sampleMode || ScreenshotMode.enabled || !result.showCard) {
       return const SizedBox.shrink(
         key: Key('capacity_return_trigger_card_hidden'),
       );

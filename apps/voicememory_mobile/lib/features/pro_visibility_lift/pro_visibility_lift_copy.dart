@@ -6,31 +6,25 @@ abstract final class ProVisibilityLiftCopy {
   static const title = RevenueLiftExperimentV2Copy.proVisibilityTitle;
   static const body = RevenueLiftExperimentV2Copy.proVisibilityBody;
   static const primaryCta = RevenueLiftExperimentV2Copy.proVisibilityPrimaryCta;
-  static const secondaryCta = RevenueLiftExperimentV2Copy.proVisibilitySecondaryCta;
+  static const secondaryCta =
+      RevenueLiftExperimentV2Copy.proVisibilitySecondaryCta;
 }
 
-enum ProVisibilityLiftActionType {
-  seePro,
-  dismiss,
-}
+enum ProVisibilityLiftActionType { seePro, dismiss }
 
 extension ProVisibilityLiftActionTypeStorage on ProVisibilityLiftActionType {
   String get analyticsValue => switch (this) {
-        ProVisibilityLiftActionType.seePro => 'see_pro',
-        ProVisibilityLiftActionType.dismiss => 'dismiss',
-      };
+    ProVisibilityLiftActionType.seePro => 'see_pro',
+    ProVisibilityLiftActionType.dismiss => 'dismiss',
+  };
 }
 
-enum ProVisibilityLiftSurface {
-  recordReady,
-  recordPostSave,
-  archivePatterns,
-}
+enum ProVisibilityLiftSurface { recordReady, recordPostSave, archivePatterns }
 
 extension ProVisibilityLiftSurfaceStorage on ProVisibilityLiftSurface {
   String get analyticsValue => switch (this) {
-        ProVisibilityLiftSurface.recordReady => 'record_ready',
-        ProVisibilityLiftSurface.recordPostSave => 'record_post_save',
-        ProVisibilityLiftSurface.archivePatterns => 'archive_patterns',
-      };
+    ProVisibilityLiftSurface.recordReady => 'record_ready',
+    ProVisibilityLiftSurface.recordPostSave => 'record_post_save',
+    ProVisibilityLiftSurface.archivePatterns => 'archive_patterns',
+  };
 }

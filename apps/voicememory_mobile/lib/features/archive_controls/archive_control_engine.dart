@@ -51,7 +51,8 @@ abstract final class ArchiveControlEngine {
     final entries = await AppServices.instance.journal.loadAll();
     final wasEvidence = wasUsedAsEvidence(entryId: entryId, entries: entries);
 
-    final service = privateDataService ??
+    final service =
+        privateDataService ??
         PrivateDataService(journalStore: AppServices.instance.journalStore);
     final result = await service.deleteEntrySecurely(entryId);
     if (!result.deleted) {

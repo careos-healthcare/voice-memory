@@ -58,9 +58,7 @@ class CapacityBoundaryResponseStore {
   Future<void> recordCopied() async {
     final existing = _cached;
     if (existing == null || !existing.hasSelection) return;
-    await _persist(
-      existing.copyWith(lastCopiedAt: DateTime.now().toUtc()),
-    );
+    await _persist(existing.copyWith(lastCopiedAt: DateTime.now().toUtc()));
   }
 
   Future<void> _persist(CapacityBoundaryResponseSelection record) async {

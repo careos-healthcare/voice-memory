@@ -2,6 +2,7 @@ import 'dart:io' show Platform;
 
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/foundation.dart';
+import 'package:meta/meta.dart';
 
 import 'backend_url_resolver.dart';
 import 'developer_settings_gate.dart';
@@ -65,6 +66,26 @@ class AppConfig {
 
   static bool get isApiResolutionInitialized => _apiResolutionInitialized;
 
+  /// Pins a stable test backend so [SyncRepository] and transport paths
+  /// exercise real coordinator logic under `flutter test`.
+  @visibleForTesting
+  static void configureForTest({
+    String apiBaseUrl = defaultDevBaseUrl,
+  }) {
+    _resolvedApiBase = apiBaseUrl;
+    _backendConfigured = true;
+    _apiResolutionInitialized = true;
+  }
+
+  /// Restores pre-test [AppConfig] resolution state between suites.
+  @visibleForTesting
+  static void resetTestConfiguration() {
+    _resolvedApiBase = null;
+    _backendConfigured = true;
+    _apiResolutionInitialized = false;
+    _releaseApiWarningLogged = false;
+  }
+
   /// Call once at startup before [AppServices.initialize].
   static Future<void> initApiResolution() async {
     if (_apiResolutionInitialized) return;
@@ -97,7 +118,9 @@ class AppConfig {
       _resolvedApiBase = defaultDevBaseUrl;
       _backendConfigured = true;
       _apiResolutionInitialized = true;
-      debugPrint('AppConfig: debug API base → $_resolvedApiBase (iOS simulator)');
+      debugPrint(
+        'AppConfig: debug API base → $_resolvedApiBase (iOS simulator)',
+      );
       return;
     }
 

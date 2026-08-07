@@ -49,7 +49,7 @@ function wrapClientSocket(ws: WebSocket): LiveAudioClientSocket {
       ws.close(code ?? 1000, reason);
     },
     onMessage(handler) {
-      ws.on("message", (data) => {
+      ws.on("message", (data: Buffer | ArrayBuffer | Buffer[]) => {
         if (typeof data === "string") {
           handler(data);
           return;
@@ -131,7 +131,7 @@ async function handleUpgradeRequest(
     return;
   }
 
-  wss.handleUpgrade(request, socket, head, (ws) => {
+  wss.handleUpgrade(request, socket, head, (ws: WebSocket) => {
     wss.emit("connection", ws, request);
     const client = wrapClientSocket(ws);
     const unregister = registerLiveAudioConnection({

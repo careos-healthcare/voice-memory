@@ -5,12 +5,11 @@ import 'package:voicememory_mobile/features/comparison_engine/domain/services/hi
 ArchiveMomentRecord _moment({
   required String id,
   required DateTime createdAt,
-}) =>
-    ArchiveMomentRecord(
-      id: id,
-      createdAt: createdAt,
-      savedWords: 'words for $id',
-    );
+}) => ArchiveMomentRecord(
+  id: id,
+  createdAt: createdAt,
+  savedWords: 'words for $id',
+);
 
 void main() {
   group('pruneHistoricalContext', () {
@@ -28,10 +27,7 @@ void main() {
     test('keeps freshest items and preserves chronological order', () {
       final history = [
         for (var day = 1; day <= 35; day++)
-          _moment(
-            id: 'm$day',
-            createdAt: DateTime.utc(2026, 1, day),
-          ),
+          _moment(id: 'm$day', createdAt: DateTime.utc(2026, 1, day)),
       ];
 
       final pruned = pruneHistoricalContext(history, maxContextItems: 30);
@@ -40,10 +36,7 @@ void main() {
       expect(pruned.first.id, 'm6');
       expect(pruned.last.id, 'm35');
       for (var i = 1; i < pruned.length; i++) {
-        expect(
-          pruned[i].createdAt.isAfter(pruned[i - 1].createdAt),
-          isTrue,
-        );
+        expect(pruned[i].createdAt.isAfter(pruned[i - 1].createdAt), isTrue);
       }
     });
   });

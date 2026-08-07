@@ -1,9 +1,5 @@
 /// Stage of the first-three recording retention loop.
-enum EarlyRepeatProgressKind {
-  oneMoment,
-  twoRelated,
-  twoUnrelated,
-}
+enum EarlyRepeatProgressKind { oneMoment, twoRelated, twoUnrelated }
 
 /// Quiet next-moment guidance below the progress line on Record.
 class EarlyRepeatNextMomentCue {

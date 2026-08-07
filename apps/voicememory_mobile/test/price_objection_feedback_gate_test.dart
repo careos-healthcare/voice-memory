@@ -17,31 +17,26 @@ PriceObjectionFeedbackGateInput _input({
   bool? discountRequested,
   bool? newFeatureRequested,
   bool? nonBetaInterpretationRequested,
-}) =>
-    PriceObjectionFeedbackGateInput(
-      proTapped: proTapped,
-      purchaseCompleted: purchaseCompleted,
-      isPro: isPro,
-      feedbackRequested: feedbackRequested,
-      priceChangeRequested: priceChangeRequested,
-      discountRequested: discountRequested,
-      newFeatureRequested: newFeatureRequested,
-      nonBetaInterpretationRequested: nonBetaInterpretationRequested,
-    );
+}) => PriceObjectionFeedbackGateInput(
+  proTapped: proTapped,
+  purchaseCompleted: purchaseCompleted,
+  isPro: isPro,
+  feedbackRequested: feedbackRequested,
+  priceChangeRequested: priceChangeRequested,
+  discountRequested: discountRequested,
+  newFeatureRequested: newFeatureRequested,
+  nonBetaInterpretationRequested: nonBetaInterpretationRequested,
+);
 
 PriceObjectionFeedbackRule _rule(
   PriceObjectionFeedbackGateResult result,
   PriceObjectionFeedbackRuleId id,
-) =>
-    result.rules.firstWhere((rule) => rule.id == id);
+) => result.rules.firstWhere((rule) => rule.id == id);
 
 void main() {
   group('PriceObjectionFeedbackGate.shouldShowFeedback', () {
     test('hidden before Pro tap', () {
-      expect(
-        PriceObjectionFeedbackGate.shouldShowFeedback(_input()),
-        isFalse,
-      );
+      expect(PriceObjectionFeedbackGate.shouldShowFeedback(_input()), isFalse);
     });
 
     test('shown after Pro tap without purchase', () {
@@ -77,7 +72,10 @@ void main() {
       final result = PriceObjectionFeedbackGate.build(_input());
       expect(result.reasons.length, PriceObjectionFeedbackGate.reasonCount);
       expect(result.rules.length, PriceObjectionFeedbackGate.ruleCount);
-      expect(result.reasonOrder, PriceObjectionFeedbackGate.canonicalReasonOrder);
+      expect(
+        result.reasonOrder,
+        PriceObjectionFeedbackGate.canonicalReasonOrder,
+      );
       expect(result.ruleOrder, PriceObjectionFeedbackGate.canonicalRuleOrder);
     });
 
@@ -108,10 +106,7 @@ void main() {
 
     test('feedback requested before Pro tap fails show rule', () {
       final result = PriceObjectionFeedbackGate.build(
-        _input(
-          proTapped: false,
-          feedbackRequested: true,
-        ),
+        _input(proTapped: false, feedbackRequested: true),
       );
       expect(
         _rule(
@@ -186,7 +181,11 @@ void main() {
         _input(proTapped: true, purchaseCompleted: false),
       );
       for (final rule in result.rules) {
-        expect(rule.status, PriceObjectionFeedbackRuleStatus.pass, reason: rule.id.name);
+        expect(
+          rule.status,
+          PriceObjectionFeedbackRuleStatus.pass,
+          reason: rule.id.name,
+        );
       }
     });
 
@@ -225,7 +224,10 @@ void main() {
       );
       expect(report.headline, PriceObjectionFeedbackCopy.headline);
       expect(report.guardrail, PriceObjectionFeedbackCopy.guardrail);
-      expect(report.reasonOrderLine, PriceObjectionFeedbackCopy.reasonOrderLine);
+      expect(
+        report.reasonOrderLine,
+        PriceObjectionFeedbackCopy.reasonOrderLine,
+      );
     });
   });
 

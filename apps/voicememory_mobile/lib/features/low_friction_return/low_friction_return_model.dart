@@ -8,13 +8,13 @@ enum LowFrictionReturnPromptType {
   whatNotToForget;
 
   String get analyticsValue => switch (this) {
-        whatKeptComingBack => 'what_kept_coming_back',
-        whatFeltHeavier => 'what_felt_heavier',
-        whatChanged => 'what_changed',
-        whatDidIAvoid => 'what_did_i_avoid',
-        whatHelped => 'what_helped',
-        whatNotToForget => 'what_not_to_forget',
-      };
+    whatKeptComingBack => 'what_kept_coming_back',
+    whatFeltHeavier => 'what_felt_heavier',
+    whatChanged => 'what_changed',
+    whatDidIAvoid => 'what_did_i_avoid',
+    whatHelped => 'what_helped',
+    whatNotToForget => 'what_not_to_forget',
+  };
 
   static const all = [
     whatKeptComingBack,
@@ -32,8 +32,8 @@ enum LowFrictionReturnActionType {
   skipToday;
 
   String get analyticsValue => switch (this) {
-        saveOneSentence => 'save_one_sentence',
-        useTinyPrompt => 'use_tiny_prompt',
-        skipToday => 'skip_today',
-      };
+    saveOneSentence => 'save_one_sentence',
+    useTinyPrompt => 'use_tiny_prompt',
+    skipToday => 'skip_today',
+  };
 }

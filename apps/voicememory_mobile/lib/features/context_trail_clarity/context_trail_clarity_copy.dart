@@ -18,8 +18,7 @@ abstract final class ContextTrailClarityCopy {
   static const notMaintenanceLine =
       'No manual map maintenance. No tagging homework.';
 
-  static const trailLine =
-      'Use context only when it makes the repeat clearer.';
+  static const trailLine = 'Use context only when it makes the repeat clearer.';
 
   static const proLaterLine =
       'Over time, Pro can keep a longer context trail — where the same repeat '

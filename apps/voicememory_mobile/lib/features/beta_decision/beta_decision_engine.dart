@@ -17,11 +17,10 @@ abstract final class BetaDecisionEngine {
     BetaNextBuildRecommendation.expandProUtility,
   ];
 
-  static bool shouldShow({required bool betaMissionEnabled}) => betaMissionEnabled;
+  static bool shouldShow({required bool betaMissionEnabled}) =>
+      betaMissionEnabled;
 
-  static BetaDecisionResult build({
-    required List<BetaTesterOutcome> outcomes,
-  }) {
+  static BetaDecisionResult build({required List<BetaTesterOutcome> outcomes}) {
     if (outcomes.isEmpty) {
       return _emptyResult();
     }
@@ -42,11 +41,14 @@ abstract final class BetaDecisionEngine {
         .length;
     final askedWithoutCareCount = outcomes
         .where(
-          (o) => o.askedForUtilityExpansion && !o.has(BetaDecisionSignal.proofFeltMeaningful),
+          (o) =>
+              o.askedForUtilityExpansion &&
+              !o.has(BetaDecisionSignal.proofFeltMeaningful),
         )
         .length;
 
-    final expansionAllowed = caredAboutProofCount >= expansionCaredAboutProofThreshold ||
+    final expansionAllowed =
+        caredAboutProofCount >= expansionCaredAboutProofThreshold ||
         askedUtilityCount >= expansionExplicitAskThreshold;
 
     if (askedWithoutCareCount > 0 && !expansionAllowed) {
@@ -171,31 +173,30 @@ abstract final class BetaDecisionEngine {
     required int testerCount,
     required int caredAboutProofCount,
     required int askedUtilityCount,
-  }) =>
-      switch (recommendation) {
-        BetaNextBuildRecommendation.fixRecordOnboardingCopy =>
-          '$count of $testerCount tester(s) misunderstood the promise or positioned ArchiveMe as journal/chat/therapy.',
-        BetaNextBuildRecommendation.fixCaptureFriction =>
-          '$count of $testerCount tester(s) understood the promise but did not capture a first moment.',
-        BetaNextBuildRecommendation.addReturnReason =>
-          '$count of $testerCount tester(s) saved once but did not return on day 2.',
-        BetaNextBuildRecommendation.improveProofEmotionalClarity =>
-          '$count of $testerCount tester(s) reached proof but it did not feel meaningful.',
-        BetaNextBuildRecommendation.sharpenProPackaging =>
-          '$count of $testerCount tester(s) cared about proof but would not pay for the longer trail.',
-        BetaNextBuildRecommendation.expandProUtility =>
-          '$count of $testerCount tester(s) asked for history/export/report after proof mattered. '
-              'Cared-about-proof: $caredAboutProofCount. Utility asks: $askedUtilityCount.',
-        _ => '$count of $testerCount tester(s) matched this branch.',
-      };
+  }) => switch (recommendation) {
+    BetaNextBuildRecommendation.fixRecordOnboardingCopy =>
+      '$count of $testerCount tester(s) misunderstood the promise or positioned ArchiveMe as journal/chat/therapy.',
+    BetaNextBuildRecommendation.fixCaptureFriction =>
+      '$count of $testerCount tester(s) understood the promise but did not capture a first moment.',
+    BetaNextBuildRecommendation.addReturnReason =>
+      '$count of $testerCount tester(s) saved once but did not return on day 2.',
+    BetaNextBuildRecommendation.improveProofEmotionalClarity =>
+      '$count of $testerCount tester(s) reached proof but it did not feel meaningful.',
+    BetaNextBuildRecommendation.sharpenProPackaging =>
+      '$count of $testerCount tester(s) cared about proof but would not pay for the longer trail.',
+    BetaNextBuildRecommendation.expandProUtility =>
+      '$count of $testerCount tester(s) asked for history/export/report after proof mattered. '
+          'Cared-about-proof: $caredAboutProofCount. Utility asks: $askedUtilityCount.',
+    _ => '$count of $testerCount tester(s) matched this branch.',
+  };
 
   static BetaDecisionResult _emptyResult() => BetaDecisionResult(
-        primaryRecommendation: BetaNextBuildRecommendation.insufficientData,
-        reason: 'No tester outcomes logged yet.',
-        evidenceCounts: const {},
-        nextActionCopy: BetaDecisionCopy.insufficientDataBody,
-        testerCount: 0,
-        failingBranchCounts: const {},
-        expansionAllowed: false,
-      );
+    primaryRecommendation: BetaNextBuildRecommendation.insufficientData,
+    reason: 'No tester outcomes logged yet.',
+    evidenceCounts: const {},
+    nextActionCopy: BetaDecisionCopy.insufficientDataBody,
+    testerCount: 0,
+    failingBranchCounts: const {},
+    expansionAllowed: false,
+  );
 }

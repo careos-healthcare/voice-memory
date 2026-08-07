@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/billing/archive_entitlement_reader.dart';
@@ -16,33 +14,33 @@ import 'package:voicememory_mobile/theme/app_theme.dart';
 import 'package:voicememory_mobile/features/post_save/post_save_recorded_summary_copy.dart';
 import 'package:voicememory_mobile/widgets/record/analysis_fallback_payoff_card.dart';
 import 'package:voicememory_mobile/widgets/record/post_save_recorded_summary_card.dart';
+import 'support/test_storage_sandbox.dart';
 
 JournalEntry _voiceEntry({
   required String id,
   required String transcript,
   DateTime? createdAt,
-}) =>
-    JournalEntry(
-      id: id,
-      createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
-      transcript: transcript,
-      durationSeconds: 20,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 0,
-        recurringThemes: [],
-        exactLanguagePattern: '',
-        concreteObservation: '',
-        repeatedSignal: '',
-      ),
-    );
+}) => JournalEntry(
+  id: id,
+  createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
+  transcript: transcript,
+  durationSeconds: 20,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 0,
+    recurringThemes: [],
+    exactLanguagePattern: '',
+    concreteObservation: '',
+    repeatedSignal: '',
+  ),
+);
 
 JournalEntry _degradedVoiceEntry({String id = 'v1'}) => _voiceEntry(
-      id: id,
-      transcript:
-          '[draft] ${CaptureSaveMessages.recordingSavedLocally} — transcribe when connected',
-    );
+  id: id,
+  transcript:
+      '[draft] ${CaptureSaveMessages.recordingSavedLocally} — transcribe when connected',
+);
 
 const _bannedPatternWords = [
   'pattern found',
@@ -119,14 +117,16 @@ void main() {
       expect(payoff!.title, AnalysisFallbackPayoffCopy.title);
       expect(payoff.body, AnalysisFallbackPayoffCopy.bodyOneEntry);
       expect(payoff.evidenceLine, AnalysisFallbackPayoffCopy.evidenceOneEntry);
-      expect(payoff.nextActionLine, AnalysisFallbackPayoffCopy.nextActionOneEntry);
+      expect(
+        payoff.nextActionLine,
+        AnalysisFallbackPayoffCopy.nextActionOneEntry,
+      );
       expect(payoff.footnoteLine, AnalysisFallbackPayoffCopy.deferredFootnote);
       expect(payoff.secondaryLine, isNull);
-      _expectNoBannedCopy([payoff.title, payoff.body, payoff.evidenceLine], [
-        ..._bannedPatternWords,
-        'repeat',
-        'loop',
-      ]);
+      _expectNoBannedCopy(
+        [payoff.title, payoff.body, payoff.evidenceLine],
+        [..._bannedPatternWords, 'repeat', 'loop'],
+      );
     });
 
     test('two entries defers to second-session payoff card', () {
@@ -153,7 +153,8 @@ void main() {
         entries: [
           _voiceEntry(
             id: 'e1',
-            transcript: 'I felt pressure before saying yes again today at work.',
+            transcript:
+                'I felt pressure before saying yes again today at work.',
             createdAt: DateTime(2026, 6, 11, 12),
           ),
           _voiceEntry(
@@ -197,16 +198,20 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           theme: AppTheme.light(),
-          home: Scaffold(
-            body: AnalysisFallbackPayoffCard(payoff: payoff),
-          ),
+          home: Scaffold(body: AnalysisFallbackPayoffCard(payoff: payoff)),
         ),
       );
       await tester.pump();
 
-      expect(find.byKey(const Key('analysis_fallback_payoff_card')), findsOneWidget);
+      expect(
+        find.byKey(const Key('analysis_fallback_payoff_card')),
+        findsOneWidget,
+      );
       expect(find.text(AnalysisFallbackPayoffCopy.title), findsOneWidget);
-      expect(find.text(AnalysisFallbackPayoffCopy.bodyOneEntry), findsOneWidget);
+      expect(
+        find.text(AnalysisFallbackPayoffCopy.bodyOneEntry),
+        findsOneWidget,
+      );
       expect(
         find.text(AnalysisFallbackPayoffCopy.evidenceOneEntry),
         findsOneWidget,
@@ -223,15 +228,17 @@ void main() {
   });
 
   group('RecordScreen analysis fallback UI', () {
-    late Directory tempDir;
+    late TestStorageSandbox sandbox;
 
     setUp(() async {
-      tempDir = Directory.systemTemp.createTempSync('vm_analysis_fallback_');
+      sandbox = TestStorageSandbox.create();
       await AppServices.resetForTest(
-        journalPath: '${tempDir.path}/journal.json',
+        journalPath: sandbox.journalPath,
         skipRevenueCat: true,
       );
     });
+
+    tearDown(() => sandbox.dispose());
 
     tearDown(() {
       VisualAuditOverrides.setRecordPresentation(null);
@@ -270,45 +277,61 @@ void main() {
       }
     }
 
-    testWidgets('good transcript with analysis unavailable shows local payoff', (
+    testWidgets(
+      'good transcript with analysis unavailable shows local payoff',
+      (tester) async {
+        await pumpDoneState(
+          tester,
+          entriesAfterSave: [
+            _voiceEntry(
+              id: 'e1',
+              transcript: 'I felt pressure before saying yes again today.',
+            ),
+          ],
+        );
+
+        expect(
+          find.byKey(const Key('analysis_fallback_payoff_card')),
+          findsNothing,
+        );
+        expect(
+          find.byKey(const Key('post_save_focused_actions_bar')),
+          findsOneWidget,
+        );
+        expect(
+          find.text(PostSaveRecordedSummaryCopy.firstEntryFootnote),
+          findsOneWidget,
+        );
+        expect(find.text(PostSaveRecordedSummaryCopy.title), findsOneWidget);
+        _expectNoBannedCopy(_visibleText(tester), _bannedAiSuccessWords);
+      },
+    );
+
+    testWidgets(
+      'good transcript with analysis unavailable skips degraded recovery',
+      (tester) async {
+        await pumpDoneState(
+          tester,
+          entriesAfterSave: [
+            _voiceEntry(
+              id: 'e1',
+              transcript: 'I felt pressure before saying yes again today.',
+            ),
+          ],
+        );
+
+        expect(
+          find.byKey(const Key('post_save_degraded_transcription_card')),
+          findsNothing,
+        );
+        expect(find.text(PendingTranscriptRecoveryCopy.title), findsNothing);
+        expect(find.text(VoiceCaptureCopy.typeWhatYouSaid), findsNothing);
+      },
+    );
+
+    testWidgets('one entry avoids repeat loop pattern language', (
       tester,
     ) async {
-      await pumpDoneState(
-        tester,
-        entriesAfterSave: [
-          _voiceEntry(
-            id: 'e1',
-            transcript: 'I felt pressure before saying yes again today.',
-          ),
-        ],
-      );
-
-      expect(find.byKey(const Key('analysis_fallback_payoff_card')), findsNothing);
-      expect(find.byKey(const Key('post_save_focused_actions_bar')), findsOneWidget);
-      expect(find.text(PostSaveRecordedSummaryCopy.firstEntryFootnote), findsOneWidget);
-      expect(find.text(PostSaveRecordedSummaryCopy.title), findsOneWidget);
-      _expectNoBannedCopy(_visibleText(tester), _bannedAiSuccessWords);
-    });
-
-    testWidgets('good transcript with analysis unavailable skips degraded recovery', (
-      tester,
-    ) async {
-      await pumpDoneState(
-        tester,
-        entriesAfterSave: [
-          _voiceEntry(
-            id: 'e1',
-            transcript: 'I felt pressure before saying yes again today.',
-          ),
-        ],
-      );
-
-      expect(find.byKey(const Key('post_save_degraded_transcription_card')), findsNothing);
-      expect(find.text(PendingTranscriptRecoveryCopy.title), findsNothing);
-      expect(find.text(VoiceCaptureCopy.typeWhatYouSaid), findsNothing);
-    });
-
-    testWidgets('one entry avoids repeat loop pattern language', (tester) async {
       await pumpDoneState(
         tester,
         entriesAfterSave: [
@@ -326,7 +349,9 @@ void main() {
       ]);
     });
 
-    testWidgets('degraded transcript still shows audio recovery card', (tester) async {
+    testWidgets('degraded transcript still shows audio recovery card', (
+      tester,
+    ) async {
       VisualAuditOverrides.setRecordPresentation(
         RecordAuditPresentation(
           ui: RecordUiState.done,
@@ -350,40 +375,62 @@ void main() {
       );
       await tester.pump();
 
-      expect(find.byKey(const Key('post_save_degraded_transcription_card')), findsOneWidget);
+      expect(
+        find.byKey(const Key('post_save_degraded_transcription_card')),
+        findsOneWidget,
+      );
       expect(find.text(PendingTranscriptRecoveryCopy.title), findsOneWidget);
-      expect(find.byKey(const Key('analysis_fallback_payoff_card')), findsNothing);
+      expect(
+        find.byKey(const Key('analysis_fallback_payoff_card')),
+        findsNothing,
+      );
     });
 
-    testWidgets('two entries with analysis unavailable stay focused on record screen', (
+    testWidgets(
+      'two entries with analysis unavailable stay focused on record screen',
+      (tester) async {
+        await pumpDoneState(
+          tester,
+          entriesAfterSave: [
+            _voiceEntry(
+              id: 'e1',
+              transcript:
+                  'I stayed late finishing slides for tomorrow morning.',
+              createdAt: DateTime(2026, 6, 11, 12),
+            ),
+            _voiceEntry(
+              id: 'e2',
+              transcript: 'My sister called about planning the weekend trip.',
+              createdAt: DateTime(2026, 6, 12, 12),
+            ),
+          ],
+          lastCaptureAnalysisSucceeded: false,
+        );
+
+        expect(
+          find.byKey(const Key('post_save_archive_home_nudge_card')),
+          findsNothing,
+        );
+        expect(
+          find.byKey(const Key('second_session_payoff_card')),
+          findsNothing,
+        );
+        expect(
+          find.byKey(const Key('post_save_focused_actions_bar')),
+          findsOneWidget,
+        );
+        expect(find.text(PostSaveRecordedSummaryCopy.title), findsOneWidget);
+        expect(
+          find.byKey(const Key('analysis_fallback_payoff_card')),
+          findsNothing,
+        );
+        _expectNoBannedCopy(_visibleText(tester), _bannedPatternWords);
+      },
+    );
+
+    testWidgets('analysis succeeded does not show fallback card', (
       tester,
     ) async {
-      await pumpDoneState(
-        tester,
-        entriesAfterSave: [
-          _voiceEntry(
-            id: 'e1',
-            transcript: 'I stayed late finishing slides for tomorrow morning.',
-            createdAt: DateTime(2026, 6, 11, 12),
-          ),
-          _voiceEntry(
-            id: 'e2',
-            transcript: 'My sister called about planning the weekend trip.',
-            createdAt: DateTime(2026, 6, 12, 12),
-          ),
-        ],
-        lastCaptureAnalysisSucceeded: false,
-      );
-
-      expect(find.byKey(const Key('post_save_archive_home_nudge_card')), findsNothing);
-      expect(find.byKey(const Key('second_session_payoff_card')), findsNothing);
-      expect(find.byKey(const Key('post_save_focused_actions_bar')), findsOneWidget);
-      expect(find.text(PostSaveRecordedSummaryCopy.title), findsOneWidget);
-      expect(find.byKey(const Key('analysis_fallback_payoff_card')), findsNothing);
-      _expectNoBannedCopy(_visibleText(tester), _bannedPatternWords);
-    });
-
-    testWidgets('analysis succeeded does not show fallback card', (tester) async {
       await pumpDoneState(
         tester,
         entriesAfterSave: [
@@ -395,7 +442,10 @@ void main() {
         lastCaptureAnalysisSucceeded: true,
       );
 
-      expect(find.byKey(const Key('analysis_fallback_payoff_card')), findsNothing);
+      expect(
+        find.byKey(const Key('analysis_fallback_payoff_card')),
+        findsNothing,
+      );
     });
   });
 }

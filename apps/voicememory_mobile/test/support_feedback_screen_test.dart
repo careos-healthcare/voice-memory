@@ -8,7 +8,7 @@ import 'package:voicememory_mobile/config/app_config.dart';
 import 'package:voicememory_mobile/features/support/support_feedback_copy.dart';
 import 'package:voicememory_mobile/features/archive_proof/visible_archive_proof_copy.dart';
 import 'package:voicememory_mobile/router/app_router.dart';
-import 'package:voicememory_mobile/screens/help_reviewer_guide_screen.dart';
+import 'package:archiveme_research/screens/help_reviewer_guide_screen.dart';
 import 'package:voicememory_mobile/screens/settings_screen.dart';
 import 'package:voicememory_mobile/screens/support_feedback_screen.dart';
 import 'package:voicememory_mobile/security/sensitive_screen_guard.dart';
@@ -95,10 +95,7 @@ void main() {
   group('Support feedback UI', () {
     testWidgets('Settings shows Support button', (tester) async {
       await tester.pumpWidget(
-        MaterialApp(
-          theme: AppTheme.light(),
-          home: const SettingsScreen(),
-        ),
+        MaterialApp(theme: AppTheme.light(), home: const SettingsScreen()),
       );
       await tester.pump();
 
@@ -119,13 +116,31 @@ void main() {
       await tester.pump();
 
       expect(find.byKey(const Key('support_feedback_screen')), findsOneWidget);
-      expect(find.byKey(const Key('support_feedback_need_help')), findsOneWidget);
+      expect(
+        find.byKey(const Key('support_feedback_need_help')),
+        findsOneWidget,
+      );
       expect(find.byKey(const Key('support_feedback_privacy')), findsOneWidget);
-      expect(find.text(SupportFeedbackCopy.sectionPrivacyBulletOne), findsOneWidget);
-      expect(find.byKey(const Key('support_feedback_open_support_page')), findsOneWidget);
-      expect(find.byKey(const Key('support_feedback_copy_checklist')), findsOneWidget);
-      expect(find.byKey(const Key('support_feedback_open_help_guide')), findsOneWidget);
-      expect(find.byKey(const Key('support_feedback_open_sample_archive')), findsOneWidget);
+      expect(
+        find.text(SupportFeedbackCopy.sectionPrivacyBulletOne),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(const Key('support_feedback_open_support_page')),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(const Key('support_feedback_copy_checklist')),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(const Key('support_feedback_open_help_guide')),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(const Key('support_feedback_open_sample_archive')),
+        findsOneWidget,
+      );
     });
 
     testWidgets('settings row routes to support screen', (tester) async {
@@ -143,10 +158,7 @@ void main() {
       );
 
       await tester.pumpWidget(
-        MaterialApp.router(
-          theme: AppTheme.light(),
-          routerConfig: router,
-        ),
+        MaterialApp.router(theme: AppTheme.light(), routerConfig: router),
       );
       await tester.pump();
 
@@ -175,15 +187,14 @@ void main() {
       addTearDown(() => tester.binding.setSurfaceSize(null));
 
       await tester.pumpWidget(
-        MaterialApp.router(
-          theme: AppTheme.light(),
-          routerConfig: router,
-        ),
+        MaterialApp.router(theme: AppTheme.light(), routerConfig: router),
       );
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 100));
 
-      final link = find.byKey(const Key('help_reviewer_guide_support_feedback_link'));
+      final link = find.byKey(
+        const Key('help_reviewer_guide_support_feedback_link'),
+      );
       await tester.ensureVisible(link);
       await tester.tap(link);
       await tester.pump();
@@ -202,8 +213,10 @@ void main() {
         },
       );
       addTearDown(
-        () => tester.binding.defaultBinaryMessenger
-            .setMockMethodCallHandler(SystemChannels.platform, null),
+        () => tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+          SystemChannels.platform,
+          null,
+        ),
       );
 
       await tester.binding.setSurfaceSize(const Size(390, 3000));
@@ -217,13 +230,18 @@ void main() {
       );
       await tester.pump();
 
-      final copyButton = find.byKey(const Key('support_feedback_copy_checklist'));
+      final copyButton = find.byKey(
+        const Key('support_feedback_copy_checklist'),
+      );
       await tester.ensureVisible(copyButton);
       await tester.tap(copyButton);
       await tester.pump();
 
       final copyCall = calls.firstWhere((c) => c.method == 'Clipboard.setData');
-      expect((copyCall.arguments as Map)['text'], SupportFeedbackCopy.buildChecklist());
+      expect(
+        (copyCall.arguments as Map)['text'],
+        SupportFeedbackCopy.buildChecklist(),
+      );
     });
   });
 }

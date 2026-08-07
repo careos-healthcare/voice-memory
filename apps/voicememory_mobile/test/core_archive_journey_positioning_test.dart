@@ -17,24 +17,23 @@ import 'package:voicememory_mobile/features/surface_priority/surface_priority_en
 import 'package:voicememory_mobile/features/surface_priority/surface_priority_model.dart';
 import 'package:voicememory_mobile/features/value_prop_ranking_diagnostic/value_prop_ranking_diagnostic.dart';
 
-BetaRepairLabVisibilityInput _repairInput() =>
-    BetaRepairLabVisibilityInput(
-      mode: BetaRepairLabMode.evidenceTrailTimelineClarity,
-      entryCount: 4,
-      source: 'test',
-      isPro: false,
-      isRecording: false,
-      isDegradedTranscriptState: false,
-      whatChangedQuestionActive: false,
-      patternReviewInboxHasActiveItems: false,
-      hasTimelineProofVisible: true,
-      hasConfirmedRepeat: true,
-      confidenceLevel: ProofConfidenceLevel.watchOnly,
-      hasUsefulProofFeedback: false,
-      feedbackType: null,
-      isNegativeFeedback: false,
-      betaMissionEnabled: true,
-    );
+BetaRepairLabVisibilityInput _repairInput() => BetaRepairLabVisibilityInput(
+  mode: BetaRepairLabMode.evidenceTrailTimelineClarity,
+  entryCount: 4,
+  source: 'test',
+  isPro: false,
+  isRecording: false,
+  isDegradedTranscriptState: false,
+  whatChangedQuestionActive: false,
+  patternReviewInboxHasActiveItems: false,
+  hasTimelineProofVisible: true,
+  hasConfirmedRepeat: true,
+  confidenceLevel: ProofConfidenceLevel.watchOnly,
+  hasUsefulProofFeedback: false,
+  feedbackType: null,
+  isNegativeFeedback: false,
+  betaMissionEnabled: true,
+);
 
 void main() {
   group('CoreArchiveJourney steps', () {
@@ -97,10 +96,7 @@ void main() {
     });
 
     test('subheadline says private archive', () {
-      expect(
-        CoreArchiveJourneyCopy.subheadline,
-        contains('private archive'),
-      );
+      expect(CoreArchiveJourneyCopy.subheadline, contains('private archive'));
     });
 
     test('subheadline says returns/changes/fades/corrected over time', () {
@@ -113,10 +109,7 @@ void main() {
     });
 
     test('first proof copy says one clear repeat', () {
-      expect(
-        CoreArchiveJourneyCopy.firstProof,
-        contains('one clear repeat'),
-      );
+      expect(CoreArchiveJourneyCopy.firstProof, contains('one clear repeat'));
     });
 
     test('why proof copy says clearest specific repeat', () {
@@ -192,17 +185,19 @@ void main() {
       );
     });
 
-    test('proofOfChangeLine says remembers repeats and proves change over time',
-        () {
-      expect(
-        CoreArchiveJourneyCopy.proofOfChangeLine,
-        contains('remembers repeats'),
-      );
-      expect(
-        CoreArchiveJourneyCopy.proofOfChangeLine,
-        contains('proves change over time'),
-      );
-    });
+    test(
+      'proofOfChangeLine says remembers repeats and proves change over time',
+      () {
+        expect(
+          CoreArchiveJourneyCopy.proofOfChangeLine,
+          contains('remembers repeats'),
+        );
+        expect(
+          CoreArchiveJourneyCopy.proofOfChangeLine,
+          contains('proves change over time'),
+        );
+      },
+    );
 
     test('doNotBuildList includes better voice chat', () {
       expect(
@@ -219,17 +214,11 @@ void main() {
     });
 
     test('doNotBuildList includes AI companion', () {
-      expect(
-        CoreArchiveJourneyCopy.doNotBuildList,
-        contains('AI companion'),
-      );
+      expect(CoreArchiveJourneyCopy.doNotBuildList, contains('AI companion'));
     });
 
     test('doNotBuildList includes ranked advice', () {
-      expect(
-        CoreArchiveJourneyCopy.doNotBuildList,
-        contains('Ranked advice'),
-      );
+      expect(CoreArchiveJourneyCopy.doNotBuildList, contains('Ranked advice'));
     });
 
     test('doNotBuildList includes therapy or diagnosis', () {
@@ -459,38 +448,41 @@ void main() {
       );
     });
 
-    test('record screen remains capture-first without stacking extra cards', () {
-      final audit = SurfacePriorityEngine.auditRecordReady(
-        entryCount: 4,
-        source: 'record',
-        candidates: SurfacePriorityCandidates.recordReady(
-          firstMomentCapture: false,
-          secondMomentReturn: false,
-          lowFrictionReturn: false,
-          whatToNoticeNext: false,
-          betaTodaySummary: false,
-          openCapturePromptChips: false,
-          captureFreedomLine: false,
-          timelineProofMoment: true,
-          archiveTimelineSpine: false,
-          timelinePositioning: false,
-          currentRelevance: false,
-          correctionMemory: false,
-          notRelevantRecovery: false,
-          proofQualityResponse: false,
-          evidenceWeighting: false,
-          proofSpecificity: false,
-          presentDayRelevance: false,
-          patternConfidence: false,
-          betaTesterReport: false,
-          proEvidenceValue: false,
-          privateReportProBridge: false,
-          suppressLegacyEducation: false,
-          betaProofLift: true,
-        ),
-      );
-      expect(audit.proofCardKey, 'timelineProofMoment');
-      expect(audit.guidanceCardKey, isNull);
-    });
+    test(
+      'record screen remains capture-first without stacking extra cards',
+      () {
+        final audit = SurfacePriorityEngine.auditRecordReady(
+          entryCount: 4,
+          source: 'record',
+          candidates: SurfacePriorityCandidates.recordReady(
+            firstMomentCapture: false,
+            secondMomentReturn: false,
+            lowFrictionReturn: false,
+            whatToNoticeNext: false,
+            betaTodaySummary: false,
+            openCapturePromptChips: false,
+            captureFreedomLine: false,
+            timelineProofMoment: true,
+            archiveTimelineSpine: false,
+            timelinePositioning: false,
+            currentRelevance: false,
+            correctionMemory: false,
+            notRelevantRecovery: false,
+            proofQualityResponse: false,
+            evidenceWeighting: false,
+            proofSpecificity: false,
+            presentDayRelevance: false,
+            patternConfidence: false,
+            betaTesterReport: false,
+            proEvidenceValue: false,
+            privateReportProBridge: false,
+            suppressLegacyEducation: false,
+            betaProofLift: true,
+          ),
+        );
+        expect(audit.proofCardKey, 'timelineProofMoment');
+        expect(audit.guidanceCardKey, isNull);
+      },
+    );
   });
 }

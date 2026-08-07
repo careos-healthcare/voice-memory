@@ -96,10 +96,6 @@ class _ArchiveEvidencePanelBody extends StatelessWidget {
   static String _excerpt(JournalEntry e) {
     final t = e.transcript.trim();
     if (t.isEmpty) {
-      final obs = e.reflection.concreteObservation.trim();
-      if (obs.isNotEmpty) {
-        return '“${UserContentSafety.safeSnippet(obs, maxChars: 140)}”';
-      }
       return '(No transcript)';
     }
     return '“${UserContentSafety.safeSnippet(t, maxChars: 140)}”';

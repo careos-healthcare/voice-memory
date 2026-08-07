@@ -160,12 +160,12 @@ void main() {
         routes: [
           GoRoute(
             path: '/',
-            builder: (_, __) =>
+            builder: (_, _) =>
                 ArchivePrivateReceiptCard(entryCount: 1, onDismiss: () {}),
           ),
           GoRoute(
             path: '/settings',
-            builder: (_, __) =>
+            builder: (_, _) =>
                 const Scaffold(body: Text('Settings memory controls')),
           ),
         ],
@@ -188,7 +188,10 @@ void main() {
 
   group('Pro value clarity', () {
     test('copy is exact', () {
-      expect(ProTrustCopy.proTitle, 'Free shows the first useful proof. Pro keeps the longer trail.');
+      expect(
+        ProTrustCopy.proTitle,
+        'Free shows the first useful proof. Pro keeps the longer trail.',
+      );
       expect(
         ProTrustCopy.proBody,
         'Unlock deeper history, saved evidence, and continuity as your '

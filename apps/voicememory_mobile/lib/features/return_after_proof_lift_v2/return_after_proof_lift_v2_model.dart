@@ -1,6 +1,5 @@
 import '../proof_confidence_calibration/proof_confidence_calibration_model.dart';
 import '../return_after_proof/return_after_proof_model.dart';
-import 'return_after_proof_lift_v2_copy.dart';
 
 class ReturnAfterProofLiftV2Result {
   const ReturnAfterProofLiftV2Result({
@@ -21,21 +20,20 @@ class ReturnAfterProofLiftV2Result {
   static ReturnAfterProofLiftV2Result hidden({
     required String source,
     required int entryCount,
-  }) =>
-      ReturnAfterProofLiftV2Result(
-        shouldShow: false,
-        title: '',
-        body: '',
-        watchLine: '',
-        primaryCta: '',
-        secondaryCta: '',
-        promptLine: '',
-        targetType: ReturnAfterProofWatchTargetType.returnedAgain,
-        confidenceLevel: ProofConfidenceLevel.watchOnly,
-        hasAnchor: false,
-        entryCount: entryCount,
-        source: source,
-      );
+  }) => ReturnAfterProofLiftV2Result(
+    shouldShow: false,
+    title: '',
+    body: '',
+    watchLine: '',
+    primaryCta: '',
+    secondaryCta: '',
+    promptLine: '',
+    targetType: ReturnAfterProofWatchTargetType.returnedAgain,
+    confidenceLevel: ProofConfidenceLevel.watchOnly,
+    hasAnchor: false,
+    entryCount: entryCount,
+    source: source,
+  );
 
   final bool shouldShow;
   final String title;

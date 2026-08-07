@@ -8,10 +8,7 @@ abstract class AnalysisLog {
     debugPrint('ARCHIVEME_ANALYSIS_REQUEST url=$url');
   }
 
-  static void response({
-    required int status,
-    required String contentType,
-  }) {
+  static void response({required int status, required String contentType}) {
     debugPrint(
       'ARCHIVEME_ANALYSIS_RESPONSE status=$status contentType=$contentType',
     );
@@ -23,11 +20,7 @@ abstract class AnalysisLog {
     );
   }
 
-  static void failed({
-    required String reason,
-    int? status,
-    String? code,
-  }) {
+  static void failed({required String reason, int? status, String? code}) {
     debugPrint(
       'ARCHIVEME_ANALYSIS_FAILED'
       '${status == null ? '' : ' status=$status'}'

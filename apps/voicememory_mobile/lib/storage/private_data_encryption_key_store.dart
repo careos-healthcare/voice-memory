@@ -20,17 +20,29 @@ abstract class PrivateDataEncryptionKeyStore {
 /// Production key store backed by [SecureStorageService].
 class SecurePrivateDataEncryptionKeyStore
     implements PrivateDataEncryptionKeyStore {
-  SecurePrivateDataEncryptionKeyStore({SecureStorageService? secure})
-    : _secure = secure ?? SecureStorageService();
+  SecurePrivateDataEncryptionKeyStore({
+    SecureStorageService? secure,
+    String? keyAlias,
+  }) : _secure = secure ?? SecureStorageService(),
+       _storageKey = keyAlias == null || keyAlias.isEmpty
+           ? storageKey
+           : 'private_journal_encryption_key_v1__$keyAlias';
 
+  /// Legacy, pre-per-account default alias — kept unchanged so existing
+  /// installs continue decrypting their single shared journal without any
+  /// key rotation. New per-account namespaces must pass a distinct
+  /// [keyAlias] (see `AccountNamespace`) so each account's data is
+  /// encrypted with its own key and one account's key material never
+  /// decrypts another account's file.
   static const storageKey = 'private_journal_encryption_key_v1';
   static const keyByteLength = 32;
 
   final SecureStorageService _secure;
+  final String _storageKey;
 
   @override
   Future<List<int>?> readKeyBytes() async {
-    final encoded = await _secure.read(storageKey);
+    final encoded = await _secure.read(_storageKey);
     if (encoded == null || encoded.isEmpty) return null;
     return base64Decode(encoded);
   }
@@ -44,11 +56,11 @@ class SecurePrivateDataEncryptionKeyStore
         'expected $keyByteLength bytes',
       );
     }
-    await _secure.write(storageKey, base64Encode(keyBytes));
+    await _secure.write(_storageKey, base64Encode(keyBytes));
   }
 
   @override
-  Future<void> deleteKey() => _secure.delete(storageKey);
+  Future<void> deleteKey() => _secure.delete(_storageKey);
 
   /// Generates and persists a fresh 256-bit key when none exists.
   Future<List<int>> ensureKey() async {
@@ -75,9 +87,8 @@ class InMemoryPrivateDataEncryptionKeyStore
   List<int>? _keyBytes;
 
   @override
-  Future<List<int>?> readKeyBytes() async => _keyBytes == null
-      ? null
-      : List<int>.from(_keyBytes!);
+  Future<List<int>?> readKeyBytes() async =>
+      _keyBytes == null ? null : List<int>.from(_keyBytes!);
 
   @override
   Future<void> writeKeyBytes(List<int> keyBytes) async {

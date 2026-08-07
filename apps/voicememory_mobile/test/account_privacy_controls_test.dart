@@ -1,45 +1,45 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/screens/account_screen.dart';
-import 'package:voicememory_mobile/screens/archive_export_screen.dart';
+import 'package:archiveme_research/screens/archive_export_screen.dart';
 import 'package:voicememory_mobile/screens/privacy_screen.dart';
 import 'package:voicememory_mobile/screens/support_feedback_screen.dart';
 import 'package:voicememory_mobile/security/account_privacy_controls_copy.dart';
 import 'package:voicememory_mobile/security/privacy_data_controls_copy.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
 import 'package:voicememory_mobile/theme/app_theme.dart';
-import 'package:voicememory_mobile/widgets/settings/privacy_data_controls_dialogs.dart';
+import 'support/test_storage_sandbox.dart';
 
 JournalEntry _entry({required String id}) => JournalEntry(
-      id: id,
-      createdAt: DateTime(2026, 6, 1, 12),
-      transcript: 'A long enough transcript to count as a saved reflection.',
-      durationSeconds: 30,
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 2,
-        recurringThemes: ['work'],
-        exactLanguagePattern: '',
-        concreteObservation: 'You mentioned pressure in this moment.',
-        repeatedSignal: '',
-      ),
-    );
+  id: id,
+  createdAt: DateTime(2026, 6, 1, 12),
+  transcript: 'A long enough transcript to count as a saved reflection.',
+  durationSeconds: 30,
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 2,
+    recurringThemes: ['work'],
+    exactLanguagePattern: '',
+    concreteObservation: 'You mentioned pressure in this moment.',
+    repeatedSignal: '',
+  ),
+);
 
 void main() {
-  late Directory tempDir;
+  late TestStorageSandbox sandbox;
 
   setUp(() async {
-    tempDir = Directory.systemTemp.createTempSync('vm_account_controls_');
+    sandbox = TestStorageSandbox.create();
     await AppServices.resetForTest(
-      journalPath: '${tempDir.path}/journal.json',
+      journalPath: sandbox.journalPath,
       skipRevenueCat: true,
     );
   });
+
+  tearDown(() => sandbox.dispose());
 
   Future<void> pumpAccount(
     WidgetTester tester, {
@@ -50,10 +50,7 @@ void main() {
     addTearDown(tester.view.reset);
 
     final routes = <RouteBase>[
-      GoRoute(
-        path: '/',
-        builder: (context, state) => const AccountScreen(),
-      ),
+      GoRoute(path: '/', builder: (context, state) => const AccountScreen()),
       GoRoute(
         path: '/archive-export',
         builder: (context, state) => const ArchiveExportScreen(),
@@ -66,7 +63,7 @@ void main() {
         path: '/support-feedback',
         builder: (context, state) => const SupportFeedbackScreen(),
       ),
-      if (extraRoutes != null) ...extraRoutes,
+      ...?extraRoutes,
     ];
 
     final router = GoRouter(initialLocation: '/', routes: routes);
@@ -82,6 +79,7 @@ void main() {
     await tester.pump(const Duration(milliseconds: 400));
   }
 
+  tearDown(() => sandbox.dispose());
   group('Account standard controls section', () {
     testWidgets('shows the six standard control buttons', (tester) async {
       await pumpAccount(tester);
@@ -95,10 +93,19 @@ void main() {
         findsOneWidget,
       );
       expect(find.text(AccountPrivacyControlsCopy.deleteEntry), findsOneWidget);
-      expect(find.text(AccountPrivacyControlsCopy.correctEntry), findsOneWidget);
+      expect(
+        find.text(AccountPrivacyControlsCopy.correctEntry),
+        findsOneWidget,
+      );
       expect(find.text(AccountPrivacyControlsCopy.export), findsOneWidget);
-      expect(find.text(AccountPrivacyControlsCopy.clearArchive), findsOneWidget);
-      expect(find.text(AccountPrivacyControlsCopy.privacyPolicy), findsOneWidget);
+      expect(
+        find.text(AccountPrivacyControlsCopy.clearArchive),
+        findsOneWidget,
+      );
+      expect(
+        find.text(AccountPrivacyControlsCopy.privacyPolicy),
+        findsOneWidget,
+      );
       expect(find.text(AccountPrivacyControlsCopy.support), findsOneWidget);
     });
 

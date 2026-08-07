@@ -19,26 +19,24 @@ enum RevenueFunnelEvent {
   final String id;
 
   bool get isValueEvent => switch (this) {
-        RevenueFunnelEvent.firstProofSeen ||
-        RevenueFunnelEvent.proLockSeen ||
-        RevenueFunnelEvent.monthlyReportPreviewSeen ||
-        RevenueFunnelEvent.backupBridgeSeen ||
-        RevenueFunnelEvent.proEvidenceValueSeen ||
-        RevenueFunnelEvent.paywallSeen =>
-          true,
-        _ => false,
-      };
+    RevenueFunnelEvent.firstProofSeen ||
+    RevenueFunnelEvent.proLockSeen ||
+    RevenueFunnelEvent.monthlyReportPreviewSeen ||
+    RevenueFunnelEvent.backupBridgeSeen ||
+    RevenueFunnelEvent.proEvidenceValueSeen ||
+    RevenueFunnelEvent.paywallSeen => true,
+    _ => false,
+  };
 
   bool get isCtaEvent => switch (this) {
-        RevenueFunnelEvent.proLockCtaTapped ||
-        RevenueFunnelEvent.monthlyReportPreviewCtaTapped ||
-        RevenueFunnelEvent.backupBridgeCtaTapped ||
-        RevenueFunnelEvent.proEvidenceValueCtaTapped ||
-        RevenueFunnelEvent.paywallPurchaseCtaTapped ||
-        RevenueFunnelEvent.paywallRestoreTapped =>
-          true,
-        _ => false,
-      };
+    RevenueFunnelEvent.proLockCtaTapped ||
+    RevenueFunnelEvent.monthlyReportPreviewCtaTapped ||
+    RevenueFunnelEvent.backupBridgeCtaTapped ||
+    RevenueFunnelEvent.proEvidenceValueCtaTapped ||
+    RevenueFunnelEvent.paywallPurchaseCtaTapped ||
+    RevenueFunnelEvent.paywallRestoreTapped => true,
+    _ => false,
+  };
 
   bool get isDismissEvent => this == RevenueFunnelEvent.paywallDismissed;
 }

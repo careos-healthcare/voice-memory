@@ -31,32 +31,31 @@ JournalEntry _entry({
   String transcript =
       'I felt pressure at work before saying yes again even when I was tired.',
   DateTime? createdAt,
-}) =>
-    JournalEntry(
-      id: id,
-      createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
-      transcript: transcript,
-      durationSeconds: 30,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 2,
-        recurringThemes: ['work'],
-        exactLanguagePattern: '',
-        concreteObservation: 'Work pressure showed up in this moment.',
-        repeatedSignal: '',
-      ),
-    );
+}) => JournalEntry(
+  id: id,
+  createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
+  transcript: transcript,
+  durationSeconds: 30,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 2,
+    recurringThemes: ['work'],
+    exactLanguagePattern: '',
+    concreteObservation: 'Work pressure showed up in this moment.',
+    repeatedSignal: '',
+  ),
+);
 
 List<JournalEntry> _entries(int count) => List.generate(
-      count,
-      (i) => _entry(
-        id: 'e$i',
-        transcript:
-            'I felt pressure at work before saying yes again even when I was tired moment $i.',
-        createdAt: DateTime(2026, 6, 9 + i, 12),
-      ),
-    );
+  count,
+  (i) => _entry(
+    id: 'e$i',
+    transcript:
+        'I felt pressure at work before saying yes again even when I was tired moment $i.',
+    createdAt: DateTime(2026, 6, 9 + i, 12),
+  ),
+);
 
 const _bannedWords = [
   'diagnosis',
@@ -137,18 +136,21 @@ void main() {
       for (final step in VisibleArchiveProofCopy.firstRunPromiseSteps) {
         expect(find.text(step), findsOneWidget);
       }
-      expect(find.text(RecordScreenFramingCopy.firstRunPrivacyTitle), findsOneWidget);
+      expect(
+        find.text(RecordScreenFramingCopy.firstRunPrivacyTitle),
+        findsOneWidget,
+      );
       expect(find.textContaining('VoiceMemory'), findsNothing);
       _expectNoBannedCopy(VisibleArchiveProofCopy.firstRunPromiseSteps);
     });
 
-    testWidgets('Type Instead path is available without microphone', (tester) async {
+    testWidgets('Type Instead path is available without microphone', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           theme: AppTheme.light(),
-          home: Scaffold(
-            body: CaptureEntryActions(onRecord: () {}),
-          ),
+          home: Scaffold(body: CaptureEntryActions(onRecord: () {})),
         ),
       );
       await tester.pump();
@@ -166,7 +168,9 @@ void main() {
   });
 
   group('First saved entry payoff', () {
-    testWidgets('first save card stays calm without overclaiming', (tester) async {
+    testWidgets('first save card stays calm without overclaiming', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           theme: AppTheme.light(),
@@ -181,8 +185,14 @@ void main() {
       );
       await tester.pump();
 
-      expect(find.text(VisibleArchiveProofCopy.firstSavePostSaveTitle), findsOneWidget);
-      expect(find.text(VisibleArchiveProofCopy.firstSavePostSaveReassurance), findsOneWidget);
+      expect(
+        find.text(VisibleArchiveProofCopy.firstSavePostSaveTitle),
+        findsOneWidget,
+      );
+      expect(
+        find.text(VisibleArchiveProofCopy.firstSavePostSaveReassurance),
+        findsOneWidget,
+      );
       expect(find.textContaining('compare what repeats'), findsOneWidget);
       expect(find.textContaining('VoiceMemory'), findsNothing);
       _expectNoBannedCopy([
@@ -208,20 +218,26 @@ void main() {
       expect(home.suppressDuplicatePayoffCards, isTrue);
     });
 
-    test('2-entry workspace shows comparison guidance without overclaiming', () {
-      final home = ArchiveHomeSummaryEngine.build(entries: _entries(2));
-      final quickActions = _quickActions(_entries(2));
+    test(
+      '2-entry workspace shows comparison guidance without overclaiming',
+      () {
+        final home = ArchiveHomeSummaryEngine.build(entries: _entries(2));
+        final quickActions = _quickActions(_entries(2));
 
-      expect(home.stage, ArchiveHomeStage.two);
-      expect(home.title, VisibleArchiveProofCopy.twoEntryCompareTitle);
-      expect(home.body.toLowerCase(), isNot(contains('pattern found')));
-      expect(home.footnoteLine, VisibleArchiveProofCopy.firstRunBeliefsNotConclusionsLine);
-      expect(
-        quickActions.actions.map((a) => a.kind),
-        isNot(contains(ArchiveWorkspaceQuickActionKind.addMoment)),
-      );
-      _expectNoBannedCopy([home.title, home.body]);
-    });
+        expect(home.stage, ArchiveHomeStage.two);
+        expect(home.title, VisibleArchiveProofCopy.twoEntryCompareTitle);
+        expect(home.body.toLowerCase(), isNot(contains('pattern found')));
+        expect(
+          home.footnoteLine,
+          VisibleArchiveProofCopy.firstRunBeliefsNotConclusionsLine,
+        );
+        expect(
+          quickActions.actions.map((a) => a.kind),
+          isNot(contains(ArchiveWorkspaceQuickActionKind.addMoment)),
+        );
+        _expectNoBannedCopy([home.title, home.body]);
+      },
+    );
 
     test('3-entry state can show cautious belief payoff', () {
       final home = ArchiveHomeSummaryEngine.build(entries: _entries(3));
@@ -255,7 +271,10 @@ void main() {
       await tester.pump();
 
       expect(find.text(PrivacyDataControlsCopy.sectionTitle), findsOneWidget);
-      expect(find.byKey(const Key('privacy_data_stays_on_device_tile')), findsOneWidget);
+      expect(
+        find.byKey(const Key('privacy_data_stays_on_device_tile')),
+        findsOneWidget,
+      );
     });
   });
 
@@ -274,7 +293,11 @@ void main() {
       ];
       for (final text in archiveMeStrings) {
         expect(text, contains('ArchiveMe'), reason: text);
-        expect(text.toLowerCase(), isNot(contains('voicememory')), reason: text);
+        expect(
+          text.toLowerCase(),
+          isNot(contains('voicememory')),
+          reason: text,
+        );
       }
       expect(
         VisibleArchiveProofCopy.typeInsteadCta.toLowerCase(),
@@ -284,7 +307,9 @@ void main() {
     });
 
     test('0-entry hints stay calm', () {
-      final hints = ArchiveWorkspaceHintsEngine.build(layout: _layout(const []));
+      final hints = ArchiveWorkspaceHintsEngine.build(
+        layout: _layout(const []),
+      );
       expect(hints.introHint, isNotNull);
       expect(hints.needsAttentionHint, isNull);
     });

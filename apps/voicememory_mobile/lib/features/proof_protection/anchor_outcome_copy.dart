@@ -11,44 +11,36 @@ abstract final class AnchorOutcomeCopy {
   static AnchorOutcomeReport report(
     AnchorOutcomeSummary summary,
     AnchorOutcomeDecision decision,
-  ) =>
-      AnchorOutcomeReport(
-        title: titleFor(decision),
-        body: bodyFor(decision),
-        nextAction: nextActionFor(decision),
-        guardrail: guardrail,
-      );
+  ) => AnchorOutcomeReport(
+    title: titleFor(decision),
+    body: bodyFor(decision),
+    nextAction: nextActionFor(decision),
+    guardrail: guardrail,
+  );
 
-  static String titleFor(AnchorOutcomeDecision decision) =>
-      switch (decision) {
-        AnchorOutcomeDecision.insufficientData =>
-          'Not enough anchor data yet',
-        AnchorOutcomeDecision.anchorsStillTooLoose =>
-          'Anchors are still too loose',
-        AnchorOutcomeDecision.anchorsTooStrict =>
-          'Anchors may be too strict',
-        AnchorOutcomeDecision.proofStableReturnToEvidenceTrail =>
-          'Proof is stable',
-        AnchorOutcomeDecision.productionCandidate =>
-          'Proof and value signals pass',
-      };
+  static String titleFor(AnchorOutcomeDecision decision) => switch (decision) {
+    AnchorOutcomeDecision.insufficientData => 'Not enough anchor data yet',
+    AnchorOutcomeDecision.anchorsStillTooLoose => 'Anchors are still too loose',
+    AnchorOutcomeDecision.anchorsTooStrict => 'Anchors may be too strict',
+    AnchorOutcomeDecision.proofStableReturnToEvidenceTrail => 'Proof is stable',
+    AnchorOutcomeDecision.productionCandidate => 'Proof and value signals pass',
+  };
 
-  static String bodyFor(AnchorOutcomeDecision decision) =>
-      switch (decision) {
-        AnchorOutcomeDecision.insufficientData =>
-          'Build 64 does not yet have enough testers to choose the next anchor move.',
-        AnchorOutcomeDecision.anchorsStillTooLoose =>
-          'Too many testers still mark proof as too vague or not relevant after '
+  static String bodyFor(AnchorOutcomeDecision decision) => switch (decision) {
+    AnchorOutcomeDecision.insufficientData =>
+      'Build 64 does not yet have enough testers to choose the next anchor move.',
+    AnchorOutcomeDecision.anchorsStillTooLoose =>
+      'Too many testers still mark proof as too vague or not relevant after '
           'tightening anchors.',
-        AnchorOutcomeDecision.anchorsTooStrict =>
-          'Useful proof is below the Build 64 target after tightening anchors.',
-        AnchorOutcomeDecision.proofStableReturnToEvidenceTrail =>
-          'Anchor quality is holding, but evidence-trail and value signals still '
+    AnchorOutcomeDecision.anchorsTooStrict =>
+      'Useful proof is below the Build 64 target after tightening anchors.',
+    AnchorOutcomeDecision.proofStableReturnToEvidenceTrail =>
+      'Anchor quality is holding, but evidence-trail and value signals still '
           'need work.',
-        AnchorOutcomeDecision.productionCandidate =>
-          'Useful proof, anchor quality, specific proof recall, Pro understanding, '
+    AnchorOutcomeDecision.productionCandidate =>
+      'Useful proof, anchor quality, specific proof recall, Pro understanding, '
           'and would-pay intent are all holding.',
-      };
+  };
 
   static String nextActionFor(AnchorOutcomeDecision decision) =>
       switch (decision) {

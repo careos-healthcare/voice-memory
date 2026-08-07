@@ -164,7 +164,9 @@ void main() {
       final pullRecords = await CapacityPullReasonStore.instance().loadAll();
       expect(saveResult.savedPullReason, isTrue);
       expect(pullRecords, hasLength(1));
-      expect(pullRecords.first.reasonIds, [CapacityPullReasonIds.soundedUrgent]);
+      expect(pullRecords.first.reasonIds, [
+        CapacityPullReasonIds.soundedUrgent,
+      ]);
     });
 
     test('selected decision outcome is saved using fixed IDs', () async {
@@ -180,39 +182,45 @@ void main() {
         ),
       );
 
-      final outcomeRecords =
-          await CapacityDecisionOutcomeStore.instance().loadAll();
+      final outcomeRecords = await CapacityDecisionOutcomeStore.instance()
+          .loadAll();
       expect(outcomeRecords, hasLength(1));
-      expect(outcomeRecords.first.outcomeId, CapacityDecisionOutcomeIds.delayed);
+      expect(
+        outcomeRecords.first.outcomeId,
+        CapacityDecisionOutcomeIds.delayed,
+      );
     });
 
-    test('quick capture creates capacity moment without transcript text', () async {
-      final stamp = DateTime.now().microsecondsSinceEpoch.toString();
-      await _resetStores(stamp);
+    test(
+      'quick capture creates capacity moment without transcript text',
+      () async {
+        final stamp = DateTime.now().microsecondsSinceEpoch.toString();
+        await _resetStores(stamp);
 
-      await engine.saveQuickCapture(
-        journal: AppServices.instance.journalStore,
-        request: const LowEffortYesCaptureSaveRequest(
-          pullReasonId: CapacityPullReasonIds.wantedOpportunity,
-          timingId: YesCaptureTimingIds.laterCost,
-        ),
-      );
+        await engine.saveQuickCapture(
+          journal: AppServices.instance.journalStore,
+          request: const LowEffortYesCaptureSaveRequest(
+            pullReasonId: CapacityPullReasonIds.wantedOpportunity,
+            timingId: YesCaptureTimingIds.laterCost,
+          ),
+        );
 
-      final entries = await AppServices.instance.journalStore.loadAll();
-      expect(entries, hasLength(1));
-      final entry = entries.first;
-      expect(entry.transcript, isEmpty);
-      expect(
-        entry.captureContextTag,
-        LowEffortYesCaptureIds.contextTagForTiming(
-          YesCaptureTimingIds.laterCost,
-        ),
-      );
-      expect(
-        loopEngine.eligibleCapacityEntryIds(entries),
-        contains(entry.id),
-      );
-    });
+        final entries = await AppServices.instance.journalStore.loadAll();
+        expect(entries, hasLength(1));
+        final entry = entries.first;
+        expect(entry.transcript, isEmpty);
+        expect(
+          entry.captureContextTag,
+          LowEffortYesCaptureIds.contextTagForTiming(
+            YesCaptureTimingIds.laterCost,
+          ),
+        );
+        expect(
+          loopEngine.eligibleCapacityEntryIds(entries),
+          contains(entry.id),
+        );
+      },
+    );
 
     test('no private transcript text is stored', () async {
       final stamp = DateTime.now().microsecondsSinceEpoch.toString();
@@ -229,13 +237,18 @@ void main() {
       final entries = await AppServices.instance.journalStore.loadAll();
       for (final entry in entries) {
         expect(entry.transcript, isEmpty);
-        expect(entry.transcript.toLowerCase(), isNot(contains(_privateSnippet)));
+        expect(
+          entry.transcript.toLowerCase(),
+          isNot(contains(_privateSnippet)),
+        );
       }
     });
   });
 
   group('LowEffortYesCaptureCard', () {
-    testWidgets('hidden for generic users without capacity context', (tester) async {
+    testWidgets('hidden for generic users without capacity context', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           theme: AppTheme.light(),
@@ -253,7 +266,10 @@ void main() {
         ),
       );
 
-      expect(find.byKey(const Key('low_effort_yes_capture_card_hidden')), findsOneWidget);
+      expect(
+        find.byKey(const Key('low_effort_yes_capture_card_hidden')),
+        findsOneWidget,
+      );
     });
 
     testWidgets('visible for capacity-yes users', (tester) async {
@@ -266,12 +282,20 @@ void main() {
         ),
       );
 
-      expect(find.byKey(const Key('low_effort_yes_capture_card')), findsOneWidget);
+      expect(
+        find.byKey(const Key('low_effort_yes_capture_card')),
+        findsOneWidget,
+      );
       expect(find.text('Quick yes moment'), findsOneWidget);
-      expect(find.textContaining('No need to explain everything'), findsOneWidget);
+      expect(
+        find.textContaining('No need to explain everything'),
+        findsOneWidget,
+      );
     });
 
-    testWidgets('hidden when engine returns hidden (screenshot path)', (tester) async {
+    testWidgets('hidden when engine returns hidden (screenshot path)', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           theme: AppTheme.light(),
@@ -289,7 +313,10 @@ void main() {
         ),
       );
 
-      expect(find.byKey(const Key('low_effort_yes_capture_card_hidden')), findsOneWidget);
+      expect(
+        find.byKey(const Key('low_effort_yes_capture_card_hidden')),
+        findsOneWidget,
+      );
     });
 
     testWidgets('hidden for sample mode', (tester) async {
@@ -305,10 +332,15 @@ void main() {
         ),
       );
 
-      expect(find.byKey(const Key('low_effort_yes_capture_card_hidden')), findsOneWidget);
+      expect(
+        find.byKey(const Key('low_effort_yes_capture_card_hidden')),
+        findsOneWidget,
+      );
     });
 
-    testWidgets('normal recording remains available via Record instead', (tester) async {
+    testWidgets('normal recording remains available via Record instead', (
+      tester,
+    ) async {
       final router = GoRouter(
         routes: [
           GoRoute(
@@ -326,7 +358,9 @@ void main() {
       );
 
       await tester.pumpWidget(MaterialApp.router(routerConfig: router));
-      await tester.tap(find.byKey(const Key('low_effort_yes_capture_card_record_instead')));
+      await tester.tap(
+        find.byKey(const Key('low_effort_yes_capture_card_record_instead')),
+      );
       await tester.pumpAndSettle();
 
       expect(find.text('record screen'), findsOneWidget);
@@ -350,7 +384,9 @@ void main() {
       );
 
       await tester.pumpWidget(MaterialApp.router(routerConfig: router));
-      await tester.tap(find.byKey(const Key('low_effort_yes_capture_card_quick_save')));
+      await tester.tap(
+        find.byKey(const Key('low_effort_yes_capture_card_quick_save')),
+      );
       await tester.pumpAndSettle();
 
       expect(find.text('quick capture screen'), findsOneWidget);
@@ -438,9 +474,8 @@ void main() {
         routes: [
           GoRoute(
             path: '/',
-            builder: (context, state) => Scaffold(
-              body: CapacityThreeMomentCard(result: result),
-            ),
+            builder: (context, state) =>
+                Scaffold(body: CapacityThreeMomentCard(result: result)),
           ),
           GoRoute(
             path: '/quick-yes-capture',

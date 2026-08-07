@@ -1,5 +1,3 @@
-import 'proof_value_bottleneck_playbook_copy.dart';
-
 enum ProofValueBottleneckPlaybookId {
   runMoreTesters,
   fixFirstUse,
@@ -54,15 +52,15 @@ class ProofValueBottleneckPlaybookReport {
   final ProofValueBottleneckPlaybookEntry entry;
 
   List<String> get visibleCopyBlocks => [
-        title,
-        subtitle,
-        activeRecommendation,
-        entry.summaryLine,
-        entry.meaning,
-        entry.fixArea,
-        ...entry.inspectSurfaces,
-        entry.guardrail,
-        ...entry.suggestedTestFiles,
-        entry.testCommand,
-      ];
+    title,
+    subtitle,
+    activeRecommendation,
+    entry.summaryLine,
+    entry.meaning,
+    entry.fixArea,
+    ...entry.inspectSurfaces,
+    entry.guardrail,
+    ...entry.suggestedTestFiles,
+    entry.testCommand,
+  ];
 }

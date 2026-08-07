@@ -13,7 +13,6 @@ import 'package:voicememory_mobile/features/early_archive/private_archive_report
 import 'package:voicememory_mobile/features/interpretation/interpretation_quality_engine.dart';
 import 'package:voicememory_mobile/features/timeline/timeline_entry_display.dart';
 import 'package:voicememory_mobile/features/trust/pending_transcript_recovery_copy.dart';
-import 'package:voicememory_mobile/features/voice_capture/voice_capture_copy.dart';
 import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/models/sync_status.dart';
@@ -30,37 +29,37 @@ const _aiObservation =
     'I felt pressure to say yes before checking my capacity again today.';
 
 JournalEntry _voicePlaceholder({String observation = ''}) => JournalEntry(
-      id: 'v1',
-      createdAt: DateTime(2026, 6, 12),
-      transcript: _placeholder,
-      durationSeconds: 20,
-      localAudioPath: '/tmp/audio.m4a',
-      reflection: Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 2,
-        recurringThemes: const [],
-        exactLanguagePattern: '',
-        concreteObservation: observation,
-        repeatedSignal: '',
-      ),
-      syncStatus: SyncStatus.localOnly,
-    );
+  id: 'v1',
+  createdAt: DateTime(2026, 6, 12),
+  transcript: _placeholder,
+  durationSeconds: 20,
+  localAudioPath: '/tmp/audio.m4a',
+  reflection: Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 2,
+    recurringThemes: const [],
+    exactLanguagePattern: '',
+    concreteObservation: observation,
+    repeatedSignal: '',
+  ),
+  syncStatus: SyncStatus.localOnly,
+);
 
 JournalEntry _textEntry(String id, String transcript) => JournalEntry(
-      id: id,
-      createdAt: DateTime(2026, 6, 12, 10 + id.hashCode % 5),
-      transcript: transcript,
-      durationSeconds: 24,
-      reflection: const Reflection(
-        mood: 'thoughtful',
-        emotionalIntensity: 2,
-        recurringThemes: ['work'],
-        exactLanguagePattern: '',
-        concreteObservation: 'Work pressure showed up again today.',
-        repeatedSignal: '',
-      ),
-      syncStatus: SyncStatus.localOnly,
-    );
+  id: id,
+  createdAt: DateTime(2026, 6, 12, 10 + id.hashCode % 5),
+  transcript: transcript,
+  durationSeconds: 24,
+  reflection: const Reflection(
+    mood: 'thoughtful',
+    emotionalIntensity: 2,
+    recurringThemes: ['work'],
+    exactLanguagePattern: '',
+    concreteObservation: 'Work pressure showed up again today.',
+    repeatedSignal: '',
+  ),
+  syncStatus: SyncStatus.localOnly,
+);
 
 void main() {
   group('ComparableEvidenceText', () {
@@ -108,14 +107,20 @@ void main() {
       final entries = [
         _voicePlaceholder(observation: _aiObservation),
         _textEntry('2', _realText),
-        _textEntry('3', 'Another long enough reflection about saying yes again.'),
+        _textEntry(
+          '3',
+          'Another long enough reflection about saying yes again.',
+        ),
       ];
       final eligible = ArchiveEvidenceGuard.eligibleEntries(
         entries,
         analyticsSource: 'test',
       );
       expect(eligible.length, 2);
-      expect(eligible.every((e) => !e.transcript.startsWith('[draft]')), isTrue);
+      expect(
+        eligible.every((e) => !e.transcript.startsWith('[draft]')),
+        isTrue,
+      );
     });
   });
 
@@ -167,16 +172,22 @@ void main() {
       expect(belief, isNull);
     });
 
-    test('adaptive daily question does not extract phrase from placeholder', () {
-      final entries = List.generate(
-        3,
-        (i) => _voicePlaceholder(observation: _aiObservation),
-      );
-      final question = AdaptiveDailyQuestionEngine.build(entries: entries);
-      expect(question?.usesPhrase, isNot(true));
-      expect(question?.questionText.contains('[draft]'), isNot(true));
-      expect(question?.questionText.contains('transcribe when connected'), isNot(true));
-    });
+    test(
+      'adaptive daily question does not extract phrase from placeholder',
+      () {
+        final entries = List.generate(
+          3,
+          (i) => _voicePlaceholder(observation: _aiObservation),
+        );
+        final question = AdaptiveDailyQuestionEngine.build(entries: entries);
+        expect(question.usesPhrase, isNot(true));
+        expect(question.questionText.contains('[draft]'), isNot(true));
+        expect(
+          question.questionText.contains('transcribe when connected'),
+          isNot(true),
+        );
+      },
+    );
 
     test('private archive report excludes placeholder evidence', () {
       final report = PrivateArchiveReportEngine.build(
@@ -221,7 +232,9 @@ void main() {
       expect(find.textContaining('Saying yes'), findsNothing);
     });
 
-    testWidgets('Record post-save shows transcript pending copy', (tester) async {
+    testWidgets('Record post-save shows transcript pending copy', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -230,16 +243,13 @@ void main() {
         ),
       );
 
-      expect(
-        find.text(PendingTranscriptRecoveryCopy.title),
-        findsOneWidget,
-      );
-      expect(
-        find.text(PendingTranscriptRecoveryCopy.body),
-        findsOneWidget,
-      );
+      expect(find.text(PendingTranscriptRecoveryCopy.title), findsOneWidget);
+      expect(find.text(PendingTranscriptRecoveryCopy.body), findsOneWidget);
       expect(find.textContaining('[draft]'), findsNothing);
-      expect(find.textContaining(ConsumerUiCopy.postSaveInsightFeelsTrue), findsNothing);
+      expect(
+        find.textContaining(ConsumerUiCopy.postSaveInsightFeelsTrue),
+        findsNothing,
+      );
     });
 
     test('entry detail pending view uses neutral recovery copy', () {

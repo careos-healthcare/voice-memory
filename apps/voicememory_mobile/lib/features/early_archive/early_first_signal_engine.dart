@@ -135,7 +135,6 @@ abstract final class EarlyFirstSignalEngine {
 
   static const _signalEngine = SecondSessionSignalEngine();
   static const _journeyEngine = FirstThreeJourneyEngine();
-  static const _maxSnippetLength = 72;
 
   static const _softeningPhrases = [
     'easier',
@@ -235,7 +234,8 @@ abstract final class EarlyFirstSignalEngine {
     if (eligible.length < 3) return false;
     if (!hasConfirmedRepeatAcrossThree(eligible.sublist(0, 3))) return false;
 
-    final hasSofteningContext = hasSofteningReturnEvidence(entries) ||
+    final hasSofteningContext =
+        hasSofteningReturnEvidence(entries) ||
         buildChangeNotice(entries: entries) != null;
     if (!hasSofteningContext) return false;
 
@@ -268,9 +268,7 @@ abstract final class EarlyFirstSignalEngine {
   }
 
   /// Returns a card model for 1–3 eligible entries when early proof applies.
-  static EarlyFirstSignalModel? build({
-    required List<JournalEntry> entries,
-  }) {
+  static EarlyFirstSignalModel? build({required List<JournalEntry> entries}) {
     if (!ArchiveEvidenceQualityGate.allowsEarlySignals(entries)) return null;
 
     final eligible = ArchiveEvidenceGuard.eligibleEntries(entries);
@@ -310,9 +308,9 @@ abstract final class EarlyFirstSignalEngine {
       final isStrong = evidence.isStrong;
       final groundedPhrases =
           ConfirmedRepeatEvidencePhraseEngine.groundedPhrases(
-        evidence.phrases,
-        eligible,
-      );
+            evidence.phrases,
+            eligible,
+          );
 
       final summaryLines = <String>[
         if (isStrong)
@@ -369,8 +367,10 @@ abstract final class EarlyFirstSignalEngine {
           ? '${insight.triggerSummary!} That gives ArchiveMe stronger evidence for what starts this loop.'
           : EarlyArchiveInsightQualityCopy.triggerPayoffBodyFallback,
       evidenceLines: [
-        insight.repeatSummary ?? EarlyFirstSignalCopy.triggerPayoffRepeatEvidence,
-        insight.triggerSummary ?? EarlyFirstSignalCopy.triggerPayoffTriggerEvidence,
+        insight.repeatSummary ??
+            EarlyFirstSignalCopy.triggerPayoffRepeatEvidence,
+        insight.triggerSummary ??
+            EarlyFirstSignalCopy.triggerPayoffTriggerEvidence,
       ],
       primaryCta: EarlyFirstSignalCopy.triggerPayoffPrimaryCta,
       secondaryCta: EarlyFirstSignalCopy.viewEvidenceCta,
@@ -397,10 +397,12 @@ abstract final class EarlyFirstSignalEngine {
 
     return ConfirmedRepeatChangeNotice(
       title: EarlyFirstSignalCopy.changeNoticeTitle,
-      body: insight.softeningSummary ??
+      body:
+          insight.softeningSummary ??
           EarlyArchiveInsightQualityCopy.changeNoticeBodyFallback,
       evidenceLines: [
-        insight.repeatSummary ?? EarlyFirstSignalCopy.changeNoticeRepeatEvidence,
+        insight.repeatSummary ??
+            EarlyFirstSignalCopy.changeNoticeRepeatEvidence,
         _softeningEvidenceLine(insight.softeningSummary) ??
             EarlyFirstSignalCopy.changeNoticeChangeEvidence,
       ],
@@ -428,7 +430,8 @@ abstract final class EarlyFirstSignalEngine {
 
     return ConfirmedRepeatHelpfulActionPayoff(
       title: EarlyFirstSignalCopy.helpfulActionPayoffTitle,
-      body: insight.helpfulActionSummary ??
+      body:
+          insight.helpfulActionSummary ??
           EarlyArchiveInsightQualityCopy.helpfulActionPayoffBodyFallback,
       evidenceLines: [
         insight.repeatSummary ??
@@ -441,24 +444,6 @@ abstract final class EarlyFirstSignalEngine {
       primaryCta: EarlyFirstSignalCopy.triggerPayoffPrimaryCta,
       secondaryCta: EarlyFirstSignalCopy.viewEvidenceCta,
     );
-  }
-
-  static List<EarlyFirstSignalEvidenceRow> _evidenceRows(
-    List<JournalEntry> eligible,
-  ) {
-    final rows = <EarlyFirstSignalEvidenceRow>[];
-    for (final entry in eligible) {
-      final snippet = _snippet(_entryText(entry));
-      if (snippet.isEmpty) continue;
-      rows.add(
-        EarlyFirstSignalEvidenceRow(
-          timestampLabel: _timestampLabel(entry.createdAt),
-          snippet: snippet,
-        ),
-      );
-    }
-    if (rows.length <= 3) return rows;
-    return rows.sublist(rows.length - 3);
   }
 
   static String? _softeningEvidenceLine(String? softeningSummary) {
@@ -480,30 +465,5 @@ abstract final class EarlyFirstSignalEngine {
     final resolution = resolveEntryDisplayText(entry);
     if (resolution.text.isNotEmpty) return resolution.text.trim();
     return entry.transcript.trim();
-  }
-
-  static String _snippet(String text) {
-    final trimmed = text.trim();
-    if (trimmed.isEmpty) return '';
-    if (trimmed.length <= _maxSnippetLength) return trimmed;
-    return '${trimmed.substring(0, _maxSnippetLength - 1)}…';
-  }
-
-  static String _timestampLabel(DateTime createdAt) {
-    const months = [
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'May',
-      'Jun',
-      'Jul',
-      'Aug',
-      'Sep',
-      'Oct',
-      'Nov',
-      'Dec',
-    ];
-    return '${months[createdAt.month - 1]} ${createdAt.day}';
   }
 }

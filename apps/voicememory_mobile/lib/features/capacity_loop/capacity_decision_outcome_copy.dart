@@ -18,12 +18,12 @@ abstract final class CapacityDecisionOutcomeCopy {
   static const outcomeNotSure = 'Not sure yet';
 
   static String labelForOutcome(String id) => switch (id) {
-        CapacityDecisionOutcomeIds.saidYes => outcomeSaidYes,
-        CapacityDecisionOutcomeIds.saidNo => outcomeSaidNo,
-        CapacityDecisionOutcomeIds.delayed => outcomeDelayed,
-        CapacityDecisionOutcomeIds.notSure => outcomeNotSure,
-        _ => id,
-      };
+    CapacityDecisionOutcomeIds.saidYes => outcomeSaidYes,
+    CapacityDecisionOutcomeIds.saidNo => outcomeSaidNo,
+    CapacityDecisionOutcomeIds.delayed => outcomeDelayed,
+    CapacityDecisionOutcomeIds.notSure => outcomeNotSure,
+    _ => id,
+  };
 
   static String outcomeMarkedCount(int count) =>
       'Outcome marked on $count moment${count == 1 ? '' : 's'}.';
@@ -38,16 +38,16 @@ abstract final class CapacityDecisionOutcomeCopy {
       'Some moments show the pattern may have changed.';
 
   static List<String> allVisibleStrings() => [
-        cardTitle,
-        cardBody,
-        cardHelper,
-        saveOutcomeCta,
-        skipCta,
-        outcomeSaidYes,
-        outcomeSaidNo,
-        outcomeDelayed,
-        outcomeNotSure,
-        outcomeStrengthenPrompt,
-        patternMayHaveChanged,
-      ];
+    cardTitle,
+    cardBody,
+    cardHelper,
+    saveOutcomeCta,
+    skipCta,
+    outcomeSaidYes,
+    outcomeSaidNo,
+    outcomeDelayed,
+    outcomeNotSure,
+    outcomeStrengthenPrompt,
+    patternMayHaveChanged,
+  ];
 }

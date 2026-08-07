@@ -1,3 +1,4 @@
+import 'package:voicememory_mobile/config/app_config.dart';
 import 'package:voicememory_mobile/features/come_back_tomorrow/come_back_tomorrow_v2_store.dart';
 import 'package:voicememory_mobile/features/first_proof_truth/first_proof_truth_store.dart';
 import 'package:voicememory_mobile/features/helped_tracking/helped_tracking_store.dart';
@@ -8,7 +9,7 @@ import 'package:voicememory_mobile/features/archive_backup_bridge/archive_backup
 import 'package:voicememory_mobile/features/monthly_private_report/monthly_private_report_analytics.dart';
 import 'package:voicememory_mobile/features/monthly_private_report/monthly_private_report_dismiss_store.dart';
 import 'package:voicememory_mobile/features/pro_evidence_value/pro_evidence_value_dismiss_store.dart';
-import 'package:voicememory_mobile/billing/paywall_objection_follow_up.dart';
+import 'package:voicememory_mobile/billing/paywall_session_tracker.dart';
 import 'package:voicememory_mobile/features/pro_bridge_visibility/delayed_paywall_proof_store.dart';
 import 'package:voicememory_mobile/features/pro_lock_moment/pro_lock_moment_analytics.dart';
 import 'package:voicememory_mobile/features/pro_lock_moment/pro_lock_moment_dismiss_store.dart';
@@ -27,6 +28,7 @@ abstract final class ReleaseSuiteStaticStateReset {
 
   /// Safe before each test even when [AppServices] is not initialized.
   static Future<void> resetCachedState() async {
+    AppConfig.configureForTest();
     await ComeBackTomorrowV2Store.resetForTest(null);
     FirstProofTruthStore.invalidateCache();
     WhatChangedV2Store.invalidateCache();
@@ -47,7 +49,7 @@ abstract final class ReleaseSuiteStaticStateReset {
     BetaFeedbackIntelligenceStore.invalidateSessionForTest();
     RevenueFunnelAnalytics.resetForTest();
     DelayedPaywallProofStore.bypassGateForTest = true;
-    PaywallObjectionFollowUp.resetSessionForTest();
+    livePaywallSessionTracker.resetSession();
   }
 
   /// Clears prefs-backed state after [AppServices.resetForTest].

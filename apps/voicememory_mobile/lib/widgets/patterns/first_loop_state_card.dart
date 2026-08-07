@@ -23,7 +23,7 @@ class FirstLoopStateCard extends StatelessWidget {
   final String? question;
 
   static const Color _surface = Color(0xFFFFFBF5);
-  static const Color _border = Color(0xFFF5E6D3);
+  static const Color _border = AppColors.warmBorder;
 
   String get _title {
     switch (phase) {

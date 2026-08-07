@@ -1,8 +1,5 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:go_router/go_router.dart';
 import 'package:voicememory_mobile/billing/archive_entitlement_reader.dart';
 import 'package:voicememory_mobile/dev/visual_audit_overrides.dart';
 import 'package:voicememory_mobile/features/archive_proof/proof_surface_advice_guard.dart';
@@ -20,7 +17,7 @@ import 'package:voicememory_mobile/features/low_evidence/low_evidence_engine.dar
 import 'package:voicememory_mobile/features/pattern_detail/pattern_detail_engine.dart';
 import 'package:voicememory_mobile/features/return_day/return_day_flow_engine.dart';
 import 'package:voicememory_mobile/features/weekly_review/weekly_archive_review_engine.dart'
-    as weeklyReviewSurface;
+    as weekly_review_surface;
 import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/product/consumer_ui_copy.dart';
@@ -30,6 +27,7 @@ import 'package:voicememory_mobile/services/capture_save_messages.dart';
 import 'package:voicememory_mobile/theme/app_theme.dart';
 import 'package:voicememory_mobile/widgets/patterns/pattern_detail_sheet.dart';
 import 'package:voicememory_mobile/widgets/record/daily_archive_memory_card.dart';
+import 'support/test_storage_sandbox.dart';
 
 const _placeholder =
     '[draft] ${CaptureSaveMessages.recordingSavedLocally} — transcribe when connected';
@@ -39,95 +37,95 @@ JournalEntry _entry({
   required String transcript,
   DateTime? createdAt,
   String? localAudioPath,
-}) =>
-    JournalEntry(
-      id: id,
-      createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
-      transcript: transcript,
-      durationSeconds: 30,
-      localAudioPath: localAudioPath ?? '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 2,
-        recurringThemes: ['work'],
-        exactLanguagePattern: '',
-        concreteObservation: 'Work pressure showed up in this moment.',
-        repeatedSignal: '',
-      ),
-    );
+}) => JournalEntry(
+  id: id,
+  createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
+  transcript: transcript,
+  durationSeconds: 30,
+  localAudioPath: localAudioPath ?? '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 2,
+    recurringThemes: ['work'],
+    exactLanguagePattern: '',
+    concreteObservation: 'Work pressure showed up in this moment.',
+    repeatedSignal: '',
+  ),
+);
 
 List<JournalEntry> _threeRelatedRepeatEntries() => [
-      _entry(
-        id: 'e1',
-        transcript:
-            'I had no capacity but I said yes again to the extra meeting today.',
-        createdAt: DateTime(2026, 6, 10, 12),
-      ),
-      _entry(
-        id: 'e2',
-        transcript:
-            'Same thing — said yes when I had no capacity for one more thing.',
-        createdAt: DateTime(2026, 6, 11, 12),
-      ),
-      _entry(
-        id: 'e3',
-        transcript:
-            'I said yes again even though I had no capacity for one more ask.',
-        createdAt: DateTime(2026, 6, 12, 12),
-      ),
-    ];
+  _entry(
+    id: 'e1',
+    transcript:
+        'I had no capacity but I said yes again to the extra meeting today.',
+    createdAt: DateTime(2026, 6, 10, 12),
+  ),
+  _entry(
+    id: 'e2',
+    transcript:
+        'Same thing — said yes when I had no capacity for one more thing.',
+    createdAt: DateTime(2026, 6, 11, 12),
+  ),
+  _entry(
+    id: 'e3',
+    transcript:
+        'I said yes again even though I had no capacity for one more ask.',
+    createdAt: DateTime(2026, 6, 12, 12),
+  ),
+];
 
 List<JournalEntry> _fourRelatedRepeatEntries() => [
-      ..._threeRelatedRepeatEntries(),
-      _entry(
-        id: 'e4',
-        transcript:
-            'The meeting invite came in and I said yes again with no capacity left for it.',
-        createdAt: DateTime(2026, 6, 13, 12),
-      ),
-    ];
+  ..._threeRelatedRepeatEntries(),
+  _entry(
+    id: 'e4',
+    transcript:
+        'The meeting invite came in and I said yes again with no capacity left for it.',
+    createdAt: DateTime(2026, 6, 13, 12),
+  ),
+];
 
-JournalEntry _genericTestEntry({String id = 'g1'}) => _entry(
-      id: id,
-      transcript: 'This is a test to check function',
-    );
+JournalEntry _genericTestEntry({String id = 'g1'}) =>
+    _entry(id: id, transcript: 'This is a test to check function');
 
 JournalEntry _degradedVoiceEntry({String id = 'v1'}) => JournalEntry(
-      id: id,
-      createdAt: DateTime(2026, 6, 12, 12),
-      transcript: _placeholder,
-      durationSeconds: 20,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 0,
-        recurringThemes: [],
-        exactLanguagePattern: '',
-        concreteObservation: '',
-        repeatedSignal: '',
-      ),
-    );
+  id: id,
+  createdAt: DateTime(2026, 6, 12, 12),
+  transcript: _placeholder,
+  durationSeconds: 20,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 0,
+    recurringThemes: [],
+    exactLanguagePattern: '',
+    concreteObservation: '',
+    repeatedSignal: '',
+  ),
+);
 
 List<JournalEntry> _fiveRelatedRepeatEntries() => [
-      ..._fourRelatedRepeatEntries(),
-      _entry(
-        id: 'e5',
-        transcript:
-            'I said yes again even though I had no capacity for one more ask today.',
-        createdAt: DateTime(2026, 6, 14, 12),
-      ),
-    ];
+  ..._fourRelatedRepeatEntries(),
+  _entry(
+    id: 'e5',
+    transcript:
+        'I said yes again even though I had no capacity for one more ask today.',
+    createdAt: DateTime(2026, 6, 14, 12),
+  ),
+];
 
 void main() {
+  late TestStorageSandbox sandbox;
   setUp(() async {
+    sandbox = TestStorageSandbox.create();
     DailyArchiveMemoryAnalytics.resetForTest();
     await AppServices.resetForTest(
-      journalPath: '${DateTime.now().microsecondsSinceEpoch}_journal.json',
-      prefsPath: '${DateTime.now().microsecondsSinceEpoch}_prefs.json',
+      journalPath: sandbox.journalPath,
+      prefsPath: sandbox.prefsPath,
       skipRevenueCat: true,
     );
   });
 
+  tearDown(() => sandbox.dispose());
   tearDown(() {
     VisualAuditOverrides.setRecordPresentation(null);
   });
@@ -274,9 +272,21 @@ void main() {
       );
 
       for (final blocked in [
-        (showReturnDayFlow: true, showLowEvidenceGuidance: false, showWeeklyArchiveReview: false),
-        (showReturnDayFlow: false, showLowEvidenceGuidance: true, showWeeklyArchiveReview: false),
-        (showReturnDayFlow: false, showLowEvidenceGuidance: false, showWeeklyArchiveReview: true),
+        (
+          showReturnDayFlow: true,
+          showLowEvidenceGuidance: false,
+          showWeeklyArchiveReview: false,
+        ),
+        (
+          showReturnDayFlow: false,
+          showLowEvidenceGuidance: true,
+          showWeeklyArchiveReview: false,
+        ),
+        (
+          showReturnDayFlow: false,
+          showLowEvidenceGuidance: false,
+          showWeeklyArchiveReview: true,
+        ),
       ]) {
         expect(
           DailyArchiveMemoryGates.shouldShow(
@@ -348,7 +358,10 @@ void main() {
     test('generic test pending and degraded entries do not produce target', () {
       expect(
         DailyArchiveMemoryEngine.build(
-          entries: [_genericTestEntry(), _genericTestEntry(id: 'g2')],
+          entries: [
+            _genericTestEntry(),
+            _genericTestEntry(id: 'g2'),
+          ],
           viewingConfirmedRepeatOrTimeline: true,
         ),
         isNull,
@@ -407,7 +420,10 @@ void main() {
         ),
       );
 
-      expect(find.byKey(const Key('daily_archive_memory_card')), findsOneWidget);
+      expect(
+        find.byKey(const Key('daily_archive_memory_card')),
+        findsOneWidget,
+      );
       expect(find.text(DailyArchiveMemoryCopy.watchTitle), findsOneWidget);
       expect(
         find.text(
@@ -448,8 +464,14 @@ void main() {
         actionType: 'view_pattern_details',
       );
 
-      expect(events[DailyArchiveMemoryAnalytics.seenEvent]!['has_watch_target'], 1);
-      expect(events[DailyArchiveMemoryAnalytics.seenEvent]!['source'], 'record');
+      expect(
+        events[DailyArchiveMemoryAnalytics.seenEvent]!['has_watch_target'],
+        1,
+      );
+      expect(
+        events[DailyArchiveMemoryAnalytics.seenEvent]!['source'],
+        'record',
+      );
       expect(events.containsKey('transcript'), isFalse);
       for (final props in events.values) {
         expect(props.containsKey('transcript'), isFalse);
@@ -509,14 +531,25 @@ void main() {
       expect(find.byKey(const Key('daily_archive_memory_card')), findsNothing);
     });
 
-    testWidgets('focused watch surface hides competing guidance', (tester) async {
+    testWidgets('focused watch surface hides competing guidance', (
+      tester,
+    ) async {
       await pumpRecord(tester);
 
-      expect(find.byKey(const Key('daily_archive_memory_card')), findsOneWidget);
-      expect(find.byKey(const Key('daily_archive_memory_watch_prompt')), findsOneWidget);
+      expect(
+        find.byKey(const Key('daily_archive_memory_card')),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(const Key('daily_archive_memory_watch_prompt')),
+        findsOneWidget,
+      );
       expect(find.textContaining('Did this come back?'), findsOneWidget);
       expect(find.text(DailyArchiveExerciseCopy.recordLabel), findsNothing);
-      expect(find.text(DailyArchiveExerciseCopy.openBetaFeedbackCta), findsNothing);
+      expect(
+        find.text(DailyArchiveExerciseCopy.openBetaFeedbackCta),
+        findsNothing,
+      );
       expect(
         find.textContaining(
           ProofSpecificityCopy.captureFreedomLineCompact.split('.').first,
@@ -530,7 +563,9 @@ void main() {
       }
       expect(
         find.textContaining(
-          EntryMemoryModeCopy.advancedSaveOptionsCollapsedHelper.split('.').first,
+          EntryMemoryModeCopy.advancedSaveOptionsCollapsedHelper
+              .split('.')
+              .first,
         ),
         findsNothing,
       );
@@ -546,8 +581,14 @@ void main() {
     testWidgets('shown for returning user with watch target', (tester) async {
       await pumpRecord(tester);
 
-      expect(find.byKey(const Key('daily_archive_memory_card')), findsOneWidget);
-      expect(find.byKey(const Key('daily_archive_memory_watch_prompt')), findsOneWidget);
+      expect(
+        find.byKey(const Key('daily_archive_memory_card')),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(const Key('daily_archive_memory_watch_prompt')),
+        findsOneWidget,
+      );
       expect(find.textContaining('Did this come back?'), findsOneWidget);
     });
 
@@ -555,7 +596,7 @@ void main() {
       await pumpRecord(tester, entryCount: 3);
 
       expect(
-        weeklyReviewSurface.WeeklyArchiveReviewEngine.shouldShow(
+        weekly_review_surface.WeeklyArchiveReviewEngine.shouldShow(
           entries: _threeRelatedRepeatEntries(),
         ),
         isTrue,
@@ -563,39 +604,67 @@ void main() {
       expect(find.byKey(const Key('daily_archive_memory_card')), findsNothing);
     });
 
-    testWidgets('focused watch card is primary capture surface', (tester) async {
+    testWidgets('focused watch card is primary capture surface', (
+      tester,
+    ) async {
       await pumpRecord(tester);
 
-      expect(find.byKey(const Key('daily_archive_memory_card')), findsOneWidget);
-      expect(find.byKey(const Key('daily_archive_memory_watch_prompt')), findsOneWidget);
+      expect(
+        find.byKey(const Key('daily_archive_memory_card')),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(const Key('daily_archive_memory_watch_prompt')),
+        findsOneWidget,
+      );
       expect(find.textContaining('Did this come back?'), findsOneWidget);
-      expect(find.byKey(const Key('daily_archive_memory_record_cta')), findsOneWidget);
-      expect(find.byKey(const Key('daily_archive_memory_type_instead_cta')), findsOneWidget);
+      expect(
+        find.byKey(const Key('daily_archive_memory_record_cta')),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(const Key('daily_archive_memory_type_instead_cta')),
+        findsOneWidget,
+      );
       expect(find.text('Record moment'), findsNothing);
       expect(find.text('Log pressure moment'), findsNothing);
       expect(find.text(ConsumerUiCopy.recordTitle), findsNothing);
     });
 
-    testWidgets('record CTA uses existing capture flow without duplicate CTAs', (
-      tester,
-    ) async {
-      await pumpRecord(tester);
+    testWidgets(
+      'record CTA uses existing capture flow without duplicate CTAs',
+      (tester) async {
+        await pumpRecord(tester);
 
-      expect(find.byKey(const Key('daily_archive_memory_record_cta')), findsOneWidget);
-      await tester.tap(find.byKey(const Key('daily_archive_memory_record_cta')));
-      await tester.pump();
-      expect(find.byKey(const Key('capture_entry_record_cta')), findsNothing);
-    });
+        expect(
+          find.byKey(const Key('daily_archive_memory_record_cta')),
+          findsOneWidget,
+        );
+        await tester.tap(
+          find.byKey(const Key('daily_archive_memory_record_cta')),
+        );
+        await tester.pump();
+        expect(find.byKey(const Key('capture_entry_record_cta')), findsNothing);
+      },
+    );
 
     testWidgets('Not today dismisses watch card without streak pressure', (
       tester,
     ) async {
       await pumpRecord(tester);
 
-      expect(find.byKey(const Key('daily_archive_memory_card')), findsOneWidget);
-      expect(find.byKey(const Key('daily_archive_memory_not_today_cta')), findsOneWidget);
+      expect(
+        find.byKey(const Key('daily_archive_memory_card')),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(const Key('daily_archive_memory_not_today_cta')),
+        findsOneWidget,
+      );
 
-      await tester.tap(find.byKey(const Key('daily_archive_memory_not_today_cta')));
+      await tester.tap(
+        find.byKey(const Key('daily_archive_memory_not_today_cta')),
+      );
       await tester.pump();
       await tester.runAsync(() async {
         await Future<void>.delayed(const Duration(milliseconds: 200));
@@ -615,14 +684,21 @@ void main() {
       expect(find.byKey(const Key('entry_options_section')), findsNothing);
     });
 
-    testWidgets('view pattern details opens sheet when available', (tester) async {
+    testWidgets('view pattern details opens sheet when available', (
+      tester,
+    ) async {
       await pumpRecord(tester);
 
-      if (find.byKey(const Key('daily_archive_memory_pattern_details_cta')).evaluate().isEmpty) {
+      if (find
+          .byKey(const Key('daily_archive_memory_pattern_details_cta'))
+          .evaluate()
+          .isEmpty) {
         return;
       }
 
-      await tester.tap(find.byKey(const Key('daily_archive_memory_pattern_details_cta')));
+      await tester.tap(
+        find.byKey(const Key('daily_archive_memory_pattern_details_cta')),
+      );
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 300));
 
@@ -637,15 +713,13 @@ void main() {
         isNotNull,
       );
       expect(
-        weeklyReviewSurface.WeeklyArchiveReviewEngine.shouldShow(
+        weekly_review_surface.WeeklyArchiveReviewEngine.shouldShow(
           entries: _fourRelatedRepeatEntries(),
         ),
         isTrue,
       );
       expect(
-        LowEvidenceEngine.buildForRecordReady(
-          entries: [_genericTestEntry()],
-        ),
+        LowEvidenceEngine.buildForRecordReady(entries: [_genericTestEntry()]),
         isNotNull,
       );
       expect(

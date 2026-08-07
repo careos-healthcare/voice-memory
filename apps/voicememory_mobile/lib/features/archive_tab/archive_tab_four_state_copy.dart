@@ -27,6 +27,5 @@ abstract final class ArchiveTabFourStateCopy {
   static String twoRelatedBody({
     required String thread,
     required String change,
-  }) =>
-      'This may connect to: $thread. What changed: $change.';
+  }) => 'This may connect to: $thread. What changed: $change.';
 }

@@ -16,76 +16,75 @@ JournalEntry _voiceEntry({
   required String id,
   required String transcript,
   DateTime? createdAt,
-}) =>
-    JournalEntry(
-      id: id,
-      createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
-      transcript: transcript,
-      durationSeconds: 30,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 2,
-        recurringThemes: ['work'],
-        exactLanguagePattern: '',
-        concreteObservation: 'Work pressure showed up in this moment.',
-        repeatedSignal: '',
-      ),
-    );
+}) => JournalEntry(
+  id: id,
+  createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
+  transcript: transcript,
+  durationSeconds: 30,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 2,
+    recurringThemes: ['work'],
+    exactLanguagePattern: '',
+    concreteObservation: 'Work pressure showed up in this moment.',
+    repeatedSignal: '',
+  ),
+);
 
 JournalEntry _degradedVoiceEntry({String id = 'v1'}) => JournalEntry(
-      id: id,
-      createdAt: DateTime(2026, 6, 12, 12),
-      transcript:
-          '[draft] ${CaptureSaveMessages.recordingSavedLocally} — transcribe when connected',
-      durationSeconds: 20,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 0,
-        recurringThemes: [],
-        exactLanguagePattern: '',
-        concreteObservation: '',
-        repeatedSignal: '',
-      ),
-    );
+  id: id,
+  createdAt: DateTime(2026, 6, 12, 12),
+  transcript:
+      '[draft] ${CaptureSaveMessages.recordingSavedLocally} — transcribe when connected',
+  durationSeconds: 20,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 0,
+    recurringThemes: [],
+    exactLanguagePattern: '',
+    concreteObservation: '',
+    repeatedSignal: '',
+  ),
+);
 
 List<JournalEntry> _fourDistinctWorkEntries() => [
-      _voiceEntry(
-        id: 'e1',
-        transcript:
-            'I felt pressure at work before saying yes again even when I was tired.',
-        createdAt: DateTime(2026, 6, 9, 12),
-      ),
-      _voiceEntry(
-        id: 'e2',
-        transcript:
-            'Work kept pulling me back after I wanted to stop for the day at the office.',
-        createdAt: DateTime(2026, 6, 10, 12),
-      ),
-      _voiceEntry(
-        id: 'e3',
-        transcript:
-            'I noticed the same hurry showing up before I answered anyone at work.',
-        createdAt: DateTime(2026, 6, 11, 12),
-      ),
-      _voiceEntry(
-        id: 'e4',
-        transcript:
-            'The deadline pressure returned, but I caught it earlier this time.',
-        createdAt: DateTime(2026, 6, 12, 12),
-      ),
-    ];
+  _voiceEntry(
+    id: 'e1',
+    transcript:
+        'I felt pressure at work before saying yes again even when I was tired.',
+    createdAt: DateTime(2026, 6, 9, 12),
+  ),
+  _voiceEntry(
+    id: 'e2',
+    transcript:
+        'Work kept pulling me back after I wanted to stop for the day at the office.',
+    createdAt: DateTime(2026, 6, 10, 12),
+  ),
+  _voiceEntry(
+    id: 'e3',
+    transcript:
+        'I noticed the same hurry showing up before I answered anyone at work.',
+    createdAt: DateTime(2026, 6, 11, 12),
+  ),
+  _voiceEntry(
+    id: 'e4',
+    transcript:
+        'The deadline pressure returned, but I caught it earlier this time.',
+    createdAt: DateTime(2026, 6, 12, 12),
+  ),
+];
 
 List<JournalEntry> _fiveDistinctWorkEntriesWithContextShift() => [
-      ..._fourDistinctWorkEntries(),
-      _voiceEntry(
-        id: 'e5',
-        transcript:
-            'The same hurry showed up at home with my partner after a long day at work.',
-        createdAt: DateTime(2026, 6, 13, 12),
-      ),
-    ];
+  ..._fourDistinctWorkEntries(),
+  _voiceEntry(
+    id: 'e5',
+    transcript:
+        'The same hurry showed up at home with my partner after a long day at work.',
+    createdAt: DateTime(2026, 6, 13, 12),
+  ),
+];
 
 const _bannedWords = [
   'you are',
@@ -151,10 +150,7 @@ void main() {
       expect(timeline, isNotNull);
       expect(timeline!.hasMeaningfulChange, isTrue);
       expect(timeline.title, 'Your archive belief changed.');
-      expect(
-        timeline.body,
-        VisibleArchiveProofCopy.beliefHistoryBodyChanged,
-      );
+      expect(timeline.body, VisibleArchiveProofCopy.beliefHistoryBodyChanged);
       expect(
         timeline.earlierBelief,
         VisibleArchiveProofCopy.beliefHistoryEarlierOneMoment,
@@ -178,20 +174,37 @@ void main() {
       const shared =
           'I felt pressure at work before saying yes again even when I was tired.';
       final entries = [
-        _voiceEntry(id: 'e1', transcript: shared, createdAt: DateTime(2026, 6, 9)),
-        _voiceEntry(id: 'e2', transcript: shared, createdAt: DateTime(2026, 6, 10)),
-        _voiceEntry(id: 'e3', transcript: shared, createdAt: DateTime(2026, 6, 11)),
-        _voiceEntry(id: 'e4', transcript: shared, createdAt: DateTime(2026, 6, 12)),
-        _voiceEntry(id: 'e5', transcript: shared, createdAt: DateTime(2026, 6, 13)),
+        _voiceEntry(
+          id: 'e1',
+          transcript: shared,
+          createdAt: DateTime(2026, 6, 9),
+        ),
+        _voiceEntry(
+          id: 'e2',
+          transcript: shared,
+          createdAt: DateTime(2026, 6, 10),
+        ),
+        _voiceEntry(
+          id: 'e3',
+          transcript: shared,
+          createdAt: DateTime(2026, 6, 11),
+        ),
+        _voiceEntry(
+          id: 'e4',
+          transcript: shared,
+          createdAt: DateTime(2026, 6, 12),
+        ),
+        _voiceEntry(
+          id: 'e5',
+          transcript: shared,
+          createdAt: DateTime(2026, 6, 13),
+        ),
       ];
       final timeline = BeliefHistoryTimelineEngine.build(entries: entries);
       expect(timeline, isNotNull);
       expect(timeline!.hasMeaningfulChange, isFalse);
       expect(timeline.evidenceWeak, isTrue);
-      expect(
-        timeline.body,
-        'Your archive belief has not clearly changed yet.',
-      );
+      expect(timeline.body, 'Your archive belief has not clearly changed yet.');
       expect(timeline.title, 'Belief history');
     });
 
@@ -203,17 +216,20 @@ void main() {
       expect(BeliefHistoryTimelineEngine.build(entries: entries), isNull);
     });
 
-    test('earlier, current, what changed, and evidence sections are populated', () {
-      final timeline = BeliefHistoryTimelineEngine.build(
-        entries: _fiveDistinctWorkEntriesWithContextShift(),
-      );
-      expect(timeline, isNotNull);
-      expect(timeline!.earlierBelief, isNotEmpty);
-      expect(timeline.currentBelief, isNotEmpty);
-      expect(timeline.whatChangedLine, isNotEmpty);
-      expect(timeline.evidenceRows, isNotEmpty);
-      expect(timeline.earlierBelief, isNot(equals(timeline.currentBelief)));
-    });
+    test(
+      'earlier, current, what changed, and evidence sections are populated',
+      () {
+        final timeline = BeliefHistoryTimelineEngine.build(
+          entries: _fiveDistinctWorkEntriesWithContextShift(),
+        );
+        expect(timeline, isNotNull);
+        expect(timeline!.earlierBelief, isNotEmpty);
+        expect(timeline.currentBelief, isNotEmpty);
+        expect(timeline.whatChangedLine, isNotEmpty);
+        expect(timeline.evidenceRows, isNotEmpty);
+        expect(timeline.earlierBelief, isNot(equals(timeline.currentBelief)));
+      },
+    );
   });
 
   group('BeliefHistoryTimelineCard', () {
@@ -237,13 +253,22 @@ void main() {
       );
       await tester.pump();
 
-      expect(find.byKey(const Key('belief_history_timeline_card')), findsOneWidget);
+      expect(
+        find.byKey(const Key('belief_history_timeline_card')),
+        findsOneWidget,
+      );
       expect(find.text('Your archive belief changed.'), findsOneWidget);
       expect(find.text('Earlier belief'), findsOneWidget);
-      expect(find.text(VisibleArchiveProofCopy.beliefHistoryCurrentBeliefLabel), findsOneWidget);
+      expect(
+        find.text(VisibleArchiveProofCopy.beliefHistoryCurrentBeliefLabel),
+        findsOneWidget,
+      );
       expect(find.text('What changed'), findsOneWidget);
       expect(find.text('Evidence that changed it'), findsOneWidget);
-      expect(find.byKey(const Key('belief_history_timeline_evidence_0')), findsOneWidget);
+      expect(
+        find.byKey(const Key('belief_history_timeline_evidence_0')),
+        findsOneWidget,
+      );
       _expectNoBannedCopy(_visibleText(tester));
     });
 
@@ -265,9 +290,7 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           theme: AppTheme.light(),
-          home: Scaffold(
-            body: BeliefHistoryTimelineCard(timeline: timeline!),
-          ),
+          home: Scaffold(body: BeliefHistoryTimelineCard(timeline: timeline!)),
         ),
       );
       await tester.pump();
@@ -281,7 +304,9 @@ void main() {
   });
 
   group('Evidence drilldown belief history section', () {
-    testWidgets('evidence trail includes history at five entries', (tester) async {
+    testWidgets('evidence trail includes history at five entries', (
+      tester,
+    ) async {
       final trail = BeliefEvidenceTrailEngine.build(
         entries: _fiveDistinctWorkEntriesWithContextShift(),
       );
@@ -301,11 +326,19 @@ void main() {
       );
       await tester.pump();
 
-      expect(find.byKey(const Key('belief_evidence_trail_history_heading')), findsOneWidget);
-      expect(find.byKey(const Key('belief_evidence_trail_history_earlier_belief')), findsOneWidget);
+      expect(
+        find.byKey(const Key('belief_evidence_trail_history_heading')),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(const Key('belief_evidence_trail_history_earlier_belief')),
+        findsOneWidget,
+      );
     });
 
-    testWidgets('evidence screen does not crash with too few entries', (tester) async {
+    testWidgets('evidence screen does not crash with too few entries', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           theme: AppTheme.light(),
@@ -316,8 +349,14 @@ void main() {
       );
       await tester.pump();
 
-      expect(find.byKey(const Key('belief_evidence_trail_insufficient')), findsOneWidget);
-      expect(find.byKey(const Key('belief_evidence_trail_history_heading')), findsNothing);
+      expect(
+        find.byKey(const Key('belief_evidence_trail_insufficient')),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(const Key('belief_evidence_trail_history_heading')),
+        findsNothing,
+      );
     });
   });
 }

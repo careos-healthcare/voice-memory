@@ -27,24 +27,25 @@ abstract final class ArchiveMilestonesCopy {
   static const firstWatchlistTheme = 'First watchlist theme tracked';
   static const firstReturnRitual = 'First return ritual set';
   static const firstShareSafeProof = 'First export/share-safe proof ready';
-  static const longTermArchiveBuilding = 'Long-term archive building at 10+ entries';
+  static const longTermArchiveBuilding =
+      'Long-term archive building at 10+ entries';
 
   static String labelFor(ArchiveMilestoneId id) => switch (id) {
-        ArchiveMilestoneId.firstMomentSaved => firstMomentSaved,
-        ArchiveMilestoneId.firstComparisonPossible => firstComparisonPossible,
-        ArchiveMilestoneId.firstCautiousBelief => firstCautiousBelief,
-        ArchiveMilestoneId.firstWeeklyReviewReady => firstWeeklyReviewReady,
-        ArchiveMilestoneId.firstWatchlistTheme => firstWatchlistTheme,
-        ArchiveMilestoneId.firstReturnRitual => firstReturnRitual,
-        ArchiveMilestoneId.firstShareSafeProof => firstShareSafeProof,
-        ArchiveMilestoneId.longTermArchiveBuilding => longTermArchiveBuilding,
-      };
+    ArchiveMilestoneId.firstMomentSaved => firstMomentSaved,
+    ArchiveMilestoneId.firstComparisonPossible => firstComparisonPossible,
+    ArchiveMilestoneId.firstCautiousBelief => firstCautiousBelief,
+    ArchiveMilestoneId.firstWeeklyReviewReady => firstWeeklyReviewReady,
+    ArchiveMilestoneId.firstWatchlistTheme => firstWatchlistTheme,
+    ArchiveMilestoneId.firstReturnRitual => firstReturnRitual,
+    ArchiveMilestoneId.firstShareSafeProof => firstShareSafeProof,
+    ArchiveMilestoneId.longTermArchiveBuilding => longTermArchiveBuilding,
+  };
 
   static String stateLabel(ArchiveMilestoneRowState state) => switch (state) {
-        ArchiveMilestoneRowState.done => stateDone,
-        ArchiveMilestoneRowState.now => stateNow,
-        ArchiveMilestoneRowState.next => stateNext,
-      };
+    ArchiveMilestoneRowState.done => stateDone,
+    ArchiveMilestoneRowState.now => stateNow,
+    ArchiveMilestoneRowState.next => stateNext,
+  };
 
   static Iterable<String> allVisibleCopy() sync* {
     yield cardTitle;

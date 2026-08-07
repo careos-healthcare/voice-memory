@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../services/capture_pipeline_service.dart';
 import '../../../../theme/app_colors.dart';
@@ -24,7 +25,7 @@ Future<void> showOfflineVaultRecoveryModal({
   );
 }
 
-class _OfflineVaultRecoveryDialog extends StatefulWidget {
+class _OfflineVaultRecoveryDialog extends ConsumerStatefulWidget {
   const _OfflineVaultRecoveryDialog({
     required this.manifest,
     required this.onRecover,
@@ -36,11 +37,12 @@ class _OfflineVaultRecoveryDialog extends StatefulWidget {
   final Future<void> Function() onDiscard;
 
   @override
-  State<_OfflineVaultRecoveryDialog> createState() =>
+  ConsumerState<_OfflineVaultRecoveryDialog> createState() =>
       _OfflineVaultRecoveryDialogState();
 }
 
-class _OfflineVaultRecoveryDialogState extends State<_OfflineVaultRecoveryDialog> {
+class _OfflineVaultRecoveryDialogState
+    extends ConsumerState<_OfflineVaultRecoveryDialog> {
   var _busy = false;
   String? _error;
 
@@ -91,9 +93,9 @@ class _OfflineVaultRecoveryDialogState extends State<_OfflineVaultRecoveryDialog
             const SizedBox(height: AppSpacing.sm),
             Text(
               _error!,
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: AppColors.error,
-                  ),
+              style: Theme.of(
+                context,
+              ).textTheme.bodySmall?.copyWith(color: AppColors.error),
             ),
           ],
         ],

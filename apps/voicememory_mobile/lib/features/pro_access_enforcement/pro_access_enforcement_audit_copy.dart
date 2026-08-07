@@ -32,7 +32,8 @@ abstract final class ProAccessEnforcementAuditCopy {
   static const detailVerified = 'Verified';
   static const detailBroken = 'Broken — fix before production';
   static const detailDocumentedGap = 'Documented gap';
-  static const detailNotApplicableYet = 'Not applicable until RevenueCat is live';
+  static const detailNotApplicableYet =
+      'Not applicable until RevenueCat is live';
   static const detailRestoreRequired = 'Restore path required after reinstall';
 
   static const testFlightAcceptableLine =
@@ -56,35 +57,34 @@ abstract final class ProAccessEnforcementAuditCopy {
       'entitlement is broken.';
 
   static String labelFor(ProAccessEnforcementAuditItemId id) => switch (id) {
-        ProAccessEnforcementAuditItemId.revenueCatEntitlement =>
-          itemRevenueCatEntitlement,
-        ProAccessEnforcementAuditItemId.restoreEntitlement =>
-          itemRestoreEntitlement,
-        ProAccessEnforcementAuditItemId.localCache => itemLocalCache,
-        ProAccessEnforcementAuditItemId.reinstallBehavior => itemReinstallBehavior,
-        ProAccessEnforcementAuditItemId.accountIdentity => itemAccountIdentity,
-        ProAccessEnforcementAuditItemId.deviceSharing => itemDeviceSharing,
-        ProAccessEnforcementAuditItemId.serverSideEntitlement =>
-          itemServerSideEntitlement,
-        ProAccessEnforcementAuditItemId.privacyLockSeparate =>
-          itemPrivacyLockSeparate,
-      };
+    ProAccessEnforcementAuditItemId.revenueCatEntitlement =>
+      itemRevenueCatEntitlement,
+    ProAccessEnforcementAuditItemId.restoreEntitlement =>
+      itemRestoreEntitlement,
+    ProAccessEnforcementAuditItemId.localCache => itemLocalCache,
+    ProAccessEnforcementAuditItemId.reinstallBehavior => itemReinstallBehavior,
+    ProAccessEnforcementAuditItemId.accountIdentity => itemAccountIdentity,
+    ProAccessEnforcementAuditItemId.deviceSharing => itemDeviceSharing,
+    ProAccessEnforcementAuditItemId.serverSideEntitlement =>
+      itemServerSideEntitlement,
+    ProAccessEnforcementAuditItemId.privacyLockSeparate =>
+      itemPrivacyLockSeparate,
+  };
 
   static String classificationLabel(
     ProAccessEnforcementClassification classification,
-  ) =>
-      switch (classification) {
-        ProAccessEnforcementClassification.enforcedLocally =>
-          classificationEnforcedLocally,
-        ProAccessEnforcementClassification.enforcedByRevenueCat =>
-          classificationEnforcedByRevenueCat,
-        ProAccessEnforcementClassification.notEnforcedYet =>
-          classificationNotEnforcedYet,
-        ProAccessEnforcementClassification.acceptableForTestFlight =>
-          classificationAcceptableForTestFlight,
-        ProAccessEnforcementClassification.productionBlocker =>
-          classificationProductionBlocker,
-      };
+  ) => switch (classification) {
+    ProAccessEnforcementClassification.enforcedLocally =>
+      classificationEnforcedLocally,
+    ProAccessEnforcementClassification.enforcedByRevenueCat =>
+      classificationEnforcedByRevenueCat,
+    ProAccessEnforcementClassification.notEnforcedYet =>
+      classificationNotEnforcedYet,
+    ProAccessEnforcementClassification.acceptableForTestFlight =>
+      classificationAcceptableForTestFlight,
+    ProAccessEnforcementClassification.productionBlocker =>
+      classificationProductionBlocker,
+  };
 
   static Iterable<String> allVisibleStrings() sync* {
     yield headline;

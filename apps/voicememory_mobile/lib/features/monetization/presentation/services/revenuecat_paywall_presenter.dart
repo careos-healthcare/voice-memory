@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
@@ -15,14 +14,13 @@ import '../models/paywall_result.dart';
 /// Presents the remotely managed RevenueCat paywall sheet.
 class RevenueCatPaywallPresenter {
   const RevenueCatPaywallPresenter({
-    RevenueCatService? revenueCatService,
-    Future<bool> Function()? canOpenPaywall,
+    this._revenueCatService,
+    this._canOpenPaywall,
     this.presentPaywallOverride,
     this.presentPaywallIfNeededOverride,
     this.getCustomerInfoOverride,
     this.openFallbackRouteOverride,
-  })  : _revenueCatService = revenueCatService,
-        _canOpenPaywall = canOpenPaywall;
+  });
 
   final RevenueCatService? _revenueCatService;
   final Future<bool> Function()? _canOpenPaywall;
@@ -37,23 +35,23 @@ class RevenueCatPaywallPresenter {
   final Future<purchases_ui.PaywallResult> Function({
     Offering? offering,
     bool displayCloseButton,
-  })? presentPaywallOverride;
+  })?
+  presentPaywallOverride;
 
   @visibleForTesting
   final Future<purchases_ui.PaywallResult> Function(
     String requiredEntitlementIdentifier, {
     Offering? offering,
     bool displayCloseButton,
-  })? presentPaywallIfNeededOverride;
+  })?
+  presentPaywallIfNeededOverride;
 
   @visibleForTesting
   final Future<CustomerInfo?> Function()? getCustomerInfoOverride;
 
   @visibleForTesting
-  final Future<void> Function(
-    BuildContext? context,
-    PaywallRouteArgs? args,
-  )? openFallbackRouteOverride;
+  final Future<void> Function(BuildContext? context, PaywallRouteArgs? args)?
+  openFallbackRouteOverride;
 
   /// Triggers the native RevenueCat paywall footer or sheet.
   ///
@@ -305,13 +303,7 @@ class RevenueCatPaywallPresenter {
     );
   }
 
-  void _logFallbackStrategy({
-    required String reason,
-    String? error,
-  }) {
-    RevenueCatDiagnosticsLog.paywallFallback(
-      reason: reason,
-      error: error,
-    );
+  void _logFallbackStrategy({required String reason, String? error}) {
+    RevenueCatDiagnosticsLog.paywallFallback(reason: reason, error: error);
   }
 }

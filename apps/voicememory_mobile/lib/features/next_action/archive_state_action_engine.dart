@@ -37,8 +37,7 @@ abstract final class ArchiveStateActionEngine {
     return switch (kind) {
       NextBestActionKind.noEntries => ArchiveStateActionKind.noEntries,
       NextBestActionKind.oneEntry => ArchiveStateActionKind.oneEntry,
-      NextBestActionKind.twoNoClearMatch =>
-        ArchiveStateActionKind.twoUnrelated,
+      NextBestActionKind.twoNoClearMatch => ArchiveStateActionKind.twoUnrelated,
       NextBestActionKind.twoRelated => ArchiveStateActionKind.twoRelated,
       NextBestActionKind.firstProof => ArchiveStateActionKind.firstProof,
       NextBestActionKind.returnCheckUnanswered =>
@@ -56,8 +55,7 @@ abstract final class ArchiveStateActionEngine {
 
   static String _actionLabel(ArchiveStateActionKind kind) {
     return switch (kind) {
-      ArchiveStateActionKind.noEntries =>
-        ArchiveStateActionCopy.noEntries,
+      ArchiveStateActionKind.noEntries => ArchiveStateActionCopy.noEntries,
       ArchiveStateActionKind.oneEntry => ArchiveStateActionCopy.oneEntry,
       ArchiveStateActionKind.twoUnrelated =>
         ArchiveStateActionCopy.twoUnrelated,

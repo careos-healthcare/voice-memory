@@ -8,10 +8,7 @@ import '../../theme/app_theme.dart';
 
 /// Developer-only beta revenue readiness dashboard — metadata only.
 class RevenueReadinessCard extends StatelessWidget {
-  const RevenueReadinessCard({
-    super.key,
-    required this.dashboard,
-  });
+  const RevenueReadinessCard({super.key, required this.dashboard});
 
   final RevenueReadinessDashboard dashboard;
 
@@ -20,9 +17,7 @@ class RevenueReadinessCard extends StatelessWidget {
     if (!RevenueReadinessEngine.shouldShow(
       betaMissionEnabled: ArchiveBetaMissionGate.isEnabled,
     )) {
-      return const SizedBox.shrink(
-        key: Key('revenue_readiness_hidden'),
-      );
+      return const SizedBox.shrink(key: Key('revenue_readiness_hidden'));
     }
 
     return Container(
@@ -39,9 +34,9 @@ class RevenueReadinessCard extends StatelessWidget {
           Text(
             dashboard.title,
             key: const Key('revenue_readiness_title'),
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: 6),
           Text(
@@ -62,9 +57,9 @@ class RevenueReadinessCard extends StatelessWidget {
           Text(
             RevenueReadinessCopy.surfacesTitle,
             key: const Key('revenue_readiness_surfaces_title'),
-            style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: 8),
           for (final surface in dashboard.surfaces) ...[

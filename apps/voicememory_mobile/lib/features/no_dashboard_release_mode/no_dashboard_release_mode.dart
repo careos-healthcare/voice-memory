@@ -47,14 +47,13 @@ abstract final class NoDashboardReleaseMode {
     'life operating system',
   ];
 
-  static NoDashboardReleaseModeResult build(
-    NoDashboardReleaseModeInput input,
-  ) {
+  static NoDashboardReleaseModeResult build(NoDashboardReleaseModeInput input) {
     final surfaces = {
       for (final surface in NoDashboardReleaseSurface.values)
         surface: resolve(surface, input),
     };
-    final riskyHiddenInRelease = !input.releaseMode ||
+    final riskyHiddenInRelease =
+        !input.releaseMode ||
         riskySurfaces.every((surface) => !surfaces[surface]!.visible);
     final decision = riskyHiddenInRelease
         ? NoDashboardReleaseModeDecision.hardened
@@ -73,15 +72,14 @@ abstract final class NoDashboardReleaseMode {
 
   static NoDashboardReleaseModeReport report(
     NoDashboardReleaseModeResult result,
-  ) =>
-      NoDashboardReleaseModeReport(
-        headline: NoDashboardReleaseModeCopy.headline,
-        body: NoDashboardReleaseModeCopy.body,
-        riskyLine: NoDashboardReleaseModeCopy.riskyLine,
-        allowedLine: NoDashboardReleaseModeCopy.allowedLine,
-        guardrail: NoDashboardReleaseModeCopy.guardrail,
-        result: result,
-      );
+  ) => NoDashboardReleaseModeReport(
+    headline: NoDashboardReleaseModeCopy.headline,
+    body: NoDashboardReleaseModeCopy.body,
+    riskyLine: NoDashboardReleaseModeCopy.riskyLine,
+    allowedLine: NoDashboardReleaseModeCopy.allowedLine,
+    guardrail: NoDashboardReleaseModeCopy.guardrail,
+    result: result,
+  );
 
   static NoDashboardReleaseSurfaceResult resolve(
     NoDashboardReleaseSurface surface,
@@ -128,20 +126,20 @@ abstract final class NoDashboardReleaseMode {
   static NoDashboardReleaseModeInput fromReducerInput({
     required bool releaseMode,
     required V1VisibleSurfaceReducerInput reducerInput,
-  }) =>
-      NoDashboardReleaseModeInput(
-        releaseMode: releaseMode,
-        postSaveImmediate: reducerInput.postSaveImmediate,
-        firstProofSafe: reducerInput.firstProofSafe,
-        afterFirstProof: reducerInput.afterFirstProof,
-        confirmedRepeatOrEligibleMoment:
-            reducerInput.confirmedRepeatOrEligibleMoment,
-        proofValueSeen: reducerInput.proofValueSeen,
-        userExplicitlyAsked: reducerInput.userExplicitlyAsked,
-        proofThresholdStillThree: reducerInput.proofThresholdStillThree,
-      );
+  }) => NoDashboardReleaseModeInput(
+    releaseMode: releaseMode,
+    postSaveImmediate: reducerInput.postSaveImmediate,
+    firstProofSafe: reducerInput.firstProofSafe,
+    afterFirstProof: reducerInput.afterFirstProof,
+    confirmedRepeatOrEligibleMoment:
+        reducerInput.confirmedRepeatOrEligibleMoment,
+    proofValueSeen: reducerInput.proofValueSeen,
+    userExplicitlyAsked: reducerInput.userExplicitlyAsked,
+    proofThresholdStillThree: reducerInput.proofThresholdStillThree,
+  );
 
-  static bool releaseModeActive() => ProductionNavigation.hideIncompleteSurfaces;
+  static bool releaseModeActive() =>
+      ProductionNavigation.hideIncompleteSurfaces;
 
   static V1Surface? toV1Surface(NoDashboardReleaseSurface surface) =>
       switch (surface) {
@@ -161,13 +159,11 @@ abstract final class NoDashboardReleaseMode {
         NoDashboardReleaseSurface.evidenceMap => V1Surface.evidenceMap,
         NoDashboardReleaseSurface.reports => V1Surface.reports,
         NoDashboardReleaseSurface.dashboard => V1Surface.dashboard,
-        NoDashboardReleaseSurface.contextInsights =>
-          V1Surface.contextExpansion,
+        NoDashboardReleaseSurface.contextInsights => V1Surface.contextExpansion,
         NoDashboardReleaseSurface.monthlyReview => V1Surface.monthlyReview,
         NoDashboardReleaseSurface.archiveAnalyst => V1Surface.archiveAnalyst,
         NoDashboardReleaseSurface.actionPlan ||
-        NoDashboardReleaseSurface.workspaceQuickActions =>
-          null,
+        NoDashboardReleaseSurface.workspaceQuickActions => null,
       };
 
   static bool _shouldShow({
@@ -313,7 +309,8 @@ class NoDashboardReleaseModeResult {
 
   final NoDashboardReleaseModeDecision decision;
   final String message;
-  final Map<NoDashboardReleaseSurface, NoDashboardReleaseSurfaceResult> surfaces;
+  final Map<NoDashboardReleaseSurface, NoDashboardReleaseSurfaceResult>
+  surfaces;
   final bool riskyHiddenInRelease;
   final bool keepsProofTrailFocus;
 

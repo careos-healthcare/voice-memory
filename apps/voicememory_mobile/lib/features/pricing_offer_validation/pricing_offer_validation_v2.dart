@@ -163,26 +163,25 @@ abstract final class PricingOfferValidationV2 {
       needStrongerProofHighTargetFor(summary.totalTesters);
 
   static bool _needRankingHigh(PricingOfferValidationSummary summary) =>
-      summary.needRankingCount >= needRankingHighTargetFor(summary.totalTesters);
+      summary.needRankingCount >=
+      needRankingHighTargetFor(summary.totalTesters);
 
   static PricingOfferValidationReport report(
     PricingOfferValidationSummary summary,
     PricingOfferValidationDecision decision,
-  ) =>
-      PricingOfferValidationReport(
-        title: PricingOfferValidationV2Copy.title,
-        body: PricingOfferValidationV2Copy.body,
-        valueLine: PricingOfferValidationV2Copy.valueLine,
-        decision: decision,
-        guardrail: PricingOfferValidationV2Copy.guardrail,
-      );
+  ) => PricingOfferValidationReport(
+    title: PricingOfferValidationV2Copy.title,
+    body: PricingOfferValidationV2Copy.body,
+    valueLine: PricingOfferValidationV2Copy.valueLine,
+    decision: decision,
+    guardrail: PricingOfferValidationV2Copy.guardrail,
+  );
 
   static int _scaledTarget({
     required int totalTesters,
     required int numerator,
     required int denominator,
-  }) =>
-      ((numerator * totalTesters) / denominator).ceil();
+  }) => ((numerator * totalTesters) / denominator).ceil();
 }
 
 enum PricingOfferValidationDecision {

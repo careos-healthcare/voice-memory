@@ -30,41 +30,41 @@ abstract final class ThreeMomentCompletionEngine {
 
     return switch (stage) {
       ThreeMomentCompletionStage.start => ThreeMomentCompletionResult(
-          shouldShow: true,
-          stage: stage,
-          title: ThreeMomentCompletionCopy.startTitle,
-          body: ThreeMomentCompletionCopy.startBody,
-          noPressureLine: ThreeMomentCompletionCopy.noPressureLine,
-          primaryCta: ThreeMomentCompletionCopy.startPrimaryCta,
-          secondaryCta: ThreeMomentCompletionCopy.secondaryCta,
-          primaryActionType: ThreeMomentCompletionActionType.saveOneSentence,
-          entryCount: entryCount,
-          source: source,
-        ),
+        shouldShow: true,
+        stage: stage,
+        title: ThreeMomentCompletionCopy.startTitle,
+        body: ThreeMomentCompletionCopy.startBody,
+        noPressureLine: ThreeMomentCompletionCopy.noPressureLine,
+        primaryCta: ThreeMomentCompletionCopy.startPrimaryCta,
+        secondaryCta: ThreeMomentCompletionCopy.secondaryCta,
+        primaryActionType: ThreeMomentCompletionActionType.saveOneSentence,
+        entryCount: entryCount,
+        source: source,
+      ),
       ThreeMomentCompletionStage.second => ThreeMomentCompletionResult(
-          shouldShow: true,
-          stage: stage,
-          title: ThreeMomentCompletionCopy.secondTitle,
-          body: ThreeMomentCompletionCopy.secondBody,
-          noPressureLine: ThreeMomentCompletionCopy.noPressureLine,
-          primaryCta: ThreeMomentCompletionCopy.secondPrimaryCta,
-          secondaryCta: ThreeMomentCompletionCopy.secondaryCta,
-          primaryActionType: ThreeMomentCompletionActionType.noticedSomething,
-          entryCount: entryCount,
-          source: source,
-        ),
+        shouldShow: true,
+        stage: stage,
+        title: ThreeMomentCompletionCopy.secondTitle,
+        body: ThreeMomentCompletionCopy.secondBody,
+        noPressureLine: ThreeMomentCompletionCopy.noPressureLine,
+        primaryCta: ThreeMomentCompletionCopy.secondPrimaryCta,
+        secondaryCta: ThreeMomentCompletionCopy.secondaryCta,
+        primaryActionType: ThreeMomentCompletionActionType.noticedSomething,
+        entryCount: entryCount,
+        source: source,
+      ),
       ThreeMomentCompletionStage.third => ThreeMomentCompletionResult(
-          shouldShow: true,
-          stage: stage,
-          title: ThreeMomentCompletionCopy.thirdTitle,
-          body: ThreeMomentCompletionCopy.thirdBody,
-          noPressureLine: ThreeMomentCompletionCopy.noPressureLine,
-          primaryCta: ThreeMomentCompletionCopy.thirdPrimaryCta,
-          secondaryCta: ThreeMomentCompletionCopy.secondaryCta,
-          primaryActionType: ThreeMomentCompletionActionType.saveOneMoreMoment,
-          entryCount: entryCount,
-          source: source,
-        ),
+        shouldShow: true,
+        stage: stage,
+        title: ThreeMomentCompletionCopy.thirdTitle,
+        body: ThreeMomentCompletionCopy.thirdBody,
+        noPressureLine: ThreeMomentCompletionCopy.noPressureLine,
+        primaryCta: ThreeMomentCompletionCopy.thirdPrimaryCta,
+        secondaryCta: ThreeMomentCompletionCopy.secondaryCta,
+        primaryActionType: ThreeMomentCompletionActionType.saveOneMoreMoment,
+        entryCount: entryCount,
+        source: source,
+      ),
     };
   }
 
@@ -95,8 +95,7 @@ abstract final class ThreeMomentCompletionEngine {
 
   static bool suppressesLegacyEarlyGuidance({
     required bool threeMomentCompletionVisible,
-  }) =>
-      threeMomentCompletionVisible;
+  }) => threeMomentCompletionVisible;
 
   static ThreeMomentCompletionStage? _stageFor(int entryCount) =>
       switch (entryCount) {

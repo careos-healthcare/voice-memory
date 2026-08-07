@@ -2,12 +2,7 @@ import '../paid_intent/paid_intent_confirmation_models.dart';
 import 'quick_capture_friction_models.dart';
 
 /// Local beta verdict — cautious, not PMF proof.
-enum CapacityBetaSignalVerdict {
-  strong,
-  promising,
-  weak,
-  unclear,
-}
+enum CapacityBetaSignalVerdict { strong, promising, weak, unclear }
 
 /// Read-only capacity beta signal snapshot — counts and fixed labels only.
 class CapacityBetaSignalSnapshot {

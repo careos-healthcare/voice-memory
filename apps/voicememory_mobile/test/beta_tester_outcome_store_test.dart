@@ -13,7 +13,7 @@ import 'package:voicememory_mobile/widgets/beta/beta_tester_outcome_log_card.dar
 
 class _MemoryPrefs extends MobilePrefsStore {
   _MemoryPrefs()
-      : super(file: File('test/tmp/beta_tester_outcome/unused.json'));
+    : super(file: File('test/tmp/beta_tester_outcome/unused.json'));
 
   final Map<String, Map<String, dynamic>> maps = {};
 
@@ -138,9 +138,7 @@ void main() {
                         store: store,
                         onChanged: () => setState(() => refreshToken++),
                       ),
-                      BetaNextBuildDecisionCard(
-                        refreshToken: refreshToken,
-                      ),
+                      BetaNextBuildDecisionCard(refreshToken: refreshToken),
                     ],
                   ),
                 );

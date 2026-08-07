@@ -41,32 +41,25 @@ JournalEntry _entry({
 }
 
 List<JournalEntry> _threeRelatedRepeatEntries() => [
-      _entry(
-        id: 'e1',
-        transcript:
-            'I had no capacity but I said yes again to the extra meeting today.',
-        createdAt: DateTime(2026, 6, 10, 12),
-      ),
-      _entry(
-        id: 'e2',
-        transcript:
-            'Same thing — said yes when I had no capacity for one more thing.',
-        createdAt: DateTime(2026, 6, 11, 12),
-      ),
-      _entry(
-        id: 'e3',
-        transcript:
-            'I said yes again even though I had no capacity for one more ask.',
-        createdAt: DateTime(2026, 6, 12, 12),
-      ),
-    ];
-
-RepeatReturnCheckRecord _strongerRecord() => RepeatReturnCheckRecord(
-      entryId: 'e4',
-      choice: RepeatReturnCheckChoice.stronger,
-      entryCountAtCapture: 4,
-      createdAt: DateTime(2026, 6, 13),
-    );
+  _entry(
+    id: 'e1',
+    transcript:
+        'I had no capacity but I said yes again to the extra meeting today.',
+    createdAt: DateTime(2026, 6, 10, 12),
+  ),
+  _entry(
+    id: 'e2',
+    transcript:
+        'Same thing — said yes when I had no capacity for one more thing.',
+    createdAt: DateTime(2026, 6, 11, 12),
+  ),
+  _entry(
+    id: 'e3',
+    transcript:
+        'I said yes again even though I had no capacity for one more ask.',
+    createdAt: DateTime(2026, 6, 12, 12),
+  ),
+];
 
 void main() {
   group('RecordProofStackPolicy', () {
@@ -215,34 +208,37 @@ void main() {
       expect(decision.proofCardCount, 3);
     });
 
-    test('drops archive summary before first week loop when pattern changed keeps cap', () {
-      final decision = RecordProofStackPolicy.decide(
-        loaded: true,
-        entryCount: 5,
-        isReady: true,
-        isPostSave: false,
-        isRecording: false,
-        archiveSummaryVisible: true,
-        hasEarlyFirstSignal: false,
-        hasEarlyEvidenceTimeline: false,
-        patternChangedVisible: true,
-        dailyReturnReasonEligible: true,
-        weeklyReviewEligible: false,
-        privateReportEligible: false,
-        whyMattersEligible: false,
-        thoughtMapEligible: false,
-        positiveReinforcementEligible: false,
-        changeProofEligible: false,
-        firstWeekLoopEligible: true,
-        proBridgeEligible: true,
-      );
+    test(
+      'drops archive summary before first week loop when pattern changed keeps cap',
+      () {
+        final decision = RecordProofStackPolicy.decide(
+          loaded: true,
+          entryCount: 5,
+          isReady: true,
+          isPostSave: false,
+          isRecording: false,
+          archiveSummaryVisible: true,
+          hasEarlyFirstSignal: false,
+          hasEarlyEvidenceTimeline: false,
+          patternChangedVisible: true,
+          dailyReturnReasonEligible: true,
+          weeklyReviewEligible: false,
+          privateReportEligible: false,
+          whyMattersEligible: false,
+          thoughtMapEligible: false,
+          positiveReinforcementEligible: false,
+          changeProofEligible: false,
+          firstWeekLoopEligible: true,
+          proBridgeEligible: true,
+        );
 
-      expect(decision.showPatternChanged, isTrue);
-      expect(decision.showArchiveSummary, isFalse);
-      expect(decision.showFirstWeekLoop, isTrue);
-      expect(decision.showProBridge, isFalse);
-      expect(decision.proofCardCount, lessThanOrEqualTo(3));
-    });
+        expect(decision.showPatternChanged, isTrue);
+        expect(decision.showArchiveSummary, isFalse);
+        expect(decision.showFirstWeekLoop, isTrue);
+        expect(decision.showProBridge, isFalse);
+        expect(decision.proofCardCount, lessThanOrEqualTo(3));
+      },
+    );
   });
 
   group('ArchiveProofSurfaceLayout record folding', () {

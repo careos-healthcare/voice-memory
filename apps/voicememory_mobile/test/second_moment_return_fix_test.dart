@@ -17,7 +17,8 @@ import 'package:voicememory_mobile/storage/mobile_prefs_store.dart';
 import 'package:voicememory_mobile/widgets/record/second_moment_return_card.dart';
 
 class _MemoryPrefs extends MobilePrefsStore {
-  _MemoryPrefs() : super(file: File('test/tmp/second_moment_return/unused.json'));
+  _MemoryPrefs()
+    : super(file: File('test/tmp/second_moment_return/unused.json'));
 
   final Map<String, Map<String, dynamic>> maps = {};
 
@@ -33,30 +34,26 @@ class _MemoryPrefs extends MobilePrefsStore {
 final _now = DateTime(2026, 6, 12, 12);
 
 JournalEntry _entry(String id, {DateTime? createdAt}) => JournalEntry(
-      id: id,
-      createdAt: createdAt ?? _now,
-      transcript: 'Something from today that felt worth saving.',
-      durationSeconds: 24,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'thoughtful',
-        emotionalIntensity: 2,
-        recurringThemes: ['work'],
-        exactLanguagePattern: '',
-        concreteObservation: 'Work pressure showed up today.',
-        repeatedSignal: '',
-      ),
-      syncStatus: SyncStatus.localOnly,
-    );
+  id: id,
+  createdAt: createdAt ?? _now,
+  transcript: 'Something from today that felt worth saving.',
+  durationSeconds: 24,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'thoughtful',
+    emotionalIntensity: 2,
+    recurringThemes: ['work'],
+    exactLanguagePattern: '',
+    concreteObservation: 'Work pressure showed up today.',
+    repeatedSignal: '',
+  ),
+  syncStatus: SyncStatus.localOnly,
+);
 
 SecondMomentReturnResult _buildResult({
   List<JournalEntry> entries = const [],
 }) =>
-    SecondMomentReturnEngine.build(
-      entries: entries,
-      source: 'test',
-      now: _now,
-    );
+    SecondMomentReturnEngine.build(entries: entries, source: 'test', now: _now);
 
 void main() {
   final analyticsEvents = <({String event, Map<String, Object> props})>[];
@@ -281,25 +278,29 @@ void main() {
         onPromptSelected: (_) {},
         onSaveOneSentence: () {},
       );
-      expect(find.textContaining('One moment starts the archive'), findsOneWidget);
-    });
-
-    testWidgets('renders A second moment gives ArchiveMe something to compare', (
-      tester,
-    ) async {
-      await pumpCard(
-        tester,
-        onNoticedSomething: () {},
-        onPromptSelected: (_) {},
-        onSaveOneSentence: () {},
-      );
       expect(
-        find.textContaining(
-          'A second similar moment gives ArchiveMe something to compare',
-        ),
+        find.textContaining('One moment starts the archive'),
         findsOneWidget,
       );
     });
+
+    testWidgets(
+      'renders A second moment gives ArchiveMe something to compare',
+      (tester) async {
+        await pumpCard(
+          tester,
+          onNoticedSomething: () {},
+          onPromptSelected: (_) {},
+          onSaveOneSentence: () {},
+        );
+        expect(
+          find.textContaining(
+            'A second similar moment gives ArchiveMe something to compare',
+          ),
+          findsOneWidget,
+        );
+      },
+    );
 
     testWidgets('renders no daily pressure line', (tester) async {
       await pumpCard(
@@ -321,10 +322,17 @@ void main() {
         onPromptSelected: (_) {},
         onSaveOneSentence: () => saveTapped = true,
       );
-      await tester.tap(find.byKey(const Key('second_moment_return_noticed_something')));
+      await tester.tap(
+        find.byKey(const Key('second_moment_return_noticed_something')),
+      );
       await tester.pump();
-      expect(find.text(SecondMomentReturnCopy.afterNoticedSomething), findsOneWidget);
-      await tester.tap(find.byKey(const Key('second_moment_return_save_one_sentence')));
+      expect(
+        find.text(SecondMomentReturnCopy.afterNoticedSomething),
+        findsOneWidget,
+      );
+      await tester.tap(
+        find.byKey(const Key('second_moment_return_save_one_sentence')),
+      );
       await tester.pump();
       expect(saveTapped, isTrue);
     });
@@ -336,10 +344,15 @@ void main() {
         onPromptSelected: (_) {},
         onSaveOneSentence: () {},
       );
-      await tester.tap(find.byKey(const Key('second_moment_return_show_what_to_notice')));
+      await tester.tap(
+        find.byKey(const Key('second_moment_return_show_what_to_notice')),
+      );
       await tester.pump();
       for (final type in SecondMomentReturnCopy.promptOrder) {
-        expect(find.text(SecondMomentReturnCopy.promptTextFor(type)), findsOneWidget);
+        expect(
+          find.text(SecondMomentReturnCopy.promptTextFor(type)),
+          findsOneWidget,
+        );
       }
     });
 
@@ -366,7 +379,9 @@ void main() {
         onPromptSelected: (prompt) => selected = prompt,
         onSaveOneSentence: () {},
       );
-      await tester.tap(find.byKey(const Key('second_moment_return_show_what_to_notice')));
+      await tester.tap(
+        find.byKey(const Key('second_moment_return_show_what_to_notice')),
+      );
       await tester.pump();
       await tester.tap(
         find.byKey(const Key('second_moment_return_prompt_didThisComeBack')),
@@ -382,18 +397,19 @@ void main() {
         onPromptSelected: (_) {},
         onSaveOneSentence: () {},
       );
-      await tester.tap(find.byKey(const Key('second_moment_return_noticed_something')));
+      await tester.tap(
+        find.byKey(const Key('second_moment_return_noticed_something')),
+      );
       await tester.pump();
 
       expect(analyticsEvents, isNotEmpty);
       final seen = analyticsEvents.firstWhere(
         (event) => event.event == SecondMomentReturnAnalytics.seenEvent,
       );
-      expect(seen.props.keys, containsAll([
-        'source',
-        'entry_count',
-        'has_confirmed_repeat',
-      ]));
+      expect(
+        seen.props.keys,
+        containsAll(['source', 'entry_count', 'has_confirmed_repeat']),
+      );
       expect(seen.props.keys, isNot(contains('transcript')));
       expect(seen.props.keys, isNot(contains('body')));
 
@@ -430,74 +446,86 @@ void main() {
       expect(cardIndex, lessThan(lowFrictionIndex));
     });
 
-    test('SurfacePriorityAudit prefers three moment completion for exactly one entry', () {
-      final result = SurfacePriorityEngine.auditRecordReady(
-        entryCount: 1,
-        source: 'test',
-        candidates: SurfacePriorityCandidates.recordReady(
-          threeMomentCompletion: true,
-          firstMomentCapture: false,
-          secondMomentReturn: true,
-          lowFrictionReturn: true,
-          whatToNoticeNext: true,
-          betaTodaySummary: true,
-          openCapturePromptChips: true,
-          captureFreedomLine: true,
-          timelineProofMoment: false,
-          archiveTimelineSpine: false,
-          timelinePositioning: false,
-          currentRelevance: false,
-          correctionMemory: false,
-          notRelevantRecovery: false,
-          proofQualityResponse: false,
-          evidenceWeighting: false,
-          proofSpecificity: false,
-          presentDayRelevance: false,
-          patternConfidence: false,
-          betaTesterReport: false,
-          proEvidenceValue: false,
-          privateReportProBridge: false,
-          suppressLegacyEducation: false,
-        ),
-      );
-      expect(result.guidanceSlot, SurfacePriorityCardKey.threeMomentCompletion);
-      expect(result.isVisible(
-        SurfacePriorityCardKey.secondMomentReturn,
-        candidate: true,
-      ), isFalse);
-    });
+    test(
+      'SurfacePriorityAudit prefers three moment completion for exactly one entry',
+      () {
+        final result = SurfacePriorityEngine.auditRecordReady(
+          entryCount: 1,
+          source: 'test',
+          candidates: SurfacePriorityCandidates.recordReady(
+            threeMomentCompletion: true,
+            firstMomentCapture: false,
+            secondMomentReturn: true,
+            lowFrictionReturn: true,
+            whatToNoticeNext: true,
+            betaTodaySummary: true,
+            openCapturePromptChips: true,
+            captureFreedomLine: true,
+            timelineProofMoment: false,
+            archiveTimelineSpine: false,
+            timelinePositioning: false,
+            currentRelevance: false,
+            correctionMemory: false,
+            notRelevantRecovery: false,
+            proofQualityResponse: false,
+            evidenceWeighting: false,
+            proofSpecificity: false,
+            presentDayRelevance: false,
+            patternConfidence: false,
+            betaTesterReport: false,
+            proEvidenceValue: false,
+            privateReportProBridge: false,
+            suppressLegacyEducation: false,
+          ),
+        );
+        expect(
+          result.guidanceSlot,
+          SurfacePriorityCardKey.threeMomentCompletion,
+        );
+        expect(
+          result.isVisible(
+            SurfacePriorityCardKey.secondMomentReturn,
+            candidate: true,
+          ),
+          isFalse,
+        );
+      },
+    );
 
-    test('second moment return still wins when three moment completion inactive', () {
-      final result = SurfacePriorityEngine.auditRecordReady(
-        entryCount: 1,
-        source: 'test',
-        candidates: SurfacePriorityCandidates.recordReady(
-          threeMomentCompletion: false,
-          firstMomentCapture: false,
-          secondMomentReturn: true,
-          lowFrictionReturn: true,
-          whatToNoticeNext: true,
-          betaTodaySummary: true,
-          openCapturePromptChips: true,
-          captureFreedomLine: true,
-          timelineProofMoment: false,
-          archiveTimelineSpine: false,
-          timelinePositioning: false,
-          currentRelevance: false,
-          correctionMemory: false,
-          notRelevantRecovery: false,
-          proofQualityResponse: false,
-          evidenceWeighting: false,
-          proofSpecificity: false,
-          presentDayRelevance: false,
-          patternConfidence: false,
-          betaTesterReport: false,
-          proEvidenceValue: false,
-          privateReportProBridge: false,
-          suppressLegacyEducation: false,
-        ),
-      );
-      expect(result.guidanceSlot, SurfacePriorityCardKey.secondMomentReturn);
-    });
+    test(
+      'second moment return still wins when three moment completion inactive',
+      () {
+        final result = SurfacePriorityEngine.auditRecordReady(
+          entryCount: 1,
+          source: 'test',
+          candidates: SurfacePriorityCandidates.recordReady(
+            threeMomentCompletion: false,
+            firstMomentCapture: false,
+            secondMomentReturn: true,
+            lowFrictionReturn: true,
+            whatToNoticeNext: true,
+            betaTodaySummary: true,
+            openCapturePromptChips: true,
+            captureFreedomLine: true,
+            timelineProofMoment: false,
+            archiveTimelineSpine: false,
+            timelinePositioning: false,
+            currentRelevance: false,
+            correctionMemory: false,
+            notRelevantRecovery: false,
+            proofQualityResponse: false,
+            evidenceWeighting: false,
+            proofSpecificity: false,
+            presentDayRelevance: false,
+            patternConfidence: false,
+            betaTesterReport: false,
+            proEvidenceValue: false,
+            privateReportProBridge: false,
+            suppressLegacyEducation: false,
+          ),
+        );
+        expect(result.guidanceSlot, SurfacePriorityCardKey.secondMomentReturn);
+      },
+    );
   });
 }

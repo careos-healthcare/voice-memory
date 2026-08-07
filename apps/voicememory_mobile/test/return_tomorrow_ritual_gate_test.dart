@@ -12,17 +12,15 @@ const _docsPath = 'docs/RETURN_TOMORROW_RITUAL.md';
 ReturnTomorrowRitualGateInput _input({
   bool? paidIntentBetaComplete,
   bool? v1RitualUiRequested,
-}) =>
-    ReturnTomorrowRitualGateInput(
-      paidIntentBetaComplete: paidIntentBetaComplete,
-      v1RitualUiRequested: v1RitualUiRequested,
-    );
+}) => ReturnTomorrowRitualGateInput(
+  paidIntentBetaComplete: paidIntentBetaComplete,
+  v1RitualUiRequested: v1RitualUiRequested,
+);
 
 ReturnTomorrowRitualRule _rule(
   ReturnTomorrowRitualGateResult result,
   ReturnTomorrowRitualRuleId id,
-) =>
-    result.rules.firstWhere((rule) => rule.id == id);
+) => result.rules.firstWhere((rule) => rule.id == id);
 
 void main() {
   group('ReturnTomorrowRitualGate.build', () {
@@ -63,10 +61,7 @@ void main() {
 
     test('v1 ritual UI requested without beta proof fails noNewLiveV1Ui', () {
       final result = ReturnTomorrowRitualGate.build(
-        _input(
-          paidIntentBetaComplete: false,
-          v1RitualUiRequested: true,
-        ),
+        _input(paidIntentBetaComplete: false, v1RitualUiRequested: true),
       );
       expect(
         _rule(result, ReturnTomorrowRitualRuleId.noNewLiveV1Ui).status,
@@ -77,7 +72,11 @@ void main() {
     test('canonical rules pass for gate copy', () {
       final result = ReturnTomorrowRitualGate.build(_input());
       for (final rule in result.rules) {
-        expect(rule.status, ReturnTomorrowRitualRuleStatus.pass, reason: rule.id.name);
+        expect(
+          rule.status,
+          ReturnTomorrowRitualRuleStatus.pass,
+          reason: rule.id.name,
+        );
       }
     });
 
@@ -113,7 +112,10 @@ void main() {
         ReturnTomorrowRitualGate.build(_input()),
       );
       expect(report.headline, ReturnTomorrowRitualCopy.headline);
-      expect(report.allowedLanguageLine, ReturnTomorrowRitualCopy.allowedLanguageLine);
+      expect(
+        report.allowedLanguageLine,
+        ReturnTomorrowRitualCopy.allowedLanguageLine,
+      );
       expect(report.guardrail, ReturnTomorrowRitualCopy.guardrail);
     });
   });
@@ -158,10 +160,7 @@ void main() {
     });
 
     test('detectDocListsRules matches docs', () {
-      expect(
-        ReturnTomorrowRitualGate.detectDocListsRules(docsSource),
-        isTrue,
-      );
+      expect(ReturnTomorrowRitualGate.detectDocListsRules(docsSource), isTrue);
     });
 
     test('detectGuardrailPresentInCopy matches gate copy', () {

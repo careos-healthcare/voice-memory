@@ -34,22 +34,21 @@ PostSaveReinforcementPlacementInput _input({
   bool isRecordScreen = false,
   bool wouldCompeteWithFirstProof = false,
   bool wouldPressureMoreRecording = false,
-}) =>
-    PostSaveReinforcementPlacementInput(
-      surface: surface,
-      savedMoment: savedMoment,
-      isFirstMoment: isFirstMoment,
-      isRelatedToPreviousRepeat: isRelatedToPreviousRepeat,
-      hasSafeRepeat: hasSafeRepeat,
-      hasEnoughArchiveSignal: hasEnoughArchiveSignal,
-      userCorrectedProofRecently: userCorrectedProofRecently,
-      isWatchOnly: isWatchOnly,
-      isPrivateRawText: isPrivateRawText,
-      isPostSave: isPostSave,
-      isRecordScreen: isRecordScreen,
-      wouldCompeteWithFirstProof: wouldCompeteWithFirstProof,
-      wouldPressureMoreRecording: wouldPressureMoreRecording,
-    );
+}) => PostSaveReinforcementPlacementInput(
+  surface: surface,
+  savedMoment: savedMoment,
+  isFirstMoment: isFirstMoment,
+  isRelatedToPreviousRepeat: isRelatedToPreviousRepeat,
+  hasSafeRepeat: hasSafeRepeat,
+  hasEnoughArchiveSignal: hasEnoughArchiveSignal,
+  userCorrectedProofRecently: userCorrectedProofRecently,
+  isWatchOnly: isWatchOnly,
+  isPrivateRawText: isPrivateRawText,
+  isPostSave: isPostSave,
+  isRecordScreen: isRecordScreen,
+  wouldCompeteWithFirstProof: wouldCompeteWithFirstProof,
+  wouldPressureMoreRecording: wouldPressureMoreRecording,
+);
 
 void main() {
   group('PostSaveReinforcementPlacement.build', () {
@@ -58,7 +57,10 @@ void main() {
         _input(isPostSave: false),
       );
       expect(result.shouldShow, isFalse);
-      expect(result.reason, PostSaveReinforcementPlacementReason.hideNotPostSave);
+      expect(
+        result.reason,
+        PostSaveReinforcementPlacementReason.hideNotPostSave,
+      );
     });
 
     test('no saved moment hides', () {
@@ -66,7 +68,10 @@ void main() {
         _input(savedMoment: false),
       );
       expect(result.shouldShow, isFalse);
-      expect(result.reason, PostSaveReinforcementPlacementReason.hideNoSavedMoment);
+      expect(
+        result.reason,
+        PostSaveReinforcementPlacementReason.hideNoSavedMoment,
+      );
     });
 
     test('private raw text hides', () {
@@ -74,7 +79,10 @@ void main() {
         _input(isPrivateRawText: true),
       );
       expect(result.shouldShow, isFalse);
-      expect(result.reason, PostSaveReinforcementPlacementReason.hidePrivateRawText);
+      expect(
+        result.reason,
+        PostSaveReinforcementPlacementReason.hidePrivateRawText,
+      );
     });
 
     test('recent correction hides', () {
@@ -82,7 +90,10 @@ void main() {
         _input(userCorrectedProofRecently: true),
       );
       expect(result.shouldShow, isFalse);
-      expect(result.reason, PostSaveReinforcementPlacementReason.hideAfterCorrection);
+      expect(
+        result.reason,
+        PostSaveReinforcementPlacementReason.hideAfterCorrection,
+      );
     });
 
     test('correction surface hides', () {
@@ -90,7 +101,10 @@ void main() {
         _input(surface: PostSaveReinforcementPlacementSurface.afterCorrection),
       );
       expect(result.shouldShow, isFalse);
-      expect(result.reason, PostSaveReinforcementPlacementReason.hideAfterCorrection);
+      expect(
+        result.reason,
+        PostSaveReinforcementPlacementReason.hideAfterCorrection,
+      );
     });
 
     test('watchOnly hides', () {
@@ -136,10 +150,7 @@ void main() {
 
     test('repeat-related safe repeat shows repeat-related reinforcement', () {
       final result = PostSaveReinforcementPlacement.build(
-        _input(
-          isRelatedToPreviousRepeat: true,
-          hasSafeRepeat: true,
-        ),
+        _input(isRelatedToPreviousRepeat: true, hasSafeRepeat: true),
       );
       expect(result.shouldShow, isTrue);
       expect(
@@ -191,21 +202,25 @@ void main() {
       );
     });
 
-    test('firstMomentLine says one real moment is enough to start your archive',
-        () {
-      expect(
-        PostSaveReinforcementPlacementCopy.firstMomentLine.toLowerCase(),
-        contains('one real moment is enough to start your archive'),
-      );
-    });
+    test(
+      'firstMomentLine says one real moment is enough to start your archive',
+      () {
+        expect(
+          PostSaveReinforcementPlacementCopy.firstMomentLine.toLowerCase(),
+          contains('one real moment is enough to start your archive'),
+        );
+      },
+    );
 
-    test('simpleMomentLine says gives archive something real to compare later',
-        () {
-      expect(
-        PostSaveReinforcementPlacementCopy.simpleMomentLine,
-        contains('gives your archive something real to compare later'),
-      );
-    });
+    test(
+      'simpleMomentLine says gives archive something real to compare later',
+      () {
+        expect(
+          PostSaveReinforcementPlacementCopy.simpleMomentLine,
+          contains('gives your archive something real to compare later'),
+        );
+      },
+    );
 
     test('repeatRelatedLine includes returning changing fading corrected', () {
       expect(
@@ -268,20 +283,25 @@ void main() {
       );
     });
 
-    test('nextLine says save another only if something real is still on mind',
-        () {
-      expect(
-        PostSaveReinforcementPlacementCopy.nextLine,
-        contains('only if something real is still on your mind'),
-      );
-    });
+    test(
+      'nextLine says save another only if something real is still on mind',
+      () {
+        expect(
+          PostSaveReinforcementPlacementCopy.nextLine,
+          contains('only if something real is still on your mind'),
+        );
+      },
+    );
 
     test('guardrail blocks streaks', () {
       expect(PostSaveReinforcementPlacementCopy.guardrail, contains('streaks'));
     });
 
     test('guardrail blocks pressure', () {
-      expect(PostSaveReinforcementPlacementCopy.guardrail, contains('pressure'));
+      expect(
+        PostSaveReinforcementPlacementCopy.guardrail,
+        contains('pressure'),
+      );
     });
 
     test('guardrail blocks advice', () {
@@ -300,7 +320,8 @@ void main() {
     });
 
     test('copy does not say better than ChatGPT', () {
-      for (final text in PostSaveReinforcementPlacementCopy.allVisibleStrings()) {
+      for (final text
+          in PostSaveReinforcementPlacementCopy.allVisibleStrings()) {
         final lower = text.toLowerCase();
         expect(lower.contains('better than chatgpt'), isFalse, reason: text);
         expect(lower.contains('better chatgpt'), isFalse, reason: text);
@@ -308,7 +329,8 @@ void main() {
     });
 
     test('copy does not position ArchiveMe as voice chat', () {
-      for (final text in PostSaveReinforcementPlacementCopy.allVisibleStrings()) {
+      for (final text
+          in PostSaveReinforcementPlacementCopy.allVisibleStrings()) {
         final lower = text.toLowerCase();
         expect(lower.contains('voice chat'), isFalse, reason: text);
         expect(lower.contains('voice assistant'), isFalse, reason: text);
@@ -316,7 +338,8 @@ void main() {
     });
 
     test('copy does not introduce ranking or importance scoring', () {
-      for (final text in PostSaveReinforcementPlacementCopy.allVisibleStrings()) {
+      for (final text
+          in PostSaveReinforcementPlacementCopy.allVisibleStrings()) {
         final lower = text.toLowerCase();
         expect(lower.contains('ranking'), isFalse, reason: text);
         expect(lower.contains('importance score'), isFalse, reason: text);
@@ -324,7 +347,8 @@ void main() {
     });
 
     test('copy avoids therapy diagnosis coaching and advice claims', () {
-      for (final text in PostSaveReinforcementPlacementCopy.allVisibleStrings()) {
+      for (final text
+          in PostSaveReinforcementPlacementCopy.allVisibleStrings()) {
         expect(ProofSurfaceAdviceGuard.passes(text), isTrue, reason: text);
         final lower = text.toLowerCase();
         expect(lower.contains('advice'), isFalse, reason: text);
@@ -467,43 +491,47 @@ void main() {
       );
     });
 
-    test('record screen remains capture-first without stacking extra cards', () {
-      final audit = SurfacePriorityEngine.auditRecordReady(
-        entryCount: 4,
-        source: 'record',
-        candidates: SurfacePriorityCandidates.recordReady(
-          firstMomentCapture: false,
-          secondMomentReturn: false,
-          lowFrictionReturn: false,
-          whatToNoticeNext: false,
-          betaTodaySummary: false,
-          openCapturePromptChips: false,
-          captureFreedomLine: false,
-          timelineProofMoment: true,
-          archiveTimelineSpine: false,
-          timelinePositioning: false,
-          currentRelevance: false,
-          correctionMemory: false,
-          notRelevantRecovery: false,
-          proofQualityResponse: false,
-          evidenceWeighting: false,
-          proofSpecificity: false,
-          presentDayRelevance: false,
-          patternConfidence: false,
-          betaTesterReport: false,
-          proEvidenceValue: false,
-          privateReportProBridge: false,
-          suppressLegacyEducation: false,
-          betaProofLift: true,
-        ),
-      );
-      expect(audit.proofCardKey, 'timelineProofMoment');
-      expect(audit.guidanceCardKey, isNull);
-    });
+    test(
+      'record screen remains capture-first without stacking extra cards',
+      () {
+        final audit = SurfacePriorityEngine.auditRecordReady(
+          entryCount: 4,
+          source: 'record',
+          candidates: SurfacePriorityCandidates.recordReady(
+            firstMomentCapture: false,
+            secondMomentReturn: false,
+            lowFrictionReturn: false,
+            whatToNoticeNext: false,
+            betaTodaySummary: false,
+            openCapturePromptChips: false,
+            captureFreedomLine: false,
+            timelineProofMoment: true,
+            archiveTimelineSpine: false,
+            timelinePositioning: false,
+            currentRelevance: false,
+            correctionMemory: false,
+            notRelevantRecovery: false,
+            proofQualityResponse: false,
+            evidenceWeighting: false,
+            proofSpecificity: false,
+            presentDayRelevance: false,
+            patternConfidence: false,
+            betaTesterReport: false,
+            proEvidenceValue: false,
+            privateReportProBridge: false,
+            suppressLegacyEducation: false,
+            betaProofLift: true,
+          ),
+        );
+        expect(audit.proofCardKey, 'timelineProofMoment');
+        expect(audit.guidanceCardKey, isNull);
+      },
+    );
   });
 }
 
-ChangeTrailClaritySummary _fullTrailSummary() => const ChangeTrailClaritySummary(
+ChangeTrailClaritySummary _fullTrailSummary() =>
+    const ChangeTrailClaritySummary(
       totalTesters: 30,
       understoodFirstProofCount: 7,
       understoodProKeepsTrailCount: 6,

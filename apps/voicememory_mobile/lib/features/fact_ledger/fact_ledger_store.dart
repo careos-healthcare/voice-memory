@@ -1,5 +1,4 @@
 import '../../config/creator_demo_mode.dart';
-import '../../models/journal_entry.dart';
 import '../../services/activation_funnel_analytics.dart';
 import '../../services/app_services.dart';
 import '../../storage/mobile_prefs_store.dart';
@@ -213,28 +212,7 @@ class FactLedgerStore {
         sourceEntryId,
       );
       if (entry == null || entry.preserveOriginal) return;
-      final updated = JournalEntry(
-        id: entry.id,
-        createdAt: entry.createdAt,
-        transcript: entry.transcript,
-        durationSeconds: entry.durationSeconds,
-        reflection: entry.reflection,
-        syncStatus: entry.syncStatus,
-        localAudioPath: entry.localAudioPath,
-        treatAsNew: entry.treatAsNew,
-        connectionApproved: entry.connectionApproved,
-        keepExactDetails: entry.keepExactDetails,
-        keepSeparate: entry.keepSeparate,
-        archiveThreadId: entry.archiveThreadId,
-        archivePackId: entry.archivePackId,
-        isPinned: entry.isPinned,
-        pinnedAt: entry.pinnedAt,
-        isArchived: entry.isArchived,
-        archivedAt: entry.archivedAt,
-        entryAboutness: entry.entryAboutness,
-        memorySurfacing: entry.memorySurfacing,
-        preserveOriginal: true,
-      );
+      final updated = entry.copyWith(preserveOriginal: true);
       await AppServices.instance.journalStore.update(updated);
       await PressureCheckInStore.instance().syncFromJournalEntry(updated);
     } catch (_) {

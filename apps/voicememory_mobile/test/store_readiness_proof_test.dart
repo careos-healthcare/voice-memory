@@ -2,17 +2,11 @@ import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/features/archive_proof/proof_surface_advice_guard.dart';
-import 'package:voicememory_mobile/features/change_trail_clarity/change_trail_clarity.dart';
-import 'package:voicememory_mobile/features/context_trail_clarity/context_trail_clarity.dart';
-import 'package:voicememory_mobile/features/core_archive_journey/core_archive_journey.dart';
-import 'package:voicememory_mobile/features/low_effort_archive_capture/low_effort_archive_capture.dart';
-import 'package:voicememory_mobile/features/positive_archive_reinforcement/positive_archive_reinforcement.dart';
 import 'package:voicememory_mobile/features/preserved_proof_value/preserved_proof_value.dart';
 import 'package:voicememory_mobile/features/production_candidate/production_candidate_checklist.dart';
 import 'package:voicememory_mobile/features/proof_detail_repair/proof_detail_repair_copy.dart';
 import 'package:voicememory_mobile/features/proof_selection/proof_selection_principle.dart';
 import 'package:voicememory_mobile/features/proof_trail_positioning/proof_trail_positioning.dart';
-import 'package:voicememory_mobile/features/save_a_repeat_habit/save_a_repeat_habit.dart';
 import 'package:voicememory_mobile/features/store_readiness/store_readiness_audit.dart';
 import 'package:voicememory_mobile/features/store_readiness_proof/store_readiness_proof.dart';
 import 'package:voicememory_mobile/features/store_readiness_proof/store_readiness_proof_copy.dart';
@@ -37,25 +31,24 @@ StoreReadinessProofInput _input({
   bool physicalDeviceSmokePassed = true,
   bool testFlightUploadReady = true,
   bool secretsRotated = true,
-}) =>
-    StoreReadinessProofInput(
-      revenueCatApiKeyProvided: revenueCatApiKeyProvided,
-      revenueCatConfigured: revenueCatConfigured,
-      productsLoaded: productsLoaded,
-      proEntitlementConfigured: proEntitlementConfigured,
-      purchaseFlowReachable: purchaseFlowReachable,
-      restorePurchasesReachable: restorePurchasesReachable,
-      restoreNoCrashVerified: restoreNoCrashVerified,
-      purchasesUnavailableFallbackVerified: purchasesUnavailableFallbackVerified,
-      proStateCanBeRead: proStateCanBeRead,
-      supportUrlSet: supportUrlSet,
-      privacyUrlSet: privacyUrlSet,
-      appStoreMetadataReady: appStoreMetadataReady,
-      screenshotsReady: screenshotsReady,
-      physicalDeviceSmokePassed: physicalDeviceSmokePassed,
-      testFlightUploadReady: testFlightUploadReady,
-      secretsRotated: secretsRotated,
-    );
+}) => StoreReadinessProofInput(
+  revenueCatApiKeyProvided: revenueCatApiKeyProvided,
+  revenueCatConfigured: revenueCatConfigured,
+  productsLoaded: productsLoaded,
+  proEntitlementConfigured: proEntitlementConfigured,
+  purchaseFlowReachable: purchaseFlowReachable,
+  restorePurchasesReachable: restorePurchasesReachable,
+  restoreNoCrashVerified: restoreNoCrashVerified,
+  purchasesUnavailableFallbackVerified: purchasesUnavailableFallbackVerified,
+  proStateCanBeRead: proStateCanBeRead,
+  supportUrlSet: supportUrlSet,
+  privacyUrlSet: privacyUrlSet,
+  appStoreMetadataReady: appStoreMetadataReady,
+  screenshotsReady: screenshotsReady,
+  physicalDeviceSmokePassed: physicalDeviceSmokePassed,
+  testFlightUploadReady: testFlightUploadReady,
+  secretsRotated: secretsRotated,
+);
 
 void main() {
   group('StoreReadinessProof.resolve', () {
@@ -129,9 +122,7 @@ void main() {
 
     test('support/privacy/metadata missing -> metadataMissing', () {
       expect(
-        StoreReadinessProof.resolve(
-          _input(supportUrlSet: false),
-        ).status,
+        StoreReadinessProof.resolve(_input(supportUrlSet: false)).status,
         StoreReadinessProofStatus.metadataMissing,
       );
     });
@@ -161,13 +152,15 @@ void main() {
       );
     });
 
-    test('all store items pass but secrets not rotated -> readyForTestFlight',
-        () {
-      expect(
-        StoreReadinessProof.resolve(_input(secretsRotated: false)).status,
-        StoreReadinessProofStatus.readyForTestFlight,
-      );
-    });
+    test(
+      'all store items pass but secrets not rotated -> readyForTestFlight',
+      () {
+        expect(
+          StoreReadinessProof.resolve(_input(secretsRotated: false)).status,
+          StoreReadinessProofStatus.readyForTestFlight,
+        );
+      },
+    );
 
     test('all store items and secrets rotated -> readyForSubmission', () {
       expect(
@@ -179,10 +172,7 @@ void main() {
 
   group('StoreReadinessProofCopy', () {
     test('headline says Store readiness proof', () {
-      expect(
-        StoreReadinessProofCopy.headline,
-        'Store readiness proof',
-      );
+      expect(StoreReadinessProofCopy.headline, 'Store readiness proof');
     });
 
     test('body blocks new product features until store readiness proven', () {
@@ -190,28 +180,16 @@ void main() {
         StoreReadinessProofCopy.body,
         contains('should not add more product features'),
       );
-      expect(
-        StoreReadinessProofCopy.body,
-        contains('device smoke are proven'),
-      );
+      expect(StoreReadinessProofCopy.body, contains('device smoke are proven'));
     });
 
     test('revenueCatLine says real API key', () {
-      expect(
-        StoreReadinessProofCopy.revenueCatLine,
-        contains('real API key'),
-      );
+      expect(StoreReadinessProofCopy.revenueCatLine, contains('real API key'));
     });
 
     test('restoreLine says reachable and must not crash', () {
-      expect(
-        StoreReadinessProofCopy.restoreLine,
-        contains('reachable'),
-      );
-      expect(
-        StoreReadinessProofCopy.restoreLine,
-        contains('must not crash'),
-      );
+      expect(StoreReadinessProofCopy.restoreLine, contains('reachable'));
+      expect(StoreReadinessProofCopy.restoreLine, contains('must not crash'));
     });
 
     test('entitlementLine says Pro state readable', () {
@@ -232,14 +210,16 @@ void main() {
       );
     });
 
-    test('metadataLine mentions support URL/privacy URL/screenshots/App Store metadata',
-        () {
-      final line = StoreReadinessProofCopy.metadataLine;
-      expect(line, contains('Support URL'));
-      expect(line, contains('privacy URL'));
-      expect(line, contains('screenshots'));
-      expect(line, contains('App Store metadata'));
-    });
+    test(
+      'metadataLine mentions support URL/privacy URL/screenshots/App Store metadata',
+      () {
+        final line = StoreReadinessProofCopy.metadataLine;
+        expect(line, contains('Support URL'));
+        expect(line, contains('privacy URL'));
+        expect(line, contains('screenshots'));
+        expect(line, contains('App Store metadata'));
+      },
+    );
 
     test('deviceLine says physical-device smoke test', () {
       expect(
@@ -328,8 +308,9 @@ void main() {
         ProductionCandidateStatus.readyForSubmission,
       );
       expect(
-        StoreReadinessAudit.fromProductionCandidateChecklist(checklist)
-            .resolveStatus(),
+        StoreReadinessAudit.fromProductionCandidateChecklist(
+          checklist,
+        ).resolveStatus(),
         StoreReadinessStatus.readyForSubmission,
       );
     });
@@ -385,38 +366,41 @@ void main() {
       );
     });
 
-    test('record screen remains capture-first without stacking extra cards', () {
-      final audit = SurfacePriorityEngine.auditRecordReady(
-        entryCount: 4,
-        source: 'record',
-        candidates: SurfacePriorityCandidates.recordReady(
-          firstMomentCapture: false,
-          secondMomentReturn: false,
-          lowFrictionReturn: false,
-          whatToNoticeNext: false,
-          betaTodaySummary: false,
-          openCapturePromptChips: false,
-          captureFreedomLine: false,
-          timelineProofMoment: true,
-          archiveTimelineSpine: false,
-          timelinePositioning: false,
-          currentRelevance: false,
-          correctionMemory: false,
-          notRelevantRecovery: false,
-          proofQualityResponse: false,
-          evidenceWeighting: false,
-          proofSpecificity: false,
-          presentDayRelevance: false,
-          patternConfidence: false,
-          betaTesterReport: false,
-          proEvidenceValue: false,
-          privateReportProBridge: false,
-          suppressLegacyEducation: false,
-          betaProofLift: true,
-        ),
-      );
-      expect(audit.proofCardKey, 'timelineProofMoment');
-      expect(audit.guidanceCardKey, isNull);
-    });
+    test(
+      'record screen remains capture-first without stacking extra cards',
+      () {
+        final audit = SurfacePriorityEngine.auditRecordReady(
+          entryCount: 4,
+          source: 'record',
+          candidates: SurfacePriorityCandidates.recordReady(
+            firstMomentCapture: false,
+            secondMomentReturn: false,
+            lowFrictionReturn: false,
+            whatToNoticeNext: false,
+            betaTodaySummary: false,
+            openCapturePromptChips: false,
+            captureFreedomLine: false,
+            timelineProofMoment: true,
+            archiveTimelineSpine: false,
+            timelinePositioning: false,
+            currentRelevance: false,
+            correctionMemory: false,
+            notRelevantRecovery: false,
+            proofQualityResponse: false,
+            evidenceWeighting: false,
+            proofSpecificity: false,
+            presentDayRelevance: false,
+            patternConfidence: false,
+            betaTesterReport: false,
+            proEvidenceValue: false,
+            privateReportProBridge: false,
+            suppressLegacyEducation: false,
+            betaProofLift: true,
+          ),
+        );
+        expect(audit.proofCardKey, 'timelineProofMoment');
+        expect(audit.guidanceCardKey, isNull);
+      },
+    );
   });
 }

@@ -24,7 +24,7 @@ class TrialSummaryExporter {
     final participant = summary.participantId?.trim().isNotEmpty == true
         ? summary.participantId!
         : '—';
-    final pct = (double? rate) =>
+    String pct(double? rate) =>
         rate == null ? '—' : '${(rate * 100).toStringAsFixed(0)}%';
 
     return '''

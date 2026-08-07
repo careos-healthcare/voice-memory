@@ -12,7 +12,8 @@ abstract class FirstUserExperienceCopy {
       'a private timeline in your own words. Start with one honest moment.';
   static const String primaryCta = ConsumerUiCopy.recordOneMomentCta;
 
-  static const String trustLine = PrivacyCopyPolicy.personalNotMedicalDisclaimer;
+  static const String trustLine =
+      PrivacyCopyPolicy.personalNotMedicalDisclaimer;
 
   /// Returning-user session survey — must never render on an empty archive.
   static const String returnSessionSurveyTitle = 'What brought you back today?';

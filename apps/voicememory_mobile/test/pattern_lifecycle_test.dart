@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/features/archive_proof/archive_belief_surface.dart';
@@ -28,6 +26,7 @@ import 'package:voicememory_mobile/widgets/patterns/archive_belief_surface_card.
 import 'package:voicememory_mobile/widgets/patterns/pattern_detail_sheet.dart';
 import 'package:voicememory_mobile/widgets/patterns/pattern_lifecycle_badge.dart';
 import 'package:voicememory_mobile/widgets/weekly_review/weekly_archive_review_sheet.dart';
+import 'support/test_storage_sandbox.dart';
 
 const _placeholder =
     '[draft] ${CaptureSaveMessages.recordingSavedLocally} — transcribe when connected';
@@ -38,100 +37,91 @@ JournalEntry _entry({
   required String id,
   required String transcript,
   DateTime? createdAt,
-}) =>
-    JournalEntry(
-      id: id,
-      createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
-      transcript: transcript,
-      durationSeconds: 30,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 2,
-        recurringThemes: ['work'],
-        exactLanguagePattern: '',
-        concreteObservation: 'Work pressure showed up in this moment.',
-        repeatedSignal: '',
-      ),
-    );
+}) => JournalEntry(
+  id: id,
+  createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
+  transcript: transcript,
+  durationSeconds: 30,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 2,
+    recurringThemes: ['work'],
+    exactLanguagePattern: '',
+    concreteObservation: 'Work pressure showed up in this moment.',
+    repeatedSignal: '',
+  ),
+);
 
 List<JournalEntry> _twoRelatedRepeatEntries() => [
-      _entry(
-        id: 'e1',
-        transcript: _strongRepeat,
-        createdAt: DateTime(2026, 6, 10, 12),
-      ),
-      _entry(
-        id: 'e2',
-        transcript:
-            'Same thing — said yes when I had no capacity for one more thing.',
-        createdAt: DateTime(2026, 6, 11, 12),
-      ),
-    ];
+  _entry(
+    id: 'e1',
+    transcript: _strongRepeat,
+    createdAt: DateTime(2026, 6, 10, 12),
+  ),
+  _entry(
+    id: 'e2',
+    transcript:
+        'Same thing — said yes when I had no capacity for one more thing.',
+    createdAt: DateTime(2026, 6, 11, 12),
+  ),
+];
 
 List<JournalEntry> _threeRelatedRepeatEntries() => [
-      ..._twoRelatedRepeatEntries(),
-      _entry(
-        id: 'e3',
-        transcript:
-            'I said yes again even though I had no capacity for one more ask.',
-        createdAt: DateTime(2026, 6, 12, 12),
-      ),
-    ];
+  ..._twoRelatedRepeatEntries(),
+  _entry(
+    id: 'e3',
+    transcript:
+        'I said yes again even though I had no capacity for one more ask.',
+    createdAt: DateTime(2026, 6, 12, 12),
+  ),
+];
 
 List<JournalEntry> _fourRelatedRepeatEntries() => [
-      ..._threeRelatedRepeatEntries(),
-      _entry(
-        id: 'e4',
-        transcript:
-            'The meeting invite came in and I said yes again with no capacity left for it.',
-        createdAt: DateTime(2026, 6, 13, 12),
-      ),
-    ];
+  ..._threeRelatedRepeatEntries(),
+  _entry(
+    id: 'e4',
+    transcript:
+        'The meeting invite came in and I said yes again with no capacity left for it.',
+    createdAt: DateTime(2026, 6, 13, 12),
+  ),
+];
 
 List<JournalEntry> _fourWithDifferentLatestPhrase() => [
-      ..._threeRelatedRepeatEntries(),
-      _entry(
-        id: 'e4',
-        transcript:
-            'I checked my calendar before answering when they asked me to take on more work.',
-        createdAt: DateTime(2026, 6, 13, 12),
-      ),
-    ];
-
-List<JournalEntry> _fourWithSofterLatestPhrase() => [
-      ..._threeRelatedRepeatEntries(),
-      _entry(
-        id: 'e4',
-        transcript:
-            'The ask came in and it felt less urgent than before, so I paused before answering.',
-        createdAt: DateTime(2026, 6, 13, 12),
-      ),
-    ];
+  ..._threeRelatedRepeatEntries(),
+  _entry(
+    id: 'e4',
+    transcript:
+        'I checked my calendar before answering when they asked me to take on more work.',
+    createdAt: DateTime(2026, 6, 13, 12),
+  ),
+];
 
 RepeatReturnCheckRecord _answeredRecord({
   required String entryId,
   required RepeatReturnCheckChoice choice,
-}) =>
-    RepeatReturnCheckRecord(
-      entryId: entryId,
-      choice: choice,
-      entryCountAtCapture: 4,
-      createdAt: DateTime(2026, 6, 13),
-    );
+}) => RepeatReturnCheckRecord(
+  entryId: entryId,
+  choice: choice,
+  entryCountAtCapture: 4,
+  createdAt: DateTime(2026, 6, 13),
+);
 
 void main() {
+  late TestStorageSandbox sandbox;
   setUp(() async {
+    sandbox = TestStorageSandbox.create();
     await WhatChangedV2Store.resetForTest();
     await ComeBackTomorrowV2Store.resetForTest(null);
     PatternLifecycleAnalytics.resetForTest();
     await AppServices.resetForTest(
-      journalPath: '${DateTime.now().microsecondsSinceEpoch}_journal.json',
-      prefsPath: '${DateTime.now().microsecondsSinceEpoch}_prefs.json',
+      journalPath: sandbox.journalPath,
+      prefsPath: sandbox.prefsPath,
       skipRevenueCat: true,
     );
   });
 
+  tearDown(() => sandbox.dispose());
   group('PatternLifecycleEngine', () {
     test('2 related entries resolve Forming', () {
       final lifecycle = PatternLifecycleEngine.build(
@@ -269,7 +259,11 @@ void main() {
       );
       final now = DateTime(2026, 6, 15, 12);
       final entries = [
-        _entry(id: '1', transcript: _strongRepeat, createdAt: DateTime(2026, 6, 10, 12)),
+        _entry(
+          id: '1',
+          transcript: _strongRepeat,
+          createdAt: DateTime(2026, 6, 10, 12),
+        ),
         _entry(
           id: '2',
           transcript: 'A quiet lunch with a friend — nothing about work.',
@@ -387,8 +381,9 @@ void main() {
     });
 
     test('no advice diagnosis solved fixed cured healed language', () {
-      final blob =
-          PatternLifecycleCopy.allVisibleStrings().join(' ').toLowerCase();
+      final blob = PatternLifecycleCopy.allVisibleStrings()
+          .join(' ')
+          .toLowerCase();
       expect(blob, isNot(contains('diagnos')));
       expect(blob, isNot(contains('solved')));
       expect(blob, isNot(contains('fixed')));
@@ -427,8 +422,8 @@ void main() {
   group('PatternLifecycleBadge', () {
     testWidgets('analytics metadata only', (tester) async {
       final captured = <({String event, Map<String, Object> properties})>[];
-      PatternLifecycleAnalytics.captureForTest =
-          (event, properties) => captured.add((event: event, properties: properties));
+      PatternLifecycleAnalytics.captureForTest = (event, properties) =>
+          captured.add((event: event, properties: properties));
 
       const lifecycle = PatternLifecycle(
         state: PatternLifecycleState.watching,

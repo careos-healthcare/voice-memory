@@ -7,10 +7,7 @@ import '../../theme/app_spacing.dart';
 
 /// Small status line — what the archive is currently watching.
 class ArchiveWatchingMicroState extends StatelessWidget {
-  const ArchiveWatchingMicroState({
-    super.key,
-    required this.watching,
-  });
+  const ArchiveWatchingMicroState({super.key, required this.watching});
 
   final ArchiveWatchingResult watching;
 

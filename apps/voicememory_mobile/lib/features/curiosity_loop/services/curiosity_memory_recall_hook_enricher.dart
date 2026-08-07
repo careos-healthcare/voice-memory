@@ -3,9 +3,7 @@ import '../repositories/curiosity_loop_repository.dart';
 
 /// Applies pending clinical memory-recall flags to the next curiosity hook.
 class CuriosityMemoryRecallHookEnricher {
-  CuriosityMemoryRecallHookEnricher({
-    CuriosityLoopRepository? repository,
-  }) : _repository = repository;
+  CuriosityMemoryRecallHookEnricher({this._repository});
 
   final CuriosityLoopRepository? _repository;
 

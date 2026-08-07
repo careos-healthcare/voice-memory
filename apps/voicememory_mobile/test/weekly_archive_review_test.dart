@@ -23,7 +23,7 @@ import 'package:voicememory_mobile/features/pro_evidence_value/pro_evidence_valu
 import 'package:voicememory_mobile/features/pro_evidence_value/pro_evidence_value_model.dart';
 import 'package:voicememory_mobile/features/pro_memory/pro_memory_boundary_engine.dart';
 import 'package:voicememory_mobile/product/consumer_ui_copy.dart';
-import 'package:voicememory_mobile/screens/weekly_archive_review_screen.dart';
+import 'package:archiveme_research/screens/weekly_archive_review_screen.dart';
 import 'package:voicememory_mobile/security/privacy_copy_policy.dart';
 import 'package:voicememory_mobile/services/capture_save_messages.dart';
 import 'package:voicememory_mobile/theme/app_theme.dart';
@@ -44,76 +44,75 @@ JournalEntry _voiceEntry({
   required String id,
   required String transcript,
   DateTime? createdAt,
-}) =>
-    JournalEntry(
-      id: id,
-      createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
-      transcript: transcript,
-      durationSeconds: 30,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 2,
-        recurringThemes: ['work'],
-        exactLanguagePattern: '',
-        concreteObservation: 'Work pressure showed up in this moment.',
-        repeatedSignal: '',
-      ),
-    );
+}) => JournalEntry(
+  id: id,
+  createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
+  transcript: transcript,
+  durationSeconds: 30,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 2,
+    recurringThemes: ['work'],
+    exactLanguagePattern: '',
+    concreteObservation: 'Work pressure showed up in this moment.',
+    repeatedSignal: '',
+  ),
+);
 
 JournalEntry _degradedVoiceEntry({String id = 'v1'}) => JournalEntry(
-      id: id,
-      createdAt: DateTime(2026, 6, 12, 12),
-      transcript:
-          '[draft] ${CaptureSaveMessages.recordingSavedLocally} — transcribe when connected',
-      durationSeconds: 20,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 0,
-        recurringThemes: [],
-        exactLanguagePattern: '',
-        concreteObservation: '',
-        repeatedSignal: '',
-      ),
-    );
+  id: id,
+  createdAt: DateTime(2026, 6, 12, 12),
+  transcript:
+      '[draft] ${CaptureSaveMessages.recordingSavedLocally} — transcribe when connected',
+  durationSeconds: 20,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 0,
+    recurringThemes: [],
+    exactLanguagePattern: '',
+    concreteObservation: '',
+    repeatedSignal: '',
+  ),
+);
 
 List<JournalEntry> _fourDistinctWorkEntries() => [
-      _voiceEntry(
-        id: 'e1',
-        transcript:
-            'I felt pressure at work before saying yes again even when I was tired.',
-        createdAt: DateTime(2026, 6, 9, 12),
-      ),
-      _voiceEntry(
-        id: 'e2',
-        transcript:
-            'Work kept pulling me back after I wanted to stop for the day at the office.',
-        createdAt: DateTime(2026, 6, 10, 12),
-      ),
-      _voiceEntry(
-        id: 'e3',
-        transcript:
-            'I noticed the same hurry showing up before I answered anyone at work.',
-        createdAt: DateTime(2026, 6, 11, 12),
-      ),
-      _voiceEntry(
-        id: 'e4',
-        transcript:
-            'The deadline pressure returned, but I caught it earlier this time.',
-        createdAt: DateTime(2026, 6, 12, 12),
-      ),
-    ];
+  _voiceEntry(
+    id: 'e1',
+    transcript:
+        'I felt pressure at work before saying yes again even when I was tired.',
+    createdAt: DateTime(2026, 6, 9, 12),
+  ),
+  _voiceEntry(
+    id: 'e2',
+    transcript:
+        'Work kept pulling me back after I wanted to stop for the day at the office.',
+    createdAt: DateTime(2026, 6, 10, 12),
+  ),
+  _voiceEntry(
+    id: 'e3',
+    transcript:
+        'I noticed the same hurry showing up before I answered anyone at work.',
+    createdAt: DateTime(2026, 6, 11, 12),
+  ),
+  _voiceEntry(
+    id: 'e4',
+    transcript:
+        'The deadline pressure returned, but I caught it earlier this time.',
+    createdAt: DateTime(2026, 6, 12, 12),
+  ),
+];
 
 List<JournalEntry> _fiveDistinctWorkEntries() => [
-      ..._fourDistinctWorkEntries(),
-      _voiceEntry(
-        id: 'e5',
-        transcript:
-            'The same hurry showed up at home with my partner after a long day at work.',
-        createdAt: DateTime(2026, 6, 13, 12),
-      ),
-    ];
+  ..._fourDistinctWorkEntries(),
+  _voiceEntry(
+    id: 'e5',
+    transcript:
+        'The same hurry showed up at home with my partner after a long day at work.',
+    createdAt: DateTime(2026, 6, 13, 12),
+  ),
+];
 
 const _bannedWords = [
   'you always',
@@ -170,10 +169,7 @@ void main() {
       );
       expect(review.hasEnoughEvidence, isTrue);
       expect(review.title, 'Your archive review');
-      expect(
-        review.subtitle,
-        'What your saved words are starting to show.',
-      );
+      expect(review.subtitle, 'What your saved words are starting to show.');
     });
 
     test('review includes all required sections', () {
@@ -184,7 +180,10 @@ void main() {
       expect(review.whatChangedLine, isNotEmpty);
       expect(review.evidenceRows.length, greaterThanOrEqualTo(2));
       expect(review.nextActionLine, isNotEmpty);
-      expect(review.notConclusionLine, VisibleArchiveProofCopy.weeklyArchiveReviewNotConclusion);
+      expect(
+        review.notConclusionLine,
+        VisibleArchiveProofCopy.weeklyArchiveReviewNotConclusion,
+      );
       expect(
         review.sourceLine,
         'ArchiveMe is using your saved words, not guessing.',
@@ -226,7 +225,10 @@ void main() {
       );
       expect(review.hasEnoughEvidence, isTrue);
       expect(review.evidenceWeak, isTrue);
-      expect(review.uncertaintyLine, VisibleArchiveProofCopy.weeklyArchiveReviewStillThin);
+      expect(
+        review.uncertaintyLine,
+        VisibleArchiveProofCopy.weeklyArchiveReviewStillThin,
+      );
     });
 
     test('route constant is stable', () {
@@ -254,12 +256,18 @@ void main() {
       );
       await tester.pump();
 
-      expect(find.byKey(const Key('weekly_archive_review_card')), findsOneWidget);
+      expect(
+        find.byKey(const Key('weekly_archive_review_card')),
+        findsOneWidget,
+      );
       expect(find.text('This week\'s strongest thread'), findsOneWidget);
       expect(find.text('What changed'), findsOneWidget);
       expect(find.text('Evidence from your archive'), findsOneWidget);
       expect(find.text('What to add next'), findsOneWidget);
-      expect(find.byKey(const Key('weekly_archive_review_evidence_0')), findsOneWidget);
+      expect(
+        find.byKey(const Key('weekly_archive_review_evidence_0')),
+        findsOneWidget,
+      );
       _expectNoBannedCopy(_visibleText(tester));
     });
 
@@ -276,7 +284,10 @@ void main() {
       );
       await tester.pump();
 
-      expect(find.byKey(const Key('weekly_archive_review_insufficient')), findsOneWidget);
+      expect(
+        find.byKey(const Key('weekly_archive_review_insufficient')),
+        findsOneWidget,
+      );
       expect(
         find.text(
           'Your archive needs more moments before it can create a review.',
@@ -302,10 +313,19 @@ void main() {
       );
       await tester.pump();
 
-      expect(find.byKey(const Key('weekly_archive_review_screen_title')), findsOneWidget);
+      expect(
+        find.byKey(const Key('weekly_archive_review_screen_title')),
+        findsOneWidget,
+      );
       expect(find.text('Your archive review'), findsWidgets);
-      expect(find.byKey(const Key('weekly_archive_review_add_cta')), findsOneWidget);
-      expect(find.byKey(const Key('weekly_archive_review_view_evidence_cta')), findsOneWidget);
+      expect(
+        find.byKey(const Key('weekly_archive_review_add_cta')),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(const Key('weekly_archive_review_view_evidence_cta')),
+        findsOneWidget,
+      );
     });
 
     testWidgets('insufficient preview does not crash', (tester) async {
@@ -319,7 +339,10 @@ void main() {
       );
       await tester.pump();
 
-      expect(find.byKey(const Key('weekly_archive_review_insufficient_body')), findsOneWidget);
+      expect(
+        find.byKey(const Key('weekly_archive_review_insufficient_body')),
+        findsOneWidget,
+      );
     });
   });
 
@@ -335,9 +358,8 @@ void main() {
         routes: [
           GoRoute(
             path: WeeklyArchiveReviewNavigation.route,
-            builder: (context, state) => WeeklyArchiveReviewScreen(
-              previewReview: review,
-            ),
+            builder: (context, state) =>
+                WeeklyArchiveReviewScreen(previewReview: review),
           ),
           GoRoute(
             path: '/record',
@@ -376,17 +398,14 @@ void main() {
         routes: [
           GoRoute(
             path: WeeklyArchiveReviewNavigation.route,
-            builder: (context, state) => WeeklyArchiveReviewScreen(
-              previewReview: review,
-            ),
+            builder: (context, state) =>
+                WeeklyArchiveReviewScreen(previewReview: review),
           ),
           GoRoute(
             path: BeliefEvidenceNavigation.route,
             builder: (context, state) {
               evidenceOpened = true;
-              return const Scaffold(
-                body: Text('EVIDENCE_SCREEN'),
-              );
+              return const Scaffold(body: Text('EVIDENCE_SCREEN'));
             },
           ),
         ],
@@ -399,8 +418,9 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      final evidenceCta =
-          find.byKey(const Key('weekly_archive_review_view_evidence_cta'));
+      final evidenceCta = find.byKey(
+        const Key('weekly_archive_review_view_evidence_cta'),
+      );
       await tester.ensureVisible(evidenceCta);
       await tester.tap(evidenceCta);
       await tester.pumpAndSettle();
@@ -417,88 +437,87 @@ void main() {
       required String id,
       required String transcript,
       DateTime? createdAt,
-    }) =>
-        JournalEntry(
-          id: id,
-          createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
-          transcript: transcript,
-          durationSeconds: 30,
-          localAudioPath: '/tmp/$id.m4a',
-          reflection: const Reflection(
-            mood: 'neutral',
-            emotionalIntensity: 2,
-            recurringThemes: ['work'],
-            exactLanguagePattern: '',
-            concreteObservation: 'Work pressure showed up in this moment.',
-            repeatedSignal: '',
-          ),
-        );
+    }) => JournalEntry(
+      id: id,
+      createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
+      transcript: transcript,
+      durationSeconds: 30,
+      localAudioPath: '/tmp/$id.m4a',
+      reflection: const Reflection(
+        mood: 'neutral',
+        emotionalIntensity: 2,
+        recurringThemes: ['work'],
+        exactLanguagePattern: '',
+        concreteObservation: 'Work pressure showed up in this moment.',
+        repeatedSignal: '',
+      ),
+    );
 
     List<JournalEntry> threeRelatedRepeatEntries() => [
-          v1Entry(
-            id: 'e1',
-            transcript:
-                'I had no capacity but I said yes again to the extra meeting today.',
-            createdAt: DateTime(2026, 6, 10, 12),
-          ),
-          v1Entry(
-            id: 'e2',
-            transcript:
-                'Same thing — said yes when I had no capacity for one more thing.',
-            createdAt: DateTime(2026, 6, 11, 12),
-          ),
-          v1Entry(
-            id: 'e3',
-            transcript:
-                'I said yes again even though I had no capacity for one more ask.',
-            createdAt: DateTime(2026, 6, 12, 12),
-          ),
-        ];
+      v1Entry(
+        id: 'e1',
+        transcript:
+            'I had no capacity but I said yes again to the extra meeting today.',
+        createdAt: DateTime(2026, 6, 10, 12),
+      ),
+      v1Entry(
+        id: 'e2',
+        transcript:
+            'Same thing — said yes when I had no capacity for one more thing.',
+        createdAt: DateTime(2026, 6, 11, 12),
+      ),
+      v1Entry(
+        id: 'e3',
+        transcript:
+            'I said yes again even though I had no capacity for one more ask.',
+        createdAt: DateTime(2026, 6, 12, 12),
+      ),
+    ];
 
     List<JournalEntry> fiveRelatedRepeatEntries() => [
-          ...threeRelatedRepeatEntries(),
-          v1Entry(
-            id: 'e4',
-            transcript:
-                'I said yes again even though I had no capacity for one more ask today.',
-            createdAt: DateTime(2026, 6, 13, 12),
-          ),
-          v1Entry(
-            id: 'e5',
-            transcript:
-                'Same yes pattern came back but it felt less urgent and easier to stop this time.',
-            createdAt: DateTime(2026, 6, 14, 12),
-          ),
-        ];
+      ...threeRelatedRepeatEntries(),
+      v1Entry(
+        id: 'e4',
+        transcript:
+            'I said yes again even though I had no capacity for one more ask today.',
+        createdAt: DateTime(2026, 6, 13, 12),
+      ),
+      v1Entry(
+        id: 'e5',
+        transcript:
+            'Same yes pattern came back but it felt less urgent and easier to stop this time.',
+        createdAt: DateTime(2026, 6, 14, 12),
+      ),
+    ];
 
     List<JournalEntry> mixedRepeatAndWalkEntries() => [
-          ...threeRelatedRepeatEntries(),
-          v1Entry(
-            id: 'w4',
-            transcript: 'I walked outside before replying and it helped.',
-            createdAt: DateTime(2026, 6, 13, 12),
-          ),
-          v1Entry(
-            id: 'w5',
-            transcript: 'Same week I walked outside again before the hard email.',
-            createdAt: DateTime(2026, 6, 14, 12),
-          ),
-        ];
+      ...threeRelatedRepeatEntries(),
+      v1Entry(
+        id: 'w4',
+        transcript: 'I walked outside before replying and it helped.',
+        createdAt: DateTime(2026, 6, 13, 12),
+      ),
+      v1Entry(
+        id: 'w5',
+        transcript: 'Same week I walked outside again before the hard email.',
+        createdAt: DateTime(2026, 6, 14, 12),
+      ),
+    ];
 
-    RepeatReturnCheckChangeProof v1ChangeProof(RepeatReturnCheckChoice choice) =>
-        RepeatReturnCheckChangeProof(
-          title: RepeatReturnCheckCopy.changeProofTitle,
-          body: switch (choice) {
-            RepeatReturnCheckChoice.stronger =>
-              RepeatReturnCheckCopy.trendGettingLouder,
-            RepeatReturnCheckChoice.softer =>
-              RepeatReturnCheckCopy.trendSofterThanBefore,
-            RepeatReturnCheckChoice.same => RepeatReturnCheckCopy.trendSteady,
-            RepeatReturnCheckChoice.changed =>
-              RepeatReturnCheckCopy.trendSteady,
-          },
-          latestChoice: choice,
-        );
+    RepeatReturnCheckChangeProof v1ChangeProof(
+      RepeatReturnCheckChoice choice,
+    ) => RepeatReturnCheckChangeProof(
+      title: RepeatReturnCheckCopy.changeProofTitle,
+      body: switch (choice) {
+        RepeatReturnCheckChoice.stronger =>
+          RepeatReturnCheckCopy.trendGettingLouder,
+        RepeatReturnCheckChoice.softer =>
+          RepeatReturnCheckCopy.trendSofterThanBefore,
+        RepeatReturnCheckChoice.same => RepeatReturnCheckCopy.trendSteady,
+        RepeatReturnCheckChoice.changed => RepeatReturnCheckCopy.trendSteady,
+      },
+      latestChoice: choice,
+    );
 
     void expectNoDiagnosticLanguage(String copy) {
       final lower = copy.toLowerCase();
@@ -641,20 +660,23 @@ void main() {
     });
 
     group('copy', () {
-      test('references change over time with stronger softer same language', () {
-        final joined = [
-          WeeklyArchiveWeekReviewCopy.promise,
-          WeeklyArchiveWeekReviewCopy.changedLabel,
-          WeeklyArchiveWeekReviewCopy.changedLouder,
-          WeeklyArchiveWeekReviewCopy.changedSame,
-          WeeklyArchiveWeekReviewCopy.changedSofter,
-        ].join(' ').toLowerCase();
+      test(
+        'references change over time with stronger softer same language',
+        () {
+          final joined = [
+            WeeklyArchiveWeekReviewCopy.promise,
+            WeeklyArchiveWeekReviewCopy.changedLabel,
+            WeeklyArchiveWeekReviewCopy.changedLouder,
+            WeeklyArchiveWeekReviewCopy.changedSame,
+            WeeklyArchiveWeekReviewCopy.changedSofter,
+          ].join(' ').toLowerCase();
 
-        expect(joined, contains('over time'));
-        expect(joined, contains('stronger'));
-        expect(joined, contains('softer'));
-        expect(joined, contains('what changed'));
-      });
+          expect(joined, contains('over time'));
+          expect(joined, contains('stronger'));
+          expect(joined, contains('softer'));
+          expect(joined, contains('what changed'));
+        },
+      );
 
       test('section labels describe evidence not prescriptions', () {
         expect(
@@ -680,10 +702,7 @@ void main() {
           WeeklyArchiveWeekReviewCopy.helpedPrefix.toLowerCase(),
           contains('noticed'),
         );
-        expect(
-          WeeklyArchiveWeekReviewCopy.helpedLabel,
-          'Appeared to help',
-        );
+        expect(WeeklyArchiveWeekReviewCopy.helpedLabel, 'Appeared to help');
         expect(
           WeeklyArchiveWeekReviewCopy.helpedPrefix.toLowerCase(),
           isNot(contains('you should')),
@@ -753,7 +772,10 @@ void main() {
           find.text(WeeklyArchiveWeekReviewCopy.nextToWatchLabel),
           findsOneWidget,
         );
-        expect(find.text(WeeklyArchiveWeekReviewCopy.recordCta), findsOneWidget);
+        expect(
+          find.text(WeeklyArchiveWeekReviewCopy.recordCta),
+          findsOneWidget,
+        );
       });
 
       testWidgets('does not expose full transcript', (tester) async {
@@ -779,10 +801,7 @@ void main() {
           ),
         );
 
-        expect(
-          find.textContaining(entries.first.transcript),
-          findsNothing,
-        );
+        expect(find.textContaining(entries.first.transcript), findsNothing);
       });
     });
 
@@ -816,12 +835,14 @@ void main() {
 
     group('placement', () {
       test('appears on Patterns near Archive Summary', () {
-        final src =
-            File('lib/screens/archive_belief_screen.dart').readAsStringSync();
+        final src = File(
+          'lib/screens/archive_belief_screen.dart',
+        ).readAsStringSync();
         final summaryIndex = src.indexOf('ArchiveSummaryCard');
         final dailyIndex = src.indexOf('DailyReturnReasonCard');
-        final weeklyIndex =
-            src.indexOf('weeklyReviewSurface.WeeklyArchiveReviewCard');
+        final weeklyIndex = src.indexOf(
+          'weeklyReviewSurface.WeeklyArchiveReviewCard',
+        );
         expect(summaryIndex, greaterThan(-1));
         expect(dailyIndex, greaterThan(summaryIndex));
         expect(weeklyIndex, greaterThan(dailyIndex));
@@ -862,74 +883,72 @@ void main() {
       required String id,
       required String transcript,
       DateTime? createdAt,
-    }) =>
-        JournalEntry(
-          id: id,
-          createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
-          transcript: transcript,
-          durationSeconds: 30,
-          localAudioPath: '/tmp/$id.m4a',
-          reflection: const Reflection(
-            mood: 'neutral',
-            emotionalIntensity: 2,
-            recurringThemes: ['work'],
-            exactLanguagePattern: '',
-            concreteObservation: 'Work pressure showed up in this moment.',
-            repeatedSignal: '',
-          ),
-        );
+    }) => JournalEntry(
+      id: id,
+      createdAt: createdAt ?? DateTime(2026, 6, 12, 12),
+      transcript: transcript,
+      durationSeconds: 30,
+      localAudioPath: '/tmp/$id.m4a',
+      reflection: const Reflection(
+        mood: 'neutral',
+        emotionalIntensity: 2,
+        recurringThemes: ['work'],
+        exactLanguagePattern: '',
+        concreteObservation: 'Work pressure showed up in this moment.',
+        repeatedSignal: '',
+      ),
+    );
 
     List<JournalEntry> threeDistinctUnrelatedEntries() => [
-          surfaceEntry(
-            id: 'u1',
-            transcript:
-                'I stayed late finishing a report for my manager at work.',
-            createdAt: DateTime(2026, 6, 10, 12),
-          ),
-          surfaceEntry(
-            id: 'u2',
-            transcript: 'My neighbor was loud during my morning call at home.',
-            createdAt: DateTime(2026, 6, 11, 12),
-          ),
-          surfaceEntry(
-            id: 'u3',
-            transcript: 'I forgot to buy groceries on the way home tonight.',
-            createdAt: DateTime(2026, 6, 12, 12),
-          ),
-        ];
+      surfaceEntry(
+        id: 'u1',
+        transcript: 'I stayed late finishing a report for my manager at work.',
+        createdAt: DateTime(2026, 6, 10, 12),
+      ),
+      surfaceEntry(
+        id: 'u2',
+        transcript: 'My neighbor was loud during my morning call at home.',
+        createdAt: DateTime(2026, 6, 11, 12),
+      ),
+      surfaceEntry(
+        id: 'u3',
+        transcript: 'I forgot to buy groceries on the way home tonight.',
+        createdAt: DateTime(2026, 6, 12, 12),
+      ),
+    ];
 
     List<JournalEntry> fiveSaidYesEntries() => [
-          surfaceEntry(
-            id: 'e1',
-            transcript:
-                'I had no capacity but I said yes again to the extra meeting today.',
-            createdAt: DateTime(2026, 6, 10, 12),
-          ),
-          surfaceEntry(
-            id: 'e2',
-            transcript:
-                'Same thing — said yes when I had no capacity for one more thing.',
-            createdAt: DateTime(2026, 6, 11, 12),
-          ),
-          surfaceEntry(
-            id: 'e3',
-            transcript:
-                'I said yes again even though I had no capacity for one more ask.',
-            createdAt: DateTime(2026, 6, 12, 12),
-          ),
-          surfaceEntry(
-            id: 'e4',
-            transcript:
-                'I said yes again even though I had no capacity for one more ask today.',
-            createdAt: DateTime(2026, 6, 13, 12),
-          ),
-          surfaceEntry(
-            id: 'e5',
-            transcript:
-                'Same yes pattern came back but it felt less urgent and easier to stop this time.',
-            createdAt: DateTime(2026, 6, 14, 12),
-          ),
-        ];
+      surfaceEntry(
+        id: 'e1',
+        transcript:
+            'I had no capacity but I said yes again to the extra meeting today.',
+        createdAt: DateTime(2026, 6, 10, 12),
+      ),
+      surfaceEntry(
+        id: 'e2',
+        transcript:
+            'Same thing — said yes when I had no capacity for one more thing.',
+        createdAt: DateTime(2026, 6, 11, 12),
+      ),
+      surfaceEntry(
+        id: 'e3',
+        transcript:
+            'I said yes again even though I had no capacity for one more ask.',
+        createdAt: DateTime(2026, 6, 12, 12),
+      ),
+      surfaceEntry(
+        id: 'e4',
+        transcript:
+            'I said yes again even though I had no capacity for one more ask today.',
+        createdAt: DateTime(2026, 6, 13, 12),
+      ),
+      surfaceEntry(
+        id: 'e5',
+        transcript:
+            'Same yes pattern came back but it felt less urgent and easier to stop this time.',
+        createdAt: DateTime(2026, 6, 14, 12),
+      ),
+    ];
 
     void expectNoDebugLabels(Iterable<String> copy) {
       final joined = copy.join(' ').toLowerCase();
@@ -942,8 +961,14 @@ void main() {
 
     group('gates', () {
       test('does not show with zero entries', () {
-        expect(reviewSurface.WeeklyArchiveReviewEngine.shouldShow(entries: []), isFalse);
-        expect(reviewSurface.WeeklyArchiveReviewEngine.build(entries: []), isNull);
+        expect(
+          reviewSurface.WeeklyArchiveReviewEngine.shouldShow(entries: []),
+          isFalse,
+        );
+        expect(
+          reviewSurface.WeeklyArchiveReviewEngine.build(entries: []),
+          isNull,
+        );
       });
 
       test('does not show with generic test entries only', () {
@@ -978,20 +1003,31 @@ void main() {
     });
 
     group('states', () {
-      test('shows week still forming when low evidence but real entries exist', () {
-        final entries = threeDistinctUnrelatedEntries();
-        expect(
-          reviewSurface.WeeklyArchiveReviewEngine.shouldShow(entries: entries),
-          isTrue,
-        );
-        final review = reviewSurface.WeeklyArchiveReviewEngine.build(
-          entries: entries,
-        );
-        expect(review, isNotNull);
-        expect(review!.state, WeeklyArchiveReviewState.forming);
-        expect(review.title, reviewSurfaceCopy.WeeklyArchiveReviewCopy.formingTitle);
-        expect(review.formingBody, reviewSurfaceCopy.WeeklyArchiveReviewCopy.formingBody);
-      });
+      test(
+        'shows week still forming when low evidence but real entries exist',
+        () {
+          final entries = threeDistinctUnrelatedEntries();
+          expect(
+            reviewSurface.WeeklyArchiveReviewEngine.shouldShow(
+              entries: entries,
+            ),
+            isTrue,
+          );
+          final review = reviewSurface.WeeklyArchiveReviewEngine.build(
+            entries: entries,
+          );
+          expect(review, isNotNull);
+          expect(review!.state, WeeklyArchiveReviewState.forming);
+          expect(
+            review.title,
+            reviewSurfaceCopy.WeeklyArchiveReviewCopy.formingTitle,
+          );
+          expect(
+            review.formingBody,
+            reviewSurfaceCopy.WeeklyArchiveReviewCopy.formingBody,
+          );
+        },
+      );
 
       test('shows full weekly review after five real entries', () {
         final entries = fiveSaidYesEntries();
@@ -1002,7 +1038,10 @@ void main() {
         expect(review, isNotNull);
         expect(review!.state, WeeklyArchiveReviewState.full);
         expect(review.title, reviewSurfaceCopy.WeeklyArchiveReviewCopy.title);
-        expect(review.subtitle, reviewSurfaceCopy.WeeklyArchiveReviewCopy.subtitle);
+        expect(
+          review.subtitle,
+          reviewSurfaceCopy.WeeklyArchiveReviewCopy.subtitle,
+        );
       });
 
       test('shows full weekly review after first proof and later return', () {
@@ -1126,9 +1165,14 @@ void main() {
           ),
         );
 
-        expect(find.byKey(const Key('weekly_archive_review_card')), findsOneWidget);
         expect(
-          find.text(reviewSurfaceCopy.WeeklyArchiveReviewCopy.viewWeeklyReviewCta),
+          find.byKey(const Key('weekly_archive_review_card')),
+          findsOneWidget,
+        );
+        expect(
+          find.text(
+            reviewSurfaceCopy.WeeklyArchiveReviewCopy.viewWeeklyReviewCta,
+          ),
           findsOneWidget,
         );
         expect(
@@ -1149,14 +1193,21 @@ void main() {
           MaterialApp(
             theme: AppTheme.light(),
             home: Scaffold(
-              body: reviewSurfaceWidget.WeeklyArchiveReviewSheet(review: review!),
+              body: reviewSurfaceWidget.WeeklyArchiveReviewSheet(
+                review: review!,
+              ),
             ),
           ),
         );
 
-        expect(find.byKey(const Key('weekly_archive_review_sheet')), findsOneWidget);
         expect(
-          find.text(reviewSurfaceCopy.WeeklyArchiveReviewCopy.whatRepeatedLabel),
+          find.byKey(const Key('weekly_archive_review_sheet')),
+          findsOneWidget,
+        );
+        expect(
+          find.text(
+            reviewSurfaceCopy.WeeklyArchiveReviewCopy.whatRepeatedLabel,
+          ),
           findsOneWidget,
         );
         expect(
@@ -1173,47 +1224,49 @@ void main() {
         );
       });
 
-      test('weekly preview surface can show pro evidence bridge when gates pass',
-          () {
-        ProEvidenceValueDismissStore.invalidateSessionForTest();
-        final entries = fiveSaidYesEntries();
-        final review = reviewSurface.WeeklyArchiveReviewEngine.build(
-          entries: entries,
-          viewingConfirmedRepeatOrTimeline: true,
-        );
-        expect(review, isNotNull);
-        expect(
-          ProMemoryBoundaryEngine.hasGatedWeeklyReviewSections(
-            review: review!,
-            isPro: false,
-          ),
-          isTrue,
-        );
-        expect(
-          ProEvidenceValueEngine.shouldShowCard(
-            ProEvidenceValueContext(
-              surface: ProEvidenceValueSurface.weeklyReviewPreview,
-              entryCount: entries.length,
+      test(
+        'weekly preview surface can show pro evidence bridge when gates pass',
+        () {
+          ProEvidenceValueDismissStore.invalidateSessionForTest();
+          final entries = fiveSaidYesEntries();
+          final review = reviewSurface.WeeklyArchiveReviewEngine.build(
+            entries: entries,
+            viewingConfirmedRepeatOrTimeline: true,
+          );
+          expect(review, isNotNull);
+          expect(
+            ProMemoryBoundaryEngine.hasGatedWeeklyReviewSections(
+              review: review!,
               isPro: false,
-              dismissed: false,
-              firstProofPayoffSeen: true,
-              hasConfirmedRepeatEvidence: true,
-              privateReportPreviewVisible: false,
-              weeklyReviewPreviewVisible: true,
-              isZeroEntryState: false,
-              isFirstRecordingState: false,
-              isDegradedTranscriptState: false,
-              isPostSaveDegradedState: false,
-              firstProofTruthQuestionActive: false,
-              whatChangedQuestionActive: false,
-              currentRelevanceQuestionActive: false,
-              patternReviewInboxHasActiveItems: false,
-              exportReportsLive: true,
             ),
-          ),
-          isTrue,
-        );
-      });
+            isTrue,
+          );
+          expect(
+            ProEvidenceValueEngine.shouldShowCard(
+              ProEvidenceValueContext(
+                surface: ProEvidenceValueSurface.weeklyReviewPreview,
+                entryCount: entries.length,
+                isPro: false,
+                dismissed: false,
+                firstProofPayoffSeen: true,
+                hasConfirmedRepeatEvidence: true,
+                privateReportPreviewVisible: false,
+                weeklyReviewPreviewVisible: true,
+                isZeroEntryState: false,
+                isFirstRecordingState: false,
+                isDegradedTranscriptState: false,
+                isPostSaveDegradedState: false,
+                firstProofTruthQuestionActive: false,
+                whatChangedQuestionActive: false,
+                currentRelevanceQuestionActive: false,
+                patternReviewInboxHasActiveItems: false,
+                exportReportsLive: true,
+              ),
+            ),
+            isTrue,
+          );
+        },
+      );
     });
 
     group('billing untouched', () {

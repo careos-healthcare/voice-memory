@@ -9,8 +9,7 @@ abstract final class CapacityLoopGates {
   static bool showOnArchiveHome({
     required bool hasCard,
     required bool sampleMode,
-  }) =>
-      hasCard && !sampleMode;
+  }) => hasCard && !sampleMode;
 
   static bool shouldBuildCard(CapacityLoopGateInput input) {
     if (input.sampleMode) return false;
@@ -29,8 +28,7 @@ abstract final class CapacityLoopGates {
   static bool showRecordPrompt({
     required bool capacityWedgeActive,
     required bool sampleMode,
-  }) =>
-      capacityWedgeActive && !sampleMode;
+  }) => capacityWedgeActive && !sampleMode;
 }
 
 /// Gate input without journal text.

@@ -16,12 +16,7 @@ enum ArchiveHealthStage {
 }
 
 /// Internal confidence band for copy tone — never shown as a numeric score.
-enum ArchiveHealthConfidenceBand {
-  low,
-  cautious,
-  moderate,
-  stronger,
-}
+enum ArchiveHealthConfidenceBand { low, cautious, moderate, stronger }
 
 /// Local-only archive health readout from usable saved moments.
 class ArchiveHealthScore {
@@ -58,20 +53,20 @@ class ArchiveHealthScore {
   final String? cautionLine;
 
   factory ArchiveHealthScore.hidden() => const ArchiveHealthScore(
-        showCard: false,
-        usableMomentCount: 0,
-        excludedEntryCount: 0,
-        duplicateEntryCount: 0,
-        stage: ArchiveHealthStage.hidden,
-        title: VisibleArchiveProofCopy.archiveHealthTitle,
-        subtitle: VisibleArchiveProofCopy.archiveHealthSubtitle,
-        statusLine: '',
-        statusBody: '',
-        evidenceQualityLine: '',
-        needsMoreEvidenceLines: [],
-        whatToAddNextLine: '',
-        confidenceBand: ArchiveHealthConfidenceBand.low,
-      );
+    showCard: false,
+    usableMomentCount: 0,
+    excludedEntryCount: 0,
+    duplicateEntryCount: 0,
+    stage: ArchiveHealthStage.hidden,
+    title: VisibleArchiveProofCopy.archiveHealthTitle,
+    subtitle: VisibleArchiveProofCopy.archiveHealthSubtitle,
+    statusLine: '',
+    statusBody: '',
+    evidenceQualityLine: '',
+    needsMoreEvidenceLines: [],
+    whatToAddNextLine: '',
+    confidenceBand: ArchiveHealthConfidenceBand.low,
+  );
 }
 
 /// Deterministic archive health from eligible entries and local feedback.
@@ -80,9 +75,7 @@ abstract final class ArchiveHealthScoreEngine {
 
   static const _nearDuplicateOverlap = 0.85;
 
-  static ArchiveHealthScore build({
-    required List<JournalEntry> entries,
-  }) {
+  static ArchiveHealthScore build({required List<JournalEntry> entries}) {
     final eligible = ArchiveEvidenceGuard.eligibleEntries(entries);
     final usableCount = eligible.length;
     if (usableCount == 0) {
@@ -97,7 +90,8 @@ abstract final class ArchiveHealthScoreEngine {
 
     final notQuiteCount = ArchiveInsightFeedbackStore.totalNotQuiteCount();
     final feelsRightCount = ArchiveInsightFeedbackStore.totalFeelsRightCount();
-    final correctionNoteCount = ArchiveInsightFeedbackStore.correctionNoteCount();
+    final correctionNoteCount =
+        ArchiveInsightFeedbackStore.correctionNoteCount();
 
     final needsMore = <String>[];
     if (excludedCount > 0) {
@@ -122,7 +116,8 @@ abstract final class ArchiveHealthScoreEngine {
       needsMore.add(VisibleArchiveProofCopy.archiveHealthVariedContextTagLine);
     }
 
-    final evidenceWeak = hasDuplicates ||
+    final evidenceWeak =
+        hasDuplicates ||
         hasNearDuplicates ||
         CaptureContextTagAnalysis.singleContextEvidence(entries);
     final status = _statusForStage(stage);
@@ -185,25 +180,25 @@ abstract final class ArchiveHealthScoreEngine {
     return switch (stage) {
       ArchiveHealthStage.hidden => ('', ''),
       ArchiveHealthStage.thin => (
-          VisibleArchiveProofCopy.archiveHealthThinStatus,
-          VisibleArchiveProofCopy.archiveHealthThinBody,
-        ),
+        VisibleArchiveProofCopy.archiveHealthThinStatus,
+        VisibleArchiveProofCopy.archiveHealthThinBody,
+      ),
       ArchiveHealthStage.startingToCompare => (
-          VisibleArchiveProofCopy.archiveHealthStartingStatus,
-          VisibleArchiveProofCopy.archiveHealthStartingBody,
-        ),
+        VisibleArchiveProofCopy.archiveHealthStartingStatus,
+        VisibleArchiveProofCopy.archiveHealthStartingBody,
+      ),
       ArchiveHealthStage.firstBeliefReady => (
-          VisibleArchiveProofCopy.archiveHealthFirstBeliefStatus,
-          VisibleArchiveProofCopy.archiveHealthFirstBeliefBody,
-        ),
+        VisibleArchiveProofCopy.archiveHealthFirstBeliefStatus,
+        VisibleArchiveProofCopy.archiveHealthFirstBeliefBody,
+      ),
       ArchiveHealthStage.beliefUpdateReady => (
-          VisibleArchiveProofCopy.archiveHealthBeliefUpdateStatus,
-          VisibleArchiveProofCopy.archiveHealthBeliefUpdateBody,
-        ),
+        VisibleArchiveProofCopy.archiveHealthBeliefUpdateStatus,
+        VisibleArchiveProofCopy.archiveHealthBeliefUpdateBody,
+      ),
       ArchiveHealthStage.reviewReady => (
-          VisibleArchiveProofCopy.archiveHealthReviewStatus,
-          VisibleArchiveProofCopy.archiveHealthReviewBody,
-        ),
+        VisibleArchiveProofCopy.archiveHealthReviewStatus,
+        VisibleArchiveProofCopy.archiveHealthReviewBody,
+      ),
     };
   }
 
@@ -241,7 +236,8 @@ abstract final class ArchiveHealthScoreEngine {
 
     return switch (stage) {
       ArchiveHealthStage.hidden => '',
-      ArchiveHealthStage.thin => VisibleArchiveProofCopy.archiveHealthThinStatus,
+      ArchiveHealthStage.thin =>
+        VisibleArchiveProofCopy.archiveHealthThinStatus,
       ArchiveHealthStage.startingToCompare =>
         VisibleArchiveProofCopy.archiveHealthStartingStatus,
       ArchiveHealthStage.firstBeliefReady =>
@@ -263,7 +259,8 @@ abstract final class ArchiveHealthScoreEngine {
     }
     return switch (stage) {
       ArchiveHealthStage.hidden => '',
-      ArchiveHealthStage.thin => VisibleArchiveProofCopy.archiveHealthAddNextOne,
+      ArchiveHealthStage.thin =>
+        VisibleArchiveProofCopy.archiveHealthAddNextOne,
       ArchiveHealthStage.startingToCompare =>
         VisibleArchiveProofCopy.archiveHealthAddNextTwo,
       ArchiveHealthStage.firstBeliefReady =>
@@ -335,7 +332,8 @@ abstract final class ArchiveHealthScoreEngine {
       for (var j = i + 1; j < normalized.length; j++) {
         if (normalized[j].isEmpty) continue;
         if (normalized[i] == normalized[j]) continue;
-        if (_tokenOverlap(normalized[i], normalized[j]) >= _nearDuplicateOverlap) {
+        if (_tokenOverlap(normalized[i], normalized[j]) >=
+            _nearDuplicateOverlap) {
           return true;
         }
       }
@@ -347,8 +345,7 @@ abstract final class ArchiveHealthScoreEngine {
     final tokensA = a.split(' ').where((w) => w.length > 3).toSet();
     final tokensB = b.split(' ').where((w) => w.length > 3).toSet();
     if (tokensA.isEmpty || tokensB.isEmpty) return 0;
-    return tokensA.intersection(tokensB).length /
-        tokensA.union(tokensB).length;
+    return tokensA.intersection(tokensB).length / tokensA.union(tokensB).length;
   }
 
   static String _entryText(JournalEntry entry) {

@@ -30,7 +30,8 @@ abstract final class LowFrictionReturnCopy {
   static const afterSkip =
       'Skipped for today. Come back when something stands out.';
 
-  static String promptTextFor(LowFrictionReturnPromptType type) => switch (type) {
+  static String promptTextFor(LowFrictionReturnPromptType type) =>
+      switch (type) {
         LowFrictionReturnPromptType.whatKeptComingBack =>
           'What kept coming back today?',
         LowFrictionReturnPromptType.whatFeltHeavier =>
@@ -44,16 +45,15 @@ abstract final class LowFrictionReturnCopy {
       };
 
   static List<String> allVisibleStrings() => [
-        title,
-        body,
-        permissionLine,
-        recordAnythingReminder,
-        saveOneSentenceAction,
-        useTinyPromptAction,
-        skipTodayAction,
-        afterPromptSelected,
-        afterSkip,
-        for (final prompt in LowFrictionReturnPromptType.all)
-          promptTextFor(prompt),
-      ];
+    title,
+    body,
+    permissionLine,
+    recordAnythingReminder,
+    saveOneSentenceAction,
+    useTinyPromptAction,
+    skipTodayAction,
+    afterPromptSelected,
+    afterSkip,
+    for (final prompt in LowFrictionReturnPromptType.all) promptTextFor(prompt),
+  ];
 }

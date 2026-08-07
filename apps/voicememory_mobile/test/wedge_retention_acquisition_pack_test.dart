@@ -15,11 +15,7 @@ const _docPaths = [
   _paidLaunchPath,
 ];
 
-const _forbiddenPurchaseCtas = [
-  'Buy now',
-  'Subscribe now',
-  'Pro is active',
-];
+const _forbiddenPurchaseCtas = ['Buy now', 'Subscribe now', 'Pro is active'];
 
 const _forbiddenClinicalTerms = [
   'therapy',
@@ -72,10 +68,7 @@ void main() {
       expect(allDocs.toLowerCase(), contains('private evidence archive'));
       expect(
         allDocs.toLowerCase(),
-        anyOf(
-          contains('keeps returning'),
-          contains('what returned'),
-        ),
+        anyOf(contains('keeps returning'), contains('what returned')),
       );
       expect(allDocs.toLowerCase(), contains('what changed'));
       expect(allDocs.toLowerCase(), contains('what to watch next'));
@@ -127,10 +120,7 @@ void main() {
           contains('not ready until'),
         ),
       );
-      expect(
-        allDocs.toLowerCase(),
-        contains('revenuecat'),
-      );
+      expect(allDocs.toLowerCase(), contains('revenuecat'));
     });
   });
 

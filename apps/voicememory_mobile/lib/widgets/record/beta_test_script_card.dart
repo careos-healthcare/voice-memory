@@ -22,10 +22,9 @@ class BetaTestScriptCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bodyStyle = ArchiveMobileTypography.explanationBody(context).copyWith(
-      color: AppColors.textSecondary,
-      height: 1.4,
-    );
+    final bodyStyle = ArchiveMobileTypography.explanationBody(
+      context,
+    ).copyWith(color: AppColors.textSecondary, height: 1.4);
 
     return Container(
       key: const Key('beta_test_script_card'),
@@ -40,8 +39,9 @@ class BetaTestScriptCard extends StatelessWidget {
           Text(
             card.title,
             key: const Key('beta_test_script_card_title'),
-            style: ArchiveMobileTypography.responsiveSectionTitle(context)
-                .copyWith(fontSize: 16),
+            style: ArchiveMobileTypography.responsiveSectionTitle(
+              context,
+            ).copyWith(fontSize: 16),
           ),
           const SizedBox(height: AppSpacing.xs / 2),
           Text(
@@ -66,11 +66,12 @@ class BetaTestScriptCard extends StatelessWidget {
                 ),
                 child: Text(
                   BetaTestScriptCopy.viewTestStepsCta,
-                  style: ArchiveMobileTypography.responsiveHelper(context).copyWith(
-                    color: AppColors.accentPrimary,
-                    fontWeight: FontWeight.w600,
-                    fontSize: 13,
-                  ),
+                  style: ArchiveMobileTypography.responsiveHelper(context)
+                      .copyWith(
+                        color: AppColors.accentPrimary,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 13,
+                      ),
                 ),
               ),
               if (card.showSendFeedbackSecondary && onSendFeedback != null)
@@ -86,11 +87,12 @@ class BetaTestScriptCard extends StatelessWidget {
                   ),
                   child: Text(
                     BetaTestScriptCopy.sendBetaFeedbackCta,
-                    style: ArchiveMobileTypography.responsiveHelper(context).copyWith(
-                      color: AppColors.accentPrimary,
-                      fontWeight: FontWeight.w600,
-                      fontSize: 13,
-                    ),
+                    style: ArchiveMobileTypography.responsiveHelper(context)
+                        .copyWith(
+                          color: AppColors.accentPrimary,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 13,
+                        ),
                   ),
                 ),
             ],

@@ -3,10 +3,13 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-import '../../../api/api_client.dart';
 import '../../../api/api_exceptions.dart';
-import '../../../security/api_usage_guard.dart';
+import '../../../core/network/api_failure.dart';
+import '../../../core/network/api_result.dart';
+import '../../../core/network/network_cancel_token.dart';
+import '../../../data/repositories/capture_repository.dart';
 import '../../../security/api_response_safety.dart';
+import '../../../security/api_usage_guard.dart';
 import 'transcript_quality.dart';
 import 'transcription_log.dart';
 
@@ -112,10 +115,11 @@ abstract class TranscriptionService {
   static Future<TranscriptionOutcome> transcribeRecording({
     required File audioFile,
     required int durationSeconds,
-    required ApiClient api,
+    required CaptureRepository captureRepository,
     required Future<String> Function({bool forceRefresh}) ensureCaptureToken,
     required String scopeKey,
     required ApiUsageGuard usageGuard,
+    NetworkCancelToken? cancelToken,
     bool testStub = false,
   }) async {
     final mode = activeMode(testStub: testStub);
@@ -178,35 +182,27 @@ abstract class TranscriptionService {
       operation: ApiUsageOperation.transcribe,
     );
 
-    try {
-      var token = await ensureCaptureToken();
-      final transcript = await _requestTranscript(
-        api: api,
+    Future<ApiResult<String>> requestTranscript(String token) {
+      return captureRepository.postTranscribe(
         audioFile: audioFile,
         durationSeconds: durationSeconds,
         captureToken: token,
         idempotencyKey: idempotencyKey,
+        cancelToken: cancelToken,
       );
-      usageGuard.recordAttempt(
-        scopeKey: scopeKey,
-        operation: ApiUsageOperation.transcribe,
-        success: true,
-      );
-      return _successOutcome(
-        mode: mode,
-        transcript: transcript,
-        speechPermissionStatus: speechStatus,
-      );
-    } on AuthRequiredException {
-      try {
-        final token = await ensureCaptureToken(forceRefresh: true);
-        final transcript = await _requestTranscript(
-          api: api,
-          audioFile: audioFile,
-          durationSeconds: durationSeconds,
-          captureToken: token,
-          idempotencyKey: idempotencyKey,
-        );
+    }
+
+    var token = await ensureCaptureToken();
+    var result = await requestTranscript(token);
+
+    if (result case ApiFailureResult(:final failure)
+        when failure is ApiFailureAuthRequired) {
+      token = await ensureCaptureToken(forceRefresh: true);
+      result = await requestTranscript(token);
+    }
+
+    return result.when(
+      success: (transcript) {
         usageGuard.recordAttempt(
           scopeKey: scopeKey,
           operation: ApiUsageOperation.transcribe,
@@ -217,48 +213,21 @@ abstract class TranscriptionService {
           transcript: transcript,
           speechPermissionStatus: speechStatus,
         );
-      } catch (e) {
+      },
+      onFailure: (failure) {
         usageGuard.recordAttempt(
           scopeKey: scopeKey,
           operation: ApiUsageOperation.transcribe,
           success: false,
         );
-        final reason = failureReason(e);
+        final reason = failureReason(failure);
         TranscriptionLog.failed(reason: reason);
         return TranscriptionOutcome.failed(
           mode: mode,
           reason: reason,
           speechPermissionStatus: speechStatus,
         );
-      }
-    } catch (e) {
-      usageGuard.recordAttempt(
-        scopeKey: scopeKey,
-        operation: ApiUsageOperation.transcribe,
-        success: false,
-      );
-      final reason = failureReason(e);
-      TranscriptionLog.failed(reason: reason);
-      return TranscriptionOutcome.failed(
-        mode: mode,
-        reason: reason,
-        speechPermissionStatus: speechStatus,
-      );
-    }
-  }
-
-  static Future<String> _requestTranscript({
-    required ApiClient api,
-    required File audioFile,
-    required int durationSeconds,
-    required String captureToken,
-    required String idempotencyKey,
-  }) async {
-    return api.postTranscribe(
-      audioFile: audioFile,
-      durationSeconds: durationSeconds,
-      captureToken: captureToken,
-      idempotencyKey: idempotencyKey,
+      },
     );
   }
 
@@ -298,8 +267,16 @@ abstract class TranscriptionService {
     );
   }
 
+  /// Classifies a transcription failure for logging and degraded-save metadata.
+  static String classifyFailureReason(Object error) => failureReason(error);
+
   @visibleForTesting
   static String failureReason(Object error) {
+    if (error is ApiFailure) {
+      final code = error.code;
+      if (code.isNotEmpty) return '$code:${error.message}';
+      return 'api_${error.statusCode ?? 0}:${error.message}';
+    }
     if (error is FormatException &&
         error.message == ApiResponseSafety.htmlResponseMessage) {
       return 'wrong_api_host:html_response';

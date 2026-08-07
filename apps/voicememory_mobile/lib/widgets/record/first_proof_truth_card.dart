@@ -82,10 +82,7 @@ class _FirstProofTruthCardState extends State<FirstProofTruthCard> {
     );
     if (!widget.skipPrefsLoad || widget.store != null) {
       _store ??= widget.store ?? FirstProofTruthStore.instance();
-      await _store!.saveAnswer(
-        proofKey: widget.proofKey,
-        answer: answer,
-      );
+      await _store!.saveAnswer(proofKey: widget.proofKey, answer: answer);
     }
     if (!mounted) return;
     setState(() => _answer = answer);

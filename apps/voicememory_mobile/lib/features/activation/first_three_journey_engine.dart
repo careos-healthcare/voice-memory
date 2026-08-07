@@ -95,12 +95,16 @@ class FirstThreeJourneyEngine {
     );
   }
 
-  FirstThreeJourneyModel _stepTwo(int count, {List<JournalEntry> entries = const []}) {
+  FirstThreeJourneyModel _stepTwo(
+    int count, {
+    List<JournalEntry> entries = const [],
+  }) {
     final payoff = SecondSessionPayoffEngine.build(entries: entries);
     return FirstThreeJourneyModel(
       reflectionCount: count,
       currentStep: FirstThreeJourneyStep.three,
-      title: payoff?.title ?? FirstThreeSessionCopy.session2StartingToNoticeTitle,
+      title:
+          payoff?.title ?? FirstThreeSessionCopy.session2StartingToNoticeTitle,
       body: payoff?.body ?? FirstThreeSessionCopy.session2StartingToNoticeBody,
       progressLabel: FirstThreeSessionCopy.journeyStep2,
       nextAction: FirstThreeSessionCopy.session2NextAction,

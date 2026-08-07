@@ -1,16 +1,26 @@
-# ArchiveMe
+# ArchiveMe — backend & web services
 
-**ArchiveMe — understand your day in 60 seconds.**
+**ArchiveMe's canonical consumer product is the Flutter mobile app** at
+[`apps/voicememory_mobile`](./apps/voicememory_mobile). This root-level Next.js
+project is **not** a second consumer app — it exists only to support the
+mobile app and the business around it:
 
-A private, local-first voice journal that turns daily recordings into clarity.
+- Authenticated API/backend services the mobile app calls (transcription,
+  analysis, account, sync, deletion/export endpoints, etc.)
+- Privacy, terms, and support pages
+- Necessary marketing/download pages (pointing users to the app stores)
+- Server-side operational tooling (admin scripts, jobs, migrations)
 
-## MVP direction
+There is one product promise, and it should read the same whether you're in
+the app, on a marketing page, or in privacy copy:
 
-- **Voice journal** — capture quick spoken reflections without typing
-- **AI reflection** — summarize what you said and surface what matters
-- **Mood patterns** — track emotional tone over days and weeks
-- **Recurring themes** — notice the ideas, worries, and wins that keep showing up
-- **Private local-first memory** — your data stays on your device by default
+> **Record a real moment, preserve the evidence, and safely see what changed
+> over time.**
+
+If you're looking for the consumer product itself — recording, the Archive,
+proof/evidence display, correction controls, subscription — that all lives in
+the Flutter app under `apps/voicememory_mobile`. See its
+[README](./apps/voicememory_mobile/README.md) for how to run it.
 
 ## Stack
 
@@ -30,9 +40,10 @@ Open [http://localhost:3000](http://localhost:3000).
 ## Project structure
 
 ```
-app/          # Routes and layouts
-components/   # UI components
-lib/          # Utilities and core logic
+app/          # API routes, and the support/marketing/legal web pages
+components/   # UI components for the web pages above
+lib/          # Backend/server utilities and core logic shared with the API
 data/         # Local data (gitignored when populated)
 public/       # Static assets
+apps/voicememory_mobile/   # The canonical consumer product (Flutter)
 ```

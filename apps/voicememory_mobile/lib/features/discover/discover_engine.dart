@@ -4,7 +4,6 @@ import '../archive_state_object/archive_state_object.dart';
 import '../belief_change/belief_change_detector.dart';
 import '../belief_change/belief_change_models.dart';
 import '../belief_shift/belief_shift_engine.dart';
-import '../belief_shift/belief_shift_models.dart';
 import 'belief_engine.dart';
 import 'blind_spot_engine.dart';
 import 'chapter_engine.dart';
@@ -447,26 +446,5 @@ class DiscoverYourselfEngine {
     final t = text.trim();
     if (t.length <= max) return t;
     return '${t.substring(0, max)}…';
-  }
-
-  static String _monthYearRange(DateTime start, DateTime end) {
-    const months = [
-      'January',
-      'February',
-      'March',
-      'April',
-      'May',
-      'June',
-      'July',
-      'August',
-      'September',
-      'October',
-      'November',
-      'December',
-    ];
-    final a = '${months[start.month - 1]} ${start.year}';
-    final b = '${months[end.month - 1]} ${end.year}';
-    if (a == b) return a;
-    return '$a – $b';
   }
 }

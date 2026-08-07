@@ -6,13 +6,13 @@ enum ProMomentTimingAuditV2Status {
   blocked;
 
   String get label => switch (this) {
-        ProMomentTimingAuditV2Status.ready =>
-          ProMomentTimingAuditV2Copy.statusReady,
-        ProMomentTimingAuditV2Status.watch =>
-          ProMomentTimingAuditV2Copy.statusWatch,
-        ProMomentTimingAuditV2Status.blocked =>
-          ProMomentTimingAuditV2Copy.statusBlocked,
-      };
+    ProMomentTimingAuditV2Status.ready =>
+      ProMomentTimingAuditV2Copy.statusReady,
+    ProMomentTimingAuditV2Status.watch =>
+      ProMomentTimingAuditV2Copy.statusWatch,
+    ProMomentTimingAuditV2Status.blocked =>
+      ProMomentTimingAuditV2Copy.statusBlocked,
+  };
 }
 
 enum ProMomentTimingAuditV2CheckId {
@@ -80,14 +80,14 @@ class ProMomentTimingAuditV2Snapshot {
   final int blockedCount;
 
   List<String> get allDisplayedText => [
-        title,
-        subtitle,
-        for (final check in checks) ...[
-          check.label,
-          check.detailLabel,
-          check.status.label,
-        ],
-        for (final diagnosis in diagnoses) diagnosis.title,
-        ProMomentTimingAuditV2Copy.localNote,
-      ];
+    title,
+    subtitle,
+    for (final check in checks) ...[
+      check.label,
+      check.detailLabel,
+      check.status.label,
+    ],
+    for (final diagnosis in diagnoses) diagnosis.title,
+    ProMomentTimingAuditV2Copy.localNote,
+  ];
 }

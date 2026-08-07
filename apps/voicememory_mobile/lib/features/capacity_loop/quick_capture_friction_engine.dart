@@ -45,7 +45,9 @@ class QuickCaptureFrictionEngine {
   }
 
   static bool showFrictionCheck(QuickCaptureFrictionInput input) {
-    if (!input.capacityWedgeActive || input.sampleMode || input.screenshotMode) {
+    if (!input.capacityWedgeActive ||
+        input.sampleMode ||
+        input.screenshotMode) {
       return false;
     }
     if (input.showAfterQuickSave && input.hasQuickCaptureEntry) {

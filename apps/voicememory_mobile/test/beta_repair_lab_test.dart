@@ -11,7 +11,6 @@ import 'package:voicememory_mobile/features/beta_repair_lab/beta_repair_lab_engi
 import 'package:voicememory_mobile/features/beta_repair_lab/beta_repair_lab_model.dart';
 import 'package:voicememory_mobile/features/beta_repair_lab/beta_repair_lab_store.dart';
 import 'package:voicememory_mobile/features/first_session_proof_repair/first_session_proof_repair_engine.dart';
-import 'package:voicememory_mobile/features/first_session_proof_repair/first_session_proof_repair_model.dart';
 import 'package:voicememory_mobile/features/pro_understanding_lift/pro_understanding_lift_copy.dart';
 import 'package:voicememory_mobile/features/pro_understanding_lift/pro_understanding_lift_engine.dart';
 import 'package:voicememory_mobile/features/pro_understanding_lift/pro_understanding_lift_model.dart';
@@ -46,24 +45,23 @@ BetaRepairLabVisibilityInput _input({
   BetaProofFeedbackType? feedbackType,
   bool isNegativeFeedback = false,
   bool betaMissionEnabled = true,
-}) =>
-    BetaRepairLabVisibilityInput(
-      mode: mode,
-      entryCount: entryCount,
-      source: 'test',
-      isPro: false,
-      isRecording: false,
-      isDegradedTranscriptState: false,
-      whatChangedQuestionActive: false,
-      patternReviewInboxHasActiveItems: false,
-      hasTimelineProofVisible: hasTimelineProofVisible,
-      hasConfirmedRepeat: hasConfirmedRepeat,
-      confidenceLevel: confidenceLevel,
-      hasUsefulProofFeedback: feedbackType == BetaProofFeedbackType.useful,
-      feedbackType: feedbackType,
-      isNegativeFeedback: isNegativeFeedback,
-      betaMissionEnabled: betaMissionEnabled,
-    );
+}) => BetaRepairLabVisibilityInput(
+  mode: mode,
+  entryCount: entryCount,
+  source: 'test',
+  isPro: false,
+  isRecording: false,
+  isDegradedTranscriptState: false,
+  whatChangedQuestionActive: false,
+  patternReviewInboxHasActiveItems: false,
+  hasTimelineProofVisible: hasTimelineProofVisible,
+  hasConfirmedRepeat: hasConfirmedRepeat,
+  confidenceLevel: confidenceLevel,
+  hasUsefulProofFeedback: feedbackType == BetaProofFeedbackType.useful,
+  feedbackType: feedbackType,
+  isNegativeFeedback: isNegativeFeedback,
+  betaMissionEnabled: betaMissionEnabled,
+);
 
 void main() {
   setUp(() async {
@@ -78,18 +76,21 @@ void main() {
   });
 
   group('BetaRepairLabBuildOverride', () {
-    test('default active mode is proof protection baseline in beta mission', () {
-      expect(BetaRepairLabStore.buildOverrideMode, BetaRepairLabMode.none);
-      expect(
-        BetaRepairLabStore.activeMode,
-        BetaRepairLabMode.proofSpecificityCaution,
-      );
-      expect(BetaRepairLabStore.isDefaultBaselineActive, isTrue);
-      expect(
-        BetaRepairLabEngine.defaultBaselineStatusLabel(),
-        'Default beta baseline active: Proof protection',
-      );
-    });
+    test(
+      'default active mode is proof protection baseline in beta mission',
+      () {
+        expect(BetaRepairLabStore.buildOverrideMode, BetaRepairLabMode.none);
+        expect(
+          BetaRepairLabStore.activeMode,
+          BetaRepairLabMode.proofSpecificityCaution,
+        );
+        expect(BetaRepairLabStore.isDefaultBaselineActive, isTrue);
+        expect(
+          BetaRepairLabEngine.defaultBaselineStatusLabel(),
+          'Default beta baseline active: Proof protection',
+        );
+      },
+    );
 
     test('default active mode is none outside beta mission', () {
       ArchiveBetaMissionGate.enabledOverride = false;
@@ -132,46 +133,51 @@ void main() {
       );
     });
 
-    test('build override activates pricingValueFraming when beta mission is true',
-        () {
-      BetaRepairLabStore.repairModeOverrideForTest = 'pricingValueFraming';
-      expect(
-        BetaRepairLabStore.buildOverrideMode,
-        BetaRepairLabMode.pricingValueFraming,
-      );
-      expect(
-        BetaRepairLabStore.buildOverrideActiveLabel,
-        'Build override active: Pricing value framing',
-      );
-    });
-
-    test('build override activates pricingValidation when beta mission is true',
-        () {
-      BetaRepairLabStore.repairModeOverrideForTest = 'pricingValidation';
-      expect(
-        BetaRepairLabStore.buildOverrideMode,
-        BetaRepairLabMode.pricingValidation,
-      );
-      expect(
-        BetaRepairLabStore.buildOverrideActiveLabel,
-        'Build override active: Pricing validation',
-      );
-    });
+    test(
+      'build override activates pricingValueFraming when beta mission is true',
+      () {
+        BetaRepairLabStore.repairModeOverrideForTest = 'pricingValueFraming';
+        expect(
+          BetaRepairLabStore.buildOverrideMode,
+          BetaRepairLabMode.pricingValueFraming,
+        );
+        expect(
+          BetaRepairLabStore.buildOverrideActiveLabel,
+          'Build override active: Pricing value framing',
+        );
+      },
+    );
 
     test(
-        'build override activates evidenceTrailTimelineClarity when beta mission is true',
-        () {
-      BetaRepairLabStore.repairModeOverrideForTest =
-          'evidenceTrailTimelineClarity';
-      expect(
-        BetaRepairLabStore.buildOverrideMode,
-        BetaRepairLabMode.evidenceTrailTimelineClarity,
-      );
-      expect(
-        BetaRepairLabStore.buildOverrideActiveLabel,
-        'Build override active: Evidence trail timeline clarity',
-      );
-    });
+      'build override activates pricingValidation when beta mission is true',
+      () {
+        BetaRepairLabStore.repairModeOverrideForTest = 'pricingValidation';
+        expect(
+          BetaRepairLabStore.buildOverrideMode,
+          BetaRepairLabMode.pricingValidation,
+        );
+        expect(
+          BetaRepairLabStore.buildOverrideActiveLabel,
+          'Build override active: Pricing validation',
+        );
+      },
+    );
+
+    test(
+      'build override activates evidenceTrailTimelineClarity when beta mission is true',
+      () {
+        BetaRepairLabStore.repairModeOverrideForTest =
+            'evidenceTrailTimelineClarity';
+        expect(
+          BetaRepairLabStore.buildOverrideMode,
+          BetaRepairLabMode.evidenceTrailTimelineClarity,
+        );
+        expect(
+          BetaRepairLabStore.buildOverrideActiveLabel,
+          'Build override active: Evidence trail timeline clarity',
+        );
+      },
+    );
 
     test('build override ignored when beta mission is false', () {
       ArchiveBetaMissionGate.enabledOverride = false;
@@ -198,21 +204,24 @@ void main() {
       expect(BetaRepairLabStore.activeMode, BetaRepairLabMode.none);
     });
 
-    test('build override takes precedence over local stored selection', () async {
-      BetaRepairLabStore.repairModeOverrideForTest =
-          'proPlacementAfterUsefulProof';
-      await BetaRepairLabStore.setModeForTest(
-        BetaRepairLabMode.openingScreenSimplification,
-      );
-      expect(
-        BetaRepairLabStore.localMode,
-        BetaRepairLabMode.openingScreenSimplification,
-      );
-      expect(
-        BetaRepairLabStore.activeMode,
-        BetaRepairLabMode.proPlacementAfterUsefulProof,
-      );
-    });
+    test(
+      'build override takes precedence over local stored selection',
+      () async {
+        BetaRepairLabStore.repairModeOverrideForTest =
+            'proPlacementAfterUsefulProof';
+        await BetaRepairLabStore.setModeForTest(
+          BetaRepairLabMode.openingScreenSimplification,
+        );
+        expect(
+          BetaRepairLabStore.localMode,
+          BetaRepairLabMode.openingScreenSimplification,
+        );
+        expect(
+          BetaRepairLabStore.activeMode,
+          BetaRepairLabMode.proPlacementAfterUsefulProof,
+        );
+      },
+    );
 
     test('testing screen build override label', () {
       BetaRepairLabStore.repairModeOverrideForTest =
@@ -593,7 +602,10 @@ void main() {
         previousMode: BetaRepairLabMode.none,
       );
       final props = events[BetaRepairLabAnalytics.modeSelectedEvent]!;
-      expect(props.keys, containsAll(['source', 'selected_mode', 'previous_mode']));
+      expect(
+        props.keys,
+        containsAll(['source', 'selected_mode', 'previous_mode']),
+      );
       expect(props['source'], 'testing_archiveme');
       expect(props['selected_mode'], 'pro_explanation');
       expect(props['previous_mode'], 'none');
@@ -626,34 +638,40 @@ void main() {
       );
     });
 
-    testWidgets('testing screen renders active mode and warning', (tester) async {
+    testWidgets('testing screen renders active mode and warning', (
+      tester,
+    ) async {
       await BetaRepairLabStore.setModeForTest(
         BetaRepairLabMode.proofSpecificityCaution,
       );
       await tester.pumpWidget(
         const MaterialApp(
-          home: Scaffold(
-            body: BetaRepairLabCard(source: 'testing_archiveme'),
-          ),
+          home: Scaffold(body: BetaRepairLabCard(source: 'testing_archiveme')),
         ),
       );
       await tester.pump();
 
       expect(find.byKey(const Key('beta_repair_lab_card')), findsOneWidget);
-      expect(find.byKey(const Key('beta_repair_lab_active_mode')), findsOneWidget);
+      expect(
+        find.byKey(const Key('beta_repair_lab_active_mode')),
+        findsOneWidget,
+      );
       expect(find.byKey(const Key('beta_repair_lab_warning')), findsOneWidget);
-      expect(find.textContaining('Proof specificity and caution'), findsWidgets);
+      expect(
+        find.textContaining('Proof specificity and caution'),
+        findsWidgets,
+      );
       expect(find.text(BetaRepairLabCopy.warning), findsOneWidget);
     });
 
-    testWidgets('shows build override active on repair lab card', (tester) async {
+    testWidgets('shows build override active on repair lab card', (
+      tester,
+    ) async {
       BetaRepairLabStore.repairModeOverrideForTest =
           'proPlacementAfterUsefulProof';
       await tester.pumpWidget(
         const MaterialApp(
-          home: Scaffold(
-            body: BetaRepairLabCard(source: 'testing_archiveme'),
-          ),
+          home: Scaffold(body: BetaRepairLabCard(source: 'testing_archiveme')),
         ),
       );
       await tester.pump();
@@ -666,23 +684,21 @@ void main() {
         find.text('Build override active: Pro placement after useful proof'),
         findsOneWidget,
       );
-      expect(
-        find.text(BetaRepairLabCopy.buildOverrideWarning),
-        findsOneWidget,
-      );
+      expect(find.text(BetaRepairLabCopy.buildOverrideWarning), findsOneWidget);
     });
 
     testWidgets('hidden when beta mission disabled', (tester) async {
       ArchiveBetaMissionGate.enabledOverride = false;
       await tester.pumpWidget(
         const MaterialApp(
-          home: Scaffold(
-            body: BetaRepairLabCard(source: 'testing_archiveme'),
-          ),
+          home: Scaffold(body: BetaRepairLabCard(source: 'testing_archiveme')),
         ),
       );
       await tester.pump();
-      expect(find.byKey(const Key('beta_repair_lab_card_hidden')), findsOneWidget);
+      expect(
+        find.byKey(const Key('beta_repair_lab_card_hidden')),
+        findsOneWidget,
+      );
     });
   });
 }

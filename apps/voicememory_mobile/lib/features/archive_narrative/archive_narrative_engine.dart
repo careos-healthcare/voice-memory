@@ -202,8 +202,9 @@ _NarrativeEvidence? _beliefEvolutionNarrative(
     entryIds.addAll(block.version.supportingEntryIds);
     for (final line in block.evidence) {
       entryIds.add(line.entryId);
-      if (beliefs.length < 4 && line.quote.length >= 12)
+      if (beliefs.length < 4 && line.quote.length >= 12) {
         beliefs.add(line.quote);
+      }
     }
   }
 
@@ -336,8 +337,9 @@ String _quoteForEntry(JournalEntry entry) {
     return exact.length <= 140 ? exact : '${exact.substring(0, 140).trim()}…';
   }
   final obs = entry.reflection.concreteObservation.trim();
-  if (obs.length >= 12)
+  if (obs.length >= 12) {
     return obs.length <= 140 ? obs : '${obs.substring(0, 140).trim()}…';
+  }
   final line = entry.transcript.trim().split('\n').first.trim();
   return line.length <= 140 ? line : '${line.substring(0, 140).trim()}…';
 }

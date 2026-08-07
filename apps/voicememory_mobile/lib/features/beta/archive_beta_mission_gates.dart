@@ -44,10 +44,9 @@ abstract final class ArchiveBetaMissionGates {
     required RecordCtaPolicyResolution policy,
     required bool hideCardRecordButtons,
     required bool promoteMicCaptureActions,
-  }) =>
-      !capturePrimaryCtaVisible(
-        policy: policy,
-        hideCardRecordButtons: hideCardRecordButtons,
-        promoteMicCaptureActions: promoteMicCaptureActions,
-      );
+  }) => !capturePrimaryCtaVisible(
+    policy: policy,
+    hideCardRecordButtons: hideCardRecordButtons,
+    promoteMicCaptureActions: promoteMicCaptureActions,
+  );
 }

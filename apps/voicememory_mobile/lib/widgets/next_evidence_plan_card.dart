@@ -28,24 +28,22 @@ class NextEvidencePlanCard extends StatefulWidget {
     this.watchlistStore,
     this.returnRitualStore,
     this.engine = const NextEvidencePlanEngine(),
-    List<ArchiveWatchlistItem>? initialWatchlistItems,
-    ReturnRitualChoice? initialReturnRitual,
-  })  : _initialWatchlistItems = initialWatchlistItems,
-        _initialReturnRitual = initialReturnRitual;
+    this._initialWatchlistItems,
+    this._initialReturnRitual,
+  });
 
   const NextEvidencePlanCard.test({
     super.key,
     required this.entryCount,
     required this.entries,
-    required List<ArchiveWatchlistItem>? initialWatchlistItems,
-    ReturnRitualChoice? initialReturnRitual,
+    required this._initialWatchlistItems,
+    this._initialReturnRitual,
     this.onAddMoment,
     this.onReviewWatchlist,
     this.watchlistStore,
     this.returnRitualStore,
     this.engine = const NextEvidencePlanEngine(),
-  })  : _initialWatchlistItems = initialWatchlistItems,
-        _initialReturnRitual = initialReturnRitual;
+  });
 
   final int entryCount;
   final List<JournalEntry> entries;
@@ -217,7 +215,8 @@ class _NextEvidencePlanCardState extends State<NextEvidencePlanCard> {
             alignment: Alignment.centerLeft,
             child: TextButton(
               key: const Key('next_evidence_plan_pro_preview_button'),
-              onPressed: () => context.push(NextEvidencePlanCopy.proPreviewRoute),
+              onPressed: () =>
+                  context.push(NextEvidencePlanCopy.proPreviewRoute),
               child: const Text(NextEvidencePlanCopy.proPreviewButton),
             ),
           ),
@@ -229,7 +228,8 @@ class _NextEvidencePlanCardState extends State<NextEvidencePlanCard> {
           children: [
             FilledButton(
               key: const Key('next_evidence_plan_add_moment_button'),
-              onPressed: widget.onAddMoment ??
+              onPressed:
+                  widget.onAddMoment ??
                   () => context.push(result.primaryActionRoute),
               child: Text(result.primaryActionLabel),
             ),

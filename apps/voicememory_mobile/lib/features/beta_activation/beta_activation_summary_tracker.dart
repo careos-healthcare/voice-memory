@@ -12,9 +12,7 @@ import 'beta_activation_summary_store.dart';
 abstract final class BetaActivationSummaryTracker {
   BetaActivationSummaryTracker._();
 
-  static const _sessionDedupeFields = <String>{
-    'patternsOpened',
-  };
+  static const _sessionDedupeFields = <String>{'patternsOpened'};
 
   static final Set<String> _sessionSeen = <String>{};
 
@@ -83,10 +81,9 @@ abstract final class BetaActivationSummaryTracker {
   }
 
   static Future<
-      ({
-        BetaActivationLoopCounts loop,
-        BetaActivationSummaryExtension extension,
-      })> loadAll() async {
+    ({BetaActivationLoopCounts loop, BetaActivationSummaryExtension extension})
+  >
+  loadAll() async {
     final loop = await BetaActivationLoopTracker.readCounts();
     final extension = await loadExtension();
     return (loop: loop, extension: extension);
@@ -105,8 +102,9 @@ abstract final class BetaActivationSummaryTracker {
     if (sessionDedupe && _sessionDedupeFields.contains(field)) {
       if (!_sessionSeen.add(field)) return;
     }
-    final counts =
-        await BetaActivationSummaryStore.fromAppServices().increment(field);
+    final counts = await BetaActivationSummaryStore.fromAppServices().increment(
+      field,
+    );
     if (kDebugMode) {
       debugPrint(
         'ARCHIVEME_BETA_ACTIVATION_SUMMARY event=$field '

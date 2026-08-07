@@ -31,9 +31,8 @@ class YesterdayWatchCard extends StatefulWidget {
     this.onAnswered,
     this.onCameBack,
     this.onDifferent,
-    YesterdayWatchAnswer? initialAnswer,
-  })  : skipPrefsLoad = true,
-        initialAnswer = initialAnswer;
+    this.initialAnswer,
+  }) : skipPrefsLoad = true;
 
   final YesterdayWatch watch;
   final int entryCount;
@@ -122,10 +121,10 @@ class _YesterdayWatchCardState extends State<YesterdayWatchCard> {
   }
 
   String? _helperFor(YesterdayWatchAnswer answer) => switch (answer) {
-        YesterdayWatchAnswer.cameBack => YesterdayWatchCopy.helperCameBack,
-        YesterdayWatchAnswer.notToday => YesterdayWatchCopy.helperNotToday,
-        YesterdayWatchAnswer.different => YesterdayWatchCopy.helperDifferent,
-      };
+    YesterdayWatchAnswer.cameBack => YesterdayWatchCopy.helperCameBack,
+    YesterdayWatchAnswer.notToday => YesterdayWatchCopy.helperNotToday,
+    YesterdayWatchAnswer.different => YesterdayWatchCopy.helperDifferent,
+  };
 
   @override
   Widget build(BuildContext context) {
@@ -161,9 +160,9 @@ class _YesterdayWatchCardState extends State<YesterdayWatchCard> {
           Text(
             widget.watch.body,
             key: const Key('yesterday_watch_body'),
-            style: ArchiveMobileTypography.explanationBody(context).copyWith(
-              color: AppColors.textSecondary,
-            ),
+            style: ArchiveMobileTypography.explanationBody(
+              context,
+            ).copyWith(color: AppColors.textSecondary),
           ),
           if (showChoices) ...[
             const SizedBox(height: AppSpacing.md),
@@ -188,9 +187,9 @@ class _YesterdayWatchCardState extends State<YesterdayWatchCard> {
             Text(
               helper,
               key: Key('yesterday_watch_helper_${_answer!.name}'),
-              style: ArchiveMobileTypography.responsiveHelper(context).copyWith(
-                color: AppColors.textSecondary,
-              ),
+              style: ArchiveMobileTypography.responsiveHelper(
+                context,
+              ).copyWith(color: AppColors.textSecondary),
             ),
           ],
         ],

@@ -66,10 +66,7 @@ class ConnectedClinicalTelemetryTrendWidget extends StatelessWidget {
                     const SizedBox(height: 4),
                     Text(
                       'Based on last 4 tracking cycles',
-                      style: TextStyle(
-                        color: Colors.grey[600],
-                        fontSize: 12,
-                      ),
+                      style: TextStyle(color: Colors.grey[600], fontSize: 12),
                     ),
                   ],
                 ),
@@ -86,7 +83,10 @@ class ConnectedClinicalTelemetryTrendWidget extends StatelessWidget {
                     ),
                     const SizedBox(height: 4),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 2,
+                      ),
                       decoration: BoxDecoration(
                         color: themeColor.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(4),

@@ -19,11 +19,9 @@ class ProPackagingBridgeLine extends StatelessWidget {
     return Text(
       line,
       key: lineKey,
-      style: ArchiveMobileTypography.responsiveHelper(context).copyWith(
-        color: AppColors.textSecondary,
-        fontSize: 12,
-        height: 1.4,
-      ),
+      style: ArchiveMobileTypography.responsiveHelper(
+        context,
+      ).copyWith(color: AppColors.textSecondary, fontSize: 12, height: 1.4),
     );
   }
 }

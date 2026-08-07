@@ -27,19 +27,18 @@ ProofTrailPositioningInput _input({
   bool userUnderstandsLowEffort = true,
   bool wouldPayYes = true,
   bool wouldPayMaybe = false,
-}) =>
-    ProofTrailPositioningInput(
-      userThinksChatBox: userThinksChatBox,
-      userThinksStorageApp: userThinksStorageApp,
-      userThinksSecondBrain: userThinksSecondBrain,
-      userThinksDashboardToMaintain: userThinksDashboardToMaintain,
-      userUnderstandsProofTrail: userUnderstandsProofTrail,
-      userUnderstandsMeaningfulResurfacing: userUnderstandsMeaningfulResurfacing,
-      userUnderstandsSaveARepeat: userUnderstandsSaveARepeat,
-      userUnderstandsLowEffort: userUnderstandsLowEffort,
-      wouldPayYes: wouldPayYes,
-      wouldPayMaybe: wouldPayMaybe,
-    );
+}) => ProofTrailPositioningInput(
+  userThinksChatBox: userThinksChatBox,
+  userThinksStorageApp: userThinksStorageApp,
+  userThinksSecondBrain: userThinksSecondBrain,
+  userThinksDashboardToMaintain: userThinksDashboardToMaintain,
+  userUnderstandsProofTrail: userUnderstandsProofTrail,
+  userUnderstandsMeaningfulResurfacing: userUnderstandsMeaningfulResurfacing,
+  userUnderstandsSaveARepeat: userUnderstandsSaveARepeat,
+  userUnderstandsLowEffort: userUnderstandsLowEffort,
+  wouldPayYes: wouldPayYes,
+  wouldPayMaybe: wouldPayMaybe,
+);
 
 void main() {
   group('ProofTrailPositioning.resolve', () {
@@ -52,16 +51,18 @@ void main() {
 
     test('storage-app confusion -> clarifyNotStorage', () {
       expect(
-        ProofTrailPositioning.resolve(_input(userThinksStorageApp: true))
-            .decision,
+        ProofTrailPositioning.resolve(
+          _input(userThinksStorageApp: true),
+        ).decision,
         ProofTrailPositioningDecision.clarifyNotStorage,
       );
     });
 
     test('second-brain confusion -> clarifyNotSecondBrain', () {
       expect(
-        ProofTrailPositioning.resolve(_input(userThinksSecondBrain: true))
-            .decision,
+        ProofTrailPositioning.resolve(
+          _input(userThinksSecondBrain: true),
+        ).decision,
         ProofTrailPositioningDecision.clarifyNotSecondBrain,
       );
     });
@@ -84,15 +85,17 @@ void main() {
       );
     });
 
-    test('weak meaningful-resurfacing understanding -> clarifyMeaningfulResurfacing',
-        () {
-      expect(
-        ProofTrailPositioning.resolve(
-          _input(userUnderstandsMeaningfulResurfacing: false),
-        ).decision,
-        ProofTrailPositioningDecision.clarifyMeaningfulResurfacing,
-      );
-    });
+    test(
+      'weak meaningful-resurfacing understanding -> clarifyMeaningfulResurfacing',
+      () {
+        expect(
+          ProofTrailPositioning.resolve(
+            _input(userUnderstandsMeaningfulResurfacing: false),
+          ).decision,
+          ProofTrailPositioningDecision.clarifyMeaningfulResurfacing,
+        );
+      },
+    );
 
     test('weak save-a-repeat understanding -> clarifySaveARepeat', () {
       expect(
@@ -325,11 +328,17 @@ void main() {
 
   group('ProofTrailPositioningGuardrail', () {
     test('guardrail helper disallows chat box positioning', () {
-      expect(ProofTrailPositioningGuardrail.allowsChatBoxPositioning(), isFalse);
+      expect(
+        ProofTrailPositioningGuardrail.allowsChatBoxPositioning(),
+        isFalse,
+      );
     });
 
     test('guardrail helper disallows storage positioning', () {
-      expect(ProofTrailPositioningGuardrail.allowsStoragePositioning(), isFalse);
+      expect(
+        ProofTrailPositioningGuardrail.allowsStoragePositioning(),
+        isFalse,
+      );
     });
 
     test('guardrail helper disallows second brain positioning', () {
@@ -456,39 +465,42 @@ void main() {
       );
     });
 
-    test('record screen remains capture-first without stacking extra cards', () {
-      final audit = SurfacePriorityEngine.auditRecordReady(
-        entryCount: 4,
-        source: 'record',
-        candidates: SurfacePriorityCandidates.recordReady(
-          firstMomentCapture: false,
-          secondMomentReturn: false,
-          lowFrictionReturn: false,
-          whatToNoticeNext: false,
-          betaTodaySummary: false,
-          openCapturePromptChips: false,
-          captureFreedomLine: false,
-          timelineProofMoment: true,
-          archiveTimelineSpine: false,
-          timelinePositioning: false,
-          currentRelevance: false,
-          correctionMemory: false,
-          notRelevantRecovery: false,
-          proofQualityResponse: false,
-          evidenceWeighting: false,
-          proofSpecificity: false,
-          presentDayRelevance: false,
-          patternConfidence: false,
-          betaTesterReport: false,
-          proEvidenceValue: false,
-          privateReportProBridge: false,
-          suppressLegacyEducation: false,
-          betaProofLift: true,
-        ),
-      );
-      expect(audit.proofCardKey, 'timelineProofMoment');
-      expect(audit.guidanceCardKey, isNull);
-    });
+    test(
+      'record screen remains capture-first without stacking extra cards',
+      () {
+        final audit = SurfacePriorityEngine.auditRecordReady(
+          entryCount: 4,
+          source: 'record',
+          candidates: SurfacePriorityCandidates.recordReady(
+            firstMomentCapture: false,
+            secondMomentReturn: false,
+            lowFrictionReturn: false,
+            whatToNoticeNext: false,
+            betaTodaySummary: false,
+            openCapturePromptChips: false,
+            captureFreedomLine: false,
+            timelineProofMoment: true,
+            archiveTimelineSpine: false,
+            timelinePositioning: false,
+            currentRelevance: false,
+            correctionMemory: false,
+            notRelevantRecovery: false,
+            proofQualityResponse: false,
+            evidenceWeighting: false,
+            proofSpecificity: false,
+            presentDayRelevance: false,
+            patternConfidence: false,
+            betaTesterReport: false,
+            proEvidenceValue: false,
+            privateReportProBridge: false,
+            suppressLegacyEducation: false,
+            betaProofLift: true,
+          ),
+        );
+        expect(audit.proofCardKey, 'timelineProofMoment');
+        expect(audit.guidanceCardKey, isNull);
+      },
+    );
   });
 }
 
@@ -507,7 +519,8 @@ LowEffortArchiveCaptureSummary _fullLowEffortSummary() =>
       wouldPayNoCount: 1,
     );
 
-ChangeTrailClaritySummary _fullTrailSummary() => const ChangeTrailClaritySummary(
+ChangeTrailClaritySummary _fullTrailSummary() =>
+    const ChangeTrailClaritySummary(
       totalTesters: 30,
       understoodFirstProofCount: 7,
       understoodProKeepsTrailCount: 6,

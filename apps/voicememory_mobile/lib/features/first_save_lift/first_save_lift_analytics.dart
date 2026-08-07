@@ -13,7 +13,7 @@ abstract final class FirstSaveLiftAnalytics {
 
   @visibleForTesting
   static void Function(String event, Map<String, Object> properties)?
-      captureForTest;
+  captureForTest;
 
   static void seen({required FirstSaveLiftResult result}) {
     _emit(seenEvent, result: result);
@@ -23,11 +23,7 @@ abstract final class FirstSaveLiftAnalytics {
     required FirstSaveLiftResult result,
     required FirstSaveLiftActionType actionType,
   }) {
-    _emit(
-      ctaTappedEvent,
-      result: result,
-      actionType: actionType,
-    );
+    _emit(ctaTappedEvent, result: result, actionType: actionType);
   }
 
   static void exampleTapped({

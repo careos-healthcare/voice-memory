@@ -56,8 +56,7 @@ abstract final class BetaFeedbackResponseCopy {
   static const doNotEnablePayments =
       'Do not enable RevenueCat or payments in this response branch.';
   static const doNotAddBackend = 'Do not add backend work.';
-  static const doNotBuildAllFixes =
-      'Do not build all fixes at once.';
+  static const doNotBuildAllFixes = 'Do not build all fixes at once.';
   static const oneBranchPerFailure =
       'Use one branch per repeated failure after beta evidence.';
   static const revenueCatAfterWtp =
@@ -79,54 +78,53 @@ abstract final class BetaFeedbackResponseCopy {
       'User reports quick capture felt light enough to use again.';
 
   static String suggestedFixForIssue(String issueId) => switch (issueId) {
-        BetaFeedbackIssueIds.unclearPromise => suggestedFixClarifyPromise,
-        BetaFeedbackIssueIds.firstMomentBlocked =>
-          suggestedFixFirstRecordingCta,
-        BetaFeedbackIssueIds.activationDropoff => suggestedFixActivationPath,
-        BetaFeedbackIssueIds.repetitiveLoop => suggestedFixDailyChange,
-        BetaFeedbackIssueIds.weakAlternative => suggestedFixAlternatives,
-        BetaFeedbackIssueIds.paidSignalReady => suggestedFixPaidLaunch,
-        BetaFeedbackIssueIds.quickCaptureStillWork =>
-          suggestedFixReduceCaptureWorkload,
-        _ => '',
-      };
+    BetaFeedbackIssueIds.unclearPromise => suggestedFixClarifyPromise,
+    BetaFeedbackIssueIds.firstMomentBlocked => suggestedFixFirstRecordingCta,
+    BetaFeedbackIssueIds.activationDropoff => suggestedFixActivationPath,
+    BetaFeedbackIssueIds.repetitiveLoop => suggestedFixDailyChange,
+    BetaFeedbackIssueIds.weakAlternative => suggestedFixAlternatives,
+    BetaFeedbackIssueIds.paidSignalReady => suggestedFixPaidLaunch,
+    BetaFeedbackIssueIds.quickCaptureStillWork =>
+      suggestedFixReduceCaptureWorkload,
+    _ => '',
+  };
 
   static List<String> allVisibleStrings() => [
-        sectionTitle,
-        localBetaSignalPrefix,
-        notEnoughEvidence,
-        suggestedFixClarifyPromise,
-        suggestedFixFirstRecordingCta,
-        suggestedFixActivationPath,
-        suggestedFixDailyChange,
-        suggestedFixAlternatives,
-        suggestedFixPaidLaunch,
-        suggestedFixReduceCaptureWorkload,
-        unclearPromiseProblem,
-        firstMomentBlockedProblem,
-        activationDropoffProblem,
-        repetitiveLoopProblem,
-        weakAlternativeProblem,
-        paidSignalReadyProblem,
-        quickCaptureStillWorkProblem,
-        unclearPromiseChange,
-        firstMomentBlockedChange,
-        activationDropoffChange,
-        repetitiveLoopChange,
-        weakAlternativeChange,
-        paidSignalReadyChange,
-        quickCaptureStillWorkChange,
-        doNotEnablePayments,
-        doNotAddBackend,
-        doNotBuildAllFixes,
-        oneBranchPerFailure,
-        revenueCatAfterWtp,
-        unclearPromiseSuccess,
-        firstMomentBlockedSuccess,
-        activationDropoffSuccess,
-        repetitiveLoopSuccess,
-        weakAlternativeSuccess,
-        paidSignalReadySuccess,
-        quickCaptureStillWorkSuccess,
-      ];
+    sectionTitle,
+    localBetaSignalPrefix,
+    notEnoughEvidence,
+    suggestedFixClarifyPromise,
+    suggestedFixFirstRecordingCta,
+    suggestedFixActivationPath,
+    suggestedFixDailyChange,
+    suggestedFixAlternatives,
+    suggestedFixPaidLaunch,
+    suggestedFixReduceCaptureWorkload,
+    unclearPromiseProblem,
+    firstMomentBlockedProblem,
+    activationDropoffProblem,
+    repetitiveLoopProblem,
+    weakAlternativeProblem,
+    paidSignalReadyProblem,
+    quickCaptureStillWorkProblem,
+    unclearPromiseChange,
+    firstMomentBlockedChange,
+    activationDropoffChange,
+    repetitiveLoopChange,
+    weakAlternativeChange,
+    paidSignalReadyChange,
+    quickCaptureStillWorkChange,
+    doNotEnablePayments,
+    doNotAddBackend,
+    doNotBuildAllFixes,
+    oneBranchPerFailure,
+    revenueCatAfterWtp,
+    unclearPromiseSuccess,
+    firstMomentBlockedSuccess,
+    activationDropoffSuccess,
+    repetitiveLoopSuccess,
+    weakAlternativeSuccess,
+    paidSignalReadySuccess,
+    quickCaptureStillWorkSuccess,
+  ];
 }

@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/features/beta/archive_beta_mission_gate.dart';
 import 'package:voicememory_mobile/features/archive_proof/proof_surface_advice_guard.dart';
-import 'package:voicememory_mobile/features/archive_timeline_spine/archive_timeline_spine_engine.dart';
 import 'package:voicememory_mobile/features/beta_proof_feedback/beta_proof_feedback_model.dart';
 import 'package:voicememory_mobile/features/beta_proof_feedback/beta_proof_feedback_store.dart';
 import 'package:voicememory_mobile/features/beta_proof_lift/beta_proof_lift_engine.dart';
@@ -11,8 +10,6 @@ import 'package:voicememory_mobile/features/beta_proof_lift/beta_proof_lift_mode
 import 'package:voicememory_mobile/features/anchor_calibration/anchor_calibration_analytics.dart';
 import 'package:voicememory_mobile/features/anchor_calibration/anchor_calibration_copy.dart';
 import 'package:voicememory_mobile/features/anchor_calibration/anchor_calibration_engine.dart';
-import 'package:voicememory_mobile/features/anchor_calibration/anchor_calibration_model.dart';
-import 'package:voicememory_mobile/features/correction_memory/correction_memory_model.dart';
 import 'package:voicememory_mobile/features/evidence_anchors/evidence_anchor_copy.dart';
 import 'package:voicememory_mobile/features/evidence_anchors/evidence_anchor_engine.dart';
 import 'package:voicememory_mobile/features/evidence_anchors/evidence_anchor_model.dart';
@@ -28,10 +25,10 @@ import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/models/sync_status.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
 import 'package:voicememory_mobile/storage/mobile_prefs_store.dart';
+import 'support/test_storage_sandbox.dart';
 
 class _MemoryPrefs extends MobilePrefsStore {
-  _MemoryPrefs()
-      : super(file: File('test/tmp/anchor_calibration/unused.json'));
+  _MemoryPrefs() : super(file: File('test/tmp/anchor_calibration/unused.json'));
 
   final Map<String, Map<String, dynamic>> maps = {};
 
@@ -48,11 +45,7 @@ const _strongRepeat =
     'I had no capacity but I said yes again to the extra meeting today.';
 final _now = DateTime(2026, 6, 12, 12);
 
-JournalEntry _entry(
-  String id,
-  String transcript, {
-  DateTime? createdAt,
-}) =>
+JournalEntry _entry(String id, String transcript, {DateTime? createdAt}) =>
     JournalEntry(
       id: id,
       createdAt: createdAt ?? _now,
@@ -96,19 +89,18 @@ EvidenceAnchor _anchor(
   String id = 'a1',
   String summary = 'Said yes when capacity was already full.',
   bool isSafeForDisplay = true,
-}) =>
-    EvidenceAnchor(
-      id: id,
-      type: type,
-      label: type.label,
-      safeSummary: summary,
-      strength: 0.8,
-      recencyWeight: 0.9,
-      sourceCount: 2,
-      isUserCorrected: false,
-      isFreshReturn: type == EvidenceAnchorType.freshReturn,
-      isSafeForDisplay: isSafeForDisplay,
-    );
+}) => EvidenceAnchor(
+  id: id,
+  type: type,
+  label: type.label,
+  safeSummary: summary,
+  strength: 0.8,
+  recencyWeight: 0.9,
+  sourceCount: 2,
+  isUserCorrected: false,
+  isFreshReturn: type == EvidenceAnchorType.freshReturn,
+  isSafeForDisplay: isSafeForDisplay,
+);
 
 EvidenceAnchorExtractionResult _extraction(List<EvidenceAnchor> anchors) =>
     EvidenceAnchorExtractionResult(
@@ -146,10 +138,12 @@ Future<void> _saveFeedback(BetaProofFeedbackType type) async {
 }
 
 void main() {
+  late TestStorageSandbox sandbox;
   final analyticsEvents = <({String event, Map<String, Object> props})>[];
   late _MemoryPrefs prefs;
 
   setUp(() async {
+    sandbox = TestStorageSandbox.create();
     prefs = _MemoryPrefs();
     ArchiveBetaMissionGate.enabledOverride = true;
     AnchorCalibrationAnalytics.resetForTest();
@@ -158,15 +152,14 @@ void main() {
     };
     analyticsEvents.clear();
     await AppServices.resetForTest(
-      journalPath:
-          'test/tmp/anchor_calibration/${DateTime.now().microsecondsSinceEpoch}_journal.json',
-      prefsPath:
-          'test/tmp/anchor_calibration/${DateTime.now().microsecondsSinceEpoch}_prefs.json',
+      journalPath: sandbox.journalPath,
+      prefsPath: sandbox.prefsPath,
       skipRevenueCat: true,
     );
     await BetaProofFeedbackStore.resetForTest(prefs);
   });
 
+  tearDown(() => sandbox.dispose());
   tearDown(() async {
     ArchiveBetaMissionGate.resetForTest();
     AnchorCalibrationAnalytics.resetForTest();
@@ -185,11 +178,17 @@ void main() {
     test('helped ranks above repeat', () {
       expect(
         AnchorCalibrationEngine.typeRank(EvidenceAnchorType.helped),
-        greaterThan(AnchorCalibrationEngine.typeRank(EvidenceAnchorType.repeat)),
+        greaterThan(
+          AnchorCalibrationEngine.typeRank(EvidenceAnchorType.repeat),
+        ),
       );
       final ranked = AnchorCalibrationEngine.rankAnchors([
         _anchor(EvidenceAnchorType.repeat, id: 'repeat'),
-        _anchor(EvidenceAnchorType.helped, id: 'helped', summary: 'Helped: paused before saying yes.'),
+        _anchor(
+          EvidenceAnchorType.helped,
+          id: 'helped',
+          summary: 'Helped: paused before saying yes.',
+        ),
       ]);
       expect(ranked.first.type, EvidenceAnchorType.helped);
     });
@@ -253,16 +252,11 @@ void main() {
         entries: _threeRelatedEntries(),
         beliefSurfaceVisible: true,
         source: 'test',
-        anchorExtraction: _extraction([
-          _anchor(EvidenceAnchorType.repeat),
-        ]),
+        anchorExtraction: _extraction([_anchor(EvidenceAnchorType.repeat)]),
         calibrationFeedback: BetaProofFeedbackType.alreadyKnew,
         now: _now,
       );
-      expect(
-        calibration.primaryCopy,
-        AnchorCalibrationCopy.changeTrackingBody,
-      );
+      expect(calibration.primaryCopy, AnchorCalibrationCopy.changeTrackingBody);
       expect(calibration.level, isNot(ProofConfidenceLevel.strong));
     });
 
@@ -294,9 +288,7 @@ void main() {
         entries: _threeRelatedEntries(),
         beliefSurfaceVisible: true,
         source: 'test',
-        anchorExtraction: _extraction([
-          _anchor(EvidenceAnchorType.repeat),
-        ]),
+        anchorExtraction: _extraction([_anchor(EvidenceAnchorType.repeat)]),
         calibrationFeedback: BetaProofFeedbackType.notRelevant,
         now: _now,
       );
@@ -360,7 +352,9 @@ void main() {
 
     test('no medical claims', () {
       expect(
-        ProofSurfaceAdviceGuard.passes(AnchorCalibrationCopy.changeTrackingBody),
+        ProofSurfaceAdviceGuard.passes(
+          AnchorCalibrationCopy.changeTrackingBody,
+        ),
         isTrue,
       );
       expect(
@@ -380,7 +374,10 @@ void main() {
         source: 'test',
         trackAnalytics: true,
       );
-      expect(analyticsEvents.single.event, AnchorCalibrationAnalytics.appliedEvent);
+      expect(
+        analyticsEvents.single.event,
+        AnchorCalibrationAnalytics.appliedEvent,
+      );
       expect(
         analyticsEvents.single.props.keys,
         containsAll([

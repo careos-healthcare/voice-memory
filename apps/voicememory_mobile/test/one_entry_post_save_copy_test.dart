@@ -10,23 +10,22 @@ import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/theme/app_theme.dart';
 import 'package:voicememory_mobile/widgets/onboarding/first_save_evidence_card.dart';
-import 'package:voicememory_mobile/widgets/record/done_for_today_receipt_card.dart';
 
 JournalEntry _entry({String id = 'e1'}) => JournalEntry(
-      id: id,
-      createdAt: DateTime(2026, 6, 12, 12),
-      transcript:
-          'I felt pressure to keep going even when I wanted to stop for the day.',
-      durationSeconds: 30,
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 2,
-        recurringThemes: ['work'],
-        exactLanguagePattern: '',
-        concreteObservation: 'Work pressure showed up in this moment.',
-        repeatedSignal: '',
-      ),
-    );
+  id: id,
+  createdAt: DateTime(2026, 6, 12, 12),
+  transcript:
+      'I felt pressure to keep going even when I wanted to stop for the day.',
+  durationSeconds: 30,
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 2,
+    recurringThemes: ['work'],
+    exactLanguagePattern: '',
+    concreteObservation: 'Work pressure showed up in this moment.',
+    repeatedSignal: '',
+  ),
+);
 
 PressureCheckInRecord _pressureRecord({String id = 'e1'}) =>
     PressureCheckInRecord(
@@ -72,8 +71,14 @@ void main() {
     test('done-for-today receipt uses neutral one-entry lines', () {
       const engine = DoneForTodayReceiptEngine();
       final receipt = engine.build(saved: true, entryCount: 1);
-      expect(receipt.archiveLine, VisibleArchiveProofCopy.oneEntryAddedTodayLine);
-      expect(receipt.tomorrowLine, VisibleArchiveProofCopy.oneEntryTomorrowLine);
+      expect(
+        receipt.archiveLine,
+        VisibleArchiveProofCopy.oneEntryAddedTodayLine,
+      );
+      expect(
+        receipt.tomorrowLine,
+        VisibleArchiveProofCopy.oneEntryTomorrowLine,
+      );
       _expectNoBannedOneEntryCopy([receipt.archiveLine, receipt.tomorrowLine]);
     });
 
@@ -129,8 +134,6 @@ void main() {
     testWidgets('one-entry cards render neutral copy without share proof', (
       tester,
     ) async {
-      const doneEngine = DoneForTodayReceiptEngine();
-      final doneReceipt = doneEngine.build(saved: true, entryCount: 1);
       const shareEngine = ShareableArchiveProofEngine();
       final shareProof = shareEngine.build(
         [_pressureRecord()],
@@ -164,7 +167,10 @@ void main() {
         find.text(VisibleArchiveProofCopy.firstSavePostSaveReassurance),
         findsOneWidget,
       );
-      expect(find.byKey(const Key('shareable_archive_proof_card')), findsNothing);
+      expect(
+        find.byKey(const Key('shareable_archive_proof_card')),
+        findsNothing,
+      );
       _expectNoBannedOneEntryCopy(_visibleText(tester));
     });
   });

@@ -1,4 +1,6 @@
 /// Copy for the first-three recording retention loop on Record.
+library;
+
 import '../trust/capture_recovery_copy.dart';
 
 abstract final class EarlyRepeatProgressCopy {
@@ -19,8 +21,7 @@ abstract final class EarlyRepeatProgressCopy {
   static const twoUnrelatedProgress = '2 of 3';
 
   static const oneMomentCueLabel = 'Next step';
-  static const oneMomentCueBodyFallback =
-      'Come back when this shows up again.';
+  static const oneMomentCueBodyFallback = 'Come back when this shows up again.';
   static const oneMomentCueFooter = 'Ten seconds is enough.';
 
   static const twoRelatedCueLabel = 'One more unlocks first proof';

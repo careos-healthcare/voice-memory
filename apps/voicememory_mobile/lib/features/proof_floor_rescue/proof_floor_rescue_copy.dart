@@ -36,11 +36,11 @@ abstract final class ProofFloorRescueCopy {
   static const statusProofNotSafe = 'Proof not safe to monetize';
 
   static String stateLabel(ProofFloorRescueState state) => switch (state) {
-        ProofFloorRescueState.waitForClearerEvidence => 'waitForClearerEvidence',
-        ProofFloorRescueState.needsSpecificFeedback => 'needsSpecificFeedback',
-        ProofFloorRescueState.sharpenNextReturn => 'sharpenNextReturn',
-        ProofFloorRescueState.suppressThread => 'suppressThread',
-      };
+    ProofFloorRescueState.waitForClearerEvidence => 'waitForClearerEvidence',
+    ProofFloorRescueState.needsSpecificFeedback => 'needsSpecificFeedback',
+    ProofFloorRescueState.sharpenNextReturn => 'sharpenNextReturn',
+    ProofFloorRescueState.suppressThread => 'suppressThread',
+  };
 
   static Iterable<String> allVisibleStrings() sync* {
     yield waitTitle;
@@ -88,14 +88,12 @@ enum ProofFloorRescueCtaType {
   continueThread;
 
   String get analyticsValue => switch (this) {
-        ProofFloorRescueCtaType.saveIfReturns => 'save_if_returns',
-        ProofFloorRescueCtaType.notNow => 'not_now',
-        ProofFloorRescueCtaType.saveNextReturn => 'save_next_return',
-        ProofFloorRescueCtaType.skip => 'skip',
-        ProofFloorRescueCtaType.continueThread => 'continue',
-      };
+    ProofFloorRescueCtaType.saveIfReturns => 'save_if_returns',
+    ProofFloorRescueCtaType.notNow => 'not_now',
+    ProofFloorRescueCtaType.saveNextReturn => 'save_next_return',
+    ProofFloorRescueCtaType.skip => 'skip',
+    ProofFloorRescueCtaType.continueThread => 'continue',
+  };
 }
 
-enum ProofFloorRescueRepairFocusId {
-  protectProofFloor,
-}
+enum ProofFloorRescueRepairFocusId { protectProofFloor }

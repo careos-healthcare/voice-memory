@@ -13,7 +13,10 @@ void main() {
       PlatformException(
         code: 'native_recorder_start',
         message: 'OSStatus error -50.',
-        details: const {'step': 'recorder_init_failed', 'reason': 'OSStatus error -50.'},
+        details: const {
+          'step': 'recorder_init_failed',
+          'reason': 'OSStatus error -50.',
+        },
       ),
     );
 
@@ -29,28 +32,34 @@ void main() {
     expect(path, '/tmp/vm_native.m4a');
   });
 
-  test('native start can resolve wav path after AAC fallback on device', () async {
-    IosNativeRecorder.testPlatform = _FallbackSuccessPlatform();
+  test(
+    'native start can resolve wav path after AAC fallback on device',
+    () async {
+      IosNativeRecorder.testPlatform = _FallbackSuccessPlatform();
 
-    final path = await IosNativeRecorder.startRecording('/tmp/vm_native.m4a');
+      final path = await IosNativeRecorder.startRecording('/tmp/vm_native.m4a');
 
-    expect(path, '/tmp/vm_native.wav');
-  });
+      expect(path, '/tmp/vm_native.wav');
+    },
+  );
 
-  test('native both formats fail returns clean NativeRecorderException', () async {
-    IosNativeRecorder.testPlatform = _BothFailPlatform();
+  test(
+    'native both formats fail returns clean NativeRecorderException',
+    () async {
+      IosNativeRecorder.testPlatform = _BothFailPlatform();
 
-    expect(
-      () => IosNativeRecorder.startRecording('/tmp/vm_native.m4a'),
-      throwsA(
-        isA<NativeRecorderException>().having(
-          (error) => error.step,
-          'step',
-          'record_start_failed',
+      expect(
+        () => IosNativeRecorder.startRecording('/tmp/vm_native.m4a'),
+        throwsA(
+          isA<NativeRecorderException>().having(
+            (error) => error.step,
+            'step',
+            'record_start_failed',
+          ),
         ),
-      ),
-    );
-  });
+      );
+    },
+  );
 
   test('upload content type supports m4a and wav native paths', () {
     expect(

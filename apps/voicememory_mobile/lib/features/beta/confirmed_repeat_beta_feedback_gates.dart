@@ -21,6 +21,5 @@ abstract final class ConfirmedRepeatBetaFeedbackGates {
   /// Hide the inline accuracy row while the one-time beta prompt is pending.
   static bool suppressInlineAccuracyFeedback({
     required ConfirmedRepeatBetaFeedbackState state,
-  }) =>
-      !state.completed;
+  }) => !state.completed;
 }

@@ -31,7 +31,9 @@ class ReviewRitualCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (ScreenshotMode.enabled || !result.hasCard || !result.showOnArchiveHome) {
+    if (ScreenshotMode.enabled ||
+        !result.hasCard ||
+        !result.showOnArchiveHome) {
       return const SizedBox.shrink(key: Key('review_ritual_card_hidden'));
     }
 
@@ -91,15 +93,16 @@ class ReviewRitualCard extends StatelessWidget {
             children: [
               FilledButton(
                 key: const Key('review_ritual_card_primary_button'),
-                onPressed: onPrimaryAction ??
-                    () => context.push(result.primaryRoute),
+                onPressed:
+                    onPrimaryAction ?? () => context.push(result.primaryRoute),
                 child: Text(result.primaryCtaLabel),
               ),
               if (result.hasRitual &&
                   result.primaryRoute != ReviewRitualCopy.route)
                 OutlinedButton(
                   key: const Key('review_ritual_card_secondary_button'),
-                  onPressed: onSecondaryAction ??
+                  onPressed:
+                      onSecondaryAction ??
                       () => context.push(result.secondaryRoute),
                   child: Text(result.secondaryCtaLabel),
                 ),

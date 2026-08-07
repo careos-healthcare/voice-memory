@@ -1,4 +1,6 @@
 /// Calm copy for user-confirmed insight feedback.
+library;
+
 import 'insight_feedback_models.dart';
 
 abstract final class InsightFeedbackCopy {
@@ -26,7 +28,8 @@ abstract final class InsightFeedbackCopy {
   static const betaOutcomesNone = 'None yet';
   static const betaOutcomesSome = 'Yes';
 
-  static String latestChoiceLabel(InsightFeedbackChoice choice) => switch (choice) {
+  static String latestChoiceLabel(InsightFeedbackChoice choice) =>
+      switch (choice) {
         InsightFeedbackChoice.fits => fits,
         InsightFeedbackChoice.notQuite => notQuite,
         InsightFeedbackChoice.tooEarly => tooEarly,
@@ -46,21 +49,21 @@ abstract final class InsightFeedbackCopy {
   }
 
   static List<String> get allVisibleStrings => [
-        prompt,
-        fits,
-        notQuite,
-        tooEarly,
-        saveAsWatchTheme,
-        openWatchlistCta,
-        savedLocally,
-        localOnlyNote,
-        signalNotFact,
-        supportSectionTitle,
-        supportSectionBody,
-        betaOutcomesLabel,
-        betaOutcomesNone,
-        betaOutcomesSome,
-        trustSummaryLabel(fitsCount: 2, notQuiteCount: 1, tooEarlyCount: 1),
-        latestChoiceLabel(InsightFeedbackChoice.fits),
-      ];
+    prompt,
+    fits,
+    notQuite,
+    tooEarly,
+    saveAsWatchTheme,
+    openWatchlistCta,
+    savedLocally,
+    localOnlyNote,
+    signalNotFact,
+    supportSectionTitle,
+    supportSectionBody,
+    betaOutcomesLabel,
+    betaOutcomesNone,
+    betaOutcomesSome,
+    trustSummaryLabel(fitsCount: 2, notQuiteCount: 1, tooEarlyCount: 1),
+    latestChoiceLabel(InsightFeedbackChoice.fits),
+  ];
 }

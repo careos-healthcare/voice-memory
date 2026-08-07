@@ -34,10 +34,7 @@ Future<void> _pumpPaywall(WidgetTester tester, {PaywallRouteArgs? args}) async {
 void main() {
   group('PaywallAlignmentCopy', () {
     test('defines canonical headline and body', () {
-      expect(
-        PaywallAlignmentCopy.headline,
-        'You saw the first useful repeat.',
-      );
+      expect(PaywallAlignmentCopy.headline, 'You saw the first useful repeat.');
       expect(
         PaywallAlignmentCopy.body,
         'Free shows the first useful proof. Pro keeps the longer trail.',
@@ -73,7 +70,10 @@ void main() {
         ConsumerUiCopy.paywallPrimaryValueBlock,
         PaywallValueSharpeningCopy.proofConnectedLine,
       );
-      expect(ConsumerUiCopy.paywallBullets, PaywallAlignmentCopy.benefitBullets);
+      expect(
+        ConsumerUiCopy.paywallBullets,
+        PaywallAlignmentCopy.benefitBullets,
+      );
       expect(
         PaywallSourceCopy.generalPro.headline,
         PaywallAlignmentCopy.headline,
@@ -89,7 +89,9 @@ void main() {
     });
 
     test('avoids generic AI chat and medical positioning', () {
-      final blob = PaywallAlignmentCopy.allPaywallStrings().join(' ').toLowerCase();
+      final blob = PaywallAlignmentCopy.allPaywallStrings()
+          .join(' ')
+          .toLowerCase();
       expect(blob, isNot(contains('more ai')));
       expect(blob, isNot(contains('better chat')));
       expect(blob, isNot(contains('therapy')));
@@ -110,7 +112,10 @@ void main() {
 
       expect(find.text(PaywallAlignmentCopy.headline), findsOneWidget);
       expect(find.byKey(const Key('paywall_unavailable_body')), findsOneWidget);
-      expect(find.byKey(const Key('paywall_subscription_details')), findsOneWidget);
+      expect(
+        find.byKey(const Key('paywall_subscription_details')),
+        findsOneWidget,
+      );
       expect(
         find.text(PaywallAlignmentCopy.secondaryReassurance),
         findsNothing,

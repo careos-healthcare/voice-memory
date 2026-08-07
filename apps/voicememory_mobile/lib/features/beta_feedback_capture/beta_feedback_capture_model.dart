@@ -18,26 +18,26 @@ enum BetaFeedbackCaptureMoment {
 
 extension BetaFeedbackCaptureMomentStorage on BetaFeedbackCaptureMoment {
   String get storageValue => switch (this) {
-        BetaFeedbackCaptureMoment.afterFirstSave => 'after_first_save',
-        BetaFeedbackCaptureMoment.afterThirdSave => 'after_third_save',
-        BetaFeedbackCaptureMoment.afterTimelineProof => 'after_timeline_proof',
-        BetaFeedbackCaptureMoment.afterProPreview => 'after_pro_preview',
-        BetaFeedbackCaptureMoment.afterPaywallSeenNoCta =>
-          'after_paywall_seen_no_cta',
-        BetaFeedbackCaptureMoment.afterPaywallCtaNoPurchase =>
-          'after_paywall_cta_no_purchase',
-      };
+    BetaFeedbackCaptureMoment.afterFirstSave => 'after_first_save',
+    BetaFeedbackCaptureMoment.afterThirdSave => 'after_third_save',
+    BetaFeedbackCaptureMoment.afterTimelineProof => 'after_timeline_proof',
+    BetaFeedbackCaptureMoment.afterProPreview => 'after_pro_preview',
+    BetaFeedbackCaptureMoment.afterPaywallSeenNoCta =>
+      'after_paywall_seen_no_cta',
+    BetaFeedbackCaptureMoment.afterPaywallCtaNoPurchase =>
+      'after_paywall_cta_no_purchase',
+  };
 
   String get analyticsValue => storageValue;
 }
 
 extension BetaFeedbackCaptureSurfaceStorage on BetaFeedbackCaptureSurface {
   String get analyticsValue => switch (this) {
-        BetaFeedbackCaptureSurface.recordReady => 'record_ready',
-        BetaFeedbackCaptureSurface.recordPostSave => 'record_post_save',
-        BetaFeedbackCaptureSurface.patterns => 'patterns',
-        BetaFeedbackCaptureSurface.paywall => 'paywall',
-      };
+    BetaFeedbackCaptureSurface.recordReady => 'record_ready',
+    BetaFeedbackCaptureSurface.recordPostSave => 'record_post_save',
+    BetaFeedbackCaptureSurface.patterns => 'patterns',
+    BetaFeedbackCaptureSurface.paywall => 'paywall',
+  };
 }
 
 /// Visibility inputs for one surface audit.
@@ -136,10 +136,7 @@ class BetaFeedbackCaptureResult {
 }
 
 class BetaFeedbackCaptureOption {
-  const BetaFeedbackCaptureOption({
-    required this.id,
-    required this.label,
-  });
+  const BetaFeedbackCaptureOption({required this.id, required this.label});
 
   final String id;
   final String label;
@@ -172,17 +169,16 @@ class BetaFeedbackCaptureRecord {
   bool get answered => answerId != null && answerId!.isNotEmpty;
 
   Map<String, dynamic> toJson() => {
-        if (moment != null) 'moment': moment!.storageValue,
-        if (answerId != null) 'answerId': answerId,
-        if (dateKey != null) 'dateKey': dateKey,
-        if (source != null) 'source': source,
-        if (entryCount != null) 'entryCount': entryCount,
-        if (freeTextLocal != null && freeTextLocal!.isNotEmpty)
-          'freeTextLocal': freeTextLocal,
-        if (answeredAt != null)
-          'answeredAt': answeredAt!.toUtc().toIso8601String(),
-        if (dismissed) 'dismissed': true,
-      };
+    if (moment != null) 'moment': moment!.storageValue,
+    if (answerId != null) 'answerId': answerId,
+    if (dateKey != null) 'dateKey': dateKey,
+    if (source != null) 'source': source,
+    if (entryCount != null) 'entryCount': entryCount,
+    if (freeTextLocal != null && freeTextLocal!.isNotEmpty)
+      'freeTextLocal': freeTextLocal,
+    if (answeredAt != null) 'answeredAt': answeredAt!.toUtc().toIso8601String(),
+    if (dismissed) 'dismissed': true,
+  };
 
   factory BetaFeedbackCaptureRecord.fromJson(Map<String, dynamic>? json) {
     if (json == null || json.isEmpty) return empty;
@@ -191,8 +187,7 @@ class BetaFeedbackCaptureRecord {
       answerId: json['answerId'] is String ? json['answerId'] as String : null,
       dateKey: json['dateKey'] is String ? json['dateKey'] as String : null,
       source: json['source'] is String ? json['source'] as String : null,
-      entryCount:
-          json['entryCount'] is int ? json['entryCount'] as int : null,
+      entryCount: json['entryCount'] is int ? json['entryCount'] as int : null,
       freeTextLocal: json['freeTextLocal'] is String
           ? json['freeTextLocal'] as String
           : null,

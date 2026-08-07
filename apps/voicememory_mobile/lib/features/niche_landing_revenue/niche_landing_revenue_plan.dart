@@ -76,16 +76,15 @@ abstract final class NicheLandingRevenuePlan {
 
   static NicheLandingRevenuePlanReport report(
     NicheLandingRevenuePlanResult result,
-  ) =>
-      NicheLandingRevenuePlanReport(
-        headline: NicheLandingRevenueCopy.headline,
-        body: NicheLandingRevenueCopy.body,
-        positioning: NicheLandingRevenueCopy.positioning,
-        landingPagesLine: NicheLandingRevenueCopy.landingPagesLine,
-        orderLine: NicheLandingRevenueCopy.orderLine,
-        guardrail: NicheLandingRevenueCopy.guardrail,
-        result: result,
-      );
+  ) => NicheLandingRevenuePlanReport(
+    headline: NicheLandingRevenueCopy.headline,
+    body: NicheLandingRevenueCopy.body,
+    positioning: NicheLandingRevenueCopy.positioning,
+    landingPagesLine: NicheLandingRevenueCopy.landingPagesLine,
+    orderLine: NicheLandingRevenueCopy.orderLine,
+    guardrail: NicheLandingRevenueCopy.guardrail,
+    result: result,
+  );
 
   static bool landingPagePassesRules(String copy) =>
       evaluateCopyPassesRules(copy) &&
@@ -98,17 +97,16 @@ abstract final class NicheLandingRevenuePlan {
     bool? medicalTherapyClaimRequested,
     bool? landingPageMissingCorePromise,
     bool? landingPageMissingPaidPromise,
-  }) =>
-      NicheLandingRevenuePlanInput(
-        appV1SurfaceRequested: appV1SurfaceRequested,
-        medicalTherapyClaimRequested: medicalTherapyClaimRequested,
-        landingPageMissingCorePromise: landingPageMissingCorePromise,
-        landingPageMissingPaidPromise: landingPageMissingPaidPromise,
-        docListsRules: detectDocListsRules(nicheLandingRevenueDocSource),
-        guardrailPresentInCopy: detectGuardrailPresentInCopy(planCopySource),
-        landingPagesPresentInCopy: detectLandingPagesPresentInCopy(planCopySource),
-        promisesPresentInCopy: detectPromisesPresentInCopy(planCopySource),
-      );
+  }) => NicheLandingRevenuePlanInput(
+    appV1SurfaceRequested: appV1SurfaceRequested,
+    medicalTherapyClaimRequested: medicalTherapyClaimRequested,
+    landingPageMissingCorePromise: landingPageMissingCorePromise,
+    landingPageMissingPaidPromise: landingPageMissingPaidPromise,
+    docListsRules: detectDocListsRules(nicheLandingRevenueDocSource),
+    guardrailPresentInCopy: detectGuardrailPresentInCopy(planCopySource),
+    landingPagesPresentInCopy: detectLandingPagesPresentInCopy(planCopySource),
+    promisesPresentInCopy: detectPromisesPresentInCopy(planCopySource),
+  );
 
   static bool detectDocListsRules(String docSource) {
     const markers = [
@@ -143,7 +141,8 @@ abstract final class NicheLandingRevenuePlan {
   static bool detectLandingPagesPresentInCopy(String planCopySource) {
     final lower = planCopySource.toLowerCase();
     return canonicalLandingPageOrder.every(
-      (id) => lower.contains(NicheLandingRevenueCopy.labelFor(id).toLowerCase()),
+      (id) =>
+          lower.contains(NicheLandingRevenueCopy.labelFor(id).toLowerCase()),
     );
   }
 
@@ -182,34 +181,45 @@ abstract final class NicheLandingRevenuePlan {
       ...canonicalLandingPageOrder.map(NicheLandingRevenueCopy.hookFor),
     ].join(' ');
     final guardrailLower = NicheLandingRevenueCopy.guardrail.toLowerCase();
-    final allPagesHaveCorePromise = !(input.landingPageMissingCorePromise ?? false) &&
+    final allPagesHaveCorePromise =
+        !(input.landingPageMissingCorePromise ?? false) &&
         canonicalLandingPageOrder.every(
-          (id) => NicheLandingRevenueCopy.hookFor(id)
-              .contains(NicheLandingRevenueCopy.corePromise) ||
+          (id) =>
+              NicheLandingRevenueCopy.hookFor(
+                id,
+              ).contains(NicheLandingRevenueCopy.corePromise) ||
               copyBundle.contains(NicheLandingRevenueCopy.corePromise),
         );
     return [
       _rule(
         id: NicheLandingRevenueRuleId.marketingWebNotAppV1Surface,
-        passes: guardrailLower.contains('marketing/web acquisition pages only') &&
+        passes:
+            guardrailLower.contains('marketing/web acquisition pages only') &&
             guardrailLower.contains('not app v1 feature surfaces') &&
             evaluateCopyPassesRules(copyBundle) &&
             !(input.appV1SurfaceRequested ?? false),
       ),
       _rule(
         id: NicheLandingRevenueRuleId.noMedicalTherapyClaims,
-        passes: guardrailLower.contains('avoid medical or wellness-treatment claims') &&
+        passes:
+            guardrailLower.contains(
+              'avoid medical or wellness-treatment claims',
+            ) &&
             evaluateCopyPassesRules(copyBundle) &&
             !(input.medicalTherapyClaimRequested ?? false),
       ),
       _rule(
         id: NicheLandingRevenueRuleId.corePromiseOnEveryLandingPage,
-        passes: guardrailLower.contains('save one repeat. archiveme compares it later') &&
+        passes:
+            guardrailLower.contains(
+              'save one repeat. archiveme compares it later',
+            ) &&
             allPagesHaveCorePromise,
       ),
       _rule(
         id: NicheLandingRevenueRuleId.paidPromiseDocumented,
-        passes: guardrailLower.contains('pro keeps the longer proof trail') &&
+        passes:
+            guardrailLower.contains('pro keeps the longer proof trail') &&
             copyBundle.contains(NicheLandingRevenueCopy.paidPromise) &&
             !(input.landingPageMissingPaidPromise ?? false),
       ),
@@ -246,7 +256,14 @@ abstract final class NicheLandingRevenuePlan {
 
   static bool _markerInProhibitionContext(String lower, int markerStart) {
     final prefix = lower.substring(0, markerStart);
-    const prohibitionMarkers = ['avoid ', 'without ', 'never ', 'no ', 'not ', 'do not '];
+    const prohibitionMarkers = [
+      'avoid ',
+      'without ',
+      'never ',
+      'no ',
+      'not ',
+      'do not ',
+    ];
     for (final marker in prohibitionMarkers) {
       final index = prefix.lastIndexOf(marker);
       if (index < 0) continue;
@@ -259,17 +276,16 @@ abstract final class NicheLandingRevenuePlan {
   static NicheLandingRevenueRule _rule({
     required NicheLandingRevenueRuleId id,
     required bool passes,
-  }) =>
-      NicheLandingRevenueRule(
-        id: id,
-        label: NicheLandingRevenueCopy.ruleLabelFor(id),
-        status: passes
-            ? NicheLandingRevenueRuleStatus.pass
-            : NicheLandingRevenueRuleStatus.fail,
-        detailLabel: passes
-            ? NicheLandingRevenueCopy.detailPass
-            : NicheLandingRevenueCopy.detailFail,
-      );
+  }) => NicheLandingRevenueRule(
+    id: id,
+    label: NicheLandingRevenueCopy.ruleLabelFor(id),
+    status: passes
+        ? NicheLandingRevenueRuleStatus.pass
+        : NicheLandingRevenueRuleStatus.fail,
+    detailLabel: passes
+        ? NicheLandingRevenueCopy.detailPass
+        : NicheLandingRevenueCopy.detailFail,
+  );
 }
 
 class NicheLandingRevenuePlanInput {

@@ -46,10 +46,10 @@ class PaywallUnavailableFallback extends StatelessWidget {
       PaywallUnavailableState.primaryDismissLabel(hideBenefits: hideBenefits);
 
   Key get _dismissButtonKey => Key(
-        hideBenefits
-            ? 'paywall_unavailable_continue_without_pro'
-            : 'paywall_unavailable_done',
-      );
+    hideBenefits
+        ? 'paywall_unavailable_continue_without_pro'
+        : 'paywall_unavailable_done',
+  );
 
   @override
   Widget build(BuildContext context) {

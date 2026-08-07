@@ -23,9 +23,9 @@ class CapacityPullReasonCard extends StatefulWidget {
     super.key,
     required this.result,
     this.onSaved,
-    CapacityPullReasonStore? store,
+    this.store,
     this.sampleMode = false,
-  }) : store = store;
+  });
 
   final CapacityPullReasonResult result;
   final VoidCallback? onSaved;
@@ -101,7 +101,9 @@ class _CapacityPullReasonCardState extends State<CapacityPullReasonCard> {
             const SizedBox(height: AppSpacing.sm),
             FilledButton(
               key: const Key('capacity_pull_reason_save_button'),
-              onPressed: _saving || _selectedReasons.isEmpty ? null : _saveAnswer,
+              onPressed: _saving || _selectedReasons.isEmpty
+                  ? null
+                  : _saveAnswer,
               child: Text(CapacityPullReasonCopy.saveReasonCta),
             ),
           ] else ...[

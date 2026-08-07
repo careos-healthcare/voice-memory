@@ -29,25 +29,23 @@ RevenueCatSandboxProofInput _input({
   bool? restorePurchasesSucceeds = true,
   bool? entitlementPersistsAfterRestart = true,
   bool? missingKeyNoCrash,
-}) =>
-    RevenueCatSandboxProofInput(
-      iosApiKeyPresent: iosApiKeyPresent,
-      offeringLoads: offeringLoads,
-      productTitlePriceVisible: productTitlePriceVisible,
-      storeKitSheetAppears: storeKitSheetAppears,
-      sandboxPurchaseSucceeds: sandboxPurchaseSucceeds,
-      proEntitlementActive: proEntitlementActive,
-      proGateUnlocks: proGateUnlocks,
-      restorePurchasesSucceeds: restorePurchasesSucceeds,
-      entitlementPersistsAfterRestart: entitlementPersistsAfterRestart,
-      missingKeyNoCrash: missingKeyNoCrash,
-    );
+}) => RevenueCatSandboxProofInput(
+  iosApiKeyPresent: iosApiKeyPresent,
+  offeringLoads: offeringLoads,
+  productTitlePriceVisible: productTitlePriceVisible,
+  storeKitSheetAppears: storeKitSheetAppears,
+  sandboxPurchaseSucceeds: sandboxPurchaseSucceeds,
+  proEntitlementActive: proEntitlementActive,
+  proGateUnlocks: proGateUnlocks,
+  restorePurchasesSucceeds: restorePurchasesSucceeds,
+  entitlementPersistsAfterRestart: entitlementPersistsAfterRestart,
+  missingKeyNoCrash: missingKeyNoCrash,
+);
 
 RevenueCatSandboxProofCheck _check(
   RevenueCatSandboxProofResult result,
   RevenueCatSandboxProofCheckId id,
-) =>
-    result.checks.firstWhere((check) => check.id == id);
+) => result.checks.firstWhere((check) => check.id == id);
 
 void main() {
   group('RevenueCatSandboxProof.build', () {
@@ -92,8 +90,10 @@ void main() {
         RevenueCatSandboxProofCheckId.offeringLoads,
       );
       expect(
-        _check(result, RevenueCatSandboxProofCheckId.storeKitSheetAppears)
-            .status,
+        _check(
+          result,
+          RevenueCatSandboxProofCheckId.storeKitSheetAppears,
+        ).status,
         RevenueCatSandboxProofStatus.blocked,
       );
     });
@@ -105,38 +105,42 @@ void main() {
 
       expect(result.decision, RevenueCatSandboxProofDecision.blocked);
       expect(
-        _check(result, RevenueCatSandboxProofCheckId.storeKitSheetAppears)
-            .status,
+        _check(
+          result,
+          RevenueCatSandboxProofCheckId.storeKitSheetAppears,
+        ).status,
         RevenueCatSandboxProofStatus.blocked,
       );
     });
 
-    test('automated checks pass but manual steps pending -> manualRequired', () {
-      final result = RevenueCatSandboxProof.build(
-        _input(
-          storeKitSheetAppears: null,
-          sandboxPurchaseSucceeds: null,
-          proEntitlementActive: null,
-          proGateUnlocks: null,
-          restorePurchasesSucceeds: null,
-          entitlementPersistsAfterRestart: null,
-        ),
-      );
+    test(
+      'automated checks pass but manual steps pending -> manualRequired',
+      () {
+        final result = RevenueCatSandboxProof.build(
+          _input(
+            storeKitSheetAppears: null,
+            sandboxPurchaseSucceeds: null,
+            proEntitlementActive: null,
+            proGateUnlocks: null,
+            restorePurchasesSucceeds: null,
+            entitlementPersistsAfterRestart: null,
+          ),
+        );
 
-      expect(result.decision, RevenueCatSandboxProofDecision.manualRequired);
-      expect(
-        _check(result, RevenueCatSandboxProofCheckId.storeKitSheetAppears)
-            .status,
-        RevenueCatSandboxProofStatus.pending,
-      );
-    });
+        expect(result.decision, RevenueCatSandboxProofDecision.manualRequired);
+        expect(
+          _check(
+            result,
+            RevenueCatSandboxProofCheckId.storeKitSheetAppears,
+          ).status,
+          RevenueCatSandboxProofStatus.pending,
+        );
+      },
+    );
 
     test('sandbox purchase failure blocks entitlement checks', () {
       final result = RevenueCatSandboxProof.build(
-        _input(
-          sandboxPurchaseSucceeds: false,
-          proEntitlementActive: null,
-        ),
+        _input(sandboxPurchaseSucceeds: false, proEntitlementActive: null),
       );
 
       expect(result.decision, RevenueCatSandboxProofDecision.blocked);
@@ -145,26 +149,28 @@ void main() {
         RevenueCatSandboxProofCheckId.sandboxPurchaseSucceeds,
       );
       expect(
-        _check(result, RevenueCatSandboxProofCheckId.proEntitlementActive)
-            .status,
+        _check(
+          result,
+          RevenueCatSandboxProofCheckId.proEntitlementActive,
+        ).status,
         RevenueCatSandboxProofStatus.blocked,
       );
     });
 
     test('recognizes archive_loop_pro entitlement', () {
       expect(
-        RevenueCatSandboxProof.recognizesProEntitlement(
-          [ArchiveLoopEntitlementIds.archiveLoopPro],
-        ),
+        RevenueCatSandboxProof.recognizesProEntitlement([
+          ArchiveLoopEntitlementIds.archiveLoopPro,
+        ]),
         isTrue,
       );
     });
 
     test('recognizes legacy pro entitlement', () {
       expect(
-        RevenueCatSandboxProof.recognizesProEntitlement(
-          [ArchiveLoopEntitlementIds.revenueCatLegacyPro],
-        ),
+        RevenueCatSandboxProof.recognizesProEntitlement([
+          ArchiveLoopEntitlementIds.revenueCatLegacyPro,
+        ]),
         isTrue,
       );
     });
@@ -219,13 +225,17 @@ void main() {
 
       expect(result.decision, RevenueCatSandboxProofDecision.proved);
       expect(
-        _check(result, RevenueCatSandboxProofCheckId.sandboxPurchaseSucceeds)
-            .status,
+        _check(
+          result,
+          RevenueCatSandboxProofCheckId.sandboxPurchaseSucceeds,
+        ).status,
         RevenueCatSandboxProofStatus.pass,
       );
       expect(
-        _check(result, RevenueCatSandboxProofCheckId.restorePurchasesSucceeds)
-            .status,
+        _check(
+          result,
+          RevenueCatSandboxProofCheckId.restorePurchasesSucceeds,
+        ).status,
         RevenueCatSandboxProofStatus.pass,
       );
     });
@@ -405,7 +415,8 @@ void main() {
   });
 }
 
-ChangeTrailClaritySummary _fullTrailSummary() => const ChangeTrailClaritySummary(
+ChangeTrailClaritySummary _fullTrailSummary() =>
+    const ChangeTrailClaritySummary(
       totalTesters: 30,
       understoodFirstProofCount: 7,
       understoodProKeepsTrailCount: 6,

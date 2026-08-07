@@ -6,10 +6,10 @@ enum ArchiveTimelineTruthFeedback {
   notReally;
 
   String get storageId => switch (this) {
-        yes => 'yes',
-        partly => 'partly',
-        notReally => 'notReally',
-      };
+    yes => 'yes',
+    partly => 'partly',
+    notReally => 'notReally',
+  };
 
   static ArchiveTimelineTruthFeedback? fromStorage(String? raw) {
     if (raw == null || raw.isEmpty) return null;
@@ -65,27 +65,18 @@ class ArchiveChangeTimelineMetricsStore {
   Future<void> incrementPromptTap() async {
     final map = await _prefs.readMap(_key) ?? {};
     final next = _readCount(map['promptTappedCount']) + 1;
-    await _prefs.writeMap(_key, {
-      ...map,
-      'promptTappedCount': next,
-    });
+    await _prefs.writeMap(_key, {...map, 'promptTappedCount': next});
   }
 
   Future<void> markTimelineViewed() async {
     final map = await _prefs.readMap(_key) ?? {};
     if (map['archiveTimelineViewed'] == true) return;
-    await _prefs.writeMap(_key, {
-      ...map,
-      'archiveTimelineViewed': true,
-    });
+    await _prefs.writeMap(_key, {...map, 'archiveTimelineViewed': true});
   }
 
   Future<void> markTimelineExpanded() async {
     final map = await _prefs.readMap(_key) ?? {};
-    await _prefs.writeMap(_key, {
-      ...map,
-      'archiveTimelineExpanded': true,
-    });
+    await _prefs.writeMap(_key, {...map, 'archiveTimelineExpanded': true});
   }
 
   Future<void> saveTruthFeedback({

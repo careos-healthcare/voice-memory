@@ -20,8 +20,7 @@ import 'package:voicememory_mobile/storage/mobile_prefs_store.dart';
 import 'package:voicememory_mobile/widgets/record/return_after_proof_card.dart';
 
 class _MemoryPrefs extends MobilePrefsStore {
-  _MemoryPrefs()
-      : super(file: File('test/tmp/return_after_proof/unused.json'));
+  _MemoryPrefs() : super(file: File('test/tmp/return_after_proof/unused.json'));
 
   final Map<String, Map<String, dynamic>> maps = {};
 
@@ -38,11 +37,7 @@ const _strongRepeat =
     'I had no capacity but I said yes again to the extra meeting today.';
 final _now = DateTime(2026, 6, 12, 12);
 
-JournalEntry _entry(
-  String id,
-  String transcript, {
-  DateTime? createdAt,
-}) =>
+JournalEntry _entry(String id, String transcript, {DateTime? createdAt}) =>
     JournalEntry(
       id: id,
       createdAt: createdAt ?? _now,
@@ -86,14 +81,13 @@ ReturnAfterProofResult _resultFor(
   bool firstProofSeen = true,
   bool timelineProofVisible = false,
   bool betaTesterReportVisible = false,
-}) =>
-    ReturnAfterProofEngine.build(
-      entries: entries,
-      source: 'test',
-      firstProofSeen: firstProofSeen,
-      timelineProofVisible: timelineProofVisible,
-      betaTesterReportVisible: betaTesterReportVisible,
-    );
+}) => ReturnAfterProofEngine.build(
+  entries: entries,
+  source: 'test',
+  firstProofSeen: firstProofSeen,
+  timelineProofVisible: timelineProofVisible,
+  betaTesterReportVisible: betaTesterReportVisible,
+);
 
 void main() {
   final analyticsEvents = <({String event, Map<String, Object> props})>[];
@@ -216,13 +210,13 @@ void main() {
           ReturnAfterProofEngine.shouldShowOnRecordReady(
             result: result,
             isReady: true,
-            isRecording: override['isRecording'] as bool? ?? false,
+            isRecording: override['isRecording'] ?? false,
             isDegradedTranscriptState:
-                override['isDegradedTranscriptState'] as bool? ?? false,
+                override['isDegradedTranscriptState'] ?? false,
             whatChangedQuestionActive:
-                override['whatChangedQuestionActive'] as bool? ?? false,
+                override['whatChangedQuestionActive'] ?? false,
             patternReviewInboxHasActiveItems:
-                override['patternReviewInboxHasActiveItems'] as bool? ?? false,
+                override['patternReviewInboxHasActiveItems'] ?? false,
             firstProofSeen: true,
             timelineProofVisible: false,
             betaTesterReportVisible: false,
@@ -274,7 +268,10 @@ void main() {
 
   group('ReturnAfterProofAnalytics', () {
     test('metadata-only analytics payloads', () {
-      final result = _resultFor(_threeRelatedEntries(), timelineProofVisible: true);
+      final result = _resultFor(
+        _threeRelatedEntries(),
+        timelineProofVisible: true,
+      );
       ReturnAfterProofAnalytics.seen(result: result);
       ReturnAfterProofAnalytics.promptTapped(
         result: result,
@@ -340,8 +337,20 @@ void main() {
         ),
       );
       expect(result.guidanceSlot, SurfacePriorityCardKey.returnAfterProof);
-      expect(result.isVisible(SurfacePriorityCardKey.lowFrictionReturn, candidate: true), isFalse);
-      expect(result.isVisible(SurfacePriorityCardKey.whatToNoticeNext, candidate: true), isFalse);
+      expect(
+        result.isVisible(
+          SurfacePriorityCardKey.lowFrictionReturn,
+          candidate: true,
+        ),
+        isFalse,
+      );
+      expect(
+        result.isVisible(
+          SurfacePriorityCardKey.whatToNoticeNext,
+          candidate: true,
+        ),
+        isFalse,
+      );
     });
 
     test('returnAfterProofStrengthened beats generic returnAfterProof', () {
@@ -418,7 +427,9 @@ void main() {
       }
     });
 
-    testWidgets('tapping prompt sets selected prompt line only', (tester) async {
+    testWidgets('tapping prompt sets selected prompt line only', (
+      tester,
+    ) async {
       final result = _resultFor(_threeRelatedEntries());
       await tester.pumpWidget(
         MaterialApp(
@@ -434,9 +445,7 @@ void main() {
       await tester.pump();
 
       await tester.tap(
-        find.byKey(
-          const Key('return_after_proof_prompt_itCameBack'),
-        ),
+        find.byKey(const Key('return_after_proof_prompt_itCameBack')),
       );
       await tester.pump();
 
@@ -444,8 +453,7 @@ void main() {
       expect(find.text('This came back:'), findsOneWidget);
       expect(
         analyticsEvents.any(
-          (event) =>
-              event.event == ReturnAfterProofAnalytics.promptTappedEvent,
+          (event) => event.event == ReturnAfterProofAnalytics.promptTappedEvent,
         ),
         isTrue,
       );

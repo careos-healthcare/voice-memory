@@ -2,7 +2,6 @@ import '../../models/journal_entry.dart';
 import '../archive_evidence/archive_evidence_quality_gate.dart';
 import '../archive_evidence/archive_evidence_guard.dart';
 import '../repeat_return_check/pattern_changed_engine.dart';
-import '../repeat_return_check/repeat_return_check_change_proof.dart';
 import '../repeat_return_check/repeat_return_check_engine.dart';
 import '../repeat_return_check/repeat_return_check_models.dart';
 import '../repeat_return_check/repeat_return_check_trend.dart';
@@ -37,9 +36,7 @@ abstract final class ArchiveChangeTimelineEngine {
     final eligible = ArchiveEvidenceGuard.strongEntries(entries);
     if (eligible.length < 3) return null;
 
-    final foundation = eligible.length >= 3
-        ? eligible.sublist(0, 3)
-        : eligible;
+    final foundation = eligible.length >= 3 ? eligible.sublist(0, 3) : eligible;
     final repeatPhrase = _groundedPhrase(foundation);
     if (repeatPhrase == null) return null;
 
@@ -50,7 +47,9 @@ abstract final class ArchiveChangeTimelineEngine {
       isPostSave: isPostSave,
       records: returnChecks,
     );
-    final latestChoice = RepeatReturnCheckTrendEngine.latestChoice(returnChecks);
+    final latestChoice = RepeatReturnCheckTrendEngine.latestChoice(
+      returnChecks,
+    );
     final patternChanged = PatternChangedEngine.build(
       changeProof: changeProof,
       records: returnChecks,
@@ -83,8 +82,7 @@ abstract final class ArchiveChangeTimelineEngine {
           body: ArchiveChangeTimelineCopy.changedThisTimeBody,
           phrase: patternChanged.thisTimePhrase,
         ),
-      if (_helpfulItem(helpfulAction, eligible) case final helpful?)
-        helpful,
+      ?_helpfulItem(helpfulAction, eligible),
       const ArchiveChangeTimelineItem(
         kind: ArchiveChangeTimelineItemKind.stillWatching,
         label: ArchiveChangeTimelineCopy.stillWatchingLabel,
@@ -114,29 +112,29 @@ abstract final class ArchiveChangeTimelineEngine {
 
     return switch (latestChoice) {
       RepeatReturnCheckChoice.softer => [
-          ArchiveChangeTimelineItem(
-            kind: ArchiveChangeTimelineItemKind.lookedSofter,
-            label: ArchiveChangeTimelineCopy.lookedSofterLabel,
-            body: ArchiveChangeTimelineCopy.lookedSofterBody,
-            phrase: phrase,
-          ),
-        ],
+        ArchiveChangeTimelineItem(
+          kind: ArchiveChangeTimelineItemKind.lookedSofter,
+          label: ArchiveChangeTimelineCopy.lookedSofterLabel,
+          body: ArchiveChangeTimelineCopy.lookedSofterBody,
+          phrase: phrase,
+        ),
+      ],
       RepeatReturnCheckChoice.stronger => [
-          ArchiveChangeTimelineItem(
-            kind: ArchiveChangeTimelineItemKind.lookedStronger,
-            label: ArchiveChangeTimelineCopy.lookedStrongerLabel,
-            body: ArchiveChangeTimelineCopy.lookedStrongerBody,
-            phrase: phrase,
-          ),
-        ],
+        ArchiveChangeTimelineItem(
+          kind: ArchiveChangeTimelineItemKind.lookedStronger,
+          label: ArchiveChangeTimelineCopy.lookedStrongerLabel,
+          body: ArchiveChangeTimelineCopy.lookedStrongerBody,
+          phrase: phrase,
+        ),
+      ],
       RepeatReturnCheckChoice.same => [
-          ArchiveChangeTimelineItem(
-            kind: ArchiveChangeTimelineItemKind.aboutTheSame,
-            label: ArchiveChangeTimelineCopy.aboutTheSameLabel,
-            body: ArchiveChangeTimelineCopy.aboutTheSameBody,
-            phrase: phrase,
-          ),
-        ],
+        ArchiveChangeTimelineItem(
+          kind: ArchiveChangeTimelineItemKind.aboutTheSame,
+          label: ArchiveChangeTimelineCopy.aboutTheSameLabel,
+          body: ArchiveChangeTimelineCopy.aboutTheSameBody,
+          phrase: phrase,
+        ),
+      ],
       RepeatReturnCheckChoice.changed => const [],
     };
   }
@@ -161,12 +159,14 @@ abstract final class ArchiveChangeTimelineEngine {
   }
 
   static String? _groundedPhrase(List<JournalEntry> entries) {
-    final shared =
-        ConfirmedRepeatEvidencePhraseEngine.sharedConcretePhrase(entries);
+    final shared = ConfirmedRepeatEvidencePhraseEngine.sharedConcretePhrase(
+      entries,
+    );
     if (shared != null && _isGroundedPhrase(shared, entries)) return shared;
 
-    for (final phrase
-        in ConfirmedRepeatEvidencePhraseEngine.extract(entries).phrases) {
+    for (final phrase in ConfirmedRepeatEvidencePhraseEngine.extract(
+      entries,
+    ).phrases) {
       if (_isGroundedPhrase(phrase, entries)) return phrase;
     }
     return null;
@@ -174,9 +174,10 @@ abstract final class ArchiveChangeTimelineEngine {
 
   static String? _latestGroundedPhrase(List<JournalEntry> entries) {
     if (entries.isEmpty) return null;
-    final phrase = ConfirmedRepeatEvidencePhraseEngine.singleEntryConcretePhrase(
-      entries.last,
-    );
+    final phrase =
+        ConfirmedRepeatEvidencePhraseEngine.singleEntryConcretePhrase(
+          entries.last,
+        );
     if (phrase == null || !_isGroundedPhrase(phrase, entries)) return null;
     return phrase;
   }

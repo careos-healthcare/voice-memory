@@ -12,7 +12,7 @@ abstract final class PatternReviewInboxAnalytics {
 
   @visibleForTesting
   static void Function(String event, Map<String, Object> properties)?
-      captureForTest;
+  captureForTest;
 
   static void seen({
     required String source,
@@ -66,9 +66,9 @@ abstract final class PatternReviewInboxAnalytics {
     final props = <String, Object>{
       'source': source,
       'entry_count': entryCount,
-      if (itemCount != null) 'item_count': itemCount,
-      if (itemType != null) 'item_type': itemType,
-      if (resultType != null) 'result_type': resultType,
+      'item_count': ?itemCount,
+      'item_type': ?itemType,
+      'result_type': ?resultType,
     };
 
     captureForTest?.call(event, props);

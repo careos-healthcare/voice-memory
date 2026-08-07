@@ -77,26 +77,26 @@ abstract final class V1SurfaceScopeAudit {
     final scope = scopeFor(input.surface);
     return switch (scope) {
       V1SurfaceScope.coreV1 => _result(
-          surface: input.surface,
-          scope: scope,
-          decision: V1ScopeDecision.coreAllowed,
-          requiredForRelease: true,
-          visibleInV1: true,
-        ),
+        surface: input.surface,
+        scope: scope,
+        decision: V1ScopeDecision.coreAllowed,
+        requiredForRelease: true,
+        visibleInV1: true,
+      ),
       V1SurfaceScope.secondaryHidden => _result(
-          surface: input.surface,
-          scope: scope,
-          decision: V1ScopeDecision.secondaryNotRequiredForRelease,
-          requiredForRelease: false,
-          visibleInV1: false,
-        ),
+        surface: input.surface,
+        scope: scope,
+        decision: V1ScopeDecision.secondaryNotRequiredForRelease,
+        requiredForRelease: false,
+        visibleInV1: false,
+      ),
       V1SurfaceScope.releaseBlockerOnly => _result(
-          surface: input.surface,
-          scope: scope,
-          decision: V1ScopeDecision.releaseBlockerAllowed,
-          requiredForRelease: true,
-          visibleInV1: false,
-        ),
+        surface: input.surface,
+        scope: scope,
+        decision: V1ScopeDecision.releaseBlockerAllowed,
+        requiredForRelease: true,
+        visibleInV1: false,
+      ),
     };
   }
 
@@ -117,14 +117,13 @@ abstract final class V1SurfaceScopeAudit {
     required V1ScopeDecision decision,
     required bool requiredForRelease,
     required bool visibleInV1,
-  }) =>
-      V1SurfaceScopeAuditResult(
-        surface: surface,
-        scope: scope,
-        decision: decision,
-        requiredForRelease: requiredForRelease,
-        visibleInV1: visibleInV1,
-      );
+  }) => V1SurfaceScopeAuditResult(
+    surface: surface,
+    scope: scope,
+    decision: decision,
+    requiredForRelease: requiredForRelease,
+    visibleInV1: visibleInV1,
+  );
 }
 
 enum V1VisibleSurface {
@@ -160,11 +159,7 @@ enum V1VisibleSurface {
   secrets,
 }
 
-enum V1SurfaceScope {
-  coreV1,
-  secondaryHidden,
-  releaseBlockerOnly,
-}
+enum V1SurfaceScope { coreV1, secondaryHidden, releaseBlockerOnly }
 
 enum V1ScopeDecision {
   coreAllowed,

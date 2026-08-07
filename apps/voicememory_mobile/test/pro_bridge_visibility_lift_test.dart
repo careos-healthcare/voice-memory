@@ -5,7 +5,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/billing/archive_loop_entitlement_ids.dart';
 import 'package:voicememory_mobile/billing/restore_purchases_copy.dart';
 import 'package:voicememory_mobile/billing/revenuecat_service.dart';
-import 'package:voicememory_mobile/features/beta_proof_feedback/beta_proof_feedback_model.dart';
 import 'package:voicememory_mobile/features/beta_proof_feedback/beta_proof_feedback_store.dart';
 import 'package:voicememory_mobile/features/pro_bridge_visibility/pro_bridge_visibility_analytics.dart';
 import 'package:voicememory_mobile/features/pro_bridge_visibility/pro_bridge_visibility_copy.dart';
@@ -23,7 +22,7 @@ import 'package:voicememory_mobile/widgets/pro/pro_bridge_visibility_card.dart';
 
 class _MemoryPrefs extends MobilePrefsStore {
   _MemoryPrefs()
-      : super(file: File('test/tmp/pro_bridge_visibility/unused.json'));
+    : super(file: File('test/tmp/pro_bridge_visibility/unused.json'));
 
   final Map<String, Map<String, dynamic>> maps = {};
 
@@ -37,8 +36,7 @@ class _MemoryPrefs extends MobilePrefsStore {
 }
 
 ProBridgeVisibilityInput _allowedInput({
-  ProBridgeVisibilitySurface surface =
-      ProBridgeVisibilitySurface.recordReady,
+  ProBridgeVisibilitySurface surface = ProBridgeVisibilitySurface.recordReady,
   int entryCount = 3,
   bool isPro = false,
   bool postProofProBridgeEnabled = true,
@@ -63,44 +61,38 @@ ProBridgeVisibilityInput _allowedInput({
   bool patternReviewInboxHasActiveItems = false,
   bool hasSeenFirstRepeat = true,
   bool hasOpenedEvidenceTrail = true,
-}) =>
-    ProBridgeVisibilityInput(
-      surface: surface,
-      source: 'test',
-      entryCount: entryCount,
-      isPro: isPro,
-      postProofProBridgeEnabled: postProofProBridgeEnabled,
-      hasFirstProof: hasFirstProof,
-      hasTimelineProofVisible: hasTimelineProofVisible,
-      hasFirstProofPayoffVisible: hasFirstProofPayoffVisible,
-      hasBetaTesterReportVisible: hasBetaTesterReportVisible,
-      hasCorrectionMemoryVisible: hasCorrectionMemoryVisible,
-      hasBetaProofLiftVisible: hasBetaProofLiftVisible,
-      hasReturnAfterProofStrengthenedVisible:
-          hasReturnAfterProofStrengthenedVisible,
-      feedbackState: feedbackState,
-      confidenceLevel: confidenceLevel,
-      hasSafeAnchor: hasSafeAnchor,
-      hasFreshReturnAfterCorrection: hasFreshReturnAfterCorrection,
-      hasSolidStrongPatternWithSafeAnchors:
-          hasSolidStrongPatternWithSafeAnchors,
-      isRecording: isRecording,
-      isZeroEntryState: isZeroEntryState,
-      isFirstRecordingState: isFirstRecordingState,
-      isPostSaveDegradedState: isPostSaveDegradedState,
-      isDegradedTranscriptState: isDegradedTranscriptState,
-      whatChangedQuestionActive: whatChangedQuestionActive,
-      patternReviewInboxHasActiveItems: patternReviewInboxHasActiveItems,
-      hasSeenFirstRepeat: hasSeenFirstRepeat,
-      hasOpenedEvidenceTrail: hasOpenedEvidenceTrail,
-    );
+}) => ProBridgeVisibilityInput(
+  surface: surface,
+  source: 'test',
+  entryCount: entryCount,
+  isPro: isPro,
+  postProofProBridgeEnabled: postProofProBridgeEnabled,
+  hasFirstProof: hasFirstProof,
+  hasTimelineProofVisible: hasTimelineProofVisible,
+  hasFirstProofPayoffVisible: hasFirstProofPayoffVisible,
+  hasBetaTesterReportVisible: hasBetaTesterReportVisible,
+  hasCorrectionMemoryVisible: hasCorrectionMemoryVisible,
+  hasBetaProofLiftVisible: hasBetaProofLiftVisible,
+  hasReturnAfterProofStrengthenedVisible:
+      hasReturnAfterProofStrengthenedVisible,
+  feedbackState: feedbackState,
+  confidenceLevel: confidenceLevel,
+  hasSafeAnchor: hasSafeAnchor,
+  hasFreshReturnAfterCorrection: hasFreshReturnAfterCorrection,
+  hasSolidStrongPatternWithSafeAnchors: hasSolidStrongPatternWithSafeAnchors,
+  isRecording: isRecording,
+  isZeroEntryState: isZeroEntryState,
+  isFirstRecordingState: isFirstRecordingState,
+  isPostSaveDegradedState: isPostSaveDegradedState,
+  isDegradedTranscriptState: isDegradedTranscriptState,
+  whatChangedQuestionActive: whatChangedQuestionActive,
+  patternReviewInboxHasActiveItems: patternReviewInboxHasActiveItems,
+  hasSeenFirstRepeat: hasSeenFirstRepeat,
+  hasOpenedEvidenceTrail: hasOpenedEvidenceTrail,
+);
 
-ProBridgeVisibilityResult _result({
-  ProBridgeVisibilityInput? input,
-}) =>
-    ProBridgeVisibilityEngine.build(
-      input: input ?? _allowedInput(),
-    );
+ProBridgeVisibilityResult _result({ProBridgeVisibilityInput? input}) =>
+    ProBridgeVisibilityEngine.build(input: input ?? _allowedInput());
 
 void main() {
   setUp(() async {
@@ -130,7 +122,10 @@ void main() {
     test('hidden before proof', () {
       expect(
         ProBridgeVisibilityEngine.shouldShow(
-          input: _allowedInput(hasFirstProof: false, hasTimelineProofVisible: false),
+          input: _allowedInput(
+            hasFirstProof: false,
+            hasTimelineProofVisible: false,
+          ),
         ),
         isFalse,
       );
@@ -177,18 +172,21 @@ void main() {
       );
     });
 
-    test('standalone bridge hidden on post-save first proof payoff surface', () {
-      expect(
-        ProBridgeVisibilityEngine.shouldShow(
-          input: _allowedInput(
-            surface: ProBridgeVisibilitySurface.recordPostSaveAfterPayoff,
-            hasTimelineProofVisible: false,
-            hasFirstProofPayoffVisible: true,
+    test(
+      'standalone bridge hidden on post-save first proof payoff surface',
+      () {
+        expect(
+          ProBridgeVisibilityEngine.shouldShow(
+            input: _allowedInput(
+              surface: ProBridgeVisibilitySurface.recordPostSaveAfterPayoff,
+              hasTimelineProofVisible: false,
+              hasFirstProofPayoffVisible: true,
+            ),
           ),
-        ),
-        isFalse,
-      );
-    });
+          isFalse,
+        );
+      },
+    );
 
     test('visible after BetaTesterReport', () {
       expect(
@@ -285,9 +283,7 @@ void main() {
 
     test('hidden for Pro subscribers', () {
       expect(
-        ProBridgeVisibilityEngine.shouldShow(
-          input: _allowedInput(isPro: true),
-        ),
+        ProBridgeVisibilityEngine.shouldShow(input: _allowedInput(isPro: true)),
         isFalse,
       );
     });
@@ -357,7 +353,8 @@ void main() {
         source: 'record_ready',
         surface: 'record_ready',
         entryCount: 3,
-        triggerReason: ProMomentTimingTrigger.timelineProofMoment.analyticsValue,
+        triggerReason:
+            ProMomentTimingTrigger.timelineProofMoment.analyticsValue,
         hasTimelineProof: true,
         feedbackState: ProofQualityFeedbackState.none.analyticsValue,
       );
@@ -365,7 +362,8 @@ void main() {
         source: 'record_ready',
         surface: 'record_ready',
         entryCount: 3,
-        triggerReason: ProMomentTimingTrigger.timelineProofMoment.analyticsValue,
+        triggerReason:
+            ProMomentTimingTrigger.timelineProofMoment.analyticsValue,
         hasTimelineProof: true,
         feedbackState: ProofQualityFeedbackState.none.analyticsValue,
       );
@@ -373,7 +371,8 @@ void main() {
         source: 'record_ready',
         surface: 'record_ready',
         entryCount: 3,
-        triggerReason: ProMomentTimingTrigger.timelineProofMoment.analyticsValue,
+        triggerReason:
+            ProMomentTimingTrigger.timelineProofMoment.analyticsValue,
         hasTimelineProof: true,
         feedbackState: ProofQualityFeedbackState.none.analyticsValue,
       );
@@ -384,14 +383,17 @@ void main() {
         ProBridgeVisibilityAnalytics.dismissedEvent,
       ]);
       for (final props in properties) {
-        expect(props.keys, containsAll([
-          'entry_count',
-          'source',
-          'surface',
-          'trigger_reason',
-          'has_timeline_proof',
-          'feedback_state',
-        ]));
+        expect(
+          props.keys,
+          containsAll([
+            'entry_count',
+            'source',
+            'surface',
+            'trigger_reason',
+            'has_timeline_proof',
+            'feedback_state',
+          ]),
+        );
         expect(props.containsKey('product_id'), isFalse);
         expect(props.containsKey('price'), isFalse);
       }
@@ -470,7 +472,10 @@ void main() {
         ),
         isFalse,
       );
-      expect(result.hiddenReasons, contains(SurfacePriorityCopy.hiddenReasonProCap));
+      expect(
+        result.hiddenReasons,
+        contains(SurfacePriorityCopy.hiddenReasonProCap),
+      );
     });
   });
 
@@ -483,18 +488,20 @@ void main() {
 
     test('restore purchases unchanged', () {
       expect(RestorePurchasesCopy.restorePurchases, 'Restore purchases');
-      expect(
-        RestorePurchasesCopy.restoreScreenTitle,
-        'Restore purchases',
-      );
+      expect(RestorePurchasesCopy.restoreScreenTitle, 'Restore purchases');
     });
 
-    test('record screen routes Pro bridge through existing paywall handler', () {
-      final source = File('lib/screens/record_screen.dart').readAsStringSync();
-      expect(source, contains('ProBridgeVisibilityCard'));
-      expect(source, contains('_openProEvidenceValueSubscription'));
-      expect(source, contains("context.push(\n      '/subscription'"));
-      expect(source, isNot(contains('ProBridgeVisibilityPurchase')));
-    });
+    test(
+      'record screen routes Pro bridge through existing paywall handler',
+      () {
+        final source = File(
+          'lib/screens/record_screen.dart',
+        ).readAsStringSync();
+        expect(source, contains('ProBridgeVisibilityCard'));
+        expect(source, contains('_openProEvidenceValueSubscription'));
+        expect(source, contains("context.push(\n      '/subscription'"));
+        expect(source, isNot(contains('ProBridgeVisibilityPurchase')));
+      },
+    );
   });
 }

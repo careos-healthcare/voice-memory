@@ -39,9 +39,9 @@ class PostSaveArchiveHomeNudgeCard extends StatelessWidget {
           const SizedBox(height: AppSpacing.xs),
           Text(
             summary.body,
-            style: ArchiveMobileTypography.body(context).copyWith(
-              color: AppColors.textPrimary,
-            ),
+            style: ArchiveMobileTypography.body(
+              context,
+            ).copyWith(color: AppColors.textPrimary),
           ),
           const SizedBox(height: AppSpacing.sm),
           FilledButton(

@@ -22,11 +22,7 @@ const _genericTest = 'This is a test to check function';
 const _strongRepeat =
     'I had no capacity but I said yes again to the extra meeting today.';
 
-JournalEntry _entry(
-  String id,
-  String transcript, {
-  DateTime? createdAt,
-}) =>
+JournalEntry _entry(String id, String transcript, {DateTime? createdAt}) =>
     JournalEntry(
       id: id,
       createdAt: createdAt ?? DateTime(2026, 6, 12, 10),
@@ -47,69 +43,71 @@ JournalEntry _voiceEntry({
   required String id,
   String transcript = '',
   DateTime? createdAt,
-}) =>
-    JournalEntry(
-      id: id,
-      createdAt: createdAt ?? DateTime(2026, 6, 12, 10),
-      transcript: transcript,
-      durationSeconds: 24,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 2,
-        recurringThemes: const [],
-        exactLanguagePattern: '',
-        concreteObservation: '',
-        repeatedSignal: '',
-      ),
-      syncStatus: SyncStatus.localOnly,
-    );
+}) => JournalEntry(
+  id: id,
+  createdAt: createdAt ?? DateTime(2026, 6, 12, 10),
+  transcript: transcript,
+  durationSeconds: 24,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 2,
+    recurringThemes: [],
+    exactLanguagePattern: '',
+    concreteObservation: '',
+    repeatedSignal: '',
+  ),
+  syncStatus: SyncStatus.localOnly,
+);
 
 List<JournalEntry> _threeRelatedEntries({DateTime? lastCreatedAt}) => [
-      _entry('1', _strongRepeat, createdAt: DateTime(2026, 6, 10, 12)),
-      _entry(
-        '2',
-        'Same thing — said yes when I had no capacity for one more thing.',
-        createdAt: DateTime(2026, 6, 11, 12),
-      ),
-      _entry(
-        '3',
-        'I said yes again even though I had no capacity for one more ask.',
-        createdAt: lastCreatedAt ?? DateTime(2026, 6, 12, 12),
-      ),
-    ];
+  _entry('1', _strongRepeat, createdAt: DateTime(2026, 6, 10, 12)),
+  _entry(
+    '2',
+    'Same thing — said yes when I had no capacity for one more thing.',
+    createdAt: DateTime(2026, 6, 11, 12),
+  ),
+  _entry(
+    '3',
+    'I said yes again even though I had no capacity for one more ask.',
+    createdAt: lastCreatedAt ?? DateTime(2026, 6, 12, 12),
+  ),
+];
 
 void main() {
   tearDown(ActivationFunnelAnalytics.resetForTest);
 
   group('FirstWeekProgressEngine post-save', () {
-    test('shows day 1 after first real moment only when more than one entry', () {
-      final now = DateTime(2026, 6, 12, 14);
-      final oneEntryProgress = FirstWeekProgressEngine.buildPostSave(
-        entries: [_entry('1', _strongRepeat, createdAt: now)],
-        firstProofUnlocked: false,
-        now: now,
-      );
-      expect(oneEntryProgress, isNull);
+    test(
+      'shows day 1 after first real moment only when more than one entry',
+      () {
+        final now = DateTime(2026, 6, 12, 14);
+        final oneEntryProgress = FirstWeekProgressEngine.buildPostSave(
+          entries: [_entry('1', _strongRepeat, createdAt: now)],
+          firstProofUnlocked: false,
+          now: now,
+        );
+        expect(oneEntryProgress, isNull);
 
-      final twoEntryProgress = FirstWeekProgressEngine.buildPostSave(
-        entries: [
-          _entry('1', _strongRepeat, createdAt: now),
-          _entry(
-            '2',
-            'Another saved moment with enough words for archive evidence.',
-            createdAt: now,
-          ),
-        ],
-        firstProofUnlocked: false,
-        now: now,
-      );
+        final twoEntryProgress = FirstWeekProgressEngine.buildPostSave(
+          entries: [
+            _entry('1', _strongRepeat, createdAt: now),
+            _entry(
+              '2',
+              'Another saved moment with enough words for archive evidence.',
+              createdAt: now,
+            ),
+          ],
+          firstProofUnlocked: false,
+          now: now,
+        );
 
-      expect(twoEntryProgress, isNotNull);
-      expect(twoEntryProgress!.state, FirstWeekProgressState.day1);
-      expect(twoEntryProgress.title, FirstWeekProgressCopy.day1Title);
-      expect(twoEntryProgress.body, FirstWeekProgressCopy.day1Body);
-    });
+        expect(twoEntryProgress, isNotNull);
+        expect(twoEntryProgress!.state, FirstWeekProgressState.day1);
+        expect(twoEntryProgress.title, FirstWeekProgressCopy.day1Title);
+        expect(twoEntryProgress.body, FirstWeekProgressCopy.day1Body);
+      },
+    );
 
     test('first proof state replaces generic progress', () {
       final now = DateTime(2026, 6, 12, 14);
@@ -172,7 +170,13 @@ void main() {
         ArchiveEvidenceQualityGate.showsGenericTestEvidenceFallback(entries),
         isTrue,
       );
-      expect(FirstWeekProgressEngine.buildPostSave(entries: entries, firstProofUnlocked: false), isNull);
+      expect(
+        FirstWeekProgressEngine.buildPostSave(
+          entries: entries,
+          firstProofUnlocked: false,
+        ),
+        isNull,
+      );
       expect(FirstWeekProgressEngine.buildReady(entries: entries), isNull);
     });
 
@@ -210,7 +214,9 @@ void main() {
       final now = DateTime(2026, 6, 20, 12);
       expect(
         FirstWeekProgressEngine.buildReady(
-          entries: [_entry('1', _strongRepeat, createdAt: DateTime(2026, 6, 10, 12))],
+          entries: [
+            _entry('1', _strongRepeat, createdAt: DateTime(2026, 6, 10, 12)),
+          ],
           now: now,
         ),
         isNull,
@@ -223,7 +229,10 @@ void main() {
       final now = DateTime.now();
       final yesterday = now.subtract(const Duration(days: 1));
       final entries = [_entry('1', _strongRepeat, createdAt: yesterday)];
-      final progress = FirstWeekProgressEngine.buildReady(entries: entries, now: now);
+      final progress = FirstWeekProgressEngine.buildReady(
+        entries: entries,
+        now: now,
+      );
       final flow = ReturnDayFlowEngine.build(entries: entries, now: now);
 
       expect(progress, isNotNull);
@@ -245,8 +254,14 @@ void main() {
       final now = DateTime.now();
       final yesterday = now.subtract(const Duration(days: 1));
       final entries = [_entry('1', _strongRepeat, createdAt: yesterday)];
-      final progress = FirstWeekProgressEngine.buildReady(entries: entries, now: now);
-      final returnCue = ReturnTomorrowCueEngine.buildReady(entries: entries, now: now);
+      final progress = FirstWeekProgressEngine.buildReady(
+        entries: entries,
+        now: now,
+      );
+      final returnCue = ReturnTomorrowCueEngine.buildReady(
+        entries: entries,
+        now: now,
+      );
 
       expect(progress, isNotNull);
       expect(returnCue, isNotNull);

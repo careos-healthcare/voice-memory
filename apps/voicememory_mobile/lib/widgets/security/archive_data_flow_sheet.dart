@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../design/archive_mobile_typography.dart';
 import '../../security/archive_privacy_controls_copy.dart';
-import '../../theme/app_colors.dart';
 import '../../theme/app_spacing.dart';
-import '../../theme/voicememory_cards.dart';
 
 /// Plain-language explanation of what stays on device vs what may be sent.
 Future<void> showArchiveDataFlowSheet(BuildContext context) {
@@ -36,9 +34,9 @@ Future<void> showArchiveDataFlowSheet(BuildContext context) {
                 Text(
                   section,
                   key: Key('archive_data_flow_section_${section.hashCode}'),
-                  style: ArchiveMobileTypography.body(sheetContext).copyWith(
-                    height: 1.45,
-                  ),
+                  style: ArchiveMobileTypography.body(
+                    sheetContext,
+                  ).copyWith(height: 1.45),
                 ),
                 const SizedBox(height: AppSpacing.sm),
               ],

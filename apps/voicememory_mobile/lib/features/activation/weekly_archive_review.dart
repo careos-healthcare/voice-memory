@@ -114,9 +114,7 @@ abstract final class WeeklyArchiveReviewEngine {
   static const _maxSnippetLength = 80;
   static const _heuristics = ArchiveEvidenceHeuristics();
 
-  static WeeklyArchiveReview build({
-    required List<JournalEntry> entries,
-  }) {
+  static WeeklyArchiveReview build({required List<JournalEntry> entries}) {
     final eligible = ArchiveEvidenceGuard.eligibleEntries(entries);
     if (eligible.length < _minEligibleCount) {
       return WeeklyArchiveReview.insufficient();
@@ -129,7 +127,9 @@ abstract final class WeeklyArchiveReviewEngine {
     final weekAnalysis = _heuristics.analyze(weekEntries);
     final fullAnalysis = _heuristics.analyze(entries);
     final evidenceWeak = payoff.evidenceWeak;
-    final evidenceRows = _evidenceRows(weekEntries.isNotEmpty ? weekEntries : eligible);
+    final evidenceRows = _evidenceRows(
+      weekEntries.isNotEmpty ? weekEntries : eligible,
+    );
     final contextCopy = ContextAwareArchiveCopyEngine.build(entries: entries);
 
     return WeeklyArchiveReview(
@@ -152,8 +152,7 @@ abstract final class WeeklyArchiveReviewEngine {
       uncertaintyLine: evidenceWeak
           ? WeeklyArchiveReviewCopy.evidenceStillThin
           : (contextCopy.showLines ? contextCopy.summaryLine : null),
-      contextAwareDetailLine:
-          evidenceWeak ? null : contextCopy.detailLine,
+      contextAwareDetailLine: evidenceWeak ? null : contextCopy.detailLine,
       nextActionLine: evidenceWeak
           ? WeeklyArchiveReviewCopy.nextWhenThin
           : WeeklyArchiveReviewCopy.nextDefault,
@@ -166,8 +165,9 @@ abstract final class WeeklyArchiveReviewEngine {
   static List<JournalEntry> _thisWeekEntries(List<JournalEntry> eligible) {
     final anchor = eligible.last.createdAt;
     final weekStart = anchor.subtract(const Duration(days: _weekWindowDays));
-    final weekEntries =
-        eligible.where((e) => !e.createdAt.isBefore(weekStart)).toList();
+    final weekEntries = eligible
+        .where((e) => !e.createdAt.isBefore(weekStart))
+        .toList();
     if (weekEntries.length >= 2) return weekEntries;
     final fallbackCount = eligible.length >= 3 ? 3 : eligible.length;
     return eligible.sublist(eligible.length - fallbackCount);

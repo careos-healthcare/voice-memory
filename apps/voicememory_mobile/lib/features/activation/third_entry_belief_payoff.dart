@@ -28,7 +28,8 @@ abstract final class ThirdEntryBeliefPayoffCopy {
   static const secondaryCta =
       VisibleArchiveProofCopy.threeEntryBeliefViewArchiveCta;
 
-  static const analysisDeferredFootnote = VoiceCaptureCopy.analysisUnavailableNote;
+  static const analysisDeferredFootnote =
+      VoiceCaptureCopy.analysisUnavailableNote;
 }
 
 /// Cautious belief payoff when the archive reaches exactly three usable moments.
@@ -93,10 +94,12 @@ abstract final class ThirdEntryBeliefPayoffEngine {
       bodySource: ThirdEntryBeliefPayoffCopy.bodySource,
       evidenceRows: evidenceRows,
       evidenceThin: evidenceThin,
-      thinEvidenceNote:
-          evidenceThin ? ThirdEntryBeliefPayoffCopy.evidenceThin : null,
-      thinEvidenceAction:
-          evidenceThin ? ThirdEntryBeliefPayoffCopy.evidenceThinAction : null,
+      thinEvidenceNote: evidenceThin
+          ? ThirdEntryBeliefPayoffCopy.evidenceThin
+          : null,
+      thinEvidenceAction: evidenceThin
+          ? ThirdEntryBeliefPayoffCopy.evidenceThinAction
+          : null,
       primaryCta: ThirdEntryBeliefPayoffCopy.primaryCta,
       secondaryCta: ThirdEntryBeliefPayoffCopy.secondaryCta,
       footnoteLine: analysisSucceeded
@@ -122,7 +125,9 @@ abstract final class ThirdEntryBeliefPayoffEngine {
     List<String> evidenceRows,
   ) {
     if (_hasDuplicatedEvidence(eligible)) return true;
-    if (eligible.every((entry) => _entryText(entry).length < _minDistinctSnippetLength)) {
+    if (eligible.every(
+      (entry) => _entryText(entry).length < _minDistinctSnippetLength,
+    )) {
       return true;
     }
     if (evidenceRows.length < 2) return true;

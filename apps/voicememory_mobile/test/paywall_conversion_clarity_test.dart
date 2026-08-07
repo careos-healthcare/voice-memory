@@ -52,15 +52,15 @@ Future<void> _pumpPaywall(
 }
 
 List<String> _generalPaywallCopyBlob() => [
-      ConsumerUiCopy.paywallHeadline,
-      ConsumerUiCopy.paywallSubhead,
-      ConsumerUiCopy.paywallPrimaryValueBlock,
-      ...ConsumerUiCopy.paywallBullets,
-      ConsumerUiCopy.paywallDifferentiation,
-      ConsumerUiCopy.paywallTrust,
-      ConsumerUiCopy.paywallBackupLine,
-      ConsumerUiCopy.paywallPrimaryCta,
-    ];
+  ConsumerUiCopy.paywallHeadline,
+  ConsumerUiCopy.paywallSubhead,
+  ConsumerUiCopy.paywallPrimaryValueBlock,
+  ...ConsumerUiCopy.paywallBullets,
+  ConsumerUiCopy.paywallDifferentiation,
+  ConsumerUiCopy.paywallTrust,
+  ConsumerUiCopy.paywallBackupLine,
+  ConsumerUiCopy.paywallPrimaryCta,
+];
 
 void main() {
   setUp(RevenueFunnelAnalytics.resetForTest);
@@ -75,17 +75,18 @@ void main() {
         PaywallAlignmentCopy.secondaryReassurance,
       );
       expect(ConsumerUiCopy.paywallPrimaryCta, 'Keep the longer trail');
-      expect(
-        ConsumerUiCopy.paywallBackupLine,
-        contains('planned Pro areas'),
-      );
+      expect(ConsumerUiCopy.paywallBackupLine, contains('planned Pro areas'));
     });
 
     test('copy guard blocks banned terms', () {
       final blob = _generalPaywallCopyBlob().join(' ').toLowerCase();
       for (final banned in _bannedTerms) {
         if (banned == 'therapy') continue;
-        expect(blob, isNot(contains(banned)), reason: 'must not contain $banned');
+        expect(
+          blob,
+          isNot(contains(banned)),
+          reason: 'must not contain $banned',
+        );
       }
       expect(blob, contains('not therapy'));
       expect(blob, isNot(contains('diagnosis')));
@@ -116,22 +117,26 @@ void main() {
       expect(find.text('Longer evidence history'), findsNothing);
     });
 
-    testWidgets('keeps subscription details visible without benefit checklist', (
-      tester,
-    ) async {
-      await _pumpPaywall(
-        tester,
-        args: const PaywallRouteArgs(source: PaywallSource.generalPro),
-      );
+    testWidgets(
+      'keeps subscription details visible without benefit checklist',
+      (tester) async {
+        await _pumpPaywall(
+          tester,
+          args: const PaywallRouteArgs(source: PaywallSource.generalPro),
+        );
 
-      expect(find.byKey(const Key('paywall_subscription_details')), findsOneWidget);
-      expect(
-        find.text(ArchiveLoopPaywallCopy.subscriptionAutoRenewingSummary),
-        findsOneWidget,
-      );
-      expect(find.text(PurchaseConfidenceCopy.cardTitle), findsNothing);
-      expect(find.text(ConsumerUiCopy.paywallBackupLine), findsNothing);
-    });
+        expect(
+          find.byKey(const Key('paywall_subscription_details')),
+          findsOneWidget,
+        );
+        expect(
+          find.text(ArchiveLoopPaywallCopy.subscriptionAutoRenewingSummary),
+          findsOneWidget,
+        );
+        expect(find.text(PurchaseConfidenceCopy.cardTitle), findsNothing);
+        expect(find.text(ConsumerUiCopy.paywallBackupLine), findsNothing);
+      },
+    );
 
     test('source-specific paywall still wires differentiation blocks', () {
       final source = File('lib/screens/paywall_screen.dart').readAsStringSync();
@@ -181,7 +186,10 @@ void main() {
 
     test('paywall wires purchase, restore, and dismiss funnel events', () {
       final source = File('lib/screens/paywall_screen.dart').readAsStringSync();
-      expect(source, contains('RevenueFunnelAnalytics.paywallPurchaseCtaTapped'));
+      expect(
+        source,
+        contains('RevenueFunnelAnalytics.paywallPurchaseCtaTapped'),
+      );
       expect(source, contains('RevenueFunnelAnalytics.paywallRestoreTapped'));
       expect(source, contains('RevenueFunnelAnalytics.paywallDismissed'));
     });

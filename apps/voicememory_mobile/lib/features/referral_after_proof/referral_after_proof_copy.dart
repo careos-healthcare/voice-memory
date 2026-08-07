@@ -32,18 +32,18 @@ abstract final class ReferralAfterProofCopy {
   static const detailReferralAfterProofAllowed = 'Referral after proof allowed';
 
   static String ruleLabelFor(ReferralAfterProofRuleId id) => switch (id) {
-        ReferralAfterProofRuleId.onlyAfterProofValue =>
-          'Only after useful proof or Pro promise understood',
-        ReferralAfterProofRuleId.neverSharePrivateContent =>
-          'Never share private content',
-        ReferralAfterProofRuleId.inviteSharesProductNotArchive =>
-          'Invite shares product, not user archive',
-        ReferralAfterProofRuleId.notShownInFirstFiveMinutes =>
-          'Not shown in first five minutes',
-        ReferralAfterProofRuleId.notPartOfPaidPromise => 'Not part of paid promise',
-        ReferralAfterProofRuleId.noLiveReferralUiUnlessGated =>
-          'No live referral UI unless existing route gated',
-      };
+    ReferralAfterProofRuleId.onlyAfterProofValue =>
+      'Only after useful proof or Pro promise understood',
+    ReferralAfterProofRuleId.neverSharePrivateContent =>
+      'Never share private content',
+    ReferralAfterProofRuleId.inviteSharesProductNotArchive =>
+      'Invite shares product, not user archive',
+    ReferralAfterProofRuleId.notShownInFirstFiveMinutes =>
+      'Not shown in first five minutes',
+    ReferralAfterProofRuleId.notPartOfPaidPromise => 'Not part of paid promise',
+    ReferralAfterProofRuleId.noLiveReferralUiUnlessGated =>
+      'No live referral UI unless existing route gated',
+  };
 
   static String messageFor(ReferralAfterProofGateDecision decision) =>
       switch (decision) {
@@ -52,13 +52,14 @@ abstract final class ReferralAfterProofCopy {
           referralAfterProofAllowedLine,
       };
 
-  static String recommendationFor(ReferralAfterProofGateDecision decision) =>
-      switch (decision) {
-        ReferralAfterProofGateDecision.referralBlocked =>
-          'Do not surface referral prompts before proof value. Keep invite copy product-only.',
-        ReferralAfterProofGateDecision.referralAfterProofAllowed =>
-          'Gate referral through existing routes only. Never share archive content in invite copy.',
-      };
+  static String recommendationFor(
+    ReferralAfterProofGateDecision decision,
+  ) => switch (decision) {
+    ReferralAfterProofGateDecision.referralBlocked =>
+      'Do not surface referral prompts before proof value. Keep invite copy product-only.',
+    ReferralAfterProofGateDecision.referralAfterProofAllowed =>
+      'Gate referral through existing routes only. Never share archive content in invite copy.',
+  };
 
   static Iterable<String> allVisibleStrings() sync* {
     yield headline;
@@ -91,10 +92,7 @@ enum ReferralAfterProofRuleId {
   noLiveReferralUiUnlessGated,
 }
 
-enum ReferralAfterProofRuleStatus {
-  pass,
-  fail,
-}
+enum ReferralAfterProofRuleStatus { pass, fail }
 
 enum ReferralAfterProofGateDecision {
   referralBlocked,

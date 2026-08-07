@@ -8,7 +8,6 @@ import 'package:voicememory_mobile/features/archive_discovery_share/archive_disc
 import 'package:voicememory_mobile/features/archive_discovery_share/archive_discovery_share_palette.dart';
 import 'package:voicememory_mobile/features/archive_discovery_share/archive_discovery_share_types.dart';
 import 'package:voicememory_mobile/features/archive_surprises/archive_surprises_models.dart';
-import 'package:voicememory_mobile/features/archive_synthesis/archive_synthesis_models.dart';
 import 'package:voicememory_mobile/features/archive_theory/archive_theory_models.dart';
 import 'package:voicememory_mobile/features/archive_v1/archive_v1_models.dart';
 import 'package:voicememory_mobile/features/belief_evolution/belief_evolution_models.dart';

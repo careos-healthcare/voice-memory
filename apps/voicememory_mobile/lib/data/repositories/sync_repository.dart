@@ -1,0 +1,77 @@
+import '../../config/app_config.dart';
+import '../../config/archive_me_demo_state.dart';
+import '../../config/creator_demo_mode.dart';
+import '../../core/network/api_result.dart';
+import '../../features/encrypted_sync/encrypted_journal_sync_coordinator.dart';
+import '../../product/consumer_ui_copy.dart';
+import '../../services/capture_save_messages.dart';
+import '../../services/sync_service.dart';
+import '../../storage/mobile_prefs_store.dart';
+
+/// Orchestrates encrypted journal sync with typed [ApiResult] boundaries.
+class SyncRepository {
+  SyncRepository({
+    required EncryptedJournalSyncCoordinator coordinator,
+    required MobilePrefsStore prefs,
+  }) : _coordinator = coordinator,
+       _prefs = prefs;
+
+  final EncryptedJournalSyncCoordinator _coordinator;
+  final MobilePrefsStore _prefs;
+
+  Future<ApiResult<SyncResult>> syncNow() async {
+    if (ArchiveMeDemoState.isActive || CreatorDemoMode.isActive) {
+      return ApiSuccess(
+        const SyncResult(
+          cloudSyncSucceeded: false,
+          message: 'Your moments stay on this device.',
+          pushed: 0,
+          pulled: 0,
+        ),
+      );
+    }
+    if (!AppConfig.isBackendConfigured) {
+      return ApiSuccess(
+        const SyncResult(
+          cloudSyncSucceeded: false,
+          message: 'Your moments stay on this device.',
+          syncNote: CaptureSaveMessages.syncNotAvailableTestFlight,
+          pushed: 0,
+          pulled: 0,
+        ),
+      );
+    }
+
+    final result = await _coordinator.syncNow();
+    return result.when(
+      success: (encrypted) => ApiSuccess(
+        SyncResult(
+          cloudSyncSucceeded: true,
+          message:
+              'Sync complete. If anything looks duplicated, newer copies were kept.',
+          syncNote: encrypted.blocked > 0
+              ? '${encrypted.blocked} entr${encrypted.blocked == 1 ? 'y' : 'ies'} from a different '
+                    'account stayed private on this device and were not '
+                    'uploaded.'
+              : encrypted.migratedLegacy
+              ? 'Legacy plaintext archive was encrypted on this device. Server plaintext rows remain until audited deletion.'
+              : null,
+          pushed: encrypted.pushed,
+          pulled: encrypted.pulled,
+        ),
+      ),
+      onFailure: (failure) => ApiFailureResult(failure),
+    );
+  }
+
+  Future<String> lastSyncLabel() async {
+    if (!AppConfig.isBackendConfigured) {
+      return ConsumerUiCopy.syncNotAvailableTestFlight;
+    }
+    final raw = await _prefs.lastSyncAt;
+    if (raw == null) return ConsumerUiCopy.syncOnDeviceOnly;
+    final at = DateTime.tryParse(raw);
+    if (at == null) return ConsumerUiCopy.syncOnDeviceOnly;
+    return 'Last sync ${at.toLocal()}';
+  }
+}

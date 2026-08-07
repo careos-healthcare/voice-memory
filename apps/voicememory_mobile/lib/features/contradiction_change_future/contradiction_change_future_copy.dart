@@ -37,7 +37,8 @@ abstract final class ContradictionChangeFutureCopy {
   static const detailPending = 'Pending';
   static const detailFail = 'Fail';
 
-  static const detailBlockedBeforeProofTrail = 'Blocked before proof trail proof';
+  static const detailBlockedBeforeProofTrail =
+      'Blocked before proof trail proof';
   static const detailFutureChangeDetectionDocumented =
       'Future change detection documented only';
 
@@ -49,16 +50,20 @@ abstract final class ContradictionChangeFutureCopy {
           'Paid-intent beta complete',
       };
 
-  static String ruleLabelFor(ContradictionChangeFutureRuleId id) => switch (id) {
+  static String ruleLabelFor(ContradictionChangeFutureRuleId id) =>
+      switch (id) {
         ContradictionChangeFutureRuleId.futureValueLanguageDocumented =>
           'Future value language documented',
         ContradictionChangeFutureRuleId.strongProofTrailRequired =>
           'Strong proof trail required',
-        ContradictionChangeFutureRuleId.correctionAllowed => 'Correction allowed',
+        ContradictionChangeFutureRuleId.correctionAllowed =>
+          'Correction allowed',
         ContradictionChangeFutureRuleId.noClinicalLabelFraming =>
           'No clinical-label framing',
-        ContradictionChangeFutureRuleId.noCoachingLanguage => 'No directive language',
-        ContradictionChangeFutureRuleId.noForecastLanguage => 'No forecast language',
+        ContradictionChangeFutureRuleId.noCoachingLanguage =>
+          'No directive language',
+        ContradictionChangeFutureRuleId.noForecastLanguage =>
+          'No forecast language',
         ContradictionChangeFutureRuleId.noNewLiveV1Ui => 'No new live V1 UI',
       };
 
@@ -69,13 +74,14 @@ abstract final class ContradictionChangeFutureCopy {
           futureChangeDetectionDocumentedLine,
       };
 
-  static String recommendationFor(ContradictionChangeFutureGateDecision decision) =>
-      switch (decision) {
-        ContradictionChangeFutureGateDecision.changeFrozen =>
-          'Finish strong proof trail and paid-intent beta before documenting contradiction change detection.',
-        ContradictionChangeFutureGateDecision.futureChangeDetectionDocumented =>
-          'Document contradiction change as future premium only. Keep copy observational, correctable, and proof-led.',
-      };
+  static String recommendationFor(
+    ContradictionChangeFutureGateDecision decision,
+  ) => switch (decision) {
+    ContradictionChangeFutureGateDecision.changeFrozen =>
+      'Finish strong proof trail and paid-intent beta before documenting contradiction change detection.',
+    ContradictionChangeFutureGateDecision.futureChangeDetectionDocumented =>
+      'Document contradiction change as future premium only. Keep copy observational, correctable, and proof-led.',
+  };
 
   static Iterable<String> allVisibleStrings() sync* {
     yield headline;
@@ -110,11 +116,7 @@ enum ContradictionChangeFuturePrereqId {
   paidIntentBetaComplete,
 }
 
-enum ContradictionChangeFuturePrereqStatus {
-  pass,
-  pending,
-  fail,
-}
+enum ContradictionChangeFuturePrereqStatus { pass, pending, fail }
 
 enum ContradictionChangeFutureRuleId {
   futureValueLanguageDocumented,
@@ -126,10 +128,7 @@ enum ContradictionChangeFutureRuleId {
   noNewLiveV1Ui,
 }
 
-enum ContradictionChangeFutureRuleStatus {
-  pass,
-  fail,
-}
+enum ContradictionChangeFutureRuleStatus { pass, fail }
 
 enum ContradictionChangeFutureGateDecision {
   changeFrozen,

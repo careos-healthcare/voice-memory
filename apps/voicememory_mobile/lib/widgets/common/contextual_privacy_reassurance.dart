@@ -29,7 +29,8 @@ class ContextualPrivacyReassurance extends StatefulWidget {
       _ContextualPrivacyReassuranceState();
 }
 
-class _ContextualPrivacyReassuranceState extends State<ContextualPrivacyReassurance> {
+class _ContextualPrivacyReassuranceState
+    extends State<ContextualPrivacyReassurance> {
   var _trackedSeen = false;
 
   void _trackSeenOnce() {
@@ -57,11 +58,9 @@ class _ContextualPrivacyReassuranceState extends State<ContextualPrivacyReassura
     final line = widget.compact
         ? ContextualPrivacyCopy.compactLine
         : ContextualPrivacyCopy.fullLine;
-    final textStyle = ArchiveMobileTypography.responsiveHelper(context).copyWith(
-      color: AppColors.textSecondary,
-      fontSize: 12,
-      height: 1.4,
-    );
+    final textStyle = ArchiveMobileTypography.responsiveHelper(
+      context,
+    ).copyWith(color: AppColors.textSecondary, fontSize: 12, height: 1.4);
 
     return Column(
       key: const Key('contextual_privacy_reassurance'),
@@ -89,9 +88,7 @@ class _ContextualPrivacyReassuranceState extends State<ContextualPrivacyReassura
           onPressed: _openControls,
           child: Text(
             ContextualPrivacyCopy.yourControlsLink,
-            style: textStyle.copyWith(
-              decoration: TextDecoration.underline,
-            ),
+            style: textStyle.copyWith(decoration: TextDecoration.underline),
           ),
         ),
       ],

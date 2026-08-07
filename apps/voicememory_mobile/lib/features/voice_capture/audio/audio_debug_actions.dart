@@ -51,16 +51,13 @@ abstract class AudioDebugActions {
     AudioDiagLog.share(path: trimmed, exists: exists, bytes: bytes);
     if (!exists) return;
 
-    await Share.shareXFiles(
-      [
-        XFile(
-          trimmed,
-          mimeType: AudioCaptureDiagnostics.guessMimeFromPath(trimmed),
-          name: file.uri.pathSegments.last,
-        ),
-      ],
-      subject: 'ArchiveMe capture debug',
-    );
+    await Share.shareXFiles([
+      XFile(
+        trimmed,
+        mimeType: AudioCaptureDiagnostics.guessMimeFromPath(trimmed),
+        name: file.uri.pathSegments.last,
+      ),
+    ], subject: 'ArchiveMe capture debug');
   }
 
   static Future<void> dispose() async {

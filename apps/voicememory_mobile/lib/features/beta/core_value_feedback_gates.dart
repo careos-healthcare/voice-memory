@@ -11,8 +11,7 @@ abstract final class CoreValueFeedbackGates {
   static bool hasFirstProof({
     required int entryCount,
     required bool hasConfirmedRepeatFoundation,
-  }) =>
-      entryCount >= 3 && hasConfirmedRepeatFoundation;
+  }) => entryCount >= 3 && hasConfirmedRepeatFoundation;
 
   static bool shouldShow({
     required CoreValueFeedbackSource source,
@@ -54,18 +53,17 @@ abstract final class CoreValueFeedbackGates {
     required bool isProPaywallVisible,
     CoreValueFeedbackRecord? record,
     bool? dismissed,
-  }) =>
-      shouldShow(
-        source: CoreValueFeedbackSource.recordPostFirstProof,
-        entryCount: entryCount,
-        hasConfirmedRepeatFoundation: hasConfirmedRepeatFoundation,
-        isRecording: isRecording,
-        isDegraded: isDegradedPostSave,
-        isProPaywallVisible: isProPaywallVisible,
-        placementEligible: showFirstProofMoment && isPostSaveDone,
-        record: record,
-        dismissed: dismissed,
-      );
+  }) => shouldShow(
+    source: CoreValueFeedbackSource.recordPostFirstProof,
+    entryCount: entryCount,
+    hasConfirmedRepeatFoundation: hasConfirmedRepeatFoundation,
+    isRecording: isRecording,
+    isDegraded: isDegradedPostSave,
+    isProPaywallVisible: isProPaywallVisible,
+    placementEligible: showFirstProofMoment && isPostSaveDone,
+    record: record,
+    dismissed: dismissed,
+  );
 
   static bool shouldShowOnPatternsArchive({
     required bool showArchiveCurrentBelief,
@@ -76,18 +74,16 @@ abstract final class CoreValueFeedbackGates {
     required bool isProPaywallVisible,
     CoreValueFeedbackRecord? record,
     bool? dismissed,
-  }) =>
-      shouldShow(
-        source: CoreValueFeedbackSource.patternsArchive,
-        entryCount: entryCount,
-        hasConfirmedRepeatFoundation:
-            EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(entries),
-        isRecording: isRecording,
-        isDegraded: false,
-        isProPaywallVisible: isProPaywallVisible,
-        placementEligible:
-            showArchiveCurrentBelief && archiveBeliefSurfaceVisible,
-        record: record,
-        dismissed: dismissed,
-      );
+  }) => shouldShow(
+    source: CoreValueFeedbackSource.patternsArchive,
+    entryCount: entryCount,
+    hasConfirmedRepeatFoundation:
+        EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(entries),
+    isRecording: isRecording,
+    isDegraded: false,
+    isProPaywallVisible: isProPaywallVisible,
+    placementEligible: showArchiveCurrentBelief && archiveBeliefSurfaceVisible,
+    record: record,
+    dismissed: dismissed,
+  );
 }

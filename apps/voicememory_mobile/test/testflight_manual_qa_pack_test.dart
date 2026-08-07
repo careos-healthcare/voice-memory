@@ -6,11 +6,7 @@ const _qaDocPath = 'docs/TESTFLIGHT_MANUAL_QA.md';
 const _supportUrl = 'https://careosapp.co.uk/archiveme-support';
 const _bundleId = 'com.voicememory.mobile';
 
-const _forbiddenPurchaseCtas = [
-  'Buy now',
-  'Subscribe now',
-  'Pro is active',
-];
+const _forbiddenPurchaseCtas = ['Buy now', 'Subscribe now', 'Pro is active'];
 
 const _forbiddenClinicalTerms = [
   'therapy',
@@ -99,16 +95,19 @@ void main() {
       }
     });
 
-    test('does not recommend clinical or forbidden language in QA guidance', () {
-      final lower = doc.toLowerCase();
-      for (final term in _forbiddenClinicalTerms) {
-        expect(
-          lower,
-          isNot(contains(term)),
-          reason: 'QA doc must not contain "$term"',
-        );
-      }
-    });
+    test(
+      'does not recommend clinical or forbidden language in QA guidance',
+      () {
+        final lower = doc.toLowerCase();
+        for (final term in _forbiddenClinicalTerms) {
+          expect(
+            lower,
+            isNot(contains(term)),
+            reason: 'QA doc must not contain "$term"',
+          );
+        }
+      },
+    );
 
     test('includes release decision checklist sections', () {
       expect(doc, contains('Internal TestFlight ready when'));

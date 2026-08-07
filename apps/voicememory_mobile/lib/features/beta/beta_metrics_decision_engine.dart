@@ -59,8 +59,8 @@ abstract final class BetaMetricsDecisionEngine {
     int? wouldPay,
   }) {
     final counters = ActivationDropoffReviewEngine.fromBetaCounts(betaCounts);
-    final resolvedTotal = totalTesters ??
-        (counters.appOpened > 0 ? counters.appOpened : 0);
+    final resolvedTotal =
+        totalTesters ?? (counters.appOpened > 0 ? counters.appOpened : 0);
 
     return BetaMetricsDecisionInput(
       totalTesters: resolvedTotal,
@@ -176,8 +176,7 @@ abstract final class BetaMetricsDecisionEngine {
         fixArea: BetaMetricsDecisionCopy.fixEvidence,
       );
     }
-    if (input.totalTesters <= 0 ||
-        input.firstProofReached < firstProofTarget) {
+    if (input.totalTesters <= 0 || input.firstProofReached < firstProofTarget) {
       return BetaMetricsDecisionRow(
         id: BetaMetricsDecisionRowId.specificProof,
         metricName: BetaMetricsDecisionCopy.rowSpecificProof,
@@ -286,7 +285,10 @@ abstract final class BetaMetricsDecisionEngine {
       return BetaMetricsDecisionRow(
         id: BetaMetricsDecisionRowId.wouldPay,
         metricName: BetaMetricsDecisionCopy.rowWouldPay,
-        currentValue: BetaMetricsDecisionCopy.valueLabel(input.wouldPay!, total),
+        currentValue: BetaMetricsDecisionCopy.valueLabel(
+          input.wouldPay!,
+          total,
+        ),
         targetValue: '> 0',
         status: BetaMetricsDecisionRowStatus.notEnoughData,
         fixArea: BetaMetricsDecisionCopy.fixMonetisation,
@@ -346,9 +348,14 @@ abstract final class BetaMetricsDecisionEngine {
     required int firstProofTarget,
     required int specificProofTarget,
   }) {
-    final firstSaveTarget = _scaledTarget(firstSaveTargetForTen, input.totalTesters);
-    final secondSaveTarget =
-        _scaledTarget(secondSaveTargetForTen, input.totalTesters);
+    final firstSaveTarget = _scaledTarget(
+      firstSaveTargetForTen,
+      input.totalTesters,
+    );
+    final secondSaveTarget = _scaledTarget(
+      secondSaveTargetForTen,
+      input.totalTesters,
+    );
     return _activationWorking(
           input: input,
           firstSaveTarget: firstSaveTarget,
@@ -406,7 +413,8 @@ abstract final class BetaMetricsDecisionEngine {
       }
     }
 
-    final automaticHealthy = input.firstMomentSaved >= firstSaveTarget &&
+    final automaticHealthy =
+        input.firstMomentSaved >= firstSaveTarget &&
         input.secondMomentSaved >= secondSaveTarget &&
         input.firstProofReached >= firstProofTarget &&
         (input.proofFeltSpecific == null ||

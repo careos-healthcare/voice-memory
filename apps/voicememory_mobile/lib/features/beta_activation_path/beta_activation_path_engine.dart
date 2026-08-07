@@ -27,27 +27,26 @@ abstract final class BetaActivationPathEngine {
     bool whatChangedQuestionActive = false,
     bool patternReviewInboxHasActiveItems = false,
     bool isPermissionBlocked = false,
-  }) =>
-      BetaActivationPathContext(
-        source: source,
-        entryCount: entryCount,
-        betaMissionEnabled: betaMissionEnabled ?? ArchiveBetaMissionGate.isEnabled,
-        dismissedForToday:
-            dismissedForToday || BetaActivationPathStore.isDismissedToday,
-        hasUsefulProof: hasUsefulProof || _hasUsefulFeedbackToday(),
-        hasTimelineProof: hasTimelineProof,
-        hasPaywallSeen: hasPaywallSeen,
-        hasPurchaseCtaTapped: hasPurchaseCtaTapped,
-        strongerProCardVisible: strongerProCardVisible,
-        isReady: isReady,
-        isRecording: isRecording,
-        isPostSave: isPostSave,
-        isDegradedTranscriptState: isDegradedTranscriptState,
-        isPostSaveDegradedState: isPostSaveDegradedState,
-        whatChangedQuestionActive: whatChangedQuestionActive,
-        patternReviewInboxHasActiveItems: patternReviewInboxHasActiveItems,
-        isPermissionBlocked: isPermissionBlocked,
-      );
+  }) => BetaActivationPathContext(
+    source: source,
+    entryCount: entryCount,
+    betaMissionEnabled: betaMissionEnabled ?? ArchiveBetaMissionGate.isEnabled,
+    dismissedForToday:
+        dismissedForToday || BetaActivationPathStore.isDismissedToday,
+    hasUsefulProof: hasUsefulProof || _hasUsefulFeedbackToday(),
+    hasTimelineProof: hasTimelineProof,
+    hasPaywallSeen: hasPaywallSeen,
+    hasPurchaseCtaTapped: hasPurchaseCtaTapped,
+    strongerProCardVisible: strongerProCardVisible,
+    isReady: isReady,
+    isRecording: isRecording,
+    isPostSave: isPostSave,
+    isDegradedTranscriptState: isDegradedTranscriptState,
+    isPostSaveDegradedState: isPostSaveDegradedState,
+    whatChangedQuestionActive: whatChangedQuestionActive,
+    patternReviewInboxHasActiveItems: patternReviewInboxHasActiveItems,
+    isPermissionBlocked: isPermissionBlocked,
+  );
 
   static BetaActivationPathResult build({
     required BetaActivationPathContext context,
@@ -127,10 +126,11 @@ abstract final class BetaActivationPathEngine {
 
   static bool suppressesLegacyEarlyGuidance({
     required bool betaActivationPathVisible,
-  }) =>
-      betaActivationPathVisible;
+  }) => betaActivationPathVisible;
 
-  static BetaActivationPathStage? _resolveStage(BetaActivationPathContext context) {
+  static BetaActivationPathStage? _resolveStage(
+    BetaActivationPathContext context,
+  ) {
     if (context.hasPurchaseCtaTapped) {
       return BetaActivationPathStage.paidMomentReached;
     }
@@ -156,75 +156,73 @@ abstract final class BetaActivationPathEngine {
     return switch (stage) {
       BetaActivationPathStage.firstSave ||
       BetaActivationPathStage.secondSave ||
-      BetaActivationPathStage.thirdSave =>
-        BetaActivationPathSlot.guidance,
+      BetaActivationPathStage.thirdSave => BetaActivationPathSlot.guidance,
       BetaActivationPathStage.proofCheck ||
       BetaActivationPathStage.valueMoment ||
-      BetaActivationPathStage.proReview =>
-        BetaActivationPathSlot.revenue,
+      BetaActivationPathStage.proReview => BetaActivationPathSlot.revenue,
       BetaActivationPathStage.paidMomentReached =>
         BetaActivationPathSlot.hidden,
     };
   }
 
   static _StageCopy _copyFor(BetaActivationPathStage stage) => switch (stage) {
-        BetaActivationPathStage.firstSave => _StageCopy(
-            title: BetaActivationPathCopy.firstSaveTitle,
-            body: BetaActivationPathCopy.firstSaveBody,
-            primaryCta: BetaActivationPathCopy.firstSavePrimaryCta,
-            secondaryCta: BetaActivationPathCopy.firstSaveSecondaryCta,
-            primaryActionType: BetaActivationPathActionType.saveFirstMoment,
-            secondaryActionType: BetaActivationPathActionType.notNow,
-          ),
-        BetaActivationPathStage.secondSave => _StageCopy(
-            title: BetaActivationPathCopy.secondSaveTitle,
-            body: BetaActivationPathCopy.secondSaveBody,
-            primaryCta: BetaActivationPathCopy.secondSavePrimaryCta,
-            secondaryCta: BetaActivationPathCopy.secondSaveSecondaryCta,
-            primaryActionType: BetaActivationPathActionType.saveAnotherMoment,
-            secondaryActionType: BetaActivationPathActionType.notToday,
-          ),
-        BetaActivationPathStage.thirdSave => _StageCopy(
-            title: BetaActivationPathCopy.thirdSaveTitle,
-            body: BetaActivationPathCopy.thirdSaveBody,
-            primaryCta: BetaActivationPathCopy.thirdSavePrimaryCta,
-            secondaryCta: BetaActivationPathCopy.thirdSaveSecondaryCta,
-            primaryActionType: BetaActivationPathActionType.saveOneMoreMoment,
-            secondaryActionType: BetaActivationPathActionType.notToday,
-          ),
-        BetaActivationPathStage.proofCheck => _StageCopy(
-            title: BetaActivationPathCopy.proofCheckTitle,
-            body: BetaActivationPathCopy.proofCheckBody,
-            primaryCta: BetaActivationPathCopy.proofCheckPrimaryCta,
-            secondaryCta: BetaActivationPathCopy.proofCheckSecondaryCta,
-            primaryActionType: BetaActivationPathActionType.viewTimelineProof,
-            secondaryActionType: BetaActivationPathActionType.notNow,
-          ),
-        BetaActivationPathStage.valueMoment => _StageCopy(
-            title: BetaActivationPathCopy.valueMomentTitle,
-            body: BetaActivationPathCopy.valueMomentBody,
-            primaryCta: BetaActivationPathCopy.valueMomentPrimaryCta,
-            secondaryCta: BetaActivationPathCopy.valueMomentSecondaryCta,
-            primaryActionType: BetaActivationPathActionType.seeWhatProKeeps,
-            secondaryActionType: BetaActivationPathActionType.notNow,
-          ),
-        BetaActivationPathStage.proReview => _StageCopy(
-            title: BetaActivationPathCopy.proReviewTitle,
-            body: BetaActivationPathCopy.proReviewBody,
-            primaryCta: BetaActivationPathCopy.proReviewPrimaryCta,
-            secondaryCta: BetaActivationPathCopy.proReviewSecondaryCta,
-            primaryActionType: BetaActivationPathActionType.reviewProValue,
-            secondaryActionType: BetaActivationPathActionType.notNow,
-          ),
-        BetaActivationPathStage.paidMomentReached => const _StageCopy(
-            title: '',
-            body: '',
-            primaryCta: '',
-            secondaryCta: '',
-            primaryActionType: BetaActivationPathActionType.notNow,
-            secondaryActionType: BetaActivationPathActionType.notNow,
-          ),
-      };
+    BetaActivationPathStage.firstSave => _StageCopy(
+      title: BetaActivationPathCopy.firstSaveTitle,
+      body: BetaActivationPathCopy.firstSaveBody,
+      primaryCta: BetaActivationPathCopy.firstSavePrimaryCta,
+      secondaryCta: BetaActivationPathCopy.firstSaveSecondaryCta,
+      primaryActionType: BetaActivationPathActionType.saveFirstMoment,
+      secondaryActionType: BetaActivationPathActionType.notNow,
+    ),
+    BetaActivationPathStage.secondSave => _StageCopy(
+      title: BetaActivationPathCopy.secondSaveTitle,
+      body: BetaActivationPathCopy.secondSaveBody,
+      primaryCta: BetaActivationPathCopy.secondSavePrimaryCta,
+      secondaryCta: BetaActivationPathCopy.secondSaveSecondaryCta,
+      primaryActionType: BetaActivationPathActionType.saveAnotherMoment,
+      secondaryActionType: BetaActivationPathActionType.notToday,
+    ),
+    BetaActivationPathStage.thirdSave => _StageCopy(
+      title: BetaActivationPathCopy.thirdSaveTitle,
+      body: BetaActivationPathCopy.thirdSaveBody,
+      primaryCta: BetaActivationPathCopy.thirdSavePrimaryCta,
+      secondaryCta: BetaActivationPathCopy.thirdSaveSecondaryCta,
+      primaryActionType: BetaActivationPathActionType.saveOneMoreMoment,
+      secondaryActionType: BetaActivationPathActionType.notToday,
+    ),
+    BetaActivationPathStage.proofCheck => _StageCopy(
+      title: BetaActivationPathCopy.proofCheckTitle,
+      body: BetaActivationPathCopy.proofCheckBody,
+      primaryCta: BetaActivationPathCopy.proofCheckPrimaryCta,
+      secondaryCta: BetaActivationPathCopy.proofCheckSecondaryCta,
+      primaryActionType: BetaActivationPathActionType.viewTimelineProof,
+      secondaryActionType: BetaActivationPathActionType.notNow,
+    ),
+    BetaActivationPathStage.valueMoment => _StageCopy(
+      title: BetaActivationPathCopy.valueMomentTitle,
+      body: BetaActivationPathCopy.valueMomentBody,
+      primaryCta: BetaActivationPathCopy.valueMomentPrimaryCta,
+      secondaryCta: BetaActivationPathCopy.valueMomentSecondaryCta,
+      primaryActionType: BetaActivationPathActionType.seeWhatProKeeps,
+      secondaryActionType: BetaActivationPathActionType.notNow,
+    ),
+    BetaActivationPathStage.proReview => _StageCopy(
+      title: BetaActivationPathCopy.proReviewTitle,
+      body: BetaActivationPathCopy.proReviewBody,
+      primaryCta: BetaActivationPathCopy.proReviewPrimaryCta,
+      secondaryCta: BetaActivationPathCopy.proReviewSecondaryCta,
+      primaryActionType: BetaActivationPathActionType.reviewProValue,
+      secondaryActionType: BetaActivationPathActionType.notNow,
+    ),
+    BetaActivationPathStage.paidMomentReached => const _StageCopy(
+      title: '',
+      body: '',
+      primaryCta: '',
+      secondaryCta: '',
+      primaryActionType: BetaActivationPathActionType.notNow,
+      secondaryActionType: BetaActivationPathActionType.notNow,
+    ),
+  };
 
   static bool _hasUsefulFeedbackToday() {
     for (final surface in BetaProofFeedbackSurface.values) {

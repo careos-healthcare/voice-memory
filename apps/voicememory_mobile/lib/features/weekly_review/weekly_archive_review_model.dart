@@ -1,9 +1,5 @@
 /// Weekly review visibility and content state.
-enum WeeklyArchiveReviewState {
-  hidden,
-  forming,
-  full,
-}
+enum WeeklyArchiveReviewState { hidden, forming, full }
 
 class WeeklyArchiveReviewSection {
   const WeeklyArchiveReviewSection({

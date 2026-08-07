@@ -76,8 +76,9 @@ class _YourStorySoFarSectionState extends State<YourStorySoFarSection> {
 
   @override
   Widget build(BuildContext context) {
-    if (!archiveHasMinimumEvidence(widget.entries))
+    if (!archiveHasMinimumEvidence(widget.entries)) {
       return const SizedBox.shrink();
+    }
     if (_loading) {
       return const Padding(
         padding: EdgeInsets.symmetric(vertical: 12),
@@ -92,8 +93,9 @@ class _YourStorySoFarSectionState extends State<YourStorySoFarSection> {
     }
 
     final narrative = _narrative;
-    if (narrative == null || !narrative.hasNarrative)
+    if (narrative == null || !narrative.hasNarrative) {
       return const SizedBox.shrink();
+    }
 
     return _YourStorySoFarCard(narrative: narrative);
   }

@@ -80,9 +80,8 @@ class CorrectionMemoryStore {
     return recordsRaw
         .whereType<Map>()
         .map(
-          (entry) => CorrectionMemoryRecord.fromJson(
-            Map<String, dynamic>.from(entry),
-          ),
+          (entry) =>
+              CorrectionMemoryRecord.fromJson(Map<String, dynamic>.from(entry)),
         )
         .where((record) => record.proofKey.isNotEmpty)
         .toList()

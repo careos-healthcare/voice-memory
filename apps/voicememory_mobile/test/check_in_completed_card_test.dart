@@ -9,7 +9,7 @@ import 'package:voicememory_mobile/widgets/record/check_in_completed_card.dart';
 import 'package:voicememory_mobile/widgets/trial/check_in_result_rating_prompt.dart';
 
 void main() {
-  TomorrowCheckIn _completed(String optionId) {
+  TomorrowCheckIn completed(String optionId) {
     return TomorrowCheckIn(
       id: 't1',
       createdAt: DateTime(2026, 5, 25),
@@ -23,7 +23,7 @@ void main() {
     );
   }
 
-  Future<void> _pump(WidgetTester tester, Widget child) {
+  Future<void> pump(WidgetTester tester, Widget child) {
     return tester.pumpWidget(
       MaterialApp(
         home: Scaffold(body: SingleChildScrollView(child: child)),
@@ -34,9 +34,9 @@ void main() {
   testWidgets('same result shows a repeat takeaway before rating', (
     tester,
   ) async {
-    await _pump(
+    await pump(
       tester,
-      CheckInCompletedCard(checkIn: _completed('showed_up_again')),
+      CheckInCompletedCard(checkIn: completed('showed_up_again')),
     );
 
     expect(find.text('You closed the loop.'), findsOneWidget);
@@ -59,7 +59,7 @@ void main() {
   testWidgets('lighter result shows a helped takeaway with next check', (
     tester,
   ) async {
-    await _pump(tester, CheckInCompletedCard(checkIn: _completed('lighter')));
+    await pump(tester, CheckInCompletedCard(checkIn: completed('lighter')));
 
     expect(find.text('It felt lighter today.'), findsOneWidget);
     expect(find.text('Something made this lighter.'), findsOneWidget);
@@ -72,7 +72,7 @@ void main() {
   });
 
   testWidgets('heavier result shows an attention takeaway', (tester) async {
-    await _pump(tester, CheckInCompletedCard(checkIn: _completed('heavier')));
+    await pump(tester, CheckInCompletedCard(checkIn: completed('heavier')));
 
     expect(find.text('It felt heavier today.'), findsOneWidget);
     expect(find.text('Something made this heavier.'), findsOneWidget);
@@ -80,7 +80,7 @@ void main() {
   });
 
   testWidgets('changed result shows a changed takeaway', (tester) async {
-    await _pump(tester, CheckInCompletedCard(checkIn: _completed('not_today')));
+    await pump(tester, CheckInCompletedCard(checkIn: completed('not_today')));
 
     expect(find.text('Something changed today.'), findsOneWidget);
     expect(find.text('Today was different.'), findsOneWidget);
@@ -90,9 +90,9 @@ void main() {
   testWidgets('weak input shows an Early read with a concrete next check', (
     tester,
   ) async {
-    await _pump(
+    await pump(
       tester,
-      CheckInCompletedCard(checkIn: _completed('lighter'), weakInput: true),
+      CheckInCompletedCard(checkIn: completed('lighter'), weakInput: true),
     );
 
     expect(
@@ -107,9 +107,9 @@ void main() {
   });
 
   testWidgets('result card can show Spanish labels', (tester) async {
-    await _pump(
+    await pump(
       tester,
-      CheckInCompletedCard(checkIn: _completed('lighter'), languageCode: 'es'),
+      CheckInCompletedCard(checkIn: completed('lighter'), languageCode: 'es'),
     );
 
     expect(find.text(localized('usefulTakeaway', 'es')), findsOneWidget);
@@ -129,10 +129,10 @@ void main() {
   testWidgets('Show original reveals the preserved original text on tap', (
     tester,
   ) async {
-    await _pump(
+    await pump(
       tester,
       CheckInCompletedCard(
-        checkIn: _completed('lighter'),
+        checkIn: completed('lighter'),
         languageCode: 'es',
         originalText: 'Hoy me sentí más ligero después de una pausa.',
       ),
@@ -155,14 +155,14 @@ void main() {
   });
 
   testWidgets('no Show original toggle without original text', (tester) async {
-    await _pump(tester, CheckInCompletedCard(checkIn: _completed('lighter')));
+    await pump(tester, CheckInCompletedCard(checkIn: completed('lighter')));
     expect(find.text(localized('showOriginal', 'en')), findsNothing);
   });
 
   testWidgets('useful takeaway appears above the usefulness rating', (
     tester,
   ) async {
-    await _pump(tester, CheckInCompletedCard(checkIn: _completed('lighter')));
+    await pump(tester, CheckInCompletedCard(checkIn: completed('lighter')));
 
     final takeawayY = tester
         .getTopLeft(find.text(ConsumerUiCopy.usefulTakeawayTitle))
@@ -176,7 +176,7 @@ void main() {
   testWidgets(
     'Make this more useful opens the sheet and refines the takeaway',
     (tester) async {
-      await _pump(tester, CheckInCompletedCard(checkIn: _completed('lighter')));
+      await pump(tester, CheckInCompletedCard(checkIn: completed('lighter')));
 
       expect(find.text('Something made this lighter.'), findsOneWidget);
 
@@ -200,10 +200,10 @@ void main() {
   );
 
   testWidgets('rating appears after the next-check slot', (tester) async {
-    await _pump(
+    await pump(
       tester,
       CheckInCompletedCard(
-        checkIn: _completed('showed_up_again'),
+        checkIn: completed('showed_up_again'),
         nextCheckSlot: const SizedBox(key: Key('next-check-slot'), height: 10),
       ),
     );
@@ -223,9 +223,9 @@ void main() {
   testWidgets('go deeper button shows for an obvious result and expands', (
     tester,
   ) async {
-    await _pump(
+    await pump(
       tester,
-      CheckInCompletedCard(checkIn: _completed('showed_up_again')),
+      CheckInCompletedCard(checkIn: completed('showed_up_again')),
     );
 
     expect(find.text(ConsumerUiCopy.checkInGoDeeperCta), findsOneWidget);
@@ -242,12 +242,12 @@ void main() {
   });
 
   testWidgets('go deeper is hidden for a clear lighter result', (tester) async {
-    await _pump(tester, CheckInCompletedCard(checkIn: _completed('lighter')));
+    await pump(tester, CheckInCompletedCard(checkIn: completed('lighter')));
     expect(find.text(ConsumerUiCopy.checkInGoDeeperCta), findsNothing);
   });
 
   testWidgets('none fit result shows its own headline', (tester) async {
-    await _pump(tester, CheckInCompletedCard(checkIn: _completed('none_fit')));
+    await pump(tester, CheckInCompletedCard(checkIn: completed('none_fit')));
 
     expect(find.text('None of those fit today.'), findsOneWidget);
     expect(find.text('Today was different.'), findsOneWidget);
@@ -260,7 +260,7 @@ void main() {
       MaterialApp(
         home: Scaffold(
           body: PatternsCheckInStatusCard.closed(
-            completed: _completed('lighter'),
+            completed: completed('lighter'),
           ),
         ),
       ),
@@ -299,7 +299,7 @@ void main() {
   testWidgets(
     'shows one feedback row at a time: rating then correction chips',
     (tester) async {
-      await _pump(tester, CheckInCompletedCard(checkIn: _completed('lighter')));
+      await pump(tester, CheckInCompletedCard(checkIn: completed('lighter')));
 
       // Quick usefulness rating is the only feedback row first — no duplicate.
       expect(find.text('Was this useful?'), findsOneWidget);

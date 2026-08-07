@@ -91,12 +91,6 @@ abstract class TranscriptQuality {
 }
 
 class TranscriptQualityVerdict {
-  const TranscriptQualityVerdict._({
-    required this.normalized,
-    required this.isValid,
-    this.reason,
-  });
-
   const TranscriptQualityVerdict.valid({required this.normalized})
     : isValid = true,
       reason = null;

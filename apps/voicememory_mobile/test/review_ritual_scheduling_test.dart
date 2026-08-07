@@ -62,16 +62,15 @@ ReviewRitual _ritual({
   bool focusRepeated = true,
   bool focusChanged = true,
   bool focusWatchNext = true,
-}) =>
-    ReviewRitual(
-      selectedDay: ReviewRitualDay.sunday,
-      selectedDaypart: daypart,
-      focusRepeated: focusRepeated,
-      focusChanged: focusChanged,
-      focusWatchNext: focusWatchNext,
-      createdAt: DateTime(2026, 6, 1),
-      updatedAt: DateTime(2026, 6, 1),
-    );
+}) => ReviewRitual(
+  selectedDay: ReviewRitualDay.sunday,
+  selectedDaypart: daypart,
+  focusRepeated: focusRepeated,
+  focusChanged: focusChanged,
+  focusWatchNext: focusWatchNext,
+  createdAt: DateTime(2026, 6, 1),
+  updatedAt: DateTime(2026, 6, 1),
+);
 
 void main() {
   const engine = ReviewRitualEngine();
@@ -155,11 +154,7 @@ void main() {
 
     test('selecting focus booleans persists locally', () async {
       await store.save(
-        _ritual(
-          focusRepeated: true,
-          focusChanged: false,
-          focusWatchNext: true,
-        ),
+        _ritual(focusRepeated: true, focusChanged: false, focusWatchNext: true),
       );
       final loaded = await store.load();
       expect(loaded?.focusRepeated, isTrue);
@@ -188,7 +183,10 @@ void main() {
       await store.save(_ritual());
       final prefsRaw = await File('${tempDir.path}/prefs.json').readAsString();
       expect(prefsRaw, contains('archiveReviewRitual'));
-      expect(prefsRaw, isNot(contains('Private journal detail should never persist')));
+      expect(
+        prefsRaw,
+        isNot(contains('Private journal detail should never persist')),
+      );
     });
 
     test('clearAll removes ritual prefs', () async {
@@ -202,8 +200,9 @@ void main() {
     });
 
     test('privacy controls wire review ritual clear', () {
-      final controls =
-          File('lib/security/local_privacy_data_controls.dart').readAsStringSync();
+      final controls = File(
+        'lib/security/local_privacy_data_controls.dart',
+      ).readAsStringSync();
       expect(controls, contains('ReviewRitualStore.clearAll'));
     });
   });
@@ -257,7 +256,10 @@ void main() {
         ),
       );
 
-      expect(plan.secondarySections, contains(ArchiveHomeSectionId.reviewRitual));
+      expect(
+        plan.secondarySections,
+        contains(ArchiveHomeSectionId.reviewRitual),
+      );
       expect(
         plan.secondarySections.indexOf(ArchiveHomeSectionId.reviewRitual),
         greaterThan(
@@ -301,8 +303,12 @@ void main() {
 
     test('no notification permission requested in review ritual feature', () {
       final feature = [
-        File('lib/features/review_ritual/view_ritual_copy.dart').readAsStringSync(),
-        File('lib/screens/review_ritual_screen.dart').readAsStringSync(),
+        File(
+          'lib/features/review_ritual/view_ritual_copy.dart',
+        ).readAsStringSync(),
+        File(
+          'packages/archiveme_research/lib/screens/review_ritual_screen.dart',
+        ).readAsStringSync(),
         File('lib/widgets/review_ritual_card.dart').readAsStringSync(),
       ].join('\n').toLowerCase();
       expect(feature, isNot(contains('requestpermission')));

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../config/screenshot_mode.dart';
 import '../design/archive_mobile_typography.dart';
-import '../features/capacity_loop/before_yes_copy.dart';
 import '../features/capacity_loop/before_yes_engine.dart';
 import '../features/capacity_loop/low_effort_yes_capture_copy.dart';
 import '../theme/app_colors.dart';
@@ -40,8 +39,7 @@ class BeforeYouSayYesCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final visible =
-        compact ? result.showOnArchiveHome : result.showOnRecord;
+    final visible = compact ? result.showOnArchiveHome : result.showOnRecord;
     if (sampleMode || ScreenshotMode.enabled || !visible) {
       return const SizedBox.shrink(key: Key('before_you_say_yes_card_hidden'));
     }
@@ -71,9 +69,9 @@ class BeforeYouSayYesCard extends StatelessWidget {
             Text(
               result.recordPrompt,
               key: const Key('before_you_say_yes_card_prompt'),
-              style: ArchiveMobileTypography.listSubtitle(context).copyWith(
-                fontWeight: FontWeight.w600,
-              ),
+              style: ArchiveMobileTypography.listSubtitle(
+                context,
+              ).copyWith(fontWeight: FontWeight.w600),
             ),
           ],
           const SizedBox(height: AppSpacing.sm),

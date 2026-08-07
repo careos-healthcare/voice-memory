@@ -12,29 +12,25 @@ const _docsPath = 'docs/SAFE_EXPORTS_FUTURE.md';
 SafeExportsFutureGateInput _input({
   bool? exportTestsPass = true,
   bool? paidIntentBetaComplete = true,
-}) =>
-    SafeExportsFutureGateInput(
-      exportTestsPass: exportTestsPass,
-      paidIntentBetaComplete: paidIntentBetaComplete,
-    );
+}) => SafeExportsFutureGateInput(
+  exportTestsPass: exportTestsPass,
+  paidIntentBetaComplete: paidIntentBetaComplete,
+);
 
 SafeExportFuturePrereq _prereq(
   SafeExportsFutureGateResult result,
   SafeExportFuturePrereqId id,
-) =>
-    result.prereqs.firstWhere((prereq) => prereq.id == id);
+) => result.prereqs.firstWhere((prereq) => prereq.id == id);
 
 SafeExportFuture _export(
   SafeExportsFutureGateResult result,
   SafeExportFutureId id,
-) =>
-    result.exports.firstWhere((export) => export.id == id);
+) => result.exports.firstWhere((export) => export.id == id);
 
 SafeExportsFutureRule _rule(
   SafeExportsFutureGateResult result,
   SafeExportsFutureRuleId id,
-) =>
-    result.rules.firstWhere((rule) => rule.id == id);
+) => result.rules.firstWhere((rule) => rule.id == id);
 
 void main() {
   group('SafeExportsFutureGate.build', () {
@@ -59,18 +55,13 @@ void main() {
       expect(result.primaryProPromiseBlocked, isTrue);
       expect(result.v1ExportUiBlocked, isTrue);
       expect(result.blockedExportCount, 0);
-      expect(
-        result.documentedExportCount,
-        SafeExportsFutureGate.exportCount,
-      );
+      expect(result.documentedExportCount, SafeExportsFutureGate.exportCount);
       expect(result.earliestPrereqGap, isNull);
       expect(result.earliestRuleFailure, isNull);
     });
 
     test('pending export tests -> exportsFrozen and exports blocked', () {
-      final result = SafeExportsFutureGate.build(
-        _input(exportTestsPass: null),
-      );
+      final result = SafeExportsFutureGate.build(_input(exportTestsPass: null));
       expect(result.decision, SafeExportsFutureGateDecision.exportsFrozen);
       expect(result.exportProofComplete, isFalse);
       expect(
@@ -98,25 +89,32 @@ void main() {
       );
     });
 
-    test('marketing exports planned without tests fails testedBeforeMarketing', () {
-      final result = SafeExportsFutureGate.build(
-        SafeExportsFutureGateInput(
-          exportTestsPass: false,
-          paidIntentBetaComplete: true,
-          marketingExportsPlanned: true,
-        ),
-      );
-      expect(
-        _rule(result, SafeExportsFutureRuleId.testedBeforeMarketing).status,
-        SafeExportsFutureRuleStatus.fail,
-      );
-      expect(result.decision, SafeExportsFutureGateDecision.exportsFrozen);
-    });
+    test(
+      'marketing exports planned without tests fails testedBeforeMarketing',
+      () {
+        final result = SafeExportsFutureGate.build(
+          SafeExportsFutureGateInput(
+            exportTestsPass: false,
+            paidIntentBetaComplete: true,
+            marketingExportsPlanned: true,
+          ),
+        );
+        expect(
+          _rule(result, SafeExportsFutureRuleId.testedBeforeMarketing).status,
+          SafeExportsFutureRuleStatus.fail,
+        );
+        expect(result.decision, SafeExportsFutureGateDecision.exportsFrozen);
+      },
+    );
 
     test('canonical rules pass for gate copy', () {
       final result = SafeExportsFutureGate.build(_input());
       for (final rule in result.rules) {
-        expect(rule.status, SafeExportsFutureRuleStatus.pass, reason: rule.id.name);
+        expect(
+          rule.status,
+          SafeExportsFutureRuleStatus.pass,
+          reason: rule.id.name,
+        );
       }
     });
 
@@ -192,10 +190,7 @@ void main() {
     });
 
     test('detectDocListsRules matches docs', () {
-      expect(
-        SafeExportsFutureGate.detectDocListsRules(docsSource),
-        isTrue,
-      );
+      expect(SafeExportsFutureGate.detectDocListsRules(docsSource), isTrue);
     });
 
     test('detectGuardrailPresentInCopy matches gate copy', () {

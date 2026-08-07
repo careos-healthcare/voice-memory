@@ -9,10 +9,7 @@ import '../../theme/voicememory_cards.dart';
 
 /// Compact local-only archive health / evidence quality card.
 class ArchiveHealthCard extends StatelessWidget {
-  const ArchiveHealthCard({
-    super.key,
-    required this.score,
-  });
+  const ArchiveHealthCard({super.key, required this.score});
 
   final ArchiveHealthScore score;
 
@@ -21,14 +18,12 @@ class ArchiveHealthCard extends StatelessWidget {
     if (!score.showCard) return const SizedBox.shrink();
 
     final titleStyle = ArchiveMobileTypography.responsiveSectionTitle(context);
-    final bodyStyle = ArchiveMobileTypography.responsiveHelper(context).copyWith(
-      color: AppColors.textPrimary,
-      height: 1.45,
-    );
-    final labelStyle = ArchiveMobileTypography.responsiveHelper(context).copyWith(
-      color: AppColors.textSecondary,
-      fontWeight: FontWeight.w600,
-    );
+    final bodyStyle = ArchiveMobileTypography.responsiveHelper(
+      context,
+    ).copyWith(color: AppColors.textPrimary, height: 1.45);
+    final labelStyle = ArchiveMobileTypography.responsiveHelper(
+      context,
+    ).copyWith(color: AppColors.textSecondary, fontWeight: FontWeight.w600);
 
     return Container(
       key: const Key('archive_health_card'),

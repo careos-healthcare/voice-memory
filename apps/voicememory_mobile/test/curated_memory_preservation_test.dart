@@ -9,13 +9,11 @@ import 'package:voicememory_mobile/features/memory/archive_evidence_record.dart'
 import 'package:voicememory_mobile/features/memory/archive_evidence_type.dart';
 import 'package:voicememory_mobile/features/memory/curated_memory_marker.dart';
 import 'package:voicememory_mobile/features/memory/curated_memory_preservation_policy.dart';
-import 'package:voicememory_mobile/features/memory/entry_save_coordinator.dart';
 import 'package:voicememory_mobile/features/memory/keep_exact_details.dart';
 import 'package:voicememory_mobile/features/memory/memory_authority_frame.dart';
 import 'package:voicememory_mobile/features/memory/memory_authority_framing_engine.dart';
 import 'package:voicememory_mobile/features/memory/memory_control_model.dart';
 import 'package:voicememory_mobile/features/memory/memory_governance_policy.dart';
-import 'package:voicememory_mobile/features/memory/memory_scope.dart';
 import 'package:voicememory_mobile/features/memory/memory_scope_policy.dart';
 import 'package:voicememory_mobile/features/memory/memory_surfacing_mode.dart';
 import 'package:voicememory_mobile/features/memory/sensitive_surfacing_policy.dart';
@@ -25,13 +23,11 @@ import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/services/activation_funnel_analytics.dart';
 import 'package:voicememory_mobile/theme/app_theme.dart';
-import 'package:voicememory_mobile/widgets/archive_search/archive_search_result_card.dart';
 import 'package:voicememory_mobile/widgets/memory/curated_memory_receipt.dart';
 import 'package:voicememory_mobile/widgets/memory/entry_options_section.dart';
 
 import 'support/expand_advanced_save_options.dart';
 import 'package:voicememory_mobile/widgets/memory/memory_evidence_inspect_sheet.dart';
-import 'package:voicememory_mobile/widgets/memory/original_evidence_block.dart';
 import 'package:voicememory_mobile/widgets/memory/preserve_original_control.dart';
 import 'package:voicememory_mobile/widgets/pressure_retention/thread_return_evidence_card.dart';
 

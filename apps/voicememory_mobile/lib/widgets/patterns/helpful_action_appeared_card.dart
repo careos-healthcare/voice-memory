@@ -34,22 +34,21 @@ class HelpfulActionAppearedCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     _trackSeen();
-    final bodyStyle = ArchiveMobileTypography.explanationBody(context).copyWith(
-      color: AppColors.textPrimary,
-      height: 1.45,
-    );
-    final labelStyle = ArchiveMobileTypography.cardLabel(context).copyWith(
-      color: AppColors.textSecondary,
-    );
-    final chipStyle = labelStyle.copyWith(
-      color: AppColors.accentPrimary,
-    );
+    final bodyStyle = ArchiveMobileTypography.explanationBody(
+      context,
+    ).copyWith(color: AppColors.textPrimary, height: 1.45);
+    final labelStyle = ArchiveMobileTypography.cardLabel(
+      context,
+    ).copyWith(color: AppColors.textSecondary);
+    final chipStyle = labelStyle.copyWith(color: AppColors.accentPrimary);
 
     return Container(
       key: const Key('helpful_action_appeared_card'),
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.md),
-      decoration: VoiceMemoryCards.standard(background: const Color(0xFFF5FAF6)),
+      decoration: VoiceMemoryCards.standard(
+        background: const Color(0xFFF5FAF6),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -59,7 +58,9 @@ class HelpfulActionAppearedCard extends StatelessWidget {
                 child: Text(
                   result.title,
                   key: const Key('helpful_action_appeared_title'),
-                  style: ArchiveMobileTypography.responsiveSectionTitle(context),
+                  style: ArchiveMobileTypography.responsiveSectionTitle(
+                    context,
+                  ),
                 ),
               ),
               Container(

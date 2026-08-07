@@ -35,8 +35,7 @@ class BetaInviteCard extends StatefulWidget {
 class _BetaInviteCardState extends State<BetaInviteCard> {
   var _trackedSeen = false;
 
-  String get _triggerValue =>
-      widget.result.trigger?.analyticsValue ?? 'none';
+  String get _triggerValue => widget.result.trigger?.analyticsValue ?? 'none';
 
   void _trackSeenOnce() {
     if (_trackedSeen || !widget.result.shouldShow) return;
@@ -81,10 +80,9 @@ class _BetaInviteCardState extends State<BetaInviteCard> {
 
     _trackSeenOnce();
 
-    final bodyStyle = ArchiveMobileTypography.explanationBody(context).copyWith(
-      color: AppColors.textSecondary,
-      height: 1.45,
-    );
+    final bodyStyle = ArchiveMobileTypography.explanationBody(
+      context,
+    ).copyWith(color: AppColors.textSecondary, height: 1.45);
 
     return Container(
       key: const Key('beta_invite_card'),

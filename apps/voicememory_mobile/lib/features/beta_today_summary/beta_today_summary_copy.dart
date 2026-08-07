@@ -30,16 +30,16 @@ abstract final class BetaTodaySummaryCopy {
   static const closingLine = 'Record if something stands out.';
 
   static List<String> allVisibleStrings() => [
-        corePositioning,
-        title,
-        primaryBody,
-        fallbackBody,
-        activePatternRow,
-        fadingRow,
-        correctionRow,
-        needsFreshProofRow,
-        noStrongPatternRow,
-        nothingUrgentRow,
-        closingLine,
-      ];
+    corePositioning,
+    title,
+    primaryBody,
+    fallbackBody,
+    activePatternRow,
+    fadingRow,
+    correctionRow,
+    needsFreshProofRow,
+    noStrongPatternRow,
+    nothingUrgentRow,
+    closingLine,
+  ];
 }

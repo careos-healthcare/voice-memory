@@ -18,7 +18,8 @@ abstract final class ReturnDayFlowCopy {
   static const helperNotToday = ComeBackTomorrowV2Copy.helperNotToday;
   static const helperDifferent = ComeBackTomorrowV2Copy.helperDifferent;
 
-  static const cameBackRecordPrompt = ComeBackTomorrowV2Copy.cameBackRecordPrompt;
+  static const cameBackRecordPrompt =
+      ComeBackTomorrowV2Copy.cameBackRecordPrompt;
   static const differentRecordPrompt =
       ComeBackTomorrowV2Copy.differentRecordPrompt;
 

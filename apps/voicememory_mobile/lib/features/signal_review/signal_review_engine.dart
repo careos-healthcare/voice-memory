@@ -1,6 +1,5 @@
 import '../../models/journal_entry.dart';
 import '../../product/consumer_ui_copy.dart';
-import '../../product/loop_mode_copy.dart';
 import '../archive_evidence/archive_evidence_guard.dart';
 import '../loop_mode/capacity_loop_review_sections.dart';
 import '../loop_mode/loop_mode_engine.dart';

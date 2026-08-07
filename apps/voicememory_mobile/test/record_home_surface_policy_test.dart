@@ -106,20 +106,23 @@ void main() {
       expect(policy.showReturningUserToday, isFalse);
     });
 
-    test('shows todays question only when map and archive review are absent', () {
-      final policy = RecordHomeSurfacePolicy.resolve(
-        isReady: true,
-        loaded: true,
-        entryCount: 2,
-        screenshotMode: false,
-        dailyArchiveExercise: null,
-        returningUserToday: null,
-        todaysOneQuestion: _todaysQuestion,
-      );
+    test(
+      'shows todays question only when map and archive review are absent',
+      () {
+        final policy = RecordHomeSurfacePolicy.resolve(
+          isReady: true,
+          loaded: true,
+          entryCount: 2,
+          screenshotMode: false,
+          dailyArchiveExercise: null,
+          returningUserToday: null,
+          todaysOneQuestion: _todaysQuestion,
+        );
 
-      expect(policy.showTodaysOneQuestion, isTrue);
-      expect(policy.guidanceCardCount, 1);
-    });
+        expect(policy.showTodaysOneQuestion, isTrue);
+        expect(policy.guidanceCardCount, 1);
+      },
+    );
 
     test('shows start here only when no top guidance card is available', () {
       final policy = RecordHomeSurfacePolicy.resolve(

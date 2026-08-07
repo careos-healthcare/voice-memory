@@ -29,7 +29,7 @@ class BetterFirstRecordPromptCard extends StatefulWidget {
 class _BetterFirstRecordPromptCardState
     extends State<BetterFirstRecordPromptCard> {
   static const Color _warmSurface = Color(0xFFFFFBF5);
-  static const Color _warmBorder = Color(0xFFF5E6D3);
+  static const Color _warmBorder = AppColors.warmBorder;
 
   @override
   void initState() {

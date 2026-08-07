@@ -35,11 +35,11 @@ abstract final class CorrectionMemoryCopy {
       'ChatGPT responds in the moment. ArchiveMe remembers how you corrected the timeline.';
 
   static String bodyFor(CorrectionMemoryState state) => switch (state) {
-        CorrectionMemoryState.stillCurrent => stillCurrentBody,
-        CorrectionMemoryState.partlyCurrent => partlyCurrentBody,
-        CorrectionMemoryState.faded => fadedBody,
-        CorrectionMemoryState.unsure => unsureBody,
-      };
+    CorrectionMemoryState.stillCurrent => stillCurrentBody,
+    CorrectionMemoryState.partlyCurrent => partlyCurrentBody,
+    CorrectionMemoryState.faded => fadedBody,
+    CorrectionMemoryState.unsure => unsureBody,
+  };
 
   static const List<String> all = [
     title,

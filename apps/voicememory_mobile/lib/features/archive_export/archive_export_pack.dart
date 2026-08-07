@@ -50,31 +50,29 @@ class ArchiveExportPack {
   final String plainText;
 
   Map<String, dynamic> toJson() => {
-        'app': 'ArchiveMe',
-        'exportedAt': exportedAt.toUtc().toIso8601String(),
-        'savedMomentCount': savedMomentCount,
-        'usableEvidenceCount': usableEvidenceCount,
-        if (currentBeliefLine != null) 'currentBeliefLine': currentBeliefLine,
-        if (evidenceMapSummary.isNotEmpty)
-          'evidenceMapSummary': evidenceMapSummary,
-        if (weeklyReviewSummary != null)
-          'weeklyReviewSummary': weeklyReviewSummary,
-        'recentMoments': recentMoments
-            .map(
-              (moment) => {
-                'date': moment.createdAt.toUtc().toIso8601String().substring(0, 10),
-                'preview': moment.preview,
-                if (moment.contextTagLabel != null)
-                  'contextTag': moment.contextTagLabel,
-                'usableEvidence': moment.usableEvidence,
-              },
-            )
-            .toList(),
-        'privacyNotes': [
-          ArchiveExportPackCopy.privacyNoteDevice,
-          ArchiveExportPackCopy.privacyNoteReview,
-        ],
-      };
+    'app': 'ArchiveMe',
+    'exportedAt': exportedAt.toUtc().toIso8601String(),
+    'savedMomentCount': savedMomentCount,
+    'usableEvidenceCount': usableEvidenceCount,
+    if (currentBeliefLine != null) 'currentBeliefLine': currentBeliefLine,
+    if (evidenceMapSummary.isNotEmpty) 'evidenceMapSummary': evidenceMapSummary,
+    if (weeklyReviewSummary != null) 'weeklyReviewSummary': weeklyReviewSummary,
+    'recentMoments': recentMoments
+        .map(
+          (moment) => {
+            'date': moment.createdAt.toUtc().toIso8601String().substring(0, 10),
+            'preview': moment.preview,
+            if (moment.contextTagLabel != null)
+              'contextTag': moment.contextTagLabel,
+            'usableEvidence': moment.usableEvidence,
+          },
+        )
+        .toList(),
+    'privacyNotes': [
+      ArchiveExportPackCopy.privacyNoteDevice,
+      ArchiveExportPackCopy.privacyNoteReview,
+    ],
+  };
 }
 
 /// Builds a deterministic local export pack from journal entries.
@@ -201,7 +199,9 @@ abstract final class ArchiveExportPackEngine {
     final buffer = StringBuffer()
       ..writeln(ArchiveExportPackCopy.headerTitle)
       ..writeln()
-      ..writeln('${ArchiveExportPackCopy.exportDateLabel}: ${_formatDate(exportedAt)}')
+      ..writeln(
+        '${ArchiveExportPackCopy.exportDateLabel}: ${_formatDate(exportedAt)}',
+      )
       ..writeln('${ArchiveExportPackCopy.savedMomentsLabel}: $savedMomentCount')
       ..writeln(
         '${ArchiveExportPackCopy.usableEvidenceLabel}: $usableEvidenceCount',

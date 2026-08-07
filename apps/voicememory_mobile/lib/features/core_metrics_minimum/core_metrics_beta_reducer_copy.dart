@@ -47,23 +47,23 @@ abstract final class CoreMetricsBetaReducerCopy {
       'do not stop existing analytics, and do not change emission.';
 
   static String labelFor(CoreMetricsBetaMetricId id) => switch (id) {
-        CoreMetricsBetaMetricId.appOpened => metricAppOpened,
-        CoreMetricsBetaMetricId.firstSave => metricFirstSave,
-        CoreMetricsBetaMetricId.secondSave => metricSecondSave,
-        CoreMetricsBetaMetricId.firstUsefulProofSeen =>
-          metricFirstUsefulProofSeen,
-        CoreMetricsBetaMetricId.proofAccepted => metricProofAccepted,
-        CoreMetricsBetaMetricId.proofCorrected => metricProofCorrected,
-        CoreMetricsBetaMetricId.proPromiseSeen => metricProPromiseSeen,
-        CoreMetricsBetaMetricId.proTapped => metricProTapped,
-        CoreMetricsBetaMetricId.purchaseStarted => metricPurchaseStarted,
-        CoreMetricsBetaMetricId.purchaseCompleted => metricPurchaseCompleted,
-        CoreMetricsBetaMetricId.restoreSucceeded => metricRestoreSucceeded,
-        CoreMetricsBetaMetricId.entitlementActive => metricEntitlementActive,
-        CoreMetricsBetaMetricId.crashOrBlocker => metricCrashOrBlocker,
-      };
+    CoreMetricsBetaMetricId.appOpened => metricAppOpened,
+    CoreMetricsBetaMetricId.firstSave => metricFirstSave,
+    CoreMetricsBetaMetricId.secondSave => metricSecondSave,
+    CoreMetricsBetaMetricId.firstUsefulProofSeen => metricFirstUsefulProofSeen,
+    CoreMetricsBetaMetricId.proofAccepted => metricProofAccepted,
+    CoreMetricsBetaMetricId.proofCorrected => metricProofCorrected,
+    CoreMetricsBetaMetricId.proPromiseSeen => metricProPromiseSeen,
+    CoreMetricsBetaMetricId.proTapped => metricProTapped,
+    CoreMetricsBetaMetricId.purchaseStarted => metricPurchaseStarted,
+    CoreMetricsBetaMetricId.purchaseCompleted => metricPurchaseCompleted,
+    CoreMetricsBetaMetricId.restoreSucceeded => metricRestoreSucceeded,
+    CoreMetricsBetaMetricId.entitlementActive => metricEntitlementActive,
+    CoreMetricsBetaMetricId.crashOrBlocker => metricCrashOrBlocker,
+  };
 
-  static String bucketLabelFor(CoreMetricsBetaBucket bucket) => switch (bucket) {
+  static String bucketLabelFor(CoreMetricsBetaBucket bucket) =>
+      switch (bucket) {
         CoreMetricsBetaBucket.decisionMetric => bucketDecisionMetric,
         CoreMetricsBetaBucket.revenueMetric => bucketRevenueMetric,
         CoreMetricsBetaBucket.releaseBlocking => bucketReleaseBlocking,

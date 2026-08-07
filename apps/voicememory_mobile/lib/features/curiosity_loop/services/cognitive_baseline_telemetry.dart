@@ -21,9 +21,7 @@ class CognitiveBaselineUpdateRecord {
 
 /// Telemetry sink for long-term cognitive baseline updates.
 class CognitiveBaselineTelemetry {
-  const CognitiveBaselineTelemetry({
-    void Function(String event, Map<String, Object> meta)? sink,
-  }) : _sink = sink;
+  const CognitiveBaselineTelemetry({this._sink});
 
   static const logPrefix = '[TELEMETRY][COGNITIVE_BASELINE]';
   static const baselineUpdatedEvent = 'cognitive_baseline_updated';
@@ -36,23 +34,19 @@ class CognitiveBaselineTelemetry {
     required int observationCount,
     CognitiveBiomarkers? previousBaseline,
   }) {
-    _emit(
-      baselineUpdatedEvent,
-      {
-        'entry_id': entryId,
-        'observation_count': observationCount,
-        'lexical_diversity': updatedBaseline.lexicalDiversity,
-        'cohesion_drift': updatedBaseline.cohesionDrift,
-        'emotional_volatility': updatedBaseline.emotionalVolatility,
-        if (previousBaseline != null)
-          'previous_lexical_diversity': previousBaseline.lexicalDiversity,
-        if (previousBaseline != null)
-          'previous_cohesion_drift': previousBaseline.cohesionDrift,
-        if (previousBaseline != null)
-          'previous_emotional_volatility':
-              previousBaseline.emotionalVolatility,
-      },
-    );
+    _emit(baselineUpdatedEvent, {
+      'entry_id': entryId,
+      'observation_count': observationCount,
+      'lexical_diversity': updatedBaseline.lexicalDiversity,
+      'cohesion_drift': updatedBaseline.cohesionDrift,
+      'emotional_volatility': updatedBaseline.emotionalVolatility,
+      if (previousBaseline != null)
+        'previous_lexical_diversity': previousBaseline.lexicalDiversity,
+      if (previousBaseline != null)
+        'previous_cohesion_drift': previousBaseline.cohesionDrift,
+      if (previousBaseline != null)
+        'previous_emotional_volatility': previousBaseline.emotionalVolatility,
+    });
   }
 
   void _emit(String event, Map<String, Object> meta) {

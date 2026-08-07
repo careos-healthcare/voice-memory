@@ -92,7 +92,9 @@ abstract final class RevenueValueEngine {
     return true;
   }
 
-  static bool futureFeaturesNotPresentedAsLive(RevenueValueFoundation foundation) {
+  static bool futureFeaturesNotPresentedAsLive(
+    RevenueValueFoundation foundation,
+  ) {
     if (foundation.safeSharingLive) return false;
     final blob = foundation.allVisibleStrings.join(' ').toLowerCase();
     for (final term in RevenueValueCopy.bannedLiveOverpromises) {

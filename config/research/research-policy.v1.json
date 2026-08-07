@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "policyVersion": "research-evidence-v1",
+  "precisionMarketingClaimsDefault": false,
+  "eligibleProvenance": "consented_human_submission",
+  "thresholds": {
+    "minimumHumanReviewedCases": 30,
+    "minimumAggregateKappa": 0.6,
+    "minimumEvidenceAgreement": 0.7,
+    "minimumSafetyAgreement": 0.8
+  }
+}

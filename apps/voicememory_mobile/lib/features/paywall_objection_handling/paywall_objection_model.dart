@@ -1,5 +1,3 @@
-import 'paywall_objection_copy.dart';
-
 enum PaywallObjectionId {
   notJournaling,
   notAiChat,
@@ -10,12 +8,12 @@ enum PaywallObjectionId {
 
 extension PaywallObjectionIdAnalytics on PaywallObjectionId {
   String get analyticsValue => switch (this) {
-        PaywallObjectionId.notJournaling => 'not_journaling',
-        PaywallObjectionId.notAiChat => 'not_ai_chat',
-        PaywallObjectionId.whatProKeeps => 'what_pro_keeps',
-        PaywallObjectionId.stayInControl => 'stay_in_control',
-        PaywallObjectionId.restorePurchases => 'restore_purchases',
-      };
+    PaywallObjectionId.notJournaling => 'not_journaling',
+    PaywallObjectionId.notAiChat => 'not_ai_chat',
+    PaywallObjectionId.whatProKeeps => 'what_pro_keeps',
+    PaywallObjectionId.stayInControl => 'stay_in_control',
+    PaywallObjectionId.restorePurchases => 'restore_purchases',
+  };
 }
 
 class PaywallObjectionRow {

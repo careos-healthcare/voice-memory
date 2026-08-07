@@ -44,16 +44,14 @@ abstract final class ReturnTomorrowCueGates {
     required bool isPostSaveDone,
     required bool isDegradedPostSave,
     ReturnTomorrowCue? cue,
-  }) =>
-      isPostSaveDone && !isDegradedPostSave && cue != null;
+  }) => isPostSaveDone && !isDegradedPostSave && cue != null;
 
   static bool shouldShowReady({
     required bool isReady,
     required bool isRecording,
     required bool isPostSave,
     ReturnTomorrowCue? cue,
-  }) =>
-      isReady && !isRecording && !isPostSave && cue != null;
+  }) => isReady && !isRecording && !isPostSave && cue != null;
 
   static bool _sameDay(DateTime a, DateTime b) =>
       a.year == b.year && a.month == b.month && a.day == b.day;
@@ -91,7 +89,8 @@ abstract final class ReturnTomorrowCueEngine {
       );
     }
 
-    if (eligible.length == 2 && _signalEngine.hasGroundedRepeatMatch(eligible)) {
+    if (eligible.length == 2 &&
+        _signalEngine.hasGroundedRepeatMatch(eligible)) {
       return const ReturnTomorrowCue(
         state: ReturnTomorrowCueState.afterSecondRelated,
         title: ReturnTomorrowCueCopy.afterSecondRelatedTitle,
@@ -128,8 +127,9 @@ abstract final class ReturnTomorrowCueEngine {
     if (eligible.isEmpty) return null;
 
     if (eligible.length >= 2) {
-      final shared =
-          ConfirmedRepeatEvidencePhraseEngine.sharedConcretePhrase(eligible);
+      final shared = ConfirmedRepeatEvidencePhraseEngine.sharedConcretePhrase(
+        eligible,
+      );
       if (shared != null) return shared;
     }
 

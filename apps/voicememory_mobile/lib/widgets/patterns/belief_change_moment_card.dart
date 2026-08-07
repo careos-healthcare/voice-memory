@@ -63,27 +63,26 @@ class _BeliefChangeMomentCardState extends State<BeliefChangeMomentCard> {
     _trackSeenOnce();
     final moment = widget.moment;
     final titleStyle = ArchiveMobileTypography.responsiveSectionTitle(context);
-    final bodyStyle = ArchiveMobileTypography.explanationBody(context).copyWith(
-      color: AppColors.textSecondary,
-      height: 1.45,
-    );
-    final labelStyle = ArchiveMobileTypography.cardLabel(context).copyWith(
-      color: AppColors.textSecondary,
-    );
-    final exampleStyle = ArchiveMobileTypography.explanationBody(context).copyWith(
-      color: AppColors.textPrimary,
-      height: 1.4,
-    );
-    final snippetStyle = ArchiveMobileTypography.explanationBody(context).copyWith(
-      color: AppColors.textPrimary,
-      height: 1.35,
-    );
+    final bodyStyle = ArchiveMobileTypography.explanationBody(
+      context,
+    ).copyWith(color: AppColors.textSecondary, height: 1.45);
+    final labelStyle = ArchiveMobileTypography.cardLabel(
+      context,
+    ).copyWith(color: AppColors.textSecondary);
+    final exampleStyle = ArchiveMobileTypography.explanationBody(
+      context,
+    ).copyWith(color: AppColors.textPrimary, height: 1.4);
+    final snippetStyle = ArchiveMobileTypography.explanationBody(
+      context,
+    ).copyWith(color: AppColors.textPrimary, height: 1.35);
 
     return Container(
       key: const Key('belief_change_moment_card'),
       width: double.infinity,
       padding: EdgeInsets.all(widget.compact ? AppSpacing.sm : AppSpacing.md),
-      decoration: VoiceMemoryCards.standard(background: const Color(0xFFF4FAF7)),
+      decoration: VoiceMemoryCards.standard(
+        background: const Color(0xFFF4FAF7),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [

@@ -8,6 +8,7 @@ import 'package:voicememory_mobile/features/early_archive/early_archive_proof_an
 import 'package:voicememory_mobile/features/first25/first25_user_metrics.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
 import 'package:voicememory_mobile/storage/mobile_prefs_store.dart';
+import 'support/test_storage_sandbox.dart';
 
 class _MemoryPrefs extends MobilePrefsStore {
   _MemoryPrefs() : super(file: File('test/tmp/beta_loop/prefs.json'));
@@ -34,23 +35,24 @@ class _MemoryPrefs extends MobilePrefsStore {
 }
 
 void main() {
+  late TestStorageSandbox sandbox;
   late _MemoryPrefs prefs;
 
   setUp(() async {
+    sandbox = TestStorageSandbox.create();
     prefs = _MemoryPrefs();
     prefs.maps.clear();
     BetaActivationLoopTracker.resetSessionForTest();
     await BetaActivationLoopTracker.clearCounts();
     EarlyArchiveProofAnalytics.resetForTest();
     await AppServices.resetForTest(
-      journalPath:
-          'test/tmp/beta_loop/${DateTime.now().microsecondsSinceEpoch}_journal.json',
-      prefsPath:
-          'test/tmp/beta_loop/${DateTime.now().microsecondsSinceEpoch}_prefs.json',
+      journalPath: sandbox.journalPath,
+      prefsPath: sandbox.prefsPath,
       skipRevenueCat: true,
     );
   });
 
+  tearDown(() => sandbox.dispose());
   tearDown(() async {
     await AppServices.resetForTest(
       journalPath:
@@ -137,12 +139,14 @@ void main() {
       );
       BetaActivationLoopCounts counts =
           await BetaActivationLoopTracker.readCounts();
-      for (var i = 0;
-          i < 50 &&
-              (counts.oneEntryReturnScreenSeen == 0 ||
-                  counts.twoEntryRelatedSeen == 0 ||
-                  counts.confirmedRepeatSeen == 0);
-          i++) {
+      for (
+        var i = 0;
+        i < 50 &&
+            (counts.oneEntryReturnScreenSeen == 0 ||
+                counts.twoEntryRelatedSeen == 0 ||
+                counts.confirmedRepeatSeen == 0);
+        i++
+      ) {
         await Future<void>.delayed(const Duration(milliseconds: 10));
         counts = await BetaActivationLoopTracker.readCounts();
       }

@@ -72,18 +72,23 @@ abstract final class B2bWorkplacePressureFutureGate {
     final rulesPass = rules.every(
       (rule) => rule.status == B2bWorkplacePressureFutureRuleStatus.pass,
     );
-    final betaProofComplete = rulesPass &&
+    final betaProofComplete =
+        rulesPass &&
         prereqs.every(
-          (prereq) => prereq.status == B2bWorkplacePressureFuturePrereqStatus.pass,
+          (prereq) =>
+              prereq.status == B2bWorkplacePressureFuturePrereqStatus.pass,
         );
     final decision = betaProofComplete
-        ? B2bWorkplacePressureFutureGateDecision.futureLandingPositioningDocumented
+        ? B2bWorkplacePressureFutureGateDecision
+              .futureLandingPositioningDocumented
         : B2bWorkplacePressureFutureGateDecision.b2bFrozen;
     final audiences = _buildAudiences(betaProofComplete: betaProofComplete);
     return B2bWorkplacePressureFutureGateResult(
       decision: decision,
       message: B2bWorkplacePressureFutureCopy.messageFor(decision),
-      recommendation: B2bWorkplacePressureFutureCopy.recommendationFor(decision),
+      recommendation: B2bWorkplacePressureFutureCopy.recommendationFor(
+        decision,
+      ),
       positioning: B2bWorkplacePressureFutureCopy.positioning,
       rules: rules,
       ruleOrder: canonicalRuleOrder,
@@ -130,16 +135,15 @@ abstract final class B2bWorkplacePressureFutureGate {
 
   static B2bWorkplacePressureFutureGateReport report(
     B2bWorkplacePressureFutureGateResult result,
-  ) =>
-      B2bWorkplacePressureFutureGateReport(
-        headline: B2bWorkplacePressureFutureCopy.headline,
-        body: B2bWorkplacePressureFutureCopy.body,
-        positioning: B2bWorkplacePressureFutureCopy.positioning,
-        orderLine: B2bWorkplacePressureFutureCopy.orderLine,
-        prereqOrderLine: B2bWorkplacePressureFutureCopy.prereqOrderLine,
-        guardrail: B2bWorkplacePressureFutureCopy.guardrail,
-        result: result,
-      );
+  ) => B2bWorkplacePressureFutureGateReport(
+    headline: B2bWorkplacePressureFutureCopy.headline,
+    body: B2bWorkplacePressureFutureCopy.body,
+    positioning: B2bWorkplacePressureFutureCopy.positioning,
+    orderLine: B2bWorkplacePressureFutureCopy.orderLine,
+    prereqOrderLine: B2bWorkplacePressureFutureCopy.prereqOrderLine,
+    guardrail: B2bWorkplacePressureFutureCopy.guardrail,
+    result: result,
+  );
 
   static B2bWorkplacePressureFutureGateInput composeInput({
     bool? testFlightUploaded,
@@ -147,15 +151,15 @@ abstract final class B2bWorkplacePressureFutureGate {
     bool? v1B2bUiRequested,
     SingleLaunchChecklistInput? launchChecklist,
     PaidIntentBetaProofResult? paidIntentBeta,
-  }) =>
-      B2bWorkplacePressureFutureGateInput(
-        testFlightUploaded:
-            testFlightUploaded ?? launchChecklist?.testFlightUploaded,
-        paidIntentBetaComplete: paidIntentBetaComplete ??
-            launchChecklist?.paidIntentBetaComplete ??
-            _paidIntentBetaCompleteFrom(paidIntentBeta),
-        v1B2bUiRequested: v1B2bUiRequested,
-      );
+  }) => B2bWorkplacePressureFutureGateInput(
+    testFlightUploaded:
+        testFlightUploaded ?? launchChecklist?.testFlightUploaded,
+    paidIntentBetaComplete:
+        paidIntentBetaComplete ??
+        launchChecklist?.paidIntentBetaComplete ??
+        _paidIntentBetaCompleteFrom(paidIntentBeta),
+    v1B2bUiRequested: v1B2bUiRequested,
+  );
 
   static B2bWorkplacePressureFutureGateInput fromRepoSignals({
     required String b2bWorkplacePressureFutureDocSource,
@@ -164,16 +168,16 @@ abstract final class B2bWorkplacePressureFutureGate {
     bool? testFlightUploaded,
     bool? paidIntentBetaComplete,
     bool? v1B2bUiRequested,
-  }) =>
-      B2bWorkplacePressureFutureGateInput(
-        testFlightUploaded: testFlightUploaded,
-        paidIntentBetaComplete: paidIntentBetaComplete,
-        v1B2bUiRequested: v1B2bUiRequested,
-        docListsRules: detectDocListsRules(b2bWorkplacePressureFutureDocSource),
-        guardrailPresentInCopy: detectGuardrailPresentInCopy(gateCopySource),
-        audienceWedgeIdsAligned:
-            detectAudienceWedgeIdsAligned(audienceWedgeModelSource),
-      );
+  }) => B2bWorkplacePressureFutureGateInput(
+    testFlightUploaded: testFlightUploaded,
+    paidIntentBetaComplete: paidIntentBetaComplete,
+    v1B2bUiRequested: v1B2bUiRequested,
+    docListsRules: detectDocListsRules(b2bWorkplacePressureFutureDocSource),
+    guardrailPresentInCopy: detectGuardrailPresentInCopy(gateCopySource),
+    audienceWedgeIdsAligned: detectAudienceWedgeIdsAligned(
+      audienceWedgeModelSource,
+    ),
+  );
 
   static bool detectDocListsRules(String docSource) {
     const markers = [
@@ -228,28 +232,34 @@ abstract final class B2bWorkplacePressureFutureGate {
       B2bWorkplacePressureFutureCopy.guardrail,
       B2bWorkplacePressureFutureCopy.body,
     ].join(' ');
-    final guardrailLower = B2bWorkplacePressureFutureCopy.guardrail.toLowerCase();
-    final betaProofComplete = (input.testFlightUploaded ?? false) &&
+    final guardrailLower = B2bWorkplacePressureFutureCopy.guardrail
+        .toLowerCase();
+    final betaProofComplete =
+        (input.testFlightUploaded ?? false) &&
         (input.paidIntentBetaComplete ?? false);
     return [
       _rule(
         id: B2bWorkplacePressureFutureRuleId.noEmployerDashboard,
-        passes: evaluateCopyPassesRules(copyBundle) &&
+        passes:
+            evaluateCopyPassesRules(copyBundle) &&
             guardrailLower.contains('no employer dashboard'),
       ),
       _rule(
         id: B2bWorkplacePressureFutureRuleId.noEmployeeSurveillance,
-        passes: evaluateCopyPassesRules(copyBundle) &&
+        passes:
+            evaluateCopyPassesRules(copyBundle) &&
             guardrailLower.contains('no employee surveillance'),
       ),
       _rule(
         id: B2bWorkplacePressureFutureRuleId.noMedicalTherapyClaims,
-        passes: evaluateCopyPassesRules(copyBundle) &&
+        passes:
+            evaluateCopyPassesRules(copyBundle) &&
             guardrailLower.contains('no medical or treatment-style claims'),
       ),
       _rule(
         id: B2bWorkplacePressureFutureRuleId.noLiveB2bUi,
-        passes: guardrailLower.contains('no live b2b ui') &&
+        passes:
+            guardrailLower.contains('no live b2b ui') &&
             (!(input.v1B2bUiRequested ?? false) || betaProofComplete),
       ),
       _rule(
@@ -261,39 +271,37 @@ abstract final class B2bWorkplacePressureFutureGate {
 
   static List<B2bWorkplacePressureFuturePrereq> _buildPrereqs(
     B2bWorkplacePressureFutureGateInput input,
-  ) =>
-      [
-        _prereq(
-          id: B2bWorkplacePressureFuturePrereqId.testFlightUploaded,
-          value: input.testFlightUploaded,
-        ),
-        _prereq(
-          id: B2bWorkplacePressureFuturePrereqId.paidIntentBetaComplete,
-          value: input.paidIntentBetaComplete,
-        ),
-      ];
+  ) => [
+    _prereq(
+      id: B2bWorkplacePressureFuturePrereqId.testFlightUploaded,
+      value: input.testFlightUploaded,
+    ),
+    _prereq(
+      id: B2bWorkplacePressureFuturePrereqId.paidIntentBetaComplete,
+      value: input.paidIntentBetaComplete,
+    ),
+  ];
 
   static List<B2bWorkplacePressureAudience> _buildAudiences({
     required bool betaProofComplete,
-  }) =>
-      canonicalAudienceOrder
-          .map(
-            (id) => B2bWorkplacePressureAudience(
-              id: id,
-              label: B2bWorkplacePressureFutureCopy.labelFor(id),
-              positioning: B2bWorkplacePressureFutureCopy.positioningFor(id),
-              status: betaProofComplete
-                  ? B2bWorkplacePressureAudienceStatus
-                      .futureLandingPositioningDocumented
-                  : B2bWorkplacePressureAudienceStatus.blockedBeforeBetaProof,
-              detailLabel: betaProofComplete
-                  ? B2bWorkplacePressureFutureCopy
-                      .detailFutureLandingPositioningDocumented
-                  : B2bWorkplacePressureFutureCopy.detailBlockedBeforeBetaProof,
-              audienceWedgeId: audienceWedgeIdByAudience[id]!,
-            ),
-          )
-          .toList();
+  }) => canonicalAudienceOrder
+      .map(
+        (id) => B2bWorkplacePressureAudience(
+          id: id,
+          label: B2bWorkplacePressureFutureCopy.labelFor(id),
+          positioning: B2bWorkplacePressureFutureCopy.positioningFor(id),
+          status: betaProofComplete
+              ? B2bWorkplacePressureAudienceStatus
+                    .futureLandingPositioningDocumented
+              : B2bWorkplacePressureAudienceStatus.blockedBeforeBetaProof,
+          detailLabel: betaProofComplete
+              ? B2bWorkplacePressureFutureCopy
+                    .detailFutureLandingPositioningDocumented
+              : B2bWorkplacePressureFutureCopy.detailBlockedBeforeBetaProof,
+          audienceWedgeId: audienceWedgeIdByAudience[id]!,
+        ),
+      )
+      .toList();
 
   static bool _violatesEmployerDashboard(String copy) =>
       employerDashboardViolationMarkers.any(copy.toLowerCase().contains);
@@ -357,17 +365,16 @@ abstract final class B2bWorkplacePressureFutureGate {
   static B2bWorkplacePressureFutureRule _rule({
     required B2bWorkplacePressureFutureRuleId id,
     required bool passes,
-  }) =>
-      B2bWorkplacePressureFutureRule(
-        id: id,
-        label: B2bWorkplacePressureFutureCopy.ruleLabelFor(id),
-        status: passes
-            ? B2bWorkplacePressureFutureRuleStatus.pass
-            : B2bWorkplacePressureFutureRuleStatus.fail,
-        detailLabel: passes
-            ? B2bWorkplacePressureFutureCopy.detailPass
-            : B2bWorkplacePressureFutureCopy.detailFail,
-      );
+  }) => B2bWorkplacePressureFutureRule(
+    id: id,
+    label: B2bWorkplacePressureFutureCopy.ruleLabelFor(id),
+    status: passes
+        ? B2bWorkplacePressureFutureRuleStatus.pass
+        : B2bWorkplacePressureFutureRuleStatus.fail,
+    detailLabel: passes
+        ? B2bWorkplacePressureFutureCopy.detailPass
+        : B2bWorkplacePressureFutureCopy.detailFail,
+  );
 }
 
 class B2bWorkplacePressureFutureGateInput {

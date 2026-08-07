@@ -74,9 +74,18 @@ void main() {
       DeveloperSettingsGate.resetForTest();
       expect(DeveloperRouteGuard.redirectFor('/discover-yourself'), isNull);
       expect(DeveloperRouteGuard.redirectFor('/belief-changes'), isNull);
-      expect(DeveloperRouteGuard.redirectFor(BeliefEvidenceNavigation.route), isNull);
-      expect(DeveloperRouteGuard.redirectFor(WeeklyArchiveReviewNavigation.route), isNull);
-      expect(DeveloperRouteGuard.redirectFor(InsightQualityNavigation.route), isNull);
+      expect(
+        DeveloperRouteGuard.redirectFor(BeliefEvidenceNavigation.route),
+        isNull,
+      );
+      expect(
+        DeveloperRouteGuard.redirectFor(WeeklyArchiveReviewNavigation.route),
+        isNull,
+      );
+      expect(
+        DeveloperRouteGuard.redirectFor(InsightQualityNavigation.route),
+        isNull,
+      );
       expect(
         DeveloperRouteGuard.redirectFor(
           ArchiveEvidenceMapNavigation.contextPath(CaptureContextTagIds.work),

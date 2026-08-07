@@ -14,12 +14,12 @@ class ProofDetailRepairResult {
   });
 
   factory ProofDetailRepairResult.hidden() => const ProofDetailRepairResult(
-        shouldShow: false,
-        ctaLabel: '',
-        title: '',
-        body: '',
-        behaviorPhrase: '',
-      );
+    shouldShow: false,
+    ctaLabel: '',
+    title: '',
+    body: '',
+    behaviorPhrase: '',
+  );
 
   final bool shouldShow;
   final String ctaLabel;
@@ -61,15 +61,14 @@ abstract final class ProofDetailRepairEngine {
 
   static ProofDetailRepairResult buildFromTimelineMoment(
     TimelineProofMomentResult moment,
-  ) =>
-      build(
-        level: moment.proofConfidenceCalibration.level,
-        hasSafeAnchor: moment.hasSafeAnchor,
-        behaviorPhrase: moment.evidenceAnchors.isNotEmpty
-            ? moment.evidenceAnchors.first
-            : null,
-        weakReasons: moment.patternMatchQuality.weakReasons,
-      );
+  ) => build(
+    level: moment.proofConfidenceCalibration.level,
+    hasSafeAnchor: moment.hasSafeAnchor,
+    behaviorPhrase: moment.evidenceAnchors.isNotEmpty
+        ? moment.evidenceAnchors.first
+        : null,
+    weakReasons: moment.patternMatchQuality.weakReasons,
+  );
 
   static bool shouldShow({
     required ProofConfidenceLevel level,
@@ -105,8 +104,9 @@ abstract final class ProofDetailRepairEngine {
     if (weakReasons.contains(PatternMatchWeakReason.noSafeAnchorAvailable)) {
       return true;
     }
-    if (weakReasons
-        .contains(PatternMatchWeakReason.onlyGenericWordingOverlaps)) {
+    if (weakReasons.contains(
+      PatternMatchWeakReason.onlyGenericWordingOverlaps,
+    )) {
       return true;
     }
     if (weakReasons.contains(PatternMatchWeakReason.userMarkedNotRelevant)) {

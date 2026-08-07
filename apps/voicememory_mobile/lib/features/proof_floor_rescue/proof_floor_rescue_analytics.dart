@@ -15,7 +15,7 @@ abstract final class ProofFloorRescueAnalytics {
 
   @visibleForTesting
   static void Function(String event, Map<String, Object> properties)?
-      captureForTest;
+  captureForTest;
 
   static void seen({required ProofFloorRescueResult result}) {
     _emit(seenEvent, result: result);
@@ -25,11 +25,7 @@ abstract final class ProofFloorRescueAnalytics {
     required ProofFloorRescueResult result,
     required ProofFloorRescueCtaType ctaType,
   }) {
-    _emit(
-      ctaTappedEvent,
-      result: result,
-      ctaType: ctaType,
-    );
+    _emit(ctaTappedEvent, result: result, ctaType: ctaType);
   }
 
   static void feedbackAnswered({

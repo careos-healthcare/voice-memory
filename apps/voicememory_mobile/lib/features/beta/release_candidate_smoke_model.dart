@@ -26,13 +26,12 @@ enum ReleaseCandidateSmokeStatus {
   missing;
 
   String get label => switch (this) {
-        ReleaseCandidateSmokeStatus.ready =>
-          ReleaseCandidateSmokeCopy.statusReady,
-        ReleaseCandidateSmokeStatus.checkManually =>
-          ReleaseCandidateSmokeCopy.statusCheckManually,
-        ReleaseCandidateSmokeStatus.missing =>
-          ReleaseCandidateSmokeCopy.statusMissing,
-      };
+    ReleaseCandidateSmokeStatus.ready => ReleaseCandidateSmokeCopy.statusReady,
+    ReleaseCandidateSmokeStatus.checkManually =>
+      ReleaseCandidateSmokeCopy.statusCheckManually,
+    ReleaseCandidateSmokeStatus.missing =>
+      ReleaseCandidateSmokeCopy.statusMissing,
+  };
 }
 
 class ReleaseCandidateSmokeRow {
@@ -65,13 +64,10 @@ class ReleaseCandidateSmokeReport {
   final List<String> manualChecklistSteps;
 
   List<String> get visibleCopyBlocks => [
-        title,
-        summary,
-        for (final row in rows) ...[
-          row.label,
-          row.status.label,
-        ],
-        manualChecklistTitle,
-        ...manualChecklistSteps,
-      ];
+    title,
+    summary,
+    for (final row in rows) ...[row.label, row.status.label],
+    manualChecklistTitle,
+    ...manualChecklistSteps,
+  ];
 }

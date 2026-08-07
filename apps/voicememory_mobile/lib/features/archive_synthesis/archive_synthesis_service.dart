@@ -1,4 +1,5 @@
-import '../../api/api_client.dart';
+import '../../core/network/api_result.dart';
+import '../../data/repositories/archive_synthesis_repository.dart';
 import '../../config/app_config.dart';
 import '../../models/entitlement.dart';
 import '../../storage/device_id.dart';
@@ -15,15 +16,13 @@ import 'archive_synthesis_trigger.dart';
 /// GPT-5 synthesis V2 — parallel layer; does not modify archive engines.
 class ArchiveSynthesisService {
   ArchiveSynthesisService({
-    required ArchiveSynthesisStore store,
-    required ApiClient api,
-    required DeviceIdStore deviceIds,
-  }) : _store = store,
-       _api = api,
-       _deviceIds = deviceIds;
+    required this._store,
+    required this._repository,
+    required this._deviceIds,
+  });
 
   final ArchiveSynthesisStore _store;
-  final ApiClient _api;
+  final ArchiveSynthesisRepository _repository;
   final DeviceIdStore _deviceIds;
 
   Future<ArchiveSynthesisLoadResult> loadMonthly({
@@ -87,11 +86,15 @@ class ArchiveSynthesisService {
       milestonesReached: milestones,
     );
 
-    final response = await _api.postArchiveSynthesis(
+    final responseResult = await _repository.postArchiveSynthesis(
       synthesisType: ArchiveSynthesisType.monthly,
       monthKey: monthKey,
       userId: subjectId,
       pack: pack,
+    );
+    final response = responseResult.when(
+      success: (value) => value,
+      onFailure: (_) => null,
     );
 
     final review = response?.monthlyReview;
@@ -147,12 +150,16 @@ class ArchiveSynthesisService {
         milestonesReached: milestones,
       );
 
-      final response = await _api.postArchiveSynthesis(
+      final responseResult = await _repository.postArchiveSynthesis(
         synthesisType: ArchiveSynthesisType.milestone,
         monthKey: monthKey,
         userId: subjectId,
         pack: pack,
         milestoneThreshold: threshold,
+      );
+      final response = responseResult.when(
+        success: (value) => value,
+        onFailure: (_) => null,
       );
 
       final review = response?.milestoneReview;
@@ -227,11 +234,15 @@ class ArchiveSynthesisService {
       milestonesReached: milestones,
     );
 
-    final response = await _api.postArchiveSynthesis(
+    final responseResult = await _repository.postArchiveSynthesis(
       synthesisType: ArchiveSynthesisType.historian,
       monthKey: monthKey,
       userId: subjectId,
       pack: pack,
+    );
+    final response = responseResult.when(
+      success: (value) => value,
+      onFailure: (_) => null,
     );
 
     final report = response?.historianReport;
@@ -294,11 +305,15 @@ class ArchiveSynthesisService {
       return const ArchiveDeepDiveNarrativeLoadResult.backendUnavailable();
     }
 
-    final response = await _api.postArchiveSynthesis(
+    final responseResult = await _repository.postArchiveSynthesis(
       synthesisType: ArchiveSynthesisType.deepDive,
       monthKey: monthKey,
       userId: subjectId,
       pack: pack,
+    );
+    final response = responseResult.when(
+      success: (value) => value,
+      onFailure: (_) => null,
     );
 
     final narrative = response?.deepDiveNarrative;

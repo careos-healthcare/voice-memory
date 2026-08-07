@@ -22,18 +22,18 @@ class ArchiveWatchlistCard extends StatefulWidget {
     this.onAddMoment,
     this.store,
     this.engine = const ArchiveWatchlistEngine(),
-    List<ArchiveWatchlistItem>? initialItems,
-  }) : _initialItems = initialItems;
+    this._initialItems,
+  });
 
   const ArchiveWatchlistCard.test({
     super.key,
     required this.entryCount,
     required this.entries,
-    required List<ArchiveWatchlistItem>? initialItems,
+    required this._initialItems,
     this.onAddMoment,
     this.store,
     this.engine = const ArchiveWatchlistEngine(),
-  }) : _initialItems = initialItems;
+  });
 
   final int entryCount;
   final List<JournalEntry> entries;
@@ -88,10 +88,10 @@ class _ArchiveWatchlistCardState extends State<ArchiveWatchlistCard> {
   }
 
   ArchiveWatchlistCardResult get _result => widget.engine.build(
-        entries: widget.entries,
-        items: _items,
-        entryCount: widget.entryCount,
-      );
+    entries: widget.entries,
+    items: _items,
+    entryCount: widget.entryCount,
+  );
 
   Future<void> _addItem(ArchiveWatchlistItem item) async {
     if (!ArchiveWatchlistGates.canAddTheme(_items.length)) {
@@ -197,7 +197,9 @@ class _ArchiveWatchlistCardState extends State<ArchiveWatchlistCard> {
       margin: const EdgeInsets.only(bottom: AppSpacing.md),
       padding: const EdgeInsets.all(AppSpacing.md),
       decoration: VoiceMemoryCards.standard(background: AppColors.surfaceAlt),
-      child: _choosing ? _chooseContent(context) : _savedContent(context, result),
+      child: _choosing
+          ? _chooseContent(context)
+          : _savedContent(context, result),
     );
   }
 
@@ -418,11 +420,7 @@ class _ArchiveWatchlistCardState extends State<ArchiveWatchlistCard> {
 }
 
 class _OptionButton extends StatelessWidget {
-  const _OptionButton({
-    super.key,
-    required this.label,
-    required this.onTap,
-  });
+  const _OptionButton({super.key, required this.label, required this.onTap});
 
   final String label;
   final VoidCallback onTap;

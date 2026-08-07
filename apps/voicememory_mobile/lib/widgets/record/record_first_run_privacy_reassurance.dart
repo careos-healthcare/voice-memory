@@ -49,10 +49,9 @@ class RecordFirstRunPrivacyReassurance extends StatelessWidget {
             onPressed: () => showArchiveDataFlowSheet(context),
             child: Text(
               RecordScreenFramingCopy.firstRunPrivacyLink,
-              style: ArchiveMobileTypography.responsiveHelper(context).copyWith(
-                fontSize: 12,
-                decoration: TextDecoration.underline,
-              ),
+              style: ArchiveMobileTypography.responsiveHelper(
+                context,
+              ).copyWith(fontSize: 12, decoration: TextDecoration.underline),
             ),
           ),
         ],

@@ -27,9 +27,11 @@ abstract final class ProPreviewEngine {
     bool whatChangedQuestionActive = false,
     bool patternReviewInboxHasActiveItems = false,
   }) {
-    final firstProofPayoffSeen = firstProofPayoffVisible ||
+    final firstProofPayoffSeen =
+        firstProofPayoffVisible ||
         FirstProofPayoffEngine.build(entries: entries) != null;
-    final hasFirstProof = firstProofPayoffSeen ||
+    final hasFirstProof =
+        firstProofPayoffSeen ||
         EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(entries);
 
     return ProPreviewContext(
@@ -51,9 +53,7 @@ abstract final class ProPreviewEngine {
     );
   }
 
-  static ProPreviewResult build({
-    required ProPreviewContext context,
-  }) {
+  static ProPreviewResult build({required ProPreviewContext context}) {
     final shouldShow = shouldShowCard(context);
     return ProPreviewResult(
       shouldShow: shouldShow,

@@ -54,20 +54,20 @@ const _forbiddenOnboardingTerms = [
 const _privateSnippet = 'felt pressure at work before saying yes';
 
 JournalEntry _capacityEntry(String id) => JournalEntry(
-      id: id,
-      createdAt: DateTime(2026, 6, 15, 12),
-      transcript: 'I said yes again with no capacity left.',
-      durationSeconds: 30,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 2,
-        recurringThemes: ['work'],
-        exactLanguagePattern: '',
-        concreteObservation: 'Work pressure showed up in this moment.',
-        repeatedSignal: '',
-      ),
-    );
+  id: id,
+  createdAt: DateTime(2026, 6, 15, 12),
+  transcript: 'I said yes again with no capacity left.',
+  durationSeconds: 30,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 2,
+    recurringThemes: ['work'],
+    exactLanguagePattern: '',
+    concreteObservation: 'Work pressure showed up in this moment.',
+    repeatedSignal: '',
+  ),
+);
 
 CapacityPullReasonRecord _pullReason(String entryId, List<String> ids) =>
     CapacityPullReasonRecord(
@@ -83,7 +83,11 @@ void _expectNoBannedCopy(Iterable<String> visible) {
     final lower = text.toLowerCase();
     for (final phrase in _bannedPhrases) {
       if (phrase == 'therapy' && lower.contains('not therapy')) continue;
-      expect(lower, isNot(contains(phrase)), reason: '"$text" contains "$phrase"');
+      expect(
+        lower,
+        isNot(contains(phrase)),
+        reason: '"$text" contains "$phrase"',
+      );
     }
     expect(lower, isNot(contains(_privateSnippet)));
     for (final reason in PrivacyCopyPolicy.violationsInLiteral(text)) {
@@ -97,35 +101,34 @@ ArchiveHomePriorityInput _calmHomeInput({
   bool dailyChangeVisible = true,
   bool loopVisible = true,
   bool pullReasonVisible = true,
-}) =>
-    ArchiveHomePriorityInput(
-      savedEntryCount: 1,
-      usableEvidenceCount: 1,
-      depthLevel: ArchiveDepthLevel.notStarted,
-      returnChangesAvailable: false,
-      weeklyReviewAvailable: false,
-      sampleMode: false,
-      proPreviewPromoVisible: false,
-      showEmptySample: false,
-      archiveDailyChangeVisible: dailyChangeVisible,
-      firstWeekPathVisible: false,
-      dailyArchiveExerciseVisible: false,
-      archiveClarityProgressVisible: false,
-      capacityThreeMomentActivationVisible: activationVisible,
-      capacityLoopVisible: loopVisible,
-      capacityPullReasonVisible: pullReasonVisible,
-      capacityDecisionOutcomeVisible: false,
-      capacityCostLaterCheckinVisible: false,
-      capacityActivationFitVisible: false,
-      beforeYouSayYesPauseVisible: false,
-      capacityWeeklyReviewVisible: false,
-      capacityBoundaryResponseVisible: false,
-      thenVsNowVisible: false,
-      archiveCalendarVisible: false,
-      reviewRitualVisible: false,
-      milestoneShareVisible: false,
-      calmCapacityActivationMode: true,
-    );
+}) => ArchiveHomePriorityInput(
+  savedEntryCount: 1,
+  usableEvidenceCount: 1,
+  depthLevel: ArchiveDepthLevel.notStarted,
+  returnChangesAvailable: false,
+  weeklyReviewAvailable: false,
+  sampleMode: false,
+  proPreviewPromoVisible: false,
+  showEmptySample: false,
+  archiveDailyChangeVisible: dailyChangeVisible,
+  firstWeekPathVisible: false,
+  dailyArchiveExerciseVisible: false,
+  archiveClarityProgressVisible: false,
+  capacityThreeMomentActivationVisible: activationVisible,
+  capacityLoopVisible: loopVisible,
+  capacityPullReasonVisible: pullReasonVisible,
+  capacityDecisionOutcomeVisible: false,
+  capacityCostLaterCheckinVisible: false,
+  capacityActivationFitVisible: false,
+  beforeYouSayYesPauseVisible: false,
+  capacityWeeklyReviewVisible: false,
+  capacityBoundaryResponseVisible: false,
+  thenVsNowVisible: false,
+  archiveCalendarVisible: false,
+  reviewRitualVisible: false,
+  milestoneShareVisible: false,
+  calmCapacityActivationMode: true,
+);
 
 void main() {
   group('Onboarding clarity', () {
@@ -148,15 +151,12 @@ void main() {
     });
 
     test('how it works explains save choose pull come back review', () {
-      expect(
-        AcquisitionStartCopy.capacityHowItWorksSteps,
-        [
-          'Save one real moment',
-          'Choose what pulled you in',
-          'Come back when it repeats',
-          'See what appeared and returned',
-        ],
-      );
+      expect(AcquisitionStartCopy.capacityHowItWorksSteps, [
+        'Save one real moment',
+        'Choose what pulled you in',
+        'Come back when it repeats',
+        'See what appeared and returned',
+      ]);
     });
 
     test('onboarding does not expose internal terms', () {
@@ -184,10 +184,7 @@ void main() {
     test('1 moment state says wait and do not force it', () {
       expect(
         CapacityReturnTriggerCopy.archiveHomeBody(1, target: 3).toLowerCase(),
-        allOf(
-          contains('wait for the next real one'),
-          contains('do not force'),
-        ),
+        allOf(contains('wait for the next real one'), contains('do not force')),
       );
     });
 
@@ -199,10 +196,7 @@ void main() {
     });
 
     test('return trigger primary CTA says Done for now', () {
-      expect(
-        CapacityReturnTriggerCopy.archiveHomePrimaryCta,
-        'Done for now',
-      );
+      expect(CapacityReturnTriggerCopy.archiveHomePrimaryCta, 'Done for now');
     });
 
     test('under 3 moments only one primary capacity card is selected', () {
@@ -215,10 +209,7 @@ void main() {
           pullReasonVisible: true,
         ),
       );
-      expect(
-        ArchiveHomeCardPriority.onlyOneCapacityPrimaryCard(plan),
-        isTrue,
-      );
+      expect(ArchiveHomeCardPriority.onlyOneCapacityPrimaryCard(plan), isTrue);
       expect(
         plan.primarySections,
         contains(ArchiveHomeSectionId.capacityThreeMomentActivation),
@@ -357,8 +348,9 @@ void main() {
         responseId: CapacityBoundaryResponseIds.cannotAnswerNow,
         selectedAt: DateTime(2026, 6, 16),
       );
-      final boundaryText =
-          CapacityBoundaryResponseCopy.textForId(selection.responseId);
+      final boundaryText = CapacityBoundaryResponseCopy.textForId(
+        selection.responseId,
+      );
       expect(boundaryText, isNotNull);
       expect(
         boundaryText,
@@ -392,17 +384,24 @@ void main() {
 
   group('Commercial readiness docs', () {
     test('paid checklist requires 2-3 paid-intent users', () {
-      final doc = File('docs/PAID_LAUNCH_DECISION_CHECKLIST.md').readAsStringSync();
+      final doc = File(
+        'docs/PAID_LAUNCH_DECISION_CHECKLIST.md',
+      ).readAsStringSync();
       expect(doc, contains('2–3 clear paid-intent users'));
       expect(doc, contains('RevenueCat readiness comes after return'));
-      expect(doc, contains('Do not enable paid launch from one maybe-paid user'));
+      expect(
+        doc,
+        contains('Do not enable paid launch from one maybe-paid user'),
+      );
     });
   });
 
   group('Dependency maintenance doc', () {
     test('dependency maintenance plan exists', () {
       expect(File('docs/DEPENDENCY_MAINTENANCE_PLAN.md').existsSync(), isTrue);
-      final doc = File('docs/DEPENDENCY_MAINTENANCE_PLAN.md').readAsStringSync();
+      final doc = File(
+        'docs/DEPENDENCY_MAINTENANCE_PLAN.md',
+      ).readAsStringSync();
       expect(doc.toLowerCase(), contains('deferred during testflight'));
     });
   });

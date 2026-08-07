@@ -26,23 +26,22 @@ class ArchiveMilestonesCard extends StatefulWidget {
     this.returnRitualStore,
     this.engine = const ArchiveMilestonesEngine(),
     this.initialWatchlistCount = 0,
-    ReturnRitualChoice? initialReturnRitual,
+    this._initialReturnRitual,
     this.sampleMode = false,
     this.skipPrefsLoad = false,
-  }) : _initialReturnRitual = initialReturnRitual;
+  });
 
   const ArchiveMilestonesCard.test({
     super.key,
     required this.entries,
     this.initialWatchlistCount = 0,
-    ReturnRitualChoice? initialReturnRitual,
+    this._initialReturnRitual,
     this.onAddMoment,
     this.watchlistStore,
     this.returnRitualStore,
     this.engine = const ArchiveMilestonesEngine(),
     this.sampleMode = false,
-  })  : _initialReturnRitual = initialReturnRitual,
-        skipPrefsLoad = true;
+  }) : skipPrefsLoad = true;
 
   final List<JournalEntry> entries;
   final VoidCallback? onAddMoment;
@@ -161,7 +160,8 @@ class _ArchiveMilestonesCardState extends State<ArchiveMilestonesCard> {
           const SizedBox(height: AppSpacing.sm),
           FilledButton(
             key: const Key('archive_milestones_add_moment_button'),
-            onPressed: widget.onAddMoment ??
+            onPressed:
+                widget.onAddMoment ??
                 () => context.push(result.primaryActionRoute),
             child: Text(result.primaryActionLabel),
           ),

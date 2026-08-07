@@ -68,27 +68,26 @@ abstract final class SaveARepeatHabit {
         message: _messageFor(decision),
       );
 
-  static String _messageFor(SaveARepeatHabitDecision decision) =>
-      switch (decision) {
-        SaveARepeatHabitDecision.clarifyRepeatTrigger =>
-          SaveARepeatHabitCopy.triggerLine,
-        SaveARepeatHabitDecision.clarifyOneSentenceEnough =>
-          SaveARepeatHabitCopy.oneSentenceLine,
-        SaveARepeatHabitDecision.clarifyNoDailyPressure =>
-          SaveARepeatHabitCopy.notDailyLine,
-        SaveARepeatHabitDecision.clarifyNoDashboardMaintenance =>
-          SaveARepeatHabitCopy.notDailyLine,
-        SaveARepeatHabitDecision.clarifyArchiveComparesLater =>
-          SaveARepeatHabitCopy.whyItMattersLine,
-        SaveARepeatHabitDecision.clarifyChatGptHabitDifference =>
-          SaveARepeatHabitCopy.chatDifferenceLine,
-        SaveARepeatHabitDecision.clarifyNotesHabitDifference =>
-          SaveARepeatHabitCopy.notesDifferenceLine,
-        SaveARepeatHabitDecision.pricingValidation =>
-          SaveARepeatHabitCopy.proLine,
-        SaveARepeatHabitDecision.releaseCandidate =>
-          SaveARepeatHabitCopy.headline,
-      };
+  static String _messageFor(
+    SaveARepeatHabitDecision decision,
+  ) => switch (decision) {
+    SaveARepeatHabitDecision.clarifyRepeatTrigger =>
+      SaveARepeatHabitCopy.triggerLine,
+    SaveARepeatHabitDecision.clarifyOneSentenceEnough =>
+      SaveARepeatHabitCopy.oneSentenceLine,
+    SaveARepeatHabitDecision.clarifyNoDailyPressure =>
+      SaveARepeatHabitCopy.notDailyLine,
+    SaveARepeatHabitDecision.clarifyNoDashboardMaintenance =>
+      SaveARepeatHabitCopy.notDailyLine,
+    SaveARepeatHabitDecision.clarifyArchiveComparesLater =>
+      SaveARepeatHabitCopy.whyItMattersLine,
+    SaveARepeatHabitDecision.clarifyChatGptHabitDifference =>
+      SaveARepeatHabitCopy.chatDifferenceLine,
+    SaveARepeatHabitDecision.clarifyNotesHabitDifference =>
+      SaveARepeatHabitCopy.notesDifferenceLine,
+    SaveARepeatHabitDecision.pricingValidation => SaveARepeatHabitCopy.proLine,
+    SaveARepeatHabitDecision.releaseCandidate => SaveARepeatHabitCopy.headline,
+  };
 }
 
 enum SaveARepeatHabitDecision {
@@ -130,10 +129,7 @@ class SaveARepeatHabitInput {
 }
 
 class SaveARepeatHabitResult {
-  const SaveARepeatHabitResult({
-    required this.decision,
-    required this.message,
-  });
+  const SaveARepeatHabitResult({required this.decision, required this.message});
 
   final SaveARepeatHabitDecision decision;
   final String message;

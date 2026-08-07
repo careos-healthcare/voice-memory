@@ -8,17 +8,14 @@ import 'package:voicememory_mobile/billing/archive_entitlement_reader.dart';
 import 'package:voicememory_mobile/dev/visual_audit_overrides.dart';
 import 'package:voicememory_mobile/features/archive_proof/visible_archive_proof_copy.dart';
 import 'package:voicememory_mobile/features/first_session/first_save_rescue.dart';
-import 'package:voicememory_mobile/features/onboarding/first_session_onboarding_copy.dart';
 import 'package:voicememory_mobile/features/onboarding/first_session_onboarding_store.dart';
 import 'package:voicememory_mobile/features/onboarding/record_return_pro_state.dart';
 import 'package:voicememory_mobile/features/low_evidence/low_evidence_copy.dart';
 import 'package:voicememory_mobile/features/record/daily_mirror_copy.dart';
 import 'package:voicememory_mobile/features/early_archive/early_first_signal_copy.dart';
-import 'package:voicememory_mobile/features/early_archive/early_first_signal_engine.dart';
 import 'package:voicememory_mobile/features/record/record_empty_archive_gates.dart';
 import 'package:voicememory_mobile/features/trust/pending_transcript_recovery_copy.dart';
 import 'package:voicememory_mobile/features/voice_capture/microphone_permission_copy.dart';
-import 'package:voicememory_mobile/features/voice_capture/voice_capture_copy.dart';
 import 'package:voicememory_mobile/features/voice_capture/voice_capture_quality.dart';
 import 'package:voicememory_mobile/product/consumer_ui_copy.dart';
 import 'package:voicememory_mobile/record/record_screen_framing_copy.dart';
@@ -31,8 +28,8 @@ import 'package:voicememory_mobile/features/pressure_retention/done_for_today_re
 import 'package:voicememory_mobile/features/pressure_retention/pressure_check_in_record.dart';
 import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
-import 'package:voicememory_mobile/screens/pressure_check_in_screen.dart';
-import 'package:voicememory_mobile/screens/pressure_insights_screen.dart';
+import 'package:archiveme_research/screens/pressure_check_in_screen.dart';
+import 'package:archiveme_research/screens/pressure_insights_screen.dart';
 import 'package:voicememory_mobile/screens/record_screen.dart';
 import 'package:voicememory_mobile/services/activation_funnel_analytics.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
@@ -51,6 +48,7 @@ import 'package:voicememory_mobile/widgets/referral/invited_day_two_return_card.
 import 'package:voicememory_mobile/widgets/referral/invited_user_welcome_card.dart';
 
 import 'support/memory_pressure_stores.dart';
+import 'support/test_storage_sandbox.dart';
 
 class _MemoryPrefs extends MobilePrefsStore {
   _MemoryPrefs() : super(file: File('test/tmp/invited_welcome/unused.json'));
@@ -132,7 +130,12 @@ void main() {
 
       expect(find.text('How ArchiveMe works'), findsOneWidget);
       expect(find.text('Record one small thing.'), findsOneWidget);
-      expect(find.text('After a second moment, ArchiveMe can start comparing your own words.'), findsOneWidget);
+      expect(
+        find.text(
+          'After a second moment, ArchiveMe can start comparing your own words.',
+        ),
+        findsOneWidget,
+      );
       expect(
         find.text('Tomorrow, check whether it returned, faded, or changed.'),
         findsOneWidget,
@@ -520,50 +523,49 @@ void main() {
   });
 
   group('Record screen first-session ladder', () {
-    late Directory tempDir;
+    late TestStorageSandbox sandbox;
 
-    JournalEntry _usableEntry({String id = 'e1'}) => JournalEntry(
-          id: id,
-          createdAt: DateTime(2026, 6, 12, 12),
-          transcript:
-              'I felt pressure before saying yes again even when I was tired.',
-          durationSeconds: 30,
-          localAudioPath: '/tmp/$id.m4a',
-          reflection: const Reflection(
-            mood: 'neutral',
-            emotionalIntensity: 2,
-            recurringThemes: ['work'],
-            exactLanguagePattern: '',
-            concreteObservation: 'Work pressure showed up in this moment.',
-            repeatedSignal: '',
-          ),
-        );
+    JournalEntry usableEntry({String id = 'e1'}) => JournalEntry(
+      id: id,
+      createdAt: DateTime(2026, 6, 12, 12),
+      transcript:
+          'I felt pressure before saying yes again even when I was tired.',
+      durationSeconds: 30,
+      localAudioPath: '/tmp/$id.m4a',
+      reflection: const Reflection(
+        mood: 'neutral',
+        emotionalIntensity: 2,
+        recurringThemes: ['work'],
+        exactLanguagePattern: '',
+        concreteObservation: 'Work pressure showed up in this moment.',
+        repeatedSignal: '',
+      ),
+    );
 
-    JournalEntry _degradedEntry({String id = 'v1'}) => JournalEntry(
-          id: id,
-          createdAt: DateTime(2026, 6, 12, 12),
-          transcript:
-              '[draft] Recording saved locally — transcribe when connected',
-          durationSeconds: 20,
-          localAudioPath: '/tmp/$id.m4a',
-          reflection: const Reflection(
-            mood: 'neutral',
-            emotionalIntensity: 0,
-            recurringThemes: [],
-            exactLanguagePattern: '',
-            concreteObservation: '',
-            repeatedSignal: '',
-          ),
-        );
+    JournalEntry degradedEntry({String id = 'v1'}) => JournalEntry(
+      id: id,
+      createdAt: DateTime(2026, 6, 12, 12),
+      transcript: '[draft] Recording saved locally — transcribe when connected',
+      durationSeconds: 20,
+      localAudioPath: '/tmp/$id.m4a',
+      reflection: const Reflection(
+        mood: 'neutral',
+        emotionalIntensity: 0,
+        recurringThemes: [],
+        exactLanguagePattern: '',
+        concreteObservation: '',
+        repeatedSignal: '',
+      ),
+    );
 
     setUp(() async {
-      tempDir = Directory.systemTemp.createTempSync('vm_first_session_ladder_');
-      await AppServices.resetForTest(
-        journalPath: '${tempDir.path}/journal.json',
-      );
+      sandbox = TestStorageSandbox.create();
+      await AppServices.resetForTest(journalPath: sandbox.journalPath);
       await FirstSessionOnboardingStore.resetForTest();
       VisualAuditOverrides.setRecordPresentation(null);
     });
+
+    tearDown(() => sandbox.dispose());
 
     tearDown(() {
       VisualAuditOverrides.setRecordPresentation(null);
@@ -574,7 +576,7 @@ void main() {
       await tester.runAsync(() async {
         for (var i = 0; i < count; i++) {
           await AppServices.instance.journalStore.save(
-            _usableEntry(id: 'seed_$i'),
+            usableEntry(id: 'seed_$i'),
           );
         }
       });
@@ -655,80 +657,117 @@ void main() {
       );
     });
 
-    test('empty-archive gates retire legacy onboarding on the record screen', () {
-      expect(
-        RecordEmptyArchiveGates.showLegacyEmptyOnboarding(
-          loaded: true,
-          entryCount: 0,
-        ),
-        isFalse,
-      );
-      expect(
-        RecordEmptyArchiveGates.showTwoDayActivationCard(
-          loaded: true,
-          entryCount: 0,
-        ),
-        isFalse,
-      );
-      expect(
-        RecordEmptyArchiveGates.showBottomRetentionCards(
-          loaded: true,
-          entryCount: 0,
-        ),
-        isFalse,
-      );
-    });
+    test(
+      'empty-archive gates retire legacy onboarding on the record screen',
+      () {
+        expect(
+          RecordEmptyArchiveGates.showLegacyEmptyOnboarding(
+            loaded: true,
+            entryCount: 0,
+          ),
+          isFalse,
+        );
+        expect(
+          RecordEmptyArchiveGates.showTwoDayActivationCard(
+            loaded: true,
+            entryCount: 0,
+          ),
+          isFalse,
+        );
+        expect(
+          RecordEmptyArchiveGates.showBottomRetentionCards(
+            loaded: true,
+            entryCount: 0,
+          ),
+          isFalse,
+        );
+      },
+    );
 
     testWidgets('zero entries show simplified capture-first layout', (
       tester,
     ) async {
       await pumpRecordScreen(tester);
 
-      expect(find.byKey(const Key('record_first_run_screen_card')), findsOneWidget);
+      expect(
+        find.byKey(const Key('record_first_run_screen_card')),
+        findsOneWidget,
+      );
       expect(find.text(RecordFirstRunPromiseCopy.title), findsOneWidget);
-      expect(find.byKey(const Key('first_session_onboarding_card')), findsNothing);
-      expect(find.byKey(const Key('record_top_archive_promise_hero')), findsNothing);
-      expect(find.byKey(const Key('record_first_use_capture_section')), findsNothing);
-      expect(find.byKey(const Key('daily_archive_exercise_record_card')), findsNothing);
+      expect(
+        find.byKey(const Key('first_session_onboarding_card')),
+        findsNothing,
+      );
+      expect(
+        find.byKey(const Key('record_top_archive_promise_hero')),
+        findsNothing,
+      );
+      expect(
+        find.byKey(const Key('record_first_use_capture_section')),
+        findsNothing,
+      );
+      expect(
+        find.byKey(const Key('daily_archive_exercise_record_card')),
+        findsNothing,
+      );
       expect(find.text("Today's map prompt"), findsNothing);
       expect(find.textContaining('private mind map'), findsNothing);
       expect(find.byKey(const Key('todays_one_question_card')), findsNothing);
       expect(find.text("Today's exercise"), findsNothing);
       expect(find.text("Today's one question"), findsNothing);
-      expect(find.byKey(const Key('first_session_explanation_card')), findsNothing);
+      expect(
+        find.byKey(const Key('first_session_explanation_card')),
+        findsNothing,
+      );
       expect(find.byKey(const Key('first_save_rescue_card')), findsNothing);
       expect(find.byKey(const Key('two_day_activation_card')), findsNothing);
       expect(find.byType(CaptureEntryActions), findsOneWidget);
-      expect(find.text(MicrophonePermissionCopy.requestMicrophoneCta), findsOneWidget);
-      expect(find.text(CaptureEntryActions.logPressureMomentLabel), findsNothing);
+      expect(
+        find.text(MicrophonePermissionCopy.requestMicrophoneCta),
+        findsOneWidget,
+      );
+      expect(
+        find.text(CaptureEntryActions.logPressureMomentLabel),
+        findsNothing,
+      );
       expect(find.text(EmptyArchiveCopy.typeInsteadCta), findsOneWidget);
       expect(find.byKey(const Key('capture_how_it_works_link')), findsNothing);
       expect(tester.takeException(), isNull);
     });
 
-    testWidgets('one entry ready stays capture-first without daily mirror card', (
-      tester,
-    ) async {
-      await pumpRecordScreen(tester, entryCount: 1);
+    testWidgets(
+      'one entry ready stays capture-first without daily mirror card',
+      (tester) async {
+        await pumpRecordScreen(tester, entryCount: 1);
 
-      expect(find.text(DailyMirrorCopy.heardHeroTitle), findsNothing);
-      expect(find.byKey(const Key('first_session_explanation_card')), findsNothing);
-      expect(find.byKey(const Key('first_save_rescue_card')), findsNothing);
-      expect(find.byKey(const Key('two_day_activation_card')), findsNothing);
-      expect(find.byKey(const Key('daily_archive_exercise_record_card')), findsNothing);
-      expect(
-        find.byKey(const Key('low_evidence_guidance_card_oneRealEntry')),
-        findsOneWidget,
-      );
-      expect(find.text(LowEvidenceCopy.oneEntryTitle), findsOneWidget);
-      expect(find.text(LowEvidenceCopy.oneEntryBody), findsOneWidget);
-      expect(find.byKey(const Key('early_first_signal_card_oneEntryReceipt')), findsNothing);
-      expect(find.text(EarlyFirstSignalCopy.oneEntryTitle), findsNothing);
-      expect(find.text(EarlyFirstSignalCopy.addMomentCta), findsNothing);
-      expect(find.text(ConsumerUiCopy.recordMomentCta), findsOneWidget);
-      expect(find.text(RecordScreenFramingCopy.title), findsOneWidget);
-      expect(tester.takeException(), isNull);
-    });
+        expect(find.text(DailyMirrorCopy.heardHeroTitle), findsNothing);
+        expect(
+          find.byKey(const Key('first_session_explanation_card')),
+          findsNothing,
+        );
+        expect(find.byKey(const Key('first_save_rescue_card')), findsNothing);
+        expect(find.byKey(const Key('two_day_activation_card')), findsNothing);
+        expect(
+          find.byKey(const Key('daily_archive_exercise_record_card')),
+          findsNothing,
+        );
+        expect(
+          find.byKey(const Key('low_evidence_guidance_card_oneRealEntry')),
+          findsOneWidget,
+        );
+        expect(find.text(LowEvidenceCopy.oneEntryTitle), findsOneWidget);
+        expect(find.text(LowEvidenceCopy.oneEntryBody), findsOneWidget);
+        expect(
+          find.byKey(const Key('early_first_signal_card_oneEntryReceipt')),
+          findsNothing,
+        );
+        expect(find.text(EarlyFirstSignalCopy.oneEntryTitle), findsNothing);
+        expect(find.text(EarlyFirstSignalCopy.addMomentCta), findsNothing);
+        expect(find.text(ConsumerUiCopy.recordMomentCta), findsOneWidget);
+        expect(find.text(RecordScreenFramingCopy.title), findsOneWidget);
+        expect(tester.takeException(), isNull);
+      },
+    );
 
     Future<void> pumpDoneState(
       WidgetTester tester, {
@@ -741,7 +780,9 @@ void main() {
           entriesAfterSave: entriesAfterSave,
           justSavedFirst:
               entriesAfterSave.length == 1 &&
-              !VoiceCaptureQuality.isDegradedVoiceCapture(entriesAfterSave.first),
+              !VoiceCaptureQuality.isDegradedVoiceCapture(
+                entriesAfterSave.first,
+              ),
           degradedVoicePostSave: degradedVoicePostSave,
           lastCaptureAnalysisSucceeded: !degradedVoicePostSave,
         ),
@@ -771,15 +812,27 @@ void main() {
     testWidgets('first save post-save shows one calm saved card', (
       tester,
     ) async {
-      await pumpDoneState(tester, entriesAfterSave: [_usableEntry()]);
+      await pumpDoneState(tester, entriesAfterSave: [usableEntry()]);
 
-      expect(find.byKey(const Key('first_entry_saved_receipt_card')), findsNothing);
-      expect(find.byKey(const Key('first_save_archive_started_card')), findsOneWidget);
+      expect(
+        find.byKey(const Key('first_entry_saved_receipt_card')),
+        findsNothing,
+      );
+      expect(
+        find.byKey(const Key('first_save_archive_started_card')),
+        findsOneWidget,
+      );
       expect(find.text(RecordReturnProCopy.evidenceTitle), findsOneWidget);
       expect(find.text('Record if it happens again'), findsOneWidget);
-      expect(find.text(VisibleArchiveProofCopy.firstSaveDoneForTodayCta), findsOneWidget);
+      expect(
+        find.text(VisibleArchiveProofCopy.firstSaveDoneForTodayCta),
+        findsOneWidget,
+      );
       expect(find.byKey(const Key('day_two_return_loop_card')), findsNothing);
-      expect(find.byKey(const Key('day_two_return_preview_card')), findsNothing);
+      expect(
+        find.byKey(const Key('day_two_return_preview_card')),
+        findsNothing,
+      );
       expect(find.byKey(const Key('two_day_activation_card')), findsNothing);
       expect(find.text(ConsumerUiCopy.doneCta), findsNothing);
       expect(find.text(ConsumerUiCopy.recordAnotherCta), findsNothing);
@@ -791,24 +844,33 @@ void main() {
     ) async {
       await pumpDoneState(
         tester,
-        entriesAfterSave: [_degradedEntry()],
+        entriesAfterSave: [degradedEntry()],
         degradedVoicePostSave: true,
       );
 
       expect(find.text(PendingTranscriptRecoveryCopy.title), findsOneWidget);
-      expect(find.text(PendingTranscriptRecoveryCopy.primaryAction), findsNWidgets(2));
+      expect(
+        find.text(PendingTranscriptRecoveryCopy.primaryAction),
+        findsNWidgets(2),
+      );
       expect(find.byKey(const Key('day_two_return_loop_card')), findsNothing);
-      expect(find.byKey(const Key('first_save_archive_started_card')), findsNothing);
+      expect(
+        find.byKey(const Key('first_save_archive_started_card')),
+        findsNothing,
+      );
       expect(tester.takeException(), isNull);
     });
 
     testWidgets('good transcript post-save hides degraded recovery', (
       tester,
     ) async {
-      await pumpDoneState(tester, entriesAfterSave: [_usableEntry()]);
+      await pumpDoneState(tester, entriesAfterSave: [usableEntry()]);
 
       expect(find.text(PendingTranscriptRecoveryCopy.title), findsNothing);
-      expect(find.byKey(const Key('first_save_archive_started_card')), findsOneWidget);
+      expect(
+        find.byKey(const Key('first_save_archive_started_card')),
+        findsOneWidget,
+      );
       expect(tester.takeException(), isNull);
     });
   });
@@ -1063,17 +1125,17 @@ void main() {
   });
 
   group('Record screen return-path gates', () {
-    late Directory tempDir;
+    late TestStorageSandbox sandbox;
 
     setUp(() async {
-      tempDir = Directory.systemTemp.createTempSync('vm_return_path_gates_');
-      await AppServices.resetForTest(
-        journalPath: '${tempDir.path}/journal.json',
-      );
+      sandbox = TestStorageSandbox.create();
+      await AppServices.resetForTest(journalPath: sandbox.journalPath);
       VisualAuditOverrides.setRecordPresentation(
         const RecordAuditPresentation(ui: RecordUiState.ready),
       );
     });
+
+    tearDown(() => sandbox.dispose());
 
     tearDown(() {
       VisualAuditOverrides.setRecordPresentation(null);
@@ -1148,12 +1210,25 @@ void main() {
       );
     });
 
-    testWidgets('zero and one entry ready screens hide two-day activation card', (
+    // Seeding always happens before the screen is mounted. A journal save
+    // awaited inside `runAsync` while RecordScreen is mounted never completes:
+    // the save resolves against work the mounted screen owns in the fake-async
+    // zone, which only advances while frames are pumped, and `runAsync` pumps
+    // none. The test then dies on the binding's ten-minute real-time timeout
+    // and leaves `runAsync` occupied, so every later test in the file fails
+    // with "Reentrant call to runAsync() denied" and the suite never
+    // terminates — which used to hang the whole `flutter test` run.
+    testWidgets('a zero entry ready screen hides two-day activation card', (
       tester,
     ) async {
       await pumpRecordScreen(tester);
       expect(find.byKey(const Key('two_day_activation_card')), findsNothing);
+      expect(tester.takeException(), isNull);
+    });
 
+    testWidgets('a one entry ready screen hides two-day activation card', (
+      tester,
+    ) async {
       await tester.runAsync(() async {
         await seedEntries([DateTime.now()]);
       });
@@ -1460,13 +1535,11 @@ void main() {
   });
 
   group('Invited user welcome on the record screen', () {
-    late Directory tempDir;
+    late TestStorageSandbox sandbox;
 
     setUp(() async {
-      tempDir = Directory.systemTemp.createTempSync('vm_invited_welcome_');
-      await AppServices.resetForTest(
-        journalPath: '${tempDir.path}/journal.json',
-      );
+      sandbox = TestStorageSandbox.create();
+      await AppServices.resetForTest(journalPath: sandbox.journalPath);
       await FirstSessionOnboardingStore.resetForTest();
       ActivationFunnelAnalytics.resetForTest();
       InvitedUserWelcome.resetSessionForTest();
@@ -1474,6 +1547,8 @@ void main() {
         const RecordAuditPresentation(ui: RecordUiState.ready),
       );
     });
+
+    tearDown(() => sandbox.dispose());
 
     tearDown(() {
       VisualAuditOverrides.setRecordPresentation(null);
@@ -1522,22 +1597,42 @@ void main() {
     testWidgets(
       'empty archive uses simplified promise — invited welcome stays off record screen',
       (tester) async {
-        await pumpRecordScreen(tester, store: storeWith(source: 'weekly_review'));
+        await pumpRecordScreen(
+          tester,
+          store: storeWith(source: 'weekly_review'),
+        );
 
-        expect(find.byKey(const Key('invited_user_welcome_card')), findsNothing);
-        expect(find.byKey(const Key('first_session_explanation_card')), findsNothing);
-        expect(find.byKey(const Key('record_first_run_screen_card')), findsOneWidget);
+        expect(
+          find.byKey(const Key('invited_user_welcome_card')),
+          findsNothing,
+        );
+        expect(
+          find.byKey(const Key('first_session_explanation_card')),
+          findsNothing,
+        );
+        expect(
+          find.byKey(const Key('record_first_run_screen_card')),
+          findsOneWidget,
+        );
         expect(find.byType(CaptureEntryActions), findsOneWidget);
         expect(tester.takeException(), isNull);
       },
     );
 
-    testWidgets('hidden without attribution — simplified promise only', (tester) async {
+    testWidgets('hidden without attribution — simplified promise only', (
+      tester,
+    ) async {
       await pumpRecordScreen(tester, store: storeWith());
 
       expect(find.byKey(const Key('invited_user_welcome_card')), findsNothing);
-      expect(find.byKey(const Key('first_session_explanation_card')), findsNothing);
-      expect(find.byKey(const Key('record_first_run_screen_card')), findsOneWidget);
+      expect(
+        find.byKey(const Key('first_session_explanation_card')),
+        findsNothing,
+      );
+      expect(
+        find.byKey(const Key('record_first_run_screen_card')),
+        findsOneWidget,
+      );
       expect(tester.takeException(), isNull);
     });
 
@@ -1849,13 +1944,11 @@ void main() {
   });
 
   group('Invited Day 2 return copy on the record screen', () {
-    late Directory tempDir;
+    late TestStorageSandbox sandbox;
 
     setUp(() async {
-      tempDir = Directory.systemTemp.createTempSync('vm_invited_day2_');
-      await AppServices.resetForTest(
-        journalPath: '${tempDir.path}/journal.json',
-      );
+      sandbox = TestStorageSandbox.create();
+      await AppServices.resetForTest(journalPath: sandbox.journalPath);
       await FirstSessionOnboardingStore.resetForTest();
       ActivationFunnelAnalytics.resetForTest();
       InvitedUserWelcome.resetSessionForTest();
@@ -1864,6 +1957,8 @@ void main() {
         const RecordAuditPresentation(ui: RecordUiState.ready),
       );
     });
+
+    tearDown(() => sandbox.dispose());
 
     tearDown(() {
       VisualAuditOverrides.setRecordPresentation(null);
@@ -1944,34 +2039,47 @@ void main() {
           id: 'e1',
           createdAt: DateTime.now().subtract(const Duration(days: 1)),
         );
-        await pumpRecordScreen(tester, store: storeWith(source: 'weekly_review'));
+        await pumpRecordScreen(
+          tester,
+          store: storeWith(source: 'weekly_review'),
+        );
 
-        expect(find.byKey(const Key('invited_day_two_return_card')), findsNothing);
+        expect(
+          find.byKey(const Key('invited_day_two_return_card')),
+          findsNothing,
+        );
         expect(find.byKey(const Key('two_day_activation_card')), findsNothing);
         expect(find.byType(CaptureEntryActions), findsOneWidget);
         expect(tester.takeException(), isNull);
       },
     );
 
-    testWidgets('non-invited users also hide generic Day 2 card before two entries', (
-      tester,
-    ) async {
-      await saveEntry(
-        tester,
-        id: 'e1',
-        createdAt: DateTime.now().subtract(const Duration(days: 1)),
-      );
-      await pumpRecordScreen(tester, store: storeWith());
+    testWidgets(
+      'non-invited users also hide generic Day 2 card before two entries',
+      (tester) async {
+        await saveEntry(
+          tester,
+          id: 'e1',
+          createdAt: DateTime.now().subtract(const Duration(days: 1)),
+        );
+        await pumpRecordScreen(tester, store: storeWith());
 
-      expect(find.byKey(const Key('invited_day_two_return_card')), findsNothing);
-      expect(find.byKey(const Key('two_day_activation_card')), findsNothing);
-      expect(tester.takeException(), isNull);
-    });
+        expect(
+          find.byKey(const Key('invited_day_two_return_card')),
+          findsNothing,
+        );
+        expect(find.byKey(const Key('two_day_activation_card')), findsNothing);
+        expect(tester.takeException(), isNull);
+      },
+    );
 
     testWidgets('hidden before the first save', (tester) async {
       await pumpRecordScreen(tester, store: storeWith(source: 'weekly_review'));
 
-      expect(find.byKey(const Key('invited_day_two_return_card')), findsNothing);
+      expect(
+        find.byKey(const Key('invited_day_two_return_card')),
+        findsNothing,
+      );
       expect(tester.takeException(), isNull);
     });
 
@@ -1988,7 +2096,10 @@ void main() {
       );
       await pumpRecordScreen(tester, store: storeWith(source: 'weekly_review'));
 
-      expect(find.byKey(const Key('invited_day_two_return_card')), findsNothing);
+      expect(
+        find.byKey(const Key('invited_day_two_return_card')),
+        findsNothing,
+      );
       expect(tester.takeException(), isNull);
     });
   });

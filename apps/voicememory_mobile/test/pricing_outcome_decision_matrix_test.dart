@@ -20,23 +20,22 @@ PricingValidationSummary _summary({
   int betterCorrectionsCount = 0,
   int clearerTimelineCount = 0,
   int lowerPriceCount = 0,
-}) =>
-    PricingValidationSummary(
-      totalTesters: totalTesters,
-      usefulProofCount: usefulProofCount,
-      sawProCount: sawProCount,
-      understandsProCount: understandsProCount,
-      paywallCtaTapCount: paywallCtaTapCount,
-      wouldPayYesMaybeCount: wouldPayYesMaybeCount,
-      price299Count: price299Count,
-      price499Count: price499Count,
-      price799Count: price799Count,
-      wouldNotPayMonthlyCount: wouldNotPayMonthlyCount,
-      moreProofOverTimeCount: moreProofOverTimeCount,
-      betterCorrectionsCount: betterCorrectionsCount,
-      clearerTimelineCount: clearerTimelineCount,
-      lowerPriceCount: lowerPriceCount,
-    );
+}) => PricingValidationSummary(
+  totalTesters: totalTesters,
+  usefulProofCount: usefulProofCount,
+  sawProCount: sawProCount,
+  understandsProCount: understandsProCount,
+  paywallCtaTapCount: paywallCtaTapCount,
+  wouldPayYesMaybeCount: wouldPayYesMaybeCount,
+  price299Count: price299Count,
+  price499Count: price499Count,
+  price799Count: price799Count,
+  wouldNotPayMonthlyCount: wouldNotPayMonthlyCount,
+  moreProofOverTimeCount: moreProofOverTimeCount,
+  betterCorrectionsCount: betterCorrectionsCount,
+  clearerTimelineCount: clearerTimelineCount,
+  lowerPriceCount: lowerPriceCount,
+);
 
 void main() {
   group('PricingOutcomeDecisionMatrix thresholds', () {

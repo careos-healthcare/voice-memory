@@ -12,16 +12,15 @@ class FirstProofJourneyStripCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final stripStyle = ArchiveMobileTypography.responsiveHelper(context).copyWith(
-      fontWeight: FontWeight.w600,
-      fontSize: 13,
-      color: AppColors.textPrimary,
-    );
-    final helperStyle = ArchiveMobileTypography.responsiveHelper(context).copyWith(
-      color: AppColors.textSecondary,
-      fontSize: 12,
-      height: 1.35,
-    );
+    final stripStyle = ArchiveMobileTypography.responsiveHelper(context)
+        .copyWith(
+          fontWeight: FontWeight.w600,
+          fontSize: 13,
+          color: AppColors.textPrimary,
+        );
+    final helperStyle = ArchiveMobileTypography.responsiveHelper(
+      context,
+    ).copyWith(color: AppColors.textSecondary, fontSize: 12, height: 1.35);
 
     return Container(
       key: const Key('first_proof_journey_strip_card'),

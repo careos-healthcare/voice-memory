@@ -17,7 +17,6 @@ import 'package:voicememory_mobile/features/capacity_loop/capacity_return_trigge
 import 'package:voicememory_mobile/features/capacity_loop/capacity_return_trigger_models.dart';
 import 'package:voicememory_mobile/features/capacity_loop/capacity_three_moment_engine.dart';
 import 'package:voicememory_mobile/features/capacity_loop/capacity_three_moment_models.dart';
-import 'package:voicememory_mobile/features/capacity_loop/quick_capture_friction_models.dart';
 import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/product/acquisition_start_copy.dart';
@@ -55,20 +54,20 @@ const _forbiddenOnboardingTerms = [
 const _privateSnippet = 'felt pressure at work before saying yes';
 
 JournalEntry _capacityEntry(String id) => JournalEntry(
-      id: id,
-      createdAt: DateTime(2026, 6, 15, 12),
-      transcript: 'I said yes again with no capacity left.',
-      durationSeconds: 30,
-      localAudioPath: '/tmp/$id.m4a',
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 2,
-        recurringThemes: ['work'],
-        exactLanguagePattern: '',
-        concreteObservation: 'Work pressure showed up in this moment.',
-        repeatedSignal: '',
-      ),
-    );
+  id: id,
+  createdAt: DateTime(2026, 6, 15, 12),
+  transcript: 'I said yes again with no capacity left.',
+  durationSeconds: 30,
+  localAudioPath: '/tmp/$id.m4a',
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 2,
+    recurringThemes: ['work'],
+    exactLanguagePattern: '',
+    concreteObservation: 'Work pressure showed up in this moment.',
+    repeatedSignal: '',
+  ),
+);
 
 CapacityPullReasonRecord _pullReason(String entryId, List<String> ids) =>
     CapacityPullReasonRecord(
@@ -84,7 +83,11 @@ void _expectNoBannedCopy(Iterable<String> visible) {
     final lower = text.toLowerCase();
     for (final phrase in _bannedPhrases) {
       if (phrase == 'therapy' && lower.contains('not therapy')) continue;
-      expect(lower, isNot(contains(phrase)), reason: '"$text" contains "$phrase"');
+      expect(
+        lower,
+        isNot(contains(phrase)),
+        reason: '"$text" contains "$phrase"',
+      );
     }
     expect(lower, isNot(contains(_privateSnippet)));
     for (final reason in PrivacyCopyPolicy.violationsInLiteral(text)) {
@@ -96,35 +99,34 @@ void _expectNoBannedCopy(Iterable<String> visible) {
 ArchiveHomePriorityInput _calmHomeInput({
   bool activationVisible = true,
   bool dailyChangeVisible = true,
-}) =>
-    ArchiveHomePriorityInput(
-      savedEntryCount: 1,
-      usableEvidenceCount: 1,
-      depthLevel: ArchiveDepthLevel.notStarted,
-      returnChangesAvailable: false,
-      weeklyReviewAvailable: false,
-      sampleMode: false,
-      proPreviewPromoVisible: false,
-      showEmptySample: false,
-      archiveDailyChangeVisible: dailyChangeVisible,
-      firstWeekPathVisible: false,
-      dailyArchiveExerciseVisible: false,
-      archiveClarityProgressVisible: false,
-      capacityThreeMomentActivationVisible: activationVisible,
-      capacityLoopVisible: true,
-      capacityPullReasonVisible: true,
-      capacityDecisionOutcomeVisible: false,
-      capacityCostLaterCheckinVisible: false,
-      capacityActivationFitVisible: false,
-      beforeYouSayYesPauseVisible: false,
-      capacityWeeklyReviewVisible: false,
-      capacityBoundaryResponseVisible: false,
-      thenVsNowVisible: false,
-      archiveCalendarVisible: false,
-      reviewRitualVisible: false,
-      milestoneShareVisible: false,
-      calmCapacityActivationMode: true,
-    );
+}) => ArchiveHomePriorityInput(
+  savedEntryCount: 1,
+  usableEvidenceCount: 1,
+  depthLevel: ArchiveDepthLevel.notStarted,
+  returnChangesAvailable: false,
+  weeklyReviewAvailable: false,
+  sampleMode: false,
+  proPreviewPromoVisible: false,
+  showEmptySample: false,
+  archiveDailyChangeVisible: dailyChangeVisible,
+  firstWeekPathVisible: false,
+  dailyArchiveExerciseVisible: false,
+  archiveClarityProgressVisible: false,
+  capacityThreeMomentActivationVisible: activationVisible,
+  capacityLoopVisible: true,
+  capacityPullReasonVisible: true,
+  capacityDecisionOutcomeVisible: false,
+  capacityCostLaterCheckinVisible: false,
+  capacityActivationFitVisible: false,
+  beforeYouSayYesPauseVisible: false,
+  capacityWeeklyReviewVisible: false,
+  capacityBoundaryResponseVisible: false,
+  thenVsNowVisible: false,
+  archiveCalendarVisible: false,
+  reviewRitualVisible: false,
+  milestoneShareVisible: false,
+  calmCapacityActivationMode: true,
+);
 
 void main() {
   group('Onboarding fallback', () {
@@ -138,10 +140,7 @@ void main() {
     test('fallback body explains save one real moment', () {
       expect(
         AcquisitionStartCopy.capacityBody.toLowerCase(),
-        allOf(
-          contains('save one real moment'),
-          contains('returned'),
-        ),
+        allOf(contains('save one real moment'), contains('returned')),
       );
     });
 
@@ -171,18 +170,12 @@ void main() {
     test('1/3 copy says wait and do not force it', () {
       expect(
         CapacityReturnTriggerCopy.archiveHomeBody(1, target: 3).toLowerCase(),
-        allOf(
-          contains('wait for the next real one'),
-          contains('do not force'),
-        ),
+        allOf(contains('wait for the next real one'), contains('do not force')),
       );
     });
 
     test('1/3 primary action can be Done for now', () {
-      expect(
-        CapacityReturnTriggerCopy.archiveHomePrimaryCta,
-        'Done for now',
-      );
+      expect(CapacityReturnTriggerCopy.archiveHomePrimaryCta, 'Done for now');
       const engine = CapacityReturnTriggerEngine();
       final result = engine.build(
         const CapacityReturnTriggerInput(
@@ -202,7 +195,10 @@ void main() {
         CapacityReturnTriggerCopy.archiveHomeBody(2, target: 3).toLowerCase(),
         contains('one more real moment'),
       );
-      expect(CapacityReturnTriggerCopy.archiveHomeTitle(2), 'Two moments saved.');
+      expect(
+        CapacityReturnTriggerCopy.archiveHomeTitle(2),
+        'Two moments saved.',
+      );
     });
 
     test('under 3 moments only one primary capacity card', () {
@@ -270,7 +266,10 @@ void main() {
           quickCaptureFrictionRecord: null,
         ),
       );
-      expect(result.changeLine, ArchiveDailyChangeCopy.repeatedPullNewOutcomeLine);
+      expect(
+        result.changeLine,
+        ArchiveDailyChangeCopy.repeatedPullNewOutcomeLine,
+      );
     });
 
     test('distinguishes same pull with same outcome', () {
@@ -312,14 +311,17 @@ void main() {
         responseId: CapacityBoundaryResponseIds.cannotAnswerNow,
         selectedAt: DateTime(2026, 6, 16),
       );
-      final boundaryText =
-          CapacityBoundaryResponseCopy.textForId(selection.responseId);
+      final boundaryText = CapacityBoundaryResponseCopy.textForId(
+        selection.responseId,
+      );
       expect(boundaryText, isNotNull);
       expect(
         boundaryText,
-        isNot(ArchiveDailyChangeCopy.alternativeBodyForPull(
-          CapacityPullReasonIds.soundedUrgent,
-        )),
+        isNot(
+          ArchiveDailyChangeCopy.alternativeBodyForPull(
+            CapacityPullReasonIds.soundedUrgent,
+          ),
+        ),
       );
     });
 

@@ -58,11 +58,9 @@ class _PatternLifecycleBadgeState extends State<PatternLifecycleBadge> {
       fontWeight: FontWeight.w600,
       height: 1.2,
     );
-    final bodyStyle = ArchiveMobileTypography.explanationBody(context).copyWith(
-      color: AppColors.textSecondary,
-      fontSize: 12,
-      height: 1.35,
-    );
+    final bodyStyle = ArchiveMobileTypography.explanationBody(
+      context,
+    ).copyWith(color: AppColors.textSecondary, fontSize: 12, height: 1.35);
 
     return Column(
       key: Key('pattern_lifecycle_badge_${widget.lifecycle.state.name}'),

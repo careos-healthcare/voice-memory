@@ -10,12 +10,10 @@ import '../pro_evidence_value/pro_evidence_value_engine.dart';
 import '../pro_evidence_value/pro_evidence_value_model.dart';
 import '../pro_lock_moment/pro_lock_moment_copy.dart';
 import '../pro_lock_moment/pro_lock_moment_engine.dart';
-import '../pro_lock_moment/pro_lock_moment_model.dart';
 import '../pro_value/pro_value_copy.dart';
 import '../private_report/private_report_copy.dart';
 import '../revenue_foundation/revenue_value_copy.dart';
 import '../../models/journal_entry.dart';
-import '../../models/reflection.dart';
 import 'pro_conversion_audit_copy.dart';
 
 enum ProConversionSurface {
@@ -75,9 +73,7 @@ enum ProConversionSurface {
 abstract final class ProConversionAuditEngine {
   ProConversionAuditEngine._();
 
-  static List<String> revenueFeatureCopy({
-    bool exportReportsLive = true,
-  }) {
+  static List<String> revenueFeatureCopy({bool exportReportsLive = true}) {
     return [
       ...ProLockMomentCopy.allVisibleStrings(),
       ...MonthlyPrivateReportCopy.allVisibleStrings(),
@@ -101,9 +97,7 @@ abstract final class ProConversionAuditEngine {
     ];
   }
 
-  static bool passesRevenueCopyAudit({
-    bool exportReportsLive = true,
-  }) {
+  static bool passesRevenueCopyAudit({bool exportReportsLive = true}) {
     final strings = revenueFeatureCopy(exportReportsLive: exportReportsLive);
     return ProConversionAuditCopy.mentionsPaidMemoryReason(strings) &&
         ProConversionAuditCopy.hasNoBannedLiveClaims(strings) &&

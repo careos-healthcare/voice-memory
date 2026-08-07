@@ -4,9 +4,8 @@ import 'curiosity_prompt_generator.dart';
 
 /// Resolves clinically synthesized display prompts for curiosity hooks.
 class CuriosityPromptResolver {
-  CuriosityPromptResolver({
-    CuriosityPromptGenerator? generator,
-  }) : _generator = generator ?? const DefaultCuriosityPromptGenerator();
+  CuriosityPromptResolver({CuriosityPromptGenerator? generator})
+    : _generator = generator ?? const DefaultCuriosityPromptGenerator();
 
   final CuriosityPromptGenerator _generator;
 

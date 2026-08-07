@@ -1,21 +1,25 @@
+// Covers the "View archive" hop from Record's first-save card into the
+// Archive tab, plus the legacy-route redirect that keeps old deep links
+// working. The four-state Patterns-style assertions this file used to carry
+// against ArchiveBeliefScreen were testing behavior that has since moved to
+// the Changes tab (test/archive_tab_four_state_test.dart,
+// test/belief_changes_navigation_test.dart) — removed rather than kept as
+// stale duplicate coverage. PatternsFirstArchiveView (an unreachable, unused
+// widget) was deleted as part of the Objective 1 launch-surface cleanup, so
+// its dedicated tests are gone too.
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
-import 'package:voicememory_mobile/design/empty_archive_experience.dart';
-import 'package:voicememory_mobile/features/archive_evidence/archive_evidence.dart';
 import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
-import 'package:voicememory_mobile/features/archive_proof/visible_archive_proof_copy.dart';
-import 'package:voicememory_mobile/product/consumer_ui_copy.dart';
 import 'package:voicememory_mobile/router/developer_route_guard.dart';
 import 'package:voicememory_mobile/screens/archive_belief_screen.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
 import 'package:voicememory_mobile/theme/app_theme.dart';
 import 'package:voicememory_mobile/widgets/onboarding/first_save_evidence_card.dart';
 import 'package:voicememory_mobile/widgets/patterns/patterns_empty_view.dart';
-import 'package:voicememory_mobile/widgets/patterns/patterns_first_archive_view.dart';
 
 JournalEntry _entry({String id = 'e1'}) {
   return JournalEntry(
@@ -43,37 +47,13 @@ Future<void> _resetServices() async {
   );
 }
 
-Future<void> _pumpUntil(
-  WidgetTester tester,
-  Finder finder, {
-  int maxFrames = 50,
-}) async {
-  for (var i = 0; i < maxFrames; i++) {
-    await tester.pump(const Duration(milliseconds: 100));
-    if (finder.evaluate().isNotEmpty) return;
-  }
-}
-
-Future<void> _pumpEmptyPatterns(WidgetTester tester) async {
-  await tester.binding.setSurfaceSize(const Size(390, 1800));
-  addTearDown(() => tester.binding.setSurfaceSize(null));
-  await tester.pumpWidget(
-    MaterialApp(
-      theme: AppTheme.light(),
-      home: ArchiveBeliefScreen(key: UniqueKey()),
-    ),
-  );
-  await tester.pump();
-  await tester.pump(const Duration(milliseconds: 200));
-}
-
 void main() {
   setUp(() async {
     await _resetServices();
   });
 
   group('View archive routing', () {
-    test('legacy journal path redirects to patterns tab in production', () {
+    test('legacy journal path redirects to the Archive tab in production', () {
       expect(
         DeveloperRouteGuard.redirectFor('/journal'),
         DeveloperRouteGuard.patternsHome,
@@ -82,7 +62,7 @@ void main() {
     });
 
     testWidgets(
-      'first-save View archive navigates to patterns tab not record',
+      'first-save View archive navigates to the Archive tab not Record',
       (tester) async {
         final router = GoRouter(
           initialLocation: '/record',
@@ -100,7 +80,7 @@ void main() {
             GoRoute(
               path: '/archive-belief',
               builder: (context, state) =>
-                  const Scaffold(body: Text('PATTERNS_TAB_MARKER')),
+                  const Scaffold(body: Text('ARCHIVE_TAB_MARKER')),
             ),
           ],
         );
@@ -113,7 +93,7 @@ void main() {
         await tester.tap(find.byKey(const Key('first_save_view_archive_cta')));
         await tester.pumpAndSettle();
 
-        expect(find.text('PATTERNS_TAB_MARKER'), findsOneWidget);
+        expect(find.text('ARCHIVE_TAB_MARKER'), findsOneWidget);
         expect(
           router.routeInformationProvider.value.uri.path,
           '/archive-belief',
@@ -121,7 +101,7 @@ void main() {
       },
     );
 
-    testWidgets('archive screen shows one-entry state after first save', (
+    testWidgets('archive screen shows the saved entry as an original moment', (
       tester,
     ) async {
       await tester.runAsync(() async {
@@ -139,123 +119,31 @@ void main() {
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 300));
 
+      expect(find.text('Original moments'), findsOneWidget);
+      expect(find.textContaining('A long enough transcript'), findsOneWidget);
       expect(
-        find.text(VisibleArchiveProofCopy.archiveHomeOneTitle),
-        findsOneWidget,
+        find.byKey(const Key('archive_tab_entry_state_empty')),
+        findsNothing,
       );
-      expect(
-        find.text(VisibleArchiveProofCopy.archiveHomeOneBody),
-        findsOneWidget,
-      );
-      expect(find.text('Record if it happens again'), findsOneWidget);
-      expect(find.text('Record first moment'), findsNothing);
-      expect(find.text('Record one moment'), findsNothing);
-      expect(find.text(ConsumerUiCopy.patternsEmptyPageTitle), findsNothing);
     });
   });
 
-  group('Patterns tab empty vs first-save state', () {
-    testWidgets('zero entries shows mind-map empty state only', (
-      tester,
-    ) async {
-      await _pumpEmptyPatterns(tester);
-      await _pumpUntil(
-        tester,
-        find.text(VisibleArchiveProofCopy.patternsMindMapEmptyTitle),
-      );
-
-      expect(
-        find.text(VisibleArchiveProofCopy.patternsMindMapEmptyTitle),
-        findsOneWidget,
-      );
-      expect(find.textContaining('Record a few real moments'), findsOneWidget);
-      expect(find.text('Record moment'), findsOneWidget);
-      expect(find.text('Type instead'), findsOneWidget);
-      expect(find.text('Current belief'), findsNothing);
-      expect(find.text('Start your first week'), findsNothing);
-      expect(find.text('Record first moment'), findsNothing);
-      expect(find.byType(PatternsFirstArchiveView), findsNothing);
-    });
-
-    test('one eligible entry is not treated as intentional empty archive', () {
-      expect(isIntentionalEmptyArchive([_entry()]), isFalse);
-      expect(archiveEvidenceReflectionCount([_entry()]), 1);
-    });
-
-    testWidgets('first archive widget shows desired one-entry copy', (
+  group('PatternsEmptyView — shared Changes-tab empty state', () {
+    testWidgets('shows four-state empty copy and record CTA only', (
       tester,
     ) async {
       await tester.pumpWidget(
-        MaterialApp(
-          theme: AppTheme.light(),
-          home: PatternsFirstArchiveView(savedEntryId: 'e1'),
+        const MaterialApp(
+          home: Scaffold(body: PatternsEmptyView(fillViewport: false)),
         ),
       );
       await tester.pump();
 
+      expect(find.text('Record a moment'), findsOneWidget);
       expect(
-        find.text(ConsumerUiCopy.patternsFirstEntrySavedTitle),
+        find.byKey(const Key('archive_tab_record_moment_cta')),
         findsOneWidget,
-      );
-      expect(
-        find.text(ConsumerUiCopy.patternsFirstEntrySavedBody),
-        findsOneWidget,
-      );
-      expect(
-        find.text(ConsumerUiCopy.patternsFirstEntrySavedHelper),
-        findsOneWidget,
-      );
-      expect(find.text('Record if it happens again'), findsOneWidget);
-      expect(find.text('Record first moment'), findsNothing);
-      expect(find.text('Record one moment'), findsNothing);
-      expect(find.text(ConsumerUiCopy.patternsEmptyPageTitle), findsNothing);
-    });
-
-    test('journal drift is visible to patterns tab after first save', () async {
-      expect(
-        peekJournalEntriesSync(AppServices.instance.journalStore).length,
-        0,
-      );
-      await AppServices.instance.journalStore.save(_entry());
-      expect(
-        archiveEvidenceReflectionCount(
-          peekJournalEntriesSync(AppServices.instance.journalStore),
-        ),
-        1,
       );
     });
-  });
-
-  group('Layout and brand safety', () {
-    const surfaces = <MapEntry<String, Size>>[
-      MapEntry('iphone_17_pro', Size(402, 874)),
-      MapEntry('small_android', Size(360, 640)),
-    ];
-
-    for (final surface in surfaces) {
-      testWidgets('no overflow on ${surface.key} for first-archive view', (
-        tester,
-      ) async {
-        await tester.binding.setSurfaceSize(surface.value);
-        addTearDown(() => tester.binding.setSurfaceSize(null));
-
-        await tester.pumpWidget(
-          MaterialApp(
-            theme: AppTheme.light(),
-            home: Scaffold(
-              body: SingleChildScrollView(
-                child: PatternsFirstArchiveView(savedEntryId: 'e1'),
-              ),
-            ),
-          ),
-        );
-        await tester.pump();
-
-        expect(tester.takeException(), isNull);
-        expect(find.textContaining('VoiceMemory'), findsNothing);
-        expect(find.textContaining('ChatGPT'), findsNothing);
-        expect(find.textContaining('OpenAI'), findsNothing);
-      });
-    }
   });
 }

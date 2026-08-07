@@ -48,7 +48,8 @@ abstract final class SampleArchiveCopy {
       'Save real moments when something repeats. ArchiveMe compares them later.';
 
   static const demoShareTitle = 'ArchiveMe sample archive';
-  static const demoShareSubtitle = 'Example data only — not your private archive';
+  static const demoShareSubtitle =
+      'Example data only — not your private archive';
   static const demoShareBulletOne =
       'After a few real moments, a pattern can appear.';
   static const demoShareBulletTwo =
@@ -80,7 +81,6 @@ abstract final class SampleArchiveCopy {
   static const demoPathCopySummaryTitle = '4. Copy demo summary';
   static const demoPathBackArchiveTitle = '5. Back to your archive';
 
-  static const sampleContextBanner =
-      'Sample archive — example data only';
+  static const sampleContextBanner = 'Sample archive — example data only';
   static const sampleContextExampleLabel = 'Example moment';
 }
