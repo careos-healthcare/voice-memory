@@ -43,7 +43,7 @@ void main() {
         ),
       );
 
-      final billing = createBillingServiceForTest(
+      final billing = createBillingServiceWithTestOverrides(
         cache: cache,
         revenueCat: _FreeStoreBilling(),
       );

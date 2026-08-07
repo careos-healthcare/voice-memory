@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/api/api_exceptions.dart';
 import 'package:voicememory_mobile/core/network/api_result.dart';
+import 'package:voicememory_mobile/core/network/network_cancel_token.dart';
 import 'package:voicememory_mobile/data/network/auth_api_client.dart';
 import 'helpers/fake_auth_api_client.dart';
 import 'package:voicememory_mobile/auth/account_auth.dart';
@@ -26,22 +27,30 @@ class _FakeAuthApi extends FakeAuthApiClient {
   Object? verifyThrow;
 
   @override
-  Future<ApiResult<void>> sendAuthCode(String email) async {
+  Future<ApiResult<void>> sendAuthCode(
+    String email, {
+    NetworkCancelToken? cancelToken,
+  }) async {
     if (sendCodeThrow != null) {
       throw sendCodeThrow!;
     }
-    return super.sendAuthCode(email);
+    return super.sendAuthCode(email, cancelToken: cancelToken);
   }
 
   @override
   Future<ApiResult<AuthVerifyPayload>> verifyAuthCode({
     required String email,
     required String code,
+    NetworkCancelToken? cancelToken,
   }) async {
     if (verifyThrow != null) {
       throw verifyThrow!;
     }
-    return super.verifyAuthCode(email: email, code: code);
+    return super.verifyAuthCode(
+      email: email,
+      code: code,
+      cancelToken: cancelToken,
+    );
   }
 }
 

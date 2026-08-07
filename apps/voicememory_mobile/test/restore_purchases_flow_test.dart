@@ -69,7 +69,7 @@ Future<({BillingService billing, EntitlementCache cache, Directory dir})>
 _openBillingHarness(_FakeStoreBilling store) async {
   final dir = await Directory.systemTemp.createTemp('restore_flow_test');
   final cache = await EntitlementCache.open('${dir.path}/entitlements.json');
-  final billing = createBillingServiceForTest(cache: cache, revenueCat: store);
+  final billing = createBillingServiceWithTestOverrides(cache: cache, revenueCat: store);
   return (billing: billing, cache: cache, dir: dir);
 }
 
@@ -243,7 +243,7 @@ void main() {
       tempDir = await Directory.systemTemp.createTemp('billing_restore_test');
       cache = await EntitlementCache.open('${tempDir.path}/entitlements.json');
       store = _FakeStoreBilling();
-      billing = createBillingServiceForTest(cache: cache, revenueCat: store);
+      billing = createBillingServiceWithTestOverrides(cache: cache, revenueCat: store);
     });
 
     tearDown(() async {
@@ -257,7 +257,7 @@ void main() {
         restoreResult: _proEntitlements(),
         refreshResult: _proEntitlements(),
       );
-      billing = createBillingServiceForTest(cache: cache, revenueCat: store);
+      billing = createBillingServiceWithTestOverrides(cache: cache, revenueCat: store);
 
       final ent = await billing.restoreNative();
 
@@ -273,7 +273,7 @@ void main() {
         restoreResult: PremiumEntitlements.free(),
         refreshResult: PremiumEntitlements.free(),
       );
-      billing = createBillingServiceForTest(cache: cache, revenueCat: store);
+      billing = createBillingServiceWithTestOverrides(cache: cache, revenueCat: store);
 
       final ent = await billing.restoreNative();
 

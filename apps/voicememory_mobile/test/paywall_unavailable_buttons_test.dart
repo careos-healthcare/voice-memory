@@ -200,7 +200,7 @@ void main() {
       );
       store = _FakeStoreBilling(configured: true);
       restoreFlow = RestorePurchasesFlow(
-        billing: createBillingServiceForTest(
+        billing: createBillingServiceWithTestOverrides(
           cache: await EntitlementCache.open(
             '${tempDir.path}/entitlements.json',
           ),

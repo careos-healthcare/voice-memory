@@ -57,7 +57,7 @@ void main() {
       final cache = await EntitlementCache.open(
         '${tempDir.path}/entitlements.json',
       );
-      final billing = createBillingServiceForTest(
+      final billing = createBillingServiceWithTestOverrides(
         cache: cache,
         revenueCat: store,
       );
