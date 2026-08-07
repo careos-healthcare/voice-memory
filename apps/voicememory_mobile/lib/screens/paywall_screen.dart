@@ -15,6 +15,7 @@ import '../billing/paywall_attribution_event.dart';
 import '../features/referral/invite_funnel_metrics.dart';
 import '../billing/paywall_attribution_store.dart';
 import '../billing/paywall_objection_follow_up.dart';
+import '../billing/paywall_session_tracker.dart';
 import '../billing/paywall_rejection_reason.dart';
 import '../billing/purchase_intent_return_cue.dart';
 import '../billing/paywall_route_args.dart';
@@ -74,6 +75,8 @@ class PaywallScreen extends StatefulWidget {
     this.billingConfiguredForRestore,
     this.billingReadyOverride,
     this.delayedPaywallProofGateOverride,
+    this.sessionTracker,
+    this.objectionFollowUp,
   });
 
   /// Trigger-specific preview copy when opened from a memory limit gate.
@@ -103,6 +106,12 @@ class PaywallScreen extends StatefulWidget {
   /// Injectable delayed paywall gate for tests; defaults to live proof milestones.
   final bool Function()? delayedPaywallProofGateOverride;
 
+  /// Injectable session tracker for tests; defaults to [livePaywallSessionTracker].
+  final PaywallSessionTracker? sessionTracker;
+
+  /// Injectable follow-up gate for tests; defaults to a tracker-backed instance.
+  final PaywallObjectionFollowUp? objectionFollowUp;
+
   @override
   State<PaywallScreen> createState() => _PaywallScreenState();
 }
@@ -121,6 +130,12 @@ class _PaywallScreenState extends State<PaywallScreen> {
       loadTimeout: _loadTimeout,
     ),
   );
+
+  late final PaywallObjectionFollowUp _objectionFollowUp =
+      widget.objectionFollowUp ??
+      PaywallObjectionFollowUp(
+        sessionTracker: widget.sessionTracker ?? livePaywallSessionTracker,
+      );
 
   PaywallState get _ps => _paywallController.state;
 
@@ -405,13 +420,13 @@ class _PaywallScreenState extends State<PaywallScreen> {
   Future<void> _loadObjectionFollowUp() async {
     final reason = await _objectionStore.lastReason();
     if (!mounted) return;
-    if (!PaywallObjectionFollowUp.shouldShow(
+    if (!_objectionFollowUp.shouldShow(
       isPro: _ps.entitlements?.isPro == true,
       reason: reason,
     )) {
       return;
     }
-    PaywallObjectionFollowUp.shownThisSession = true;
+    _objectionFollowUp.markShown();
     setState(() => _objectionFollowUpReason = reason);
   }
 

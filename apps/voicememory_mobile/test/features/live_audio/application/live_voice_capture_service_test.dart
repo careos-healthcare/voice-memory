@@ -16,9 +16,10 @@ import 'package:voicememory_mobile/features/live_audio/infrastructure/local_audi
 import 'package:voicememory_mobile/features/live_audio/infrastructure/live_audio_session_api_client.dart';
 import 'package:voicememory_mobile/features/live_audio/infrastructure/live_audio_socket_connection.dart';
 import 'package:voicememory_mobile/features/live_audio/infrastructure/live_audio_websocket_client.dart';
-import 'package:voicememory_mobile/features/live_audio/infrastructure/live_pcm24_playback_engine.dart';
 import 'package:voicememory_mobile/features/live_audio/live_audio_constants.dart';
 import 'package:voicememory_mobile/features/live_audio/presentation/controllers/live_audio_session_controller.dart';
+import '../../../helpers/silent_playback_service.dart';
+import '../../../helpers/fake_path_provider.dart';
 import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/security/api_usage_guard.dart';
@@ -42,6 +43,21 @@ IsolateAudioPipeline _inlineIsolatePipeline(PipelineConfig config) {
 }
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+
+  late Directory pathProviderRoot;
+
+  setUp(() {
+    pathProviderRoot = Directory.systemTemp.createTempSync('vm_capture_path_');
+    installFakePathProvider(root: pathProviderRoot);
+  });
+
+  tearDown(() {
+    if (pathProviderRoot.existsSync()) {
+      pathProviderRoot.deleteSync(recursive: true);
+    }
+  });
+
   group('LiveVoiceCaptureService + IsolateAudioPipeline Bridge Tests', () {
     late StreamController<dynamic> sinkController;
     late _CountingSessionApi sessionApi;
@@ -312,7 +328,7 @@ void main() {
           ),
         ),
         pipeline: pipeline,
-        playback: _SilentPlayback(),
+        playback: silentPlaybackService(),
         maxReconnectAttempts: 1,
         offlineAudioVault: LocalAudioVault(
           keyStore: vaultKeyStore,
@@ -531,7 +547,7 @@ LiveVoiceCaptureService _buildBridgeCaptureService({
       ),
     ),
     pipeline: journalPipeline,
-    playback: _SilentPlayback(),
+    playback: silentPlaybackService(),
     useIsolateAudioPipeline: true,
     pipelineFactory: _inlineIsolatePipeline,
     offlineAudioVault: offlineAudioVault,
@@ -604,17 +620,6 @@ class _RecordingPipeline extends CapturePipelineService {
       analysisSucceeded: true,
     );
   }
-}
-
-class _SilentPlayback extends LivePcm24PlaybackEngine {
-  @override
-  Future<void> prepare() async {}
-
-  @override
-  Future<void> stop() async {}
-
-  @override
-  Future<void> dispose() async {}
 }
 
 class _FakeSocketConnection implements LiveAudioSocketConnection {

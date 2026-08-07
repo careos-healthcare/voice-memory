@@ -27,17 +27,19 @@ void main() {
 
   Future<Directory> deviceOutDir() async {
     if (_deviceOutDir != null) return _deviceOutDir!;
+
+    final Directory baseDir;
     if (Platform.isAndroid) {
-      final external = Directory('/sdcard/Download/revenuecat_production');
-      if (!external.existsSync()) external.createSync(recursive: true);
-      _deviceOutDir = external;
-      return external;
+      final external = await getExternalStorageDirectory();
+      baseDir = external ?? await getApplicationDocumentsDirectory();
+    } else {
+      baseDir = await getTemporaryDirectory();
     }
-    _deviceOutDir = Directory(
-      '${(await getTemporaryDirectory()).path}/revenuecat_production',
-    );
-    if (!_deviceOutDir!.existsSync())
-      _deviceOutDir!.createSync(recursive: true);
+
+    _deviceOutDir = Directory('${baseDir.path}/revenuecat_production');
+    if (!await _deviceOutDir!.exists()) {
+      await _deviceOutDir!.create(recursive: true);
+    }
     return _deviceOutDir!;
   }
 

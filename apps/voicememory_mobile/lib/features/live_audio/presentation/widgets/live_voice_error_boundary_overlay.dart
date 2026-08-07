@@ -1,13 +1,14 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../theme/app_colors.dart';
 import '../../../../theme/app_spacing.dart';
 import '../../domain/models/live_voice_error_state.dart';
 import '../live_voice_session_copy.dart';
 
-class LiveVoiceErrorBoundaryOverlay extends StatelessWidget {
+class LiveVoiceErrorBoundaryOverlay extends ConsumerWidget {
   const LiveVoiceErrorBoundaryOverlay({
     super.key,
     required this.errorState,
@@ -22,7 +23,7 @@ class LiveVoiceErrorBoundaryOverlay extends StatelessWidget {
   final bool busy;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     if (errorState == LiveVoiceErrorState.none) {
       return const SizedBox.shrink(key: ValueKey('live_voice_error_none'));
     }

@@ -107,7 +107,7 @@ void main() {
   });
 
   test('physical iOS uses native recorder when flag enabled', () async {
-    final recording = RecordingService(
+    final recording = RecordingService.create(
       testMode: true,
       permissionGateway: FakeMicrophonePermissionGateway(
         statusValue: PermissionStatus.granted,
@@ -124,7 +124,7 @@ void main() {
   });
 
   test('native stop preserves path bytes duration and levels', () async {
-    final recording = RecordingService(
+    final recording = RecordingService.create(
       testMode: true,
       useNativeRecorderOverride: true,
     );
@@ -150,7 +150,7 @@ void main() {
       likelySilent: true,
     );
 
-    final recording = RecordingService(
+    final recording = RecordingService.create(
       testMode: true,
       useNativeRecorderOverride: true,
     );

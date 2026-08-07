@@ -1,22 +1,23 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../services/app_services.dart';
 import '../offline_vault_recovery_launch_controller.dart';
 
 /// Prompts for pending offline vault recovery after startup and on app resume.
-class OfflineVaultRecoveryHost extends StatefulWidget {
+class OfflineVaultRecoveryHost extends ConsumerStatefulWidget {
   const OfflineVaultRecoveryHost({super.key, required this.child});
 
   final Widget child;
 
   @override
-  State<OfflineVaultRecoveryHost> createState() =>
+  ConsumerState<OfflineVaultRecoveryHost> createState() =>
       _OfflineVaultRecoveryHostState();
 }
 
-class _OfflineVaultRecoveryHostState extends State<OfflineVaultRecoveryHost>
+class _OfflineVaultRecoveryHostState extends ConsumerState<OfflineVaultRecoveryHost>
     with WidgetsBindingObserver {
   @override
   void initState() {

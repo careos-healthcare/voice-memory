@@ -12,10 +12,10 @@ import 'package:voicememory_mobile/features/live_audio/domain/services/live_pcm1
 import 'package:voicememory_mobile/features/live_audio/infrastructure/live_audio_session_api_client.dart';
 import 'package:voicememory_mobile/features/live_audio/infrastructure/live_audio_socket_connection.dart';
 import 'package:voicememory_mobile/features/live_audio/infrastructure/live_audio_websocket_client.dart';
-import 'package:voicememory_mobile/features/live_audio/infrastructure/live_pcm24_playback_engine.dart';
 import 'package:voicememory_mobile/features/live_audio/infrastructure/native_audio_lifecycle_bridge.dart';
 import 'package:voicememory_mobile/features/live_audio/live_audio_constants.dart';
 import 'package:voicememory_mobile/features/live_audio/presentation/controllers/live_audio_session_controller.dart';
+import '../../../helpers/silent_playback_service.dart';
 import 'package:voicememory_mobile/security/api_usage_guard.dart';
 import 'package:voicememory_mobile/features/proof_admission/remote_processing_consent_store.dart';
 import 'package:voicememory_mobile/services/capture_attest_service.dart';
@@ -59,7 +59,7 @@ void main() {
           ),
         ),
         pipeline: _NoopPipeline(journalFile: journalFile),
-        playback: _SilentPlayback(),
+        playback: silentPlaybackService(),
       );
     });
 
@@ -163,17 +163,6 @@ class _FakeSocket implements LiveAudioSocketConnection {
 
   @override
   Future<void> close([int? code, String? reason]) async {}
-}
-
-class _SilentPlayback extends LivePcm24PlaybackEngine {
-  @override
-  Future<void> prepare() async {}
-
-  @override
-  Future<void> stop() async {}
-
-  @override
-  Future<void> dispose() async {}
 }
 
 class _NoopPipeline extends CapturePipelineService {

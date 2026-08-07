@@ -8,7 +8,7 @@ import 'package:voicememory_mobile/features/archive_backup_bridge/archive_backup
 import 'package:voicememory_mobile/features/monthly_private_report/monthly_private_report_analytics.dart';
 import 'package:voicememory_mobile/features/monthly_private_report/monthly_private_report_dismiss_store.dart';
 import 'package:voicememory_mobile/features/pro_evidence_value/pro_evidence_value_dismiss_store.dart';
-import 'package:voicememory_mobile/billing/paywall_objection_follow_up.dart';
+import 'package:voicememory_mobile/billing/paywall_session_tracker.dart';
 import 'package:voicememory_mobile/features/pro_bridge_visibility/delayed_paywall_proof_store.dart';
 import 'package:voicememory_mobile/features/pro_lock_moment/pro_lock_moment_analytics.dart';
 import 'package:voicememory_mobile/features/pro_lock_moment/pro_lock_moment_dismiss_store.dart';
@@ -47,7 +47,7 @@ abstract final class ReleaseSuiteStaticStateReset {
     BetaFeedbackIntelligenceStore.invalidateSessionForTest();
     RevenueFunnelAnalytics.resetForTest();
     DelayedPaywallProofStore.bypassGateForTest = true;
-    PaywallObjectionFollowUp.resetSessionForTest();
+    livePaywallSessionTracker.resetSession();
   }
 
   /// Clears prefs-backed state after [AppServices.resetForTest].

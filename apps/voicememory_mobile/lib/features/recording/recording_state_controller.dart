@@ -1,6 +1,6 @@
 part of '../../screens/record_screen.dart';
 
-class _RecordScreenState extends State<RecordScreen>
+class _RecordScreenState extends ConsumerState<RecordScreen>
     with WidgetsBindingObserver {
   RecordNavigationActivityController get _navigationActivity =>
       widget.navigationActivityController ?? recordNavigationActivityController;
@@ -65,7 +65,6 @@ class _RecordScreenState extends State<RecordScreen>
   set _micSessionRequiresOpenSettings(bool value) =>
       _micPermission.sessionRequiresOpenSettings = value;
 
-  int get _seconds => _recordingState.seconds;
   String? get _localSaveTitle => _postSaveResult.localSaveTitle;
   set _localSaveTitle(String? value) => _postSaveResult.localSaveTitle = value;
   String? get _syncNote => _captureProcessing.syncNote;
@@ -196,17 +195,6 @@ class _RecordScreenState extends State<RecordScreen>
     if (AppConfig.enableLiveVoiceCapture) {
       _liveVoice = widget.liveVoiceCapture ?? s.liveVoiceCapture;
     }
-    _recordingState.bindDuration(
-      _recording.durationSeconds,
-      onTick: (seconds) {
-        if (!mounted) return;
-        setState(() {});
-        if (_ui == RecordUiState.recording &&
-            RecordingDurationPolicy.shouldAutoStop(seconds)) {
-          unawaited(_stopAndProcess(reachedDurationLimit: true));
-        }
-      },
-    );
     _refreshMic();
     unawaited(_loadMicPermissionSimulatorHelper());
     unawaited(
@@ -3023,6 +3011,17 @@ class _RecordScreenState extends State<RecordScreen>
 
   @override
   Widget build(BuildContext context) {
+    ref.listen(recordingServiceProvider, (previous, next) {
+      if (!mounted) return;
+      final seconds = next.currentDuration.inSeconds;
+      if (previous?.currentDuration == next.currentDuration) return;
+      _recordingState.syncDurationSeconds(seconds);
+      if (_ui == RecordUiState.recording &&
+          RecordingDurationPolicy.shouldAutoStop(seconds)) {
+        unawaited(_stopAndProcess(reachedDurationLimit: true));
+      }
+    });
+
     var ui = _ui;
     var policyMic = _mic;
     var policyUserDenied = _micPermissionUserDenied;
@@ -8923,7 +8922,6 @@ class _RecordScreenState extends State<RecordScreen>
                         ),
                         if (ui == RecordUiState.recording) ...[
                           _RecordingStatusCard(
-                            seconds: _seconds,
                             stageLabel: stageLabel,
                           ),
                           if (_selectedPromptLine != null) ...[

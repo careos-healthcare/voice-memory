@@ -17,6 +17,8 @@ export '../../features/media/media_attachment.dart';
 export '../../features/live_audio/application/live_voice_capture_service.dart';
 export '../../features/live_audio/presentation/live_voice_session_copy.dart';
 export '../../audio/recording_service.dart';
+export '../../audio/playback_service.dart';
+export '../../features/live_audio/presentation/live_audio_ui_providers.dart';
 export '../../services/app_services.dart';
 export '../../services/capture_pipeline_service.dart';
 export '../../services/record_pipeline_log.dart';

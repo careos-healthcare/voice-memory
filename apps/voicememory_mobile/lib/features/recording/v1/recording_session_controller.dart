@@ -13,9 +13,13 @@ class RecordingSessionController {
   }) {
     unawaited(_durationSubscription?.cancel());
     _durationSubscription = duration.listen((value) {
-      _seconds = value;
+      syncDurationSeconds(value);
       onTick(value);
     });
+  }
+
+  void syncDurationSeconds(int seconds) {
+    _seconds = seconds;
   }
 
   void resetTimer() {

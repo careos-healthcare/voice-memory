@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:voicememory_mobile/billing/paywall_attribution_event.dart';
 import 'package:voicememory_mobile/billing/paywall_attribution_store.dart';
 import 'package:voicememory_mobile/billing/paywall_objection_follow_up.dart';
+import 'package:voicememory_mobile/billing/paywall_session_tracker.dart';
 import 'package:voicememory_mobile/billing/paywall_rejection_reason.dart';
 import 'package:voicememory_mobile/billing/paywall_route_args.dart';
 import 'package:voicememory_mobile/billing/paywall_source.dart';
@@ -52,6 +53,7 @@ class _MemoryAttributionStore extends PaywallAttributionStore {
 
 void main() {
   late List<({String event, Map<String, Object> properties})> captured;
+  late PaywallSessionTracker sessionTracker;
 
   List<({String event, Map<String, Object> properties})> eventsNamed(
     String name,
@@ -59,6 +61,7 @@ void main() {
 
   setUp(() {
     captured = [];
+    sessionTracker = PaywallSessionTracker();
     DelayedPaywallProofStore.bypassGateForTest = true;
     ActivationFunnelAnalytics.resetForTest();
     ActivationFunnelAnalytics.captureForTest(
@@ -66,14 +69,14 @@ void main() {
           captured.add((event: event, properties: properties)),
     );
     PaywallRejectionCapture.resetSessionForTest();
-    PaywallObjectionFollowUp.resetSessionForTest();
+    livePaywallSessionTracker.resetSession();
   });
 
   tearDown(() {
     DelayedPaywallProofStore.bypassGateForTest = false;
     ActivationFunnelAnalytics.resetForTest();
     PaywallRejectionCapture.resetSessionForTest();
-    PaywallObjectionFollowUp.resetSessionForTest();
+    livePaywallSessionTracker.resetSession();
   });
 
   Future<void> pumpPaywall(
@@ -95,6 +98,7 @@ void main() {
                 attributionStore: _MemoryAttributionStore(),
                 suggestionAttributionStore: MemorySuggestionAttributionStore(),
                 objectionStore: store,
+                sessionTracker: sessionTracker,
                 delayedPaywallProofGateOverride: () => true,
                 billingReadyOverride: () => false,
               ),
@@ -256,8 +260,11 @@ void main() {
 
   group('Objection follow-up gate', () {
     test('never for Pro users', () {
+      final followUp = PaywallObjectionFollowUp(
+        sessionTracker: PaywallSessionTracker(),
+      );
       expect(
-        PaywallObjectionFollowUp.shouldShow(
+        followUp.shouldShow(
           isPro: true,
           reason: PaywallRejectionReason.notEnoughProof,
         ),
@@ -266,23 +273,25 @@ void main() {
     });
 
     test('nothing without a reason', () {
-      expect(
-        PaywallObjectionFollowUp.shouldShow(isPro: false, reason: null),
-        isFalse,
+      final followUp = PaywallObjectionFollowUp(
+        sessionTracker: PaywallSessionTracker(),
       );
+      expect(followUp.shouldShow(isPro: false, reason: null), isFalse);
     });
 
     test('at most once per session', () {
+      final tracker = PaywallSessionTracker();
+      final followUp = PaywallObjectionFollowUp(sessionTracker: tracker);
       expect(
-        PaywallObjectionFollowUp.shouldShow(
+        followUp.shouldShow(
           isPro: false,
           reason: PaywallRejectionReason.tooExpensive,
         ),
         isTrue,
       );
-      PaywallObjectionFollowUp.shownThisSession = true;
+      tracker.markShown();
       expect(
-        PaywallObjectionFollowUp.shouldShow(
+        followUp.shouldShow(
           isPro: false,
           reason: PaywallRejectionReason.tooExpensive,
         ),

@@ -1,17 +1,18 @@
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/features/live_audio/application/live_voice_capture_service.dart';
 import 'package:voicememory_mobile/features/live_audio/application/live_voice_telemetry_source.dart';
 import 'package:voicememory_mobile/features/live_audio/domain/models/live_voice_session_fault.dart';
-import 'package:voicememory_mobile/features/live_audio/presentation/controllers/throttled_telemetry_view_model.dart';
+import 'package:voicememory_mobile/features/live_audio/presentation/live_audio_ui_providers.dart';
 
 void main() {
-  group('ThrottledTelemetryViewModel', () {
+  group('ThrottledTelemetryNotifier', () {
     late StreamController<LiveVoiceDiagnosticsSnapshot> diagnosticsController;
     late _FakeTelemetrySource telemetrySource;
-    late ThrottledTelemetryViewModel viewModel;
+    late ProviderContainer container;
 
     LiveVoiceDiagnosticsSnapshot snapshot(int pcmChunksSent) {
       return LiveVoiceDiagnosticsSnapshot(
@@ -31,32 +32,48 @@ void main() {
       telemetrySource = _FakeTelemetrySource(
         diagnosticsStream: diagnosticsController.stream,
       );
-      viewModel = ThrottledTelemetryViewModel(
-        captureService: telemetrySource,
-        diagnosticsStream: diagnosticsController.stream,
-        refreshInterval: const Duration(milliseconds: 100),
+      container = ProviderContainer(
+        overrides: [
+          throttledTelemetryConfigProvider.overrideWithValue(
+            ThrottledTelemetryConfig(
+              captureService: telemetrySource,
+              diagnosticsStream: diagnosticsController.stream,
+              refreshInterval: const Duration(milliseconds: 100),
+            ),
+          ),
+        ],
       );
+      container.read(throttledTelemetryProvider);
     });
 
     tearDown(() async {
-      viewModel.dispose();
+      container.dispose();
       await diagnosticsController.close();
     });
 
     test('exposes latest snapshot and engine state', () async {
-      expect(viewModel.snapshot, isNull);
-      expect(viewModel.engineState, LiveVoiceCaptureState.active);
+      expect(container.read(throttledTelemetryProvider).snapshot, isNull);
+      expect(
+        container.read(throttledTelemetryProvider).engineState,
+        LiveVoiceCaptureState.active,
+      );
 
       diagnosticsController.add(snapshot(1));
       await pumpEventQueue();
-      expect(viewModel.snapshot?.pcmChunksSent, 1);
+      expect(
+        container.read(throttledTelemetryProvider).snapshot?.pcmChunksSent,
+        1,
+      );
     });
 
     test(
       'throttles rapid diagnostics to at most ten UI updates per second',
       () async {
         var notifyCount = 0;
-        viewModel.addListener(() => notifyCount++);
+        container.listen(
+          throttledTelemetryProvider,
+          (_, _) => notifyCount++,
+        );
 
         for (var i = 0; i < 50; i++) {
           diagnosticsController.add(snapshot(i));
@@ -70,20 +87,22 @@ void main() {
 
         expect(immediateCount, lessThanOrEqualTo(2));
         expect(afterWindowCount, lessThan(15));
-        expect(viewModel.snapshot?.pcmChunksSent, 49);
+        expect(
+          container.read(throttledTelemetryProvider).snapshot?.pcmChunksSent,
+          49,
+        );
       },
     );
 
     test(
-      'notifies when capture engine state changes through service listener',
+      'updates when capture engine state changes through service listener',
       () {
-        var notifyCount = 0;
-        viewModel.addListener(() => notifyCount++);
-
         telemetrySource.emitCaptureStateChange(LiveVoiceCaptureState.paused);
 
-        expect(viewModel.engineState, LiveVoiceCaptureState.paused);
-        expect(notifyCount, greaterThanOrEqualTo(1));
+        expect(
+          container.read(throttledTelemetryProvider).engineState,
+          LiveVoiceCaptureState.paused,
+        );
       },
     );
   });

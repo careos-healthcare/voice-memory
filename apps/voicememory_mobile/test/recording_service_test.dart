@@ -98,7 +98,7 @@ void main() {
     'simulator policy: permanentlyDenied + hasRecorder starts recording when flagged',
     () async {
       MicrophonePermissionEnvironment.setIosSimulatorForTest(true);
-      final recording = RecordingService(
+      final recording = RecordingService.create(
         testMode: true,
         permissionGateway: FakeMicrophonePermissionGateway(
           statusValue: PermissionStatus.permanentlyDenied,
@@ -121,7 +121,7 @@ void main() {
         'granted': true,
         'canRequest': false,
       };
-      final recording = RecordingService(
+      final recording = RecordingService.create(
         testMode: true,
         permissionGateway: FakeMicrophonePermissionGateway(
           statusValue: PermissionStatus.permanentlyDenied,
@@ -145,7 +145,7 @@ void main() {
         'granted': false,
         'canRequest': false,
       };
-      final recording = RecordingService(
+      final recording = RecordingService.create(
         testMode: true,
         permissionGateway: FakeMicrophonePermissionGateway(
           statusValue: PermissionStatus.denied,

@@ -16,10 +16,12 @@ import 'package:voicememory_mobile/features/live_audio/infrastructure/local_audi
 import 'package:voicememory_mobile/features/live_audio/infrastructure/live_audio_session_api_client.dart';
 import 'package:voicememory_mobile/features/live_audio/infrastructure/live_audio_socket_connection.dart';
 import 'package:voicememory_mobile/features/live_audio/infrastructure/live_audio_websocket_client.dart';
-import 'package:voicememory_mobile/features/live_audio/infrastructure/live_pcm24_playback_engine.dart';
 import 'package:voicememory_mobile/features/live_audio/live_audio_constants.dart';
 import 'package:voicememory_mobile/features/live_audio/presentation/controllers/live_audio_session_controller.dart';
-import 'package:voicememory_mobile/features/live_audio/presentation/controllers/throttled_telemetry_view_model.dart';
+import 'package:voicememory_mobile/features/live_audio/presentation/live_audio_ui_providers.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../helpers/silent_playback_service.dart';
+import '../../../helpers/fake_path_provider.dart';
 import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/security/api_usage_guard.dart';
@@ -43,11 +45,18 @@ IsolateAudioPipeline _inlineIsolatePipeline(PipelineConfig config) {
 }
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+
   group('ArchiveMe Complete End-to-End Resiliency Suite', () {
     late Directory vaultDirectory;
+    late Directory pathProviderRoot;
     late InMemoryPrivateDataEncryptionKeyStore vaultKeyStore;
 
     setUp(() async {
+      pathProviderRoot = Directory.systemTemp.createTempSync(
+        'vm_resilience_path_',
+      );
+      installFakePathProvider(root: pathProviderRoot);
       ApiUsageGuard.resetForTest(
         replacement: ApiUsageGuard(maxAttemptsPerScope: 5),
       );
@@ -62,6 +71,9 @@ void main() {
       ApiUsageGuard.resetForTest();
       if (vaultDirectory.existsSync()) {
         await vaultDirectory.delete(recursive: true);
+      }
+      if (pathProviderRoot.existsSync()) {
+        pathProviderRoot.deleteSync(recursive: true);
       }
     });
 
@@ -182,12 +194,21 @@ void main() {
           vaultKeyStore: vaultKeyStore,
           pcmSent: <List<int>>[],
         );
-        final telemetry = ThrottledTelemetryViewModel(
-          captureService: harness.captureService,
-          refreshInterval: const Duration(milliseconds: 100),
+        final telemetryContainer = ProviderContainer(
+          overrides: [
+            throttledTelemetryConfigProvider.overrideWithValue(
+              ThrottledTelemetryConfig(
+                captureService: harness.captureService,
+                refreshInterval: const Duration(milliseconds: 100),
+              ),
+            ),
+          ],
         );
         var notifyCount = 0;
-        telemetry.addListener(() => notifyCount++);
+        telemetryContainer.listen(
+          throttledTelemetryProvider,
+          (_, _) => notifyCount++,
+        );
 
         try {
           await harness.startConnected(hardwareSampleRate: 48000);
@@ -196,7 +217,10 @@ void main() {
             reason: 'network_dropout',
           );
 
-          expect(telemetry.engineState, LiveVoiceCaptureState.active);
+          expect(
+            harness.captureService.captureState,
+            LiveVoiceCaptureState.active,
+          );
 
           for (var i = 0; i < 40; i++) {
             harness.captureService.handleIncomingPipelineFrame(
@@ -216,9 +240,12 @@ void main() {
           expect(afterWindowCount, lessThan(15));
           expect(harness.captureService.isOfflineVaultActive, isTrue);
           expect(harness.captureService.vaultedFrameCount, greaterThan(0));
-          expect(telemetry.engineState, LiveVoiceCaptureState.active);
+          expect(
+            harness.captureService.captureState,
+            LiveVoiceCaptureState.active,
+          );
         } finally {
-          telemetry.dispose();
+          telemetryContainer.dispose();
           await harness.dispose();
         }
       },
@@ -267,7 +294,7 @@ class _ResilientPipelineHarness {
         ),
       ),
       pipeline: journalPipeline,
-      playback: _SilentPlayback(),
+      playback: silentPlaybackService(),
       useIsolateAudioPipeline: true,
       pipelineFactory: _inlineIsolatePipeline,
       maxReconnectAttempts: 1,
@@ -372,17 +399,6 @@ class _RecordingPipeline extends CapturePipelineService {
       analysisSucceeded: true,
     );
   }
-}
-
-class _SilentPlayback extends LivePcm24PlaybackEngine {
-  @override
-  Future<void> prepare() async {}
-
-  @override
-  Future<void> stop() async {}
-
-  @override
-  Future<void> dispose() async {}
 }
 
 class _InstrumentedWebSocketClient extends LiveAudioWebSocketClient {

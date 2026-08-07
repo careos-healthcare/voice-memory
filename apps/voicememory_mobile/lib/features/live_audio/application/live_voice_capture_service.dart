@@ -13,11 +13,11 @@ import '../domain/models/live_voice_error_state.dart';
 import '../domain/models/live_voice_session_fault.dart';
 import '../domain/models/live_session_state.dart';
 import '../domain/services/live_audio_transcript_collector.dart';
+import '../../../audio/playback_service.dart';
 import '../infrastructure/isolate_audio_pipeline.dart';
 import '../infrastructure/local_audio_vault.dart';
 import '../infrastructure/local_audio_vault_reader.dart';
 import '../infrastructure/live_audio_pipeline_log.dart';
-import '../infrastructure/live_pcm24_playback_engine.dart';
 import '../infrastructure/offline_vault_recovery_store.dart';
 import '../live_audio_constants.dart';
 import '../presentation/controllers/live_audio_session_controller.dart';
@@ -33,14 +33,17 @@ class LiveVoiceCaptureService implements Listenable, LiveVoiceTelemetrySource {
   LiveVoiceCaptureService({
     required this._controller,
     required this._pipeline,
-    LivePcm24PlaybackEngine? playback,
+    PlaybackService? playback,
     LiveAudioTranscriptCollector? transcriptCollector,
     IsolateAudioPipelineFactory? pipelineFactory,
     LocalAudioVault? offlineAudioVault,
     OfflineVaultRecoveryStore? recoveryStore,
     this.useIsolateAudioPipeline = false,
     this.maxReconnectAttempts = 1,
-  }) : _playback = playback ?? LivePcm24PlaybackEngine(),
+  }) : _ownsPlayback = playback != null,
+       _playback =
+           playback ??
+           playbackProviderContainer.read(playbackServiceProvider.notifier),
        _transcripts = transcriptCollector ?? LiveAudioTranscriptCollector(),
        _pipelineFactory =
            pipelineFactory ?? ((config) => IsolateAudioPipeline(config)),
@@ -51,7 +54,8 @@ class LiveVoiceCaptureService implements Listenable, LiveVoiceTelemetrySource {
 
   final LiveAudioSessionController _controller;
   final CapturePipelineService _pipeline;
-  final LivePcm24PlaybackEngine _playback;
+  final PlaybackService _playback;
+  final bool _ownsPlayback;
   final LiveAudioTranscriptCollector _transcripts;
   final IsolateAudioPipelineFactory _pipelineFactory;
   final LocalAudioVault _localVault;
@@ -179,7 +183,7 @@ class LiveVoiceCaptureService implements Listenable, LiveVoiceTelemetrySource {
       if (!_transcriptController.isClosed) {
         _transcriptController.add('');
       }
-      await _playback.prepare();
+      await _playback.prepareLiveSession();
       _serverEventsSubscription ??= _controller.serverEvents.listen(
         _handleServerEvent,
       );
@@ -315,7 +319,7 @@ class LiveVoiceCaptureService implements Listenable, LiveVoiceTelemetrySource {
     _durationTimer?.cancel();
     _durationTimer = null;
     await _controller.pauseMicrophoneCaptureForFocus();
-    await _playback.flush();
+    await _playback.flushLivePcm();
     LiveAudioPipelineLog.audioFocusPaused();
   }
 
@@ -567,7 +571,7 @@ class LiveVoiceCaptureService implements Listenable, LiveVoiceTelemetrySource {
   void _ingestNonFaultEvent(LiveServerEvent event) {
     if (event is LiveInterruptedEvent) {
       LiveAudioPipelineLog.bargeIn(source: 'server_interrupted');
-      unawaited(_playback.flush());
+      unawaited(_playback.flushLivePcm());
       return;
     }
 
@@ -591,7 +595,7 @@ class LiveVoiceCaptureService implements Listenable, LiveVoiceTelemetrySource {
         chunkIndex: _audioChunksReceived,
         latencyMs: _firstAudioLatencyMs,
       );
-      _playback.feed(event.pcmBytes);
+      _playback.feedLivePcm(event.pcmBytes);
       _emitDiagnostics();
     }
   }
@@ -689,7 +693,10 @@ class LiveVoiceCaptureService implements Listenable, LiveVoiceTelemetrySource {
     await cancel();
     await _serverEventsSubscription?.cancel();
     _serverEventsSubscription = null;
-    await _playback.dispose();
+    await _playback.stop();
+    if (_ownsPlayback) {
+      await _playback.disposeAsync();
+    }
     await _durationController.close();
     await _sessionFaultController.close();
     await _errorStateController.close();

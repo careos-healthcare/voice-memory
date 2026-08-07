@@ -46,7 +46,7 @@ Physical device: use your LAN IP, e.g. `http://192.168.1.10:3000`.
 
 - Record → `/live-voice` full-screen session
 - `RecordLivePcm16CaptureSource` → `record` plugin @ 16 kHz PCM16 mono → coordinator → proxy
-- `LivePcm24PlaybackEngine` → 24 kHz model audio via `audioplayers` (low-latency WAV chunks)
+- `PlaybackService` → 24 kHz model audio via `audioplayers` (low-latency WAV chunks)
 - `stopAndSave()` → analyze + journal entry (`captureContextTag: live_voice_capture`)
 
 3. Run tests:
@@ -87,10 +87,10 @@ The pasted `GeminiLiveAudioSession` + client API key pattern is **not** used. Ar
 |-----------------|-------------------------|
 | `record` + `startStream` @ 16 kHz PCM16 | `RecordLivePcm16CaptureSource` (`lib/features/live_audio/infrastructure/record_live_pcm16_capture_source.dart`) |
 | `streamUserAudioChunk` → WebSocket | `LiveAudioSessionCoordinator.streamPcm16kChunk` → `realtimeInput.audio` via backend proxy |
-| Raw PCM playback plugin | `LivePcm24PlaybackEngine` — wraps 24 kHz PCM in WAV, `PlayerMode.lowLatency` |
+| Raw PCM playback plugin | `PlaybackService` (`lib/audio/playback_service.dart`) — wraps 24 kHz PCM in WAV, `PlayerMode.lowLatency` |
 | Client `connect()` + setup frame | `POST /api/live-audio/session` + server `GeminiLiveProxy` setup |
 | Network drop / reconnect | `LiveVoiceCaptureService` → one automatic `reconnectSession()` (re-mint + WS); then user-visible fault |
-| Barge-in (user speaks over model) | Server sends `serverContent.interrupted` → `LiveInterruptedEvent` → `LivePcm24PlaybackEngine.flush()` clears playback queue |
+| Barge-in (user speaks over model) | Server sends `serverContent.interrupted` → `LiveInterruptedEvent` → `PlaybackService.flushLivePcm()` clears playback queue |
 
 Mic bytes never touch a client-side Gemini URL. Live voice configures native audio focus via `LiveAudioFocusGateway` (`audio_session` package, `voiceChat` / `voiceCommunication`) before capture starts. Classic one-shot capture still uses `record` / `IosAudioSessionConfigurator`.
 

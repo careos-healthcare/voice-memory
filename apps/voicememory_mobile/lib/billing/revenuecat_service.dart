@@ -7,6 +7,7 @@ import 'package:purchases_flutter/purchases_flutter.dart';
 import '../config/app_config.dart';
 import '../models/entitlement.dart';
 import 'archive_loop_entitlement_ids.dart';
+import '../api/api_exceptions.dart';
 import 'billing_async_guard.dart';
 import 'revenuecat_diagnostics.dart';
 import 'revenuecat_diagnostics_log.dart';
@@ -319,7 +320,7 @@ class RevenueCatService implements StoreBillingPort {
   @override
   Future<PremiumEntitlements> purchasePackage(Package package) async {
     if (!_configured) {
-      throw StateError('RevenueCat not configured');
+      throw BillingUnavailableException();
     }
     final result = await Purchases.purchasePackage(package);
     final mapped = _mapCustomerInfo(result);
@@ -330,7 +331,7 @@ class RevenueCatService implements StoreBillingPort {
   @override
   Future<PremiumEntitlements> restorePurchases() async {
     if (!_configured) {
-      throw StateError('RevenueCat not configured');
+      throw BillingUnavailableException();
     }
     final info = await withBillingTimeoutRequired(
       Purchases.restorePurchases(),

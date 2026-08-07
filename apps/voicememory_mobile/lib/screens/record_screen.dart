@@ -1,3 +1,5 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../core/config/v1_feature_flags.dart';
 import '../features/recording/recording_dependencies.dart';
 import '../core/di/v1_account_dependencies.dart';
@@ -35,7 +37,7 @@ void _recordCtaLog(String message) {
   debugPrint('${RecordMicrophonePermissionUi.recordCtaLogPrefix} $message');
 }
 
-class RecordScreen extends StatefulWidget {
+class RecordScreen extends ConsumerStatefulWidget {
   const RecordScreen({
     super.key,
     this.initialPrompt,
@@ -97,5 +99,5 @@ class RecordScreen extends StatefulWidget {
   final V1AccountDependencies? accountDependencies;
 
   @override
-  State<RecordScreen> createState() => _RecordScreenState();
+  ConsumerState<RecordScreen> createState() => _RecordScreenState();
 }

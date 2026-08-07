@@ -36,6 +36,7 @@ dependencies:
   purchases_ui_flutter: ^8.1.0
   web_socket_channel: ^3.0.3
   audio_session: ^0.2.4
+  flutter_riverpod: ^2.6.1
 
 dev_dependencies:
   flutter_test:

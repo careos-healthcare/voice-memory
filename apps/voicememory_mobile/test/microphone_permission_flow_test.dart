@@ -245,7 +245,7 @@ void main() {
           statusValue: PermissionStatus.permanentlyDenied,
           hasRecorder: true,
         );
-        final recording = RecordingService(
+        final recording = RecordingService.create(
           testMode: true,
           permissionGateway: gateway,
         );
@@ -264,7 +264,7 @@ void main() {
           statusValue: PermissionStatus.denied,
           hasRecorder: true,
         );
-        final recording = RecordingService(
+        final recording = RecordingService.create(
           testMode: true,
           permissionGateway: gateway,
         );
@@ -279,7 +279,7 @@ void main() {
         statusValue: PermissionStatus.denied,
         hasRecorder: false,
       );
-      final recording = RecordingService(
+      final recording = RecordingService.create(
         testMode: true,
         permissionGateway: gateway,
       );
@@ -296,7 +296,7 @@ void main() {
         statusValue: PermissionStatus.denied,
         hasRecorder: true,
       );
-      final recording = RecordingService(
+      final recording = RecordingService.create(
         testMode: true,
         permissionGateway: gateway,
       );
@@ -314,7 +314,7 @@ void main() {
           statusValue: PermissionStatus.denied,
           hasRecorder: true,
         );
-        final recording = RecordingService(
+        final recording = RecordingService.create(
           testMode: true,
           permissionGateway: gateway,
         );
@@ -333,7 +333,7 @@ void main() {
           statusValue: PermissionStatus.permanentlyDenied,
           hasRecorder: true,
         );
-        final recording = RecordingService(
+        final recording = RecordingService.create(
           testMode: true,
           permissionGateway: gateway,
         );
@@ -352,7 +352,7 @@ void main() {
           statusValue: PermissionStatus.denied,
           hasRecorder: true,
         );
-        final recording = RecordingService(
+        final recording = RecordingService.create(
           testMode: true,
           permissionGateway: gateway,
         );
@@ -375,7 +375,7 @@ void main() {
           statusValue: PermissionStatus.permanentlyDenied,
           hasRecorder: false,
         );
-        final recording = RecordingService(
+        final recording = RecordingService.create(
           testMode: true,
           permissionGateway: gateway,
         );
@@ -394,7 +394,7 @@ void main() {
           statusValue: PermissionStatus.denied,
           hasRecorder: true,
         );
-        final recording = RecordingService(
+        final recording = RecordingService.create(
           testMode: true,
           permissionGateway: gateway,
         );
@@ -415,7 +415,7 @@ void main() {
           statusValue: PermissionStatus.denied,
           hasRecorder: true,
         );
-        final recording = RecordingService(
+        final recording = RecordingService.create(
           testMode: true,
           permissionGateway: gateway,
         );
@@ -430,7 +430,7 @@ void main() {
         statusValue: PermissionStatus.granted,
         hasRecorder: true,
       );
-      final recording = RecordingService(
+      final recording = RecordingService.create(
         testMode: true,
         permissionGateway: gateway,
       );
@@ -446,7 +446,7 @@ void main() {
         requestResult: PermissionStatus.granted,
         hasRecorder: true,
       );
-      final recording = RecordingService(
+      final recording = RecordingService.create(
         testMode: true,
         permissionGateway: gateway,
       );
@@ -463,7 +463,7 @@ void main() {
           statusValue: PermissionStatus.denied,
           hasRecorder: true,
         );
-        final recording = RecordingService(
+        final recording = RecordingService.create(
           testMode: true,
           permissionGateway: gateway,
         );
@@ -480,7 +480,7 @@ void main() {
           statusValue: PermissionStatus.granted,
           hasRecorder: true,
         );
-        final recording = RecordingService(
+        final recording = RecordingService.create(
           testMode: true,
           permissionGateway: gateway,
         );
@@ -894,7 +894,7 @@ void main() {
           requestResult: PermissionStatus.granted,
           hasRecorder: true,
         );
-        final recording = RecordingService(
+        final recording = RecordingService.create(
           testMode: true,
           permissionGateway: gateway,
         );
@@ -912,7 +912,7 @@ void main() {
         requestResult: PermissionStatus.denied,
         hasRecorder: true,
       );
-      final recording = RecordingService(
+      final recording = RecordingService.create(
         testMode: true,
         permissionGateway: gateway,
       );
