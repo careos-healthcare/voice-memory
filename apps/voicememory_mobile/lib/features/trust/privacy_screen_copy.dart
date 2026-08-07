@@ -32,9 +32,9 @@ abstract class PrivacyScreenCopy {
 
   static const String encryptedBackupTitle = 'Optional encrypted backup';
   static const String encryptedBackupBody =
-      'If you sign in and enable sync, your archive is encrypted on this device '
-      'before anything is uploaded. The server stores ciphertext only — it cannot '
-      'read your transcripts or reflections. Sync is optional.';
+      'If you sign in and enable sync, backup data is encrypted before it is '
+      'uploaded. The server stores ciphertext only — it cannot read your '
+      'transcripts or reflections. Sync is optional.';
 
   static const String doesNotDoTitle = 'What ArchiveMe does not do';
   static const String doesNotDoBody =
