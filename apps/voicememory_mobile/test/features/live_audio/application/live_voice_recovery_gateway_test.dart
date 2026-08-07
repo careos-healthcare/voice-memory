@@ -9,6 +9,9 @@ import 'package:voicememory_mobile/features/live_audio/domain/models/offline_vau
 import 'package:voicememory_mobile/features/live_audio/infrastructure/local_audio_vault.dart';
 import 'package:voicememory_mobile/features/live_audio/infrastructure/network_connectivity_source.dart';
 import 'package:voicememory_mobile/features/live_audio/infrastructure/offline_vault_recovery_store.dart';
+import 'package:voicememory_mobile/core/network/network_cancel_token.dart';
+import 'package:voicememory_mobile/data/network/api_client_capture_adapter.dart';
+import 'package:voicememory_mobile/data/repositories/capture_repository.dart';
 import 'package:voicememory_mobile/services/capture_attest_service.dart';
 import 'package:voicememory_mobile/services/capture_pipeline_service.dart';
 import 'package:voicememory_mobile/features/proof_admission/remote_processing_consent_store.dart';
@@ -56,6 +59,10 @@ void main() {
             ..setToken('capture-token', expiresInSeconds: 3600),
         ),
         pipeline: CapturePipelineService(
+          captureRepository: CaptureRepository(
+            api: ApiClientCaptureAdapter(api),
+            requestScope: NetworkRequestScope(),
+          ),
           api: api,
           attest: CaptureAttestService(
             api: api,

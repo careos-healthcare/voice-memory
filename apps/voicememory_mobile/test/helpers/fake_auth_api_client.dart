@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:voicememory_mobile/core/di/network_providers.dart';
+import 'package:voicememory_mobile/core/network/network_cancel_token.dart';
 import 'package:voicememory_mobile/core/network/api_failure.dart';
 import 'package:voicememory_mobile/core/network/api_result.dart';
 import 'package:voicememory_mobile/core/network/session_cookie_source.dart';
@@ -24,7 +25,10 @@ class FakeAuthApiClient implements AuthApiClient {
   ApiFailure? signOutError;
 
   @override
-  Future<ApiResult<void>> sendAuthCode(String email) async {
+  Future<ApiResult<void>> sendAuthCode(
+    String email, {
+    NetworkCancelToken? cancelToken,
+  }) async {
     if (sendCodeError != null) {
       return ApiFailureResult(sendCodeError!);
     }
@@ -36,6 +40,7 @@ class FakeAuthApiClient implements AuthApiClient {
   Future<ApiResult<AuthVerifyPayload>> verifyAuthCode({
     required String email,
     required String code,
+    NetworkCancelToken? cancelToken,
   }) async {
     if (verifyError != null) {
       return ApiFailureResult(verifyError!);
@@ -52,10 +57,15 @@ class FakeAuthApiClient implements AuthApiClient {
   UserSession? session;
 
   @override
-  Future<ApiResult<UserSession?>> getSession() async => ApiSuccess(session);
+  Future<ApiResult<UserSession?>> getSession({
+    NetworkCancelToken? cancelToken,
+  }) async =>
+      ApiSuccess(session);
 
   @override
-  Future<ApiResult<void>> signOut() async {
+  Future<ApiResult<void>> signOut({
+    NetworkCancelToken? cancelToken,
+  }) async {
     signOutCalls++;
     session = null;
     if (signOutError != null) {
@@ -78,6 +88,7 @@ AuthService createTestAuthService({
     api: api ?? FakeAuthApiClient(),
     sessionCookies: cookies,
     secure: secureStorage,
+    requestScope: NetworkRequestScope(),
   );
   final container = ProviderContainer(
     overrides: [authRepositoryProvider.overrideWithValue(repository)],

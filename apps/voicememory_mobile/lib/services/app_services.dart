@@ -9,6 +9,7 @@ import '../audio/recording_service.dart';
 import '../core/di/app_provider_container.dart';
 import '../core/di/network_providers.dart';
 import '../core/network/http_transport.dart';
+import '../core/network/network_cancel_token.dart';
 import '../core/network/session_cookie_source.dart';
 import '../data/network/http_auth_api_client.dart';
 import '../features/billing/application/billing_notifier.dart';
@@ -571,6 +572,7 @@ class AppServices {
       s.remoteProcessingConsentStore,
     );
     s.pipeline = CapturePipelineService(
+      captureRepository: appProviderContainer.read(captureRepositoryProvider),
       api: s.api,
       attest: s.attest,
       journalStore: s.journalStore,
@@ -896,10 +898,12 @@ class AppServices {
       // Legacy test clients may supply their own http.Client — keep transport
       // on a dedicated client for typed domain API clients.
     }
+    final requestScope = NetworkRequestScope();
     final authRepository = createAuthRepository(
       api: HttpAuthApiClient(transport),
       sessionCookies: s.sessionCookieSource,
       secure: s.secureStorage,
+      requestScope: requestScope,
     );
     bindAppProviderContainer(
       createNetworkProviderContainer(
@@ -907,6 +911,7 @@ class AppServices {
         sessionCookieStore: s.sessionCookies,
         sessionCookieSource: s.sessionCookieSource,
         authRepository: authRepository,
+        requestScope: requestScope,
         httpClient: client,
         apiBaseUrl: AppConfig.apiBaseUrl,
       ),

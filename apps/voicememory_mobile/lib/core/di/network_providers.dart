@@ -137,6 +137,7 @@ ProviderContainer createNetworkProviderContainer({
   required SessionCookieStore sessionCookieStore,
   required SessionCookieSource sessionCookieSource,
   required AuthRepository authRepository,
+  NetworkRequestScope? requestScope,
   http.Client? httpClient,
   String? apiBaseUrl,
   StoreBillingPort? storeBilling,
@@ -147,6 +148,8 @@ ProviderContainer createNetworkProviderContainer({
       sessionCookieStoreProvider.overrideWithValue(sessionCookieStore),
       sessionCookieSourceProvider.overrideWithValue(sessionCookieSource),
       authRepositoryProvider.overrideWithValue(authRepository),
+      if (requestScope != null)
+        networkRequestScopeProvider.overrideWithValue(requestScope),
       if (httpClient != null)
         httpClientProvider.overrideWithValue(httpClient),
       if (apiBaseUrl != null) apiBaseUrlProvider.overrideWithValue(apiBaseUrl),
@@ -160,10 +163,12 @@ AuthRepository createAuthRepository({
   required AuthApiClient api,
   required SessionCookieSource sessionCookies,
   required SecureStorageService secure,
+  required NetworkRequestScope requestScope,
 }) {
   return AuthRepository(
     api: api,
     sessionCookies: sessionCookies,
     secure: secure,
+    requestScope: requestScope,
   );
 }

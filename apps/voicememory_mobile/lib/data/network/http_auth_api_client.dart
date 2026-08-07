@@ -2,6 +2,7 @@ import '../../core/network/api_failure.dart';
 import '../../core/network/api_failure_mapper.dart';
 import '../../core/network/api_result.dart';
 import '../../core/network/http_transport.dart';
+import '../../core/network/network_cancel_token.dart';
 import '../../models/session.dart';
 import 'auth_api_client.dart';
 
@@ -11,10 +12,14 @@ class HttpAuthApiClient implements AuthApiClient {
   final HttpTransport _transport;
 
   @override
-  Future<ApiResult<void>> sendAuthCode(String email) async {
+  Future<ApiResult<void>> sendAuthCode(
+    String email, {
+    NetworkCancelToken? cancelToken,
+  }) async {
     final responseResult = await _transport.post(
       '/api/auth/send-code',
       body: {'email': email.trim()},
+      cancelToken: cancelToken,
     );
     return responseResult.when(
       success: (response) => _transport.expectSuccess(response),
@@ -26,10 +31,12 @@ class HttpAuthApiClient implements AuthApiClient {
   Future<ApiResult<AuthVerifyPayload>> verifyAuthCode({
     required String email,
     required String code,
+    NetworkCancelToken? cancelToken,
   }) async {
     final responseResult = await _transport.post(
       '/api/auth/verify',
       body: {'email': email.trim(), 'code': code.trim()},
+      cancelToken: cancelToken,
     );
     return responseResult.when(
       success: (response) {
@@ -64,11 +71,16 @@ class HttpAuthApiClient implements AuthApiClient {
   }
 
   @override
-  Future<ApiResult<UserSession?>> getSession() async {
+  Future<ApiResult<UserSession?>> getSession({
+    NetworkCancelToken? cancelToken,
+  }) async {
     if (_transport.tryUri('/api/auth/session') == null) {
       return const ApiSuccess(null);
     }
-    final responseResult = await _transport.get('/api/auth/session');
+    final responseResult = await _transport.get(
+      '/api/auth/session',
+      cancelToken: cancelToken,
+    );
     return responseResult.when(
       success: (response) {
         if (response.statusCode == 401) {
@@ -88,8 +100,13 @@ class HttpAuthApiClient implements AuthApiClient {
   }
 
   @override
-  Future<ApiResult<void>> signOut() async {
-    final responseResult = await _transport.post('/api/auth/signout');
+  Future<ApiResult<void>> signOut({
+    NetworkCancelToken? cancelToken,
+  }) async {
+    final responseResult = await _transport.post(
+      '/api/auth/signout',
+      cancelToken: cancelToken,
+    );
     return responseResult.when(
       success: (response) {
         if (response.statusCode == 401 ||

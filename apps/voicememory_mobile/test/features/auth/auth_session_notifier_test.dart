@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/api/api_exceptions.dart';
 import 'package:voicememory_mobile/core/di/network_providers.dart';
 import 'package:voicememory_mobile/core/network/api_failure.dart';
+import 'package:voicememory_mobile/core/network/network_cancel_token.dart';
 import 'package:voicememory_mobile/core/network/session_cookie_source.dart';
 import 'package:voicememory_mobile/data/repositories/auth_repository.dart';
 import 'package:voicememory_mobile/features/auth/application/auth_session_notifier.dart';
@@ -40,6 +41,7 @@ void main() {
       api: fakeApi,
       sessionCookies: cookies,
       secure: secure,
+      requestScope: NetworkRequestScope(),
     );
     container = ProviderContainer(
       overrides: [authRepositoryProvider.overrideWithValue(repository)],

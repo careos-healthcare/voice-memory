@@ -30,6 +30,7 @@ import '../security/user_content_safety.dart';
 import '../storage/journal_store.dart';
 import 'capture_attest_service.dart';
 import 'capture_save_messages.dart';
+import '../data/repositories/capture_repository.dart';
 import '../api/api_client.dart';
 import 'product_analytics.dart';
 import 'record_pipeline_log.dart';
@@ -69,14 +70,20 @@ class CapturePipelineResult {
 
 class CapturePipelineService {
   CapturePipelineService({
-    required this._api,
-    required this._attest,
-    required this._journalStore,
+    required CaptureRepository captureRepository,
+    required ApiClient api,
+    required CaptureAttestService attest,
+    required JournalStore journalStore,
     this._scopeProvider = const AppServicesProofScopeProvider(),
     required this.consentStore,
     ApiUsageGuard? usageGuard,
-  }) : _usageGuard = usageGuard ?? ApiUsageGuard.shared;
+  }) : _captureRepository = captureRepository,
+       _api = api,
+       _attest = attest,
+       _journalStore = journalStore,
+       _usageGuard = usageGuard ?? ApiUsageGuard.shared;
 
+  final CaptureRepository _captureRepository;
   final ApiClient _api;
   final CaptureAttestService _attest;
   final JournalStore _journalStore;
@@ -1059,10 +1066,14 @@ class CapturePipelineService {
     required ProofSourceType sourceType,
   }) async {
     final revision = UserContentSafety.privacyHash(transcript);
-    final raw = await _api.postAnalyzeRaw(
+    final analyzeResult = await _captureRepository.postAnalyzeRaw(
       transcript: transcript,
       captureToken: captureToken,
       idempotencyKey: idempotencyKey,
+    );
+    final raw = analyzeResult.when(
+      success: (value) => value,
+      onFailure: (failure) => throw failure.toApiException(),
     );
     // Every caller already checked `_remoteProcessingConsented()` live
     // before it was willing to make the `postAnalyzeRaw` call above — that is
