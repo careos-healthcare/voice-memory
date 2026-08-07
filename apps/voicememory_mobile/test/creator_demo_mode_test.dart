@@ -18,6 +18,7 @@ import 'package:archiveme_research/screens/pressure_insights_screen.dart';
 import 'package:voicememory_mobile/services/activation_funnel_analytics.dart';
 import 'package:voicememory_mobile/services/product_analytics.dart';
 import 'package:voicememory_mobile/services/sync_service.dart';
+import 'helpers/test_sync_service.dart';
 import 'package:voicememory_mobile/storage/journal_store.dart';
 import 'package:voicememory_mobile/storage/mobile_prefs_store.dart';
 
@@ -133,7 +134,11 @@ void main() {
         file: File('${dir.path}/journal.json')..writeAsStringSync('broken'),
       );
       final prefs = MobilePrefsStore(file: File('${dir.path}/prefs.json'));
-      final sync = SyncService(ApiClient(baseUrl: ''), journal, prefs);
+      final sync = createTestSyncService(
+        api: ApiClient(baseUrl: ''),
+        journal: journal,
+        prefs: prefs,
+      );
 
       final result = await sync.syncNow();
       expect(result.cloudSyncSucceeded, isFalse);

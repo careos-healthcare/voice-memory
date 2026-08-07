@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import '../api/api_exceptions.dart';
+import '../core/network/api_failure.dart';
 import '../product/consumer_ui_copy.dart';
 
 /// User-facing copy for capture / sync — local success is never overridden by backend errors.
@@ -22,6 +23,9 @@ class CaptureSaveMessages {
       'Sync will resume when you are back online.';
 
   static String syncNoteFor(Object error) {
+    if (error is ApiFailure) {
+      return syncNoteFor(error.toApiException());
+    }
     if (error is BackendNotConfiguredException) {
       return syncNotAvailableTestFlight;
     }

@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/api/api_client.dart';
+import 'package:voicememory_mobile/data/network/api_client_sync_adapter.dart';
 import 'package:voicememory_mobile/features/encrypted_sync/legacy_plaintext_migration_service.dart';
 import 'package:voicememory_mobile/features/encrypted_sync/sync_master_key_store.dart';
 import 'package:voicememory_mobile/models/journal_entry.dart';
@@ -34,6 +35,7 @@ void main() {
       api = _MigrationApi();
       migration = LegacyPlaintextMigrationService(
         api: api,
+        syncApi: ApiClientSyncAdapter(api),
         journal: journal,
         prefs: prefs,
         deviceIds: _FakeDeviceIds(),

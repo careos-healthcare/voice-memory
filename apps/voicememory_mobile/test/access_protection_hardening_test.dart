@@ -7,7 +7,7 @@ import 'package:voicememory_mobile/billing/subscription_copy.dart';
 import 'package:voicememory_mobile/features/pro/pro_value_preview_copy.dart';
 import 'package:voicememory_mobile/features/pro_value/pro_value_copy.dart';
 import 'package:voicememory_mobile/product/consumer_ui_copy.dart';
-import 'package:voicememory_mobile/api/api_client.dart';
+import 'helpers/fake_auth_api_client.dart';
 import 'package:voicememory_mobile/models/session.dart';
 import 'package:archiveme_research/screens/pro_value_preview_screen.dart';
 import 'package:voicememory_mobile/screens/security_settings_screen.dart';
@@ -26,11 +26,8 @@ import 'package:voicememory_mobile/storage/session_cookie_store.dart';
 import 'package:voicememory_mobile/theme/app_theme.dart';
 import 'support/test_storage_sandbox.dart';
 
-class _FakeApi extends ApiClient {
-  _FakeApi() : super(baseUrl: 'http://test.invalid');
-
-  @override
-  Future<UserSession?> getSession() async => null;
+class _FakeApi extends FakeAuthApiClient {
+  _FakeApi();
 }
 
 class _MemorySecure extends SecureStorageService {
@@ -246,7 +243,7 @@ void main() {
         biometrics: const NoBiometricAuthenticator(),
       );
       final secure = _MemorySecure();
-      auth = AuthService(_FakeApi(), secure, SessionCookieStore(secure));
+      auth = createTestAuthService(api: _FakeApi(), secure: secure);
     });
 
     tearDown(() => sandbox.dispose());

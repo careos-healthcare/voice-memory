@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:uuid/uuid.dart';
 
+import '../core/network/capture_pipeline_api_errors.dart';
 import '../api/api_exceptions.dart';
 import '../features/timeline/timeline_entry_display.dart';
 import '../features/proof_admission/proof_admission_analytics.dart';
@@ -330,30 +331,6 @@ class CapturePipelineService {
         syncSucceeded: true,
         analysisSucceeded: true,
       );
-    } on SocketException catch (e) {
-      return _handleVoiceCaptureFailure(
-        audioFile: audioFile,
-        durationSeconds: durationSeconds,
-        partialTranscript: partialTranscript,
-        error: e,
-        onStage: onStage,
-      );
-    } on ApiException catch (e) {
-      return _handleVoiceCaptureFailure(
-        audioFile: audioFile,
-        durationSeconds: durationSeconds,
-        partialTranscript: partialTranscript,
-        error: e,
-        onStage: onStage,
-      );
-    } on FormatException catch (e) {
-      return _handleVoiceCaptureFailure(
-        audioFile: audioFile,
-        durationSeconds: durationSeconds,
-        partialTranscript: partialTranscript,
-        error: e,
-        onStage: onStage,
-      );
     } catch (e) {
       return _handleVoiceCaptureFailure(
         audioFile: audioFile,
@@ -382,21 +359,20 @@ class CapturePipelineService {
       );
     }
 
-    final reason = TranscriptionService.classifyFailureReason(error);
+    final reason = CapturePipelineApiErrors.failureReason(error);
     TranscriptionLog.failed(reason: reason);
-    if (error is FormatException) {
+    final invalidMessage = CapturePipelineApiErrors.invalidResponseMessage(error);
+    if (invalidMessage != null) {
       RecordPipelineLog.apiGuardBlocked(
         operation: 'response',
-        reason: error.message,
+        reason: invalidMessage,
       );
     }
     return _saveLocalOnly(
       audioFile: audioFile,
       durationSeconds: durationSeconds,
       partialTranscript: null,
-      syncNote: error is FormatException
-          ? VoiceCaptureCopy.transcriptionFailedDegraded
-          : CaptureSaveMessages.syncNoteFor(error),
+      syncNote: CapturePipelineApiErrors.syncNoteFor(error),
       transcriptionFailureReason: reason,
       onStage: onStage,
     );
@@ -834,32 +810,17 @@ class CapturePipelineService {
         localSaved: true,
         syncSucceeded: true,
       );
-    } on SocketException catch (e) {
-      return _saveTextLocalOnly(
-        transcript: trimmed,
-        syncNote: CaptureSaveMessages.syncNoteFor(e),
-        onStage: onStage,
-      );
-    } on ApiException catch (e) {
-      return _saveTextLocalOnly(
-        transcript: trimmed,
-        syncNote: CaptureSaveMessages.syncNoteFor(e),
-        onStage: onStage,
-      );
-    } on FormatException catch (e) {
-      RecordPipelineLog.apiGuardBlocked(
-        operation: 'response',
-        reason: e.message,
-      );
-      return _saveTextLocalOnly(
-        transcript: trimmed,
-        syncNote: VoiceCaptureCopy.transcriptionFailedDegraded,
-        onStage: onStage,
-      );
     } catch (e) {
+      final invalidMessage = CapturePipelineApiErrors.invalidResponseMessage(e);
+      if (invalidMessage != null) {
+        RecordPipelineLog.apiGuardBlocked(
+          operation: 'response',
+          reason: invalidMessage,
+        );
+      }
       return _saveTextLocalOnly(
         transcript: trimmed,
-        syncNote: CaptureSaveMessages.syncNoteFor(e),
+        syncNote: CapturePipelineApiErrors.syncNoteFor(e),
         onStage: onStage,
       );
     }
@@ -970,36 +931,18 @@ class CapturePipelineService {
         syncSucceeded: true,
         analysisSucceeded: true,
       );
-    } on SocketException catch (e) {
-      return _saveLiveVoiceLocalOnly(
-        transcript: trimmed,
-        durationSeconds: durationSeconds,
-        syncNote: CaptureSaveMessages.syncNoteFor(e),
-        onStage: onStage,
-      );
-    } on ApiException catch (e) {
-      return _saveLiveVoiceLocalOnly(
-        transcript: trimmed,
-        durationSeconds: durationSeconds,
-        syncNote: CaptureSaveMessages.syncNoteFor(e),
-        onStage: onStage,
-      );
-    } on FormatException catch (e) {
-      RecordPipelineLog.apiGuardBlocked(
-        operation: 'response',
-        reason: e.message,
-      );
-      return _saveLiveVoiceLocalOnly(
-        transcript: trimmed,
-        durationSeconds: durationSeconds,
-        syncNote: VoiceCaptureCopy.transcriptionFailedDegraded,
-        onStage: onStage,
-      );
     } catch (e) {
+      final invalidMessage = CapturePipelineApiErrors.invalidResponseMessage(e);
+      if (invalidMessage != null) {
+        RecordPipelineLog.apiGuardBlocked(
+          operation: 'response',
+          reason: invalidMessage,
+        );
+      }
       return _saveLiveVoiceLocalOnly(
         transcript: trimmed,
         durationSeconds: durationSeconds,
-        syncNote: CaptureSaveMessages.syncNoteFor(e),
+        syncNote: CapturePipelineApiErrors.syncNoteFor(e),
         onStage: onStage,
       );
     }

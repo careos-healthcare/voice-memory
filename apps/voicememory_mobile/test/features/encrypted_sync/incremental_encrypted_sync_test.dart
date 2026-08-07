@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:voicememory_mobile/api/api_client.dart';
+import 'package:voicememory_mobile/data/network/api_client_sync_adapter.dart';
 import 'package:voicememory_mobile/features/encrypted_sync/encrypted_sync_service.dart';
 import 'package:voicememory_mobile/features/encrypted_sync/sync_master_key_store.dart';
 import 'package:voicememory_mobile/models/journal_entry.dart';
@@ -40,7 +41,7 @@ void main() {
     await prefs.setLastSyncSequence(1);
     final api = _IncrementalApi();
     final service = EncryptedSyncService(
-      api: api,
+      syncApi: ApiClientSyncAdapter(api),
       journal: journal,
       prefs: prefs,
       deviceIds: _FakeDeviceIds(),
@@ -72,7 +73,7 @@ void main() {
       userId: 'user-a',
     );
     final service = EncryptedSyncService(
-      api: _StaleMidFlightApi(),
+      syncApi: ApiClientSyncAdapter(_StaleMidFlightApi()),
       journal: journal,
       prefs: prefs,
       deviceIds: _FakeDeviceIds(),

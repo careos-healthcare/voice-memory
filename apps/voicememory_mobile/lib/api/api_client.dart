@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 
 import '../config/app_config.dart';
+import '../core/network/session_cookie_source.dart';
 import '../features/voice_capture/audio/audio_capture_diagnostics.dart';
 import '../features/voice_capture/audio/audio_diag_log.dart';
 import '../features/voice_capture/analysis/analysis_log.dart';
@@ -27,21 +28,34 @@ import 'api_errors.dart';
 import 'api_exceptions.dart';
 
 class ApiClient {
-  ApiClient({http.Client? httpClient, String? baseUrl, this._sessionCookie})
-    : _http = httpClient ?? http.Client(),
-      _baseUrl = baseUrl ?? AppConfig.apiBaseUrl;
+  ApiClient({
+    http.Client? httpClient,
+    String? baseUrl,
+    SessionCookieSource? sessionCookies,
+    String? sessionCookie,
+  }) : _http = httpClient ?? http.Client(),
+       _baseUrl = baseUrl ?? AppConfig.apiBaseUrl,
+       _sessionCookies = sessionCookies {
+    if (sessionCookie != null) {
+      _sessionCookies?.setInMemory(sessionCookie);
+    }
+  }
 
   final http.Client _http;
   final String _baseUrl;
-  String? _sessionCookie;
+  final SessionCookieSource? _sessionCookies;
 
   static const captureTokenHeader = 'x-vm-capture-token';
   static const sessionCookieName = 'vm_session';
   static const idempotencyHeader = 'x-vm-idempotency-key';
 
-  void setSessionCookie(String? cookie) => _sessionCookie = cookie;
+  @Deprecated('Use SessionCookieSource.applyCookie instead')
+  void setSessionCookie(String? cookie) {
+    _sessionCookies?.setInMemory(cookie);
+  }
 
-  String? get sessionCookie => _sessionCookie;
+  @Deprecated('Use SessionCookieSource.current instead')
+  String? get sessionCookie => _sessionCookies?.current;
 
   Map<String, String> _headersWithIdempotency({
     required Map<String, String> base,
@@ -57,8 +71,7 @@ class ApiClient {
   Map<String, String> get _jsonHeaders => {
     'Accept': 'application/json',
     'Content-Type': 'application/json',
-    if (_sessionCookie != null && _sessionCookie!.isNotEmpty)
-      'Cookie': _sessionCookie!,
+    ...?_sessionCookies?.headerEntries(),
   };
 
   Uri? _tryUri(String path) {
@@ -107,7 +120,9 @@ class ApiClient {
       throw ApiErrorMapper.fromResponse(response);
     }
     final cookie = _extractSessionCookie(response);
-    if (cookie != null) _sessionCookie = cookie;
+    if (cookie != null) {
+      await _sessionCookies?.applyCookie(cookie, persist: false);
+    }
     final body = _decodeJson(response);
     final session = body['session'] as Map<String, dynamic>?;
     if (session == null) {
@@ -135,7 +150,7 @@ class ApiClient {
 
   Future<void> signOut() async {
     await _http.post(_uri('/api/auth/signout'), headers: _jsonHeaders);
-    _sessionCookie = null;
+    await _sessionCookies?.clear(persist: false);
   }
 
   // ——— Capture ———
@@ -209,7 +224,9 @@ class ApiClient {
     request.headers['Authorization'] = 'Bearer $captureToken';
     request.headers[captureTokenHeader] = captureToken;
     request.headers[idempotencyHeader] = idempotencyKey;
-    if (_sessionCookie != null) request.headers['Cookie'] = _sessionCookie!;
+    if (_sessionCookies?.current != null) {
+      request.headers['Cookie'] = _sessionCookies!.current!;
+    }
     request.fields['session_id'] = sessionId;
     if (recoverySecretKeyBytes != null && recoverySecretKeyBytes.length == 32) {
       request.fields['recovery_secret'] = base64Url.encode(
@@ -290,7 +307,9 @@ class ApiClient {
     if (idempotencyKey != null && idempotencyKey.isNotEmpty) {
       request.headers[idempotencyHeader] = idempotencyKey;
     }
-    if (_sessionCookie != null) request.headers['Cookie'] = _sessionCookie!;
+    if (_sessionCookies?.current != null) {
+      request.headers['Cookie'] = _sessionCookies!.current!;
+    }
     request.fields['durationSeconds'] = durationSeconds.toString();
     final fileName = _audioFilename(audioFile.path);
     final uploadBytes = audioFile.existsSync() ? audioFile.lengthSync() : 0;
@@ -615,7 +634,7 @@ class ApiClient {
     if (!response.statusCode.toString().startsWith('2')) {
       throw ApiErrorMapper.fromResponse(response);
     }
-    _sessionCookie = null;
+    await _sessionCookies?.clear(persist: false);
   }
 
   static String? _extractSessionCookie(http.Response response) {

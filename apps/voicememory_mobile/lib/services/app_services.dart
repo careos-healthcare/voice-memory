@@ -1,9 +1,20 @@
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../api/api_client.dart';
 import '../audio/recording_service.dart';
+import '../core/di/app_provider_container.dart';
+import '../core/di/network_providers.dart';
+import '../core/network/http_transport.dart';
+import '../core/network/session_cookie_source.dart';
+import '../data/network/http_auth_api_client.dart';
+import '../features/auth/application/auth_session_notifier.dart';
+import '../data/network/http_sync_api_client.dart';
+import '../data/repositories/sync_repository.dart';
+import '../features/encrypted_sync/encrypted_journal_sync_coordinator.dart';
+import '../features/sync/application/sync_notifier.dart';
 import '../billing/value_moment_paywall.dart';
 import '../storage/account_namespace.dart';
 import '../storage/app_storage_paths.dart';
@@ -96,6 +107,8 @@ class AppServices {
   late final DeviceIdStore deviceIds;
   late final SecureStorageService secureStorage;
   late final SessionCookieStore sessionCookies;
+  late final SessionCookieSource sessionCookieSource;
+  late final HttpTransport httpTransport;
   late final CaptureTokenCache tokenCache;
   late final CaptureAttestService attest;
 
@@ -225,11 +238,11 @@ class AppServices {
 
     s.secureStorage = SecureStorageService();
     s.sessionCookies = SessionCookieStore(s.secureStorage);
-    s.api = ApiClient();
-    await s.sessionCookies.read().then((cookie) {
-      if (cookie != null) s.api.setSessionCookie(cookie);
-    });
+    s.sessionCookieSource = SessionCookieSource(s.sessionCookies);
+    await s.sessionCookieSource.hydrateFromStore();
+    _configureProviderContainer(s);
 
+    s.api = ApiClient(sessionCookies: s.sessionCookieSource);
     s.deviceIds = DeviceIdStore();
     s.tokenCache = CaptureTokenCache();
     s.attest = CaptureAttestService(
@@ -237,8 +250,10 @@ class AppServices {
       deviceIds: s.deviceIds,
       tokenCache: s.tokenCache,
     );
-    s.recording = RecordingService();
-    s.auth = AuthService(s.api, s.secureStorage, s.sessionCookies);
+    s.recording = appProviderContainer.read(
+      recordingServiceProvider.notifier,
+    );
+    s.auth = AuthService(appProviderContainer.read(authSessionProvider.notifier));
 
     await s.auth.loadPersistedSession();
     final resumedSession = s.auth.currentSession;
@@ -386,7 +401,11 @@ class AppServices {
 
     s.secureStorage = SecureStorageService();
     s.sessionCookies = SessionCookieStore(s.secureStorage);
-    s.api = ApiClient();
+    s.sessionCookieSource = SessionCookieSource(s.sessionCookies);
+    await s.sessionCookieSource.hydrateFromStore();
+    _configureProviderContainer(s);
+
+    s.api = ApiClient(sessionCookies: s.sessionCookieSource);
     s.deviceIds = DeviceIdStore();
     s.tokenCache = CaptureTokenCache();
     s.attest = CaptureAttestService(
@@ -394,8 +413,8 @@ class AppServices {
       deviceIds: s.deviceIds,
       tokenCache: s.tokenCache,
     );
-    s.recording = RecordingService(testMode: true);
-    s.auth = AuthService(s.api, s.secureStorage, s.sessionCookies);
+    s.recording = RecordingService.create(testMode: true);
+    s.auth = AuthService(appProviderContainer.read(authSessionProvider.notifier));
 
     const namespace = AccountNamespace.guest;
     await _openNamespacedStores(s, base, namespace);
@@ -569,13 +588,8 @@ class AppServices {
     s.syncMasterKeyStore = SecureSyncMasterKeyStore(
       accountNamespace: s._activeNamespace.key,
     );
-    s.sync = SyncService(
-      s.api,
-      s.journalStore,
-      s.prefs,
-      deviceIds: s.deviceIds,
-      keyStore: s.syncMasterKeyStore,
-    );
+    _bindSyncRepository(s);
+    s.sync = SyncService(appProviderContainer.read(syncProvider.notifier));
     s.paywall = ValueMomentPaywallLogic(s.prefs);
     // Bound to the now-stale `pipeline`/`offlineVaultRecoveryStore` pair —
     // dropped so the next access lazily rebuilds against the current ones.
@@ -734,7 +748,9 @@ class AppServices {
 
     s.secureStorage = SecureStorageService();
     s.sessionCookies = SessionCookieStore(s.secureStorage);
-    s.api = api ?? ApiClient();
+    s.sessionCookieSource = SessionCookieSource(s.sessionCookies);
+    await s.sessionCookieSource.hydrateFromStore();
+    s.api = api ?? ApiClient(sessionCookies: s.sessionCookieSource);
     s.deviceIds = DeviceIdStore();
     s.tokenCache = CaptureTokenCache();
     s.attest = CaptureAttestService(
@@ -788,8 +804,11 @@ class AppServices {
     _instance = s;
     _initialized = true;
 
-    s.recording = recording ?? RecordingService(testMode: true);
-    s.auth = AuthService(s.api, s.secureStorage, s.sessionCookies);
+    _configureProviderContainer(s);
+    s.recording =
+        recording ??
+        appProviderContainer.read(recordingServiceProvider.notifier);
+    s.auth = AuthService(appProviderContainer.read(authSessionProvider.notifier));
     if (!skipRevenueCat) {
       await RevenueCatService.instance.initialize();
     }
@@ -858,6 +877,48 @@ class AppServices {
     await ArchiveBackupBridgeDismissStore.resetPersistedState();
     await BetaFeedbackIntelligenceStore.resetPersistedState();
     _optionalServicesInitialized = !skipRevenueCat;
+  }
+
+  static void _configureProviderContainer(AppServices s) {
+    final transport = HttpTransport(
+      baseUrl: AppConfig.apiBaseUrl,
+      sessionCookies: s.sessionCookieSource,
+    );
+    s.httpTransport = transport;
+    final authRepository = createAuthRepository(
+      api: HttpAuthApiClient(transport),
+      sessionCookies: s.sessionCookieSource,
+      secure: s.secureStorage,
+    );
+    bindAppProviderContainer(
+      ProviderContainer(
+        overrides: [
+          secureStorageProvider.overrideWithValue(s.secureStorage),
+          sessionCookieStoreProvider.overrideWithValue(s.sessionCookies),
+          sessionCookieSourceProvider.overrideWithValue(s.sessionCookieSource),
+          authRepositoryProvider.overrideWithValue(authRepository),
+          httpTransportProvider.overrideWithValue(transport),
+          apiBaseUrlProvider.overrideWithValue(AppConfig.apiBaseUrl),
+        ],
+      ),
+    );
+  }
+
+  static void _bindSyncRepository(AppServices s) {
+    final syncApi = HttpSyncApiClient(s.httpTransport);
+    final coordinator = EncryptedJournalSyncCoordinator(
+      syncApi: syncApi,
+      api: s.api,
+      journal: s.journalStore,
+      prefs: s.prefs,
+      deviceIds: s.deviceIds,
+      keyStore: s.syncMasterKeyStore,
+    );
+    appProviderContainer.read(syncRepositoryHolderProvider).value =
+        SyncRepository(
+          coordinator: coordinator,
+          prefs: s.prefs,
+        );
   }
 
   static void _configureJournalSaveInterceptors(AppServices services) {

@@ -1,4 +1,5 @@
-import '../../api/api_client.dart';
+import '../../core/network/api_result.dart';
+import '../../data/network/sync_api_client.dart';
 import '../../models/journal_entry.dart';
 import '../../security/account_session_guard.dart';
 import '../../services/journal_ownership_guard.dart';
@@ -13,20 +14,20 @@ import 'sync_master_key_store.dart';
 /// the device. The server stores ciphertext envelopes only.
 class EncryptedSyncService {
   EncryptedSyncService({
-    required ApiClient api,
+    required SyncApiClient syncApi,
     required JournalStore journal,
     required MobilePrefsStore prefs,
     required DeviceIdStore deviceIds,
     required SyncMasterKeyStore keyStore,
     JournalOwnershipGuard ownershipGuard = const JournalOwnershipGuard(),
-  }) : _api = api,
+  }) : _syncApi = syncApi,
        _journal = journal,
        _prefs = prefs,
        _deviceIds = deviceIds,
        _keyStore = keyStore,
        _ownershipGuard = ownershipGuard;
 
-  final ApiClient _api;
+  final SyncApiClient _syncApi;
   final JournalStore _journal;
   final MobilePrefsStore _prefs;
   final DeviceIdStore _deviceIds;
@@ -88,18 +89,20 @@ class EncryptedSyncService {
     final updatedAt = DateTime.now().toUtc().toIso8601String();
 
     session.assertActive();
-    final pushBody = await _api.syncPush({
-      'blobs': [
-        {
-          'id': EncryptedSyncSchema.coreBlobId,
-          'type': EncryptedSyncSchema.coreBlobType,
-          'encrypted': encrypted.toJson(),
-          'updatedAt': updatedAt,
-          'byteLength': byteLength,
-          'binding': binding,
-        },
-      ],
-    });
+    final pushBody = _unwrap(
+      await _syncApi.syncPush({
+        'blobs': [
+          {
+            'id': EncryptedSyncSchema.coreBlobId,
+            'type': EncryptedSyncSchema.coreBlobType,
+            'encrypted': encrypted.toJson(),
+            'updatedAt': updatedAt,
+            'byteLength': byteLength,
+            'binding': binding,
+          },
+        ],
+      }),
+    );
 
     session.assertActive();
     final pullResult = await _pullRemoteBlobs(session);
@@ -142,7 +145,9 @@ class EncryptedSyncService {
     final since = await _prefs.lastSyncSequence ?? 0;
     if (since > 0) {
       session.assertActive();
-      final changesBody = await _api.syncChanges(since: since);
+      final changesBody = _unwrap(
+        await _syncApi.syncChanges(since: since),
+      );
       final latestSequence = latestSequenceFromChanges(changesBody);
       final blobs = changesBody['blobs'];
       if (blobs is List) {
@@ -158,7 +163,7 @@ class EncryptedSyncService {
     }
 
     session.assertActive();
-    final pullBody = await _api.syncPull();
+    final pullBody = _unwrap(await _syncApi.syncPull());
     final blobs = pullBody['blobs'];
     if (blobs is! List) {
       return (blobs: <Map<String, dynamic>>[], latestSequence: null);
@@ -192,5 +197,12 @@ class EncryptedSyncService {
   DateTime? _parseLastSync(String? raw) {
     if (raw == null) return null;
     return DateTime.tryParse(raw)?.toUtc();
+  }
+
+  Map<String, dynamic> _unwrap(ApiResult<Map<String, dynamic>> result) {
+    return result.when(
+      success: (value) => value,
+      onFailure: (failure) => throw failure.toApiException(),
+    );
   }
 }

@@ -18,6 +18,7 @@ import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/models/sync_status.dart';
 import 'package:voicememory_mobile/services/journal_ownership_guard.dart';
+import 'helpers/test_sync_service.dart';
 import 'package:voicememory_mobile/services/sync_service.dart';
 import 'package:voicememory_mobile/storage/journal_store.dart';
 import 'package:voicememory_mobile/storage/mobile_prefs_store.dart';
@@ -224,7 +225,7 @@ void main() {
         },
         onGet: () => _pullOk([]),
       );
-      final result = await SyncService(api, h.journal, h.prefs).syncNow();
+      final result = await createTestSyncService(api: api, journal: h.journal, prefs: h.prefs).syncNow();
 
       expect(pushedBodies, hasLength(1));
       expect(pushedBodies.first['transcript'], 'edited transcript');
@@ -264,7 +265,7 @@ void main() {
         },
         onGet: () => _pullOk([]),
       );
-      final result = await SyncService(api, h.journal, h.prefs).syncNow();
+      final result = await createTestSyncService(api: api, journal: h.journal, prefs: h.prefs).syncNow();
 
       expect(pushedBatches, hasLength(1));
       expect(pushedBatches.single, hasLength(1));
@@ -304,7 +305,7 @@ void main() {
         ),
         onGet: () => _pullOk([]),
       );
-      final result = await SyncService(api, h.journal, h.prefs).syncNow();
+      final result = await createTestSyncService(api: api, journal: h.journal, prefs: h.prefs).syncNow();
 
       expect(result.pushed, 0);
       expect(result.rejected, 1);
@@ -354,7 +355,7 @@ void main() {
         ),
         onGet: () => _pullOk([]),
       );
-      await SyncService(api, h.journal, h.prefs).syncNow();
+      await createTestSyncService(api: api, journal: h.journal, prefs: h.prefs).syncNow();
 
       final after = await h.journal.getById('a');
       expect(after!.transcript, 'remote-tie-winner');
@@ -391,7 +392,7 @@ void main() {
         ),
         onGet: () => _pullOk([]),
       );
-      final result = await SyncService(api, h.journal, h.prefs).syncNow();
+      final result = await createTestSyncService(api: api, journal: h.journal, prefs: h.prefs).syncNow();
 
       expect(result.pushed, 0);
       expect(result.rejected, 1);
@@ -419,7 +420,7 @@ void main() {
         },
         onGet: () => _pullOk([]),
       );
-      final result = await SyncService(api, h.journal, h.prefs).syncNow();
+      final result = await createTestSyncService(api: api, journal: h.journal, prefs: h.prefs).syncNow();
 
       expect(pushedEntries, hasLength(1));
       expect(pushedEntries.single['id'], 'a');
@@ -456,7 +457,7 @@ void main() {
             _pushOk(accepted: entries.map((e) => e['id'] as String).toList()),
         onGet: () => _pullOk([remoteTombstone.toJson()]),
       );
-      await SyncService(api, h.journal, h.prefs).syncNow();
+      await createTestSyncService(api: api, journal: h.journal, prefs: h.prefs).syncNow();
 
       final visible = await h.journal.loadAll();
       expect(visible.where((e) => e.id == 'a'), isEmpty);
@@ -489,7 +490,7 @@ void main() {
             _pushOk(accepted: entries.map((e) => e['id'] as String).toList()),
         onGet: () => _pullOk([staleNonDeleted.toJson()]),
       );
-      await SyncService(api, h.journal, h.prefs).syncNow();
+      await createTestSyncService(api: api, journal: h.journal, prefs: h.prefs).syncNow();
 
       final after = await h.journal.getByIdIncludingTombstones('a');
       expect(after!.isDeleted, isTrue);
@@ -550,7 +551,7 @@ void main() {
         },
         onGet: () => _pullOk([]),
       );
-      await SyncService(api, h.journal, h.prefs).syncNow();
+      await createTestSyncService(api: api, journal: h.journal, prefs: h.prefs).syncNow();
 
       final all = await h.journal.loadAllIncludingTombstones();
       expect(all.any((e) => e.id == 'old-acked'), isFalse);
@@ -599,7 +600,7 @@ void main() {
         },
         onGet: () => _pullOk([echoedPush!]),
       );
-      await SyncService(api, h.journal, h.prefs).syncNow();
+      await createTestSyncService(api: api, journal: h.journal, prefs: h.prefs).syncNow();
 
       final after = await h.journal.getById('meta-1');
       expect(after, isNotNull);
@@ -651,7 +652,7 @@ void main() {
         onGet: () => _pullOk([]),
       );
 
-      final sync = SyncService(api, h.journal, h.prefs);
+      final sync = createTestSyncService(api: api, journal: h.journal, prefs: h.prefs);
       final firstResult = await sync.syncNow();
 
       expect(postBatchSizes, [200, 50]);

@@ -10,6 +10,7 @@ import 'package:voicememory_mobile/models/journal_entry.dart';
 import 'package:voicememory_mobile/models/reflection.dart';
 import 'package:voicememory_mobile/models/sync_status.dart';
 import 'package:voicememory_mobile/services/journal_ownership_guard.dart';
+import '../helpers/test_sync_service.dart';
 import 'package:voicememory_mobile/services/sync_service.dart';
 import 'package:voicememory_mobile/storage/journal_store.dart';
 import 'package:voicememory_mobile/storage/mobile_prefs_store.dart';
@@ -89,7 +90,11 @@ void main() {
       );
       api.setSessionCookie('session=user-b');
 
-      final sync = SyncService(api, journal, prefs);
+      final sync = createTestSyncService(
+        api: api,
+        journal: journal,
+        prefs: prefs,
+      );
       final result = await sync.syncNow();
 
       expect(uploadedIds, ['b']);
@@ -149,7 +154,11 @@ void main() {
     );
     api.setSessionCookie('session=user-a');
 
-    final sync = SyncService(api, journal, prefs);
+    final sync = createTestSyncService(
+      api: api,
+      journal: journal,
+      prefs: prefs,
+    );
     final result = await sync.syncNow();
 
     expect(uploadedIds, ['legacy']);

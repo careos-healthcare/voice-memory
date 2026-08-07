@@ -1,4 +1,5 @@
 import '../../api/api_client.dart';
+import '../../data/network/sync_api_client.dart';
 import '../../models/journal_entry.dart';
 import '../../storage/device_id.dart';
 import '../../storage/journal_store.dart';
@@ -12,11 +13,13 @@ import 'sync_master_key_store.dart';
 class LegacyPlaintextMigrationService {
   LegacyPlaintextMigrationService({
     required ApiClient api,
+    required SyncApiClient syncApi,
     required JournalStore journal,
     required MobilePrefsStore prefs,
     required DeviceIdStore deviceIds,
     required SyncMasterKeyStore keyStore,
   }) : _api = api,
+       _syncApi = syncApi,
        _journal = journal,
        _prefs = prefs,
        _deviceIds = deviceIds,
@@ -26,6 +29,7 @@ class LegacyPlaintextMigrationService {
   static const eligibleDeletionKey = 'legacy_plaintext_deletion_eligible_v1';
 
   final ApiClient _api;
+  final SyncApiClient _syncApi;
   final JournalStore _journal;
   final MobilePrefsStore _prefs;
   final DeviceIdStore _deviceIds;
@@ -64,7 +68,7 @@ class LegacyPlaintextMigrationService {
       await _journal.mergeRemote(validated);
     }
     final encryptedSync = EncryptedSyncService(
-      api: _api,
+      syncApi: _syncApi,
       journal: _journal,
       prefs: _prefs,
       deviceIds: _deviceIds,
