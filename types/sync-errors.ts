@@ -12,4 +12,4 @@ export type SyncErrorCode =
   | "REMOTE_BACKUP_CORRUPT"
   | "NO_REMOTE_BACKUP";
 
-export type SyncApiRoute = "manifest" | "pull" | "push";
+export type SyncApiRoute = "manifest" | "pull" | "push" | "changes";

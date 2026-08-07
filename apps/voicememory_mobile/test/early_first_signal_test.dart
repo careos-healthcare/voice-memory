@@ -2239,16 +2239,19 @@ void main() {
   });
 
   group('ConfirmedRepeatWhyMatters', () {
+    late TestStorageSandbox sandbox;
+
     setUp(() async {
+      sandbox = TestStorageSandbox.create(prefix: 'why_matters_');
       await AppServices.resetForTest(
-        journalPath:
-            '${DateTime.now().microsecondsSinceEpoch}_why_matters_journal.json',
-        prefsPath:
-            '${DateTime.now().microsecondsSinceEpoch}_why_matters_prefs.json',
+        journalPath: sandbox.journalPath,
+        prefsPath: sandbox.prefsPath,
         skipRevenueCat: true,
       );
       await ConfirmedRepeatWhyMattersStore.resetForTest();
     });
+
+    tearDown(() => sandbox.dispose());
 
     test('copy avoids therapy and diagnostic language', () {
       final lines = [
@@ -2404,17 +2407,20 @@ void main() {
   });
 
   group('ConfirmedRepeatThoughtMap', () {
+    late TestStorageSandbox sandbox;
+
     setUp(() async {
+      sandbox = TestStorageSandbox.create(prefix: 'thought_map_');
       await AppServices.resetForTest(
-        journalPath:
-            '${DateTime.now().microsecondsSinceEpoch}_thought_map_journal.json',
-        prefsPath:
-            '${DateTime.now().microsecondsSinceEpoch}_thought_map_prefs.json',
+        journalPath: sandbox.journalPath,
+        prefsPath: sandbox.prefsPath,
         skipRevenueCat: true,
       );
       await ConfirmedRepeatThoughtMapStore.resetForTest();
       ConfirmedRepeatThoughtMapAnalytics.resetForTest();
     });
+
+    tearDown(() => sandbox.dispose());
 
     test('copy avoids therapy and diagnostic language', () {
       final lines = [

@@ -2,7 +2,9 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
 import 'package:voicememory_mobile/api/api_client.dart';
+import 'package:voicememory_mobile/core/di/v1_account_dependencies.dart';
 import 'package:voicememory_mobile/screens/delete_account_screen.dart';
 import 'package:voicememory_mobile/services/app_services.dart';
 
@@ -52,6 +54,34 @@ void main() {
 
   Future<void> pumpScreen(WidgetTester tester) async {
     await tester.pumpWidget(const MaterialApp(home: DeleteAccountScreen()));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
+  }
+
+  Future<void> pumpScreenWithRouter(WidgetTester tester) async {
+    final messengerKey = GlobalKey<ScaffoldMessengerState>();
+    final router = GoRouter(
+      initialLocation: '/delete-account',
+      routes: [
+        GoRoute(
+          path: '/delete-account',
+          builder: (context, state) => DeleteAccountScreen(
+            accountDependencies: V1AccountDependencies.fromAppServices(),
+          ),
+        ),
+        GoRoute(
+          path: '/record',
+          builder: (context, state) =>
+              const Scaffold(body: Text('record destination')),
+        ),
+      ],
+    );
+    await tester.pumpWidget(
+      MaterialApp.router(
+        scaffoldMessengerKey: messengerKey,
+        routerConfig: router,
+      ),
+    );
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 300));
   }
@@ -328,5 +358,83 @@ void main() {
 
       handle.dispose();
     });
+
+    testWidgets('failed deletion stays explicit and allows retry', (
+      tester,
+    ) async {
+      fakeApi.deleteAccountError = Exception('network unavailable');
+      await pumpScreen(tester);
+      await openConfirmDialog(tester);
+      await tester.tap(find.byKey(const Key('delete_account_confirm_accept')));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 300));
+
+      expect(fakeApi.deleteAccountCalls, 1);
+      expect(find.text('Account deletion failed. Try again.'), findsOneWidget);
+      expect(
+        find.textContaining('deletion requested'),
+        findsNothing,
+        reason: 'must not claim success when server deletion failed',
+      );
+      expect(
+        find.text(DeleteAccountScreen.deletionCompletedMessage),
+        findsNothing,
+      );
+
+      fakeApi.deleteAccountError = null;
+      await openConfirmDialog(tester);
+      await tester.tap(find.byKey(const Key('delete_account_confirm_accept')));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 300));
+
+      expect(fakeApi.deleteAccountCalls, 2);
+      expect(
+        find.byKey(const Key('delete_account_local_wipe_offer_dialog')),
+        findsOneWidget,
+      );
+    });
+
+    test('deletionCompletedMessage describes confirmed server deletion', () {
+      expect(
+        DeleteAccountScreen.deletionCompletedMessage.toLowerCase(),
+        contains('deleted'),
+      );
+      expect(
+        DeleteAccountScreen.deletionCompletedMessage.toLowerCase(),
+        isNot(contains('requested')),
+      );
+      expect(
+        DeleteAccountScreen.deletionCompletedMessage,
+        contains('permanently removed'),
+      );
+    });
+
+    testWidgets(
+      'successful server deletion shows completion copy only after confirm',
+      (tester) async {
+        await pumpScreenWithRouter(tester);
+        await openConfirmDialog(tester);
+        await tester.tap(
+          find.byKey(const Key('delete_account_confirm_accept')),
+        );
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 300));
+
+        expect(find.text('Server data deleted'), findsOneWidget);
+        expect(
+          find.textContaining('deletion requested'),
+          findsNothing,
+          reason: 'must not claim a mere request before server confirms',
+        );
+
+        await tester.tap(
+          find.byKey(const Key('delete_account_local_wipe_skip')),
+        );
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 300));
+
+        expect(fakeApi.deleteAccountCalls, 1);
+      },
+    );
   });
 }

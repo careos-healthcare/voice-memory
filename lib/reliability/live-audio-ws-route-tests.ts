@@ -131,7 +131,7 @@ export async function runLiveAudioWsRouteTests(): Promise<{ failures: string[] }
   await check("proxy connection forwards upstream frames and relays PCM after setupComplete", async () => {
     const client = createMockClient();
     const upstreamSent: string[] = [];
-    let upstreamMessageHandler: ((raw: string) => void) | null = null;
+    const upstreamHandlers: Array<(raw: string) => void> = [];
 
     const proxy = new GeminiLiveProxy({
       apiKey: "test-key",
@@ -141,7 +141,7 @@ export async function runLiveAudioWsRouteTests(): Promise<{ failures: string[] }
         },
         close() {},
         onMessage(handler) {
-          upstreamMessageHandler = handler;
+          upstreamHandlers.push(handler);
         },
         onError() {},
         onClose() {},
@@ -157,7 +157,8 @@ export async function runLiveAudioWsRouteTests(): Promise<{ failures: string[] }
     });
 
     assert.equal(upstreamSent.length, 1);
-    upstreamMessageHandler?.(JSON.stringify({ setupComplete: {} }));
+    assert.equal(upstreamHandlers.length, 1);
+    upstreamHandlers[0]!(JSON.stringify({ setupComplete: {} }));
 
     const audioFrame = JSON.stringify(buildLiveAudioInputMessage(Buffer.from([1, 2, 3, 4])));
     client.messageHandler?.(audioFrame);

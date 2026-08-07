@@ -1,5 +1,3 @@
-import storiesData from "@/data/archive-proof-stories.json";
-
 export interface ArchiveProofStory {
   id: string;
   quote: string;
@@ -10,6 +8,11 @@ export interface ArchiveProofStoriesData {
   stories: ArchiveProofStory[];
 }
 
+const DEFAULT_STORIES: ArchiveProofStoriesData = {
+  label: "Archive proof stories",
+  stories: [],
+};
+
 export function getArchiveProofStories(): ArchiveProofStoriesData {
-  return storiesData as ArchiveProofStoriesData;
+  return DEFAULT_STORIES;
 }

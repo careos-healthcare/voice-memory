@@ -54,7 +54,7 @@ export async function GET(request: Request) {
       blobCount: payload.blobs.length,
       changeCount: payload.changes.length,
     });
-    return syncApiSuccess(payload);
+    return syncApiSuccess(payload as unknown as Record<string, unknown>);
   } catch (error) {
     log({
       ok: false,

@@ -69,7 +69,7 @@ export async function POST(request: Request) {
     return syncApiFailure("Request body must be valid JSON.", "INVALID_REMOTE_JSON", 400);
   }
 
-  if (contentLength > MAX_SYNC_PUSH_BODY_BYTES) {
+  if (contentLength != null && contentLength > MAX_SYNC_PUSH_BODY_BYTES) {
     log({
       ok: false,
       errorCode: "SYNC_PUSH_TOO_LARGE",
