@@ -9,6 +9,7 @@ import '../../security/api_response_safety.dart';
 import 'api_failure.dart';
 import 'api_failure_mapper.dart';
 import 'api_result.dart';
+import 'multipart_file_part.dart';
 import 'network_cancel_token.dart';
 import 'session_cookie_source.dart';
 
@@ -99,6 +100,35 @@ class HttpTransport {
     );
   }
 
+  /// Multipart POST — supports path, bytes, or stream file parts with custom headers.
+  ///
+  /// Does not set `Content-Type: application/json`; [http.MultipartRequest] owns
+  /// the multipart boundary. Network and transport errors map to [ApiFailure].
+  Future<ApiResult<http.Response>> postMultipart(
+    String path, {
+    Map<String, String>? fields,
+    List<MultipartFilePart> files = const [],
+    Map<String, String>? headers,
+    NetworkCancelToken? cancelToken,
+  }) {
+    return _execute(
+      () async {
+        final uri = _requireUri(path);
+        final request = http.MultipartRequest('POST', uri);
+        request.headers.addAll(_mergeMultipartHeaders(headers));
+        if (fields != null) {
+          request.fields.addAll(fields);
+        }
+        for (final part in files) {
+          request.files.add(await part.toMultipartFile());
+        }
+        final streamed = await _client.send(request);
+        return http.Response.fromStream(streamed);
+      },
+      cancelToken: cancelToken,
+    );
+  }
+
   ApiResult<T> decodeSuccess<T>(
     http.Response response,
     T Function(Map<String, dynamic> json) parse,
@@ -130,6 +160,12 @@ class HttpTransport {
 
   Map<String, String> _mergeHeaders(Map<String, String>? headers) => {
     ...jsonHeaders,
+    ...?_sessionCookies?.headerEntries(),
+    ...?headers,
+  };
+
+  Map<String, String> _mergeMultipartHeaders(Map<String, String>? headers) => {
+    'Accept': 'application/json',
     ...?_sessionCookies?.headerEntries(),
     ...?headers,
   };
