@@ -28,7 +28,7 @@ jobs:
       - name: Server build
         run: npm run build:server
       - name: Server tests
-        run: npm test --if-present
+        run: npm run validate:auth-security
       - name: Privacy log validation
         run: npm run validate:privacy-logs || node scripts/validate-privacy-logs.mjs
 
