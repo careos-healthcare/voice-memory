@@ -71,11 +71,10 @@ class CapturePipelineService {
     required this._api,
     required this._attest,
     required this._journalStore,
-    ApiUsageGuard? usageGuard,
     this._scopeProvider = const AppServicesProofScopeProvider(),
-    required RemoteProcessingConsentStore consentStore,
-  }) : _usageGuard = usageGuard ?? ApiUsageGuard.shared,
-       _consentStore = consentStore;
+    required this.consentStore,
+    ApiUsageGuard? usageGuard,
+  }) : _usageGuard = usageGuard ?? ApiUsageGuard.shared;
 
   final ApiClient _api;
   final CaptureAttestService _attest;
@@ -95,7 +94,7 @@ class CapturePipelineService {
 
   /// Account-scoped consent for remote transcript processing — injected at
   /// composition root so pipeline runs stay off the service locator.
-  final RemoteProcessingConsentStore _consentStore;
+  final RemoteProcessingConsentStore consentStore;
 
   /// The live gate on a *new* remote-processing attempt: whether the account
   /// or guest namespace active right now has said yes to sending a
@@ -106,7 +105,7 @@ class CapturePipelineService {
   /// error is treated as "not consented" rather than silently proceeding.
   Future<bool> _remoteProcessingConsented() async {
     try {
-      return await _consentStore.isConsentedNow();
+      return await consentStore.isConsentedNow();
     } catch (_) {
       return false;
     }

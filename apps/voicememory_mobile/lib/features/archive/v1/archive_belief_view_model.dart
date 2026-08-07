@@ -6,12 +6,11 @@ import 'archive_belief_search_state.dart';
 /// Flow-scoped archive tab state — load, search, and filtered entry access.
 class ArchiveBeliefViewModel {
   ArchiveBeliefViewModel({
-    required ArchiveBeliefRepository repository,
+    required this.repository,
     ArchiveBeliefSearchState? search,
-  }) : _repository = repository,
-       search = search ?? ArchiveBeliefSearchState();
+  }) : search = search ?? ArchiveBeliefSearchState();
 
-  final ArchiveBeliefRepository _repository;
+  final ArchiveBeliefRepository repository;
   final ArchiveBeliefSearchState search;
 
   ArchiveBeliefLoadState loadState = ArchiveBeliefLoadState.loading;
@@ -32,7 +31,7 @@ class ArchiveBeliefViewModel {
     if (entries == null) {
       loadState = ArchiveBeliefLoadState.loading;
     }
-    final result = await _repository.loadSortedEntries();
+    final result = await repository.loadSortedEntries();
     switch (result) {
       case ArchiveBeliefLoadSuccess(:final entries):
         this.entries = entries;

@@ -11,11 +11,11 @@ import 'paywall_dependencies.dart';
 /// Production [PaywallDependencies] backed by [AppServices] and RevenueCat.
 class AppServicesPaywallDependencies implements PaywallDependencies {
   AppServicesPaywallDependencies({
-    bool Function()? billingReady,
+    this.billingReady,
     this.loadTimeout = const Duration(seconds: 12),
-  }) : _billingReady = billingReady;
+  });
 
-  final bool Function()? _billingReady;
+  final bool Function()? billingReady;
 
   @override
   final Duration loadTimeout;
@@ -25,11 +25,10 @@ class AppServicesPaywallDependencies implements PaywallDependencies {
 
   @override
   bool isBillingReady() =>
-      _billingReady?.call() ?? RevenueCatService.instance.isConfigured;
+      billingReady?.call() ?? RevenueCatService.instance.isConfigured;
 
   @override
-  Future<void> initializeBilling() =>
-      RevenueCatService.instance.initialize();
+  Future<void> initializeBilling() => RevenueCatService.instance.initialize();
 
   @override
   Future<Offerings?> fetchOfferings() =>
@@ -113,14 +112,14 @@ class FakePaywallDependencies implements PaywallDependencies {
   }
 
   @override
-  Future<PremiumEntitlements> loadEntitlements({required bool forceRefresh}) async =>
-      entitlements;
+  Future<PremiumEntitlements> loadEntitlements({
+    required bool forceRefresh,
+  }) async => entitlements;
 
   @override
   Future<PremiumEntitlements> mergeReviewProEntitlements(
     PremiumEntitlements value,
-  ) async =>
-      value;
+  ) async => value;
 
   @override
   Future<PremiumEntitlements> purchasePackage(Package package) async {

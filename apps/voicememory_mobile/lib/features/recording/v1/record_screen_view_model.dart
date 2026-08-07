@@ -14,48 +14,34 @@ import 'recording_session_controller.dart';
 /// than the full record screen state object.
 class RecordScreenViewModel {
   RecordScreenViewModel({
-    required RecordingSessionController session,
-    required MicrophonePermissionController microphone,
-    required CaptureProcessingController capture,
-    required PostSaveResultController postSave,
-    required RecordingRecoveryController recovery,
-    RecordUiState ui = RecordUiState.idle,
+    required this.session,
+    required this.microphone,
+    required this.capture,
+    required this.postSave,
+    required this.recovery,
+    this.ui = RecordUiState.idle,
     this.errorMessage,
-  }) : _session = session,
-       _microphone = microphone,
-       _capture = capture,
-       _postSave = postSave,
-       _recovery = recovery,
-       _ui = ui;
+  });
 
-  final RecordingSessionController _session;
-  final MicrophonePermissionController _microphone;
-  final CaptureProcessingController _capture;
-  final PostSaveResultController _postSave;
-  final RecordingRecoveryController _recovery;
+  final RecordingSessionController session;
+  final MicrophonePermissionController microphone;
+  final CaptureProcessingController capture;
+  final PostSaveResultController postSave;
+  final RecordingRecoveryController recovery;
 
-  RecordUiState _ui;
+  RecordUiState ui;
   String? errorMessage;
-
-  RecordUiState get ui => _ui;
-  set ui(RecordUiState value) => _ui = value;
-
-  RecordingSessionController get session => _session;
-  MicrophonePermissionController get microphone => _microphone;
-  CaptureProcessingController get capture => _capture;
-  PostSaveResultController get postSave => _postSave;
-  RecordingRecoveryController get recovery => _recovery;
 
   RecordViewState get viewState {
     return RecordViewStateMapper.fromUi(
-      ui: _ui,
-      recordingDuration: Duration(seconds: _session.seconds),
-      statusMessage: _capture.stageLabel,
+      ui: ui,
+      recordingDuration: Duration(seconds: session.seconds),
+      statusMessage: capture.stageLabel,
       errorMessage: errorMessage,
-      savedEntryId: _postSave.savedEntryId,
-      hasVerifiedProof: _postSave.hasVerifiedProof,
+      savedEntryId: postSave.savedEntryId,
+      hasVerifiedProof: postSave.hasVerifiedProof,
     );
   }
 
-  bool get showsRecoveryOffer => _recovery.pendingTranscriptRecoveryVisible;
+  bool get showsRecoveryOffer => recovery.pendingTranscriptRecoveryVisible;
 }

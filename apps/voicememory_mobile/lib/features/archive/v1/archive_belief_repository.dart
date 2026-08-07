@@ -8,14 +8,13 @@ import 'archive_belief_load_state.dart';
 
 /// Loads and sorts archive entries for the V1 Archive tab.
 class ArchiveBeliefRepository {
-  ArchiveBeliefRepository({required JournalStore journalStore})
-    : _journalStore = journalStore;
+  ArchiveBeliefRepository({required this.journalStore});
 
-  final JournalStore _journalStore;
+  final JournalStore journalStore;
 
   Future<ArchiveBeliefLoadResult> loadSortedEntries() async {
     try {
-      final entries = (await _journalStore.loadAll()).toList();
+      final entries = (await journalStore.loadAll()).toList();
       entries.sort((a, b) => b.createdAt.compareTo(a.createdAt));
       return ArchiveBeliefLoadSuccess(entries);
     } on SocketException {
