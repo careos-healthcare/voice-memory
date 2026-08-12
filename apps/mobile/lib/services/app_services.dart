@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:archiveme_mobile/audio/recording_service.dart';
@@ -23,6 +24,7 @@ import 'package:archiveme_mobile/data/network/http_sync_api_client.dart';
 import 'package:archiveme_mobile/data/repositories/account_repository.dart';
 import 'package:archiveme_mobile/data/repositories/sync_repository.dart';
 import 'package:archiveme_mobile/features/archive_agreement/archive_agreement_service.dart';
+import 'package:archiveme_mobile/features/activation/archive_insight_feedback.dart';
 import 'package:archiveme_mobile/features/archive_backup_bridge/archive_backup_bridge_dismiss_store.dart';
 import 'package:archiveme_mobile/features/auth/application/auth_session_notifier.dart';
 import 'package:archiveme_mobile/features/belief_evolution/belief_evolution_service.dart';
@@ -106,6 +108,7 @@ import 'package:archiveme_mobile/storage/in_memory_secure_storage.dart';
 import 'package:archiveme_mobile/storage/journal_store.dart';
 import 'package:archiveme_mobile/storage/legacy_storage_migration.dart';
 import 'package:archiveme_mobile/storage/mobile_prefs_store.dart';
+import 'package:archiveme_mobile/storage/personal_content_encrypted_storage.dart';
 import 'package:archiveme_mobile/storage/secure_storage.dart';
 import 'package:archiveme_mobile/storage/session_cookie_store.dart';
 import 'package:archiveme_mobile/storage/sqlite/app_sqlite_database.dart';
@@ -167,6 +170,7 @@ class AppServices {
   WatchConnectivityService? _watchConnectivity;
   WatchAudioIngestService? _watchAudioIngest;
   late EncryptedJsonStorage clinicalTelemetryEncryptedStorage;
+  late EncryptedJsonStorage personalContentEncryptedStorage;
 
   /// Base documents directory this device stores everything under —
   /// resolved once at startup; every namespace's directory
@@ -484,6 +488,8 @@ class AppServices {
     s._activeNamespace = namespace;
     s.clinicalTelemetryEncryptedStorage =
         ClinicalTelemetryEncryptedStorage.forTest();
+    s.personalContentEncryptedStorage =
+        PersonalContentEncryptedStorage.forTest();
     // See the matching comment in `initialize()`: registering early (rather
     // than at the very end) is required so `_wireAccountScopedServices`
     // below can resolve `AppServices.instance` for the curiosity-loop
@@ -630,6 +636,13 @@ class AppServices {
     s.sqliteDatabase = await AppSqliteDatabase.open(
       filePath: _sqlitePathFor(base, namespace),
     );
+    s.personalContentEncryptedStorage =
+        Platform.environment.containsKey('FLUTTER_TEST')
+        ? PersonalContentEncryptedStorage.forTest()
+        : await PersonalContentEncryptedStorage.forNamespace(
+            secureStorage: s.secureStorage,
+            keyAlias: namespace.key,
+          );
   }
 
   /// (Re)builds every service that is derived from `journalStore`/`prefs`/
@@ -671,6 +684,8 @@ class AppServices {
     // dropped so the next access lazily rebuilds against the current ones.
     s._liveVoiceCapture = null;
     _configureJournalSaveInterceptors(s);
+    unawaited(ArchiveInsightFeedbackStore.ensureLoaded());
+    unawaited(PatternNameStore.ensureLoaded());
   }
 
   static void _wireProvisionalTranscriptReconcile(AppServices s) {
@@ -890,6 +905,8 @@ class AppServices {
     }
     s.clinicalTelemetryEncryptedStorage =
         ClinicalTelemetryEncryptedStorage.forTest();
+    s.personalContentEncryptedStorage =
+        PersonalContentEncryptedStorage.forTest();
     // See the matching comment in `initialize()`: registering early is
     // required so `_wireAccountScopedServices` below can resolve
     // `AppServices.instance` for the curiosity-loop repositories that read
