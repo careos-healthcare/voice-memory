@@ -1,0 +1,509 @@
+import 'dart:async';
+
+import 'package:archiveme_mobile/billing/archive_entitlement_reader.dart';
+import 'package:archiveme_mobile/billing/restore_purchases_feedback.dart';
+import 'package:archiveme_mobile/billing/restore_purchases_flow.dart';
+import 'package:archiveme_mobile/billing/revenuecat_configuration.dart';
+import 'package:archiveme_mobile/billing/revenuecat_service.dart';
+import 'package:archiveme_mobile/billing/subscription_copy.dart';
+import 'package:archiveme_mobile/config/developer_settings_gate.dart';
+import 'package:archiveme_mobile/config/production_navigation.dart';
+import 'package:archiveme_mobile/core/config/v1_navigation_guard.dart';
+import 'package:archiveme_mobile/core/config/v1_capability_registry.dart';
+import 'package:archiveme_mobile/core/config/v1_feature_flags.dart';
+import 'package:archiveme_mobile/design/archive_mobile_typography.dart';
+import 'package:archiveme_mobile/design/archive_responsive_layout.dart';
+import 'package:archiveme_mobile/features/action_items/archive_action_item.dart';
+import 'package:archiveme_mobile/features/archive_backup_bridge/archive_backup_bridge_dismiss_store.dart';
+import 'package:archiveme_mobile/features/archive_backup_bridge/archive_backup_bridge_engine.dart';
+import 'package:archiveme_mobile/features/archive_backup_bridge/archive_backup_bridge_model.dart';
+import 'package:archiveme_mobile/features/archive_packs/archive_pack.dart';
+import 'package:archiveme_mobile/features/archive_proof/visible_archive_proof_copy.dart';
+import 'package:archiveme_mobile/features/beta/archive_beta_mission_gate.dart';
+import 'package:archiveme_mobile/features/beta_feedback_intelligence/beta_feedback_intelligence_engine.dart';
+import 'package:archiveme_mobile/features/beta_feedback_intelligence/beta_feedback_intelligence_model.dart';
+import 'package:archiveme_mobile/features/beta_feedback_intelligence/beta_feedback_intelligence_store.dart';
+import 'package:archiveme_mobile/features/beta_test_script/beta_test_script_copy.dart';
+import 'package:archiveme_mobile/features/collections/archive_collection.dart';
+import 'package:archiveme_mobile/features/fact_ledger/archive_fact.dart';
+import 'package:archiveme_mobile/features/help/help_reviewer_guide_copy.dart';
+import 'package:archiveme_mobile/features/paywall/archive_loop_entitlements.dart';
+import 'package:archiveme_mobile/features/pins/pinned_evidence_store.dart';
+import 'package:archiveme_mobile/features/privacy_trust/privacy_trust_copy.dart';
+import 'package:archiveme_mobile/features/pro/pro_value_preview_copy.dart';
+import 'package:archiveme_mobile/features/pro_evidence_value/pro_evidence_value_engine.dart';
+import 'package:archiveme_mobile/features/revenue_metrics/revenue_readiness_engine.dart';
+import 'package:archiveme_mobile/features/tomorrow_return/check_in_reminder_service.dart';
+import 'package:archiveme_mobile/features/tomorrow_return/tomorrow_check_in_coordinator.dart';
+import 'package:archiveme_mobile/models/journal_entry.dart';
+import 'package:archiveme_mobile/product/consumer_ui_copy.dart';
+import 'package:archiveme_mobile/router/route_catalog.dart';
+import 'package:archiveme_mobile/security/security_settings_copy.dart';
+import 'package:archiveme_mobile/services/app_services.dart';
+import 'package:archiveme_mobile/theme/app_colors.dart';
+import 'package:archiveme_mobile/theme/app_spacing.dart';
+import 'package:archiveme_mobile/widgets/account/account_privacy_controls_section.dart';
+import 'package:archiveme_mobile/widgets/beta/beta_conversion_diagnosis_card.dart';
+import 'package:archiveme_mobile/widgets/beta/beta_feedback_intelligence_card.dart';
+import 'package:archiveme_mobile/widgets/beta/purchase_smoke_test_card.dart';
+import 'package:archiveme_mobile/widgets/beta/testflight_metrics_dashboard_card.dart';
+import 'package:archiveme_mobile/widgets/debug/revenue_readiness_card.dart';
+import 'package:archiveme_mobile/widgets/memory/memory_scope_settings_section.dart';
+import 'package:archiveme_mobile/widgets/pro/archive_backup_bridge_card.dart';
+import 'package:archiveme_mobile/widgets/pushed_screen_shell.dart';
+import 'package:archiveme_mobile/widgets/settings/app_review_access_settings_section.dart';
+import 'package:archiveme_mobile/widgets/settings/privacy_data_controls_section.dart';
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:package_info_plus/package_info_plus.dart';
+
+class SettingsScreen extends StatefulWidget {
+  const SettingsScreen({super.key});
+
+  @override
+  State<SettingsScreen> createState() => _SettingsScreenState();
+}
+
+class _SettingsScreenState extends State<SettingsScreen> {
+  PackageInfo? _packageInfo;
+  bool _restoreBusy = false;
+  RestorePurchasesFlow? _restoreFlow;
+  bool _remindersEnabled = false;
+  bool _remindersBusy = false;
+  List<JournalEntry> _journalEntries = const [];
+  bool _isPro = false;
+  @override
+  void initState() {
+    super.initState();
+    unawaited(BetaFeedbackIntelligenceStore.ensureLoaded());
+    unawaited(ArchiveBackupBridgeDismissStore.ensureLoaded());
+    unawaited(_loadJournalEntries());
+    unawaited(_loadIsPro());
+    unawaited(PackageInfo.fromPlatform().then((info) {
+      if (mounted) setState(() => _packageInfo = info);
+    }));
+    if (V1CapabilityRegistry.notifications) {
+      unawaited(CheckInReminderService.remindersEnabled().then((value) {
+        if (mounted) setState(() => _remindersEnabled = value);
+      }));
+    }
+  }
+
+  String get _reminderStateLabel {
+    if (!_remindersEnabled) return ConsumerUiCopy.reminderStateOff;
+    if (!CheckInReminderService.pluginAvailable) {
+      return ConsumerUiCopy.reminderStatePermissionNeeded;
+    }
+    return ConsumerUiCopy.reminderStateOn;
+  }
+
+  String get _reminderBody {
+    if (!_remindersEnabled) return ConsumerUiCopy.reminderSettingsBodyOff;
+    if (!CheckInReminderService.pluginAvailable) {
+      return ConsumerUiCopy.reminderSettingsBodyPermissionNeeded;
+    }
+    return ConsumerUiCopy.reminderSettingsBodyOn;
+  }
+
+  Future<void> _toggleReminders(bool enable) async {
+    if (_remindersBusy) return;
+    setState(() => _remindersBusy = true);
+    try {
+      if (!enable) {
+        await CheckInReminderService.setRemindersEnabled(false);
+        if (mounted) setState(() => _remindersEnabled = false);
+        return;
+      }
+      await CheckInReminderService.setRemindersEnabled(true);
+      final active = await TomorrowCheckInCoordinator.loadActive();
+      if (active != null) {
+        await CheckInReminderService.scheduleTomorrowCheckInReminder(active);
+      } else {
+        await CheckInReminderService.requestPermissionOnly();
+      }
+      if (mounted) setState(() => _remindersEnabled = true);
+    } finally {
+      if (mounted) setState(() => _remindersBusy = false);
+    }
+  }
+
+  void _openTestingArchiveMeGuide() {
+    if (!ArchiveBetaMissionGate.isEnabled) return;
+    unawaited(context.push('/testing-archiveme'));
+  }
+
+  Future<void> _loadJournalEntries() async {
+    if (!AppServices.isInitialized) return;
+    final entries = await AppServices.instance.journal.loadAll();
+    if (!mounted) return;
+    setState(() => _journalEntries = entries);
+  }
+
+  Future<void> _loadIsPro() async {
+    if (!AppServices.isInitialized) return;
+    final snap = await ArchiveLoopEntitlementGate.load(
+      store: ArchiveLoopEntitlementStore(AppServices.instance.prefs),
+      reader: ArchiveEntitlementReader.forAccessCheck(),
+    );
+    if (!mounted) return;
+    setState(() => _isPro = snap.effectivePro);
+  }
+
+  Future<void> _onAppReviewAccessUnlocked() async {
+    await _loadJournalEntries();
+    await _loadIsPro();
+  }
+
+  Future<void> _dismissArchiveBackupBridge() async {
+    await ArchiveBackupBridgeDismissStore.dismiss();
+    if (mounted) setState(() {});
+  }
+
+  Future<void> _restorePurchases() async {
+    final flow = _restoreFlow ??= RestorePurchasesFlow(
+      billing: AppServices.instance.billing,
+    );
+    if (flow.isBusy || _restoreBusy) return;
+
+    setState(() => _restoreBusy = true);
+    try {
+      final result = await flow.restore();
+      if (!mounted || result.outcome == RestorePurchasesOutcome.skippedBusy) {
+        return;
+      }
+      RestorePurchasesFeedback.showSnackBar(context, result);
+    } finally {
+      if (mounted) setState(() => _restoreBusy = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final packageInfo = _packageInfo;
+    final versionLabel = packageInfo == null
+        ? '…'
+        : '${packageInfo.version} (${packageInfo.buildNumber})';
+    final showSettingsBetaFeedbackCard =
+        ArchiveBetaMissionGate.isEnabled &&
+        BetaFeedbackIntelligenceEngine.shouldShowCard(
+          BetaFeedbackIntelligenceEngine.buildContext(
+            surface: BetaFeedbackIntelligenceSurface.settingsBeta,
+            entryCount: _journalEntries.length,
+            entries: _journalEntries,
+            isZeroEntryState: _journalEntries.isEmpty,
+            firstProofPayoffVisible:
+                BetaFeedbackIntelligenceStore.cached.hasReachedFirstProof,
+          ),
+        );
+    final settingsFirstProofReached =
+        BetaFeedbackIntelligenceStore.cached.hasReachedFirstProof ||
+        ProEvidenceValueEngine.firstProofPayoffSeenForEntries(_journalEntries);
+    final archiveBackupBridgeContext = ArchiveBackupBridgeEngine.buildContext(
+      surface: ArchiveBackupBridgeSurface.settings,
+      entryCount: _journalEntries.length,
+      isPro: _isPro,
+      dismissed: ArchiveBackupBridgeDismissStore.isDismissed(),
+      entries: _journalEntries,
+      isZeroEntryState: _journalEntries.isEmpty,
+    );
+    final showArchiveBackupBridgeOnSettings =
+        ArchiveBackupBridgeEngine.shouldShowCard(archiveBackupBridgeContext);
+
+    return PushedScreenShell(
+      title: ConsumerUiCopy.settings,
+      fallbackRoute: RouteCatalog.accountHome,
+      body: ArchiveResponsiveLayout.page(
+        context: context,
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            const AccountPrivacyControlsSection(),
+            const SizedBox(height: AppSpacing.md),
+            ListTile(
+              key: const Key('settings_privacy_trust_centre_tile'),
+              contentPadding: EdgeInsets.zero,
+              title: Text(
+                PrivacyTrustCopy.title,
+                style: ArchiveMobileTypography.listTitle(context),
+              ),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () => context.push('/privacy-trust-centre'),
+            ),
+            _tile(
+              ConsumerUiCopy.termsOfUse,
+              onTap: () => context.push('/terms'),
+            ),
+            if (V1NavigationGuard.isNavRouteVisible('/help-reviewer-guide'))
+              ListTile(
+                key: const Key('settings_help_reviewer_guide_tile'),
+                contentPadding: EdgeInsets.zero,
+                title: Text(
+                  HelpReviewerGuideCopy.settingsTitle,
+                  style: ArchiveMobileTypography.listTitle(context),
+                ),
+                subtitle: Text(
+                  HelpReviewerGuideCopy.settingsSubtitle,
+                  style: ArchiveMobileTypography.listSubtitle(context),
+                ),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () => context.push('/help-reviewer-guide'),
+              ),
+            if (ArchiveBetaMissionGate.isEnabled)
+              ListTile(
+                key: const Key('settings_testflight_feedback_tile'),
+                contentPadding: EdgeInsets.zero,
+                title: Text(
+                  BetaTestScriptCopy.settingsTileTitle,
+                  style: ArchiveMobileTypography.listTitle(context),
+                ),
+                subtitle: Text(
+                  BetaTestScriptCopy.settingsTileBody,
+                  style: ArchiveMobileTypography.listSubtitle(context),
+                ),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: _openTestingArchiveMeGuide,
+              ),
+            if (showSettingsBetaFeedbackCard) ...[
+              const SizedBox(height: AppSpacing.sm),
+              BetaFeedbackIntelligenceCard(
+                surface: BetaFeedbackIntelligenceSurface.settingsBeta,
+                entryCount: _journalEntries.length,
+                reachedFirstProof: settingsFirstProofReached,
+                compact: true,
+                onSubmitted: () {
+                  if (mounted) setState(() {});
+                },
+              ),
+            ],
+            if (ArchiveBetaMissionGate.isEnabled) ...[
+              const SizedBox(height: AppSpacing.sm),
+              RevenueReadinessCard(dashboard: RevenueReadinessEngine.build()),
+              const SizedBox(height: AppSpacing.sm),
+              const TestFlightMetricsDashboardCard(
+                
+              ),
+              const SizedBox(height: AppSpacing.sm),
+              const BetaConversionDiagnosisCard(),
+              const SizedBox(height: AppSpacing.sm),
+              const PurchaseSmokeTestCard(source: 'settings', compact: true),
+            ],
+            if (RevenueCatConfiguration.purchasesEnabledAtBuildTime &&
+                showArchiveBackupBridgeOnSettings) ...[
+              const SizedBox(height: AppSpacing.sm),
+              ArchiveBackupBridgeCard(
+                contextData: archiveBackupBridgeContext,
+                compact: true,
+                onSeePro: _isPro ? null : () => context.push('/subscription'),
+                onDismiss: () => unawaited(_dismissArchiveBackupBridge()),
+              ),
+            ],
+            if (RevenueCatConfiguration.purchasesEnabledAtBuildTime &&
+                V1NavigationGuard.isNavRouteVisible('/pro-preview'))
+              ListTile(
+                key: const Key('settings_pro_value_preview_tile'),
+                contentPadding: EdgeInsets.zero,
+                title: Text(
+                  ProValuePreviewCopy.settingsTitle,
+                  style: ArchiveMobileTypography.listTitle(context),
+                ),
+                subtitle: Text(
+                  ProValuePreviewCopy.settingsSubtitle,
+                  style: ArchiveMobileTypography.listSubtitle(context),
+                ),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () => context.push('/pro-preview'),
+              ),
+            if (RevenueCatConfiguration.purchasesEnabledAtBuildTime)
+              ListTile(
+                contentPadding: EdgeInsets.zero,
+                title: Text(
+                  ConsumerUiCopy.restorePurchases,
+                  style: ArchiveMobileTypography.listTitle(context),
+                ),
+                subtitle: RevenueCatService.instance.isConfigured
+                    ? null
+                    : Text(
+                        SubscriptionCopy.temporarilyUnavailable,
+                        style: ArchiveMobileTypography.listSubtitle(context),
+                      ),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: _restoreBusy ? null : _restorePurchases,
+              ),
+            const PrivacyDataControlsSection(),
+            AppReviewAccessSettingsSection(
+              onUnlocked: _onAppReviewAccessUnlocked,
+            ),
+            if (V1CapabilityRegistry.notifications)
+              SwitchListTile(
+                contentPadding: EdgeInsets.zero,
+                title: Text(
+                  ConsumerUiCopy.reminderSettingsTitle,
+                  style: ArchiveMobileTypography.listTitle(context),
+                ),
+                subtitle: Text(
+                  '$_reminderStateLabel · $_reminderBody',
+                  style: ArchiveMobileTypography.listSubtitle(context),
+                ),
+                value: _remindersEnabled,
+                onChanged: _remindersBusy ? null : _toggleReminders,
+              ),
+            // Memory: when ArchiveMe may connect entries. Persistent and
+            // user-only — "Memory off" stays off until changed here.
+            const Padding(
+              padding: EdgeInsets.symmetric(vertical: AppSpacing.xs),
+              child: MemoryScopeSettingsSection(),
+            ),
+            if (V1FeatureFlags.enableCustomReports)
+              ListTile(
+                key: const Key('settings_insight_quality_tile'),
+                contentPadding: EdgeInsets.zero,
+                title: Text(
+                  VisibleArchiveProofCopy.insightQualitySettingsTitle,
+                  style: ArchiveMobileTypography.listTitle(context),
+                ),
+                subtitle: Text(
+                  VisibleArchiveProofCopy.insightQualitySettingsSubtitle,
+                  style: ArchiveMobileTypography.listSubtitle(context),
+                ),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () => context.push('/insight-quality'),
+              ),
+            ListTile(
+              key: const Key('settings_security_tile'),
+              contentPadding: EdgeInsets.zero,
+              title: Text(
+                SecuritySettingsCopy.title,
+                style: ArchiveMobileTypography.listTitle(context),
+              ),
+              subtitle: Text(
+                SecuritySettingsCopy.subtitle,
+                style: ArchiveMobileTypography.listSubtitle(context),
+              ),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () => context.push('/security'),
+            ),
+            if (ProductionNavigation.isNavRouteVisible('/pinned-evidence'))
+              ListTile(
+                key: const Key('settings_pinned_evidence_tile'),
+                contentPadding: EdgeInsets.zero,
+                title: Text(
+                  PinnedEvidenceCopy.settingsTitle,
+                  style: ArchiveMobileTypography.listTitle(context),
+                ),
+                subtitle: Text(
+                  PinnedEvidenceCopy.settingsSubtitle,
+                  style: ArchiveMobileTypography.listSubtitle(context),
+                ),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () => context.push('/pinned-evidence'),
+              ),
+            if (ProductionNavigation.isNavRouteVisible('/archive-packs'))
+              ListTile(
+                key: const Key('settings_archive_packs_tile'),
+                contentPadding: EdgeInsets.zero,
+                title: Text(
+                  ArchivePacksCopy.settingsTitle,
+                  style: ArchiveMobileTypography.listTitle(context),
+                ),
+                subtitle: Text(
+                  ArchivePacksCopy.settingsSubtitle,
+                  style: ArchiveMobileTypography.listSubtitle(context),
+                ),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () => context.push('/archive-packs'),
+              ),
+            if (ProductionNavigation.isNavRouteVisible('/details'))
+              ListTile(
+                key: const Key('settings_details_tile'),
+                contentPadding: EdgeInsets.zero,
+                title: Text(
+                  FactLedgerCopy.settingsTitle,
+                  style: ArchiveMobileTypography.listTitle(context),
+                ),
+                subtitle: Text(
+                  FactLedgerCopy.settingsSubtitle,
+                  style: ArchiveMobileTypography.listSubtitle(context),
+                ),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () => context.push('/details'),
+              ),
+            if (V1FeatureFlags.enableActionItems)
+              ListTile(
+                key: const Key('settings_action_items_tile'),
+                contentPadding: EdgeInsets.zero,
+                title: Text(
+                  ActionItemsCopy.settingsTitle,
+                  style: ArchiveMobileTypography.listTitle(context),
+                ),
+                subtitle: Text(
+                  ActionItemsCopy.settingsSubtitle,
+                  style: ArchiveMobileTypography.listSubtitle(context),
+                ),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () => context.push('/action-items'),
+              ),
+            if (ProductionNavigation.isNavRouteVisible('/collections'))
+              ListTile(
+                key: const Key('settings_collections_tile'),
+                contentPadding: EdgeInsets.zero,
+                title: Text(
+                  ArchiveCollectionsCopy.settingsTitle,
+                  style: ArchiveMobileTypography.listTitle(context),
+                ),
+                subtitle: Text(
+                  ArchiveCollectionsCopy.settingsSubtitle,
+                  style: ArchiveMobileTypography.listSubtitle(context),
+                ),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () => context.push('/collections'),
+              ),
+            _tile(
+              ConsumerUiCopy.deleteAccount,
+              onTap: () => context.push('/delete-account'),
+              destructive: true,
+            ),
+            const SizedBox(height: AppSpacing.md),
+            Text(
+              ConsumerUiCopy.appVersion,
+              style: ArchiveMobileTypography.cardLabel(
+                context,
+                color: AppColors.textSecondary,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              versionLabel,
+              style: ArchiveMobileTypography.explanationBody(context),
+            ),
+            if (DeveloperSettingsGate.canShowDeveloperSettings) ...[
+              const Divider(height: 28),
+              _tile(
+                'Developer diagnostics',
+                onTap: () => context.push('/developer-diagnostics'),
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _tile(
+    String title, {
+    VoidCallback? onTap,
+    Widget? trailing,
+    bool destructive = false,
+  }) {
+    return ListTile(
+      contentPadding: EdgeInsets.zero,
+      title: Text(
+        title,
+        style: ArchiveMobileTypography.listTitle(context).copyWith(
+          color: destructive ? AppColors.error : AppColors.textPrimary,
+        ),
+      ),
+      trailing: trailing ?? const Icon(Icons.chevron_right),
+      onTap: onTap,
+    );
+  }
+}
