@@ -4,6 +4,7 @@ import 'package:archiveme_mobile/core/constants/database_constants.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/models/reflection.dart';
 import 'package:archiveme_mobile/features/insight_engine/hybrid_search_models.dart';
+import 'package:archiveme_mobile/storage/drift/journal_database.dart';
 import 'package:archiveme_mobile/storage/sqlite/app_sqlite_database.dart';
 import 'package:archiveme_mobile/storage/sqlite/memory_transcript_search_repository.dart';
 import 'package:archiveme_mobile/storage/sqlite/journal_sqlite_log.dart';
@@ -30,6 +31,14 @@ class JournalSqliteRepository {
 
   final AppSqliteDatabase _sqlite;
   MemoryTranscriptSearchRepository? _searchRepository;
+  JournalDatabase? _driftDb;
+  JournalKeysetQueries? _keysetQueries;
+
+  JournalDatabase get _drift =>
+      _driftDb ??= JournalDatabase(_sqlite.database);
+
+  JournalKeysetQueries get _keyset =>
+      _keysetQueries ??= JournalKeysetQueries(_drift);
 
   MemoryTranscriptSearchRepository get _transcriptSearch =>
       _searchRepository ??= MemoryTranscriptSearchRepository(_sqlite);
@@ -429,104 +438,24 @@ class JournalSqliteRepository {
     final trimmedQuery = searchQuery?.trim();
     if (trimmedQuery != null && trimmedQuery.isNotEmpty) {
       try {
-        return _fetchSearchPageAfterFts(
+        final rows = await _keyset.fetchFtsPageAfter(
+          searchQuery: trimmedQuery,
           limit: limit,
           afterCreatedAt: afterCreatedAt,
           afterId: afterId,
-          searchQuery: trimmedQuery,
         );
+        return _entriesFromRows(rows);
       } on Object catch (error) {
         JournalSqliteLog.fetchPageFtsFallback(error: error);
       }
     }
 
-    final args = <Object?>[];
-    final seekClause = _keysetSeekClause(
+    final rows = await _keyset.fetchActivePageAfter(
+      limit: limit,
       afterCreatedAt: afterCreatedAt,
       afterId: afterId,
-      args: args,
-    );
-    final rows = await _sqlite.database.rawQuery(
-      '''
-      SELECT
-        id,
-        created_at,
-        updated_at,
-        deleted_at,
-        is_archived,
-        transcript,
-        has_verified_proof,
-        payload_json
-      FROM $table
-      WHERE deleted_at IS NULL
-        $seekClause
-      ORDER BY created_at DESC, id DESC
-      LIMIT ?
-      ''',
-      [...args, limit],
     );
     return _entriesFromRows(rows);
-  }
-
-  Future<List<JournalEntry>> _fetchSearchPageAfterFts({
-    required int limit,
-    DateTime? afterCreatedAt,
-    String? afterId,
-    required String searchQuery,
-  }) async {
-    final args = <Object?>[searchQuery];
-    final seekClause = _keysetSeekClause(
-      afterCreatedAt: afterCreatedAt,
-      afterId: afterId,
-      args: args,
-      tableAlias: 'je',
-    );
-    final rows = await _sqlite.database.rawQuery(
-      '''
-      SELECT
-        je.id,
-        je.created_at,
-        je.updated_at,
-        je.deleted_at,
-        je.is_archived,
-        je.transcript,
-        je.has_verified_proof,
-        je.payload_json
-      FROM $table je
-      INNER JOIN ${DatabaseConstants.ftsTable} fts ON fts.entry_id = je.id
-      WHERE je.deleted_at IS NULL
-        AND fts.transcript MATCH ?
-        $seekClause
-      ORDER BY bm25(${DatabaseConstants.ftsTable}) ASC, je.created_at DESC, je.id DESC
-      LIMIT ?
-      ''',
-      [...args, limit],
-    );
-    return _entriesFromRows(rows);
-  }
-
-  String _keysetSeekClause({
-    required DateTime? afterCreatedAt,
-    required String? afterId,
-    required List<Object?> args,
-    String tableAlias = '',
-  }) {
-    if (afterCreatedAt == null || afterId == null) {
-      return '';
-    }
-
-    final prefix = tableAlias.isEmpty ? '' : '$tableAlias.';
-    final createdAtMillis = afterCreatedAt.toUtc().millisecondsSinceEpoch;
-    args
-      ..add(createdAtMillis)
-      ..add(createdAtMillis)
-      ..add(afterId);
-    return '''
-      AND (
-        ${prefix}created_at < ?
-        OR (${prefix}created_at = ? AND ${prefix}id < ?)
-      )
-    ''';
   }
 
   Future<List<JournalEntry>> fetchProofContextStubs() async {

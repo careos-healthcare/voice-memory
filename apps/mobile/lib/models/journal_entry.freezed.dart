@@ -14,7 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$JournalEntry {
 
- String get id; DateTime get createdAt; String get transcript; int get durationSeconds; Reflection get reflection; String? get localAudioPath; TranscriptStatus get transcriptStatus; String? get ownerKey; JournalSyncMetadata get sync; JournalDisplaySettings get display; JournalProofData get proof;
+ String get id; DateTime get createdAt; String get transcript; int get durationSeconds; Reflection get reflection; String? get localAudioPath; TranscriptStatus get transcriptStatus; String? get ownerKey; JournalSyncMetadata get sync; JournalDisplayMetadata get display; JournalProofData get proof;
 
 
 
@@ -105,7 +105,7 @@ return stored(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( String id,  DateTime createdAt,  String transcript,  int durationSeconds,  Reflection reflection,  String? localAudioPath,  TranscriptStatus transcriptStatus,  String? ownerKey,  JournalSyncMetadata sync,  JournalDisplaySettings display,  JournalProofData proof)?  stored,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( String id,  DateTime createdAt,  String transcript,  int durationSeconds,  Reflection reflection,  String? localAudioPath,  TranscriptStatus transcriptStatus,  String? ownerKey,  JournalSyncMetadata sync,  JournalDisplayMetadata display,  JournalProofData proof)?  stored,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _JournalEntry() when stored != null:
 return stored(_that.id,_that.createdAt,_that.transcript,_that.durationSeconds,_that.reflection,_that.localAudioPath,_that.transcriptStatus,_that.ownerKey,_that.sync,_that.display,_that.proof);case _:
@@ -126,7 +126,7 @@ return stored(_that.id,_that.createdAt,_that.transcript,_that.durationSeconds,_t
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( String id,  DateTime createdAt,  String transcript,  int durationSeconds,  Reflection reflection,  String? localAudioPath,  TranscriptStatus transcriptStatus,  String? ownerKey,  JournalSyncMetadata sync,  JournalDisplaySettings display,  JournalProofData proof)  stored,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( String id,  DateTime createdAt,  String transcript,  int durationSeconds,  Reflection reflection,  String? localAudioPath,  TranscriptStatus transcriptStatus,  String? ownerKey,  JournalSyncMetadata sync,  JournalDisplayMetadata display,  JournalProofData proof)  stored,}) {final _that = this;
 switch (_that) {
 case _JournalEntry():
 return stored(_that.id,_that.createdAt,_that.transcript,_that.durationSeconds,_that.reflection,_that.localAudioPath,_that.transcriptStatus,_that.ownerKey,_that.sync,_that.display,_that.proof);case _:
@@ -146,7 +146,7 @@ return stored(_that.id,_that.createdAt,_that.transcript,_that.durationSeconds,_t
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( String id,  DateTime createdAt,  String transcript,  int durationSeconds,  Reflection reflection,  String? localAudioPath,  TranscriptStatus transcriptStatus,  String? ownerKey,  JournalSyncMetadata sync,  JournalDisplaySettings display,  JournalProofData proof)?  stored,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( String id,  DateTime createdAt,  String transcript,  int durationSeconds,  Reflection reflection,  String? localAudioPath,  TranscriptStatus transcriptStatus,  String? ownerKey,  JournalSyncMetadata sync,  JournalDisplayMetadata display,  JournalProofData proof)?  stored,}) {final _that = this;
 switch (_that) {
 case _JournalEntry() when stored != null:
 return stored(_that.id,_that.createdAt,_that.transcript,_that.durationSeconds,_that.reflection,_that.localAudioPath,_that.transcriptStatus,_that.ownerKey,_that.sync,_that.display,_that.proof);case _:
@@ -173,7 +173,7 @@ class _JournalEntry extends JournalEntry {
 @override@JsonKey() final  TranscriptStatus transcriptStatus;
 @override final  String? ownerKey;
 @override final  JournalSyncMetadata sync;
-@override final  JournalDisplaySettings display;
+@override final  JournalDisplayMetadata display;
 @override final  JournalProofData proof;
 
 

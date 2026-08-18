@@ -5,7 +5,8 @@ import 'package:archiveme_mobile/core/copy_with_unset.dart';
 import 'package:archiveme_mobile/features/curiosity_loop/domain/models/cognitive_biomarkers.dart';
 import 'package:archiveme_mobile/features/proof_admission/proof_admission_models.dart';
 import 'package:archiveme_mobile/models/image_evidence.dart';
-import 'package:archiveme_mobile/models/journal_display_settings.dart';
+import 'package:archiveme_mobile/features/journal/presentation/models/journal_display_presentation.dart';
+import 'package:archiveme_mobile/models/journal_display_metadata.dart';
 import 'package:archiveme_mobile/models/journal_proof_data.dart';
 import 'package:archiveme_mobile/models/journal_sync_metadata.dart';
 import 'package:archiveme_mobile/models/reflection.dart';
@@ -14,6 +15,7 @@ import 'package:archiveme_mobile/models/transcript_status.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:uuid/uuid.dart';
 
+export 'journal_display_metadata.dart';
 export 'journal_display_settings.dart';
 export 'journal_proof_data.dart';
 export 'journal_sync_metadata.dart';
@@ -37,7 +39,7 @@ abstract class JournalEntry with _$JournalEntry {
     TranscriptStatus transcriptStatus,
     String? ownerKey,
     required JournalSyncMetadata sync,
-    required JournalDisplaySettings display,
+    required JournalDisplayMetadata display,
     required JournalProofData proof,
   }) = _JournalEntry;
 
@@ -80,7 +82,7 @@ abstract class JournalEntry with _$JournalEntry {
     DateTime? deletedAt,
     int? schemaVersion,
     JournalSyncMetadata? sync,
-    JournalDisplaySettings? display,
+    JournalDisplayMetadata? display,
     JournalProofData? proof,
   }) {
     final resolvedSync =
@@ -97,7 +99,7 @@ abstract class JournalEntry with _$JournalEntry {
         );
     final resolvedDisplay =
         display ??
-        JournalDisplaySettings(
+        JournalDisplayMetadata(
           treatAsNew: treatAsNew,
           connectionApproved: connectionApproved,
           keepExactDetails: keepExactDetails,
@@ -162,7 +164,7 @@ abstract class JournalEntry with _$JournalEntry {
         createdAt: createdAt,
         entryId: id,
       ),
-      display: JournalDisplaySettings.fromJson(json),
+      display: JournalDisplayMetadata.fromJson(json),
       proof: proof,
     );
   }
@@ -194,6 +196,10 @@ abstract class JournalEntry with _$JournalEntry {
   bool get preserveOriginal => display.preserveOriginal;
   String? get captureContextTag => display.captureContextTag;
   String? get captureSource => display.captureSource;
+
+  /// UI-facing display state derived from persisted metadata.
+  JournalDisplayPresentation get displayPresentation =>
+      JournalDisplayPresentation.fromEntry(this);
 
   ImageEvidence? get imageEvidence => proof.imageEvidence;
   CognitiveBiomarkers? get biomarkers => proof.biomarkers;
@@ -279,7 +285,7 @@ abstract class JournalEntry with _$JournalEntry {
     Object? deletedAt = copyWithUnset,
     int? schemaVersion,
     JournalSyncMetadata? sync,
-    JournalDisplaySettings? display,
+    JournalDisplayMetadata? display,
     JournalProofData? proof,
   }) => JournalEntry.stored(
     id: id ?? this.id,
