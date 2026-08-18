@@ -1,8 +1,8 @@
 import 'package:archiveme_mobile/features/insight_engine/hybrid_search_models.dart';
+import 'package:archiveme_mobile/src/native/sqlite_vector_extension.dart';
 import 'package:archiveme_mobile/storage/sqlite/migrations/migration_005_hybrid_search.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:sqlite3/sqlite3.dart' as sqlite3_lib;
-import 'package:sqlite_vector/sqlite_vector.dart';
 
 /// Loads the SQLite Vector extension when the platform supports it.
 abstract final class SqliteVectorSupport {
@@ -14,7 +14,7 @@ abstract final class SqliteVectorSupport {
   /// True after a successful [ensureLoaded] on this process.
   static bool get isAvailable => _available;
 
-  /// Loads sqlite_vector once. Safe to call repeatedly.
+  /// Loads sqlite-vector once. Safe to call repeatedly.
   static bool ensureLoaded() {
     if (_loadAttempted) return _available;
     _loadAttempted = true;
