@@ -2,6 +2,7 @@ import 'package:archiveme_mobile/storage/sqlite/migrations/migration_001_user_re
 import 'package:archiveme_mobile/storage/sqlite/migrations/migration_002_fact_ledger.dart';
 import 'package:archiveme_mobile/storage/sqlite/migrations/migration_003_account_pro_status.dart';
 import 'package:archiveme_mobile/storage/sqlite/migrations/migration_004_journal_entries.dart';
+import 'package:archiveme_mobile/storage/sqlite/migrations/migration_005_hybrid_search.dart';
 import 'package:archiveme_mobile/storage/sqlite/migrations/migration_007_journal_payload_slim.dart';
 import 'package:archiveme_mobile/storage/sqlite/sqlite_migration.dart';
 import 'package:sqflite/sqflite.dart';
