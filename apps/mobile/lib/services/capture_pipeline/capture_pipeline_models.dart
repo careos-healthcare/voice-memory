@@ -22,6 +22,22 @@ class CapturePipelineFailure implements Exception {
 
 enum PipelineStage { attesting, transcribing, analyzing, saving, done }
 
+/// Broadcast snapshot of capture pipeline progression.
+class PipelineState {
+  PipelineState({
+    required this.stage,
+    DateTime? at,
+  }) : at = (at ?? DateTime.now()).toUtc();
+
+  final PipelineStage stage;
+  final DateTime at;
+}
+
+/// Internal stage notifier wired to [CapturePipelineFacade.pipelineStates].
+typedef PipelineStageEmitter = void Function(PipelineStage stage);
+
+void noopPipelineStage(PipelineStage _) {}
+
 class CapturePipelineResult {
   const CapturePipelineResult({
     required this.entry,

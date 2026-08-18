@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:archiveme_mobile/core/async/keyed_async_lock.dart';
@@ -36,25 +37,34 @@ class CapturePipelineFacade {
     LiveVoiceHandler? liveVoiceHandler,
     ImageCaptionHandler? imageCaptionHandler,
   }) {
+    final stageController = StreamController<PipelineState>.broadcast();
+    final stageEmitter = _pipelineStageEmitter(stageController);
     final resolvedAnalyzer = analyzer ?? CaptureProofAnalyzer(dependencies);
     final resolvedMiddleware =
         middleware ??
-        CapturePipelineMiddleware(dependencies, resolvedAnalyzer);
+        CapturePipelineMiddleware(
+          dependencies,
+          resolvedAnalyzer,
+          stageEmitter: stageEmitter,
+        );
     final resolvedTextHandler =
         textHandler ??
         TextCaptureHandler(
           deps: dependencies,
           middleware: resolvedMiddleware,
+          stageEmitter: stageEmitter,
         );
     return CapturePipelineFacade._(
       dependencies: dependencies,
       analyzer: resolvedAnalyzer,
       middleware: resolvedMiddleware,
+      pipelineStateController: stageController,
       voiceHandler:
           voiceHandler ??
           VoiceCaptureHandler(
             deps: dependencies,
             middleware: resolvedMiddleware,
+            stageEmitter: stageEmitter,
           ),
       textHandler: resolvedTextHandler,
       liveVoiceHandler:
@@ -62,6 +72,7 @@ class CapturePipelineFacade {
           LiveVoiceHandler(
             deps: dependencies,
             middleware: resolvedMiddleware,
+            stageEmitter: stageEmitter,
           ),
       imageCaptionHandler:
           imageCaptionHandler ??
@@ -76,24 +87,34 @@ class CapturePipelineFacade {
   factory CapturePipelineFacade.standard(
     CapturePipelineDependencies dependencies,
   ) {
+    final stageController = StreamController<PipelineState>.broadcast();
+    final stageEmitter = _pipelineStageEmitter(stageController);
     final analyzer = CaptureProofAnalyzer(dependencies);
-    final middleware = CapturePipelineMiddleware(dependencies, analyzer);
+    final middleware = CapturePipelineMiddleware(
+      dependencies,
+      analyzer,
+      stageEmitter: stageEmitter,
+    );
     final textHandler = TextCaptureHandler(
       deps: dependencies,
       middleware: middleware,
+      stageEmitter: stageEmitter,
     );
     return CapturePipelineFacade._(
       dependencies: dependencies,
       analyzer: analyzer,
       middleware: middleware,
+      pipelineStateController: stageController,
       voiceHandler: VoiceCaptureHandler(
         deps: dependencies,
         middleware: middleware,
+        stageEmitter: stageEmitter,
       ),
       textHandler: textHandler,
       liveVoiceHandler: LiveVoiceHandler(
         deps: dependencies,
         middleware: middleware,
+        stageEmitter: stageEmitter,
       ),
       imageCaptionHandler: ImageCaptionHandler(
         deps: dependencies,
@@ -106,6 +127,7 @@ class CapturePipelineFacade {
     required CapturePipelineDependencies dependencies,
     required CaptureProofAnalyzer analyzer,
     required CapturePipelineMiddleware middleware,
+    required StreamController<PipelineState> pipelineStateController,
     required VoiceCaptureHandler voiceHandler,
     required TextCaptureHandler textHandler,
     required LiveVoiceHandler liveVoiceHandler,
@@ -113,6 +135,7 @@ class CapturePipelineFacade {
   }) : _deps = dependencies,
        _analyzer = analyzer,
        _middleware = middleware,
+       _pipelineStateController = pipelineStateController,
        _voiceHandler = voiceHandler,
        _textHandler = textHandler,
        _liveVoiceHandler = liveVoiceHandler,
@@ -122,14 +145,35 @@ class CapturePipelineFacade {
   /// Fallback duration when watch capture does not report elapsed seconds.
   static const _watchCaptureFallbackDurationSeconds = 1;
 
+  static PipelineStageEmitter _pipelineStageEmitter(
+    StreamController<PipelineState> controller,
+  ) {
+    return (PipelineStage stage) {
+      if (!controller.isClosed) {
+        controller.add(PipelineState(stage: stage));
+      }
+    };
+  }
+
   final CapturePipelineDependencies _deps;
   final CaptureProofAnalyzer _analyzer;
   final CapturePipelineMiddleware _middleware;
+  final StreamController<PipelineState> _pipelineStateController;
   final VoiceCaptureHandler _voiceHandler;
   final TextCaptureHandler _textHandler;
   final LiveVoiceHandler _liveVoiceHandler;
   final ImageCaptionHandler _imageCaptionHandler;
   final KeyedAsyncLock _postSaveDetailLocks;
+
+  /// Broadcast stream of pipeline stage progression for UI and background listeners.
+  Stream<PipelineState> get pipelineStates => _pipelineStateController.stream;
+
+  /// Closes [pipelineStates]. Call when the facade is discarded.
+  void dispose() {
+    if (!_pipelineStateController.isClosed) {
+      _pipelineStateController.close();
+    }
+  }
 
   CapturePipelineDependencies get dependencies => _deps;
   CaptureProofAnalyzer get analyzer => _analyzer;
@@ -142,12 +186,10 @@ class CapturePipelineFacade {
   Future<CapturePipelineOutcome> run({
     required File audioFile,
     required int durationSeconds,
-    void Function(PipelineStage stage)? onStage,
   }) =>
       _voiceHandler.run(
         audioFile: audioFile,
         durationSeconds: durationSeconds,
-        onStage: onStage,
       );
 
   Future<CapturePipelineOutcome> attachTypedTextToVoiceEntry({
@@ -161,30 +203,24 @@ class CapturePipelineFacade {
 
   Future<CapturePipelineOutcome> saveTextThought({
     required String transcript,
-    void Function(PipelineStage stage)? onStage,
-  }) =>
-      _textHandler.saveTextThought(transcript: transcript, onStage: onStage);
+  }) => _textHandler.saveTextThought(transcript: transcript);
 
   Future<CapturePipelineOutcome> saveLiveVoiceTranscript({
     required String transcript,
     required int durationSeconds,
-    void Function(PipelineStage stage)? onStage,
   }) =>
       _liveVoiceHandler.saveLiveVoiceTranscript(
         transcript: transcript,
         durationSeconds: durationSeconds,
-        onStage: onStage,
       );
 
   Future<CapturePipelineOutcome> saveImageCaptionEntry({
     required String caption,
     required ImageEvidence imageEvidence,
-    void Function(PipelineStage stage)? onStage,
   }) =>
       _imageCaptionHandler.saveImageCaptionEntry(
         caption: caption,
         imageEvidence: imageEvidence,
-        onStage: onStage,
       );
 
   Future<CapturePipelineOutcome> saveRecoveredVaultEntry({
@@ -192,14 +228,12 @@ class CapturePipelineFacade {
     required Map<String, dynamic> reflectionJson,
     required int durationSeconds,
     required bool remoteProcessingConsented,
-    void Function(PipelineStage stage)? onStage,
   }) =>
       _liveVoiceHandler.saveRecoveredVaultEntry(
         transcript: transcript,
         reflectionJson: reflectionJson,
         durationSeconds: durationSeconds,
         remoteProcessingConsented: remoteProcessingConsented,
-        onStage: onStage,
       );
 
   Future<CapturePipelineOutcome> runWatchCapture({

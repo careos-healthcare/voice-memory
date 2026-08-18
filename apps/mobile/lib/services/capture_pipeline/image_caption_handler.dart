@@ -18,11 +18,11 @@ class ImageCaptionHandler {
   Future<CapturePipelineOutcome> saveImageCaptionEntry({
     required String caption,
     required ImageEvidence imageEvidence,
-    void Function(PipelineStage stage)? onStage,
+    
   }) async {
     final outcome = await _textHandler.saveTextThought(
       transcript: caption,
-      onStage: onStage,
+      
     );
 
     return outcome.match(

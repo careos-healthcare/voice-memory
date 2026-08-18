@@ -9,10 +9,15 @@ import 'package:archiveme_mobile/services/record_pipeline_log.dart';
 
 /// Shared attestation, consent, usage-guard, and analyze-with-auth-retry logic.
 class CapturePipelineMiddleware {
-  CapturePipelineMiddleware(this._deps, this._analyzer);
+  CapturePipelineMiddleware(
+    this._deps,
+    this._analyzer, {
+    PipelineStageEmitter stageEmitter = noopPipelineStage,
+  }) : _stageEmitter = stageEmitter;
 
   final CapturePipelineDependencies _deps;
   final CaptureProofAnalyzer _analyzer;
+  final PipelineStageEmitter _stageEmitter;
 
   Future<bool> isPurposeGranted(RemoteProcessingPurpose purpose) =>
       _analyzer.isPurposeGranted(purpose);
@@ -68,15 +73,15 @@ class CapturePipelineMiddleware {
     required String scopeKey,
     required String entryId,
     required ProofSourceType sourceType,
-    void Function(PipelineStage stage)? onStage,
+    
     bool attestFirst = true,
   }) async {
     if (attestFirst) {
-      onStage?.call(PipelineStage.attesting);
+      _stageEmitter(PipelineStage.attesting);
     }
     var token = await ensureCaptureToken();
 
-    onStage?.call(PipelineStage.analyzing);
+    _stageEmitter(PipelineStage.analyzing);
     final analyzeCheck = checkUsage(
       scopeKey: scopeKey,
       operation: ApiUsageOperation.analyze,

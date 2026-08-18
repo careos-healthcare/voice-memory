@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:archiveme_mobile/features/moment_quality/post_save_moment_detail_model.dart';
@@ -70,10 +71,18 @@ void main() {
 
     test('saveTextThought analyzes and saves when consent is granted', () async {
       final stages = <PipelineStage>[];
+      final doneStage = Completer<void>();
+      final subscription = facade.pipelineStates.listen((state) {
+        stages.add(state.stage);
+        if (state.stage == PipelineStage.done && !doneStage.isCompleted) {
+          doneStage.complete();
+        }
+      });
       final result = (await facade.saveTextThought(
         transcript: 'I keep saying I want more balance but I still take on extra work every week.',
-        onStage: stages.add,
       )).getOrThrow();
+      await doneStage.future;
+      await subscription.cancel();
 
       expect(result.localSaved, isTrue);
       expect(result.syncSucceeded, isTrue);

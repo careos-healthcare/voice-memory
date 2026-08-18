@@ -61,15 +61,19 @@ class CapturePipelineService {
 
   CapturePipelineDependencies get dependencies => _facade.dependencies;
 
+  /// Broadcast stream of capture pipeline stage progression.
+  Stream<PipelineState> get pipelineStates => _facade.pipelineStates;
+
+  /// Closes [pipelineStates]. Call when the service is discarded.
+  void dispose() => _facade.dispose();
+
   Future<CapturePipelineOutcome> run({
     required File audioFile,
     required int durationSeconds,
-    void Function(PipelineStage stage)? onStage,
   }) =>
       _facade.run(
         audioFile: audioFile,
         durationSeconds: durationSeconds,
-        onStage: onStage,
       );
 
   Future<CapturePipelineOutcome> attachTypedTextToVoiceEntry({
@@ -91,30 +95,24 @@ class CapturePipelineService {
 
   Future<CapturePipelineOutcome> saveTextThought({
     required String transcript,
-    void Function(PipelineStage stage)? onStage,
-  }) =>
-      _facade.saveTextThought(transcript: transcript, onStage: onStage);
+  }) => _facade.saveTextThought(transcript: transcript);
 
   Future<CapturePipelineOutcome> saveImageCaptionEntry({
     required String caption,
     required ImageEvidence imageEvidence,
-    void Function(PipelineStage stage)? onStage,
   }) =>
       _facade.saveImageCaptionEntry(
         caption: caption,
         imageEvidence: imageEvidence,
-        onStage: onStage,
       );
 
   Future<CapturePipelineOutcome> saveLiveVoiceTranscript({
     required String transcript,
     required int durationSeconds,
-    void Function(PipelineStage stage)? onStage,
   }) =>
       _facade.saveLiveVoiceTranscript(
         transcript: transcript,
         durationSeconds: durationSeconds,
-        onStage: onStage,
       );
 
   Future<CapturePipelineOutcome> saveRecoveredVaultEntry({
@@ -122,14 +120,12 @@ class CapturePipelineService {
     required Map<String, dynamic> reflectionJson,
     required int durationSeconds,
     required bool remoteProcessingConsented,
-    void Function(PipelineStage stage)? onStage,
   }) =>
       _facade.saveRecoveredVaultEntry(
         transcript: transcript,
         reflectionJson: reflectionJson,
         durationSeconds: durationSeconds,
         remoteProcessingConsented: remoteProcessingConsented,
-        onStage: onStage,
       );
 
   Future<CapturePipelineOutcome> runWatchCapture({

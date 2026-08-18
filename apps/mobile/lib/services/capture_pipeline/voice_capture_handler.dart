@@ -28,18 +28,20 @@ class VoiceCaptureHandler {
     required CapturePipelineDependencies deps,
     required CapturePipelineMiddleware middleware,
     CaptureVoicePersistence? persistence,
+    PipelineStageEmitter stageEmitter = noopPipelineStage,
   }) : _deps = deps,
        _middleware = middleware,
-       _persistence = persistence ?? CaptureVoicePersistence(deps);
+       _persistence = persistence ?? CaptureVoicePersistence(deps),
+       _stageEmitter = stageEmitter;
 
   final CapturePipelineDependencies _deps;
   final CapturePipelineMiddleware _middleware;
   final CaptureVoicePersistence _persistence;
+  final PipelineStageEmitter _stageEmitter;
 
   Future<CapturePipelineOutcome> run({
     required File audioFile,
     required int durationSeconds,
-    void Function(PipelineStage stage)? onStage,
   }) async {
     final session = _deps.sessionGuardFactory();
     final exists = audioFile.existsSync();
@@ -72,14 +74,14 @@ class VoiceCaptureHandler {
           durationSeconds: durationSeconds,
           syncNote: VoiceCaptureCopy.remoteProcessingConsentPausedNote,
           transcriptionFailureReason: reason,
-          onStage: onStage,
+          
         );
       }
 
-      onStage?.call(PipelineStage.attesting);
+      _stageEmitter(PipelineStage.attesting);
       await _middleware.ensureCaptureToken();
 
-      onStage?.call(PipelineStage.transcribing);
+      _stageEmitter(PipelineStage.transcribing);
       await BetaAnalyticsConsentBoundary.auditRemoteAttempt(
         purpose: RemoteProcessingPurpose.remoteTranscription,
         permitted: true,
@@ -105,7 +107,7 @@ class VoiceCaptureHandler {
             syncNote: VoiceCaptureCopy.lowQualityTranscriptIssue,
             transcriptionFailureReason: reason,
             lowQualityTranscript: true,
-            onStage: onStage,
+            
           );
         }
         _middleware.logApiGuardBlocked(operation: 'transcribe', reason: reason);
@@ -114,7 +116,7 @@ class VoiceCaptureHandler {
           durationSeconds: durationSeconds,
           syncNote: VoiceCaptureCopy.transcriptionFailedDegraded,
           transcriptionFailureReason: reason,
-          onStage: onStage,
+          
         );
       }
 
@@ -135,7 +137,7 @@ class VoiceCaptureHandler {
           durationSeconds: durationSeconds,
           syncNote: CaptureSaveMessages.syncUnavailableOffline,
           transcriptionFailureReason: reason,
-          onStage: onStage,
+          
         );
       }
 
@@ -148,11 +150,11 @@ class VoiceCaptureHandler {
           audioFile: resolvedAudio,
           durationSeconds: durationSeconds,
           transcript: trimmedTranscript,
-          onStage: onStage,
+          
         );
       }
 
-      onStage?.call(PipelineStage.analyzing);
+      _stageEmitter(PipelineStage.analyzing);
       if (!await _middleware.isPurposeGranted(
         RemoteProcessingPurpose.remoteReflection,
       )) {
@@ -164,7 +166,7 @@ class VoiceCaptureHandler {
           transcript: trimmedTranscript,
           reason: reason,
           syncNote: VoiceCaptureCopy.remoteProcessingConsentPausedNote,
-          onStage: onStage,
+          
         );
       }
 
@@ -175,7 +177,7 @@ class VoiceCaptureHandler {
           scopeKey: scopeKey,
           entryId: entryId,
           sourceType: ProofSourceType.userVoiceTranscript,
-          onStage: onStage,
+          
           attestFirst: false,
         );
         return _saveAnalyzedVoiceEntry(
@@ -185,7 +187,7 @@ class VoiceCaptureHandler {
           verifiedProof: verifiedProof,
           entryId: entryId,
           session: session,
-          onStage: onStage,
+          
         );
       } on AnalyzeBlockedException catch (e) {
         return _saveAfterAnalysisFailure(
@@ -193,7 +195,7 @@ class VoiceCaptureHandler {
           durationSeconds: durationSeconds,
           transcript: trimmedTranscript,
           reason: e.reason,
-          onStage: onStage,
+          
         );
       } catch (e) {
         return _saveAfterAnalysisFailure(
@@ -201,7 +203,7 @@ class VoiceCaptureHandler {
           durationSeconds: durationSeconds,
           transcript: trimmedTranscript,
           error: e,
-          onStage: onStage,
+          
         );
       }
     } catch (e) {
@@ -210,7 +212,7 @@ class VoiceCaptureHandler {
         durationSeconds: durationSeconds,
         partialTranscript: partialTranscript,
         error: e,
-        onStage: onStage,
+        
       );
     }
   }
@@ -276,7 +278,7 @@ class VoiceCaptureHandler {
     required VerifiedProof verifiedProof,
     required String entryId,
     required AccountSessionGuard session,
-    void Function(PipelineStage stage)? onStage,
+    
   }) async {
     RecordPipelineLog.transcriptLengths(
       transcriptLength: trimmedTranscript.length,
@@ -289,7 +291,7 @@ class VoiceCaptureHandler {
           .length,
     );
 
-    onStage?.call(PipelineStage.saving);
+    _stageEmitter(PipelineStage.saving);
     session.assertActive();
     final finalTranscript =
         resolveFinalCaptureTranscript(
@@ -322,7 +324,7 @@ class VoiceCaptureHandler {
     );
     _middleware.clearCaptureToken();
 
-    onStage?.call(PipelineStage.done);
+    _stageEmitter(PipelineStage.done);
     return pipelineSuccess(CapturePipelineResult(
       entry: entry,
       localSaved: true,
@@ -336,7 +338,7 @@ class VoiceCaptureHandler {
     required int durationSeconds,
     required String? partialTranscript,
     required Object error,
-    void Function(PipelineStage stage)? onStage,
+    
   }) {
     if (CaptureVoicePersistence.hasUsableTranscript(partialTranscript)) {
       return _saveAfterAnalysisFailure(
@@ -344,7 +346,7 @@ class VoiceCaptureHandler {
         durationSeconds: durationSeconds,
         transcript: partialTranscript!.trim(),
         error: error,
-        onStage: onStage,
+        
       );
     }
 
@@ -364,7 +366,7 @@ class VoiceCaptureHandler {
       durationSeconds: durationSeconds,
       syncNote: CapturePipelineApiErrors.syncNoteFor(error),
       transcriptionFailureReason: reason,
-      onStage: onStage,
+      
     );
   }
 
@@ -372,13 +374,13 @@ class VoiceCaptureHandler {
     required File audioFile,
     required int durationSeconds,
     required String transcript,
-    void Function(PipelineStage stage)? onStage,
+    
   }) async {
     RecordPipelineLog.transcriptionFallback(
       reason: 'native_provisional_stt',
       audioPath: audioFile.path,
     );
-    onStage?.call(PipelineStage.saving);
+    _stageEmitter(PipelineStage.saving);
     final finalTranscript = resolveFinalCaptureTranscript(
       transcript: transcript,
       body: transcript,
@@ -413,7 +415,7 @@ class VoiceCaptureHandler {
       first25Source: 'native_provisional_voice_capture',
     );
     _middleware.clearCaptureToken();
-    onStage?.call(PipelineStage.done);
+    _stageEmitter(PipelineStage.done);
     return pipelineSuccess(CapturePipelineResult(
       entry: entry,
       localSaved: true,
@@ -430,7 +432,7 @@ class VoiceCaptureHandler {
     Object? error,
     String? reason,
     String syncNote = VoiceCaptureCopy.analysisUnavailableNote,
-    void Function(PipelineStage stage)? onStage,
+    
   }) async {
     final resolvedReason =
         reason ??
@@ -453,7 +455,7 @@ class VoiceCaptureHandler {
       partialTranscript: transcript,
       syncNote: syncNote,
       analysisFailureReason: resolvedReason,
-      onStage: onStage,
+      
     );
   }
 
@@ -552,7 +554,7 @@ class VoiceCaptureHandler {
     String? transcriptionFailureReason,
     String? analysisFailureReason,
     bool lowQualityTranscript = false,
-    void Function(PipelineStage stage)? onStage,
+    
   }) async {
     if (analysisFailureReason != null) {
       RecordPipelineLog.analysisFallback(
@@ -565,7 +567,7 @@ class VoiceCaptureHandler {
         audioPath: audioFile.path,
       );
     }
-    onStage?.call(PipelineStage.saving);
+    _stageEmitter(PipelineStage.saving);
     try {
       final entry = await _persistence.saveOfflineDraft(
         audioFile: audioFile,
@@ -573,7 +575,7 @@ class VoiceCaptureHandler {
         partialTranscript: partialTranscript,
       );
       _middleware.clearCaptureToken();
-      onStage?.call(PipelineStage.done);
+      _stageEmitter(PipelineStage.done);
       return pipelineSuccess(CapturePipelineResult(
         entry: entry,
         localSaved: true,

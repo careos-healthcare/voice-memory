@@ -15,16 +15,18 @@ class LiveVoiceHandler {
   LiveVoiceHandler({
     required CapturePipelineDependencies deps,
     required CapturePipelineMiddleware middleware,
+    PipelineStageEmitter stageEmitter = noopPipelineStage,
   }) : _deps = deps,
-       _middleware = middleware;
+       _middleware = middleware,
+       _stageEmitter = stageEmitter;
 
   final CapturePipelineDependencies _deps;
   final CapturePipelineMiddleware _middleware;
+  final PipelineStageEmitter _stageEmitter;
 
   Future<CapturePipelineOutcome> saveLiveVoiceTranscript({
     required String transcript,
     required int durationSeconds,
-    void Function(PipelineStage stage)? onStage,
   }) async {
     final session = _deps.sessionGuardFactory();
     final trimmed = transcript.trim();
@@ -43,7 +45,7 @@ class LiveVoiceHandler {
           transcript: trimmed,
           durationSeconds: durationSeconds,
           syncNote: VoiceCaptureCopy.remoteProcessingConsentPausedNote,
-          onStage: onStage,
+          
         );
       }
 
@@ -54,9 +56,9 @@ class LiveVoiceHandler {
           scopeKey: scopeKey,
           entryId: entryId,
           sourceType: ProofSourceType.userVoiceTranscript,
-          onStage: onStage,
+          
         );
-        onStage?.call(PipelineStage.saving);
+        _stageEmitter(PipelineStage.saving);
         final entry = JournalEntry(
           id: entryId,
           createdAt: DateTime.now().toUtc(),
@@ -75,7 +77,7 @@ class LiveVoiceHandler {
         );
         _middleware.clearCaptureToken();
 
-        onStage?.call(PipelineStage.done);
+        _stageEmitter(PipelineStage.done);
         return pipelineSuccess(CapturePipelineResult(
           entry: entry,
           localSaved: true,
@@ -89,7 +91,7 @@ class LiveVoiceHandler {
           syncNote: e.reason.isNotEmpty
               ? e.reason
               : VoiceCaptureCopy.transcriptionFailedDegraded,
-          onStage: onStage,
+          
         );
       }
     } catch (e) {
@@ -104,7 +106,7 @@ class LiveVoiceHandler {
         transcript: trimmed,
         durationSeconds: durationSeconds,
         syncNote: CapturePipelineApiErrors.syncNoteFor(e),
-        onStage: onStage,
+        
       );
     }
   }
@@ -114,7 +116,7 @@ class LiveVoiceHandler {
     required Map<String, dynamic> reflectionJson,
     required int durationSeconds,
     required bool remoteProcessingConsented,
-    void Function(PipelineStage stage)? onStage,
+    
   }) async {
     final session = _deps.sessionGuardFactory();
     final trimmed = transcript.trim();
@@ -124,7 +126,7 @@ class LiveVoiceHandler {
       );
     }
 
-    onStage?.call(PipelineStage.saving);
+    _stageEmitter(PipelineStage.saving);
     final entryId = JournalSyncIds.newOfflineEntryId();
     final raw = RawModelResponse(
       payload: {'reflection': reflectionJson},
@@ -174,7 +176,7 @@ class LiveVoiceHandler {
       captureKind: 'voice',
     );
     _middleware.clearCaptureToken();
-    onStage?.call(PipelineStage.done);
+    _stageEmitter(PipelineStage.done);
     return pipelineSuccess(CapturePipelineResult(
       entry: entry,
       localSaved: true,
@@ -187,9 +189,9 @@ class LiveVoiceHandler {
     required String transcript,
     required int durationSeconds,
     required String syncNote,
-    void Function(PipelineStage stage)? onStage,
+    
   }) async {
-    onStage?.call(PipelineStage.saving);
+    _stageEmitter(PipelineStage.saving);
     final entry = JournalEntry(
       id: JournalSyncIds.newOfflineEntryId(),
       createdAt: DateTime.now().toUtc(),
@@ -211,7 +213,7 @@ class LiveVoiceHandler {
       captureKind: 'voice',
     );
     _middleware.clearCaptureToken();
-    onStage?.call(PipelineStage.done);
+    _stageEmitter(PipelineStage.done);
     return pipelineSuccess(CapturePipelineResult(
       entry: entry,
       localSaved: true,

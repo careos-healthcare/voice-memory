@@ -17,18 +17,20 @@ class TextCaptureHandler {
   TextCaptureHandler({
     required CapturePipelineDependencies deps,
     required CapturePipelineMiddleware middleware,
+    PipelineStageEmitter stageEmitter = noopPipelineStage,
   }) : _deps = deps,
-       _middleware = middleware;
+       _middleware = middleware,
+       _stageEmitter = stageEmitter;
 
   final CapturePipelineDependencies _deps;
   final CapturePipelineMiddleware _middleware;
+  final PipelineStageEmitter _stageEmitter;
 
   @visibleForTesting
   CapturePipelineMiddleware get middlewareForTest => _middleware;
 
   Future<CapturePipelineOutcome> saveTextThought({
     required String transcript,
-    void Function(PipelineStage stage)? onStage,
   }) async {
     final session = _deps.sessionGuardFactory();
     final trimmed = transcript.trim();
@@ -46,7 +48,7 @@ class TextCaptureHandler {
         return _saveTextLocalOnly(
           transcript: trimmed,
           syncNote: VoiceCaptureCopy.remoteProcessingConsentPausedNote,
-          onStage: onStage,
+          
         );
       }
 
@@ -57,9 +59,9 @@ class TextCaptureHandler {
           scopeKey: scopeKey,
           entryId: entryId,
           sourceType: ProofSourceType.userTyped,
-          onStage: onStage,
+          
         );
-        onStage?.call(PipelineStage.saving);
+        _stageEmitter(PipelineStage.saving);
         final entry = JournalEntry(
           id: entryId,
           createdAt: DateTime.now().toUtc(),
@@ -79,7 +81,7 @@ class TextCaptureHandler {
         );
         _middleware.clearCaptureToken();
 
-        onStage?.call(PipelineStage.done);
+        _stageEmitter(PipelineStage.done);
         return pipelineSuccess(CapturePipelineResult(
           entry: entry,
           localSaved: true,
@@ -91,7 +93,7 @@ class TextCaptureHandler {
           syncNote: e.reason.isNotEmpty
               ? e.reason
               : VoiceCaptureCopy.transcriptionFailedDegraded,
-          onStage: onStage,
+          
         );
       }
     } catch (e) {
@@ -105,7 +107,7 @@ class TextCaptureHandler {
       return _saveTextLocalOnly(
         transcript: trimmed,
         syncNote: CapturePipelineApiErrors.syncNoteFor(e),
-        onStage: onStage,
+        
       );
     }
   }
@@ -113,13 +115,13 @@ class TextCaptureHandler {
   Future<CapturePipelineOutcome> _saveTextLocalOnly({
     required String transcript,
     required String syncNote,
-    void Function(PipelineStage stage)? onStage,
+    
   }) async {
-    onStage?.call(PipelineStage.saving);
+    _stageEmitter(PipelineStage.saving);
     try {
       final entry = await _saveOfflineTextDraft(transcript);
       _middleware.clearCaptureToken();
-      onStage?.call(PipelineStage.done);
+      _stageEmitter(PipelineStage.done);
       return pipelineSuccess(CapturePipelineResult(
         entry: entry,
         localSaved: true,
