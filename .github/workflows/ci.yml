@@ -62,28 +62,25 @@ jobs:
         run: flutter pub get
 
       - name: Audit silent catch blocks
-        run: dart run tool/audit_silent_catches.dart
+        run: python3 tool/run_gate.py audits silent_catches
 
       - name: Validate API contract parity
-        run: dart run tool/validate_api_contract.dart
-
-      - name: Feature module count budget
-        run: bash tool/check_feature_count_budget.sh
+        run: python3 tool/run_gate.py validates api_contract
 
       - name: Enforce repository budget
-        run: python3 tool/enforce_budget.py
+        run: python3 tool/run_gate.py budget
 
       - name: Run API DTO self-tests
-        run: dart run tool/run_api_dto_self_test.dart
+        run: python3 tool/run_gate.py self_tests api_dto
 
       - name: Run pro status SQLite self-tests
-        run: dart run tool/run_pro_status_self_test.dart
+        run: python3 tool/run_gate.py self_tests pro_status
 
       - name: Analyze API client layer
         run: dart analyze lib/api
 
       - name: Run Flutter Analyze
-        run: flutter analyze
+        run: python3 tool/run_gate.py analyze
 
       - name: Run Record screen CI gate
         run: flutter test test/v1_record_controllers_wiring_test.dart test/v1_record_view_state_mapper_test.dart test/v1_record_post_save_surface_test.dart test/record_screen_overflow_test.dart test/record_screen_framing_copy_test.dart

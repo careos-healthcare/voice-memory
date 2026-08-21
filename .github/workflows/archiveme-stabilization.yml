@@ -22,7 +22,7 @@ jobs:
       - name: npm ci integrity
         run: npm ci --ignore-scripts
       - name: TypeScript check
-        run: npx tsc --noEmit -p tsconfig.json
+        run: npm run typecheck
       - name: ESLint
         run: npm run lint
       - name: Server build
@@ -31,12 +31,26 @@ jobs:
         run: npm run validate:auth-security
       - name: Privacy log validation
         run: npm run validate:privacy-logs || node scripts/validate-privacy-logs.mjs
+      - name: Insight quality gate (PRD Goal #4 — ordered validators)
+        run: npm run validate:insight-quality-gate
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      - name: Product restraint (consolidated)
+        run: npm run validate:restraint
+      - name: Blind-spot validation (consolidated)
+        run: npm run validate:blind-spot
+      - name: Resurfacing validation (consolidated)
+        run: npm run validate:resurfacing
+      - name: Clinical quarantine audit
+        run: npm run validate:clinical-quarantine
 
   flutter-gates:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: apps/voicememory_mobile
+        working-directory: apps/mobile
     steps:
       - uses: actions/checkout@v4
       - uses: subosito/flutter-action@v2
@@ -45,60 +59,31 @@ jobs:
           cache: true
       - name: pub get
         run: flutter pub get
+      - name: Audit silent catch blocks
+        run: python3 tool/run_gate.py audits silent_catches
       - name: dart format check
         run: dart format --output=none --set-exit-if-changed lib test
       - name: analyzer baseline
         run: bash tool/validate_analyzer_baseline.sh
       - name: research import guard
         run: bash tool/validate_no_research_imports.sh
+      - name: feature module count budget
+        run: python3 tool/run_gate.py budget
       - name: V1 production graph and permissions
         run: bash tool/validate_v1_production_graph.sh
-      - name: release evidence regression
-        run: flutter test test/release_evidence_pack_test.dart test/single_launch_checklist_test.dart
-      - name: focused V1 privacy and delete-account tests
-        run: |
-          flutter test \
-            test/delete_account_confirmation_test.dart \
-            test/privacy_contract_test.dart \
-            test/privacy_copy_policy_test.dart \
-            test/test_storage_sandbox_test.dart \
-            test/v1_navigation_guard_test.dart \
-            test/v1_router_graph_reduction_test.dart \
-            test/v1_record_controllers_wiring_test.dart \
-            test/v1_record_view_state_mapper_test.dart \
-            test/v1_production_allowlist_test.dart \
-            test/v1_dependency_scopes_test.dart \
-            test/v1_paywall_controller_test.dart \
-            test/v1_paywall_wiring_test.dart \
-            test/v1_archive_belief_split_test.dart \
-            test/v1_archive_belief_lazy_list_test.dart \
-            test/v1_free_paid_capabilities_test.dart
+      - name: validate core (analyzer + full test suite + release gates)
+        run: bash tool/validate_core.sh
+      - name: Insight-science theory dart suites
+        run: flutter test test/archive_theory_engine_test.dart test/theory_ranking_engine_test.dart test/archive_agreement_service_test.dart test/archive_primary_theory_validation_test.dart test/archive_quality_validation_test.dart
       - name: repository cleanliness
         run: bash tool/validate_repository_cleanliness.sh
-      - name: validate core subset
-        run: bash tool/validate_core.sh
-
-  flutter-full-test:
-    runs-on: ubuntu-latest
-    needs: flutter-gates
-    defaults:
-      run:
-        working-directory: apps/voicememory_mobile
-    steps:
-      - uses: actions/checkout@v4
-      - uses: subosito/flutter-action@v2
-        with:
-          channel: stable
-          cache: true
-      - name: full flutter test
-        run: flutter test
 
   flutter-android:
     runs-on: ubuntu-latest
     needs: flutter-gates
     defaults:
       run:
-        working-directory: apps/voicememory_mobile
+        working-directory: apps/mobile
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
@@ -117,7 +102,7 @@ jobs:
     needs: flutter-gates
     defaults:
       run:
-        working-directory: apps/voicememory_mobile
+        working-directory: apps/mobile
     steps:
       - uses: actions/checkout@v4
       - uses: subosito/flutter-action@v2
@@ -140,13 +125,13 @@ jobs:
           ! git grep -nE '(BEGIN (RSA |EC |OPENSSH )?PRIVATE KEY|sk_live_[A-Za-z0-9]{8,}|AKIA[0-9A-Z]{16})' \
             -- ':!*.md' ':!package-lock.json' ':!pubspec.lock' \
                ':!.github/**' ':!**/test/**' ':!scripts/**' \
-               ':!apps/voicememory_mobile/lib/features/secrets_rotation_gate/**'
+               ':!apps/mobile/lib/features/secrets_rotation_gate/**'
 
   migration-check:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: apps/voicememory_mobile
+        working-directory: apps/mobile
     steps:
       - uses: actions/checkout@v4
       - name: no timestamp journal paths in tests
