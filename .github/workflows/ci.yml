@@ -1,0 +1,89 @@
+name: ArchiveMe CI/CD Pipeline
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  backend-ci:
+    name: Backend Typecheck & QA
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Run Backend Typecheck
+        run: npm run typecheck -w @voice-memory/api
+
+      - name: Insight quality gate (genericness → evidence → tone → science)
+        run: npm run validate:insight-quality-gate
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+
+  mobile-ci:
+    name: Flutter Mobile Build & Test
+    runs-on: macos-latest
+
+    defaults:
+      run:
+        working-directory: apps/mobile
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: zulu
+          java-version: '17'
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.x'
+          cache: true
+
+      - name: Install Dependencies
+        run: flutter pub get
+
+      - name: Audit silent catch blocks
+        run: dart run tool/audit_silent_catches.dart
+
+      - name: Validate API contract parity
+        run: dart run tool/validate_api_contract.dart
+
+      - name: Feature module count budget
+        run: bash tool/check_feature_count_budget.sh
+
+      - name: Enforce repository budget
+        run: python3 tool/enforce_budget.py
+
+      - name: Run API DTO self-tests
+        run: dart run tool/run_api_dto_self_test.dart
+
+      - name: Run pro status SQLite self-tests
+        run: dart run tool/run_pro_status_self_test.dart
+
+      - name: Analyze API client layer
+        run: dart analyze lib/api
+
+      - name: Run Flutter Analyze
+        run: flutter analyze
+
+      - name: Run Record screen CI gate
+        run: flutter test test/v1_record_controllers_wiring_test.dart test/v1_record_view_state_mapper_test.dart test/v1_record_post_save_surface_test.dart test/record_screen_overflow_test.dart test/record_screen_framing_copy_test.dart
