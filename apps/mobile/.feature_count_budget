@@ -1,0 +1,3 @@
+max_features: 35
+max_docs: 20
+max_tool_scripts: 8

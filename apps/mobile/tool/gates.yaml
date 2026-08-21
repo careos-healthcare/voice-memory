@@ -1,0 +1,76 @@
+# Manifest for `python3 tool/run_gate.py <section> <name>`.
+# CI and local checks should prefer run_gate.py over one-off shell wrappers.
+
+gates:
+  analyze:
+    description: Run Flutter static analysis and lint checks
+    command: flutter analyze
+  test:
+    description: Execute unit and widget test suite
+    command: flutter test
+  format:
+    description: Check Dart code formatting
+    command: dart format --output=none --set-exit-if-changed .
+  budget:
+    description: Enforce repository directory and file budgets
+    command: python3 tool/enforce_budget.py
+
+audits:
+  silent_catches:
+    description: Fail on catch blocks that swallow errors without logging or rethrow
+    command: dart run tool/audit_silent_catches.dart
+
+validates:
+  api_contract:
+    description: Validate mobile API client contract parity
+    command: dart run tool/validate_api_contract.dart
+
+self_tests:
+  api_dto:
+    description: API DTO serialization self-tests
+    command: dart run tool/run_api_dto_self_test.dart
+  pro_status:
+    description: Pro status SQLite self-tests
+    command: dart run tool/run_pro_status_self_test.dart
+
+feature_gates:
+  android_after_ios_proof:
+    command: flutter test test/android_after_ios_proof_gate_test.dart
+  annual_plan_future:
+    command: flutter test test/annual_plan_future_gate_test.dart
+  archive_memory_after_v1:
+    command: flutter test test/archive_memory_after_v1_gate_test.dart
+  b2b_workplace_pressure_future:
+    command: flutter test test/b2b_workplace_pressure_future_gate_test.dart
+  commercial_readiness:
+    command: flutter test test/commercial_readiness_gate_test.dart
+  contradiction_change_future:
+    command: flutter test test/contradiction_change_future_gate_test.dart
+  cross_device_continuity_future:
+    command: flutter test test/cross_device_continuity_future_gate_test.dart
+  future_expansion_roadmap:
+    command: flutter test test/future_expansion_roadmap_gate_test.dart
+  loop_packs_future:
+    command: flutter test test/loop_packs_future_gate_test.dart
+  payment_proof_not_interest:
+    command: flutter test test/payment_proof_not_interest_gate_test.dart
+  post_proof_pro_cta:
+    command: flutter test test/post_proof_pro_cta_hardening_test.dart
+  premium_tiers_future:
+    command: flutter test test/premium_tiers_future_gate_test.dart
+  price_objection_feedback:
+    command: flutter test test/price_objection_feedback_gate_test.dart
+  private_reports_future:
+    command: flutter test test/private_reports_future_gate_test.dart
+  referral_after_proof:
+    command: flutter test test/referral_after_proof_gate_test.dart
+  return_tomorrow_ritual:
+    command: flutter test test/return_tomorrow_ritual_gate_test.dart
+  safe_exports_future:
+    command: flutter test test/safe_exports_future_gate_test.dart
+  safe_sharing_future:
+    command: flutter test test/safe_sharing_future_gate_test.dart
+  three_day_proof_challenge:
+    command: flutter test test/three_day_proof_challenge_gate_test.dart
+  v1_visible_surface_reducer:
+    command: flutter test test/v1_visible_surface_reducer_test.dart
