@@ -9,8 +9,11 @@ def load_budget():
         sys.exit(1)
     with open('.feature_count_budget', 'r') as f:
         for line in f:
-            if ':' in line:
-                k, v = line.split(':')
+            stripped = line.strip()
+            if not stripped or stripped.startswith('#'):
+                continue
+            if ':' in stripped:
+                k, v = stripped.split(':', 1)
                 budget[k.strip()] = int(v.strip())
     return budget
 
@@ -74,19 +77,28 @@ def main():
     failed = False
 
     print("Directory counts against budget:")
-    print(f" -> V1 features: {feature_count} (Max: {budget.get('max_features', 35)})")
+    max_features = budget.get('max_features', 13)
+    print(f" -> V1 features: {feature_count} (Max: {max_features})")
     if symlink_count:
         print(f"    (excluding {symlink_count} retired_sprawl symlinks)")
-    if feature_count > budget.get('max_features', 35):
+    if feature_count > max_features:
         failed = True
+    elif feature_count < max_features:
+        print(f"    NOTE: ratchet max_features down toward {feature_count} when stable.")
 
-    print(f" -> Docs: {doc_count} (Max: {budget.get('max_docs', 20)})")
-    if doc_count > budget.get('max_docs', 20):
+    max_docs = budget.get('max_docs', 15)
+    print(f" -> Docs: {doc_count} (Max: {max_docs})")
+    if doc_count > max_docs:
         failed = True
+    elif doc_count < max_docs:
+        print(f"    NOTE: ratchet max_docs down toward {doc_count} when stable.")
 
-    print(f" -> Tools: {tool_count} (Max: {budget.get('max_tool_scripts', 8)})")
-    if tool_count > budget.get('max_tool_scripts', 8):
+    max_tools = budget.get('max_tool_scripts', 7)
+    print(f" -> Tools: {tool_count} (Max: {max_tools})")
+    if tool_count > max_tools:
         failed = True
+    elif tool_count < max_tools:
+        print(f"    NOTE: ratchet max_tool_scripts down toward {tool_count} when stable.")
 
     if failed:
         print("\n[!] FAILURE: Repository budget exceeded. Clean up sprawl before merging.")
