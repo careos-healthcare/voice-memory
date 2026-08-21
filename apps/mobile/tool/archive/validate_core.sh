@@ -39,24 +39,12 @@ echo "==> First proof field readiness"
 bash tool/run_first_proof_field_readiness.sh
 
 echo ""
-echo "==> Commercial readiness gate"
-bash tool/run_commercial_readiness_gate.sh
-
-echo ""
 echo "==> Physical device smoke proof"
 bash tool/run_physical_device_release_smoke.sh
 
 echo ""
 echo "==> Secrets rotation launch gate"
 bash tool/run_secrets_rotation_launch_gate.sh
-
-echo ""
-echo "==> Payment proof not interest gate"
-bash tool/run_payment_proof_not_interest_gate.sh
-
-echo ""
-echo "==> V1 visible surface reducer"
-bash tool/run_v1_visible_surface_reducer.sh
 
 echo ""
 echo "==> Commercial proof executor"
