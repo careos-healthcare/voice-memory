@@ -74,4 +74,7 @@ bash "$ROOT/tool/audit_v1_launch_product.sh"
 echo "==> production route-link integrity"
 dart run tool/validate_production_route_links.dart
 
+echo "==> billing frozen — consumer graph must not import billing"
+dart run tool/validate_production_billing_absence.dart
+
 echo "OK — V1 production graph checks passed"
