@@ -1,3 +1,4 @@
+import 'package:archiveme_mobile/core/utils/app_logger.dart';
 import 'package:archiveme_mobile/security/release_logger.dart';
 import 'package:archiveme_mobile/security/release_log_sanitizer.dart';
 import 'package:flutter/foundation.dart';
@@ -15,10 +16,10 @@ abstract class ArchiveMeCrashDiagnostics {
         errorCode: ReleaseLogSanitizer.errorCodeFromObject(details.exception),
       );
       if (kDebugMode) {
-        debugPrint(
+        AppLogger.debug(
           'ARCHIVEME_FLUTTER_ERROR exception=${details.exceptionAsString()}',
         );
-        debugPrint('ARCHIVEME_FLUTTER_ERROR stack=${details.stack}');
+        AppLogger.debug('ARCHIVEME_FLUTTER_ERROR stack=${details.stack}');
       }
       priorFlutterOnError?.call(details);
     };
@@ -31,8 +32,8 @@ abstract class ArchiveMeCrashDiagnostics {
         errorCode: ReleaseLogSanitizer.errorCodeFromObject(error),
       );
       if (kDebugMode) {
-        debugPrint('ARCHIVEME_PLATFORM_ERROR exception=$error');
-        debugPrint('ARCHIVEME_PLATFORM_ERROR stack=$stack');
+        AppLogger.debug('ARCHIVEME_PLATFORM_ERROR exception=$error');
+        AppLogger.debug('ARCHIVEME_PLATFORM_ERROR stack=$stack');
       }
       if (priorPlatformOnError != null) {
         return priorPlatformOnError(error, stack);

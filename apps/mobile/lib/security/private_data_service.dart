@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:archiveme_mobile/core/utils/app_logger.dart';
 import 'package:archiveme_mobile/features/activation/archive_insight_feedback.dart';
 import 'package:archiveme_mobile/features/voice_capture/voice_capture_quality.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
@@ -79,7 +80,9 @@ abstract class TempRecordingCleanup {
       if (name.startsWith('vm_rec_retry_')) {
         try {
           if (entity.existsSync()) await entity.delete();
-        } catch (_) {}
+        } catch (e, stackTrace) {
+          AppLogger.error('Unhandled error caught', error: e, stackTrace: stackTrace);
+          }
       }
     }
   }
@@ -96,7 +99,9 @@ abstract class TempRecordingCleanup {
       if (preservePaths.contains(entity.path)) continue;
       try {
         if (entity.existsSync()) await entity.delete();
-      } catch (_) {}
+      } catch (e, stackTrace) {
+        AppLogger.error('Unhandled error caught', error: e, stackTrace: stackTrace);
+        }
     }
   }
 
@@ -171,7 +176,9 @@ abstract class TempRecordingCleanup {
         if (age >= orphanMaxAge && entity.existsSync()) {
           await entity.delete();
         }
-      } catch (_) {}
+      } catch (e, stackTrace) {
+        AppLogger.error('Unhandled error caught', error: e, stackTrace: stackTrace);
+        }
     }
   }
 
@@ -184,7 +191,7 @@ abstract class TempRecordingCleanup {
       if (!file.existsSync()) return false;
       await file.delete();
       return true;
-    } catch (_) {
+    } catch (_, stackTrace) {
       return false;
     }
   }
@@ -370,7 +377,7 @@ class PrivateDataService {
       if (!file.existsSync()) return false;
       await file.delete();
       return true;
-    } catch (_) {
+    } catch (_, stackTrace) {
       return false;
     }
   }

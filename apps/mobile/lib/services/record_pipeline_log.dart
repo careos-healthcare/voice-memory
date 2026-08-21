@@ -1,3 +1,4 @@
+import 'package:archiveme_mobile/core/utils/app_logger.dart';
 import 'package:archiveme_mobile/security/release_logger.dart';
 import 'package:archiveme_mobile/security/release_log_sanitizer.dart';
 import 'package:flutter/foundation.dart';
@@ -8,7 +9,7 @@ abstract class RecordPipelineLog {
 
   static void log(String message) {
     if (kDebugMode) {
-      debugPrint('ARCHIVEME_RECORD_PIPELINE: $message');
+      AppLogger.debug('ARCHIVEME_RECORD_PIPELINE: $message');
     }
   }
 
@@ -353,6 +354,103 @@ abstract class RecordPipelineLog {
       event: 'microphone_permission_result_detail',
       category: ReleaseLogCategory.permission,
       fields: {'detail': detail},
+    );
+  }
+
+  static void recorderStop({required bool success}) {
+    ReleaseLogger.emit(
+      event: 'recorder_stop',
+      category: ReleaseLogCategory.capture,
+      fields: {'success': success},
+    );
+  }
+
+  static void localSaveStarted({required String kind}) {
+    ReleaseLogger.emit(
+      event: 'capture_local_save_started',
+      category: ReleaseLogCategory.capture,
+      fields: {'kind': ReleaseLogSanitizer.sanitizeReasonCode(kind)},
+    );
+  }
+
+  static void localSaveCompleted({required bool success, required String kind}) {
+    ReleaseLogger.emit(
+      event: 'capture_local_save_completed',
+      category: ReleaseLogCategory.capture,
+      fields: {
+        'success': success,
+        'kind': ReleaseLogSanitizer.sanitizeReasonCode(kind),
+      },
+    );
+  }
+
+  static void remoteProcessingStarted({required String kind}) {
+    ReleaseLogger.emit(
+      event: 'capture_remote_started',
+      category: ReleaseLogCategory.capture,
+      fields: {'kind': ReleaseLogSanitizer.sanitizeReasonCode(kind)},
+    );
+  }
+
+  static void remoteProcessingCompleted({
+    required bool success,
+    required String kind,
+  }) {
+    ReleaseLogger.emit(
+      event: 'capture_remote_completed',
+      category: ReleaseLogCategory.capture,
+      fields: {
+        'success': success,
+        'kind': ReleaseLogSanitizer.sanitizeReasonCode(kind),
+      },
+    );
+  }
+
+  static void illegalCaptureTransition({
+    required String from,
+    required String to,
+  }) {
+    ReleaseLogger.emit(
+      event: 'capture_illegal_transition',
+      category: ReleaseLogCategory.capture,
+      severity: ReleaseLogSeverity.warn,
+      fields: {
+        'from_phase': ReleaseLogSanitizer.sanitizeReasonCode(from),
+        'to_phase': ReleaseLogSanitizer.sanitizeReasonCode(to),
+      },
+    );
+  }
+
+  static void recoverableCaptureFailure({
+    required String reason,
+    required bool hasLocalSave,
+  }) {
+    ReleaseLogger.emit(
+      event: 'capture_recoverable_failure',
+      category: ReleaseLogCategory.capture,
+      severity: ReleaseLogSeverity.warn,
+      fields: {
+        'error_code': ReleaseLogSanitizer.sanitizeReasonCode(reason),
+        'has_local_save': hasLocalSave,
+      },
+    );
+  }
+
+  /// Post-save background work that must not block capture (embedding index,
+  /// related-source lookup, etc.).
+  static void backgroundProcessingFailed({
+    required String operation,
+    required Object error,
+  }) {
+    ReleaseLogger.emit(
+      event: 'capture_background_processing_failed',
+      category: ReleaseLogCategory.capture,
+      severity: ReleaseLogSeverity.warn,
+      fields: {
+        'success': false,
+        'operation': ReleaseLogSanitizer.sanitizeReasonCode(operation),
+        'error_code': ReleaseLogSanitizer.errorCodeFromObject(error),
+      },
     );
   }
 }
