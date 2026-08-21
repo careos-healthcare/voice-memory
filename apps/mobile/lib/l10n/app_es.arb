@@ -1,0 +1,961 @@
+{
+  "@@locale": "es",
+  "accountAuthCodeBody": "Introduce el código de inicio de sesión que acabamos de enviarte.",
+  "@accountAuthCodeBody": {
+    "description": "English source: Enter the sign-in code we just sent you."
+  },
+  "accountAuthCodeCta": "Continuar",
+  "@accountAuthCodeCta": {
+    "description": "English source: Continue"
+  },
+  "accountAuthCodeLabel": "Código",
+  "@accountAuthCodeLabel": {
+    "description": "English source: Code"
+  },
+  "accountAuthCodeSent": "Código enviado — revisa tu correo.",
+  "@accountAuthCodeSent": {
+    "description": "English source: Code sent — check your email."
+  },
+  "accountAuthCodeTitle": "Revisa tu correo",
+  "@accountAuthCodeTitle": {
+    "description": "English source: Check your email"
+  },
+  "accountAuthContinueWithoutAccount": "Continuar sin cuenta",
+  "@accountAuthContinueWithoutAccount": {
+    "description": "English source: Continue without an account"
+  },
+  "accountAuthCreateBody": "ArchiveMe es un diario de voz privado que convierte tus pensamientos hablados en una historia de vida unificada e inteligencia personal profunda. Crea una cuenta para restaurar el acceso más tarde.",
+  "@accountAuthCreateBody": {
+    "description": "English source: ArchiveMe is a private voice journal that turns your spoken thoughts into a unified life story and deep personal intelligence. Create an account to restore access later."
+  },
+  "accountAuthCreateCta": "Crear cuenta",
+  "@accountAuthCreateCta": {
+    "description": "English source: Create account"
+  },
+  "accountAuthCreateTitle": "Crea tu cuenta de ArchiveMe",
+  "@accountAuthCreateTitle": {
+    "description": "English source: Create your ArchiveMe account"
+  },
+  "accountAuthEmailLabel": "Correo electrónico",
+  "@accountAuthEmailLabel": {
+    "description": "English source: Email"
+  },
+  "accountAuthInvalidCode": "Introduce el código de tu correo.",
+  "@accountAuthInvalidCode": {
+    "description": "English source: Enter the code from your email."
+  },
+  "accountAuthInvalidEmail": "Introduce una dirección de correo válida.",
+  "@accountAuthInvalidEmail": {
+    "description": "English source: Enter a valid email address."
+  },
+  "accountAuthPrivacyLine": "Tu archivo permanece privado. No incluimos tus grabaciones en analíticas.",
+  "@accountAuthPrivacyLine": {
+    "description": "English source: Your archive stays private. We do not include your recordings in analytics."
+  },
+  "accountAuthResendCode": "Reenviar código",
+  "@accountAuthResendCode": {
+    "description": "English source: Resend code"
+  },
+  "accountAuthSendCodeFailed": "No se pudo enviar el código.",
+  "@accountAuthSendCodeFailed": {
+    "description": "English source: Could not send the code."
+  },
+  "accountAuthSignInCta": "Iniciar sesión",
+  "@accountAuthSignInCta": {
+    "description": "English source: Sign in"
+  },
+  "accountAuthSignInFailed": "Error al iniciar sesión. Comprueba el código e inténtalo de nuevo.",
+  "@accountAuthSignInFailed": {
+    "description": "English source: Sign-in failed. Check the code and try again."
+  },
+  "accountAuthSignInTitle": "Inicia sesión en ArchiveMe",
+  "@accountAuthSignInTitle": {
+    "description": "English source: Sign in to ArchiveMe"
+  },
+  "accountAuthSignOut": "Cerrar sesión",
+  "@accountAuthSignOut": {
+    "description": "English source: Sign out"
+  },
+  "accountAuthSignOutKeepsArchive": "Al cerrar sesión, tus grabaciones permanecen en este dispositivo.",
+  "@accountAuthSignOutKeepsArchive": {
+    "description": "English source: Signing out keeps your recordings on this device."
+  },
+  "accountAuthTimingNote": "ArchiveMe es un diario de voz privado que convierte tus pensamientos hablados en una historia de vida unificada e inteligencia personal profunda. Puedes usarlo localmente sin cuenta.",
+  "@accountAuthTimingNote": {
+    "description": "English source: ArchiveMe is a private voice journal that turns your spoken thoughts into a unified life story and deep personal intelligence. You can use it locally without an account."
+  },
+  "accountScreenLabel": "Pantalla de cuenta",
+  "@accountScreenLabel": {
+    "description": "English source: Account screen"
+  },
+  "appTitle": "ArchiveMe",
+  "@appTitle": {
+    "description": "English source: ArchiveMe"
+  },
+  "archiveAddMoment": "Añadir un momento",
+  "@archiveAddMoment": {
+    "description": "English source: Add a moment"
+  },
+  "archiveCurrentObservation": "Tu observación actual más clara es: {statement}",
+  "@archiveCurrentObservation": {
+    "placeholders": {
+      "statement": {
+        "type": "String"
+      }
+    },
+    "description": "English source: Your clearest current observation is: {statement}"
+  },
+  "archiveEvidenceCount": "{count, plural, one{1 momento guardado disponible para comparar.} other{{count} momentos guardados disponibles para comparar.}}",
+  "@archiveEvidenceCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    },
+    "description": "English source: {count, plural, one{1 saved moment available for comparison.} other{{count} saved moments available for comparison.}}"
+  },
+  "archiveEvidenceTitle": "Evidencia",
+  "@archiveEvidenceTitle": {
+    "description": "English source: Evidence"
+  },
+  "archiveNeedsComparison": "Añade otro momento para que ArchiveMe pueda comparar lo que cambió.",
+  "@archiveNeedsComparison": {
+    "description": "English source: Add another moment so ArchiveMe can compare what changed."
+  },
+  "archiveNeedsSupportedMoments": "ArchiveMe necesita al menos dos momentos compatibles antes de explicar un patrón.",
+  "@archiveNeedsSupportedMoments": {
+    "description": "English source: ArchiveMe needs at least two supported moments before explaining a pattern."
+  },
+  "archiveNextMomentGuidance": "Graba o escribe un momento específico. Una segunda observación compatible hace visible el cambio.",
+  "@archiveNextMomentGuidance": {
+    "description": "English source: Record or type one specific moment. A second supported observation makes change visible."
+  },
+  "archiveNextStepsTitle": "Próximos pasos",
+  "@archiveNextStepsTitle": {
+    "description": "English source: Next steps"
+  },
+  "archiveScreenLabel": "Pantalla de archivo",
+  "@archiveScreenLabel": {
+    "description": "English source: Archive screen"
+  },
+  "archiveTitle": "Archivo",
+  "@archiveTitle": {
+    "description": "English source: Archive"
+  },
+  "archiveWhatChangedTitle": "¿Qué cambió?",
+  "@archiveWhatChangedTitle": {
+    "description": "English source: What changed?"
+  },
+  "archiveWhyTitle": "¿Por qué?",
+  "@archiveWhyTitle": {
+    "description": "English source: Why?"
+  },
+  "authTriggerArchiveChangedReturnCta": "Proteger archivo",
+  "@authTriggerArchiveChangedReturnCta": {
+    "description": "English source: Protect archive"
+  },
+  "authTriggerArchiveChangedReturnLead": "Inicia sesión para proteger tu archivo después de que pueda haber cambiado.",
+  "@authTriggerArchiveChangedReturnLead": {
+    "description": "English source: Sign in to protect your archive after it may have shifted."
+  },
+  "authTriggerArchiveChangedReturnTitle": "Mira en qué cree tu archivo ahora",
+  "@authTriggerArchiveChangedReturnTitle": {
+    "description": "English source: See what your archive believes now"
+  },
+  "authTriggerCrossDeviceCta": "Inicia sesión para continuar",
+  "@authTriggerCrossDeviceCta": {
+    "description": "English source: Sign in to continue"
+  },
+  "authTriggerCrossDeviceLead": "Inicia sesión para retomar tu archivo donde lo dejaste.",
+  "@authTriggerCrossDeviceLead": {
+    "description": "English source: Sign in to pick up your archive where you left off."
+  },
+  "authTriggerCrossDeviceTitle": "Continuar en otro dispositivo",
+  "@authTriggerCrossDeviceTitle": {
+    "description": "English source: Continue on another device"
+  },
+  "authTriggerExportCta": "Inicia sesión para exportar",
+  "@authTriggerExportCta": {
+    "description": "English source: Sign in to export"
+  },
+  "authTriggerExportLead": "Inicia sesión antes de exportar tu archivo.",
+  "@authTriggerExportLead": {
+    "description": "English source: Sign in before exporting your archive."
+  },
+  "authTriggerExportTitle": "Exportar con una cuenta protegida",
+  "@authTriggerExportTitle": {
+    "description": "English source: Export with a protected account"
+  },
+  "authTriggerFirstWorkingBeliefCta": "Proteger esta creencia",
+  "@authTriggerFirstWorkingBeliefCta": {
+    "description": "English source: Protect this belief"
+  },
+  "authTriggerFirstWorkingBeliefLead": "Inicia sesión para proteger la creencia que está formando tu archivo.",
+  "@authTriggerFirstWorkingBeliefLead": {
+    "description": "English source: Sign in to protect the belief your archive is forming."
+  },
+  "authTriggerFirstWorkingBeliefTitle": "Tu archivo tiene una creencia en formación",
+  "@authTriggerFirstWorkingBeliefTitle": {
+    "description": "English source: Your archive has a working belief"
+  },
+  "authTriggerKeepTrackingProCta": "Inicia sesión para continuar",
+  "@authTriggerKeepTrackingProCta": {
+    "description": "English source: Sign in to continue"
+  },
+  "authTriggerKeepTrackingProLead": "Inicia sesión antes de actualizar para que tu archivo siga respaldado.",
+  "@authTriggerKeepTrackingProLead": {
+    "description": "English source: Sign in before upgrading so your archive stays backed up."
+  },
+  "authTriggerKeepTrackingProTitle": "Sigue registrando con Pro",
+  "@authTriggerKeepTrackingProTitle": {
+    "description": "English source: Keep tracking with Pro"
+  },
+  "authTriggerProPaywallCta": "Continuar con correo",
+  "@authTriggerProPaywallCta": {
+    "description": "English source: Continue with email"
+  },
+  "authTriggerProPaywallLead": "La compra necesita una cuenta para proteger tu archivo.",
+  "@authTriggerProPaywallLead": {
+    "description": "English source: Checkout needs an account to protect your archive."
+  },
+  "authTriggerProPaywallTitle": "Inicia sesión para Pro",
+  "@authTriggerProPaywallTitle": {
+    "description": "English source: Sign in for Pro"
+  },
+  "authTriggerProtectArchiveCta": "Proteger con correo",
+  "@authTriggerProtectArchiveCta": {
+    "description": "English source: Protect with email"
+  },
+  "authTriggerProtectArchiveLead": "Inicia sesión con correo para cifrar una copia de seguridad de lo que construiste en este dispositivo.",
+  "@authTriggerProtectArchiveLead": {
+    "description": "English source: Sign in with email to encrypt a backup of what you built on this device."
+  },
+  "authTriggerProtectArchiveTitle": "Proteger este archivo",
+  "@authTriggerProtectArchiveTitle": {
+    "description": "English source: Protect this archive"
+  },
+  "authTriggerSyncArchiveCta": "Inicia sesión para sincronizar",
+  "@authTriggerSyncArchiveCta": {
+    "description": "English source: Sign in to sync"
+  },
+  "authTriggerSyncArchiveLead": "El inicio de sesión con correo habilita la sincronización cifrada en este dispositivo.",
+  "@authTriggerSyncArchiveLead": {
+    "description": "English source: Email sign-in enables encrypted sync on this device."
+  },
+  "authTriggerSyncArchiveTitle": "Respaldar tu archivo",
+  "@authTriggerSyncArchiveTitle": {
+    "description": "English source: Back up your archive"
+  },
+  "changesScreenLabel": "Pantalla de cambios",
+  "@changesScreenLabel": {
+    "description": "English source: Changes screen"
+  },
+  "coachingConfidence": "{percentage}% de confianza",
+  "@coachingConfidence": {
+    "placeholders": {
+      "percentage": {
+        "type": "int"
+      }
+    },
+    "description": "English source: {percentage}% confidence"
+  },
+  "coachingConfidenceSemantics": "Confianza {percentage} por ciento",
+  "@coachingConfidenceSemantics": {
+    "placeholders": {
+      "percentage": {
+        "type": "int"
+      }
+    },
+    "description": "English source: Confidence {percentage} percent"
+  },
+  "coachingInsightHint": "Reflexión generada por IA basada en evidencia reciente del diario.",
+  "@coachingInsightHint": {
+    "description": "English source: AI-generated reflection based on recent journal evidence."
+  },
+  "coachingInsightSemantics": "{category}. Confianza {percentage} por ciento. {content}",
+  "@coachingInsightSemantics": {
+    "placeholders": {
+      "category": {
+        "type": "String"
+      },
+      "percentage": {
+        "type": "int"
+      },
+      "content": {
+        "type": "String"
+      }
+    },
+    "description": "English source: {category}. Confidence {percentage} percent. {content}"
+  },
+  "commonNotNow": "Ahora no",
+  "@commonNotNow": {
+    "description": "English source: Not now"
+  },
+  "dataPortabilityTrustFooter": "Exportado desde tu dispositivo. Tu propia voz — no terapia ni diagnóstico.",
+  "@dataPortabilityTrustFooter": {
+    "description": "English source: Exported from your device. Your own voice — not therapy or diagnosis."
+  },
+  "exportJsonCta": "Exportar JSON",
+  "@exportJsonCta": {
+    "description": "English source: Export JSON"
+  },
+  "exportPortabilityBusy": "Preparando exportación…",
+  "@exportPortabilityBusy": {
+    "description": "English source: Building export…"
+  },
+  "exportPortabilityCta": "Descargar archivo completo (ZIP)",
+  "@exportPortabilityCta": {
+    "description": "English source: Download full archive (ZIP)"
+  },
+  "exportPortabilityFailed": "Error al exportar. Inténtalo de nuevo.",
+  "@exportPortabilityFailed": {
+    "description": "English source: Export failed. Try again."
+  },
+  "exportPortabilitySuccess": "Exportación lista — comparte o guarda el archivo ZIP.",
+  "@exportPortabilitySuccess": {
+    "description": "English source: Export ready — share or save the ZIP file."
+  },
+  "exportScreenLead": "Descarga una copia portable de tu archivo para respaldo o migración.",
+  "@exportScreenLead": {
+    "description": "English source: Download a portable copy of your archive for backup or migration."
+  },
+  "exportScreenTitle": "Exportar",
+  "@exportScreenTitle": {
+    "description": "English source: Export"
+  },
+  "memoryGraphActionBarHint": "Desliza horizontalmente para explorar más acciones del gráfico.",
+  "@memoryGraphActionBarHint": {
+    "description": "English source: Swipe horizontally to explore more graph actions."
+  },
+  "memoryGraphActionBarLabel": "Acciones del gráfico de memoria",
+  "@memoryGraphActionBarLabel": {
+    "description": "English source: Memory Graph actions"
+  },
+  "memoryGraphActionButtonHint": "Toca dos veces para activar esta acción del gráfico.",
+  "@memoryGraphActionButtonHint": {
+    "description": "English source: Double tap to activate this graph action."
+  },
+  "memoryGraphClosePreview": "Cerrar vista previa",
+  "@memoryGraphClosePreview": {
+    "description": "English source: Close Preview"
+  },
+  "memoryGraphCloseRewind": "Cerrar retroceso",
+  "@memoryGraphCloseRewind": {
+    "description": "English source: Close Rewind"
+  },
+  "memoryGraphClusters": "Clusters {count}",
+  "@memoryGraphClusters": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    },
+    "description": "English source: Clusters {count}"
+  },
+  "memoryGraphDocuments": "Documentos",
+  "@memoryGraphDocuments": {
+    "description": "English source: Documents"
+  },
+  "memoryGraphLifeDashboard": "Panel de vida",
+  "@memoryGraphLifeDashboard": {
+    "description": "English source: Life Dashboard"
+  },
+  "memoryGraphLifeSimulator": "Simulador de vida",
+  "@memoryGraphLifeSimulator": {
+    "description": "English source: Life Simulator"
+  },
+  "memoryGraphNodeCount": "{count, plural, one{1 nodo} other{{count} nodos}}",
+  "@memoryGraphNodeCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    },
+    "description": "English source: {count, plural, one{1 node} other{{count} nodes}}"
+  },
+  "memoryGraphPreview": "Vista previa del gráfico",
+  "@memoryGraphPreview": {
+    "description": "English source: Preview Graph"
+  },
+  "memoryGraphReturnToPresent": "Volver al presente",
+  "@memoryGraphReturnToPresent": {
+    "description": "English source: Return to Present"
+  },
+  "memoryGraphSampleBadge": "Mente de ejemplo · ilustrativo",
+  "@memoryGraphSampleBadge": {
+    "description": "English source: Sample Mind · illustrative"
+  },
+  "memoryGraphSmallSteps": "Pequeños pasos",
+  "@memoryGraphSmallSteps": {
+    "description": "English source: Small steps"
+  },
+  "memoryGraphTimeMachine": "Máquina del tiempo",
+  "@memoryGraphTimeMachine": {
+    "description": "English source: Time Machine"
+  },
+  "memoryGraphWeekly": "Semanal",
+  "@memoryGraphWeekly": {
+    "description": "English source: Weekly"
+  },
+  "memoryGraphWidgets": "Widgets",
+  "@memoryGraphWidgets": {
+    "description": "English source: Widgets"
+  },
+  "meshNoPeers": "No hay dispositivos emparejados cerca.",
+  "@meshNoPeers": {
+    "description": "English source: No paired devices are nearby."
+  },
+  "meshPairDevice": "Emparejar un dispositivo",
+  "@meshPairDevice": {
+    "description": "English source: Pair a device"
+  },
+  "meshPrivacyDescription": "El descubrimiento cercano solo anuncia un identificador rotativo. Los metadatos del archivo se intercambian tras el emparejamiento cifrado.",
+  "@meshPrivacyDescription": {
+    "description": "English source: Nearby discovery advertises only a rotating identifier. Archive metadata is exchanged after encrypted pairing."
+  },
+  "meshReadOnlyBranch": "Rama compartida de solo lectura",
+  "@meshReadOnlyBranch": {
+    "description": "English source: Read-only shared branch"
+  },
+  "meshShareCluster": "Compartir este cluster",
+  "@meshShareCluster": {
+    "description": "English source: Share this cluster"
+  },
+  "meshStatusComplete": "Sincronización local completa",
+  "@meshStatusComplete": {
+    "description": "English source: Local sync complete"
+  },
+  "meshStatusConnected": "Conectado de forma segura",
+  "@meshStatusConnected": {
+    "description": "English source: Connected securely"
+  },
+  "meshStatusSearching": "Buscando cerca",
+  "@meshStatusSearching": {
+    "description": "English source: Searching nearby"
+  },
+  "meshStatusTitle": "Sincronización cifrada cercana",
+  "@meshStatusTitle": {
+    "description": "English source: Nearby encrypted sync"
+  },
+  "meshSyncNow": "Sincronizar cerca",
+  "@meshSyncNow": {
+    "description": "English source: Sync nearby"
+  },
+  "navigationAccount": "Cuenta",
+  "@navigationAccount": {
+    "description": "English source: Account"
+  },
+  "navigationArchive": "Archivo",
+  "@navigationArchive": {
+    "description": "English source: Archive"
+  },
+  "navigationChanges": "Cambios",
+  "@navigationChanges": {
+    "description": "English source: Changes"
+  },
+  "navigationRecord": "Grabar",
+  "@navigationRecord": {
+    "description": "English source: Record"
+  },
+  "primaryNavigationLabel": "Navegación principal",
+  "@primaryNavigationLabel": {
+    "description": "English source: Primary navigation"
+  },
+  "recapCopied": "Resumen copiado.",
+  "@recapCopied": {
+    "description": "English source: Recap copied."
+  },
+  "recordScreenLabel": "Pantalla de grabación",
+  "@recordScreenLabel": {
+    "description": "English source: Record screen"
+  },
+  "recordingCopyRecap": "Copiar resumen",
+  "@recordingCopyRecap": {
+    "description": "English source: Copy recap"
+  },
+  "recordingEnoughForNow": "Suficiente por ahora",
+  "@recordingEnoughForNow": {
+    "description": "English source: That's enough for now"
+  },
+  "recordingInProgressSeconds": "Grabación en curso, {seconds, plural, one{1 segundo} other{{seconds} segundos}}",
+  "@recordingInProgressSeconds": {
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    },
+    "description": "English source: Recording in progress, {seconds, plural, one{1 second} other{{seconds} seconds}}"
+  },
+  "recordingPlainLanguageHint": "Dilo con claridad. ArchiveMe busca patrones, no juicios.",
+  "@recordingPlainLanguageHint": {
+    "description": "English source: Say it plainly. ArchiveMe looks for patterns, not judgment."
+  },
+  "recordingProcessingStatus": "Procesando",
+  "@recordingProcessingStatus": {
+    "description": "English source: Processing"
+  },
+  "recordingPromptNudgeBody": "ArchiveMe usa lo que grabas para mostrar cada día cosas más claras que merecen la pena comprobar.",
+  "@recordingPromptNudgeBody": {
+    "description": "English source: ArchiveMe uses what you record to surface sharper things worth checking each day."
+  },
+  "recordingPromptNudgeTitle": "Mejora tus indicaciones diarias del archivo",
+  "@recordingPromptNudgeTitle": {
+    "description": "English source: Keep your daily archive prompts improving"
+  },
+  "recordingReadyStatus": "Listo para grabar",
+  "@recordingReadyStatus": {
+    "description": "English source: Ready to record"
+  },
+  "recordingSavedBackgroundTranscription": "Grabación guardada. La transcripción terminará en segundo plano.",
+  "@recordingSavedBackgroundTranscription": {
+    "description": "English source: Recording saved. Transcription will finish in the background."
+  },
+  "recordingSavedStatus": "Guardado",
+  "@recordingSavedStatus": {
+    "description": "English source: Saved"
+  },
+  "recordingStatus": "Grabando",
+  "@recordingStatus": {
+    "description": "English source: Recording"
+  },
+  "recordingStopAndSaveHint": "Toca Detener y guardar cuando hayas terminado.",
+  "@recordingStopAndSaveHint": {
+    "description": "English source: Tap Stop and save when you are finished."
+  },
+  "recordingUnlockPro": "Desbloquear Pro",
+  "@recordingUnlockPro": {
+    "description": "English source: Unlock Pro"
+  },
+  "savedForNextCheckIn": "Guardado para tu próximo registro.",
+  "@savedForNextCheckIn": {
+    "description": "English source: Saved for your next check-in."
+  },
+  "savedForNextMonthCheck": "Guardado para el registro del próximo mes.",
+  "@savedForNextMonthCheck": {
+    "description": "English source: Saved for next month's check."
+  },
+  "savedForTomorrowCheck": "Guardado para la comprobación de mañana.",
+  "@savedForTomorrowCheck": {
+    "description": "English source: Saved for tomorrow's check."
+  },
+  "textJournalPanelLead": "No hace falta micrófono — unas frases bastan para tu archivo.",
+  "@textJournalPanelLead": {
+    "description": "English source: No microphone needed — a few sentences is enough for your archive."
+  },
+  "textJournalPanelTitle": "Escribe un momento",
+  "@textJournalPanelTitle": {
+    "description": "English source: Type a moment"
+  },
+  "textJournalSaveCta": "Guardar pensamiento",
+  "@textJournalSaveCta": {
+    "description": "English source: Save thought"
+  },
+  "tomorrowCheckSet": "La comprobación de mañana está programada.",
+  "@tomorrowCheckSet": {
+    "description": "English source: Tomorrow's check is set."
+  },
+  "watchQuickRecordCta": "Empezar a grabar",
+  "@watchQuickRecordCta": {
+    "description": "English source: Start recording"
+  },
+  "watchQuickRecordTitle": "Grabación rápida",
+  "@watchQuickRecordTitle": {
+    "description": "English source: Quick record"
+  },
+  "widgetQuickCaptureAction": "Grabar",
+  "@widgetQuickCaptureAction": {
+    "description": "English source: Record"
+  },
+  "widgetQuickCaptureBody": "Captura un momento desde la pantalla de inicio.",
+  "@widgetQuickCaptureBody": {
+    "description": "English source: Capture a moment from your home screen."
+  },
+  "accountTitle": "Cuenta de ArchiveMe",
+  "@accountTitle": {
+    "description": "English source: ArchiveMe account"
+  },
+  "syncStatus": "Estado de sincronización",
+  "@syncStatus": {
+    "description": "English source: Sync status"
+  },
+  "syncNotAvailableTestFlight": "La sincronización no está disponible en esta versión de TestFlight.",
+  "@syncNotAvailableTestFlight": {
+    "description": "English source: Sync is not available in this TestFlight build."
+  },
+  "syncOnDeviceOnly": "En este dispositivo",
+  "@syncOnDeviceOnly": {
+    "description": "English source: On this device"
+  },
+  "syncNow": "Sincronizar ahora",
+  "@syncNow": {
+    "description": "English source: Sync now"
+  },
+  "accountPrivacyNote": "Tus grabaciones permanecen en este dispositivo a menos que inicies sesión para sincronizar.",
+  "@accountPrivacyNote": {
+    "description": "English source: Your recordings stay on this device unless you sign in to sync."
+  },
+  "deleteAccount": "Eliminar cuenta",
+  "@deleteAccount": {
+    "description": "English source: Delete account"
+  },
+  "settings": "Ajustes",
+  "@settings": {
+    "description": "English source: Settings"
+  },
+  "accountSessionLoading": "Cargando…",
+  "@accountSessionLoading": {
+    "description": "English source: Loading…"
+  },
+  "accountNotSignedIn": "Sin sesión iniciada",
+  "@accountNotSignedIn": {
+    "description": "English source: Not signed in"
+  },
+  "accountSignedIn": "Sesión iniciada",
+  "@accountSignedIn": {
+    "description": "English source: Signed in"
+  },
+  "accountSignedInForSync": "Sesión iniciada para sincronizar",
+  "@accountSignedInForSync": {
+    "description": "English source: Signed in for sync"
+  },
+  "accountLastSyncedToday": "Última sincronización hoy",
+  "@accountLastSyncedToday": {
+    "description": "English source: Last synced today"
+  },
+  "recordTitle": "¿Qué tienes en mente?",
+  "@recordTitle": {
+    "description": "English source: What is on your mind?"
+  },
+  "recordSubtitle": "Di una cosa pequeña de hoy.",
+  "@recordSubtitle": {
+    "description": "English source: Say one small thing from today."
+  },
+  "recordOneMomentCta": "Grabar un momento",
+  "@recordOneMomentCta": {
+    "description": "English source: Record one moment"
+  },
+  "recordMomentCta": "Grabar momento",
+  "@recordMomentCta": {
+    "description": "English source: Record moment"
+  },
+  "stopRecordingCta": "Detener grabación",
+  "@stopRecordingCta": {
+    "description": "English source: Stop recording"
+  },
+  "recordAnotherCta": "Grabar otro",
+  "@recordAnotherCta": {
+    "description": "English source: Record another"
+  },
+  "recordNextMomentCta": "Grabar el siguiente momento",
+  "@recordNextMomentCta": {
+    "description": "English source: Record next moment"
+  },
+  "startRecording": "Empezar a grabar",
+  "@startRecording": {
+    "description": "English source: Start recording"
+  },
+  "trySayingOneOfThese": "Prueba decir una de estas",
+  "@trySayingOneOfThese": {
+    "description": "English source: Try saying one of these"
+  },
+  "recordHelpSheetTitle": "Elige un indicio",
+  "@recordHelpSheetTitle": {
+    "description": "English source: Pick a prompt"
+  },
+  "recordHelpSheetHelper": "Elige uno y graba una frase.",
+  "@recordHelpSheetHelper": {
+    "description": "English source: Choose one, then record one sentence."
+  },
+  "reflectionSavedTitle": "Reflexión guardada",
+  "@reflectionSavedTitle": {
+    "description": "English source: Reflection saved"
+  },
+  "postSaveRecordAnother": "Grabar otro momento",
+  "@postSaveRecordAnother": {
+    "description": "English source: Record another moment"
+  },
+  "viewPatternsCta": "Ver patrones",
+  "@viewPatternsCta": {
+    "description": "English source: View patterns"
+  },
+  "back": "Atrás",
+  "@back": {
+    "description": "English source: Back"
+  },
+  "firstSavePostSaveTitle": "Guardado.",
+  "@firstSavePostSaveTitle": {
+    "description": "English source: Saved."
+  },
+  "firstSavePostSaveBody": "Vuelve cuando esto aparezca de nuevo.",
+  "@firstSavePostSaveBody": {
+    "description": "English source: Come back when this shows up again."
+  },
+  "finishRecordingFirst": "Termina o cancela la grabación primero.",
+  "@finishRecordingFirst": {
+    "description": "English source: Finish or cancel the recording first."
+  },
+  "paywallHeadline": "Viste la primera repetición útil.",
+  "@paywallHeadline": {
+    "description": "English source: You saw the first useful repeat."
+  },
+  "paywallSubhead": "Gratis muestra la primera prueba útil. Pro conserva el historial más largo.",
+  "@paywallSubhead": {
+    "description": "English source: Free shows the first useful proof. Pro keeps the longer trail."
+  },
+  "paywallPrimaryCta": "Conservar el historial más largo",
+  "@paywallPrimaryCta": {
+    "description": "English source: Keep the longer trail"
+  },
+  "paywallSecondaryCta": "Ahora no",
+  "@paywallSecondaryCta": {
+    "description": "English source: Not now"
+  },
+  "paywallContinue": "Conservar el historial más largo",
+  "@paywallContinue": {
+    "description": "English source: Keep the longer trail"
+  },
+  "paywallDifferentiation": "ArchiveMe no intenta responder mejor que ChatGPT. Intenta recordar de otra manera.",
+  "@paywallDifferentiation": {
+    "description": "English source: ArchiveMe is not trying to answer better than ChatGPT. It is trying to remember differently."
+  },
+  "paywallTrust": "Tus guardados siguen siendo gratis. Gestiona o cancela cuando quieras en el App Store.",
+  "@paywallTrust": {
+    "description": "English source: Your saves stay free. Manage or cancel anytime in the App Store."
+  },
+  "paywallBackupLine": "Estás acumulando evidencia con el tiempo. Pro conserva el historial de pruebas más largo cuando los momentos regresan, cambian o se desvanecen.",
+  "@paywallBackupLine": {
+    "description": "English source: You are building evidence over time. Pro keeps the longer proof trail as moments return, change, or fade."
+  },
+  "paywallPrimaryValueBlock": "Pro conserva un archivo privado más largo: más momentos, más continuidad, más evidencia con el tiempo.",
+  "@paywallPrimaryValueBlock": {
+    "description": "English source: Pro keeps a longer private archive — more moments, more continuity, more evidence over time."
+  },
+  "paywallBackToPatterns": "Volver a Patrones",
+  "@paywallBackToPatterns": {
+    "description": "English source: Back to Patterns"
+  },
+  "restorePurchases": "Restaurar compras",
+  "@restorePurchases": {
+    "description": "English source: Restore purchases"
+  },
+  "paywallAnchorPositioningLine": "Mantén creciendo tu línea de tiempo verificada.",
+  "@paywallAnchorPositioningLine": {
+    "description": "English source: Keep your verified timeline growing."
+  },
+  "paywallProofConnectedLine": "Pro conserva un archivo privado más largo: más momentos, más continuidad, más evidencia con el tiempo.",
+  "@paywallProofConnectedLine": {
+    "description": "English source: Pro keeps a longer private archive — more moments, more continuity, more evidence over time."
+  },
+  "paywallSecondaryReassurance": "Tú mantienes el control. Puedes eliminar entradas y corregir lo que guardaste.",
+  "@paywallSecondaryReassurance": {
+    "description": "English source: You stay in control. You can delete entries and correct what you saved."
+  },
+  "paywallBenefitBullet1": "Historial de evidencia más largo en este dispositivo",
+  "@paywallBenefitBullet1": {
+    "description": "English source: Longer evidence history on this device"
+  },
+  "paywallBenefitBullet2": "Más momentos archivados durante semanas y meses",
+  "@paywallBenefitBullet2": {
+    "description": "English source: More archived moments over weeks and months"
+  },
+  "paywallBenefitBullet3": "Continuidad cuando los patrones regresan o cambian",
+  "@paywallBenefitBullet3": {
+    "description": "English source: Continuity when patterns return or change"
+  },
+  "paywallSetupUnavailableBody": "Los planes no están disponibles en este momento.",
+  "@paywallSetupUnavailableBody": {
+    "description": "English source: Plans are not available right now."
+  },
+  "paywallUnavailablePlansLoading": "Cargando planes…",
+  "@paywallUnavailablePlansLoading": {
+    "description": "English source: Loading plans…"
+  },
+  "valueMomentProTitle": "Conserva el historial de pruebas más largo",
+  "@valueMomentProTitle": {
+    "description": "English source: Keep the longer proof trail"
+  },
+  "valueMomentProCta": "Ver Pro",
+  "@valueMomentProCta": {
+    "description": "English source: See Pro"
+  },
+  "valueMomentProDismiss": "Ahora no",
+  "@valueMomentProDismiss": {
+    "description": "English source: Not now"
+  },
+  "valueMomentThreadReturnBody": "Este hilo ha regresado antes. Pro conserva el historial de evidencia para que ArchiveMe pueda mostrar si se fortalece, se suaviza o cambia.",
+  "@valueMomentThreadReturnBody": {
+    "description": "English source: This thread has returned before. Pro keeps the evidence history so ArchiveMe can show whether it gets stronger, softer, or changes."
+  },
+  "valueMomentBeliefBody": "Una frase similar a una creencia apareció de nuevo. Pro conserva la línea de tiempo de lo que cambió en tu archivo.",
+  "@valueMomentBeliefBody": {
+    "description": "English source: A belief-like phrase showed up again. Pro keeps the timeline of what changed across your archive."
+  },
+  "valueMomentWeeklyBody": "Tu revisión semanal encontró algo para comparar. Pro conserva las revisiones semanales del archivo para que ArchiveMe pueda seguir lo que cambió con el tiempo.",
+  "@valueMomentWeeklyBody": {
+    "description": "English source: Your weekly review found something to compare. Pro keeps weekly archive reviews so ArchiveMe can track what changed over time."
+  },
+  "valueMomentProofCounterBody": "Tu archivo tiene grabaciones conectadas. Pro conserva todo el historial de evidencia a medida que crece el rastro.",
+  "@valueMomentProofCounterBody": {
+    "description": "English source: Your archive has connected recordings. Pro keeps the full evidence history as the trail grows."
+  },
+  "valueMomentFallbackBody": "Tu primera repetición es gratis. Pro conserva el historial de evidencia para que ArchiveMe pueda mostrar si los patrones se fortalecen, se suavizan o cambian con el tiempo.",
+  "@valueMomentFallbackBody": {
+    "description": "English source: Your first repeat is free. Pro keeps the evidence history so ArchiveMe can show whether patterns get stronger, softer, or change over time."
+  },
+  "subscriptionPaywallNoOfferings": "No hay planes de suscripción disponibles.",
+  "@subscriptionPaywallNoOfferings": {
+    "description": "English source: No subscription plans are available."
+  },
+  "purchaseSuccess": "Pro está activo.",
+  "@purchaseSuccess": {
+    "description": "English source: Pro is active."
+  },
+  "restorePurchasesError": "No se pudieron restaurar las compras.",
+  "@restorePurchasesError": {
+    "description": "English source: Could not restore purchases."
+  },
+  "patternsTabLabel": "Archivo",
+  "@patternsTabLabel": {
+    "description": "English source: Archive"
+  },
+  "patternsEmptyPageTitle": "Graba algunos momentos reales",
+  "@patternsEmptyPageTitle": {
+    "description": "English source: Record a few real moments"
+  },
+  "patternsEarlyStateBody": "Graba algunos momentos reales. ArchiveMe buscará lo que se repite entre ellos.",
+  "@patternsEarlyStateBody": {
+    "description": "English source: Record a few real moments. ArchiveMe will look for what repeats across them."
+  },
+  "patternsEmptyCta": "Grabar momento",
+  "@patternsEmptyCta": {
+    "description": "English source: Record moment"
+  },
+  "patternsHeroHeading": "LO QUE SIGUE REPITIÉNDOSE EN TU VIDA",
+  "@patternsHeroHeading": {
+    "description": "English source: WHAT KEEPS REPEATING IN YOUR LIFE"
+  },
+  "patternsShiftingHeading": "LO QUE PUEDE ESTAR CAMBIANDO",
+  "@patternsShiftingHeading": {
+    "description": "English source: WHAT MAY BE CHANGING"
+  },
+  "patternsEvolutionHeading": "CAMBIANDO CON EL TIEMPO",
+  "@patternsEvolutionHeading": {
+    "description": "English source: CHANGING OVER TIME"
+  },
+  "patternsSectionCurrent": "Patrones que siguen repitiéndose",
+  "@patternsSectionCurrent": {
+    "description": "English source: Patterns that keep repeating"
+  },
+  "patternsSectionEmerging": "Se está formando un patrón",
+  "@patternsSectionEmerging": {
+    "description": "English source: A pattern is forming"
+  },
+  "patternsSectionChanging": "Esto parece estar cambiando",
+  "@patternsSectionChanging": {
+    "description": "English source: This seems to be changing"
+  },
+  "patternsFirstEntrySavedTitle": "Primer momento guardado",
+  "@patternsFirstEntrySavedTitle": {
+    "description": "English source: First moment saved"
+  },
+  "patternsFirstEntrySavedBody": "Graba un momento más claro y ArchiveMe podrá comparar lo que se repite.",
+  "@patternsFirstEntrySavedBody": {
+    "description": "English source: Record one more clear moment and ArchiveMe can compare what repeats."
+  },
+  "patternsFirstEntrySavedCta": "Grabar otro momento",
+  "@patternsFirstEntrySavedCta": {
+    "description": "English source: Record another moment"
+  },
+  "patternsFirstEntryViewSavedCta": "Ver entrada guardada",
+  "@patternsFirstEntryViewSavedCta": {
+    "description": "English source: View saved entry"
+  },
+  "patternsHowItWorksTitle": "Cómo funciona",
+  "@patternsHowItWorksTitle": {
+    "description": "English source: How it works"
+  },
+  "patternsPrivacyReassurance": "Privado en tu dispositivo. Nada se comparte sin que tú lo elijas.",
+  "@patternsPrivacyReassurance": {
+    "description": "English source: Private on your device. Nothing is shared without you choosing to."
+  },
+  "allPatternsTitle": "Todos los patrones",
+  "@allPatternsTitle": {
+    "description": "English source: All patterns"
+  },
+  "allPatternsLead": "Patrones y temas que ArchiveMe sigue notando en tus reflexiones.",
+  "@allPatternsLead": {
+    "description": "English source: Patterns and themes ArchiveMe keeps noticing in your reflections."
+  },
+  "patternsCheckInWaitingTitle": "Registro pendiente",
+  "@patternsCheckInWaitingTitle": {
+    "description": "English source: Check-in waiting"
+  },
+  "patternsCheckInWaitingBody": "ArchiveMe tiene una pregunta de tu último momento.",
+  "@patternsCheckInWaitingBody": {
+    "description": "English source: ArchiveMe has a question from your last moment."
+  },
+  "patternsCheckInWaitingCta": "Responder ahora",
+  "@patternsCheckInWaitingCta": {
+    "description": "English source: Answer it now"
+  },
+  "patternsLoopClosedTitle": "Bucle cerrado",
+  "@patternsLoopClosedTitle": {
+    "description": "English source: Loop closed"
+  },
+  "patternsRecordAnotherMomentCta": "Grabar otro momento",
+  "@patternsRecordAnotherMomentCta": {
+    "description": "English source: Record another moment"
+  },
+  "patternsResultUseCheckCta": "Usar esta comprobación",
+  "@patternsResultUseCheckCta": {
+    "description": "English source: Use this check"
+  },
+  "patternsSignalsWaitingTitle": "Señales esperando claridad",
+  "@patternsSignalsWaitingTitle": {
+    "description": "English source: Signals waiting for clarity"
+  },
+  "patternsWatchingSignalTitle": "ArchiveMe está observando esta señal",
+  "@patternsWatchingSignalTitle": {
+    "description": "English source: ArchiveMe is watching this signal"
+  },
+  "patternsWatchingSignalBody": "Graba un momento más para comprobar si se repite.",
+  "@patternsWatchingSignalBody": {
+    "description": "English source: Record one more moment to test whether it repeats."
+  },
+  "archiveDiscoverPatternsLink": "Ver todos los patrones",
+  "@archiveDiscoverPatternsLink": {
+    "description": "English source: See all patterns"
+  },
+  "archiveTimelineLink": "Línea de tiempo",
+  "@archiveTimelineLink": {
+    "description": "English source: Timeline"
+  },
+  "archiveSearchLink": "Buscar en el archivo",
+  "@archiveSearchLink": {
+    "description": "English source: Search archive"
+  },
+  "activePatternCurrentTitle": "Patrón actual",
+  "@activePatternCurrentTitle": {
+    "description": "English source: Current pattern"
+  },
+  "activePatternRecordTodayCta": "Grabar hoy",
+  "@activePatternRecordTodayCta": {
+    "description": "English source: Record today"
+  },
+  "seeWhatChanged": "Ver qué cambió",
+  "@seeWhatChanged": {
+    "description": "English source: See what changed"
+  },
+  "patternsComeBackTitle": "¿Por qué volver mañana?",
+  "@patternsComeBackTitle": {
+    "description": "English source: Why come back tomorrow?"
+  },
+  "patternsComeBackBody": "ArchiveMe compara lo que guardas con el tiempo.",
+  "@patternsComeBackBody": {
+    "description": "English source: ArchiveMe compares what you save over time."
+  },
+  "patternsComeBackRecordCta": "Grabar la reflexión de hoy",
+  "@patternsComeBackRecordCta": {
+    "description": "English source: Record today's reflection"
+  }
+}
