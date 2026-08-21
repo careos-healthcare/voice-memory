@@ -1,0 +1,41 @@
+@media screen {
+  body:has(.print-report) {
+    background: #fafafa;
+  }
+}
+
+@media print {
+  @page {
+    margin: 1.2cm 1.4cm;
+    size: A4;
+  }
+
+  body {
+    background: white !important;
+    color: #18181b !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .print-report {
+    max-width: none !important;
+    padding: 0 !important;
+  }
+
+  .print-report h1,
+  .print-report h2 {
+    page-break-after: avoid;
+  }
+
+  .print-report section {
+    page-break-inside: avoid;
+  }
+
+  .print-report table {
+    page-break-inside: auto;
+  }
+
+  .print-report tr {
+    page-break-inside: avoid;
+  }
+}

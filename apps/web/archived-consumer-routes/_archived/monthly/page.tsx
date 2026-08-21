@@ -1,0 +1,222 @@
+"use client";
+
+import { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { CalendarDays } from "lucide-react";
+
+import { FollowupPromptInline } from "@/archived-components/_archived/conversation/FollowupPromptInline";
+
+import { MilestoneNotes } from "@/archived-components/_archived/memory/MilestoneNotes";
+import { PrimaryCallbackNote } from "@/archived-components/_archived/memory/PrimaryCallbackNote";
+import { ArchiveGravityNote } from "@/archived-components/_archived/memory/ArchiveGravityNote";
+import { EmotionalChapterNote } from "@/archived-components/_archived/memory/EmotionalChapterNote";
+import { VoiceIdentityNote } from "@/archived-components/_archived/memory/VoiceIdentityNote";
+import { ArchiveGrowthNotes, MemoryNotesOverview, ChangeMomentsNotes, FamiliarityNotes, FamiliarityResurfacingNotes, RhythmNotes, ResurfacingNotes, RevisitationNotes, TimeMemoryNotes } from "@/archived-components/_archived/patterns/MemoryNote";
+import { MotionPageTitle } from "@/archived-components/_archived/motion/MotionPage";
+import { PrimaryMain } from "@/components/layout/PrimaryMain";
+import { SiteHeader } from "@/components/SiteHeader";
+import { Button } from "@/archived-components/_archived/ui/button";
+import { useQuietMode } from "@/lib/hooks/useQuietMode";
+import { monthlyMilestoneNotes } from "@/lib/memory/milestones";
+import { monthlyArchiveGrowthNotes } from "@/lib/memory/archive-growth";
+import { monthlyChangeMomentsNotes } from "@/lib/memory/change-moments";
+import { monthlyFamiliarityNotes } from "@/lib/memory/familiarity";
+import { monthlyFamiliarityResurfacingNotes } from "@/lib/memory/familiarity-resurfacing";
+import { monthlyRhythmNotes } from "@/lib/memory/rhythm-memory";
+import { monthlyResurfacingNotes } from "@/lib/memory/resurfacing";
+import { monthlyRevisitationNotes } from "@/lib/memory/revisitation";
+import { monthlyTimeMemoryNotes } from "@/lib/memory/time-memory";
+import {
+  buildFollowupPrompt,
+} from "@/lib/conversation/followup-prompts";
+import {
+  buildRecordReturnFromFollowup,
+  storeRecordReturnContext,
+} from "@/lib/reflection/record-return";
+import { monthlyKnowsMeMoment } from "@/lib/refinement/knows-me-moments";
+import { monthlyArchiveGravityMoment } from "@/lib/refinement/archive-gravity";
+import { monthlyEmotionalChapterMoment } from "@/lib/memory/emotional-chapters";
+import { monthlyVoiceIdentityMoment } from "@/lib/memory/voice-identity";
+import { calibratePrimaryNote } from "@/lib/refinement/silence-calibration";
+import { buildMemoryNotesReport } from "@/lib/patterns/memory-notes";
+import { getMemoryEligibleEntries } from "@/lib/storage";
+import type { EmotionalMilestone } from "@/types/emotional-milestone";
+import type { MemoryNote } from "@/types/memory-note";
+import type { MemoryNotesReport } from "@/types/memory-note";
+import type { FollowupPrompt } from "@/types/followup-prompt";
+import type { JournalEntry } from "@/types/journal";
+
+export default function MonthlyPage() {
+  const router = useRouter();
+  const { limits } = useQuietMode();
+  const [knowsMe, setKnowsMe] = useState<MemoryNote | null>(null);
+  const [archiveGravity, setArchiveGravity] = useState<MemoryNote | null>(null);
+  const [voiceIdentity, setVoiceIdentity] = useState<MemoryNote | null>(null);
+  const [emotionalChapter, setEmotionalChapter] = useState<MemoryNote | null>(null);
+  const [notes, setNotes] = useState<MemoryNotesReport | null>(null);
+  const [timeMemory, setTimeMemory] = useState<MemoryNote[]>([]);
+  const [revisitation, setRevisitation] = useState<MemoryNote[]>([]);
+  const [resurfacing, setResurfacing] = useState<MemoryNote[]>([]);
+  const [changeMoments, setChangeMoments] = useState<MemoryNote[]>([]);
+  const [familiarity, setFamiliarity] = useState<MemoryNote[]>([]);
+  const [rhythm, setRhythm] = useState<MemoryNote[]>([]);
+  const [familiarityResurfacing, setFamiliarityResurfacing] = useState<MemoryNote[]>([]);
+  const [archiveGrowth, setArchiveGrowth] = useState<MemoryNote[]>([]);
+  const [milestones, setMilestones] = useState<EmotionalMilestone[]>([]);
+  const [entries, setEntries] = useState<JournalEntry[]>([]);
+
+  useEffect(() => {
+    const id = requestAnimationFrame(() => {
+      const entries = getMemoryEligibleEntries();
+      const resurfacingNotes = monthlyResurfacingNotes(entries, limits.resurfacing);
+      const revisitationNotes = monthlyRevisitationNotes(entries);
+      const changeMomentNotes = monthlyChangeMomentsNotes(entries, limits.changeMoments);
+      const familiarityResurfacingNotes = monthlyFamiliarityResurfacingNotes(
+        entries,
+        limits.familiarityResurfacing,
+      );
+      setNotes(buildMemoryNotesReport(entries, { context: "monthly", maxTotal: limits.notes }));
+      setTimeMemory(monthlyTimeMemoryNotes(entries));
+      setRevisitation(revisitationNotes);
+      setResurfacing(resurfacingNotes);
+      setChangeMoments(changeMomentNotes);
+      setFamiliarity(monthlyFamiliarityNotes(entries, limits.familiarity));
+      setRhythm(monthlyRhythmNotes(entries, limits.rhythm));
+      setFamiliarityResurfacing(familiarityResurfacingNotes);
+      const meaningfulTiming =
+        resurfacingNotes.length > 0 ||
+        revisitationNotes.length > 0 ||
+        changeMomentNotes.length > 0 ||
+        familiarityResurfacingNotes.length > 0;
+      setArchiveGrowth(
+        monthlyArchiveGrowthNotes(entries, meaningfulTiming).slice(0, limits.archiveGrowth),
+      );
+      setMilestones(monthlyMilestoneNotes(entries, limits.milestones));
+      setEntries(entries);
+      setKnowsMe(
+        calibratePrimaryNote(
+          [monthlyKnowsMeMoment(entries)].filter(Boolean) as MemoryNote[],
+          entries,
+          "monthly",
+        ),
+      );
+      setArchiveGravity(monthlyArchiveGravityMoment(entries));
+      setVoiceIdentity(monthlyVoiceIdentityMoment(entries));
+      setEmotionalChapter(monthlyEmotionalChapterMoment(entries));
+    });
+    return () => cancelAnimationFrame(id);
+  }, [
+    limits.notes,
+    limits.resurfacing,
+    limits.changeMoments,
+    limits.familiarity,
+    limits.rhythm,
+    limits.familiarityResurfacing,
+    limits.archiveGrowth,
+    limits.milestones,
+  ]);
+
+  const loading = notes === null;
+  const hasTimeMemory = timeMemory.length > 0;
+  const hasRevisitation = revisitation.length > 0;
+  const hasResurfacing = resurfacing.length > 0;
+  const hasChangeMoments = changeMoments.length > 0;
+  const hasFamiliarity = familiarity.length > 0;
+  const hasRhythm = rhythm.length > 0;
+  const hasFamiliarityResurfacing = familiarityResurfacing.length > 0;
+  const hasArchiveGrowth = archiveGrowth.length > 0;
+  const hasNotes = notes?.hasData ?? false;
+
+  const followupNotes = useMemo(
+    () => [
+      ...(notes?.changed ?? []),
+      ...(notes?.returned ?? []),
+      ...changeMoments,
+      ...familiarityResurfacing,
+      ...resurfacing,
+      ...revisitation,
+    ],
+    [notes, changeMoments, familiarityResurfacing, resurfacing, revisitation],
+  );
+
+  const followupPrompt = useMemo(
+    () => buildFollowupPrompt(followupNotes, entries),
+    [followupNotes, entries],
+  );
+
+  const handleRecordAgain = (prompt: FollowupPrompt) => {
+    storeRecordReturnContext(buildRecordReturnFromFollowup(prompt));
+    router.push("/#recorder");
+  };
+
+  return (
+    <div className="min-h-screen bg-zinc-950">
+      <div className="mx-auto max-w-3xl px-4 pb-24 sm:px-6">
+        <SiteHeader />
+
+        <PrimaryMain>
+        <MotionPageTitle title="This month" />
+
+        <div className="mt-20 space-y-20">
+          {loading ? (
+            <p className="py-20 text-center text-sm text-zinc-600">One moment…</p>
+          ) : !hasNotes && !hasTimeMemory && !hasRevisitation && !hasResurfacing && !hasChangeMoments && !hasFamiliarity && !hasRhythm && !hasFamiliarityResurfacing && !hasArchiveGrowth ? (
+            <div className="px-2 py-16 text-center">
+              <CalendarDays className="mx-auto h-7 w-7 text-zinc-600/80" />
+              <p className="mt-5 text-base font-normal text-zinc-400">Not enough yet</p>
+              <p className="mt-3 text-sm leading-relaxed text-zinc-600">
+                After a few days of real speech, this page can show what shifted in your words.
+              </p>
+              <Button asChild className="mt-8" variant="secondary">
+                <Link href="/">Record a reflection</Link>
+              </Button>
+            </div>
+          ) : (
+            <>
+              <PrimaryCallbackNote note={knowsMe} />
+              <ArchiveGravityNote note={archiveGravity} />
+              <VoiceIdentityNote note={voiceIdentity} />
+              <EmotionalChapterNote note={emotionalChapter} />
+              <ChangeMomentsNotes notes={changeMoments} max={limits.changeMoments} />
+              <FamiliarityNotes notes={familiarity} max={limits.familiarity} />
+              <FamiliarityResurfacingNotes
+                notes={familiarityResurfacing}
+                max={limits.familiarityResurfacing}
+              />
+              <RhythmNotes notes={rhythm} max={limits.rhythm} />
+              <ResurfacingNotes notes={resurfacing} max={limits.resurfacing} />
+              <RevisitationNotes notes={revisitation} max={1} />
+              <TimeMemoryNotes notes={timeMemory} max={2} />
+              <ArchiveGrowthNotes notes={archiveGrowth} max={limits.archiveGrowth} />
+              <MilestoneNotes milestones={milestones} entries={entries} max={limits.milestones} />
+              <FollowupPromptInline
+                prompt={followupPrompt}
+                onRecordAgain={handleRecordAgain}
+              />
+              {hasNotes ? (
+                <MemoryNotesOverview
+                  changed={notes!.changed}
+                  faded={notes!.faded}
+                  returned={notes!.returned}
+                  landmarks={notes!.landmarks}
+                  maxPerSection={2}
+                  maxLandmarks={4}
+                />
+              ) : null}
+            </>
+          )}
+        </div>
+
+        {entries.length > 0 ? (
+          <div className="mt-16">
+            <Link href="/roundups/month" className="text-sm text-zinc-500 transition-colors hover:text-zinc-300">
+              Monthly roundup →
+            </Link>
+          </div>
+        ) : null}
+        </PrimaryMain>
+      </div>
+    </div>
+  );
+}
