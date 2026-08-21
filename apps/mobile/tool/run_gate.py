@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Run CI gates, audits, validates, self-tests, and feature gates from gates.yaml."""
+"""Run CI gates, audits, validates, and self-tests from gates.yaml."""
 
 import os
 import subprocess
@@ -15,7 +15,6 @@ MANIFEST_SECTIONS = (
     "audits",
     "validates",
     "self_tests",
-    "feature_gates",
 )
 
 
