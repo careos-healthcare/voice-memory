@@ -1,3 +1,9 @@
-max_features: 35
-max_docs: 20
-max_tool_scripts: 8
+# Repository sprawl caps for apps/mobile. Ratchet these DOWN as cleanup lands —
+# they are targets to work toward, not permanent slack. Lower a line when the
+# corresponding count drops and stays down; never leave headroom "just in case".
+#
+# Locked to stable counts (2026-08): V1 features 13, living docs 15, root tool scripts 7.
+
+max_features: 13
+max_docs: 15
+max_tool_scripts: 7
