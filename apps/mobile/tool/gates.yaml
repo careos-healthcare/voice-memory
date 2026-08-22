@@ -86,3 +86,76 @@ self_tests:
     description: Pro status SQLite self-tests
     command: flutter test tool/run_pro_status_self_test.dart
 
+
+legacy_checks:
+  audit_v1_launch_product:
+    description: Launch-product focus audit — surfaces, copy, and startup aligned to V1 contract.
+    command: bash tool/audit_v1_launch_product.sh
+
+  audit_v1_permissions:
+    description: Validates native permission declarations against V1CapabilityRegistry.
+    command: bash tool/audit_v1_permissions.sh
+
+  audit_v1_service_locator:
+    description: Fails if V1 critical-path sources reference AppServices.instance directly.
+    command: bash tool/audit_v1_service_locator.sh
+
+  validate_v1_production_graph:
+    description: Enforces V1 production dependency graph — routes, modules, imports, deep links.
+    command: bash tool/validate_v1_production_graph.sh
+
+  validate_repository_cleanliness:
+    description: Records Git status, runs a test command, and fails if the working tree changed.
+    command: bash tool/validate_repository_cleanliness.sh
+
+  validate_no_research_imports:
+    description: Fail if production lib/ imports the non-shipping research package.
+    command: bash tool/validate_no_research_imports.sh
+
+  validate_core:
+    description: Core validation for ArchiveMe mobile.
+    command: bash tool/validate_core.sh
+
+  run_commercial_proof_executor:
+    description: Commercial proof executor v1 — one executable release checklist.
+    command: bash tool/run_commercial_proof_executor.sh
+
+  run_pro_access_enforcement_audit:
+    description: Pro access enforcement audit v3 — store readiness bridge + CI enforcement bundle.
+    command: bash tool/run_pro_access_enforcement_audit.sh
+
+  run_product_language_consistency_guard:
+    description: Product language consistency guard v1 — proof-trail language wins in core surfaces.
+    command: bash tool/run_product_language_consistency_guard.sh
+
+  run_revenuecat_live_proof_checklist:
+    description: RevenueCat live proof runner v1 — automated checklist + missing-key guard.
+    command: bash tool/run_revenuecat_live_proof_checklist.sh
+
+  run_core_metrics_minimum_set:
+    description: Core metrics minimum set v2 — classifier, dashboard wiring, and CI bundle.
+    command: bash tool/run_core_metrics_minimum_set.sh
+
+  run_first_proof_field_readiness:
+    description: First proof field readiness v1 — beta measurement and repair routing only.
+    command: bash tool/run_first_proof_field_readiness.sh
+
+  run_physical_device_release_smoke:
+    description: Physical device smoke proof v1 — automated checklist + RevenueCat no-crash guard.
+    command: bash tool/run_physical_device_release_smoke.sh
+
+  run_value_clarity_screenshot_export:
+    description: Value-clarity PNGs — fails in ~45s if headless toImage hangs (use simulator + manual capture as fallback).
+    command: bash tool/run_value_clarity_screenshot_export.sh
+
+  analyze_production_graph:
+    description: Analyzer gate for the focused-beta production graph — zero errors and warnings.
+    command: bash tool/analyze_production_graph.sh
+
+  validate_android_release_signing:
+    description: Release gate: Android release builds must never fall back to the debug keystore.
+    command: bash tool/validate_android_release_signing.sh
+
+  validate_no_stray_test_artifacts:
+    description: Fails when flutter test leaves stray JSON artifacts in the package root.
+    command: bash tool/validate_no_stray_test_artifacts.sh
