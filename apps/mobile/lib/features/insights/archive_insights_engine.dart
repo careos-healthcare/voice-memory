@@ -1,4 +1,5 @@
 import 'package:archiveme_mobile/features/archive_evidence/archive_evidence.dart';
+import 'package:archiveme_mobile/features/belief_evidence/evidence/journal_transcript_evidence_indexer.dart';
 import 'package:archiveme_mobile/features/discover/discover_local.dart';
 import 'package:archiveme_mobile/features/insights/archive_insight.dart';
 import 'package:archiveme_mobile/features/insights/archive_insight_mapper.dart';
@@ -23,6 +24,10 @@ class ArchiveInsightsEngine {
     if (!archiveHasMinimumEvidence(entries)) {
       return ArchiveInsightsSnapshot.empty;
     }
+
+    // Insight surfaces quote from these same entries, and the citation widgets
+    // refuse to render anything they cannot find in stored text.
+    JournalTranscriptEvidenceIndexer.rememberAll(entries);
 
     final beliefsInput =
         candidateBeliefs ?? _defaultCandidates(entries, discoverFeed);

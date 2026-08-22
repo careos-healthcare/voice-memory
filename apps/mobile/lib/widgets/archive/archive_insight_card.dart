@@ -1,3 +1,4 @@
+import 'package:archiveme_mobile/features/belief_evidence/ui/evidence_citation_card.dart';
 import 'package:archiveme_mobile/features/belief_evidence/ui/evidence_trust_copy.dart';
 import 'package:archiveme_mobile/features/belief_evidence/ui/fact_ledger_resolved_citation.dart';
 import 'package:archiveme_mobile/features/belief_evidence/ui/view_source_proof_section.dart';
@@ -50,12 +51,16 @@ class ArchiveInsightCard extends StatelessWidget {
           ),
         ],
         const SizedBox(height: AppSpacing.md),
-        ViewSourceProofSection(
-          citations: citations,
-          leadLine: EvidenceTrustCopy.supportedByEntries(
-            citations.isNotEmpty ? citations.length : insight.evidenceCount,
+        // Always visible, directly under the claim: the words this is built
+        // from, or an explicit statement that there are none.
+        EvidenceCitationList(lines: insight.supportingEvidence),
+        if (citations.isNotEmpty) ...[
+          const SizedBox(height: AppSpacing.xs),
+          ViewSourceProofSection(
+            citations: citations,
+            leadLine: EvidenceTrustCopy.supportedByEntries(citations.length),
           ),
-        ),
+        ],
       ],
     );
 
