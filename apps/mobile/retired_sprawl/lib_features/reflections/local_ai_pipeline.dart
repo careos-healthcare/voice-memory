@@ -243,7 +243,7 @@ class LocalAiPipeline implements VoiceLocalAiPort {
       reflection: reflectionConfidence,
     );
 
-    final threshold = await LocalAiConfidence.effectiveRemoteFallbackThreshold();
+    final threshold = await LocalAiConfidence.effectiveQualityFloor();
     if (overall >= threshold) {
       return LocalAiPipelineResult(
         transcript: transcript,

@@ -305,8 +305,10 @@ abstract class ArchiveSynthesisPackBuilder {
     return {
       'id': entry.id,
       'createdAt': entry.createdAt.toUtc().toIso8601String(),
-      'mood': r.mood,
-      'emotionalIntensity': r.emotionalIntensity,
+      // Omitted when unread: a synthesiser reading `emotionalIntensity: 0`
+      // would treat it as a measured low rather than a missing measurement.
+      if (r.mood.trim().isNotEmpty) 'mood': r.mood,
+      if (r.emotionalIntensity > 0) 'emotionalIntensity': r.emotionalIntensity,
       'recurringThemes': r.recurringThemes,
       'concreteObservation': _truncate(
         UserContentSafety.redactSecrets(r.concreteObservation),

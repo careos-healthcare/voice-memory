@@ -1,3 +1,4 @@
+import 'package:archiveme_mobile/features/timeline/timeline_entry_display.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
 
 /// Reflection-backed statement used for contradiction and belief-shift analysis.
@@ -88,25 +89,41 @@ List<ArchivedStatement> archivedStatementsFromEntries(
   return statements;
 }
 
+String? _normalizeStatementText(String? raw) {
+  final t = raw?.trim() ?? '';
+  if (t.length < 12) return null;
+  return t.length <= 220 ? t : '${t.substring(0, 220).trim()}…';
+}
+
+/// The only text of an entry that may be shown as the user's own words.
+///
+/// Reads `entry.transcript` and nothing else, and returns null for a draft or
+/// system placeholder. Reflection fields are analysis output, so they are not
+/// reachable from here even though [archiveStatementTexts] still matches on
+/// them.
+String? archiveQuotableStatementText(JournalEntry entry) {
+  final transcript = entry.transcript.trim();
+  if (transcript.isEmpty) return null;
+  final line = transcript.split('\n').first.trim();
+  if (isDraftOrSystemTranscriptPlaceholder(line)) return null;
+  return _normalizeStatementText(line);
+}
+
+/// Statement corpus used for *matching* — contradictions, belief shifts and
+/// theme overlap. Reflection fields belong here because they are useful match
+/// signals; they are not quotable. Transcript text is first so that a consumer
+/// taking the head of the list gets the user's own words.
 List<String> archiveStatementTexts(JournalEntry entry) {
   final out = <String>[];
   void add(String? raw) {
-    final t = raw?.trim() ?? '';
-    if (t.length >= 12) {
-      out.add(t.length <= 220 ? t : '${t.substring(0, 220).trim()}…');
-    }
+    final t = _normalizeStatementText(raw);
+    if (t != null) out.add(t);
   }
 
+  add(archiveQuotableStatementText(entry));
   add(entry.reflection.exactLanguagePattern);
   add(entry.reflection.concreteObservation);
-  final tension = entry.reflection.tensionOrContradiction;
-  if (tension != null) add(tension);
-
-  final transcript = entry.transcript.trim();
-  if (transcript.isNotEmpty) {
-    final line = transcript.split('\n').first.trim();
-    add(line);
-  }
+  add(entry.reflection.tensionOrContradiction);
 
   return out.toSet().toList();
 }

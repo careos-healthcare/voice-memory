@@ -22,7 +22,14 @@ class _ProtectArchiveBannerState extends State<ProtectArchiveBanner> {
   @override
   void initState() {
     super.initState();
-    unawaited(_load());
+    // `refreshSession` writes `authSessionProvider` before its first await, so
+    // calling it straight from `initState` mutates a provider mid-build. Here
+    // the `catch` below would swallow that error and the banner would silently
+    // never appear. Run it once the frame is done.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      unawaited(_load());
+    });
   }
 
   Future<void> _load() async {

@@ -54,8 +54,11 @@ class LocalRoutinePromptGenerator {
       ..writeln('Archive context (local only):');
 
     for (final chunk in chunks.take(4)) {
+      final mood = chunk.mood.trim();
       buffer.writeln(
-        '- ${chunk.formattedDate}: mood ${chunk.mood}; ${chunk.summary}',
+        mood.isEmpty
+            ? '- ${chunk.formattedDate}: ${chunk.summary}'
+            : '- ${chunk.formattedDate}: mood $mood; ${chunk.summary}',
       );
     }
 

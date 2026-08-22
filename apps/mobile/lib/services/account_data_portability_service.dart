@@ -5,6 +5,7 @@ import 'dart:typed_data';
 import 'package:archive/archive.dart';
 import 'package:archiveme_mobile/features/archive_export/archive_export_pack.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
+import 'package:archiveme_mobile/security/caregiver_session_guard.dart';
 import 'package:archiveme_mobile/security/private_data_service.dart';
 import 'package:archiveme_mobile/security/user_content_safety.dart';
 import 'package:archiveme_mobile/storage/journal_store.dart';
@@ -65,6 +66,11 @@ class AccountDataPortabilityService {
   final PrivateDataService _privateData;
 
   Future<AccountPortabilityResult> buildZipExport() async {
+    // An export is the whole archive in one file — outside every per-stream
+    // scope a caregiver can be granted.
+    await CaregiverSessionGuard.assertOwnerAccess(
+      CaregiverSessionGuard.exportAccountPortability,
+    );
     final entries = await _journal.loadAll();
     final exportedAt = DateTime.now().toUtc();
     final sanitized = await _privateData.buildSanitizedExport();
@@ -226,11 +232,18 @@ Store this ZIP where you trust. ArchiveMe does not upload exports to any server.
       );
       buffer
         ..writeln('### ${entry.createdAt.toUtc().toIso8601String()}')
-        ..writeln()
-        ..writeln(
-          '**Mood:** ${entry.reflection.mood} · '
+        ..writeln();
+      // Omitted entirely when unread — an export is evidence, so a blank mood
+      // or an "0/10" intensity would read as a measurement that was taken.
+      final moodLine = <String>[
+        if (entry.reflection.mood.trim().isNotEmpty)
+          '**Mood:** ${entry.reflection.mood.trim()}',
+        if (entry.reflection.emotionalIntensity > 0)
           '**Intensity:** ${entry.reflection.emotionalIntensity}/10',
-        );
+      ];
+      if (moodLine.isNotEmpty) {
+        buffer.writeln(moodLine.join(' · '));
+      }
       if (entry.reflection.recurringThemes.isNotEmpty) {
         buffer.writeln(
           '**Themes:** ${entry.reflection.recurringThemes.join(', ')}',

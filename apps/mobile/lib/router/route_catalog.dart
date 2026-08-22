@@ -16,7 +16,6 @@ abstract final class RouteCatalog {
   static const askArchive = '/ask-archive';
   static const onboardingLifeStage = '/onboarding/life-stage';
   static const onboardingBacklogImport = '/onboarding/backlog-import';
-  static const onboardingBrainDump = '/onboarding/brain-dump';
 
   /// Caregiver monitoring (compile-time gated).
   static const caregiverHome = '/caregiver';

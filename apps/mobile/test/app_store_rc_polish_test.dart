@@ -321,10 +321,13 @@ void main() {
         ConsumerUiCopy.paywallSetupUnavailableBody.toLowerCase(),
         isNot(contains('revenuecat')),
       );
-      expect(ConsumerUiCopy.paywallBillingNotConfigured, contains('ArchiveMe'));
+      expect(
+        ConsumerUiCopy.paywallBillingNotConfigured,
+        contains('not available'),
+      );
       expect(
         ConsumerUiCopy.paywallSetupUnavailableBody,
-        contains('not available'),
+        'Plans are not available right now.',
       );
 
       final settings = File(

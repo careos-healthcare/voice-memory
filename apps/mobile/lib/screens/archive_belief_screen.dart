@@ -59,7 +59,14 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
     _configureScopedContainerIfNeeded();
     _attachFeedListener();
     unawaited(BetaAnalyticsHooks.archiveFirstViewed());
-    unawaited(_refresh());
+    // `ArchiveFeedPaginationNotifier.refresh` writes `state` before its first
+    // await whenever the feed is still on its initial load, which is always
+    // true on first mount, so calling it straight from `initState` mutates a
+    // provider mid-build. Run it once the frame is done.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      unawaited(_refresh());
+    });
   }
 
   void _configureScopedContainerIfNeeded() {

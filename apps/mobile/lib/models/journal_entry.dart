@@ -10,6 +10,7 @@ import 'package:archiveme_mobile/models/journal_proof_data.dart';
 import 'package:archiveme_mobile/models/journal_sync_metadata.dart';
 import 'package:archiveme_mobile/models/reflection.dart';
 import 'package:archiveme_mobile/models/sync_status.dart';
+import 'package:archiveme_mobile/models/transcript_provenance.dart';
 import 'package:archiveme_mobile/models/transcript_status.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:uuid/uuid.dart';
@@ -42,6 +43,8 @@ abstract class JournalEntry with _$JournalEntry {
     String? localAudioPath,
     @Default(TranscriptStatus.finalTranscript)
     TranscriptStatus transcriptStatus,
+    @Default(TranscriptProvenance.unknownLegacy)
+    TranscriptProvenance transcriptProvenance,
     String? ownerKey,
     required JournalSyncMetadata sync,
     required JournalDisplayMetadata display,
@@ -67,6 +70,8 @@ abstract class JournalEntry with _$JournalEntry {
     SyncStatus syncStatus = SyncStatus.localOnly,
     String? localAudioPath,
     TranscriptStatus transcriptStatus = TranscriptStatus.finalTranscript,
+    TranscriptProvenance transcriptProvenance =
+        TranscriptProvenance.unknownLegacy,
     bool treatAsNew = false,
     bool connectionApproved = false,
     bool keepExactDetails = false,
@@ -145,6 +150,7 @@ abstract class JournalEntry with _$JournalEntry {
       reflection: reflection,
       localAudioPath: localAudioPath,
       transcriptStatus: transcriptStatus,
+      transcriptProvenance: transcriptProvenance,
       ownerKey: ownerKey,
       sync: resolvedSync,
       display: resolvedDisplay,
@@ -181,6 +187,13 @@ abstract class JournalEntry with _$JournalEntry {
       localAudioPath: JsonConverters.nullableString(json['localAudioPath']),
       transcriptStatus: TranscriptStatus.fromStorage(
         JsonConverters.nullableString(json['transcriptStatus']),
+      ),
+      // A payload written before this field existed has no key here, and
+      // `fromStorage` maps that to `unknownLegacy`. An older client that
+      // round-trips the entry without understanding the field has the same
+      // effect. Neither can produce a trusted value.
+      transcriptProvenance: TranscriptProvenance.fromStorage(
+        JsonConverters.nullableString(json['transcriptProvenance']),
       ),
       ownerKey: JsonConverters.nullableString(json['ownerKey']),
       sync: JournalSyncMetadata.fromJson(
@@ -247,6 +260,11 @@ abstract class JournalEntry with _$JournalEntry {
     if (localAudioPath != null) 'localAudioPath': localAudioPath,
     if (transcriptStatus != TranscriptStatus.finalTranscript)
       'transcriptStatus': transcriptStatus.storageValue,
+    // Written unconditionally, including when it equals the default. Omitting
+    // a field on its default value is what made `transcriptStatus`
+    // unrecoverable: an omitted value is indistinguishable from one an older
+    // build never wrote, so the two must not be allowed to collapse.
+    'transcriptProvenance': transcriptProvenance.storageValue,
     if (ownerKey != null) 'ownerKey': ownerKey,
     ...sync.toJson(),
     ...display.toJson(),
@@ -272,6 +290,7 @@ abstract class JournalEntry with _$JournalEntry {
           other.reflection == reflection &&
           other.localAudioPath == localAudioPath &&
           other.transcriptStatus == transcriptStatus &&
+          other.transcriptProvenance == transcriptProvenance &&
           other.ownerKey == ownerKey &&
           other.sync == sync &&
           other.display == display &&
@@ -286,6 +305,7 @@ abstract class JournalEntry with _$JournalEntry {
         reflection,
         localAudioPath,
         transcriptStatus,
+        transcriptProvenance,
         ownerKey,
         sync,
         display,
@@ -307,6 +327,7 @@ abstract class JournalEntry with _$JournalEntry {
     SyncStatus? syncStatus,
     Object? localAudioPath = copyWithUnset,
     TranscriptStatus? transcriptStatus,
+    TranscriptProvenance? transcriptProvenance,
     bool? treatAsNew,
     bool? connectionApproved,
     bool? keepExactDetails,
@@ -346,6 +367,7 @@ abstract class JournalEntry with _$JournalEntry {
         ? this.localAudioPath
         : localAudioPath as String?,
     transcriptStatus: transcriptStatus ?? this.transcriptStatus,
+    transcriptProvenance: transcriptProvenance ?? this.transcriptProvenance,
     ownerKey: identical(ownerKey, copyWithUnset)
         ? this.ownerKey
         : ownerKey as String?,

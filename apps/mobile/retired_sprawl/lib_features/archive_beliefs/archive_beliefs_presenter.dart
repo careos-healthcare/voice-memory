@@ -177,7 +177,7 @@ class ArchiveBeliefsPresenter {
   ) {
     return ArchiveBeliefCardModel(
       id: _idFor(item.title),
-      statement: _titleCase(item.title),
+      statement: _sentenceCase(item.title),
       confidencePercent: section == ArchiveBeliefSection.emerging ? 62 : 68,
       evidenceSummary: 'Pattern shift detected in recent reflections.',
       whyExplanation: item.detail,
@@ -194,7 +194,7 @@ class ArchiveBeliefsPresenter {
       ..sort((a, b) => b.value.compareTo(a.value));
     for (final e in sorted.take(2)) {
       if (e.value < 2) continue;
-      final title = _titleCase(e.key);
+      final title = _sentenceCase(e.key);
       if (cards.any((c) => c.statement.toLowerCase().contains(e.key))) continue;
       cards.add(
         ArchiveBeliefCardModel(
@@ -333,6 +333,19 @@ class ArchiveBeliefsPresenter {
         .split(' ')
         .map((w) => w.isEmpty ? w : '${w[0].toUpperCase()}${w.substring(1)}')
         .join(' ');
+  }
+
+  /// Sentence case, not title case — the same rule
+  /// `belief_change_timeline.dart` applies to the story rows.
+  ///
+  /// Themes reach here lowercased from `DiscoverLocalEngine.themeCounts`, so
+  /// the first letter is raised for readability. Title Case Like This was
+  /// compensating for that, but it reads as a headline or a quotation, and
+  /// these are patterns ArchiveMe derived rather than anything the user said.
+  static String _sentenceCase(String raw) {
+    final t = raw.trim();
+    if (t.isEmpty) return t;
+    return '${t[0].toUpperCase()}${t.substring(1)}';
   }
 
   /// Early signals after a new recording — themes from latest reflection.

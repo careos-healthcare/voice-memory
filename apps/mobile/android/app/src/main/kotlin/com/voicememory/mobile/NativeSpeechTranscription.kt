@@ -1,116 +1,47 @@
 package com.voicememory.mobile
 
-import android.content.Intent
-import android.os.Bundle
-import android.speech.RecognitionListener
-import android.speech.RecognizerIntent
-import android.speech.SpeechRecognizer
-import java.io.File
-
-object NativeSpeechTranscription {
-    fun transcribe(
-        context: android.content.Context,
-        audioPath: String,
-        preferOnDevice: Boolean,
-        callback: (Map<String, Any?>) -> Unit,
-    ) {
-        val audioFile = File(audioPath)
-        if (!audioFile.exists()) {
-            callback(mapOf("transcript" to "", "reason" to "audio_missing"))
-            return
-        }
-
-        if (!SpeechRecognizer.isRecognitionAvailable(context)) {
-            callback(mapOf("transcript" to "", "reason" to "recognizer_unavailable"))
-            return
-        }
-
-        val recognizer = SpeechRecognizer.createSpeechRecognizer(context)
-        val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
-            putExtra(
-                RecognizerIntent.EXTRA_LANGUAGE_MODEL,
-                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM,
-            )
-            putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, false)
-            putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 1)
-            if (preferOnDevice) {
-                putExtra(RecognizerIntent.EXTRA_PREFER_OFFLINE, true)
-            }
-        }
-
-        recognizer.setRecognitionListener(object : RecognitionListener {
-            override fun onReadyForSpeech(params: Bundle?) {}
-            override fun onBeginningOfSpeech() {}
-            override fun onRmsChanged(rmsdB: Float) {}
-            override fun onBufferReceived(buffer: ByteArray?) {}
-            override fun onEndOfSpeech() {}
-            override fun onError(error: Int) {
-                recognizer.destroy()
-                callback(mapOf("transcript" to "", "reason" to "android_stt_error_$error"))
-            }
-
-            override fun onResults(results: Bundle?) {
-                val matches = results
-                    ?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
-                    ?.firstOrNull()
-                    ?.trim()
-                    .orEmpty()
-                recognizer.destroy()
-                callback(
-                    mapOf(
-                        "transcript" to matches,
-                        "reason" to if (matches.isEmpty()) "empty_native_transcript" else "",
-                    ),
-                )
-            }
-
-            override fun onPartialResults(partialResults: Bundle?) {}
-            override fun onEvent(eventType: Int, params: Bundle?) {}
-        })
-
-        val player = android.media.MediaPlayer()
-        try {
-            player.setDataSource(audioPath)
-            player.prepare()
-            player.start()
-            recognizer.startListening(intent)
-            android.os.Handler(android.os.Looper.getMainLooper()).postDelayed({
-                if (player.isPlaying) {
-                    player.stop()
-                }
-                player.release()
-            }, (player.duration + 500).coerceAtLeast(1500).toLong())
-        } catch (error: Exception) {
-            player.release()
-            recognizer.destroy()
-            callback(mapOf("transcript" to "", "reason" to error.message))
-        }
-    }
-}
-
+/**
+ * Android native speech-to-text is disabled. Do not re-enable this without
+ * reading the whole comment.
+ *
+ * This file used to transcribe a saved recording by playing it back through the
+ * device speaker while the microphone recognizer listened. That is an acoustic
+ * loopback, and it is unacceptable for this app for two independent reasons:
+ *
+ *  1. Dignity. It plays a private mental-health reflection out loud, in
+ *     whatever room the phone happens to be in.
+ *  2. Privacy. The "prefer offline" recognizer flag is only a hint. On a device
+ *     with no offline recognizer installed, the platform recognizer streams the
+ *     microphone audio to Google's servers — an upload the customer never
+ *     consented to and the product copy says never happens.
+ *
+ * The correct API for this job is the on-device recognizer factory added in
+ * API 31, which takes an audio source directly and needs no playback. If you
+ * implement it, keep it strictly on-device, gate it behind the same
+ * `RemoteProcessingConsentGate` predicate the rest of the app uses, and flip
+ * `NativeSpeechTranscription.blockedPlatforms` in
+ * `lib/features/voice_capture/transcription/native_speech_transcription.dart`
+ * in the same change — the Dart side refuses to call this channel on Android,
+ * so restoring a Kotlin implementation alone does nothing.
+ *
+ * `test/features/voice_capture/native_speech_android_disabled_test.dart` scans
+ * this file and fails if the loopback APIs reappear.
+ */
 object NativeSpeechTranscriptionHandler {
+    private const val DISABLED_CODE = "android_native_stt_disabled"
+    private const val DISABLED_MESSAGE =
+        "Android native speech-to-text is disabled: the only implementation " +
+            "available here required playing the recording out loud for the " +
+            "microphone recognizer, which exposes private audio to the room " +
+            "and to Google."
+
     fun handle(
         context: android.content.Context,
         call: io.flutter.plugin.common.MethodCall,
         result: io.flutter.plugin.common.MethodChannel.Result,
     ) {
         when (call.method) {
-            "transcribeFile" -> {
-                val args = call.arguments as? Map<*, *>
-                val audioPath = args?.get("audioPath") as? String
-                if (audioPath.isNullOrBlank()) {
-                    result.error("invalid_args", "Expected audioPath", null)
-                    return
-                }
-                val preferOnDevice = args["preferOnDevice"] as? Boolean ?: true
-                NativeSpeechTranscription.transcribe(
-                    context = context,
-                    audioPath = audioPath,
-                    preferOnDevice = preferOnDevice,
-                ) { payload ->
-                    result.success(payload)
-                }
-            }
+            "transcribeFile" -> result.error(DISABLED_CODE, DISABLED_MESSAGE, null)
             else -> result.notImplemented()
         }
     }

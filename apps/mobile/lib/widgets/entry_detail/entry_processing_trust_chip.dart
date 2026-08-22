@@ -9,12 +9,40 @@ class EntryProcessingTrustChip extends StatelessWidget {
 
   final JournalEntry entry;
 
+  /// The provenance claim for [entry], or null when this build makes none.
+  ///
+  /// [JournalEntry.processingUsedOnnx] answers first because it is the only
+  /// flag that distinguishes local analysis from remote: true means ONNX ran
+  /// here, false means the entry was sent. Null is a third state, not a
+  /// missing second one — a `SFSpeechRecognizer` transcript is neither ONNX
+  /// nor uploaded, and it used to be recorded as `usedOnnx: true` purely to
+  /// light this chip, which was true about the device and false about the
+  /// model. Correcting that to null left the most private path showing no
+  /// provenance at all, which is backwards; [JournalEntry.processingUsedLocalStt]
+  /// is what recovers it.
+  ///
+  /// The local-STT arm gets its own, narrower claim rather than reusing
+  /// [EntryProcessingCopy.processedOnDevice]. See that constant for why: on
+  /// that path nothing has been processed yet and the entry is queued to
+  /// upload.
   static String? labelFor(JournalEntry entry) {
     final usedOnnx = entry.processingUsedOnnx;
-    if (usedOnnx == null) return null;
-    return usedOnnx
-        ? EntryProcessingCopy.processedOnDevice
-        : EntryProcessingCopy.sentForSecureProcessing;
+    if (usedOnnx == true) return EntryProcessingCopy.processedOnDevice;
+    if (usedOnnx == false) return EntryProcessingCopy.sentForSecureProcessing;
+    if (entry.processingUsedLocalStt == true) {
+      return EntryProcessingCopy.transcribedOnDevice;
+    }
+    return null;
+  }
+
+  static Key _keyFor(JournalEntry entry) {
+    if (entry.processingUsedOnnx == true) {
+      return const Key('entry_processing_on_device_chip');
+    }
+    if (entry.processingUsedOnnx == false) {
+      return const Key('entry_processing_cloud_chip');
+    }
+    return const Key('entry_processing_transcribed_on_device_chip');
   }
 
   @override
@@ -24,14 +52,7 @@ class EntryProcessingTrustChip extends StatelessWidget {
 
     return Padding(
       padding: const EdgeInsets.only(top: 8),
-      child: TimelineSyncBadge(
-        key: Key(
-          entry.processingUsedOnnx == true
-              ? 'entry_processing_on_device_chip'
-              : 'entry_processing_cloud_chip',
-        ),
-        label: label,
-      ),
+      child: TimelineSyncBadge(key: _keyFor(entry), label: label),
     );
   }
 }

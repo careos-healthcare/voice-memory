@@ -5,7 +5,18 @@ import 'package:flutter/material.dart';
 
 /// Subtle, non-distracting trust indicators for archive and settings surfaces.
 class TrustStatusFooter extends StatelessWidget {
-  const TrustStatusFooter({super.key});
+  const TrustStatusFooter({this.processingUsedOnDevice = false, super.key});
+
+  /// Whether the entries behind this footer were produced by a model on this
+  /// device — `JournalProofData.processingUsedOnnx`.
+  ///
+  /// Defaults to false rather than true because that is what the build does:
+  /// no model binary ships with the app, so `processingUsedOnnx` is never set
+  /// and the chip has to describe local *storage*, not local processing. Both
+  /// call sites — `settings_screen.dart` and `archive_dashboard_scroll_view`
+  /// — cover a whole archive rather than one entry and so leave it at the
+  /// default; pass true only where an entry's own proof flags say so.
+  final bool processingUsedOnDevice;
 
   static const Key footerKey = Key('trust_status_footer');
   static const Key encryptedKey = Key('trust_status_footer_encrypted');
@@ -13,6 +24,12 @@ class TrustStatusFooter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final processingLabel = TrustStatusFooterCopy.labelFor(
+      processingUsedOnDevice: processingUsedOnDevice,
+    );
+    final processingSemanticLabel = TrustStatusFooterCopy.semanticLabelFor(
+      processingUsedOnDevice: processingUsedOnDevice,
+    );
     final theme = Theme.of(context);
     final labelStyle = theme.textTheme.labelSmall?.copyWith(
       color: AppColors.textMuted.withValues(alpha: 0.72),
@@ -26,9 +43,7 @@ class TrustStatusFooter extends StatelessWidget {
 
     return Semantics(
       container: true,
-      label:
-          '${TrustStatusFooterCopy.encryptedAtRest}. '
-          '${TrustStatusFooterCopy.processedOnDevice}.',
+      label: '${TrustStatusFooterCopy.encryptedAtRest}. $processingLabel.',
       child: Padding(
         key: footerKey,
         padding: const EdgeInsets.symmetric(vertical: AppSpacing.xs),
@@ -55,8 +70,8 @@ class TrustStatusFooter extends StatelessWidget {
               _Indicator(
                 key: onDeviceKey,
                 icon: Icons.memory_outlined,
-                label: TrustStatusFooterCopy.processedOnDevice,
-                semanticLabel: TrustStatusFooterCopy.onDeviceSemanticLabel,
+                label: processingLabel,
+                semanticLabel: processingSemanticLabel,
                 iconColor: iconColor,
                 labelStyle: labelStyle,
               ),

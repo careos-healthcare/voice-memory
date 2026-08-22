@@ -8,6 +8,7 @@ import 'package:archiveme_mobile/core/di/app_provider_container.dart';
 import 'package:archiveme_mobile/features/live_audio/infrastructure/live_audio_pipeline_log.dart';
 import 'package:archiveme_mobile/features/live_audio/infrastructure/pcm_wav_utils.dart';
 import 'package:archiveme_mobile/features/live_audio/live_audio_constants.dart';
+import 'package:archiveme_mobile/security/caregiver_session_guard.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -53,6 +54,13 @@ void bindPlaybackProviderContainer(ProviderContainer container) {
 
 /// Unified playback boundary for captured files and live PCM output.
 class PlaybackService extends Notifier<PlaybackState> {
+  /// Builds a playback service configured by the arguments given here.
+  ///
+  /// Both providers are overridden in the new container. Overriding the config
+  /// alone is not enough: an un-overridden provider resolves in the root of the
+  /// container tree, so the notifier built by the first call in a process was
+  /// the one every later call read back — carrying the first call's `testMode`
+  /// and player factory with it, and silently ignoring these arguments.
   static PlaybackService create({
     bool testMode = false,
     AudioPlayerFactory? playerFactory,
@@ -71,6 +79,7 @@ class PlaybackService extends Notifier<PlaybackState> {
             wrapPcmChunk: wrapPcmChunk ?? wrapPcm16LeInWav,
           ),
         ),
+        playbackServiceProvider.overrideWith(PlaybackService.new),
       ],
     );
     bindPlaybackProviderContainer(container);
@@ -151,7 +160,18 @@ class PlaybackService extends Notifier<PlaybackState> {
     }
   }
 
+  /// Plays a captured recording from disk.
+  ///
+  /// Ahead of every early return and outside the `try` below on purpose: this
+  /// is the archive owner's own voice, which is a different thing from the
+  /// counts, short excerpts and summaries a caregiver session is shown, and a
+  /// refusal must reach the caller as a refusal rather than as nothing having
+  /// happened or as an ordinary playback error.
   Future<void> playFile(String path) async {
+    await CaregiverSessionGuard.assertOwnerAccess(
+      CaregiverSessionGuard.playbackRecordingFile,
+    );
+
     if (_disposed || _testMode) return;
     final trimmed = path.trim();
     if (trimmed.isEmpty) {

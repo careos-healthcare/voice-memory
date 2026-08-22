@@ -33,6 +33,11 @@ abstract final class V1RouteInventory {
       V1RouteClass.v1Supporting,
       'Privacy & security control center',
     ),
+    V1RouteEntry(
+      '/caregiver-access',
+      V1RouteClass.v1Supporting,
+      'Caregiver and observer access',
+    ),
     V1RouteEntry('/privacy', V1RouteClass.v1Supporting, 'Privacy'),
     V1RouteEntry(
       '/privacy-trust-centre',

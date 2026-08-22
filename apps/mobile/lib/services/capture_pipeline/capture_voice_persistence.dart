@@ -4,6 +4,7 @@ import 'package:archiveme_mobile/features/timeline/timeline_entry_display.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/models/reflection.dart';
 import 'package:archiveme_mobile/models/sync_status.dart';
+import 'package:archiveme_mobile/models/transcript_provenance.dart';
 import 'package:archiveme_mobile/models/transcript_status.dart';
 import 'package:archiveme_mobile/security/account_session_guard.dart';
 import 'package:archiveme_mobile/security/private_data_service.dart';
@@ -72,8 +73,6 @@ class CaptureVoicePersistence {
         '[draft] ${CaptureSaveMessages.recordingSavedLocally} — transcribe when connected';
     final finalTranscript = resolveFinalCaptureTranscript(
       transcript: partialTranscript,
-      body: partialTranscript,
-      observation: partialTranscript,
     );
     RecordPipelineLog.preSaveFinalTranscript(
       length: finalTranscript?.length ?? 0,
@@ -103,6 +102,7 @@ class CaptureVoicePersistence {
     final prepared = applyFinalTranscriptToVoiceEntry(
       template,
       finalTranscript: finalTranscript,
+      provenance: TranscriptProvenance.speechToText,
       draftPlaceholder: draftPlaceholder,
     );
     return saveVoiceEntryAndLog(

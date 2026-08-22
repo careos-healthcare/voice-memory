@@ -64,8 +64,7 @@ class BlindSpotInsightEngine {
         .take(5)
         .map(
           (e) {
-            final rawQuote =
-                archiveStatementTexts(e).firstOrNull ?? e.transcript;
+            final rawQuote = archiveQuotableStatementText(e) ?? '';
             return InsightEvidenceLine(
               entryId: e.id,
               quote: FactLedgerCitationService.resolve(
@@ -131,8 +130,7 @@ class BlindSpotInsightEngine {
         .take(4)
         .map(
           (e) {
-            final rawQuote =
-                archiveStatementTexts(e).firstOrNull ?? e.transcript;
+            final rawQuote = archiveQuotableStatementText(e) ?? '';
             return InsightEvidenceLine(
               entryId: e.id,
               quote: FactLedgerCitationService.resolve(
@@ -178,8 +176,4 @@ class BlindSpotInsightEngine {
     'health' => 'Health',
     _ => topic,
   };
-}
-
-extension _FirstOrNull<E> on List<E> {
-  E? get firstOrNull => isEmpty ? null : first;
 }

@@ -1,49 +1,57 @@
+import 'package:archiveme_mobile/features/belief_evidence/evidence/verbatim_evidence.dart';
+import 'package:archiveme_mobile/features/belief_evidence/insight_evidence_line.dart';
 import 'package:archiveme_mobile/features/belief_evidence/ui/evidence_trust_copy.dart';
-import 'package:archiveme_mobile/features/belief_evidence/ui/fact_ledger_resolved_citation.dart';
+import 'package:archiveme_mobile/features/belief_evidence/ui/verified_source_proof_sheet.dart';
 import 'package:archiveme_mobile/theme/app_colors.dart';
 import 'package:archiveme_mobile/theme/app_spacing.dart';
 import 'package:flutter/material.dart';
 
-/// Expandable fact-ledger citations — muted lead line plus source snippets.
-class ViewSourceProofSection extends StatefulWidget {
+/// Block-level presentation of [VerifiedSourceProofLink] for use inside a card.
+///
+/// This is all a claim surface needs to add to become one tap from its proof.
+/// It counts and opens *verified* quotes only, so when an engine hands over
+/// supporting lines that are not present in any stored transcript the whole
+/// section disappears rather than offering a link to nothing.
+class ViewSourceProofSection extends StatelessWidget {
   const ViewSourceProofSection({
-    required this.citations,
+    required this.evidence,
     super.key,
-    this.leadLine,
     this.showArchiveNoticed = false,
+    this.claimContext,
+    this.onOpenEntry,
   });
 
-  final List<FactLedgerResolvedCitation> citations;
-  final String? leadLine;
+  /// Verifies [lines] before anything is drawn, so the count, the link, and the
+  /// sheet all describe the same set of quotes.
+  factory ViewSourceProofSection.fromLines({
+    required List<InsightEvidenceLine> lines,
+    Key? key,
+    bool showArchiveNoticed = false,
+    String? claimContext,
+    ValueChanged<String>? onOpenEntry,
+  }) => ViewSourceProofSection(
+    evidence: VerifiedSourceProofSheet.verifiedFrom(lines),
+    key: key,
+    showArchiveNoticed: showArchiveNoticed,
+    claimContext: claimContext,
+    onOpenEntry: onOpenEntry,
+  );
+
+  final List<VerbatimEvidence> evidence;
   final bool showArchiveNoticed;
+  final String? claimContext;
+  final ValueChanged<String>? onOpenEntry;
 
   static const Key sectionKey = Key('view_source_proof_section');
-  static const Key toggleKey = Key('view_source_proof_toggle');
-  static const Key expandedKey = Key('view_source_proof_expanded');
-
-  @override
-  State<ViewSourceProofSection> createState() => _ViewSourceProofSectionState();
-}
-
-class _ViewSourceProofSectionState extends State<ViewSourceProofSection> {
-  var _expanded = false;
 
   @override
   Widget build(BuildContext context) {
-    if (widget.citations.isEmpty) return const SizedBox.shrink();
+    if (evidence.isEmpty) return const SizedBox.shrink();
 
     final theme = Theme.of(context);
-    final lead =
-        widget.leadLine ??
-        EvidenceTrustCopy.supportedByEntries(widget.citations.length);
     final muted = theme.textTheme.bodySmall?.copyWith(
       color: AppColors.textMuted,
       height: 1.4,
-    );
-    final snippetStyle = theme.textTheme.bodySmall?.copyWith(
-      color: AppColors.textSecondary,
-      fontStyle: FontStyle.italic,
-      height: 1.45,
     );
     final labelStyle = theme.textTheme.labelSmall?.copyWith(
       color: AppColors.textMuted,
@@ -54,53 +62,24 @@ class _ViewSourceProofSectionState extends State<ViewSourceProofSection> {
       key: ViewSourceProofSection.sectionKey,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        if (widget.showArchiveNoticed) ...[
+        if (showArchiveNoticed) ...[
           Text(EvidenceTrustCopy.archiveNoticed, style: labelStyle),
           const SizedBox(height: 4),
         ],
-        Text(lead, style: muted),
-        const SizedBox(height: AppSpacing.xs),
-        Align(
-          alignment: Alignment.centerLeft,
-          child: TextButton(
-            key: ViewSourceProofSection.toggleKey,
-            style: TextButton.styleFrom(
-              padding: EdgeInsets.zero,
-              minimumSize: Size.zero,
-              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-              foregroundColor: AppColors.textMuted,
-              textStyle: muted?.copyWith(
-                decoration: TextDecoration.underline,
-                decorationColor: AppColors.textMuted.withValues(alpha: 0.5),
-              ),
-            ),
-            onPressed: () => setState(() => _expanded = !_expanded),
-            child: Text(
-              _expanded
-                  ? EvidenceTrustCopy.hideSourceProof
-                  : EvidenceTrustCopy.viewSourceProof,
-            ),
+        VerifiedSourceProofLink(
+          evidence: evidence,
+          claimContext: claimContext,
+          onOpenEntry: onOpenEntry,
+        ),
+        // Counted from verified quotes rather than from what the engine
+        // proposed, so this number can never overstate the evidence.
+        Padding(
+          padding: const EdgeInsets.only(top: AppSpacing.xs),
+          child: Text(
+            EvidenceTrustCopy.supportedByEntries(evidence.length),
+            style: muted,
           ),
         ),
-        if (_expanded) ...[
-          const SizedBox(height: AppSpacing.xs),
-          Column(
-            key: ViewSourceProofSection.expandedKey,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              for (var i = 0; i < widget.citations.length; i++) ...[
-                if (i > 0) const SizedBox(height: AppSpacing.sm),
-                Text(EvidenceTrustCopy.yourWordsLabel, style: labelStyle),
-                const SizedBox(height: 2),
-                Text(
-                  '"${widget.citations[i].quote}"',
-                  key: Key('view_source_proof_snippet_$i'),
-                  style: snippetStyle,
-                ),
-              ],
-            ],
-          ),
-        ],
       ],
     );
   }

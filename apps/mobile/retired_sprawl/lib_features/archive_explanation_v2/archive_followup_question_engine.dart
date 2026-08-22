@@ -1,5 +1,6 @@
 import 'package:archiveme_mobile/features/archive_evidence/archive_evidence.dart';
 import 'package:archiveme_mobile/features/archive_explanations/explanation_models.dart';
+import 'package:archiveme_mobile/features/reflections/data/reflection_model_contract.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
 
 /// One specific, evidence-grounded follow-up — never generic assistant chat.
@@ -53,15 +54,17 @@ class ArchiveFollowupQuestionEngine {
   ) {
     final recent = archiveEligibleEvidenceEntries(entries);
     if (recent.length >= 2) {
-      final latest = recent.last;
-      final prior = recent[recent.length - 2];
-      if (latest.reflection.emotionalIntensity >
-          prior.reflection.emotionalIntensity + 1) {
-        return 'What happened on the day before your most intense recent reflection?';
-      }
-      if (latest.reflection.emotionalIntensity <
-          prior.reflection.emotionalIntensity - 1) {
-        return 'When do you feel this pattern least strongly in your day?';
+      final latest = recent.last.reflection.emotionalIntensity;
+      final prior = recent[recent.length - 2].reflection.emotionalIntensity;
+      // Comparing against an unread intensity would invent a rise or a drop.
+      if (latest != ReflectionModelContract.unknownIntensity &&
+          prior != ReflectionModelContract.unknownIntensity) {
+        if (latest > prior + 1) {
+          return 'What happened on the day before your most intense recent reflection?';
+        }
+        if (latest < prior - 1) {
+          return 'When do you feel this pattern least strongly in your day?';
+        }
       }
     }
     if (explanation.supportingEvidence.isNotEmpty) {

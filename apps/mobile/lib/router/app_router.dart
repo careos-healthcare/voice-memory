@@ -13,6 +13,7 @@ import 'package:archiveme_mobile/features/acquisition/acquisition_cohort_coordin
 import 'package:archiveme_mobile/features/activation/archive_evidence_map.dart';
 import 'package:archiveme_mobile/features/activation/belief_evidence_trail.dart';
 import 'package:archiveme_mobile/features/archive_beliefs/archive_belief_models.dart';
+import 'package:archiveme_mobile/features/caregiver/caregiver_mode_controller.dart';
 import 'package:archiveme_mobile/features/demo/sample_archive_demo_paths.dart';
 import 'package:archiveme_mobile/features/referral/invite_attribution.dart';
 import 'package:archiveme_mobile/router/capture_routine_route.dart';
@@ -40,11 +41,11 @@ import 'package:archiveme_mobile/screens/export_screen.dart';
 import 'package:archiveme_mobile/screens/journal_bulk_export_screen.dart';
 import 'package:archiveme_mobile/screens/memory_transparency_screen.dart';
 import 'package:archiveme_mobile/screens/onboarding_screen.dart';
-import 'package:archiveme_mobile/screens/privacy_screen.dart';
 import 'package:archiveme_mobile/screens/record_screen.dart';
 import 'package:archiveme_mobile/screens/sample_archive_context_screen.dart';
 import 'package:archiveme_mobile/screens/security_settings_screen.dart';
 import 'package:archiveme_mobile/ui/screens/settings/privacy_security_screen.dart';
+import 'package:archiveme_mobile/features/settings/ui/caregiver_access_screen.dart';
 import 'package:archiveme_mobile/screens/settings_screen.dart';
 import 'package:archiveme_mobile/screens/support_feedback_screen.dart';
 import 'package:archiveme_mobile/screens/terms_screen.dart';
@@ -106,6 +107,11 @@ final GoRouter appRouter = GoRouter(
       path,
     );
     if (incompleteRedirect != null) return incompleteRedirect;
+
+    // Isolates an active caregiver session from the owner's app. Returns null
+    // without touching storage while the capability is compiled out.
+    final caregiverRedirect = await CaregiverModeController.tryRedirectFor(path);
+    if (caregiverRedirect != null) return caregiverRedirect;
 
     if (path == '/start') {
       return AcquisitionCohortCoordinator.resolveStartRedirect(state.uri);
@@ -257,6 +263,11 @@ final GoRouter appRouter = GoRouter(
       builder: (context, state) => const PrivacySecurityScreen(),
     ),
     GoRoute(
+      path: '/caregiver-access',
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) => const CaregiverAccessScreen(),
+    ),
+    GoRoute(
       path: '/account/create',
       parentNavigatorKey: _rootNavigatorKey,
       builder: (context, state) =>
@@ -384,10 +395,17 @@ final GoRouter appRouter = GoRouter(
       parentNavigatorKey: _rootNavigatorKey,
       builder: (context, state) => const PrivacyTrustCentreScreen(),
     ),
+    // `/privacy` redirects rather than retiring. Seven surfaces still push it
+    // — About, the archive trust card, the account privacy controls, the
+    // on-device hero, and the remote-processing consent step among them — and
+    // two of those live under `lib/features/onboarding/`. A removed route
+    // would turn each of those into a dead tap. `PrivacySummarySection`, the
+    // body this route used to render, is now part of the trust centre, so the
+    // redirect loses no content.
     GoRoute(
       path: '/privacy',
       parentNavigatorKey: _rootNavigatorKey,
-      builder: (context, state) => const PrivacyScreen(),
+      redirect: (context, state) => '/privacy-trust-centre',
     ),
     GoRoute(
       path: '/terms',

@@ -196,7 +196,7 @@ class BeliefEvolutionInsightEngine {
               .contains(theme)) {
         continue;
       }
-      final rawQuote = archiveStatementTexts(e).firstOrNull ?? e.transcript;
+      final rawQuote = archiveQuotableStatementText(e) ?? '';
       final quote = FactLedgerCitationService.resolve(
         entryId: e.id,
         fallback: rawQuote,
@@ -225,8 +225,7 @@ class BeliefEvolutionInsightEngine {
         .take(4)
         .map(
           (e) {
-            final rawQuote =
-                archiveStatementTexts(e).firstOrNull ?? e.transcript;
+            final rawQuote = archiveQuotableStatementText(e) ?? '';
             return InsightEvidenceLine(
               entryId: e.id,
               quote: FactLedgerCitationService.resolve(
@@ -274,8 +273,4 @@ class _ThemeSeries {
   int firstHalf = 0;
   int secondHalf = 0;
   void add(bool isFirst) => isFirst ? firstHalf++ : secondHalf++;
-}
-
-extension _FirstOrNull<E> on List<E> {
-  E? get firstOrNull => isEmpty ? null : first;
 }

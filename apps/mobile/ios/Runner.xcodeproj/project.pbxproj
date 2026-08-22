@@ -24,6 +24,7 @@
 		D4E5F6A81E000001004F5970 /* LiveAudioLifecycleBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4E5F6A71E000001004F5970 /* LiveAudioLifecycleBridge.swift */; };
 		Q1C2A3P41E000001004F5970 /* QuickCaptureWidgetStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = Q1C2A3P31E000001004F5970 /* QuickCaptureWidgetStorage.swift */; };
 		Q1C2A3P61E000001004F5970 /* QuickCaptureWidgetChannelHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = Q1C2A3P51E000001004F5970 /* QuickCaptureWidgetChannelHandler.swift */; };
+		A7C8D9E11E000001004F5970 /* HardwareMonitorChannelHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7C8D9E01E000001004F5970 /* HardwareMonitorChannelHandler.swift */; };
 		78A318202AECB46A00862997 /* FlutterGeneratedPluginSwiftPackage in Frameworks */ = {isa = PBXBuildFile; productRef = 78A3181F2AECB46A00862997 /* FlutterGeneratedPluginSwiftPackage */; };
 /* End PBXBuildFile section */
 
@@ -83,6 +84,7 @@
 		F6A7B8C81E000001004F5970 /* LegacyWidgetSharedDataCleanup.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LegacyWidgetSharedDataCleanup.swift; sourceTree = "<group>"; };
 		Q1C2A3P31E000001004F5970 /* QuickCaptureWidgetStorage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QuickCaptureWidgetStorage.swift; sourceTree = "<group>"; };
 		Q1C2A3P51E000001004F5970 /* QuickCaptureWidgetChannelHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = QuickCaptureWidgetChannelHandler.swift; sourceTree = "<group>"; };
+		A7C8D9E01E000001004F5970 /* HardwareMonitorChannelHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HardwareMonitorChannelHandler.swift; sourceTree = "<group>"; };
 		W1A2T3C31E000001004F5970 /* WatchSessionBridge.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WatchSessionBridge.swift; sourceTree = "<group>"; };
 		78E0A7A72DC9AD7400C4905E /* FlutterGeneratedPluginSwiftPackage */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = FlutterGeneratedPluginSwiftPackage; path = Flutter/ephemeral/Packages/FlutterGeneratedPluginSwiftPackage; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -176,6 +178,7 @@
 				F6A7B8C81E000001004F5970 /* LegacyWidgetSharedDataCleanup.swift */,
 				Q1C2A3P31E000001004F5970 /* QuickCaptureWidgetStorage.swift */,
 				Q1C2A3P51E000001004F5970 /* QuickCaptureWidgetChannelHandler.swift */,
+				A7C8D9E01E000001004F5970 /* HardwareMonitorChannelHandler.swift */,
 				W1A2T3C31E000001004F5970 /* WatchSessionBridge.swift */,
 				B2C3D4E41E000001004F5970 /* IosCaptureAudioSession.swift */,
 				E5F6A7B71E000001004F5970 /* IosCaptureAudioCompressor.swift */,
@@ -441,6 +444,7 @@
 				D4E5F6A81E000001004F5970 /* LiveAudioLifecycleBridge.swift in Sources */,
 				Q1C2A3P41E000001004F5970 /* QuickCaptureWidgetStorage.swift in Sources */,
 				Q1C2A3P61E000001004F5970 /* QuickCaptureWidgetChannelHandler.swift in Sources */,
+				A7C8D9E11E000001004F5970 /* HardwareMonitorChannelHandler.swift in Sources */,
 				1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -518,7 +522,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				SUPPORTED_PLATFORMS = iphoneos;
@@ -649,7 +653,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -700,7 +704,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				SUPPORTED_PLATFORMS = iphoneos;

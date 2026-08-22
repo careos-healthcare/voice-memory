@@ -1,6 +1,10 @@
+import 'dart:async';
+
 import 'package:archiveme_mobile/features/beta_analytics/beta_analytics_consent_boundary.dart';
 import 'package:archiveme_mobile/features/beta_analytics/beta_analytics_hooks.dart';
+import 'package:archiveme_mobile/features/onboarding/remote_processing_consent_decision.dart';
 import 'package:archiveme_mobile/features/onboarding/ui/evidence_method_onboarding_screen.dart';
+import 'package:archiveme_mobile/features/onboarding/ui/on_device_hero_screen.dart';
 import 'package:archiveme_mobile/features/onboarding/ui/onboarding_trust_pillars_section.dart';
 import 'package:archiveme_mobile/features/onboarding/ui/remote_processing_consent_step.dart';
 import 'package:archiveme_mobile/features/proof_admission/remote_processing_consent_store.dart';
@@ -14,7 +18,6 @@ import 'package:archiveme_mobile/theme/app_colors.dart';
 import 'package:archiveme_mobile/theme/app_spacing.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'dart:async';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
@@ -39,9 +42,24 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   bool _showingEvidenceMethodStep = false;
   bool _showingConsentStep = false;
 
-  static const int _conceptualStepCount = 3;
+  /// True once the consent decision is persisted and the architecture hero is
+  /// on screen. This is the last step before `/record`, so it is the screen
+  /// that owns the "into the app" CTA — see [_complete].
+  bool _showingOnDeviceHero = false;
+
+  static const int _conceptualStepCount = 4;
 
   bool get _isLast => _index >= OnboardingPages.pageCount - 1;
+
+  /// Which of the [_conceptualStepCount] progress dots is current. The extra
+  /// steps live in this widget's state rather than in `OnboardingPages`, so the
+  /// dot row cannot read the page index alone.
+  int get _stepIndex {
+    if (_showingOnDeviceHero) return 3;
+    if (_showingConsentStep) return 2;
+    if (_showingEvidenceMethodStep) return 1;
+    return _index;
+  }
 
   @override
   void initState() {
@@ -75,17 +93,21 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     if (_completing) return;
     setState(() => _completing = true);
     try {
-      final store = RemoteProcessingConsentStore(AppServices.instance.prefs);
-      if (allow) {
-        await store.grant();
-      } else {
-        await store.withdraw();
-      }
+      await OnboardingRemoteProcessingDecision.record(
+        allow: allow,
+        consentStore: RemoteProcessingConsentStore(AppServices.instance.prefs),
+      );
       await BetaAnalyticsConsentBoundary.recordOnboardingConsent(granted: allow);
     } finally {
       if (mounted) setState(() => _completing = false);
     }
-    await _complete();
+    if (!mounted) return;
+    // The decision is recorded; the hero states what that decision means and
+    // carries the only CTA that reaches `/record`.
+    setState(() {
+      _showingConsentStep = false;
+      _showingOnDeviceHero = true;
+    });
   }
 
   void _advance() {
@@ -143,7 +165,14 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     ],
                   ),
                 ),
-                if (_showingConsentStep)
+                if (_showingOnDeviceHero)
+                  Expanded(
+                    child: OnDeviceHeroScreen(
+                      submitting: _completing,
+                      onContinue: () => unawaited(_complete()),
+                    ),
+                  )
+                else if (_showingConsentStep)
                   Expanded(
                     child: RemoteProcessingConsentStep(
                       submitting: _completing,
@@ -187,12 +216,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                               height: 4,
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(2),
-                                color: (_showingConsentStep
-                                        ? 2
-                                        : _showingEvidenceMethodStep
-                                        ? 1
-                                        : _index) >=
-                                    i
+                                color: _stepIndex >= i
                                     ? AppColors.accentPrimary.withValues(
                                         alpha: 0.9,
                                       )
@@ -254,6 +278,11 @@ class _OnboardingPage extends StatelessWidget {
                 SizedBox(height: OnboardingTypography.sectionGap(context)),
                 Text(page.body, style: OnboardingTypography.body(context)),
                 const SizedBox(height: AppSpacing.md),
+                // `TrustBadge` used to sit here as well. Its two lines were the
+                // same claims as pillars 2 and 3 — identical titles, and detail
+                // text the pillar bodies already say more fully — so the screen
+                // stated them twice. The pillars are the richer form; the badge
+                // still serves `privacy_screen.dart`, where it stands alone.
                 const OnboardingTrustPillarsSection(),
                 const SizedBox(height: AppSpacing.md),
                 OnboardingPageVisual(page: page),

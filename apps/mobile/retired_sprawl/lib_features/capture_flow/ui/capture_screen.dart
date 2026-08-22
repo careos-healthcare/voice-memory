@@ -6,6 +6,8 @@ import 'package:archiveme_mobile/features/capture_flow/capture_flow_dependencies
 import 'package:archiveme_mobile/features/capture_flow/capture_routine_launch_controller.dart';
 import 'package:archiveme_mobile/features/capture_flow/capture_flow_phase.dart';
 import 'package:archiveme_mobile/features/capture_flow/ui/capture_flow_panels.dart';
+import 'package:archiveme_mobile/features/capture_flow/ui/local_transcription_unavailable_card.dart';
+import 'package:archiveme_mobile/features/capture_flow/ui/speech_language_choice_card.dart';
 import 'package:archiveme_mobile/features/insights/rag/routine_rag_models.dart';
 import 'package:archiveme_mobile/features/post_save/moment_save_receipt_model.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
@@ -198,6 +200,19 @@ class _CaptureScreenState extends State<CaptureScreen>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
+          if (snapshot.transcriptionChoiceRequired)
+            LocalTranscriptionUnavailableCard(
+              onChoice: (allowRemote) => unawaited(
+                _controller.resolveTranscriptionChoice(
+                  allowRemote: allowRemote,
+                ),
+              ),
+            ),
+          if (snapshot.speechLocaleChoiceRequired)
+            SpeechLanguageChoiceCard(
+              onConfirmed: (locale) =>
+                  unawaited(_controller.resolveSpeechLocale(locale)),
+            ),
           MomentSaveReceiptCard(
             entry: entry,
             entryCount: snapshot.entryCount,

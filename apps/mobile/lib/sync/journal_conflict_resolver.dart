@@ -1,3 +1,4 @@
+import 'package:archiveme_mobile/features/reflections/data/reflection_model_contract.dart';
 import 'package:archiveme_mobile/models/journal_display_metadata.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/models/journal_sync_metadata.dart';
@@ -228,6 +229,15 @@ abstract final class JournalConflictResolver {
         remote.transcriptStatus,
         pickLocalOnConflict,
       ),
+      // Follows the same side as `transcript` above, so text and its
+      // provenance can never be merged apart. Omitting it here would silently
+      // fall back to the constructor default on every merge, which is safe in
+      // direction but throws away a genuine stamp.
+      transcriptProvenance: _pick(
+        local.transcriptProvenance,
+        remote.transcriptProvenance,
+        pickLocalOnConflict,
+      ),
       ownerKey: remote.ownerKey ?? local.ownerKey,
       display: mergedDisplay,
       proof: mergedProof,
@@ -274,11 +284,19 @@ abstract final class JournalConflictResolver {
     bool pickLocalOnConflict,
   ) {
     return Reflection(
-      mood: _pick(local.mood, remote.mood, pickLocalOnConflict),
-      emotionalIntensity: _pick(
+      // An on-device extraction reports no mood or intensity at all. Treating
+      // that as a value would let it overwrite a real reading from the server.
+      mood: _pickKnown(
+        local.mood,
+        remote.mood,
+        pickLocalOnConflict,
+        ReflectionModelContract.unknownMood,
+      ),
+      emotionalIntensity: _pickKnown(
         local.emotionalIntensity,
         remote.emotionalIntensity,
         pickLocalOnConflict,
+        ReflectionModelContract.unknownIntensity,
       ),
       recurringThemes: _listEqual(local.recurringThemes, remote.recurringThemes)
           ? local.recurringThemes
@@ -415,6 +433,19 @@ abstract final class JournalConflictResolver {
 
   static T _pick<T>(T local, T remote, bool pickLocalOnConflict) {
     if (local == remote) return local;
+    return pickLocalOnConflict ? local : remote;
+  }
+
+  /// [_pick], except an [unknown] value never wins over a real one.
+  static T _pickKnown<T>(
+    T local,
+    T remote,
+    bool pickLocalOnConflict,
+    T unknown,
+  ) {
+    if (local == remote) return local;
+    if (local == unknown) return remote;
+    if (remote == unknown) return local;
     return pickLocalOnConflict ? local : remote;
   }
 

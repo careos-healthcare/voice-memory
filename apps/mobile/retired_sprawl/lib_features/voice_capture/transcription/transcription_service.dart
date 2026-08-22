@@ -7,6 +7,7 @@ import 'package:archiveme_mobile/core/network/network_cancel_token.dart';
 import 'package:archiveme_mobile/data/repositories/capture_repository.dart';
 import 'package:archiveme_mobile/features/voice_capture/audio/capture_audio_compressor.dart';
 import 'package:archiveme_mobile/features/voice_capture/transcription/native_speech_transcription.dart';
+import 'package:archiveme_mobile/features/voice_capture/transcription/speech_locale.dart';
 import 'package:archiveme_mobile/features/voice_capture/transcription/transcript_quality.dart';
 import 'package:archiveme_mobile/features/voice_capture/transcription/transcription_log.dart';
 import 'package:archiveme_mobile/security/api_response_safety.dart';
@@ -19,7 +20,12 @@ enum TranscriptionMode {
   /// Backend `/api/transcribe`.
   server,
 
-  /// On-device platform speech recognition (offline fallback).
+  /// On-device platform speech recognition.
+  ///
+  /// Reached two ways: as the primary path when the customer has on-device-only
+  /// processing on, and as the fallback when a permitted upload finds the
+  /// network gone. The first is the mode the privacy setting promises; it used
+  /// to be unreachable, so a default iOS install produced no transcript at all.
   local,
 
   /// Auto transcription intentionally not attempted.
@@ -99,15 +105,33 @@ class TranscriptionOutcome {
   bool get succeeded => transcript != null && transcript!.trim().isNotEmpty;
 }
 
-/// Voice transcription — server-first with native offline fallback.
+/// Voice transcription — on-device first when the customer asked for that,
+/// server otherwise, with a native fallback when a permitted upload goes
+/// offline.
 abstract class TranscriptionService {
   TranscriptionService._();
 
   static bool get localIosSpeechRecognitionImplemented =>
       NativeSpeechTranscription.isSupported;
 
-  static TranscriptionMode activeMode({bool testStub = false}) {
+  /// Which path this recording takes.
+  ///
+  /// [onDeviceOnly] is the customer's "Never send to server" setting. When it
+  /// is on, the answer is [TranscriptionMode.local] and nothing in
+  /// [transcribeRecording] reaches the network — not as a fallback, not on a
+  /// local failure. When the platform has no local recogniser at all, the
+  /// honest answer is [TranscriptionMode.disabled] rather than quietly
+  /// upgrading to the server the customer just said not to use.
+  static TranscriptionMode activeMode({
+    bool testStub = false,
+    bool onDeviceOnly = false,
+  }) {
     if (testStub) return TranscriptionMode.stubbed;
+    if (onDeviceOnly) {
+      return NativeSpeechTranscription.isSupported
+          ? TranscriptionMode.local
+          : TranscriptionMode.disabled;
+    }
     return TranscriptionMode.server;
   }
 
@@ -127,10 +151,24 @@ abstract class TranscriptionService {
     required Future<String> Function({bool forceRefresh}) ensureCaptureToken,
     required String scopeKey,
     required ApiUsageGuard usageGuard,
+
+    /// The language the customer confirmed they speak, or null when they have
+    /// not been asked yet.
+    ///
+    /// Required-but-nullable on purpose. Every caller has to state an answer,
+    /// and null is a real one meaning "do not run speech recognition" — never
+    /// "work it out from the phone". A recogniser aimed at the wrong language
+    /// returns fluent text that the pipeline stamps
+    /// `TranscriptProvenance.speechToText` and the archive later quotes back as
+    /// the customer's own words.
+    required ConfirmedSpeechLocale? speechLocale,
+
+    /// The customer's "Never send to server" setting.
+    required bool onDeviceOnly,
     NetworkCancelToken? cancelToken,
     bool testStub = false,
   }) async {
-    final mode = activeMode(testStub: testStub);
+    final mode = activeMode(testStub: testStub, onDeviceOnly: onDeviceOnly);
     TranscriptionLog.mode(mode.logLabel);
 
     final speechStatus = await speechPermissionStatusLabel();
@@ -154,6 +192,14 @@ abstract class TranscriptionService {
       return TranscriptionOutcome.skipped(
         mode: mode,
         reason: reason,
+        speechPermissionStatus: speechStatus,
+      );
+    }
+
+    if (mode == TranscriptionMode.local) {
+      return _transcribeOnDevice(
+        audioFile: audioFile,
+        speechLocale: speechLocale,
         speechPermissionStatus: speechStatus,
       );
     }
@@ -223,9 +269,12 @@ abstract class TranscriptionService {
       final reason = failureReason(failure);
       TranscriptionLog.failed(reason: reason);
 
-      if (failure is ApiFailureOffline && NativeSpeechTranscription.isSupported) {
+      if (failure is ApiFailureOffline &&
+          NativeSpeechTranscription.isSupported &&
+          speechLocale != null) {
         final nativeTranscript = await NativeSpeechTranscription.transcribeFile(
           uploadFile,
+          locale: speechLocale,
         );
         if (nativeTranscript != null) {
           return _successOutcome(
@@ -249,6 +298,54 @@ abstract class TranscriptionService {
       mode: mode,
       reason: 'transcription_unexpected',
       speechPermissionStatus: speechStatus,
+    );
+  }
+
+  /// The primary path when "Never send to server" is on.
+  ///
+  /// Terminates either way. There is no fall-through to the network on failure,
+  /// because the setting that put us here is the customer saying the recording
+  /// must not leave the device, and a local recogniser that could not read it
+  /// does not change that.
+  static Future<TranscriptionOutcome> _transcribeOnDevice({
+    required File audioFile,
+    required ConfirmedSpeechLocale? speechLocale,
+    required String speechPermissionStatus,
+  }) async {
+    if (speechLocale == null) {
+      // Not a failure of the device. `TranscriptionCapabilityPolicy` turns this
+      // into a one-time question, and the recording keeps its audio meanwhile.
+      const reason = 'speech_language_not_confirmed';
+      TranscriptionLog.skipped(reason: reason);
+      return TranscriptionOutcome.skipped(
+        mode: TranscriptionMode.local,
+        reason: reason,
+        speechPermissionStatus: speechPermissionStatus,
+      );
+    }
+
+    final transcript = await NativeSpeechTranscription.transcribeFile(
+      audioFile,
+      locale: speechLocale,
+    );
+    if (transcript == null) {
+      const reason = 'native_stt_unavailable';
+      TranscriptionLog.failed(reason: reason);
+      return TranscriptionOutcome.failed(
+        mode: TranscriptionMode.local,
+        reason: reason,
+        speechPermissionStatus: speechPermissionStatus,
+      );
+    }
+
+    // Not provisional. Provisional means "a better transcript is coming from
+    // the server", and in this mode none ever is, so marking it provisional
+    // would leave every entry permanently waiting on a request that will not
+    // be made.
+    return _successOutcome(
+      mode: TranscriptionMode.local,
+      transcript: transcript,
+      speechPermissionStatus: speechPermissionStatus,
     );
   }
 

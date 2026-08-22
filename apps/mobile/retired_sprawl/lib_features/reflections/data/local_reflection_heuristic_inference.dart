@@ -1,4 +1,3 @@
-import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:archiveme_mobile/features/reflections/data/reflection_inference.dart';
@@ -9,27 +8,19 @@ import 'package:archiveme_mobile/features/reflections/data/reflection_transcript
 ///
 /// Produces logits compatible with [ReflectionOutputParser] using transcript
 /// heuristics only — no network calls.
+///
+/// Mood and emotional intensity are deliberately left unset. Nothing derivable
+/// from a transcript hash carries either signal, and a synthesised number is
+/// indistinguishable from a measured one once it reaches a surface.
 class LocalReflectionHeuristicInference implements ReflectionInference {
   const LocalReflectionHeuristicInference();
 
   @override
   Future<List<double>> runReflectionLogits(Float32List inputTensor) async {
-    final logits = List<double>.filled(
+    return List<double>.filled(
       ReflectionModelContract.reflectionLogitWidth,
       0,
     );
-
-    final tokenMass = inputTensor.fold<double>(0, (sum, value) => sum + value);
-    final density = tokenMass / ReflectionModelContract.maxSeqLen;
-    logits[ReflectionModelContract.intensityLogitIndex] =
-        _logit((density % 1000) / 1000 * 0.6 + 0.2);
-
-    for (var i = 0; i < ReflectionModelContract.moodLogitCount; i++) {
-      logits[ReflectionModelContract.moodLogitStart + i] =
-          _logit(sin((density + i) * 0.17) * 0.5 + 0.5);
-    }
-
-    return logits;
   }
 
   /// Builds logits using full [transcript] text (heuristic path).
@@ -74,10 +65,5 @@ class LocalReflectionHeuristicInference implements ReflectionInference {
     if (lower.contains('maybe') || lower.contains('kind of')) {
       logits[ReflectionModelContract.patternLogitStart + 4] = 0.75;
     }
-  }
-
-  double _logit(double probability) {
-    final p = probability.clamp(1e-6, 1 - 1e-6);
-    return log(p / (1 - p));
   }
 }

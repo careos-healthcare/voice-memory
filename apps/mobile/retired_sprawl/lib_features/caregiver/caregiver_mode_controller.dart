@@ -1,4 +1,6 @@
 import 'package:archiveme_mobile/config/app_mode_config.dart';
+import 'package:archiveme_mobile/data/network/consent_revocation_api_client.dart';
+import 'package:archiveme_mobile/features/auth/application/server_consent_revocation_coordinator.dart';
 import 'package:archiveme_mobile/features/caregiver/caregiver_access_service.dart';
 import 'package:archiveme_mobile/features/caregiver/caregiver_audit_store.dart';
 import 'package:archiveme_mobile/features/caregiver/caregiver_feature_flags.dart';
@@ -100,28 +102,29 @@ class CaregiverModeController {
     }
   }
 
+  /// The only paths an active caregiver session may reach.
+  ///
+  /// Deliberately a whitelist. The previous denylist named the shell routes and
+  /// so let every export, capture, and settings path through, and would have
+  /// let each new route through as it was added.
+  static const Set<String> _caregiverPaths = {
+    RouteCatalog.caregiverHome,
+    RouteCatalog.caregiverConsent,
+  };
+
   /// Router guard — returns redirect path when caregiver mode requires it.
   Future<String?> redirectFor(String path) async {
+    // Checked before touching storage: with the capability compiled out this
+    // runs on every navigation and must stay free.
+    if (!CaregiverFeatureFlags.isCaregiverModeEnabled) {
+      return _caregiverPaths.contains(path) ? RouteCatalog.recordHome : null;
+    }
+
     await initialize();
 
-    const caregiverPaths = {
-      RouteCatalog.caregiverHome,
-      RouteCatalog.caregiverConsent,
-    };
-
-    if (!CaregiverFeatureFlags.isCaregiverModeEnabled) {
-      if (caregiverPaths.contains(path)) {
-        return RouteCatalog.recordHome;
-      }
-      return null;
-    }
-
     if (_cachedMode.mode != AppMode.caregiverMonitoring) {
-      if (caregiverPaths.contains(path)) return RouteCatalog.recordHome;
-      return null;
+      return _caregiverPaths.contains(path) ? RouteCatalog.recordHome : null;
     }
-
-    if (caregiverPaths.contains(path)) return null;
 
     if (!hasValidSession) {
       if (path != RouteCatalog.caregiverConsent) {
@@ -133,13 +136,11 @@ class CaregiverModeController {
     if (path == RouteCatalog.caregiverConsent) {
       return RouteCatalog.caregiverHome;
     }
+    if (_caregiverPaths.contains(path)) return null;
 
-    const shellPaths = {...RouteCatalog.primaryRoutes, '/'};
-    if (shellPaths.contains(path)) {
-      return RouteCatalog.caregiverHome;
-    }
-
-    return null;
+    // Everything else — export, capture, settings, the shell — belongs to the
+    // owner.
+    return RouteCatalog.caregiverHome;
   }
 
   Future<void> switchToSelfReflection() async {
@@ -260,6 +261,10 @@ class CaregiverModeController {
 
   Future<void> revokeGrant(String tokenId) async {
     final sessionId = _cachedSession?.sessionId ?? 'none';
+    // Read before the local clear below — the server accepts the signed token
+    // as an ownership-proof fallback for grants issued before it kept a
+    // registry, and `clearMonitoringState` is about to drop it.
+    final stored = await _modeStore.readStoredToken();
     await _verificationService.revokeToken(tokenId);
     await _auditStore.append(
       sessionId: sessionId,
@@ -268,7 +273,6 @@ class CaregiverModeController {
       resourceId: tokenId,
     );
 
-    final stored = await _modeStore.readStoredToken();
     if (stored?.tokenId == tokenId) {
       await _modeStore.clearMonitoringState();
       _cachedSession = null;
@@ -282,6 +286,14 @@ class CaregiverModeController {
         );
       }
     }
+
+    // Local revocation above is complete and unconditional; this only adds the
+    // server side, and queues itself for retry when it cannot land.
+    await ServerConsentRevocationCoordinator.instance.revokeOnServer(
+      tokenId: tokenId,
+      domain: ConsentRevocationDomain.caregiverMonitoring,
+      token: stored?.tokenId == tokenId ? stored?.toJson() : null,
+    );
   }
 
   Future<bool> ensureReadAllowed({
@@ -302,8 +314,7 @@ class CaregiverModeController {
       return false;
     }
 
-    if (!session.permissions.allowsStream(streamId) &&
-        streamId != CaregiverPermissions.insightAlertsStream) {
+    if (!session.permissions.allowsStream(streamId)) {
       await _auditStore.append(
         sessionId: session.sessionId,
         action: CaregiverAuditAction.accessDenied,

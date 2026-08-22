@@ -1,6 +1,5 @@
 import 'package:archiveme_mobile/features/archive_beliefs/archive_belief_models.dart';
 import 'package:archiveme_mobile/features/archive_beliefs/belief_change_timeline.dart';
-import 'package:archiveme_mobile/product/belief_clarity.dart';
 import 'package:archiveme_mobile/product/belief_product_copy.dart';
 import 'package:archiveme_mobile/product/consumer_ui_copy.dart';
 import 'package:archiveme_mobile/theme/app_colors.dart';
@@ -96,10 +95,9 @@ class _StoryCard extends StatelessWidget {
             ),
           ),
           const SizedBox(height: AppSpacing.sm),
-          Text(
-            BeliefClarity.quotedBelief(item.statement),
-            style: VoiceMemoryTypography.bodyStyle(),
-          ),
+          // Not quoted: `statement` is a theme ArchiveMe derived, not the
+          // user's words, so quotation marks would misattribute it.
+          Text(item.statement, style: VoiceMemoryTypography.bodyStyle()),
           const SizedBox(height: AppSpacing.xs),
           Text(
             item.detail,

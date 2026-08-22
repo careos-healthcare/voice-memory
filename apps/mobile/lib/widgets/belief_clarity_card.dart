@@ -28,8 +28,10 @@ class BeliefClarityCard extends StatelessWidget {
       children: [
         _label(BeliefProductCopy.labelBelief),
         const SizedBox(height: 6),
+        // Not quoted: `statement` is a pattern ArchiveMe derived, not the
+        // user's words, so quotation marks would misattribute it.
         Text(
-          BeliefClarity.quotedBelief(belief.statement),
+          belief.statement,
           style: VoiceMemoryTypography.headlineStyle().copyWith(fontSize: 22),
         ),
         const SizedBox(height: AppSpacing.md),

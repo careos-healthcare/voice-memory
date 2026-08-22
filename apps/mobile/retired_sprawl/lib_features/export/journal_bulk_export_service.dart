@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:archiveme_mobile/features/memory_transparency/memory_transparency_catalog.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
+import 'package:archiveme_mobile/security/caregiver_session_guard.dart';
 import 'package:archiveme_mobile/storage/sqlite/journal_sqlite_repository.dart';
 
 /// Open-format journal export payload.
@@ -85,6 +86,9 @@ class JournalBulkExportService {
   final MemoryTransparencyCatalog catalog;
 
   Future<JournalBulkExportPayload> buildExport() async {
+    await CaregiverSessionGuard.assertOwnerAccess(
+      CaregiverSessionGuard.exportJournalBulk,
+    );
     final entries = await repository.fetchAllActive();
     final insights = catalog.build(entries: entries);
     return JournalBulkExportPayload.fromEntries(

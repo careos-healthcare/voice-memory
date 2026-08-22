@@ -98,6 +98,7 @@ import 'package:archiveme_mobile/features/repeat_return_check/repeat_return_chec
 import 'package:archiveme_mobile/features/sync/application/sync_notifier.dart';
 import 'package:archiveme_mobile/features/voice_capture/microphone_permission_environment.dart';
 import 'package:archiveme_mobile/features/voice_capture/transcription/provisional_transcript_reconciler.dart';
+import 'package:archiveme_mobile/features/voice_capture/transcription/speech_locale_store.dart';
 import 'package:archiveme_mobile/services/capture_pipeline/capture_pipeline_middleware.dart';
 import 'package:archiveme_mobile/services/capture_pipeline/capture_proof_analyzer.dart';
 import 'package:archiveme_mobile/services/sync/background_sync_queue_gateway.dart';
@@ -147,6 +148,7 @@ import 'package:archiveme_mobile/services/ai/ai_service_bootstrap.dart';
 import 'package:archiveme_mobile/services/offline_tts/offline_tts_bootstrap.dart';
 import 'package:archiveme_mobile/services/offline_tts/offline_tts_service.dart';
 import 'package:archiveme_mobile/features/beta_analytics/beta_analytics_tracker.dart';
+import 'package:archiveme_mobile/features/beta_analytics/product_analytics_consent_store.dart';
 import 'package:archiveme_mobile/services/product_analytics.dart';
 import 'package:archiveme_mobile/core/hardware/resource_guard.dart';
 import 'package:archiveme_mobile/services/thermal_throttling/thermal_throttling_service.dart';
@@ -776,7 +778,9 @@ class AppServices {
       );
       s._watchConnectivity = WatchConnectivityService();
     }
-    await ProductAnalytics.initialize();
+    await ProductAnalytics.initialize(
+      consentStore: ProductAnalyticsConsentStore(s.prefs),
+    );
   }
 
   static void _registerAuthLifecycleCallbacks(AppServices s) {
@@ -1055,6 +1059,7 @@ class AppServices {
       localAiPipeline: LocalAiPipeline.heuristic(
         audioStructuringResolver: s.resolveAudioStructuring,
       ),
+      speechLocale: SpeechLocaleStore(s.prefs).read,
     );
     s.journal = JournalService(s.journalStore);
     s.billing = BillingService(
@@ -1157,6 +1162,7 @@ class AppServices {
       imageEmbeddingService: pipelineDeps.imageEmbeddingService,
       localAiPipeline: pipelineDeps.localAiPipeline,
       reflectionEmbeddingIndexWorker: s._reflectionEmbeddingIndexWorker,
+      speechLocale: pipelineDeps.speechLocale,
     );
     final automatedGraphService = AutomatedGraphService(
       sqliteFilePath: s.activeSqliteFilePath,

@@ -1,0 +1,35 @@
+# This file configures the analyzer, which statically analyzes Dart code to
+# check for errors, warnings, and lints.
+#
+# Silent-catch policy (deliberate, not an oversight):
+# - `empty_catches: true` flags catch blocks with no body at analyze time.
+# - Non-empty swallows are audited via:
+#     dart run tool/audit_silent_catches.dart
+#   Legitimate swallows must annotate:
+#     // ignore: silent_catch_audit — <reason>
+#   on the catch line or the line above.
+# - Triage: ignore-with-reason for best-effort cleanup; add structured logging
+#   (CapturePipelineLog, CaptureFlowLog, JournalSqliteLog, etc.) when the
+#   failure affects user-visible state or recovery paths.
+# - Start triage in capture_flow_controller.dart, then expand outward.
+
+include: package:very_good_analysis/analysis_options.yaml
+
+analyzer:
+  exclude:
+    - lib/features/android_after_ios_proof/**
+  language:
+    # Existing resolver/view-state surfaces still use dynamic engine payloads;
+    # tighten incrementally rather than blocking the whole app on cast errors.
+    strict-casts: true
+
+linter:
+  rules:
+    public_member_api_docs: false
+    lines_longer_than_80_chars: false
+    avoid_print: true
+    empty_catches: true
+    avoid_catches_without_on_clauses: true
+
+# Additional information about this file can be found at
+# https://dart.dev/guides/language/analysis-options

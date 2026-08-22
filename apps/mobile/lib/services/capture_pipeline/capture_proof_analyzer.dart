@@ -4,9 +4,9 @@ import 'package:archiveme_mobile/features/proof_admission/proof_admission_analyt
 import 'package:archiveme_mobile/features/proof_admission/proof_admission_models.dart';
 import 'package:archiveme_mobile/features/proof_admission/proof_admission_service.dart';
 import 'package:archiveme_mobile/features/proof_admission/related_source_resolver.dart';
-import 'package:archiveme_mobile/features/privacy/on_device_processing_store.dart';
 import 'package:archiveme_mobile/features/proof_admission/remote_processing_purpose.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
+import 'package:archiveme_mobile/security/remote_processing_consent_gate.dart';
 import 'package:archiveme_mobile/security/user_content_safety.dart';
 import 'package:archiveme_mobile/services/capture_pipeline/capture_pipeline_dependencies.dart';
 import 'package:archiveme_mobile/services/product_analytics.dart';
@@ -18,18 +18,16 @@ class CaptureProofAnalyzer {
 
   final CapturePipelineDependencies _deps;
 
+  late final RemoteProcessingConsentGate _consentGate =
+      RemoteProcessingConsentGate(_deps.consentStore);
+
   Future<bool> remoteProcessingConsented() =>
       isPurposeGranted(RemoteProcessingPurpose.remoteReflection);
 
-  Future<bool> isPurposeGranted(RemoteProcessingPurpose purpose) async {
-    try {
-      await OnDeviceProcessingStore.ensureLoaded();
-      if (OnDeviceProcessingStore.enabled) return false;
-      return await _deps.consentStore.isPurposeGrantedNow(purpose);
-    } catch (_, stackTrace) {
-      return false;
-    }
-  }
+  /// Delegates to [RemoteProcessingConsentGate], which composes the
+  /// on-device-only setting with per-purpose consent and fails closed.
+  Future<bool> isPurposeGranted(RemoteProcessingPurpose purpose) =>
+      _consentGate.isPurposePermittedNow(purpose);
 
   Future<VerifiedProof> postAndAdmit({
     required String transcript,

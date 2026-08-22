@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:archiveme_mobile/features/privacy/on_device_processing_store.dart';
 import 'package:archiveme_mobile/features/proof_admission/remote_processing_consent_store.dart';
 import 'package:archiveme_mobile/features/proof_admission/remote_processing_purpose.dart';
 import 'package:archiveme_mobile/security/remote_processing_consent_gate.dart';
@@ -16,9 +17,14 @@ void main() {
       tempDir = await Directory.systemTemp.createTemp('consent_gate_');
       prefs = await MobilePrefsStore.open('${tempDir.path}/prefs.json');
       gate = RemoteProcessingConsentGate.fromPrefs(prefs);
+      // These cases vary consent; the on-device-only veto has its own case
+      // below, so hold it off here.
+      await OnDeviceProcessingStore.resetForTest();
+      await OnDeviceProcessingStore.setEnabled(false);
     });
 
     tearDown(() async {
+      await OnDeviceProcessingStore.resetForTest();
       if (tempDir.existsSync()) {
         await tempDir.delete(recursive: true);
       }
@@ -66,6 +72,23 @@ void main() {
       final restored = await gate.evaluate();
       expect(restored.permitted, isTrue);
       expect(restored.consentAtProcessingTime, isTrue);
+    });
+
+    test('on-device-only vetoes every purpose, whatever consent says',
+        () async {
+      final store = RemoteProcessingConsentStore(prefs);
+      await store.grant();
+      await OnDeviceProcessingStore.setEnabled(true);
+
+      for (final purpose in RemoteProcessingPurpose.values) {
+        final decision = await gate.evaluateFor(purpose);
+        expect(decision.permitted, isFalse);
+        expect(decision.consentAtProcessingTime, isFalse);
+        expect(decision.onDeviceProcessingOnly, isTrue);
+        // Consent itself is untouched — the veto is the local switch.
+        expect(decision.currentPermission, isTrue);
+      }
+      expect(await gate.isPermittedNow(), isFalse);
     });
 
     test('withdrawn while queued — recheck blocks upload', () async {

@@ -1,6 +1,7 @@
 import 'package:archiveme_mobile/features/insight_engine/hybrid_search_models.dart';
 import 'package:archiveme_mobile/features/search/reflection_embedding_inference.dart';
 import 'package:archiveme_mobile/features/search/reflection_text_processor.dart';
+import 'package:archiveme_mobile/features/search/semantic_vector_fusion.dart';
 import 'package:archiveme_mobile/storage/sqlite/hybrid_local_search/hybrid_search_result_merger.dart';
 import 'package:archiveme_mobile/storage/sqlite/memory_transcript_search_repository.dart';
 
@@ -118,6 +119,17 @@ final class DatabaseHelper {
               limit: limit,
             ),
           );
+    }
+
+    // Same degrade path the embedding failure below takes, for the same
+    // reason: a semantic channel the encoder cannot fill reorders BM25 rather
+    // than refining it. See [SemanticVectorFusion].
+    if (!SemanticVectorFusion.isEnabledFor(_embeddingInference)) {
+      return mergeAndRank(
+        keywordHits: await searchKeywords(trimmed, limit: candidateLimit),
+        semanticHits: const [],
+        limit: limit,
+      );
     }
 
     try {

@@ -127,7 +127,14 @@ class ClientConsentVerificationService {
     required String coachId,
     required CoachSharingPermissions permissions,
     required String clientAffirmationHash,
-    Duration ttl = const Duration(days: 90),
+    // Mirrors `COACH_CONSENT_DEFAULT_TTL_MS`
+    // (`packages/shared/lib/consent/consent-token-ttl.ts`), which is the
+    // authoritative coach lifetime. Unlike the caregiver service this default
+    // is read — the local-issuance fallback below passes it to `clock.add(ttl)`
+    // — so a stale value here mints a token the server contract would not.
+    // `scripts/validate-consent-ttl.mjs` only scans TypeScript, so nothing
+    // catches a drift on this side.
+    Duration ttl = const Duration(days: 30),
     DateTime? now,
     bool preferServerIssuance = false,
   }) async {

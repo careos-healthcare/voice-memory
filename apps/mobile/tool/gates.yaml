@@ -24,12 +24,65 @@ validates:
   api_contract:
     description: Validate mobile API client contract parity
     command: dart run tool/validate_api_contract.dart
+  analysis_excludes:
+    description: >
+      Fail when the generated lib/features exclude block drifts from the symlinks
+      on disk. Drift silently changes what the analyzer sees, which makes every
+      issue-count comparison against a baseline meaningless.
+    command: python3 tool/check_analysis_excludes.py
+  initstate_provider_writes:
+    description: >
+      Fail when a widget build-phase life-cycle can synchronously reach a
+      Riverpod notifier method that writes `state` before its first await.
+      ProviderScope only installs that check in debug, so these never break a
+      release build — they just silently skip the work they were meant to start.
+      Walks the source directly so it also covers the analyzer-excluded
+      retired_sprawl symlinks, which the app still ships.
+    command: python3 tool/check_initstate_provider_writes.py
+  ios_sources_phase:
+    description: >
+      Fail when a Swift file in ios/Runner is not listed in the Runner target's
+      Sources build phase. Xcode compiles the phase, not the directory, so such
+      a file is silently absent from the binary and the failure surfaces far
+      from its cause — or not at all, as a channel handler that is simply never
+      registered. Pure Python, no Xcode required.
+    command: python3 tool/check_ios_sources_phase.py
+  ios_deployment_target:
+    description: >
+      Fail when an iOS plugin requires a newer iOS than the app's deployment
+      target. Reads both plugin systems — `.iOS(...)` from SPM Package.swift
+      manifests and `ios.deployment_target`/`platform :ios` from podspecs —
+      because the Podfile post_install hook overwrites each pod's own
+      requirement, so a CocoaPods plugin under the target fails at compile time
+      rather than at `pod install`. Checking one system silently under-reports.
+      Needs `.flutter-plugins-dependencies`, so run after pub get.
+    command: python3 tool/check_ios_deployment_target.py
+  copy_render_path:
+    description: >
+      Fail when a privacy/trust copy constant newly loses its last live render
+      path. Scoped to the sources the privacy copy scanner already discovers.
+      A claim no user can reach is not a disclosure, and citing one as
+      evidence offers a reviewer something they cannot check by using the app.
+    command: python3 tool/check_copy_render_path.py
+  mobile_privacy_logs:
+    description: >
+      Scan the release production graph for banned log fragments — raw
+      transcripts, bearer tokens and audio paths must never reach release
+      logs. Fails when the scan set is empty, so a moved scan root cannot
+      read as a clean pass.
+    command: dart run tool/validate_mobile_privacy_logs.dart
+  privacy_copy:
+    description: >
+      Scan every discovered privacy/trust copy source for unsafe promises.
+      Runs without flutter_test so it gates even while the widget suite is
+      broken.
+    command: dart run tool/privacy/check_privacy_copy_policy.dart
 
 self_tests:
   api_dto:
     description: API DTO serialization self-tests
-    command: dart run tool/run_api_dto_self_test.dart
+    command: flutter test tool/run_api_dto_self_test.dart
   pro_status:
     description: Pro status SQLite self-tests
-    command: dart run tool/run_pro_status_self_test.dart
+    command: flutter test tool/run_pro_status_self_test.dart
 

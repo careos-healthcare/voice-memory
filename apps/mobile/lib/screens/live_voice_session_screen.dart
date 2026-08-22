@@ -18,6 +18,7 @@ import 'package:archiveme_mobile/features/live_audio/infrastructure/live_audio_p
 import 'package:archiveme_mobile/features/live_audio/presentation/live_voice_session_copy.dart';
 import 'package:archiveme_mobile/features/live_audio/presentation/live_voice_session_presentation.dart';
 import 'package:archiveme_mobile/features/live_audio/presentation/widgets/live_voice_error_boundary_overlay.dart';
+import 'package:archiveme_mobile/security/remote_processing_consent_gate.dart';
 import 'package:archiveme_mobile/services/app_services.dart';
 import 'package:archiveme_mobile/services/capture_pipeline_service.dart';
 import 'package:archiveme_mobile/theme/app_colors.dart';
@@ -207,6 +208,20 @@ class _LiveVoiceSessionScreenState extends State<LiveVoiceSessionScreen>
         reason: error.message,
       );
       setState(() => _phase = LiveVoiceUiPhase.error);
+    } on RemoteProcessingConsentRequired {
+      // The coordinator refused before minting a session. Named separately so
+      // this reads as a choice the customer made rather than a fault, and so
+      // the retry affordance does not invite them to try again into the same
+      // refusal.
+      if (!mounted) return;
+      await _liveVoice.handleSessionFailure(
+        LiveVoiceErrorState.unknown,
+        reason: 'remote_processing_consent_missing',
+      );
+      setState(() {
+        _phase = LiveVoiceUiPhase.error;
+        _stageLabel = LiveVoiceSessionCopy.remoteProcessingRequiredBody;
+      });
     } catch (_, stackTrace) {
       if (!mounted) return;
       await _liveVoice.handleSessionFailure(
@@ -377,6 +392,20 @@ class _LiveVoiceSessionScreenState extends State<LiveVoiceSessionScreen>
                                   visualState: visualState,
                                   seconds: _seconds,
                                   playbackQueueDepth: _playbackQueueDepth,
+                                ),
+                                const SizedBox(height: AppSpacing.sm),
+                                // Live voice is remote by nature. Consent is
+                                // enforced in the coordinator; this is the
+                                // customer-facing half of the same fact, kept
+                                // on screen for the whole session rather than
+                                // shown once and dismissed.
+                                Text(
+                                  key: const Key(
+                                    'live_voice_streaming_disclosure',
+                                  ),
+                                  LiveVoiceSessionCopy
+                                      .remoteStreamingDisclosure,
+                                  style: Theme.of(context).textTheme.bodySmall,
                                 ),
                                 const SizedBox(height: AppSpacing.md),
                                 if (showSaving) ...[

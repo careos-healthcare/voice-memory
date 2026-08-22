@@ -18,6 +18,9 @@ class OnnxReflectionEmbeddingInference implements ReflectionEmbeddingInference {
   final String _inputName;
   final String _outputName;
 
+  @override
+  bool get producesSemanticVectors => true;
+
   static Future<OnnxReflectionEmbeddingInference?> tryCreateFromAsset({
     String assetPath = ReflectionEmbeddingContract.defaultAssetPath,
     String inputName = ReflectionEmbeddingContract.inputName,

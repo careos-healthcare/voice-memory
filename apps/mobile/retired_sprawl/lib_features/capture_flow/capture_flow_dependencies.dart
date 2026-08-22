@@ -7,6 +7,8 @@ import 'package:archiveme_mobile/features/capture_flow/adapters/prefs_pending_ca
 import 'package:archiveme_mobile/features/capture_flow/adapters/record_pipeline_capture_telemetry.dart';
 import 'package:archiveme_mobile/features/capture_flow/adapters/recording_service_audio_adapter.dart';
 import 'package:archiveme_mobile/features/capture_flow/interfaces/capture_flow_ports.dart';
+import 'package:archiveme_mobile/features/voice_capture/transcription/local_transcription_choice_store.dart';
+import 'package:archiveme_mobile/features/voice_capture/transcription/speech_locale_store.dart';
 
 /// Narrow dependency bundle for the strangler capture flow.
 ///
@@ -23,6 +25,7 @@ class CaptureFlowDependencies {
     required this.transcriptCorrection,
     required this.routinePrompts,
     required this.routineAnchors,
+    required this.transcriptionCapability,
   });
 
   factory CaptureFlowDependencies.fromAccount(
@@ -33,6 +36,7 @@ class CaptureFlowDependencies {
     TranscriptCorrectionPort? transcriptCorrection,
     RoutinePromptGateway? routinePrompts,
     RoutineAnchorLoader? routineAnchors,
+    TranscriptionCapabilityPort? transcriptionCapability,
   }) {
     final consentPolicy = StoreRemoteConsentPolicy(account.pipeline.consentStore);
     return CaptureFlowDependencies(
@@ -53,6 +57,13 @@ class CaptureFlowDependencies {
           AppRoutinePromptAdapter(journalStore: account.journalStore),
       routineAnchors: routineAnchors ??
           PrefsRoutineAnchorLoader(account.prefs),
+      transcriptionCapability: transcriptionCapability ??
+          StoreTranscriptionCapabilityPolicy(
+            consentStore: account.pipeline.consentStore,
+            choiceStore: LocalTranscriptionChoiceStore(account.prefs),
+            speechLocaleStore: SpeechLocaleStore(account.prefs),
+            consentPolicy: consentPolicy,
+          ),
     );
   }
 
@@ -66,4 +77,5 @@ class CaptureFlowDependencies {
   final TranscriptCorrectionPort transcriptCorrection;
   final RoutinePromptGateway routinePrompts;
   final RoutineAnchorLoader routineAnchors;
+  final TranscriptionCapabilityPort transcriptionCapability;
 }

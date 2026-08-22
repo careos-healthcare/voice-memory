@@ -49,10 +49,13 @@ class _ConsentAuditScreenState extends State<ConsentAuditScreen> {
   }
 
   Future<void> _revoke(ConsentGrantRecord record) async {
-    await _service?.revokeGrant(record);
-    if (!mounted) return;
+    // No service means nothing was revoked, so there is nothing to report.
+    // Unreachable in practice: the revoke button only renders for a grant the
+    // service loaded.
+    final outcome = await _service?.revokeGrant(record);
+    if (!mounted || outcome == null) return;
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text(ConsentAuditCopy.revokedSnack)),
+      SnackBar(content: Text(ConsentAuditCopy.revokedSnackFor(outcome))),
     );
     await _reload();
   }

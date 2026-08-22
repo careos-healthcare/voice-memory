@@ -77,6 +77,7 @@ abstract final class ReflectionOutputParser {
     return out;
   }
 
+  /// Empty when no mood head scored — see [ReflectionModelContract.unknownMood].
   static String _decodeMood(List<double> logits) {
     var bestIdx = 0;
     var best = double.negativeInfinity;
@@ -87,12 +88,15 @@ abstract final class ReflectionOutputParser {
         bestIdx = i;
       }
     }
-    if (best <= 0) return 'reflective';
+    if (best <= 0) return ReflectionModelContract.unknownMood;
     return ReflectionModelContract.moodLabels[bestIdx];
   }
 
+  /// Zero when the intensity head is unset — see
+  /// [ReflectionModelContract.unknownIntensity].
   static int _decodeIntensity(List<double> logits) {
     final raw = logits[ReflectionModelContract.intensityLogitIndex];
+    if (raw == 0) return ReflectionModelContract.unknownIntensity;
     final scaled = (1 / (1 + exp(-raw))) * 10;
     return scaled.round().clamp(1, 10);
   }

@@ -7,6 +7,7 @@ import 'package:archiveme_mobile/features/onboarding/backlog_import_notifier.dar
 import 'package:archiveme_mobile/features/onboarding/experiment_h_onboarding_coordinator.dart';
 import 'package:archiveme_mobile/features/pattern_match_quality/pattern_match_quality_model.dart';
 import 'package:archiveme_mobile/onboarding/onboarding_visuals.dart';
+import 'package:archiveme_mobile/router/route_catalog.dart';
 import 'package:archiveme_mobile/services/app_services.dart';
 import 'package:archiveme_mobile/services/backlog_import_service.dart';
 import 'package:archiveme_mobile/theme/app_colors.dart';
@@ -31,13 +32,12 @@ class BacklogImportScreen extends ConsumerWidget {
         ExperimentHOnboardingCoordinator.routeFor(
           source: 'backlog_import',
           entryId: entries.isNotEmpty ? entries.first.id : null,
-          continueRoute: '/onboarding/brain-dump',
         ),
       );
       return;
     }
     if (!context.mounted) return;
-    context.go('/onboarding/brain-dump');
+    context.go(RouteCatalog.recordHome);
   }
 
   @override

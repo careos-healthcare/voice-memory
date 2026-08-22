@@ -1,0 +1,480 @@
+retired_sprawl/lib_features/android_after_ios_proof/android_after_ios_proof_gate.dart
+    - NAME referenced outside retired tree: docs/archive/2026-08/android_after_ios_proof.md:55
+retired_sprawl/lib_features/annual_plan_future/annual_plan_future_gate.dart
+    - NAME referenced outside retired tree: docs/archive/2026-08/annual_plan_future.md:62
+retired_sprawl/lib_features/archive_analyst/archive_analyst_copy.dart
+    - NAME referenced outside retired tree: tool/copy_render_path_baseline.txt:185
+    - NAME referenced outside retired tree: tool/copy_render_path_baseline.txt:186
+    - NAME referenced outside retired tree: tool/copy_render_path_baseline.txt:187
+    - NAME referenced outside retired tree: tool/copy_render_path_baseline.txt:188
+    - NAME referenced outside retired tree: tool/copy_render_path_baseline.txt:189
+    - NAME referenced outside retired tree: tool/copy_render_path_baseline.txt:190
+retired_sprawl/lib_features/archive_controls/archive_exclusion_model.dart
+    - NAME referenced outside retired tree: test/archive_exclusion_test.dart:348
+retired_sprawl/lib_features/archive_deep_dive/archive_deep_dive_copy.dart
+    - NAME referenced outside retired tree: tool/copy_render_path_baseline.txt:233
+    - NAME referenced outside retired tree: tool/copy_render_path_baseline.txt:234
+    - NAME referenced outside retired tree: tool/copy_render_path_baseline.txt:235
+    - NAME referenced outside retired tree: tool/copy_render_path_baseline.txt:236
+    - NAME referenced outside retired tree: tool/copy_render_path_baseline.txt:237
+    - NAME referenced outside retired tree: tool/copy_render_path_baseline.txt:238
+retired_sprawl/lib_features/archive_evidence/archive_moment_record.dart
+    - NAME referenced outside retired tree: lib/features/archive_evidence/archive_moment_record.dart:1
+    - NAME referenced outside retired tree: lib/features/comparison_engine/domain/mappers/archive_moment_record_mapper.dart:2
+    - NAME referenced outside retired tree: lib/features/comparison_engine/domain/models/pattern_comparison_plan.dart:1
+    - NAME referenced outside retired tree: lib/features/comparison_engine/domain/models/pattern_evidence_view_state.dart:1
+    - NAME referenced outside retired tree: lib/features/comparison_engine/domain/services/comparison_explorer_query.dart:2
+    - NAME referenced outside retired tree: lib/features/comparison_engine/domain/services/comparison_output_parser.dart:1
+retired_sprawl/lib_features/archive_memory_after_v1/archive_memory_after_v1_gate.dart
+    - NAME referenced outside retired tree: docs/archive/2026-08/archive_memory_after_v1.md:51
+retired_sprawl/lib_features/archive_reactivity/archive_change_timeline_metrics_store.dart
+    - NAME referenced outside retired tree: lib/widgets/patterns/archive_evolution_timeline_card.dart:5
+    - NAME referenced outside retired tree: lib/widgets/patterns/archive_timeline_truth_feedback_card.dart:2
+    - NAME referenced outside retired tree: test/archive_belief_surface_test.dart:8
+retired_sprawl/lib_features/b2b_workplace_pressure_future/b2b_workplace_pressure_future_gate.dart
+    - NAME referenced outside retired tree: docs/archive/2026-08/b2b_workplace_pressure_future.md:63
+retired_sprawl/lib_features/beta/archive_activation_funnel_tracker.dart
+    - NAME referenced outside retired tree: lib/features/beta/archive_activation_funnel_store.dart:1
+retired_sprawl/lib_features/caregiver/views/caregiver_dashboard_view.dart
+    - NAME referenced outside retired tree: docs/archive/2026-08/CAREGIVER_MONITORING.md:83
+    - NAME referenced outside retired tree: tool/check_copy_render_path.py:738
+    - SKIP: excluded path (retired_sprawl/lib_features/caregiver/)
+retired_sprawl/lib_features/caregiver/views/consent_request_view.dart
+    - NAME referenced outside retired tree: docs/archive/2026-08/CAREGIVER_MONITORING.md:84
+    - NAME referenced outside retired tree: docs/security/CAREGIVER_ACCESS_PRELAUNCH_BLOCKERS.md:109
+    - SKIP: excluded path (retired_sprawl/lib_features/caregiver/)
+retired_sprawl/lib_features/clinical_sandbox/domain/clinical_sandbox_cognitive_analyzer.dart
+    - NAME referenced outside retired tree: lib/features/clinical_sandbox/clinical_sandbox.dart:15
+retired_sprawl/lib_features/clinical_sandbox/pipeline/clinical_sandbox_pipeline.dart
+    - NAME referenced outside retired tree: lib/features/clinical_sandbox/clinical_sandbox.dart:17
+retired_sprawl/lib_features/clinical_sandbox/presentation/clinical_consent_copy.dart
+    - NAME referenced outside retired tree: lib/features/clinical_sandbox/clinical_sandbox.dart:18
+    - NAME referenced outside retired tree: lib/features/clinical_sandbox/views/clinical_consent_disclaimer_view.dart:3
+    - NAME referenced outside retired tree: lib/features/clinical_sandbox/views/clinical_sandbox_consent_screen.dart:3
+    - NAME referenced outside retired tree: tool/copy_render_path_baseline.txt:1122
+retired_sprawl/lib_features/clinical_sandbox/views/clinical_consent_disclaimer_view.dart
+    - NAME referenced outside retired tree: lib/features/clinical_sandbox/clinical_sandbox.dart:21
+    - NAME referenced outside retired tree: lib/features/clinical_sandbox/views/clinical_sandbox_consent_screen.dart:5
+retired_sprawl/lib_features/clinical_sandbox/views/clinical_sandbox_consent_screen.dart
+    - NAME referenced outside retired tree: lib/features/clinical_sandbox/clinical_sandbox.dart:22
+retired_sprawl/lib_features/coach/coach_copy.dart
+    - NAME referenced outside retired tree: lib/features/coach/views/client_consent_verification_view.dart:7
+    - NAME referenced outside retired tree: lib/features/coach/views/coach_dashboard_view.dart:4
+    - NAME referenced outside retired tree: tool/copy_render_path_baseline.txt:1123
+    - NAME referenced outside retired tree: tool/copy_render_path_baseline.txt:1124
+    - NAME referenced outside retired tree: tool/copy_render_path_baseline.txt:1125
+    - NAME referenced outside retired tree: tool/copy_render_path_baseline.txt:1126
+    - SKIP: excluded path (retired_sprawl/lib_features/coach/)
+retired_sprawl/lib_features/coach/coach_mode_controller.dart
+    - NAME referenced outside retired tree: lib/features/coach/coach_read_service.dart:3
+    - NAME referenced outside retired tree: lib/features/coach/views/client_consent_verification_view.dart:8
+    - NAME referenced outside retired tree: lib/features/coach/views/coach_dashboard_view.dart:5
+    - NAME referenced outside retired tree: lib/features/relationships/views/professional_client_read_only_view.dart:4
+    - SKIP: excluded path (retired_sprawl/lib_features/coach/)
+retired_sprawl/lib_features/coach/coach_read_service.dart
+    - NAME referenced outside retired tree: lib/features/coach/views/coach_dashboard_view.dart:6
+    - NAME referenced outside retired tree: lib/features/relationships/views/professional_client_read_only_view.dart:5
+    - SKIP: excluded path (retired_sprawl/lib_features/coach/)
+retired_sprawl/lib_features/coach/local_rag/local_coach_conversation.dart
+    - SKIP: excluded path (retired_sprawl/lib_features/coach/)
+retired_sprawl/lib_features/coach/views/client_consent_verification_view.dart
+    - SKIP: excluded path (retired_sprawl/lib_features/coach/)
+retired_sprawl/lib_features/coach/views/coach_dashboard_view.dart
+    - SKIP: excluded path (retired_sprawl/lib_features/coach/)
+retired_sprawl/lib_features/comparison/comparison_copy.dart
+    - NAME referenced outside retired tree: lib/features/comparison/views/comparison_explorer_screen.dart:4
+    - NAME referenced outside retired tree: tool/copy_render_path_baseline.txt:1213
+    - NAME referenced outside retired tree: tool/copy_render_path_baseline.txt:1214
+    - NAME referenced outside retired tree: tool/copy_render_path_baseline.txt:1215
+    - NAME referenced outside retired tree: tool/copy_render_path_baseline.txt:1216
+    - NAME referenced outside retired tree: tool/copy_render_path_baseline.txt:1217
+retired_sprawl/lib_features/comparison_engine/presentation/comparison_explorer_copy.dart
+    - NAME referenced outside retired tree: lib/features/comparison_engine/views/comparison_explorer_screen.dart:12
+    - NAME referenced outside retired tree: tool/copy_render_path_baseline.txt:1218
+    - NAME referenced outside retired tree: tool/copy_render_path_baseline.txt:1219
+    - NAME referenced outside retired tree: tool/copy_render_path_baseline.txt:1220
+retired_sprawl/lib_features/contextual_privacy/contextual_privacy_model.dart
+    - NAME referenced outside retired tree: test/contextual_privacy_test.dart:349
+retired_sprawl/lib_features/contradiction_change_future/contradiction_change_future_gate.dart
+    - NAME referenced outside retired tree: docs/archive/2026-08/contradiction_change_future.md:62
+retired_sprawl/lib_features/cross_device_continuity_future/cross_device_continuity_future_gate.dart
+    - NAME referenced outside retired tree: docs/archive/2026-08/cross_device_continuity_future.md:60
+retired_sprawl/lib_features/curiosity_loop/curiosity_hook_copy.dart
+    - NAME referenced outside retired tree: tool/copy_render_path_baseline.txt:1323
+retired_sprawl/lib_features/discover/discover_analytics.dart
+    - NAME referenced outside retired tree: DISCOVER_YOURSELF_IMPLEMENTATION.md:69
+retired_sprawl/lib_features/future_expansion_roadmap/future_expansion_roadmap_gate.dart
+    - NAME referenced outside retired tree: docs/archive/2026-08/future_expansion_roadmap.md:84
+retired_sprawl/lib_features/graph/graph.dart
+    - NAME referenced outside retired tree: lib/database/daos/reflection_graph_dao.dart:5
+    - NAME referenced outside retired tree: lib/features/llm/application/llm_capture_analysis_service.dart:9
+    - NAME referenced outside retired tree: lib/features/reflections/data/local_reflection_data_source.dart:3
+    - NAME referenced outside retired tree: lib/features/reflections/data/offline_reflection_knowledge_graph.dart:1
+    - NAME referenced outside retired tree: lib/features/reflections/data/onnx_llm_reflection_extractor.dart:8
+    - NAME referenced outside retired tree: lib/features/reflections/data/reflection_output_parser.dart:4
+retired_sprawl/lib_features/image_evidence/image_evidence_attachment_panel.dart
+    - NAME referenced outside retired tree: lib/core/config/insight_science_deferred_guard.dart:15
+retired_sprawl/lib_features/image_evidence/image_evidence_copy.dart
+    - NAME referenced outside retired tree: lib/features/image_evidence/image_evidence_attachment_panel.dart:5
+    - NAME referenced outside retired tree: tool/copy_render_path_baseline.txt:1687
+    - NAME referenced outside retired tree: tool/copy_render_path_baseline.txt:1688
+    - NAME referenced outside retired tree: tool/copy_render_path_baseline.txt:1689
+    - NAME referenced outside retired tree: tool/copy_render_path_baseline.txt:1690
+    - NAME referenced outside retired tree: tool/copy_render_path_baseline.txt:1691
+retired_sprawl/lib_features/insights/archive_insight.dart
+    - NAME referenced outside retired tree: docs/archive/2026-08/INSIGHT_ENGINE_ARCHITECTURE.md:51
+    - NAME referenced outside retired tree: docs/archive/2026-08/INSIGHT_ENGINE_ARCHITECTURE.md:96
+    - NAME referenced outside retired tree: lib/config/screenshot_sample_data.dart:13
+    - NAME referenced outside retired tree: lib/features/insights/archive_insight_mapper.dart:2
+    - NAME referenced outside retired tree: lib/features/insights/archive_insights_engine.dart:4
+    - NAME referenced outside retired tree: lib/features/insights/insight_quality.dart:2
+retired_sprawl/lib_features/insights/archive_insight_mapper.dart
+    - NAME referenced outside retired tree: docs/archive/2026-08/INSIGHT_ENGINE_ARCHITECTURE.md:95
+    - NAME referenced outside retired tree: lib/features/insights/archive_insights_engine.dart:5
+    - NAME referenced outside retired tree: test/consumer_copy_banned_words_test.dart:92
+    - NAME referenced outside retired tree: test/features/fact_ledger/fact_ledger_citation_service_test.dart:5
+retired_sprawl/lib_features/insights/archive_insights_engine.dart
+    - NAME referenced outside retired tree: docs/archive/2026-08/INSIGHT_ENGINE_ARCHITECTURE.md:94
+    - NAME referenced outside retired tree: lib/features/tomorrow_return/tomorrow_return_loop_coordinator.dart:7
+    - NAME referenced outside retired tree: test/archive_insights_engine_test.dart:2
+retired_sprawl/lib_features/insights/belief_evidence/belief_evidence_bundle.dart
+    - NAME referenced outside retired tree: lib/features/insights/archive_insight_mapper.dart:3
+    - NAME referenced outside retired tree: lib/features/insights/belief_evidence/belief_evidence_engine.dart:4
+retired_sprawl/lib_features/insights/belief_evidence/belief_evidence_engine.dart
+    - NAME referenced outside retired tree: lib/features/insights/archive_insights_engine.dart:6
+retired_sprawl/lib_features/insights/belief_evolution/belief_evolution_engine.dart
+    - NAME referenced outside retired tree: lib/features/insights/archive_insights_engine.dart:7
+retired_sprawl/lib_features/insights/belief_evolution/belief_evolution_models.dart
+    - NAME referenced outside retired tree: lib/features/archive_analyst/archive_analyst_belief_catalog.dart:5
+    - NAME referenced outside retired tree: lib/features/archive_deep_dive/archive_deep_dive_models.dart:1
+    - NAME referenced outside retired tree: lib/features/archive_narrative/archive_narrative_engine.dart:3
+    - NAME referenced outside retired tree: lib/features/archive_theory/theory_ranking_engine.dart:11
+    - NAME referenced outside retired tree: lib/features/archive_v1/archive_v1_builder.dart:12
+    - NAME referenced outside retired tree: lib/features/archive_v1/archive_v1_models.dart:6
+retired_sprawl/lib_features/insights/blind_spots/blind_spot_engine.dart
+    - NAME referenced outside retired tree: DISCOVER_YOURSELF_IMPLEMENTATION.md:66
+    - NAME referenced outside retired tree: lib/features/archive_explanations/cross_reference_engine.dart:6
+    - NAME referenced outside retired tree: lib/features/archive_v1/archive_v1_builder.dart:17
+    - NAME referenced outside retired tree: lib/features/discover/discover_engine.dart:7
+    - NAME referenced outside retired tree: lib/features/insights/archive_insights_engine.dart:8
+retired_sprawl/lib_features/insights/blind_spots/blind_spot_models.dart
+    - NAME referenced outside retired tree: lib/features/insights/archive_insight_mapper.dart:5
+    - NAME referenced outside retired tree: lib/features/insights/blind_spots/blind_spot_engine.dart:4
+retired_sprawl/lib_features/insights/contradictions/contradiction_engine.dart
+    - NAME referenced outside retired tree: DISCOVER_YOURSELF_IMPLEMENTATION.md:65
+    - NAME referenced outside retired tree: lib/features/archive_change_feed/archive_change_feed_engine.dart:10
+    - NAME referenced outside retired tree: lib/features/archive_v1/archive_v1_builder.dart:18
+    - NAME referenced outside retired tree: lib/features/discover/discover_engine.dart:9
+    - NAME referenced outside retired tree: lib/features/insights/archive_insights_engine.dart:9
+retired_sprawl/lib_features/insights/contradictions/contradiction_models.dart
+    - NAME referenced outside retired tree: lib/features/insights/archive_insight_mapper.dart:6
+    - NAME referenced outside retired tree: lib/features/insights/contradictions/contradiction_engine.dart:5
+retired_sprawl/lib_features/insights/insight_evidence.dart
+    - NAME referenced outside retired tree: docs/archive/2026-08/INSIGHT_ENGINE_ARCHITECTURE.md:97
+    - NAME referenced outside retired tree: lib/config/screenshot_sample_data.dart:14
+    - NAME referenced outside retired tree: lib/features/insights/archive_insight_mapper.dart:7
+    - NAME referenced outside retired tree: lib/features/insights/belief_evidence/belief_evidence_bundle.dart:1
+    - NAME referenced outside retired tree: lib/features/insights/belief_evidence/belief_evidence_engine.dart:5
+    - NAME referenced outside retired tree: lib/features/insights/belief_evolution/belief_evolution_engine.dart:6
+retired_sprawl/lib_features/insights/insight_quality.dart
+    - NAME referenced outside retired tree: docs/archive/2026-08/INSIGHT_ENGINE_ARCHITECTURE.md:66
+    - NAME referenced outside retired tree: docs/archive/2026-08/INSIGHT_ENGINE_ARCHITECTURE.md:98
+    - NAME referenced outside retired tree: lib/features/insights/archive_insights_engine.dart:10
+    - NAME referenced outside retired tree: lib/features/insights/belief_evidence/belief_evidence_engine.dart:6
+    - NAME referenced outside retired tree: lib/features/insights/belief_evolution/belief_evolution_engine.dart:7
+    - NAME referenced outside retired tree: lib/features/insights/blind_spots/blind_spot_engine.dart:6
+retired_sprawl/lib_features/insights/insight_text_signals.dart
+    - NAME referenced outside retired tree: docs/archive/2026-08/INSIGHT_ENGINE_ARCHITECTURE.md:99
+    - NAME referenced outside retired tree: lib/features/insights/blind_spots/blind_spot_engine.dart:7
+    - NAME referenced outside retired tree: lib/features/insights/contradictions/contradiction_engine.dart:8
+    - NAME referenced outside retired tree: lib/features/insights/predictions/prediction_engine.dart:4
+retired_sprawl/lib_features/insights/models/theory_connection_graph.dart
+    - NAME referenced outside retired tree: lib/features/insights/widgets/node_graph_viewer.dart:6
+    - NAME referenced outside retired tree: test/features/insights/node_graph_viewer_test.dart:2
+retired_sprawl/lib_features/insights/predictions/prediction_engine.dart
+    - NAME referenced outside retired tree: lib/features/insights/archive_insights_engine.dart:11
+    - NAME referenced outside retired tree: lib/features/insights/trend_analysis/trend_analysis_aggregator.dart:3
+retired_sprawl/lib_features/insights/predictions/prediction_models.dart
+    - NAME referenced outside retired tree: lib/features/insights/archive_insight_mapper.dart:8
+    - NAME referenced outside retired tree: lib/features/insights/predictions/prediction_engine.dart:5
+    - NAME referenced outside retired tree: test/features/fact_ledger/fact_ledger_citation_service_test.dart:6
+retired_sprawl/lib_features/insights/rag/local_reflection_rag_drift_queries.dart
+    - NAME referenced outside retired tree: lib/features/insights/rag/routine_rag.dart:1
+retired_sprawl/lib_features/insights/rag/local_reflection_rag_retriever.dart
+    - NAME referenced outside retired tree: lib/features/insights/rag/local_routine_rag_engine.dart:1
+    - NAME referenced outside retired tree: lib/features/insights/rag/routine_rag.dart:2
+retired_sprawl/lib_features/insights/rag/local_routine_prompt_generator.dart
+    - NAME referenced outside retired tree: lib/features/insights/rag/local_routine_rag_engine.dart:2
+    - NAME referenced outside retired tree: lib/features/insights/rag/routine_rag.dart:3
+retired_sprawl/lib_features/insights/rag/local_routine_rag_engine.dart
+    - NAME referenced outside retired tree: lib/features/insights/rag/routine_rag.dart:4
+    - NAME referenced outside retired tree: lib/services/app_services.dart:110
+    - NAME referenced outside retired tree: test/features/insights/rag/local_routine_rag_engine_test.dart:1
+retired_sprawl/lib_features/insights/rag/routine_rag_models.dart
+    - NAME referenced outside retired tree: lib/features/capture_flow/adapters/app_routine_prompt_adapter.dart:2
+    - NAME referenced outside retired tree: lib/features/capture_flow/capture_flow_controller.dart:12
+    - NAME referenced outside retired tree: lib/features/capture_flow/capture_flow_phase.dart:3
+    - NAME referenced outside retired tree: lib/features/capture_flow/capture_routine_launch_controller.dart:2
+    - NAME referenced outside retired tree: lib/features/capture_flow/interfaces/capture_flow_ports.dart:6
+    - NAME referenced outside retired tree: lib/features/capture_flow/routine/routine_kind_resolver.dart:1
+retired_sprawl/lib_features/insights/rag/routine_rag_query_builder.dart
+    - NAME referenced outside retired tree: lib/features/insights/rag/local_routine_rag_engine.dart:4
+    - NAME referenced outside retired tree: lib/features/insights/rag/routine_rag.dart:6
+retired_sprawl/lib_features/insights/theory_xray_enricher.dart
+    - NAME referenced outside retired tree: lib/features/insights/widgets/theory_xray_sheet.dart:4
+retired_sprawl/lib_features/insights/theory_xray_models.dart
+    - NAME referenced outside retired tree: lib/features/archive_theory/theory_ranking_engine.dart:12
+    - NAME referenced outside retired tree: lib/features/archive_theory/theory_ranking_models.dart:2
+    - NAME referenced outside retired tree: lib/features/archive_theory/theory_tracker_models.dart:2
+    - NAME referenced outside retired tree: lib/features/insights/models/theory_connection_graph.dart:5
+    - NAME referenced outside retired tree: lib/features/insights/theory_xray_enricher.dart:3
+    - NAME referenced outside retired tree: lib/features/insights/widgets/theory_xray_sheet.dart:5
+retired_sprawl/lib_features/insights/trend_analysis/trend_analysis_aggregator.dart
+    - NAME referenced outside retired tree: lib/features/insights/trend_analysis/trend_analysis.dart:1
+    - NAME referenced outside retired tree: lib/features/insights/trend_analysis/trend_analysis_service.dart:3
+    - NAME referenced outside retired tree: test/features/insights/trend_analysis/trend_analysis_aggregator_test.dart:1
+    - NAME referenced outside retired tree: test/features/insights/trend_analysis/trend_analysis_service_test.dart:5
+    - NAME referenced outside retired tree: test/features/reflections/heuristic_mood_intensity_not_fabricated_test.dart:2
+retired_sprawl/lib_features/insights/trend_analysis/trend_analysis_drift_queries.dart
+    - NAME referenced outside retired tree: lib/features/insights/trend_analysis/trend_analysis.dart:2
+    - NAME referenced outside retired tree: lib/features/insights/trend_analysis/trend_analysis_service.dart:4
+retired_sprawl/lib_features/insights/trend_analysis/trend_analysis_models.dart
+    - NAME referenced outside retired tree: lib/features/insights/trend_analysis/trend_analysis.dart:3
+    - NAME referenced outside retired tree: lib/features/insights/trend_analysis/trend_analysis_aggregator.dart:4
+    - NAME referenced outside retired tree: lib/features/insights/trend_analysis/trend_analysis_drift_queries.dart:4
+    - NAME referenced outside retired tree: lib/features/insights/trend_analysis/trend_analysis_onnx_synthesizer.dart:2
+    - NAME referenced outside retired tree: lib/features/insights/trend_analysis/trend_analysis_report_store.dart:3
+    - NAME referenced outside retired tree: lib/features/insights/trend_analysis/trend_analysis_service.dart:5
+retired_sprawl/lib_features/insights/trend_analysis/trend_analysis_onnx_synthesizer.dart
+    - NAME referenced outside retired tree: lib/features/insights/trend_analysis/trend_analysis.dart:4
+    - NAME referenced outside retired tree: lib/features/insights/trend_analysis/trend_analysis_service.dart:6
+    - NAME referenced outside retired tree: test/features/insights/trend_analysis/trend_analysis_service_test.dart:7
+    - NAME referenced outside retired tree: test/features/reflections/heuristic_mood_intensity_not_fabricated_test.dart:4
+retired_sprawl/lib_features/insights/trend_analysis/trend_analysis_report_store.dart
+    - NAME referenced outside retired tree: lib/features/insights/trend_analysis/trend_analysis.dart:5
+    - NAME referenced outside retired tree: lib/features/insights/trend_analysis/trend_analysis_service.dart:7
+    - NAME referenced outside retired tree: lib/services/app_services.dart:111
+    - NAME referenced outside retired tree: test/features/insights/trend_analysis/trend_analysis_service_test.dart:8
+retired_sprawl/lib_features/insights/trend_analysis/trend_analysis_service.dart
+    - NAME referenced outside retired tree: lib/features/insights/trend_analysis/trend_analysis.dart:6
+    - NAME referenced outside retired tree: lib/services/app_services.dart:112
+    - NAME referenced outside retired tree: lib/startup/v1_startup_coordinator.dart:14
+    - NAME referenced outside retired tree: test/features/insights/trend_analysis/trend_analysis_service_test.dart:9
+retired_sprawl/lib_features/insights/widgets/node_graph_viewer.dart
+    - NAME referenced outside retired tree: lib/features/archive_theory/views/theories_screen.dart:16
+    - NAME referenced outside retired tree: test/features/insights/node_graph_viewer_test.dart:4
+retired_sprawl/lib_features/insights/widgets/theory_xray_sheet.dart
+    - NAME referenced outside retired tree: lib/features/archive_theory/views/theories_screen.dart:17
+retired_sprawl/lib_features/insights/widgets/xray_panel.dart
+    - NAME referenced outside retired tree: lib/features/insights/widgets/theory_xray_sheet.dart:6
+    - NAME referenced outside retired tree: test/features/insights/xray_panel_test.dart:2
+retired_sprawl/lib_features/journal/data/journal_cursor_data_source.dart
+    - NAME referenced outside retired tree: lib/features/journal/providers/journal_dependency_providers.dart:4
+    - NAME referenced outside retired tree: lib/features/journal/providers/journal_timeline_pagination_notifier.dart:1
+    - NAME referenced outside retired tree: lib/features/journal/providers/task_timeline_pagination_notifier.dart:1
+retired_sprawl/lib_features/journal/providers/journal_dependency_providers.dart
+    - NAME referenced outside retired tree: lib/features/journal/providers/journal_providers.dart:9
+    - NAME referenced outside retired tree: lib/features/journal/providers/journal_timeline_pagination_notifier.dart:2
+    - NAME referenced outside retired tree: lib/features/journal/providers/task_timeline_pagination_notifier.dart:3
+retired_sprawl/lib_features/journal/providers/journal_entity_parse_pool.dart
+    - NAME referenced outside retired tree: lib/features/journal/providers/journal_dependency_providers.dart:5
+    - NAME referenced outside retired tree: lib/features/journal/providers/journal_timeline_pagination_notifier.dart:3
+    - NAME referenced outside retired tree: lib/features/journal/providers/task_timeline_pagination_notifier.dart:4
+retired_sprawl/lib_features/journal/providers/journal_entry_map_notifier.dart
+    - NAME referenced outside retired tree: lib/features/journal/providers/journal_providers.dart:11
+    - NAME referenced outside retired tree: lib/features/journal/providers/journal_providers.dart:2
+    - NAME referenced outside retired tree: lib/features/journal/providers/journal_timeline_pagination_notifier.dart:5
+retired_sprawl/lib_features/journal/providers/journal_timeline_pagination_notifier.dart
+    - NAME referenced outside retired tree: lib/features/journal/providers/journal_providers.dart:12
+    - NAME referenced outside retired tree: lib/features/journal/providers/journal_providers.dart:3
+retired_sprawl/lib_features/journal/providers/task_node_map_notifier.dart
+    - NAME referenced outside retired tree: lib/features/journal/providers/journal_providers.dart:13
+    - NAME referenced outside retired tree: lib/features/journal/providers/journal_providers.dart:4
+    - NAME referenced outside retired tree: lib/features/journal/providers/task_timeline_pagination_notifier.dart:6
+retired_sprawl/lib_features/journal/providers/task_timeline_pagination_notifier.dart
+    - NAME referenced outside retired tree: lib/features/journal/providers/journal_providers.dart:14
+    - NAME referenced outside retired tree: lib/features/journal/providers/journal_providers.dart:5
+retired_sprawl/lib_features/journal_entry/journal_entry_backlink_copy.dart
+    - NAME referenced outside retired tree: lib/features/journal_entry/journal_entry_derived_insights_section.dart:1
+    - NAME referenced outside retired tree: lib/features/journal_entry/journal_entry_highlighted_transcript.dart:1
+    - NAME referenced outside retired tree: tool/copy_render_path_baseline.txt:1702
+    - NAME referenced outside retired tree: tool/copy_render_path_baseline.txt:1703
+    - NAME referenced outside retired tree: tool/copy_render_path_baseline.txt:1704
+retired_sprawl/lib_features/live_audio/application/live_conversation_context_builder.dart
+    - SKIP: excluded path (retired_sprawl/lib_features/live_audio/)
+retired_sprawl/lib_features/live_audio/domain/services/live_pcm_wav.dart
+    - SKIP: excluded path (retired_sprawl/lib_features/live_audio/)
+retired_sprawl/lib_features/llm/llm.dart
+    - NAME referenced outside retired tree: test/services/local_llm/local_llm_config_test.dart:1
+    - NAME referenced outside retired tree: test/services/local_llm/local_llm_service_test.dart:1
+retired_sprawl/lib_features/loop_packs_future/loop_packs_future_gate.dart
+    - NAME referenced outside retired tree: docs/archive/2026-08/loop_packs_future.md:72
+retired_sprawl/lib_features/onboarding/archive_journey_copy.dart
+    - NAME referenced outside retired tree: lib/features/archive_proof/proof_surface_advice_guard.dart:24
+    - NAME referenced outside retired tree: lib/features/beta/release_candidate_smoke_engine.dart:13
+    - NAME referenced outside retired tree: lib/features/core_archive_journey/core_archive_journey.dart:1
+    - NAME referenced outside retired tree: lib/features/onboarding/archive_journey_model.dart:1
+    - NAME referenced outside retired tree: lib/screens/about_screen.dart:3
+    - NAME referenced outside retired tree: lib/widgets/onboarding/archive_journey_explainer_card.dart:2
+retired_sprawl/lib_features/onboarding/archive_journey_model.dart
+    - NAME referenced outside retired tree: lib/screens/about_screen.dart:4
+    - NAME referenced outside retired tree: lib/widgets/onboarding/archive_journey_explainer_card.dart:3
+    - NAME referenced outside retired tree: lib/widgets/patterns/patterns_empty_view.dart:3
+    - NAME referenced outside retired tree: test/archive_journey_explainer_test.dart:12
+retired_sprawl/lib_features/onboarding/backlog_import_copy.dart
+    - NAME referenced outside retired tree: lib/screens/onboarding/backlog_import_screen.dart:5
+    - NAME referenced outside retired tree: tool/copy_render_path_baseline.txt:1811
+    - NAME referenced outside retired tree: tool/copy_render_path_baseline.txt:1812
+    - NAME referenced outside retired tree: tool/copy_render_path_baseline.txt:1813
+    - NAME referenced outside retired tree: tool/copy_render_path_baseline.txt:1814
+    - NAME referenced outside retired tree: tool/copy_render_path_baseline.txt:1815
+retired_sprawl/lib_features/onboarding/backlog_import_notifier.dart
+    - NAME referenced outside retired tree: lib/screens/onboarding/backlog_import_screen.dart:6
+retired_sprawl/lib_features/onboarding/brain_dump_copy.dart
+    - NAME referenced outside retired tree: tool/copy_render_path_baseline.txt:1819
+    - NAME referenced outside retired tree: tool/copy_render_path_baseline.txt:1820
+    - NAME referenced outside retired tree: tool/copy_render_path_baseline.txt:1821
+    - NAME referenced outside retired tree: tool/copy_render_path_baseline.txt:1822
+    - NAME referenced outside retired tree: tool/copy_render_path_baseline.txt:1823
+    - NAME referenced outside retired tree: tool/copy_render_path_baseline.txt:1824
+retired_sprawl/lib_features/onboarding/brain_dump_upload_service.dart
+    - NAME referenced outside retired tree: lib/features/onboarding/ui/on_device_hero_copy.dart:44
+retired_sprawl/lib_features/onboarding/chatgpt_vs_evidence_builder.dart
+    - NAME referenced outside retired tree: lib/features/onboarding/views/archive_onboarding_screen.dart:4
+    - NAME referenced outside retired tree: lib/features/onboarding/widgets/chatgpt_vs_evidence_card.dart:1
+    - NAME referenced outside retired tree: test/features/onboarding/chatgpt_vs_evidence_card_test.dart:1
+retired_sprawl/lib_features/onboarding/evidence_method_onboarding_copy.dart
+    - NAME referenced outside retired tree: lib/features/onboarding/evidence_method_onboarding_copy.dart:1
+    - NAME referenced outside retired tree: lib/features/onboarding/ui/evidence_method_onboarding_screen.dart:1
+    - NAME referenced outside retired tree: test/features/onboarding/evidence_method_onboarding_test.dart:1
+    - NAME referenced outside retired tree: test/onboarding_simplified_test.dart:1
+retired_sprawl/lib_features/onboarding/evidence_method_onboarding_screen.dart
+    - NAME referenced outside retired tree: lib/features/onboarding/evidence_method_onboarding_screen.dart:1
+    - NAME referenced outside retired tree: lib/screens/onboarding_screen.dart:6
+    - NAME referenced outside retired tree: test/features/onboarding/evidence_method_onboarding_test.dart:2
+retired_sprawl/lib_features/onboarding/experiment_h_copy.dart
+    - NAME referenced outside retired tree: lib/features/onboarding/chatgpt_vs_evidence_builder.dart:3
+    - NAME referenced outside retired tree: lib/features/onboarding/views/archive_onboarding_screen.dart:5
+    - NAME referenced outside retired tree: lib/features/onboarding/widgets/chatgpt_vs_evidence_card.dart:2
+    - NAME referenced outside retired tree: tool/copy_render_path_baseline.txt:1830
+    - NAME referenced outside retired tree: tool/copy_render_path_baseline.txt:1831
+    - NAME referenced outside retired tree: tool/copy_render_path_baseline.txt:1832
+retired_sprawl/lib_features/onboarding/experiment_h_events.dart
+    - NAME referenced outside retired tree: lib/features/activation/events/v1_event_registry.dart:6
+    - NAME referenced outside retired tree: lib/features/onboarding/experiment_h_telemetry.dart:3
+retired_sprawl/lib_features/onboarding/experiment_h_feature_flags.dart
+    - NAME referenced outside retired tree: lib/features/onboarding/experiment_h_onboarding_coordinator.dart:1
+    - NAME referenced outside retired tree: lib/features/onboarding/experiment_h_telemetry.dart:4
+    - NAME referenced outside retired tree: lib/features/onboarding/views/archive_onboarding_screen.dart:6
+    - NAME referenced outside retired tree: test/features/onboarding/chatgpt_vs_evidence_card_test.dart:2
+retired_sprawl/lib_features/onboarding/experiment_h_onboarding_coordinator.dart
+    - NAME referenced outside retired tree: lib/screens/onboarding/backlog_import_screen.dart:7
+retired_sprawl/lib_features/onboarding/experiment_h_telemetry.dart
+    - NAME referenced outside retired tree: lib/features/onboarding/views/archive_onboarding_screen.dart:7
+    - NAME referenced outside retired tree: lib/features/onboarding/widgets/chatgpt_vs_evidence_card.dart:3
+retired_sprawl/lib_features/onboarding/first_60_second_state.dart
+    - NAME referenced outside retired tree: lib/features/onboarding/first_60_second_store.dart:3
+    - NAME referenced outside retired tree: lib/features/onboarding/record_return_pro_store.dart:2
+    - NAME referenced outside retired tree: lib/widgets/onboarding/first_60_second_intro_card.dart:2
+    - NAME referenced outside retired tree: lib/widgets/onboarding/first_archive_helper_card.dart:2
+    - NAME referenced outside retired tree: lib/widgets/onboarding/first_recording_value_card.dart:2
+    - NAME referenced outside retired tree: lib/widgets/onboarding/pro_continuity_bridge_card.dart:2
+retired_sprawl/lib_features/onboarding/first_60_second_store.dart
+    - NAME referenced outside retired tree: lib/features/onboarding/record_return_pro_store.dart:3
+    - NAME referenced outside retired tree: test/first_60_seconds_test.dart:7
+retired_sprawl/lib_features/onboarding/first_proof_journey_copy.dart
+    - NAME referenced outside retired tree: lib/features/v1_interface/v1_scope_guard_copy.dart:26
+    - NAME referenced outside retired tree: lib/widgets/onboarding/first_proof_journey_strip_card.dart:2
+    - NAME referenced outside retired tree: test/archive_journey_explainer_test.dart:13
+    - NAME referenced outside retired tree: test/v1_expansion_guardrails_test.dart:3
+    - NAME referenced outside retired tree: test/v1_sharper_interface_test.dart:4
+retired_sprawl/lib_features/onboarding/first_save_loop_state.dart
+    - NAME referenced outside retired tree: lib/features/onboarding/record_return_pro_store.dart:4
+    - NAME referenced outside retired tree: test/first_save_commercial_loop_test.dart:4
+    - NAME referenced outside retired tree: test/paywall_timing_test.dart:7
+    - NAME referenced outside retired tree: test/repeat_recording_day2_loop_test.dart:4
+retired_sprawl/lib_features/onboarding/first_save_loop_store.dart
+    - NAME referenced outside retired tree: lib/features/onboarding/record_return_pro_store.dart:5
+    - NAME referenced outside retired tree: test/first_save_commercial_loop_test.dart:5
+    - NAME referenced outside retired tree: test/storage/mobile_prefs_policy_test.dart:13
+retired_sprawl/lib_features/onboarding/first_session_onboarding_copy.dart
+    - NAME referenced outside retired tree: lib/features/product_language_consistency/product_language_consistency_guard.dart:3
+    - NAME referenced outside retired tree: lib/features/v1_interface/v1_scope_guard_copy.dart:25
+    - NAME referenced outside retired tree: lib/record/record_how_it_works_copy.dart:1
+    - NAME referenced outside retired tree: lib/widgets/record/first_session_onboarding_card.dart:2
+    - NAME referenced outside retired tree: test/first_session_onboarding_test.dart:3
+retired_sprawl/lib_features/onboarding/first_user_experience_copy.dart
+    - NAME referenced outside retired tree: lib/security/privacy_copy_policy.dart:161
+    - NAME referenced outside retired tree: test/first_user_experience_test.dart:32
+    - NAME referenced outside retired tree: test/first_user_experience_test.dart:6
+    - NAME referenced outside retired tree: test/production_consumer_wording_test.dart:30
+    - NAME referenced outside retired tree: tool/copy_render_path_baseline.txt:1860
+    - NAME referenced outside retired tree: tool/copy_render_path_baseline.txt:1861
+retired_sprawl/lib_features/onboarding/first_user_experience_gates.dart
+    - NAME referenced outside retired tree: test/first_user_experience_test.dart:7
+retired_sprawl/lib_features/onboarding/remote_processing_consent_copy.dart
+    - NAME referenced outside retired tree: lib/features/onboarding/remote_processing_consent_copy.dart:1
+    - NAME referenced outside retired tree: lib/features/onboarding/ui/on_device_hero_copy.dart:2
+    - NAME referenced outside retired tree: lib/features/onboarding/ui/remote_processing_consent_step.dart:1
+    - NAME referenced outside retired tree: lib/security/privacy_copy_policy.dart:162
+    - NAME referenced outside retired tree: test/features/onboarding/ui/on_device_hero_copy_test.dart:4
+    - NAME referenced outside retired tree: test/features/onboarding/ui/on_device_hero_flow_test.dart:2
+retired_sprawl/lib_features/onboarding/remote_processing_consent_step.dart
+    - NAME referenced outside retired tree: lib/features/onboarding/remote_processing_consent_step.dart:1
+    - NAME referenced outside retired tree: lib/screens/onboarding_screen.dart:9
+    - NAME referenced outside retired tree: test/privacy/no_remote_call_on_default_state_test.dart:11
+    - NAME referenced outside retired tree: test/privacy/onboarding_consent_clears_on_device_only_test.dart:5
+    - NAME referenced outside retired tree: test/privacy_copy_policy_test.dart:420
+    - NAME referenced outside retired tree: test/privacy_copy_policy_test.dart:504
+retired_sprawl/lib_features/onboarding/widgets/chatgpt_vs_evidence_card.dart
+    - NAME referenced outside retired tree: lib/features/onboarding/views/archive_onboarding_screen.dart:8
+    - NAME referenced outside retired tree: test/features/onboarding/chatgpt_vs_evidence_card_test.dart:3
+retired_sprawl/lib_features/payment_proof_not_interest/payment_proof_not_interest_gate.dart
+    - NAME referenced outside retired tree: docs/archive/2026-08/payment_proof_not_interest_gate.md:63
+retired_sprawl/lib_features/post_proof_pro_cta/post_proof_pro_cta_hardening.dart
+    - NAME referenced outside retired tree: docs/archive/2026-08/post_proof_pro_cta.md:64
+retired_sprawl/lib_features/premium_tiers_future/premium_tiers_future_gate.dart
+    - NAME referenced outside retired tree: docs/archive/2026-08/premium_tiers_future.md:58
+retired_sprawl/lib_features/price_objection_feedback/price_objection_feedback_gate.dart
+    - NAME referenced outside retired tree: docs/archive/2026-08/price_objection_feedback.md:66
+retired_sprawl/lib_features/private_reports_future/private_reports_future_gate.dart
+    - NAME referenced outside retired tree: docs/archive/2026-08/private_reports_future.md:54
+retired_sprawl/lib_features/referral_after_proof/referral_after_proof_gate.dart
+    - NAME referenced outside retired tree: docs/archive/2026-08/referral_after_proof.md:60
+retired_sprawl/lib_features/relationships/application/user_relationship_providers.dart
+    - NAME referenced outside retired tree: lib/features/relationships/views/consent_management_screen.dart:5
+    - NAME referenced outside retired tree: lib/features/relationships/views/professional_dashboard_screen.dart:5
+retired_sprawl/lib_features/relationships/relationship_copy.dart
+    - NAME referenced outside retired tree: lib/features/relationships/views/consent_management_screen.dart:6
+    - NAME referenced outside retired tree: lib/features/relationships/views/professional_client_read_only_view.dart:7
+    - NAME referenced outside retired tree: lib/features/relationships/views/professional_dashboard_screen.dart:6
+    - NAME referenced outside retired tree: tool/copy_render_path_baseline.txt:2519
+    - NAME referenced outside retired tree: tool/copy_render_path_baseline.txt:2520
+    - NAME referenced outside retired tree: tool/copy_render_path_baseline.txt:2521
+retired_sprawl/lib_features/relationships/views/professional_client_read_only_view.dart
+    - NAME referenced outside retired tree: lib/features/relationships/views/professional_dashboard_screen.dart:8
+retired_sprawl/lib_features/release_fragility/release_fragility_audit.dart
+    - NAME referenced outside retired tree: docs/archive/2026-08/RELEASE_FRAGILITY_AUDIT.md:65
+    - NAME referenced outside retired tree: lib/features/future_expansion_roadmap/future_expansion_roadmap_gate.dart:4
+retired_sprawl/lib_features/return_tomorrow_ritual/return_tomorrow_ritual_gate.dart
+    - NAME referenced outside retired tree: docs/archive/2026-08/return_tomorrow_ritual.md:63
+retired_sprawl/lib_features/safe_exports_future/safe_exports_future_gate.dart
+    - NAME referenced outside retired tree: docs/archive/2026-08/safe_exports_future.md:60
+retired_sprawl/lib_features/safe_sharing_future/safe_sharing_future_gate.dart
+    - NAME referenced outside retired tree: docs/archive/2026-08/safe_sharing_future.md:56
+retired_sprawl/lib_features/secrets_rotation_gate/secrets_production_block_hardening.dart
+    - NAME referenced outside retired tree: docs/archive/2026-08/SECRETS_PRODUCTION_BLOCK_HARDENING.md:56
+retired_sprawl/lib_features/single_launch_checklist/single_launch_checklist.dart
+    - NAME referenced outside retired tree: docs/archive/2026-08/single_launch_checklist.md:63
+    - NAME referenced outside retired tree: lib/features/android_after_ios_proof/android_after_ios_proof_gate.dart:5
+    - NAME referenced outside retired tree: lib/features/annual_plan_future/annual_plan_future_gate.dart:3
+    - NAME referenced outside retired tree: lib/features/archive_memory_after_v1/archive_memory_after_v1_gate.dart:4
+    - NAME referenced outside retired tree: lib/features/b2b_workplace_pressure_future/b2b_workplace_pressure_future_gate.dart:4
+    - NAME referenced outside retired tree: lib/features/contradiction_change_future/contradiction_change_future_gate.dart:3
+retired_sprawl/lib_features/three_day_proof_challenge/three_day_proof_challenge_gate.dart
+    - NAME referenced outside retired tree: docs/archive/2026-08/three_day_proof_challenge.md:60
+retired_sprawl/lib_features/voice_capture/transcription/provisional_transcript_reconcile_gateway.dart
+    - SKIP: excluded path (retired_sprawl/lib_features/voice_capture/transcription/)
+retired_sprawl/lib_features/widget_release_risk/widget_release_risk_gate.dart
+    - NAME referenced outside retired tree: docs/archive/2026-08/widget_release_risk_gate.md:37
+    - NAME referenced outside retired tree: lib/features/release_fragility/release_fragility_audit.dart:8

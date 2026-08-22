@@ -30,4 +30,28 @@ abstract final class LiveVoiceSessionCopy {
   static const helperListening =
       'Speak naturally. Tap Stop & save when you are done.';
   static const helperSpeaking = 'Listening to the reply…';
+
+  /// Says what live voice actually does, on the screen that does it.
+  ///
+  /// Live voice cannot work on-device: the audio goes to the backend proxy
+  /// frame by frame while you are still speaking, which is how the reply
+  /// arrives mid-sentence. `LiveAudioSessionCoordinator` will not open a
+  /// session without consent for remote transcription, and this is the other
+  /// half of that — a customer who granted the purpose should still be told,
+  /// on the surface itself, what granting it means here.
+  ///
+  /// Deliberately narrow: it describes this session, and claims nothing about
+  /// the rest of the app.
+  static const remoteStreamingDisclosure =
+      'Audio streams in real time. Your voice is sent to our server while you '
+      'speak, and the transcript comes back the same way.';
+
+  /// Shown when the gate refuses: consent for remote transcription is missing,
+  /// or "Never send to server" is on.
+  static const remoteProcessingRequiredTitle = 'Live voice needs remote '
+      'processing';
+  static const remoteProcessingRequiredBody =
+      'This session works by sending audio to our server as you speak, so it '
+      'needs remote transcription turned on. You can change that in Privacy '
+      'settings. Recording on its own still works without it.';
 }

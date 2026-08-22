@@ -28,7 +28,6 @@ import 'package:archiveme_mobile/data/network/retrofit_auth_api_client.dart';
 import 'package:archiveme_mobile/data/network/retrofit_billing_api_client.dart';
 import 'package:archiveme_mobile/data/network/sync_api_client.dart';
 import 'package:archiveme_mobile/data/network/user_relationship_api_client.dart';
-import 'package:archiveme_mobile/features/evidence_method/evidence_insight_client.dart';
 import 'package:archiveme_mobile/services/api_service.dart';
 import 'package:dio/dio.dart';
 
@@ -48,7 +47,6 @@ class VoiceMemoryApiClientBundle {
     required this.caregiverConsent,
     required this.userRelationships,
     required this.insights,
-    required this.evidenceInsights,
     Dio? retrofitDio,
     this.sessionCookieCapture,
   }) : _retrofitDio = retrofitDio;
@@ -66,7 +64,6 @@ class VoiceMemoryApiClientBundle {
   final CaregiverConsentApiClient caregiverConsent;
   final UserRelationshipApiClient userRelationships;
   final ApiService insights;
-  final EvidenceInsightClient evidenceInsights;
   final SessionCookieCapture? sessionCookieCapture;
 
   final Dio? _retrofitDio;
@@ -100,7 +97,6 @@ class VoiceMemoryApiClientBundle {
         caregiverConsent: HttpCaregiverConsentApiClient(transport),
         userRelationships: HttpUserRelationshipApiClient(transport),
         insights: ApiService(transport),
-        evidenceInsights: EvidenceInsightClient(transport),
         retrofitDio: dio,
         sessionCookieCapture: capture,
       );
@@ -120,7 +116,6 @@ class VoiceMemoryApiClientBundle {
       caregiverConsent: HttpCaregiverConsentApiClient(transport),
       userRelationships: HttpUserRelationshipApiClient(transport),
       insights: ApiService(transport),
-      evidenceInsights: EvidenceInsightClient(transport),
     );
   }
 

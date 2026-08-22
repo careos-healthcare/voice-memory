@@ -22,29 +22,40 @@ class CaregiverReadService {
     if (!allowed) return null;
 
     final entries = await _journalStore.loadEligible();
+
+    // No snapshot field derives from the proof trail, so this call records the
+    // read decision without having anything to withhold on a denial. Bind the
+    // result before returning proof-trail data here.
     await _modeController.ensureReadAllowed(
       streamId: CaregiverPermissions.proofTrailStream,
       auditAction: CaregiverAuditAction.evidenceStreamRead,
       resourceId: 'proof_trail',
     );
 
-    final timeline = _buildTimelineSummaries(entries);
-    if (timeline.isNotEmpty) {
-      await _modeController.ensureReadAllowed(
-        streamId: CaregiverPermissions.timelineStream,
-        auditAction: CaregiverAuditAction.reviewSummaryRead,
-        resourceId: 'timeline_summary',
-      );
-    }
+    // The summaries section is derived from the timeline stream and rendered as
+    // a review summary, so it is two separate consent choices. Declining either
+    // withholds it.
+    final timelineAllowed = await _modeController.ensureReadAllowed(
+      streamId: CaregiverPermissions.timelineStream,
+      auditAction: CaregiverAuditAction.evidenceStreamRead,
+      resourceId: 'timeline',
+    );
+    final summariesAllowed = await _modeController.ensureReadAllowed(
+      streamId: CaregiverPermissions.reviewSummariesStream,
+      auditAction: CaregiverAuditAction.reviewSummaryRead,
+      resourceId: 'timeline_summary',
+    );
+    final timeline = timelineAllowed && summariesAllowed
+        ? _buildTimelineSummaries(entries)
+        : const <String>[];
 
-    final alerts = _buildThresholdAlerts(entries);
-    if (alerts.isNotEmpty) {
-      await _modeController.ensureReadAllowed(
-        streamId: CaregiverPermissions.insightAlertsStream,
-        auditAction: CaregiverAuditAction.thresholdAlertRead,
-        resourceId: 'insight_alerts',
-      );
-    }
+    final alertsAllowed = await _modeController.ensureReadAllowed(
+      streamId: CaregiverPermissions.insightAlertsStream,
+      auditAction: CaregiverAuditAction.thresholdAlertRead,
+      resourceId: 'insight_alerts',
+    );
+    final alerts =
+        alertsAllowed ? _buildThresholdAlerts(entries) : const <String>[];
 
     return CaregiverDashboardSnapshot(
       evidenceCount: entries.length,

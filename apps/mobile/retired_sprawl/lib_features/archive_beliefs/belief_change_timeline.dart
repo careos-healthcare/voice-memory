@@ -40,7 +40,7 @@ List<BeliefChangeTimelineItem> buildBeliefChangeTimeline({
       items.add(
         BeliefChangeTimelineItem(
           kind: BeliefChangeKind.strengthening,
-          statement: _title(c.title),
+          statement: _sentenceCase(c.title),
           detail: c.detail,
           sortOrder: order++,
         ),
@@ -50,7 +50,7 @@ List<BeliefChangeTimelineItem> buildBeliefChangeTimeline({
       items.add(
         BeliefChangeTimelineItem(
           kind: BeliefChangeKind.weakening,
-          statement: _title(c.title),
+          statement: _sentenceCase(c.title),
           detail: c.detail,
           sortOrder: order++,
         ),
@@ -60,7 +60,7 @@ List<BeliefChangeTimelineItem> buildBeliefChangeTimeline({
       items.add(
         BeliefChangeTimelineItem(
           kind: BeliefChangeKind.newBelief,
-          statement: _title(c.title),
+          statement: _sentenceCase(c.title),
           detail: c.detail,
           sortOrder: order++,
         ),
@@ -96,10 +96,12 @@ List<BeliefChangeTimelineItem> buildBeliefChangeTimeline({
   return items;
 }
 
-String _title(String raw) {
-  if (raw.isEmpty) return raw;
-  return raw
-      .split(' ')
-      .map((w) => w.isEmpty ? w : '${w[0].toUpperCase()}${w.substring(1)}')
-      .join(' ');
+/// Sentence case, not title case. Themes arrive lowercased from
+/// `DiscoverLocalEngine.themeCounts`, so the first letter is raised for
+/// readability — but Title Case Like This reads as a headline or a quotation,
+/// and these are themes ArchiveMe derived rather than anything the user said.
+String _sentenceCase(String raw) {
+  final t = raw.trim();
+  if (t.isEmpty) return t;
+  return '${t[0].toUpperCase()}${t.substring(1)}';
 }

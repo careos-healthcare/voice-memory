@@ -1,4 +1,23 @@
+import 'package:archiveme_mobile/features/settings/ui/trust_badge_copy.dart';
+import 'package:archiveme_mobile/security/privacy_claim_catalogue.dart';
+
 /// V1 onboarding copy — product contract and trust pillars.
+///
+/// Pillars 2 and 3 are the first-run form of the statement in
+/// `lib/features/settings/ui/on_device_architecture_copy.dart`: processing is
+/// on-device *by default* rather than exclusively, because
+/// `RemoteProcessingConsentStore` gates real uploads; and storage protection
+/// is read off the live status rather than asserted, because
+/// `SecureSqliteLockService.encryptionEnabled` is a runtime property of the
+/// build. Both bodies are composed from [PrivacyClaimCatalogue] so they stay
+/// worded in one place.
+///
+/// Their titles are taken from [TrustBadgeCopy] rather than retyped. The two
+/// used to be byte-identical by coincidence, which is how the welcome screen
+/// ended up rendering the same heading twice — once via `TrustBadge` and once
+/// via `OnboardingTrustPillarsSection` — and why `findsOneWidget` reported two
+/// matches. Aliasing makes the shared wording deliberate: a screen may render
+/// one of these or the other, never both.
 abstract final class OnboardingV1Copy {
   OnboardingV1Copy._();
 
@@ -18,15 +37,16 @@ abstract final class OnboardingV1Copy {
       'Patterns and changes link back to the entries you saved. You can '
       'inspect source proof before you rely on any read.';
 
-  static const pillar2Title = 'AI processing happens locally on this device';
+  static const String pillar2Title = TrustBadgeCopy.onDeviceProcessing;
   static const pillar2Body =
-      'Language models run here first. Remote processing is optional, '
-      'consent-gated, and off until you choose it.';
+      '${PrivacyClaimCatalogue.remoteProcessingIsAChoice} '
+      '${PrivacyClaimCatalogue.remoteProcessingScopedToJob} '
+      '${PrivacyClaimCatalogue.remoteProcessingOffSwitch}';
 
-  static const pillar3Title = 'Data is secured via local SQLite encryption';
+  static const String pillar3Title = TrustBadgeCopy.storage;
   static const pillar3Body =
-      'Your journal file is encrypted on this device. The database key stays '
-      'in secure device storage.';
+      '${PrivacyClaimCatalogue.momentsStayLocal} '
+      '${PrivacyClaimCatalogue.storageProtectionReportedLive}';
 
   static const pillar4Title = 'You control all access';
   static const pillar4Body =

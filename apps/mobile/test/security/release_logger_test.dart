@@ -110,6 +110,20 @@ void main() {
       expect(line, isNot(contains(_fixtureTranscript)));
     });
 
+    test('background processing failure uses coarse error code only', () {
+      RecordPipelineLog.backgroundProcessingFailed(
+        operation: 'related_sources',
+        error: StateError('journal load failed for $_fixtureEntryId'),
+      );
+
+      final line = ReleaseLogger.testLines.single;
+      expect(line, contains('event=capture_background_processing_failed'));
+      expect(line, contains('operation=related_sources'));
+      expect(line, contains('error_code=invalid_state'));
+      expect(line, isNot(contains(_fixtureEntryId)));
+      expect(line, isNot(contains('journal load failed')));
+    });
+
     test('prohibited fixture values absent from release output batch', () {
       RecordPipelineLog.transcriptionFallback(
         reason: 'native timeout',

@@ -6,6 +6,21 @@ import 'package:archiveme_mobile/widgets/record/start_here_loader.dart';
 import 'package:flutter/material.dart';
 
 /// Canonical copy for Search tab when there are no recordings.
+///
+/// Every promise here is scoped to what search actually runs: FTS5 BM25 over
+/// the transcript, tokenised `porter unicode61`. That stems inflections, so a
+/// query for "confidence" also finds "confident", but it matches words rather
+/// than meanings — it cannot reach a paraphrase that shares no word with the
+/// query.
+///
+/// Two earlier bullets, "beliefs you've repeated" and "patterns that appear
+/// over time", are deliberately absent. Both need semantic similarity, and
+/// `SemanticVectorFusion.enabled` is off: with no encoder asset in the tree
+/// every embedding resolves to `LocalReflectionEmbeddingInference`, a random
+/// projection over word-position hashes that supports exact-duplicate matching
+/// and nothing else. `HybridSearchEngine.search` therefore returns BM25 order
+/// untouched for any query carrying both legs. Recurrence and pattern
+/// surfacing are not switched on to be promised.
 abstract class SearchEmptyCopy {
   SearchEmptyCopy._();
 
@@ -13,14 +28,21 @@ abstract class SearchEmptyCopy {
   static const String body =
       'As you record thoughts, your archive becomes searchable.';
   static const String searchableForHeader = "You'll be able to search for:";
+
+  /// Four claims BM25 over the transcript genuinely delivers: the wording
+  /// itself, a topic under the name the customer gave it, a named person or
+  /// place, and complete recall of a term across the archive.
   static const List<String> searchableBullets = [
-    "beliefs you've repeated",
+    'the words and phrases you actually said',
     "topics you've talked about",
     'people, places, and events',
-    'patterns that appear over time',
+    'every recording where a word came up',
   ];
+
+  /// Framed as the customer's own words rather than as themes, because a term
+  /// only matches where they said it. The pay-off is recall, not analysis.
   static const String futureSearchHeader =
-      'Months from now you might search for:';
+      'Months from now, search the words you used:';
   static const List<String> exampleSearchTerms = [
     'confidence',
     'burnout',
@@ -28,7 +50,7 @@ abstract class SearchEmptyCopy {
     "I'm not ready",
   ];
   static const String exampleSupporting =
-      'and see how those ideas changed across your recordings.';
+      'and find every recording where you said them.';
   static const String closing =
       'Record your first thought to begin building a searchable archive.';
 }

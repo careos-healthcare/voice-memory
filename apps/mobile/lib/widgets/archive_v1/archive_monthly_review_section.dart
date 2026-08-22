@@ -38,7 +38,13 @@ class _ArchiveMonthlyReviewSectionState
   void initState() {
     super.initState();
     if (AppConfig.enableGpt5ArchiveSynthesis) {
-      unawaited(_load());
+      // `BillingService.loadEntitlements` delegates to `BillingNotifier`, which
+      // writes `state` before its first await, so calling it straight from
+      // `initState` mutates a provider mid-build. Run it once the frame is done.
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        unawaited(_load());
+      });
     } else {
       _loading = false;
     }
@@ -48,7 +54,12 @@ class _ArchiveMonthlyReviewSectionState
   void didUpdateWidget(covariant ArchiveMonthlyReviewSection oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.view != widget.view) {
-      unawaited(_load());
+      // `didUpdateWidget` also runs inside the build phase, so the reload has
+      // to be deferred for the same reason as the one in `initState`.
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        unawaited(_load());
+      });
     }
   }
 

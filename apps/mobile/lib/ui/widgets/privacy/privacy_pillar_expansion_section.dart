@@ -14,6 +14,7 @@ class PrivacyPillarExpansionSection extends StatelessWidget {
     required this.explanationBody,
     required this.children,
     super.key,
+    this.initiallyExpanded = false,
   });
 
   final String cardId;
@@ -22,10 +23,15 @@ class PrivacyPillarExpansionSection extends StatelessWidget {
   final String explanationBody;
   final List<Widget> children;
 
+  /// Opens the section on first build for pillars whose content is the reason
+  /// to visit the screen. Collapsing still works.
+  final bool initiallyExpanded;
+
   @override
   Widget build(BuildContext context) {
     return ExpansionTile(
       key: Key('privacy_pillar_expansion_$cardId'),
+      initiallyExpanded: initiallyExpanded,
       tilePadding: EdgeInsets.zero,
       title: Text(
         title,

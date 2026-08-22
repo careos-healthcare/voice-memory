@@ -15,6 +15,14 @@ abstract final class ReflectionModelContract {
   static const maxSeqLen = 128;
   static const reflectionLogitWidth = 512;
 
+  /// Sentinels for "this entry has no mood/intensity reading".
+  ///
+  /// Only a model that actually measures these may populate them. Extractors
+  /// that cannot must leave the heads at zero so every consumer can tell the
+  /// difference between a reading and no reading.
+  static const unknownMood = '';
+  static const unknownIntensity = 0;
+
   /// Mood label order — argmax over [moodLogitStart, moodLogitEnd).
   static const moodLogitStart = 0;
   static const moodLogitCount = 16;

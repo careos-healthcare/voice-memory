@@ -13,6 +13,7 @@ abstract final class V1RouteRegistry {
   static const termsPath = '/terms';
   static const securityPath = '/security';
   static const privacySecurityPath = '/privacy-security';
+  static const caregiverAccessPath = '/caregiver-access';
   static const settingsPath = '/settings';
   static const supportFeedbackPath = '/support-feedback';
   static const subscriptionPath = '/subscription';
@@ -39,6 +40,7 @@ abstract final class V1RouteRegistry {
     settingsPath,
     securityPath,
     privacySecurityPath,
+    caregiverAccessPath,
     privacyPath,
     privacyTrustCentrePath,
     termsPath,

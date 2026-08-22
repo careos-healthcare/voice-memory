@@ -83,12 +83,8 @@ class PredictionInsightEngine {
           PredictionEvent(
             triggerEntryId: trigger.id,
             outcomeEntryId: outcome.id,
-            triggerQuote:
-                archiveStatementTexts(trigger).firstOrNull ??
-                trigger.transcript,
-            outcomeQuote:
-                archiveStatementTexts(outcome).firstOrNull ??
-                outcome.transcript,
+            triggerQuote: archiveQuotableStatementText(trigger) ?? '',
+            outcomeQuote: archiveQuotableStatementText(outcome) ?? '',
             recordedAt: outcome.createdAt,
           ),
         );
@@ -133,8 +129,4 @@ class _Pattern {
   final String outcomeLabel;
   final List<String> outcomeMarkers;
   final int windowEntries;
-}
-
-extension _FirstOrNull<E> on List<E> {
-  E? get firstOrNull => isEmpty ? null : first;
 }

@@ -194,6 +194,15 @@ class MobilePrefsStore {
     return null;
   }
 
+  /// The stored value at [key] with no shape coercion, or null when the key is
+  /// absent.
+  ///
+  /// [readJsonMap] and [readString] both answer null for "absent" and for
+  /// "present but the wrong type". A caller that has to fail closed on a
+  /// corrupt blob needs to tell those apart, and this is the only read that
+  /// lets it.
+  Future<Object?> readRawValue(String key) async => (await _read())[key];
+
   Future<void> writeJsonMap(String key, Map<String, dynamic> value) async {
     await _update((data) => data[key] = value);
   }

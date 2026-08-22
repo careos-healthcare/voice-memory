@@ -1,0 +1,10 @@
+{
+  "name": "@voice-memory/mobile",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "test": "flutter test",
+    "analyze": "dart analyze",
+    "format": "dart format --output=none --set-exit-if-changed lib test"
+  }
+}

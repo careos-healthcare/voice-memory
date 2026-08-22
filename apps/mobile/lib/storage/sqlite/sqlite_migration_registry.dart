@@ -15,6 +15,7 @@ import 'package:archiveme_mobile/storage/sqlite/migrations/migration_014_embeddi
 import 'package:archiveme_mobile/storage/sqlite/migrations/migration_015_vec_chunks.dart';
 import 'package:archiveme_mobile/storage/sqlite/migrations/migration_016_audio_processing_queue.dart';
 import 'package:archiveme_mobile/storage/sqlite/migrations/migration_017_capture_audio_metadata.dart';
+import 'package:archiveme_mobile/storage/sqlite/migrations/migration_018_transcript_provenance.dart';
 import 'package:archiveme_mobile/storage/sqlite/sqlite_migration.dart';
 
 /// Ordered, validated catalog of [SqliteMigration] steps for the local DB.
@@ -42,6 +43,7 @@ class SqliteMigrationRegistry {
     Migration015VecChunks(),
     Migration016AudioProcessingQueue(),
     Migration017CaptureAudioMetadata(),
+    Migration018TranscriptProvenance(),
   ];
 
   static int get latestVersion =>

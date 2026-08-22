@@ -5,6 +5,8 @@ import 'package:archiveme_mobile/core/utils/app_logger.dart';
 import 'package:archiveme_mobile/features/activation/archive_insight_feedback.dart';
 import 'package:archiveme_mobile/features/voice_capture/voice_capture_quality.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
+import 'package:archiveme_mobile/security/caregiver_session_guard.dart';
+import 'package:archiveme_mobile/security/privacy_claim_catalogue.dart';
 import 'package:archiveme_mobile/security/user_content_safety.dart';
 import 'package:archiveme_mobile/storage/app_storage_paths.dart';
 import 'package:archiveme_mobile/storage/journal_store.dart';
@@ -210,7 +212,8 @@ class PrivateDataService {
   final MobilePrefsStore? _prefs;
   final Future<Directory> Function() _tempDirProvider;
 
-  static const wipeConfirmationPhrase = 'DELETE MY ARCHIVE';
+  static const wipeConfirmationPhrase =
+      PrivacyClaimCatalogue.deleteArchiveConfirmationPhrase;
 
   Future<Directory?> _resolveTempDirectory() async {
     try {
@@ -303,6 +306,11 @@ class PrivateDataService {
   }
 
   Future<ArchiveExportPayload> buildSanitizedExport() async {
+    // Sanitizing removes transport paths, not content: this is still every
+    // reflection in the archive, which no caregiver scope covers.
+    await CaregiverSessionGuard.assertOwnerAccess(
+      CaregiverSessionGuard.exportSanitizedArchive,
+    );
     await ArchiveInsightFeedbackStore.ensureLoaded();
     final all = await _journal.loadAll();
     final entries = all.map(_sanitizedEntry).toList();
@@ -319,8 +327,11 @@ class PrivateDataService {
       'transcript': UserContentSafety.sanitizePlainText(entry.transcript),
       'durationSeconds': entry.durationSeconds,
       'reflection': {
-        'mood': entry.reflection.mood,
-        'emotionalIntensity': entry.reflection.emotionalIntensity,
+        // Absent rather than blank when no reading was taken.
+        if (entry.reflection.mood.trim().isNotEmpty)
+          'mood': entry.reflection.mood,
+        if (entry.reflection.emotionalIntensity > 0)
+          'emotionalIntensity': entry.reflection.emotionalIntensity,
         'recurringThemes': entry.reflection.recurringThemes,
         'exactLanguagePattern': UserContentSafety.sanitizePlainText(
           entry.reflection.exactLanguagePattern,

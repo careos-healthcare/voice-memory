@@ -76,22 +76,54 @@ class SubscriptionState {
 }
 
 class SubscriptionNotifier extends Notifier<SubscriptionState> {
+  Future<void>? _inFlightBootstrap;
+  Future<void> _bootstrap = Future<void>.value();
+
   @override
   SubscriptionState build() {
-    unawaited(_initRevenueCat());
+    _inFlightBootstrap = null;
+    // `_initRevenueCat` reads and writes `state` before its first `await`, and
+    // `state` does not exist until this method has returned. One microtask of
+    // delay keeps `build` synchronous, so the provider is readable the instant
+    // it is created, while still starting the bootstrap off this notifier's own
+    // creation rather than pushing that duty onto every caller.
+    _bootstrap = Future<void>.microtask(ensureInitialized);
+    unawaited(_bootstrap);
     return const SubscriptionState();
   }
+
+  /// Settles when the bootstrap [build] kicked off has finished.
+  ///
+  /// `build` cannot await its own initialisation, so this is the handle callers
+  /// and tests use to observe it instead of pumping until the state happens to
+  /// look settled.
+  Future<void> get bootstrapped => _bootstrap;
 
   RevenueCatService get _revenueCat => RevenueCatService.instance;
 
   /// Idempotent bootstrap for billing settings and Tier 2 gates.
-  Future<void> ensureInitialized() => _initRevenueCat();
+  ///
+  /// A concurrent caller joins the run already in flight — including the one
+  /// [build] starts — instead of racing a second RevenueCat configure against
+  /// it. Once that run settles a later call re-checks entitlements, which is
+  /// what makes remounting a gated screen pick up an out-of-app purchase.
+  Future<void> ensureInitialized() => _inFlightBootstrap ??= _runBootstrap();
 
   Future<void> refreshEntitlements() => checkSubscriptionStatus();
 
   Future<void> openManageSubscriptions() => _revenueCat.openManageSubscriptions();
 
+  Future<void> _runBootstrap() async {
+    try {
+      await _initRevenueCat();
+    } finally {
+      _inFlightBootstrap = null;
+    }
+  }
+
   Future<void> _initRevenueCat() async {
+    if (!ref.mounted) return;
+
     if (!RevenueCatConfiguration.purchasesEnabledAtBuildTime) {
       state = state.copyWith(isLoading: false, billingConfigured: false);
       return;
@@ -101,10 +133,12 @@ class SubscriptionNotifier extends Notifier<SubscriptionState> {
 
     try {
       await _revenueCat.initialize();
+      if (!ref.mounted) return;
       ref.read(billingProvider.notifier).startListening();
       await checkSubscriptionStatus();
       await _refreshOfferingsPriceLabels();
     } catch (e, stackTrace) {
+      if (!ref.mounted) return;
       state = state.copyWith(
         isLoading: false,
         billingConfigured: _revenueCat.isConfigured,
@@ -114,6 +148,8 @@ class SubscriptionNotifier extends Notifier<SubscriptionState> {
   }
 
   Future<void> checkSubscriptionStatus() async {
+    if (!ref.mounted) return;
+
     if (!RevenueCatConfiguration.purchasesEnabledAtBuildTime) {
       state = state.copyWith(isLoading: false, billingConfigured: false);
       return;
@@ -127,12 +163,14 @@ class SubscriptionNotifier extends Notifier<SubscriptionState> {
       }
 
       final entitlements = await _revenueCat.refreshEntitlements();
+      if (!ref.mounted) return;
       state = state.copyWith(
         isPro: entitlements.isPro,
         isLoading: false,
         billingConfigured: _revenueCat.isConfigured,
       );
     } catch (e, stackTrace) {
+      if (!ref.mounted) return;
       state = state.copyWith(
         isLoading: false,
         billingConfigured: _revenueCat.isConfigured,
@@ -198,6 +236,7 @@ class SubscriptionNotifier extends Notifier<SubscriptionState> {
         }
       }
 
+      if (!ref.mounted) return;
       state = state.copyWith(
         monthlyPriceLabel: monthly,
         yearlyPriceLabel: yearly,

@@ -15,6 +15,7 @@ import 'package:archiveme_mobile/features/beta_feedback_intelligence/beta_feedba
 import 'package:archiveme_mobile/features/beta_feedback_intelligence/beta_feedback_intelligence_model.dart';
 import 'package:archiveme_mobile/features/beta_feedback_intelligence/beta_feedback_intelligence_store.dart';
 import 'package:archiveme_mobile/features/beta_test_script/beta_test_script_copy.dart';
+import 'package:archiveme_mobile/features/caregiver_grant/caregiver_grant_entry_point.dart';
 import 'package:archiveme_mobile/features/collections/archive_collection.dart';
 import 'package:archiveme_mobile/features/fact_ledger/archive_fact.dart';
 import 'package:archiveme_mobile/features/help/help_reviewer_guide_copy.dart';
@@ -26,7 +27,7 @@ import 'package:archiveme_mobile/features/pins/pinned_evidence_store.dart';
 import 'package:archiveme_mobile/features/privacy_trust/privacy_trust_copy.dart';
 import 'package:archiveme_mobile/features/pro_evidence_value/pro_evidence_value_engine.dart';
 import 'package:archiveme_mobile/features/revenue_metrics/revenue_readiness_engine.dart';
-import 'package:archiveme_mobile/features/settings/ui/consent_management_panel.dart';
+import 'package:archiveme_mobile/features/auth/domain/caregiver_access_copy.dart';
 import 'package:archiveme_mobile/features/settings/ui/trust_status_footer.dart';
 import 'package:archiveme_mobile/features/tomorrow_return/check_in_reminder_service.dart';
 import 'package:archiveme_mobile/features/tomorrow_return/tomorrow_check_in_coordinator.dart';
@@ -266,7 +267,25 @@ class _SettingsScreenState extends State<SettingsScreen> {
               showOnDeviceLink: V1CapabilityRegistry.localAiPrivacyControls,
             ),
             const SizedBox(height: AppSpacing.lg),
-            const ConsentManagementPanel(),
+            // Ship gate from docs/security/CAREGIVER_ACCESS_PRELAUNCH_BLOCKERS.md:
+            // no nav entry until the capability is on. The route itself stays
+            // registered so a stale grant remains revocable by deep link.
+            if (V1CapabilityRegistry.caregiverMonitoring)
+              ListTile(
+                key: const Key('settings_caregiver_access_tile'),
+                contentPadding: EdgeInsets.zero,
+                title: Text(
+                  CaregiverAccessCopy.settingsTitle,
+                  style: ArchiveMobileTypography.listTitle(context),
+                ),
+                subtitle: Text(
+                  CaregiverAccessCopy.settingsSubtitle,
+                  style: ArchiveMobileTypography.listSubtitle(context),
+                ),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () => context.push('/caregiver-access'),
+              ),
+            const CaregiverEntryPoint(),
             ListTile(
               key: const Key('settings_privacy_security_control_center_tile'),
               contentPadding: EdgeInsets.zero,

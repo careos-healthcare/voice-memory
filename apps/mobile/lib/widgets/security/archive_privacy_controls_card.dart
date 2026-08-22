@@ -90,21 +90,33 @@ class ArchivePrivacyControlsCard extends StatelessWidget {
     required VoidCallback? onTap,
     bool destructive = false,
   }) {
-    return ListTile(
-      key: key,
-      contentPadding: EdgeInsets.zero,
-      title: Text(
-        title,
-        style: ArchiveMobileTypography.listTitle(context).copyWith(
-          color: destructive ? AppColors.error : AppColors.textPrimary,
+    // `ListTile` paints its ink splash on the nearest `Material` *ancestor*, and
+    // the card above wraps these rows in a `DecoratedBox` (from its `Container`
+    // decoration) that has an opaque background. Without a `Material` between
+    // the two, every tap ripple painted behind that background and was never
+    // seen — and `ListTile` asserts about exactly this whenever `onTap` is set.
+    // A transparency `Material` paints nothing at rest, so the card keeps its
+    // own background, border, and radius while the rows get a surface to splash
+    // on. `tileColor` is not the fix: it would put the colour on the row rather
+    // than the card, and it makes the assert fire on untappable rows too.
+    return Material(
+      type: MaterialType.transparency,
+      child: ListTile(
+        key: key,
+        contentPadding: EdgeInsets.zero,
+        title: Text(
+          title,
+          style: ArchiveMobileTypography.listTitle(context).copyWith(
+            color: destructive ? AppColors.error : AppColors.textPrimary,
+          ),
         ),
+        subtitle: Text(
+          subtitle,
+          style: ArchiveMobileTypography.listSubtitle(context),
+        ),
+        trailing: const Icon(Icons.chevron_right),
+        onTap: onTap,
       ),
-      subtitle: Text(
-        subtitle,
-        style: ArchiveMobileTypography.listSubtitle(context),
-      ),
-      trailing: const Icon(Icons.chevron_right),
-      onTap: onTap,
     );
   }
 }

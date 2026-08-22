@@ -1,12 +1,13 @@
 /// Consumer-facing copy for archive privacy / trust controls.
 library;
 
+import 'package:archiveme_mobile/security/privacy_claim_catalogue.dart';
 import 'package:archiveme_mobile/security/privacy_copy_policy.dart';
 
 abstract class ArchivePrivacyControlsCopy {
   ArchivePrivacyControlsCopy._();
 
-  static const String cardTitle = 'Your archive is private';
+  static const String cardTitle = PrivacyClaimCatalogue.archiveIsPrivateTitle;
 
   static const String lockTitle = PrivacyCopyPolicy.lockArchiveMe;
   static const String lockSubtitle =

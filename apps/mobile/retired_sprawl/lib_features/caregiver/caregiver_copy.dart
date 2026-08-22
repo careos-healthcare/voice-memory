@@ -3,14 +3,22 @@ abstract final class CaregiverCopy {
   CaregiverCopy._();
 
   static const dashboardTitle = 'Caregiver monitoring';
+  // Says what this device refuses, not just what this view omits. The export
+  // surfaces, the sealed backup, capture, and both audio playback paths run
+  // `CaregiverSessionGuard` and deny a caregiver session — and deny again when
+  // the persona cannot be read. The manual local-backup share does not, and no
+  // server checks the session role at all, so keep the device scope in the
+  // sentence.
   static const dashboardSubtitle =
-      'Read-only view of shared evidence and alerts. You cannot record or edit '
-      'on behalf of the archive owner.';
+      'Read-only summaries and alerts for the categories the archive owner '
+      'approved. On this device, recording, exporting, and playing back the '
+      'original audio are refused while this session is active.';
 
   static const consentTitle = 'Share archive access';
   static const consentIntro =
-      'Choose what a trusted caregiver may view. They will not be able to '
-      'record, edit, or export raw transcripts.';
+      'Choose which summary categories a trusted caregiver may view. The '
+      'caregiver view shows counts, short labels, and summaries — not the '
+      'recording or its full text.';
 
   static const stepScopeTitle = 'Choose what to share';
   static const stepReviewTitle = 'Review permissions';

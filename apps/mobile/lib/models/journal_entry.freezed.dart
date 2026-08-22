@@ -14,7 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$JournalEntry {
 
- String get id; DateTime get createdAt; String get transcript; int get durationSeconds; Reflection get reflection; String? get localAudioPath; TranscriptStatus get transcriptStatus; String? get ownerKey; JournalSyncMetadata get sync; JournalDisplayMetadata get display; JournalProofData get proof;
+ String get id; DateTime get createdAt; String get transcript; int get durationSeconds; Reflection get reflection; String? get localAudioPath; TranscriptStatus get transcriptStatus; TranscriptProvenance get transcriptProvenance; String? get ownerKey; JournalSyncMetadata get sync; JournalDisplayMetadata get display; JournalProofData get proof;
 
 
 
@@ -105,10 +105,10 @@ return stored(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( String id,  DateTime createdAt,  String transcript,  int durationSeconds,  Reflection reflection,  String? localAudioPath,  TranscriptStatus transcriptStatus,  String? ownerKey,  JournalSyncMetadata sync,  JournalDisplayMetadata display,  JournalProofData proof)?  stored,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( String id,  DateTime createdAt,  String transcript,  int durationSeconds,  Reflection reflection,  String? localAudioPath,  TranscriptStatus transcriptStatus,  TranscriptProvenance transcriptProvenance,  String? ownerKey,  JournalSyncMetadata sync,  JournalDisplayMetadata display,  JournalProofData proof)?  stored,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _JournalEntry() when stored != null:
-return stored(_that.id,_that.createdAt,_that.transcript,_that.durationSeconds,_that.reflection,_that.localAudioPath,_that.transcriptStatus,_that.ownerKey,_that.sync,_that.display,_that.proof);case _:
+return stored(_that.id,_that.createdAt,_that.transcript,_that.durationSeconds,_that.reflection,_that.localAudioPath,_that.transcriptStatus,_that.transcriptProvenance,_that.ownerKey,_that.sync,_that.display,_that.proof);case _:
   return orElse();
 
 }
@@ -126,10 +126,10 @@ return stored(_that.id,_that.createdAt,_that.transcript,_that.durationSeconds,_t
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( String id,  DateTime createdAt,  String transcript,  int durationSeconds,  Reflection reflection,  String? localAudioPath,  TranscriptStatus transcriptStatus,  String? ownerKey,  JournalSyncMetadata sync,  JournalDisplayMetadata display,  JournalProofData proof)  stored,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( String id,  DateTime createdAt,  String transcript,  int durationSeconds,  Reflection reflection,  String? localAudioPath,  TranscriptStatus transcriptStatus,  TranscriptProvenance transcriptProvenance,  String? ownerKey,  JournalSyncMetadata sync,  JournalDisplayMetadata display,  JournalProofData proof)  stored,}) {final _that = this;
 switch (_that) {
 case _JournalEntry():
-return stored(_that.id,_that.createdAt,_that.transcript,_that.durationSeconds,_that.reflection,_that.localAudioPath,_that.transcriptStatus,_that.ownerKey,_that.sync,_that.display,_that.proof);case _:
+return stored(_that.id,_that.createdAt,_that.transcript,_that.durationSeconds,_that.reflection,_that.localAudioPath,_that.transcriptStatus,_that.transcriptProvenance,_that.ownerKey,_that.sync,_that.display,_that.proof);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -146,10 +146,10 @@ return stored(_that.id,_that.createdAt,_that.transcript,_that.durationSeconds,_t
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( String id,  DateTime createdAt,  String transcript,  int durationSeconds,  Reflection reflection,  String? localAudioPath,  TranscriptStatus transcriptStatus,  String? ownerKey,  JournalSyncMetadata sync,  JournalDisplayMetadata display,  JournalProofData proof)?  stored,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( String id,  DateTime createdAt,  String transcript,  int durationSeconds,  Reflection reflection,  String? localAudioPath,  TranscriptStatus transcriptStatus,  TranscriptProvenance transcriptProvenance,  String? ownerKey,  JournalSyncMetadata sync,  JournalDisplayMetadata display,  JournalProofData proof)?  stored,}) {final _that = this;
 switch (_that) {
 case _JournalEntry() when stored != null:
-return stored(_that.id,_that.createdAt,_that.transcript,_that.durationSeconds,_that.reflection,_that.localAudioPath,_that.transcriptStatus,_that.ownerKey,_that.sync,_that.display,_that.proof);case _:
+return stored(_that.id,_that.createdAt,_that.transcript,_that.durationSeconds,_that.reflection,_that.localAudioPath,_that.transcriptStatus,_that.transcriptProvenance,_that.ownerKey,_that.sync,_that.display,_that.proof);case _:
   return null;
 
 }
@@ -161,7 +161,7 @@ return stored(_that.id,_that.createdAt,_that.transcript,_that.durationSeconds,_t
 
 
 class _JournalEntry extends JournalEntry {
-  const _JournalEntry({required this.id, required this.createdAt, required this.transcript, required this.durationSeconds, required this.reflection, this.localAudioPath, this.transcriptStatus = TranscriptStatus.finalTranscript, this.ownerKey, required this.sync, required this.display, required this.proof}): super._();
+  const _JournalEntry({required this.id, required this.createdAt, required this.transcript, required this.durationSeconds, required this.reflection, this.localAudioPath, this.transcriptStatus = TranscriptStatus.finalTranscript, this.transcriptProvenance = TranscriptProvenance.unknownLegacy, this.ownerKey, required this.sync, required this.display, required this.proof}): super._();
   
 
 @override final  String id;
@@ -171,6 +171,7 @@ class _JournalEntry extends JournalEntry {
 @override final  Reflection reflection;
 @override final  String? localAudioPath;
 @override@JsonKey() final  TranscriptStatus transcriptStatus;
+@override@JsonKey() final  TranscriptProvenance transcriptProvenance;
 @override final  String? ownerKey;
 @override final  JournalSyncMetadata sync;
 @override final  JournalDisplayMetadata display;

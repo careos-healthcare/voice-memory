@@ -1,0 +1,14 @@
+{
+  "heavy_local_sync": {
+    "maxWallMs": 120000,
+    "maxSqliteMs": 90000
+  },
+  "encrypted_read_queries": {
+    "maxWallMs": 15000,
+    "maxSqliteMs": 12000
+  },
+  "fts5_full_text_search": {
+    "maxWallMs": 20000,
+    "maxSqliteMs": 18000
+  }
+}

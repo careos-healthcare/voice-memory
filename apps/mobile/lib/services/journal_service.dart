@@ -1,4 +1,5 @@
 import 'package:archiveme_mobile/models/journal_entry.dart';
+import 'package:archiveme_mobile/security/caregiver_session_guard.dart';
 import 'package:archiveme_mobile/storage/journal_store.dart';
 
 /// Local journal — MVP uses on-device JSON only.
@@ -17,5 +18,10 @@ class JournalService {
 
   Future<void> deleteEntry(String id) => _store.delete(id);
 
-  Future<String> exportJson() => _store.exportJson();
+  Future<String> exportJson() async {
+    await CaregiverSessionGuard.assertOwnerAccess(
+      CaregiverSessionGuard.exportJournalJson,
+    );
+    return _store.exportJson();
+  }
 }

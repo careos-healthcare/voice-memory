@@ -36,7 +36,13 @@ class _ConsentManagementScreenState
   @override
   void initState() {
     super.initState();
-    unawaited(_load());
+    // `UserRelationshipNotifier.loadForClient` writes `state` before its first
+    // await, so calling it straight from `initState` mutates a provider
+    // mid-build. Run it once the frame is done.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      unawaited(_load());
+    });
   }
 
   @override

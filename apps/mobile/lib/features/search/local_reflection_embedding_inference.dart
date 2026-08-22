@@ -6,11 +6,22 @@ import 'package:archiveme_mobile/features/search/reflection_embedding_inference.
 import 'package:archiveme_mobile/features/search/reflection_text_processor.dart';
 
 /// Deterministic on-device reflection encoder when the ONNX asset is absent.
+///
+/// A fixed random projection over the tensor `ReflectionTextProcessor` builds,
+/// which places the FNV hash of the i-th word at index i. The result is a
+/// function of word *position*, not meaning: two wordings of the same thought
+/// produce unrelated vectors, and the largest hash dominates. Identical text
+/// still produces an identical vector, so exact-duplicate detection holds —
+/// which is why [producesSemanticVectors] is the distinction that matters and
+/// not "is this a real encoder".
 class LocalReflectionEmbeddingInference implements ReflectionEmbeddingInference {
   LocalReflectionEmbeddingInference({Random? random})
     : _random = random ?? Random(_seed);
 
   static const _seed = 0x52_46_4C_43; // 'RFLC'
+
+  @override
+  bool get producesSemanticVectors => false;
 
   final Random _random;
   late final List<List<double>> _weights = _buildProjectionWeights();

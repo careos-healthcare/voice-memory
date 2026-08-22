@@ -7,6 +7,19 @@ import 'package:yaml/yaml.dart';
 /// Run from apps/mobile: `dart run tool/validate_api_contract.dart`
 void main() {
   final mobileRoot = Directory.current;
+
+  // `repoRoot` below is only correct when the cwd *is* apps/mobile. Run from
+  // anywhere else it points two directories above the wrong tree, and the
+  // failure reads as a missing spec rather than a missing `cd`. Anchor on a
+  // directory that exists only here, and say so, before deriving anything.
+  if (!Directory('${mobileRoot.path}/lib/api/retrofit').existsSync()) {
+    stderr.writeln(
+      'run this from apps/mobile — no lib/api/retrofit under '
+      '${mobileRoot.path}',
+    );
+    exit(2);
+  }
+
   final repoRoot = mobileRoot.parent.parent;
 
   final specFile = File('${repoRoot.path}/packages/api_contract/openapi.yaml');

@@ -19,8 +19,17 @@ abstract final class BrainDumpCopy {
   static const recordingLabel = 'Keep going — we are listening.';
   static const pausedLabel = 'Recording paused — your audio is saved securely.';
   static const generatingTitle = 'Generating your first insight…';
+
+  /// Kept in step with `lib/features/onboarding/brain_dump_copy.dart`.
+  ///
+  /// `lib/features/onboarding` is a real directory, not one of the 373
+  /// symlinks, so this file is an unreferenced duplicate that nothing compiles
+  /// and the privacy scan never reads. It is corrected anyway: if the symlink
+  /// generator ever points `lib/features/onboarding` here, the old sentence
+  /// would come back *and* land inside the analyzer's excluded set.
   static const generatingBody =
-      'Uploading your encrypted audio and finding patterns in what you shared.';
+      'Your recording was streamed to our server to be transcribed as you '
+      'spoke. Now we are finding patterns in what you shared.';
 
   static const promptSeeds = [
     "What's the loudest thought in your head right now?",

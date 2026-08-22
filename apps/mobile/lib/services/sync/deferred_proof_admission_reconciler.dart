@@ -4,6 +4,7 @@ import 'package:archiveme_mobile/features/proof_admission/remote_processing_purp
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/models/reflection.dart';
 import 'package:archiveme_mobile/models/transcript_status.dart';
+import 'package:archiveme_mobile/security/remote_processing_consent_gate.dart';
 import 'package:archiveme_mobile/services/capture_pipeline/capture_pipeline_middleware.dart';
 import 'package:archiveme_mobile/services/capture_save_messages.dart';
 import 'package:archiveme_mobile/storage/journal_store.dart';
@@ -17,11 +18,17 @@ class DeferredProofAdmissionReconciler {
     required RemoteProcessingConsentStore consentStore,
   }) : _middleware = middleware,
        _journalStore = journalStore,
-       _consentStore = consentStore;
+       _consentGate = RemoteProcessingConsentGate(consentStore);
 
   final CapturePipelineMiddleware _middleware;
   final JournalStore _journalStore;
-  final RemoteProcessingConsentStore _consentStore;
+  final RemoteProcessingConsentGate _consentGate;
+
+  /// `CapturePipelineMiddleware.analyzeWithAuthRetry` only enforces the API
+  /// usage guard, so nothing downstream re-checks consent: this predicate is
+  /// the last thing between a stored transcript and `/api/analyze`.
+  Future<bool> _remoteReflectionAllowed() => _consentGate
+      .isPurposePermittedNow(RemoteProcessingPurpose.remoteReflection);
 
   static bool needsDeferredProofAdmission(JournalEntry entry) {
     if (entry.isDeleted) return false;
@@ -43,11 +50,7 @@ class DeferredProofAdmissionReconciler {
   }
 
   Future<int> reconcileAll() async {
-    if (!await _consentStore.isPurposeGrantedNow(
-      RemoteProcessingPurpose.remoteReflection,
-    )) {
-      return 0;
-    }
+    if (!await _remoteReflectionAllowed()) return 0;
 
     final entries = await _journalStore.loadAll();
     var updated = 0;
@@ -61,11 +64,7 @@ class DeferredProofAdmissionReconciler {
 
   Future<bool> reconcileEntry(JournalEntry entry) async {
     if (!needsDeferredProofAdmission(entry)) return false;
-    if (!await _consentStore.isPurposeGrantedNow(
-      RemoteProcessingPurpose.remoteReflection,
-    )) {
-      return false;
-    }
+    if (!await _remoteReflectionAllowed()) return false;
 
     final scopeKey = 'proof_admission:${entry.id}';
     try {

@@ -1,6 +1,7 @@
 import 'package:archiveme_mobile/features/archive_proof/visible_archive_proof_copy.dart';
 import 'package:archiveme_mobile/features/onboarding/ui/onboarding_v1_copy.dart';
 import 'package:archiveme_mobile/features/landing_continuity/landing_app_continuity_copy.dart';
+import 'package:archiveme_mobile/security/privacy_claim_catalogue.dart';
 
 /// Consumer-facing UI copy — calm, human, App Store-ready.
 abstract class ConsumerUiCopy {
@@ -565,7 +566,7 @@ abstract class ConsumerUiCopy {
   static const String protectPatternsCta = 'Save my patterns';
 
   // ——— Settings ———
-  static const String privacyPolicy = 'Privacy policy';
+  static const String privacyPolicy = PrivacyClaimCatalogue.privacyPolicyLink;
   static const String termsOfUse = 'Terms of use';
   static const String restorePurchases = 'Restore purchases';
   static const String exportReflections = 'Export reflections';
@@ -605,9 +606,15 @@ abstract class ConsumerUiCopy {
   static const String freeBetaUnlimitedLocalArchive =
       'During the focused beta, every moment you save stays on this device. '
       'There is no moment cap, no upgrade, and no purchase flow.';
+  /// Led with a bare "Archive" until `consumer_copy_banned_words_test.dart`
+  /// caught it. The word was doing duty as a verb for saving a moment, which
+  /// is the one sense the product language never uses it in — "archive" alone
+  /// reads as the noun, and the noun form the scanner accepts is the one that
+  /// says whose it is. Naming the action instead keeps the same list of five
+  /// capabilities and drops the ambiguity.
   static const String freeBetaNoPaidLimits =
-      'Archive, search, export, correction, and deletion are fully available '
-      'in the beta without a subscription.';
+      'Saving to your archive, plus search, export, correction, and deletion, '
+      'are fully available in the beta without a subscription.';
 
   /// Legacy paid-limit copy — retained for billing re-entry tests only.
   static const String freeKeepsSevenKeyMoments =

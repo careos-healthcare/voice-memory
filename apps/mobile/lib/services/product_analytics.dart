@@ -5,6 +5,7 @@ import 'package:archiveme_mobile/features/recording/recording_dependencies.dart'
 import 'package:archiveme_mobile/push/firebase_bootstrap.dart';
 import 'package:archiveme_mobile/services/app_services.dart' show AppServices;
 import 'package:archiveme_mobile/features/beta_analytics/beta_analytics_event_registry.dart';
+import 'package:archiveme_mobile/features/beta_analytics/product_analytics_consent_store.dart';
 import 'package:archiveme_mobile/services/proof_analytics_guard.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/foundation.dart';
@@ -16,12 +17,28 @@ class ProductAnalytics {
   static FirebaseAnalytics? _analytics;
   static bool _initialized = false;
 
+  /// Whether the customer has affirmatively allowed collection.
+  ///
+  /// Starts `false` and is only ever set from a recorded
+  /// [ProductAnalyticsConsentState]. Nothing reaches the provider while this is
+  /// false, so a failure to read consent cannot become permission to collect.
+  static bool _consentGranted = false;
+
   /// Counts events suppressed by creator demo mode — test/debug only.
   @visibleForTesting
   static int demoSuppressedCount = 0;
 
+  @visibleForTesting
+  static bool get consentGranted => _consentGranted;
+
   /// Call after [FirebaseBootstrap.tryInitialize] (e.g. from [AppServices.initialize]).
-  static Future<void> initialize() async {
+  ///
+  /// [consentStore] is required in practice — the fallback exists only for the
+  /// handful of call sites that run before `AppServices.instance` is readable,
+  /// and it resolves to "no consent", which keeps collection off.
+  static Future<void> initialize({
+    ProductAnalyticsConsentStore? consentStore,
+  }) async {
     if (_initialized) return;
     _initialized = true;
     // Creator demo mode: no production analytics collection at all.
@@ -29,12 +46,35 @@ class ProductAnalytics {
     if (!FirebaseBootstrap.isInitialized) return;
     try {
       _analytics = FirebaseAnalytics.instance;
-      await _analytics!.setAnalyticsCollectionEnabled(true);
+      await applyConsent(
+        granted: await (consentStore?.isGrantedNow() ?? Future.value(false)),
+      );
     } catch (e, stackTrace) {
       if (kDebugMode) {
         AppLogger.debug('ProductAnalytics: Firebase Analytics unavailable — $e');
       }
       _analytics = null;
+      _consentGranted = false;
+    }
+  }
+
+  /// Applies an analytics consent decision to the provider and to this facade.
+  ///
+  /// Always calls through to the provider, including with `false`. Firebase
+  /// enables collection by default from the platform manifest, so declining has
+  /// to be stated explicitly — simply not calling would leave collection on.
+  static Future<void> applyConsent({required bool granted}) async {
+    _consentGranted = granted;
+    final analytics = _analytics;
+    if (analytics == null) return;
+    try {
+      await analytics.setAnalyticsCollectionEnabled(granted);
+    } catch (e) {
+      if (kDebugMode) {
+        AppLogger.debug('ProductAnalytics: consent apply failed — $e');
+      }
+      // The provider state is now unknown, so stop sending from our side too.
+      _consentGranted = false;
     }
   }
 
@@ -70,7 +110,9 @@ class ProductAnalytics {
     }
 
     final analytics = _analytics;
-    if (analytics == null) return;
+    // Second gate, after the debug log so local development still sees the
+    // event: nothing leaves the device without a recorded consent decision.
+    if (analytics == null || !_consentGranted) return;
 
     try {
       await analytics.logEvent(
@@ -133,5 +175,6 @@ class ProductAnalytics {
   static void resetForTest() {
     _analytics = null;
     _initialized = false;
+    _consentGranted = false;
   }
 }

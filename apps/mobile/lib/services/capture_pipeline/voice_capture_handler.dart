@@ -4,10 +4,12 @@ import 'package:archiveme_mobile/api/api_exceptions.dart';
 import 'package:archiveme_mobile/core/network/capture_pipeline_api_errors.dart';
 import 'package:archiveme_mobile/features/beta_analytics/beta_analytics_consent_boundary.dart';
 import 'package:archiveme_mobile/features/proof_admission/proof_admission_models.dart';
+import 'package:archiveme_mobile/features/privacy/on_device_processing_store.dart';
 import 'package:archiveme_mobile/features/proof_admission/remote_processing_purpose.dart';
 import 'package:archiveme_mobile/features/reflections/data/local_ai_confidence.dart';
 import 'package:archiveme_mobile/features/timeline/timeline_entry_display.dart';
 import 'package:archiveme_mobile/features/voice_capture/analysis/analysis_log.dart';
+import 'package:archiveme_mobile/features/voice_capture/transcription/speech_locale.dart';
 import 'package:archiveme_mobile/features/voice_capture/transcription/transcription_log.dart';
 import 'package:archiveme_mobile/features/voice_capture/transcription/transcription_service.dart';
 import 'package:archiveme_mobile/features/voice_capture/voice_capture_copy.dart';
@@ -15,6 +17,7 @@ import 'package:archiveme_mobile/features/voice_capture/voice_capture_quality.da
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/models/reflection.dart';
 import 'package:archiveme_mobile/models/sync_status.dart';
+import 'package:archiveme_mobile/models/transcript_provenance.dart';
 import 'package:archiveme_mobile/models/transcript_status.dart';
 import 'package:archiveme_mobile/security/account_session_guard.dart';
 import 'package:archiveme_mobile/services/capture_pipeline/capture_pipeline_dependencies.dart';
@@ -24,8 +27,16 @@ import 'package:archiveme_mobile/services/capture_pipeline/capture_voice_persist
 import 'package:archiveme_mobile/services/capture_save_messages.dart';
 import 'package:archiveme_mobile/services/record_pipeline_log.dart';
 
+/// [usedOnnx] is nullable because "we did not run ONNX" and "we make no claim
+/// about where this was processed" are different, and the entry-detail chip
+/// reads the flag as though it were the second: null renders nothing, true
+/// renders "Processed on your device", and false renders "Sent securely for
+/// higher-accuracy processing". A `SFSpeechRecognizer` transcript is neither
+/// ONNX nor sent anywhere, so it passes null rather than claiming an upload
+/// that did not happen. See the reported fix to `EntryProcessingTrustChip`,
+/// which should read `processingUsedLocalStt` too.
 JournalProofData processingProofFlags({
-  required bool usedOnnx,
+  required bool? usedOnnx,
   bool usedLocalStt = false,
   bool usedGenerativeLlm = false,
 }) {
@@ -91,6 +102,18 @@ class VoiceCaptureHandler {
       partialTranscript = localPreflight.transcript;
       localReflection = localPreflight.reflection;
 
+      if (!CaptureVoicePersistence.hasUsableTranscript(partialTranscript)) {
+        // Before any consideration of the network. The bundled Whisper ONNX
+        // asset the step above wants is not in the build, so on a default iOS
+        // install this is the only thing that can produce a transcript, and it
+        // used to run only after a remote request had already failed.
+        partialTranscript = await _attemptOnDeviceSpeech(
+          audioFile: audioFile,
+          durationSeconds: durationSeconds,
+          scopeKey: scopeKey,
+        );
+      }
+
       final hasLocalTranscript =
           CaptureVoicePersistence.hasUsableTranscript(partialTranscript);
 
@@ -126,6 +149,12 @@ class VoiceCaptureHandler {
           ensureCaptureToken: _deps.attest.ensureCaptureToken,
           scopeKey: scopeKey,
           usageGuard: _deps.usageGuard,
+          // The remote path, reached only with transcription consent granted
+          // and on-device-only off. The locale still travels, because a
+          // permitted upload that finds the network gone falls back to the same
+          // native recogniser and needs to know what language to expect.
+          speechLocale: await _readConfirmedSpeechLocale(),
+          onDeviceOnly: false,
         );
 
         if (!transcription.succeeded) {
@@ -255,6 +284,62 @@ class VoiceCaptureHandler {
     }
   }
 
+  /// Platform speech recognition, when the customer asked for on-device only.
+  ///
+  /// Returns null — meaning "no transcript" and never a guess — when the
+  /// setting is off, when this platform has no recogniser, or when nobody has
+  /// confirmed which language the recording is in. The last case is the one
+  /// worth being strict about: `SFSpeechRecognizer` pointed at the wrong
+  /// language does not error, it returns fluent text in that language, and the
+  /// archive later quotes it back as the customer's own words.
+  Future<String?> _attemptOnDeviceSpeech({
+    required File audioFile,
+    required int durationSeconds,
+    required String scopeKey,
+  }) async {
+    await OnDeviceProcessingStore.ensureLoaded();
+    if (!OnDeviceProcessingStore.enabled) return null;
+
+    final ConfirmedSpeechLocale? speechLocale =
+        await _readConfirmedSpeechLocale();
+
+    _stageEmitter(PipelineStage.transcribing);
+    final outcome = await TranscriptionService.transcribeRecording(
+      audioFile: audioFile,
+      durationSeconds: durationSeconds,
+      captureRepository: _deps.captureRepository,
+      ensureCaptureToken: _deps.attest.ensureCaptureToken,
+      scopeKey: scopeKey,
+      usageGuard: _deps.usageGuard,
+      speechLocale: speechLocale,
+      onDeviceOnly: true,
+    );
+
+    if (!outcome.succeeded) {
+      RecordPipelineLog.transcriptionFallback(
+        reason: outcome.skippedReason ??
+            outcome.failureReason ??
+            'on_device_stt_unavailable',
+        audioPath: audioFile.path,
+      );
+      return null;
+    }
+    return outcome.transcript;
+  }
+
+  Future<ConfirmedSpeechLocale?> _readConfirmedSpeechLocale() async {
+    final reader = _deps.speechLocale;
+    if (reader == null) return null;
+    try {
+      return await reader();
+    } on Object {
+      // ignore: silent_catch_audit — an unreadable preference is not a
+      // confirmed language, and the safe reading of "unknown" is "do not
+      // transcribe", not "assume the phone's language".
+      return null;
+    }
+  }
+
   Future<({
     CapturePipelineOutcome? completed,
     String? transcript,
@@ -345,12 +430,7 @@ class VoiceCaptureHandler {
     _stageEmitter(PipelineStage.saving);
     session.assertActive();
     final finalTranscript =
-        resolveFinalCaptureTranscript(
-          transcript: trimmedTranscript,
-          body: reflection.concreteObservation,
-          exactLanguage: reflection.exactLanguagePattern,
-          observation: reflection.concreteObservation,
-        ) ??
+        resolveFinalCaptureTranscript(transcript: trimmedTranscript) ??
         trimmedTranscript;
     RecordPipelineLog.preSaveFinalTranscript(length: finalTranscript.length);
     if (usedLocalStructuring) {
@@ -377,6 +457,7 @@ class VoiceCaptureHandler {
     final prepared = applyFinalTranscriptToVoiceEntry(
       template,
       finalTranscript: finalTranscript,
+      provenance: TranscriptProvenance.speechToText,
     );
     final entry = await _persistence.saveVoiceEntryAndLog(
       prepared,
@@ -470,12 +551,7 @@ class VoiceCaptureHandler {
     _stageEmitter(PipelineStage.saving);
     session.assertActive();
     final finalTranscript =
-        resolveFinalCaptureTranscript(
-          transcript: trimmedTranscript,
-          body: verifiedProof.reflection.concreteObservation,
-          exactLanguage: verifiedProof.reflection.exactLanguagePattern,
-          observation: verifiedProof.reflection.concreteObservation,
-        ) ??
+        resolveFinalCaptureTranscript(transcript: trimmedTranscript) ??
         trimmedTranscript;
     RecordPipelineLog.preSaveFinalTranscript(length: finalTranscript.length);
     final template = JournalEntry(
@@ -494,6 +570,7 @@ class VoiceCaptureHandler {
     final prepared = applyFinalTranscriptToVoiceEntry(
       template,
       finalTranscript: finalTranscript,
+      provenance: TranscriptProvenance.speechToText,
     );
     final entry = await _persistence.saveVoiceEntryAndLog(
       prepared,
@@ -561,8 +638,6 @@ class VoiceCaptureHandler {
     _stageEmitter(PipelineStage.saving);
     final finalTranscript = resolveFinalCaptureTranscript(
       transcript: transcript,
-      body: transcript,
-      observation: transcript,
     );
     RecordPipelineLog.preSaveFinalTranscript(
       length: finalTranscript?.length ?? transcript.length,
@@ -583,11 +658,15 @@ class VoiceCaptureHandler {
       syncStatus: SyncStatus.pendingUpload,
       localAudioPath: audioFile.path,
       transcriptStatus: TranscriptStatus.provisional,
-      proof: processingProofFlags(usedOnnx: true, usedLocalStt: true),
+      // `SFSpeechRecognizer`, not ONNX. The flag said `usedOnnx: true` because
+      // it is what drives the "Processed on your device" chip, which was true
+      // about the device and false about the model.
+      proof: processingProofFlags(usedOnnx: null, usedLocalStt: true),
     );
     final prepared = applyFinalTranscriptToVoiceEntry(
       template,
       finalTranscript: finalTranscript,
+      provenance: TranscriptProvenance.speechToText,
     );
     final entry = await _persistence.saveVoiceEntryAndLog(
       prepared,
@@ -646,13 +725,7 @@ class VoiceCaptureHandler {
     String? syncNote,
   }) async {
     final finalTranscript =
-        resolveFinalCaptureTranscript(
-          transcript: trimmed,
-          body: verifiedProof.reflection.concreteObservation,
-          exactLanguage: verifiedProof.reflection.exactLanguagePattern,
-          observation: verifiedProof.reflection.concreteObservation,
-        ) ??
-        trimmed;
+        resolveFinalCaptureTranscript(transcript: trimmed) ?? trimmed;
     RecordPipelineLog.preSaveFinalTranscript(length: finalTranscript.length);
     final template = entry.copyWith(
       transcript: trimmed,
@@ -663,6 +736,7 @@ class VoiceCaptureHandler {
     final updated = applyFinalTranscriptToVoiceEntry(
       template,
       finalTranscript: finalTranscript,
+      provenance: TranscriptProvenance.userEdited,
     );
     final saved = await _persistence.saveVoiceEntryAndLog(
       updated,
@@ -685,11 +759,7 @@ class VoiceCaptureHandler {
     required String trimmed,
     required String syncNote,
   }) async {
-    final finalTranscript = resolveFinalCaptureTranscript(
-      transcript: trimmed,
-      body: trimmed,
-      observation: trimmed,
-    );
+    final finalTranscript = resolveFinalCaptureTranscript(transcript: trimmed);
     RecordPipelineLog.preSaveFinalTranscript(
       length: finalTranscript?.length ?? 0,
     );
@@ -708,6 +778,7 @@ class VoiceCaptureHandler {
     final prepared = applyFinalTranscriptToVoiceEntry(
       template,
       finalTranscript: finalTranscript,
+      provenance: TranscriptProvenance.userEdited,
     );
     final updated = await _persistence.saveVoiceEntryAndLog(
       prepared,
@@ -756,8 +827,13 @@ class VoiceCaptureHandler {
       );
       _middleware.clearCaptureToken();
       _stageEmitter(PipelineStage.done);
+      // Judged on extracted content, not on an intensity number: the on-device
+      // extractor reports no intensity at all, so it is not a liveness signal.
       final hasLocalReflection = localReflection != null &&
-          localReflection.emotionalIntensity > 0;
+          (localReflection.recurringThemes.isNotEmpty ||
+              localReflection.concreteObservation.trim().isNotEmpty ||
+              (localReflection.tensionOrContradiction ?? '').trim().isNotEmpty ||
+              (localReflection.nextSmallAction ?? '').trim().isNotEmpty);
       return pipelineSuccess(CapturePipelineResult(
         entry: entry,
         localSaved: true,

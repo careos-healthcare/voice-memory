@@ -13,6 +13,7 @@ import 'package:archiveme_mobile/features/memory/memory_surfacing_mode.dart';
 import 'package:archiveme_mobile/features/pressure_retention/pressure_check_in_record.dart';
 import 'package:archiveme_mobile/features/timeline/timeline_entry_display.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
+import 'package:archiveme_mobile/security/caregiver_session_guard.dart';
 
 /// Builds an export of explicitly selected entries — and only those.
 ///
@@ -37,7 +38,39 @@ class SelectedArchiveExport {
         '.${format.fileExtension}';
   }
 
+  /// Owner-checked entry point — use this from anything that will hand the
+  /// result to a file, a share sheet or another process.
+  ///
+  /// The guard runs first and outside any `try`, so a refusal reaches the
+  /// caller as a refusal rather than as an empty or partial export. The
+  /// selected entries are the writer's own words; a caregiver session is shown
+  /// counts, 72-character excerpts and summaries, and an export is none of
+  /// those.
+  Future<String> buildOwnerMarkdown({
+    required List<JournalEntry> selectedEntries,
+    List<PressureCheckInRecord> records = const [],
+    List<ArchiveActionItem> actionItems = const [],
+    List<ArchiveFact> facts = const [],
+    DateTime? now,
+  }) async {
+    await CaregiverSessionGuard.assertOwnerAccess(
+      CaregiverSessionGuard.exportSelectedEntries,
+    );
+    return buildMarkdown(
+      selectedEntries: selectedEntries,
+      records: records,
+      actionItems: actionItems,
+      facts: facts,
+      now: now,
+    );
+  }
+
   /// Markdown for the selected entries only, newest first.
+  ///
+  /// Formatting only, and ungated. Prefer [buildOwnerMarkdown] anywhere the
+  /// result leaves the process — the guard cannot live here because this is
+  /// synchronous and `CaregiverSessionGuard` resolves the persona
+  /// asynchronously.
   String buildMarkdown({
     required List<JournalEntry> selectedEntries,
     List<PressureCheckInRecord> records = const [],

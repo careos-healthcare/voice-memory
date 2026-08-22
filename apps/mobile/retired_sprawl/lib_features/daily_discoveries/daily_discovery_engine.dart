@@ -598,12 +598,14 @@ class DailyDiscoveryEngine {
   }
 
   static double? _avgIntensity(List<JournalEntry> entries) {
-    final eligible = archiveEligibleEvidenceEntries(entries);
-    if (eligible.isEmpty) return null;
-    final sum = eligible
+    // Entries without an intensity reading are excluded rather than counted as
+    // zero, which would drag the average toward a number nobody reported.
+    final values = archiveEligibleEvidenceEntries(entries)
         .map((e) => e.reflection.emotionalIntensity)
-        .fold<int>(0, (a, b) => a + b);
-    return sum / eligible.length;
+        .where((value) => value > 0)
+        .toList(growable: false);
+    if (values.isEmpty) return null;
+    return values.reduce((a, b) => a + b) / values.length;
   }
 
   static String _truncate(String text, int max) {

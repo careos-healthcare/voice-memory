@@ -67,15 +67,12 @@ GoRouter buildProductionRouterHarness({GlobalKey<NavigatorState>? rootKey}) {
               GoRoute(
                 path: RouteCatalog.archiveHome,
                 builder: (context, state) => const ArchiveBeliefScreen(),
-              ),
-            ],
-          ),
-          StatefulShellBranch(
-            navigatorKey: changesBranchNavigatorKey,
-            routes: [
-              GoRoute(
-                path: RouteCatalog.changesHome,
-                builder: (context, state) => const BeliefChangesScreen(),
+                routes: [
+                  GoRoute(
+                    path: 'changes',
+                    builder: (context, state) => const BeliefChangesScreen(),
+                  ),
+                ],
               ),
             ],
           ),

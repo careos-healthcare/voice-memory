@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:archiveme_mobile/security/caregiver_session_guard.dart';
 import 'package:archiveme_mobile/services/app_services.dart';
 import 'package:archiveme_mobile/storage/account_namespace.dart';
 import 'package:archiveme_mobile/sync/cloud_backup_models.dart';
@@ -51,6 +52,14 @@ class EncryptedCloudBackupService {
     required String passphrase,
     String? outputDirectory,
   }) async {
+    // Outside the try below on purpose: a refusal must reach the caller as a
+    // refusal, not be folded into a generic export failure. Sealing the file
+    // does not narrow it — the whole database is in there, under a passphrase
+    // whoever ran the export chose.
+    await CaregiverSessionGuard.assertOwnerAccess(
+      CaregiverSessionGuard.exportEncryptedBackup,
+    );
+
     if (passphrase.trim().length < 8) {
       return const CloudBackupExportResult.failure(
         CloudBackupExportFailure.emptyPassphrase,

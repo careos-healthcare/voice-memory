@@ -2,6 +2,7 @@ import 'package:archiveme_mobile/features/capture_flow/interfaces/capture_flow_p
 import 'package:archiveme_mobile/features/timeline/timeline_entry_display.dart';
 import 'package:archiveme_mobile/features/transcript_correction/transcript_correction_copy.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
+import 'package:archiveme_mobile/models/transcript_provenance.dart';
 import 'package:archiveme_mobile/storage/journal_store.dart';
 
 class TranscriptCorrectionFailure implements Exception {
@@ -34,9 +35,11 @@ class JournalTranscriptCorrectionAdapter implements TranscriptCorrectionPort {
       throw TranscriptCorrectionFailure(TranscriptCorrectionCopy.saveFailed);
     }
 
+    // User-authored correction, no AI rewrite — still the user's own words.
     final updated = applyFinalTranscriptToVoiceEntry(
       existing,
       finalTranscript: trimmed,
+      provenance: TranscriptProvenance.userEdited,
     );
     await _journalStore.update(updated);
     return updated;

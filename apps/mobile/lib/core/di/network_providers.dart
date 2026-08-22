@@ -23,7 +23,6 @@ import 'package:archiveme_mobile/data/repositories/billing_repository.dart';
 import 'package:archiveme_mobile/data/repositories/capture_repository.dart';
 import 'package:archiveme_mobile/data/repositories/live_audio_repository.dart';
 import 'package:archiveme_mobile/data/repositories/sync_repository.dart';
-import 'package:archiveme_mobile/features/evidence_method/evidence_insight_client.dart';
 import 'package:archiveme_mobile/services/api_service.dart';
 import 'package:archiveme_mobile/storage/entitlement_cache.dart';
 import 'package:archiveme_mobile/storage/secure_storage.dart';
@@ -142,10 +141,6 @@ final userRelationshipApiClientProvider = Provider<UserRelationshipApiClient>(
 
 final insightsApiServiceProvider = Provider<ApiService>(
   (ref) => ref.watch(voiceMemoryApiClientBundleProvider).insights,
-);
-
-final evidenceInsightClientProvider = Provider<EvidenceInsightClient>(
-  (ref) => ref.watch(voiceMemoryApiClientBundleProvider).evidenceInsights,
 );
 
 final authRepositoryProvider = Provider<AuthRepository>(

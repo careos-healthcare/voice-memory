@@ -68,12 +68,20 @@ class ConsentVerificationService {
   }
 
   /// Issues a server-signed token after explicit in-app consent.
+  ///
+  /// Takes no lifetime and no clock. Both are the server's: expiry comes from
+  /// `CAREGIVER_CONSENT_DEFAULT_TTL_MS` (7 days,
+  /// `packages/shared/lib/consent/consent-token-ttl.ts`) and arrives on the
+  /// returned token. This used to declare `ttl` defaulting to 30 days and a
+  /// `now` override, neither of which was read here or passed to
+  /// `_consentApi.issueToken`. A caller could set either and change nothing,
+  /// and a reader could take the 30 for the caregiver lifetime — which is what
+  /// happened: it is the coach default, and published copy said 30 days until
+  /// `CaregiverGrantCopy.stopPassLifetime` was corrected to 7.
   Future<MonitoringConsentToken> issueToken({
     required String subjectAccountId,
     required String caregiverId,
     required CaregiverPermissions permissions,
-    Duration ttl = const Duration(days: 30),
-    DateTime? now,
   }) async {
     if (AppConfig.isBackendConfigured && _consentApi != null) {
       final result = await _consentApi.issueToken(

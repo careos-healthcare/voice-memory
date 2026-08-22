@@ -176,6 +176,21 @@ abstract final class VoiceMemoryApiRoutes {
     {VoiceMemoryHttpMethod.post},
   );
 
+  /// Serves both consent domains — the body's `consentDomain` selects between
+  /// `caregiverMonitoring` and `coachClient`.
+  static const coachConsentRevoke = VoiceMemoryApiEndpoint(
+    '/api/coach/consent/revoke',
+    {VoiceMemoryHttpMethod.post},
+  );
+
+  /// Caregiver grants only, and only at the archive owner's request. The
+  /// server replaces the presented token with a fresh one of the same length
+  /// and withdraws the presented one in the same step.
+  static const coachConsentRenew = VoiceMemoryApiEndpoint(
+    '/api/coach/consent/renew',
+    {VoiceMemoryHttpMethod.post},
+  );
+
   // — Archive synthesis —
   static const archiveSynthesis = VoiceMemoryApiEndpoint(
     '/api/archive-synthesis',
@@ -269,6 +284,8 @@ abstract final class VoiceMemoryApiRoutes {
     userRelationships,
     coachConsentIssue,
     coachConsentVerify,
+    coachConsentRevoke,
+    coachConsentRenew,
     archiveSynthesis,
     pushRegister,
     internalSendTestPush,

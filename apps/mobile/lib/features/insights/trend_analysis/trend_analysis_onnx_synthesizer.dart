@@ -56,13 +56,16 @@ class TrendAnalysisOnnxSynthesizer {
     final buffer = StringBuffer()
       ..writeln('Weekly trend analysis (local only):')
       ..writeln('Window: last ${metadata.window.label}')
-      ..writeln('Reflections analyzed: ${metadata.reflectionCount}')
-      ..writeln(
+      ..writeln('Reflections analyzed: ${metadata.reflectionCount}');
+
+    if (metadata.intensityTrend != TrendIntensityDirection.unknown) {
+      buffer.writeln(
         'Average emotional intensity: '
         '${metadata.averageIntensity.toStringAsFixed(1)} '
         '(early ${metadata.earlyWindowAverageIntensity.toStringAsFixed(1)}, '
         'late ${metadata.lateWindowAverageIntensity.toStringAsFixed(1)})',
       );
+    }
 
     if (metadata.moodCounts.isNotEmpty) {
       final moods = metadata.moodCounts.entries.toList()
@@ -114,6 +117,10 @@ class TrendAnalysisOnnxSynthesizer {
     if (repeated != null && repeated.isNotEmpty) {
       return repeated;
     }
+    if (metadata.intensityTrend == TrendIntensityDirection.unknown) {
+      return 'Based on these entries, your archive noticed recurring focus on '
+          '${_topThemes(metadata)}.';
+    }
     return 'Based on these entries, your archive noticed emotional intensity that '
         'may be ${_intensityTrendWord(metadata.intensityTrend)} with recurring '
         'focus on ${_topThemes(metadata)}.';
@@ -125,16 +132,20 @@ class TrendAnalysisOnnxSynthesizer {
   ) {
     final lines = <EmotionalShiftLine>[];
 
-    lines.add(
-      EmotionalShiftLine(
-        headline: _intensityHeadline(metadata.intensityTrend),
-        detail:
-            'Average intensity moved from '
-            '${metadata.earlyWindowAverageIntensity.toStringAsFixed(1)} '
-            'to ${metadata.lateWindowAverageIntensity.toStringAsFixed(1)} '
-            'across ${metadata.reflectionCount} reflections.',
-      ),
-    );
+    // No entry in the window carried an intensity reading, so there is no
+    // movement to report. Saying "0.0 to 0.0" would read as a measured flatline.
+    if (metadata.intensityTrend != TrendIntensityDirection.unknown) {
+      lines.add(
+        EmotionalShiftLine(
+          headline: _intensityHeadline(metadata.intensityTrend),
+          detail:
+              'Average intensity moved from '
+              '${metadata.earlyWindowAverageIntensity.toStringAsFixed(1)} '
+              'to ${metadata.lateWindowAverageIntensity.toStringAsFixed(1)} '
+              'across ${metadata.reflectionCount} reflections.',
+        ),
+      );
+    }
 
     if (metadata.moodCounts.isNotEmpty) {
       final topMood = metadata.moodCounts.entries.toList()

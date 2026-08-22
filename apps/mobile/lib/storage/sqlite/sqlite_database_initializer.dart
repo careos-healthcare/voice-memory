@@ -9,6 +9,7 @@ import 'package:archiveme_mobile/storage/sqlite/sqlite_connection_pragmas.dart';
 import 'package:archiveme_mobile/storage/sqlite/sqlite_hybrid_search_initializer.dart';
 import 'package:archiveme_mobile/storage/sqlite/sqlite_migration_manager.dart';
 import 'package:archiveme_mobile/storage/sqlite/reflection_graph_backfill.dart';
+import 'package:archiveme_mobile/storage/sqlite/transcript_provenance_backfill.dart';
 import 'package:archiveme_mobile/storage/isolate/local_database_worker_service.dart';
 import 'package:path/path.dart' as p;
 import 'package:sqflite/sqflite.dart' as sqflite;
@@ -84,6 +85,7 @@ abstract final class SqliteDatabaseInitializer {
         encryptionPassword: passwordOverride ?? password,
         keyAlias: keyAlias,
       );
+      await _runDeferredTranscriptProvenanceBackfill(db);
     }
     return db;
   }
@@ -200,6 +202,25 @@ abstract final class SqliteDatabaseInitializer {
     }
 
     await ReflectionGraphBackfill.markComplete(database);
+  }
+
+  /// Stamps legacy journal payloads with an explicit `unknown_legacy`
+  /// provenance, a bounded number of rows per launch.
+  ///
+  /// Failure here is deliberately not fatal and deliberately does not mark the
+  /// backfill complete. An un-stamped payload still decodes to `unknownLegacy`
+  /// and still yields no evidence source, so a database that never finishes
+  /// this is honest about its own history; it just says so implicitly rather
+  /// than in the stored row.
+  static Future<void> _runDeferredTranscriptProvenanceBackfill(
+    sqflite.Database database,
+  ) async {
+    try {
+      if (!await TranscriptProvenanceBackfill.isPending(database)) return;
+      await TranscriptProvenanceBackfill.run(database);
+    } on Object {
+      return;
+    }
   }
 
   static Future<void> _openEncryptedForMigration(

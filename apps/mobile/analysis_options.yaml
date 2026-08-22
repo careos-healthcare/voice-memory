@@ -24,6 +24,16 @@ analyzer:
   # a symlink; delete it outright with retired_sprawl/ (see its README deletion gate).
   exclude:
     - retired_sprawl/**
+    # Build output, not source. An iOS build drops a full Dart SDK-worth of
+    # third-party packages under build/ios/SourcePackages/checkouts/, and the
+    # analyzer walks them: 16,511 deduped issues / 10,751 errors with this line
+    # absent, against 5,043 / 197 for the code actually in this repo. Every
+    # measurement taken after a build is otherwise unusable.
+    # Deliberately outside the generated block below: the generator rewrites
+    # that block wholesale, so an entry inside it would be dropped on the next
+    # regeneration, and tool/check_analysis_excludes.py rejects any line in
+    # there that is not a `lib/features/<name>/**` entry.
+    - build/**
     # BEGIN generated: lib/features symlink excludes (restore_lib_features_symlinks.sh)
     - lib/features/account_migration/**
     - lib/features/acquisition/**

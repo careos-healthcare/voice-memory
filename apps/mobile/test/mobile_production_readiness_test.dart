@@ -205,7 +205,7 @@ void main() {
   group('Share-safe privacy', () {
     test(
       'share-safe proof excludes transcripts, tags, map/filter state, and notes',
-      () {
+      () async {
         const engine = ShareableArchiveProofEngine();
         const sensitive =
             'Maria told me about the divorce paperwork at the hospital again';
@@ -213,6 +213,7 @@ void main() {
           'beliefEvidence',
           'This felt more about hurry than pressure.',
         );
+        await ArchiveInsightFeedbackStore.flushForTest();
 
         final entries = List.generate(
           5,

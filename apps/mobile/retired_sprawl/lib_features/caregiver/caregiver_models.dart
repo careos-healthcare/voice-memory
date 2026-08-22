@@ -22,7 +22,13 @@ class CaregiverPermissions {
   static const journalStream = 'journal';
   static const proofTrailStream = 'proof_trail';
   static const timelineStream = 'timeline';
+
+  /// Consent choices carried as booleans rather than as [evidenceStreamIds]
+  /// entries. Nothing ever writes these ids into the list, so a membership
+  /// test alone can only ever deny them — [allowsStream] resolves them against
+  /// [thresholdAlerts] and [reviewSummaries] instead.
   static const insightAlertsStream = 'insight_alerts';
+  static const reviewSummariesStream = 'review_summaries';
 
   static const defaultScopes = CaregiverPermissions(
     evidenceStreamIds: [
@@ -38,7 +44,16 @@ class CaregiverPermissions {
   final bool reviewSummaries;
   final bool thresholdAlerts;
 
-  bool allowsStream(String streamId) => evidenceStreamIds.contains(streamId);
+  /// Single authoritative read gate for every consent choice on the token.
+  ///
+  /// The boolean choices take priority over list membership: the boolean is the
+  /// answer the owner gave to that prompt, so a token that lists a pseudo-stream
+  /// id while carrying `false` is still a decline. Unknown ids deny.
+  bool allowsStream(String streamId) => switch (streamId) {
+        insightAlertsStream => thresholdAlerts,
+        reviewSummariesStream => reviewSummaries,
+        _ => evidenceStreamIds.contains(streamId),
+      };
 
   Map<String, dynamic> toJson() => {
         'evidenceStreamIds': List<String>.of(evidenceStreamIds),

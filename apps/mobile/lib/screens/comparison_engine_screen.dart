@@ -36,7 +36,13 @@ class _ComparisonEngineScreenState extends ConsumerState<ComparisonEngineScreen>
   @override
   void initState() {
     super.initState();
-    unawaited(_bootstrap());
+    // `ensureInitialized` reaches `SubscriptionNotifier._initRevenueCat`, which
+    // writes `state` before its first await, so awaiting it straight from
+    // `initState` mutates a provider mid-build. Run it once the frame is done.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      unawaited(_bootstrap());
+    });
   }
 
   Future<void> _bootstrap() async {

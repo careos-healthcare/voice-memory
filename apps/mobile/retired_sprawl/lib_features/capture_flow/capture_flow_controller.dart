@@ -14,6 +14,8 @@ import 'package:archiveme_mobile/features/proof_admission/remote_processing_purp
 import 'package:archiveme_mobile/features/voice_capture/microphone_permission_copy.dart';
 import 'package:archiveme_mobile/features/voice_capture/microphone_permission_state.dart';
 import 'package:archiveme_mobile/features/voice_capture/voice_capture_copy.dart';
+import 'package:archiveme_mobile/features/voice_capture/transcription/speech_locale.dart';
+import 'package:archiveme_mobile/features/voice_capture/transcription/transcription_capability_policy.dart';
 import 'package:archiveme_mobile/features/voice_capture/voice_capture_quality.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/services/capture_pipeline_service.dart';
@@ -519,6 +521,11 @@ class CaptureFlowController extends ChangeNotifier {
         throw CapturePipelineFailure(VoiceCaptureCopy.notEnoughAudio);
       }
 
+      // Measured before the save so the answer describes this device and this
+      // permission rather than whatever the upload happened to do. Nothing here
+      // touches the network.
+      final capability = await _evaluateTranscriptionCapability();
+
       final transcriptionAllowed =
           await _deps.transcription.transcriptionAllowed();
       final reflectionAllowed = await _deps.reflection.reflectionAllowed();
@@ -562,6 +569,14 @@ class CaptureFlowController extends ChangeNotifier {
           );
           unawaited(_deps.recovery.clearPendingVoice());
           _completeSave(result);
+          // After the save, deliberately. The recording keeps its audio either
+          // way, so the question is never the price of storing it.
+          if (capability == TranscriptionCapabilityOutcome.askOnce) {
+            _emit(_snapshot.copyWith(transcriptionChoiceRequired: true));
+          } else if (capability ==
+              TranscriptionCapabilityOutcome.askSpeechLanguage) {
+            _emit(_snapshot.copyWith(speechLocaleChoiceRequired: true));
+          }
         },
       );
     } catch (e, stackTrace) {
@@ -575,6 +590,64 @@ class CaptureFlowController extends ChangeNotifier {
         hasLocalDraft: true,
         hasLocalSave: false,
       );
+    }
+  }
+
+  /// Whether this device can transcribe at all, failing quiet on error.
+  ///
+  /// A capability probe that throws is not evidence of a capability gap, so it
+  /// resolves to [TranscriptionCapabilityOutcome.proceed]: a privacy prompt
+  /// raised by a broken probe would be a prompt the customer cannot act on
+  /// honestly.
+  Future<TranscriptionCapabilityOutcome>
+      _evaluateTranscriptionCapability() async {
+    try {
+      return await _deps.transcriptionCapability.evaluate();
+    } on Object {
+      // ignore: silent_catch_audit — see above.
+      return TranscriptionCapabilityOutcome.proceed;
+    }
+  }
+
+  /// Records the customer's answer to the transcription prompt, permanently.
+  ///
+  /// [allowRemote] false is a real answer, not a dismissal: it is stored, and
+  /// [TranscriptionCapabilityPolicy] stops asking.
+  Future<void> resolveTranscriptionChoice({required bool allowRemote}) async {
+    if (!_snapshot.transcriptionChoiceRequired) return;
+    _emit(_snapshot.copyWith(transcriptionChoiceRequired: false));
+    try {
+      await _deps.transcriptionCapability.recordChoice(
+        allowRemote: allowRemote,
+      );
+    } on Object catch (error, stackTrace) {
+      CaptureFlowLog.unexpectedFailure(
+        operation: 'resolve_transcription_choice',
+        error: error,
+        stackTrace: stackTrace,
+      );
+    }
+  }
+
+  /// Records which language the customer speaks, permanently.
+  ///
+  /// Takes a [ConfirmedSpeechLocale], so there is no overload of this that a
+  /// caller could reach with a device setting. If the write fails the flag goes
+  /// back up rather than staying down: an answer that did not persist has not
+  /// been given, and silently proceeding would leave on-device recognition
+  /// disabled with no way for the customer to find out why.
+  Future<void> resolveSpeechLocale(ConfirmedSpeechLocale locale) async {
+    if (!_snapshot.speechLocaleChoiceRequired) return;
+    _emit(_snapshot.copyWith(speechLocaleChoiceRequired: false));
+    try {
+      await _deps.transcriptionCapability.recordSpeechLocale(locale);
+    } on Object catch (error, stackTrace) {
+      CaptureFlowLog.unexpectedFailure(
+        operation: 'resolve_speech_locale',
+        error: error,
+        stackTrace: stackTrace,
+      );
+      _emit(_snapshot.copyWith(speechLocaleChoiceRequired: true));
     }
   }
 

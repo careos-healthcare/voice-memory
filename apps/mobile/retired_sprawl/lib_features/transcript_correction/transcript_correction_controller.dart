@@ -3,6 +3,7 @@ import 'package:archiveme_mobile/features/pressure_retention/pressure_check_in_s
 import 'package:archiveme_mobile/features/timeline/timeline_entry_display.dart';
 import 'package:archiveme_mobile/features/transcript_correction/transcript_correction_copy.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
+import 'package:archiveme_mobile/models/transcript_provenance.dart';
 import 'package:archiveme_mobile/services/app_services.dart';
 
 class TranscriptCorrectionFailure implements Exception {
@@ -32,9 +33,12 @@ abstract final class TranscriptCorrectionController {
       throw TranscriptCorrectionFailure(TranscriptCorrectionCopy.saveFailed);
     }
 
+    // The user authored this replacement themselves — there is no AI rewrite
+    // in this path — so the corrected text stays quotable.
     final updated = applyFinalTranscriptToVoiceEntry(
       existing,
       finalTranscript: trimmed,
+      provenance: TranscriptProvenance.userEdited,
     );
 
     await AppServices.instance.journalStore.update(updated);

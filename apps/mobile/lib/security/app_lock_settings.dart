@@ -1,3 +1,5 @@
+import 'package:archiveme_mobile/security/privacy_claim_catalogue.dart';
+
 /// App Lock — all consumer-facing copy in one place. Calm, factual lines
 /// only: no fear, no overclaiming, no security theater.
 abstract class AppLockCopy {
@@ -33,8 +35,12 @@ abstract class AppLockCopy {
   static const String lockUnlockLabel = 'Unlock';
 
   /// The reason line passed to the platform biometric prompt.
-  static const String biometricReason = 'Unlock ArchiveMe';
+  ///
+  /// Deliberately the same words as [lockTitle]: the OS sheet and the screen
+  /// behind it are one moment, and reading two names for it is a wobble.
+  static const String biometricReason = lockTitle;
 
   /// Emergency path — wipe local data without PIN (double confirmation).
-  static const String emergencyWipeLabel = 'Delete all local archive data';
+  static const String emergencyWipeLabel =
+      PrivacyClaimCatalogue.deleteAllLocalArchiveData;
 }

@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:archiveme_mobile/features/archive_theory/theory_tracker_models.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
+import 'package:archiveme_mobile/security/caregiver_session_guard.dart';
 import 'package:audioplayers/audioplayers.dart';
 
 /// Launches local audio playback at a theory citation timestamp.
@@ -10,10 +11,21 @@ class CitationPlaybackLauncher {
 
   final AudioPlayer Function() playerFactory;
 
+  /// Plays the recording a theory citation was drawn from.
+  ///
+  /// The guard runs before the quote is even inspected: a citation renders as
+  /// text a caregiver session may be entitled to see, but the recording behind
+  /// it is the archive owner's voice, unedited and including whatever was said
+  /// around the quoted line. A refusal is raised rather than returned so it
+  /// cannot be mistaken for "this citation has no audio".
   Future<void> play({
     required TheoryEvidenceQuote quote,
     required List<JournalEntry> entries,
   }) async {
+    await CaregiverSessionGuard.assertOwnerAccess(
+      CaregiverSessionGuard.playbackTheoryCitation,
+    );
+
     if (!quote.hasCitationPlayback) return;
 
     JournalEntry? entry;

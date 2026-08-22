@@ -1,10 +1,12 @@
 import 'package:archiveme_mobile/features/caregiver/caregiver_models.dart';
+import 'package:archiveme_mobile/security/privacy_claim_catalogue.dart';
+import 'package:archiveme_mobile/security/privacy_copy_policy.dart';
 
 /// Copy for the Privacy & Security Control Center.
 abstract final class PrivacySecurityControlCenterCopy {
   PrivacySecurityControlCenterCopy._();
 
-  static const screenTitle = 'Privacy & Security';
+  static const screenTitle = PrivacyClaimCatalogue.privacyAndSecurityTitle;
 
   static const pillar3Heading = 'Encryption at rest';
   static const pillar4Heading = 'Caregiver access';
@@ -36,11 +38,18 @@ abstract final class PrivacySecurityControlCenterCopy {
 
   static const auditLogTitle = 'Access & Revocation Audit Log';
   static const auditLogEmpty = 'No access or revocation events recorded yet.';
-  static const revokeAccessCta = 'Revoke Access';
-  static const revokeAccessConfirmBody =
-      'This immediately ends caregiver access for this grant. '
-      'You can issue a new consent later if needed.';
-  static const revokeSuccessSnack = 'Caregiver access revoked.';
+
+  // A revoke CTA, a two-stage confirmation body, and a confirmed/queued snack
+  // pair used to live here. This screen has never had a revoke control: it
+  // links to `/caregiver-access`, which owns the grant list and its revoke
+  // action, so nothing read any of them. They were the third parallel set of
+  // revocation wording in the app, after `CaregiverAccessCopy` on the screen
+  // that actually revokes and `ConsentAuditCopy` on the audit trail, and the
+  // only one of the three that no user could reach — while
+  // `docs/security/CAREGIVER_ACCESS_PRELAUNCH_BLOCKERS.md` cited this set as
+  // the disclosure that already describes the two-stage revoke. Wording for a
+  // control belongs next to the control; put it back here only if this screen
+  // grows one.
 
   static const settingsEntryTitle = 'Privacy, Encryption & Caregiver Access';
   static const settingsEntrySubtitle =
@@ -48,19 +57,38 @@ abstract final class PrivacySecurityControlCenterCopy {
 
   static const whyAmISeeingThis = 'Why am I seeing this?';
 
-  static const pillar3ExplanationTitle = 'Encryption at rest';
-  static const pillar3ExplanationBody =
-      'ArchiveMe stores your journal in a SQLCipher-encrypted SQLite file on '
-      'this device. The encryption key stays in secure device storage. '
-      'Optional biometrics add another gate before the database reopens '
-      'after backgrounding — it does not replace file encryption.';
+  /// The expansion repeats the pillar's own heading, so it aliases it rather
+  /// than retyping it — one heading, one place to change it.
+  static const pillar3ExplanationTitle = pillar3Heading;
 
-  static const pillar4ExplanationTitle = 'Caregiver access';
+  /// The baseline comes from [PrivacyCopyPolicy] rather than being described
+  /// again here. This block used to say the journal lived in a
+  /// "SQLCipher-encrypted SQLite file", which names the wrong store: the
+  /// journal is an AES-GCM envelope written by `EncryptedJsonFileStore` on
+  /// every platform, and SQLCipher covers `archiveme.db`, the index that
+  /// searches it, only on iOS and Android.
+  static const pillar3ExplanationBody =
+      '${PrivacyCopyPolicy.encryptionBaselineDetail} '
+      'Optional biometrics add another gate before the database reopens '
+      'after backgrounding. That gate sits on top of the protection '
+      'described here rather than replacing it.';
+
+  static const pillar4ExplanationTitle = pillar4Heading;
+
+  /// Said access "can be revoked here at any time" while this screen had no
+  /// revoke control and never has — revoking is on `/caregiver-access`, which
+  /// the link in this section opens. The lifetime is the one the server
+  /// declares: `CAREGIVER_CONSENT_DEFAULT_TTL_MS` in
+  /// `packages/shared/lib/consent/consent-token-ttl.ts`, 7 days, which
+  /// `CaregiverGrantCopy.stopPassLifetime` states in words on the grant
+  /// screen. The audit-log sentence points at `AccessRevocationAuditLogView`,
+  /// which does render directly below this section, and it records
+  /// [auditActionLabel] values only.
   static const pillar4ExplanationBody =
-      'Caregiver or coach access requires your explicit consent, uses '
-      'time-scoped tokens, and can be revoked here at any time. '
-      'Revocation and access events are recorded in the audit log below '
-      'without storing journal content.';
+      'Caregiver or coach access requires your explicit consent and uses '
+      'time-scoped tokens. You can end a grant at any time from the caregiver '
+      'access screen linked in this section. Revocation and access events are '
+      'recorded in the audit log below without storing journal content.';
 
   static String auditActionLabel(CaregiverAuditAction action) =>
       switch (action) {

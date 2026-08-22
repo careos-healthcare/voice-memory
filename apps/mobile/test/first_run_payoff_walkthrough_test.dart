@@ -11,6 +11,9 @@ import 'package:archiveme_mobile/features/activation/context_insights.dart';
 import 'package:archiveme_mobile/features/activation/evidence_attention_filters.dart';
 import 'package:archiveme_mobile/features/activation/third_entry_belief_payoff.dart';
 import 'package:archiveme_mobile/features/archive_proof/visible_archive_proof_copy.dart';
+import 'package:archiveme_mobile/features/archive_tab/archive_tab_four_state_copy.dart';
+import 'package:archiveme_mobile/features/onboarding/record_return_pro_state.dart';
+import 'package:archiveme_mobile/product/consumer_ui_copy.dart';
 import 'package:archiveme_mobile/features/pressure_retention/shareable_archive_proof_engine.dart';
 import 'package:archiveme_mobile/features/voice_capture/microphone_permission_copy.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
@@ -186,19 +189,20 @@ void main() {
       await tester.pump();
 
       expect(
-        find.text(VisibleArchiveProofCopy.firstSavePostSaveTitle),
+        find.text(RecordReturnProCopy.evidenceTitle),
         findsOneWidget,
       );
+      expect(find.text(RecordReturnProCopy.evidenceBody), findsOneWidget);
       expect(
-        find.text(VisibleArchiveProofCopy.firstSavePostSaveReassurance),
+        find.text(RecordReturnProCopy.evidenceSecondLine),
         findsOneWidget,
       );
-      expect(find.textContaining('compare what repeats'), findsOneWidget);
+      expect(find.textContaining('Come back when this shows up again'), findsOneWidget);
       expect(find.textContaining('VoiceMemory'), findsNothing);
       _expectNoBannedCopy([
-        VisibleArchiveProofCopy.firstSavePostSaveTitle,
-        VisibleArchiveProofCopy.firstSavePostSaveBody,
-        VisibleArchiveProofCopy.firstSavePostSaveReassurance,
+        RecordReturnProCopy.evidenceTitle,
+        RecordReturnProCopy.evidenceBody,
+        RecordReturnProCopy.evidenceSecondLine,
       ]);
     });
   });
@@ -214,7 +218,8 @@ void main() {
       expect(layout.needsAttention.show, isFalse);
       expect(layout.evidenceQuality.show, isFalse);
       expect(quickActions.showCard, isFalse);
-      expect(home.primaryCta, VisibleArchiveProofCopy.firstSavePrimaryCta);
+      expect(home.body, ArchiveTabFourStateCopy.oneBody);
+      expect(home.primaryCta, isNull);
       expect(home.suppressDuplicatePayoffCards, isTrue);
     });
 
@@ -225,17 +230,16 @@ void main() {
         final quickActions = _quickActions(_entries(2));
 
         expect(home.stage, ArchiveHomeStage.two);
-        expect(home.title, VisibleArchiveProofCopy.twoEntryCompareTitle);
+        expect(
+          home.body,
+          anyOf(
+            ArchiveTabFourStateCopy.twoUnrelatedBody,
+            contains('This may connect to:'),
+          ),
+        );
         expect(home.body.toLowerCase(), isNot(contains('pattern found')));
-        expect(
-          home.footnoteLine,
-          VisibleArchiveProofCopy.firstRunBeliefsNotConclusionsLine,
-        );
-        expect(
-          quickActions.actions.map((a) => a.kind),
-          isNot(contains(ArchiveWorkspaceQuickActionKind.addMoment)),
-        );
-        _expectNoBannedCopy([home.title, home.body]);
+        expect(home.title, isEmpty);
+        _expectNoBannedCopy([home.body]);
       },
     );
 
@@ -286,10 +290,10 @@ void main() {
 
     test('first-run copy uses ArchiveMe not VoiceMemory', () {
       const archiveMeStrings = [
-        VisibleArchiveProofCopy.recordHeroBody,
-        VisibleArchiveProofCopy.archiveHomeEmptyBody,
-        VisibleArchiveProofCopy.firstSaveSecondary,
+        ArchiveTabFourStateCopy.oneBody,
+        ConsumerUiCopy.patternsFirstEntrySavedBody,
         PrivacyDataControlsCopy.dataStaysOnDeviceBody,
+        VisibleArchiveProofCopy.recordHeroTitle,
       ];
       for (final text in archiveMeStrings) {
         expect(text, contains('ArchiveMe'), reason: text);

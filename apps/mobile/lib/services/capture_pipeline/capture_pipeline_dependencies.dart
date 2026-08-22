@@ -5,6 +5,7 @@ import 'package:archiveme_mobile/features/proof_admission/remote_processing_cons
 import 'package:archiveme_mobile/features/search/reflection_embedding_index_worker.dart';
 import 'package:archiveme_mobile/features/reflections/local_ai_pipeline.dart';
 import 'package:archiveme_mobile/features/vision/image_embedding_service.dart';
+import 'package:archiveme_mobile/features/voice_capture/transcription/speech_locale.dart';
 import 'package:archiveme_mobile/security/account_session_guard.dart';
 import 'package:archiveme_mobile/security/api_usage_guard.dart';
 import 'package:archiveme_mobile/services/capture_attest_service.dart';
@@ -23,6 +24,7 @@ class CapturePipelineDependencies {
     this.imageEmbeddingService,
     this.localAiPipeline,
     this.reflectionEmbeddingIndexWorker,
+    this.speechLocale,
     this.sessionGuardFactory = AccountSessionGuard.capture,
   });
 
@@ -36,6 +38,16 @@ class CapturePipelineDependencies {
   final ImageEmbeddingService? imageEmbeddingService;
   final VoiceLocalAiPort? localAiPipeline;
   final ReflectionEmbeddingIndexWorker? reflectionEmbeddingIndexWorker;
+
+  /// Reads the language the customer confirmed they speak.
+  ///
+  /// Nullable, and null means "nobody has told us" rather than any default.
+  /// Unwired, on-device speech recognition simply does not run, which is the
+  /// same outcome as before this existed — a missing reader can cost a
+  /// transcript but can never produce one in the wrong language.
+  /// `speech_locale_contract_test.dart` asserts the production wiring supplies
+  /// one.
+  final SpeechLocaleReader? speechLocale;
   final AccountSessionGuard Function() sessionGuardFactory;
 
   String get archiveScope => scopeProvider.activeArchiveScope;
@@ -57,6 +69,7 @@ class CapturePipelineDependencies {
       localAiPipeline: localAiPipeline ?? this.localAiPipeline,
       reflectionEmbeddingIndexWorker:
           reflectionEmbeddingIndexWorker ?? this.reflectionEmbeddingIndexWorker,
+      speechLocale: speechLocale,
       sessionGuardFactory: sessionGuardFactory,
     );
   }

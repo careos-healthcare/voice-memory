@@ -7,6 +7,7 @@ import 'package:archiveme_mobile/features/reflections/data/local_reflection_data
 import 'package:archiveme_mobile/features/reflections/data/local_reflection_heuristic_inference.dart';
 import 'package:archiveme_mobile/features/reflections/data/offline_reflection_knowledge_graph.dart';
 import 'package:archiveme_mobile/features/reflections/data/onnx_reflection_inference.dart';
+import 'package:archiveme_mobile/features/reflections/data/reflection_model_contract.dart';
 import 'package:archiveme_mobile/features/reflections/data/reflection_output_parser.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_onnxruntime/flutter_onnxruntime.dart';
@@ -135,11 +136,12 @@ class OnnxLlmReflectionExtractor {
     try {
       final map = jsonDecode(generated.substring(start, end + 1))
           as Map<String, dynamic>;
+      final generatedIntensity = map['emotionalIntensity'] as num?;
       return ReflectionDto(
-        mood: map['mood'] as String? ?? 'reflective',
-        emotionalIntensity: ((map['emotionalIntensity'] as num?) ?? 5)
-            .toInt()
-            .clamp(1, 10),
+        mood: map['mood'] as String? ?? ReflectionModelContract.unknownMood,
+        emotionalIntensity: generatedIntensity == null
+            ? ReflectionModelContract.unknownIntensity
+            : generatedIntensity.toInt().clamp(1, 10),
         recurringThemes: (map['recurringThemes'] as List<dynamic>? ?? [])
             .whereType<String>()
             .toList(),

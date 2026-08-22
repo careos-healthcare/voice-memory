@@ -104,6 +104,8 @@ class LocalReflectionRagRetriever {
 
     if (query.emotionalIntensity != null) {
       for (final entry in entries) {
+        // Without a reading there is nothing to be near, so no proximity boost.
+        if (entry.reflection.emotionalIntensity <= 0) continue;
         final delta = (entry.reflection.emotionalIntensity -
                 query.emotionalIntensity!)
             .abs();

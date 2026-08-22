@@ -17,6 +17,14 @@ MANIFEST_SECTIONS = (
     "self_tests",
 )
 
+# Every command in gates.yaml is written relative to apps/mobile, so the gate
+# has to run there no matter where the runner was invoked from. Resolving this
+# the same way as the manifest keeps the two from disagreeing: locating the
+# manifest by __file__ while inheriting the caller's cwd is what made
+# `python3 apps/mobile/tool/run_gate.py gates budget` announce the gate and
+# then fail in the wrong tree.
+PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
 
 def _fallback_load_manifest(manifest_path):
     """Minimal YAML loader when PyYAML is unavailable."""
@@ -51,7 +59,7 @@ def _fallback_load_manifest(manifest_path):
 
 
 def load_manifest():
-    manifest_path = os.path.join(os.path.dirname(__file__), "gates.yaml")
+    manifest_path = os.path.join(PROJECT_ROOT, "tool", "gates.yaml")
     if yaml:
         with open(manifest_path, "r", encoding="utf-8") as handle:
             data = yaml.safe_load(handle) or {}
@@ -113,7 +121,12 @@ def main():
         section_label = f"{section}/{gate_name}"
 
     print(f"Running gate [{section_label}]: {command}")
-    result = subprocess.run(command, shell=True)
+    if os.path.realpath(os.getcwd()) != os.path.realpath(PROJECT_ROOT):
+        print(f"  (in {PROJECT_ROOT})")
+    # The child writes straight to the terminal, so an unflushed announcement
+    # lands underneath the output it introduces.
+    sys.stdout.flush()
+    result = subprocess.run(command, shell=True, cwd=PROJECT_ROOT)
     sys.exit(result.returncode)
 
 

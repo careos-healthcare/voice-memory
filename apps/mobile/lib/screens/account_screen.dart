@@ -34,7 +34,13 @@ class _AccountScreenState extends State<AccountScreen> {
   @override
   void initState() {
     super.initState();
-    unawaited(_refresh());
+    // `refreshSession` writes `authSessionProvider` before its first await, so
+    // calling it straight from `initState` mutates a provider mid-build and any
+    // enclosing `ProviderScope` rejects it. Run it once the frame is done.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      unawaited(_refresh());
+    });
   }
 
   Future<void> _refresh() async {

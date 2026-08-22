@@ -1,0 +1,1800 @@
+TOTAL tests: 365   PASS: 257   FAIL: 108
+
+=== FAILURES BY SUITE ===
+   2  archive_paywall_copy_test.dart
+   1  archive_paywall_stats_test.dart
+   8  delayed_paywall_proof_test.dart
+   5  paywall_accessibility_test.dart
+   3  paywall_alignment_test.dart
+   3  paywall_archive_branding_test.dart
+   7  paywall_conversion_clarity_test.dart
+  20  paywall_conversion_copy_test.dart
+   3  paywall_copy_alignment_test.dart
+   2  paywall_launch_copy_test.dart
+   8  paywall_objection_follow_up_test.dart
+   2  paywall_objection_handling_test.dart
+   2  paywall_purchase_confidence_test.dart
+   4  paywall_rejection_capture_test.dart
+   3  paywall_restore_test.dart
+   7  paywall_source_attribution_test.dart
+   1  paywall_timing_gates_test.dart
+   1  paywall_timing_test.dart
+   5  paywall_trigger_engine_test.dart
+   8  paywall_unavailable_buttons_test.dart
+   6  paywall_value_sharpening_test.dart
+   2  pro_preview_before_paywall_test.dart
+   5  value_moment_paywall_test.dart
+
+=== FAILURES (sorted by suite, name) ===
+[archive_paywall_copy_test.dart] paywall benefits include aligned timeline bullets
+[archive_paywall_copy_test.dart] paywall subhead sells timeline value
+[archive_paywall_stats_test.dart] variant B subheadline uses change-over-time copy
+[delayed_paywall_proof_test.dart] DelayedPaywallProofStore persists to prefs
+[delayed_paywall_proof_test.dart] DelayedPaywallProofStore requires at least three evidence milestones
+[delayed_paywall_proof_test.dart] DelayedPaywallProofStore starts false until all proof milestones are recorded
+[delayed_paywall_proof_test.dart] PaywallAccess delayed paywall gate canOpenPaywall is false until all proof milestones
+[delayed_paywall_proof_test.dart] PaywallScreen delayed paywall gate blocks paywall content when proof milestones are missing
+[delayed_paywall_proof_test.dart] ProBridgeVisibilityEngine delayed paywall gate passesDelayedPaywallProofGate false without evidence trail
+[delayed_paywall_proof_test.dart] ProBridgeVisibilityEngine delayed paywall gate passesDelayedPaywallProofGate false without first repeat
+[delayed_paywall_proof_test.dart] ProBridgeVisibilityEngine delayed paywall gate passesDelayedPaywallProofGate when all milestones met
+[paywall_accessibility_test.dart] Paywall accessibility header restore action is gated on the same loaded-entitlement check as the bottom-of-page CTA
+[paywall_accessibility_test.dart] Paywall accessibility header restore action is reachable by a screen reader without duplicating the visible button label
+[paywall_accessibility_test.dart] Paywall accessibility remains usable at 200% text scale with no overflow
+[paywall_accessibility_test.dart] Paywall plan selector semantics (source contract) a load error is announced via a live region
+[paywall_accessibility_test.dart] Paywall plan selector semantics (source contract) plan chips expose button/selected semantics in the sticky checkout bar
+[paywall_alignment_test.dart] ConsumerUiCopy paywall alignment delegates paywall strings to alignment copy
+[paywall_alignment_test.dart] PaywallScreen alignment rendering renders compact headline and subscription details
+[paywall_alignment_test.dart] PaywallScreen alignment rendering still renders restore purchases on paywall
+[paywall_archive_branding_test.dart] empty offerings fallback copy is consumer-safe
+[paywall_archive_branding_test.dart] paywall screen shows ArchiveMe fallback when billing unavailable
+[paywall_archive_branding_test.dart] restore tap does not crash on unavailable paywall
+[paywall_conversion_clarity_test.dart] Paywall conversion clarity copy constants copy guard blocks banned terms
+[paywall_conversion_clarity_test.dart] Paywall conversion clarity copy constants defines the conversion hierarchy copy
+[paywall_conversion_clarity_test.dart] Paywall conversion clarity rendering Pro user sees active state instead of upgrade paywall
+[paywall_conversion_clarity_test.dart] Paywall conversion clarity rendering keeps subscription details visible without benefit checklist
+[paywall_conversion_clarity_test.dart] Paywall conversion clarity rendering renders headline and timeline subhead
+[paywall_conversion_clarity_test.dart] Paywall conversion clarity rendering restore purchases stays visible
+[paywall_conversion_clarity_test.dart] Paywall conversion clarity revenue funnel hooks paywall_seen fires once for non-Pro paywall
+[paywall_conversion_copy_test.dart] Paywall above-fold clarity unavailable paywall does not show purchase-body clarity stack
+[paywall_conversion_copy_test.dart] Paywall screen source-aware headline Ask the Archive source shows archive question copy
+[paywall_conversion_copy_test.dart] Paywall screen source-aware headline daily suggestion source shows thread headline
+[paywall_conversion_copy_test.dart] Paywall screen source-aware headline general Pro source shows fallback headline
+[paywall_conversion_copy_test.dart] Paywall screen source-aware headline no source keeps the existing default headline
+[paywall_conversion_copy_test.dart] Paywall screen source-aware headline pressure pattern source shows pressure headline/subheadline
+[paywall_conversion_copy_test.dart] Paywall screen source-aware headline review source shows pressure-specific copy
+[paywall_conversion_copy_test.dart] Paywall screen source-aware headline start here today source shows thread headline
+[paywall_conversion_copy_test.dart] Paywall source copy variants general Pro fallback copy
+[paywall_conversion_copy_test.dart] Price confidence unavailable paywall hides price-confidence purchase stack
+[paywall_conversion_copy_test.dart] Pro proof and annual value framing framing and proof preview do not render on unavailable generic paywall
+[paywall_conversion_copy_test.dart] Pro proof and annual value framing long-term archive line stays on source-specific purchase body
+[paywall_conversion_copy_test.dart] Pro proof and annual value framing proof preview does not render while plans are unavailable
+[paywall_conversion_copy_test.dart] Pro proof and annual value framing proof preview stays on source-specific purchase body
+[paywall_conversion_copy_test.dart] Pro proof and annual value framing suggestion reassurance stays on source-specific purchase body
+[paywall_conversion_copy_test.dart] Pro trial explainer no trial mention when no trial offer is configured
+[paywall_conversion_copy_test.dart] Purchase confidence layer confidence copy is wired for source-specific purchase body
+[paywall_conversion_copy_test.dart] Purchase confidence layer generic unavailable paywall stays compact without confidence stack
+[paywall_conversion_copy_test.dart] What Pro keeps is centralized in the clarity block generic unavailable paywall stays compact
+[paywall_conversion_copy_test.dart] What Pro keeps is centralized in the clarity block suggestion unavailable paywall keeps restore visible
+[paywall_copy_alignment_test.dart] Paywall copy alignment v1 default paywall still renders restore and unavailable dismiss
+[paywall_copy_alignment_test.dart] Paywall copy alignment v1 general Pro paywall renders aligned copy with CTAs
+[paywall_copy_alignment_test.dart] Paywall copy alignment v1 subhead sells the proof trail value
+[paywall_launch_copy_test.dart] paywall benefits include aligned timeline bullets
+[paywall_launch_copy_test.dart] paywall subhead sells timeline value
+[paywall_objection_follow_up_test.dart] Paywall screen integration RevenueCat identifiers and purchase logic are unchanged
+[paywall_objection_follow_up_test.dart] Paywall screen integration a stored reason renders its block below the clarity block
+[paywall_objection_follow_up_test.dart] Paywall screen integration follow-up sits below the clarity block and above plan cards in the purchase body
+[paywall_objection_follow_up_test.dart] Paywall screen integration no raw notes, snippets, or source terms in any payload
+[paywall_objection_follow_up_test.dart] Paywall screen integration no stored reason renders nothing
+[paywall_objection_follow_up_test.dart] Paywall screen integration seen event fires once with reason and source only
+[paywall_objection_follow_up_test.dart] Paywall screen integration shows at most once per session
+[paywall_objection_follow_up_test.dart] Paywall screen integration the dismissal flow that captures the reason never shows the follow-up — only a later paywall does
+[paywall_objection_handling_test.dart] PaywallScreen integration purchase flow wiring untouched
+[paywall_objection_handling_test.dart] PaywallScreen integration restore purchases remains visible
+[paywall_purchase_confidence_test.dart] ArchivePaywallCopy purchase confidence strings purchase confidence copy guard blocks banned terms
+[paywall_purchase_confidence_test.dart] PaywallScreen purchase confidence wiring paywall screen references purchase confidence copy
+[paywall_rejection_capture_test.dart] Paywall screen flow answering closes the sheet and leaves the paywall
+[paywall_rejection_capture_test.dart] Paywall screen flow no private content in any rejection payload
+[paywall_rejection_capture_test.dart] Paywall screen flow prompt appears after backing out of the paywall
+[paywall_rejection_capture_test.dart] Paywall screen flow prompt appears only once per session
+[paywall_restore_test.dart] Paywall restore purchases purchase unavailable copy still shows when products missing
+[paywall_restore_test.dart] Paywall restore purchases restore calls RestorePurchasesFlow when offerings are unavailable
+[paywall_restore_test.dart] Paywall restore purchases restore does not show plans unavailable copy
+[paywall_source_attribution_test.dart] Paywall screen attribution no VoiceMemory consumer copy on attributed paywall
+[paywall_source_attribution_test.dart] Paywall screen attribution paywall_seen falls back to generalPro without a source
+[paywall_source_attribution_test.dart] Paywall screen attribution paywall_seen records the source it was opened from
+[paywall_source_attribution_test.dart] Paywall screen attribution restore tap records restore_started with the right source
+[paywall_source_attribution_test.dart] Suggestion-to-Pro paywall funnel daily suggestion sourced paywall records suggestion_to_paywall_seen
+[paywall_source_attribution_test.dart] Suggestion-to-Pro paywall funnel non-suggestion sources record no suggestion funnel events
+[paywall_source_attribution_test.dart] Suggestion-to-Pro paywall funnel start-here sourced paywall records suggestion_to_paywall_seen
+[paywall_timing_gates_test.dart] PaywallTimingGates.showSoftProBridge shows after grounded repeat proof at two or more entries
+[paywall_timing_test.dart] PaywallTimingGates.showSoftProBridge shows after grounded repeat proof at two or more entries
+[paywall_trigger_engine_test.dart] archive timeline full triggers when loop closed
+[paywall_trigger_engine_test.dart] full history triggers after 7 moments
+[paywall_trigger_engine_test.dart] key moments triggers after 7 moments
+[paywall_trigger_engine_test.dart] monthly review and private export are Pro after loop closed
+[paywall_trigger_engine_test.dart] pattern map full triggers when loop closed
+[paywall_unavailable_buttons_test.dart] PaywallScreen unavailable purchases Continue without Pro dismisses to previous route safely
+[paywall_unavailable_buttons_test.dart] PaywallScreen unavailable purchases Continue without Pro falls back to Record when no pop route
+[paywall_unavailable_buttons_test.dart] PaywallScreen unavailable purchases ProPackagingCopy exposes continue without Pro label
+[paywall_unavailable_buttons_test.dart] PaywallScreen unavailable purchases Try again reloads offerings without purchasing
+[paywall_unavailable_buttons_test.dart] PaywallScreen unavailable purchases billing not configured still uses Continue without Pro
+[paywall_unavailable_buttons_test.dart] PaywallScreen unavailable purchases restore purchases remains available and does not purchase
+[paywall_unavailable_buttons_test.dart] PaywallScreen unavailable purchases unavailable paywall shows subscription Terms and Privacy
+[paywall_unavailable_buttons_test.dart] PaywallScreen unavailable purchases unavailable state shows honest copy and Continue without Pro label
+[paywall_value_sharpening_test.dart] PaywallScreen sharpening rendering generic source renders compact unavailable paywall copy
+[paywall_value_sharpening_test.dart] PaywallScreen sharpening rendering proof source renders proof-first headline and copy
+[paywall_value_sharpening_test.dart] PaywallScreen sharpening rendering restore purchases remains visible
+[paywall_value_sharpening_test.dart] PaywallValueSharpeningCopy defines trail benefit bullets only
+[paywall_value_sharpening_test.dart] PaywallValueSharpeningCopy defines trail-focused body and differentiation line
+[paywall_value_sharpening_test.dart] Protected billing areas purchase buttons unchanged
+[pro_preview_before_paywall_test.dart] Protected billing areas patterns screen routes preview CTA through existing paywall handler
+[pro_preview_before_paywall_test.dart] SurfacePriorityEngine Pro slot cap pro preview wins single Pro slot on record post save
+[value_moment_paywall_test.dart] Pressure Insights integration CTA opens the existing paywall with the value-moment source
+[value_moment_paywall_test.dart] Pressure Insights integration bridge appears after thread return evidence
+[value_moment_paywall_test.dart] Pressure Insights integration dismiss hides the bridge for the rest of the session
+[value_moment_paywall_test.dart] Value moment paywall copy value moment routes to the continuity paywall copy
+[value_moment_paywall_test.dart] Value moment trigger — moment-specific bodies a weekly review alone uses the weekly body
+
+=== ERROR DETAIL ===
+--- [archive_paywall_copy_test.dart] paywall benefits include aligned timeline bullets
+Expected: contains 'Longer evidence history'
+  Actual: [
+            'Longer evidence history on this device',
+            'More archived moments over weeks and months',
+            'Continuity when patterns return or change'
+          ]
+   Which: does not contain 'Longer evidence history'
+
+
+--- [archive_paywall_copy_test.dart] paywall subhead sells timeline value
+Expected: 'Free shows the first useful proof. Pro keeps the longer trail.'
+  Actual: 'Free shows the first useful repeat. Pro keeps the longer trail.'
+   Which: is different.
+          Expected: ... st useful proof. Pro ...
+            Actual: ... st useful repeat. Pr ...
+                                  ^
+           Differ at offset 28
+
+
+--- [archive_paywall_stats_test.dart] variant B subheadline uses change-over-time copy
+Expected: contains 'first useful proof'
+  Actual: 'Free shows the first useful repeat. Pro keeps the longer trail.\n'
+            '\n'
+            'ArchiveMe is not trying to answer better than ChatGPT. It is trying to remember differently.'
+   Which: does not contain 'first useful proof'
+
+
+--- [delayed_paywall_proof_test.dart] DelayedPaywallProofStore persists to prefs
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+MissingPluginException(No implementation found for method check on channel dev.fluttercommunity.plus/connectivity)
+
+--- [delayed_paywall_proof_test.dart] DelayedPaywallProofStore requires at least three evidence milestones
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+MissingPluginException(No implementation found for method check on channel dev.fluttercommunity.plus/connectivity)
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+
+--- [delayed_paywall_proof_test.dart] DelayedPaywallProofStore starts false until all proof milestones are recorded
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+MissingPluginException(No implementation found for method check on channel dev.fluttercommunity.plus/connectivity)
+Warning: At least one test in this suite creates an HttpClient. When running a test suite that uses
+TestWidgetsFlutterBinding, all HTTP requests will return status code 400, and no network request
+will actually be made. Any test expecting a real network connection and status code will fail.
+To test code that needs an HttpClient, provide your own HttpClient implementation to the code under
+test, so that your test can consistently provide a testable response to the code under test.
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+DatabaseException(error database_clo
+--- [delayed_paywall_proof_test.dart] PaywallAccess delayed paywall gate canOpenPaywall is false until all proof milestones
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+MissingPluginException(No implementation found for method check on channel dev.fluttercommunity.plus/connectivity)
+Expected: true
+  Actual: <false>
+
+
+--- [delayed_paywall_proof_test.dart] PaywallScreen delayed paywall gate blocks paywall content when proof milestones are missing
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+MissingPluginException(No implementation found for method check on channel dev.fluttercommunity.plus/connectivity)
+
+--- [delayed_paywall_proof_test.dart] ProBridgeVisibilityEngine delayed paywall gate passesDelayedPaywallProofGate false without evidence trail
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+MissingPluginException(No implementation found for method check on channel dev.fluttercommunity.plus/connectivity)
+
+--- [delayed_paywall_proof_test.dart] ProBridgeVisibilityEngine delayed paywall gate passesDelayedPaywallProofGate false without first repeat
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+MissingPluginException(No implementation found for method check on channel dev.fluttercommunity.plus/connectivity)
+
+--- [delayed_paywall_proof_test.dart] ProBridgeVisibilityEngine delayed paywall gate passesDelayedPaywallProofGate when all milestones met
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+MissingPluginException(No implementation found for method check on channel dev.fluttercommunity.plus/connectivity)
+
+--- [paywall_accessibility_test.dart] Paywall accessibility header restore action is gated on the same loaded-entitlement check as the bottom-of-page CTA
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+MissingPluginException(No implementation found for method check on channel dev.fluttercommunity.plus/connectivity)
+
+--- [paywall_accessibility_test.dart] Paywall accessibility header restore action is reachable by a screen reader without duplicating the visible button label
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+MissingPluginException(No implementation found for method check on channel dev.fluttercommunity.plus/connectivity)
+══╡ EXCEPTION CAUGHT BY WIDGETS LIBRARY ╞═══════════════════════════════════════════════════════════
+The following StateError was thrown building SyncStatusAppBarAction(dirty, state:
+_ConsumerState#686e4):
+Bad state: No ProviderScope found
+
+The relevant error-causing widget was:
+  SyncStatusAppBarAction
+  SyncStatusAppBarAction:file:///Users/chiragpatel/Projects/voice-memory/apps/mobile/lib/features/sync/presentation/widgets/sync_status_app_bar_action.dart:29:11
+
+When the exception was thrown, this was the stack:
+#0      ProviderScope.containerOf (package:flutter_riverpod/src/core/provider_scope.dart:105:7)
+#1      ConsumerStatefulElement.container (package:flutter_riverpod/src/core/consumer.dart:374:52)
+#2      ConsumerStatefulElement.container 
+--- [paywall_accessibility_test.dart] Paywall accessibility remains usable at 200% text scale with no overflow
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+MissingPluginException(No implementation found for method check on channel dev.fluttercommunity.plus/connectivity)
+Warning: At least one test in this suite creates an HttpClient. When running a test suite that uses
+TestWidgetsFlutterBinding, all HTTP requests will return status code 400, and no network request
+will actually be made. Any test expecting a real network connection and status code will fail.
+To test code that needs an HttpClient, provide your own HttpClient implementation to the code under
+test, so that your test can consistently provide a testable response to the code under test.
+══╡ EXCEPTION CAUGHT BY WIDGETS LIBRARY ╞═══════════════════════════════════════════════════════════
+The following StateError was thrown building SyncStatusAppBarAction(dirty, state:
+_ConsumerState#9a261):
+Bad state: No ProviderScope found
+
+The relevant error-causing widget was:
+  SyncStatusAppBarAction
+  SyncStatusA
+--- [paywall_accessibility_test.dart] Paywall plan selector semantics (source contract) a load error is announced via a live region
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+MissingPluginException(No implementation found for method check on channel dev.fluttercommunity.plus/connectivity)
+
+--- [paywall_accessibility_test.dart] Paywall plan selector semantics (source contract) plan chips expose button/selected semantics in the sticky checkout bar
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+MissingPluginException(No implementation found for method check on channel dev.fluttercommunity.plus/connectivity)
+
+--- [paywall_alignment_test.dart] ConsumerUiCopy paywall alignment delegates paywall strings to alignment copy
+Expected: 'Free shows the first useful proof. Pro keeps the longer trail.'
+  Actual: 'Free shows the first useful repeat. Pro keeps the longer trail.'
+   Which: is different.
+          Expected: ... st useful proof. Pro ...
+            Actual: ... st useful repeat. Pr ...
+                                  ^
+           Differ at offset 28
+
+
+--- [paywall_alignment_test.dart] PaywallScreen alignment rendering renders compact headline and subscription details
+══╡ EXCEPTION CAUGHT BY WIDGETS LIBRARY ╞═══════════════════════════════════════════════════════════
+The following StateError was thrown building SyncStatusAppBarAction(dirty, state:
+_ConsumerState#43940):
+Bad state: No ProviderScope found
+
+The relevant error-causing widget was:
+  SyncStatusAppBarAction
+  SyncStatusAppBarAction:file:///Users/chiragpatel/Projects/voice-memory/apps/mobile/lib/features/sync/presentation/widgets/sync_status_app_bar_action.dart:29:11
+
+When the exception was thrown, this was the stack:
+#0      ProviderScope.containerOf (package:flutter_riverpod/src/core/provider_scope.dart:105:7)
+#1      ConsumerStatefulElement.container (package:flutter_riverpod/src/core/consumer.dart:374:52)
+#2      ConsumerStatefulElement.container (package:flutter_riverpod/src/core/consumer.dart)
+#3      ConsumerStatefulElement.watch.<anonymous closure> (package:flutter_riverpod/src/core/consumer.dart:490:27)
+#4      _LinkedHashMapMixin.putIfAbsent (dart:_compact_hash:682:23)
+#5      ConsumerStatefulElement.watch (package:flutter_riverpod/src/core/consumer.dart:483:14)
+#6      SyncStatusAppBarAction.build (package:archiveme_mobile/features/sync/presentation/widgets/sync_status_app_ba
+--- [paywall_alignment_test.dart] PaywallScreen alignment rendering still renders restore purchases on paywall
+══╡ EXCEPTION CAUGHT BY WIDGETS LIBRARY ╞═══════════════════════════════════════════════════════════
+The following StateError was thrown building SyncStatusAppBarAction(dirty, state:
+_ConsumerState#fd3ac):
+Bad state: No ProviderScope found
+
+The relevant error-causing widget was:
+  SyncStatusAppBarAction
+  SyncStatusAppBarAction:file:///Users/chiragpatel/Projects/voice-memory/apps/mobile/lib/features/sync/presentation/widgets/sync_status_app_bar_action.dart:29:11
+
+When the exception was thrown, this was the stack:
+#0      ProviderScope.containerOf (package:flutter_riverpod/src/core/provider_scope.dart:105:7)
+#1      ConsumerStatefulElement.container (package:flutter_riverpod/src/core/consumer.dart:374:52)
+#2      ConsumerStatefulElement.container (package:flutter_riverpod/src/core/consumer.dart)
+#3      ConsumerStatefulElement.watch.<anonymous closure> (package:flutter_riverpod/src/core/consumer.dart:490:27)
+#4      _LinkedHashMapMixin.putIfAbsent (dart:_compact_hash:682:23)
+#5      ConsumerStatefulElement.watch (package:flutter_riverpod/src/core/consumer.dart:483:14)
+#6      SyncStatusAppBarAction.build (package:archiveme_mobile/features/sync/presentation/widgets/sync_status_app_ba
+--- [paywall_archive_branding_test.dart] empty offerings fallback copy is consumer-safe
+Expected: 'Purchases are not available right now.'
+  Actual: 'Plans are not available right now.'
+   Which: is different.
+          Expected: Purchases a ...
+            Actual: Plans are n ...
+                     ^
+           Differ at offset 1
+
+
+--- [paywall_archive_branding_test.dart] paywall screen shows ArchiveMe fallback when billing unavailable
+══╡ EXCEPTION CAUGHT BY WIDGETS LIBRARY ╞═══════════════════════════════════════════════════════════
+The following StateError was thrown building SyncStatusAppBarAction(dirty, state:
+_ConsumerState#d83f8):
+Bad state: No ProviderScope found
+
+The relevant error-causing widget was:
+  SyncStatusAppBarAction
+  SyncStatusAppBarAction:file:///Users/chiragpatel/Projects/voice-memory/apps/mobile/lib/features/sync/presentation/widgets/sync_status_app_bar_action.dart:29:11
+
+When the exception was thrown, this was the stack:
+#0      ProviderScope.containerOf (package:flutter_riverpod/src/core/provider_scope.dart:105:7)
+#1      ConsumerStatefulElement.container (package:flutter_riverpod/src/core/consumer.dart:374:52)
+#2      ConsumerStatefulElement.container (package:flutter_riverpod/src/core/consumer.dart)
+#3      ConsumerStatefulElement.watch.<anonymous closure> (package:flutter_riverpod/src/core/consumer.dart:490:27)
+#4      _LinkedHashMapMixin.putIfAbsent (dart:_compact_hash:682:23)
+#5      ConsumerStatefulElement.watch (package:flutter_riverpod/src/core/consumer.dart:483:14)
+#6      SyncStatusAppBarAction.build (package:archiveme_mobile/features/sync/presentation/widgets/sync_status_app_ba
+--- [paywall_archive_branding_test.dart] restore tap does not crash on unavailable paywall
+══╡ EXCEPTION CAUGHT BY WIDGETS LIBRARY ╞═══════════════════════════════════════════════════════════
+The following StateError was thrown building SyncStatusAppBarAction(dirty, state:
+_ConsumerState#c57fd):
+Bad state: No ProviderScope found
+
+The relevant error-causing widget was:
+  SyncStatusAppBarAction
+  SyncStatusAppBarAction:file:///Users/chiragpatel/Projects/voice-memory/apps/mobile/lib/features/sync/presentation/widgets/sync_status_app_bar_action.dart:29:11
+
+When the exception was thrown, this was the stack:
+#0      ProviderScope.containerOf (package:flutter_riverpod/src/core/provider_scope.dart:105:7)
+#1      ConsumerStatefulElement.container (package:flutter_riverpod/src/core/consumer.dart:374:52)
+#2      ConsumerStatefulElement.container (package:flutter_riverpod/src/core/consumer.dart)
+#3      ConsumerStatefulElement.watch.<anonymous closure> (package:flutter_riverpod/src/core/consumer.dart:490:27)
+#4      _LinkedHashMapMixin.putIfAbsent (dart:_compact_hash:682:23)
+#5      ConsumerStatefulElement.watch (package:flutter_riverpod/src/core/consumer.dart:483:14)
+#6      SyncStatusAppBarAction.build (package:archiveme_mobile/features/sync/presentation/widgets/sync_status_app_ba
+--- [paywall_conversion_clarity_test.dart] Paywall conversion clarity copy constants copy guard blocks banned terms
+Expected: contains 'not therapy'
+  Actual: 'you saw the first useful repeat. free shows the first useful repeat. pro keeps the longer trail. pro keeps a longer private archive — more moments, more continuity, more evidence over time. longer evidence history on this device more archived moments over weeks and months continuity when patterns return or change archiveme is not trying to answer better than chatgpt. it is trying to remember differently. your saves stay free. manage or cancel anytime in the app store. you are building evidence over time. pro keeps the longer archive trail as moments return, change, or fade. keep the longer trail'
+   Which: does not contain 'not therapy'
+
+
+--- [paywall_conversion_clarity_test.dart] Paywall conversion clarity copy constants defines the conversion hierarchy copy
+Expected: 'Free shows the first useful proof. Pro keeps the longer trail.'
+  Actual: 'Free shows the first useful repeat. Pro keeps the longer trail.'
+   Which: is different.
+          Expected: ... st useful proof. Pro ...
+            Actual: ... st useful repeat. Pr ...
+                                  ^
+           Differ at offset 28
+
+
+--- [paywall_conversion_clarity_test.dart] Paywall conversion clarity rendering Pro user sees active state instead of upgrade paywall
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: contains 'else if (_entitlements?.isPro == true)'
+  Actual: 'import \'dart:async\';\n'
+            '\n'
+            'import \'package:archiveme_mobile/l10n/localized_consumer_ui.dart\';\n'
+            'import \'package:archiveme_mobile/api/api_error_message.dart\';\n'
+            'import \'package:archiveme_mobile/billing/archive_paywall_copy.dart\';\n'
+            'import \'package:archiveme_mobile/billing/archive_paywall_plans.dart\';\n'
+            'import \'package:archiveme_mobile/billing/paywall_attribution_event.dart\';\n'
+            'import \'package:archiveme_mobile/billing/paywall_attribution_store.dart\';\n'
+            'import \'package:archiveme_mobile/billing/paywall_objection_follow_up.dart\';\n'
+            'import \'package:archiveme_mobile/billing/paywall_rejection_reason.dart\';\n'
+            'import \'package:archiveme_mobile/billing/paywall_route_args.dart\';\n'
+            'import \'package:archiveme_mobile/billing/paywall_session_tracker.dart\';\n'
+            'import \'package:archiveme_mobile/b
+--- [paywall_conversion_clarity_test.dart] Paywall conversion clarity rendering keeps subscription details visible without benefit checklist
+══╡ EXCEPTION CAUGHT BY WIDGETS LIBRARY ╞═══════════════════════════════════════════════════════════
+The following StateError was thrown building SyncStatusAppBarAction(dirty, state:
+_ConsumerState#726da):
+Bad state: No ProviderScope found
+
+The relevant error-causing widget was:
+  SyncStatusAppBarAction
+  SyncStatusAppBarAction:file:///Users/chiragpatel/Projects/voice-memory/apps/mobile/lib/features/sync/presentation/widgets/sync_status_app_bar_action.dart:29:11
+
+When the exception was thrown, this was the stack:
+#0      ProviderScope.containerOf (package:flutter_riverpod/src/core/provider_scope.dart:105:7)
+#1      ConsumerStatefulElement.container (package:flutter_riverpod/src/core/consumer.dart:374:52)
+#2      ConsumerStatefulElement.container (package:flutter_riverpod/src/core/consumer.dart)
+#3      ConsumerStatefulElement.watch.<anonymous closure> (package:flutter_riverpod/src/core/consumer.dart:490:27)
+#4      _LinkedHashMapMixin.putIfAbsent (dart:_compact_hash:682:23)
+#5      ConsumerStatefulElement.watch (package:flutter_riverpod/src/core/consumer.dart:483:14)
+#6      SyncStatusAppBarAction.build (package:archiveme_mobile/features/sync/presentation/widgets/sync_status_app_ba
+--- [paywall_conversion_clarity_test.dart] Paywall conversion clarity rendering renders headline and timeline subhead
+══╡ EXCEPTION CAUGHT BY WIDGETS LIBRARY ╞═══════════════════════════════════════════════════════════
+The following StateError was thrown building SyncStatusAppBarAction(dirty, state:
+_ConsumerState#f8c6e):
+Bad state: No ProviderScope found
+
+The relevant error-causing widget was:
+  SyncStatusAppBarAction
+  SyncStatusAppBarAction:file:///Users/chiragpatel/Projects/voice-memory/apps/mobile/lib/features/sync/presentation/widgets/sync_status_app_bar_action.dart:29:11
+
+When the exception was thrown, this was the stack:
+#0      ProviderScope.containerOf (package:flutter_riverpod/src/core/provider_scope.dart:105:7)
+#1      ConsumerStatefulElement.container (package:flutter_riverpod/src/core/consumer.dart:374:52)
+#2      ConsumerStatefulElement.container (package:flutter_riverpod/src/core/consumer.dart)
+#3      ConsumerStatefulElement.watch.<anonymous closure> (package:flutter_riverpod/src/core/consumer.dart:490:27)
+#4      _LinkedHashMapMixin.putIfAbsent (dart:_compact_hash:682:23)
+#5      ConsumerStatefulElement.watch (package:flutter_riverpod/src/core/consumer.dart:483:14)
+#6      SyncStatusAppBarAction.build (package:archiveme_mobile/features/sync/presentation/widgets/sync_status_app_ba
+--- [paywall_conversion_clarity_test.dart] Paywall conversion clarity rendering restore purchases stays visible
+══╡ EXCEPTION CAUGHT BY WIDGETS LIBRARY ╞═══════════════════════════════════════════════════════════
+The following StateError was thrown building SyncStatusAppBarAction(dirty, state:
+_ConsumerState#48826):
+Bad state: No ProviderScope found
+
+The relevant error-causing widget was:
+  SyncStatusAppBarAction
+  SyncStatusAppBarAction:file:///Users/chiragpatel/Projects/voice-memory/apps/mobile/lib/features/sync/presentation/widgets/sync_status_app_bar_action.dart:29:11
+
+When the exception was thrown, this was the stack:
+#0      ProviderScope.containerOf (package:flutter_riverpod/src/core/provider_scope.dart:105:7)
+#1      ConsumerStatefulElement.container (package:flutter_riverpod/src/core/consumer.dart:374:52)
+#2      ConsumerStatefulElement.container (package:flutter_riverpod/src/core/consumer.dart)
+#3      ConsumerStatefulElement.watch.<anonymous closure> (package:flutter_riverpod/src/core/consumer.dart:490:27)
+#4      _LinkedHashMapMixin.putIfAbsent (dart:_compact_hash:682:23)
+#5      ConsumerStatefulElement.watch (package:flutter_riverpod/src/core/consumer.dart:483:14)
+#6      SyncStatusAppBarAction.build (package:archiveme_mobile/features/sync/presentation/widgets/sync_status_app_ba
+--- [paywall_conversion_clarity_test.dart] Paywall conversion clarity revenue funnel hooks paywall_seen fires once for non-Pro paywall
+══╡ EXCEPTION CAUGHT BY WIDGETS LIBRARY ╞═══════════════════════════════════════════════════════════
+The following StateError was thrown building SyncStatusAppBarAction(dirty, state:
+_ConsumerState#095b6):
+Bad state: No ProviderScope found
+
+The relevant error-causing widget was:
+  SyncStatusAppBarAction
+  SyncStatusAppBarAction:file:///Users/chiragpatel/Projects/voice-memory/apps/mobile/lib/features/sync/presentation/widgets/sync_status_app_bar_action.dart:29:11
+
+When the exception was thrown, this was the stack:
+#0      ProviderScope.containerOf (package:flutter_riverpod/src/core/provider_scope.dart:105:7)
+#1      ConsumerStatefulElement.container (package:flutter_riverpod/src/core/consumer.dart:374:52)
+#2      ConsumerStatefulElement.container (package:flutter_riverpod/src/core/consumer.dart)
+#3      ConsumerStatefulElement.watch.<anonymous closure> (package:flutter_riverpod/src/core/consumer.dart:490:27)
+#4      _LinkedHashMapMixin.putIfAbsent (dart:_compact_hash:682:23)
+#5      ConsumerStatefulElement.watch (package:flutter_riverpod/src/core/consumer.dart:483:14)
+#6      SyncStatusAppBarAction.build (package:archiveme_mobile/features/sync/presentation/widgets/sync_status_app_ba
+--- [paywall_conversion_copy_test.dart] Paywall above-fold clarity unavailable paywall does not show purchase-body clarity stack
+══╡ EXCEPTION CAUGHT BY WIDGETS LIBRARY ╞═══════════════════════════════════════════════════════════
+The following StateError was thrown building SyncStatusAppBarAction(dirty, state:
+_ConsumerState#f4b12):
+Bad state: No ProviderScope found
+
+The relevant error-causing widget was:
+  SyncStatusAppBarAction
+  SyncStatusAppBarAction:file:///Users/chiragpatel/Projects/voice-memory/apps/mobile/lib/features/sync/presentation/widgets/sync_status_app_bar_action.dart:29:11
+
+When the exception was thrown, this was the stack:
+#0      ProviderScope.containerOf (package:flutter_riverpod/src/core/provider_scope.dart:105:7)
+#1      ConsumerStatefulElement.container (package:flutter_riverpod/src/core/consumer.dart:374:52)
+#2      ConsumerStatefulElement.container (package:flutter_riverpod/src/core/consumer.dart)
+#3      ConsumerStatefulElement.watch.<anonymous closure> (package:flutter_riverpod/src/core/consumer.dart:490:27)
+#4      _LinkedHashMapMixin.putIfAbsent (dart:_compact_hash:682:23)
+#5      ConsumerStatefulElement.watch (package:flutter_riverpod/src/core/consumer.dart:483:14)
+#6      SyncStatusAppBarAction.build (package:archiveme_mobile/features/sync/presentation/widgets/sync_status_app_ba
+--- [paywall_conversion_copy_test.dart] Paywall screen source-aware headline Ask the Archive source shows archive question copy
+══╡ EXCEPTION CAUGHT BY WIDGETS LIBRARY ╞═══════════════════════════════════════════════════════════
+The following StateError was thrown building SyncStatusAppBarAction(dirty, state:
+_ConsumerState#c60d0):
+Bad state: No ProviderScope found
+
+The relevant error-causing widget was:
+  SyncStatusAppBarAction
+  SyncStatusAppBarAction:file:///Users/chiragpatel/Projects/voice-memory/apps/mobile/lib/features/sync/presentation/widgets/sync_status_app_bar_action.dart:29:11
+
+When the exception was thrown, this was the stack:
+#0      ProviderScope.containerOf (package:flutter_riverpod/src/core/provider_scope.dart:105:7)
+#1      ConsumerStatefulElement.container (package:flutter_riverpod/src/core/consumer.dart:374:52)
+#2      ConsumerStatefulElement.container (package:flutter_riverpod/src/core/consumer.dart)
+#3      ConsumerStatefulElement.watch.<anonymous closure> (package:flutter_riverpod/src/core/consumer.dart:490:27)
+#4      _LinkedHashMapMixin.putIfAbsent (dart:_compact_hash:682:23)
+#5      ConsumerStatefulElement.watch (package:flutter_riverpod/src/core/consumer.dart:483:14)
+#6      SyncStatusAppBarAction.build (package:archiveme_mobile/features/sync/presentation/widgets/sync_status_app_ba
+--- [paywall_conversion_copy_test.dart] Paywall screen source-aware headline daily suggestion source shows thread headline
+══╡ EXCEPTION CAUGHT BY WIDGETS LIBRARY ╞═══════════════════════════════════════════════════════════
+The following StateError was thrown building SyncStatusAppBarAction(dirty, state:
+_ConsumerState#5941f):
+Bad state: No ProviderScope found
+
+The relevant error-causing widget was:
+  SyncStatusAppBarAction
+  SyncStatusAppBarAction:file:///Users/chiragpatel/Projects/voice-memory/apps/mobile/lib/features/sync/presentation/widgets/sync_status_app_bar_action.dart:29:11
+
+When the exception was thrown, this was the stack:
+#0      ProviderScope.containerOf (package:flutter_riverpod/src/core/provider_scope.dart:105:7)
+#1      ConsumerStatefulElement.container (package:flutter_riverpod/src/core/consumer.dart:374:52)
+#2      ConsumerStatefulElement.container (package:flutter_riverpod/src/core/consumer.dart)
+#3      ConsumerStatefulElement.watch.<anonymous closure> (package:flutter_riverpod/src/core/consumer.dart:490:27)
+#4      _LinkedHashMapMixin.putIfAbsent (dart:_compact_hash:682:23)
+#5      ConsumerStatefulElement.watch (package:flutter_riverpod/src/core/consumer.dart:483:14)
+#6      SyncStatusAppBarAction.build (package:archiveme_mobile/features/sync/presentation/widgets/sync_status_app_ba
+--- [paywall_conversion_copy_test.dart] Paywall screen source-aware headline general Pro source shows fallback headline
+══╡ EXCEPTION CAUGHT BY WIDGETS LIBRARY ╞═══════════════════════════════════════════════════════════
+The following StateError was thrown building SyncStatusAppBarAction(dirty, state:
+_ConsumerState#4b8a4):
+Bad state: No ProviderScope found
+
+The relevant error-causing widget was:
+  SyncStatusAppBarAction
+  SyncStatusAppBarAction:file:///Users/chiragpatel/Projects/voice-memory/apps/mobile/lib/features/sync/presentation/widgets/sync_status_app_bar_action.dart:29:11
+
+When the exception was thrown, this was the stack:
+#0      ProviderScope.containerOf (package:flutter_riverpod/src/core/provider_scope.dart:105:7)
+#1      ConsumerStatefulElement.container (package:flutter_riverpod/src/core/consumer.dart:374:52)
+#2      ConsumerStatefulElement.container (package:flutter_riverpod/src/core/consumer.dart)
+#3      ConsumerStatefulElement.watch.<anonymous closure> (package:flutter_riverpod/src/core/consumer.dart:490:27)
+#4      _LinkedHashMapMixin.putIfAbsent (dart:_compact_hash:682:23)
+#5      ConsumerStatefulElement.watch (package:flutter_riverpod/src/core/consumer.dart:483:14)
+#6      SyncStatusAppBarAction.build (package:archiveme_mobile/features/sync/presentation/widgets/sync_status_app_ba
+--- [paywall_conversion_copy_test.dart] Paywall screen source-aware headline no source keeps the existing default headline
+══╡ EXCEPTION CAUGHT BY WIDGETS LIBRARY ╞═══════════════════════════════════════════════════════════
+The following StateError was thrown building SyncStatusAppBarAction(dirty, state:
+_ConsumerState#7343c):
+Bad state: No ProviderScope found
+
+The relevant error-causing widget was:
+  SyncStatusAppBarAction
+  SyncStatusAppBarAction:file:///Users/chiragpatel/Projects/voice-memory/apps/mobile/lib/features/sync/presentation/widgets/sync_status_app_bar_action.dart:29:11
+
+When the exception was thrown, this was the stack:
+#0      ProviderScope.containerOf (package:flutter_riverpod/src/core/provider_scope.dart:105:7)
+#1      ConsumerStatefulElement.container (package:flutter_riverpod/src/core/consumer.dart:374:52)
+#2      ConsumerStatefulElement.container (package:flutter_riverpod/src/core/consumer.dart)
+#3      ConsumerStatefulElement.watch.<anonymous closure> (package:flutter_riverpod/src/core/consumer.dart:490:27)
+#4      _LinkedHashMapMixin.putIfAbsent (dart:_compact_hash:682:23)
+#5      ConsumerStatefulElement.watch (package:flutter_riverpod/src/core/consumer.dart:483:14)
+#6      SyncStatusAppBarAction.build (package:archiveme_mobile/features/sync/presentation/widgets/sync_status_app_ba
+--- [paywall_conversion_copy_test.dart] Paywall screen source-aware headline pressure pattern source shows pressure headline/subheadline
+══╡ EXCEPTION CAUGHT BY WIDGETS LIBRARY ╞═══════════════════════════════════════════════════════════
+The following StateError was thrown building SyncStatusAppBarAction(dirty, state:
+_ConsumerState#489a6):
+Bad state: No ProviderScope found
+
+The relevant error-causing widget was:
+  SyncStatusAppBarAction
+  SyncStatusAppBarAction:file:///Users/chiragpatel/Projects/voice-memory/apps/mobile/lib/features/sync/presentation/widgets/sync_status_app_bar_action.dart:29:11
+
+When the exception was thrown, this was the stack:
+#0      ProviderScope.containerOf (package:flutter_riverpod/src/core/provider_scope.dart:105:7)
+#1      ConsumerStatefulElement.container (package:flutter_riverpod/src/core/consumer.dart:374:52)
+#2      ConsumerStatefulElement.container (package:flutter_riverpod/src/core/consumer.dart)
+#3      ConsumerStatefulElement.watch.<anonymous closure> (package:flutter_riverpod/src/core/consumer.dart:490:27)
+#4      _LinkedHashMapMixin.putIfAbsent (dart:_compact_hash:682:23)
+#5      ConsumerStatefulElement.watch (package:flutter_riverpod/src/core/consumer.dart:483:14)
+#6      SyncStatusAppBarAction.build (package:archiveme_mobile/features/sync/presentation/widgets/sync_status_app_ba
+--- [paywall_conversion_copy_test.dart] Paywall screen source-aware headline review source shows pressure-specific copy
+══╡ EXCEPTION CAUGHT BY WIDGETS LIBRARY ╞═══════════════════════════════════════════════════════════
+The following StateError was thrown building SyncStatusAppBarAction(dirty, state:
+_ConsumerState#0dcef):
+Bad state: No ProviderScope found
+
+The relevant error-causing widget was:
+  SyncStatusAppBarAction
+  SyncStatusAppBarAction:file:///Users/chiragpatel/Projects/voice-memory/apps/mobile/lib/features/sync/presentation/widgets/sync_status_app_bar_action.dart:29:11
+
+When the exception was thrown, this was the stack:
+#0      ProviderScope.containerOf (package:flutter_riverpod/src/core/provider_scope.dart:105:7)
+#1      ConsumerStatefulElement.container (package:flutter_riverpod/src/core/consumer.dart:374:52)
+#2      ConsumerStatefulElement.container (package:flutter_riverpod/src/core/consumer.dart)
+#3      ConsumerStatefulElement.watch.<anonymous closure> (package:flutter_riverpod/src/core/consumer.dart:490:27)
+#4      _LinkedHashMapMixin.putIfAbsent (dart:_compact_hash:682:23)
+#5      ConsumerStatefulElement.watch (package:flutter_riverpod/src/core/consumer.dart:483:14)
+#6      SyncStatusAppBarAction.build (package:archiveme_mobile/features/sync/presentation/widgets/sync_status_app_ba
+--- [paywall_conversion_copy_test.dart] Paywall screen source-aware headline start here today source shows thread headline
+══╡ EXCEPTION CAUGHT BY WIDGETS LIBRARY ╞═══════════════════════════════════════════════════════════
+The following StateError was thrown building SyncStatusAppBarAction(dirty, state:
+_ConsumerState#043eb):
+Bad state: No ProviderScope found
+
+The relevant error-causing widget was:
+  SyncStatusAppBarAction
+  SyncStatusAppBarAction:file:///Users/chiragpatel/Projects/voice-memory/apps/mobile/lib/features/sync/presentation/widgets/sync_status_app_bar_action.dart:29:11
+
+When the exception was thrown, this was the stack:
+#0      ProviderScope.containerOf (package:flutter_riverpod/src/core/provider_scope.dart:105:7)
+#1      ConsumerStatefulElement.container (package:flutter_riverpod/src/core/consumer.dart:374:52)
+#2      ConsumerStatefulElement.container (package:flutter_riverpod/src/core/consumer.dart)
+#3      ConsumerStatefulElement.watch.<anonymous closure> (package:flutter_riverpod/src/core/consumer.dart:490:27)
+#4      _LinkedHashMapMixin.putIfAbsent (dart:_compact_hash:682:23)
+#5      ConsumerStatefulElement.watch (package:flutter_riverpod/src/core/consumer.dart:483:14)
+#6      SyncStatusAppBarAction.build (package:archiveme_mobile/features/sync/presentation/widgets/sync_status_app_ba
+--- [paywall_conversion_copy_test.dart] Paywall source copy variants general Pro fallback copy
+Expected: 'Free shows the first useful proof. Pro keeps the longer trail.'
+  Actual: 'Free shows the first useful repeat. Pro keeps the longer trail.'
+   Which: is different.
+          Expected: ... st useful proof. Pro ...
+            Actual: ... st useful repeat. Pr ...
+                                  ^
+           Differ at offset 28
+
+
+--- [paywall_conversion_copy_test.dart] Price confidence unavailable paywall hides price-confidence purchase stack
+══╡ EXCEPTION CAUGHT BY WIDGETS LIBRARY ╞═══════════════════════════════════════════════════════════
+The following StateError was thrown building SyncStatusAppBarAction(dirty, state:
+_ConsumerState#58c18):
+Bad state: No ProviderScope found
+
+The relevant error-causing widget was:
+  SyncStatusAppBarAction
+  SyncStatusAppBarAction:file:///Users/chiragpatel/Projects/voice-memory/apps/mobile/lib/features/sync/presentation/widgets/sync_status_app_bar_action.dart:29:11
+
+When the exception was thrown, this was the stack:
+#0      ProviderScope.containerOf (package:flutter_riverpod/src/core/provider_scope.dart:105:7)
+#1      ConsumerStatefulElement.container (package:flutter_riverpod/src/core/consumer.dart:374:52)
+#2      ConsumerStatefulElement.container (package:flutter_riverpod/src/core/consumer.dart)
+#3      ConsumerStatefulElement.watch.<anonymous closure> (package:flutter_riverpod/src/core/consumer.dart:490:27)
+#4      _LinkedHashMapMixin.putIfAbsent (dart:_compact_hash:682:23)
+#5      ConsumerStatefulElement.watch (package:flutter_riverpod/src/core/consumer.dart:483:14)
+#6      SyncStatusAppBarAction.build (package:archiveme_mobile/features/sync/presentation/widgets/sync_status_app_ba
+--- [paywall_conversion_copy_test.dart] Pro proof and annual value framing framing and proof preview do not render on unavailable generic paywall
+══╡ EXCEPTION CAUGHT BY WIDGETS LIBRARY ╞═══════════════════════════════════════════════════════════
+The following StateError was thrown building SyncStatusAppBarAction(dirty, state:
+_ConsumerState#a4e53):
+Bad state: No ProviderScope found
+
+The relevant error-causing widget was:
+  SyncStatusAppBarAction
+  SyncStatusAppBarAction:file:///Users/chiragpatel/Projects/voice-memory/apps/mobile/lib/features/sync/presentation/widgets/sync_status_app_bar_action.dart:29:11
+
+When the exception was thrown, this was the stack:
+#0      ProviderScope.containerOf (package:flutter_riverpod/src/core/provider_scope.dart:105:7)
+#1      ConsumerStatefulElement.container (package:flutter_riverpod/src/core/consumer.dart:374:52)
+#2      ConsumerStatefulElement.container (package:flutter_riverpod/src/core/consumer.dart)
+#3      ConsumerStatefulElement.watch.<anonymous closure> (package:flutter_riverpod/src/core/consumer.dart:490:27)
+#4      _LinkedHashMapMixin.putIfAbsent (dart:_compact_hash:682:23)
+#5      ConsumerStatefulElement.watch (package:flutter_riverpod/src/core/consumer.dart:483:14)
+#6      SyncStatusAppBarAction.build (package:archiveme_mobile/features/sync/presentation/widgets/sync_status_app_ba
+--- [paywall_conversion_copy_test.dart] Pro proof and annual value framing long-term archive line stays on source-specific purchase body
+══╡ EXCEPTION CAUGHT BY WIDGETS LIBRARY ╞═══════════════════════════════════════════════════════════
+The following StateError was thrown building SyncStatusAppBarAction(dirty, state:
+_ConsumerState#66348):
+Bad state: No ProviderScope found
+
+The relevant error-causing widget was:
+  SyncStatusAppBarAction
+  SyncStatusAppBarAction:file:///Users/chiragpatel/Projects/voice-memory/apps/mobile/lib/features/sync/presentation/widgets/sync_status_app_bar_action.dart:29:11
+
+When the exception was thrown, this was the stack:
+#0      ProviderScope.containerOf (package:flutter_riverpod/src/core/provider_scope.dart:105:7)
+#1      ConsumerStatefulElement.container (package:flutter_riverpod/src/core/consumer.dart:374:52)
+#2      ConsumerStatefulElement.container (package:flutter_riverpod/src/core/consumer.dart)
+#3      ConsumerStatefulElement.watch.<anonymous closure> (package:flutter_riverpod/src/core/consumer.dart:490:27)
+#4      _LinkedHashMapMixin.putIfAbsent (dart:_compact_hash:682:23)
+#5      ConsumerStatefulElement.watch (package:flutter_riverpod/src/core/consumer.dart:483:14)
+#6      SyncStatusAppBarAction.build (package:archiveme_mobile/features/sync/presentation/widgets/sync_status_app_ba
+--- [paywall_conversion_copy_test.dart] Pro proof and annual value framing proof preview does not render while plans are unavailable
+══╡ EXCEPTION CAUGHT BY WIDGETS LIBRARY ╞═══════════════════════════════════════════════════════════
+The following StateError was thrown building SyncStatusAppBarAction(dirty, state:
+_ConsumerState#c299b):
+Bad state: No ProviderScope found
+
+The relevant error-causing widget was:
+  SyncStatusAppBarAction
+  SyncStatusAppBarAction:file:///Users/chiragpatel/Projects/voice-memory/apps/mobile/lib/features/sync/presentation/widgets/sync_status_app_bar_action.dart:29:11
+
+When the exception was thrown, this was the stack:
+#0      ProviderScope.containerOf (package:flutter_riverpod/src/core/provider_scope.dart:105:7)
+#1      ConsumerStatefulElement.container (package:flutter_riverpod/src/core/consumer.dart:374:52)
+#2      ConsumerStatefulElement.container (package:flutter_riverpod/src/core/consumer.dart)
+#3      ConsumerStatefulElement.watch.<anonymous closure> (package:flutter_riverpod/src/core/consumer.dart:490:27)
+#4      _LinkedHashMapMixin.putIfAbsent (dart:_compact_hash:682:23)
+#5      ConsumerStatefulElement.watch (package:flutter_riverpod/src/core/consumer.dart:483:14)
+#6      SyncStatusAppBarAction.build (package:archiveme_mobile/features/sync/presentation/widgets/sync_status_app_ba
+--- [paywall_conversion_copy_test.dart] Pro proof and annual value framing proof preview stays on source-specific purchase body
+══╡ EXCEPTION CAUGHT BY WIDGETS LIBRARY ╞═══════════════════════════════════════════════════════════
+The following StateError was thrown building SyncStatusAppBarAction(dirty, state:
+_ConsumerState#6d72c):
+Bad state: No ProviderScope found
+
+The relevant error-causing widget was:
+  SyncStatusAppBarAction
+  SyncStatusAppBarAction:file:///Users/chiragpatel/Projects/voice-memory/apps/mobile/lib/features/sync/presentation/widgets/sync_status_app_bar_action.dart:29:11
+
+When the exception was thrown, this was the stack:
+#0      ProviderScope.containerOf (package:flutter_riverpod/src/core/provider_scope.dart:105:7)
+#1      ConsumerStatefulElement.container (package:flutter_riverpod/src/core/consumer.dart:374:52)
+#2      ConsumerStatefulElement.container (package:flutter_riverpod/src/core/consumer.dart)
+#3      ConsumerStatefulElement.watch.<anonymous closure> (package:flutter_riverpod/src/core/consumer.dart:490:27)
+#4      _LinkedHashMapMixin.putIfAbsent (dart:_compact_hash:682:23)
+#5      ConsumerStatefulElement.watch (package:flutter_riverpod/src/core/consumer.dart:483:14)
+#6      SyncStatusAppBarAction.build (package:archiveme_mobile/features/sync/presentation/widgets/sync_status_app_ba
+--- [paywall_conversion_copy_test.dart] Pro proof and annual value framing suggestion reassurance stays on source-specific purchase body
+══╡ EXCEPTION CAUGHT BY WIDGETS LIBRARY ╞═══════════════════════════════════════════════════════════
+The following StateError was thrown building SyncStatusAppBarAction(dirty, state:
+_ConsumerState#90f81):
+Bad state: No ProviderScope found
+
+The relevant error-causing widget was:
+  SyncStatusAppBarAction
+  SyncStatusAppBarAction:file:///Users/chiragpatel/Projects/voice-memory/apps/mobile/lib/features/sync/presentation/widgets/sync_status_app_bar_action.dart:29:11
+
+When the exception was thrown, this was the stack:
+#0      ProviderScope.containerOf (package:flutter_riverpod/src/core/provider_scope.dart:105:7)
+#1      ConsumerStatefulElement.container (package:flutter_riverpod/src/core/consumer.dart:374:52)
+#2      ConsumerStatefulElement.container (package:flutter_riverpod/src/core/consumer.dart)
+#3      ConsumerStatefulElement.watch.<anonymous closure> (package:flutter_riverpod/src/core/consumer.dart:490:27)
+#4      _LinkedHashMapMixin.putIfAbsent (dart:_compact_hash:682:23)
+#5      ConsumerStatefulElement.watch (package:flutter_riverpod/src/core/consumer.dart:483:14)
+#6      SyncStatusAppBarAction.build (package:archiveme_mobile/features/sync/presentation/widgets/sync_status_app_ba
+--- [paywall_conversion_copy_test.dart] Pro trial explainer no trial mention when no trial offer is configured
+══╡ EXCEPTION CAUGHT BY WIDGETS LIBRARY ╞═══════════════════════════════════════════════════════════
+The following StateError was thrown building SyncStatusAppBarAction(dirty, state:
+_ConsumerState#c77a2):
+Bad state: No ProviderScope found
+
+The relevant error-causing widget was:
+  SyncStatusAppBarAction
+  SyncStatusAppBarAction:file:///Users/chiragpatel/Projects/voice-memory/apps/mobile/lib/features/sync/presentation/widgets/sync_status_app_bar_action.dart:29:11
+
+When the exception was thrown, this was the stack:
+#0      ProviderScope.containerOf (package:flutter_riverpod/src/core/provider_scope.dart:105:7)
+#1      ConsumerStatefulElement.container (package:flutter_riverpod/src/core/consumer.dart:374:52)
+#2      ConsumerStatefulElement.container (package:flutter_riverpod/src/core/consumer.dart)
+#3      ConsumerStatefulElement.watch.<anonymous closure> (package:flutter_riverpod/src/core/consumer.dart:490:27)
+#4      _LinkedHashMapMixin.putIfAbsent (dart:_compact_hash:682:23)
+#5      ConsumerStatefulElement.watch (package:flutter_riverpod/src/core/consumer.dart:483:14)
+#6      SyncStatusAppBarAction.build (package:archiveme_mobile/features/sync/presentation/widgets/sync_status_app_ba
+--- [paywall_conversion_copy_test.dart] Purchase confidence layer confidence copy is wired for source-specific purchase body
+══╡ EXCEPTION CAUGHT BY WIDGETS LIBRARY ╞═══════════════════════════════════════════════════════════
+The following StateError was thrown building SyncStatusAppBarAction(dirty, state:
+_ConsumerState#62acd):
+Bad state: No ProviderScope found
+
+The relevant error-causing widget was:
+  SyncStatusAppBarAction
+  SyncStatusAppBarAction:file:///Users/chiragpatel/Projects/voice-memory/apps/mobile/lib/features/sync/presentation/widgets/sync_status_app_bar_action.dart:29:11
+
+When the exception was thrown, this was the stack:
+#0      ProviderScope.containerOf (package:flutter_riverpod/src/core/provider_scope.dart:105:7)
+#1      ConsumerStatefulElement.container (package:flutter_riverpod/src/core/consumer.dart:374:52)
+#2      ConsumerStatefulElement.container (package:flutter_riverpod/src/core/consumer.dart)
+#3      ConsumerStatefulElement.watch.<anonymous closure> (package:flutter_riverpod/src/core/consumer.dart:490:27)
+#4      _LinkedHashMapMixin.putIfAbsent (dart:_compact_hash:682:23)
+#5      ConsumerStatefulElement.watch (package:flutter_riverpod/src/core/consumer.dart:483:14)
+#6      SyncStatusAppBarAction.build (package:archiveme_mobile/features/sync/presentation/widgets/sync_status_app_ba
+--- [paywall_conversion_copy_test.dart] Purchase confidence layer generic unavailable paywall stays compact without confidence stack
+══╡ EXCEPTION CAUGHT BY WIDGETS LIBRARY ╞═══════════════════════════════════════════════════════════
+The following StateError was thrown building SyncStatusAppBarAction(dirty, state:
+_ConsumerState#ac0ac):
+Bad state: No ProviderScope found
+
+The relevant error-causing widget was:
+  SyncStatusAppBarAction
+  SyncStatusAppBarAction:file:///Users/chiragpatel/Projects/voice-memory/apps/mobile/lib/features/sync/presentation/widgets/sync_status_app_bar_action.dart:29:11
+
+When the exception was thrown, this was the stack:
+#0      ProviderScope.containerOf (package:flutter_riverpod/src/core/provider_scope.dart:105:7)
+#1      ConsumerStatefulElement.container (package:flutter_riverpod/src/core/consumer.dart:374:52)
+#2      ConsumerStatefulElement.container (package:flutter_riverpod/src/core/consumer.dart)
+#3      ConsumerStatefulElement.watch.<anonymous closure> (package:flutter_riverpod/src/core/consumer.dart:490:27)
+#4      _LinkedHashMapMixin.putIfAbsent (dart:_compact_hash:682:23)
+#5      ConsumerStatefulElement.watch (package:flutter_riverpod/src/core/consumer.dart:483:14)
+#6      SyncStatusAppBarAction.build (package:archiveme_mobile/features/sync/presentation/widgets/sync_status_app_ba
+--- [paywall_conversion_copy_test.dart] What Pro keeps is centralized in the clarity block generic unavailable paywall stays compact
+══╡ EXCEPTION CAUGHT BY WIDGETS LIBRARY ╞═══════════════════════════════════════════════════════════
+The following StateError was thrown building SyncStatusAppBarAction(dirty, state:
+_ConsumerState#8b449):
+Bad state: No ProviderScope found
+
+The relevant error-causing widget was:
+  SyncStatusAppBarAction
+  SyncStatusAppBarAction:file:///Users/chiragpatel/Projects/voice-memory/apps/mobile/lib/features/sync/presentation/widgets/sync_status_app_bar_action.dart:29:11
+
+When the exception was thrown, this was the stack:
+#0      ProviderScope.containerOf (package:flutter_riverpod/src/core/provider_scope.dart:105:7)
+#1      ConsumerStatefulElement.container (package:flutter_riverpod/src/core/consumer.dart:374:52)
+#2      ConsumerStatefulElement.container (package:flutter_riverpod/src/core/consumer.dart)
+#3      ConsumerStatefulElement.watch.<anonymous closure> (package:flutter_riverpod/src/core/consumer.dart:490:27)
+#4      _LinkedHashMapMixin.putIfAbsent (dart:_compact_hash:682:23)
+#5      ConsumerStatefulElement.watch (package:flutter_riverpod/src/core/consumer.dart:483:14)
+#6      SyncStatusAppBarAction.build (package:archiveme_mobile/features/sync/presentation/widgets/sync_status_app_ba
+--- [paywall_conversion_copy_test.dart] What Pro keeps is centralized in the clarity block suggestion unavailable paywall keeps restore visible
+══╡ EXCEPTION CAUGHT BY WIDGETS LIBRARY ╞═══════════════════════════════════════════════════════════
+The following StateError was thrown building SyncStatusAppBarAction(dirty, state:
+_ConsumerState#09eff):
+Bad state: No ProviderScope found
+
+The relevant error-causing widget was:
+  SyncStatusAppBarAction
+  SyncStatusAppBarAction:file:///Users/chiragpatel/Projects/voice-memory/apps/mobile/lib/features/sync/presentation/widgets/sync_status_app_bar_action.dart:29:11
+
+When the exception was thrown, this was the stack:
+#0      ProviderScope.containerOf (package:flutter_riverpod/src/core/provider_scope.dart:105:7)
+#1      ConsumerStatefulElement.container (package:flutter_riverpod/src/core/consumer.dart:374:52)
+#2      ConsumerStatefulElement.container (package:flutter_riverpod/src/core/consumer.dart)
+#3      ConsumerStatefulElement.watch.<anonymous closure> (package:flutter_riverpod/src/core/consumer.dart:490:27)
+#4      _LinkedHashMapMixin.putIfAbsent (dart:_compact_hash:682:23)
+#5      ConsumerStatefulElement.watch (package:flutter_riverpod/src/core/consumer.dart:483:14)
+#6      SyncStatusAppBarAction.build (package:archiveme_mobile/features/sync/presentation/widgets/sync_status_app_ba
+--- [paywall_copy_alignment_test.dart] Paywall copy alignment v1 default paywall still renders restore and unavailable dismiss
+══╡ EXCEPTION CAUGHT BY WIDGETS LIBRARY ╞═══════════════════════════════════════════════════════════
+The following StateError was thrown building SyncStatusAppBarAction(dirty, state:
+_ConsumerState#d09b5):
+Bad state: No ProviderScope found
+
+The relevant error-causing widget was:
+  SyncStatusAppBarAction
+  SyncStatusAppBarAction:file:///Users/chiragpatel/Projects/voice-memory/apps/mobile/lib/features/sync/presentation/widgets/sync_status_app_bar_action.dart:29:11
+
+When the exception was thrown, this was the stack:
+#0      ProviderScope.containerOf (package:flutter_riverpod/src/core/provider_scope.dart:105:7)
+#1      ConsumerStatefulElement.container (package:flutter_riverpod/src/core/consumer.dart:374:52)
+#2      ConsumerStatefulElement.container (package:flutter_riverpod/src/core/consumer.dart)
+#3      ConsumerStatefulElement.watch.<anonymous closure> (package:flutter_riverpod/src/core/consumer.dart:490:27)
+#4      _LinkedHashMapMixin.putIfAbsent (dart:_compact_hash:682:23)
+#5      ConsumerStatefulElement.watch (package:flutter_riverpod/src/core/consumer.dart:483:14)
+#6      SyncStatusAppBarAction.build (package:archiveme_mobile/features/sync/presentation/widgets/sync_status_app_ba
+--- [paywall_copy_alignment_test.dart] Paywall copy alignment v1 general Pro paywall renders aligned copy with CTAs
+══╡ EXCEPTION CAUGHT BY WIDGETS LIBRARY ╞═══════════════════════════════════════════════════════════
+The following StateError was thrown building SyncStatusAppBarAction(dirty, state:
+_ConsumerState#7e2ee):
+Bad state: No ProviderScope found
+
+The relevant error-causing widget was:
+  SyncStatusAppBarAction
+  SyncStatusAppBarAction:file:///Users/chiragpatel/Projects/voice-memory/apps/mobile/lib/features/sync/presentation/widgets/sync_status_app_bar_action.dart:29:11
+
+When the exception was thrown, this was the stack:
+#0      ProviderScope.containerOf (package:flutter_riverpod/src/core/provider_scope.dart:105:7)
+#1      ConsumerStatefulElement.container (package:flutter_riverpod/src/core/consumer.dart:374:52)
+#2      ConsumerStatefulElement.container (package:flutter_riverpod/src/core/consumer.dart)
+#3      ConsumerStatefulElement.watch.<anonymous closure> (package:flutter_riverpod/src/core/consumer.dart:490:27)
+#4      _LinkedHashMapMixin.putIfAbsent (dart:_compact_hash:682:23)
+#5      ConsumerStatefulElement.watch (package:flutter_riverpod/src/core/consumer.dart:483:14)
+#6      SyncStatusAppBarAction.build (package:archiveme_mobile/features/sync/presentation/widgets/sync_status_app_ba
+--- [paywall_copy_alignment_test.dart] Paywall copy alignment v1 subhead sells the proof trail value
+Expected: 'Free shows the first useful proof. Pro keeps the longer trail.'
+  Actual: 'Free shows the first useful repeat. Pro keeps the longer trail.'
+   Which: is different.
+          Expected: ... st useful proof. Pro ...
+            Actual: ... st useful repeat. Pr ...
+                                  ^
+           Differ at offset 28
+
+
+--- [paywall_launch_copy_test.dart] paywall benefits include aligned timeline bullets
+Expected: contains 'Longer evidence history'
+  Actual: [
+            'Longer evidence history on this device',
+            'More archived moments over weeks and months',
+            'Continuity when patterns return or change'
+          ]
+   Which: does not contain 'Longer evidence history'
+
+
+--- [paywall_launch_copy_test.dart] paywall subhead sells timeline value
+Expected: 'Free shows the first useful proof. Pro keeps the longer trail.'
+  Actual: 'Free shows the first useful repeat. Pro keeps the longer trail.'
+   Which: is different.
+          Expected: ... st useful proof. Pro ...
+            Actual: ... st useful repeat. Pr ...
+                                  ^
+           Differ at offset 28
+
+
+--- [paywall_objection_follow_up_test.dart] Paywall screen integration RevenueCat identifiers and purchase logic are unchanged
+Expected: true
+  Actual: <false>
+the purchase CTA must still call _continue
+
+
+--- [paywall_objection_follow_up_test.dart] Paywall screen integration a stored reason renders its block below the clarity block
+══╡ EXCEPTION CAUGHT BY WIDGETS LIBRARY ╞═══════════════════════════════════════════════════════════
+The following StateError was thrown building SyncStatusAppBarAction(dirty, state:
+_ConsumerState#a39f6):
+Bad state: No ProviderScope found
+
+The relevant error-causing widget was:
+  SyncStatusAppBarAction
+  SyncStatusAppBarAction:file:///Users/chiragpatel/Projects/voice-memory/apps/mobile/lib/features/sync/presentation/widgets/sync_status_app_bar_action.dart:29:11
+
+When the exception was thrown, this was the stack:
+#0      ProviderScope.containerOf (package:flutter_riverpod/src/core/provider_scope.dart:105:7)
+#1      ConsumerStatefulElement.container (package:flutter_riverpod/src/core/consumer.dart:374:52)
+#2      ConsumerStatefulElement.container (package:flutter_riverpod/src/core/consumer.dart)
+#3      ConsumerStatefulElement.watch.<anonymous closure> (package:flutter_riverpod/src/core/consumer.dart:490:27)
+#4      _LinkedHashMapMixin.putIfAbsent (dart:_compact_hash:682:23)
+#5      ConsumerStatefulElement.watch (package:flutter_riverpod/src/core/consumer.dart:483:14)
+#6      SyncStatusAppBarAction.build (package:archiveme_mobile/features/sync/presentation/widgets/sync_status_app_ba
+--- [paywall_objection_follow_up_test.dart] Paywall screen integration follow-up sits below the clarity block and above plan cards in the purchase body
+Expected: a value greater than <-1>
+  Actual: <-1>
+   Which: is not a value greater than <-1>
+
+
+--- [paywall_objection_follow_up_test.dart] Paywall screen integration no raw notes, snippets, or source terms in any payload
+══╡ EXCEPTION CAUGHT BY WIDGETS LIBRARY ╞═══════════════════════════════════════════════════════════
+The following StateError was thrown building SyncStatusAppBarAction(dirty, state:
+_ConsumerState#accbb):
+Bad state: No ProviderScope found
+
+The relevant error-causing widget was:
+  SyncStatusAppBarAction
+  SyncStatusAppBarAction:file:///Users/chiragpatel/Projects/voice-memory/apps/mobile/lib/features/sync/presentation/widgets/sync_status_app_bar_action.dart:29:11
+
+When the exception was thrown, this was the stack:
+#0      ProviderScope.containerOf (package:flutter_riverpod/src/core/provider_scope.dart:105:7)
+#1      ConsumerStatefulElement.container (package:flutter_riverpod/src/core/consumer.dart:374:52)
+#2      ConsumerStatefulElement.container (package:flutter_riverpod/src/core/consumer.dart)
+#3      ConsumerStatefulElement.watch.<anonymous closure> (package:flutter_riverpod/src/core/consumer.dart:490:27)
+#4      _LinkedHashMapMixin.putIfAbsent (dart:_compact_hash:682:23)
+#5      ConsumerStatefulElement.watch (package:flutter_riverpod/src/core/consumer.dart:483:14)
+#6      SyncStatusAppBarAction.build (package:archiveme_mobile/features/sync/presentation/widgets/sync_status_app_ba
+--- [paywall_objection_follow_up_test.dart] Paywall screen integration no stored reason renders nothing
+══╡ EXCEPTION CAUGHT BY WIDGETS LIBRARY ╞═══════════════════════════════════════════════════════════
+The following StateError was thrown building SyncStatusAppBarAction(dirty, state:
+_ConsumerState#702b0):
+Bad state: No ProviderScope found
+
+The relevant error-causing widget was:
+  SyncStatusAppBarAction
+  SyncStatusAppBarAction:file:///Users/chiragpatel/Projects/voice-memory/apps/mobile/lib/features/sync/presentation/widgets/sync_status_app_bar_action.dart:29:11
+
+When the exception was thrown, this was the stack:
+#0      ProviderScope.containerOf (package:flutter_riverpod/src/core/provider_scope.dart:105:7)
+#1      ConsumerStatefulElement.container (package:flutter_riverpod/src/core/consumer.dart:374:52)
+#2      ConsumerStatefulElement.container (package:flutter_riverpod/src/core/consumer.dart)
+#3      ConsumerStatefulElement.watch.<anonymous closure> (package:flutter_riverpod/src/core/consumer.dart:490:27)
+#4      _LinkedHashMapMixin.putIfAbsent (dart:_compact_hash:682:23)
+#5      ConsumerStatefulElement.watch (package:flutter_riverpod/src/core/consumer.dart:483:14)
+#6      SyncStatusAppBarAction.build (package:archiveme_mobile/features/sync/presentation/widgets/sync_status_app_ba
+--- [paywall_objection_follow_up_test.dart] Paywall screen integration seen event fires once with reason and source only
+══╡ EXCEPTION CAUGHT BY WIDGETS LIBRARY ╞═══════════════════════════════════════════════════════════
+The following StateError was thrown building SyncStatusAppBarAction(dirty, state:
+_ConsumerState#c2fb6):
+Bad state: No ProviderScope found
+
+The relevant error-causing widget was:
+  SyncStatusAppBarAction
+  SyncStatusAppBarAction:file:///Users/chiragpatel/Projects/voice-memory/apps/mobile/lib/features/sync/presentation/widgets/sync_status_app_bar_action.dart:29:11
+
+When the exception was thrown, this was the stack:
+#0      ProviderScope.containerOf (package:flutter_riverpod/src/core/provider_scope.dart:105:7)
+#1      ConsumerStatefulElement.container (package:flutter_riverpod/src/core/consumer.dart:374:52)
+#2      ConsumerStatefulElement.container (package:flutter_riverpod/src/core/consumer.dart)
+#3      ConsumerStatefulElement.watch.<anonymous closure> (package:flutter_riverpod/src/core/consumer.dart:490:27)
+#4      _LinkedHashMapMixin.putIfAbsent (dart:_compact_hash:682:23)
+#5      ConsumerStatefulElement.watch (package:flutter_riverpod/src/core/consumer.dart:483:14)
+#6      SyncStatusAppBarAction.build (package:archiveme_mobile/features/sync/presentation/widgets/sync_status_app_ba
+--- [paywall_objection_follow_up_test.dart] Paywall screen integration shows at most once per session
+══╡ EXCEPTION CAUGHT BY WIDGETS LIBRARY ╞═══════════════════════════════════════════════════════════
+The following StateError was thrown building SyncStatusAppBarAction(dirty, state:
+_ConsumerState#9c861):
+Bad state: No ProviderScope found
+
+The relevant error-causing widget was:
+  SyncStatusAppBarAction
+  SyncStatusAppBarAction:file:///Users/chiragpatel/Projects/voice-memory/apps/mobile/lib/features/sync/presentation/widgets/sync_status_app_bar_action.dart:29:11
+
+When the exception was thrown, this was the stack:
+#0      ProviderScope.containerOf (package:flutter_riverpod/src/core/provider_scope.dart:105:7)
+#1      ConsumerStatefulElement.container (package:flutter_riverpod/src/core/consumer.dart:374:52)
+#2      ConsumerStatefulElement.container (package:flutter_riverpod/src/core/consumer.dart)
+#3      ConsumerStatefulElement.watch.<anonymous closure> (package:flutter_riverpod/src/core/consumer.dart:490:27)
+#4      _LinkedHashMapMixin.putIfAbsent (dart:_compact_hash:682:23)
+#5      ConsumerStatefulElement.watch (package:flutter_riverpod/src/core/consumer.dart:483:14)
+#6      SyncStatusAppBarAction.build (package:archiveme_mobile/features/sync/presentation/widgets/sync_status_app_ba
+--- [paywall_objection_follow_up_test.dart] Paywall screen integration the dismissal flow that captures the reason never shows the follow-up — only a later paywall does
+══╡ EXCEPTION CAUGHT BY WIDGETS LIBRARY ╞═══════════════════════════════════════════════════════════
+The following StateError was thrown building SyncStatusAppBarAction(dirty, state:
+_ConsumerState#ffc00):
+Bad state: No ProviderScope found
+
+The relevant error-causing widget was:
+  SyncStatusAppBarAction
+  SyncStatusAppBarAction:file:///Users/chiragpatel/Projects/voice-memory/apps/mobile/lib/features/sync/presentation/widgets/sync_status_app_bar_action.dart:29:11
+
+When the exception was thrown, this was the stack:
+#0      ProviderScope.containerOf (package:flutter_riverpod/src/core/provider_scope.dart:105:7)
+#1      ConsumerStatefulElement.container (package:flutter_riverpod/src/core/consumer.dart:374:52)
+#2      ConsumerStatefulElement.container (package:flutter_riverpod/src/core/consumer.dart)
+#3      ConsumerStatefulElement.watch.<anonymous closure> (package:flutter_riverpod/src/core/consumer.dart:490:27)
+#4      _LinkedHashMapMixin.putIfAbsent (dart:_compact_hash:682:23)
+#5      ConsumerStatefulElement.watch (package:flutter_riverpod/src/core/consumer.dart:483:14)
+#6      SyncStatusAppBarAction.build (package:archiveme_mobile/features/sync/presentation/widgets/sync_status_app_ba
+--- [paywall_objection_handling_test.dart] PaywallScreen integration purchase flow wiring untouched
+Expected: contains 'ArchivePaywallCopy.purchaseStarting'
+  Actual: 'import \'dart:async\';\n'
+            '\n'
+            'import \'package:archiveme_mobile/l10n/localized_consumer_ui.dart\';\n'
+            'import \'package:archiveme_mobile/api/api_error_message.dart\';\n'
+            'import \'package:archiveme_mobile/billing/archive_paywall_copy.dart\';\n'
+            'import \'package:archiveme_mobile/billing/archive_paywall_plans.dart\';\n'
+            'import \'package:archiveme_mobile/billing/paywall_attribution_event.dart\';\n'
+            'import \'package:archiveme_mobile/billing/paywall_attribution_store.dart\';\n'
+            'import \'package:archiveme_mobile/billing/paywall_objection_follow_up.dart\';\n'
+            'import \'package:archiveme_mobile/billing/paywall_rejection_reason.dart\';\n'
+            'import \'package:archiveme_mobile/billing/paywall_route_args.dart\';\n'
+            'import \'package:archiveme_mobile/billing/paywall_session_tracker.dart\';\n'
+            'import \'package:archiveme_mobile/billing/paywall_source.dart\';\n'
+            'import \'package:archiveme_mobile/billing/purchase_intent_return_cue.dart\';\n'
+            'import \'package:a
+--- [paywall_objection_handling_test.dart] PaywallScreen integration restore purchases remains visible
+══╡ EXCEPTION CAUGHT BY WIDGETS LIBRARY ╞═══════════════════════════════════════════════════════════
+The following StateError was thrown building SyncStatusAppBarAction(dirty, state:
+_ConsumerState#5ac88):
+Bad state: No ProviderScope found
+
+The relevant error-causing widget was:
+  SyncStatusAppBarAction
+  SyncStatusAppBarAction:file:///Users/chiragpatel/Projects/voice-memory/apps/mobile/lib/features/sync/presentation/widgets/sync_status_app_bar_action.dart:29:11
+
+When the exception was thrown, this was the stack:
+#0      ProviderScope.containerOf (package:flutter_riverpod/src/core/provider_scope.dart:105:7)
+#1      ConsumerStatefulElement.container (package:flutter_riverpod/src/core/consumer.dart:374:52)
+#2      ConsumerStatefulElement.container (package:flutter_riverpod/src/core/consumer.dart)
+#3      ConsumerStatefulElement.watch.<anonymous closure> (package:flutter_riverpod/src/core/consumer.dart:490:27)
+#4      _LinkedHashMapMixin.putIfAbsent (dart:_compact_hash:682:23)
+#5      ConsumerStatefulElement.watch (package:flutter_riverpod/src/core/consumer.dart:483:14)
+#6      SyncStatusAppBarAction.build (package:archiveme_mobile/features/sync/presentation/widgets/sync_status_app_ba
+--- [paywall_purchase_confidence_test.dart] ArchivePaywallCopy purchase confidence strings purchase confidence copy guard blocks banned terms
+Expected: contains 'not therapy'
+  Actual: 'checking your pro access… starting secure purchase… pro is active. archiveme keeps the longer proof trail over time. checking for previous purchases… purchase restored. pro is active. no previous pro purchase was found on this apple id. keep the longer trail you saw the first useful repeat. free shows the first useful repeat. pro keeps the longer trail. archiveme is not trying to answer better than chatgpt. it is trying to remember differently. your saves stay free. manage or cancel anytime in the app store. you are building evidence over time. pro keeps the longer archive trail as moments return, change, or fade.'
+   Which: does not contain 'not therapy'
+
+
+--- [paywall_purchase_confidence_test.dart] PaywallScreen purchase confidence wiring paywall screen references purchase confidence copy
+Expected: contains 'ArchivePaywallCopy.purchaseStarting'
+  Actual: 'import \'dart:async\';\n'
+            '\n'
+            'import \'package:archiveme_mobile/l10n/localized_consumer_ui.dart\';\n'
+            'import \'package:archiveme_mobile/api/api_error_message.dart\';\n'
+            'import \'package:archiveme_mobile/billing/archive_paywall_copy.dart\';\n'
+            'import \'package:archiveme_mobile/billing/archive_paywall_plans.dart\';\n'
+            'import \'package:archiveme_mobile/billing/paywall_attribution_event.dart\';\n'
+            'import \'package:archiveme_mobile/billing/paywall_attribution_store.dart\';\n'
+            'import \'package:archiveme_mobile/billing/paywall_objection_follow_up.dart\';\n'
+            'import \'package:archiveme_mobile/billing/paywall_rejection_reason.dart\';\n'
+            'import \'package:archiveme_mobile/billing/paywall_route_args.dart\';\n'
+            'import \'package:archiveme_mobile/billing/paywall_session_tracker.dart\';\n'
+            'import \'package:archiveme_mobile/billing/paywall_source.dart\';\n'
+            'import \'package:archiveme_mobile/billing/purchase_intent_return_cue.dart\';\n'
+            'import \'package:a
+--- [paywall_rejection_capture_test.dart] Paywall screen flow answering closes the sheet and leaves the paywall
+══╡ EXCEPTION CAUGHT BY WIDGETS LIBRARY ╞═══════════════════════════════════════════════════════════
+The following StateError was thrown building SyncStatusAppBarAction(dirty, state:
+_ConsumerState#b2b72):
+Bad state: No ProviderScope found
+
+The relevant error-causing widget was:
+  SyncStatusAppBarAction
+  SyncStatusAppBarAction:file:///Users/chiragpatel/Projects/voice-memory/apps/mobile/lib/features/sync/presentation/widgets/sync_status_app_bar_action.dart:29:11
+
+When the exception was thrown, this was the stack:
+#0      ProviderScope.containerOf (package:flutter_riverpod/src/core/provider_scope.dart:105:7)
+#1      ConsumerStatefulElement.container (package:flutter_riverpod/src/core/consumer.dart:374:52)
+#2      ConsumerStatefulElement.container (package:flutter_riverpod/src/core/consumer.dart)
+#3      ConsumerStatefulElement.watch.<anonymous closure> (package:flutter_riverpod/src/core/consumer.dart:490:27)
+#4      _LinkedHashMapMixin.putIfAbsent (dart:_compact_hash:682:23)
+#5      ConsumerStatefulElement.watch (package:flutter_riverpod/src/core/consumer.dart:483:14)
+#6      SyncStatusAppBarAction.build (package:archiveme_mobile/features/sync/presentation/widgets/sync_status_app_ba
+--- [paywall_rejection_capture_test.dart] Paywall screen flow no private content in any rejection payload
+══╡ EXCEPTION CAUGHT BY WIDGETS LIBRARY ╞═══════════════════════════════════════════════════════════
+The following StateError was thrown building SyncStatusAppBarAction(dirty, state:
+_ConsumerState#f909d):
+Bad state: No ProviderScope found
+
+The relevant error-causing widget was:
+  SyncStatusAppBarAction
+  SyncStatusAppBarAction:file:///Users/chiragpatel/Projects/voice-memory/apps/mobile/lib/features/sync/presentation/widgets/sync_status_app_bar_action.dart:29:11
+
+When the exception was thrown, this was the stack:
+#0      ProviderScope.containerOf (package:flutter_riverpod/src/core/provider_scope.dart:105:7)
+#1      ConsumerStatefulElement.container (package:flutter_riverpod/src/core/consumer.dart:374:52)
+#2      ConsumerStatefulElement.container (package:flutter_riverpod/src/core/consumer.dart)
+#3      ConsumerStatefulElement.watch.<anonymous closure> (package:flutter_riverpod/src/core/consumer.dart:490:27)
+#4      _LinkedHashMapMixin.putIfAbsent (dart:_compact_hash:682:23)
+#5      ConsumerStatefulElement.watch (package:flutter_riverpod/src/core/consumer.dart:483:14)
+#6      SyncStatusAppBarAction.build (package:archiveme_mobile/features/sync/presentation/widgets/sync_status_app_ba
+--- [paywall_rejection_capture_test.dart] Paywall screen flow prompt appears after backing out of the paywall
+══╡ EXCEPTION CAUGHT BY WIDGETS LIBRARY ╞═══════════════════════════════════════════════════════════
+The following StateError was thrown building SyncStatusAppBarAction(dirty, state:
+_ConsumerState#48841):
+Bad state: No ProviderScope found
+
+The relevant error-causing widget was:
+  SyncStatusAppBarAction
+  SyncStatusAppBarAction:file:///Users/chiragpatel/Projects/voice-memory/apps/mobile/lib/features/sync/presentation/widgets/sync_status_app_bar_action.dart:29:11
+
+When the exception was thrown, this was the stack:
+#0      ProviderScope.containerOf (package:flutter_riverpod/src/core/provider_scope.dart:105:7)
+#1      ConsumerStatefulElement.container (package:flutter_riverpod/src/core/consumer.dart:374:52)
+#2      ConsumerStatefulElement.container (package:flutter_riverpod/src/core/consumer.dart)
+#3      ConsumerStatefulElement.watch.<anonymous closure> (package:flutter_riverpod/src/core/consumer.dart:490:27)
+#4      _LinkedHashMapMixin.putIfAbsent (dart:_compact_hash:682:23)
+#5      ConsumerStatefulElement.watch (package:flutter_riverpod/src/core/consumer.dart:483:14)
+#6      SyncStatusAppBarAction.build (package:archiveme_mobile/features/sync/presentation/widgets/sync_status_app_ba
+--- [paywall_rejection_capture_test.dart] Paywall screen flow prompt appears only once per session
+══╡ EXCEPTION CAUGHT BY WIDGETS LIBRARY ╞═══════════════════════════════════════════════════════════
+The following StateError was thrown building SyncStatusAppBarAction(dirty, state:
+_ConsumerState#4ec90):
+Bad state: No ProviderScope found
+
+The relevant error-causing widget was:
+  SyncStatusAppBarAction
+  SyncStatusAppBarAction:file:///Users/chiragpatel/Projects/voice-memory/apps/mobile/lib/features/sync/presentation/widgets/sync_status_app_bar_action.dart:29:11
+
+When the exception was thrown, this was the stack:
+#0      ProviderScope.containerOf (package:flutter_riverpod/src/core/provider_scope.dart:105:7)
+#1      ConsumerStatefulElement.container (package:flutter_riverpod/src/core/consumer.dart:374:52)
+#2      ConsumerStatefulElement.container (package:flutter_riverpod/src/core/consumer.dart)
+#3      ConsumerStatefulElement.watch.<anonymous closure> (package:flutter_riverpod/src/core/consumer.dart:490:27)
+#4      _LinkedHashMapMixin.putIfAbsent (dart:_compact_hash:682:23)
+#5      ConsumerStatefulElement.watch (package:flutter_riverpod/src/core/consumer.dart:483:14)
+#6      SyncStatusAppBarAction.build (package:archiveme_mobile/features/sync/presentation/widgets/sync_status_app_ba
+--- [paywall_restore_test.dart] Paywall restore purchases purchase unavailable copy still shows when products missing
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+MissingPluginException(No implementation found for method check on channel dev.fluttercommunity.plus/connectivity)
+══╡ EXCEPTION CAUGHT BY WIDGETS LIBRARY ╞═══════════════════════════════════════════════════════════
+The following StateError was thrown building SyncStatusAppBarAction(dirty, state:
+_ConsumerState#43fea):
+Bad state: No ProviderScope found
+
+The relevant error-causing widget was:
+  SyncStatusAppBarAction
+  SyncStatusAppBarAction:file:///Users/chiragpatel/Projects/voice-memory/apps/mobile/lib/features/sync/presentation/widgets/sync_status_app_bar_action.dart:29:11
+
+When the exception was thrown, this was the stack:
+#0      ProviderScope.containerOf (package:flutter_riverpod/src/core/provider_scope.dart:105:7)
+#1      ConsumerStatefulElement.container (package:flutter_riverpod/src/core/consumer.dart:374:52)
+#2      ConsumerStatefulElement.container 
+--- [paywall_restore_test.dart] Paywall restore purchases restore calls RestorePurchasesFlow when offerings are unavailable
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+MissingPluginException(No implementation found for method check on channel dev.fluttercommunity.plus/connectivity)
+Warning: At least one test in this suite creates an HttpClient. When running a test suite that uses
+TestWidgetsFlutterBinding, all HTTP requests will return status code 400, and no network request
+will actually be made. Any test expecting a real network connection and status code will fail.
+To test code that needs an HttpClient, provide your own HttpClient implementation to the code under
+test, so that your test can consistently provide a testable response to the code under test.
+══╡ EXCEPTION CAUGHT BY WIDGETS LIBRARY ╞═══════════════════════════════════════════════════════════
+The following StateError was thrown building SyncStatusAppBarAction(dirty, state:
+_ConsumerState#dfdc8):
+Bad state: No ProviderScope found
+
+The relevant error-causing widget was:
+  SyncStatusAppBarAction
+  SyncStatusA
+--- [paywall_restore_test.dart] Paywall restore purchases restore does not show plans unavailable copy
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+MissingPluginException(No implementation found for method check on channel dev.fluttercommunity.plus/connectivity)
+══╡ EXCEPTION CAUGHT BY WIDGETS LIBRARY ╞═══════════════════════════════════════════════════════════
+The following StateError was thrown building SyncStatusAppBarAction(dirty, state:
+_ConsumerState#414e5):
+Bad state: No ProviderScope found
+
+The relevant error-causing widget was:
+  SyncStatusAppBarAction
+  SyncStatusAppBarAction:file:///Users/chiragpatel/Projects/voice-memory/apps/mobile/lib/features/sync/presentation/widgets/sync_status_app_bar_action.dart:29:11
+
+When the exception was thrown, this was the stack:
+#0      ProviderScope.containerOf (package:flutter_riverpod/src/core/provider_scope.dart:105:7)
+#1      ConsumerStatefulElement.container (package:flutter_riverpod/src/core/consumer.dart:374:52)
+#2      ConsumerStatefulElement.container 
+--- [paywall_source_attribution_test.dart] Paywall screen attribution no VoiceMemory consumer copy on attributed paywall
+══╡ EXCEPTION CAUGHT BY WIDGETS LIBRARY ╞═══════════════════════════════════════════════════════════
+The following StateError was thrown building SyncStatusAppBarAction(dirty, state:
+_ConsumerState#2ea51):
+Bad state: No ProviderScope found
+
+The relevant error-causing widget was:
+  SyncStatusAppBarAction
+  SyncStatusAppBarAction:file:///Users/chiragpatel/Projects/voice-memory/apps/mobile/lib/features/sync/presentation/widgets/sync_status_app_bar_action.dart:29:11
+
+When the exception was thrown, this was the stack:
+#0      ProviderScope.containerOf (package:flutter_riverpod/src/core/provider_scope.dart:105:7)
+#1      ConsumerStatefulElement.container (package:flutter_riverpod/src/core/consumer.dart:374:52)
+#2      ConsumerStatefulElement.container (package:flutter_riverpod/src/core/consumer.dart)
+#3      ConsumerStatefulElement.watch.<anonymous closure> (package:flutter_riverpod/src/core/consumer.dart:490:27)
+#4      _LinkedHashMapMixin.putIfAbsent (dart:_compact_hash:682:23)
+#5      ConsumerStatefulElement.watch (package:flutter_riverpod/src/core/consumer.dart:483:14)
+#6      SyncStatusAppBarAction.build (package:archiveme_mobile/features/sync/presentation/widgets/sync_status_app_ba
+--- [paywall_source_attribution_test.dart] Paywall screen attribution paywall_seen falls back to generalPro without a source
+══╡ EXCEPTION CAUGHT BY WIDGETS LIBRARY ╞═══════════════════════════════════════════════════════════
+The following StateError was thrown building SyncStatusAppBarAction(dirty, state:
+_ConsumerState#4b715):
+Bad state: No ProviderScope found
+
+The relevant error-causing widget was:
+  SyncStatusAppBarAction
+  SyncStatusAppBarAction:file:///Users/chiragpatel/Projects/voice-memory/apps/mobile/lib/features/sync/presentation/widgets/sync_status_app_bar_action.dart:29:11
+
+When the exception was thrown, this was the stack:
+#0      ProviderScope.containerOf (package:flutter_riverpod/src/core/provider_scope.dart:105:7)
+#1      ConsumerStatefulElement.container (package:flutter_riverpod/src/core/consumer.dart:374:52)
+#2      ConsumerStatefulElement.container (package:flutter_riverpod/src/core/consumer.dart)
+#3      ConsumerStatefulElement.watch.<anonymous closure> (package:flutter_riverpod/src/core/consumer.dart:490:27)
+#4      _LinkedHashMapMixin.putIfAbsent (dart:_compact_hash:682:23)
+#5      ConsumerStatefulElement.watch (package:flutter_riverpod/src/core/consumer.dart:483:14)
+#6      SyncStatusAppBarAction.build (package:archiveme_mobile/features/sync/presentation/widgets/sync_status_app_ba
+--- [paywall_source_attribution_test.dart] Paywall screen attribution paywall_seen records the source it was opened from
+══╡ EXCEPTION CAUGHT BY WIDGETS LIBRARY ╞═══════════════════════════════════════════════════════════
+The following StateError was thrown building SyncStatusAppBarAction(dirty, state:
+_ConsumerState#95465):
+Bad state: No ProviderScope found
+
+The relevant error-causing widget was:
+  SyncStatusAppBarAction
+  SyncStatusAppBarAction:file:///Users/chiragpatel/Projects/voice-memory/apps/mobile/lib/features/sync/presentation/widgets/sync_status_app_bar_action.dart:29:11
+
+When the exception was thrown, this was the stack:
+#0      ProviderScope.containerOf (package:flutter_riverpod/src/core/provider_scope.dart:105:7)
+#1      ConsumerStatefulElement.container (package:flutter_riverpod/src/core/consumer.dart:374:52)
+#2      ConsumerStatefulElement.container (package:flutter_riverpod/src/core/consumer.dart)
+#3      ConsumerStatefulElement.watch.<anonymous closure> (package:flutter_riverpod/src/core/consumer.dart:490:27)
+#4      _LinkedHashMapMixin.putIfAbsent (dart:_compact_hash:682:23)
+#5      ConsumerStatefulElement.watch (package:flutter_riverpod/src/core/consumer.dart:483:14)
+#6      SyncStatusAppBarAction.build (package:archiveme_mobile/features/sync/presentation/widgets/sync_status_app_ba
+--- [paywall_source_attribution_test.dart] Paywall screen attribution restore tap records restore_started with the right source
+══╡ EXCEPTION CAUGHT BY WIDGETS LIBRARY ╞═══════════════════════════════════════════════════════════
+The following StateError was thrown building SyncStatusAppBarAction(dirty, state:
+_ConsumerState#5deff):
+Bad state: No ProviderScope found
+
+The relevant error-causing widget was:
+  SyncStatusAppBarAction
+  SyncStatusAppBarAction:file:///Users/chiragpatel/Projects/voice-memory/apps/mobile/lib/features/sync/presentation/widgets/sync_status_app_bar_action.dart:29:11
+
+When the exception was thrown, this was the stack:
+#0      ProviderScope.containerOf (package:flutter_riverpod/src/core/provider_scope.dart:105:7)
+#1      ConsumerStatefulElement.container (package:flutter_riverpod/src/core/consumer.dart:374:52)
+#2      ConsumerStatefulElement.container (package:flutter_riverpod/src/core/consumer.dart)
+#3      ConsumerStatefulElement.watch.<anonymous closure> (package:flutter_riverpod/src/core/consumer.dart:490:27)
+#4      _LinkedHashMapMixin.putIfAbsent (dart:_compact_hash:682:23)
+#5      ConsumerStatefulElement.watch (package:flutter_riverpod/src/core/consumer.dart:483:14)
+#6      SyncStatusAppBarAction.build (package:archiveme_mobile/features/sync/presentation/widgets/sync_status_app_ba
+--- [paywall_source_attribution_test.dart] Suggestion-to-Pro paywall funnel daily suggestion sourced paywall records suggestion_to_paywall_seen
+══╡ EXCEPTION CAUGHT BY WIDGETS LIBRARY ╞═══════════════════════════════════════════════════════════
+The following StateError was thrown building SyncStatusAppBarAction(dirty, state:
+_ConsumerState#3a51d):
+Bad state: No ProviderScope found
+
+The relevant error-causing widget was:
+  SyncStatusAppBarAction
+  SyncStatusAppBarAction:file:///Users/chiragpatel/Projects/voice-memory/apps/mobile/lib/features/sync/presentation/widgets/sync_status_app_bar_action.dart:29:11
+
+When the exception was thrown, this was the stack:
+#0      ProviderScope.containerOf (package:flutter_riverpod/src/core/provider_scope.dart:105:7)
+#1      ConsumerStatefulElement.container (package:flutter_riverpod/src/core/consumer.dart:374:52)
+#2      ConsumerStatefulElement.container (package:flutter_riverpod/src/core/consumer.dart)
+#3      ConsumerStatefulElement.watch.<anonymous closure> (package:flutter_riverpod/src/core/consumer.dart:490:27)
+#4      _LinkedHashMapMixin.putIfAbsent (dart:_compact_hash:682:23)
+#5      ConsumerStatefulElement.watch (package:flutter_riverpod/src/core/consumer.dart:483:14)
+#6      SyncStatusAppBarAction.build (package:archiveme_mobile/features/sync/presentation/widgets/sync_status_app_ba
+--- [paywall_source_attribution_test.dart] Suggestion-to-Pro paywall funnel non-suggestion sources record no suggestion funnel events
+══╡ EXCEPTION CAUGHT BY WIDGETS LIBRARY ╞═══════════════════════════════════════════════════════════
+The following StateError was thrown building SyncStatusAppBarAction(dirty, state:
+_ConsumerState#59c0d):
+Bad state: No ProviderScope found
+
+The relevant error-causing widget was:
+  SyncStatusAppBarAction
+  SyncStatusAppBarAction:file:///Users/chiragpatel/Projects/voice-memory/apps/mobile/lib/features/sync/presentation/widgets/sync_status_app_bar_action.dart:29:11
+
+When the exception was thrown, this was the stack:
+#0      ProviderScope.containerOf (package:flutter_riverpod/src/core/provider_scope.dart:105:7)
+#1      ConsumerStatefulElement.container (package:flutter_riverpod/src/core/consumer.dart:374:52)
+#2      ConsumerStatefulElement.container (package:flutter_riverpod/src/core/consumer.dart)
+#3      ConsumerStatefulElement.watch.<anonymous closure> (package:flutter_riverpod/src/core/consumer.dart:490:27)
+#4      _LinkedHashMapMixin.putIfAbsent (dart:_compact_hash:682:23)
+#5      ConsumerStatefulElement.watch (package:flutter_riverpod/src/core/consumer.dart:483:14)
+#6      SyncStatusAppBarAction.build (package:archiveme_mobile/features/sync/presentation/widgets/sync_status_app_ba
+--- [paywall_source_attribution_test.dart] Suggestion-to-Pro paywall funnel start-here sourced paywall records suggestion_to_paywall_seen
+══╡ EXCEPTION CAUGHT BY WIDGETS LIBRARY ╞═══════════════════════════════════════════════════════════
+The following StateError was thrown building SyncStatusAppBarAction(dirty, state:
+_ConsumerState#b6560):
+Bad state: No ProviderScope found
+
+The relevant error-causing widget was:
+  SyncStatusAppBarAction
+  SyncStatusAppBarAction:file:///Users/chiragpatel/Projects/voice-memory/apps/mobile/lib/features/sync/presentation/widgets/sync_status_app_bar_action.dart:29:11
+
+When the exception was thrown, this was the stack:
+#0      ProviderScope.containerOf (package:flutter_riverpod/src/core/provider_scope.dart:105:7)
+#1      ConsumerStatefulElement.container (package:flutter_riverpod/src/core/consumer.dart:374:52)
+#2      ConsumerStatefulElement.container (package:flutter_riverpod/src/core/consumer.dart)
+#3      ConsumerStatefulElement.watch.<anonymous closure> (package:flutter_riverpod/src/core/consumer.dart:490:27)
+#4      _LinkedHashMapMixin.putIfAbsent (dart:_compact_hash:682:23)
+#5      ConsumerStatefulElement.watch (package:flutter_riverpod/src/core/consumer.dart:483:14)
+#6      SyncStatusAppBarAction.build (package:archiveme_mobile/features/sync/presentation/widgets/sync_status_app_ba
+--- [paywall_timing_gates_test.dart] PaywallTimingGates.showSoftProBridge shows after grounded repeat proof at two or more entries
+Expected: true
+  Actual: <false>
+
+
+--- [paywall_timing_test.dart] PaywallTimingGates.showSoftProBridge shows after grounded repeat proof at two or more entries
+Expected: true
+  Actual: <false>
+
+
+--- [paywall_trigger_engine_test.dart] archive timeline full triggers when loop closed
+Expected: PaywallTrigger:<PaywallTrigger.archiveTimelineFull>
+  Actual: <null>
+
+
+--- [paywall_trigger_engine_test.dart] full history triggers after 7 moments
+Expected: PaywallTrigger:<PaywallTrigger.fullHistory>
+  Actual: <null>
+
+
+--- [paywall_trigger_engine_test.dart] key moments triggers after 7 moments
+Expected: PaywallTrigger:<PaywallTrigger.keyMomentsLimit>
+  Actual: <null>
+
+
+--- [paywall_trigger_engine_test.dart] monthly review and private export are Pro after loop closed
+Expected: PaywallTrigger:<PaywallTrigger.monthlyReview>
+  Actual: <null>
+
+
+--- [paywall_trigger_engine_test.dart] pattern map full triggers when loop closed
+Expected: PaywallTrigger:<PaywallTrigger.patternMapFull>
+  Actual: <null>
+
+
+--- [paywall_unavailable_buttons_test.dart] PaywallScreen unavailable purchases Continue without Pro dismisses to previous route safely
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+MissingPluginException(No implementation found for method check on channel dev.fluttercommunity.plus/connectivity)
+*** Request ***
+uri: http://127.0.0.1:3000/api/billing/entitlements
+method: GET
+responseType: ResponseType.json
+followRedirects: true
+persistentConnection: true
+connectTimeout: 0:00:30.000000
+sendTimeout: null
+receiveTimeout: 0:00:30.000000
+transformTimeout: null
+receiveDataWhenStatusError: true
+extra: {}
+headers:
+ Accept: application/json
+ Content-Type: application/json
+data:
+null
+
+*** Response ***
+uri: http://127.0.0.1:3000/api/billing/entitlements
+statusCode: 400
+statusMessage: 
+headers:
+
+══╡ EXCEPTION CAUGHT BY WIDGETS LIBRARY ╞═══════════════════════════════════════════════════════════
+The following StateError was thrown building SyncStatusAppBarAction(dirty, state:
+_ConsumerState#608a3):
+Bad state: No ProviderScope found
+
+The relevant error
+--- [paywall_unavailable_buttons_test.dart] PaywallScreen unavailable purchases Continue without Pro falls back to Record when no pop route
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+MissingPluginException(No implementation found for method check on channel dev.fluttercommunity.plus/connectivity)
+══╡ EXCEPTION CAUGHT BY WIDGETS LIBRARY ╞═══════════════════════════════════════════════════════════
+The following StateError was thrown building SyncStatusAppBarAction(dirty, state:
+_ConsumerState#988ce):
+Bad state: No ProviderScope found
+
+The relevant error-causing widget was:
+  SyncStatusAppBarAction
+  SyncStatusAppBarAction:file:///Users/chiragpatel/Projects/voice-memory/apps/mobile/lib/features/sync/presentation/widgets/sync_status_app_bar_action.dart:29:11
+
+When the exception was thrown, this was the stack:
+#0      ProviderScope.containerOf (package:flutter_riverpod/src/core/provider_scope.dart:105:7)
+#1      ConsumerStatefulElement.container (package:flutter_riverpod/src/core/consumer.dart:374:52)
+#2      ConsumerStatefulElement.container 
+--- [paywall_unavailable_buttons_test.dart] PaywallScreen unavailable purchases ProPackagingCopy exposes continue without Pro label
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+MissingPluginException(No implementation found for method check on channel dev.fluttercommunity.plus/connectivity)
+
+--- [paywall_unavailable_buttons_test.dart] PaywallScreen unavailable purchases Try again reloads offerings without purchasing
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+MissingPluginException(No implementation found for method check on channel dev.fluttercommunity.plus/connectivity)
+══╡ EXCEPTION CAUGHT BY WIDGETS LIBRARY ╞═══════════════════════════════════════════════════════════
+The following StateError was thrown building SyncStatusAppBarAction(dirty, state:
+_ConsumerState#be7f2):
+Bad state: No ProviderScope found
+
+The relevant error-causing widget was:
+  SyncStatusAppBarAction
+  SyncStatusAppBarAction:file:///Users/chiragpatel/Projects/voice-memory/apps/mobile/lib/features/sync/presentation/widgets/sync_status_app_bar_action.dart:29:11
+
+When the exception was thrown, this was the stack:
+#0      ProviderScope.containerOf (package:flutter_riverpod/src/core/provider_scope.dart:105:7)
+#1      ConsumerStatefulElement.container (package:flutter_riverpod/src/core/consumer.dart:374:52)
+#2      ConsumerStatefulElement.container 
+--- [paywall_unavailable_buttons_test.dart] PaywallScreen unavailable purchases billing not configured still uses Continue without Pro
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+MissingPluginException(No implementation found for method check on channel dev.fluttercommunity.plus/connectivity)
+══╡ EXCEPTION CAUGHT BY WIDGETS LIBRARY ╞═══════════════════════════════════════════════════════════
+The following StateError was thrown building SyncStatusAppBarAction(dirty, state:
+_ConsumerState#a7b81):
+Bad state: No ProviderScope found
+
+The relevant error-causing widget was:
+  SyncStatusAppBarAction
+  SyncStatusAppBarAction:file:///Users/chiragpatel/Projects/voice-memory/apps/mobile/lib/features/sync/presentation/widgets/sync_status_app_bar_action.dart:29:11
+
+When the exception was thrown, this was the stack:
+#0      ProviderScope.containerOf (package:flutter_riverpod/src/core/provider_scope.dart:105:7)
+#1      ConsumerStatefulElement.container (package:flutter_riverpod/src/core/consumer.dart:374:52)
+#2      ConsumerStatefulElement.container 
+--- [paywall_unavailable_buttons_test.dart] PaywallScreen unavailable purchases restore purchases remains available and does not purchase
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+MissingPluginException(No implementation found for method check on channel dev.fluttercommunity.plus/connectivity)
+══╡ EXCEPTION CAUGHT BY WIDGETS LIBRARY ╞═══════════════════════════════════════════════════════════
+The following StateError was thrown building SyncStatusAppBarAction(dirty, state:
+_ConsumerState#f13a3):
+Bad state: No ProviderScope found
+
+The relevant error-causing widget was:
+  SyncStatusAppBarAction
+  SyncStatusAppBarAction:file:///Users/chiragpatel/Projects/voice-memory/apps/mobile/lib/features/sync/presentation/widgets/sync_status_app_bar_action.dart:29:11
+
+When the exception was thrown, this was the stack:
+#0      ProviderScope.containerOf (package:flutter_riverpod/src/core/provider_scope.dart:105:7)
+#1      ConsumerStatefulElement.container (package:flutter_riverpod/src/core/consumer.dart:374:52)
+#2      ConsumerStatefulElement.container 
+--- [paywall_unavailable_buttons_test.dart] PaywallScreen unavailable purchases unavailable paywall shows subscription Terms and Privacy
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+MissingPluginException(No implementation found for method check on channel dev.fluttercommunity.plus/connectivity)
+══╡ EXCEPTION CAUGHT BY WIDGETS LIBRARY ╞═══════════════════════════════════════════════════════════
+The following StateError was thrown building SyncStatusAppBarAction(dirty, state:
+_ConsumerState#55ea0):
+Bad state: No ProviderScope found
+
+The relevant error-causing widget was:
+  SyncStatusAppBarAction
+  SyncStatusAppBarAction:file:///Users/chiragpatel/Projects/voice-memory/apps/mobile/lib/features/sync/presentation/widgets/sync_status_app_bar_action.dart:29:11
+
+When the exception was thrown, this was the stack:
+#0      ProviderScope.containerOf (package:flutter_riverpod/src/core/provider_scope.dart:105:7)
+#1      ConsumerStatefulElement.container (package:flutter_riverpod/src/core/consumer.dart:374:52)
+#2      ConsumerStatefulElement.container 
+--- [paywall_unavailable_buttons_test.dart] PaywallScreen unavailable purchases unavailable state shows honest copy and Continue without Pro label
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+This warning will only appear on debug builds.
+MissingPluginException(No implementation found for method check on channel dev.fluttercommunity.plus/connectivity)
+Warning: At least one test in this suite creates an HttpClient. When running a test suite that uses
+TestWidgetsFlutterBinding, all HTTP requests will return status code 400, and no network request
+will actually be made. Any test expecting a real network connection and status code will fail.
+To test code that needs an HttpClient, provide your own HttpClient implementation to the code under
+test, so that your test can consistently provide a testable response to the code under test.
+══╡ EXCEPTION CAUGHT BY WIDGETS LIBRARY ╞═══════════════════════════════════════════════════════════
+The following StateError was thrown building SyncStatusAppBarAction(dirty, state:
+_ConsumerState#b55e1):
+Bad state: No ProviderScope found
+
+The relevant error-causing widget was:
+  SyncStatusAppBarAction
+  SyncStatusA
+--- [paywall_value_sharpening_test.dart] PaywallScreen sharpening rendering generic source renders compact unavailable paywall copy
+══╡ EXCEPTION CAUGHT BY WIDGETS LIBRARY ╞═══════════════════════════════════════════════════════════
+The following StateError was thrown building SyncStatusAppBarAction(dirty, state:
+_ConsumerState#9402f):
+Bad state: No ProviderScope found
+
+The relevant error-causing widget was:
+  SyncStatusAppBarAction
+  SyncStatusAppBarAction:file:///Users/chiragpatel/Projects/voice-memory/apps/mobile/lib/features/sync/presentation/widgets/sync_status_app_bar_action.dart:29:11
+
+When the exception was thrown, this was the stack:
+#0      ProviderScope.containerOf (package:flutter_riverpod/src/core/provider_scope.dart:105:7)
+#1      ConsumerStatefulElement.container (package:flutter_riverpod/src/core/consumer.dart:374:52)
+#2      ConsumerStatefulElement.container (package:flutter_riverpod/src/core/consumer.dart)
+#3      ConsumerStatefulElement.watch.<anonymous closure> (package:flutter_riverpod/src/core/consumer.dart:490:27)
+#4      _LinkedHashMapMixin.putIfAbsent (dart:_compact_hash:682:23)
+#5      ConsumerStatefulElement.watch (package:flutter_riverpod/src/core/consumer.dart:483:14)
+#6      SyncStatusAppBarAction.build (package:archiveme_mobile/features/sync/presentation/widgets/sync_status_app_ba
+--- [paywall_value_sharpening_test.dart] PaywallScreen sharpening rendering proof source renders proof-first headline and copy
+══╡ EXCEPTION CAUGHT BY WIDGETS LIBRARY ╞═══════════════════════════════════════════════════════════
+The following StateError was thrown building SyncStatusAppBarAction(dirty, state:
+_ConsumerState#24a1f):
+Bad state: No ProviderScope found
+
+The relevant error-causing widget was:
+  SyncStatusAppBarAction
+  SyncStatusAppBarAction:file:///Users/chiragpatel/Projects/voice-memory/apps/mobile/lib/features/sync/presentation/widgets/sync_status_app_bar_action.dart:29:11
+
+When the exception was thrown, this was the stack:
+#0      ProviderScope.containerOf (package:flutter_riverpod/src/core/provider_scope.dart:105:7)
+#1      ConsumerStatefulElement.container (package:flutter_riverpod/src/core/consumer.dart:374:52)
+#2      ConsumerStatefulElement.container (package:flutter_riverpod/src/core/consumer.dart)
+#3      ConsumerStatefulElement.watch.<anonymous closure> (package:flutter_riverpod/src/core/consumer.dart:490:27)
+#4      _LinkedHashMapMixin.putIfAbsent (dart:_compact_hash:682:23)
+#5      ConsumerStatefulElement.watch (package:flutter_riverpod/src/core/consumer.dart:483:14)
+#6      SyncStatusAppBarAction.build (package:archiveme_mobile/features/sync/presentation/widgets/sync_status_app_ba
+--- [paywall_value_sharpening_test.dart] PaywallScreen sharpening rendering restore purchases remains visible
+══╡ EXCEPTION CAUGHT BY WIDGETS LIBRARY ╞═══════════════════════════════════════════════════════════
+The following StateError was thrown building SyncStatusAppBarAction(dirty, state:
+_ConsumerState#60d34):
+Bad state: No ProviderScope found
+
+The relevant error-causing widget was:
+  SyncStatusAppBarAction
+  SyncStatusAppBarAction:file:///Users/chiragpatel/Projects/voice-memory/apps/mobile/lib/features/sync/presentation/widgets/sync_status_app_bar_action.dart:29:11
+
+When the exception was thrown, this was the stack:
+#0      ProviderScope.containerOf (package:flutter_riverpod/src/core/provider_scope.dart:105:7)
+#1      ConsumerStatefulElement.container (package:flutter_riverpod/src/core/consumer.dart:374:52)
+#2      ConsumerStatefulElement.container (package:flutter_riverpod/src/core/consumer.dart)
+#3      ConsumerStatefulElement.watch.<anonymous closure> (package:flutter_riverpod/src/core/consumer.dart:490:27)
+#4      _LinkedHashMapMixin.putIfAbsent (dart:_compact_hash:682:23)
+#5      ConsumerStatefulElement.watch (package:flutter_riverpod/src/core/consumer.dart:483:14)
+#6      SyncStatusAppBarAction.build (package:archiveme_mobile/features/sync/presentation/widgets/sync_status_app_ba
+--- [paywall_value_sharpening_test.dart] PaywallValueSharpeningCopy defines trail benefit bullets only
+Expected: contains 'Longer evidence history'
+  Actual: [
+            'Longer evidence history on this device',
+            'More archived moments over weeks and months',
+            'Continuity when patterns return or change'
+          ]
+   Which: does not contain 'Longer evidence history'
+
+
+--- [paywall_value_sharpening_test.dart] PaywallValueSharpeningCopy defines trail-focused body and differentiation line
+Expected: 'You saw the first useful repeat.'
+  Actual: 'Free shows the first useful proof. Pro keeps the longer trail.'
+   Which: is different.
+          Expected: You saw th ...
+            Actual: Free shows ...
+                    ^
+           Differ at offset 0
+
+
+--- [paywall_value_sharpening_test.dart] Protected billing areas purchase buttons unchanged
+Expected: contains '_PaywallBusyKind.purchase'
+  Actual: 'import \'dart:async\';\n'
+            '\n'
+            'import \'package:archiveme_mobile/l10n/localized_consumer_ui.dart\';\n'
+            'import \'package:archiveme_mobile/api/api_error_message.dart\';\n'
+            'import \'package:archiveme_mobile/billing/archive_paywall_copy.dart\';\n'
+            'import \'package:archiveme_mobile/billing/archive_paywall_plans.dart\';\n'
+            'import \'package:archiveme_mobile/billing/paywall_attribution_event.dart\';\n'
+            'import \'package:archiveme_mobile/billing/paywall_attribution_store.dart\';\n'
+            'import \'package:archiveme_mobile/billing/paywall_objection_follow_up.dart\';\n'
+            'import \'package:archiveme_mobile/billing/paywall_rejection_reason.dart\';\n'
+            'import \'package:archiveme_mobile/billing/paywall_route_args.dart\';\n'
+            'import \'package:archiveme_mobile/billing/paywall_session_tracker.dart\';\n'
+            'import \'package:archiveme_mobile/billing/paywall_source.dart\';\n'
+            'import \'package:archiveme_mobile/billing/purchase_intent_return_cue.dart\';\n'
+            'import \'package:archiveme_m
+--- [pro_preview_before_paywall_test.dart] Protected billing areas patterns screen routes preview CTA through existing paywall handler
+Expected: contains 'ProPreviewCard'
+  Actual: 'import \'dart:async\';\n'
+            '\n'
+            'import \'package:archiveme_mobile/features/archive/v1/archive_belief_load_state.dart\';\n'
+            'import \'package:archiveme_mobile/features/archive/v1/archive_dashboard_scroll_view.dart\';\n'
+            'import \'package:archiveme_mobile/features/archive/v1/archive_feed_pagination_provider.dart\';\n'
+            'import \'package:archiveme_mobile/features/beta_analytics/beta_analytics_hooks.dart\';\n'
+            'import \'package:archiveme_mobile/core/di/app_provider_container.dart\';\n'
+            'import \'package:archiveme_mobile/core/di/archive_feed_providers.dart\';\n'
+            'import \'package:archiveme_mobile/core/di/storage_providers.dart\';\n'
+            'import \'package:archiveme_mobile/router/archive_changes_deep_link.dart\';\n'
+            'import \'package:archiveme_mobile/router/route_catalog.dart\';\n'
+            'import \'package:archiveme_mobile/storage/journal_store.dart\';\n'
+            'import \'package:archiveme_mobile/storage/sqlite/journal_sqlite_repository.dart\';\n'
+            'import \'package:archiveme_mobile/theme/app_colors.dart\';\n
+--- [pro_preview_before_paywall_test.dart] SurfacePriorityEngine Pro slot cap pro preview wins single Pro slot on record post save
+Expected: SurfacePriorityCardKey:<SurfacePriorityCardKey.proPreview>
+  Actual: <null>
+
+
+--- [value_moment_paywall_test.dart] Pressure Insights integration CTA opens the existing paywall with the value-moment source
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following StateError was thrown running a test:
+Bad state: No element
+
+When the exception was thrown, this was the stack:
+#0      Iterable.single (dart:core/iterable.dart:694:25)
+#1      WidgetController.element (package:flutter_test/src/controller.dart:888:30)
+#2      WidgetController.ensureVisible (package:flutter_test/src/controller.dart:2389:32)
+#3      main.<anonymous closure>.<anonymous closure> (file:///Users/chiragpatel/Projects/voice-memory/apps/mobile/test/value_moment_paywall_test.dart:495:20)
+<asynchronous suspension>
+#4      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#5      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+The test description was:
+  CTA opens the existing paywall with the value-moment source
+════════════════════════════════════════════════════════════════════════════════════════════════════
+Test failed. See exception logs above.
+T
+--- [value_moment_paywall_test.dart] Pressure Insights integration bridge appears after thread return evidence
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: exactly one matching candidate
+  Actual: _KeyWidgetFinder:<Found 0 widgets with key [<'value_moment_pro_bridge'>]: []>
+   Which: means none were found but one was expected
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure>.<anonymous closure> (file:///Users/chiragpatel/Projects/voice-memory/apps/mobile/test/value_moment_paywall_test.dart:436:7)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///Users/chiragpatel/Projects/voice-memory/apps/mobile/test/value_moment_paywall_test.dart line 436
+The test description was:
+  bridge appears after thread return evidence
+═════════════════════════════════════════════════════════
+--- [value_moment_paywall_test.dart] Pressure Insights integration dismiss hides the bridge for the rest of the session
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following StateError was thrown running a test:
+Bad state: No element
+
+When the exception was thrown, this was the stack:
+#0      Iterable.single (dart:core/iterable.dart:694:25)
+#1      WidgetController.element (package:flutter_test/src/controller.dart:888:30)
+#2      WidgetController.ensureVisible (package:flutter_test/src/controller.dart:2389:32)
+#3      main.<anonymous closure>.<anonymous closure> (file:///Users/chiragpatel/Projects/voice-memory/apps/mobile/test/value_moment_paywall_test.dart:454:20)
+<asynchronous suspension>
+#4      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#5      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1952:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+The test description was:
+  dismiss hides the bridge for the rest of the session
+════════════════════════════════════════════════════════════════════════════════════════════════════
+Test failed. See exception logs above.
+The test
+--- [value_moment_paywall_test.dart] Value moment paywall copy value moment routes to the continuity paywall copy
+Expected: 'Free shows the first useful repeat. Pro keeps the longer trail.'
+  Actual: 'Free shows the first useful proof. Pro keeps the longer trail.'
+   Which: is different.
+          Expected: ... st useful repeat. Pr ...
+            Actual: ... st useful proof. Pro ...
+                                  ^
+           Differ at offset 28
+
+
+--- [value_moment_paywall_test.dart] Value moment trigger — moment-specific bodies a weekly review alone uses the weekly body
+Expected: true
+  Actual: <false>
+
+

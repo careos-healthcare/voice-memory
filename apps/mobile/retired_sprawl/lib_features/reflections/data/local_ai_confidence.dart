@@ -11,8 +11,49 @@ abstract final class LocalAiConfidence {
   /// Remote Retrofit fallback triggers when overall confidence is below this.
   static const remoteFallbackThreshold = 0.80;
 
-  /// When [OnDeviceProcessingStore] is enabled, local results are always kept
-  /// on-device — threshold drops to 0 so remote fallback never triggers.
+  /// The bar a local reflection must clear when no remote re-scoring can ever
+  /// happen for it.
+  ///
+  /// Deliberately lower than [remoteFallbackThreshold], and deliberately not
+  /// unified with it. 0.80 is not a statement about reflection quality — it is
+  /// the point at which shipping the audio to the server is worth it, and it
+  /// presupposes that a better remote result is available to switch to. Under
+  /// "Never send to server" there is no such alternative, and on-device
+  /// extraction legitimately scores below 0.80 on material a remote model
+  /// handles well, so reusing 0.80 here would reject work that is the best
+  /// obtainable on the device.
+  ///
+  /// It is not 0.0 either, which is what this used to be. These reflections are
+  /// claims about the customer's own patterns and beliefs; one that cleared no
+  /// bar at all must not reach a surface with the same standing as a scored
+  /// one.
+  static const onDeviceOnlyQualityFloor = 0.55;
+
+  /// "Was this local result good enough to report as scored?"
+  ///
+  /// Kept separate from [effectiveRemoteFallbackThreshold] on purpose. This is
+  /// a question about the reflection; that one is a question about the network.
+  /// They looked like the same question only while on-device-only answered 0.0
+  /// to both, which made every local reflection appear to have passed a bar
+  /// that was never applied.
+  static Future<double> effectiveQualityFloor() async {
+    await OnDeviceProcessingStore.ensureLoaded();
+    if (OnDeviceProcessingStore.enabled) {
+      return onDeviceOnlyQualityFloor;
+    }
+    return remoteFallbackThreshold;
+  }
+
+  /// "May this leave the device?" — 0 when it may not.
+  ///
+  /// The 0 is redundant to the privacy guarantee rather than the source of it:
+  /// `_maybeRemoteFallback` checks [OnDeviceProcessingStore] itself before
+  /// touching the network. Do not raise it to [onDeviceOnlyQualityFloor]
+  /// without reading every caller first — `voice_capture_handler` also uses
+  /// this value to decide whether a locally-analyzed entry is saved at all, and
+  /// a higher number there changes which save path a journal entry takes.
+  /// [effectiveQualityFloor] exists so the quality signal can move without
+  /// dragging that decision along with it.
   static Future<double> effectiveRemoteFallbackThreshold() async {
     await OnDeviceProcessingStore.ensureLoaded();
     if (OnDeviceProcessingStore.enabled) {
@@ -46,9 +87,6 @@ abstract final class LocalAiConfidence {
   }) {
     var score = modelScore ?? (usedOnnx ? 0.86 : 0.74);
 
-    if (reflection.emotionalIntensity >= 1 && reflection.emotionalIntensity <= 10) {
-      score += 0.02;
-    }
     if ((reflection.tensionOrContradiction ?? '').trim().length >= 8) {
       score += 0.04;
     }

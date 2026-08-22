@@ -6,6 +6,8 @@ import 'package:archiveme_mobile/features/capture_flow/capture_flow_phase.dart';
 import 'package:archiveme_mobile/features/insights/rag/routine_rag_models.dart';
 import 'package:archiveme_mobile/features/proof_admission/remote_processing_purpose.dart';
 import 'package:archiveme_mobile/features/routine/routine_anchor_model.dart';
+import 'package:archiveme_mobile/features/voice_capture/transcription/speech_locale.dart';
+import 'package:archiveme_mobile/features/voice_capture/transcription/transcription_capability_policy.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/services/capture_pipeline_service.dart';
 
@@ -87,6 +89,29 @@ abstract interface class RemoteTranscriptionGateway {
 /// Remote reflection/analysis boundary.
 abstract interface class RemoteReflectionGateway {
   Future<bool> reflectionAllowed();
+}
+
+/// Whether anything can transcribe this recording, and what to do if not.
+///
+/// A device-capability question plus a permission plus the customer's standing
+/// answer. No request result is an input, so a dropped connection cannot make
+/// [evaluate] ask for a privacy decision.
+abstract interface class TranscriptionCapabilityPort {
+  Future<TranscriptionCapabilityOutcome> evaluate();
+
+  /// Persists the answer to the one-time prompt.
+  ///
+  /// [allowRemote] true also grants the transcription purpose and clears the
+  /// on-device-only switch, because otherwise "yes, transcribe it" would change
+  /// nothing and the customer would be asked again forever.
+  Future<void> recordChoice({required bool allowRemote});
+
+  /// Persists the language the customer says they speak into the app.
+  ///
+  /// Takes a [ConfirmedSpeechLocale] rather than a string so that nothing on
+  /// this path can hand over a value it read off the device instead of off a
+  /// person.
+  Future<void> recordSpeechLocale(ConfirmedSpeechLocale locale);
 }
 
 /// Tracks interrupted captures so recovery can resume safely.

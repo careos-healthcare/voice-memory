@@ -1,10 +1,12 @@
+import 'package:archiveme_mobile/security/privacy_claim_catalogue.dart';
+
 /// Trust and reliability copy for Settings/About — factual, no overclaiming.
 abstract final class TrustReliabilityCopy {
   TrustReliabilityCopy._();
 
   static const sectionTitle = 'Privacy and control';
 
-  static const archivePrivateTitle = 'Your archive is private';
+  static const archivePrivateTitle = PrivacyClaimCatalogue.archiveIsPrivateTitle;
   static const archivePrivateSubtitle =
       'Recordings and reflections stay in your archive on this device.';
 

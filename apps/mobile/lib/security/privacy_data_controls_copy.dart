@@ -1,6 +1,7 @@
 /// Settings copy for local privacy and data controls.
 library;
 
+import 'package:archiveme_mobile/security/privacy_claim_catalogue.dart';
 import 'package:archiveme_mobile/security/privacy_copy_policy.dart';
 
 abstract final class PrivacyDataControlsCopy {
@@ -22,7 +23,7 @@ abstract final class PrivacyDataControlsCopy {
   static const viewSampleArchiveSubtitle =
       'Example data only — your private archive stays untouched.';
 
-  static const clearLocalArchiveTitle = 'Clear archive';
+  static const clearLocalArchiveTitle = PrivacyClaimCatalogue.clearArchiveAction;
   static const clearLocalArchiveSubtitle =
       'Remove saved moments and archive evidence from this device.';
 
@@ -40,9 +41,9 @@ abstract final class PrivacyDataControlsCopy {
       'Archive workspace hints will appear again the next time you open Patterns.';
 
   static const cancel = 'Cancel';
-  static const clearArchiveConfirm = 'Clear archive';
+  static const clearArchiveConfirm = clearLocalArchiveTitle;
   static const resetTipsConfirm = 'Reset tips';
 
-  static const clearArchiveDone = 'Local archive cleared.';
+  static const clearArchiveDone = PrivacyClaimCatalogue.localArchiveCleared;
   static const resetTipsDone = 'Dismissed tips reset.';
 }

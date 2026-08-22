@@ -4,12 +4,6 @@ import 'package:archiveme_mobile/features/archive_beliefs/archive_belief_models.
 abstract class BeliefClarity {
   BeliefClarity._();
 
-  static String quotedBelief(String statement) {
-    final t = statement.trim();
-    if (t.startsWith('"') && t.endsWith('"')) return t;
-    return '"$t"';
-  }
-
   static int reflectionCountFromSummary(String evidenceSummary) {
     final m = RegExp(r'(\d+)').firstMatch(evidenceSummary);
     return int.tryParse(m?.group(1) ?? '') ?? 0;

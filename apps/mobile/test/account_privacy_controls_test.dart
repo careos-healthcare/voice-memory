@@ -1,3 +1,6 @@
+import 'package:archiveme_mobile/features/sync/application/background_sync_state.dart';
+import 'package:archiveme_mobile/features/sync/application/sync_status_provider.dart';
+import 'package:archiveme_mobile/features/sync/presentation/sync_status_snapshot.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/models/reflection.dart';
 import 'package:archiveme_mobile/router/v1_route_registry.dart';
@@ -9,6 +12,8 @@ import 'package:archiveme_mobile/security/account_privacy_controls_copy.dart';
 import 'package:archiveme_mobile/security/privacy_data_controls_copy.dart';
 import 'package:archiveme_mobile/services/app_services.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 
@@ -32,6 +37,18 @@ JournalEntry _entry({required String id}) => JournalEntry(
 
 void main() {
   late TestStorageSandbox sandbox;
+
+  setUpAll(() {
+    // `AppServices.resetForTest` starts `ConnectivityAwareNetworkSource`,
+    // which throws `MissingPluginException` without this stub — in `setUp`,
+    // so every case in the file failed before its body ran.
+    const channel = MethodChannel('dev.fluttercommunity.plus/connectivity');
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (call) async {
+          if (call.method == 'check') return ['wifi'];
+          return null;
+        });
+  });
 
   setUp(() async {
     sandbox = TestStorageSandbox.create();
@@ -69,8 +86,22 @@ void main() {
     ];
 
     final router = GoRouter(initialLocation: '/', routes: routes);
+    // `PushedScreenShell` puts `SyncStatusAppBarAction` in the AppBar, and
+    // that is a `ConsumerWidget`, so every case here threw
+    // `Bad state: No ProviderScope found` during `pumpWidget`. The status is
+    // overridden rather than left to resolve so the indicator stays hidden.
     await tester.pumpWidget(
-      localizedMaterialAppRouter(routerConfig: router),
+      ProviderScope(
+        overrides: [
+          syncStatusProvider.overrideWithValue(
+            const SyncStatusSnapshot(
+              sync: BackgroundSyncState(),
+              isOnline: true,
+            ),
+          ),
+        ],
+        child: localizedMaterialAppRouter(routerConfig: router),
+      ),
     );
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 100));

@@ -5,6 +5,21 @@
 > Compile-time off by default (`VOICEMEMORY_ENABLE_CAREGIVER_MODE=false`). Real UI and
 > server consent verification exist; routes are unreachable until the flag is enabled.
 
+> ### Before enabling the flag, read [../../security/CAREGIVER_ACCESS_PRELAUNCH_BLOCKERS.md](../../security/CAREGIVER_ACCESS_PRELAUNCH_BLOCKERS.md)
+>
+> This file is the design and governance record and lives under `docs/archive/`.
+> The blocking preconditions live in `docs/security/` so they are found by
+> someone about to ship rather than only by someone reading history. In short:
+> there are still no capability checks on export, bulk export, data portability,
+> or audio playback, so the read-only limits remain a property of which buttons
+> the shared screens draw. Revocation is no longer among the gaps —
+> `POST /api/coach/consent/revoke` records revocations in Postgres and both
+> server `verify` paths consult that list on every call, failing closed if it
+> cannot be read — and the default TTLs are now 7 days (caregiver) and 30 days
+> (coach) from a single declaration per role. Enabling the flag before the
+> capability checks land still turns the remaining gap into a live safety
+> problem.
+
 Caregiver monitoring is a **separate persona gate** — not bundled into
 `VOICE_MEMORY_ENABLE_BETA_SURFACES` and not covered by the insight-quality CI gate alone.
 
@@ -46,9 +61,17 @@ Backend must have `CAREGIVER_CONSENT_HMAC_SECRET` configured (see API coach cons
 
 - [ ] End-to-end consent: grant → server verify → dashboard read with audit log
 - [ ] Deep links to `/caregiver` redirect to Record when flag off
-- [ ] No settings/account nav entry without flag (currently none — keep it that way until ship)
+- [ ] No settings/account nav entry without flag — the two Settings-list entries
+      are now gated on `V1CapabilityRegistry.caregiverMonitoring`, but the
+      pillar-4 caregiver section of `privacy_security_screen.dart` is still
+      ungated and still mounts its own grants list. See the discoverability gate
+      and "remaining consolidation step" sections of the blockers doc.
 - [ ] Permission matrix + production graph validators green
 - [ ] Explicit product sign-off separate from beta surfaces bundle
+- [ ] **All five blockers in
+      [CAREGIVER_ACCESS_PRELAUNCH_BLOCKERS.md](../../security/CAREGIVER_ACCESS_PRELAUNCH_BLOCKERS.md)
+      closed** — capability checks, revoke endpoint + server revocation list,
+      shorter TTLs, `observer` implemented or deleted, copy re-checked
 
 ## Key files
 

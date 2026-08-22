@@ -7,6 +7,7 @@ import 'package:archiveme_mobile/features/post_save/post_save_recorded_summary_c
 import 'package:archiveme_mobile/features/voice_capture/provisional_transcript_copy.dart';
 import 'package:archiveme_mobile/features/voice_capture/voice_capture_copy.dart';
 import 'package:archiveme_mobile/features/voice_capture/voice_capture_quality.dart';
+import 'package:archiveme_mobile/models/transcript_provenance.dart';
 import 'package:archiveme_mobile/models/transcript_status.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/models/reflection.dart';
@@ -109,37 +110,46 @@ bool hasPersistedCaptureText(JournalEntry entry) {
   return hasTranscript || hasBody;
 }
 
-/// Best non-placeholder capture text for persistence — transcript > body >
-/// exactLanguage > observation.
-String? resolveFinalCaptureTranscript({
-  String? transcript,
-  String? body,
-  String? exactLanguage,
-  String? observation,
-}) {
-  for (final raw in [transcript, body, exactLanguage, observation]) {
-    final sanitized = UserContentSafety.sanitizePlainText(raw?.trim() ?? '');
-    if (sanitized.isEmpty) continue;
-    if (isDraftOrSystemTranscriptPlaceholder(sanitized)) continue;
-    if (_isTransportErrorTranscript(sanitized)) continue;
-    return sanitized;
-  }
-  return null;
+/// Capture text that is safe to persist as `entry.transcript`.
+///
+/// Takes speech-to-text output only. It deliberately has no parameter for a
+/// reflection field: `entry.transcript` is the source of truth the evidence
+/// index quotes from, so analysis output must not be able to reach it even
+/// when transcription produced nothing. When STT is empty the transcript stays
+/// empty and [resolveEntryDisplayText] supplies the reflection-derived text at
+/// display time instead.
+String? resolveFinalCaptureTranscript({String? transcript}) {
+  final sanitized = UserContentSafety.sanitizePlainText(
+    transcript?.trim() ?? '',
+  );
+  if (sanitized.isEmpty) return null;
+  if (isDraftOrSystemTranscriptPlaceholder(sanitized)) return null;
+  if (_isTransportErrorTranscript(sanitized)) return null;
+  return sanitized;
 }
 
 /// Applies [finalTranscript] to voice entry fields used by display/insights.
 /// Never replaces an existing real transcript with a draft placeholder.
+///
+/// [provenance] is required rather than defaulted so that a new call site has
+/// to state where its text came from. A default would have to be either
+/// `speechToText`, which silently grants an unaudited caller the right to have
+/// its text quoted back as the user's words, or `unknownLegacy`, which
+/// silently discards provenance for a genuine capture. Neither is a safe thing
+/// to guess, so the compiler asks.
+///
+/// The stamp is applied only when [finalTranscript] is what lands on the
+/// entry. When this falls back to the transcript the entry already held, that
+/// text keeps the provenance it was stored with — a caller cannot promote
+/// older text to a trusted provenance by passing new text that turns out to be
+/// unusable.
 JournalEntry applyFinalTranscriptToVoiceEntry(
   JournalEntry entry, {
   required String? finalTranscript,
+  required TranscriptProvenance provenance,
   String? draftPlaceholder,
 }) {
-  final existing = resolveFinalCaptureTranscript(
-    transcript: entry.transcript,
-    body: entry.reflection.concreteObservation,
-    exactLanguage: entry.reflection.exactLanguagePattern,
-    observation: entry.reflection.concreteObservation,
-  );
+  final existing = resolveFinalCaptureTranscript(transcript: entry.transcript);
   final resolved = finalTranscript ?? existing;
   if (resolved == null || resolved.isEmpty) {
     if (draftPlaceholder == null || draftPlaceholder.trim().isEmpty) {
@@ -151,6 +161,9 @@ JournalEntry applyFinalTranscriptToVoiceEntry(
 
   return entry.copyWith(
     transcript: resolved,
+    transcriptProvenance: finalTranscript == null
+        ? entry.transcriptProvenance
+        : provenance,
     reflection: Reflection(
       mood: entry.reflection.mood,
       emotionalIntensity: entry.reflection.emotionalIntensity,

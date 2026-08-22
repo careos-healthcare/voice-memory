@@ -13,6 +13,7 @@ import 'package:archiveme_mobile/features/pattern_detail/pattern_detail_engine.d
 import 'package:archiveme_mobile/features/pattern_naming/pattern_name_store.dart';
 import 'package:archiveme_mobile/features/what_changed/what_changed_v2_store.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
+import 'package:archiveme_mobile/security/caregiver_session_guard.dart';
 import 'package:archiveme_mobile/security/local_privacy_data_controls.dart';
 import 'package:archiveme_mobile/services/app_services.dart';
 import 'package:archiveme_mobile/storage/journal_store.dart';
@@ -100,7 +101,21 @@ class LocalBackupRestoreService {
   LocalPrivacyDataControls get controls =>
       _controls ?? LocalPrivacyDataControls.instance();
 
+  /// Writes the whole archive to a JSON file and hands it to the share sheet.
+  ///
+  /// [LocalBackupBuilder] strips `localAudioPath`, so no audio leaves with the
+  /// file — but every transcript does, which is the archive itself.
+  ///
+  /// The guard sits ahead of the `isInitialized` early return and outside the
+  /// `try` below on purpose. That `try` folds everything it catches into
+  /// [LocalBackupExportFailure.shareFailed]; a refusal delivered that way would
+  /// read as "the share didn't work, try again" rather than as "this session is
+  /// not allowed to do this".
   Future<LocalBackupExportResult> exportBackup({required String source}) async {
+    await CaregiverSessionGuard.assertOwnerAccess(
+      CaregiverSessionGuard.exportLocalBackup,
+    );
+
     if (!AppServices.isInitialized) {
       return const LocalBackupExportResult.failure(
         LocalBackupExportFailure.notInitialized,

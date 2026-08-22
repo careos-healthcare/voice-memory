@@ -2,6 +2,7 @@ import 'package:archiveme_mobile/billing/paywall_session_tracker.dart';
 import 'package:archiveme_mobile/config/app_config.dart';
 import 'package:archiveme_mobile/features/archive_backup_bridge/archive_backup_bridge_analytics.dart';
 import 'package:archiveme_mobile/features/archive_backup_bridge/archive_backup_bridge_dismiss_store.dart';
+import 'package:archiveme_mobile/features/belief_evidence/evidence/transcript_evidence_index.dart';
 import 'package:archiveme_mobile/features/beta_feedback_intelligence/beta_feedback_intelligence_analytics.dart';
 import 'package:archiveme_mobile/features/beta_feedback_intelligence/beta_feedback_intelligence_store.dart';
 import 'package:archiveme_mobile/features/come_back_tomorrow/come_back_tomorrow_v2_store.dart';
@@ -37,6 +38,7 @@ abstract final class ReleaseSuiteStaticStateReset {
     HelpedTrackingStore.invalidateCache();
     await PatternNameStore.resetForTest();
     MicrophonePermissionEnvironment.resetForTest();
+    TranscriptEvidenceIndex.resetForTest();
     PatternReviewInboxAnalytics.resetForTest();
     QuietSignalAnalytics.resetForTest();
     ProEvidenceValueAnalytics.resetForTest();

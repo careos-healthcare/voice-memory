@@ -1,18 +1,19 @@
 import 'dart:io';
 
+import 'package:archiveme_mobile/router/archive_changes_deep_link.dart';
 import 'package:archiveme_mobile/router/developer_route_guard.dart';
 import 'package:archiveme_mobile/router/route_catalog.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  test('V1 shell exposes four ordered canonical destinations', () {
+  test('V1 shell exposes three ordered canonical destinations', () {
     expect(RouteCatalog.primaryRoutes, [
       '/record',
       '/archive-belief',
-      '/belief-changes',
       '/account',
     ]);
-    expect(RouteCatalog.primaryRoutes, hasLength(4));
+    expect(RouteCatalog.primaryRoutes, hasLength(3));
+    expect(RouteCatalog.changesHome, '/belief-changes');
   });
 
   test('every retired deep link uses the shared compatibility registry', () {
@@ -27,7 +28,12 @@ void main() {
         '/archive-detail',
       }),
     );
+    expect(
+      DeveloperRouteGuard.redirectFor('/discover-changes'),
+      ArchiveChangesDeepLink.nestedChangesPath,
+    );
     for (final alias in DeveloperRouteGuard.legacyRedirects.entries) {
+      if (alias.key == '/discover-changes') continue;
       expect(alias.value, RouteCatalog.archiveHome, reason: alias.key);
       expect(
         DeveloperRouteGuard.redirectFor('${alias.key}?source=old-build'),

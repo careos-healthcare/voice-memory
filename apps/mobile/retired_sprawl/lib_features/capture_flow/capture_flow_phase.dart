@@ -46,6 +46,8 @@ class CaptureFlowSnapshot {
     this.routinePrompt,
     this.routinePromptDismissed = false,
     this.routinePromptLoading = false,
+    this.transcriptionChoiceRequired = false,
+    this.speechLocaleChoiceRequired = false,
   });
 
   final CaptureFlowPhase phase;
@@ -66,6 +68,19 @@ class CaptureFlowSnapshot {
   final RoutineJournalPrompt? routinePrompt;
   final bool routinePromptDismissed;
   final bool routinePromptLoading;
+
+  /// Set when this device cannot transcribe locally and remote transcription is
+  /// not permitted, so the customer has to be asked once which they want. Never
+  /// set by a request failure — see [TranscriptionCapabilityPolicy].
+  final bool transcriptionChoiceRequired;
+
+  /// Set when this device can transcribe locally but has not been told which
+  /// language to listen for, and remote transcription is not permitted.
+  ///
+  /// A separate flag from [transcriptionChoiceRequired] because the two ask
+  /// different questions and only one of them is about privacy. Also never set
+  /// by a request failure.
+  final bool speechLocaleChoiceRequired;
 
   bool get showsRoutinePrompt =>
       !isAttachMode &&
@@ -107,6 +122,8 @@ class CaptureFlowSnapshot {
     RoutineJournalPrompt? routinePrompt,
     bool? routinePromptDismissed,
     bool? routinePromptLoading,
+    bool? transcriptionChoiceRequired,
+    bool? speechLocaleChoiceRequired,
     bool clearRoutinePrompt = false,
     bool clearError = false,
     bool clearStage = false,
@@ -136,6 +153,10 @@ class CaptureFlowSnapshot {
       routinePromptDismissed:
           routinePromptDismissed ?? this.routinePromptDismissed,
       routinePromptLoading: routinePromptLoading ?? this.routinePromptLoading,
+      transcriptionChoiceRequired:
+          transcriptionChoiceRequired ?? this.transcriptionChoiceRequired,
+      speechLocaleChoiceRequired:
+          speechLocaleChoiceRequired ?? this.speechLocaleChoiceRequired,
     );
   }
 }

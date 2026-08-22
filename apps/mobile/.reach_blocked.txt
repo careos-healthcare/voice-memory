@@ -1,0 +1,34 @@
+retired_sprawl/lib_features/archive_controls/archive_exclusion_model.dart
+    [LIVE PATH REF] test/archive_exclusion_test.dart:348  'lib/features/archive_controls/archive_exclusion_model.dart',
+retired_sprawl/lib_features/caregiver/views/caregiver_dashboard_view.dart
+    concurrent-agent excluded module: caregiver
+retired_sprawl/lib_features/caregiver/views/consent_request_view.dart
+    concurrent-agent excluded module: caregiver
+retired_sprawl/lib_features/coach/coach_copy.dart
+    [intra-retired ref] lib/features/coach/views/client_consent_verification_view.dart:7  import 'package:archiveme_mobile/features/coach/coach_copy.dart';
+    [intra-retired ref] lib/features/coach/views/coach_dashboard_view.dart:4  import 'package:archiveme_mobile/features/coach/coach_copy.dart';
+    concurrent-agent excluded module: coach
+retired_sprawl/lib_features/coach/coach_mode_controller.dart
+    [intra-retired ref] lib/features/coach/coach_read_service.dart:3  import 'package:archiveme_mobile/features/coach/coach_mode_controller.dart';
+    [intra-retired ref] lib/features/coach/views/client_consent_verification_view.dart:8  import 'package:archiveme_mobile/features/coach/coach_mode_controller.dart';
+    [intra-retired ref] lib/features/coach/views/coach_dashboard_view.dart:5  import 'package:archiveme_mobile/features/coach/coach_mode_controller.dart';
+    [intra-retired ref] lib/features/relationships/views/professional_client_read_only_view.dart:4  import 'package:archiveme_mobile/features/coach/coach_mode_controller.dart';
+    concurrent-agent excluded module: coach
+retired_sprawl/lib_features/coach/coach_read_service.dart
+    [intra-retired ref] lib/features/coach/views/coach_dashboard_view.dart:6  import 'package:archiveme_mobile/features/coach/coach_read_service.dart';
+    [intra-retired ref] lib/features/relationships/views/professional_client_read_only_view.dart:5  import 'package:archiveme_mobile/features/coach/coach_read_service.dart';
+    concurrent-agent excluded module: coach
+retired_sprawl/lib_features/coach/local_rag/local_coach_conversation.dart
+    concurrent-agent excluded module: coach
+retired_sprawl/lib_features/coach/views/client_consent_verification_view.dart
+    concurrent-agent excluded module: coach
+retired_sprawl/lib_features/coach/views/coach_dashboard_view.dart
+    concurrent-agent excluded module: coach
+retired_sprawl/lib_features/contextual_privacy/contextual_privacy_model.dart
+    [LIVE PATH REF] test/contextual_privacy_test.dart:349  'lib/features/contextual_privacy/contextual_privacy_model.dart',
+retired_sprawl/lib_features/live_audio/application/live_conversation_context_builder.dart
+    concurrent-agent excluded module: live_audio
+retired_sprawl/lib_features/live_audio/domain/services/live_pcm_wav.dart
+    concurrent-agent excluded module: live_audio
+retired_sprawl/lib_features/voice_capture/transcription/provisional_transcript_reconcile_gateway.dart
+    concurrent-agent excluded: voice_capture/transcription/**

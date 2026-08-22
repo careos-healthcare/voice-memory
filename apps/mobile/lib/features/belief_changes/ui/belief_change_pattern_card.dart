@@ -1,15 +1,23 @@
 import 'package:archiveme_mobile/design/archive_mobile_typography.dart';
 import 'package:archiveme_mobile/features/belief_changes/belief_change_moment_copy.dart';
 import 'package:archiveme_mobile/features/belief_changes/belief_change_moment_model.dart';
+import 'package:archiveme_mobile/features/belief_evidence/evidence/transcript_evidence_index.dart';
+import 'package:archiveme_mobile/features/belief_evidence/evidence/verbatim_evidence.dart';
+import 'package:archiveme_mobile/features/belief_evidence/ui/evidence_citation_card.dart';
 import 'package:archiveme_mobile/features/belief_evidence/ui/evidence_trust_copy.dart';
-import 'package:archiveme_mobile/features/belief_evidence/ui/fact_ledger_resolved_citation.dart';
+import 'package:archiveme_mobile/features/belief_evidence/ui/source_quote_chip.dart';
 import 'package:archiveme_mobile/features/belief_evidence/ui/view_source_proof_section.dart';
 import 'package:archiveme_mobile/theme/app_colors.dart';
 import 'package:archiveme_mobile/theme/app_spacing.dart';
 import 'package:archiveme_mobile/theme/voicememory_cards.dart';
 import 'package:flutter/material.dart';
 
-/// Belief-change pattern card with fact-ledger source proof expansion.
+/// Belief-change pattern card.
+///
+/// Each half of the comparison shows the stored words behind it inline, and the
+/// card carries one source-proof link covering both. The claim lines themselves
+/// hold no citation marker: they are the archive's read, and the quotes below
+/// are what that read is allowed to rest on.
 class BeliefChangePatternCard extends StatelessWidget {
   const BeliefChangePatternCard({
     required this.moment,
@@ -39,20 +47,9 @@ class BeliefChangePatternCard extends StatelessWidget {
       context,
     ).copyWith(color: AppColors.textPrimary, height: 1.4);
 
-    final citations = FactLedgerResolvedCitation.fromEntryQuotes(
-      items: [
-        (
-          entryId: moment.earlierSnippet.entryId,
-          quote: moment.earlierSnippet.quote,
-          label: moment.earlierSnippet.label,
-        ),
-        (
-          entryId: moment.laterSnippet.entryId,
-          quote: moment.laterSnippet.quote,
-          label: moment.laterSnippet.label,
-        ),
-      ],
-    );
+    final earlierEvidence = _verify(moment.earlierSnippet);
+    final laterEvidence = _verify(moment.laterSnippet);
+    final verified = [?earlierEvidence, ?laterEvidence];
 
     return Container(
       key: cardKey,
@@ -78,23 +75,62 @@ class BeliefChangePatternCard extends StatelessWidget {
           Text(BeliefChangeMomentCopy.beliefLine, style: labelStyle),
           const SizedBox(height: 2),
           Text('"${moment.earlierBeliefExample}"', style: exampleStyle),
+          if (earlierEvidence != null) ...[
+            const SizedBox(height: 6),
+            Align(
+              alignment: AlignmentDirectional.centerStart,
+              child: SourceQuoteChip(evidence: earlierEvidence),
+            ),
+          ],
           const SizedBox(height: AppSpacing.sm),
           Text(BeliefChangeMomentCopy.changeLine, style: labelStyle),
           const SizedBox(height: 2),
           Text('"${moment.changeExample}"', style: exampleStyle),
-          const SizedBox(height: AppSpacing.sm),
-          ViewSourceProofSection(
-            citations: citations,
-            leadLine: EvidenceTrustCopy.supportedByEntries(citations.length),
-          ),
+          if (laterEvidence != null) ...[
+            const SizedBox(height: 6),
+            Align(
+              alignment: AlignmentDirectional.centerStart,
+              child: SourceQuoteChip(evidence: laterEvidence),
+            ),
+          ],
+          if (verified.isEmpty)
+            ...[
+              const SizedBox(height: AppSpacing.xs),
+              UngroundedEvidenceNotice(
+                failure: _failureFor(moment.earlierSnippet),
+              ),
+            ]
+          else
+            ViewSourceProofSection(
+              evidence: verified,
+              claimContext: BeliefChangeMomentCopy.title,
+            ),
           if (!compact) ...[
             const SizedBox(height: AppSpacing.sm),
             Text(BeliefChangeMomentCopy.footer, style: bodyStyle),
           ],
-          if (footer != null) footer!,
-          if (trailing != null) trailing!,
+          ?footer,
+          ?trailing,
         ],
       ),
     );
   }
+
+  static EvidenceGrounding _ground(BeliefChangeEvidenceSnippet snippet) {
+    return VerbatimEvidenceVerifier.verify(
+      entryId: snippet.entryId,
+      candidate: snippet.quote,
+      sourceText: TranscriptEvidenceIndex.transcriptFor(snippet.entryId),
+      recordedAt: TranscriptEvidenceIndex.recordedAtFor(snippet.entryId),
+      label: snippet.label,
+    );
+  }
+
+  static VerbatimEvidence? _verify(BeliefChangeEvidenceSnippet snippet) =>
+      _ground(snippet).evidence;
+
+  static EvidenceGroundingFailure _failureFor(
+    BeliefChangeEvidenceSnippet snippet,
+  ) =>
+      _ground(snippet).failure ?? EvidenceGroundingFailure.sourceUnavailable;
 }

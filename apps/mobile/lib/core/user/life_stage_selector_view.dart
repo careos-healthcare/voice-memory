@@ -135,14 +135,7 @@ class _LifeStageSelectorViewState extends State<LifeStageSelectorView> {
   Future<void> _continue(BuildContext context) async {
     await _persist(lens: _selected);
     if (!context.mounted) return;
-    final nextRoute = switch (_selected) {
-      LifeStageLens.careerTransition => RouteCatalog.onboardingBrainDump,
-      LifeStageLens.recovery => RouteCatalog.onboardingBrainDump,
-      LifeStageLens.newParent => RouteCatalog.onboardingBrainDump,
-      LifeStageLens.griefLoss => RouteCatalog.onboardingBrainDump,
-      _ => widget.nextRoute,
-    };
-    context.go(nextRoute);
+    context.go(widget.nextRoute);
   }
 
   Future<void> _persist({required LifeStageLens lens}) async {

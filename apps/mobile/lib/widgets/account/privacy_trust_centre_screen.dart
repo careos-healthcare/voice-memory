@@ -11,7 +11,6 @@ import 'package:archiveme_mobile/features/privacy_trust/privacy_trust_copy.dart'
 import 'package:archiveme_mobile/features/private_report/private_report_engine.dart';
 import 'package:archiveme_mobile/features/repeat_return_check/repeat_return_check_store.dart';
 import 'package:archiveme_mobile/security/local_privacy_data_controls.dart';
-import 'package:archiveme_mobile/security/privacy_data_controls_copy.dart';
 import 'package:archiveme_mobile/services/app_services.dart';
 import 'package:archiveme_mobile/theme/app_colors.dart';
 import 'package:archiveme_mobile/theme/app_spacing.dart';
@@ -19,10 +18,10 @@ import 'package:archiveme_mobile/widgets/account/beta_activation_summary_sheet.d
 import 'package:archiveme_mobile/widgets/account/beta_feedback_sheet.dart';
 import 'package:archiveme_mobile/widgets/account/local_backup_restore_sheet.dart';
 import 'package:archiveme_mobile/widgets/archive_history/archive_history_sheet.dart';
+import 'package:archiveme_mobile/widgets/privacy/privacy_summary_section.dart';
 import 'package:archiveme_mobile/widgets/pushed_screen_shell.dart';
 import 'package:archiveme_mobile/widgets/settings/privacy_data_controls_dialogs.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'dart:async';
 
 /// Privacy & Trust Centre — what is stored, what stays private, and controls.
@@ -191,27 +190,20 @@ class _PrivacyTrustCentreScreenState extends State<PrivacyTrustCentreScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            _infoSection(
-              context,
-              key: const Key('privacy_trust_section_what_stores'),
-              heading: PrivacyTrustCopy.whatStoresHeading,
-              body: PrivacyTrustCopy.whatStoresBody,
-              bodyStyle: bodyStyle,
-            ),
-            const SizedBox(height: AppSpacing.md),
+            // Migrated from `/privacy`, which now redirects here. The two
+            // sections that used to open this screen — "What ArchiveMe
+            // stores" and "What stays private" — went with it: each was a
+            // one-sentence version of a claim this block already makes in
+            // full ("What stays on your device" and "Private by default"),
+            // and a screen that states a claim twice is a screen where a
+            // correction can land on one of them.
+            const PrivacySummarySection(),
+            const SizedBox(height: AppSpacing.lg),
             _infoSection(
               context,
               key: const Key('privacy_trust_section_not_included'),
               heading: PrivacyTrustCopy.whatNotIncludedHeading,
               body: PrivacyTrustCopy.whatNotIncludedBody,
-              bodyStyle: bodyStyle,
-            ),
-            const SizedBox(height: AppSpacing.md),
-            _infoSection(
-              context,
-              key: const Key('privacy_trust_section_stays_private'),
-              heading: PrivacyTrustCopy.whatStaysPrivateHeading,
-              body: PrivacyTrustCopy.whatStaysPrivateBody,
               bodyStyle: bodyStyle,
             ),
             const SizedBox(height: AppSpacing.lg),
@@ -271,12 +263,11 @@ class _PrivacyTrustCentreScreenState extends State<PrivacyTrustCentreScreen> {
                 onTap: _openBetaProgressSummary,
               ),
             ],
-            const SizedBox(height: AppSpacing.sm),
-            TextButton(
-              key: const Key('privacy_trust_full_privacy_policy'),
-              onPressed: () => context.push('/privacy'),
-              child: const Text(PrivacyDataControlsCopy.dataStaysOnDeviceTitle),
-            ),
+            // A "Private by default" button pushing `/privacy` used to sit
+            // here. `/privacy` now redirects to this screen, so it was a loop
+            // back to itself, and its label was the heading of the section
+            // above it. `PrivacyScreenCopy.fullPolicyLink` in
+            // [PrivacySummarySection] is the link out to the hosted policy.
           ],
         ),
       ),

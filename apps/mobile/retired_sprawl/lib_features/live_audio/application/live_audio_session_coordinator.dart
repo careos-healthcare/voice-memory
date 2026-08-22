@@ -9,7 +9,9 @@ import 'package:archiveme_mobile/features/live_audio/infrastructure/live_audio_s
 import 'package:archiveme_mobile/features/live_audio/infrastructure/live_audio_websocket_client.dart';
 import 'package:archiveme_mobile/features/live_audio/infrastructure/record_live_pcm16_capture_source.dart';
 import 'package:archiveme_mobile/features/live_audio/live_audio_constants.dart';
+import 'package:archiveme_mobile/features/proof_admission/remote_processing_purpose.dart';
 import 'package:archiveme_mobile/security/api_usage_guard.dart';
+import 'package:archiveme_mobile/security/remote_processing_consent_gate.dart';
 import 'package:archiveme_mobile/services/capture_attest_service.dart';
 
 class LiveAudioSessionFailure implements Exception {
@@ -23,10 +25,25 @@ class LiveAudioSessionFailure implements Exception {
 }
 
 /// Orchestrates mint → proxy connect → setupComplete → PCM streaming lifecycle.
+///
+/// This feature is remote by nature: the microphone's PCM is streamed to the
+/// backend proxy frame by frame while the customer is still speaking, and the
+/// transcript comes back over the same socket. That is a legitimate design, but
+/// it is still audio leaving the device, so it needs the same permission as any
+/// other upload — [RemoteProcessingConsentGate], which composes consent for
+/// [RemoteProcessingPurpose.remoteTranscription] with the "Never send to
+/// server" toggle and fails closed.
+///
+/// The `consentGate` argument is nullable so the composition root can be wired
+/// independently, but a null gate is read as *refusal*, not as absence of an
+/// opinion: [connect] throws [RemoteProcessingConsentRequired] and no session
+/// is minted. Streaming that nobody granted is the failure this class exists to
+/// avoid, so the unwired case has to be the closed one.
 class LiveAudioSessionCoordinator {
   LiveAudioSessionCoordinator({
     required this._sessionApi,
     required this._attest,
+    this._consentGate,
     LiveAudioWebSocketClient? webSocketClient,
     LivePcm16CaptureSource? captureSource,
     ApiUsageGuard? usageGuard,
@@ -37,12 +54,27 @@ class LiveAudioSessionCoordinator {
            RecordLivePcm16CaptureSource(configureIosAudioSession: false),
        _usageGuard = usageGuard ?? ApiUsageGuard.shared;
 
+  /// The purpose live voice needs: raw audio leaves the device to be turned
+  /// into text. The reflection the session produces is admitted separately by
+  /// `LiveVoiceCaptureService.stopAndSave`, which checks its own purpose.
+  static const RemoteProcessingPurpose streamingPurpose =
+      RemoteProcessingPurpose.remoteTranscription;
+
   final LiveAudioSessionApiClient _sessionApi;
   final CaptureAttestService _attest;
+  final RemoteProcessingConsentGate? _consentGate;
   final LiveAudioWebSocketClient _webSocketClient;
   final LivePcm16CaptureSource _captureSource;
   final ApiUsageGuard _usageGuard;
   final String _usageScopeKey;
+
+  /// The gate's answer for the session being set up, captured at [connect].
+  ///
+  /// [streamPcm16kChunk] runs once per audio frame and cannot await, so the
+  /// decision is taken before the socket opens and re-taken on every
+  /// reconnect. It starts false, which is what makes a coordinator that never
+  /// reached [connect] unable to put a frame on the wire.
+  var _remoteStreamingPermitted = false;
 
   LiveSessionState _state = LiveSessionState.disconnected;
   LiveAudioSessionConfig? _activeSession;
@@ -80,6 +112,20 @@ class LiveAudioSessionCoordinator {
         _state != LiveSessionState.error) {
       throw StateError('Live audio session already active');
     }
+
+    // Before the usage guard, before minting, before the socket. A refused
+    // session leaves the state untouched so nothing downstream sees a
+    // half-started connection. Re-checked on reconnect too: consent withdrawn
+    // mid-session must stop the stream coming back up.
+    _remoteStreamingPermitted = false;
+    final gate = _consentGate;
+    if (gate == null ||
+        !await gate.isPurposePermittedNow(streamingPurpose)) {
+      throw const RemoteProcessingConsentRequired(
+        RemoteProcessingPurpose.remoteTranscription,
+      );
+    }
+    _remoteStreamingPermitted = true;
 
     _setState(LiveSessionState.connecting);
 
@@ -158,6 +204,14 @@ class LiveAudioSessionCoordinator {
   }
 
   Future<void> startMicrophoneCapture() async {
+    // Opening the microphone here means opening it *onto the socket*, so the
+    // gate decision taken in `connect` has to hold before the first frame is
+    // ever captured, not only before it is sent.
+    if (!_remoteStreamingPermitted) {
+      throw const RemoteProcessingConsentRequired(
+        RemoteProcessingPurpose.remoteTranscription,
+      );
+    }
     if (!canStreamAudio) {
       throw StateError(
         'Live audio session is not ready for microphone capture',
@@ -260,6 +314,10 @@ class LiveAudioSessionCoordinator {
   }
 
   void streamPcm16kChunk(List<int> pcm16kBytes) {
+    // Fail closed. Reached once per frame from the capture source, including
+    // frames already in flight when a session is torn down, so it drops the
+    // chunk rather than throwing.
+    if (!_remoteStreamingPermitted) return;
     if (!canStreamAudio || _state == LiveSessionState.reconnecting) {
       return;
     }
@@ -287,6 +345,7 @@ class LiveAudioSessionCoordinator {
   }
 
   Future<void> endAudioStream() async {
+    if (!_remoteStreamingPermitted) return;
     if (!canStreamAudio) return;
     _webSocketClient.sendAudioStreamEnd();
   }
@@ -297,6 +356,7 @@ class LiveAudioSessionCoordinator {
       _isCapturingMicrophone = false;
     }
     _pausedByAudioFocus = false;
+    _remoteStreamingPermitted = false;
     _setState(LiveSessionState.closing);
     await _tearDownSocket(reason: 'coordinator_disconnect');
     _activeSession = null;

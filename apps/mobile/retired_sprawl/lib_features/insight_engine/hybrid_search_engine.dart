@@ -1,5 +1,6 @@
 import 'package:archiveme_mobile/features/insight_engine/hybrid_search_models.dart';
 import 'package:archiveme_mobile/features/insight_engine/reciprocal_rank_fusion.dart';
+import 'package:archiveme_mobile/features/search/semantic_vector_fusion.dart';
 import 'package:archiveme_mobile/storage/sqlite/image_attachment_embedding_repository.dart';
 import 'package:archiveme_mobile/storage/sqlite/memory_transcript_search_repository.dart';
 
@@ -10,13 +11,20 @@ class HybridSearchEngine {
     required MemoryTranscriptSearchRepository repository,
     ImageAttachmentEmbeddingRepository? imageRepository,
     ReciprocalRankFusion? fusion,
+    bool? vectorFusionEnabled,
   }) : _repository = repository,
        _imageRepository = imageRepository,
-       _fusion = fusion ?? const ReciprocalRankFusion();
+       _fusion = fusion ?? const ReciprocalRankFusion(),
+       _vectorFusionEnabled = vectorFusionEnabled;
 
   final MemoryTranscriptSearchRepository _repository;
   final ImageAttachmentEmbeddingRepository? _imageRepository;
   final ReciprocalRankFusion _fusion;
+
+  /// Null means "ask [SemanticVectorFusion]"; a value pins it for one engine.
+  final bool? _vectorFusionEnabled;
+
+  bool get _fuseVectorLeg => _vectorFusionEnabled ?? SemanticVectorFusion.enabled;
 
   /// Runs keyword + vector retrieval asynchronously and merges with RRF.
   ///
@@ -35,6 +43,17 @@ class HybridSearchEngine {
     final hasKeyword = trimmedKeyword.isNotEmpty;
     final hasTranscriptVector = queryEmbedding != null &&
         queryEmbedding.length == localTranscriptEmbeddingDimensions;
+
+    // Fusing a leg the encoder cannot rank meaningfully does not dilute the
+    // keyword ranking, it reorders it — see [SemanticVectorFusion]. While the
+    // leg is off, a query carrying both returns BM25 order untouched.
+    if (hasKeyword && hasTranscriptVector && !_fuseVectorLeg) {
+      final keywordIds = await _repository.keywordSearch(
+        query: trimmedKeyword,
+        limit: candidateLimit,
+      );
+      return _hitsFromSingleList(keywordIds, limit, keywordRank: true);
+    }
 
     if (hasKeyword && hasTranscriptVector) {
       return _repository.hybridSearch(
