@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import 'package:voicememory_mobile/services/app_services.dart';
-import 'package:voicememory_mobile/theme/app_theme.dart';
-import 'package:voicememory_mobile/widgets/pushed_screen_shell.dart';
+import 'package:archiveme_mobile/services/app_services.dart';
+import 'package:archiveme_mobile/theme/app_theme.dart';
+import 'package:archiveme_mobile/widgets/pushed_screen_shell.dart';
 
 class UpdatesScreen extends StatefulWidget {
   const UpdatesScreen({super.key});

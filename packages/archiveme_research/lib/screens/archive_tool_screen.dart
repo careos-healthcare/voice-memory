@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:voicememory_mobile/features/archive_evidence/archive_evidence.dart';
-import 'package:voicememory_mobile/models/journal_entry.dart';
-import 'package:voicememory_mobile/services/app_services.dart';
-import 'package:voicememory_mobile/theme/app_theme.dart';
-import 'package:voicememory_mobile/widgets/archive_mobile_page_template.dart';
-import 'package:voicememory_mobile/widgets/belief_dossier_compact.dart';
+import 'package:archiveme_mobile/features/archive_evidence/archive_evidence.dart';
+import 'package:archiveme_mobile/models/journal_entry.dart';
+import 'package:archiveme_mobile/services/app_services.dart';
+import 'package:archiveme_mobile/theme/app_theme.dart';
+import 'package:archiveme_mobile/widgets/archive_mobile_page_template.dart';
+import 'package:archiveme_mobile/widgets/belief_dossier_compact.dart';
 
 /// Deferred archive tools — not linked from production navigation (see [ArchiveToolRoutes]).
 class ArchiveToolScreen extends StatefulWidget {

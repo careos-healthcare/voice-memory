@@ -3,14 +3,14 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:voicememory_mobile/features/activation/activation_tracker.dart';
-import 'package:voicememory_mobile/features/loop_mode/loop_mode_coordinator.dart';
-import 'package:voicememory_mobile/features/loop_mode/loop_mode_model.dart';
-import 'package:voicememory_mobile/product/loop_mode_copy.dart';
-import 'package:voicememory_mobile/router/onboarding_gate.dart';
-import 'package:voicememory_mobile/services/app_services.dart';
-import 'package:voicememory_mobile/theme/app_colors.dart';
-import 'package:voicememory_mobile/theme/app_spacing.dart';
+import 'package:archiveme_mobile/features/activation/activation_tracker.dart';
+import 'package:archiveme_mobile/features/loop_mode/loop_mode_coordinator.dart';
+import 'package:archiveme_mobile/features/loop_mode/loop_mode_model.dart';
+import 'package:archiveme_mobile/product/loop_mode_copy.dart';
+import 'package:archiveme_mobile/router/onboarding_gate.dart';
+import 'package:archiveme_mobile/services/app_services.dart';
+import 'package:archiveme_mobile/theme/app_colors.dart';
+import 'package:archiveme_mobile/theme/app_spacing.dart';
 
 /// Focused loop selection after acquisition intent — prove_enough is default.
 class OnboardingLoopScreen extends StatefulWidget {

@@ -5,24 +5,24 @@ import 'package:go_router/go_router.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 
-import 'package:voicememory_mobile/design/archive_mobile_typography.dart';
-import 'package:voicememory_mobile/features/archive_packs/archive_pack.dart';
-import 'package:voicememory_mobile/features/archive_packs/archive_pack_store.dart';
-import 'package:voicememory_mobile/features/archive_search/archive_search_filters.dart';
-import 'package:voicememory_mobile/features/fact_ledger/archive_fact.dart';
-import 'package:voicememory_mobile/features/fact_ledger/fact_ledger_export.dart';
-import 'package:voicememory_mobile/features/fact_ledger/fact_ledger_filter.dart';
-import 'package:voicememory_mobile/features/fact_ledger/fact_ledger_store.dart';
-import 'package:voicememory_mobile/features/memory/archive_thread.dart';
-import 'package:voicememory_mobile/features/memory/archive_thread_store.dart';
-import 'package:voicememory_mobile/models/journal_entry.dart';
-import 'package:voicememory_mobile/services/activation_funnel_analytics.dart';
-import 'package:voicememory_mobile/services/app_services.dart';
-import 'package:voicememory_mobile/theme/app_colors.dart';
-import 'package:voicememory_mobile/theme/app_spacing.dart';
-import 'package:voicememory_mobile/widgets/fact_ledger/fact_card.dart';
-import 'package:voicememory_mobile/widgets/pushed_screen_shell.dart';
-import 'package:voicememory_mobile/widgets/retention/tiny_record_again_cta.dart';
+import 'package:archiveme_mobile/design/archive_mobile_typography.dart';
+import 'package:archiveme_mobile/features/archive_packs/archive_pack.dart';
+import 'package:archiveme_mobile/features/archive_packs/archive_pack_store.dart';
+import 'package:archiveme_mobile/features/archive_search/archive_search_filters.dart';
+import 'package:archiveme_mobile/features/fact_ledger/archive_fact.dart';
+import 'package:archiveme_mobile/features/fact_ledger/fact_ledger_export.dart';
+import 'package:archiveme_mobile/features/fact_ledger/fact_ledger_filter.dart';
+import 'package:archiveme_mobile/features/fact_ledger/fact_ledger_store.dart';
+import 'package:archiveme_mobile/features/memory/archive_thread.dart';
+import 'package:archiveme_mobile/features/memory/archive_thread_store.dart';
+import 'package:archiveme_mobile/models/journal_entry.dart';
+import 'package:archiveme_mobile/services/activation_funnel_analytics.dart';
+import 'package:archiveme_mobile/services/app_services.dart';
+import 'package:archiveme_mobile/theme/app_colors.dart';
+import 'package:archiveme_mobile/theme/app_spacing.dart';
+import 'package:archiveme_mobile/widgets/fact_ledger/fact_card.dart';
+import 'package:archiveme_mobile/widgets/pushed_screen_shell.dart';
+import 'package:archiveme_mobile/widgets/retention/tiny_record_again_cta.dart';
 
 /// Saved details the user chose to keep — not auto-extracted facts.
 class FactLedgerScreen extends StatefulWidget {

@@ -2,16 +2,16 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
-import 'package:voicememory_mobile/config/developer_settings_gate.dart';
-import 'package:voicememory_mobile/features/first_session/first_pattern_quality_result.dart';
-import 'package:voicememory_mobile/features/first_session/first_pattern_quality_runner.dart';
-import 'package:voicememory_mobile/features/first_session/first_pattern_quality_samples.dart';
-import 'package:voicememory_mobile/features/activation/activation_summary_engine.dart';
-import 'package:voicememory_mobile/features/activation/activation_summary_model.dart';
-import 'package:voicememory_mobile/features/first_session/pattern_correction_learning_coordinator.dart';
-import 'package:voicememory_mobile/features/first_session/pattern_correction_learning_model.dart';
-import 'package:voicememory_mobile/theme/app_theme.dart';
-import 'package:voicememory_mobile/widgets/debug_only_unavailable.dart';
+import 'package:archiveme_mobile/config/developer_settings_gate.dart';
+import 'package:archiveme_mobile/features/first_session/first_pattern_quality_result.dart';
+import 'package:archiveme_mobile/features/first_session/first_pattern_quality_runner.dart';
+import 'package:archiveme_mobile/features/first_session/first_pattern_quality_samples.dart';
+import 'package:archiveme_mobile/features/activation/activation_summary_engine.dart';
+import 'package:archiveme_mobile/features/activation/activation_summary_model.dart';
+import 'package:archiveme_mobile/features/first_session/pattern_correction_learning_coordinator.dart';
+import 'package:archiveme_mobile/features/first_session/pattern_correction_learning_model.dart';
+import 'package:archiveme_mobile/theme/app_theme.dart';
+import 'package:archiveme_mobile/widgets/debug_only_unavailable.dart';
 
 /// Developer-only first-pattern QA report.
 class FirstPatternQualityScreen extends StatefulWidget {

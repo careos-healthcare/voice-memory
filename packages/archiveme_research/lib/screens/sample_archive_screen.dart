@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:voicememory_mobile/design/archive_mobile_spacing.dart';
-import 'package:voicememory_mobile/features/demo/demo_share_pack.dart';
-import 'package:voicememory_mobile/features/demo/sample_archive_copy.dart';
-import 'package:voicememory_mobile/features/demo/sample_archive_demo_paths.dart';
-import 'package:voicememory_mobile/features/demo/sample_archive_entries.dart';
-import 'package:voicememory_mobile/features/demo/sample_archive_workspace.dart';
-import 'package:voicememory_mobile/features/help/help_reviewer_guide_copy.dart';
-import 'package:voicememory_mobile/widgets/demo/demo_share_pack_card.dart';
-import 'package:voicememory_mobile/widgets/demo/sample_archive_banner.dart';
-import 'package:voicememory_mobile/widgets/demo/sample_archive_demo_paths_card.dart';
-import 'package:voicememory_mobile/widgets/demo/sample_archive_starter_prompts_card.dart';
-import 'package:voicememory_mobile/widgets/demo/sample_archive_tour_card.dart';
-import 'package:voicememory_mobile/widgets/pushed_screen_shell.dart';
+import 'package:archiveme_mobile/design/archive_mobile_spacing.dart';
+import 'package:archiveme_mobile/features/demo/demo_share_pack.dart';
+import 'package:archiveme_mobile/features/demo/sample_archive_copy.dart';
+import 'package:archiveme_mobile/features/demo/sample_archive_demo_paths.dart';
+import 'package:archiveme_mobile/features/demo/sample_archive_entries.dart';
+import 'package:archiveme_mobile/features/demo/sample_archive_workspace.dart';
+import 'package:archiveme_mobile/features/help/help_reviewer_guide_copy.dart';
+import 'package:archiveme_mobile/widgets/demo/demo_share_pack_card.dart';
+import 'package:archiveme_mobile/widgets/demo/sample_archive_banner.dart';
+import 'package:archiveme_mobile/widgets/demo/sample_archive_demo_paths_card.dart';
+import 'package:archiveme_mobile/widgets/demo/sample_archive_starter_prompts_card.dart';
+import 'package:archiveme_mobile/widgets/demo/sample_archive_tour_card.dart';
+import 'package:archiveme_mobile/widgets/pushed_screen_shell.dart';
 
 /// Optional sample archive — in-memory example data, never mixed with real entries.
 class SampleArchiveScreen extends StatefulWidget {

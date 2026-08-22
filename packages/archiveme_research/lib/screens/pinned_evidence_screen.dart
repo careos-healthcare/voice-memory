@@ -1,26 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:voicememory_mobile/design/archive_mobile_typography.dart';
-import 'package:voicememory_mobile/features/bulk_actions/archive_selection_controller.dart';
-import 'package:voicememory_mobile/features/bulk_actions/bulk_archive_action.dart';
-import 'package:voicememory_mobile/features/collections/archive_collection.dart';
-import 'package:voicememory_mobile/features/collections/archive_collection_store.dart';
-import 'package:voicememory_mobile/features/pins/pinned_evidence_store.dart';
-import 'package:voicememory_mobile/features/timeline/timeline_entry_display.dart';
-import 'package:voicememory_mobile/models/journal_entry.dart';
-import 'package:voicememory_mobile/services/activation_funnel_analytics.dart';
-import 'package:voicememory_mobile/theme/app_colors.dart';
-import 'package:voicememory_mobile/theme/app_spacing.dart';
-import 'package:voicememory_mobile/widgets/bulk_actions/archive_selection_bar.dart';
-import 'package:voicememory_mobile/widgets/bulk_actions/bulk_actions_flow.dart';
-import 'package:voicememory_mobile/widgets/collections/add_to_collection_sheet.dart';
-import 'package:voicememory_mobile/features/action_items/action_item_store.dart';
-import 'package:voicememory_mobile/widgets/action_items/remember_this_button.dart';
-import 'package:voicememory_mobile/widgets/pins/pin_entry_button.dart';
-import 'package:voicememory_mobile/services/app_services.dart';
-import 'package:voicememory_mobile/widgets/retention/tiny_record_again_cta.dart';
-import 'package:voicememory_mobile/widgets/pushed_screen_shell.dart';
+import 'package:archiveme_mobile/design/archive_mobile_typography.dart';
+import 'package:archiveme_mobile/features/bulk_actions/archive_selection_controller.dart';
+import 'package:archiveme_mobile/features/bulk_actions/bulk_archive_action.dart';
+import 'package:archiveme_mobile/features/collections/archive_collection.dart';
+import 'package:archiveme_mobile/features/collections/archive_collection_store.dart';
+import 'package:archiveme_mobile/features/pins/pinned_evidence_store.dart';
+import 'package:archiveme_mobile/features/timeline/timeline_entry_display.dart';
+import 'package:archiveme_mobile/models/journal_entry.dart';
+import 'package:archiveme_mobile/services/activation_funnel_analytics.dart';
+import 'package:archiveme_mobile/theme/app_colors.dart';
+import 'package:archiveme_mobile/theme/app_spacing.dart';
+import 'package:archiveme_mobile/widgets/bulk_actions/archive_selection_bar.dart';
+import 'package:archiveme_mobile/widgets/bulk_actions/bulk_actions_flow.dart';
+import 'package:archiveme_mobile/widgets/collections/add_to_collection_sheet.dart';
+import 'package:archiveme_mobile/features/action_items/action_item_store.dart';
+import 'package:archiveme_mobile/widgets/action_items/remember_this_button.dart';
+import 'package:archiveme_mobile/widgets/pins/pin_entry_button.dart';
+import 'package:archiveme_mobile/services/app_services.dart';
+import 'package:archiveme_mobile/widgets/retention/tiny_record_again_cta.dart';
+import 'package:archiveme_mobile/widgets/pushed_screen_shell.dart';
 
 /// Pinned evidence — saved entries, easy to find again. Read-only over
 /// the journal store except for the unpin toggle (safe metadata only).

@@ -1,21 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:voicememory_mobile/config/screenshot_mode.dart';
-import 'package:voicememory_mobile/design/archive_mobile_typography.dart';
-import 'package:voicememory_mobile/features/then_now/then_now_copy.dart';
-import 'package:voicememory_mobile/features/milestone_share/milestone_share_copy.dart';
-import 'package:voicememory_mobile/features/archive_calendar/archive_calendar_copy.dart';
-import 'package:voicememory_mobile/features/then_now/then_now_engine.dart';
-import 'package:voicememory_mobile/features/then_now/then_now_models.dart';
-import 'package:voicememory_mobile/services/app_services.dart';
-import 'package:voicememory_mobile/services/journal_service.dart';
-import 'package:voicememory_mobile/theme/app_colors.dart';
-import 'package:voicememory_mobile/theme/app_spacing.dart';
-import 'package:voicememory_mobile/widgets/pushed_screen_shell.dart';
-import 'package:voicememory_mobile/widgets/insight_feedback_actions.dart';
-import 'package:voicememory_mobile/features/insight_feedback/insight_feedback_gates.dart';
-import 'package:voicememory_mobile/features/insight_feedback/insight_feedback_models.dart';
+import 'package:archiveme_mobile/config/screenshot_mode.dart';
+import 'package:archiveme_mobile/design/archive_mobile_typography.dart';
+import 'package:archiveme_mobile/features/then_now/then_now_copy.dart';
+import 'package:archiveme_mobile/features/milestone_share/milestone_share_copy.dart';
+import 'package:archiveme_mobile/features/archive_calendar/archive_calendar_copy.dart';
+import 'package:archiveme_mobile/features/then_now/then_now_engine.dart';
+import 'package:archiveme_mobile/features/then_now/then_now_models.dart';
+import 'package:archiveme_mobile/services/app_services.dart';
+import 'package:archiveme_mobile/services/journal_service.dart';
+import 'package:archiveme_mobile/theme/app_colors.dart';
+import 'package:archiveme_mobile/theme/app_spacing.dart';
+import 'package:archiveme_mobile/widgets/pushed_screen_shell.dart';
+import 'package:archiveme_mobile/widgets/insight_feedback_actions.dart';
+import 'package:archiveme_mobile/features/insight_feedback/insight_feedback_gates.dart';
+import 'package:archiveme_mobile/features/insight_feedback/insight_feedback_models.dart';
 
 /// Full Then vs Now screen — cautious summaries, no journal text.
 class ThenVsNowScreen extends StatefulWidget {

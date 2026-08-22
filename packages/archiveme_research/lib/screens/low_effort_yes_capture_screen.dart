@@ -3,24 +3,24 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:voicememory_mobile/config/screenshot_mode.dart';
-import 'package:voicememory_mobile/design/archive_mobile_typography.dart';
-import 'package:voicememory_mobile/features/acquisition/acquisition_cohort_coordinator.dart';
-import 'package:voicememory_mobile/features/acquisition/acquisition_cohort_model.dart';
-import 'package:voicememory_mobile/features/capacity_loop/capacity_return_trigger_engine.dart';
-import 'package:voicememory_mobile/features/capacity_loop/capacity_return_trigger_models.dart';
-import 'package:voicememory_mobile/features/capacity_loop/low_effort_yes_capture_copy.dart';
-import 'package:voicememory_mobile/features/capacity_loop/low_effort_yes_capture_engine.dart';
-import 'package:voicememory_mobile/features/capacity_loop/low_effort_yes_capture_models.dart';
-import 'package:voicememory_mobile/features/capacity_loop/quick_capture_friction_engine.dart';
-import 'package:voicememory_mobile/features/capacity_loop/quick_capture_friction_models.dart';
-import 'package:voicememory_mobile/features/loop_mode/loop_mode_coordinator.dart';
-import 'package:voicememory_mobile/services/app_services.dart';
-import 'package:voicememory_mobile/theme/app_colors.dart';
-import 'package:voicememory_mobile/theme/app_spacing.dart';
-import 'package:voicememory_mobile/widgets/pushed_screen_shell.dart';
-import 'package:voicememory_mobile/widgets/quick_capture_friction_card.dart';
-import 'package:voicememory_mobile/widgets/capacity_return_trigger_card.dart';
+import 'package:archiveme_mobile/config/screenshot_mode.dart';
+import 'package:archiveme_mobile/design/archive_mobile_typography.dart';
+import 'package:archiveme_mobile/features/acquisition/acquisition_cohort_coordinator.dart';
+import 'package:archiveme_mobile/features/acquisition/acquisition_cohort_model.dart';
+import 'package:archiveme_mobile/features/capacity_loop/capacity_return_trigger_engine.dart';
+import 'package:archiveme_mobile/features/capacity_loop/capacity_return_trigger_models.dart';
+import 'package:archiveme_mobile/features/capacity_loop/low_effort_yes_capture_copy.dart';
+import 'package:archiveme_mobile/features/capacity_loop/low_effort_yes_capture_engine.dart';
+import 'package:archiveme_mobile/features/capacity_loop/low_effort_yes_capture_models.dart';
+import 'package:archiveme_mobile/features/capacity_loop/quick_capture_friction_engine.dart';
+import 'package:archiveme_mobile/features/capacity_loop/quick_capture_friction_models.dart';
+import 'package:archiveme_mobile/features/loop_mode/loop_mode_coordinator.dart';
+import 'package:archiveme_mobile/services/app_services.dart';
+import 'package:archiveme_mobile/theme/app_colors.dart';
+import 'package:archiveme_mobile/theme/app_spacing.dart';
+import 'package:archiveme_mobile/widgets/pushed_screen_shell.dart';
+import 'package:archiveme_mobile/widgets/quick_capture_friction_card.dart';
+import 'package:archiveme_mobile/widgets/capacity_return_trigger_card.dart';
 
 /// Quick yes capture screen — fixed pull + decision options only.
 class LowEffortYesCaptureScreen extends StatefulWidget {

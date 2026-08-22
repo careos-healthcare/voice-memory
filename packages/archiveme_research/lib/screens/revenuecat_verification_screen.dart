@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
 
-import 'package:voicememory_mobile/api/api_error_message.dart';
-import 'package:voicememory_mobile/config/developer_settings_gate.dart';
-import 'package:voicememory_mobile/billing/revenuecat_purchase_journey.dart';
-import 'package:voicememory_mobile/billing/revenuecat_service.dart';
-import 'package:voicememory_mobile/models/entitlement.dart';
-import 'package:voicememory_mobile/services/app_services.dart';
-import 'package:voicememory_mobile/theme/app_theme.dart';
-import 'package:voicememory_mobile/widgets/debug_only_unavailable.dart';
+import 'package:archiveme_mobile/api/api_error_message.dart';
+import 'package:archiveme_mobile/config/developer_settings_gate.dart';
+import 'package:archiveme_mobile/billing/revenuecat_purchase_journey.dart';
+import 'package:archiveme_mobile/billing/revenuecat_service.dart';
+import 'package:archiveme_mobile/models/entitlement.dart';
+import 'package:archiveme_mobile/services/app_services.dart';
+import 'package:archiveme_mobile/theme/app_theme.dart';
+import 'package:archiveme_mobile/widgets/debug_only_unavailable.dart';
 
 /// Physical-device RevenueCat production verification — export evidence JSON.
 class RevenueCatVerificationScreen extends StatefulWidget {

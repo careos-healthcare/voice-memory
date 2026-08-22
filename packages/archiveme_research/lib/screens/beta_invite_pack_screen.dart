@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:voicememory_mobile/design/archive_mobile_typography.dart';
-import 'package:voicememory_mobile/features/beta_invite/beta_invite_copy.dart';
-import 'package:voicememory_mobile/features/beta_invite/beta_invite_models.dart';
-import 'package:voicememory_mobile/features/beta_invite/beta_invite_store.dart';
-import 'package:voicememory_mobile/features/share/archive_share_actions.dart';
-import 'package:voicememory_mobile/theme/app_colors.dart';
-import 'package:voicememory_mobile/theme/app_spacing.dart';
-import 'package:voicememory_mobile/theme/voicememory_cards.dart';
-import 'package:voicememory_mobile/widgets/capacity_beta_signal_card.dart';
-import 'package:voicememory_mobile/widgets/capacity_beta_mission_card.dart';
-import 'package:voicememory_mobile/features/capacity_loop/capacity_beta_mission_engine.dart';
-import 'package:voicememory_mobile/features/capacity_loop/capacity_beta_mission_models.dart';
-import 'package:voicememory_mobile/widgets/pushed_screen_shell.dart';
+import 'package:archiveme_mobile/design/archive_mobile_typography.dart';
+import 'package:archiveme_mobile/features/beta_invite/beta_invite_copy.dart';
+import 'package:archiveme_mobile/features/beta_invite/beta_invite_models.dart';
+import 'package:archiveme_mobile/features/beta_invite/beta_invite_store.dart';
+import 'package:archiveme_mobile/features/share/archive_share_actions.dart';
+import 'package:archiveme_mobile/theme/app_colors.dart';
+import 'package:archiveme_mobile/theme/app_spacing.dart';
+import 'package:archiveme_mobile/theme/voicememory_cards.dart';
+import 'package:archiveme_mobile/widgets/capacity_beta_signal_card.dart';
+import 'package:archiveme_mobile/widgets/capacity_beta_mission_card.dart';
+import 'package:archiveme_mobile/features/capacity_loop/capacity_beta_mission_engine.dart';
+import 'package:archiveme_mobile/features/capacity_loop/capacity_beta_mission_models.dart';
+import 'package:archiveme_mobile/widgets/pushed_screen_shell.dart';
 
 /// Local beta tester invite scripts — copy only, no uploads.
 class BetaInvitePackScreen extends StatefulWidget {

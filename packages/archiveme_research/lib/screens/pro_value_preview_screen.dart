@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:voicememory_mobile/billing/revenuecat_service.dart';
-import 'package:voicememory_mobile/design/archive_mobile_typography.dart';
-import 'package:voicememory_mobile/features/archive_depth/archive_depth_models.dart';
-import 'package:voicememory_mobile/features/pro/pro_value_preview_copy.dart';
-import 'package:voicememory_mobile/features/pro_interest/pro_interest_copy.dart';
-import 'package:voicememory_mobile/features/pro_value/pro_value_engine.dart';
-import 'package:voicememory_mobile/features/pro_value/pro_value_models.dart';
-import 'package:voicememory_mobile/theme/app_colors.dart';
-import 'package:voicememory_mobile/theme/app_spacing.dart';
-import 'package:voicememory_mobile/widgets/pushed_screen_shell.dart';
+import 'package:archiveme_mobile/billing/revenuecat_service.dart';
+import 'package:archiveme_mobile/design/archive_mobile_typography.dart';
+import 'package:archiveme_mobile/features/archive_depth/archive_depth_models.dart';
+import 'package:archiveme_mobile/features/pro/pro_value_preview_copy.dart';
+import 'package:archiveme_mobile/features/pro_interest/pro_interest_copy.dart';
+import 'package:archiveme_mobile/features/pro_value/pro_value_engine.dart';
+import 'package:archiveme_mobile/features/pro_value/pro_value_models.dart';
+import 'package:archiveme_mobile/theme/app_colors.dart';
+import 'package:archiveme_mobile/theme/app_spacing.dart';
+import 'package:archiveme_mobile/widgets/pushed_screen_shell.dart';
 
 /// Honest Pro value overview — purchases unavailable until store setup completes.
 class ProValuePreviewScreen extends StatelessWidget {

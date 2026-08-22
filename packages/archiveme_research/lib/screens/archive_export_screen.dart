@@ -5,15 +5,15 @@ import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 
-import 'package:voicememory_mobile/api/api_error_message.dart';
-import 'package:voicememory_mobile/design/archive_mobile_typography.dart';
-import 'package:voicememory_mobile/features/archive_export/archive_export_pack.dart';
-import 'package:voicememory_mobile/features/archive_export/archive_export_pack_copy.dart';
-import 'package:voicememory_mobile/security/sensitive_screen_guard.dart';
-import 'package:voicememory_mobile/services/app_services.dart';
-import 'package:voicememory_mobile/theme/app_colors.dart';
-import 'package:voicememory_mobile/theme/app_spacing.dart';
-import 'package:voicememory_mobile/widgets/pushed_screen_shell.dart';
+import 'package:archiveme_mobile/api/api_error_message.dart';
+import 'package:archiveme_mobile/design/archive_mobile_typography.dart';
+import 'package:archiveme_mobile/features/archive_export/archive_export_pack.dart';
+import 'package:archiveme_mobile/features/archive_export/archive_export_pack_copy.dart';
+import 'package:archiveme_mobile/security/sensitive_screen_guard.dart';
+import 'package:archiveme_mobile/services/app_services.dart';
+import 'package:archiveme_mobile/theme/app_colors.dart';
+import 'package:archiveme_mobile/theme/app_spacing.dart';
+import 'package:archiveme_mobile/widgets/pushed_screen_shell.dart';
 
 /// Explicit local Archive Export Pack preview — user must tap Share manually.
 class ArchiveExportScreen extends StatefulWidget {
