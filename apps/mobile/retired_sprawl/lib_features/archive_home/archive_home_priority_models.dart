@@ -1,0 +1,103 @@
+import 'package:archiveme_mobile/features/archive_depth/archive_depth_models.dart';
+
+/// Archive Home surface identifiers for priority stacking.
+enum ArchiveHomeSectionId {
+  archiveSummary,
+  archiveDailyChange,
+  introHint,
+  quickActions,
+  returnRitual,
+  proPreview,
+  returnChanges,
+  archiveDepth,
+  watchlist,
+  nextEvidencePlan,
+  firstWeekPath,
+  dailyArchiveExercise,
+  archiveClarityProgress,
+  capacityThreeMomentActivation,
+  capacityLoop,
+  capacityPullReason,
+  capacityDecisionOutcome,
+  capacityCostLaterCheckin,
+  capacityActivationFit,
+  beforeYouSayYesPause,
+  capacityWeeklyReview,
+  capacityBoundaryResponse,
+  thenVsNow,
+  archiveCalendar,
+  reviewRitual,
+  milestoneShare,
+  milestones,
+  betaFeedback,
+  proInterestLink,
+  needsAttention,
+  evidenceQuality,
+  reviewHistory,
+  controls,
+  sampleArchive,
+}
+
+/// Inputs for deterministic Archive Home priority — metadata only.
+class ArchiveHomePriorityInput {
+  const ArchiveHomePriorityInput({
+    required this.savedEntryCount,
+    required this.usableEvidenceCount,
+    required this.depthLevel,
+    required this.returnChangesAvailable,
+    required this.weeklyReviewAvailable,
+    required this.sampleMode,
+    required this.proPreviewPromoVisible,
+    required this.showEmptySample,
+    required this.firstWeekPathVisible, required this.dailyArchiveExerciseVisible, required this.archiveClarityProgressVisible, required this.capacityThreeMomentActivationVisible, required this.capacityLoopVisible, required this.capacityPullReasonVisible, required this.capacityDecisionOutcomeVisible, required this.capacityCostLaterCheckinVisible, required this.capacityActivationFitVisible, required this.beforeYouSayYesPauseVisible, required this.capacityWeeklyReviewVisible, required this.capacityBoundaryResponseVisible, required this.thenVsNowVisible, required this.archiveCalendarVisible, required this.reviewRitualVisible, required this.milestoneShareVisible, this.archiveDailyChangeVisible = false,
+    this.calmCapacityActivationMode = false,
+  });
+
+  final int savedEntryCount;
+  final int usableEvidenceCount;
+  final ArchiveDepthLevel depthLevel;
+  final bool returnChangesAvailable;
+  final bool weeklyReviewAvailable;
+  final bool sampleMode;
+  final bool proPreviewPromoVisible;
+  final bool showEmptySample;
+  final bool archiveDailyChangeVisible;
+  final bool firstWeekPathVisible;
+  final bool dailyArchiveExerciseVisible;
+  final bool archiveClarityProgressVisible;
+  final bool capacityThreeMomentActivationVisible;
+  final bool capacityLoopVisible;
+  final bool capacityPullReasonVisible;
+  final bool capacityDecisionOutcomeVisible;
+  final bool capacityCostLaterCheckinVisible;
+  final bool capacityActivationFitVisible;
+  final bool beforeYouSayYesPauseVisible;
+  final bool capacityWeeklyReviewVisible;
+  final bool capacityBoundaryResponseVisible;
+  final bool thenVsNowVisible;
+  final bool archiveCalendarVisible;
+  final bool reviewRitualVisible;
+  final bool milestoneShareVisible;
+  final bool calmCapacityActivationMode;
+}
+
+/// Ordered Archive Home layout plan — primary first, then optional collapse.
+class ArchiveHomePriorityPlan {
+  const ArchiveHomePriorityPlan({
+    required this.primarySections,
+    required this.secondarySections,
+    required this.hiddenSections,
+    required this.showMoreArchiveTools,
+    required this.proPreviewProminent,
+  });
+
+  final List<ArchiveHomeSectionId> primarySections;
+  final List<ArchiveHomeSectionId> secondarySections;
+  final Set<ArchiveHomeSectionId> hiddenSections;
+  final bool showMoreArchiveTools;
+  final bool proPreviewProminent;
+
+  bool isHidden(ArchiveHomeSectionId id) => hiddenSections.contains(id);
+
+  bool isPrimary(ArchiveHomeSectionId id) => primarySections.contains(id);
+}

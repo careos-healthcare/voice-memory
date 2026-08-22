@@ -1,0 +1,73 @@
+import 'package:archiveme_mobile/core/utils/app_logger.dart';
+import 'package:archiveme_mobile/services/activation_funnel_analytics.dart';
+import 'package:flutter/foundation.dart';
+
+/// Safe analytics for archive moment delete — metadata only.
+abstract final class ArchiveControlAnalytics {
+  ArchiveControlAnalytics._();
+
+  static const deletedEvent = 'archive_moment_deleted';
+  static const patternEvidenceExcludedEvent = 'pattern_evidence_excluded';
+
+  @visibleForTesting
+  static void Function(String event, Map<String, Object> properties)?
+  captureForTest;
+
+  static void deleted({
+    required String source,
+    required int entryCount,
+    required bool wasEvidence,
+  }) {
+    final props = <String, Object>{
+      'source': source,
+      'entry_count': entryCount,
+      'was_evidence': wasEvidence ? 1 : 0,
+    };
+
+    captureForTest?.call(deletedEvent, props);
+    ActivationFunnelAnalytics.track(
+      deletedEvent,
+      source: source,
+      entryCount: entryCount,
+      wasEvidence: wasEvidence,
+    );
+    if (kDebugMode) {
+      AppLogger.debug(
+        'ARCHIVEME_ARCHIVE_CONTROL event=$deletedEvent source=$source '
+        'entry_count=$entryCount was_evidence=$wasEvidence',
+      );
+    }
+  }
+
+  static void patternEvidenceExcluded({
+    required String source,
+    required int entryCount,
+    required bool hasConfirmedRepeat,
+  }) {
+    final props = <String, Object>{
+      'source': source,
+      'entry_count': entryCount,
+      'has_confirmed_repeat': hasConfirmedRepeat ? 1 : 0,
+    };
+
+    captureForTest?.call(patternEvidenceExcludedEvent, props);
+    ActivationFunnelAnalytics.track(
+      patternEvidenceExcludedEvent,
+      source: source,
+      entryCount: entryCount,
+      hasConfirmedRepeat: hasConfirmedRepeat,
+    );
+    if (kDebugMode) {
+      AppLogger.debug(
+        'ARCHIVEME_ARCHIVE_CONTROL event=$patternEvidenceExcludedEvent '
+        'source=$source entry_count=$entryCount '
+        'has_confirmed_repeat=$hasConfirmedRepeat',
+      );
+    }
+  }
+
+  @visibleForTesting
+  static void resetForTest() {
+    captureForTest = null;
+  }
+}
