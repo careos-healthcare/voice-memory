@@ -1,0 +1,27 @@
+include: ../analysis_options.yaml
+
+analyzer:
+  errors:
+    inference_failure_on_collection_literal: ignore
+    strict_raw_type: ignore
+    unused_element: ignore
+    unused_local_variable: ignore
+    missing_whitespace_between_adjacent_strings: ignore
+
+linter:
+  rules:
+    avoid_slow_async_io: false
+    cascade_invocations: false
+    avoid_dynamic_calls: false
+    discarded_futures: false
+    document_ignores: false
+    only_throw_errors: false
+    avoid_setters_without_getters: false
+    avoid_positional_boolean_parameters: false
+    prefer_constructors_over_static_methods: false
+    no_adjacent_strings_in_list: false
+    matching_super_parameters: false
+    unnecessary_statements: false
+    unawaited_futures: false
+    use_named_constants: false
+    deprecated_member_use_from_same_package: false
