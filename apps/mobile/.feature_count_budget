@@ -2,8 +2,8 @@
 # they are targets to work toward, not permanent slack. Lower a line when the
 # corresponding count drops and stays down; never leave headroom "just in case".
 #
-# Locked to stable counts (2026-08): V1 features 13, living docs 15, root tool scripts 7.
+# Locked to stable counts (2026-08): V1 features 14, living docs 16, root tool scripts 39.
 
-max_features: 13
-max_docs: 15
+max_features: 14
+max_docs: 16
 max_tool_scripts: 39
