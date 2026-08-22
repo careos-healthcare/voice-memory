@@ -28,8 +28,8 @@ validates:
 self_tests:
   api_dto:
     description: API DTO serialization self-tests
-    command: dart run tool/run_api_dto_self_test.dart
+    command: flutter test tool/run_api_dto_self_test.dart
   pro_status:
     description: Pro status SQLite self-tests
-    command: dart run tool/run_pro_status_self_test.dart
+    command: flutter test tool/run_pro_status_self_test.dart
 
