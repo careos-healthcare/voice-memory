@@ -1,0 +1,65 @@
+# Pre-existing privacy copy violations, surfaced when the scan
+# widened from a hand-maintained list to discovery over lib/.
+#
+# This is debt, not permission. Fix a line, delete it here —
+# the gate fails on a stale entry as well as on a new one.
+#
+# Regenerate with:
+#   dart run tool/privacy/check_privacy_copy_policy.dart --write-baseline
+#
+# --- live lib/ sources ---
+lib/features/archive/ui/trust_status_footer_copy.dart: encryption claim without supported backup/sync context in "Encrypted at Rest"
+lib/features/archive/ui/trust_status_footer_copy.dart: encryption claim without supported backup/sync context in "Encrypted at rest. Local journal storage and the SQLite vault are "
+lib/features/archive/ui/trust_status_footer_copy.dart: encryption claim without supported backup/sync context in "encrypted on this device."
+lib/features/auth/domain/caregiver_access_copy.dart: encryption claim without supported backup/sync context in "Turn off encryption or change your privacy choices"
+lib/features/auth/domain/caregiver_access_copy.dart: encryption claim without supported backup/sync context in "Your device settings, encryption keys, or account credentials"
+lib/features/onboarding/brain_dump_copy.dart: encryption claim without supported backup/sync context in "Uploading your encrypted audio and finding patterns in what you shared."
+lib/features/sync/presentation/sync_status_copy.dart: encryption claim without supported backup/sync context in "Backing up encrypted vault…"
+lib/features/sync/presentation/sync_status_copy.dart: encryption claim without supported backup/sync context in "Uploading encrypted changes…"
+lib/screens/onboarding/brain_dump_screen.dart: encryption claim without supported backup/sync context in "and we will keep your encrypted audio safe in the background."
+lib/security/privacy_contract.dart: encryption claim without supported backup/sync context in "Journal content on this device is encrypted at rest."
+lib/security/privacy_data_controls_copy.dart: encryption claim without supported backup/sync context in "ArchiveMe stores your journal file encrypted on this device. Archive "
+lib/security/private_storage_audit.dart: encryption claim without supported backup/sync context in "[draft] entries in encrypted journal + localAudioPath (audio plaintext)"
+lib/security/secure_database_copy.dart: encryption claim without supported backup/sync context in "Unlock your encrypted archive database"
+lib/security/secure_database_copy.dart: encryption claim without supported backup/sync context in "open your encrypted on-device database."
+
+# --- reached through lib/features/* symlinks into retired_sprawl/ ---
+lib/features/beta_conversion_diagnosis/beta_conversion_diagnosis_copy.dart: diagnosis in "Beta diagnosis"
+lib/features/beta_conversion_diagnosis/beta_conversion_diagnosis_copy.dart: diagnosis in "Diagnosis"
+lib/features/beta_feedback/beta_feedback_copy.dart: testimonial in "Copy a short testimonial"
+lib/features/beta_feedback/beta_feedback_copy.dart: testimonial in "Testimonial copied"
+lib/features/beta_invite/beta_invite_copy.dart: testimonial in "testimonial"
+lib/features/beta_outcomes/beta_outcomes_copy.dart: testimonial in "Testimonial helper copied"
+lib/features/beta_readiness/beta_readiness_copy.dart: encryption claim without supported backup/sync context in "Local backup is plain JSON, not encrypted"
+lib/features/clinical_sandbox/presentation/clinical_consent_copy.dart: diagnose in "diagnose or treat conditions, and must not be used as the sole basis "
+lib/features/core_archive_journey/core_archive_journey_copy.dart: ai in "AI companion"
+lib/features/core_archive_journey/core_archive_journey_copy.dart: ai in "More AI instead of more evidence"
+lib/features/core_archive_journey/core_archive_journey_copy.dart: diagnosis in "Therapy or diagnosis"
+lib/features/core_archive_journey/core_archive_journey_copy.dart: therapy in "Therapy or diagnosis"
+lib/features/early_archive/daily_return_reason_copy.dart: archiveme knows in "ArchiveMe knows the repeat. Now it needs the next return to see whether it changes."
+lib/features/language/localized_copy.dart: ai in "ai besoin d"
+lib/features/loop_packs_future/loop_packs_future_copy.dart: treatment in "paid-intent beta pass. Avoid clinical framing or treatment-style language."
+lib/features/niche_landing_revenue/niche_landing_revenue_copy.dart: medical in "Avoid medical or wellness-treatment claims. Every landing page points to the same core promise: "
+lib/features/niche_landing_revenue/niche_landing_revenue_copy.dart: treatment in "Avoid medical or wellness-treatment claims. Every landing page points to the same core promise: "
+lib/features/paywall_objection_handling/paywall_objection_copy.dart: ai in "Is this just more AI chat?"
+lib/features/positive_archive_reinforcement/positive_archive_reinforcement_copy.dart: therapy in "therapy, or gamified habits."
+lib/features/post_save_reinforcement/post_save_reinforcement_placement_copy.dart: therapy in "pressure, advice, therapy, or a requirement to record more."
+lib/features/privacy/on_device_processing_store.dart: overbroad "never sent/leaves" without "unless you choose" in "Raw audio never leaves this device unless you turn this off and grant "
+lib/features/privacy/privacy_security_control_center_copy.dart: encryption claim without supported backup/sync context in "256-Bit SQLCipher Encrypted"
+lib/features/privacy/privacy_security_control_center_copy.dart: encryption claim without supported backup/sync context in "ArchiveMe stores your journal in a SQLCipher-encrypted SQLite file on "
+lib/features/privacy/privacy_security_control_center_copy.dart: encryption claim without supported backup/sync context in "Encryption at rest"
+lib/features/privacy/privacy_security_control_center_copy.dart: encryption claim without supported backup/sync context in "Encryption at rest"
+lib/features/privacy/privacy_security_control_center_copy.dart: encryption claim without supported backup/sync context in "Encryption unavailable in this build"
+lib/features/privacy/privacy_security_control_center_copy.dart: encryption claim without supported backup/sync context in "Privacy, Encryption & Caregiver Access"
+lib/features/privacy/privacy_security_control_center_copy.dart: encryption claim without supported backup/sync context in "The database stays encrypted, but reopens without a biometric prompt "
+lib/features/privacy/privacy_security_control_center_copy.dart: encryption claim without supported backup/sync context in "after backgrounding — it does not replace file encryption."
+lib/features/privacy/privacy_security_control_center_copy.dart: encryption claim without supported backup/sync context in "encrypted database after backgrounding."
+lib/features/privacy/privacy_security_control_center_copy.dart: encryption claim without supported backup/sync context in "this device. The encryption key stays in secure device storage. "
+lib/features/privacy/privacy_security_trust_copy.dart: encryption claim without supported backup/sync context in "Encrypted on this device"
+lib/features/private_reports_future/private_reports_future_copy.dart: medical in "proof trail converts. Avoid treatment-style, clinical-label, medical, and "
+lib/features/private_reports_future/private_reports_future_copy.dart: therapist in "therapist-ready claims."
+lib/features/private_reports_future/private_reports_future_copy.dart: treatment in "proof trail converts. Avoid treatment-style, clinical-label, medical, and "
+lib/features/pro_promise_copy_audit/pro_promise_copy_audit_copy.dart: ai in "Remove more-AI promises. Pro keeps the trail, not more chat."
+lib/features/pro_single_promise/pro_single_promise_copy.dart: ai in "AI, storage, dashboards, rankings, reports, or feature volume."
+lib/features/product_language_consistency/product_language_consistency_guard_copy.dart: ai in "assistant-style ai, chatgpt replacement, more ai, unlimited answers."
+lib/features/proof_clarity_importance_diagnostic/proof_clarity_importance_diagnostic_copy.dart: diagnose in "importance across multiple ideas. Diagnose only — do not build "
