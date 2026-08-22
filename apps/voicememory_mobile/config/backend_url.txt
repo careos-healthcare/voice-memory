@@ -1,2 +1,0 @@
-# Production ArchiveMe API (Next.js on Vercel).
-https://voice-memory-iota.vercel.app
