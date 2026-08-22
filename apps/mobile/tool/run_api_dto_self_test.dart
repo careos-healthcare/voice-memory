@@ -1,16 +1,25 @@
-import 'dart:io' show stdout;
-
 import 'package:archiveme_mobile/api/models/api_response.dart';
 import 'package:archiveme_mobile/api/models/auth_dto.dart';
 import 'package:archiveme_mobile/api/models/sync_dto.dart';
+import 'package:flutter_test/flutter_test.dart';
 
-/// Self-contained DTO smoke tests runnable without compiling the full app.
+/// API DTO serialization smoke tests.
 ///
-/// Run: `dart run tool/run_api_dto_self_test.dart`
+/// Run: `flutter test tool/run_api_dto_self_test.dart`
+///
+/// These must run on the Flutter test target, not `dart run`: the DTO layer
+/// transitively imports `package:flutter`, which the bare Dart VM cannot
+/// compile because `dart:ui` does not exist there. Under `dart run` the
+/// unresolved `dart:ui` types also crash the kernel FFI transformer
+/// ("InvalidType is not a subtype of FunctionType").
+///
+/// Every check is an `expect`, never a bare `assert`: `assert` is a no-op
+/// under any runtime started without `--enable-asserts`, so an assert-based
+/// self-test passes while verifying nothing the moment someone moves it back
+/// to `dart run`.
 void main() {
-  _authTests();
-  _syncTests();
-  stdout.writeln('OK: API DTO self-tests passed');
+  test('auth DTOs round-trip', _authTests);
+  test('sync DTOs round-trip', _syncTests);
 }
 
 void _authTests() {
@@ -20,15 +29,15 @@ void _authTests() {
       'signedInAt': '2026-08-10T12:00:00.000Z',
     },
   });
-  assert(verify.session?.user.id == 'u1');
-  assert(verify.toDomain()?.email == 'a@example.com');
+  expect(verify.session?.user.id, 'u1');
+  expect(verify.toDomain()?.email, 'a@example.com');
 
   final session = AuthSessionApiResponse.fromJson({'session': null});
-  assert(session.session == null);
-  assert(session.toDomain() == null);
+  expect(session.session, isNull);
+  expect(session.toDomain(), isNull);
 
   final ok = ApiOkResponse.fromJson({'ok': true});
-  assert(ok.isSuccess);
+  expect(ok.isSuccess, isTrue);
 }
 
 void _syncTests() {
@@ -49,7 +58,7 @@ void _syncTests() {
       ],
     },
   });
-  assert(push.manifest.latestSequence == 42);
+  expect(push.manifest.latestSequence, 42);
 
   final changes = SyncChangesResponseDto.fromJson({
     'ok': true,
@@ -74,7 +83,7 @@ void _syncTests() {
       },
     ],
   });
-  assert(changes.blobMaps().single['id'] == 'archive-core');
+  expect(changes.blobMaps().single['id'], 'archive-core');
 
   final request = SyncPushRequestDto(
     blobs: [
@@ -87,7 +96,8 @@ void _syncTests() {
       ),
     ],
   );
-  assert(
-    SyncPushRequestDto.fromJson(request.toJson()).blobs.single.id == 'archive-core',
+  expect(
+    SyncPushRequestDto.fromJson(request.toJson()).blobs.single.id,
+    'archive-core',
   );
 }
