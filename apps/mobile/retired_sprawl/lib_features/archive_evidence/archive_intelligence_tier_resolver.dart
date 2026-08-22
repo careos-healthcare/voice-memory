@@ -1,0 +1,28 @@
+import 'package:archiveme_mobile/billing/archive_entitlement_reader.dart';
+import 'package:archiveme_mobile/config/archive_intelligence_preview.dart';
+import 'package:archiveme_mobile/features/archive_evidence/archive_intelligence_tier.dart';
+
+/// Resolves archive intelligence tier from Pro status and QA overrides.
+class ArchiveIntelligenceTierResolver {
+  const ArchiveIntelligenceTierResolver({this._reader});
+
+  final ArchiveEntitlementReader? _reader;
+
+  ArchiveIntelligenceTier resolveSync({required bool isPro}) {
+    final forced = ArchiveIntelligencePreview.forcedTier;
+    if (forced != null) return forced;
+    return isPro
+        ? ArchiveIntelligenceTier.proMax
+        : ArchiveIntelligenceTier.freeMedium;
+  }
+
+  Future<ArchiveIntelligenceTier> resolve() async {
+    final forced = ArchiveIntelligencePreview.forcedTier;
+    if (forced != null) return forced;
+    final reader = _reader ?? ArchiveEntitlementReader.forAccessCheck();
+    final isPro = await reader.isPro;
+    return isPro
+        ? ArchiveIntelligenceTier.proMax
+        : ArchiveIntelligenceTier.freeMedium;
+  }
+}
