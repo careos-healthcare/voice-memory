@@ -33,9 +33,13 @@ migrate_working_dir/
 /build/
 /coverage/
 
-# Deprecated duplicate lib trees — canonical source is apps/mobile/lib/
+# Deprecated duplicate lib trees — canonical source is apps/mobile/lib/.
+# Patterns here are anchored to apps/mobile/, so this only guards against a
+# duplicate reappearing *inside* this package. The retired apps/voicememory_mobile/
+# tree is still tracked in git; ignoring it requires removing it from the index
+# first, then adding `/apps/voicememory_mobile/` to the repo-root .gitignore.
+# Never add `/apps/mobile/` to the root .gitignore — it would untrack this app.
 /voicememory_mobile/
-/apps/mobile/
 
 # Generated tool artifacts (local gate runs, screenshot exports)
 /tool/output/

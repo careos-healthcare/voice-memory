@@ -1,0 +1,27 @@
+# Git LFS rules for this vendored fork of netdur/llama_cpp_dart.
+#
+# Scoped to the package so the vendored tree carries its own rules and the
+# repository root stays free of binary-specific configuration.
+#
+# Prebuilt native artifacts live in bin/ (per-architecture dylibs),
+# dist/Llama.xcframework/ (Apple xcframework) and src/opencl-libs/.
+# Vendored *source* (Vulkan/OpenCL headers, miniaudio, stb, Dart) is
+# deliberately left in Git proper so it stays diffable and greppable.
+
+# Compiled shared and static libraries.
+*.dylib filter=lfs diff=lfs merge=lfs -text
+*.so filter=lfs diff=lfs merge=lfs -text
+*.a filter=lfs diff=lfs merge=lfs -text
+*.dll filter=lfs diff=lfs merge=lfs -text
+*.lib filter=lfs diff=lfs merge=lfs -text
+
+# Mach-O binaries inside Apple frameworks carry no file extension.
+**/*.framework/Llama filter=lfs diff=lfs merge=lfs -text
+
+# GPU shader archives and model weights.
+*.metallib filter=lfs diff=lfs merge=lfs -text
+*.gguf filter=lfs diff=lfs merge=lfs -text
+*.bin filter=lfs diff=lfs merge=lfs -text
+
+# Packaged xcframework archive.
+*.zip filter=lfs diff=lfs merge=lfs -text

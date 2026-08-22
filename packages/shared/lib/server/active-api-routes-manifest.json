@@ -1,0 +1,60 @@
+{
+  "guardedOpenAi": [
+    {
+      "routeFile": "apps/api/app/api/transcribe/route.ts",
+      "guard": "guardOpenAiRoute"
+    },
+    {
+      "routeFile": "apps/api/app/api/analyze/route.ts",
+      "guard": "guardOpenAiRoute"
+    },
+    {
+      "routeFile": "apps/api/app/api/atmosphere/route.ts",
+      "guard": "guardOpenAiRoute"
+    }
+  ],
+  "guardedAttest": [
+    {
+      "routeFile": "apps/api/app/api/capture/attest/route.ts",
+      "guard": "guardAttestRoute"
+    }
+  ],
+  "activeApiRouteFiles": [
+    "apps/api/app/api/transcribe/route.ts",
+    "apps/api/app/api/analyze/route.ts",
+    "apps/api/app/api/atmosphere/route.ts",
+    "apps/api/app/api/capture/attest/route.ts",
+    "apps/api/app/api/sync/push/route.ts",
+    "apps/api/app/api/sync/pull/route.ts",
+    "apps/api/app/api/sync/changes/route.ts",
+    "apps/api/app/api/sync/manifest/route.ts",
+    "apps/api/app/api/account/delete/route.ts",
+    "apps/api/app/api/auth/send-code/route.ts",
+    "apps/api/app/api/auth/verify/route.ts",
+    "apps/api/app/api/auth/session/route.ts",
+    "apps/api/app/api/auth/signout/route.ts",
+    "apps/api/app/api/journal/route.ts",
+    "apps/api/app/api/journal/export/route.ts",
+    "apps/api/app/api/billing/checkout/route.ts",
+    "apps/api/app/api/billing/config/route.ts",
+    "apps/api/app/api/billing/entitlements/route.ts",
+    "apps/api/app/api/billing/webhook/route.ts",
+    "apps/api/app/api/health/route.ts",
+    "apps/api/app/api/healthz/route.ts"
+  ],
+  "apiGuardSupportFiles": [
+    "packages/shared/lib/server/api-guard.ts",
+    "packages/shared/lib/server/openai-budget-guard.ts",
+    "packages/shared/lib/server/openai-cost-estimator.ts",
+    "packages/shared/lib/server/openai-spend-store.ts",
+    "packages/shared/lib/server/capture-auth-crypto.ts",
+    "packages/shared/lib/server/api-usage-store.ts",
+    "packages/shared/lib/client/capture-attest.ts"
+  ],
+  "captureAttestClientFile": "apps/web/components/Recorder.tsx",
+  "securityResponseHeadersNotes": {
+    "webApp": "apps/web/next.config.ts — no custom security headers; rely on hosting edge.",
+    "apiApp": "apps/api/next.config.ts — no custom security headers; API-only standalone service.",
+    "middleware": "apps/web/middleware.ts — internal/debug path gating only; no CSP/HSTS."
+  }
+}

@@ -11,8 +11,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  voicememory_mobile:
-    path: ../../apps/voicememory_mobile
+  archiveme_mobile:
+    path: ../../apps/mobile
   go_router: ^14.8.1
 
 dev_dependencies:

@@ -1,0 +1,43 @@
+import 'package:archiveme_mobile/features/support/testflight_feedback_copy.dart';
+import 'package:flutter/foundation.dart' show visibleForTesting;
+import 'package:url_launcher/url_launcher.dart';
+
+/// Opens the TestFlight feedback mail draft in the user's email app.
+abstract final class TestFlightFeedbackLauncher {
+  TestFlightFeedbackLauncher._();
+
+  static Future<bool> Function(Uri uri)? resolveUrlLauncher() =>
+      launchUrlForTest;
+
+  @visibleForTesting
+  static Future<bool> Function(Uri uri)? launchUrlForTest;
+
+  static Uri mailtoUri({
+    String to = TestFlightFeedbackCopy.emailTo,
+    String subject = TestFlightFeedbackCopy.emailSubject,
+    String body = TestFlightFeedbackCopy.emailBody,
+  }) {
+    return Uri(
+      scheme: 'mailto',
+      path: to,
+      query: _encodeQuery({'subject': subject, 'body': body}),
+    );
+  }
+
+  static Future<bool> openFeedbackEmail() async {
+    final uri = mailtoUri();
+    final launch =
+        launchUrlForTest ??
+        ((target) => launchUrl(target, mode: LaunchMode.externalApplication));
+    return launch(uri);
+  }
+
+  static String _encodeQuery(Map<String, String> parameters) {
+    return parameters.entries
+        .map(
+          (entry) =>
+              '${Uri.encodeQueryComponent(entry.key)}=${Uri.encodeQueryComponent(entry.value)}',
+        )
+        .join('&');
+  }
+}
