@@ -1,14 +1,15 @@
 import 'package:archiveme_mobile/design/archive_mobile_typography.dart';
 import 'package:archiveme_mobile/features/belief_evidence/insight_evidence_line.dart';
+import 'package:archiveme_mobile/features/belief_evidence/ui/cited_claim_text.dart';
+import 'package:archiveme_mobile/features/belief_evidence/ui/evidence_citation_card.dart';
 import 'package:archiveme_mobile/features/belief_evidence/ui/evidence_trust_copy.dart';
 import 'package:archiveme_mobile/features/belief_evidence/ui/fact_ledger_resolved_citation.dart';
-import 'package:archiveme_mobile/features/belief_evidence/ui/view_source_proof_section.dart';
 import 'package:archiveme_mobile/theme/app_colors.dart';
 import 'package:archiveme_mobile/theme/app_spacing.dart';
 import 'package:archiveme_mobile/theme/voicememory_cards.dart';
 import 'package:flutter/material.dart';
 
-/// Generic evidence-backed insight shell with fact-ledger citations.
+/// Generic evidence-backed insight shell with inline fact-ledger citations.
 class BeliefEvidenceInsightCard extends StatelessWidget {
   const BeliefEvidenceInsightCard({
     required this.headline,
@@ -18,6 +19,7 @@ class BeliefEvidenceInsightCard extends StatelessWidget {
     this.subheadline,
     this.footer,
     this.backgroundColor,
+    this.onOpenEntry,
   });
 
   final String headline;
@@ -26,6 +28,7 @@ class BeliefEvidenceInsightCard extends StatelessWidget {
   final String? subheadline;
   final Widget? footer;
   final Color? backgroundColor;
+  final ValueChanged<String>? onOpenEntry;
 
   static const Key cardKey = Key('belief_evidence_insight_card');
 
@@ -58,20 +61,33 @@ class BeliefEvidenceInsightCard extends StatelessWidget {
             ),
           ),
           const SizedBox(height: AppSpacing.xs),
-          Text(headline, style: titleStyle),
+          CitedClaimText(
+            text: headline,
+            style: titleStyle,
+            citations: citations,
+            indicatorSuffix: 'headline',
+          ),
           if (subheadline case final sub?) ...[
             const SizedBox(height: AppSpacing.xs),
-            Text(sub, style: mutedStyle),
-          ],
-          const SizedBox(height: AppSpacing.sm),
-          Text(body, style: bodyStyle),
-          if (citations.isNotEmpty) ...[
-            const SizedBox(height: AppSpacing.sm),
-            ViewSourceProofSection(
+            CitedClaimText(
+              text: sub,
+              style: mutedStyle,
               citations: citations,
-              leadLine: EvidenceTrustCopy.supportedByEntries(citations.length),
+              indicatorSuffix: 'subheadline',
             ),
           ],
+          const SizedBox(height: AppSpacing.sm),
+          CitedClaimText(
+            text: body,
+            style: bodyStyle,
+            citations: citations,
+            indicatorSuffix: 'body',
+          ),
+          const SizedBox(height: AppSpacing.sm),
+          EvidenceCitationList(
+            lines: supportingEvidence,
+            onOpenEntry: onOpenEntry,
+          ),
           if (footer != null) ...[
             const SizedBox(height: AppSpacing.sm),
             footer!,

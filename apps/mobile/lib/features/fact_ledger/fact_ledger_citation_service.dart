@@ -1,8 +1,9 @@
+import 'package:archiveme_mobile/features/belief_evidence/evidence/journal_transcript_evidence_indexer.dart';
+import 'package:archiveme_mobile/features/belief_evidence/insight_evidence_line.dart';
 import 'package:archiveme_mobile/features/contradiction_detection/statement_analysis.dart';
 import 'package:archiveme_mobile/features/fact_ledger/archive_fact.dart';
 import 'package:archiveme_mobile/features/fact_ledger/fact_ledger_sqlite_repository.dart';
 import 'package:archiveme_mobile/features/fact_ledger/fact_ledger_store.dart';
-import 'package:archiveme_mobile/features/belief_evidence/insight_evidence_line.dart';
 import 'package:archiveme_mobile/features/proof_admission/proof_admission_models.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/security/user_content_safety.dart';
@@ -60,6 +61,10 @@ abstract final class FactLedgerCitationService {
     FactLedgerStore? store,
     FactLedgerSqliteRepository? repository,
   }) async {
+    // Kept outside the dedupe guard: the transcript index is per-session and
+    // must be repopulated even when ledger rows already exist.
+    JournalTranscriptEvidenceIndexer.rememberEntry(entry);
+
     if (_indexedEntryIds.contains(entry.id)) return;
 
     for (final text in archiveStatementTexts(entry)) {

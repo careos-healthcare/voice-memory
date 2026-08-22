@@ -3,6 +3,7 @@ import 'package:archiveme_mobile/features/archive_evidence/archive_evidence_qual
 import 'package:archiveme_mobile/features/archive_evidence/comparable_evidence_text.dart';
 import 'package:archiveme_mobile/features/belief_changes/belief_change_moment_copy.dart';
 import 'package:archiveme_mobile/features/belief_changes/belief_change_moment_model.dart';
+import 'package:archiveme_mobile/features/belief_evidence/evidence/journal_transcript_evidence_indexer.dart';
 import 'package:archiveme_mobile/features/early_archive/archive_change_timeline_engine.dart';
 import 'package:archiveme_mobile/features/early_archive/confirmed_repeat_evidence_phrase_engine.dart';
 import 'package:archiveme_mobile/features/early_archive/early_first_signal_engine.dart';
@@ -48,6 +49,10 @@ abstract final class BeliefChangeMomentEngine {
 
     final eligible = ArchiveEvidenceGuard.eligibleEntries(entries);
     if (eligible.length < 4) return null;
+
+    // The card built from this moment quotes these entries, and its citation
+    // chips are verified against stored transcript text before rendering.
+    JournalTranscriptEvidenceIndexer.rememberAll(eligible);
 
     final foundation = eligible.sublist(0, 3);
     if (!EarlyFirstSignalEngine.hasConfirmedRepeatAcrossThree(foundation)) {
