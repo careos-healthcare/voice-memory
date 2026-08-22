@@ -81,3 +81,6 @@ apps/voicememory_mobile/*_journal.json
 apps/voicememory_mobile/*_prefs.json
 apps/voicememory_mobile/_journal.json
 apps/voicememory_mobile/_prefs.json
+
+# Gate and release-suite run logs, regenerated on every run rather than reviewed
+/release/evidence/
