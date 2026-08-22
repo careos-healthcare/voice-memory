@@ -5,9 +5,9 @@ import 'package:archiveme_mobile/features/caregiver/caregiver_access_service.dar
 import 'package:archiveme_mobile/features/caregiver/caregiver_audit_store.dart';
 import 'package:archiveme_mobile/features/caregiver/caregiver_mode_store.dart';
 import 'package:archiveme_mobile/features/caregiver/caregiver_models.dart';
-import 'package:archiveme_mobile/features/caregiver/caregiver_models.dart';
 import 'package:archiveme_mobile/features/privacy/privacy_security_control_center_copy.dart';
 import 'package:archiveme_mobile/features/privacy/privacy_security_engagement_analytics.dart';
+import 'package:archiveme_mobile/features/settings/ui/on_device_architecture_section.dart';
 import 'package:archiveme_mobile/services/app_services.dart';
 import 'package:archiveme_mobile/theme/app_spacing.dart';
 import 'package:archiveme_mobile/ui/widgets/privacy/access_revocation_audit_log_view.dart';
@@ -81,6 +81,8 @@ class _PrivacySecurityScreenState extends State<PrivacySecurityScreen> {
           key: const Key('privacy_security_control_center_screen'),
           padding: EdgeInsets.zero,
           children: [
+            const OnDeviceArchitectureSection(),
+            const SizedBox(height: AppSpacing.lg),
             PrivacyPillarExpansionSection(
               cardId: PrivacySecurityEngagementAnalytics.pillar3EncryptionCardId,
               title: PrivacySecurityControlCenterCopy.pillar3Heading,

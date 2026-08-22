@@ -1,4 +1,4 @@
-import 'package:archiveme_mobile/features/onboarding/remote_processing_consent_copy.dart';
+import 'package:archiveme_mobile/features/onboarding/ui/remote_processing_consent_copy.dart';
 import 'package:archiveme_mobile/features/proof_admission/remote_processing_data_flow.dart';
 import 'package:archiveme_mobile/features/proof_admission/remote_processing_purpose.dart';
 import 'package:archiveme_mobile/features/trust/privacy_screen_copy.dart';

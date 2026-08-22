@@ -24,6 +24,12 @@ validates:
   api_contract:
     description: Validate mobile API client contract parity
     command: dart run tool/validate_api_contract.dart
+  privacy_copy:
+    description: >
+      Scan every discovered privacy/trust copy source for unsafe promises.
+      Runs without flutter_test so it gates even while the widget suite is
+      broken.
+    command: dart run tool/privacy/check_privacy_copy_policy.dart
 
 self_tests:
   api_dto:

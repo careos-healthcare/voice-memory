@@ -83,7 +83,7 @@ class PrivacySecurityTrustSection extends StatelessWidget {
             style: ArchiveMobileTypography.listTitle(context),
           ),
           trailing: const Icon(Icons.chevron_right),
-          onTap: () => context.push('/privacy-security'),
+          onTap: () => context.push('/caregiver-access'),
         ),
         const SizedBox(height: AppSpacing.sm),
       ],

@@ -4,22 +4,25 @@ abstract final class RemoteProcessingConsentCopy {
 
   static const String title = 'Processing on this device first';
 
-  static const String body =
-      'Saving always works on this device. Language models run locally here '
-      'first. Nothing is sent for transcription or reflection until you choose '
-      'remote processing below or turn it on later in Settings → Privacy.';
+  // The generic privacy paragraph that used to sit here was superseded by
+  // OnDeviceArchitectureCopy, which the step now renders under its own
+  // headings. That section states that remote processing is opt-in; the
+  // bullets below are the operative disclosure of what the opt-in sends, so
+  // they sit under [detailsHeading] rather than repeating the choice itself.
+
+  static const String detailsHeading = 'If you turn it on';
 
   static const String detailBullet1 =
-      'When remote processing is on: your audio may be sent for transcription, '
-      'then transcript text for reflection.';
+      'Your audio may be sent for transcription, then transcript text for '
+      'reflection.';
 
   static const String detailBullet2 =
       'What comes back: a written transcript when needed and a short read on '
       'whether this may repeat something you said before.';
 
   static const String detailBullet3 =
-      'You can turn this off any time in Settings → Privacy. Off means '
-      'nothing is sent for new moments — audio and text stay on this device.';
+      'Off is where you start, and where you can return: nothing is sent for '
+      'new moments, and the switch lives in Settings → Privacy.';
 
   static const String allowCta = 'Use remote processing';
   static const String declineCta = 'Keep saves on this device only';

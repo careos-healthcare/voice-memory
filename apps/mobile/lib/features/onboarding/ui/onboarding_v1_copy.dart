@@ -1,4 +1,15 @@
+import 'package:archiveme_mobile/security/privacy_copy_policy.dart';
+
 /// V1 onboarding copy — product contract and trust pillars.
+///
+/// Pillars 2 and 3 are the first-run form of the statement in
+/// `lib/features/settings/ui/on_device_architecture_copy.dart`: processing is
+/// on-device *by default* rather than exclusively, because
+/// `RemoteProcessingConsentStore` gates real uploads; and storage protection
+/// is read off the live status rather than asserted, because
+/// `SecureSqliteLockService.encryptionEnabled` is a runtime property of the
+/// build. The sensitive promise comes from [PrivacyCopyPolicy] so it stays
+/// worded in one place.
 abstract final class OnboardingV1Copy {
   OnboardingV1Copy._();
 
@@ -18,15 +29,17 @@ abstract final class OnboardingV1Copy {
       'Patterns and changes link back to the entries you saved. You can '
       'inspect source proof before you rely on any read.';
 
-  static const pillar2Title = 'AI processing happens locally on this device';
+  static const pillar2Title = 'Processing is on-device by default';
   static const pillar2Body =
-      'Language models run here first. Remote processing is optional, '
-      'consent-gated, and off until you choose it.';
+      '${PrivacyCopyPolicy.nothingSentUnlessFeatureChosen} Choose '
+      'transcription or sync and that audio and transcript text go to our '
+      'servers for that job only; turn it off in Settings and new moments '
+      'stay on this device.';
 
-  static const pillar3Title = 'Data is secured via local SQLite encryption';
+  static const pillar3Title = 'Storage protection is reported live';
   static const pillar3Body =
-      'Your journal file is encrypted on this device. The database key stays '
-      'in secure device storage.';
+      'Your moments stay in local databases on this device. Privacy settings '
+      'report how this build protects them, instead of asserting it here.';
 
   static const pillar4Title = 'You control all access';
   static const pillar4Body =
