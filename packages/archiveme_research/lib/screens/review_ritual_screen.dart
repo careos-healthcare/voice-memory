@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:voicememory_mobile/config/screenshot_mode.dart';
-import 'package:voicememory_mobile/design/archive_mobile_typography.dart';
-import 'package:voicememory_mobile/features/activation/weekly_archive_review.dart';
-import 'package:voicememory_mobile/features/beta_feedback/beta_feedback_engine.dart';
-import 'package:voicememory_mobile/features/review_ritual/view_ritual_copy.dart';
-import 'package:voicememory_mobile/features/milestone_share/milestone_share_copy.dart';
-import 'package:voicememory_mobile/features/review_ritual/view_ritual_engine.dart';
-import 'package:voicememory_mobile/features/review_ritual/view_ritual_models.dart';
-import 'package:voicememory_mobile/features/review_ritual/view_ritual_store.dart';
-import 'package:voicememory_mobile/services/app_services.dart';
-import 'package:voicememory_mobile/theme/app_colors.dart';
-import 'package:voicememory_mobile/theme/app_spacing.dart';
-import 'package:voicememory_mobile/widgets/pushed_screen_shell.dart';
+import 'package:archiveme_mobile/config/screenshot_mode.dart';
+import 'package:archiveme_mobile/design/archive_mobile_typography.dart';
+import 'package:archiveme_mobile/features/activation/weekly_archive_review.dart';
+import 'package:archiveme_mobile/features/beta_feedback/beta_feedback_engine.dart';
+import 'package:archiveme_mobile/features/review_ritual/view_ritual_copy.dart';
+import 'package:archiveme_mobile/features/milestone_share/milestone_share_copy.dart';
+import 'package:archiveme_mobile/features/review_ritual/view_ritual_engine.dart';
+import 'package:archiveme_mobile/features/review_ritual/view_ritual_models.dart';
+import 'package:archiveme_mobile/features/review_ritual/view_ritual_store.dart';
+import 'package:archiveme_mobile/services/app_services.dart';
+import 'package:archiveme_mobile/theme/app_colors.dart';
+import 'package:archiveme_mobile/theme/app_spacing.dart';
+import 'package:archiveme_mobile/widgets/pushed_screen_shell.dart';
 
 /// Review ritual setup — local timing and focus only, no notifications.
 class ReviewRitualScreen extends StatefulWidget {

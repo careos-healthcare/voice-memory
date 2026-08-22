@@ -194,7 +194,20 @@ export async function runAuthSecurityTests(): Promise<{ failures: string[] }> {
   await check("verify route never echoes internal error details", () => {
     const route = readSource("apps/api/app/api/auth/verify/route.ts");
     assert.ok(!route.includes("error.message"), "verify must not return error.message");
-    assert.ok(route.includes("Sign-in failed."));
+
+    // The user-facing copy moved out of the route into the shared public error
+    // catalog. Pin the property (route answers with a code, code maps to a safe
+    // generic message) rather than the string's old location, so the guard
+    // survives the indirection instead of silently checking the wrong file.
+    assert.ok(
+      route.includes('code: "AUTH_VERIFY_FAILED"'),
+      "verify must answer with the AUTH_VERIFY_FAILED public error code",
+    );
+    const catalog = readSource("packages/shared/lib/server/public-api-error-codes.ts");
+    assert.ok(
+      /AUTH_VERIFY_FAILED:\s*\{\s*message:\s*"Sign-in failed\."/.test(catalog),
+      "AUTH_VERIFY_FAILED must map to the generic 'Sign-in failed.' message",
+    );
   });
 
   await check("auth secret is required in production", () => {

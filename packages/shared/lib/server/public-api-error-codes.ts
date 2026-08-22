@@ -441,6 +441,39 @@ export const PUBLIC_API_ERROR_CODES = {
     retryable: true,
     httpStatus: 503,
   },
+  INVALID_TOKEN_ID: {
+    message: "tokenId is required.",
+    retryable: false,
+    httpStatus: 400,
+  },
+  CONSENT_REVOKE_FAILED: {
+    message:
+      "Access was not revoked on the server — this device has stopped accepting the grant and will retry.",
+    retryable: true,
+    httpStatus: 503,
+  },
+  OWNER_CONFIRMATION_REQUIRED: {
+    message: "Renewing this access needs a fresh confirmation from its owner.",
+    retryable: false,
+    httpStatus: 400,
+  },
+  GRANT_EXPIRED: {
+    message:
+      "This access window has ended. Granting access again starts a new one.",
+    retryable: false,
+    httpStatus: 409,
+  },
+  GRANT_NOT_RENEWABLE: {
+    message: "This access grant cannot be renewed as it stands.",
+    retryable: false,
+    httpStatus: 409,
+  },
+  CONSENT_RENEWAL_FAILED: {
+    message:
+      "Renewal did not finish on the server. The current access window is unchanged.",
+    retryable: true,
+    httpStatus: 503,
+  },
   ENTRY_ID_REQUIRED: {
     message: "entryId is required.",
     retryable: false,

@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:voicememory_mobile/features/acquisition/audience_wedge_model.dart';
-import 'package:voicememory_mobile/features/acquisition/audience_wedge_store.dart';
-import 'package:voicememory_mobile/features/loop_mode/loop_mode_coordinator.dart';
-import 'package:voicememory_mobile/product/consumer_ui_copy.dart';
-import 'package:voicememory_mobile/theme/app_colors.dart';
-import 'package:voicememory_mobile/theme/app_spacing.dart';
+import 'package:archiveme_mobile/features/acquisition/audience_wedge_model.dart';
+import 'package:archiveme_mobile/features/acquisition/audience_wedge_store.dart';
+import 'package:archiveme_mobile/features/loop_mode/loop_mode_coordinator.dart';
+import 'package:archiveme_mobile/product/consumer_ui_copy.dart';
+import 'package:archiveme_mobile/theme/app_colors.dart';
+import 'package:archiveme_mobile/theme/app_spacing.dart';
 
 /// Optional pressure-loop question before loop selection.
 class OnboardingIntentScreen extends StatefulWidget {

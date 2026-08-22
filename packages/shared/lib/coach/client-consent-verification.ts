@@ -1,3 +1,4 @@
+import { resolveCoachConsentTtlMs } from "@/lib/consent/consent-token-ttl";
 import type {
   CoachConsentToken,
   CoachSharingPermissions,
@@ -96,7 +97,7 @@ export async function issueCoachConsentToken(
   const now = options.now ?? new Date();
   const issuedAt = now.toISOString();
   const expiresAt = new Date(
-    now.getTime() + (options.ttlMs ?? 1000 * 60 * 60 * 24 * 90),
+    now.getTime() + resolveCoachConsentTtlMs(options.ttlMs),
   ).toISOString();
 
   const draft = {

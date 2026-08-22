@@ -1,22 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:voicememory_mobile/design/archive_mobile_typography.dart';
-import 'package:voicememory_mobile/features/first_session/first_session_pattern_category.dart';
-import 'package:voicememory_mobile/features/first_session/first_session_pattern_model.dart';
-import 'package:voicememory_mobile/features/loop_mode/loop_mode_engine.dart';
-import 'package:voicememory_mobile/features/loop_mode/loop_mode_model.dart';
-import 'package:voicememory_mobile/features/pressure_retention/pressure_check_in_option.dart';
-import 'package:voicememory_mobile/features/pressure_retention/pressure_check_in_service.dart';
-import 'package:voicememory_mobile/features/pressure_retention/pressure_context.dart';
-import 'package:voicememory_mobile/theme/app_colors.dart';
-import 'package:voicememory_mobile/theme/app_spacing.dart';
-import 'package:voicememory_mobile/theme/voicememory_cards.dart';
-import 'package:voicememory_mobile/widgets/memory/fresh_entry_choice.dart';
-import 'package:voicememory_mobile/widgets/prove_enough/prove_enough_post_record_payoff.dart';
-import 'package:voicememory_mobile/widgets/pressure_retention/ask_the_archive_card.dart';
-import 'package:voicememory_mobile/widgets/pressure_retention/pressure_first_win_card.dart';
-import 'package:voicememory_mobile/widgets/pressure_retention/pressure_quick_save_success.dart';
+import 'package:archiveme_mobile/design/archive_mobile_typography.dart';
+import 'package:archiveme_mobile/features/first_session/first_session_pattern_category.dart';
+import 'package:archiveme_mobile/features/first_session/first_session_pattern_model.dart';
+import 'package:archiveme_mobile/features/loop_mode/loop_mode_engine.dart';
+import 'package:archiveme_mobile/features/loop_mode/loop_mode_model.dart';
+import 'package:archiveme_mobile/features/pressure_retention/pressure_check_in_option.dart';
+import 'package:archiveme_mobile/features/pressure_retention/pressure_check_in_service.dart';
+import 'package:archiveme_mobile/features/pressure_retention/pressure_context.dart';
+import 'package:archiveme_mobile/theme/app_colors.dart';
+import 'package:archiveme_mobile/theme/app_spacing.dart';
+import 'package:archiveme_mobile/theme/voicememory_cards.dart';
+import 'package:archiveme_mobile/widgets/memory/fresh_entry_choice.dart';
+import 'package:archiveme_mobile/widgets/prove_enough/prove_enough_post_record_payoff.dart';
+import 'package:archiveme_mobile/widgets/pressure_retention/ask_the_archive_card.dart';
+import 'package:archiveme_mobile/widgets/pressure_retention/pressure_first_win_card.dart';
+import 'package:archiveme_mobile/widgets/pressure_retention/pressure_quick_save_success.dart';
 
 /// One-tap pressure check-in: pick a pressure, quick save, see the payoff.
 class PressureCheckInScreen extends StatefulWidget {

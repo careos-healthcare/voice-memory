@@ -1,21 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:voicememory_mobile/design/archive_mobile_spacing.dart';
-import 'package:voicememory_mobile/features/archive_explanation_v2/archive_explanation_v2_analytics.dart';
-import 'package:voicememory_mobile/features/archive_explanation_v2/archive_interpretation_engine.dart';
-import 'package:voicememory_mobile/features/archive_explanation_v2/archive_interpretation_models.dart';
-import 'package:voicememory_mobile/features/archive_explanation_v2/archive_interpretation_store.dart';
-import 'package:voicememory_mobile/features/archive_explanations/archive_explanation_analytics.dart';
-import 'package:voicememory_mobile/features/archive_explanations/archive_explanation_engine.dart';
-import 'package:voicememory_mobile/features/archive_explanations/archive_explanation_navigation.dart';
-import 'package:voicememory_mobile/features/archive_explanations/explanation_models.dart';
-import 'package:voicememory_mobile/features/archive_state_object/archive_state_object.dart';
-import 'package:voicememory_mobile/services/app_services.dart';
-import 'package:voicememory_mobile/theme/voicememory_colors.dart';
-import 'package:voicememory_mobile/theme/voicememory_typography.dart';
-import 'package:voicememory_mobile/widgets/archive_interpretation_body.dart';
-import 'package:voicememory_mobile/widgets/pushed_screen_shell.dart';
+import 'package:archiveme_mobile/design/archive_mobile_spacing.dart';
+import 'package:archiveme_mobile/features/archive_explanation_v2/archive_explanation_v2_analytics.dart';
+import 'package:archiveme_mobile/features/archive_explanation_v2/archive_interpretation_engine.dart';
+import 'package:archiveme_mobile/features/archive_explanation_v2/archive_interpretation_models.dart';
+import 'package:archiveme_mobile/features/archive_explanation_v2/archive_interpretation_store.dart';
+import 'package:archiveme_mobile/features/archive_explanations/archive_explanation_analytics.dart';
+import 'package:archiveme_mobile/features/archive_explanations/archive_explanation_engine.dart';
+import 'package:archiveme_mobile/features/archive_explanations/archive_explanation_navigation.dart';
+import 'package:archiveme_mobile/features/archive_explanations/explanation_models.dart';
+import 'package:archiveme_mobile/features/archive_state_object/archive_state_object.dart';
+import 'package:archiveme_mobile/services/app_services.dart';
+import 'package:archiveme_mobile/theme/voicememory_colors.dart';
+import 'package:archiveme_mobile/theme/voicememory_typography.dart';
+import 'package:archiveme_mobile/widgets/archive_interpretation_body.dart';
+import 'package:archiveme_mobile/widgets/pushed_screen_shell.dart';
 
 /// Evidence-backed interpretation journey for any archive insight.
 class ArchiveExplanationScreen extends StatefulWidget {

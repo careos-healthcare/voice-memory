@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:voicememory_mobile/design/user_facing_date.dart';
-import 'package:voicememory_mobile/features/archive_analyst/archive_analyst_copy.dart';
-import 'package:voicememory_mobile/features/archive_v1/archive_v1_models.dart';
-import 'package:voicememory_mobile/features/archive_analyst/archive_analyst_engine.dart';
-import 'package:voicememory_mobile/features/archive_analyst/archive_analyst_gate.dart';
-import 'package:voicememory_mobile/features/archive_analyst/archive_analyst_models.dart';
-import 'package:voicememory_mobile/features/archive_state_object/archive_state_object.dart';
-import 'package:voicememory_mobile/services/app_services.dart';
-import 'package:voicememory_mobile/theme/app_theme.dart';
-import 'package:voicememory_mobile/theme/voicememory_colors.dart';
-import 'package:voicememory_mobile/theme/voicememory_typography.dart';
-import 'package:voicememory_mobile/widgets/pushed_screen_shell.dart';
+import 'package:archiveme_mobile/design/user_facing_date.dart';
+import 'package:archiveme_mobile/features/archive_analyst/archive_analyst_copy.dart';
+import 'package:archiveme_mobile/features/archive_v1/archive_v1_models.dart';
+import 'package:archiveme_mobile/features/archive_analyst/archive_analyst_engine.dart';
+import 'package:archiveme_mobile/features/archive_analyst/archive_analyst_gate.dart';
+import 'package:archiveme_mobile/features/archive_analyst/archive_analyst_models.dart';
+import 'package:archiveme_mobile/features/archive_state_object/archive_state_object.dart';
+import 'package:archiveme_mobile/services/app_services.dart';
+import 'package:archiveme_mobile/theme/app_theme.dart';
+import 'package:archiveme_mobile/theme/voicememory_colors.dart';
+import 'package:archiveme_mobile/theme/voicememory_typography.dart';
+import 'package:archiveme_mobile/widgets/pushed_screen_shell.dart';
 
 /// Periodic archive analyst report — evidence synthesis only.
 class ArchiveAnalystScreen extends StatefulWidget {

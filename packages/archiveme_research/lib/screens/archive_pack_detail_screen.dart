@@ -5,24 +5,24 @@ import 'package:go_router/go_router.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 
-import 'package:voicememory_mobile/design/archive_mobile_typography.dart';
-import 'package:voicememory_mobile/features/archive_packs/archive_pack.dart';
-import 'package:voicememory_mobile/features/archive_packs/archive_pack_store.dart';
-import 'package:voicememory_mobile/features/archive_packs/pack_archive_export.dart';
-import 'package:voicememory_mobile/features/fact_ledger/fact_ledger_filter.dart';
-import 'package:voicememory_mobile/features/fact_ledger/fact_ledger_store.dart';
-import 'package:voicememory_mobile/features/fact_ledger/archive_fact.dart';
-import 'package:voicememory_mobile/features/pressure_retention/pressure_check_in_record.dart';
-import 'package:voicememory_mobile/features/pressure_retention/pressure_check_in_store.dart';
-import 'package:voicememory_mobile/models/journal_entry.dart';
-import 'package:voicememory_mobile/security/user_content_safety.dart';
-import 'package:voicememory_mobile/services/activation_funnel_analytics.dart';
-import 'package:voicememory_mobile/services/app_services.dart';
-import 'package:voicememory_mobile/storage/journal_store.dart';
-import 'package:voicememory_mobile/theme/app_spacing.dart';
-import 'package:voicememory_mobile/widgets/archive_packs/pack_instructions_editor.dart';
-import 'package:voicememory_mobile/widgets/fact_ledger/fact_card.dart';
-import 'package:voicememory_mobile/widgets/pushed_screen_shell.dart';
+import 'package:archiveme_mobile/design/archive_mobile_typography.dart';
+import 'package:archiveme_mobile/features/archive_packs/archive_pack.dart';
+import 'package:archiveme_mobile/features/archive_packs/archive_pack_store.dart';
+import 'package:archiveme_mobile/features/archive_packs/pack_archive_export.dart';
+import 'package:archiveme_mobile/features/fact_ledger/fact_ledger_filter.dart';
+import 'package:archiveme_mobile/features/fact_ledger/fact_ledger_store.dart';
+import 'package:archiveme_mobile/features/fact_ledger/archive_fact.dart';
+import 'package:archiveme_mobile/features/pressure_retention/pressure_check_in_record.dart';
+import 'package:archiveme_mobile/features/pressure_retention/pressure_check_in_store.dart';
+import 'package:archiveme_mobile/models/journal_entry.dart';
+import 'package:archiveme_mobile/security/user_content_safety.dart';
+import 'package:archiveme_mobile/services/activation_funnel_analytics.dart';
+import 'package:archiveme_mobile/services/app_services.dart';
+import 'package:archiveme_mobile/storage/journal_store.dart';
+import 'package:archiveme_mobile/theme/app_spacing.dart';
+import 'package:archiveme_mobile/widgets/archive_packs/pack_instructions_editor.dart';
+import 'package:archiveme_mobile/widgets/fact_ledger/fact_card.dart';
+import 'package:archiveme_mobile/widgets/pushed_screen_shell.dart';
 
 class ArchivePackDetailScreen extends StatefulWidget {
   const ArchivePackDetailScreen({

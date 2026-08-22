@@ -463,8 +463,41 @@ export async function runEvidencePipelineTests(): Promise<{ failures: string[] }
   });
 
   check("web clients no longer send raw prior excerpts", () => {
-    for (const file of ["components/Recorder.tsx", "lib/pending-reflection.ts"]) {
-      const source = readFileSync(join(process.cwd(), file), "utf8");
+    // This used to read `components/Recorder.tsx` and `lib/pending-reflection.ts`
+    // at the repo root. Both are now under `apps/web/archived-*`, retired with
+    // the consumer web product. Repointing at the archived copies would validate
+    // code that no longer ships, so the check scans every *live* web source
+    // instead: the invariant holds for whatever web client actually exists, and
+    // it starts enforcing again by itself if a consumer surface returns.
+    const liveWebRoots = ["apps/web/app", "apps/web/components", "apps/web/lib"];
+    const scanned: string[] = [];
+
+    const walk = (dir: string): void => {
+      let entries;
+      try {
+        entries = readdirSync(dir, { withFileTypes: true });
+      } catch {
+        return;
+      }
+      for (const entry of entries) {
+        const full = join(dir, entry.name);
+        if (entry.isDirectory()) {
+          if (entry.name.startsWith("archived-") || entry.name === "node_modules") continue;
+          walk(full);
+        } else if (entry.name.endsWith(".ts") || entry.name.endsWith(".tsx")) {
+          scanned.push(full);
+        }
+      }
+    };
+    for (const root of liveWebRoots) walk(join(process.cwd(), root));
+
+    assert.ok(
+      scanned.length > 0,
+      "no live web sources found under apps/web — refusing to pass this check vacuously",
+    );
+
+    for (const file of scanned) {
+      const source = readFileSync(file, "utf8");
       assert.ok(!source.includes("priorContext"), `${file} sends loose context`);
       assert.ok(!/excerpt/i.test(source), `${file} sends raw excerpts`);
       assert.ok(

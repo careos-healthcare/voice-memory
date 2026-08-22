@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:voicememory_mobile/features/activation/activation_tracker.dart';
-import 'package:voicememory_mobile/features/archive_memory/memory_quality_coordinator.dart';
-import 'package:voicememory_mobile/features/archive_memory/memory_quality_model.dart';
-import 'package:voicememory_mobile/features/pattern_profile/pattern_profile_coordinator.dart';
-import 'package:voicememory_mobile/features/pattern_profile/pattern_profile_model.dart';
-import 'package:voicememory_mobile/features/feedback/archive_feedback_model.dart';
-import 'package:voicememory_mobile/features/tomorrow_return/tomorrow_check_in_coordinator.dart';
-import 'package:voicememory_mobile/product/consumer_ui_copy.dart';
-import 'package:voicememory_mobile/theme/app_colors.dart';
-import 'package:voicememory_mobile/theme/app_spacing.dart';
-import 'package:voicememory_mobile/theme/voicememory_typography.dart';
-import 'package:voicememory_mobile/widgets/feedback/archive_feedback_chips.dart';
-import 'package:voicememory_mobile/widgets/patterns/memory_quality_chip.dart';
+import 'package:archiveme_mobile/features/activation/activation_tracker.dart';
+import 'package:archiveme_mobile/features/archive_memory/memory_quality_coordinator.dart';
+import 'package:archiveme_mobile/features/archive_memory/memory_quality_model.dart';
+import 'package:archiveme_mobile/features/pattern_profile/pattern_profile_coordinator.dart';
+import 'package:archiveme_mobile/features/pattern_profile/pattern_profile_model.dart';
+import 'package:archiveme_mobile/features/feedback/archive_feedback_model.dart';
+import 'package:archiveme_mobile/features/tomorrow_return/tomorrow_check_in_coordinator.dart';
+import 'package:archiveme_mobile/product/consumer_ui_copy.dart';
+import 'package:archiveme_mobile/theme/app_colors.dart';
+import 'package:archiveme_mobile/theme/app_spacing.dart';
+import 'package:archiveme_mobile/theme/voicememory_typography.dart';
+import 'package:archiveme_mobile/widgets/feedback/archive_feedback_chips.dart';
+import 'package:archiveme_mobile/widgets/patterns/memory_quality_chip.dart';
 
 /// One place to see a single recurring pattern — memory, map, timeline, and
 /// related moments without opening four separate screens.

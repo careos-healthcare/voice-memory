@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:voicememory_mobile/billing/revenuecat_service.dart';
-import 'package:voicememory_mobile/design/archive_mobile_spacing.dart';
-import 'package:voicememory_mobile/design/archive_mobile_typography.dart';
-import 'package:voicememory_mobile/design/archive_responsive_layout.dart';
-import 'package:voicememory_mobile/design/user_facing_date.dart';
-import 'package:voicememory_mobile/features/prove_enough/prove_enough_evidence_trail_coordinator.dart';
-import 'package:voicememory_mobile/features/prove_enough/prove_enough_evidence_trail_model.dart';
-import 'package:voicememory_mobile/models/entitlement.dart';
-import 'package:voicememory_mobile/services/app_services.dart';
-import 'package:voicememory_mobile/theme/app_colors.dart';
-import 'package:voicememory_mobile/theme/app_spacing.dart';
-import 'package:voicememory_mobile/theme/voicememory_cards.dart';
-import 'package:voicememory_mobile/widgets/prove_enough/prove_enough_pattern_report_export_button.dart';
+import 'package:archiveme_mobile/billing/revenuecat_service.dart';
+import 'package:archiveme_mobile/design/archive_mobile_spacing.dart';
+import 'package:archiveme_mobile/design/archive_mobile_typography.dart';
+import 'package:archiveme_mobile/design/archive_responsive_layout.dart';
+import 'package:archiveme_mobile/design/user_facing_date.dart';
+import 'package:archiveme_mobile/features/prove_enough/prove_enough_evidence_trail_coordinator.dart';
+import 'package:archiveme_mobile/features/prove_enough/prove_enough_evidence_trail_model.dart';
+import 'package:archiveme_mobile/models/entitlement.dart';
+import 'package:archiveme_mobile/services/app_services.dart';
+import 'package:archiveme_mobile/theme/app_colors.dart';
+import 'package:archiveme_mobile/theme/app_spacing.dart';
+import 'package:archiveme_mobile/theme/voicememory_cards.dart';
+import 'package:archiveme_mobile/widgets/prove_enough/prove_enough_pattern_report_export_button.dart';
 
 /// Pro full evidence trail for the prove_enough loop — free users get preview.
 class ProveEnoughEvidenceTrailScreen extends StatefulWidget {

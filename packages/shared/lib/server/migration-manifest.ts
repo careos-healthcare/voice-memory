@@ -21,6 +21,10 @@ export const REQUIRED_TABLES = [
   "fact_ledger",
   "insight_corrections",
   "brain_dump_uploads",
+  // Consent verification fails closed without this table, so a deployment that
+  // is missing it cannot verify any caregiver or coach grant. Better to fail
+  // the migration check than to discover it as a total consent outage.
+  "consent_grants",
 ] as const;
 
 export const REQUIRED_INDEXES = [
@@ -31,6 +35,7 @@ export const REQUIRED_INDEXES = [
   { table: "journal_entries", index: "journal_entries_user_updated_idx" },
   { table: "resurfacing_events", index: "resurfacing_events_subject_created_idx" },
   { table: "resurfacing_feedback", index: "resurfacing_feedback_user_created_idx" },
+  { table: "consent_grants", index: "consent_grants_subject_idx" },
   ...EVIDENCE_METHOD_REQUIRED_INDEXES,
 ] as const;
 

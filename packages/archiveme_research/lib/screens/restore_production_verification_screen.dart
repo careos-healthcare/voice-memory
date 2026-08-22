@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:voicememory_mobile/api/api_error_message.dart';
-import 'package:voicememory_mobile/config/developer_settings_gate.dart';
-import 'package:voicememory_mobile/billing/restore_production_evidence.dart';
-import 'package:voicememory_mobile/models/entitlement.dart';
-import 'package:voicememory_mobile/services/app_services.dart';
-import 'package:voicememory_mobile/theme/app_theme.dart';
-import 'package:voicememory_mobile/widgets/debug_only_unavailable.dart';
+import 'package:archiveme_mobile/api/api_error_message.dart';
+import 'package:archiveme_mobile/config/developer_settings_gate.dart';
+import 'package:archiveme_mobile/billing/restore_production_evidence.dart';
+import 'package:archiveme_mobile/models/entitlement.dart';
+import 'package:archiveme_mobile/services/app_services.dart';
+import 'package:archiveme_mobile/theme/app_theme.dart';
+import 'package:archiveme_mobile/widgets/debug_only_unavailable.dart';
 
 /// Production restore proof: purchase → delete app → reinstall → restore.
 class RestoreProductionVerificationScreen extends StatefulWidget {

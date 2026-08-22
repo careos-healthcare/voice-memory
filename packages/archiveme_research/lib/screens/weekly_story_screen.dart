@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 
-import 'package:voicememory_mobile/design/warm_archive_copy.dart';
-import 'package:voicememory_mobile/features/archive_state_object/archive_state_object.dart';
-import 'package:voicememory_mobile/features/retention/retention_analytics.dart';
-import 'package:voicememory_mobile/features/weekly_story/weekly_story_engine.dart';
-import 'package:voicememory_mobile/features/weekly_story/weekly_story_models.dart';
-import 'package:voicememory_mobile/models/journal_entry.dart';
-import 'package:voicememory_mobile/services/app_services.dart';
-import 'package:voicememory_mobile/theme/app_theme.dart';
-import 'package:voicememory_mobile/features/archive_explanations/explanation_models.dart';
-import 'package:voicememory_mobile/widgets/archive_why_button.dart';
-import 'package:voicememory_mobile/widgets/pushed_screen_shell.dart';
+import 'package:archiveme_mobile/design/warm_archive_copy.dart';
+import 'package:archiveme_mobile/features/archive_state_object/archive_state_object.dart';
+import 'package:archiveme_mobile/features/retention/retention_analytics.dart';
+import 'package:archiveme_mobile/features/weekly_story/weekly_story_engine.dart';
+import 'package:archiveme_mobile/features/weekly_story/weekly_story_models.dart';
+import 'package:archiveme_mobile/models/journal_entry.dart';
+import 'package:archiveme_mobile/services/app_services.dart';
+import 'package:archiveme_mobile/theme/app_theme.dart';
+import 'package:archiveme_mobile/features/archive_explanations/explanation_models.dart';
+import 'package:archiveme_mobile/widgets/archive_why_button.dart';
+import 'package:archiveme_mobile/widgets/pushed_screen_shell.dart';
 
 /// Full weekly archive story — evidence-backed only.
 class WeeklyStoryScreen extends StatefulWidget {

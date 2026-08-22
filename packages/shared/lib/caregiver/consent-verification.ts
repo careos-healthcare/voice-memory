@@ -1,3 +1,4 @@
+import { resolveCaregiverConsentTtlMs } from "@/lib/consent/consent-token-ttl";
 import type {
   CaregiverPermissions,
   CaregiverSession,
@@ -83,7 +84,7 @@ export async function issueMonitoringConsentToken(
   const now = options.now ?? new Date();
   const issuedAt = now.toISOString();
   const expiresAt = new Date(
-    now.getTime() + (options.ttlMs ?? 1000 * 60 * 60 * 24 * 30),
+    now.getTime() + resolveCaregiverConsentTtlMs(options.ttlMs),
   ).toISOString();
 
   const draft = {

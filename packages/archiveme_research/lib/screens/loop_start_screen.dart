@@ -3,17 +3,17 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:voicememory_mobile/design/archive_mobile_spacing.dart';
-import 'package:voicememory_mobile/design/archive_mobile_typography.dart';
-import 'package:voicememory_mobile/features/acquisition/acquisition_cohort_coordinator.dart';
-import 'package:voicememory_mobile/features/acquisition/acquisition_cohort_model.dart';
-import 'package:voicememory_mobile/features/loop_mode/loop_mode_coordinator.dart';
-import 'package:voicememory_mobile/features/loop_mode/loop_mode_model.dart';
-import 'package:voicememory_mobile/product/acquisition_start_copy.dart';
-import 'package:voicememory_mobile/router/onboarding_gate.dart';
-import 'package:voicememory_mobile/services/app_services.dart';
-import 'package:voicememory_mobile/theme/app_colors.dart';
-import 'package:voicememory_mobile/theme/app_spacing.dart';
+import 'package:archiveme_mobile/design/archive_mobile_spacing.dart';
+import 'package:archiveme_mobile/design/archive_mobile_typography.dart';
+import 'package:archiveme_mobile/features/acquisition/acquisition_cohort_coordinator.dart';
+import 'package:archiveme_mobile/features/acquisition/acquisition_cohort_model.dart';
+import 'package:archiveme_mobile/features/loop_mode/loop_mode_coordinator.dart';
+import 'package:archiveme_mobile/features/loop_mode/loop_mode_model.dart';
+import 'package:archiveme_mobile/product/acquisition_start_copy.dart';
+import 'package:archiveme_mobile/router/onboarding_gate.dart';
+import 'package:archiveme_mobile/services/app_services.dart';
+import 'package:archiveme_mobile/theme/app_colors.dart';
+import 'package:archiveme_mobile/theme/app_spacing.dart';
 
 /// Sharp loop-specific acquisition start — cohort / deep-link entry.
 class LoopStartScreen extends StatefulWidget {

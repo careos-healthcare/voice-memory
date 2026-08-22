@@ -29,7 +29,7 @@ export const THEORY_UNCERTAINTY_COPY = {
   supportingLabel: "Evidence (supporting)",
   contradictingLabel: "Evidence (contradicting)",
   missingLabel: "Missing / unknown",
-  confidenceLabel: "Confidence score",
+  confidenceLabel: "Evidence balance",
   statusLabel: "Archive read",
   displayStatusLabels: {
     strengthening: "Strengthening",

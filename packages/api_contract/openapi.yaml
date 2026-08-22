@@ -616,6 +616,48 @@ paths:
               schema:
                 $ref: '#/components/schemas/ConsentVerifyResponse'
 
+  /api/coach/consent/revoke:
+    post:
+      tags: [consent]
+      operationId: consentRevokeToken
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConsentRevokeRequest'
+      responses:
+        '200':
+          description: Token revocation result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConsentRevokeResponse'
+
+  /api/coach/consent/renew:
+    post:
+      tags: [consent]
+      operationId: consentRenewCaregiverToken
+      description: >-
+        Replaces a live caregiver consent token with a fresh one of the same
+        length, at the request of the account the grant names as its subject.
+        The caller must present the token being replaced and a confirmation the
+        archive owner gave moments earlier. The replaced token is withdrawn in
+        the same step that registers its successor.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConsentRenewRequest'
+      responses:
+        '200':
+          description: Successor token issued and predecessor withdrawn
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConsentRenewResponse'
+
   /api/archive-synthesis:
     post:
       tags: [archive-synthesis]
@@ -1225,6 +1267,88 @@ components:
           type: string
         session:
           type: object
+
+    ConsentRevokeRequest:
+      type: object
+      required: [consentDomain, tokenId]
+      properties:
+        consentDomain:
+          type: string
+        tokenId:
+          type: string
+        reason:
+          type: string
+          maxLength: 200
+        token:
+          type: object
+
+    ConsentRevokeResponse:
+      type: object
+      properties:
+        ok:
+          type: boolean
+        tokenId:
+          type: string
+        revoked:
+          type: boolean
+        alreadyRevoked:
+          type: boolean
+        revokedAt:
+          type: string
+          format: date-time
+
+    ConsentRenewRequest:
+      type: object
+      required: [tokenId, token, ownerConfirmation]
+      properties:
+        tokenId:
+          type: string
+        token:
+          type: object
+          description: >-
+            The caregiver consent token being replaced. Required because the
+            agreed permission scope lives in the token rather than in the
+            server's grant registry. It is evidence about the grant, not
+            authority to extend it — the session cookie has to belong to the
+            account the token names as its subject.
+        ownerConfirmation:
+          $ref: '#/components/schemas/ConsentRenewOwnerConfirmation'
+
+    ConsentRenewOwnerConfirmation:
+      type: object
+      required: [confirmedTokenId, acknowledgedAt]
+      properties:
+        confirmedTokenId:
+          type: string
+          description: The grant the archive owner confirmed, which must match tokenId.
+        acknowledgedAt:
+          type: string
+          format: date-time
+          description: >-
+            When the archive owner confirmed. Rejected once it is more than a
+            few minutes old, so a confirmation cannot be stored and replayed on
+            a schedule.
+
+    ConsentRenewResponse:
+      type: object
+      properties:
+        ok:
+          type: boolean
+        renewed:
+          type: boolean
+        consentDomain:
+          type: string
+        token:
+          type: object
+          description: The successor token, carrying a fresh caregiver window.
+        previousTokenId:
+          type: string
+        previousRevokedAt:
+          type: string
+          format: date-time
+        ownerConfirmedAt:
+          type: string
+          format: date-time
 
     ArchiveSynthesisRequest:
       type: object

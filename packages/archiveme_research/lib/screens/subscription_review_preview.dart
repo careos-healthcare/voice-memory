@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import 'package:voicememory_mobile/billing/archive_paywall_copy.dart';
-import 'package:voicememory_mobile/features/paywall/archive_loop_entitlements.dart';
-import 'package:voicememory_mobile/product/consumer_ui_copy.dart';
-import 'package:voicememory_mobile/theme/voicememory_colors.dart';
-import 'package:voicememory_mobile/theme/voicememory_typography.dart';
+import 'package:archiveme_mobile/billing/archive_paywall_copy.dart';
+import 'package:archiveme_mobile/features/paywall/archive_loop_entitlements.dart';
+import 'package:archiveme_mobile/product/consumer_ui_copy.dart';
+import 'package:archiveme_mobile/theme/voicememory_colors.dart';
+import 'package:archiveme_mobile/theme/voicememory_typography.dart';
 
 /// Static paywall for App Store subscription review screenshots only.
 ///

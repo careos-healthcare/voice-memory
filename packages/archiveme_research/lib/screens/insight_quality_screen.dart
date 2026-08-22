@@ -2,29 +2,29 @@ import 'package:flutter/material.dart';
 
 import 'package:go_router/go_router.dart';
 
-import 'package:voicememory_mobile/design/archive_mobile_spacing.dart';
-import 'package:voicememory_mobile/features/activation/archive_evidence_map.dart';
-import 'package:voicememory_mobile/features/activation/evidence_attention_filters.dart';
-import 'package:voicememory_mobile/features/activation/context_insights.dart';
-import 'package:voicememory_mobile/features/activation/archive_health_action_plan.dart';
-import 'package:voicememory_mobile/features/activation/archive_health_score.dart';
-import 'package:voicememory_mobile/features/activation/belief_evidence_trail.dart';
-import 'package:voicememory_mobile/features/activation/archive_insight_feedback.dart';
-import 'package:voicememory_mobile/features/activation/insight_quality_dashboard.dart';
-import 'package:voicememory_mobile/features/archive_proof/visible_archive_proof_copy.dart';
-import 'package:voicememory_mobile/models/journal_entry.dart';
-import 'package:voicememory_mobile/security/sensitive_screen_guard.dart';
-import 'package:voicememory_mobile/theme/app_colors.dart';
-import 'package:voicememory_mobile/theme/app_spacing.dart';
-import 'package:voicememory_mobile/theme/voicememory_typography.dart';
-import 'package:voicememory_mobile/services/app_services.dart';
-import 'package:voicememory_mobile/widgets/archive/archive_evidence_map_card.dart';
-import 'package:voicememory_mobile/widgets/archive/evidence_attention_filters_card.dart';
-import 'package:voicememory_mobile/widgets/archive/context_insights_card.dart';
-import 'package:voicememory_mobile/widgets/archive/archive_health_action_plan_card.dart';
-import 'package:voicememory_mobile/widgets/archive/archive_health_card.dart';
-import 'package:voicememory_mobile/widgets/archive/insight_quality_dashboard_card.dart';
-import 'package:voicememory_mobile/widgets/consumer/consumer_screen_back_header.dart';
+import 'package:archiveme_mobile/design/archive_mobile_spacing.dart';
+import 'package:archiveme_mobile/features/activation/archive_evidence_map.dart';
+import 'package:archiveme_mobile/features/activation/evidence_attention_filters.dart';
+import 'package:archiveme_mobile/features/activation/context_insights.dart';
+import 'package:archiveme_mobile/features/activation/archive_health_action_plan.dart';
+import 'package:archiveme_mobile/features/activation/archive_health_score.dart';
+import 'package:archiveme_mobile/features/activation/belief_evidence_trail.dart';
+import 'package:archiveme_mobile/features/activation/archive_insight_feedback.dart';
+import 'package:archiveme_mobile/features/activation/insight_quality_dashboard.dart';
+import 'package:archiveme_mobile/features/archive_proof/visible_archive_proof_copy.dart';
+import 'package:archiveme_mobile/models/journal_entry.dart';
+import 'package:archiveme_mobile/security/sensitive_screen_guard.dart';
+import 'package:archiveme_mobile/theme/app_colors.dart';
+import 'package:archiveme_mobile/theme/app_spacing.dart';
+import 'package:archiveme_mobile/theme/voicememory_typography.dart';
+import 'package:archiveme_mobile/services/app_services.dart';
+import 'package:archiveme_mobile/widgets/archive/archive_evidence_map_card.dart';
+import 'package:archiveme_mobile/widgets/archive/evidence_attention_filters_card.dart';
+import 'package:archiveme_mobile/widgets/archive/context_insights_card.dart';
+import 'package:archiveme_mobile/widgets/archive/archive_health_action_plan_card.dart';
+import 'package:archiveme_mobile/widgets/archive/archive_health_card.dart';
+import 'package:archiveme_mobile/widgets/archive/insight_quality_dashboard_card.dart';
+import 'package:archiveme_mobile/widgets/consumer/consumer_screen_back_header.dart';
 
 /// Local-only dashboard for reviewing and managing insight feedback.
 class InsightQualityScreen extends StatefulWidget {

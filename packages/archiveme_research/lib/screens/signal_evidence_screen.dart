@@ -1,22 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:voicememory_mobile/design/archive_mobile_spacing.dart';
-import 'package:voicememory_mobile/design/user_facing_date.dart';
-import 'package:voicememory_mobile/design/archive_mobile_typography.dart';
-import 'package:voicememory_mobile/design/archive_responsive_layout.dart';
-import 'package:voicememory_mobile/features/loop_mode/loop_mode_coordinator.dart';
-import 'package:voicememory_mobile/features/loop_mode/loop_mode_model.dart';
-import 'package:voicememory_mobile/features/signal_archive/signal_archive_coordinator.dart';
-import 'package:voicememory_mobile/features/signal_archive/signal_archive_navigation.dart';
-import 'package:voicememory_mobile/features/signal_archive/signal_archive_snapshot.dart';
-import 'package:voicememory_mobile/features/signal_archive/signal_evidence_model.dart';
-import 'package:voicememory_mobile/product/consumer_ui_copy.dart';
-import 'package:voicememory_mobile/theme/app_colors.dart';
-import 'package:voicememory_mobile/theme/app_spacing.dart';
-import 'package:voicememory_mobile/theme/voicememory_cards.dart';
-import 'package:voicememory_mobile/features/prove_enough/prove_enough_evidence_trail_navigation.dart';
-import 'package:voicememory_mobile/widgets/prove_enough/loop_trigger_map_section.dart';
+import 'package:archiveme_mobile/design/archive_mobile_spacing.dart';
+import 'package:archiveme_mobile/design/user_facing_date.dart';
+import 'package:archiveme_mobile/design/archive_mobile_typography.dart';
+import 'package:archiveme_mobile/design/archive_responsive_layout.dart';
+import 'package:archiveme_mobile/features/loop_mode/loop_mode_coordinator.dart';
+import 'package:archiveme_mobile/features/loop_mode/loop_mode_model.dart';
+import 'package:archiveme_mobile/features/signal_archive/signal_archive_coordinator.dart';
+import 'package:archiveme_mobile/features/signal_archive/signal_archive_navigation.dart';
+import 'package:archiveme_mobile/features/signal_archive/signal_archive_snapshot.dart';
+import 'package:archiveme_mobile/features/signal_archive/signal_evidence_model.dart';
+import 'package:archiveme_mobile/product/consumer_ui_copy.dart';
+import 'package:archiveme_mobile/theme/app_colors.dart';
+import 'package:archiveme_mobile/theme/app_spacing.dart';
+import 'package:archiveme_mobile/theme/voicememory_cards.dart';
+import 'package:archiveme_mobile/features/prove_enough/prove_enough_evidence_trail_navigation.dart';
+import 'package:archiveme_mobile/widgets/prove_enough/loop_trigger_map_section.dart';
 
 class SignalEvidenceScreen extends StatefulWidget {
   const SignalEvidenceScreen({super.key, this.initialSnapshot});

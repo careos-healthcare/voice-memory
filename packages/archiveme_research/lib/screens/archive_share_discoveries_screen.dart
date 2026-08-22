@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-import 'package:voicememory_mobile/features/archive_discovery_share/archive_discovery_share_card_model.dart';
-import 'package:voicememory_mobile/features/archive_discovery_share/archive_discovery_share_copy.dart';
-import 'package:voicememory_mobile/features/archive_growth/archive_growth_service.dart';
-import 'package:voicememory_mobile/theme/app_theme.dart';
-import 'package:voicememory_mobile/widgets/archive_discovery_share/archive_discovery_share_card.dart';
-import 'package:voicememory_mobile/widgets/pushed_screen_shell.dart';
+import 'package:archiveme_mobile/features/archive_discovery_share/archive_discovery_share_card_model.dart';
+import 'package:archiveme_mobile/features/archive_discovery_share/archive_discovery_share_copy.dart';
+import 'package:archiveme_mobile/features/archive_growth/archive_growth_service.dart';
+import 'package:archiveme_mobile/theme/app_theme.dart';
+import 'package:archiveme_mobile/widgets/archive_discovery_share/archive_discovery_share_card.dart';
+import 'package:archiveme_mobile/widgets/pushed_screen_shell.dart';
 
 class ArchiveShareDiscoveriesScreen extends StatefulWidget {
   const ArchiveShareDiscoveriesScreen({super.key});

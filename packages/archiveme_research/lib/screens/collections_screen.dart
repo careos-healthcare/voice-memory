@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:voicememory_mobile/design/archive_mobile_typography.dart';
-import 'package:voicememory_mobile/features/collections/archive_collection.dart';
-import 'package:voicememory_mobile/features/collections/archive_collection_store.dart';
-import 'package:voicememory_mobile/services/activation_funnel_analytics.dart';
-import 'package:voicememory_mobile/theme/app_colors.dart';
-import 'package:voicememory_mobile/theme/app_spacing.dart';
-import 'package:voicememory_mobile/widgets/collections/collection_card.dart';
-import 'package:voicememory_mobile/widgets/collections/create_collection_sheet.dart';
-import 'package:voicememory_mobile/widgets/pushed_screen_shell.dart';
+import 'package:archiveme_mobile/design/archive_mobile_typography.dart';
+import 'package:archiveme_mobile/features/collections/archive_collection.dart';
+import 'package:archiveme_mobile/features/collections/archive_collection_store.dart';
+import 'package:archiveme_mobile/services/activation_funnel_analytics.dart';
+import 'package:archiveme_mobile/theme/app_colors.dart';
+import 'package:archiveme_mobile/theme/app_spacing.dart';
+import 'package:archiveme_mobile/widgets/collections/collection_card.dart';
+import 'package:archiveme_mobile/widgets/collections/create_collection_sheet.dart';
+import 'package:archiveme_mobile/widgets/pushed_screen_shell.dart';
 
 /// Collections — user-created groups of entries. Organization only:
 /// nothing here reads or writes memory state.

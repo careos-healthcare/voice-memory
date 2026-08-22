@@ -146,6 +146,26 @@ export const AUTH_SYNC_SCHEMA_STATEMENTS = [
   `CREATE INDEX IF NOT EXISTS user_relationships_client_idx ON user_relationships (client_id)`,
   `CREATE INDEX IF NOT EXISTS user_relationships_professional_idx ON user_relationships (professional_id)`,
   `CREATE INDEX IF NOT EXISTS user_relationships_status_idx ON user_relationships (consent_status)`,
+  // Consent grant registry and revocation list. Rows are never deleted and
+  // never expire: a revocation record has to outlive the token it revokes, or
+  // the access it withdrew comes back. Do not add a cleanup job or a retention
+  // policy to this table — see packages/shared/lib/server/consent-revocation-store.ts.
+  `CREATE TABLE IF NOT EXISTS consent_grants (
+  token_id text PRIMARY KEY,
+  grant_kind text NOT NULL,
+  subject_account_id text NOT NULL,
+  party_id text NOT NULL DEFAULT '',
+  relationship_id text,
+  issued_at timestamptz,
+  expires_at timestamptz,
+  revoked_at timestamptz,
+  revoked_by text,
+  revocation_reason text,
+  created_at timestamptz NOT NULL DEFAULT now(),
+  updated_at timestamptz NOT NULL DEFAULT now()
+)`,
+  `CREATE INDEX IF NOT EXISTS consent_grants_subject_idx ON consent_grants (subject_account_id)`,
+  `CREATE INDEX IF NOT EXISTS consent_grants_revoked_idx ON consent_grants (revoked_at)`,
   ...EVIDENCE_METHOD_SCHEMA_STATEMENTS,
 ] as const;
 

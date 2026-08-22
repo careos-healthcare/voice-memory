@@ -3,20 +3,20 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:voicememory_mobile/billing/revenuecat_service.dart';
-import 'package:voicememory_mobile/design/archive_mobile_spacing.dart';
-import 'package:voicememory_mobile/design/archive_mobile_typography.dart';
-import 'package:voicememory_mobile/design/archive_responsive_layout.dart';
-import 'package:voicememory_mobile/features/prove_enough/monthly_ambition_pressure_review_coordinator.dart';
-import 'package:voicememory_mobile/features/prove_enough/monthly_ambition_pressure_review_model.dart';
-import 'package:voicememory_mobile/features/retention/retention_metrics_tracker.dart';
-import 'package:voicememory_mobile/models/entitlement.dart';
-import 'package:voicememory_mobile/services/app_services.dart';
-import 'package:voicememory_mobile/theme/app_colors.dart';
-import 'package:voicememory_mobile/theme/app_spacing.dart';
-import 'package:voicememory_mobile/theme/voicememory_cards.dart';
-import 'package:voicememory_mobile/widgets/prove_enough/monthly_ambition_pressure_review_card.dart';
-import 'package:voicememory_mobile/widgets/prove_enough/prove_enough_pattern_report_export_button.dart';
+import 'package:archiveme_mobile/billing/revenuecat_service.dart';
+import 'package:archiveme_mobile/design/archive_mobile_spacing.dart';
+import 'package:archiveme_mobile/design/archive_mobile_typography.dart';
+import 'package:archiveme_mobile/design/archive_responsive_layout.dart';
+import 'package:archiveme_mobile/features/prove_enough/monthly_ambition_pressure_review_coordinator.dart';
+import 'package:archiveme_mobile/features/prove_enough/monthly_ambition_pressure_review_model.dart';
+import 'package:archiveme_mobile/features/retention/retention_metrics_tracker.dart';
+import 'package:archiveme_mobile/models/entitlement.dart';
+import 'package:archiveme_mobile/services/app_services.dart';
+import 'package:archiveme_mobile/theme/app_colors.dart';
+import 'package:archiveme_mobile/theme/app_spacing.dart';
+import 'package:archiveme_mobile/theme/voicememory_cards.dart';
+import 'package:archiveme_mobile/widgets/prove_enough/monthly_ambition_pressure_review_card.dart';
+import 'package:archiveme_mobile/widgets/prove_enough/prove_enough_pattern_report_export_button.dart';
 
 /// Full monthly prove_enough review — Pro after first free view.
 class MonthlyAmbitionPressureReviewScreen extends StatefulWidget {

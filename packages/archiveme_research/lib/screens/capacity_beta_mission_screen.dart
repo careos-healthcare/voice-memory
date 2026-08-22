@@ -1,25 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:voicememory_mobile/design/archive_mobile_typography.dart';
-import 'package:voicememory_mobile/features/acquisition/acquisition_cohort_coordinator.dart';
-import 'package:voicememory_mobile/features/acquisition/acquisition_cohort_model.dart';
-import 'package:voicememory_mobile/features/capacity_loop/capacity_activation_fit_store.dart';
-import 'package:voicememory_mobile/features/capacity_loop/capacity_beta_mission_copy.dart';
-import 'package:voicememory_mobile/features/capacity_loop/capacity_beta_mission_engine.dart';
-import 'package:voicememory_mobile/features/capacity_loop/capacity_beta_mission_models.dart';
-import 'package:voicememory_mobile/features/capacity_loop/capacity_beta_mission_store.dart';
-import 'package:voicememory_mobile/features/capacity_loop/capacity_boundary_response_store.dart';
-import 'package:voicememory_mobile/features/capacity_loop/capacity_cost_store.dart';
-import 'package:voicememory_mobile/features/capacity_loop/capacity_decision_outcome_store.dart';
-import 'package:voicememory_mobile/features/capacity_loop/capacity_pull_reason_store.dart';
-import 'package:voicememory_mobile/features/loop_mode/loop_mode_coordinator.dart';
-import 'package:voicememory_mobile/features/pro_interest/pro_interest_store.dart';
-import 'package:voicememory_mobile/services/app_services.dart';
-import 'package:voicememory_mobile/services/journal_service.dart';
-import 'package:voicememory_mobile/theme/app_colors.dart';
-import 'package:voicememory_mobile/theme/app_spacing.dart';
-import 'package:voicememory_mobile/widgets/pushed_screen_shell.dart';
+import 'package:archiveme_mobile/design/archive_mobile_typography.dart';
+import 'package:archiveme_mobile/features/acquisition/acquisition_cohort_coordinator.dart';
+import 'package:archiveme_mobile/features/acquisition/acquisition_cohort_model.dart';
+import 'package:archiveme_mobile/features/capacity_loop/capacity_activation_fit_store.dart';
+import 'package:archiveme_mobile/features/capacity_loop/capacity_beta_mission_copy.dart';
+import 'package:archiveme_mobile/features/capacity_loop/capacity_beta_mission_engine.dart';
+import 'package:archiveme_mobile/features/capacity_loop/capacity_beta_mission_models.dart';
+import 'package:archiveme_mobile/features/capacity_loop/capacity_beta_mission_store.dart';
+import 'package:archiveme_mobile/features/capacity_loop/capacity_boundary_response_store.dart';
+import 'package:archiveme_mobile/features/capacity_loop/capacity_cost_store.dart';
+import 'package:archiveme_mobile/features/capacity_loop/capacity_decision_outcome_store.dart';
+import 'package:archiveme_mobile/features/capacity_loop/capacity_pull_reason_store.dart';
+import 'package:archiveme_mobile/features/loop_mode/loop_mode_coordinator.dart';
+import 'package:archiveme_mobile/features/pro_interest/pro_interest_store.dart';
+import 'package:archiveme_mobile/services/app_services.dart';
+import 'package:archiveme_mobile/services/journal_service.dart';
+import 'package:archiveme_mobile/theme/app_colors.dart';
+import 'package:archiveme_mobile/theme/app_spacing.dart';
+import 'package:archiveme_mobile/widgets/pushed_screen_shell.dart';
 
 /// Guided 7-day capacity beta mission — task list only, no private text.
 class CapacityBetaMissionScreen extends StatefulWidget {

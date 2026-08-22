@@ -1,23 +1,23 @@
 import 'package:flutter/material.dart';
 
-import 'package:voicememory_mobile/config/screenshot_mode.dart';
-import 'package:voicememory_mobile/features/acquisition/acquisition_cohort_coordinator.dart';
-import 'package:voicememory_mobile/features/acquisition/acquisition_cohort_model.dart';
-import 'package:voicememory_mobile/features/beta_feedback/beta_feedback_engine.dart';
-import 'package:voicememory_mobile/features/capacity_loop/capacity_boundary_response_copy.dart';
-import 'package:voicememory_mobile/features/capacity_loop/capacity_boundary_response_engine.dart';
-import 'package:voicememory_mobile/features/capacity_loop/capacity_boundary_response_models.dart';
-import 'package:voicememory_mobile/features/capacity_loop/capacity_boundary_response_store.dart';
-import 'package:voicememory_mobile/features/capacity_loop/capacity_cost_store.dart';
-import 'package:voicememory_mobile/features/capacity_loop/capacity_decision_outcome_store.dart';
-import 'package:voicememory_mobile/features/capacity_loop/capacity_pull_reason_store.dart';
-import 'package:voicememory_mobile/features/demo/sample_archive_mode.dart';
-import 'package:voicememory_mobile/features/loop_mode/loop_mode_coordinator.dart';
-import 'package:voicememory_mobile/models/journal_entry.dart';
-import 'package:voicememory_mobile/services/app_services.dart';
-import 'package:voicememory_mobile/services/journal_service.dart';
-import 'package:voicememory_mobile/widgets/capacity_boundary_response_card.dart';
-import 'package:voicememory_mobile/widgets/pushed_screen_shell.dart';
+import 'package:archiveme_mobile/config/screenshot_mode.dart';
+import 'package:archiveme_mobile/features/acquisition/acquisition_cohort_coordinator.dart';
+import 'package:archiveme_mobile/features/acquisition/acquisition_cohort_model.dart';
+import 'package:archiveme_mobile/features/beta_feedback/beta_feedback_engine.dart';
+import 'package:archiveme_mobile/features/capacity_loop/capacity_boundary_response_copy.dart';
+import 'package:archiveme_mobile/features/capacity_loop/capacity_boundary_response_engine.dart';
+import 'package:archiveme_mobile/features/capacity_loop/capacity_boundary_response_models.dart';
+import 'package:archiveme_mobile/features/capacity_loop/capacity_boundary_response_store.dart';
+import 'package:archiveme_mobile/features/capacity_loop/capacity_cost_store.dart';
+import 'package:archiveme_mobile/features/capacity_loop/capacity_decision_outcome_store.dart';
+import 'package:archiveme_mobile/features/capacity_loop/capacity_pull_reason_store.dart';
+import 'package:archiveme_mobile/features/demo/sample_archive_mode.dart';
+import 'package:archiveme_mobile/features/loop_mode/loop_mode_coordinator.dart';
+import 'package:archiveme_mobile/models/journal_entry.dart';
+import 'package:archiveme_mobile/services/app_services.dart';
+import 'package:archiveme_mobile/services/journal_service.dart';
+import 'package:archiveme_mobile/widgets/capacity_boundary_response_card.dart';
+import 'package:archiveme_mobile/widgets/pushed_screen_shell.dart';
 
 /// Full capacity boundary response screen — fixed templates only.
 class CapacityBoundaryResponseScreen extends StatefulWidget {
