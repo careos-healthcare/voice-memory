@@ -1,0 +1,16 @@
+targets:
+  $default:
+    builders:
+      drift_dev:
+        options:
+          sql:
+            dialect: sqlite
+      retrofit_generator:
+        generate_for:
+          - lib/api/retrofit/*.dart
+      json_serializable:
+        generate_for:
+          - lib/api/models/**
+        options:
+          any_map: true
+          checked: true
