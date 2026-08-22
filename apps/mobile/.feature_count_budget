@@ -6,4 +6,4 @@
 
 max_features: 13
 max_docs: 15
-max_tool_scripts: 7
+max_tool_scripts: 39
