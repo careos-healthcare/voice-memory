@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:voicememory_mobile/design/archive_mobile_typography.dart';
-import 'package:voicememory_mobile/features/beta_invite/beta_invite_copy.dart';
-import 'package:voicememory_mobile/features/beta_outcomes/beta_outcomes_copy.dart';
-import 'package:voicememory_mobile/features/beta/archive_beta_mission_gate.dart';
-import 'package:voicememory_mobile/features/help/help_reviewer_guide_copy.dart';
-import 'package:voicememory_mobile/theme/app_colors.dart';
-import 'package:voicememory_mobile/theme/app_spacing.dart';
-import 'package:voicememory_mobile/widgets/pushed_screen_shell.dart';
+import 'package:archiveme_mobile/design/archive_mobile_typography.dart';
+import 'package:archiveme_mobile/features/beta_invite/beta_invite_copy.dart';
+import 'package:archiveme_mobile/features/beta_outcomes/beta_outcomes_copy.dart';
+import 'package:archiveme_mobile/features/beta/archive_beta_mission_gate.dart';
+import 'package:archiveme_mobile/features/help/help_reviewer_guide_copy.dart';
+import 'package:archiveme_mobile/theme/app_colors.dart';
+import 'package:archiveme_mobile/theme/app_spacing.dart';
+import 'package:archiveme_mobile/widgets/pushed_screen_shell.dart';
 
 /// Static Help & reviewer guide — safe testing paths and privacy basics.
 class HelpReviewerGuideScreen extends StatelessWidget {

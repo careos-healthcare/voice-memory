@@ -1,31 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:voicememory_mobile/billing/archive_entitlement_reader.dart';
-import 'package:voicememory_mobile/billing/archive_pro_feature_map.dart';
-import 'package:voicememory_mobile/billing/paywall_access.dart';
-import 'package:voicememory_mobile/billing/paywall_trigger_model.dart';
-import 'package:voicememory_mobile/billing/pro_value_preview_engine.dart';
-import 'package:voicememory_mobile/config/screenshot_mode.dart';
-import 'package:voicememory_mobile/config/screenshot_sample_data.dart';
-import 'package:voicememory_mobile/features/activation/activation_tracker.dart';
-import 'package:voicememory_mobile/features/archive_memory/archive_evolution_store.dart';
-import 'package:voicememory_mobile/features/archive_review/archive_range_review_engine.dart';
-import 'package:voicememory_mobile/features/archive_review/archive_range_review_model.dart';
-import 'package:voicememory_mobile/features/archive_review/archive_range_review_store.dart';
-import 'package:voicememory_mobile/features/moments/key_moment_model.dart';
-import 'package:voicememory_mobile/features/moments/key_moment_store.dart';
-import 'package:voicememory_mobile/features/pattern_map/pattern_map_engine.dart';
-import 'package:voicememory_mobile/features/pattern_map/pattern_map_model.dart';
-import 'package:voicememory_mobile/features/pattern_memory/pattern_memory_store.dart';
-import 'package:voicememory_mobile/services/app_services.dart';
-import 'package:voicememory_mobile/features/tomorrow_return/tomorrow_check_in_coordinator.dart';
-import 'package:voicememory_mobile/theme/app_colors.dart';
-import 'package:voicememory_mobile/theme/app_spacing.dart';
-import 'package:voicememory_mobile/theme/voicememory_typography.dart';
-import 'package:voicememory_mobile/widgets/archive/archive_range_selector.dart';
-import 'package:voicememory_mobile/widgets/billing/pro_value_preview_card.dart';
-import 'package:voicememory_mobile/widgets/patterns/archive_range_review_card.dart';
+import 'package:archiveme_mobile/billing/archive_entitlement_reader.dart';
+import 'package:archiveme_mobile/billing/archive_pro_feature_map.dart';
+import 'package:archiveme_mobile/billing/paywall_access.dart';
+import 'package:archiveme_mobile/billing/paywall_trigger_model.dart';
+import 'package:archiveme_mobile/billing/pro_value_preview_engine.dart';
+import 'package:archiveme_mobile/config/screenshot_mode.dart';
+import 'package:archiveme_mobile/config/screenshot_sample_data.dart';
+import 'package:archiveme_mobile/features/activation/activation_tracker.dart';
+import 'package:archiveme_mobile/features/archive_memory/archive_evolution_store.dart';
+import 'package:archiveme_mobile/features/archive_review/archive_range_review_engine.dart';
+import 'package:archiveme_mobile/features/archive_review/archive_range_review_model.dart';
+import 'package:archiveme_mobile/features/archive_review/archive_range_review_store.dart';
+import 'package:archiveme_mobile/features/moments/key_moment_model.dart';
+import 'package:archiveme_mobile/features/moments/key_moment_store.dart';
+import 'package:archiveme_mobile/features/pattern_map/pattern_map_engine.dart';
+import 'package:archiveme_mobile/features/pattern_map/pattern_map_model.dart';
+import 'package:archiveme_mobile/features/pattern_memory/pattern_memory_store.dart';
+import 'package:archiveme_mobile/services/app_services.dart';
+import 'package:archiveme_mobile/features/tomorrow_return/tomorrow_check_in_coordinator.dart';
+import 'package:archiveme_mobile/theme/app_colors.dart';
+import 'package:archiveme_mobile/theme/app_spacing.dart';
+import 'package:archiveme_mobile/theme/voicememory_typography.dart';
+import 'package:archiveme_mobile/widgets/archive/archive_range_selector.dart';
+import 'package:archiveme_mobile/widgets/billing/pro_value_preview_card.dart';
+import 'package:archiveme_mobile/widgets/patterns/archive_range_review_card.dart';
 
 /// Review what repeated, changed, or helped in a chosen date range.
 class ArchiveRangeReviewScreen extends StatefulWidget {

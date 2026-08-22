@@ -1,25 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:voicememory_mobile/config/screenshot_mode.dart';
-import 'package:voicememory_mobile/design/archive_mobile_typography.dart';
-import 'package:voicememory_mobile/features/archive_evidence/archive_evidence_guard.dart';
-import 'package:voicememory_mobile/features/demo/sample_archive_mode.dart';
-import 'package:voicememory_mobile/features/archive_watchlist/archive_watchlist_store.dart';
-import 'package:voicememory_mobile/features/beta_feedback/beta_feedback_store.dart';
-import 'package:voicememory_mobile/features/archive_clarity/archive_clarity_copy.dart';
-import 'package:voicememory_mobile/features/then_now/then_now_copy.dart';
-import 'package:voicememory_mobile/features/archive_calendar/archive_calendar_copy.dart';
-import 'package:voicememory_mobile/features/archive_clarity/archive_clarity_engine.dart';
-import 'package:voicememory_mobile/features/archive_clarity/archive_clarity_models.dart';
-import 'package:voicememory_mobile/services/app_services.dart';
-import 'package:voicememory_mobile/services/journal_service.dart';
-import 'package:voicememory_mobile/theme/app_colors.dart';
-import 'package:voicememory_mobile/theme/app_spacing.dart';
-import 'package:voicememory_mobile/widgets/pushed_screen_shell.dart';
-import 'package:voicememory_mobile/widgets/insight_feedback_actions.dart';
-import 'package:voicememory_mobile/features/insight_feedback/insight_feedback_gates.dart';
-import 'package:voicememory_mobile/features/insight_feedback/insight_feedback_models.dart';
+import 'package:archiveme_mobile/config/screenshot_mode.dart';
+import 'package:archiveme_mobile/design/archive_mobile_typography.dart';
+import 'package:archiveme_mobile/features/archive_evidence/archive_evidence_guard.dart';
+import 'package:archiveme_mobile/features/demo/sample_archive_mode.dart';
+import 'package:archiveme_mobile/features/archive_watchlist/archive_watchlist_store.dart';
+import 'package:archiveme_mobile/features/beta_feedback/beta_feedback_store.dart';
+import 'package:archiveme_mobile/features/archive_clarity/archive_clarity_copy.dart';
+import 'package:archiveme_mobile/features/then_now/then_now_copy.dart';
+import 'package:archiveme_mobile/features/archive_calendar/archive_calendar_copy.dart';
+import 'package:archiveme_mobile/features/archive_clarity/archive_clarity_engine.dart';
+import 'package:archiveme_mobile/features/archive_clarity/archive_clarity_models.dart';
+import 'package:archiveme_mobile/services/app_services.dart';
+import 'package:archiveme_mobile/services/journal_service.dart';
+import 'package:archiveme_mobile/theme/app_colors.dart';
+import 'package:archiveme_mobile/theme/app_spacing.dart';
+import 'package:archiveme_mobile/widgets/pushed_screen_shell.dart';
+import 'package:archiveme_mobile/widgets/insight_feedback_actions.dart';
+import 'package:archiveme_mobile/features/insight_feedback/insight_feedback_gates.dart';
+import 'package:archiveme_mobile/features/insight_feedback/insight_feedback_models.dart';
 
 /// Full archive clarity progress screen — metadata only, no journal text.
 class ArchiveClarityProgressScreen extends StatefulWidget {

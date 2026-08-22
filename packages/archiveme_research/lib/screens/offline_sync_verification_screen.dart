@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:voicememory_mobile/config/developer_settings_gate.dart';
-import 'package:voicememory_mobile/features/offline_sync/archive_integrity_snapshot.dart';
-import 'package:voicememory_mobile/features/offline_sync/offline_sync_journey_store.dart';
-import 'package:voicememory_mobile/features/offline_sync/offline_sync_production_evidence.dart';
-import 'package:voicememory_mobile/services/app_services.dart';
-import 'package:voicememory_mobile/theme/app_theme.dart';
-import 'package:voicememory_mobile/widgets/debug_only_unavailable.dart';
+import 'package:archiveme_mobile/config/developer_settings_gate.dart';
+import 'package:archiveme_mobile/features/offline_sync/archive_integrity_snapshot.dart';
+import 'package:archiveme_mobile/features/offline_sync/offline_sync_journey_store.dart';
+import 'package:archiveme_mobile/features/offline_sync/offline_sync_production_evidence.dart';
+import 'package:archiveme_mobile/services/app_services.dart';
+import 'package:archiveme_mobile/theme/app_theme.dart';
+import 'package:archiveme_mobile/widgets/debug_only_unavailable.dart';
 
 /// Offline sync production verification — physical device, evidence only.
 class OfflineSyncVerificationScreen extends StatefulWidget {

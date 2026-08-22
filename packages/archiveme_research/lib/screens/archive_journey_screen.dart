@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-import 'package:voicememory_mobile/features/archive_growth/archive_growth_copy.dart';
-import 'package:voicememory_mobile/features/archive_growth/archive_growth_service.dart';
-import 'package:voicememory_mobile/features/archive_growth/archive_journey_engine.dart';
-import 'package:voicememory_mobile/theme/app_theme.dart';
-import 'package:voicememory_mobile/theme/voicememory_colors.dart';
-import 'package:voicememory_mobile/widgets/pushed_screen_shell.dart';
+import 'package:archiveme_mobile/features/archive_growth/archive_growth_copy.dart';
+import 'package:archiveme_mobile/features/archive_growth/archive_growth_service.dart';
+import 'package:archiveme_mobile/features/archive_growth/archive_journey_engine.dart';
+import 'package:archiveme_mobile/theme/app_theme.dart';
+import 'package:archiveme_mobile/theme/voicememory_colors.dart';
+import 'package:archiveme_mobile/widgets/pushed_screen_shell.dart';
 
 class ArchiveJourneyScreen extends StatefulWidget {
   const ArchiveJourneyScreen({super.key});

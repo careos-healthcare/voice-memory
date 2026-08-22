@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:voicememory_mobile/design/archive_mobile_typography.dart';
-import 'package:voicememory_mobile/features/archive_packs/archive_pack.dart';
-import 'package:voicememory_mobile/features/archive_packs/archive_pack_store.dart';
-import 'package:voicememory_mobile/services/activation_funnel_analytics.dart';
-import 'package:voicememory_mobile/theme/app_colors.dart';
-import 'package:voicememory_mobile/theme/app_spacing.dart';
-import 'package:voicememory_mobile/widgets/archive_packs/create_archive_pack_sheet.dart';
-import 'package:voicememory_mobile/widgets/pushed_screen_shell.dart';
+import 'package:archiveme_mobile/design/archive_mobile_typography.dart';
+import 'package:archiveme_mobile/features/archive_packs/archive_pack.dart';
+import 'package:archiveme_mobile/features/archive_packs/archive_pack_store.dart';
+import 'package:archiveme_mobile/services/activation_funnel_analytics.dart';
+import 'package:archiveme_mobile/theme/app_colors.dart';
+import 'package:archiveme_mobile/theme/app_spacing.dart';
+import 'package:archiveme_mobile/widgets/archive_packs/create_archive_pack_sheet.dart';
+import 'package:archiveme_mobile/widgets/pushed_screen_shell.dart';
 
 class ArchivePacksScreen extends StatefulWidget {
   const ArchivePacksScreen({super.key, this.store});

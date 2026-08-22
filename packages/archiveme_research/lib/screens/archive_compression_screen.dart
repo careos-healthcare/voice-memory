@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 
-import 'package:voicememory_mobile/features/activation/activation_tracker.dart';
-import 'package:voicememory_mobile/features/archive_compression/archive_compression_coordinator.dart';
-import 'package:voicememory_mobile/features/archive_compression/archive_compression_model.dart';
-import 'package:voicememory_mobile/theme/app_colors.dart';
-import 'package:voicememory_mobile/theme/app_spacing.dart';
-import 'package:voicememory_mobile/theme/voicememory_typography.dart';
-import 'package:voicememory_mobile/widgets/patterns/archive_compression_card.dart';
+import 'package:archiveme_mobile/features/activation/activation_tracker.dart';
+import 'package:archiveme_mobile/features/archive_compression/archive_compression_coordinator.dart';
+import 'package:archiveme_mobile/features/archive_compression/archive_compression_model.dart';
+import 'package:archiveme_mobile/theme/app_colors.dart';
+import 'package:archiveme_mobile/theme/app_spacing.dart';
+import 'package:archiveme_mobile/theme/voicememory_typography.dart';
+import 'package:archiveme_mobile/widgets/patterns/archive_compression_card.dart';
 
 /// Full list of similar-moment groups the user can keep, split, or hide.
 class ArchiveCompressionScreen extends StatefulWidget {

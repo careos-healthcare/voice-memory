@@ -1,33 +1,36 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:voicememory_mobile/design/archive_mobile_spacing.dart';
-import 'package:voicememory_mobile/features/activation/archive_evidence_map.dart';
-import 'package:voicememory_mobile/features/activation/context_insights.dart';
-import 'package:voicememory_mobile/features/activation/archive_health_action_plan.dart';
-import 'package:voicememory_mobile/features/activation/archive_health_score.dart';
-import 'package:voicememory_mobile/features/activation/belief_evidence_trail.dart';
-import 'package:voicememory_mobile/features/activation/next_moment_prompt.dart';
-import 'package:voicememory_mobile/features/activation/weekly_archive_review.dart';
-import 'package:voicememory_mobile/features/review_ritual/view_ritual_copy.dart';
-import 'package:voicememory_mobile/features/milestone_share/milestone_share_copy.dart';
-import 'package:voicememory_mobile/features/pressure_retention/shareable_archive_proof_engine.dart';
-import 'package:voicememory_mobile/features/pressure_retention/shareable_archive_proof_model.dart';
-import 'package:voicememory_mobile/services/app_services.dart';
-import 'package:voicememory_mobile/theme/app_colors.dart';
-import 'package:voicememory_mobile/theme/app_spacing.dart';
-import 'package:voicememory_mobile/theme/voicememory_typography.dart';
-import 'package:voicememory_mobile/widgets/archive/archive_evidence_map_card.dart';
-import 'package:voicememory_mobile/widgets/archive/context_insights_card.dart';
-import 'package:voicememory_mobile/widgets/archive/archive_health_action_plan_card.dart';
-import 'package:voicememory_mobile/widgets/archive/archive_health_card.dart';
-import 'package:voicememory_mobile/widgets/archive/weekly_archive_review_card.dart';
-import 'package:voicememory_mobile/widgets/record/next_moment_prompt_card.dart';
-import 'package:voicememory_mobile/widgets/consumer/consumer_screen_back_header.dart';
-import 'package:voicememory_mobile/widgets/pressure_retention/shareable_archive_proof_card.dart';
+import 'package:archiveme_mobile/billing/archive_pro_feature_map.dart';
+import 'package:archiveme_mobile/design/archive_mobile_spacing.dart';
+import 'package:archiveme_mobile/features/activation/archive_evidence_map.dart';
+import 'package:archiveme_mobile/features/activation/context_insights.dart';
+import 'package:archiveme_mobile/features/activation/archive_health_action_plan.dart';
+import 'package:archiveme_mobile/features/activation/archive_health_score.dart';
+import 'package:archiveme_mobile/features/activation/belief_evidence_trail.dart';
+import 'package:archiveme_mobile/features/activation/next_moment_prompt.dart';
+import 'package:archiveme_mobile/features/activation/weekly_archive_review.dart';
+import 'package:archiveme_mobile/features/review_ritual/view_ritual_copy.dart';
+import 'package:archiveme_mobile/features/milestone_share/milestone_share_copy.dart';
+import 'package:archiveme_mobile/features/pressure_retention/shareable_archive_proof_engine.dart';
+import 'package:archiveme_mobile/features/pressure_retention/shareable_archive_proof_model.dart';
+import 'package:archiveme_mobile/services/app_services.dart';
+import 'package:archiveme_mobile/theme/app_colors.dart';
+import 'package:archiveme_mobile/theme/app_spacing.dart';
+import 'package:archiveme_mobile/theme/voicememory_typography.dart';
+import 'package:archiveme_mobile/widgets/archive/archive_evidence_map_card.dart';
+import 'package:archiveme_mobile/widgets/archive/context_insights_card.dart';
+import 'package:archiveme_mobile/widgets/archive/archive_health_action_plan_card.dart';
+import 'package:archiveme_mobile/widgets/archive/archive_health_card.dart';
+import 'package:archiveme_mobile/widgets/archive/weekly_archive_review_card.dart';
+import 'package:archiveme_mobile/widgets/record/next_moment_prompt_card.dart';
+import 'package:archiveme_mobile/widgets/billing/paywall_gate.dart';
+import 'package:archiveme_mobile/widgets/consumer/consumer_screen_back_header.dart';
+import 'package:archiveme_mobile/widgets/pressure_retention/shareable_archive_proof_card.dart';
 
 /// Full weekly archive review — strongest thread, change, evidence, uncertainty.
-class WeeklyArchiveReviewScreen extends StatefulWidget {
+class WeeklyArchiveReviewScreen extends ConsumerStatefulWidget {
   const WeeklyArchiveReviewScreen({super.key, this.previewReview});
 
   /// Test-only: skip async load and render this review.
@@ -35,11 +38,12 @@ class WeeklyArchiveReviewScreen extends StatefulWidget {
   final WeeklyArchiveReview? previewReview;
 
   @override
-  State<WeeklyArchiveReviewScreen> createState() =>
+  ConsumerState<WeeklyArchiveReviewScreen> createState() =>
       _WeeklyArchiveReviewScreenState();
 }
 
-class _WeeklyArchiveReviewScreenState extends State<WeeklyArchiveReviewScreen> {
+class _WeeklyArchiveReviewScreenState
+    extends ConsumerState<WeeklyArchiveReviewScreen> {
   WeeklyArchiveReview? _review;
   ShareableArchiveProof? _shareProof;
   NextMomentPrompt? _nextMomentPrompt;
@@ -69,6 +73,7 @@ class _WeeklyArchiveReviewScreenState extends State<WeeklyArchiveReviewScreen> {
     setState(() => _loading = true);
     final entries = await AppServices.instance.journal.loadAll();
     if (!mounted) return;
+
     setState(() {
       _review = WeeklyArchiveReviewEngine.build(entries: entries);
       _shareProof = const ShareableArchiveProofEngine().buildFromJournal(
@@ -125,6 +130,20 @@ class _WeeklyArchiveReviewScreenState extends State<WeeklyArchiveReviewScreen> {
 
     final review = _review ?? WeeklyArchiveReview.insufficient();
 
+    if (widget.previewReview != null) {
+      return _buildReviewScaffold(review);
+    }
+
+    return PaywallGate(
+      featureName: 'Weekly archive review',
+      feature: ArchiveFeature.tier2WeeklyReview,
+      sourceRoute: '/weekly-archive-review',
+      onDismiss: () => context.pop(),
+      child: _buildReviewScaffold(review),
+    );
+  }
+
+  Widget _buildReviewScaffold(WeeklyArchiveReview review) {
     return Scaffold(
       backgroundColor: AppColors.backgroundPrimary,
       body: SafeArea(

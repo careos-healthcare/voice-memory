@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:voicememory_mobile/features/activation/activation_tracker.dart';
-import 'package:voicememory_mobile/features/export/private_recap_engine.dart';
-import 'package:voicememory_mobile/features/moments/key_moment_model.dart';
-import 'package:voicememory_mobile/features/tomorrow_return/tomorrow_check_in_coordinator.dart';
-import 'package:voicememory_mobile/product/consumer_ui_copy.dart';
-import 'package:voicememory_mobile/theme/app_colors.dart';
-import 'package:voicememory_mobile/theme/app_spacing.dart';
-import 'package:voicememory_mobile/theme/voicememory_typography.dart';
-import 'package:voicememory_mobile/widgets/export/private_recap_actions.dart';
+import 'package:archiveme_mobile/features/activation/activation_tracker.dart';
+import 'package:archiveme_mobile/features/export/private_recap_engine.dart';
+import 'package:archiveme_mobile/features/moments/key_moment_model.dart';
+import 'package:archiveme_mobile/features/tomorrow_return/tomorrow_check_in_coordinator.dart';
+import 'package:archiveme_mobile/product/consumer_ui_copy.dart';
+import 'package:archiveme_mobile/theme/app_colors.dart';
+import 'package:archiveme_mobile/theme/app_spacing.dart';
+import 'package:archiveme_mobile/theme/voicememory_typography.dart';
+import 'package:archiveme_mobile/widgets/export/private_recap_actions.dart';
 
 /// Full view of a single saved moment, preserving the original words.
 class KeyMomentDetailScreen extends StatefulWidget {

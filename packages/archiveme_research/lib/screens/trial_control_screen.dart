@@ -1,31 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import 'package:voicememory_mobile/config/developer_settings_gate.dart';
-import 'package:voicememory_mobile/config/trial_mode.dart';
-import 'package:voicememory_mobile/billing/revenuecat_service.dart';
-import 'package:voicememory_mobile/features/activation/activation_tracker.dart';
-import 'package:voicememory_mobile/features/activation/first_loop_activation_model.dart';
-import 'package:voicememory_mobile/features/pattern_memory/habit_proof_model.dart';
-import 'package:voicememory_mobile/features/pattern_memory/pattern_memory_model.dart';
-import 'package:voicememory_mobile/features/pattern_memory/pattern_next_action_model.dart';
-import 'package:voicememory_mobile/features/pattern_memory/pattern_progress_model.dart';
-import 'package:voicememory_mobile/features/pattern_memory/weekly_pattern_recap_model.dart';
-import 'package:voicememory_mobile/features/acquisition/acquisition_cohort_coordinator.dart';
-import 'package:voicememory_mobile/features/acquisition/acquisition_cohort_model.dart';
-import 'package:voicememory_mobile/features/acquisition/acquisition_intent_model.dart';
-import 'package:voicememory_mobile/features/acquisition/audience_wedge_model.dart';
-import 'package:voicememory_mobile/features/quality/first_insight_specificity_store.dart';
-import 'package:voicememory_mobile/features/trial/trial_reset_service.dart';
-import 'package:voicememory_mobile/features/trial/trial_summary_engine.dart';
-import 'package:voicememory_mobile/features/trial/trial_summary_exporter.dart';
-import 'package:voicememory_mobile/features/trial/hook_diagnosis_model.dart';
-import 'package:voicememory_mobile/features/trial/hook_rescue_decision_model.dart';
-import 'package:voicememory_mobile/features/trial/trial_summary_model.dart';
-import 'package:voicememory_mobile/widgets/trial/positioning_comprehension_sheet.dart';
-import 'package:voicememory_mobile/product/testflight_invite_copy.dart';
-import 'package:voicememory_mobile/theme/app_theme.dart';
-import 'package:voicememory_mobile/widgets/debug_only_unavailable.dart';
+import 'package:archiveme_mobile/config/developer_settings_gate.dart';
+import 'package:archiveme_mobile/config/trial_mode.dart';
+import 'package:archiveme_mobile/billing/revenuecat_service.dart';
+import 'package:archiveme_mobile/features/activation/activation_tracker.dart';
+import 'package:archiveme_mobile/features/activation/first_loop_activation_model.dart';
+import 'package:archiveme_mobile/features/pattern_memory/habit_proof_model.dart';
+import 'package:archiveme_mobile/features/pattern_memory/pattern_memory_model.dart';
+import 'package:archiveme_mobile/features/pattern_memory/pattern_next_action_model.dart';
+import 'package:archiveme_mobile/features/pattern_memory/pattern_progress_model.dart';
+import 'package:archiveme_mobile/features/pattern_memory/weekly_pattern_recap_model.dart';
+import 'package:archiveme_mobile/features/acquisition/acquisition_cohort_coordinator.dart';
+import 'package:archiveme_mobile/features/acquisition/acquisition_cohort_model.dart';
+import 'package:archiveme_mobile/features/acquisition/acquisition_intent_model.dart';
+import 'package:archiveme_mobile/features/acquisition/audience_wedge_model.dart';
+import 'package:archiveme_mobile/features/quality/first_insight_specificity_store.dart';
+import 'package:archiveme_mobile/features/trial/trial_reset_service.dart';
+import 'package:archiveme_mobile/features/trial/trial_summary_engine.dart';
+import 'package:archiveme_mobile/features/trial/trial_summary_exporter.dart';
+import 'package:archiveme_mobile/features/trial/hook_diagnosis_model.dart';
+import 'package:archiveme_mobile/features/trial/hook_rescue_decision_model.dart';
+import 'package:archiveme_mobile/features/trial/trial_summary_model.dart';
+import 'package:archiveme_mobile/widgets/trial/positioning_comprehension_sheet.dart';
+import 'package:archiveme_mobile/product/testflight_invite_copy.dart';
+import 'package:archiveme_mobile/theme/app_theme.dart';
+import 'package:archiveme_mobile/widgets/debug_only_unavailable.dart';
 
 /// Facilitator screen for 5-user trial reset and export.
 class TrialControlScreen extends StatefulWidget {
