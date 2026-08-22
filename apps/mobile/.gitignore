@@ -1,0 +1,57 @@
+# Miscellaneous
+*.class
+*.log
+*.pyc
+*.swp
+.DS_Store
+.atom/
+.build/
+.buildlog/
+.history
+.svn/
+.swiftpm/
+migrate_working_dir/
+
+# IntelliJ related
+*.iml
+*.ipr
+*.iws
+.idea/
+
+# The .vscode folder contains launch configuration and tasks you configure in
+# VS Code which you may wish to be included in version control, so this line
+# is commented out by default.
+#.vscode/
+
+# Flutter/Dart/Pub related
+**/doc/api/
+**/ios/Flutter/.last_build_id
+.dart_tool/
+.flutter-plugins-dependencies
+.pub-cache/
+.pub/
+/build/
+/coverage/
+
+# Deprecated duplicate lib trees — canonical source is apps/mobile/lib/.
+# Patterns here are anchored to apps/mobile/, so this only guards against a
+# duplicate reappearing *inside* this package. The retired apps/voicememory_mobile/
+# tree is still tracked in git; ignoring it requires removing it from the index
+# first, then adding `/apps/voicememory_mobile/` to the repo-root .gitignore.
+# Never add `/apps/mobile/` to the root .gitignore — it would untrack this app.
+/voicememory_mobile/
+
+# Generated tool artifacts (local gate runs, screenshot exports)
+/tool/output/
+/tool/screenshots/
+
+# Symbolication related
+app.*.symbols
+
+# Obfuscation related
+app.*.map.json
+
+# Android Studio will place build artifacts here
+/android/app/debug
+/android/app/profile
+/android/app/release

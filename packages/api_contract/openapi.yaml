@@ -1,0 +1,1283 @@
+openapi: 3.0.3
+info:
+  title: Voice Memory API
+  version: 1.0.0
+  description: |
+    Next.js App Router handlers under apps/api/app/api/**/route.ts.
+    Mobile clients use Dio + Retrofit (apps/mobile/lib/api/retrofit/) with
+    VOICE_MEMORY_API_BASE_URL injected at runtime.
+
+servers:
+  - url: "{baseUrl}"
+    variables:
+      baseUrl:
+        default: https://voice-memory-iota.vercel.app
+
+tags:
+  - name: auth
+  - name: billing
+  - name: capture
+  - name: live-audio
+  - name: sync
+  - name: journal
+  - name: account
+  - name: insights
+  - name: ledger
+  - name: onboarding
+  - name: relationships
+  - name: consent
+  - name: archive-synthesis
+  - name: push
+  - name: health
+  - name: internal
+  - name: resurfacing
+  - name: metrics
+  - name: reflection
+
+paths:
+  /api/auth/send-code:
+    post:
+      tags: [auth]
+      operationId: authSendCode
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SendCodeRequest'
+      responses:
+        '200':
+          description: Code sent
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OkMessageResponse'
+
+  /api/auth/verify:
+    post:
+      tags: [auth]
+      operationId: authVerify
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VerifyCodeRequest'
+      responses:
+        '200':
+          description: Session established
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthVerifyResponse'
+
+  /api/auth/session:
+    get:
+      tags: [auth]
+      operationId: authGetSession
+      responses:
+        '200':
+          description: Current session or null
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthSessionResponse'
+        '401':
+          description: Not signed in
+
+  /api/auth/signout:
+    post:
+      tags: [auth]
+      operationId: authSignOut
+      responses:
+        '200':
+          description: Signed out
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OkResponse'
+
+  /api/billing/entitlements:
+    get:
+      tags: [billing]
+      operationId: billingGetEntitlements
+      responses:
+        '200':
+          description: Entitlements payload
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BillingEntitlementsResponse'
+
+  /api/billing/checkout:
+    post:
+      tags: [billing]
+      operationId: billingCreateCheckout
+      responses:
+        '200':
+          description: Stripe checkout session
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CheckoutSessionResponse'
+
+  /api/billing/config:
+    get:
+      tags: [billing]
+      operationId: billingGetConfig
+      responses:
+        '200':
+          description: Billing configuration
+
+  /api/billing/webhook:
+    post:
+      tags: [billing]
+      operationId: billingWebhook
+      responses:
+        '200':
+          description: Webhook processed
+
+  /api/capture/attest:
+    post:
+      tags: [capture]
+      operationId: captureAttest
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CaptureAttestRequest'
+      responses:
+        '200':
+          description: Attestation token or session path
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CaptureAttestResponse'
+
+  /api/analyze:
+    get:
+      tags: [capture]
+      operationId: analyzeDiscovery
+      responses:
+        '405':
+          description: Method discovery
+    post:
+      tags: [capture]
+      operationId: analyzeTranscript
+      parameters:
+        - $ref: '#/components/parameters/CaptureTokenHeader'
+        - $ref: '#/components/parameters/IdempotencyKeyHeader'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AnalyzeRequest'
+      responses:
+        '200':
+          description: Reflection payload
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AnalyzeResponse'
+
+  /api/transcribe:
+    get:
+      tags: [capture]
+      operationId: transcribeDiscovery
+      responses:
+        '405':
+          description: Method discovery
+    post:
+      tags: [capture]
+      operationId: transcribeAudio
+      parameters:
+        - $ref: '#/components/parameters/CaptureTokenHeader'
+        - $ref: '#/components/parameters/IdempotencyKeyHeader'
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TranscribeMultipartRequest'
+      responses:
+        '200':
+          description: Transcript
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TranscribeResponse'
+
+  /api/atmosphere:
+    post:
+      tags: [capture]
+      operationId: atmosphereAnalyze
+      responses:
+        '200':
+          description: Atmosphere analysis
+
+  /api/live-audio/session:
+    get:
+      tags: [live-audio]
+      operationId: liveAudioSessionDiscovery
+      responses:
+        '405':
+          description: Method discovery
+    post:
+      tags: [live-audio]
+      operationId: liveAudioMintSession
+      parameters:
+        - $ref: '#/components/parameters/CaptureTokenHeader'
+        - $ref: '#/components/parameters/IdempotencyKeyHeader'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: Live session config
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LiveAudioSessionResponse'
+
+  /api/live-audio/recover:
+    get:
+      tags: [live-audio]
+      operationId: liveAudioRecoverDiscovery
+      responses:
+        '405':
+          description: Method discovery
+    post:
+      tags: [live-audio]
+      operationId: liveAudioRecoverVault
+      parameters:
+        - $ref: '#/components/parameters/CaptureTokenHeader'
+        - $ref: '#/components/parameters/IdempotencyKeyHeader'
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/LiveAudioRecoverMultipartRequest'
+      responses:
+        '200':
+          description: Recovery result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LiveAudioRecoverResponse'
+
+  /api/live-audio/vault-recovery:
+    get:
+      tags: [live-audio]
+      operationId: liveAudioVaultRecoveryDiscovery
+      responses:
+        '200':
+          description: Discovery
+    post:
+      tags: [live-audio]
+      operationId: liveAudioVaultRecovery
+      responses:
+        '200':
+          description: Vault recovery
+
+  /api/live-audio/ws:
+    get:
+      tags: [live-audio]
+      operationId: liveAudioWebSocket
+      parameters:
+        - name: sessionToken
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '101':
+          description: WebSocket upgrade
+
+  /api/sync/manifest:
+    get:
+      tags: [sync]
+      operationId: syncManifest
+      responses:
+        '200':
+          description: Sync manifest
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SyncManifestResponse'
+
+  /api/sync/pull:
+    get:
+      tags: [sync]
+      operationId: syncPull
+      responses:
+        '200':
+          description: Full encrypted blob pull
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SyncPullResponse'
+
+  /api/sync/changes:
+    get:
+      tags: [sync]
+      operationId: syncChanges
+      parameters:
+        - name: since
+          in: query
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Incremental sync changes
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SyncChangesResponse'
+
+  /api/sync/push:
+    post:
+      tags: [sync]
+      operationId: syncPush
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SyncPushRequest'
+      responses:
+        '200':
+          description: Push acknowledged
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SyncPushResponse'
+
+  /api/journal:
+    get:
+      tags: [journal]
+      operationId: journalList
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+        - name: cursor
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Legacy journal page
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JournalListResponse'
+    post:
+      tags: [journal]
+      operationId: journalCreate
+      responses:
+        '200':
+          description: Legacy journal entry created
+
+  /api/journal/export:
+    get:
+      tags: [journal]
+      operationId: journalExport
+      responses:
+        '200':
+          description: Journal export bundle
+
+  /api/journal/{id}:
+    put:
+      tags: [journal]
+      operationId: journalUpdate
+      parameters:
+        - $ref: '#/components/parameters/JournalEntryId'
+      responses:
+        '200':
+          description: Entry updated
+    delete:
+      tags: [journal]
+      operationId: journalDelete
+      parameters:
+        - $ref: '#/components/parameters/JournalEntryId'
+      responses:
+        '200':
+          description: Entry deleted
+
+  /api/account/delete:
+    post:
+      tags: [account]
+      operationId: accountDelete
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AccountDeleteRequest'
+      responses:
+        '200':
+          description: Account deletion started
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountDeleteResponse'
+
+  /api/user/data:
+    delete:
+      tags: [account]
+      operationId: userDataDelete
+      responses:
+        '200':
+          description: User data deleted
+
+  /api/insights/corrections:
+    post:
+      tags: [insights]
+      operationId: insightsSubmitCorrection
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InsightCorrectionRequest'
+      responses:
+        '200':
+          description: Correction recorded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OkResponse'
+
+  /api/insights/evidence:
+    post:
+      tags: [insights]
+      operationId: insightsGenerateEvidence
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EvidenceInsightRequest'
+      responses:
+        '200':
+          description: Evidence-backed insight
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EvidenceInsightResponse'
+
+  /api/insights/weekly-story:
+    get:
+      tags: [insights]
+      operationId: insightsWeeklyStory
+      responses:
+        '200':
+          description: Weekly story insight
+
+  /api/insights/comparison:
+    get:
+      tags: [insights]
+      operationId: insightsComparison
+      responses:
+        '200':
+          description: Comparison insight
+
+  /api/ledger/bulk-import:
+    post:
+      tags: [ledger]
+      operationId: ledgerBulkImport
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LedgerBulkImportJsonRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/LedgerBulkImportMultipartRequest'
+      responses:
+        '200':
+          description: Bulk import result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LedgerBulkImportResponse'
+
+  /api/onboarding/brain-dump:
+    post:
+      tags: [onboarding]
+      operationId: onboardingBrainDump
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/BrainDumpMultipartRequest'
+      responses:
+        '200':
+          description: Brain dump stored
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BrainDumpResponse'
+
+  /api/user-relationships:
+    get:
+      tags: [relationships]
+      operationId: userRelationshipsList
+      responses:
+        '200':
+          description: Relationships for current user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserRelationshipsListResponse'
+    post:
+      tags: [relationships]
+      operationId: userRelationshipsUpsert
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRelationshipUpsertRequest'
+      responses:
+        '200':
+          description: Relationship upserted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserRelationshipResponse'
+
+  /api/user-relationships/{id}:
+    patch:
+      tags: [relationships]
+      operationId: userRelationshipUpdateConsent
+      parameters:
+        - $ref: '#/components/parameters/RelationshipId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRelationshipConsentPatchRequest'
+      responses:
+        '200':
+          description: Consent status updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserRelationshipResponse'
+
+  /api/coach/consent/issue:
+    post:
+      tags: [consent]
+      operationId: consentIssueToken
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConsentIssueRequest'
+      responses:
+        '200':
+          description: Consent token issued
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConsentIssueResponse'
+
+  /api/coach/consent/verify:
+    post:
+      tags: [consent]
+      operationId: consentVerifyToken
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConsentVerifyRequest'
+      responses:
+        '200':
+          description: Token verification result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConsentVerifyResponse'
+
+  /api/archive-synthesis:
+    post:
+      tags: [archive-synthesis]
+      operationId: archiveSynthesisGenerate
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ArchiveSynthesisRequest'
+      responses:
+        '200':
+          description: Synthesis result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ArchiveSynthesisResponse'
+
+  /api/push/register:
+    post:
+      tags: [push]
+      operationId: pushRegisterDevice
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PushRegisterRequest'
+      responses:
+        '200':
+          description: Device registered
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PushRegisterResponse'
+
+  /api/internal/send-test-push:
+    post:
+      tags: [internal, push]
+      operationId: internalSendTestPush
+      parameters:
+        - name: x-vm-debug-token
+          in: header
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SendTestPushRequest'
+      responses:
+        '200':
+          description: Test push queued
+
+  /api/internal/curiosity-loop/dispatch:
+    post:
+      tags: [internal]
+      operationId: internalCuriosityLoopDispatch
+      responses:
+        '200':
+          description: Loop dispatched
+
+  /api/internal/archive-monthly-review:
+    post:
+      tags: [internal]
+      operationId: internalArchiveMonthlyReview
+      responses:
+        '200':
+          description: Monthly review triggered
+
+  /api/internal/auth-env:
+    get:
+      tags: [internal]
+      operationId: internalAuthEnv
+      responses:
+        '200':
+          description: Auth environment debug
+
+  /api/health:
+    get:
+      tags: [health]
+      operationId: healthCheck
+      responses:
+        '200':
+          description: Health status
+
+  /api/healthz:
+    get:
+      tags: [health]
+      operationId: healthzCheck
+      responses:
+        '200':
+          description: Liveness probe
+
+  /api/resurfacing/feedback:
+    post:
+      tags: [resurfacing]
+      operationId: resurfacingFeedback
+      responses:
+        '200':
+          description: Feedback recorded
+
+  /api/resurfacing/feedback/summary:
+    get:
+      tags: [resurfacing]
+      operationId: resurfacingFeedbackSummary
+      responses:
+        '200':
+          description: Feedback summary
+
+  /api/metrics/resurfacing:
+    get:
+      tags: [metrics]
+      operationId: metricsResurfacingGet
+      responses:
+        '200':
+          description: Resurfacing metrics
+    post:
+      tags: [metrics]
+      operationId: metricsResurfacingPost
+      responses:
+        '200':
+          description: Resurfacing metric recorded
+
+  /api/weekly-reflection:
+    post:
+      tags: [reflection]
+      operationId: weeklyReflection
+      responses:
+        '200':
+          description: Weekly reflection generated
+
+components:
+  parameters:
+    CaptureTokenHeader:
+      name: x-vm-capture-token
+      in: header
+      required: true
+      schema:
+        type: string
+    IdempotencyKeyHeader:
+      name: x-vm-idempotency-key
+      in: header
+      schema:
+        type: string
+    JournalEntryId:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: string
+    RelationshipId:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: string
+
+  schemas:
+    OkResponse:
+      type: object
+      required: [ok]
+      properties:
+        ok:
+          type: boolean
+
+    OkMessageResponse:
+      type: object
+      properties:
+        ok:
+          type: boolean
+        message:
+          type: string
+        devCode:
+          type: string
+
+    SendCodeRequest:
+      type: object
+      required: [email]
+      properties:
+        email:
+          type: string
+          format: email
+
+    VerifyCodeRequest:
+      type: object
+      required: [email, code]
+      properties:
+        email:
+          type: string
+        code:
+          type: string
+
+    UserSession:
+      type: object
+      properties:
+        user:
+          type: object
+          properties:
+            id:
+              type: string
+            email:
+              type: string
+        signedInAt:
+          type: string
+          format: date-time
+
+    AuthVerifyResponse:
+      type: object
+      properties:
+        session:
+          $ref: '#/components/schemas/UserSession'
+
+    AuthSessionResponse:
+      type: object
+      properties:
+        session:
+          nullable: true
+          allOf:
+            - $ref: '#/components/schemas/UserSession'
+
+    BillingEntitlementsResponse:
+      type: object
+      properties:
+        tier:
+          type: string
+        entitlements:
+          type: array
+          items:
+            type: string
+        billingConnected:
+          type: boolean
+        source:
+          type: string
+        previewMode:
+          type: boolean
+        founderPreview:
+          type: boolean
+
+    CheckoutSessionResponse:
+      type: object
+      required: [url]
+      properties:
+        url:
+          type: string
+        sessionId:
+          type: string
+
+    CaptureAttestRequest:
+      type: object
+      required: [deviceId]
+      properties:
+        deviceId:
+          type: string
+
+    CaptureAttestResponse:
+      type: object
+      properties:
+        ok:
+          type: boolean
+        via:
+          type: string
+          enum: [session, capture]
+        userId:
+          type: string
+        deviceId:
+          type: string
+        token:
+          type: string
+        expiresInSeconds:
+          type: integer
+
+    AnalyzeRequest:
+      type: object
+      required: [transcript]
+      properties:
+        transcript:
+          type: string
+        priorEvidence:
+          type: array
+          items:
+            type: object
+
+    AnalyzeResponse:
+      type: object
+      properties:
+        reflection:
+          type: object
+
+    TranscribeMultipartRequest:
+      type: object
+      required: [audio, durationSeconds]
+      properties:
+        audio:
+          type: string
+          format: binary
+        durationSeconds:
+          type: string
+
+    TranscribeResponse:
+      type: object
+      required: [transcript]
+      properties:
+        transcript:
+          type: string
+
+    LiveAudioSessionResponse:
+      type: object
+      properties:
+        ok:
+          type: boolean
+        sessionId:
+          type: string
+        sessionToken:
+          type: string
+        expiresAt:
+          type: string
+        expiresInSeconds:
+          type: integer
+        proxyWebSocketUrl:
+          type: string
+        model:
+          type: string
+        inputAudioMimeType:
+          type: string
+        outputAudioMimeType:
+          type: string
+        vaultRecoverySecret:
+          type: string
+
+    LiveAudioRecoverMultipartRequest:
+      type: object
+      required: [vault, session_id]
+      properties:
+        vault:
+          type: string
+          format: binary
+        session_id:
+          type: string
+        recovery_secret:
+          type: string
+
+    LiveAudioRecoverResponse:
+      type: object
+      properties:
+        ok:
+          type: boolean
+        recoveryAckId:
+          type: string
+        duplicate:
+          type: boolean
+        transcript:
+          type: string
+        reflection:
+          type: object
+        durationSeconds:
+          type: integer
+        frameCount:
+          type: integer
+
+    SyncPushRequest:
+      type: object
+      required: [blobs]
+      properties:
+        blobs:
+          type: array
+          items:
+            type: object
+
+    SyncPushResponse:
+      type: object
+      properties:
+        ok:
+          type: boolean
+        manifest:
+          type: object
+
+    SyncChangesResponse:
+      type: object
+      properties:
+        ok:
+          type: boolean
+        latestSequence:
+          type: integer
+        changes:
+          type: array
+          items:
+            type: object
+        blobs:
+          type: array
+          items:
+            type: object
+
+    SyncPullResponse:
+      type: object
+      properties:
+        ok:
+          type: boolean
+        blobs:
+          type: array
+          items:
+            type: object
+
+    SyncManifestResponse:
+      type: object
+      additionalProperties: true
+
+    JournalListResponse:
+      type: object
+      properties:
+        entries:
+          type: array
+          items:
+            type: object
+        nextCursor:
+          type: string
+          nullable: true
+
+    AccountDeleteRequest:
+      type: object
+      required: [confirm]
+      properties:
+        confirm:
+          type: boolean
+
+    AccountDeleteResponse:
+      type: object
+      properties:
+        ok:
+          type: boolean
+        message:
+          type: string
+
+    InsightCorrectionRequest:
+      type: object
+      required: [insightId, reason]
+      properties:
+        insightId:
+          type: string
+        reason:
+          type: string
+
+    EvidenceInsightRequest:
+      type: object
+      required: [transcript, entryId]
+      properties:
+        transcript:
+          type: string
+        entryId:
+          type: string
+        activeLens:
+          type: string
+
+    EvidenceInsightResponse:
+      type: object
+      properties:
+        ok:
+          type: boolean
+        entryId:
+          type: string
+        insight:
+          type: object
+
+    LedgerBulkImportJsonRequest:
+      type: object
+      properties:
+        chunks:
+          type: array
+          items:
+            type: object
+        finalizeColdStart:
+          type: boolean
+        coldStartTranscript:
+          type: string
+        activeLens:
+          type: string
+
+    LedgerBulkImportMultipartRequest:
+      type: object
+      properties:
+        audio:
+          type: string
+          format: binary
+        entryId:
+          type: string
+        sourceFile:
+          type: string
+
+    LedgerBulkImportResponse:
+      type: object
+      properties:
+        ok:
+          type: boolean
+        imported:
+          type: integer
+        failed:
+          type: integer
+        errors:
+          type: array
+          items:
+            type: string
+
+    BrainDumpMultipartRequest:
+      type: object
+      required: [encryptedAudio, entryId, durationSeconds]
+      properties:
+        encryptedAudio:
+          type: string
+          format: binary
+        entryId:
+          type: string
+        durationSeconds:
+          type: string
+
+    BrainDumpResponse:
+      type: object
+      properties:
+        ok:
+          type: boolean
+        entryId:
+          type: string
+
+    UserRelationshipsListResponse:
+      type: object
+      properties:
+        ok:
+          type: boolean
+        relationships:
+          type: array
+          items:
+            type: object
+
+    UserRelationshipUpsertRequest:
+      type: object
+      required: [clientId, professionalId, relationshipType, consentStatus, agreedScope]
+      properties:
+        id:
+          type: string
+        clientId:
+          type: string
+        professionalId:
+          type: string
+        relationshipType:
+          type: string
+        consentStatus:
+          type: string
+        agreedScope:
+          type: string
+        activeConsentTokenId:
+          type: string
+
+    UserRelationshipConsentPatchRequest:
+      type: object
+      required: [consentStatus]
+      properties:
+        consentStatus:
+          type: string
+
+    UserRelationshipResponse:
+      type: object
+      properties:
+        ok:
+          type: boolean
+        relationship:
+          type: object
+
+    ConsentIssueRequest:
+      type: object
+      properties:
+        consentDomain:
+          type: string
+        relationshipId:
+          type: string
+        coachId:
+          type: string
+        caregiverId:
+          type: string
+        permissions:
+          type: object
+        clientAffirmationHash:
+          type: string
+
+    ConsentIssueResponse:
+      type: object
+      properties:
+        ok:
+          type: boolean
+        token:
+          type: object
+
+    ConsentVerifyRequest:
+      type: object
+      required: [token]
+      properties:
+        consentDomain:
+          type: string
+        token:
+          type: object
+
+    ConsentVerifyResponse:
+      type: object
+      properties:
+        valid:
+          type: boolean
+        reason:
+          type: string
+        session:
+          type: object
+
+    ArchiveSynthesisRequest:
+      type: object
+      required: [synthesisType, monthKey, userId, pack]
+      properties:
+        synthesisType:
+          type: string
+        monthKey:
+          type: string
+        userId:
+          type: string
+        pack:
+          type: object
+        milestoneThreshold:
+          type: integer
+
+    ArchiveSynthesisResponse:
+      type: object
+      properties:
+        synthesisType:
+          type: string
+        cached:
+          type: boolean
+        review:
+          type: object
+
+    PushRegisterRequest:
+      type: object
+      required: [deviceId, platform, fcmToken]
+      properties:
+        deviceId:
+          type: string
+        platform:
+          type: string
+          enum: [ios, android]
+        fcmToken:
+          type: string
+
+    PushRegisterResponse:
+      type: object
+      properties:
+        ok:
+          type: boolean
+        userId:
+          type: string
+        pruned:
+          type: integer
+
+    SendTestPushRequest:
+      type: object
+      required: [deviceId, targetRoute]
+      properties:
+        deviceId:
+          type: string
+        targetRoute:
+          type: string
