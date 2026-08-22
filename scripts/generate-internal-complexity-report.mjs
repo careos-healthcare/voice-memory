@@ -7,10 +7,10 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const OUT = path.join(ROOT, "docs/INTERNAL_COMPLEXITY_REPORT.md");
 
 const { buildInternalComplexityReport } = await import(
-  "../lib/internal/internal-complexity-report.ts"
+  "../packages/shared/lib/internal/internal-complexity-report.ts"
 );
 const { getInternalSurfaceRegistry } = await import(
-  "../lib/internal/internal-surface-registry.ts"
+  "../packages/shared/lib/internal/internal-surface-registry.ts"
 );
 
 const report = buildInternalComplexityReport(path.join(ROOT, "app"));

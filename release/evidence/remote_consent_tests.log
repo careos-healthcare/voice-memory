@@ -1,0 +1,184 @@
+00:00 +0: loading /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/remote_processing_consent_gate_test.dart
+00:00 +0: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/remote_processing_consent_gate_test.dart: consent granted: transcription and analysis proceed normally
+ARCHIVEME_REVENUECAT: configure started platform=unknown apiKeyPresent=false apiKeyPrefix=missing bundleId=com.voicememory.mobile
+RevenueCat: startup — platform=unknown
+RevenueCat: disabled — no API key (set REVENUECAT_UNKNOWN_API_KEY or REVENUECAT_API_KEY at build time)
+ARCHIVEME_REVENUECAT: configure finished success=false reason=api_key_missing
+ARCHIVEME_LOG event=capture_audio_file severity=info category=capture exists=true bytes_bucket=lt_1kb
+ARCHIVEME_LOG event=capture_audio_file_detail severity=debug category=capture path=/var/folders/bq/drktr9xs3wq8lx4ncf90byv80000gn/T/vm_consent_gate_jdY3e8/voice.m4a byte_length=1000
+ARCHIVEME_LOG event=transcription_mode severity=info category=transcription mode=server
+ARCHIVEME_LOG event=transcription_permission severity=info category=permission status=not_applicable
+ARCHIVEME_LOG event=transcription_started severity=info category=transcription success=true
+ARCHIVEME_LOG event=transcription_started_detail severity=debug category=transcription audio_path=/var/folders/bq/drktr9xs3wq8lx4ncf90byv80000gn/T/vm_consent_gate_jdY3e8/voice.m4a
+ARCHIVEME_LOG event=transcription_success severity=info category=transcription success=true transcript_length_bucket=lt_256
+ARCHIVEME_LOG event=capture_transcript_lengths severity=info category=capture transcript_length_bucket=lt_256 body_length_bucket=lt_256 observation_length_bucket=zero exact_language_length_bucket=zero
+analytics:proof_admission_result {admission_result: admitted, confidence_band: medium, source_count_band: one, contradiction_count_band: none, duration_band: under_50ms, verifier_version: 1, scorer_version: 1, config_version: 1}
+ARCHIVEME_LOG event=capture_transcript_lengths severity=info category=capture transcript_length_bucket=lt_256 body_length_bucket=lt_256 observation_length_bucket=lt_256 exact_language_length_bucket=lt_256
+ARCHIVEME_LOG event=capture_presave_transcript severity=info category=capture transcript_length_bucket=lt_256
+analytics:entry_saved_use_archive_context {entry_count: 1, source: record, memory_scope: automatic}
+analytics:first_recording_saved {entry_count: 1}
+ProofAnalyticsGuard: dropped recording_created.entry_id (forbiddenKey)
+analytics:recording_created {source: voice_capture}
+[TELEMETRY][COGNITIVE_BASELINE] -> Event: cognitive_baseline_updated, Meta: {entry_id: 9FD2MVZK10ZG4Z8PDFNVZ2MC87, observation_count: 1, lexical_diversity: 1.0, cohesion_drift: 0.0, emotional_volatility: 0.008771929824561403}
+ARCHIVEME_LOG event=capture_persisted severity=info category=capture transcript_length_bucket=lt_256 body_length_bucket=lt_256 display_text_source=transcript
+ARCHIVEME_LOG event=capture_saved severity=info category=capture success=true display_text_length_bucket=lt_256
+ARCHIVEME_LOG event=capture_saved_detail severity=debug category=capture entry_id=9FD2MVZK10ZG4Z8PDFNVZ2MC87
+ARCHIVEME_LOG event=capture_voice_transcript_present severity=info category=capture missing=false
+00:01 +1: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/remote_processing_consent_gate_test.dart: stamp-at-creation-time: a withdrawal that lands during the network round trip is reflected in what gets stamped, not the stale answer the earlier pre-call gate saw
+ARCHIVEME_REVENUECAT: configure started platform=unknown apiKeyPresent=false apiKeyPrefix=missing bundleId=com.voicememory.mobile
+RevenueCat: startup — platform=unknown
+RevenueCat: disabled — no API key (set REVENUECAT_UNKNOWN_API_KEY or REVENUECAT_API_KEY at build time)
+ARCHIVEME_REVENUECAT: configure finished success=false reason=api_key_missing
+ARCHIVEME_LOG event=capture_audio_file severity=info category=capture exists=true bytes_bucket=lt_1kb
+ARCHIVEME_LOG event=capture_audio_file_detail severity=debug category=capture path=/var/folders/bq/drktr9xs3wq8lx4ncf90byv80000gn/T/vm_consent_gate_q8tkKA/voice.m4a byte_length=1000
+ARCHIVEME_LOG event=transcription_mode severity=info category=transcription mode=server
+ARCHIVEME_LOG event=transcription_permission severity=info category=permission status=not_applicable
+ARCHIVEME_LOG event=transcription_started severity=info category=transcription success=true
+ARCHIVEME_LOG event=transcription_started_detail severity=debug category=transcription audio_path=/var/folders/bq/drktr9xs3wq8lx4ncf90byv80000gn/T/vm_consent_gate_q8tkKA/voice.m4a
+ARCHIVEME_LOG event=transcription_success severity=info category=transcription success=true transcript_length_bucket=lt_256
+ARCHIVEME_LOG event=capture_transcript_lengths severity=info category=capture transcript_length_bucket=lt_256 body_length_bucket=lt_256 observation_length_bucket=zero exact_language_length_bucket=zero
+analytics:proof_admission_result {admission_result: invalid_evidence, rejection_reason: remote_processing_consent_missing, source_count_band: none, contradiction_count_band: none, duration_band: under_50ms, verifier_version: 1, scorer_version: 1, config_version: 1}
+ARCHIVEME_LOG event=analysis_failed severity=error category=analysis success=false error_code=operation_failed
+ARCHIVEME_LOG event=capture_analysis_failed severity=error category=analysis success=false error_code=operation_failed
+ARCHIVEME_LOG event=capture_analysis_fallback severity=warn category=analysis error_code=operation_failed
+ARCHIVEME_LOG event=capture_analysis_fallback_detail severity=debug category=analysis audio_path=/var/folders/bq/drktr9xs3wq8lx4ncf90byv80000gn/T/vm_consent_gate_q8tkKA/voice.m4a
+ARCHIVEME_LOG event=capture_presave_transcript severity=info category=capture transcript_length_bucket=lt_256
+analytics:entry_saved_use_archive_context {entry_count: 1, source: record, memory_scope: automatic}
+ProofAnalyticsGuard: dropped recording_created.entry_id (forbiddenKey)
+analytics:recording_created {source: offline_voice_capture}
+[TELEMETRY][COGNITIVE_BASELINE] -> Event: cognitive_baseline_updated, Meta: {entry_id: 7PD2MVZK109M6MER429YRXM26B, observation_count: 1, lexical_diversity: 1.0, cohesion_drift: 0.0, emotional_volatility: 0.008771929824561403}
+ARCHIVEME_LOG event=capture_persisted severity=info category=capture transcript_length_bucket=lt_256 body_length_bucket=lt_256 display_text_source=transcript
+ARCHIVEME_LOG event=capture_saved severity=info category=capture success=true display_text_length_bucket=lt_256
+ARCHIVEME_LOG event=capture_saved_detail severity=debug category=capture entry_id=7PD2MVZK109M6MER429YRXM26B
+ARCHIVEME_LOG event=capture_voice_transcript_present severity=info category=capture missing=false
+00:01 +2: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/remote_processing_consent_gate_test.dart: transcription consent is checked before postTranscribe (decline blocks network)
+ARCHIVEME_REVENUECAT: configure started platform=unknown apiKeyPresent=false apiKeyPrefix=missing bundleId=com.voicememory.mobile
+RevenueCat: startup — platform=unknown
+RevenueCat: disabled — no API key (set REVENUECAT_UNKNOWN_API_KEY or REVENUECAT_API_KEY at build time)
+ARCHIVEME_REVENUECAT: configure finished success=false reason=api_key_missing
+ARCHIVEME_LOG event=capture_audio_file severity=info category=capture exists=true bytes_bucket=lt_1kb
+ARCHIVEME_LOG event=capture_audio_file_detail severity=debug category=capture path=/var/folders/bq/drktr9xs3wq8lx4ncf90byv80000gn/T/vm_consent_gate_5j8F2C/voice.m4a byte_length=1000
+ARCHIVEME_LOG event=capture_api_guard_blocked severity=warn category=capture operation=transcribe error_code=remote_processing_consent_missing
+ARCHIVEME_LOG event=capture_transcription_fallback severity=warn category=transcription error_code=remote_processing_consent_missing
+ARCHIVEME_LOG event=capture_transcription_fallback_detail severity=debug category=transcription audio_path=/var/folders/bq/drktr9xs3wq8lx4ncf90byv80000gn/T/vm_consent_gate_5j8F2C/voice.m4a
+ARCHIVEME_LOG event=capture_presave_transcript severity=info category=capture transcript_length_bucket=zero
+analytics:entry_saved_use_archive_context {entry_count: 1, source: record, memory_scope: automatic}
+[TELEMETRY][COGNITIVE_BASELINE] -> Event: cognitive_baseline_updated, Meta: {entry_id: KRD2MVZK10WBJ619FGH37GBD0Q, observation_count: 1, lexical_diversity: 1.0, cohesion_drift: 0.0, emotional_volatility: 0.006802721088435374}
+ARCHIVEME_LOG event=capture_persisted severity=info category=capture transcript_length_bucket=lt_256 body_length_bucket=zero display_text_source=none
+ARCHIVEME_LOG event=capture_saved severity=info category=capture success=true display_text_length_bucket=zero
+ARCHIVEME_LOG event=capture_saved_detail severity=debug category=capture entry_id=KRD2MVZK10WBJ619FGH37GBD0Q
+ARCHIVEME_LOG event=capture_voice_transcript_missing severity=warn category=capture missing=true
+00:01 +3: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/remote_processing_consent_gate_test.dart: transcription-only grant: audio is transcribed but reflection is not called
+ARCHIVEME_REVENUECAT: configure started platform=unknown apiKeyPresent=false apiKeyPrefix=missing bundleId=com.voicememory.mobile
+RevenueCat: startup — platform=unknown
+RevenueCat: disabled — no API key (set REVENUECAT_UNKNOWN_API_KEY or REVENUECAT_API_KEY at build time)
+ARCHIVEME_REVENUECAT: configure finished success=false reason=api_key_missing
+ARCHIVEME_LOG event=capture_audio_file severity=info category=capture exists=true bytes_bucket=lt_1kb
+ARCHIVEME_LOG event=capture_audio_file_detail severity=debug category=capture path=/var/folders/bq/drktr9xs3wq8lx4ncf90byv80000gn/T/vm_consent_gate_pdEqBh/voice.m4a byte_length=1000
+ARCHIVEME_LOG event=transcription_mode severity=info category=transcription mode=server
+ARCHIVEME_LOG event=transcription_permission severity=info category=permission status=not_applicable
+ARCHIVEME_LOG event=transcription_started severity=info category=transcription success=true
+ARCHIVEME_LOG event=transcription_started_detail severity=debug category=transcription audio_path=/var/folders/bq/drktr9xs3wq8lx4ncf90byv80000gn/T/vm_consent_gate_pdEqBh/voice.m4a
+ARCHIVEME_LOG event=transcription_success severity=info category=transcription success=true transcript_length_bucket=lt_256
+ARCHIVEME_LOG event=capture_transcript_lengths severity=info category=capture transcript_length_bucket=lt_256 body_length_bucket=lt_256 observation_length_bucket=zero exact_language_length_bucket=zero
+ARCHIVEME_LOG event=capture_api_guard_blocked severity=warn category=capture operation=analyze error_code=remote_processing_consent_missing
+ARCHIVEME_LOG event=analysis_failed severity=error category=analysis success=false error_code=remote_processing_consent_missing
+ARCHIVEME_LOG event=capture_analysis_failed severity=error category=analysis success=false error_code=remote_processing_consent_missing
+ARCHIVEME_LOG event=capture_analysis_fallback severity=warn category=analysis error_code=remote_processing_consent_missing
+ARCHIVEME_LOG event=capture_analysis_fallback_detail severity=debug category=analysis audio_path=/var/folders/bq/drktr9xs3wq8lx4ncf90byv80000gn/T/vm_consent_gate_pdEqBh/voice.m4a
+ARCHIVEME_LOG event=capture_presave_transcript severity=info category=capture transcript_length_bucket=lt_256
+analytics:entry_saved_use_archive_context {entry_count: 1, source: record, memory_scope: automatic}
+ProofAnalyticsGuard: dropped recording_created.entry_id (forbiddenKey)
+analytics:recording_created {source: offline_voice_capture}
+[TELEMETRY][COGNITIVE_BASELINE] -> Event: cognitive_baseline_updated, Meta: {entry_id: 9TD2MVZK1015NVPR1EAHP9JEAR, observation_count: 1, lexical_diversity: 1.0, cohesion_drift: 0.0, emotional_volatility: 0.008771929824561403}
+ARCHIVEME_LOG event=capture_persisted severity=info category=capture transcript_length_bucket=lt_256 body_length_bucket=lt_256 display_text_source=transcript
+ARCHIVEME_LOG event=capture_saved severity=info category=capture success=true display_text_length_bucket=lt_256
+ARCHIVEME_LOG event=capture_saved_detail severity=debug category=capture entry_id=9TD2MVZK1015NVPR1EAHP9JEAR
+ARCHIVEME_LOG event=capture_voice_transcript_present severity=info category=capture missing=false
+00:01 +4: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/remote_processing_consent_gate_test.dart: granted, then withdrawn: the next save makes zero network calls
+ARCHIVEME_REVENUECAT: configure started platform=unknown apiKeyPresent=false apiKeyPrefix=missing bundleId=com.voicememory.mobile
+RevenueCat: startup — platform=unknown
+RevenueCat: disabled — no API key (set REVENUECAT_UNKNOWN_API_KEY or REVENUECAT_API_KEY at build time)
+ARCHIVEME_REVENUECAT: configure finished success=false reason=api_key_missing
+ARCHIVEME_LOG event=capture_audio_file severity=info category=capture exists=true bytes_bucket=lt_1kb
+ARCHIVEME_LOG event=capture_audio_file_detail severity=debug category=capture path=/var/folders/bq/drktr9xs3wq8lx4ncf90byv80000gn/T/vm_consent_gate_WHcVQJ/voice.m4a byte_length=1000
+ARCHIVEME_LOG event=transcription_mode severity=info category=transcription mode=server
+ARCHIVEME_LOG event=transcription_permission severity=info category=permission status=not_applicable
+ARCHIVEME_LOG event=transcription_started severity=info category=transcription success=true
+ARCHIVEME_LOG event=transcription_started_detail severity=debug category=transcription audio_path=/var/folders/bq/drktr9xs3wq8lx4ncf90byv80000gn/T/vm_consent_gate_WHcVQJ/voice.m4a
+ARCHIVEME_LOG event=transcription_success severity=info category=transcription success=true transcript_length_bucket=lt_256
+ARCHIVEME_LOG event=capture_transcript_lengths severity=info category=capture transcript_length_bucket=lt_256 body_length_bucket=lt_256 observation_length_bucket=zero exact_language_length_bucket=zero
+analytics:proof_admission_result {admission_result: admitted, confidence_band: medium, source_count_band: one, contradiction_count_band: none, duration_band: under_50ms, verifier_version: 1, scorer_version: 1, config_version: 1}
+ARCHIVEME_LOG event=capture_transcript_lengths severity=info category=capture transcript_length_bucket=lt_256 body_length_bucket=lt_256 observation_length_bucket=lt_256 exact_language_length_bucket=lt_256
+ARCHIVEME_LOG event=capture_presave_transcript severity=info category=capture transcript_length_bucket=lt_256
+analytics:entry_saved_use_archive_context {entry_count: 1, source: record, memory_scope: automatic}
+ProofAnalyticsGuard: dropped recording_created.entry_id (forbiddenKey)
+analytics:recording_created {source: voice_capture}
+[TELEMETRY][COGNITIVE_BASELINE] -> Event: cognitive_baseline_updated, Meta: {entry_id: JDE2MVZK102DZN8WA5G0A7S3T2, observation_count: 1, lexical_diversity: 1.0, cohesion_drift: 0.0, emotional_volatility: 0.008771929824561403}
+ARCHIVEME_LOG event=capture_persisted severity=info category=capture transcript_length_bucket=lt_256 body_length_bucket=lt_256 display_text_source=transcript
+ARCHIVEME_LOG event=capture_saved severity=info category=capture success=true display_text_length_bucket=lt_256
+ARCHIVEME_LOG event=capture_saved_detail severity=debug category=capture entry_id=JDE2MVZK102DZN8WA5G0A7S3T2
+ARCHIVEME_LOG event=capture_voice_transcript_present severity=info category=capture missing=false
+ARCHIVEME_LOG event=capture_audio_file severity=info category=capture exists=true bytes_bucket=lt_1kb
+ARCHIVEME_LOG event=capture_audio_file_detail severity=debug category=capture path=/var/folders/bq/drktr9xs3wq8lx4ncf90byv80000gn/T/vm_consent_gate_By9r9e/voice.m4a byte_length=1000
+ARCHIVEME_LOG event=capture_api_guard_blocked severity=warn category=capture operation=transcribe error_code=remote_processing_consent_missing
+ARCHIVEME_LOG event=capture_transcription_fallback severity=warn category=transcription error_code=remote_processing_consent_missing
+ARCHIVEME_LOG event=capture_transcription_fallback_detail severity=debug category=transcription audio_path=/var/folders/bq/drktr9xs3wq8lx4ncf90byv80000gn/T/vm_consent_gate_By9r9e/voice.m4a
+ARCHIVEME_LOG event=capture_presave_transcript severity=info category=capture transcript_length_bucket=zero
+analytics:entry_saved_use_archive_context {entry_count: 2, source: record, memory_scope: automatic}
+[TELEMETRY][COGNITIVE_BASELINE] -> Event: cognitive_baseline_updated, Meta: {entry_id: 2EE2MVZK101EJM3GR3ZV05NDNA, observation_count: 2, lexical_diversity: 1.0, cohesion_drift: 0.0, emotional_volatility: 0.008181167203723593, previous_lexical_diversity: 1.0, previous_cohesion_drift: 0.0, previous_emotional_volatility: 0.008771929824561403}
+ARCHIVEME_LOG event=capture_persisted severity=info category=capture transcript_length_bucket=lt_256 body_length_bucket=zero display_text_source=none
+ARCHIVEME_LOG event=capture_saved severity=info category=capture success=true display_text_length_bucket=zero
+ARCHIVEME_LOG event=capture_saved_detail severity=debug category=capture entry_id=2EE2MVZK101EJM3GR3ZV05NDNA
+ARCHIVEME_LOG event=capture_voice_transcript_missing severity=warn category=capture missing=true
+00:01 +5: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/remote_processing_consent_gate_test.dart: saveTextThought is gated: declined consent saves locally with zero network calls
+ARCHIVEME_REVENUECAT: configure started platform=unknown apiKeyPresent=false apiKeyPrefix=missing bundleId=com.voicememory.mobile
+RevenueCat: startup — platform=unknown
+RevenueCat: disabled — no API key (set REVENUECAT_UNKNOWN_API_KEY or REVENUECAT_API_KEY at build time)
+ARCHIVEME_REVENUECAT: configure finished success=false reason=api_key_missing
+analytics:entry_saved_use_archive_context {entry_count: 1, source: record, memory_scope: automatic}
+ProofAnalyticsGuard: dropped recording_created.entry_id (forbiddenKey)
+analytics:recording_created {source: offline_text_capture}
+[TELEMETRY][COGNITIVE_BASELINE] -> Event: cognitive_baseline_updated, Meta: {entry_id: DGE2MVZK10ZNH757J8HVJFQE0Y, observation_count: 1, lexical_diversity: 0.9, cohesion_drift: 0.0, emotional_volatility: 0.018018018018018018}
+00:02 +6: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/remote_processing_consent_gate_test.dart: remote failure after consent does not erase a locally saved entry
+ARCHIVEME_REVENUECAT: configure started platform=unknown apiKeyPresent=false apiKeyPrefix=missing bundleId=com.voicememory.mobile
+RevenueCat: startup — platform=unknown
+RevenueCat: disabled — no API key (set REVENUECAT_UNKNOWN_API_KEY or REVENUECAT_API_KEY at build time)
+ARCHIVEME_REVENUECAT: configure finished success=false reason=api_key_missing
+ARCHIVEME_LOG event=capture_audio_file severity=info category=capture exists=true bytes_bucket=lt_1kb
+ARCHIVEME_LOG event=capture_audio_file_detail severity=debug category=capture path=/var/folders/bq/drktr9xs3wq8lx4ncf90byv80000gn/T/vm_consent_gate_sWmBcs/voice.m4a byte_length=1000
+ARCHIVEME_LOG event=transcription_mode severity=info category=transcription mode=server
+ARCHIVEME_LOG event=transcription_permission severity=info category=permission status=not_applicable
+ARCHIVEME_LOG event=transcription_started severity=info category=transcription success=true
+ARCHIVEME_LOG event=transcription_started_detail severity=debug category=transcription audio_path=/var/folders/bq/drktr9xs3wq8lx4ncf90byv80000gn/T/vm_consent_gate_sWmBcs/voice.m4a
+ARCHIVEME_LOG event=transcription_success severity=info category=transcription success=true transcript_length_bucket=lt_256
+ARCHIVEME_LOG event=capture_transcript_lengths severity=info category=capture transcript_length_bucket=lt_256 body_length_bucket=lt_256 observation_length_bucket=zero exact_language_length_bucket=zero
+ARCHIVEME_LOG event=analysis_failed severity=error category=analysis success=false error_code=api_500_analyze_failed http_status=500
+ARCHIVEME_LOG event=capture_analysis_failed severity=error category=analysis success=false error_code=api_500_analyze_failed
+ARCHIVEME_LOG event=capture_analysis_fallback severity=warn category=analysis error_code=api_500_analyze_failed
+ARCHIVEME_LOG event=capture_analysis_fallback_detail severity=debug category=analysis audio_path=/var/folders/bq/drktr9xs3wq8lx4ncf90byv80000gn/T/vm_consent_gate_sWmBcs/voice.m4a
+ARCHIVEME_LOG event=capture_presave_transcript severity=info category=capture transcript_length_bucket=lt_256
+analytics:entry_saved_use_archive_context {entry_count: 1, source: record, memory_scope: automatic}
+ProofAnalyticsGuard: dropped recording_created.entry_id (forbiddenKey)
+analytics:recording_created {source: offline_voice_capture}
+[TELEMETRY][COGNITIVE_BASELINE] -> Event: cognitive_baseline_updated, Meta: {entry_id: 3KE2MVZK10QWM3QV0H1CD6V27J, observation_count: 1, lexical_diversity: 1.0, cohesion_drift: 0.0, emotional_volatility: 0.008771929824561403}
+ARCHIVEME_LOG event=capture_persisted severity=info category=capture transcript_length_bucket=lt_256 body_length_bucket=lt_256 display_text_source=transcript
+ARCHIVEME_LOG event=capture_saved severity=info category=capture success=true display_text_length_bucket=lt_256
+ARCHIVEME_LOG event=capture_saved_detail severity=debug category=capture entry_id=3KE2MVZK10QWM3QV0H1CD6V27J
+ARCHIVEME_LOG event=capture_voice_transcript_present severity=info category=capture missing=false
+00:03 +7: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/capture_pipeline_consent_boundary_test.dart: revoked transcription consent blocks provisional reconcile retries
+ARCHIVEME_REVENUECAT: configure started platform=unknown apiKeyPresent=false apiKeyPrefix=missing bundleId=com.voicememory.mobile
+RevenueCat: startup — platform=unknown
+RevenueCat: disabled — no API key (set REVENUECAT_UNKNOWN_API_KEY or REVENUECAT_API_KEY at build time)
+ARCHIVEME_REVENUECAT: configure finished success=false reason=api_key_missing
+analytics:entry_saved_use_archive_context {entry_count: 1, source: record, memory_scope: automatic}
+analytics:first_recording_saved {entry_count: 1}
+ProofAnalyticsGuard: dropped recording_created.entry_id (forbiddenKey)
+analytics:recording_created {source: test}
+[TELEMETRY][COGNITIVE_BASELINE] -> Event: cognitive_baseline_updated, Meta: {entry_id: entry-provisional, observation_count: 1, lexical_diversity: 1.0, cohesion_drift: 0.0, emotional_volatility: 0.0}
+00:04 +8: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/security/remote_processing_consent_gate_test.dart: RemoteProcessingConsentGate never consented — reflection upload not permitted
+00:04 +9: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/security/remote_processing_consent_gate_test.dart: RemoteProcessingConsentGate never consented — transcription upload not permitted
+00:04 +10: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/security/remote_processing_consent_gate_test.dart: RemoteProcessingConsentGate partial grant permits only the granted purpose
+00:04 +11: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/security/remote_processing_consent_gate_test.dart: RemoteProcessingConsentGate consent restored after withdrawal
+00:04 +12: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/security/remote_processing_consent_gate_test.dart: RemoteProcessingConsentGate withdrawn while queued — recheck blocks upload
+00:04 +13: All tests passed!

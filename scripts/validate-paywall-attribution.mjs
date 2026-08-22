@@ -9,16 +9,16 @@ const failures = [];
 const fail = (msg) => failures.push(msg);
 
 const required = [
-  "types/paywall-attribution.ts",
-  "lib/billing/paywall-attribution-copy.ts",
-  "lib/billing/paywall-attribution.ts",
-  "lib/metrics/paywall-attribution-events.ts",
-  "lib/internal/paywall-attribution-report.ts",
-  "components/billing/PaywallRejectionPrompt.tsx",
-  "components/billing/PaywallInterestPrompt.tsx",
-  "components/billing/ConversionReasonPrompt.tsx",
-  "components/internal/PaywallAttributionPanel.tsx",
-  "app/internal/paywall-attribution/page.tsx",
+  "packages/shared/types/paywall-attribution.ts",
+  "packages/shared/lib/billing/paywall-attribution-copy.ts",
+  "packages/shared/lib/billing/paywall-attribution.ts",
+  "packages/shared/lib/metrics/paywall-attribution-events.ts",
+  "packages/shared/lib/internal/paywall-attribution-report.ts",
+  "apps/web/components/billing/PaywallRejectionPrompt.tsx",
+  "apps/web/components/billing/PaywallInterestPrompt.tsx",
+  "apps/web/components/billing/ConversionReasonPrompt.tsx",
+  "apps/web/components/internal/PaywallAttributionPanel.tsx",
+  "apps/web/app/internal/paywall-attribution/page.tsx",
 ];
 
 for (const rel of required) {
@@ -26,7 +26,7 @@ for (const rel of required) {
 }
 
 const copy = fs.readFileSync(
-  path.join(ROOT, "lib/billing/paywall-attribution-copy.ts"),
+  path.join(ROOT, "packages/shared/lib/billing/paywall-attribution-copy.ts"),
   "utf8",
 );
 for (const phrase of [
@@ -40,7 +40,7 @@ for (const phrase of [
 }
 
 const events = fs.readFileSync(
-  path.join(ROOT, "lib/metrics/paywall-attribution-events.ts"),
+  path.join(ROOT, "packages/shared/lib/metrics/paywall-attribution-events.ts"),
   "utf8",
 );
 for (const name of ["paywall_rejection_reason", "paywall_interest_reason", "conversion_reason"]) {
@@ -48,14 +48,14 @@ for (const name of ["paywall_rejection_reason", "paywall_interest_reason", "conv
 }
 
 const paywall = fs.readFileSync(
-  path.join(ROOT, "components/billing/ValueMomentPaywall.tsx"),
+  path.join(ROOT, "apps/web/components/billing/ValueMomentPaywall.tsx"),
   "utf8",
 );
 if (!paywall.includes("PaywallRejectionPrompt")) fail("ValueMomentPaywall must show rejection prompt");
 if (!paywall.includes("PaywallInterestPrompt")) fail("ValueMomentPaywall must show interest prompt");
 
 const pricing = fs.readFileSync(
-  path.join(ROOT, "app/pricing/PricingPageClient.tsx"),
+  path.join(ROOT, "apps/web/app/pricing/PricingPageClient.tsx"),
   "utf8",
 );
 if (!pricing.includes("PaywallInterestPrompt")) fail("pricing must show interest prompt");
@@ -63,7 +63,7 @@ if (!pricing.includes("ConversionReasonPrompt")) fail("pricing must show convers
 if (!pricing.includes("armConversionReasonPrompt")) fail("pricing must arm conversion prompt");
 
 const report = fs.readFileSync(
-  path.join(ROOT, "lib/internal/paywall-attribution-report.ts"),
+  path.join(ROOT, "packages/shared/lib/internal/paywall-attribution-report.ts"),
   "utf8",
 );
 if (!report.includes("What makes people pay?")) fail("report main question missing");
@@ -84,10 +84,10 @@ globalThis.localStorage = {
   key: (i) => [...storage.keys()][i] ?? null,
 };
 
-const { clearPaywallAttributionForEval, savePaywallRejectionReason, savePaywallInterestReason, saveConversionReason, armConversionReasonPrompt, shouldShowConversionReasonPrompt } = await import("../lib/billing/paywall-attribution.ts");
-const { clearPaywallAttributionEventsForEval } = await import("../lib/metrics/paywall-attribution-events.ts");
-const { buildPaywallAttributionReport } = await import("../lib/internal/paywall-attribution-report.ts");
-const { setPlanId } = await import("../lib/subscription.ts");
+const { clearPaywallAttributionForEval, savePaywallRejectionReason, savePaywallInterestReason, saveConversionReason, armConversionReasonPrompt, shouldShowConversionReasonPrompt } = await import("../packages/shared/lib/billing/paywall-attribution.ts");
+const { clearPaywallAttributionEventsForEval } = await import("../packages/shared/lib/metrics/paywall-attribution-events.ts");
+const { buildPaywallAttributionReport } = await import("../packages/shared/lib/internal/paywall-attribution-report.ts");
+const { setPlanId } = await import("../packages/shared/lib/subscription.ts");
 
 clearPaywallAttributionForEval();
 clearPaywallAttributionEventsForEval();

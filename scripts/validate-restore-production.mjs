@@ -20,23 +20,23 @@ function mustExist(rel) {
 }
 
 for (const rel of [
-  "types/restore-production-verification.ts",
-  "lib/mobile/restore-production-verification.ts",
+  "packages/shared/types/restore-production-verification.ts",
+  "packages/shared/lib/mobile/restore-production-verification.ts",
   "mobile/evidence/restore_purchases_tested.json",
-  "components/internal/RestoreVerificationPanel.tsx",
-  "app/internal/restore-verification/page.tsx",
-  "apps/voicememory_mobile/lib/billing/restore_production_evidence.dart",
-  "apps/voicememory_mobile/lib/screens/restore_production_verification_screen.dart",
+  "apps/web/components/internal/RestoreVerificationPanel.tsx",
+  "apps/web/app/internal/restore-verification/page.tsx",
+  "apps/mobile/lib/billing/restore_production_evidence.dart",
+  "apps/mobile/lib/screens/restore_production_verification_screen.dart",
 ]) {
   mustExist(rel);
 }
 
-const router = read("apps/voicememory_mobile/lib/router/app_router.dart");
+const router = read("apps/mobile/lib/router/app_router.dart");
 if (!router.includes("/restore-production-verify")) {
   fail("app_router must register /restore-production-verify");
 }
 
-const lib = read("lib/mobile/restore-production-verification.ts");
+const lib = read("packages/shared/lib/mobile/restore-production-verification.ts");
 for (const token of [
   "restore_purchases_tested.json",
   "isRestoreProductionPassing",
@@ -46,7 +46,7 @@ for (const token of [
   if (!lib.includes(token)) fail(`restore-production-verification missing ${token}`);
 }
 
-const production = read("lib/mobile/mobile-production-readiness.ts");
+const production = read("packages/shared/lib/mobile/mobile-production-readiness.ts");
 if (!production.includes("resolveRestorePurchasesItem")) {
   fail("mobile-production-readiness must use resolveRestorePurchasesItem");
 }
@@ -61,7 +61,7 @@ try {
     readRestorePurchasesEvidence,
     isRestoreProductionPassing,
     buildRestoreProductionReport,
-  } = await import(path.join(ROOT, "lib/mobile/restore-production-verification.ts"));
+  } = await import(path.join(ROOT, "packages/shared/lib/mobile/restore-production-verification.ts"));
 
   const evidence = readRestorePurchasesEvidence();
   if (!evidence) {

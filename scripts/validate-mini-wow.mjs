@@ -40,10 +40,10 @@ const fiveEntries = [
   entry("e5", 20, "I should have spoken up but I keep waiting to quit."),
 ];
 
-const { buildMiniWowReport } = await import("../lib/blind-spots/mini-wow.ts");
-const { MINI_WOW_COPY } = await import("../lib/blind-spots/mini-wow-copy.ts");
-const { BLIND_SPOT_MIN_REFLECTIONS } = await import("../lib/blind-spots/blind-spot-copy.ts");
-const { buildPatternCandidatesRelaxed } = await import("../lib/patterns/pattern-engine.ts");
+const { buildMiniWowReport } = await import("../packages/shared/lib/blind-spots/mini-wow.ts");
+const { MINI_WOW_COPY } = await import("../packages/shared/lib/blind-spots/mini-wow-copy.ts");
+const { BLIND_SPOT_MIN_REFLECTIONS } = await import("../packages/shared/lib/blind-spots/blind-spot-copy.ts");
+const { buildPatternCandidatesRelaxed } = await import("../packages/shared/lib/patterns/pattern-engine.ts");
 
 assert.equal(MINI_WOW_COPY.disclaimer, "Early signal, not a conclusion");
 assert.ok(MINI_WOW_COPY.progressTowardReview(2).includes("2/5"));
@@ -95,11 +95,11 @@ if (progressTwo.showPanel) {
   assert.ok(progressTwo.clueType !== "none");
 }
 
-const { buildImmediateLearningSignal } = await import("../lib/blind-spots/mini-wow.ts");
+const { buildImmediateLearningSignal } = await import("../packages/shared/lib/blind-spots/mini-wow.ts");
 assert.equal(buildImmediateLearningSignal([twoEcho[0]]).tier, "first");
 
 const panelSrc = fs.readFileSync(
-  path.join(ROOT, "components/blind-spots/MiniWowPanel.tsx"),
+  path.join(ROOT, "apps/web/components/blind-spots/MiniWowPanel.tsx"),
   "utf8",
 );
 if (!panelSrc.includes("panelTitle")) {
@@ -107,29 +107,29 @@ if (!panelSrc.includes("panelTitle")) {
 }
 
 const required = [
-  "types/mini-wow.ts",
-  "lib/blind-spots/mini-wow.ts",
-  "lib/blind-spots/mini-wow-copy.ts",
-  "components/blind-spots/MiniWowPanel.tsx",
-  "app/memory/page.tsx",
-  "components/Recorder.tsx",
+  "packages/shared/types/mini-wow.ts",
+  "packages/shared/lib/blind-spots/mini-wow.ts",
+  "packages/shared/lib/blind-spots/mini-wow-copy.ts",
+  "apps/web/components/blind-spots/MiniWowPanel.tsx",
+  "apps/web/app/memory/page.tsx",
+  "apps/web/components/Recorder.tsx",
 ];
 
 for (const rel of required) {
   if (!fs.existsSync(path.join(ROOT, rel))) failures.push(`missing ${rel}`);
 }
 
-const memorySrc = fs.readFileSync(path.join(ROOT, "app/memory/page.tsx"), "utf8");
+const memorySrc = fs.readFileSync(path.join(ROOT, "apps/web/app/memory/page.tsx"), "utf8");
 if (!memorySrc.includes("MiniWowPanel")) {
   failures.push("memory page must render MiniWowPanel");
 }
 
-const recorderSrc = fs.readFileSync(path.join(ROOT, "components/Recorder.tsx"), "utf8");
+const recorderSrc = fs.readFileSync(path.join(ROOT, "apps/web/components/Recorder.tsx"), "utf8");
 if (!recorderSrc.includes("MiniWowPanel")) {
   failures.push("Recorder must render MiniWowPanel after save");
 }
 
-const entrySrc = fs.readFileSync(path.join(ROOT, "app/entry/[id]/page.tsx"), "utf8");
+const entrySrc = fs.readFileSync(path.join(ROOT, "apps/web/app/entry/[id]/page.tsx"), "utf8");
 if (!entrySrc.includes("MiniWowPanel")) {
   failures.push("entry page must render MiniWowPanel on fresh save");
 }

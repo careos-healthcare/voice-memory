@@ -55,33 +55,33 @@ export const LAUNCH_SURFACE = [...TIER_A, ...TIER_B, ...TIER_C];
 
 /** app/ path for static PrimaryMain checks */
 export const TIER_B_PAGE_FILES = [
-  "app/timeline/page.tsx",
-  "app/feelings-timeline/page.tsx",
-  "app/intentions/page.tsx",
-  "app/roundups/page.tsx",
-  "app/territories/page.tsx",
-  "app/seasons/page.tsx",
-  "app/bookmarks/page.tsx",
-  "app/open-loops/page.tsx",
-  "app/blind-spots/page.tsx",
-  "app/export/print/page.tsx",
+  "apps/web/app/timeline/page.tsx",
+  "apps/web/app/feelings-timeline/page.tsx",
+  "apps/web/app/intentions/page.tsx",
+  "apps/web/app/roundups/page.tsx",
+  "apps/web/app/territories/page.tsx",
+  "apps/web/app/seasons/page.tsx",
+  "apps/web/app/bookmarks/page.tsx",
+  "apps/web/app/open-loops/page.tsx",
+  "apps/web/app/blind-spots/page.tsx",
+  "apps/web/app/export/print/page.tsx",
 ];
 
 /** Dynamic segment routes — tested via test:a11y:dynamic + seed fixture */
 export const DYNAMIC_PAGE_FILES = [
-  "app/entry/[id]/page.tsx",
-  "app/threads/[slug]/page.tsx",
-  "app/territories/[slug]/page.tsx",
-  "app/roundups/[period]/page.tsx",
+  "apps/web/app/entry/[id]/page.tsx",
+  "apps/web/app/threads/[slug]/page.tsx",
+  "apps/web/app/territories/[slug]/page.tsx",
+  "apps/web/app/roundups/[period]/page.tsx",
 ];
 
 export const TIER_C_PAGE_FILES = [
-  "app/privacy/page.tsx",
-  "app/privacy-simple/page.tsx",
-  "app/terms/page.tsx",
-  "app/contact/page.tsx",
-  "app/safety/page.tsx",
-  "app/how-it-works/page.tsx",
-  "app/offline/page.tsx",
-  "app/welcome/page.tsx",
+  "apps/web/app/privacy/page.tsx",
+  "apps/web/app/privacy-simple/page.tsx",
+  "apps/web/app/terms/page.tsx",
+  "apps/web/app/contact/page.tsx",
+  "apps/web/app/safety/page.tsx",
+  "apps/web/app/how-it-works/page.tsx",
+  "apps/web/app/offline/page.tsx",
+  "apps/web/app/welcome/page.tsx",
 ];

@@ -193,17 +193,17 @@ function classifyProjectFile(rel) {
     return "01_project_overview_and_configs.txt";
   }
 
-  if (lower.startsWith("app/api/")) return "04_backend_api_server_auth_billing.txt";
-  if (lower.startsWith("app/")) return "02_app_routes_pages_layouts.txt";
+  if (lower.startsWith("apps/api/app/api/")) return "04_backend_api_server_auth_billing.txt";
+  if (lower.startsWith("apps/web/app/")) return "02_app_routes_pages_layouts.txt";
 
-  if (lower.startsWith("components/")) return "03_ui_components_design_system.txt";
+  if (lower.startsWith("apps/web/components/")) return "03_ui_components_design_system.txt";
 
   if (
-    lower.startsWith("lib/server/") ||
-    lower.startsWith("lib/billing/") ||
-    lower.startsWith("lib/entitlement/") ||
-    lower.startsWith("lib/reliability/") ||
-    lower.startsWith("lib/notifications/") ||
+    lower.startsWith("packages/shared/lib/server/") ||
+    lower.startsWith("packages/shared/lib/billing/") ||
+    lower.startsWith("packages/shared/lib/entitlement/") ||
+    lower.startsWith("packages/shared/lib/reliability/") ||
+    lower.startsWith("packages/shared/lib/notifications/") ||
     lower === "middleware.ts" ||
     lower === "instrumentation.ts"
   ) {
@@ -211,40 +211,40 @@ function classifyProjectFile(rel) {
   }
 
   if (
-    lower.startsWith("lib/openai") ||
+    lower.startsWith("packages/shared/lib/openai") ||
     lower.includes("/openai") ||
-    lower.startsWith("lib/memory/") ||
-    lower.startsWith("lib/resurfacing/") ||
-    lower.startsWith("lib/emotional") ||
-    lower.startsWith("lib/patterns/") ||
-    lower.startsWith("lib/refinement/") ||
-    lower.startsWith("lib/continuity/") ||
-    lower.startsWith("lib/clarity/") ||
-    lower.startsWith("lib/conversation/") ||
-    lower.startsWith("lib/reflection/") ||
-    lower.startsWith("lib/revisit/") ||
-    lower.startsWith("lib/territories/") ||
-    lower.startsWith("lib/atmosphere/") ||
-    lower.startsWith("lib/open-loops/") ||
-    lower.startsWith("lib/emotional-quality/")
+    lower.startsWith("packages/shared/lib/memory/") ||
+    lower.startsWith("packages/shared/lib/resurfacing/") ||
+    lower.startsWith("packages/shared/lib/emotional") ||
+    lower.startsWith("packages/shared/lib/patterns/") ||
+    lower.startsWith("packages/shared/lib/refinement/") ||
+    lower.startsWith("packages/shared/lib/continuity/") ||
+    lower.startsWith("packages/shared/lib/clarity/") ||
+    lower.startsWith("packages/shared/lib/conversation/") ||
+    lower.startsWith("packages/shared/lib/reflection/") ||
+    lower.startsWith("packages/shared/lib/revisit/") ||
+    lower.startsWith("packages/shared/lib/territories/") ||
+    lower.startsWith("packages/shared/lib/atmosphere/") ||
+    lower.startsWith("packages/shared/lib/open-loops/") ||
+    lower.startsWith("packages/shared/lib/emotional-quality/")
   ) {
     return "05_ai_memory_emotional_resurfacing.txt";
   }
 
   if (
-    lower.startsWith("lib/storage") ||
-    lower.startsWith("lib/sync/") ||
-    lower.startsWith("lib/server/journal") ||
-    lower.startsWith("lib/persistence/") ||
-    lower.startsWith("lib/archive/") ||
-    lower.startsWith("lib/account/") ||
+    lower.startsWith("packages/shared/lib/storage") ||
+    lower.startsWith("packages/shared/lib/sync/") ||
+    lower.startsWith("packages/shared/lib/server/journal") ||
+    lower.startsWith("packages/shared/lib/persistence/") ||
+    lower.startsWith("packages/shared/lib/archive/") ||
+    lower.startsWith("packages/shared/lib/account/") ||
     lower.startsWith("docs/sql/") ||
     lower.endsWith(".sql")
   ) {
     return "06_data_persistence_journal_sync_migrations.txt";
   }
 
-  if (lower.endsWith(".dart") || lower.startsWith("lib/") && lower.includes("flutter")) {
+  if (lower.endsWith(".dart") || lower.startsWith("packages/shared/lib/") && lower.includes("flutter")) {
     return "07_dart_flutter_mobile_code.txt";
   }
 
@@ -260,10 +260,10 @@ function classifyProjectFile(rel) {
 
   if (lower.startsWith("docs/")) return "09_docs_reports_audits.txt";
 
-  if (lower.startsWith("lib/")) return "05_ai_memory_emotional_resurfacing.txt";
-  if (lower.startsWith("types/")) return "05_ai_memory_emotional_resurfacing.txt";
+  if (lower.startsWith("packages/shared/lib/")) return "05_ai_memory_emotional_resurfacing.txt";
+  if (lower.startsWith("packages/shared/types/")) return "05_ai_memory_emotional_resurfacing.txt";
   if (lower.startsWith("public/")) return "01_project_overview_and_configs.txt";
-  if (lower.startsWith("app/")) return "02_app_routes_pages_layouts.txt";
+  if (lower.startsWith("apps/web/app/")) return "02_app_routes_pages_layouts.txt";
 
   return "10_full_file_inventory_and_missing_items.txt";
 }

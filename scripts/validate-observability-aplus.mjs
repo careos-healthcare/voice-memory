@@ -6,7 +6,7 @@ import { fileURLToPath } from "node:url";
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const failures = [];
 
-const health = fs.readFileSync(path.join(ROOT, "app/api/health/route.ts"), "utf8");
+const health = fs.readFileSync(path.join(ROOT, "apps/api/app/api/health/route.ts"), "utf8");
 for (const field of [
   "rateLimiterMode",
   "migrationsOk",
@@ -19,7 +19,7 @@ if (health.includes("STRIPE_SECRET") || health.includes("OPENAI_API_KEY")) {
   failures.push("health must not expose secrets");
 }
 
-const log = fs.readFileSync(path.join(ROOT, "lib/server/structured-log.ts"), "utf8");
+const log = fs.readFileSync(path.join(ROOT, "packages/shared/lib/server/structured-log.ts"), "utf8");
 if (!log.includes("logServerEvent")) failures.push("structured log helper missing");
 
 if (failures.length) {

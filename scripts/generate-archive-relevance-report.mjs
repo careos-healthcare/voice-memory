@@ -6,7 +6,7 @@ import { fileURLToPath } from "node:url";
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const OUT = path.join(ROOT, "docs/ARCHIVE_RELEVANCE_REPORT.md");
 
-const { buildArchiveRelevanceReport } = await import("../lib/product/archive-relevance.ts");
+const { buildArchiveRelevanceReport } = await import("../packages/shared/lib/product/archive-relevance.ts");
 
 const report = buildArchiveRelevanceReport();
 

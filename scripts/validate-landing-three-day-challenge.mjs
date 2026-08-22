@@ -6,14 +6,14 @@ import { fileURLToPath } from "node:url";
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
 const paths = {
-  landingCopy: path.join(ROOT, "lib/product/landing-three-day-challenge-copy.ts"),
-  page: path.join(ROOT, "app/page.tsx"),
-  component: path.join(ROOT, "components/landing/ThreeDayProofChallengeLanding.tsx"),
-  clarity: path.join(ROOT, "lib/product/product-clarity-copy.ts"),
-  recognition: path.join(ROOT, "lib/product/recognition-copy.ts"),
-  howItWorks: path.join(ROOT, "lib/tester-onboarding-copy.ts"),
-  pricingShell: path.join(ROOT, "components/pricing/PricingStaticShell.tsx"),
-  pricingCopy: path.join(ROOT, "lib/billing/value-moment-paywall-copy.ts"),
+  landingCopy: path.join(ROOT, "packages/shared/lib/product/landing-three-day-challenge-copy.ts"),
+  page: path.join(ROOT, "apps/web/app/page.tsx"),
+  component: path.join(ROOT, "apps/web/components/landing/ThreeDayProofChallengeLanding.tsx"),
+  clarity: path.join(ROOT, "packages/shared/lib/product/product-clarity-copy.ts"),
+  recognition: path.join(ROOT, "packages/shared/lib/product/recognition-copy.ts"),
+  howItWorks: path.join(ROOT, "packages/shared/lib/tester-onboarding-copy.ts"),
+  pricingShell: path.join(ROOT, "apps/web/components/pricing/PricingStaticShell.tsx"),
+  pricingCopy: path.join(ROOT, "packages/shared/lib/billing/value-moment-paywall-copy.ts"),
 };
 
 for (const [name, rel] of Object.entries(paths)) {

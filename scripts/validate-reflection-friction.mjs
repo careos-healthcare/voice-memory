@@ -6,16 +6,16 @@ import { fileURLToPath } from "node:url";
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
 const REQUIRED = [
-  "lib/reflection/reflection-friction-report.ts",
-  "lib/reflection/record-return.ts",
-  "lib/reflection/after-save-continuity.ts",
-  "lib/reflection/quick-reflection.ts",
-  "lib/reflection/start-record-return.ts",
-  "types/reflection-friction.ts",
-  "types/record-return.ts",
-  "app/internal/reflection-friction/page.tsx",
-  "components/internal/ReflectionFrictionPanel.tsx",
-  "components/recording/RecordReturnAnchor.tsx",
+  "packages/shared/lib/reflection/reflection-friction-report.ts",
+  "packages/shared/lib/reflection/record-return.ts",
+  "packages/shared/lib/reflection/after-save-continuity.ts",
+  "packages/shared/lib/reflection/quick-reflection.ts",
+  "packages/shared/lib/reflection/start-record-return.ts",
+  "packages/shared/types/reflection-friction.ts",
+  "packages/shared/types/record-return.ts",
+  "apps/web/app/internal/reflection-friction/page.tsx",
+  "apps/web/components/internal/ReflectionFrictionPanel.tsx",
+  "apps/web/components/recording/RecordReturnAnchor.tsx",
 ];
 
 const failures = [];
@@ -27,7 +27,7 @@ for (const rel of REQUIRED) {
 }
 
 const report = fs.readFileSync(
-  path.join(ROOT, "lib/reflection/reflection-friction-report.ts"),
+  path.join(ROOT, "packages/shared/lib/reflection/reflection-friction-report.ts"),
   "utf8",
 );
 if (!report.includes("buildReflectionFrictionReport")) {
@@ -35,7 +35,7 @@ if (!report.includes("buildReflectionFrictionReport")) {
 }
 
 const page = fs.readFileSync(
-  path.join(ROOT, "app/internal/reflection-friction/page.tsx"),
+  path.join(ROOT, "apps/web/app/internal/reflection-friction/page.tsx"),
   "utf8",
 );
 for (const token of ["ReflectionFrictionPanel", "buildReflectionFrictionReport"]) {
@@ -44,7 +44,7 @@ for (const token of ["ReflectionFrictionPanel", "buildReflectionFrictionReport"]
   }
 }
 
-const recorder = fs.readFileSync(path.join(ROOT, "components/Recorder.tsx"), "utf8");
+const recorder = fs.readFileSync(path.join(ROOT, "apps/web/components/Recorder.tsx"), "utf8");
 if (!recorder.includes("RecordReturnAnchor") || !recorder.includes("recordReturn")) {
   failures.push("Recorder must wire recordReturn and RecordReturnAnchor");
 }

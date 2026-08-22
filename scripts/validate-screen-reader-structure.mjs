@@ -16,11 +16,11 @@ function read(rel) {
 }
 
 const srSources = [
-  ["components/Recorder.tsx", "aria-live"],
-  ["components/recording/MicPermissionPanel.tsx", "aria-live"],
-  ["components/system/SyncStatus.tsx", 'role="status"'],
-  ["components/capture/RecordCaptureChrome.tsx", "aria-live"],
-  ["components/system/LoadingState.tsx", "aria-live"],
+  ["apps/web/components/Recorder.tsx", "aria-live"],
+  ["apps/web/components/recording/MicPermissionPanel.tsx", "aria-live"],
+  ["apps/web/components/system/SyncStatus.tsx", 'role="status"'],
+  ["apps/web/components/capture/RecordCaptureChrome.tsx", "aria-live"],
+  ["apps/web/components/system/LoadingState.tsx", "aria-live"],
 ];
 
 for (const [rel, needle] of srSources) {
@@ -30,7 +30,7 @@ for (const [rel, needle] of srSources) {
   }
 }
 
-const deleteEntry = read("app/entry/[id]/page.tsx");
+const deleteEntry = read("apps/web/app/entry/[id]/page.tsx");
 if (!deleteEntry.includes('aria-label="Delete reflection"')) {
   failures.push("entry delete control needs aria-label");
 }

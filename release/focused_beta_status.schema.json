@@ -1,0 +1,151 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "focused_beta_status.schema.json",
+  "title": "FocusedBetaReleaseManifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "identity", "capabilities", "gates"],
+  "properties": {
+    "schemaVersion": { "type": "integer", "const": 1 },
+    "identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "productName",
+        "semanticVersion",
+        "buildNumber",
+        "commitSha",
+        "buildEnvironment",
+        "createdAt",
+        "expirationPolicy",
+        "distributionChannel"
+      ],
+      "properties": {
+        "productName": { "type": "string", "minLength": 1 },
+        "semanticVersion": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$" },
+        "buildNumber": { "type": "integer", "minimum": 1 },
+        "bundleId": { "type": "string" },
+        "commitSha": { "type": "string", "pattern": "^[0-9a-f]{7,40}$" },
+        "buildEnvironment": { "type": "string", "minLength": 1 },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "expirationPolicy": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["manifestStaleAfterDays", "gateEvidenceStaleAfterDays", "waiverMaxDays"],
+          "properties": {
+            "manifestStaleAfterDays": { "type": "integer", "minimum": 1 },
+            "gateEvidenceStaleAfterDays": { "type": "integer", "minimum": 1 },
+            "waiverMaxDays": { "type": "integer", "minimum": 1 }
+          }
+        },
+        "distributionChannel": {
+          "type": "string",
+          "enum": ["testflight-internal", "play-internal", "app-store", "play-production"]
+        }
+      }
+    },
+    "capabilities": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["sync", "storeBilling", "notifications", "nativeExtensions"],
+      "properties": {
+        "sync": { "$ref": "#/definitions/capabilityFlag" },
+        "storeBilling": { "$ref": "#/definitions/capabilityFlag" },
+        "notifications": { "$ref": "#/definitions/capabilityFlag" },
+        "nativeExtensions": { "$ref": "#/definitions/capabilityFlag" }
+      }
+    },
+    "gates": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/definitions/gate" }
+    }
+  },
+  "definitions": {
+    "capabilityFlag": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["enabled", "registrySource"],
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "registrySource": { "type": "string", "minLength": 1 },
+        "livePurchases": { "type": "boolean" }
+      }
+    },
+    "gateStatus": {
+      "type": "string",
+      "enum": ["not_run", "pass", "fail", "waived"]
+    },
+    "actor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "name"],
+      "properties": {
+        "type": { "type": "string", "enum": ["tool", "manual"] },
+        "name": { "type": "string", "minLength": 1 }
+      }
+    },
+    "waiver": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["owner", "reason", "expiresAt", "approvedAt"],
+      "properties": {
+        "owner": { "type": "string", "minLength": 1 },
+        "reason": { "type": "string", "minLength": 1 },
+        "expiresAt": { "type": "string", "format": "date-time" },
+        "approvedAt": { "type": "string", "format": "date-time" }
+      }
+    },
+    "gate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "title",
+        "required",
+        "conditionalOn",
+        "status",
+        "recordedAt",
+        "commitSha",
+        "buildNumber",
+        "environment",
+        "evidencePath",
+        "actor"
+      ],
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z0-9_]+$" },
+        "title": { "type": "string", "minLength": 1 },
+        "required": { "type": "boolean" },
+        "conditionalOn": {
+          "oneOf": [{ "type": "null" }, { "type": "string", "enum": ["sync", "storeBilling", "notifications", "nativeExtensions"] }]
+        },
+        "status": { "$ref": "#/definitions/gateStatus" },
+        "recordedAt": {
+          "oneOf": [{ "type": "null" }, { "type": "string", "format": "date-time" }]
+        },
+        "commitSha": {
+          "oneOf": [
+            { "type": "null" },
+            { "type": "string", "pattern": "^[0-9a-f]{7,40}$" }
+          ]
+        },
+        "buildNumber": {
+          "oneOf": [{ "type": "null" }, { "type": "integer", "minimum": 1 }]
+        },
+        "environment": { "type": "string" },
+        "evidencePath": { "type": ["string", "null"] },
+        "actor": { "$ref": "#/definitions/actor" },
+        "notes": { "type": ["string", "null"] },
+        "waiver": {
+          "oneOf": [{ "type": "null" }, { "$ref": "#/definitions/waiver" }]
+        },
+        "section": {
+          "type": "string",
+          "enum": ["A", "B", "C", "D", "E"]
+        },
+        "automated": { "type": "boolean" },
+        "nonWaivable": { "type": "boolean" }
+      }
+    }
+  }
+}

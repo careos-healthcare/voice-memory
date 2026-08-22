@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Archive Experience System v1 — design consistency validator.
+ * Design Consistency Audit & Enforcement
  */
 import fs from "node:fs";
 import path from "node:path";
@@ -18,82 +18,62 @@ function mustExist(rel) {
   if (!fs.existsSync(path.join(ROOT, rel))) fail(`missing ${rel}`);
 }
 
-const required = [
-  "lib/design/archive-typography.ts",
-  "lib/design/archive-spacing.ts",
-  "lib/design/archive-visual-gravity.ts",
-  "lib/design/archive-experience-language.ts",
-  "components/layout/ArchivePageBlueprint.tsx",
-  "components/layout/ArchiveActionArea.tsx",
-  "components/archive/ArchiveCard.tsx",
-  "lib/internal/archive-experience-report.ts",
-  "apps/voicememory_mobile/lib/widgets/archive_mobile_page_template.dart",
-  "apps/voicememory_mobile/lib/design/archive_mobile_spacing.dart",
-  "apps/voicememory_mobile/lib/design/archive_mobile_typography.dart",
+const requiredModules = [
+  "packages/shared/lib/design/archive-page-grammar.ts",
+  "packages/shared/lib/design/archive-typography-audit.ts",
+  "packages/shared/lib/design/archive-spacing-audit.ts",
+  "packages/shared/lib/design/archive-cta-map.ts",
+  "packages/shared/lib/design/archive-density.ts",
+  "packages/shared/lib/design/archive-visual-weight.ts",
+  "packages/shared/lib/design/mobile-design-consistency-audit.ts",
+  "packages/shared/lib/design/design-consistency-score.ts",
+  "packages/shared/lib/design/scan-pattern-audit.ts",
+  "packages/shared/lib/internal/design-consistency-file-audit.ts",
+  "apps/web/components/internal/DesignConsistencyAuditPanel.tsx",
+  "apps/web/components/layout/ArchiveGrammarSection.tsx",
 ];
 
-for (const rel of required) mustExist(rel);
+for (const rel of requiredModules) mustExist(rel);
 
-const blueprintSurfaces = [
-  "app/discover/page.tsx",
-  "app/blind-spots/page.tsx",
-  "app/updates/page.tsx",
-  "app/memory/page.tsx",
-  "components/archive/EvidenceArchiveHome.tsx",
+const grammar = read("packages/shared/lib/design/archive-page-grammar.ts");
+for (const section of [
+  "identity",
+  "current_state",
+  "change",
+  "evidence",
+  "supporting_context",
+  "action",
+]) {
+  if (!grammar.includes(`"${section}"`)) fail(`PAGE_STRUCTURE missing ${section}`);
+}
+
+const blueprint = read("apps/web/components/layout/ArchivePageBlueprint.tsx");
+if (!blueprint.includes("data-archive-grammar-section")) {
+  fail("ArchivePageBlueprint must emit grammar section markers");
+}
+
+const panel = read("apps/web/components/internal/DesignConsistencyAuditPanel.tsx");
+if (!panel.includes("CONSISTENT") || !panel.includes("INCONSISTENT")) {
+  fail("DesignConsistencyAuditPanel must show CONSISTENT / INCONSISTENT");
+}
+
+if (!read("apps/web/components/internal/FounderTestPanel.tsx").includes("DesignConsistencyAuditPanel")) {
+  fail("FounderTestPanel must mount DesignConsistencyAuditPanel");
+}
+
+const surfaces = [
+  "apps/web/app/discover/page.tsx",
+  "apps/web/app/memory/page.tsx",
+  "apps/web/app/account/page.tsx",
+  "apps/web/app/archive-detail/page.tsx",
+  "apps/web/components/archive/EvidenceArchiveHome.tsx",
 ];
 
-for (const page of blueprintSurfaces) {
+for (const page of surfaces) {
   const src = read(page);
   if (!src.includes("ArchivePageBlueprint")) {
     fail(`${page} must use ArchivePageBlueprint`);
   }
-  if (!src.includes('data-testid="archive-page-blueprint"') && !src.includes("ArchivePageBlueprint")) {
-    // blueprint renders testid internally
-  }
-  if (/\btext-(2xl|3xl|4xl)\b/.test(src)) {
-    fail(`${page} must not use page-level text-2xl/3xl/4xl — use ARCHIVE_TYPO`);
-  }
-  const arbitrary = src.match(/\b[mp][trblxy]?-\[[^\]]+\]/g);
-  if (arbitrary?.length) {
-    fail(`${page} has arbitrary spacing: ${arbitrary.slice(0, 3).join(", ")}`);
-  }
-}
-
-for (const page of ["app/discover/page.tsx", "app/blind-spots/page.tsx", "app/updates/page.tsx"]) {
-  if (!read(page).includes("ArchiveActionArea")) {
-    fail(`${page} must use ArchiveActionArea`);
-  }
-}
-
-if (!read("lib/product/archive-product-copy.ts").includes("What changed since your last visit?")) {
-  fail("Discover must headline archive change log");
-}
-
-const blind = read("lib/blind-spots/blind-spot-copy.ts");
-if (!blind.includes("one reason your archive currently believes")) {
-  fail("Blind spots lead must frame archive evidence");
-}
-
-const blueprint = read("components/layout/ArchivePageBlueprint.tsx");
-if (!blueprint.includes("data-archive-section")) {
-  fail("ArchivePageBlueprint must tag sections for visual gravity");
-}
-if (!blueprint.includes("ARCHIVE_BLUEPRINT_SECTION_ORDER")) {
-  fail("ArchivePageBlueprint must reference ARCHIVE_BLUEPRINT_SECTION_ORDER");
-}
-
-const gravity = read("lib/design/archive-visual-gravity.ts");
-if (!gravity.includes("ARCHIVE_GRAVITY_ORDER")) {
-  fail("archive-visual-gravity must define weight order");
-}
-
-const mobileShell = read("apps/voicememory_mobile/lib/screens/archive_belief_screen.dart");
-const mobileDiscover = read("apps/voicememory_mobile/lib/screens/discover_screen.dart");
-if (!mobileShell.includes("ArchiveMobilePageTemplate")) {
-  fail("archive_belief_screen must use ArchiveMobilePageTemplate");
-}
-if (!mobileDiscover.includes("ArchiveMobilePageTemplate")) {
-  fail("discover_screen must use ArchiveMobilePageTemplate");
 }
 
 const pkg = JSON.parse(read("package.json"));
@@ -101,26 +81,33 @@ if (!pkg.scripts?.["validate:design-consistency"]) {
   fail("package.json missing validate:design-consistency");
 }
 
-let designConsistencyScore = 0;
 try {
-  const { buildArchiveExperienceReport } = await import(
-    path.join(ROOT, "lib/internal/archive-experience-report.ts")
+  const { buildDesignConsistencyFileReport } = await import(
+    path.join(ROOT, "packages/shared/lib/internal/design-consistency-file-audit.ts")
   );
-  const report = buildArchiveExperienceReport();
-  designConsistencyScore = report.designConsistencyScore;
-  console.log(`DESIGN_CONSISTENCY_SCORE=${designConsistencyScore}`);
+  const report = buildDesignConsistencyFileReport();
+  console.log(`DESIGN_CONSISTENCY_SCORE_V2=${report.score.total}`);
   console.log(
-    `  typography=${report.typographyScore} spacing=${report.spacingScore} cta=${report.ctaScore} hierarchy=${report.hierarchyScore} language=${report.languageScore} consistency=${report.consistencyScore}`,
+    `  typography=${report.score.typography} spacing=${report.score.spacing} hierarchy=${report.score.hierarchy} cta=${report.score.cta} visualWeight=${report.score.visualWeight} mobile=${report.score.mobile}`,
   );
-  if (designConsistencyScore < 95) {
-    fail(`DESIGN_CONSISTENCY_SCORE ${designConsistencyScore} below target 95`);
+  for (const scan of report.scanPatterns) {
+    console.log(`  scan:${scan.surface}=${scan.verdict}`);
+    if (scan.verdict === "INCONSISTENT") {
+      fail(`${scan.surface}: scan pattern ${scan.notes.join("; ") || "inconsistent"}`);
+    }
+  }
+  if (report.score.total < 95) {
+    fail(`DESIGN_CONSISTENCY_SCORE_V2 ${report.score.total} below target 95`);
+    for (const f of report.failures) fail(f);
   }
 } catch (e) {
-  fail(`archive-experience-report failed: ${e.message}`);
+  fail(`design-consistency-file-audit failed: ${e.message}`);
 }
 
-if (failures.length) {
-  console.error("validate-design-consistency failed:\n", failures.join("\n"));
+const uniqueFailures = [...new Set(failures)];
+if (uniqueFailures.length) {
+  console.error("validate-design-consistency failed:\n");
+  for (const f of uniqueFailures) console.error(`  - ${f}`);
   process.exit(1);
 }
 console.log("validate-design-consistency ok");

@@ -6,10 +6,10 @@ import { fileURLToPath } from "node:url";
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
 const REQUIRED = [
-  "lib/resurfacing/genericity-filter.ts",
-  "lib/resurfacing/evidence-engine.ts",
-  "lib/refinement/callback-tuning.ts",
-  "lib/revisit/resurfacing-copy.ts",
+  "packages/shared/lib/resurfacing/genericity-filter.ts",
+  "packages/shared/lib/resurfacing/evidence-engine.ts",
+  "packages/shared/lib/refinement/callback-tuning.ts",
+  "packages/shared/lib/revisit/resurfacing-copy.ts",
 ];
 
 for (const rel of REQUIRED) {
@@ -20,18 +20,18 @@ for (const rel of REQUIRED) {
 }
 
 const filter = fs.readFileSync(
-  path.join(ROOT, "lib/resurfacing/genericity-filter.ts"),
+  path.join(ROOT, "packages/shared/lib/resurfacing/genericity-filter.ts"),
   "utf8",
 );
 const evidence = fs.readFileSync(
-  path.join(ROOT, "lib/resurfacing/evidence-engine.ts"),
+  path.join(ROOT, "packages/shared/lib/resurfacing/evidence-engine.ts"),
   "utf8",
 );
 const tuning = fs.readFileSync(
-  path.join(ROOT, "lib/refinement/callback-tuning.ts"),
+  path.join(ROOT, "packages/shared/lib/refinement/callback-tuning.ts"),
   "utf8",
 );
-const copy = fs.readFileSync(path.join(ROOT, "lib/revisit/resurfacing-copy.ts"), "utf8");
+const copy = fs.readFileSync(path.join(ROOT, "packages/shared/lib/revisit/resurfacing-copy.ts"), "utf8");
 
 for (const [file, src, tokens] of [
   ["genericity-filter.ts", filter, ["isGenericResurfacing", "scoreSpecificity", "MIN_RESURFACING_SPECIFICITY", "passesResurfacingGenericityGate"]],

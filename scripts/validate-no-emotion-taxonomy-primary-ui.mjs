@@ -6,12 +6,12 @@ import { fileURLToPath } from "node:url";
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
 const primaryFiles = [
-  "app/insights/page.tsx",
-  "app/timeline/page.tsx",
-  "app/memory/page.tsx",
-  "app/journal/page.tsx",
-  "components/continuity/ReturnThreadCard.tsx",
-  "components/continuity/ReturnThreadsOverview.tsx",
+  "apps/web/app/insights/page.tsx",
+  "apps/web/app/timeline/page.tsx",
+  "apps/web/app/memory/page.tsx",
+  "apps/web/app/journal/page.tsx",
+  "apps/web/components/continuity/ReturnThreadCard.tsx",
+  "apps/web/components/continuity/ReturnThreadsOverview.tsx",
 ];
 
 const banned = [

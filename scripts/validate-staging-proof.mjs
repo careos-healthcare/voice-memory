@@ -7,9 +7,9 @@
  */
 import { writeFileSync } from "node:fs";
 import { resolve } from "node:path";
-import { formatProofChecks } from "../lib/proof/proof-result.ts";
-import { validateStagingProofStatusFile } from "../lib/proof/signoff-validation.ts";
-import { validateStagingProof } from "../lib/server/staging-proof-check.ts";
+import { formatProofChecks } from "../packages/shared/lib/proof/proof-result.ts";
+import { validateStagingProofStatusFile } from "../packages/shared/lib/proof/signoff-validation.ts";
+import { validateStagingProof } from "../packages/shared/lib/server/staging-proof-check.ts";
 
 const requireProof =
   process.env.VOICEMEMORY_STAGING_PROOF === "1" || process.argv.includes("--require");

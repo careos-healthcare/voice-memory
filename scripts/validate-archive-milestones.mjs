@@ -31,26 +31,26 @@ const FORBIDDEN = [
 ];
 
 const MILESTONE_UI = [
-  "lib/archive/archive-milestones.ts",
-  "lib/archive/archive-milestone-copy.ts",
-  "components/archive/ArchiveLatestMilestone.tsx",
-  "components/archive/ArchiveMilestoneTimeline.tsx",
-  "components/archive/ArchiveMilestoneFeed.tsx",
-  "components/archive/ArchiveMilestoneReturnMoment.tsx",
+  "packages/shared/lib/archive/archive-milestones.ts",
+  "packages/shared/lib/archive/archive-milestone-copy.ts",
+  "apps/web/components/archive/ArchiveLatestMilestone.tsx",
+  "apps/web/components/archive/ArchiveMilestoneTimeline.tsx",
+  "apps/web/components/archive/ArchiveMilestoneFeed.tsx",
+  "apps/web/components/archive/ArchiveMilestoneReturnMoment.tsx",
 ];
 
 for (const rel of [
-  "types/archive-milestone.ts",
-  "lib/archive/archive-milestones.ts",
-  "lib/archive/archive-milestone-copy.ts",
-  "lib/archive/archive-milestone-storage.ts",
+  "packages/shared/types/archive-milestone.ts",
+  "packages/shared/lib/archive/archive-milestones.ts",
+  "packages/shared/lib/archive/archive-milestone-copy.ts",
+  "packages/shared/lib/archive/archive-milestone-storage.ts",
   ...MILESTONE_UI,
   "scripts/validate-archive-milestones.mjs",
 ]) {
   mustExist(rel);
 }
 
-const engine = read("lib/archive/archive-milestones.ts");
+const engine = read("packages/shared/lib/archive/archive-milestones.ts");
 if (!engine.includes("buildArchiveMilestones")) fail("missing buildArchiveMilestones");
 for (const dep of [
   "buildArchiveBeliefView",
@@ -88,7 +88,7 @@ for (const type of [
   if (!engine.includes(type)) fail(`engine missing type ${type}`);
 }
 
-const copy = read("lib/archive/archive-milestone-copy.ts");
+const copy = read("packages/shared/lib/archive/archive-milestone-copy.ts");
 if (!copy.includes("Archive History")) fail("missing Archive History headline");
 if (copy.includes("You unlocked")) fail("copy must not use user-unlocked framing");
 
@@ -99,7 +99,7 @@ for (const rel of MILESTONE_UI) {
   }
 }
 
-const progressive = read("components/archive/ProgressiveArchiveHome.tsx");
+const progressive = read("apps/web/components/archive/ProgressiveArchiveHome.tsx");
 if (!progressive.includes("ArchiveLatestMilestone")) {
   fail("ProgressiveArchiveHome must include ArchiveLatestMilestone");
 }
@@ -110,12 +110,12 @@ if (!progressive.includes("ArchiveMilestoneTimeline")) {
   fail("L2 must include ArchiveMilestoneTimeline");
 }
 
-const home = read("components/archive/EvidenceArchiveHome.tsx");
+const home = read("apps/web/components/archive/EvidenceArchiveHome.tsx");
 if (!home.includes("ArchiveMilestoneReturnMoment")) {
   fail("EvidenceArchiveHome must include return moment");
 }
 
-const mobile = read("apps/voicememory_mobile/lib/screens/archive_belief_screen.dart");
+const mobile = read("apps/mobile/lib/screens/archive_belief_screen.dart");
 if (!mobile.includes("ArchiveLatestMilestoneMobile")) {
   fail("mobile archive must show latest milestone");
 }

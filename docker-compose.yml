@@ -1,11 +1,51 @@
-version: "3.8"
-
 services:
-  telemetry-backend:
-    image: archiveme/telemetry-backend:latest
+  web:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: apps/web/Dockerfile
+    image: archiveme/web:latest
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      NODE_ENV: production
+      PORT: "3000"
+      HOSTNAME: 0.0.0.0
+    deploy:
+      resources:
+        limits:
+          cpus: "1.5"
+          memory: 2G
+        reservations:
+          cpus: "0.25"
+          memory: 512M
+    ulimits:
+      nofile:
+        soft: 65536
+        hard: 65536
+    security_opt:
+      - no-new-privileges:true
+    init: true
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://127.0.0.1:3000/').then((r)=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
+        ]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 60s
+    networks:
+      - archiveme-mesh
+
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    image: archiveme/api:latest
     restart: unless-stopped
     env_file:
       - .env
@@ -13,9 +53,8 @@ services:
       NODE_ENV: production
       PORT: "8080"
       HOSTNAME: 0.0.0.0
-      REDIS_URL: redis://redis-cluster:6379/0
+      REDIS_URL: redis://redis:6379/0
       LOG_LEVEL: info
-    # Enforce strict resource constraints to prevent a single runaway stream from crashing the node
     deploy:
       resources:
         limits:
@@ -24,7 +63,6 @@ services:
         reservations:
           cpus: "0.5"
           memory: 1G
-    # Raise per-process descriptor caps for concurrent live-audio WebSocket pools
     ulimits:
       nofile:
         soft: 65536
@@ -33,11 +71,8 @@ services:
         soft: 65536
         hard: 65536
     sysctls:
-      # Listen backlog for burst connection storms (requires Docker sysctl allow-list on host)
       net.core.somaxconn: 32768
-      # Recycle TIME_WAIT sockets faster under high churn
       net.ipv4.tcp_tw_reuse: 1
-      # Widen ephemeral port range for outbound Gemini upstream sockets
       net.ipv4.ip_local_port_range: 1024 65535
     security_opt:
       - no-new-privileges:true
@@ -55,12 +90,12 @@ services:
       retries: 3
       start_period: 60s
     depends_on:
-      redis-cluster:
+      redis:
         condition: service_healthy
     networks:
-      - telemetry-mesh
+      - archiveme-mesh
 
-  redis-cluster:
+  redis:
     image: redis:7-alpine
     restart: unless-stopped
     command:
@@ -85,20 +120,21 @@ services:
       timeout: 3s
       retries: 5
     networks:
-      - telemetry-mesh
+      - archiveme-mesh
 
-  # Reverse proxy layer configured for HTTP + live-audio WebSocket upgrades
   gateway:
     image: nginx:1.27-alpine
     restart: unless-stopped
     ports:
-      - "443:443"
       - "80:80"
+      - "443:443"
     volumes:
       - ./nginx.prod.conf:/etc/nginx/nginx.conf:ro
       - /etc/letsencrypt:/etc/letsencrypt:ro
     depends_on:
-      telemetry-backend:
+      web:
+        condition: service_healthy
+      api:
         condition: service_healthy
     ulimits:
       nofile:
@@ -110,8 +146,8 @@ services:
     security_opt:
       - no-new-privileges:true
     networks:
-      - telemetry-mesh
+      - archiveme-mesh
 
 networks:
-  telemetry-mesh:
+  archiveme-mesh:
     driver: bridge

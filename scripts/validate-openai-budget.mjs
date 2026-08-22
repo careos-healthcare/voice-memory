@@ -15,27 +15,27 @@ function fail(msg) {
 }
 
 for (const rel of [
-  "lib/server/openai-cost-estimator.ts",
-  "lib/server/openai-budget-core.ts",
-  "lib/server/openai-budget-guard.ts",
-  "lib/server/openai-spend-store.ts",
-  "lib/server/api-limits.ts",
-  "lib/recording/openai-api-response.ts",
+  "packages/shared/lib/server/openai-cost-estimator.ts",
+  "packages/shared/lib/server/openai-budget-core.ts",
+  "packages/shared/lib/server/openai-budget-guard.ts",
+  "packages/shared/lib/server/openai-spend-store.ts",
+  "packages/shared/lib/server/api-limits.ts",
+  "packages/shared/lib/recording/openai-api-response.ts",
 ]) {
   if (!fs.existsSync(path.join(ROOT, rel))) fail(`missing ${rel}`);
 }
 
-const guard = fs.readFileSync(path.join(ROOT, "lib/server/api-guard.ts"), "utf8");
+const guard = fs.readFileSync(path.join(ROOT, "packages/shared/lib/server/api-guard.ts"), "utf8");
 if (!guard.includes("guardOpenAiBudget")) {
   fail("api-guard must enforce OpenAI budget");
 }
 
-const db = fs.readFileSync(path.join(ROOT, "lib/server/db.ts"), "utf8");
+const db = fs.readFileSync(path.join(ROOT, "packages/shared/lib/server/db.ts"), "utf8");
 if (!db.includes("openai_daily_spend")) {
   fail("db schema must include openai_daily_spend");
 }
 
-const weekly = fs.readFileSync(path.join(ROOT, "app/api/weekly-reflection/route.ts"), "utf8");
+const weekly = fs.readFileSync(path.join(ROOT, "apps/api/app/api/weekly-reflection/route.ts"), "utf8");
 if (!weekly.includes("guardOpenAiRoute")) {
   fail("weekly-reflection must use guardOpenAiRoute");
 }
@@ -48,9 +48,9 @@ if (!pkg.scripts["validate:openai-budget"]) {
 const {
   estimateTranscribeCost,
   estimateAnalyzeCost,
-} = await import("../lib/server/openai-cost-estimator.ts");
-const { getOpenAiBudgetLimits } = await import("../lib/server/openai-budget-core.ts");
-const { reserveOpenAiSpend, peekOpenAiSpend } = await import("../lib/server/openai-spend-store.ts");
+} = await import("../packages/shared/lib/server/openai-cost-estimator.ts");
+const { getOpenAiBudgetLimits } = await import("../packages/shared/lib/server/openai-budget-core.ts");
+const { reserveOpenAiSpend, peekOpenAiSpend } = await import("../packages/shared/lib/server/openai-spend-store.ts");
 
 assert.ok(estimateTranscribeCost({ durationSeconds: 45 }) > 0);
 assert.ok(estimateAnalyzeCost(1000) > 0);
@@ -73,7 +73,7 @@ const ok = await reserveOpenAiSpend(subject, 100, 500);
 assert.equal(ok.ok, true);
 assert.equal(await peekOpenAiSpend(subject), 100);
 
-const { runOpenAiBudgetTests } = await import("../lib/reliability/openai-budget-tests.ts");
+const { runOpenAiBudgetTests } = await import("../packages/shared/lib/reliability/openai-budget-tests.ts");
 const { failures: testFailures } = await runOpenAiBudgetTests();
 if (testFailures.length) {
   fail(`openai-budget-tests:\n${testFailures.join("\n")}`);

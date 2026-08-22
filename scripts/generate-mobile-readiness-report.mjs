@@ -9,7 +9,7 @@ import { fileURLToPath } from "node:url";
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
 const { buildMobileProductionReadinessReport } = await import(
-  path.join(ROOT, "lib/mobile/mobile-production-readiness.ts")
+  path.join(ROOT, "packages/shared/lib/mobile/mobile-production-readiness.ts")
 );
 
 const report = buildMobileProductionReadinessReport();

@@ -7,7 +7,7 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const failures = [];
 
 const engine = fs.readFileSync(
-  path.join(ROOT, "lib/persistence/journal-sync-engine.ts"),
+  path.join(ROOT, "packages/shared/lib/persistence/journal-sync-engine.ts"),
   "utf8",
 );
 
@@ -23,11 +23,11 @@ for (const token of [
   if (!engine.includes(token)) failures.push(`journal-sync-engine missing ${token}`);
 }
 
-if (!fs.existsSync(path.join(ROOT, "app/api/journal/export/route.ts"))) {
+if (!fs.existsSync(path.join(ROOT, "apps/api/app/api/journal/export/route.ts"))) {
   failures.push("missing journal export route");
 }
 
-const storage = fs.readFileSync(path.join(ROOT, "lib/storage.ts"), "utf8");
+const storage = fs.readFileSync(path.join(ROOT, "packages/shared/lib/storage.ts"), "utf8");
 if (!storage.includes("syncEntryServerFirst")) {
   failures.push("saveEntry must use server-first sync");
 }

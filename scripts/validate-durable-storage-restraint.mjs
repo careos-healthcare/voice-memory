@@ -6,14 +6,14 @@ import { fileURLToPath } from "node:url";
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
 const REQUIRED_FILES = [
-  "lib/server/db.ts",
-  "lib/server/auth-diagnostics.ts",
-  "lib/server/auth-store-postgres.ts",
-  "lib/server/sync-store-postgres.ts",
+  "packages/shared/lib/server/db.ts",
+  "packages/shared/lib/server/auth-diagnostics.ts",
+  "packages/shared/lib/server/auth-store-postgres.ts",
+  "packages/shared/lib/server/sync-store-postgres.ts",
   "docs/sql/001_auth_sync_schema.sql",
-  "lib/server/auth-storage.ts",
-  "lib/server/auth-store.ts",
-  "lib/server/sync-store.ts",
+  "packages/shared/lib/server/auth-storage.ts",
+  "packages/shared/lib/server/auth-store.ts",
+  "packages/shared/lib/server/sync-store.ts",
 ];
 
 const missing = REQUIRED_FILES.filter((rel) => !fs.existsSync(path.join(ROOT, rel)));
@@ -23,14 +23,14 @@ if (missing.length > 0) {
   process.exit(1);
 }
 
-const authStorage = fs.readFileSync(path.join(ROOT, "lib/server/auth-storage.ts"), "utf8");
-const authStore = fs.readFileSync(path.join(ROOT, "lib/server/auth-store.ts"), "utf8");
-const syncStore = fs.readFileSync(path.join(ROOT, "lib/server/sync-store.ts"), "utf8");
-const db = fs.readFileSync(path.join(ROOT, "lib/server/db.ts"), "utf8");
+const authStorage = fs.readFileSync(path.join(ROOT, "packages/shared/lib/server/auth-storage.ts"), "utf8");
+const authStore = fs.readFileSync(path.join(ROOT, "packages/shared/lib/server/auth-store.ts"), "utf8");
+const syncStore = fs.readFileSync(path.join(ROOT, "packages/shared/lib/server/sync-store.ts"), "utf8");
+const db = fs.readFileSync(path.join(ROOT, "packages/shared/lib/server/db.ts"), "utf8");
 const schema = fs.readFileSync(path.join(ROOT, "docs/sql/001_auth_sync_schema.sql"), "utf8");
 const envExample = fs.readFileSync(path.join(ROOT, ".env.example"), "utf8");
 const sendCodeRoute = fs.readFileSync(
-  path.join(ROOT, "app/api/auth/send-code/route.ts"),
+  path.join(ROOT, "apps/api/app/api/auth/send-code/route.ts"),
   "utf8",
 );
 
@@ -109,7 +109,7 @@ if (!sendCodeRoute.includes("AUTH_DATABASE_FAILED") || !sendCodeRoute.includes("
 }
 
 const sessionRoute = fs.readFileSync(
-  path.join(ROOT, "app/api/auth/session/route.ts"),
+  path.join(ROOT, "apps/api/app/api/auth/session/route.ts"),
   "utf8",
 );
 if (!sessionRoute.includes("logAuthError") || !sessionRoute.includes("AUTH_SESSION_FAILED")) {
@@ -118,7 +118,7 @@ if (!sessionRoute.includes("logAuthError") || !sessionRoute.includes("AUTH_SESSI
 }
 
 const syncPostgres = fs.readFileSync(
-  path.join(ROOT, "lib/server/sync-store-postgres.ts"),
+  path.join(ROOT, "packages/shared/lib/server/sync-store-postgres.ts"),
   "utf8",
 );
 if (

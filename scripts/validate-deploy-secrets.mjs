@@ -2,7 +2,7 @@
 import {
   printDeployProofSummary,
   runDeployProofOrchestrator,
-} from "../lib/proof/deploy-proof-orchestrator.ts";
+} from "../packages/shared/lib/proof/deploy-proof-orchestrator.ts";
 
 const report = await runDeployProofOrchestrator();
 printDeployProofSummary(report);

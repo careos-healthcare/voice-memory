@@ -7,11 +7,11 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const failures = [];
 
 const required = [
-  "types/return-thread.ts",
-  "lib/continuity/return-threads.ts",
-  "lib/continuity/build-continuity-lines.ts",
-  "components/continuity/ReturnThreadCard.tsx",
-  "components/continuity/ReturnThreadsOverview.tsx",
+  "packages/shared/types/return-thread.ts",
+  "packages/shared/lib/continuity/return-threads.ts",
+  "packages/shared/lib/continuity/build-continuity-lines.ts",
+  "apps/web/components/continuity/ReturnThreadCard.tsx",
+  "apps/web/components/continuity/ReturnThreadsOverview.tsx",
 ];
 
 for (const rel of required) {
@@ -21,7 +21,7 @@ for (const rel of required) {
 }
 
 const threads = fs.readFileSync(
-  path.join(ROOT, "lib/continuity/return-threads.ts"),
+  path.join(ROOT, "packages/shared/lib/continuity/return-threads.ts"),
   "utf8",
 );
 const types = [
@@ -42,7 +42,7 @@ if (!threads.includes("buildReturnThreads") || !threads.includes("groupReturnThr
 }
 
 const lines = fs.readFileSync(
-  path.join(ROOT, "lib/continuity/build-continuity-lines.ts"),
+  path.join(ROOT, "packages/shared/lib/continuity/build-continuity-lines.ts"),
   "utf8",
 );
 if (!lines.includes("buildContinuityLineForThread") || !lines.includes("preMicContinuityLine")) {
@@ -50,9 +50,9 @@ if (!lines.includes("buildContinuityLineForThread") || !lines.includes("preMicCo
 }
 
 const primaryRoutes = [
-  "app/insights/page.tsx",
-  "app/timeline/page.tsx",
-  "app/memory/page.tsx",
+  "apps/web/app/insights/page.tsx",
+  "apps/web/app/timeline/page.tsx",
+  "apps/web/app/memory/page.tsx",
 ];
 for (const file of primaryRoutes) {
   const text = fs.readFileSync(path.join(ROOT, file), "utf8");

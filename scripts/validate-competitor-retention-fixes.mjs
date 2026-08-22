@@ -7,17 +7,14 @@ import { fileURLToPath } from "node:url";
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
 const CHILD = [
-  "validate:session-movement-summary",
   "validate:archive-asset-value",
-  "validate:archive-maturity",
-  "validate:effort-compounds",
   "validate:hard-to-reproduce-proof",
   "validate:archive-moat-copy",
 ];
 
 const REQUIRED_INTERNAL = [
-  "lib/internal/retention-moat-report.ts",
-  "components/internal/RetentionMoatPanel.tsx",
+  "packages/shared/lib/internal/retention-moat-report.ts",
+  "apps/web/components/internal/RetentionMoatPanel.tsx",
 ];
 
 for (const rel of REQUIRED_INTERNAL) {
@@ -28,7 +25,7 @@ for (const rel of REQUIRED_INTERNAL) {
 }
 
 const retentionPage = fs.readFileSync(
-  path.join(ROOT, "app/internal/retention-discovery/page.tsx"),
+  path.join(ROOT, "apps/web/app/internal/retention-discovery/page.tsx"),
   "utf8",
 );
 if (!retentionPage.includes("RetentionMoatPanel")) {

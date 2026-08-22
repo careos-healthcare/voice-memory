@@ -1,0 +1,5 @@
+==> research package import guard
+OK — production lib/ does not import archiveme_research
+==> deferred screens must not be production route builders
+==> production router screens must be allowlisted
+error: OfflineSyncVerificationScreen used in router but missing from V1ProductionAllowlist.productionRouterScreens

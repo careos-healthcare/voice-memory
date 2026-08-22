@@ -12,32 +12,32 @@ function fail(msg) {
 }
 
 for (const rel of [
-  "lib/auth/guest-first-auth.ts",
-  "lib/auth/auth-trigger-rules.ts",
-  "lib/auth/auth-value-validation.ts",
-  "types/auth-trigger.ts",
-  "types/auth-value-validation.ts",
+  "packages/shared/lib/auth/guest-first-auth.ts",
+  "packages/shared/lib/auth/auth-trigger-rules.ts",
+  "packages/shared/lib/auth/auth-value-validation.ts",
+  "packages/shared/types/auth-trigger.ts",
+  "packages/shared/types/auth-value-validation.ts",
   "docs/AUTH_VALUE_VALIDATION.md",
-  "components/auth/EmailCodeAuthModal.tsx",
-  "components/auth/ProtectArchiveBanner.tsx",
-  "components/auth/AuthPromptProvider.tsx",
-  "components/internal/AuthValueValidationPanel.tsx",
-  "app/internal/auth-value-validation/page.tsx",
-  "apps/voicememory_mobile/lib/auth/guest_first_auth.dart",
-  "apps/voicememory_mobile/lib/widgets/protect_archive_banner.dart",
+  "apps/web/components/auth/EmailCodeAuthModal.tsx",
+  "apps/web/components/auth/ProtectArchiveBanner.tsx",
+  "apps/web/components/auth/AuthPromptProvider.tsx",
+  "apps/web/components/internal/AuthValueValidationPanel.tsx",
+  "apps/web/app/internal/auth-value-validation/page.tsx",
+  "apps/mobile/lib/auth/guest_first_auth.dart",
+  "apps/mobile/lib/widgets/protect_archive_banner.dart",
 ]) {
   if (!fs.existsSync(path.join(ROOT, rel))) fail(`missing ${rel}`);
 }
 
-const providers = fs.readFileSync(path.join(ROOT, "app/providers.tsx"), "utf8");
+const providers = fs.readFileSync(path.join(ROOT, "apps/web/app/providers.tsx"), "utf8");
 if (!providers.includes("AuthPromptProvider")) {
   fail("AppProviders must wrap AuthPromptProvider");
 }
 
-const page = fs.readFileSync(path.join(ROOT, "app/page.tsx"), "utf8");
+const page = fs.readFileSync(path.join(ROOT, "apps/web/app/page.tsx"), "utf8");
 if (!page.includes("ProtectArchiveBanner")) fail("home must show ProtectArchiveBanner");
 
-const recorder = fs.readFileSync(path.join(ROOT, "components/Recorder.tsx"), "utf8");
+const recorder = fs.readFileSync(path.join(ROOT, "apps/web/components/Recorder.tsx"), "utf8");
 if (!recorder.includes("ensureCaptureAttested")) {
   fail("Recorder must still use device attest for guest recording");
 }
@@ -45,8 +45,8 @@ if (!recorder.includes("ensureCaptureAttested")) {
 const {
   shouldPromptForAuthTrigger,
   readAuthTriggerContext,
-} = await import("../lib/auth/auth-trigger-rules.ts");
-const { shouldShowProtectArchiveBanner } = await import("../lib/auth/guest-first-auth.ts");
+} = await import("../packages/shared/lib/auth/auth-trigger-rules.ts");
+const { shouldShowProtectArchiveBanner } = await import("../packages/shared/lib/auth/guest-first-auth.ts");
 
 assert.equal(
   shouldPromptForAuthTrigger("export", { isSignedIn: false, reflectionCount: 0 }),
@@ -57,7 +57,7 @@ assert.equal(
   true,
 );
 
-const guestAuth = fs.readFileSync(path.join(ROOT, "lib/auth/guest-first-auth.ts"), "utf8");
+const guestAuth = fs.readFileSync(path.join(ROOT, "packages/shared/lib/auth/guest-first-auth.ts"), "utf8");
 for (const event of [
   "guest_mode_started",
   "protect_archive_clicked",

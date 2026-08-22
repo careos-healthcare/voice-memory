@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 import assert from "node:assert/strict";
 
-import { entitlementsForTier, FREE_ARCHIVE_LIMIT } from "../lib/entitlement/tiers.ts";
+import { entitlementsForTier, FREE_ARCHIVE_LIMIT } from "../packages/shared/lib/entitlement/tiers.ts";
 import {
   getPaymentStackAudit,
   isLiveBillingAvailable,
-} from "../lib/entitlement/payment-stack.ts";
-import { entriesForResurfacingScope } from "../lib/entitlement/resurfacing-scope.ts";
+} from "../packages/shared/lib/entitlement/payment-stack.ts";
+import { entriesForResurfacingScope } from "../packages/shared/lib/entitlement/resurfacing-scope.ts";
 
 const audit = getPaymentStackAudit();
 assert.equal(audit.checkoutImplemented, isLiveBillingAvailable());

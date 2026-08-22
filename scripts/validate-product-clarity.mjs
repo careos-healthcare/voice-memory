@@ -28,37 +28,37 @@ function mustInclude(fileRel, tokens) {
 }
 
 const requiredFiles = [
-  "lib/product/product-clarity-copy.ts",
-  "lib/product/pattern-activation.ts",
-  "lib/product/returning-home.ts",
-  "lib/product/archive-product-copy.ts",
-  "components/archive/ArchiveProductWayfinding.tsx",
-  "lib/product/activation-metrics.ts",
-  "components/product/PatternActivationProgress.tsx",
-  "components/product/HomepageChatGptComparison.tsx",
-  "components/product/ProductDemoStory.tsx",
-  "components/product/ReturningDiscoverRedirect.tsx",
-  "components/internal/ActivationMetricsPanel.tsx",
-  "lib/product/activation-theory-preview.ts",
-  "components/product/ActivationTheoryPreview.tsx",
-  "components/product/FirstBlindSpotSimulator.tsx",
-  "components/product/ArchiveValueBanner.tsx",
-  "components/product/ReflectionValueLadder.tsx",
-  "lib/product/archive-value-progress.ts",
-  "lib/billing/value-moment-paywall-copy.ts",
-  "components/billing/ValueMomentPaywall.tsx",
-  "lib/archive/archive-worth.ts",
-  "components/archive/ArchiveWorthStatement.tsx",
-  "lib/product/archive-product-model.ts",
-  "components/archive/ArchiveCommandCenter.tsx",
-  "lib/product/product-simplification-copy.ts",
+  "packages/shared/lib/product/product-clarity-copy.ts",
+  "packages/shared/lib/product/pattern-activation.ts",
+  "packages/shared/lib/product/returning-home.ts",
+  "packages/shared/lib/product/archive-product-copy.ts",
+  "apps/web/components/archive/ArchiveProductWayfinding.tsx",
+  "packages/shared/lib/product/activation-metrics.ts",
+  "apps/web/components/product/PatternActivationProgress.tsx",
+  "apps/web/components/product/HomepageChatGptComparison.tsx",
+  "apps/web/components/product/ProductDemoStory.tsx",
+  "apps/web/components/product/ReturningDiscoverRedirect.tsx",
+  "apps/web/components/internal/ActivationMetricsPanel.tsx",
+  "packages/shared/lib/product/activation-theory-preview.ts",
+  "apps/web/components/product/ActivationTheoryPreview.tsx",
+  "apps/web/components/product/FirstBlindSpotSimulator.tsx",
+  "apps/web/components/product/ArchiveValueBanner.tsx",
+  "apps/web/components/product/ReflectionValueLadder.tsx",
+  "packages/shared/lib/product/archive-value-progress.ts",
+  "packages/shared/lib/billing/value-moment-paywall-copy.ts",
+  "apps/web/components/billing/ValueMomentPaywall.tsx",
+  "packages/shared/lib/archive/archive-worth.ts",
+  "apps/web/components/archive/ArchiveWorthStatement.tsx",
+  "packages/shared/lib/product/archive-product-model.ts",
+  "apps/web/components/archive/ArchiveCommandCenter.tsx",
+  "packages/shared/lib/product/product-simplification-copy.ts",
 ];
 
 for (const rel of requiredFiles) {
   if (!fs.existsSync(path.join(ROOT, rel))) failures.push(`missing ${rel}`);
 }
 
-mustInclude("lib/product/product-clarity-copy.ts", [
+mustInclude("packages/shared/lib/product/product-clarity-copy.ts", [
   "LANDING_3_DAY_CHALLENGE",
   "LANDING_3_DAY_CHALLENGE.hero",
   "LANDING_3_DAY_CHALLENGE.chatGptDifferentiation",
@@ -69,13 +69,13 @@ mustInclude("lib/product/product-clarity-copy.ts", [
   "EVOLVING_VIEW_INTRO",
 ]);
 
-mustInclude("lib/theories/personal-theory-copy.ts", ["See what changed"]);
-mustInclude("lib/product/archive-product-copy.ts", [
+mustInclude("packages/shared/lib/theories/personal-theory-copy.ts", ["See what changed"]);
+mustInclude("packages/shared/lib/product/archive-product-copy.ts", [
   "Check the state of your archive",
   "See archive changes",
 ]);
 
-mustInclude("app/page.tsx", [
+mustInclude("apps/web/app/page.tsx", [
   "ReturningDiscoverRedirect",
   "HomepageChatGptComparison",
   "ProductDemoStory",
@@ -87,12 +87,12 @@ mustInclude("app/page.tsx", [
   "WhatThisArchiveCanAnswer",
 ]);
 
-mustInclude("app/archive-belief/page.tsx", ["EvidenceArchiveHome"]);
-mustInclude("components/archive/EvidenceArchiveHome.tsx", [
+mustInclude("apps/web/app/archive-belief/page.tsx", ["EvidenceArchiveHome"]);
+mustInclude("apps/web/components/archive/EvidenceArchiveHome.tsx", [
   "ArchiveCommandCenter",
   "PAGE_TITLE_ARCHIVE",
 ]);
-mustInclude("app/memory/page.tsx", [
+mustInclude("apps/web/app/memory/page.tsx", [
   "ActivationTheoryPreview",
   "FirstBlindSpotSimulator",
   "PatternActivationProgress",
@@ -105,12 +105,12 @@ mustInclude("app/memory/page.tsx", [
   "MEMORY_PAGE_UTILITY_TITLE",
 ]);
 
-mustInclude("app/discover/page.tsx", [
+mustInclude("apps/web/app/discover/page.tsx", [
   "DISCOVER_PAGE.heading",
   "TheoryChangeFeed",
   "ArchiveProductWayfinding",
 ]);
-mustInclude("lib/billing/value-moment-paywall-copy.ts", [
+mustInclude("packages/shared/lib/billing/value-moment-paywall-copy.ts", [
   "ChatGPT can answer a conversation",
   "First proof from your saves",
   "First working belief",
@@ -118,12 +118,12 @@ mustInclude("lib/billing/value-moment-paywall-copy.ts", [
   "Full pattern timeline",
   "VALUE_MOMENT_PRO_PRICE_LABEL",
 ]);
-mustInclude("lib/theories/personal-theory-copy.ts", [
+mustInclude("packages/shared/lib/theories/personal-theory-copy.ts", [
   "What your archive currently believes",
 ]);
 
 const copySrc = fs.readFileSync(
-  path.join(ROOT, "lib/product/product-clarity-copy.ts"),
+  path.join(ROOT, "packages/shared/lib/product/product-clarity-copy.ts"),
   "utf8",
 );
 if (/\bcoaching\b/i.test(copySrc)) failures.push("product-clarity-copy must not say coaching");
@@ -137,14 +137,14 @@ if (/diagnos/i.test(copySrc) && !/not a diagnos/i.test(copySrc)) {
 const {
   buildPatternActivationProgress,
   PATTERN_REVIEW_REFLECTION_TARGET,
-} = await import("../lib/product/pattern-activation.ts");
+} = await import("../packages/shared/lib/product/pattern-activation.ts");
 const progress = buildPatternActivationProgress(2);
 assert.equal(progress?.line, "2/5 reflections toward your first belief.");
 assert.equal(PATTERN_REVIEW_REFLECTION_TARGET, 5);
 
 const { buildActivationMetricsReport, ACTIVATION_METRIC_EVENTS, observeActivationReflectionCount } =
-  await import("../lib/product/activation-metrics.ts");
-const { trackLocalEvent } = await import("../lib/local-analytics.ts");
+  await import("../packages/shared/lib/product/activation-metrics.ts");
+const { trackLocalEvent } = await import("../packages/shared/lib/local-analytics.ts");
 
 observeActivationReflectionCount(5);
 const report = buildActivationMetricsReport();
@@ -153,17 +153,17 @@ assert.ok(report.lines.length === 3);
 assert.ok(ACTIVATION_METRIC_EVENTS.fiveReflectionsReached);
 
 const returningSrc = fs.readFileSync(
-  path.join(ROOT, "lib/product/returning-home.ts"),
+  path.join(ROOT, "packages/shared/lib/product/returning-home.ts"),
   "utf8",
 );
 assert.ok(returningSrc.includes("shouldAutoRedirectToArchiveBelief"));
 assert.ok(returningSrc.includes("/archive-belief"));
 
-mustInclude("components/SiteHeader.tsx", [
+mustInclude("apps/web/components/SiteHeader.tsx", [
   "SIMPLICITY_PRIMARY_NAV",
   "/archive-belief",
 ]);
-mustInclude("lib/product/simplicity-mode.ts", [
+mustInclude("packages/shared/lib/product/simplicity-mode.ts", [
   'label: "Record"',
   'label: "Archive"',
   'label: "Archive Activity"',

@@ -5,10 +5,10 @@ import {
   isNativeWrapper,
   isPWA,
   supportsPush,
-} from "../lib/mobile/platform.ts";
-import { QUIET_NOTIFICATION_TRIGGERS } from "../lib/notifications/triggers.ts";
-import { NOTIFICATION_COPY } from "../lib/notifications/notification-copy.ts";
-import { buildQuietNotificationPayload } from "../lib/notifications/triggers.ts";
+} from "../packages/shared/lib/mobile/platform.ts";
+import { QUIET_NOTIFICATION_TRIGGERS } from "../packages/shared/lib/notifications/triggers.ts";
+import { NOTIFICATION_COPY } from "../packages/shared/lib/notifications/notification-copy.ts";
+import { buildQuietNotificationPayload } from "../packages/shared/lib/notifications/triggers.ts";
 
 assert.equal(isNativeWrapper(), false);
 assert.equal(isPWA(), false);

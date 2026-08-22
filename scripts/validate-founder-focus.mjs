@@ -19,23 +19,23 @@ function mustExist(rel) {
 }
 
 for (const rel of [
-  "types/founder-focus.ts",
-  "lib/internal/founder-priority.ts",
-  "lib/internal/founder-focus-copy.ts",
-  "lib/internal/north-star-report.ts",
-  "lib/internal/founder-archive-dashboard.ts",
-  "lib/product/feature-filter.ts",
-  "components/internal/FounderInternalNav.tsx",
-  "components/internal/FounderModePreamble.tsx",
-  "components/internal/NorthStarDashboard.tsx",
-  "components/internal/FounderArchiveDashboard.tsx",
-  "app/internal/north-star/page.tsx",
-  "app/internal/archive/page.tsx",
+  "packages/shared/types/founder-focus.ts",
+  "packages/shared/lib/internal/founder-priority.ts",
+  "packages/shared/lib/internal/founder-focus-copy.ts",
+  "packages/shared/lib/internal/north-star-report.ts",
+  "packages/shared/lib/internal/founder-archive-dashboard.ts",
+  "packages/shared/lib/product/feature-filter.ts",
+  "apps/web/components/internal/FounderInternalNav.tsx",
+  "apps/web/components/internal/FounderModePreamble.tsx",
+  "apps/web/components/internal/NorthStarDashboard.tsx",
+  "apps/web/components/internal/FounderArchiveDashboard.tsx",
+  "apps/web/app/internal/north-star/page.tsx",
+  "apps/web/app/internal/archive/page.tsx",
 ]) {
   mustExist(rel);
 }
 
-const copy = read("lib/internal/founder-focus-copy.ts");
+const copy = read("packages/shared/lib/internal/founder-focus-copy.ts");
 for (const token of [
   "The biggest risk is not missing features",
   "First archive belief",
@@ -51,13 +51,13 @@ for (const token of [
   if (!copy.includes(token)) fail(`founder-focus-copy missing ${token}`);
 }
 
-const northStarReport = read("lib/internal/north-star-report.ts");
+const northStarReport = read("packages/shared/lib/internal/north-star-report.ts");
 if (!northStarReport.includes("NORTH_STAR_METRIC_COUNT = 5")) {
   fail("north-star-report must cap at 5 metrics");
 }
 
-const northStarPage = read("app/internal/north-star/page.tsx");
-const northStarDash = read("components/internal/NorthStarDashboard.tsx");
+const northStarPage = read("apps/web/app/internal/north-star/page.tsx");
+const northStarDash = read("apps/web/components/internal/NorthStarDashboard.tsx");
 if (!northStarPage.includes("NorthStarDashboard")) {
   fail("north-star page must render NorthStarDashboard only");
 }
@@ -65,8 +65,8 @@ if (northStarDash.includes("sm:grid-cols-3")) {
   fail("north star must not expose a sixth metric column layout");
 }
 
-const archiveDash = read("components/internal/FounderArchiveDashboard.tsx");
-const archiveDashLib = read("lib/internal/founder-archive-dashboard.ts");
+const archiveDash = read("apps/web/components/internal/FounderArchiveDashboard.tsx");
+const archiveDashLib = read("packages/shared/lib/internal/founder-archive-dashboard.ts");
 if (!archiveDash.includes("FOUNDER_DASHBOARD_TAB_COUNT")) {
   fail("FounderArchiveDashboard must reference FOUNDER_DASHBOARD_TAB_COUNT");
 }
@@ -77,12 +77,12 @@ for (const tab of ["activation", "return", "conversion"]) {
   if (!archiveDashLib.includes(tab)) fail(`founder-archive-dashboard missing tab ${tab}`);
 }
 
-const priority = read("lib/internal/founder-priority.ts");
+const priority = read("packages/shared/lib/internal/founder-priority.ts");
 for (const token of ["CORE", "ARCHIVED", "changesProductDecision", "getFounderPanelPriorityRegistry"]) {
   if (!priority.includes(token)) fail(`founder-priority missing ${token}`);
 }
 
-const featureFilter = read("lib/product/feature-filter.ts");
+const featureFilter = read("packages/shared/lib/product/feature-filter.ts");
 if (!featureFilter.includes("LOW PRIORITY")) {
   fail("feature-filter must flag LOW PRIORITY");
 }
@@ -90,13 +90,13 @@ for (const axis of ["improvesActivation", "improvesReturn", "improvesConversion"
   if (!featureFilter.includes(axis)) fail(`feature-filter missing ${axis}`);
 }
 
-const layout = read("app/internal/layout.tsx");
+const layout = read("apps/web/app/internal/layout.tsx");
 if (!layout.includes("FounderInternalNav")) {
   fail("internal layout must render FounderInternalNav");
 }
 
-const nav = read("components/internal/FounderInternalNav.tsx");
-const navCopy = read("lib/internal/founder-focus-copy.ts");
+const nav = read("apps/web/components/internal/FounderInternalNav.tsx");
+const navCopy = read("packages/shared/lib/internal/founder-focus-copy.ts");
 if (!nav.includes("FOUNDER_INTERNAL_NAV")) {
   fail("FounderInternalNav must use FOUNDER_INTERNAL_NAV");
 }
@@ -108,8 +108,8 @@ if (
 }
 
 const hubFiles = [
-  "app/internal/founder-test/FounderTestShell.tsx",
-  "app/internal/retention-discovery/page.tsx",
+  "apps/web/app/internal/founder-test/FounderTestShell.tsx",
+  "apps/web/app/internal/retention-discovery/page.tsx",
 ];
 const allowedHubTargets = ["/internal", "/internal/launch", "/internal/activation", "/internal/return", "/internal/conversion", "/internal/distribution", "/internal/mobile-readiness"];
 for (const rel of hubFiles) {
@@ -124,14 +124,14 @@ for (const rel of hubFiles) {
 
 try {
   const { buildNorthStarDashboard, NORTH_STAR_METRIC_COUNT } = await import(
-    path.join(ROOT, "lib/internal/north-star-report.ts")
+    path.join(ROOT, "packages/shared/lib/internal/north-star-report.ts")
   );
   const view = buildNorthStarDashboard();
   if (view.metrics.length !== NORTH_STAR_METRIC_COUNT) {
     fail(`north star must expose ${NORTH_STAR_METRIC_COUNT} metrics, got ${view.metrics.length}`);
   }
   const { getFounderPanelPriorityRegistry, NORTH_STAR_METRIC_IDS, FOUNDER_DASHBOARD_TAB_IDS } =
-    await import(path.join(ROOT, "lib/internal/founder-priority.ts"));
+    await import(path.join(ROOT, "packages/shared/lib/internal/founder-priority.ts"));
   if (NORTH_STAR_METRIC_IDS.length !== 5) fail("NORTH_STAR_METRIC_IDS must be 5");
   if (FOUNDER_DASHBOARD_TAB_IDS.length !== 3) fail("FOUNDER_DASHBOARD_TAB_IDS must be 3");
   const registry = getFounderPanelPriorityRegistry();
@@ -150,7 +150,7 @@ try {
 }
 
 function listInternalRoutes() {
-  const internalRoot = path.join(ROOT, "app/internal");
+  const internalRoot = path.join(ROOT, "apps/web/app/internal");
   const routes = [];
   if (fs.existsSync(path.join(internalRoot, "page.tsx"))) {
     routes.push("/internal");

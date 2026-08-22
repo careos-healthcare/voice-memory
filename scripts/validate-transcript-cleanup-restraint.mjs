@@ -6,13 +6,13 @@ import { fileURLToPath } from "node:url";
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
 const REQUIRED = [
-  "lib/transcript/transcript-cleanup.ts",
-  "types/transcript-cleanup.ts",
-  "lib/debug/transcript-cleanup-review.ts",
-  "components/internal/TranscriptCleanupDebugPanel.tsx",
-  "app/internal/transcript-cleanup/page.tsx",
-  "types/journal.ts",
-  "lib/patterns/phrase-memory.ts",
+  "packages/shared/lib/transcript/transcript-cleanup.ts",
+  "packages/shared/types/transcript-cleanup.ts",
+  "packages/shared/lib/debug/transcript-cleanup-review.ts",
+  "apps/web/components/internal/TranscriptCleanupDebugPanel.tsx",
+  "apps/web/app/internal/transcript-cleanup/page.tsx",
+  "packages/shared/types/journal.ts",
+  "packages/shared/lib/patterns/phrase-memory.ts",
 ];
 
 for (const rel of REQUIRED) {
@@ -23,12 +23,12 @@ for (const rel of REQUIRED) {
 }
 
 const cleanup = fs.readFileSync(
-  path.join(ROOT, "lib/transcript/transcript-cleanup.ts"),
+  path.join(ROOT, "packages/shared/lib/transcript/transcript-cleanup.ts"),
   "utf8",
 );
-const journal = fs.readFileSync(path.join(ROOT, "types/journal.ts"), "utf8");
+const journal = fs.readFileSync(path.join(ROOT, "packages/shared/types/journal.ts"), "utf8");
 const phraseMemory = fs.readFileSync(
-  path.join(ROOT, "lib/patterns/phrase-memory.ts"),
+  path.join(ROOT, "packages/shared/lib/patterns/phrase-memory.ts"),
   "utf8",
 );
 const packageJson = fs.readFileSync(path.join(ROOT, "package.json"), "utf8");

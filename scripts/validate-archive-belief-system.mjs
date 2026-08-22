@@ -12,24 +12,24 @@ function fail(msg) {
 }
 
 const required = [
-  "types/archive-belief.ts",
-  "lib/archive/archive-belief.ts",
-  "lib/archive/archive-belief-copy.ts",
-  "lib/metrics/archive-belief-events.ts",
-  "lib/metrics/archive-belief-adoption-report.ts",
-  "components/archive/ArchiveBeliefCard.tsx",
-  "components/archive/ArchiveBeliefEvidenceSection.tsx",
-  "components/archive/CurrentArchiveBeliefStrip.tsx",
-  "components/archive/HomeArchiveBeliefIntro.tsx",
-  "components/internal/ArchiveBeliefAdoptionPanel.tsx",
-  "app/internal/archive-belief/page.tsx",
+  "packages/shared/types/archive-belief.ts",
+  "packages/shared/lib/archive/archive-belief.ts",
+  "packages/shared/lib/archive/archive-belief-copy.ts",
+  "packages/shared/lib/metrics/archive-belief-events.ts",
+  "packages/shared/lib/metrics/archive-belief-adoption-report.ts",
+  "apps/web/components/archive/ArchiveBeliefCard.tsx",
+  "apps/web/components/archive/ArchiveBeliefEvidenceSection.tsx",
+  "apps/web/components/archive/CurrentArchiveBeliefStrip.tsx",
+  "apps/web/components/archive/HomeArchiveBeliefIntro.tsx",
+  "apps/web/components/internal/ArchiveBeliefAdoptionPanel.tsx",
+  "apps/web/app/internal/archive-belief/page.tsx",
 ];
 
 for (const rel of required) {
   if (!fs.existsSync(path.join(ROOT, rel))) fail(`missing ${rel}`);
 }
 
-const copy = fs.readFileSync(path.join(ROOT, "lib/archive/archive-belief-copy.ts"), "utf8");
+const copy = fs.readFileSync(path.join(ROOT, "packages/shared/lib/archive/archive-belief-copy.ts"), "utf8");
 for (const phrase of [
   "What your archive currently believes",
   "Your archive currently believes:",
@@ -44,7 +44,7 @@ for (const phrase of [
   if (!copy.includes(phrase)) fail(`copy missing: ${phrase}`);
 }
 
-const card = fs.readFileSync(path.join(ROOT, "components/archive/ArchiveBeliefCard.tsx"), "utf8");
+const card = fs.readFileSync(path.join(ROOT, "apps/web/components/archive/ArchiveBeliefCard.tsx"), "utf8");
 for (const fn of [
   "trackArchiveBeliefViewed",
   "trackArchiveBeliefExpanded",
@@ -54,7 +54,7 @@ for (const fn of [
 }
 if (!card.includes('data-testid="archive-belief-card"')) fail("belief card test id");
 
-const events = fs.readFileSync(path.join(ROOT, "lib/metrics/archive-belief-events.ts"), "utf8");
+const events = fs.readFileSync(path.join(ROOT, "packages/shared/lib/metrics/archive-belief-events.ts"), "utf8");
 for (const name of [
   "archive_belief_viewed",
   "archive_belief_expanded",
@@ -63,21 +63,21 @@ for (const name of [
   if (!events.includes(name)) fail(`event missing: ${name}`);
 }
 
-const discover = fs.readFileSync(path.join(ROOT, "app/discover/page.tsx"), "utf8");
+const discover = fs.readFileSync(path.join(ROOT, "apps/web/app/discover/page.tsx"), "utf8");
 if (!discover.includes("ArchiveBeliefCard")) fail("discover must show ArchiveBeliefCard");
 if (!discover.includes("TheoryChangeFeed")) fail("discover must show TheoryChangeFeed");
 if (!discover.includes("ArchiveProductWayfinding")) {
   fail("discover must link back to archive-belief");
 }
 
-const memory = fs.readFileSync(path.join(ROOT, "app/memory/page.tsx"), "utf8");
+const memory = fs.readFileSync(path.join(ROOT, "apps/web/app/memory/page.tsx"), "utf8");
 if (!memory.includes("CurrentArchiveBeliefStrip")) fail("memory must show current belief");
 
-const home = fs.readFileSync(path.join(ROOT, "app/page.tsx"), "utf8");
+const home = fs.readFileSync(path.join(ROOT, "apps/web/app/page.tsx"), "utf8");
 if (!home.includes("HomeArchiveBeliefIntro")) fail("home must use HomeArchiveBeliefIntro");
 if (home.includes("ArchiveValueBanner")) fail("home should replace ArchiveValueBanner framing");
 
-const { THEORY_PAGE } = await import("../lib/theories/theory-copy.ts");
+const { THEORY_PAGE } = await import("../packages/shared/lib/theories/theory-copy.ts");
 if (THEORY_PAGE.title !== "Archive beliefs") {
   fail(`theories title must be Archive beliefs, got ${THEORY_PAGE.title}`);
 }
@@ -102,12 +102,12 @@ globalThis.localStorage = {
 };
 
 const { clearArchiveBeliefEventsForEval, trackArchiveBeliefViewed, countArchiveBeliefEvent } =
-  await import("../lib/metrics/archive-belief-events.ts");
-const { buildArchiveBeliefView } = await import("../lib/archive/archive-belief.ts");
+  await import("../packages/shared/lib/metrics/archive-belief-events.ts");
+const { buildArchiveBeliefView } = await import("../packages/shared/lib/archive/archive-belief.ts");
 const { buildArchiveBeliefAdoptionReport } = await import(
-  "../lib/metrics/archive-belief-adoption-report.ts"
+  "../packages/shared/lib/metrics/archive-belief-adoption-report.ts"
 );
-const { scanArchiveVoiceSource } = await import("../lib/archive/archive-voice.ts");
+const { scanArchiveVoiceSource } = await import("../packages/shared/lib/archive/archive-voice.ts");
 
 clearArchiveBeliefEventsForEval();
 

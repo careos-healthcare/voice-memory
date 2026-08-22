@@ -2,9 +2,9 @@ name: ArchiveMe stabilization
 
 on:
   push:
-    branches: [main, 'cursor/**']
+    branches: [main, 'cursor/**', archive-me/focused-beta-stabilization]
   pull_request:
-    branches: [main]
+    branches: [main, archive-me/focused-beta-stabilization]
 
 concurrency:
   group: archiveme-stabilization-${{ github.ref }}
@@ -17,33 +17,54 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
           cache: npm
       - name: npm ci integrity
+        id: install
         run: npm ci --ignore-scripts
+
+      # Guarded with `!cancelled() && install succeeded` rather than the default
+      # fail-fast. Under fail-fast, root `npm run lint` failed on one error and
+      # skipped the eight steps below it — server build, auth security, privacy
+      # logs, the insight gate, three restraint validators and the clinical
+      # audit had therefore never executed once, and nothing in the UI said so.
+      # A skipped guard and a passing guard must not look the same.
       - name: TypeScript check
+        if: ${{ !cancelled() && steps.install.outcome == 'success' }}
         run: npm run typecheck
       - name: ESLint
+        if: ${{ !cancelled() && steps.install.outcome == 'success' }}
         run: npm run lint
       - name: Server build
+        if: ${{ !cancelled() && steps.install.outcome == 'success' }}
         run: npm run build:server
       - name: Server tests
+        if: ${{ !cancelled() && steps.install.outcome == 'success' }}
         run: npm run validate:auth-security
+      # The old `|| node scripts/validate-privacy-logs.mjs` fallback re-ran the
+      # exact command `npm run validate:privacy-logs` already runs, so it could
+      # only ever fail twice and print the failure twice.
       - name: Privacy log validation
-        run: npm run validate:privacy-logs || node scripts/validate-privacy-logs.mjs
+        if: ${{ !cancelled() && steps.install.outcome == 'success' }}
+        run: npm run validate:privacy-logs
       - name: Insight quality gate (PRD Goal #4 — ordered validators)
+        if: ${{ !cancelled() && steps.install.outcome == 'success' }}
         run: npm run validate:insight-quality-gate
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
       - name: Product restraint (consolidated)
+        if: ${{ !cancelled() && steps.install.outcome == 'success' }}
         run: npm run validate:restraint
       - name: Blind-spot validation (consolidated)
+        if: ${{ !cancelled() && steps.install.outcome == 'success' }}
         run: npm run validate:blind-spot
       - name: Resurfacing validation (consolidated)
+        if: ${{ !cancelled() && steps.install.outcome == 'success' }}
         run: npm run validate:resurfacing
       - name: Clinical quarantine audit
+        if: ${{ !cancelled() && steps.install.outcome == 'success' }}
         run: npm run validate:clinical-quarantine
 
   flutter-gates:
@@ -58,24 +79,45 @@ jobs:
           channel: stable
           cache: true
       - name: pub get
+        id: pubget
         run: flutter pub get
+
+      # Same reasoning as server-gates above. Under fail-fast, `analyzer baseline`
+      # failing on pre-existing analyzer errors skipped the six steps below it,
+      # including every step that runs tests. A skipped gate and a passing gate
+      # must not look the same, so each gate reports its own outcome.
       - name: Audit silent catch blocks
+        if: ${{ !cancelled() && steps.pubget.outcome == 'success' }}
         run: python3 tool/run_gate.py audits silent_catches
       - name: dart format check
+        if: ${{ !cancelled() && steps.pubget.outcome == 'success' }}
         run: dart format --output=none --set-exit-if-changed lib test
       - name: analyzer baseline
+        if: ${{ !cancelled() && steps.pubget.outcome == 'success' }}
         run: bash tool/validate_analyzer_baseline.sh
       - name: research import guard
+        if: ${{ !cancelled() && steps.pubget.outcome == 'success' }}
         run: bash tool/validate_no_research_imports.sh
       - name: feature module count budget
+        if: ${{ !cancelled() && steps.pubget.outcome == 'success' }}
         run: python3 tool/run_gate.py budget
       - name: V1 production graph and permissions
+        if: ${{ !cancelled() && steps.pubget.outcome == 'success' }}
         run: bash tool/validate_v1_production_graph.sh
+      # validate_core.sh runs the full suite, but only after its own analyzer gate,
+      # which currently fails on pre-existing errors — so the suite was unreachable
+      # even once the script was back in place. This step reports the suite directly.
+      - name: flutter test (full suite)
+        if: ${{ !cancelled() && steps.pubget.outcome == 'success' }}
+        run: flutter test
       - name: validate core (analyzer + full test suite + release gates)
+        if: ${{ !cancelled() && steps.pubget.outcome == 'success' }}
         run: bash tool/validate_core.sh
       - name: Insight-science theory dart suites
+        if: ${{ !cancelled() && steps.pubget.outcome == 'success' }}
         run: flutter test test/archive_theory_engine_test.dart test/theory_ranking_engine_test.dart test/archive_agreement_service_test.dart test/archive_primary_theory_validation_test.dart test/archive_quality_validation_test.dart
       - name: repository cleanliness
+        if: ${{ !cancelled() && steps.pubget.outcome == 'success' }}
         run: bash tool/validate_repository_cleanliness.sh
 
   flutter-android:

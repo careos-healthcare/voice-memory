@@ -6,16 +6,16 @@ import { fileURLToPath } from "node:url";
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
 const REQUIRED = [
-  "lib/performance/debug-isolation.ts",
-  "lib/performance/lightweight-mode.ts",
-  "lib/performance/perf-instrumentation.ts",
-  "lib/performance/phrase-scan-cache.ts",
-  "lib/performance/resurfacing-cache.ts",
-  "lib/debug/performance-health.ts",
-  "components/internal/PerformanceHealthPanel.tsx",
-  "app/internal/performance-health/page.tsx",
-  "lib/local-analytics.ts",
-  "lib/storage.ts",
+  "packages/shared/lib/performance/debug-isolation.ts",
+  "packages/shared/lib/performance/lightweight-mode.ts",
+  "packages/shared/lib/performance/perf-instrumentation.ts",
+  "packages/shared/lib/performance/phrase-scan-cache.ts",
+  "packages/shared/lib/performance/resurfacing-cache.ts",
+  "packages/shared/lib/debug/performance-health.ts",
+  "apps/web/components/internal/PerformanceHealthPanel.tsx",
+  "apps/web/app/internal/performance-health/page.tsx",
+  "packages/shared/lib/local-analytics.ts",
+  "packages/shared/lib/storage.ts",
 ];
 
 for (const rel of REQUIRED) {
@@ -25,12 +25,12 @@ for (const rel of REQUIRED) {
   }
 }
 
-const analytics = fs.readFileSync(path.join(ROOT, "lib/local-analytics.ts"), "utf8");
-const storage = fs.readFileSync(path.join(ROOT, "lib/storage.ts"), "utf8");
-const entryPage = fs.readFileSync(path.join(ROOT, "app/entry/[id]/page.tsx"), "utf8");
-const recorder = fs.readFileSync(path.join(ROOT, "components/Recorder.tsx"), "utf8");
-const phraseMemory = fs.readFileSync(path.join(ROOT, "lib/patterns/phrase-memory.ts"), "utf8");
-const transcript = fs.readFileSync(path.join(ROOT, "lib/transcript/transcript-cleanup.ts"), "utf8");
+const analytics = fs.readFileSync(path.join(ROOT, "packages/shared/lib/local-analytics.ts"), "utf8");
+const storage = fs.readFileSync(path.join(ROOT, "packages/shared/lib/storage.ts"), "utf8");
+const entryPage = fs.readFileSync(path.join(ROOT, "apps/web/app/entry/[id]/page.tsx"), "utf8");
+const recorder = fs.readFileSync(path.join(ROOT, "apps/web/components/Recorder.tsx"), "utf8");
+const phraseMemory = fs.readFileSync(path.join(ROOT, "packages/shared/lib/patterns/phrase-memory.ts"), "utf8");
+const transcript = fs.readFileSync(path.join(ROOT, "packages/shared/lib/transcript/transcript-cleanup.ts"), "utf8");
 const packageJson = fs.readFileSync(path.join(ROOT, "package.json"), "utf8");
 
 const analyticsChecks = [

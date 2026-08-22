@@ -20,68 +20,68 @@ function mustExist(rel) {
 }
 
 const required = [
-  "lib/product/archive-positioning.ts",
-  "lib/archive/what-is-my-archive.ts",
-  "lib/archive/archive-difference-examples.ts",
-  "lib/archive/first-session-value.ts",
-  "lib/archive/why-people-return-copy.ts",
-  "lib/founder-test/archive-understanding-validation.ts",
-  "components/archive/WhatIsMyArchive.tsx",
-  "components/archive/ArchiveDifferenceCard.tsx",
-  "components/archive/WhyPeopleReturn.tsx",
-  "components/archive/FirstSessionValueCard.tsx",
-  "components/archive/ArchiveVisualModel.tsx",
-  "components/internal/ArchiveUnderstandingPanel.tsx",
-  "apps/voicememory_mobile/lib/widgets/archive_quick_explain_card.dart",
+  "packages/shared/lib/product/archive-positioning.ts",
+  "packages/shared/lib/archive/what-is-my-archive.ts",
+  "packages/shared/lib/archive/archive-difference-examples.ts",
+  "packages/shared/lib/archive/first-session-value.ts",
+  "packages/shared/lib/archive/why-people-return-copy.ts",
+  "packages/shared/lib/founder-test/archive-understanding-validation.ts",
+  "apps/web/components/archive/WhatIsMyArchive.tsx",
+  "apps/web/components/archive/ArchiveDifferenceCard.tsx",
+  "apps/web/components/archive/WhyPeopleReturn.tsx",
+  "apps/web/components/archive/FirstSessionValueCard.tsx",
+  "apps/web/components/archive/ArchiveVisualModel.tsx",
+  "apps/web/components/internal/ArchiveUnderstandingPanel.tsx",
+  "apps/mobile/lib/widgets/archive_quick_explain_card.dart",
   "scripts/validate-archive-language.mjs",
   "scripts/validate-instant-understanding.mjs",
 ];
 
 for (const rel of required) mustExist(rel);
 
-const positioning = read("lib/product/archive-positioning.ts");
+const positioning = read("packages/shared/lib/product/archive-positioning.ts");
 const canonical =
   "ArchiveMe keeps track of what your archive believes about you and how that changes over time.";
 if (!positioning.includes(canonical)) fail("archive-positioning missing canonical sentence");
 
-if (!read("components/archive/ArchiveIdentityBar.tsx").includes("VOICEMEMORY_ARCHIVE_POSITIONING")) {
+if (!read("apps/web/components/archive/ArchiveIdentityBar.tsx").includes("VOICEMEMORY_ARCHIVE_POSITIONING")) {
   fail("ArchiveIdentityBar must use VOICEMEMORY_ARCHIVE_POSITIONING");
 }
 
 for (const page of [
-  "app/page.tsx",
-  "components/archive/EvidenceArchiveHome.tsx",
-  "components/onboarding/ArchiveOnboarding.tsx",
-  "components/Recorder.tsx",
-  "app/discover/page.tsx",
-  "app/pricing/PricingPageClient.tsx",
+  "apps/web/app/page.tsx",
+  "apps/web/components/archive/EvidenceArchiveHome.tsx",
+  "apps/web/components/onboarding/ArchiveOnboarding.tsx",
+  "apps/web/components/Recorder.tsx",
+  "apps/web/app/discover/page.tsx",
+  "apps/web/app/pricing/PricingPageClient.tsx",
 ]) {
   const src = read(page);
-  if (!src.includes("WhatIsMyArchive") && page !== "app/discover/page.tsx" && page !== "app/pricing/PricingPageClient.tsx") {
+  if (!src.includes("WhatIsMyArchive") && page !== "apps/web/app/discover/page.tsx" && page !== "apps/web/app/pricing/PricingPageClient.tsx") {
     fail(`${page} must include WhatIsMyArchive`);
   }
 }
 
-if (!read("components/Recorder.tsx").includes("FirstSessionValueCard")) {
+if (!read("apps/web/components/Recorder.tsx").includes("FirstSessionValueCard")) {
   fail("Recorder must show FirstSessionValueCard after first save");
 }
-if (!read("components/onboarding/ArchiveOnboarding.tsx").includes("ArchiveDifferenceCard")) {
+if (!read("apps/web/components/onboarding/ArchiveOnboarding.tsx").includes("ArchiveDifferenceCard")) {
   fail("ArchiveOnboarding must include ArchiveDifferenceCard");
 }
-if (!read("app/page.tsx").includes("ArchiveDifferenceCard")) {
+if (!read("apps/web/app/page.tsx").includes("ArchiveDifferenceCard")) {
   fail("home must include ArchiveDifferenceCard");
 }
-if (!read("app/pricing/PricingPageClient.tsx").includes("ArchiveVisualModel")) {
+if (!read("apps/web/app/pricing/PricingPageClient.tsx").includes("ArchiveVisualModel")) {
   fail("pricing must include ArchiveVisualModel");
 }
-if (!read("components/archive/EvidenceArchiveHome.tsx").includes("WhyPeopleReturn")) {
+if (!read("apps/web/components/archive/EvidenceArchiveHome.tsx").includes("WhyPeopleReturn")) {
   fail("archive home must include WhyPeopleReturn");
 }
-if (read("app/discover/page.tsx").includes("WhyPeopleReturn")) {
+if (read("apps/web/app/discover/page.tsx").includes("WhyPeopleReturn")) {
   fail("Discover must not duplicate WhyPeopleReturn — archive owns understanding");
 }
 
-const whatIs = read("lib/archive/what-is-my-archive.ts");
+const whatIs = read("packages/shared/lib/archive/what-is-my-archive.ts");
 for (const phrase of [
   "Your archive is building a view of you.",
   "Collecting evidence",
@@ -93,9 +93,9 @@ for (const phrase of [
 
 const forbidden = ["openai", "generateTheory", "pattern-engine", "SemanticSearch", "llm"];
 for (const file of [
-  "lib/archive/what-is-my-archive.ts",
-  "lib/archive/first-session-value.ts",
-  "lib/archive/archive-difference-examples.ts",
+  "packages/shared/lib/archive/what-is-my-archive.ts",
+  "packages/shared/lib/archive/first-session-value.ts",
+  "packages/shared/lib/archive/archive-difference-examples.ts",
 ]) {
   const src = read(file);
   for (const token of forbidden) {
@@ -103,12 +103,12 @@ for (const file of [
   }
 }
 
-const mobile = read("apps/voicememory_mobile/lib/screens/archive_belief_screen.dart");
+const mobile = read("apps/mobile/lib/screens/archive_belief_screen.dart");
 if (!mobile.includes("ArchiveQuickExplainCard")) {
   fail("mobile archive home must include ArchiveQuickExplainCard");
 }
 
-const founder = read("components/internal/FounderTestPanel.tsx");
+const founder = read("apps/web/components/internal/FounderTestPanel.tsx");
 if (!founder.includes("ArchiveUnderstandingPanel")) {
   fail("founder-test panel must include ArchiveUnderstandingPanel");
 }

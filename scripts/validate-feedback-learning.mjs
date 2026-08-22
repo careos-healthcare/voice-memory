@@ -6,8 +6,8 @@ import {
   recordResurfacingFeedback,
   userFeedbackPenaltyForPhrase,
   isPhraseOnResurfacingCooldown,
-} from "../lib/resurfacing/resurfacing-feedback.ts";
-import { runCanonicalPipelineForContinuity } from "../lib/resurfacing/canonical-resurfacing-pipeline.ts";
+} from "../packages/shared/lib/resurfacing/resurfacing-feedback.ts";
+import { runCanonicalPipelineForContinuity } from "../packages/shared/lib/resurfacing/canonical-resurfacing-pipeline.ts";
 
 const storage = new Map();
 globalThis.localStorage = {

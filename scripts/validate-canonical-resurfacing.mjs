@@ -15,20 +15,20 @@ globalThis.localStorage = {
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
-import { runCanonicalResurfacingPipeline } from "../lib/resurfacing/canonical-resurfacing-pipeline.ts";
-import { containsOverconfidentResurfacingCopy } from "../lib/resurfacing/resurfacing-ambiguity.ts";
+import { runCanonicalResurfacingPipeline } from "../packages/shared/lib/resurfacing/canonical-resurfacing-pipeline.ts";
+import { containsOverconfidentResurfacingCopy } from "../packages/shared/lib/resurfacing/resurfacing-ambiguity.ts";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const failures = [];
 
 const USER_FACING_LOGIC = [
-  "components/entry/EntryPrimaryCallback.tsx",
-  "lib/continuity/first-return-moment.ts",
-  "lib/refinement/callback-tuning.ts",
-  "lib/resurfacing/evidence-engine.ts",
+  "apps/web/components/entry/EntryPrimaryCallback.tsx",
+  "packages/shared/lib/continuity/first-return-moment.ts",
+  "packages/shared/lib/refinement/callback-tuning.ts",
+  "packages/shared/lib/resurfacing/evidence-engine.ts",
 ];
 
-const USER_FACING_UI = ["components/continuity/FirstReturnMoment.tsx"];
+const USER_FACING_UI = ["apps/web/components/continuity/FirstReturnMoment.tsx"];
 
 const FORBIDDEN_IMPORTS = [
   "resurfacing-evidence-gate",
@@ -61,7 +61,7 @@ for (const rel of USER_FACING_UI) {
   }
 }
 
-const entry = fs.readFileSync(path.join(ROOT, "components/entry/EntryPrimaryCallback.tsx"), "utf8");
+const entry = fs.readFileSync(path.join(ROOT, "apps/web/components/entry/EntryPrimaryCallback.tsx"), "utf8");
 if (!entry.includes("runCanonicalPipelineForMemoryNote")) {
   failures.push("EntryPrimaryCallback must use runCanonicalPipelineForMemoryNote");
 }
@@ -100,7 +100,7 @@ if (
   /* cautious ok */
 }
 
-if (!fs.existsSync(path.join(ROOT, "lib/resurfacing/canonical-resurfacing-pipeline.ts"))) {
+if (!fs.existsSync(path.join(ROOT, "packages/shared/lib/resurfacing/canonical-resurfacing-pipeline.ts"))) {
   failures.push("missing canonical-resurfacing-pipeline.ts");
 }
 

@@ -7,22 +7,22 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const failures = [];
 
 const required = [
-  "lib/continuity/first-return-moment.ts",
-  "components/continuity/FirstReturnMoment.tsx",
-  "components/journal/JournalArchiveRow.tsx",
-  "lib/product/recognition-copy.ts",
-  "lib/resurfacing/resurfacing-feedback.ts",
-  "lib/resurfacing/resurfacing-scoring.ts",
-  "lib/resurfacing/resurfacing-evidence-gate.ts",
-  "lib/resurfacing/resurfacing-metrics.ts",
-  "app/api/account/delete/route.ts",
+  "packages/shared/lib/continuity/first-return-moment.ts",
+  "apps/web/components/continuity/FirstReturnMoment.tsx",
+  "apps/web/components/journal/JournalArchiveRow.tsx",
+  "packages/shared/lib/product/recognition-copy.ts",
+  "packages/shared/lib/resurfacing/resurfacing-feedback.ts",
+  "packages/shared/lib/resurfacing/resurfacing-scoring.ts",
+  "packages/shared/lib/resurfacing/resurfacing-evidence-gate.ts",
+  "packages/shared/lib/resurfacing/resurfacing-metrics.ts",
+  "apps/api/app/api/account/delete/route.ts",
 ];
 
 for (const rel of required) {
   if (!fs.existsSync(path.join(ROOT, rel))) failures.push(`missing ${rel}`);
 }
 
-const home = fs.readFileSync(path.join(ROOT, "app/page.tsx"), "utf8");
+const home = fs.readFileSync(path.join(ROOT, "apps/web/app/page.tsx"), "utf8");
 if (!home.includes("FirstReturnMoment")) {
   failures.push("homepage must render FirstReturnMoment");
 }
@@ -34,25 +34,25 @@ if (!home.includes("presentation=\"quiet\"")) {
 }
 
 const momentComponent = fs.readFileSync(
-  path.join(ROOT, "components/continuity/FirstReturnMoment.tsx"),
+  path.join(ROOT, "apps/web/components/continuity/FirstReturnMoment.tsx"),
   "utf8",
 );
 if (!momentComponent.includes("onFeedback")) {
   failures.push("FirstReturnMoment must wire onFeedback to MemoryConfidence");
 }
 const memoryConfidence = fs.readFileSync(
-  path.join(ROOT, "components/system/MemoryConfidence.tsx"),
+  path.join(ROOT, "apps/web/components/system/MemoryConfidence.tsx"),
   "utf8",
 );
 if (!memoryConfidence.includes("Not me") || !memoryConfidence.includes("That fits")) {
   failures.push("MemoryConfidence must offer not-me and that-fits feedback");
 }
 
-if (!fs.existsSync(path.join(ROOT, "lib/continuity/first-return-observation.ts"))) {
+if (!fs.existsSync(path.join(ROOT, "packages/shared/lib/continuity/first-return-observation.ts"))) {
   failures.push("missing first-return-observation metrics");
 }
 const observation = fs.readFileSync(
-  path.join(ROOT, "lib/continuity/first-return-observation.ts"),
+  path.join(ROOT, "packages/shared/lib/continuity/first-return-observation.ts"),
   "utf8",
 );
 for (const token of [
@@ -66,7 +66,7 @@ for (const token of [
   if (!observation.includes(token)) failures.push(`first-return metrics missing ${token}`);
 }
 
-const journal = fs.readFileSync(path.join(ROOT, "app/journal/page.tsx"), "utf8");
+const journal = fs.readFileSync(path.join(ROOT, "apps/web/app/journal/page.tsx"), "utf8");
 if (!journal.includes("FirstReturnMoment")) {
   failures.push("journal must render FirstReturnMoment");
 }
@@ -80,29 +80,29 @@ if (journal.includes("HabitLoopCard")) {
   failures.push("journal must not lead with habit/rhythm cards");
 }
 
-const launch = fs.readFileSync(path.join(ROOT, "app/launch/page.tsx"), "utf8");
+const launch = fs.readFileSync(path.join(ROOT, "apps/web/app/launch/page.tsx"), "utf8");
 if (launch.includes('href="/debug')) {
   failures.push("launch must not link to debug routes");
 }
 
-const siteHeader = fs.readFileSync(path.join(ROOT, "components/SiteHeader.tsx"), "utf8");
+const siteHeader = fs.readFileSync(path.join(ROOT, "apps/web/components/SiteHeader.tsx"), "utf8");
 if (siteHeader.includes("/debug")) {
   failures.push("SiteHeader must not link to debug");
 }
 
-const bannedVoice = fs.readFileSync(path.join(ROOT, "lib/product/recognition-copy.ts"), "utf8");
+const bannedVoice = fs.readFileSync(path.join(ROOT, "packages/shared/lib/product/recognition-copy.ts"), "utf8");
 const bannedList = bannedVoice.match(/BANNED_PRODUCT_VOICE = \[([\s\S]*?)\]/)?.[1] ?? "";
 for (const line of bannedList.split("\n")) {
   const m = line.match(/"([^"]+)"/);
   if (!m) continue;
   const phrase = m[1].toLowerCase();
-  for (const rel of ["app/journal/page.tsx", "app/memory/page.tsx", "app/page.tsx"]) {
+  for (const rel of ["apps/web/app/journal/page.tsx", "apps/web/app/memory/page.tsx", "apps/web/app/page.tsx"]) {
     const src = fs.readFileSync(path.join(ROOT, rel), "utf8").toLowerCase();
     if (src.includes(phrase)) failures.push(`${rel} contains banned phrase: ${phrase}`);
   }
 }
 
-const copy = fs.readFileSync(path.join(ROOT, "lib/product-copy.ts"), "utf8");
+const copy = fs.readFileSync(path.join(ROOT, "packages/shared/lib/product-copy.ts"), "utf8");
 if (copy.includes("ArchiveMe brings back")) {
   failures.push("product-copy must not use abstract brings-back framing");
 }
@@ -110,7 +110,7 @@ if (!copy.includes("You said this before") && !copy.includes("RECOGNITION_COPY.w
   failures.push("product-copy must use recognition wedge");
 }
 
-const mod = await import(pathToFileURL(path.join(ROOT, "lib/continuity/first-return-moment.ts")).href);
+const mod = await import(pathToFileURL(path.join(ROOT, "packages/shared/lib/continuity/first-return-moment.ts")).href);
 
 const junk = mod.pickFirstReturnMoment([
   {

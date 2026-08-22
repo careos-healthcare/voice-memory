@@ -1,0 +1,29 @@
+==> research package import guard
+OK — production lib/ does not import archiveme_research
+==> deferred screens must not be production route builders
+==> production router screens must be allowlisted
+==> blocked deep links resolve to V1 destinations
+==> quarantine redirects registered when V1-only
+==> feature module registry (approval required for new lib/features/*)
+==> research dashboards unreachable in release navigation
+==> permission audit
+==> Android permission allowlist
+==> iOS usage description allowlist
+==> Excluded native capabilities (widgets, local notification receivers)
+OK — native permissions match V1 capability registry
+==> service locator audit (V1 critical paths)
+==> V1 critical paths must not use AppServices.instance
+OK — no service-locator access on V1 critical paths
+==> launch product audit
+==> launch product contract exists
+==> required V1 contract docs
+==> paywall must not promise quarantined features
+==> account screen must not show AI accuracy dashboard
+==> startup uses staged coordinator
+==> production screens must not import quarantined surfaces
+OK — launch product audit passed
+==> production route-link integrity
+validate_production_route_links: PASS
+==> billing frozen — consumer graph must not import billing
+validate_production_billing_absence: PASS
+OK — V1 production graph checks passed

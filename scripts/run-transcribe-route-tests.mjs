@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { runTranscribeRouteTests } from "../lib/reliability/transcribe-route-tests.ts";
+import { runTranscribeRouteTests } from "../packages/shared/lib/reliability/transcribe-route-tests.ts";
 
 const { failures } = await runTranscribeRouteTests();
 

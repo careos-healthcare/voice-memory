@@ -31,16 +31,16 @@ const FORBIDDEN_UI = [
 ];
 
 for (const rel of [
-  "types/archive-question.ts",
-  "lib/archive/archive-question-engine.ts",
-  "lib/archive/archive-question-copy.ts",
-  "components/archive/QuestionTheArchive.tsx",
-  "components/archive/ArchiveQuestionAnswerCard.tsx",
+  "packages/shared/types/archive-question.ts",
+  "packages/shared/lib/archive/archive-question-engine.ts",
+  "packages/shared/lib/archive/archive-question-copy.ts",
+  "apps/web/components/archive/QuestionTheArchive.tsx",
+  "apps/web/components/archive/ArchiveQuestionAnswerCard.tsx",
 ]) {
   mustExist(rel);
 }
 
-const engine = read("lib/archive/archive-question-engine.ts");
+const engine = read("packages/shared/lib/archive/archive-question-engine.ts");
 if (!engine.includes("buildArchiveQuestionAnswers")) {
   fail("archive-question-engine missing buildArchiveQuestionAnswers");
 }
@@ -76,7 +76,7 @@ if (!engine.includes("buildArchiveImplications")) {
   fail("engine must use buildArchiveImplications for WHY_SHOULD_I_CARE");
 }
 
-const types = read("types/archive-question.ts");
+const types = read("packages/shared/types/archive-question.ts");
 for (const q of [
   "WHY",
   "SHOW_EVIDENCE",
@@ -93,7 +93,7 @@ for (const q of [
   if (!types.includes(q)) fail(`types missing question ${q}`);
 }
 
-const card = read("components/archive/ArchiveQuestionAnswerCard.tsx");
+const card = read("apps/web/components/archive/ArchiveQuestionAnswerCard.tsx");
 for (const label of ["Question", "Archive answer", "Evidence"]) {
   if (!card.includes(label)) fail(`answer card missing label ${label}`);
 }
@@ -101,7 +101,7 @@ if (card.includes("recommend") || card.includes("therapy")) {
   fail("answer card must not include coaching or therapy framing");
 }
 
-const qta = read("components/archive/QuestionTheArchive.tsx");
+const qta = read("apps/web/components/archive/QuestionTheArchive.tsx");
 if (
   !qta.includes("Question the Archive") &&
   !qta.includes("QUESTION_THE_ARCHIVE_HEADLINE")
@@ -110,7 +110,7 @@ if (
 }
 if (!qta.includes('type="button"')) fail("questions must be buttons not chat input");
 
-const copy = read("lib/archive/archive-question-copy.ts");
+const copy = read("packages/shared/lib/archive/archive-question-copy.ts");
 if (copy.includes("Archive reputation") || copy.includes("Archive Reputation")) {
   fail("public copy must hide reputation mechanics");
 }
@@ -118,7 +118,7 @@ for (const band of ["Low", "Developing", "Strong"]) {
   if (!copy.includes(band)) fail(`copy missing trust band ${band}`);
 }
 
-const progressive = read("components/archive/ProgressiveArchiveHome.tsx");
+const progressive = read("apps/web/components/archive/ProgressiveArchiveHome.tsx");
 if (!progressive.includes("QuestionTheArchive")) {
   fail("ProgressiveArchiveHome must include QuestionTheArchive");
 }
@@ -126,9 +126,9 @@ if (!progressive.includes("ArchiveImplicationsCard")) {
   fail("ProgressiveArchiveHome must include ArchiveImplicationsCard");
 }
 
-const mobile = read("apps/voicememory_mobile/lib/widgets/question_the_archive_mobile.dart");
+const mobile = read("apps/mobile/lib/widgets/question_the_archive_mobile.dart");
 const mobileEngine = read(
-  "apps/voicememory_mobile/lib/features/archive_question/archive_question_engine.dart",
+  "apps/mobile/lib/features/archive_question/archive_question_engine.dart",
 );
 if (
   !mobile.includes("Question the Archive") &&
@@ -139,8 +139,8 @@ if (
 }
 
 for (const rel of [
-  "components/archive/QuestionTheArchive.tsx",
-  "components/archive/ArchiveQuestionAnswerCard.tsx",
+  "apps/web/components/archive/QuestionTheArchive.tsx",
+  "apps/web/components/archive/ArchiveQuestionAnswerCard.tsx",
 ]) {
   const src = read(rel);
   for (const pattern of FORBIDDEN_UI) {

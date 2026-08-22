@@ -19,15 +19,15 @@ function mustExist(rel) {
 }
 
 const required = [
-  "types/archive-ownership-v2.ts",
-  "lib/archive/archive-ownership-v2.ts",
-  "components/archive/ArchiveMilestones.tsx",
-  "components/archive/ArchiveHistorySummary.tsx",
+  "packages/shared/types/archive-ownership-v2.ts",
+  "packages/shared/lib/archive/archive-ownership-v2.ts",
+  "apps/web/components/archive/ArchiveMilestones.tsx",
+  "apps/web/components/archive/ArchiveHistorySummary.tsx",
 ];
 
 for (const rel of required) mustExist(rel);
 
-const lib = read("lib/archive/archive-ownership-v2.ts");
+const lib = read("packages/shared/lib/archive/archive-ownership-v2.ts");
 for (const phrase of [
   "ARCHIVE_MILESTONES_HEADLINE",
   "Your archive now contains:",
@@ -43,7 +43,7 @@ for (const phrase of [
   if (!lib.includes(phrase)) fail(`archive-ownership-v2 missing: ${phrase}`);
 }
 
-const milestones = read("components/archive/ArchiveMilestones.tsx");
+const milestones = read("apps/web/components/archive/ArchiveMilestones.tsx");
 if (!milestones.includes('data-testid="archive-milestones"')) {
   fail("ArchiveMilestones missing test id");
 }
@@ -51,7 +51,7 @@ if (!milestones.includes("buildArchiveMilestones")) {
   fail("ArchiveMilestones must call buildArchiveMilestones");
 }
 
-const history = read("components/archive/ArchiveHistorySummary.tsx");
+const history = read("apps/web/components/archive/ArchiveHistorySummary.tsx");
 if (!history.includes('data-testid="archive-history-summary"')) {
   fail("ArchiveHistorySummary missing test id");
 }
@@ -60,10 +60,10 @@ if (!history.includes("buildArchiveHistorySummary")) {
 }
 
 const surfaces = [
-  ["components/archive/EvidenceArchiveHome.tsx", "Archive"],
-  ["app/account/page.tsx", "Account"],
-  ["components/archive/ArchiveOwnershipPanel.tsx", "Export"],
-  ["components/billing/ValueMomentPaywall.tsx", "Paywall"],
+  ["apps/web/components/archive/EvidenceArchiveHome.tsx", "Archive"],
+  ["apps/web/app/account/page.tsx", "Account"],
+  ["apps/web/components/archive/ArchiveOwnershipPanel.tsx", "Export"],
+  ["apps/web/components/billing/ValueMomentPaywall.tsx", "Paywall"],
 ];
 
 for (const [file, label] of surfaces) {

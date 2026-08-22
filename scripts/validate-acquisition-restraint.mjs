@@ -5,13 +5,13 @@ import { fileURLToPath } from "node:url";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
-const SCAN_DIRS = ["app", "lib/marketing"];
+const SCAN_DIRS = ["app", "packages/shared/lib/marketing"];
 
 const SKIP_PATH_PARTS = [
   `${path.sep}debug${path.sep}`,
   `${path.sep}api${path.sep}`,
-  "lib/marketing/acquisition-copy.ts",
-  "lib/marketing/acquisition-restraint.ts",
+  "packages/shared/lib/marketing/acquisition-copy.ts",
+  "packages/shared/lib/marketing/acquisition-restraint.ts",
   "scripts/",
 ];
 

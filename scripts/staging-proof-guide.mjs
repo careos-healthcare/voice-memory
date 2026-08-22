@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { printStagingProofGuide } from "../lib/staging/staging-proof-guide.ts";
+import { printStagingProofGuide } from "../packages/shared/lib/staging/staging-proof-guide.ts";
 
 printStagingProofGuide();
 process.exit(0);

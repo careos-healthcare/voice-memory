@@ -6,19 +6,19 @@ import { fileURLToPath } from "node:url";
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
 const REQUIRED = [
-  "lib/behavior/helpers.ts",
-  "lib/behavior/observation.ts",
-  "lib/behavior/funnels.ts",
-  "lib/behavior/return-analysis.ts",
-  "lib/behavior/surface-effectiveness.ts",
-  "lib/behavior/copy-effectiveness.ts",
-  "lib/behavior/mobile-behavior.ts",
-  "lib/behavior/product-pressure.ts",
-  "lib/behavior/insight-summary.ts",
-  "lib/behavior/behavior-truth-report.ts",
-  "types/behavior-truth.ts",
-  "app/internal/behavior-truth/page.tsx",
-  "components/internal/BehaviorTruthPanel.tsx",
+  "packages/shared/lib/behavior/helpers.ts",
+  "packages/shared/lib/behavior/observation.ts",
+  "packages/shared/lib/behavior/funnels.ts",
+  "packages/shared/lib/behavior/return-analysis.ts",
+  "packages/shared/lib/behavior/surface-effectiveness.ts",
+  "packages/shared/lib/behavior/copy-effectiveness.ts",
+  "packages/shared/lib/behavior/mobile-behavior.ts",
+  "packages/shared/lib/behavior/product-pressure.ts",
+  "packages/shared/lib/behavior/insight-summary.ts",
+  "packages/shared/lib/behavior/behavior-truth-report.ts",
+  "packages/shared/types/behavior-truth.ts",
+  "apps/web/app/internal/behavior-truth/page.tsx",
+  "apps/web/components/internal/BehaviorTruthPanel.tsx",
 ];
 
 const BANNED = [
@@ -42,19 +42,19 @@ for (const rel of REQUIRED) {
 }
 
 const report = fs.readFileSync(
-  path.join(ROOT, "lib/behavior/behavior-truth-report.ts"),
+  path.join(ROOT, "packages/shared/lib/behavior/behavior-truth-report.ts"),
   "utf8",
 );
 if (!report.includes("buildBehaviorTruthReport")) {
   failures.push("behavior-truth-report must export buildBehaviorTruthReport");
 }
 
-const insight = fs.readFileSync(path.join(ROOT, "lib/behavior/insight-summary.ts"), "utf8");
+const insight = fs.readFileSync(path.join(ROOT, "packages/shared/lib/behavior/insight-summary.ts"), "utf8");
 if (!insight.includes("buildBehaviorInsightSummary")) {
   failures.push("insight-summary must export buildBehaviorInsightSummary");
 }
 
-const page = fs.readFileSync(path.join(ROOT, "app/internal/behavior-truth/page.tsx"), "utf8");
+const page = fs.readFileSync(path.join(ROOT, "apps/web/app/internal/behavior-truth/page.tsx"), "utf8");
 for (const section of [
   "BehaviorTruthPanel",
   "buildBehaviorTruthReport",
@@ -66,7 +66,7 @@ for (const section of [
 }
 
 const panel = fs.readFileSync(
-  path.join(ROOT, "components/internal/BehaviorTruthPanel.tsx"),
+  path.join(ROOT, "apps/web/components/internal/BehaviorTruthPanel.tsx"),
   "utf8",
 );
 for (const section of ["Read vs speak", "Reflex decompression score"]) {
@@ -75,7 +75,7 @@ for (const section of ["Read vs speak", "Reflex decompression score"]) {
   }
 }
 
-const scanDirs = ["lib/behavior", "components/internal/BehaviorTruthPanel.tsx", "app/internal/behavior-truth"];
+const scanDirs = ["packages/shared/lib/behavior", "apps/web/components/internal/BehaviorTruthPanel.tsx", "apps/web/app/internal/behavior-truth"];
 for (const rel of scanDirs) {
   const full = path.join(ROOT, rel);
   if (!fs.existsSync(full)) continue;

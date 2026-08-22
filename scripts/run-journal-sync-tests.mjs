@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { runJournalSyncTests } from "../lib/reliability/journal-sync-tests.ts";
+import { runJournalSyncTests } from "../packages/shared/lib/reliability/journal-sync-tests.ts";
 
 const { failures } = await runJournalSyncTests();
 

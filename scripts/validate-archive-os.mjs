@@ -14,7 +14,7 @@ function read(rel) {
   return fs.readFileSync(path.join(ROOT, rel), "utf8");
 }
 
-const commandCenter = read("components/archive/ArchiveCommandCenter.tsx");
+const commandCenter = read("apps/web/components/archive/ArchiveCommandCenter.tsx");
 for (const token of ["ArchiveReputationCard", "WhyTheArchiveTrustsThis", "ArchiveMeaningSummary"]) {
   if (!commandCenter.includes(token)) fail(`Archive OS command center missing ${token}`);
 }

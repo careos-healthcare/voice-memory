@@ -7,7 +7,7 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const failures = [];
 
 const { ARCHIVE_MOAT_FORBIDDEN, ARCHIVE_MOAT_SCAN_FILES } = await import(
-  "../lib/archive/archive-moat-copy.ts"
+  "../packages/shared/lib/archive/archive-moat-copy.ts"
 );
 
 for (const rel of ARCHIVE_MOAT_SCAN_FILES) {
@@ -23,7 +23,7 @@ for (const rel of ARCHIVE_MOAT_SCAN_FILES) {
 }
 
 const proofEngine = fs.readFileSync(
-  path.join(ROOT, "lib/archive/hard-to-reproduce-proof.ts"),
+  path.join(ROOT, "packages/shared/lib/archive/hard-to-reproduce-proof.ts"),
   "utf8",
 );
 for (const re of ARCHIVE_MOAT_FORBIDDEN) {

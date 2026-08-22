@@ -12,16 +12,16 @@ function fail(msg) {
 }
 
 const required = [
-  "types/archive-as-product-validation.ts",
-  "lib/founder-test/archive-as-product-validation.ts",
-  "lib/founder-test/archive-as-product-metrics.ts",
-  "lib/metrics/archive-as-product-events.ts",
-  "components/internal/ArchiveAsProductValidationPanel.tsx",
-  "components/archive/EvidenceArchiveHome.tsx",
-  "components/discover/TheoryChangeFeed.tsx",
-  "components/Recorder.tsx",
-  "app/internal/founder-test/page.tsx",
-  "app/internal/archive-belief/page.tsx",
+  "packages/shared/types/archive-as-product-validation.ts",
+  "packages/shared/lib/founder-test/archive-as-product-validation.ts",
+  "packages/shared/lib/founder-test/archive-as-product-metrics.ts",
+  "packages/shared/lib/metrics/archive-as-product-events.ts",
+  "apps/web/components/internal/ArchiveAsProductValidationPanel.tsx",
+  "apps/web/components/archive/EvidenceArchiveHome.tsx",
+  "apps/web/components/discover/TheoryChangeFeed.tsx",
+  "apps/web/components/Recorder.tsx",
+  "apps/web/app/internal/founder-test/page.tsx",
+  "apps/web/app/internal/archive-belief/page.tsx",
 ];
 
 for (const rel of required) {
@@ -34,7 +34,7 @@ if (!pkg.scripts["validate:archive-as-product"]) {
 }
 
 const home = fs.readFileSync(
-  path.join(ROOT, "components/archive/EvidenceArchiveHome.tsx"),
+  path.join(ROOT, "apps/web/components/archive/EvidenceArchiveHome.tsx"),
   "utf8",
 );
 if (!home.includes("trackArchiveProductHomeOpened")) {
@@ -42,20 +42,20 @@ if (!home.includes("trackArchiveProductHomeOpened")) {
 }
 
 const discover = fs.readFileSync(
-  path.join(ROOT, "components/discover/TheoryChangeFeed.tsx"),
+  path.join(ROOT, "apps/web/components/discover/TheoryChangeFeed.tsx"),
   "utf8",
 );
 if (!discover.includes("trackDiscoverProductOpened")) {
   fail("TheoryChangeFeed must track post-five Discover opens");
 }
 
-const recorder = fs.readFileSync(path.join(ROOT, "components/Recorder.tsx"), "utf8");
+const recorder = fs.readFileSync(path.join(ROOT, "apps/web/components/Recorder.tsx"), "utf8");
 if (!recorder.includes("markPostFiveReflectionMilestone")) {
   fail("Recorder must mark post-five milestone");
 }
 
 const founderPage = fs.readFileSync(
-  path.join(ROOT, "app/internal/founder-test/page.tsx"),
+  path.join(ROOT, "apps/web/app/internal/founder-test/page.tsx"),
   "utf8",
 );
 if (!founderPage.includes("Archive before Discover")) {
@@ -66,18 +66,18 @@ const {
   ARCHIVE_AS_PRODUCT_CRITERIA,
   ARCHIVE_AS_PRODUCT_MAIN_QUESTION,
   classifyProductDescriptionVerbatim,
-} = await import("../lib/founder-test/archive-as-product-validation.ts");
+} = await import("../packages/shared/lib/founder-test/archive-as-product-validation.ts");
 const { buildArchiveAsProductValidationReport } = await import(
-  "../lib/founder-test/archive-as-product-metrics.ts"
+  "../packages/shared/lib/founder-test/archive-as-product-metrics.ts"
 );
 const {
   ARCHIVE_AS_PRODUCT_EVENT_NAMES,
   clearArchiveAsProductEventsForEval,
   trackArchiveProductHomeOpened,
   trackDiscoverProductOpened,
-} = await import("../lib/metrics/archive-as-product-events.ts");
+} = await import("../packages/shared/lib/metrics/archive-as-product-events.ts");
 const { clearFounderTestSessionsForEval, updateFounderTestSession, createFounderTestParticipant } =
-  await import("../lib/founder-test/founder-test-storage.ts");
+  await import("../packages/shared/lib/founder-test/founder-test-storage.ts");
 
 assert.equal(ARCHIVE_AS_PRODUCT_CRITERIA.length, 4);
 
@@ -121,7 +121,7 @@ assert.ok(report.mainQuestion === ARCHIVE_AS_PRODUCT_MAIN_QUESTION);
 assert.ok(["strong", "weak", "mixed", "insufficient_data"].includes(report.verdict));
 
 const belief = fs.readFileSync(
-  path.join(ROOT, "lib/founder-test/belief-reframing-validation.ts"),
+  path.join(ROOT, "packages/shared/lib/founder-test/belief-reframing-validation.ts"),
   "utf8",
 );
 if (!belief.includes("archive_before_discover")) {

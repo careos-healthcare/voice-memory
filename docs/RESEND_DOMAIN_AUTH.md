@@ -1,11 +1,13 @@
 # Resend verified domain — production auth email
 
-Use this after [Resend](https://resend.com/domains) shows **Verified** for a domain you control.
+Use this after [Resend](https://resend.com/domains) shows **Verified** for **archiveme.app**.
+
+Full cutover checklist: [docs/product/ARCHIVEME_APP_DNS.md](./product/ARCHIVEME_APP_DNS.md)
 
 ## 1. Add and verify domain (Resend dashboard)
 
 1. Open https://resend.com/domains
-2. **Add Domain** — e.g. `voicememory.app` (must be a domain you control)
+2. **Add Domain** — `archiveme.app`
 3. Add DNS records at your registrar (Resend shows exact host/names):
 
 | Type | Purpose |
@@ -23,13 +25,7 @@ Project: **voice-memory** → Settings → Environment Variables
 Set **EMAIL_FROM** (Production, Preview, Development):
 
 ```text
-ArchiveMe <noreply@YOUR_VERIFIED_DOMAIN>
-```
-
-Example:
-
-```text
-ArchiveMe <noreply@voicememory.app>
+ArchiveMe <noreply@archiveme.app>
 ```
 
 Rules:
@@ -41,12 +37,19 @@ Rules:
 CLI (no stray quotes):
 
 ```bash
-printf '%s' 'ArchiveMe <noreply@voicememory.app>' | npx vercel env update EMAIL_FROM production -y
-printf '%s' 'ArchiveMe <noreply@voicememory.app>' | npx vercel env update EMAIL_FROM preview -y
-printf '%s' 'ArchiveMe <noreply@voicememory.app>' | npx vercel env update EMAIL_FROM development -y
+printf '%s' 'ArchiveMe <noreply@archiveme.app>' | npx vercel env update EMAIL_FROM production -y
+printf '%s' 'ArchiveMe <noreply@archiveme.app>' | npx vercel env update EMAIL_FROM preview -y
+printf '%s' 'ArchiveMe <noreply@archiveme.app>' | npx vercel env update EMAIL_FROM development -y
 ```
 
-Replace the domain with yours. Wait 1–2 minutes (redeploy only if sends still use the old sender).
+Also set:
+
+```bash
+printf '%s' 'https://archiveme.app' | npx vercel env update NEXT_PUBLIC_SITE_URL production -y
+printf '%s' 'https://archiveme.app' | npx vercel env update NEXT_PUBLIC_APP_URL production -y
+```
+
+Wait 1–2 minutes (redeploy only if sends still use the old sender).
 
 ## 3. Verify production
 
@@ -61,7 +64,7 @@ Expected:
   "resendConfigured": true,
   "emailFromConfigured": true,
   "emailFromUsesResendSandbox": false,
-  "emailFromDomain": "voicememory.app",
+  "emailFromDomain": "archiveme.app",
   "appUrlConfigured": true,
   "productionEmailReady": true
 }
@@ -73,9 +76,18 @@ If `emailFromUsesResendSandbox` is **true**, Production still has `onboarding@re
 chmod +x scripts/verify-production-auth-email.sh
 ./scripts/verify-production-auth-email.sh
 ./scripts/verify-production-auth-email.sh you@yourdomain.com
+./scripts/verify-archiveme-domain-setup.sh
 ```
 
-## 4. Send-code test (any user email)
+## 4. Inbound contact addresses
+
+Customer-facing contact: **hello@archiveme.app** (web, app help, TestFlight feedback).
+
+Billing alias: **support@archiveme.app** — forward to the same inbox via Cloudflare Email Routing or your mail host.
+
+Resend does not receive inbound mail; configure MX/forwarding separately (see ARCHIVEME_APP_DNS.md).
+
+## 5. Send-code test (any user email)
 
 `POST /api/auth/send-code` with a **real** inbox you can open (not required to be the Resend owner).
 
@@ -85,9 +97,7 @@ Expected:
 - `{ "ok": true, "message": "Code sent. Check your email." }`
 - No `AUTH_RESEND_REJECTED`
 
-Then: `/account` → sign in → **Back up now** → confirm sync (see [POST_DEPLOY_QA.md](./POST_DEPLOY_QA.md)).
-
-## 5. Troubleshooting
+## 6. Troubleshooting
 
 | Symptom | Likely cause |
 | --- | --- |
@@ -95,9 +105,10 @@ Then: `/account` → sign in → **Back up now** → confirm sync (see [POST_DEP
 | `AUTH_RESEND_REJECTED` + “only send testing emails to your own…” | Still on `onboarding@resend.dev` |
 | `AUTH_RESEND_NOT_CONFIGURED` | Missing `RESEND_API_KEY` or `EMAIL_FROM` in Production |
 | Env probe all `true` but send fails | Wrong `EMAIL_FROM` value or literal quotes in Vercel value — re-set via CLI above |
+| hello@ bounces | Inbound MX/forwarding not configured — see ARCHIVEME_APP_DNS.md |
 
 Vercel logs: filter `[ArchiveMe auth]` for `resendResponseId`, `resendErrorMessage`, `errorCode`.
 
-## 6. Resend API key note
+## Legacy
 
-Production uses a **Sending** API key. Domain management requires a key with broader permissions in the Resend dashboard; verification is done in the UI, not via the restricted send-only key.
+`voicememory.app` remains a redirect host until DNS is retired. Do not use `hello@voicememory.app` in new copy.

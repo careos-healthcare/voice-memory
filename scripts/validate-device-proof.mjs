@@ -9,9 +9,9 @@
  */
 import { writeFileSync, existsSync } from "node:fs";
 import { resolve } from "node:path";
-import { formatProofChecks } from "../lib/proof/proof-result.ts";
-import { validateDeviceProofSignoff } from "../lib/proof/signoff-validation.ts";
-import { DEVICE_SIGNOFF_PATH, SPP20_DIR } from "../lib/proof/signoff-files.ts";
+import { formatProofChecks } from "../packages/shared/lib/proof/proof-result.ts";
+import { validateDeviceProofSignoff } from "../packages/shared/lib/proof/signoff-validation.ts";
+import { DEVICE_SIGNOFF_PATH, SPP20_DIR } from "../packages/shared/lib/proof/signoff-files.ts";
 
 const required = process.env.VOICEMEMORY_DEVICE_PROOF_REQUIRED === "1";
 const templatePath = resolve(SPP20_DIR, "device_proof_signoff.template.json");

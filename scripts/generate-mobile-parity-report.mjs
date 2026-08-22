@@ -9,7 +9,7 @@ import { fileURLToPath } from "node:url";
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
 const { buildMobileParityReport, formatParityReportMarkdown } = await import(
-  path.join(ROOT, "lib/mobile/mobile-parity-report.ts")
+  path.join(ROOT, "packages/shared/lib/mobile/mobile-parity-report.ts")
 );
 
 const report = buildMobileParityReport();

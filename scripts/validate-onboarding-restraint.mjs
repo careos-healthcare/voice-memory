@@ -6,19 +6,19 @@ import { fileURLToPath } from "node:url";
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
 const REQUIRED_FILES = [
-  "types/onboarding-clarity.ts",
-  "lib/onboarding/first-session-flow.ts",
-  "lib/onboarding/confusion-signals.ts",
-  "lib/onboarding/onboarding-observation.ts",
-  "lib/onboarding/onboarding-copy.ts",
-  "lib/onboarding/first-aha-callback.ts",
-  "lib/onboarding/calm-comprehension.ts",
-  "lib/onboarding/onboarding-restraint.ts",
-  "lib/debug/onboarding-clarity.ts",
-  "components/onboarding/OnboardingNavigationTracker.tsx",
-  "components/onboarding/CalmComprehensionPrompt.tsx",
-  "components/debug/OnboardingClarityDebugPanel.tsx",
-  "app/internal/onboarding-clarity/page.tsx",
+  "packages/shared/types/onboarding-clarity.ts",
+  "packages/shared/lib/onboarding/first-session-flow.ts",
+  "packages/shared/lib/onboarding/confusion-signals.ts",
+  "packages/shared/lib/onboarding/onboarding-observation.ts",
+  "packages/shared/lib/onboarding/onboarding-copy.ts",
+  "packages/shared/lib/onboarding/first-aha-callback.ts",
+  "packages/shared/lib/onboarding/calm-comprehension.ts",
+  "packages/shared/lib/onboarding/onboarding-restraint.ts",
+  "packages/shared/lib/debug/onboarding-clarity.ts",
+  "apps/web/components/onboarding/OnboardingNavigationTracker.tsx",
+  "apps/web/components/onboarding/CalmComprehensionPrompt.tsx",
+  "apps/web/components/debug/OnboardingClarityDebugPanel.tsx",
+  "apps/web/app/internal/onboarding-clarity/page.tsx",
 ];
 
 const REQUIRED_EVENTS = [
@@ -68,11 +68,11 @@ const FORBIDDEN_RE = [
 ];
 
 const USER_SCAN = [
-  "lib/onboarding/onboarding-copy.ts",
-  "components/onboarding",
-  "components/ActivationOnboarding.tsx",
-  "components/onboarding/ArchiveOnboarding.tsx",
-  "lib/onboarding/archive-onboarding-copy.ts",
+  "packages/shared/lib/onboarding/onboarding-copy.ts",
+  "apps/web/components/onboarding",
+  "apps/web/components/ActivationOnboarding.tsx",
+  "apps/web/components/onboarding/ArchiveOnboarding.tsx",
+  "packages/shared/lib/onboarding/archive-onboarding-copy.ts",
 ];
 
 const missing = REQUIRED_FILES.filter((rel) => !fs.existsSync(path.join(ROOT, rel)));
@@ -83,7 +83,7 @@ if (missing.length > 0) {
 }
 
 const observation = fs.readFileSync(
-  path.join(ROOT, "lib/onboarding/onboarding-observation.ts"),
+  path.join(ROOT, "packages/shared/lib/onboarding/onboarding-observation.ts"),
   "utf8",
 );
 for (const event of REQUIRED_EVENTS) {
@@ -94,10 +94,10 @@ for (const event of REQUIRED_EVENTS) {
 }
 
 const homeCopy = [
-  fs.readFileSync(path.join(ROOT, "lib/onboarding/onboarding-copy.ts"), "utf8"),
-  fs.readFileSync(path.join(ROOT, "lib/onboarding/archive-onboarding-copy.ts"), "utf8"),
-  fs.readFileSync(path.join(ROOT, "lib/product-copy.ts"), "utf8"),
-  fs.readFileSync(path.join(ROOT, "lib/trust-copy.ts"), "utf8"),
+  fs.readFileSync(path.join(ROOT, "packages/shared/lib/onboarding/onboarding-copy.ts"), "utf8"),
+  fs.readFileSync(path.join(ROOT, "packages/shared/lib/onboarding/archive-onboarding-copy.ts"), "utf8"),
+  fs.readFileSync(path.join(ROOT, "packages/shared/lib/product-copy.ts"), "utf8"),
+  fs.readFileSync(path.join(ROOT, "packages/shared/lib/trust-copy.ts"), "utf8"),
 ].join("\n");
 const copyAlternatives = {
   "This came back.": ["MEMORY_LANGUAGE.thisCameBack", "WEDGE_RESURFACING.wordsCameBack"],
@@ -122,20 +122,20 @@ for (const line of REQUIRED_COPY) {
   }
 }
 
-const calm = fs.readFileSync(path.join(ROOT, "lib/onboarding/calm-comprehension.ts"), "utf8");
+const calm = fs.readFileSync(path.join(ROOT, "packages/shared/lib/onboarding/calm-comprehension.ts"), "utf8");
 if (!calm.includes("You don't need to organize anything here.")) {
   console.error("Onboarding restraint validation failed — missing calm comprehension copy.");
   process.exit(1);
 }
 
-const activation = fs.readFileSync(path.join(ROOT, "lib/activation-guidance.ts"), "utf8");
+const activation = fs.readFileSync(path.join(ROOT, "packages/shared/lib/activation-guidance.ts"), "utf8");
 if (!activation.includes("ARCHIVE_ONBOARDING_SCREENS")) {
   console.error("Onboarding restraint validation failed — must use archive onboarding screens.");
   process.exit(1);
 }
 
 const archiveOnboarding = fs.readFileSync(
-  path.join(ROOT, "components/onboarding/ArchiveOnboarding.tsx"),
+  path.join(ROOT, "apps/web/components/onboarding/ArchiveOnboarding.tsx"),
   "utf8",
 );
 if (
@@ -147,7 +147,7 @@ if (
 }
 
 const restraint = fs.readFileSync(
-  path.join(ROOT, "lib/onboarding/onboarding-restraint.ts"),
+  path.join(ROOT, "packages/shared/lib/onboarding/onboarding-restraint.ts"),
   "utf8",
 );
 if (!restraint.includes("isOnboardingCopyAllowed") || !restraint.includes("ONBOARDING_BLOCKED_TERMS")) {
@@ -190,7 +190,7 @@ for (const rel of USER_SCAN) {
   }
 }
 
-if (!fs.readFileSync(path.join(ROOT, "app/providers.tsx"), "utf8").includes("OnboardingNavigationTracker")) {
+if (!fs.readFileSync(path.join(ROOT, "apps/web/app/providers.tsx"), "utf8").includes("OnboardingNavigationTracker")) {
   console.error("Onboarding restraint validation failed — wire OnboardingNavigationTracker in providers.");
   process.exit(1);
 }

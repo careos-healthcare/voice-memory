@@ -6,7 +6,7 @@ import { fileURLToPath } from "node:url";
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const failures = [];
 
-const middleware = fs.readFileSync(path.join(ROOT, "middleware.ts"), "utf8");
+const middleware = fs.readFileSync(path.join(ROOT, "apps/web/middleware.ts"), "utf8");
 if (!middleware.includes("isDeprecatedDebugPath")) {
   failures.push("middleware must retire /debug paths");
 }
@@ -20,30 +20,30 @@ if (!middleware.includes("denyNotFound")) {
   failures.push("middleware must 404 blocked routes");
 }
 
-const gate = fs.readFileSync(path.join(ROOT, "lib/middleware/internal-gate.ts"), "utf8");
+const gate = fs.readFileSync(path.join(ROOT, "packages/shared/lib/middleware/internal-gate.ts"), "utf8");
 if (!gate.includes("tier1_production_denied")) {
   failures.push("internal-gate must deny tier1 routes in production");
 }
 
-const atmosphere = fs.readFileSync(path.join(ROOT, "app/api/atmosphere/route.ts"), "utf8");
+const atmosphere = fs.readFileSync(path.join(ROOT, "apps/api/app/api/atmosphere/route.ts"), "utf8");
 if (!atmosphere.includes("guardOpenAiRoute")) {
   failures.push("atmosphere must use guardOpenAiRoute");
 }
 
-if (fs.existsSync(path.join(ROOT, "app/debug"))) {
-  failures.push("app/debug must be removed");
+if (fs.existsSync(path.join(ROOT, "apps/web/app/debug"))) {
+  failures.push("apps/web/app/debug must be removed");
 }
 
-if (!fs.existsSync(path.join(ROOT, "app/internal/layout.tsx"))) {
-  failures.push("app/internal/layout.tsx required");
+if (!fs.existsSync(path.join(ROOT, "apps/web/app/internal/layout.tsx"))) {
+  failures.push("apps/web/app/internal/layout.tsx required");
 }
 
 for (const rel of [
-  "app/api/billing/checkout/route.ts",
-  "app/api/billing/webhook/route.ts",
-  "app/api/journal/route.ts",
-  "lib/billing/stripe-config.ts",
-  "app/api/internal/auth-env/route.ts",
+  "apps/api/app/api/billing/checkout/route.ts",
+  "apps/api/app/api/billing/webhook/route.ts",
+  "apps/api/app/api/journal/route.ts",
+  "packages/shared/lib/billing/stripe-config.ts",
+  "apps/api/app/api/internal/auth-env/route.ts",
 ]) {
   if (!fs.existsSync(path.join(ROOT, rel))) failures.push(`missing ${rel}`);
 }

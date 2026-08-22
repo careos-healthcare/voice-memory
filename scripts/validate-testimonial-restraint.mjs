@@ -10,8 +10,8 @@ const SCAN_DIRS = ["app", "components", "lib"];
 const SKIP_PATH_PARTS = [
   `${path.sep}debug${path.sep}`,
   `${path.sep}api${path.sep}`,
-  "lib/social-proof/testimonial-review.ts",
-  "lib/social-proof/emotional-proof.ts",
+  "packages/shared/lib/social-proof/testimonial-review.ts",
+  "packages/shared/lib/social-proof/emotional-proof.ts",
   "scripts/",
 ];
 

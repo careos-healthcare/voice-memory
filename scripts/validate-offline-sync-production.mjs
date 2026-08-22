@@ -19,24 +19,24 @@ function mustExist(rel) {
 }
 
 for (const rel of [
-  "types/offline-sync-production-verification.ts",
-  "lib/mobile/offline-sync-production-verification.ts",
+  "packages/shared/types/offline-sync-production-verification.ts",
+  "packages/shared/lib/mobile/offline-sync-production-verification.ts",
   "mobile/evidence/offline_sync_tested.json",
-  "apps/voicememory_mobile/lib/features/offline_sync/archive_integrity_snapshot.dart",
-  "apps/voicememory_mobile/lib/features/offline_sync/offline_sync_journey_store.dart",
-  "apps/voicememory_mobile/lib/features/offline_sync/offline_sync_production_evidence.dart",
-  "apps/voicememory_mobile/lib/screens/offline_sync_verification_screen.dart",
-  "apps/voicememory_mobile/lib/services/sync_service.dart",
+  "apps/mobile/lib/features/offline_sync/archive_integrity_snapshot.dart",
+  "apps/mobile/lib/features/offline_sync/offline_sync_journey_store.dart",
+  "apps/mobile/lib/features/offline_sync/offline_sync_production_evidence.dart",
+  "apps/mobile/lib/features/sync/screens/offline_sync_verification_screen.dart",
+  "apps/mobile/lib/services/sync_service.dart",
 ]) {
   mustExist(rel);
 }
 
-const router = read("apps/voicememory_mobile/lib/router/app_router.dart");
+const router = read("apps/mobile/lib/router/app_router.dart");
 if (!router.includes("/offline-sync-verify")) {
   fail("app_router must register /offline-sync-verify");
 }
 
-const screen = read("apps/voicememory_mobile/lib/screens/offline_sync_verification_screen.dart");
+const screen = read("apps/mobile/lib/features/sync/screens/offline_sync_verification_screen.dart");
 if (screen.includes("simulator") && !screen.includes("Physical device")) {
   fail("screen must warn physical device only");
 }
@@ -44,7 +44,7 @@ if (screen.includes("FlutterLocalNotifications")) {
   fail("offline sync must not use local notifications");
 }
 
-const lib = read("lib/mobile/offline-sync-production-verification.ts");
+const lib = read("packages/shared/lib/mobile/offline-sync-production-verification.ts");
 for (const token of [
   "offline_sync_tested.json",
   "belief_preserved",
@@ -66,7 +66,7 @@ try {
     readOfflineSyncEvidence,
     isOfflineSyncProductionPassing,
     buildOfflineSyncProductionReport,
-  } = await import(path.join(ROOT, "lib/mobile/offline-sync-production-verification.ts"));
+  } = await import(path.join(ROOT, "packages/shared/lib/mobile/offline-sync-production-verification.ts"));
 
   const evidence = readOfflineSyncEvidence();
   if (!evidence) {

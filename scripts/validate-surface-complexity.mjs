@@ -13,10 +13,10 @@ const DUPLICATE_GROUPS = [
     id: "archive_surfaces",
     label: "Archive read surfaces",
     patterns: [
-      "app/archive-belief/",
-      "components/archive/EvidenceArchiveHome",
-      "components/archive/ArchiveBeliefCard",
-      "components/archive/ArchiveCommandCenter",
+      "apps/web/app/archive-belief/",
+      "apps/web/components/archive/EvidenceArchiveHome",
+      "apps/web/components/archive/ArchiveBeliefCard",
+      "apps/web/components/archive/ArchiveCommandCenter",
       "ArchiveValueBanner",
     ],
     recommendation: "KEEP command center + archive-belief; MERGE card into home; HIDE redundant banners on archive-belief",
@@ -25,9 +25,9 @@ const DUPLICATE_GROUPS = [
     id: "theory_surfaces",
     label: "Theory / belief surfaces",
     patterns: [
-      "app/theories/",
-      "components/theories/TheoriesView",
-      "components/discover/TheoryChangeFeed",
+      "apps/web/app/theories/",
+      "apps/web/components/theories/TheoriesView",
+      "apps/web/components/discover/TheoryChangeFeed",
       "BeliefDossier",
     ],
     recommendation: "KEEP dossier on archive + discover feed; HIDE theories list behind Account > More",
@@ -36,9 +36,9 @@ const DUPLICATE_GROUPS = [
     id: "reflection_surfaces",
     label: "Reflection surfaces",
     patterns: [
-      "app/memory/",
-      "app/journal/",
-      "components/memory/",
+      "apps/web/app/memory/",
+      "apps/web/app/journal/",
+      "apps/web/components/memory/",
     ],
     recommendation: "KEEP Reflection Log (/memory); HIDE journal behind Account > More",
   },
@@ -46,8 +46,8 @@ const DUPLICATE_GROUPS = [
     id: "insight_surfaces",
     label: "Insight / blind spot surfaces",
     patterns: [
-      "app/blind-spots/",
-      "app/insights/",
+      "apps/web/app/blind-spots/",
+      "apps/web/app/insights/",
       "BlindSpotAcceleration",
       "InsightOutcome",
     ],
@@ -79,7 +79,7 @@ for (const group of DUPLICATE_GROUPS) {
   for (const file of files) {
     const src = fs.readFileSync(path.join(ROOT, file), "utf8");
     for (const pattern of group.patterns) {
-      if (src.includes(pattern) || file.includes(pattern.replace("app/", "").replace("components/", ""))) {
+      if (src.includes(pattern) || file.includes(pattern.replace("apps/web/app/", "").replace("apps/web/components/", ""))) {
         hits.push({ file, pattern });
       }
     }

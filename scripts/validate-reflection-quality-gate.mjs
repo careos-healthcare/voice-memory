@@ -4,8 +4,8 @@ import { fileURLToPath } from "node:url";
 import { pathToFileURL } from "node:url";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const gatePath = path.join(ROOT, "lib/reflection/reflection-quality-gate.ts");
-const labelPath = path.join(ROOT, "lib/reflection/recorder-primary-label.ts");
+const gatePath = path.join(ROOT, "packages/shared/lib/reflection/reflection-quality-gate.ts");
+const labelPath = path.join(ROOT, "packages/shared/lib/reflection/recorder-primary-label.ts");
 
 const failures = [];
 
@@ -23,7 +23,7 @@ if (!labelSrc.includes("Say it now")) {
   failures.push('recorder-primary-label must use "Say it now"');
 }
 
-const recorder = fs.readFileSync(path.join(ROOT, "components/Recorder.tsx"), "utf8");
+const recorder = fs.readFileSync(path.join(ROOT, "apps/web/components/Recorder.tsx"), "utf8");
 if (!recorder.includes("RECORDER_PRIMARY_LABEL")) {
   failures.push("Recorder must use RECORDER_PRIMARY_LABEL");
 }

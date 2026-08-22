@@ -6,9 +6,9 @@ import { mkdirSync, writeFileSync } from "node:fs";
 import { resolve, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { buildConversationThreadsReport } from "../lib/memory/conversation-threads.ts";
-import { buildEmotionalTerritoriesReport } from "../lib/territories/emotional-territories.ts";
-import { buildWeeklyPeriod } from "../lib/roundups/reflective-roundups.ts";
+import { buildConversationThreadsReport } from "../packages/shared/lib/memory/conversation-threads.ts";
+import { buildEmotionalTerritoriesReport } from "../packages/shared/lib/territories/emotional-territories.ts";
+import { buildWeeklyPeriod } from "../packages/shared/lib/roundups/reflective-roundups.ts";
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const ANCHOR_END = "2026-05-20";

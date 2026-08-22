@@ -12,12 +12,12 @@ function fail(msg) {
 }
 
 const required = [
-  "types/immediate-engagement.ts",
-  "lib/archive/immediate-engagement.ts",
-  "lib/archive/immediate-engagement-copy.ts",
-  "lib/archive/archive-followup-storage.ts",
-  "lib/metrics/immediate-engagement-events.ts",
-  "components/archive/ImmediateEngagementPanel.tsx",
+  "packages/shared/types/immediate-engagement.ts",
+  "packages/shared/lib/archive/immediate-engagement.ts",
+  "packages/shared/lib/archive/immediate-engagement-copy.ts",
+  "packages/shared/lib/archive/archive-followup-storage.ts",
+  "packages/shared/lib/metrics/immediate-engagement-events.ts",
+  "apps/web/components/archive/ImmediateEngagementPanel.tsx",
 ];
 
 for (const rel of required) {
@@ -25,7 +25,7 @@ for (const rel of required) {
 }
 
 const copy = fs.readFileSync(
-  path.join(ROOT, "lib/archive/immediate-engagement-copy.ts"),
+  path.join(ROOT, "packages/shared/lib/archive/immediate-engagement-copy.ts"),
   "utf8",
 );
 if (!copy.includes("What ArchiveMe noticed")) fail("heading missing");
@@ -42,7 +42,7 @@ for (const kind of [
 if (!copy.includes("IMMEDIATE_ENGAGEMENT_FORBIDDEN")) fail("forbidden regex missing");
 
 const panel = fs.readFileSync(
-  path.join(ROOT, "components/archive/ImmediateEngagementPanel.tsx"),
+  path.join(ROOT, "apps/web/components/archive/ImmediateEngagementPanel.tsx"),
   "utf8",
 );
 if (!panel.includes("trackFollowupShown")) fail("panel must track followup_shown");
@@ -51,7 +51,7 @@ if (!panel.includes("persistArchiveFollowupAnswer")) fail("panel must persist an
 if (!panel.includes('data-testid="immediate-engagement-panel"')) fail("panel test id missing");
 
 const storage = fs.readFileSync(
-  path.join(ROOT, "lib/archive/archive-followup-storage.ts"),
+  path.join(ROOT, "packages/shared/lib/archive/archive-followup-storage.ts"),
   "utf8",
 );
 if (!storage.includes("voicememory_archive_followup_answer")) {
@@ -59,14 +59,14 @@ if (!storage.includes("voicememory_archive_followup_answer")) {
 }
 
 const events = fs.readFileSync(
-  path.join(ROOT, "lib/metrics/immediate-engagement-events.ts"),
+  path.join(ROOT, "packages/shared/lib/metrics/immediate-engagement-events.ts"),
   "utf8",
 );
 for (const name of ["followup_shown", "followup_answered"]) {
   if (!events.includes(name)) fail(`event missing: ${name}`);
 }
 
-const engine = fs.readFileSync(path.join(ROOT, "lib/archive/immediate-engagement.ts"), "utf8");
+const engine = fs.readFileSync(path.join(ROOT, "packages/shared/lib/archive/immediate-engagement.ts"), "utf8");
 if (engine.includes("mini-wow-internal")) fail("must not import mini-wow-internal");
 const pickOrder = [
   "repeatedPhraseNotice",
@@ -84,11 +84,11 @@ for (const fn of pickOrder) {
   lastIdx = idx;
 }
 
-const recorder = fs.readFileSync(path.join(ROOT, "components/Recorder.tsx"), "utf8");
+const recorder = fs.readFileSync(path.join(ROOT, "apps/web/components/Recorder.tsx"), "utf8");
 if (!recorder.includes("ImmediateEngagementPanel")) fail("Recorder must use ImmediateEngagementPanel");
 if (!recorder.includes("buildImmediateEngagement")) fail("Recorder must build engagement");
 
-const entryPage = fs.readFileSync(path.join(ROOT, "app/entry/[id]/page.tsx"), "utf8");
+const entryPage = fs.readFileSync(path.join(ROOT, "apps/web/app/entry/[id]/page.tsx"), "utf8");
 if (!entryPage.includes("ImmediateEngagementPanel")) fail("entry page must use panel");
 
 const pkg = fs.readFileSync(path.join(ROOT, "package.json"), "utf8");
@@ -117,14 +117,14 @@ globalThis.localStorage = {
 };
 
 const { clearArchiveFollowupAnswersForEval, persistArchiveFollowupAnswer } = await import(
-  "../lib/archive/archive-followup-storage.ts"
+  "../packages/shared/lib/archive/archive-followup-storage.ts"
 );
 const {
   clearImmediateEngagementEventsForEval,
   countImmediateEngagementEvents,
   trackFollowupShown,
-} = await import("../lib/metrics/immediate-engagement-events.ts");
-const { buildImmediateEngagement } = await import("../lib/archive/immediate-engagement.ts");
+} = await import("../packages/shared/lib/metrics/immediate-engagement-events.ts");
+const { buildImmediateEngagement } = await import("../packages/shared/lib/archive/immediate-engagement.ts");
 
 clearArchiveFollowupAnswersForEval();
 clearImmediateEngagementEventsForEval();

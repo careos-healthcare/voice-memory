@@ -10,12 +10,12 @@ import { fileURLToPath } from "node:url";
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
 const SCANNED_FILES = [
-  "lib/refinement/quiet-presentation.ts",
-  "lib/refinement/revisit-experience.ts",
-  "lib/refinement/callback-tuning.ts",
-  "lib/revisit/resurfacing-confidence.ts",
-  "lib/resurfacing/evidence-engine.ts",
-  "lib/retention/day-two-return.ts",
+  "packages/shared/lib/refinement/quiet-presentation.ts",
+  "packages/shared/lib/refinement/revisit-experience.ts",
+  "packages/shared/lib/refinement/callback-tuning.ts",
+  "packages/shared/lib/revisit/resurfacing-confidence.ts",
+  "packages/shared/lib/resurfacing/evidence-engine.ts",
+  "packages/shared/lib/retention/day-two-return.ts",
 ];
 
 const BUILD_FN_PATTERN =
@@ -67,12 +67,12 @@ function extractExportedFunctions(source) {
 
 function assertRequiredFiles() {
   const required = [
-    "lib/tracking/presentation-guard.ts",
-    "lib/refinement/presentation-side-effects.ts",
-    "lib/performance/resurfacing-cache.ts",
-    "lib/entry/entry-route-guard.ts",
-    "app/page.tsx",
-    "app/entry/[id]/page.tsx",
+    "packages/shared/lib/tracking/presentation-guard.ts",
+    "packages/shared/lib/refinement/presentation-side-effects.ts",
+    "packages/shared/lib/performance/resurfacing-cache.ts",
+    "packages/shared/lib/entry/entry-route-guard.ts",
+    "apps/web/app/page.tsx",
+    "apps/web/app/entry/[id]/page.tsx",
   ];
   for (const rel of required) {
     if (!fs.existsSync(path.join(ROOT, rel))) {
@@ -81,7 +81,7 @@ function assertRequiredFiles() {
     }
   }
 
-  const page = fs.readFileSync(path.join(ROOT, "app/page.tsx"), "utf8");
+  const page = fs.readFileSync(path.join(ROOT, "apps/web/app/page.tsx"), "utf8");
   if (!page.includes("runPresentationBuild") || !page.includes("flushPresentationSideEffects")) {
     console.error(
       "Presentation side-effect validation failed — homepage must build under guard and flush after.",
@@ -89,7 +89,7 @@ function assertRequiredFiles() {
     process.exit(1);
   }
 
-  const cache = fs.readFileSync(path.join(ROOT, "lib/performance/resurfacing-cache.ts"), "utf8");
+  const cache = fs.readFileSync(path.join(ROOT, "packages/shared/lib/performance/resurfacing-cache.ts"), "utf8");
   if (!cache.includes("runPresentationBuild") || !cache.includes("flushPresentationSideEffects")) {
     console.error(
       "Presentation side-effect validation failed — resurfacing cache must guard builds and flush.",
@@ -97,7 +97,7 @@ function assertRequiredFiles() {
     process.exit(1);
   }
 
-  const entryPage = fs.readFileSync(path.join(ROOT, "app/entry/[id]/page.tsx"), "utf8");
+  const entryPage = fs.readFileSync(path.join(ROOT, "apps/web/app/entry/[id]/page.tsx"), "utf8");
   if (!entryPage.includes("shouldRunEntryPresentationBuilders")) {
     console.error(
       "Presentation side-effect validation failed — entry page must gate presentation builders.",
@@ -136,7 +136,7 @@ for (const rel of SCANNED_FILES) {
 }
 
 const provider = fs.readFileSync(
-  path.join(ROOT, "components/homepage/HomepagePrimaryCtaProvider.tsx"),
+  path.join(ROOT, "apps/web/components/homepage/HomepagePrimaryCtaProvider.tsx"),
   "utf8",
 );
 if (!provider.includes("registryRef") || !provider.includes("current === next")) {

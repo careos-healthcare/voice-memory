@@ -48,13 +48,13 @@ const REPO_SCRIPTS = [
 ];
 
 const REPO_LIB_PROOF = [
-  "lib/proof/signoff-files.ts",
-  "lib/proof/signoff-validation.ts",
-  "lib/proof/database-live-check.ts",
-  "lib/proof/stripe-webhook-proof-check.ts",
-  "lib/proof/email-live-check.ts",
-  "lib/proof/deploy-proof-orchestrator.ts",
-  "lib/proof/proof-result.ts",
+  "packages/shared/lib/proof/signoff-files.ts",
+  "packages/shared/lib/proof/signoff-validation.ts",
+  "packages/shared/lib/proof/database-live-check.ts",
+  "packages/shared/lib/proof/stripe-webhook-proof-check.ts",
+  "packages/shared/lib/proof/email-live-check.ts",
+  "packages/shared/lib/proof/deploy-proof-orchestrator.ts",
+  "packages/shared/lib/proof/proof-result.ts",
 ];
 
 const NPM_SCRIPTS = [
@@ -94,9 +94,9 @@ for (const rel of [...REPO_SCRIPTS, ...STAGING_SCRIPTS]) {
 }
 
 const STAGING_LIB = [
-  "lib/staging/staging-setup-check.ts",
-  "lib/staging/staging-signoff-status.ts",
-  "lib/staging/staging-proof-guide.ts",
+  "packages/shared/lib/staging/staging-setup-check.ts",
+  "packages/shared/lib/staging/staging-signoff-status.ts",
+  "packages/shared/lib/staging/staging-proof-guide.ts",
 ];
 for (const rel of STAGING_LIB) {
   requirePath("lib", resolve(ROOT, rel));

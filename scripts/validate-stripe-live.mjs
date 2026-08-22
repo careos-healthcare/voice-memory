@@ -10,7 +10,7 @@ import {
   formatStripeLiveReport,
   runStripeLiveCheck,
   writeStripeLiveReport,
-} from "../lib/billing/stripe-live-check.ts";
+} from "../packages/shared/lib/billing/stripe-live-check.ts";
 
 const retrievePrice = process.argv.includes("--retrieve-price");
 const strictEnv = process.argv.includes("--strict-env");

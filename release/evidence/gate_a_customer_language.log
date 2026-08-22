@@ -1,0 +1,29 @@
+00:00 +0: loading /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/customer_language_production_copy_test.dart
+00:00 +0: customer language defines canonical feedback controls
+00:00 +1: evidence eligibility copy uses canonical pattern labels
+00:00 +2: lib/features/archive_proof/visible_archive_proof_copy.dart follows customer language policy
+00:00 +3: lib/features/evidence_contract/evidence_eligibility_copy.dart follows customer language policy
+00:00 +4: lib/features/archive_theory/archive_theory_copy.dart follows customer language policy
+00:00 +5: lib/features/archive_v1/archive_v1_copy.dart follows customer language policy
+00:00 +6: lib/features/session_movement/session_movement_copy.dart follows customer language policy
+00:00 +7: lib/features/archive_home/evidence_ledger_copy.dart follows customer language policy
+00:00 +8: lib/widgets/archive_v1/insight_feed_copy.dart follows customer language policy
+00:00 +9: lib/features/support/support_feedback_copy.dart follows customer language policy
+00:00 +10: lib/features/submission/app_store_submission_copy.dart follows customer language policy
+00:00 +11: lib/onboarding/onboarding_pages.dart follows customer language policy
+00:00 +12: lib/features/trust/privacy_screen_copy.dart follows customer language policy
+00:00 +13: lib/features/trust/terms_screen_copy.dart follows customer language policy
+00:00 +14: lib/security/archive_privacy_controls_copy.dart follows customer language policy
+00:00 +15: lib/security/account_privacy_controls_copy.dart follows customer language policy
+00:00 +16: lib/features/archive_export/archive_export_pack_copy.dart follows customer language policy
+00:00 +17: lib/billing/subscription_billing_copy.dart follows customer language policy
+00:00 +18: lib/features/support/testflight_feedback_copy.dart follows customer language policy
+00:00 +19: lib/features/capture_flow/ui/capture_flow_panels.dart follows customer language policy
+00:00 +20: lib/record/record_screen_framing_copy.dart follows customer language policy
+00:00 +21: ../../packages/shared/lib/site/web-marketing-copy.ts follows customer language policy
+00:00 +22: ../../packages/shared/lib/trust-copy.ts follows customer language policy
+00:00 +23: ../../packages/shared/lib/product/brand-copy.ts follows customer language policy
+00:00 +24: ../../apps/web/app/page.tsx follows customer language policy
+00:00 +25: ../../apps/web/app/contact/page.tsx follows customer language policy
+00:00 +26: ../../apps/web/app/privacy/page.tsx follows customer language policy
+00:00 +27: All tests passed!

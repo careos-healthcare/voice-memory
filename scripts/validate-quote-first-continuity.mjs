@@ -5,7 +5,7 @@ import { fileURLToPath } from "node:url";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const card = fs.readFileSync(
-  path.join(ROOT, "components/continuity/ReturnThreadCard.tsx"),
+  path.join(ROOT, "apps/web/components/continuity/ReturnThreadCard.tsx"),
   "utf8",
 );
 
@@ -21,7 +21,7 @@ if (card.includes("reflection.mood") || /\d\/10/.test(card)) {
 }
 
 const overview = fs.readFileSync(
-  path.join(ROOT, "components/continuity/ReturnThreadsOverview.tsx"),
+  path.join(ROOT, "apps/web/components/continuity/ReturnThreadsOverview.tsx"),
   "utf8",
 );
 const sections = [

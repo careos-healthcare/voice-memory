@@ -6,10 +6,10 @@ import { fileURLToPath } from "node:url";
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const failures = [];
 
-const layout = fs.readFileSync(path.join(ROOT, "app/record/layout.tsx"), "utf8");
-const quick = fs.readFileSync(path.join(ROOT, "components/capture/QuickRecordPage.tsx"), "utf8");
+const layout = fs.readFileSync(path.join(ROOT, "apps/web/app/record/layout.tsx"), "utf8");
+const quick = fs.readFileSync(path.join(ROOT, "apps/web/components/capture/QuickRecordPage.tsx"), "utf8");
 const capture = fs.readFileSync(
-  path.join(ROOT, "components/capture/RecordFullscreenCapture.tsx"),
+  path.join(ROOT, "apps/web/components/capture/RecordFullscreenCapture.tsx"),
   "utf8",
 );
 
@@ -32,7 +32,7 @@ if (!quick.includes("ZeroStateRecorderShell")) {
   failures.push("QuickRecordPage must use ZeroStateRecorderShell");
 }
 
-const gate = fs.readFileSync(path.join(ROOT, "lib/mobile/install-prompt-gate.ts"), "utf8");
+const gate = fs.readFileSync(path.join(ROOT, "packages/shared/lib/mobile/install-prompt-gate.ts"), "utf8");
 if (!gate.includes('"/record"')) {
   failures.push("install prompt gate must block /record");
 }

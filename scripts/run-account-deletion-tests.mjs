@@ -7,7 +7,7 @@
  * must be invoked with `node --conditions=react-server` (see the
  * `validate:account-deletion` npm script).
  */
-import { runAccountDeletionTests } from "../lib/reliability/account-deletion-tests.ts";
+import { runAccountDeletionTests } from "../packages/shared/lib/reliability/account-deletion-tests.ts";
 
 const { failures } = await runAccountDeletionTests();
 

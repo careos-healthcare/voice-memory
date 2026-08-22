@@ -1,0 +1,12 @@
+npm warn Unknown env config "devdir". This will stop working in the next major version of npm.
+
+> voice-memory@0.1.0 validate:ios-signing
+> node --import tsx scripts/validate-ios-signing.mjs
+
+validate:ios-signing failed:
+
+  - ios signing incomplete: success
+  - ios signing incomplete: archive_build_created
+  - ios signing incomplete: uploaded_to_app_store_connect
+  - ios signing incomplete: timestamp
+  - isIosSigningPassing returned false

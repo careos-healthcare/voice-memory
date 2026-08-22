@@ -8,8 +8,8 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const DEBUG_DIR = path.join(ROOT, "app/debug");
-const INTERNAL_DIR = path.join(ROOT, "app/internal");
+const DEBUG_DIR = path.join(ROOT, "apps/web/app/debug");
+const INTERNAL_DIR = path.join(ROOT, "apps/web/app/internal");
 
 /** Required by product validators + founder hub. */
 const KEEP_SLUGS = new Set([
@@ -71,7 +71,7 @@ function replaceInTree(rootDir) {
       .replaceAll("'/internal/", "'/internal/")
       .replaceAll("href=\"/internal/", 'href="/internal/')
       .replaceAll("href='/internal/", "href='/internal/")
-      .replaceAll("app/internal/", "app/internal/")
+      .replaceAll("apps/web/app/internal/", "apps/web/app/internal/")
       .replaceAll('startsWith("/debug")', 'startsWith("/internal")');
     if (next !== text) {
       fs.writeFileSync(file, next);
@@ -82,7 +82,7 @@ function replaceInTree(rootDir) {
 }
 
 if (!fs.existsSync(DEBUG_DIR)) {
-  console.log("app/debug not found — migration already applied or skipped.");
+  console.log("apps/web/app/debug not found — migration already applied or skipped.");
   process.exit(0);
 }
 

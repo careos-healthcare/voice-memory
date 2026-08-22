@@ -1,6 +1,6 @@
 #!/usr/bin/env node
-import { runEmailLiveCheck, writeEmailLiveReport } from "../lib/proof/email-live-check.ts";
-import { formatProofChecks } from "../lib/proof/proof-result.ts";
+import { runEmailLiveCheck, writeEmailLiveReport } from "../packages/shared/lib/proof/email-live-check.ts";
+import { formatProofChecks } from "../packages/shared/lib/proof/proof-result.ts";
 
 const report = await runEmailLiveCheck();
 formatProofChecks(report.checks);

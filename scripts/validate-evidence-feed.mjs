@@ -56,18 +56,18 @@ const expandedEntries = [
   ),
 ];
 
-const { buildEvidenceFeed } = await import("../lib/discover/evidence-feed.ts");
-const { buildTheoryTrackerReport } = await import("../lib/theories/theory-generation.ts");
+const { buildEvidenceFeed } = await import("../packages/shared/lib/discover/evidence-feed.ts");
+const { buildTheoryTrackerReport } = await import("../packages/shared/lib/theories/theory-generation.ts");
 const {
   clearDiscoverVisitForEval,
   saveDiscoverVisitBaseline,
   readDiscoverBaseline,
-} = await import("../lib/discover/discover-visit.ts");
-const { clearTheorySnapshotsForEval } = await import("../lib/theories/theory-snapshots.ts");
+} = await import("../packages/shared/lib/discover/discover-visit.ts");
+const { clearTheorySnapshotsForEval } = await import("../packages/shared/lib/theories/theory-snapshots.ts");
 const { theoryToEvidenceBaseline, buildDiscoverEvidenceContext } = await import(
-  "../lib/discover/theory-evidence-snapshot.ts"
+  "../packages/shared/lib/discover/theory-evidence-snapshot.ts"
 );
-const { DISCOVER_PAGE } = await import("../lib/discover/discover-copy.ts");
+const { DISCOVER_PAGE } = await import("../packages/shared/lib/discover/discover-copy.ts");
 
 clearDiscoverVisitForEval();
 clearTheorySnapshotsForEval();
@@ -111,10 +111,10 @@ assert.ok(Array.isArray(snap.lifeAreas));
 assert.ok(Array.isArray(snap.costEvidenceLines));
 
 const required = [
-  "types/evidence-feed.ts",
-  "lib/discover/evidence-feed.ts",
-  "lib/discover/theory-evidence-snapshot.ts",
-  "components/discover/EvidenceFeedSection.tsx",
+  "packages/shared/types/evidence-feed.ts",
+  "packages/shared/lib/discover/evidence-feed.ts",
+  "packages/shared/lib/discover/theory-evidence-snapshot.ts",
+  "apps/web/components/discover/EvidenceFeedSection.tsx",
 ];
 
 for (const rel of required) {
@@ -122,7 +122,7 @@ for (const rel of required) {
 }
 
 const discoverUi = fs.readFileSync(
-  path.join(ROOT, "components/discover/TheoryChangeFeed.tsx"),
+  path.join(ROOT, "apps/web/components/discover/TheoryChangeFeed.tsx"),
   "utf8",
 );
 if (!discoverUi.includes("EvidenceFeedSection")) {

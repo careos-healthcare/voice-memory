@@ -5,7 +5,7 @@ import { fileURLToPath } from "node:url";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
-const PRESSURE_FILE = path.join(ROOT, "lib/behavior/product-pressure.ts");
+const PRESSURE_FILE = path.join(ROOT, "packages/shared/lib/behavior/product-pressure.ts");
 const failures = [];
 
 if (!fs.existsSync(PRESSURE_FILE)) {
@@ -24,7 +24,7 @@ if (!fs.existsSync(PRESSURE_FILE)) {
 }
 
 const insight = fs.readFileSync(
-  path.join(ROOT, "lib/behavior/insight-summary.ts"),
+  path.join(ROOT, "packages/shared/lib/behavior/insight-summary.ts"),
   "utf8",
 );
 if (!insight.includes("productPressure")) {

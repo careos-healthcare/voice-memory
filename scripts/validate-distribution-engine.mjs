@@ -19,28 +19,28 @@ function mustExist(rel) {
 }
 
 const REQUIRED = [
-  "types/distribution.ts",
-  "lib/distribution/transformation-moments.ts",
-  "lib/distribution/testimonial-store.ts",
-  "lib/distribution/archive-share-cards.ts",
-  "lib/distribution/creator-story-builder.ts",
-  "lib/distribution/share-archive-prompt.ts",
-  "lib/distribution/proof-wall.ts",
-  "lib/distribution/creator-kit.ts",
-  "lib/distribution/distribution-metrics.ts",
-  "lib/internal/distribution-report.ts",
-  "components/distribution/ArchiveShareCard.tsx",
-  "components/distribution/TestimonialCapturePrompt.tsx",
-  "components/distribution/ShareArchivePrompt.tsx",
-  "components/distribution/ProofWall.tsx",
-  "components/distribution/DistributionArchivePanel.tsx",
-  "app/internal/distribution/page.tsx",
-  "app/creator-kit/page.tsx",
+  "packages/shared/types/distribution.ts",
+  "packages/shared/lib/distribution/transformation-moments.ts",
+  "packages/shared/lib/distribution/testimonial-store.ts",
+  "packages/shared/lib/distribution/archive-share-cards.ts",
+  "packages/shared/lib/distribution/creator-story-builder.ts",
+  "packages/shared/lib/distribution/share-archive-prompt.ts",
+  "packages/shared/lib/distribution/proof-wall.ts",
+  "packages/shared/lib/distribution/creator-kit.ts",
+  "packages/shared/lib/distribution/distribution-metrics.ts",
+  "packages/shared/lib/internal/distribution-report.ts",
+  "apps/web/components/distribution/ArchiveShareCard.tsx",
+  "apps/web/components/distribution/TestimonialCapturePrompt.tsx",
+  "apps/web/components/distribution/ShareArchivePrompt.tsx",
+  "apps/web/components/distribution/ProofWall.tsx",
+  "apps/web/components/distribution/DistributionArchivePanel.tsx",
+  "apps/web/app/internal/distribution/page.tsx",
+  "apps/web/app/creator-kit/page.tsx",
 ];
 
 for (const rel of REQUIRED) mustExist(rel);
 
-const moments = read("lib/distribution/transformation-moments.ts");
+const moments = read("packages/shared/lib/distribution/transformation-moments.ts");
 for (const type of [
   "first_belief",
   "belief_change",
@@ -56,28 +56,28 @@ for (const fn of ["syncTransformationMoments", "readDistributionMoments"]) {
   if (!moments.includes(fn)) fail(`transformation-moments missing ${fn}`);
 }
 
-const shareCard = read("components/distribution/ArchiveShareCard.tsx");
+const shareCard = read("apps/web/components/distribution/ArchiveShareCard.tsx");
 for (const line of [
   "My archive changed its mind.",
   "screenshot",
 ]) {
-  if (!shareCard.includes(line) && !read("lib/distribution/archive-share-cards.ts").includes(line)) {
+  if (!shareCard.includes(line) && !read("packages/shared/lib/distribution/archive-share-cards.ts").includes(line)) {
     fail(`share card missing example line: ${line}`);
   }
 }
 
-const testimonial = read("lib/distribution/testimonial-store.ts");
+const testimonial = read("packages/shared/lib/distribution/testimonial-store.ts");
 if (!testimonial.includes("What surprised you most?")) {
   fail("testimonial capture must ask What surprised you most?");
 }
 
-const builder = read("lib/distribution/creator-story-builder.ts");
+const builder = read("packages/shared/lib/distribution/creator-story-builder.ts");
 if (!builder.includes("CreatorStoryBuilder")) fail("missing CreatorStoryBuilder");
 for (const fmt of ["forTikTok", "forInstagram", "forShorts"]) {
   if (!builder.includes(fmt)) fail(`CreatorStoryBuilder missing ${fmt}`);
 }
 
-const shareArchive = read("lib/distribution/share-archive-prompt.ts");
+const shareArchive = read("packages/shared/lib/distribution/share-archive-prompt.ts");
 if (!shareArchive.includes("Share Archive")) fail("missing Share Archive label");
 for (const trigger of [
   "belief_change",
@@ -89,7 +89,7 @@ for (const trigger of [
   if (!shareArchive.includes(trigger)) fail(`share-archive missing trigger ${trigger}`);
 }
 
-const proofWall = read("lib/distribution/proof-wall.ts");
+const proofWall = read("packages/shared/lib/distribution/proof-wall.ts");
 if (!proofWall.includes("testimonial") || !proofWall.includes("archive_moment")) {
   fail("proof-wall must use real testimonials and archive moments");
 }
@@ -97,12 +97,12 @@ if (proofWall.includes("fake") || proofWall.includes("thousands of users")) {
   fail("proof-wall must not use fake social proof");
 }
 
-const creatorKit = read("lib/distribution/creator-kit.ts");
+const creatorKit = read("packages/shared/lib/distribution/creator-kit.ts");
 if (!creatorKit.includes("KIT_SIZE = 10") && !creatorKit.includes("KIT_SIZE")) {
   fail("creator-kit must generate 10 items per section");
 }
 
-const metrics = read("lib/distribution/distribution-metrics.ts");
+const metrics = read("packages/shared/lib/distribution/distribution-metrics.ts");
 for (const rate of [
   "shareRate",
   "referralRate",
@@ -113,12 +113,12 @@ for (const rate of [
   if (!metrics.includes(rate)) fail(`distribution-metrics missing ${rate}`);
 }
 
-const archiveHome = read("components/archive/EvidenceArchiveHome.tsx");
+const archiveHome = read("apps/web/components/archive/EvidenceArchiveHome.tsx");
 if (!archiveHome.includes("DistributionArchivePanel")) {
   fail("EvidenceArchiveHome must wire DistributionArchivePanel");
 }
 
-const homepage = read("app/page.tsx");
+const homepage = read("apps/web/app/page.tsx");
 if (!homepage.includes("ProofWall")) {
   fail("homepage must use ProofWall");
 }

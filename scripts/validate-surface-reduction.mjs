@@ -20,11 +20,11 @@ function mustExist(rel) {
 }
 
 const required = [
-  "lib/product/archive-relevance.ts",
-  "lib/product/archive-feature-justification.ts",
-  "components/archive/ArchiveDetailHub.tsx",
-  "app/archive-detail/page.tsx",
-  "components/archive/ReflectionLogPanel.tsx",
+  "packages/shared/lib/product/archive-relevance.ts",
+  "packages/shared/lib/product/archive-feature-justification.ts",
+  "apps/web/components/archive/ArchiveDetailHub.tsx",
+  "apps/web/app/archive-detail/page.tsx",
+  "apps/web/components/archive/ReflectionLogPanel.tsx",
   "scripts/generate-archive-relevance-report.mjs",
   "scripts/validate-surface-reduction.mjs",
 ];
@@ -40,7 +40,7 @@ if (!fs.existsSync(path.join(ROOT, "docs/ARCHIVE_RELEVANCE_REPORT.md"))) {
   fail("docs/ARCHIVE_RELEVANCE_REPORT.md not generated");
 }
 
-const simplicity = read("lib/product/simplicity-mode.ts");
+const simplicity = read("packages/shared/lib/product/simplicity-mode.ts");
 for (const label of ["Record", "Archive", "Archive Activity", "Account"]) {
   if (!simplicity.includes(`label: "${label}"`)) fail(`primary nav missing ${label}`);
 }
@@ -59,10 +59,10 @@ if (simplicity.includes('label: "Discover"')) {
   if (block.includes('label: "Discover"')) fail('Use "Archive Activity" not Discover in primary nav');
 }
 
-const header = read("components/SiteHeader.tsx");
+const header = read("apps/web/components/SiteHeader.tsx");
 if (!header.includes("SIMPLICITY_PRIMARY_NAV")) fail("SiteHeader must use SIMPLICITY_PRIMARY_NAV");
 
-const commandCenter = read("components/archive/ArchiveCommandCenter.tsx");
+const commandCenter = read("apps/web/components/archive/ArchiveCommandCenter.tsx");
 for (const token of [
   "ArchiveReputationCard",
   "WhyTheArchiveTrustsThis",
@@ -82,7 +82,7 @@ for (const required of ["BeliefChangeTimeline", "ArchiveBeliefEvidenceSection"])
   }
 }
 
-const discover = read("app/discover/page.tsx");
+const discover = read("apps/web/app/discover/page.tsx");
 for (const dup of [
   "ArchiveBeliefCard",
   "ArchiveReputationCard",
@@ -97,7 +97,7 @@ if (!discover.includes("TheoryChangeFeed") || !discover.includes("ArchiveReputat
   fail("Discover must own change/movement feeds");
 }
 
-const memory = read("app/memory/page.tsx");
+const memory = read("apps/web/app/memory/page.tsx");
 if (!memory.includes("ReflectionLogPanel")) fail("memory must use ReflectionLogPanel");
 for (const dup of [
   "SessionMovementSummary",
@@ -108,10 +108,10 @@ for (const dup of [
   if (memory.includes(dup)) fail(`Reflection log must not duplicate: ${dup}`);
 }
 
-const home = read("components/archive/EvidenceArchiveHome.tsx");
+const home = read("apps/web/components/archive/EvidenceArchiveHome.tsx");
 if (!home.includes("ArchiveDetailHub")) fail("archive home must link ArchiveDetailHub");
 
-const justification = read("lib/product/archive-feature-justification.ts");
+const justification = read("packages/shared/lib/product/archive-feature-justification.ts");
 for (const key of [
   "ArchiveCommandCenter",
   "ArchiveReputationCard",
@@ -152,7 +152,7 @@ if (!classifySurface('/search').hide) process.exit(1);
 );
 if (classifyCheck.status !== 0) fail("classifySurface rules failed");
 
-const mobile = read("apps/voicememory_mobile/lib/widgets/main_shell.dart");
+const mobile = read("apps/mobile/lib/widgets/main_shell.dart");
 if (!mobile.includes("label: 'Changes'")) fail("mobile nav must label Changes");
 if (mobileShellDiscover(mobile)) fail("mobile must not use Discover label");
 function mobileShellDiscover(src) {

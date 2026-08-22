@@ -10,7 +10,7 @@ const SCAN_DIRS = ["app", "components", "lib"];
 const SKIP_PATH_PARTS = [
   `${path.sep}debug${path.sep}`,
   `${path.sep}api${path.sep}`,
-  "lib/sharing/quiet-sharing.ts",
+  "packages/shared/lib/sharing/quiet-sharing.ts",
   "scripts/",
 ];
 

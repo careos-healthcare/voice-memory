@@ -1,0 +1,85 @@
+{
+  "recordedAt": "2026-08-12T19:35:00.000Z",
+  "commitSha": "1eabdc74cd255548af59e626a75f93f3731ea385",
+  "buildNumber": 48,
+  "environment": "local-dev",
+  "runs": [
+    {
+      "gateId": "remote_consent_no_network_evidence",
+      "command": "flutter test remote_processing_consent_gate_test.dart capture_pipeline_consent_boundary_test.dart security/remote_processing_consent_gate_test.dart",
+      "exitCode": 0,
+      "summary": "13 passed, 0 failed",
+      "evidencePath": "release/evidence/remote_consent_tests.log"
+    },
+    {
+      "gateId": "sensitive_storage_scan",
+      "command": "flutter test storage/mobile_prefs_policy_test.dart && validate-mobile-clean-working-tree.sh",
+      "exitCode": 0,
+      "summary": "prefs policy 2 passed; clean working tree ok",
+      "evidencePath": "release/evidence/sensitive_storage_prefs_test.log"
+    },
+    {
+      "gateId": "log_redaction",
+      "command": "npm run validate:privacy-logs",
+      "exitCode": 0,
+      "summary": "validate-privacy-logs ok",
+      "evidencePath": "release/evidence/log_redaction.log"
+    },
+    {
+      "gateId": "route_link_integrity",
+      "command": "bash apps/mobile/tool/validate_v1_production_graph.sh",
+      "exitCode": 1,
+      "summary": "OfflineSyncVerificationScreen missing from V1ProductionAllowlist.productionRouterScreens",
+      "evidencePath": "release/evidence/route_link_integrity.log"
+    },
+    {
+      "gateId": "focused_analyzer_test_suite",
+      "command": "LAUNCH_VALIDATION.md focused suite (16 files)",
+      "exitCode": 1,
+      "summary": "270 passed, 15 failed",
+      "evidencePath": "release/evidence/focused_release_suite.log"
+    },
+    {
+      "gateId": "security_validators",
+      "command": "validate:privacy-logs && validate:security-aplus && validate:api-guard",
+      "exitCode": 0,
+      "summary": "all three validators exit 0",
+      "evidencePath": "release/evidence/security_validators.log"
+    },
+    {
+      "gateId": "export_delete",
+      "command": "flutter test archive_export_pack_test.dart delete_account_confirmation_test.dart",
+      "exitCode": 0,
+      "summary": "29 passed, 0 failed (automated; device export smoke not recorded)",
+      "evidencePath": "release/evidence/export_delete_tests_full.log"
+    },
+    {
+      "gateId": "ios_android_build_signing",
+      "command": "validate:ios-signing && validate:android-signing",
+      "exitCode": 1,
+      "summary": "ios_signing_tested.json and android_signing_tested.json success:false",
+      "evidencePath": "mobile/evidence/ios_signing_tested.json"
+    },
+    {
+      "gateId": "testflight_internal_smoke",
+      "command": "validate:testflight-proof",
+      "exitCode": 1,
+      "summary": "testflight_tested.json success:false",
+      "evidencePath": "mobile/evidence/testflight_tested.json"
+    },
+    {
+      "gateId": "sync_offline_conflict",
+      "command": "validate:offline-sync-production",
+      "exitCode": 0,
+      "summary": "structural validator ok; device evidence 2026-08-11 not bound to build 48 / commit 1eabdc74",
+      "evidencePath": "mobile/evidence/offline_sync_tested.json"
+    },
+    {
+      "gateId": "purchase_restore",
+      "command": "validate:revenuecat-production && validate:testflight-proof",
+      "exitCode": 1,
+      "summary": "revenuecat validator ok; testflight purchase/restore false; live purchases paused",
+      "evidencePath": "mobile/evidence/revenuecat_store_tested.json"
+    }
+  ]
+}

@@ -19,42 +19,42 @@ function mustExist(rel) {
 }
 
 const required = [
-  "lib/design/archive-copy-restraint.ts",
-  "lib/design/archive-success-copy.ts",
-  "lib/design/archive-empty-state-audit.ts",
-  "lib/design/archive-empty-state-copy.ts",
-  "lib/design/archive-icon-registry.ts",
-  "lib/design/archive-motion-restraint.ts",
-  "lib/design/archive-taste-score.ts",
-  "lib/internal/archive-taste-file-audit.ts",
-  "lib/onboarding/onboarding-confidence-check.ts",
-  "components/onboarding/OnboardingConfidenceCheck.tsx",
+  "packages/shared/lib/design/archive-copy-restraint.ts",
+  "packages/shared/lib/design/archive-success-copy.ts",
+  "packages/shared/lib/design/archive-empty-state-audit.ts",
+  "packages/shared/lib/design/archive-empty-state-copy.ts",
+  "packages/shared/lib/design/archive-icon-registry.ts",
+  "packages/shared/lib/design/archive-motion-restraint.ts",
+  "packages/shared/lib/design/archive-taste-score.ts",
+  "packages/shared/lib/internal/archive-taste-file-audit.ts",
+  "packages/shared/lib/onboarding/onboarding-confidence-check.ts",
+  "apps/web/components/onboarding/OnboardingConfidenceCheck.tsx",
 ];
 
 for (const rel of required) mustExist(rel);
 
-const restraint = read("lib/design/archive-copy-restraint.ts");
+const restraint = read("packages/shared/lib/design/archive-copy-restraint.ts");
 for (const surface of ["archive", "changes", "detail", "account"]) {
   if (!restraint.includes(`"${surface}"`)) fail(`archive-copy-restraint missing ${surface}`);
 }
 
-const success = read("lib/design/archive-success-copy.ts");
+const success = read("packages/shared/lib/design/archive-success-copy.ts");
 if (!success.includes("Archive updated.")) fail("archive-success-copy must define Archive updated.");
 for (const banned of ["Success!", "Reflection processed"]) {
-  if (read("lib/archive/reflection-impact-receipt.ts").includes(banned)) {
+  if (read("packages/shared/lib/archive/reflection-impact-receipt.ts").includes(banned)) {
     fail(`reflection-impact-receipt must not use: ${banned}`);
   }
 }
 
-const emptyAudit = read("lib/design/archive-empty-state-audit.ts");
+const emptyAudit = read("packages/shared/lib/design/archive-empty-state-audit.ts");
 if (!emptyAudit.includes("ARCHIVE_EMPTY_STATE_REGISTRY")) {
   fail("archive-empty-state-audit must export empty state registry");
 }
 
-const icons = read("lib/design/archive-icon-registry.ts");
+const icons = read("packages/shared/lib/design/archive-icon-registry.ts");
 if (!icons.includes("ARCHIVE_ICON_REGISTRY")) fail("missing ARCHIVE_ICON_REGISTRY");
 
-const onboarding = read("lib/onboarding/onboarding-confidence-check.ts");
+const onboarding = read("packages/shared/lib/onboarding/onboarding-confidence-check.ts");
 if (!onboarding.includes("tracks_archive_belief")) {
   fail("onboarding-confidence must classify tracks_archive_belief");
 }
@@ -66,7 +66,7 @@ if (!pkg.scripts?.["validate:archive-taste"]) {
 
 try {
   const { buildArchiveTasteFileReport } = await import(
-    path.join(ROOT, "lib/internal/archive-taste-file-audit.ts")
+    path.join(ROOT, "packages/shared/lib/internal/archive-taste-file-audit.ts")
   );
   const report = buildArchiveTasteFileReport();
   console.log(`ARCHIVE_TASTE_SCORE=${report.score.total}`);

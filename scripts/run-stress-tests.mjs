@@ -4,7 +4,7 @@
  * Requires tsx for TypeScript + path alias resolution.
  */
 
-import { runAllArchiveStressTests, STRESS_TEST_SEED } from "../lib/reliability/stress-tests.ts";
+import { runAllArchiveStressTests, STRESS_TEST_SEED } from "../packages/shared/lib/reliability/stress-tests.ts";
 
 const report = runAllArchiveStressTests();
 

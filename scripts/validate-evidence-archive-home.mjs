@@ -9,24 +9,24 @@ const failures = [];
 const fail = (msg) => failures.push(msg);
 
 const required = [
-  "app/archive-belief/page.tsx",
-  "components/archive/EvidenceArchiveHome.tsx",
-  "components/archive/ArchiveBeliefCard.tsx",
-  "components/archive/BeliefChangeTimeline.tsx",
-  "components/product/EvidenceArchivePreview.tsx",
-  "components/retention/BeliefRecallPrompt.tsx",
-  "lib/internal/belief-recall-report.ts",
-  "components/internal/BeliefRecallPanel.tsx",
-  "components/social-proof/ArchiveProofStories.tsx",
+  "apps/web/app/archive-belief/page.tsx",
+  "apps/web/components/archive/EvidenceArchiveHome.tsx",
+  "apps/web/components/archive/ArchiveBeliefCard.tsx",
+  "apps/web/components/archive/BeliefChangeTimeline.tsx",
+  "apps/web/components/product/EvidenceArchivePreview.tsx",
+  "apps/web/components/retention/BeliefRecallPrompt.tsx",
+  "packages/shared/lib/internal/belief-recall-report.ts",
+  "apps/web/components/internal/BeliefRecallPanel.tsx",
+  "apps/web/components/social-proof/ArchiveProofStories.tsx",
   "data/archive-proof-stories.json",
-  "components/retention/ReferralSharePrompt.tsx",
-  "lib/retention/referral-share-prompt.ts",
-  "components/account/AccountSecondaryNav.tsx",
-  "lib/archive/evidence-archive-home-copy.ts",
-  "lib/product/evidence-archive-preview-copy.ts",
-  "lib/product/archive-product-copy.ts",
-  "components/archive/ArchiveProductWayfinding.tsx",
-  "components/archive/ArchiveUtilitiesNav.tsx",
+  "apps/web/components/retention/ReferralSharePrompt.tsx",
+  "packages/shared/lib/retention/referral-share-prompt.ts",
+  "apps/web/components/account/AccountSecondaryNav.tsx",
+  "packages/shared/lib/archive/evidence-archive-home-copy.ts",
+  "packages/shared/lib/product/evidence-archive-preview-copy.ts",
+  "packages/shared/lib/product/archive-product-copy.ts",
+  "apps/web/components/archive/ArchiveProductWayfinding.tsx",
+  "apps/web/components/archive/ArchiveUtilitiesNav.tsx",
 ];
 
 for (const rel of required) {
@@ -34,11 +34,11 @@ for (const rel of required) {
 }
 
 const homeCopy = fs.readFileSync(
-  path.join(ROOT, "lib/archive/evidence-archive-home-copy.ts"),
+  path.join(ROOT, "packages/shared/lib/archive/evidence-archive-home-copy.ts"),
   "utf8",
 );
 const productCopy = fs.readFileSync(
-  path.join(ROOT, "lib/product/archive-product-copy.ts"),
+  path.join(ROOT, "packages/shared/lib/product/archive-product-copy.ts"),
   "utf8",
 );
 for (const phrase of [
@@ -68,7 +68,7 @@ if (
 }
 
 const archiveHome = fs.readFileSync(
-  path.join(ROOT, "components/archive/EvidenceArchiveHome.tsx"),
+  path.join(ROOT, "apps/web/components/archive/EvidenceArchiveHome.tsx"),
   "utf8",
 );
 for (const token of [
@@ -103,7 +103,7 @@ for (const token of [
 }
 
 const previewCopy = fs.readFileSync(
-  path.join(ROOT, "lib/product/evidence-archive-preview-copy.ts"),
+  path.join(ROOT, "packages/shared/lib/product/evidence-archive-preview-copy.ts"),
   "utf8",
 );
 for (const phrase of [
@@ -114,9 +114,9 @@ for (const phrase of [
   if (!previewCopy.includes(phrase)) fail(`missing preview: ${phrase}`);
 }
 
-const header = fs.readFileSync(path.join(ROOT, "components/SiteHeader.tsx"), "utf8");
+const header = fs.readFileSync(path.join(ROOT, "apps/web/components/SiteHeader.tsx"), "utf8");
 const simplicityNav = fs.readFileSync(
-  path.join(ROOT, "lib/product/simplicity-mode.ts"),
+  path.join(ROOT, "packages/shared/lib/product/simplicity-mode.ts"),
   "utf8",
 );
 if (!header.includes("SIMPLICITY_PRIMARY_NAV")) fail("SiteHeader must use SIMPLICITY_PRIMARY_NAV");
@@ -134,12 +134,12 @@ for (const demoted of ["/theories", "/insights", "/weekly"]) {
 }
 if (!simplicityNav.includes("/archive-belief")) fail("nav must link archive-belief");
 
-const returning = fs.readFileSync(path.join(ROOT, "lib/product/returning-home.ts"), "utf8");
+const returning = fs.readFileSync(path.join(ROOT, "packages/shared/lib/product/returning-home.ts"), "utf8");
 if (!returning.includes("/archive-belief")) fail("returning home must use archive-belief");
 if (!returning.includes("shouldAutoRedirectToArchiveBelief")) fail("archive redirect fn");
 
 const paywall = fs.readFileSync(
-  path.join(ROOT, "lib/billing/value-moment-paywall-copy.ts"),
+  path.join(ROOT, "packages/shared/lib/billing/value-moment-paywall-copy.ts"),
   "utf8",
 );
 for (const phrase of [
@@ -160,14 +160,14 @@ if (stories.stories?.some((s) => /\d+%|users love|thousands/i.test(s.quote))) {
 }
 
 const timeline = fs.readFileSync(
-  path.join(ROOT, "components/archive/BeliefChangeTimeline.tsx"),
+  path.join(ROOT, "apps/web/components/archive/BeliefChangeTimeline.tsx"),
   "utf8",
 );
 if (!timeline.includes("data-dominant")) fail("timeline must support dominant mode");
 if (!timeline.includes("evidenceQuoteCount")) fail("timeline must show evidence count");
 
 const mobileRouter = fs.readFileSync(
-  path.join(ROOT, "apps/voicememory_mobile/lib/router/app_router.dart"),
+  path.join(ROOT, "apps/mobile/lib/router/app_router.dart"),
   "utf8",
 );
 if (!mobileRouter.includes("/archive-belief")) fail("mobile route /archive-belief");
@@ -176,7 +176,7 @@ const pkg = fs.readFileSync(path.join(ROOT, "package.json"), "utf8");
 if (!pkg.includes("validate:evidence-archive-home")) fail("package.json script");
 
 const forbiddenEngine = fs.readFileSync(
-  path.join(ROOT, "components/archive/EvidenceArchiveHome.tsx"),
+  path.join(ROOT, "apps/web/components/archive/EvidenceArchiveHome.tsx"),
   "utf8",
 );
 for (const imp of ["insight-ingredient-optimizer", "pattern-detection/engine", "theory-generation/engine"]) {
@@ -197,11 +197,11 @@ globalThis.localStorage = {
 };
 
 const { clearBeliefRecallForEval, saveBeliefRecallLevel } = await import(
-  "../lib/retention/belief-recall.ts"
+  "../packages/shared/lib/retention/belief-recall.ts"
 );
-const { buildBeliefRecallReport } = await import("../lib/internal/belief-recall-report.ts");
+const { buildBeliefRecallReport } = await import("../packages/shared/lib/internal/belief-recall-report.ts");
 const { clearReferralShareForEval, meetsReferralShareEligibility } = await import(
-  "../lib/retention/referral-share-prompt.ts"
+  "../packages/shared/lib/retention/referral-share-prompt.ts"
 );
 
 clearBeliefRecallForEval();

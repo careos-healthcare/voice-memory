@@ -1,0 +1,13 @@
+{
+  "success": false,
+  "belief_preserved": false,
+  "evidence_preserved": false,
+  "reflections_recorded_offline": 0,
+  "reflections_synced": 0,
+  "timestamp": "",
+  "platform": "ios",
+  "device": "",
+  "marketing_version": "0.2.0",
+  "build_number": 48,
+  "commit_sha": ""
+}

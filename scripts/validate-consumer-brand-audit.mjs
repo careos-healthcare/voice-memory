@@ -1,7 +1,7 @@
 #!/usr/bin/env node
-import { runConsumerBrandAuditTests } from "../lib/reliability/consumer-brand-audit-tests.ts";
+import { runConsumerBrandAuditTests } from "../packages/shared/lib/reliability/consumer-brand-audit-tests.ts";
 
-const { failures } = runConsumerBrandAuditTests();
+const { failures } = runConsumerBrandAuditTests(process.cwd());
 
 if (failures.length > 0) {
   console.error("validate-consumer-brand-audit failed:\n", failures.join("\n"));

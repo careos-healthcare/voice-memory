@@ -1,0 +1,17 @@
+npm warn Unknown env config "devdir". This will stop working in the next major version of npm.
+
+> voice-memory@0.1.0 validate:testflight-proof
+> node --import tsx scripts/validate-testflight-proof.mjs
+
+validate:testflight-proof failed:
+
+  - testflight proof incomplete: success
+  - testflight proof incomplete: build_uploaded
+  - testflight proof incomplete: build_installed
+  - testflight proof incomplete: onboarding_completed
+  - testflight proof incomplete: record_completed
+  - testflight proof incomplete: archive_viewed
+  - testflight proof incomplete: purchase_completed
+  - testflight proof incomplete: restore_completed
+  - testflight proof incomplete: timestamp
+  - isTestflightProofPassing returned false

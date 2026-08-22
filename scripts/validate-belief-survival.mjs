@@ -19,14 +19,14 @@ function mustExist(rel) {
 }
 
 const required = [
-  "types/belief-survival.ts",
-  "lib/archive/belief-survival.ts",
-  "components/archive/BeliefSurvivalCard.tsx",
+  "packages/shared/types/belief-survival.ts",
+  "packages/shared/lib/archive/belief-survival.ts",
+  "apps/web/components/archive/BeliefSurvivalCard.tsx",
 ];
 
 for (const rel of required) mustExist(rel);
 
-const lib = read("lib/archive/belief-survival.ts");
+const lib = read("packages/shared/lib/archive/belief-survival.ts");
 for (const phrase of [
   "BELIEF_SURVIVAL_TITLE",
   "buildBeliefSurvivalView",
@@ -43,7 +43,7 @@ for (const phrase of [
   if (!lib.includes(phrase)) fail(`belief-survival missing: ${phrase}`);
 }
 
-const card = read("components/archive/BeliefSurvivalCard.tsx");
+const card = read("apps/web/components/archive/BeliefSurvivalCard.tsx");
 for (const phrase of [
   'data-testid="belief-survival-card"',
   "buildBeliefSurvivalView",
@@ -57,8 +57,8 @@ for (const phrase of [
 }
 
 const surfaces = [
-  ["components/archive/BeliefDossier.tsx", "Belief Dossier"],
-  ["app/discover/page.tsx", "Discover"],
+  ["apps/web/components/archive/BeliefDossier.tsx", "Belief Dossier"],
+  ["apps/web/app/discover/page.tsx", "Discover"],
 ];
 
 for (const [file, label] of surfaces) {

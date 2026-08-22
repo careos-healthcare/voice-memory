@@ -12,22 +12,22 @@ function fail(msg) {
 }
 
 const required = [
-  "types/belief-timeline.ts",
-  "lib/archive/belief-timeline.ts",
-  "lib/archive/belief-timeline-storage.ts",
-  "lib/archive/belief-timeline-copy.ts",
-  "components/archive/BeliefChangeTimeline.tsx",
-  "lib/founder-test/belief-reframing-validation.ts",
+  "packages/shared/types/belief-timeline.ts",
+  "packages/shared/lib/archive/belief-timeline.ts",
+  "packages/shared/lib/archive/belief-timeline-storage.ts",
+  "packages/shared/lib/archive/belief-timeline-copy.ts",
+  "apps/web/components/archive/BeliefChangeTimeline.tsx",
+  "packages/shared/lib/founder-test/belief-reframing-validation.ts",
 ];
 
 for (const rel of required) {
   if (!fs.existsSync(path.join(ROOT, rel))) fail(`missing ${rel}`);
 }
 
-const card = fs.readFileSync(path.join(ROOT, "components/archive/ArchiveBeliefCard.tsx"), "utf8");
+const card = fs.readFileSync(path.join(ROOT, "apps/web/components/archive/ArchiveBeliefCard.tsx"), "utf8");
 if (!card.includes("BeliefChangeTimeline")) fail("ArchiveBeliefCard must include timeline");
 
-const events = fs.readFileSync(path.join(ROOT, "lib/metrics/archive-belief-events.ts"), "utf8");
+const events = fs.readFileSync(path.join(ROOT, "packages/shared/lib/metrics/archive-belief-events.ts"), "utf8");
 if (!events.includes("belief_timeline_viewed")) fail("belief_timeline_viewed missing");
 
 const pkg = fs.readFileSync(path.join(ROOT, "package.json"), "utf8");
@@ -41,9 +41,9 @@ globalThis.localStorage = {
   removeItem: (k) => storage.delete(String(k)),
 };
 
-const { clearBeliefTimelineForEval } = await import("../lib/archive/belief-timeline-storage.ts");
-const { buildBeliefChangeTimeline } = await import("../lib/archive/belief-timeline.ts");
-const { buildArchiveBeliefView } = await import("../lib/archive/archive-belief.ts");
+const { clearBeliefTimelineForEval } = await import("../packages/shared/lib/archive/belief-timeline-storage.ts");
+const { buildBeliefChangeTimeline } = await import("../packages/shared/lib/archive/belief-timeline.ts");
+const { buildArchiveBeliefView } = await import("../packages/shared/lib/archive/archive-belief.ts");
 
 clearBeliefTimelineForEval();
 

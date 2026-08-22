@@ -9,7 +9,7 @@ const SCAN_DIRS = ["app", "components"];
 const SKIP = [`${path.sep}debug${path.sep}`, `${path.sep}api${path.sep}`];
 const EXT = new Set([".tsx", ".ts"]);
 
-const memoryLang = fs.readFileSync(path.join(ROOT, "lib/memory-language.ts"), "utf8");
+const memoryLang = fs.readFileSync(path.join(ROOT, "packages/shared/lib/memory-language.ts"), "utf8");
 if (!memoryLang.includes("MEMORY_LANGUAGE") || !memoryLang.includes("BANNED_USER_MEMORY_PHRASES")) {
   console.error("human-memory-copy: missing lib/memory-language.ts exports");
   process.exit(1);
@@ -77,8 +77,8 @@ for (const token of ["You said this before", "This came back", "Your own words c
     failures.push(`lib/memory-language.ts missing ${token}`);
   }
 }
-if (!fs.readFileSync(path.join(ROOT, "lib/product-copy.ts"), "utf8").includes("MEMORY_LANGUAGE")) {
-  failures.push("lib/product-copy.ts must use MEMORY_LANGUAGE");
+if (!fs.readFileSync(path.join(ROOT, "packages/shared/lib/product-copy.ts"), "utf8").includes("MEMORY_LANGUAGE")) {
+  failures.push("packages/shared/lib/product-copy.ts must use MEMORY_LANGUAGE");
 }
 
 if (failures.length > 0) {

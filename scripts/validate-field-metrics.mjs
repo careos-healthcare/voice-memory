@@ -17,7 +17,7 @@ const REQUIRED_EVENTS = [
 ];
 
 const metrics = fs.readFileSync(
-  path.join(ROOT, "lib/resurfacing/resurfacing-metrics.ts"),
+  path.join(ROOT, "packages/shared/lib/resurfacing/resurfacing-metrics.ts"),
   "utf8",
 );
 for (const ev of REQUIRED_EVENTS) {
@@ -25,7 +25,7 @@ for (const ev of REQUIRED_EVENTS) {
 }
 
 const store = fs.readFileSync(
-  path.join(ROOT, "lib/server/resurfacing-metrics-store.ts"),
+  path.join(ROOT, "packages/shared/lib/server/resurfacing-metrics-store.ts"),
   "utf8",
 );
 if (!store.includes("phrase_key_hash")) {
@@ -34,12 +34,12 @@ if (!store.includes("phrase_key_hash")) {
 if (store.includes("transcript")) failures.push("server metrics must not reference transcript");
 
 const route = fs.readFileSync(
-  path.join(ROOT, "app/api/metrics/resurfacing/route.ts"),
+  path.join(ROOT, "apps/api/app/api/metrics/resurfacing/route.ts"),
   "utf8",
 );
 if (!route.includes("403")) failures.push("metrics GET must be founder-only");
 
-const db = fs.readFileSync(path.join(ROOT, "lib/server/db.ts"), "utf8");
+const db = fs.readFileSync(path.join(ROOT, "packages/shared/lib/server/db.ts"), "utf8");
 if (!db.includes("resurfacing_events")) failures.push("resurfacing_events table missing");
 if (!db.includes("resurfacing_feedback")) failures.push("resurfacing_feedback table missing");
 

@@ -1,0 +1,460 @@
+00:00 +0: loading /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/ios_testflight_submission_readiness_test.dart
+00:00 +0: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/ios_testflight_submission_readiness_test.dart: (setUpAll)
+00:00 +0: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/ios_testflight_submission_readiness_test.dart: APP_STORE_SUBMISSION_PACK.md exists and states core release identity
+00:00 +1: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/ios_testflight_submission_readiness_test.dart: APP_STORE_SUBMISSION_PACK.md documents reviewer and support paths
+00:00 +2: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/ios_testflight_submission_readiness_test.dart: APP_STORE_SUBMISSION_PACK.md states purchases unavailable and RevenueCat paused
+00:00 +3: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/ios_testflight_submission_readiness_test.dart: APP_STORE_SUBMISSION_PACK.md does not overclaim purchases or use forbidden CTAs
+00:00 +4: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/ios_testflight_submission_readiness_test.dart: APP_STORE_SUBMISSION_PACK.md includes manual TestFlight checklist and validation commands
+00:00 +5: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/ios_testflight_submission_readiness_test.dart: Reviewer docs alignment APP_STORE_COPY uses ArchiveMe not VoiceMemory as public name
+00:00 +6: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/ios_testflight_submission_readiness_test.dart: Reviewer docs alignment APP_REVIEW_NOTES contains reviewer path, review code, and support URL
+00:00 +7: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/ios_testflight_submission_readiness_test.dart: Reviewer docs alignment IOS_RELEASE_CHECKLIST contains bundle ID and workspace
+00:00 +8: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/ios_testflight_submission_readiness_test.dart: (tearDownAll)
+00:01 +8: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/release_identity_consistency_test.dart: Release identity constants AppConfig uses ArchiveMe and com.voicememory.mobile
+00:01 +9: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/release_identity_consistency_test.dart: Android release identity build.gradle.kts namespace and applicationId are canonical
+00:01 +10: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/release_identity_consistency_test.dart: Android release identity MainActivity kotlin package matches namespace
+00:01 +11: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/release_identity_consistency_test.dart: iOS release identity Runner PRODUCT_BUNDLE_IDENTIFIER is canonical
+00:01 +12: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/release_identity_consistency_test.dart: iOS release identity Info.plist display name and URL schemes
+00:01 +13: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/release_identity_consistency_test.dart: iOS release identity Runner entitlements exclude App Group for beta
+00:01 +14: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/release_identity_consistency_test.dart: iOS release identity active tree does not compile widget storage swift
+00:01 +15: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/release_identity_consistency_test.dart: Archived widget source historical widget files remain in experiments archive only
+00:01 +16: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/release_identity_consistency_test.dart: Docs and branding README states ArchiveMe public name and canonical bundle id
+00:01 +17: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/release_identity_consistency_test.dart: Docs and branding IDENTIFIERS.md documents canonical ids and policy
+00:01 +18: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/release_identity_consistency_test.dart: Docs and branding release checklists document canonical ids
+00:01 +19: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/release_identity_consistency_test.dart: Legacy id hygiene active config files do not use com.voicememory.app
+00:01 +20: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/release_identity_consistency_test.dart: Legacy id hygiene legacy id only appears in tiny allowlisted docs if at all
+00:04 +21: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/release_identity_consistency_test.dart: Legacy id hygiene legacy id only appears in tiny allowlisted docs if at all
+00:04 +22: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/release_identity_consistency_test.dart: Legacy id hygiene legacy id only appears in tiny allowlisted docs if at all
+00:04 +23: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/release_identity_consistency_test.dart: Legacy id hygiene legacy id only appears in tiny allowlisted docs if at all
+00:04 +24: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/app_store_rc_polish_test.dart: App Store release candidate typed capture path remains available on Record
+00:04 +25: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/app_store_rc_polish_test.dart: App Store release candidate privacy and data controls are visible in Settings section
+00:04 +26: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/app_store_rc_polish_test.dart: App Store release candidate clear local archive requires confirmation
+00:04 +27: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/app_store_rc_polish_test.dart: App Store release candidate share-safe proof excludes private archive data
+00:04 +28: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/app_store_rc_polish_test.dart: App Store release candidate sensitive routes include insight quality and evidence map drilldowns
+00:04 +29: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/app_store_rc_polish_test.dart: App Store release candidate 0/1/2/3/5+ archive states stay calm and gated
+00:04 +30: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/app_store_rc_polish_test.dart: App Store release candidate no user-facing VoiceMemory in RC copy constants
+00:04 +31: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/app_store_rc_polish_test.dart: App Store release candidate RevenueCat unconfigured copy stays calm and non-technical
+00:04 +32: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/app_store_rc_polish_test.dart: App Store release candidate debug and screenshot modes stay hidden by default
+00:06 +33: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/mobile_production_readiness_test.dart: App identity and launch surfaces app display name remains ArchiveMe
+00:06 +34: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/mobile_production_readiness_test.dart: App identity and launch surfaces bundle identifier is aligned across Flutter and iOS
+00:07 +35: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/mobile_production_readiness_test.dart: App identity and launch surfaces screenshot and debug capture modes stay off in release config
+00:07 +36: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/mobile_production_readiness_test.dart: App identity and launch surfaces developer diagnostics stay hidden until gate unlocks
+00:07 +37: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/mobile_production_readiness_test.dart: Legal, privacy, and support copy privacy and terms surfaces use ArchiveMe product voice
+00:07 +38: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/mobile_production_readiness_test.dart: Legal, privacy, and support copy support URL references remain ArchiveMe-facing
+00:07 +39: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/mobile_production_readiness_test.dart: Legal, privacy, and support copy settings and workspace copy avoid debug-only language
+00:07 +40: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/mobile_production_readiness_test.dart: Share-safe privacy share-safe proof excludes transcripts, tags, map/filter state, and notes
+00:07 +41: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/mobile_production_readiness_test.dart: Sensitive routes and navigation safety insight quality and evidence map drilldowns stay sensitive
+00:07 +42: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/mobile_production_readiness_test.dart: Sensitive routes and navigation safety insight quality route remains reachable
+00:07 +43: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/mobile_production_readiness_test.dart: Archive workspace low-entry experience 0/1 entry workspace stays calm
+00:07 +44: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/mobile_production_readiness_test.dart: Archive workspace low-entry experience 0/1 entry workspace stays calm
+00:07 +45: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/mobile_production_readiness_test.dart: Archive workspace low-entry experience 0/1 entry workspace stays calm
+00:07 +46: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/mobile_production_readiness_test.dart: Archive workspace low-entry experience 0/1 entry workspace stays calm
+00:08 +47: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/mobile_production_readiness_test.dart: Archive workspace low-entry experience 0/1 entry workspace stays calm
+00:08 +48: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/mobile_production_readiness_test.dart: Archive workspace low-entry experience 0/1 entry workspace stays calm
+00:08 +49: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/mobile_production_readiness_test.dart: Archive workspace low-entry experience 0/1 entry workspace stays calm
+00:08 +50: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/mobile_production_readiness_test.dart: Archive workspace low-entry experience 0/1 entry workspace stays calm
+00:08 +51: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/mobile_production_readiness_test.dart: Archive workspace low-entry experience 0/1 entry workspace stays calm
+00:08 +52: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/mobile_production_readiness_test.dart: Archive workspace low-entry experience 0/1 entry workspace stays calm
+00:08 +53: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/mobile_production_readiness_test.dart: Archive workspace low-entry experience 0/1 entry workspace stays calm
+00:08 +54: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/mobile_production_readiness_test.dart: Archive workspace low-entry experience 0/1 entry workspace stays calm
+00:08 +55: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/mobile_production_readiness_test.dart: Archive workspace low-entry experience 0/1 entry workspace stays calm
+00:08 +56: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/mobile_production_readiness_test.dart: Archive workspace low-entry experience 0/1 entry workspace stays calm
+00:08 +57: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/mobile_production_readiness_test.dart: Archive workspace low-entry experience 0/1 entry workspace stays calm
+00:08 +58: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/mobile_production_readiness_test.dart: Archive workspace low-entry experience 0/1 entry workspace stays calm
+00:08 +59: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/mobile_production_readiness_test.dart: Archive workspace low-entry experience 0/1 entry workspace stays calm
+00:08 +60: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/mobile_production_readiness_test.dart: Archive workspace low-entry experience 0/1 entry workspace stays calm
+00:08 +61: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/mobile_production_readiness_test.dart: Archive workspace low-entry experience 0/1 entry workspace stays calm
+00:08 +62: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/mobile_production_readiness_test.dart: Archive workspace low-entry experience 0/1 entry workspace stays calm
+00:08 +63: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/mobile_production_readiness_test.dart: Archive workspace low-entry experience 0/1 entry workspace stays calm
+00:08 +64: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/mobile_production_readiness_test.dart: Archive workspace low-entry experience 0/1 entry workspace stays calm
+00:08 +65: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/mobile_production_readiness_test.dart: Archive workspace low-entry experience 0/1 entry workspace stays calm
+00:08 +66: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/mobile_production_readiness_test.dart: Archive workspace low-entry experience 0/1 entry workspace stays calm
+00:08 +67: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/mobile_production_readiness_test.dart: Archive workspace low-entry experience 0/1 entry workspace stays calm
+00:08 +68: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/mobile_production_readiness_test.dart: Archive workspace low-entry experience 0/1 entry workspace stays calm
+00:08 +69: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/mobile_production_readiness_test.dart: Archive workspace low-entry experience 0/1 entry workspace stays calm
+00:08 +70: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/mobile_production_readiness_test.dart: Archive workspace low-entry experience 0/1 entry workspace stays calm
+00:08 +71: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/mobile_production_readiness_test.dart: Archive workspace low-entry experience 0/1 entry workspace stays calm
+00:08 +72: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/consumer_visible_branding_test.dart: lib/features/demo/sample_archive_copy.dart has no consumer-visible VoiceMemory branding
+00:08 +73: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/mobile_production_readiness_test.dart: Archive workspace low-entry experience 2/3/5 entry gating remains correct
+00:08 +74: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/mobile_production_readiness_test.dart: Archive workspace low-entry experience 2/3/5 entry gating remains correct
+00:08 +75: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/mobile_production_readiness_test.dart: Archive workspace low-entry experience 2/3/5 entry gating remains correct
+00:08 +76: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/mobile_production_readiness_test.dart: Archive workspace low-entry experience 2/3/5 entry gating remains correct
+00:08 +77: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/mobile_production_readiness_test.dart: Archive workspace low-entry experience 2/3/5 entry gating remains correct
+00:08 +78: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/mobile_production_readiness_test.dart: Archive workspace low-entry experience 2/3/5 entry gating remains correct
+00:08 +79: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/mobile_production_readiness_test.dart: Archive workspace low-entry experience 2/3/5 entry gating remains correct
+00:08 +80: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/mobile_production_readiness_test.dart: Archive workspace low-entry experience 2/3/5 entry gating remains correct
+00:08 +81: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/mobile_production_readiness_test.dart: Archive workspace low-entry experience 2/3/5 entry gating remains correct
+00:08 +82: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/mobile_production_readiness_test.dart: Archive workspace low-entry experience 2/3/5 entry gating remains correct
+00:08 +83: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/mobile_production_readiness_test.dart: Archive workspace low-entry experience 2/3/5 entry gating remains correct
+00:08 +84: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/mobile_production_readiness_test.dart: Archive workspace low-entry experience 2/3/5 entry gating remains correct
+00:08 +85: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/mobile_production_readiness_test.dart: Archive workspace low-entry experience 2/3/5 entry gating remains correct
+00:08 +86: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/mobile_production_readiness_test.dart: Archive workspace low-entry experience 2/3/5 entry gating remains correct
+00:08 +87: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/mobile_production_readiness_test.dart: Archive workspace low-entry experience 2/3/5 entry gating remains correct
+00:08 +88: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/mobile_production_readiness_test.dart: Archive workspace low-entry experience 2/3/5 entry gating remains correct
+00:08 +89: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/mobile_production_readiness_test.dart: Archive workspace low-entry experience 2/3/5 entry gating remains correct
+00:08 +90: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/mobile_production_readiness_test.dart: Archive workspace low-entry experience 2/3/5 entry gating remains correct
+00:08 +91: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/mobile_production_readiness_test.dart: Archive workspace low-entry experience 2/3/5 entry gating remains correct
+00:08 +92: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/mobile_production_readiness_test.dart: Archive workspace low-entry experience 2/3/5 entry gating remains correct
+00:08 +93: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/mobile_production_readiness_test.dart: Archive workspace low-entry experience 2/3/5 entry gating remains correct
+00:08 +94: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/mobile_production_readiness_test.dart: Archive workspace low-entry experience 2/3/5 entry gating remains correct
+00:08 +95: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/mobile_production_readiness_test.dart: Archive workspace low-entry experience 2/3/5 entry gating remains correct
+00:08 +96: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/mobile_production_readiness_test.dart: Archive workspace low-entry experience 2/3/5 entry gating remains correct
+00:08 +97: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/mobile_production_readiness_test.dart: Archive workspace low-entry experience 2/3/5 entry gating remains correct
+00:08 +98: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/mobile_production_readiness_test.dart: Archive workspace low-entry experience 2/3/5 entry gating remains correct
+00:08 +99: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/mobile_production_readiness_test.dart: Archive workspace low-entry experience 2/3/5 entry gating remains correct
+00:08 +100: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/mobile_production_readiness_test.dart: Archive workspace low-entry experience 2/3/5 entry gating remains correct
+00:08 +101: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/mobile_production_readiness_test.dart: Archive workspace low-entry experience 2/3/5 entry gating remains correct
+00:08 +102: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/mobile_production_readiness_test.dart: Archive workspace low-entry experience 2/3/5 entry gating remains correct
+00:08 +103: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/mobile_production_readiness_test.dart: Archive workspace low-entry experience 2/3/5 entry gating remains correct
+00:08 +104: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/mobile_production_readiness_test.dart: Archive workspace low-entry experience 2/3/5 entry gating remains correct
+00:08 +105: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/mobile_production_readiness_test.dart: Archive workspace low-entry experience 2/3/5 entry gating remains correct
+00:08 +106: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/mobile_production_readiness_test.dart: Archive workspace low-entry experience 2/3/5 entry gating remains correct
+00:08 +107: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/mobile_production_readiness_test.dart: Archive workspace low-entry experience 2/3/5 entry gating remains correct
+00:08 +108: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/mobile_production_readiness_test.dart: Archive workspace low-entry experience 2/3/5 entry gating remains correct
+00:08 +109: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/mobile_production_readiness_test.dart: Archive workspace low-entry experience 2/3/5 entry gating remains correct
+00:08 +110: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/mobile_production_readiness_test.dart: Archive workspace low-entry experience 2/3/5 entry gating remains correct
+00:08 +111: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/mobile_production_readiness_test.dart: Persistence and evidence integrity manual context tag editing still persists
+analytics:entry_saved_use_archive_context {entry_count: 1, source: record, memory_scope: automatic}
+analytics:first_recording_saved {entry_count: 1}
+ProofAnalyticsGuard: dropped recording_created.entry_id (forbiddenKey)
+analytics:recording_created {source: journal_save}
+00:08 +112: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/mobile_production_readiness_test.dart: Persistence and evidence integrity hint dismissal persists locally
+00:09 +113: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/first_run_payoff_walkthrough_test.dart: 0-entry Record first action shows clear private archive promise
+00:10 +114: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/first_run_payoff_walkthrough_test.dart: 0-entry Record first action Type Instead path is available without microphone
+00:10 +115: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/first_run_payoff_walkthrough_test.dart: First saved entry payoff first save card stays calm without overclaiming
+analytics:first_save_evidence_seen {entry_count: 1, source: record, stage: evidence}
+00:10 +116: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/first_run_payoff_walkthrough_test.dart: Archive/Patterns ladder 1-entry workspace is not noisy
+00:10 +117: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/first_run_payoff_walkthrough_test.dart: Archive/Patterns ladder 2-entry workspace shows comparison guidance without overclaiming
+00:10 +118: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/first_run_payoff_walkthrough_test.dart: Archive/Patterns ladder 3-entry state can show cautious belief payoff
+00:10 +119: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/first_run_payoff_walkthrough_test.dart: Settings privacy visibility privacy and data controls section is visible
+00:10 +120: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/first_run_payoff_walkthrough_test.dart: First-run copy quality no duplicate add-moment quick action at one entry
+00:10 +121: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/first_run_payoff_walkthrough_test.dart: First-run copy quality first-run copy uses ArchiveMe not VoiceMemory
+00:10 +122: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/first_run_payoff_walkthrough_test.dart: First-run copy quality 0-entry hints stay calm
+00:10 +123: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/archive_home_priority_test.dart: ArchiveHomePriorityEngine 0-entry layout hides advanced clutter
+00:10 +124: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/archive_home_priority_test.dart: ArchiveHomePriorityEngine archive clarity follows daily exercise in sticky loop order
+00:10 +125: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/archive_home_priority_test.dart: ArchiveHomePriorityEngine 1-entry layout prioritises First Week Path and Daily Exercise
+00:10 +126: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/archive_home_priority_test.dart: ArchiveHomePriorityEngine 2-entry layout keeps sticky loop before secondary tools
+00:10 +127: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/archive_home_priority_test.dart: ArchiveHomePriorityEngine 3–4 entry layout keeps Return Changes secondary
+00:10 +128: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/archive_home_priority_test.dart: ArchiveHomePriorityEngine 5+ layout keeps weekly review in secondary until sticky loop fills primary
+00:10 +129: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/archive_home_priority_test.dart: ArchiveHomePriorityEngine sticky loop order is stable across entry counts
+00:10 +130: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/archive_home_priority_test.dart: ArchiveHomePriorityEngine 10+ layout allows Pro Preview but no purchase CTAs in copy
+00:10 +131: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/archive_home_priority_test.dart: ArchiveHomePriorityEngine sample/screenshot mode stays clean
+00:10 +132: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/archive_home_priority_test.dart: ArchiveHomePriorityEngine all sections remain reachable via primary or secondary when not hidden
+00:10 +133: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/archive_home_priority_test.dart: ArchiveHomePriorityEngine copy uses ArchiveMe branding and calm tone
+00:10 +134: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/archive_home_priority_test.dart: ArchiveHomePriorityEngine primary area caps at summary plus three cards
+00:12 +135: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/next_evidence_plan_test.dart: Next evidence plan gates shows teaser at zero entries
+00:12 +136: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/next_evidence_plan_test.dart: Next evidence plan gates hidden on sample archive mode
+00:12 +137: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/next_evidence_plan_test.dart: Next evidence plan gates shows card at one or more entries
+00:12 +138: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/next_evidence_plan_test.dart: Next evidence plan engine entry bands 1 entry suggests adding one more moment
+00:12 +139: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/next_evidence_plan_test.dart: Next evidence plan engine entry bands 2 entries suggests confirm change or challenge pattern
+00:12 +140: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/next_evidence_plan_test.dart: Next evidence plan engine entry bands 3–4 entries suggests testing whether belief still fits
+00:12 +141: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/next_evidence_plan_test.dart: Next evidence plan engine entry bands 5+ entries suggests next weekly review evidence
+00:12 +142: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/next_evidence_plan_test.dart: Next evidence plan engine signals watchlist theme takes priority when present
+00:12 +143: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/next_evidence_plan_test.dart: Next evidence plan engine signals return ritual phrase appears when present
+00:12 +144: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/next_evidence_plan_test.dart: Next evidence plan engine signals untagged context suggests context improvement
+00:12 +145: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/next_evidence_plan_test.dart: Next evidence plan engine signals very short recent entry suggests one extra detail
+00:12 +146: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/next_evidence_plan_test.dart: Next evidence plan engine signals Pro line appears only at 10+ entries or 3 watch themes
+00:12 +147: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/next_evidence_plan_test.dart: Next evidence plan engine signals does not expose raw entry text in result
+00:12 +148: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/next_evidence_plan_test.dart: Next evidence plan copy uses ArchiveMe and avoids banned language
+00:12 +149: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/next_evidence_plan_test.dart: Next evidence plan copy does not include Buy now or Subscribe now copy
+00:12 +150: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/next_evidence_plan_test.dart: Next evidence plan UI teaser at zero entries
+00:12 +151: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/next_evidence_plan_test.dart: Next evidence plan UI Pro preview routes at ten entries
+00:13 +152: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/next_evidence_plan_test.dart: Next evidence plan UI does not include Buy now or Subscribe now text
+00:13 +153: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/next_evidence_plan_test.dart: Next evidence plan privacy boundaries does not write to JournalStore
+00:13 +154: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/next_evidence_plan_test.dart: Next evidence plan privacy boundaries share-safe proof excludes plan text
+00:13 +155: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/next_evidence_plan_test.dart: Next evidence plan privacy boundaries archive export pack excludes plan text
+00:13 +156: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/next_evidence_plan_test.dart: Next evidence plan privacy boundaries focused beta archive home excludes next evidence plan card
+00:14 +157: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/archive_watchlist_test.dart: Archive watchlist gates shows teaser at zero entries
+00:14 +158: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/archive_watchlist_test.dart: Archive watchlist gates shows card at one or more entries
+00:14 +159: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/archive_watchlist_test.dart: Archive watchlist store persists preset and custom watch themes locally
+00:14 +160: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/archive_watchlist_test.dart: Archive watchlist store does not use JournalStore
+00:14 +161: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/archive_watchlist_test.dart: Archive watchlist engine counts related moments without exposing raw entry text
+00:14 +162: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/archive_watchlist_test.dart: Archive watchlist engine no-match state uses no clear evidence yet copy
+00:14 +163: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/archive_watchlist_test.dart: Archive watchlist engine match state uses early evidence wording
+00:14 +164: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/archive_watchlist_test.dart: Archive watchlist engine custom theme matches tokenized label words
+00:14 +165: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/archive_watchlist_test.dart: Archive watchlist engine Pro line appears at three themes or ten entries
+00:14 +166: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/archive_watchlist_test.dart: Archive watchlist copy uses ArchiveMe and avoids banned language
+00:14 +167: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/archive_watchlist_test.dart: Archive watchlist copy does not include Buy now or Subscribe now copy
+00:14 +168: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/archive_watchlist_test.dart: Archive watchlist copy theme limit copy is honest and non-pressure
+00:14 +169: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/archive_watchlist_test.dart: Archive watchlist UI teaser at zero entries
+00:15 +170: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/archive_watchlist_test.dart: Archive watchlist UI shows card at one entry and add preset theme
+00:15 +171: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/archive_watchlist_test.dart: Archive watchlist UI Pro preview routes from card at ten entries
+00:15 +172: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/archive_watchlist_test.dart: Archive watchlist UI does not include Buy now or Subscribe now text
+00:15 +173: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/archive_watchlist_test.dart: Archive watchlist privacy boundaries share-safe proof does not include watchlist data
+00:15 +174: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/archive_watchlist_test.dart: Archive watchlist privacy boundaries archive export pack does not include watchlist data
+00:15 +175: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/archive_watchlist_test.dart: Archive watchlist privacy boundaries focused beta archive home excludes watchlist card
+00:15 +176: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/archive_watchlist_test.dart: Archive watchlist privacy boundaries journal store source is separate from watchlist store
+00:15 +177: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/archive_depth_test.dart: Archive depth engine levels 0 entries returns Archive not started yet
+00:15 +178: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/archive_depth_test.dart: Archive depth engine levels 1 entry returns First evidence saved
+00:15 +179: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/archive_depth_test.dart: Archive depth engine levels 2 entries returns Starting to compare
+00:15 +180: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/archive_depth_test.dart: Archive depth engine levels 3–4 entries returns Cautious belief forming
+00:15 +181: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/archive_depth_test.dart: Archive depth engine levels 5–9 entries returns Weekly review ready
+00:15 +182: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/archive_depth_test.dart: Archive depth engine levels 10+ entries returns Long-term archive building
+00:15 +183: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/archive_depth_test.dart: Archive depth evidence counts degraded and blank entries excluded from usable evidence count
+00:15 +184: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/archive_depth_test.dart: Archive depth monetisation Pro line appears only at 10+ entries
+00:15 +185: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/archive_depth_test.dart: Archive depth copy uses ArchiveMe and avoids banned language
+00:15 +186: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/archive_depth_test.dart: Archive depth copy does not include Buy now or Subscribe now copy
+00:15 +187: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/archive_depth_test.dart: Archive depth gates record compact hint only after two entries and not post-save
+00:15 +188: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/archive_depth_test.dart: Archive depth UI card shows Pro preview route at 10+ entries
+00:16 +189: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/archive_depth_test.dart: Archive depth UI card hides Pro line below ten entries
+00:16 +190: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/archive_depth_test.dart: Archive depth archive home wiring focused beta archive home excludes depth card widget
+00:16 +191: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/archive_depth_test.dart: Pro preview value section shows central Pro value headline
+00:17 +192: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/archive_milestones_test.dart: Archive milestones gates shows on archive when not sample mode
+00:17 +193: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/archive_milestones_test.dart: Archive milestones gates hidden on sample archive mode
+00:17 +194: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/archive_milestones_test.dart: Archive milestones gates Pro line only at ten entries
+00:17 +195: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/archive_milestones_test.dart: Archive milestones engine 0 entries shows first milestone as next
+00:17 +196: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/archive_milestones_test.dart: Archive milestones engine 1 entry completes first moment saved
+00:17 +197: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/archive_milestones_test.dart: Archive milestones engine 2 entries completes first comparison possible
+00:17 +198: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/archive_milestones_test.dart: Archive milestones engine 3+ entries completes cautious belief milestone
+00:17 +199: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/archive_milestones_test.dart: Archive milestones engine 5+ entries completes weekly review milestone when review ready
+00:17 +200: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/archive_milestones_test.dart: Archive milestones engine watchlist item completes watchlist milestone
+00:17 +201: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/archive_milestones_test.dart: Archive milestones engine return ritual completes return ritual milestone
+00:17 +202: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/archive_milestones_test.dart: Archive milestones engine 10+ entries shows long-term archive building
+00:17 +203: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/archive_milestones_test.dart: Archive milestones engine share-safe proof milestone at three eligible entries
+00:17 +204: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/archive_milestones_test.dart: Archive milestones engine shows at most five milestone rows
+00:17 +205: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/archive_milestones_test.dart: Archive milestones copy uses ArchiveMe and avoids banned language
+00:17 +206: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/archive_milestones_test.dart: Archive milestones copy does not include Buy now or Subscribe now copy
+00:17 +207: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/archive_milestones_test.dart: Archive milestones UI card hidden in sample mode
+00:17 +208: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/archive_milestones_test.dart: Archive milestones UI Pro preview routes at ten entries
+00:18 +209: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/archive_milestones_test.dart: Archive milestones UI does not include Buy now or Subscribe now text
+00:18 +210: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/archive_milestones_test.dart: Archive milestones privacy boundaries does not write to JournalStore
+00:18 +211: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/archive_milestones_test.dart: Archive milestones privacy boundaries share-safe proof excludes milestone text
+00:18 +212: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/archive_milestones_test.dart: Archive milestones privacy boundaries archive export pack excludes milestone text
+00:18 +213: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/archive_milestones_test.dart: Archive milestones privacy boundaries focused beta archive home excludes milestones card
+00:19 +214: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/shareable_archive_proof_test.dart: Shareable archive proof engine — eligibility no share card before three usable journal entries
+00:19 +215: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/shareable_archive_proof_test.dart: Shareable archive proof engine — eligibility three usable journal entries show variant B
+00:19 +216: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/shareable_archive_proof_test.dart: Shareable archive proof engine — eligibility four usable journal entries show variant A
+00:19 +217: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/shareable_archive_proof_test.dart: Shareable archive proof engine — eligibility five usable journal entries show variant C
+00:19 +218: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/shareable_archive_proof_test.dart: Shareable archive proof engine — eligibility pressure connected thread uses cautious variant without user text
+analytics:memory_governance_checked {entry_count: 3, source: memory_card, card_type: thread_return, memory_scope: automatic, current_intent: use_archive_context}
+analytics:archive_retrieval_scored {card_type: thread_return, memory_scope: automatic, score_band: possible, record_count: 3}
+analytics:archive_retrieval_used {card_type: thread_return, memory_scope: automatic, score_band: possible, record_count: 3}
+analytics:memory_authority_frame_created {entry_count: 3, card_type: thread_return, memory_scope: automatic, authority_state: repeated, influence_level: compare, reason_id: repeated_supported}
+analytics:memory_influence_used {entry_count: 3, card_type: thread_return, memory_scope: automatic, authority_state: repeated, influence_level: compare, reason_id: repeated_supported}
+analytics:memory_governance_allowed {entry_count: 3, source: memory_card, card_type: thread_return, memory_scope: automatic, reason_id: repeated_supported, decision_id: allowed_same_thread, current_intent: use_archive_context, relevance_band: high}
+00:19 +219: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/shareable_archive_proof_test.dart: Shareable archive proof engine — eligibility no share card for unrelated pressure records without three entries
+analytics:memory_governance_checked {entry_count: 3, source: memory_card, card_type: thread_return, memory_scope: automatic, current_intent: use_archive_context}
+analytics:memory_authority_frame_created {entry_count: 0, card_type: thread_return, memory_scope: automatic, authority_state: stale, influence_level: background, reason_id: older_unreinforced}
+analytics:memory_influence_suppressed {entry_count: 0, card_type: thread_return, memory_scope: automatic, authority_state: stale, influence_level: background, reason_id: older_unreinforced}
+analytics:memory_governance_blocked {entry_count: 3, source: memory_card, card_type: thread_return, memory_scope: automatic, reason_id: older_unreinforced, decision_id: blocked_low_relevance, current_intent: use_archive_context, relevance_band: low}
+analytics:memory_governance_checked {entry_count: 3, source: memory_card, card_type: thread_return, memory_scope: automatic, current_intent: use_archive_context}
+analytics:memory_governance_blocked {entry_count: 3, source: memory_card, card_type: thread_return, memory_scope: automatic, reason_id: older_unreinforced, decision_id: blocked_low_relevance, current_intent: use_archive_context, relevance_band: low}
+00:19 +220: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/shareable_archive_proof_test.dart: Shareable archive proof engine — eligibility degraded journal entries do not count toward three usable entries
+analytics:archive_evidence_skipped_placeholder {entry_count: 1, source: archive_evidence_guard, reason: placeholder_or_pending_transcript}
+00:19 +221: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/shareable_archive_proof_test.dart: Shareable archive proof — privacy safeguards share text contains required privacy footer and product line
+00:19 +222: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/shareable_archive_proof_test.dart: Shareable archive proof — privacy safeguards journal share text never includes raw transcript or snippets
+00:19 +223: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/shareable_archive_proof_test.dart: Shareable archive proof — privacy safeguards pressure share text never includes private terms from records
+analytics:memory_governance_checked {entry_count: 3, source: memory_card, card_type: thread_return, memory_scope: automatic, current_intent: use_archive_context}
+analytics:memory_governance_allowed {entry_count: 3, source: memory_card, card_type: thread_return, memory_scope: automatic, reason_id: repeated_supported, decision_id: allowed_same_thread, current_intent: use_archive_context, relevance_band: high}
+00:19 +224: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/shareable_archive_proof_test.dart: Shareable archive proof — privacy safeguards share copy includes ArchiveMe and never VoiceMemory
+analytics:memory_governance_checked {entry_count: 3, source: memory_card, card_type: thread_return, memory_scope: automatic, current_intent: use_archive_context}
+analytics:memory_governance_allowed {entry_count: 3, source: memory_card, card_type: thread_return, memory_scope: automatic, reason_id: repeated_supported, decision_id: allowed_same_thread, current_intent: use_archive_context, relevance_band: high}
+00:19 +225: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/shareable_archive_proof_test.dart: Shareable archive proof — privacy safeguards share-safe proof excludes archive watchlist data
+00:19 +226: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/shareable_archive_proof_test.dart: Shareable archive proof — privacy safeguards share-safe proof excludes next evidence plan data
+00:19 +227: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/shareable_archive_proof_test.dart: Shareable archive proof — privacy safeguards share-safe proof excludes archive milestones data
+00:19 +228: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/shareable_archive_proof_test.dart: Shareable archive proof — privacy safeguards share-safe proof excludes beta feedback data
+00:19 +229: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/shareable_archive_proof_test.dart: Shareable archive proof — privacy safeguards share-safe proof excludes beta outcomes data
+00:19 +230: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/shareable_archive_proof_test.dart: Shareable archive proof — privacy safeguards share-safe proof excludes Pro interest data
+00:19 +231: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/shareable_archive_proof_test.dart: Shareable archive proof — privacy safeguards share-safe proof excludes beta invite data
+00:19 +232: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/shareable_archive_proof_test.dart: Shareable archive proof card renders preview with privacy footer and copy/share actions
+00:19 +233: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/shareable_archive_proof_test.dart: Shareable archive proof card copy puts exact share text on clipboard
+00:19 +234: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/shareable_archive_proof_test.dart: Shareable archive proof card share hands exact share text to share action
+00:19 +235: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/shareable_archive_proof_test.dart: Shareable archive proof card renders nothing without proof
+00:20 +236: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/shareable_archive_proof_test.dart: Activation screen integration weekly review screen shows optional share proof at five entries
+00:20 +237: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/shareable_archive_proof_test.dart: Activation screen integration belief evidence preview does not crash without share load
+00:20 +238: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/shareable_archive_proof_test.dart: Pressure Insights integration share card renders near proof counter with connected evidence
+analytics:memory_governance_checked {entry_count: 3, source: memory_card, card_type: thread_return, memory_scope: automatic, current_intent: use_archive_context}
+analytics:memory_governance_allowed {entry_count: 3, source: memory_card, card_type: thread_return, memory_scope: automatic, reason_id: repeated_supported, decision_id: allowed_same_thread, current_intent: use_archive_context, relevance_band: high}
+analytics:memory_governance_checked {entry_count: 3, source: memory_card, card_type: thread_return, memory_scope: automatic, current_intent: use_archive_context}
+analytics:memory_governance_allowed {entry_count: 3, source: memory_card, card_type: thread_return, memory_scope: automatic, reason_id: repeated_supported, decision_id: allowed_same_thread, current_intent: use_archive_context, relevance_band: high}
+analytics:memory_governance_checked {entry_count: 3, source: memory_card, card_type: thread_return, memory_scope: automatic, current_intent: use_archive_context}
+analytics:memory_governance_allowed {entry_count: 3, source: memory_card, card_type: thread_return, memory_scope: automatic, reason_id: repeated_supported, decision_id: allowed_same_thread, current_intent: use_archive_context, relevance_band: high}
+analytics:memory_governance_checked {entry_count: 3, source: memory_card, card_type: thread_return, memory_scope: automatic, current_intent: use_archive_context}
+analytics:memory_governance_allowed {entry_count: 3, source: memory_card, card_type: thread_return, memory_scope: automatic, reason_id: repeated_supported, decision_id: allowed_same_thread, current_intent: use_archive_context, relevance_band: high}
+analytics:memory_governance_checked {entry_count: 3, source: memory_card, card_type: thread_return, memory_scope: automatic, current_intent: use_archive_context}
+analytics:memory_governance_allowed {entry_count: 3, source: memory_card, card_type: thread_return, memory_scope: automatic, reason_id: repeated_supported, decision_id: allowed_same_thread, current_intent: use_archive_context, relevance_band: high}
+analytics:memory_governance_checked {entry_count: 3, source: memory_card, card_type: thread_return, memory_scope: automatic, current_intent: use_archive_context}
+analytics:memory_governance_allowed {entry_count: 3, source: memory_card, card_type: thread_return, memory_scope: automatic, reason_id: repeated_supported, decision_id: allowed_same_thread, current_intent: use_archive_context, relevance_band: high}
+analytics:memory_governance_checked {entry_count: 3, source: memory_card, card_type: thread_return, memory_scope: automatic, current_intent: use_archive_context}
+analytics:memory_governance_allowed {entry_count: 3, source: memory_card, card_type: thread_return, memory_scope: automatic, reason_id: repeated_supported, decision_id: allowed_same_thread, current_intent: use_archive_context, relevance_band: high}
+analytics:memory_governance_checked {entry_count: 3, source: memory_card, card_type: belief_distance, memory_scope: automatic, current_intent: use_archive_context}
+analytics:archive_retrieval_scored {card_type: belief_distance, memory_scope: automatic, score_band: possible, record_count: 3}
+analytics:archive_retrieval_used {card_type: belief_distance, memory_scope: automatic, score_band: possible, record_count: 3}
+analytics:memory_authority_frame_created {entry_count: 3, card_type: belief_distance, memory_scope: automatic, authority_state: repeated, influence_level: compare, reason_id: repeated_supported}
+analytics:memory_influence_used {entry_count: 3, card_type: belief_distance, memory_scope: automatic, authority_state: repeated, influence_level: compare, reason_id: repeated_supported}
+analytics:memory_governance_allowed {entry_count: 3, source: memory_card, card_type: belief_distance, memory_scope: automatic, reason_id: repeated_supported, decision_id: allowed_same_thread, current_intent: use_archive_context, relevance_band: high}
+analytics:archive_retrieval_scored {card_type: weekly_review, memory_scope: automatic, score_band: possible, record_count: 3}
+analytics:archive_retrieval_used {card_type: weekly_review, memory_scope: automatic, score_band: possible, record_count: 3}
+analytics:memory_authority_frame_created {entry_count: 3, card_type: weekly_review, memory_scope: automatic, authority_state: stale, influence_level: background, reason_id: older_unreinforced}
+analytics:memory_influence_suppressed {entry_count: 3, card_type: weekly_review, memory_scope: automatic, authority_state: stale, influence_level: background, reason_id: older_unreinforced}
+analytics:memory_governance_checked {entry_count: 3, source: memory_card, card_type: thread_return, memory_scope: automatic, current_intent: use_archive_context}
+analytics:memory_background_only {entry_count: 3, source: memory_card, card_type: thread_return, memory_scope: automatic, reason_id: older_unreinforced, decision_id: background_only, current_intent: use_archive_context, relevance_band: medium}
+analytics:memory_governance_checked {entry_count: 3, source: memory_card, card_type: belief_distance, memory_scope: automatic, current_intent: use_archive_context}
+analytics:memory_governance_allowed {entry_count: 3, source: memory_card, card_type: belief_distance, memory_scope: automatic, reason_id: repeated_supported, decision_id: allowed_same_thread, current_intent: use_archive_context, relevance_band: high}
+analytics:memory_governance_checked {entry_count: 3, source: memory_card, card_type: thread_return, memory_scope: automatic, current_intent: use_archive_context}
+analytics:memory_governance_allowed {entry_count: 3, source: memory_card, card_type: thread_return, memory_scope: automatic, reason_id: repeated_supported, decision_id: allowed_same_thread, current_intent: use_archive_context, relevance_band: high}
+analytics:memory_governance_checked {entry_count: 3, source: memory_card, card_type: thread_return, memory_scope: automatic, current_intent: use_archive_context}
+analytics:memory_governance_allowed {entry_count: 3, source: memory_card, card_type: thread_return, memory_scope: automatic, reason_id: repeated_supported, decision_id: allowed_same_thread, current_intent: use_archive_context, relevance_band: high}
+analytics:memory_governance_checked {entry_count: 3, source: memory_card, card_type: thread_return, memory_scope: automatic, current_intent: use_archive_context}
+analytics:memory_background_only {entry_count: 3, source: memory_card, card_type: thread_return, memory_scope: automatic, reason_id: older_unreinforced, decision_id: background_only, current_intent: use_archive_context, relevance_band: medium}
+analytics:memory_governance_checked {entry_count: 3, source: memory_card, card_type: belief_distance, memory_scope: automatic, current_intent: use_archive_context}
+analytics:memory_governance_allowed {entry_count: 3, source: memory_card, card_type: belief_distance, memory_scope: automatic, reason_id: repeated_supported, decision_id: allowed_same_thread, current_intent: use_archive_context, relevance_band: high}
+analytics:memory_governance_checked {entry_count: 3, source: memory_card, card_type: belief_distance, memory_scope: automatic, current_intent: use_archive_context}
+analytics:memory_governance_allowed {entry_count: 3, source: memory_card, card_type: belief_distance, memory_scope: automatic, reason_id: repeated_supported, decision_id: allowed_same_thread, current_intent: use_archive_context, relevance_band: high}
+analytics:memory_governance_checked {entry_count: 3, source: memory_card, card_type: thread_return, memory_scope: automatic, current_intent: use_archive_context}
+analytics:memory_background_only {entry_count: 3, source: memory_card, card_type: thread_return, memory_scope: automatic, reason_id: older_unreinforced, decision_id: background_only, current_intent: use_archive_context, relevance_band: medium}
+analytics:memory_governance_checked {entry_count: 3, source: memory_card, card_type: belief_distance, memory_scope: automatic, current_intent: use_archive_context}
+analytics:memory_governance_allowed {entry_count: 3, source: memory_card, card_type: belief_distance, memory_scope: automatic, reason_id: repeated_supported, decision_id: allowed_same_thread, current_intent: use_archive_context, relevance_band: high}
+analytics:memory_governance_checked {entry_count: 3, source: memory_card, card_type: thread_return, memory_scope: automatic, current_intent: use_archive_context}
+analytics:memory_background_only {entry_count: 3, source: memory_card, card_type: thread_return, memory_scope: automatic, reason_id: older_unreinforced, decision_id: background_only, current_intent: use_archive_context, relevance_band: medium}
+analytics:memory_governance_checked {entry_count: 3, source: memory_card, card_type: belief_distance, memory_scope: automatic, current_intent: use_archive_context}
+analytics:memory_governance_allowed {entry_count: 3, source: memory_card, card_type: belief_distance, memory_scope: automatic, reason_id: repeated_supported, decision_id: allowed_same_thread, current_intent: use_archive_context, relevance_band: high}
+analytics:memory_governance_checked {entry_count: 3, source: memory_card, card_type: belief_distance, memory_scope: automatic, current_intent: use_archive_context}
+analytics:memory_governance_allowed {entry_count: 3, source: memory_card, card_type: belief_distance, memory_scope: automatic, reason_id: repeated_supported, decision_id: allowed_same_thread, current_intent: use_archive_context, relevance_band: high}
+analytics:memory_governance_checked {entry_count: 3, source: memory_card, card_type: thread_return, memory_scope: automatic, current_intent: use_archive_context}
+analytics:memory_background_only {entry_count: 3, source: memory_card, card_type: thread_return, memory_scope: automatic, reason_id: older_unreinforced, decision_id: background_only, current_intent: use_archive_context, relevance_band: medium}
+analytics:memory_governance_checked {entry_count: 3, source: memory_card, card_type: belief_distance, memory_scope: automatic, current_intent: use_archive_context}
+analytics:memory_governance_allowed {entry_count: 3, source: memory_card, card_type: belief_distance, memory_scope: automatic, reason_id: repeated_supported, decision_id: allowed_same_thread, current_intent: use_archive_context, relevance_band: high}
+analytics:memory_governance_checked {entry_count: 3, source: memory_card, card_type: thread_return, memory_scope: automatic, current_intent: use_archive_context}
+analytics:memory_governance_allowed {entry_count: 3, source: memory_card, card_type: thread_return, memory_scope: automatic, reason_id: repeated_supported, decision_id: allowed_same_thread, current_intent: use_archive_context, relevance_band: high}
+analytics:memory_governance_checked {entry_count: 3, source: memory_card, card_type: thread_return, memory_scope: automatic, current_intent: use_archive_context}
+analytics:memory_governance_allowed {entry_count: 3, source: memory_card, card_type: thread_return, memory_scope: automatic, reason_id: repeated_supported, decision_id: allowed_same_thread, current_intent: use_archive_context, relevance_band: high}
+analytics:memory_governance_checked {entry_count: 3, source: memory_card, card_type: belief_distance, memory_scope: automatic, current_intent: use_archive_context}
+analytics:memory_governance_allowed {entry_count: 3, source: memory_card, card_type: belief_distance, memory_scope: automatic, reason_id: repeated_supported, decision_id: allowed_same_thread, current_intent: use_archive_context, relevance_band: high}
+analytics:memory_governance_checked {entry_count: 3, source: memory_card, card_type: thread_return, memory_scope: automatic, current_intent: use_archive_context}
+analytics:memory_background_only {entry_count: 3, source: memory_card, card_type: thread_return, memory_scope: automatic, reason_id: older_unreinforced, decision_id: background_only, current_intent: use_archive_context, relevance_band: medium}
+analytics:memory_governance_checked {entry_count: 3, source: memory_card, card_type: belief_distance, memory_scope: automatic, current_intent: use_archive_context}
+analytics:memory_governance_allowed {entry_count: 3, source: memory_card, card_type: belief_distance, memory_scope: automatic, reason_id: repeated_supported, decision_id: allowed_same_thread, current_intent: use_archive_context, relevance_band: high}
+analytics:archive_proof_counter_seen {has_connected_thread: 1}
+analytics:memory_relevance_seen {entry_count: 3, relevance: strong}
+analytics:thread_return_evidence_seen {entry_count: 3, has_connected_thread: 1}
+analytics:memory_governance_checked {entry_count: 2, source: memory_card, card_type: belief_distance, memory_scope: automatic, current_intent: use_archive_context}
+analytics:memory_governance_allowed {entry_count: 2, source: memory_card, card_type: belief_distance, memory_scope: automatic, reason_id: repeated_supported, decision_id: allowed_same_thread, current_intent: use_archive_context, relevance_band: high}
+analytics:memory_priority_checked {entry_count: 2, source: memory_card, card_type: belief_distance, memory_scope: automatic}
+analytics:memory_priority_used {entry_count: 2, source: memory_card, card_type: belief_distance, memory_scope: automatic, reason_id: repeated_evidence, decision_id: important_repeated, priority_band: important}
+analytics:belief_distance_seen {}
+analytics:memory_priority_checked {entry_count: 2, source: memory_card, card_type: belief_distance, memory_scope: automatic}
+analytics:memory_priority_used {entry_count: 2, source: memory_card, card_type: belief_distance, memory_scope: automatic, reason_id: repeated_evidence, decision_id: important_repeated, priority_band: important}
+analytics:memory_used_receipt_seen {card_type: belief_distance}
+analytics:weekly_thread_review_seen {}
+analytics:referral_invite_seen {source: weekly_review, card_type: weekly_review}
+analytics:referral_proof_moment_seen {source: weekly_review, card_type: weekly_review}
+analytics:archive_belief_share_card_seen {source: belief_distance, card_type: archive_belief_share}
+analytics:review_prompt_seen {entry_count: 3, source: weekly_review, card_type: weekly_review}
+analytics:memory_governance_checked {entry_count: 3, source: memory_card, card_type: thread_return, memory_scope: automatic, current_intent: use_archive_context}
+analytics:memory_governance_allowed {entry_count: 3, source: memory_card, card_type: thread_return, memory_scope: automatic, reason_id: repeated_supported, decision_id: allowed_same_thread, current_intent: use_archive_context, relevance_band: high}
+00:20 +239: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/shareable_archive_proof_test.dart: Pressure Insights integration no share card without connected evidence
+analytics:memory_governance_checked {entry_count: 3, source: memory_card, card_type: thread_return, memory_scope: automatic, current_intent: use_archive_context}
+analytics:memory_governance_blocked {entry_count: 3, source: memory_card, card_type: thread_return, memory_scope: automatic, reason_id: older_unreinforced, decision_id: blocked_low_relevance, current_intent: use_archive_context, relevance_band: low}
+analytics:memory_governance_checked {entry_count: 3, source: memory_card, card_type: thread_return, memory_scope: automatic, current_intent: use_archive_context}
+analytics:memory_governance_blocked {entry_count: 3, source: memory_card, card_type: thread_return, memory_scope: automatic, reason_id: older_unreinforced, decision_id: blocked_low_relevance, current_intent: use_archive_context, relevance_band: low}
+analytics:memory_governance_checked {entry_count: 3, source: memory_card, card_type: thread_return, memory_scope: automatic, current_intent: use_archive_context}
+analytics:memory_governance_blocked {entry_count: 3, source: memory_card, card_type: thread_return, memory_scope: automatic, reason_id: older_unreinforced, decision_id: blocked_low_relevance, current_intent: use_archive_context, relevance_band: low}
+analytics:memory_governance_checked {entry_count: 3, source: memory_card, card_type: thread_return, memory_scope: automatic, current_intent: use_archive_context}
+analytics:memory_governance_blocked {entry_count: 3, source: memory_card, card_type: thread_return, memory_scope: automatic, reason_id: older_unreinforced, decision_id: blocked_low_relevance, current_intent: use_archive_context, relevance_band: low}
+analytics:memory_governance_checked {entry_count: 3, source: memory_card, card_type: thread_return, memory_scope: automatic, current_intent: use_archive_context}
+analytics:memory_governance_blocked {entry_count: 3, source: memory_card, card_type: thread_return, memory_scope: automatic, reason_id: older_unreinforced, decision_id: blocked_low_relevance, current_intent: use_archive_context, relevance_band: low}
+analytics:memory_governance_checked {entry_count: 3, source: memory_card, card_type: thread_return, memory_scope: automatic, current_intent: use_archive_context}
+analytics:memory_governance_blocked {entry_count: 3, source: memory_card, card_type: thread_return, memory_scope: automatic, reason_id: older_unreinforced, decision_id: blocked_low_relevance, current_intent: use_archive_context, relevance_band: low}
+analytics:archive_retrieval_empty {card_type: weekly_review, memory_scope: automatic, score_band: none, record_count: 0}
+analytics:memory_authority_frame_created {entry_count: 0, card_type: weekly_review, memory_scope: automatic, authority_state: fresh, influence_level: suppress, reason_id: fresh_entry}
+analytics:memory_influence_suppressed {entry_count: 0, card_type: weekly_review, memory_scope: automatic, authority_state: fresh, influence_level: suppress, reason_id: fresh_entry}
+analytics:memory_governance_checked {entry_count: 3, source: memory_card, card_type: thread_return, memory_scope: automatic, current_intent: use_archive_context}
+analytics:archive_retrieval_empty {card_type: thread_return, memory_scope: automatic, score_band: none, record_count: 0}
+analytics:memory_authority_frame_created {entry_count: 0, card_type: thread_return, memory_scope: automatic, authority_state: fresh, influence_level: suppress, reason_id: fresh_entry}
+analytics:memory_influence_suppressed {entry_count: 0, card_type: thread_return, memory_scope: automatic, authority_state: fresh, influence_level: suppress, reason_id: fresh_entry}
+analytics:memory_governance_blocked {entry_count: 3, source: memory_card, card_type: thread_return, memory_scope: automatic, reason_id: fresh_entry, decision_id: blocked_low_relevance, current_intent: use_archive_context, relevance_band: low}
+analytics:memory_governance_checked {entry_count: 3, source: memory_card, card_type: belief_distance, memory_scope: automatic, current_intent: use_archive_context}
+analytics:memory_authority_frame_created {entry_count: 0, card_type: belief_distance, memory_scope: automatic, authority_state: stale, influence_level: background, reason_id: older_unreinforced}
+analytics:memory_influence_suppressed {entry_count: 0, card_type: belief_distance, memory_scope: automatic, authority_state: stale, influence_level: background, reason_id: older_unreinforced}
+analytics:memory_governance_blocked {entry_count: 3, source: memory_card, card_type: belief_distance, memory_scope: automatic, reason_id: older_unreinforced, decision_id: blocked_low_relevance, current_intent: use_archive_context, relevance_band: low}
+analytics:memory_governance_checked {entry_count: 3, source: memory_card, card_type: belief_distance, memory_scope: automatic, current_intent: use_archive_context}
+analytics:memory_governance_blocked {entry_count: 3, source: memory_card, card_type: belief_distance, memory_scope: automatic, reason_id: older_unreinforced, decision_id: blocked_low_relevance, current_intent: use_archive_context, relevance_band: low}
+analytics:memory_governance_checked {entry_count: 3, source: memory_card, card_type: thread_return, memory_scope: automatic, current_intent: use_archive_context}
+analytics:memory_governance_blocked {entry_count: 3, source: memory_card, card_type: thread_return, memory_scope: automatic, reason_id: fresh_entry, decision_id: blocked_low_relevance, current_intent: use_archive_context, relevance_band: low}
+analytics:memory_governance_checked {entry_count: 3, source: memory_card, card_type: belief_distance, memory_scope: automatic, current_intent: use_archive_context}
+analytics:memory_governance_blocked {entry_count: 3, source: memory_card, card_type: belief_distance, memory_scope: automatic, reason_id: older_unreinforced, decision_id: blocked_low_relevance, current_intent: use_archive_context, relevance_band: low}
+analytics:memory_governance_checked {entry_count: 3, source: memory_card, card_type: thread_return, memory_scope: automatic, current_intent: use_archive_context}
+analytics:memory_governance_blocked {entry_count: 3, source: memory_card, card_type: thread_return, memory_scope: automatic, reason_id: fresh_entry, decision_id: blocked_low_relevance, current_intent: use_archive_context, relevance_band: low}
+analytics:memory_governance_checked {entry_count: 3, source: memory_card, card_type: belief_distance, memory_scope: automatic, current_intent: use_archive_context}
+analytics:memory_governance_blocked {entry_count: 3, source: memory_card, card_type: belief_distance, memory_scope: automatic, reason_id: older_unreinforced, decision_id: blocked_low_relevance, current_intent: use_archive_context, relevance_band: low}
+analytics:memory_governance_checked {entry_count: 3, source: memory_card, card_type: belief_distance, memory_scope: automatic, current_intent: use_archive_context}
+analytics:memory_governance_blocked {entry_count: 3, source: memory_card, card_type: belief_distance, memory_scope: automatic, reason_id: older_unreinforced, decision_id: blocked_low_relevance, current_intent: use_archive_context, relevance_band: low}
+analytics:memory_governance_checked {entry_count: 3, source: memory_card, card_type: thread_return, memory_scope: automatic, current_intent: use_archive_context}
+analytics:memory_governance_blocked {entry_count: 3, source: memory_card, card_type: thread_return, memory_scope: automatic, reason_id: fresh_entry, decision_id: blocked_low_relevance, current_intent: use_archive_context, relevance_band: low}
+analytics:memory_governance_checked {entry_count: 3, source: memory_card, card_type: belief_distance, memory_scope: automatic, current_intent: use_archive_context}
+analytics:memory_governance_blocked {entry_count: 3, source: memory_card, card_type: belief_distance, memory_scope: automatic, reason_id: older_unreinforced, decision_id: blocked_low_relevance, current_intent: use_archive_context, relevance_band: low}
+analytics:memory_governance_checked {entry_count: 3, source: memory_card, card_type: thread_return, memory_scope: automatic, current_intent: use_archive_context}
+analytics:memory_governance_blocked {entry_count: 3, source: memory_card, card_type: thread_return, memory_scope: automatic, reason_id: older_unreinforced, decision_id: blocked_low_relevance, current_intent: use_archive_context, relevance_band: low}
+analytics:memory_governance_checked {entry_count: 3, source: memory_card, card_type: thread_return, memory_scope: automatic, current_intent: use_archive_context}
+analytics:memory_governance_blocked {entry_count: 3, source: memory_card, card_type: thread_return, memory_scope: automatic, reason_id: older_unreinforced, decision_id: blocked_low_relevance, current_intent: use_archive_context, relevance_band: low}
+analytics:memory_governance_checked {entry_count: 3, source: memory_card, card_type: belief_distance, memory_scope: automatic, current_intent: use_archive_context}
+analytics:memory_governance_blocked {entry_count: 3, source: memory_card, card_type: belief_distance, memory_scope: automatic, reason_id: older_unreinforced, decision_id: blocked_low_relevance, current_intent: use_archive_context, relevance_band: low}
+analytics:memory_governance_checked {entry_count: 3, source: memory_card, card_type: thread_return, memory_scope: automatic, current_intent: use_archive_context}
+analytics:memory_governance_blocked {entry_count: 3, source: memory_card, card_type: thread_return, memory_scope: automatic, reason_id: fresh_entry, decision_id: blocked_low_relevance, current_intent: use_archive_context, relevance_band: low}
+analytics:memory_governance_checked {entry_count: 3, source: memory_card, card_type: belief_distance, memory_scope: automatic, current_intent: use_archive_context}
+analytics:memory_governance_blocked {entry_count: 3, source: memory_card, card_type: belief_distance, memory_scope: automatic, reason_id: older_unreinforced, decision_id: blocked_low_relevance, current_intent: use_archive_context, relevance_band: low}
+00:20 +240: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/archive_export_pack_test.dart: Settings export entry point shows Export button in standard archive controls
+00:21 +241: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/archive_export_pack_test.dart: ArchiveExportPackEngine empty archive export shows empty state
+00:21 +242: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/archive_export_pack_test.dart: ArchiveExportPackEngine non-empty export includes ArchiveMe and export date
+00:21 +243: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/archive_export_pack_test.dart: ArchiveExportPackEngine export includes saved and usable evidence counts
+analytics:archive_evidence_skipped_placeholder {entry_count: 1, source: archive_evidence_guard, reason: placeholder_or_pending_transcript}
+analytics:archive_evidence_skipped_placeholder {entry_count: 1, source: archive_evidence_guard, reason: placeholder_or_pending_transcript}
+analytics:archive_evidence_skipped_placeholder {entry_count: 1, source: archive_evidence_guard, reason: placeholder_or_pending_transcript}
+analytics:archive_evidence_skipped_placeholder {entry_count: 1, source: archive_evidence_guard, reason: placeholder_or_pending_transcript}
+analytics:archive_evidence_skipped_placeholder {entry_count: 1, source: archive_evidence_guard, reason: placeholder_or_pending_transcript}
+analytics:archive_evidence_skipped_placeholder {entry_count: 1, source: archive_evidence_guard, reason: placeholder_or_pending_transcript}
+analytics:archive_evidence_skipped_placeholder {entry_count: 1, source: archive_evidence_guard, reason: placeholder_or_pending_transcript}
+analytics:archive_evidence_skipped_placeholder {entry_count: 1, source: archive_evidence_guard, reason: placeholder_or_pending_transcript}
+analytics:archive_evidence_skipped_placeholder {entry_count: 1, source: archive_evidence_guard, reason: placeholder_or_pending_transcript}
+analytics:archive_evidence_skipped_placeholder {entry_count: 1, source: archive_evidence_guard, reason: placeholder_or_pending_transcript}
+analytics:archive_evidence_skipped_placeholder {entry_count: 1, source: archive_evidence_guard, reason: placeholder_or_pending_transcript}
+00:21 +244: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/archive_export_pack_test.dart: ArchiveExportPackEngine export includes evidence map summary when tags exist
+00:21 +245: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/archive_export_pack_test.dart: ArchiveExportPackEngine export includes review before sharing privacy note
+00:21 +246: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/archive_export_pack_test.dart: ArchiveExportPackEngine export uses safe previews distinct from share-safe proof
+00:21 +247: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/archive_export_pack_test.dart: ArchiveExportPackEngine share-safe proof remains unchanged and excludes private map/filter data
+00:21 +248: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/archive_export_pack_test.dart: ArchiveExportPackEngine export route is sensitive/guarded
+00:21 +249: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/archive_export_pack_test.dart: ArchiveExportPackEngine standard archive controls route to canonical export screen
+00:21 +250: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/archive_export_pack_test.dart: ArchiveExportPackEngine export pack excludes archive watchlist data
+00:21 +251: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/archive_export_pack_test.dart: ArchiveExportPackEngine export pack excludes next evidence plan data
+00:21 +252: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/archive_export_pack_test.dart: ArchiveExportPackEngine export pack excludes archive milestones data
+00:21 +253: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/archive_export_pack_test.dart: ArchiveExportPackEngine export pack excludes beta feedback data
+00:21 +254: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/archive_export_pack_test.dart: ArchiveExportPackEngine export pack excludes beta outcomes data
+00:21 +255: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/archive_export_pack_test.dart: ArchiveExportPackEngine export pack excludes Pro interest data
+00:21 +256: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/archive_export_pack_test.dart: ArchiveExportPackEngine export pack excludes beta invite data
+00:22 +257: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/launch_hardening_test.dart: generated file guard gitignore ignores test journal/prefs patterns
+00:22 +258: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/launch_hardening_test.dart: generated file guard validation script exists and is executable
+00:22 +259: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/launch_hardening_test.dart: launch validation docs LAUNCH_VALIDATION.md contains focused test command
+00:22 +260: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/launch_hardening_test.dart: launch validation docs REVENUECAT_LAUNCH_BLOCKERS.md says purchases unavailable until setup
+00:22 +261: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/launch_hardening_test.dart: launch validation docs docs do not claim purchases are ready
+00:22 +262: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/launch_hardening_test.dart: route audit doc includes key consumer routes and release-hidden verification
+00:22 +263: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/launch_hardening_test.dart: first two-session copy 0-entry archive home mentions sample archive calmly
+00:22 +264: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/launch_hardening_test.dart: first two-session copy 1-entry next action explains why second moment matters
+00:22 +265: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/launch_hardening_test.dart: first two-session copy onboarding step 2 aligns with cautious comparison language
+00:22 +266: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/launch_hardening_test.dart: first two-session copy updated docs use ArchiveMe not VoiceMemory in user-facing prose
+00:22 +267: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/launch_hardening_test.dart: billing entitlement merge configured RevenueCat free beats stale cached Pro
+00:22 +268: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/launch_hardening_test.dart: billing entitlement merge store Pro still wins when configured
+00:22 +269: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/launch_hardening_test.dart: billing entitlement merge unconfigured billing may use server cache
+00:23 +270: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/revenuecat_release_config_test.dart: pro entitlement id is pro
+00:23 +271: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/revenuecat_release_config_test.dart: missing RevenueCat key does not crash initialize
+ARCHIVEME_REVENUECAT: configure started platform=unknown apiKeyPresent=false apiKeyPrefix=missing bundleId=com.voicememory.mobile
+RevenueCat: startup — platform=unknown
+RevenueCat: disabled — no API key (set REVENUECAT_UNKNOWN_API_KEY or REVENUECAT_API_KEY at build time)
+ARCHIVEME_REVENUECAT: configure finished success=false reason=api_key_missing
+00:23 +272: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/revenuecat_release_config_test.dart: trial mode skips billing requirement
+00:23 +273: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/revenuecat_release_config_test.dart: paywall shows safe message when billing not configured
+00:23 +274: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/revenuecat_release_config_test.dart: diagnostics expose QA fields when SDK not configured
+ARCHIVEME_REVENUECAT: configure started platform=unknown apiKeyPresent=false apiKeyPrefix=missing bundleId=com.voicememory.mobile
+RevenueCat: startup — platform=unknown
+RevenueCat: disabled — no API key (set REVENUECAT_UNKNOWN_API_KEY or REVENUECAT_API_KEY at build time)
+ARCHIVEME_REVENUECAT: configure finished success=false reason=api_key_missing
+00:23 +275: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/revenuecat_release_config_test.dart: diagnostics log key fingerprint never exposes full key
+00:24 +276: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/pro_value_packaging_test.dart: ProValueEngine headline is deeper long-term evidence history
+00:24 +277: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/pro_value_packaging_test.dart: ProValueEngine value bullets cover long-term Pro surfaces
+00:24 +278: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/pro_value_packaging_test.dart: ProValueEngine purchase unavailable copy keeps free archive usable
+00:24 +279: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/pro_value_packaging_test.dart: ProValueEngine card pro line is consistent across touchpoints
+00:24 +280: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/pro_value_packaging_test.dart: ProValueEngine copy avoids banned language and purchase CTAs
+00:24 +281: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/pro_value_packaging_test.dart: ProValueEngine uses ArchiveMe branding only in visible copy
+00:24 +282: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/pro_value_packaging_test.dart: ProValuePreviewCopy delegates to central copy preview copy matches ProValueCopy headline and bullets
+00:24 +283: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/pro_value_packaging_test.dart: Pro value preview screen uses central Pro value headline and sections
+00:25 +284: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/pro_value_packaging_test.dart: Pro value preview screen honestly says purchases are not available yet
+00:25 +285: All tests passed!

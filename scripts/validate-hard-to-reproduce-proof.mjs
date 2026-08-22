@@ -8,33 +8,33 @@ const failures = [];
 const fail = (msg) => failures.push(msg);
 
 for (const rel of [
-  "lib/archive/hard-to-reproduce-proof.ts",
-  "lib/archive/what-archive-can-answer-copy.ts",
-  "lib/metrics/hard-to-reproduce-proof-events.ts",
-  "components/archive/HardToReproduceProof.tsx",
-  "components/archive/WhatThisArchiveCanAnswer.tsx",
+  "packages/shared/lib/archive/hard-to-reproduce-proof.ts",
+  "packages/shared/lib/archive/what-archive-can-answer-copy.ts",
+  "packages/shared/lib/metrics/hard-to-reproduce-proof-events.ts",
+  "apps/web/components/archive/HardToReproduceProof.tsx",
+  "apps/web/components/archive/WhatThisArchiveCanAnswer.tsx",
 ]) {
   if (!fs.existsSync(path.join(ROOT, rel))) fail(`missing ${rel}`);
 }
 
 const copy = fs.readFileSync(
-  path.join(ROOT, "lib/archive/what-archive-can-answer-copy.ts"),
+  path.join(ROOT, "packages/shared/lib/archive/what-archive-can-answer-copy.ts"),
   "utf8",
 );
 if (!copy.includes("What this archive can answer")) fail("headline missing");
 if (!copy.includes("What do I keep doing?")) fail("bullet missing");
 
-const engine = fs.readFileSync(path.join(ROOT, "lib/archive/hard-to-reproduce-proof.ts"), "utf8");
+const engine = fs.readFileSync(path.join(ROOT, "packages/shared/lib/archive/hard-to-reproduce-proof.ts"), "utf8");
 if (!engine.includes("hard to recreate from one prompt")) fail("proof line missing");
 
 const proof = fs.readFileSync(
-  path.join(ROOT, "components/archive/HardToReproduceProof.tsx"),
+  path.join(ROOT, "apps/web/components/archive/HardToReproduceProof.tsx"),
   "utf8",
 );
 if (!proof.includes("trackHardToReproduceProofSeen")) fail("must track seen");
 
 const events = fs.readFileSync(
-  path.join(ROOT, "lib/metrics/hard-to-reproduce-proof-events.ts"),
+  path.join(ROOT, "packages/shared/lib/metrics/hard-to-reproduce-proof-events.ts"),
   "utf8",
 );
 for (const name of ["hard_to_reproduce_proof_seen", "hard_to_reproduce_proof_expanded"]) {
@@ -42,10 +42,10 @@ for (const name of ["hard_to_reproduce_proof_seen", "hard_to_reproduce_proof_exp
 }
 
 for (const rel of [
-  "app/page.tsx",
-  "app/discover/page.tsx",
-  "app/memory/page.tsx",
-  "app/blind-spots/page.tsx",
+  "apps/web/app/page.tsx",
+  "apps/web/app/discover/page.tsx",
+  "apps/web/app/memory/page.tsx",
+  "apps/web/app/blind-spots/page.tsx",
 ]) {
   const src = fs.readFileSync(path.join(ROOT, rel), "utf8");
   if (!src.includes("WhatThisArchiveCanAnswer")) fail(`${rel} missing WhatThisArchiveCanAnswer`);

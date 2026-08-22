@@ -4,8 +4,8 @@ import { resolve } from "node:path";
 import {
   formatDatabaseLiveReport,
   runDatabaseLiveCheck,
-} from "../lib/proof/database-live-check.ts";
-import { formatProofChecks } from "../lib/proof/proof-result.ts";
+} from "../packages/shared/lib/proof/database-live-check.ts";
+import { formatProofChecks } from "../packages/shared/lib/proof/proof-result.ts";
 
 const report = await runDatabaseLiveCheck();
 formatProofChecks(report.checks);

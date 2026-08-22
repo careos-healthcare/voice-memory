@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { runEvidencePipelineTests } from "../lib/reliability/evidence-pipeline-tests.ts";
+import { runEvidencePipelineTests } from "../packages/shared/lib/reliability/evidence-pipeline-tests.ts";
 
 const { failures } = await runEvidencePipelineTests();
 

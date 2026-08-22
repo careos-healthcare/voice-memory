@@ -32,23 +32,23 @@ const FORBIDDEN = [
 ];
 
 const PROMPT_FILES = [
-  "lib/archive/archive-prompt-engine.ts",
-  "lib/archive/archive-prompt-copy.ts",
-  "lib/archive/archive-record-copy.ts",
-  "components/recording/LowEffortMode.tsx",
-  "components/recording/ArchivePostSaveLoop.tsx",
+  "packages/shared/lib/archive/archive-prompt-engine.ts",
+  "packages/shared/lib/archive/archive-prompt-copy.ts",
+  "packages/shared/lib/archive/archive-record-copy.ts",
+  "apps/web/components/recording/LowEffortMode.tsx",
+  "apps/web/components/recording/ArchivePostSaveLoop.tsx",
 ];
 
 for (const rel of [
-  "types/archive-prompt.ts",
+  "packages/shared/types/archive-prompt.ts",
   ...PROMPT_FILES,
-  "lib/metrics/archive-prompt-events.ts",
+  "packages/shared/lib/metrics/archive-prompt-events.ts",
   "scripts/validate-archive-prompt-engine.mjs",
 ]) {
   mustExist(rel);
 }
 
-const engine = read("lib/archive/archive-prompt-engine.ts");
+const engine = read("packages/shared/lib/archive/archive-prompt-engine.ts");
 if (!engine.includes("buildArchivePrompts")) fail("missing buildArchivePrompts");
 if (!engine.includes("pickArchiveDisplayPrompts")) fail("missing pickArchiveDisplayPrompts");
 if (!engine.includes("buildPostSaveFollowUp")) fail("missing buildPostSaveFollowUp");
@@ -84,7 +84,7 @@ for (const rel of PROMPT_FILES) {
   }
 }
 
-const recordCopy = read("lib/archive/archive-record-copy.ts");
+const recordCopy = read("packages/shared/lib/archive/archive-record-copy.ts");
 if (!recordCopy.includes("What's on your mind?")) {
   fail("record copy missing headline");
 }
@@ -92,12 +92,12 @@ if (!recordCopy.includes("I don't know what to talk about")) {
   fail("record copy missing low effort button");
 }
 
-const lowEffort = read("components/recording/LowEffortMode.tsx");
+const lowEffort = read("apps/web/components/recording/LowEffortMode.tsx");
 if (!lowEffort.includes("low-effort-mode")) fail("LowEffortMode missing test id");
 if (!lowEffort.includes("trackArchivePromptShown")) fail("LowEffortMode must track shown");
 if (!lowEffort.includes("trackArchivePromptRefreshed")) fail("LowEffortMode must track refresh");
 
-const events = read("lib/metrics/archive-prompt-events.ts");
+const events = read("packages/shared/lib/metrics/archive-prompt-events.ts");
 for (const name of [
   "archive_prompt_shown",
   "archive_prompt_selected",
@@ -107,22 +107,22 @@ for (const name of [
   if (!events.includes(name)) fail(`missing event ${name}`);
 }
 
-const recorder = read("components/Recorder.tsx");
+const recorder = read("apps/web/components/Recorder.tsx");
 if (!recorder.includes("LowEffortMode")) fail("Recorder must include LowEffortMode");
 if (!recorder.includes("ArchivePostSaveLoop")) fail("Recorder must include post-save loop");
 
-const shell = read("components/capture/ZeroStateRecorderShell.tsx");
+const shell = read("apps/web/components/capture/ZeroStateRecorderShell.tsx");
 if (!shell.includes("RECORD_SCREEN_HEADLINE")) fail("ZeroStateRecorderShell must show record framing");
 
-const mobileRecord = read("apps/voicememory_mobile/lib/screens/record_screen.dart");
-const mobilePrompts = read("apps/voicememory_mobile/lib/widgets/low_effort_prompts.dart");
+const mobileRecord = read("apps/mobile/lib/screens/record_screen.dart");
+const mobilePrompts = read("apps/mobile/lib/widgets/low_effort_prompts.dart");
 if (!mobileRecord.includes("What's on your mind")) {
   fail("mobile record screen missing headline");
 }
 if (!mobileRecord.includes("LowEffortPrompts") && !mobilePrompts.includes("talk about")) {
   fail("mobile must wire low effort prompts");
 }
-if (!read("apps/voicememory_mobile/lib/features/archive_prompt/archive_prompt_engine.dart").includes(
+if (!read("apps/mobile/lib/features/archive_prompt/archive_prompt_engine.dart").includes(
   "buildArchivePrompts",
 )) {
   fail("mobile archive_prompt_engine missing buildArchivePrompts");

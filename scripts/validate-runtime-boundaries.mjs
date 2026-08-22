@@ -6,10 +6,10 @@ import { fileURLToPath } from "node:url";
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
 const REQUIRED = [
-  "lib/runtime/render-safe.ts",
-  "lib/runtime/read-model.ts",
-  "lib/runtime/write-actions.ts",
-  "lib/runtime/deferred-jobs.ts",
+  "packages/shared/lib/runtime/render-safe.ts",
+  "packages/shared/lib/runtime/read-model.ts",
+  "packages/shared/lib/runtime/write-actions.ts",
+  "packages/shared/lib/runtime/deferred-jobs.ts",
 ];
 
 const READ_MODEL_FORBIDDEN = [
@@ -25,13 +25,13 @@ const READ_MODEL_FORBIDDEN = [
 ];
 
 const UI_COMPONENTS = [
-  "components/entry/OpenLoopNextStepPrompt.tsx",
-  "components/open-loops/OpenLoopEntryContinuity.tsx",
-  "components/open-loops/OpenLoopCard.tsx",
-  "components/open-loops/OpenLoopReturnPrompt.tsx",
-  "components/clarity/SortThisOutAloudPrompt.tsx",
-  "components/clarity/CirclingThoughtsSection.tsx",
-  "components/reflex/MicCentricHome.tsx",
+  "apps/web/components/entry/OpenLoopNextStepPrompt.tsx",
+  "apps/web/components/open-loops/OpenLoopEntryContinuity.tsx",
+  "apps/web/components/open-loops/OpenLoopCard.tsx",
+  "apps/web/components/open-loops/OpenLoopReturnPrompt.tsx",
+  "apps/web/components/clarity/SortThisOutAloudPrompt.tsx",
+  "apps/web/components/clarity/CirclingThoughtsSection.tsx",
+  "apps/web/components/reflex/MicCentricHome.tsx",
 ];
 
 const UI_FORBIDDEN_IMPORTS = [
@@ -45,7 +45,7 @@ for (const rel of REQUIRED) {
   if (!fs.existsSync(path.join(ROOT, rel))) failures.push(`missing ${rel}`);
 }
 
-const readModel = fs.readFileSync(path.join(ROOT, "lib/runtime/read-model.ts"), "utf8");
+const readModel = fs.readFileSync(path.join(ROOT, "packages/shared/lib/runtime/read-model.ts"), "utf8");
 for (const token of READ_MODEL_FORBIDDEN) {
   if (readModel.includes(token)) {
     failures.push(`read-model.ts must not contain ${token}`);
@@ -55,12 +55,12 @@ if (!readModel.includes("runReadOnly")) {
   failures.push("read-model.ts must wrap selectors with runReadOnly");
 }
 
-const writeActions = fs.readFileSync(path.join(ROOT, "lib/runtime/write-actions.ts"), "utf8");
+const writeActions = fs.readFileSync(path.join(ROOT, "packages/shared/lib/runtime/write-actions.ts"), "utf8");
 if (!writeActions.includes("runWriteAction")) {
   failures.push("write-actions.ts must use runWriteAction");
 }
 
-const deferred = fs.readFileSync(path.join(ROOT, "lib/runtime/deferred-jobs.ts"), "utf8");
+const deferred = fs.readFileSync(path.join(ROOT, "packages/shared/lib/runtime/deferred-jobs.ts"), "utf8");
 for (const job of [
   "refresh-open-loop-continuity",
   "link-reflection-after-resurface",
@@ -69,7 +69,7 @@ for (const job of [
   if (!deferred.includes(job)) failures.push(`deferred-jobs.ts missing ${job}`);
 }
 
-const storage = fs.readFileSync(path.join(ROOT, "lib/open-loops/open-loop-storage.ts"), "utf8");
+const storage = fs.readFileSync(path.join(ROOT, "packages/shared/lib/open-loops/open-loop-storage.ts"), "utf8");
 if (storage.includes("getAllOpenLoops(): OpenLoop[] {\n  return sortLoops(withFreshContinuity")) {
   failures.push("getAllOpenLoops must not refresh continuity on read");
 }
@@ -90,7 +90,7 @@ for (const rel of UI_COMPONENTS) {
   }
 }
 
-const entryPage = fs.readFileSync(path.join(ROOT, "app/entry/[id]/page.tsx"), "utf8");
+const entryPage = fs.readFileSync(path.join(ROOT, "apps/web/app/entry/[id]/page.tsx"), "utf8");
 if (entryPage.includes("readCachedQuietEntryPresentation") && entryPage.includes("getCachedQuietEntryPresentation")) {
   failures.push("entry page: use readCached* not getCached* for presentation");
 }

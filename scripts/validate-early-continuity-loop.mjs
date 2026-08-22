@@ -7,9 +7,9 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const failures = [];
 
 const requiredFiles = [
-  "lib/continuity/early-resurfacing-magic.ts",
-  "lib/continuity/memory-starts-immediately.ts",
-  "lib/product/pro-framing.ts",
+  "packages/shared/lib/continuity/early-resurfacing-magic.ts",
+  "packages/shared/lib/continuity/memory-starts-immediately.ts",
+  "packages/shared/lib/product/pro-framing.ts",
 ];
 
 for (const rel of requiredFiles) {
@@ -17,19 +17,19 @@ for (const rel of requiredFiles) {
 }
 
 const memoryStarts = fs.readFileSync(
-  path.join(ROOT, "lib/continuity/memory-starts-immediately.ts"),
+  path.join(ROOT, "packages/shared/lib/continuity/memory-starts-immediately.ts"),
   "utf8",
 );
 const buildLines = fs.readFileSync(
-  path.join(ROOT, "lib/continuity/build-continuity-lines.ts"),
+  path.join(ROOT, "packages/shared/lib/continuity/build-continuity-lines.ts"),
   "utf8",
 );
 const quiet = fs.readFileSync(
-  path.join(ROOT, "lib/refinement/quiet-presentation.ts"),
+  path.join(ROOT, "packages/shared/lib/refinement/quiet-presentation.ts"),
   "utf8",
 );
 const afterSave = fs.readFileSync(
-  path.join(ROOT, "lib/reflection/after-save-continuity.ts"),
+  path.join(ROOT, "packages/shared/lib/reflection/after-save-continuity.ts"),
   "utf8",
 );
 
@@ -60,7 +60,7 @@ if (!afterSave.includes("postSaveAcknowledgmentLine")) {
 
 const grindRe =
   /\b(keep recording|unlock later|build your streak|streak counter|unlock your|grind|level up|productivity score)\b/i;
-const scanDirs = ["app", "components", "lib/product", "lib/continuity", "lib/onboarding"];
+const scanDirs = ["app", "components", "packages/shared/lib/product", "packages/shared/lib/continuity", "packages/shared/lib/onboarding"];
 for (const dir of scanDirs) {
   const full = path.join(ROOT, dir);
   if (!fs.existsSync(full)) continue;
@@ -95,7 +95,7 @@ for (const dir of scanDirs) {
   walk(full);
 }
 
-const proFraming = fs.readFileSync(path.join(ROOT, "lib/product/pro-framing.ts"), "utf8");
+const proFraming = fs.readFileSync(path.join(ROOT, "packages/shared/lib/product/pro-framing.ts"), "utf8");
 if (!proFraming.includes("Export stays available") && !proFraming.includes("Export JSON")) {
   failures.push("pro-framing must keep export secondary");
 }
@@ -104,13 +104,13 @@ if (proFraming.toLowerCase().includes("unlock your")) {
 }
 
 const magicMod = await import(
-  pathToFileURL(path.join(ROOT, "lib/continuity/early-resurfacing-magic.ts")).href
+  pathToFileURL(path.join(ROOT, "packages/shared/lib/continuity/early-resurfacing-magic.ts")).href
 );
 const memoryMod = await import(
-  pathToFileURL(path.join(ROOT, "lib/continuity/memory-starts-immediately.ts")).href
+  pathToFileURL(path.join(ROOT, "packages/shared/lib/continuity/memory-starts-immediately.ts")).href
 );
 const gateMod = await import(
-  pathToFileURL(path.join(ROOT, "lib/continuity/continuity-quality-gate.ts")).href
+  pathToFileURL(path.join(ROOT, "packages/shared/lib/continuity/continuity-quality-gate.ts")).href
 );
 
 if (magicMod.pickEarlyResurfacingMagicLine([]) !== null) {

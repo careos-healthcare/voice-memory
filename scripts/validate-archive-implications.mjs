@@ -32,26 +32,26 @@ const FORBIDDEN_OUTPUT = [
 ];
 
 const IMPLICATION_FILES = [
-  "lib/archive/archive-implications.ts",
-  "lib/archive/archive-case-file-copy.ts",
-  "lib/archive/archive-uniqueness-copy.ts",
-  "lib/archive/archive-moat-proof.ts",
-  "components/archive/ArchiveImplicationsCard.tsx",
-  "components/archive/ArchiveUniquenessPanel.tsx",
-  "components/archive/ArchiveMoatProof.tsx",
+  "packages/shared/lib/archive/archive-implications.ts",
+  "packages/shared/lib/archive/archive-case-file-copy.ts",
+  "packages/shared/lib/archive/archive-uniqueness-copy.ts",
+  "packages/shared/lib/archive/archive-moat-proof.ts",
+  "apps/web/components/archive/ArchiveImplicationsCard.tsx",
+  "apps/web/components/archive/ArchiveUniquenessPanel.tsx",
+  "apps/web/components/archive/ArchiveMoatProof.tsx",
 ];
 
 for (const rel of [
-  "types/archive-implications.ts",
+  "packages/shared/types/archive-implications.ts",
   ...IMPLICATION_FILES,
   "scripts/validate-archive-implications.mjs",
-  "app/internal/archive-moat/page.tsx",
-  "lib/internal/archive-moat-report.ts",
+  "apps/web/app/internal/archive-moat/page.tsx",
+  "packages/shared/lib/internal/archive-moat-report.ts",
 ]) {
   mustExist(rel);
 }
 
-const engine = read("lib/archive/archive-implications.ts");
+const engine = read("packages/shared/lib/archive/archive-implications.ts");
 if (!engine.includes("buildArchiveImplications")) {
   fail("archive-implications missing buildArchiveImplications");
 }
@@ -89,7 +89,7 @@ for (const rel of IMPLICATION_FILES) {
   }
 }
 
-const card = read("components/archive/ArchiveImplicationsCard.tsx");
+const card = read("apps/web/components/archive/ArchiveImplicationsCard.tsx");
 if (
   !card.includes("Why this matters") &&
   !card.includes("ARCHIVE_CASE_FILE_IMPLICATIONS_HEADLINE")
@@ -97,7 +97,7 @@ if (
   fail("ArchiveImplicationsCard missing headline");
 }
 
-const progressive = read("components/archive/ProgressiveArchiveHome.tsx");
+const progressive = read("apps/web/components/archive/ProgressiveArchiveHome.tsx");
 if (!progressive.includes("ArchiveImplicationsCard")) {
   fail("ProgressiveArchiveHome must include ArchiveImplicationsCard");
 }
@@ -109,21 +109,21 @@ if (
 }
 if (/insight/i.test(progressive)) fail("ProgressiveArchiveHome must not use insight language");
 
-const qCopy = read("lib/archive/archive-question-copy.ts");
+const qCopy = read("packages/shared/lib/archive/archive-question-copy.ts");
 if (!qCopy.includes("WHY_SHOULD_I_CARE")) fail("missing Why should I care question");
 
-const qEngine = read("lib/archive/archive-question-engine.ts");
+const qEngine = read("packages/shared/lib/archive/archive-question-engine.ts");
 if (!qEngine.includes("buildArchiveImplications")) {
   fail("question engine must answer care from implications");
 }
 if (!qEngine.includes("IMPLICATIONS")) fail("question engine missing IMPLICATIONS answer");
 
-const attachment = read("components/archive/ArchiveAttachmentPrompt.tsx");
+const attachment = read("apps/web/components/archive/ArchiveAttachmentPrompt.tsx");
 if (!attachment.includes("archive-moat-perception-prompt")) {
   fail("attachment prompt must include moat perception phase");
 }
 if (
-  !read("lib/archive/archive-attachment-copy.ts").includes(
+  !read("packages/shared/lib/archive/archive-attachment-copy.ts").includes(
     "If this archive disappeared tomorrow",
   )
 ) {

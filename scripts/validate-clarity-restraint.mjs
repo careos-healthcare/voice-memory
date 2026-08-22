@@ -6,16 +6,16 @@ import { fileURLToPath } from "node:url";
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
 const REQUIRED = [
-  "lib/clarity/thinking-out-loud-signals.ts",
-  "lib/clarity/thought-patterns.ts",
-  "lib/clarity/clarity-copy.ts",
-  "lib/clarity/clarity-record.ts",
-  "lib/clarity/clarity-observation.ts",
-  "lib/clarity/clarity-storage.ts",
-  "lib/clarity/after-save-clarity.ts",
-  "lib/clarity/clarity-resurfacing.ts",
-  "components/clarity/SortThisOutAloudPrompt.tsx",
-  "components/clarity/CirclingThoughtsSection.tsx",
+  "packages/shared/lib/clarity/thinking-out-loud-signals.ts",
+  "packages/shared/lib/clarity/thought-patterns.ts",
+  "packages/shared/lib/clarity/clarity-copy.ts",
+  "packages/shared/lib/clarity/clarity-record.ts",
+  "packages/shared/lib/clarity/clarity-observation.ts",
+  "packages/shared/lib/clarity/clarity-storage.ts",
+  "packages/shared/lib/clarity/after-save-clarity.ts",
+  "packages/shared/lib/clarity/clarity-resurfacing.ts",
+  "apps/web/components/clarity/SortThisOutAloudPrompt.tsx",
+  "apps/web/components/clarity/CirclingThoughtsSection.tsx",
 ];
 
 const BANNED = [
@@ -42,7 +42,7 @@ for (const rel of REQUIRED) {
   }
 }
 
-const scanDirs = ["lib/clarity", "components/clarity"];
+const scanDirs = ["packages/shared/lib/clarity", "apps/web/components/clarity"];
 for (const rel of scanDirs) {
   const dir = path.join(ROOT, rel);
   for (const file of fs.readdirSync(dir)) {
@@ -56,7 +56,7 @@ for (const rel of scanDirs) {
   }
 }
 
-const copy = fs.readFileSync(path.join(ROOT, "lib/clarity/clarity-copy.ts"), "utf8");
+const copy = fs.readFileSync(path.join(ROOT, "packages/shared/lib/clarity/clarity-copy.ts"), "utf8");
 for (const phrase of [
   "Sort this out aloud",
   "Record where this is now",
@@ -65,12 +65,12 @@ for (const phrase of [
   if (!copy.includes(phrase)) failures.push(`clarity-copy missing: ${phrase}`);
 }
 
-const entry = fs.readFileSync(path.join(ROOT, "app/entry/[id]/page.tsx"), "utf8");
+const entry = fs.readFileSync(path.join(ROOT, "apps/web/app/entry/[id]/page.tsx"), "utf8");
 if (!entry.includes("SortThisOutAloudPrompt")) {
   failures.push("entry page must render SortThisOutAloudPrompt");
 }
 
-const recorder = fs.readFileSync(path.join(ROOT, "components/Recorder.tsx"), "utf8");
+const recorder = fs.readFileSync(path.join(ROOT, "apps/web/components/Recorder.tsx"), "utf8");
 if (!recorder.includes("clarityRecord")) {
   failures.push("Recorder must accept clarityRecord");
 }

@@ -6,18 +6,18 @@ import { fileURLToPath } from "node:url";
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
 const REQUIRED = [
-  "lib/reflex/reflex-capture.ts",
-  "lib/reflex/reflex-restraint.ts",
-  "lib/reflex/read-vs-speak.ts",
-  "lib/reflex/reflex-score.ts",
-  "lib/reflex/reflex-observation.ts",
-  "lib/reflex/reflex-copy.ts",
-  "lib/reflex/reflex-context.ts",
-  "lib/reflex/open-without-record.ts",
-  "lib/mobile/quick-entry.ts",
-  "types/reflex.ts",
-  "components/reflex/MicCentricHome.tsx",
-  "app/record/page.tsx",
+  "packages/shared/lib/reflex/reflex-capture.ts",
+  "packages/shared/lib/reflex/reflex-restraint.ts",
+  "packages/shared/lib/reflex/read-vs-speak.ts",
+  "packages/shared/lib/reflex/reflex-score.ts",
+  "packages/shared/lib/reflex/reflex-observation.ts",
+  "packages/shared/lib/reflex/reflex-copy.ts",
+  "packages/shared/lib/reflex/reflex-context.ts",
+  "packages/shared/lib/reflex/open-without-record.ts",
+  "packages/shared/lib/mobile/quick-entry.ts",
+  "packages/shared/types/reflex.ts",
+  "apps/web/components/reflex/MicCentricHome.tsx",
+  "apps/web/app/record/page.tsx",
 ];
 
 const BANNED = [
@@ -41,7 +41,7 @@ for (const rel of REQUIRED) {
 }
 
 const capture = fs.readFileSync(
-  path.join(ROOT, "lib/reflex/reflex-capture.ts"),
+  path.join(ROOT, "packages/shared/lib/reflex/reflex-capture.ts"),
   "utf8",
 );
 for (const token of [
@@ -56,7 +56,7 @@ for (const token of [
   }
 }
 
-const home = fs.readFileSync(path.join(ROOT, "app/page.tsx"), "utf8");
+const home = fs.readFileSync(path.join(ROOT, "apps/web/app/page.tsx"), "utf8");
 if (!home.includes("MicCentricHome") || !home.includes("detectReflexCapture")) {
   failures.push("homepage must wire reflex capture and MicCentricHome");
 }
@@ -65,7 +65,7 @@ if (!home.includes("shouldActivateReflexSilenceFirst")) {
 }
 
 const micHome = fs.readFileSync(
-  path.join(ROOT, "components/reflex/MicCentricHome.tsx"),
+  path.join(ROOT, "apps/web/components/reflex/MicCentricHome.tsx"),
   "utf8",
 );
 if (
@@ -79,13 +79,13 @@ if (continuityBlocks > 1) {
   failures.push("MicCentricHome must have at most one continuity line before mic");
 }
 
-const recorder = fs.readFileSync(path.join(ROOT, "components/Recorder.tsx"), "utf8");
+const recorder = fs.readFileSync(path.join(ROOT, "apps/web/components/Recorder.tsx"), "utf8");
 if (!recorder.includes("reflexFastBoot") || !recorder.includes("reflexCapture")) {
   failures.push("Recorder must accept reflexFastBoot and reflexCapture");
 }
 
 const report = fs.readFileSync(
-  path.join(ROOT, "lib/behavior/behavior-truth-report.ts"),
+  path.join(ROOT, "packages/shared/lib/behavior/behavior-truth-report.ts"),
   "utf8",
 );
 if (!report.includes("buildReadVsSpeakReport") || !report.includes("buildReflexScoreSnapshot")) {
@@ -93,14 +93,14 @@ if (!report.includes("buildReadVsSpeakReport") || !report.includes("buildReflexS
 }
 
 const panel = fs.readFileSync(
-  path.join(ROOT, "components/internal/BehaviorTruthPanel.tsx"),
+  path.join(ROOT, "apps/web/components/internal/BehaviorTruthPanel.tsx"),
   "utf8",
 );
 if (!panel.includes("Read vs speak") || !panel.includes("Reflex decompression score")) {
   failures.push("BehaviorTruthPanel must surface read-vs-speak and reflex score");
 }
 
-const scanDirs = ["lib/reflex", "components/reflex", "lib/mobile/quick-entry.ts"];
+const scanDirs = ["packages/shared/lib/reflex", "apps/web/components/reflex", "packages/shared/lib/mobile/quick-entry.ts"];
 for (const rel of scanDirs) {
   const full = path.join(ROOT, rel);
   if (!fs.existsSync(full)) continue;

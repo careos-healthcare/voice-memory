@@ -7,7 +7,7 @@ import {
   getRecentResurfacingModes,
   isReturnModeBlocked,
   RESURFACING_RETURN_MODES,
-} from "../lib/resurfacing/return-modes.ts";
+} from "../packages/shared/lib/resurfacing/return-modes.ts";
 const reflection = {
   mood: "anxious",
   emotionalIntensity: 4,

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { runEntryRouteTestsForCi } from "../lib/reliability/entry-route-tests.ts";
+import { runEntryRouteTestsForCi } from "../packages/shared/lib/reliability/entry-route-tests.ts";
 
 const report = await runEntryRouteTestsForCi();
 

@@ -2,8 +2,8 @@
 import {
   runStripeWebhookProofCheck,
   writeStripeWebhookLiveReport,
-} from "../lib/proof/stripe-webhook-proof-check.ts";
-import { formatProofChecks } from "../lib/proof/proof-result.ts";
+} from "../packages/shared/lib/proof/stripe-webhook-proof-check.ts";
+import { formatProofChecks } from "../packages/shared/lib/proof/proof-result.ts";
 
 const report = await runStripeWebhookProofCheck();
 formatProofChecks(report.checks);

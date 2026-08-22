@@ -10,26 +10,26 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const failures = [];
 
 const MUST_BE_CLEAN = [
-  "lib/product/archive-positioning.ts",
-  "lib/archive/what-is-my-archive.ts",
-  "lib/archive/archive-difference-examples.ts",
-  "lib/archive/first-session-value.ts",
-  "lib/archive/why-people-return-copy.ts",
-  "components/archive/WhatIsMyArchive.tsx",
-  "components/archive/ArchiveDifferenceCard.tsx",
-  "components/archive/WhyPeopleReturn.tsx",
-  "components/archive/FirstSessionValueCard.tsx",
-  "components/archive/ArchiveVisualModel.tsx",
-  "components/archive/ArchiveIdentityBar.tsx",
-  "components/onboarding/ArchiveOnboarding.tsx",
-  "apps/voicememory_mobile/lib/widgets/archive_quick_explain_card.dart",
+  "packages/shared/lib/product/archive-positioning.ts",
+  "packages/shared/lib/archive/what-is-my-archive.ts",
+  "packages/shared/lib/archive/archive-difference-examples.ts",
+  "packages/shared/lib/archive/first-session-value.ts",
+  "packages/shared/lib/archive/why-people-return-copy.ts",
+  "apps/web/components/archive/WhatIsMyArchive.tsx",
+  "apps/web/components/archive/ArchiveDifferenceCard.tsx",
+  "apps/web/components/archive/WhyPeopleReturn.tsx",
+  "apps/web/components/archive/FirstSessionValueCard.tsx",
+  "apps/web/components/archive/ArchiveVisualModel.tsx",
+  "apps/web/components/archive/ArchiveIdentityBar.tsx",
+  "apps/web/components/onboarding/ArchiveOnboarding.tsx",
+  "apps/mobile/lib/widgets/archive_quick_explain_card.dart",
 ];
 
 const PRIMARY_PAGES = [
-  "app/page.tsx",
-  "app/discover/page.tsx",
-  "app/pricing/PricingPageClient.tsx",
-  "components/archive/EvidenceArchiveHome.tsx",
+  "apps/web/app/page.tsx",
+  "apps/web/app/discover/page.tsx",
+  "apps/web/app/pricing/PricingPageClient.tsx",
+  "apps/web/components/archive/EvidenceArchiveHome.tsx",
 ];
 
 const DISCOURAGED = [
@@ -64,7 +64,7 @@ for (const rel of PRIMARY_PAGES) {
 }
 
 const positioning = fs.readFileSync(
-  path.join(ROOT, "lib/product/archive-positioning.ts"),
+  path.join(ROOT, "packages/shared/lib/product/archive-positioning.ts"),
   "utf8",
 );
 if (positioning.includes("ARCHIVE_IDENTITY_ONE_LINER") && positioning.split("\n").filter((l) => l.includes("keeps track")).length > 2) {

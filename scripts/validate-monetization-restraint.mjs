@@ -10,10 +10,10 @@ const SCAN_DIRS = ["app", "components", "lib"];
 const SKIP_PATH_PARTS = [
   `${path.sep}debug${path.sep}`,
   `${path.sep}api${path.sep}`,
-  "lib/monetization/",
-  "lib/subscription.ts",
-  "components/billing/",
-  "app/pricing/",
+  "packages/shared/lib/monetization/",
+  "packages/shared/lib/subscription.ts",
+  "apps/web/components/billing/",
+  "apps/web/app/pricing/",
   "scripts/",
 ];
 

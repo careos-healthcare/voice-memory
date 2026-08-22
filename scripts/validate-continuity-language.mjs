@@ -5,7 +5,7 @@ import { fileURLToPath } from "node:url";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const linesFile = fs.readFileSync(
-  path.join(ROOT, "lib/continuity/build-continuity-lines.ts"),
+  path.join(ROOT, "packages/shared/lib/continuity/build-continuity-lines.ts"),
   "utf8",
 );
 

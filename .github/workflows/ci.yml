@@ -2,13 +2,13 @@ name: ArchiveMe CI/CD Pipeline
 
 on:
   push:
-    branches: [main, master]
+    branches: [main, master, archive-me/focused-beta-stabilization]
   pull_request:
-    branches: [main, master]
+    branches: [main, master, archive-me/focused-beta-stabilization]
 
 jobs:
   backend-ci:
-    name: Backend Typecheck & QA
+    name: Backend Typecheck, Lint & Guards
     runs-on: ubuntu-latest
 
     steps:
@@ -18,16 +18,195 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
           cache: npm
 
       - name: Install Dependencies
+        id: install
         run: npm ci
 
+      # Every step below is guarded by `!cancelled() && install succeeded` rather
+      # than the default fail-fast so that one red guard cannot hide the state of
+      # the others. A guard whose result is unknown is indistinguishable from a
+      # guard that was never wired up.
       - name: Run Backend Typecheck
+        if: ${{ !cancelled() && steps.install.outcome == 'success' }}
         run: npm run typecheck -w @voice-memory/api
 
+      - name: Guard consent token TTL (one declaration per role)
+        if: ${{ !cancelled() && steps.install.outcome == 'success' }}
+        run: npm run validate:consent-ttl
+
+      - name: Guard consent revocation (fail-closed, never expiring)
+        if: ${{ !cancelled() && steps.install.outcome == 'success' }}
+        run: npm run validate:consent-revocation
+
+      - name: Guard rate limits
+        if: ${{ !cancelled() && steps.install.outcome == 'success' }}
+        run: npm run validate:rate-limits
+
+      - name: Guard clinical quarantine (log + public surface)
+        if: ${{ !cancelled() && steps.install.outcome == 'success' }}
+        run: npm run validate:clinical-quarantine
+
+      - name: Guard curiosity loop
+        if: ${{ !cancelled() && steps.install.outcome == 'success' }}
+        run: npm run validate:curiosity-loop
+
+      - name: Lint shared package
+        if: ${{ !cancelled() && steps.install.outcome == 'success' }}
+        run: npm run lint -w @voice-memory/shared
+
+      # `npm run lint -w @voice-memory/api` (i.e. `eslint .` in apps/api) is now
+      # error-clean: the clinical quarantine harness moved under
+      # `src/internal/**`, which the no-restricted-imports rule already exempts,
+      # so its one grandfathered violation is gone and the allowlist is empty.
+      # The mechanism stays because it is exhaustive and self-expiring — any new
+      # error fails the step, and any allowlist entry that stops occurring also
+      # fails it, so the list cannot rot into a silent blanket exemption.
+      - name: Lint API (blocking, allowlist empty)
+        if: ${{ !cancelled() && steps.install.outcome == 'success' }}
+        env:
+          ESLINT_REPORT: ${{ runner.temp }}/api-eslint.json
+        run: |
+          set -uo pipefail
+
+          set +e
+          (cd apps/api && npx --no-install eslint . --format json --output-file "$ESLINT_REPORT")
+          eslint_status=$?
+          set -e
+
+          # eslint exits 1 for lint errors and >=2 for a crash/config failure.
+          # Without this, a crashed linter would leave a stale or empty report
+          # and the gate would read as clean.
+          if [ "$eslint_status" -gt 1 ]; then
+            echo "::error title=eslint crashed::apps/api eslint exited $eslint_status without producing a report"
+            exit 1
+          fi
+
+          node - "$ESLINT_REPORT" <<'NODE'
+          const fs = require("node:fs");
+          const path = require("node:path");
+
+          // Exhaustive allowlist of pre-existing apps/api lint errors.
+          // key = <path relative to apps/api>:<line>:<column> <ruleId>
+          // Empty on purpose: apps/api currently has zero lint errors.
+          const GRANDFATHERED = new Set([]);
+
+          const reportPath = process.argv[2];
+          if (!reportPath || !fs.existsSync(reportPath)) {
+            console.error(`::error title=Lint gate::eslint report ${reportPath} was not produced`);
+            process.exit(1);
+          }
+
+          const report = JSON.parse(fs.readFileSync(reportPath, "utf8"));
+          const apiRoot = path.resolve("apps/api");
+
+          const errors = [];
+          let warnings = 0;
+
+          for (const file of report) {
+            const rel = path.relative(apiRoot, file.filePath);
+            for (const message of file.messages) {
+              const at = `${rel}:${message.line ?? 0}:${message.column ?? 0}`;
+              if (message.severity === 2) {
+                errors.push({
+                  key: `${at} ${message.ruleId ?? "<fatal>"}`,
+                  rel,
+                  line: message.line ?? 0,
+                  column: message.column ?? 0,
+                  text: `${at}  ${message.ruleId ?? "<fatal>"}  ${message.message}`,
+                });
+              } else {
+                warnings += 1;
+                console.log(`warning  ${at}  ${message.ruleId ?? "?"}  ${message.message}`);
+              }
+            }
+          }
+
+          const seen = new Set(errors.map((e) => e.key));
+          const unexpected = errors.filter((e) => !GRANDFATHERED.has(e.key));
+          const stale = [...GRANDFATHERED].filter((key) => !seen.has(key));
+
+          console.log(
+            `apps/api eslint: ${errors.length} error(s), ${warnings} warning(s), ` +
+              `${GRANDFATHERED.size} grandfathered`,
+          );
+
+          for (const key of GRANDFATHERED) {
+            if (seen.has(key)) {
+              console.log(`::notice title=Grandfathered lint error::${key} — still present, still not fixed`);
+            }
+          }
+
+          for (const e of unexpected) {
+            console.log(
+              `::error file=apps/api/${e.rel},line=${e.line},col=${e.column},` +
+                `title=New lint error::${e.text}`,
+            );
+          }
+
+          for (const key of stale) {
+            console.log(
+              `::error title=Stale lint grandfather::${key} no longer occurs. ` +
+                `Delete it from GRANDFATHERED in .github/workflows/ci.yml.`,
+            );
+          }
+
+          if (unexpected.length || stale.length) {
+            process.exit(1);
+          }
+          NODE
+
+      # validate:genericness-qa exits 0 when DATABASE_URL is absent. The insight
+      # quality gate below already calls it, so today that skip is invisible: the
+      # job goes green having enforced nothing. This step runs it explicitly and
+      # states, in the log and the job summary, whether the guard was enforced.
+      # It does not fail on a missing secret, and it does fail if the secret is
+      # present but the guard skipped anyway.
+      - name: Genericness QA enforcement status
+        if: ${{ !cancelled() && steps.install.outcome == 'success' }}
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          GENERICNESS_LOG: ${{ runner.temp }}/genericness-qa.log
+        run: |
+          set -uo pipefail
+          summary="${GITHUB_STEP_SUMMARY:-/dev/null}"
+
+          # `bash -e` + pipefail would abort on a failing pipeline before the
+          # status is inspected, skipping the annotation below.
+          set +e
+          npm run validate:genericness-qa 2>&1 | tee "$GENERICNESS_LOG"
+          status=${PIPESTATUS[0]}
+          set -e
+
+          if grep -q 'validate-genericness-qa skipped' "$GENERICNESS_LOG"; then
+            if [ -n "${DATABASE_URL:-}" ]; then
+              echo "::error title=Guard skipped with secret present::DATABASE_URL is set but validate:genericness-qa skipped anyway — the guard is broken, not merely unconfigurable"
+              echo '### validate:genericness-qa — BROKEN (skipped despite DATABASE_URL)' >> "$summary"
+              exit 1
+            fi
+            echo "::warning title=Guard NOT enforced::validate:genericness-qa was SKIPPED (no DATABASE_URL secret). Its green check proves nothing about genericness."
+            {
+              echo '### validate:genericness-qa — SKIPPED, NOT ENFORCED'
+              echo 'No `DATABASE_URL` secret, so the genericness acceptance test did not run.'
+              echo 'Do not read this job passing as evidence that genericness was checked.'
+            } >> "$summary"
+            exit 0
+          fi
+
+          if [ "$status" -ne 0 ]; then
+            echo "::error title=Genericness QA failed::validate:genericness-qa ran and failed"
+            echo '### validate:genericness-qa — ENFORCED, FAILED' >> "$summary"
+            exit "$status"
+          fi
+
+          echo '### validate:genericness-qa — ENFORCED, passed' >> "$summary"
+
       - name: Insight quality gate (genericness → evidence → tone → science)
+        if: ${{ !cancelled() && steps.install.outcome == 'success' }}
         run: npm run validate:insight-quality-gate
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
@@ -66,6 +245,9 @@ jobs:
 
       - name: Validate API contract parity
         run: python3 tool/run_gate.py validates api_contract
+
+      - name: Validate privacy and trust copy
+        run: python3 tool/run_gate.py validates privacy_copy
 
       - name: Enforce repository budget
         run: python3 tool/run_gate.py budget

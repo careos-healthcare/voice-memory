@@ -1,0 +1,11 @@
+00:00 +0: loading /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/archive_export_pack_test.dart
+00:00 +0: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/router/production_route_link_integration_test.dart: production route-link integration export delete privacy support and terms routes mount
+record_empty_gate entryCount=0 loaded=true reason=journal_loaded
+record_empty_gate entryCount=0 loaded=true reason=build
+ARCHIVEME_RECORD_CTA_POLICY: state=idle mic=unknown primary=none action=none secondary=none
+RECORD: state ui=RecordUiState.ready mic=RecordingPhase.ready recordable=granted (refresh)
+analytics:surface_priority_audit_seen {entry_count: 0, source: record}
+ARCHIVEME_SURFACE_PRIORITY event=surface_priority_audit_seen surface=recordReady source=record entry_count=0 visible_card_count=3 suppressed_card_count=4 proof_card_key=timelinePositioning guidance_card_key=threeMomentCompletion
+record_empty_gate entryCount=0 loaded=true reason=build
+ARCHIVEME_RECORD_CTA_POLICY: state=first_use mic=granted primary=Use voice to record action=start_recording secondary=Type instead
+00:02 +1: All tests passed!

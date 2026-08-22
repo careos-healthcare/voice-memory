@@ -1,6 +1,6 @@
 #!/usr/bin/env node
-import { runJournalProductionTests } from "../lib/reliability/journal-production-tests.ts";
-import { runJournalServerTests } from "../lib/reliability/journal-server-tests.ts";
+import { runJournalProductionTests } from "../packages/shared/lib/reliability/journal-production-tests.ts";
+import { runJournalServerTests } from "../packages/shared/lib/reliability/journal-server-tests.ts";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -9,7 +9,7 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const failures = [];
 
 const engine = fs.readFileSync(
-  path.join(ROOT, "lib/persistence/journal-sync-engine.ts"),
+  path.join(ROOT, "packages/shared/lib/persistence/journal-sync-engine.ts"),
   "utf8",
 );
 for (const token of [

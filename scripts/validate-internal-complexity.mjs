@@ -20,28 +20,28 @@ function mustExist(rel) {
 }
 
 for (const rel of [
-  "lib/internal/internal-surface-registry.ts",
-  "lib/internal/internal-complexity-report.ts",
-  "lib/server/founder-mode.ts",
+  "packages/shared/lib/internal/internal-surface-registry.ts",
+  "packages/shared/lib/internal/internal-complexity-report.ts",
+  "packages/shared/lib/server/founder-mode.ts",
   "scripts/validate-internal-complexity.mjs",
   "scripts/generate-internal-complexity-report.mjs",
 ]) {
   mustExist(rel);
 }
 
-const registry = read("lib/internal/internal-surface-registry.ts");
+const registry = read("packages/shared/lib/internal/internal-surface-registry.ts");
 for (const kind of ["dashboard", "validator", "founder_panel", "experiment_panel"]) {
   if (!registry.includes(`"${kind}"`)) fail(`registry missing kind ${kind}`);
 }
 
-const founderMode = read("lib/server/founder-mode.ts");
+const founderMode = read("packages/shared/lib/server/founder-mode.ts");
 if (!founderMode.includes('FOUNDER_MODE') || !founderMode.includes("isFounderModeEnabled")) {
   fail("founder-mode.ts must define FOUNDER_MODE gate");
 }
 
 for (const file of [
-  "lib/server/internal-access.ts",
-  "lib/middleware/internal-gate.ts",
+  "packages/shared/lib/server/internal-access.ts",
+  "packages/shared/lib/middleware/internal-gate.ts",
 ]) {
   const src = read(file);
   if (!src.includes("isFounderModeEnabled")) {
@@ -99,7 +99,7 @@ for (const token of [
   if (!reportMd.includes(token)) fail(`report missing ${token}`);
 }
 
-const layout = read("app/internal/layout.tsx");
+const layout = read("apps/web/app/internal/layout.tsx");
 if (!layout.includes("assertInternalPageAccess")) {
   fail("internal layout must assert access");
 }

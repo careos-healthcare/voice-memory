@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { validateProductionEnv, formatProductionEnvReport } from "../lib/server/production-env.ts";
+import { validateProductionEnv, formatProductionEnvReport } from "../packages/shared/lib/server/production-env.ts";
 
 const strict =
   process.argv.includes("--strict") ||

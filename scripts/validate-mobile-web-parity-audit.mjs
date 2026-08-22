@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { runMobileWebParityAuditTests } from "../lib/reliability/mobile-web-parity-audit-tests.ts";
+import { runMobileWebParityAuditTests } from "../packages/shared/lib/reliability/mobile-web-parity-audit-tests.ts";
 
 const { failures } = runMobileWebParityAuditTests();
 

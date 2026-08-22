@@ -189,7 +189,7 @@ function redactContent(text, relPath) {
 function shouldSkipDir(name, parentRel = "") {
   if (name.startsWith(".") && name !== ".well-known") return true;
   if (SKIP_DIR_NAMES.has(name)) return true;
-  if (name === "build" && /voicememory_mobile\/(android|ios)\//.test(parentRel)) return true;
+  if (name === "build" && /apps\/mobile\/(android|ios)\//.test(parentRel)) return true;
   return false;
 }
 
@@ -230,27 +230,27 @@ function classifyApp21(rel) {
   const p = rel.replace(/\\/g, "/");
 
   if (/\.dart$/i.test(p)) return "06";
-  if (p.startsWith("apps/voicememory_mobile/")) {
+  if (p.startsWith("apps/mobile/")) {
     if (/\.(png|jpg|jpeg|gif|ico|webp|storyboard)$/i.test(p)) return null;
     return "06";
   }
 
   if (
-    p.startsWith("lib/mobile/") ||
+    p.startsWith("packages/shared/lib/mobile/") ||
     p.startsWith("mobile/") ||
     (p.startsWith("docs/") && /MOBILE/i.test(p)) ||
-    p.startsWith("types/mobile-") ||
-    p.startsWith("app/internal/mobile-") ||
-    p.startsWith("lib/notifications/push") ||
-    p.startsWith("components/internal/Mobile")
+    p.startsWith("packages/shared/types/mobile-") ||
+    p.startsWith("apps/web/app/internal/mobile-") ||
+    p.startsWith("packages/shared/lib/notifications/push") ||
+    p.startsWith("apps/web/components/internal/Mobile")
   ) {
     return "08";
   }
 
   if (
-    p.startsWith("app/internal/") ||
-    p.startsWith("lib/internal/") ||
-    p.startsWith("components/internal/") ||
+    p.startsWith("apps/web/app/internal/") ||
+    p.startsWith("packages/shared/lib/internal/") ||
+    p.startsWith("apps/web/components/internal/") ||
     p.startsWith("scripts/validate") ||
     p.startsWith("scripts/generate-mobile") ||
     p.startsWith("scripts/run-") ||
@@ -260,17 +260,17 @@ function classifyApp21(rel) {
   }
 
   if (
-    p.startsWith("lib/auth/") ||
-    p.startsWith("components/auth/") ||
-    p.startsWith("app/api/") ||
-    p.startsWith("lib/server/") ||
-    p.startsWith("lib/billing/") ||
-    p.startsWith("lib/entitlement/") ||
-    p.startsWith("lib/persistence/") ||
-    p.startsWith("lib/proof/") ||
-    p.startsWith("lib/reliability/") ||
-    p.startsWith("lib/sync/") ||
-    p.startsWith("lib/openai-budget/") ||
+    p.startsWith("packages/shared/lib/auth/") ||
+    p.startsWith("apps/web/components/auth/") ||
+    p.startsWith("apps/api/app/api/") ||
+    p.startsWith("packages/shared/lib/server/") ||
+    p.startsWith("packages/shared/lib/billing/") ||
+    p.startsWith("packages/shared/lib/entitlement/") ||
+    p.startsWith("packages/shared/lib/persistence/") ||
+    p.startsWith("packages/shared/lib/proof/") ||
+    p.startsWith("packages/shared/lib/reliability/") ||
+    p.startsWith("packages/shared/lib/sync/") ||
+    p.startsWith("packages/shared/lib/openai-budget/") ||
     p.startsWith("middleware.ts") ||
     p === "middleware.ts" ||
     p.startsWith("supabase/")
@@ -279,67 +279,67 @@ function classifyApp21(rel) {
   }
 
   if (
-    p.startsWith("lib/archive/") ||
-    p.startsWith("components/archive/") ||
-    p.startsWith("types/living-archive") ||
-    p.startsWith("types/archive-") ||
-    p.startsWith("types/belief-") ||
-    p.startsWith("types/evidence-") ||
-    p.startsWith("lib/memory-export") ||
-    p.startsWith("lib/product/archive") ||
-    p.startsWith("lib/refinement/") ||
-    p.startsWith("lib/theories/") ||
-    p.startsWith("lib/discover/") ||
-    p.startsWith("lib/blind-spots/") ||
-    p.startsWith("components/blind-spots/") ||
-    p.startsWith("components/discover/") ||
-    p.startsWith("components/theories/") ||
-    p.startsWith("app/archive-belief/") ||
-    p.startsWith("app/archive/") ||
-    p.startsWith("app/memory/") ||
-    p.startsWith("app/timeline/")
+    p.startsWith("packages/shared/lib/archive/") ||
+    p.startsWith("apps/web/components/archive/") ||
+    p.startsWith("packages/shared/types/living-archive") ||
+    p.startsWith("packages/shared/types/archive-") ||
+    p.startsWith("packages/shared/types/belief-") ||
+    p.startsWith("packages/shared/types/evidence-") ||
+    p.startsWith("packages/shared/lib/memory-export") ||
+    p.startsWith("packages/shared/lib/product/archive") ||
+    p.startsWith("packages/shared/lib/refinement/") ||
+    p.startsWith("packages/shared/lib/theories/") ||
+    p.startsWith("packages/shared/lib/discover/") ||
+    p.startsWith("packages/shared/lib/blind-spots/") ||
+    p.startsWith("apps/web/components/blind-spots/") ||
+    p.startsWith("apps/web/components/discover/") ||
+    p.startsWith("apps/web/components/theories/") ||
+    p.startsWith("apps/web/app/archive-belief/") ||
+    p.startsWith("apps/web/app/archive/") ||
+    p.startsWith("apps/web/app/memory/") ||
+    p.startsWith("apps/web/app/timeline/")
   ) {
     return "03";
   }
 
   if (
-    p.startsWith("lib/onboarding/") ||
-    p.startsWith("components/onboarding/") ||
-    p.startsWith("lib/retention/") ||
-    p.startsWith("lib/activation") ||
-    p.startsWith("lib/product/activation") ||
-    p.startsWith("lib/founder-test/") ||
-    p.startsWith("lib/metrics/") ||
-    p.startsWith("lib/marketing/") ||
-    p.startsWith("lib/monetization/") ||
-    p.startsWith("lib/organic-referral") ||
-    p.startsWith("lib/paywall") ||
-    p.startsWith("types/onboarding") ||
-    p.startsWith("types/retention") ||
-    p.startsWith("app/internal/north-star") ||
-    p.startsWith("app/internal/archive/page") ||
-    p.startsWith("lib/internal/founder")
+    p.startsWith("packages/shared/lib/onboarding/") ||
+    p.startsWith("apps/web/components/onboarding/") ||
+    p.startsWith("packages/shared/lib/retention/") ||
+    p.startsWith("packages/shared/lib/activation") ||
+    p.startsWith("packages/shared/lib/product/activation") ||
+    p.startsWith("packages/shared/lib/founder-test/") ||
+    p.startsWith("packages/shared/lib/metrics/") ||
+    p.startsWith("packages/shared/lib/marketing/") ||
+    p.startsWith("packages/shared/lib/monetization/") ||
+    p.startsWith("packages/shared/lib/organic-referral") ||
+    p.startsWith("packages/shared/lib/paywall") ||
+    p.startsWith("packages/shared/types/onboarding") ||
+    p.startsWith("packages/shared/types/retention") ||
+    p.startsWith("apps/web/app/internal/north-star") ||
+    p.startsWith("apps/web/app/internal/archive/page") ||
+    p.startsWith("packages/shared/lib/internal/founder")
   ) {
     return "04";
   }
 
   if (
-    p === "app/page.tsx" ||
-    p.startsWith("app/record/") ||
-    p.startsWith("app/discover/") ||
-    p.startsWith("app/blind-spots/") ||
-    p.startsWith("app/welcome/") ||
-    p.startsWith("app/export/") ||
-    p.startsWith("app/pricing/") ||
-    p.startsWith("app/settings/") ||
-    p.startsWith("app/account/") ||
-    p.startsWith("components/Recorder") ||
-    p.startsWith("components/ActivationOnboarding") ||
-    p.startsWith("components/layout/") ||
-    p.startsWith("components/SiteHeader") ||
-    p.startsWith("lib/product-copy") ||
-    p.startsWith("lib/tester-onboarding") ||
-    p.startsWith("lib/activation-guidance") ||
+    p === "apps/web/app/page.tsx" ||
+    p.startsWith("apps/web/app/record/") ||
+    p.startsWith("apps/web/app/discover/") ||
+    p.startsWith("apps/web/app/blind-spots/") ||
+    p.startsWith("apps/web/app/welcome/") ||
+    p.startsWith("apps/web/app/export/") ||
+    p.startsWith("apps/web/app/pricing/") ||
+    p.startsWith("apps/web/app/settings/") ||
+    p.startsWith("apps/web/app/account/") ||
+    p.startsWith("apps/web/components/Recorder") ||
+    p.startsWith("apps/web/components/ActivationOnboarding") ||
+    p.startsWith("apps/web/components/layout/") ||
+    p.startsWith("apps/web/components/SiteHeader") ||
+    p.startsWith("packages/shared/lib/product-copy") ||
+    p.startsWith("packages/shared/lib/tester-onboarding") ||
+    p.startsWith("packages/shared/lib/activation-guidance") ||
     p.startsWith("docs/") ||
     p === "AGENTS.md" ||
     p === "CLAUDE.md"
@@ -348,10 +348,10 @@ function classifyApp21(rel) {
   }
 
   if (
-    p.startsWith("app/") ||
-    p.startsWith("components/") ||
-    p.startsWith("lib/") ||
-    p.startsWith("types/") ||
+    p.startsWith("apps/web/app/") ||
+    p.startsWith("apps/web/components/") ||
+    p.startsWith("packages/shared/lib/") ||
+    p.startsWith("packages/shared/types/") ||
     p.startsWith("e2e/") ||
     p.startsWith("public/")
   ) {
@@ -411,14 +411,14 @@ function listRoutes(files) {
     publicRoutes: routes.filter((r) => !r.startsWith("/internal") && !r.startsWith("/debug")),
     internalRoutes: routes.filter((r) => r.startsWith("/internal") || r.startsWith("/debug")),
     apiRoutes: files
-      .filter((f) => f.startsWith("app/api/") && f.endsWith("/route.ts"))
+      .filter((f) => f.startsWith("apps/api/app/api/") && f.endsWith("/route.ts"))
       .map((f) => `/api/${f.replace(/^app\/api\//, "").replace(/\/route\.ts$/, "")}`)
       .sort(),
   };
 }
 
 function flutterRouteMap() {
-  const router = readFileSafe("apps/voicememory_mobile/lib/router/app_router.dart");
+  const router = readFileSafe("apps/mobile/lib/router/app_router.dart");
   if (!router) return "(router not found)";
   const paths = [...router.content.matchAll(/path:\s*'([^']+)'/g)].map((m) => m[1]);
   return [...new Set(paths)].sort().map((p) => `  ${p}`).join("\n");
@@ -427,16 +427,16 @@ function flutterRouteMap() {
 async function loadReports() {
   try {
     const { buildMobileProductionReadinessReport } = await import(
-      path.join(ROOT, "lib/mobile/mobile-production-readiness.ts")
+      path.join(ROOT, "packages/shared/lib/mobile/mobile-production-readiness.ts")
     );
     const { buildMobileFirstClassReport } = await import(
-      path.join(ROOT, "lib/mobile/mobile-first-class-report.ts")
+      path.join(ROOT, "packages/shared/lib/mobile/mobile-first-class-report.ts")
     );
     const { buildMobileParityReport, formatParityReportMarkdown } = await import(
-      path.join(ROOT, "lib/mobile/mobile-parity-report.ts")
+      path.join(ROOT, "packages/shared/lib/mobile/mobile-parity-report.ts")
     );
     const { getPaymentStackAudit } = await import(
-      path.join(ROOT, "lib/entitlement/payment-stack.ts")
+      path.join(ROOT, "packages/shared/lib/entitlement/payment-stack.ts")
     );
     return {
       mobileReadiness: buildMobileProductionReadinessReport(),
@@ -578,7 +578,7 @@ Guest-first auth; ProtectArchiveBanner (mobile); auth trigger rules at value mom
 
 MOBILE ARCHITECTURE
 -------------------
-Flutter app: apps/voicememory_mobile — go_router, AppServices, local journal + API sync when signed in.
+Flutter app: apps/mobile — go_router, AppServices, local journal + API sync when signed in.
 
 INFORMATION HIERARCHY
 ---------------------
@@ -610,7 +610,7 @@ Modules included in this export part:
 • Timeline — belief-change-timeline, updates, feelings-timeline
 • Evidence Locker — evidence locker components + types
 • Dossier — belief dossier types and UI
-• Progress — archive-value-progress, archive-maturity, effort-compounds
+• Progress — archive-value-progress, archive-maturity, effort-compounds (v2 deferred — scripts/deferred_v2_insight_science/, not in CI)
 
 See file blocks below for full source.
 `;
@@ -623,7 +623,7 @@ ACTIVATION, RETENTION & CONVERSION (generated index)
 ================================================================================
 
 • Activation — activation-guidance, first-blind-spot, pattern-activation, immediate-engagement
-• Curiosity — theory-curiosity, open-loops, discovery-loop
+• Curiosity — open-loops, discovery-loop (v1); theory-curiosity quarantined v2 — scripts/deferred_v2_insight_science/
 • Return — returning-home, archive-reason-to-return, callback-learning, resurfacing
 • Attachment — archive-attachment, archive-voice, continuity-reinforcement
 • Referral — organic-referral
@@ -636,8 +636,8 @@ ACTIVATION, RETENTION & CONVERSION (generated index)
 
 function generateFlutterSummary(allFiles) {
   const dart = allFiles.filter((f) => f.endsWith(".dart"));
-  const ios = allFiles.filter((f) => f.startsWith("apps/voicememory_mobile/ios/"));
-  const android = allFiles.filter((f) => f.startsWith("apps/voicememory_mobile/android/"));
+  const ios = allFiles.filter((f) => f.startsWith("apps/mobile/ios/"));
+  const android = allFiles.filter((f) => f.startsWith("apps/mobile/android/"));
   return `
 ================================================================================
 FLUTTER MOBILE (generated index)
@@ -876,8 +876,8 @@ Generated: ${new Date().toISOString()}
 
 | Stage | System | Evidence in repo |
 |-------|--------|------------------|
-| First belief activation | Archive belief home, 1→5 reflection ladder | archive-value-progress validators |
-| Archive curiosity | Theory curiosity, discover, open loops | validate:theory-curiosity, discovery-loop |
+| First belief activation | Archive belief home, 1→5 reflection ladder | v2 deferred — scripts/deferred_v2_insight_science/validate-archive-value-progress.mjs (not in CI) |
+| Archive curiosity | Theory curiosity, discover, open loops | v2 deferred — scripts/deferred_v2_insight_science/validate-theory-curiosity.mjs (not in CI); validate:discovery-loop (v1 module audit only) |
 | Archive return | Return triggers, callback learning, resurfacing | return-trigger-attribution, callback-learning |
 | Attachment | archive-attachment, continuity reinforcement | validate:archive-attachment |
 | Conversion | value-moment paywall, paywall-attribution | validate:value-moment-paywall |

@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { runLiveAudioSessionRouteTests } from "../lib/reliability/live-audio-session-route-tests.ts";
+import { runLiveAudioSessionRouteTests } from "../packages/shared/lib/reliability/live-audio-session-route-tests.ts";
 
 const { failures } = await runLiveAudioSessionRouteTests();
 

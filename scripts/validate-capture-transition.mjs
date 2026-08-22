@@ -6,9 +6,9 @@ import { fileURLToPath } from "node:url";
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
 const REQUIRED = [
-  "lib/capture/zero-state-recorder.ts",
-  "components/capture/ZeroStateRecorderShell.tsx",
-  "app/record/page.tsx",
+  "packages/shared/lib/capture/zero-state-recorder.ts",
+  "apps/web/components/capture/ZeroStateRecorderShell.tsx",
+  "apps/web/app/record/page.tsx",
 ];
 
 const failures = [];
@@ -17,7 +17,7 @@ for (const rel of REQUIRED) {
   if (!fs.existsSync(path.join(ROOT, rel))) failures.push(`missing ${rel}`);
 }
 
-const zero = fs.readFileSync(path.join(ROOT, "lib/capture/zero-state-recorder.ts"), "utf8");
+const zero = fs.readFileSync(path.join(ROOT, "packages/shared/lib/capture/zero-state-recorder.ts"), "utf8");
 for (const fn of [
   "shouldUseZeroStateRecorder",
   "getZeroStateRecorderLine",
@@ -26,9 +26,9 @@ for (const fn of [
   if (!zero.includes(fn)) failures.push(`zero-state-recorder missing ${fn}`);
 }
 
-const record = fs.readFileSync(path.join(ROOT, "app/record/page.tsx"), "utf8");
+const record = fs.readFileSync(path.join(ROOT, "apps/web/app/record/page.tsx"), "utf8");
 const quickRecord = fs.readFileSync(
-  path.join(ROOT, "components/capture/QuickRecordPage.tsx"),
+  path.join(ROOT, "apps/web/components/capture/QuickRecordPage.tsx"),
   "utf8",
 );
 if (!record.includes("QuickRecordPage") || !quickRecord.includes("ZeroStateRecorderShell")) {
@@ -44,7 +44,7 @@ for (const heavy of [
 }
 
 const shell = fs.readFileSync(
-  path.join(ROOT, "components/capture/ZeroStateRecorderShell.tsx"),
+  path.join(ROOT, "apps/web/components/capture/ZeroStateRecorderShell.tsx"),
   "utf8",
 );
 if (!shell.includes("Recorder")) failures.push("ZeroStateRecorderShell must render Recorder");

@@ -29,27 +29,27 @@ const FORBIDDEN = [
 ];
 
 const L1_SURFACE_FILES = [
-  "components/archive/ProgressiveArchiveHome.tsx",
-  "components/archive/EvidenceArchiveHome.tsx",
-  "components/archive/DiscoverWhatChanged.tsx",
-  "components/archive/ArchiveDetailsCollapsible.tsx",
-  "lib/billing/value-moment-paywall-copy.ts",
-  "lib/onboarding/archive-onboarding-copy.ts",
-  "lib/design/archive-copy-restraint.ts",
+  "apps/web/components/archive/ProgressiveArchiveHome.tsx",
+  "apps/web/components/archive/EvidenceArchiveHome.tsx",
+  "apps/web/components/archive/DiscoverWhatChanged.tsx",
+  "apps/web/components/archive/ArchiveDetailsCollapsible.tsx",
+  "packages/shared/lib/billing/value-moment-paywall-copy.ts",
+  "packages/shared/lib/onboarding/archive-onboarding-copy.ts",
+  "packages/shared/lib/design/archive-copy-restraint.ts",
 ];
 
 for (const rel of [
-  "lib/archive/archive-disclosure-level.ts",
-  "types/archive-disclosure-level.ts",
-  "lib/archive/archive-disclosure-copy.ts",
-  "components/archive/ProgressiveArchiveHome.tsx",
-  "components/archive/AdvancedArchiveDetail.tsx",
-  "components/archive/EvidenceArchiveHome.tsx",
+  "packages/shared/lib/archive/archive-disclosure-level.ts",
+  "packages/shared/types/archive-disclosure-level.ts",
+  "packages/shared/lib/archive/archive-disclosure-copy.ts",
+  "apps/web/components/archive/ProgressiveArchiveHome.tsx",
+  "apps/web/components/archive/AdvancedArchiveDetail.tsx",
+  "apps/web/components/archive/EvidenceArchiveHome.tsx",
 ]) {
   mustExist(rel);
 }
 
-const levelModule = read("lib/archive/archive-disclosure-level.ts");
+const levelModule = read("packages/shared/lib/archive/archive-disclosure-level.ts");
 for (const level of ["L1_BASIC", "L2_ENGAGED", "L3_ADVANCED"]) {
   if (!levelModule.includes(level)) fail(`archive-disclosure-level missing ${level}`);
 }
@@ -61,7 +61,7 @@ for (const fn of [
   if (!levelModule.includes(fn)) fail(`archive-disclosure-level missing ${fn}`);
 }
 
-const disclosureCopy = read("lib/archive/archive-disclosure-copy.ts");
+const disclosureCopy = read("packages/shared/lib/archive/archive-disclosure-copy.ts");
 for (const label of [
   "Archive detail",
   "Advanced Archive Detail",
@@ -72,7 +72,7 @@ for (const label of [
   }
 }
 
-const evidenceHome = read("components/archive/EvidenceArchiveHome.tsx");
+const evidenceHome = read("apps/web/components/archive/EvidenceArchiveHome.tsx");
 if (!evidenceHome.includes("ProgressiveArchiveHome")) {
   fail("EvidenceArchiveHome must use ProgressiveArchiveHome");
 }
@@ -91,7 +91,7 @@ for (const demoted of [
   }
 }
 
-const progressiveHome = read("components/archive/ProgressiveArchiveHome.tsx");
+const progressiveHome = read("apps/web/components/archive/ProgressiveArchiveHome.tsx");
 if (!progressiveHome.includes("archive-disclosure-level")) {
   fail("ProgressiveArchiveHome must use archive-disclosure-level");
 }
@@ -101,12 +101,12 @@ for (const demoted of ["ArchiveHealthLine", "ArchiveReputationCard", "ArchiveDet
   }
 }
 
-const advanced = read("components/archive/AdvancedArchiveDetail.tsx");
+const advanced = read("apps/web/components/archive/AdvancedArchiveDetail.tsx");
 if (!advanced.includes("ARCHIVE_ADVANCED_DETAIL_EYEBROW")) {
   fail("AdvancedArchiveDetail must show Advanced Archive Detail eyebrow");
 }
 
-const collapsible = read("components/archive/ArchiveDetailsCollapsible.tsx");
+const collapsible = read("apps/web/components/archive/ArchiveDetailsCollapsible.tsx");
 if (!collapsible.includes("markArchiveDetailOpened")) {
   fail("ArchiveDetailsCollapsible must mark archive detail opened");
 }
@@ -114,7 +114,7 @@ if (!collapsible.includes("AdvancedArchiveDetail")) {
   fail("ArchiveDetailsCollapsible must render AdvancedArchiveDetail");
 }
 
-const paywall = read("lib/billing/value-moment-paywall-copy.ts");
+const paywall = read("packages/shared/lib/billing/value-moment-paywall-copy.ts");
 if (
   !paywall.includes("Keep the archive evolving") &&
   !paywall.includes("archive-disclosure-copy")
@@ -122,7 +122,7 @@ if (
   fail("paywall must use Keep the archive evolving headline");
 }
 
-const onboarding = read("lib/onboarding/archive-onboarding-copy.ts");
+const onboarding = read("packages/shared/lib/onboarding/archive-onboarding-copy.ts");
 if (!onboarding.includes("forms beliefs")) {
   fail("onboarding must mention beliefs forming");
 }
@@ -139,7 +139,7 @@ for (const rel of L1_SURFACE_FILES) {
   }
 }
 
-const hub = read("components/archive/ArchiveDetailHub.tsx");
+const hub = read("apps/web/components/archive/ArchiveDetailHub.tsx");
 for (const forbiddenLabel of [
   "Belief Survival",
   "Archive Accuracy",

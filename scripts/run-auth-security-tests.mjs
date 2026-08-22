@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { runAuthSecurityTests } from "../lib/reliability/auth-security-tests.ts";
+import { runAuthSecurityTests } from "../packages/shared/lib/reliability/auth-security-tests.ts";
 
 const { failures } = await runAuthSecurityTests();
 

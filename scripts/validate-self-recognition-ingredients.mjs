@@ -49,18 +49,18 @@ const entries = [
 ];
 
 const { buildSelfRecognitionIngredientsReport } = await import(
-  "../lib/insights/self-recognition-ingredients.ts"
+  "../packages/shared/lib/insights/self-recognition-ingredients.ts"
 );
 const {
   clearBlindSpotFeedbackForEval,
   saveBlindSpotReaction,
-} = await import("../lib/blind-spots/blind-spot-feedback.ts");
+} = await import("../packages/shared/lib/blind-spots/blind-spot-feedback.ts");
 const {
   clearTheoryFeedbackForEval,
   saveTheoryFeedback,
-} = await import("../lib/theories/theory-feedback.ts");
-const { clearTheorySnapshotsForEval } = await import("../lib/theories/theory-snapshots.ts");
-const { buildTheoryTrackerReport } = await import("../lib/theories/theory-generation.ts");
+} = await import("../packages/shared/lib/theories/theory-feedback.ts");
+const { clearTheorySnapshotsForEval } = await import("../packages/shared/lib/theories/theory-snapshots.ts");
+const { buildTheoryTrackerReport } = await import("../packages/shared/lib/theories/theory-generation.ts");
 
 clearBlindSpotFeedbackForEval();
 clearTheoryFeedbackForEval();
@@ -144,10 +144,10 @@ assert.ok(
 );
 
 const required = [
-  "types/self-recognition-ingredients.ts",
-  "lib/insights/self-recognition-ingredients.ts",
-  "components/internal/SelfRecognitionIngredientsPanel.tsx",
-  "app/internal/blind-spot-discovery/page.tsx",
+  "packages/shared/types/self-recognition-ingredients.ts",
+  "packages/shared/lib/insights/self-recognition-ingredients.ts",
+  "apps/web/components/internal/SelfRecognitionIngredientsPanel.tsx",
+  "apps/web/app/internal/blind-spot-discovery/page.tsx",
 ];
 
 for (const rel of required) {
@@ -155,7 +155,7 @@ for (const rel of required) {
 }
 
 const pageSrc = fs.readFileSync(
-  path.join(ROOT, "app/internal/blind-spot-discovery/page.tsx"),
+  path.join(ROOT, "apps/web/app/internal/blind-spot-discovery/page.tsx"),
   "utf8",
 );
 if (!pageSrc.includes("SelfRecognitionIngredientsPanel")) {
@@ -166,7 +166,7 @@ if (!pageSrc.includes("buildSelfRecognitionIngredientsReport")) {
 }
 
 const panelSrc = fs.readFileSync(
-  path.join(ROOT, "components/internal/SelfRecognitionIngredientsPanel.tsx"),
+  path.join(ROOT, "apps/web/components/internal/SelfRecognitionIngredientsPanel.tsx"),
   "utf8",
 );
 if (!panelSrc.includes("Common ingredients — strongest")) {

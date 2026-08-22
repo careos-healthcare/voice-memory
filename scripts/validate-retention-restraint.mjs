@@ -6,26 +6,26 @@ import { fileURLToPath } from "node:url";
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
 const REQUIRED_FILES = [
-  "lib/retention/first-week.ts",
-  "lib/retention/gentle-return-prompts.ts",
-  "lib/retention/archive-attachment-signals.ts",
-  "lib/retention/archive-value-moments.ts",
-  "lib/retention/first-week-observation.ts",
-  "lib/retention/first-magic-moment.ts",
-  "lib/retention/recurrence-density.ts",
-  "lib/revisit/first-meaningful-revisit.ts",
-  "components/retention/GentleReturnPrompt.tsx",
-  "components/retention/ArchiveValueMoments.tsx",
-  "lib/debug/first-week-retention.ts",
-  "lib/debug/first-magic-moment-review.ts",
-  "lib/debug/recurrence-density-review.ts",
-  "app/internal/first-week-retention/page.tsx",
-  "app/internal/first-magic-moment/page.tsx",
-  "app/internal/recurrence-density/page.tsx",
-  "components/internal/RecurrenceDensityDebugPanel.tsx",
-  "types/first-week-retention.ts",
-  "types/first-magic-moment.ts",
-  "types/recurrence-density.ts",
+  "packages/shared/lib/retention/first-week.ts",
+  "packages/shared/lib/retention/gentle-return-prompts.ts",
+  "packages/shared/lib/retention/archive-attachment-signals.ts",
+  "packages/shared/lib/retention/archive-value-moments.ts",
+  "packages/shared/lib/retention/first-week-observation.ts",
+  "packages/shared/lib/retention/first-magic-moment.ts",
+  "packages/shared/lib/retention/recurrence-density.ts",
+  "packages/shared/lib/revisit/first-meaningful-revisit.ts",
+  "apps/web/components/retention/GentleReturnPrompt.tsx",
+  "apps/web/components/retention/ArchiveValueMoments.tsx",
+  "packages/shared/lib/debug/first-week-retention.ts",
+  "packages/shared/lib/debug/first-magic-moment-review.ts",
+  "packages/shared/lib/debug/recurrence-density-review.ts",
+  "apps/web/app/internal/first-week-retention/page.tsx",
+  "apps/web/app/internal/first-magic-moment/page.tsx",
+  "apps/web/app/internal/recurrence-density/page.tsx",
+  "apps/web/components/internal/RecurrenceDensityDebugPanel.tsx",
+  "packages/shared/types/first-week-retention.ts",
+  "packages/shared/types/first-magic-moment.ts",
+  "packages/shared/types/recurrence-density.ts",
 ];
 
 const REQUIRED_EVENTS = [
@@ -80,7 +80,7 @@ const FORBIDDEN_RE = [
   { re: /\bFOMO\b/i, label: "FOMO" },
 ];
 
-const USER_SCAN_DIRS = ["components/retention", "lib/retention/archive-value-moments.ts"];
+const USER_SCAN_DIRS = ["apps/web/components/retention", "packages/shared/lib/retention/archive-value-moments.ts"];
 
 const missing = REQUIRED_FILES.filter((rel) => !fs.existsSync(path.join(ROOT, rel)));
 if (missing.length > 0) {
@@ -90,7 +90,7 @@ if (missing.length > 0) {
 }
 
 const observation = fs.readFileSync(
-  path.join(ROOT, "lib/retention/first-week-observation.ts"),
+  path.join(ROOT, "packages/shared/lib/retention/first-week-observation.ts"),
   "utf8",
 );
 for (const event of REQUIRED_EVENTS) {
@@ -101,7 +101,7 @@ for (const event of REQUIRED_EVENTS) {
 }
 
 const magicMoment = fs.readFileSync(
-  path.join(ROOT, "lib/retention/first-magic-moment.ts"),
+  path.join(ROOT, "packages/shared/lib/retention/first-magic-moment.ts"),
   "utf8",
 );
 for (const event of MAGIC_EVENTS) {
@@ -116,7 +116,7 @@ if (!magicMoment.includes("timeUntilFirstMeaningfulCallbackMs") || !magicMoment.
 }
 
 const recurrenceDensity = fs.readFileSync(
-  path.join(ROOT, "lib/retention/recurrence-density.ts"),
+  path.join(ROOT, "packages/shared/lib/retention/recurrence-density.ts"),
   "utf8",
 );
 for (const event of RECURRENCE_DENSITY_EVENTS) {
@@ -135,14 +135,14 @@ if (
 }
 
 const prompts = fs.readFileSync(
-  path.join(ROOT, "lib/retention/gentle-return-prompts.ts"),
+  path.join(ROOT, "packages/shared/lib/retention/gentle-return-prompts.ts"),
   "utf8",
 );
 const valueMoments = fs.readFileSync(
-  path.join(ROOT, "lib/retention/archive-value-moments.ts"),
+  path.join(ROOT, "packages/shared/lib/retention/archive-value-moments.ts"),
   "utf8",
 );
-const productCopy = fs.readFileSync(path.join(ROOT, "lib/product-copy.ts"), "utf8");
+const productCopy = fs.readFileSync(path.join(ROOT, "packages/shared/lib/product-copy.ts"), "utf8");
 const retentionCopy = `${prompts}\n${valueMoments}\n${productCopy}\n${recurrenceDensity}`;
 for (const line of REQUIRED_COPY) {
   if (!retentionCopy.includes(line)) {
@@ -157,7 +157,7 @@ if (!prompts.includes("isGentlePromptCopyAllowed") || !prompts.includes("BLOCKED
 }
 
 const attachment = fs.readFileSync(
-  path.join(ROOT, "lib/retention/archive-attachment-signals.ts"),
+  path.join(ROOT, "packages/shared/lib/retention/archive-attachment-signals.ts"),
   "utf8",
 );
 if (attachment.includes("attachmentScore") && attachment.match(/user|UI|display/i)) {
@@ -192,7 +192,7 @@ for (const rel of USER_SCAN_DIRS) {
 }
 
 const revisit = fs.readFileSync(
-  path.join(ROOT, "lib/revisit/first-meaningful-revisit.ts"),
+  path.join(ROOT, "packages/shared/lib/revisit/first-meaningful-revisit.ts"),
   "utf8",
 );
 if (!revisit.includes("pickStrongestReopenMoment")) {

@@ -1,7 +1,7 @@
 #!/usr/bin/env node
-import { AUTH_SYNC_SCHEMA_STATEMENTS } from "../lib/server/db.ts";
-import { REQUIRED_INDEXES, REQUIRED_TABLES } from "../lib/server/migration-manifest.ts";
-import { verifyMigrations } from "../lib/server/migration-verify.ts";
+import { AUTH_SYNC_SCHEMA_STATEMENTS } from "../packages/shared/lib/server/db.ts";
+import { REQUIRED_INDEXES, REQUIRED_TABLES } from "../packages/shared/lib/server/migration-manifest.ts";
+import { verifyMigrations } from "../packages/shared/lib/server/migration-verify.ts";
 
 const failures = [];
 

@@ -6,27 +6,27 @@ import { fileURLToPath } from "node:url";
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
 const REQUIRED = [
-  "types/entitlement.ts",
-  "lib/entitlement/entitlements.ts",
-  "lib/entitlement/tiers.ts",
-  "lib/entitlement/payment-stack.ts",
-  "components/billing/EntitlementGate.tsx",
+  "packages/shared/types/entitlement.ts",
+  "packages/shared/lib/entitlement/entitlements.ts",
+  "packages/shared/lib/entitlement/tiers.ts",
+  "packages/shared/lib/entitlement/payment-stack.ts",
+  "apps/web/components/billing/EntitlementGate.tsx",
 ];
 
-const ENTITLEMENT_READ = path.join(ROOT, "lib/entitlement/entitlements.ts");
+const ENTITLEMENT_READ = path.join(ROOT, "packages/shared/lib/entitlement/entitlements.ts");
 const entitlementsSrc = fs.readFileSync(ENTITLEMENT_READ, "utf8");
 if (entitlementsSrc.includes("localStorage.setItem(PLAN_KEY") === false) {
   console.error("entitlements.ts must define plan storage for preview tier");
   process.exit(1);
 }
 
-const paymentSrc = fs.readFileSync(path.join(ROOT, "lib/entitlement/payment-stack.ts"), "utf8");
+const paymentSrc = fs.readFileSync(path.join(ROOT, "packages/shared/lib/entitlement/payment-stack.ts"), "utf8");
 if (!paymentSrc.includes("isStripeConfigured")) {
   console.error("payment-stack must use isStripeConfigured for fail-closed checkout");
   process.exit(1);
 }
 
-const billingState = fs.readFileSync(path.join(ROOT, "lib/billing/billing-state.ts"), "utf8");
+const billingState = fs.readFileSync(path.join(ROOT, "packages/shared/lib/billing/billing-state.ts"), "utf8");
 if (!billingState.includes("isBillingEnabled")) {
   console.error("billing-state.ts must expose isBillingEnabled");
   process.exit(1);
@@ -39,7 +39,7 @@ for (const rel of REQUIRED) {
   }
 }
 
-const subscription = fs.readFileSync(path.join(ROOT, "lib/subscription.ts"), "utf8");
+const subscription = fs.readFileSync(path.join(ROOT, "packages/shared/lib/subscription.ts"), "utf8");
 if (!subscription.includes("hasEntitlement")) {
   console.error("subscription.ts must delegate to entitlement layer");
   process.exit(1);

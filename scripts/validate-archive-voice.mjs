@@ -11,19 +11,19 @@ function fail(msg) {
 }
 
 const required = [
-  "types/archive-voice.ts",
-  "lib/archive/archive-voice.ts",
-  "lib/archive/archive-voice-scopes.ts",
-  "lib/archive/archive-voice-report.ts",
-  "components/internal/ArchiveVoiceConsistencyPanel.tsx",
-  "app/internal/archive-voice/page.tsx",
+  "packages/shared/types/archive-voice.ts",
+  "packages/shared/lib/archive/archive-voice.ts",
+  "packages/shared/lib/archive/archive-voice-scopes.ts",
+  "packages/shared/lib/archive/archive-voice-report.ts",
+  "apps/web/components/internal/ArchiveVoiceConsistencyPanel.tsx",
+  "apps/web/app/internal/archive-voice/page.tsx",
 ];
 
 for (const rel of required) {
   if (!fs.existsSync(path.join(ROOT, rel))) fail(`missing ${rel}`);
 }
 
-const voice = fs.readFileSync(path.join(ROOT, "lib/archive/archive-voice.ts"), "utf8");
+const voice = fs.readFileSync(path.join(ROOT, "packages/shared/lib/archive/archive-voice.ts"), "utf8");
 for (const phrase of [
   "Your archive is still evaluating",
   "New evidence may support",
@@ -42,7 +42,7 @@ if (!voice.includes("motivational")) fail("motivational category missing");
 if (!voice.includes("therapy")) fail("therapy category missing");
 
 const panel = fs.readFileSync(
-  path.join(ROOT, "components/internal/ArchiveVoiceConsistencyPanel.tsx"),
+  path.join(ROOT, "apps/web/components/internal/ArchiveVoiceConsistencyPanel.tsx"),
   "utf8",
 );
 if (!panel.includes("report.title")) fail("panel must render report.title");
@@ -51,10 +51,10 @@ const pkg = fs.readFileSync(path.join(ROOT, "package.json"), "utf8");
 if (!pkg.includes("validate:archive-voice")) fail("package.json missing script");
 
 const { buildArchiveVoiceConsistencyReport } = await import(
-  "../lib/archive/archive-voice-report.ts"
+  "../packages/shared/lib/archive/archive-voice-report.ts"
 );
-const { ARCHIVE_VOICE_SCOPES } = await import("../lib/archive/archive-voice-scopes.ts");
-const { scanArchiveVoiceSource } = await import("../lib/archive/archive-voice.ts");
+const { ARCHIVE_VOICE_SCOPES } = await import("../packages/shared/lib/archive/archive-voice-scopes.ts");
+const { scanArchiveVoiceSource } = await import("../packages/shared/lib/archive/archive-voice.ts");
 
 const report = buildArchiveVoiceConsistencyReport(ROOT);
 
@@ -78,7 +78,7 @@ if (!report.pass) {
 }
 
 const movementCopy = fs.readFileSync(
-  path.join(ROOT, "lib/archive/archive-movement-copy.ts"),
+  path.join(ROOT, "packages/shared/lib/archive/archive-movement-copy.ts"),
   "utf8",
 );
 if (!movementCopy.includes("still evaluating")) {

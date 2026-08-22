@@ -20,16 +20,16 @@ function mustExist(rel) {
 }
 
 for (const rel of [
-  "types/store-distribution-verification.ts",
-  "lib/mobile/store-distribution-verification.ts",
+  "packages/shared/types/store-distribution-verification.ts",
+  "packages/shared/lib/mobile/store-distribution-verification.ts",
   "mobile/evidence/play_internal_tested.json",
-  "components/internal/StoreReadinessPanel.tsx",
-  "app/internal/store-readiness/page.tsx",
+  "apps/web/components/internal/StoreReadinessPanel.tsx",
+  "apps/web/app/internal/store-readiness/page.tsx",
 ]) {
   mustExist(rel);
 }
 
-const lib = read("lib/mobile/store-distribution-verification.ts");
+const lib = read("packages/shared/lib/mobile/store-distribution-verification.ts");
 for (const token of [
   "play_internal_tested.json",
   "isPlayProofPassing",
@@ -38,7 +38,7 @@ for (const token of [
   if (!lib.includes(token)) fail(`store-distribution-verification missing ${token}`);
 }
 
-const commercial = read("lib/mobile/commercial-evidence.ts");
+const commercial = read("packages/shared/lib/mobile/commercial-evidence.ts");
 if (!commercial.includes("isPlayProofPassing")) {
   fail("commercial-evidence must delegate play_internal_tested to isPlayProofPassing");
 }
@@ -53,7 +53,7 @@ try {
     readPlayInternalEvidence,
     isPlayProofPassing,
     playProofMissingRequirements,
-  } = await import(path.join(ROOT, "lib/mobile/store-distribution-verification.ts"));
+  } = await import(path.join(ROOT, "packages/shared/lib/mobile/store-distribution-verification.ts"));
 
   const evidence = readPlayInternalEvidence();
   if (!evidence) {

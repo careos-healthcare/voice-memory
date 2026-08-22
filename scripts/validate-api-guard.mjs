@@ -5,42 +5,67 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+const manifest = JSON.parse(
+  fs.readFileSync(
+    path.join(ROOT, "packages/shared/lib/server/active-api-routes-manifest.json"),
+    "utf8",
+  ),
+);
 const failures = [];
 
-for (const rel of [
-  "lib/server/api-guard.ts",
-  "lib/server/openai-budget-guard.ts",
-  "lib/server/openai-cost-estimator.ts",
-  "lib/server/openai-spend-store.ts",
-  "lib/server/capture-auth-crypto.ts",
-  "lib/server/api-usage-store.ts",
-  "app/api/capture/attest/route.ts",
-  "lib/client/capture-attest.ts",
-]) {
-  if (!fs.existsSync(path.join(ROOT, rel))) failures.push(`missing ${rel}`);
+function assertRouteFile(relPath, guardName) {
+  const absolute = path.join(ROOT, relPath);
+  if (!fs.existsSync(absolute)) {
+    failures.push(
+      `stale validator target: ${relPath} is listed in active-api-routes-manifest but missing on disk`,
+    );
+    return;
+  }
+  const text = fs.readFileSync(absolute, "utf8");
+  if (!text.includes(guardName)) {
+    failures.push(`${relPath} must use ${guardName}`);
+  }
 }
 
-const transcribe = fs.readFileSync(path.join(ROOT, "app/api/transcribe/route.ts"), "utf8");
-const analyze = fs.readFileSync(path.join(ROOT, "app/api/analyze/route.ts"), "utf8");
-
-if (!transcribe.includes("guardOpenAiRoute")) {
-  failures.push("transcribe must use guardOpenAiRoute");
-}
-if (!analyze.includes("guardOpenAiRoute")) {
-  failures.push("analyze must use guardOpenAiRoute");
+for (const rel of manifest.apiGuardSupportFiles) {
+  if (!fs.existsSync(path.join(ROOT, rel))) {
+    failures.push(`missing support file ${rel}`);
+  }
 }
 
-const atmosphere = fs.readFileSync(path.join(ROOT, "app/api/atmosphere/route.ts"), "utf8");
-if (!atmosphere.includes("guardOpenAiRoute")) {
-  failures.push("atmosphere must use guardOpenAiRoute");
-}
-if (!transcribe.includes("MAX_AUDIO_BYTES")) {
-  failures.push("transcribe must enforce audio size limit");
+for (const route of manifest.guardedOpenAi) {
+  assertRouteFile(route.routeFile, route.guard);
 }
 
-const recorder = fs.readFileSync(path.join(ROOT, "components/Recorder.tsx"), "utf8");
-if (!recorder.includes("ensureCaptureAttested")) {
-  failures.push("Recorder must attest before OpenAI routes");
+for (const route of manifest.guardedAttest) {
+  assertRouteFile(route.routeFile, route.guard);
+}
+
+const transcribePath = path.join(ROOT, "apps/api/app/api/transcribe/route.ts");
+if (!fs.existsSync(transcribePath)) {
+  failures.push("stale validator target: apps/api/app/api/transcribe/route.ts missing on disk");
+} else {
+  const transcribe = fs.readFileSync(transcribePath, "utf8");
+  if (!transcribe.includes("MAX_AUDIO_BYTES")) {
+    failures.push("transcribe must enforce audio size limit");
+  }
+}
+
+const recorderPath = path.join(ROOT, manifest.captureAttestClientFile);
+if (!fs.existsSync(recorderPath)) {
+  failures.push(
+    `stale validator target: ${manifest.captureAttestClientFile} is listed in active-api-routes-manifest but missing on disk`,
+  );
+} else {
+  const recorder = fs.readFileSync(recorderPath, "utf8");
+  if (!recorder.includes("ensureCaptureAttested")) {
+    failures.push("Recorder must attest before OpenAI routes");
+  }
+}
+
+const apiErrorHelper = path.join(ROOT, "packages/shared/lib/server/api-error-response.ts");
+if (!fs.existsSync(apiErrorHelper)) {
+  failures.push("missing packages/shared/lib/server/api-error-response.ts");
 }
 
 if (failures.length > 0) {
@@ -57,4 +82,13 @@ if (blockers.status !== 0) {
   process.exit(blockers.status ?? 1);
 }
 
-console.log("validate-api-guard ok (static + grade-a-blockers-tests)");
+const apiErrorTests = spawnSync("npm", ["run", "validate:api-error-response"], {
+  cwd: ROOT,
+  stdio: "inherit",
+  env: process.env,
+});
+if (apiErrorTests.status !== 0) {
+  process.exit(apiErrorTests.status ?? 1);
+}
+
+console.log("validate-api-guard ok (static + grade-a-blockers-tests + api-error-response)");

@@ -1,0 +1,15 @@
+{
+  "success": false,
+  "build_uploaded": false,
+  "build_installed": false,
+  "onboarding_completed": false,
+  "record_completed": false,
+  "archive_viewed": false,
+  "purchase_completed": false,
+  "restore_completed": false,
+  "timestamp": "",
+  "marketing_version": "0.2.0",
+  "build_number": 48,
+  "platform": "ios",
+  "device": ""
+}

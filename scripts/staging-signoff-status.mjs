@@ -2,7 +2,7 @@
 import {
   printStagingSignoffStatus,
   runStagingSignoffStatus,
-} from "../lib/staging/staging-signoff-status.ts";
+} from "../packages/shared/lib/staging/staging-signoff-status.ts";
 
 const report = runStagingSignoffStatus();
 printStagingSignoffStatus(report);

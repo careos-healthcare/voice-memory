@@ -9,7 +9,7 @@ import { fileURLToPath } from "node:url";
 import { spawnSync } from "node:child_process";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const MOBILE = path.join(ROOT, "apps/voicememory_mobile");
+const MOBILE = path.join(ROOT, "apps/mobile");
 const failures = [];
 const fail = (msg) => failures.push(msg);
 
@@ -30,34 +30,34 @@ const evidenceFiles = [
 ];
 
 for (const rel of [
-  "types/mobile-commercial-readiness.ts",
-  "lib/mobile/commercial-evidence.ts",
-  "lib/mobile/mobile-primary-platform.ts",
-  "apps/voicememory_mobile/lib/billing/revenuecat_service.dart",
-  "apps/voicememory_mobile/lib/screens/mobile_subscription_screen.dart",
-  "apps/voicememory_mobile/lib/screens/restore_purchases_screen.dart",
-  "app/internal/apple-store-readiness/page.tsx",
-  "app/internal/google-play-readiness/page.tsx",
-  "app/internal/store-readiness/page.tsx",
-  "types/store-distribution-verification.ts",
-  "lib/mobile/store-distribution-verification.ts",
-  "components/internal/StoreReadinessPanel.tsx",
-  "app/internal/revenuecat-verification/page.tsx",
-  "app/internal/restore-verification/page.tsx",
-  "lib/mobile/revenuecat-production-verification.ts",
-  "lib/mobile/restore-production-verification.ts",
-  "components/internal/RevenueCatVerificationPanel.tsx",
-  "components/internal/CommercialReadinessPanel.tsx",
-  "apps/voicememory_mobile/lib/billing/revenuecat_purchase_journey.dart",
-  "apps/voicememory_mobile/lib/screens/revenuecat_verification_screen.dart",
-  "apps/voicememory_mobile/lib/billing/restore_production_evidence.dart",
-  "apps/voicememory_mobile/lib/screens/restore_production_verification_screen.dart",
-  "apps/voicememory_mobile/lib/push/fcm_service.dart",
-  "apps/voicememory_mobile/lib/push/push_deep_link_handler.dart",
-  "lib/push/fcm-admin.ts",
-  "app/api/internal/send-test-push/route.ts",
-  "lib/mobile/offline-sync-production-verification.ts",
-  "apps/voicememory_mobile/lib/screens/offline_sync_verification_screen.dart",
+  "packages/shared/types/mobile-commercial-readiness.ts",
+  "packages/shared/lib/mobile/commercial-evidence.ts",
+  "packages/shared/lib/mobile/mobile-primary-platform.ts",
+  "apps/mobile/lib/billing/revenuecat_service.dart",
+  "apps/mobile/lib/screens/mobile_subscription_screen.dart",
+  "apps/mobile/lib/screens/restore_purchases_screen.dart",
+  "apps/web/app/internal/apple-store-readiness/page.tsx",
+  "apps/web/app/internal/google-play-readiness/page.tsx",
+  "apps/web/app/internal/store-readiness/page.tsx",
+  "packages/shared/types/store-distribution-verification.ts",
+  "packages/shared/lib/mobile/store-distribution-verification.ts",
+  "apps/web/components/internal/StoreReadinessPanel.tsx",
+  "apps/web/app/internal/revenuecat-verification/page.tsx",
+  "apps/web/app/internal/restore-verification/page.tsx",
+  "packages/shared/lib/mobile/revenuecat-production-verification.ts",
+  "packages/shared/lib/mobile/restore-production-verification.ts",
+  "apps/web/components/internal/RevenueCatVerificationPanel.tsx",
+  "apps/web/components/internal/CommercialReadinessPanel.tsx",
+  "apps/mobile/lib/billing/revenuecat_purchase_journey.dart",
+  "apps/mobile/lib/screens/revenuecat_verification_screen.dart",
+  "apps/mobile/lib/billing/restore_production_evidence.dart",
+  "apps/mobile/lib/screens/restore_production_verification_screen.dart",
+  "apps/mobile/lib/push/fcm_service.dart",
+  "apps/mobile/lib/push/push_deep_link_handler.dart",
+  "packages/shared/lib/push/fcm-admin.ts",
+  "apps/api/app/api/internal/send-test-push/route.ts",
+  "packages/shared/lib/mobile/offline-sync-production-verification.ts",
+  "apps/mobile/lib/screens/offline_sync_verification_screen.dart",
   ...evidenceFiles.map((f) => `mobile/evidence/${f}`),
 ]) {
   mustExist(rel);
@@ -107,7 +107,7 @@ if (!pubspecPush.includes("firebase_messaging")) {
 }
 
 const { buildMobilePrimaryPlatformReport, collectMobilePrimaryProductFailures } =
-  await import(path.join(ROOT, "lib/mobile/mobile-primary-platform.ts"));
+  await import(path.join(ROOT, "packages/shared/lib/mobile/mobile-primary-platform.ts"));
 
 const report = buildMobilePrimaryPlatformReport();
 

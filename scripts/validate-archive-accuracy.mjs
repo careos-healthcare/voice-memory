@@ -19,14 +19,14 @@ function mustExist(rel) {
 }
 
 const required = [
-  "types/archive-accuracy.ts",
-  "lib/archive/archive-accuracy.ts",
-  "components/archive/ArchiveAccuracyTracker.tsx",
+  "packages/shared/types/archive-accuracy.ts",
+  "packages/shared/lib/archive/archive-accuracy.ts",
+  "apps/web/components/archive/ArchiveAccuracyTracker.tsx",
 ];
 
 for (const rel of required) mustExist(rel);
 
-const lib = read("lib/archive/archive-accuracy.ts");
+const lib = read("packages/shared/lib/archive/archive-accuracy.ts");
 for (const phrase of [
   "ARCHIVE_ACCURACY_TITLE",
   "buildArchiveAccuracyView",
@@ -45,7 +45,7 @@ for (const phrase of [
   if (!lib.includes(phrase)) fail(`archive-accuracy missing: ${phrase}`);
 }
 
-const component = read("components/archive/ArchiveAccuracyTracker.tsx");
+const component = read("apps/web/components/archive/ArchiveAccuracyTracker.tsx");
 if (!component.includes('data-testid="archive-accuracy-tracker"')) {
   fail("ArchiveAccuracyTracker missing test id");
 }
@@ -54,9 +54,9 @@ if (!component.includes("buildArchiveAccuracyView")) {
 }
 
 const surfaces = [
-  ["components/archive/ArchiveCommandCenter.tsx", "Archive"],
-  ["components/archive/BeliefDossier.tsx", "Belief Dossier"],
-  ["app/discover/page.tsx", "Discover"],
+  ["apps/web/components/archive/ArchiveCommandCenter.tsx", "Archive"],
+  ["apps/web/components/archive/BeliefDossier.tsx", "Belief Dossier"],
+  ["apps/web/app/discover/page.tsx", "Discover"],
 ];
 
 for (const [file, label] of surfaces) {

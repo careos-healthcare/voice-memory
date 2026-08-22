@@ -19,20 +19,20 @@ function mustExist(rel) {
 }
 
 for (const rel of [
-  "lib/archive/archive-state-object.ts",
-  "types/archive-state-object.ts",
-  "lib/archive/archive-reduction-v3-copy.ts",
-  "lib/archive/archive-health-v3.ts",
-  "lib/archive/archive-watch-v3.ts",
-  "components/archive/ArchiveReductionV3Home.tsx",
-  "components/archive/ArchiveWatchCard.tsx",
-  "components/archive/ArchiveHealthLine.tsx",
-  "components/archive/DiscoverWhatChanged.tsx",
+  "packages/shared/lib/archive/archive-state-object.ts",
+  "packages/shared/types/archive-state-object.ts",
+  "packages/shared/lib/archive/archive-reduction-v3-copy.ts",
+  "packages/shared/lib/archive/archive-health-v3.ts",
+  "packages/shared/lib/archive/archive-watch-v3.ts",
+  "apps/web/components/archive/ArchiveReductionV3Home.tsx",
+  "apps/web/components/archive/ArchiveWatchCard.tsx",
+  "apps/web/components/archive/ArchiveHealthLine.tsx",
+  "apps/web/components/archive/DiscoverWhatChanged.tsx",
 ]) {
   mustExist(rel);
 }
 
-const stateObj = read("lib/archive/archive-state-object.ts");
+const stateObj = read("packages/shared/lib/archive/archive-state-object.ts");
 for (const fn of [
   "buildArchiveStateObject",
   "evidenceSummary",
@@ -42,7 +42,7 @@ for (const fn of [
   if (!stateObj.includes(fn)) fail(`archive-state-object missing ${fn}`);
 }
 
-const v3Home = read("components/archive/EvidenceArchiveHome.tsx");
+const v3Home = read("apps/web/components/archive/EvidenceArchiveHome.tsx");
 if (
   !v3Home.includes("ProgressiveArchiveHome") &&
   !v3Home.includes("ArchiveReductionV3Home")
@@ -64,7 +64,7 @@ for (const demoted of [
   }
 }
 
-const v3Copy = read("lib/archive/archive-reduction-v3-copy.ts");
+const v3Copy = read("packages/shared/lib/archive/archive-reduction-v3-copy.ts");
 for (const label of [
   "Current Belief",
   "Why The Archive Believes This",
@@ -75,7 +75,7 @@ for (const label of [
   if (!v3Copy.includes(label)) fail(`archive-reduction-v3-copy missing label: ${label}`);
 }
 
-const reductionHome = read("components/archive/ArchiveReductionV3Home.tsx");
+const reductionHome = read("apps/web/components/archive/ArchiveReductionV3Home.tsx");
 if (!reductionHome.includes("archive-reduction-v3-copy")) {
   fail("ArchiveReductionV3Home must import v3 copy constants");
 }
@@ -91,7 +91,7 @@ for (const forbidden of [
   }
 }
 
-const discover = read("app/discover/page.tsx");
+const discover = read("apps/web/app/discover/page.tsx");
 if (!discover.includes("DiscoverWhatChanged")) {
   fail("discover page must use DiscoverWhatChanged");
 }
@@ -99,7 +99,7 @@ if (discover.includes("ArchiveBeliefHeader") || discover.includes("ArchiveReputa
   fail("discover page must not duplicate archive trust/reputation headers");
 }
 
-const hub = read("components/archive/ArchiveDetailHub.tsx");
+const hub = read("apps/web/components/archive/ArchiveDetailHub.tsx");
 if (
   !hub.includes("ARCHIVE_V3_ADVANCED_DETAIL") &&
   !hub.includes("ARCHIVE_ADVANCED_DETAIL_EYEBROW")
@@ -107,7 +107,7 @@ if (
   fail("ArchiveDetailHub must use advanced archive detail copy");
 }
 
-const mobile = read("apps/voicememory_mobile/lib/screens/archive_belief_screen.dart");
+const mobile = read("apps/mobile/lib/screens/archive_belief_screen.dart");
 for (const label of [
   "Current Belief",
   "Why The Archive Believes This",

@@ -41,27 +41,27 @@ const {
   shouldAskReturnReasonThisSession,
   markReturnReasonAskedThisSession,
   RETURN_REASON_OPTIONS,
-} = await import("../lib/retention/return-reason-survey.ts");
+} = await import("../packages/shared/lib/retention/return-reason-survey.ts");
 
 const {
   clearSessionOutcomesForEval,
   saveSessionOutcome,
   readAllSessionOutcomes,
   helpfulnessScore,
-} = await import("../lib/retention/session-outcome.ts");
+} = await import("../packages/shared/lib/retention/session-outcome.ts");
 
 const {
   clearFirstValueMomentsForEval,
   observeFirstValueMoment,
   readFirstValueSnapshot,
-} = await import("../lib/retention/first-value-moments.ts");
+} = await import("../packages/shared/lib/retention/first-value-moments.ts");
 
 const { buildRetentionDiscoveryReport, returnReasonBySessionBucket } = await import(
-  "../lib/retention/retention-discovery-report.ts"
+  "../packages/shared/lib/retention/retention-discovery-report.ts"
 );
 
 const { clearBlindSpotFeedbackForEval, saveBlindSpotReaction } = await import(
-  "../lib/blind-spots/blind-spot-feedback.ts"
+  "../packages/shared/lib/blind-spots/blind-spot-feedback.ts"
 );
 
 clearReturnReasonsForEval();
@@ -121,16 +121,16 @@ assert.ok(Array.isArray(buckets.session_1));
 
 // Required files
 const required = [
-  "types/retention-discovery.ts",
-  "lib/retention/return-reason-survey.ts",
-  "lib/retention/session-outcome.ts",
-  "lib/retention/first-value-moments.ts",
-  "lib/retention/retention-discovery-report.ts",
-  "components/retention/ReturnReasonPrompt.tsx",
-  "components/retention/SessionOutcomePrompt.tsx",
-  "components/retention/RetentionInstrumentation.tsx",
-  "app/internal/retention-discovery/page.tsx",
-  "components/internal/RetentionDiscoveryPanel.tsx",
+  "packages/shared/types/retention-discovery.ts",
+  "packages/shared/lib/retention/return-reason-survey.ts",
+  "packages/shared/lib/retention/session-outcome.ts",
+  "packages/shared/lib/retention/first-value-moments.ts",
+  "packages/shared/lib/retention/retention-discovery-report.ts",
+  "apps/web/components/retention/ReturnReasonPrompt.tsx",
+  "apps/web/components/retention/SessionOutcomePrompt.tsx",
+  "apps/web/components/retention/RetentionInstrumentation.tsx",
+  "apps/web/app/internal/retention-discovery/page.tsx",
+  "apps/web/components/internal/RetentionDiscoveryPanel.tsx",
 ];
 
 for (const rel of required) {
@@ -139,13 +139,13 @@ for (const rel of required) {
   }
 }
 
-const providers = fs.readFileSync(path.join(ROOT, "app/providers.tsx"), "utf8");
+const providers = fs.readFileSync(path.join(ROOT, "apps/web/app/providers.tsx"), "utf8");
 if (!providers.includes("RetentionInstrumentation")) {
-  failures.push("app/providers.tsx must mount RetentionInstrumentation");
+  failures.push("apps/web/app/providers.tsx must mount RetentionInstrumentation");
 }
 
 const pageSrc = fs.readFileSync(
-  path.join(ROOT, "app/internal/retention-discovery/page.tsx"),
+  path.join(ROOT, "apps/web/app/internal/retention-discovery/page.tsx"),
   "utf8",
 );
 if (!pageSrc.includes("buildRetentionDiscoveryReport")) {

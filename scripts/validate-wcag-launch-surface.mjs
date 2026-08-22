@@ -38,7 +38,7 @@ for (const rel of [...TIER_B_PAGE_FILES, ...TIER_C_PAGE_FILES, ...DYNAMIC_PAGE_F
   }
 }
 
-const siteHeader = read("components/SiteHeader.tsx");
+const siteHeader = read("apps/web/components/SiteHeader.tsx");
 if (!siteHeader.includes('href="#main-content"')) {
   failures.push("SiteHeader skip link must target #main-content");
 }

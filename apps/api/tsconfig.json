@@ -1,0 +1,26 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "plugins": [{ "name": "next" }],
+    "paths": {
+      "@/*": ["./*"],
+      "@/lib/rate-limit/*": ["./lib/rate-limit/*"],
+      "@/lib/ledger/*": ["./lib/ledger/*"],
+      "@/lib/insights/*": ["./lib/insights/*"],
+      "@/lib/user/*": ["./lib/user/*"],
+      "@/lib/db/*": ["./lib/db/*"],
+      "@/lib/utils/*": ["./lib/utils/*"],
+      "@/lib/*": ["../../packages/shared/lib/*"],
+      "@/types/*": ["../../packages/shared/types/*"]
+    }
+  },
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    ".next/dev/types/**/*.ts",
+    "**/*.mts"
+  ],
+  "exclude": ["node_modules", "dist"]
+}

@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { runLiveAudioProtocolTests } from "../lib/reliability/live-audio-protocol-tests.ts";
+import { runLiveAudioProtocolTests } from "../packages/shared/lib/reliability/live-audio-protocol-tests.ts";
 
 const { failures } = await runLiveAudioProtocolTests();
 

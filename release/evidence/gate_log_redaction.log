@@ -1,0 +1,4 @@
+> voice-memory@0.1.0 validate:privacy-logs
+> node scripts/validate-privacy-logs.mjs
+
+validate-privacy-logs ok

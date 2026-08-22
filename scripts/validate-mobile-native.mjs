@@ -49,10 +49,10 @@ mustExist("mobile/README.md");
 mustExist("docs/MOBILE_NATIVE_SETUP.md");
 mustExist("ios/App/App/Info.plist");
 mustExist("android/app/src/main/AndroidManifest.xml");
-mustExist("lib/mobile/deep-links.ts");
-mustExist("lib/mobile/secure-storage.ts");
-mustExist("lib/mobile/capacitor-bootstrap.ts");
-mustExist("components/mobile/NativeBootstrap.tsx");
+mustExist("packages/shared/lib/mobile/deep-links.ts");
+mustExist("packages/shared/lib/mobile/secure-storage.ts");
+mustExist("packages/shared/lib/mobile/capacitor-bootstrap.ts");
+mustExist("apps/web/components/mobile/NativeBootstrap.tsx");
 mustExist("scripts/validate-mobile-native.mjs");
 
 mustInclude("capacitor.config.ts", 'appId: "com.voicememory.app"', "app id");
@@ -80,14 +80,14 @@ if (!pkg.dependencies?.["@capacitor/core"]) {
   failures.push("package.json missing @capacitor/core dependency");
 }
 
-mustInclude("lib/mobile/platform.ts", "capacitor", "platform runtime");
+mustInclude("packages/shared/lib/mobile/platform.ts", "capacitor", "platform runtime");
 mustNotInclude(
-  "lib/mobile/platform.ts",
+  "packages/shared/lib/mobile/platform.ts",
   "if (isNativeWrapper()) return true",
   "no fake native push/audio",
 );
 
-const platform = fs.readFileSync(path.join(ROOT, "lib/mobile/platform.ts"), "utf8");
+const platform = fs.readFileSync(path.join(ROOT, "packages/shared/lib/mobile/platform.ts"), "utf8");
 if (platform.includes("not wired yet")) {
   failures.push("platform.ts still claims Capacitor is not wired");
 }

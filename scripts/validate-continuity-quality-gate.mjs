@@ -5,8 +5,8 @@ import { pathToFileURL } from "node:url";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
-const gatePath = path.join(ROOT, "lib/continuity/continuity-quality-gate.ts");
-const buildPath = path.join(ROOT, "lib/continuity/build-continuity-lines.ts");
+const gatePath = path.join(ROOT, "packages/shared/lib/continuity/continuity-quality-gate.ts");
+const buildPath = path.join(ROOT, "packages/shared/lib/continuity/build-continuity-lines.ts");
 
 const failures = [];
 

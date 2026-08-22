@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { runAnalyzeRouteTests } from "../lib/reliability/analyze-route-tests.ts";
+import { runAnalyzeRouteTests } from "../packages/shared/lib/reliability/analyze-route-tests.ts";
 
 const { failures } = await runAnalyzeRouteTests();
 

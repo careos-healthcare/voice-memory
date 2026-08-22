@@ -20,14 +20,14 @@ function mustExist(rel) {
 }
 
 for (const rel of [
-  "types/store-distribution-verification.ts",
-  "lib/mobile/store-distribution-verification.ts",
+  "packages/shared/types/store-distribution-verification.ts",
+  "packages/shared/lib/mobile/store-distribution-verification.ts",
   "mobile/evidence/ios_signing_tested.json",
 ]) {
   mustExist(rel);
 }
 
-const lib = read("lib/mobile/store-distribution-verification.ts");
+const lib = read("packages/shared/lib/mobile/store-distribution-verification.ts");
 for (const token of [
   "ios_signing_tested.json",
   "isIosSigningPassing",
@@ -36,7 +36,7 @@ for (const token of [
   if (!lib.includes(token)) fail(`store-distribution-verification missing ${token}`);
 }
 
-const commercial = read("lib/mobile/commercial-evidence.ts");
+const commercial = read("packages/shared/lib/mobile/commercial-evidence.ts");
 if (!commercial.includes("isIosSigningPassing")) {
   fail("commercial-evidence must delegate ios_signing_tested to isIosSigningPassing");
 }
@@ -51,7 +51,7 @@ try {
     readIosSigningEvidence,
     isIosSigningPassing,
     iosSigningMissingRequirements,
-  } = await import(path.join(ROOT, "lib/mobile/store-distribution-verification.ts"));
+  } = await import(path.join(ROOT, "packages/shared/lib/mobile/store-distribution-verification.ts"));
 
   const evidence = readIosSigningEvidence();
   if (!evidence) {

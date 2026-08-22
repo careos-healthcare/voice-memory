@@ -7,7 +7,7 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const failures = [];
 
 const quiet = fs.readFileSync(
-  path.join(ROOT, "lib/refinement/quiet-presentation.ts"),
+  path.join(ROOT, "packages/shared/lib/refinement/quiet-presentation.ts"),
   "utf8",
 );
 if (!quiet.includes("preMicContinuityLine")) {
@@ -17,13 +17,13 @@ if (quiet.includes("homepageContinuationNotes")) {
   failures.push("quiet-presentation must not stack homepage continuation notes before mic");
 }
 
-const recorder = fs.readFileSync(path.join(ROOT, "components/Recorder.tsx"), "utf8");
-const micHome = fs.readFileSync(path.join(ROOT, "components/reflex/MicCentricHome.tsx"), "utf8");
+const recorder = fs.readFileSync(path.join(ROOT, "apps/web/components/Recorder.tsx"), "utf8");
+const micHome = fs.readFileSync(path.join(ROOT, "apps/web/components/reflex/MicCentricHome.tsx"), "utf8");
 if (!recorder.includes("continuityLine") && !micHome.includes("preserveQuote")) {
   failures.push("recorder/mic home must support a single continuity line");
 }
 
-const reflex = fs.readFileSync(path.join(ROOT, "app/page.tsx"), "utf8");
+const reflex = fs.readFileSync(path.join(ROOT, "apps/web/app/page.tsx"), "utf8");
 if (!reflex.includes("reflexContinuityLine")) {
   failures.push("homepage must wire reflexContinuityLine");
 }

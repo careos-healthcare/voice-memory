@@ -6,9 +6,9 @@ import { fileURLToPath } from "node:url";
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const OUT = path.resolve(ROOT, "..", "spp20", "debug_surface_inventory.md");
 
-const KEPT = fs.existsSync(path.join(ROOT, "app/internal"))
+const KEPT = fs.existsSync(path.join(ROOT, "apps/web/app/internal"))
   ? fs
-      .readdirSync(path.join(ROOT, "app/internal"), { withFileTypes: true })
+      .readdirSync(path.join(ROOT, "apps/web/app/internal"), { withFileTypes: true })
       .filter((d) => d.isDirectory())
       .map((d) => d.name)
       .sort()

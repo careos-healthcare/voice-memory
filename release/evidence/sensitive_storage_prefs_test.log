@@ -1,0 +1,4 @@
+00:00 +0: loading /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/storage/mobile_prefs_policy_test.dart
+00:00 +0: beta-scoped stores do not write personal content fields to prefs
+00:00 +1: encrypted personal content keys are allowlisted
+00:00 +2: All tests passed!

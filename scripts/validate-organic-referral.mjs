@@ -9,21 +9,21 @@ const failures = [];
 const fail = (msg) => failures.push(msg);
 
 const required = [
-  "types/organic-referral.ts",
-  "lib/retention/organic-referral-copy.ts",
-  "lib/retention/organic-referral.ts",
-  "lib/metrics/organic-referral-events.ts",
-  "lib/internal/organic-referral-report.ts",
-  "components/retention/OrganicReferralPrompt.tsx",
-  "components/internal/OrganicReferralPanel.tsx",
-  "app/internal/organic-referral/page.tsx",
+  "packages/shared/types/organic-referral.ts",
+  "packages/shared/lib/retention/organic-referral-copy.ts",
+  "packages/shared/lib/retention/organic-referral.ts",
+  "packages/shared/lib/metrics/organic-referral-events.ts",
+  "packages/shared/lib/internal/organic-referral-report.ts",
+  "apps/web/components/retention/OrganicReferralPrompt.tsx",
+  "apps/web/components/internal/OrganicReferralPanel.tsx",
+  "apps/web/app/internal/organic-referral/page.tsx",
 ];
 
 for (const rel of required) {
   if (!fs.existsSync(path.join(ROOT, rel))) fail(`missing ${rel}`);
 }
 
-const copy = fs.readFileSync(path.join(ROOT, "lib/retention/organic-referral-copy.ts"), "utf8");
+const copy = fs.readFileSync(path.join(ROOT, "packages/shared/lib/retention/organic-referral-copy.ts"), "utf8");
 for (const phrase of [
   "Have you told anyone about ArchiveMe?",
   "Thought about it",
@@ -37,12 +37,12 @@ for (const phrase of [
   if (!copy.includes(phrase)) fail(`missing copy phrase: ${phrase}`);
 }
 
-const core = fs.readFileSync(path.join(ROOT, "lib/retention/organic-referral.ts"), "utf8");
+const core = fs.readFileSync(path.join(ROOT, "packages/shared/lib/retention/organic-referral.ts"), "utf8");
 if (!core.includes("ORGANIC_REFERRAL_MIN_REFLECTIONS = 5")) fail("min reflections");
 if (!core.includes("ORGANIC_REFERRAL_COOLDOWN_MS = 14")) fail("cooldown");
 
 const events = fs.readFileSync(
-  path.join(ROOT, "lib/metrics/organic-referral-events.ts"),
+  path.join(ROOT, "packages/shared/lib/metrics/organic-referral-events.ts"),
   "utf8",
 );
 for (const name of ["organic_referral_status", "organic_referral_reason", "referral_blocker"]) {
@@ -50,24 +50,24 @@ for (const name of ["organic_referral_status", "organic_referral_reason", "refer
 }
 
 const prompt = fs.readFileSync(
-  path.join(ROOT, "components/retention/OrganicReferralPrompt.tsx"),
+  path.join(ROOT, "apps/web/components/retention/OrganicReferralPrompt.tsx"),
   "utf8",
 );
 if (!prompt.includes("saveOrganicReferralStatus")) fail("prompt must save status");
 if (!prompt.includes('data-testid="organic-referral-prompt"')) fail("status test id");
 
 const report = fs.readFileSync(
-  path.join(ROOT, "lib/internal/organic-referral-report.ts"),
+  path.join(ROOT, "packages/shared/lib/internal/organic-referral-report.ts"),
   "utf8",
 );
 if (!report.includes("Would users naturally tell someone?")) fail("critical question");
 
-if (!fs.readFileSync(path.join(ROOT, "app/memory/page.tsx"), "utf8").includes("OrganicReferralPrompt")) {
+if (!fs.readFileSync(path.join(ROOT, "apps/web/app/memory/page.tsx"), "utf8").includes("OrganicReferralPrompt")) {
   fail("memory page must wire OrganicReferralPrompt");
 }
 
 const retentionPage = fs.readFileSync(
-  path.join(ROOT, "app/internal/retention-discovery/page.tsx"),
+  path.join(ROOT, "apps/web/app/internal/retention-discovery/page.tsx"),
   "utf8",
 );
 if (!retentionPage.includes("OrganicReferralPanel")) fail("retention-discovery must wire panel");
@@ -88,9 +88,9 @@ globalThis.localStorage = {
   key: (i) => [...storage.keys()][i] ?? null,
 };
 
-const { trackLocalEvent } = await import("../lib/local-analytics.ts");
-const { THEORY_EVENTS } = await import("../lib/theories/theory-events.ts");
-const { ACTIVATION_METRIC_EVENTS } = await import("../lib/product/activation-metrics.ts");
+const { trackLocalEvent } = await import("../packages/shared/lib/local-analytics.ts");
+const { THEORY_EVENTS } = await import("../packages/shared/lib/theories/theory-events.ts");
+const { ACTIVATION_METRIC_EVENTS } = await import("../packages/shared/lib/product/activation-metrics.ts");
 const {
   clearOrganicReferralForEval,
   canShowOrganicReferralPrompt,
@@ -98,12 +98,12 @@ const {
   saveOrganicReferralReason,
   shouldShowOrganicReferralFollowUp,
   ORGANIC_REFERRAL_MIN_REFLECTIONS,
-} = await import("../lib/retention/organic-referral.ts");
+} = await import("../packages/shared/lib/retention/organic-referral.ts");
 const { clearOrganicReferralEventsForEval } = await import(
-  "../lib/metrics/organic-referral-events.ts"
+  "../packages/shared/lib/metrics/organic-referral-events.ts"
 );
 const { buildOrganicReferralReport } = await import(
-  "../lib/internal/organic-referral-report.ts"
+  "../packages/shared/lib/internal/organic-referral-report.ts"
 );
 
 clearOrganicReferralForEval();
@@ -169,7 +169,7 @@ saveOrganicReferralStatus("no", entries);
 const blockerCtx = shouldShowOrganicReferralFollowUp();
 assert.ok(blockerCtx);
 assert.equal(blockerCtx.kind, "referral_blocker");
-const { saveReferralBlocker } = await import("../lib/retention/organic-referral.ts");
+const { saveReferralBlocker } = await import("../packages/shared/lib/retention/organic-referral.ts");
 saveReferralBlocker("not_sure_yet", blockerCtx.attributionId);
 const built2 = buildOrganicReferralReport();
 assert.equal(built2.referralBlockers[0]?.id, "not_sure_yet");

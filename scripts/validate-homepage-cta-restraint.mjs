@@ -6,8 +6,8 @@ import { fileURLToPath } from "node:url";
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
 const REQUIRED = [
-  "lib/homepage/primary-cta.ts",
-  "components/homepage/HomepagePrimaryCtaProvider.tsx",
+  "packages/shared/lib/homepage/primary-cta.ts",
+  "apps/web/components/homepage/HomepagePrimaryCtaProvider.tsx",
 ];
 
 for (const rel of REQUIRED) {
@@ -17,7 +17,7 @@ for (const rel of REQUIRED) {
   }
 }
 
-const primaryCta = fs.readFileSync(path.join(ROOT, "lib/homepage/primary-cta.ts"), "utf8");
+const primaryCta = fs.readFileSync(path.join(ROOT, "packages/shared/lib/homepage/primary-cta.ts"), "utf8");
 if (!primaryCta.includes("PRIMARY_CTA_PRIORITY")) {
   console.error("Homepage CTA validation failed — priority list missing.");
   process.exit(1);
@@ -25,19 +25,19 @@ if (!primaryCta.includes("PRIMARY_CTA_PRIORITY")) {
 
 const checks = [
   {
-    file: "app/page.tsx",
+    file: "apps/web/app/page.tsx",
     tokens: ["HomepagePrimaryCtaProvider", "suppressRecordCta"],
   },
   {
-    file: "components/onboarding/ArchiveOnboarding.tsx",
+    file: "apps/web/components/onboarding/ArchiveOnboarding.tsx",
     tokens: ["usePrimaryCtaClaim", 'data-primary-cta="onboarding"', "canShowRecordCta"],
   },
   {
-    file: "components/Recorder.tsx",
+    file: "apps/web/components/Recorder.tsx",
     tokens: ["usePrimaryCtaClaim", 'data-primary-cta="recorder"', "canShowRecorderCta"],
   },
   {
-    file: "components/HabitLoopCard.tsx",
+    file: "apps/web/components/HabitLoopCard.tsx",
     tokens: ["suppressRecordCta"],
   },
 ];
@@ -64,15 +64,15 @@ function assertSingleConstDeclaration(file, name) {
 }
 
 for (const [file, names] of [
-  ["components/onboarding/ArchiveOnboarding.tsx", ["isLast", "canShowRecordCta"]],
-  ["components/Recorder.tsx", ["canShowRecorderCta", "canShowRetryCta"]],
+  ["apps/web/components/onboarding/ArchiveOnboarding.tsx", ["isLast", "canShowRecordCta"]],
+  ["apps/web/components/Recorder.tsx", ["canShowRecorderCta", "canShowRetryCta"]],
 ]) {
   for (const name of names) {
     assertSingleConstDeclaration(file, name);
   }
 }
 
-const pageContent = fs.readFileSync(path.join(ROOT, "app/page.tsx"), "utf8");
+const pageContent = fs.readFileSync(path.join(ROOT, "apps/web/app/page.tsx"), "utf8");
 const providerOpens = pageContent.match(/<HomepagePrimaryCtaProvider\b/g) ?? [];
 const providerCloses = pageContent.match(/<\/HomepagePrimaryCtaProvider>/g) ?? [];
 if (providerOpens.length !== 1 || providerCloses.length !== 1) {
@@ -83,13 +83,13 @@ if (providerOpens.length !== 1 || providerCloses.length !== 1) {
 }
 
 const activation = fs.readFileSync(
-  path.join(ROOT, "components/onboarding/ArchiveOnboarding.tsx"),
+  path.join(ROOT, "apps/web/components/onboarding/ArchiveOnboarding.tsx"),
   "utf8",
 );
-const recorder = fs.readFileSync(path.join(ROOT, "components/Recorder.tsx"), "utf8");
-const habit = fs.readFileSync(path.join(ROOT, "components/HabitLoopCard.tsx"), "utf8");
+const recorder = fs.readFileSync(path.join(ROOT, "apps/web/components/Recorder.tsx"), "utf8");
+const habit = fs.readFileSync(path.join(ROOT, "apps/web/components/HabitLoopCard.tsx"), "utf8");
 const ctaProvider = fs.readFileSync(
-  path.join(ROOT, "components/homepage/HomepagePrimaryCtaProvider.tsx"),
+  path.join(ROOT, "apps/web/components/homepage/HomepagePrimaryCtaProvider.tsx"),
   "utf8",
 );
 
@@ -123,9 +123,9 @@ if (
 }
 
 const unstableEffectDeps = [
-  { file: "components/homepage/HomepagePrimaryCtaProvider.tsx", pattern: /\[ctx\b/ },
-  { file: "components/onboarding/ArchiveOnboarding.tsx", pattern: /useEffect\([^)]*\[[^\]]*\bctx\b/ },
-  { file: "components/Recorder.tsx", pattern: /useEffect\([^)]*\[[^\]]*\bctx\b/ },
+  { file: "apps/web/components/homepage/HomepagePrimaryCtaProvider.tsx", pattern: /\[ctx\b/ },
+  { file: "apps/web/components/onboarding/ArchiveOnboarding.tsx", pattern: /useEffect\([^)]*\[[^\]]*\bctx\b/ },
+  { file: "apps/web/components/Recorder.tsx", pattern: /useEffect\([^)]*\[[^\]]*\bctx\b/ },
 ];
 
 for (const { file, pattern } of unstableEffectDeps) {
@@ -139,7 +139,7 @@ for (const { file, pattern } of unstableEffectDeps) {
 }
 
 const limitsObjectDep = /useEffect\(\s*[\s\S]*?\[\s*limits\s*,/m;
-for (const file of ["app/page.tsx", "app/entry/[id]/page.tsx"]) {
+for (const file of ["apps/web/app/page.tsx", "apps/web/app/entry/[id]/page.tsx"]) {
   const content = fs.readFileSync(path.join(ROOT, file), "utf8");
   if (limitsObjectDep.test(content)) {
     console.error(

@@ -6,15 +6,15 @@ import { fileURLToPath } from "node:url";
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
 const REQUIRED_FILES = [
-  "lib/server/auth-storage.ts",
-  "lib/server/auth-store.ts",
-  "lib/server/env-check.ts",
-  "lib/server/auth-route-log.ts",
-  "lib/email/send-auth-code.ts",
-  "lib/auth/auth-errors.ts",
+  "packages/shared/lib/server/auth-storage.ts",
+  "packages/shared/lib/server/auth-store.ts",
+  "packages/shared/lib/server/env-check.ts",
+  "packages/shared/lib/server/auth-route-log.ts",
+  "packages/shared/lib/email/send-auth-code.ts",
+  "packages/shared/lib/auth/auth-errors.ts",
   "instrumentation.ts",
-  "app/api/auth/send-code/route.ts",
-  "app/api/internal/auth-env/route.ts",
+  "apps/api/app/api/auth/send-code/route.ts",
+  "apps/api/app/api/internal/auth-env/route.ts",
 ];
 
 const missing = REQUIRED_FILES.filter((rel) => !fs.existsSync(path.join(ROOT, rel)));
@@ -24,27 +24,27 @@ if (missing.length > 0) {
   process.exit(1);
 }
 
-const authStorage = fs.readFileSync(path.join(ROOT, "lib/server/auth-storage.ts"), "utf8");
-const authStore = fs.readFileSync(path.join(ROOT, "lib/server/auth-store.ts"), "utf8");
+const authStorage = fs.readFileSync(path.join(ROOT, "packages/shared/lib/server/auth-storage.ts"), "utf8");
+const authStore = fs.readFileSync(path.join(ROOT, "packages/shared/lib/server/auth-store.ts"), "utf8");
 const sendCodeRoute = fs.readFileSync(
-  path.join(ROOT, "app/api/auth/send-code/route.ts"),
+  path.join(ROOT, "apps/api/app/api/auth/send-code/route.ts"),
   "utf8",
 );
 const sendAuthCode = fs.readFileSync(
-  path.join(ROOT, "lib/email/send-auth-code.ts"),
+  path.join(ROOT, "packages/shared/lib/email/send-auth-code.ts"),
   "utf8",
 );
 const accountClient = fs.readFileSync(
-  path.join(ROOT, "lib/sync/account-client.ts"),
+  path.join(ROOT, "packages/shared/lib/sync/account-client.ts"),
   "utf8",
 );
-const accountPage = fs.readFileSync(path.join(ROOT, "app/account/page.tsx"), "utf8");
+const accountPage = fs.readFileSync(path.join(ROOT, "apps/web/app/account/page.tsx"), "utf8");
 const productionDeploy = fs.readFileSync(
   path.join(ROOT, "docs/PRODUCTION_DEPLOY.md"),
   "utf8",
 );
 const authEnvRoute = fs.readFileSync(
-  path.join(ROOT, "app/api/internal/auth-env/route.ts"),
+  path.join(ROOT, "apps/api/app/api/internal/auth-env/route.ts"),
   "utf8",
 );
 
@@ -113,13 +113,13 @@ if (authEnvRoute.includes("RESEND_API_KEY") || authEnvRoute.includes("process.en
   process.exit(1);
 }
 
-if (!fs.existsSync(path.join(ROOT, "lib/sync/parse-response.ts"))) {
+if (!fs.existsSync(path.join(ROOT, "packages/shared/lib/sync/parse-response.ts"))) {
   console.error("Auth storage validation failed — missing lib/sync/parse-response.ts");
   process.exit(1);
 }
 
 const accountProvider = fs.readFileSync(
-  path.join(ROOT, "components/providers/AccountProvider.tsx"),
+  path.join(ROOT, "apps/web/components/providers/AccountProvider.tsx"),
   "utf8",
 );
 if (!accountProvider.includes("useClientHydrated")) {

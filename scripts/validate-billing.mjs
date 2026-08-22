@@ -1,8 +1,8 @@
 #!/usr/bin/env node
-import { runBillingProductionTests } from "../lib/reliability/billing-production-tests.ts";
-import { runBillingTestsAsync } from "../lib/reliability/billing-tests.ts";
-import { runBillingAplusTests } from "../lib/reliability/billing-aplus-tests.ts";
-import { runStripeLiveCheck } from "../lib/billing/stripe-live-check.ts";
+import { runBillingProductionTests } from "../packages/shared/lib/reliability/billing-production-tests.ts";
+import { runBillingTestsAsync } from "../packages/shared/lib/reliability/billing-tests.ts";
+import { runBillingAplusTests } from "../packages/shared/lib/reliability/billing-aplus-tests.ts";
+import { runStripeLiveCheck } from "../packages/shared/lib/billing/stripe-live-check.ts";
 
 const failures = [];
 

@@ -8,12 +8,12 @@ import {
   fleissKappa,
   summarizeAgreement,
   type CategoryDecision,
-} from "../lib/research/agreement";
+} from "../packages/shared/lib/research/agreement";
 import {
   BlindReviewCoordinator,
   BlindReviewViolation,
   type CompletedEvaluationRecord,
-} from "../lib/research/blind-review";
+} from "../packages/shared/lib/research/blind-review";
 import {
   createHumanCase,
   createSyntheticCase,
@@ -21,16 +21,16 @@ import {
   ResearchPolicyViolation,
   type HumanObservationCase,
   type SyntheticObservationCase,
-} from "../lib/research/research-domain";
+} from "../packages/shared/lib/research/research-domain";
 import {
   buildResearchExportBundle,
   serializeResearchExport,
-} from "../lib/research/research-export";
-import { JsonResearchRepository } from "../lib/research/research-repository";
+} from "../packages/shared/lib/research/research-export";
+import { JsonResearchRepository } from "../packages/shared/lib/research/research-repository";
 import {
   decidePrecisionMarketingClaims,
   type ResearchClaimsPolicy,
-} from "../lib/research/precision-claims-policy";
+} from "../packages/shared/lib/research/precision-claims-policy";
 
 const NOW = "2026-08-04T09:00:00.000Z";
 const CATEGORIES = ["supported", "safe_to_show"] as const;

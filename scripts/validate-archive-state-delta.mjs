@@ -19,19 +19,19 @@ function mustExist(rel) {
 }
 
 const required = [
-  "types/archive-state-snapshot.ts",
-  "lib/archive/archive-state-snapshot.ts",
-  "lib/archive/archive-state-delta-copy.ts",
-  "components/archive/ArchiveStateDeltaCard.tsx",
-  "components/archive/ArchiveStateDeltaSection.tsx",
-  "components/archive/ArchiveDiscoverDeltaFeed.tsx",
-  "apps/voicememory_mobile/lib/features/archive_state_delta/archive_state_snapshot.dart",
-  "apps/voicememory_mobile/lib/widgets/archive_state_delta_card_mobile.dart",
+  "packages/shared/types/archive-state-snapshot.ts",
+  "packages/shared/lib/archive/archive-state-snapshot.ts",
+  "packages/shared/lib/archive/archive-state-delta-copy.ts",
+  "apps/web/components/archive/ArchiveStateDeltaCard.tsx",
+  "apps/web/components/archive/ArchiveStateDeltaSection.tsx",
+  "apps/web/components/archive/ArchiveDiscoverDeltaFeed.tsx",
+  "apps/mobile/lib/features/archive_state_delta/archive_state_snapshot.dart",
+  "apps/mobile/lib/widgets/archive_state_delta_card_mobile.dart",
 ];
 
 for (const rel of required) mustExist(rel);
 
-const snapshot = read("lib/archive/archive-state-snapshot.ts");
+const snapshot = read("packages/shared/lib/archive/archive-state-snapshot.ts");
 for (const token of [
   "captureArchiveStateSnapshot",
   "buildArchiveStateDelta",
@@ -47,12 +47,12 @@ for (const token of [
   if (!snapshot.includes(token)) fail(`archive-state-snapshot missing ${token}`);
 }
 
-const card = read("components/archive/ArchiveStateDeltaCard.tsx");
+const card = read("apps/web/components/archive/ArchiveStateDeltaCard.tsx");
 for (const token of ["Then", "Now", "row.difference", "data-testid=\"archive-state-delta-card\""]) {
   if (!card.includes(token)) fail(`ArchiveStateDeltaCard missing ${token}`);
 }
 
-const copy = read("lib/archive/archive-state-delta-copy.ts");
+const copy = read("packages/shared/lib/archive/archive-state-delta-copy.ts");
 if (!copy.includes("Your archive changed while you were away.")) {
   fail("away return headline missing");
 }
@@ -60,7 +60,7 @@ if (!copy.includes("What changed since you last looked")) {
   fail("delta title missing");
 }
 
-const home = read("components/archive/EvidenceArchiveHome.tsx");
+const home = read("apps/web/components/archive/EvidenceArchiveHome.tsx");
 const chromeStart = home.indexOf("const archiveBeliefChrome");
 const chromeBlock =
   chromeStart >= 0 ? home.slice(chromeStart, chromeStart + 2500) : home;
@@ -75,7 +75,7 @@ if (!(headerIdx < statusIdx && statusIdx < deltaIdx && deltaIdx < healthIdx)) {
   fail("Archive home order: Belief → Status → Delta → Health/Reputation stack");
 }
 
-const command = read("components/archive/ArchiveCommandCenter.tsx");
+const command = read("apps/web/components/archive/ArchiveCommandCenter.tsx");
 const repIdx = command.indexOf('"reputation"');
 const trustIdx = command.indexOf('"trust"');
 const timelineIdx = command.indexOf('"timeline"');
@@ -87,7 +87,7 @@ if (!(repIdx < trustIdx && trustIdx < timelineIdx && timelineIdx < evidenceIdx))
   fail("ArchiveCommandCenter order: reputation → trust → timeline → evidence");
 }
 
-const discover = read("app/discover/page.tsx");
+const discover = read("apps/web/app/discover/page.tsx");
 if (!discover.includes("ArchiveActivityPanel") && !discover.includes("ArchiveDiscoverDeltaFeed")) {
   fail("discover must use ArchiveActivityPanel or ArchiveDiscoverDeltaFeed");
 }
@@ -98,7 +98,7 @@ if (discover.includes("ArchiveReputationMovement")) {
   fail("discover must not use ArchiveReputationMovement in changes section");
 }
 
-const mobile = read("apps/voicememory_mobile/lib/screens/archive_belief_screen.dart");
+const mobile = read("apps/mobile/lib/screens/archive_belief_screen.dart");
 const mobileHeader = mobile.indexOf("ArchiveBeliefHeaderMobile");
 const mobileStatus = mobile.indexOf("ArchiveStatusCardMobile");
 const mobileDelta = mobile.indexOf("ArchiveStateDeltaCardMobile");
@@ -120,7 +120,7 @@ try {
     captureArchiveStateSnapshot,
     buildArchiveStateDelta,
     buildDeltaRows,
-  } = await import(path.join(ROOT, "lib/archive/archive-state-snapshot.ts"));
+  } = await import(path.join(ROOT, "packages/shared/lib/archive/archive-state-snapshot.ts"));
 
   const before = {
     belief: "I avoid conflict at work",

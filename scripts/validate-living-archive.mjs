@@ -19,30 +19,30 @@ function mustExist(rel) {
 }
 
 const required = [
-  "types/living-archive.ts",
-  "lib/archive/archive-status.ts",
-  "lib/archive/archive-pulse.ts",
-  "lib/archive/archive-memory.ts",
-  "lib/archive/archive-open-question.ts",
-  "lib/archive/archive-reason-to-return.ts",
-  "lib/archive/archive-activity.ts",
-  "lib/archive/living-archive.ts",
-  "lib/archive/living-archive-copy.ts",
-  "components/archive/ArchiveStatusCard.tsx",
-  "components/archive/ArchivePulse.tsx",
-  "components/archive/ArchiveMemoryCard.tsx",
-  "components/archive/ArchiveOpenQuestion.tsx",
-  "components/archive/ArchiveReasonToReturn.tsx",
-  "components/archive/ArchiveActivityPanel.tsx",
-  "apps/voicememory_mobile/lib/features/living_archive/living_archive_mobile.dart",
-  "apps/voicememory_mobile/lib/widgets/archive_status_card_mobile.dart",
-  "apps/voicememory_mobile/lib/widgets/archive_pulse_mobile.dart",
-  "apps/voicememory_mobile/lib/widgets/archive_reason_to_return_mobile.dart",
+  "packages/shared/types/living-archive.ts",
+  "packages/shared/lib/archive/archive-status.ts",
+  "packages/shared/lib/archive/archive-pulse.ts",
+  "packages/shared/lib/archive/archive-memory.ts",
+  "packages/shared/lib/archive/archive-open-question.ts",
+  "packages/shared/lib/archive/archive-reason-to-return.ts",
+  "packages/shared/lib/archive/archive-activity.ts",
+  "packages/shared/lib/archive/living-archive.ts",
+  "packages/shared/lib/archive/living-archive-copy.ts",
+  "apps/web/components/archive/ArchiveStatusCard.tsx",
+  "apps/web/components/archive/ArchivePulse.tsx",
+  "apps/web/components/archive/ArchiveMemoryCard.tsx",
+  "apps/web/components/archive/ArchiveOpenQuestion.tsx",
+  "apps/web/components/archive/ArchiveReasonToReturn.tsx",
+  "apps/web/components/archive/ArchiveActivityPanel.tsx",
+  "apps/mobile/lib/features/living_archive/living_archive_mobile.dart",
+  "apps/mobile/lib/widgets/archive_status_card_mobile.dart",
+  "apps/mobile/lib/widgets/archive_pulse_mobile.dart",
+  "apps/mobile/lib/widgets/archive_reason_to_return_mobile.dart",
 ];
 
 for (const rel of required) mustExist(rel);
 
-const statusLib = read("lib/archive/archive-status.ts");
+const statusLib = read("packages/shared/lib/archive/archive-status.ts");
 for (const token of [
   "deriveArchiveLivingStatus",
   "buildArchiveStatusView",
@@ -56,7 +56,7 @@ for (const token of [
   if (!statusLib.includes(token)) fail(`archive-status missing ${token}`);
 }
 
-const copy = read("lib/archive/living-archive-copy.ts");
+const copy = read("packages/shared/lib/archive/living-archive-copy.ts");
 for (const token of [
   "ARCHIVE_STATUS_CARD_TITLE",
   "Status Changes",
@@ -67,7 +67,7 @@ for (const token of [
   if (!copy.includes(token)) fail(`living-archive-copy missing ${token}`);
 }
 
-const home = read("components/archive/EvidenceArchiveHome.tsx");
+const home = read("apps/web/components/archive/EvidenceArchiveHome.tsx");
 const chromeStart = home.indexOf("const archiveBeliefChrome");
 const chromeBlock =
   chromeStart >= 0 ? home.slice(chromeStart, chromeStart + 2500) : home;
@@ -89,7 +89,7 @@ if (memoryIdx < 0 || questionIdx < 0 || reasonIdx < 0) {
   fail("EvidenceArchiveHome must include memory, open questions, return reason");
 }
 
-const discover = read("app/discover/page.tsx");
+const discover = read("apps/web/app/discover/page.tsx");
 if (!discover.includes("ArchiveActivityPanel")) {
   fail("discover must use ArchiveActivityPanel");
 }
@@ -100,17 +100,17 @@ if (discover.includes("TheoryChangeFeed") || discover.includes("ArchiveDiscoverD
   fail("discover must not use feed cards or delta feed as primary activity");
 }
 
-const product = read("lib/product/archive-product-copy.ts");
+const product = read("packages/shared/lib/product/archive-product-copy.ts");
 if (!product.includes('"Archive Activity"')) {
   fail('discover product copy must frame as "Archive Activity"');
 }
 
-const activity = read("lib/archive/archive-activity.ts");
+const activity = read("packages/shared/lib/archive/archive-activity.ts");
 if (!activity.includes("evidence.movements")) {
   fail("archive-activity must read evidence feed movements");
 }
 
-const mobile = read("apps/voicememory_mobile/lib/screens/archive_belief_screen.dart");
+const mobile = read("apps/mobile/lib/screens/archive_belief_screen.dart");
 const mHeader = mobile.indexOf("ArchiveBeliefHeaderMobile");
 const mStatus = mobile.indexOf("ArchiveStatusCardMobile");
 const mDelta = mobile.indexOf("ArchiveStateDeltaCardMobile");

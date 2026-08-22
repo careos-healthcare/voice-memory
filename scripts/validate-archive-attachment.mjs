@@ -9,21 +9,21 @@ const failures = [];
 const fail = (msg) => failures.push(msg);
 
 const required = [
-  "types/archive-attachment.ts",
-  "lib/archive/archive-attachment-copy.ts",
-  "lib/archive/archive-attachment.ts",
-  "lib/metrics/archive-attachment-events.ts",
-  "lib/internal/archive-attachment-report.ts",
-  "components/archive/ArchiveAttachmentPrompt.tsx",
-  "components/internal/ArchiveAttachmentPanel.tsx",
-  "app/internal/archive-attachment/page.tsx",
+  "packages/shared/types/archive-attachment.ts",
+  "packages/shared/lib/archive/archive-attachment-copy.ts",
+  "packages/shared/lib/archive/archive-attachment.ts",
+  "packages/shared/lib/metrics/archive-attachment-events.ts",
+  "packages/shared/lib/internal/archive-attachment-report.ts",
+  "apps/web/components/archive/ArchiveAttachmentPrompt.tsx",
+  "apps/web/components/internal/ArchiveAttachmentPanel.tsx",
+  "apps/web/app/internal/archive-attachment/page.tsx",
 ];
 
 for (const rel of required) {
   if (!fs.existsSync(path.join(ROOT, rel))) fail(`missing ${rel}`);
 }
 
-const copy = fs.readFileSync(path.join(ROOT, "lib/archive/archive-attachment-copy.ts"), "utf8");
+const copy = fs.readFileSync(path.join(ROOT, "packages/shared/lib/archive/archive-attachment-copy.ts"), "utf8");
 for (const phrase of [
   "If your archive disappeared tomorrow",
   "Not at all",
@@ -33,13 +33,13 @@ for (const phrase of [
   "ARCHIVE_ATTACHMENT_MIN_REFLECTIONS = 5",
   "ARCHIVE_ATTACHMENT_COOLDOWN_MS = 14",
 ]) {
-  if (!copy.includes(phrase) && !fs.readFileSync(path.join(ROOT, "lib/archive/archive-attachment.ts"), "utf8").includes(phrase)) {
+  if (!copy.includes(phrase) && !fs.readFileSync(path.join(ROOT, "packages/shared/lib/archive/archive-attachment.ts"), "utf8").includes(phrase)) {
     fail(`missing phrase/threshold: ${phrase}`);
   }
 }
 
 const events = fs.readFileSync(
-  path.join(ROOT, "lib/metrics/archive-attachment-events.ts"),
+  path.join(ROOT, "packages/shared/lib/metrics/archive-attachment-events.ts"),
   "utf8",
 );
 for (const name of [
@@ -51,21 +51,21 @@ for (const name of [
 }
 
 const prompt = fs.readFileSync(
-  path.join(ROOT, "components/archive/ArchiveAttachmentPrompt.tsx"),
+  path.join(ROOT, "apps/web/components/archive/ArchiveAttachmentPrompt.tsx"),
   "utf8",
 );
 if (!prompt.includes("saveArchiveAttachmentLevel")) fail("prompt must save level");
 if (!prompt.includes('data-testid="archive-attachment-prompt"')) fail("level test id");
 
 const report = fs.readFileSync(
-  path.join(ROOT, "lib/internal/archive-attachment-report.ts"),
+  path.join(ROOT, "packages/shared/lib/internal/archive-attachment-report.ts"),
   "utf8",
 );
 if (!report.includes("Do users feel they own something valuable?")) fail("critical question");
 if (!report.includes("ARCHIVE_ATTACHMENT_STRONG_THRESHOLD_PERCENT")) fail("strong threshold");
 
 const attachmentWiring =
-  fs.readFileSync(path.join(ROOT, "components/archive/EvidenceArchiveHome.tsx"), "utf8");
+  fs.readFileSync(path.join(ROOT, "apps/web/components/archive/EvidenceArchiveHome.tsx"), "utf8");
 if (!attachmentWiring.includes("ArchiveAttachmentPrompt")) {
   fail("EvidenceArchiveHome must wire ArchiveAttachmentPrompt");
 }
@@ -89,9 +89,9 @@ globalThis.localStorage = {
   key: (i) => [...storage.keys()][i] ?? null,
 };
 
-const { clearArchiveAttachmentForEval, canShowArchiveAttachmentPrompt, saveArchiveAttachmentLevel, saveArchiveAttachmentReason, shouldShowArchiveAttachmentReasonPrompt, ARCHIVE_ATTACHMENT_MIN_REFLECTIONS } = await import("../lib/archive/archive-attachment.ts");
-const { clearArchiveAttachmentEventsForEval } = await import("../lib/metrics/archive-attachment-events.ts");
-const { buildArchiveAttachmentReport } = await import("../lib/internal/archive-attachment-report.ts");
+const { clearArchiveAttachmentForEval, canShowArchiveAttachmentPrompt, saveArchiveAttachmentLevel, saveArchiveAttachmentReason, shouldShowArchiveAttachmentReasonPrompt, ARCHIVE_ATTACHMENT_MIN_REFLECTIONS } = await import("../packages/shared/lib/archive/archive-attachment.ts");
+const { clearArchiveAttachmentEventsForEval } = await import("../packages/shared/lib/metrics/archive-attachment-events.ts");
+const { buildArchiveAttachmentReport } = await import("../packages/shared/lib/internal/archive-attachment-report.ts");
 
 clearArchiveAttachmentForEval();
 clearArchiveAttachmentEventsForEval();

@@ -12,7 +12,6 @@ const ROOT = resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const scriptsDir = path.join(ROOT, "scripts");
 
 const LOW_RISK_STATIC = new Set([
-  "validate-quiet-copy",
   "validate-restraint",
   "validate-product-restraint",
   "validate-ux-copy",

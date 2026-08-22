@@ -24,18 +24,18 @@ globalThis.localStorage = {
 };
 
 const required = [
-  "types/founder-test.ts",
-  "lib/founder-test/founder-test-storage.ts",
-  "lib/founder-test/founder-test-checklist.ts",
-  "lib/founder-test/founder-test-thresholds.ts",
-  "lib/founder-test/founder-test-report.ts",
-  "lib/founder-test/founder-evolving-validation.ts",
-  "components/internal/FounderEvolvingValidationPanel.tsx",
-  "components/internal/FounderTestPanel.tsx",
-  "components/internal/FounderTestParticipantCard.tsx",
-  "components/internal/FounderTestChecklist.tsx",
-  "components/internal/FounderTestReportPanel.tsx",
-  "app/internal/founder-test/page.tsx",
+  "packages/shared/types/founder-test.ts",
+  "packages/shared/lib/founder-test/founder-test-storage.ts",
+  "packages/shared/lib/founder-test/founder-test-checklist.ts",
+  "packages/shared/lib/founder-test/founder-test-thresholds.ts",
+  "packages/shared/lib/founder-test/founder-test-report.ts",
+  "packages/shared/lib/founder-test/founder-evolving-validation.ts",
+  "apps/web/components/internal/FounderEvolvingValidationPanel.tsx",
+  "apps/web/components/internal/FounderTestPanel.tsx",
+  "apps/web/components/internal/FounderTestParticipantCard.tsx",
+  "apps/web/components/internal/FounderTestChecklist.tsx",
+  "apps/web/components/internal/FounderTestReportPanel.tsx",
+  "apps/web/app/internal/founder-test/page.tsx",
 ];
 
 for (const rel of required) {
@@ -49,11 +49,11 @@ const {
   FOUNDER_EVOLVING_INTERVIEW_QUESTIONS,
   FOUNDER_TEST_CORE_QUESTION,
   buildDefaultFounderTestChecklist,
-} = await import("../lib/founder-test/founder-test-checklist.ts");
+} = await import("../packages/shared/lib/founder-test/founder-test-checklist.ts");
 const {
   buildFounderEvolvingValidationReport,
   classifyDiscoverExpectationVerbatim,
-} = await import("../lib/founder-test/founder-evolving-validation.ts");
+} = await import("../packages/shared/lib/founder-test/founder-evolving-validation.ts");
 const {
   createFounderTestParticipant,
   updateFounderTestSession,
@@ -61,13 +61,13 @@ const {
   readFounderTestRecords,
   markChecklistItem,
   clearFounderTestSessionsForEval,
-} = await import("../lib/founder-test/founder-test-storage.ts");
-const { buildFounderTestReport } = await import("../lib/founder-test/founder-test-report.ts");
+} = await import("../packages/shared/lib/founder-test/founder-test-storage.ts");
+const { buildFounderTestReport } = await import("../packages/shared/lib/founder-test/founder-test-report.ts");
 const {
   classifyFounderTestStudySignal,
   FOUNDER_TEST_STRONG_THRESHOLDS,
   FOUNDER_TEST_WEAK_THRESHOLDS,
-} = await import("../lib/founder-test/founder-test-thresholds.ts");
+} = await import("../packages/shared/lib/founder-test/founder-test-thresholds.ts");
 
 clearFounderTestSessionsForEval();
 
@@ -95,7 +95,7 @@ assert.equal(
 );
 
 const evolvingSrc = fs.readFileSync(
-  path.join(ROOT, "lib/founder-test/founder-evolving-validation.ts"),
+  path.join(ROOT, "packages/shared/lib/founder-test/founder-evolving-validation.ts"),
   "utf8",
 );
 for (const phrase of [
@@ -244,13 +244,13 @@ assert.equal(classifyFounderTestStudySignal(weakReport), "weak_signal");
 assert.equal(FOUNDER_TEST_STRONG_THRESHOLDS.reachedFiveRate, 60);
 assert.equal(FOUNDER_TEST_WEAK_THRESHOLDS.reachedFiveRate, 40);
 
-const pagePath = path.join(ROOT, "app/internal/founder-test/page.tsx");
+const pagePath = path.join(ROOT, "apps/web/app/internal/founder-test/page.tsx");
 if (!fs.existsSync(pagePath)) fail("internal route missing");
 const pageSrc = fs.readFileSync(pagePath, "utf8");
 if (!pageSrc.includes("FounderTestPanel")) fail("page must render FounderTestPanel");
 
 const retentionSrc = fs.readFileSync(
-  path.join(ROOT, "app/internal/retention-discovery/page.tsx"),
+  path.join(ROOT, "apps/web/app/internal/retention-discovery/page.tsx"),
   "utf8",
 );
 if (!retentionSrc.includes("Founder user-study checklist")) {
@@ -258,15 +258,15 @@ if (!retentionSrc.includes("Founder user-study checklist")) {
 }
 
 const forbiddenEngine = [
-  "lib/patterns/pattern-engine",
-  "lib/blind-spots/blind-spot-review.ts",
-  "lib/blind-spots/blind-spot-ranking.ts",
-  "lib/insights/insight-ingredient-optimizer.ts",
+  "packages/shared/lib/patterns/pattern-engine",
+  "packages/shared/lib/blind-spots/blind-spot-review.ts",
+  "packages/shared/lib/blind-spots/blind-spot-ranking.ts",
+  "packages/shared/lib/insights/insight-ingredient-optimizer.ts",
 ];
 for (const rel of [
-  "lib/founder-test/founder-test-storage.ts",
-  "lib/founder-test/founder-test-report.ts",
-  "components/internal/FounderTestPanel.tsx",
+  "packages/shared/lib/founder-test/founder-test-storage.ts",
+  "packages/shared/lib/founder-test/founder-test-report.ts",
+  "apps/web/components/internal/FounderTestPanel.tsx",
 ]) {
   const src = fs.readFileSync(path.join(ROOT, rel), "utf8");
   for (const eng of forbiddenEngine) {
@@ -274,7 +274,7 @@ for (const rel of [
   }
 }
 
-const publicPaths = ["app/page.tsx", "components/SiteHeader.tsx", "app/layout.tsx"];
+const publicPaths = ["apps/web/app/page.tsx", "apps/web/components/SiteHeader.tsx", "apps/web/app/layout.tsx"];
 for (const rel of publicPaths) {
   const full = path.join(ROOT, rel);
   if (fs.existsSync(full)) {
@@ -288,7 +288,7 @@ for (const rel of publicPaths) {
 const FORBIDDEN =
   /\b(diagnos|disorder|patholog|clinical|therapy|counsel|coach|treatment|you are always|guaranteed)\b/i;
 const checklistSrc = fs.readFileSync(
-  path.join(ROOT, "lib/founder-test/founder-test-checklist.ts"),
+  path.join(ROOT, "packages/shared/lib/founder-test/founder-test-checklist.ts"),
   "utf8",
 );
 if (FORBIDDEN.test(checklistSrc)) fail("checklist copy must avoid forbidden framing");

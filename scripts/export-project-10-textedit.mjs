@@ -185,7 +185,7 @@ function redactContent(text, relPath) {
 function shouldSkipDir(name, parentRel = "") {
   if (name.startsWith(".") && name !== ".well-known") return true;
   if (SKIP_DIR_NAMES.has(name)) return true;
-  if (name === "build" && /voicememory_mobile\/(android|ios)\//.test(parentRel)) {
+  if (name === "build" && /apps\/mobile\/(android|ios)\//.test(parentRel)) {
     return true;
   }
   if (name === "gradle" && parentRel.includes("android/.gradle")) return true;
@@ -229,12 +229,12 @@ function classifyFile(rel) {
   const p = rel.replace(/\\/g, "/");
 
   if (/\.dart$/i.test(p)) return "09";
-  if (p.startsWith("apps/voicememory_mobile/ios/")) {
+  if (p.startsWith("apps/mobile/ios/")) {
     if (/\.(png|jpg|jpeg|gif|ico|webp|storyboard|xcassets)$/i.test(p)) return null;
     if (/\.(plist|gradle|kts|xml|properties|swift|kt|md|yaml|yml|json)$/i.test(p)) return "09";
     return null;
   }
-  if (p.startsWith("apps/voicememory_mobile/android/")) {
+  if (p.startsWith("apps/mobile/android/")) {
     if (/\.(png|jpg|jpeg|gif|ico|webp)$/i.test(p)) return null;
     if (
       /\.(gradle|kts|xml|properties|kt|md|yaml|yml|json|pro)$/i.test(p) ||
@@ -244,56 +244,56 @@ function classifyFile(rel) {
     }
     return null;
   }
-  if (p === "apps/voicememory_mobile/pubspec.yaml") return "09";
+  if (p === "apps/mobile/pubspec.yaml") return "09";
 
   if (p.startsWith("scripts/") || p.startsWith("e2e/") || /^playwright/i.test(p)) return "08";
   if (p === "package.json") return "08";
 
   if (
-    p.startsWith("app/api/") ||
-    p.startsWith("lib/server/") ||
-    p.startsWith("lib/auth/") ||
-    p.startsWith("components/auth/") ||
-    p.startsWith("types/auth")
+    p.startsWith("apps/api/app/api/") ||
+    p.startsWith("packages/shared/lib/server/") ||
+    p.startsWith("packages/shared/lib/auth/") ||
+    p.startsWith("apps/web/components/auth/") ||
+    p.startsWith("packages/shared/types/auth")
   ) {
     return "07";
   }
   if (
-    p.startsWith("lib/persistence/") ||
-    p.startsWith("lib/proof/") ||
-    p.startsWith("lib/reliability/")
+    p.startsWith("packages/shared/lib/persistence/") ||
+    p.startsWith("packages/shared/lib/proof/") ||
+    p.startsWith("packages/shared/lib/reliability/")
   ) {
     return "07";
   }
 
   if (
-    p.startsWith("lib/billing/") ||
-    p.startsWith("lib/entitlement/") ||
-    p === "lib/subscription.ts" ||
-    p.startsWith("lib/monetization/") ||
-    p.startsWith("components/billing/") ||
-    p.startsWith("app/pricing/")
+    p.startsWith("packages/shared/lib/billing/") ||
+    p.startsWith("packages/shared/lib/entitlement/") ||
+    p === "packages/shared/lib/subscription.ts" ||
+    p.startsWith("packages/shared/lib/monetization/") ||
+    p.startsWith("apps/web/components/billing/") ||
+    p.startsWith("apps/web/app/pricing/")
   ) {
     return "06";
   }
 
   if (
-    p.startsWith("lib/blind-spots/") ||
-    p.startsWith("components/blind-spots/") ||
+    p.startsWith("packages/shared/lib/blind-spots/") ||
+    p.startsWith("apps/web/components/blind-spots/") ||
     /^types\/blind-spot/i.test(p) ||
-    p.startsWith("lib/pattern-detection/") ||
-    p.startsWith("lib/insights/insight-ingredient") ||
-    p.startsWith("lib/insights/insight-scorecard") ||
-    p.startsWith("lib/insights/self-recognition")
+    p.startsWith("packages/shared/lib/pattern-detection/") ||
+    p.startsWith("packages/shared/lib/insights/insight-ingredient") ||
+    p.startsWith("packages/shared/lib/insights/insight-scorecard") ||
+    p.startsWith("packages/shared/lib/insights/self-recognition")
   ) {
     return "03";
   }
 
   if (
-    p.startsWith("lib/discover/") ||
-    p.startsWith("lib/theories/") ||
-    p.startsWith("components/discover/") ||
-    p.startsWith("components/theories/") ||
+    p.startsWith("packages/shared/lib/discover/") ||
+    p.startsWith("packages/shared/lib/theories/") ||
+    p.startsWith("apps/web/components/discover/") ||
+    p.startsWith("apps/web/components/theories/") ||
     /^types\/theory/i.test(p) ||
     /^types\/evidence-feed/i.test(p)
   ) {
@@ -301,68 +301,68 @@ function classifyFile(rel) {
   }
 
   if (
-    p.startsWith("app/archive-belief/") ||
-    p.startsWith("app/export/") ||
-    p.startsWith("app/account/") ||
-    p.startsWith("app/internal/archive-belief") ||
-    p.startsWith("app/internal/auth-value") ||
-    p.startsWith("components/archive/") ||
-    p.startsWith("lib/archive/") ||
-    p.startsWith("types/archive-worth") ||
-    p.startsWith("types/evidence-locker") ||
-    p.startsWith("types/belief-dossier") ||
-    p.startsWith("types/evidence-search") ||
-    p.startsWith("lib/memory-export") ||
-    p === "lib/memory-export.ts" ||
-    p.startsWith("lib/product/archive-value") ||
-    p.startsWith("lib/product/activation") ||
-    p.startsWith("lib/product/first-blind-spot") ||
-    p.startsWith("lib/product/pattern-activation") ||
-    p.startsWith("lib/product/product-clarity") ||
-    p.startsWith("lib/product/returning-home") ||
-    p.startsWith("lib/founder-test/") ||
-    p.startsWith("lib/breakthrough/") ||
-    p.startsWith("lib/retention/") ||
-    p.startsWith("lib/onboarding/") ||
-    p.startsWith("components/product/") ||
-    p.startsWith("components/internal/") ||
-    p.startsWith("components/retention/") ||
-    p.startsWith("app/internal/retention") ||
-    p.startsWith("app/internal/founder-test") ||
-    p.startsWith("app/debug/retention") ||
-    p.startsWith("lib/insights/insight-outcome") ||
+    p.startsWith("apps/web/app/archive-belief/") ||
+    p.startsWith("apps/web/app/export/") ||
+    p.startsWith("apps/web/app/account/") ||
+    p.startsWith("apps/web/app/internal/archive-belief") ||
+    p.startsWith("apps/web/app/internal/auth-value") ||
+    p.startsWith("apps/web/components/archive/") ||
+    p.startsWith("packages/shared/lib/archive/") ||
+    p.startsWith("packages/shared/types/archive-worth") ||
+    p.startsWith("packages/shared/types/evidence-locker") ||
+    p.startsWith("packages/shared/types/belief-dossier") ||
+    p.startsWith("packages/shared/types/evidence-search") ||
+    p.startsWith("packages/shared/lib/memory-export") ||
+    p === "packages/shared/lib/memory-export.ts" ||
+    p.startsWith("packages/shared/lib/product/archive-value") ||
+    p.startsWith("packages/shared/lib/product/activation") ||
+    p.startsWith("packages/shared/lib/product/first-blind-spot") ||
+    p.startsWith("packages/shared/lib/product/pattern-activation") ||
+    p.startsWith("packages/shared/lib/product/product-clarity") ||
+    p.startsWith("packages/shared/lib/product/returning-home") ||
+    p.startsWith("packages/shared/lib/founder-test/") ||
+    p.startsWith("packages/shared/lib/breakthrough/") ||
+    p.startsWith("packages/shared/lib/retention/") ||
+    p.startsWith("packages/shared/lib/onboarding/") ||
+    p.startsWith("apps/web/components/product/") ||
+    p.startsWith("apps/web/components/internal/") ||
+    p.startsWith("apps/web/components/retention/") ||
+    p.startsWith("apps/web/app/internal/retention") ||
+    p.startsWith("apps/web/app/internal/founder-test") ||
+    p.startsWith("apps/web/app/debug/retention") ||
+    p.startsWith("packages/shared/lib/insights/insight-outcome") ||
     /^types\/(retention|founder-test|archive-value|onboarding)/i.test(p)
   ) {
     return "05";
   }
 
   if (
-    p === "app/page.tsx" ||
-    p.startsWith("app/memory/") ||
-    p.startsWith("app/discover/") ||
-    p.startsWith("app/blind-spots/") ||
-    p.startsWith("app/theories/") ||
-    p.startsWith("app/updates/") ||
-    p.startsWith("app/record/") ||
-    p.startsWith("app/entry/") ||
-    p.startsWith("app/welcome/") ||
-    p.startsWith("components/Recorder.tsx") ||
-    p.startsWith("components/ActivationOnboarding") ||
-    p.startsWith("components/memory/") ||
-    p.startsWith("components/layout/") ||
-    p.startsWith("components/motion/") ||
-    p.startsWith("components/ui/") ||
-    p.startsWith("components/system/") ||
-    p.startsWith("components/SiteHeader") ||
-    p.startsWith("lib/product-copy") ||
-    p.startsWith("lib/tester-onboarding") ||
-    p.startsWith("lib/activation-guidance")
+    p === "apps/web/app/page.tsx" ||
+    p.startsWith("apps/web/app/memory/") ||
+    p.startsWith("apps/web/app/discover/") ||
+    p.startsWith("apps/web/app/blind-spots/") ||
+    p.startsWith("apps/web/app/theories/") ||
+    p.startsWith("apps/web/app/updates/") ||
+    p.startsWith("apps/web/app/record/") ||
+    p.startsWith("apps/web/app/entry/") ||
+    p.startsWith("apps/web/app/welcome/") ||
+    p.startsWith("apps/web/components/Recorder.tsx") ||
+    p.startsWith("apps/web/components/ActivationOnboarding") ||
+    p.startsWith("apps/web/components/memory/") ||
+    p.startsWith("apps/web/components/layout/") ||
+    p.startsWith("apps/web/components/motion/") ||
+    p.startsWith("apps/web/components/ui/") ||
+    p.startsWith("apps/web/components/system/") ||
+    p.startsWith("apps/web/components/SiteHeader") ||
+    p.startsWith("packages/shared/lib/product-copy") ||
+    p.startsWith("packages/shared/lib/tester-onboarding") ||
+    p.startsWith("packages/shared/lib/activation-guidance")
   ) {
     return "02";
   }
 
   if (
-    p.startsWith("app/") &&
+    p.startsWith("apps/web/app/") &&
     (p.endsWith("/page.tsx") ||
       p.endsWith("/layout.tsx") ||
       p.endsWith("/loading.tsx") ||
@@ -371,8 +371,8 @@ function classifyFile(rel) {
     return "01";
   }
   if (
-    p.startsWith("lib/product/") ||
-    p.startsWith("lib/marketing/") ||
+    p.startsWith("packages/shared/lib/product/") ||
+    p.startsWith("packages/shared/lib/marketing/") ||
     p === "AGENTS.md" ||
     p === "CLAUDE.md" ||
     p.startsWith("docs/")
@@ -380,11 +380,11 @@ function classifyFile(rel) {
     return "01";
   }
 
-  if (p.startsWith("components/") && !p.startsWith("components/internal/")) return "02";
-  if (p.startsWith("lib/sync/")) return "07";
-  if (p.startsWith("app/api/")) return "07";
+  if (p.startsWith("apps/web/components/") && !p.startsWith("apps/web/components/internal/")) return "02";
+  if (p.startsWith("packages/shared/lib/sync/")) return "07";
+  if (p.startsWith("apps/api/app/api/")) return "07";
 
-  if (p.startsWith("types/")) {
+  if (p.startsWith("packages/shared/types/")) {
     if (/blind-spot/i.test(p)) return "03";
     if (/theory|evidence/i.test(p)) return "04";
     if (/entitlement|monetization/i.test(p)) return "06";
@@ -394,15 +394,15 @@ function classifyFile(rel) {
     return "02";
   }
 
-  if (p.startsWith("lib/refinement/") || p.startsWith("lib/resurfacing/")) return "05";
-  if (p.startsWith("lib/insights/")) return "03";
-  if (p.startsWith("lib/storage.ts") || p === "lib/storage.ts") return "07";
-  if (p.startsWith("lib/local-analytics")) return "05";
-  if (p.startsWith("lib/internal/")) return "05";
-  if (p.startsWith("lib/metrics/")) return "05";
-  if (p.startsWith("lib/")) return "02";
-  if (p.startsWith("app/")) return "01";
-  if (p.startsWith("components/")) return "02";
+  if (p.startsWith("packages/shared/lib/refinement/") || p.startsWith("packages/shared/lib/resurfacing/")) return "05";
+  if (p.startsWith("packages/shared/lib/insights/")) return "03";
+  if (p.startsWith("packages/shared/lib/storage.ts") || p === "packages/shared/lib/storage.ts") return "07";
+  if (p.startsWith("packages/shared/lib/local-analytics")) return "05";
+  if (p.startsWith("packages/shared/lib/internal/")) return "05";
+  if (p.startsWith("packages/shared/lib/metrics/")) return "05";
+  if (p.startsWith("packages/shared/lib/")) return "02";
+  if (p.startsWith("apps/web/app/")) return "01";
+  if (p.startsWith("apps/web/components/")) return "02";
   if (p.startsWith("public/")) return "02";
   if (p.startsWith("supabase/")) return "07";
   if (/^(middleware|next\.config|tsconfig|tailwind|postcss|vercel|capacitor|components\.json)/i.test(p)) {
@@ -672,7 +672,7 @@ ${routeIndex.internalRoutes.map((r) => `  ${r}`).join("\n")}
 
 API ROUTES (app/api)
 ${allFiles
-  .filter((f) => f.startsWith("app/api/") && f.endsWith("/route.ts"))
+  .filter((f) => f.startsWith("apps/api/app/api/") && f.endsWith("/route.ts"))
   .map((f) => `  /api/${f.replace(/^app\/api\//, "").replace(/\/route\.ts$/, "")}`)
   .join("\n")}
 `;

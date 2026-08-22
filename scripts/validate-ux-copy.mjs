@@ -7,17 +7,17 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const failures = [];
 
 const PRIMARY_ROUTES = [
-  "app/page.tsx",
-  "app/journal/page.tsx",
-  "app/memory/page.tsx",
-  "app/pricing/page.tsx",
-  "app/account/page.tsx",
-  "app/export/page.tsx",
-  "app/threads/page.tsx",
-  "components/capture/RecordCaptureChrome.tsx",
-  "components/continuity/FirstReturnMoment.tsx",
-  "components/system/MemoryConfidence.tsx",
-  "components/entry/EntryPrimaryCallback.tsx",
+  "apps/web/app/page.tsx",
+  "apps/web/app/journal/page.tsx",
+  "apps/web/app/memory/page.tsx",
+  "apps/web/app/pricing/page.tsx",
+  "apps/web/app/account/page.tsx",
+  "apps/web/app/export/page.tsx",
+  "apps/web/app/threads/page.tsx",
+  "apps/web/components/capture/RecordCaptureChrome.tsx",
+  "apps/web/components/continuity/FirstReturnMoment.tsx",
+  "apps/web/components/system/MemoryConfidence.tsx",
+  "apps/web/components/entry/EntryPrimaryCallback.tsx",
 ];
 
 const BANNED = [
@@ -37,14 +37,14 @@ const BANNED = [
 ];
 
 const REQUIRED_TRUST = [
-  { file: "components/pricing/PricingStaticShell.tsx", pattern: /Free/ },
-  { file: "components/pricing/PricingStaticShell.tsx", pattern: /Pro/ },
-  { file: "components/pricing/PricingStaticShell.tsx", pattern: /Checkout unavailable|Checkout available/ },
-  { file: "components/system/MemoryConfidence.tsx", pattern: /Not me/ },
-  { file: "components/system/MemoryConfidence.tsx", pattern: /That fits/ },
-  { file: "components/system/MemoryConfidence.tsx", pattern: /Why this surfaced/ },
-  { file: "components/capture/RecordCaptureChrome.tsx", pattern: /PrivacyNotice/ },
-  { file: "components/entry/EntryPrimaryCallback.tsx", pattern: /MemoryConfidence/ },
+  { file: "apps/web/components/pricing/PricingStaticShell.tsx", pattern: /Free/ },
+  { file: "apps/web/components/pricing/PricingStaticShell.tsx", pattern: /Pro/ },
+  { file: "apps/web/components/pricing/PricingStaticShell.tsx", pattern: /Checkout unavailable|Checkout available/ },
+  { file: "apps/web/components/system/MemoryConfidence.tsx", pattern: /Not me/ },
+  { file: "apps/web/components/system/MemoryConfidence.tsx", pattern: /That fits/ },
+  { file: "apps/web/components/system/MemoryConfidence.tsx", pattern: /Why this surfaced/ },
+  { file: "apps/web/components/capture/RecordCaptureChrome.tsx", pattern: /PrivacyNotice/ },
+  { file: "apps/web/components/entry/EntryPrimaryCallback.tsx", pattern: /MemoryConfidence/ },
 ];
 
 for (const rel of PRIMARY_ROUTES) {

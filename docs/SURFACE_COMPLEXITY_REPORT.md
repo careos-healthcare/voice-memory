@@ -1,6 +1,6 @@
 # Surface complexity report
 
-Generated: 2026-05-30T15:15:32.933Z
+Generated: 2026-08-22T17:26:24.730Z
 
 Automated recommendations only — no routes or engines removed.
 
@@ -10,34 +10,34 @@ Verdict: **HIDE**
 
 KEEP command center + archive-belief; MERGE card into home; HIDE redundant banners on archive-belief
 
-Files (41):
+Files (50):
 
-- app/archive-belief/page.tsx
-- app/blind-spots/page.tsx
-- app/entry/[id]/page.tsx
-- app/internal/archive-belief/page.tsx
-- app/page.tsx
-- components/Recorder.tsx
-- components/archive/ArchiveBeliefCard.tsx
-- components/archive/ArchiveCommandCenter.tsx
-- components/archive/EvidenceArchiveHome.tsx
-- components/product/ArchiveValueBanner.tsx
-- lib/archive/archive-voice-scopes.ts
-- lib/internal/archive-experience-report.ts
-- lib/product/archive-surface-ownership.ts
-- lib/product/archive-value-metrics.ts
-- lib/product/archive-value-progress.ts
+- apps/web/archived-components/_archived/archive/ArchiveBeliefCard.tsx
+- apps/web/archived-components/_archived/archive/ArchiveCommandCenter.tsx
+- apps/web/archived-components/_archived/archive/EvidenceArchiveHome.tsx
+- apps/web/archived-components/_archived/product/ArchiveValueBanner.tsx
+- apps/web/archived-consumer-routes/_archived/archive-belief/page.tsx
+- apps/web/archived-consumer-routes/_archived/blind-spots/page.tsx
+- apps/web/archived-consumer-routes/_archived/entry/[id]/page.tsx
+- apps/web/archived-consumer-routes/internal/archive-belief/page.tsx
+- packages/shared/lib/archive/archive-progress-copy.ts
+- packages/shared/lib/archive/archive-voice-scopes.ts
+- packages/shared/lib/product/archive-surface-ownership.ts
+- packages/shared/lib/product/archive-value-metrics.ts
+- packages/shared/lib/product/archive-value-progress.ts
+- scripts/deferred_v2_insight_science/validate-archive-emotional-elegance.mjs
+- scripts/deferred_v2_insight_science/validate-archive-value-deepening.mjs
+- scripts/deferred_v2_insight_science/validate-archive-value-progress.mjs
+- scripts/deferred_v2_insight_science/validate-premium-polish.mjs
+- scripts/export-app20.mjs
+- scripts/export-app21.mjs
 - scripts/export-project-10-textedit.mjs
 - scripts/validate-archive-accuracy.mjs
 - scripts/validate-archive-as-product.mjs
+- scripts/validate-archive-attachment.mjs
 - scripts/validate-archive-belief-centrality.mjs
 - scripts/validate-archive-belief-system.mjs
-- scripts/validate-archive-clarity-momentum.mjs
-- scripts/validate-archive-emotional-elegance.mjs
-- scripts/validate-archive-experience.mjs
-- scripts/validate-archive-language.mjs
-- scripts/validate-archive-os.mjs
-- … and 16 more
+- … and 25 more
 
 ## Theory / belief surfaces
 
@@ -47,31 +47,31 @@ KEEP dossier on archive + discover feed; HIDE theories list behind Account > Mor
 
 Files (69):
 
-- app/discover/page.tsx
-- app/theories/page.tsx
-- components/archive/BeliefDossier.tsx
-- components/archive/BeliefDossierCompactLink.tsx
-- components/archive/EvidenceArchiveHome.tsx
-- components/discover/TheoryChangeFeed.tsx
-- components/theories/EvidenceBuildingCard.tsx
-- components/theories/EvolvingViewCard.tsx
-- components/theories/TheoriesView.tsx
-- components/theories/TheoryCard.tsx
-- components/theories/TheoryConfidenceMovement.tsx
-- components/theories/TheoryCuriosityPrompt.tsx
-- components/theories/TheoryNotificationCard.tsx
-- components/theories/TheoryUnderReviewPanel.tsx
-- components/theories/TheoryUpdatesNav.tsx
-- lib/archive/archive-export-attachment.ts
-- lib/archive/archive-export-preview.ts
-- lib/archive/belief-dossier.ts
-- lib/product/archive-belief-justification.ts
-- lib/product/archive-feature-justification.ts
-- lib/product/archive-surface-ownership.ts
-- lib/reliability/archive-value-deepening-tests.ts
-- lib/theories/evolving-view-snapshot.ts
-- lib/theories/notification-effectiveness.ts
-- lib/theories/personal-theory-copy.ts
+- apps/web/archived-components/_archived/archive/BeliefDossier.tsx
+- apps/web/archived-components/_archived/archive/BeliefDossierCompactLink.tsx
+- apps/web/archived-components/_archived/discover/TheoryChangeFeed.tsx
+- apps/web/archived-components/_archived/theories/EvidenceBuildingCard.tsx
+- apps/web/archived-components/_archived/theories/EvolvingViewCard.tsx
+- apps/web/archived-components/_archived/theories/TheoriesView.tsx
+- apps/web/archived-components/_archived/theories/TheoryCard.tsx
+- apps/web/archived-components/_archived/theories/TheoryConfidenceMovement.tsx
+- apps/web/archived-components/_archived/theories/TheoryCuriosityPrompt.tsx
+- apps/web/archived-components/_archived/theories/TheoryNotificationCard.tsx
+- apps/web/archived-components/_archived/theories/TheoryUnderReviewPanel.tsx
+- apps/web/archived-components/_archived/theories/TheoryUpdatesNav.tsx
+- apps/web/archived-consumer-routes/_archived/theories/page.tsx
+- packages/shared/lib/archive/archive-export-attachment.ts
+- packages/shared/lib/archive/archive-export-preview.ts
+- packages/shared/lib/archive/belief-dossier.ts
+- packages/shared/lib/product/archive-belief-justification.ts
+- packages/shared/lib/product/archive-feature-justification.ts
+- packages/shared/lib/product/archive-surface-ownership.ts
+- packages/shared/lib/reliability/archive-value-deepening-tests.ts
+- packages/shared/lib/theories/evolving-view-snapshot.ts
+- packages/shared/lib/theories/notification-effectiveness.ts
+- packages/shared/lib/theories/personal-theory-copy.ts
+- packages/shared/lib/theories/personal-theory-map.ts
+- packages/shared/lib/theories/personal-theory-status.ts
 - … and 44 more
 
 ## Reflection surfaces
@@ -80,34 +80,34 @@ Verdict: **HIDE**
 
 KEEP Reflection Log (/memory); HIDE journal behind Account > More
 
-Files (103):
+Files (87):
 
-- app/api/journal/[id]/route.ts
-- app/api/journal/export/route.ts
-- app/api/journal/route.ts
-- app/bookmarks/page.tsx
-- app/entry/[id]/page.tsx
-- app/insights/page.tsx
-- app/journal/page.tsx
-- app/memory/page.tsx
-- app/monthly/page.tsx
-- app/open-loops/page.tsx
-- app/page.tsx
-- app/reminders/page.tsx
-- app/search/page.tsx
-- app/seasons/page.tsx
-- app/territories/page.tsx
-- app/threads/[slug]/page.tsx
-- app/threads/page.tsx
-- app/timeline/page.tsx
-- app/weekly/page.tsx
-- components/archive/ReflectionLogPanel.tsx
-- components/continuity/ReturnThreadCard.tsx
-- components/homepage/MobileReturningHome.tsx
-- components/journal/JournalArchiveRow.tsx
-- components/journal/JournalSyncStatus.tsx
-- components/memory/AnticipatoryEmptyState.tsx
-- … and 78 more
+- apps/api/app/api/journal/[id]/route.ts
+- apps/api/app/api/journal/export/route.ts
+- apps/api/app/api/journal/route.ts
+- apps/web/archived-components/_archived/journal/JournalArchiveRow.tsx
+- apps/web/archived-components/_archived/journal/JournalSyncStatus.tsx
+- apps/web/archived-components/_archived/memory/AnticipatoryEmptyState.tsx
+- apps/web/archived-components/_archived/memory/ArchiveGravityNote.tsx
+- apps/web/archived-components/_archived/memory/ArchiveLandmarkNote.tsx
+- apps/web/archived-components/_archived/memory/ContinuityDepthNote.tsx
+- apps/web/archived-components/_archived/memory/ConversationThreadSection.tsx
+- apps/web/archived-components/_archived/memory/CopyMemoryMomentButton.tsx
+- apps/web/archived-components/_archived/memory/EmotionalChapterNote.tsx
+- apps/web/archived-components/_archived/memory/EntityMemorySection.tsx
+- apps/web/archived-components/_archived/memory/EntryListRowMeta.tsx
+- apps/web/archived-components/_archived/memory/LivingResurfacingNote.tsx
+- apps/web/archived-components/_archived/memory/MemoryContinuitySection.tsx
+- apps/web/archived-components/_archived/memory/MemoryReminderNote.tsx
+- apps/web/archived-components/_archived/memory/MemorySeasonSection.tsx
+- apps/web/archived-components/_archived/memory/MilestoneNotes.tsx
+- apps/web/archived-components/_archived/memory/PrimaryCallbackNote.tsx
+- apps/web/archived-components/_archived/memory/ReflectionBookmarkList.tsx
+- apps/web/archived-components/_archived/memory/ReflectionBookmarkMark.tsx
+- apps/web/archived-components/_archived/memory/RelationshipContinuityNotes.tsx
+- apps/web/archived-components/_archived/memory/RevisitRhythmNote.tsx
+- apps/web/archived-components/_archived/memory/ShareMemoryCardButton.tsx
+- … and 62 more
 
 ## Insight / blind spot surfaces
 
@@ -115,31 +115,31 @@ Verdict: **HIDE**
 
 KEEP Archive Insight (/blind-spots); HIDE legacy /insights behind More
 
-Files (99):
+Files (110):
 
-- app/blind-spots/page.tsx
-- app/insights/page.tsx
-- app/internal/blind-spot-discovery/page.tsx
-- app/theories/page.tsx
-- app/updates/page.tsx
-- components/archive/EvidenceArchiveHome.tsx
-- components/blind-spots/BlindSpotAccelerationView.tsx
-- components/blind-spots/BlindSpotExperimentFollowUpPrompt.tsx
-- components/blind-spots/BlindSpotExperimentFollowUpStack.tsx
-- components/blind-spots/BlindSpotExperimentSection.tsx
-- components/blind-spots/BlindSpotReview.tsx
-- components/blind-spots/BlindSpotReviewChangesSection.tsx
-- components/blind-spots/BlindSpotReviewCta.tsx
-- components/blind-spots/BreakthroughCapturePrompt.tsx
-- components/blind-spots/DelayedValidationPrompt.tsx
-- components/blind-spots/EmergingPatternsSection.tsx
-- components/blind-spots/EvidenceQualityBadge.tsx
-- components/blind-spots/MiniWowPanel.tsx
-- components/blind-spots/PredictionReviewSection.tsx
-- components/blind-spots/WhatHappensNextPanel.tsx
-- components/breakthrough/BreakthroughTrackingPrompt.tsx
-- components/insights/InsightOutcomePrompt.tsx
-- components/insights/InsightOutcomePromptStack.tsx
-- components/insights/InsightScorecardPanel.tsx
-- components/insights/IntensityTrendChart.tsx
-- … and 74 more
+- apps/api/app/api/insights/comparison/route.ts
+- apps/api/app/api/insights/corrections/route.ts
+- apps/api/app/api/insights/evidence/route.ts
+- apps/api/app/api/insights/weekly-story/route.ts
+- apps/api/lib/insights/comparison.ts
+- apps/api/lib/insights/corrections-store.ts
+- apps/api/lib/insights/generator.ts
+- apps/api/lib/insights/weekly_story.ts
+- apps/api/src/services/insights/comparison.ts
+- apps/api/src/services/insights/generator.ts
+- apps/api/src/services/insights/weekly_story.ts
+- apps/web/archived-components/_archived/blind-spots/BlindSpotAccelerationView.tsx
+- apps/web/archived-components/_archived/blind-spots/BlindSpotExperimentFollowUpPrompt.tsx
+- apps/web/archived-components/_archived/blind-spots/BlindSpotExperimentFollowUpStack.tsx
+- apps/web/archived-components/_archived/blind-spots/BlindSpotExperimentSection.tsx
+- apps/web/archived-components/_archived/blind-spots/BlindSpotReview.tsx
+- apps/web/archived-components/_archived/blind-spots/BlindSpotReviewChangesSection.tsx
+- apps/web/archived-components/_archived/blind-spots/BlindSpotReviewCta.tsx
+- apps/web/archived-components/_archived/blind-spots/BreakthroughCapturePrompt.tsx
+- apps/web/archived-components/_archived/blind-spots/DelayedValidationPrompt.tsx
+- apps/web/archived-components/_archived/blind-spots/EmergingPatternsSection.tsx
+- apps/web/archived-components/_archived/blind-spots/EvidenceQualityBadge.tsx
+- apps/web/archived-components/_archived/blind-spots/MiniWowPanel.tsx
+- apps/web/archived-components/_archived/blind-spots/PredictionReviewSection.tsx
+- apps/web/archived-components/_archived/blind-spots/WhatHappensNextPanel.tsx
+- … and 85 more

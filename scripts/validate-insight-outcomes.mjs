@@ -31,7 +31,7 @@ const FORBIDDEN =
 const {
   insightOutcomeEventFromBlindSpotReview,
   profileKeyForEvent,
-} = await import("../lib/insights/insight-outcome-attribution.ts");
+} = await import("../packages/shared/lib/insights/insight-outcome-attribution.ts");
 const {
   scheduleInsightOutcomeOffer,
   saveInsightOutcomeResponse,
@@ -40,9 +40,9 @@ const {
   clearInsightOutcomeForEval,
   readInsightOutcomeEventsWithResponse,
   OUTCOME_PROMPT_COOLDOWN_MS,
-} = await import("../lib/insights/insight-outcome-storage.ts");
-const { buildInsightOutcomeReport } = await import("../lib/insights/insight-outcome-report.ts");
-const { INSIGHT_OUTCOME_COPY } = await import("../lib/insights/insight-outcome-copy.ts");
+} = await import("../packages/shared/lib/insights/insight-outcome-storage.ts");
+const { buildInsightOutcomeReport } = await import("../packages/shared/lib/insights/insight-outcome-report.ts");
+const { INSIGHT_OUTCOME_COPY } = await import("../packages/shared/lib/insights/insight-outcome-copy.ts");
 
 const mockReview = {
   reviewId: "blind-spot:contradiction:test",
@@ -138,14 +138,14 @@ assert.ok(INSIGHT_OUTCOME_COPY.question.includes("What happened"));
 assert.ok(!FORBIDDEN.test(INSIGHT_OUTCOME_COPY.question));
 
 const discoverySrc = fs.readFileSync(
-  path.join(ROOT, "app/internal/blind-spot-discovery/page.tsx"),
+  path.join(ROOT, "apps/web/app/internal/blind-spot-discovery/page.tsx"),
   "utf8",
 );
 if (!discoverySrc.includes("InsightOutcomePanel")) {
   fail("blind-spot-discovery must wire InsightOutcomePanel");
 }
 const panelSrc = fs.readFileSync(
-  path.join(ROOT, "components/internal/InsightOutcomePanel.tsx"),
+  path.join(ROOT, "apps/web/components/internal/InsightOutcomePanel.tsx"),
   "utf8",
 );
 if (!panelSrc.includes("Behavior Change Outcomes")) {
@@ -153,14 +153,14 @@ if (!panelSrc.includes("Behavior Change Outcomes")) {
 }
 
 for (const rel of [
-  "components/insights/InsightOutcomePrompt.tsx",
-  "lib/insights/insight-outcome-report.ts",
-  "types/insight-outcome.ts",
+  "apps/web/components/insights/InsightOutcomePrompt.tsx",
+  "packages/shared/lib/insights/insight-outcome-report.ts",
+  "packages/shared/types/insight-outcome.ts",
 ]) {
   if (!fs.existsSync(path.join(ROOT, rel))) fail(`missing ${rel}`);
 }
 
-const reviewSrc = fs.readFileSync(path.join(ROOT, "components/blind-spots/BlindSpotReview.tsx"), "utf8");
+const reviewSrc = fs.readFileSync(path.join(ROOT, "apps/web/components/blind-spots/BlindSpotReview.tsx"), "utf8");
 if (!reviewSrc.includes("InsightOutcomePromptStack")) {
   fail("BlindSpotReview must wire outcome prompt");
 }

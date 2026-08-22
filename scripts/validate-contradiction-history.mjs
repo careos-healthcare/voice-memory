@@ -19,14 +19,14 @@ function mustExist(rel) {
 }
 
 const required = [
-  "types/contradiction-history.ts",
-  "lib/archive/contradiction-history.ts",
-  "components/archive/ArchiveContradictionHistory.tsx",
+  "packages/shared/types/contradiction-history.ts",
+  "packages/shared/lib/archive/contradiction-history.ts",
+  "apps/web/components/archive/ArchiveContradictionHistory.tsx",
 ];
 
 for (const rel of required) mustExist(rel);
 
-const lib = read("lib/archive/contradiction-history.ts");
+const lib = read("packages/shared/lib/archive/contradiction-history.ts");
 for (const phrase of [
   "CONTRADICTION_HISTORY_HEADLINE",
   "Your archive has changed its mind before.",
@@ -41,7 +41,7 @@ for (const phrase of [
   if (!lib.includes(phrase)) fail(`contradiction-history missing: ${phrase}`);
 }
 
-const component = read("components/archive/ArchiveContradictionHistory.tsx");
+const component = read("apps/web/components/archive/ArchiveContradictionHistory.tsx");
 for (const phrase of [
   'data-testid="archive-contradiction-history"',
   "buildContradictionHistoryView",
@@ -57,9 +57,9 @@ for (const phrase of [
 }
 
 const surfaces = [
-  ["components/archive/ArchiveCommandCenter.tsx", "Archive"],
-  ["components/archive/BeliefDossier.tsx", "Belief Dossier"],
-  ["app/discover/page.tsx", "Discover"],
+  ["apps/web/components/archive/ArchiveCommandCenter.tsx", "Archive"],
+  ["apps/web/components/archive/BeliefDossier.tsx", "Belief Dossier"],
+  ["apps/web/app/discover/page.tsx", "Discover"],
 ];
 
 for (const [file, label] of surfaces) {

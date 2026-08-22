@@ -5,7 +5,7 @@ set -euo pipefail
 
 SRC="${HOME}/Desktop/voice-memory"
 DEST="${HOME}/Developer/voice-memory"
-MOBILE="${DEST}/apps/voicememory_mobile"
+MOBILE="${DEST}/apps/mobile"
 
 echo "=== 1. Verify source ==="
 if [[ ! -d "${SRC}/.git" ]]; then

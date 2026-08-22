@@ -9,15 +9,15 @@ const failures = [];
 const fail = (msg) => failures.push(msg);
 
 const required = [
-  "types/return-trigger-attribution.ts",
-  "lib/retention/return-trigger-attribution-copy.ts",
-  "lib/retention/return-trigger-attribution.ts",
-  "lib/metrics/return-trigger-attribution-events.ts",
-  "lib/internal/return-trigger-attribution-report.ts",
-  "components/retention/ReturnTriggerReasonPrompt.tsx",
-  "components/retention/ReturnExpectationMetPrompt.tsx",
-  "components/internal/ReturnTriggerPanel.tsx",
-  "app/internal/return-trigger-attribution/page.tsx",
+  "packages/shared/types/return-trigger-attribution.ts",
+  "packages/shared/lib/retention/return-trigger-attribution-copy.ts",
+  "packages/shared/lib/retention/return-trigger-attribution.ts",
+  "packages/shared/lib/metrics/return-trigger-attribution-events.ts",
+  "packages/shared/lib/internal/return-trigger-attribution-report.ts",
+  "apps/web/components/retention/ReturnTriggerReasonPrompt.tsx",
+  "apps/web/components/retention/ReturnExpectationMetPrompt.tsx",
+  "apps/web/components/internal/ReturnTriggerPanel.tsx",
+  "apps/web/app/internal/return-trigger-attribution/page.tsx",
 ];
 
 for (const rel of required) {
@@ -25,7 +25,7 @@ for (const rel of required) {
 }
 
 const copy = fs.readFileSync(
-  path.join(ROOT, "lib/retention/return-trigger-attribution-copy.ts"),
+  path.join(ROOT, "packages/shared/lib/retention/return-trigger-attribution-copy.ts"),
   "utf8",
 );
 for (const phrase of [
@@ -38,7 +38,7 @@ for (const phrase of [
 }
 
 const events = fs.readFileSync(
-  path.join(ROOT, "lib/metrics/return-trigger-attribution-events.ts"),
+  path.join(ROOT, "packages/shared/lib/metrics/return-trigger-attribution-events.ts"),
   "utf8",
 );
 for (const name of ["return_trigger_reason", "return_expectation_met"]) {
@@ -46,7 +46,7 @@ for (const name of ["return_trigger_reason", "return_expectation_met"]) {
 }
 
 const reasonPrompt = fs.readFileSync(
-  path.join(ROOT, "components/retention/ReturnTriggerReasonPrompt.tsx"),
+  path.join(ROOT, "apps/web/components/retention/ReturnTriggerReasonPrompt.tsx"),
   "utf8",
 );
 if (!reasonPrompt.includes("saveReturnTriggerReason")) fail("reason prompt must save");
@@ -55,7 +55,7 @@ if (!reasonPrompt.includes('data-testid="return-trigger-reason-prompt"')) {
 }
 
 const expectationPrompt = fs.readFileSync(
-  path.join(ROOT, "components/retention/ReturnExpectationMetPrompt.tsx"),
+  path.join(ROOT, "apps/web/components/retention/ReturnExpectationMetPrompt.tsx"),
   "utf8",
 );
 if (!expectationPrompt.includes("saveReturnExpectationMet")) fail("expectation prompt must save");
@@ -64,30 +64,30 @@ if (!expectationPrompt.includes('data-testid="return-expectation-met-prompt"')) 
 }
 
 const panel = fs.readFileSync(
-  path.join(ROOT, "components/internal/ReturnTriggerPanel.tsx"),
+  path.join(ROOT, "apps/web/components/internal/ReturnTriggerPanel.tsx"),
   "utf8",
 );
 if (!panel.includes("criticalQuestion")) fail("panel must render criticalQuestion");
-if (!fs.readFileSync(path.join(ROOT, "lib/internal/return-trigger-attribution-report.ts"), "utf8").includes(
+if (!fs.readFileSync(path.join(ROOT, "packages/shared/lib/internal/return-trigger-attribution-report.ts"), "utf8").includes(
   "Why do people actually come back?",
 )) {
   fail("report must answer critical question");
 }
 
 const engine = fs.readFileSync(
-  path.join(ROOT, "lib/retention/return-trigger-attribution.ts"),
+  path.join(ROOT, "packages/shared/lib/retention/return-trigger-attribution.ts"),
   "utf8",
 );
 if (!engine.includes("MIN_RETURN_ATTRIBUTION_HOURS = 24")) {
   fail("must use 24h return threshold");
 }
 
-for (const rel of ["app/page.tsx", "app/discover/page.tsx", "components/discover/TheoryChangeFeed.tsx"]) {
+for (const rel of ["apps/web/app/page.tsx", "apps/web/app/discover/page.tsx", "apps/web/components/discover/TheoryChangeFeed.tsx"]) {
   const src = fs.readFileSync(path.join(ROOT, rel), "utf8");
   if (rel.includes("page.tsx") && rel.includes("discover") && !src.includes("ReturnExpectationMetPrompt")) {
     fail("discover page must render expectation prompt");
   }
-  if (rel === "app/page.tsx" && !src.includes("ReturnTriggerReasonPrompt")) {
+  if (rel === "apps/web/app/page.tsx" && !src.includes("ReturnTriggerReasonPrompt")) {
     fail("home must render reason prompt");
   }
   if (rel.includes("TheoryChangeFeed") && !src.includes("markReturnExpectationPromptEligible")) {
@@ -121,12 +121,12 @@ const {
   markReturnExpectationPromptEligible,
   shouldShowReturnExpectationPrompt,
   saveReturnExpectationMet,
-} = await import("../lib/retention/return-trigger-attribution.ts");
+} = await import("../packages/shared/lib/retention/return-trigger-attribution.ts");
 const { clearReturnTriggerAttributionEventsForEval } = await import(
-  "../lib/metrics/return-trigger-attribution-events.ts"
+  "../packages/shared/lib/metrics/return-trigger-attribution-events.ts"
 );
 const { buildReturnTriggerAttributionReport } = await import(
-  "../lib/internal/return-trigger-attribution-report.ts"
+  "../packages/shared/lib/internal/return-trigger-attribution-report.ts"
 );
 
 clearReturnTriggerAttributionForEval();

@@ -3,7 +3,7 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-MOBILE="$ROOT/apps/voicememory_mobile"
+MOBILE="$ROOT/apps/mobile"
 
 if [[ ! -d "$MOBILE" ]]; then
   echo "error: mobile app directory not found: $MOBILE" >&2
@@ -23,10 +23,10 @@ fi
 
 tracked=$(
   git -C "$ROOT" ls-files -- \
-    'apps/voicememory_mobile/*_journal.json' \
-    'apps/voicememory_mobile/*_prefs.json' \
-    'apps/voicememory_mobile/_journal.json' \
-    'apps/voicememory_mobile/_prefs.json' 2>/dev/null || true
+    'apps/mobile/*_journal.json' \
+    'apps/mobile/*_prefs.json' \
+    'apps/mobile/_journal.json' \
+    'apps/mobile/_prefs.json' 2>/dev/null || true
 )
 
 if [[ -n "$tracked" ]]; then

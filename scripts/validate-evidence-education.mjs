@@ -12,10 +12,10 @@ function fail(msg) {
 }
 
 const required = [
-  "lib/archive/evidence-education-copy.ts",
-  "lib/archive/evidence-education.ts",
-  "lib/metrics/evidence-education-events.ts",
-  "components/archive/WhyMoreEvidenceMatters.tsx",
+  "packages/shared/lib/archive/evidence-education-copy.ts",
+  "packages/shared/lib/archive/evidence-education.ts",
+  "packages/shared/lib/metrics/evidence-education-events.ts",
+  "apps/web/components/archive/WhyMoreEvidenceMatters.tsx",
 ];
 
 for (const rel of required) {
@@ -23,7 +23,7 @@ for (const rel of required) {
 }
 
 const copy = fs.readFileSync(
-  path.join(ROOT, "lib/archive/evidence-education-copy.ts"),
+  path.join(ROOT, "packages/shared/lib/archive/evidence-education-copy.ts"),
   "utf8",
 );
 for (const phrase of [
@@ -39,7 +39,7 @@ for (const phrase of [
 }
 
 const component = fs.readFileSync(
-  path.join(ROOT, "components/archive/WhyMoreEvidenceMatters.tsx"),
+  path.join(ROOT, "apps/web/components/archive/WhyMoreEvidenceMatters.tsx"),
   "utf8",
 );
 if (!component.includes("trackWhyEvidenceMattersSeen")) {
@@ -50,24 +50,24 @@ if (!component.includes('data-testid="why-more-evidence-matters"')) {
 }
 
 const events = fs.readFileSync(
-  path.join(ROOT, "lib/metrics/evidence-education-events.ts"),
+  path.join(ROOT, "packages/shared/lib/metrics/evidence-education-events.ts"),
   "utf8",
 );
 if (!events.includes("why_evidence_matters_seen")) fail("metric name missing");
 
-const engine = fs.readFileSync(path.join(ROOT, "lib/archive/evidence-education.ts"), "utf8");
+const engine = fs.readFileSync(path.join(ROOT, "packages/shared/lib/archive/evidence-education.ts"), "utf8");
 for (const n of [3, 4, 5, 6, 7]) {
   if (!engine.includes(String(n))) fail(`engine must include reflection count ${n}`);
 }
 
 const surfaces = [
-  "components/Recorder.tsx",
-  "app/memory/page.tsx",
-  "app/discover/page.tsx",
-  "app/blind-spots/page.tsx",
-  "app/theories/page.tsx",
-  "app/entry/[id]/page.tsx",
-  "app/updates/page.tsx",
+  "apps/web/components/Recorder.tsx",
+  "apps/web/app/memory/page.tsx",
+  "apps/web/app/discover/page.tsx",
+  "apps/web/app/blind-spots/page.tsx",
+  "apps/web/app/theories/page.tsx",
+  "apps/web/app/entry/[id]/page.tsx",
+  "apps/web/app/updates/page.tsx",
 ];
 for (const rel of surfaces) {
   const src = fs.readFileSync(path.join(ROOT, rel), "utf8");
@@ -91,18 +91,18 @@ globalThis.localStorage = {
 };
 
 const { clearTheorySnapshotsForEval, upsertTheorySnapshots } = await import(
-  "../lib/theories/theory-snapshots.ts"
+  "../packages/shared/lib/theories/theory-snapshots.ts"
 );
 const {
   buildEvidenceEducationVisibility,
   isEvidenceEducationReflectionCount,
-} = await import("../lib/archive/evidence-education.ts");
+} = await import("../packages/shared/lib/archive/evidence-education.ts");
 const {
   trackWhyEvidenceMattersSeen,
   countWhyEvidenceMattersSeen,
   WHY_EVIDENCE_MATTERS_SEEN,
-} = await import("../lib/metrics/evidence-education-events.ts");
-const { scanArchiveVoiceSource } = await import("../lib/archive/archive-voice.ts");
+} = await import("../packages/shared/lib/metrics/evidence-education-events.ts");
+const { scanArchiveVoiceSource } = await import("../packages/shared/lib/archive/archive-voice.ts");
 
 clearTheorySnapshotsForEval();
 

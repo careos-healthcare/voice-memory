@@ -7,7 +7,7 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const failures = [];
 
 const human = fs.readFileSync(
-  path.join(ROOT, "lib/product/human-continuity-ui.ts"),
+  path.join(ROOT, "packages/shared/lib/product/human-continuity-ui.ts"),
   "utf8",
 );
 if (!human.includes("sanitizeUserFacingObservation") || !human.includes("entryContinuitySnippet")) {
@@ -15,12 +15,12 @@ if (!human.includes("sanitizeUserFacingObservation") || !human.includes("entryCo
 }
 
 const bannedInProductUi = [
-  { file: "app/journal/page.tsx", patterns: [/reflection\.mood/, /emotionalIntensity\/10/, /<Badge[^>]*>\s*\{entry\.reflection\.mood/] },
-  { file: "components/memory/MemoryContinuitySection.tsx", patterns: [/reflection\.mood/, /REASON_LABELS.*mood/] },
-  { file: "components/insights/MemoryTimelineDashboard.tsx", patterns: [/Dominant mood/, /IntensityTrendChart/, /dominantMoods\.map/] },
-  { file: "components/InsightCard.tsx", patterns: [/Mood snapshot/, /reflection\.mood/] },
+  { file: "apps/web/app/journal/page.tsx", patterns: [/reflection\.mood/, /emotionalIntensity\/10/, /<Badge[^>]*>\s*\{entry\.reflection\.mood/] },
+  { file: "apps/web/components/memory/MemoryContinuitySection.tsx", patterns: [/reflection\.mood/, /REASON_LABELS.*mood/] },
+  { file: "apps/web/components/insights/MemoryTimelineDashboard.tsx", patterns: [/Dominant mood/, /IntensityTrendChart/, /dominantMoods\.map/] },
+  { file: "apps/web/components/InsightCard.tsx", patterns: [/Mood snapshot/, /reflection\.mood/] },
   {
-    file: "components/HabitLoopCard.tsx",
+    file: "apps/web/components/HabitLoopCard.tsx",
     patterns: [/Dominant mood/, /Avg intensity/, /avgIntensity\/10/, /Emotional intensity/],
   },
 ];
@@ -33,14 +33,14 @@ for (const { file, patterns } of bannedInProductUi) {
 }
 
 const insightDefaults = fs.readFileSync(
-  path.join(ROOT, "components/InsightCard.tsx"),
+  path.join(ROOT, "apps/web/components/InsightCard.tsx"),
   "utf8",
 );
 if (!insightDefaults.includes("calmMode = true")) {
   failures.push("InsightCard must default to calm, mood-free presentation");
 }
 
-const analyze = fs.readFileSync(path.join(ROOT, "app/api/analyze/route.ts"), "utf8");
+const analyze = fs.readFileSync(path.join(ROOT, "apps/api/app/api/analyze/route.ts"), "utf8");
 if (!analyze.includes("speaker expresses")) {
   failures.push("analyze route must ban speaker-expresses phrasing");
 }

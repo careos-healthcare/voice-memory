@@ -1,0 +1,261 @@
+00:00 +0: loading /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/focused_beta_billing_frozen_test.dart
+00:00 +0: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/focused_beta_billing_frozen_test.dart: focused beta billing capability is disabled in registry
+00:00 +1: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/focused_beta_billing_frozen_test.dart: production allowlist excludes billing screens and paid capability
+00:00 +2: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/focused_beta_billing_frozen_test.dart: billing routes are quarantined not allowlisted
+00:00 +3: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/focused_beta_billing_frozen_test.dart: release evidence pack excludes purchase proof when billing disabled
+00:00 +4: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/focused_beta_billing_frozen_test.dart: consumer production graph has no billing imports or CTAs
+00:00 +5: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/remote_processing_consent_gate_test.dart: consent granted: transcription and analysis proceed normally
+ARCHIVEME_REVENUECAT: configure started platform=unknown apiKeyPresent=false apiKeyPrefix=missing bundleId=com.voicememory.mobile
+RevenueCat: startup — platform=unknown
+RevenueCat: disabled — no API key (set REVENUECAT_UNKNOWN_API_KEY or REVENUECAT_API_KEY at build time)
+ARCHIVEME_REVENUECAT: configure finished success=false reason=api_key_missing
+00:00 +5: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/focused_beta_billing_frozen_test.dart: RevenueCat initialize is inert when billing capability disabled
+ARCHIVEME_REVENUECAT: configure started platform=unknown apiKeyPresent=false apiKeyPrefix=missing bundleId=com.voicememory.mobile
+RevenueCat: startup — platform=unknown
+RevenueCat: disabled — no API key (set REVENUECAT_UNKNOWN_API_KEY or REVENUECAT_API_KEY at build time)
+ARCHIVEME_REVENUECAT: configure finished success=false reason=api_key_missing
+00:00 +6: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/remote_processing_consent_gate_test.dart: consent granted: transcription and analysis proceed normally
+00:00 +7: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/remote_processing_consent_gate_test.dart: consent granted: transcription and analysis proceed normally
+00:00 +7: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/capture_pipeline_consent_boundary_test.dart: revoked transcription consent blocks provisional reconcile retries
+ARCHIVEME_REVENUECAT: configure started platform=unknown apiKeyPresent=false apiKeyPrefix=missing bundleId=com.voicememory.mobile
+RevenueCat: startup — platform=unknown
+RevenueCat: disabled — no API key (set REVENUECAT_UNKNOWN_API_KEY or REVENUECAT_API_KEY at build time)
+ARCHIVEME_REVENUECAT: configure finished success=false reason=api_key_missing
+00:00 +7: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/remote_processing_consent_gate_test.dart: consent granted: transcription and analysis proceed normally
+ARCHIVEME_LOG event=capture_audio_file severity=info category=capture exists=true bytes_bucket=lt_1kb
+ARCHIVEME_LOG event=capture_audio_file_detail severity=debug category=capture path=/var/folders/bq/drktr9xs3wq8lx4ncf90byv80000gn/T/vm_consent_gate_uupqbz/voice.m4a byte_length=1000
+ARCHIVEME_LOG event=transcription_mode severity=info category=transcription mode=server
+ARCHIVEME_LOG event=transcription_permission severity=info category=permission status=not_applicable
+ARCHIVEME_LOG event=transcription_started severity=info category=transcription success=true
+ARCHIVEME_LOG event=transcription_started_detail severity=debug category=transcription audio_path=/var/folders/bq/drktr9xs3wq8lx4ncf90byv80000gn/T/vm_consent_gate_uupqbz/voice.m4a
+ARCHIVEME_LOG event=transcription_success severity=info category=transcription success=true transcript_length_bucket=lt_256
+ARCHIVEME_LOG event=capture_transcript_lengths severity=info category=capture transcript_length_bucket=lt_256 body_length_bucket=lt_256 observation_length_bucket=zero exact_language_length_bucket=zero
+ProductAnalytics: dropped unregistered event — proof_admission_result
+ARCHIVEME_LOG event=capture_transcript_lengths severity=info category=capture transcript_length_bucket=lt_256 body_length_bucket=lt_256 observation_length_bucket=lt_256 exact_language_length_bucket=lt_256
+ARCHIVEME_LOG event=capture_presave_transcript severity=info category=capture transcript_length_bucket=lt_256
+beta_analytics:first_moment_saved_local {capture_kind: voice}
+analytics:first_moment_saved_local {capture_kind: voice}
+ProductAnalytics: dropped unregistered event — recording_created
+00:00 +7: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/capture_pipeline_consent_boundary_test.dart: revoked transcription consent blocks provisional reconcile retries
+beta_analytics:first_moment_saved_local {capture_kind: typed}
+analytics:first_moment_saved_local {capture_kind: typed}
+ProductAnalytics: dropped unregistered event — recording_created
+00:00 +7: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/remote_processing_consent_gate_test.dart: consent granted: transcription and analysis proceed normally
+[TELEMETRY][COGNITIVE_BASELINE] -> Event: cognitive_baseline_updated, Meta: {entry_id: MCEA4XZK10M52KZYZZK0R806VE, observation_count: 1, lexical_diversity: 1.0, cohesion_drift: 0.0, emotional_volatility: 0.008771929824561403}
+00:00 +7: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/capture_pipeline_consent_boundary_test.dart: revoked transcription consent blocks provisional reconcile retries
+[TELEMETRY][COGNITIVE_BASELINE] -> Event: cognitive_baseline_updated, Meta: {entry_id: entry-provisional, observation_count: 1, lexical_diversity: 1.0, cohesion_drift: 0.0, emotional_volatility: 0.0}
+00:00 +8: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/remote_processing_consent_gate_test.dart: consent granted: transcription and analysis proceed normally
+ARCHIVEME_LOG event=capture_persisted severity=info category=capture transcript_length_bucket=lt_256 body_length_bucket=lt_256 display_text_source=transcript
+ARCHIVEME_LOG event=capture_saved severity=info category=capture success=true display_text_length_bucket=lt_256
+ARCHIVEME_LOG event=capture_saved_detail severity=debug category=capture entry_id=MCEA4XZK10M52KZYZZK0R806VE
+ARCHIVEME_LOG event=capture_voice_transcript_present severity=info category=capture missing=false
+00:00 +9: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/remote_processing_consent_gate_test.dart: stamp-at-creation-time: a withdrawal that lands during the network round trip is reflected in what gets stamped, not the stale answer the earlier pre-call gate saw
+ARCHIVEME_REVENUECAT: configure started platform=unknown apiKeyPresent=false apiKeyPrefix=missing bundleId=com.voicememory.mobile
+RevenueCat: startup — platform=unknown
+RevenueCat: disabled — no API key (set REVENUECAT_UNKNOWN_API_KEY or REVENUECAT_API_KEY at build time)
+ARCHIVEME_REVENUECAT: configure finished success=false reason=api_key_missing
+ARCHIVEME_LOG event=capture_audio_file severity=info category=capture exists=true bytes_bucket=lt_1kb
+ARCHIVEME_LOG event=capture_audio_file_detail severity=debug category=capture path=/var/folders/bq/drktr9xs3wq8lx4ncf90byv80000gn/T/vm_consent_gate_SOFCru/voice.m4a byte_length=1000
+ARCHIVEME_LOG event=transcription_mode severity=info category=transcription mode=server
+ARCHIVEME_LOG event=transcription_permission severity=info category=permission status=not_applicable
+ARCHIVEME_LOG event=transcription_started severity=info category=transcription success=true
+ARCHIVEME_LOG event=transcription_started_detail severity=debug category=transcription audio_path=/var/folders/bq/drktr9xs3wq8lx4ncf90byv80000gn/T/vm_consent_gate_SOFCru/voice.m4a
+ARCHIVEME_LOG event=transcription_success severity=info category=transcription success=true transcript_length_bucket=lt_256
+ARCHIVEME_LOG event=capture_transcript_lengths severity=info category=capture transcript_length_bucket=lt_256 body_length_bucket=lt_256 observation_length_bucket=zero exact_language_length_bucket=zero
+ProductAnalytics: dropped unregistered event — proof_admission_result
+ARCHIVEME_LOG event=analysis_failed severity=error category=analysis success=false error_code=operation_failed
+ARCHIVEME_LOG event=capture_analysis_failed severity=error category=analysis success=false error_code=operation_failed
+ARCHIVEME_LOG event=capture_analysis_fallback severity=warn category=analysis error_code=operation_failed
+00:00 +10: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/remote_processing_consent_gate_test.dart: stamp-at-creation-time: a withdrawal that lands during the network round trip is reflected in what gets stamped, not the stale answer the earlier pre-call gate saw
+ARCHIVEME_LOG event=capture_analysis_fallback_detail severity=debug category=analysis audio_path=/var/folders/bq/drktr9xs3wq8lx4ncf90byv80000gn/T/vm_consent_gate_SOFCru/voice.m4a
+ARCHIVEME_LOG event=capture_presave_transcript severity=info category=capture transcript_length_bucket=lt_256
+00:00 +11: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/remote_processing_consent_gate_test.dart: stamp-at-creation-time: a withdrawal that lands during the network round trip is reflected in what gets stamped, not the stale answer the earlier pre-call gate saw
+beta_analytics:first_moment_saved_local {capture_kind: voice}
+analytics:first_moment_saved_local {capture_kind: voice}
+ProductAnalytics: dropped unregistered event — recording_created
+[TELEMETRY][COGNITIVE_BASELINE] -> Event: cognitive_baseline_updated, Meta: {entry_id: 9MEA4XZK10ZZ6ZV2VEA8DG2YYV, observation_count: 1, lexical_diversity: 1.0, cohesion_drift: 0.0, emotional_volatility: 0.008771929824561403}
+ARCHIVEME_LOG event=capture_persisted severity=info category=capture transcript_length_bucket=lt_256 body_length_bucket=lt_256 display_text_source=transcript
+ARCHIVEME_LOG event=capture_saved severity=info category=capture success=true display_text_length_bucket=lt_256
+ARCHIVEME_LOG event=capture_saved_detail severity=debug category=capture entry_id=9MEA4XZK10ZZ6ZV2VEA8DG2YYV
+ARCHIVEME_LOG event=capture_voice_transcript_present severity=info category=capture missing=false
+00:00 +12: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/security/remote_processing_consent_gate_test.dart: RemoteProcessingConsentGate partial grant permits only the granted purpose
+00:00 +13: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/remote_processing_consent_gate_test.dart: transcription consent is checked before postTranscribe (decline blocks network)
+ARCHIVEME_REVENUECAT: configure started platform=unknown apiKeyPresent=false apiKeyPrefix=missing bundleId=com.voicememory.mobile
+RevenueCat: startup — platform=unknown
+RevenueCat: disabled — no API key (set REVENUECAT_UNKNOWN_API_KEY or REVENUECAT_API_KEY at build time)
+ARCHIVEME_REVENUECAT: configure finished success=false reason=api_key_missing
+00:00 +14: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/remote_processing_consent_gate_test.dart: transcription consent is checked before postTranscribe (decline blocks network)
+00:00 +15: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/remote_processing_consent_gate_test.dart: transcription consent is checked before postTranscribe (decline blocks network)
+ARCHIVEME_LOG event=capture_audio_file severity=info category=capture exists=true bytes_bucket=lt_1kb
+ARCHIVEME_LOG event=capture_audio_file_detail severity=debug category=capture path=/var/folders/bq/drktr9xs3wq8lx4ncf90byv80000gn/T/vm_consent_gate_tfZkxi/voice.m4a byte_length=1000
+ARCHIVEME_LOG event=capture_api_guard_blocked severity=warn category=capture operation=transcribe error_code=remote_processing_consent_missing
+ARCHIVEME_LOG event=capture_transcription_fallback severity=warn category=transcription error_code=remote_processing_consent_missing
+ARCHIVEME_LOG event=capture_transcription_fallback_detail severity=debug category=transcription audio_path=/var/folders/bq/drktr9xs3wq8lx4ncf90byv80000gn/T/vm_consent_gate_tfZkxi/voice.m4a
+ARCHIVEME_LOG event=capture_presave_transcript severity=info category=capture transcript_length_bucket=zero
+beta_analytics:first_moment_saved_local {capture_kind: voice}
+analytics:first_moment_saved_local {capture_kind: voice}
+[TELEMETRY][COGNITIVE_BASELINE] -> Event: cognitive_baseline_updated, Meta: {entry_id: 6PEA4XZK10V7TVHFQN8SHYE35Y, observation_count: 1, lexical_diversity: 1.0, cohesion_drift: 0.0, emotional_volatility: 0.006802721088435374}
+ARCHIVEME_LOG event=capture_persisted severity=info category=capture transcript_length_bucket=lt_256 body_length_bucket=zero display_text_source=none
+ARCHIVEME_LOG event=capture_saved severity=info category=capture success=true display_text_length_bucket=zero
+ARCHIVEME_LOG event=capture_saved_detail severity=debug category=capture entry_id=6PEA4XZK10V7TVHFQN8SHYE35Y
+ARCHIVEME_LOG event=capture_voice_transcript_missing severity=warn category=capture missing=true
+00:00 +16: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/remote_processing_consent_gate_test.dart: transcription-only grant: audio is transcribed but reflection is not called
+ARCHIVEME_REVENUECAT: configure started platform=unknown apiKeyPresent=false apiKeyPrefix=missing bundleId=com.voicememory.mobile
+RevenueCat: startup — platform=unknown
+RevenueCat: disabled — no API key (set REVENUECAT_UNKNOWN_API_KEY or REVENUECAT_API_KEY at build time)
+ARCHIVEME_REVENUECAT: configure finished success=false reason=api_key_missing
+ARCHIVEME_LOG event=capture_audio_file severity=info category=capture exists=true bytes_bucket=lt_1kb
+ARCHIVEME_LOG event=capture_audio_file_detail severity=debug category=capture path=/var/folders/bq/drktr9xs3wq8lx4ncf90byv80000gn/T/vm_consent_gate_juaCuX/voice.m4a byte_length=1000
+ARCHIVEME_LOG event=transcription_mode severity=info category=transcription mode=server
+ARCHIVEME_LOG event=transcription_permission severity=info category=permission status=not_applicable
+ARCHIVEME_LOG event=transcription_started severity=info category=transcription success=true
+ARCHIVEME_LOG event=transcription_started_detail severity=debug category=transcription audio_path=/var/folders/bq/drktr9xs3wq8lx4ncf90byv80000gn/T/vm_consent_gate_juaCuX/voice.m4a
+ARCHIVEME_LOG event=transcription_success severity=info category=transcription success=true transcript_length_bucket=lt_256
+ARCHIVEME_LOG event=capture_transcript_lengths severity=info category=capture transcript_length_bucket=lt_256 body_length_bucket=lt_256 observation_length_bucket=zero exact_language_length_bucket=zero
+ARCHIVEME_LOG event=capture_api_guard_blocked severity=warn category=capture operation=analyze error_code=remote_processing_consent_missing
+ARCHIVEME_LOG event=analysis_failed severity=error category=analysis success=false error_code=remote_processing_consent_missing
+ARCHIVEME_LOG event=capture_analysis_failed severity=error category=analysis success=false error_code=remote_processing_consent_missing
+ARCHIVEME_LOG event=capture_analysis_fallback severity=warn category=analysis error_code=remote_processing_consent_missing
+ARCHIVEME_LOG event=capture_analysis_fallback_detail severity=debug category=analysis audio_path=/var/folders/bq/drktr9xs3wq8lx4ncf90byv80000gn/T/vm_consent_gate_juaCuX/voice.m4a
+ARCHIVEME_LOG event=capture_presave_transcript severity=info category=capture transcript_length_bucket=lt_256
+beta_analytics:first_moment_saved_local {capture_kind: voice}
+analytics:first_moment_saved_local {capture_kind: voice}
+ProductAnalytics: dropped unregistered event — recording_created
+[TELEMETRY][COGNITIVE_BASELINE] -> Event: cognitive_baseline_updated, Meta: {entry_id: QQEA4XZK100QBWT9A44792XZ06, observation_count: 1, lexical_diversity: 1.0, cohesion_drift: 0.0, emotional_volatility: 0.008771929824561403}
+ARCHIVEME_LOG event=capture_persisted severity=info category=capture transcript_length_bucket=lt_256 body_length_bucket=lt_256 display_text_source=transcript
+ARCHIVEME_LOG event=capture_saved severity=info category=capture success=true display_text_length_bucket=lt_256
+ARCHIVEME_LOG event=capture_saved_detail severity=debug category=capture entry_id=QQEA4XZK100QBWT9A44792XZ06
+ARCHIVEME_LOG event=capture_voice_transcript_present severity=info category=capture missing=false
+00:00 +17: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/remote_processing_consent_gate_test.dart: granted, then withdrawn: the next save makes zero network calls
+ARCHIVEME_REVENUECAT: configure started platform=unknown apiKeyPresent=false apiKeyPrefix=missing bundleId=com.voicememory.mobile
+RevenueCat: startup — platform=unknown
+RevenueCat: disabled — no API key (set REVENUECAT_UNKNOWN_API_KEY or REVENUECAT_API_KEY at build time)
+ARCHIVEME_REVENUECAT: configure finished success=false reason=api_key_missing
+ARCHIVEME_LOG event=capture_audio_file severity=info category=capture exists=true bytes_bucket=lt_1kb
+ARCHIVEME_LOG event=capture_audio_file_detail severity=debug category=capture path=/var/folders/bq/drktr9xs3wq8lx4ncf90byv80000gn/T/vm_consent_gate_Mg1G9j/voice.m4a byte_length=1000
+ARCHIVEME_LOG event=transcription_mode severity=info category=transcription mode=server
+ARCHIVEME_LOG event=transcription_permission severity=info category=permission status=not_applicable
+ARCHIVEME_LOG event=transcription_started severity=info category=transcription success=true
+ARCHIVEME_LOG event=transcription_started_detail severity=debug category=transcription audio_path=/var/folders/bq/drktr9xs3wq8lx4ncf90byv80000gn/T/vm_consent_gate_Mg1G9j/voice.m4a
+ARCHIVEME_LOG event=transcription_success severity=info category=transcription success=true transcript_length_bucket=lt_256
+ARCHIVEME_LOG event=capture_transcript_lengths severity=info category=capture transcript_length_bucket=lt_256 body_length_bucket=lt_256 observation_length_bucket=zero exact_language_length_bucket=zero
+ProductAnalytics: dropped unregistered event — proof_admission_result
+ARCHIVEME_LOG event=capture_transcript_lengths severity=info category=capture transcript_length_bucket=lt_256 body_length_bucket=lt_256 observation_length_bucket=lt_256 exact_language_length_bucket=lt_256
+00:01 +18: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/remote_processing_consent_gate_test.dart: saveTextThought is gated: declined consent saves locally with zero network calls
+00:01 +19: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/storage/mobile_prefs_policy_test.dart: beta-scoped stores do not write personal content fields to prefs
+00:01 +20: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/remote_processing_consent_gate_test.dart: remote failure after consent does not erase a locally saved entry
+00:01 +21: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/remote_processing_consent_gate_test.dart: remote failure after consent does not erase a locally saved entry
+00:01 +22: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/features/live_audio/application/offline_vault_recovery_service_test.dart: OfflineVaultRecoveryService recoverVault uploads, saves journal entry, then deletes vault on ack
+ARCHIVEME_LIVE: offline vault registered sessionId=session_ack frames=5
+ARCHIVEME_LIVE: offline vault recovery started sessionId=session_ack
+ProductAnalytics: dropped unregistered event — recording_created
+ARCHIVEME_LIVE: offline vault recovery ack sessionId=session_ack ack=ack_session_ack duplicate=false
+00:01 +23: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/archive_export_pack_test.dart: Settings export entry point shows Export button in standard archive controls
+00:01 +23: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/features/live_audio/application/offline_vault_recovery_service_test.dart: OfflineVaultRecoveryService recoverVault without consent retains vault and does not upload
+ARCHIVEME_LIVE: offline vault registered sessionId=session_no_consent frames=3
+00:01 +24: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/archive_export_pack_test.dart: Settings export entry point shows Export button in standard archive controls
+00:01 +24: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/features/live_audio/application/offline_vault_recovery_service_test.dart: OfflineVaultRecoveryService recoverVault sends recovery_secret for offline_* sessions
+ARCHIVEME_LIVE: offline vault registered sessionId=offline_1784498962800 frames=5
+ARCHIVEME_LIVE: offline vault recovery started sessionId=offline_1784498962800
+ProductAnalytics: dropped unregistered event — recording_created
+ARCHIVEME_LIVE: offline vault recovery ack sessionId=offline_1784498962800 ack=ack_offline_1784498962800 duplicate=false
+00:01 +25: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/archive_export_pack_test.dart: Settings export entry point shows Export button in standard archive controls
+00:01 +25: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/features/live_audio/application/offline_vault_recovery_service_test.dart: OfflineVaultRecoveryService recoverVault rejects offline_* sessions missing recovery_secret
+ARCHIVEME_LIVE: offline vault registered sessionId=offline_orphan frames=3
+00:01 +26: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/archive_export_pack_test.dart: Settings export entry point shows Export button in standard archive controls
+00:02 +27: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/delete_account_confirmation_test.dart: Delete account confirmation shows a confirmation dialog before deleting
+00:02 +28: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/delete_account_confirmation_test.dart: Delete account confirmation shows a confirmation dialog before deleting
+00:02 +29: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/delete_account_confirmation_test.dart: Delete account confirmation shows a confirmation dialog before deleting
+00:02 +30: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/delete_account_confirmation_test.dart: Delete account confirmation shows a confirmation dialog before deleting
+00:02 +31: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/delete_account_confirmation_test.dart: Delete account confirmation shows a confirmation dialog before deleting
+00:02 +32: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/delete_account_confirmation_test.dart: Delete account confirmation shows a confirmation dialog before deleting
+00:02 +33: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/delete_account_confirmation_test.dart: Delete account confirmation shows a confirmation dialog before deleting
+00:02 +34: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/delete_account_confirmation_test.dart: Delete account confirmation shows a confirmation dialog before deleting
+00:02 +35: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/delete_account_confirmation_test.dart: Delete account confirmation shows a confirmation dialog before deleting
+00:02 +36: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/delete_account_confirmation_test.dart: Delete account confirmation shows a confirmation dialog before deleting
+00:02 +37: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/delete_account_confirmation_test.dart: Delete account confirmation shows a confirmation dialog before deleting
+00:02 +38: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/delete_account_confirmation_test.dart: Delete account confirmation shows a confirmation dialog before deleting
+00:02 +39: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/delete_account_confirmation_test.dart: Delete account confirmation shows a confirmation dialog before deleting
+00:02 +40: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/delete_account_confirmation_test.dart: Delete account confirmation shows a confirmation dialog before deleting
+00:02 +41: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/delete_account_confirmation_test.dart: Delete account confirmation shows a confirmation dialog before deleting
+00:02 +42: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/delete_account_confirmation_test.dart: Delete account confirmation shows a confirmation dialog before deleting
+00:02 +43: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/delete_account_confirmation_test.dart: Delete account confirmation shows a confirmation dialog before deleting
+00:02 +44: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/delete_account_confirmation_test.dart: Delete account confirmation shows a confirmation dialog before deleting
+00:02 +45: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/delete_account_confirmation_test.dart: Delete account confirmation shows a confirmation dialog before deleting
+00:02 +46: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/delete_account_confirmation_test.dart: Delete account confirmation shows a confirmation dialog before deleting
+00:02 +47: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/delete_account_confirmation_test.dart: Delete account confirmation shows a confirmation dialog before deleting
+00:02 +48: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/delete_account_confirmation_test.dart: Delete account confirmation shows a confirmation dialog before deleting
+00:02 +49: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/delete_account_confirmation_test.dart: Delete account confirmation shows a confirmation dialog before deleting
+00:02 +50: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/delete_account_confirmation_test.dart: Delete account confirmation shows a confirmation dialog before deleting
+00:02 +51: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/delete_account_confirmation_test.dart: Delete account confirmation shows a confirmation dialog before deleting
+00:02 +52: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/delete_account_confirmation_test.dart: Delete account confirmation shows a confirmation dialog before deleting
+00:02 +53: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/delete_account_confirmation_test.dart: Delete account confirmation shows a confirmation dialog before deleting
+00:02 +54: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/delete_account_confirmation_test.dart: Delete account confirmation shows a confirmation dialog before deleting
+00:02 +55: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/delete_account_confirmation_test.dart: Delete account confirmation shows a confirmation dialog before deleting
+00:02 +56: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/delete_account_confirmation_test.dart: Delete account confirmation shows a confirmation dialog before deleting
+00:02 +56 -1: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/delete_account_confirmation_test.dart: Delete account confirmation shows a confirmation dialog before deleting
+00:02 +56 -1: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/core/network/capture_pipeline_api_errors_test.dart: maps socket errors through ApiFailure to offline sync note [E]
+  Expected: contains 'offline'
+    Actual: 'Sync will resume when you are back online.'
+     Which: does not contain 'offline'
+  
+  package:matcher                                               expect
+  package:flutter_test/src/widget_tester.dart 473:18            expect
+  test/core/network/capture_pipeline_api_errors_test.dart 20:5  main.<fn>
+  
+00:02 +57 -1: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/delete_account_confirmation_test.dart: Delete account confirmation shows a confirmation dialog before deleting
+00:02 +58 -1: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/evidence_eligibility_policy_test.dart: UI contract one-moment receipt shows no relationship copy
+00:02 +59 -1: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/evidence_eligibility_policy_test.dart: UI contract one-moment receipt shows no relationship copy
+00:02 +60 -1: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/evidence_eligibility_policy_test.dart: UI contract one-moment receipt shows no relationship copy
+00:02 +61 -1: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/evidence_eligibility_policy_test.dart: UI contract one-moment receipt shows no relationship copy
+00:02 +62 -1: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/delete_account_confirmation_test.dart: Delete account confirmation cancelling the dialog does not start deletion
+00:02 +62 -1: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/evidence_eligibility_policy_test.dart: UI contract two-moment receipt shows tentative related copy
+ARCHIVEME_EVIDENCE_FIRST_COPY_FALLBACK reason=not_enough_repeated_words
+ARCHIVEME_PATTERN_COPY_SOURCE source=fallback
+ARCHIVEME_REPEAT_COPY confidence=0.15 phrase=yes shown=generic
+ARCHIVEME_EVIDENCE_FIRST_COPY_FALLBACK reason=not_enough_repeated_words
+ARCHIVEME_PATTERN_COPY_SOURCE source=fallback
+ARCHIVEME_REPEAT_COPY confidence=0.15 phrase=yes shown=generic
+00:02 +63 -1: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/delete_account_confirmation_test.dart: Delete account confirmation cancelling the dialog does not start deletion
+00:02 +63 -1: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/evidence_eligibility_policy_test.dart: UI contract two-moment post-save repeat copy stays tentative
+ARCHIVEME_EVIDENCE_FIRST_COPY_FALLBACK reason=not_enough_repeated_words
+ARCHIVEME_PATTERN_COPY_SOURCE source=fallback
+ARCHIVEME_REPEAT_COPY confidence=0.15 phrase=yes shown=generic
+00:02 +64 -1: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/delete_account_confirmation_test.dart: Delete account confirmation cancelling the dialog does not start deletion
+00:02 +65 -1: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/delete_account_confirmation_test.dart: Delete account confirmation cancelling the dialog does not start deletion
+00:02 +66 -1: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/delete_account_confirmation_test.dart: Delete account confirmation cancelling the dialog does not start deletion
+00:02 +67 -1: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/delete_account_confirmation_test.dart: Delete account confirmation cancelling the dialog does not start deletion
+00:02 +68 -1: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/delete_account_confirmation_test.dart: Delete account confirmation cancelling the dialog does not start deletion
+00:02 +69 -1: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/delete_account_confirmation_test.dart: Delete account confirmation cancelling the dialog does not start deletion
+00:02 +70 -1: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/delete_account_confirmation_test.dart: Delete account confirmation cancelling the dialog does not start deletion
+00:02 +71 -1: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/delete_account_confirmation_test.dart: Delete account confirmation cancelling the dialog does not start deletion
+00:02 +72 -1: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/delete_account_confirmation_test.dart: Delete account confirmation cancelling the dialog does not start deletion
+00:02 +73 -1: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/delete_account_confirmation_test.dart: Delete account confirmation confirming dismisses the dialog and calls deleteAccount
+00:02 +74 -1: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/delete_account_confirmation_test.dart: Delete account confirmation successful server deletion offers a separate local-data wipe choice
+ARCHIVEME_LOG event=auth_signOut_failed severity=error category=auth success=false error_code=http_400 http_status=400
+00:03 +75 -1: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/delete_account_confirmation_test.dart: Delete account confirmation accepting the local-data wipe offer opens the double-confirmation wipe dialog
+00:03 +76 -1: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/delete_account_confirmation_test.dart: Delete account confirmation accepting the local-data wipe offer opens the double-confirmation wipe dialog
+00:03 +77 -1: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/delete_account_confirmation_test.dart: Delete account confirmation accepting the local-data wipe offer opens the double-confirmation wipe dialog
+00:03 +78 -1: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/delete_account_confirmation_test.dart: Delete account confirmation accepting the local-data wipe offer opens the double-confirmation wipe dialog
+ARCHIVEME_LOG event=auth_signOut_failed severity=error category=auth success=false error_code=http_400 http_status=400
+00:03 +79 -1: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/security/release_log_scan_test.dart: mobile privacy log validator passes on production graph
+00:03 +80 -1: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/security/release_log_scan_test.dart: mobile privacy log validator passes on production graph
+00:03 +81 -1: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/security/release_log_scan_test.dart: mobile privacy log validator passes on production graph
+00:03 +82 -1: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/security/release_log_scan_test.dart: mobile privacy log validator passes on production graph
+00:03 +83 -1: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/security/release_log_scan_test.dart: mobile privacy log validator passes on production graph
+00:03 +84 -1: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/security/release_log_scan_test.dart: mobile privacy log validator passes on production graph
+00:03 +85 -1: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/security/release_log_scan_test.dart: mobile privacy log validator passes on production graph
+00:03 +86 -1: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/security/release_log_scan_test.dart: mobile privacy log validator passes on production graph
+00:03 +87 -1: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/security/release_log_scan_test.dart: mobile privacy log validator passes on production graph
+00:03 +88 -1: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/security/release_log_scan_test.dart: mobile privacy log validator passes on production graph
+00:04 +89 -1: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/delete_account_confirmation_test.dart: Delete account confirmation successful server deletion shows completion copy only after confirm
+00:04 +90 -1: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/delete_account_confirmation_test.dart: Delete account confirmation successful server deletion shows completion copy only after confirm
+00:04 +91 -1: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/delete_account_confirmation_test.dart: Delete account confirmation successful server deletion shows completion copy only after confirm
+00:04 +92 -1: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/delete_account_confirmation_test.dart: Delete account confirmation successful server deletion shows completion copy only after confirm
+ARCHIVEME_LOG event=auth_signOut_failed severity=error category=auth success=false error_code=http_400 http_status=400
+00:04 +93 -1: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/security/release_log_scan_test.dart: production graph scan skips test fixture paths
+00:04 +94 -1: Some tests failed.
+
+Failing tests:
+  /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/core/network/capture_pipeline_api_errors_test.dart: maps socket errors through ApiFailure to offline sync note
+Command failed: flutter test --no-pub test/focused_beta_billing_frozen_test.dart test/remote_processing_consent_gate_test.dart test/capture_pipeline_consent_boundary_test.dart test/security/remote_processing_consent_gate_test.dart test/storage/mobile_prefs_policy_test.dart test/features/live_audio/application/offline_vault_recovery_service_test.dart test/archive_export_pack_test.dart test/delete_account_confirmation_test.dart test/evidence_eligibility_policy_test.dart test/router/production_route_link_gate_test.dart test/core/network/capture_pipeline_api_errors_test.dart test/security/release_log_scan_test.dart test/v1_production_allowlist_test.dart

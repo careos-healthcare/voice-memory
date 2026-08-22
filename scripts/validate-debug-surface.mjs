@@ -21,45 +21,45 @@ if (!middleware.includes("status: 404") && !middleware.includes("denyNotFound"))
   failures.push("middleware must 404 unauthorized access");
 }
 
-const gate = read("lib/middleware/internal-gate.ts");
+const gate = read("packages/shared/lib/middleware/internal-gate.ts");
 if (/import\s+["']server-only["']/.test(gate)) {
   failures.push("internal-gate must stay edge-safe (no server-only import)");
 }
 
-if (!fs.existsSync(path.join(ROOT, "app/internal/layout.tsx"))) {
-  failures.push("app/internal/layout.tsx must gate server-side access");
+if (!fs.existsSync(path.join(ROOT, "apps/web/app/internal/layout.tsx"))) {
+  failures.push("apps/web/app/internal/layout.tsx must gate server-side access");
 }
-if (!read("app/internal/layout.tsx").includes("assertInternalPageAccess")) {
+if (!read("apps/web/app/internal/layout.tsx").includes("assertInternalPageAccess")) {
   failures.push("internal layout must call assertInternalPageAccess");
 }
 
-if (fs.existsSync(path.join(ROOT, "app/debug"))) {
-  failures.push("app/debug must not exist (migrated to /internal)");
+if (fs.existsSync(path.join(ROOT, "apps/web/app/debug"))) {
+  failures.push("apps/web/app/debug must not exist (migrated to /internal)");
 }
 
-const header = read("components/SiteHeader.tsx");
+const header = read("apps/web/components/SiteHeader.tsx");
 if (header.includes('href="/internal') || header.includes('href="/debug')) {
   failures.push("SiteHeader must not link to internal/debug routes");
 }
 
-const home = read("app/page.tsx");
+const home = read("apps/web/app/page.tsx");
 if (home.match(/href=["']\/(debug|internal)/)) {
   failures.push("home page must not link to internal/debug routes");
 }
 
-const record = read("app/record/page.tsx");
+const record = read("apps/web/app/record/page.tsx");
 if (record.match(/href=["']\/(debug|internal)/)) {
   failures.push("record page must not link to internal/debug routes");
 }
 
-if (!fs.existsSync(path.join(ROOT, "app/api/internal/auth-env/route.ts"))) {
+if (!fs.existsSync(path.join(ROOT, "apps/api/app/api/internal/auth-env/route.ts"))) {
   failures.push("auth-env probe must live under /api/internal/auth-env");
 }
-if (fs.existsSync(path.join(ROOT, "app/api/debug/auth-env/route.ts"))) {
+if (fs.existsSync(path.join(ROOT, "apps/api/app/api/debug/auth-env/route.ts"))) {
   failures.push("remove legacy /api/debug/auth-env");
 }
 
-const internalDir = path.join(ROOT, "app/internal");
+const internalDir = path.join(ROOT, "apps/web/app/internal");
 const slugs = fs
   .readdirSync(internalDir, { withFileTypes: true })
   .filter((d) => d.isDirectory())
@@ -74,7 +74,7 @@ for (const banned of ["retention-readout", "resurfacing-metrics", "callbacks", "
   }
 }
 
-const pageGuard = read("lib/server/internal-page-guard.ts");
+const pageGuard = read("packages/shared/lib/server/internal-page-guard.ts");
 if (!pageGuard.includes("notFound()")) {
   failures.push("internal-page-guard must notFound()");
 }

@@ -6,12 +6,12 @@ import { fileURLToPath } from "node:url";
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
 const REQUIRED_FILES = [
-  "lib/restraint/silence-intelligence.ts",
-  "lib/restraint/silence-intelligence-observation.ts",
-  "lib/debug/silence-intelligence.ts",
-  "app/internal/silence-intelligence/page.tsx",
-  "components/restraint/QuietSilenceLine.tsx",
-  "types/silence-intelligence.ts",
+  "packages/shared/lib/restraint/silence-intelligence.ts",
+  "packages/shared/lib/restraint/silence-intelligence-observation.ts",
+  "packages/shared/lib/debug/silence-intelligence.ts",
+  "apps/web/app/internal/silence-intelligence/page.tsx",
+  "apps/web/components/restraint/QuietSilenceLine.tsx",
+  "packages/shared/types/silence-intelligence.ts",
 ];
 
 const REQUIRED_EVENTS = [
@@ -40,7 +40,7 @@ if (missing.length > 0) {
   process.exit(1);
 }
 
-const core = fs.readFileSync(path.join(ROOT, "lib/restraint/silence-intelligence.ts"), "utf8");
+const core = fs.readFileSync(path.join(ROOT, "packages/shared/lib/restraint/silence-intelligence.ts"), "utf8");
 for (const line of REQUIRED_USER_LINES) {
   if (!core.includes(line)) {
     console.error(`Silence intelligence validation failed — missing user line: "${line}"`);
@@ -56,7 +56,7 @@ for (const state of ["normal", "quiet", "very_quiet", "almost_silent"]) {
 }
 
 const observation = fs.readFileSync(
-  path.join(ROOT, "lib/restraint/silence-intelligence-observation.ts"),
+  path.join(ROOT, "packages/shared/lib/restraint/silence-intelligence-observation.ts"),
   "utf8",
 );
 for (const event of REQUIRED_EVENTS) {
@@ -72,7 +72,7 @@ if (!core.includes("isSilenceIntelligenceEnabled") || !core.includes("setSilence
 }
 
 const settings = fs.readFileSync(
-  path.join(ROOT, "components/settings/PersonalizationSettings.tsx"),
+  path.join(ROOT, "apps/web/components/settings/PersonalizationSettings.tsx"),
   "utf8",
 );
 if (!settings.includes("Quiet mode")) {
@@ -86,7 +86,7 @@ if (/\bSilence intelligence\b/i.test(settings)) {
 }
 
 const quietLine = fs.readFileSync(
-  path.join(ROOT, "components/restraint/QuietSilenceLine.tsx"),
+  path.join(ROOT, "apps/web/components/restraint/QuietSilenceLine.tsx"),
   "utf8",
 );
 for (const { re, label } of FORBIDDEN_IN_USER_COMPONENTS) {

@@ -12,10 +12,10 @@ function fail(msg) {
 }
 
 const required = [
-  "types/continuity-reinforcement.ts",
-  "lib/archive/continuity-reinforcement.ts",
-  "lib/archive/continuity-reinforcement-copy.ts",
-  "components/archive/ContinuityStrip.tsx",
+  "packages/shared/types/continuity-reinforcement.ts",
+  "packages/shared/lib/archive/continuity-reinforcement.ts",
+  "packages/shared/lib/archive/continuity-reinforcement-copy.ts",
+  "apps/web/components/archive/ContinuityStrip.tsx",
 ];
 
 for (const rel of required) {
@@ -23,7 +23,7 @@ for (const rel of required) {
 }
 
 const copy = fs.readFileSync(
-  path.join(ROOT, "lib/archive/continuity-reinforcement-copy.ts"),
+  path.join(ROOT, "packages/shared/lib/archive/continuity-reinforcement-copy.ts"),
   "utf8",
 );
 for (const example of [
@@ -37,13 +37,13 @@ for (const example of [
 }
 
 const strip = fs.readFileSync(
-  path.join(ROOT, "components/archive/ContinuityStrip.tsx"),
+  path.join(ROOT, "apps/web/components/archive/ContinuityStrip.tsx"),
   "utf8",
 );
 if (!strip.includes('data-testid="continuity-strip"')) fail("strip test id missing");
 if (!strip.includes("buildContinuityStripMessage")) fail("strip must build message");
 
-const engine = fs.readFileSync(path.join(ROOT, "lib/archive/continuity-reinforcement.ts"), "utf8");
+const engine = fs.readFileSync(path.join(ROOT, "packages/shared/lib/archive/continuity-reinforcement.ts"), "utf8");
 for (const kind of [
   "theory_first_appeared",
   "cross_life_areas",
@@ -56,11 +56,11 @@ for (const kind of [
 }
 
 const surfaces = [
-  { file: "app/discover/page.tsx", prop: 'surface="discover"' },
-  { file: "app/blind-spots/page.tsx", prop: 'surface="blind_spots"' },
-  { file: "app/theories/page.tsx", prop: 'surface="theories"' },
-  { file: "app/memory/page.tsx", prop: 'surface="memory"' },
-  { file: "app/updates/page.tsx", prop: 'surface="updates"' },
+  { file: "apps/web/app/discover/page.tsx", prop: 'surface="discover"' },
+  { file: "apps/web/app/blind-spots/page.tsx", prop: 'surface="blind_spots"' },
+  { file: "apps/web/app/theories/page.tsx", prop: 'surface="theories"' },
+  { file: "apps/web/app/memory/page.tsx", prop: 'surface="memory"' },
+  { file: "apps/web/app/updates/page.tsx", prop: 'surface="updates"' },
 ];
 
 for (const { file, prop } of surfaces) {
@@ -83,12 +83,12 @@ globalThis.localStorage = {
 };
 
 const { clearTheorySnapshotsForEval, upsertTheorySnapshots } = await import(
-  "../lib/theories/theory-snapshots.ts"
+  "../packages/shared/lib/theories/theory-snapshots.ts"
 );
 const {
   buildContinuityStripMessage,
   CONTINUITY_REINFORCEMENT_SURFACES,
-} = await import("../lib/archive/continuity-reinforcement.ts");
+} = await import("../packages/shared/lib/archive/continuity-reinforcement.ts");
 
 clearTheorySnapshotsForEval();
 

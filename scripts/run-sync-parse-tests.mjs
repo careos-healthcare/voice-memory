@@ -3,7 +3,7 @@
  * Sync parse / recovery tests — lib/reliability/sync-parse-tests.ts
  */
 
-import { runSyncParseTestsForCi } from "../lib/reliability/sync-parse-tests.ts";
+import { runSyncParseTestsForCi } from "../packages/shared/lib/reliability/sync-parse-tests.ts";
 
 const report = await runSyncParseTestsForCi();
 

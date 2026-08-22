@@ -1,16 +1,16 @@
 #!/usr/bin/env node
 import assert from "node:assert/strict";
 
-import { computeBehaviorFunnels } from "../lib/behavior/funnels.ts";
-import { computeReturnTiming, computeUserReturnSegments } from "../lib/behavior/return-analysis.ts";
-import { computeSurfaceEffectiveness } from "../lib/behavior/surface-effectiveness.ts";
-import { computeCopyEffectiveness } from "../lib/behavior/copy-effectiveness.ts";
-import { computeProductPressureWarnings } from "../lib/behavior/product-pressure.ts";
-import { buildBehaviorInsightSummary } from "../lib/behavior/insight-summary.ts";
-import { ratePercent, medianHours } from "../lib/behavior/helpers.ts";
-import { LAUNCH_EVENTS } from "../lib/local-analytics.ts";
-import { CALLBACK_LEARNING_EVENTS } from "../lib/revisit/callback-learning.ts";
-import { OPEN_LOOP_EVENTS } from "../lib/open-loops/open-loop-observation.ts";
+import { computeBehaviorFunnels } from "../packages/shared/lib/behavior/funnels.ts";
+import { computeReturnTiming, computeUserReturnSegments } from "../packages/shared/lib/behavior/return-analysis.ts";
+import { computeSurfaceEffectiveness } from "../packages/shared/lib/behavior/surface-effectiveness.ts";
+import { computeCopyEffectiveness } from "../packages/shared/lib/behavior/copy-effectiveness.ts";
+import { computeProductPressureWarnings } from "../packages/shared/lib/behavior/product-pressure.ts";
+import { buildBehaviorInsightSummary } from "../packages/shared/lib/behavior/insight-summary.ts";
+import { ratePercent, medianHours } from "../packages/shared/lib/behavior/helpers.ts";
+import { LAUNCH_EVENTS } from "../packages/shared/lib/local-analytics.ts";
+import { CALLBACK_LEARNING_EVENTS } from "../packages/shared/lib/revisit/callback-learning.ts";
+import { OPEN_LOOP_EVENTS } from "../packages/shared/lib/open-loops/open-loop-observation.ts";
 
 assert.equal(ratePercent(2, 10), 20);
 assert.equal(medianHours([4, 8, 12]), 8);

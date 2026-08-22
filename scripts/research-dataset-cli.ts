@@ -1,16 +1,16 @@
 #!/usr/bin/env node
 import { readFile, writeFile } from "node:fs/promises";
 import { pathToFileURL } from "node:url";
-import type { CompletedEvaluationRecord } from "../lib/research/blind-review";
+import type { CompletedEvaluationRecord } from "../packages/shared/lib/research/blind-review";
 import {
   type HumanCaseInput,
   type SyntheticCaseInput,
-} from "../lib/research/research-domain";
+} from "../packages/shared/lib/research/research-domain";
 import {
   buildResearchExportBundle,
   serializeResearchExport,
-} from "../lib/research/research-export";
-import { JsonResearchRepository } from "../lib/research/research-repository";
+} from "../packages/shared/lib/research/research-export";
+import { JsonResearchRepository } from "../packages/shared/lib/research/research-repository";
 
 async function readJson<T>(filePath: string): Promise<T> {
   return JSON.parse(await readFile(filePath, "utf8")) as T;

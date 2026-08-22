@@ -20,29 +20,29 @@ function mustExist(rel) {
 }
 
 for (const rel of [
-  "types/revenuecat-production-verification.ts",
-  "lib/mobile/revenuecat-production-verification.ts",
+  "packages/shared/types/revenuecat-production-verification.ts",
+  "packages/shared/lib/mobile/revenuecat-production-verification.ts",
   "mobile/evidence/revenuecat_store_tested.json",
-  "components/internal/RevenueCatVerificationPanel.tsx",
-  "app/internal/revenuecat-verification/page.tsx",
-  "apps/voicememory_mobile/lib/billing/revenuecat_purchase_journey.dart",
-  "apps/voicememory_mobile/lib/screens/revenuecat_verification_screen.dart",
-  "apps/voicememory_mobile/lib/billing/revenuecat_service.dart",
+  "apps/web/components/internal/RevenueCatVerificationPanel.tsx",
+  "apps/web/app/internal/revenuecat-verification/page.tsx",
+  "apps/mobile/lib/billing/revenuecat_purchase_journey.dart",
+  "apps/mobile/lib/screens/revenuecat_verification_screen.dart",
+  "apps/mobile/lib/billing/revenuecat_service.dart",
 ]) {
   mustExist(rel);
 }
 
-const pubspec = read("apps/voicememory_mobile/pubspec.yaml");
+const pubspec = read("apps/mobile/pubspec.yaml");
 if (!pubspec.includes("purchases_flutter")) {
   fail("purchases_flutter missing from pubspec");
 }
 
-const router = read("apps/voicememory_mobile/lib/router/app_router.dart");
+const router = read("apps/mobile/lib/router/app_router.dart");
 if (!router.includes("/revenuecat-verify")) {
   fail("app_router must register /revenuecat-verify");
 }
 
-const lib = read("lib/mobile/revenuecat-production-verification.ts");
+const lib = read("packages/shared/lib/mobile/revenuecat-production-verification.ts");
 for (const token of [
   "revenuecat_store_tested.json",
   "purchase_completed",
@@ -55,7 +55,7 @@ for (const token of [
   if (!lib.includes(token)) fail(`revenuecat-production-verification missing ${token}`);
 }
 
-const production = read("lib/mobile/mobile-production-readiness.ts");
+const production = read("packages/shared/lib/mobile/mobile-production-readiness.ts");
 if (!production.includes("resolveRevenueCatItem")) {
   fail("mobile-production-readiness must use resolveRevenueCatItem (evidence-only)");
 }
@@ -70,7 +70,7 @@ try {
     readRevenueCatStoreEvidence,
     isRevenueCatProductionPassing,
     buildRevenueCatProductionReport,
-  } = await import(path.join(ROOT, "lib/mobile/revenuecat-production-verification.ts"));
+  } = await import(path.join(ROOT, "packages/shared/lib/mobile/revenuecat-production-verification.ts"));
 
   const evidence = readRevenueCatStoreEvidence();
   if (!evidence) {

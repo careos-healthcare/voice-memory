@@ -20,22 +20,22 @@ function mustExist(rel) {
 }
 
 for (const rel of [
-  "lib/internal/internal-archive-registry.ts",
-  "lib/internal/delete-candidate-detector.ts",
-  "lib/internal/founder-focus-score.ts",
-  "lib/internal/launch-readiness.ts",
-  "app/internal/page.tsx",
-  "app/internal/activation/page.tsx",
-  "app/internal/return/page.tsx",
-  "app/internal/conversion/page.tsx",
-  "app/internal/launch/page.tsx",
-  "components/internal/InternalCommandCenter.tsx",
-  "components/internal/FounderInternalNav.tsx",
+  "packages/shared/lib/internal/internal-archive-registry.ts",
+  "packages/shared/lib/internal/delete-candidate-detector.ts",
+  "packages/shared/lib/internal/founder-focus-score.ts",
+  "packages/shared/lib/internal/launch-readiness.ts",
+  "apps/web/app/internal/page.tsx",
+  "apps/web/app/internal/activation/page.tsx",
+  "apps/web/app/internal/return/page.tsx",
+  "apps/web/app/internal/conversion/page.tsx",
+  "apps/web/app/internal/launch/page.tsx",
+  "apps/web/components/internal/InternalCommandCenter.tsx",
+  "apps/web/components/internal/FounderInternalNav.tsx",
 ]) {
   mustExist(rel);
 }
 
-const registry = read("lib/internal/internal-archive-registry.ts");
+const registry = read("packages/shared/lib/internal/internal-archive-registry.ts");
 for (const status of ["ACTIVE", "ARCHIVED", "DELETE_CANDIDATE"]) {
   if (!registry.includes(status)) fail(`registry missing status ${status}`);
 }
@@ -46,12 +46,12 @@ for (const field of ["decisionQuestion", "decisionAction", "discoverable"]) {
   if (!registry.includes(field)) fail(`registry missing ${field}`);
 }
 
-const commandCenter = read("app/internal/page.tsx");
+const commandCenter = read("apps/web/app/internal/page.tsx");
 if (!commandCenter.includes("InternalCommandCenter")) {
   fail("/internal must render InternalCommandCenter");
 }
 
-const nav = read("components/internal/FounderInternalNav.tsx");
+const nav = read("apps/web/components/internal/FounderInternalNav.tsx");
 if (nav.includes("/internal/organic-referral") || nav.includes("/internal/archive")) {
   fail("FounderInternalNav must not link archived dashboards");
 }
@@ -59,7 +59,7 @@ if (!nav.includes("/internal") || !nav.includes("/internal/launch")) {
   fail("FounderInternalNav must link command center and launch");
 }
 
-const returnPage = read("app/internal/return/page.tsx");
+const returnPage = read("apps/web/app/internal/return/page.tsx");
 for (const panel of [
   "ArchiveAttachmentPanel",
   "BeliefRecallPanel",
@@ -69,19 +69,19 @@ for (const panel of [
   if (!returnPage.includes(panel)) fail(`return hub missing ${panel}`);
 }
 
-const conversionPage = read("app/internal/conversion/page.tsx");
+const conversionPage = read("apps/web/app/internal/conversion/page.tsx");
 if (!conversionPage.includes("PaywallAttributionPanel")) {
   fail("conversion hub missing PaywallAttributionPanel");
 }
 
-const distributionPage = read("app/internal/distribution/page.tsx");
+const distributionPage = read("apps/web/app/internal/distribution/page.tsx");
 if (!distributionPage.includes("DistributionReportPanel")) {
   fail("distribution hub missing DistributionReportPanel");
 }
 
-const launch = read("app/internal/launch/page.tsx");
+const launch = read("apps/web/app/internal/launch/page.tsx");
 for (const verdict of ["NOT_READY", "ALMOST_READY", "READY"]) {
-  if (!launch.includes(verdict) && !read("lib/internal/launch-readiness.ts").includes(verdict)) {
+  if (!launch.includes(verdict) && !read("packages/shared/lib/internal/launch-readiness.ts").includes(verdict)) {
     fail(`launch readiness missing verdict ${verdict}`);
   }
 }

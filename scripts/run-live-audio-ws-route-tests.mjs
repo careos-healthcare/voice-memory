@@ -1,9 +1,9 @@
 #!/usr/bin/env node
-import { runLiveAudioWsRouteTests } from "../lib/reliability/live-audio-ws-route-tests.ts";
+import { runLiveAudioWsRouteTests } from "../packages/shared/lib/reliability/live-audio-ws-route-tests.ts";
 
 const ws = await runLiveAudioWsRouteTests();
 const { runLiveAudioGracefulShutdownTests } = await import(
-  "../lib/reliability/live-audio-graceful-shutdown-tests.ts"
+  "../packages/shared/lib/reliability/live-audio-graceful-shutdown-tests.ts"
 );
 const shutdown = await runLiveAudioGracefulShutdownTests();
 

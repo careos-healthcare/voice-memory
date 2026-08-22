@@ -1,11 +1,11 @@
 #!/usr/bin/env node
-import { runAplusEmotionalEval, writeAplusEmotionalReport } from "../lib/emotional-quality/run-aplus-eval.ts";
+import { runAplusEmotionalEval, writeAplusEmotionalReport } from "../packages/shared/lib/emotional-quality/run-aplus-eval.ts";
 import {
   runAdversarialEmotionalEval,
   writeAdversarialReport,
-} from "../lib/emotional-quality/run-adversarial-eval.ts";
+} from "../packages/shared/lib/emotional-quality/run-adversarial-eval.ts";
 
-import { clearResurfacingFeedbackForEval } from "../lib/resurfacing/resurfacing-feedback.ts";
+import { clearResurfacingFeedbackForEval } from "../packages/shared/lib/resurfacing/resurfacing-feedback.ts";
 
 const storage = new Map();
 

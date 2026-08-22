@@ -20,18 +20,18 @@ function mustExist(rel) {
 }
 
 const required = [
-  "types/archive-belief-object.ts",
-  "lib/archive/build-archive-belief-object.ts",
-  "components/archive/ArchiveBeliefHeader.tsx",
-  "lib/product/archive-surface-ownership.ts",
-  "lib/product/archive-belief-justification.ts",
-  "components/internal/ArchiveBeliefCenterPanel.tsx",
+  "packages/shared/types/archive-belief-object.ts",
+  "packages/shared/lib/archive/build-archive-belief-object.ts",
+  "apps/web/components/archive/ArchiveBeliefHeader.tsx",
+  "packages/shared/lib/product/archive-surface-ownership.ts",
+  "packages/shared/lib/product/archive-belief-justification.ts",
+  "apps/web/components/internal/ArchiveBeliefCenterPanel.tsx",
   "scripts/validate-archive-belief-centrality.mjs",
 ];
 
 for (const rel of required) mustExist(rel);
 
-const beliefType = read("types/archive-belief-object.ts");
+const beliefType = read("packages/shared/types/archive-belief-object.ts");
 for (const field of [
   "belief:",
   "confidence:",
@@ -43,11 +43,11 @@ for (const field of [
   if (!beliefType.includes(field)) fail(`ArchiveBeliefObject missing ${field}`);
 }
 
-if (!read("lib/archive/build-archive-belief-object.ts").includes("buildArchiveBeliefObject")) {
+if (!read("packages/shared/lib/archive/build-archive-belief-object.ts").includes("buildArchiveBeliefObject")) {
   fail("missing buildArchiveBeliefObject");
 }
 
-const header = read("components/archive/ArchiveBeliefHeader.tsx");
+const header = read("apps/web/components/archive/ArchiveBeliefHeader.tsx");
 if (!header.includes("buildArchiveBeliefObject")) {
   fail("ArchiveBeliefHeader must use buildArchiveBeliefObject");
 }
@@ -73,12 +73,12 @@ function beliefHeaderFirst(file, label) {
   }
 }
 
-beliefHeaderFirst("components/archive/EvidenceArchiveHome.tsx", "archive home");
-beliefHeaderFirst("app/discover/page.tsx", "discover");
-beliefHeaderFirst("components/archive/BeliefDossier.tsx", "belief dossier");
-beliefHeaderFirst("app/archive-detail/page.tsx", "archive detail");
+beliefHeaderFirst("apps/web/components/archive/EvidenceArchiveHome.tsx", "archive home");
+beliefHeaderFirst("apps/web/app/discover/page.tsx", "discover");
+beliefHeaderFirst("apps/web/components/archive/BeliefDossier.tsx", "belief dossier");
+beliefHeaderFirst("apps/web/app/archive-detail/page.tsx", "archive detail");
 
-const discover = read("app/discover/page.tsx");
+const discover = read("apps/web/app/discover/page.tsx");
 for (const dup of [
   "ArchiveBeliefCard",
   "WhyTheArchiveTrustsThis",
@@ -90,7 +90,7 @@ for (const dup of [
 }
 if (!discover.includes("TheoryChangeFeed")) fail("Discover must own change feed");
 
-const commandCenter = read("components/archive/ArchiveCommandCenter.tsx");
+const commandCenter = read("apps/web/components/archive/ArchiveCommandCenter.tsx");
 if (!commandCenter.includes("BeliefChangeTimeline")) {
   fail("Archive must own timeline in command center");
 }
@@ -104,10 +104,10 @@ if (commandCenter.includes("ArchiveBeliefHeader")) {
   fail("Belief header is separate from command center body");
 }
 
-const memory = read("app/memory/page.tsx");
+const memory = read("apps/web/app/memory/page.tsx");
 if (!memory.includes("ReflectionLogPanel")) fail("memory must use ReflectionLogPanel");
 
-const justification = read("lib/product/archive-belief-justification.ts");
+const justification = read("packages/shared/lib/product/archive-belief-justification.ts");
 if (!justification.includes("supportsBelief")) fail("belief justification flags required");
 const hideCheck = spawnSync(
   "node",
@@ -125,10 +125,10 @@ if (hideCheck.status !== 0) {
   fail(`features missing belief-centric support: ${hideCheck.stderr || hideCheck.stdout}`);
 }
 
-if (!read("lib/blind-spots/blind-spot-copy.ts").includes("Evidence for belief")) {
+if (!read("packages/shared/lib/blind-spots/blind-spot-copy.ts").includes("Evidence for belief")) {
   fail("blind spot copy must reframe to Evidence for belief");
 }
-const blindCopy = read("lib/blind-spots/blind-spot-copy.ts");
+const blindCopy = read("packages/shared/lib/blind-spots/blind-spot-copy.ts");
 if (
   !blindCopy.includes("EVIDENCE_FOR_BELIEF_LEAD") &&
   !blindCopy.includes("one reason the archive currently believes")
@@ -136,18 +136,18 @@ if (
   fail("evidence-for-belief lead must anchor to archive belief");
 }
 
-if (!read("components/archive/ArchiveDetailHub.tsx").includes("Belief Survival")) {
+if (!read("apps/web/components/archive/ArchiveDetailHub.tsx").includes("Belief Survival")) {
   fail("ArchiveDetailHub must link Belief Survival");
 }
-if (!read("components/archive/ArchiveDetailHub.tsx").includes("Archive Silence")) {
+if (!read("apps/web/components/archive/ArchiveDetailHub.tsx").includes("Archive Silence")) {
   fail("ArchiveDetailHub must link Archive Silence");
 }
 
-if (!read("components/internal/FounderTestPanel.tsx").includes("ArchiveBeliefCenterPanel")) {
+if (!read("apps/web/components/internal/FounderTestPanel.tsx").includes("ArchiveBeliefCenterPanel")) {
   fail("founder-test must include ArchiveBeliefCenterPanel");
 }
 
-const mobile = read("apps/voicememory_mobile/lib/screens/archive_belief_screen.dart");
+const mobile = read("apps/mobile/lib/screens/archive_belief_screen.dart");
 if (!mobile.includes("Archive detail")) fail("mobile archive must link archive detail");
 if (!mobile.includes("ArchiveBeliefHeaderMobile")) {
   fail("mobile archive must render ArchiveBeliefHeaderMobile first");
@@ -182,7 +182,7 @@ if (o !== null) process.exit(1);`,
 if (buildCheck.status !== 0) fail("buildArchiveBeliefObject empty check failed");
 
 const forbidden = ["openai", "generateTheory", "pattern-engine", "llm"];
-for (const file of ["lib/archive/build-archive-belief-object.ts"]) {
+for (const file of ["packages/shared/lib/archive/build-archive-belief-object.ts"]) {
   for (const token of forbidden) {
     if (read(file).includes(token)) fail(`${file} must not add intelligence: ${token}`);
   }

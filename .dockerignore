@@ -1,16 +1,13 @@
 node_modules
-.next
+**/.next
 .git
 .gitignore
 .env
 .env.*
 !.env.example
 
-# Mobile / native — not part of the web server image
-apps/
-android/
-ios/
-capacitor.config.ts
+# Flutter mobile — not part of web/api images
+apps/mobile
 
 # Docs, audits, and local artifacts
 *.md
@@ -19,9 +16,17 @@ coverage/
 test-results/
 playwright-report/
 exports/
-
-# Dev / CI only
 e2e/
 .husky
 .cursor
 .vscode
+
+# Native / Capacitor stubs
+android/
+ios/
+capacitor.config.ts
+
+# Local build outputs
+dist/
+**/.dart_tool
+**/build

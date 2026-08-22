@@ -1,0 +1,6 @@
+npm warn Unknown env config "devdir". This will stop working in the next major version of npm.
+
+> voice-memory@0.1.0 validate:privacy-logs
+> node scripts/validate-privacy-logs.mjs
+
+validate-privacy-logs ok

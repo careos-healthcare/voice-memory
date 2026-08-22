@@ -38,24 +38,24 @@ for (const route of [
   }
 }
 
-const globals = read("app/globals.css");
+const globals = read("apps/web/app/globals.css");
 if (!globals.includes(".text-muted")) {
-  failures.push("app/globals.css missing .text-muted token");
+  failures.push("apps/web/app/globals.css missing .text-muted token");
 }
 if (!globals.includes("prefers-reduced-motion")) {
-  failures.push("app/globals.css missing prefers-reduced-motion block");
+  failures.push("apps/web/app/globals.css missing prefers-reduced-motion block");
 }
 
-const button = read("components/ui/button.tsx");
+const button = read("apps/web/components/ui/button.tsx");
 if (button.includes("bg-violet-500 text-white")) {
-  failures.push("components/ui/button.tsx still uses bg-violet-500 text-white (sub-AA pair)");
+  failures.push("apps/web/components/ui/button.tsx still uses bg-violet-500 text-white (sub-AA pair)");
 }
 
-if (!fs.existsSync(path.join(ROOT, "components/layout/PrimaryMain.tsx"))) {
+if (!fs.existsSync(path.join(ROOT, "apps/web/components/layout/PrimaryMain.tsx"))) {
   failures.push("missing components/layout/PrimaryMain.tsx");
 }
 
-const siteHeader = read("components/SiteHeader.tsx");
+const siteHeader = read("apps/web/components/SiteHeader.tsx");
 if (!siteHeader.includes("Skip to main content")) {
   failures.push("SiteHeader missing skip link");
 }
@@ -80,11 +80,11 @@ if (!pkg.includes('"validate:accessibility-full"')) {
 }
 
 const primaryPages = [
-  "app/journal/page.tsx",
-  "app/memory/page.tsx",
-  "app/export/page.tsx",
-  "app/settings/page.tsx",
-  "app/reminders/page.tsx",
+  "apps/web/app/journal/page.tsx",
+  "apps/web/app/memory/page.tsx",
+  "apps/web/app/export/page.tsx",
+  "apps/web/app/settings/page.tsx",
+  "apps/web/app/reminders/page.tsx",
 ];
 for (const rel of primaryPages) {
   const text = read(rel);

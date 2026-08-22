@@ -19,19 +19,19 @@ function mustExist(rel) {
 }
 
 for (const rel of [
-  "types/native-push-verification.ts",
-  "lib/mobile/native-push-verification.ts",
+  "packages/shared/types/native-push-verification.ts",
+  "packages/shared/lib/mobile/native-push-verification.ts",
   "mobile/evidence/native_push_verification.json",
-  "components/internal/NativeMobilePushReadinessPanel.tsx",
-  "app/internal/mobile-push-readiness/page.tsx",
-  "apps/voicememory_mobile/lib/features/native_push/native_push_verification.dart",
-  "apps/voicememory_mobile/lib/features/native_push/native_push_service.dart",
-  "apps/voicememory_mobile/lib/screens/native_push_verification_screen.dart",
+  "apps/web/components/internal/NativeMobilePushReadinessPanel.tsx",
+  "apps/web/app/internal/mobile-push-readiness/page.tsx",
+  "apps/mobile/lib/features/native_push/native_push_verification.dart",
+  "apps/mobile/lib/features/native_push/native_push_service.dart",
+  "apps/mobile/lib/screens/native_push_verification_screen.dart",
 ]) {
   mustExist(rel);
 }
 
-const pubspec = read("apps/voicememory_mobile/pubspec.yaml");
+const pubspec = read("apps/mobile/pubspec.yaml");
 if (!pubspec.includes("flutter_local_notifications")) {
   fail("Flutter app must include flutter_local_notifications for native verify");
 }
@@ -41,7 +41,7 @@ if (!fs.existsSync(evidencePath)) {
   fail("missing mobile/evidence/native_push_verification.json");
 }
 
-const lib = read("lib/mobile/native-push-verification.ts");
+const lib = read("packages/shared/lib/mobile/native-push-verification.ts");
 for (const token of [
   "native_push_verification.json",
   "permission_granted",
@@ -55,7 +55,7 @@ for (const token of [
   if (!lib.includes(token)) fail(`native-push-verification missing ${token}`);
 }
 
-const production = read("lib/mobile/mobile-production-readiness.ts");
+const production = read("packages/shared/lib/mobile/mobile-production-readiness.ts");
 if (!production.includes("resolveNativePushNotificationsItem")) {
   fail("mobile-production-readiness must use native push for push_notifications");
 }
@@ -67,7 +67,7 @@ try {
   const {
     buildNativePushReadinessReport,
     readNativePushVerificationEvidence,
-  } = await import(path.join(ROOT, "lib/mobile/native-push-verification.ts"));
+  } = await import(path.join(ROOT, "packages/shared/lib/mobile/native-push-verification.ts"));
 
   const evidence = readNativePushVerificationEvidence();
   if (!evidence) {

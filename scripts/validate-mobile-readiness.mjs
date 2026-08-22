@@ -20,20 +20,20 @@ function mustExist(rel) {
 }
 
 for (const rel of [
-  "types/mobile-production-readiness.ts",
-  "lib/mobile/release-evidence.ts",
-  "lib/mobile/mobile-production-readiness.ts",
-  "components/internal/MobileProductionReadinessPanel.tsx",
-  "app/internal/mobile-readiness/page.tsx",
+  "packages/shared/types/mobile-production-readiness.ts",
+  "packages/shared/lib/mobile/release-evidence.ts",
+  "packages/shared/lib/mobile/mobile-production-readiness.ts",
+  "apps/web/components/internal/MobileProductionReadinessPanel.tsx",
+  "apps/web/app/internal/mobile-readiness/page.tsx",
   "mobile/evidence/README.md",
   "scripts/generate-mobile-readiness-report.mjs",
-  "apps/voicememory_mobile/pubspec.yaml",
-  "lib/mobile/mobile-readiness.ts",
+  "apps/mobile/pubspec.yaml",
+  "packages/shared/lib/mobile/mobile-readiness.ts",
 ]) {
   mustExist(rel);
 }
 
-const evidence = read("lib/mobile/release-evidence.ts");
+const evidence = read("packages/shared/lib/mobile/release-evidence.ts");
 for (const id of [
   "testflight_uploaded",
   "play_internal_uploaded",
@@ -45,7 +45,7 @@ for (const id of [
   if (!evidence.includes(id)) fail(`release-evidence missing ${id}`);
 }
 
-const production = read("lib/mobile/mobile-production-readiness.ts");
+const production = read("packages/shared/lib/mobile/mobile-production-readiness.ts");
 for (const item of [
   "push_notifications",
   "background_recording",
@@ -62,7 +62,7 @@ for (const item of [
   if (!production.includes(item)) fail(`mobile-production-readiness missing ${item}`);
 }
 
-const page = read("app/internal/mobile-readiness/page.tsx");
+const page = read("apps/web/app/internal/mobile-readiness/page.tsx");
 if (!page.includes("MobileProductionReadinessPanel")) {
   fail("mobile-readiness page must use MobileProductionReadinessPanel");
 }
@@ -70,11 +70,11 @@ if (!page.includes("buildMobileProductionReadinessReport")) {
   fail("mobile-readiness page must build production report");
 }
 
-const panel = read("components/internal/MobileProductionReadinessPanel.tsx");
+const panel = read("apps/web/components/internal/MobileProductionReadinessPanel.tsx");
 for (const status of ["FAILING", "PASSING"]) {
   if (!panel.includes(status)) fail(`panel must render ${status}`);
 }
-if (!read("types/mobile-production-readiness.ts").includes("UNKNOWN")) {
+if (!read("packages/shared/types/mobile-production-readiness.ts").includes("UNKNOWN")) {
   fail("types must define UNKNOWN status");
 }
 
@@ -101,7 +101,7 @@ for (const token of [
 
 try {
   const { buildMobileProductionReadinessReport } = await import(
-    path.join(ROOT, "lib/mobile/mobile-production-readiness.ts")
+    path.join(ROOT, "packages/shared/lib/mobile/mobile-production-readiness.ts")
   );
   const report = buildMobileProductionReadinessReport();
   if (report.items.length !== 11) {

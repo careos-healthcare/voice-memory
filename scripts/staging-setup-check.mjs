@@ -2,7 +2,7 @@
 import {
   printStagingSetupCheck,
   runStagingSetupCheck,
-} from "../lib/staging/staging-setup-check.ts";
+} from "../packages/shared/lib/staging/staging-setup-check.ts";
 
 const report = runStagingSetupCheck();
 printStagingSetupCheck(report);

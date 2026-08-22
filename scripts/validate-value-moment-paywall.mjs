@@ -30,13 +30,13 @@ globalThis.localStorage = {
 };
 
 const required = [
-  "types/value-moment-paywall.ts",
-  "lib/billing/value-moment-paywall.ts",
-  "lib/billing/value-moment-paywall-copy.ts",
-  "lib/billing/value-moment-paywall-metrics.ts",
-  "components/billing/ValueMomentPaywall.tsx",
-  "components/billing/ValueMomentContinuityGate.tsx",
-  "components/internal/ValueMomentPaywallPanel.tsx",
+  "packages/shared/types/value-moment-paywall.ts",
+  "packages/shared/lib/billing/value-moment-paywall.ts",
+  "packages/shared/lib/billing/value-moment-paywall-copy.ts",
+  "packages/shared/lib/billing/value-moment-paywall-metrics.ts",
+  "apps/web/components/billing/ValueMomentPaywall.tsx",
+  "apps/web/components/billing/ValueMomentContinuityGate.tsx",
+  "apps/web/components/internal/ValueMomentPaywallPanel.tsx",
 ];
 
 for (const rel of required) {
@@ -64,12 +64,12 @@ const {
   resetValueMomentPaywallForTests,
   shouldBypassValueMomentPaywall,
   VALUE_MOMENT_REFLECTION_TARGET,
-} = await import("../lib/billing/value-moment-paywall.ts");
+} = await import("../packages/shared/lib/billing/value-moment-paywall.ts");
 
 const {
   VALUE_MOMENT_PAYWALL_COPY,
   VALUE_MOMENT_PRICING_COPY,
-} = await import("../lib/billing/value-moment-paywall-copy.ts");
+} = await import("../packages/shared/lib/billing/value-moment-paywall-copy.ts");
 
 const {
   buildValueMomentPaywallMetricsReport,
@@ -77,9 +77,9 @@ const {
   trackValueMomentPaywallCtaClicked,
   trackValueMomentPaywallDismissed,
   clearValueMomentPaywallMetricsForEval,
-} = await import("../lib/billing/value-moment-paywall-metrics.ts");
+} = await import("../packages/shared/lib/billing/value-moment-paywall-metrics.ts");
 
-const { setPreviewTier } = await import("../lib/entitlement/entitlements.ts");
+const { setPreviewTier } = await import("../packages/shared/lib/entitlement/entitlements.ts");
 
 resetValueMomentPaywallForTests();
 clearValueMomentPaywallMetricsForEval();
@@ -158,8 +158,8 @@ assert.equal(VALUE_MOMENT_PRICING_COPY.priceLabel, "£9.99/month");
 assert.equal(VALUE_MOMENT_REFLECTION_TARGET, 5);
 
 for (const rel of [
-  "lib/billing/value-moment-paywall-copy.ts",
-  "components/billing/ValueMomentPaywall.tsx",
+  "packages/shared/lib/billing/value-moment-paywall-copy.ts",
+  "apps/web/components/billing/ValueMomentPaywall.tsx",
 ]) {
   const src = fs.readFileSync(path.join(ROOT, rel), "utf8");
   if (FORBIDDEN.test(src)) fail(`${rel} contains forbidden language`);
@@ -181,16 +181,16 @@ assert.ok(metrics.shownAfterDiscoverCount >= 0);
 
 // Route wiring
 for (const rel of [
-  "components/blind-spots/BlindSpotReview.tsx",
-  "components/discover/TheoryChangeFeed.tsx",
-  "app/internal/retention-discovery/page.tsx",
+  "apps/web/components/blind-spots/BlindSpotReview.tsx",
+  "apps/web/components/discover/TheoryChangeFeed.tsx",
+  "apps/web/app/internal/retention-discovery/page.tsx",
 ]) {
   const src = fs.readFileSync(path.join(ROOT, rel), "utf8");
   if (!src.includes("ValueMomentPaywall")) fail(`${rel} must wire ValueMomentPaywall`);
 }
 
 const retentionSrc = fs.readFileSync(
-  path.join(ROOT, "app/internal/retention-discovery/page.tsx"),
+  path.join(ROOT, "apps/web/app/internal/retention-discovery/page.tsx"),
   "utf8",
 );
 if (!retentionSrc.includes("ValueMomentPaywallPanel")) {
@@ -198,14 +198,14 @@ if (!retentionSrc.includes("ValueMomentPaywallPanel")) {
 }
 
 const paywallSrc = fs.readFileSync(
-  path.join(ROOT, "components/billing/ValueMomentPaywall.tsx"),
+  path.join(ROOT, "apps/web/components/billing/ValueMomentPaywall.tsx"),
   "utf8",
 );
 if (!paywallSrc.includes("VALUE_MOMENT_PAYWALL_COPY")) {
   fail("ValueMomentPaywall must render VALUE_MOMENT_PAYWALL_COPY");
 }
 const copySrc = fs.readFileSync(
-  path.join(ROOT, "lib/billing/value-moment-paywall-copy.ts"),
+  path.join(ROOT, "packages/shared/lib/billing/value-moment-paywall-copy.ts"),
   "utf8",
 );
 if (!copySrc.includes("Keep the full timeline")) {
@@ -214,7 +214,7 @@ if (!copySrc.includes("Keep the full timeline")) {
 if (!copySrc.includes("Not now")) fail("paywall copy must include dismiss");
 
 const progressSrc = fs.readFileSync(
-  path.join(ROOT, "lib/billing/value-moment-paywall.ts"),
+  path.join(ROOT, "packages/shared/lib/billing/value-moment-paywall.ts"),
   "utf8",
 );
 if (/new PatternEngine|buildBlindSpotReview\(/i.test(progressSrc)) {

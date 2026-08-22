@@ -3,7 +3,7 @@
  * Firefox recursion regression — no sync storage during presentation build.
  */
 
-import { runPresentationSideEffectsTestsForCi } from "../lib/reliability/presentation-side-effects-tests.ts";
+import { runPresentationSideEffectsTestsForCi } from "../packages/shared/lib/reliability/presentation-side-effects-tests.ts";
 
 const report = await runPresentationSideEffectsTestsForCi();
 

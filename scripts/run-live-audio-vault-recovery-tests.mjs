@@ -1,4 +1,4 @@
-import { runLiveAudioVaultRecoveryRouteTests } from "../lib/reliability/live-audio-vault-recovery-route-tests.ts";
+import { runLiveAudioVaultRecoveryRouteTests } from "../packages/shared/lib/reliability/live-audio-vault-recovery-route-tests.ts";
 
 const { failures } = await runLiveAudioVaultRecoveryRouteTests();
 if (failures.length > 0) {

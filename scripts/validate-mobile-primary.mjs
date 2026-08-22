@@ -8,7 +8,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const MOBILE = path.join(ROOT, "apps/voicememory_mobile");
+const MOBILE = path.join(ROOT, "apps/mobile");
 const failures = [];
 const warnings = [];
 
@@ -37,13 +37,13 @@ const requiredDocs = [
 
 for (const d of requiredDocs) mustExist(d);
 
-const router = read("lib/router/app_router.dart");
+const router = read("packages/shared/lib/router/app_router.dart");
 for (const route of ["/record", "/archive-belief", "/discover", "/account", "/blind-spots", "/updates"]) {
   if (!router.includes(route)) fail(`app_router missing ${route}`);
 }
 if (!router.includes("ArchiveBeliefScreen")) fail("app_router must use ArchiveBeliefScreen");
 
-const archiveScreen = read("lib/screens/archive_belief_screen.dart");
+const archiveScreen = read("packages/shared/lib/screens/archive_belief_screen.dart");
 for (const token of [
   "ArchiveBeliefHeaderMobile",
   "ArchiveProgressBarMobile",
@@ -52,11 +52,11 @@ for (const token of [
 ]) {
   if (!archiveScreen.includes(token)) fail(`archive_belief_screen missing ${token}`);
 }
-const discoverScreen = read("lib/screens/discover_screen.dart");
+const discoverScreen = read("packages/shared/lib/screens/discover_screen.dart");
 if (!discoverScreen.includes("ArchiveMobilePageTemplate")) {
   fail("discover_screen must use ArchiveMobilePageTemplate");
 }
-const mainShell = read("lib/widgets/main_shell.dart");
+const mainShell = read("packages/shared/lib/widgets/main_shell.dart");
 if (mainShell.includes("Journal") || mainShell.includes("Blind Spots")) {
   fail("mobile primary bottom nav must not include Journal or Blind Spots");
 }
@@ -64,7 +64,7 @@ if (/internal|founder-test|debug\//i.test(router)) {
   fail("app_router must not include internal/founder/debug routes");
 }
 
-const config = read("lib/config/app_config.dart");
+const config = read("packages/shared/lib/config/app_config.dart");
 if (!config.includes("VOICE_MEMORY_API_BASE_URL")) {
   fail("app_config must use VOICE_MEMORY_API_BASE_URL dart-define");
 }
@@ -72,7 +72,7 @@ if (/localhost.*release/i.test(config)) {
   fail("app_config must not hardcode localhost for release");
 }
 
-const paywallCopy = read("lib/billing/value_moment_paywall.dart");
+const paywallCopy = read("packages/shared/lib/billing/value_moment_paywall.dart");
 for (const phrase of [
   "Keep the evolving archive alive",
   "Keep tracking my patterns",
@@ -89,7 +89,7 @@ const plist = read("ios/Runner/Info.plist");
 if (!plist.includes("NSMicrophoneUsageDescription")) fail("iOS mic description missing");
 if (!plist.includes("ArchiveMe")) fail("iOS display name ArchiveMe missing");
 
-const api = read("lib/api/api_client.dart");
+const api = read("packages/shared/lib/api/api_client.dart");
 for (const fn of [
   "sendAuthCode",
   "verifyAuthCode",

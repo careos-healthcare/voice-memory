@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { runLandingPageAlignmentTests } from "../lib/reliability/landing-page-alignment-tests.ts";
+import { runLandingPageAlignmentTests } from "../packages/shared/lib/reliability/landing-page-alignment-tests.ts";
 
 const { failures } = runLandingPageAlignmentTests();
 if (failures.length > 0) {

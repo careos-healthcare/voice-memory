@@ -8,9 +8,9 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const failures = [];
 
 const required = [
-  "lib/blind-spots/evidence-accuracy.ts",
-  "lib/blind-spots/blind-spot-ranking.ts",
-  "types/blind-spot.ts",
+  "packages/shared/lib/blind-spots/evidence-accuracy.ts",
+  "packages/shared/lib/blind-spots/blind-spot-ranking.ts",
+  "packages/shared/types/blind-spot.ts",
 ];
 
 for (const rel of required) {
@@ -18,7 +18,7 @@ for (const rel of required) {
 }
 
 const accuracySrc = fs.readFileSync(
-  path.join(ROOT, "lib/blind-spots/evidence-accuracy.ts"),
+  path.join(ROOT, "packages/shared/lib/blind-spots/evidence-accuracy.ts"),
   "utf8",
 );
 if (!accuracySrc.includes("passesSkepticEvidenceGate")) {
@@ -29,7 +29,7 @@ if (!accuracySrc.includes("deriveRootBeliefHypothesis")) {
 }
 
 const reviewSrc = fs.readFileSync(
-  path.join(ROOT, "lib/blind-spots/blind-spot-review.ts"),
+  path.join(ROOT, "packages/shared/lib/blind-spots/blind-spot-review.ts"),
   "utf8",
 );
 if (!reviewSrc.includes("rankBlindSpotCandidates")) {
@@ -37,12 +37,12 @@ if (!reviewSrc.includes("rankBlindSpotCandidates")) {
 }
 
 const pkg = fs.readFileSync(path.join(ROOT, "package.json"), "utf8");
-if (!pkg.includes("validate:blind-spot-tests")) {
-  failures.push("package.json must include validate:blind-spot-tests");
+if (!pkg.includes("validate:blind-spot")) {
+  failures.push("package.json must include validate:blind-spot");
 }
 
 const { FORBIDDEN_ROOT_BELIEF, deriveRootBeliefHypothesis } = await import(
-  "../lib/blind-spots/evidence-accuracy.ts"
+  "../packages/shared/lib/blind-spots/evidence-accuracy.ts"
 );
 
 const sample = deriveRootBeliefHypothesis(

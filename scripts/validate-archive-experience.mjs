@@ -20,17 +20,17 @@ spawnSync("node", ["scripts/validate-archive-clarity-momentum.mjs"], {
   stdio: "inherit",
 });
 
-const archiveHome = read("components/archive/EvidenceArchiveHome.tsx");
+const archiveHome = read("apps/web/components/archive/EvidenceArchiveHome.tsx");
 if (!archiveHome.includes("ArchiveDetailHub")) {
   fail("archive home must include ArchiveDetailHub");
 }
 
-const discover = read("lib/discover/discover-copy.ts");
+const discover = read("packages/shared/lib/discover/discover-copy.ts");
 if (!discover.includes("DISCOVER_PAGE_EYEBROW")) fail("discover-copy must use archive changes eyebrow");
 
-const caseFile = read("lib/archive/archive-case-file-progress.ts");
+const caseFile = read("packages/shared/lib/archive/archive-case-file-progress.ts");
 for (const token of ["Evidence", "Areas", "under review", "strengthened", "challenged"]) {
-  if (!caseFile.includes(token) && !read("components/archive/ArchiveCaseFileProgress.tsx").includes(token)) {
+  if (!caseFile.includes(token) && !read("apps/web/components/archive/ArchiveCaseFileProgress.tsx").includes(token)) {
     fail(`case file progress missing framing: ${token}`);
   }
 }

@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { getEmailMode, isEmailDisabled } from "../lib/server/email-mode.ts";
+import { getEmailMode, isEmailDisabled } from "../packages/shared/lib/server/email-mode.ts";
 
 const failures = [];
 

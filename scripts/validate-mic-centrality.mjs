@@ -8,7 +8,7 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const failures = [];
 
 const micHome = fs.readFileSync(
-  path.join(ROOT, "components/reflex/MicCentricHome.tsx"),
+  path.join(ROOT, "apps/web/components/reflex/MicCentricHome.tsx"),
   "utf8",
 );
 const bannedInMicHome = [
@@ -26,7 +26,7 @@ for (const token of bannedInMicHome) {
   }
 }
 
-const home = fs.readFileSync(path.join(ROOT, "app/page.tsx"), "utf8");
+const home = fs.readFileSync(path.join(ROOT, "apps/web/app/page.tsx"), "utf8");
 if (!home.includes("micCentric")) {
   failures.push("homepage must branch on micCentric");
 }
@@ -51,13 +51,13 @@ if (
   failures.push("homepage continuity stack must be gated behind !micCentric");
 }
 
-const recordPage = fs.readFileSync(path.join(ROOT, "app/record/page.tsx"), "utf8");
+const recordPage = fs.readFileSync(path.join(ROOT, "apps/web/app/record/page.tsx"), "utf8");
 const quickRecord = fs.readFileSync(
-  path.join(ROOT, "components/capture/QuickRecordPage.tsx"),
+  path.join(ROOT, "apps/web/components/capture/QuickRecordPage.tsx"),
   "utf8",
 );
 const zeroShell = fs.readFileSync(
-  path.join(ROOT, "components/capture/ZeroStateRecorderShell.tsx"),
+  path.join(ROOT, "apps/web/components/capture/ZeroStateRecorderShell.tsx"),
   "utf8",
 );
 if (
@@ -70,7 +70,7 @@ if (
 }
 
 const quickEntry = fs.readFileSync(
-  path.join(ROOT, "lib/mobile/quick-entry.ts"),
+  path.join(ROOT, "packages/shared/lib/mobile/quick-entry.ts"),
   "utf8",
 );
 if (!quickEntry.includes("QUICK_ENTRY_PATH") || !quickEntry.includes("parseQuickEntryIntent")) {

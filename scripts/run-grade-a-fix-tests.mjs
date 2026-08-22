@@ -1,7 +1,7 @@
 #!/usr/bin/env node
-import { runApiGuardTests } from "../lib/reliability/api-guard-tests.ts";
-import { runJournalPersistenceTests } from "../lib/reliability/journal-persistence-tests.ts";
-import { runResurfacingFeedbackTests } from "../lib/reliability/resurfacing-feedback-tests.ts";
+import { runApiGuardTests } from "../packages/shared/lib/reliability/api-guard-tests.ts";
+import { runJournalPersistenceTests } from "../packages/shared/lib/reliability/journal-persistence-tests.ts";
+import { runResurfacingFeedbackTests } from "../packages/shared/lib/reliability/resurfacing-feedback-tests.ts";
 
 const failures = [];
 

@@ -8,13 +8,13 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const ENTRY_PAGE = path.join(ROOT, "app/entry/[id]/page.tsx");
+const ENTRY_PAGE = path.join(ROOT, "apps/web/app/entry/[id]/page.tsx");
 
 const REQUIRED = [
-  "lib/entry/entry-route-guard.ts",
-  "lib/entry/entry-presentation-runtime.ts",
-  "lib/entry/defer-after-mount.ts",
-  "app/entry/[id]/page.tsx",
+  "packages/shared/lib/entry/entry-route-guard.ts",
+  "packages/shared/lib/entry/entry-presentation-runtime.ts",
+  "packages/shared/lib/entry/defer-after-mount.ts",
+  "apps/web/app/entry/[id]/page.tsx",
 ];
 
 for (const rel of REQUIRED) {

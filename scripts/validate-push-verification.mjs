@@ -19,16 +19,16 @@ function mustExist(rel) {
 }
 
 for (const rel of [
-  "types/push-verification.ts",
-  "lib/notifications/push-verification.ts",
-  "components/internal/PushVerificationPanel.tsx",
-  "components/notifications/PushVerificationBootstrap.tsx",
-  "app/internal/push-verification/page.tsx",
+  "packages/shared/types/push-verification.ts",
+  "packages/shared/lib/notifications/push-verification.ts",
+  "apps/web/components/internal/PushVerificationPanel.tsx",
+  "apps/web/components/notifications/PushVerificationBootstrap.tsx",
+  "apps/web/app/internal/push-verification/page.tsx",
 ]) {
   mustExist(rel);
 }
 
-const lib = read("lib/notifications/push-verification.ts");
+const lib = read("packages/shared/lib/notifications/push-verification.ts");
 for (const token of [
   "lastNotificationSent",
   "lastNotificationDelivered",
@@ -52,7 +52,7 @@ for (const check of [
   if (!lib.includes(check)) fail(`push-verification missing check ${check}`);
 }
 
-const panel = read("components/internal/PushVerificationPanel.tsx");
+const panel = read("apps/web/components/internal/PushVerificationPanel.tsx");
 if (!panel.includes("Last notification sent")) fail("panel must show last notification sent");
 if (!panel.includes("Last notification delivered")) {
   fail("panel must show last notification delivered");
@@ -61,10 +61,10 @@ if (!panel.includes("Last notification opened")) fail("panel must show last noti
 if (!panel.includes("Request permission")) fail("panel must offer permission request");
 if (!panel.includes("Send test notification")) fail("panel must offer send test");
 
-const page = read("app/internal/push-verification/page.tsx");
+const page = read("apps/web/app/internal/push-verification/page.tsx");
 if (!page.includes("PushVerificationPanel")) fail("page must render PushVerificationPanel");
 
-const providers = read("app/providers.tsx");
+const providers = read("apps/web/app/providers.tsx");
 if (!providers.includes("PushVerificationBootstrap")) {
   fail("providers must mount PushVerificationBootstrap");
 }
@@ -73,7 +73,7 @@ try {
   const {
     buildPushVerificationReport,
     PUSH_VERIFICATION_CHECK_IDS,
-  } = await import(path.join(ROOT, "lib/notifications/push-verification.ts"));
+  } = await import(path.join(ROOT, "packages/shared/lib/notifications/push-verification.ts"));
   const report = buildPushVerificationReport();
   if (report.checks.length !== 5) {
     fail(`expected 5 checks, got ${report.checks.length}`);

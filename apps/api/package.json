@@ -1,0 +1,41 @@
+{
+  "name": "@voice-memory/api",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "node --import tsx server.mjs",
+    "build": "next build && node scripts/build-server.mjs",
+    "build:server": "node scripts/build-server.mjs",
+    "start": "NODE_ENV=production node dist/main.js",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit -p tsconfig.json"
+  },
+  "dependencies": {
+    "@voice-memory/shared": "*",
+    "fflate": "^0.8.3",
+    "firebase-admin": "^13.10.0",
+    "ioredis": "^5.11.1",
+    "next": "15.5.23",
+    "openai": "^6.39.0",
+    "pg": "^8.21.0",
+    "pino": "^10.3.1",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "resend": "^4.8.0",
+    "server-only": "^0.0.1",
+    "stripe": "^17.7.0",
+    "ws": "^8.21.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/pg": "^8.20.0",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "@types/ws": "^8.18.1",
+    "esbuild": "^0.25.12",
+    "eslint": "^9",
+    "eslint-config-next": "15.5.23",
+    "tsx": "^4.20.6",
+    "typescript": "^5"
+  }
+}

@@ -1,15 +1,15 @@
 #!/usr/bin/env node
 import assert from "node:assert/strict";
 
-import { resetUnresolvedDetectionCache } from "../lib/open-loops/unresolved-cache.ts";
-import { resetOpenLoopActivationCache } from "../lib/open-loops/open-loop-activation.ts";
+import { resetUnresolvedDetectionCache } from "../packages/shared/lib/open-loops/unresolved-cache.ts";
+import { resetOpenLoopActivationCache } from "../packages/shared/lib/open-loops/open-loop-activation.ts";
 import {
   getUnresolvedDetectionRunCount,
   resetOpenLoopPerformanceCounters,
-} from "../lib/open-loops/open-loop-performance.ts";
-import { readOpenLoopActivation, readUnresolvedThread } from "../lib/runtime/read-model.ts";
-import { resetDeferredJobQueue } from "../lib/runtime/deferred-jobs.ts";
-import { isReadOnlyPhase, runReadOnly } from "../lib/runtime/render-safe.ts";
+} from "../packages/shared/lib/open-loops/open-loop-performance.ts";
+import { readOpenLoopActivation, readUnresolvedThread } from "../packages/shared/lib/runtime/read-model.ts";
+import { resetDeferredJobQueue } from "../packages/shared/lib/runtime/deferred-jobs.ts";
+import { isReadOnlyPhase, runReadOnly } from "../packages/shared/lib/runtime/render-safe.ts";
 
 const HAUNTED =
   "I am haunted by the past, the present and the future. I'm scared.";

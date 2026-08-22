@@ -6,8 +6,8 @@ import { fileURLToPath } from "node:url";
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const failures = [];
 
-const copyPath = path.join(ROOT, "lib/product/anticipatory-memory-copy.ts");
-const componentPath = path.join(ROOT, "components/memory/AnticipatoryEmptyState.tsx");
+const copyPath = path.join(ROOT, "packages/shared/lib/product/anticipatory-memory-copy.ts");
+const componentPath = path.join(ROOT, "apps/web/components/memory/AnticipatoryEmptyState.tsx");
 
 if (!fs.existsSync(copyPath)) failures.push("missing anticipatory-memory-copy.ts");
 if (!fs.existsSync(componentPath)) failures.push("missing AnticipatoryEmptyState.tsx");
@@ -23,10 +23,10 @@ for (const token of [
 }
 
 const pages = [
-  "app/journal/page.tsx",
-  "app/memory/page.tsx",
-  "app/insights/page.tsx",
-  "app/timeline/page.tsx",
+  "apps/web/app/journal/page.tsx",
+  "apps/web/app/memory/page.tsx",
+  "apps/web/app/insights/page.tsx",
+  "apps/web/app/timeline/page.tsx",
 ];
 for (const rel of pages) {
   const src = fs.readFileSync(path.join(ROOT, rel), "utf8");

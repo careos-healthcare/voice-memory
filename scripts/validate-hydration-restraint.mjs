@@ -6,15 +6,15 @@ import { fileURLToPath } from "node:url";
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
 const SCAN_FILES = [
-  "components/ActivationOnboarding.tsx",
-  "components/OnboardingBanner.tsx",
-  "components/PersonalisationProgressNote.tsx",
-  "components/onboarding/CalmComprehensionPrompt.tsx",
-  "components/onboarding/OnboardingNavigationTracker.tsx",
-  "components/social-proof/OnboardingCompletionProof.tsx",
-  "components/social-proof/OnboardingTrustLine.tsx",
-  "components/homepage/HomepagePrimaryCtaProvider.tsx",
-  "components/retention/DayTwoReturnPrompt.tsx",
+  "apps/web/components/ActivationOnboarding.tsx",
+  "apps/web/components/OnboardingBanner.tsx",
+  "apps/web/components/PersonalisationProgressNote.tsx",
+  "apps/web/components/onboarding/CalmComprehensionPrompt.tsx",
+  "apps/web/components/onboarding/OnboardingNavigationTracker.tsx",
+  "apps/web/components/social-proof/OnboardingCompletionProof.tsx",
+  "apps/web/components/social-proof/OnboardingTrustLine.tsx",
+  "apps/web/components/homepage/HomepagePrimaryCtaProvider.tsx",
+  "apps/web/components/retention/DayTwoReturnPrompt.tsx",
 ];
 
 const BROWSER_READ_RE =

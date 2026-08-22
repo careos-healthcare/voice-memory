@@ -6,15 +6,15 @@ import { fileURLToPath } from "node:url";
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
 const REQUIRED = [
-  "lib/revisit/callback-learning.ts",
-  "types/callback-learning.ts",
-  "lib/debug/callback-learning-review.ts",
-  "components/internal/CallbackLearningDebugPanel.tsx",
-  "app/internal/callback-learning/page.tsx",
-  "lib/revisit/resurfacing-confidence.ts",
-  "lib/refinement/callback-tuning.ts",
-  "lib/retention/return-triggers.ts",
-  "lib/retention/first-magic-moment.ts",
+  "packages/shared/lib/revisit/callback-learning.ts",
+  "packages/shared/types/callback-learning.ts",
+  "packages/shared/lib/debug/callback-learning-review.ts",
+  "apps/web/components/internal/CallbackLearningDebugPanel.tsx",
+  "apps/web/app/internal/callback-learning/page.tsx",
+  "packages/shared/lib/revisit/resurfacing-confidence.ts",
+  "packages/shared/lib/refinement/callback-tuning.ts",
+  "packages/shared/lib/retention/return-triggers.ts",
+  "packages/shared/lib/retention/first-magic-moment.ts",
 ];
 
 for (const rel of REQUIRED) {
@@ -24,8 +24,8 @@ for (const rel of REQUIRED) {
   }
 }
 
-const learning = fs.readFileSync(path.join(ROOT, "lib/revisit/callback-learning.ts"), "utf8");
-const memoryNote = fs.readFileSync(path.join(ROOT, "components/patterns/MemoryNote.tsx"), "utf8");
+const learning = fs.readFileSync(path.join(ROOT, "packages/shared/lib/revisit/callback-learning.ts"), "utf8");
+const memoryNote = fs.readFileSync(path.join(ROOT, "apps/web/components/patterns/MemoryNote.tsx"), "utf8");
 const packageJson = fs.readFileSync(path.join(ROOT, "package.json"), "utf8");
 
 const CAPS = [

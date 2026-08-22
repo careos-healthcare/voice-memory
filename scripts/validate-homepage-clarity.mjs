@@ -5,9 +5,9 @@ import { fileURLToPath } from "node:url";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
-const pagePath = path.join(ROOT, "app/page.tsx");
-const copyPath = path.join(ROOT, "lib/product-copy.ts");
-const recognitionPath = path.join(ROOT, "lib/product/recognition-copy.ts");
+const pagePath = path.join(ROOT, "apps/web/app/page.tsx");
+const copyPath = path.join(ROOT, "packages/shared/lib/product-copy.ts");
+const recognitionPath = path.join(ROOT, "packages/shared/lib/product/recognition-copy.ts");
 
 for (const rel of [pagePath, copyPath, recognitionPath]) {
   if (!fs.existsSync(rel)) {
@@ -21,8 +21,8 @@ const copy = fs.readFileSync(copyPath, "utf8");
 const recognition = fs.readFileSync(recognitionPath, "utf8");
 const copySources = `${copy}\n${recognition}`;
 
-const clarityCopyPath = path.join(ROOT, "lib/product/product-clarity-copy.ts");
-const landingCopyPath = path.join(ROOT, "lib/product/landing-three-day-challenge-copy.ts");
+const clarityCopyPath = path.join(ROOT, "packages/shared/lib/product/product-clarity-copy.ts");
+const landingCopyPath = path.join(ROOT, "packages/shared/lib/product/landing-three-day-challenge-copy.ts");
 const clarityCopy = fs.existsSync(clarityCopyPath)
   ? fs.readFileSync(clarityCopyPath, "utf8")
   : "";

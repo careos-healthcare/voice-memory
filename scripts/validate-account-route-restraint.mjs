@@ -5,8 +5,8 @@ import { fileURLToPath } from "node:url";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
-const ACCOUNT_PAGE = path.join(ROOT, "app/account/page.tsx");
-const REVISIT_COPY = path.join(ROOT, "lib/refinement/revisit-reward-copy.ts");
+const ACCOUNT_PAGE = path.join(ROOT, "apps/web/app/account/page.tsx");
+const REVISIT_COPY = path.join(ROOT, "packages/shared/lib/refinement/revisit-reward-copy.ts");
 
 if (!fs.existsSync(REVISIT_COPY)) {
   console.error("Account route validation failed — missing lib/refinement/revisit-reward-copy.ts");
@@ -41,7 +41,7 @@ for (const token of forbiddenImports) {
 }
 
 const observation = fs.readFileSync(
-  path.join(ROOT, "lib/monetization/monetization-observation.ts"),
+  path.join(ROOT, "packages/shared/lib/monetization/monetization-observation.ts"),
   "utf8",
 );
 if (observation.includes('from "@/lib/debug/emotional-legitimacy-review"')) {

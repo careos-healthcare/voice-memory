@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { runPrivacyLogsTests } from "../lib/reliability/privacy-logs-tests.ts";
+import { runPrivacyLogsTests } from "../packages/shared/lib/reliability/privacy-logs-tests.ts";
 
 const { failures } = runPrivacyLogsTests();
 if (failures.length) {

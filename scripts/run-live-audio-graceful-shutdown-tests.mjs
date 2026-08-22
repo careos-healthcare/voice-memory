@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { runLiveAudioGracefulShutdownTests } from "../lib/reliability/live-audio-graceful-shutdown-tests.ts";
+import { runLiveAudioGracefulShutdownTests } from "../packages/shared/lib/reliability/live-audio-graceful-shutdown-tests.ts";
 
 const { failures } = await runLiveAudioGracefulShutdownTests();
 

@@ -19,22 +19,22 @@ function mustExist(rel) {
 }
 
 const required = [
-  "types/archive-reputation.ts",
-  "lib/archive/archive-reputation.ts",
-  "lib/archive/archive-reputation-copy.ts",
-  "lib/archive/archive-reputation-trust.ts",
-  "lib/archive/archive-reputation-movement.ts",
-  "components/archive/ArchiveReputationCard.tsx",
-  "components/archive/WhyTheArchiveTrustsThis.tsx",
-  "components/archive/ArchiveReputationMovement.tsx",
-  "lib/internal/archive-reputation-report.ts",
-  "apps/voicememory_mobile/lib/features/archive_reputation/archive_reputation.dart",
-  "apps/voicememory_mobile/lib/widgets/archive_reputation_card_mobile.dart",
+  "packages/shared/types/archive-reputation.ts",
+  "packages/shared/lib/archive/archive-reputation.ts",
+  "packages/shared/lib/archive/archive-reputation-copy.ts",
+  "packages/shared/lib/archive/archive-reputation-trust.ts",
+  "packages/shared/lib/archive/archive-reputation-movement.ts",
+  "apps/web/components/archive/ArchiveReputationCard.tsx",
+  "apps/web/components/archive/WhyTheArchiveTrustsThis.tsx",
+  "apps/web/components/archive/ArchiveReputationMovement.tsx",
+  "packages/shared/lib/internal/archive-reputation-report.ts",
+  "apps/mobile/lib/features/archive_reputation/archive_reputation.dart",
+  "apps/mobile/lib/widgets/archive_reputation_card_mobile.dart",
 ];
 
 for (const rel of required) mustExist(rel);
 
-const types = read("types/archive-reputation.ts");
+const types = read("packages/shared/types/archive-reputation.ts");
 for (const phrase of [
   "ArchiveReputationLevel",
   "very_high",
@@ -44,7 +44,7 @@ for (const phrase of [
   if (!types.includes(phrase)) fail(`archive-reputation types missing: ${phrase}`);
 }
 
-const engine = read("lib/archive/archive-reputation.ts");
+const engine = read("packages/shared/lib/archive/archive-reputation.ts");
 for (const phrase of [
   "buildArchiveReputationView",
   "buildBeliefSurvivalView",
@@ -69,7 +69,7 @@ for (const token of forbiddenImports) {
   if (engine.includes(token)) fail(`archive-reputation must not import new intelligence: ${token}`);
 }
 
-const copy = read("lib/archive/archive-reputation-copy.ts");
+const copy = read("packages/shared/lib/archive/archive-reputation-copy.ts");
 for (const phrase of [
   "The archive is still learning.",
   "The archive has started to gather evidence.",
@@ -90,10 +90,10 @@ const forbiddenCertainty = [
   /\byou should\b/i,
 ];
 for (const file of [
-  "lib/archive/archive-reputation-copy.ts",
-  "lib/archive/archive-reputation-trust.ts",
-  "lib/archive/archive-reputation-movement.ts",
-  "components/archive/ArchiveReputationCard.tsx",
+  "packages/shared/lib/archive/archive-reputation-copy.ts",
+  "packages/shared/lib/archive/archive-reputation-trust.ts",
+  "packages/shared/lib/archive/archive-reputation-movement.ts",
+  "apps/web/components/archive/ArchiveReputationCard.tsx",
 ]) {
   const src = read(file);
   for (const pattern of forbiddenCertainty) {
@@ -101,7 +101,7 @@ for (const file of [
   }
 }
 
-const commandCenter = read("components/archive/ArchiveCommandCenter.tsx");
+const commandCenter = read("apps/web/components/archive/ArchiveCommandCenter.tsx");
 const ccIndex = (label) => commandCenter.indexOf(label);
 const order = [
   ["reputation", ccIndex("<ArchiveReputationCard")],
@@ -124,7 +124,7 @@ if (commandCenter.includes("BeliefSurvivalCard")) {
   fail("ArchiveCommandCenter should demote BeliefSurvivalCard to dossier (reputation first)");
 }
 
-const dossier = read("components/archive/BeliefDossier.tsx");
+const dossier = read("apps/web/components/archive/BeliefDossier.tsx");
 const dossierRep = dossier.indexOf("ArchiveReputationCard");
 const dossierBlind = dossier.indexOf("relatedBlindSpotHeadline");
 if (dossierRep < 0 || dossier.indexOf("WhyTheArchiveTrustsThis") < 0) {
@@ -134,31 +134,31 @@ if (dossierBlind >= 0 && dossierRep > dossierBlind) {
   fail("BeliefDossier reputation must appear above blind spot");
 }
 
-const discover = read("app/discover/page.tsx");
+const discover = read("apps/web/app/discover/page.tsx");
 if (!discover.includes("ArchiveReputationMovement")) {
   fail("Discover must include ArchiveReputationMovement");
 }
 if (!discover.includes("Archive reputation increased")) {
-  const movement = read("lib/archive/archive-reputation-movement.ts");
+  const movement = read("packages/shared/lib/archive/archive-reputation-movement.ts");
   if (!movement.includes("Archive reputation increased")) {
     fail("discover reputation movement copy missing");
   }
 }
 
-if (!read("components/archive/ArchiveCommandCenter.tsx").includes("ArchiveReputationCard")) {
+if (!read("apps/web/components/archive/ArchiveCommandCenter.tsx").includes("ArchiveReputationCard")) {
   fail("Archive command center must render ArchiveReputationCard");
 }
-if (!read("components/archive/ArchiveBeliefHeader.tsx").includes("buildArchiveBeliefObject")) {
+if (!read("apps/web/components/archive/ArchiveBeliefHeader.tsx").includes("buildArchiveBeliefObject")) {
   fail("ArchiveBeliefHeader must use belief object");
 }
-if (!read("components/archive/BeliefDossier.tsx").includes("ArchiveReputationCard")) {
+if (!read("apps/web/components/archive/BeliefDossier.tsx").includes("ArchiveReputationCard")) {
   fail("Belief Dossier must render ArchiveReputationCard");
 }
 if (discover.includes("ArchiveReputationCard") && !discover.includes("compact")) {
   fail("Discover must use ArchiveReputationMovement only, not full ArchiveReputationCard");
 }
 
-const beliefCopy = read("lib/archive/archive-belief-copy.ts");
+const beliefCopy = read("packages/shared/lib/archive/archive-belief-copy.ts");
 if (!beliefCopy.includes("currently believes")) {
   fail("archive-belief-copy must use currently believes framing");
 }

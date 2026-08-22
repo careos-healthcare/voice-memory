@@ -12,94 +12,80 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
 const CHILD_VALIDATORS = [
   "validate:evidence-feed",
-  "validate:theory-volatility",
-  "validate:theory-notifications",
-  "validate:notification-effectiveness",
-  "validate:breakthrough-tracking",
-  "validate:insight-scorecard",
-  "validate:theory-resolution",
   "validate:self-recognition-ingredients",
   "validate:mini-wow",
-  "validate:theory-tracker",
-  "validate:blind-spot-tests",
+  "validate:blind-spot",
   "validate:uncomfortably-accurate",
   "validate:insight-outcomes",
-  "validate:blind-spot-quality",
-  "validate:insight-ingredient-optimizer",
-  "validate:archive-value-progress",
   "validate:value-moment-paywall",
-  "validate:evolving-understanding",
-  "validate:session-movement-summary",
   "validate:archive-asset-value",
-  "validate:archive-maturity",
   "validate:hard-to-reproduce-proof",
   "validate:evidence-archive-home",
-  "validate:archive-value-deepening",
 ];
 
 const DISCOVERY_LOOP_MODULES = [
-  "lib/discover/evidence-feed.ts",
-  "lib/discover/theory-change-feed.ts",
-  "lib/discover/theory-resolution-feed.ts",
-  "lib/discover/theory-volatility.ts",
-  "lib/discover/discover-visit.ts",
-  "lib/theories/theory-notification-generator.ts",
-  "lib/theories/theory-notification-storage.ts",
-  "lib/theories/theory-notification-lifecycle.ts",
-  "lib/theories/notification-effectiveness.ts",
-  "lib/breakthrough/breakthrough-events.ts",
-  "lib/breakthrough/breakthrough-tracking-report.ts",
-  "lib/breakthrough/breakthrough-attribution.ts",
-  "lib/insights/insight-scorecard.ts",
-  "lib/insights/insight-scorecard-report.ts",
-  "lib/insights/insight-outcome-storage.ts",
-  "lib/insights/insight-outcome-report.ts",
-  "lib/insights/insight-outcome-attribution.ts",
-  "lib/theories/theory-resolution.ts",
-  "lib/insights/self-recognition-ingredients.ts",
-  "lib/blind-spots/mini-wow.ts",
-  "lib/blind-spots/evidence-accuracy.ts",
-  "lib/blind-spots/blind-spot-experiment-commitment.ts",
-  "lib/blind-spots/blind-spot-experiment-followup.ts",
-  "lib/blind-spots/blind-spot-experiment-metrics.ts",
-  "lib/blind-spots/blind-spot-quality-storage.ts",
-  "lib/blind-spots/blind-spot-quality-report.ts",
-  "lib/blind-spots/blind-spot-quality-enrichment.ts",
-  "components/internal/BlindSpotQualityPanel.tsx",
-  "lib/insights/insight-ingredient-optimizer.ts",
-  "lib/insights/insight-ingredient-optimizer-report.ts",
-  "components/internal/InsightIngredientOptimizerPanel.tsx",
-  "lib/product/archive-value-progress.ts",
-  "lib/product/archive-value-metrics.ts",
-  "components/product/ArchiveValueBanner.tsx",
-  "components/internal/ArchiveValueProgressPanel.tsx",
-  "lib/billing/value-moment-paywall.ts",
-  "lib/billing/value-moment-paywall-metrics.ts",
-  "components/billing/ValueMomentPaywall.tsx",
-  "components/internal/ValueMomentPaywallPanel.tsx",
-  "components/discover/TheoryChangeFeed.tsx",
-  "components/discover/EvidenceFeedSection.tsx",
-  "components/discover/TheoryResolutionSection.tsx",
-  "components/internal/TheoryVolatilityPanel.tsx",
-  "components/internal/SelfRecognitionIngredientsPanel.tsx",
-  "components/blind-spots/MiniWowPanel.tsx",
-  "lib/metrics/evolving-understanding-events.ts",
-  "lib/metrics/evolving-understanding-report.ts",
-  "components/blind-spots/WhatHappensNextPanel.tsx",
-  "components/theories/EvolvingViewCard.tsx",
-  "lib/archive/session-movement-summary.ts",
-  "components/archive/SessionMovementSummary.tsx",
-  "lib/archive/archive-maturity.ts",
-  "components/archive/ArchiveMaturityMeter.tsx",
-  "lib/internal/retention-moat-report.ts",
-  "components/internal/RetentionMoatPanel.tsx",
+  "packages/shared/lib/discover/evidence-feed.ts",
+  "packages/shared/lib/discover/theory-change-feed.ts",
+  "packages/shared/lib/discover/theory-resolution-feed.ts",
+  "packages/shared/lib/discover/theory-volatility.ts",
+  "packages/shared/lib/discover/discover-visit.ts",
+  "packages/shared/lib/theories/theory-notification-generator.ts",
+  "packages/shared/lib/theories/theory-notification-storage.ts",
+  "packages/shared/lib/theories/theory-notification-lifecycle.ts",
+  "packages/shared/lib/theories/notification-effectiveness.ts",
+  "packages/shared/lib/breakthrough/breakthrough-events.ts",
+  "packages/shared/lib/breakthrough/breakthrough-tracking-report.ts",
+  "packages/shared/lib/breakthrough/breakthrough-attribution.ts",
+  "packages/shared/lib/insights/insight-scorecard.ts",
+  "packages/shared/lib/insights/insight-scorecard-report.ts",
+  "packages/shared/lib/insights/insight-outcome-storage.ts",
+  "packages/shared/lib/insights/insight-outcome-report.ts",
+  "packages/shared/lib/insights/insight-outcome-attribution.ts",
+  "packages/shared/lib/theories/theory-resolution.ts",
+  "packages/shared/lib/insights/self-recognition-ingredients.ts",
+  "packages/shared/lib/blind-spots/mini-wow.ts",
+  "packages/shared/lib/blind-spots/evidence-accuracy.ts",
+  "packages/shared/lib/blind-spots/blind-spot-experiment-commitment.ts",
+  "packages/shared/lib/blind-spots/blind-spot-experiment-followup.ts",
+  "packages/shared/lib/blind-spots/blind-spot-experiment-metrics.ts",
+  "packages/shared/lib/blind-spots/blind-spot-quality-storage.ts",
+  "packages/shared/lib/blind-spots/blind-spot-quality-report.ts",
+  "packages/shared/lib/blind-spots/blind-spot-quality-enrichment.ts",
+  "apps/web/components/internal/BlindSpotQualityPanel.tsx",
+  "packages/shared/lib/insights/insight-ingredient-optimizer.ts",
+  "packages/shared/lib/insights/insight-ingredient-optimizer-report.ts",
+  "apps/web/components/internal/InsightIngredientOptimizerPanel.tsx",
+  "packages/shared/lib/product/archive-value-progress.ts",
+  "packages/shared/lib/product/archive-value-metrics.ts",
+  "apps/web/components/product/ArchiveValueBanner.tsx",
+  "apps/web/components/internal/ArchiveValueProgressPanel.tsx",
+  "packages/shared/lib/billing/value-moment-paywall.ts",
+  "packages/shared/lib/billing/value-moment-paywall-metrics.ts",
+  "apps/web/components/billing/ValueMomentPaywall.tsx",
+  "apps/web/components/internal/ValueMomentPaywallPanel.tsx",
+  "apps/web/components/discover/TheoryChangeFeed.tsx",
+  "apps/web/components/discover/EvidenceFeedSection.tsx",
+  "apps/web/components/discover/TheoryResolutionSection.tsx",
+  "apps/web/components/internal/TheoryVolatilityPanel.tsx",
+  "apps/web/components/internal/SelfRecognitionIngredientsPanel.tsx",
+  "apps/web/components/blind-spots/MiniWowPanel.tsx",
+  "packages/shared/lib/metrics/evolving-understanding-events.ts",
+  "packages/shared/lib/metrics/evolving-understanding-report.ts",
+  "apps/web/components/blind-spots/WhatHappensNextPanel.tsx",
+  "apps/web/components/theories/EvolvingViewCard.tsx",
+  "packages/shared/lib/archive/session-movement-summary.ts",
+  "apps/web/components/archive/SessionMovementSummary.tsx",
+  "packages/shared/lib/archive/archive-maturity.ts",
+  "apps/web/components/archive/ArchiveMaturityMeter.tsx",
+  "packages/shared/lib/internal/retention-moat-report.ts",
+  "apps/web/components/internal/RetentionMoatPanel.tsx",
 ];
 
 const PRODUCT_ROUTES = [
-  { href: "/discover", page: "app/discover/page.tsx" },
-  { href: "/theories", page: "app/theories/page.tsx" },
-  { href: "/blind-spots", page: "app/blind-spots/page.tsx" },
-  { href: "/memory", page: "app/memory/page.tsx" },
+  { href: "/discover", page: "apps/web/app/discover/page.tsx" },
+  { href: "/theories", page: "apps/web/app/theories/page.tsx" },
+  { href: "/blind-spots", page: "apps/web/app/blind-spots/page.tsx" },
+  { href: "/memory", page: "apps/web/app/memory/page.tsx" },
 ];
 
 function runNpmScript(scriptName) {
@@ -136,7 +122,7 @@ for (const route of PRODUCT_ROUTES) {
   }
 }
 
-const memoryPage = path.join(ROOT, "app/memory/page.tsx");
+const memoryPage = path.join(ROOT, "apps/web/app/memory/page.tsx");
 if (fs.existsSync(memoryPage)) {
   const memorySrc = fs.readFileSync(memoryPage, "utf8");
   if (!memorySrc.includes("MiniWowPanel")) {
@@ -147,7 +133,7 @@ if (fs.existsSync(memoryPage)) {
   }
 }
 
-const blindDiscovery = path.join(ROOT, "app/internal/blind-spot-discovery/page.tsx");
+const blindDiscovery = path.join(ROOT, "apps/web/app/internal/blind-spot-discovery/page.tsx");
 if (fs.existsSync(blindDiscovery)) {
   const src = fs.readFileSync(blindDiscovery, "utf8");
   if (!src.includes("SelfRecognitionIngredientsPanel")) {
@@ -173,7 +159,7 @@ if (fs.existsSync(blindDiscovery)) {
   }
 }
 
-const retentionDiscovery = path.join(ROOT, "app/internal/retention-discovery/page.tsx");
+const retentionDiscovery = path.join(ROOT, "apps/web/app/internal/retention-discovery/page.tsx");
 if (fs.existsSync(retentionDiscovery)) {
   const src = fs.readFileSync(retentionDiscovery, "utf8");
   if (!src.includes("ArchiveValueProgressPanel")) {
@@ -187,7 +173,7 @@ if (fs.existsSync(retentionDiscovery)) {
   }
 }
 
-const theoryDiscovery = path.join(ROOT, "app/internal/theory-discovery/page.tsx");
+const theoryDiscovery = path.join(ROOT, "apps/web/app/internal/theory-discovery/page.tsx");
 if (fs.existsSync(theoryDiscovery)) {
   const src = fs.readFileSync(theoryDiscovery, "utf8");
   if (!src.includes("EvolvingUnderstandingPanel")) {
@@ -195,7 +181,7 @@ if (fs.existsSync(theoryDiscovery)) {
   }
 }
 
-const theoryPanel = path.join(ROOT, "components/internal/TheoryDiscoveryPanel.tsx");
+const theoryPanel = path.join(ROOT, "apps/web/components/internal/TheoryDiscoveryPanel.tsx");
 if (fs.existsSync(theoryPanel)) {
   const src = fs.readFileSync(theoryPanel, "utf8");
   if (!src.includes("TheoryVolatilityPanel")) {

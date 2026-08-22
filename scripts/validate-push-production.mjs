@@ -20,38 +20,38 @@ function mustExist(rel) {
 }
 
 for (const rel of [
-  "types/native-push-verification.ts",
-  "types/mobile-push.ts",
-  "lib/mobile/native-push-verification.ts",
-  "lib/push/fcm-admin.ts",
-  "lib/push/mobile-push-devices.ts",
-  "app/api/push/register/route.ts",
-  "app/api/internal/send-test-push/route.ts",
+  "packages/shared/types/native-push-verification.ts",
+  "packages/shared/types/mobile-push.ts",
+  "packages/shared/lib/mobile/native-push-verification.ts",
+  "packages/shared/lib/push/fcm-admin.ts",
+  "packages/shared/lib/push/mobile-push-devices.ts",
+  "apps/api/app/api/push/register/route.ts",
+  "apps/api/app/api/internal/send-test-push/route.ts",
   "mobile/evidence/native_push_verification.json",
-  "apps/voicememory_mobile/lib/push/fcm_service.dart",
-  "apps/voicememory_mobile/lib/push/push_deep_link_handler.dart",
-  "apps/voicememory_mobile/lib/screens/native_push_verification_screen.dart",
+  "apps/mobile/lib/push/fcm_service.dart",
+  "apps/mobile/lib/push/push_deep_link_handler.dart",
+  "apps/mobile/lib/screens/native_push_verification_screen.dart",
 ]) {
   mustExist(rel);
 }
 
-const pubspec = read("apps/voicememory_mobile/pubspec.yaml");
+const pubspec = read("apps/mobile/pubspec.yaml");
 if (!pubspec.includes("firebase_messaging")) {
   fail("firebase_messaging required in pubspec — no local notification harness");
 }
 if (pubspec.includes("flutter_local_notifications")) {
-  const screen = read("apps/voicememory_mobile/lib/screens/native_push_verification_screen.dart");
+  const screen = read("apps/mobile/lib/screens/native_push_verification_screen.dart");
   if (screen.includes("showVerificationNotification")) {
     fail("native push screen must use backend FCM send, not local notifications");
   }
 }
 
-const nativePushService = read("apps/voicememory_mobile/lib/features/native_push/native_push_service.dart");
+const nativePushService = read("apps/mobile/lib/features/native_push/native_push_service.dart");
 if (nativePushService.includes("FlutterLocalNotificationsPlugin")) {
   fail("NativePushService must not use flutter_local_notifications for production verify");
 }
 
-const lib = read("lib/mobile/native-push-verification.ts");
+const lib = read("packages/shared/lib/mobile/native-push-verification.ts");
 for (const token of [
   "archive_destination_verified",
   "discover_destination_verified",
@@ -62,7 +62,7 @@ for (const token of [
   if (!lib.includes(token)) fail(`native-push-verification missing ${token}`);
 }
 
-const production = read("lib/mobile/mobile-production-readiness.ts");
+const production = read("packages/shared/lib/mobile/mobile-production-readiness.ts");
 if (!production.includes("resolveNativePushNotificationsItem")) {
   fail("mobile-production-readiness must use native push evidence");
 }
@@ -72,7 +72,7 @@ try {
     readNativePushVerificationEvidence,
     isPushProductionPassing,
     buildNativePushReadinessReport,
-  } = await import(path.join(ROOT, "lib/mobile/native-push-verification.ts"));
+  } = await import(path.join(ROOT, "packages/shared/lib/mobile/native-push-verification.ts"));
 
   const evidence = readNativePushVerificationEvidence();
   if (!evidence) {

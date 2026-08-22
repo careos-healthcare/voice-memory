@@ -1,44 +1,30 @@
-import { defineConfig, globalIgnores } from "eslint/config";
-import nextVitals from "eslint-config-next/core-web-vitals";
-import nextTs from "eslint-config-next/typescript";
+import { dirname } from "path";
+import { fileURLToPath } from "url";
+import { FlatCompat } from "@eslint/eslintrc";
 
-// eslint-plugin-react-hooks v7 enables React Compiler rules by default.
-// This codebase predates those rules; keep classic hooks linting only until
-// we opt into the compiler migration.
-const reactCompilerRulesOff = {
-  "react-hooks/static-components": "off",
-  "react-hooks/use-memo": "off",
-  "react-hooks/preserve-manual-memoization": "off",
-  "react-hooks/incompatible-library": "off",
-  "react-hooks/immutability": "off",
-  "react-hooks/globals": "off",
-  "react-hooks/refs": "off",
-  "react-hooks/set-state-in-effect": "off",
-  "react-hooks/error-boundaries": "off",
-  "react-hooks/purity": "off",
-  "react-hooks/set-state-in-render": "off",
-  "react-hooks/unsupported-syntax": "off",
-  "react-hooks/config": "off",
-  "react-hooks/gating": "off",
-};
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
-const eslintConfig = defineConfig([
-  ...nextVitals,
-  ...nextTs,
+const compat = new FlatCompat({
+  baseDirectory: __dirname,
+});
+
+const eslintConfig = [
+  ...compat.extends("next/core-web-vitals", "next/typescript"),
   {
-    rules: reactCompilerRulesOff,
+    ignores: [
+      ".next/**",
+      "out/**",
+      "build/**",
+      "next-env.d.ts",
+      "dist/**",
+      "apps/mobile/**",
+      "apps/web/.next/**",
+      "apps/api/.next/**",
+      "apps/api/dist/**",
+      "node_modules/**",
+    ],
   },
-  // Override default ignores of eslint-config-next.
-  globalIgnores([
-    // Default ignores of eslint-config-next:
-    ".next/**",
-    "out/**",
-    "build/**",
-    "next-env.d.ts",
-    // Not part of the Next.js web app:
-    "dist/**",
-    "apps/voicememory_mobile/**",
-  ]),
-]);
+];
 
 export default eslintConfig;

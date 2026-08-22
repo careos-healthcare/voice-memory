@@ -8,16 +8,16 @@ const failures = [];
 const fail = (msg) => failures.push(msg);
 
 for (const rel of [
-  "lib/archive/archive-asset-value.ts",
-  "lib/archive/archive-asset-value-copy.ts",
-  "lib/metrics/archive-asset-value-events.ts",
-  "components/archive/ArchiveAssetCard.tsx",
+  "packages/shared/lib/archive/archive-asset-value.ts",
+  "packages/shared/lib/archive/archive-asset-value-copy.ts",
+  "packages/shared/lib/metrics/archive-asset-value-events.ts",
+  "apps/web/components/archive/ArchiveAssetCard.tsx",
 ]) {
   if (!fs.existsSync(path.join(ROOT, rel))) fail(`missing ${rel}`);
 }
 
 const copy = fs.readFileSync(
-  path.join(ROOT, "lib/archive/archive-asset-value-copy.ts"),
+  path.join(ROOT, "packages/shared/lib/archive/archive-asset-value-copy.ts"),
   "utf8",
 );
 for (const phrase of [
@@ -28,18 +28,18 @@ for (const phrase of [
   if (!copy.includes(phrase)) fail(`copy missing: ${phrase}`);
 }
 
-const card = fs.readFileSync(path.join(ROOT, "components/archive/ArchiveAssetCard.tsx"), "utf8");
+const card = fs.readFileSync(path.join(ROOT, "apps/web/components/archive/ArchiveAssetCard.tsx"), "utf8");
 if (!card.includes("trackArchiveAssetCardSeen")) fail("must track seen");
 
 const events = fs.readFileSync(
-  path.join(ROOT, "lib/metrics/archive-asset-value-events.ts"),
+  path.join(ROOT, "packages/shared/lib/metrics/archive-asset-value-events.ts"),
   "utf8",
 );
 for (const name of ["archive_asset_card_seen", "archive_asset_export_clicked"]) {
   if (!events.includes(name)) fail(`event missing: ${name}`);
 }
 
-for (const rel of ["app/memory/page.tsx", "app/account/page.tsx", "app/export/page.tsx", "app/pricing/PricingPageClient.tsx"]) {
+for (const rel of ["apps/web/app/memory/page.tsx", "apps/web/app/account/page.tsx", "apps/web/app/export/page.tsx", "apps/web/app/pricing/PricingPageClient.tsx"]) {
   if (!fs.readFileSync(path.join(ROOT, rel), "utf8").includes("ArchiveAssetCard")) {
     fail(`${rel} must render ArchiveAssetCard`);
   }

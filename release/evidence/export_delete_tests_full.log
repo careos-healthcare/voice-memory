@@ -1,0 +1,48 @@
+00:00 +0: loading /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/archive_export_pack_test.dart
+00:00 +0: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/archive_export_pack_test.dart: Settings export entry point shows Export button in standard archive controls
+00:00 +1: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/archive_export_pack_test.dart: ArchiveExportPackEngine empty archive export shows empty state
+00:00 +2: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/archive_export_pack_test.dart: ArchiveExportPackEngine non-empty export includes ArchiveMe and export date
+00:00 +3: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/archive_export_pack_test.dart: ArchiveExportPackEngine export includes saved and usable evidence counts
+analytics:archive_evidence_skipped_placeholder {entry_count: 1, source: archive_evidence_guard, reason: placeholder_or_pending_transcript}
+analytics:archive_evidence_skipped_placeholder {entry_count: 1, source: archive_evidence_guard, reason: placeholder_or_pending_transcript}
+analytics:archive_evidence_skipped_placeholder {entry_count: 1, source: archive_evidence_guard, reason: placeholder_or_pending_transcript}
+analytics:archive_evidence_skipped_placeholder {entry_count: 1, source: archive_evidence_guard, reason: placeholder_or_pending_transcript}
+analytics:archive_evidence_skipped_placeholder {entry_count: 1, source: archive_evidence_guard, reason: placeholder_or_pending_transcript}
+analytics:archive_evidence_skipped_placeholder {entry_count: 1, source: archive_evidence_guard, reason: placeholder_or_pending_transcript}
+analytics:archive_evidence_skipped_placeholder {entry_count: 1, source: archive_evidence_guard, reason: placeholder_or_pending_transcript}
+analytics:archive_evidence_skipped_placeholder {entry_count: 1, source: archive_evidence_guard, reason: placeholder_or_pending_transcript}
+analytics:archive_evidence_skipped_placeholder {entry_count: 1, source: archive_evidence_guard, reason: placeholder_or_pending_transcript}
+analytics:archive_evidence_skipped_placeholder {entry_count: 1, source: archive_evidence_guard, reason: placeholder_or_pending_transcript}
+analytics:archive_evidence_skipped_placeholder {entry_count: 1, source: archive_evidence_guard, reason: placeholder_or_pending_transcript}
+00:00 +4: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/archive_export_pack_test.dart: ArchiveExportPackEngine export includes evidence map summary when tags exist
+00:00 +5: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/archive_export_pack_test.dart: ArchiveExportPackEngine export includes review before sharing privacy note
+00:00 +6: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/archive_export_pack_test.dart: ArchiveExportPackEngine export uses safe previews distinct from share-safe proof
+00:00 +7: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/archive_export_pack_test.dart: ArchiveExportPackEngine share-safe proof remains unchanged and excludes private map/filter data
+00:00 +8: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/archive_export_pack_test.dart: ArchiveExportPackEngine export route is sensitive/guarded
+00:00 +9: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/archive_export_pack_test.dart: ArchiveExportPackEngine standard archive controls route to canonical export screen
+00:00 +10: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/archive_export_pack_test.dart: ArchiveExportPackEngine export pack excludes archive watchlist data
+00:00 +11: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/archive_export_pack_test.dart: ArchiveExportPackEngine export pack excludes next evidence plan data
+00:00 +12: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/archive_export_pack_test.dart: ArchiveExportPackEngine export pack excludes archive milestones data
+00:00 +13: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/archive_export_pack_test.dart: ArchiveExportPackEngine export pack excludes beta feedback data
+00:00 +14: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/archive_export_pack_test.dart: ArchiveExportPackEngine export pack excludes beta outcomes data
+00:00 +15: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/archive_export_pack_test.dart: ArchiveExportPackEngine export pack excludes Pro interest data
+00:00 +16: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/archive_export_pack_test.dart: ArchiveExportPackEngine export pack excludes beta invite data
+00:01 +17: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/delete_account_confirmation_test.dart: Delete account confirmation shows a confirmation dialog before deleting
+00:02 +18: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/delete_account_confirmation_test.dart: Delete account confirmation cancelling the dialog does not start deletion
+00:02 +19: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/delete_account_confirmation_test.dart: Delete account confirmation confirming dismisses the dialog and calls deleteAccount
+00:02 +20: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/delete_account_confirmation_test.dart: Delete account confirmation successful server deletion offers a separate local-data wipe choice
+ARCHIVEME_LOG event=auth_signOut_failed severity=error category=auth success=false error_code=http_400 http_status=400
+analytics:account_signout {method: email_code}
+00:02 +21: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/delete_account_confirmation_test.dart: Delete account confirmation accepting the local-data wipe offer opens the double-confirmation wipe dialog
+ARCHIVEME_LOG event=auth_signOut_failed severity=error category=auth success=false error_code=http_400 http_status=400
+analytics:account_signout {method: email_code}
+00:02 +22: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/delete_account_confirmation_test.dart: Delete account confirmation remains usable at 300% text scale (no overflow)
+00:02 +23: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/delete_account_confirmation_test.dart: Delete account confirmation delete button stays reachable on a narrow small screen
+00:02 +24: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/delete_account_confirmation_test.dart: Delete account confirmation remains usable at 200% text scale (no overflow)
+00:02 +25: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/delete_account_confirmation_test.dart: Delete account confirmation confirmation dialog exposes real semantics labels
+00:03 +26: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/delete_account_confirmation_test.dart: Delete account confirmation failed deletion stays explicit and allows retry
+00:03 +27: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/delete_account_confirmation_test.dart: Delete account confirmation deletionCompletedMessage describes confirmed server deletion
+00:03 +28: /Users/chiragpatel/Projects/voice-memory/apps/mobile/test/delete_account_confirmation_test.dart: Delete account confirmation successful server deletion shows completion copy only after confirm
+ARCHIVEME_LOG event=auth_signOut_failed severity=error category=auth success=false error_code=http_400 http_status=400
+analytics:account_signout {method: email_code}
+00:03 +29: All tests passed!

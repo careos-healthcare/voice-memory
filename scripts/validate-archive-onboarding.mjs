@@ -23,16 +23,16 @@ const HEADLINES = [
 ];
 
 const required = [
-  "lib/onboarding/archive-onboarding-copy.ts",
-  "components/onboarding/ArchiveOnboarding.tsx",
-  "components/ActivationOnboarding.tsx",
+  "packages/shared/lib/onboarding/archive-onboarding-copy.ts",
+  "apps/web/components/onboarding/ArchiveOnboarding.tsx",
+  "apps/web/components/ActivationOnboarding.tsx",
 ];
 
 for (const rel of required) {
   if (!fs.existsSync(path.join(ROOT, rel))) fail(`missing ${rel}`);
 }
 
-const copy = read("lib/onboarding/archive-onboarding-copy.ts");
+const copy = read("packages/shared/lib/onboarding/archive-onboarding-copy.ts");
 for (const headline of HEADLINES) {
   if (!copy.includes(headline)) fail(`archive-onboarding-copy missing: ${headline}`);
 }
@@ -40,7 +40,7 @@ if (!copy.includes("ARCHIVE_ONBOARDING_SCREEN_COUNT")) {
   fail("archive-onboarding-copy must export screen count");
 }
 
-const onboarding = read("components/onboarding/ArchiveOnboarding.tsx");
+const onboarding = read("apps/web/components/onboarding/ArchiveOnboarding.tsx");
 if (!onboarding.includes("ARCHIVE_ONBOARDING_SCREENS")) {
   fail("ArchiveOnboarding must use ARCHIVE_ONBOARDING_SCREENS");
 }
@@ -75,12 +75,12 @@ for (const token of forbiddenInOnboarding) {
   if (onboarding.includes(token)) fail(`ArchiveOnboarding must not include: ${token}`);
 }
 
-const activation = read("components/ActivationOnboarding.tsx");
+const activation = read("apps/web/components/ActivationOnboarding.tsx");
 if (!activation.includes("ArchiveOnboarding")) {
   fail("ActivationOnboarding must re-export ArchiveOnboarding");
 }
 
-const guidance = read("lib/activation-guidance.ts");
+const guidance = read("packages/shared/lib/activation-guidance.ts");
 if (!guidance.includes("ARCHIVE_ONBOARDING_SCREENS")) {
   fail("activation-guidance must map ARCHIVE_ONBOARDING_SCREENS");
 }
@@ -88,7 +88,7 @@ if (!guidance.includes("ARCHIVE_ONBOARDING_SCREENS")) {
   fail("activation-guidance must derive steps from ARCHIVE_ONBOARDING_SCREENS");
 }
 
-const mobile = read("apps/voicememory_mobile/lib/screens/onboarding_screen.dart");
+const mobile = read("apps/mobile/lib/screens/onboarding_screen.dart");
 for (const headline of HEADLINES) {
   if (!mobile.includes(headline)) fail(`mobile onboarding missing: ${headline}`);
 }
@@ -97,7 +97,7 @@ if (mobile.includes("transcribe") || mobile.includes("export JSON")) {
   fail("mobile onboarding must not explain features");
 }
 
-const banner = read("components/OnboardingBanner.tsx");
+const banner = read("apps/web/components/OnboardingBanner.tsx");
 if (banner.includes("/demo") || banner.includes("transcribe")) {
   fail("OnboardingBanner must not explain features");
 }

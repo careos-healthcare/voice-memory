@@ -64,14 +64,14 @@ function makeArchive(count) {
 }
 
 const required = [
-  "lib/product/activation-theory-preview.ts",
-  "lib/product/first-blind-spot-simulator.ts",
-  "lib/product/first-blind-spot-simulator-copy.ts",
-  "lib/product/activation-bottleneck-metrics.ts",
-  "components/product/ActivationTheoryPreview.tsx",
-  "components/product/FirstBlindSpotSimulator.tsx",
-  "components/product/FirstBlindSpotExampleReviewModal.tsx",
-  "components/internal/ActivationBottleneckPanel.tsx",
+  "packages/shared/lib/product/activation-theory-preview.ts",
+  "packages/shared/lib/product/first-blind-spot-simulator.ts",
+  "packages/shared/lib/product/first-blind-spot-simulator-copy.ts",
+  "packages/shared/lib/product/activation-bottleneck-metrics.ts",
+  "apps/web/components/product/ActivationTheoryPreview.tsx",
+  "apps/web/components/product/FirstBlindSpotSimulator.tsx",
+  "apps/web/components/product/FirstBlindSpotExampleReviewModal.tsx",
+  "apps/web/components/internal/ActivationBottleneckPanel.tsx",
 ];
 
 for (const rel of required) {
@@ -83,14 +83,14 @@ const {
   passesTheoryPreviewCopyGate,
   FORBIDDEN_THEORY_PREVIEW,
   ACTIVATION_THEORY_PREVIEW_DISCLAIMER,
-} = await import("../lib/product/activation-theory-preview.ts");
+} = await import("../packages/shared/lib/product/activation-theory-preview.ts");
 const {
   buildFirstBlindSpotSimulatorView,
   buildFirstBlindSpotExampleReview,
   shouldShowFirstBlindSpotSimulator,
-} = await import("../lib/product/first-blind-spot-simulator.ts");
+} = await import("../packages/shared/lib/product/first-blind-spot-simulator.ts");
 const { FIRST_BLIND_SPOT_SIMULATOR } = await import(
-  "../lib/product/first-blind-spot-simulator-copy.ts"
+  "../packages/shared/lib/product/first-blind-spot-simulator-copy.ts"
 );
 const {
   buildActivationBottleneckMetricsReport,
@@ -102,7 +102,7 @@ const {
   trackFirstBlindSpotSimulatorCtaClicked,
   clearActivationBottleneckForEval,
   ACTIVATION_BOTTLENECK_EVENTS,
-} = await import("../lib/product/activation-bottleneck-metrics.ts");
+} = await import("../packages/shared/lib/product/activation-bottleneck-metrics.ts");
 
 assert.equal(buildActivationTheoryPreview(makeArchive(2)), null, "<3 returns null");
 
@@ -168,11 +168,11 @@ assert.ok(report.simulatorExampleOpenedCount >= 1);
 assert.ok(report.simulatorCtaClickedCount >= 1);
 assert.equal(report.conversionWithSimulatorRate, 100);
 
-const memorySrc = fs.readFileSync(path.join(ROOT, "app/memory/page.tsx"), "utf8");
-const entrySrc = fs.readFileSync(path.join(ROOT, "app/entry/[id]/page.tsx"), "utf8");
-const recorderSrc = fs.readFileSync(path.join(ROOT, "components/Recorder.tsx"), "utf8");
+const memorySrc = fs.readFileSync(path.join(ROOT, "apps/web/app/memory/page.tsx"), "utf8");
+const entrySrc = fs.readFileSync(path.join(ROOT, "apps/web/app/entry/[id]/page.tsx"), "utf8");
+const recorderSrc = fs.readFileSync(path.join(ROOT, "apps/web/components/Recorder.tsx"), "utf8");
 const retentionSrc = fs.readFileSync(
-  path.join(ROOT, "app/internal/retention-discovery/page.tsx"),
+  path.join(ROOT, "apps/web/app/internal/retention-discovery/page.tsx"),
   "utf8",
 );
 
@@ -187,7 +187,7 @@ if (!retentionSrc.includes("ActivationBottleneckPanel")) {
 }
 
 const previewSrc = fs.readFileSync(
-  path.join(ROOT, "lib/product/activation-theory-preview.ts"),
+  path.join(ROOT, "packages/shared/lib/product/activation-theory-preview.ts"),
   "utf8",
 );
 if (/\bcoaching\b/i.test(previewSrc) && !/not coaching/i.test(previewSrc)) {
@@ -203,7 +203,7 @@ assert.ok(Object.values(ACTIVATION_BOTTLENECK_EVENTS).includes("simulator_exampl
 assert.ok(Object.values(ACTIVATION_BOTTLENECK_EVENTS).includes("simulator_cta_clicked"));
 
 const simCopySrc = fs.readFileSync(
-  path.join(ROOT, "lib/product/first-blind-spot-simulator-copy.ts"),
+  path.join(ROOT, "packages/shared/lib/product/first-blind-spot-simulator-copy.ts"),
   "utf8",
 );
 if (/you are always/i.test(simCopySrc)) fail("simulator copy must avoid certainty");

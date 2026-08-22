@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { runPromptContextContractTests } from "../lib/reliability/prompt-context-contract-tests.ts";
+import { runPromptContextContractTests } from "../packages/shared/lib/reliability/prompt-context-contract-tests.ts";
 
 const { failures } = await runPromptContextContractTests();
 
