@@ -28,6 +28,11 @@ abstract final class V1RouteInventory {
     V1RouteEntry('/quick-capture', V1RouteClass.v1Supporting, 'Fast text capture'),
     V1RouteEntry('/settings', V1RouteClass.v1Supporting, 'Settings'),
     V1RouteEntry('/security', V1RouteClass.v1Supporting, 'Security'),
+    V1RouteEntry(
+      '/privacy-security',
+      V1RouteClass.v1Supporting,
+      'Privacy & security control center',
+    ),
     V1RouteEntry('/privacy', V1RouteClass.v1Supporting, 'Privacy'),
     V1RouteEntry(
       '/privacy-trust-centre',

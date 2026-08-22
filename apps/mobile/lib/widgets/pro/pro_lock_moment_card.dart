@@ -1,0 +1,135 @@
+import 'package:archiveme_mobile/design/archive_mobile_typography.dart';
+import 'package:archiveme_mobile/features/pro_lock_moment/pro_lock_moment_analytics.dart';
+import 'package:archiveme_mobile/features/pro_lock_moment/pro_lock_moment_engine.dart';
+import 'package:archiveme_mobile/theme/app_colors.dart';
+import 'package:archiveme_mobile/theme/app_spacing.dart';
+import 'package:archiveme_mobile/theme/voicememory_cards.dart';
+import 'package:archiveme_mobile/widgets/paywall/purchase_confidence_card.dart';
+import 'package:archiveme_mobile/widgets/pro/pro_lock_moment_sheet.dart';
+import 'package:flutter/material.dart';
+
+/// Restrained Pro lock moment after first proof — opens detail sheet.
+class ProLockMomentCard extends StatefulWidget {
+  const ProLockMomentCard({
+    required this.entryCount, required this.hasFirstProof, required this.hasConfirmedRepeat, required this.onSeePro, required this.onDismiss, super.key,
+    this.source = ProLockMomentEngine.recordPostSaveSource,
+  });
+
+  final int entryCount;
+  final bool hasFirstProof;
+  final bool hasConfirmedRepeat;
+  final VoidCallback onSeePro;
+  final VoidCallback onDismiss;
+  final String source;
+
+  @override
+  State<ProLockMomentCard> createState() => _ProLockMomentCardState();
+}
+
+class _ProLockMomentCardState extends State<ProLockMomentCard> {
+  var _trackedSeen = false;
+
+  void _trackSeenOnce() {
+    if (_trackedSeen) return;
+    _trackedSeen = true;
+    ProLockMomentAnalytics.seen(
+      source: widget.source,
+      entryCount: widget.entryCount,
+      hasFirstProof: widget.hasFirstProof,
+      hasConfirmedRepeat: widget.hasConfirmedRepeat,
+    );
+  }
+
+  Future<void> _openSheet() async {
+    ProLockMomentAnalytics.ctaTapped(
+      source: widget.source,
+      entryCount: widget.entryCount,
+      hasFirstProof: widget.hasFirstProof,
+      hasConfirmedRepeat: widget.hasConfirmedRepeat,
+      actionType: 'open_sheet',
+    );
+    await ProLockMomentSheet.show(
+      context,
+      source: widget.source,
+      entryCount: widget.entryCount,
+      hasFirstProof: widget.hasFirstProof,
+      hasConfirmedRepeat: widget.hasConfirmedRepeat,
+      onSeePro: widget.onSeePro,
+    );
+  }
+
+  void _handleDismiss() {
+    ProLockMomentAnalytics.dismissed(
+      source: widget.source,
+      entryCount: widget.entryCount,
+      hasFirstProof: widget.hasFirstProof,
+      hasConfirmedRepeat: widget.hasConfirmedRepeat,
+    );
+    widget.onDismiss();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    _trackSeenOnce();
+    final display = ProLockMomentEngine.buildDisplay();
+    // Locked/Pro-gated surface: use the locked-state tokens (not
+    // textSecondary-on-surfaceAlt) so body copy keeps WCAG AA contrast —
+    // see the gray-on-gray fix documented on AppColors.lockedText.
+    final bodyStyle = ArchiveMobileTypography.explanationBody(
+      context,
+    ).copyWith(color: AppColors.lockedText, height: 1.45);
+
+    return Container(
+      key: const Key('pro_lock_moment_card'),
+      width: double.infinity,
+      padding: const EdgeInsets.all(AppSpacing.md),
+      decoration: VoiceMemoryCards.standard(
+        background: AppColors.lockedSurface,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(
+            display.title,
+            key: const Key('pro_lock_moment_title'),
+            style: ArchiveMobileTypography.listTitle(context),
+          ),
+          const SizedBox(height: AppSpacing.xs),
+          Text(
+            display.body,
+            key: const Key('pro_lock_moment_body'),
+            style: bodyStyle,
+          ),
+          const SizedBox(height: AppSpacing.xs),
+          Text(
+            display.paidReason,
+            key: const Key('pro_lock_moment_paid_reason'),
+            style: bodyStyle,
+          ),
+          const SizedBox(height: AppSpacing.xs),
+          const PurchaseConfidenceCompactLine(),
+          const SizedBox(height: AppSpacing.sm),
+          Row(
+            children: [
+              Expanded(
+                child: OutlinedButton(
+                  key: const Key('pro_lock_moment_dismiss'),
+                  onPressed: _handleDismiss,
+                  child: Text(display.secondary),
+                ),
+              ),
+              const SizedBox(width: AppSpacing.xs),
+              Expanded(
+                child: FilledButton(
+                  key: const Key('pro_lock_moment_cta'),
+                  onPressed: _openSheet,
+                  child: Text(display.cta),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}

@@ -1,0 +1,337 @@
+import 'dart:async';
+import 'dart:convert';
+
+import 'package:archiveme_mobile/api/adapters/api_envelope_adapter.dart';
+import 'package:archiveme_mobile/config/app_config.dart';
+import 'package:archiveme_mobile/core/network/api_failure.dart';
+import 'package:archiveme_mobile/core/network/api_failure_mapper.dart';
+import 'package:archiveme_mobile/core/network/api_result.dart';
+import 'package:archiveme_mobile/core/network/multipart_file_part.dart';
+import 'package:archiveme_mobile/core/network/network_cancel_token.dart';
+import 'package:archiveme_mobile/core/network/session_cookie_source.dart';
+import 'package:archiveme_mobile/core/utils/app_logger.dart';
+import 'package:archiveme_mobile/features/vision/offline_image_embedding_guard.dart';
+import 'package:archiveme_mobile/security/api_response_safety.dart';
+import 'package:flutter/foundation.dart';
+import 'package:http/http.dart' as http;
+
+/// Low-level JSON HTTP transport — normalizes connectivity and response failures.
+class HttpTransport {
+  HttpTransport({
+    http.Client? client,
+    String? baseUrl,
+    this._sessionCookies,
+    this.timeout = const Duration(seconds: 30),
+  }) : _client = client ?? http.Client(),
+       _baseUrl = baseUrl ?? AppConfig.apiBaseUrl;
+
+  final http.Client _client;
+  final String _baseUrl;
+  final SessionCookieSource? _sessionCookies;
+  final Duration timeout;
+
+  /// Shared client for legacy [ApiClient] multipart routes during migration.
+  http.Client get client => _client;
+
+  static const jsonHeaders = {
+    'Accept': 'application/json',
+    'Content-Type': 'application/json',
+  };
+
+  Future<ApiResult<http.Response>> get(
+    String path, {
+    Map<String, String>? headers,
+    Map<String, String>? queryParameters,
+    NetworkCancelToken? cancelToken,
+  }) {
+    return _execute(() {
+      final uri = _requireUri(path, queryParameters: queryParameters);
+      return _client.get(uri, headers: _mergeHeaders(headers));
+    }, cancelToken: cancelToken);
+  }
+
+  Future<ApiResult<http.Response>> post(
+    String path, {
+    Map<String, String>? headers,
+    Object? body,
+    NetworkCancelToken? cancelToken,
+  }) {
+    return _execute(() {
+      final uri = _requireUri(path);
+      final encodedBody = switch (body) {
+        null => null,
+        final String value => value,
+        _ => jsonEncode(body),
+      };
+      return _client.post(
+        uri,
+        headers: _mergeHeaders(headers),
+        body: encodedBody,
+      );
+    }, cancelToken: cancelToken);
+  }
+
+  Future<ApiResult<http.Response>> put(
+    String path, {
+    Map<String, String>? headers,
+    Object? body,
+    NetworkCancelToken? cancelToken,
+  }) {
+    return _execute(() {
+      final uri = _requireUri(path);
+      final encodedBody = switch (body) {
+        null => null,
+        final String value => value,
+        _ => jsonEncode(body),
+      };
+      return _client.put(
+        uri,
+        headers: _mergeHeaders(headers),
+        body: encodedBody,
+      );
+    }, cancelToken: cancelToken);
+  }
+
+  Future<ApiResult<http.Response>> patch(
+    String path, {
+    Map<String, String>? headers,
+    Object? body,
+    NetworkCancelToken? cancelToken,
+  }) {
+    return _execute(() {
+      final uri = _requireUri(path);
+      final encodedBody = switch (body) {
+        null => null,
+        final String value => value,
+        _ => jsonEncode(body),
+      };
+      return _client.patch(
+        uri,
+        headers: _mergeHeaders(headers),
+        body: encodedBody,
+      );
+    }, cancelToken: cancelToken);
+  }
+
+  Future<ApiResult<http.Response>> delete(
+    String path, {
+    Map<String, String>? headers,
+    Object? body,
+    NetworkCancelToken? cancelToken,
+  }) {
+    return _execute(() {
+      final uri = _requireUri(path);
+      final encodedBody = switch (body) {
+        null => null,
+        final String value => value,
+        _ => jsonEncode(body),
+      };
+      return _client.delete(
+        uri,
+        headers: _mergeHeaders(headers),
+        body: encodedBody,
+      );
+    }, cancelToken: cancelToken);
+  }
+
+  /// Multipart POST — supports path, bytes, or stream file parts with custom headers.
+  ///
+  /// Does not set `Content-Type: application/json`; [http.MultipartRequest] owns
+  /// the multipart boundary. Network and transport errors map to [ApiFailure].
+  Future<ApiResult<http.Response>> postMultipart(
+    String path, {
+    Map<String, String>? fields,
+    List<MultipartFilePart> files = const [],
+    Map<String, String>? headers,
+    NetworkCancelToken? cancelToken,
+  }) {
+    return _execute(() async {
+      final uri = _requireUri(path);
+      final request = http.MultipartRequest('POST', uri);
+      request.headers.addAll(_mergeMultipartHeaders(headers));
+      if (fields != null) {
+        request.fields.addAll(fields);
+      }
+      for (final part in files) {
+        request.files.add(await part.toMultipartFile());
+      }
+      final streamed = await _client.send(request);
+      return http.Response.fromStream(streamed);
+    }, cancelToken: cancelToken);
+  }
+
+  ApiResult<T> decodeSuccess<T>(
+    http.Response response,
+    T Function(Map<String, dynamic> json) parse,
+  ) {
+    if (!_isSuccessStatus(response.statusCode)) {
+      return ApiFailureResult(ApiFailureMapper.fromResponse(response));
+    }
+    try {
+      final json = ApiResponseSafety.decodeJsonObject(response);
+      return ApiSuccess(parse(json));
+    } on FormatException catch (error, stackTrace) {
+      return ApiFailureResult(ApiFailureMapper.fromException(error));
+    }
+  }
+
+  /// Parses a success HTTP response through [ApiEnvelopeAdapter] into domain data.
+  ApiResult<TDomain> decodeEnvelope<TData, TDomain>(
+    http.Response response, {
+    required TData Function(Map<String, dynamic> json) parseData,
+    required TDomain Function(TData data) toDomain,
+    String missingDataMessage = 'Response payload missing',
+  }) {
+    if (!_isSuccessStatus(response.statusCode)) {
+      return ApiFailureResult(ApiFailureMapper.fromResponse(response));
+    }
+    try {
+      final json = ApiResponseSafety.decodeJsonObject(response);
+      return ApiEnvelopeAdapter.mapJson(
+        json: json,
+        parseData: parseData,
+        toDomain: toDomain,
+        missingDataMessage: missingDataMessage,
+        statusCode: response.statusCode,
+      );
+    } on FormatException catch (error, stackTrace) {
+      return ApiFailureResult(ApiFailureMapper.fromException(error));
+    }
+  }
+
+  /// Parses a success HTTP response through [ApiEnvelopeAdapter] into nullable domain data.
+  ApiResult<TDomain?> decodeNullableEnvelope<TData, TDomain>(
+    http.Response response, {
+    required TData Function(Map<String, dynamic> json) parseData,
+    required TDomain? Function(TData data) toDomain,
+  }) {
+    if (!_isSuccessStatus(response.statusCode)) {
+      return ApiFailureResult(ApiFailureMapper.fromResponse(response));
+    }
+    try {
+      final json = ApiResponseSafety.decodeJsonObject(response);
+      return ApiEnvelopeAdapter.mapNullableJson(
+        json: json,
+        parseData: parseData,
+        toDomain: toDomain,
+        statusCode: response.statusCode,
+      );
+    } on FormatException catch (error, stackTrace) {
+      return ApiFailureResult(ApiFailureMapper.fromException(error));
+    }
+  }
+
+  /// Parses a success HTTP response with no payload body.
+  ApiResult<void> decodeEnvelopeOk(http.Response response) {
+    if (!_isSuccessStatus(response.statusCode)) {
+      return ApiFailureResult(ApiFailureMapper.fromResponse(response));
+    }
+    try {
+      final json = ApiResponseSafety.decodeJsonObject(response);
+      return ApiEnvelopeAdapter.mapJsonOk(
+        json: json,
+        statusCode: response.statusCode,
+      );
+    } on FormatException catch (error, stackTrace) {
+      return ApiFailureResult(ApiFailureMapper.fromException(error));
+    }
+  }
+
+  ApiResult<void> expectSuccess(http.Response response) {
+    if (!_isSuccessStatus(response.statusCode)) {
+      return ApiFailureResult(ApiFailureMapper.fromResponse(response));
+    }
+    try {
+      ApiResponseSafety.ensureJsonResponse(response);
+      return const ApiSuccess(null);
+    } on FormatException catch (error, stackTrace) {
+      return ApiFailureResult(ApiFailureMapper.fromException(error));
+    }
+  }
+
+  void dispose() => _client.close();
+
+  Map<String, String> _mergeHeaders(Map<String, String>? headers) => {
+    ...jsonHeaders,
+    ...?_sessionCookies?.headerEntries(),
+    ...?headers,
+  };
+
+  Map<String, String> _mergeMultipartHeaders(Map<String, String>? headers) => {
+    'Accept': 'application/json',
+    ...?_sessionCookies?.headerEntries(),
+    ...?headers,
+  };
+
+  Uri? tryUri(String path, {Map<String, String>? queryParameters}) {
+    if (!AppConfig.isBackendConfigured || _baseUrl.isEmpty) {
+      AppLogger.debug('HttpTransport: backend not configured — skipping $path');
+      return null;
+    }
+    if (!ApiResponseSafety.isBaseUrlAllowed(_baseUrl)) {
+      AppLogger.debug(
+        'HttpTransport: rejected API base URL for this build — skipping $path',
+      );
+      return null;
+    }
+    final uri = Uri.parse('$_baseUrl$path');
+    if (queryParameters == null || queryParameters.isEmpty) return uri;
+    return uri.replace(queryParameters: queryParameters);
+  }
+
+  Uri _requireUri(String path, {Map<String, String>? queryParameters}) {
+    final uri = tryUri(path, queryParameters: queryParameters);
+    if (uri == null) {
+      throw const ApiFailureBackendNotConfigured();
+    }
+    return uri;
+  }
+
+  Future<ApiResult<http.Response>> _execute(
+    Future<http.Response> Function() request, {
+    NetworkCancelToken? cancelToken,
+  }) async {
+    if (cancelToken?.isCancelled ?? false) {
+      return const ApiFailureResult(ApiFailureCancelled());
+    }
+    try {
+      OfflineImageEmbeddingGuard.assertOfflineBlocked(operation: 'http_transport');
+      final response = await request().timeout(timeout);
+      if (cancelToken?.isCancelled ?? false) {
+        return const ApiFailureResult(ApiFailureCancelled());
+      }
+      return ApiSuccess(response);
+    } on ApiFailure catch (failure, stackTrace) {
+      return ApiFailureResult(failure);
+    } on TimeoutException {
+      return const ApiFailureResult(ApiFailureOffline());
+    } on Object catch (error, stackTrace) {
+      return ApiFailureResult(ApiFailureMapper.fromException(error));
+    }
+  }
+
+  bool _isSuccessStatus(int statusCode) =>
+      statusCode >= 200 && statusCode < 300;
+}
+
+/// Extracts `vm_session` from a Set-Cookie header on auth responses.
+String? extractSessionCookie(http.Response response) {
+  const sessionCookieName = ApiClientSessionCookie.sessionCookieName;
+  final raw = response.headers['set-cookie'];
+  if (raw == null) return null;
+  for (final part in raw.split(',')) {
+    final trimmed = part.trim();
+    if (trimmed.startsWith('$sessionCookieName=')) {
+      final semi = trimmed.indexOf(';');
+      return semi > 0 ? trimmed.substring(0, semi) : trimmed;
+    }
+  }
+  return null;
+}
+
+/// Shared auth cookie constant — keeps [HttpTransport] decoupled from [ApiClient].
+abstract final class ApiClientSessionCookie {
+  ApiClientSessionCookie._();
+
+  static const sessionCookieName = 'vm_session';
+}

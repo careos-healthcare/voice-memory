@@ -1,4 +1,5 @@
 import 'package:archiveme_mobile/core/network/api_failure.dart';
+import 'package:archiveme_mobile/core/utils/app_logger.dart';
 import 'package:archiveme_mobile/security/release_log_sanitizer.dart';
 import 'package:flutter/foundation.dart';
 
@@ -63,7 +64,7 @@ abstract final class ReleaseLogger {
     final line = parts.join(' ');
     testLines.add(line);
     if (severity == ReleaseLogSeverity.debug && _release) return;
-    debugPrint(line);
+    AppLogger.debug(line);
   }
 
   /// Debug-only detail — stripped entirely in release builds.
@@ -88,7 +89,7 @@ abstract final class ReleaseLogger {
         'category=${category.name}',
         ...fields.entries.map((e) => '${e.key}=${e.value}'),
       ];
-      debugPrint(parts.join(' '));
+      AppLogger.debug(parts.join(' '));
     }
   }
 

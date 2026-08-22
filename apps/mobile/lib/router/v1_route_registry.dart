@@ -1,6 +1,4 @@
 import 'package:archiveme_mobile/router/route_catalog.dart';
-
-/// Single typed source for focused-beta production routes.
 ///
 /// [V1NavigationGuard], [V1RouteInventory], validators, and route tests must
 /// derive allow/quarantine lists from here — do not duplicate string paths.
@@ -14,6 +12,7 @@ abstract final class V1RouteRegistry {
   static const privacyTrustCentrePath = '/privacy-trust-centre';
   static const termsPath = '/terms';
   static const securityPath = '/security';
+  static const privacySecurityPath = '/privacy-security';
   static const settingsPath = '/settings';
   static const supportFeedbackPath = '/support-feedback';
   static const subscriptionPath = '/subscription';
@@ -31,12 +30,15 @@ abstract final class V1RouteRegistry {
 
   static const supportingPaths = [
     onboardingPath,
+    RouteCatalog.changesHome,
+    '${RouteCatalog.archiveHome}/changes',
     '/entry/:id',
     beliefEvidencePath,
     beliefDetailPath,
     quickCapturePath,
     settingsPath,
     securityPath,
+    privacySecurityPath,
     privacyPath,
     privacyTrustCentrePath,
     termsPath,
@@ -49,11 +51,7 @@ abstract final class V1RouteRegistry {
     guestDataMigrationPath,
   ];
 
-  static const paidPaths = [
-    subscriptionPath,
-    pricingPath,
-    restorePurchasesPath,
-  ];
+  static const paidPaths = <String>[];
 
   static const additionalExactPaths = [
     '/',
@@ -137,6 +135,9 @@ abstract final class V1RouteRegistry {
     '/revenuecat-verify',
     '/offline-sync-verify',
     '/subscription-review-preview',
+    '/pricing',
+    '/subscription',
+    '/restore-purchases',
     '/weekly-archive-review',
     '/insight-quality',
     '/live-voice',

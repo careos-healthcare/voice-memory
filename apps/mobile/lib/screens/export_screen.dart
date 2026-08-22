@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:archiveme_mobile/features/beta_analytics/beta_analytics_hooks.dart';
 import 'package:archiveme_mobile/api/api_error_message.dart';
 import 'package:archiveme_mobile/security/private_data_service.dart';
 import 'package:archiveme_mobile/services/app_services.dart';
@@ -37,10 +38,12 @@ class _ExportScreenState extends State<ExportScreen> {
       await Share.shareXFiles([
         XFile(file.path),
       ], subject: 'ArchiveMe journal export');
+      await BetaAnalyticsHooks.exportResult(success: true);
       setState(
         () => _message = 'Export ready (${payload.entries.length} entries).',
       );
-    } catch (e) {
+    } catch (e, stackTrace) {
+      await BetaAnalyticsHooks.exportResult(success: false);
       ReleaseLogger.exceptionFailure(
         event: 'export_build_failed',
         category: ReleaseLogCategory.export,

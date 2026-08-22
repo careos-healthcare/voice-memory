@@ -1,11 +1,5 @@
 import 'dart:async';
 
-import 'package:archiveme_mobile/billing/archive_entitlement_reader.dart';
-import 'package:archiveme_mobile/billing/restore_purchases_feedback.dart';
-import 'package:archiveme_mobile/billing/restore_purchases_flow.dart';
-import 'package:archiveme_mobile/billing/revenuecat_configuration.dart';
-import 'package:archiveme_mobile/billing/revenuecat_service.dart';
-import 'package:archiveme_mobile/billing/subscription_copy.dart';
 import 'package:archiveme_mobile/config/developer_settings_gate.dart';
 import 'package:archiveme_mobile/config/production_navigation.dart';
 import 'package:archiveme_mobile/core/config/v1_navigation_guard.dart';
@@ -14,9 +8,6 @@ import 'package:archiveme_mobile/core/config/v1_feature_flags.dart';
 import 'package:archiveme_mobile/design/archive_mobile_typography.dart';
 import 'package:archiveme_mobile/design/archive_responsive_layout.dart';
 import 'package:archiveme_mobile/features/action_items/archive_action_item.dart';
-import 'package:archiveme_mobile/features/archive_backup_bridge/archive_backup_bridge_dismiss_store.dart';
-import 'package:archiveme_mobile/features/archive_backup_bridge/archive_backup_bridge_engine.dart';
-import 'package:archiveme_mobile/features/archive_backup_bridge/archive_backup_bridge_model.dart';
 import 'package:archiveme_mobile/features/archive_packs/archive_pack.dart';
 import 'package:archiveme_mobile/features/archive_proof/visible_archive_proof_copy.dart';
 import 'package:archiveme_mobile/features/beta/archive_beta_mission_gate.dart';
@@ -27,12 +18,16 @@ import 'package:archiveme_mobile/features/beta_test_script/beta_test_script_copy
 import 'package:archiveme_mobile/features/collections/archive_collection.dart';
 import 'package:archiveme_mobile/features/fact_ledger/archive_fact.dart';
 import 'package:archiveme_mobile/features/help/help_reviewer_guide_copy.dart';
-import 'package:archiveme_mobile/features/paywall/archive_loop_entitlements.dart';
+import 'package:archiveme_mobile/features/memory_transparency/memory_transparency_copy.dart';
+import 'package:archiveme_mobile/features/privacy/on_device_processing_store.dart';
+import 'package:archiveme_mobile/features/privacy/privacy_security_control_center_copy.dart';
+import 'package:archiveme_mobile/features/consent_audit/consent_audit_service.dart';
 import 'package:archiveme_mobile/features/pins/pinned_evidence_store.dart';
 import 'package:archiveme_mobile/features/privacy_trust/privacy_trust_copy.dart';
-import 'package:archiveme_mobile/features/pro/pro_value_preview_copy.dart';
 import 'package:archiveme_mobile/features/pro_evidence_value/pro_evidence_value_engine.dart';
 import 'package:archiveme_mobile/features/revenue_metrics/revenue_readiness_engine.dart';
+import 'package:archiveme_mobile/features/settings/ui/consent_management_panel.dart';
+import 'package:archiveme_mobile/features/settings/ui/trust_status_footer.dart';
 import 'package:archiveme_mobile/features/tomorrow_return/check_in_reminder_service.dart';
 import 'package:archiveme_mobile/features/tomorrow_return/tomorrow_check_in_coordinator.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
@@ -45,14 +40,13 @@ import 'package:archiveme_mobile/theme/app_spacing.dart';
 import 'package:archiveme_mobile/widgets/account/account_privacy_controls_section.dart';
 import 'package:archiveme_mobile/widgets/beta/beta_conversion_diagnosis_card.dart';
 import 'package:archiveme_mobile/widgets/beta/beta_feedback_intelligence_card.dart';
-import 'package:archiveme_mobile/widgets/beta/purchase_smoke_test_card.dart';
 import 'package:archiveme_mobile/widgets/beta/testflight_metrics_dashboard_card.dart';
 import 'package:archiveme_mobile/widgets/debug/revenue_readiness_card.dart';
 import 'package:archiveme_mobile/widgets/memory/memory_scope_settings_section.dart';
-import 'package:archiveme_mobile/widgets/pro/archive_backup_bridge_card.dart';
 import 'package:archiveme_mobile/widgets/pushed_screen_shell.dart';
 import 'package:archiveme_mobile/widgets/settings/app_review_access_settings_section.dart';
 import 'package:archiveme_mobile/widgets/settings/privacy_data_controls_section.dart';
+import 'package:archiveme_mobile/widgets/settings/privacy_security_trust_section.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -66,19 +60,17 @@ class SettingsScreen extends StatefulWidget {
 
 class _SettingsScreenState extends State<SettingsScreen> {
   PackageInfo? _packageInfo;
-  bool _restoreBusy = false;
-  RestorePurchasesFlow? _restoreFlow;
   bool _remindersEnabled = false;
   bool _remindersBusy = false;
+  bool _onDeviceProcessing = OnDeviceProcessingStore.defaultEnabled;
+  bool _onDeviceBusy = false;
   List<JournalEntry> _journalEntries = const [];
-  bool _isPro = false;
+  final GlobalKey _onDeviceToggleKey = GlobalKey();
   @override
   void initState() {
     super.initState();
     unawaited(BetaFeedbackIntelligenceStore.ensureLoaded());
-    unawaited(ArchiveBackupBridgeDismissStore.ensureLoaded());
     unawaited(_loadJournalEntries());
-    unawaited(_loadIsPro());
     unawaited(PackageInfo.fromPlatform().then((info) {
       if (mounted) setState(() => _packageInfo = info);
     }));
@@ -87,6 +79,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
         if (mounted) setState(() => _remindersEnabled = value);
       }));
     }
+    unawaited(OnDeviceProcessingStore.ensureLoaded().then((_) {
+      if (mounted) {
+        setState(() => _onDeviceProcessing = OnDeviceProcessingStore.enabled);
+      }
+    }));
   }
 
   String get _reminderStateLabel {
@@ -132,6 +129,29 @@ class _SettingsScreenState extends State<SettingsScreen> {
     unawaited(context.push('/testing-archiveme'));
   }
 
+  Future<void> _toggleOnDeviceProcessing(bool enable) async {
+    if (_onDeviceBusy) return;
+    setState(() => _onDeviceBusy = true);
+    try {
+      await OnDeviceProcessingStore.setEnabled(enable);
+      if (mounted) setState(() => _onDeviceProcessing = enable);
+    } finally {
+      if (mounted) setState(() => _onDeviceBusy = false);
+    }
+  }
+
+  void _scrollToOnDeviceToggle() {
+    final context = _onDeviceToggleKey.currentContext;
+    if (context == null) return;
+    unawaited(
+      Scrollable.ensureVisible(
+        context,
+        duration: const Duration(milliseconds: 300),
+        alignment: 0.1,
+      ),
+    );
+  }
+
   Future<void> _loadJournalEntries() async {
     if (!AppServices.isInitialized) return;
     final entries = await AppServices.instance.journal.loadAll();
@@ -139,42 +159,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
     setState(() => _journalEntries = entries);
   }
 
-  Future<void> _loadIsPro() async {
-    if (!AppServices.isInitialized) return;
-    final snap = await ArchiveLoopEntitlementGate.load(
-      store: ArchiveLoopEntitlementStore(AppServices.instance.prefs),
-      reader: ArchiveEntitlementReader.forAccessCheck(),
-    );
-    if (!mounted) return;
-    setState(() => _isPro = snap.effectivePro);
-  }
-
   Future<void> _onAppReviewAccessUnlocked() async {
     await _loadJournalEntries();
-    await _loadIsPro();
-  }
-
-  Future<void> _dismissArchiveBackupBridge() async {
-    await ArchiveBackupBridgeDismissStore.dismiss();
-    if (mounted) setState(() {});
-  }
-
-  Future<void> _restorePurchases() async {
-    final flow = _restoreFlow ??= RestorePurchasesFlow(
-      billing: AppServices.instance.billing,
-    );
-    if (flow.isBusy || _restoreBusy) return;
-
-    setState(() => _restoreBusy = true);
-    try {
-      final result = await flow.restore();
-      if (!mounted || result.outcome == RestorePurchasesOutcome.skippedBusy) {
-        return;
-      }
-      RestorePurchasesFeedback.showSnackBar(context, result);
-    } finally {
-      if (mounted) setState(() => _restoreBusy = false);
-    }
   }
 
   @override
@@ -198,16 +184,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
     final settingsFirstProofReached =
         BetaFeedbackIntelligenceStore.cached.hasReachedFirstProof ||
         ProEvidenceValueEngine.firstProofPayoffSeenForEntries(_journalEntries);
-    final archiveBackupBridgeContext = ArchiveBackupBridgeEngine.buildContext(
-      surface: ArchiveBackupBridgeSurface.settings,
-      entryCount: _journalEntries.length,
-      isPro: _isPro,
-      dismissed: ArchiveBackupBridgeDismissStore.isDismissed(),
-      entries: _journalEntries,
-      isZeroEntryState: _journalEntries.isEmpty,
-    );
-    final showArchiveBackupBridgeOnSettings =
-        ArchiveBackupBridgeEngine.shouldShowCard(archiveBackupBridgeContext);
 
     return PushedScreenShell(
       title: ConsumerUiCopy.settings,
@@ -284,52 +260,85 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
               const SizedBox(height: AppSpacing.sm),
               const BetaConversionDiagnosisCard(),
-              const SizedBox(height: AppSpacing.sm),
-              const PurchaseSmokeTestCard(source: 'settings', compact: true),
             ],
-            if (RevenueCatConfiguration.purchasesEnabledAtBuildTime &&
-                showArchiveBackupBridgeOnSettings) ...[
-              const SizedBox(height: AppSpacing.sm),
-              ArchiveBackupBridgeCard(
-                contextData: archiveBackupBridgeContext,
-                compact: true,
-                onSeePro: _isPro ? null : () => context.push('/subscription'),
-                onDismiss: () => unawaited(_dismissArchiveBackupBridge()),
+            PrivacySecurityTrustSection(
+              onScrollToOnDeviceToggle: _scrollToOnDeviceToggle,
+              showOnDeviceLink: V1CapabilityRegistry.localAiPrivacyControls,
+            ),
+            const SizedBox(height: AppSpacing.lg),
+            const ConsentManagementPanel(),
+            ListTile(
+              key: const Key('settings_privacy_security_control_center_tile'),
+              contentPadding: EdgeInsets.zero,
+              title: Text(
+                PrivacySecurityControlCenterCopy.settingsEntryTitle,
+                style: ArchiveMobileTypography.listTitle(context),
               ),
-            ],
-            if (RevenueCatConfiguration.purchasesEnabledAtBuildTime &&
-                V1NavigationGuard.isNavRouteVisible('/pro-preview'))
-              ListTile(
-                key: const Key('settings_pro_value_preview_tile'),
-                contentPadding: EdgeInsets.zero,
-                title: Text(
-                  ProValuePreviewCopy.settingsTitle,
-                  style: ArchiveMobileTypography.listTitle(context),
-                ),
-                subtitle: Text(
-                  ProValuePreviewCopy.settingsSubtitle,
-                  style: ArchiveMobileTypography.listSubtitle(context),
-                ),
-                trailing: const Icon(Icons.chevron_right),
-                onTap: () => context.push('/pro-preview'),
+              subtitle: Text(
+                PrivacySecurityControlCenterCopy.settingsEntrySubtitle,
+                style: ArchiveMobileTypography.listSubtitle(context),
               ),
-            if (RevenueCatConfiguration.purchasesEnabledAtBuildTime)
-              ListTile(
-                contentPadding: EdgeInsets.zero,
-                title: Text(
-                  ConsumerUiCopy.restorePurchases,
-                  style: ArchiveMobileTypography.listTitle(context),
-                ),
-                subtitle: RevenueCatService.instance.isConfigured
-                    ? null
-                    : Text(
-                        SubscriptionCopy.temporarilyUnavailable,
-                        style: ArchiveMobileTypography.listSubtitle(context),
-                      ),
-                trailing: const Icon(Icons.chevron_right),
-                onTap: _restoreBusy ? null : _restorePurchases,
-              ),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () => context.push('/privacy-security'),
+            ),
             const PrivacyDataControlsSection(),
+            if (V1CapabilityRegistry.localAiPrivacyControls)
+              KeyedSubtree(
+                key: const Key('settings_on_device_processing_toggle'),
+                child: SwitchListTile(
+                  key: _onDeviceToggleKey,
+                  contentPadding: EdgeInsets.zero,
+                  title: Text(
+                    OnDeviceProcessingCopy.title,
+                    style: ArchiveMobileTypography.listTitle(context),
+                  ),
+                  subtitle: Text(
+                    OnDeviceProcessingCopy.subtitle,
+                    style: ArchiveMobileTypography.listSubtitle(context),
+                  ),
+                  value: _onDeviceProcessing,
+                  onChanged: _onDeviceBusy ? null : _toggleOnDeviceProcessing,
+                ),
+              ),
+            ListTile(
+              key: const Key('settings_memory_transparency_tile'),
+              contentPadding: EdgeInsets.zero,
+              title: Text(
+                MemoryTransparencyCopy.title,
+                style: ArchiveMobileTypography.listTitle(context),
+              ),
+              subtitle: Text(
+                MemoryTransparencyCopy.subtitle,
+                style: ArchiveMobileTypography.listSubtitle(context),
+              ),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () => context.push('/memory-transparency'),
+            ),
+            ListTile(
+              key: const Key('settings_consent_audit_tile'),
+              contentPadding: EdgeInsets.zero,
+              title: Text(
+                ConsentAuditCopy.title,
+                style: ArchiveMobileTypography.listTitle(context),
+              ),
+              subtitle: Text(
+                ConsentAuditCopy.subtitle,
+                style: ArchiveMobileTypography.listSubtitle(context),
+              ),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () => context.push('/consent-audit'),
+            ),
+            ListTile(
+              key: const Key('settings_journal_export_tile'),
+              contentPadding: EdgeInsets.zero,
+              title: const Text('Export my journal'),
+              subtitle: Text(
+                'Open JSON export of non-deleted entries',
+                style: ArchiveMobileTypography.listSubtitle(context),
+              ),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () => context.push('/journal-export'),
+            ),
             AppReviewAccessSettingsSection(
               onUnlocked: _onAppReviewAccessUnlocked,
             ),
@@ -475,11 +484,25 @@ class _SettingsScreenState extends State<SettingsScreen> {
               versionLabel,
               style: ArchiveMobileTypography.explanationBody(context),
             ),
+            const SizedBox(height: AppSpacing.lg),
+            const TrustStatusFooter(),
             if (DeveloperSettingsGate.canShowDeveloperSettings) ...[
               const Divider(height: 28),
               _tile(
                 'Developer diagnostics',
                 onTap: () => context.push('/developer-diagnostics'),
+              ),
+              _tile(
+                'Offline sync verify',
+                onTap: () => context.push('/offline-sync-verify'),
+              ),
+              _tile(
+                'RevenueCat verify',
+                onTap: () => context.push('/revenuecat-verify'),
+              ),
+              _tile(
+                'Restore production verify',
+                onTap: () => context.push('/restore-production-verify'),
               ),
             ],
           ],
