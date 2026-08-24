@@ -6,8 +6,9 @@
 // finder then reports the entry point missing when it is only unbuilt.
 import 'package:archiveme_mobile/features/caregiver/caregiver_feature_flags.dart';
 import 'package:archiveme_mobile/features/caregiver_grant/caregiver_grant_copy.dart';
-import 'package:archiveme_mobile/features/caregiver_grant/caregiver_grant_disclosure_screen.dart';
 import 'package:archiveme_mobile/features/caregiver_grant/caregiver_grant_entry_point.dart';
+import 'package:archiveme_mobile/features/settings/ui/caregiver_consent_copy.dart';
+import 'package:archiveme_mobile/features/settings/ui/caregiver_consent_screen.dart';
 import 'package:archiveme_mobile/l10n/generated/app_localizations.dart';
 import 'package:archiveme_mobile/router/route_catalog.dart';
 import 'package:archiveme_mobile/router/v1_route_registry.dart';
@@ -74,20 +75,25 @@ void main() {
     expect(find.byKey(CaregiverEntryPoint.cardKey), findsNothing);
     expect(find.byKey(CaregiverEntryPoint.actionKey), findsNothing);
     expect(find.text(CaregiverGrantCopy.entryTitle), findsNothing);
+    expect(find.text(CaregiverConsentCopy.settingsTileTitle), findsNothing);
+    expect(find.byKey(const Key('settings_caregiver_consent_tile')), findsNothing);
+    expect(find.byKey(const Key('settings_caregiver_access_tile')), findsNothing);
   });
 
-  testWidgets('the grant entry point appears once the capability is on',
+  testWidgets('one consent tile appears once the capability is on',
       (tester) async {
     CaregiverFeatureFlags.debugOverride = true;
 
     await pumpSettings(tester);
 
-    expect(find.byKey(CaregiverEntryPoint.cardKey), findsOneWidget);
-    expect(find.byKey(CaregiverEntryPoint.actionKey), findsOneWidget);
-    expect(find.text(CaregiverGrantCopy.entryTitle), findsOneWidget);
+    expect(find.byKey(CaregiverEntryPoint.cardKey), findsNothing);
+    expect(find.byKey(CaregiverEntryPoint.actionKey), findsNothing);
+    expect(find.byKey(const Key('settings_caregiver_consent_tile')), findsOneWidget);
+    expect(find.byKey(const Key('settings_caregiver_access_tile')), findsOneWidget);
+    expect(find.text(CaregiverConsentCopy.settingsTileTitle), findsOneWidget);
   });
 
-  testWidgets('it sits inside the Settings list, not floating in the tree',
+  testWidgets('the tile sits inside the Settings list, not floating in the tree',
       (tester) async {
     CaregiverFeatureFlags.debugOverride = true;
 
@@ -96,27 +102,26 @@ void main() {
     expect(
       find.descendant(
         of: find.byType(SettingsScreen),
-        matching: find.byKey(CaregiverEntryPoint.cardKey),
+        matching: find.byKey(const Key('settings_caregiver_consent_tile')),
       ),
       findsOneWidget,
     );
   });
 
   testWidgets(
-    'tapping the Settings entry opens CaregiverDisclosureScreen',
+    'tapping the Settings consent tile opens CaregiverConsentScreen',
     (tester) async {
       CaregiverFeatureFlags.debugOverride = true;
 
       await pumpSettings(tester);
 
-      await tester.tap(find.byKey(CaregiverEntryPoint.actionKey));
-      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const Key('settings_caregiver_consent_tile')));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 300));
 
-      expect(find.byKey(CaregiverDisclosureScreen.screenKey), findsOneWidget);
-      expect(find.text(CaregiverGrantCopy.canSeeRecent), findsOneWidget);
-      expect(find.text(CaregiverGrantCopy.stopOnThisDevice), findsOneWidget);
-      expect(find.text(CaregiverGrantCopy.stopPassLifetime), findsOneWidget);
-      expect(find.textContaining('instantly severs'), findsNothing);
+      expect(find.byKey(CaregiverConsentScreen.screenKey), findsOneWidget);
+      expect(find.text(CaregiverConsentCopy.banner), findsOneWidget);
+      expect(find.byKey(CaregiverConsentScreen.masterSwitchKey), findsOneWidget);
     },
   );
 

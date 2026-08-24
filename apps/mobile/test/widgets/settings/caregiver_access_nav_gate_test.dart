@@ -1,5 +1,5 @@
 import 'package:archiveme_mobile/core/config/v1_capability_registry.dart';
-import 'package:archiveme_mobile/features/auth/domain/caregiver_access_copy.dart';
+import 'package:archiveme_mobile/features/settings/ui/caregiver_consent_copy.dart';
 import 'package:archiveme_mobile/features/caregiver/caregiver_feature_flags.dart';
 import 'package:archiveme_mobile/features/privacy/privacy_security_trust_copy.dart';
 import 'package:archiveme_mobile/l10n/generated/app_localizations.dart';
@@ -161,7 +161,11 @@ void main() {
         find.byKey(const Key('settings_caregiver_access_tile')),
         findsNothing,
       );
-      expect(find.text(CaregiverAccessCopy.settingsTitle), findsNothing);
+      expect(
+        find.byKey(const Key('settings_caregiver_consent_tile')),
+        findsNothing,
+      );
+      expect(find.text(CaregiverConsentCopy.settingsTileTitle), findsNothing);
     });
 
     testWidgets('tile is present when the flag is on', (tester) async {
@@ -173,6 +177,11 @@ void main() {
         find.byKey(const Key('settings_caregiver_access_tile')),
         findsOneWidget,
       );
+      expect(
+        find.byKey(const Key('settings_caregiver_consent_tile')),
+        findsOneWidget,
+      );
+      expect(find.text(CaregiverConsentCopy.settingsTileTitle), findsOneWidget);
     });
   });
 }
