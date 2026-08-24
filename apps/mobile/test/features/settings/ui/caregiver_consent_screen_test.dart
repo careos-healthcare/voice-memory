@@ -7,6 +7,7 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   test('copy names opening words and a local revoke', () {
     expect(CaregiverConsentCopy.banner, contains('opening words'));
+    expect(CaregiverConsentCopy.banner, contains('Raw audio stays on this phone'));
     expect(CaregiverConsentCopy.banner, contains('unless you choose'));
     expect(CaregiverConsentCopy.banner.toLowerCase(), isNot(contains('strictly')));
     expect(
@@ -21,11 +22,12 @@ void main() {
       CaregiverConsentCopy.banner.toLowerCase(),
       isNot(contains('summarized trend')),
     );
-    expect(CaregiverConsentCopy.revokeConfirmBody, contains('this screen'));
-    expect(CaregiverConsentCopy.settingsTileTitle, 'Caregiver Access & Consent');
-    expect(CaregiverConsentCopy.screenTitle, 'Caregiver Access & Consent');
+    expect(CaregiverConsentCopy.revokeConfirmBody, contains('stop sharing'));
+    expect(CaregiverConsentCopy.revokeConfirmBody, isNot(contains('Heather')));
+    expect(CaregiverConsentCopy.settingsTileTitle, 'Caregiver Access & Permissions');
+    expect(CaregiverConsentCopy.screenTitle, 'Caregiver Access & Permissions');
     expect(CaregiverConsentCopy.statusOff, 'Sharing disabled');
-    expect(CaregiverConsentCopy.revokeCta, 'Revoke');
+    expect(CaregiverConsentCopy.revokeCta, 'Revoke All Caregiver Access');
     expect(
       CaregiverConsentCopy.connectedStatus(caregiverDisplayName: 'Sam'),
       'Connected to Sam',
@@ -61,9 +63,11 @@ void main() {
       CaregiverConsentCopy.alertsBody,
       CaregiverConsentCopy.checkInsTitle,
       CaregiverConsentCopy.checkInsBody,
+      CaregiverConsentCopy.sharingPermissions,
       CaregiverConsentCopy.revokeCta,
       CaregiverConsentCopy.revokeConfirmTitle,
       CaregiverConsentCopy.revokeConfirmBody,
+      CaregiverConsentCopy.revokeConfirmBodyPreview,
       CaregiverConsentCopy.revokeCancel,
       CaregiverConsentCopy.revokeConfirmAction,
       CaregiverConsentCopy.connectedStatus(caregiverDisplayName: 'Sam'),
@@ -89,6 +93,7 @@ void main() {
     expect(find.byKey(CaregiverConsentScreen.screenKey), findsOneWidget);
     expect(find.text(CaregiverConsentCopy.banner), findsOneWidget);
     expect(find.byKey(CaregiverConsentScreen.masterSwitchKey), findsOneWidget);
+    expect(find.byKey(CaregiverConsentScreen.revokeKey), findsNothing);
     expect(find.textContaining('Heather'), findsNothing);
   });
 }

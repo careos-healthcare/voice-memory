@@ -1,4 +1,4 @@
-/// Copy for Settings → Caregiver Access & Consent.
+/// Copy for Settings → Caregiver Access & Permissions.
 ///
 /// The requested panel used a banner that called recordings and transcripts
 /// "100% private and on this phone". That absolute is false: the user can
@@ -11,19 +11,19 @@
 abstract final class CaregiverConsentCopy {
   CaregiverConsentCopy._();
 
-  static const String settingsTileTitle = 'Caregiver Access & Consent';
+  static const String settingsTileTitle = 'Caregiver Access & Permissions';
 
   static const String settingsTileSubtitle =
       'Grant access, see what is shared, and revoke it on this device';
 
-  static const String screenTitle = 'Caregiver Access & Consent';
+  static const String screenTitle = 'Caregiver Access & Permissions';
 
   /// Accurate replacement for the requested trend-alert / "100% private" banner.
   static const String banner =
       'If you grant access, a caregiver can see the opening words of your '
-      'recent moments. They cannot play your original audio or export the '
-      'database from this app. Journal entries stay on this phone unless you '
-      'choose a remote feature.';
+      'recent moments. Raw audio stays on this phone. They cannot play your '
+      'original recording or export the database from this app. Journal '
+      'entries stay on this phone unless you choose a remote feature.';
 
   static const String masterTitle = 'Enable Caregiver Sharing';
 
@@ -52,16 +52,29 @@ abstract final class CaregiverConsentCopy {
       'Local preview on this screen. This switch does not grant check-in '
       'requests.';
 
-  static const String revokeCta = 'Revoke';
+  static const String sharingPermissions = 'Sharing Permissions';
+
+  static const String revokeCta = 'Revoke All Caregiver Access';
 
   static const String revokeConfirmTitle = 'Revoke Caregiver Access?';
 
+  /// Production dialog — generic caregiver, never a preview fixture name.
   static const String revokeConfirmBody =
-      'This turns every sharing toggle off on this screen.';
+      'This will immediately stop sharing with your caregiver. '
+      'You can re-enable access at any time.';
 
   static const String revokeCancel = 'Cancel';
 
   static const String revokeConfirmAction = 'Revoke';
+
+  /// Preview-only dialog. Mentions [previewConnectedName]; do not use in Settings.
+  static String get revokeConfirmBodyPreview =>
+      'This will immediately stop all data sharing with $previewConnectedName. '
+      'You can re-enable access at any time.';
+
+  static String revokeConfirmBodyFor({required bool previewMode}) {
+    return previewMode ? revokeConfirmBodyPreview : revokeConfirmBody;
+  }
 
   static String connectedStatus({
     String? caregiverDisplayName,

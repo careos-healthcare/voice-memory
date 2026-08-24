@@ -90,7 +90,7 @@ void main() {
     expect(find.byKey(CaregiverEntryPoint.actionKey), findsNothing);
     expect(find.byKey(const Key('settings_caregiver_consent_tile')), findsOneWidget);
     expect(find.byKey(const Key('settings_caregiver_access_tile')), findsOneWidget);
-    expect(find.text('Caregiver Access & Consent'), findsOneWidget);
+    expect(find.text('Caregiver Access & Permissions'), findsOneWidget);
     expect(find.text(CaregiverConsentCopy.settingsTileTitle), findsOneWidget);
     expect(
       find.descendant(
@@ -130,6 +130,16 @@ void main() {
       expect(find.byKey(CaregiverConsentScreen.screenKey), findsOneWidget);
       expect(find.text(CaregiverConsentCopy.banner), findsOneWidget);
       expect(find.byKey(CaregiverConsentScreen.masterSwitchKey), findsOneWidget);
+      expect(
+        tester
+            .widget<SwitchListTile>(
+              find.byKey(CaregiverConsentScreen.masterSwitchKey),
+            )
+            .value,
+        isFalse,
+      );
+      expect(find.textContaining('Heather'), findsNothing);
+      expect(find.text(CaregiverConsentCopy.statusOff), findsOneWidget);
     },
   );
 
