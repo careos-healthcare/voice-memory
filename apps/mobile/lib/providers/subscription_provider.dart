@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:archiveme_mobile/billing/archive_loop_entitlement_ids.dart';
 import 'package:archiveme_mobile/billing/revenuecat_configuration.dart';
 import 'package:archiveme_mobile/billing/revenuecat_service.dart';
+import 'package:archiveme_mobile/core/config/v1_billing_capability.dart';
 import 'package:archiveme_mobile/core/utils/app_logger.dart';
 import 'package:archiveme_mobile/features/billing/application/billing_notifier.dart';
 import 'package:flutter/foundation.dart';
@@ -33,7 +34,7 @@ class SubscriptionState {
     this.isLoading = true,
     this.errorMessage,
     this.billingConfigured = false,
-    this.purchasesEnabled = RevenueCatConfiguration.purchasesEnabledAtBuildTime,
+    this.purchasesEnabled = V1BillingCapability.isEnabled,
     this.monthlyPriceLabel,
     this.yearlyPriceLabel,
   });
@@ -124,8 +125,12 @@ class SubscriptionNotifier extends Notifier<SubscriptionState> {
   Future<void> _initRevenueCat() async {
     if (!ref.mounted) return;
 
-    if (!RevenueCatConfiguration.purchasesEnabledAtBuildTime) {
-      state = state.copyWith(isLoading: false, billingConfigured: false);
+    if (!V1BillingCapability.isEnabled) {
+      state = state.copyWith(
+        isLoading: false,
+        billingConfigured: false,
+        purchasesEnabled: false,
+      );
       return;
     }
 
@@ -150,8 +155,12 @@ class SubscriptionNotifier extends Notifier<SubscriptionState> {
   Future<void> checkSubscriptionStatus() async {
     if (!ref.mounted) return;
 
-    if (!RevenueCatConfiguration.purchasesEnabledAtBuildTime) {
-      state = state.copyWith(isLoading: false, billingConfigured: false);
+    if (!V1BillingCapability.isEnabled) {
+      state = state.copyWith(
+        isLoading: false,
+        billingConfigured: false,
+        purchasesEnabled: false,
+      );
       return;
     }
 
@@ -264,5 +273,5 @@ String? revenueCatPublicApiKeyForCurrentPlatform() {
       : Platform.isAndroid
       ? RevenueCatPlatform.android
       : RevenueCatPlatform.unsupported;
-  return RevenueCatConfiguration.current.publicSdkKeyFor(platform);
+  return RevenueCatConfiguration.current.sdkKeyForConfigure(platform);
 }

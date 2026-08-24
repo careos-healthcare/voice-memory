@@ -35,7 +35,7 @@ abstract final class ProfessionalCoachEntitlementGate {
 
   /// Resolves the coach-seat store product from RevenueCat offerings.
   static Future<Package?> resolveCoachSeatPackage() async {
-    const config = RevenueCatConfiguration.current;
+    final config = RevenueCatConfiguration.current;
     final productId = _configuredProductId(config.coachSeatProductIdentifier);
     if (productId == null) return null;
 

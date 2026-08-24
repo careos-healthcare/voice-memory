@@ -1,3 +1,7 @@
+import 'package:archiveme_mobile/billing/revenuecat_configuration.dart';
+import 'package:archiveme_mobile/billing/revenuecat_service.dart';
+import 'package:archiveme_mobile/core/config/v1_billing_capability.dart';
+import 'package:archiveme_mobile/core/config/v1_capability_registry.dart';
 import 'package:archiveme_mobile/providers/subscription_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -67,5 +71,22 @@ void main() {
     // The kickoff microtask is still queued at this point. It must notice the
     // provider is gone rather than throwing out of an unawaited future.
     await Future<void>.delayed(Duration.zero);
+  });
+
+  test('storeBilling off wins over REVENUECAT_PURCHASES_ENABLED on init',
+      () async {
+    expect(V1CapabilityRegistry.storeBilling, isFalse);
+    expect(RevenueCatConfiguration.purchasesEnabledAtBuildTime, isTrue);
+    expect(V1BillingCapability.isEnabled, isFalse);
+
+    final container = ProviderContainer();
+    addTearDown(container.dispose);
+
+    await container.read(subscriptionProvider.notifier).bootstrapped;
+
+    final state = container.read(subscriptionProvider);
+    expect(state.purchasesEnabled, isFalse);
+    expect(state.billingConfigured, isFalse);
+    expect(RevenueCatService.instance.isConfigured, isFalse);
   });
 }

@@ -6,6 +6,12 @@ enum RevenueCatPlatform { ios, android, unsupported }
 
 enum RevenueCatBuildEnvironment { development, sandbox, production }
 
+/// Reads a compile-time or test-provided RevenueCat env value.
+typedef RevenueCatEnvReader = String Function(
+  String name, {
+  String defaultValue,
+});
+
 /// Compile-time RevenueCat contract for consumer builds.
 ///
 /// Only public mobile SDK keys belong here. RevenueCat secret API keys must
@@ -18,6 +24,7 @@ class RevenueCatConfiguration {
     required this.entitlementId,
     required this.environment,
     required this.purchasesEnabled,
+    this.fallbackPublicSdkKey,
     this.monthlyProductIdentifier,
     this.yearlyProductIdentifier,
     this.offeringId,
@@ -25,6 +32,8 @@ class RevenueCatConfiguration {
     this.coachSeatOfferingId,
   });
 
+  /// Compile-time `REVENUECAT_PURCHASES_ENABLED` (default true). Config only —
+  /// store billing is gated by `V1CapabilityRegistry.storeBilling`.
   static const bool purchasesEnabledAtBuildTime = bool.fromEnvironment(
     'REVENUECAT_PURCHASES_ENABLED',
     defaultValue: true,
@@ -33,36 +42,73 @@ class RevenueCatConfiguration {
     'REVENUECAT_SANDBOX_BUILD',
   );
 
-  static const RevenueCatConfiguration current = RevenueCatConfiguration(
-    iosPublicSdkKey: String.fromEnvironment('REVENUECAT_IOS_API_KEY'),
-    androidPublicSdkKey: String.fromEnvironment('REVENUECAT_ANDROID_API_KEY'),
-    entitlementId: String.fromEnvironment(
-      'REVENUECAT_ENTITLEMENT_ID',
-      defaultValue: ArchiveLoopEntitlementIds.archiveLoopPro,
-    ),
-    offeringId: String.fromEnvironment('REVENUECAT_OFFERING_ID'),
-    monthlyProductIdentifier: String.fromEnvironment(
-      'REVENUECAT_MONTHLY_PRODUCT_ID',
-    ),
-    yearlyProductIdentifier: String.fromEnvironment(
-      'REVENUECAT_YEARLY_PRODUCT_ID',
-    ),
-    coachSeatProductIdentifier: String.fromEnvironment(
-      'REVENUECAT_COACH_SEAT_PRODUCT_ID',
-    ),
-    coachSeatOfferingId: String.fromEnvironment(
-      'REVENUECAT_COACH_SEAT_OFFERING_ID',
-    ),
-    environment: sandboxBuild
-        ? RevenueCatBuildEnvironment.sandbox
-        : kReleaseMode
-        ? RevenueCatBuildEnvironment.production
-        : RevenueCatBuildEnvironment.development,
-    purchasesEnabled: purchasesEnabledAtBuildTime,
-  );
+  static const _iosApiKeyEnvName = 'REVENUECAT_IOS_API_KEY';
+  static const _androidApiKeyEnvName = 'REVENUECAT_ANDROID_API_KEY';
+  static const _fallbackApiKeyEnvName = 'REVENUECAT_API_KEY';
+
+  /// Single-read env snapshot. SDK setup must consume this instance.
+  static RevenueCatConfiguration get current => _cached ??= load();
+
+  static RevenueCatConfiguration? _cached;
+
+  /// Test hook — swap to spy env reads. Production uses compile-time defines.
+  @visibleForTesting
+  static RevenueCatEnvReader envReader = _defaultEnvReader;
+
+  @visibleForTesting
+  static void resetCacheForTest() => _cached = null;
+
+  /// Reads the three public SDK keys once through [envReader].
+  static RevenueCatConfiguration load([RevenueCatEnvReader? reader]) {
+    final read = reader ?? envReader;
+    return RevenueCatConfiguration(
+      iosPublicSdkKey: read(_iosApiKeyEnvName),
+      androidPublicSdkKey: read(_androidApiKeyEnvName),
+      fallbackPublicSdkKey: read(_fallbackApiKeyEnvName),
+      entitlementId: const String.fromEnvironment(
+        'REVENUECAT_ENTITLEMENT_ID',
+        defaultValue: ArchiveLoopEntitlementIds.archiveLoopPro,
+      ),
+      offeringId: const String.fromEnvironment('REVENUECAT_OFFERING_ID'),
+      monthlyProductIdentifier: const String.fromEnvironment(
+        'REVENUECAT_MONTHLY_PRODUCT_ID',
+      ),
+      yearlyProductIdentifier: const String.fromEnvironment(
+        'REVENUECAT_YEARLY_PRODUCT_ID',
+      ),
+      coachSeatProductIdentifier: const String.fromEnvironment(
+        'REVENUECAT_COACH_SEAT_PRODUCT_ID',
+      ),
+      coachSeatOfferingId: const String.fromEnvironment(
+        'REVENUECAT_COACH_SEAT_OFFERING_ID',
+      ),
+      environment: sandboxBuild
+          ? RevenueCatBuildEnvironment.sandbox
+          : kReleaseMode
+          ? RevenueCatBuildEnvironment.production
+          : RevenueCatBuildEnvironment.development,
+      purchasesEnabled: purchasesEnabledAtBuildTime,
+    );
+  }
+
+  static String _defaultEnvReader(String name, {String defaultValue = ''}) {
+    switch (name) {
+      case _iosApiKeyEnvName:
+        return const String.fromEnvironment(_iosApiKeyEnvName);
+      case _androidApiKeyEnvName:
+        return const String.fromEnvironment(_androidApiKeyEnvName);
+      case _fallbackApiKeyEnvName:
+        return const String.fromEnvironment(_fallbackApiKeyEnvName);
+      default:
+        return defaultValue;
+    }
+  }
 
   final String iosPublicSdkKey;
   final String androidPublicSdkKey;
+
+  /// Shared public SDK key (`REVENUECAT_API_KEY`) when a platform key is empty.
+  final String? fallbackPublicSdkKey;
   final String entitlementId;
   final String? offeringId;
 
@@ -75,6 +121,8 @@ class RevenueCatConfiguration {
   final String? coachSeatProductIdentifier;
   final String? coachSeatOfferingId;
   final RevenueCatBuildEnvironment environment;
+
+  /// Snapshot of `REVENUECAT_PURCHASES_ENABLED`. Does not enable store billing.
   final bool purchasesEnabled;
 
   String? publicSdkKeyFor(RevenueCatPlatform platform) {
@@ -84,6 +132,14 @@ class RevenueCatConfiguration {
       RevenueCatPlatform.unsupported => '',
     }.trim();
     return key.isEmpty ? null : key;
+  }
+
+  /// Key passed to `Purchases.configure` — platform key, then shared fallback.
+  String? sdkKeyForConfigure(RevenueCatPlatform platform) {
+    final platformKey = publicSdkKeyFor(platform);
+    if (platformKey != null) return platformKey;
+    final fallback = fallbackPublicSdkKey?.trim() ?? '';
+    return fallback.isEmpty ? null : fallback;
   }
 
   List<String> validationErrorsFor(RevenueCatPlatform platform) {
