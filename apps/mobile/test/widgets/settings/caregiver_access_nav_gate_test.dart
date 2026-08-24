@@ -1,5 +1,5 @@
 import 'package:archiveme_mobile/core/config/v1_capability_registry.dart';
-import 'package:archiveme_mobile/features/settings/ui/caregiver_consent_copy.dart';
+import 'package:archiveme_mobile/features/settings/presentation/caregiver_consent_copy.dart';
 import 'package:archiveme_mobile/features/caregiver/caregiver_feature_flags.dart';
 import 'package:archiveme_mobile/features/privacy/privacy_security_trust_copy.dart';
 import 'package:archiveme_mobile/l10n/generated/app_localizations.dart';
