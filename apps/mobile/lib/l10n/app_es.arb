@@ -122,11 +122,11 @@
   "@archiveNeedsComparison": {
     "description": "English source: Add another moment so ArchiveMe can compare what changed."
   },
-  "archiveNeedsSupportedMoments": "ArchiveMe necesita al menos dos momentos compatibles antes de explicar un patrón.",
+  "archiveNeedsSupportedMoments": "ArchiveMe necesita al menos dos momentos con respaldo antes de explicar un patrón.",
   "@archiveNeedsSupportedMoments": {
     "description": "English source: ArchiveMe needs at least two supported moments before explaining a pattern."
   },
-  "archiveNextMomentGuidance": "Graba o escribe un momento específico. Una segunda observación compatible hace visible el cambio.",
+  "archiveNextMomentGuidance": "Graba o escribe un momento específico. Una segunda observación con respaldo hace visible el cambio.",
   "@archiveNextMomentGuidance": {
     "description": "English source: Record or type one specific moment. A second supported observation makes change visible."
   },
