@@ -2,6 +2,8 @@ import 'package:archiveme_mobile/features/auth/application/multi_party_access_se
 import 'package:archiveme_mobile/features/settings/ui/caregiver_access_screen.dart';
 import 'package:flutter/material.dart';
 
+export 'package:archiveme_mobile/features/settings/presentation/caregiver_consent_screen.dart';
+
 /// Former consent-management panel — redirects to the canonical screen.
 ///
 /// `ConsentManagementPanel` was deleted. This widget exists so leftover
