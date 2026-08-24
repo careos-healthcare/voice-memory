@@ -73,6 +73,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.byKey(VerifiedSourceProofSheet.sheetKey), findsOneWidget);
+      expect(find.text(EvidenceTrustCopy.howWeKnowThisPattern), findsOneWidget);
       expect(find.byKey(EvidenceCitationCard.cardKey), findsOneWidget);
       expect(find.text(EvidenceCitationCopy.verbatimHelper), findsOneWidget);
       expect(find.text(EvidenceTrustCopy.sheetLead), findsOneWidget);
@@ -91,32 +92,21 @@ void main() {
           ),
         );
 
-        expect(find.byKey(EvidenceTap.tapKey), findsNothing);
-        expect(find.byKey(VerifiedSourceProofLink.linkKey), findsNothing);
+        expect(find.byKey(EvidenceTap.tapKey), findsOneWidget);
         expect(find.text(_modelParaphrase), findsNothing);
         expect(find.text(EvidenceTrustCopy.transcriptExcerptLabel), findsNothing);
 
-        late BuildContext hostContext;
-        await tester.pumpWidget(
-          _host(
-            Builder(
-              builder: (context) {
-                hostContext = context;
-                return const SizedBox.shrink();
-              },
-            ),
-          ),
-        );
-
-        final opened = await VerifiedSourceProofSheet.show(
-          hostContext,
-          lines: [_line(entryId: 'e1', quote: _modelParaphrase)],
-        );
+        await tester.tap(find.byKey(EvidenceTap.tapKey));
         await tester.pumpAndSettle();
 
-        expect(opened, isFalse);
-        expect(find.byKey(VerifiedSourceProofSheet.sheetKey), findsNothing);
+        expect(find.byKey(VerifiedSourceProofSheet.sheetKey), findsOneWidget);
+        expect(find.text(EvidenceTrustCopy.howWeKnowThisPattern), findsOneWidget);
+        expect(
+          find.text(EvidenceTrustCopy.sourceQuotesUnavailable),
+          findsOneWidget,
+        );
         expect(find.text(_modelParaphrase), findsNothing);
+        expect(find.byKey(EvidenceCitationCard.cardKey), findsNothing);
         expect(
           find.text(EvidenceTrustCopy.transcriptExcerptLabel),
           findsNothing,

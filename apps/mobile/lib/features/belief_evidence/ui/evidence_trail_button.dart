@@ -3,16 +3,16 @@ import 'package:archiveme_mobile/features/belief_evidence/insight_evidence_line.
 import 'package:archiveme_mobile/features/belief_evidence/ui/verified_source_proof_sheet.dart';
 import 'package:flutter/material.dart';
 
-/// Subtle one-tap affordance that opens the verified source-proof sheet.
+/// Subtle one-tap affordance that opens the source-proof sheet.
 ///
 /// Public name for the control every pattern, belief-change, and insight
 /// surface should use. Thin wrapper around [VerifiedSourceProofLink]: same
 /// evidence, same sheet, same 48dp target. Cards that already carry
 /// `ViewSourceProofSection` get this automatically.
 ///
-/// The label is "How we know" (source-data sense). Renders nothing when
-/// [evidence] is empty — an affordance that promised proof it cannot open
-/// would be worse than no affordance. Never invents a quote.
+/// The label is "How we know" (source-data sense). Always tappable: verified
+/// quotes open the existing sheet; an empty list opens the same sheet with
+/// an honest "source quotes are not available" layout. Never invents a quote.
 class EvidenceTrailButton extends StatelessWidget {
   const EvidenceTrailButton({
     required this.evidence,
@@ -51,8 +51,6 @@ class EvidenceTrailButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (evidence.isEmpty) return const SizedBox.shrink();
-
     return KeyedSubtree(
       key: buttonKey,
       child: KeyedSubtree(
