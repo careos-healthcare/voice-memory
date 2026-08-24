@@ -26,7 +26,9 @@ Future<void> _pumpFrames(WidgetTester tester, {int frames = 5}) async {
 void main() {
   group('on-device hero placement', () {
     testWidgets('is not shown on the welcome step', (tester) async {
-      await tester.pumpWidget(const MaterialApp(home: OnboardingScreen()));
+      await tester.pumpWidget(
+        const MaterialApp(home: OnboardingScreen(debugStartAtWelcome: true)),
+      );
       await _pumpFrames(tester);
 
       expect(find.byKey(OnDeviceHeroScreen.screenKey), findsNothing);
@@ -34,7 +36,9 @@ void main() {
     });
 
     testWidgets('is not shown on the evidence-method step', (tester) async {
-      await tester.pumpWidget(const MaterialApp(home: OnboardingScreen()));
+      await tester.pumpWidget(
+        const MaterialApp(home: OnboardingScreen(debugStartAtWelcome: true)),
+      );
       await _pumpFrames(tester);
 
       await tester.tap(find.text(ConsumerUiCopy.onboardingContinueCta));
@@ -50,7 +54,9 @@ void main() {
     testWidgets('is not shown until the consent decision is answered', (
       tester,
     ) async {
-      await tester.pumpWidget(const MaterialApp(home: OnboardingScreen()));
+      await tester.pumpWidget(
+        const MaterialApp(home: OnboardingScreen(debugStartAtWelcome: true)),
+      );
       await _pumpFrames(tester);
 
       await tester.tap(find.text(ConsumerUiCopy.onboardingContinueCta));

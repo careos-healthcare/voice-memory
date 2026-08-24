@@ -26,7 +26,9 @@ void main() {
   testWidgets('welcome screen uses V1 contract copy and trust pillars', (
     tester,
   ) async {
-    await tester.pumpWidget(const MaterialApp(home: OnboardingScreen()));
+    await tester.pumpWidget(
+      const MaterialApp(home: OnboardingScreen(debugStartAtWelcome: true)),
+    );
     await _pumpFrames(tester);
 
     expect(find.text(OnboardingV1Copy.welcomeTitle), findsOneWidget);
@@ -47,7 +49,9 @@ void main() {
     // pillars 2 and 3, so the screen said each of those twice. Titles are
     // aliased now, which means a duplicate render shows up here as two matches
     // rather than as two constants that quietly drifted into agreement.
-    await tester.pumpWidget(const MaterialApp(home: OnboardingScreen()));
+    await tester.pumpWidget(
+      const MaterialApp(home: OnboardingScreen(debugStartAtWelcome: true)),
+    );
     await _pumpFrames(tester);
 
     for (final pillar in OnboardingV1Copy.trustPillars) {
@@ -63,7 +67,9 @@ void main() {
   testWidgets('continue advances through evidence step to consent screen', (
     tester,
   ) async {
-    await tester.pumpWidget(const MaterialApp(home: OnboardingScreen()));
+    await tester.pumpWidget(
+      const MaterialApp(home: OnboardingScreen(debugStartAtWelcome: true)),
+    );
     await _pumpFrames(tester);
 
     expect(find.text(OnboardingPages.pages[0].title), findsOneWidget);
@@ -83,7 +89,9 @@ void main() {
     tester.view.devicePixelRatio = 1.0;
     addTearDown(tester.view.resetPhysicalSize);
 
-    await tester.pumpWidget(const MaterialApp(home: OnboardingScreen()));
+    await tester.pumpWidget(
+      const MaterialApp(home: OnboardingScreen(debugStartAtWelcome: true)),
+    );
     await _pumpFrames(tester);
 
     expect(find.text(ConsumerUiCopy.onboardingContinueCta), findsOneWidget);
@@ -97,7 +105,9 @@ void main() {
     addTearDown(tester.view.resetPhysicalSize);
     addTearDown(tester.view.resetDevicePixelRatio);
 
-    await tester.pumpWidget(const MaterialApp(home: OnboardingScreen()));
+    await tester.pumpWidget(
+      const MaterialApp(home: OnboardingScreen(debugStartAtWelcome: true)),
+    );
     await _pumpFrames(tester);
 
     expect(find.text('ArchiveMe'), findsOneWidget);

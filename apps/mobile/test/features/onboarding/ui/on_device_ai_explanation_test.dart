@@ -67,14 +67,10 @@ void main() {
   });
 
   group('onboarding inserts the explanation before the dashboard', () {
-    testWidgets('the last step is OnDeviceAiExplanation, not the welcome page', (
+    testWidgets('the first page is OnDeviceAiExplanation, not the welcome page', (
       tester,
     ) async {
-      await tester.pumpWidget(
-        const MaterialApp(
-          home: OnboardingScreen(debugStartAtOnDeviceExplanation: true),
-        ),
-      );
+      await tester.pumpWidget(const MaterialApp(home: OnboardingScreen()));
       await tester.pump();
 
       expect(find.byKey(OnDeviceAiExplanation.screenKey), findsOneWidget);
@@ -84,10 +80,12 @@ void main() {
       expect(find.text(OnDeviceAiExplanationCopy.understandCta), findsOneWidget);
     });
 
-    testWidgets('the welcome step does not show the explanation', (
+    testWidgets('the welcome step is after Continue, not first', (
       tester,
     ) async {
-      await tester.pumpWidget(const MaterialApp(home: OnboardingScreen()));
+      await tester.pumpWidget(
+        const MaterialApp(home: OnboardingScreen(debugStartAtWelcome: true)),
+      );
       for (var i = 0; i < 5; i++) {
         await tester.pump(const Duration(milliseconds: 100));
       }

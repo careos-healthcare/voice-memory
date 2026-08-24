@@ -1,6 +1,7 @@
 import 'package:archiveme_mobile/features/loop_mode/loop_mode_coordinator.dart';
 import 'package:archiveme_mobile/features/loop_mode/loop_mode_model.dart';
 import 'package:archiveme_mobile/features/onboarding/ui/remote_processing_consent_copy.dart';
+import 'package:archiveme_mobile/onboarding/onboarding_pages.dart';
 import 'package:archiveme_mobile/product/consumer_ui_copy.dart';
 import 'package:archiveme_mobile/product/loop_mode_copy.dart';
 import 'package:archiveme_mobile/router/onboarding_gate.dart';
@@ -62,7 +63,9 @@ void main() {
     addTearDown(tester.view.resetPhysicalSize);
     addTearDown(tester.view.resetDevicePixelRatio);
 
-    await tester.pumpWidget(const MaterialApp(home: OnboardingScreen()));
+    await tester.pumpWidget(
+      const MaterialApp(home: OnboardingScreen(debugStartAtWelcome: true)),
+    );
     await _pumpFrames(tester);
 
     expect(find.text(OnboardingPages.pages[0].title), findsOneWidget);
@@ -77,6 +80,10 @@ void main() {
     await tester.pumpWidget(MaterialApp.router(routerConfig: router));
     await _pumpFrames(tester);
 
+    expect(find.byKey(const Key('on_device_ai_disclosure_screen')), findsOneWidget);
+    await tester.tap(find.byKey(const Key('on_device_ai_disclosure_screen_continue')));
+    await _pumpFrames(tester);
+
     await tester.tap(find.text(ConsumerUiCopy.onboardingContinueCta));
     await _pumpFrames(tester, frames: 5);
     await tester.tap(find.byKey(const Key('evidence_method_onboarding_continue')));
@@ -86,6 +93,46 @@ void main() {
     expect(find.byKey(const Key('remote_processing_consent_decline')),
         findsOneWidget);
   });
+
+  testWidgets(
+    'incomplete onboarding cannot reach /record — disclosure is first',
+    (tester) async {
+      onboardingGate.resetSessionRedirectsForTest();
+      onboardingGate.resetCompleteForTest();
+      expect(onboardingGate.complete, isFalse);
+
+      final router = GoRouter(
+        initialLocation: '/record',
+        refreshListenable: onboardingGate,
+        redirect: (context, state) {
+          if (!onboardingGate.complete && state.uri.path != '/onboarding') {
+            return '/onboarding';
+          }
+          return null;
+        },
+        routes: [
+          GoRoute(
+            path: '/onboarding',
+            builder: (context, state) => const OnboardingScreen(),
+          ),
+          GoRoute(
+            path: '/record',
+            builder: (context, state) =>
+                const Scaffold(body: Center(child: Text('Record screen'))),
+          ),
+        ],
+      );
+
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+      await _pumpFrames(tester, frames: 5);
+
+      expect(find.text('Record screen'), findsNothing);
+      expect(
+        find.byKey(const Key('on_device_ai_disclosure_screen')),
+        findsOneWidget,
+      );
+    },
+  );
 
   test(
     'loop screen finish path stores prove_enough and marks onboarding complete',

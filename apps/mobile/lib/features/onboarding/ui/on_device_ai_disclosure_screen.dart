@@ -1,22 +1,24 @@
 import 'package:archiveme_mobile/features/onboarding/ui/on_device_ai_explanation_copy.dart';
 import 'package:flutter/material.dart';
 
-/// Last onboarding disclosure before `/record`.
+/// First onboarding disclosure — shown before welcome, consent, or `/record`.
 ///
-/// [onContinue] proceeds into the app. It does not grant remote-processing
-/// consent — that decision is recorded on the previous step.
-/// [onCancel] returns to that previous step. It is not a consent decline.
+/// [onContinue] advances the flow. It does not grant remote-processing
+/// consent — that decision is recorded on a later step.
+/// [onCancel] is hidden when this is the first page. It is not a consent decline.
 class OnDeviceAiDisclosureScreen extends StatelessWidget {
   const OnDeviceAiDisclosureScreen({
     required this.onContinue,
     required this.onCancel,
     super.key,
     this.submitting = false,
+    this.showCancel = true,
   });
 
   final VoidCallback onContinue;
   final VoidCallback onCancel;
   final bool submitting;
+  final bool showCancel;
 
   static const Key screenKey = Key('on_device_ai_disclosure_screen');
   static const Key titleKey = Key('on_device_ai_disclosure_screen_title');
@@ -82,11 +84,12 @@ class OnDeviceAiDisclosureScreen extends StatelessWidget {
                 child: const Text(OnDeviceAiDisclosureCopy.understandCta),
               ),
             ),
-            TextButton(
-              key: cancelKey,
-              onPressed: submitting ? null : onCancel,
-              child: const Text(OnDeviceAiDisclosureCopy.cancelCta),
-            ),
+            if (showCancel)
+              TextButton(
+                key: cancelKey,
+                onPressed: submitting ? null : onCancel,
+                child: const Text(OnDeviceAiDisclosureCopy.cancelCta),
+              ),
           ],
         ),
       ),

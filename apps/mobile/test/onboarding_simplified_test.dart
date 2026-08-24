@@ -47,7 +47,9 @@ void main() {
     testWidgets('screen 1 shows contract copy, pillars, and Continue', (
       tester,
     ) async {
-      await tester.pumpWidget(const MaterialApp(home: OnboardingScreen()));
+      await tester.pumpWidget(
+        const MaterialApp(home: OnboardingScreen(debugStartAtWelcome: true)),
+      );
       await _pumpFrames(tester);
 
       expect(find.text('ArchiveMe'), findsOneWidget);
@@ -63,7 +65,9 @@ void main() {
     testWidgets('screen 3 is remote consent with equal-weight choices', (
       tester,
     ) async {
-      await tester.pumpWidget(const MaterialApp(home: OnboardingScreen()));
+      await tester.pumpWidget(
+        const MaterialApp(home: OnboardingScreen(debugStartAtWelcome: true)),
+      );
       await _pumpFrames(tester);
 
       await _advanceToConsent(tester);
@@ -93,7 +97,9 @@ void main() {
     testWidgets('does not request microphone during onboarding', (
       tester,
     ) async {
-      await tester.pumpWidget(const MaterialApp(home: OnboardingScreen()));
+      await tester.pumpWidget(
+        const MaterialApp(home: OnboardingScreen(debugStartAtWelcome: true)),
+      );
       await _pumpFrames(tester);
 
       expect(find.textContaining('microphone'), findsNothing);
@@ -113,7 +119,9 @@ void main() {
         await tester.pumpWidget(
           MediaQuery(
             data: MediaQueryData(textScaler: TextScaler.linear(scale)),
-            child: const MaterialApp(home: OnboardingScreen()),
+            child: const MaterialApp(
+              home: OnboardingScreen(debugStartAtWelcome: true),
+            ),
           ),
         );
         await _pumpFrames(tester);
@@ -129,7 +137,9 @@ void main() {
     testWidgets('consent step exposes semantics for screen readers', (
       tester,
     ) async {
-      await tester.pumpWidget(const MaterialApp(home: OnboardingScreen()));
+      await tester.pumpWidget(
+        const MaterialApp(home: OnboardingScreen(debugStartAtWelcome: true)),
+      );
       await _pumpFrames(tester);
 
       await _advanceToConsent(tester);
