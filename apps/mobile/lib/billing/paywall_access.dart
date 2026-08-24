@@ -31,8 +31,11 @@ abstract class PaywallAccess {
     int checkInCount = 0,
     int weekCount = 0,
     String sourceRoute = '',
+    bool? isBillingReachable,
   }) async {
-    if (!V1BillingCapability.isProductionReachable) return null;
+    final billingReachable =
+        isBillingReachable ?? V1BillingCapability.isProductionReachable;
+    if (!billingReachable) return null;
     final reader =
         entitlementReader ?? ArchiveEntitlementReader.forAccessCheck();
     final isPro = await reader.isPro;
@@ -49,6 +52,7 @@ abstract class PaywallAccess {
       checkInCount: checkInCount,
       weekCount: weekCount,
       sourceRoute: sourceRoute,
+      isBillingReachable: billingReachable,
     );
   }
 
@@ -83,12 +87,19 @@ abstract class PaywallAccess {
   }
 
   /// Paywall only after first repeat and evidence trail — same gate as Pro bridge.
-  static Future<bool> canOpenPaywall() async {
-    if (!V1BillingCapability.isProductionReachable) return false;
+  static Future<bool> canOpenPaywall({
+    bool? isBillingReachable,
+    int? evidenceMilestoneCount,
+  }) async {
+    if (!(isBillingReachable ?? V1BillingCapability.isProductionReachable)) {
+      return false;
+    }
     if (ScreenshotMode.enabled) return true;
     if (ArchiveAppReviewSession.isActive) return true;
     await DelayedPaywallProofStore.ensureLoaded();
-    return DelayedPaywallProofStore.passesGate;
+    return DelayedPaywallProofStore.passesGateFor(
+      evidenceMilestoneCount: evidenceMilestoneCount,
+    );
   }
 
   static Future<void> openPaywall(
