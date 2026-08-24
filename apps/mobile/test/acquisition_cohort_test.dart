@@ -196,7 +196,7 @@ void main() {
   });
 
   group('cohort first-run skip', () {
-    test('cohort user redirects away from broad onboarding', () async {
+    test('cohort user still reaches onboarding so the disclosure is first', () async {
       final stamp = DateTime.now().microsecondsSinceEpoch.toString();
       await _reset(stamp);
 
@@ -207,7 +207,7 @@ void main() {
       final redirect = await AcquisitionCohortCoordinator.fastPathRedirect(
         '/onboarding',
       );
-      expect(redirect, '/start/capacity-yes');
+      expect(redirect, isNull);
     });
 
     test('non-cohort user has no fast-path redirect', () async {
