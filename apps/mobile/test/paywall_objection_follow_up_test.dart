@@ -9,7 +9,7 @@ import 'package:archiveme_mobile/billing/paywall_session_tracker.dart';
 import 'package:archiveme_mobile/billing/paywall_source.dart';
 import 'package:archiveme_mobile/billing/revenuecat_service.dart';
 import 'package:archiveme_mobile/features/pro_bridge_visibility/delayed_paywall_proof_store.dart';
-import 'package:archiveme_mobile/screens/paywall_screen.dart';
+import 'package:archiveme_mobile/billing/screens/paywall_screen.dart';
 import 'package:archiveme_mobile/services/activation_funnel_analytics.dart';
 import 'package:archiveme_mobile/storage/mobile_prefs_store.dart';
 import 'package:flutter/material.dart';
@@ -335,7 +335,7 @@ void main() {
         'the purchase body', () {
       // The purchase body only renders with live offerings, which widget
       // tests cannot fabricate — so pin the structure at the source.
-      final source = File('lib/screens/paywall_screen.dart').readAsStringSync();
+      final source = File('lib/billing/screens/paywall_screen.dart').readAsStringSync();
       final clarityIdx = source.indexOf(
         '// Objection follow-up: below the clarity block, above plan cards.',
       );
@@ -483,7 +483,7 @@ void main() {
 
     test('RevenueCat identifiers and purchase logic are unchanged', () {
       expect(RevenueCatService.proEntitlementId, 'pro');
-      final source = File('lib/screens/paywall_screen.dart').readAsStringSync();
+      final source = File('lib/billing/screens/paywall_screen.dart').readAsStringSync();
       expect(
         RegExp(
           r'FilledButton\(\s*onPressed: _busy \? null : _continue,',

@@ -10,7 +10,7 @@ import 'package:archiveme_mobile/features/memory/memory_surfacing_mode.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/models/reflection.dart';
 import 'package:archiveme_mobile/product/consumer_ui_copy.dart';
-import 'package:archiveme_mobile/screens/entry_detail_screen.dart';
+import 'package:archiveme_mobile/features/archive/screens/entry_detail_screen.dart';
 import 'package:archiveme_mobile/services/app_services.dart';
 import 'package:archiveme_mobile/theme/app_theme.dart';
 import 'package:flutter/material.dart';

@@ -1,6 +1,6 @@
 import 'package:archiveme_mobile/features/activation/belief_evidence_trail.dart';
 import 'package:archiveme_mobile/features/post_save/post_save_focused_actions_copy.dart';
-import 'package:archiveme_mobile/screens/belief_evidence_screen.dart';
+import 'package:archiveme_mobile/features/belief_evidence/screens/belief_evidence_screen.dart';
 import 'package:archiveme_mobile/theme/app_theme.dart';
 import 'package:archiveme_mobile/widgets/record/post_save_focused_actions_bar.dart';
 import 'package:flutter/material.dart';

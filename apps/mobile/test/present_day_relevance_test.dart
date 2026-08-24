@@ -328,7 +328,7 @@ void main() {
   group('Present day relevance placement', () {
     test('patterns screen renders card before post-proof Pro bridge', () {
       final source = File(
-        'lib/screens/archive_belief_screen.dart',
+        'lib/features/archive/screens/archive_belief_screen.dart',
       ).readAsStringSync();
       final cardIndex = source.indexOf('PresentDayRelevanceCard(');
       final proBridgeIndex = source.indexOf(
@@ -350,7 +350,7 @@ void main() {
 
     test('patterns card sits after proof specificity card', () {
       final source = File(
-        'lib/screens/archive_belief_screen.dart',
+        'lib/features/archive/screens/archive_belief_screen.dart',
       ).readAsStringSync();
       final specificityIndex = source.indexOf('ProofSpecificityCard(');
       final relevanceIndex = source.indexOf('PresentDayRelevanceCard(');

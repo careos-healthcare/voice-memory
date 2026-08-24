@@ -5,7 +5,7 @@ import 'package:archiveme_mobile/billing/paywall_attribution_store.dart';
 import 'package:archiveme_mobile/billing/paywall_rejection_reason.dart';
 import 'package:archiveme_mobile/billing/paywall_route_args.dart';
 import 'package:archiveme_mobile/billing/paywall_source.dart';
-import 'package:archiveme_mobile/screens/paywall_screen.dart';
+import 'package:archiveme_mobile/billing/screens/paywall_screen.dart';
 import 'package:archiveme_mobile/services/activation_funnel_analytics.dart';
 import 'package:archiveme_mobile/storage/mobile_prefs_store.dart';
 import 'package:archiveme_mobile/widgets/billing/paywall_rejection_prompt.dart';

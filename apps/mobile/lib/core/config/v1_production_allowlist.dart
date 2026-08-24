@@ -46,6 +46,7 @@ abstract final class V1ProductionAllowlist {
   /// Screen widgets permitted as GoRoute builders when [enableV1Only] is true.
   static const productionRouterScreens = {
     'OnboardingScreen',
+    'LiveCaptureHost',
     'CaptureScreenHost',
     'CaptureScreen',
     'ArchiveBeliefScreen',

@@ -374,7 +374,7 @@ void main() {
 
     test('focused beta archive home excludes milestones card', () {
       final src = File(
-        'lib/screens/archive_belief_screen.dart',
+        'lib/features/archive/screens/archive_belief_screen.dart',
       ).readAsStringSync();
       expect(src, isNot(contains('ArchiveMilestonesCard')));
       expect(src, isNot(contains('ArchiveMilestonesGates.showOnArchive')));

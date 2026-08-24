@@ -10,7 +10,7 @@ import 'package:archiveme_mobile/security/app_lock_service.dart';
 import 'package:archiveme_mobile/security/sqlite/secure_sqlite_lock_service.dart';
 import 'package:archiveme_mobile/services/analytics_service.dart';
 import 'package:archiveme_mobile/theme/app_theme.dart';
-import 'package:archiveme_mobile/ui/screens/settings/privacy_security_screen.dart';
+import 'package:archiveme_mobile/features/settings/screens/privacy_security_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';

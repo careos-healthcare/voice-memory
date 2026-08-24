@@ -7,7 +7,7 @@ import 'package:archiveme_mobile/billing/revenuecat_service.dart';
 import 'package:archiveme_mobile/features/paywall_alignment/paywall_alignment_copy.dart';
 import 'package:archiveme_mobile/features/pressure_retention/pressure_check_in_record.dart';
 import 'package:archiveme_mobile/product/consumer_ui_copy.dart';
-import 'package:archiveme_mobile/screens/paywall_screen.dart';
+import 'package:archiveme_mobile/billing/screens/paywall_screen.dart';
 import 'package:archiveme_mobile/services/activation_funnel_analytics.dart';
 import 'package:archiveme_mobile/widgets/billing/plan_selection_confidence_block.dart';
 import 'package:archiveme_research/screens/pressure_insights_screen.dart';
@@ -582,7 +582,7 @@ void main() {
       'source-specific purchase body keeps clarity in scroll content; packaging path stays compact',
       () {
         final source = File(
-          'lib/screens/paywall_screen.dart',
+          'lib/billing/screens/paywall_screen.dart',
         ).readAsStringSync();
         final proPaywall = File(
           'lib/widgets/paywall/archive_intelligence_pro_paywall.dart',
@@ -621,7 +621,7 @@ void main() {
     );
 
     test('clarity block logs paywall_above_fold_clarity_seen in source', () {
-      final source = File('lib/screens/paywall_screen.dart').readAsStringSync();
+      final source = File('lib/billing/screens/paywall_screen.dart').readAsStringSync();
       expect(
         source,
         contains('ActivationFunnelAnalytics.paywallAboveFoldClaritySeen'),
@@ -807,7 +807,7 @@ void main() {
 
     test('plan selection taps log paywall_plan_selected, and confidence renders '
         'in scroll content before the sticky purchase CTA', () {
-      final source = File('lib/screens/paywall_screen.dart').readAsStringSync();
+      final source = File('lib/billing/screens/paywall_screen.dart').readAsStringSync();
       final stickySource = File(
         'lib/widgets/paywall/paywall_sticky_checkout_bar.dart',
       ).readAsStringSync();
@@ -921,7 +921,7 @@ void main() {
       'price confidence sits in scroll content; confirm line stays on sticky CTA',
       () {
         final source = File(
-          'lib/screens/paywall_screen.dart',
+          'lib/billing/screens/paywall_screen.dart',
         ).readAsStringSync();
         final proPaywall = File(
           'lib/widgets/paywall/archive_intelligence_pro_paywall.dart',
@@ -953,7 +953,7 @@ void main() {
     );
 
     test('price confidence logs price_confidence_seen in source', () {
-      final source = File('lib/screens/paywall_screen.dart').readAsStringSync();
+      final source = File('lib/billing/screens/paywall_screen.dart').readAsStringSync();
       expect(source, contains('ActivationFunnelAnalytics.priceConfidenceSeen'));
     });
 
@@ -1018,7 +1018,7 @@ void main() {
       'reassurance sits in scroll content before the sticky purchase CTA',
       () {
         final source = File(
-          'lib/screens/paywall_screen.dart',
+          'lib/billing/screens/paywall_screen.dart',
         ).readAsStringSync();
         final proPaywall = File(
           'lib/widgets/paywall/archive_intelligence_pro_paywall.dart',
@@ -1053,7 +1053,7 @@ void main() {
     );
 
     test('reassurance logs purchase_reassurance_seen in source', () {
-      final source = File('lib/screens/paywall_screen.dart').readAsStringSync();
+      final source = File('lib/billing/screens/paywall_screen.dart').readAsStringSync();
       expect(
         source,
         contains('ActivationFunnelAnalytics.purchaseReassuranceSeen'),

@@ -1,7 +1,7 @@
 import 'package:archiveme_mobile/billing/archive_paywall_plans.dart';
 import 'package:archiveme_mobile/billing/paywall_unavailable_state.dart';
 import 'package:archiveme_mobile/product/consumer_ui_copy.dart';
-import 'package:archiveme_mobile/screens/paywall_screen.dart';
+import 'package:archiveme_mobile/billing/screens/paywall_screen.dart';
 import 'package:archiveme_mobile/widgets/archive_paywall/paywall_unavailable_fallback.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';

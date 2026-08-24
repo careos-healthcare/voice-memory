@@ -363,7 +363,7 @@ void main() {
   group('Beta tester report placement', () {
     test('appears on Patterns below ArchiveTimelineSpineCard', () {
       final source = File(
-        'lib/screens/archive_belief_screen.dart',
+        'lib/features/archive/screens/archive_belief_screen.dart',
       ).readAsStringSync();
       final spineIndex = source.indexOf('ArchiveTimelineSpineCard(');
       final reportIndex = source.indexOf('if (showBetaTesterReportOnPatterns)');

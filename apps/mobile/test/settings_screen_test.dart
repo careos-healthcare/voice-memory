@@ -4,7 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   test('settings screen lists consumer items', () {
-    final src = File('lib/screens/settings_screen.dart').readAsStringSync();
+    final src = File('lib/features/settings/screens/settings_screen.dart').readAsStringSync();
     for (final label in [
       'ConsumerUiCopy.privacy',
       'ConsumerUiCopy.termsOfUse',
@@ -19,7 +19,7 @@ void main() {
   });
 
   test('developer tools are behind developer gate', () {
-    final src = File('lib/screens/settings_screen.dart').readAsStringSync();
+    final src = File('lib/features/settings/screens/settings_screen.dart').readAsStringSync();
     final gateIndex = src.indexOf('canShowDeveloperSettings');
     expect(gateIndex, greaterThan(-1));
     expect(src.indexOf('Developer diagnostics'), greaterThan(gateIndex));

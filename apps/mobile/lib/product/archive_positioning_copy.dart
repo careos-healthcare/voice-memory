@@ -108,7 +108,7 @@ abstract final class ArchivePositioningCopy {
   static const publicSurfacePaths = [
     'lib/product/archive_positioning_copy.dart',
     'lib/product/acquisition_start_copy.dart',
-    'lib/screens/about_screen.dart',
+    'lib/features/settings/screens/about_screen.dart',
     'packages/archiveme_research/lib/screens/loop_start_screen.dart',
     'lib/features/demo/sample_archive_copy.dart',
     'docs/APP_STORE_COPY.md',

@@ -1,9 +1,9 @@
 import 'package:archiveme_mobile/onboarding/onboarding_pages.dart';
 import 'package:archiveme_mobile/product/consumer_ui_copy.dart';
-import 'package:archiveme_mobile/screens/account_screen.dart';
-import 'package:archiveme_mobile/screens/onboarding_screen.dart';
-import 'package:archiveme_mobile/screens/paywall_screen.dart';
-import 'package:archiveme_mobile/screens/settings_screen.dart';
+import 'package:archiveme_mobile/features/auth/screens/account_screen.dart';
+import 'package:archiveme_mobile/features/onboarding/screens/onboarding_screen.dart';
+import 'package:archiveme_mobile/billing/screens/paywall_screen.dart';
+import 'package:archiveme_mobile/features/settings/screens/settings_screen.dart';
 import 'package:archiveme_mobile/services/app_services.dart';
 import 'package:archiveme_mobile/widgets/patterns/patterns_empty_view.dart';
 import 'package:flutter/material.dart';

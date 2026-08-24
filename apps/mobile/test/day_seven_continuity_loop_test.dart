@@ -4,7 +4,7 @@ import 'package:archiveme_mobile/features/first_session/day_seven_continuity_loo
 import 'package:archiveme_mobile/features/pressure_retention/pressure_check_in_record.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/models/reflection.dart';
-import 'package:archiveme_mobile/screens/record_screen.dart';
+import 'package:archiveme_mobile/features/recording/recording_screen.dart';
 import 'package:archiveme_mobile/services/activation_funnel_analytics.dart';
 import 'package:archiveme_mobile/services/app_services.dart';
 import 'package:archiveme_mobile/theme/app_theme.dart';

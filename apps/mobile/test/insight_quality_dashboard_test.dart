@@ -6,7 +6,7 @@ import 'package:archiveme_mobile/features/activation/insight_quality_dashboard.d
 import 'package:archiveme_mobile/features/archive_proof/visible_archive_proof_copy.dart';
 import 'package:archiveme_mobile/features/pressure_retention/shareable_archive_proof_engine.dart';
 import 'package:archiveme_mobile/router/developer_route_guard.dart';
-import 'package:archiveme_mobile/screens/settings_screen.dart';
+import 'package:archiveme_mobile/features/settings/screens/settings_screen.dart';
 import 'package:archiveme_mobile/security/sensitive_screen_guard.dart';
 import 'package:archiveme_mobile/services/app_services.dart';
 import 'package:archiveme_mobile/theme/app_theme.dart';

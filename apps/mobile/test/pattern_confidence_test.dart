@@ -628,7 +628,7 @@ void main() {
   group('Pattern confidence placement', () {
     test('patterns screen renders card after present day relevance', () {
       final source = File(
-        'lib/screens/archive_belief_screen.dart',
+        'lib/features/archive/screens/archive_belief_screen.dart',
       ).readAsStringSync();
       final relevanceIndex = source.indexOf('PresentDayRelevanceCard(');
       final cardIndex = source.indexOf('PatternConfidenceCard(');
@@ -655,7 +655,7 @@ void main() {
 
     test('weekly review renders compact card near weekly archive review', () {
       final source = File(
-        'lib/screens/archive_belief_screen.dart',
+        'lib/features/archive/screens/archive_belief_screen.dart',
       ).readAsStringSync();
       final weeklyCardIndex = source.indexOf(
         'if (showPatternConfidenceExplanationNearWeeklyReview &&',

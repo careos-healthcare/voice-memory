@@ -8,7 +8,7 @@ import 'package:archiveme_mobile/features/post_save/post_save_recorded_summary_c
 import 'package:archiveme_mobile/features/voice_capture/analysis_fallback_payoff.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/models/reflection.dart';
-import 'package:archiveme_mobile/screens/record_screen.dart';
+import 'package:archiveme_mobile/features/recording/recording_screen.dart';
 import 'package:archiveme_mobile/services/app_services.dart';
 import 'package:archiveme_mobile/services/capture_save_messages.dart';
 import 'package:archiveme_mobile/theme/app_theme.dart';

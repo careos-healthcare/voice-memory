@@ -376,7 +376,7 @@ void main() {
 
     test('focused beta archive home excludes next evidence plan card', () {
       final src = File(
-        'lib/screens/archive_belief_screen.dart',
+        'lib/features/archive/screens/archive_belief_screen.dart',
       ).readAsStringSync();
       expect(src, isNot(contains('NextEvidencePlanCard')));
       expect(src, isNot(contains('NextEvidencePlanGates')));

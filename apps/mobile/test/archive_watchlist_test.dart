@@ -415,7 +415,7 @@ void main() {
 
     test('focused beta archive home excludes watchlist card', () {
       final src = File(
-        'lib/screens/archive_belief_screen.dart',
+        'lib/features/archive/screens/archive_belief_screen.dart',
       ).readAsStringSync();
       expect(src, isNot(contains('ArchiveWatchlistCard')));
     });

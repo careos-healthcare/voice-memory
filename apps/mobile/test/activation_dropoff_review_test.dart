@@ -249,7 +249,7 @@ void main() {
   group('Production UI isolation', () {
     test('settings screen does not import activation dropoff review card', () {
       final source = File(
-        'lib/screens/settings_screen.dart',
+        'lib/features/settings/screens/settings_screen.dart',
       ).readAsStringSync();
       expect(source.contains('activation_dropoff_review'), isFalse);
       expect(source.contains('ActivationDropoffReviewCard'), isFalse);

@@ -6,7 +6,7 @@ import 'package:archiveme_mobile/features/pressure_retention/pressure_check_in_r
 import 'package:archiveme_mobile/features/pressure_retention/thread_return_evidence_engine.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/models/reflection.dart';
-import 'package:archiveme_mobile/screens/record_screen.dart';
+import 'package:archiveme_mobile/features/recording/recording_screen.dart';
 import 'package:archiveme_mobile/services/app_services.dart';
 import 'package:archiveme_mobile/theme/app_theme.dart';
 import 'package:archiveme_mobile/widgets/record/low_effort_check_in_card.dart';

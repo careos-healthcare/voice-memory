@@ -512,7 +512,7 @@ void main() {
   group('Patterns screen isolation', () {
     test('archive belief screen does not import first week loop card', () {
       final source = File(
-        'lib/screens/archive_belief_screen.dart',
+        'lib/features/archive/screens/archive_belief_screen.dart',
       ).readAsStringSync();
       expect(source.contains('first_week_loop'), isFalse);
       expect(source.contains('FirstWeekLoopCard'), isFalse);

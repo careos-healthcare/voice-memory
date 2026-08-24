@@ -8,7 +8,7 @@ import 'package:archiveme_mobile/features/capacity_loop/capacity_beta_mission_st
 import 'package:archiveme_mobile/features/capacity_loop/capacity_beta_signal_copy.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/models/reflection.dart';
-import 'package:archiveme_mobile/screens/support_feedback_screen.dart';
+import 'package:archiveme_mobile/features/settings/screens/support_feedback_screen.dart';
 import 'package:archiveme_mobile/security/sensitive_screen_guard.dart';
 import 'package:archiveme_mobile/theme/app_theme.dart';
 import 'package:archiveme_mobile/widgets/capacity_beta_mission_card.dart';
@@ -484,7 +484,7 @@ void main() {
 
     test('appears in Support and Feedback beta tools', () {
       final support = File(
-        'lib/screens/support_feedback_screen.dart',
+        'lib/features/settings/screens/support_feedback_screen.dart',
       ).readAsStringSync();
       expect(support, contains('support_feedback_capacity_beta_mission'));
       expect(support, contains('support_feedback_open_capacity_beta_mission'));
@@ -504,7 +504,7 @@ void main() {
 
     test('archive home uses compact card when showOnArchiveHome', () {
       final archive = File(
-        'lib/screens/archive_belief_screen.dart',
+        'lib/features/archive/screens/archive_belief_screen.dart',
       ).readAsStringSync();
       expect(archive, contains('archive_home_capacity_beta_mission'));
       expect(archive, contains('showOnArchiveHome'));

@@ -8,7 +8,7 @@ import 'package:archiveme_mobile/features/moment_quality/moment_quality_models.d
 import 'package:archiveme_mobile/features/pressure_retention/shareable_archive_proof_engine.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/models/reflection.dart';
-import 'package:archiveme_mobile/screens/quick_text_capture_screen.dart';
+import 'package:archiveme_mobile/features/capture/screens/legacy/quick_text_capture_screen.dart';
 import 'package:archiveme_mobile/services/app_services.dart';
 import 'package:archiveme_mobile/storage/journal_store.dart';
 import 'package:archiveme_mobile/theme/app_theme.dart';

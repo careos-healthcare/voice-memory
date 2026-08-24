@@ -19,7 +19,7 @@ import 'package:archiveme_mobile/models/reflection.dart';
 import 'package:archiveme_mobile/services/activation_funnel_analytics.dart';
 import 'package:archiveme_mobile/services/app_services.dart';
 import 'package:archiveme_mobile/theme/app_theme.dart';
-import 'package:archiveme_mobile/widgets/account/privacy_trust_centre_screen.dart';
+import 'package:archiveme_mobile/features/settings/ui/privacy_trust_centre_screen.dart';
 import 'package:archiveme_mobile/widgets/common/contextual_privacy_reassurance.dart';
 import 'package:archiveme_mobile/widgets/patterns/belief_change_moment_card.dart';
 import 'package:archiveme_mobile/widgets/patterns/pattern_detail_sheet.dart';

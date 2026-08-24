@@ -312,7 +312,7 @@ void main() {
       "support feedback links to today's one question when implemented",
       () {
         final support = File(
-          'lib/screens/support_feedback_screen.dart',
+          'lib/features/settings/screens/support_feedback_screen.dart',
         ).readAsStringSync();
         expect(support, contains('support_feedback_open_todays_one_question'));
         expect(support, contains('TodaysQuestionCopy.route'));

@@ -11,7 +11,7 @@ import 'package:archiveme_mobile/features/paywall_value_sharpening/paywall_value
 import 'package:archiveme_mobile/features/paywall_value_sharpening/paywall_value_sharpening_copy.dart';
 import 'package:archiveme_mobile/features/pro_value/pro_value_copy.dart';
 import 'package:archiveme_mobile/product/consumer_ui_copy.dart';
-import 'package:archiveme_mobile/screens/paywall_screen.dart';
+import 'package:archiveme_mobile/billing/screens/paywall_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
@@ -190,7 +190,7 @@ void main() {
     });
 
     test('purchase buttons unchanged', () {
-      final source = File('lib/screens/paywall_screen.dart').readAsStringSync();
+      final source = File('lib/billing/screens/paywall_screen.dart').readAsStringSync();
       expect(source, contains('_PaywallBusyKind.purchase'));
       expect(source, contains('_PaywallBusyKind.restore'));
       expect(source, contains('ArchivePaywallCopy.purchaseStarting'));

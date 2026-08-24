@@ -1,8 +1,8 @@
 import 'dart:io' show Platform;
 
 import 'package:archiveme_mobile/audio/recording_service.dart';
+import 'package:archiveme_mobile/features/voice_capture/record_microphone_permission_ui.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
-import 'package:archiveme_mobile/screens/record_screen.dart';
 import 'package:flutter/foundation.dart';
 
 /// Compile-time flag: `flutter test --dart-define=VISUAL_AUDIT=true`

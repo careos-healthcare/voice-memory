@@ -4,7 +4,7 @@ import 'package:archiveme_mobile/features/activation/belief_update_payoff.dart';
 import 'package:archiveme_mobile/features/archive_proof/visible_archive_proof_copy.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/models/reflection.dart';
-import 'package:archiveme_mobile/screens/belief_evidence_screen.dart';
+import 'package:archiveme_mobile/features/belief_evidence/screens/belief_evidence_screen.dart';
 import 'package:archiveme_mobile/services/capture_save_messages.dart';
 import 'package:archiveme_mobile/theme/app_theme.dart';
 import 'package:archiveme_mobile/widgets/archive/belief_evidence_trail_card.dart';

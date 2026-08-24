@@ -358,7 +358,7 @@ void main() {
       'patterns screen routes preview CTA through existing paywall handler',
       () {
         final patternsSource = File(
-          'lib/screens/archive_belief_screen.dart',
+          'lib/features/archive/screens/archive_belief_screen.dart',
         ).readAsStringSync();
         expect(patternsSource, contains('ProPreviewCard'));
         expect(patternsSource, contains('_openProEvidenceValueSubscription'));

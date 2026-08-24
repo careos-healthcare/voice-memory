@@ -11,16 +11,16 @@ abstract final class ProductionRouteLinkGate {
   static const scanRoots = [
     'lib/widgets/account',
     'lib/widgets/security',
-    'lib/screens/account_screen.dart',
-    'lib/screens/settings_screen.dart',
-    'lib/screens/security_settings_screen.dart',
-    'lib/screens/export_screen.dart',
-    'lib/screens/delete_account_screen.dart',
-    'lib/screens/onboarding_screen.dart',
-    'lib/screens/archive_belief_screen.dart',
-    'lib/screens/entry_detail_screen.dart',
-    'lib/screens/about_screen.dart',
-    'lib/screens/privacy_screen.dart',
+    'lib/features/auth/screens/account_screen.dart',
+    'lib/features/settings/screens/settings_screen.dart',
+    'lib/features/settings/screens/security_settings_screen.dart',
+    'lib/features/settings/screens/export_screen.dart',
+    'lib/features/auth/screens/delete_account_screen.dart',
+    'lib/features/onboarding/screens/onboarding_screen.dart',
+    'lib/features/archive/screens/archive_belief_screen.dart',
+    'lib/features/archive/screens/entry_detail_screen.dart',
+    'lib/features/settings/screens/about_screen.dart',
+    'lib/features/settings/screens/privacy_screen.dart',
   ];
 
   static const approvedFiles = {

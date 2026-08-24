@@ -5,7 +5,7 @@ import 'package:archiveme_mobile/features/first_session/day_two_reminder.dart';
 import 'package:archiveme_mobile/features/post_save/post_save_focused_actions_copy.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/models/reflection.dart';
-import 'package:archiveme_mobile/screens/record_screen.dart';
+import 'package:archiveme_mobile/features/recording/recording_screen.dart';
 import 'package:archiveme_mobile/services/app_services.dart';
 import 'package:archiveme_mobile/theme/app_theme.dart';
 import 'package:archiveme_mobile/widgets/record/day_two_return_loop_card.dart';

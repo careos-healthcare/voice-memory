@@ -7,7 +7,7 @@ import 'package:archiveme_mobile/billing/paywall_source.dart';
 import 'package:archiveme_mobile/billing/suggestion_attribution_event.dart';
 import 'package:archiveme_mobile/billing/suggestion_attribution_store.dart';
 import 'package:archiveme_mobile/product/consumer_ui_copy.dart';
-import 'package:archiveme_mobile/screens/paywall_screen.dart';
+import 'package:archiveme_mobile/billing/screens/paywall_screen.dart';
 import 'package:archiveme_mobile/storage/mobile_prefs_store.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';

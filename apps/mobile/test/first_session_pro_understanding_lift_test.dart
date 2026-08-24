@@ -517,7 +517,7 @@ void main() {
 
     test('archive belief integrates pro understanding lift', () {
       final source = File(
-        'lib/screens/archive_belief_screen.dart',
+        'lib/features/archive/screens/archive_belief_screen.dart',
       ).readAsStringSync();
       expect(source, contains('ProUnderstandingLiftCard'));
       expect(source, contains('patterns_pro_understanding_lift'));

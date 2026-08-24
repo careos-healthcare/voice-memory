@@ -837,7 +837,7 @@ void main() {
     group('placement', () {
       test('appears on Patterns near Archive Summary', () {
         final src = File(
-          'lib/screens/archive_belief_screen.dart',
+          'lib/features/archive/screens/archive_belief_screen.dart',
         ).readAsStringSync();
         final summaryIndex = src.indexOf('ArchiveSummaryCard');
         final dailyIndex = src.indexOf('DailyReturnReasonCard');

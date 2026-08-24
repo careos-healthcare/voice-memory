@@ -11,7 +11,7 @@ import 'package:archiveme_mobile/features/revenue_metrics/revenue_funnel_analyti
 import 'package:archiveme_mobile/features/revenue_metrics/revenue_funnel_event.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/models/reflection.dart';
-import 'package:archiveme_mobile/screens/paywall_screen.dart';
+import 'package:archiveme_mobile/billing/screens/paywall_screen.dart';
 import 'package:archiveme_mobile/theme/app_theme.dart';
 import 'package:archiveme_mobile/widgets/pro/archive_backup_bridge_card.dart';
 import 'package:archiveme_mobile/widgets/pro/monthly_private_report_preview_card.dart';

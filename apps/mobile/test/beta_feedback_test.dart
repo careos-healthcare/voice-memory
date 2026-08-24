@@ -16,7 +16,7 @@ import 'package:archiveme_mobile/features/support/testflight_feedback_launcher.d
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/models/reflection.dart';
 import 'package:archiveme_mobile/product/consumer_ui_copy.dart';
-import 'package:archiveme_mobile/screens/account_screen.dart';
+import 'package:archiveme_mobile/features/auth/screens/account_screen.dart';
 import 'package:archiveme_mobile/security/sensitive_screen_guard.dart';
 import 'package:archiveme_mobile/services/app_services.dart';
 import 'package:archiveme_mobile/storage/journal_store.dart';
@@ -454,7 +454,7 @@ void main() {
       final src = File('lib/router/app_router.dart').readAsStringSync();
       expect(src, contains("path: '/beta-feedback'"));
       final belief = File(
-        'lib/screens/archive_belief_screen.dart',
+        'lib/features/archive/screens/archive_belief_screen.dart',
       ).readAsStringSync();
       expect(belief, contains('ArchiveHomeSectionId.betaFeedback'));
       expect(belief, contains('BetaFeedbackCard'));

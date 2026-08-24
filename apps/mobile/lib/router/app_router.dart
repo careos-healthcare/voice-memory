@@ -1,6 +1,6 @@
 import 'package:archiveme_mobile/features/archive_theory/views/theories_screen.dart';
 import 'package:archiveme_mobile/features/capture/capture_module_config.dart';
-import 'package:archiveme_mobile/features/capture_flow/capture_flow_phase.dart';
+import 'package:archiveme_mobile/features/capture/screens/live_capture_host.dart';
 import 'package:archiveme_mobile/features/sync/screens/offline_sync_verification_screen.dart';
 import 'package:archiveme_mobile/config/production_navigation.dart';
 import 'package:archiveme_mobile/config/screenshot_mode.dart';
@@ -8,7 +8,7 @@ import 'package:archiveme_mobile/config/trial_mode.dart';
 import 'package:archiveme_mobile/core/config/v1_capability_registry.dart';
 import 'package:archiveme_mobile/core/config/v1_feature_flags.dart';
 import 'package:archiveme_mobile/core/config/v1_navigation_guard.dart';
-import 'package:archiveme_mobile/features/account_migration/guest_data_migration_screen.dart';
+import 'package:archiveme_mobile/features/auth/screens/guest_data_migration_screen.dart';
 import 'package:archiveme_mobile/features/acquisition/acquisition_cohort_coordinator.dart';
 import 'package:archiveme_mobile/features/activation/archive_evidence_map.dart';
 import 'package:archiveme_mobile/features/activation/belief_evidence_trail.dart';
@@ -26,31 +26,30 @@ import 'package:archiveme_mobile/router/record_navigation_activity_controller.da
 import 'package:archiveme_mobile/router/route_catalog.dart';
 import 'package:archiveme_mobile/router/v1_quarantine_redirects.dart';
 import 'package:archiveme_mobile/router/v1_route_registry.dart';
-import 'package:archiveme_mobile/screens/about_screen.dart';
-import 'package:archiveme_mobile/screens/account_auth_screen.dart';
-import 'package:archiveme_mobile/screens/account_screen.dart';
-import 'package:archiveme_mobile/screens/archive_belief_screen.dart';
-import 'package:archiveme_mobile/screens/archive_evidence_context_screen.dart';
-import 'package:archiveme_mobile/screens/belief_changes_screen.dart';
-import 'package:archiveme_mobile/screens/belief_detail_screen.dart';
-import 'package:archiveme_mobile/screens/belief_evidence_screen.dart';
-import 'package:archiveme_mobile/screens/beliefs_screen.dart';
-import 'package:archiveme_mobile/screens/delete_account_screen.dart';
-import 'package:archiveme_mobile/screens/entry_detail_screen.dart';
-import 'package:archiveme_mobile/screens/consent_audit_screen.dart';
-import 'package:archiveme_mobile/screens/export_screen.dart';
-import 'package:archiveme_mobile/screens/journal_bulk_export_screen.dart';
-import 'package:archiveme_mobile/screens/memory_transparency_screen.dart';
-import 'package:archiveme_mobile/screens/onboarding_screen.dart';
-import 'package:archiveme_mobile/screens/record_screen.dart';
-import 'package:archiveme_mobile/screens/sample_archive_context_screen.dart';
-import 'package:archiveme_mobile/screens/security_settings_screen.dart';
-import 'package:archiveme_mobile/ui/screens/settings/privacy_security_screen.dart';
+import 'package:archiveme_mobile/features/settings/screens/about_screen.dart';
+import 'package:archiveme_mobile/features/auth/screens/account_auth_screen.dart';
+import 'package:archiveme_mobile/features/auth/screens/account_screen.dart';
+import 'package:archiveme_mobile/features/archive/screens/archive_belief_screen.dart';
+import 'package:archiveme_mobile/features/belief_evidence/screens/archive_evidence_context_screen.dart';
+import 'package:archiveme_mobile/features/belief_changes/screens/belief_changes_screen.dart';
+import 'package:archiveme_mobile/features/archive/screens/belief_detail_screen.dart';
+import 'package:archiveme_mobile/features/belief_evidence/screens/belief_evidence_screen.dart';
+import 'package:archiveme_mobile/features/archive/screens/beliefs_screen.dart';
+import 'package:archiveme_mobile/features/auth/screens/delete_account_screen.dart';
+import 'package:archiveme_mobile/features/archive/screens/entry_detail_screen.dart';
+import 'package:archiveme_mobile/features/settings/screens/consent_audit_screen.dart';
+import 'package:archiveme_mobile/features/settings/screens/export_screen.dart';
+import 'package:archiveme_mobile/features/settings/screens/journal_bulk_export_screen.dart';
+import 'package:archiveme_mobile/features/settings/screens/memory_transparency_screen.dart';
+import 'package:archiveme_mobile/features/onboarding/screens/onboarding_screen.dart';
+import 'package:archiveme_mobile/features/archive/screens/sample_archive_context_screen.dart';
+import 'package:archiveme_mobile/features/settings/screens/security_settings_screen.dart';
+import 'package:archiveme_mobile/features/settings/screens/privacy_security_screen.dart';
 import 'package:archiveme_mobile/features/settings/ui/caregiver_access_screen.dart';
-import 'package:archiveme_mobile/screens/settings_screen.dart';
-import 'package:archiveme_mobile/screens/support_feedback_screen.dart';
-import 'package:archiveme_mobile/screens/terms_screen.dart';
-import 'package:archiveme_mobile/widgets/account/privacy_trust_centre_screen.dart';
+import 'package:archiveme_mobile/features/settings/screens/settings_screen.dart';
+import 'package:archiveme_mobile/features/settings/screens/support_feedback_screen.dart';
+import 'package:archiveme_mobile/features/settings/screens/terms_screen.dart';
+import 'package:archiveme_mobile/features/settings/ui/privacy_trust_centre_screen.dart';
 import 'package:archiveme_mobile/widgets/main_shell.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -216,7 +215,7 @@ final GoRouter appRouter = GoRouter(
             GoRoute(
               path: RouteCatalog.recordHome,
               builder: (context, state) {
-                return CaptureScreenHost(
+                return LiveCaptureHost(
                   navigationActivityController:
                       recordNavigationActivityController,
                   routineKindOverride: journalRoutineKindFromUri(state.uri),
@@ -317,8 +316,8 @@ final GoRouter appRouter = GoRouter(
           initialText = extra['initialText'] as String?;
           entryId = extra['entryId'] as String?;
         }
-        return CaptureScreenHost(
-          initialInputMode: CaptureInputMode.typed,
+        return LiveCaptureHost(
+          typed: true,
           attachToEntryId: entryId,
           initialTypedText: initialText,
           routineKindOverride: journalRoutineKindFromUri(state.uri),

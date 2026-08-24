@@ -158,7 +158,7 @@ void main() {
       expect(DeveloperSettingsGate.canShowDeveloperSettings, isFalse);
 
       final settings = File(
-        'lib/screens/settings_screen.dart',
+        'lib/features/settings/screens/settings_screen.dart',
       ).readAsStringSync();
       expect(settings, contains('canShowDeveloperSettings'));
       expect(

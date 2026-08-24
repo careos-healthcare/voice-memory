@@ -343,7 +343,7 @@ void main() {
 
     test('support feedback links to archive clarity when implemented', () {
       final support = File(
-        'lib/screens/support_feedback_screen.dart',
+        'lib/features/settings/screens/support_feedback_screen.dart',
       ).readAsStringSync();
       expect(support, contains('support_feedback_open_archive_clarity'));
       expect(support, contains('ArchiveClarityCopy.route'));

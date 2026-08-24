@@ -3,9 +3,9 @@ import 'package:archiveme_mobile/features/sync/application/background_sync_state
 import 'package:archiveme_mobile/features/sync/application/sync_status_provider.dart';
 import 'package:archiveme_mobile/features/sync/presentation/sync_status_snapshot.dart';
 import 'package:archiveme_mobile/product/consumer_ui_copy.dart';
-import 'package:archiveme_mobile/screens/about_screen.dart';
-import 'package:archiveme_mobile/screens/privacy_screen.dart';
-import 'package:archiveme_mobile/screens/settings_screen.dart';
+import 'package:archiveme_mobile/features/settings/screens/about_screen.dart';
+import 'package:archiveme_mobile/features/settings/screens/privacy_screen.dart';
+import 'package:archiveme_mobile/features/settings/screens/settings_screen.dart';
 import 'package:archiveme_mobile/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

@@ -27,7 +27,7 @@ void main() {
 
     test('paywall package selection uses PackageType monthly and annual', () {
       final paywallSource = File(
-        'lib/screens/paywall_screen.dart',
+        'lib/billing/screens/paywall_screen.dart',
       ).readAsStringSync();
       expect(paywallSource, contains('PackageType.monthly'));
       expect(paywallSource, contains('PackageType.annual'));
@@ -39,7 +39,7 @@ void main() {
       'availability gate checks current offering package count not store ids',
       () {
         final paywallSource = File(
-          'lib/screens/paywall_screen.dart',
+          'lib/billing/screens/paywall_screen.dart',
         ).readAsStringSync();
         expect(paywallSource, contains('availablePackages'));
         expect(paywallSource, isNot(contains('storeProduct.identifier ==')));
@@ -68,7 +68,7 @@ void main() {
 
     test('paywall load always logs final purchase availability decision', () {
       final paywallSource = File(
-        'lib/screens/paywall_screen.dart',
+        'lib/billing/screens/paywall_screen.dart',
       ).readAsStringSync();
       expect(
         paywallSource,
@@ -83,7 +83,7 @@ void main() {
 
     test('paywall restore path does not gate on package availability', () {
       final paywallSource = File(
-        'lib/screens/paywall_screen.dart',
+        'lib/billing/screens/paywall_screen.dart',
       ).readAsStringSync();
       final restoreStart = paywallSource.indexOf('Future<void> _restore()');
       final restoreEnd = paywallSource.indexOf(

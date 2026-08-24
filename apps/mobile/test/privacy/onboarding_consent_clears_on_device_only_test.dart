@@ -244,7 +244,7 @@ void main() {
       // A migration would have to clear the toggle from somewhere. Enumerating
       // the callers is how a future one gets noticed in review.
       const allowed = {
-        'lib/screens/settings_screen.dart',
+        'lib/features/settings/screens/settings_screen.dart',
         'lib/features/onboarding/remote_processing_consent_decision.dart',
         'lib/features/privacy/on_device_processing_store.dart',
         'lib/features/capture_flow/adapters/pipeline_capture_adapters.dart',

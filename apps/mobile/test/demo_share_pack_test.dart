@@ -137,7 +137,7 @@ void main() {
         '../../packages/archiveme_research/lib/screens/sample_archive_screen.dart',
       ).readAsStringSync();
       final archiveSrc = File(
-        'lib/screens/archive_belief_screen.dart',
+        'lib/features/archive/screens/archive_belief_screen.dart',
       ).readAsStringSync();
 
       expect(sampleSrc, contains('DemoSharePackCard'));

@@ -262,7 +262,7 @@ void main() {
   group('Archive depth archive home wiring', () {
     test('focused beta archive home excludes depth card widget', () {
       final src = File(
-        'lib/screens/archive_belief_screen.dart',
+        'lib/features/archive/screens/archive_belief_screen.dart',
       ).readAsStringSync();
       expect(src, isNot(contains('ArchiveDepthCard')));
       expect(src, isNot(contains('ArchiveDepthEngine')));

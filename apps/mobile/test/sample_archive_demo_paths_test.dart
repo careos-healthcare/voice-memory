@@ -6,7 +6,7 @@ import 'package:archiveme_mobile/features/demo/sample_archive_demo_paths.dart';
 import 'package:archiveme_mobile/features/demo/sample_archive_entries.dart';
 import 'package:archiveme_mobile/features/demo/sample_archive_mode.dart';
 import 'package:archiveme_mobile/features/help/help_reviewer_guide_copy.dart';
-import 'package:archiveme_mobile/screens/sample_archive_context_screen.dart';
+import 'package:archiveme_mobile/features/archive/screens/sample_archive_context_screen.dart';
 import 'package:archiveme_mobile/storage/journal_store.dart';
 import 'package:archiveme_mobile/theme/app_theme.dart';
 import 'package:archiveme_mobile/widgets/demo/sample_archive_demo_paths_card.dart';

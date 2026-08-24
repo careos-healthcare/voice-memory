@@ -1,14 +1,14 @@
 /// Characterization notes for the strangler capture production path.
 ///
 /// **Voice capture:**
-/// 1. Router `/record` → `CaptureScreenHost` → `CaptureScreen`
+/// 1. Router `/record` → `LiveCaptureHost` → `CaptureScreenHost` → `CaptureScreen`
 /// 2. `CaptureFlowController.startVoiceCapture` → `AudioRecorderAdapter`
 /// 3. Stop → `LocalMomentRepository.saveVoiceCapture` → `CapturePipelineService.run`
 /// 4. Consent via `RemoteConsentPolicy` before remote gateways fire
 /// 5. Post-save → `MomentSaveReceiptCard` → Archive CTA
 ///
 /// **Typed capture:**
-/// 1. Router `/quick-capture` → `CaptureScreenHost(typed)`
+/// 1. Router `/quick-capture` → `LiveCaptureHost(typed)` → `CaptureScreenHost`
 /// 2. `saveTypedCapture` → `LocalMomentRepository.saveTypedCapture`
 ///
 /// **Returning-user:**

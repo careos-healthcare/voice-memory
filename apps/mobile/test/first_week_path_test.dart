@@ -11,7 +11,7 @@ import 'package:archiveme_mobile/features/first_week_path/first_week_path_models
 import 'package:archiveme_mobile/features/help/help_reviewer_guide_copy.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/models/reflection.dart';
-import 'package:archiveme_mobile/screens/support_feedback_screen.dart';
+import 'package:archiveme_mobile/features/settings/screens/support_feedback_screen.dart';
 import 'package:archiveme_mobile/theme/app_theme.dart';
 import 'package:archiveme_mobile/widgets/first_week_path_card.dart';
 import 'package:flutter/material.dart';
@@ -267,7 +267,7 @@ void main() {
     test('router registers first week path route', () {
       final router = File('lib/router/app_router.dart').readAsStringSync();
       final support = File(
-        'lib/screens/support_feedback_screen.dart',
+        'lib/features/settings/screens/support_feedback_screen.dart',
       ).readAsStringSync();
       expect(router, contains("path: '/first-week-path'"));
       expect(support, contains('FirstWeekPathCopy.route'));

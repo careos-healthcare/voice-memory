@@ -7,7 +7,7 @@ import 'dart:io';
 
 import 'package:archiveme_mobile/billing/paywall_unavailable_state.dart';
 import 'package:archiveme_mobile/product/consumer_ui_copy.dart';
-import 'package:archiveme_mobile/screens/paywall_screen.dart';
+import 'package:archiveme_mobile/billing/screens/paywall_screen.dart';
 import 'package:archiveme_mobile/services/app_services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -139,7 +139,7 @@ void main() {
         // is asserted directly against the source, matching this file's
         // other source-contract checks below.
         final source = File(
-          'lib/screens/paywall_screen.dart',
+          'lib/billing/screens/paywall_screen.dart',
         ).readAsStringSync();
         expect(
           source,

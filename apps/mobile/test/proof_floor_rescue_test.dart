@@ -432,7 +432,7 @@ void main() {
 
     test('archive belief screen integrates proof floor rescue', () {
       final source = File(
-        'lib/screens/archive_belief_screen.dart',
+        'lib/features/archive/screens/archive_belief_screen.dart',
       ).readAsStringSync();
       expect(source, contains('ProofFloorRescueCard'));
       expect(source, contains('blocksProByProofFloorOnPatterns'));

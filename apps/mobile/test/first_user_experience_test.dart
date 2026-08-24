@@ -11,9 +11,9 @@ import 'package:archiveme_mobile/features/voice_capture/microphone_permission_co
 import 'package:archiveme_mobile/product/consumer_ui_copy.dart';
 import 'package:archiveme_mobile/record/record_screen_framing_copy.dart';
 import 'package:archiveme_mobile/router/app_router.dart';
-import 'package:archiveme_mobile/screens/record_screen.dart';
-import 'package:archiveme_mobile/screens/settings_screen.dart';
-import 'package:archiveme_mobile/screens/terms_screen.dart';
+import 'package:archiveme_mobile/features/recording/recording_screen.dart';
+import 'package:archiveme_mobile/features/settings/screens/settings_screen.dart';
+import 'package:archiveme_mobile/features/settings/screens/terms_screen.dart';
 import 'package:archiveme_mobile/security/privacy_copy_policy.dart';
 import 'package:archiveme_mobile/services/app_services.dart';
 import 'package:archiveme_mobile/theme/app_theme.dart';
@@ -36,10 +36,10 @@ const _consumerVisibleCopyFiles = [
   'lib/record/record_screen_framing_copy.dart',
   'lib/features/trust/privacy_screen_copy.dart',
   'lib/features/trust/terms_screen_copy.dart',
-  'lib/screens/terms_screen.dart',
-  'lib/screens/privacy_screen.dart',
-  'lib/screens/about_screen.dart',
-  'lib/screens/settings_screen.dart',
+  'lib/features/settings/screens/terms_screen.dart',
+  'lib/features/settings/screens/privacy_screen.dart',
+  'lib/features/settings/screens/about_screen.dart',
+  'lib/features/settings/screens/settings_screen.dart',
 ];
 
 const _bannedConsumerPhrases = [

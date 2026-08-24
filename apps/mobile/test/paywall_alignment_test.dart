@@ -8,7 +8,7 @@ import 'package:archiveme_mobile/billing/revenuecat_service.dart';
 import 'package:archiveme_mobile/features/paywall_alignment/paywall_alignment_copy.dart';
 import 'package:archiveme_mobile/features/paywall_value_sharpening/paywall_value_sharpening_copy.dart';
 import 'package:archiveme_mobile/product/consumer_ui_copy.dart';
-import 'package:archiveme_mobile/screens/paywall_screen.dart';
+import 'package:archiveme_mobile/billing/screens/paywall_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
@@ -146,7 +146,7 @@ void main() {
 
     test('paywall purchase wiring unchanged', () {
       final paywallSource = File(
-        'lib/screens/paywall_screen.dart',
+        'lib/billing/screens/paywall_screen.dart',
       ).readAsStringSync();
       final checkoutSource = File(
         'lib/widgets/paywall/paywall_sticky_checkout_bar.dart',

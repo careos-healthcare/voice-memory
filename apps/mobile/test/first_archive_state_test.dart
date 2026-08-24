@@ -15,7 +15,7 @@ import 'package:archiveme_mobile/features/proof_admission/proof_admission_models
 import 'package:archiveme_mobile/features/proof_admission/proof_admission_service.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/models/reflection.dart';
-import 'package:archiveme_mobile/screens/archive_belief_screen.dart';
+import 'package:archiveme_mobile/features/archive/screens/archive_belief_screen.dart';
 import 'package:archiveme_mobile/security/user_content_safety.dart';
 import 'package:archiveme_mobile/services/app_services.dart';
 import 'package:archiveme_mobile/storage/journal_store.dart';
@@ -409,7 +409,7 @@ void main() {
     ) async {
       final handle = tester.ensureSemantics();
       final source = File(
-        'lib/screens/archive_belief_screen.dart',
+        'lib/features/archive/screens/archive_belief_screen.dart',
       ).readAsStringSync();
       expect(source, contains('liveRegion: true'));
       expect(source, contains('Your archive could not be opened right now.'));

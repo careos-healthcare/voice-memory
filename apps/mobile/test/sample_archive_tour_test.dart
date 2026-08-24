@@ -73,7 +73,7 @@ void main() {
   group('Sample archive tour wiring', () {
     test('real Archive/Patterns does not include sample tour card', () {
       final src = File(
-        'lib/screens/archive_belief_screen.dart',
+        'lib/features/archive/screens/archive_belief_screen.dart',
       ).readAsStringSync();
       expect(src, isNot(contains('SampleArchiveTourCard')));
       expect(src, isNot(contains('SampleArchiveTour')));

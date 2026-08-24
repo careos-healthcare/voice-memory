@@ -263,10 +263,10 @@ void main() {
         '../../packages/archiveme_research/lib/screens/testing_archiveme_screen.dart',
       ).readAsStringSync();
       final accountSource = File(
-        'lib/screens/account_screen.dart',
+        'lib/features/auth/screens/account_screen.dart',
       ).readAsStringSync();
       final settingsSource = File(
-        'lib/screens/settings_screen.dart',
+        'lib/features/settings/screens/settings_screen.dart',
       ).readAsStringSync();
 
       expect(

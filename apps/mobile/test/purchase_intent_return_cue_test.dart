@@ -6,7 +6,7 @@ import 'package:archiveme_mobile/billing/revenuecat_service.dart';
 import 'package:archiveme_mobile/dev/visual_audit_overrides.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/models/reflection.dart';
-import 'package:archiveme_mobile/screens/record_screen.dart';
+import 'package:archiveme_mobile/features/recording/recording_screen.dart';
 import 'package:archiveme_mobile/services/activation_funnel_analytics.dart';
 import 'package:archiveme_mobile/services/app_services.dart';
 import 'package:archiveme_mobile/storage/mobile_prefs_store.dart';
@@ -488,7 +488,7 @@ void main() {
   group('Purchase logic unchanged', () {
     test('RevenueCat identifiers and the purchase path are untouched', () {
       expect(RevenueCatService.proEntitlementId, 'pro');
-      final source = File('lib/screens/paywall_screen.dart').readAsStringSync();
+      final source = File('lib/billing/screens/paywall_screen.dart').readAsStringSync();
       expect(
         RegExp(
           r'FilledButton\(\s*onPressed: _busy \? null : _continue,',

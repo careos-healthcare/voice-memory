@@ -1,7 +1,7 @@
 import 'package:archiveme_mobile/core/di/network_providers.dart';
 import 'package:archiveme_mobile/core/di/v1_account_dependencies.dart';
 import 'package:archiveme_mobile/core/network/api_failure.dart';
-import 'package:archiveme_mobile/screens/delete_account_screen.dart';
+import 'package:archiveme_mobile/features/auth/screens/delete_account_screen.dart';
 import 'package:archiveme_mobile/services/app_services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';

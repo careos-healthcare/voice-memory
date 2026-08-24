@@ -77,7 +77,7 @@ void main() {
 
   group('PaywallScreen purchase confidence wiring', () {
     test('paywall screen references purchase confidence copy', () {
-      final source = File('lib/screens/paywall_screen.dart').readAsStringSync();
+      final source = File('lib/billing/screens/paywall_screen.dart').readAsStringSync();
       expect(source, contains('ArchivePaywallCopy.checkingProAccess'));
       expect(source, contains('ArchivePaywallCopy.purchaseStarting'));
       expect(source, contains('ArchivePaywallCopy.purchaseSuccess'));

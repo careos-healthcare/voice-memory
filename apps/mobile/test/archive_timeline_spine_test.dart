@@ -565,7 +565,7 @@ void main() {
   group('Archive timeline spine placement', () {
     test('patterns card sits below ArchiveBeliefSurfaceCard', () {
       final source = File(
-        'lib/screens/archive_belief_screen.dart',
+        'lib/features/archive/screens/archive_belief_screen.dart',
       ).readAsStringSync();
       final beliefIndex = source.indexOf('ArchiveBeliefSurfaceCard(');
       final spineIndex = source.indexOf('ArchiveTimelineSpineCard(');
@@ -575,7 +575,7 @@ void main() {
 
     test('patterns suppresses legacy education cards when spine visible', () {
       final source = File(
-        'lib/screens/archive_belief_screen.dart',
+        'lib/features/archive/screens/archive_belief_screen.dart',
       ).readAsStringSync();
       expect(source, contains('suppressLegacyEducationCardsForSpine'));
       expect(source, contains('!suppressLegacyEducationCardsForSpine'));

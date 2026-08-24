@@ -237,7 +237,7 @@ void main() {
 
     test('patterns screen integrates pro visibility lift card', () {
       final source = File(
-        'lib/screens/archive_belief_screen.dart',
+        'lib/features/archive/screens/archive_belief_screen.dart',
       ).readAsStringSync();
       expect(source, contains('ProVisibilityLiftCard'));
       expect(source, contains('patterns_pro_visibility_lift'));
