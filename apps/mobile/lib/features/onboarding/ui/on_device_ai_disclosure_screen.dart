@@ -48,7 +48,7 @@ class OnDeviceAiDisclosureScreen extends StatelessWidget {
               ),
               child: Icon(
                 Icons.shield,
-                size: 52,
+                size: 64,
                 color: Colors.lightBlue.shade700,
               ),
             ),
