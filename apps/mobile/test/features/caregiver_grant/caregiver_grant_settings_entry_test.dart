@@ -7,8 +7,8 @@
 import 'package:archiveme_mobile/features/caregiver/caregiver_feature_flags.dart';
 import 'package:archiveme_mobile/features/caregiver_grant/caregiver_grant_copy.dart';
 import 'package:archiveme_mobile/features/caregiver_grant/caregiver_grant_entry_point.dart';
-import 'package:archiveme_mobile/features/settings/ui/caregiver_consent_copy.dart';
-import 'package:archiveme_mobile/features/settings/ui/caregiver_consent_screen.dart';
+import 'package:archiveme_mobile/features/settings/presentation/caregiver_consent_copy.dart';
+import 'package:archiveme_mobile/features/settings/presentation/caregiver_consent_screen.dart';
 import 'package:archiveme_mobile/l10n/generated/app_localizations.dart';
 import 'package:archiveme_mobile/router/route_catalog.dart';
 import 'package:archiveme_mobile/router/v1_route_registry.dart';
@@ -90,7 +90,15 @@ void main() {
     expect(find.byKey(CaregiverEntryPoint.actionKey), findsNothing);
     expect(find.byKey(const Key('settings_caregiver_consent_tile')), findsOneWidget);
     expect(find.byKey(const Key('settings_caregiver_access_tile')), findsOneWidget);
+    expect(find.text('Caregiver Access & Consent'), findsOneWidget);
     expect(find.text(CaregiverConsentCopy.settingsTileTitle), findsOneWidget);
+    expect(
+      find.descendant(
+        of: find.byKey(const Key('settings_caregiver_access_tile')),
+        matching: find.byIcon(Icons.family_restroom),
+      ),
+      findsOneWidget,
+    );
   });
 
   testWidgets('the tile sits inside the Settings list, not floating in the tree',

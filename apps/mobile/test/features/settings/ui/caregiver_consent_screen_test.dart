@@ -3,9 +3,8 @@ import 'package:archiveme_mobile/features/auth/domain/consent_revocation_outcome
 import 'package:archiveme_mobile/features/auth/domain/multi_party_access_grant.dart';
 import 'package:archiveme_mobile/features/caregiver/caregiver_feature_flags.dart';
 import 'package:archiveme_mobile/features/caregiver_grant/caregiver_grant_disclosure_screen.dart';
-import 'package:archiveme_mobile/features/caregiver_grant/caregiver_grant_entry_point.dart';
-import 'package:archiveme_mobile/features/settings/ui/caregiver_consent_copy.dart';
-import 'package:archiveme_mobile/features/settings/ui/caregiver_consent_screen.dart';
+import 'package:archiveme_mobile/features/settings/presentation/caregiver_consent_copy.dart';
+import 'package:archiveme_mobile/features/settings/presentation/caregiver_consent_screen.dart';
 import 'package:archiveme_mobile/security/privacy_copy_policy.dart';
 import 'package:archiveme_mobile/theme/app_theme.dart';
 import 'package:flutter/material.dart';
@@ -76,8 +75,37 @@ void main() {
       CaregiverConsentCopy.banner.toLowerCase(),
       isNot(contains('never leaves')),
     );
+    expect(
+      CaregiverConsentCopy.banner.toLowerCase(),
+      isNot(contains('100%')),
+    );
+    expect(
+      CaregiverConsentCopy.banner.toLowerCase(),
+      isNot(contains('summarized trend')),
+    );
     expect(CaregiverConsentCopy.revokeConfirmBody, contains('this device'));
     expect(CaregiverConsentCopy.revokeConfirmBody, contains('server'));
+    expect(CaregiverConsentCopy.settingsTileTitle, 'Caregiver Access & Consent');
+    expect(CaregiverConsentCopy.screenTitle, 'Caregiver Access & Consent');
+    expect(CaregiverConsentCopy.statusOff, 'Not Connected');
+    expect(CaregiverConsentCopy.revokeCta, 'Revoke All Caregiver Access');
+    expect(
+      CaregiverConsentCopy.statusOn(partyLabels: const ['Sam']),
+      'Connected to Sam',
+    );
+  });
+
+  test('statusOn uses the grant display name and never hard-codes Heather', () {
+    expect(
+      CaregiverConsentCopy.statusOn(partyLabels: const ['Sam']),
+      'Connected to Sam',
+    );
+    expect(
+      CaregiverConsentCopy.statusOn(partyLabels: const []),
+      CaregiverConsentCopy.statusOnAnonymous,
+    );
+    expect(CaregiverConsentCopy.statusOnAnonymous, isNot(contains('Heather')));
+    expect(CaregiverConsentCopy.statusOff, isNot(contains('Heather')));
   });
 
   test('no shipped line trips PrivacyCopyPolicy', () {
@@ -97,11 +125,13 @@ void main() {
       CaregiverConsentCopy.alertsBody,
       CaregiverConsentCopy.checkInsTitle,
       CaregiverConsentCopy.checkInsBody,
+      CaregiverConsentCopy.unavailableInThisVersion,
       CaregiverConsentCopy.revokeCta,
       CaregiverConsentCopy.revokeDisabled,
       CaregiverConsentCopy.revokeConfirmTitle,
       CaregiverConsentCopy.revokeConfirmBody,
       CaregiverConsentCopy.revokeCancel,
+      CaregiverConsentCopy.statusOn(partyLabels: const ['Sam']),
     ]) {
       final violations = PrivacyCopyPolicy.violationsInLiteral(line);
       if (violations.isNotEmpty) offenders[line] = violations;
@@ -109,12 +139,16 @@ void main() {
     expect(offenders, isEmpty);
   });
 
-  testWidgets('shows title, banner, master control, and revoke', (tester) async {
+  testWidgets('shows title, shield banner, master control, and revoke', (
+    tester,
+  ) async {
     await pumpScreen(tester, service: _StubAccessService());
 
     expect(find.byKey(CaregiverConsentScreen.screenKey), findsOneWidget);
     expect(find.text(CaregiverConsentCopy.screenTitle), findsOneWidget);
     expect(find.byKey(CaregiverConsentScreen.bannerKey), findsOneWidget);
+    expect(find.byKey(CaregiverConsentScreen.shieldKey), findsOneWidget);
+    expect(find.byIcon(Icons.shield_outlined), findsOneWidget);
     expect(find.text(CaregiverConsentCopy.banner), findsOneWidget);
     expect(find.byKey(CaregiverConsentScreen.masterSwitchKey), findsOneWidget);
     expect(find.text(CaregiverConsentCopy.masterTitle), findsOneWidget);
@@ -122,7 +156,6 @@ void main() {
     expect(find.byKey(CaregiverConsentScreen.revokeKey), findsOneWidget);
     expect(find.text(CaregiverConsentCopy.revokeCta), findsOneWidget);
     expect(find.text(CaregiverConsentCopy.revokeDisabled), findsOneWidget);
-    expect(find.byKey(CaregiverEntryPoint.cardKey), findsOneWidget);
   });
 
   testWidgets('granular rows are disabled labels, not live switches', (
@@ -137,6 +170,10 @@ void main() {
     expect(find.text(CaregiverConsentCopy.moodTitle), findsOneWidget);
     expect(find.text(CaregiverConsentCopy.alertsTitle), findsOneWidget);
     expect(find.text(CaregiverConsentCopy.checkInsTitle), findsOneWidget);
+    expect(find.text(CaregiverConsentCopy.moodBody), findsOneWidget);
+    expect(find.text(CaregiverConsentCopy.alertsBody), findsOneWidget);
+    expect(find.text(CaregiverConsentCopy.checkInsBody), findsOneWidget);
+    expect(find.textContaining(CaregiverConsentCopy.unavailableInThisVersion), findsNWidgets(3));
 
     for (final key in [
       CaregiverConsentScreen.moodRowKey,
@@ -193,8 +230,8 @@ void main() {
       confirmRevoke: (_) async => true,
     );
 
-    expect(find.text('Connected on this device: caregiver-sam.'), findsOneWidget);
-    expect(find.byKey(CaregiverEntryPoint.cardKey), findsNothing);
+    expect(find.text('Connected to caregiver-sam'), findsOneWidget);
+    expect(find.text('Heather'), findsNothing);
 
     final switchTile = tester.widget<SwitchListTile>(
       find.byKey(CaregiverConsentScreen.masterSwitchKey),
@@ -205,6 +242,33 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(service.revoked, ['grant-1']);
+    expect(find.text(CaregiverConsentCopy.statusOff), findsOneWidget);
+  });
+
+  testWidgets('turning the master switch off revokes the live grant', (
+    tester,
+  ) async {
+    final service = _StubAccessService(
+      grants: [
+        MultiPartyAccessGrant(
+          grantId: 'grant-2',
+          partyId: 'caregiver-sam',
+          role: MultiPartyAccessRole.caregiver,
+          grantedAt: DateTime.utc(2026, 6),
+        ),
+      ],
+    );
+
+    await pumpScreen(
+      tester,
+      service: service,
+      confirmRevoke: (_) async => true,
+    );
+
+    await tester.tap(find.byKey(CaregiverConsentScreen.masterSwitchKey));
+    await tester.pumpAndSettle();
+
+    expect(service.revoked, ['grant-2']);
     expect(find.text(CaregiverConsentCopy.statusOff), findsOneWidget);
   });
 }
