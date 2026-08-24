@@ -34,19 +34,17 @@ class VerifiedSourceProofSheet extends StatelessWidget {
 
   static const Key sheetKey = Key('verified_source_proof_sheet');
 
-  /// Opens the sheet, or does nothing when [evidence] is empty.
+  /// Opens the sheet. An empty [evidence] list still opens: the sheet
+  /// says source quotes are not available instead of inventing any.
   ///
-  /// Returns whether a sheet was opened. Refusing to open on empty input is the
-  /// point: an empty proof sheet would answer "show me the words behind this"
-  /// with silence, which reads as proof having existed and been withheld.
+  /// Returns whether a sheet was opened. Always true from this method —
+  /// the honest-empty layout is the answer when there is nothing to quote.
   static Future<bool> showEvidence(
     BuildContext context, {
     required List<VerbatimEvidence> evidence,
     String? claimContext,
     ValueChanged<String>? onOpenEntry,
   }) async {
-    if (evidence.isEmpty) return false;
-
     await showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
@@ -121,7 +119,7 @@ class VerifiedSourceProofSheet extends StatelessWidget {
                   children: [
                     Expanded(
                       child: Text(
-                        EvidenceTrustCopy.viewSourceProof,
+                        EvidenceTrustCopy.howWeKnowThisPattern,
                         style: VoiceMemoryTypography.pageTitleStyle().copyWith(
                           fontSize: 18,
                         ),
@@ -150,23 +148,33 @@ class VerifiedSourceProofSheet extends StatelessWidget {
                           ).copyWith(height: 1.45),
                         ),
                       ),
-                    Text(
-                      EvidenceTrustCopy.sheetLead,
-                      style: VoiceMemoryTypography.bodyStyle(
-                        color: AppColors.textMuted,
-                      ).copyWith(height: 1.4),
-                    ),
-                    const SizedBox(height: AppSpacing.md),
-                    for (var i = 0; i < sorted.length; i++)
-                      Padding(
-                        key: Key('verified_source_proof_excerpt_$i'),
-                        padding: const EdgeInsets.only(bottom: AppSpacing.sm),
-                        child: EvidenceCitationCard(
-                          evidence: sorted[i],
-                          onOpenEntry: onOpenEntry,
-                          initiallyExpanded: true,
-                        ),
+                    if (sorted.isEmpty)
+                      Text(
+                        EvidenceTrustCopy.sourceQuotesUnavailable,
+                        key: const Key('verified_source_proof_empty'),
+                        style: VoiceMemoryTypography.bodyStyle(
+                          color: AppColors.textSecondary,
+                        ).copyWith(height: 1.45),
+                      )
+                    else ...[
+                      Text(
+                        EvidenceTrustCopy.sheetLead,
+                        style: VoiceMemoryTypography.bodyStyle(
+                          color: AppColors.textMuted,
+                        ).copyWith(height: 1.4),
                       ),
+                      const SizedBox(height: AppSpacing.md),
+                      for (var i = 0; i < sorted.length; i++)
+                        Padding(
+                          key: Key('verified_source_proof_excerpt_$i'),
+                          padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+                          child: EvidenceCitationCard(
+                            evidence: sorted[i],
+                            onOpenEntry: onOpenEntry,
+                            initiallyExpanded: true,
+                          ),
+                        ),
+                    ],
                   ],
                 ),
               ),
@@ -181,10 +189,9 @@ class VerifiedSourceProofSheet extends StatelessWidget {
 /// The single one-tap affordance for opening a claim's source proof.
 ///
 /// Every pattern, belief-change, and insight surface uses this rather than
-/// wiring its own gesture, so the behaviour cannot drift per card. It renders
-/// nothing at all when there is no verifiable quote: an affordance promising
-/// proof must exist only where the proof does, otherwise tapping it would imply
-/// grounding the archive does not have.
+/// wiring its own gesture, so the behaviour cannot drift per card. An empty
+/// [evidence] list still renders: the tap opens the same sheet, which says
+/// source quotes are not available instead of inventing any.
 class VerifiedSourceProofLink extends StatelessWidget {
   const VerifiedSourceProofLink({
     required this.evidence,
@@ -225,8 +232,6 @@ class VerifiedSourceProofLink extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (evidence.isEmpty) return const SizedBox.shrink();
-
     final theme = Theme.of(context);
     final style = theme.textTheme.labelSmall?.copyWith(
       color: AppColors.textMuted,
@@ -234,7 +239,9 @@ class VerifiedSourceProofLink extends StatelessWidget {
       height: 1.2,
     );
     final countLabel = EvidenceTrustCopy.sourceCount(evidence.length);
-    final label = showCount
+    final label = evidence.isEmpty
+        ? EvidenceTrustCopy.howWeKnow
+        : showCount
         ? '$countLabel \u00B7 ${EvidenceTrustCopy.viewSourceProof}'
         : EvidenceTrustCopy.viewSourceProof;
 

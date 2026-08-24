@@ -10,9 +10,9 @@ import 'package:flutter/material.dart';
 /// Block-level presentation of [EvidenceTrailButton] for use inside a card.
 ///
 /// This is all a claim surface needs to add to become one tap from its proof.
-/// It counts and opens *verified* quotes only, so when an engine hands over
-/// supporting lines that are not present in any stored transcript the whole
-/// section disappears rather than offering a link to nothing.
+/// It counts and opens *verified* quotes only. When nothing verified, the
+/// button still shows and the sheet says source quotes are not available —
+/// never a stand-in sentence.
 class ViewSourceProofSection extends StatelessWidget {
   const ViewSourceProofSection({
     required this.evidence,
@@ -47,8 +47,6 @@ class ViewSourceProofSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (evidence.isEmpty) return const SizedBox.shrink();
-
     final theme = Theme.of(context);
     final muted = theme.textTheme.bodySmall?.copyWith(
       color: AppColors.textMuted,

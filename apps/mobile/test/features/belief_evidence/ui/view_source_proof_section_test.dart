@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:archiveme_mobile/features/belief_evidence/evidence/transcript_evidence_index.dart';
 import 'package:archiveme_mobile/features/belief_evidence/insight_evidence_line.dart';
 import 'package:archiveme_mobile/features/belief_evidence/ui/evidence_citation_card.dart';
@@ -154,28 +156,46 @@ void main() {
   });
 
   group('ViewSourceProofSection without grounded evidence', () {
-    // Regression guard. "Standardise one tap to proof everywhere" must never be
-    // satisfied by wiring a tap on a claim that has no proof: an affordance
-    // that opens nothing, or opens invented text, is worse than no affordance.
-    testWidgets('renders no proof affordance when nothing is grounded', (
+    testWidgets(
+      'tap opens an honest-empty sheet and never invents a quote',
+      (tester) async {
+        await tester.pumpWidget(
+          _host(
+            ViewSourceProofSection.fromLines(
+              lines: [
+                _line(
+                  entryId: 'missing',
+                  quote: 'you avoid difficult conversations',
+                ),
+              ],
+            ),
+          ),
+        );
+
+        expect(find.byKey(ViewSourceProofSection.sectionKey), findsOneWidget);
+        expect(find.byKey(VerifiedSourceProofLink.linkKey), findsOneWidget);
+        expect(find.text('you avoid difficult conversations'), findsNothing);
+
+        await tester.tap(find.byKey(VerifiedSourceProofLink.linkKey));
+        await tester.pumpAndSettle();
+
+        expect(find.byKey(VerifiedSourceProofSheet.sheetKey), findsOneWidget);
+        expect(
+          find.text(EvidenceTrustCopy.howWeKnowThisPattern),
+          findsOneWidget,
+        );
+        expect(
+          find.text(EvidenceTrustCopy.sourceQuotesUnavailable),
+          findsOneWidget,
+        );
+        expect(find.text('you avoid difficult conversations'), findsNothing);
+        expect(find.byKey(EvidenceCitationCard.cardKey), findsNothing);
+      },
+    );
+
+    testWidgets('paraphrase of a stored entry is not quoted as an excerpt', (
       tester,
     ) async {
-      await tester.pumpWidget(
-        _host(
-          ViewSourceProofSection.fromLines(
-            lines: [
-              _line(entryId: 'missing', quote: 'you avoid difficult conversations'),
-            ],
-          ),
-        ),
-      );
-
-      expect(find.byKey(ViewSourceProofSection.sectionKey), findsNothing);
-      expect(find.byKey(VerifiedSourceProofLink.linkKey), findsNothing);
-      expect(find.text(EvidenceTrustCopy.viewSourceProof), findsNothing);
-    });
-
-    testWidgets('paraphrase of a stored entry is not quotable', (tester) async {
       TranscriptEvidenceIndex.remember(
         SpokenTranscript.fromCaptureText(
           entryId: 'e1',
@@ -194,32 +214,46 @@ void main() {
         ),
       );
 
-      expect(find.byKey(VerifiedSourceProofLink.linkKey), findsNothing);
-    });
-
-    testWidgets('the sheet refuses to open with no verified evidence', (
-      tester,
-    ) async {
-      late BuildContext hostContext;
-      await tester.pumpWidget(
-        _host(
-          Builder(
-            builder: (context) {
-              hostContext = context;
-              return const SizedBox.shrink();
-            },
-          ),
-        ),
-      );
-
-      final opened = await VerifiedSourceProofSheet.show(
-        hostContext,
-        lines: [_line(entryId: 'missing', quote: 'a generated observation')],
-      );
+      await tester.tap(find.byKey(VerifiedSourceProofLink.linkKey));
       await tester.pumpAndSettle();
 
-      expect(opened, isFalse);
-      expect(find.byKey(VerifiedSourceProofSheet.sheetKey), findsNothing);
+      expect(find.text('You agree to things before you check.'), findsNothing);
+      expect(
+        find.text(EvidenceTrustCopy.sourceQuotesUnavailable),
+        findsOneWidget,
+      );
     });
+
+    testWidgets(
+      'the sheet opens empty when nothing verified — no invented excerpt',
+      (tester) async {
+        late BuildContext hostContext;
+        await tester.pumpWidget(
+          _host(
+            Builder(
+              builder: (context) {
+                hostContext = context;
+                return const SizedBox.shrink();
+              },
+            ),
+          ),
+        );
+
+        unawaited(
+          VerifiedSourceProofSheet.show(
+            hostContext,
+            lines: [_line(entryId: 'missing', quote: 'a generated observation')],
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        expect(find.byKey(VerifiedSourceProofSheet.sheetKey), findsOneWidget);
+        expect(find.text('a generated observation'), findsNothing);
+        expect(
+          find.text(EvidenceTrustCopy.sourceQuotesUnavailable),
+          findsOneWidget,
+        );
+      },
+    );
   });
 }
