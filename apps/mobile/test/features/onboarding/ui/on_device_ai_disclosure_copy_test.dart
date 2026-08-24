@@ -12,11 +12,19 @@ const _requestedFalseAbsolute =
     'Your data stays on your phone. Our AI runs entirely on your device, '
     'meaning your personal information never goes to the cloud.';
 
+const _requestedFalseOnDeviceBody =
+    'Our AI processes everything directly on this device. Your data never '
+    'leaves your phone.';
+
 String get _fullDisclosureText => [
+  OnDeviceAiDisclosureCopy.heading,
   OnDeviceAiDisclosureCopy.title,
   OnDeviceAiDisclosureCopy.lede,
+  OnDeviceAiDisclosureCopy.body,
   ...OnDeviceAiDisclosureCopy.bullets,
   OnDeviceAiDisclosureCopy.continueCta,
+  OnDeviceAiDisclosureCopy.understandCta,
+  OnDeviceAiDisclosureCopy.cancelCta,
 ].join(' ');
 
 void main() {
@@ -43,11 +51,22 @@ void main() {
       );
     });
 
+    test('the screen body aliases the live default-and-choice claims', () {
+      expect(
+        OnDeviceAiDisclosureCopy.body,
+        '${OnDeviceHeroCopy.title} ${PrivacyClaimCatalogue.remoteProcessingIsAChoice}',
+      );
+    });
+
     test('every block passes the privacy copy policy', () {
       for (final block in [
+        OnDeviceAiDisclosureCopy.heading,
         OnDeviceAiDisclosureCopy.title,
         OnDeviceAiDisclosureCopy.lede,
+        OnDeviceAiDisclosureCopy.body,
         OnDeviceAiDisclosureCopy.continueCta,
+        OnDeviceAiDisclosureCopy.understandCta,
+        OnDeviceAiDisclosureCopy.cancelCta,
         ...OnDeviceAiDisclosureCopy.bullets,
       ]) {
         expect(
@@ -63,7 +82,12 @@ void main() {
       expect(lower, isNot(contains('never goes to the cloud')));
       expect(lower, isNot(contains('entirely on your device')));
       expect(lower, isNot(contains('stays on your phone')));
+      expect(lower, isNot(contains('never leaves your phone')));
+      expect(lower, isNot(contains('processes everything directly on this device')));
+      expect(lower, isNot(contains('works fully offline')));
+      expect(lower, isNot(contains('zero third-party sharing')));
       expect(_fullDisclosureText, isNot(contains(_requestedFalseAbsolute)));
+      expect(_fullDisclosureText, isNot(contains(_requestedFalseOnDeviceBody)));
     });
 
     test('the policy still flags the leave-the-device shape of that claim', () {

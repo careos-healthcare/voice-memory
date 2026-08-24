@@ -146,6 +146,16 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     });
   }
 
+  /// Returns to the consent step. Does not record or reverse a remote-
+  /// processing decision — that already happened on the previous step.
+  void _backFromDisclosure() {
+    if (_completing) return;
+    setState(() {
+      _showingOnDeviceHero = false;
+      _showingConsentStep = true;
+    });
+  }
+
   @override
   void dispose() {
     _controller.dispose();
@@ -186,6 +196,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     child: OnDeviceAiDisclosure(
                       submitting: _completing,
                       onContinue: () => unawaited(_complete()),
+                      onCancel: _backFromDisclosure,
                     ),
                   )
                 else if (_showingConsentStep)

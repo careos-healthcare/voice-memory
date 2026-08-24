@@ -12,11 +12,19 @@ const _requestedFalseAbsolute =
     'Your data stays on your phone. Our AI runs entirely on your device, '
     'meaning your personal information never goes to the cloud.';
 
+const _requestedFalseOnDeviceBody =
+    'Our AI processes everything directly on this device. Your data never '
+    'leaves your phone.';
+
 String get _fullExplanationText => [
+  OnDeviceAiExplanationCopy.heading,
   OnDeviceAiExplanationCopy.title,
   OnDeviceAiExplanationCopy.lede,
+  OnDeviceAiExplanationCopy.body,
   ...OnDeviceAiExplanationCopy.bullets,
   OnDeviceAiExplanationCopy.continueCta,
+  OnDeviceAiExplanationCopy.understandCta,
+  OnDeviceAiExplanationCopy.cancelCta,
 ].join(' ');
 
 void main() {
@@ -40,9 +48,13 @@ void main() {
 
     test('every block passes the privacy copy policy', () {
       for (final block in [
+        OnDeviceAiExplanationCopy.heading,
         OnDeviceAiExplanationCopy.title,
         OnDeviceAiExplanationCopy.lede,
+        OnDeviceAiExplanationCopy.body,
         OnDeviceAiExplanationCopy.continueCta,
+        OnDeviceAiExplanationCopy.understandCta,
+        OnDeviceAiExplanationCopy.cancelCta,
         ...OnDeviceAiExplanationCopy.bullets,
       ]) {
         expect(
@@ -58,7 +70,10 @@ void main() {
       expect(lower, isNot(contains('never goes to the cloud')));
       expect(lower, isNot(contains('entirely on your device')));
       expect(lower, isNot(contains('stays on your phone')));
+      expect(lower, isNot(contains('never leaves your phone')));
+      expect(lower, isNot(contains('processes everything directly on this device')));
       expect(_fullExplanationText, isNot(contains(_requestedFalseAbsolute)));
+      expect(_fullExplanationText, isNot(contains(_requestedFalseOnDeviceBody)));
     });
 
     test('the policy still flags the leave-the-device shape of that claim', () {

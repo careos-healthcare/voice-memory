@@ -1,7 +1,7 @@
 import 'package:archiveme_mobile/features/onboarding/ui/on_device_ai_explanation.dart';
 import 'package:archiveme_mobile/features/onboarding/ui/on_device_ai_explanation_copy.dart';
 import 'package:archiveme_mobile/features/onboarding/ui/on_device_hero_copy.dart';
-import 'package:archiveme_mobile/features/onboarding/ui/on_device_hero_screen.dart';
+import 'package:archiveme_mobile/features/onboarding/ui/remote_processing_consent_copy.dart';
 import 'package:archiveme_mobile/product/consumer_ui_copy.dart';
 import 'package:archiveme_mobile/screens/onboarding_screen.dart';
 import 'package:archiveme_mobile/theme/app_theme.dart';
@@ -11,6 +11,7 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   Widget wrapDisclosure({
     VoidCallback? onContinue,
+    VoidCallback? onCancel,
     VoidCallback? onSeeDetails,
   }) {
     return MaterialApp(
@@ -18,6 +19,7 @@ void main() {
       home: Scaffold(
         body: OnDeviceAiDisclosure(
           onContinue: onContinue ?? () {},
+          onCancel: onCancel ?? () {},
           onSeeDetails: onSeeDetails ?? () {},
         ),
       ),
@@ -28,30 +30,46 @@ void main() {
     test('OnDeviceAiExplanation remains a typedef of OnDeviceAiDisclosure', () {
       final alias = OnDeviceAiDisclosure(
         onContinue: () {},
+        onCancel: () {},
       );
       expect(alias, isA<OnDeviceAiDisclosure>());
     });
 
-    testWidgets('is a named alias of the existing on-device hero', (
-      tester,
-    ) async {
+    testWidgets('builds OnDeviceAiDisclosureScreen', (tester) async {
       await tester.pumpWidget(wrapDisclosure());
 
       expect(find.byKey(OnDeviceAiDisclosure.screenKey), findsOneWidget);
       expect(find.byKey(OnDeviceAiExplanation.explanationKey), findsOneWidget);
-      expect(find.byKey(OnDeviceHeroScreen.screenKey), findsOneWidget);
-      expect(find.text(OnDeviceAiDisclosureCopy.title), findsOneWidget);
-      expect(find.text(OnDeviceHeroCopy.title), findsOneWidget);
+      expect(find.byKey(OnDeviceAiDisclosureScreen.screenKey), findsOneWidget);
+      expect(find.text(OnDeviceAiDisclosureCopy.heading), findsOneWidget);
+      expect(find.text(OnDeviceAiDisclosureCopy.body), findsOneWidget);
     });
 
     testWidgets('the continue CTA proceeds into the app', (tester) async {
       var proceeded = 0;
       await tester.pumpWidget(wrapDisclosure(onContinue: () => proceeded++));
 
-      await tester.tap(find.byKey(OnDeviceHeroScreen.continueKey));
+      await tester.tap(find.byKey(OnDeviceAiDisclosureScreen.continueKey));
       await tester.pump();
 
       expect(proceeded, 1);
+    });
+
+    testWidgets('Cancel returns without continuing', (tester) async {
+      var proceeded = 0;
+      var cancelled = 0;
+      await tester.pumpWidget(
+        wrapDisclosure(
+          onContinue: () => proceeded++,
+          onCancel: () => cancelled++,
+        ),
+      );
+
+      await tester.tap(find.byKey(OnDeviceAiDisclosureScreen.cancelKey));
+      await tester.pump();
+
+      expect(cancelled, 1);
+      expect(proceeded, 0);
     });
 
     testWidgets('headings stay visible at 800x600', (tester) async {
@@ -63,9 +81,11 @@ void main() {
       await tester.pumpWidget(wrapDisclosure());
 
       expect(tester.takeException(), isNull);
-      expect(find.byKey(OnDeviceHeroScreen.titleKey), findsOneWidget);
-      expect(find.text(OnDeviceAiDisclosureCopy.title), findsOneWidget);
-      final titleRect = tester.getRect(find.byKey(OnDeviceHeroScreen.titleKey));
+      expect(find.byKey(OnDeviceAiDisclosureScreen.titleKey), findsOneWidget);
+      expect(find.text(OnDeviceAiDisclosureCopy.heading), findsOneWidget);
+      final titleRect = tester.getRect(
+        find.byKey(OnDeviceAiDisclosureScreen.titleKey),
+      );
       expect(titleRect.top, greaterThanOrEqualTo(0));
       expect(titleRect.bottom, lessThanOrEqualTo(600));
     });
@@ -83,10 +103,11 @@ void main() {
       await tester.pump();
 
       expect(find.byKey(OnDeviceAiDisclosure.screenKey), findsOneWidget);
-      expect(find.byKey(OnDeviceHeroScreen.screenKey), findsOneWidget);
+      expect(find.byKey(OnDeviceAiDisclosureScreen.screenKey), findsOneWidget);
       expect(find.byKey(const Key('onboarding_page_view')), findsNothing);
       expect(find.text(ConsumerUiCopy.onboardingContinueCta), findsNothing);
-      expect(find.text(OnDeviceHeroCopy.continueCta), findsOneWidget);
+      expect(find.text(OnDeviceAiDisclosureCopy.understandCta), findsOneWidget);
+      expect(find.text(OnDeviceHeroCopy.continueCta), findsNothing);
     });
 
     testWidgets('the welcome step does not show the disclosure', (
@@ -99,6 +120,23 @@ void main() {
 
       expect(find.byKey(OnDeviceAiDisclosure.screenKey), findsNothing);
       expect(find.byKey(const Key('onboarding_page_view')), findsOneWidget);
+    });
+
+    testWidgets('Cancel returns to the previous onboarding step', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: OnboardingScreen(debugStartAtOnDeviceDisclosure: true),
+        ),
+      );
+      await tester.pump();
+
+      await tester.tap(find.byKey(OnDeviceAiDisclosureScreen.cancelKey));
+      await tester.pump();
+
+      expect(find.byKey(OnDeviceAiDisclosureScreen.screenKey), findsNothing);
+      expect(find.text(RemoteProcessingConsentCopy.title), findsOneWidget);
     });
   });
 }

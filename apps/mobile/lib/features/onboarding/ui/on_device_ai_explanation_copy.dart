@@ -5,10 +5,9 @@ import 'package:archiveme_mobile/security/privacy_claim_catalogue.dart';
 /// Named copy surface for the on-device AI disclosure step.
 ///
 /// This file exists so the privacy-copy gate discovers the disclosure as its
-/// own `*_copy.dart`. It does not invent claims. Every user-visible string is
-/// an alias of [OnDeviceHeroCopy], [OnDeviceArchitectureCopy], or
-/// [PrivacyClaimCatalogue], which already take sensitive promises from
-/// `PrivacyCopyPolicy`.
+/// own `*_copy.dart`. Sensitive promises are aliases of [OnDeviceHeroCopy],
+/// [OnDeviceArchitectureCopy], or [PrivacyClaimCatalogue]. The heading and
+/// button labels are not custody claims.
 ///
 /// The sentence "Your data stays on your phone. Our AI runs entirely on your
 /// device, meaning your personal information never goes to the cloud." is
@@ -40,6 +39,23 @@ abstract final class OnDeviceAiDisclosureCopy {
       PrivacyClaimCatalogue.remoteProcessingOffSwitch;
 
   static const String continueCta = OnDeviceHeroCopy.continueCta;
+
+  /// Visual heading on the disclosure screen. A priority statement, not a
+  /// custody claim — it does not say where data goes.
+  static const String heading = 'Your Privacy Is Priority #1';
+
+  /// Body slot on the disclosure screen. Replaces the requested false
+  /// sentence "Our AI processes everything directly on this device. Your data
+  /// never leaves your phone."
+  static const String body =
+      '${OnDeviceHeroCopy.title} ${PrivacyClaimCatalogue.remoteProcessingIsAChoice}';
+
+  /// Acknowledges the disclosure and continues onboarding. Does not grant
+  /// remote-processing consent — that decision is the previous step.
+  static const String understandCta = 'I Understand, Let’s Continue';
+
+  /// Returns to the previous onboarding step. Does not decline remote consent.
+  static const String cancelCta = 'Cancel';
 
   static const List<String> bullets = [
     journalDefault,
