@@ -4,11 +4,13 @@ import 'dart:io';
 import 'package:archiveme_mobile/api/api_exceptions.dart';
 import 'package:archiveme_mobile/billing/archive_loop_entitlement_ids.dart';
 import 'package:archiveme_mobile/billing/billing_async_guard.dart';
+import 'package:archiveme_mobile/billing/revenuecat_configuration.dart';
 import 'package:archiveme_mobile/billing/revenuecat_diagnostics.dart';
 import 'package:archiveme_mobile/billing/revenuecat_diagnostics_log.dart';
 import 'package:archiveme_mobile/billing/revenuecat_offerings_debug_log.dart';
 import 'package:archiveme_mobile/billing/store_billing_port.dart';
 import 'package:archiveme_mobile/config/app_config.dart';
+import 'package:archiveme_mobile/core/config/v1_billing_capability.dart';
 import 'package:archiveme_mobile/models/entitlement.dart';
 import 'package:flutter/foundation.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
@@ -65,34 +67,31 @@ class RevenueCatService implements StoreBillingPort {
     }
   }
 
-  String? get _apiKey {
-    if (Platform.isIOS) {
-      const key = String.fromEnvironment(
-        'REVENUECAT_IOS_API_KEY',
-      );
-      if (key.trim().isNotEmpty) return key.trim();
-    }
-    if (Platform.isAndroid) {
-      const key = String.fromEnvironment(
-        'REVENUECAT_ANDROID_API_KEY',
-      );
-      if (key.trim().isNotEmpty) return key.trim();
-    }
-    const fallback = String.fromEnvironment(
-      'REVENUECAT_API_KEY',
-    );
-    return fallback.trim().isEmpty ? null : fallback.trim();
+  RevenueCatPlatform get _currentPlatform {
+    if (Platform.isIOS) return RevenueCatPlatform.ios;
+    if (Platform.isAndroid) return RevenueCatPlatform.android;
+    return RevenueCatPlatform.unsupported;
   }
 
   String get _platformLabel {
-    if (Platform.isIOS) return 'ios';
-    if (Platform.isAndroid) return 'android';
-    return 'unknown';
+    return switch (_currentPlatform) {
+      RevenueCatPlatform.ios => 'ios',
+      RevenueCatPlatform.android => 'android',
+      RevenueCatPlatform.unsupported => 'unknown',
+    };
   }
 
-  Future<void> initialize() async {
+  Future<void> initialize({
+    RevenueCatConfiguration? configuration,
+  }) async {
     if (_configured) return;
-    final apiKey = _apiKey;
+    configuration ??= RevenueCatConfiguration.current;
+    // Product gate is the capability registry, not REVENUECAT_PURCHASES_ENABLED.
+    // Config is still loaded once so API-key reads stay on the cached snapshot.
+    if (!V1BillingCapability.isEnabled) {
+      return;
+    }
+    final apiKey = configuration.sdkKeyForConfigure(_currentPlatform);
     RevenueCatDiagnosticsLog.configureStarted(
       platform: _platformLabel,
       apiKeyPresent: apiKey != null,
