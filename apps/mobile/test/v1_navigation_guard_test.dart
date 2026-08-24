@@ -1,4 +1,5 @@
 import 'package:archiveme_mobile/core/config/beta_surfaces_feature_flags.dart';
+import 'package:archiveme_mobile/core/config/v1_billing_capability.dart';
 import 'package:archiveme_mobile/core/config/v1_feature_flags.dart';
 import 'package:archiveme_mobile/core/config/v1_navigation_guard.dart';
 import 'package:archiveme_mobile/router/route_catalog.dart';
@@ -28,12 +29,9 @@ void main() {
       }
     });
 
-    test('customer-ready support/legal/billing routes are allowed', () {
+    test('customer-ready support/legal routes are allowed', () {
       for (final path in [
         '/settings',
-        '/subscription',
-        '/pricing',
-        '/restore-purchases',
         '/delete-account',
         '/export',
         '/privacy',
@@ -49,6 +47,21 @@ void main() {
       BetaSurfacesFeatureFlags.debugOverride = true;
       expect(V1NavigationGuard.redirectFor('/onboarding/brain-dump'), isNull);
       BetaSurfacesFeatureFlags.debugOverride = null;
+    });
+
+    test('billing routes redirect to Archive while capability is frozen', () {
+      expect(V1BillingCapability.isEnabled, isFalse);
+      for (final path in [
+        '/subscription',
+        '/pricing',
+        '/restore-purchases',
+      ]) {
+        expect(
+          V1NavigationGuard.redirectFor(path),
+          RouteCatalog.archiveHome,
+          reason: path,
+        );
+      }
     });
 
     test('entry and account detail prefixes are allowed', () {

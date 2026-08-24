@@ -18,6 +18,15 @@ abstract final class V1NavigationGuard {
     if (!V1FeatureFlags.enableV1Only) return null;
 
     final normalized = _normalize(path);
+
+    final billingRedirect = V1RouteRegistry.billingCapabilityRedirect(
+      normalized,
+    );
+    if (billingRedirect != null) return billingRedirect;
+    // Billing is on: do not treat these as generic unknown routes. A future
+    // pass may mount builders; this pass still has no PaywallScreen.
+    if (V1RouteRegistry.billingExactPaths.contains(normalized)) return null;
+
     if (_isAllowed(normalized)) return null;
 
     return _fallbackFor(normalized);
