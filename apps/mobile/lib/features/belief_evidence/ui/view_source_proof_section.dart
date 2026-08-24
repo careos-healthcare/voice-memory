@@ -1,12 +1,13 @@
 import 'package:archiveme_mobile/features/belief_evidence/evidence/verbatim_evidence.dart';
 import 'package:archiveme_mobile/features/belief_evidence/insight_evidence_line.dart';
+import 'package:archiveme_mobile/features/belief_evidence/ui/evidence_tap.dart';
 import 'package:archiveme_mobile/features/belief_evidence/ui/evidence_trust_copy.dart';
 import 'package:archiveme_mobile/features/belief_evidence/ui/verified_source_proof_sheet.dart';
 import 'package:archiveme_mobile/theme/app_colors.dart';
 import 'package:archiveme_mobile/theme/app_spacing.dart';
 import 'package:flutter/material.dart';
 
-/// Block-level presentation of [VerifiedSourceProofLink] for use inside a card.
+/// Block-level presentation of [EvidenceTrailButton] for use inside a card.
 ///
 /// This is all a claim surface needs to add to become one tap from its proof.
 /// It counts and opens *verified* quotes only, so when an engine hands over
@@ -66,7 +67,7 @@ class ViewSourceProofSection extends StatelessWidget {
           Text(EvidenceTrustCopy.archiveNoticed, style: labelStyle),
           const SizedBox(height: 4),
         ],
-        VerifiedSourceProofLink(
+        EvidenceTrailButton(
           evidence: evidence,
           claimContext: claimContext,
           onOpenEntry: onOpenEntry,

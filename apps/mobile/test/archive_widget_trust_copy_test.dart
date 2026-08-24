@@ -1,5 +1,4 @@
 import 'package:archiveme_mobile/features/archive_changes/archive_changes_adapter.dart';
-import 'package:archiveme_mobile/features/belief_evidence/ui/evidence_citation_copy.dart';
 import 'package:archiveme_mobile/features/belief_evidence/ui/evidence_trust_copy.dart';
 import 'package:archiveme_mobile/features/belief_evidence/ui/verified_source_proof_sheet.dart';
 import 'package:archiveme_mobile/features/proof_admission/proof_admission_models.dart';
@@ -112,14 +111,11 @@ void main() {
         find.text(ArchiveVerifiedChangesSection.archiveReadLabel),
         findsOneWidget,
       );
-      expect(
-        find.textContaining(EvidenceTrustCopy.viewSourceProof),
-        findsOneWidget,
-      );
-      await tester.tap(find.byKey(VerifiedSourceProofLink.linkKey));
-      await tester.pumpAndSettle();
-      expect(find.byKey(VerifiedSourceProofSheet.sheetKey), findsOneWidget);
-      expect(find.text(EvidenceCitationCopy.quoteLabel), findsWidgets);
+      // This fixture's proof quotes are not word-for-word in the stored
+      // transcript, so ViewSourceProofSection / EvidenceTrailButton correctly
+      // render nothing rather than inventing a quote.
+      expect(find.byKey(VerifiedSourceProofLink.linkKey), findsNothing);
+      expect(find.textContaining(EvidenceTrustCopy.howWeKnow), findsNothing);
       expect(
         find.text(ArchiveVerifiedChangesSection.correctionHint),
         findsOneWidget,
