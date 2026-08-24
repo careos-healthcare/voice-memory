@@ -6,8 +6,11 @@
 // finder then reports the entry point missing when it is only unbuilt.
 import 'package:archiveme_mobile/features/caregiver/caregiver_feature_flags.dart';
 import 'package:archiveme_mobile/features/caregiver_grant/caregiver_grant_copy.dart';
+import 'package:archiveme_mobile/features/caregiver_grant/caregiver_grant_disclosure_screen.dart';
 import 'package:archiveme_mobile/features/caregiver_grant/caregiver_grant_entry_point.dart';
 import 'package:archiveme_mobile/l10n/generated/app_localizations.dart';
+import 'package:archiveme_mobile/router/route_catalog.dart';
+import 'package:archiveme_mobile/router/v1_route_registry.dart';
 import 'package:archiveme_mobile/screens/settings_screen.dart';
 import 'package:archiveme_mobile/services/app_services.dart';
 import 'package:archiveme_mobile/theme/app_theme.dart';
@@ -96,6 +99,46 @@ void main() {
         matching: find.byKey(CaregiverEntryPoint.cardKey),
       ),
       findsOneWidget,
+    );
+  });
+
+  testWidgets(
+    'tapping the Settings entry opens CaregiverDisclosureScreen',
+    (tester) async {
+      CaregiverFeatureFlags.debugOverride = true;
+
+      await pumpSettings(tester);
+
+      await tester.tap(find.byKey(CaregiverEntryPoint.actionKey));
+      await tester.pumpAndSettle();
+
+      expect(find.byKey(CaregiverDisclosureScreen.screenKey), findsOneWidget);
+      expect(find.text(CaregiverGrantCopy.canSeeRecent), findsOneWidget);
+      expect(find.text(CaregiverGrantCopy.stopOnThisDevice), findsOneWidget);
+      expect(find.text(CaregiverGrantCopy.stopPassLifetime), findsOneWidget);
+      expect(find.textContaining('instantly severs'), findsNothing);
+    },
+  );
+
+  test('catalog-only caregiver paths stay off the production registry', () {
+    expect(V1RouteRegistry.caregiverAccessPath, '/caregiver-access');
+    expect(V1RouteRegistry.supportingPaths, contains('/caregiver-access'));
+    expect(V1RouteRegistry.supportingPaths, isNot(contains(RouteCatalog.caregiverHome)));
+    expect(
+      V1RouteRegistry.supportingPaths,
+      isNot(contains(RouteCatalog.caregiverConsent)),
+    );
+  });
+
+  test('disclosure copy names opening words and a local-then-server revoke', () {
+    expect(CaregiverGrantCopy.canSeeRecent, contains('opening words'));
+    expect(CaregiverGrantCopy.cannotAudio, contains('does not play your audio'));
+    expect(CaregiverGrantCopy.stopOnThisDevice, contains('right away'));
+    expect(CaregiverGrantCopy.stopPassLifetime, contains('7 days'));
+    expect(CaregiverGrantCopy.stopReachesServer, contains('reconnect'));
+    expect(
+      CaregiverGrantCopy.all.join(' ').toLowerCase(),
+      isNot(contains('instantly severs')),
     );
   });
 }
