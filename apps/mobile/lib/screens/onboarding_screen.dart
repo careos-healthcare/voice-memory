@@ -4,7 +4,7 @@ import 'package:archiveme_mobile/features/beta_analytics/beta_analytics_consent_
 import 'package:archiveme_mobile/features/beta_analytics/beta_analytics_hooks.dart';
 import 'package:archiveme_mobile/features/onboarding/remote_processing_consent_decision.dart';
 import 'package:archiveme_mobile/features/onboarding/ui/evidence_method_onboarding_screen.dart';
-import 'package:archiveme_mobile/features/onboarding/ui/on_device_hero_screen.dart';
+import 'package:archiveme_mobile/features/onboarding/ui/on_device_ai_disclosure.dart';
 import 'package:archiveme_mobile/features/onboarding/ui/onboarding_trust_pillars_section.dart';
 import 'package:archiveme_mobile/features/onboarding/ui/remote_processing_consent_step.dart';
 import 'package:archiveme_mobile/features/proof_admission/remote_processing_consent_store.dart';
@@ -20,7 +20,20 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 class OnboardingScreen extends StatefulWidget {
-  const OnboardingScreen({super.key});
+  const OnboardingScreen({
+    super.key,
+    @visibleForTesting this.debugStartAtOnDeviceDisclosure = false,
+    @visibleForTesting bool debugStartAtOnDeviceExplanation = false,
+  }) : debugStartAtOnDeviceExplanation =
+           debugStartAtOnDeviceDisclosure || debugStartAtOnDeviceExplanation;
+
+  /// Opens on the on-device AI disclosure step. Tests only.
+  @visibleForTesting
+  final bool debugStartAtOnDeviceDisclosure;
+
+  /// Previous name for [debugStartAtOnDeviceDisclosure].
+  @visibleForTesting
+  final bool debugStartAtOnDeviceExplanation;
 
   @override
   State<OnboardingScreen> createState() => _OnboardingScreenState();
@@ -64,6 +77,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   @override
   void initState() {
     super.initState();
+    if (widget.debugStartAtOnDeviceExplanation) {
+      _showingOnDeviceHero = true;
+    }
     unawaited(BetaAnalyticsHooks.onboardingViewed());
     unawaited(RetentionMetricsTracker.track(RetentionMetricsTracker.onboardingStarted));
   }
@@ -130,6 +146,16 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     });
   }
 
+  /// Returns to the consent step. Does not record or reverse a remote-
+  /// processing decision — that already happened on the previous step.
+  void _backFromDisclosure() {
+    if (_completing) return;
+    setState(() {
+      _showingOnDeviceHero = false;
+      _showingConsentStep = true;
+    });
+  }
+
   @override
   void dispose() {
     _controller.dispose();
@@ -167,9 +193,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 ),
                 if (_showingOnDeviceHero)
                   Expanded(
-                    child: OnDeviceHeroScreen(
+                    child: OnDeviceAiDisclosure(
                       submitting: _completing,
                       onContinue: () => unawaited(_complete()),
+                      onCancel: _backFromDisclosure,
                     ),
                   )
                 else if (_showingConsentStep)
