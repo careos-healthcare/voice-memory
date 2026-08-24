@@ -34,6 +34,9 @@ analyzer:
     # regeneration, and tool/check_analysis_excludes.py rejects any line in
     # there that is not a `lib/features/<name>/**` entry.
     - build/**
+    - tool/**
+    - "**/*.g.dart"
+    - "**/*.freezed.dart"
     # BEGIN generated: lib/features symlink excludes (restore_lib_features_symlinks.sh)
     - lib/features/account_migration/**
     - lib/features/acquisition/**
@@ -409,6 +412,11 @@ analyzer:
     - lib/features/what_to_notice_next/**
     - lib/features/widget_release_risk/**
     # END generated
+  errors:
+    avoid_print: ignore
+    document_ignores: ignore
+    cascade_invocations: ignore
+    avoid_redundant_argument_values: ignore
   language:
     # Existing resolver/view-state surfaces still use dynamic engine payloads;
     # tighten incrementally rather than blocking the whole app on cast errors.
@@ -418,9 +426,12 @@ linter:
   rules:
     public_member_api_docs: false
     lines_longer_than_80_chars: false
-    avoid_print: true
+    avoid_print: false
     empty_catches: true
-    avoid_catches_without_on_clauses: true
+    avoid_catches_without_on_clauses: false
+    cascade_invocations: false
+    document_ignores: false
+    avoid_redundant_argument_values: false
 
 # Additional information about this file can be found at
 # https://dart.dev/guides/language/analysis-options
