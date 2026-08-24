@@ -34,6 +34,10 @@ npm run dev   # from repo root — backend on :3000
 flutter run --dart-define=VOICE_MEMORY_API_BASE_URL=http://127.0.0.1:3000
 ```
 
+## Contributing
+
+Repo-root [CONTRIBUTING.md](../../CONTRIBUTING.md) has the Feature Budget Policy. Check `lib/core/config/v1_production_allowlist.dart` before adding a new top-level `lib/features/` directory.
+
 ## Validate (launch-focused)
 
 See [LAUNCH_VALIDATION.md](./LAUNCH_VALIDATION.md) — not the full historical test suite.
