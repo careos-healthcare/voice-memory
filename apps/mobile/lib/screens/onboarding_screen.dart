@@ -4,7 +4,7 @@ import 'package:archiveme_mobile/features/beta_analytics/beta_analytics_consent_
 import 'package:archiveme_mobile/features/beta_analytics/beta_analytics_hooks.dart';
 import 'package:archiveme_mobile/features/onboarding/remote_processing_consent_decision.dart';
 import 'package:archiveme_mobile/features/onboarding/ui/evidence_method_onboarding_screen.dart';
-import 'package:archiveme_mobile/features/onboarding/ui/on_device_hero_screen.dart';
+import 'package:archiveme_mobile/features/onboarding/ui/on_device_ai_explanation.dart';
 import 'package:archiveme_mobile/features/onboarding/ui/onboarding_trust_pillars_section.dart';
 import 'package:archiveme_mobile/features/onboarding/ui/remote_processing_consent_step.dart';
 import 'package:archiveme_mobile/features/proof_admission/remote_processing_consent_store.dart';
@@ -20,7 +20,14 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 class OnboardingScreen extends StatefulWidget {
-  const OnboardingScreen({super.key});
+  const OnboardingScreen({
+    super.key,
+    @visibleForTesting this.debugStartAtOnDeviceExplanation = false,
+  });
+
+  /// Opens on the on-device explanation step. Tests only.
+  @visibleForTesting
+  final bool debugStartAtOnDeviceExplanation;
 
   @override
   State<OnboardingScreen> createState() => _OnboardingScreenState();
@@ -64,6 +71,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   @override
   void initState() {
     super.initState();
+    if (widget.debugStartAtOnDeviceExplanation) {
+      _showingOnDeviceHero = true;
+    }
     unawaited(BetaAnalyticsHooks.onboardingViewed());
     unawaited(RetentionMetricsTracker.track(RetentionMetricsTracker.onboardingStarted));
   }
@@ -167,7 +177,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 ),
                 if (_showingOnDeviceHero)
                   Expanded(
-                    child: OnDeviceHeroScreen(
+                    child: OnDeviceAiExplanation(
                       submitting: _completing,
                       onContinue: () => unawaited(_complete()),
                     ),
