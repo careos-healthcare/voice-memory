@@ -1,3 +1,4 @@
+import 'package:archiveme_mobile/core/config/v1_billing_capability.dart';
 import 'package:archiveme_mobile/router/route_catalog.dart';
 ///
 /// [V1NavigationGuard], [V1RouteInventory], validators, and route tests must
@@ -54,6 +55,25 @@ abstract final class V1RouteRegistry {
   ];
 
   static const paidPaths = <String>[];
+
+  /// Store-billing deep links. Stay redirect-only while billing is frozen.
+  ///
+  /// `/pro-interest` is the same quarantined billing CTA class (Support row).
+  static const billingExactPaths = [
+    subscriptionPath,
+    pricingPath,
+    restorePurchasesPath,
+    '/pro-interest',
+  ];
+
+  /// Archive when [V1BillingCapability.isEnabled] is false. Null if [path] is
+  /// not a billing route, or when billing is on so a future builder can resolve.
+  /// This pass never mounts a paywall builder.
+  static String? billingCapabilityRedirect(String path) {
+    if (!billingExactPaths.contains(path)) return null;
+    if (!V1BillingCapability.isEnabled) return RouteCatalog.archiveHome;
+    return null;
+  }
 
   static const additionalExactPaths = [
     '/',

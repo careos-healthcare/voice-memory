@@ -25,6 +25,7 @@ import 'package:archiveme_mobile/router/primary_navigation_controller.dart';
 import 'package:archiveme_mobile/router/record_navigation_activity_controller.dart';
 import 'package:archiveme_mobile/router/route_catalog.dart';
 import 'package:archiveme_mobile/router/v1_quarantine_redirects.dart';
+import 'package:archiveme_mobile/router/v1_route_registry.dart';
 import 'package:archiveme_mobile/screens/about_screen.dart';
 import 'package:archiveme_mobile/screens/account_auth_screen.dart';
 import 'package:archiveme_mobile/screens/account_screen.dart';
@@ -96,6 +97,9 @@ final GoRouter appRouter = GoRouter(
     if (instantCaptureTarget != null) return instantCaptureTarget;
 
     final path = state.uri.path;
+
+    final billingRedirect = V1RouteRegistry.billingCapabilityRedirect(path);
+    if (billingRedirect != null) return billingRedirect;
 
     final v1Redirect = V1NavigationGuard.redirectFor(path);
     if (v1Redirect != null) return v1Redirect;

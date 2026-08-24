@@ -19,6 +19,9 @@ abstract final class V1QuarantineRedirects {
       V1RouteRegistry.parameterizedQuarantinePaths;
 
   static String redirectTarget(String path) {
+    final billingRedirect = V1RouteRegistry.billingCapabilityRedirect(path);
+    if (billingRedirect != null) return billingRedirect;
+
     final guarded = V1NavigationGuard.redirectFor(path);
     if (guarded != null) return guarded;
     return V1RouteRegistry.canonicalRedirectFor(path);
