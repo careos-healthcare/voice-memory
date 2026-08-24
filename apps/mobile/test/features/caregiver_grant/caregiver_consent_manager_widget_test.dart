@@ -72,7 +72,7 @@ void main() {
         withAppProviderScope(
           MaterialApp(
             theme: AppTheme.light(),
-            home: CaregiverConsentScreen(accessService: _StubAccessService()),
+            home: const CaregiverConsentScreen(previewMode: false),
           ),
         ),
       );
@@ -83,9 +83,11 @@ void main() {
       expect(find.byKey(CaregiverConsentScreen.masterSwitchKey), findsOneWidget);
 
       await tester.tap(find.byKey(CaregiverConsentScreen.masterSwitchKey));
-      await tester.pumpAndSettle();
+      await tester.pump();
 
-      expect(find.byKey(CaregiverDisclosureScreen.screenKey), findsOneWidget);
+      expect(find.byKey(CaregiverDisclosureScreen.screenKey), findsNothing);
+      expect(find.text(CaregiverConsentCopy.statusOnAnonymous), findsOneWidget);
+      expect(find.textContaining('Heather'), findsNothing);
     },
   );
 }

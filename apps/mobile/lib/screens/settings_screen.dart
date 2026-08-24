@@ -290,7 +290,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     unawaited(
                       Navigator.of(context).push<void>(
                         MaterialPageRoute<void>(
-                          builder: (_) => const CaregiverConsentScreen(),
+                          builder: (_) => const CaregiverConsentScreen(
+                            // Production: no Heather preview. Pass
+                            // caregiverDisplayName only when a real grant exists.
+                            previewMode: false,
+                          ),
                         ),
                       ),
                     );
