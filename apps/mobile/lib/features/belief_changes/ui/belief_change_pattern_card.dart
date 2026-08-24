@@ -7,9 +7,11 @@ import 'package:archiveme_mobile/features/belief_evidence/ui/evidence_citation_c
 import 'package:archiveme_mobile/features/belief_evidence/ui/evidence_trust_copy.dart';
 import 'package:archiveme_mobile/features/belief_evidence/ui/source_quote_chip.dart';
 import 'package:archiveme_mobile/features/belief_evidence/ui/view_source_proof_section.dart';
+import 'package:archiveme_mobile/shared/ui/evidence_trail.dart';
 import 'package:archiveme_mobile/theme/app_colors.dart';
 import 'package:archiveme_mobile/theme/app_spacing.dart';
 import 'package:archiveme_mobile/theme/voicememory_cards.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 /// Belief-change pattern card.
@@ -18,6 +20,10 @@ import 'package:flutter/material.dart';
 /// card carries one source-proof link covering both. The claim lines themselves
 /// hold no citation marker: they are the archive's read, and the quotes below
 /// are what that read is allowed to rest on.
+///
+/// In debug, a visually distinct [EvidenceTrailDebugPreview] chip is added so
+/// the preview sheet can be opened. Release builds omit it; mock rows never
+/// enter [ViewSourceProofSection].
 class BeliefChangePatternCard extends StatelessWidget {
   const BeliefChangePatternCard({
     required this.moment,
@@ -93,18 +99,23 @@ class BeliefChangePatternCard extends StatelessWidget {
               child: SourceQuoteChip(evidence: laterEvidence),
             ),
           ],
-          if (verified.isEmpty)
-            ...[
-              const SizedBox(height: AppSpacing.xs),
-              UngroundedEvidenceNotice(
-                failure: _failureFor(moment.earlierSnippet),
-              ),
-            ]
-          else
-            ViewSourceProofSection(
-              evidence: verified,
-              claimContext: BeliefChangeMomentCopy.title,
+          if (verified.isEmpty) ...[
+            const SizedBox(height: AppSpacing.xs),
+            UngroundedEvidenceNotice(
+              failure: _failureFor(moment.earlierSnippet),
             ),
+          ],
+          ViewSourceProofSection(
+            evidence: verified,
+            claimContext: BeliefChangeMomentCopy.title,
+          ),
+          if (kDebugMode && !compact) ...[
+            const SizedBox(height: AppSpacing.xs),
+            const Align(
+              alignment: AlignmentDirectional.centerStart,
+              child: EvidenceTrailDebugPreview(),
+            ),
+          ],
           if (!compact) ...[
             const SizedBox(height: AppSpacing.sm),
             Text(BeliefChangeMomentCopy.footer, style: bodyStyle),
