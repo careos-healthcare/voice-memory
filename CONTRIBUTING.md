@@ -19,3 +19,7 @@ There is no file named `feature_budget`. The budget is the V1 production allowli
 Most entries under `apps/mobile/lib/features/` are symlinks into `apps/mobile/retired_sprawl/`. Real V1 directories are the exception. Reuse an existing feature, doc, or gate before adding a new top-level directory.
 
 Enforced by `apps/mobile/test/v1_production_allowlist_test.dart` and the production-graph script above.
+
+## Root npm scripts
+
+npm scripts in root `package.json` must be generalized and parameterized. One-off, numbered, and report-named scripts are forbidden (`export:project-10`, `generate:mobile-parity-report`, and similar). Prefer a single runner plus short aliases for names CI or docs still call (`npm run validate:privacy-logs`). Archived one-offs live in [`retired_sprawl/archived_npm_scripts.json`](retired_sprawl/archived_npm_scripts.json).
