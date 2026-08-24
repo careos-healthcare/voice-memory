@@ -223,16 +223,12 @@ abstract class AcquisitionCohortCoordinator {
       '/start/prove-enough',
       '/start/generic',
       '/start',
+      '/onboarding',
+      '/onboarding-intent',
       '/onboarding-loop',
     };
     if (cohort.onboardingCompleted && path == '/record') return null;
     if (allowed.contains(path) || path.startsWith('/entry/')) return null;
-
-    if (path == '/onboarding' ||
-        path == '/onboarding-intent' ||
-        path == '/onboarding-loop') {
-      return cohort.cohortId.startRoutePath;
-    }
 
     return cohort.cohortId.startRoutePath;
   }
