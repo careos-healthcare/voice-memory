@@ -418,7 +418,7 @@ abstract class Guard {
         'lib/features/anything/anything_copy.dart',
         'lib/features/settings/ui/on_device_architecture_copy.dart',
         'lib/features/onboarding/ui/remote_processing_consent_step.dart',
-        'lib/screens/privacy_screen.dart',
+        'lib/features/settings/screens/privacy_screen.dart',
         'lib/widgets/security/archive_data_flow_sheet.dart',
       ]) {
         expect(
@@ -502,7 +502,7 @@ abstract class Guard {
         'lib/features/settings/ui/on_device_architecture_section.dart',
         'lib/features/onboarding/ui/remote_processing_consent_copy.dart',
         'lib/features/onboarding/ui/remote_processing_consent_step.dart',
-        'lib/ui/screens/settings/privacy_security_screen.dart',
+        'lib/features/settings/screens/privacy_security_screen.dart',
       ]) {
         final source = sources[path];
         expect(source, isNotNull, reason: 'not discovered: $path');

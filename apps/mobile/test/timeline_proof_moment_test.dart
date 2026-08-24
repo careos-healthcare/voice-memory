@@ -349,7 +349,7 @@ void main() {
   group('Timeline proof moment placement', () {
     test('appears before ArchiveTimelineSpineCard on patterns', () {
       final source = File(
-        'lib/screens/archive_belief_screen.dart',
+        'lib/features/archive/screens/archive_belief_screen.dart',
       ).readAsStringSync();
       final proofIndex = source.indexOf('TimelineProofMomentCard(');
       final spineIndex = source.indexOf('ArchiveTimelineSpineCard(');

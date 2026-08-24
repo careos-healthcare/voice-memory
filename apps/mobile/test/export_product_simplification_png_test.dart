@@ -1,11 +1,11 @@
 import 'dart:io';
 import 'dart:ui' as ui;
 
-import 'package:archiveme_mobile/screens/archive_belief_screen.dart';
-import 'package:archiveme_mobile/screens/belief_changes_screen.dart';
-import 'package:archiveme_mobile/screens/beliefs_screen.dart';
-import 'package:archiveme_mobile/screens/onboarding_screen.dart';
-import 'package:archiveme_mobile/screens/record_screen.dart';
+import 'package:archiveme_mobile/features/archive/screens/archive_belief_screen.dart';
+import 'package:archiveme_mobile/features/belief_changes/screens/belief_changes_screen.dart';
+import 'package:archiveme_mobile/features/archive/screens/beliefs_screen.dart';
+import 'package:archiveme_mobile/features/onboarding/screens/onboarding_screen.dart';
+import 'package:archiveme_mobile/features/recording/recording_screen.dart';
 import 'package:archiveme_mobile/theme/app_theme.dart';
 import 'package:archiveme_mobile/widgets/belief_empty_state.dart';
 import 'package:flutter/material.dart';

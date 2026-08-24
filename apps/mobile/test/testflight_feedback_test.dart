@@ -4,7 +4,7 @@ import 'package:archiveme_mobile/features/beta_test_script/beta_test_script_copy
 import 'package:archiveme_mobile/features/support/testflight_feedback_analytics.dart';
 import 'package:archiveme_mobile/features/support/testflight_feedback_copy.dart';
 import 'package:archiveme_mobile/features/support/testflight_feedback_launcher.dart';
-import 'package:archiveme_mobile/screens/settings_screen.dart';
+import 'package:archiveme_mobile/features/settings/screens/settings_screen.dart';
 import 'package:archiveme_mobile/services/activation_funnel_analytics.dart';
 import 'package:archiveme_research/screens/testing_archiveme_screen.dart';
 import 'package:flutter/material.dart';

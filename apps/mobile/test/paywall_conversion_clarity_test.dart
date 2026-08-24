@@ -8,7 +8,7 @@ import 'package:archiveme_mobile/features/purchase_confidence/purchase_confidenc
 import 'package:archiveme_mobile/features/revenue_metrics/revenue_funnel_analytics.dart';
 import 'package:archiveme_mobile/features/revenue_metrics/revenue_funnel_event.dart';
 import 'package:archiveme_mobile/product/consumer_ui_copy.dart';
-import 'package:archiveme_mobile/screens/paywall_screen.dart';
+import 'package:archiveme_mobile/billing/screens/paywall_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
@@ -139,7 +139,7 @@ void main() {
     );
 
     test('source-specific paywall still wires differentiation blocks', () {
-      final source = File('lib/screens/paywall_screen.dart').readAsStringSync();
+      final source = File('lib/billing/screens/paywall_screen.dart').readAsStringSync();
       expect(source, contains('_paywallDifferentiationAndTrustSection'));
       expect(source, contains('_purchaseConfidenceSection'));
       expect(source, contains('showPackagingSection'));
@@ -154,7 +154,7 @@ void main() {
       tester,
     ) async {
       expect(ConsumerUiCopy.paywallPrimaryCta, 'Keep the longer trail');
-      final source = File('lib/screens/paywall_screen.dart').readAsStringSync();
+      final source = File('lib/billing/screens/paywall_screen.dart').readAsStringSync();
       expect(
         source,
         contains('sourceCopy?.cta ?? ConsumerUiCopy.paywallPrimaryCta'),
@@ -164,7 +164,7 @@ void main() {
     testWidgets('Pro user sees active state instead of upgrade paywall', (
       tester,
     ) async {
-      final source = File('lib/screens/paywall_screen.dart').readAsStringSync();
+      final source = File('lib/billing/screens/paywall_screen.dart').readAsStringSync();
       expect(source, contains('else if (_entitlements?.isPro == true)'));
       expect(source, contains('_proActiveBody()'));
     });
@@ -185,7 +185,7 @@ void main() {
     });
 
     test('paywall wires purchase, restore, and dismiss funnel events', () {
-      final source = File('lib/screens/paywall_screen.dart').readAsStringSync();
+      final source = File('lib/billing/screens/paywall_screen.dart').readAsStringSync();
       expect(
         source,
         contains('RevenueFunnelAnalytics.paywallPurchaseCtaTapped'),

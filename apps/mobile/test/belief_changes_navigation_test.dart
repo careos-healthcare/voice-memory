@@ -1,8 +1,8 @@
 import 'package:archiveme_mobile/config/screenshot_sample_data.dart';
 import 'package:archiveme_mobile/features/archive_beliefs/archive_belief_models.dart';
 import 'package:archiveme_mobile/product/consumer_ui_copy.dart';
-import 'package:archiveme_mobile/screens/belief_changes_screen.dart';
-import 'package:archiveme_mobile/screens/belief_detail_screen.dart';
+import 'package:archiveme_mobile/features/belief_changes/screens/belief_changes_screen.dart';
+import 'package:archiveme_mobile/features/archive/screens/belief_detail_screen.dart';
 import 'package:archiveme_mobile/theme/app_theme.dart';
 import 'package:archiveme_mobile/widgets/consumer/consumer_screen_back_header.dart';
 import 'package:flutter/material.dart';

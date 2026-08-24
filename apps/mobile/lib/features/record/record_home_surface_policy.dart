@@ -2,7 +2,6 @@ import 'package:archiveme_mobile/features/activation/returning_user_today.dart';
 import 'package:archiveme_mobile/features/daily_archive_exercise/daily_archive_exercise_models.dart';
 import 'package:archiveme_mobile/features/record/record_empty_archive_gates.dart';
 import 'package:archiveme_mobile/features/todays_question/todays_question_models.dart';
-import 'package:archiveme_mobile/screens/record_screen.dart' show RecordScreen;
 
 /// Which surfaces may appear on the Record tab ready state.
 ///
@@ -39,7 +38,7 @@ class RecordHomeSurfacePolicy {
   /// Optional single starter below capture when no top guidance card shows.
   final bool showStartHereTodayPrompt;
 
-  /// Surfaces hidden from Record ready state — explicit for [RecordScreen].
+  /// Surfaces hidden from Record ready state.
   final bool showDailyMirrorCard;
   final bool showWorthCheckingToday;
   final bool showTrySayingPrompts;

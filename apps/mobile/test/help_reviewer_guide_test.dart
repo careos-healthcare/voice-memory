@@ -5,7 +5,7 @@ import 'package:archiveme_mobile/features/demo/sample_archive_entries.dart';
 import 'package:archiveme_mobile/features/help/help_reviewer_guide_copy.dart';
 import 'package:archiveme_mobile/features/submission/app_store_submission_copy.dart';
 import 'package:archiveme_mobile/router/app_router.dart';
-import 'package:archiveme_mobile/screens/settings_screen.dart';
+import 'package:archiveme_mobile/features/settings/screens/settings_screen.dart';
 import 'package:archiveme_mobile/security/sensitive_screen_guard.dart';
 import 'package:archiveme_mobile/theme/app_theme.dart';
 import 'package:archiveme_research/screens/help_reviewer_guide_screen.dart';

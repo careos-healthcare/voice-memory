@@ -203,7 +203,7 @@ void main() {
       ).readAsStringSync();
       appRouterSource = File('lib/router/app_router.dart').readAsStringSync();
       securitySettingsSource = File(
-        'lib/screens/security_settings_screen.dart',
+        'lib/features/settings/screens/security_settings_screen.dart',
       ).readAsStringSync();
       proValueCopySource = File(
         'lib/features/pro_value/pro_value_copy.dart',

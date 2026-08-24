@@ -12,7 +12,7 @@ import 'package:archiveme_mobile/config/production_navigation.dart';
 import 'package:archiveme_mobile/dev/visual_audit_overrides.dart';
 import 'package:archiveme_mobile/router/app_router.dart';
 import 'package:archiveme_mobile/router/onboarding_gate.dart';
-import 'package:archiveme_mobile/screens/record_screen.dart';
+import 'package:archiveme_mobile/features/recording/recording_screen.dart';
 import 'package:archiveme_mobile/services/app_services.dart';
 
 import 'full_visual_audit.dart';

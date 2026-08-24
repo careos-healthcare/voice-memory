@@ -4,7 +4,7 @@ import 'package:archiveme_mobile/features/beta_analytics/beta_analytics_consent_
 import 'package:archiveme_mobile/features/beta_analytics/beta_analytics_hooks.dart';
 import 'package:archiveme_mobile/features/onboarding/remote_processing_consent_decision.dart';
 import 'package:archiveme_mobile/features/onboarding/ui/evidence_method_onboarding_screen.dart';
-import 'package:archiveme_mobile/features/onboarding/ui/on_device_hero_screen.dart';
+import 'package:archiveme_mobile/features/onboarding/ui/on_device_ai_disclosure.dart';
 import 'package:archiveme_mobile/features/onboarding/ui/onboarding_trust_pillars_section.dart';
 import 'package:archiveme_mobile/features/onboarding/ui/remote_processing_consent_step.dart';
 import 'package:archiveme_mobile/features/proof_admission/remote_processing_consent_store.dart';
@@ -20,7 +20,26 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 class OnboardingScreen extends StatefulWidget {
-  const OnboardingScreen({super.key});
+  const OnboardingScreen({
+    super.key,
+    @visibleForTesting this.debugStartAtOnDeviceDisclosure = true,
+    @visibleForTesting bool debugStartAtOnDeviceExplanation = false,
+    @visibleForTesting this.debugStartAtWelcome = false,
+  }) : debugStartAtOnDeviceExplanation =
+           debugStartAtOnDeviceDisclosure || debugStartAtOnDeviceExplanation;
+
+  /// Opens on the on-device AI disclosure step. Default: first page.
+  /// Tests that need the welcome page pass [debugStartAtWelcome].
+  @visibleForTesting
+  final bool debugStartAtOnDeviceDisclosure;
+
+  /// Previous name for [debugStartAtOnDeviceDisclosure].
+  @visibleForTesting
+  final bool debugStartAtOnDeviceExplanation;
+
+  /// Skips the leading disclosure so tests can drive the welcome PageView.
+  @visibleForTesting
+  final bool debugStartAtWelcome;
 
   @override
   State<OnboardingScreen> createState() => _OnboardingScreenState();
@@ -42,10 +61,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   bool _showingEvidenceMethodStep = false;
   bool _showingConsentStep = false;
 
-  /// True once the consent decision is persisted and the architecture hero is
-  /// on screen. This is the last step before `/record`, so it is the screen
-  /// that owns the "into the app" CTA — see [_complete].
-  bool _showingOnDeviceHero = false;
+  /// True while the on-device AI disclosure is on screen. This is the
+  /// first page a new user sees. Continue advances into welcome — it does
+  /// not mark onboarding complete and does not grant remote consent.
+  bool _showingOnDeviceHero = true;
 
   static const int _conceptualStepCount = 4;
 
@@ -55,15 +74,16 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   /// steps live in this widget's state rather than in `OnboardingPages`, so the
   /// dot row cannot read the page index alone.
   int get _stepIndex {
-    if (_showingOnDeviceHero) return 3;
-    if (_showingConsentStep) return 2;
-    if (_showingEvidenceMethodStep) return 1;
-    return _index;
+    if (_showingOnDeviceHero) return 0;
+    if (_showingConsentStep) return 3;
+    if (_showingEvidenceMethodStep) return 2;
+    return 1 + _index;
   }
 
   @override
   void initState() {
     super.initState();
+    _showingOnDeviceHero = !widget.debugStartAtWelcome;
     unawaited(BetaAnalyticsHooks.onboardingViewed());
     unawaited(RetentionMetricsTracker.track(RetentionMetricsTracker.onboardingStarted));
   }
@@ -102,12 +122,14 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       if (mounted) setState(() => _completing = false);
     }
     if (!mounted) return;
-    // The decision is recorded; the hero states what that decision means and
-    // carries the only CTA that reaches `/record`.
-    setState(() {
-      _showingConsentStep = false;
-      _showingOnDeviceHero = true;
-    });
+    // Disclosure already happened as page 1. The consent decision is the
+    // last gate — completing here is the only path to `/record`.
+    await _complete();
+  }
+
+  void _advanceFromDisclosure() {
+    if (_completing) return;
+    setState(() => _showingOnDeviceHero = false);
   }
 
   void _advance() {
@@ -167,9 +189,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 ),
                 if (_showingOnDeviceHero)
                   Expanded(
-                    child: OnDeviceHeroScreen(
+                    child: OnDeviceAiDisclosure(
                       submitting: _completing,
-                      onContinue: () => unawaited(_complete()),
+                      onContinue: _advanceFromDisclosure,
+                      onCancel: _advanceFromDisclosure,
+                      showCancel: false,
                     ),
                   )
                 else if (_showingConsentStep)

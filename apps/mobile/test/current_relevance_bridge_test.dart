@@ -413,7 +413,7 @@ void main() {
       'patterns screen renders relevance card before post-proof Pro bridge',
       () {
         final source = File(
-          'lib/screens/archive_belief_screen.dart',
+          'lib/features/archive/screens/archive_belief_screen.dart',
         ).readAsStringSync();
         final relevanceIndex = source.indexOf('CurrentRelevanceCard(');
         final proBridgeIndex = source.indexOf(

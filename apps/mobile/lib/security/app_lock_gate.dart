@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:archiveme_mobile/security/app_lock_service.dart';
 import 'package:archiveme_mobile/theme/app_colors.dart';
-import 'package:archiveme_mobile/widgets/security/app_lock_screen.dart';
+import 'package:archiveme_mobile/features/settings/security/app_lock_screen.dart';
 import 'package:flutter/material.dart';
 
 /// Wraps the whole app. While the lock state is unknown or locked, nothing

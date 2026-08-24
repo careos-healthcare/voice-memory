@@ -12,7 +12,7 @@ import 'package:archiveme_mobile/features/pro_interest/pro_interest_models.dart'
 import 'package:archiveme_mobile/features/pro_interest/pro_interest_store.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/models/reflection.dart';
-import 'package:archiveme_mobile/screens/support_feedback_screen.dart';
+import 'package:archiveme_mobile/features/settings/screens/support_feedback_screen.dart';
 import 'package:archiveme_mobile/security/sensitive_screen_guard.dart';
 import 'package:archiveme_mobile/storage/journal_store.dart';
 import 'package:archiveme_mobile/storage/mobile_prefs_store.dart';
@@ -350,7 +350,7 @@ void main() {
         '../../packages/archiveme_research/lib/screens/pro_value_preview_screen.dart',
       ).readAsStringSync();
       final support = File(
-        'lib/screens/support_feedback_screen.dart',
+        'lib/features/settings/screens/support_feedback_screen.dart',
       ).readAsStringSync();
       expect(router, contains("path: '/pro-interest'"));
       expect(SensitiveRoutes.isSensitiveRoute('/pro-interest'), isTrue);

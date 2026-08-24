@@ -26,7 +26,7 @@ import 'package:archiveme_mobile/security/private_data_service.dart';
 import 'package:archiveme_mobile/services/app_services.dart';
 import 'package:archiveme_mobile/theme/app_theme.dart';
 import 'package:archiveme_mobile/widgets/account/local_backup_restore_sheet.dart';
-import 'package:archiveme_mobile/widgets/account/privacy_trust_centre_screen.dart';
+import 'package:archiveme_mobile/features/settings/ui/privacy_trust_centre_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -462,7 +462,7 @@ void main() {
         'lib/features/local_backup/local_backup_restore_service.dart',
         'lib/features/local_backup/local_backup_analytics.dart',
         'lib/widgets/account/local_backup_restore_sheet.dart',
-        'lib/widgets/account/privacy_trust_centre_screen.dart',
+        'lib/features/settings/ui/privacy_trust_centre_screen.dart',
       ];
       for (final path in files) {
         final text = File(path).readAsStringSync();

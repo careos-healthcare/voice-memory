@@ -14,7 +14,7 @@ import 'package:archiveme_mobile/features/voice_capture/record_microphone_permis
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/models/reflection.dart';
 import 'package:archiveme_mobile/product/consumer_ui_copy.dart';
-import 'package:archiveme_mobile/screens/record_screen.dart';
+import 'package:archiveme_mobile/features/recording/recording_screen.dart';
 import 'package:archiveme_mobile/services/app_services.dart';
 import 'package:archiveme_mobile/storage/mobile_prefs_store.dart';
 import 'package:archiveme_mobile/theme/app_theme.dart';

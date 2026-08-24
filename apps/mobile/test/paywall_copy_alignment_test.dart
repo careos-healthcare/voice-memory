@@ -4,7 +4,7 @@ import 'package:archiveme_mobile/billing/paywall_source.dart';
 import 'package:archiveme_mobile/features/paywall_alignment/paywall_alignment_copy.dart';
 import 'package:archiveme_mobile/features/purchase_confidence/purchase_confidence_copy.dart';
 import 'package:archiveme_mobile/product/consumer_ui_copy.dart';
-import 'package:archiveme_mobile/screens/paywall_screen.dart';
+import 'package:archiveme_mobile/billing/screens/paywall_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';

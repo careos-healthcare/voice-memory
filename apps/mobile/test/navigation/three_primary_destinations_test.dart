@@ -10,7 +10,7 @@ import 'package:archiveme_mobile/product/belief_product_copy.dart';
 import 'package:archiveme_mobile/router/archive_changes_deep_link.dart';
 import 'package:archiveme_mobile/router/primary_destination.dart';
 import 'package:archiveme_mobile/router/route_catalog.dart';
-import 'package:archiveme_mobile/screens/belief_changes_screen.dart';
+import 'package:archiveme_mobile/features/belief_changes/screens/belief_changes_screen.dart';
 import 'package:archiveme_mobile/widgets/archive/archive_beliefs_dashboard.dart';
 import 'package:archiveme_mobile/widgets/archive/archive_changes_section.dart';
 import 'package:archiveme_mobile/widgets/archive/archive_changes_unavailable_notice.dart';

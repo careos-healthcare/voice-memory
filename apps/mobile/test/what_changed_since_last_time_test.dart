@@ -465,7 +465,7 @@ void main() {
   group('Patterns screen isolation', () {
     test('archive belief screen does not import ReturnCheckPayoffCard', () {
       final source = File(
-        'lib/screens/archive_belief_screen.dart',
+        'lib/features/archive/screens/archive_belief_screen.dart',
       ).readAsStringSync();
       expect(source.contains('ReturnCheckPayoffCard'), isFalse);
       expect(source.contains('what_changed_since_last_time_card'), isTrue);

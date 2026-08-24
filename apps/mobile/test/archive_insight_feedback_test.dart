@@ -6,7 +6,7 @@ import 'package:archiveme_mobile/features/activation/weekly_archive_review.dart'
 import 'package:archiveme_mobile/features/archive_proof/visible_archive_proof_copy.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/models/reflection.dart';
-import 'package:archiveme_mobile/screens/belief_evidence_screen.dart';
+import 'package:archiveme_mobile/features/belief_evidence/screens/belief_evidence_screen.dart';
 import 'package:archiveme_mobile/theme/app_theme.dart';
 import 'package:archiveme_mobile/widgets/archive/archive_home_summary_card.dart';
 import 'package:archiveme_mobile/widgets/archive/weekly_archive_review_card.dart';

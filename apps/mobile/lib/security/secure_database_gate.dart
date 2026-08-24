@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:archiveme_mobile/features/privacy/database_biometric_gate_store.dart';
 import 'package:archiveme_mobile/security/secure_database_copy.dart';
-import 'package:archiveme_mobile/security/secure_database_unlock_screen.dart';
+import 'package:archiveme_mobile/features/auth/security/secure_database_unlock_screen.dart';
 import 'package:archiveme_mobile/security/sqlite/secure_sqlite_lock_service.dart';
 import 'package:archiveme_mobile/services/app_services.dart';
 import 'package:archiveme_mobile/theme/app_colors.dart';

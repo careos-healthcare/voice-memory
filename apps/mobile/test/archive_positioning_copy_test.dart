@@ -230,7 +230,7 @@ List<String> _visibleStringsForSurface(String path) {
         AcquisitionStartCopy.genericBody,
         AcquisitionStartCopy.genericFirstPathLine,
       ];
-    case 'lib/screens/about_screen.dart':
+    case 'lib/features/settings/screens/about_screen.dart':
       return [
         ArchivePositioningCopy.umbrellaHeadline,
         ArchivePositioningCopy.umbrellaBody,

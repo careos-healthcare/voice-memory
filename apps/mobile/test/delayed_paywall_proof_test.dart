@@ -4,7 +4,7 @@ import 'package:archiveme_mobile/features/pro_bridge_visibility/pro_bridge_visib
 import 'package:archiveme_mobile/features/pro_bridge_visibility/pro_bridge_visibility_model.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/models/reflection.dart';
-import 'package:archiveme_mobile/screens/paywall_screen.dart';
+import 'package:archiveme_mobile/billing/screens/paywall_screen.dart';
 import 'package:archiveme_mobile/services/app_services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';

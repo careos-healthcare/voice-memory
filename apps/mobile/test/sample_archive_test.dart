@@ -122,7 +122,7 @@ void main() {
   group('Sample archive wiring', () {
     test('0-entry Archive/Patterns source includes sample archive card', () {
       final src = File(
-        'lib/screens/archive_belief_screen.dart',
+        'lib/features/archive/screens/archive_belief_screen.dart',
       ).readAsStringSync();
       expect(src, contains('SampleArchiveEntryCard'));
       expect(src, contains("context.push('/sample-archive')"));

@@ -13,7 +13,7 @@ import 'package:archiveme_mobile/features/memory/memory_influence_level.dart';
 import 'package:archiveme_mobile/features/pressure_retention/pressure_check_in_record.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/models/reflection.dart';
-import 'package:archiveme_mobile/screens/entry_detail_screen.dart';
+import 'package:archiveme_mobile/features/archive/screens/entry_detail_screen.dart';
 import 'package:archiveme_mobile/services/activation_funnel_analytics.dart';
 import 'package:archiveme_mobile/services/app_services.dart';
 import 'package:archiveme_mobile/storage/journal_store.dart';

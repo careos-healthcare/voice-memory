@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:archiveme_mobile/config/force_screenshot_repeat_card.dart';
 import 'package:archiveme_mobile/features/first_session/first_pattern_quality_titles.dart';
 import 'package:archiveme_mobile/product/consumer_ui_copy.dart';
-import 'package:archiveme_mobile/screens/archive_belief_screen.dart';
+import 'package:archiveme_mobile/features/archive/screens/archive_belief_screen.dart';
 import 'package:archiveme_mobile/services/app_services.dart';
 import 'package:archiveme_mobile/theme/app_theme.dart';
 import 'package:archiveme_mobile/widgets/record/second_session_comparison_card.dart';

@@ -9,7 +9,7 @@ import 'package:archiveme_mobile/features/paywall_objection_handling/paywall_obj
 import 'package:archiveme_mobile/features/paywall_objection_handling/paywall_objection_engine.dart';
 import 'package:archiveme_mobile/features/paywall_objection_handling/paywall_objection_model.dart';
 import 'package:archiveme_mobile/product/consumer_ui_copy.dart';
-import 'package:archiveme_mobile/screens/paywall_screen.dart';
+import 'package:archiveme_mobile/billing/screens/paywall_screen.dart';
 import 'package:archiveme_mobile/widgets/pro/paywall_objection_section.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -207,7 +207,7 @@ void main() {
 
   group('PaywallScreen integration', () {
     test('paywall wires objection section for available plans body', () {
-      final source = File('lib/screens/paywall_screen.dart').readAsStringSync();
+      final source = File('lib/billing/screens/paywall_screen.dart').readAsStringSync();
       expect(source, contains('_paywallObjectionSectionResult.shouldShow'));
       expect(source, contains('_paywallObjectionSection()'));
     });
@@ -219,7 +219,7 @@ void main() {
     });
 
     test('purchase flow wiring untouched', () {
-      final source = File('lib/screens/paywall_screen.dart').readAsStringSync();
+      final source = File('lib/billing/screens/paywall_screen.dart').readAsStringSync();
       expect(source, contains('ArchivePaywallCopy.purchaseStarting'));
       expect(source, contains('_PaywallBusyKind.purchase'));
       expect(source, contains('_PaywallBusyKind.restore'));

@@ -10,12 +10,13 @@ abstract final class V1CriticalPathFiles {
   V1CriticalPathFiles._();
 
   static const noServiceLocatorAccess = [
+    'lib/features/capture/screens/live_capture_host.dart',
     'lib/features/capture_flow/capture_flow_controller.dart',
     'lib/features/capture_flow/ui/capture_screen.dart',
     'lib/features/capture_flow/ui/capture_screen_host.dart',
     'lib/services/capture_pipeline_service.dart',
-    'lib/screens/delete_account_screen.dart',
-    'lib/screens/archive_belief_screen.dart',
-    'lib/screens/entry_detail_screen.dart',
+    'lib/features/auth/screens/delete_account_screen.dart',
+    'lib/features/archive/screens/archive_belief_screen.dart',
+    'lib/features/archive/screens/entry_detail_screen.dart',
   ];
 }

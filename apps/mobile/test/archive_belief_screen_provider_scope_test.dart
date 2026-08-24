@@ -1,7 +1,7 @@
 import 'package:archiveme_mobile/core/di/app_provider_container.dart';
 import 'package:archiveme_mobile/features/archive/v1/archive_belief_load_state.dart';
 import 'package:archiveme_mobile/features/archive/v1/archive_feed_pagination_provider.dart';
-import 'package:archiveme_mobile/screens/archive_belief_screen.dart';
+import 'package:archiveme_mobile/features/archive/screens/archive_belief_screen.dart';
 import 'package:archiveme_mobile/services/app_services.dart';
 import 'package:archiveme_mobile/theme/app_theme.dart';
 import 'package:flutter/material.dart';

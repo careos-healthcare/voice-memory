@@ -248,7 +248,7 @@ void main() {
     testWidgets('purchase line appears above purchase CTA for valueMoment', (
       tester,
     ) async {
-      final source = File('lib/screens/paywall_screen.dart').readAsStringSync();
+      final source = File('lib/billing/screens/paywall_screen.dart').readAsStringSync();
       final purchaseLineIndex = source.indexOf(
         'paywall_cta_lift_purchase_line',
       );
@@ -386,7 +386,7 @@ void main() {
 
   group('Protected integration areas', () {
     test('does not change purchase button wiring', () {
-      final source = File('lib/screens/paywall_screen.dart').readAsStringSync();
+      final source = File('lib/billing/screens/paywall_screen.dart').readAsStringSync();
       expect(source, contains('FilledButton'));
       expect(source, contains('paywall_cta_lift_purchase_line'));
       expect(source, contains('RestorePurchasesCopy'));

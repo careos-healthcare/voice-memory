@@ -22,8 +22,8 @@ import 'package:archiveme_mobile/features/repeat_return_check/repeat_return_chec
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/models/reflection.dart';
 import 'package:archiveme_mobile/product/consumer_ui_copy.dart';
-import 'package:archiveme_mobile/screens/account_screen.dart';
-import 'package:archiveme_mobile/screens/paywall_screen.dart';
+import 'package:archiveme_mobile/features/auth/screens/account_screen.dart';
+import 'package:archiveme_mobile/billing/screens/paywall_screen.dart';
 import 'package:archiveme_mobile/services/app_services.dart';
 import 'package:archiveme_mobile/theme/app_theme.dart';
 import 'package:archiveme_mobile/widgets/account/archive_me_pro_value_section.dart';

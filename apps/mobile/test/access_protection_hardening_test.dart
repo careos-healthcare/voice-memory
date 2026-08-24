@@ -5,8 +5,8 @@ import 'package:archiveme_mobile/billing/subscription_copy.dart';
 import 'package:archiveme_mobile/features/pro/pro_value_preview_copy.dart';
 import 'package:archiveme_mobile/features/pro_value/pro_value_copy.dart';
 import 'package:archiveme_mobile/product/consumer_ui_copy.dart';
-import 'package:archiveme_mobile/screens/security_settings_screen.dart';
-import 'package:archiveme_mobile/screens/settings_screen.dart';
+import 'package:archiveme_mobile/features/settings/screens/security_settings_screen.dart';
+import 'package:archiveme_mobile/features/settings/screens/settings_screen.dart';
 import 'package:archiveme_mobile/security/app_lock_service.dart';
 import 'package:archiveme_mobile/security/app_lock_settings.dart';
 import 'package:archiveme_mobile/security/app_lock_store.dart';
@@ -43,7 +43,7 @@ class _MemorySecure extends SecureStorageService {
 }
 
 const _auditDocPath = 'docs/ACCESS_PROTECTION_AUDIT.md';
-const _accountAuthScreenPath = 'lib/screens/account_auth_screen.dart';
+const _accountAuthScreenPath = 'lib/features/auth/screens/account_auth_screen.dart';
 const _authServicePath = 'lib/services/auth_service.dart';
 const _appLockStorePath = 'lib/security/app_lock_store.dart';
 const _pinHashPath = 'lib/security/pin_hash.dart';

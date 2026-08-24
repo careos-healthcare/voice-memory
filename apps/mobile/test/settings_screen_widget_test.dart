@@ -1,6 +1,6 @@
 import 'package:archiveme_mobile/config/developer_settings_gate.dart';
 import 'package:archiveme_mobile/product/consumer_ui_copy.dart';
-import 'package:archiveme_mobile/screens/settings_screen.dart';
+import 'package:archiveme_mobile/features/settings/screens/settings_screen.dart';
 import 'package:archiveme_mobile/security/privacy_data_controls_copy.dart';
 import 'package:archiveme_mobile/services/app_services.dart';
 import 'package:flutter/material.dart';

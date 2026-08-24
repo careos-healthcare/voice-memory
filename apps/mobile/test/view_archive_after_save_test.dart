@@ -12,7 +12,7 @@ import 'dart:io';
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/models/reflection.dart';
 import 'package:archiveme_mobile/router/developer_route_guard.dart';
-import 'package:archiveme_mobile/screens/archive_belief_screen.dart';
+import 'package:archiveme_mobile/features/archive/screens/archive_belief_screen.dart';
 import 'package:archiveme_mobile/services/app_services.dart';
 import 'package:archiveme_mobile/theme/app_theme.dart';
 import 'package:archiveme_mobile/widgets/onboarding/first_save_evidence_card.dart';

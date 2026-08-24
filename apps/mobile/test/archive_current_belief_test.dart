@@ -166,7 +166,7 @@ void main() {
 
     test('ArchiveCurrentBelief leads WhatChanged and timeline on Patterns', () {
       final source = File(
-        'lib/screens/archive_belief_screen.dart',
+        'lib/features/archive/screens/archive_belief_screen.dart',
       ).readAsStringSync();
       const stackAnchor =
           'if (showArchiveCurrentBelief &&\n                    archiveBeliefSurfaceCandidate.shouldShow)';

@@ -123,7 +123,7 @@ void main() {
 
   group('Integration placement', () {
     test('paywall screen integrates block above plan cards', () {
-      final source = File('lib/screens/paywall_screen.dart').readAsStringSync();
+      final source = File('lib/billing/screens/paywall_screen.dart').readAsStringSync();
       expect(source, contains('PaywallCtaLiftBlock'));
       expect(source, contains('PaywallCtaLiftEngine.build'));
       expect(source, contains('paywall_cta_lift_purchase_line'));

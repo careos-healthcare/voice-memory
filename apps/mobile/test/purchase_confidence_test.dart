@@ -8,7 +8,7 @@ import 'package:archiveme_mobile/billing/revenuecat_service.dart';
 import 'package:archiveme_mobile/features/purchase_confidence/purchase_confidence_analytics.dart';
 import 'package:archiveme_mobile/features/purchase_confidence/purchase_confidence_copy.dart';
 import 'package:archiveme_mobile/product/consumer_ui_copy.dart';
-import 'package:archiveme_mobile/screens/paywall_screen.dart';
+import 'package:archiveme_mobile/billing/screens/paywall_screen.dart';
 import 'package:archiveme_mobile/theme/app_theme.dart';
 import 'package:archiveme_mobile/widgets/paywall/purchase_confidence_card.dart';
 import 'package:archiveme_mobile/widgets/pro/pro_lock_moment_card.dart';
@@ -191,7 +191,7 @@ void main() {
     });
 
     test('paywall purchase wiring unchanged', () {
-      final source = File('lib/screens/paywall_screen.dart').readAsStringSync();
+      final source = File('lib/billing/screens/paywall_screen.dart').readAsStringSync();
       expect(source, contains('ArchivePaywallCopy.purchaseStarting'));
       expect(source, contains('ArchivePaywallCopy.restoreChecking'));
       expect(source, contains('_PaywallBusyKind.restore'));

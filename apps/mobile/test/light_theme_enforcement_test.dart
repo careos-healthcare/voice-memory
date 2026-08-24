@@ -63,10 +63,10 @@ void main() {
   test('consumer routes use warm light scaffold background', () {
     for (final path in [
       ...recordScreenLibraryPaths,
-      'lib/screens/archive_belief_screen.dart',
-      'lib/screens/account_screen.dart',
-      'lib/screens/settings_screen.dart',
-      'lib/screens/paywall_screen.dart',
+      'lib/features/archive/screens/archive_belief_screen.dart',
+      'lib/features/auth/screens/account_screen.dart',
+      'lib/features/settings/screens/settings_screen.dart',
+      'lib/billing/screens/paywall_screen.dart',
     ]) {
       final src = File(path).readAsStringSync();
       expect(

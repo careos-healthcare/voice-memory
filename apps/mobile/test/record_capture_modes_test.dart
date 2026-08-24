@@ -10,7 +10,7 @@ import 'package:archiveme_mobile/features/record_capture_modes/record_capture_mo
 import 'package:archiveme_mobile/features/record_capture_modes/record_capture_mode_model.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/models/reflection.dart';
-import 'package:archiveme_mobile/screens/quick_text_capture_screen.dart';
+import 'package:archiveme_mobile/features/capture/screens/legacy/quick_text_capture_screen.dart';
 import 'package:archiveme_mobile/services/app_services.dart';
 import 'package:archiveme_mobile/theme/app_theme.dart';
 import 'package:archiveme_mobile/widgets/record/navigate_to_capture_mode.dart';

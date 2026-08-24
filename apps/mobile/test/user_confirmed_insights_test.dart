@@ -277,7 +277,7 @@ void main() {
   group('Support & Feedback', () {
     test('support screen mentions user-confirmed insights', () {
       final support = File(
-        'lib/screens/support_feedback_screen.dart',
+        'lib/features/settings/screens/support_feedback_screen.dart',
       ).readAsStringSync();
       expect(support, contains('InsightFeedbackCopy.supportSectionTitle'));
       expect(support, contains('support_feedback_insight_feedback'));

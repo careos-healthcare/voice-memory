@@ -4,10 +4,10 @@ import 'package:archiveme_mobile/features/sync/presentation/sync_status_snapshot
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/models/reflection.dart';
 import 'package:archiveme_mobile/router/v1_route_registry.dart';
-import 'package:archiveme_mobile/screens/account_screen.dart';
-import 'package:archiveme_mobile/screens/export_screen.dart';
-import 'package:archiveme_mobile/screens/privacy_screen.dart';
-import 'package:archiveme_mobile/screens/support_feedback_screen.dart';
+import 'package:archiveme_mobile/features/auth/screens/account_screen.dart';
+import 'package:archiveme_mobile/features/settings/screens/export_screen.dart';
+import 'package:archiveme_mobile/features/settings/screens/privacy_screen.dart';
+import 'package:archiveme_mobile/features/settings/screens/support_feedback_screen.dart';
 import 'package:archiveme_mobile/security/account_privacy_controls_copy.dart';
 import 'package:archiveme_mobile/security/privacy_data_controls_copy.dart';
 import 'package:archiveme_mobile/services/app_services.dart';

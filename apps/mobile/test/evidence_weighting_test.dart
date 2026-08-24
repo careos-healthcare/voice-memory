@@ -377,7 +377,7 @@ void main() {
   group('Evidence weighting placement', () {
     test('patterns screen renders card before post-proof Pro bridge', () {
       final source = File(
-        'lib/screens/archive_belief_screen.dart',
+        'lib/features/archive/screens/archive_belief_screen.dart',
       ).readAsStringSync();
       final cardIndex = source.indexOf('EvidenceWeightingCard(');
       final proBridgeIndex = source.indexOf(
@@ -399,7 +399,7 @@ void main() {
 
     test('patterns card sits after current relevance card', () {
       final source = File(
-        'lib/screens/archive_belief_screen.dart',
+        'lib/features/archive/screens/archive_belief_screen.dart',
       ).readAsStringSync();
       final relevanceIndex = source.indexOf('CurrentRelevanceCard(');
       final weightingIndex = source.indexOf('EvidenceWeightingCard(');

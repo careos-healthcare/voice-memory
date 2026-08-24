@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:archiveme_mobile/features/pro/pro_value_preview_copy.dart';
 import 'package:archiveme_mobile/features/pro/pro_value_preview_gates.dart';
-import 'package:archiveme_mobile/screens/settings_screen.dart';
+import 'package:archiveme_mobile/features/settings/screens/settings_screen.dart';
 import 'package:archiveme_mobile/services/app_services.dart';
 import 'package:archiveme_mobile/theme/app_theme.dart';
 import 'package:archiveme_mobile/widgets/pro_value_preview_card.dart';

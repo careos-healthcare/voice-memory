@@ -4,7 +4,7 @@ import 'package:archiveme_mobile/security/app_lock_settings.dart';
 import 'package:archiveme_mobile/security/app_lock_store.dart';
 import 'package:archiveme_mobile/security/pin_hash.dart';
 import 'package:archiveme_mobile/services/activation_funnel_analytics.dart';
-import 'package:archiveme_mobile/widgets/security/setup_pin_screen.dart';
+import 'package:archiveme_mobile/features/settings/security/setup_pin_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 

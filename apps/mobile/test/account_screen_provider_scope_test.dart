@@ -3,7 +3,7 @@ import 'package:archiveme_mobile/features/auth/application/auth_session_notifier
 import 'package:archiveme_mobile/features/auth/application/auth_session_state.dart';
 import 'package:archiveme_mobile/l10n/generated/app_localizations.dart';
 import 'package:archiveme_mobile/l10n/localized_consumer_ui.dart';
-import 'package:archiveme_mobile/screens/account_screen.dart';
+import 'package:archiveme_mobile/features/auth/screens/account_screen.dart';
 import 'package:archiveme_mobile/services/app_services.dart';
 import 'package:archiveme_mobile/theme/app_theme.dart';
 import 'package:flutter/material.dart';

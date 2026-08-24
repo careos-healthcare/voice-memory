@@ -331,7 +331,7 @@ void main() {
       );
 
       final settings = File(
-        'lib/screens/settings_screen.dart',
+        'lib/features/settings/screens/settings_screen.dart',
       ).readAsStringSync();
       expect(settings, contains('isConfigured'));
       expect(settings, contains('SubscriptionCopy.temporarilyUnavailable'));

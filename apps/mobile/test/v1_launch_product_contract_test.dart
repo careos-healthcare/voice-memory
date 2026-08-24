@@ -24,15 +24,15 @@ void main() {
 
   test('production screens do not reference quarantined widgets', () {
     final checks = <(String file, String symbol)>[
-      ('lib/screens/account_screen.dart', 'WeeklyGrowthPreviewCard'),
-      ('lib/screens/account_screen.dart', 'AiAccuracyFeedbackStore'),
-      ('lib/screens/account_screen.dart', 'BetaFeedbackSheet'),
-      ('lib/screens/account_screen.dart', 'ProUtilityExpansionSection'),
-      ('lib/screens/entry_detail_screen.dart', 'RememberThisButton'),
-      ('lib/screens/entry_detail_screen.dart', 'SaveAsFactButton'),
-      ('lib/screens/entry_detail_screen.dart', 'PinEntryButton'),
-      ('lib/screens/paywall_screen.dart', 'BetaFeedbackCaptureCard'),
-      ('lib/screens/paywall_screen.dart', 'BetaFeedbackCaptureStore'),
+      ('lib/features/auth/screens/account_screen.dart', 'WeeklyGrowthPreviewCard'),
+      ('lib/features/auth/screens/account_screen.dart', 'AiAccuracyFeedbackStore'),
+      ('lib/features/auth/screens/account_screen.dart', 'BetaFeedbackSheet'),
+      ('lib/features/auth/screens/account_screen.dart', 'ProUtilityExpansionSection'),
+      ('lib/features/archive/screens/entry_detail_screen.dart', 'RememberThisButton'),
+      ('lib/features/archive/screens/entry_detail_screen.dart', 'SaveAsFactButton'),
+      ('lib/features/archive/screens/entry_detail_screen.dart', 'PinEntryButton'),
+      ('lib/billing/screens/paywall_screen.dart', 'BetaFeedbackCaptureCard'),
+      ('lib/billing/screens/paywall_screen.dart', 'BetaFeedbackCaptureStore'),
       ('lib/router/app_router.dart', 'CuriosityNotificationLaunchController'),
       ('lib/router/app_router.dart', 'ObjectiveWidgetPendingRouteStore'),
     ];

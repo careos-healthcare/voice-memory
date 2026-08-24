@@ -19,7 +19,7 @@ import 'package:archiveme_mobile/features/auth/domain/consent_renewal_outcome.da
 import 'package:archiveme_mobile/features/auth/domain/consent_revocation_outcome.dart';
 import 'package:archiveme_mobile/features/auth/domain/multi_party_access_grant.dart';
 import 'package:archiveme_mobile/features/caregiver/caregiver_feature_flags.dart';
-import 'package:archiveme_mobile/features/caregiver_grant/caregiver_grant_disclosure_screen.dart';
+import 'package:archiveme_mobile/features/caregiver_grant/screens/caregiver_grant_disclosure_screen.dart';
 import 'package:archiveme_mobile/features/settings/ui/caregiver_access_grant_list.dart';
 import 'package:archiveme_mobile/theme/app_theme.dart';
 import 'package:flutter/material.dart';

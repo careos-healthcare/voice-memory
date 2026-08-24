@@ -151,7 +151,7 @@ void main() {
     });
 
     test('settings screen includes standard archive controls', () {
-      final src = File('lib/screens/settings_screen.dart').readAsStringSync();
+      final src = File('lib/features/settings/screens/settings_screen.dart').readAsStringSync();
       expect(src, contains('AccountPrivacyControlsSection'));
       expect(src, contains('PrivacyDataControlsSection'));
     });

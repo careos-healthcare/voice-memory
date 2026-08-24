@@ -1,4 +1,4 @@
-import 'package:archiveme_mobile/screens/paywall_screen.dart';
+import 'package:archiveme_mobile/billing/screens/paywall_screen.dart';
 import 'package:flutter/material.dart';
 
 /// Legacy `/pricing` route — renders subscription UI directly (no redirect spinner).

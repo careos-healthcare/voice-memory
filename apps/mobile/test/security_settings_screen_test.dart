@@ -1,8 +1,8 @@
 import 'package:archiveme_mobile/features/sync/application/background_sync_state.dart';
 import 'package:archiveme_mobile/features/sync/application/sync_status_provider.dart';
 import 'package:archiveme_mobile/features/sync/presentation/sync_status_snapshot.dart';
-import 'package:archiveme_mobile/screens/security_settings_screen.dart';
-import 'package:archiveme_mobile/screens/settings_screen.dart';
+import 'package:archiveme_mobile/features/settings/screens/security_settings_screen.dart';
+import 'package:archiveme_mobile/features/settings/screens/settings_screen.dart';
 import 'package:archiveme_mobile/security/app_lock_service.dart';
 import 'package:archiveme_mobile/security/app_lock_settings.dart';
 import 'package:archiveme_mobile/security/app_lock_store.dart';

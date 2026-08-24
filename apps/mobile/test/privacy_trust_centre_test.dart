@@ -6,12 +6,12 @@ import 'package:archiveme_mobile/features/local_backup/local_backup_copy.dart';
 import 'package:archiveme_mobile/features/privacy_trust/privacy_trust_copy.dart';
 import 'package:archiveme_mobile/features/trust/privacy_screen_copy.dart';
 import 'package:archiveme_mobile/l10n/generated/app_localizations.dart';
-import 'package:archiveme_mobile/screens/account_screen.dart';
-import 'package:archiveme_mobile/screens/settings_screen.dart';
+import 'package:archiveme_mobile/features/auth/screens/account_screen.dart';
+import 'package:archiveme_mobile/features/settings/screens/settings_screen.dart';
 import 'package:archiveme_mobile/security/account_privacy_controls_copy.dart';
 import 'package:archiveme_mobile/services/app_services.dart';
 import 'package:archiveme_mobile/theme/app_theme.dart';
-import 'package:archiveme_mobile/widgets/account/privacy_trust_centre_screen.dart';
+import 'package:archiveme_mobile/features/settings/ui/privacy_trust_centre_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -332,7 +332,7 @@ void main() {
       ];
       final files = [
         'lib/features/privacy_trust/privacy_trust_copy.dart',
-        'lib/widgets/account/privacy_trust_centre_screen.dart',
+        'lib/features/settings/ui/privacy_trust_centre_screen.dart',
         'lib/features/local_backup/local_backup_copy.dart',
         'lib/features/local_backup/local_backup_builder.dart',
       ];

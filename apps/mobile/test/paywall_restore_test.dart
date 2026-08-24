@@ -4,7 +4,7 @@ import 'package:archiveme_mobile/billing/restore_purchases_flow.dart';
 import 'package:archiveme_mobile/billing/store_billing_port.dart';
 import 'package:archiveme_mobile/models/entitlement.dart';
 import 'package:archiveme_mobile/product/consumer_ui_copy.dart';
-import 'package:archiveme_mobile/screens/paywall_screen.dart';
+import 'package:archiveme_mobile/billing/screens/paywall_screen.dart';
 import 'package:archiveme_mobile/services/app_services.dart';
 import 'package:archiveme_mobile/storage/entitlement_cache.dart';
 import 'package:flutter/material.dart';

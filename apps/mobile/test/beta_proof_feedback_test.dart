@@ -353,7 +353,7 @@ void main() {
   group('Beta proof feedback placement', () {
     test('appears under TimelineProofMomentCard on patterns', () {
       final source = File(
-        'lib/screens/archive_belief_screen.dart',
+        'lib/features/archive/screens/archive_belief_screen.dart',
       ).readAsStringSync();
       final cardIndex = source.indexOf('TimelineProofMomentCard(');
       final rowIndex = source.indexOf(
@@ -365,7 +365,7 @@ void main() {
 
     test('appears under ArchiveTimelineSpineCard on patterns', () {
       final source = File(
-        'lib/screens/archive_belief_screen.dart',
+        'lib/features/archive/screens/archive_belief_screen.dart',
       ).readAsStringSync();
       final cardIndex = source.indexOf('ArchiveTimelineSpineCard(');
       final rowIndex = source.indexOf(

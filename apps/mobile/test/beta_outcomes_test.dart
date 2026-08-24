@@ -11,7 +11,7 @@ import 'package:archiveme_mobile/features/pressure_retention/shareable_archive_p
 import 'package:archiveme_mobile/features/pro_interest/pro_interest_models.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/models/reflection.dart';
-import 'package:archiveme_mobile/screens/support_feedback_screen.dart';
+import 'package:archiveme_mobile/features/settings/screens/support_feedback_screen.dart';
 import 'package:archiveme_mobile/security/sensitive_screen_guard.dart';
 import 'package:archiveme_mobile/storage/journal_store.dart';
 import 'package:archiveme_mobile/theme/app_theme.dart';
@@ -315,7 +315,7 @@ void main() {
       () {
         final router = File('lib/router/app_router.dart').readAsStringSync();
         final support = File(
-          'lib/screens/support_feedback_screen.dart',
+          'lib/features/settings/screens/support_feedback_screen.dart',
         ).readAsStringSync();
         expect(router, contains("path: '/beta-outcomes'"));
         expect(SensitiveRoutes.isSensitiveRoute('/beta-outcomes'), isTrue);

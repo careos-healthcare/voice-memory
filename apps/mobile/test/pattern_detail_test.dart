@@ -460,7 +460,7 @@ void main() {
 
     test('patterns screen wires detail action for grounded patterns', () {
       final source = File(
-        'lib/screens/archive_belief_screen.dart',
+        'lib/features/archive/screens/archive_belief_screen.dart',
       ).readAsStringSync();
       expect(source, contains('PatternDetailEngine.canShow'));
       expect(source, contains('_openPatternDetail'));

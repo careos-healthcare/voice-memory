@@ -92,7 +92,7 @@ void main() {
       'lib/features/memory_graph/memory_graph_canvas.dart',
     ).readAsStringSync();
     final archive = File(
-      'lib/screens/archive_belief_screen.dart',
+      'lib/features/archive/screens/archive_belief_screen.dart',
     ).readAsStringSync();
     final capabilities = File(
       'lib/core/config/v1_capability_registry.dart',

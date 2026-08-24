@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:archiveme_mobile/config/app_config.dart';
 import 'package:archiveme_mobile/l10n/generated/app_localizations.dart';
 import 'package:archiveme_mobile/product/consumer_ui_copy.dart';
-import 'package:archiveme_mobile/screens/account_screen.dart';
+import 'package:archiveme_mobile/features/auth/screens/account_screen.dart';
 import 'package:archiveme_mobile/services/app_services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';

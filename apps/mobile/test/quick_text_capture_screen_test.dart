@@ -6,7 +6,7 @@ import 'package:archiveme_mobile/models/reflection.dart';
 import 'package:archiveme_mobile/models/sync_status.dart';
 import 'package:archiveme_mobile/product/consumer_ui_copy.dart';
 import 'package:archiveme_mobile/record/start_here_catalog.dart';
-import 'package:archiveme_mobile/screens/quick_text_capture_screen.dart';
+import 'package:archiveme_mobile/features/capture/screens/legacy/quick_text_capture_screen.dart';
 import 'package:archiveme_mobile/services/app_services.dart';
 import 'package:archiveme_mobile/services/capture_save_messages.dart';
 import 'package:archiveme_mobile/theme/app_theme.dart';
@@ -154,7 +154,7 @@ void main() {
 
     test('save failure keeps draft text in the controller', () {
       final source = File(
-        'lib/screens/quick_text_capture_screen.dart',
+        'lib/features/capture/screens/legacy/quick_text_capture_screen.dart',
       ).readAsStringSync();
       expect(source, contains('_error = VoiceCaptureCopy.saveFailed'));
       expect(source, isNot(contains('_controller.clear()')));

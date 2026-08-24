@@ -6,7 +6,7 @@ import 'package:archiveme_mobile/features/pressure_retention/shareable_archive_p
 import 'package:archiveme_mobile/features/pressure_retention/shareable_archive_proof_model.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/models/reflection.dart';
-import 'package:archiveme_mobile/screens/belief_evidence_screen.dart';
+import 'package:archiveme_mobile/features/belief_evidence/screens/belief_evidence_screen.dart';
 import 'package:archiveme_mobile/services/capture_save_messages.dart';
 import 'package:archiveme_mobile/theme/app_theme.dart';
 import 'package:archiveme_mobile/widgets/pressure_retention/shareable_archive_proof_card.dart';
