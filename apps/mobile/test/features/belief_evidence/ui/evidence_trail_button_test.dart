@@ -47,13 +47,18 @@ void main() {
   setUp(TranscriptEvidenceIndex.resetForTest);
   tearDown(TranscriptEvidenceIndex.resetForTest);
 
-  group('EvidenceTap', () {
+  group('EvidenceTrailButton', () {
+    test('EvidenceTap remains a typedef of EvidenceTrailButton', () {
+      const alias = EvidenceTap(evidence: []);
+      expect(alias, isA<EvidenceTrailButton>());
+    });
+
     testWidgets('one tap opens the verified proof sheet', (tester) async {
       _rememberStoredEntry();
 
       await tester.pumpWidget(
         _host(
-          EvidenceTap.fromLines(
+          EvidenceTrailButton.fromLines(
             lines: [
               _line(
                 entryId: 'e1',
@@ -64,12 +69,15 @@ void main() {
         ),
       );
 
-      expect(find.byKey(EvidenceTap.tapKey), findsOneWidget);
       expect(find.byKey(EvidenceTrailButton.buttonKey), findsOneWidget);
+      expect(find.byKey(EvidenceTrailButton.tapKey), findsOneWidget);
+      expect(find.byKey(EvidenceTap.tapKey), findsOneWidget);
       expect(find.byKey(VerifiedSourceProofLink.linkKey), findsOneWidget);
+      expect(find.textContaining(EvidenceTrustCopy.howWeKnow), findsOneWidget);
+      expect(find.textContaining(EvidenceTrustCopy.viewSourceProof), findsOneWidget);
       expect(find.byKey(VerifiedSourceProofSheet.sheetKey), findsNothing);
 
-      await tester.tap(find.byKey(EvidenceTap.tapKey));
+      await tester.tap(find.byKey(EvidenceTrailButton.buttonKey));
       await tester.pumpAndSettle();
 
       expect(find.byKey(VerifiedSourceProofSheet.sheetKey), findsOneWidget);
@@ -85,12 +93,13 @@ void main() {
 
         await tester.pumpWidget(
           _host(
-            EvidenceTap.fromLines(
+            EvidenceTrailButton.fromLines(
               lines: [_line(entryId: 'e1', quote: _modelParaphrase)],
             ),
           ),
         );
 
+        expect(find.byKey(EvidenceTrailButton.buttonKey), findsNothing);
         expect(find.byKey(EvidenceTap.tapKey), findsNothing);
         expect(find.byKey(VerifiedSourceProofLink.linkKey), findsNothing);
         expect(find.text(_modelParaphrase), findsNothing);
@@ -125,7 +134,7 @@ void main() {
     );
 
     testWidgets(
-      'a belief-change card already using ViewSourceProofSection exposes EvidenceTap',
+      'a belief-change card already using ViewSourceProofSection exposes EvidenceTrailButton',
       (tester) async {
         _rememberStoredEntry();
         TranscriptEvidenceIndex.remember(
@@ -158,14 +167,16 @@ void main() {
           ),
         );
 
-        expect(find.byKey(EvidenceTap.tapKey), findsOneWidget);
+        expect(find.byKey(EvidenceTrailButton.buttonKey), findsOneWidget);
         expect(find.byKey(VerifiedSourceProofLink.linkKey), findsOneWidget);
+        expect(find.textContaining(EvidenceTrustCopy.howWeKnow), findsOneWidget);
 
-        await tester.tap(find.byKey(EvidenceTap.tapKey));
+        await tester.tap(find.byKey(EvidenceTrailButton.buttonKey));
         await tester.pumpAndSettle();
 
         expect(find.byKey(VerifiedSourceProofSheet.sheetKey), findsOneWidget);
         expect(find.text(LegacyProvenanceCopy.title), findsNothing);
+        expect(find.text(_modelParaphrase), findsNothing);
       },
     );
   });

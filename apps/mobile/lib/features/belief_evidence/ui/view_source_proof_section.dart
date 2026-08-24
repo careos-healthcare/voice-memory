@@ -7,7 +7,7 @@ import 'package:archiveme_mobile/theme/app_colors.dart';
 import 'package:archiveme_mobile/theme/app_spacing.dart';
 import 'package:flutter/material.dart';
 
-/// Block-level presentation of [EvidenceTap] for use inside a card.
+/// Block-level presentation of [EvidenceTrailButton] for use inside a card.
 ///
 /// This is all a claim surface needs to add to become one tap from its proof.
 /// It counts and opens *verified* quotes only, so when an engine hands over
@@ -67,7 +67,7 @@ class ViewSourceProofSection extends StatelessWidget {
           Text(EvidenceTrustCopy.archiveNoticed, style: labelStyle),
           const SizedBox(height: 4),
         ],
-        EvidenceTap(
+        EvidenceTrailButton(
           evidence: evidence,
           claimContext: claimContext,
           onOpenEntry: onOpenEntry,
