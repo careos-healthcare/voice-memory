@@ -2,9 +2,9 @@ import 'package:archiveme_mobile/features/onboarding/ui/on_device_hero_copy.dart
 import 'package:archiveme_mobile/features/settings/ui/on_device_architecture_copy.dart';
 import 'package:archiveme_mobile/security/privacy_claim_catalogue.dart';
 
-/// Named copy surface for the on-device AI explanation step.
+/// Named copy surface for the on-device AI disclosure step.
 ///
-/// This file exists so the privacy-copy gate discovers the explanation as its
+/// This file exists so the privacy-copy gate discovers the disclosure as its
 /// own `*_copy.dart`. It does not invent claims. Every user-visible string is
 /// an alias of [OnDeviceHeroCopy], [OnDeviceArchitectureCopy], or
 /// [PrivacyClaimCatalogue], which already take sensitive promises from
@@ -15,8 +15,8 @@ import 'package:archiveme_mobile/security/privacy_claim_catalogue.dart';
 /// deliberately absent. Remote transcription, analysis, Firebase Analytics
 /// (behind consent), and a production backend all exist. On-device processing
 /// is a user-selectable mode, not the only architecture.
-abstract final class OnDeviceAiExplanationCopy {
-  OnDeviceAiExplanationCopy._();
+abstract final class OnDeviceAiDisclosureCopy {
+  OnDeviceAiDisclosureCopy._();
 
   static const String title = OnDeviceHeroCopy.title;
 
@@ -49,3 +49,6 @@ abstract final class OnDeviceAiExplanationCopy {
     remoteOffSwitch,
   ];
 }
+
+/// Previous name for [OnDeviceAiDisclosureCopy].
+typedef OnDeviceAiExplanationCopy = OnDeviceAiDisclosureCopy;

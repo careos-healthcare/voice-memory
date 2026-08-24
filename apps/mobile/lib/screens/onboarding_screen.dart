@@ -4,7 +4,7 @@ import 'package:archiveme_mobile/features/beta_analytics/beta_analytics_consent_
 import 'package:archiveme_mobile/features/beta_analytics/beta_analytics_hooks.dart';
 import 'package:archiveme_mobile/features/onboarding/remote_processing_consent_decision.dart';
 import 'package:archiveme_mobile/features/onboarding/ui/evidence_method_onboarding_screen.dart';
-import 'package:archiveme_mobile/features/onboarding/ui/on_device_ai_explanation.dart';
+import 'package:archiveme_mobile/features/onboarding/ui/on_device_ai_disclosure.dart';
 import 'package:archiveme_mobile/features/onboarding/ui/onboarding_trust_pillars_section.dart';
 import 'package:archiveme_mobile/features/onboarding/ui/remote_processing_consent_step.dart';
 import 'package:archiveme_mobile/features/proof_admission/remote_processing_consent_store.dart';
@@ -22,10 +22,16 @@ import 'package:go_router/go_router.dart';
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({
     super.key,
-    @visibleForTesting this.debugStartAtOnDeviceExplanation = false,
-  });
+    @visibleForTesting this.debugStartAtOnDeviceDisclosure = false,
+    @visibleForTesting bool debugStartAtOnDeviceExplanation = false,
+  }) : debugStartAtOnDeviceExplanation =
+           debugStartAtOnDeviceDisclosure || debugStartAtOnDeviceExplanation;
 
-  /// Opens on the on-device explanation step. Tests only.
+  /// Opens on the on-device AI disclosure step. Tests only.
+  @visibleForTesting
+  final bool debugStartAtOnDeviceDisclosure;
+
+  /// Previous name for [debugStartAtOnDeviceDisclosure].
   @visibleForTesting
   final bool debugStartAtOnDeviceExplanation;
 
@@ -177,7 +183,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 ),
                 if (_showingOnDeviceHero)
                   Expanded(
-                    child: OnDeviceAiExplanation(
+                    child: OnDeviceAiDisclosure(
                       submitting: _completing,
                       onContinue: () => unawaited(_complete()),
                     ),
