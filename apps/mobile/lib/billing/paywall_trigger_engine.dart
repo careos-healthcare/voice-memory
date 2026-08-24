@@ -15,8 +15,11 @@ PaywallTriggerContext? buildPaywallTrigger({
   int checkInCount = 0,
   int weekCount = 0,
   String sourceRoute = '',
+  bool? isBillingReachable,
 }) {
-  if (!V1BillingCapability.isProductionReachable) return null;
+  if (!(isBillingReachable ?? V1BillingCapability.isProductionReachable)) {
+    return null;
+  }
   if (isPro || !firstLoopClosed) return null;
   if (magicMomentsCount < MagicMomentsCounter.paywallThreshold) return null;
 
