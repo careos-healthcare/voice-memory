@@ -1,7 +1,6 @@
 import 'package:archiveme_mobile/features/onboarding/ui/on_device_ai_explanation.dart';
 import 'package:archiveme_mobile/features/onboarding/ui/on_device_ai_explanation_copy.dart';
 import 'package:archiveme_mobile/features/onboarding/ui/on_device_hero_copy.dart';
-import 'package:archiveme_mobile/features/onboarding/ui/remote_processing_consent_copy.dart';
 import 'package:archiveme_mobile/product/consumer_ui_copy.dart';
 import 'package:archiveme_mobile/screens/onboarding_screen.dart';
 import 'package:archiveme_mobile/theme/app_theme.dart';
@@ -92,14 +91,10 @@ void main() {
   });
 
   group('onboarding inserts the disclosure before the dashboard', () {
-    testWidgets('the last step is OnDeviceAiDisclosure, not the welcome page', (
+    testWidgets('the first page is OnDeviceAiDisclosure, not the welcome page', (
       tester,
     ) async {
-      await tester.pumpWidget(
-        const MaterialApp(
-          home: OnboardingScreen(debugStartAtOnDeviceDisclosure: true),
-        ),
-      );
+      await tester.pumpWidget(const MaterialApp(home: OnboardingScreen()));
       await tester.pump();
 
       expect(find.byKey(OnDeviceAiDisclosure.screenKey), findsOneWidget);
@@ -110,10 +105,12 @@ void main() {
       expect(find.text(OnDeviceHeroCopy.continueCta), findsNothing);
     });
 
-    testWidgets('the welcome step does not show the disclosure', (
+    testWidgets('the welcome step is after Continue, not first', (
       tester,
     ) async {
-      await tester.pumpWidget(const MaterialApp(home: OnboardingScreen()));
+      await tester.pumpWidget(
+        const MaterialApp(home: OnboardingScreen(debugStartAtWelcome: true)),
+      );
       for (var i = 0; i < 5; i++) {
         await tester.pump(const Duration(milliseconds: 100));
       }
@@ -122,21 +119,18 @@ void main() {
       expect(find.byKey(const Key('onboarding_page_view')), findsOneWidget);
     });
 
-    testWidgets('Cancel returns to the previous onboarding step', (
+    testWidgets('Continue on the first page advances to welcome, not /record', (
       tester,
     ) async {
-      await tester.pumpWidget(
-        const MaterialApp(
-          home: OnboardingScreen(debugStartAtOnDeviceDisclosure: true),
-        ),
-      );
+      await tester.pumpWidget(const MaterialApp(home: OnboardingScreen()));
       await tester.pump();
 
-      await tester.tap(find.byKey(OnDeviceAiDisclosureScreen.cancelKey));
+      await tester.tap(find.byKey(OnDeviceAiDisclosureScreen.continueKey));
       await tester.pump();
 
       expect(find.byKey(OnDeviceAiDisclosureScreen.screenKey), findsNothing);
-      expect(find.text(RemoteProcessingConsentCopy.title), findsOneWidget);
+      expect(find.byKey(const Key('onboarding_page_view')), findsOneWidget);
+      expect(find.text(ConsumerUiCopy.onboardingContinueCta), findsOneWidget);
     });
   });
 }

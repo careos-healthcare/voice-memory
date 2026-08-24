@@ -82,7 +82,9 @@ void main() {
     tester,
   ) async {
     await tester.pumpWidget(
-      withProviders(const MaterialApp(home: OnboardingScreen())),
+      withProviders(
+        const MaterialApp(home: OnboardingScreen(debugStartAtWelcome: true)),
+      ),
     );
     await pumpFrames(tester);
 

@@ -51,10 +51,10 @@ abstract final class OnDeviceAiDisclosureCopy {
       '${OnDeviceHeroCopy.title} ${PrivacyClaimCatalogue.remoteProcessingIsAChoice}';
 
   /// Acknowledges the disclosure and continues onboarding. Does not grant
-  /// remote-processing consent — that decision is the previous step.
+  /// remote-processing consent — that decision is a later step.
   static const String understandCta = 'I Understand, Let’s Continue';
 
-  /// Returns to the previous onboarding step. Does not decline remote consent.
+  /// Hidden when this is the first onboarding page. Does not decline remote consent.
   static const String cancelCta = 'Cancel';
 
   static const List<String> bullets = [

@@ -19,6 +19,12 @@ class OnboardingGate extends ChangeNotifier {
     _archiveHomeRedirectApplied = false;
   }
 
+  /// Test-only: treat this session as a new user who has not finished
+  /// onboarding. Does not write prefs.
+  void resetCompleteForTest() {
+    _complete = false;
+  }
+
   Future<void> refresh() async {
     _complete = await AppServices.instance.prefs.onboardingCompleted;
     notifyListeners();
