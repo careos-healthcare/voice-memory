@@ -17,6 +17,7 @@ import 'package:archiveme_mobile/models/reflection.dart';
 import 'package:archiveme_mobile/models/sync_status.dart';
 import 'package:archiveme_mobile/security/private_data_service.dart';
 import 'package:archiveme_mobile/services/app_services.dart';
+import 'package:archiveme_mobile/services/capture_pipeline/capture_pipeline_models.dart';
 import 'package:archiveme_mobile/services/capture_save_messages.dart';
 import 'package:archiveme_mobile/storage/journal_store.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -323,10 +324,10 @@ void main() {
       final audio = File('${audioDir.path}/vm_rec_capture.m4a')
         ..writeAsBytesSync(List.filled(1200, 1));
 
-      final result = await AppServices.instance.pipeline.run(
+      final result = (await AppServices.instance.pipeline.run(
         audioFile: audio,
         durationSeconds: 20,
-      );
+      )).getOrThrow();
 
       expect(result.syncSucceeded, isFalse);
       expect(VoiceCaptureQuality.isDegradedVoiceCapture(result.entry), isTrue);

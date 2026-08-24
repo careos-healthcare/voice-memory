@@ -1,4 +1,5 @@
 import 'package:archiveme_mobile/models/journal_entry.dart';
+import 'package:archiveme_mobile/services/capture_pipeline/capture_pipeline_facade.dart' show CapturePipelineFacade;
 import 'package:fpdart/fpdart.dart';
 
 class CapturePipelineFailure implements Exception {
