@@ -337,7 +337,7 @@ class _JournalScreenState extends State<JournalScreen> {
       listenable: _selection,
       builder: (context, _) => ListView(
         controller: _listScroll,
-        cacheExtent: 2000,
+        scrollCacheExtent: 2000,
         padding: const EdgeInsets.all(AppSpacing.md),
         children: [
           if (showArchiveValue) ...[
