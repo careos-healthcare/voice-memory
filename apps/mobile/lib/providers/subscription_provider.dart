@@ -137,7 +137,7 @@ class SubscriptionNotifier extends Notifier<SubscriptionState> {
       ref.read(billingProvider.notifier).startListening();
       await checkSubscriptionStatus();
       await _refreshOfferingsPriceLabels();
-    } catch (e, stackTrace) {
+    } on Exception catch (e, stackTrace) {
       if (!ref.mounted) return;
       state = state.copyWith(
         isLoading: false,
@@ -169,7 +169,7 @@ class SubscriptionNotifier extends Notifier<SubscriptionState> {
         isLoading: false,
         billingConfigured: _revenueCat.isConfigured,
       );
-    } catch (e, stackTrace) {
+    } on Exception catch (e, stackTrace) {
       if (!ref.mounted) return;
       state = state.copyWith(
         isLoading: false,
@@ -190,7 +190,7 @@ class SubscriptionNotifier extends Notifier<SubscriptionState> {
         billingConfigured: true,
       );
       return entitlements.isPro;
-    } catch (e, stackTrace) {
+    } on Exception catch (e, stackTrace) {
       state = state.copyWith(isLoading: false, errorMessage: e.toString());
       return false;
     }
@@ -206,7 +206,7 @@ class SubscriptionNotifier extends Notifier<SubscriptionState> {
         isLoading: false,
         billingConfigured: _revenueCat.isConfigured,
       );
-    } catch (e, stackTrace) {
+    } on Exception catch (e, stackTrace) {
       state = state.copyWith(
         isLoading: false,
         billingConfigured: _revenueCat.isConfigured,
@@ -241,7 +241,7 @@ class SubscriptionNotifier extends Notifier<SubscriptionState> {
         monthlyPriceLabel: monthly,
         yearlyPriceLabel: yearly,
       );
-    } catch (e, stackTrace) {
+    } on Exception catch (e, stackTrace) {
       AppLogger.error('Unhandled error caught', error: e, stackTrace: stackTrace);
       AppLogger.debug('SubscriptionNotifier: offerings refresh skipped — $e');
     }
