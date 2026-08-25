@@ -48,6 +48,13 @@ packages:
       relative: true
     source: path
     version: "0.1.0"
+  archiveme_ui:
+    dependency: "direct main"
+    description:
+      path: "../../packages/archiveme_ui"
+      relative: true
+    source: path
+    version: "0.1.0"
   args:
     dependency: transitive
     description:
