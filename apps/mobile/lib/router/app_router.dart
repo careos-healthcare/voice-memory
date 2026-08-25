@@ -26,6 +26,7 @@ import 'package:archiveme_mobile/router/record_navigation_activity_controller.da
 import 'package:archiveme_mobile/router/route_catalog.dart';
 import 'package:archiveme_mobile/router/v1_quarantine_redirects.dart';
 import 'package:archiveme_mobile/screens/about_screen.dart';
+import 'package:archiveme_mobile/screens/archive_calendar_screen.dart';
 import 'package:archiveme_mobile/screens/account_auth_screen.dart';
 import 'package:archiveme_mobile/screens/account_screen.dart';
 import 'package:archiveme_mobile/screens/archive_belief_screen.dart';
@@ -411,6 +412,11 @@ final GoRouter appRouter = GoRouter(
       path: '/terms',
       parentNavigatorKey: _rootNavigatorKey,
       builder: (context, state) => const TermsScreen(),
+    ),
+    GoRoute(
+      path: '/archive-calendar',
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) => const ArchiveCalendarScreen(),
     ),
     if (V1FeatureFlags.enableV1Only)
       ...V1QuarantineRedirects.routes(rootNavigatorKey: _rootNavigatorKey),

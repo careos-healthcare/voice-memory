@@ -119,7 +119,6 @@ abstract final class V1RouteRegistry {
     '/quick-yes-capture',
     '/capacity-beta-mission',
     '/capacity-beta-signals',
-    '/archive-calendar',
     '/review-ritual',
     '/yesterdays-snapshot',
     '/weekly-report',
