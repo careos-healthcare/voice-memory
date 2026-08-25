@@ -15,14 +15,13 @@ import 'package:flutter_test/flutter_test.dart';
 /// Case 1 still labels a first-session / cold-start analogue as
 /// `sessionCount = 1` with [evidenceMilestones] = 0.
 class _PaywallJourneyState {
-  _PaywallJourneyState({
-    this.sessionCount = 1,
-    this.evidenceMilestones = 0,
-    this.firstLoopClosed = false,
-    this.hasSeenFirstRepeat = false,
-    this.hasOpenedEvidenceTrail = false,
-    this.isPro = false,
-  });
+  _PaywallJourneyState()
+    : evidenceMilestones = 0,
+      sessionCount = 1,
+      firstLoopClosed = false,
+      hasSeenFirstRepeat = false,
+      hasOpenedEvidenceTrail = false,
+      isPro = false;
 
   /// Label only — not read by [PaywallAccess] or [buildPaywallTrigger].
   final int sessionCount;
@@ -97,7 +96,6 @@ void main() {
         await PaywallAccess.check(
           feature: ArchiveFeature.patternMap,
           firstLoopClosed: false,
-          magicMomentsCount: 0,
         ),
         isNull,
       );
