@@ -6,30 +6,29 @@ import 'package:archiveme_mobile/auth/guest_first_auth.dart';
 import 'package:archiveme_mobile/billing/billing_service.dart';
 import 'package:archiveme_mobile/billing/revenuecat_service.dart';
 import 'package:archiveme_mobile/billing/value_moment_paywall.dart';
-import 'package:archiveme_mobile/core/config/v1_billing_capability.dart';
 import 'package:archiveme_mobile/config/app_config.dart';
 import 'package:archiveme_mobile/config/archive_me_demo_state.dart';
-import 'package:archiveme_mobile/core/config/excluded_native_capability_cleanup.dart';
 import 'package:archiveme_mobile/config/trial_mode.dart';
+import 'package:archiveme_mobile/core/config/excluded_native_capability_cleanup.dart';
+import 'package:archiveme_mobile/core/config/v1_billing_capability.dart';
 import 'package:archiveme_mobile/core/config/v1_capability_registry.dart';
 import 'package:archiveme_mobile/core/di/app_provider_container.dart';
 import 'package:archiveme_mobile/core/di/archive_feed_providers.dart';
-import 'package:archiveme_mobile/core/di/storage_providers.dart';
-import 'package:archiveme_mobile/core/utils/app_logger.dart';
-import 'package:archiveme_mobile/features/archive/v1/archive_feed_pagination_provider.dart';
 import 'package:archiveme_mobile/core/di/network_providers.dart';
-import 'package:archiveme_mobile/core/network/voice_memory_api_client_bundle.dart';
-import 'package:archiveme_mobile/features/capture/capture_module_config.dart';
-import 'package:archiveme_mobile/features/capture/providers/capture_module_providers.dart';
+import 'package:archiveme_mobile/core/di/storage_providers.dart';
+import 'package:archiveme_mobile/core/hardware/resource_guard.dart';
 import 'package:archiveme_mobile/core/network/http_transport.dart';
 import 'package:archiveme_mobile/core/network/network_cancel_token.dart';
 import 'package:archiveme_mobile/core/network/session_cookie_source.dart';
+import 'package:archiveme_mobile/core/network/voice_memory_api_client_bundle.dart';
 import 'package:archiveme_mobile/core/user/user_settings_store.dart';
+import 'package:archiveme_mobile/core/utils/app_logger.dart';
 import 'package:archiveme_mobile/data/network/http_sync_api_client.dart';
 import 'package:archiveme_mobile/data/repositories/account_repository.dart';
 import 'package:archiveme_mobile/data/repositories/sync_repository.dart';
-import 'package:archiveme_mobile/features/archive_agreement/archive_agreement_service.dart';
 import 'package:archiveme_mobile/features/activation/archive_insight_feedback.dart';
+import 'package:archiveme_mobile/features/archive/v1/archive_feed_pagination_provider.dart';
+import 'package:archiveme_mobile/features/archive_agreement/archive_agreement_service.dart';
 import 'package:archiveme_mobile/features/archive_backup_bridge/archive_backup_bridge_dismiss_store.dart';
 import 'package:archiveme_mobile/features/auth/application/auth_session_notifier.dart';
 import 'package:archiveme_mobile/features/belief_changes/belief_evolution_service.dart';
@@ -38,10 +37,18 @@ import 'package:archiveme_mobile/features/beta/archive_beta_mission_store.dart';
 import 'package:archiveme_mobile/features/beta/confirmed_repeat_beta_feedback_store.dart';
 import 'package:archiveme_mobile/features/beta/core_value_feedback_store.dart';
 import 'package:archiveme_mobile/features/beta/tester_mission_store.dart';
+import 'package:archiveme_mobile/features/beta_analytics/beta_analytics_tracker.dart';
+import 'package:archiveme_mobile/features/beta_analytics/product_analytics_consent_store.dart';
 import 'package:archiveme_mobile/features/beta_feedback/beta_feedback_store.dart';
 import 'package:archiveme_mobile/features/beta_feedback_intelligence/beta_feedback_intelligence_store.dart';
 import 'package:archiveme_mobile/features/beta_test_script/beta_test_script_store.dart';
 import 'package:archiveme_mobile/features/billing/application/billing_notifier.dart';
+import 'package:archiveme_mobile/features/capture/capture_module_config.dart';
+import 'package:archiveme_mobile/features/capture/providers/capture_module_providers.dart';
+import 'package:archiveme_mobile/features/clinical_sandbox/gates/clinical_consent_gate.dart';
+import 'package:archiveme_mobile/features/clinical_sandbox/runtime/clinical_sandbox_runtime.dart';
+import 'package:archiveme_mobile/features/clinical_sandbox/stores/clinical_consent_store.dart';
+import 'package:archiveme_mobile/features/coach/local_rag/local_coach_conversation_service.dart';
 import 'package:archiveme_mobile/features/come_back_tomorrow/come_back_tomorrow_v2_store.dart';
 import 'package:archiveme_mobile/features/curiosity_loop/application/curiosity_hook_journal_store.dart';
 import 'package:archiveme_mobile/features/curiosity_loop/domain/models/cognitive_biomarkers.dart';
@@ -53,27 +60,21 @@ import 'package:archiveme_mobile/features/curiosity_loop/repositories/curiosity_
 import 'package:archiveme_mobile/features/early_archive/confirmed_repeat_thought_map_store.dart';
 import 'package:archiveme_mobile/features/early_archive/confirmed_repeat_why_matters_store.dart';
 import 'package:archiveme_mobile/features/encrypted_sync/encrypted_journal_sync_coordinator.dart';
-import 'package:archiveme_mobile/storage/drift/journal_database.dart';
-import 'package:archiveme_mobile/sync/sync_engine.dart';
-import 'package:archiveme_mobile/sync/sync_outbox_background_service.dart';
-import 'package:archiveme_mobile/features/weekly_synthesis/background/background_task_account_registry.dart';
-import 'package:archiveme_mobile/features/weekly_synthesis/background/weekly_synthesis_workmanager.dart';
-import 'package:archiveme_mobile/sync/cloud_backup.dart';
-import 'package:archiveme_mobile/sync/sqlite_vault/sqlite_vault.dart';
 import 'package:archiveme_mobile/features/first_proof_truth/first_proof_truth_store.dart';
 import 'package:archiveme_mobile/features/helped_tracking/helped_tracking_store.dart';
+import 'package:archiveme_mobile/features/insights/rag/local_routine_rag_engine.dart';
+import 'package:archiveme_mobile/features/insights/trend_analysis/trend_analysis_report_store.dart';
+import 'package:archiveme_mobile/features/insights/trend_analysis/trend_analysis_service.dart';
 import 'package:archiveme_mobile/features/journal/domain/interceptors/journal_save_interceptor.dart';
+import 'package:archiveme_mobile/features/journal/infrastructure/journal_fact_ledger_citation_interceptor.dart';
 import 'package:archiveme_mobile/features/journal/infrastructure/journal_save_interceptor_pipeline.dart';
 import 'package:archiveme_mobile/features/live_audio/application/live_audio_session_coordinator.dart';
 import 'package:archiveme_mobile/features/live_audio/application/live_voice_capture_service.dart';
 import 'package:archiveme_mobile/features/live_audio/application/live_voice_recovery_gateway.dart';
 import 'package:archiveme_mobile/features/live_audio/application/offline_vault_recovery_service.dart';
+import 'package:archiveme_mobile/features/live_audio/infrastructure/connectivity_aware_network_source.dart';
 import 'package:archiveme_mobile/features/live_audio/infrastructure/live_audio_session_api_client.dart';
 import 'package:archiveme_mobile/features/live_audio/infrastructure/local_audio_vault.dart';
-import 'package:archiveme_mobile/features/live_audio/infrastructure/connectivity_aware_network_source.dart';
-import 'package:archiveme_mobile/features/live_audio/infrastructure/network_connectivity_source.dart';
-import 'package:archiveme_mobile/features/sync/application/background_sync_notifier.dart';
-import 'package:archiveme_mobile/features/sync/application/network_connectivity_notifier.dart';
 import 'package:archiveme_mobile/features/live_audio/infrastructure/offline_vault_recovery_store.dart';
 import 'package:archiveme_mobile/features/live_audio/presentation/controllers/live_audio_session_controller.dart';
 import 'package:archiveme_mobile/features/memory_resurfacing/memory_resurfacing_service.dart';
@@ -88,96 +89,93 @@ import 'package:archiveme_mobile/features/proof_admission/archive_correction_sto
 import 'package:archiveme_mobile/features/proof_admission/proof_admission_service.dart';
 import 'package:archiveme_mobile/features/proof_admission/proof_display_gate.dart';
 import 'package:archiveme_mobile/features/proof_admission/proof_scope_provider.dart';
+import 'package:archiveme_mobile/features/proof_admission/remote_processing_consent_store.dart';
 import 'package:archiveme_mobile/features/quick_capture/quick_capture_outbox_store.dart';
 import 'package:archiveme_mobile/features/quick_capture/quick_capture_shared_storage.dart';
 import 'package:archiveme_mobile/features/quick_capture/quick_capture_widget_bridge.dart';
 import 'package:archiveme_mobile/features/quick_capture/quick_capture_widget_service.dart';
-import 'package:archiveme_mobile/features/proof_admission/remote_processing_consent_store.dart';
 import 'package:archiveme_mobile/features/quiet_signal/quiet_signal_analytics.dart';
+import 'package:archiveme_mobile/features/reflections/local_ai_pipeline.dart';
+import 'package:archiveme_mobile/features/relationships/user_relationship_repository.dart';
 import 'package:archiveme_mobile/features/repeat_return_check/repeat_return_check_store.dart';
+import 'package:archiveme_mobile/features/search/journal_reflection_embedding_interceptor.dart';
+import 'package:archiveme_mobile/features/search/reflection_embedding_index_worker.dart';
+import 'package:archiveme_mobile/features/search/reflection_embedding_repository.dart';
+import 'package:archiveme_mobile/features/sync/application/background_sync_notifier.dart';
+import 'package:archiveme_mobile/features/sync/application/network_connectivity_notifier.dart';
 import 'package:archiveme_mobile/features/sync/application/sync_notifier.dart';
+import 'package:archiveme_mobile/features/vision/image_embedding_service.dart';
+import 'package:archiveme_mobile/features/vision/local_visual_projection_inference.dart';
 import 'package:archiveme_mobile/features/voice_capture/microphone_permission_environment.dart';
 import 'package:archiveme_mobile/features/voice_capture/transcription/provisional_transcript_reconciler.dart';
 import 'package:archiveme_mobile/features/voice_capture/transcription/speech_locale_store.dart';
-import 'package:archiveme_mobile/services/capture_pipeline/capture_pipeline_middleware.dart';
-import 'package:archiveme_mobile/services/capture_pipeline/capture_proof_analyzer.dart';
-import 'package:archiveme_mobile/services/sync/background_sync_queue_gateway.dart';
-import 'package:archiveme_mobile/services/sync/background_sync_queue_worker.dart';
-import 'package:archiveme_mobile/services/sync/deferred_proof_admission_reconciler.dart';
-import 'package:archiveme_mobile/features/journal/infrastructure/journal_fact_ledger_citation_interceptor.dart';
-import 'package:archiveme_mobile/services/sync/journal_save_sync_enqueue_interceptor.dart';
-import 'package:archiveme_mobile/features/coach/local_rag/local_coach_conversation_service.dart';
-import 'package:archiveme_mobile/features/insights/rag/local_routine_rag_engine.dart';
-import 'package:archiveme_mobile/features/insights/trend_analysis/trend_analysis_report_store.dart';
-import 'package:archiveme_mobile/features/insights/trend_analysis/trend_analysis_service.dart';
-import 'package:archiveme_mobile/features/search/journal_reflection_embedding_interceptor.dart';
-import 'package:archiveme_mobile/features/search/reflection_embedding_index_worker.dart';
-import 'package:archiveme_mobile/workers/embedding/embedding_index_worker_service.dart';
-import 'package:archiveme_mobile/workers/local_llm/local_llm_worker_service.dart';
-import 'package:archiveme_mobile/workers/speech_to_text/speech_to_text_worker_service.dart';
-import 'package:archiveme_mobile/features/search/reflection_embedding_repository.dart';
 import 'package:archiveme_mobile/features/watch/watch_audio_ingest_service.dart';
 import 'package:archiveme_mobile/features/watch/watch_audio_ingest_store.dart';
 import 'package:archiveme_mobile/features/watch_companion/watch_connectivity_service.dart';
+import 'package:archiveme_mobile/features/weekly_synthesis/background/background_task_account_registry.dart';
+import 'package:archiveme_mobile/features/weekly_synthesis/background/weekly_synthesis_workmanager.dart';
 import 'package:archiveme_mobile/features/what_changed/what_changed_v2_store.dart';
 import 'package:archiveme_mobile/push/fcm_service.dart';
 import 'package:archiveme_mobile/security/account_session_scope.dart';
-import 'package:archiveme_mobile/security/sqlite/secure_sqlite_lock_service.dart';
-import 'package:archiveme_mobile/security/sqlite/sqlite_encryption_key_store.dart';
 import 'package:archiveme_mobile/security/private_data_service.dart';
 import 'package:archiveme_mobile/security/remote_processing_consent_gate.dart';
-import 'package:archiveme_mobile/features/clinical_sandbox/gates/clinical_consent_gate.dart';
-import 'package:archiveme_mobile/features/clinical_sandbox/runtime/clinical_sandbox_runtime.dart';
-import 'package:archiveme_mobile/features/clinical_sandbox/stores/clinical_consent_store.dart';
-import 'package:archiveme_mobile/features/relationships/user_relationship_repository.dart';
+import 'package:archiveme_mobile/security/secure_database_gate.dart'
+    show SecureDatabaseGate;
+import 'package:archiveme_mobile/security/sqlite/secure_sqlite_lock_service.dart';
+import 'package:archiveme_mobile/security/sqlite/sqlite_encryption_key_store.dart';
+import 'package:archiveme_mobile/services/ai/ai_service.dart';
+import 'package:archiveme_mobile/services/ai/ai_service_bootstrap.dart';
 import 'package:archiveme_mobile/services/api_service.dart';
+import 'package:archiveme_mobile/services/audio_structuring/audio_structuring_service.dart';
 import 'package:archiveme_mobile/services/auth_service.dart';
-import 'package:archiveme_mobile/services/capture_attest_service.dart';
-import 'package:archiveme_mobile/services/capture_pipeline_service.dart';
-import 'package:archiveme_mobile/services/journal_ownership_guard.dart';
-import 'package:archiveme_mobile/services/journal_service.dart';
 import 'package:archiveme_mobile/services/automated_graph/automated_graph_index_worker.dart';
 import 'package:archiveme_mobile/services/automated_graph/automated_graph_service.dart';
 import 'package:archiveme_mobile/services/automated_graph/journal_automated_graph_interceptor.dart';
-import 'package:archiveme_mobile/services/audio_structuring/audio_structuring_service.dart';
+import 'package:archiveme_mobile/services/capture_attest_service.dart';
+import 'package:archiveme_mobile/services/capture_pipeline/capture_pipeline_middleware.dart';
+import 'package:archiveme_mobile/services/capture_pipeline/capture_proof_analyzer.dart';
+import 'package:archiveme_mobile/services/capture_pipeline_service.dart';
+import 'package:archiveme_mobile/services/journal_ownership_guard.dart';
+import 'package:archiveme_mobile/services/journal_service.dart';
 import 'package:archiveme_mobile/services/local_llm/local_llm_bootstrap.dart';
 import 'package:archiveme_mobile/services/local_llm/local_llm_service.dart';
 import 'package:archiveme_mobile/services/local_llm/model_download_service.dart';
-import 'package:archiveme_mobile/services/ai/ai_service.dart';
-import 'package:archiveme_mobile/services/ai/ai_service_bootstrap.dart';
 import 'package:archiveme_mobile/services/offline_tts/offline_tts_bootstrap.dart';
 import 'package:archiveme_mobile/services/offline_tts/offline_tts_service.dart';
-import 'package:archiveme_mobile/features/beta_analytics/beta_analytics_tracker.dart';
-import 'package:archiveme_mobile/features/beta_analytics/product_analytics_consent_store.dart';
 import 'package:archiveme_mobile/services/product_analytics.dart';
-import 'package:archiveme_mobile/core/hardware/resource_guard.dart';
-import 'package:archiveme_mobile/services/thermal_throttling/thermal_throttling_service.dart';
+import 'package:archiveme_mobile/services/sync/background_sync_queue_gateway.dart';
+import 'package:archiveme_mobile/services/sync/background_sync_queue_worker.dart';
+import 'package:archiveme_mobile/services/sync/deferred_proof_admission_reconciler.dart';
+import 'package:archiveme_mobile/services/sync/journal_save_sync_enqueue_interceptor.dart';
 import 'package:archiveme_mobile/services/sync_service.dart';
-import 'package:archiveme_mobile/storage/sqlite/embedding_deferred_queue_store.dart';
+import 'package:archiveme_mobile/services/thermal_throttling/thermal_throttling_service.dart';
 import 'package:archiveme_mobile/storage/account_namespace.dart';
 import 'package:archiveme_mobile/storage/app_storage_paths.dart';
 import 'package:archiveme_mobile/storage/capture_token_cache.dart';
 import 'package:archiveme_mobile/storage/device_id.dart';
+import 'package:archiveme_mobile/storage/drift/journal_database.dart';
 import 'package:archiveme_mobile/storage/encrypted_json_storage.dart';
 import 'package:archiveme_mobile/storage/entitlement_cache.dart';
 import 'package:archiveme_mobile/storage/in_memory_secure_storage.dart';
+import 'package:archiveme_mobile/storage/isolate/local_database_worker_service.dart';
 import 'package:archiveme_mobile/storage/journal_store.dart';
 import 'package:archiveme_mobile/storage/legacy_storage_migration.dart';
 import 'package:archiveme_mobile/storage/mobile_prefs_store.dart';
 import 'package:archiveme_mobile/storage/personal_content_encrypted_storage.dart';
 import 'package:archiveme_mobile/storage/secure_storage.dart';
 import 'package:archiveme_mobile/storage/session_cookie_store.dart';
-import 'package:archiveme_mobile/features/reflections/local_ai_pipeline.dart';
-import 'package:archiveme_mobile/features/vision/image_embedding_service.dart';
-import 'package:archiveme_mobile/features/vision/local_visual_projection_inference.dart';
-import 'package:archiveme_mobile/storage/isolate/local_database_worker_service.dart';
 import 'package:archiveme_mobile/storage/sqlite/app_sqlite_database.dart';
+import 'package:archiveme_mobile/storage/sqlite/embedding_deferred_queue_store.dart';
 import 'package:archiveme_mobile/storage/sqlite/image_attachment_embedding_repository.dart';
 import 'package:archiveme_mobile/storage/sqlite/journal_sqlite_repository.dart';
+import 'package:archiveme_mobile/sync/cloud_backup.dart';
+import 'package:archiveme_mobile/sync/sync_engine.dart';
+import 'package:archiveme_mobile/workers/embedding/embedding_index_worker_service.dart';
+import 'package:archiveme_mobile/workers/local_llm/local_llm_worker_service.dart';
+import 'package:archiveme_mobile/workers/speech_to_text/speech_to_text_worker_service.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:riverpod/misc.dart' show Override;
 import 'package:http/http.dart' as http;
+import 'package:riverpod/misc.dart' show Override;
 
 class AppServices {
   AppServices._();
@@ -202,6 +200,7 @@ class AppServices {
   late MobilePrefsStore prefs;
   late EntitlementCache entitlementCache;
   late AppSqliteDatabase sqliteDatabase;
+  AppDatabase? _appDatabase;
   late CapturePipelineService pipeline;
   late JournalService journal;
   late BillingService billing;
@@ -282,6 +281,26 @@ class AppServices {
   String get activeSqliteFilePath =>
       _sqlitePathFor(_documentsBasePath, _activeNamespace);
 
+  AppDatabase get _sharedAppDatabase {
+    final db = _appDatabase;
+    if (db == null) {
+      throw StateError('Shared AppDatabase has not been opened');
+    }
+    return db;
+  }
+
+  static Future<void> _closeSharedAppDatabase(AppServices? s) async {
+    if (s == null) return;
+    final db = s._appDatabase;
+    if (db == null) return;
+    await db.close();
+    s._appDatabase = null;
+  }
+
+  static void _bindSharedAppDatabase(AppServices s) {
+    s._appDatabase = AppDatabase.fromSqflite(s.sqliteDatabase.database);
+  }
+
   /// Base documents directory every namespace's `accounts/<key>/...`
   /// directory hangs off. Exposed read-only for features that need to
   /// reason about *other* namespaces' on-disk data than the currently
@@ -339,12 +358,13 @@ class AppServices {
       return pending;
     }
 
-    final future = OfflineTtsBootstrap.tryCreate(
-      documentsBasePath: _documentsBasePath,
-    ).then((service) {
-      _offlineTts = service;
-      return service;
-    });
+    final future =
+        OfflineTtsBootstrap.tryCreate(
+          documentsBasePath: _documentsBasePath,
+        ).then((service) {
+          _offlineTts = service;
+          return service;
+        });
     _offlineTtsFuture = future;
     return future;
   }
@@ -402,16 +422,19 @@ class AppServices {
       return pending;
     }
 
-    final future = modelDownloadService.ensureModelDownloaded().then(
-      (modelPath) => LocalLlmBootstrap.tryCreate(
-        modelDownloadService: modelDownloadService,
-        documentsBasePath: _documentsBasePath,
-        modelPathOverride: modelPath,
-      ),
-    ).then((service) {
-      _localLlm = service;
-      return service;
-    });
+    final future = modelDownloadService
+        .ensureModelDownloaded()
+        .then(
+          (modelPath) => LocalLlmBootstrap.tryCreate(
+            modelDownloadService: modelDownloadService,
+            documentsBasePath: _documentsBasePath,
+            modelPathOverride: modelPath,
+          ),
+        )
+        .then((service) {
+          _localLlm = service;
+          return service;
+        });
     _localLlmFuture = future;
     return future;
   }
@@ -428,12 +451,13 @@ class AppServices {
       return pending;
     }
 
-    final future = AiServiceBootstrap.tryCreate(
-      resourceGuard: _resourceGuard,
-    ).then((service) {
-      _aiService = service;
-      return service;
-    });
+    final future =
+        AiServiceBootstrap.tryCreate(
+          resourceGuard: _resourceGuard,
+        ).then((service) {
+          _aiService = service;
+          return service;
+        });
     _aiServiceFuture = future;
     return future;
   }
@@ -446,13 +470,14 @@ class AppServices {
     final pending = _routineRagEngineFuture;
     if (pending != null) return pending;
 
-    final future = LocalRoutineRagEngine.create(
-      journalRepository: JournalSqliteRepository(sqliteDatabase),
-      embeddingRepository: ReflectionEmbeddingRepository(sqliteDatabase),
-    ).then((engine) {
-      _routineRagEngine = engine;
-      return engine;
-    });
+    final future =
+        LocalRoutineRagEngine.create(
+          journalRepository: JournalSqliteRepository(sqliteDatabase),
+          embeddingRepository: ReflectionEmbeddingRepository(sqliteDatabase),
+        ).then((engine) {
+          _routineRagEngine = engine;
+          return engine;
+        });
     _routineRagEngineFuture = future;
     return future;
   }
@@ -465,13 +490,14 @@ class AppServices {
     final pending = _trendAnalysisServiceFuture;
     if (pending != null) return pending;
 
-    final future = TrendAnalysisService.create(
-      journalDatabase: AppDatabase.fromSqflite(sqliteDatabase.database),
-      reportStore: TrendAnalysisReportStore(prefs),
-    ).then((service) {
-      _trendAnalysisService = service;
-      return service;
-    });
+    final future =
+        TrendAnalysisService.create(
+          journalDatabase: _sharedAppDatabase,
+          reportStore: TrendAnalysisReportStore(prefs),
+        ).then((service) {
+          _trendAnalysisService = service;
+          return service;
+        });
     _trendAnalysisServiceFuture = future;
     return future;
   }
@@ -484,13 +510,14 @@ class AppServices {
     final pending = _localCoachConversationServiceFuture;
     if (pending != null) return pending;
 
-    final future = LocalCoachConversationService.create(
-      journalRepository: JournalSqliteRepository(sqliteDatabase),
-      embeddingRepository: ReflectionEmbeddingRepository(sqliteDatabase),
-    ).then((service) {
-      _localCoachConversationService = service;
-      return service;
-    });
+    final future =
+        LocalCoachConversationService.create(
+          journalRepository: JournalSqliteRepository(sqliteDatabase),
+          embeddingRepository: ReflectionEmbeddingRepository(sqliteDatabase),
+        ).then((service) {
+          _localCoachConversationService = service;
+          return service;
+        });
     _localCoachConversationServiceFuture = future;
     return future;
   }
@@ -506,7 +533,7 @@ class AppServices {
         accountNamespace: activeNamespace,
         openDatabase: sqliteDatabase.database,
         closeDatabase: () => sqliteDatabase.close(),
-        reopenDatabase: () => reopenSqliteDatabase(),
+        reopenDatabase: reopenSqliteDatabase,
         keyStore: SecureSqliteVaultKeyStore(
           accountNamespace: activeNamespace.key,
         ),
@@ -548,7 +575,6 @@ class AppServices {
       await service.ingestAndProcessBackgroundQueue();
     } on Object catch (error, stackTrace) {
       assert(() {
-        // ignore: avoid_print
         print('QuickCaptureWidgetService failed: $error\n$stackTrace');
         return true;
       }());
@@ -606,7 +632,11 @@ class AppServices {
     try {
       await sqliteDatabase.close();
     } catch (e, stackTrace) {
-      AppLogger.error('Unhandled error caught', error: e, stackTrace: stackTrace);
+      AppLogger.error(
+        'Unhandled error caught',
+        error: e,
+        stackTrace: stackTrace,
+      );
       // Already closed or never opened.
     }
   }
@@ -1015,12 +1045,15 @@ class AppServices {
     s.secureSqliteLock.bindDatabaseCloser(() async {
       await s.sqliteDatabase.close();
     });
-    final sqlitePassphrase = await s.secureSqliteLock.bootstrapUnlockedSession();
+    final sqlitePassphrase = await s.secureSqliteLock
+        .bootstrapUnlockedSession();
+    await _closeSharedAppDatabase(s);
     s.sqliteDatabase = await AppSqliteDatabase.open(
       filePath: _sqlitePathFor(base, namespace),
       password: sqlitePassphrase,
       keyAlias: namespace.key,
     );
+    _bindSharedAppDatabase(s);
     LocalDatabaseWorkerService.instance.configure(
       defaultKeyAlias: namespace.key,
     );
@@ -1130,12 +1163,13 @@ class AppServices {
       s.sqliteDatabase,
     );
     s._resourceGuard ??= ResourceGuard.shared;
-    s._thermalThrottlingService ??=
-        ThermalThrottlingService(resourceGuard: s._resourceGuard);
+    s._thermalThrottlingService ??= ThermalThrottlingService(
+      resourceGuard: s._resourceGuard,
+    );
     EmbeddingIndexWorkerService.instance.configure(
       defaultKeyAlias: s._activeNamespace.key,
       thermalThrottling: s._thermalThrottlingService,
-      deferredQueue: EmbeddingDeferredQueueStore(s.sqliteDatabase.database),
+      deferredQueue: EmbeddingDeferredQueueStore(s._sharedAppDatabase),
     );
     s._resourceGuard!.startMonitoring(
       onConditionsNormalized: () async {
@@ -1172,9 +1206,7 @@ class AppServices {
       graphService: automatedGraphService,
       journalStore: s.journalStore,
     );
-    final outboxStore = SyncOutboxStore(
-      AppDatabase.fromSqflite(s.sqliteDatabase.database),
-    );
+    final outboxStore = SyncOutboxStore(s._sharedAppDatabase);
     final outboxBackgroundService = SyncOutboxBackgroundService(
       syncEngine: SyncEngine(
         syncApi: HttpSyncApiClient(s.httpTransport),
@@ -1182,8 +1214,9 @@ class AppServices {
         outbox: outboxStore,
       ),
     );
-    final backgroundSyncController =
-        appProviderContainer.read(backgroundSyncProvider.notifier).bindController();
+    final backgroundSyncController = appProviderContainer
+        .read(backgroundSyncProvider.notifier)
+        .bindController();
     s._backgroundSyncQueueWorker = BackgroundSyncQueueWorker(
       journalStore: s.journalStore,
       syncService: s.sync,
@@ -1244,9 +1277,7 @@ class AppServices {
       bridge: bridge,
       prefs: s.prefs,
     );
-    final outbox = QuickCaptureOutboxStore(
-      AppDatabase.fromSqflite(s.sqliteDatabase.database),
-    );
+    final outbox = QuickCaptureOutboxStore(s._sharedAppDatabase);
     s._quickCaptureWidgetService = QuickCaptureWidgetService.create(
       sharedStorage: sharedStorage,
       outbox: outbox,
@@ -1260,11 +1291,13 @@ class AppServices {
   Future<void> reopenSqliteDatabase() async {
     final passphrase = secureSqliteLock.session.requirePassphrase();
     final path = _sqlitePathFor(_documentsBasePath, _activeNamespace);
+    await _closeSharedAppDatabase(this);
     await sqliteDatabase.close();
     sqliteDatabase = await AppSqliteDatabase.open(
       filePath: path,
       password: passphrase,
     );
+    _bindSharedAppDatabase(this);
     _bindAccountScopedProviders(this);
     _wireBackgroundSyncQueueWorker(this);
     _configureJournalSaveInterceptors(this);
@@ -1424,6 +1457,7 @@ class AppServices {
     AccountNamespace? namespace,
     bool grantRemoteProcessingConsentByDefault = true,
   }) async {
+    await _closeSharedAppDatabase(_instance);
     await shutdownForTest();
     _initialized = false;
     _optionalServicesInitialized = false;
@@ -1486,11 +1520,13 @@ class AppServices {
     s.secureSqliteLock.bindDatabaseCloser(() async {
       await s.sqliteDatabase.close();
     });
-    final sqlitePassphrase = await s.secureSqliteLock.bootstrapUnlockedSession();
+    final sqlitePassphrase = await s.secureSqliteLock
+        .bootstrapUnlockedSession();
     s.sqliteDatabase = await AppSqliteDatabase.open(
       filePath: sqlitePath,
       password: sqlitePassphrase,
     );
+    _bindSharedAppDatabase(s);
     if (grantRemoteProcessingConsentByDefault) {
       await RemoteProcessingConsentStore(s.prefs).grant();
     }
@@ -1656,7 +1692,8 @@ class AppServices {
         s.entitlementCache;
     appProviderContainer.read(appSqliteDatabaseHolderProvider).value =
         s.sqliteDatabase;
-    appProviderContainer.read(journalStoreHolderProvider).value = s.journalStore;
+    appProviderContainer.read(journalStoreHolderProvider).value =
+        s.journalStore;
     appProviderContainer.invalidate(archiveFeedPaginationProvider);
     bindCaptureModuleRuntime(
       CaptureModuleRuntimeConfig(
@@ -1670,9 +1707,7 @@ class AppServices {
 
   static void _bindSyncRepository(AppServices s) {
     final syncApi = HttpSyncApiClient(s.httpTransport);
-    final outboxStore = SyncOutboxStore(
-      AppDatabase.fromSqflite(s.sqliteDatabase.database),
-    );
+    final outboxStore = SyncOutboxStore(s._sharedAppDatabase);
     final coordinator = EncryptedJournalSyncCoordinator(
       syncApi: syncApi,
       journal: s.journalStore,
