@@ -2,6 +2,7 @@ import 'package:archiveme_mobile/billing/archive_loop_entitlement_ids.dart';
 import 'package:archiveme_mobile/billing/revenuecat_configuration.dart';
 import 'package:archiveme_mobile/billing/revenuecat_service.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
 
 /// Per-seat professional / coach tier billing gate.
@@ -28,7 +29,7 @@ abstract final class ProfessionalCoachEntitlementGate {
     try {
       final info = await Purchases.getCustomerInfo();
       return info.entitlements.active.containsKey(entitlementId);
-    } on Object catch (_, stackTrace) {
+    } on PlatformException catch (_, stackTrace) {
       return false;
     }
   }
