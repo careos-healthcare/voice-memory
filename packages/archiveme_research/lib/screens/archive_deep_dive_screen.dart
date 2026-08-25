@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:archiveme_mobile/config/app_config.dart';
+import 'package:archiveme_mobile/core/di/app_provider_container.dart';
+import 'package:archiveme_mobile/core/di/network_providers.dart';
 import 'package:archiveme_mobile/features/archive_deep_dive/archive_deep_dive_copy.dart';
 import 'package:archiveme_mobile/features/first25/first25_user_metrics.dart';
 import 'package:archiveme_mobile/features/archive_deep_dive/archive_deep_dive_engine.dart';
@@ -71,7 +73,9 @@ class _ArchiveDeepDiveScreenState extends State<ArchiveDeepDiveScreen> {
       final result =
           await ArchiveSynthesisService(
             store: ArchiveSynthesisStore(s.prefs),
-            api: s.api,
+            repository: appProviderContainer.read(
+              archiveSynthesisRepositoryProvider,
+            ),
             deviceIds: s.deviceIds,
           ).loadDeepDiveNarrative(
             view: widget.v1,

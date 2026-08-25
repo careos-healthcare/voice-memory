@@ -130,6 +130,7 @@ class _ArchiveExplanationScreenState extends State<ArchiveExplanationScreen> {
     ArchiveInsightKind.chapter => VoiceMemoryColors.chapterBlue,
     ArchiveInsightKind.weeklyStory => VoiceMemoryColors.discoveryGold,
     ArchiveInsightKind.surprise => VoiceMemoryColors.discoveryGold,
+    ArchiveInsightKind.breakthrough => VoiceMemoryColors.discoveryGold,
     ArchiveInsightKind.challenge => VoiceMemoryColors.discoveryGold,
   };
 

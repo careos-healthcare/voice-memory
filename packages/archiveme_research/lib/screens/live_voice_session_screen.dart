@@ -289,20 +289,20 @@ class _LiveVoiceSessionScreenState extends State<LiveVoiceSessionScreen>
       await ActivationTracker.trackTrialSaveStarted();
     }
     try {
-      final result = await _liveVoice.stopAndSave(
-        onStage: (stage) {
-          if (!mounted) return;
-          setState(() {
-            _stageLabel = switch (stage) {
-              PipelineStage.attesting => 'Connecting…',
-              PipelineStage.transcribing => 'Saving transcript…',
-              PipelineStage.analyzing => 'Finding patterns…',
-              PipelineStage.saving => 'Saving…',
-              PipelineStage.done => 'Done',
-            };
-          });
-        },
-      );
+      final stageSubscription = _liveVoice.pipelineStates.listen((state) {
+        if (!mounted) return;
+        setState(() {
+          _stageLabel = switch (state.stage) {
+            PipelineStage.attesting => 'Connecting…',
+            PipelineStage.transcribing => 'Saving transcript…',
+            PipelineStage.analyzing => 'Finding patterns…',
+            PipelineStage.saving => 'Saving…',
+            PipelineStage.done => 'Done',
+          };
+        });
+      });
+      final result = await _liveVoice.stopAndSave();
+      await stageSubscription.cancel();
       if (!mounted) return;
       context.pop(result);
     } on CapturePipelineFailure catch (_) {

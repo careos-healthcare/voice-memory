@@ -5,6 +5,8 @@ import 'package:go_router/go_router.dart';
 import 'package:archiveme_mobile/config/app_config.dart';
 import 'package:archiveme_mobile/config/archive_me_demo_state.dart';
 import 'package:archiveme_mobile/config/developer_settings_gate.dart';
+import 'package:archiveme_mobile/core/di/app_provider_container.dart';
+import 'package:archiveme_mobile/core/di/retrofit_providers.dart';
 import 'package:archiveme_mobile/features/activation/activation_dropoff_review_engine.dart';
 import 'package:archiveme_mobile/features/beta/beta_activation_loop_counts.dart';
 import 'package:archiveme_mobile/features/beta/beta_activation_loop_tracker.dart';
@@ -71,7 +73,10 @@ class _DeveloperDiagnosticsScreenState
   Future<void> _refresh() async {
     setState(() => _loading = true);
     try {
-      final h = await AppServices.instance.api.health();
+      final h = await appProviderContainer
+          .read(voiceMemoryRetrofitClientProvider)
+          .health
+          .health();
       final entries = await AppServices.instance.journalStore.loadAll();
       final betaCounts = await BetaActivationLoopTracker.readCounts();
       final testFlightInput = await TestFlightMetricsEngine.loadInput();
@@ -91,7 +96,7 @@ class _DeveloperDiagnosticsScreenState
       final confirmedRepeatFeedback = ConfirmedRepeatBetaFeedbackStore.cached;
       if (mounted) {
         setState(() {
-          _health = h['status']?.toString() ?? 'ok';
+          _health = h.status;
           _entryCount = entries.length;
           _betaLoopCounts = betaCounts;
           _confirmedRepeatBetaFeedbackSummary =
