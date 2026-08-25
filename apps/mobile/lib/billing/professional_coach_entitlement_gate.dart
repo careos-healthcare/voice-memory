@@ -28,7 +28,7 @@ abstract final class ProfessionalCoachEntitlementGate {
     try {
       final info = await Purchases.getCustomerInfo();
       return info.entitlements.active.containsKey(entitlementId);
-    } catch (_, stackTrace) {
+    } on Object catch (_, stackTrace) {
       return false;
     }
   }

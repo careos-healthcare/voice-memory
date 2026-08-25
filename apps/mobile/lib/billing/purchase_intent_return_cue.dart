@@ -88,7 +88,7 @@ class PurchaseIntentStore {
         if (plan != null && _safeValue.hasMatch(plan)) 'plan': plan,
         'completed': false,
       });
-    } catch (e, stackTrace) {
+    } on Object catch (e, stackTrace) {
       AppLogger.error('Unhandled error caught', error: e, stackTrace: stackTrace);
       // Persistence failures never surface; worst case no cue later.
     }
@@ -102,7 +102,7 @@ class PurchaseIntentStore {
     try {
       final data = await prefs.readMap(prefsKey) ?? <String, dynamic>{};
       await prefs.writeMap(prefsKey, {...data, 'completed': true});
-    } catch (e, stackTrace) {
+    } on Object catch (e, stackTrace) {
       AppLogger.error('Unhandled error caught', error: e, stackTrace: stackTrace);
       // Same as above — fail quietly.
     }
@@ -124,7 +124,7 @@ class PurchaseIntentStore {
         source: source is String && _safeValue.hasMatch(source) ? source : null,
         plan: plan is String && _safeValue.hasMatch(plan) ? plan : null,
       );
-    } catch (_, stackTrace) {
+    } on Object catch (_, stackTrace) {
       return null;
     }
   }

@@ -56,7 +56,7 @@ class RevenueCatService implements StoreBillingPort {
     if (!_configured) return null;
     try {
       return await Purchases.appUserID;
-    } catch (e, stackTrace) {
+    } on Object catch (e, stackTrace) {
       RevenueCatDiagnosticsLog.configureFinished(
         success: false,
         reason: 'app_user_id_error',
@@ -134,7 +134,7 @@ class RevenueCatService implements StoreBillingPort {
         reason: 'configure_timeout_${billingOperationTimeout.inSeconds}s',
       );
       _emit(PremiumEntitlements.free());
-    } catch (e, stackTrace) {
+    } on Object catch (e, stackTrace) {
       _configured = false;
       _diagnostics = _diagnostics.copyWith(
         revenueCatConfigured: false,
@@ -249,7 +249,7 @@ class RevenueCatService implements StoreBillingPort {
               'fetchOfferings_override_timeout_${billingOperationTimeout.inSeconds}s',
         );
         return null;
-      } catch (e, stackTrace) {
+      } on Object catch (e, stackTrace) {
         _recordOfferings(null, error: '$e');
         RevenueCatDiagnosticsLog.fetchOfferingsFinished(
           success: false,
@@ -296,7 +296,7 @@ class RevenueCatService implements StoreBillingPort {
         error: fetchError,
       );
       return offerings;
-    } catch (e, stackTrace) {
+    } on Object catch (e, stackTrace) {
       final message = '$e';
       _recordOfferings(null, error: message);
       RevenueCatDiagnosticsLog.fetchOfferingsFinished(
@@ -348,7 +348,7 @@ class RevenueCatService implements StoreBillingPort {
         Purchases.syncPurchases(),
         label: 'syncPurchases',
       );
-    } catch (e, stackTrace) {
+    } on Object catch (e, stackTrace) {
       RevenueCatDiagnosticsLog.operationFailed(
         operation: 'syncPurchases',
         error: e, stackTrace: stackTrace,
@@ -378,7 +378,7 @@ class RevenueCatService implements StoreBillingPort {
       final mapped = _mapCustomerInfo(info);
       _emit(mapped);
       return mapped;
-    } catch (e, stackTrace) {
+    } on Object catch (e, stackTrace) {
       RevenueCatDiagnosticsLog.operationFailed(
         operation: 'refreshEntitlements',
         error: e, stackTrace: stackTrace,
@@ -394,7 +394,7 @@ class RevenueCatService implements StoreBillingPort {
     try {
       final result = await Purchases.logIn(appUserId);
       _emit(_mapCustomerInfo(result.customerInfo));
-    } catch (e, stackTrace) {
+    } on Object catch (e, stackTrace) {
       RevenueCatDiagnosticsLog.operationFailed(operation: 'logIn', error: e, stackTrace: stackTrace);
     }
   }
@@ -404,7 +404,7 @@ class RevenueCatService implements StoreBillingPort {
     try {
       final info = await Purchases.logOut();
       _emit(_mapCustomerInfo(info));
-    } catch (e, stackTrace) {
+    } on Object catch (e, stackTrace) {
       RevenueCatDiagnosticsLog.operationFailed(operation: 'logOut', error: e, stackTrace: stackTrace);
     }
   }

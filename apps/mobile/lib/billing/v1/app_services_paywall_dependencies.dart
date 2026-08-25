@@ -74,7 +74,7 @@ class AppServicesPaywallDependencies implements PaywallDependencies {
         billingConnected: false,
         source: 'app_review',
       );
-    } catch (_, stackTrace) {
+    } on Object catch (_, stackTrace) {
       return entitlements;
     }
   }
