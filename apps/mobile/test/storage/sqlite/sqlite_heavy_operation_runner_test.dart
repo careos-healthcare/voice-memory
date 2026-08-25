@@ -4,20 +4,21 @@ import 'dart:io';
 import 'package:archiveme_mobile/core/constants/database_constants.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/models/reflection.dart';
+import 'package:archiveme_mobile/storage/isolate/local_database_worker_service.dart';
 import 'package:archiveme_mobile/storage/sqlite/app_sqlite_database.dart';
-import 'package:archiveme_mobile/storage/sqlite/journal_sqlite_bulk_sync.dart';
 import 'package:archiveme_mobile/storage/sqlite/migrations/migration_011_reflection_graph_fts.dart';
 import 'package:archiveme_mobile/storage/sqlite/sqlite_database_initializer.dart';
+import 'package:archiveme_mobile/storage/sqlite/sqlite_heavy_operation_runner.dart';
 import 'package:archiveme_mobile/storage/sqlite/sqlite_migration_manager.dart';
 import 'package:archiveme_mobile/storage/sqlite/sqlite_migration_registry.dart';
-import 'package:archiveme_mobile/storage/sqlite/sqlite_heavy_operation_runner.dart';
-import '../../storage/sqlite/support/sqlite_test_database.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as p;
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
+import 'support/sqlite_test_database.dart';
+
 JournalEntry _entry(String id, {String transcript = 'hello'}) {
-  final now = DateTime.utc(2026, 1, 1);
+  final now = DateTime.utc(2026);
   return JournalEntry(
     id: id,
     createdAt: now,
@@ -63,7 +64,9 @@ void main() {
       );
 
       final db = await openTestAppSqliteDatabase(filePath: filePath);
-      final rows = await db.database.query(JournalSqliteBulkSync.table);
+      final rows = await db.database.query(
+        DatabaseConstants.journalEntriesTable,
+      );
       expect(rows.length, entries.length);
     });
 
@@ -92,7 +95,7 @@ void main() {
             .toList(),
       ).run(schemaDb);
 
-      final now = DateTime.utc(2026, 1, 1).millisecondsSinceEpoch;
+      final now = DateTime.utc(2026).millisecondsSinceEpoch;
       await schemaDb.insert(DatabaseConstants.journalEntriesTable, {
         'id': 'graph-entry',
         'created_at': now,
