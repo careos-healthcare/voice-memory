@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:isolate';
 
+import 'package:archiveme_mobile/core/constants/database_constants.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/models/reflection.dart';
 import 'package:archiveme_mobile/security/sqlite/sqlite_encryption_key_store.dart';
@@ -10,13 +11,11 @@ import 'package:archiveme_mobile/storage/sqlite/sqlite_database_encryption_key.d
 import 'package:archiveme_mobile/storage/sqlite/sqlite_database_initializer.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as p;
-import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 void main() {
   setUpAll(() {
     IsolateSafeSqliteDatabaseInitializer.ensureWorkerRuntime(
       initializeTestFfi: true,
-      rootIsolateToken: null,
     );
   });
 
@@ -91,7 +90,7 @@ void main() {
       );
       addTearDown(verifyDb.close);
 
-      final rows = await verifyDb.query(JournalSqliteBulkSync.table);
+      final rows = await verifyDb.query(DatabaseConstants.journalEntriesTable);
       expect(rows, hasLength(1));
       expect(rows.single['id'], 'worker-probe');
     });
@@ -114,7 +113,6 @@ Future<void> _workerOpenProbe(_WorkerOpenProbeArgs args) async {
   try {
     IsolateSafeSqliteDatabaseInitializer.ensureWorkerRuntime(
       initializeTestFfi: true,
-      rootIsolateToken: null,
     );
 
     final db = await IsolateSafeSqliteDatabaseInitializer.openWorkerConnection(
@@ -126,7 +124,7 @@ Future<void> _workerOpenProbe(_WorkerOpenProbeArgs args) async {
       [
         JournalEntry(
           id: 'worker-probe',
-          createdAt: DateTime.utc(2026, 1, 1),
+          createdAt: DateTime.utc(2026),
           transcript: 'probe',
           durationSeconds: 1,
           reflection: const Reflection(
