@@ -9,8 +9,10 @@ import 'package:archiveme_mobile/features/activation/context_insights.dart';
 import 'package:archiveme_mobile/features/activation/archive_health_action_plan.dart';
 import 'package:archiveme_mobile/features/activation/archive_health_score.dart';
 import 'package:archiveme_mobile/features/activation/belief_evidence_trail.dart';
-import 'package:archiveme_mobile/features/activation/next_moment_prompt.dart';
+import 'package:archiveme_mobile/features/activation/next_moment_prompt.dart'
+    show NextMomentPromptEngine;
 import 'package:archiveme_mobile/features/activation/weekly_archive_review.dart';
+import 'package:archiveme_ui/models/next_moment_prompt.dart';
 import 'package:archiveme_mobile/features/review_ritual/view_ritual_copy.dart';
 import 'package:archiveme_mobile/features/milestone_share/milestone_share_copy.dart';
 import 'package:archiveme_mobile/features/pressure_retention/shareable_archive_proof_engine.dart';
@@ -24,8 +26,8 @@ import 'package:archiveme_mobile/widgets/archive/context_insights_card.dart';
 import 'package:archiveme_mobile/widgets/archive/archive_health_action_plan_card.dart';
 import 'package:archiveme_mobile/widgets/archive/archive_health_card.dart';
 import 'package:archiveme_mobile/widgets/archive/weekly_archive_review_card.dart';
-import 'package:archiveme_mobile/widgets/record/next_moment_prompt_card.dart';
-import 'package:archiveme_mobile/widgets/billing/paywall_gate.dart';
+import 'package:archiveme_ui/widgets/record/next_moment_prompt_card.dart';
+import 'package:archiveme_ui/widgets/billing/paywall_gate.dart';
 import 'package:archiveme_mobile/widgets/consumer/consumer_screen_back_header.dart';
 import 'package:archiveme_mobile/widgets/pressure_retention/shareable_archive_proof_card.dart';
 
