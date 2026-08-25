@@ -35,7 +35,7 @@ extension RecordCaptureStateSection on _RecordScreenState {
             label: 'Recording status',
             child: Text(
               ctx.stageLabel.isEmpty
-                  ? _statusTextFor(ctx.ui, ctx.localSaveTitle!)
+                  ? _statusTextFor(ctx.ui, ctx.localSaveTitle)
                   : ctx.stageLabel,
               style: Theme.of(context).textTheme.titleMedium,
             ),
@@ -329,7 +329,7 @@ extension RecordCaptureStateSection on _RecordScreenState {
           ],
         ],
         ..._buildRecordPostSaveCards(context, ctx),
-        if (ctx.error! != null) ...[
+        if (ctx.error!= null) ...[
           const SizedBox(height: 12),
           Text(
             ctx.error!,
@@ -355,7 +355,7 @@ extension RecordCaptureStateSection on _RecordScreenState {
         const SizedBox(height: 16),
       ],
       if (ctx.showWhatChangedV2Display &&
-          ctx.whatChangedV2Display! != null) ...[
+          ctx.whatChangedV2Display!= null) ...[
         WhatChangedV2Card(
           key: ValueKey(ctx.whatChangedV2Display!.entryId),
           prompt: ctx.whatChangedV2Display!,
@@ -369,7 +369,7 @@ extension RecordCaptureStateSection on _RecordScreenState {
         ),
         const SizedBox(height: 16),
       ],
-      if (ctx.showHelpedTracking && ctx.helpedTrackingPrompt! != null) ...[
+      if (ctx.showHelpedTracking && ctx.helpedTrackingPrompt!= null) ...[
         HelpedTrackingCard(
           key: ValueKey(ctx.helpedTrackingPrompt!.entryId),
           prompt: ctx.helpedTrackingPrompt!,
@@ -381,7 +381,7 @@ extension RecordCaptureStateSection on _RecordScreenState {
         const SizedBox(height: 16),
       ],
       if (ctx.showReturnCheckPayoff &&
-          ctx.returnCheckPayoffCandidate! != null) ...[
+          ctx.returnCheckPayoffCandidate!= null) ...[
         ReturnCheckPayoffCard(
           payoff: ctx.returnCheckPayoffCandidate!,
           entryCount: ctx.postSaveEntryCount,
@@ -389,7 +389,7 @@ extension RecordCaptureStateSection on _RecordScreenState {
         const SizedBox(height: 16),
       ],
       if (ctx.showFirstWeekProgressPostSave &&
-          ctx.firstWeekProgressPostSave! != null) ...[
+          ctx.firstWeekProgressPostSave!= null) ...[
         FirstWeekProgressLine(
           progress: ctx.firstWeekProgressPostSave!,
           entryCount: ctx.postSaveEntryCount,
@@ -414,7 +414,7 @@ extension RecordCaptureStateSection on _RecordScreenState {
       if (ctx.showComeBackTomorrowV2PostSave &&
           !ctx.suppressNoisyRepeatPostSaveCards &&
           !ctx.suppressDegradedTranscriptPostSaveCompetitors &&
-          ctx.comeBackTomorrowV2PostSaveWatch! != null) ...[
+          ctx.comeBackTomorrowV2PostSaveWatch!= null) ...[
         ComeBackTomorrowCard(
           watch: ctx.comeBackTomorrowV2PostSaveWatch!,
           entryCount: ctx.postSaveEntryCount,
@@ -424,7 +424,7 @@ extension RecordCaptureStateSection on _RecordScreenState {
       if (ctx.showReturnTomorrowCuePostSave &&
           !ctx.suppressNoisyRepeatPostSaveCards &&
           !ctx.suppressDegradedTranscriptPostSaveCompetitors &&
-          ctx.returnTomorrowCuePostSave! != null) ...[
+          ctx.returnTomorrowCuePostSave!= null) ...[
         ReturnTomorrowCueCard(
           cue: ctx.returnTomorrowCuePostSave!,
           entryCount: ctx.postSaveEntryCount,
@@ -435,7 +435,7 @@ extension RecordCaptureStateSection on _RecordScreenState {
       if (ctx.showPostSaveReturnHandoff &&
           !ctx.suppressNoisyRepeatPostSaveCards &&
           !ctx.suppressDegradedTranscriptPostSaveCompetitors &&
-          ctx.postSaveReturnHandoffCandidate! != null) ...[
+          ctx.postSaveReturnHandoffCandidate!= null) ...[
         PostSaveReturnHandoffCard(
           handoff: ctx.postSaveReturnHandoffCandidate!,
           entryCount: ctx.postSaveEntryCount,
