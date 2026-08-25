@@ -216,7 +216,7 @@ class EncryptedJsonFileStore {
       return const EncryptedJsonWriteSuccess();
     } on FileSystemException catch (e, stackTrace) {
       return EncryptedJsonWriteDiskFailure(e.message);
-    } catch (e, stackTrace) {
+    } on Object catch (e, stackTrace) {
       return EncryptedJsonWriteDiskFailure('$e');
     } finally {
       if (tempFile != null && await tempFile.exists()) {
@@ -268,7 +268,7 @@ class EncryptedJsonFileStore {
       return const _DecryptAuthFail();
     } on FormatException {
       return const _DecryptCorrupt();
-    } catch (_, stackTrace) {
+    } on Object catch (_, stackTrace) {
       return const _DecryptCorrupt();
     }
   }
