@@ -11,6 +11,7 @@ import 'package:archiveme_mobile/billing/store_billing_port.dart';
 import 'package:archiveme_mobile/config/app_config.dart';
 import 'package:archiveme_mobile/models/entitlement.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -56,7 +57,7 @@ class RevenueCatService implements StoreBillingPort {
     if (!_configured) return null;
     try {
       return await Purchases.appUserID;
-    } on Object catch (e, stackTrace) {
+    } on PlatformException catch (e, stackTrace) {
       RevenueCatDiagnosticsLog.configureFinished(
         success: false,
         reason: 'app_user_id_error',
@@ -134,7 +135,7 @@ class RevenueCatService implements StoreBillingPort {
         reason: 'configure_timeout_${billingOperationTimeout.inSeconds}s',
       );
       _emit(PremiumEntitlements.free());
-    } on Object catch (e, stackTrace) {
+    } on PlatformException catch (e, stackTrace) {
       _configured = false;
       _diagnostics = _diagnostics.copyWith(
         revenueCatConfigured: false,
@@ -249,7 +250,7 @@ class RevenueCatService implements StoreBillingPort {
               'fetchOfferings_override_timeout_${billingOperationTimeout.inSeconds}s',
         );
         return null;
-      } on Object catch (e, stackTrace) {
+      } on PlatformException catch (e, stackTrace) {
         _recordOfferings(null, error: '$e');
         RevenueCatDiagnosticsLog.fetchOfferingsFinished(
           success: false,
@@ -296,7 +297,7 @@ class RevenueCatService implements StoreBillingPort {
         error: fetchError,
       );
       return offerings;
-    } on Object catch (e, stackTrace) {
+    } on PlatformException catch (e, stackTrace) {
       final message = '$e';
       _recordOfferings(null, error: message);
       RevenueCatDiagnosticsLog.fetchOfferingsFinished(
@@ -348,7 +349,7 @@ class RevenueCatService implements StoreBillingPort {
         Purchases.syncPurchases(),
         label: 'syncPurchases',
       );
-    } on Object catch (e, stackTrace) {
+    } on BillingOperationException catch (e, stackTrace) {
       RevenueCatDiagnosticsLog.operationFailed(
         operation: 'syncPurchases',
         error: e, stackTrace: stackTrace,
@@ -378,7 +379,7 @@ class RevenueCatService implements StoreBillingPort {
       final mapped = _mapCustomerInfo(info);
       _emit(mapped);
       return mapped;
-    } on Object catch (e, stackTrace) {
+    } on PlatformException catch (e, stackTrace) {
       RevenueCatDiagnosticsLog.operationFailed(
         operation: 'refreshEntitlements',
         error: e, stackTrace: stackTrace,
@@ -394,7 +395,7 @@ class RevenueCatService implements StoreBillingPort {
     try {
       final result = await Purchases.logIn(appUserId);
       _emit(_mapCustomerInfo(result.customerInfo));
-    } on Object catch (e, stackTrace) {
+    } on PlatformException catch (e, stackTrace) {
       RevenueCatDiagnosticsLog.operationFailed(operation: 'logIn', error: e, stackTrace: stackTrace);
     }
   }
@@ -404,7 +405,7 @@ class RevenueCatService implements StoreBillingPort {
     try {
       final info = await Purchases.logOut();
       _emit(_mapCustomerInfo(info));
-    } on Object catch (e, stackTrace) {
+    } on PlatformException catch (e, stackTrace) {
       RevenueCatDiagnosticsLog.operationFailed(operation: 'logOut', error: e, stackTrace: stackTrace);
     }
   }
