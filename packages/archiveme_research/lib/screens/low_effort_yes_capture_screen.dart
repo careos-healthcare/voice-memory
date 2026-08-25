@@ -239,38 +239,60 @@ class _LowEffortYesCaptureScreenState extends State<LowEffortYesCaptureScreen> {
               style: ArchiveMobileTypography.cardLabel(context),
             ),
             const SizedBox(height: AppSpacing.xs),
-            for (final id in result.pullReasonIds)
-              RadioListTile<String>(
-                key: Key('low_effort_yes_capture_pull_$id'),
-                title: Text(LowEffortYesCaptureCopy.labelForPullReason(id)),
-                value: id,
-                groupValue: _selectedPullReasonId,
-                onChanged: _saving
-                    ? null
-                    : (value) => setState(() => _selectedPullReasonId = value),
-                contentPadding: EdgeInsets.zero,
-                dense: true,
-                visualDensity: VisualDensity.compact,
+            RadioGroup<String>(
+              groupValue: _selectedPullReasonId,
+              onChanged: (value) {
+                if (_saving) return;
+                setState(() => _selectedPullReasonId = value);
+              },
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  for (final id in result.pullReasonIds)
+                    RadioListTile<String>(
+                      key: Key('low_effort_yes_capture_pull_$id'),
+                      title: Text(
+                        LowEffortYesCaptureCopy.labelForPullReason(id),
+                      ),
+                      value: id,
+                      enabled: !_saving,
+                      contentPadding: EdgeInsets.zero,
+                      dense: true,
+                      visualDensity: VisualDensity.compact,
+                    ),
+                ],
               ),
+            ),
             const SizedBox(height: AppSpacing.md),
             Text(
               result.decisionSectionTitle,
               style: ArchiveMobileTypography.cardLabel(context),
             ),
             const SizedBox(height: AppSpacing.xs),
-            for (final id in result.decisionOutcomeIds)
-              RadioListTile<String>(
-                key: Key('low_effort_yes_capture_outcome_$id'),
-                title: Text(LowEffortYesCaptureCopy.labelForOutcome(id)),
-                value: id,
-                groupValue: _selectedOutcomeId,
-                onChanged: _saving
-                    ? null
-                    : (value) => setState(() => _selectedOutcomeId = value),
-                contentPadding: EdgeInsets.zero,
-                dense: true,
-                visualDensity: VisualDensity.compact,
+            RadioGroup<String>(
+              groupValue: _selectedOutcomeId,
+              onChanged: (value) {
+                if (_saving) return;
+                setState(() => _selectedOutcomeId = value);
+              },
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  for (final id in result.decisionOutcomeIds)
+                    RadioListTile<String>(
+                      key: Key('low_effort_yes_capture_outcome_$id'),
+                      title: Text(LowEffortYesCaptureCopy.labelForOutcome(id)),
+                      value: id,
+                      enabled: !_saving,
+                      contentPadding: EdgeInsets.zero,
+                      dense: true,
+                      visualDensity: VisualDensity.compact,
+                    ),
+                ],
               ),
+            ),
             const SizedBox(height: AppSpacing.lg),
             FilledButton(
               key: const Key('low_effort_yes_capture_save_button'),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:archiveme_mobile/design/archive_mobile_typography.dart';
@@ -335,7 +336,7 @@ class _JournalScreenState extends State<JournalScreen> {
     return ListenableBuilder(
       listenable: _selection,
       builder: (context, _) => ListView(
-        cacheExtent: 2000,
+        scrollCacheExtent: const ScrollCacheExtent.pixels(2000),
         controller: _listScroll,
         padding: const EdgeInsets.all(AppSpacing.md),
         children: [
