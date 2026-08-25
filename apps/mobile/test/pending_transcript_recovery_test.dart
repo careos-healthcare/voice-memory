@@ -5,6 +5,7 @@ import 'package:archiveme_mobile/features/archive_evidence/archive_evidence_qual
 import 'package:archiveme_mobile/features/early_archive/early_first_signal_engine.dart';
 import 'package:archiveme_mobile/features/early_archive/early_repeat_progress_model.dart';
 import 'package:archiveme_mobile/features/early_archive/early_saved_moments_engine.dart';
+import 'package:archiveme_mobile/features/recording/recording_screen.dart';
 import 'package:archiveme_mobile/features/trust/pending_transcript_recovery_analytics.dart';
 import 'package:archiveme_mobile/features/trust/pending_transcript_recovery_copy.dart';
 import 'package:archiveme_mobile/features/trust/pending_transcript_recovery_gate.dart';
@@ -12,9 +13,9 @@ import 'package:archiveme_mobile/features/voice_capture/record_cta_policy.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/models/reflection.dart';
 import 'package:archiveme_mobile/models/sync_status.dart';
-import 'package:archiveme_mobile/screens/record_screen.dart';
 import 'package:archiveme_mobile/services/activation_funnel_analytics.dart';
 import 'package:archiveme_mobile/services/app_services.dart';
+import 'package:archiveme_mobile/services/capture_pipeline/capture_pipeline_models.dart';
 import 'package:archiveme_mobile/services/capture_save_messages.dart';
 import 'package:archiveme_mobile/theme/app_theme.dart';
 import 'package:archiveme_mobile/widgets/patterns/patterns_evidence_quality_fallback_view.dart';
@@ -90,11 +91,12 @@ void main() {
     test('clears after typed correction', () async {
       final degraded = _degradedVoiceEntry();
       await AppServices.instance.journalStore.save(degraded);
-      final result = await AppServices.instance.pipeline
-          .attachTypedTextToVoiceEntry(
-            entry: degraded,
-            transcript: _typedCorrection,
-          );
+      final result = (await AppServices.instance.pipeline
+              .attachTypedTextToVoiceEntry(
+                entry: degraded,
+                transcript: _typedCorrection,
+              ))
+          .getOrThrow();
       expect(
         PendingTranscriptRecoveryGate.entryNeedsRecovery(result.entry),
         isFalse,
@@ -188,11 +190,12 @@ void main() {
       final degraded = _degradedVoiceEntry();
       await AppServices.instance.journalStore.save(degraded);
 
-      final result = await AppServices.instance.pipeline
-          .attachTypedTextToVoiceEntry(
-            entry: degraded,
-            transcript: _typedCorrection,
-          );
+      final result = (await AppServices.instance.pipeline
+              .attachTypedTextToVoiceEntry(
+                entry: degraded,
+                transcript: _typedCorrection,
+              ))
+          .getOrThrow();
 
       expect(result.entry.id, 'v1');
       expect(result.entry.transcript, _typedCorrection);
@@ -206,11 +209,12 @@ void main() {
         final degraded = _degradedVoiceEntry();
         await AppServices.instance.journalStore.save(degraded);
 
-        final result = await AppServices.instance.pipeline
-            .attachTypedTextToVoiceEntry(
-              entry: degraded,
-              transcript: _typedCorrection,
-            );
+        final result = (await AppServices.instance.pipeline
+                .attachTypedTextToVoiceEntry(
+                  entry: degraded,
+                  transcript: _typedCorrection,
+                ))
+            .getOrThrow();
 
         final verdict = ArchiveEvidenceQuality.assess(result.entry);
         expect(verdict.allowsInsights, isTrue);
@@ -255,11 +259,12 @@ void main() {
       () async {
         final degraded = _degradedVoiceEntry();
         await AppServices.instance.journalStore.save(degraded);
-        final result = await AppServices.instance.pipeline
-            .attachTypedTextToVoiceEntry(
-              entry: degraded,
-              transcript: _typedCorrection,
-            );
+        final result = (await AppServices.instance.pipeline
+                .attachTypedTextToVoiceEntry(
+                  entry: degraded,
+                  transcript: _typedCorrection,
+                ))
+            .getOrThrow();
 
         final signal = EarlyFirstSignalEngine.build(entries: [result.entry]);
         expect(signal, isNotNull);
