@@ -1,14 +1,15 @@
 import 'package:archiveme_mobile/design/empty_archive_experience.dart';
 import 'package:archiveme_mobile/features/archive_evidence/archive_evidence.dart';
 import 'package:archiveme_mobile/features/onboarding/record_return_pro_state.dart';
+import 'package:archiveme_mobile/features/recording/recording_screen.dart';
 import 'package:archiveme_mobile/features/trust/pending_transcript_recovery_copy.dart';
 import 'package:archiveme_mobile/features/voice_capture/record_cta_policy.dart';
 import 'package:archiveme_mobile/features/voice_capture/voice_capture_copy.dart';
 import 'package:archiveme_mobile/features/voice_capture/voice_capture_quality.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/models/reflection.dart';
-import 'package:archiveme_mobile/screens/record_screen.dart';
 import 'package:archiveme_mobile/services/app_services.dart';
+import 'package:archiveme_mobile/services/capture_pipeline/capture_pipeline_models.dart';
 import 'package:archiveme_mobile/services/capture_save_messages.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -97,11 +98,12 @@ void main() {
         final degraded = _degradedVoiceEntry();
         await AppServices.instance.journalStore.save(degraded);
 
-        final result = await AppServices.instance.pipeline
-            .attachTypedTextToVoiceEntry(
-              entry: degraded,
-              transcript: 'I said yes when I had no capacity left.',
-            );
+        final result = (await AppServices.instance.pipeline
+                .attachTypedTextToVoiceEntry(
+                  entry: degraded,
+                  transcript: 'I said yes when I had no capacity left.',
+                ))
+            .getOrThrow();
 
         expect(
           VoiceCaptureQuality.isDegradedVoiceCapture(result.entry),
