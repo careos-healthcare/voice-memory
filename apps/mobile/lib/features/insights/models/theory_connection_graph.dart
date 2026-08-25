@@ -190,13 +190,13 @@ class TheoryConnectionGraphBuilder {
     }
 
     final canvasHeight = math.max(
-      320.0,
+      320,
       verticalPadding * 2 +
           math.max(memoryNodes.length, 1) * 72 +
           math.max(counterNodes.length, 1) * 72,
     );
     const canvasWidth = 560.0;
-    final canvasSize = Size(canvasWidth, canvasHeight);
+    final canvasSize = Size(canvasWidth, canvasHeight.toDouble());
     final themeCenter = Offset(horizontalPadding + 72, canvasHeight / 2);
 
     final positioned = <InsightGraphNode>[
