@@ -14,29 +14,28 @@ import 'package:archiveme_mobile/features/early_archive/early_first_signal_copy.
 import 'package:archiveme_mobile/features/early_archive/early_repeat_progress_copy.dart';
 import 'package:archiveme_mobile/features/early_archive/post_save_return_handoff_copy.dart';
 import 'package:archiveme_mobile/features/early_archive/private_archive_report_copy.dart';
-import 'package:archiveme_mobile/features/early_archive/return_check_payoff_copy.dart';
 import 'package:archiveme_mobile/features/early_archive/weekly_archive_review_copy.dart';
 import 'package:archiveme_mobile/features/first_proof_payoff/first_proof_payoff_copy.dart';
 import 'package:archiveme_mobile/features/first_save_lift/first_save_lift_copy.dart';
+import 'package:archiveme_mobile/features/journal/infrastructure/journal_save_interceptor_pipeline.dart';
 import 'package:archiveme_mobile/features/landing_continuity/landing_app_continuity_copy.dart';
 import 'package:archiveme_mobile/features/low_evidence/low_evidence_copy.dart';
 import 'package:archiveme_mobile/features/low_friction_return/low_friction_return_engine.dart';
 import 'package:archiveme_mobile/features/next_action/next_best_action_copy.dart';
 import 'package:archiveme_mobile/features/onboarding/first_session_onboarding_store.dart';
 import 'package:archiveme_mobile/features/onboarding/record_return_pro_state.dart';
-import 'package:archiveme_mobile/features/post_save/post_save_focused_actions_copy.dart';
 import 'package:archiveme_mobile/features/post_save/moment_save_receipt_copy.dart';
+import 'package:archiveme_mobile/features/post_save/post_save_focused_actions_copy.dart';
 import 'package:archiveme_mobile/features/post_save/post_save_recorded_summary_copy.dart';
 import 'package:archiveme_mobile/features/pressure_retention/archive_proof_counter_model.dart';
 import 'package:archiveme_mobile/features/pressure_retention/daily_return_suggestion_model.dart';
 import 'package:archiveme_mobile/features/pressure_retention/one_small_recording_model.dart';
 import 'package:archiveme_mobile/features/pressure_retention/personal_return_prompt_model.dart';
 import 'package:archiveme_mobile/features/pressure_retention/pressure_check_in_record.dart';
-import 'package:archiveme_mobile/features/proof_confidence_calibration/proof_confidence_calibration_copy.dart';
 import 'package:archiveme_mobile/features/record/daily_mirror_copy.dart';
+import 'package:archiveme_mobile/features/recording/recording_screen.dart';
 import 'package:archiveme_mobile/features/retention/return_tomorrow_cue_copy.dart';
 import 'package:archiveme_mobile/features/return_changes/archive_return_changes_copy.dart';
-import 'package:archiveme_mobile/features/trust/pending_transcript_recovery_copy.dart';
 import 'package:archiveme_mobile/features/voice_capture/microphone_permission_copy.dart';
 import 'package:archiveme_mobile/features/voice_capture/microphone_permission_state.dart';
 import 'package:archiveme_mobile/features/voice_capture/record_cta_policy.dart';
@@ -49,12 +48,12 @@ import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/models/reflection.dart';
 import 'package:archiveme_mobile/product/consumer_ui_copy.dart';
 import 'package:archiveme_mobile/record/record_screen_framing_copy.dart';
-import 'package:archiveme_mobile/screens/record_screen.dart';
 import 'package:archiveme_mobile/services/app_services.dart';
 import 'package:archiveme_mobile/theme/app_theme.dart';
 import 'package:archiveme_mobile/widgets/capture_entry_actions.dart';
 import 'package:archiveme_mobile/widgets/record/first_run_positioning_card.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'helpers/app_provider_scope.dart';
@@ -63,7 +62,6 @@ import 'support/app_services_test_lifecycle.dart';
 import 'support/memory_pressure_stores.dart';
 import 'support/test_storage_sandbox.dart';
 import 'support/v1_moment_save_receipt_expectations.dart';
-
 
 Widget _wrapRecordScreenTest({required Widget screen}) {
   return withAppProviderScope(
@@ -204,7 +202,50 @@ void _expectNoBannedFirstImpressionCopy(WidgetTester tester) {
 }
 
 void main() {
-  setUpAll(installMockAudioplayers);
+  setUpAll(() {
+    TestWidgetsFlutterBinding.ensureInitialized();
+    // `AppServices.resetForTest` starts `ConnectivityAwareNetworkSource`,
+    // which throws `MissingPluginException` without this stub.
+    const channel = MethodChannel('dev.fluttercommunity.plus/connectivity');
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, (call) async {
+          if (call.method == 'check') return ['wifi'];
+          return null;
+        });
+    // Saving an entry schedules an automated-graph flush that reads secure
+    // storage on a later turn of the event loop. Stub the channel so embedding
+    // workers do not throw MissingPluginException after the widget tree pumps.
+    const secureStorage = MethodChannel(
+      'plugins.it_nomads.com/flutter_secure_storage',
+    );
+    final secureValues = <String, String>{};
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(secureStorage, (call) async {
+          final args = call.arguments as Map<Object?, Object?>? ?? const {};
+          final key = args['key'] as String?;
+          switch (call.method) {
+            case 'read':
+              return key == null ? null : secureValues[key];
+            case 'write':
+              if (key != null)
+                secureValues[key] = args['value'] as String? ?? '';
+              return null;
+            case 'containsKey':
+              return key != null && secureValues.containsKey(key);
+            case 'readAll':
+              return Map<String, String>.of(secureValues);
+            case 'delete':
+              secureValues.remove(key);
+              return null;
+            case 'deleteAll':
+              secureValues.clear();
+              return null;
+            default:
+              return null;
+          }
+        });
+    installMockAudioplayers();
+  });
   tearDownAll(uninstallMockAudioplayers);
 
   group('RecordScreenFramingCopy', () {
@@ -301,6 +342,9 @@ void main() {
         journalPath: sandbox.journalPath,
         skipRevenueCat: true,
       );
+      AppServices.instance.journalStore.configureSaveInterceptorPipeline(
+        JournalSaveInterceptorPipeline.empty(),
+      );
       await LowFrictionReturnStore.instance().dismissForDay();
       await FirstSessionOnboardingStore.resetForTest();
       VisualAuditOverrides.setRecordPresentation(
@@ -341,9 +385,9 @@ void main() {
       await tester.pumpWidget(
         _wrapRecordScreenTest(
           screen: RecordScreen(
-              pressureCheckInStore: store,
-              suggestionAttributionStore: MemorySuggestionAttributionStore(),
-              entitlementReader: FakeArchiveEntitlementReader(pro: false),
+            pressureCheckInStore: store,
+            suggestionAttributionStore: MemorySuggestionAttributionStore(),
+            entitlementReader: FakeArchiveEntitlementReader(pro: false),
           ),
         ),
       );
@@ -484,8 +528,8 @@ void main() {
         await tester.pumpWidget(
           _wrapRecordScreenTest(
             screen: RecordScreen(
-                suggestionAttributionStore: MemorySuggestionAttributionStore(),
-                entitlementReader: FakeArchiveEntitlementReader(pro: false),
+              suggestionAttributionStore: MemorySuggestionAttributionStore(),
+              entitlementReader: FakeArchiveEntitlementReader(pro: false),
             ),
           ),
         );
@@ -801,6 +845,9 @@ void main() {
         journalPath: sandbox.journalPath,
         skipRevenueCat: true,
       );
+      AppServices.instance.journalStore.configureSaveInterceptorPipeline(
+        JournalSaveInterceptorPipeline.empty(),
+      );
       await LowFrictionReturnStore.instance().dismissForDay();
       await FirstSessionOnboardingStore.resetForTest();
       VisualAuditOverrides.setRecordPresentation(
@@ -865,9 +912,9 @@ void main() {
       await tester.pumpWidget(
         _wrapRecordScreenTest(
           screen: RecordScreen(
-              pressureCheckInStore: store,
-              suggestionAttributionStore: MemorySuggestionAttributionStore(),
-              entitlementReader: FakeArchiveEntitlementReader(pro: false),
+            pressureCheckInStore: store,
+            suggestionAttributionStore: MemorySuggestionAttributionStore(),
+            entitlementReader: FakeArchiveEntitlementReader(pro: false),
           ),
         ),
       );
@@ -1125,8 +1172,8 @@ void main() {
       await tester.pumpWidget(
         _wrapRecordScreenTest(
           screen: RecordScreen(
-              suggestionAttributionStore: MemorySuggestionAttributionStore(),
-              entitlementReader: FakeArchiveEntitlementReader(pro: false),
+            suggestionAttributionStore: MemorySuggestionAttributionStore(),
+            entitlementReader: FakeArchiveEntitlementReader(pro: false),
           ),
         ),
       );
@@ -1167,8 +1214,8 @@ void main() {
       await tester.pumpWidget(
         _wrapRecordScreenTest(
           screen: RecordScreen(
-              suggestionAttributionStore: MemorySuggestionAttributionStore(),
-              entitlementReader: FakeArchiveEntitlementReader(pro: false),
+            suggestionAttributionStore: MemorySuggestionAttributionStore(),
+            entitlementReader: FakeArchiveEntitlementReader(pro: false),
           ),
         ),
       );
@@ -1246,8 +1293,8 @@ void main() {
       await tester.pumpWidget(
         _wrapRecordScreenTest(
           screen: RecordScreen(
-              suggestionAttributionStore: MemorySuggestionAttributionStore(),
-              entitlementReader: FakeArchiveEntitlementReader(pro: false),
+            suggestionAttributionStore: MemorySuggestionAttributionStore(),
+            entitlementReader: FakeArchiveEntitlementReader(pro: false),
           ),
         ),
       );
@@ -1303,8 +1350,8 @@ void main() {
       await tester.pumpWidget(
         _wrapRecordScreenTest(
           screen: RecordScreen(
-              suggestionAttributionStore: MemorySuggestionAttributionStore(),
-              entitlementReader: FakeArchiveEntitlementReader(pro: false),
+            suggestionAttributionStore: MemorySuggestionAttributionStore(),
+            entitlementReader: FakeArchiveEntitlementReader(pro: false),
           ),
         ),
       );
@@ -1340,8 +1387,8 @@ void main() {
       await tester.pumpWidget(
         _wrapRecordScreenTest(
           screen: RecordScreen(
-              suggestionAttributionStore: MemorySuggestionAttributionStore(),
-              entitlementReader: FakeArchiveEntitlementReader(pro: false),
+            suggestionAttributionStore: MemorySuggestionAttributionStore(),
+            entitlementReader: FakeArchiveEntitlementReader(pro: false),
           ),
         ),
       );
@@ -1412,8 +1459,8 @@ void main() {
         await tester.pumpWidget(
           _wrapRecordScreenTest(
             screen: RecordScreen(
-                suggestionAttributionStore: MemorySuggestionAttributionStore(),
-                entitlementReader: FakeArchiveEntitlementReader(pro: false),
+              suggestionAttributionStore: MemorySuggestionAttributionStore(),
+              entitlementReader: FakeArchiveEntitlementReader(pro: false),
             ),
           ),
         );
@@ -1451,8 +1498,8 @@ void main() {
       await tester.pumpWidget(
         _wrapRecordScreenTest(
           screen: RecordScreen(
-              suggestionAttributionStore: MemorySuggestionAttributionStore(),
-              entitlementReader: FakeArchiveEntitlementReader(pro: false),
+            suggestionAttributionStore: MemorySuggestionAttributionStore(),
+            entitlementReader: FakeArchiveEntitlementReader(pro: false),
           ),
         ),
       );
@@ -1521,8 +1568,8 @@ void main() {
       await tester.pumpWidget(
         _wrapRecordScreenTest(
           screen: RecordScreen(
-              suggestionAttributionStore: MemorySuggestionAttributionStore(),
-              entitlementReader: FakeArchiveEntitlementReader(pro: false),
+            suggestionAttributionStore: MemorySuggestionAttributionStore(),
+            entitlementReader: FakeArchiveEntitlementReader(pro: false),
           ),
         ),
       );
@@ -1891,8 +1938,8 @@ void main() {
         await tester.pumpWidget(
           _wrapRecordScreenTest(
             screen: RecordScreen(
-                suggestionAttributionStore: MemorySuggestionAttributionStore(),
-                entitlementReader: FakeArchiveEntitlementReader(pro: false),
+              suggestionAttributionStore: MemorySuggestionAttributionStore(),
+              entitlementReader: FakeArchiveEntitlementReader(pro: false),
             ),
           ),
         );
@@ -1937,31 +1984,35 @@ void main() {
     testWidgets(
       'three confirmed-repeat ready state stays capture-first without watch card',
       (tester) async {
-      await tester.runAsync(
-        () => LowFrictionReturnStore.resetForTest(AppServices.instance.prefs),
-      );
-      await seedConfirmedRepeatEntries(tester, 3);
-      await tester.binding.setSurfaceSize(const Size(390, 2800));
-      addTearDown(() => tester.binding.setSurfaceSize(null));
-      await tester.pumpWidget(
-        _wrapRecordScreenTest(
-          screen: RecordScreen(
+        await tester.runAsync(
+          () => LowFrictionReturnStore.resetForTest(AppServices.instance.prefs),
+        );
+        await seedConfirmedRepeatEntries(tester, 3);
+        await tester.binding.setSurfaceSize(const Size(390, 2800));
+        addTearDown(() => tester.binding.setSurfaceSize(null));
+        await tester.pumpWidget(
+          _wrapRecordScreenTest(
+            screen: RecordScreen(
               suggestionAttributionStore: MemorySuggestionAttributionStore(),
               entitlementReader: FakeArchiveEntitlementReader(pro: false),
+            ),
           ),
-        ),
-      );
-      await tester.pump();
-      await tester.runAsync(() async {
-        await Future<void>.delayed(const Duration(milliseconds: 400));
-      });
-      for (var i = 0; i < 30; i++) {
-        await tester.pump(const Duration(milliseconds: 50));
-      }
+        );
+        await tester.pump();
+        await tester.runAsync(() async {
+          await Future<void>.delayed(const Duration(milliseconds: 400));
+        });
+        for (var i = 0; i < 30; i++) {
+          await tester.pump(const Duration(milliseconds: 50));
+        }
 
-      expect(find.byKey(const Key('daily_archive_memory_card')), findsNothing);
-      expect(find.text(ConsumerUiCopy.recordMomentCta), findsOneWidget);
-    });
+        expect(
+          find.byKey(const Key('daily_archive_memory_card')),
+          findsNothing,
+        );
+        expect(find.text(ConsumerUiCopy.recordMomentCta), findsOneWidget);
+      },
+    );
 
     testWidgets('first proof post-save does not show first week loop card', (
       tester,
@@ -1978,8 +2029,8 @@ void main() {
       await tester.pumpWidget(
         _wrapRecordScreenTest(
           screen: RecordScreen(
-              suggestionAttributionStore: MemorySuggestionAttributionStore(),
-              entitlementReader: FakeArchiveEntitlementReader(pro: false),
+            suggestionAttributionStore: MemorySuggestionAttributionStore(),
+            entitlementReader: FakeArchiveEntitlementReader(pro: false),
           ),
         ),
       );
@@ -2011,8 +2062,8 @@ void main() {
       await tester.pumpWidget(
         _wrapRecordScreenTest(
           screen: RecordScreen(
-              suggestionAttributionStore: MemorySuggestionAttributionStore(),
-              entitlementReader: FakeArchiveEntitlementReader(pro: false),
+            suggestionAttributionStore: MemorySuggestionAttributionStore(),
+            entitlementReader: FakeArchiveEntitlementReader(pro: false),
           ),
         ),
       );
@@ -2089,8 +2140,8 @@ void main() {
         await tester.pumpWidget(
           _wrapRecordScreenTest(
             screen: RecordScreen(
-                suggestionAttributionStore: MemorySuggestionAttributionStore(),
-                entitlementReader: FakeArchiveEntitlementReader(pro: false),
+              suggestionAttributionStore: MemorySuggestionAttributionStore(),
+              entitlementReader: FakeArchiveEntitlementReader(pro: false),
             ),
           ),
         );
@@ -2130,8 +2181,8 @@ void main() {
       await tester.pumpWidget(
         _wrapRecordScreenTest(
           screen: RecordScreen(
-              suggestionAttributionStore: MemorySuggestionAttributionStore(),
-              entitlementReader: FakeArchiveEntitlementReader(pro: false),
+            suggestionAttributionStore: MemorySuggestionAttributionStore(),
+            entitlementReader: FakeArchiveEntitlementReader(pro: false),
           ),
         ),
       );
@@ -2145,8 +2196,14 @@ void main() {
 
       V1MomentSaveReceiptExpectations.expectVisible();
       expect(find.byKey(const Key('what_changed_v2_card')), findsNothing);
-      expect(find.byKey(const Key('what_changed_v2_option_softer')), findsNothing);
-      expect(find.byKey(const Key('what_changed_v2_payoff_card')), findsNothing);
+      expect(
+        find.byKey(const Key('what_changed_v2_option_softer')),
+        findsNothing,
+      );
+      expect(
+        find.byKey(const Key('what_changed_v2_payoff_card')),
+        findsNothing,
+      );
       expect(find.byKey(const Key('helped_tracking_card')), findsNothing);
       expect(
         find.byKey(const Key('return_check_payoff_card_softer')),
@@ -2268,8 +2325,8 @@ void main() {
         await tester.pumpWidget(
           _wrapRecordScreenTest(
             screen: RecordScreen(
-                suggestionAttributionStore: MemorySuggestionAttributionStore(),
-                entitlementReader: FakeArchiveEntitlementReader(pro: false),
+              suggestionAttributionStore: MemorySuggestionAttributionStore(),
+              entitlementReader: FakeArchiveEntitlementReader(pro: false),
             ),
           ),
         );
@@ -2281,7 +2338,10 @@ void main() {
           await tester.pump(const Duration(milliseconds: 50));
         }
 
-        expect(find.byKey(const Key('daily_archive_memory_card')), findsNothing);
+        expect(
+          find.byKey(const Key('daily_archive_memory_card')),
+          findsNothing,
+        );
         expect(find.text(ConsumerUiCopy.recordMomentCta), findsOneWidget);
         expect(
           find.byKey(const Key('archive_belief_surface_headline')),
@@ -2322,8 +2382,8 @@ void main() {
         await tester.pumpWidget(
           _wrapRecordScreenTest(
             screen: RecordScreen(
-                suggestionAttributionStore: MemorySuggestionAttributionStore(),
-                entitlementReader: FakeArchiveEntitlementReader(pro: false),
+              suggestionAttributionStore: MemorySuggestionAttributionStore(),
+              entitlementReader: FakeArchiveEntitlementReader(pro: false),
             ),
           ),
         );
