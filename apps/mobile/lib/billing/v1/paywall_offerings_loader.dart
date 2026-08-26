@@ -159,7 +159,7 @@ class PaywallOfferingsLoader {
           error: error,
           isRetry: isRetry,
         );
-      } on Object catch (e, stackTrace) {
+      } on Exception catch (e, stackTrace) {
         loadReason = 'load_error';
         error = SubscriptionCopy.paywallNoOfferings;
         entitlements =
@@ -230,7 +230,7 @@ class PaywallOfferingsLoader {
         unavailable: unavailable || !purchasePlansAvailable,
         loadReason: loadReason,
       );
-    } on Object catch (e, stackTrace) {
+    } on Exception catch (e, stackTrace) {
       loadReason = 'load_unhandled_error';
       error = SubscriptionCopy.paywallNoOfferings;
       RevenueCatDiagnosticsLog.paywallFallback(
