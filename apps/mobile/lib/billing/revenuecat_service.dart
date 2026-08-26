@@ -250,7 +250,7 @@ class RevenueCatService implements StoreBillingPort {
               'fetchOfferings_override_timeout_${billingOperationTimeout.inSeconds}s',
         );
         return null;
-      } on PlatformException catch (e, stackTrace) {
+      } on Exception catch (e, stackTrace) {
         _recordOfferings(null, error: '$e');
         RevenueCatDiagnosticsLog.fetchOfferingsFinished(
           success: false,
@@ -278,38 +278,27 @@ class RevenueCatService implements StoreBillingPort {
     }
     RevenueCatDiagnosticsLog.fetchOfferingsStarted(billingConfigured: true);
     RevenueCatOfferingsDebugLog.fetchOfferingsStarted(billingConfigured: true);
-    try {
-      final offerings = await withBillingTimeout(
-        Purchases.getOfferings(),
-        label: 'fetchOfferings',
-      );
-      final fetchError = offerings == null
-          ? 'fetchOfferings timeout or null response'
-          : null;
-      _recordOfferings(offerings, error: fetchError);
-      RevenueCatDiagnosticsLog.fetchOfferingsFinished(
-        success: offerings != null,
-        offerings: offerings,
-        error: fetchError,
-      );
-      RevenueCatOfferingsDebugLog.fetchOfferingsFinished(
-        offerings: offerings,
-        error: fetchError,
-      );
-      return offerings;
-    } on PlatformException catch (e, stackTrace) {
-      final message = '$e';
-      _recordOfferings(null, error: message);
-      RevenueCatDiagnosticsLog.fetchOfferingsFinished(
-        success: false,
-        error: message,
-      );
-      RevenueCatOfferingsDebugLog.fetchOfferingsFinished(
-        offerings: null,
-        error: message,
-      );
-      return null;
-    }
+    // withBillingTimeout already normalizes SDK/timeout failures to a null
+    // result (recorded below); no catch here so bugs in our own mapping code
+    // surface instead of being masked as an empty offerings response.
+    final offerings = await withBillingTimeout(
+      Purchases.getOfferings(),
+      label: 'fetchOfferings',
+    );
+    final fetchError = offerings == null
+        ? 'fetchOfferings timeout or null response'
+        : null;
+    _recordOfferings(offerings, error: fetchError);
+    RevenueCatDiagnosticsLog.fetchOfferingsFinished(
+      success: offerings != null,
+      offerings: offerings,
+      error: fetchError,
+    );
+    RevenueCatOfferingsDebugLog.fetchOfferingsFinished(
+      offerings: offerings,
+      error: fetchError,
+    );
+    return offerings;
   }
 
   @override
@@ -365,29 +354,22 @@ class RevenueCatService implements StoreBillingPort {
       _emit(free);
       return free;
     }
-    try {
-      final info = await withBillingTimeout(
-        Purchases.getCustomerInfo(),
-        label: 'refreshEntitlements',
-      );
-      if (info == null) {
-        RevenueCatDiagnosticsLog.refreshUnavailableUsingFreeTier();
-        final free = PremiumEntitlements.free();
-        _emit(free);
-        return free;
-      }
-      final mapped = _mapCustomerInfo(info);
-      _emit(mapped);
-      return mapped;
-    } on PlatformException catch (e, stackTrace) {
-      RevenueCatDiagnosticsLog.operationFailed(
-        operation: 'refreshEntitlements',
-        error: e, stackTrace: stackTrace,
-      );
+    // withBillingTimeout returns null on SDK/timeout failure (handled below as
+    // the free tier); no catch here so mapping bugs surface loudly rather than
+    // being silently downgraded to free.
+    final info = await withBillingTimeout(
+      Purchases.getCustomerInfo(),
+      label: 'refreshEntitlements',
+    );
+    if (info == null) {
+      RevenueCatDiagnosticsLog.refreshUnavailableUsingFreeTier();
       final free = PremiumEntitlements.free();
       _emit(free);
       return free;
     }
+    final mapped = _mapCustomerInfo(info);
+    _emit(mapped);
+    return mapped;
   }
 
   Future<void> logIn(String appUserId) async {
