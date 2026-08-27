@@ -1,5 +1,7 @@
 import 'package:archiveme_mobile/providers/subscription_provider.dart';
-import 'package:archiveme_mobile/screens/comparison_engine_screen.dart';
+// Retired with its screen (see retired_sprawl/README.md). Co-located relative
+// import: the screen no longer lives under lib/, so the package: path is gone.
+import 'comparison_engine_screen.dart';
 import 'package:archiveme_mobile/services/app_services.dart';
 import 'package:archiveme_mobile/theme/app_theme.dart';
 import 'package:archiveme_mobile/widgets/billing/paywall_gate.dart';
