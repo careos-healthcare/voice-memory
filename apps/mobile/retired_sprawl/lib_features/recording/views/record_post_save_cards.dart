@@ -426,58 +426,11 @@ extension RecordPostSaveCards on _RecordScreenState {
                 ProofSpecificityCard(
                   result: ctx.proofSpecificityPostSaveCandidate,
                 ),
-              ] else if (ctx.showProEvidenceValuePostSave) ...[
-                const SizedBox(height: 12),
-                ProEvidenceValueCard(
-                  surface: ProEvidenceValueSurface
-                      .recordPostSaveAfterPayoff,
-                  entryCount: ctx.postSaveEntryCount,
-                  onSeePro: () =>
-                      _openProEvidenceValueSubscription(
-                        analyticsSource:
-                            'record_post_save_pro_evidence_value',
-                      ),
-                  onDismiss: () => unawaited(
-                    _dismissProEvidenceValueBridge(),
-                  ),
-                ),
-              ] else if (ctx.showProLockMomentPostSave) ...[
-                const SizedBox(height: 12),
-                ProLockMomentCard(
-                  entryCount: ctx.postSaveEntryCount,
-                  hasFirstProof: true,
-                  hasConfirmedRepeat:
-                      EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(
-                        ctx.entriesAfterSave,
-                      ),
-                  onSeePro: () =>
-                      _openProEvidenceValueSubscription(
-                        analyticsSource:
-                            'record_post_save_pro_lock_moment',
-                      ),
-                  onDismiss: () =>
-                      unawaited(_dismissProLockMoment()),
-                ),
-              ] else if (ctx.showMonthlyPrivateReportPreviewPostSave &&
-                  ctx.monthlyPrivateReportPreviewPostSave! !=
-                      null) ...[
-                const SizedBox(height: 12),
-                MonthlyPrivateReportPreviewCard(
-                  surface: MonthlyPrivateReportSurface
-                      .recordPostSaveAfterProof,
-                  entryCount: ctx.postSaveEntryCount,
-                  preview:
-                      ctx.monthlyPrivateReportPreviewPostSave!,
-                  onSeePro: () =>
-                      _openProEvidenceValueSubscription(
-                        analyticsSource:
-                            'record_post_save_monthly_private_report_preview',
-                      ),
-                  onDismiss: () => unawaited(
-                    _dismissMonthlyPrivateReportPreview(),
-                  ),
-                ),
               ],
+              // Post-save Pro upsell cards removed from the capture-interrupt
+              // path: a save should never be followed by a billing prompt. Pro
+              // is presented only on the paywall/settings surfaces. (Pre-capture
+              // and record-ready upsells are intentionally left in place.)
               if (ctx.betaFeedbackIntelligenceSurfacePostSave! !=
                       null &&
                   ReturningRecordWatchTargetUiGates.showBetaRecordSurfaces()) ...[
@@ -922,32 +875,10 @@ extension RecordPostSaveCards on _RecordScreenState {
             const SizedBox(height: 16),
             ShareableArchiveProofCard(proof: ctx.shareableProof!),
           ],
-          if (_valueMomentBridge != null &&
-              _valueMomentBridge!.show &&
-              !ctx.suppressDegradedTranscriptPostSaveCompetitors &&
-              !ctx.suppressNoisyFirstSaveCards &&
-              !ctx.suppressNoisyRepeatPostSaveCards) ...[
-            const SizedBox(height: 16),
-            ValueMomentProBridge(
-              bridge: _valueMomentBridge!,
-              onSeePro: () {
-                setState(() => _valueMomentBridge = null);
-                unawaited(context.push(
-                  '/subscription',
-                  extra: PaywallRouteArgs(
-                    source: PaywallSource.valueMoment,
-                    sourceRoute: '/record',
-                  ),
-                ));
-              },
-              onDismiss: () => setState(() {
-                ValueMomentPaywallTrigger
-                        .dismissedThisSession =
-                    true;
-                _valueMomentBridge = null;
-              }),
-            ),
-          ],
+          // The post-save value-moment Pro bridge (ValueMomentProBridge) is
+          // removed from the capture-interrupt path — a save is never followed
+          // by a billing prompt. `_valueMomentBridge` is still computed only so
+          // FirstWeekLoopGates can suppress the (non-post-save) first-week loop.
           if (_showEvidenceContextTag &&
               !ctx.suppressDegradedTranscriptPostSaveCompetitors &&
               !ctx.suppressNoisyFirstSaveCards &&

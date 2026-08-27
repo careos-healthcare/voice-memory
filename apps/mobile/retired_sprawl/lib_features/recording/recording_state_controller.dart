@@ -1650,16 +1650,6 @@ class _RecordScreenState extends ConsumerState<RecordScreen>
     }
   }
 
-  Future<void> _dismissProLockMoment() async {
-    await ProLockMomentDismissStore.dismiss();
-    if (mounted) setState(() {});
-  }
-
-  Future<void> _dismissMonthlyPrivateReportPreview() async {
-    await MonthlyPrivateReportDismissStore.dismiss();
-    if (mounted) setState(() {});
-  }
-
   Future<void> _dismissProEvidenceValueBridge() async {
     await ProEvidenceValueEngine.dismissForSession();
     await RecordReturnProStore.instance().markProBridgeResolved();
