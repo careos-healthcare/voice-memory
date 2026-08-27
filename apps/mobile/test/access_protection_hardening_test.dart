@@ -42,7 +42,7 @@ class _MemorySecure extends SecureStorageService {
   Future<void> delete(String key) async => values.remove(key);
 }
 
-const _auditDocPath = 'docs/ACCESS_PROTECTION_AUDIT.md';
+const _auditDocPath = 'docs/archive/2026-08/ACCESS_PROTECTION_AUDIT.md';
 const _accountAuthScreenPath = 'lib/screens/account_auth_screen.dart';
 const _authServicePath = 'lib/services/auth_service.dart';
 const _appLockStorePath = 'lib/security/app_lock_store.dart';
