@@ -164,7 +164,7 @@ legacy_checks:
     command: bash tool/analyze_production_graph.sh
 
   validate_android_release_signing:
-    description: Release gate: Android release builds must never fall back to the debug keystore.
+    description: "Release gate: Android release builds must never fall back to the debug keystore."
     command: bash tool/validate_android_release_signing.sh
 
   validate_no_stray_test_artifacts:
