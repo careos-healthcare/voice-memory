@@ -63,7 +63,7 @@ void main() {
     );
     expect(trigger?.trigger, PaywallTrigger.keyMomentsLimit);
     expect(trigger?.previewTitle, 'Your pattern memory is growing');
-    expect(trigger?.previewBody, contains('first 7 key moments'));
+    expect(trigger?.previewBody, contains('longer proof trail'));
     expect(trigger?.ctaLabel, ConsumerUiCopy.unlockFullMemoryCta);
   });
 

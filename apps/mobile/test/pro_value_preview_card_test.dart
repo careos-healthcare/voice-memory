@@ -11,10 +11,11 @@ const _preview = ProValuePreview(
   type: ProValuePreviewType.memoryLimit,
   title: 'Your pattern memory is growing',
   body:
-      'Free keeps your first 7 key moments. Pro keeps the longer proof trail across weeks and months.',
+      'Pro keeps the longer proof trail across weeks and months, so patterns '
+      'stay connected as your archive grows.',
   previewBullets: [
     'Keep older moments',
-    'Search all your moments',
+    'Compare then vs now over time',
     'See patterns across months',
   ],
   ctaLabel: ConsumerUiCopy.unlockFullMemoryCta,
