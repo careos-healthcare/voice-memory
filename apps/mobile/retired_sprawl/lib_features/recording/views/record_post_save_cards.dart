@@ -134,7 +134,7 @@ extension RecordPostSaveCards on _RecordScreenState {
                 ),
               ],
               if (ctx.showFirstProofPayoff &&
-                  ctx.firstProofPayoffCandidate! != null) ...[
+                  ctx.firstProofPayoffCandidate != null) ...[
                 const SizedBox(height: 16),
                 FirstProofPayoffCard(
                   payoff: ctx.firstProofPayoffCandidate!,
@@ -142,7 +142,7 @@ extension RecordPostSaveCards on _RecordScreenState {
                   patternConfidence:
                       ctx.firstProofPatternConfidence!,
                   suppressCtas:
-                      ctx.firstProofActionLoopContent! != null,
+                      ctx.firstProofActionLoopContent != null,
                   showProPackagingBridge:
                       !ctx.showProBridgeVisibilityPostSave &&
                       !ctx.showProEvidenceValuePostSave,
@@ -195,7 +195,7 @@ extension RecordPostSaveCards on _RecordScreenState {
                   ),
                 ],
                 if (ctx.showProUnderstandingLiftOnPostSave &&
-                    ctx.proUnderstandingLiftPostSaveResult! !=
+                    ctx.proUnderstandingLiftPostSaveResult !=
                         null) ...[
                   const SizedBox(height: 12),
                   ProUnderstandingLiftCard(
@@ -208,7 +208,7 @@ extension RecordPostSaveCards on _RecordScreenState {
                         ),
                   ),
                 ] else if (ctx.showProVisibilityLiftOnPostSave &&
-                    ctx.proVisibilityLiftPostSaveResult! !=
+                    ctx.proVisibilityLiftPostSaveResult !=
                         null) ...[
                   const SizedBox(height: 12),
                   ProVisibilityLiftCard(
@@ -220,7 +220,7 @@ extension RecordPostSaveCards on _RecordScreenState {
                         ),
                   ),
                 ] else if (ctx.showProPreviewPostSave &&
-                    ctx.proPreviewPostSaveResult! != null) ...[
+                    ctx.proPreviewPostSaveResult != null) ...[
                   const SizedBox(height: 12),
                   ProPreviewCard(
                     result: ctx.proPreviewPostSaveResult!,
@@ -234,7 +234,7 @@ extension RecordPostSaveCards on _RecordScreenState {
                     ),
                   ),
                 ] else if (ctx.showProBridgeVisibilityPostSave &&
-                    ctx.proBridgeVisibilityPostSaveResult! !=
+                    ctx.proBridgeVisibilityPostSaveResult !=
                         null) ...[
                   const SizedBox(height: 12),
                   ProBridgeVisibilityCard(
@@ -320,7 +320,7 @@ extension RecordPostSaveCards on _RecordScreenState {
                 ],
               ],
               if (ctx.showTimelineProofMomentOnFirstProofPayoff &&
-                  ctx.timelineProofMomentPostSaveCandidate! !=
+                  ctx.timelineProofMomentPostSaveCandidate !=
                       null) ...[
                 const SizedBox(height: 12),
                 TimelineProofMomentCard(
@@ -410,7 +410,7 @@ extension RecordPostSaveCards on _RecordScreenState {
                 ],
                 if (ctx.showBetaInviteLoopPostSave &&
                     ReturningRecordWatchTargetUiGates.showBetaRecordSurfaces() &&
-                    ctx.betaInviteLoopPostSaveResult! != null) ...[
+                    ctx.betaInviteLoopPostSaveResult != null) ...[
                   const SizedBox(height: 12),
                   BetaInviteCard(
                     result: ctx.betaInviteLoopPostSaveResult!,
@@ -431,7 +431,7 @@ extension RecordPostSaveCards on _RecordScreenState {
               // path: a save should never be followed by a billing prompt. Pro
               // is presented only on the paywall/settings surfaces. (Pre-capture
               // and record-ready upsells are intentionally left in place.)
-              if (ctx.betaFeedbackIntelligenceSurfacePostSave! !=
+              if (ctx.betaFeedbackIntelligenceSurfacePostSave !=
                       null &&
                   ReturningRecordWatchTargetUiGates.showBetaRecordSurfaces()) ...[
                 const SizedBox(height: 12),
@@ -441,7 +441,7 @@ extension RecordPostSaveCards on _RecordScreenState {
                   entryCount: ctx.postSaveEntryCount,
                   reachedFirstProof:
                       ctx.showFirstProofPayoff &&
-                      ctx.firstProofPayoffCandidate! != null,
+                      ctx.firstProofPayoffCandidate != null,
                   onSubmitted: () {
                     if (mounted) setState(() {});
                   },
@@ -449,7 +449,7 @@ extension RecordPostSaveCards on _RecordScreenState {
               ],
               if (ctx.showBetaFeedbackCapturePostSave &&
                   ReturningRecordWatchTargetUiGates.showBetaRecordSurfaces() &&
-                  ctx.betaFeedbackCapturePostSaveResult! !=
+                  ctx.betaFeedbackCapturePostSaveResult !=
                       null) ...[
                 const SizedBox(height: 12),
                 BetaFeedbackCaptureCard(
@@ -460,7 +460,7 @@ extension RecordPostSaveCards on _RecordScreenState {
                           BetaFeedbackCaptureMoment
                               .afterTimelineProof
                       ? (ctx.showTimelineProofMomentOnFirstProofPayoff &&
-                                ctx.timelineProofMomentPostSaveCandidate! !=
+                                ctx.timelineProofMomentPostSaveCandidate !=
                                     null
                             ? BetaProofFeedbackSurface
                                   .timelineProofMoment
@@ -481,7 +481,7 @@ extension RecordPostSaveCards on _RecordScreenState {
                   },
                 ),
               ],
-              if (ctx.firstProofActionLoopContent! != null) ...[
+              if (ctx.firstProofActionLoopContent != null) ...[
                 const SizedBox(height: 12),
                 FirstProofActionLoopCard(
                   content: ctx.firstProofActionLoopContent!,
@@ -527,7 +527,7 @@ extension RecordPostSaveCards on _RecordScreenState {
                       : null,
                 ),
               ],
-              if (ctx.confirmedRepeatTriggerPayoff! != null) ...[
+              if (ctx.confirmedRepeatTriggerPayoff != null) ...[
                 const SizedBox(height: 16),
                 ConfirmedRepeatTriggerPayoffCard(
                   payoff: ctx.confirmedRepeatTriggerPayoff!,
@@ -540,7 +540,7 @@ extension RecordPostSaveCards on _RecordScreenState {
                   ),
                 ),
               ],
-              if (ctx.confirmedRepeatHelpfulActionPayoff! !=
+              if (ctx.confirmedRepeatHelpfulActionPayoff !=
                   null) ...[
                 const SizedBox(height: 16),
                 ConfirmedRepeatHelpfulActionPayoffCard(
@@ -554,7 +554,7 @@ extension RecordPostSaveCards on _RecordScreenState {
                   ),
                 ),
               ],
-              if (ctx.confirmedRepeatChangeNotice! != null) ...[
+              if (ctx.confirmedRepeatChangeNotice != null) ...[
                 const SizedBox(height: 16),
                 ConfirmedRepeatChangeNoticeCard(
                   notice: ctx.confirmedRepeatChangeNotice!,
@@ -575,7 +575,7 @@ extension RecordPostSaveCards on _RecordScreenState {
                   ),
                 ),
               ],
-              if (ctx.repeatReturnCheckOffer! != null &&
+              if (ctx.repeatReturnCheckOffer != null &&
                   !ctx.showReturnCheckPayoff &&
                   !ctx.showWhatChangedV2) ...[
                 const SizedBox(height: 12),
@@ -633,7 +633,7 @@ extension RecordPostSaveCards on _RecordScreenState {
           if (ctx.postSaveArchiveHierarchy
                       ?.showBeliefUpdateCard ==
                   true &&
-              ctx.beliefUpdatePayoff! != null &&
+              ctx.beliefUpdatePayoff != null &&
               !ctx.suppressDegradedTranscriptPostSaveCompetitors &&
               !ctx.showFirstProofMoment &&
               !ctx.showReturnCheckPayoff &&
@@ -648,7 +648,7 @@ extension RecordPostSaveCards on _RecordScreenState {
               ),
             ),
           ],
-          if (ctx.postSaveArchiveHierarchy! != null &&
+          if (ctx.postSaveArchiveHierarchy != null &&
               ctx.postSaveArchiveHierarchy!
                   .showFocusedActionsBar &&
               !ctx.suppressDegradedTranscriptPostSaveCompetitors &&
@@ -668,7 +668,7 @@ extension RecordPostSaveCards on _RecordScreenState {
               onAddOneMoreMoment: _goToRecordTab,
             ),
           ],
-          if (ctx.returnLoopPayoff! != null &&
+          if (ctx.returnLoopPayoff != null &&
               !ctx.suppressDegradedTranscriptPostSaveCompetitors &&
               !ctx.suppressNoisyFirstSaveCards &&
               !ctx.suppressNoisyRepeatPostSaveCards) ...[
@@ -727,7 +727,7 @@ extension RecordPostSaveCards on _RecordScreenState {
           // Pro bridge — after the save succeeded, never blocking.
           if (ctx.suppressNoisyRepeatPostSaveCards &&
               !ctx.suppressDegradedTranscriptPostSaveCompetitors &&
-              ctx.postSaveDailyMirror! != null &&
+              ctx.postSaveDailyMirror != null &&
               ctx.entriesAfterSave.isNotEmpty) ...[
             const SizedBox(height: 16),
             RepeatPostSaveCard(
@@ -776,7 +776,7 @@ extension RecordPostSaveCards on _RecordScreenState {
             const SizedBox(height: 16),
             SuggestionProNudgeCard(
               onUnlock: () {
-                final source = _suggestionProNudgeSource!;
+                final source = _suggestionProNudgeSource;
                 setState(
                   () => _suggestionProNudgeSource = null,
                 );
@@ -815,7 +815,7 @@ extension RecordPostSaveCards on _RecordScreenState {
                     .buildPostSave(
                       entryCount: _journalEntryCount,
                     );
-                if (!path.show || ctx.returnLoopPayoff! != null) {
+                if (!path.show || ctx.returnLoopPayoff != null) {
                   return const SizedBox.shrink();
                 }
                 return Padding(
@@ -830,7 +830,7 @@ extension RecordPostSaveCards on _RecordScreenState {
             // reminder offer, so the two never show together.
             if (_offerDayTwoReminder &&
                 !_recordReturnCueVisible &&
-                ctx.returnLoopPayoff! == null)
+                ctx.returnLoopPayoff == null)
               const Padding(
                 padding: EdgeInsets.only(top: 16),
                 child: DayTwoReminderCard(),
@@ -839,7 +839,7 @@ extension RecordPostSaveCards on _RecordScreenState {
             // safe labels only.
             if (_dayTwoReturnPreview != null &&
                 _dayTwoReturnPreview!.show &&
-                ctx.returnLoopPayoff! == null &&
+                ctx.returnLoopPayoff == null &&
                 !ctx.justSavedFirstEntry &&
                 !ctx.suppressNoisyFirstSaveCards)
               Padding(
@@ -867,7 +867,7 @@ extension RecordPostSaveCards on _RecordScreenState {
               counter: _archiveProofCounter!,
             ),
           ],
-          if (ctx.shareableProof! != null &&
+          if (ctx.shareableProof != null &&
               ctx.shareableProof!.hasProof &&
               !ctx.suppressDegradedTranscriptPostSaveCompetitors &&
               !ctx.suppressNoisyFirstSaveCards &&
@@ -1130,7 +1130,7 @@ extension RecordPostSaveCards on _RecordScreenState {
               !ctx.showWhatChangedV2) ...[
             if (_secondSessionComparison?.hasEnoughData ==
                     true &&
-                ctx.secondSessionPayoff! == null) ...[
+                ctx.secondSessionPayoff == null) ...[
               const SizedBox(height: 12),
               SecondSessionComparisonCard(
                 comparison: _secondSessionComparison!,
@@ -1373,7 +1373,7 @@ extension RecordPostSaveCards on _RecordScreenState {
                                 .captureSuccess,
                           ),
                     ),
-                    if (ctx.syncNote! != null) ...[
+                    if (ctx.syncNote != null) ...[
                       const SizedBox(height: 6),
                       Text(
                         ctx.syncNote!,
