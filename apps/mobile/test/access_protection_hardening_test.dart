@@ -22,6 +22,7 @@ import 'package:archiveme_research/screens/pro_value_preview_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'helpers/app_provider_scope.dart';
 import 'helpers/fake_auth_api_client.dart';
 import 'support/test_storage_sandbox.dart';
 
@@ -45,6 +46,7 @@ class _MemorySecure extends SecureStorageService {
 const _auditDocPath = 'docs/archive/2026-08/ACCESS_PROTECTION_AUDIT.md';
 const _accountAuthScreenPath = 'lib/screens/account_auth_screen.dart';
 const _authServicePath = 'lib/services/auth_service.dart';
+const _journalOwnershipGuardPath = 'lib/services/journal_ownership_guard.dart';
 const _appLockStorePath = 'lib/security/app_lock_store.dart';
 const _pinHashPath = 'lib/security/pin_hash.dart';
 
@@ -63,6 +65,7 @@ void main() {
   late String auditDoc;
   late String accountAuthScreenSource;
   late String authServiceSource;
+  late String journalOwnershipGuardSource;
   late String appLockStoreSource;
   late String pinHashSource;
 
@@ -70,6 +73,8 @@ void main() {
     auditDoc = File(_auditDocPath).readAsStringSync();
     accountAuthScreenSource = File(_accountAuthScreenPath).readAsStringSync();
     authServiceSource = File(_authServicePath).readAsStringSync();
+    journalOwnershipGuardSource =
+        File(_journalOwnershipGuardPath).readAsStringSync();
     appLockStoreSource = File(_appLockStorePath).readAsStringSync();
     pinHashSource = File(_pinHashPath).readAsStringSync();
   });
@@ -113,8 +118,18 @@ void main() {
 
     test('sign out keeps local archive', () {
       expect(AccountAuthCopy.signOutKeepsArchive, contains('keeps'));
-      expect(authServiceSource, contains('Never touches'));
-      expect(authServiceSource, contains('the local journal'));
+      // auth_service is now a thin facade over AuthSessionNotifier; the
+      // "sign out keeps the on-device journal" guarantee is documented and
+      // enforced in JournalOwnershipGuard, so assert it there.
+      expect(authServiceSource, contains('_notifier.signOut()'));
+      expect(
+        journalOwnershipGuardSource.toLowerCase(),
+        contains('keeps the local journal on-device'),
+      );
+      expect(
+        journalOwnershipGuardSource.toLowerCase(),
+        contains('nothing is deleted'),
+      );
     });
 
     test('account timing does not require login before recording', () {
@@ -253,7 +268,9 @@ void main() {
       addTearDown(tester.view.reset);
 
       await tester.pumpWidget(
-        MaterialApp(theme: AppTheme.light(), home: const SettingsScreen()),
+        withAppProviderScope(
+          MaterialApp(theme: AppTheme.light(), home: const SettingsScreen()),
+        ),
       );
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 300));
@@ -277,9 +294,11 @@ void main() {
       addTearDown(tester.view.reset);
 
       await tester.pumpWidget(
-        MaterialApp(
-          theme: AppTheme.light(),
-          home: SecuritySettingsScreen(appLock: appLock, auth: auth),
+        withAppProviderScope(
+          MaterialApp(
+            theme: AppTheme.light(),
+            home: SecuritySettingsScreen(appLock: appLock, auth: auth),
+          ),
         ),
       );
       await tester.pump();
@@ -295,9 +314,11 @@ void main() {
 
     testWidgets('Pro Preview shows account restore note', (tester) async {
       await tester.pumpWidget(
-        MaterialApp(
-          theme: AppTheme.light(),
-          home: const ProValuePreviewScreen(),
+        withAppProviderScope(
+          MaterialApp(
+            theme: AppTheme.light(),
+            home: const ProValuePreviewScreen(),
+          ),
         ),
       );
       await tester.pumpAndSettle();
