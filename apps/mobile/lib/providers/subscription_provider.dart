@@ -34,7 +34,7 @@ class SubscriptionState {
     this.isLoading = true,
     this.errorMessage,
     this.billingConfigured = false,
-    this.purchasesEnabled = V1BillingCapability.buildPurchasesFlag,
+    this.purchasesEnabled = V1BillingCapability.isProductionReachable,
     this.monthlyPriceLabel,
     this.yearlyPriceLabel,
   });
@@ -125,7 +125,7 @@ class SubscriptionNotifier extends Notifier<SubscriptionState> {
   Future<void> _initRevenueCat() async {
     if (!ref.mounted) return;
 
-    if (!V1BillingCapability.buildPurchasesFlag) {
+    if (!V1BillingCapability.isProductionReachable) {
       state = state.copyWith(isLoading: false, billingConfigured: false);
       return;
     }
@@ -151,7 +151,7 @@ class SubscriptionNotifier extends Notifier<SubscriptionState> {
   Future<void> checkSubscriptionStatus() async {
     if (!ref.mounted) return;
 
-    if (!V1BillingCapability.buildPurchasesFlag) {
+    if (!V1BillingCapability.isProductionReachable) {
       state = state.copyWith(isLoading: false, billingConfigured: false);
       return;
     }
