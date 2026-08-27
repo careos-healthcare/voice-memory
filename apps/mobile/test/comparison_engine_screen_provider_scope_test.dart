@@ -37,7 +37,7 @@ void main() {
 
   testWidgets('mounts under a ProviderScope and bootstraps billing '
       'without a mid-build provider write', (tester) async {
-    // The paywall card is taller than the default 600px test surface.
+    // Give the comparison body plenty of room on the default test surface.
     await tester.binding.setSurfaceSize(const Size(800, 2400));
     addTearDown(() => tester.binding.setSurfaceSize(null));
 
@@ -73,8 +73,10 @@ void main() {
     // The bootstrap awaits billing and then reads the journal off disk. Real
     // I/O does not advance under the fake async zone that drives `pump`, so
     // hand time back to the real event loop in between.
-    final gate = find.byType(PaywallGate);
-    for (var i = 0; i < 50 && gate.evaluate().isEmpty; i++) {
+    final body = find.text(
+      'Evidence-linked then vs now across your saved moments.',
+    );
+    for (var i = 0; i < 50 && body.evaluate().isEmpty; i++) {
       await tester.runAsync(
         () => Future<void>.delayed(const Duration(milliseconds: 20)),
       );
@@ -91,11 +93,15 @@ void main() {
       reason: 'ComparisonEngineScreen must enter the billing bootstrap on '
           'mount and see it resolve, not stall in loading',
     );
+    // Comparison is no longer Pro-gated: the screen renders its body directly
+    // (Pro affects only history depth, inline), matching the routed
+    // comparison_explorer_screen. There is no hard PaywallGate.
+    expect(find.byType(PaywallGate), findsNothing);
     expect(
-      gate,
+      body,
       findsOneWidget,
-      reason: '_bootstrap only clears its loading flag after '
-          'ensureInitialized() and the journal load both complete',
+      reason: '_bootstrap clears its loading flag after ensureInitialized() '
+          'and the journal load both complete, then renders the comparison body',
     );
   });
 }
