@@ -1,3 +1,4 @@
+import 'dart:math' as math;
 import 'dart:ui' as ui;
 
 import 'package:archiveme_mobile/features/graph/domain/graph_topology.dart';
@@ -86,8 +87,7 @@ class _GraphCanvasState extends State<GraphCanvas>
     setState(() {});
   }
 
-  double get _viewportScale =>
-      _transformationController.value.getMaxScaleOnAxis();
+  double get _viewportScale => graphCanvasScale(_transformationController);
 
   bool get _lowDetail => _viewportScale < graphCanvasLowDetailScaleThreshold;
 
@@ -324,10 +324,20 @@ class GraphCanvasPainter extends CustomPainter {
   }
 }
 
-/// Reads viewport scale from a [TransformationController].
+/// Reads the horizontal (x-axis) viewport scale from a [TransformationController].
+///
+/// [Matrix4.getMaxScaleOnAxis] takes the largest scale across the x, y *and* z
+/// bases. A 2D [InteractiveViewer] scales x/y uniformly but leaves the z basis
+/// at 1, so getMaxScaleOnAxis never drops below 1 on zoom-out — the low-detail
+/// path (see [_GraphCanvasState._lowDetail]) then never engages and the
+/// expensive paint effects always run. The x-axis basis-vector length is the
+/// true 2D zoom factor.
 @visibleForTesting
 double graphCanvasScale(TransformationController controller) {
-  return controller.value.getMaxScaleOnAxis();
+  final storage = controller.value.storage;
+  return math.sqrt(
+    storage[0] * storage[0] + storage[1] * storage[1] + storage[2] * storage[2],
+  );
 }
 
 @visibleForTesting
