@@ -6,12 +6,15 @@ import 'package:archiveme_mobile/screens/belief_changes_screen.dart';
 import 'package:archiveme_mobile/screens/beliefs_screen.dart';
 import 'package:archiveme_mobile/screens/onboarding_screen.dart';
 import 'package:archiveme_mobile/screens/record_screen.dart';
+import 'package:archiveme_mobile/services/app_services.dart';
 import 'package:archiveme_mobile/theme/app_theme.dart';
 import 'package:archiveme_mobile/widgets/belief_empty_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+
+import 'support/test_storage_sandbox.dart';
 
 /// Host PNG export for product simplification review.
 void main() {
@@ -23,6 +26,21 @@ void main() {
     const size = Size(393, 852);
     await tester.binding.setSurfaceSize(size);
     addTearDown(() => tester.binding.setSurfaceSize(null));
+
+    // Every screen here (belief screens and CaptureScreenHost) reads
+    // AppServices.instance in initState, so initialize it before pumping. Real
+    // disk/DB (drift) setup -> runAsync. NOTE: only reachable behind the env gate
+    // above; on a headless VM the drift/sqflite plugins are unavailable
+    // (MissingPluginException), so this path is verified on a real device only.
+    final sandbox = TestStorageSandbox.create();
+    addTearDown(sandbox.dispose);
+    await tester.runAsync(
+      () => AppServices.resetForTest(
+        journalPath: sandbox.journalPath,
+        prefsPath: sandbox.prefsPath,
+        skipRevenueCat: true,
+      ),
+    );
 
     final home = Platform.environment['HOME'] ?? '';
     final outDir = home.isNotEmpty
