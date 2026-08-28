@@ -26,7 +26,7 @@ void main() {
     final outDir = home.isNotEmpty
         ? '$home/Desktop/upload12/screenshots'
         : 'build/product_screenshots';
-    await Directory(outDir).create(recursive: true);
+    await tester.runAsync(() => Directory(outDir).create(recursive: true));
 
     final screens = <(String name, Widget child)>[
       ('onboarding-1', const OnboardingScreen()),
@@ -59,11 +59,16 @@ void main() {
       final boundary = tester.renderObject<RenderRepaintBoundary>(
         find.byType(RepaintBoundary).first,
       );
-      final image = await boundary.toImage(pixelRatio: 2);
-      final bytes = await image.toByteData(format: ui.ImageByteFormat.png);
-      await File(
-        '$outDir/${s.$1}.png',
-      ).writeAsBytes(bytes!.buffer.asUint8List());
+      // Real GPU + file I/O: toImage()/toByteData()/writeAsBytes() never complete
+      // inside the fake-async testWidgets zone, so run them under runAsync (pumps
+      // stay outside). Same pattern as the pattern_name_test.dart fix (PR #251).
+      await tester.runAsync(() async {
+        final image = await boundary.toImage(pixelRatio: 2);
+        final bytes = await image.toByteData(format: ui.ImageByteFormat.png);
+        await File(
+          '$outDir/${s.$1}.png',
+        ).writeAsBytes(bytes!.buffer.asUint8List());
+      });
     }
 
     // ignore: avoid_print
