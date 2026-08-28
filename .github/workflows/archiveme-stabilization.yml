@@ -69,6 +69,10 @@ jobs:
 
   flutter-gates:
     runs-on: ubuntu-latest
+    # Job backstop: a hung suite fails the whole job in ~2h instead of silently
+    # burning the 6h GitHub ceiling. The per-step timeout below catches the
+    # common case (the full test suite) much faster.
+    timeout-minutes: 120
     defaults:
       run:
         working-directory: apps/mobile
@@ -107,9 +111,15 @@ jobs:
       # validate_core.sh runs the full suite, but only after its own analyzer gate,
       # which currently fails on pre-existing errors — so the suite was unreachable
       # even once the script was back in place. This step reports the suite directly.
+      # A healthy full suite runs in ~65 min. timeout-minutes hard-fails a hung
+      # run fast and visibly (~90m) instead of hanging to the 6h ceiling;
+      # --timeout 5m fails an individual runaway test even faster where flutter
+      # honors it. If this step is cancelled by timeout, the offending suite is
+      # the one with no completion output before the cut-off.
       - name: flutter test (full suite)
         if: ${{ !cancelled() && steps.pubget.outcome == 'success' }}
-        run: flutter test
+        timeout-minutes: 90
+        run: flutter test --timeout 5m
       - name: validate core (analyzer + full test suite + release gates)
         if: ${{ !cancelled() && steps.pubget.outcome == 'success' }}
         run: bash tool/validate_core.sh
