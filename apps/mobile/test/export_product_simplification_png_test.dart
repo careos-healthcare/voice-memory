@@ -10,12 +10,14 @@ import 'package:archiveme_mobile/theme/app_theme.dart';
 import 'package:archiveme_mobile/widgets/belief_empty_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 /// Host PNG export for product simplification review.
 void main() {
   testWidgets('export simplified product screens', (tester) async {
-    // Manual asset export — skip in automated full-suite runs (RecordScreen bootstrap hangs).
+    // Manual asset export — skip in automated full-suite runs (screens need
+    // AppServices + a real display; run on a device with ARCHIVEME_RUN_PNG_EXPORT=true).
     if (Platform.environment['ARCHIVEME_RUN_PNG_EXPORT'] != 'true') return;
 
     const size = Size(393, 852);
@@ -34,7 +36,12 @@ void main() {
       ('archive-beliefs', const ArchiveBeliefScreen()),
       ('beliefs-explorer', const BeliefsScreen()),
       ('belief-changes', const BeliefChangesScreen()),
-      ('record', const RecordScreen()),
+      // Live capture surface. CaptureScreenHost is the routed V1 record tab;
+      // RecordScreen is deprecated and not routed. It is a ConsumerWidget, so it
+      // needs an ambient ProviderScope (and, like the other screens here, an
+      // initialized AppServices at run time — this manual export runs on a real
+      // device where that DI is present).
+      ('record', const ProviderScope(child: CaptureScreenHost())),
     ];
 
     for (final s in screens) {
