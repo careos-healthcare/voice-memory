@@ -297,11 +297,16 @@ void main() {
         find.byKey(const Key('rename_pattern_field')),
         'Saying yes too fast',
       );
-      await tester.tap(find.byKey(const Key('rename_pattern_save_button')));
-      await tester.pump();
-      await tester.pump(const Duration(milliseconds: 500));
-      await PatternNameStore.flushForTest();
-      await tester.pump();
+      // Saving calls PatternNameStore.setCustomName -> _persistAll, which does a
+      // real prefs disk write (MobilePrefsStore file I/O). Real I/O never
+      // completes inside the fake-async testWidgets zone, so the save tap and the
+      // store's persist chain must run under runAsync; awaiting the write in the
+      // fake zone otherwise deadlocks (this hung CI to the 6h ceiling).
+      await tester.runAsync(() async {
+        await tester.tap(find.byKey(const Key('rename_pattern_save_button')));
+        await PatternNameStore.flushForTest();
+      });
+      await tester.pumpAndSettle();
 
       expect(changed, isTrue);
       expect(find.text(PatternNameCopy.savedMessage), findsOneWidget);
@@ -318,7 +323,10 @@ void main() {
         MaterialApp(
           theme: AppTheme.light(),
           home: Scaffold(
-            body: RenamePatternSheet(initialName: 'said yes', onSave: (_) async {}),
+            body: RenamePatternSheet(
+              initialName: 'said yes',
+              onSave: (_) async {},
+            ),
           ),
         ),
       );
