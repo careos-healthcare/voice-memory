@@ -5,7 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('shows shimmer while pending analysis', (tester) async {
-    const state = LlmFeedCardState(
+    final state = LlmFeedCardState(
       captureId: 'capture-1',
       createdAt: DateTime.utc(2026, 1, 1, 12),
       status: LlmAnalysisStatus.pendingAnalysis,
@@ -13,7 +13,7 @@ void main() {
     );
 
     await tester.pumpWidget(
-      const MaterialApp(
+      MaterialApp(
         home: Scaffold(
           body: OptimisticTimelineFeedCard(state: state),
         ),
@@ -25,19 +25,19 @@ void main() {
   });
 
   testWidgets('shows extracted nodes when completed', (tester) async {
-    const state = LlmFeedCardState(
+    final state = LlmFeedCardState(
       captureId: 'capture-2',
       createdAt: DateTime.utc(2026, 1, 2, 9),
       status: LlmAnalysisStatus.completed,
       rawTranscript: 'Raw transcript',
       summary: 'Pause before agreeing to extra work.',
       nodes: [
-        LlmFeedGraphNode(id: 'n1', kind: 'theme', label: 'boundaries'),
+        const LlmFeedGraphNode(id: 'n1', kind: 'theme', label: 'boundaries'),
       ],
     );
 
     await tester.pumpWidget(
-      const MaterialApp(
+      MaterialApp(
         home: Scaffold(
           body: OptimisticTimelineFeedCard(state: state),
         ),
