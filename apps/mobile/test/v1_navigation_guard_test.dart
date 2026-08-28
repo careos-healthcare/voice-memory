@@ -28,12 +28,9 @@ void main() {
       }
     });
 
-    test('customer-ready support/legal/billing routes are allowed', () {
+    test('customer-ready support/legal routes are allowed', () {
       for (final path in [
         '/settings',
-        '/subscription',
-        '/pricing',
-        '/restore-purchases',
         '/delete-account',
         '/export',
         '/privacy',
@@ -50,6 +47,35 @@ void main() {
       expect(V1NavigationGuard.redirectFor('/onboarding/brain-dump'), isNull);
       BetaSurfacesFeatureFlags.debugOverride = null;
     });
+
+    test(
+      'billing routes are quarantined (redirect to Archive) during the '
+      'focused-beta billing freeze — /subscription, /pricing and '
+      '/restore-purchases are paidV1 and not part of the V1 launch surface. The '
+      'paywall is deliberately unreachable here: the V1 allowlist redirects these '
+      'away and PaywallAccess independently refuses to open the paywall while '
+      'billing is frozen (V1BillingCapability.isProductionReachable). These are '
+      'NOT customer-ready support/legal routes and must not be grouped with them. '
+      'This redirect is billing-state-agnostic; when billing is enabled these '
+      'paths must be moved into the allowlist (V1RouteRegistry.paidPaths) or '
+      'PaywallAccess will be unable to reach a paywall it believes is open — see '
+      'the paidPaths comment. If someone populates paidPaths without reading it, '
+      'this test should start failing and point them back here.',
+      () {
+        for (final path in [
+          '/subscription',
+          '/pricing',
+          '/restore-purchases',
+        ]) {
+          expect(
+            V1NavigationGuard.redirectFor(path),
+            RouteCatalog.archiveHome,
+            reason: path,
+          );
+          expect(V1NavigationGuard.isAllowed(path), isFalse, reason: path);
+        }
+      },
+    );
 
     test('entry and account detail prefixes are allowed', () {
       expect(V1NavigationGuard.isAllowed('/entry/abc123'), isTrue);
