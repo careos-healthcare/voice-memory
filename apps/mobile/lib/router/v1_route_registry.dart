@@ -1,4 +1,5 @@
 import 'package:archiveme_mobile/router/route_catalog.dart';
+
 ///
 /// [V1NavigationGuard], [V1RouteInventory], validators, and route tests must
 /// derive allow/quarantine lists from here — do not duplicate string paths.
@@ -53,6 +54,17 @@ abstract final class V1RouteRegistry {
     guestDataMigrationPath,
   ];
 
+  // FOOTGUN — intentionally empty during the focused-beta billing freeze.
+  // [V1NavigationGuard]'s redirect is billing-state-agnostic: it keys on
+  // [V1FeatureFlags.enableV1Only], NOT on V1BillingCapability, so it quarantines
+  // /subscription, /pricing and /restore-purchases regardless of billing state
+  // (those three are in [quarantinedExactPaths] and absent from the allowlist).
+  // Before billing is ever enabled, move those three paths OUT of
+  // quarantinedExactPaths and INTO this allowlist — otherwise PaywallAccess,
+  // which gates on V1BillingCapability.isProductionReachable, will believe it
+  // can open the paywall while V1NavigationGuard silently redirects it to
+  // Archive, making the paywall unreachable. The billing-quarantine test in
+  // test/v1_navigation_guard_test.dart is the tripwire for this.
   static const paidPaths = <String>[];
 
   static const additionalExactPaths = [

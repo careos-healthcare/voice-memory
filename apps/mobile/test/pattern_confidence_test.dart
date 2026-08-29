@@ -173,12 +173,15 @@ void main() {
 
   setUp(() async {
     sandbox = TestStorageSandbox.create();
-    await WhatChangedV2Store.resetForTest();
+    // AppServices.resetForTest must run first so the prefs-backed reset below
+    // writes into this test's fresh sandbox and not the previous test's
+    // already-disposed one.
     await AppServices.resetForTest(
       journalPath: sandbox.journalPath,
       prefsPath: sandbox.prefsPath,
       skipRevenueCat: true,
     );
+    await WhatChangedV2Store.resetForTest();
     PatternConfidenceAnalytics.resetForTest();
     PatternConfidenceAnalytics.captureForTest = (event, props) {
       analyticsEvents.add((event: event, props: props));
