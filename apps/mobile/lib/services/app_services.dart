@@ -339,12 +339,13 @@ class AppServices {
       return pending;
     }
 
-    final future = OfflineTtsBootstrap.tryCreate(
-      documentsBasePath: _documentsBasePath,
-    ).then((service) {
-      _offlineTts = service;
-      return service;
-    });
+    final future =
+        OfflineTtsBootstrap.tryCreate(
+          documentsBasePath: _documentsBasePath,
+        ).then((service) {
+          _offlineTts = service;
+          return service;
+        });
     _offlineTtsFuture = future;
     return future;
   }
@@ -402,16 +403,19 @@ class AppServices {
       return pending;
     }
 
-    final future = modelDownloadService.ensureModelDownloaded().then(
-      (modelPath) => LocalLlmBootstrap.tryCreate(
-        modelDownloadService: modelDownloadService,
-        documentsBasePath: _documentsBasePath,
-        modelPathOverride: modelPath,
-      ),
-    ).then((service) {
-      _localLlm = service;
-      return service;
-    });
+    final future = modelDownloadService
+        .ensureModelDownloaded()
+        .then(
+          (modelPath) => LocalLlmBootstrap.tryCreate(
+            modelDownloadService: modelDownloadService,
+            documentsBasePath: _documentsBasePath,
+            modelPathOverride: modelPath,
+          ),
+        )
+        .then((service) {
+          _localLlm = service;
+          return service;
+        });
     _localLlmFuture = future;
     return future;
   }
@@ -428,12 +432,13 @@ class AppServices {
       return pending;
     }
 
-    final future = AiServiceBootstrap.tryCreate(
-      resourceGuard: _resourceGuard,
-    ).then((service) {
-      _aiService = service;
-      return service;
-    });
+    final future =
+        AiServiceBootstrap.tryCreate(
+          resourceGuard: _resourceGuard,
+        ).then((service) {
+          _aiService = service;
+          return service;
+        });
     _aiServiceFuture = future;
     return future;
   }
@@ -446,13 +451,14 @@ class AppServices {
     final pending = _routineRagEngineFuture;
     if (pending != null) return pending;
 
-    final future = LocalRoutineRagEngine.create(
-      journalRepository: JournalSqliteRepository(sqliteDatabase),
-      embeddingRepository: ReflectionEmbeddingRepository(sqliteDatabase),
-    ).then((engine) {
-      _routineRagEngine = engine;
-      return engine;
-    });
+    final future =
+        LocalRoutineRagEngine.create(
+          journalRepository: JournalSqliteRepository(sqliteDatabase),
+          embeddingRepository: ReflectionEmbeddingRepository(sqliteDatabase),
+        ).then((engine) {
+          _routineRagEngine = engine;
+          return engine;
+        });
     _routineRagEngineFuture = future;
     return future;
   }
@@ -465,13 +471,14 @@ class AppServices {
     final pending = _trendAnalysisServiceFuture;
     if (pending != null) return pending;
 
-    final future = TrendAnalysisService.create(
-      journalDatabase: AppDatabase.fromSqflite(sqliteDatabase.database),
-      reportStore: TrendAnalysisReportStore(prefs),
-    ).then((service) {
-      _trendAnalysisService = service;
-      return service;
-    });
+    final future =
+        TrendAnalysisService.create(
+          journalDatabase: AppDatabase.fromSqflite(sqliteDatabase.database),
+          reportStore: TrendAnalysisReportStore(prefs),
+        ).then((service) {
+          _trendAnalysisService = service;
+          return service;
+        });
     _trendAnalysisServiceFuture = future;
     return future;
   }
@@ -484,13 +491,14 @@ class AppServices {
     final pending = _localCoachConversationServiceFuture;
     if (pending != null) return pending;
 
-    final future = LocalCoachConversationService.create(
-      journalRepository: JournalSqliteRepository(sqliteDatabase),
-      embeddingRepository: ReflectionEmbeddingRepository(sqliteDatabase),
-    ).then((service) {
-      _localCoachConversationService = service;
-      return service;
-    });
+    final future =
+        LocalCoachConversationService.create(
+          journalRepository: JournalSqliteRepository(sqliteDatabase),
+          embeddingRepository: ReflectionEmbeddingRepository(sqliteDatabase),
+        ).then((service) {
+          _localCoachConversationService = service;
+          return service;
+        });
     _localCoachConversationServiceFuture = future;
     return future;
   }
@@ -570,6 +578,22 @@ class AppServices {
     await previous._shutdownForTest();
   }
 
+  /// Cancels pending debounced background flushes so they cannot fire after a
+  /// test completes and run against a database the next test is about to close
+  /// (`database_closed` "after the test had completed"). Only cancels timers —
+  /// it does NOT close the database, dispose the workers, or await in-flight
+  /// network work (which can hang), so it is safe to call from a global tearDown
+  /// even for suites that initialize [AppServices] once in setUpAll. A flush
+  /// that is already running is handled defensively inside each worker, which
+  /// treats a mid-flight `database_closed` as an expected shutdown race.
+  static void quiesceBackgroundWorkersForTest() {
+    final s = _instance;
+    if (s == null) return;
+    s._backgroundSyncQueueWorker?.quiesceForTest();
+    s._reflectionEmbeddingIndexWorker?.quiesceForTest();
+    s._automatedGraphIndexWorker?.quiesceForTest();
+  }
+
   Future<void> _shutdownForTest() async {
     _backgroundSyncQueueWorker?.dispose();
     _backgroundSyncQueueWorker = null;
@@ -606,7 +630,11 @@ class AppServices {
     try {
       await sqliteDatabase.close();
     } catch (e, stackTrace) {
-      AppLogger.error('Unhandled error caught', error: e, stackTrace: stackTrace);
+      AppLogger.error(
+        'Unhandled error caught',
+        error: e,
+        stackTrace: stackTrace,
+      );
       // Already closed or never opened.
     }
   }
@@ -1015,7 +1043,8 @@ class AppServices {
     s.secureSqliteLock.bindDatabaseCloser(() async {
       await s.sqliteDatabase.close();
     });
-    final sqlitePassphrase = await s.secureSqliteLock.bootstrapUnlockedSession();
+    final sqlitePassphrase = await s.secureSqliteLock
+        .bootstrapUnlockedSession();
     s.sqliteDatabase = await AppSqliteDatabase.open(
       filePath: _sqlitePathFor(base, namespace),
       password: sqlitePassphrase,
@@ -1130,8 +1159,9 @@ class AppServices {
       s.sqliteDatabase,
     );
     s._resourceGuard ??= ResourceGuard.shared;
-    s._thermalThrottlingService ??=
-        ThermalThrottlingService(resourceGuard: s._resourceGuard);
+    s._thermalThrottlingService ??= ThermalThrottlingService(
+      resourceGuard: s._resourceGuard,
+    );
     EmbeddingIndexWorkerService.instance.configure(
       defaultKeyAlias: s._activeNamespace.key,
       thermalThrottling: s._thermalThrottlingService,
@@ -1182,8 +1212,9 @@ class AppServices {
         outbox: outboxStore,
       ),
     );
-    final backgroundSyncController =
-        appProviderContainer.read(backgroundSyncProvider.notifier).bindController();
+    final backgroundSyncController = appProviderContainer
+        .read(backgroundSyncProvider.notifier)
+        .bindController();
     s._backgroundSyncQueueWorker = BackgroundSyncQueueWorker(
       journalStore: s.journalStore,
       syncService: s.sync,
@@ -1486,7 +1517,8 @@ class AppServices {
     s.secureSqliteLock.bindDatabaseCloser(() async {
       await s.sqliteDatabase.close();
     });
-    final sqlitePassphrase = await s.secureSqliteLock.bootstrapUnlockedSession();
+    final sqlitePassphrase = await s.secureSqliteLock
+        .bootstrapUnlockedSession();
     s.sqliteDatabase = await AppSqliteDatabase.open(
       filePath: sqlitePath,
       password: sqlitePassphrase,
@@ -1656,7 +1688,8 @@ class AppServices {
         s.entitlementCache;
     appProviderContainer.read(appSqliteDatabaseHolderProvider).value =
         s.sqliteDatabase;
-    appProviderContainer.read(journalStoreHolderProvider).value = s.journalStore;
+    appProviderContainer.read(journalStoreHolderProvider).value =
+        s.journalStore;
     appProviderContainer.invalidate(archiveFeedPaginationProvider);
     bindCaptureModuleRuntime(
       CaptureModuleRuntimeConfig(

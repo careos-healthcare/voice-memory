@@ -1,4 +1,5 @@
 import 'package:archiveme_mobile/security/sqlite/secure_sqlite_lock_service.dart';
+import 'package:archiveme_mobile/services/app_services.dart';
 import 'package:archiveme_mobile/storage/sqlite/app_sqlite_database.dart';
 import 'package:archiveme_mobile/storage/sqlite/sqlite_database_initializer.dart';
 import 'package:flutter/services.dart';
@@ -88,9 +89,16 @@ Future<void> testExecutable(Future<void> Function() testMain) async {
     await AppSqliteDatabase.resetForTest();
     SecureSqliteLockService.instance
       ..resetForTest()
-      ..session
-          .unlock(SqliteDatabaseInitializer.testEncryptionPassword);
+      ..session.unlock(SqliteDatabaseInitializer.testEncryptionPassword);
     await ReleaseSuiteStaticStateReset.resetCachedState();
   });
+
+  // Runs after each test's own tearDowns but before the next test closes the
+  // sqlite database. Cancels pending debounced background flushes and awaits any
+  // in-flight one so a background worker can't run a query after the database is
+  // closed ("database_closed ... after the test had completed"). Does not close
+  // the DB or dispose workers, so setUpAll-based suites are unaffected.
+  tearDown(AppServices.quiesceBackgroundWorkersForTest);
+
   await testMain();
 }
