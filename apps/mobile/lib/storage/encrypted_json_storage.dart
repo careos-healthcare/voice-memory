@@ -46,7 +46,7 @@ class EncryptedJsonStorage {
       );
 
       return jsonDecode(utf8.decode(clearTextBytes)) as Map<String, dynamic>;
-    } catch (_, stackTrace) {
+    } on Object catch (_, stackTrace) {
       return null;
     }
   }

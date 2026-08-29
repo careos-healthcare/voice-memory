@@ -129,8 +129,12 @@ class _AskArchiveScreenState extends State<AskArchiveScreen> {
       );
     }
 
-    final sorted = [..._all]..sort((a, b) => b.date.compareTo(a.date));
-    return sorted.take(ArchiveProFeatureMap.freeKeyMomentsLimit).toList();
+    // A free user's search over their own already-loaded archive is never
+    // truncated — they get the full, accurate answer, consistent with the
+    // Search capability and the evidence-integrity trust story. The paywall
+    // offer above still surfaces Pro (history depth); it never limits what a
+    // free user's own search returns.
+    return _all;
   }
 
   Future<void> _runSearch(

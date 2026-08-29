@@ -1,5 +1,6 @@
 import 'package:archiveme_mobile/audio/recording_service.dart';
 import 'package:archiveme_mobile/billing/billing_service.dart';
+import 'package:archiveme_mobile/core/config/v1_capability_registry.dart';
 import 'package:archiveme_mobile/data/repositories/account_repository.dart';
 import 'package:archiveme_mobile/features/live_audio/application/live_voice_capture_service.dart';
 import 'package:archiveme_mobile/services/app_services.dart';
@@ -41,7 +42,8 @@ class V1AccountDependencies {
       accountRepository: services.accountRepository,
       auth: services.auth,
       billing: services.billing,
-      liveVoiceCapture: services.liveVoiceCapture,
+      liveVoiceCapture:
+          V1CapabilityRegistry.liveVoice ? services.liveVoiceCapture : null,
       offlineTts: null,
     );
   }

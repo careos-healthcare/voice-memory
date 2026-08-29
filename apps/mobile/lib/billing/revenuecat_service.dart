@@ -11,6 +11,7 @@ import 'package:archiveme_mobile/billing/store_billing_port.dart';
 import 'package:archiveme_mobile/config/app_config.dart';
 import 'package:archiveme_mobile/models/entitlement.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -56,7 +57,7 @@ class RevenueCatService implements StoreBillingPort {
     if (!_configured) return null;
     try {
       return await Purchases.appUserID;
-    } catch (e, stackTrace) {
+    } on PlatformException catch (e, stackTrace) {
       RevenueCatDiagnosticsLog.configureFinished(
         success: false,
         reason: 'app_user_id_error',
@@ -134,7 +135,7 @@ class RevenueCatService implements StoreBillingPort {
         reason: 'configure_timeout_${billingOperationTimeout.inSeconds}s',
       );
       _emit(PremiumEntitlements.free());
-    } catch (e, stackTrace) {
+    } on PlatformException catch (e, stackTrace) {
       _configured = false;
       _diagnostics = _diagnostics.copyWith(
         revenueCatConfigured: false,
@@ -249,7 +250,7 @@ class RevenueCatService implements StoreBillingPort {
               'fetchOfferings_override_timeout_${billingOperationTimeout.inSeconds}s',
         );
         return null;
-      } catch (e, stackTrace) {
+      } on Exception catch (e, stackTrace) {
         _recordOfferings(null, error: '$e');
         RevenueCatDiagnosticsLog.fetchOfferingsFinished(
           success: false,
@@ -277,38 +278,27 @@ class RevenueCatService implements StoreBillingPort {
     }
     RevenueCatDiagnosticsLog.fetchOfferingsStarted(billingConfigured: true);
     RevenueCatOfferingsDebugLog.fetchOfferingsStarted(billingConfigured: true);
-    try {
-      final offerings = await withBillingTimeout(
-        Purchases.getOfferings(),
-        label: 'fetchOfferings',
-      );
-      final fetchError = offerings == null
-          ? 'fetchOfferings timeout or null response'
-          : null;
-      _recordOfferings(offerings, error: fetchError);
-      RevenueCatDiagnosticsLog.fetchOfferingsFinished(
-        success: offerings != null,
-        offerings: offerings,
-        error: fetchError,
-      );
-      RevenueCatOfferingsDebugLog.fetchOfferingsFinished(
-        offerings: offerings,
-        error: fetchError,
-      );
-      return offerings;
-    } catch (e, stackTrace) {
-      final message = '$e';
-      _recordOfferings(null, error: message);
-      RevenueCatDiagnosticsLog.fetchOfferingsFinished(
-        success: false,
-        error: message,
-      );
-      RevenueCatOfferingsDebugLog.fetchOfferingsFinished(
-        offerings: null,
-        error: message,
-      );
-      return null;
-    }
+    // withBillingTimeout already normalizes SDK/timeout failures to a null
+    // result (recorded below); no catch here so bugs in our own mapping code
+    // surface instead of being masked as an empty offerings response.
+    final offerings = await withBillingTimeout(
+      Purchases.getOfferings(),
+      label: 'fetchOfferings',
+    );
+    final fetchError = offerings == null
+        ? 'fetchOfferings timeout or null response'
+        : null;
+    _recordOfferings(offerings, error: fetchError);
+    RevenueCatDiagnosticsLog.fetchOfferingsFinished(
+      success: offerings != null,
+      offerings: offerings,
+      error: fetchError,
+    );
+    RevenueCatOfferingsDebugLog.fetchOfferingsFinished(
+      offerings: offerings,
+      error: fetchError,
+    );
+    return offerings;
   }
 
   @override
@@ -348,7 +338,7 @@ class RevenueCatService implements StoreBillingPort {
         Purchases.syncPurchases(),
         label: 'syncPurchases',
       );
-    } catch (e, stackTrace) {
+    } on BillingOperationException catch (e, stackTrace) {
       RevenueCatDiagnosticsLog.operationFailed(
         operation: 'syncPurchases',
         error: e, stackTrace: stackTrace,
@@ -364,29 +354,22 @@ class RevenueCatService implements StoreBillingPort {
       _emit(free);
       return free;
     }
-    try {
-      final info = await withBillingTimeout(
-        Purchases.getCustomerInfo(),
-        label: 'refreshEntitlements',
-      );
-      if (info == null) {
-        RevenueCatDiagnosticsLog.refreshUnavailableUsingFreeTier();
-        final free = PremiumEntitlements.free();
-        _emit(free);
-        return free;
-      }
-      final mapped = _mapCustomerInfo(info);
-      _emit(mapped);
-      return mapped;
-    } catch (e, stackTrace) {
-      RevenueCatDiagnosticsLog.operationFailed(
-        operation: 'refreshEntitlements',
-        error: e, stackTrace: stackTrace,
-      );
+    // withBillingTimeout returns null on SDK/timeout failure (handled below as
+    // the free tier); no catch here so mapping bugs surface loudly rather than
+    // being silently downgraded to free.
+    final info = await withBillingTimeout(
+      Purchases.getCustomerInfo(),
+      label: 'refreshEntitlements',
+    );
+    if (info == null) {
+      RevenueCatDiagnosticsLog.refreshUnavailableUsingFreeTier();
       final free = PremiumEntitlements.free();
       _emit(free);
       return free;
     }
+    final mapped = _mapCustomerInfo(info);
+    _emit(mapped);
+    return mapped;
   }
 
   Future<void> logIn(String appUserId) async {
@@ -394,7 +377,7 @@ class RevenueCatService implements StoreBillingPort {
     try {
       final result = await Purchases.logIn(appUserId);
       _emit(_mapCustomerInfo(result.customerInfo));
-    } catch (e, stackTrace) {
+    } on PlatformException catch (e, stackTrace) {
       RevenueCatDiagnosticsLog.operationFailed(operation: 'logIn', error: e, stackTrace: stackTrace);
     }
   }
@@ -404,7 +387,7 @@ class RevenueCatService implements StoreBillingPort {
     try {
       final info = await Purchases.logOut();
       _emit(_mapCustomerInfo(info));
-    } catch (e, stackTrace) {
+    } on PlatformException catch (e, stackTrace) {
       RevenueCatDiagnosticsLog.operationFailed(operation: 'logOut', error: e, stackTrace: stackTrace);
     }
   }

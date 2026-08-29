@@ -62,7 +62,7 @@ class EntitlementCache {
       return PremiumEntitlements.fromJson(
         jsonDecode(raw) as Map<String, dynamic>,
       );
-    } catch (_, stackTrace) {
+    } on Object catch (_, stackTrace) {
       return null;
     }
   }
@@ -81,7 +81,7 @@ class EntitlementCache {
       return PremiumEntitlements.fromJson(
         jsonDecode(raw) as Map<String, dynamic>,
       );
-    } catch (_, stackTrace) {
+    } on Object catch (_, stackTrace) {
       return null;
     }
   }

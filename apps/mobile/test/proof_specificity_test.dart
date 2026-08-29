@@ -450,6 +450,28 @@ void main() {
       expect(modesIndex, greaterThan(0));
       expect(freedomIndex, greaterThan(modesIndex));
     });
+
+    test(
+      'post-save slot no longer renders the removed Pro upsell cards or bridge',
+      () {
+        // A save is never followed by a billing prompt: the post-save slot must
+        // not render these Pro cards or the value-moment bridge. Pre-capture /
+        // record-ready upsells live in record_pre_capture_cards.dart and are
+        // intentionally kept.
+        final postSaveSource = File(
+          'lib/features/recording/views/record_post_save_cards.dart',
+        ).readAsStringSync();
+        expect(postSaveSource, isNot(contains('ProEvidenceValueCard(')));
+        expect(postSaveSource, isNot(contains('ProLockMomentCard(')));
+        expect(
+          postSaveSource,
+          isNot(contains('MonthlyPrivateReportPreviewCard(')),
+        );
+        expect(postSaveSource, isNot(contains('ValueMomentProBridge(')));
+        // The non-Pro proof card stays in the same slot.
+        expect(postSaveSource, contains('ProofSpecificityCard('));
+      },
+    );
   });
 
   group('ProofSpecificity copy guard', () {

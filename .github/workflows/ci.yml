@@ -249,6 +249,9 @@ jobs:
       - name: Validate privacy and trust copy
         run: python3 tool/run_gate.py validates privacy_copy
 
+      - name: Guard against null-check-operator anti-pattern in excluded code
+        run: python3 tool/run_gate.py validates null_check_operator_guards
+
       - name: Enforce repository budget
         run: python3 tool/run_gate.py budget
 

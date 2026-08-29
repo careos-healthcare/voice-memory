@@ -110,14 +110,17 @@ void main() {
     sandbox = TestStorageSandbox.create();
     ActivationFunnelAnalytics.resetForTest();
     WhatChangedV2Analytics.resetForTest();
-    await RepeatReturnCheckStore.resetForTest();
-    await WhatChangedV2Store.resetForTest();
-    await HelpedTrackingStore.resetForTest();
+    // AppServices.resetForTest must run first so the prefs-backed resets below
+    // write into this test's fresh sandbox and not the previous test's
+    // already-disposed one.
     await AppServices.resetForTest(
       journalPath: sandbox.journalPath,
       prefsPath: sandbox.prefsPath,
       skipRevenueCat: true,
     );
+    await RepeatReturnCheckStore.resetForTest();
+    await WhatChangedV2Store.resetForTest();
+    await HelpedTrackingStore.resetForTest();
   });
 
   tearDown(() => sandbox.dispose());

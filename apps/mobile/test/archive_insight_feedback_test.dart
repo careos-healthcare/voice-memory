@@ -159,6 +159,11 @@ Future<void> _pumpArchiveHomeCard(
 }
 
 void main() {
+  // Reset once per test here only. Do NOT also call resetForTest() inside a
+  // test body before the first pumpWidget/pump: a second resetForTest() there
+  // (its `await flushForTest()` gap reorders against the flutter_test binding's
+  // initial frame scheduling) deterministically deadlocks the first frame, so
+  // the whole file hangs. Store state is already clean from this setUp.
   setUp(() async => ArchiveInsightFeedbackStore.resetForTest());
 
   group('ArchiveInsightFeedbackGate', () {
@@ -235,7 +240,6 @@ void main() {
   group('Archive Home feedback controls', () {
     testWidgets('render for 3+ entry archive home stages', (tester) async {
       for (final count in [3, 4, 5]) {
-        await ArchiveInsightFeedbackStore.resetForTest();
         final summary = ArchiveHomeSummaryEngine.build(
           entries: _entries(count),
         );
@@ -247,7 +251,6 @@ void main() {
 
     testWidgets('do not render for 0–1 entry premature states', (tester) async {
       for (final count in [0, 1]) {
-        await ArchiveInsightFeedbackStore.resetForTest();
         final summary = ArchiveHomeSummaryEngine.build(
           entries: count == 0 ? const [] : _entries(count),
         );

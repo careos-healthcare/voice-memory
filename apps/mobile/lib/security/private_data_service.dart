@@ -82,7 +82,7 @@ abstract class TempRecordingCleanup {
       if (name.startsWith('vm_rec_retry_')) {
         try {
           if (entity.existsSync()) await entity.delete();
-        } catch (e, stackTrace) {
+        } on FileSystemException catch (e, stackTrace) {
           AppLogger.error('Unhandled error caught', error: e, stackTrace: stackTrace);
           }
       }
@@ -101,7 +101,7 @@ abstract class TempRecordingCleanup {
       if (preservePaths.contains(entity.path)) continue;
       try {
         if (entity.existsSync()) await entity.delete();
-      } catch (e, stackTrace) {
+      } on FileSystemException catch (e, stackTrace) {
         AppLogger.error('Unhandled error caught', error: e, stackTrace: stackTrace);
         }
     }
@@ -178,7 +178,7 @@ abstract class TempRecordingCleanup {
         if (age >= orphanMaxAge && entity.existsSync()) {
           await entity.delete();
         }
-      } catch (e, stackTrace) {
+      } on FileSystemException catch (e, stackTrace) {
         AppLogger.error('Unhandled error caught', error: e, stackTrace: stackTrace);
         }
     }
@@ -193,7 +193,7 @@ abstract class TempRecordingCleanup {
       if (!file.existsSync()) return false;
       await file.delete();
       return true;
-    } catch (_, stackTrace) {
+    } on FileSystemException catch (_, stackTrace) {
       return false;
     }
   }
@@ -388,7 +388,7 @@ class PrivateDataService {
       if (!file.existsSync()) return false;
       await file.delete();
       return true;
-    } catch (_, stackTrace) {
+    } on FileSystemException catch (_, stackTrace) {
       return false;
     }
   }
