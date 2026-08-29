@@ -128,7 +128,9 @@ class EmbeddingIndexWorkerService implements PersistentIsolateWorkerClient {
   @override
   Future<void> ensureStarted() {
     if (_isFlutterTest) {
-      _testRuntime ??= _EmbeddingIndexWorkerRuntime(defaultKeyAlias: _defaultKeyAlias);
+      _testRuntime ??= _EmbeddingIndexWorkerRuntime(
+        defaultKeyAlias: _defaultKeyAlias,
+      );
       return Future<void>.value();
     }
     if (workerPort != null) {
@@ -246,32 +248,41 @@ class EmbeddingIndexWorkerService implements PersistentIsolateWorkerClient {
       return 0;
     }
 
-    final pending = await store.listPending();
-    var flushed = 0;
-    for (final task in pending) {
-      final indexed = task.operation ==
-              Migration014EmbeddingDeferredQueue.operationIndexReflection
-          ? await _dispatchIndexReflection(
-              filePath: task.sqliteFilePath,
-              entryId: task.entryId,
-              text: task.text,
-              contentHash: task.contentHash ?? '',
-              keyAlias: task.keyAlias,
-              encryptionPassword: task.encryptionPassword,
-            )
-          : await _dispatchIndexTranscript(
-              filePath: task.sqliteFilePath,
-              entryId: task.entryId,
-              llmSummary: task.text,
-              keyAlias: task.keyAlias,
-              encryptionPassword: task.encryptionPassword,
-            );
-      if (indexed) {
-        await store.remove(task.queueId);
-        flushed++;
+    try {
+      final pending = await store.listPending();
+      var flushed = 0;
+      for (final task in pending) {
+        final indexed =
+            task.operation ==
+                Migration014EmbeddingDeferredQueue.operationIndexReflection
+            ? await _dispatchIndexReflection(
+                filePath: task.sqliteFilePath,
+                entryId: task.entryId,
+                text: task.text,
+                contentHash: task.contentHash ?? '',
+                keyAlias: task.keyAlias,
+                encryptionPassword: task.encryptionPassword,
+              )
+            : await _dispatchIndexTranscript(
+                filePath: task.sqliteFilePath,
+                entryId: task.entryId,
+                llmSummary: task.text,
+                keyAlias: task.keyAlias,
+                encryptionPassword: task.encryptionPassword,
+              );
+        if (indexed) {
+          await store.remove(task.queueId);
+          flushed++;
+        }
       }
+      return flushed;
+    } on DatabaseException catch (e) {
+      // Deferred embedding work can race a database close (account switch, app
+      // shutdown, or test teardown). A closed connection just means there is
+      // nothing more to flush right now — expected, not a failure.
+      if (e.isDatabaseClosedError()) return 0;
+      rethrow;
     }
-    return flushed;
   }
 
   Future<bool> _dispatchIndexReflection({
@@ -512,7 +523,9 @@ Future<void> embeddingIndexWorkerIsolateEntry(
     rootIsolateToken: startup.rootIsolateToken,
   );
 
-  final runtime = _EmbeddingIndexWorkerRuntime(defaultKeyAlias: startup.defaultKeyAlias);
+  final runtime = _EmbeddingIndexWorkerRuntime(
+    defaultKeyAlias: startup.defaultKeyAlias,
+  );
   final serverPort = ReceivePort();
   startup.handshakePort.send(serverPort.sendPort);
 
@@ -607,7 +620,9 @@ final class _EmbeddingIndexWorkerRuntime {
     }
 
     final db = await _databaseFor(payload);
-    final transcriptRepo = MemoryTranscriptSearchRepository.fromWorkerDatabase(db);
+    final transcriptRepo = MemoryTranscriptSearchRepository.fromWorkerDatabase(
+      db,
+    );
     final embedding = await _embedText(llmSummary);
     await transcriptRepo.upsertEmbedding(
       entryId: entryId,
@@ -640,7 +655,8 @@ final class _EmbeddingIndexWorkerRuntime {
     final existingHash = await embeddingStore.readContentHash(entryId);
     List<double> queryEmbedding;
     if (existingHash == contentHash) {
-      queryEmbedding = await _readStoredEmbedding(db, entryId) ?? await _embedText(text);
+      queryEmbedding =
+          await _readStoredEmbedding(db, entryId) ?? await _embedText(text);
     } else {
       queryEmbedding = await _embedText(text);
       await embeddingStore.upsertEmbedding(
@@ -677,7 +693,10 @@ final class _EmbeddingIndexWorkerRuntime {
     ).toJson();
   }
 
-  Future<List<double>?> _readStoredEmbedding(Database db, String entryId) async {
+  Future<List<double>?> _readStoredEmbedding(
+    Database db,
+    String entryId,
+  ) async {
     final rows = await db.query(
       ReflectionEmbeddingWorkerStore.embeddingsTable,
       columns: ['embedding'],
