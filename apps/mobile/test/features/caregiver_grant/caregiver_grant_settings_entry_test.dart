@@ -7,7 +7,11 @@
 import 'package:archiveme_mobile/features/caregiver/caregiver_feature_flags.dart';
 import 'package:archiveme_mobile/features/caregiver_grant/caregiver_grant_copy.dart';
 import 'package:archiveme_mobile/features/caregiver_grant/caregiver_grant_entry_point.dart';
+import 'package:archiveme_mobile/features/settings/presentation/caregiver_consent_copy.dart';
+import 'package:archiveme_mobile/features/settings/presentation/caregiver_consent_screen.dart';
 import 'package:archiveme_mobile/l10n/generated/app_localizations.dart';
+import 'package:archiveme_mobile/router/route_catalog.dart';
+import 'package:archiveme_mobile/router/v1_route_registry.dart';
 import 'package:archiveme_mobile/screens/settings_screen.dart';
 import 'package:archiveme_mobile/services/app_services.dart';
 import 'package:archiveme_mobile/theme/app_theme.dart';
@@ -71,20 +75,33 @@ void main() {
     expect(find.byKey(CaregiverEntryPoint.cardKey), findsNothing);
     expect(find.byKey(CaregiverEntryPoint.actionKey), findsNothing);
     expect(find.text(CaregiverGrantCopy.entryTitle), findsNothing);
+    expect(find.text(CaregiverConsentCopy.settingsTileTitle), findsNothing);
+    expect(find.byKey(const Key('settings_caregiver_consent_tile')), findsNothing);
+    expect(find.byKey(const Key('settings_caregiver_access_tile')), findsNothing);
   });
 
-  testWidgets('the grant entry point appears once the capability is on',
+  testWidgets('one consent tile appears once the capability is on',
       (tester) async {
     CaregiverFeatureFlags.debugOverride = true;
 
     await pumpSettings(tester);
 
-    expect(find.byKey(CaregiverEntryPoint.cardKey), findsOneWidget);
-    expect(find.byKey(CaregiverEntryPoint.actionKey), findsOneWidget);
-    expect(find.text(CaregiverGrantCopy.entryTitle), findsOneWidget);
+    expect(find.byKey(CaregiverEntryPoint.cardKey), findsNothing);
+    expect(find.byKey(CaregiverEntryPoint.actionKey), findsNothing);
+    expect(find.byKey(const Key('settings_caregiver_consent_tile')), findsOneWidget);
+    expect(find.byKey(const Key('settings_caregiver_access_tile')), findsOneWidget);
+    expect(find.text('Caregiver Access & Permissions'), findsOneWidget);
+    expect(find.text(CaregiverConsentCopy.settingsTileTitle), findsOneWidget);
+    expect(
+      find.descendant(
+        of: find.byKey(const Key('settings_caregiver_access_tile')),
+        matching: find.byIcon(Icons.family_restroom),
+      ),
+      findsOneWidget,
+    );
   });
 
-  testWidgets('it sits inside the Settings list, not floating in the tree',
+  testWidgets('the tile sits inside the Settings list, not floating in the tree',
       (tester) async {
     CaregiverFeatureFlags.debugOverride = true;
 
@@ -93,9 +110,58 @@ void main() {
     expect(
       find.descendant(
         of: find.byType(SettingsScreen),
-        matching: find.byKey(CaregiverEntryPoint.cardKey),
+        matching: find.byKey(const Key('settings_caregiver_consent_tile')),
       ),
       findsOneWidget,
+    );
+  });
+
+  testWidgets(
+    'tapping the Settings consent tile opens CaregiverConsentScreen',
+    (tester) async {
+      CaregiverFeatureFlags.debugOverride = true;
+
+      await pumpSettings(tester);
+
+      await tester.tap(find.byKey(const Key('settings_caregiver_consent_tile')));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 300));
+
+      expect(find.byKey(CaregiverConsentScreen.screenKey), findsOneWidget);
+      expect(find.text(CaregiverConsentCopy.banner), findsOneWidget);
+      expect(find.byKey(CaregiverConsentScreen.masterSwitchKey), findsOneWidget);
+      expect(
+        tester
+            .widget<SwitchListTile>(
+              find.byKey(CaregiverConsentScreen.masterSwitchKey),
+            )
+            .value,
+        isFalse,
+      );
+      expect(find.textContaining('Heather'), findsNothing);
+      expect(find.text(CaregiverConsentCopy.statusOff), findsOneWidget);
+    },
+  );
+
+  test('catalog-only caregiver paths stay off the production registry', () {
+    expect(V1RouteRegistry.caregiverAccessPath, '/caregiver-access');
+    expect(V1RouteRegistry.supportingPaths, contains('/caregiver-access'));
+    expect(V1RouteRegistry.supportingPaths, isNot(contains(RouteCatalog.caregiverHome)));
+    expect(
+      V1RouteRegistry.supportingPaths,
+      isNot(contains(RouteCatalog.caregiverConsent)),
+    );
+  });
+
+  test('disclosure copy names opening words and a local-then-server revoke', () {
+    expect(CaregiverGrantCopy.canSeeRecent, contains('opening words'));
+    expect(CaregiverGrantCopy.cannotAudio, contains('does not play your audio'));
+    expect(CaregiverGrantCopy.stopOnThisDevice, contains('right away'));
+    expect(CaregiverGrantCopy.stopPassLifetime, contains('7 days'));
+    expect(CaregiverGrantCopy.stopReachesServer, contains('reconnect'));
+    expect(
+      CaregiverGrantCopy.all.join(' ').toLowerCase(),
+      isNot(contains('instantly severs')),
     );
   });
 }
