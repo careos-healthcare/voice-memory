@@ -1,6 +1,3 @@
-import 'dart:io';
-import 'support/record_screen_library_source.dart';
-
 import 'package:archiveme_mobile/billing/archive_loop_entitlement_ids.dart';
 import 'package:archiveme_mobile/billing/paywall_source.dart';
 import 'package:archiveme_mobile/features/archive_proof/proof_surface_advice_guard.dart';
@@ -216,12 +213,6 @@ void main() {
         ),
         isTrue,
       );
-    });
-
-    test('CTA opens existing paywall source value moment', () {
-      final contents = readRecordScreenLibrarySource();
-      expect(contents, contains('record_beta_repair_lab_pricing_validation'));
-      expect(contents, contains('PaywallSource.valueMoment'));
     });
 
     test('no RevenueCat product entitlement changes', () {

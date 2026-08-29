@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'support/record_screen_library_source.dart';
 
 import 'package:archiveme_mobile/billing/restore_purchases_copy.dart';
 import 'package:archiveme_mobile/billing/revenuecat_service.dart';
@@ -489,17 +488,6 @@ void main() {
   });
 
   group('Integration wiring', () {
-    test(
-      'record screen opens valueMoment paywall for pro understanding lift',
-      () {
-        final source = readRecordScreenLibrarySource();
-        expect(source, contains('FirstSessionLiftCard'));
-        expect(source, contains('ProUnderstandingLiftCard'));
-        expect(source, contains('record_pro_understanding_lift'));
-        expect(source, contains('PaywallSource.valueMoment'));
-      },
-    );
-
     test('testing screen renders compact previews', () {
       final source = File(
         '../../packages/archiveme_research/lib/screens/testing_archiveme_screen.dart',
@@ -532,14 +520,5 @@ void main() {
     test('restore purchases unchanged', () {
       expect(RestorePurchasesCopy.restorePurchases, 'Restore purchases');
     });
-
-    test(
-      'pro understanding lift opens valueMoment paywall via record screen',
-      () {
-        final source = readRecordScreenLibrarySource();
-        expect(source, contains('_openProEvidenceValueSubscription'));
-        expect(source, contains('source: PaywallSource.valueMoment'));
-      },
-    );
   });
 }

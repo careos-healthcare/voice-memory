@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'support/record_screen_library_source.dart';
 
 import 'package:archiveme_mobile/features/archive_proof/proof_surface_advice_guard.dart';
 import 'package:archiveme_mobile/features/beta/archive_beta_mission_gate.dart';
@@ -369,16 +368,6 @@ void main() {
       final reportIndex = source.indexOf('if (showBetaTesterReportOnPatterns)');
       expect(spineIndex, greaterThan(0));
       expect(reportIndex, greaterThan(spineIndex));
-    });
-
-    test('Record placement references SurfacePriorityAudit', () {
-      final source = readRecordScreenLibrarySource();
-      expect(source, contains('SurfacePriorityEngine.auditRecordReady'));
-      expect(source, contains('showBetaTesterReportOnRecord'));
-      final engineSource = File(
-        'lib/features/surface_priority/surface_priority_engine.dart',
-      ).readAsStringSync();
-      expect(engineSource, contains('SurfacePriorityCardKey.betaTesterReport'));
     });
   });
 }

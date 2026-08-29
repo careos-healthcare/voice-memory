@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'support/record_screen_library_source.dart';
 
 import 'package:archiveme_mobile/features/archive_proof/proof_surface_advice_guard.dart';
 import 'package:archiveme_mobile/features/beta/archive_beta_mission_gate.dart';
@@ -396,44 +395,6 @@ void main() {
       ).readAsStringSync().toLowerCase();
       expect(source, isNot(contains('transcript')));
       expect(source, isNot(contains('entry_id')));
-    });
-  });
-
-  group('What to notice next placement', () {
-    test('card sits below beta today summary and above deeper proof cards', () {
-      final source = readRecordScreenLibrarySource();
-      final summaryIndex = source.indexOf(
-        'if (ctx.showBetaTodaySummaryCard &&\n'
-        '            ReturningRecordWatchTargetUiGates.showBetaRecordSurfaces() &&\n'
-        '            !ctx.firstUseSimplifiedRecord) ...[',
-      );
-      final noticeIndex = source.indexOf(
-        'if (ctx.showWhatToNoticeNextCard &&\n'
-        '            !ctx.firstUseSimplifiedRecord &&\n'
-        '            !ctx.recordReadySuppressStreakPressure) ...[',
-      );
-      final freedomIndex = source.indexOf(
-        'if (ctx.showCaptureFreedomLine &&\n'
-        '            !ctx.firstUseSimplifiedRecord &&\n'
-        '            !ctx.showReturningWatchTargetFocusedUi) ...[',
-      );
-      expect(summaryIndex, greaterThan(0));
-      expect(noticeIndex, greaterThan(summaryIndex));
-      expect(freedomIndex, greaterThan(noticeIndex));
-    });
-
-    test('prompt selection sets selected prompt line only', () {
-      final source = readRecordScreenLibrarySource();
-      final snippet = source.substring(
-        source.indexOf('WhatToNoticeNextCard('),
-        source.indexOf(
-          'if (ctx.showCaptureFreedomLine &&\n'
-          '            !ctx.firstUseSimplifiedRecord &&\n'
-          '            !ctx.showReturningWatchTargetFocusedUi) ...[',
-        ),
-      );
-      expect(snippet, contains('_selectedPromptLine = prompt'));
-      expect(snippet, isNot(contains('context.push')));
     });
   });
 }

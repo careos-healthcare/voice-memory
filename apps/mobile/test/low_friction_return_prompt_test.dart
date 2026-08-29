@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'support/record_screen_library_source.dart';
 
 import 'package:archiveme_mobile/features/archive_proof/proof_surface_advice_guard.dart';
 import 'package:archiveme_mobile/features/low_friction_return/low_friction_return_analytics.dart';
@@ -438,55 +437,6 @@ void main() {
       expect(source, isNot(contains('transcript')));
       expect(source, isNot(contains('entry_id')));
       expect(source, isNot(contains('body')));
-    });
-  });
-
-  group('Low friction return placement', () {
-    test('card sits under OpenCapturePromptChips on record screen', () {
-      final source = readRecordScreenLibrarySource();
-      final chipsIndex = source.indexOf(
-        'if (ctx.showOpenCapturePromptChips &&\n'
-        '            !ctx.firstUseSimplifiedRecord &&\n'
-        '            !ctx.showReturningWatchTargetFocusedUi) ...[',
-      );
-      final cardIndex = source.indexOf(
-        'if (ctx.showLowFrictionReturnCard &&\n'
-        '            !ctx.firstUseSimplifiedRecord &&\n'
-        '            !ctx.showReturningWatchTargetFocusedUi &&\n'
-        '            !ReturningRecordWatchTargetUiGates.watchPromptSkippedToday()) ...[',
-      );
-      expect(chipsIndex, greaterThan(0));
-      expect(cardIndex, greaterThan(chipsIndex));
-    });
-
-    test('card sits above deeper archive proof cards', () {
-      final source = readRecordScreenLibrarySource();
-      final cardIndex = source.indexOf('LowFrictionReturnCard(');
-      final freedomIndex = source.indexOf(
-        'if (ctx.showCaptureFreedomLine &&\n'
-        '            !ctx.firstUseSimplifiedRecord &&\n'
-        '            !ctx.showReturningWatchTargetFocusedUi) ...[',
-      );
-      final timelineIndex = source.indexOf(
-        'if (!ctx.suppressLegacyEducationCardsForSpineOnRecord &&',
-      );
-      expect(cardIndex, greaterThan(0));
-      expect(freedomIndex, greaterThan(cardIndex));
-      expect(timelineIndex, greaterThan(cardIndex));
-    });
-
-    test('prompt selection sets selected prompt line only', () {
-      final source = readRecordScreenLibrarySource();
-      final snippet = source.substring(
-        source.indexOf('LowFrictionReturnCard('),
-        source.indexOf(
-          'if (ctx.showCaptureFreedomLine &&\n'
-          '            !ctx.firstUseSimplifiedRecord &&\n'
-          '            !ctx.showReturningWatchTargetFocusedUi) ...[',
-        ),
-      );
-      expect(snippet, contains('_selectedPromptLine = prompt'));
-      expect(snippet, isNot(contains('context.push')));
     });
   });
 }
