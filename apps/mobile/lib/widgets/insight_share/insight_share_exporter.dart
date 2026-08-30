@@ -6,6 +6,7 @@ import 'package:archiveme_mobile/features/insight_share/insight_share_card_model
 import 'package:archiveme_mobile/features/insight_share/insight_share_png_metadata.dart';
 import 'package:archiveme_mobile/features/weekly_story/weekly_story_engine.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
+import 'package:archiveme_mobile/widgets/archive/view_evidence_inline_link.dart';
 import 'package:archiveme_mobile/widgets/insight_share/insight_share_card_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -17,9 +18,13 @@ class InsightShareExporter extends StatefulWidget {
   const InsightShareExporter({
     required this.entries,
     super.key,
+    this.onViewEvidence,
   });
 
   final List<JournalEntry> entries;
+
+  /// Test hook — production opens the evidence trail from [entries].
+  final VoidCallback? onViewEvidence;
 
   @override
   State<InsightShareExporter> createState() => _InsightShareExporterState();
@@ -33,6 +38,11 @@ class _InsightShareExporterState extends State<InsightShareExporter> {
     final story = const WeeklyStoryEngine().build(entries: widget.entries);
     return InsightShareCardBuilder.build(story: story);
   }
+
+  List<String> get _sourceEntryIds => [
+    for (final entry in widget.entries)
+      if (entry.id.isNotEmpty) entry.id,
+  ];
 
   Future<void> _shareSnapshot() async {
     final model = _model;
@@ -101,7 +111,20 @@ class _InsightShareExporterState extends State<InsightShareExporter> {
               ),
             ),
             const SizedBox(height: 4),
-            Text(model.headline, style: theme.textTheme.titleMedium),
+            Wrap(
+              crossAxisAlignment: WrapCrossAlignment.center,
+              children: [
+                Text(model.headline, style: theme.textTheme.titleMedium),
+                if (widget.onViewEvidence != null ||
+                    _sourceEntryIds.isNotEmpty)
+                  ViewEvidenceInlineLink(
+                    key: const Key('insight_share_view_evidence'),
+                    entryIds: _sourceEntryIds,
+                    surface: 'insight_share',
+                    onViewEvidence: widget.onViewEvidence,
+                  ),
+              ],
+            ),
             const SizedBox(height: 4),
             Text(
               model.weekRangeLabel,
