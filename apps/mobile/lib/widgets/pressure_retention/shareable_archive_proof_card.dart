@@ -4,6 +4,7 @@ import 'package:archiveme_mobile/features/share/archive_share_actions.dart';
 import 'package:archiveme_mobile/theme/app_colors.dart';
 import 'package:archiveme_mobile/theme/app_spacing.dart';
 import 'package:archiveme_mobile/theme/voicememory_cards.dart';
+import 'package:archiveme_mobile/widgets/archive/view_evidence_inline_link.dart';
 import 'package:flutter/material.dart';
 
 /// Small share card: preview of anonymous proof lines plus copy/share actions.
@@ -11,11 +12,17 @@ import 'package:flutter/material.dart';
 class ShareableArchiveProofCard extends StatefulWidget {
   const ShareableArchiveProofCard({
     required this.proof, super.key,
+    this.sourceEntryIds = const [],
+    this.onViewEvidence,
     this.onShare,
     this.onCopy,
   });
 
   final ShareableArchiveProof proof;
+
+  /// In-app only — never copied into [ShareableArchiveProof.shareText].
+  final List<String> sourceEntryIds;
+  final VoidCallback? onViewEvidence;
 
   /// Test hook; production uses [ArchiveShareActions].
   @visibleForTesting
@@ -93,10 +100,23 @@ class _ShareableArchiveProofCardState extends State<ShareableArchiveProofCard> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            proof.title,
-            key: const Key('shareable_proof_title'),
-            style: ArchiveMobileTypography.responsiveSectionTitle(context),
+          Wrap(
+            crossAxisAlignment: WrapCrossAlignment.center,
+            children: [
+              Text(
+                proof.title,
+                key: const Key('shareable_proof_title'),
+                style: ArchiveMobileTypography.responsiveSectionTitle(context),
+              ),
+              if (widget.onViewEvidence != null ||
+                  widget.sourceEntryIds.isNotEmpty)
+                ViewEvidenceInlineLink(
+                  key: const Key('shareable_proof_view_evidence'),
+                  entryIds: widget.sourceEntryIds,
+                  surface: 'shareable_archive_proof',
+                  onViewEvidence: widget.onViewEvidence,
+                ),
+            ],
           ),
           if (proof.subtitle.isNotEmpty) ...[
             const SizedBox(height: AppSpacing.xs),
