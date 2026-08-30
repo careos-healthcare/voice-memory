@@ -34,6 +34,19 @@
 
 Deferred experiments redirect safely via `lib/router/v1_quarantine_redirects.dart`. They must not appear as route builders, startup services, or launch-visible widgets when `V1FeatureFlags.enableV1Only` is true.
 
+## Trust pillars (first-run)
+
+Shipped on the welcome screen (`OnboardingV1Copy`). Pillar 2 is the send-choice already live in `RemoteProcessingChoiceCopy` / `PrivacyClaimCatalogue` — not on-device AI.
+
+| # | Title | Body |
+|---|-------|------|
+| 1 | Your words are cited as evidence | Patterns and changes link back to the entries you saved. You can inspect source proof before you rely on any read. |
+| 2 | You choose what leaves your phone | Nothing is sent unless you choose a feature that needs it. Choose transcription or sync and your audio and transcript text go to our servers for that job only. Turn it off in Settings → Privacy and new moments stay on this device. |
+| 3 | Storage protection is reported live | Your moments stay in local databases on this device. Privacy settings report how this build protects them, instead of asserting it here. |
+| 4 | You control all access | Caregiver and observer grants require your explicit consent. Revoke access any time — nothing is shared without your say. |
+
+Archive Home uses the imperative twin of pillar 2: “Choose what leaves your phone” (`RemoteProcessingChoiceCopy.chooseWhatLeavesTitle`). Same choice, not a second claim.
+
 ## Trust copy rules
 
 **Avoid:** diagnosis, therapy, certainty, hidden truth, guaranteed transformation, unsupported causality.
