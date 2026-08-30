@@ -34,6 +34,14 @@ analyzer:
     # regeneration, and tool/check_analysis_excludes.py rejects any line in
     # there that is not a `lib/features/<name>/**` entry.
     - build/**
+    # Archived, unlinked experiments — not part of the V1 beta and intentionally
+    # shelved (see experiments/archive/local_notifications/README.md;
+    # V1CapabilityRegistry.notifications = false). The local_notifications Dart
+    # sources import `flutter_local_notifications` + `timezone`, which are not in
+    # pubspec, so analyzing them yields ~50 unresolved-import errors that describe
+    # the removed deps, not the live app. Kept on disk as a re-linking reference
+    # (live stubs point back to these files), so exclude rather than delete.
+    - experiments/**
     # BEGIN generated: lib/features symlink excludes (restore_lib_features_symlinks.sh)
     - lib/features/account_migration/**
     - lib/features/acquisition/**

@@ -1,3 +1,5 @@
+import 'package:archiveme_mobile/billing/paywall_route_args.dart';
+import 'package:archiveme_mobile/billing/paywall_source.dart';
 import 'package:archiveme_mobile/design/archive_mobile_typography.dart';
 import 'package:archiveme_mobile/features/archive_calendar/archive_calendar_copy.dart';
 import 'package:archiveme_mobile/features/archive_clarity/archive_clarity_copy.dart';
@@ -306,7 +308,13 @@ class SupportFeedbackScreen extends StatelessWidget {
                 ),
               ),
               trailing: const Icon(Icons.chevron_right),
-              onTap: () => context.push('/pro-interest'),
+              onTap: () => context.push(
+                '/subscription',
+                extra: const PaywallRouteArgs(
+                  source: PaywallSource.generalPro,
+                  sourceRoute: '/support-feedback',
+                ),
+              ),
             ),
             const SizedBox(height: AppSpacing.sm),
             _bulletsSection(

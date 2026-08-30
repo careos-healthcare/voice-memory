@@ -27,7 +27,7 @@ Future<T?> withBillingTimeout<T>(
       timeoutSeconds: billingOperationTimeout.inSeconds,
     );
     return null;
-  } catch (e, stackTrace) {
+  } on Exception catch (e, stackTrace) {
     BillingAsyncGuardLog.error(label: label, error: e, stackTrace: stackTrace);
     return null;
   }
@@ -45,7 +45,7 @@ Future<T> withBillingTimeoutRequired<T>(
       timeoutSeconds: billingOperationTimeout.inSeconds,
     );
     throw BillingOperationException('Billing operation timed out ($label)');
-  } catch (e, stackTrace) {
+  } on Exception catch (e, stackTrace) {
     BillingAsyncGuardLog.error(label: label, error: e, stackTrace: stackTrace);
     if (e is BillingOperationException) rethrow;
     throw BillingOperationException(

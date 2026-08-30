@@ -63,7 +63,7 @@ void main() {
     );
     expect(trigger?.trigger, PaywallTrigger.keyMomentsLimit);
     expect(trigger?.previewTitle, 'Your pattern memory is growing');
-    expect(trigger?.previewBody, contains('first 7 key moments'));
+    expect(trigger?.previewBody, contains('longer proof trail'));
     expect(trigger?.ctaLabel, ConsumerUiCopy.unlockFullMemoryCta);
   });
 
@@ -89,17 +89,18 @@ void main() {
     expect(trigger?.previewTitle, 'See more of your pattern map');
   });
 
-  test('archive timeline full triggers when loop closed', () {
+  test('archive timeline is not Pro-gated — never triggers a paywall', () {
+    // Timeline is a core capability, not a Pro upsell (only history depth is).
     final trigger = buildPaywallTrigger(
       feature: ArchiveFeature.archiveTimeline,
       isPro: false,
       firstLoopClosed: true,
       magicMomentsCount: 3,
     );
-    expect(trigger?.trigger, PaywallTrigger.archiveTimelineFull);
+    expect(trigger, isNull);
   });
 
-  test('monthly review and private export are Pro after loop closed', () {
+  test('monthly review is Pro; private export and weekly review are free', () {
     expect(
       buildPaywallTrigger(
         feature: ArchiveFeature.monthlyReview,
@@ -109,14 +110,25 @@ void main() {
       )?.trigger,
       PaywallTrigger.monthlyReview,
     );
+    // Private recap export is free forever — it must never open a paywall.
     expect(
       buildPaywallTrigger(
         feature: ArchiveFeature.privateRecapExport,
         isPro: false,
         firstLoopClosed: true,
         magicMomentsCount: 3,
-      )?.trigger,
-      PaywallTrigger.privateExport,
+      ),
+      isNull,
+    );
+    // Weekly review is ungated too (split off from the monthly-review trigger).
+    expect(
+      buildPaywallTrigger(
+        feature: ArchiveFeature.tier2WeeklyReview,
+        isPro: false,
+        firstLoopClosed: true,
+        magicMomentsCount: 3,
+      ),
+      isNull,
     );
   });
 }

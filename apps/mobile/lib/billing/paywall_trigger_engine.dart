@@ -59,15 +59,10 @@ PaywallTrigger? _triggerForFeature({
           : PaywallTrigger.fullHistory;
     case ArchiveFeature.patternMap:
       return PaywallTrigger.patternMapFull;
-    case ArchiveFeature.archiveTimeline:
-      return PaywallTrigger.archiveTimelineFull;
     case ArchiveFeature.whatArchiveMeRemembers:
       return PaywallTrigger.archiveMemoryFull;
     case ArchiveFeature.monthlyReview:
-    case ArchiveFeature.tier2WeeklyReview:
       return PaywallTrigger.monthlyReview;
-    case ArchiveFeature.privateRecapExport:
-      return PaywallTrigger.privateExport;
     default:
       return null;
   }

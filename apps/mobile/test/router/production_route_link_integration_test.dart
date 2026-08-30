@@ -54,7 +54,7 @@ GoRouter buildProductionRouterHarness({GlobalKey<NavigatorState>? rootKey}) {
             routes: [
               GoRoute(
                 path: RouteCatalog.recordHome,
-                builder: (context, state) => RecordScreen(
+                builder: (context, state) => CaptureScreenHost(
                   navigationActivityController:
                       recordNavigationActivityController,
                 ),

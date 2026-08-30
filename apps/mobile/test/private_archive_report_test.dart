@@ -490,9 +490,11 @@ void main() {
       );
     });
 
-    testWidgets('free preview shows See Pro without full report sections', (
+    testWidgets('free users see the full report with no See Pro upsell', (
       tester,
     ) async {
+      // Private recap export is free forever — every section is shown and the
+      // Pro preview upsell never appears, even for free users.
       final report = PrivateArchiveReportEngine.build(
         entries: _fourRelatedRepeatEntries(),
         viewingConfirmedRepeatOrTimeline: true,
@@ -513,11 +515,11 @@ void main() {
         ),
       );
 
-      expect(find.text(PrivateArchiveReportCopy.previewTitle), findsOneWidget);
-      expect(find.text(PrivateArchiveReportCopy.previewProCta), findsOneWidget);
+      expect(find.text(PrivateArchiveReportCopy.previewTitle), findsNothing);
+      expect(find.text(PrivateArchiveReportCopy.previewProCta), findsNothing);
       expect(
         find.text(PrivateArchiveReportCopy.whatToWatchNextHeading),
-        findsNothing,
+        findsOneWidget,
       );
     });
   });
@@ -541,7 +543,9 @@ void main() {
         ),
         isTrue,
       );
-      expect(PrivateArchiveReportGates.showPreviewNote(isPro: false), isTrue);
+      // Export is free forever: no Pro preview note on the report itself...
+      expect(PrivateArchiveReportGates.showPreviewNote(isPro: false), isFalse);
+      // ...but the full-archive *history* boundary (history depth) still applies.
       expect(
         PaywallTimingGates.showFullArchiveHistoryProBoundary(
           entryCount: 3,

@@ -7,6 +7,7 @@ import 'package:archiveme_mobile/services/automated_graph/automated_graph_servic
 import 'package:archiveme_mobile/features/search/reflection_text_processor.dart';
 import 'package:archiveme_mobile/storage/journal_store.dart';
 import 'package:crypto/crypto.dart';
+import 'package:sqflite/sqflite.dart';
 
 /// Debounced queue that builds automated knowledge-graph edges after journal saves.
 class AutomatedGraphIndexWorker {
@@ -48,6 +49,12 @@ class AutomatedGraphIndexWorker {
         if (didBuild) built++;
       }
       return built;
+    } on DatabaseException catch (e) {
+      // A debounced background flush can race app/DB shutdown (and, in tests,
+      // teardown) and find the connection already closed. Expected best-effort
+      // behaviour, not a failure.
+      if (e.isDatabaseClosedError()) return 0;
+      rethrow;
     } finally {
       _flushInFlight = false;
     }
@@ -93,6 +100,15 @@ class AutomatedGraphIndexWorker {
     _debounceTimer = Timer(_debounce, () {
       unawaited(flush());
     });
+  }
+
+  /// Test hook: cancels a pending debounced flush so it cannot fire after the
+  /// test completes and run against a database the next test is about to close.
+  /// Only cancels the timer — it never disposes the worker or closes the DB, so
+  /// shared setUpAll harnesses keep working. See flutter_test_config.dart.
+  void quiesceForTest() {
+    _debounceTimer?.cancel();
+    _debounceTimer = null;
   }
 
   void dispose() {

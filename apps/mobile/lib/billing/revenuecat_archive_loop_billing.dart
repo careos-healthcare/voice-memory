@@ -123,7 +123,7 @@ class RevenueCatArchiveLoopBilling {
         priceLine: priceLine,
         package: package,
       );
-    } catch (e, stackTrace) {
+    } on Exception catch (e, stackTrace) {
       ArchiveLoopRevenueCatLog.productFailed(reason: e.toString());
       return ArchiveLoopPaywallProductState(
         phase: ArchiveLoopPaywallProductPhase.unavailable,
@@ -181,7 +181,7 @@ class RevenueCatArchiveLoopBilling {
         isPro: isPro,
         failureReason: isPro ? null : 'entitlement_inactive',
       );
-    } catch (e, stackTrace) {
+    } on Exception catch (e, stackTrace) {
       ArchiveLoopRevenueCatLog.purchaseFailed(reason: e.toString());
       return current.copyWith(
         phase: ArchiveLoopPaywallProductPhase.purchaseFailed,
@@ -219,7 +219,7 @@ class RevenueCatArchiveLoopBilling {
       return const ArchiveLoopPaywallProductState(
         phase: ArchiveLoopPaywallProductPhase.loaded,
       );
-    } catch (e, stackTrace) {
+    } on Exception catch (e, stackTrace) {
       ArchiveLoopRevenueCatLog.purchaseFailed(reason: e.toString());
       return ArchiveLoopPaywallProductState(
         phase: ArchiveLoopPaywallProductPhase.purchaseFailed,
