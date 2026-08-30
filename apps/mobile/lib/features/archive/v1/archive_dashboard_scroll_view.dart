@@ -10,9 +10,11 @@ import 'package:archiveme_mobile/widgets/archive/archive_empty_state.dart';
 import 'package:archiveme_mobile/widgets/archive/archive_entry_card.dart';
 import 'package:archiveme_mobile/widgets/archive/archive_search_field.dart';
 import 'package:archiveme_mobile/widgets/archive/archive_status_banner.dart';
+import 'package:archiveme_mobile/widgets/archive/archive_home_choose_what_leaves_tile.dart';
 import 'package:archiveme_mobile/widgets/archive/archive_verified_changes_section.dart';
 import 'package:archiveme_mobile/widgets/insight_share/insight_share_exporter.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 /// Responsive [CustomScrollView] slivers for the Archive Home dashboard.
 class ArchiveDashboardScrollView extends StatelessWidget {
@@ -269,6 +271,15 @@ class _IntroSection extends StatelessWidget {
           style: theme.textTheme.bodySmall?.copyWith(
             color: theme.colorScheme.onSurfaceVariant,
           ),
+        ),
+        const SizedBox(height: 12),
+        ArchiveHomeChooseWhatLeavesTile(
+          onTap: () {
+            final router = GoRouter.maybeOf(context);
+            if (router != null) {
+              router.push('/privacy-trust-centre');
+            }
+          },
         ),
         if (loadState == ArchiveBeliefLoadState.offline) ...[
           const SizedBox(height: 12),

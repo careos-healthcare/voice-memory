@@ -1416,6 +1416,7 @@ extension RecordPostSaveCards on _RecordScreenState {
         syncNote: syncNoteForDisplay,
         onRecordAnother: _resetPostSaveToReady,
         onViewArchive: () => context.go('/archive-belief'),
+        onChooseWhatLeaves: () => context.push('/privacy-trust-centre'),
         onCorrectText:
             _lastSavedEntry != null &&
                 !VoiceCaptureQuality.isDegradedVoiceCapture(entry) &&

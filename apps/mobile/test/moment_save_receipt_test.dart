@@ -1,3 +1,4 @@
+import 'package:archiveme_mobile/features/archive/ui/remote_processing_choice_copy.dart';
 import 'package:archiveme_mobile/features/post_save/moment_save_receipt_copy.dart';
 import 'package:archiveme_mobile/features/post_save/moment_save_receipt_model.dart';
 import 'package:archiveme_mobile/features/voice_capture/voice_capture_copy.dart';
@@ -5,6 +6,7 @@ import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/models/reflection.dart';
 import 'package:archiveme_mobile/theme/app_theme.dart';
 import 'package:archiveme_mobile/widgets/record/moment_save_receipt_card.dart';
+import 'package:archiveme_mobile/widgets/record/remote_processing_skipped_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -152,6 +154,39 @@ void main() {
         ),
         MomentSaveRemoteStatus.none,
       );
+    });
+
+    testWidgets('local-only consent replaces the skipped analysis card', (
+      tester,
+    ) async {
+      var opened = false;
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: AppTheme.light(),
+          home: Scaffold(
+            body: MomentSaveReceiptCard(
+              entry: _entry(),
+              entryCount: 1,
+              remoteStatus: MomentSaveRemoteStatus.none,
+              syncNote: VoiceCaptureCopy.remoteProcessingConsentPausedNote,
+              onRecordAnother: () {},
+              onViewArchive: () {},
+              onChooseWhatLeaves: () => opened = true,
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.byKey(RemoteProcessingSkippedCard.cardKey), findsOneWidget);
+      expect(
+        find.text(RemoteProcessingChoiceCopy.skippedNote),
+        findsOneWidget,
+      );
+      expect(find.byKey(const Key('moment_save_receipt_sync_note')), findsNothing);
+
+      await tester.tap(find.byKey(RemoteProcessingSkippedCard.ctaKey));
+      expect(opened, isTrue);
     });
 
     test('analysis unavailable after consent is retryable', () {

@@ -41,6 +41,13 @@ abstract final class PrivacyClaimCatalogue {
   static const String onDeviceByDefaultHeading =
       'You choose what leaves your phone';
 
+  /// Imperative entry to the same choice as [onDeviceByDefaultHeading].
+  ///
+  /// Archive Home and the remote-processing-skipped card use this to open
+  /// `/privacy-trust-centre`, next to the "What can leave this phone" card.
+  static const String chooseWhatLeavesYourPhone =
+      'Choose what leaves your phone';
+
   /// Heading for the local-storage architecture block — not the send-choice
   /// heading above. The body lists what stays in local databases.
   static const String whatYouSaveStaysHereHeading = 'What you save stays here';
@@ -156,6 +163,7 @@ abstract final class PrivacyClaimCatalogue {
   /// Every claim in the catalogue, for gates and audits.
   static const List<String> all = [
     onDeviceByDefaultHeading,
+    chooseWhatLeavesYourPhone,
     whatYouSaveStaysHereHeading,
     archiveIsPrivateTitle,
     privacyAndSecurityTitle,

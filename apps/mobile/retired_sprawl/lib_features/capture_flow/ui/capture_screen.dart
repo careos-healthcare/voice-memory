@@ -220,6 +220,7 @@ class _CaptureScreenState extends State<CaptureScreen>
             syncNote: pipeline?.syncNote,
             onRecordAnother: _controller.resetToReady,
             onViewArchive: () => context.go('/archive-belief'),
+            onChooseWhatLeaves: () => context.push('/privacy-trust-centre'),
             onRetryRemote: remoteStatus == MomentSaveRemoteStatus.failedRetryable
                 ? _controller.retryRemoteProcessing
                 : null,
