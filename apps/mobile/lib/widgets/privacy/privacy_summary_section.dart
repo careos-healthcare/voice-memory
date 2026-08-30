@@ -238,7 +238,9 @@ class _WhereWordsGoCallout extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppColors.accentLight,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.accentPrimary.withValues(alpha: 0.28)),
+        border: Border.all(
+          color: AppColors.accentPrimary.withValues(alpha: 0.28),
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

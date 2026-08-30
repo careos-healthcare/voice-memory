@@ -87,7 +87,9 @@ void main() {
       final calloutTop = tester.getTopLeft(
         find.byKey(const Key('privacy_where_words_go')),
       );
-      final introTop = tester.getTopLeft(find.byKey(const Key('privacy_intro')));
+      final introTop = tester.getTopLeft(
+        find.byKey(const Key('privacy_intro')),
+      );
       final firstSectionTop = tester.getTopLeft(
         find.text(PrivacyScreenCopy.privateByDefaultTitle),
       );
@@ -100,7 +102,11 @@ void main() {
         PrivacyScreenCopy.whereWordsGoTitle,
         PrivacyScreenCopy.whereWordsGoBody,
       ]) {
-        expect(PrivacyCopyPolicy.violationsInLiteral(line), isEmpty, reason: line);
+        expect(
+          PrivacyCopyPolicy.violationsInLiteral(line),
+          isEmpty,
+          reason: line,
+        );
       }
     });
 
