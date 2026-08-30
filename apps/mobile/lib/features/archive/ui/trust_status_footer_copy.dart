@@ -26,10 +26,10 @@ abstract final class TrustStatusFooterCopy {
   static const String encryptedAtRest = PrivacyCopyPolicy.encryptedAtRestScoped;
 
   /// Chip shown when an entry recorded that a bundled model produced it.
-  static const processedOnDevice = 'Processed On-Device';
+  static const processedOnDevice = 'Processed here — not sent';
 
   /// The default chip. Storage and search are local on every platform.
-  static const storedOnDevice = 'Stored On-Device';
+  static const storedOnDevice = 'Stored on this phone';
 
   /// Carries the platform scope and the exclusions the chip has no room for.
   static const encryptedSemanticLabel =
@@ -37,7 +37,7 @@ abstract final class TrustStatusFooterCopy {
 
   /// Only reachable from an entry whose proof flags record a bundled model.
   static const onDeviceSemanticLabel =
-      'Processed on-device. A model on this device produced this entry.';
+      'Processed here. This entry was not sent for a remote read.';
 
   /// Says what is local without implying the device produces the text.
   ///

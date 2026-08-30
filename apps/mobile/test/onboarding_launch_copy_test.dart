@@ -23,7 +23,10 @@ void main() {
   test('trust pillars state four explicit commitments', () {
     expect(OnboardingV1Copy.trustPillars, hasLength(4));
     expect(OnboardingV1Copy.pillar1Title, contains('cited'));
-    expect(OnboardingV1Copy.pillar2Title.toLowerCase(), contains('by default'));
+    expect(
+      OnboardingV1Copy.pillar2Title,
+      'You choose what leaves your phone',
+    );
     expect(OnboardingV1Copy.pillar3Title.toLowerCase(), contains('storage'));
     expect(OnboardingV1Copy.pillar4Title.toLowerCase(), contains('control'));
 

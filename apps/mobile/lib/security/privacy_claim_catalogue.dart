@@ -31,14 +31,19 @@ abstract final class PrivacyClaimCatalogue {
 
   /// Heading for the local-first architecture statement.
   ///
-  /// "By default" and not "only": `RemoteProcessingConsentStore` exists
-  /// precisely because uploads are reachable, so a heading that denied them
-  /// would contradict the consent step.
+  /// Choice, not a processing mode: remote work is opt-in
+  /// (`RemoteProcessingConsentStore`), so this heading must not read as
+  /// "the AI already runs on the phone."
   ///
   /// Previously declared independently in
   /// `features/settings/ui/on_device_architecture_copy.dart` and
   /// `features/privacy/privacy_security_trust_copy.dart`.
-  static const String onDeviceByDefaultHeading = 'On-device by default';
+  static const String onDeviceByDefaultHeading =
+      'You choose what leaves your phone';
+
+  /// Heading for the local-storage architecture block — not the send-choice
+  /// heading above. The body lists what stays in local databases.
+  static const String whatYouSaveStaysHereHeading = 'What you save stays here';
 
   /// Title of the archive privacy card.
   ///
@@ -151,6 +156,7 @@ abstract final class PrivacyClaimCatalogue {
   /// Every claim in the catalogue, for gates and audits.
   static const List<String> all = [
     onDeviceByDefaultHeading,
+    whatYouSaveStaysHereHeading,
     archiveIsPrivateTitle,
     privacyAndSecurityTitle,
     momentsStayLocal,

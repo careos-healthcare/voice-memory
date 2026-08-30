@@ -57,11 +57,10 @@ import 'package:archiveme_mobile/features/settings/ui/on_device_architecture_cop
 abstract final class OnDeviceHeroCopy {
   OnDeviceHeroCopy._();
 
-  static const String eyebrow = 'On-device architecture';
+  static const String eyebrow = 'Where your words go';
 
-  /// Deliberately two sentences: the default, then the exception. A title that
-  /// stated only the default would read as an absolute.
-  static const String title = 'On-device by default. Remote only if you ask.';
+  /// The honest half of the old title. The default is a choice, not a mode.
+  static const String title = 'Remote only if you ask.';
 
   static const String lede =
       'Three things about where your words go. Each one is a setting you can '
@@ -77,7 +76,8 @@ abstract final class OnDeviceHeroCopy {
 
   // ——— Pillar 2: what leaves the device, and when ———
 
-  static const String pillarRemoteTitle = OnDeviceArchitectureCopy.remoteHeading;
+  static const String pillarRemoteTitle =
+      OnDeviceArchitectureCopy.remoteHeading;
 
   static const String pillarRemoteBody = OnDeviceArchitectureCopy.remoteCallout;
 
@@ -86,7 +86,8 @@ abstract final class OnDeviceHeroCopy {
   /// The one pillar heading with no counterpart in the settings statement.
   /// "Counts, not content" is the whole of the claim — see the class doc for
   /// why it is not a training-data claim.
-  static const String pillarAnalyticsTitle = 'Analytics carry counts, not content';
+  static const String pillarAnalyticsTitle =
+      'Analytics carry counts, not content';
 
   static const String pillarAnalyticsBody =
       OnDeviceArchitectureCopy.analyticsBody;
@@ -102,7 +103,8 @@ abstract final class OnDeviceHeroCopy {
   /// Framing above the live status card. The card reports what this build
   /// actually does, because `SecureSqliteLockService.encryptionEnabled` is a
   /// runtime flag with an unavailable state — so nothing here asserts it.
-  static const String storageStatusHeading = 'Storage protection, as it stands now';
+  static const String storageStatusHeading =
+      'Storage protection, as it stands now';
 
   static const String storageStatusBody = OnDeviceArchitectureCopy.storageBody;
 
