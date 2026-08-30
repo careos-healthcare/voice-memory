@@ -22,7 +22,6 @@ import flutter_secure_storage_darwin
 import icloud_storage
 import large_file_handler
 import local_auth_darwin
-import objectbox_flutter_libs
 import package_info_plus
 import purchases_flutter
 import record_macos
@@ -51,7 +50,6 @@ func RegisterGeneratedPlugins(registry: FlutterPluginRegistry) {
   IcloudStoragePlugin.register(with: registry.registrar(forPlugin: "IcloudStoragePlugin"))
   LargeFileHandlerPlugin.register(with: registry.registrar(forPlugin: "LargeFileHandlerPlugin"))
   LocalAuthPlugin.register(with: registry.registrar(forPlugin: "LocalAuthPlugin"))
-  ObjectboxFlutterLibsPlugin.register(with: registry.registrar(forPlugin: "ObjectboxFlutterLibsPlugin"))
   FPPPackageInfoPlusPlugin.register(with: registry.registrar(forPlugin: "FPPPackageInfoPlusPlugin"))
   PurchasesFlutterPlugin.register(with: registry.registrar(forPlugin: "PurchasesFlutterPlugin"))
   RecordMacOsPlugin.register(with: registry.registrar(forPlugin: "RecordMacOsPlugin"))
