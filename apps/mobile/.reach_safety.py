@@ -1,15 +1,35 @@
 #!/usr/bin/env python3
-"""Safety screen for the 169 unreachable candidates."""
+"""Safety screen for the 169 unreachable candidates.
+
+Consumes `.reach_state.json` from `.reach_analysis.py`. Re-run the generator
+after a significant retired_sprawl change; see that file's module docstring.
+"""
 import os, re, json, subprocess, sys
 from collections import defaultdict
 
 ROOT = os.path.abspath(os.path.dirname(__file__))
+
+
+def from_state(path):
+    if os.path.isabs(path):
+        return os.path.realpath(path)
+    return os.path.realpath(os.path.join(ROOT, path))
+
+
 state = json.load(open(os.path.join(ROOT, ".reach_state.json")))
 cands = [l.strip() for l in open(os.path.join(ROOT, ".reach_cons_unreach.txt")) if l.strip()]
-cand_abs = {os.path.join(ROOT, c) for c in cands}
-kinds = state["kinds"]
-edges = state["edges"]
-live = set(state["C_main"]) | set(state["C_test"]) | set(state["C_livelib"]) | set(state["C_itest"])
+cand_abs = {os.path.realpath(os.path.join(ROOT, c)) for c in cands}
+kinds = {
+    from_state(k): {kk: [from_state(v) for v in vv] for kk, vv in kinds_for.items()}
+    for k, kinds_for in state["kinds"].items()
+}
+edges = {from_state(k): [from_state(v) for v in vs] for k, vs in state["edges"].items()}
+live = {
+    from_state(p)
+    for p in (
+        state["C_main"] + state["C_test"] + state["C_livelib"] + state["C_itest"]
+    )
+}
 
 flags = defaultdict(list)
 
