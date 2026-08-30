@@ -135,6 +135,8 @@ void main() {
     ) async {
       await pumpCentre(tester);
 
+      expect(find.byKey(const Key('privacy_where_words_go')), findsOneWidget);
+      expect(find.text(PrivacyScreenCopy.whereWordsGoTitle), findsOneWidget);
       expect(find.byKey(const Key('privacy_intro')), findsOneWidget);
       for (final section in PrivacyScreenCopy.sections) {
         expect(

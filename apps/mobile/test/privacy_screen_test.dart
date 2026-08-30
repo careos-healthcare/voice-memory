@@ -5,6 +5,7 @@ import 'package:archiveme_mobile/features/sync/application/sync_status_provider.
 import 'package:archiveme_mobile/features/sync/presentation/sync_status_snapshot.dart';
 import 'package:archiveme_mobile/features/trust/privacy_screen_copy.dart';
 import 'package:archiveme_mobile/features/trust/pro_trust_copy.dart';
+import 'package:archiveme_mobile/security/privacy_copy_policy.dart';
 import 'package:archiveme_mobile/product/consumer_ui_copy.dart';
 import 'package:archiveme_mobile/router/app_router.dart';
 import 'package:archiveme_mobile/screens/privacy_screen.dart';
@@ -72,6 +73,35 @@ void main() {
     testWidgets('contains ArchiveMe', (tester) async {
       await pumpPrivacy(tester);
       expect(find.textContaining('ArchiveMe'), findsWidgets);
+    });
+
+    testWidgets('where-words-go callout sits above the existing sections', (
+      tester,
+    ) async {
+      await pumpPrivacy(tester);
+
+      expect(find.byKey(const Key('privacy_where_words_go')), findsOneWidget);
+      expect(find.text(PrivacyScreenCopy.whereWordsGoTitle), findsOneWidget);
+      expect(find.text(PrivacyScreenCopy.whereWordsGoBody), findsOneWidget);
+
+      final calloutTop = tester.getTopLeft(
+        find.byKey(const Key('privacy_where_words_go')),
+      );
+      final introTop = tester.getTopLeft(find.byKey(const Key('privacy_intro')));
+      final firstSectionTop = tester.getTopLeft(
+        find.text(PrivacyScreenCopy.privateByDefaultTitle),
+      );
+      expect(calloutTop.dy, lessThan(introTop.dy));
+      expect(calloutTop.dy, lessThan(firstSectionTop.dy));
+    });
+
+    test('where-words-go copy passes the privacy policy scanner', () {
+      for (final line in [
+        PrivacyScreenCopy.whereWordsGoTitle,
+        PrivacyScreenCopy.whereWordsGoBody,
+      ]) {
+        expect(PrivacyCopyPolicy.violationsInLiteral(line), isEmpty, reason: line);
+      }
     });
 
     testWidgets('does not contain VoiceMemory', (tester) async {

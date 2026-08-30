@@ -94,6 +94,8 @@ class _PrivacySummarySectionState extends State<PrivacySummarySection> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        const _WhereWordsGoCallout(),
+        const SizedBox(height: AppSpacing.lg),
         Text(
           PrivacyScreenCopy.intro,
           key: const Key('privacy_intro'),
@@ -214,5 +216,46 @@ class _PrivacySummarySectionState extends State<PrivacySummarySection> {
     final month = local.month.toString().padLeft(2, '0');
     final day = local.day.toString().padLeft(2, '0');
     return '$month/$day/${local.year}';
+  }
+}
+
+/// First block on the privacy disclosure — visually heavier than the
+/// heading/body sections below so a skeptical reader meets the scoped
+/// egress claim before the rest of the scroll.
+class _WhereWordsGoCallout extends StatelessWidget {
+  const _WhereWordsGoCallout();
+
+  static const Key cardKey = Key('privacy_where_words_go');
+  static const Key titleKey = Key('privacy_where_words_go_title');
+  static const Key bodyKey = Key('privacy_where_words_go_body');
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      key: cardKey,
+      width: double.infinity,
+      padding: const EdgeInsets.all(AppSpacing.md),
+      decoration: BoxDecoration(
+        color: AppColors.accentLight,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: AppColors.accentPrimary.withValues(alpha: 0.28)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            PrivacyScreenCopy.whereWordsGoTitle,
+            key: titleKey,
+            style: ArchiveMobileTypography.cardLabel(context),
+          ),
+          const SizedBox(height: AppSpacing.xs),
+          Text(
+            PrivacyScreenCopy.whereWordsGoBody,
+            key: bodyKey,
+            style: ArchiveMobileTypography.explanationBody(context),
+          ),
+        ],
+      ),
+    );
   }
 }
