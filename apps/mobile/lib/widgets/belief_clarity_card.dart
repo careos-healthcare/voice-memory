@@ -5,6 +5,7 @@ import 'package:archiveme_mobile/theme/app_colors.dart';
 import 'package:archiveme_mobile/theme/app_spacing.dart';
 import 'package:archiveme_mobile/theme/voicememory_cards.dart';
 import 'package:archiveme_mobile/theme/voicememory_typography.dart';
+import 'package:archiveme_mobile/widgets/archive/view_evidence_inline_link.dart';
 import 'package:flutter/material.dart';
 
 /// Answers: what is the belief, why we think so, why it matters.
@@ -14,19 +15,33 @@ class BeliefClarityCard extends StatelessWidget {
     this.reflectionsAnalysed,
     this.showArchiveExplanation = false,
     this.onTap,
+    this.onViewEvidence,
   });
 
   final ArchiveBeliefCardModel belief;
   final int? reflectionsAnalysed;
   final bool showArchiveExplanation;
   final VoidCallback? onTap;
+  final VoidCallback? onViewEvidence;
 
   @override
   Widget build(BuildContext context) {
     final child = Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _label(BeliefProductCopy.labelBelief),
+        Wrap(
+          crossAxisAlignment: WrapCrossAlignment.center,
+          children: [
+            _label(BeliefProductCopy.labelBelief),
+            if (onViewEvidence != null || belief.sourceEntryIds.isNotEmpty)
+              ViewEvidenceInlineLink(
+                key: const Key('belief_clarity_view_evidence'),
+                entryIds: belief.sourceEntryIds,
+                surface: 'belief_clarity',
+                onViewEvidence: onViewEvidence,
+              ),
+          ],
+        ),
         const SizedBox(height: 6),
         // Not quoted: `statement` is a pattern ArchiveMe derived, not the
         // user's words, so quotation marks would misattribute it.
