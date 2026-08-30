@@ -20,15 +20,23 @@ enum ArchiveInsightFeedbackChoice { feelsRight, notQuite }
 
 /// User-facing copy for insight feedback controls.
 abstract final class ArchiveInsightFeedbackCopy {
-  static const String feelsRight = VisibleArchiveProofCopy.insightFeedbackFeelsRight;
+  static const String feelsRight =
+      VisibleArchiveProofCopy.insightFeedbackFeelsRight;
 
-  static const String notQuite = VisibleArchiveProofCopy.insightFeedbackNotQuite;
+  static const String notQuite =
+      VisibleArchiveProofCopy.insightFeedbackNotQuite;
 
-  static const String hideThis = VisibleArchiveProofCopy.insightFeedbackHideThis;
+  static const String hideThis =
+      VisibleArchiveProofCopy.insightFeedbackHideThis;
 
-  static const String whySeeing = VisibleArchiveProofCopy.insightFeedbackWhySeeing;
+  static const String whySeeing =
+      VisibleArchiveProofCopy.insightFeedbackWhySeeing;
 
-  static const String whySource = VisibleArchiveProofCopy.insightFeedbackWhySource;
+  static const String viewEvidence =
+      VisibleArchiveProofCopy.beliefUpdateViewEvidenceCta;
+
+  static const String whySource =
+      VisibleArchiveProofCopy.insightFeedbackWhySource;
 
   static const String whyNotConclusion =
       VisibleArchiveProofCopy.insightFeedbackWhyNotConclusion;
@@ -116,7 +124,10 @@ abstract final class ArchiveInsightFeedbackStore {
     return trimmed.substring(0, maxCorrectionNoteLength);
   }
 
-  static Future<bool> saveCorrectionNote(String insightId, String rawNote) async {
+  static Future<bool> saveCorrectionNote(
+    String insightId,
+    String rawNote,
+  ) async {
     final normalized = normalizeCorrectionNote(rawNote);
     if (normalized == null) return false;
     _correctionNotes[insightId] = normalized;

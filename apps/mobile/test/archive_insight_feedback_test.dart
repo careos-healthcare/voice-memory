@@ -9,6 +9,7 @@ import 'package:archiveme_mobile/models/reflection.dart';
 import 'package:archiveme_mobile/screens/belief_evidence_screen.dart';
 import 'package:archiveme_mobile/theme/app_theme.dart';
 import 'package:archiveme_mobile/widgets/archive/archive_home_summary_card.dart';
+import 'package:archiveme_mobile/widgets/archive/archive_insight_feedback_controls.dart';
 import 'package:archiveme_mobile/widgets/archive/weekly_archive_review_card.dart';
 import 'package:archiveme_mobile/widgets/record/belief_update_payoff_card.dart';
 import 'package:archiveme_research/screens/weekly_archive_review_screen.dart';
@@ -329,6 +330,51 @@ void main() {
         find.byKey(const Key('archive_insight_feedback_why_hide')),
         findsOneWidget,
       );
+    });
+
+    testWidgets('view evidence is absent without source ids or callback', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: AppTheme.light(),
+          home: const Scaffold(
+            body: ArchiveInsightFeedbackControls(insightId: 'test'),
+          ),
+        ),
+      );
+      expect(
+        find.byKey(const Key('archive_insight_feedback_view_evidence')),
+        findsNothing,
+      );
+    });
+
+    testWidgets('view evidence uses source ids via callback', (tester) async {
+      var opened = false;
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: AppTheme.light(),
+          home: Scaffold(
+            body: ArchiveInsightFeedbackControls(
+              insightId: 'test',
+              sourceEntryIds: const ['e1', 'e2'],
+              onViewEvidence: () => opened = true,
+            ),
+          ),
+        ),
+      );
+
+      final cta = find.byKey(
+        const Key('archive_insight_feedback_view_evidence'),
+      );
+      expect(cta, findsOneWidget);
+      expect(
+        find.text(ArchiveInsightFeedbackCopy.viewEvidence),
+        findsOneWidget,
+      );
+      await tester.tap(cta);
+      await tester.pump();
+      expect(opened, isTrue);
     });
 
     testWidgets('feels right stores local positive feedback', (tester) async {
