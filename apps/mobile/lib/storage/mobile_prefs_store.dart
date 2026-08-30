@@ -17,6 +17,19 @@ class MobilePrefsStore {
   /// fire-and-forget metric writes) cannot lose updates or corrupt the file.
   Future<void> _mutex = Future<void>.value();
 
+  /// Completes when every write already enqueued on [_mutex] has finished.
+  ///
+  /// The Future already exists — callers that drop `writeMap` / `updateMap`
+  /// still enqueue here. Bound so a stalled disk cannot hang a test tearDown
+  /// the way an unbounded await did.
+  static const Duration drainTimeout = Duration(seconds: 3);
+
+  Future<void> drainPendingWrites({
+    Duration timeout = drainTimeout,
+  }) {
+    return _mutex.timeout(timeout, onTimeout: () {});
+  }
+
   Future<void> _update(void Function(Map<String, dynamic>) mutate) {
     final completer = Completer<void>();
     final previous = _mutex;
