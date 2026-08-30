@@ -1,3 +1,5 @@
+import 'package:archiveme_mobile/features/caregiver_grant/caregiver_grant_copy.dart';
+
 /// Plain-language copy for caregiver and coach access controls.
 ///
 /// Only two roles are described because only two are ever constructed:
@@ -45,30 +47,44 @@ abstract final class CaregiverAccessCopy {
 
   static const canSeeHeading = 'What they can see';
   static const caregiverCanSeeTitle = 'Caregiver';
+
+  /// Same four facts as [CaregiverGrantCopy.canSee], plus the local audit.
+  ///
+  /// `CaregiverReadService._safeLabel` is a 72-character transcript prefix,
+  /// not a summary or a pattern name. This used to say "summaries" and
+  /// "categories you approved", which described an unrouted toggle prompt
+  /// rather than the live binary grant.
   static const caregiverCanSeeBody =
-      'Read-only summaries built from the categories you approved: how many '
-      'moments you have preserved, short labels for recent ones, a timeline '
-      'summary, and priority alerts. Each read is logged on this device.';
+      '${CaregiverGrantCopy.canSeeCount} '
+      '${CaregiverGrantCopy.canSeeRecent} '
+      '${CaregiverGrantCopy.canSeeTimeline} '
+      '${CaregiverGrantCopy.canSeeAlert} '
+      'Each read is logged on this device.';
+
   static const coachCanSeeTitle = 'Coach';
+
+  /// The read path does not branch on role — same snapshot fields, same
+  /// prefix. It does not add an insight feed, and it does not withhold the
+  /// canned count line just because the grant is labelled coach.
   static const coachCanSeeBody =
-      'Read-only insight summaries of the kinds you approved when you signed '
-      'the grant. A coach receives no alerts and cannot change the scope you '
-      'chose.';
+      'A coach grant uses the same read as a caregiver. '
+      '${CaregiverGrantCopy.canSeeCount} '
+      '${CaregiverGrantCopy.canSeeRecent} '
+      '${CaregiverGrantCopy.cannotPatterns}';
 
   static const cannotSeeHeading = 'What the shared view leaves out';
-  static const String _sharedViewOmitsRecordings =
-      'Full transcripts and audio — a shared view carries counts, short '
-      'labels, and summaries, not the recording or its text';
   static const List<String> cannotSeeBullets = [
-    _sharedViewOmitsRecordings,
+    CaregiverGrantCopy.cannotFullText,
+    CaregiverGrantCopy.cannotAudio,
+    CaregiverGrantCopy.cannotPatterns,
     'Your app lock, device passcode, or account sign-in details',
   ];
 
   static const scopeNoteHeading = 'Read the scope carefully';
   static const scopeNoteBody =
-      'You approve categories of summary, not individual moments: a caregiver '
-      'grant for the journal category summarises everything in your journal, '
-      'not a selection you pick entry by entry.';
+      'A grant covers every saved moment that has text, not moments you pick '
+      'one by one. The live grant is one yes or no — this screen does not '
+      'offer a category picker.';
 
   static const intentHeading = 'Limits this device enforces';
   static const intentBody =
