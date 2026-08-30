@@ -41,3 +41,7 @@ Deferred experiments redirect safely via `lib/router/v1_quarantine_redirects.dar
 **Prefer:** “Your archive noticed…”, “This may be changing…”, “Based on these entries…”, “You can correct or hide this.”
 
 Original customer words must remain visually distinct from generated interpretation on every proof surface.
+
+## Competitive paper trail
+
+Checked 2026-08-30: Revocable, granular caregiver access tied to an evidence ledger has no confirmed competitor as of August 2026 (checked against Day One, Rosebud, Mindsera, Reflection, Life Note, CortexOS, Claire, Stoic). This is a dated competitive check, not a V1 launch capability.
