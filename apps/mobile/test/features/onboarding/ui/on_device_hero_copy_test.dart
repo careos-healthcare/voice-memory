@@ -80,7 +80,8 @@ String get _fullHeroText => [
   OnDeviceHeroCopy.eyebrow,
   OnDeviceHeroCopy.title,
   OnDeviceHeroCopy.lede,
-  for (final pillar in OnDeviceHeroCopy.pillars) '${pillar.title} ${pillar.body}',
+  for (final pillar in OnDeviceHeroCopy.pillars)
+    '${pillar.title} ${pillar.body}',
   OnDeviceHeroCopy.storageStatusHeading,
   OnDeviceHeroCopy.storageStatusBody,
   OnDeviceHeroCopy.detailLink,
@@ -179,14 +180,12 @@ void main() {
     });
 
     group('the claims it does make', () {
-      test('frames on-device as the default, not the whole story', () {
+      test('frames remote work as a choice, not an on-device mode', () {
+        expect(OnDeviceHeroCopy.eyebrow, 'Where your words go');
+        expect(OnDeviceHeroCopy.title, 'Remote only if you ask.');
         expect(
-          OnDeviceHeroCopy.title.toLowerCase(),
-          contains('by default'),
-        );
-        expect(
-          OnDeviceHeroCopy.pillarLocalTitle.toLowerCase(),
-          contains('by default'),
+          OnDeviceHeroCopy.pillarLocalTitle,
+          'What you save stays here',
         );
         expect(
           OnDeviceHeroCopy.pillarLocalBody.toLowerCase(),
@@ -328,21 +327,24 @@ void main() {
         });
       });
 
-      test('the policy still reports encryption claims it has not approved', () {
-        // The two approved contexts are anchored or phrase-specific, so
-        // widening them stays a deliberate act rather than a side effect.
-        for (final claim in const [
-          'Encrypted at Rest',
-          'Your data is encrypted at rest and can only be unlocked locally.',
-          'Everything on this device is encrypted.',
-        ]) {
-          expect(
-            PrivacyCopyPolicy.violationsInLiteral(claim),
-            isNotEmpty,
-            reason: claim,
-          );
-        }
-      });
+      test(
+        'the policy still reports encryption claims it has not approved',
+        () {
+          // The two approved contexts are anchored or phrase-specific, so
+          // widening them stays a deliberate act rather than a side effect.
+          for (final claim in const [
+            'Encrypted at Rest',
+            'Your data is encrypted at rest and can only be unlocked locally.',
+            'Everything on this device is encrypted.',
+          ]) {
+            expect(
+              PrivacyCopyPolicy.violationsInLiteral(claim),
+              isNotEmpty,
+              reason: claim,
+            );
+          }
+        },
+      );
 
       test('names the platforms the database half depends on', () {
         final lower = PrivacyCopyPolicy.encryptionBaselineDetail.toLowerCase();
