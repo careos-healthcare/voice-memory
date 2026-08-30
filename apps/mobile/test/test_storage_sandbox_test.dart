@@ -34,11 +34,11 @@ void main() {
     expect(sandbox.ids.next('entry'), 'entry-1');
   });
 
-  test('dispose removes sandbox root', () {
+  test('dispose removes sandbox root', () async {
     final sandbox = TestStorageSandbox.create();
     final root = sandbox.root;
     expect(root.existsSync(), isTrue);
-    sandbox.dispose();
+    await sandbox.dispose();
     expect(root.existsSync(), isFalse);
   });
 }
