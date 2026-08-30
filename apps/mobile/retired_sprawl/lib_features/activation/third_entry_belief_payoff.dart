@@ -11,9 +11,11 @@ import 'package:archiveme_mobile/models/journal_entry.dart';
 abstract final class ThirdEntryBeliefPayoffCopy {
   static const String title = VisibleArchiveProofCopy.threeEntryBeliefTitle;
 
-  static const String bodyIntro = VisibleArchiveProofCopy.threeEntryBeliefBodyIntro;
+  static const String bodyIntro =
+      VisibleArchiveProofCopy.threeEntryBeliefBodyIntro;
 
-  static const String bodySource = VisibleArchiveProofCopy.threeEntryBeliefBodySource;
+  static const String bodySource =
+      VisibleArchiveProofCopy.threeEntryBeliefBodySource;
 
   static const String evidenceLabel =
       VisibleArchiveProofCopy.threeEntryBeliefEvidenceLabel;
@@ -24,7 +26,8 @@ abstract final class ThirdEntryBeliefPayoffCopy {
   static const String evidenceThinAction =
       VisibleArchiveProofCopy.threeEntryBeliefEvidenceThinAction;
 
-  static const String primaryCta = VisibleArchiveProofCopy.threeEntryBeliefPrimaryCta;
+  static const String primaryCta =
+      VisibleArchiveProofCopy.threeEntryBeliefPrimaryCta;
 
   static const String secondaryCta =
       VisibleArchiveProofCopy.threeEntryBeliefViewArchiveCta;
@@ -43,6 +46,7 @@ class ThirdEntryBeliefPayoff {
     required this.evidenceThin,
     required this.primaryCta,
     required this.secondaryCta,
+    this.sourceEntryIds = const [],
     this.thinEvidenceNote,
     this.thinEvidenceAction,
     this.footnoteLine,
@@ -53,6 +57,7 @@ class ThirdEntryBeliefPayoff {
   final String bodyIntro;
   final String bodySource;
   final List<String> evidenceRows;
+  final List<String> sourceEntryIds;
   final bool evidenceThin;
   final String primaryCta;
   final String secondaryCta;
@@ -79,7 +84,8 @@ abstract final class ThirdEntryBeliefPayoffEngine {
     final eligible = ArchiveEvidenceGuard.eligibleEntries(entries);
     if (eligible.length != 3) return null;
 
-    final evidenceRows = _evidenceRows(eligible);
+    final evidence = _evidenceCitations(eligible);
+    final evidenceRows = evidence.rows;
     final evidenceThin = _isEvidenceThin(eligible, evidenceRows);
     final analysis = _heuristics.analyze(entries);
     final threshold = ArchiveEvidenceThreshold.evaluate(
@@ -94,6 +100,7 @@ abstract final class ThirdEntryBeliefPayoffEngine {
       bodyIntro: ThirdEntryBeliefPayoffCopy.bodyIntro,
       bodySource: ThirdEntryBeliefPayoffCopy.bodySource,
       evidenceRows: evidenceRows,
+      sourceEntryIds: evidence.ids,
       evidenceThin: evidenceThin,
       thinEvidenceNote: evidenceThin
           ? ThirdEntryBeliefPayoffCopy.evidenceThin
@@ -110,8 +117,11 @@ abstract final class ThirdEntryBeliefPayoffEngine {
     );
   }
 
-  static List<String> _evidenceRows(List<JournalEntry> eligible) {
+  static ({List<String> rows, List<String> ids}) _evidenceCitations(
+    List<JournalEntry> eligible,
+  ) {
     final rows = <String>[];
+    final ids = <String>[];
     for (final entry in eligible) {
       final snippet = FactLedgerCitationService.resolvedSnippet(
         entryId: entry.id,
@@ -120,9 +130,13 @@ abstract final class ThirdEntryBeliefPayoffEngine {
       );
       if (snippet.isEmpty) continue;
       rows.add(snippet);
+      ids.add(entry.id);
     }
-    if (rows.length <= 3) return rows;
-    return rows.sublist(rows.length - 3);
+    if (rows.length <= 3) return (rows: rows, ids: ids);
+    return (
+      rows: rows.sublist(rows.length - 3),
+      ids: ids.sublist(ids.length - 3),
+    );
   }
 
   static bool _isEvidenceThin(

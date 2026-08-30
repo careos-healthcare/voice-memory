@@ -15,6 +15,7 @@ import 'package:archiveme_mobile/features/what_changed/what_changed_v2_store.dar
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/models/reflection.dart';
 import 'package:archiveme_mobile/services/app_services.dart';
+import 'package:archiveme_mobile/widgets/patterns/pattern_confidence_badge.dart';
 import 'package:archiveme_mobile/widgets/patterns/pattern_confidence_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -204,6 +205,7 @@ void main() {
       expect(confidence!.state, PatternConfidenceState.earlySignal);
       expect(confidence.label, PatternConfidenceCopy.earlySignalLabel);
       expect(confidence.body, PatternConfidenceCopy.earlySignalBody);
+      expect(confidence.contributingEntryIds, ['e1', 'e2']);
     });
 
     test('three related moments show Repeated pattern', () {
@@ -214,6 +216,7 @@ void main() {
       expect(confidence, isNotNull);
       expect(confidence!.state, PatternConfidenceState.repeatedPattern);
       expect(confidence.label, PatternConfidenceCopy.repeatedPatternLabel);
+      expect(confidence.contributingEntryIds, ['e1', 'e2', 'e3']);
     });
 
     test('later change evidence shows Changing pattern', () {
@@ -282,6 +285,7 @@ void main() {
       );
       expect(result.label, PatternConfidenceCopy.explanationEarlySignalLabel);
       expect(result.body, PatternConfidenceCopy.explanationEarlySignalBody);
+      expect(result.contributingEntryIds, ['e1', 'e2']);
     });
 
     test('repeated resolves when repeat evidence spans saved moments', () {
@@ -437,6 +441,42 @@ void main() {
     });
   });
 
+  group('PatternConfidenceBadge', () {
+    testWidgets('view evidence fires when contributing ids are present', (
+      tester,
+    ) async {
+      var opened = false;
+      const confidence = PatternConfidence(
+        state: PatternConfidenceState.repeatedPattern,
+        label: PatternConfidenceCopy.repeatedPatternLabel,
+        body: PatternConfidenceCopy.repeatedPatternBody,
+        contributingEntryIds: ['e1', 'e2', 'e3'],
+      );
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: PatternConfidenceBadge(
+              confidence: confidence,
+              onViewEvidence: () => opened = true,
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+
+      final cta = find.byKey(const Key('pattern_confidence_view_evidence'));
+      expect(cta, findsOneWidget);
+      expect(
+        find.text(PatternConfidenceCopy.repeatedPatternLabel),
+        findsOneWidget,
+      );
+      await tester.tap(cta);
+      await tester.pump();
+      expect(opened, isTrue);
+    });
+  });
+
   group('PatternConfidenceCard', () {
     Future<void> pumpCard(
       WidgetTester tester,
@@ -550,6 +590,53 @@ void main() {
       expect(find.textContaining(_strongRepeat), findsNothing);
       expect(find.textContaining('localAudioPath'), findsNothing);
       expect(find.textContaining('transcript'), findsNothing);
+    });
+
+    testWidgets('view evidence is absent without contributing ids', (
+      tester,
+    ) async {
+      await pumpCard(
+        tester,
+        _manualExplanation(PatternConfidenceExplanationState.repeated),
+      );
+
+      expect(
+        find.byKey(const Key('pattern_confidence_card_view_evidence')),
+        findsNothing,
+      );
+    });
+
+    testWidgets('view evidence fires when contributing ids are present', (
+      tester,
+    ) async {
+      var opened = false;
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: PatternConfidenceCard.test(
+              result: PatternConfidenceEngine.buildExplanation(
+                entries: _threeRelatedRepeatEntries(),
+                beliefSurfaceVisible: true,
+                source: 'test',
+                viewingConfirmedRepeatOrTimeline: true,
+                now: _now,
+              )!,
+              source: 'test',
+              onViewEvidence: () => opened = true,
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+
+      final cta = find.byKey(
+        const Key('pattern_confidence_card_view_evidence'),
+      );
+      expect(cta, findsOneWidget);
+      expect(find.textContaining('View evidence'), findsOneWidget);
+      await tester.tap(cta);
+      await tester.pump();
+      expect(opened, isTrue);
     });
 
     testWidgets('no Pro CTA', (tester) async {
