@@ -23,11 +23,13 @@ class PatternLifecycle {
     required this.state,
     required this.label,
     required this.body,
+    this.contributingEntryIds = const [],
   });
 
   final PatternLifecycleState state;
   final String label;
   final String body;
+  final List<String> contributingEntryIds;
 
   String get lifecycleRowLabel => 'Lifecycle: $label';
 

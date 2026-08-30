@@ -11,7 +11,10 @@ import 'package:flutter/material.dart';
 /// Four-plus entry payoff — cautious belief update with evidence snippets.
 class BeliefUpdatePayoffCard extends StatelessWidget {
   const BeliefUpdatePayoffCard({
-    required this.payoff, required this.onAddAnother, required this.onViewEvidence, super.key,
+    required this.payoff,
+    required this.onAddAnother,
+    required this.onViewEvidence,
+    super.key,
     this.showInlineActions = true,
   });
 
@@ -38,6 +41,8 @@ class BeliefUpdatePayoffCard extends StatelessWidget {
         ArchiveInsightTarget.beliefUpdate,
       ),
       showControls: ArchiveInsightFeedbackGate.showForBeliefUpdate(),
+      sourceEntryIds: payoff.sourceEntryIds,
+      onViewEvidence: onViewEvidence,
       childBuilder: (context) {
         const target = ArchiveInsightTarget.beliefUpdate;
         final adaptedBody = ArchiveInsightFeedbackAdaptation.adaptedCopyFor(
