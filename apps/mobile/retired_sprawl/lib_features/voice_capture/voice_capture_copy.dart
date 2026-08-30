@@ -1,6 +1,7 @@
 /// User-facing copy for voice capture quality and transcription fallback.
 library;
 
+import 'package:archiveme_mobile/features/archive/ui/remote_processing_choice_copy.dart';
 import 'package:archiveme_mobile/features/archive_evidence/transcript_pending_copy.dart';
 import 'package:archiveme_mobile/features/trust/capture_recovery_copy.dart';
 
@@ -70,8 +71,7 @@ abstract class VoiceCaptureCopy {
   /// choice, not a failure, so the wording stays neutral rather than
   /// apologetic.
   static const String remoteProcessingConsentPausedNote =
-      'This moment is saved on your device only. Turn on remote analysis in '
-      'Privacy settings to get a reflection for it.';
+      RemoteProcessingChoiceCopy.skippedNote;
 
   static const List<String> all = [
     recordingFailed,
