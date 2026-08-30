@@ -2,23 +2,19 @@ import 'package:archiveme_mobile/design/archive_mobile_typography.dart';
 import 'package:archiveme_mobile/features/pattern_confidence/pattern_confidence_model.dart';
 import 'package:archiveme_mobile/theme/app_colors.dart';
 import 'package:archiveme_mobile/theme/app_spacing.dart';
-import 'package:archiveme_mobile/widgets/archive/view_evidence_inline_link.dart';
 import 'package:flutter/material.dart';
 
 /// Compact evidence-strength chip — label only or label + helper body.
 class PatternConfidenceBadge extends StatelessWidget {
   const PatternConfidenceBadge({
-    required this.confidence,
-    super.key,
+    required this.confidence, super.key,
     this.showBody = false,
     this.compact = true,
-    this.onViewEvidence,
   });
 
   final PatternConfidence confidence;
   final bool showBody;
   final bool compact;
-  final VoidCallback? onViewEvidence;
 
   @override
   Widget build(BuildContext context) {
@@ -38,34 +34,21 @@ class PatternConfidenceBadge extends StatelessWidget {
       key: Key('pattern_confidence_badge_${confidence.state.name}'),
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Wrap(
-          crossAxisAlignment: WrapCrossAlignment.center,
-          children: [
-            Container(
-              key: Key('pattern_confidence_chip_${confidence.state.name}'),
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-              decoration: BoxDecoration(
-                color: AppColors.accentPrimary.withValues(alpha: 0.08),
-                borderRadius: BorderRadius.circular(999),
-                border: Border.all(
-                  color: AppColors.accentPrimary.withValues(alpha: 0.18),
-                ),
-              ),
-              child: Text(
-                confidence.label,
-                key: Key('pattern_confidence_label_${confidence.state.name}'),
-                style: chipStyle,
-              ),
+        Container(
+          key: Key('pattern_confidence_chip_${confidence.state.name}'),
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+          decoration: BoxDecoration(
+            color: AppColors.accentPrimary.withValues(alpha: 0.08),
+            borderRadius: BorderRadius.circular(999),
+            border: Border.all(
+              color: AppColors.accentPrimary.withValues(alpha: 0.18),
             ),
-            if (onViewEvidence != null ||
-                confidence.contributingEntryIds.isNotEmpty)
-              ViewEvidenceInlineLink(
-                key: const Key('pattern_confidence_view_evidence'),
-                entryIds: confidence.contributingEntryIds,
-                surface: 'pattern_confidence',
-                onViewEvidence: onViewEvidence,
-              ),
-          ],
+          ),
+          child: Text(
+            confidence.label,
+            key: Key('pattern_confidence_label_${confidence.state.name}'),
+            style: chipStyle,
+          ),
         ),
         if (showBody) ...[
           const SizedBox(height: AppSpacing.xs),

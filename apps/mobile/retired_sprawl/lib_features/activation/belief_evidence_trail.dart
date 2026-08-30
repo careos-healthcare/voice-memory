@@ -15,8 +15,7 @@ abstract final class BeliefEvidenceTrailCopy {
   static const String notConclusion =
       VisibleArchiveProofCopy.beliefEvidenceNotConclusion;
 
-  static const String sourceLine =
-      VisibleArchiveProofCopy.beliefEvidenceSourceLine;
+  static const String sourceLine = VisibleArchiveProofCopy.beliefEvidenceSourceLine;
 
   static const String insufficientBody =
       VisibleArchiveProofCopy.beliefEvidenceInsufficientBody;
@@ -42,11 +41,9 @@ abstract final class BeliefEvidenceTrailCopy {
   static const String nextWhenThin =
       VisibleArchiveProofCopy.beliefEvidenceNextWhenThin;
 
-  static const String nextDefault =
-      VisibleArchiveProofCopy.beliefEvidenceNextDefault;
+  static const String nextDefault = VisibleArchiveProofCopy.beliefEvidenceNextDefault;
 
-  static const String primaryCta =
-      VisibleArchiveProofCopy.beliefUpdatePrimaryCta;
+  static const String primaryCta = VisibleArchiveProofCopy.beliefUpdatePrimaryCta;
 }
 
 /// Proof trail content for a belief update — grounded in saved words only.
@@ -59,7 +56,6 @@ class BeliefEvidenceTrail {
     this.currentBelief,
     this.whatChangedLine,
     this.evidenceRows = const [],
-    this.sourceEntryIds = const [],
     this.uncertaintyLine,
     this.nextActionLine,
     this.primaryCta,
@@ -84,7 +80,6 @@ class BeliefEvidenceTrail {
   final String? currentBelief;
   final String? whatChangedLine;
   final List<String> evidenceRows;
-  final List<String> sourceEntryIds;
   final String? uncertaintyLine;
   final String? nextActionLine;
   final String? primaryCta;
@@ -118,7 +113,6 @@ abstract final class BeliefEvidenceTrailEngine {
       currentBelief: payoff.currentBelief,
       whatChangedLine: payoff.whatChangedLine,
       evidenceRows: payoff.evidenceRows,
-      sourceEntryIds: payoff.sourceEntryIds,
       uncertaintyLine: payoff.evidenceWeak
           ? BeliefEvidenceTrailCopy.evidenceStillThin
           : null,

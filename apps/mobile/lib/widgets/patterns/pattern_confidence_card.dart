@@ -4,31 +4,23 @@ import 'package:archiveme_mobile/features/pattern_confidence/pattern_confidence_
 import 'package:archiveme_mobile/theme/app_colors.dart';
 import 'package:archiveme_mobile/theme/app_spacing.dart';
 import 'package:archiveme_mobile/theme/voicememory_cards.dart';
-import 'package:archiveme_mobile/widgets/archive/view_evidence_inline_link.dart';
 import 'package:flutter/material.dart';
 
 /// Explains why ArchiveMe shows a pattern — human labels only, no Pro CTA.
 class PatternConfidenceCard extends StatefulWidget {
   const PatternConfidenceCard({
-    required this.result,
-    required this.source,
-    super.key,
+    required this.result, required this.source, super.key,
     this.compact = false,
-    this.onViewEvidence,
   });
 
   const PatternConfidenceCard.test({
-    required this.result,
-    required this.source,
-    super.key,
+    required this.result, required this.source, super.key,
     this.compact = false,
-    this.onViewEvidence,
   });
 
   final PatternConfidenceExplanationResult result;
   final String source;
   final bool compact;
-  final VoidCallback? onViewEvidence;
 
   @override
   State<PatternConfidenceCard> createState() => _PatternConfidenceCardState();
@@ -83,25 +75,12 @@ class _PatternConfidenceCardState extends State<PatternConfidenceCard> {
             ),
           ],
           const SizedBox(height: AppSpacing.sm),
-          Wrap(
-            crossAxisAlignment: WrapCrossAlignment.center,
-            children: [
-              Text(
-                widget.result.label,
-                key: Key(
-                  'pattern_confidence_label_${widget.result.confidenceState.name}',
-                ),
-                style: labelStyle,
-              ),
-              if (widget.onViewEvidence != null ||
-                  widget.result.contributingEntryIds.isNotEmpty)
-                ViewEvidenceInlineLink(
-                  key: const Key('pattern_confidence_card_view_evidence'),
-                  entryIds: widget.result.contributingEntryIds,
-                  surface: 'pattern_confidence',
-                  onViewEvidence: widget.onViewEvidence,
-                ),
-            ],
+          Text(
+            widget.result.label,
+            key: Key(
+              'pattern_confidence_label_${widget.result.confidenceState.name}',
+            ),
+            style: labelStyle,
           ),
           const SizedBox(height: AppSpacing.xs),
           Text(

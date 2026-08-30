@@ -32,18 +32,18 @@ abstract final class PatternConfidenceEngine {
   }) {
     if (_shouldUseNotEnoughYet(entries)) {
       if (hideNotEnoughYet) return null;
-      return _confidence(PatternConfidenceState.notEnoughYet, entries);
+      return _confidence(PatternConfidenceState.notEnoughYet);
     }
 
     final eligible = ArchiveEvidenceGuard.eligibleEntries(entries);
     if (eligible.length == 2 &&
         _signalEngine.hasGroundedRepeatMatch(eligible)) {
-      return _confidence(PatternConfidenceState.earlySignal, entries);
+      return _confidence(PatternConfidenceState.earlySignal);
     }
 
     if (!EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(entries)) {
       if (hideNotEnoughYet) return null;
-      return _confidence(PatternConfidenceState.notEnoughYet, entries);
+      return _confidence(PatternConfidenceState.notEnoughYet);
     }
 
     if (_hasSofteningEvidence(
@@ -53,7 +53,7 @@ abstract final class PatternConfidenceEngine {
       viewingConfirmedRepeatOrTimeline: viewingConfirmedRepeatOrTimeline,
       helpfulActionCapturedMilestone: helpfulActionCapturedMilestone,
     )) {
-      return _confidence(PatternConfidenceState.softeningPattern, entries);
+      return _confidence(PatternConfidenceState.softeningPattern);
     }
 
     if (_hasChangingEvidence(
@@ -63,15 +63,15 @@ abstract final class PatternConfidenceEngine {
       viewingConfirmedRepeatOrTimeline: viewingConfirmedRepeatOrTimeline,
       helpfulActionCapturedMilestone: helpfulActionCapturedMilestone,
     )) {
-      return _confidence(PatternConfidenceState.changingPattern, entries);
+      return _confidence(PatternConfidenceState.changingPattern);
     }
 
     if (ArchiveEvidenceQualityGate.allowsBeliefSurfaces(entries)) {
-      return _confidence(PatternConfidenceState.repeatedPattern, entries);
+      return _confidence(PatternConfidenceState.repeatedPattern);
     }
 
     if (hideNotEnoughYet) return null;
-    return _confidence(PatternConfidenceState.notEnoughYet, entries);
+    return _confidence(PatternConfidenceState.notEnoughYet);
   }
 
   static PatternConfidenceExplanationResult? buildExplanation({
@@ -318,7 +318,6 @@ abstract final class PatternConfidenceEngine {
     body: PatternConfidenceCopy.explanationBodyFor(state),
     footer: PatternConfidenceCopy.explanationFooter,
     differentiationLine: PatternConfidenceCopy.explanationDifferentiation,
-    contributingEntryIds: _contributingEntryIds(entries),
   );
 
   static bool _shouldUseNotEnoughYet(List<JournalEntry> entries) {
@@ -338,8 +337,7 @@ abstract final class PatternConfidenceEngine {
   static bool _hasSofteningEvidence({
     required List<JournalEntry> entries,
     required List<RepeatReturnCheckRecord> returnChecks,
-    required bool viewingConfirmedRepeatOrTimeline,
-    RepeatReturnCheckChangeProof? changeProof,
+    required bool viewingConfirmedRepeatOrTimeline, RepeatReturnCheckChangeProof? changeProof,
     bool helpfulActionCapturedMilestone = false,
   }) {
     final whatChanged = _latestWhatChangedMarker(entries);
@@ -370,8 +368,7 @@ abstract final class PatternConfidenceEngine {
   static bool _hasChangingEvidence({
     required List<JournalEntry> entries,
     required List<RepeatReturnCheckRecord> returnChecks,
-    required bool viewingConfirmedRepeatOrTimeline,
-    RepeatReturnCheckChangeProof? changeProof,
+    required bool viewingConfirmedRepeatOrTimeline, RepeatReturnCheckChangeProof? changeProof,
     bool helpfulActionCapturedMilestone = false,
   }) {
     final beliefChange = BeliefChangeMomentEngine.build(
@@ -395,18 +392,10 @@ abstract final class PatternConfidenceEngine {
     return marker?.option;
   }
 
-  static List<String> _contributingEntryIds(List<JournalEntry> entries) =>
-      ArchiveEvidenceGuard.eligibleEntries(
-        entries,
-      ).map((entry) => entry.id).toList(growable: false);
-
-  static PatternConfidence _confidence(
-    PatternConfidenceState state,
-    List<JournalEntry> entries,
-  ) => PatternConfidence(
-    state: state,
-    label: PatternConfidenceCopy.labelFor(state),
-    body: PatternConfidenceCopy.bodyFor(state),
-    contributingEntryIds: _contributingEntryIds(entries),
-  );
+  static PatternConfidence _confidence(PatternConfidenceState state) =>
+      PatternConfidence(
+        state: state,
+        label: PatternConfidenceCopy.labelFor(state),
+        body: PatternConfidenceCopy.bodyFor(state),
+      );
 }

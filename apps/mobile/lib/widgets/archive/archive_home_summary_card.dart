@@ -13,9 +13,7 @@ import 'package:flutter/material.dart';
 /// Archive Home command center — belief, change, evidence, and next action.
 class ArchiveHomeSummaryCard extends StatelessWidget {
   const ArchiveHomeSummaryCard({
-    required this.summary,
-    required this.onPrimary,
-    super.key,
+    required this.summary, required this.onPrimary, super.key,
     this.onSecondary,
     this.shareProof,
   });
@@ -43,10 +41,6 @@ class ArchiveHomeSummaryCard extends StatelessWidget {
       showControls: ArchiveInsightFeedbackGate.showForArchiveHome(
         summary.stage,
       ),
-      sourceEntryIds: summary.sourceEntryIds,
-      onViewEvidence: summary.secondaryAction == ArchiveHomeAction.viewEvidence
-          ? onSecondary
-          : null,
       childBuilder: (context) {
         const target = ArchiveInsightTarget.archiveHome;
         final adaptedBody = ArchiveInsightFeedbackAdaptation.adaptedCopyFor(

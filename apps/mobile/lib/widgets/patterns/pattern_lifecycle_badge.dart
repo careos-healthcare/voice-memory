@@ -3,20 +3,15 @@ import 'package:archiveme_mobile/features/pattern_lifecycle/pattern_lifecycle_an
 import 'package:archiveme_mobile/features/pattern_lifecycle/pattern_lifecycle_model.dart';
 import 'package:archiveme_mobile/theme/app_colors.dart';
 import 'package:archiveme_mobile/theme/app_spacing.dart';
-import 'package:archiveme_mobile/widgets/archive/view_evidence_inline_link.dart';
 import 'package:flutter/material.dart';
 
 /// Compact lifecycle row — label chip + one helper sentence.
 class PatternLifecycleBadge extends StatefulWidget {
   const PatternLifecycleBadge({
-    required this.lifecycle,
-    required this.entryCount,
-    required this.source,
-    super.key,
+    required this.lifecycle, required this.entryCount, required this.source, super.key,
     this.showBody = true,
     this.compact = true,
     this.skipAnalytics = false,
-    this.onViewEvidence,
   });
 
   final PatternLifecycle lifecycle;
@@ -25,7 +20,6 @@ class PatternLifecycleBadge extends StatefulWidget {
   final bool showBody;
   final bool compact;
   final bool skipAnalytics;
-  final VoidCallback? onViewEvidence;
 
   @override
   State<PatternLifecycleBadge> createState() => _PatternLifecycleBadgeState();
@@ -68,36 +62,21 @@ class _PatternLifecycleBadgeState extends State<PatternLifecycleBadge> {
       key: Key('pattern_lifecycle_badge_${widget.lifecycle.state.name}'),
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Wrap(
-          crossAxisAlignment: WrapCrossAlignment.center,
-          children: [
-            Container(
-              key: Key('pattern_lifecycle_chip_${widget.lifecycle.state.name}'),
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-              decoration: BoxDecoration(
-                color: AppColors.textSecondary.withValues(alpha: 0.08),
-                borderRadius: BorderRadius.circular(999),
-                border: Border.all(
-                  color: AppColors.textSecondary.withValues(alpha: 0.18),
-                ),
-              ),
-              child: Text(
-                widget.lifecycle.lifecycleRowLabel,
-                key: Key(
-                  'pattern_lifecycle_label_${widget.lifecycle.state.name}',
-                ),
-                style: chipStyle,
-              ),
+        Container(
+          key: Key('pattern_lifecycle_chip_${widget.lifecycle.state.name}'),
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+          decoration: BoxDecoration(
+            color: AppColors.textSecondary.withValues(alpha: 0.08),
+            borderRadius: BorderRadius.circular(999),
+            border: Border.all(
+              color: AppColors.textSecondary.withValues(alpha: 0.18),
             ),
-            if (widget.onViewEvidence != null ||
-                widget.lifecycle.contributingEntryIds.isNotEmpty)
-              ViewEvidenceInlineLink(
-                key: const Key('pattern_lifecycle_view_evidence'),
-                entryIds: widget.lifecycle.contributingEntryIds,
-                surface: 'pattern_lifecycle',
-                onViewEvidence: widget.onViewEvidence,
-              ),
-          ],
+          ),
+          child: Text(
+            widget.lifecycle.lifecycleRowLabel,
+            key: Key('pattern_lifecycle_label_${widget.lifecycle.state.name}'),
+            style: chipStyle,
+          ),
         ),
         if (widget.showBody) ...[
           const SizedBox(height: AppSpacing.xs),

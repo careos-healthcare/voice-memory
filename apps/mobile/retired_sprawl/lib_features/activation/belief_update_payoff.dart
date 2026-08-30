@@ -11,8 +11,7 @@ import 'package:archiveme_mobile/models/journal_entry.dart';
 abstract final class BeliefUpdatePayoffCopy {
   static const String title = VisibleArchiveProofCopy.beliefUpdateTitle;
 
-  static const String bodyChanged =
-      VisibleArchiveProofCopy.beliefUpdateBodyChanged;
+  static const String bodyChanged = VisibleArchiveProofCopy.beliefUpdateBodyChanged;
 
   static const String bodyStillBuilding =
       VisibleArchiveProofCopy.beliefUpdateBodyStillBuilding;
@@ -26,8 +25,7 @@ abstract final class BeliefUpdatePayoffCopy {
   static const String whatChangedLabel =
       VisibleArchiveProofCopy.beliefUpdateWhatChangedLabel;
 
-  static const String primaryCta =
-      VisibleArchiveProofCopy.beliefUpdatePrimaryCta;
+  static const String primaryCta = VisibleArchiveProofCopy.beliefUpdatePrimaryCta;
 
   static const String secondaryCta =
       VisibleArchiveProofCopy.beliefUpdateViewEvidenceCta;
@@ -48,7 +46,6 @@ class BeliefUpdatePayoff {
     required this.evidenceWeak,
     required this.primaryCta,
     required this.secondaryCta,
-    this.sourceEntryIds = const [],
     this.footnoteLine,
     this.stageLabel,
   });
@@ -57,7 +54,6 @@ class BeliefUpdatePayoff {
   final String body;
   final String currentBelief;
   final List<String> evidenceRows;
-  final List<String> sourceEntryIds;
   final String whatChangedLine;
   final bool beliefChanged;
   final bool evidenceWeak;
@@ -87,8 +83,7 @@ abstract final class BeliefUpdatePayoffEngine {
     final analysis = _heuristics.analyze(entries);
     if (analysis.beliefLine.trim().isEmpty) return null;
 
-    final evidence = _evidenceCitations(eligible);
-    final evidenceRows = evidence.rows;
+    final evidenceRows = _evidenceRows(eligible);
     if (evidenceRows.length < 2) return null;
 
     final threshold = ArchiveEvidenceThreshold.evaluate(
@@ -112,7 +107,6 @@ abstract final class BeliefUpdatePayoffEngine {
           : BeliefUpdatePayoffCopy.bodyStillBuilding,
       currentBelief: _currentBeliefLine(analysis, eligible),
       evidenceRows: evidenceRows,
-      sourceEntryIds: evidence.ids,
       whatChangedLine: _whatChangedLine(
         analysis: analysis,
         eligible: eligible,
@@ -130,11 +124,8 @@ abstract final class BeliefUpdatePayoffEngine {
     );
   }
 
-  static ({List<String> rows, List<String> ids}) _evidenceCitations(
-    List<JournalEntry> eligible,
-  ) {
+  static List<String> _evidenceRows(List<JournalEntry> eligible) {
     final rows = <String>[];
-    final ids = <String>[];
     for (final entry in eligible.reversed) {
       final snippet = FactLedgerCitationService.resolvedSnippet(
         entryId: entry.id,
@@ -143,10 +134,9 @@ abstract final class BeliefUpdatePayoffEngine {
       );
       if (snippet.isEmpty) continue;
       rows.add(snippet);
-      ids.add(entry.id);
       if (rows.length >= 3) break;
     }
-    return (rows: rows.reversed.toList(), ids: ids.reversed.toList());
+    return rows.reversed.toList();
   }
 
   static bool _isEvidenceWeak(

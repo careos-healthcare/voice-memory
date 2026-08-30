@@ -326,7 +326,7 @@ void main() {
       expect(find.text('Evidence'), findsOneWidget);
       expect(find.text('What changed'), findsOneWidget);
       expect(find.text('Record if it happens again'), findsOneWidget);
-      expect(find.text('View evidence'), findsNWidgets(2));
+      expect(find.text('View evidence'), findsOneWidget);
       expect(
         find.byKey(const Key('belief_update_payoff_evidence_0')),
         findsOneWidget,

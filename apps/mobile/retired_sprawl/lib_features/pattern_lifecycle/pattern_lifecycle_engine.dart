@@ -56,18 +56,13 @@ abstract final class PatternLifecycleEngine {
       state: state,
       label: PatternLifecycleCopy.labelFor(state),
       body: PatternLifecycleCopy.bodyFor(state),
-      contributingEntryIds: ArchiveEvidenceGuard.eligibleEntries(
-        entries,
-      ).map((entry) => entry.id).toList(growable: false),
     );
   }
 
   static PatternLifecycleState? _resolveState({
     required List<JournalEntry> entries,
     required List<RepeatReturnCheckRecord> returnChecks,
-    required bool viewingConfirmedRepeatOrTimeline,
-    required bool helpfulActionCapturedMilestone,
-    RepeatReturnCheckChangeProof? changeProof,
+    required bool viewingConfirmedRepeatOrTimeline, required bool helpfulActionCapturedMilestone, RepeatReturnCheckChangeProof? changeProof,
     EarlyFirstSignalModel? confirmedRepeat,
     DateTime? now,
   }) {
@@ -142,9 +137,7 @@ abstract final class PatternLifecycleEngine {
 
   static bool _isWatching({
     required List<JournalEntry> entries,
-    required bool viewingConfirmedRepeatOrTimeline,
-    required bool helpfulActionCapturedMilestone,
-    EarlyFirstSignalModel? confirmedRepeat,
+    required bool viewingConfirmedRepeatOrTimeline, required bool helpfulActionCapturedMilestone, EarlyFirstSignalModel? confirmedRepeat,
   }) => ComeBackTomorrowV2Store.hasActive;
 
   static bool _isQuiet({required List<JournalEntry> entries, DateTime? now}) =>
@@ -153,9 +146,7 @@ abstract final class PatternLifecycleEngine {
   static bool _isSoftening({
     required List<JournalEntry> entries,
     required List<RepeatReturnCheckRecord> returnChecks,
-    required bool viewingConfirmedRepeatOrTimeline,
-    required bool helpfulActionCapturedMilestone,
-    RepeatReturnCheckChangeProof? changeProof,
+    required bool viewingConfirmedRepeatOrTimeline, required bool helpfulActionCapturedMilestone, RepeatReturnCheckChangeProof? changeProof,
   }) {
     final whatChanged = _latestWhatChangedMarker(entries);
     if (whatChanged == WhatChangedV2Option.softer) return true;
@@ -174,9 +165,7 @@ abstract final class PatternLifecycleEngine {
   static bool _isChanging({
     required List<JournalEntry> entries,
     required List<RepeatReturnCheckRecord> returnChecks,
-    required bool viewingConfirmedRepeatOrTimeline,
-    required bool helpfulActionCapturedMilestone,
-    RepeatReturnCheckChangeProof? changeProof,
+    required bool viewingConfirmedRepeatOrTimeline, required bool helpfulActionCapturedMilestone, RepeatReturnCheckChangeProof? changeProof,
   }) {
     final whatChanged = _latestWhatChangedMarker(entries);
     if (whatChanged == WhatChangedV2Option.differentResponse) return true;
