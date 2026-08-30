@@ -6,6 +6,10 @@ import 'package:flutter/material.dart';
 
 /// In-app privacy summary — product-centered, not provider-branded.
 ///
+/// The prominent "What can leave this phone" callout lives on
+/// [PrivacySummarySection], which this screen and `/privacy-trust-centre`
+/// both render. `/privacy` itself redirects to the trust centre.
+///
 /// No longer routed. `/privacy` redirects to `/privacy-trust-centre`, which
 /// renders [PrivacySummarySection] — the body this screen used to own — so the
 /// processing-provider disclosure and the remote-processing consent control
