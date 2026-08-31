@@ -5,6 +5,7 @@
 /// adapter.
 library archiveme_crypto;
 
+export 'src/json/encrypted_json_storage.dart';
 export 'src/key_material_store.dart';
 export 'src/memory_key_material_store.dart';
 export 'src/vault/sqlite_vault_crypto.dart';
