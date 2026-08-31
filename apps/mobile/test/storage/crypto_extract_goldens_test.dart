@@ -4,9 +4,7 @@ import 'dart:typed_data';
 
 import 'package:archiveme_crypto/archiveme_crypto.dart';
 import 'package:archiveme_mobile/security/sqlite/sqlite_encryption_key_store.dart';
-import 'package:archiveme_mobile/storage/encrypted_json_file_store.dart';
 import 'package:archiveme_mobile/storage/in_memory_secure_storage.dart';
-import 'package:archiveme_mobile/storage/private_data_encryption_key_store.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 /// Phase 0 of #281 — locked vectors captured from current production crypto.
@@ -97,6 +95,81 @@ void main() {
     );
     expect(await store.readJson(), section['plaintext']);
   });
+
+  test(
+    'crash mid-write leaves the frozen file-store envelope bytes untouched',
+    () async {
+      final section = manifest['encryptedJsonFileStore'] as Map<String, dynamic>;
+      final envelope = File(
+        '${_goldensDir().path}/${section['envelopeFile']}',
+      ).readAsStringSync();
+
+      Future<void> assertPrimaryFrozen(File file) async {
+        expect(
+          await file.readAsString(),
+          envelope,
+          reason:
+              'a failed write must not change the last-known-good envelope',
+        );
+      }
+
+      for (final hooks in [
+        const EncryptedJsonFileHooks(failAfterTempWrite: true),
+        const EncryptedJsonFileHooks(corruptTempFile: true),
+        const EncryptedJsonFileHooks(failBeforeRename: true),
+      ]) {
+        final temp = await Directory.systemTemp.createTemp(
+          'crypto_golden_crash_',
+        );
+        addTearDown(() {
+          if (temp.existsSync()) temp.deleteSync(recursive: true);
+        });
+        final file = File('${temp.path}/journal.enc');
+        await file.writeAsString(envelope);
+        final store = EncryptedJsonFileStore(
+          file: file,
+          keyStore: InMemoryPrivateDataEncryptionKeyStore(seedKey: keyBytes),
+          hooks: hooks,
+        );
+        await store.writeJsonOutcome(['must-not-land']);
+        await assertPrimaryFrozen(file);
+        expect(await store.readJson(), section['plaintext']);
+        final leftoverTmp = temp.listSync().whereType<File>().where(
+          (f) => f.path.contains('.tmp.'),
+        );
+        expect(leftoverTmp, isEmpty);
+      }
+    },
+  );
+
+  test(
+    'truncated primary recovers the frozen envelope from .bak',
+    () async {
+      final section = manifest['encryptedJsonFileStore'] as Map<String, dynamic>;
+      final envelope = File(
+        '${_goldensDir().path}/${section['envelopeFile']}',
+      ).readAsStringSync();
+      final temp = await Directory.systemTemp.createTemp(
+        'crypto_golden_bak_',
+      );
+      addTearDown(() {
+        if (temp.existsSync()) temp.deleteSync(recursive: true);
+      });
+      final file = File('${temp.path}/journal.enc');
+      await File('${file.path}.bak').writeAsString(envelope);
+      await file.writeAsString('truncated', flush: true);
+      final store = EncryptedJsonFileStore(
+        file: file,
+        keyStore: InMemoryPrivateDataEncryptionKeyStore(seedKey: keyBytes),
+      );
+      final outcome = await store.readJsonOutcome();
+      expect(outcome, isA<EncryptedJsonReadCorruptPrimaryValidBackup>());
+      expect(
+        (outcome as EncryptedJsonReadCorruptPrimaryValidBackup).value,
+        section['plaintext'],
+      );
+    },
+  );
 
   test(
     'key-store encodings match checked-in keychain values via extracted journal store',
