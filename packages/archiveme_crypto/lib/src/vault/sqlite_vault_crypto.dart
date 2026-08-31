@@ -29,8 +29,7 @@ final class SqliteVaultCrypto {
   final Uint8List _keyBytes;
   final Random _secureRandom = Random.secure();
 
-  /// Returns `[IV || ciphertext]` — only this blob may be transmitted or stored
-  /// in iCloud.
+  /// Returns `[IV || ciphertext]` — the sealed blob for host transport/storage.
   Uint8List sealDatabaseBytes(Uint8List databaseBytes) {
     if (databaseBytes.isEmpty) {
       throw SqliteVaultCryptoException('DATABASE_EMPTY');
@@ -73,6 +72,9 @@ final class SqliteVaultCrypto {
     }
 
     if (plaintext.length <= digestByteLength) {
+      // Defense-in-depth: GCM already authenticated this plaintext.
+      // [sealDatabaseBytes] never emits a payload this short (empty input
+      // is DATABASE_EMPTY; otherwise the layout is db + 32-byte digest).
       throw SqliteVaultCryptoException('INVALID_PLAINTEXT_LENGTH');
     }
 
@@ -87,6 +89,11 @@ final class SqliteVaultCrypto {
     final expected = sha256.convert(databaseBytes).bytes;
 
     if (!_constantTimeEquals(digest, Uint8List.fromList(expected))) {
+      // Defense-in-depth: GCM already authenticated this plaintext. A
+      // realistic tamper fails at DECRYPTION_FAILED. This branch is only
+      // reachable if a GCM-valid plaintext carries a SHA-256 trailer that
+      // does not match the database bytes — which [sealDatabaseBytes]
+      // never produces.
       throw SqliteVaultCryptoException('INTEGRITY_CHECK_FAILED');
     }
 

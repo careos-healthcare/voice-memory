@@ -9,7 +9,7 @@ final class SqliteDatabaseEncryptionKey {
     this._rawKeyBytes,
   );
 
-  /// Password string passed to [sqflite_sqlcipher] `openDatabase`.
+  /// Password string passed to SQLCipher `openDatabase`.
   final String sqlcipherPassword;
 
   final Uint8List? _rawKeyBytes;

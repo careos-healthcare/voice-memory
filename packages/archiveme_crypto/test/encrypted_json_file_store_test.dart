@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:archiveme_crypto/archiveme_crypto.dart';
+import 'package:archiveme_crypto/testing.dart';
 import 'package:test/test.dart';
 
 void main() {
@@ -131,7 +132,12 @@ void main() {
     macBytes[0] ^= 0xff;
     envelope['m'] = base64Encode(macBytes);
     await file.writeAsString(jsonEncode(envelope));
-    expect(await s.readJsonOutcome(), isA<EncryptedJsonReadAuthenticationFailure>());
+    final outcome = await s.readJsonOutcome();
+    expect(outcome, isA<EncryptedJsonReadAuthenticationFailure>());
+    expect(
+      (outcome as EncryptedJsonReadAuthenticationFailure).recoveredFromBackup,
+      isFalse,
+    );
   });
 
   test('a host key store that never persists is EncryptedJsonReadKeyUnavailable', () async {
@@ -205,6 +211,44 @@ void main() {
     final result = await store().migrateFromPlaintextFile(plaintext);
     expect(result.migrated, isFalse);
     expect(await store().readJson(), ['already']);
+  });
+
+  test('writeJson maps key-unavailable to StateError', () async {
+    final s = EncryptedJsonFileStore(file: file, keyStore: _RefusingKeyStore());
+    expect(() => s.writeJson(['nope']), throwsA(isA<StateError>()));
+  });
+
+  test('writeJson maps disk failure to FileSystemException', () async {
+    expect(
+      () => store(
+        hooks: const EncryptedJsonFileHooks(failAfterEncrypt: true),
+      ).writeJson(['x']),
+      throwsA(isA<FileSystemException>()),
+    );
+  });
+
+  test('writeJson maps verification failure to StateError', () async {
+    await store().writeJson(['stable']);
+    expect(
+      () => store(
+        hooks: const EncryptedJsonFileHooks(corruptTempFile: true),
+      ).writeJson(['lost']),
+      throwsA(isA<StateError>()),
+    );
+  });
+
+  test('overlapping writeJson calls leave one consistent decrypted payload', () async {
+    final s = store();
+    await Future.wait([
+      s.writeJson(['first']),
+      s.writeJson(['second']),
+    ]);
+    expect(await s.readJson(), anyOf(equals(['first']), equals(['second'])));
+    expect(jsonDecodeEnvelopeHasVersion(await file.readAsString()), isTrue);
+    expect(
+      tempDir.listSync().whereType<File>().where((f) => f.path.contains('.tmp.')),
+      isEmpty,
+    );
   });
 }
 

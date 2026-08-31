@@ -1,11 +1,11 @@
-/// At-rest encryption and key-material handling for ArchiveMe.
+/// ArchiveMe at-rest encryption and key-material handling.
 ///
-/// Must not depend on `archiveme_mobile`. The app implements [KeyMaterialStore]
-/// with `SecureStorageService` (prefixed) and a separate unprefixed vault
-/// adapter.
+/// Hosts implement [KeyMaterialStore]. Encoding and any keychain prefix
+/// are the host's job. This library must not depend on a host app.
+///
+/// Fault-injection hooks live in `package:archiveme_crypto/testing.dart`.
 library archiveme_crypto;
 
-export 'src/json/encrypted_json_file_hooks.dart';
 export 'src/json/encrypted_json_file_outcome.dart';
 export 'src/json/encrypted_json_file_store.dart';
 export 'src/json/encrypted_json_storage.dart';

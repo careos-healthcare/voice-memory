@@ -3,9 +3,9 @@ import 'dart:typed_data';
 
 import 'package:archiveme_crypto/src/key_material_store.dart';
 
-/// Persists the 256-bit AES vault key in the device keychain / secure enclave.
+/// Persists the 256-bit AES vault key in the host key store.
 ///
-/// The key never leaves secure storage and is never uploaded to iCloud.
+/// The key never leaves the host store.
 abstract class SqliteVaultKeyStore {
   static const keyByteLength = 32;
 
@@ -23,9 +23,8 @@ abstract class SqliteVaultKeyStore {
 /// Logical key: `sqlite_vault_aes_key_v1__$accountNamespace`. There is no
 /// un-namespaced default. Single stored format: raw 32 bytes.
 ///
-/// The app must pass an **unprefixed** [KeyMaterialStore]. Routing this
-/// through `SecureStorageService` would write `vm_flutter_` + the logical
-/// key and break existing installs (see #282 goldens).
+/// The host must pass an **unprefixed** [KeyMaterialStore]. A prefixed
+/// adapter would write a different physical key and break existing installs.
 final class SecureSqliteVaultKeyStore implements SqliteVaultKeyStore {
   SecureSqliteVaultKeyStore({
     required KeyMaterialStore store,
@@ -33,8 +32,8 @@ final class SecureSqliteVaultKeyStore implements SqliteVaultKeyStore {
   }) : _store = store,
        _storageKey = 'sqlite_vault_aes_key_v1__$accountNamespace';
 
-  /// Logical-key prefix. Physical key == logical key when the adapter is
-  /// unprefixed.
+  /// Logical-key prefix. Physical key == logical key when the host adapter
+  /// is unprefixed.
   static const storageKeyPrefix = 'sqlite_vault_aes_key_v1__';
 
   final KeyMaterialStore _store;

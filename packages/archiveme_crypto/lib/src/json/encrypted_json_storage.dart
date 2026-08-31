@@ -2,8 +2,7 @@ import 'dart:convert';
 
 import 'package:cryptography/cryptography.dart';
 
-/// A secure persistence wrapper that uses authenticated AES-GCM encryption
-/// to shield sensitive biomarker telemetry strings before storage.
+/// Authenticated AES-256-GCM wrapper for JSON maps at rest or in transit.
 class EncryptedJsonStorage {
   EncryptedJsonStorage({required List<int> masterKeyBytes})
     : _secretKey = SecretKey(masterKeyBytes);

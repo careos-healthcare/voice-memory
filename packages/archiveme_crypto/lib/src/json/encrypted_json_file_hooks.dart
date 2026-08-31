@@ -1,4 +1,7 @@
-/// Optional fault-injection hooks for encrypted JSON storage tests.
+/// Test-only fault injection for encrypted JSON file-store crash-safe writes.
+///
+/// Import from `package:archiveme_crypto/testing.dart`, not the production
+/// barrel.
 class EncryptedJsonFileHooks {
   const EncryptedJsonFileHooks({
     this.failAfterEncrypt = false,

@@ -6,11 +6,9 @@ import 'dart:typed_data';
 /// - v2 / journal / vault: 32 key bytes
 /// - v1 passphrase: `utf8.encode(passphrase)`
 ///
-/// Encoding and any keychain prefix are the implementation's job.
-/// The app's `SecureStorageService` writes `base64Encode(material)` at
-/// `vm_flutter_` + [logicalKey] (see #282 goldens).
-/// Vault keys use a separate unprefixed implementation — they must
-/// not go through `SecureStorageService`.
+/// Encoding and any keychain prefix are the host implementation's job.
+/// Vault keys and journal/SQLCipher keys typically use different host
+/// adapters (unprefixed vs prefixed) so they do not collide.
 abstract class KeyMaterialStore {
   Future<Uint8List?> readKey(String logicalKey);
 
