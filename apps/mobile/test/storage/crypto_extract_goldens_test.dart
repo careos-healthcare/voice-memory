@@ -98,59 +98,62 @@ void main() {
     expect(await store.readJson(), section['plaintext']);
   });
 
-  test('key-store encodings match checked-in keychain values', () async {
-    final entries = manifest['keychainEntries'] as Map<String, dynamic>;
-    final secure = InMemorySecureStorageService();
+  test(
+    'key-store encodings match checked-in keychain values via extracted journal store',
+    () async {
+      final entries = manifest['keychainEntries'] as Map<String, dynamic>;
+      final secure = InMemorySecureStorageService();
 
-    final sqlcipher = SecureSqliteEncryptionKeyStore(secure: secure);
-    await sqlcipher.writeEncryptionKey(
-      SqliteDatabaseEncryptionKey.fromStored(base64Encode(keyBytes)),
-    );
-    expect(
-      await secure.read('sqlite_encryption_key_v2'),
-      (entries['sqlite_encryption_key_v2'] as Map)['storedValue'],
-    );
+      final sqlcipher = SecureSqliteEncryptionKeyStore(secure: secure);
+      await sqlcipher.writeEncryptionKey(
+        SqliteDatabaseEncryptionKey.fromStored(base64Encode(keyBytes)),
+      );
+      expect(
+        await secure.read('sqlite_encryption_key_v2'),
+        (entries['sqlite_encryption_key_v2'] as Map)['storedValue'],
+      );
 
-    final aliased = SecureSqliteEncryptionKeyStore(
-      secure: secure,
-      keyAlias: 'guest',
-    );
-    await aliased.writeEncryptionKey(
-      SqliteDatabaseEncryptionKey.fromStored(base64Encode(keyBytes)),
-    );
-    expect(
-      await secure.read('sqlite_encryption_key_v2__guest'),
-      (entries['sqlite_encryption_key_v2__guest'] as Map)['storedValue'],
-    );
+      final aliased = SecureSqliteEncryptionKeyStore(
+        secure: secure,
+        keyAlias: 'guest',
+      );
+      await aliased.writeEncryptionKey(
+        SqliteDatabaseEncryptionKey.fromStored(base64Encode(keyBytes)),
+      );
+      expect(
+        await secure.read('sqlite_encryption_key_v2__guest'),
+        (entries['sqlite_encryption_key_v2__guest'] as Map)['storedValue'],
+      );
 
-    final v1 = entries['sqlite_encryption_passphrase_v1'] as Map;
-    await sqlcipher.writePassphrase(
-      (manifest['sqlcipherFromStored'] as Map)['v1Legacy']['passphrase']
-          as String,
-    );
-    expect(
-      await secure.read('sqlite_encryption_passphrase_v1'),
-      v1['storedValue'],
-    );
+      final v1 = entries['sqlite_encryption_passphrase_v1'] as Map;
+      await sqlcipher.writePassphrase(
+        (manifest['sqlcipherFromStored'] as Map)['v1Legacy']['passphrase']
+            as String,
+      );
+      expect(
+        await secure.read('sqlite_encryption_passphrase_v1'),
+        v1['storedValue'],
+      );
 
-    final journal = SecurePrivateDataEncryptionKeyStore(secure: secure);
-    await journal.writeKeyBytes(keyBytes);
-    expect(
-      await secure.read('private_journal_encryption_key_v1'),
-      (entries['private_journal_encryption_key_v1'] as Map)['storedValue'],
-    );
+      final journal = SecurePrivateDataEncryptionKeyStore(store: secure);
+      await journal.writeKeyBytes(keyBytes);
+      expect(
+        await secure.read('private_journal_encryption_key_v1'),
+        (entries['private_journal_encryption_key_v1'] as Map)['storedValue'],
+      );
 
-    final journalAliased = SecurePrivateDataEncryptionKeyStore(
-      secure: secure,
-      keyAlias: 'guest',
-    );
-    await journalAliased.writeKeyBytes(keyBytes);
-    expect(
-      await secure.read('private_journal_encryption_key_v1__guest'),
-      (entries['private_journal_encryption_key_v1__guest']
-          as Map)['storedValue'],
-    );
-  });
+      final journalAliased = SecurePrivateDataEncryptionKeyStore(
+        store: secure,
+        keyAlias: 'guest',
+      );
+      await journalAliased.writeKeyBytes(keyBytes);
+      expect(
+        await secure.read('private_journal_encryption_key_v1__guest'),
+        (entries['private_journal_encryption_key_v1__guest']
+            as Map)['storedValue'],
+      );
+    },
+  );
 
   test(
     'SQLCipher fromStored matches checked-in v2 / v1 / testInstance via extracted type',

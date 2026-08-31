@@ -119,10 +119,10 @@ void main() {
       SqliteDatabaseEncryptionKey.fromStored(base64Encode(keyBytes)),
     );
 
-    final journalKeys = SecurePrivateDataEncryptionKeyStore(secure: secure);
+    final journalKeys = SecurePrivateDataEncryptionKeyStore(store: secure);
     await journalKeys.writeKeyBytes(keyBytes);
     final journalKeysAliased = SecurePrivateDataEncryptionKeyStore(
-      secure: secure,
+      store: secure,
       keyAlias: 'guest',
     );
     await journalKeysAliased.writeKeyBytes(keyBytes);
