@@ -3,7 +3,6 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:archiveme_crypto/archiveme_crypto.dart';
-import 'package:archiveme_mobile/security/sqlite/sqlite_encryption_key_store.dart';
 import 'package:archiveme_mobile/storage/in_memory_secure_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -177,7 +176,7 @@ void main() {
       final entries = manifest['keychainEntries'] as Map<String, dynamic>;
       final secure = InMemorySecureStorageService();
 
-      final sqlcipher = SecureSqliteEncryptionKeyStore(secure: secure);
+      final sqlcipher = SecureSqliteEncryptionKeyStore(store: secure);
       await sqlcipher.writeEncryptionKey(
         SqliteDatabaseEncryptionKey.fromStored(base64Encode(keyBytes)),
       );
@@ -187,7 +186,7 @@ void main() {
       );
 
       final aliased = SecureSqliteEncryptionKeyStore(
-        secure: secure,
+        store: secure,
         keyAlias: 'guest',
       );
       await aliased.writeEncryptionKey(
@@ -316,7 +315,7 @@ void main() {
       );
       expect(await secure.read('sqlite_encryption_key_v2'), isNull);
 
-      final store = SecureSqliteEncryptionKeyStore(secure: secure);
+      final store = SecureSqliteEncryptionKeyStore(store: secure);
       final ensured = await store.ensureEncryptionKey();
 
       expect(ensured.sqlcipherPassword, after['sqlcipherPassword']);

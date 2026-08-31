@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:archiveme_mobile/security/sqlite/sqlite_encryption_key_store.dart';
+import 'package:archiveme_mobile/storage/secure_storage.dart';
 import 'package:archiveme_mobile/storage/sqlite/sqlite_database_initializer.dart';
 import 'package:archiveme_mobile/storage/sqlite/sqlite_hybrid_search_initializer.dart';
 import 'package:archiveme_mobile/storage/sqlite/sqlite_migration_manager.dart';
@@ -66,7 +67,10 @@ abstract final class IsolateSafeSqliteDatabaseInitializer {
     }
 
     return _readRequiredPassword(
-      SecureSqliteEncryptionKeyStore(keyAlias: keyAlias ?? ''),
+      SecureSqliteEncryptionKeyStore(
+        store: SecureStorageService(),
+        keyAlias: keyAlias ?? '',
+      ),
       keyAlias,
     );
   }

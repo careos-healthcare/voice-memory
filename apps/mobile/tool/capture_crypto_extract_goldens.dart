@@ -106,14 +106,14 @@ void main() {
     expect(await fileStore.readJson(), fileStorePayload);
 
     final secure = SecureStorageService();
-    final sqlcipherStore = SecureSqliteEncryptionKeyStore(secure: secure);
+    final sqlcipherStore = SecureSqliteEncryptionKeyStore(store: secure);
     await sqlcipherStore.writeEncryptionKey(
       SqliteDatabaseEncryptionKey.fromStored(base64Encode(keyBytes)),
     );
     await sqlcipherStore.writePassphrase(legacyPassphrase);
 
     final sqlcipherAliased = SecureSqliteEncryptionKeyStore(
-      secure: secure,
+      store: secure,
       keyAlias: 'guest',
     );
     await sqlcipherAliased.writeEncryptionKey(

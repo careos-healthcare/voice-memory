@@ -43,7 +43,7 @@ void main() {
     await secure.write('sqlite_encryption_passphrase_v1', v1Stored);
     expect(await secure.read('sqlite_encryption_key_v2'), isNull);
 
-    final store = SecureSqliteEncryptionKeyStore(secure: secure);
+    final store = SecureSqliteEncryptionKeyStore(store: secure);
     final ensured = await store.ensureEncryptionKey();
     final readBack = await store.readEncryptionKey();
 
