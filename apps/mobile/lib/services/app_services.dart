@@ -167,6 +167,7 @@ import 'package:archiveme_mobile/storage/mobile_prefs_store.dart';
 import 'package:archiveme_mobile/storage/personal_content_encrypted_storage.dart';
 import 'package:archiveme_mobile/storage/secure_storage.dart';
 import 'package:archiveme_mobile/storage/session_cookie_store.dart';
+import 'package:archiveme_mobile/storage/unprefixed_flutter_secure_storage_key_material_store.dart';
 import 'package:archiveme_mobile/features/reflections/local_ai_pipeline.dart';
 import 'package:archiveme_mobile/features/vision/image_embedding_service.dart';
 import 'package:archiveme_mobile/features/vision/local_visual_projection_inference.dart';
@@ -516,6 +517,7 @@ class AppServices {
         closeDatabase: () => sqliteDatabase.close(),
         reopenDatabase: () => reopenSqliteDatabase(),
         keyStore: SecureSqliteVaultKeyStore(
+          store: UnprefixedFlutterSecureStorageKeyMaterialStore(),
           accountNamespace: activeNamespace.key,
         ),
         cloudTransport: ICloudSqliteVaultTransport(),

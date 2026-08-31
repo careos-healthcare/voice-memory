@@ -14,3 +14,4 @@ export 'src/key_material_store.dart';
 export 'src/memory_key_material_store.dart';
 export 'src/sqlcipher/sqlite_database_encryption_key.dart';
 export 'src/vault/sqlite_vault_crypto.dart';
+export 'src/vault/sqlite_vault_key_store.dart';
