@@ -1,2 +1,1 @@
-export 'package:archiveme_crypto/archiveme_crypto.dart'
-    show EncryptedJsonFileHooks;
+export 'package:archiveme_crypto/testing.dart' show EncryptedJsonFileHooks;

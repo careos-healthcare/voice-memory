@@ -1,10 +1,11 @@
 name: archiveme_crypto
 description: >-
-  At-rest encryption and key-material handling for ArchiveMe
+  ArchiveMe at-rest encryption and key-material handling
   (AES-256-GCM vault/JSON envelopes; 32-byte keychain keys).
-  Must not depend on archiveme_mobile.
 publish_to: "none"
 version: 0.1.0
+repository: https://github.com/careos-healthcare/voice-memory
+homepage: https://github.com/careos-healthcare/voice-memory
 
 environment:
   sdk: '>=3.12.0 <4.0.0'

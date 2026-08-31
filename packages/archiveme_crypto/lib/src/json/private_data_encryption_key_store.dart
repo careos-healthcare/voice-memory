@@ -19,9 +19,8 @@ abstract class PrivateDataEncryptionKeyStore {
 /// Production key store backed by a [KeyMaterialStore].
 ///
 /// Logical keys: [storageKey] or `private_journal_encryption_key_v1__$keyAlias`.
-/// Single stored format: raw 32 bytes. The app's `SecureStorageService`
-/// (as [KeyMaterialStore]) persists `base64Encode(bytes)` under `vm_flutter_`
-/// + the logical key. There is no v1→v2 payload migration.
+/// Single stored format: raw 32 bytes. The host [KeyMaterialStore] is
+/// responsible for encoding. There is no v1→v2 payload migration.
 class SecurePrivateDataEncryptionKeyStore
     implements PrivateDataEncryptionKeyStore {
   SecurePrivateDataEncryptionKeyStore({
@@ -35,9 +34,8 @@ class SecurePrivateDataEncryptionKeyStore
   /// Legacy, pre-per-account default alias — kept unchanged so existing
   /// installs continue decrypting their single shared journal without any
   /// key rotation. New per-account namespaces must pass a distinct
-  /// [keyAlias] (see `AccountNamespace`) so each account's data is
-  /// encrypted with its own key and one account's key material never
-  /// decrypts another account's file.
+  /// [keyAlias] so each account's data is encrypted with its own key
+  /// and one account's key material never decrypts another account's file.
   static const storageKey = 'private_journal_encryption_key_v1';
   static const keyByteLength = 32;
 

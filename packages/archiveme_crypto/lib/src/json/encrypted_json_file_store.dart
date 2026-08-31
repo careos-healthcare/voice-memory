@@ -24,6 +24,9 @@ class EncryptedJsonMigrationResult {
 /// Writes use a crash-safe protocol: encrypt → temp file → verify decrypt →
 /// preserve last-known-good backup → atomic rename. Corruption never becomes
 /// an empty archive silently.
+///
+/// The `hooks` constructor argument is test-only fault injection; production
+/// callers omit it. See `package:archiveme_crypto/testing.dart`.
 class EncryptedJsonFileStore {
   EncryptedJsonFileStore({
     required this.file,

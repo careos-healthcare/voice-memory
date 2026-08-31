@@ -22,6 +22,8 @@ final class EncryptedJsonReadKeyUnavailable extends EncryptedJsonReadOutcome {
 }
 
 /// Authentication tag verification failed on primary (and backup if tried).
+///
+/// [recoveredFromBackup] is reserved; the store never constructs `true`.
 final class EncryptedJsonReadAuthenticationFailure
     extends EncryptedJsonReadOutcome {
   const EncryptedJsonReadAuthenticationFailure({

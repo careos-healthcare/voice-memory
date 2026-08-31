@@ -21,7 +21,7 @@ abstract class SqliteEncryptionKeyStore {
   /// out of an existing journal (see `v1_only_ensure.json`).
   Future<SqliteDatabaseEncryptionKey> ensureEncryptionKey();
 
-  /// Legacy alias used by `SecureSqliteLockService`.
+  /// Legacy alias for hosts that still speak passphrase, not key object.
   Future<String?> readPassphrase() async =>
       (await readEncryptionKey())?.sqlcipherPassword;
 
@@ -42,10 +42,10 @@ abstract class SqliteEncryptionKeyStore {
 /// Production SQLCipher key store backed by a [KeyMaterialStore].
 ///
 /// Logical keys: `sqlite_encryption_key_v2` / `sqlite_encryption_passphrase_v1`
-/// (+ `__$keyAlias`). Must go through the app's **prefixed**
-/// `SecureStorageService` (`vm_flutter_` + logical key). Do **not** route
-/// these through the unprefixed vault adapter — that would orphan existing
-/// installs the other direction from file 7.
+/// (+ `__$keyAlias`). The host must use a **prefixed** [KeyMaterialStore]
+/// matching existing installs. Do not route these through an unprefixed
+/// adapter — that would orphan existing installs the other direction from
+/// the vault key store.
 ///
 /// Read prefers v2, then v1. Write of a v2 key does not delete a leftover
 /// v1 slot; write of a v1 key does not delete v2. [ensureEncryptionKey]

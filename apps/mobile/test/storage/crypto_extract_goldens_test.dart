@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:archiveme_crypto/archiveme_crypto.dart';
+import 'package:archiveme_crypto/testing.dart';
 import 'package:archiveme_mobile/storage/in_memory_secure_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
 
