@@ -5,6 +5,8 @@
 /// adapter.
 library archiveme_crypto;
 
+export 'src/json/encrypted_json_file_hooks.dart';
+export 'src/json/encrypted_json_file_outcome.dart';
 export 'src/json/encrypted_json_storage.dart';
 export 'src/key_material_store.dart';
 export 'src/memory_key_material_store.dart';
