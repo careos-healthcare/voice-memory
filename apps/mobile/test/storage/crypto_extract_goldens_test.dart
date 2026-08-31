@@ -7,7 +7,6 @@ import 'package:archiveme_mobile/security/sqlite/sqlite_encryption_key_store.dar
 import 'package:archiveme_mobile/storage/encrypted_json_file_store.dart';
 import 'package:archiveme_mobile/storage/in_memory_secure_storage.dart';
 import 'package:archiveme_mobile/storage/private_data_encryption_key_store.dart';
-import 'package:archiveme_mobile/storage/sqlite/sqlite_database_encryption_key.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 /// Phase 0 of #281 — locked vectors captured from current production crypto.
@@ -153,30 +152,33 @@ void main() {
     );
   });
 
-  test('SQLCipher fromStored matches checked-in v2 / v1 / testInstance', () {
-    final section = manifest['sqlcipherFromStored'] as Map<String, dynamic>;
+  test(
+    'SQLCipher fromStored matches checked-in v2 / v1 / testInstance via extracted type',
+    () {
+      final section = manifest['sqlcipherFromStored'] as Map<String, dynamic>;
 
-    final v2 = section['v2'] as Map<String, dynamic>;
-    final v2Key = SqliteDatabaseEncryptionKey.fromStored(
-      v2['stored'] as String,
-    );
-    expect(v2Key.sqlcipherPassword, v2['sqlcipherPassword']);
-    expect(_hex(v2Key.rawKeyBytes!), v2['rawKeyBytesHex']);
-    expect(v2Key.sqlcipherPassword, v2['stored']);
+      final v2 = section['v2'] as Map<String, dynamic>;
+      final v2Key = SqliteDatabaseEncryptionKey.fromStored(
+        v2['stored'] as String,
+      );
+      expect(v2Key.sqlcipherPassword, v2['sqlcipherPassword']);
+      expect(_hex(v2Key.rawKeyBytes!), v2['rawKeyBytesHex']);
+      expect(v2Key.sqlcipherPassword, v2['stored']);
 
-    final v1 = section['v1Legacy'] as Map<String, dynamic>;
-    final v1Key = SqliteDatabaseEncryptionKey.fromStored(
-      v1['stored'] as String,
-    );
-    expect(v1Key.sqlcipherPassword, v1['sqlcipherPassword']);
-    expect(v1Key.sqlcipherPassword, v1['passphrase']);
-    expect(v1Key.rawKeyBytes, isNull);
+      final v1 = section['v1Legacy'] as Map<String, dynamic>;
+      final v1Key = SqliteDatabaseEncryptionKey.fromStored(
+        v1['stored'] as String,
+      );
+      expect(v1Key.sqlcipherPassword, v1['sqlcipherPassword']);
+      expect(v1Key.sqlcipherPassword, v1['passphrase']);
+      expect(v1Key.rawKeyBytes, isNull);
 
-    final testInstance = SqliteDatabaseEncryptionKey.testInstance;
-    final testSection = section['testInstance'] as Map<String, dynamic>;
-    expect(testInstance.sqlcipherPassword, testSection['sqlcipherPassword']);
-    expect(_hex(testInstance.rawKeyBytes!), testSection['rawKeyBytesHex']);
-  });
+      final testInstance = SqliteDatabaseEncryptionKey.testInstance;
+      final testSection = section['testInstance'] as Map<String, dynamic>;
+      expect(testInstance.sqlcipherPassword, testSection['sqlcipherPassword']);
+      expect(_hex(testInstance.rawKeyBytes!), testSection['rawKeyBytesHex']);
+    },
+  );
 
   test('wire-format schema constants still match the captured lock', () {
     final schema = manifest['schema'] as Map<String, dynamic>;
