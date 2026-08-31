@@ -2,13 +2,13 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:archiveme_crypto/archiveme_crypto.dart';
 import 'package:archiveme_mobile/security/sqlite/sqlite_encryption_key_store.dart';
 import 'package:archiveme_mobile/storage/encrypted_json_file_store.dart';
 import 'package:archiveme_mobile/storage/encrypted_json_storage.dart';
 import 'package:archiveme_mobile/storage/in_memory_secure_storage.dart';
 import 'package:archiveme_mobile/storage/private_data_encryption_key_store.dart';
 import 'package:archiveme_mobile/storage/sqlite/sqlite_database_encryption_key.dart';
-import 'package:archiveme_mobile/sync/sqlite_vault/sqlite_vault_crypto.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 /// Phase 0 of #281 — locked vectors captured from current production crypto.
@@ -40,7 +40,7 @@ void main() {
     expect(keyBytes.length, 32);
   });
 
-  test('checked-in vault blob opens with current SqliteVaultCrypto', () {
+  test('checked-in vault blob opens with extracted SqliteVaultCrypto', () {
     final vault = manifest['sqliteVaultCrypto'] as Map<String, dynamic>;
     final sealedFile = File(
       '${_goldensDir().path}/${vault['sealedBlobFile']}',
@@ -191,6 +191,43 @@ void main() {
 
     expect(schema['secureStoragePhysicalPrefix'], 'vm_flutter_');
   });
+
+  test(
+    'v1-only install survives ensureEncryptionKey without a new v2 key',
+    () async {
+      final fixtureFile = File('${_goldensDir().path}/v1_only_ensure.json');
+      expect(
+        fixtureFile.existsSync(),
+        isTrue,
+        reason:
+            'Missing ${fixtureFile.path}. Capture once with '
+            '`flutter test tool/capture_v1_only_sqlcipher_key_golden.dart`.',
+      );
+      final fixture =
+          jsonDecode(fixtureFile.readAsStringSync()) as Map<String, dynamic>;
+      final before = fixture['beforeEnsure'] as Map<String, dynamic>;
+      final after = fixture['afterEnsure'] as Map<String, dynamic>;
+
+      final secure = InMemorySecureStorageService();
+      await secure.write(
+        'sqlite_encryption_passphrase_v1',
+        before['sqlite_encryption_passphrase_v1'] as String,
+      );
+      expect(await secure.read('sqlite_encryption_key_v2'), isNull);
+
+      final store = SecureSqliteEncryptionKeyStore(secure: secure);
+      final ensured = await store.ensureEncryptionKey();
+
+      expect(ensured.sqlcipherPassword, after['sqlcipherPassword']);
+      expect(ensured.rawKeyBytes, isNull);
+      expect(
+        await secure.read('sqlite_encryption_passphrase_v1'),
+        after['sqlite_encryption_passphrase_v1'],
+      );
+      expect(await secure.read('sqlite_encryption_key_v2'), isNull);
+      expect(after['sqlite_encryption_key_v2'], isNull);
+    },
+  );
 
   test(
     'goldens are frozen — capture script must not overwrite without flag',
