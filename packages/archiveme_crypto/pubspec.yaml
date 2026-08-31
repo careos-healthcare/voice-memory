@@ -4,6 +4,7 @@ description: >-
   (AES-256-GCM vault/JSON envelopes; 32-byte keychain keys).
 publish_to: "none"
 version: 0.1.0
+license: MIT
 repository: https://github.com/careos-healthcare/voice-memory
 homepage: https://github.com/careos-healthcare/voice-memory
 
