@@ -1036,7 +1036,7 @@ class AppServices {
         Platform.environment.containsKey('FLUTTER_TEST') || TrialMode.enabled
         ? InMemorySqliteEncryptionKeyStore()
         : SecureSqliteEncryptionKeyStore(
-            secure: s.secureStorage,
+            store: s.secureStorage,
             keyAlias: namespace.key,
           );
     s.secureSqliteLock = SecureSqliteLockService(

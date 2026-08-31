@@ -5,6 +5,7 @@ import 'package:archiveme_mobile/security/app_lock_service.dart';
 import 'package:archiveme_mobile/security/secure_database_copy.dart';
 import 'package:archiveme_mobile/security/sqlite/secure_sqlite_session.dart';
 import 'package:archiveme_mobile/security/sqlite/sqlite_encryption_key_store.dart';
+import 'package:archiveme_mobile/storage/secure_storage.dart';
 import 'package:archiveme_mobile/storage/sqlite/sqlite_database_initializer.dart';
 import 'package:flutter/foundation.dart';
 
@@ -17,7 +18,8 @@ class SecureSqliteLockService extends ChangeNotifier {
     SecureSqliteSession? session,
     BiometricAuthenticator? biometrics,
     SecureSqliteDatabaseCloser? onLockDatabase,
-  }) : _keyStore = keyStore ?? SecureSqliteEncryptionKeyStore(),
+  }) : _keyStore = keyStore ??
+           SecureSqliteEncryptionKeyStore(store: SecureStorageService()),
        _session = session ?? SecureSqliteSession(),
        _biometrics = biometrics ?? LocalAuthBiometricAuthenticator(),
        _onLockDatabase = onLockDatabase;
