@@ -225,6 +225,22 @@ void main() {
         (entries['private_journal_encryption_key_v1__guest']
             as Map)['storedValue'],
       );
+
+      final vaultBackend = InMemoryUnprefixedKeyMaterialStore();
+      final vault = SecureSqliteVaultKeyStore(
+        store: vaultBackend,
+        accountNamespace: 'guest',
+      );
+      await vault.writeKey(Uint8List.fromList(keyBytes));
+      expect(
+        vaultBackend.physical['sqlite_vault_aes_key_v1__guest'],
+        (entries['sqlite_vault_aes_key_v1__guest'] as Map)['storedValue'],
+      );
+      expect(
+        vaultBackend.physical.keys.where((k) => k.startsWith('vm_flutter_')),
+        isEmpty,
+        reason: 'vault keys must not go through the prefixed SecureStorageService',
+      );
     },
   );
 
@@ -270,6 +286,11 @@ void main() {
     );
 
     expect(schema['secureStoragePhysicalPrefix'], 'vm_flutter_');
+    expect(schema['vaultKeyStoreUsesFlutterSecureStorageDirectly'], isTrue);
+    expect(
+      SecureSqliteVaultKeyStore.storageKeyPrefix,
+      'sqlite_vault_aes_key_v1__',
+    );
   });
 
   test(

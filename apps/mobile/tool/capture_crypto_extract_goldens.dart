@@ -8,6 +8,7 @@ import 'package:archiveme_mobile/storage/encrypted_json_file_store.dart';
 import 'package:archiveme_mobile/storage/encrypted_json_storage.dart';
 import 'package:archiveme_mobile/storage/private_data_encryption_key_store.dart';
 import 'package:archiveme_mobile/storage/secure_storage.dart';
+import 'package:archiveme_mobile/storage/unprefixed_flutter_secure_storage_key_material_store.dart';
 import 'package:archiveme_mobile/storage/sqlite/sqlite_database_encryption_key.dart';
 import 'package:archiveme_mobile/sync/sqlite_vault/sqlite_vault_crypto.dart';
 import 'package:archiveme_mobile/sync/sqlite_vault/sqlite_vault_key_store.dart';
@@ -127,7 +128,10 @@ void main() {
     );
     await journalKeysAliased.writeKeyBytes(keyBytes);
 
-    final vaultKeys = SecureSqliteVaultKeyStore(accountNamespace: 'guest');
+    final vaultKeys = SecureSqliteVaultKeyStore(
+      store: UnprefixedFlutterSecureStorageKeyMaterialStore(),
+      accountNamespace: 'guest',
+    );
     await vaultKeys.writeKey(keyBytes);
 
     final v2Stored = base64Encode(keyBytes);
