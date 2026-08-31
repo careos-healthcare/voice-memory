@@ -5,7 +5,6 @@ import 'dart:typed_data';
 import 'package:archiveme_crypto/archiveme_crypto.dart';
 import 'package:archiveme_mobile/security/sqlite/sqlite_encryption_key_store.dart';
 import 'package:archiveme_mobile/storage/encrypted_json_file_store.dart';
-import 'package:archiveme_mobile/storage/encrypted_json_storage.dart';
 import 'package:archiveme_mobile/storage/in_memory_secure_storage.dart';
 import 'package:archiveme_mobile/storage/private_data_encryption_key_store.dart';
 import 'package:archiveme_mobile/storage/sqlite/sqlite_database_encryption_key.dart';
@@ -60,18 +59,21 @@ void main() {
     expect(opened, plaintext);
   });
 
-  test('checked-in EncryptedJsonStorage envelope decrypts', () async {
-    final section = manifest['encryptedJsonStorage'] as Map<String, dynamic>;
-    final envelope = File(
-      '${_goldensDir().path}/${section['envelopeFile']}',
-    ).readAsStringSync();
-    expect(jsonDecode(envelope), section['envelope']);
+  test(
+    'checked-in EncryptedJsonStorage envelope decrypts via extracted type',
+    () async {
+      final section = manifest['encryptedJsonStorage'] as Map<String, dynamic>;
+      final envelope = File(
+        '${_goldensDir().path}/${section['envelopeFile']}',
+      ).readAsStringSync();
+      expect(jsonDecode(envelope), section['envelope']);
 
-    final decoded = await EncryptedJsonStorage(
-      masterKeyBytes: keyBytes,
-    ).decryptData(envelope);
-    expect(decoded, section['plaintext']);
-  });
+      final decoded = await EncryptedJsonStorage(
+        masterKeyBytes: keyBytes,
+      ).decryptData(envelope);
+      expect(decoded, section['plaintext']);
+    },
+  );
 
   test('checked-in EncryptedJsonFileStore envelope decrypts', () async {
     final section = manifest['encryptedJsonFileStore'] as Map<String, dynamic>;
