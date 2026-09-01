@@ -287,6 +287,29 @@ void main() {
       }
     });
 
+    testWidgets('expand and open-entry keep a 48pt minimum tap target', (
+      tester,
+    ) async {
+      tester.view.physicalSize = const Size(390, 844);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+
+      await tester.pumpWidget(
+        _host(
+          EvidenceCitationCard(
+            evidence: _evidenceFor(_longTranscript, source: _longTranscript),
+            onOpenEntry: (_) {},
+          ),
+        ),
+      );
+      await tester.pump();
+
+      final expand = tester.getSize(find.byKey(EvidenceCitationCard.expandKey));
+      final open = tester.getSize(find.byKey(EvidenceCitationCard.openEntryKey));
+      expect(expand.height, greaterThanOrEqualTo(EvidenceCitationCard.minTapTarget));
+      expect(open.height, greaterThanOrEqualTo(EvidenceCitationCard.minTapTarget));
+    });
+
     testWidgets('renders in the dark theme without overflow', (tester) async {
       await tester.pumpWidget(
         _host(
