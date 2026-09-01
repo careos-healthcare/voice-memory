@@ -15,8 +15,8 @@ void main() {
     expect(page.title, ConsumerUiCopy.onboardingPositioningHeadline);
     expect(page.body, ConsumerUiCopy.onboardingPositioningBody);
     expect(page.title, OnboardingV1Copy.welcomeTitle);
-    expect(page.body, contains('evidence-backed'));
     expect(page.body.toLowerCase(), contains('does not diagnose'));
+    expect(page.body.toLowerCase(), isNot(contains('cited')));
     expect(page.stepNumber, isNull);
   });
 

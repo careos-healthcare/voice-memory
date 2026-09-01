@@ -35,16 +35,17 @@ void main() {
     test('copy avoids diagnostic, therapeutic, and aspirational promises', () {
       expect(ConsumerUiCopy.onboardingPositioningHeadline,
           OnboardingV1Copy.welcomeTitle);
-      expect(ConsumerUiCopy.onboardingPositioningBody, contains('evidence-backed'));
       expect(ConsumerUiCopy.onboardingPositioningBody.toLowerCase(),
           contains('does not diagnose'));
+      expect(ConsumerUiCopy.onboardingPositioningBody.toLowerCase(),
+          isNot(contains('cited')));
       expect(EvidenceMethodOnboardingCopy.title.toLowerCase(),
           isNot(contains('finds patterns')));
       expect(EvidenceMethodOnboardingCopy.body.toLowerCase(),
           isNot(contains('confidence band')));
     });
 
-    testWidgets('screen 1 shows contract copy, pillars, and Continue', (
+    testWidgets('screen 1 shows the product sentence and Continue', (
       tester,
     ) async {
       await tester.pumpWidget(const MaterialApp(home: OnboardingScreen()));
@@ -54,7 +55,7 @@ void main() {
       expect(find.text(ConsumerUiCopy.onboardingPositioningHeadline),
           findsOneWidget);
       expect(find.text(ConsumerUiCopy.onboardingPositioningBody), findsOneWidget);
-      expect(find.text(OnboardingV1Copy.pillar2Title), findsOneWidget);
+      expect(find.text(OnboardingV1Copy.pillar2Title), findsNothing);
       expect(find.text(ConsumerUiCopy.onboardingContinueCta), findsOneWidget);
       expect(find.text('Skip'), findsNothing);
       expect(find.text('Start my archive'), findsNothing);
@@ -69,10 +70,11 @@ void main() {
       await _advanceToConsent(tester);
 
       expect(find.text(RemoteProcessingConsentCopy.title), findsOneWidget);
+      expect(find.text(RemoteProcessingConsentCopy.lede), findsOneWidget);
       expect(
-          find.byKey(OnDeviceArchitectureSection.sectionKey), findsOneWidget);
+          find.byKey(OnDeviceArchitectureSection.sectionKey), findsNothing);
       expect(
-          find.text(OnDeviceArchitectureCopy.architectureBody), findsOneWidget);
+          find.text(OnDeviceArchitectureCopy.architectureBody), findsNothing);
       expect(find.text(RemoteProcessingConsentCopy.allowCta), findsOneWidget);
       expect(find.text(RemoteProcessingConsentCopy.declineCta), findsOneWidget);
       expect(find.text(RemoteProcessingConsentCopy.moreDetailLink), findsOneWidget);

@@ -4,8 +4,8 @@ import 'package:archiveme_mobile/features/onboarding/ui/onboarding_v1_copy.dart'
 abstract class OnboardingPages {
   OnboardingPages._();
 
-  /// Welcome screen only — remote-processing consent is screen 2
-  /// ([RemoteProcessingConsentStep] in [OnboardingScreen]).
+  /// Welcome screen only. Evidence, consent, and the confirmation hero
+  /// are separate steps driven by OnboardingScreen, each with one job.
   static const int pageCount = 1;
 
   static const List<OnboardingPageData> pages = [

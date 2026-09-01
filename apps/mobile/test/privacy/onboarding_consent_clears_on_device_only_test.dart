@@ -37,9 +37,9 @@ void main() {
     if (tempDir.existsSync()) await tempDir.delete(recursive: true);
   });
 
-  group('the consent step says what it changes before the customer acts', () {
-    testWidgets('the setting-change copy sits above both buttons',
-        (tester) async {
+  group('the consent step says what the grant covers before the customer acts',
+      () {
+    testWidgets('the grant-scope copy sits above both buttons', (tester) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -49,9 +49,6 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      final change = find.byKey(
-        const Key('remote_processing_consent_setting_change'),
-      );
       final scope = find.byKey(
         const Key('remote_processing_consent_setting_scope'),
       );
@@ -60,22 +57,22 @@ void main() {
         const Key('remote_processing_consent_decline'),
       );
 
-      expect(change, findsOneWidget);
       expect(scope, findsOneWidget);
+      expect(
+        find.byKey(const Key('remote_processing_consent_setting_change')),
+        findsNothing,
+      );
       expect(allow, findsOneWidget);
       expect(decline, findsOneWidget);
 
-      // Before, not after, and in the same scroll column as the buttons.
-      for (final explanation in [change, scope]) {
-        expect(
-          tester.getTopLeft(explanation).dy,
-          lessThan(tester.getTopLeft(allow).dy),
-        );
-        expect(
-          tester.getTopLeft(explanation).dy,
-          lessThan(tester.getTopLeft(decline).dy),
-        );
-      }
+      expect(
+        tester.getTopLeft(scope).dy,
+        lessThan(tester.getTopLeft(allow).dy),
+      );
+      expect(
+        tester.getTopLeft(scope).dy,
+        lessThan(tester.getTopLeft(decline).dy),
+      );
     });
 
     test('the copy names the switch, the condition, and no absolutes', () {

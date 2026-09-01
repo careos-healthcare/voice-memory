@@ -1,5 +1,4 @@
 import 'package:archiveme_mobile/features/onboarding/ui/remote_processing_consent_copy.dart';
-import 'package:archiveme_mobile/features/settings/ui/on_device_architecture_section.dart';
 import 'package:archiveme_mobile/onboarding/onboarding_visuals.dart';
 import 'package:archiveme_mobile/theme/app_colors.dart';
 import 'package:archiveme_mobile/theme/app_spacing.dart';
@@ -48,8 +47,9 @@ class RemoteProcessingConsentStep extends StatelessWidget {
                   ),
                 ),
                 SizedBox(height: OnboardingTypography.sectionGap(context)),
-                const OnDeviceArchitectureSection(
-                  useOnboardingTypography: true,
+                Text(
+                  RemoteProcessingConsentCopy.lede,
+                  style: OnboardingTypography.body(context),
                 ),
                 const SizedBox(height: AppSpacing.md),
                 Semantics(
@@ -87,26 +87,6 @@ class RemoteProcessingConsentStep extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: AppSpacing.sm),
-                Semantics(
-                  header: true,
-                  child: Text(
-                    RemoteProcessingConsentCopy.settingChangeHeading,
-                    style: OnboardingTypography.label(
-                      color: AppColors.accentPrimary,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: AppSpacing.xs),
-                const Text(
-                  RemoteProcessingConsentCopy.settingChangeBody,
-                  key: Key('remote_processing_consent_setting_change'),
-                  style: TextStyle(
-                    fontSize: 13,
-                    color: AppColors.textSecondary,
-                    height: 1.4,
-                  ),
-                ),
-                const SizedBox(height: AppSpacing.xs),
                 const Text(
                   RemoteProcessingConsentCopy.settingChangeScope,
                   key: Key('remote_processing_consent_setting_scope'),

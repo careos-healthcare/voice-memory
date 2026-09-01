@@ -1,14 +1,19 @@
+import 'package:archiveme_mobile/features/trust/privacy_screen_copy.dart';
+import 'package:archiveme_mobile/security/privacy_claim_catalogue.dart';
+
 /// User-facing copy for the first-use remote-processing consent step.
+///
+/// This screen's only job is the send choice. Architecture, storage
+/// protection, and the on-device-only switch belong elsewhere.
 abstract final class RemoteProcessingConsentCopy {
   RemoteProcessingConsentCopy._();
 
-  static const String title = 'Processing on this device first';
+  static const String title = PrivacyClaimCatalogue.onDeviceByDefaultHeading;
 
-  // The generic privacy paragraph that used to sit here was superseded by
-  // OnDeviceArchitectureCopy, which the step now renders under its own
-  // headings. That section states that remote processing is opt-in; the
-  // bullets below are the operative disclosure of what the opt-in sends, so
-  // they sit under [detailsHeading] rather than repeating the choice itself.
+  /// The two exits, stated once — same wording as the privacy callout.
+  static const String lede = PrivacyScreenCopy.whereWordsGoBody;
+
+  // The bullets below are the operative disclosure of what the opt-in sends.
 
   static const String detailsHeading = 'If you turn it on';
 

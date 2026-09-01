@@ -1,6 +1,7 @@
 import 'package:archiveme_mobile/features/loop_mode/loop_mode_coordinator.dart';
 import 'package:archiveme_mobile/features/loop_mode/loop_mode_model.dart';
 import 'package:archiveme_mobile/features/onboarding/ui/remote_processing_consent_copy.dart';
+import 'package:archiveme_mobile/onboarding/onboarding_pages.dart';
 import 'package:archiveme_mobile/product/consumer_ui_copy.dart';
 import 'package:archiveme_mobile/product/loop_mode_copy.dart';
 import 'package:archiveme_mobile/router/onboarding_gate.dart';

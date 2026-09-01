@@ -5,7 +5,6 @@ import 'package:archiveme_mobile/features/beta_analytics/beta_analytics_hooks.da
 import 'package:archiveme_mobile/features/onboarding/remote_processing_consent_decision.dart';
 import 'package:archiveme_mobile/features/onboarding/ui/evidence_method_onboarding_screen.dart';
 import 'package:archiveme_mobile/features/onboarding/ui/on_device_hero_screen.dart';
-import 'package:archiveme_mobile/features/onboarding/ui/onboarding_trust_pillars_section.dart';
 import 'package:archiveme_mobile/features/onboarding/ui/remote_processing_consent_step.dart';
 import 'package:archiveme_mobile/features/proof_admission/remote_processing_consent_store.dart';
 import 'package:archiveme_mobile/features/retention/retention_metrics_tracker.dart';
@@ -42,10 +41,14 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   bool _showingEvidenceMethodStep = false;
   bool _showingConsentStep = false;
 
-  /// True once the consent decision is persisted and the architecture hero is
+  /// True once the consent decision is persisted and the confirmation hero is
   /// on screen. This is the last step before `/record`, so it is the screen
   /// that owns the "into the app" CTA — see [_complete].
   bool _showingOnDeviceHero = false;
+
+  /// The consent answer, so the last screen can confirm it instead of
+  /// restating the architecture essay.
+  bool _allowedRemote = false;
 
   static const int _conceptualStepCount = 4;
 
@@ -102,9 +105,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       if (mounted) setState(() => _completing = false);
     }
     if (!mounted) return;
-    // The decision is recorded; the hero states what that decision means and
+    // The decision is recorded; the hero confirms that choice and
     // carries the only CTA that reaches `/record`.
     setState(() {
+      _allowedRemote = allow;
       _showingConsentStep = false;
       _showingOnDeviceHero = true;
     });
@@ -168,6 +172,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 if (_showingOnDeviceHero)
                   Expanded(
                     child: OnDeviceHeroScreen(
+                      allowedRemote: _allowedRemote,
                       submitting: _completing,
                       onContinue: () => unawaited(_complete()),
                     ),
@@ -277,13 +282,6 @@ class _OnboardingPage extends StatelessWidget {
                 Text(page.title, style: OnboardingTypography.title(context)),
                 SizedBox(height: OnboardingTypography.sectionGap(context)),
                 Text(page.body, style: OnboardingTypography.body(context)),
-                const SizedBox(height: AppSpacing.md),
-                // `TrustBadge` used to sit here as well. Its two lines were the
-                // same claims as pillars 2 and 3 — identical titles, and detail
-                // text the pillar bodies already say more fully — so the screen
-                // stated them twice. The pillars are the richer form; the badge
-                // still serves `privacy_screen.dart`, where it stands alone.
-                const OnboardingTrustPillarsSection(),
                 const SizedBox(height: AppSpacing.md),
                 OnboardingPageVisual(page: page),
               ],
