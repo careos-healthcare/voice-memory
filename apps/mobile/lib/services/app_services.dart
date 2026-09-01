@@ -81,7 +81,6 @@ import 'package:archiveme_mobile/features/monthly_private_report/monthly_private
 import 'package:archiveme_mobile/features/native_push/native_push_service.dart';
 import 'package:archiveme_mobile/features/native_push/native_push_verification.dart';
 import 'package:archiveme_mobile/features/offline_sync/offline_sync_journey_store.dart';
-import 'package:archiveme_mobile/features/archive_controls/archive_exclusion_store.dart';
 import 'package:archiveme_mobile/features/pattern_naming/pattern_name_store.dart';
 import 'package:archiveme_mobile/features/pro_evidence_value/pro_evidence_value_dismiss_store.dart';
 import 'package:archiveme_mobile/features/pro_lock_moment/pro_lock_moment_dismiss_store.dart';
@@ -1135,7 +1134,6 @@ class AppServices {
     _wireQuickCaptureWidgetService(s);
     unawaited(ArchiveInsightFeedbackStore.ensureLoaded());
     unawaited(PatternNameStore.ensureLoaded());
-    unawaited(ArchiveExclusionStore.ensureLoaded());
   }
 
   static void _wireBackgroundSyncQueueWorker(AppServices s) {
