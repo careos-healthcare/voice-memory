@@ -1,4 +1,5 @@
 import 'package:archiveme_mobile/features/onboarding/ui/evidence_method_onboarding_copy.dart';
+import 'package:archiveme_mobile/features/onboarding/ui/on_device_hero_screen.dart';
 import 'package:archiveme_mobile/features/onboarding/ui/onboarding_trust_pillars_section.dart';
 import 'package:archiveme_mobile/features/onboarding/ui/onboarding_v1_copy.dart';
 import 'package:archiveme_mobile/features/onboarding/ui/remote_processing_consent_copy.dart';
@@ -9,6 +10,8 @@ import 'package:archiveme_mobile/screens/onboarding_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'support/repo_file_scan.dart';
+
 Future<void> _pumpFrames(WidgetTester tester, {int frames = 5}) async {
   for (var i = 0; i < frames; i++) {
     await tester.pump(const Duration(milliseconds: 100));
@@ -16,7 +19,20 @@ Future<void> _pumpFrames(WidgetTester tester, {int frames = 5}) async {
 }
 
 void main() {
-  testWidgets('welcome screen is the product sentence only', (tester) async {
+  test('first-run source is two screens: evidence then send choice', () {
+    final source = resolveRepoScanFile(
+      'lib/screens/onboarding_screen.dart',
+    ).readAsStringSync();
+    expect(source.contains('OnDeviceHeroScreen'), isFalse);
+    expect(source.contains('EvidenceMethodOnboardingScreen'), isFalse);
+    expect(source.contains('_conceptualStepCount = 2'), isTrue);
+    expect(source.contains('OnboardingRemoteProcessingDecision.record'), isTrue);
+    expect(source.contains("context.go('/record')"), isTrue);
+  });
+
+  testWidgets('welcome screen is the evidence sentence, not four pillars', (
+    tester,
+  ) async {
     await tester.pumpWidget(const MaterialApp(home: OnboardingScreen()));
     await _pumpFrames(tester);
 
@@ -28,11 +44,12 @@ void main() {
     expect(find.textContaining('evidence-backed'), findsNothing);
     expect(find.textContaining('Not a diary'), findsNothing);
     expect(find.text(ConsumerUiCopy.onboardingContinueCta), findsOneWidget);
+    expect(find.byKey(const Key('onboarding_progress_dots')), findsOneWidget);
+    expect(find.byKey(const Key('onboarding_progress_dot_0')), findsOneWidget);
+    expect(find.byKey(const Key('onboarding_progress_dot_1')), findsOneWidget);
   });
 
-  testWidgets('continue advances through evidence step to consent screen', (
-    tester,
-  ) async {
+  testWidgets('continue opens the send choice as screen 2', (tester) async {
     await tester.pumpWidget(const MaterialApp(home: OnboardingScreen()));
     await _pumpFrames(tester);
 
@@ -41,20 +58,21 @@ void main() {
 
     await tester.tap(find.text(ConsumerUiCopy.onboardingContinueCta));
     await _pumpFrames(tester);
-    expect(find.text(EvidenceMethodOnboardingCopy.title), findsOneWidget);
 
-    await tester.tap(
-      find.byKey(const Key('evidence_method_onboarding_continue')),
-    );
-    await _pumpFrames(tester);
-
+    expect(find.text(EvidenceMethodOnboardingCopy.title), findsNothing);
+    expect(find.byKey(OnDeviceHeroScreen.screenKey), findsNothing);
     expect(find.text(RemoteProcessingConsentCopy.title), findsOneWidget);
-    expect(find.text(RemoteProcessingConsentCopy.lede), findsOneWidget);
+    expect(find.text(RemoteProcessingConsentCopy.body), findsOneWidget);
     expect(find.byKey(OnDeviceArchitectureSection.sectionKey), findsNothing);
+    expect(
+      find.text(RemoteProcessingConsentCopy.moreDetailLink),
+      findsNothing,
+    );
     expect(
       find.byKey(const Key('remote_processing_consent_allow')),
       findsOneWidget,
     );
+    expect(find.byKey(const Key('onboarding_progress_dots')), findsOneWidget);
   });
 
   testWidgets('onboarding CTA visible on small phone surface', (tester) async {

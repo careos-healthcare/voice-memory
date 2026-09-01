@@ -1,23 +1,21 @@
 import 'package:archiveme_mobile/features/settings/ui/trust_badge_copy.dart';
 import 'package:archiveme_mobile/security/privacy_claim_catalogue.dart';
 
-/// V1 onboarding copy — welcome sentence plus the four trust commitments.
+/// V1 first-run copy — two screens: evidence (the product) and send choice.
 ///
-/// Welcome is the product sentence only. The four [trustPillars] stay
-/// worded here so settings and tests can still read them; first-run no
-/// longer dumps all four on screen 1. Pillars 2 and 3 still compose from
-/// [PrivacyClaimCatalogue]. Their titles alias [TrustBadgeCopy] so a
-/// screen may render the badge or a pillar, never both.
+/// The four [trustPillars] stay worded here so settings and tests can still
+/// read them. First-run does not show them. Storage belongs on Settings →
+/// Privacy (live report). Caregiver belongs on Caregiver & coach access.
 abstract final class OnboardingV1Copy {
   OnboardingV1Copy._();
 
-  static const welcomeTitle =
-      'A private voice archive of what you actually said';
+  static const welcomeTitle = 'When it comes back, we show you the words.';
 
-  /// What the product is — not how proof works, and not what can leave.
-  /// Those jobs belong to the evidence step and the consent step.
+  /// Same claim as the repeating-phrase picture: we show your wording.
   static const welcomeBody =
-      'ArchiveMe preserves your voice and text moments on this device. '
+      'ArchiveMe is a private voice archive of what you actually said. '
+      'When a phrase repeats, those moments sit next to each other — '
+      'your wording, not a verdict. '
       'It does not diagnose, treat, or promise transformation.';
 
   static const trustPillarsHeading = 'How ArchiveMe earns trust';

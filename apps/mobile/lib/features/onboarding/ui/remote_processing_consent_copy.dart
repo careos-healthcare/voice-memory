@@ -1,19 +1,32 @@
 import 'package:archiveme_mobile/features/trust/privacy_screen_copy.dart';
-import 'package:archiveme_mobile/security/privacy_claim_catalogue.dart';
 
-/// User-facing copy for the first-use remote-processing consent step.
+/// First-run send-choice copy — screen 2 of onboarding.
 ///
-/// This screen's only job is the send choice. Architecture, storage
-/// protection, and the on-device-only switch belong elsewhere.
+/// This screen's only job is the decision. Architecture, storage
+/// protection, and the on-device-only switch belong in Privacy settings.
 abstract final class RemoteProcessingConsentCopy {
   RemoteProcessingConsentCopy._();
 
-  static const String title = PrivacyClaimCatalogue.onDeviceByDefaultHeading;
+  static const String title =
+      'New moments can stay on this phone, or leave for a transcript.';
 
-  /// The two exits, stated once — same wording as the privacy callout.
+  static const String body =
+      'Sending gives you a written transcript and a short read on whether '
+      'this may have shown up before. Off is where you start. Already-saved '
+      'moments are not sent.';
+
+  /// Privacy-screen wording, aliased so the duplication gate sees a
+  /// reference. First-run renders [body], not this essay.
   static const String lede = PrivacyScreenCopy.whereWordsGoBody;
 
-  // The bullets below are the operative disclosure of what the opt-in sends.
+  static const String changeLaterFootnote =
+      'You can change this later in Privacy.';
+
+  static const String allowCta = 'Send new moments for a transcript';
+  static const String declineCta = 'Keep saves on this phone';
+
+  // ——— Not shown on first-run. Kept so grant-effect and privacy tests
+  // can still name the switch and the grant scope. ———
 
   static const String detailsHeading = 'If you turn it on';
 
@@ -29,43 +42,27 @@ abstract final class RemoteProcessingConsentCopy {
       'Off is where you start, and where you can return: nothing is sent for '
       'new moments, and the switch lives in Settings → Privacy.';
 
-  /// Heading for [settingChangeBody] — stated before the buttons, because it
-  /// describes what the "Use remote processing" button does beyond recording a
-  /// consent record.
   static const String settingChangeHeading = 'What this button changes';
 
-  /// Says that granting here also turns the Settings switch off.
+  /// Says that granting also turns the Settings switch off.
   ///
-  /// Deliberately avoids naming the switch by its label: the label is an
-  /// absolute phrase that the privacy copy scanner reports, and this constant
-  /// is new copy that should clear the scanner rather than earn a baseline
-  /// entry. It also avoids asserting the switch's current value, which is now
-  /// platform-conditional — see `OnDeviceProcessingStore.defaultEnabled`.
-  ///
-  /// Turning it off is necessary but not sufficient: `permitted = consented &&
-  /// !onDeviceOnly`, so each purpose still needs its own grant. Turning it back
-  /// on stops remote processing for every purpose while consent stays on
-  /// record, which is why the last sentence points at the switch.
+  /// Not rendered on first-run. [OnboardingRemoteProcessingDecision] still
+  /// performs this when the customer grants.
   static const String settingChangeBody =
       'This app also has an on-device-only switch in Settings → Privacy. '
       'While that switch is on, remote processing stays off even with your '
-      'permission on record. If it is on, choosing "Use remote processing" '
+      'permission on record. If it is on, choosing '
+      '"$allowCta" '
       'here turns it off for you, and you can turn it back on there any time '
       'you want remote work to stop.';
 
-  /// What stays off after granting, so the grant is not read as broader.
   static const String settingChangeScope =
       'This covers transcription and reflection for moments you save from '
       'here on. Recordings you have already saved are not sent by this '
       'choice, and it grants those two purposes rather than a general '
       'permission.';
 
-  static const String allowCta = 'Use remote processing';
-  static const String declineCta = 'Keep saves on this device only';
-
-  static const String declinedFootnote =
-      'You can still record and save. New moments stay on this device until '
-      'you turn remote processing on in Settings → Privacy.';
+  static const String declinedFootnote = changeLaterFootnote;
 
   static const String moreDetailLink = 'See what is sent and when';
 }

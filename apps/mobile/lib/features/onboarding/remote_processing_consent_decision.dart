@@ -5,12 +5,13 @@ import 'package:archiveme_mobile/features/proof_admission/remote_processing_cons
 ///
 /// Extracted from `OnboardingScreen` so the part that matters — that a grant
 /// also clears the on-device-only switch, and a decline changes nothing — can be
-/// tested without driving four widget steps through `AppServices`.
+/// tested without driving the first-run widget steps through `AppServices`.
 ///
-/// Only reachable from the consent step's two buttons. Nothing calls it on
-/// launch, on upgrade, or on account switch, which is what keeps existing
-/// installs unmigrated: a customer who granted consent under the old behaviour
-/// keeps whatever on-device-only value they have until they choose otherwise.
+/// Only reachable from onboarding screen 2's two buttons. Nothing calls it on
+/// launch, on upgrade, on /record, or on account switch, which is what keeps
+/// existing installs unmigrated: a customer who granted consent under the old
+/// behaviour keeps whatever on-device-only value they have until they choose
+/// otherwise.
 abstract final class OnboardingRemoteProcessingDecision {
   OnboardingRemoteProcessingDecision._();
 
@@ -26,9 +27,7 @@ abstract final class OnboardingRemoteProcessingDecision {
     await consentStore.grant();
     // Consent alone permits nothing — `RemoteProcessingConsentGate` requires
     // both — so without this the customer who just agreed would get no remote
-    // processing and no explanation. The step states this on screen before
-    // either button is pressed; see
-    // `RemoteProcessingConsentCopy.settingChangeBody`.
+    // processing. First-run does not lecture this; Privacy settings do.
     await OnDeviceProcessingStore.clearForGrantedRemoteConsent();
   }
 }
