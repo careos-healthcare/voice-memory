@@ -59,14 +59,14 @@ class _CaptureScreenState extends State<CaptureScreen>
     with WidgetsBindingObserver {
   late final CaptureFlowController _controller;
   late final TextEditingController _typedController;
-  late final V1AccountDependencies _accountDeps;
+
+  V1AccountDependencies get _accountDeps =>
+      widget.accountDependencies ?? V1AccountDependencies.fromAppServices();
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    _accountDeps =
-        widget.accountDependencies ?? V1AccountDependencies.fromAppServices();
     _controller = CaptureFlowController(
       widget.dependencies ??
           CaptureFlowDependencies.fromAccount(_accountDeps),
@@ -147,43 +147,49 @@ class _CaptureScreenState extends State<CaptureScreen>
       return _buildReceipt(context, snapshot);
     }
 
-    return switch (snapshot.phase) {
-      CaptureFlowPhase.ready => CaptureReadyPanel(
-        inputMode: snapshot.inputMode,
-        attachMode: snapshot.isAttachMode,
-        onStartVoice: _controller.startVoiceCapture,
-        onSaveTyped: _controller.saveTypedCapture,
-        onSwitchMode: _controller.setInputMode,
-        permissionBlocked: snapshot.permissionBlocked,
-        permissionRequiresSettings: snapshot.permissionRequiresSettings,
-        errorMessage: snapshot.errorMessage,
-        typedController: _typedController,
-        saving: false,
-        routinePrompt: snapshot.showsRoutinePrompt ? snapshot.routinePrompt : null,
-        routinePromptLoading: snapshot.routinePromptLoading,
-        onSelectRoutinePrompt: _handleRoutinePromptSelected,
-        onDismissRoutinePrompt: _controller.dismissRoutinePrompt,
-      ),
-      CaptureFlowPhase.requestingPermission ||
-      CaptureFlowPhase.stopping ||
-      CaptureFlowPhase.savingLocal ||
-      CaptureFlowPhase.processingRemote => CaptureBusyPanel(
-        label: snapshot.stageLabel,
-      ),
-      CaptureFlowPhase.recording => CaptureRecordingPanel(
-        duration: snapshot.recordingDuration,
-        onStop: _controller.stopVoiceCapture,
-        onCancel: _controller.cancelVoiceCapture,
-      ),
-      CaptureFlowPhase.recoverableFailure => CaptureFailurePanel(
-        message: snapshot.errorMessage ?? 'Something went wrong.',
-        hasLocalSave: snapshot.hasLocalSave,
-        onRetry: snapshot.hasLocalSave ? _controller.retryRemoteProcessing : null,
-        onDismiss: _controller.resetToReady,
-      ),
-      CaptureFlowPhase.savedLocal ||
-      CaptureFlowPhase.savedWithReflection => const SizedBox.shrink(),
-    };
+    return SingleChildScrollView(
+      child: switch (snapshot.phase) {
+        CaptureFlowPhase.ready => CaptureReadyPanel(
+          inputMode: snapshot.inputMode,
+          attachMode: snapshot.isAttachMode,
+          onStartVoice: _controller.startVoiceCapture,
+          onSaveTyped: _controller.saveTypedCapture,
+          onSwitchMode: _controller.setInputMode,
+          permissionBlocked: snapshot.permissionBlocked,
+          permissionRequiresSettings: snapshot.permissionRequiresSettings,
+          errorMessage: snapshot.errorMessage,
+          typedController: _typedController,
+          saving: false,
+          routinePrompt: snapshot.showsRoutinePrompt
+              ? snapshot.routinePrompt
+              : null,
+          routinePromptLoading: snapshot.routinePromptLoading,
+          onSelectRoutinePrompt: _handleRoutinePromptSelected,
+          onDismissRoutinePrompt: _controller.dismissRoutinePrompt,
+        ),
+        CaptureFlowPhase.requestingPermission ||
+        CaptureFlowPhase.stopping ||
+        CaptureFlowPhase.savingLocal ||
+        CaptureFlowPhase.processingRemote => CaptureBusyPanel(
+          label: snapshot.stageLabel,
+        ),
+        CaptureFlowPhase.recording => CaptureRecordingPanel(
+          duration: snapshot.recordingDuration,
+          onStop: _controller.stopVoiceCapture,
+          onCancel: _controller.cancelVoiceCapture,
+        ),
+        CaptureFlowPhase.recoverableFailure => CaptureFailurePanel(
+          message: snapshot.errorMessage ?? 'Something went wrong.',
+          hasLocalSave: snapshot.hasLocalSave,
+          onRetry: snapshot.hasLocalSave
+              ? _controller.retryRemoteProcessing
+              : null,
+          onDismiss: _controller.resetToReady,
+        ),
+        CaptureFlowPhase.savedLocal ||
+        CaptureFlowPhase.savedWithReflection => const SizedBox.shrink(),
+      },
+    );
   }
 
   Widget _buildReceipt(BuildContext context, CaptureFlowSnapshot snapshot) {

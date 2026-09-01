@@ -121,6 +121,7 @@ class _InsightShareExporterState extends State<InsightShareExporter> {
                     key: const Key('insight_share_view_evidence'),
                     entryIds: _sourceEntryIds,
                     surface: 'insight_share',
+                    claimContext: model.headline,
                     onViewEvidence: widget.onViewEvidence,
                   ),
               ],
