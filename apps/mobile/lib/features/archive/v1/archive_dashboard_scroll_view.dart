@@ -2,6 +2,7 @@ import 'package:archiveme_mobile/design/archive_responsive_layout.dart';
 import 'package:archiveme_mobile/features/archive/ui/trust_status_footer.dart';
 import 'package:archiveme_mobile/features/archive/v1/archive_belief_load_state.dart';
 import 'package:archiveme_mobile/features/archive/v1/archive_feed_pagination_provider.dart';
+import 'package:archiveme_mobile/features/archive_changes/archive_changes_adapter.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/theme/app_colors.dart';
 import 'package:archiveme_mobile/widgets/archive/archive_changes_section.dart';
@@ -29,6 +30,7 @@ class ArchiveDashboardScrollView extends StatelessWidget {
     required this.onQueryChanged,
     required this.onCapture,
     super.key,
+    this.previewChangesSnapshot,
   });
 
   final ScrollController controller;
@@ -40,6 +42,11 @@ class ArchiveDashboardScrollView extends StatelessWidget {
   final ValueChanged<String> onEntryTap;
   final ValueChanged<String> onQueryChanged;
   final VoidCallback onCapture;
+
+  /// Skips [ArchiveChangesAdapter.load] so widget tests can pump the feed
+  /// without initializing AppServices.
+  @visibleForTesting
+  final ArchiveChangesSnapshot? previewChangesSnapshot;
 
   @override
   Widget build(BuildContext context) {
@@ -124,7 +131,11 @@ class ArchiveDashboardScrollView extends StatelessWidget {
                 ),
                 SliverPadding(
                   padding: EdgeInsets.symmetric(horizontal: sliverPadding.left),
-                  sliver: const SliverToBoxAdapter(child: ArchiveChangesSection()),
+                  sliver: SliverToBoxAdapter(
+                    child: ArchiveChangesSection(
+                      previewSnapshot: previewChangesSnapshot,
+                    ),
+                  ),
                 ),
                 SliverPadding(
                   padding: EdgeInsets.symmetric(horizontal: sliverPadding.left),
@@ -186,7 +197,10 @@ class ArchiveDashboardScrollView extends StatelessWidget {
                         final itemCount =
                             visibleEntries.length + (feed.isLoadingMore ? 1 : 0);
 
-                        if (columns <= 1) {
+                        if (ArchiveResponsiveLayout.prefersEntryList(
+                          crossAxisCount: columns,
+                          textScaler: MediaQuery.textScalerOf(context),
+                        )) {
                           return SliverList(
                             delegate: SliverChildBuilderDelegate(
                               (context, index) => _entryTile(
