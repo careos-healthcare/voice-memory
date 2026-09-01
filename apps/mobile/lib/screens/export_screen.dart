@@ -64,7 +64,7 @@ class _ExportScreenState extends State<ExportScreen> {
   Widget build(BuildContext context) {
     return PushedScreenShell(
       title: 'Export',
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.fromLTRB(16, 8, 16, 88),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -77,6 +77,7 @@ class _ExportScreenState extends State<ExportScreen> {
             ),
             const SizedBox(height: 24),
             FilledButton.icon(
+              key: const Key('export_and_share_button'),
               onPressed: _busy ? null : _exportAndShare,
               icon: _busy
                   ? const SizedBox(
