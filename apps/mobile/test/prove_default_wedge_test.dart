@@ -2,6 +2,7 @@ import 'package:archiveme_mobile/features/acquisition/acquisition_cohort_coordin
 import 'package:archiveme_mobile/features/acquisition/audience_wedge_model.dart';
 import 'package:archiveme_mobile/features/loop_mode/loop_mode_coordinator.dart';
 import 'package:archiveme_mobile/features/loop_mode/loop_mode_model.dart';
+import 'package:archiveme_mobile/features/onboarding/ui/onboarding_v1_copy.dart';
 import 'package:archiveme_mobile/features/retention/retention_metrics_tracker.dart';
 import 'package:archiveme_mobile/onboarding/onboarding_pages.dart';
 import 'package:archiveme_mobile/product/consumer_ui_copy.dart';
@@ -27,7 +28,7 @@ void main() {
         ConsumerUiCopy.onboardingPositioningHeadline,
       );
       expect(ConsumerUiCopy.onboardingPositioningHeadline,
-          'Save the moment. See what returns.');
+          OnboardingV1Copy.welcomeTitle);
     });
 
     test('loop acquisition copy lists prove_enough first', () {
