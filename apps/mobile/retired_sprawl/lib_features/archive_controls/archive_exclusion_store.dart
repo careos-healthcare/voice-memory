@@ -16,9 +16,21 @@ class ArchiveExclusionStore {
   static ArchiveExclusionStore instance() =>
       ArchiveExclusionStore(AppServices.instance.prefs);
 
-  static Future<void> ensureLoaded() async {
-    if (_loaded || !AppServices.isInitialized) return;
-    _cached = await instance().loadAll();
+  /// Loads persisted exclusions.
+  ///
+  /// [prefs] is the restore-reload path: [LocalBackupRestoreService]
+  /// writes the backup into its own store, then must rehydrate from that
+  /// handle. Do not call [AppServices.initialize] from here —
+  /// `initializeEssential` is not re-entrant, and the live restore flow
+  /// already refuses to run when services are down. A missing prefs
+  /// source leaves [_loaded] false so a later load can still succeed.
+  static Future<void> ensureLoaded({MobilePrefsStore? prefs}) async {
+    if (_loaded) return;
+    final resolved =
+        prefs ??
+        (AppServices.isInitialized ? AppServices.instance.prefs : null);
+    if (resolved == null) return;
+    _cached = await ArchiveExclusionStore(resolved).loadAll();
     _loaded = true;
   }
 
