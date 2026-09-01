@@ -95,6 +95,7 @@ class _PatternLifecycleBadgeState extends State<PatternLifecycleBadge> {
                 key: const Key('pattern_lifecycle_view_evidence'),
                 entryIds: widget.lifecycle.contributingEntryIds,
                 surface: 'pattern_lifecycle',
+                claimContext: widget.lifecycle.lifecycleRowLabel,
                 onViewEvidence: widget.onViewEvidence,
               ),
           ],

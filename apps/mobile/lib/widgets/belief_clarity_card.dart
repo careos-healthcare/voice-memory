@@ -38,6 +38,7 @@ class BeliefClarityCard extends StatelessWidget {
                 key: const Key('belief_clarity_view_evidence'),
                 entryIds: belief.sourceEntryIds,
                 surface: 'belief_clarity',
+                claimContext: belief.statement,
                 onViewEvidence: onViewEvidence,
               ),
           ],

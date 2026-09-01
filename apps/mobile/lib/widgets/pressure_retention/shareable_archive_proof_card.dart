@@ -114,6 +114,7 @@ class _ShareableArchiveProofCardState extends State<ShareableArchiveProofCard> {
                   key: const Key('shareable_proof_view_evidence'),
                   entryIds: widget.sourceEntryIds,
                   surface: 'shareable_archive_proof',
+                  claimContext: proof.title,
                   onViewEvidence: widget.onViewEvidence,
                 ),
             ],

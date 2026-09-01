@@ -63,6 +63,7 @@ class PatternConfidenceBadge extends StatelessWidget {
                 key: const Key('pattern_confidence_view_evidence'),
                 entryIds: confidence.contributingEntryIds,
                 surface: 'pattern_confidence',
+                claimContext: confidence.label,
                 onViewEvidence: onViewEvidence,
               ),
           ],

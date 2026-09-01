@@ -99,6 +99,7 @@ class _PatternConfidenceCardState extends State<PatternConfidenceCard> {
                   key: const Key('pattern_confidence_card_view_evidence'),
                   entryIds: widget.result.contributingEntryIds,
                   surface: 'pattern_confidence',
+                  claimContext: widget.result.label,
                   onViewEvidence: widget.onViewEvidence,
                 ),
             ],
