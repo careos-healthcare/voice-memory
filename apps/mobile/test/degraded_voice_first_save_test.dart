@@ -9,6 +9,7 @@ import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/models/reflection.dart';
 import 'package:archiveme_mobile/screens/record_screen.dart';
 import 'package:archiveme_mobile/services/app_services.dart';
+import 'package:archiveme_mobile/services/capture_pipeline/capture_pipeline_models.dart';
 import 'package:archiveme_mobile/services/capture_save_messages.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -97,11 +98,11 @@ void main() {
         final degraded = _degradedVoiceEntry();
         await AppServices.instance.journalStore.save(degraded);
 
-        final result = await AppServices.instance.pipeline
+        final result = (await AppServices.instance.pipeline
             .attachTypedTextToVoiceEntry(
               entry: degraded,
               transcript: 'I said yes when I had no capacity left.',
-            );
+            )).getOrThrow();
 
         expect(
           VoiceCaptureQuality.isDegradedVoiceCapture(result.entry),
