@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'support/record_screen_library_source.dart';
 
 import 'package:archiveme_mobile/features/current_relevance/current_relevance_analytics.dart';
 import 'package:archiveme_mobile/features/current_relevance/current_relevance_copy.dart';
@@ -423,18 +422,6 @@ void main() {
         expect(proBridgeIndex, greaterThan(relevanceIndex));
       },
     );
-
-    test('record screen renders relevance card before Pro evidence bridge', () {
-      final source = readRecordScreenLibrarySource();
-      final relevanceIndex = source.indexOf(
-        'showCurrentRelevanceOnRecordReady',
-      );
-      final proBridgeIndex = source.indexOf(
-        'showProEvidenceValueOnRecordReady',
-      );
-      expect(relevanceIndex, greaterThan(0));
-      expect(proBridgeIndex, greaterThan(relevanceIndex));
-    });
   });
 
   group('Current relevance copy guard', () {

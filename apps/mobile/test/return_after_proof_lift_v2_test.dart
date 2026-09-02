@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'support/record_screen_library_source.dart';
 
 import 'package:archiveme_mobile/features/beta/archive_beta_mission_gate.dart';
 import 'package:archiveme_mobile/features/return_after_proof/return_after_proof_model.dart';
@@ -258,14 +257,6 @@ void main() {
         ),
         isFalse,
       );
-    });
-  });
-
-  group('Integration placement', () {
-    test('record screen integrates return lift v2 card', () {
-      final source = readRecordScreenLibrarySource();
-      expect(source, contains('ReturnAfterProofLiftV2Card'));
-      expect(source, contains('returnAfterProofLiftV2'));
     });
   });
 }

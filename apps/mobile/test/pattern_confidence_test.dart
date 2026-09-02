@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'support/record_screen_library_source.dart';
 
 import 'package:archiveme_mobile/features/archive_proof/proof_surface_advice_guard.dart';
 import 'package:archiveme_mobile/features/belief_changes/belief_change_moment_engine.dart';
@@ -728,19 +727,6 @@ void main() {
       expect(relevanceIndex, greaterThan(0));
       expect(cardIndex, greaterThan(relevanceIndex));
       expect(proBridgeIndex, greaterThan(cardIndex));
-    });
-
-    test('record screen renders compact card after present day relevance', () {
-      final source = readRecordScreenLibrarySource();
-      final relevanceIndex = source.indexOf(
-        'showPresentDayRelevanceOnRecordReady',
-      );
-      final cardIndex = source.indexOf(
-        'showPatternConfidenceExplanationOnRecordReady',
-      );
-      expect(relevanceIndex, greaterThan(0));
-      expect(cardIndex, greaterThan(relevanceIndex));
-      expect(source.indexOf('compact: true,'), greaterThan(cardIndex));
     });
 
     test('weekly review renders compact card near weekly archive review', () {

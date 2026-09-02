@@ -46,83 +46,101 @@ class CaptureReadyPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bodyStyle = ArchiveMobileTypography.responsiveHelper(context)
-        .copyWith(color: AppColors.textSecondary, height: 1.45);
+    final bodyStyle = ArchiveMobileTypography.responsiveHelper(
+      context,
+    ).copyWith(color: AppColors.textSecondary, height: 1.45);
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        if (routinePromptLoading)
-          const Padding(
-            padding: EdgeInsets.only(bottom: AppSpacing.lg),
-            child: LinearProgressIndicator(minHeight: 2),
-          )
-        else if (routinePrompt != null &&
-            onSelectRoutinePrompt != null &&
-            onDismissRoutinePrompt != null) ...[
-          RoutinePromptCard(
-            prompt: routinePrompt!,
-            onSelectPrompt: onSelectRoutinePrompt!,
-            onDismiss: onDismissRoutinePrompt!,
-          ),
-          const SizedBox(height: AppSpacing.lg),
-        ],
-        Text(
-          MicrophonePermissionCopy.neededTitle,
-          style: ArchiveMobileTypography.responsiveSectionTitle(context),
-        ),
-        const SizedBox(height: AppSpacing.sm),
-        Text(MicrophonePermissionCopy.neededBody, style: bodyStyle),
-        if (errorMessage != null && errorMessage!.trim().isNotEmpty) ...[
-          const SizedBox(height: AppSpacing.sm),
-          Text(errorMessage!, style: bodyStyle.copyWith(color: AppColors.error)),
-        ],
-        const SizedBox(height: AppSpacing.lg),
-        if (!attachMode)
-          SegmentedButton<CaptureInputMode>(
-            segments: const [
-              ButtonSegment(value: CaptureInputMode.voice, label: Text('Voice')),
-              ButtonSegment(value: CaptureInputMode.typed, label: Text('Type')),
-            ],
-            selected: {inputMode},
-            onSelectionChanged: (selection) => onSwitchMode(selection.first),
-          ),
-        if (!attachMode) const SizedBox(height: AppSpacing.lg),
-        if (!attachMode && inputMode == CaptureInputMode.voice)
-          FilledButton(
-            key: const Key('capture_start_voice'),
-            onPressed: saving ? null : onStartVoice,
-            child: Text(MicrophonePermissionCopy.requestMicrophoneCta),
-          )
-        else ...[
-          TextField(
-            key: const Key('capture_typed_field'),
-            controller: typedController,
-            maxLines: 4,
-            decoration: InputDecoration(
-              hintText: routinePrompt?.primaryPrompt.trim().isNotEmpty == true
-                  ? routinePrompt!.primaryPrompt
-                  : QuickTextCaptureCopy.focusedPlaceholder,
-              border: const OutlineInputBorder(),
+    // All children are intrinsically sized (no Expanded/Spacer/Flexible), so a
+    // scroll wrap is safe. Required: 200% text scale overflows a short screen.
+    return SingleChildScrollView(
+      key: const Key('capture_ready_scroll'),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          if (routinePromptLoading)
+            const Padding(
+              padding: EdgeInsets.only(bottom: AppSpacing.lg),
+              child: LinearProgressIndicator(minHeight: 2),
+            )
+          else if (routinePrompt != null &&
+              onSelectRoutinePrompt != null &&
+              onDismissRoutinePrompt != null) ...[
+            RoutinePromptCard(
+              prompt: routinePrompt!,
+              onSelectPrompt: onSelectRoutinePrompt!,
+              onDismiss: onDismissRoutinePrompt!,
             ),
+            const SizedBox(height: AppSpacing.lg),
+          ],
+          Text(
+            MicrophonePermissionCopy.neededTitle,
+            style: ArchiveMobileTypography.responsiveSectionTitle(context),
           ),
-          const SizedBox(height: AppSpacing.md),
-          FilledButton(
-            key: const Key('capture_save_typed'),
-            onPressed: saving
-                ? null
-                : () => onSaveTyped(typedController.text.trim()),
-            child: const Text('Save moment'),
-          ),
-        ],
-        if (permissionRequiresSettings) ...[
           const SizedBox(height: AppSpacing.sm),
-          Text(MicrophonePermissionCopy.statusBlocked, style: bodyStyle),
-        ] else if (permissionBlocked) ...[
-          const SizedBox(height: AppSpacing.sm),
-          Text(MicrophonePermissionCopy.typeInsteadBlockedHelper, style: bodyStyle),
+          Text(MicrophonePermissionCopy.neededBody, style: bodyStyle),
+          if (errorMessage != null && errorMessage!.trim().isNotEmpty) ...[
+            const SizedBox(height: AppSpacing.sm),
+            Text(
+              errorMessage!,
+              style: bodyStyle.copyWith(color: AppColors.error),
+            ),
+          ],
+          const SizedBox(height: AppSpacing.lg),
+          if (!attachMode)
+            SegmentedButton<CaptureInputMode>(
+              segments: const [
+                ButtonSegment(
+                  value: CaptureInputMode.voice,
+                  label: Text('Voice'),
+                ),
+                ButtonSegment(
+                  value: CaptureInputMode.typed,
+                  label: Text('Type'),
+                ),
+              ],
+              selected: {inputMode},
+              onSelectionChanged: (selection) => onSwitchMode(selection.first),
+            ),
+          if (!attachMode) const SizedBox(height: AppSpacing.lg),
+          if (!attachMode && inputMode == CaptureInputMode.voice)
+            FilledButton(
+              key: const Key('capture_start_voice'),
+              onPressed: saving ? null : onStartVoice,
+              child: Text(MicrophonePermissionCopy.requestMicrophoneCta),
+            )
+          else ...[
+            TextField(
+              key: const Key('capture_typed_field'),
+              controller: typedController,
+              maxLines: 4,
+              decoration: InputDecoration(
+                hintText: routinePrompt?.primaryPrompt.trim().isNotEmpty == true
+                    ? routinePrompt!.primaryPrompt
+                    : QuickTextCaptureCopy.focusedPlaceholder,
+                border: const OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: AppSpacing.md),
+            FilledButton(
+              key: const Key('capture_save_typed'),
+              onPressed: saving
+                  ? null
+                  : () => onSaveTyped(typedController.text.trim()),
+              child: const Text('Save moment'),
+            ),
+          ],
+          if (permissionRequiresSettings) ...[
+            const SizedBox(height: AppSpacing.sm),
+            Text(MicrophonePermissionCopy.statusBlocked, style: bodyStyle),
+          ] else if (permissionBlocked) ...[
+            const SizedBox(height: AppSpacing.sm),
+            Text(
+              MicrophonePermissionCopy.typeInsteadBlockedHelper,
+              style: bodyStyle,
+            ),
+          ],
         ],
-      ],
+      ),
     );
   }
 }
