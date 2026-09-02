@@ -7,7 +7,9 @@ import 'package:archiveme_mobile/core/network/api_result.dart';
 import 'package:archiveme_mobile/core/network/network_cancel_token.dart';
 import 'package:archiveme_mobile/data/network/capture_api_client.dart';
 import 'package:archiveme_mobile/features/live_audio/domain/models/offline_vault_manifest.dart';
+import 'package:archiveme_mobile/features/privacy/on_device_processing_store.dart';
 import 'package:archiveme_mobile/features/proof_admission/proof_admission_models.dart';
+import 'package:archiveme_mobile/features/proof_admission/remote_processing_consent_store.dart';
 import 'package:archiveme_mobile/features/timeline/timeline_entry_display.dart';
 import 'package:archiveme_mobile/features/voice_capture/transcription/transcription_service.dart';
 import 'package:archiveme_mobile/features/voice_capture/voice_capture_copy.dart';
@@ -120,6 +122,8 @@ Future<void> _initPipeline(_TranscriptionPipelineFakeApi api) async {
     'test-capture-token',
     expiresInSeconds: 3600,
   );
+  await RemoteProcessingConsentStore(AppServices.instance.prefs).grant();
+  await OnDeviceProcessingStore.clearForGrantedRemoteConsent();
 }
 
 JournalEntry _degradedVoiceEntry({required String audioPath}) => JournalEntry(
