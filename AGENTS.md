@@ -19,3 +19,12 @@ these three, not rediscover the pattern:
 - `apps/mobile/lib/widgets/archive/archive_insight_feedback_controls.dart`
 - `apps/mobile/lib/widgets/patterns/pattern_confidence_badge.dart`
 - `apps/mobile/lib/widgets/patterns/pattern_lifecycle_badge.dart`
+
+## Widget tests: fake async vs real IO
+
+A widget test that constructs a real `JournalStore` / `MobilePrefsStore` /
+coordinator that performs file I/O must use `tester.runAsync()` or an injected
+fake — never a bare `await` in a standard widget-test body. The fake async
+clock never completes those Futures (`pattern_name_test`, #268 / #269 prefs
+races, #300 `GuestDataMigrationScreen`). `pumpAndSettle` against the leftover
+`CircularProgressIndicator` then hits the 10-minute `TimeoutException`.
