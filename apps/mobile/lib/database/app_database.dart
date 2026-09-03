@@ -40,6 +40,17 @@ export 'package:archiveme_mobile/database/tables/sync_outbox.dart';
 
 part 'app_database.g.dart';
 
+/// Per-isolate cache so repeated calls to [AppDatabase.fromSqflite] for the
+/// same underlying [sqflite.Database] return the same wrapper instead of
+/// each building its own drift [GeneratedDatabase] around one executor —
+/// drift's own docs treat that as a real corruption risk, not cosmetic.
+/// Expando state is per-isolate (isolates don't share heaps), so this is
+/// automatically safe for code that constructs its own AppDatabase inside
+/// a worker isolate — it gets its own independent cache, never this one.
+final Expando<AppDatabase> _appDatabaseCache = Expando<AppDatabase>(
+  'AppDatabase.fromSqflite cache',
+);
+
 /// Unified Drift access layer for all account-scoped SQLite tables.
 ///
 /// Physical schema creation remains in [SqliteMigrationManager]; this database
@@ -76,8 +87,13 @@ part 'app_database.g.dart';
 class AppDatabase extends _$AppDatabase {
   AppDatabase(super.executor);
 
-  factory AppDatabase.fromSqflite(sqflite.Database db) =>
-      AppDatabase(WrappedSqfliteExecutor(db));
+  factory AppDatabase.fromSqflite(sqflite.Database db) {
+    final cached = _appDatabaseCache[db];
+    if (cached != null) return cached;
+    final created = AppDatabase(WrappedSqfliteExecutor(db));
+    _appDatabaseCache[db] = created;
+    return created;
+  }
 
   SearchCustomQueries? _searchCustomQueries;
 
