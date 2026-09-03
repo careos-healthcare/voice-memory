@@ -1109,14 +1109,10 @@ class AppServices {
     s.syncMasterKeyStore = SecureSyncMasterKeyStore(
       accountNamespace: s._activeNamespace.key,
     );
-    // Built once and shared with _wireBackgroundSyncQueueWorker below —
-    // each independently wrapped the same sqliteDatabase.database in its
-    // own AppDatabase, which drift warns is a real corruption risk when
-    // two GeneratedDatabase instances share one executor.
-    final sharedAppDatabase = AppDatabase.fromSqflite(
-      s.sqliteDatabase.database,
-    );
-    _bindSyncRepository(s, appDatabase: sharedAppDatabase);
+    // AppDatabase.fromSqflite is memoized per underlying Database (see
+    // app_database.dart), so every independent call here resolves to the
+    // same instance — no need to build and thread one through by hand.
+    _bindSyncRepository(s);
     s.sync = SyncService(appProviderContainer.read(syncProvider.notifier));
     s.paywall = ValueMomentPaywallLogic(s.prefs);
     // Bound to the now-stale `pipeline`/`offlineVaultRecoveryStore` pair —
@@ -1136,17 +1132,14 @@ class AppServices {
     s._trendAnalysisServiceFuture = null;
     s._localCoachConversationService = null;
     s._localCoachConversationServiceFuture = null;
-    _wireBackgroundSyncQueueWorker(s, appDatabase: sharedAppDatabase);
+    _wireBackgroundSyncQueueWorker(s);
     _configureJournalSaveInterceptors(s);
     _wireQuickCaptureWidgetService(s);
     unawaited(ArchiveInsightFeedbackStore.ensureLoaded());
     unawaited(PatternNameStore.ensureLoaded());
   }
 
-  static void _wireBackgroundSyncQueueWorker(
-    AppServices s, {
-    AppDatabase? appDatabase,
-  }) {
+  static void _wireBackgroundSyncQueueWorker(AppServices s) {
     s._backgroundSyncQueueWorker?.dispose();
     s._reflectionEmbeddingIndexWorker?.dispose();
     s._automatedGraphIndexWorker?.dispose();
@@ -1215,7 +1208,7 @@ class AppServices {
       journalStore: s.journalStore,
     );
     final outboxStore = SyncOutboxStore(
-      appDatabase ?? AppDatabase.fromSqflite(s.sqliteDatabase.database),
+      AppDatabase.fromSqflite(s.sqliteDatabase.database),
     );
     final outboxBackgroundService = SyncOutboxBackgroundService(
       syncEngine: SyncEngine(
@@ -1713,10 +1706,10 @@ class AppServices {
     appProviderContainer.invalidate(captureModuleRuntimeConfigProvider);
   }
 
-  static void _bindSyncRepository(AppServices s, {AppDatabase? appDatabase}) {
+  static void _bindSyncRepository(AppServices s) {
     final syncApi = HttpSyncApiClient(s.httpTransport);
     final outboxStore = SyncOutboxStore(
-      appDatabase ?? AppDatabase.fromSqflite(s.sqliteDatabase.database),
+      AppDatabase.fromSqflite(s.sqliteDatabase.database),
     );
     final coordinator = EncryptedJournalSyncCoordinator(
       syncApi: syncApi,
