@@ -46,6 +46,7 @@ import 'package:archiveme_mobile/screens/sample_archive_context_screen.dart';
 import 'package:archiveme_mobile/screens/security_settings_screen.dart';
 import 'package:archiveme_mobile/ui/screens/settings/privacy_security_screen.dart';
 import 'package:archiveme_mobile/features/settings/ui/caregiver_access_screen.dart';
+import 'package:archiveme_mobile/features/settings/ui/crisis_resources_screen.dart';
 import 'package:archiveme_mobile/screens/settings_screen.dart';
 import 'package:archiveme_mobile/screens/support_feedback_screen.dart';
 import 'package:archiveme_mobile/screens/terms_screen.dart';
@@ -266,6 +267,11 @@ final GoRouter appRouter = GoRouter(
       path: '/caregiver-access',
       parentNavigatorKey: _rootNavigatorKey,
       builder: (context, state) => const CaregiverAccessScreen(),
+    ),
+    GoRoute(
+      path: '/crisis-resources',
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) => const CrisisResourcesScreen(),
     ),
     GoRoute(
       path: '/account/create',

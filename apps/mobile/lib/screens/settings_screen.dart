@@ -51,6 +51,7 @@ import 'package:archiveme_mobile/widgets/settings/privacy_security_trust_section
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:archiveme_mobile/features/settings/ui/crisis_resources_copy.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -286,6 +287,20 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 onTap: () => context.push('/caregiver-access'),
               ),
             const CaregiverEntryPoint(),
+            ListTile(
+              key: const Key('settings_crisis_resources_tile'),
+              contentPadding: EdgeInsets.zero,
+              title: Text(
+                CrisisResourcesCopy.settingsTitle,
+                style: ArchiveMobileTypography.listTitle(context),
+              ),
+              subtitle: Text(
+                CrisisResourcesCopy.settingsSubtitle,
+                style: ArchiveMobileTypography.listSubtitle(context),
+              ),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () => context.push('/crisis-resources'),
+            ),
             ListTile(
               key: const Key('settings_privacy_security_control_center_tile'),
               contentPadding: EdgeInsets.zero,
