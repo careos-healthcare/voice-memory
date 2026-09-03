@@ -27,6 +27,8 @@ import 'package:archiveme_research/screens/pinned_evidence_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'support/test_storage_sandbox.dart';
+
 const _engine = ArchiveEntrySearchEngine();
 const _framingEngine = MemoryAuthorityFramingEngine();
 
@@ -403,31 +405,27 @@ void main() {
     testWidgets('no matching entries state renders', (tester) async {
       await tester.binding.setSurfaceSize(const Size(390, 1400));
       addTearDown(() => tester.binding.setSurfaceSize(null));
-      late Directory dir;
-      final journalPath =
-          '${Directory.systemTemp.createTempSync('vm_search_screen_').path}/entries.json';
-      dir = File(journalPath).parent;
-      final prefsPath = '${dir.path}/prefs.json';
-      for (final path in [
-        journalPath,
-        prefsPath,
-        JournalStore.encryptedPathFor(journalPath),
-      ]) {
-        final file = File(path);
-        if (file.existsSync()) file.deleteSync();
-      }
+      final sandbox = TestStorageSandbox.create(prefix: 'vm_search_screen_');
+      addTearDown(() async {
+        final hold = TestStorageSandbox.create(prefix: 'vm_search_hold_');
+        await tester.runAsync(() async {
+          await AppServices.resetForTest(
+            journalPath: hold.journalPath,
+            prefsPath: hold.prefsPath,
+            skipRevenueCat: true,
+          );
+          await sandbox.dispose();
+        });
+      });
       await tester.runAsync(() async {
         await AppServices.resetForTest(
-          journalPath: journalPath,
-          prefsPath: prefsPath,
+          journalPath: sandbox.journalPath,
+          prefsPath: sandbox.prefsPath,
           skipRevenueCat: true,
         );
         await AppServices.instance.journalStore.save(
           _entry(id: 'a', transcript: 'Planning the product launch'),
         );
-      });
-      addTearDown(() {
-        if (dir.existsSync()) dir.deleteSync(recursive: true);
       });
 
       await tester.runAsync(() async {

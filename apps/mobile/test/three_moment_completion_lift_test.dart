@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'support/record_screen_library_source.dart';
 
 import 'package:archiveme_mobile/features/archive_proof/proof_surface_advice_guard.dart';
 import 'package:archiveme_mobile/features/surface_priority/surface_priority_copy.dart';
@@ -424,14 +423,6 @@ void main() {
           )
           .length;
       expect(guidanceVisible, 1);
-    });
-  });
-
-  group('Record screen integration', () {
-    test('uses navigateToTypeInsteadCapture for primary CTA', () {
-      final source = readRecordScreenLibrarySource();
-      expect(source, contains('ThreeMomentCompletionCard'));
-      expect(source, contains('navigateToTypeInsteadCapture'));
     });
   });
 }

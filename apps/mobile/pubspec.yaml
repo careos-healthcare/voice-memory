@@ -62,6 +62,10 @@ dependencies:
   code_assets: ^1.0.0
   sqlite3: ^3.5.1
   sqflite_sqlcipher: ^3.4.1
+  archiveme_crypto:
+    path: ../../packages/archiveme_crypto
+  archiveme_ui:
+    path: ../../packages/archiveme_ui
   llama_cpp_dart:
     path: ../../packages/llama_cpp_dart
   sherpa_onnx: ^1.13.6

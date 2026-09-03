@@ -13,6 +13,7 @@ import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/theme/app_colors.dart';
 import 'package:archiveme_mobile/theme/app_spacing.dart';
 import 'package:archiveme_mobile/theme/voicememory_cards.dart';
+import 'package:archiveme_mobile/widgets/record/remote_processing_skipped_card.dart';
 import 'package:flutter/material.dart';
 
 /// Single post-save receipt for focused beta — local confirmation, transcript,
@@ -30,6 +31,7 @@ class MomentSaveReceiptCard extends StatelessWidget {
     this.onCorrectText,
     this.onRetryRemote,
     this.onTypeWhatYouSaid,
+    this.onChooseWhatLeaves,
   });
 
   final JournalEntry entry;
@@ -42,6 +44,7 @@ class MomentSaveReceiptCard extends StatelessWidget {
   final VoidCallback? onCorrectText;
   final VoidCallback? onRetryRemote;
   final VoidCallback? onTypeWhatYouSaid;
+  final VoidCallback? onChooseWhatLeaves;
 
   bool get _isDegraded => VoiceCaptureQuality.isDegradedVoiceCapture(entry);
 
@@ -181,6 +184,11 @@ class MomentSaveReceiptCard extends StatelessWidget {
     switch (remoteStatus) {
       case MomentSaveRemoteStatus.none:
         if (syncNote == null || syncNote!.trim().isEmpty) return null;
+        if (syncNote == VoiceCaptureCopy.remoteProcessingConsentPausedNote) {
+          return RemoteProcessingSkippedCard(
+            onChooseWhatLeaves: onChooseWhatLeaves,
+          );
+        }
         return Text(
           syncNote!,
           key: const Key('moment_save_receipt_sync_note'),

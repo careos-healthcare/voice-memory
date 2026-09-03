@@ -32,7 +32,7 @@ void main() {
     final outDir = home.isNotEmpty
         ? '$home/Desktop/upload12/screenshots'
         : 'build/value_clarity';
-    await Directory(outDir).create(recursive: true);
+    await tester.runAsync(() => Directory(outDir).create(recursive: true));
 
     const sampleBelief = ArchiveBeliefCardModel(
       id: 'sample',
@@ -122,16 +122,19 @@ void main() {
       final boundary = tester.renderObject<RenderRepaintBoundary>(
         find.byType(RepaintBoundary).first,
       );
-      final bytes = await tester.binding.runAsync(() async {
+      // Real GPU + file I/O under runAsync (pumps stay outside): toImage(),
+      // toByteData(), and File.writeAsBytes() never complete in the fake-async
+      // testWidgets zone. Same pattern as the pattern_name_test.dart fix (PR #251).
+      await tester.runAsync(() async {
         final image = await boundary.toImage();
-        return image.toByteData(format: ui.ImageByteFormat.png);
+        final bytes = await image.toByteData(format: ui.ImageByteFormat.png);
+        if (bytes == null) {
+          fail('PNG export failed for ${s.$1}');
+        }
+        await File(
+          '$outDir/${s.$1}.png',
+        ).writeAsBytes(bytes.buffer.asUint8List());
       });
-      if (bytes == null) {
-        fail('PNG export failed for ${s.$1}');
-      }
-      await File(
-        '$outDir/${s.$1}.png',
-      ).writeAsBytes(bytes.buffer.asUint8List());
     }
 
     // ignore: avoid_print

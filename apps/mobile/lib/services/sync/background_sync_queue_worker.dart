@@ -15,6 +15,7 @@ import 'package:archiveme_mobile/services/sync_service.dart';
 import 'package:archiveme_mobile/storage/journal_store.dart';
 import 'package:archiveme_mobile/sync/sync_outbox_background_service.dart';
 import 'package:archiveme_mobile/features/voice_capture/transcription/provisional_transcript_reconciler.dart';
+import 'package:sqflite/sqflite.dart';
 
 /// Result summary for a single background sync queue flush cycle.
 class BackgroundSyncFlushResult {
@@ -163,11 +164,22 @@ class BackgroundSyncQueueWorker {
     });
   }
 
+  /// Test hook: cancels a pending debounced flush so it cannot fire after the
+  /// test completes and run against a database the next test is about to close.
+  /// Only cancels the timer — it never disposes the worker or closes the DB, so
+  /// shared setUpAll harnesses keep working. See flutter_test_config.dart.
+  void quiesceForTest() {
+    _debounceTimer?.cancel();
+    _debounceTimer = null;
+  }
+
   Future<void> _refreshQueueCounts() async {
     final controller = _syncController;
     if (controller == null) return;
     final outboxCountFn = _pendingOutboxCount;
-    final pendingOutboxCount = outboxCountFn == null ? 0 : await outboxCountFn();
+    final pendingOutboxCount = outboxCountFn == null
+        ? 0
+        : await outboxCountFn();
     controller.setQueueCounts(
       queuedEntryCount: _queuedEntryIds.length,
       pendingOutboxCount: pendingOutboxCount,
@@ -237,8 +249,9 @@ class BackgroundSyncQueueWorker {
         await _refreshQueueCounts();
         if (pendingCount == 0) {
           final outboxCountFn = _pendingOutboxCount;
-          final pendingOutbox =
-              outboxCountFn == null ? 0 : await outboxCountFn();
+          final pendingOutbox = outboxCountFn == null
+              ? 0
+              : await outboxCountFn();
           if (pendingOutbox == 0 && !_vaultUploadPending) {
             SyncPipelineLog.flushSkipped(reason: 'empty_queue');
             _syncController?.resetToIdle();
@@ -269,38 +282,60 @@ class BackgroundSyncQueueWorker {
             _attest.ensureCaptureToken,
           );
         } catch (error, stackTrace) {
-          SyncPipelineLog.phaseFailed(phase: 'attestation', error: error, stackTrace: stackTrace);
+          SyncPipelineLog.phaseFailed(
+            phase: 'attestation',
+            error: error,
+            stackTrace: stackTrace,
+          );
           assert(() {
             // ignore: avoid_print
-            print('BackgroundSyncQueueWorker attestation failed: $error\n$stackTrace');
+            print(
+              'BackgroundSyncQueueWorker attestation failed: $error\n$stackTrace',
+            );
             return true;
           }());
         }
 
         try {
-          transcriptsReconciled = await _runPhase(
-            BackgroundSyncPhase.transcription,
-            _transcriptReconciler.reconcileAll,
-          ) ?? 0;
+          transcriptsReconciled =
+              await _runPhase(
+                BackgroundSyncPhase.transcription,
+                _transcriptReconciler.reconcileAll,
+              ) ??
+              0;
         } catch (error, stackTrace) {
-          SyncPipelineLog.phaseFailed(phase: 'transcription', error: error, stackTrace: stackTrace);
+          SyncPipelineLog.phaseFailed(
+            phase: 'transcription',
+            error: error,
+            stackTrace: stackTrace,
+          );
           assert(() {
             // ignore: avoid_print
-            print('BackgroundSyncQueueWorker transcription failed: $error\n$stackTrace');
+            print(
+              'BackgroundSyncQueueWorker transcription failed: $error\n$stackTrace',
+            );
             return true;
           }());
         }
 
         try {
-          proofsAdmitted = await _runPhase(
-            BackgroundSyncPhase.proofAdmission,
-            _proofReconciler.reconcileAll,
-          ) ?? 0;
+          proofsAdmitted =
+              await _runPhase(
+                BackgroundSyncPhase.proofAdmission,
+                _proofReconciler.reconcileAll,
+              ) ??
+              0;
         } catch (error, stackTrace) {
-          SyncPipelineLog.phaseFailed(phase: 'proof_admission', error: error, stackTrace: stackTrace);
+          SyncPipelineLog.phaseFailed(
+            phase: 'proof_admission',
+            error: error,
+            stackTrace: stackTrace,
+          );
           assert(() {
             // ignore: avoid_print
-            print('BackgroundSyncQueueWorker proof admission failed: $error\n$stackTrace');
+            print(
+              'BackgroundSyncQueueWorker proof admission failed: $error\n$stackTrace',
+            );
             return true;
           }());
         }
@@ -315,7 +350,8 @@ class BackgroundSyncQueueWorker {
           } catch (error, stackTrace) {
             SyncPipelineLog.phaseFailed(
               phase: 'reflection_embedding_index',
-              error: error, stackTrace: stackTrace,
+              error: error,
+              stackTrace: stackTrace,
             );
             assert(() {
               // ignore: avoid_print
@@ -337,10 +373,16 @@ class BackgroundSyncQueueWorker {
                 outboxDrainer.drainPending,
               );
             } catch (error, stackTrace) {
-              SyncPipelineLog.phaseFailed(phase: 'sync_outbox', error: error, stackTrace: stackTrace);
+              SyncPipelineLog.phaseFailed(
+                phase: 'sync_outbox',
+                error: error,
+                stackTrace: stackTrace,
+              );
               assert(() {
                 // ignore: avoid_print
-                print('BackgroundSyncQueueWorker outbox drain failed: $error\n$stackTrace');
+                print(
+                  'BackgroundSyncQueueWorker outbox drain failed: $error\n$stackTrace',
+                );
                 return true;
               }());
             }
@@ -356,10 +398,16 @@ class BackgroundSyncQueueWorker {
               );
               cloudSyncSucceeded = result?.cloudSyncSucceeded ?? false;
             } catch (error, stackTrace) {
-              SyncPipelineLog.phaseFailed(phase: 'cloud_sync', error: error, stackTrace: stackTrace);
+              SyncPipelineLog.phaseFailed(
+                phase: 'cloud_sync',
+                error: error,
+                stackTrace: stackTrace,
+              );
               assert(() {
                 // ignore: avoid_print
-                print('BackgroundSyncQueueWorker cloud sync failed: $error\n$stackTrace');
+                print(
+                  'BackgroundSyncQueueWorker cloud sync failed: $error\n$stackTrace',
+                );
                 return true;
               }());
             }
@@ -396,8 +444,9 @@ class BackgroundSyncQueueWorker {
         }
 
         final nextRetryFn = _nextOutboxRetryAt;
-        final nextOutboxRetryAt =
-            nextRetryFn == null ? null : await nextRetryFn();
+        final nextOutboxRetryAt = nextRetryFn == null
+            ? null
+            : await nextRetryFn();
         if (nextOutboxRetryAt != null) {
           _syncController?.scheduleRetry(nextOutboxRetryAt);
         } else {
@@ -445,6 +494,22 @@ class BackgroundSyncQueueWorker {
         vaultUploadAttempted: false,
         vaultUploadSucceeded: false,
       );
+    } on DatabaseException catch (e) {
+      // A debounced background flush can race app/DB shutdown (and, in tests,
+      // teardown) and find the connection already closed. Expected best-effort
+      // behaviour, not a failure — report an empty result rather than leak an
+      // unhandled error.
+      if (e.isDatabaseClosedError()) {
+        return const BackgroundSyncFlushResult(
+          transcriptsReconciled: 0,
+          proofsAdmitted: 0,
+          cloudSyncAttempted: false,
+          cloudSyncSucceeded: false,
+          vaultUploadAttempted: false,
+          vaultUploadSucceeded: false,
+        );
+      }
+      rethrow;
     } finally {
       _flushInFlight = false;
     }

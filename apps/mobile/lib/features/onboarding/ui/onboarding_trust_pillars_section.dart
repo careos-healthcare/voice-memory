@@ -4,7 +4,7 @@ import 'package:archiveme_mobile/theme/app_colors.dart';
 import 'package:archiveme_mobile/theme/app_spacing.dart';
 import 'package:flutter/material.dart';
 
-/// Numbered trust pillars shown during first-run onboarding.
+/// Numbered trust pillars — settings/tests only. First-run does not show them.
 class OnboardingTrustPillarsSection extends StatelessWidget {
   const OnboardingTrustPillarsSection({super.key});
 

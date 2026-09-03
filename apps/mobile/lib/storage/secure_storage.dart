@@ -1,8 +1,12 @@
+import 'dart:convert';
+import 'dart:typed_data';
+
+import 'package:archiveme_crypto/archiveme_crypto.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 /// Encrypted storage for non-secret preferences and future session handles.
 /// Do not store API keys, Stripe secrets, or raw passwords here.
-class SecureStorageService {
+class SecureStorageService implements KeyMaterialStore {
   SecureStorageService({FlutterSecureStorage? storage})
     : _storage =
           storage ??
@@ -27,6 +31,20 @@ class SecureStorageService {
   }
 
   Future<void> delete(String key) => _storage.delete(key: '$_prefix$key');
+
+  @override
+  Future<Uint8List?> readKey(String logicalKey) async {
+    final stored = await read(logicalKey);
+    if (stored == null || stored.isEmpty) return null;
+    return Uint8List.fromList(base64Decode(stored));
+  }
+
+  @override
+  Future<void> writeKey(String logicalKey, Uint8List material) =>
+      write(logicalKey, base64Encode(material));
+
+  @override
+  Future<void> deleteKey(String logicalKey) => delete(logicalKey);
 
   Future<void> clearAll() async {
     final all = await _storage.readAll();

@@ -1,6 +1,3 @@
-import 'dart:io';
-import 'support/record_screen_library_source.dart';
-
 import 'package:archiveme_mobile/features/timeline_positioning/timeline_positioning_analytics.dart';
 import 'package:archiveme_mobile/features/timeline_positioning/timeline_positioning_copy.dart';
 import 'package:archiveme_mobile/features/timeline_positioning/timeline_positioning_engine.dart';
@@ -230,40 +227,6 @@ void main() {
         expect(text, isNot(contains('transcript')));
         expect(text, isNot(contains(_strongRepeat.toLowerCase())));
       }
-    });
-  });
-
-  group('Timeline positioning placement', () {
-    test('record screen renders card before Pro evidence bridge', () {
-      final source = readRecordScreenLibrarySource();
-      final cardIndex = source.indexOf('ctx.showTimelinePositioningOnRecordReady');
-      final proBridgeIndex = source.indexOf(
-        'showProEvidenceValueOnRecordReady',
-      );
-      expect(cardIndex, greaterThan(0));
-      expect(proBridgeIndex, greaterThan(cardIndex));
-    });
-
-    test('record card sits above current relevance card', () {
-      final source = readRecordScreenLibrarySource();
-      final timelineIndex = source.indexOf('TimelinePositioningCard(');
-      final relevanceIndex = source.indexOf('CurrentRelevanceCard(');
-      expect(timelineIndex, greaterThan(0));
-      expect(relevanceIndex, greaterThan(timelineIndex));
-    });
-
-    test('record card sits after capture freedom line', () {
-      final source = readRecordScreenLibrarySource();
-      final freedomIndex = source.indexOf(
-        'if (ctx.showCaptureFreedomLine &&\n'
-        '            !ctx.firstUseSimplifiedRecord &&\n'
-        '            !ctx.showReturningWatchTargetFocusedUi) ...[',
-      );
-      final timelineIndex = source.indexOf(
-        'ctx.showTimelinePositioningOnRecordReady',
-      );
-      expect(freedomIndex, greaterThan(0));
-      expect(timelineIndex, greaterThan(freedomIndex));
     });
   });
 

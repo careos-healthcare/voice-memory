@@ -9,6 +9,7 @@ import 'package:archiveme_mobile/models/reflection.dart';
 import 'package:archiveme_mobile/screens/belief_evidence_screen.dart';
 import 'package:archiveme_mobile/theme/app_theme.dart';
 import 'package:archiveme_mobile/widgets/archive/archive_home_summary_card.dart';
+import 'package:archiveme_mobile/widgets/archive/archive_insight_feedback_controls.dart';
 import 'package:archiveme_mobile/widgets/archive/weekly_archive_review_card.dart';
 import 'package:archiveme_mobile/widgets/record/belief_update_payoff_card.dart';
 import 'package:archiveme_research/screens/weekly_archive_review_screen.dart';
@@ -159,6 +160,11 @@ Future<void> _pumpArchiveHomeCard(
 }
 
 void main() {
+  // Reset once per test here only. Do NOT also call resetForTest() inside a
+  // test body before the first pumpWidget/pump: a second resetForTest() there
+  // (its `await flushForTest()` gap reorders against the flutter_test binding's
+  // initial frame scheduling) deterministically deadlocks the first frame, so
+  // the whole file hangs. Store state is already clean from this setUp.
   setUp(() async => ArchiveInsightFeedbackStore.resetForTest());
 
   group('ArchiveInsightFeedbackGate', () {
@@ -235,7 +241,6 @@ void main() {
   group('Archive Home feedback controls', () {
     testWidgets('render for 3+ entry archive home stages', (tester) async {
       for (final count in [3, 4, 5]) {
-        await ArchiveInsightFeedbackStore.resetForTest();
         final summary = ArchiveHomeSummaryEngine.build(
           entries: _entries(count),
         );
@@ -247,7 +252,6 @@ void main() {
 
     testWidgets('do not render for 0–1 entry premature states', (tester) async {
       for (final count in [0, 1]) {
-        await ArchiveInsightFeedbackStore.resetForTest();
         final summary = ArchiveHomeSummaryEngine.build(
           entries: count == 0 ? const [] : _entries(count),
         );
@@ -326,6 +330,51 @@ void main() {
         find.byKey(const Key('archive_insight_feedback_why_hide')),
         findsOneWidget,
       );
+    });
+
+    testWidgets('view evidence is absent without source ids or callback', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: AppTheme.light(),
+          home: const Scaffold(
+            body: ArchiveInsightFeedbackControls(insightId: 'test'),
+          ),
+        ),
+      );
+      expect(
+        find.byKey(const Key('archive_insight_feedback_view_evidence')),
+        findsNothing,
+      );
+    });
+
+    testWidgets('view evidence uses source ids via callback', (tester) async {
+      var opened = false;
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: AppTheme.light(),
+          home: Scaffold(
+            body: ArchiveInsightFeedbackControls(
+              insightId: 'test',
+              sourceEntryIds: const ['e1', 'e2'],
+              onViewEvidence: () => opened = true,
+            ),
+          ),
+        ),
+      );
+
+      final cta = find.byKey(
+        const Key('archive_insight_feedback_view_evidence'),
+      );
+      expect(cta, findsOneWidget);
+      expect(
+        find.text(ArchiveInsightFeedbackCopy.viewEvidence),
+        findsOneWidget,
+      );
+      await tester.tap(cta);
+      await tester.pump();
+      expect(opened, isTrue);
     });
 
     testWidgets('feels right stores local positive feedback', (tester) async {

@@ -27,7 +27,8 @@ enum ArchiveHomeAction {
 
 /// User-facing copy constants for Archive Home.
 abstract final class ArchiveHomeSummaryCopy {
-  static const String emptyTitle = VisibleArchiveProofCopy.archiveHomeEmptyTitle;
+  static const String emptyTitle =
+      VisibleArchiveProofCopy.archiveHomeEmptyTitle;
 
   static const String emptyBody = VisibleArchiveProofCopy.archiveHomeEmptyBody;
 
@@ -38,17 +39,20 @@ abstract final class ArchiveHomeSummaryCopy {
 
   static const String oneTitle = VisibleArchiveProofCopy.archiveHomeOneTitle;
 
-  static const String beliefLabel = VisibleArchiveProofCopy.archiveHomeBeliefLabel;
+  static const String beliefLabel =
+      VisibleArchiveProofCopy.archiveHomeBeliefLabel;
 
   static const String whatChangedLabel =
       VisibleArchiveProofCopy.archiveHomeWhatChangedLabel;
 
-  static const String evidenceLabel = VisibleArchiveProofCopy.archiveHomeEvidenceLabel;
+  static const String evidenceLabel =
+      VisibleArchiveProofCopy.archiveHomeEvidenceLabel;
 
   static const String nextActionLabel =
       VisibleArchiveProofCopy.archiveHomeNextActionLabel;
 
-  static const String viewReviewCta = VisibleArchiveProofCopy.archiveHomeViewReviewCta;
+  static const String viewReviewCta =
+      VisibleArchiveProofCopy.archiveHomeViewReviewCta;
 }
 
 /// Central Archive Home summary — adapts by usable entry count.
@@ -64,6 +68,7 @@ class ArchiveHomeSummary {
     this.currentBeliefLine,
     this.whatChangedLine,
     this.evidenceRows = const [],
+    this.sourceEntryIds = const [],
     this.nextActionLine,
     this.primaryCta,
     this.secondaryCta,
@@ -83,6 +88,7 @@ class ArchiveHomeSummary {
   final String? currentBeliefLine;
   final String? whatChangedLine;
   final List<String> evidenceRows;
+  final List<String> sourceEntryIds;
   final String? nextActionLine;
   final String? primaryCta;
   final String? secondaryCta;
@@ -174,6 +180,7 @@ abstract final class ArchiveHomeSummaryEngine {
             payoff.thinEvidenceNote ??
             VisibleArchiveProofCopy.threeEntryBeliefEvidenceThin,
         evidenceRows: payoff.evidenceRows,
+        sourceEntryIds: payoff.sourceEntryIds,
         nextActionLine:
             _nextActionLine(entries) ??
             payoff.thinEvidenceAction ??
@@ -215,6 +222,7 @@ abstract final class ArchiveHomeSummaryEngine {
         currentBeliefLine: payoff.currentBelief,
         whatChangedLine: payoff.whatChangedLine,
         evidenceRows: payoff.evidenceRows,
+        sourceEntryIds: payoff.sourceEntryIds,
         nextActionLine: _nextActionLine(entries) ?? payoff.primaryCta,
         primaryCta: VisibleArchiveProofCopy.firstSavePrimaryCta,
         secondaryCta: VisibleArchiveProofCopy.beliefUpdateViewEvidenceCta,
@@ -240,6 +248,7 @@ abstract final class ArchiveHomeSummaryEngine {
       currentBeliefLine: review.strongestThreadLine,
       whatChangedLine: review.whatChangedLine,
       evidenceRows: review.evidenceRows,
+      sourceEntryIds: review.sourceEntryIds,
       nextActionLine: _nextActionLine(entries) ?? review.nextActionLine,
       primaryCta: ArchiveHomeSummaryCopy.viewReviewCta,
       secondaryCta: VisibleArchiveProofCopy.firstSavePrimaryCta,
@@ -267,6 +276,7 @@ abstract final class ArchiveHomeSummaryEngine {
       currentBeliefLine: summary.currentBeliefLine,
       whatChangedLine: summary.whatChangedLine,
       evidenceRows: summary.evidenceRows,
+      sourceEntryIds: summary.sourceEntryIds,
       nextActionLine: summary.nextActionLine,
       primaryCta: summary.primaryCta,
       secondaryCta: summary.secondaryCta,

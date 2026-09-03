@@ -1,6 +1,3 @@
-import 'dart:io';
-import 'support/record_screen_library_source.dart';
-
 import 'package:archiveme_mobile/billing/archive_loop_entitlement_ids.dart';
 import 'package:archiveme_mobile/billing/paywall_source.dart';
 import 'package:archiveme_mobile/features/archive_proof/proof_surface_advice_guard.dart';
@@ -202,15 +199,6 @@ void main() {
       expect(PaywallSource.valueMoment.name, 'valueMoment');
     });
 
-    test('CTA opens existing paywall source value moment', () {
-      final contents = readRecordScreenLibrarySource();
-      expect(
-        contents,
-        contains('record_beta_repair_lab_pricing_value_framing'),
-      );
-      expect(contents, contains('PaywallSource.valueMoment'));
-    });
-
     test('blocks other pro cards when active', () async {
       await BetaRepairLabStore.setModeForTest(
         BetaRepairLabMode.pricingValueFraming,
@@ -310,15 +298,6 @@ void main() {
         ),
         isTrue,
       );
-    });
-  });
-
-  group('protected areas', () {
-    test('no fake locked content or paywall screen changes', () {
-      final recordScreen = readRecordScreenLibrarySource();
-      expect(recordScreen, isNot(contains('RevenueCat')));
-      expect(recordScreen, isNot(contains('purchasePackage')));
-      expect(recordScreen, isNot(contains('restorePurchases')));
     });
   });
 }

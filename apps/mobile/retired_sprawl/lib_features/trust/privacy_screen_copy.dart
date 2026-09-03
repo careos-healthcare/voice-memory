@@ -14,6 +14,24 @@ abstract class PrivacyScreenCopy {
       'default. Audio and transcript text are sent only when you turn on '
       'remote processing for a new moment.';
 
+  /// First thing on the privacy disclosure — scoped to processing vs sync,
+  /// not a blanket "nothing leaves this phone."
+  ///
+  /// Remote processing is `RemoteProcessingConsentStore` plus the analyze /
+  /// transcribe uploads. Pattern badges on already-saved entries are local
+  /// Dart over local text; they are not what this block describes, and this
+  /// block does not claim a model runs on the phone. Sync is
+  /// `encrypted_sync_service.dart` uploading ciphertext.
+  static const String whereWordsGoTitle = 'What can leave this phone';
+
+  static const String whereWordsGoBody =
+      'Writing out a recording, or reading it against what you said before, '
+      'only happens off this phone if you turn on remote processing. Sync is '
+      'a different choice: if you sign in and back up, an encrypted copy can '
+      'leave this phone, and the server cannot read it. While remote '
+      'processing is off, those new words are not sent for a transcript or a '
+      'read.';
+
   static const String privateByDefaultTitle =
       PrivacyCopyPolicy.privateByDefault;
 
@@ -144,6 +162,8 @@ abstract class PrivacyScreenCopy {
   static const List<String> all = [
     screenTitle,
     intro,
+    whereWordsGoTitle,
+    whereWordsGoBody,
     privateByDefaultTitle,
     privateByDefaultBody,
     onDeviceTitle,

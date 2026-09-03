@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:archiveme_mobile/billing/archive_pro_feature_map.dart';
 import 'package:archiveme_mobile/design/archive_mobile_typography.dart';
 import 'package:archiveme_mobile/features/comparison_engine/domain/models/archive_moment_record.dart';
 import 'package:archiveme_mobile/features/comparison_engine/domain/services/pro_trail_gate.dart';
@@ -13,13 +12,13 @@ import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/providers/subscription_provider.dart';
 import 'package:archiveme_mobile/services/app_services.dart';
 import 'package:archiveme_mobile/theme/app_spacing.dart';
-import 'package:archiveme_mobile/widgets/billing/paywall_gate.dart';
 import 'package:archiveme_mobile/widgets/pushed_screen_shell.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-/// Tier 2 historical comparison — Pro-gated with full citation trail on capped free entries.
+/// Tier 2 historical comparison — not Pro-gated; Pro affects only history depth
+/// (free shows a capped prior window with full citation trail, Pro the full thread).
 class ComparisonEngineScreen extends ConsumerStatefulWidget {
   const ComparisonEngineScreen({super.key});
 
@@ -123,13 +122,10 @@ class _ComparisonEngineScreenState extends ConsumerState<ComparisonEngineScreen>
       );
     }
 
-    return PaywallGate(
-      featureName: 'Historical comparison',
-      feature: ArchiveFeature.tier2HistoricalComparison,
-      sourceRoute: '/comparison-engine',
-      onDismiss: () => context.pop(),
-      child: _buildComparisonBody(),
-    );
+    // Comparison is not Pro-gated: Pro gates only history depth, which the body
+    // handles inline (free shows a capped prior window; Pro unlocks the full
+    // thread). Matches the live, routed comparison_explorer_screen.
+    return _buildComparisonBody();
   }
 
   Widget _buildComparisonBody() {

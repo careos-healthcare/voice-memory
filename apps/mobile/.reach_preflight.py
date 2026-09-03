@@ -1,10 +1,26 @@
 #!/usr/bin/env python3
-"""Pre-flight: prove the delete set is safe to remove."""
+"""Pre-flight: prove the delete set is safe to remove.
+
+Consumes `.reach_state.json` from `.reach_analysis.py`. Re-run the generator
+after a significant retired_sprawl change; see that file's module docstring.
+"""
 import os, json, re
 ROOT = os.path.abspath(os.path.dirname(__file__))
 RET = os.path.realpath(os.path.join(ROOT, "retired_sprawl"))
+
+
+def from_state(path):
+    if os.path.isabs(path):
+        return os.path.realpath(path)
+    return os.path.realpath(os.path.join(ROOT, path))
+
+
 s = json.load(open(os.path.join(ROOT, ".reach_state.json")))
-edges = s["edges"]; kinds = s["kinds"]
+edges = {from_state(k): [from_state(v) for v in vs] for k, vs in s["edges"].items()}
+kinds = {
+    from_state(k): {kk: [from_state(v) for v in vv] for kk, vv in kinds_for.items()}
+    for k, kinds_for in s["kinds"].items()
+}
 delete = [l.strip() for l in open(os.path.join(ROOT, ".reach_delete.txt")) if l.strip()]
 del_rp = {os.path.realpath(os.path.join(ROOT, d)) for d in delete}
 ok = True

@@ -80,7 +80,10 @@ void main() {
         findsOneWidget,
       );
       expect(find.text(PrivacyTrustCopy.whatNotIncludedBody), findsOneWidget);
-      expect(find.text(PrivacyTrustCopy.betaMeasurementHeading), findsOneWidget);
+      expect(
+        find.text(PrivacyTrustCopy.betaMeasurementHeading),
+        findsOneWidget,
+      );
       expect(find.text(PrivacyTrustCopy.betaMeasurementBody), findsOneWidget);
       expect(find.text(PrivacyTrustCopy.yourControlsHeading), findsOneWidget);
       expect(
@@ -135,6 +138,8 @@ void main() {
     ) async {
       await pumpCentre(tester);
 
+      expect(find.byKey(const Key('privacy_where_words_go')), findsOneWidget);
+      expect(find.text(PrivacyScreenCopy.whereWordsGoTitle), findsOneWidget);
       expect(find.byKey(const Key('privacy_intro')), findsOneWidget);
       for (final section in PrivacyScreenCopy.sections) {
         expect(
@@ -166,8 +171,14 @@ void main() {
 
       final tile = find.byKey(const Key('privacy_processing_providers'));
       expect(tile, findsOneWidget);
-      expect(find.text(PrivacyScreenCopy.processingProvidersTitle), findsOneWidget);
-      expect(find.text(PrivacyScreenCopy.processingProvidersBody), findsNothing);
+      expect(
+        find.text(PrivacyScreenCopy.processingProvidersTitle),
+        findsOneWidget,
+      );
+      expect(
+        find.text(PrivacyScreenCopy.processingProvidersBody),
+        findsNothing,
+      );
 
       await tester.ensureVisible(tile);
       await tester.tap(tile);

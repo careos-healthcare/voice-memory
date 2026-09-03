@@ -7,7 +7,9 @@ import 'package:archiveme_mobile/core/network/api_result.dart';
 import 'package:archiveme_mobile/core/network/network_cancel_token.dart';
 import 'package:archiveme_mobile/data/network/capture_api_client.dart';
 import 'package:archiveme_mobile/features/live_audio/domain/models/offline_vault_manifest.dart';
+import 'package:archiveme_mobile/features/privacy/on_device_processing_store.dart';
 import 'package:archiveme_mobile/features/proof_admission/proof_admission_models.dart';
+import 'package:archiveme_mobile/features/proof_admission/remote_processing_consent_store.dart';
 import 'package:archiveme_mobile/features/timeline/timeline_entry_display.dart';
 import 'package:archiveme_mobile/features/voice_capture/transcription/transcription_service.dart';
 import 'package:archiveme_mobile/features/voice_capture/voice_capture_copy.dart';
@@ -19,6 +21,7 @@ import 'package:archiveme_mobile/models/reflection.dart';
 import 'package:archiveme_mobile/models/sync_status.dart';
 import 'package:archiveme_mobile/security/api_usage_guard.dart';
 import 'package:archiveme_mobile/services/app_services.dart';
+import 'package:archiveme_mobile/services/capture_pipeline/capture_pipeline_models.dart';
 import 'package:archiveme_mobile/services/capture_save_messages.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -119,6 +122,8 @@ Future<void> _initPipeline(_TranscriptionPipelineFakeApi api) async {
     'test-capture-token',
     expiresInSeconds: 3600,
   );
+  await RemoteProcessingConsentStore(AppServices.instance.prefs).grant();
+  await OnDeviceProcessingStore.clearForGrantedRemoteConsent();
 }
 
 JournalEntry _degradedVoiceEntry({required String audioPath}) => JournalEntry(
@@ -164,10 +169,10 @@ void main() {
         await _initPipeline(_TranscriptionPipelineFakeApi());
         final audio = await _usableAudioFile();
 
-        final result = await AppServices.instance.pipeline.run(
+        final result = (await AppServices.instance.pipeline.run(
           audioFile: audio,
           durationSeconds: 20,
-        );
+        )).getOrThrow();
 
         expect(result.syncSucceeded, isTrue);
         expect(result.entry.transcript, _spokenTranscript);
@@ -196,10 +201,10 @@ void main() {
         );
         final audio = await _usableAudioFile();
 
-        final result = await AppServices.instance.pipeline.run(
+        final result = (await AppServices.instance.pipeline.run(
           audioFile: audio,
           durationSeconds: 20,
-        );
+        )).getOrThrow();
 
         expect(result.syncSucceeded, isFalse);
         expect(result.entry.localAudioPath, audio.path);
@@ -221,11 +226,11 @@ void main() {
       final degraded = _degradedVoiceEntry(audioPath: audio.path);
       await AppServices.instance.journalStore.save(degraded);
 
-      final result = await AppServices.instance.pipeline
+      final result = (await AppServices.instance.pipeline
           .attachTypedTextToVoiceEntry(
             entry: degraded,
             transcript: 'I said yes when I had no capacity left.',
-          );
+          )).getOrThrow();
 
       expect(result.attachedTypedTextToVoiceEntry, isTrue);
       expect(result.entry.localAudioPath, audio.path);
@@ -252,10 +257,10 @@ void main() {
       final audio = await _usableAudioFile();
       final originalBytes = audio.readAsBytesSync();
 
-      final result = await AppServices.instance.pipeline.run(
+      final result = (await AppServices.instance.pipeline.run(
         audioFile: audio,
         durationSeconds: 20,
-      );
+      )).getOrThrow();
 
       expect(result.entry.localAudioPath, audio.path);
       expect(audio.existsSync(), isTrue);
@@ -276,10 +281,10 @@ void main() {
         );
         final audio = await _usableAudioFile();
 
-        final result = await AppServices.instance.pipeline.run(
+        final result = (await AppServices.instance.pipeline.run(
           audioFile: audio,
           durationSeconds: 20,
-        );
+        )).getOrThrow();
 
         expect(result.syncSucceeded, isFalse);
         expect(result.analysisSucceeded, isFalse);
@@ -318,10 +323,10 @@ void main() {
         );
         final audio = await _usableAudioFile();
 
-        final result = await AppServices.instance.pipeline.run(
+        final result = (await AppServices.instance.pipeline.run(
           audioFile: audio,
           durationSeconds: 20,
-        );
+        )).getOrThrow();
 
         expect(result.entry.transcript, _spokenTranscript);
         expect(VoiceCaptureQuality.hasUsableSpokenText(result.entry), isTrue);
@@ -334,10 +339,10 @@ void main() {
         await _initPipeline(_TranscriptionPipelineFakeApi(transcript: '...'));
         final audio = await _usableAudioFile();
 
-        final result = await AppServices.instance.pipeline.run(
+        final result = (await AppServices.instance.pipeline.run(
           audioFile: audio,
           durationSeconds: 20,
-        );
+        )).getOrThrow();
 
         expect(result.syncSucceeded, isFalse);
         expect(result.lowQualityTranscript, isTrue);
@@ -361,10 +366,10 @@ void main() {
       await _initPipeline(_TranscriptionPipelineFakeApi(transcript: spoken));
       final audio = await _usableAudioFile();
 
-      final result = await AppServices.instance.pipeline.run(
+      final result = (await AppServices.instance.pipeline.run(
         audioFile: audio,
         durationSeconds: 20,
-      );
+      )).getOrThrow();
 
       expect(result.syncSucceeded, isTrue);
       expect(result.lowQualityTranscript, isFalse);
@@ -392,10 +397,10 @@ void main() {
         durationSeconds: 20,
       );
 
-      final blocked = await AppServices.instance.pipeline.run(
+      final blocked = (await AppServices.instance.pipeline.run(
         audioFile: audio,
         durationSeconds: 20,
-      );
+      )).getOrThrow();
 
       expect(blocked.syncSucceeded, isFalse);
       expect(blocked.entry.localAudioPath, audio.path);

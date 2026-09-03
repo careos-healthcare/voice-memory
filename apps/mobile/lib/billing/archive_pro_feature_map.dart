@@ -34,17 +34,20 @@ abstract class ArchiveProFeatureMap {
     ArchiveFeature.usefulTakeaway,
     ArchiveFeature.routineAnchor,
     ArchiveFeature.lastSevenKeyMoments,
+    // Weekly review, timeline, and historical comparison are core capabilities,
+    // not Pro upsells. Pro gates only history depth (see [proFeatures]).
+    ArchiveFeature.archiveTimeline,
+    ArchiveFeature.tier2WeeklyReview,
+    ArchiveFeature.tier2HistoricalComparison,
+    // Private recap export is free forever (launch product contract).
+    ArchiveFeature.privateRecapExport,
   };
 
   static const Set<ArchiveFeature> proFeatures = {
     ArchiveFeature.whatArchiveMeRemembers,
     ArchiveFeature.patternMap,
-    ArchiveFeature.archiveTimeline,
     ArchiveFeature.keyMomentsSearch,
     ArchiveFeature.monthlyReview,
-    ArchiveFeature.tier2WeeklyReview,
-    ArchiveFeature.tier2HistoricalComparison,
-    ArchiveFeature.privateRecapExport,
     ArchiveFeature.fullHistory,
   };
 

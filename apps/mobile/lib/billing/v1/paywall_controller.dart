@@ -157,7 +157,7 @@ class PaywallController {
         purchaseInFlight: false,
       );
       return entitlements;
-    } catch (_, stackTrace) {
+    } on Object catch (_, stackTrace) {
       _state = _state.copyWith(purchaseInFlight: false);
       rethrow;
     }

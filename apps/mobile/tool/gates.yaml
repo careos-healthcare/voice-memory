@@ -30,6 +30,17 @@ validates:
       on disk. Drift silently changes what the analyzer sees, which makes every
       issue-count comparison against a baseline meaningless.
     command: python3 tool/check_analysis_excludes.py
+  null_check_operator_guards:
+    description: >
+      Fail on the `X! != null` / `X! == null` anti-pattern — a null-check
+      operator (`!`) inside a null guard throws `Null check operator used on a
+      null value` the moment the operand is null. The analyzer flags it
+      (unnecessary_null_comparison), but analysis_options excludes the whole
+      lib/features/* -> retired_sprawl symlink tree, which the app still ships
+      and ~1,000 test files still execute — exactly how this crashed RecordScreen
+      undetected. Walks the source directly (followlinks) so it covers that
+      excluded tree; self-tests its matcher first.
+    command: python3 tool/check_null_check_operator_guards.py
   initstate_provider_writes:
     description: >
       Fail when a widget build-phase life-cycle can synchronously reach a
@@ -153,7 +164,7 @@ legacy_checks:
     command: bash tool/analyze_production_graph.sh
 
   validate_android_release_signing:
-    description: Release gate: Android release builds must never fall back to the debug keystore.
+    description: "Release gate: Android release builds must never fall back to the debug keystore."
     command: bash tool/validate_android_release_signing.sh
 
   validate_no_stray_test_artifacts:

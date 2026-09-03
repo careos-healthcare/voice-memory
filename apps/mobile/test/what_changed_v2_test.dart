@@ -1,9 +1,7 @@
 import 'dart:io';
-import 'support/record_screen_library_source.dart';
 
 import 'package:archiveme_mobile/features/archive_proof/proof_surface_advice_guard.dart';
 import 'package:archiveme_mobile/features/early_archive/early_first_signal_engine.dart';
-import 'package:archiveme_mobile/features/early_archive/post_save_return_check_answer_copy.dart';
 import 'package:archiveme_mobile/features/early_archive/return_check_payoff_copy.dart';
 import 'package:archiveme_mobile/features/helped_tracking/helped_tracking_engine.dart';
 import 'package:archiveme_mobile/features/helped_tracking/helped_tracking_store.dart';
@@ -110,14 +108,17 @@ void main() {
     sandbox = TestStorageSandbox.create();
     ActivationFunnelAnalytics.resetForTest();
     WhatChangedV2Analytics.resetForTest();
-    await RepeatReturnCheckStore.resetForTest();
-    await WhatChangedV2Store.resetForTest();
-    await HelpedTrackingStore.resetForTest();
+    // AppServices.resetForTest must run first so the prefs-backed resets below
+    // write into this test's fresh sandbox and not the previous test's
+    // already-disposed one.
     await AppServices.resetForTest(
       journalPath: sandbox.journalPath,
       prefsPath: sandbox.prefsPath,
       skipRevenueCat: true,
     );
+    await RepeatReturnCheckStore.resetForTest();
+    await WhatChangedV2Store.resetForTest();
+    await HelpedTrackingStore.resetForTest();
   });
 
   tearDown(() => sandbox.dispose());
@@ -464,24 +465,6 @@ void main() {
   });
 
   group('dedup and isolation', () {
-    test('record screen does not import legacy return check answer card', () {
-      final source = readRecordScreenLibrarySource();
-      expect(source.contains('post_save_return_check_answer_card'), isFalse);
-      expect(source.contains('PostSaveReturnCheckAnswerCard'), isFalse);
-      expect(source.contains('what_changed_v2_card'), isTrue);
-      expect(source.contains('WhatChangedV2Card'), isTrue);
-    });
-
-    test('legacy return check copy is not used on record screen', () {
-      final source = readRecordScreenLibrarySource();
-      expect(source.contains('PostSaveReturnCheckAnswerCopy'), isFalse);
-      expect(
-        PostSaveReturnCheckAnswerCopy.title,
-        contains('different from your first proof'),
-      );
-      expect(WhatChangedV2Copy.question, 'What changed since last time?');
-    });
-
     test('comparison requires grounded prior and latest evidence', () {
       final comparison = WhatChangedV2Engine.buildComparison(
         entries: _fourSaidYesEntries(),

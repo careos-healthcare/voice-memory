@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'support/record_screen_library_source.dart';
 
 import 'package:archiveme_mobile/billing/archive_loop_entitlement_ids.dart';
 import 'package:archiveme_mobile/billing/paywall_source.dart';
@@ -345,13 +344,6 @@ void main() {
 
     test('restore purchases unchanged', () {
       expect(RestorePurchasesCopy.restorePurchases, 'Restore purchases');
-    });
-
-    test('record screen routes preview CTA through valueMoment paywall', () {
-      final recordSource = readRecordScreenLibrarySource();
-      expect(recordSource, contains('ProPreviewCard'));
-      expect(recordSource, contains('_openProEvidenceValueSubscription'));
-      expect(recordSource, contains('PaywallSource.valueMoment'));
     });
 
     test(

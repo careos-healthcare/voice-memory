@@ -113,7 +113,7 @@ class PaywallObjectionStore {
         'created_at': _now().toIso8601String(),
         'source': ?source,
       });
-    } catch (e, stackTrace) {
+    } on Exception catch (e, stackTrace) {
       AppLogger.error('Unhandled error caught', error: e, stackTrace: stackTrace);
       // Persistence failures never surface — worst case the next paywall
       // shows no follow-up.
@@ -129,7 +129,7 @@ class PaywallObjectionStore {
       final data = await prefs.readMap(prefsKey);
       final id = data?['reason_id'];
       return id is String ? PaywallRejectionReason.fromId(id) : null;
-    } catch (_, stackTrace) {
+    } on Exception catch (_, stackTrace) {
       return null;
     }
   }

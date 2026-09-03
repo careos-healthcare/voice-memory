@@ -3,35 +3,9 @@ import 'package:archiveme_mobile/features/activation/correction_informed_next_pr
 import 'package:archiveme_mobile/features/archive_evidence/archive_evidence_guard.dart';
 import 'package:archiveme_mobile/features/archive_proof/visible_archive_proof_copy.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
+import 'package:archiveme_ui/models/next_moment_prompt.dart';
 
-/// Ladder stage for personalized next-moment prompts.
-enum NextMomentPromptStage { one, two, three, four, fivePlus }
-
-/// Navigation action for next-moment prompt CTAs.
-enum NextMomentPromptAction { addMoment, viewEvidence, viewReview }
-
-/// Tells users what kind of moment to capture next — evidence-based, not pressure.
-class NextMomentPrompt {
-  const NextMomentPrompt({
-    required this.stage,
-    required this.title,
-    required this.body,
-    required this.primaryCta,
-    required this.primaryAction, this.secondaryCta,
-    this.secondaryAction = NextMomentPromptAction.addMoment,
-  });
-
-  final NextMomentPromptStage stage;
-  final String title;
-  final String body;
-  final String primaryCta;
-  final String? secondaryCta;
-  final NextMomentPromptAction primaryAction;
-  final NextMomentPromptAction secondaryAction;
-
-  /// Compact line for Archive Home "What to add next" section.
-  String get nextActionSummary => title;
-}
+export 'package:archiveme_ui/models/next_moment_prompt.dart';
 
 /// Builds next-moment prompts from eligible entry count — local only.
 abstract final class NextMomentPromptEngine {

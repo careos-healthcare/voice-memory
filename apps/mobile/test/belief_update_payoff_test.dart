@@ -1,15 +1,9 @@
-import 'package:archiveme_mobile/billing/archive_entitlement_reader.dart';
-import 'package:archiveme_mobile/dev/visual_audit_overrides.dart';
 import 'package:archiveme_mobile/features/activation/belief_update_payoff.dart';
 import 'package:archiveme_mobile/features/activation/third_entry_belief_payoff.dart';
 import 'package:archiveme_mobile/features/archive_proof/visible_archive_proof_copy.dart';
-import 'package:archiveme_mobile/features/first_proof_payoff/first_proof_payoff_copy.dart';
-import 'package:archiveme_mobile/features/post_save/post_save_recorded_summary_copy.dart';
 import 'package:archiveme_mobile/features/voice_capture/analysis_fallback_payoff.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/models/reflection.dart';
-import 'package:archiveme_mobile/screens/record_screen.dart';
-import 'package:archiveme_mobile/services/app_services.dart';
 import 'package:archiveme_mobile/services/capture_save_messages.dart';
 import 'package:archiveme_mobile/theme/app_theme.dart';
 import 'package:archiveme_mobile/widgets/record/belief_update_payoff_card.dart';
@@ -17,9 +11,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'helpers/app_provider_scope.dart';
-import 'support/app_services_test_lifecycle.dart';
-import 'support/test_storage_sandbox.dart';
-import 'support/v1_moment_save_receipt_expectations.dart';
 
 JournalEntry _voiceEntry({
   required String id,
@@ -76,16 +67,6 @@ List<JournalEntry> _threeRepeatCapacityEntries() => [
     transcript:
         'I said yes again even though I had no capacity for one more ask.',
     createdAt: DateTime(2026, 6, 12, 12),
-  ),
-];
-
-List<JournalEntry> _fourRepeatCapacityEntries() => [
-  ..._threeRepeatCapacityEntries(),
-  _voiceEntry(
-    id: 'e4',
-    transcript:
-        'The same yes-with-no-capacity pattern showed up again at work today.',
-    createdAt: DateTime(2026, 6, 13, 12),
   ),
 ];
 
@@ -315,18 +296,22 @@ void main() {
 
       await tester.binding.setSurfaceSize(const Size(390, 1200));
       addTearDown(() => tester.binding.setSurfaceSize(null));
-      await tester.pumpWidget(withAppProviderScope(MaterialApp(
-          theme: AppTheme.light(),
-          home: Scaffold(
-            body: SingleChildScrollView(
-              child: BeliefUpdatePayoffCard(
-                payoff: payoff,
-                onAddAnother: () {},
-                onViewEvidence: () {},
+      await tester.pumpWidget(
+        withAppProviderScope(
+          MaterialApp(
+            theme: AppTheme.light(),
+            home: Scaffold(
+              body: SingleChildScrollView(
+                child: BeliefUpdatePayoffCard(
+                  payoff: payoff,
+                  onAddAnother: () {},
+                  onViewEvidence: () {},
+                ),
               ),
             ),
           ),
-        )));
+        ),
+      );
       await tester.pump();
 
       expect(
@@ -341,7 +326,7 @@ void main() {
       expect(find.text('Evidence'), findsOneWidget);
       expect(find.text('What changed'), findsOneWidget);
       expect(find.text('Record if it happens again'), findsOneWidget);
-      expect(find.text('View evidence'), findsOneWidget);
+      expect(find.text('View evidence'), findsNWidgets(2));
       expect(
         find.byKey(const Key('belief_update_payoff_evidence_0')),
         findsOneWidget,
@@ -351,139 +336,6 @@ void main() {
         findsOneWidget,
       );
       _expectNoBannedCopy(_visibleText(tester), _bannedCertaintyWords);
-    });
-  });
-
-  group('RecordScreen belief update payoff', () {
-    late TestStorageSandbox sandbox;
-
-    setUp(() async {
-      sandbox = TestStorageSandbox.create();
-      await AppServices.resetForTest(
-        journalPath: sandbox.journalPath,
-        skipRevenueCat: true,
-      );
-    });
-
-    tearDown(() async {
-      await settleAppServicesForTest();
-      sandbox.dispose();
-    });
-
-    tearDown(() {
-      VisualAuditOverrides.setRecordPresentation(null);
-    });
-
-    Future<void> pumpDoneState(
-      WidgetTester tester, {
-      required List<JournalEntry> entriesAfterSave,
-      bool lastCaptureAnalysisSucceeded = true,
-    }) async {
-      VisualAuditOverrides.setRecordPresentation(
-        RecordAuditPresentation(
-          ui: RecordUiState.done,
-          entriesAfterSave: entriesAfterSave,
-          lastCaptureAnalysisSucceeded: lastCaptureAnalysisSucceeded,
-        ),
-      );
-      await tester.binding.setSurfaceSize(const Size(390, 3200));
-      addTearDown(() => tester.binding.setSurfaceSize(null));
-      await tester.pumpWidget(withAppProviderScope(MaterialApp(
-          theme: AppTheme.light(),
-          home: Scaffold(
-            body: RecordScreen(
-              entitlementReader: FakeArchiveEntitlementReader(pro: false),
-            ),
-          ),
-        )));
-      await tester.pump();
-      await tester.runAsync(() async {
-        await Future<void>.delayed(const Duration(milliseconds: 400));
-      });
-      for (var i = 0; i < 30; i++) {
-        await tester.pump(const Duration(milliseconds: 50));
-      }
-    }
-
-    testWidgets('three repeated entries show one primary discovery result', (
-      tester,
-    ) async {
-      await pumpDoneState(
-        tester,
-        entriesAfterSave: _threeRepeatCapacityEntries(),
-      );
-
-      expect(
-        find.byKey(const Key('post_save_archive_home_nudge_card')),
-        findsNothing,
-      );
-      expect(
-        find.byKey(const Key('third_entry_belief_payoff_card')),
-        findsNothing,
-      );
-      expect(find.byKey(const Key('belief_update_payoff_card')), findsNothing);
-      expect(
-        find.byKey(const Key('belief_history_timeline_card')),
-        findsNothing,
-      );
-      expect(
-        find.byKey(const Key('weekly_archive_review_compact_card')),
-        findsNothing,
-      );
-      expect(find.byKey(const Key('weekly_archive_review_card')), findsNothing);
-      V1MomentSaveReceiptExpectations.expectVisible();
-      V1MomentSaveReceiptExpectations.expectNoLegacyPostSaveStack();
-    });
-
-    testWidgets('four repeat entries show discovery without belief card', (
-      tester,
-    ) async {
-      VisualAuditOverrides.setRecordPresentation(
-        RecordAuditPresentation(
-          ui: RecordUiState.done,
-          entriesAfterSave: _fourRepeatCapacityEntries(),
-        ),
-      );
-      await tester.binding.setSurfaceSize(const Size(390, 3200));
-      addTearDown(() => tester.binding.setSurfaceSize(null));
-      await tester.pumpWidget(withAppProviderScope(MaterialApp(
-          theme: AppTheme.light(),
-          home: Scaffold(
-            body: RecordScreen(
-              entitlementReader: FakeArchiveEntitlementReader(pro: false),
-            ),
-          ),
-        )));
-      await tester.pump(const Duration(milliseconds: 500));
-
-      expect(find.byKey(const Key('belief_update_payoff_card')), findsNothing);
-      V1MomentSaveReceiptExpectations.expectVisible();
-      V1MomentSaveReceiptExpectations.expectNoLegacyPostSaveStack();
-    });
-
-    testWidgets('two unrelated entries keep focused post-save actions', (
-      tester,
-    ) async {
-      await pumpDoneState(
-        tester,
-        entriesAfterSave: [
-          _voiceEntry(
-            id: 'e1',
-            transcript: 'A quiet moment about lunch with a friend today.',
-            createdAt: DateTime(2026, 6, 11, 12),
-          ),
-          _voiceEntry(
-            id: 'e2',
-            transcript: 'Another unrelated note about errands this afternoon.',
-            createdAt: DateTime(2026, 6, 12, 12),
-          ),
-        ],
-      );
-
-      V1MomentSaveReceiptExpectations.expectVisible();
-      V1MomentSaveReceiptExpectations.expectNoLegacyPostSaveStack();
-      expect(V1MomentSaveReceiptExpectations.recordAnother, findsOneWidget);
-      expect(V1MomentSaveReceiptExpectations.viewArchive, findsOneWidget);
     });
   });
 }

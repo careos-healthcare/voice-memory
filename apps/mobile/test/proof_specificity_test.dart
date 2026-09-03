@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'support/record_screen_library_source.dart';
 
 import 'package:archiveme_mobile/features/early_archive/early_first_signal_engine.dart';
 import 'package:archiveme_mobile/features/proof_specificity/proof_specificity_analytics.dart';
@@ -395,61 +394,27 @@ void main() {
   });
 
   group('Proof specificity placement', () {
-    test('record screen renders card before Pro evidence bridge', () {
-      final source = readRecordScreenLibrarySource();
-      final cardIndex = source.indexOf('ProofSpecificityCard(');
-      final proBridgeIndex = source.indexOf('showProEvidenceValueOnRecordReady');
-      expect(cardIndex, greaterThan(0));
-      expect(proBridgeIndex, greaterThan(cardIndex));
-    });
-
-    test('record screen renders card before post-proof Pro bridge', () {
-      final source = readRecordScreenLibrarySource();
-      final cardIndex = source.indexOf('ProofSpecificityCard(');
-      final proBridgeIndex = source.indexOf('ProEvidenceValueCard(');
-      expect(cardIndex, greaterThan(0));
-      expect(proBridgeIndex, greaterThan(cardIndex));
-    });
-
-    test('record screen renders card before Pro evidence bridge flags', () {
-      final source = readRecordScreenLibrarySource();
-      final cardIndex = source.indexOf('showProofSpecificityOnRecordReady');
-      final proBridgeIndex = source.indexOf(
-        'showProEvidenceValueOnRecordReady',
-      );
-      expect(cardIndex, greaterThan(0));
-      expect(proBridgeIndex, greaterThan(cardIndex));
-    });
-
-    test('record post-save renders card before Pro evidence bridge', () {
-      final source = readRecordScreenLibrarySource();
-      final cardIndex = source.indexOf(
-        'showProofSpecificityOnFirstProofPayoff',
-      );
-      final proBridgeIndex = source.indexOf('showProEvidenceValuePostSave');
-      expect(cardIndex, greaterThan(0));
-      expect(proBridgeIndex, greaterThan(cardIndex));
-    });
-
-    test('record card sits after evidence weighting card', () {
-      final source = readRecordScreenLibrarySource();
-      final weightingIndex = source.indexOf('EvidenceWeightingCard(');
-      final specificityIndex = source.indexOf('ProofSpecificityCard(');
-      expect(weightingIndex, greaterThan(0));
-      expect(specificityIndex, greaterThan(weightingIndex));
-    });
-
-    test('capture freedom line sits near RecordCaptureModesCard', () {
-      final source = readRecordScreenLibrarySource();
-      final modesIndex = source.indexOf('RecordCaptureModesCard(');
-      final freedomIndex = source.indexOf(
-        'if (ctx.showCaptureFreedomLine &&\n'
-        '            !ctx.firstUseSimplifiedRecord &&\n'
-        '            !ctx.showReturningWatchTargetFocusedUi) ...[',
-      );
-      expect(modesIndex, greaterThan(0));
-      expect(freedomIndex, greaterThan(modesIndex));
-    });
+    test(
+      'post-save slot no longer renders the removed Pro upsell cards or bridge',
+      () {
+        // A save is never followed by a billing prompt: the post-save slot must
+        // not render these Pro cards or the value-moment bridge. Pre-capture /
+        // record-ready upsells live in record_pre_capture_cards.dart and are
+        // intentionally kept.
+        final postSaveSource = File(
+          'lib/features/recording/views/record_post_save_cards.dart',
+        ).readAsStringSync();
+        expect(postSaveSource, isNot(contains('ProEvidenceValueCard(')));
+        expect(postSaveSource, isNot(contains('ProLockMomentCard(')));
+        expect(
+          postSaveSource,
+          isNot(contains('MonthlyPrivateReportPreviewCard(')),
+        );
+        expect(postSaveSource, isNot(contains('ValueMomentProBridge(')));
+        // The non-Pro proof card stays in the same slot.
+        expect(postSaveSource, contains('ProofSpecificityCard('));
+      },
+    );
   });
 
   group('ProofSpecificity copy guard', () {

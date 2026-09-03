@@ -27,6 +27,7 @@ import 'package:archiveme_mobile/services/api_service.dart';
 import 'package:archiveme_mobile/storage/entitlement_cache.dart';
 import 'package:archiveme_mobile/storage/secure_storage.dart';
 import 'package:archiveme_mobile/storage/session_cookie_store.dart';
+import 'package:archiveme_mobile/widgets/billing/paywall_gate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 import 'package:riverpod/misc.dart' show Override;
@@ -247,6 +248,7 @@ ProviderContainer createNetworkProviderContainer({
         voiceMemoryApiBaseUrlProvider.overrideWithValue(apiBaseUrl),
       if (storeBilling != null)
         storeBillingPortProvider.overrideWithValue(storeBilling),
+      ...paywallGateHostOverrides,
       ...?networkOverrides,
     ],
   );
