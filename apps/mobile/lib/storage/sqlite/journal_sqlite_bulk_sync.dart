@@ -9,6 +9,8 @@ import 'package:sqflite/sqflite.dart';
 abstract final class JournalSqliteBulkSync {
   JournalSqliteBulkSync._();
 
+  static const table = DatabaseConstants.journalEntriesTable;
+
   static Future<void> upsertEntries(
     Database db,
     List<JournalEntry> entries,

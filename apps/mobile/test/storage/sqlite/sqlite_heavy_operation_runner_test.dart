@@ -10,6 +10,7 @@ import 'package:archiveme_mobile/storage/sqlite/migrations/migration_011_reflect
 import 'package:archiveme_mobile/storage/sqlite/sqlite_database_initializer.dart';
 import 'package:archiveme_mobile/storage/sqlite/sqlite_migration_manager.dart';
 import 'package:archiveme_mobile/storage/sqlite/sqlite_migration_registry.dart';
+import 'package:archiveme_mobile/storage/isolate/local_database_worker_service.dart';
 import 'package:archiveme_mobile/storage/sqlite/sqlite_heavy_operation_runner.dart';
 import '../../storage/sqlite/support/sqlite_test_database.dart';
 import 'package:flutter_test/flutter_test.dart';
