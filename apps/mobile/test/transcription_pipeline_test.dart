@@ -20,6 +20,8 @@ import 'package:archiveme_mobile/models/sync_status.dart';
 import 'package:archiveme_mobile/security/api_usage_guard.dart';
 import 'package:archiveme_mobile/services/app_services.dart';
 import 'package:archiveme_mobile/services/capture_pipeline/capture_pipeline_models.dart';
+import 'package:archiveme_mobile/features/proof_admission/remote_processing_purpose.dart';
+import 'package:archiveme_mobile/features/privacy/on_device_processing_store.dart';
 import 'package:archiveme_mobile/services/capture_save_messages.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -120,6 +122,13 @@ Future<void> _initPipeline(_TranscriptionPipelineFakeApi api) async {
     'test-capture-token',
     expiresInSeconds: 3600,
   );
+  await AppServices.instance.remoteProcessingConsentStore.grant(
+    purposes: {
+      RemoteProcessingPurpose.remoteTranscription,
+      RemoteProcessingPurpose.remoteReflection,
+    },
+  );
+  await OnDeviceProcessingStore.clearForGrantedRemoteConsent();
 }
 
 JournalEntry _degradedVoiceEntry({required String audioPath}) => JournalEntry(
