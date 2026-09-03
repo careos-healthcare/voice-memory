@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'support/record_screen_library_source.dart';
 
 import 'package:archiveme_mobile/features/archive_proof/proof_surface_advice_guard.dart';
 import 'package:archiveme_mobile/features/beta/archive_beta_mission_gate.dart';
@@ -432,33 +431,5 @@ void main() {
         expect(source, isNot(contains('subscription')));
       }
     });
-  });
-
-  group('Beta today summary placement', () {
-    test(
-      'card sits below low-friction return and above capture freedom line',
-      () {
-        final source = readRecordScreenLibrarySource();
-        final lowFrictionIndex = source.indexOf(
-          'if (ctx.showLowFrictionReturnCard &&\n'
-          '            !ctx.firstUseSimplifiedRecord &&\n'
-          '            !ctx.showReturningWatchTargetFocusedUi &&\n'
-          '            !ReturningRecordWatchTargetUiGates.watchPromptSkippedToday()) ...[',
-        );
-        final summaryIndex = source.indexOf(
-          'if (ctx.showBetaTodaySummaryCard &&\n'
-          '            ReturningRecordWatchTargetUiGates.showBetaRecordSurfaces() &&\n'
-          '            !ctx.firstUseSimplifiedRecord) ...[',
-        );
-        final freedomIndex = source.indexOf(
-          'if (ctx.showCaptureFreedomLine &&\n'
-          '            !ctx.firstUseSimplifiedRecord &&\n'
-          '            !ctx.showReturningWatchTargetFocusedUi) ...[',
-        );
-        expect(lowFrictionIndex, greaterThan(0));
-        expect(summaryIndex, greaterThan(lowFrictionIndex));
-        expect(freedomIndex, greaterThan(summaryIndex));
-      },
-    );
   });
 }

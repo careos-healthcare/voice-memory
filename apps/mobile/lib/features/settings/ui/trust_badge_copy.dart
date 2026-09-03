@@ -25,7 +25,8 @@ import 'package:archiveme_mobile/security/privacy_claim_catalogue.dart';
 abstract final class TrustBadgeCopy {
   TrustBadgeCopy._();
 
-  static const onDeviceProcessing = 'Processing is on-device by default';
+  static const String onDeviceProcessing =
+      PrivacyClaimCatalogue.onDeviceByDefaultHeading;
 
   static const onDeviceDetail =
       '${PrivacyClaimCatalogue.remoteProcessingIsAChoice} '

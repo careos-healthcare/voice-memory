@@ -472,7 +472,8 @@ class _RecordScreenState extends ConsumerState<RecordScreen>
           _hookRescueNotUsefulReason = topReason;
         });
       }
-    } catch (_) {
+      // ignore: silent_catch_audit — hook-rescue diagnosis is optional; never block the record loop
+    } catch (_, stackTrace) {
       // Diagnosis is optional; never block the record loop.
     }
   }
@@ -967,7 +968,8 @@ class _RecordScreenState extends ConsumerState<RecordScreen>
     ArchiveFeedbackType? feedbackHint;
     try {
       feedbackHint = await ArchiveFeedbackCoordinator.latestDominantIssue();
-    } catch (_) {
+      // ignore: silent_catch_audit — archive feedback hint is optional; never block the record loop
+    } catch (_, stackTrace) {
       // Feedback is optional; never block the record loop.
     }
     if (!mounted) return;

@@ -7,6 +7,7 @@ import 'package:archiveme_mobile/features/capture/storage/capture_audio_metadata
 import 'package:archiveme_mobile/features/llm/domain/llm_feed_card_state.dart';
 import 'package:archiveme_mobile/features/llm/worker/llm_background_worker.dart';
 import 'package:archiveme_mobile/features/reflections/data/offline_reflection_knowledge_graph.dart';
+import 'package:archiveme_mobile/security/release_logger.dart';
 import 'package:archiveme_mobile/services/local_llm/local_llm_knowledge_graph_extractor.dart';
 import 'package:archiveme_mobile/storage/sqlite/reflection_knowledge_graph_repository.dart';
 import 'package:flutter/foundation.dart';
@@ -220,6 +221,11 @@ class LlmCaptureAnalysisService {
         onCancelled: () => null,
       );
     } on Object catch (error) {
+      ReleaseLogger.exceptionFailure(
+        event: 'llm_capture_analysis_failed',
+        category: ReleaseLogCategory.analysis,
+        error: error,
+      );
       _applyLlmFailure(
         captureId,
         transcript,

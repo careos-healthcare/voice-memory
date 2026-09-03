@@ -17,6 +17,7 @@ class ArchiveBeliefCardModel {
     required this.whyExplanation,
     required this.section,
     this.timeline = const [],
+    this.sourceEntryIds = const [],
     this.conclusion,
   });
 
@@ -27,6 +28,9 @@ class ArchiveBeliefCardModel {
   final String whyExplanation;
   final ArchiveBeliefSection section;
   final List<BeliefEvidenceQuote> timeline;
+
+  /// Journal entry ids that already supported this card in the presenter.
+  final List<String> sourceEntryIds;
   final String? conclusion;
 }
 

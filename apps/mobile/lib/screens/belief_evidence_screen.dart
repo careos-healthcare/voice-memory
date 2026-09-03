@@ -1,6 +1,7 @@
 import 'package:archiveme_mobile/features/beta_analytics/beta_analytics_hooks.dart';
 import 'package:archiveme_mobile/design/archive_mobile_spacing.dart';
 import 'package:archiveme_mobile/features/activation/belief_evidence_trail.dart';
+import 'package:archiveme_mobile/features/archive_evidence/archive_evidence_guard.dart';
 import 'package:archiveme_mobile/features/pressure_retention/shareable_archive_proof_engine.dart';
 import 'package:archiveme_mobile/features/pressure_retention/shareable_archive_proof_model.dart';
 import 'package:archiveme_mobile/services/app_services.dart';
@@ -29,6 +30,7 @@ class BeliefEvidenceScreen extends StatefulWidget {
 class _BeliefEvidenceScreenState extends State<BeliefEvidenceScreen> {
   BeliefEvidenceTrail? _trail;
   ShareableArchiveProof? _shareProof;
+  List<String> _shareSourceEntryIds = const [];
   bool _loading = true;
 
   @override
@@ -52,6 +54,13 @@ class _BeliefEvidenceScreenState extends State<BeliefEvidenceScreen> {
       _shareProof = const ShareableArchiveProofEngine().buildFromJournal(
         entries: entries,
       );
+      _shareSourceEntryIds = [
+        for (final entry in ArchiveEvidenceGuard.eligibleEntries(
+          entries,
+          analyticsSource: 'shareable_archive_proof',
+        ))
+          if (entry.id.isNotEmpty) entry.id,
+      ];
       _loading = false;
     });
     if (_trail != null && _trail!.hasEnoughEvidence) {
@@ -109,7 +118,10 @@ class _BeliefEvidenceScreenState extends State<BeliefEvidenceScreen> {
               ),
               if (_shareProof?.hasProof == true) ...[
                 const SizedBox(height: AppSpacing.lg),
-                ShareableArchiveProofCard(proof: _shareProof!),
+                ShareableArchiveProofCard(
+                  proof: _shareProof!,
+                  sourceEntryIds: _shareSourceEntryIds,
+                ),
               ],
             ],
           ),

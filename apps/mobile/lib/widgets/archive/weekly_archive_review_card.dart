@@ -11,7 +11,8 @@ import 'package:flutter/material.dart';
 /// Compact or full weekly archive review — summary, not belief history.
 class WeeklyArchiveReviewCard extends StatelessWidget {
   const WeeklyArchiveReviewCard({
-    required this.review, super.key,
+    required this.review,
+    super.key,
     this.compact = false,
     this.onAddAnother,
     this.onViewEvidence,
@@ -32,6 +33,8 @@ class WeeklyArchiveReviewCard extends StatelessWidget {
       showControls: ArchiveInsightFeedbackGate.showForWeeklyReview(
         hasEnoughEvidence: review.hasEnoughEvidence,
       ),
+      sourceEntryIds: review.sourceEntryIds,
+      onViewEvidence: onViewEvidence,
       childBuilder: buildCard,
     );
   }

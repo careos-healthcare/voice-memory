@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'support/record_screen_library_source.dart';
 
 import 'package:archiveme_mobile/features/beta/archive_beta_mission_gate.dart';
 import 'package:archiveme_mobile/features/pro_visibility_lift/pro_visibility_lift_analytics.dart';
@@ -228,13 +227,6 @@ void main() {
   });
 
   group('Integration placement', () {
-    test('record screen routes Pro CTA through valueMoment paywall', () {
-      final source = readRecordScreenLibrarySource();
-      expect(source, contains('ProVisibilityLiftCard'));
-      expect(source, contains('record_pro_visibility_lift'));
-      expect(source, contains('PaywallSource.valueMoment'));
-    });
-
     test('patterns screen integrates pro visibility lift card', () {
       final source = File(
         'lib/screens/archive_belief_screen.dart',

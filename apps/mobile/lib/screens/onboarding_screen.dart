@@ -3,9 +3,7 @@ import 'dart:async';
 import 'package:archiveme_mobile/features/beta_analytics/beta_analytics_consent_boundary.dart';
 import 'package:archiveme_mobile/features/beta_analytics/beta_analytics_hooks.dart';
 import 'package:archiveme_mobile/features/onboarding/remote_processing_consent_decision.dart';
-import 'package:archiveme_mobile/features/onboarding/ui/evidence_method_onboarding_screen.dart';
-import 'package:archiveme_mobile/features/onboarding/ui/on_device_hero_screen.dart';
-import 'package:archiveme_mobile/features/onboarding/ui/onboarding_trust_pillars_section.dart';
+import 'package:archiveme_mobile/features/onboarding/ui/remote_processing_consent_copy.dart';
 import 'package:archiveme_mobile/features/onboarding/ui/remote_processing_consent_step.dart';
 import 'package:archiveme_mobile/features/proof_admission/remote_processing_consent_store.dart';
 import 'package:archiveme_mobile/features/retention/retention_metrics_tracker.dart';
@@ -27,45 +25,23 @@ class OnboardingScreen extends StatefulWidget {
 }
 
 class _OnboardingScreenState extends State<OnboardingScreen> {
-  final _controller = PageController();
-  int _index = 0;
   bool _completing = false;
 
-  /// True once the customer has swiped/tapped past the last regular page
-  /// into the dedicated remote-processing consent step. That step is
-  /// deliberately not just another `OnboardingPageData` entry in the same
-  /// `PageView.builder` (see `onboarding_pages.dart`): its two buttons carry
-  /// a real decision (see `_recordConsentDecision`) rather than only ever
-  /// advancing forward, so it needs its own screen state and its own CTA
-  /// row instead of reusing the generic "Continue"/"Start my archive"
-  /// button below.
-  bool _showingEvidenceMethodStep = false;
+  /// Screen 2 — the send choice. The two buttons persist consent and
+  /// complete onboarding; there is no confirmation encore.
   bool _showingConsentStep = false;
 
-  /// True once the consent decision is persisted and the architecture hero is
-  /// on screen. This is the last step before `/record`, so it is the screen
-  /// that owns the "into the app" CTA — see [_complete].
-  bool _showingOnDeviceHero = false;
+  static const int _conceptualStepCount = 2;
 
-  static const int _conceptualStepCount = 4;
-
-  bool get _isLast => _index >= OnboardingPages.pageCount - 1;
-
-  /// Which of the [_conceptualStepCount] progress dots is current. The extra
-  /// steps live in this widget's state rather than in `OnboardingPages`, so the
-  /// dot row cannot read the page index alone.
-  int get _stepIndex {
-    if (_showingOnDeviceHero) return 3;
-    if (_showingConsentStep) return 2;
-    if (_showingEvidenceMethodStep) return 1;
-    return _index;
-  }
+  int get _stepIndex => _showingConsentStep ? 1 : 0;
 
   @override
   void initState() {
     super.initState();
     unawaited(BetaAnalyticsHooks.onboardingViewed());
-    unawaited(RetentionMetricsTracker.track(RetentionMetricsTracker.onboardingStarted));
+    unawaited(
+      RetentionMetricsTracker.track(RetentionMetricsTracker.onboardingStarted),
+    );
   }
 
   Future<void> _complete() async {
@@ -84,11 +60,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     }
   }
 
-  /// Persists the customer's explicit remote-processing consent decision
-  /// before completing onboarding, so the very first save this account or
-  /// guest namespace ever makes already has a real answer for
-  /// `CapturePipelineService`'s live consent gate to read — never the
-  /// pre-consent default.
+  /// Persists the send answer, then opens Record. The capture surface
+  /// reads this gate — it must not ask the same question again.
   Future<void> _recordConsentDecision(bool allow) async {
     if (_completing) return;
     setState(() => _completing = true);
@@ -97,43 +70,19 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         allow: allow,
         consentStore: RemoteProcessingConsentStore(AppServices.instance.prefs),
       );
-      await BetaAnalyticsConsentBoundary.recordOnboardingConsent(granted: allow);
+      await BetaAnalyticsConsentBoundary.recordOnboardingConsent(
+        granted: allow,
+      );
     } finally {
       if (mounted) setState(() => _completing = false);
     }
     if (!mounted) return;
-    // The decision is recorded; the hero states what that decision means and
-    // carries the only CTA that reaches `/record`.
-    setState(() {
-      _showingConsentStep = false;
-      _showingOnDeviceHero = true;
-    });
+    await _complete();
   }
 
   void _advance() {
     if (_completing) return;
-    if (_isLast) {
-      setState(() => _showingEvidenceMethodStep = true);
-      return;
-    }
-    unawaited(_controller.nextPage(
-      duration: const Duration(milliseconds: 320),
-      curve: Curves.easeOutCubic,
-    ));
-  }
-
-  void _advanceFromEvidenceMethod() {
-    if (_completing) return;
-    setState(() {
-      _showingEvidenceMethodStep = false;
-      _showingConsentStep = true;
-    });
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
+    setState(() => _showingConsentStep = true);
   }
 
   @override
@@ -165,87 +114,110 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     ],
                   ),
                 ),
-                if (_showingOnDeviceHero)
-                  Expanded(
-                    child: OnDeviceHeroScreen(
-                      submitting: _completing,
-                      onContinue: () => unawaited(_complete()),
-                    ),
-                  )
-                else if (_showingConsentStep)
-                  Expanded(
-                    child: RemoteProcessingConsentStep(
-                      submitting: _completing,
-                      onDecision: _recordConsentDecision,
-                    ),
-                  )
-                else if (_showingEvidenceMethodStep)
-                  Expanded(
-                    child: EvidenceMethodOnboardingScreen(
-                      onContinue: _advanceFromEvidenceMethod,
-                    ),
-                  )
-                else ...[
-                  Expanded(
-                    child: PageView.builder(
-                      key: const Key('onboarding_page_view'),
-                      controller: _controller,
-                      itemCount: OnboardingPages.pageCount,
-                      onPageChanged: (i) => setState(() => _index = i),
-                      itemBuilder: (context, i) {
-                        final page = OnboardingPages.pages[i];
-                        return KeyedSubtree(
-                          key: Key('onboarding_page_$i'),
-                          child: _OnboardingPage(page: page),
-                        );
-                      },
-                    ),
+                Expanded(
+                  child: _showingConsentStep
+                      ? RemoteProcessingConsentStep(
+                          submitting: _completing,
+                          showActions: false,
+                          onDecision: _recordConsentDecision,
+                        )
+                      : _OnboardingPage(page: OnboardingPages.pages.first),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppSpacing.md,
                   ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: AppSpacing.md,
-                    ),
-                    child: Row(
-                      children: [
-                        for (var i = 0; i < _conceptualStepCount; i++)
-                          Expanded(
-                            child: Container(
-                              margin: EdgeInsets.only(
-                                right: i < _conceptualStepCount - 1 ? 6 : 0,
-                              ),
-                              height: 4,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(2),
-                                color: _stepIndex >= i
-                                    ? AppColors.accentPrimary.withValues(
-                                        alpha: 0.9,
-                                      )
-                                    : AppColors.borderSubtle,
-                              ),
+                  child: Row(
+                    key: const Key('onboarding_progress_dots'),
+                    children: [
+                      for (var i = 0; i < _conceptualStepCount; i++)
+                        Expanded(
+                          child: Container(
+                            key: Key('onboarding_progress_dot_$i'),
+                            margin: EdgeInsets.only(
+                              right: i < _conceptualStepCount - 1 ? 6 : 0,
+                            ),
+                            height: 4,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(2),
+                              color: _stepIndex >= i
+                                  ? AppColors.accentPrimary.withValues(
+                                      alpha: 0.9,
+                                    )
+                                  : AppColors.borderSubtle,
                             ),
                           ),
-                      ],
-                    ),
+                        ),
+                    ],
                   ),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(
-                      AppSpacing.md,
-                      AppSpacing.sm,
-                      AppSpacing.md,
-                      AppSpacing.md,
-                    ),
-                    child: FilledButton(
-                      key: const Key('onboarding_primary_cta'),
-                      onPressed: _completing ? null : _advance,
-                      child: const Text(ConsumerUiCopy.onboardingContinueCta),
-                    ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(
+                    AppSpacing.md,
+                    AppSpacing.sm,
+                    AppSpacing.md,
+                    AppSpacing.md,
                   ),
-                ],
+                  child: _showingConsentStep
+                      ? _ChoiceActions(
+                          submitting: _completing,
+                          onDecision: _recordConsentDecision,
+                        )
+                      : FilledButton(
+                          key: const Key('onboarding_primary_cta'),
+                          onPressed: _completing ? null : _advance,
+                          child: const Text(
+                            ConsumerUiCopy.onboardingContinueCta,
+                          ),
+                        ),
+                ),
               ],
             ),
           ],
         ),
       ),
+    );
+  }
+}
+
+class _ChoiceActions extends StatelessWidget {
+  const _ChoiceActions({
+    required this.submitting,
+    required this.onDecision,
+  });
+
+  final bool submitting;
+  final ValueChanged<bool> onDecision;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        const Text(
+          RemoteProcessingConsentCopy.changeLaterFootnote,
+          key: Key('remote_processing_consent_change_later'),
+          style: TextStyle(
+            fontSize: 13,
+            color: AppColors.textSecondary,
+            height: 1.4,
+          ),
+        ),
+        const SizedBox(height: AppSpacing.sm),
+        OutlinedButton(
+          key: const Key('remote_processing_consent_allow'),
+          style: RemoteProcessingConsentStep.buttonStyle,
+          onPressed: submitting ? null : () => onDecision(true),
+          child: const Text(RemoteProcessingConsentCopy.allowCta),
+        ),
+        const SizedBox(height: AppSpacing.sm),
+        OutlinedButton(
+          key: const Key('remote_processing_consent_decline'),
+          style: RemoteProcessingConsentStep.buttonStyle,
+          onPressed: submitting ? null : () => onDecision(false),
+          child: const Text(RemoteProcessingConsentCopy.declineCta),
+        ),
+      ],
     );
   }
 }
@@ -277,13 +249,6 @@ class _OnboardingPage extends StatelessWidget {
                 Text(page.title, style: OnboardingTypography.title(context)),
                 SizedBox(height: OnboardingTypography.sectionGap(context)),
                 Text(page.body, style: OnboardingTypography.body(context)),
-                const SizedBox(height: AppSpacing.md),
-                // `TrustBadge` used to sit here as well. Its two lines were the
-                // same claims as pillars 2 and 3 — identical titles, and detail
-                // text the pillar bodies already say more fully — so the screen
-                // stated them twice. The pillars are the richer form; the badge
-                // still serves `privacy_screen.dart`, where it stands alone.
-                const OnboardingTrustPillarsSection(),
                 const SizedBox(height: AppSpacing.md),
                 OnboardingPageVisual(page: page),
               ],

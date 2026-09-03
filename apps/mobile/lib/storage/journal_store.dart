@@ -13,7 +13,8 @@ import 'package:archiveme_mobile/features/referral/invite_funnel_metrics.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/models/sync_status.dart';
 import 'package:archiveme_mobile/features/beta_analytics/beta_analytics_milestone_coordinator.dart';
-import 'package:archiveme_mobile/services/journal_ownership_guard.dart' show JournalOwnershipGuard;
+import 'package:archiveme_mobile/services/journal_ownership_guard.dart'
+    show JournalOwnershipGuard;
 import 'package:archiveme_mobile/storage/encrypted_json_file_store.dart';
 import 'package:archiveme_mobile/storage/journal_entry_decoder.dart';
 import 'package:archiveme_mobile/storage/private_data_encryption_key_store.dart';
@@ -533,7 +534,7 @@ class JournalStore {
       return InMemoryPrivateDataEncryptionKeyStore();
     }
     return SecurePrivateDataEncryptionKeyStore(
-      secure: secureStorage,
+      store: secureStorage ?? SecureStorageService(),
       keyAlias: keyAlias,
     );
   }

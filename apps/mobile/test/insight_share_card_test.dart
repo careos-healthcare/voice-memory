@@ -3,6 +3,10 @@ import 'package:archiveme_mobile/features/insight_share/insight_share_pii.dart';
 import 'package:archiveme_mobile/features/insight_share/insight_share_png_metadata.dart';
 import 'package:archiveme_mobile/features/referral/referral_invite_after_value.dart';
 import 'package:archiveme_mobile/features/weekly_story/weekly_story_models.dart';
+import 'package:archiveme_mobile/models/journal_entry.dart';
+import 'package:archiveme_mobile/models/reflection.dart';
+import 'package:archiveme_mobile/widgets/insight_share/insight_share_exporter.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'dart:typed_data';
@@ -71,5 +75,54 @@ void main() {
       String.fromCharCodes(enriched),
       contains('ArchiveMeReferral'),
     );
+  });
+
+  testWidgets('exporter shows view evidence next to the in-app headline', (
+    tester,
+  ) async {
+    var opened = false;
+    final now = DateTime.now();
+    final entries = List.generate(
+      6,
+      (i) => JournalEntry(
+        id: 'share-e$i',
+        createdAt: now.subtract(Duration(days: i)),
+        transcript:
+            'Confidence and work reflection $i — transcript padding for evidence.',
+        durationSeconds: 30,
+        reflection: const Reflection(
+          mood: 'calm',
+          emotionalIntensity: 2,
+          recurringThemes: ['confidence', 'work'],
+          exactLanguagePattern: 'Confidence and work',
+          concreteObservation: 'Confidence and work showed up again.',
+          repeatedSignal: '',
+        ),
+      ),
+    );
+
+    await tester.binding.setSurfaceSize(const Size(390, 1600));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: InsightShareExporter(
+              entries: entries,
+              onViewEvidence: () => opened = true,
+            ),
+          ),
+        ),
+      ),
+    );
+    await tester.pump();
+
+    expect(find.byKey(const Key('insight_share_exporter')), findsOneWidget);
+    expect(find.byKey(const Key('insight_share_view_evidence')), findsOneWidget);
+    expect(find.byKey(const Key('insight_share_card_widget')), findsOneWidget);
+
+    await tester.tap(find.byKey(const Key('insight_share_view_evidence')));
+    await tester.pump();
+    expect(opened, isTrue);
   });
 }

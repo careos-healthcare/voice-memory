@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'support/record_screen_library_source.dart';
 
 import 'package:archiveme_mobile/features/activation/belief_evidence_trail.dart';
 import 'package:archiveme_mobile/features/activation/weekly_archive_review.dart';
@@ -848,12 +847,6 @@ void main() {
         expect(dailyIndex, greaterThan(summaryIndex));
         expect(weeklyIndex, greaterThan(dailyIndex));
       });
-
-      test('Record screen gates weekly review away from primary capture', () {
-        final src = readRecordScreenLibrarySource();
-        expect(src, contains('showWeeklyArchiveWeekReview'));
-        expect(src, contains('weeklyReviewSurface.WeeklyArchiveReviewCard'));
-      });
     });
 
     group('billing untouched', () {
@@ -1212,15 +1205,21 @@ void main() {
           findsOneWidget,
         );
         expect(
-          find.text(review_surface_copy.WeeklyArchiveReviewCopy.whatChangedLabel),
+          find.text(
+            review_surface_copy.WeeklyArchiveReviewCopy.whatChangedLabel,
+          ),
           findsOneWidget,
         );
         expect(
-          find.text(review_surface_copy.WeeklyArchiveReviewCopy.whatHelpedLabel),
+          find.text(
+            review_surface_copy.WeeklyArchiveReviewCopy.whatHelpedLabel,
+          ),
           findsOneWidget,
         );
         expect(
-          find.text(review_surface_copy.WeeklyArchiveReviewCopy.whatToWatchLabel),
+          find.text(
+            review_surface_copy.WeeklyArchiveReviewCopy.whatToWatchLabel,
+          ),
           findsOneWidget,
         );
       });

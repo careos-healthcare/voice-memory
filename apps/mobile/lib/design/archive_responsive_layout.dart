@@ -23,6 +23,20 @@ abstract class ArchiveResponsiveLayout {
   static int entryGridColumns(BuildContext context) =>
       entryGridColumnsForWidth(MediaQuery.sizeOf(context).width);
 
+  /// Tablet/desktop grids ignore text scale. Above this factor, Archive Home
+  /// uses the phone [SliverList] path instead of a fixed-aspect [SliverGrid].
+  static const double largeTextListFallbackThreshold = 1.3;
+
+  /// Phone (one column) already lists. Large text on a wide viewport would
+  /// clip [ArchiveEntryCard] inside `childAspectRatio` cells.
+  static bool prefersEntryList({
+    required int crossAxisCount,
+    required TextScaler textScaler,
+  }) {
+    if (crossAxisCount <= 1) return true;
+    return textScaler.scale(1) >= largeTextListFallbackThreshold;
+  }
+
   static double horizontalCenterInset({
     required double viewportWidth,
     double maxWidth = contentMaxWidth,

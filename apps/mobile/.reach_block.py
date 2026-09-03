@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
-"""Definitive blocking analysis for the 169 candidates."""
+"""Definitive blocking analysis for the 169 candidates.
+
+Consumes `.reach_state.json` from `.reach_analysis.py`. Re-run the generator
+after a significant retired_sprawl change; see that file's module docstring.
+"""
 import os, re, json, subprocess
 from collections import defaultdict
 
@@ -7,6 +11,8 @@ ROOT = os.path.abspath(os.path.dirname(__file__))
 RET = os.path.realpath(os.path.join(ROOT, "retired_sprawl"))
 cands = [l.strip() for l in open(os.path.join(ROOT, ".reach_cons_unreach.txt")) if l.strip()]
 state = json.load(open(os.path.join(ROOT, ".reach_state.json")))
+# Loaded to confirm the cache parses on this checkout. Blocking rules below
+# resolve paths live; they do not key off the stored graph.
 
 # logical lib/features path for a candidate, when its module is symlinked
 def logical(rel):

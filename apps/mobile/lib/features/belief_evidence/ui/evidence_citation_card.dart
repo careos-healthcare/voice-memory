@@ -40,6 +40,10 @@ class EvidenceCitationCard extends StatefulWidget {
   static const Key cardKey = Key('evidence_citation_card');
   static const Key quoteTextKey = Key('evidence_citation_quote_text');
   static const Key expandKey = Key('evidence_citation_expand');
+  static const Key openEntryKey = Key('evidence_citation_open_entry');
+
+  /// Same 48pt minimum as View evidence / source-proof links.
+  static const double minTapTarget = 48;
 
   @override
   State<EvidenceCitationCard> createState() => _EvidenceCitationCardState();
@@ -132,12 +136,15 @@ class _EvidenceCitationCardState extends State<EvidenceCitationCard> {
               Align(
                 alignment: AlignmentDirectional.centerStart,
                 child: TextButton(
+                  key: EvidenceCitationCard.openEntryKey,
                   onPressed: () =>
                       widget.onOpenEntry!(widget.evidence.entryId),
                   style: TextButton.styleFrom(
-                    padding: EdgeInsets.zero,
-                    minimumSize: Size.zero,
-                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    minimumSize: const Size(
+                      EvidenceCitationCard.minTapTarget,
+                      EvidenceCitationCard.minTapTarget,
+                    ),
+                    tapTargetSize: MaterialTapTargetSize.padded,
                     foregroundColor: palette.quoteAccent,
                   ),
                   child: const Text(EvidenceCitationCopy.openEntry),
@@ -210,9 +217,11 @@ class _ExpandableQuote extends StatelessWidget {
                 key: EvidenceCitationCard.expandKey,
                 onPressed: onToggle,
                 style: TextButton.styleFrom(
-                  padding: EdgeInsets.zero,
-                  minimumSize: Size.zero,
-                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  minimumSize: const Size(
+                    EvidenceCitationCard.minTapTarget,
+                    EvidenceCitationCard.minTapTarget,
+                  ),
+                  tapTargetSize: MaterialTapTargetSize.padded,
                   foregroundColor: palette.quoteAccent,
                 ),
                 child: Text(
