@@ -43,7 +43,7 @@ Scope guardrails before wider beta and live billing. Items here are **intentiona
 | Item | Why wait |
 | --- | --- |
 | **Complex cloud sync** | Prove local loop + WTP first |
-| **Notifications campaigns** | `docs/product/notifications-decision.md` — after return proven |
+| **Notifications campaigns** | `docs/product/notifications-decision.md` — V1 cut reaffirmed 2026-09-01; revisit only after testers ask |
 | **Multi-device backup** | Marked **Future** in Pro ladder |
 | **Server entitlement anti-sharing** | Needs stable SKU + identity model |
 
