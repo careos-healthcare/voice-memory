@@ -265,9 +265,6 @@ jobs:
       - name: Run pro status SQLite self-tests
         run: python3 tool/run_gate.py self_tests pro_status
 
-      - name: Analyze API client layer
-        run: dart analyze lib/api
-
       - name: Run Flutter Analyze
         run: python3 tool/run_gate.py analyze
 
