@@ -11,10 +11,24 @@ class CaregiverGrantRequest {
   const CaregiverGrantRequest({
     required this.caregiverId,
     required this.contact,
+    this.shareJournal = false,
+    this.shareProofTrail = false,
+    this.shareTimeline = false,
+    this.shareReviewSummaries = false,
   });
 
   final String caregiverId;
   final CaregiverGrantContact contact;
+
+  // Plain booleans, not a CaregiverPermissions field: this file deliberately
+  // does not import lib/features/caregiver/ (see the class comment on
+  // CaregiverGrantIssuer below), so the actual permissions model gets built
+  // from these in CaregiverGrantConsentAdapter, the one file allowed to cross
+  // that boundary.
+  final bool shareJournal;
+  final bool shareProofTrail;
+  final bool shareTimeline;
+  final bool shareReviewSummaries;
 }
 
 /// Result of trying to issue a grant.

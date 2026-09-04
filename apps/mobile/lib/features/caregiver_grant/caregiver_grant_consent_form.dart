@@ -30,6 +30,10 @@ class CaregiverConsentForm extends StatefulWidget {
   static const Key cancelKey = Key('caregiver_grant_form_cancel');
   static const Key grantKey = Key('caregiver_grant_form_submit');
   static const Key errorKey = Key('caregiver_grant_form_error');
+  static const Key journalToggleKey = Key('caregiver_grant_journal_toggle');
+  static const Key proofTrailToggleKey = Key('caregiver_grant_proof_trail_toggle');
+  static const Key timelineToggleKey = Key('caregiver_grant_timeline_toggle');
+  static const Key reviewSummariesToggleKey = Key('caregiver_grant_review_summaries_toggle');
 
   final CaregiverGrantIssuer issuer;
   final VoidCallback? onCancel;
@@ -46,6 +50,10 @@ class _CaregiverConsentFormState extends State<CaregiverConsentForm> {
 
   bool _busy = false;
   String? _submitError;
+  bool _shareJournal = false;
+  bool _shareProofTrail = false;
+  bool _shareTimeline = false;
+  bool _shareReviewSummaries = false;
 
   @override
   void dispose() {
@@ -85,6 +93,10 @@ class _CaregiverConsentFormState extends State<CaregiverConsentForm> {
           name: _nameController.text.trim(),
           email: _emailController.text.trim(),
         ),
+        shareJournal: _shareJournal,
+        shareProofTrail: _shareProofTrail,
+        shareTimeline: _shareTimeline,
+        shareReviewSummaries: _shareReviewSummaries,
       ),
     );
     if (!mounted) return;
@@ -168,6 +180,53 @@ class _CaregiverConsentFormState extends State<CaregiverConsentForm> {
                       ),
                       validator: _validateEmail,
                       onFieldSubmitted: (_) => unawaited(_submit()),
+                    ),
+                    const SizedBox(height: AppSpacing.lg),
+                    Text(
+                      CaregiverGrantCopy.permissionsHeading,
+                      style: ArchiveMobileTypography.listTitle(context),
+                    ),
+                    SwitchListTile(
+                      key: CaregiverConsentForm.journalToggleKey,
+                      contentPadding: EdgeInsets.zero,
+                      value: _shareJournal,
+                      onChanged: _busy
+                          ? null
+                          : (value) => setState(() => _shareJournal = value),
+                      title: const Text(CaregiverGrantCopy.journalToggleLabel),
+                      subtitle: const Text(CaregiverGrantCopy.journalToggleSubtitle),
+                    ),
+                    SwitchListTile(
+                      key: CaregiverConsentForm.proofTrailToggleKey,
+                      contentPadding: EdgeInsets.zero,
+                      value: _shareProofTrail,
+                      onChanged: _busy
+                          ? null
+                          : (value) => setState(() => _shareProofTrail = value),
+                      title: const Text(CaregiverGrantCopy.proofTrailToggleLabel),
+                      subtitle: const Text(CaregiverGrantCopy.proofTrailToggleSubtitle),
+                    ),
+                    SwitchListTile(
+                      key: CaregiverConsentForm.timelineToggleKey,
+                      contentPadding: EdgeInsets.zero,
+                      value: _shareTimeline,
+                      onChanged: _busy
+                          ? null
+                          : (value) => setState(() => _shareTimeline = value),
+                      title: const Text(CaregiverGrantCopy.timelineToggleLabel),
+                      subtitle: const Text(CaregiverGrantCopy.timelineToggleSubtitle),
+                    ),
+                    SwitchListTile(
+                      key: CaregiverConsentForm.reviewSummariesToggleKey,
+                      contentPadding: EdgeInsets.zero,
+                      value: _shareReviewSummaries,
+                      onChanged: _busy
+                          ? null
+                          : (value) =>
+                              setState(() => _shareReviewSummaries = value),
+                      title: const Text(CaregiverGrantCopy.reviewSummariesToggleLabel),
+                      subtitle:
+                          const Text(CaregiverGrantCopy.reviewSummariesToggleSubtitle),
                     ),
                     const SizedBox(height: AppSpacing.md),
                     Text(

@@ -48,18 +48,19 @@ abstract final class CaregiverGrantCopy {
   static const String canSeeHeading = 'What this does';
 
   static const String canSeeCount =
-      'They can see how many moments you have saved.';
+      'If you share journal moments, how many you have saved.';
 
   static const String canSeeRecent =
-      'They can see the opening words of your five most recent moments.';
+      'If you share journal moments, the opening words of your five most '
+      'recent.';
 
   static const String canSeeTimeline =
-      'They can see the dates of your three most recent moments, with the '
-      'opening words of each.';
+      'If you share timeline and review summaries, the dates of your three '
+      'most recent moments, with the opening words of each.';
 
   static const String canSeeAlert =
-      'They can see a short line that says how many moments are in your '
-      'archive.';
+      'A short line about how many moments are in your archive is not shown '
+      'in the caregiver view yet, even if you turn this on.';
 
   static const List<String> canSee = [
     canSeeCount,
@@ -67,6 +68,32 @@ abstract final class CaregiverGrantCopy {
     canSeeTimeline,
     canSeeAlert,
   ];
+
+  // --- Permission toggles ---
+  //
+  // Mapped directly to CaregiverPermissions and CaregiverReadService
+  // (lib/features/caregiver/caregiver_read_service.dart), not invented
+  // independently of them. Journal gates the whole dashboard snapshot, not
+  // just its own section -- if it's off, nothing else here shows either,
+  // regardless of what else is on. Timeline and review summaries are two
+  // separate consent choices that both have to be on for either to show
+  // anything, so both toggles say so rather than implying they act alone.
+  static const String permissionsHeading = 'Choose what to share';
+  static const String journalToggleLabel = 'Journal moments';
+  static const String journalToggleSubtitle =
+      'How many moments you have saved, and the opening words of your five '
+      'most recent. Turning this off hides everything else here too.';
+  static const String proofTrailToggleLabel = 'Proof trail';
+  static const String proofTrailToggleSubtitle =
+      'Not yet shown in the caregiver view. Turning this on does not change '
+      'what they see today.';
+  static const String timelineToggleLabel = 'Timeline';
+  static const String timelineToggleSubtitle =
+      'The dates of your three most recent moments, with the opening words '
+      'of each. Shown only when Review summaries below is also on.';
+  static const String reviewSummariesToggleLabel = 'Review summaries';
+  static const String reviewSummariesToggleSubtitle =
+      'Shown only when Timeline above is also on.';
 
   static const String cannotHeading = 'What this does not include';
 
