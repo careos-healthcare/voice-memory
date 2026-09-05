@@ -19,13 +19,14 @@ Future<void> _pumpFrames(WidgetTester tester, {int frames = 5}) async {
 }
 
 void main() {
-  test('first-run source is two screens: evidence then send choice', () {
+  test('first-run source is three screens: evidence, trust, send choice', () {
     final source = resolveRepoScanFile(
       'lib/screens/onboarding_screen.dart',
     ).readAsStringSync();
     expect(source.contains('OnDeviceHeroScreen'), isFalse);
     expect(source.contains('EvidenceMethodOnboardingScreen'), isFalse);
-    expect(source.contains('_conceptualStepCount = 2'), isTrue);
+    expect(source.contains('_conceptualStepCount = 3'), isTrue);
+    expect(source.contains('OnboardingTrustPillarsSection'), isTrue);
     expect(source.contains('OnboardingRemoteProcessingDecision.record'), isTrue);
     expect(source.contains("context.go('/record')"), isTrue);
   });
@@ -49,12 +50,25 @@ void main() {
     expect(find.byKey(const Key('onboarding_progress_dot_1')), findsOneWidget);
   });
 
-  testWidgets('continue opens the send choice as screen 2', (tester) async {
+  testWidgets('continue opens the trust pillars, then the send choice', (
+    tester,
+  ) async {
     await tester.pumpWidget(const MaterialApp(home: OnboardingScreen()));
     await _pumpFrames(tester);
 
     expect(find.text(OnboardingPages.pages[0].title), findsOneWidget);
     expect(find.text(ConsumerUiCopy.onboardingPositioningBody), findsOneWidget);
+
+    await tester.tap(find.text(ConsumerUiCopy.onboardingContinueCta));
+    await _pumpFrames(tester);
+
+    expect(
+      find.byKey(OnboardingTrustPillarsSection.sectionKey),
+      findsOneWidget,
+    );
+    expect(find.text(OnboardingV1Copy.pillar1Title), findsOneWidget);
+    expect(find.text(OnboardingV1Copy.pillar4Title), findsOneWidget);
+    expect(find.text(RemoteProcessingConsentCopy.title), findsNothing);
 
     await tester.tap(find.text(ConsumerUiCopy.onboardingContinueCta));
     await _pumpFrames(tester);

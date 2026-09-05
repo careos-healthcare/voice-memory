@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:archiveme_mobile/features/beta_analytics/beta_analytics_consent_boundary.dart';
 import 'package:archiveme_mobile/features/beta_analytics/beta_analytics_hooks.dart';
 import 'package:archiveme_mobile/features/onboarding/remote_processing_consent_decision.dart';
+import 'package:archiveme_mobile/features/onboarding/ui/onboarding_trust_pillars_section.dart';
 import 'package:archiveme_mobile/features/onboarding/ui/remote_processing_consent_copy.dart';
 import 'package:archiveme_mobile/features/onboarding/ui/remote_processing_consent_step.dart';
 import 'package:archiveme_mobile/features/proof_admission/remote_processing_consent_store.dart';
@@ -29,11 +30,17 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   /// Screen 2 — the send choice. The two buttons persist consent and
   /// complete onboarding; there is no confirmation encore.
-  bool _showingConsentStep = false;
+  // Added a third step here deliberately, overriding
+  // OnboardingTrustPillarsSection's own "first-run does not show them"
+  // doc comment -- see chat history for the explicit call to show all
+  // four trust pillars during onboarding after all.
+  int _step = 0;
 
-  static const int _conceptualStepCount = 2;
+  static const int _conceptualStepCount = 3;
 
-  int get _stepIndex => _showingConsentStep ? 1 : 0;
+  bool get _showingTrustStep => _step == 1;
+  bool get _showingConsentStep => _step == 2;
+  int get _stepIndex => _step;
 
   @override
   void initState() {
@@ -82,7 +89,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   void _advance() {
     if (_completing) return;
-    setState(() => _showingConsentStep = true);
+    setState(() => _step = (_step + 1).clamp(0, _conceptualStepCount - 1));
   }
 
   @override
@@ -121,7 +128,16 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                           showActions: false,
                           onDecision: _recordConsentDecision,
                         )
-                      : _OnboardingPage(page: OnboardingPages.pages.first),
+                      : _showingTrustStep
+                          ? const SingleChildScrollView(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: AppSpacing.md,
+                              ),
+                              child: OnboardingTrustPillarsSection(),
+                            )
+                          : _OnboardingPage(
+                              page: OnboardingPages.pages.first,
+                            ),
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(
