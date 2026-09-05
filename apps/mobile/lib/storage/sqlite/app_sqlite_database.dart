@@ -93,8 +93,26 @@ class AppSqliteDatabase {
   sqflite.Database get database => _db;
 
   Future<void> close() async {
-    if (_cached == _db) {
+    // Always close this instance's own connection first -- the
+    // conditional below only decides whether to also clear the static
+    // "currently active" bookkeeping, a separate question from whether
+    // this instance's own database needs closing. The previous version
+    // only closed _db when this instance still happened to be the
+    // cached singleton, silently leaking the connection whenever a
+    // stale instance's close() ran after a newer one had already taken
+    // over -- confirmed as the cause of a SQLITE_CANTOPEN cascade once
+    // enough leaked connections exhausted the process's file-descriptor
+    // limit during a test run.
+    // Tolerant of a double-close: only one of this method's five real
+    // call sites defends itself against that (the test-teardown path,
+    // which already anticipated it), so the safer place for this is
+    // here, not pushed out to every caller individually.
+    try {
       await _db.close();
+    } on Object catch (_) {
+      // Already closed.
+    }
+    if (_cached == _db) {
       _cached = null;
       _cachedPath = null;
       _cachedPassword = null;
