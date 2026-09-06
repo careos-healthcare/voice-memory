@@ -1,4 +1,5 @@
 import 'package:archiveme_mobile/api/retrofit/voice_memory_billing_api.dart';
+import 'package:archiveme_mobile/api/retrofit/voice_memory_consent_api.dart';
 import 'package:archiveme_mobile/api/retrofit/voice_memory_auth_api.dart';
 import 'package:archiveme_mobile/api/retrofit/voice_memory_capture_api.dart';
 import 'package:archiveme_mobile/api/retrofit/voice_memory_insights_api.dart';
@@ -42,4 +43,7 @@ final voiceMemoryCaptureRetrofitApiProvider = Provider<VoiceMemoryCaptureApi>(
 
 final voiceMemoryInsightsRetrofitApiProvider = Provider<VoiceMemoryInsightsApi>(
   (ref) => ref.watch(voiceMemoryRetrofitClientProvider).insights,
+);
+final voiceMemoryConsentRetrofitApiProvider = Provider<VoiceMemoryConsentApi>(
+  (ref) => ref.watch(voiceMemoryRetrofitClientProvider).consent,
 );

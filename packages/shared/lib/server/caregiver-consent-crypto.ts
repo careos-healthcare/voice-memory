@@ -1,4 +1,5 @@
 import "server-only";
+import { createHash } from "node:crypto";
 
 import {
   caregiverConsentCanonicalPayload,
@@ -32,6 +33,20 @@ function caregiverConsentSecret(): string {
     return "dev-only-caregiver-consent-secret-change-me";
   }
   return secret;
+}
+
+/**
+ * Hashes a redemption code (link token or manual code) against
+ * CAREGIVER_CONSENT_HMAC_SECRET -- deliberately this file's own secret, not
+ * AUTH_SECRET, so the two domains stay independent even though the pattern
+ * mirrors hashVerificationCode exactly (see auth-crypto.ts). Only the hash
+ * is ever persisted; the raw code exists in memory only long enough to be
+ * shown once and hashed.
+ */
+export function hashCaregiverRedemptionCode(code: string): string {
+  return createHash("sha256")
+    .update(`${code}:${caregiverConsentSecret()}`)
+    .digest("hex");
 }
 
 export interface IssueServerCaregiverConsentInput {

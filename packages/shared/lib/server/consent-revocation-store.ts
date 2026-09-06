@@ -3,6 +3,7 @@ import "server-only";
 import fs from "node:fs";
 import path from "node:path";
 
+import type { CaregiverPermissions } from "@/types/caregiver";
 import {
   dbQuery,
   shouldUseFilesystemStorage,
@@ -64,6 +65,7 @@ export interface ConsentGrantRecord {
   revokedAt: string | null;
   revokedBy: string | null;
   revocationReason: string | null;
+  permissions: CaregiverPermissions | null;
 }
 
 export interface RecordConsentGrantInput {
@@ -74,6 +76,7 @@ export interface RecordConsentGrantInput {
   relationshipId?: string | null;
   issuedAt?: string | null;
   expiresAt?: string | null;
+  permissions?: CaregiverPermissions | null;
 }
 
 export interface RecordConsentRevocationInput extends RecordConsentGrantInput {
@@ -181,6 +184,11 @@ function rowToRecord(row: Record<string, unknown>): ConsentGrantRecord {
     revokedBy: row.revoked_by == null ? null : String(row.revoked_by),
     revocationReason:
       row.revocation_reason == null ? null : String(row.revocation_reason),
+    // pg's default type parser JSON.parses jsonb columns on read, so this is
+    // already a real object here, not a string -- no JSON.parse needed. Cast
+    // rather than trust: a malformed row should read back as null, not throw.
+    permissions:
+      row.permissions == null ? null : (row.permissions as CaregiverPermissions),
   };
 }
 
@@ -197,11 +205,20 @@ const postgresBackend: ConsentRevocationBackend = {
   },
 
   async upsertGrant(input) {
+    // pg does not serialize objects for a jsonb parameter -- an unstringified
+    // object binds as the literal text "[object Object]", not JSON. Absent
+    // permissions must bind as a real SQL NULL, not the 4-character string
+    // "null" (JSON.stringify(null)), which would cast to a JSON null value
+    // inside the column instead of leaving the column itself NULL -- the
+    // migration this column shipped with is explicit that a missing value
+    // here must read back as "cannot redeem", not as an empty grant.
+    const permissionsParam =
+      input.permissions == null ? null : JSON.stringify(input.permissions);
     await dbQuery(
       `INSERT INTO consent_grants (
          token_id, grant_kind, subject_account_id, party_id, relationship_id,
-         issued_at, expires_at
-       ) VALUES ($1, $2, $3, $4, $5, $6::timestamptz, $7::timestamptz)
+         issued_at, expires_at, permissions
+       ) VALUES ($1, $2, $3, $4, $5, $6::timestamptz, $7::timestamptz, $8::jsonb)
        ON CONFLICT (token_id) DO UPDATE SET
          grant_kind = EXCLUDED.grant_kind,
          subject_account_id = EXCLUDED.subject_account_id,
@@ -209,6 +226,7 @@ const postgresBackend: ConsentRevocationBackend = {
          relationship_id = EXCLUDED.relationship_id,
          issued_at = EXCLUDED.issued_at,
          expires_at = EXCLUDED.expires_at,
+         permissions = EXCLUDED.permissions,
          updated_at = now()`,
       [
         input.tokenId,
@@ -218,6 +236,7 @@ const postgresBackend: ConsentRevocationBackend = {
         input.relationshipId ?? null,
         input.issuedAt ?? null,
         input.expiresAt ?? null,
+        permissionsParam,
       ],
     );
   },
@@ -425,6 +444,7 @@ const filesystemBackend: ConsentRevocationBackend = {
       relationshipId: input.relationshipId ?? null,
       issuedAt: input.issuedAt ?? null,
       expiresAt: input.expiresAt ?? null,
+      permissions: input.permissions ?? null,
       revokedAt: existing?.revokedAt ?? null,
       revokedBy: existing?.revokedBy ?? null,
       revocationReason: existing?.revocationReason ?? null,
@@ -452,6 +472,7 @@ const filesystemBackend: ConsentRevocationBackend = {
       relationshipId: existing?.relationshipId ?? input.relationshipId ?? null,
       issuedAt: existing?.issuedAt ?? input.issuedAt ?? null,
       expiresAt: existing?.expiresAt ?? input.expiresAt ?? null,
+      permissions: existing?.permissions ?? input.permissions ?? null,
       revokedAt,
       revokedBy: input.revokedBy,
       revocationReason: input.revocationReason ?? null,
@@ -479,6 +500,7 @@ const filesystemBackend: ConsentRevocationBackend = {
         previous?.relationshipId ?? input.replacement.relationshipId ?? null,
       issuedAt: previous?.issuedAt ?? input.previousIssuedAt ?? null,
       expiresAt: previous?.expiresAt ?? input.previousExpiresAt ?? null,
+      permissions: previous?.permissions ?? input.replacement.permissions ?? null,
       revokedAt,
       revokedBy: input.revokedBy,
       revocationReason: input.revocationReason ?? null,
@@ -492,6 +514,7 @@ const filesystemBackend: ConsentRevocationBackend = {
       relationshipId: input.replacement.relationshipId ?? null,
       issuedAt: input.replacement.issuedAt ?? null,
       expiresAt: input.replacement.expiresAt ?? null,
+      permissions: input.replacement.permissions ?? null,
       revokedAt: null,
       revokedBy: null,
       revocationReason: null,

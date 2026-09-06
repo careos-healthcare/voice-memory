@@ -1,6 +1,7 @@
 import 'package:archiveme_mobile/config/app_config.dart';
 import 'package:archiveme_mobile/core/di/app_provider_container.dart';
 import 'package:archiveme_mobile/features/capture/widgets/capture_module_bootstrap.dart';
+import 'package:archiveme_mobile/features/caregiver_grant/caregiver_invitation_link_listener.dart';
 import 'package:archiveme_mobile/features/llm/providers/llm_providers.dart';
 import 'package:archiveme_mobile/features/live_audio/presentation/widgets/offline_vault_recovery_host.dart';
 import 'package:archiveme_mobile/features/recording/audio_processing_queue_listener_host.dart';
@@ -38,7 +39,9 @@ class ArchiveMeApp extends StatelessWidget {
                   child: CaptureModuleBootstrap(
                     child: LlmAnalysisBootstrap(
                       child: AudioProcessingQueueListenerHost(
-                        child: child ?? const SizedBox.shrink(),
+                        child: CaregiverInvitationLinkListenerHost(
+                          child: child ?? const SizedBox.shrink(),
+                        ),
                       ),
                     ),
                   ),

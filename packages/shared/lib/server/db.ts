@@ -161,11 +161,27 @@ export const AUTH_SYNC_SCHEMA_STATEMENTS = [
   revoked_at timestamptz,
   revoked_by text,
   revocation_reason text,
+  permissions jsonb,
   created_at timestamptz NOT NULL DEFAULT now(),
   updated_at timestamptz NOT NULL DEFAULT now()
 )`,
   `CREATE INDEX IF NOT EXISTS consent_grants_subject_idx ON consent_grants (subject_account_id)`,
   `CREATE INDEX IF NOT EXISTS consent_grants_revoked_idx ON consent_grants (revoked_at)`,
+  `CREATE TABLE IF NOT EXISTS caregiver_redemption_codes (
+  id text PRIMARY KEY,
+  token_id text NOT NULL REFERENCES consent_grants (token_id),
+  reference text NOT NULL,
+  link_token_hash text NOT NULL,
+  manual_code_hash text NOT NULL,
+  manual_code_attempts integer NOT NULL DEFAULT 0,
+  expires_at timestamptz NOT NULL,
+  redeemed_at timestamptz,
+  created_at timestamptz NOT NULL DEFAULT now()
+)`,
+  `CREATE UNIQUE INDEX IF NOT EXISTS caregiver_redemption_codes_reference_idx ON caregiver_redemption_codes (reference)`,
+  `CREATE INDEX IF NOT EXISTS caregiver_redemption_codes_link_idx ON caregiver_redemption_codes (link_token_hash)`,
+  `CREATE INDEX IF NOT EXISTS caregiver_redemption_codes_manual_idx ON caregiver_redemption_codes (manual_code_hash)`,
+  `CREATE INDEX IF NOT EXISTS caregiver_redemption_codes_token_idx ON caregiver_redemption_codes (token_id)`,
   ...EVIDENCE_METHOD_SCHEMA_STATEMENTS,
 ] as const;
 

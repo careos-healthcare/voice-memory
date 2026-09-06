@@ -6,9 +6,10 @@ import 'package:archiveme_mobile/storage/journal_store.dart';
 /// Read-only caregiver data access with mandatory audit logging.
 class CaregiverReadService {
   CaregiverReadService({
-    required this._journalStore,
-    required this._modeController,
-  });
+    required JournalStore journalStore,
+    required CaregiverModeController modeController,
+  }) : _journalStore = journalStore,
+       _modeController = modeController;
 
   final JournalStore _journalStore;
   final CaregiverModeController _modeController;

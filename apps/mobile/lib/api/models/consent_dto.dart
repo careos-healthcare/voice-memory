@@ -46,6 +46,29 @@ class ConsentVerifyResponseDto {
   Map<String, dynamic> toJson() => _$ConsentVerifyResponseDtoToJson(this);
 }
 
+/// Wire response for `POST /api/coach/consent/redeem`.
+///
+/// Hand-rolled rather than `@JsonSerializable`, matching
+/// ConsentRevokeResponseDto's own precedent, so this addition does not
+/// require regenerating `consent_dto.g.dart`.
+class ConsentRedeemResponseDto {
+  const ConsentRedeemResponseDto({required this.token, this.ok});
+
+  factory ConsentRedeemResponseDto.fromJson(Map<String, dynamic> json) =>
+      ConsentRedeemResponseDto(
+        ok: JsonConverters.nullableBool(json['ok']),
+        token: JsonConverters.requiredStringMap(json['token'], field: 'token'),
+      );
+
+  final bool? ok;
+  final Map<String, dynamic> token;
+
+  Map<String, dynamic> toJson() => {
+    if (ok != null) 'ok': ok,
+    'token': token,
+  };
+}
+
 /// Wire response for `POST /api/coach/consent/revoke`.
 ///
 /// Hand-rolled rather than `@JsonSerializable` so this addition does not

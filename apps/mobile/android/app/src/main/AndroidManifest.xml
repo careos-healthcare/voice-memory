@@ -46,6 +46,14 @@
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
+            <!-- App Links: verified via assetlinks.json at archiveme.app, so the
+                 OS opens matching links directly without a disambiguation prompt. -->
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <data android:scheme="https" android:host="archiveme.app"/>
+            </intent-filter>
         </activity>
         <meta-data
             android:name="flutterEmbedding"

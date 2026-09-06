@@ -1,0 +1,14 @@
+[
+  {
+    "relation": [
+      "delegate_permission/common.handle_all_urls"
+    ],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.voicememory.mobile",
+      "sha256_cert_fingerprints": [
+        "TODO_REPLACE_WITH_REAL_SHA256_FINGERPRINT_FROM_RELEASE_KEYSTORE"
+      ]
+    }
+  }
+]
