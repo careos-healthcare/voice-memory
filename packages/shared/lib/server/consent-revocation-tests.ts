@@ -68,6 +68,7 @@ function memoryBackend(): ConsentRevocationBackend {
         revokedAt: existing?.revokedAt ?? null,
         revokedBy: existing?.revokedBy ?? null,
         revocationReason: existing?.revocationReason ?? null,
+        permissions: existing?.permissions ?? CAREGIVER_PERMISSIONS,
       });
     },
     async revoke(input) {
@@ -88,6 +89,7 @@ function memoryBackend(): ConsentRevocationBackend {
         relationshipId: existing?.relationshipId ?? input.relationshipId ?? null,
         issuedAt: existing?.issuedAt ?? input.issuedAt ?? null,
         expiresAt: existing?.expiresAt ?? input.expiresAt ?? null,
+        permissions: existing?.permissions ?? CAREGIVER_PERMISSIONS,
         revokedAt,
         revokedBy: input.revokedBy,
         revocationReason: input.revocationReason ?? null,

@@ -93,6 +93,7 @@ function toRecord(
     relationshipId: input.relationshipId ?? null,
     issuedAt: input.issuedAt ?? null,
     expiresAt: input.expiresAt ?? null,
+    permissions: CAREGIVER_PERMISSIONS,
     ...revocation,
   };
 }
