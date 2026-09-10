@@ -1,5 +1,17 @@
 import 'package:flutter/foundation.dart';
 
+/// Handoff payload when opening pattern exploration from a saved entry.
+@immutable
+class ExplorePatternsSeed {
+  const ExplorePatternsSeed({
+    required this.entryId,
+    required this.transcript,
+  });
+
+  final String entryId;
+  final String transcript;
+}
+
 /// One turn in the pattern-exploration chat.
 @immutable
 class PatternExplorationMessage {

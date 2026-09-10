@@ -11,7 +11,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 /// Multi-turn pattern exploration chat. The route itself is ungated.
 class ExplorePatternsScreen extends ConsumerStatefulWidget {
-  const ExplorePatternsScreen({super.key});
+  const ExplorePatternsScreen({super.key, this.seed});
+
+  final ExplorePatternsSeed? seed;
 
   static const Key screenKey = Key('explore_patterns_screen');
   static const Key messageListKey = Key('explore_patterns_message_list');
@@ -32,6 +34,21 @@ class ExplorePatternsScreen extends ConsumerStatefulWidget {
 class _ExplorePatternsScreenState extends ConsumerState<ExplorePatternsScreen> {
   final _composer = TextEditingController();
   final _scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    // Same once-on-mount guard as CaregiverInvitationLinkListenerHost.bind():
+    // initState, not build(), so a seeded send cannot re-fire on rebuild.
+    final seed = widget.seed;
+    if (seed != null) {
+      final notifier = ref.read(patternExplorationConversationProvider.notifier)
+        ..reset();
+      if (seed.transcript.trim().isNotEmpty) {
+        unawaited(notifier.sendMessage(seed.transcript));
+      }
+    }
+  }
 
   @override
   void dispose() {

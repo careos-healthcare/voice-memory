@@ -69,6 +69,10 @@ class PatternExplorationConversationNotifier
   void dismissError() {
     state = state.copyWith(clearError: true);
   }
+
+  void reset() {
+    state = const PatternExplorationConversationState();
+  }
 }
 
 final patternExplorationConversationProvider =
