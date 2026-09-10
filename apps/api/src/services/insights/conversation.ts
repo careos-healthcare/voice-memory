@@ -94,7 +94,7 @@ ${buildHistoricalEntriesBlock(matches)}
 Reply to the new message. You may only cite entryId values listed above.`;
 }
 
-function parseConversationalReply(
+export function parseConversationalReply(
   raw: string,
   allowedEntryIds: ReadonlySet<string>,
 ): ConversationalReply {
