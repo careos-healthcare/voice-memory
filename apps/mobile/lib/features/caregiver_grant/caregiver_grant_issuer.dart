@@ -1,3 +1,4 @@
+import 'package:archiveme_mobile/features/caregiver/caregiver_models.dart';
 import 'package:archiveme_mobile/features/caregiver_grant/caregiver_grant_contact_store.dart';
 
 /// One grant, as the form collects it.
@@ -37,10 +38,15 @@ sealed class CaregiverGrantOutcome {
 }
 
 class CaregiverGrantGranted extends CaregiverGrantOutcome {
-  const CaregiverGrantGranted({required this.tokenId, required this.expiresAt});
+  const CaregiverGrantGranted({
+    required this.tokenId,
+    required this.expiresAt,
+    this.redemption,
+  });
 
   final String tokenId;
   final DateTime expiresAt;
+  final CaregiverRedemptionInvite? redemption;
 }
 
 class CaregiverGrantFailed extends CaregiverGrantOutcome {

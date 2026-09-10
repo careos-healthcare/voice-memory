@@ -1,5 +1,5 @@
 import "server-only";
-import { createHash } from "node:crypto";
+import { createHash, randomBytes, randomInt } from "node:crypto";
 
 import {
   caregiverConsentCanonicalPayload,
@@ -48,6 +48,33 @@ export function hashCaregiverRedemptionCode(code: string): string {
     .update(`${code}:${caregiverConsentSecret()}`)
     .digest("hex");
 }
+
+const UNAMBIGUOUS_ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"; // excludes 0/O and 1/I/L
+
+function randomAlphabetString(length: number): string {
+  let result = "";
+  for (let i = 0; i < length; i++) {
+    result += UNAMBIGUOUS_ALPHABET[randomInt(UNAMBIGUOUS_ALPHABET.length)];
+  }
+  return result;
+}
+
+/** High-entropy token embedded in the caregiver's Universal Link. */
+export function createCaregiverLinkToken(): string {
+  return randomBytes(32).toString("base64url");
+}
+
+/** Short, human-typeable fallback code for manual entry. */
+export function createCaregiverManualCode(): string {
+  return randomAlphabetString(8);
+}
+
+/** Short public lookup key — not secret, just avoids scanning every row. */
+export function createCaregiverReference(): string {
+  return randomAlphabetString(4);
+}
+
+export const CAREGIVER_REDEMPTION_CODE_TTL_MS = 7 * 24 * 60 * 60 * 1000; // 7 days
 
 export interface IssueServerCaregiverConsentInput {
   tokenId: string;

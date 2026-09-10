@@ -50,7 +50,26 @@ class HttpCaregiverConsentApiClient
         return _transport.decodeEnvelope(
           response,
           parseData: ConsentIssueResponseDto.fromJson,
-          toDomain: (dto) => MonitoringConsentToken.fromJson(dto.token),
+          toDomain: (dto) {
+            final token = MonitoringConsentToken.fromJson(dto.token);
+            final redemption = dto.redemption;
+            if (redemption == null) return token;
+            return MonitoringConsentToken(
+              tokenId: token.tokenId,
+              subjectAccountId: token.subjectAccountId,
+              caregiverId: token.caregiverId,
+              permissions: token.permissions,
+              issuedAt: token.issuedAt,
+              expiresAt: token.expiresAt,
+              policyVersion: token.policyVersion,
+              signature: token.signature,
+              redemption: CaregiverRedemptionInvite(
+                linkToken: redemption.linkToken,
+                manualCode: redemption.manualCode,
+                reference: redemption.reference,
+              ),
+            );
+          },
           missingDataMessage: 'Caregiver consent token missing',
         );
       },

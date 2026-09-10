@@ -175,7 +175,8 @@ class _CaregiverConsentEntryScreenState
         const SizedBox(height: AppSpacing.sm),
         TextField(
           controller: _codeController,
-          keyboardType: TextInputType.number,
+          keyboardType: TextInputType.text,
+          textCapitalization: TextCapitalization.characters,
           decoration: const InputDecoration(
             labelText: 'Code',
             border: OutlineInputBorder(),

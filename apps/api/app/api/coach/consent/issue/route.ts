@@ -7,7 +7,15 @@ import {
   apiErrorResponse,
 } from "@/lib/server/api-error-response";
 import { issueServerCoachConsentToken } from "@/lib/server/coach-consent-crypto";
-import { issueServerCaregiverConsentToken } from "@/lib/server/caregiver-consent-crypto";
+import {
+  CAREGIVER_REDEMPTION_CODE_TTL_MS,
+  createCaregiverLinkToken,
+  createCaregiverManualCode,
+  createCaregiverReference,
+  hashCaregiverRedemptionCode,
+  issueServerCaregiverConsentToken,
+} from "@/lib/server/caregiver-consent-crypto";
+import { issueRedemptionCode } from "@/lib/server/caregiver-redemption-store";
 import { recordConsentGrantIssued } from "@/lib/server/consent-revocation-store";
 import { upsertUserRelationship } from "@/lib/server/user-relationships-store";
 import { getServerSession } from "@/lib/server/session";
@@ -107,6 +115,23 @@ export async function POST(request: Request) {
         permissions,
       });
 
+      const linkToken = createCaregiverLinkToken();
+      const manualCode = createCaregiverManualCode();
+      const reference = createCaregiverReference();
+      const linkTokenHash = hashCaregiverRedemptionCode(linkToken);
+      const manualCodeHash = hashCaregiverRedemptionCode(manualCode);
+      const redemptionExpiresAt = new Date(
+        Date.now() + CAREGIVER_REDEMPTION_CODE_TTL_MS,
+      ).toISOString();
+
+      await issueRedemptionCode({
+        tokenId: token.tokenId,
+        reference,
+        linkTokenHash,
+        manualCodeHash,
+        expiresAt: redemptionExpiresAt,
+      });
+
       // Registered before the token is handed out, and a hard failure if it
       // cannot be: without this row the owner can only revoke while they still
       // hold the token themselves, and a grant that might not be revocable
@@ -118,9 +143,10 @@ export async function POST(request: Request) {
         partyId: caregiverId,
         issuedAt: token.issuedAt,
         expiresAt: token.expiresAt,
+        permissions,
       });
 
-      return NextResponse.json({ ok: true, token });
+      return NextResponse.json({ ok: true, token, redemption: { linkToken, manualCode, reference } });
     } catch (error) {
       return apiErrorFromException(error, {
         code: "CAREGIVER_CONSENT_ISSUE_FAILED",

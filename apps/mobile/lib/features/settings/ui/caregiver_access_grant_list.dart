@@ -1,13 +1,18 @@
 import 'dart:async';
 
 import 'package:archiveme_mobile/core/config/v1_capability_registry.dart';
+import 'package:archiveme_mobile/core/di/app_provider_container.dart';
+import 'package:archiveme_mobile/core/di/network_providers.dart';
 import 'package:archiveme_mobile/design/archive_mobile_typography.dart';
 import 'package:archiveme_mobile/features/auth/application/multi_party_access_service.dart';
 import 'package:archiveme_mobile/features/auth/domain/caregiver_access_copy.dart';
 import 'package:archiveme_mobile/features/auth/domain/caregiver_renewal_copy.dart';
 import 'package:archiveme_mobile/features/auth/domain/consent_renewal_outcome.dart';
 import 'package:archiveme_mobile/features/auth/domain/multi_party_access_grant.dart';
+import 'package:archiveme_mobile/features/caregiver/consent_verification_service.dart';
+import 'package:archiveme_mobile/features/caregiver_grant/caregiver_grant_consent_adapter.dart';
 import 'package:archiveme_mobile/features/caregiver_grant/caregiver_grant_flow.dart';
+import 'package:archiveme_mobile/features/caregiver_grant/caregiver_grant_issuer.dart';
 import 'package:archiveme_mobile/features/privacy/privacy_security_engagement_analytics.dart';
 import 'package:archiveme_mobile/theme/app_colors.dart';
 import 'package:archiveme_mobile/theme/app_spacing.dart';
@@ -184,7 +189,15 @@ class _CaregiverAccessGrantListState extends State<CaregiverAccessGrantList> {
 
     if (outcome.shouldOfferFreshGrant) {
       _showSnack(CaregiverRenewalCopy.freshGrantSnack);
-      await CaregiverGrantFlow.start(context);
+      final container = boundAppProviderContainer;
+      final issuer = container != null
+          ? CaregiverGrantConsentAdapter(
+              verificationService: ConsentVerificationService(
+                consentApi: container.read(caregiverConsentApiClientProvider),
+              ),
+            )
+          : const UnwiredCaregiverGrantIssuer();
+      await CaregiverGrantFlow.start(context, issuer: issuer);
       if (mounted) await _reload();
       return;
     }

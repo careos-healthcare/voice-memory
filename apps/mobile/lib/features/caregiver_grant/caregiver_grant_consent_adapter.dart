@@ -73,6 +73,7 @@ class CaregiverGrantConsentAdapter implements CaregiverGrantIssuer {
     return CaregiverGrantGranted(
       tokenId: token.tokenId,
       expiresAt: token.expiresAt,
+      redemption: token.redemption,
     );
   }
 }

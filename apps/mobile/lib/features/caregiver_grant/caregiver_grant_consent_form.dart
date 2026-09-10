@@ -9,6 +9,7 @@ import 'package:archiveme_mobile/features/caregiver_grant/widgets/caregiver_gran
 import 'package:archiveme_mobile/theme/app_colors.dart';
 import 'package:archiveme_mobile/theme/app_spacing.dart';
 import 'package:flutter/material.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:uuid/uuid.dart';
 
 /// Final step: who the grant is for, then Grant Access.
@@ -104,6 +105,15 @@ class _CaregiverConsentFormState extends State<CaregiverConsentForm> {
     switch (outcome) {
       case CaregiverGrantGranted():
         setState(() => _busy = false);
+        final redemption = outcome.redemption;
+        if (redemption != null) {
+          await _showInviteShareDialog(
+            reference: redemption.reference,
+            manualCode: redemption.manualCode,
+            linkToken: redemption.linkToken,
+          );
+          if (!mounted) return;
+        }
         final onGranted = widget.onGranted;
         if (onGranted != null) {
           onGranted(outcome);
@@ -116,6 +126,56 @@ class _CaregiverConsentFormState extends State<CaregiverConsentForm> {
           _submitError = CaregiverGrantCopy.grantUnavailable;
         });
     }
+  }
+
+  Future<void> _showInviteShareDialog({
+    required String reference,
+    required String manualCode,
+    required String linkToken,
+  }) {
+    final inviteUrl = Uri.https(
+      'archiveme.app',
+      '/caregiver/invite',
+      {'token': linkToken},
+    ).toString();
+    final shareMessage =
+        '$inviteUrl\n\nIf the link does not open, enter reference $reference '
+        'and code $manualCode.';
+
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Invite ready'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Reference: $reference',
+              style: ArchiveMobileTypography.explanationBody(context),
+            ),
+            const SizedBox(height: AppSpacing.sm),
+            Text(
+              'Code: $manualCode',
+              style: ArchiveMobileTypography.explanationBody(context),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              unawaited(Share.share(shareMessage));
+            },
+            child: const Text('Share Invite'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(dialogContext).pop(),
+            child: const Text('Done'),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
