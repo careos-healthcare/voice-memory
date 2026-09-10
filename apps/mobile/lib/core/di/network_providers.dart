@@ -12,6 +12,7 @@ import 'package:archiveme_mobile/data/network/billing_api_client.dart';
 import 'package:archiveme_mobile/data/network/capture_api_client.dart';
 import 'package:archiveme_mobile/data/network/caregiver_consent_api_client.dart';
 import 'package:archiveme_mobile/data/network/coach_consent_api_client.dart';
+import 'package:archiveme_mobile/data/network/insights_conversation_api_client.dart';
 import 'package:archiveme_mobile/data/network/live_audio_api_client.dart';
 import 'package:archiveme_mobile/data/network/push_api_client.dart';
 import 'package:archiveme_mobile/data/network/sync_api_client.dart';
@@ -139,6 +140,12 @@ final caregiverConsentApiClientProvider = Provider<CaregiverConsentApiClient>(
 final userRelationshipApiClientProvider = Provider<UserRelationshipApiClient>(
   (ref) => ref.watch(voiceMemoryApiClientBundleProvider).userRelationships,
 );
+
+final insightsConversationApiClientProvider =
+    Provider<InsightsConversationApiClient>(
+      (ref) =>
+          ref.watch(voiceMemoryApiClientBundleProvider).insightsConversation,
+    );
 
 final insightsApiServiceProvider = Provider<ApiService>(
   (ref) => ref.watch(voiceMemoryApiClientBundleProvider).insights,

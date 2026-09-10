@@ -48,6 +48,7 @@ import 'package:archiveme_mobile/ui/screens/settings/privacy_security_screen.dar
 import 'package:archiveme_mobile/features/settings/ui/caregiver_access_screen.dart';
 import 'package:archiveme_mobile/features/caregiver_grant/caregiver_consent_entry_screen.dart';
 import 'package:archiveme_mobile/features/caregiver_grant/caregiver_dashboard_screen.dart';
+import 'package:archiveme_mobile/features/insights/explore_patterns_screen.dart';
 import 'package:archiveme_mobile/features/settings/ui/crisis_resources_screen.dart';
 import 'package:archiveme_mobile/screens/settings_screen.dart';
 import 'package:archiveme_mobile/screens/support_feedback_screen.dart';
@@ -276,6 +277,11 @@ final GoRouter appRouter = GoRouter(
       builder: (context, state) => CaregiverConsentEntryScreen(
         linkToken: state.uri.queryParameters['token'],
       ),
+    ),
+    GoRoute(
+      path: RouteCatalog.explorePatterns,
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) => const ExplorePatternsScreen(),
     ),
     GoRoute(
       path: RouteCatalog.caregiverHome,

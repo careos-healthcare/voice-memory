@@ -149,6 +149,10 @@ abstract final class VoiceMemoryApiRoutes {
     '/api/insights/comparison',
     {VoiceMemoryHttpMethod.get},
   );
+  static const insightsConversation = VoiceMemoryApiEndpoint(
+    '/api/insights/conversation',
+    {VoiceMemoryHttpMethod.post},
+  );
 
   // — Ledger —
   static const ledgerBulkImport = VoiceMemoryApiEndpoint(
@@ -279,6 +283,7 @@ abstract final class VoiceMemoryApiRoutes {
     insightsEvidence,
     insightsWeeklyStory,
     insightsComparison,
+    insightsConversation,
     ledgerBulkImport,
     onboardingBrainDump,
     userRelationships,

@@ -3,6 +3,7 @@ import 'package:archiveme_mobile/features/archive/ui/trust_status_footer.dart';
 import 'package:archiveme_mobile/features/archive/v1/archive_belief_load_state.dart';
 import 'package:archiveme_mobile/features/archive/v1/archive_feed_pagination_provider.dart';
 import 'package:archiveme_mobile/features/archive_changes/archive_changes_adapter.dart';
+import 'package:archiveme_mobile/features/insights/pattern_exploration_entry_card.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/theme/app_colors.dart';
 import 'package:archiveme_mobile/widgets/archive/archive_changes_section.dart';
@@ -78,6 +79,17 @@ class ArchiveDashboardScrollView extends StatelessWidget {
                     loadState: loadState,
                     showChangesUnavailable: showChangesUnavailable,
                   ),
+                ),
+              ),
+              SliverPadding(
+                padding: EdgeInsets.fromLTRB(
+                  sliverPadding.left,
+                  0,
+                  sliverPadding.right,
+                  0,
+                ),
+                sliver: const SliverToBoxAdapter(
+                  child: PatternExplorationEntryCard(),
                 ),
               ),
               if (loadState == ArchiveBeliefLoadState.loading &&

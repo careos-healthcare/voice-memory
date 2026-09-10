@@ -110,6 +110,7 @@ abstract final class V1RouteRegistry {
     '/archive-timeline',
     '/archive-review',
     '/ask-archive',
+    RouteCatalog.explorePatterns,
     '/moment-detail',
     '/updates',
     '/archive-export',
