@@ -1,5 +1,6 @@
 import 'package:archiveme_mobile/core/config/v1_launch_product_contract.dart';
 import 'package:archiveme_mobile/core/config/watch_companion_feature_flags.dart';
+import 'package:archiveme_mobile/features/belief_evidence/provenance_recovery_feature_flags.dart';
 import 'package:archiveme_mobile/features/caregiver/caregiver_feature_flags.dart';
 import 'package:archiveme_mobile/features/insights/pattern_exploration_feature_flags.dart';
 import 'package:archiveme_mobile/features/insights/trend_pattern_summary_feature_flags.dart';
@@ -56,6 +57,10 @@ abstract final class V1CapabilityRegistry {
   /// Trend pattern summary — compile-time gated.
   static bool get trendPatternSummary =>
       TrendPatternSummaryFeatureFlags.isEnabled;
+
+  /// Provenance recovery — compile-time gated.
+  static bool get provenanceRecovery =>
+      ProvenanceRecoveryFeatureFlags.isEnabled;
 
   /// Apple Watch quick-record companion — see `docs/WATCHOS_SETUP.md`.
   static bool get watchCompanion => WatchCompanionFeatureFlags.enableWatchCompanion;
