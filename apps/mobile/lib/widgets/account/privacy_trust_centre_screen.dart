@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:archiveme_mobile/core/config/v1_billing_capability.dart';
 import 'package:archiveme_mobile/design/archive_mobile_typography.dart';
 import 'package:archiveme_mobile/features/archive_history/archive_history_engine.dart';
@@ -17,12 +19,12 @@ import 'package:archiveme_mobile/theme/app_spacing.dart';
 import 'package:archiveme_mobile/widgets/account/beta_activation_summary_sheet.dart';
 import 'package:archiveme_mobile/widgets/account/beta_feedback_sheet.dart';
 import 'package:archiveme_mobile/widgets/account/local_backup_restore_sheet.dart';
+import 'package:archiveme_mobile/widgets/account/stopped_observations_sheet.dart';
 import 'package:archiveme_mobile/widgets/archive_history/archive_history_sheet.dart';
 import 'package:archiveme_mobile/widgets/privacy/privacy_summary_section.dart';
 import 'package:archiveme_mobile/widgets/pushed_screen_shell.dart';
 import 'package:archiveme_mobile/widgets/settings/privacy_data_controls_dialogs.dart';
 import 'package:flutter/material.dart';
-import 'dart:async';
 
 /// Privacy & Trust Centre — what is stored, what stays private, and controls.
 class PrivacyTrustCentreScreen extends StatefulWidget {
@@ -131,12 +133,20 @@ class _PrivacyTrustCentreScreenState extends State<PrivacyTrustCentreScreen> {
     return false;
   }
 
+  void _openStoppedObservations() {
+    unawaited(
+      StoppedObservationsSheet.show(context, controls: _controls),
+    );
+  }
+
   void _sendBetaFeedback() {
-    unawaited(BetaFeedbackSheet.show(
-      context,
-      source: 'privacy_trust_centre',
-      entryCount: _entryCount,
-    ));
+    unawaited(
+      BetaFeedbackSheet.show(
+        context,
+        source: 'privacy_trust_centre',
+        entryCount: _entryCount,
+      ),
+    );
   }
 
   void _openBetaProgressSummary() {
@@ -217,6 +227,11 @@ class _PrivacyTrustCentreScreenState extends State<PrivacyTrustCentreScreen> {
               key: const Key('privacy_trust_control_correct_transcript'),
               title: PrivacyTrustCopy.correctTranscriptControl,
               onTap: _loaded ? _openArchiveHistory : null,
+            ),
+            _controlTile(
+              key: const Key('privacy_trust_control_stopped_observations'),
+              title: PrivacyTrustCopy.stoppedObservationsControl,
+              onTap: _loaded ? _openStoppedObservations : null,
             ),
             _controlTile(
               key: const Key('privacy_trust_control_delete_archive'),

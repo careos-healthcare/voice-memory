@@ -23,6 +23,19 @@ abstract final class PrivacyTrustCopy {
   static const yourControlsHeading = 'Your controls';
 
   static const correctTranscriptControl = 'Correct transcript';
+  static const stoppedObservationsControl = 'Stopped observations';
+  static const stoppedObservationsEmpty = 'Nothing stopped.';
+  static const stoppedObservationsUndo = 'Undo';
+  static const stoppedObservationsUndoTitle = 'See this again?';
+  static const stoppedObservationsUndoBody =
+      'This observation may appear in your archive again.';
+  static const stoppedObservationsUndoConfirm = 'See this again';
+  static const stoppedObservationsUndoCancel = 'Cancel';
+  static const stoppedObservationsUndoFailed = 'Could not undo. Try again.';
+
+  static String stoppedObservationsFallback(String dateLabel) =>
+      'Stopped · $dateLabel';
+
   static const deleteArchiveControl = 'Delete archive';
   static const copyPrivateReportControl = 'Copy private report';
   static const sendBetaFeedbackControl = 'Send beta feedback';
@@ -33,9 +46,11 @@ abstract final class PrivacyTrustCopy {
 
   static const betaProgressSummaryControl = 'Beta progress summary';
 
-  static const String notEnoughReportEvidence = PrivateReportCopy.insufficientEvidence;
+  static const String notEnoughReportEvidence =
+      PrivateReportCopy.insufficientEvidence;
 
-  static const deleteArchiveDone = PrivacyClaimCatalogue.localArchiveCleared;
+  static const String deleteArchiveDone =
+      PrivacyClaimCatalogue.localArchiveCleared;
 
   static List<String> allVisibleStrings() => [
     title,
@@ -43,6 +58,15 @@ abstract final class PrivacyTrustCopy {
     whatNotIncludedBody,
     yourControlsHeading,
     correctTranscriptControl,
+    stoppedObservationsControl,
+    stoppedObservationsEmpty,
+    stoppedObservationsUndo,
+    stoppedObservationsUndoTitle,
+    stoppedObservationsUndoBody,
+    stoppedObservationsUndoConfirm,
+    stoppedObservationsUndoCancel,
+    stoppedObservationsUndoFailed,
+    stoppedObservationsFallback('1 January 2000'),
     deleteArchiveControl,
     copyPrivateReportControl,
     sendBetaFeedbackControl,
