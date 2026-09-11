@@ -33,17 +33,20 @@ class ArchiveExportPayload {
     required this.entries,
     required this.exportedAt,
     this.insightCorrectionNotes = const [],
+    this.evidenceTrails = const {},
   });
 
   final List<Map<String, dynamic>> entries;
   final DateTime exportedAt;
   final List<Map<String, String>> insightCorrectionNotes;
+  final Map<String, dynamic> evidenceTrails;
 
   String toJson() => const JsonEncoder.withIndent('  ').convert({
     'app': 'ArchiveMe',
     'exportedAt': exportedAt.toUtc().toIso8601String(),
     'entryCount': entries.length,
     'insightCorrectionNotes': insightCorrectionNotes,
+    'evidenceTrails': evidenceTrails,
     'entries': entries,
   });
 }
@@ -318,7 +321,31 @@ class PrivateDataService {
       entries: entries,
       exportedAt: DateTime.now().toUtc(),
       insightCorrectionNotes: ArchiveInsightFeedbackStore.exportCorrectionNotes(),
+      evidenceTrails: await _readEvidenceTrails(),
     );
+  }
+
+  Future<Map<String, dynamic>> _readEvidenceTrails() async {
+    final prefs = _prefs;
+    if (prefs == null) return const {};
+
+    const keys = [
+      'archiveFacts',
+      'archiveInsightFeedbackRecords',
+      'archiveWatchlistItems',
+      'archiveChangeTimelineMetrics',
+      'helped_tracking_records_v1',
+      'what_changed_v2_records_v1',
+    ];
+
+    final trails = <String, dynamic>{};
+    for (final key in keys) {
+      final value = await prefs.readMap(key);
+      if (value != null && value.isNotEmpty) {
+        trails[key] = value;
+      }
+    }
+    return trails;
   }
 
   Map<String, dynamic> _sanitizedEntry(JournalEntry entry) {

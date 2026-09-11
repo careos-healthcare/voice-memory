@@ -30,6 +30,7 @@ class _ExportScreenState extends State<ExportScreen> {
     try {
       final payload = await PrivateDataService(
         journalStore: AppServices.instance.journalStore,
+        prefs: AppServices.instance.prefs,
       ).buildSanitizedExport();
       final json = payload.toJson();
       final dir = await getTemporaryDirectory();
