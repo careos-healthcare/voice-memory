@@ -19,13 +19,20 @@ class _FakeVerificationService implements ConsentVerificationService {
 
   final MonitoringConsentToken? _token;
   final String? _error;
+  final List<({String? caregiverEmail, bool sendInviteEmail})> issueCalls = [];
 
   @override
   Future<MonitoringConsentToken> issueToken({
     required String subjectAccountId,
     required String caregiverId,
     required CaregiverPermissions permissions,
+    String? caregiverEmail,
+    bool sendInviteEmail = false,
   }) async {
+    issueCalls.add((
+      caregiverEmail: caregiverEmail,
+      sendInviteEmail: sendInviteEmail,
+    ));
     final error = _error;
     if (error != null) throw StateError(error);
     return _token!;
@@ -104,8 +111,9 @@ void main() {
       signature: 'sig',
     );
     final recorder = _RecordingMultiPartyAccessService();
+    final verification = _FakeVerificationService.succeeds(token);
     final adapter = CaregiverGrantConsentAdapter(
-      verificationService: _FakeVerificationService.succeeds(token),
+      verificationService: verification,
       contactStore: await CaregiverGrantContactStore.open(),
       multiPartyAccessService: recorder,
     );
@@ -113,6 +121,9 @@ void main() {
     final outcome = await adapter.issue(request);
 
     expect(outcome, isA<CaregiverGrantGranted>());
+    expect(verification.issueCalls, hasLength(1));
+    expect(verification.issueCalls.single.caregiverEmail, isNull);
+    expect(verification.issueCalls.single.sendInviteEmail, isFalse);
     expect(recorder.calls, hasLength(1));
     expect(recorder.calls.single['role'], MultiPartyAccessRole.caregiver);
     expect(recorder.calls.single['partyId'], 'Sam');
@@ -134,5 +145,65 @@ void main() {
 
     expect(outcome, isA<CaregiverGrantFailed>());
     expect(recorder.calls, isEmpty);
+  });
+
+  test('opt-in invite passes the contact email to issueToken', () async {
+    final token = MonitoringConsentToken(
+      tokenId: 'token-1',
+      subjectAccountId: 'user-1',
+      caregiverId: 'caregiver-1',
+      permissions: CaregiverPermissions.defaultScopes,
+      issuedAt: issuedAt,
+      expiresAt: expiresAt,
+      policyVersion: 1,
+      signature: 'sig',
+    );
+    final verification = _FakeVerificationService.succeeds(token);
+    final adapter = CaregiverGrantConsentAdapter(
+      verificationService: verification,
+      contactStore: await CaregiverGrantContactStore.open(),
+      multiPartyAccessService: _RecordingMultiPartyAccessService(),
+    );
+
+    await adapter.issue(
+      CaregiverGrantRequest(
+        caregiverId: 'caregiver-1',
+        contact: contact,
+        sendInviteEmail: true,
+      ),
+    );
+
+    expect(verification.issueCalls, hasLength(1));
+    expect(verification.issueCalls.single.sendInviteEmail, isTrue);
+    expect(verification.issueCalls.single.caregiverEmail, contact.email);
+  });
+
+  test('emailSent on the issued token surfaces on the granted outcome', () async {
+    final token = MonitoringConsentToken(
+      tokenId: 'token-1',
+      subjectAccountId: 'user-1',
+      caregiverId: 'caregiver-1',
+      permissions: CaregiverPermissions.defaultScopes,
+      issuedAt: issuedAt,
+      expiresAt: expiresAt,
+      policyVersion: 1,
+      signature: 'sig',
+      redemption: const CaregiverRedemptionInvite(
+        linkToken: 'link-1',
+        manualCode: 'code-1',
+        reference: 'ref-1',
+        emailSent: true,
+      ),
+    );
+    final adapter = CaregiverGrantConsentAdapter(
+      verificationService: _FakeVerificationService.succeeds(token),
+      contactStore: await CaregiverGrantContactStore.open(),
+      multiPartyAccessService: _RecordingMultiPartyAccessService(),
+    );
+
+    final outcome = await adapter.issue(request);
+
+    expect(outcome, isA<CaregiverGrantGranted>());
+    expect((outcome as CaregiverGrantGranted).redemption?.emailSent, isTrue);
   });
 }

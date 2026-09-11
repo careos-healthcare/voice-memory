@@ -2,6 +2,8 @@ import { randomUUID } from "node:crypto";
 
 import { NextResponse } from "next/server";
 
+import { CaregiverInviteEmailError } from "@/lib/email/send-caregiver-invite-email";
+import { attemptCaregiverInviteEmail } from "@/src/services/caregiver/attempt-caregiver-invite-email";
 import {
   apiErrorFromException,
   apiErrorResponse,
@@ -19,6 +21,7 @@ import { issueRedemptionCode } from "@/lib/server/caregiver-redemption-store";
 import { recordConsentGrantIssued } from "@/lib/server/consent-revocation-store";
 import { upsertUserRelationship } from "@/lib/server/user-relationships-store";
 import { getServerSession } from "@/lib/server/session";
+import { logServerEvent } from "@/lib/server/structured-log";
 import type { ArchiveInsightKind } from "@/types/insights";
 import type { CoachSharingPermissions } from "@/types/coach-client-relationship";
 import { COACH_SESSION_PLANNING_INSIGHT_KINDS } from "@/types/coach-client-relationship";
@@ -98,6 +101,8 @@ export async function POST(request: Request) {
     const caregiverId =
       typeof body.caregiverId === "string" ? body.caregiverId.trim() : "";
     const permissions = parseCaregiverPermissions(body.permissions);
+    const caregiverEmail =
+      typeof body.caregiverEmail === "string" ? body.caregiverEmail.trim() : "";
 
     if (!caregiverId) {
       return apiErrorResponse({ code: "INVALID_CAREGIVER_ID", route: "coach/consent/issue" });
@@ -146,7 +151,27 @@ export async function POST(request: Request) {
         permissions,
       });
 
-      return NextResponse.json({ ok: true, token, redemption: { linkToken, manualCode, reference } });
+      const emailSent = await attemptCaregiverInviteEmail({
+        email: caregiverEmail,
+        params: { linkToken, reference, manualCode },
+        onError: (error) => {
+          logServerEvent("api_error", {
+            route: "coach/consent/issue",
+            errorCode:
+              error instanceof CaregiverInviteEmailError
+                ? error.code
+                : "CAREGIVER_INVITE_EMAIL_SEND_FAILED",
+            internalCategory: "internal_error",
+            message: error instanceof Error ? error.message : String(error),
+          });
+        },
+      });
+
+      return NextResponse.json({
+        ok: true,
+        token,
+        redemption: { linkToken, manualCode, reference, emailSent },
+      });
     } catch (error) {
       return apiErrorFromException(error, {
         code: "CAREGIVER_CONSENT_ISSUE_FAILED",

@@ -24,6 +24,8 @@ class _FakeCaregiverConsentApiClient implements CaregiverConsentApiClient {
     required String subjectAccountId,
     required String caregiverId,
     required CaregiverPermissions permissions,
+    String? caregiverEmail,
+    bool sendInviteEmail = false,
     NetworkCancelToken? cancelToken,
   }) async {
     if (issueFailure) {

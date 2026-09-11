@@ -9,6 +9,7 @@ class ConsentRedemptionDto {
     required this.linkToken,
     required this.manualCode,
     required this.reference,
+    this.emailSent = false,
   });
 
   factory ConsentRedemptionDto.fromJson(Map<String, dynamic> json) =>
@@ -19,11 +20,13 @@ class ConsentRedemptionDto {
           field: 'manualCode',
         ),
         reference: JsonConverters.string(json['reference'], field: 'reference'),
+        emailSent: JsonConverters.boolOrFalse(json['emailSent']),
       );
 
   final String linkToken;
   final String manualCode;
   final String reference;
+  final bool emailSent;
 }
 
 /// Wire response for `POST /api/coach/consent/issue`.

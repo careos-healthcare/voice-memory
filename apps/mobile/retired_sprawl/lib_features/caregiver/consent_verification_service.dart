@@ -82,12 +82,16 @@ class ConsentVerificationService {
     required String subjectAccountId,
     required String caregiverId,
     required CaregiverPermissions permissions,
+    String? caregiverEmail,
+    bool sendInviteEmail = false,
   }) async {
     if (AppConfig.isBackendConfigured && _consentApi != null) {
       final result = await _consentApi.issueToken(
         subjectAccountId: subjectAccountId,
         caregiverId: caregiverId,
         permissions: permissions,
+        caregiverEmail: caregiverEmail,
+        sendInviteEmail: sendInviteEmail,
       );
       if (result case ApiSuccess(:final value)) {
         return value;

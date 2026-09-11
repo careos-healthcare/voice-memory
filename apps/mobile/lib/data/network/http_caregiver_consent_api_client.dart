@@ -23,6 +23,8 @@ class HttpCaregiverConsentApiClient
     required String subjectAccountId,
     required String caregiverId,
     required CaregiverPermissions permissions,
+    String? caregiverEmail,
+    bool sendInviteEmail = false,
     NetworkCancelToken? cancelToken,
   }) async {
     if (_transport.tryUri(VoiceMemoryApiRoutes.coachConsentIssue.path) == null) {
@@ -35,6 +37,10 @@ class HttpCaregiverConsentApiClient
         'consentDomain': _consentDomain,
         'caregiverId': caregiverId,
         'permissions': permissions.toJson(),
+        if (sendInviteEmail &&
+            caregiverEmail != null &&
+            caregiverEmail.isNotEmpty)
+          'caregiverEmail': caregiverEmail,
       },
       cancelToken: cancelToken,
     );
@@ -67,6 +73,7 @@ class HttpCaregiverConsentApiClient
                 linkToken: redemption.linkToken,
                 manualCode: redemption.manualCode,
                 reference: redemption.reference,
+                emailSent: redemption.emailSent,
               ),
             );
           },

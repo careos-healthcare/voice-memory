@@ -94,6 +94,9 @@ abstract final class CaregiverGrantCopy {
   static const String reviewSummariesToggleLabel = 'Review summaries';
   static const String reviewSummariesToggleSubtitle =
       'Shown only when Timeline above is also on.';
+  static const String sendInviteEmailToggleLabel = 'Email this invite';
+  static const String sendInviteEmailToggleSubtitle =
+      "We'll send it once to the email above and won't store it.";
 
   static const String cannotHeading = 'What this does not include';
 
@@ -184,7 +187,8 @@ abstract final class CaregiverGrantCopy {
   /// `CaregiverGrantContactStore` and `CaregiverGrantRequest.caregiverId`.
   static const String formIntro =
       'We keep this name and email on this device so you can tell your '
-      'passes apart. We do not send them to our servers.';
+      'passes apart. We do not send them to our servers unless you choose '
+      'to email the invite below.';
 
   static const String nameLabel = 'Their name';
 

@@ -44,7 +44,8 @@ class CaregiverGrantContact {
 /// per-namespace key the journal uses and stores only the ciphertext envelope
 /// under [securePrefsKey].
 ///
-/// None of it is sent to a server. The grant path transmits
+/// None of it is sent to a server unless the user chooses to email the invite.
+/// The grant path transmits
 /// `CaregiverGrantRequest.caregiverId`, an opaque local id, so the third
 /// party's details stay on this device.
 class CaregiverGrantContactStore {

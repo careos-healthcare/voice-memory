@@ -48,6 +48,9 @@ class CaregiverGrantConsentAdapter implements CaregiverGrantIssuer {
           reviewSummaries: request.shareReviewSummaries,
           thresholdAlerts: false,
         ),
+        caregiverEmail:
+            request.sendInviteEmail ? request.contact.email : null,
+        sendInviteEmail: request.sendInviteEmail,
       );
       // issueToken signals "backend not configured" by throwing StateError, so
       // a consent screen has to surface it as a failed grant rather than crash.

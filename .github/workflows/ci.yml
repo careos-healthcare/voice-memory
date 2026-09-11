@@ -57,6 +57,10 @@ jobs:
         if: ${{ !cancelled() && steps.install.outcome == 'success' }}
         run: npm run validate:conversation
 
+      - name: Guard caregiver invite email
+        if: ${{ !cancelled() && steps.install.outcome == 'success' }}
+        run: npm run validate:caregiver-invite-email
+
       - name: Test shared package (node:test)
         if: ${{ !cancelled() && steps.install.outcome == 'success' }}
         run: npm run test:shared

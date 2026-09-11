@@ -16,6 +16,7 @@ class CaregiverGrantRequest {
     this.shareProofTrail = false,
     this.shareTimeline = false,
     this.shareReviewSummaries = false,
+    this.sendInviteEmail = false,
   });
 
   final String caregiverId;
@@ -30,6 +31,7 @@ class CaregiverGrantRequest {
   final bool shareProofTrail;
   final bool shareTimeline;
   final bool shareReviewSummaries;
+  final bool sendInviteEmail;
 }
 
 /// Result of trying to issue a grant.

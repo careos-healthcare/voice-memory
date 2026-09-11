@@ -186,6 +186,7 @@
     "validate:consent-ttl": "TSX_TSCONFIG_PATH=apps/api/tsconfig.json node --conditions=react-server --import tsx scripts/validate-consent-ttl.mjs",
     "validate:curiosity-loop": "TSX_TSCONFIG_PATH=apps/api/tsconfig.json node --conditions=react-server --import tsx scripts/validate-curiosity-loop.mjs",
     "validate:conversation": "TSX_TSCONFIG_PATH=apps/api/tsconfig.json node --conditions=react-server --import tsx scripts/validate-conversation.mjs",
+    "validate:caregiver-invite-email": "TSX_TSCONFIG_PATH=apps/api/tsconfig.json node --conditions=react-server --import tsx scripts/validate-caregiver-invite-email.mjs",
     "validate:genericness-qa": "TSX_TSCONFIG_PATH=apps/api/tsconfig.json node --conditions=react-server --import tsx scripts/validate-genericness-qa.mjs",
     "validate:insight-quality-gate": "node scripts/validate-insight-quality-gate.mjs",
     "validate:recovery-tone": "TSX_TSCONFIG_PATH=apps/api/tsconfig.json node --conditions=react-server --import tsx scripts/validate-recovery-tone.mjs",

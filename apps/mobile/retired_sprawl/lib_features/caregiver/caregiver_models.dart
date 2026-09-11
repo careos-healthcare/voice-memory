@@ -67,11 +67,13 @@ class CaregiverRedemptionInvite {
     required this.linkToken,
     required this.manualCode,
     required this.reference,
+    this.emailSent = false,
   });
 
   final String linkToken;
   final String manualCode;
   final String reference;
+  final bool emailSent;
 }
 
 class MonitoringConsentToken {

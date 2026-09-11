@@ -35,6 +35,8 @@ class CaregiverConsentForm extends StatefulWidget {
   static const Key proofTrailToggleKey = Key('caregiver_grant_proof_trail_toggle');
   static const Key timelineToggleKey = Key('caregiver_grant_timeline_toggle');
   static const Key reviewSummariesToggleKey = Key('caregiver_grant_review_summaries_toggle');
+  static const Key sendInviteEmailToggleKey =
+      Key('caregiver_grant_send_invite_email_toggle');
 
   final CaregiverGrantIssuer issuer;
   final VoidCallback? onCancel;
@@ -55,6 +57,7 @@ class _CaregiverConsentFormState extends State<CaregiverConsentForm> {
   bool _shareProofTrail = false;
   bool _shareTimeline = false;
   bool _shareReviewSummaries = false;
+  bool _sendInviteEmail = false;
 
   @override
   void dispose() {
@@ -98,6 +101,7 @@ class _CaregiverConsentFormState extends State<CaregiverConsentForm> {
         shareProofTrail: _shareProofTrail,
         shareTimeline: _shareTimeline,
         shareReviewSummaries: _shareReviewSummaries,
+        sendInviteEmail: _sendInviteEmail,
       ),
     );
     if (!mounted) return;
@@ -111,6 +115,8 @@ class _CaregiverConsentFormState extends State<CaregiverConsentForm> {
             reference: redemption.reference,
             manualCode: redemption.manualCode,
             linkToken: redemption.linkToken,
+            emailSent: redemption.emailSent,
+            contactName: _nameController.text.trim(),
           );
           if (!mounted) return;
         }
@@ -132,6 +138,8 @@ class _CaregiverConsentFormState extends State<CaregiverConsentForm> {
     required String reference,
     required String manualCode,
     required String linkToken,
+    required bool emailSent,
+    required String contactName,
   }) {
     final inviteUrl = Uri.https(
       'archiveme.app',
@@ -160,6 +168,13 @@ class _CaregiverConsentFormState extends State<CaregiverConsentForm> {
               'Code: $manualCode',
               style: ArchiveMobileTypography.explanationBody(context),
             ),
+            if (emailSent) ...[
+              const SizedBox(height: AppSpacing.sm),
+              Text(
+                'Emailed to $contactName',
+                style: ArchiveMobileTypography.explanationBody(context),
+              ),
+            ],
           ],
         ),
         actions: [
@@ -287,6 +302,18 @@ class _CaregiverConsentFormState extends State<CaregiverConsentForm> {
                       title: const Text(CaregiverGrantCopy.reviewSummariesToggleLabel),
                       subtitle:
                           const Text(CaregiverGrantCopy.reviewSummariesToggleSubtitle),
+                    ),
+                    SwitchListTile(
+                      key: CaregiverConsentForm.sendInviteEmailToggleKey,
+                      contentPadding: EdgeInsets.zero,
+                      value: _sendInviteEmail,
+                      onChanged: _busy
+                          ? null
+                          : (value) => setState(() => _sendInviteEmail = value),
+                      title: const Text(CaregiverGrantCopy.sendInviteEmailToggleLabel),
+                      subtitle: const Text(
+                        CaregiverGrantCopy.sendInviteEmailToggleSubtitle,
+                      ),
                     ),
                     const SizedBox(height: AppSpacing.md),
                     Text(
