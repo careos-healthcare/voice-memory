@@ -232,7 +232,7 @@ void main() {
       );
     });
 
-    test('adapted copy avoids banned language', () {
+    test('adapted copy avoids banned language', () async {
       const base = 'Work pressure keeps showing up before you say yes.';
       for (final target in ArchiveInsightTarget.values) {
         await ArchiveInsightFeedbackStore.resetForTest();
