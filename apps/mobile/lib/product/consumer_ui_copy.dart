@@ -1,6 +1,6 @@
 import 'package:archiveme_mobile/features/archive_proof/visible_archive_proof_copy.dart';
 import 'package:archiveme_mobile/features/onboarding/ui/onboarding_v1_copy.dart';
-import 'package:archiveme_mobile/features/landing_continuity/landing_app_continuity_copy.dart';
+import 'package:archiveme_mobile/product/landing_app_continuity_copy.dart';
 import 'package:archiveme_mobile/security/privacy_claim_catalogue.dart';
 
 /// Consumer-facing UI copy — calm, human, App Store-ready.

@@ -18,7 +18,7 @@ import 'package:archiveme_mobile/features/early_archive/return_check_payoff_copy
 import 'package:archiveme_mobile/features/early_archive/weekly_archive_review_copy.dart';
 import 'package:archiveme_mobile/features/first_proof_payoff/first_proof_payoff_copy.dart';
 import 'package:archiveme_mobile/features/first_save_lift/first_save_lift_copy.dart';
-import 'package:archiveme_mobile/features/landing_continuity/landing_app_continuity_copy.dart';
+import 'package:archiveme_mobile/product/landing_app_continuity_copy.dart';
 import 'package:archiveme_mobile/features/low_evidence/low_evidence_copy.dart';
 import 'package:archiveme_mobile/features/low_friction_return/low_friction_return_engine.dart';
 import 'package:archiveme_mobile/features/next_action/next_best_action_copy.dart';

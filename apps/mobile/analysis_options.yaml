@@ -217,7 +217,6 @@ analyzer:
     - lib/features/interpretation/**
     - lib/features/journal/**
     - lib/features/journal_entry/**
-    - lib/features/landing_continuity/**
     - lib/features/language/**
     - lib/features/lenses/**
     - lib/features/life_chapters/**

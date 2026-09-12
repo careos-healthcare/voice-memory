@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:archiveme_mobile/features/archive_proof/proof_surface_advice_guard.dart';
 import 'package:archiveme_mobile/features/change_trail_clarity/change_trail_clarity.dart';
 import 'package:archiveme_mobile/features/core_archive_journey/core_archive_journey.dart';
-import 'package:archiveme_mobile/features/landing_continuity/landing_app_continuity_copy.dart';
+import 'package:archiveme_mobile/product/landing_app_continuity_copy.dart';
 import 'package:archiveme_mobile/features/paywall_value_sharpening/paywall_value_sharpening_copy.dart';
 import 'package:archiveme_mobile/features/pro_promise_copy_audit/pro_promise_copy_audit.dart';
 import 'package:archiveme_mobile/features/pro_promise_copy_audit/pro_promise_copy_audit_copy.dart';
