@@ -944,6 +944,45 @@ void main() {
       ),
     ];
 
+    List<JournalEntry> fiveDistinctUnrelatedEntries() => [
+      ...threeDistinctUnrelatedEntries(),
+      surfaceEntry(
+        id: 'u4',
+        transcript: 'The coffee machine broke before my first meeting.',
+        createdAt: DateTime(2026, 6, 13, 12),
+      ),
+      surfaceEntry(
+        id: 'u5',
+        transcript: 'I missed the bus and walked the long way around town.',
+        createdAt: DateTime(2026, 6, 14, 12),
+      ),
+    ];
+
+    List<JournalEntry> mixedRepeatAndWalkEntries() => [
+      ...fiveSaidYesEntries().sublist(0, 3),
+      surfaceEntry(
+        id: 'w4',
+        transcript: 'I walked outside before replying and it helped.',
+        createdAt: DateTime(2026, 6, 13, 12),
+      ),
+      surfaceEntry(
+        id: 'w5',
+        transcript: 'Same week I walked outside again before the hard email.',
+        createdAt: DateTime(2026, 6, 14, 12),
+      ),
+    ];
+
+    List<RepeatReturnCheckRecord> laterReturnChecks(
+      RepeatReturnCheckChoice choice,
+    ) => [
+      RepeatReturnCheckRecord(
+        entryId: 'e4',
+        choice: choice,
+        entryCountAtCapture: 4,
+        createdAt: DateTime(2026, 6, 14),
+      ),
+    ];
+
     void expectNoDebugLabels(Iterable<String> copy) {
       final joined = copy.join(' ').toLowerCase();
       expect(joined, isNot(contains('[draft]')));
@@ -1094,7 +1133,7 @@ void main() {
         expect(withoutChange!.whatChanged?.isSupported, isFalse);
         expect(
           withoutChange.whatChanged?.body,
-          review_surface_copy.WeeklyArchiveReviewCopy.notEnoughEvidenceYet,
+          review_surface_copy.WeeklyArchiveReviewCopy.changedFallback,
         );
 
         final withChange = review_surface.WeeklyArchiveReviewEngine.build(
@@ -1110,6 +1149,69 @@ void main() {
         expect(withChange.whatChanged!.body, isNotEmpty);
       });
 
+      test(
+        'return-check-only stronger and same emit supported changed lines',
+        () {
+          final entries = fiveSaidYesEntries().sublist(0, 4);
+
+          final stronger = review_surface.WeeklyArchiveReviewEngine.build(
+            entries: entries,
+            returnChecks: laterReturnChecks(RepeatReturnCheckChoice.stronger),
+            viewingConfirmedRepeatOrTimeline: true,
+          );
+          expect(stronger!.whatChanged?.isSupported, isTrue);
+          expect(
+            stronger.whatChanged!.body,
+            'One later entry sounded more aware of the pressure.',
+          );
+
+          final same = review_surface.WeeklyArchiveReviewEngine.build(
+            entries: entries,
+            returnChecks: laterReturnChecks(RepeatReturnCheckChoice.same),
+            viewingConfirmedRepeatOrTimeline: true,
+          );
+          expect(same!.whatChanged?.isSupported, isTrue);
+          expect(
+            same.whatChanged!.body,
+            'Later entries stayed about the same this week.',
+          );
+
+          final softer = review_surface.WeeklyArchiveReviewEngine.build(
+            entries: entries,
+            returnChecks: laterReturnChecks(RepeatReturnCheckChoice.softer),
+            viewingConfirmedRepeatOrTimeline: true,
+          );
+          expect(softer!.whatChanged?.isSupported, isTrue);
+          expect(
+            softer.whatChanged!.body,
+            'One later entry sounded more aware of checking capacity.',
+          );
+
+          final changedChoice = review_surface.WeeklyArchiveReviewEngine.build(
+            entries: entries,
+            returnChecks: laterReturnChecks(RepeatReturnCheckChoice.changed),
+            viewingConfirmedRepeatOrTimeline: true,
+          );
+          expect(changedChoice!.whatChanged?.isSupported, isFalse);
+          expect(
+            changedChoice.whatChanged?.body,
+            review_surface_copy.WeeklyArchiveReviewCopy.changedFallback,
+          );
+        },
+      );
+
+      test('what repeated uses section-specific empty copy', () {
+        final review = review_surface.WeeklyArchiveReviewEngine.build(
+          entries: fiveDistinctUnrelatedEntries(),
+        );
+        expect(review!.state, WeeklyArchiveReviewState.full);
+        expect(review.whatRepeated?.isSupported, isFalse);
+        expect(
+          review.whatRepeated?.body,
+          review_surface_copy.WeeklyArchiveReviewCopy.repeatedFallback,
+        );
+      });
+
       test('what seemed to help says not enough evidence when unsupported', () {
         final review = review_surface.WeeklyArchiveReviewEngine.build(
           entries: fiveSaidYesEntries(),
@@ -1118,8 +1220,25 @@ void main() {
         expect(review!.whatHelped?.isSupported, isFalse);
         expect(
           review.whatHelped?.body,
-          review_surface_copy.WeeklyArchiveReviewCopy.notEnoughEvidenceYet,
+          review_surface_copy.WeeklyArchiveReviewCopy.helpedFallback,
         );
+      });
+
+      test('positive-pattern helped line uses noticed-in-your-words prefix', () {
+        final review = review_surface.WeeklyArchiveReviewEngine.build(
+          entries: mixedRepeatAndWalkEntries(),
+          viewingConfirmedRepeatOrTimeline: true,
+        );
+        expect(review!.whatHelped?.isSupported, isTrue);
+        expect(
+          review.whatHelped!.body,
+          startsWith(
+            '${review_surface_copy.WeeklyArchiveReviewCopy.helpedPrefix} ',
+          ),
+        );
+        expect(review.whatHelped!.body.toLowerCase(), contains('walked outside'));
+        expect(review.whatHelped!.body, isNot(contains('You marked that you')));
+        expect(review.whatHelped!.body, isNot(contains('The last time you')));
       });
     });
 

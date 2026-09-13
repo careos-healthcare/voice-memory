@@ -454,7 +454,7 @@ void main() {
       expect(review!.whatRepeated?.isSupported, isTrue);
       expect(
         review.whatHelped?.body,
-        WeeklyArchiveReviewCopy.notEnoughEvidenceYet,
+        WeeklyArchiveReviewCopy.helpedFallback,
       );
     });
 
