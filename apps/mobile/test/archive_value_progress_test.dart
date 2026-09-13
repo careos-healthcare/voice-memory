@@ -1,6 +1,6 @@
-import 'package:archiveme_mobile/features/archive_value/archive_value_progress.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/models/reflection.dart';
+import 'package:archiveme_mobile/widgets/archive_value_progress.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 Reflection _reflection() => const Reflection(

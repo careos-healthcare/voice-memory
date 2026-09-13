@@ -103,7 +103,6 @@ analyzer:
     - lib/features/archive_thought_map/**
     - lib/features/archive_timeline_spine/**
     - lib/features/archive_v1/**
-    - lib/features/archive_value/**
     - lib/features/archive_watchlist/**
     - lib/features/ask_archive/**
     - lib/features/b2b_workplace_pressure_future/**
