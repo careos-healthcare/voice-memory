@@ -1,4 +1,4 @@
-import 'package:archiveme_mobile/features/quick_help/quick_help_model.dart';
+import 'package:archiveme_mobile/widgets/quick_help/quick_help_model.dart';
 
 /// Builds one short, practical Quick help answer for the chosen [intent].
 ///

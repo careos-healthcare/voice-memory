@@ -117,7 +117,7 @@ const _consumerCopyFiles = [
   'lib/features/perspective/kinder_angle_engine.dart',
   'lib/widgets/quick_help/quick_help_sheet.dart',
   'lib/widgets/quick_help/quick_help_button.dart',
-  'lib/features/quick_help/quick_help_engine.dart',
+  'lib/widgets/quick_help/quick_help_engine.dart',
   'lib/features/moments/key_moment_engine.dart',
   'lib/features/moments/moment_tag_model.dart',
   'lib/features/moments/moment_tag_engine.dart',

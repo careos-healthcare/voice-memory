@@ -49,7 +49,6 @@ analyzer:
     - lib/features/action_items_v1_gate/**
     - lib/features/activation/**
     - lib/features/aha/**
-    - lib/features/ai_engines/**
     - lib/features/anchor_calibration/**
     - lib/features/android_after_ios_proof/**
     - lib/features/annual_plan_future/**
@@ -327,7 +326,6 @@ analyzer:
     - lib/features/prove_enough/**
     - lib/features/purchase_smoke_test/**
     - lib/features/quality/**
-    - lib/features/quick_help/**
     - lib/features/quiet_signal/**
     - lib/features/record_capture_modes/**
     - lib/features/recording/**
