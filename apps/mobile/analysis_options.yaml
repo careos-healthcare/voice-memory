@@ -275,7 +275,6 @@ analyzer:
     - lib/features/paywall_value_sharpening/**
     - lib/features/perspective/**
     - lib/features/physical_device_smoke/**
-    - lib/features/pins/**
     - lib/features/positive_archive_reinforcement/**
     - lib/features/post_proof_pro_cta/**
     - lib/features/post_save/**

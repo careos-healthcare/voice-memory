@@ -23,7 +23,7 @@ import 'package:archiveme_mobile/features/memory_transparency/memory_transparenc
 import 'package:archiveme_mobile/features/privacy/on_device_processing_store.dart';
 import 'package:archiveme_mobile/features/privacy/privacy_security_control_center_copy.dart';
 import 'package:archiveme_mobile/features/consent_audit/consent_audit_service.dart';
-import 'package:archiveme_mobile/features/pins/pinned_evidence_store.dart';
+import 'package:archiveme_mobile/widgets/pins/pinned_evidence_store.dart';
 import 'package:archiveme_mobile/features/privacy_trust/privacy_trust_copy.dart';
 import 'package:archiveme_mobile/features/pro_evidence_value/pro_evidence_value_engine.dart';
 import 'package:archiveme_mobile/features/revenue_metrics/revenue_readiness_engine.dart';
