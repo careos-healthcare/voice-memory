@@ -8,9 +8,10 @@ import 'package:archiveme_mobile/theme/voicememory_cards.dart';
 import 'package:archiveme_mobile/widgets/archive/archive_insight_feedback_controls.dart';
 import 'package:flutter/material.dart';
 
-/// Compact or full weekly archive review — summary, not belief history.
-class WeeklyArchiveReviewCard extends StatelessWidget {
-  const WeeklyArchiveReviewCard({
+/// Research-package weekly archive review — compact or full summary, not belief history.
+/// Distinct from Record's WeeklyArchiveReviewCard teaser.
+class ArchiveResearchWeeklyReviewCard extends StatelessWidget {
+  const ArchiveResearchWeeklyReviewCard({
     required this.review,
     super.key,
     this.compact = false,

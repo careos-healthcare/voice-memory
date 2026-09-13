@@ -23,7 +23,7 @@ import 'package:archiveme_mobile/widgets/archive/archive_evidence_map_card.dart'
 import 'package:archiveme_mobile/widgets/archive/context_insights_card.dart';
 import 'package:archiveme_mobile/widgets/archive/archive_health_action_plan_card.dart';
 import 'package:archiveme_mobile/widgets/archive/archive_health_card.dart';
-import 'package:archiveme_mobile/widgets/archive/weekly_archive_review_card.dart';
+import 'package:archiveme_mobile/widgets/archive/archive_research_weekly_review_card.dart';
 import 'package:archiveme_mobile/widgets/record/next_moment_prompt_card.dart';
 import 'package:archiveme_mobile/widgets/billing/paywall_gate.dart';
 import 'package:archiveme_mobile/widgets/consumer/consumer_screen_back_header.dart';
@@ -169,7 +169,7 @@ class _WeeklyArchiveReviewScreenState
                 ),
               ],
               const SizedBox(height: AppSpacing.lg),
-              WeeklyArchiveReviewCard(
+              ArchiveResearchWeeklyReviewCard(
                 review: review,
                 onAddAnother: review.hasEnoughEvidence ? _goToRecord : null,
                 onViewEvidence: review.hasEnoughEvidence ? _goToEvidence : null,

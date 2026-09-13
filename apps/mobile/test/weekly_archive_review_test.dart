@@ -19,7 +19,7 @@ import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/models/reflection.dart';
 import 'package:archiveme_mobile/services/capture_save_messages.dart';
 import 'package:archiveme_mobile/theme/app_theme.dart';
-import 'package:archiveme_mobile/widgets/archive/weekly_archive_review_card.dart';
+import 'package:archiveme_mobile/widgets/archive/archive_research_weekly_review_card.dart';
 import 'package:archiveme_mobile/widgets/weekly_review/weekly_archive_review_card.dart'
     as review_surface_card;
 import 'package:archiveme_mobile/widgets/weekly_review/weekly_archive_review_sheet.dart'
@@ -225,7 +225,7 @@ void main() {
     });
   });
 
-  group('WeeklyArchiveReviewCard', () {
+  group('ArchiveResearchWeeklyReviewCard', () {
     testWidgets('full card renders all sections', (tester) async {
       final review = WeeklyArchiveReviewEngine.build(
         entries: _fiveDistinctWorkEntries(),
@@ -238,7 +238,7 @@ void main() {
           theme: AppTheme.light(),
           home: Scaffold(
             body: SingleChildScrollView(
-              child: WeeklyArchiveReviewCard(review: review),
+              child: ArchiveResearchWeeklyReviewCard(review: review),
             ),
           ),
         ),
@@ -265,7 +265,7 @@ void main() {
         MaterialApp(
           theme: AppTheme.light(),
           home: Scaffold(
-            body: WeeklyArchiveReviewCard(
+            body: ArchiveResearchWeeklyReviewCard(
               review: WeeklyArchiveReview.insufficient(),
             ),
           ),
