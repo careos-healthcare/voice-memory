@@ -327,7 +327,6 @@ analyzer:
     - lib/features/proof_specificity_boost/**
     - lib/features/proof_trail_positioning/**
     - lib/features/prove_enough/**
-    - lib/features/purchase_confidence/**
     - lib/features/purchase_smoke_test/**
     - lib/features/quality/**
     - lib/features/quick_help/**

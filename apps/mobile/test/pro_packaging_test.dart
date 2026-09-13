@@ -17,7 +17,6 @@ import 'package:archiveme_mobile/features/pro_evidence_value/pro_evidence_value_
 import 'package:archiveme_mobile/features/pro_memory/pro_memory_boundary_engine.dart';
 import 'package:archiveme_mobile/features/pro_packaging/pro_value_copy.dart';
 import 'package:archiveme_mobile/features/pro_packaging/pro_value_engine.dart';
-import 'package:archiveme_mobile/features/purchase_confidence/purchase_confidence_copy.dart';
 import 'package:archiveme_mobile/features/repeat_return_check/repeat_return_check_models.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/models/reflection.dart';
@@ -28,6 +27,7 @@ import 'package:archiveme_mobile/services/app_services.dart';
 import 'package:archiveme_mobile/theme/app_theme.dart';
 import 'package:archiveme_mobile/widgets/account/archive_me_pro_value_section.dart';
 import 'package:archiveme_mobile/widgets/patterns/belief_change_moment_card.dart';
+import 'package:archiveme_mobile/widgets/paywall/purchase_confidence_copy.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
