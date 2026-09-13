@@ -1,7 +1,9 @@
 import 'dart:async';
 
+import 'package:archiveme_mobile/core/config/v1_capability_registry.dart';
 import 'package:archiveme_mobile/features/belief_evidence/evidence/journal_transcript_evidence_indexer.dart';
 import 'package:archiveme_mobile/features/belief_evidence/insight_evidence_line.dart';
+import 'package:archiveme_mobile/features/belief_evidence/ui/provenance_recovery_action.dart';
 import 'package:archiveme_mobile/features/belief_evidence/ui/view_source_proof_section.dart';
 import 'package:archiveme_mobile/features/beta_analytics/beta_analytics_hooks.dart';
 import 'package:archiveme_mobile/features/proof_admission/proof_display_gate.dart';
@@ -228,6 +230,9 @@ class _VerifiedChangeCard extends StatelessWidget {
                 ViewSourceProofSection.fromLines(
                   lines: _evidenceLines,
                   claimContext: view.statement,
+                  recoveryBuilder: V1CapabilityRegistry.provenanceRecovery
+                      ? ProvenanceRecoveryAction.productionBuilder
+                      : null,
                 ),
                 const SizedBox(height: 8),
                 Text(
