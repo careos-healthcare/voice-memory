@@ -13,11 +13,8 @@ import 'package:archiveme_mobile/features/pro_interest/pro_interest_models.dart'
 import 'package:archiveme_mobile/features/share/archive_share_actions.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/models/reflection.dart';
-import 'package:archiveme_mobile/screens/support_feedback_screen.dart';
 import 'package:archiveme_mobile/security/sensitive_screen_guard.dart';
 import 'package:archiveme_mobile/storage/mobile_prefs_store.dart';
-import 'package:archiveme_mobile/theme/app_theme.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -265,33 +262,14 @@ void main() {
   });
 
   group('Beta invite routing and links', () {
-    test('route is sensitive and linked from Support and Beta Outcomes', () {
+    test('route is sensitive and linked from Beta Outcomes', () {
       final router = File('lib/router/app_router.dart').readAsStringSync();
-      final support = File(
-        'lib/screens/support_feedback_screen.dart',
-      ).readAsStringSync();
       final outcomes = File(
         '../../packages/archiveme_research/lib/screens/beta_outcomes_screen.dart',
       ).readAsStringSync();
       expect(router, contains("path: '/beta-invite-pack'"));
       expect(SensitiveRoutes.isSensitiveRoute('/beta-invite-pack'), isTrue);
-      expect(support, contains("context.push('/beta-invite-pack')"));
       expect(outcomes, contains("context.push('/beta-invite-pack')"));
-    });
-
-    testWidgets('Support & feedback links to beta invite pack', (tester) async {
-      await tester.pumpWidget(
-        MaterialApp(
-          theme: AppTheme.light(),
-          home: const SupportFeedbackScreen(),
-        ),
-      );
-      await tester.pump();
-      expect(
-        find.byKey(const Key('support_feedback_open_beta_invite_pack')),
-        findsOneWidget,
-      );
-      expect(find.text(BetaInviteCopy.openBetaInviteButton), findsOneWidget);
     });
 
     test('invite screen includes positioning variants and copy actions', () {
