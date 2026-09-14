@@ -1,8 +1,12 @@
 import 'dart:async';
 
+import 'package:archiveme_mobile/core/config/v1_capability_registry.dart';
+import 'package:archiveme_mobile/core/di/archive_feed_providers.dart';
 import 'package:archiveme_mobile/design/archive_mobile_typography.dart';
 import 'package:archiveme_mobile/features/insights/pattern_exploration_conversation_notifier.dart';
 import 'package:archiveme_mobile/features/insights/pattern_exploration_conversation_state.dart';
+import 'package:archiveme_mobile/features/insights/widgets/evidence_connection_graph_viewer.dart';
+import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/theme/app_colors.dart';
 import 'package:archiveme_mobile/theme/app_spacing.dart';
 import 'package:archiveme_mobile/widgets/archive/view_evidence_inline_link.dart';
@@ -20,11 +24,14 @@ class ExplorePatternsScreen extends ConsumerStatefulWidget {
   static const Key composerFieldKey = Key('explore_patterns_composer_field');
   static const Key sendButtonKey = Key('explore_patterns_send_button');
   static const Key errorBannerKey = Key('explore_patterns_error_banner');
+  static const Key seeHowThisConnectsKey =
+      Key('explore_patterns_see_how_this_connects');
 
   static const String screenTitle = 'Explore patterns';
   static const String composerHint = 'Ask about a pattern';
   static const String sendTooltip = 'Send';
   static const String dismissErrorTooltip = 'Dismiss';
+  static const String seeHowThisConnectsLabel = 'See how this connects';
 
   @override
   ConsumerState<ExplorePatternsScreen> createState() =>
@@ -229,6 +236,7 @@ class _PatternExplorationBubble extends StatelessWidget {
                     surface: 'pattern_exploration',
                     claimContext: message.content,
                   ),
+                ExploreCitationGraphAction(message: message),
               ],
             ),
           ),
@@ -277,5 +285,56 @@ class _PatternExplorationErrorBanner extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+/// Opens the citation graph for an assistant reply with two or more sources.
+class ExploreCitationGraphAction extends ConsumerWidget {
+  const ExploreCitationGraphAction({required this.message, super.key});
+
+  final PatternExplorationMessage message;
+
+  static bool shouldShow(PatternExplorationMessage message) {
+    return V1CapabilityRegistry.patternExploration &&
+        message.isAssistant &&
+        message.citedEntryIds.length >= 2;
+  }
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    if (!shouldShow(message)) return const SizedBox.shrink();
+
+    return Align(
+      alignment: AlignmentDirectional.centerStart,
+      child: TextButton(
+        key: ExplorePatternsScreen.seeHowThisConnectsKey,
+        onPressed: () => _openSheet(context, ref),
+        style: TextButton.styleFrom(
+          foregroundColor: AppColors.accentPrimary,
+          padding: const EdgeInsets.symmetric(horizontal: 6),
+          minimumSize: const Size(0, 40),
+          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+        ),
+        child: const Text(ExplorePatternsScreen.seeHowThisConnectsLabel),
+      ),
+    );
+  }
+
+  void _openSheet(BuildContext context, WidgetRef ref) {
+    unawaited(
+      showEvidenceConnectionGraphSheet(
+        context,
+        message: message,
+        getById: (id) => _lookupEntry(ref, id),
+      ),
+    );
+  }
+
+  Future<JournalEntry?> _lookupEntry(WidgetRef ref, String id) async {
+    try {
+      return await ref.read(journalStoreProvider).getById(id);
+    } on Object {
+      return null;
+    }
   }
 }
