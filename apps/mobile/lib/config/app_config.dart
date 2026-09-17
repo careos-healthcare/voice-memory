@@ -225,13 +225,13 @@ class AppConfig {
   }
 
   /// Consumer-facing legal URLs — not the API backend host.
-  static const String privacyUrl = 'https://archiveme.app/privacy';
-  static const String supportUrl = 'https://archiveme.app/contact';
+  static const String privacyUrl = 'https://thoughtprint.xyz/privacy';
+  static const String supportUrl = 'https://thoughtprint.xyz/contact';
 
   /// In-app terms route (see [TermsScreen]).
   static const String termsRoute = '/terms';
   static const String contactUrl = '$productionApiBaseUrl/contact';
-  static const String helpEmail = 'hello@archiveme.app';
+  static const String helpEmail = 'hello@thoughtprint.xyz';
 
   static const bool coreLoopEnabled = true;
   static const bool authImplemented = true;

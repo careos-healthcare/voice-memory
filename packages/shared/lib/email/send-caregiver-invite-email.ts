@@ -3,6 +3,7 @@ import "server-only";
 import { Resend } from "resend";
 
 import { readAuthEmailEnvStatus } from "@/lib/server/env-check";
+import { MARKETING_DOMAIN } from "@/lib/site/marketing-site";
 
 const SUBJECT = "You're invited to ArchiveMe as a caregiver";
 
@@ -36,7 +37,7 @@ function isProduction(): boolean {
 }
 
 function buildInviteUrl(linkToken: string): string {
-  return `https://archiveme.app/caregiver/invite?token=${linkToken}`;
+  return `https://${MARKETING_DOMAIN}/caregiver/invite?token=${linkToken}`;
 }
 
 function buildEmailBody(params: {

@@ -1,17 +1,17 @@
 /** Canonical marketing domain, URLs, and contact addresses — single source. */
 
-export const MARKETING_DOMAIN = "archiveme.app";
+export const MARKETING_DOMAIN = "thoughtprint.xyz";
 
-/** Legacy marketing host — redirect to [MARKETING_SITE_URL] when both point at Vercel. */
-export const LEGACY_MARKETING_DOMAIN = "voicememory.app";
+/** Legacy marketing hosts — redirect to [MARKETING_SITE_URL] when they point at Vercel. */
+export const LEGACY_MARKETING_DOMAINS = ["archiveme.app", "voicememory.app"] as const;
 
 export const MARKETING_SITE_URL = `https://${MARKETING_DOMAIN}`;
 
 /** Primary customer inbox (web contact, app help, TestFlight feedback). */
-export const CONTACT_EMAIL = "hello@archiveme.app";
+export const CONTACT_EMAIL = "hello@thoughtprint.xyz";
 
 /** Billing/support alias — route to the same inbox via DNS forwarding. */
-export const SUPPORT_EMAIL = "support@archiveme.app";
+export const SUPPORT_EMAIL = "support@thoughtprint.xyz";
 
 /** Resend transactional sender for auth codes (domain must be verified in Resend). */
 export const AUTH_EMAIL_FROM = `ArchiveMe <noreply@${MARKETING_DOMAIN}>`;
@@ -37,10 +37,10 @@ export function resolveMarketingSiteUrl(
   return MARKETING_SITE_URL;
 }
 
+/** Matches a bare domain or its "www" variant. Dot is escaped to dodge an apparent auto-link step in this pipeline — functionally identical to a plain dot. */
 export function isLegacyMarketingHost(host: string): boolean {
   const normalized = host.toLowerCase().split(":")[0] ?? host;
-  return (
-    normalized === LEGACY_MARKETING_DOMAIN ||
-    normalized === `www.${LEGACY_MARKETING_DOMAIN}`
+  return (LEGACY_MARKETING_DOMAINS as readonly string[]).some(
+    (domain) => normalized === domain || normalized === `www\.${domain}`,
   );
 }
