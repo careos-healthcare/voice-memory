@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
-# Verify archiveme.app marketing + email cutover (DNS/Vercel/Resend must be done externally).
+# Verify thoughtprint.xyz marketing + email cutover (DNS/Vercel/Resend must be done externally).
 set -euo pipefail
 
-MARKETING_URL="${ARCHIVEME_MARKETING_URL:-https://archiveme.app}"
-LEGACY_URL="${ARCHIVEME_LEGACY_URL:-https://voicememory.app}"
-API_URL="${VOICEMEMORY_APP_URL:-https://voice-memory-iota.vercel.app}"
-CONTACT_EMAIL="hello@archiveme.app"
+MARKETING_URL="${THOUGHTPRINT_MARKETING_URL:-https://thoughtprint.xyz}"
+LEGACY_URLS=("https://archiveme.app" "https://voicememory.app")
+API_URL="${VOICEMEMORY_APP_URL:-https://voice-memory-api.vercel.app}"
+CONTACT_EMAIL="hello@thoughtprint.xyz"
 
 failures=0
 
@@ -32,14 +32,16 @@ else
 fi
 
 echo ""
-echo "== Legacy redirect ($LEGACY_URL → archiveme.app) =="
-legacy_location=$(curl -sS -o /dev/null -w "%{redirect_url}" "$LEGACY_URL/privacy" 2>/dev/null || true)
-if [[ "$legacy_location" == *"archiveme.app/privacy"* ]]; then
-  echo "OK  voicememory.app redirects to archiveme.app"
-else
-  echo "FAIL voicememory.app redirect (got: ${legacy_location:-none})"
-  failures=$((failures + 1))
-fi
+echo "== Legacy redirects (archiveme.app, voicememory.app → thoughtprint.xyz) =="
+for legacy_url in "${LEGACY_URLS[@]}"; do
+  legacy_location=$(curl -sS -o /dev/null -w "%{redirect_url}" "$legacy_url/privacy" 2>/dev/null || true)
+  if [[ "$legacy_location" == *"thoughtprint.xyz/privacy"* ]]; then
+    echo "OK  $legacy_url redirects to thoughtprint.xyz"
+  else
+    echo "FAIL $legacy_url redirect (got: ${legacy_location:-none})"
+    failures=$((failures + 1))
+  fi
+done
 
 echo ""
 echo "== Auth email env ($API_URL) =="
@@ -52,10 +54,10 @@ if ENV_JSON=$(curl -fsS "$API_URL/api/debug/auth-env" 2>/dev/null); then
       echo "FAIL Resend not configured"
       failures=$((failures + 1))
     fi
-    if echo "$ENV_JSON" | jq -e '.emailFromDomain == "archiveme.app"' >/dev/null; then
-      echo "OK  EMAIL_FROM on archiveme.app"
+    if echo "$ENV_JSON" | jq -e '.emailFromDomain == "thoughtprint.xyz"' >/dev/null; then
+      echo "OK  EMAIL_FROM on thoughtprint.xyz"
     else
-      echo "FAIL EMAIL_FROM not on archiveme.app"
+      echo "FAIL EMAIL_FROM not on thoughtprint.xyz"
       failures=$((failures + 1))
     fi
     if echo "$ENV_JSON" | jq -e '.productionEmailReady == true' >/dev/null; then

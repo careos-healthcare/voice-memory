@@ -4,7 +4,7 @@ import { describe, it } from "node:test";
 import {
   AUTH_EMAIL_FROM,
   CONTACT_EMAIL,
-  LEGACY_MARKETING_DOMAIN,
+  LEGACY_MARKETING_DOMAINS,
   MARKETING_CONTACT_URL,
   MARKETING_DOMAIN,
   MARKETING_PRIVACY_URL,
@@ -14,22 +14,24 @@ import {
 } from "./marketing-site";
 
 describe("marketing-site", () => {
-  it("uses archiveme.app as canonical marketing domain", () => {
-    assert.equal(MARKETING_DOMAIN, "archiveme.app");
-    assert.equal(MARKETING_SITE_URL, "https://archiveme.app");
-    assert.equal(MARKETING_PRIVACY_URL, "https://archiveme.app/privacy");
-    assert.equal(MARKETING_CONTACT_URL, "https://archiveme.app/contact");
+  it("uses thoughtprint.xyz as canonical marketing domain", () => {
+    assert.equal(MARKETING_DOMAIN, "thoughtprint.xyz");
+    assert.equal(MARKETING_SITE_URL, "https://thoughtprint.xyz");
+    assert.equal(MARKETING_PRIVACY_URL, "https://thoughtprint.xyz/privacy");
+    assert.equal(MARKETING_CONTACT_URL, "https://thoughtprint.xyz/contact");
   });
 
-  it("publishes hello@archiveme.app as primary contact", () => {
-    assert.equal(CONTACT_EMAIL, "hello@archiveme.app");
-    assert.match(AUTH_EMAIL_FROM, /noreply@archiveme\.app/);
+  it("publishes hello@thoughtprint.xyz as primary contact", () => {
+    assert.equal(CONTACT_EMAIL, "hello@thoughtprint.xyz");
+    assert.match(AUTH_EMAIL_FROM, /noreply@thoughtprint\.xyz/);
   });
 
-  it("detects legacy voicememory.app host", () => {
-    assert.equal(isLegacyMarketingHost(LEGACY_MARKETING_DOMAIN), true);
-    assert.equal(isLegacyMarketingHost("www.voicememory.app"), true);
-    assert.equal(isLegacyMarketingHost("archiveme.app"), false);
+  it("detects legacy archiveme.app and voicememory.app hosts", () => {
+    for (const domain of LEGACY_MARKETING_DOMAINS) {
+      assert.equal(isLegacyMarketingHost(domain), true);
+      assert.equal(isLegacyMarketingHost(`www\.${domain}`), true);
+    }
+    assert.equal(isLegacyMarketingHost("thoughtprint.xyz"), false);
   });
 
   it("resolveMarketingSiteUrl prefers NEXT_PUBLIC_SITE_URL", () => {

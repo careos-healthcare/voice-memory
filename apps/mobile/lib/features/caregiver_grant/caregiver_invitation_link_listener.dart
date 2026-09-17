@@ -6,7 +6,7 @@ import 'package:archiveme_mobile/router/route_catalog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-/// Listens for incoming `https://archiveme.app/caregiver/*` Universal
+/// Listens for incoming `https://archiveme.app/caregiver/*` or `https://thoughtprint.xyz/caregiver/*` Universal
 /// Links / App Links and routes them to the (currently unregistered, see
 /// route_catalog.dart) caregiver-consent entry screen.
 ///
@@ -36,7 +36,7 @@ class CaregiverInvitationLinkNotifier extends Notifier<void> {
   }
 
   void _handleIncomingLink(Uri uri) {
-    if (uri.host != 'archiveme.app') return;
+    if (uri.host != 'archiveme.app' && uri.host != 'thoughtprint.xyz') return;
     if (!uri.path.startsWith('/caregiver')) return;
     final token = uri.queryParameters['token'];
     if (token == null || token.isEmpty) return;

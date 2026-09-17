@@ -17,7 +17,7 @@ import {
   isRetiredConsumerPath,
   resolvePublicRedirect,
 } from "@/lib/site/web-public-production-routes";
-import { isLegacyMarketingHost } from "@/lib/site/marketing-site";
+import { MARKETING_DOMAIN, isLegacyMarketingHost } from "@/lib/site/marketing-site";
 
 function applyTokenCookieRedirect(request: NextRequest): NextResponse | null {
   const queryToken = request.nextUrl.searchParams.get("debug_token");
@@ -57,7 +57,7 @@ export function middleware(request: NextRequest) {
   if (isLegacyMarketingHost(host)) {
     const url = request.nextUrl.clone();
     url.protocol = "https:";
-    url.host = "archiveme.app";
+    url.host = MARKETING_DOMAIN;
     return NextResponse.redirect(url, 308);
   }
 

@@ -50,10 +50,10 @@ abstract final class CustomerLanguage {
       'These moments may repeat a similar theme. Review the evidence '
       'before treating it as settled.';
 
-  static const contactEmail = 'hello@archiveme.app';
-  static const supportEmail = 'support@archiveme.app';
-  static const privacyUrl = 'https://archiveme.app/privacy';
-  static const supportUrl = 'https://archiveme.app/contact';
+  static const contactEmail = 'hello@thoughtprint.xyz';
+  static const supportEmail = 'support@thoughtprint.xyz';
+  static const privacyUrl = 'https://thoughtprint.xyz/privacy';
+  static const supportUrl = 'https://thoughtprint.xyz/contact';
 
   /// Substrings banned in release-reachable UI literals (case-insensitive).
   static const bannedPrimaryUiTerms = [

@@ -58,7 +58,7 @@ abstract final class SubscriptionBillingCopy {
   static const billingSupportTitle = 'Human billing support';
   static const billingSupportBody =
       'Guaranteed human response path for any billing disputes.';
-  static const billingSupportEmail = 'support@archiveme.app';
+  static const billingSupportEmail = 'support@thoughtprint.xyz';
 
   static const proPlanActiveSubtitle = 'ArchiveMe Pro Active';
   static const freePlanCappedSubtitle = 'Free Tier (Evidence Capped)';

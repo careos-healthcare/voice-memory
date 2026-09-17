@@ -142,7 +142,7 @@ class _CaregiverConsentFormState extends State<CaregiverConsentForm> {
     required String contactName,
   }) {
     final inviteUrl = Uri.https(
-      'archiveme.app',
+      'thoughtprint.xyz',
       '/caregiver/invite',
       {'token': linkToken},
     ).toString();
