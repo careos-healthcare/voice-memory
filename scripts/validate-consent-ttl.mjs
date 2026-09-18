@@ -46,8 +46,21 @@ const TTL_LITERAL_PATTERNS = [
   /\b1000\s*\*\s*60\s*\*\s*60\s*\*\s*24\b/,
   /\b24\s*\*\s*60\s*\*\s*60\s*\*\s*1000\b/,
   /\bDEFAULT_TTL_MS\s*=/,
+  // A second consent-grant default by name, even without a duration product.
+  /\b(?:CAREGIVER|COACH)_CONSENT_DEFAULT_TTL_MS\s*=/,
   /ttlMs\s*\?\?\s*\d/,
 ];
+
+/**
+ * Invite / unused-redemption-code expiry is not a consent-grant lifetime.
+ * `CAREGIVER_REDEMPTION_CODE_TTL_MS` is also 7 days and ends in `_TTL_MS` by
+ * coincidence — it bounds how long an unused invite code stays redeemable,
+ * not how long a granted token keeps working. Exempt only those identifiers.
+ * A raw `1000 * 60 * 60 * 24 * 7` or a second `CAREGIVER_CONSENT_DEFAULT_TTL_MS`
+ * outside the canonical file still fails.
+ */
+const NON_CONSENT_GRANT_TTL_DECLARATION =
+  /(?:export\s+)?(?:const|let|var)\s+[A-Z0-9_]*(?:REDEMPTION|INVITE)_CODE_TTL_MS\s*=/;
 
 const failures = [];
 
@@ -71,6 +84,7 @@ for (const relativePath of SCANNED_FILES) {
   const lines = source.split("\n");
   lines.forEach((line, index) => {
     if (line.trimStart().startsWith("*") || line.trimStart().startsWith("//")) return;
+    if (NON_CONSENT_GRANT_TTL_DECLARATION.test(line)) return;
     for (const pattern of TTL_LITERAL_PATTERNS) {
       if (pattern.test(line)) {
         failures.push(
