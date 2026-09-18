@@ -61,6 +61,48 @@ class MemoryResurfacingService {
         .toList();
   }
 
+  /// Calendar-based "on this day" cards from past years.
+  ///
+  /// Matches entries whose local month and day equal [now] and whose year
+  /// is earlier than [now], returning every match oldest-first with an
+  /// anniversary-specific headline. Belief-relation text is attached only
+  /// when [_relatesToArchiveThemes] confirms a genuine connection — never a
+  /// generic fallback. Complements theme-based [selectCards]; this method
+  /// does not read or write [_store] shown-tracking, so the same date can
+  /// surface again whenever asked.
+  Future<List<MemoryResurfacingCardData>> selectByAnniversary({
+    required List<JournalEntry> entries,
+    String? currentBelief,
+    DateTime? now,
+  }) async {
+    final clock = now ?? DateTime.now();
+    final themes = _activeArchiveThemes(entries);
+    final belief = currentBelief?.trim() ?? '';
+    final clockLocal = clock.toLocal();
+
+    final matches = entries.where((entry) {
+      if (!_isEligibleRecording(entry)) return false;
+      final created = entry.createdAt.toLocal();
+      return created.month == clockLocal.month &&
+          created.day == clockLocal.day &&
+          created.year < clockLocal.year;
+    }).toList()
+      ..sort((a, b) => a.createdAt.compareTo(b.createdAt));
+
+    return matches.map((entry) {
+      final base = _toCard(entry, now: clock, themes: themes, belief: belief);
+      final hasGenuineConnection =
+          _relatesToArchiveThemes(entry, themes, belief);
+      return MemoryResurfacingCardData(
+        entry: base.entry,
+        headline: anniversaryHeadline(entry.createdAt, clock),
+        quoteSnippet: base.quoteSnippet,
+        originalDateLabel: base.originalDateLabel,
+        beliefRelation: hasGenuineConnection ? base.beliefRelation : '',
+      );
+    }).toList();
+  }
+
   Future<void> markShown(Iterable<String> entryIds) async {
     await _store.markResurfaced(entryIds);
   }
@@ -204,6 +246,15 @@ String resurfacingHeadline(DateTime createdAt, DateTime now) {
   final months = (days / 30).round().clamp(1, 11);
   if (months <= 1) return 'You said this about a month ago.';
   return 'You said this $months months ago.';
+}
+
+/// "On this day" framing — distinct from resurfacingHeadline's relative-age
+/// phrasing, since anniversary browsing is specifically about marking that
+/// today is the day, not just how long ago something was.
+String anniversaryHeadline(DateTime createdAt, DateTime now) {
+  final years = now.year - createdAt.toLocal().year;
+  if (years <= 0) return 'Earlier today';
+  return years == 1 ? '1 year ago today' : '$years years ago today';
 }
 
 String _quoteSnippet(JournalEntry entry) {
