@@ -8,7 +8,11 @@ part of 'consent_dto.dart';
 
 Map<String, dynamic> _$ConsentIssueResponseDtoToJson(
   ConsentIssueResponseDto instance,
-) => <String, dynamic>{'ok': instance.ok, 'token': instance.token};
+) => <String, dynamic>{
+  'ok': instance.ok,
+  'token': instance.token,
+  'redemption': instance.redemption,
+};
 
 Map<String, dynamic> _$ConsentVerifyResponseDtoToJson(
   ConsentVerifyResponseDto instance,
