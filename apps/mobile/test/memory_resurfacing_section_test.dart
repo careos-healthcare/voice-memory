@@ -1,13 +1,10 @@
+import 'package:archiveme_mobile/features/memory_resurfacing/memory_resurfacing_models.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/models/reflection.dart';
-import 'package:archiveme_mobile/services/app_services.dart';
 import 'package:archiveme_mobile/theme/app_theme.dart';
 import 'package:archiveme_mobile/widgets/memory_resurfacing_section.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-
-import 'support/app_services_test_lifecycle.dart';
-import 'support/test_storage_sandbox.dart';
 
 JournalEntry _entry({
   required String id,
@@ -32,53 +29,49 @@ JournalEntry _entry({
   );
 }
 
-void main() {
-  late TestStorageSandbox sandbox;
+MemoryResurfacingCardData _card({
+  required String id,
+  required String headline,
+  String quoteSnippet = 'time traveling abroad',
+  String originalDateLabel = 'May 19, 2025',
+  String beliefRelation = '',
+}) {
+  return MemoryResurfacingCardData(
+    entry: _entry(
+      id: id,
+      createdAt: DateTime(2025, 5, 19, 10),
+      transcript: 'I want to spend more time traveling abroad',
+    ),
+    headline: headline,
+    quoteSnippet: quoteSnippet,
+    originalDateLabel: originalDateLabel,
+    beliefRelation: beliefRelation,
+  );
+}
 
-  setUp(() async {
-    sandbox = TestStorageSandbox.create();
-    await AppServices.resetForTest(
-      journalPath: sandbox.journalPath,
-      prefsPath: sandbox.prefsPath,
-      skipRevenueCat: true,
-    );
-  });
-
-  tearDown(() async {
-    await settleAppServicesForTest();
-    await sandbox.dispose();
-  });
-
-  Future<void> pumpOnThisDay(WidgetTester tester) async {
-    await tester.pumpWidget(
-      MaterialApp(
-        theme: AppTheme.light(),
-        home: const Scaffold(body: OnThisDaySection()),
+Future<void> pumpOnThisDay(
+  WidgetTester tester, {
+  required List<MemoryResurfacingCardData> cards,
+}) async {
+  await tester.pumpWidget(
+    MaterialApp(
+      theme: AppTheme.light(),
+      home: Scaffold(
+        body: OnThisDaySection(
+          cards: cards,
+          onCardTap: (_) {},
+        ),
       ),
-    );
-    await tester.pump();
-    await tester.runAsync(() async {
-      await Future<void>.delayed(const Duration(milliseconds: 80));
-    });
-    await tester.pump();
-    await tester.pump(const Duration(milliseconds: 50));
-  }
+    ),
+  );
+  await tester.pump();
+}
 
+void main() {
   testWidgets('OnThisDaySection hides when selectByAnniversary is empty', (
     tester,
   ) async {
-    final now = DateTime.now();
-    await tester.runAsync(() async {
-      await AppServices.instance.journalStore.save(
-        _entry(
-          id: 'other-day',
-          createdAt: DateTime(now.year - 1, now.month, now.day == 1 ? 2 : 1),
-          transcript: 'I want to spend more time traveling abroad',
-        ),
-      );
-    });
-
-    await pumpOnThisDay(tester);
+    await pumpOnThisDay(tester, cards: const []);
 
     expect(find.text('On this day'), findsNothing);
     expect(find.byType(CircularProgressIndicator), findsNothing);
@@ -88,19 +81,15 @@ void main() {
   testWidgets('OnThisDaySection shows cards from selectByAnniversary', (
     tester,
   ) async {
-    final now = DateTime.now();
-    final lastYear = DateTime(now.year - 1, now.month, now.day, 10);
-    await tester.runAsync(() async {
-      await AppServices.instance.journalStore.save(
-        _entry(
+    await pumpOnThisDay(
+      tester,
+      cards: [
+        _card(
           id: 'last-year',
-          createdAt: lastYear,
-          transcript: 'I want to spend more time traveling abroad',
+          headline: '1 year ago today',
         ),
-      );
-    });
-
-    await pumpOnThisDay(tester);
+      ],
+    );
 
     expect(find.text('On this day'), findsOneWidget);
     expect(find.text('From past years on this date'), findsOneWidget);
@@ -111,20 +100,16 @@ void main() {
   testWidgets(
     'empty beliefRelation does not render empty Text or extra spacing',
     (tester) async {
-      final now = DateTime.now();
-      final lastYear = DateTime(now.year - 1, now.month, now.day, 10);
-      await tester.runAsync(() async {
-        await AppServices.instance.journalStore.save(
-          _entry(
+      await pumpOnThisDay(
+        tester,
+        cards: [
+          _card(
             id: 'unrelated-anniversary',
-            createdAt: lastYear,
-            transcript: 'I want to spend more time traveling abroad',
-            themes: const ['travel'],
+            headline: '1 year ago today',
+            beliefRelation: '',
           ),
-        );
-      });
-
-      await pumpOnThisDay(tester);
+        ],
+      );
 
       expect(find.text('On this day'), findsOneWidget);
       expect(find.text('1 year ago today'), findsOneWidget);

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:archiveme_mobile/design/archive_responsive_layout.dart';
 import 'package:archiveme_mobile/features/archive/ui/trust_status_footer.dart';
 import 'package:archiveme_mobile/features/archive/v1/archive_belief_load_state.dart';
@@ -7,6 +9,7 @@ import 'package:archiveme_mobile/features/ask_archive/ask_archive_entry_bar.dart
 import 'package:archiveme_mobile/features/insights/pattern_exploration_entry_card.dart';
 import 'package:archiveme_mobile/features/insights/trend_pattern_summary_card.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
+import 'package:archiveme_mobile/services/app_services.dart';
 import 'package:archiveme_mobile/theme/app_colors.dart';
 import 'package:archiveme_mobile/widgets/archive/archive_changes_section.dart';
 import 'package:archiveme_mobile/widgets/archive/archive_changes_unavailable_notice.dart';
@@ -17,6 +20,7 @@ import 'package:archiveme_mobile/widgets/archive/archive_status_banner.dart';
 import 'package:archiveme_mobile/widgets/archive/archive_home_choose_what_leaves_tile.dart';
 import 'package:archiveme_mobile/widgets/archive/archive_verified_changes_section.dart';
 import 'package:archiveme_mobile/widgets/insight_share/insight_share_exporter.dart';
+import 'package:archiveme_mobile/widgets/memory_resurfacing_section.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -180,6 +184,50 @@ class ArchiveDashboardScrollView extends StatelessWidget {
                       children: [
                         InsightShareExporter(entries: feed.proofContextEntries),
                         SizedBox(height: ArchiveResponsiveLayout.gap(context)),
+                      ],
+                    ),
+                  ),
+                ),
+                SliverPadding(
+                  padding: EdgeInsets.symmetric(horizontal: sliverPadding.left),
+                  sliver: SliverToBoxAdapter(
+                    child: Column(
+                      children: [
+                        if (feed.resurfacingCards.isNotEmpty) ...[
+                          MemoryResurfacingSection(
+                            cards: feed.resurfacingCards,
+                            onCardTap: (card) {
+                              unawaited(
+                                AppServices.instance.memoryResurfacing
+                                    .markOpened(card.entry.id),
+                              );
+                              onEntryTap(card.entry.id);
+                            },
+                          ),
+                          SizedBox(height: ArchiveResponsiveLayout.gap(context)),
+                        ],
+                      ],
+                    ),
+                  ),
+                ),
+                SliverPadding(
+                  padding: EdgeInsets.symmetric(horizontal: sliverPadding.left),
+                  sliver: SliverToBoxAdapter(
+                    child: Column(
+                      children: [
+                        if (feed.anniversaryCards.isNotEmpty) ...[
+                          OnThisDaySection(
+                            cards: feed.anniversaryCards,
+                            onCardTap: (card) {
+                              unawaited(
+                                AppServices.instance.memoryResurfacing
+                                    .markOpened(card.entry.id),
+                              );
+                              onEntryTap(card.entry.id);
+                            },
+                          ),
+                          SizedBox(height: ArchiveResponsiveLayout.gap(context)),
+                        ],
                       ],
                     ),
                   ),

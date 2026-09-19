@@ -335,3 +335,16 @@ Future<List<MemoryResurfacingCardData>> selectResurfacingForJournal({
     limit: limit,
   );
 }
+
+/// Convenience: anniversary cards with belief from archive v3 rules.
+Future<List<MemoryResurfacingCardData>> selectAnniversaryForJournal({
+  required MemoryResurfacingService service,
+  required Future<List<JournalEntry>> Function() loadEntries,
+}) async {
+  final entries = await loadEntries();
+  final state = buildArchiveStateObjectV3(entries: entries);
+  return service.selectByAnniversary(
+    entries: entries,
+    currentBelief: state?.belief,
+  );
+}
