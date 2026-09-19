@@ -2,7 +2,6 @@
  * Production environment validation — fail closed in production, warn in development.
  */
 
-import { isStripeConfigured } from "@/lib/billing/stripe-config";
 import { isEmailDisabled } from "@/lib/server/email-mode";
 
 const WEAK_DEBUG_TOKENS = new Set([
@@ -93,13 +92,11 @@ export function validateProductionEnv(options?: {
     push("error", "APP_URL", "Set NEXT_PUBLIC_APP_URL or APP_URL for checkout redirects and links.");
   }
 
-  if (!isStripeConfigured()) {
-    push(
-      "error",
-      "STRIPE",
-      "Stripe is not fully configured (STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET, STRIPE_PRO_PRICE_ID, app URL).",
-    );
-  }
+  // Stripe is intentionally optional -- the billing route itself (see
+  // packages/shared/lib/billing/stripe-config.ts) fails closed with a
+  // clean 503 BILLING_DISABLED when unconfigured, rather than erroring.
+  // Requiring it here crashed the instrumentation hook and 500'd every
+  // request, not just billing ones.
 
   if (!isEmailDisabled()) {
     if (!process.env.RESEND_API_KEY?.trim()) {
