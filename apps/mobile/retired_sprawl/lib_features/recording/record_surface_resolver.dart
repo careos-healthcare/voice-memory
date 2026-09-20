@@ -4088,7 +4088,7 @@ abstract final class RecordSurfaceResolver {
         );
 
 
-    return RecordSurfaceViewState(
+    return RecordSurfaceViewState.build(
       policyMic: policyMic,
       policyUserDenied: policyUserDenied,
       firstUseSimplifiedRecord: firstUseSimplifiedRecord,
