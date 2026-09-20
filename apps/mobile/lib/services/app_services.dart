@@ -1342,13 +1342,13 @@ class AppServices {
       target,
       ownerUserId: ownerUserId,
     );
+    _activeNamespace = target;
     AppServices._wireAccountScopedServices(this);
     _wireBackgroundSyncQueue(this);
     oldBilling.dispose();
     if (_billingListeningEnabled) {
       billing.startListening();
     }
-    _activeNamespace = target;
     unawaited(BackgroundTaskAccountRegistry.persistActiveNamespace(target));
     AccountSessionRegistry.instance.activate(
       namespace: target,
