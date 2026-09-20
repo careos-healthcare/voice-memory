@@ -10,7 +10,19 @@ import 'package:archiveme_mobile/features/weekly_review/weekly_archive_review_en
 abstract final class RecordSurfaceResolver {
   RecordSurfaceResolver._();
 
-  static RecordSurfaceViewState resolve(RecordSurfaceInput input) {
+  static ({
+    RecordSurfaceFlags flags,
+    RecordingPhase policyMic,
+    bool policyUserDenied,
+    bool firstUseSimplifiedRecord,
+    String? error,
+    String? localSaveTitle,
+    String? syncNote,
+    String stageLabel,
+    List<JournalEntry> entriesAfterSave,
+    bool lastCaptureAnalysisSucceeded,
+  })
+  resolveInputOverlay(RecordSurfaceInput input) {
     final flags = input.flags;
     var policyMic = input.micPhase;
     var policyUserDenied = input.micUserDeniedThisSession;
@@ -43,6 +55,33 @@ abstract final class RecordSurfaceResolver {
         lastCaptureAnalysisSucceeded = audit.lastCaptureAnalysisSucceeded;
       }
     }
+    return (
+      flags: flags,
+      policyMic: policyMic,
+      policyUserDenied: policyUserDenied,
+      firstUseSimplifiedRecord: firstUseSimplifiedRecord,
+      error: error,
+      localSaveTitle: localSaveTitle,
+      syncNote: syncNote,
+      stageLabel: stageLabel,
+      entriesAfterSave: entriesAfterSave,
+      lastCaptureAnalysisSucceeded: lastCaptureAnalysisSucceeded,
+    );
+  }
+
+  static RecordSurfaceViewState resolve(RecordSurfaceInput input) {
+    final (
+      :flags,
+      :policyMic,
+      :policyUserDenied,
+      :firstUseSimplifiedRecord,
+      :error,
+      :localSaveTitle,
+      :syncNote,
+      :stageLabel,
+      :entriesAfterSave,
+      :lastCaptureAnalysisSucceeded,
+    ) = resolveInputOverlay(input);
 
     final canRecord = flags.canRecord;
     final showFraming = flags.showFraming;
