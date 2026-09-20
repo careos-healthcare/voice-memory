@@ -14,6 +14,7 @@ class ThemeTrackerService {
     'career',
     'money',
     'health',
+    'reading',
   ];
 
   static const Map<String, String> displayNames = {
@@ -24,6 +25,7 @@ class ThemeTrackerService {
     'career': 'Career',
     'money': 'Money',
     'health': 'Health',
+    'reading': 'Reading',
   };
 
   ThemeTrackingResult track({
@@ -242,5 +244,18 @@ const Map<String, List<String>> _themeKeywords = {
     'wellness',
     'anxious',
     'anxiety',
+  ],
+  'reading': [
+    'book',
+    'novel',
+    'read',
+    'chapter',
+    'author',
+    'library',
+    'audiobook',
+    'bookstore',
+    'page-turn',
+    'plot',
+    'character',
   ],
 };
