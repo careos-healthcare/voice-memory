@@ -286,6 +286,7 @@ abstract class ConsumerUiCopy {
     'What did you react strongly to recently?',
     'What are you worried might happen?',
     'What keeps repeating in this situation?',
+    'What book or story has stayed with you lately?',
   ];
   static const String reflectionSavedTitle = 'Reflection saved';
   static const String possiblePatternForming = 'A pattern may be forming';

@@ -92,6 +92,42 @@ void main() {
     );
   });
 
+  test('reading theme matches a novel mention and not career copy', () {
+    final reading = _entry(
+      id: 'r1',
+      at: DateTime(2026, 6),
+      text: 'I finished a great novel last week',
+    );
+    expect(
+      ThemeTrackerService.themesForEntry(reading),
+      contains('reading'),
+    );
+
+    final career = JournalEntry(
+      id: 'c1',
+      createdAt: DateTime(2026, 6),
+      transcript:
+          'I stayed late at the office with my manager about a promotion this week.',
+      durationSeconds: 20,
+      reflection: const Reflection(
+        mood: '',
+        emotionalIntensity: 0,
+        recurringThemes: [],
+        exactLanguagePattern: '',
+        concreteObservation: '',
+        repeatedSignal: '',
+      ),
+    );
+    expect(
+      ThemeTrackerService.themesForEntry(career),
+      contains('career'),
+    );
+    expect(
+      ThemeTrackerService.themesForEntry(career),
+      isNot(contains('reading')),
+    );
+  });
+
   test('ArchiveTheme serializes for future sync', () {
     const theme = ArchiveTheme(
       name: 'Career',
