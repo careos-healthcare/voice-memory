@@ -1,4 +1,4 @@
-import 'dart:io' show File;
+import 'dart:io' show File, FileSystemException;
 
 import 'package:archiveme_mobile/config/app_config.dart' show AppConfig;
 import 'package:archiveme_mobile/core/utils/app_logger.dart';
@@ -93,7 +93,7 @@ class BackendUrlResolver {
         if (!await file.exists()) continue;
         final url = _parseEnvContent(await file.readAsString());
         if (url != null) return url;
-      } catch (e, stackTrace) {
+      } on FileSystemException catch (e, stackTrace) {
         AppLogger.error('Unhandled error caught', error: e, stackTrace: stackTrace);
         AppLogger.debug('BackendUrlResolver: could not read $path — $e');
       }
@@ -127,7 +127,7 @@ class BackendUrlResolver {
           if (!await file.exists()) continue;
           final url = _readConfigLine(await file.readAsString());
           if (url != null) return url;
-        } catch (e, stackTrace) {
+        } on FileSystemException catch (e, stackTrace) {
           AppLogger.error('Unhandled error caught', error: e, stackTrace: stackTrace);
           AppLogger.debug('BackendUrlResolver: could not read $path — $e');
         }

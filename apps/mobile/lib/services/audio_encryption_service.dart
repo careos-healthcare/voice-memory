@@ -181,7 +181,7 @@ class AudioEncryptionService {
           await raf.close();
         }
       }
-    } catch (e, stackTrace) {
+    } on FileSystemException catch (e, stackTrace) {
       AppLogger.error('Unhandled error caught', error: e, stackTrace: stackTrace);
       // Best-effort overwrite — still attempt deletion below.
     }
