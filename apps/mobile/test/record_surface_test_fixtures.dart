@@ -7,33 +7,52 @@ import 'package:archiveme_mobile/features/recording/record_surface_input.dart';
 import 'package:archiveme_mobile/features/recording/record_user_pro_state.dart';
 import 'package:archiveme_mobile/features/voice_capture/microphone_permission_state.dart';
 import 'package:archiveme_mobile/features/voice_capture/record_microphone_permission_ui.dart';
+import 'package:archiveme_mobile/models/journal_entry.dart';
+import 'package:archiveme_mobile/models/reflection.dart';
 
-RecordSurfaceInput emptyRecordSurfaceInput({int entryCount = 0}) {
+RecordSurfaceInput emptyRecordSurfaceInput({
+  int? entryCount,
+  RecordUiState ui = RecordUiState.ready,
+  List<JournalEntry> journalEntries = const [],
+  bool isPostSave = false,
+  RecordUserProState? userProState,
+  MicrophonePermissionState micPermissionState =
+      MicrophonePermissionState.granted,
+  List<JournalEntry> entriesAfterSave = const [],
+  bool recordReturnProJustSaved = false,
+  bool savedFromConfirmedRepeatTrigger = false,
+}) {
+  final resolvedEntryCount = entryCount ?? journalEntries.length;
   return RecordSurfaceInput(
-    ui: RecordUiState.ready,
-    flags: RecordSurfaceFlags.from(RecordUiState.ready),
-    journalEntries: const [],
-    entryCount: entryCount,
+    ui: ui,
+    flags: RecordSurfaceFlags.from(ui),
+    journalEntries: journalEntries,
+    entryCount: resolvedEntryCount,
     entryCountLoaded: true,
-    isPostSave: false,
-    userProState: const RecordUserProState(
-      recordReturnProState: null,
-      isPro: false,
-    ),
-    micPhase: RecordingPhase.ready,
-    micPermissionState: MicrophonePermissionState.granted,
-    micUserDeniedThisSession: false,
-    sessionRequiresOpenSettings: false,
+    isPostSave: isPostSave,
+    userProState:
+        userProState ??
+        const RecordUserProState(recordReturnProState: null, isPro: false),
+    micPhase: ui == RecordUiState.recording
+        ? RecordingPhase.recording
+        : RecordingPhase.ready,
+    micPermissionState: micPermissionState,
+    micUserDeniedThisSession:
+        micPermissionState == MicrophonePermissionState.deniedOpenSettings ||
+        micPermissionState == MicrophonePermissionState.deniedCanAskAgain,
+    sessionRequiresOpenSettings:
+        micPermissionState == MicrophonePermissionState.deniedOpenSettings,
     compactLayout: false,
     stackDecision: decideRecordStack(
       hasDueCheck: false,
-      isFirstRun: entryCount == 0,
-      reflectionCount: entryCount,
+      isFirstRun: resolvedEntryCount == 0,
+      reflectionCount: resolvedEntryCount,
       isTrialMode: false,
-      isRecording: false,
-      hasSavedReflection: false,
+      isRecording: ui == RecordUiState.recording,
+      hasSavedReflection:
+          journalEntries.isNotEmpty || entriesAfterSave.isNotEmpty,
       inputQualityNeedsCoach: false,
-      hasCompletedResult: false,
+      hasCompletedResult: ui == RecordUiState.done || isPostSave,
       hasResultNextCheck: false,
       hasRoutineAnchorOffer: false,
       hasArchiveProof: false,
@@ -42,14 +61,14 @@ RecordSurfaceInput emptyRecordSurfaceInput({int entryCount = 0}) {
     localSaveTitle: null,
     syncNoteRaw: null,
     stageLabelRaw: '',
-    entriesAfterSave: const [],
+    entriesAfterSave: entriesAfterSave,
     lastCaptureAnalysisSucceeded: true,
-    showPostSaveLoop: false,
-    lastSavedEntry: null,
+    showPostSaveLoop: isPostSave,
+    lastSavedEntry: entriesAfterSave.isNotEmpty ? entriesAfterSave.last : null,
     lastSavedEntryIsDegraded: false,
-    recordReturnProJustSaved: false,
+    recordReturnProJustSaved: recordReturnProJustSaved,
     recordReturnCueVisible: false,
-    savedFromConfirmedRepeatTrigger: false,
+    savedFromConfirmedRepeatTrigger: savedFromConfirmedRepeatTrigger,
     savedFromHelpfulAction: false,
     earlyEvidenceTriggerCaptured: false,
     earlyEvidenceHelpfulCaptured: false,
@@ -69,3 +88,56 @@ RecordSurfaceInput emptyRecordSurfaceInput({int entryCount = 0}) {
     applyEmptyArchiveGates: true,
   );
 }
+
+/// Same shape as `repeat_return_check_test.dart`'s `_entry`.
+JournalEntry relatedRepeatEntry({
+  required String id,
+  required String transcript,
+  DateTime? createdAt,
+}) {
+  return JournalEntry(
+    id: id,
+    createdAt: createdAt ?? DateTime(2026, 6, 12, 10),
+    transcript: transcript,
+    durationSeconds: 24,
+    reflection: const Reflection(
+      mood: 'thoughtful',
+      emotionalIntensity: 2,
+      recurringThemes: ['work'],
+      exactLanguagePattern: 'I said yes again',
+      concreteObservation: 'Saying yes showed up again.',
+      repeatedSignal: 'saying yes before ready',
+    ),
+  );
+}
+
+List<JournalEntry> threeRelatedRepeatEntries() => [
+  relatedRepeatEntry(
+    id: 'e1',
+    transcript:
+        'I had no capacity but I said yes again to the extra meeting today.',
+    createdAt: DateTime(2026, 6, 10, 12),
+  ),
+  relatedRepeatEntry(
+    id: 'e2',
+    transcript:
+        'Same thing — said yes when I had no capacity for one more thing.',
+    createdAt: DateTime(2026, 6, 11, 12),
+  ),
+  relatedRepeatEntry(
+    id: 'e3',
+    transcript:
+        'I said yes again even though I had no capacity for one more ask.',
+    createdAt: DateTime(2026, 6, 12, 12),
+  ),
+];
+
+List<JournalEntry> fourRelatedRepeatEntries() => [
+  ...threeRelatedRepeatEntries(),
+  relatedRepeatEntry(
+    id: 'e4',
+    transcript:
+        'I said yes again even though I had no capacity for one more ask today.',
+    createdAt: DateTime(2026, 6, 13, 12),
+  ),
+];
