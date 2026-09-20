@@ -413,7 +413,7 @@ class RecordingService extends Notifier<RecordingState> {
         if (partial.existsSync()) {
           await partial.delete();
         }
-      } catch (e, stackTrace) {
+      } on FileSystemException catch (e, stackTrace) {
         AppLogger.error('Unhandled error caught', error: e, stackTrace: stackTrace);
       }
     }
