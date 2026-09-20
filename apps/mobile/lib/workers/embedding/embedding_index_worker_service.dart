@@ -18,6 +18,7 @@ import 'package:archiveme_mobile/storage/sqlite/reflection_embedding_vector_sear
 import 'package:archiveme_mobile/storage/sqlite/reflection_embedding_worker_store.dart';
 import 'package:archiveme_mobile/storage/sqlite/migrations/migration_014_embedding_deferred_queue.dart';
 import 'package:archiveme_mobile/workers/isolate_worker_client.dart';
+import 'package:flutter/foundation.dart' show visibleForTesting;
 import 'package:flutter/services.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -108,6 +109,11 @@ class EmbeddingIndexWorkerService implements PersistentIsolateWorkerClient {
   String? _defaultKeyAlias;
   ThermalThrottlingService? _thermalThrottling;
   EmbeddingDeferredQueueStore? _deferredQueue;
+
+  /// Alias last passed to [configure]. Test-only: production callers
+  /// pass [keyAlias] per request or rely on the isolate default.
+  @visibleForTesting
+  String? get defaultKeyAlias => _defaultKeyAlias;
 
   bool get isRunning => workerPort != null || _testRuntime != null;
 
