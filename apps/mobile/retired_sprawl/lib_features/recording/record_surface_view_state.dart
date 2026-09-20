@@ -9,6 +9,7 @@ import 'package:archiveme_mobile/features/recording/record_surface_field_type_ex
 import 'package:archiveme_mobile/features/surface_priority/surface_priority_model.dart';
 import 'package:archiveme_mobile/features/voice_capture/record_cta_policy.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
+import 'package:flutter/foundation.dart';
 
 class RecordSurfaceViewState {
   const RecordSurfaceViewState({
@@ -375,6 +376,665 @@ class RecordSurfaceViewState {
     required this.showFirstWeekLoopRecordCta,
   });
 
+  /// Test-only snapshot of every field for characterization testing.
+  /// Not a public API -- do not use outside tests.
+  @visibleForTesting
+  Map<String, Object?> toDebugMap() => {
+    'policyMic': _debugSnap(policyMic),
+    'policyUserDenied': _debugSnap(policyUserDenied),
+    'firstUseSimplifiedRecord': _debugSnap(firstUseSimplifiedRecord),
+    'error': _debugSnap(error),
+    'localSaveTitle': _debugSnap(localSaveTitle),
+    'syncNote': _debugSnap(syncNote),
+    'stageLabel': _debugSnap(stageLabel),
+    'entriesAfterSave': _debugSnap(entriesAfterSave),
+    'lastCaptureAnalysisSucceeded': _debugSnap(lastCaptureAnalysisSucceeded),
+    'canRecord': _debugSnap(canRecord),
+    'showFraming': _debugSnap(showFraming),
+    'compact': _debugSnap(compact),
+    'stack': _debugSnap(stack),
+    'suppressPostResultNextCheckCompetitors': _debugSnap(
+      suppressPostResultNextCheckCompetitors,
+    ),
+    'auditPresentation': _debugSnap(auditPresentation),
+    'justSavedFirstEntry': _debugSnap(justSavedFirstEntry),
+    'postSaveEntryCount': _debugSnap(postSaveEntryCount),
+    'suppressNoisyFirstSaveCards': _debugSnap(suppressNoisyFirstSaveCards),
+    'suppressEarlyPatternClaimCards': _debugSnap(suppressEarlyPatternClaimCards),
+    'suppressLatestSaveArchiveInsight': _debugSnap(
+      suppressLatestSaveArchiveInsight,
+    ),
+    'secondSessionPayoff': _debugSnap(secondSessionPayoff),
+    'thirdEntryBeliefPayoff': _debugSnap(thirdEntryBeliefPayoff),
+    'confirmedRepeatTriggerPayoff': _debugSnap(confirmedRepeatTriggerPayoff),
+    'confirmedRepeatHelpfulActionPayoff': _debugSnap(
+      confirmedRepeatHelpfulActionPayoff,
+    ),
+    'confirmedRepeatChangeNotice': _debugSnap(confirmedRepeatChangeNotice),
+    'repeatReturnCheckOffer': _debugSnap(repeatReturnCheckOffer),
+    'earlyEvidenceTimeline': _debugSnap(earlyEvidenceTimeline),
+    'showEarlyEvidenceTimeline': _debugSnap(showEarlyEvidenceTimeline),
+    'suppressEarlyRepeatPayoffCompetitors': _debugSnap(
+      suppressEarlyRepeatPayoffCompetitors,
+    ),
+    'earlyFirstSignalOnRecord': _debugSnap(earlyFirstSignalOnRecord),
+    'returnTomorrowCueReady': _debugSnap(returnTomorrowCueReady),
+    'returnDayFlowCandidate': _debugSnap(returnDayFlowCandidate),
+    'showReturnDayFlow': _debugSnap(showReturnDayFlow),
+    'showReturnTomorrowCueReady': _debugSnap(showReturnTomorrowCueReady),
+    'firstWeekProgressReady': _debugSnap(firstWeekProgressReady),
+    'showFirstWeekProgressReady': _debugSnap(showFirstWeekProgressReady),
+    'showEarlyReturnReminder': _debugSnap(showEarlyReturnReminder),
+    'viewingConfirmedRepeatOnRecord': _debugSnap(viewingConfirmedRepeatOnRecord),
+    'suppressConfirmedRepeatInlineFeedback': _debugSnap(
+      suppressConfirmedRepeatInlineFeedback,
+    ),
+    'showConfirmedRepeatBetaFeedback': _debugSnap(
+      showConfirmedRepeatBetaFeedback,
+    ),
+    'repeatReturnChangeProof': _debugSnap(repeatReturnChangeProof),
+    'patternChangedCandidate': _debugSnap(patternChangedCandidate),
+    'patternChangedDismissed': _debugSnap(patternChangedDismissed),
+    'confirmedRepeatThoughtMap': _debugSnap(confirmedRepeatThoughtMap),
+    'positivePattern': _debugSnap(positivePattern),
+    'helpfulActionAppearedCandidate': _debugSnap(helpfulActionAppearedCandidate),
+    'showHelpfulActionAppearedEligible': _debugSnap(
+      showHelpfulActionAppearedEligible,
+    ),
+    'positiveReinforcement': _debugSnap(positiveReinforcement),
+    'archiveSummaryCandidate': _debugSnap(archiveSummaryCandidate),
+    'archiveBeliefSurfaceCandidate': _debugSnap(archiveBeliefSurfaceCandidate),
+    'patternNamePrompt': _debugSnap(patternNamePrompt),
+    'showArchiveCurrentBeliefEligible': _debugSnap(
+      showArchiveCurrentBeliefEligible,
+    ),
+    'dailyReturnReasonCandidate': _debugSnap(dailyReturnReasonCandidate),
+    'hasChangeOverTimeProof': _debugSnap(hasChangeOverTimeProof),
+    'postProofArchiveProof': _debugSnap(postProofArchiveProof),
+    'archiveSummaryVisibleForProGate': _debugSnap(
+      archiveSummaryVisibleForProGate,
+    ),
+    'weeklyArchiveReviewVisibleForProGate': _debugSnap(
+      weeklyArchiveReviewVisibleForProGate,
+    ),
+    'hasConfirmedRepeatForProGate': _debugSnap(hasConfirmedRepeatForProGate),
+    'privateArchiveReportForProGate': _debugSnap(privateArchiveReportForProGate),
+    'privateArchiveReportPreviewForProGate': _debugSnap(
+      privateArchiveReportPreviewForProGate,
+    ),
+    'patternChangedForProGate': _debugSnap(patternChangedForProGate),
+    'hasReturnCheckAnsweredForProGate': _debugSnap(
+      hasReturnCheckAnsweredForProGate,
+    ),
+    'showPostProofProBridge': _debugSnap(showPostProofProBridge),
+    'proofSurfaceLayout': _debugSnap(proofSurfaceLayout),
+    'showArchiveSummary': _debugSnap(showArchiveSummary),
+    'archiveSummary': _debugSnap(archiveSummary),
+    'showDailyReturnReason': _debugSnap(showDailyReturnReason),
+    'dailyReturnReason': _debugSnap(dailyReturnReason),
+    'archiveWatchingCandidate': _debugSnap(archiveWatchingCandidate),
+    'archiveWatching': _debugSnap(archiveWatching),
+    'weeklyArchiveReview': _debugSnap(weeklyArchiveReview),
+    'showWeeklyArchiveReview': _debugSnap(showWeeklyArchiveReview),
+    'privateArchiveReportCandidate': _debugSnap(privateArchiveReportCandidate),
+    'showPrivateArchiveReport': _debugSnap(showPrivateArchiveReport),
+    'showConfirmedRepeatWhyMatters': _debugSnap(showConfirmedRepeatWhyMatters),
+    'showConfirmedRepeatThoughtMap': _debugSnap(showConfirmedRepeatThoughtMap),
+    'showPositiveReinforcement': _debugSnap(showPositiveReinforcement),
+    'firstWeekLoopCandidate': _debugSnap(firstWeekLoopCandidate),
+    'firstWeekLoopProGated': _debugSnap(firstWeekLoopProGated),
+    'recordProofStack': _debugSnap(recordProofStack),
+    'showPatternChanged': _debugSnap(showPatternChanged),
+    'showArchiveCurrentBeliefOnRecord': _debugSnap(
+      showArchiveCurrentBeliefOnRecord,
+    ),
+    'showEarlyEvidenceTimelineOnRecord': _debugSnap(
+      showEarlyEvidenceTimelineOnRecord,
+    ),
+    'showWeeklyArchiveReviewOnRecord': _debugSnap(
+      showWeeklyArchiveReviewOnRecord,
+    ),
+    'showPrivateArchiveReportOnRecord': _debugSnap(
+      showPrivateArchiveReportOnRecord,
+    ),
+    'showDailyReturnReasonOnRecord': _debugSnap(showDailyReturnReasonOnRecord),
+    'showPostProofProBridgeOnRecord': _debugSnap(showPostProofProBridgeOnRecord),
+    'firstProofPayoffSeenOnRecord': _debugSnap(firstProofPayoffSeenOnRecord),
+    'isDegradedTranscriptOnRecord': _debugSnap(isDegradedTranscriptOnRecord),
+    'currentRelevanceCandidate': _debugSnap(currentRelevanceCandidate),
+    'patternReviewInboxActiveOnRecord': _debugSnap(
+      patternReviewInboxActiveOnRecord,
+    ),
+    'showCurrentRelevanceOnRecordReady': _debugSnap(
+      showCurrentRelevanceOnRecordReady,
+    ),
+    'currentRelevanceQuestionActiveOnRecord': _debugSnap(
+      currentRelevanceQuestionActiveOnRecord,
+    ),
+    'correctionMemoryCandidate': _debugSnap(correctionMemoryCandidate),
+    'showCorrectionMemoryOnRecordReady': _debugSnap(
+      showCorrectionMemoryOnRecordReady,
+    ),
+    'evidenceWeightingCandidate': _debugSnap(evidenceWeightingCandidate),
+    'showEvidenceWeightingOnRecordReady': _debugSnap(
+      showEvidenceWeightingOnRecordReady,
+    ),
+    'proofSpecificityCandidate': _debugSnap(proofSpecificityCandidate),
+    'showProofSpecificityOnRecordReady': _debugSnap(
+      showProofSpecificityOnRecordReady,
+    ),
+    'presentDayRelevanceCandidate': _debugSnap(presentDayRelevanceCandidate),
+    'showPresentDayRelevanceOnRecordReady': _debugSnap(
+      showPresentDayRelevanceOnRecordReady,
+    ),
+    'showCaptureFreedomLine': _debugSnap(showCaptureFreedomLine),
+    'timelinePositioningCandidate': _debugSnap(timelinePositioningCandidate),
+    'otherEducationCardsOnRecord': _debugSnap(otherEducationCardsOnRecord),
+    'showTimelinePositioningOnRecordReady': _debugSnap(
+      showTimelinePositioningOnRecordReady,
+    ),
+    'patternConfidenceEducationCount': _debugSnap(
+      patternConfidenceEducationCount,
+    ),
+    'patternConfidenceExplanationCandidate': _debugSnap(
+      patternConfidenceExplanationCandidate,
+    ),
+    'showPatternConfidenceExplanationOnRecordReady': _debugSnap(
+      showPatternConfidenceExplanationOnRecordReady,
+    ),
+    'showProEvidenceValueOnRecordReady': _debugSnap(
+      showProEvidenceValueOnRecordReady,
+    ),
+    'showProBridgeVisibilityOnRecordReady': _debugSnap(
+      showProBridgeVisibilityOnRecordReady,
+    ),
+    'showProEvidenceValuePrivateReportOnRecord': _debugSnap(
+      showProEvidenceValuePrivateReportOnRecord,
+    ),
+    'showConfirmedRepeatWhyMattersOnRecord': _debugSnap(
+      showConfirmedRepeatWhyMattersOnRecord,
+    ),
+    'showConfirmedRepeatThoughtMapOnRecord': _debugSnap(
+      showConfirmedRepeatThoughtMapOnRecord,
+    ),
+    'showPositiveReinforcementOnRecord': _debugSnap(
+      showPositiveReinforcementOnRecord,
+    ),
+    'showHelpfulActionAppearedOnRecord': _debugSnap(
+      showHelpfulActionAppearedOnRecord,
+    ),
+    'showChangeProofOnRecord': _debugSnap(showChangeProofOnRecord),
+    'showFirstWeekLoopOnRecord': _debugSnap(showFirstWeekLoopOnRecord),
+    'firstProofPayoffCandidate': _debugSnap(firstProofPayoffCandidate),
+    'showFirstProofPayoff': _debugSnap(showFirstProofPayoff),
+    'threeDayChallengeCandidate': _debugSnap(threeDayChallengeCandidate),
+    'showThreeDayChallengeOnRecord': _debugSnap(showThreeDayChallengeOnRecord),
+    'firstProofPatternConfidence': _debugSnap(firstProofPatternConfidence),
+    'firstProofTruthProofKey': _debugSnap(firstProofTruthProofKey),
+    'showFirstProofTruth': _debugSnap(showFirstProofTruth),
+    'firstProofTruthAnswer': _debugSnap(firstProofTruthAnswer),
+    'showFirstProofActionLoop': _debugSnap(showFirstProofActionLoop),
+    'firstProofActionLoopContent': _debugSnap(firstProofActionLoopContent),
+    'showFirstProofMoment': _debugSnap(showFirstProofMoment),
+    'postSaveHasConfirmedRepeat': _debugSnap(postSaveHasConfirmedRepeat),
+    'postSaveHasFirstProof': _debugSnap(postSaveHasFirstProof),
+    'postSaveDegraded': _debugSnap(postSaveDegraded),
+    'showCoreValueFeedbackOnRecordPostFirstProof': _debugSnap(
+      showCoreValueFeedbackOnRecordPostFirstProof,
+    ),
+    'returnCheckPayoffCandidate': _debugSnap(returnCheckPayoffCandidate),
+    'whatChangedV2Prompt': _debugSnap(whatChangedV2Prompt),
+    'whatChangedV2Display': _debugSnap(whatChangedV2Display),
+    'showWhatChangedV2': _debugSnap(showWhatChangedV2),
+    'showWhatChangedV2Display': _debugSnap(showWhatChangedV2Display),
+    'showOpenCapturePromptChips': _debugSnap(showOpenCapturePromptChips),
+    'showLowFrictionReturnCard': _debugSnap(showLowFrictionReturnCard),
+    'firstMomentCaptureCandidate': _debugSnap(firstMomentCaptureCandidate),
+    'firstSaveLiftCandidate': _debugSnap(firstSaveLiftCandidate),
+    'firstSessionCaptureRepairCandidate': _debugSnap(
+      firstSessionCaptureRepairCandidate,
+    ),
+    'openingRepairOverride': _debugSnap(openingRepairOverride),
+    'showFirstSessionCaptureRepairCard': _debugSnap(
+      showFirstSessionCaptureRepairCard,
+    ),
+    'firstSessionLiftCandidate': _debugSnap(firstSessionLiftCandidate),
+    'showFirstSessionLiftCard': _debugSnap(showFirstSessionLiftCard),
+    'showFirstSaveLiftCard': _debugSnap(showFirstSaveLiftCard),
+    'showFirstMomentCaptureCard': _debugSnap(showFirstMomentCaptureCard),
+    'secondMomentReturnCandidate': _debugSnap(secondMomentReturnCandidate),
+    'showSecondMomentReturnCard': _debugSnap(showSecondMomentReturnCard),
+    'threeMomentCompletionCandidate': _debugSnap(
+      threeMomentCompletionCandidate,
+    ),
+    'showThreeMomentCompletionCard': _debugSnap(showThreeMomentCompletionCard),
+    'firstRunPositioningCandidate': _debugSnap(firstRunPositioningCandidate),
+    'showFirstRunPositioningCard': _debugSnap(showFirstRunPositioningCard),
+    'betaTodaySummaryCandidate': _debugSnap(betaTodaySummaryCandidate),
+    'showBetaTodaySummaryCard': _debugSnap(showBetaTodaySummaryCard),
+    'archiveTimelineSpineCandidate': _debugSnap(archiveTimelineSpineCandidate),
+    'whatToNoticeNextCandidate': _debugSnap(whatToNoticeNextCandidate),
+    'showWhatToNoticeNextCard': _debugSnap(showWhatToNoticeNextCard),
+    'showArchiveTimelineSpineOnRecord': _debugSnap(
+      showArchiveTimelineSpineOnRecord,
+    ),
+    'suppressLegacyEducationCardsForSpineOnRecord': _debugSnap(
+      suppressLegacyEducationCardsForSpineOnRecord,
+    ),
+    'timelineProofMomentCandidate': _debugSnap(timelineProofMomentCandidate),
+    'showTimelineProofMomentOnRecord': _debugSnap(
+      showTimelineProofMomentOnRecord,
+    ),
+    'betaTesterReportCandidate': _debugSnap(betaTesterReportCandidate),
+    'showBetaTesterReportOnRecord': _debugSnap(showBetaTesterReportOnRecord),
+    'notRelevantRecoveryCandidate': _debugSnap(notRelevantRecoveryCandidate),
+    'proofQualityResponseTimelineCandidate': _debugSnap(
+      proofQualityResponseTimelineCandidate,
+    ),
+    'proofQualityResponseSpineCandidate': _debugSnap(
+      proofQualityResponseSpineCandidate,
+    ),
+    'betaProofLiftTimelineCandidate': _debugSnap(
+      betaProofLiftTimelineCandidate,
+    ),
+    'returnAfterProofRecordCandidate': _debugSnap(
+      returnAfterProofRecordCandidate,
+    ),
+    'showReturnAfterProofStrengthenedOnRecordReady': _debugSnap(
+      showReturnAfterProofStrengthenedOnRecordReady,
+    ),
+    'showReturnAfterProofGenericOnRecordReady': _debugSnap(
+      showReturnAfterProofGenericOnRecordReady,
+    ),
+    'showReturnAfterProofOnRecordReady': _debugSnap(
+      showReturnAfterProofOnRecordReady,
+    ),
+    'returnAfterProofLiftV2Candidate': _debugSnap(
+      returnAfterProofLiftV2Candidate,
+    ),
+    'showReturnAfterProofLiftV2OnRecordReady': _debugSnap(
+      showReturnAfterProofLiftV2OnRecordReady,
+    ),
+    'recordReadySurfacePriority': _debugSnap(recordReadySurfacePriority),
+    'recordLoosenSignalsPreAudit': _debugSnap(recordLoosenSignalsPreAudit),
+    'recordEvidenceAnchorPreAudit': _debugSnap(recordEvidenceAnchorPreAudit),
+    'recordFeedbackStateForLift': _debugSnap(recordFeedbackStateForLift),
+    'timelineFeedbackType': _debugSnap(timelineFeedbackType),
+    'betaRepairLabInput': _debugSnap(betaRepairLabInput),
+    'showBetaRepairLabProPlacementOnRecord': _debugSnap(
+      showBetaRepairLabProPlacementOnRecord,
+    ),
+    'betaRepairLabProPlacementResult': _debugSnap(
+      betaRepairLabProPlacementResult,
+    ),
+    'showBetaRepairLabPricingValueFramingOnRecord': _debugSnap(
+      showBetaRepairLabPricingValueFramingOnRecord,
+    ),
+    'betaRepairLabPricingValueFramingResult': _debugSnap(
+      betaRepairLabPricingValueFramingResult,
+    ),
+    'showBetaRepairLabPaywallValueOnRecord': _debugSnap(
+      showBetaRepairLabPaywallValueOnRecord,
+    ),
+    'betaRepairLabPaywallValueResult': _debugSnap(
+      betaRepairLabPaywallValueResult,
+    ),
+    'hasProEngagementOnRecord': _debugSnap(hasProEngagementOnRecord),
+    'showBetaRepairLabPricingValidationOnRecord': _debugSnap(
+      showBetaRepairLabPricingValidationOnRecord,
+    ),
+    'showBetaRepairLabEvidenceTrailClarityOnRecord': _debugSnap(
+      showBetaRepairLabEvidenceTrailClarityOnRecord,
+    ),
+    'betaRepairLabPricingValidationResult': _debugSnap(
+      betaRepairLabPricingValidationResult,
+    ),
+    'proUnderstandingLiftRecordReadyInput': _debugSnap(
+      proUnderstandingLiftRecordReadyInput,
+    ),
+    'showProUnderstandingLiftOnRecordReady': _debugSnap(
+      showProUnderstandingLiftOnRecordReady,
+    ),
+    'showProVisibilityLiftOnRecordReady': _debugSnap(
+      showProVisibilityLiftOnRecordReady,
+    ),
+    'proUnderstandingLiftRecordReadyResult': _debugSnap(
+      proUnderstandingLiftRecordReadyResult,
+    ),
+    'proVisibilityLiftRecordReadyResult': _debugSnap(
+      proVisibilityLiftRecordReadyResult,
+    ),
+    'showProofQualityResponseOnRecordReady': _debugSnap(
+      showProofQualityResponseOnRecordReady,
+    ),
+    'showNotRelevantRecoveryOnRecordReady': _debugSnap(
+      showNotRelevantRecoveryOnRecordReady,
+    ),
+    'showBetaProofLiftOnRecordReady': _debugSnap(showBetaProofLiftOnRecordReady),
+    'betaActivationPathPreAuditContext': _debugSnap(
+      betaActivationPathPreAuditContext,
+    ),
+    'betaActivationPathPreAuditResult': _debugSnap(
+      betaActivationPathPreAuditResult,
+    ),
+    'showBetaActivationPathCard': _debugSnap(showBetaActivationPathCard),
+    'betaActivationPathResult': _debugSnap(betaActivationPathResult),
+    'betaFeedbackCaptureRecordReadyPreAudit': _debugSnap(
+      betaFeedbackCaptureRecordReadyPreAudit,
+    ),
+    'showBetaFeedbackCaptureRecordReady': _debugSnap(
+      showBetaFeedbackCaptureRecordReady,
+    ),
+    'betaFeedbackCaptureRecordReadyResult': _debugSnap(
+      betaFeedbackCaptureRecordReadyResult,
+    ),
+    'betaProofFeedbackCounts': _debugSnap(betaProofFeedbackCounts),
+    'betaProofFeedbackRowVisibleOnTimeline': _debugSnap(
+      betaProofFeedbackRowVisibleOnTimeline,
+    ),
+    'proofQualityRepairInput': _debugSnap(proofQualityRepairInput),
+    'showProofQualityRepairOnRecord': _debugSnap(showProofQualityRepairOnRecord),
+    'proofQualityRepairResult': _debugSnap(proofQualityRepairResult),
+    'proofFloorRescueInput': _debugSnap(proofFloorRescueInput),
+    'showProofFloorRescueOnRecord': _debugSnap(showProofFloorRescueOnRecord),
+    'proofFloorRescueResult': _debugSnap(proofFloorRescueResult),
+    'blocksProByProofFloorOnRecord': _debugSnap(blocksProByProofFloorOnRecord),
+    'showBetaRepairLabProofOnRecord': _debugSnap(showBetaRepairLabProofOnRecord),
+    'betaRepairLabProofResult': _debugSnap(betaRepairLabProofResult),
+    'blocksProCardsByProofProtectionOnRecord': _debugSnap(
+      blocksProCardsByProofProtectionOnRecord,
+    ),
+    'betaRepairLabEvidenceTrailClarityResult': _debugSnap(
+      betaRepairLabEvidenceTrailClarityResult,
+    ),
+    'recordLoosenSignals': _debugSnap(recordLoosenSignals),
+    'recordReadyProTiming': _debugSnap(recordReadyProTiming),
+    'betaActivationPathFinalContext': _debugSnap(betaActivationPathFinalContext),
+    'shareableNonPrivateProofResult': _debugSnap(shareableNonPrivateProofResult),
+    'showShareableNonPrivateProofOnRecord': _debugSnap(
+      showShareableNonPrivateProofOnRecord,
+    ),
+    'proofSpecificityBoostCandidate': _debugSnap(proofSpecificityBoostCandidate),
+    'timelineProofParentVisible': _debugSnap(timelineProofParentVisible),
+    'showProofSpecificityBoostOnTimelineProof': _debugSnap(
+      showProofSpecificityBoostOnTimelineProof,
+    ),
+    'showProofQualityResponseUnderTimelineProof': _debugSnap(
+      showProofQualityResponseUnderTimelineProof,
+    ),
+    'showProofQualityResponseUnderArchiveSpine': _debugSnap(
+      showProofQualityResponseUnderArchiveSpine,
+    ),
+    'showNotRelevantRecoveryUnderTimelineProof': _debugSnap(
+      showNotRelevantRecoveryUnderTimelineProof,
+    ),
+    'showBetaProofLiftUnderTimelineProof': _debugSnap(
+      showBetaProofLiftUnderTimelineProof,
+    ),
+    'showReturnAfterProofLiftV2BelowProofOnRecord': _debugSnap(
+      showReturnAfterProofLiftV2BelowProofOnRecord,
+    ),
+    'showReturnAfterProofLiftV2InGuidanceStack': _debugSnap(
+      showReturnAfterProofLiftV2InGuidanceStack,
+    ),
+    'showReturnAfterProofBelowProofOnRecord': _debugSnap(
+      showReturnAfterProofBelowProofOnRecord,
+    ),
+    'showReturnAfterProofInGuidanceStack': _debugSnap(
+      showReturnAfterProofInGuidanceStack,
+    ),
+    'showProUnderstandingLiftBelowProofOnRecord': _debugSnap(
+      showProUnderstandingLiftBelowProofOnRecord,
+    ),
+    'showBetaRepairLabEvidenceTrailClarityBelowProofOnRecord': _debugSnap(
+      showBetaRepairLabEvidenceTrailClarityBelowProofOnRecord,
+    ),
+    'showBetaRepairLabPricingValidationBelowProofOnRecord': _debugSnap(
+      showBetaRepairLabPricingValidationBelowProofOnRecord,
+    ),
+    'showBetaRepairLabPricingValueFramingBelowProofOnRecord': _debugSnap(
+      showBetaRepairLabPricingValueFramingBelowProofOnRecord,
+    ),
+    'showBetaRepairLabPaywallValueBelowProofOnRecord': _debugSnap(
+      showBetaRepairLabPaywallValueBelowProofOnRecord,
+    ),
+    'showBetaRepairLabProPlacementBelowProofOnRecord': _debugSnap(
+      showBetaRepairLabProPlacementBelowProofOnRecord,
+    ),
+    'showProUnderstandingLiftInProSectionOnRecord': _debugSnap(
+      showProUnderstandingLiftInProSectionOnRecord,
+    ),
+    'showProVisibilityLiftBelowProofOnRecord': _debugSnap(
+      showProVisibilityLiftBelowProofOnRecord,
+    ),
+    'showProVisibilityLiftInProSectionOnRecord': _debugSnap(
+      showProVisibilityLiftInProSectionOnRecord,
+    ),
+    'showProBridgeBelowProofOnRecord': _debugSnap(
+      showProBridgeBelowProofOnRecord,
+    ),
+    'showProBridgeInProSectionOnRecord': _debugSnap(
+      showProBridgeInProSectionOnRecord,
+    ),
+    'proBridgeVisibilityRecordResult': _debugSnap(
+      proBridgeVisibilityRecordResult,
+    ),
+    'patternReviewInboxActivePostSave': _debugSnap(
+      patternReviewInboxActivePostSave,
+    ),
+    'timelineProofMomentPostSaveCandidate': _debugSnap(
+      timelineProofMomentPostSaveCandidate,
+    ),
+    'showTimelineProofMomentOnFirstProofPayoff': _debugSnap(
+      showTimelineProofMomentOnFirstProofPayoff,
+    ),
+    'proofSpecificityPostSaveCandidate': _debugSnap(
+      proofSpecificityPostSaveCandidate,
+    ),
+    'showProofSpecificityOnFirstProofPayoff': _debugSnap(
+      showProofSpecificityOnFirstProofPayoff,
+    ),
+    'proofSpecificityBoostPostSaveCandidate': _debugSnap(
+      proofSpecificityBoostPostSaveCandidate,
+    ),
+    'proofQualityResponseFirstProofCandidate': _debugSnap(
+      proofQualityResponseFirstProofCandidate,
+    ),
+    'proofQualityResponseTimelinePostSaveCandidate': _debugSnap(
+      proofQualityResponseTimelinePostSaveCandidate,
+    ),
+    'betaProofLiftFirstProofCandidate': _debugSnap(
+      betaProofLiftFirstProofCandidate,
+    ),
+    'betaProofLiftTimelinePostSaveCandidate': _debugSnap(
+      betaProofLiftTimelinePostSaveCandidate,
+    ),
+    'returnAfterProofPostSaveCandidate': _debugSnap(
+      returnAfterProofPostSaveCandidate,
+    ),
+    'firstProofPayoffParentVisible': _debugSnap(firstProofPayoffParentVisible),
+    'showProofSpecificityBoostOnFirstProofPayoff': _debugSnap(
+      showProofSpecificityBoostOnFirstProofPayoff,
+    ),
+    'showProofQualityResponseOnFirstProofPayoff': _debugSnap(
+      showProofQualityResponseOnFirstProofPayoff,
+    ),
+    'timelineProofPostSaveParentVisible': _debugSnap(
+      timelineProofPostSaveParentVisible,
+    ),
+    'showProofSpecificityBoostOnTimelineProofPostSave': _debugSnap(
+      showProofSpecificityBoostOnTimelineProofPostSave,
+    ),
+    'showProofQualityResponseOnTimelineProofPostSave': _debugSnap(
+      showProofQualityResponseOnTimelineProofPostSave,
+    ),
+    'showBetaProofLiftOnFirstProofPayoff': _debugSnap(
+      showBetaProofLiftOnFirstProofPayoff,
+    ),
+    'showBetaProofLiftUnderTimelineProofPostSave': _debugSnap(
+      showBetaProofLiftUnderTimelineProofPostSave,
+    ),
+    'showReturnAfterProofStrengthenedOnFirstProofPayoff': _debugSnap(
+      showReturnAfterProofStrengthenedOnFirstProofPayoff,
+    ),
+    'showReturnAfterProofGenericOnFirstProofPayoff': _debugSnap(
+      showReturnAfterProofGenericOnFirstProofPayoff,
+    ),
+    'showReturnAfterProofOnFirstProofPayoff': _debugSnap(
+      showReturnAfterProofOnFirstProofPayoff,
+    ),
+    'returnAfterProofLiftV2PostSaveCandidate': _debugSnap(
+      returnAfterProofLiftV2PostSaveCandidate,
+    ),
+    'showReturnAfterProofLiftV2OnPostSave': _debugSnap(
+      showReturnAfterProofLiftV2OnPostSave,
+    ),
+    'postSaveLoosenSignalsPreAudit': _debugSnap(postSaveLoosenSignalsPreAudit),
+    'postSaveEvidenceAnchorPreAudit': _debugSnap(postSaveEvidenceAnchorPreAudit),
+    'postSaveFeedbackStateForLift': _debugSnap(postSaveFeedbackStateForLift),
+    'hasProEngagementOnPostSave': _debugSnap(hasProEngagementOnPostSave),
+    'proUnderstandingLiftPostSaveInput': _debugSnap(
+      proUnderstandingLiftPostSaveInput,
+    ),
+    'showProUnderstandingLiftOnPostSave': _debugSnap(
+      showProUnderstandingLiftOnPostSave,
+    ),
+    'proUnderstandingLiftPostSaveResult': _debugSnap(
+      proUnderstandingLiftPostSaveResult,
+    ),
+    'base': _debugSnap(base),
+    'showProVisibilityLiftOnPostSave': _debugSnap(
+      showProVisibilityLiftOnPostSave,
+    ),
+    'proVisibilityLiftPostSaveResult': _debugSnap(
+      proVisibilityLiftPostSaveResult,
+    ),
+    'showProEvidenceValuePostSave': _debugSnap(showProEvidenceValuePostSave),
+    'showBetaInviteLoopPostSave': _debugSnap(showBetaInviteLoopPostSave),
+    'showProPreviewPostSave': _debugSnap(showProPreviewPostSave),
+    'showProBridgeVisibilityPostSave': _debugSnap(
+      showProBridgeVisibilityPostSave,
+    ),
+    'showProLockMomentPostSave': _debugSnap(showProLockMomentPostSave),
+    'monthlyPrivateReportPreviewPostSave': _debugSnap(
+      monthlyPrivateReportPreviewPostSave,
+    ),
+    'showMonthlyPrivateReportPreviewPostSave': _debugSnap(
+      showMonthlyPrivateReportPreviewPostSave,
+    ),
+    'betaFeedbackIntelligenceSurfaceOnRecordReady': _debugSnap(
+      betaFeedbackIntelligenceSurfaceOnRecordReady,
+    ),
+    'betaFeedbackIntelligenceSurfacePostSave': _debugSnap(
+      betaFeedbackIntelligenceSurfacePostSave,
+    ),
+    'helpedTrackingPrompt': _debugSnap(helpedTrackingPrompt),
+    'showHelpedTracking': _debugSnap(showHelpedTracking),
+    'showReturnCheckPayoff': _debugSnap(showReturnCheckPayoff),
+    'showArchiveSummaryOnRecord': _debugSnap(showArchiveSummaryOnRecord),
+    'confirmedRepeatChangeNoticeOnRecord': _debugSnap(
+      confirmedRepeatChangeNoticeOnRecord,
+    ),
+    'lowEvidenceGuidance': _debugSnap(lowEvidenceGuidance),
+    'quietSignalCandidate': _debugSnap(quietSignalCandidate),
+    'showQuietSignalOnRecord': _debugSnap(showQuietSignalOnRecord),
+    'showLowEvidenceGuidanceOnRecord': _debugSnap(
+      showLowEvidenceGuidanceOnRecord,
+    ),
+    'dailyArchiveMemoryCandidate': _debugSnap(dailyArchiveMemoryCandidate),
+    'firstProofLoopActive': _debugSnap(firstProofLoopActive),
+    'showDailyArchiveMemory': _debugSnap(showDailyArchiveMemory),
+    'showReturningWatchTargetFocusedUi': _debugSnap(
+      showReturningWatchTargetFocusedUi,
+    ),
+    'recordReadyShowsWatchTargetOnly': _debugSnap(
+      recordReadyShowsWatchTargetOnly,
+    ),
+    'recordReadySuppressStreakPressure': _debugSnap(
+      recordReadySuppressStreakPressure,
+    ),
+    'betaTestScriptCardCandidate': _debugSnap(betaTestScriptCardCandidate),
+    'showBetaTestScriptCard': _debugSnap(showBetaTestScriptCard),
+    'daysSinceLastEntry': _debugSnap(daysSinceLastEntry),
+    'showReturnedAfterDelayRecovery': _debugSnap(showReturnedAfterDelayRecovery),
+    'nextBestActionCandidate': _debugSnap(nextBestActionCandidate),
+    'showNextBestActionOnRecord': _debugSnap(showNextBestActionOnRecord),
+    'postSaveReturnHandoffCandidate': _debugSnap(postSaveReturnHandoffCandidate),
+    'returnTomorrowCuePostSave': _debugSnap(returnTomorrowCuePostSave),
+    'postSaveDegradedForReturnCue': _debugSnap(postSaveDegradedForReturnCue),
+    'comeBackTomorrowV2PostSaveWatch': _debugSnap(
+      comeBackTomorrowV2PostSaveWatch,
+    ),
+    'showComeBackTomorrowV2PostSave': _debugSnap(showComeBackTomorrowV2PostSave),
+    'showPostSaveCuriosityHook': _debugSnap(showPostSaveCuriosityHook),
+    'betaFeedbackCapturePostSavePreAudit': _debugSnap(
+      betaFeedbackCapturePostSavePreAudit,
+    ),
+    'showBetaFeedbackCapturePostSave': _debugSnap(
+      showBetaFeedbackCapturePostSave,
+    ),
+    'betaFeedbackCapturePostSaveResult': _debugSnap(
+      betaFeedbackCapturePostSaveResult,
+    ),
+    'postSaveProofFloorRescueInput': _debugSnap(postSaveProofFloorRescueInput),
+    'blocksProByProofFloorOnPostSave': _debugSnap(
+      blocksProByProofFloorOnPostSave,
+    ),
+    'recordPostSaveSurfacePriority': _debugSnap(recordPostSaveSurfacePriority),
+    'postSaveLoosenSignals': _debugSnap(postSaveLoosenSignals),
+    'postSaveProTiming': _debugSnap(postSaveProTiming),
+    'betaFeedbackCapturePostSaveFinal': _debugSnap(
+      betaFeedbackCapturePostSaveFinal,
+    ),
+    'proPreviewPostSaveResult': _debugSnap(proPreviewPostSaveResult),
+    'betaInviteLoopPostSaveResult': _debugSnap(betaInviteLoopPostSaveResult),
+    'proBridgeVisibilityPostSaveResult': _debugSnap(
+      proBridgeVisibilityPostSaveResult,
+    ),
+    'showReturnTomorrowCuePostSave': _debugSnap(showReturnTomorrowCuePostSave),
+    'firstWeekProgressPostSave': _debugSnap(firstWeekProgressPostSave),
+    'showFirstWeekProgressPostSave': _debugSnap(showFirstWeekProgressPostSave),
+    'showPostSaveReturnHandoff': _debugSnap(showPostSaveReturnHandoff),
+    'beliefUpdatePayoff': _debugSnap(beliefUpdatePayoff),
+    'journalShareProof': _debugSnap(journalShareProof),
+    'shareableProof': _debugSnap(shareableProof),
+    'returnLoopPayoff': _debugSnap(returnLoopPayoff),
+    'postSaveDailyMirror': _debugSnap(postSaveDailyMirror),
+    'postSaveArchiveHierarchy': _debugSnap(postSaveArchiveHierarchy),
+    'suppressNoisyRepeatPostSaveCards': _debugSnap(
+      suppressNoisyRepeatPostSaveCards,
+    ),
+    'repeatPostSaveThoughtMapPreview': _debugSnap(
+      repeatPostSaveThoughtMapPreview,
+    ),
+    'showDegradedTranscriptFocusedPostSave': _debugSnap(
+      showDegradedTranscriptFocusedPostSave,
+    ),
+    'suppressDegradedTranscriptPostSaveCompetitors': _debugSnap(
+      suppressDegradedTranscriptPostSaveCompetitors,
+    ),
+    'returningUserToday': _debugSnap(returningUserToday),
+    'nextMomentPrompt': _debugSnap(nextMomentPrompt),
+    'dailyArchiveExercise': _debugSnap(dailyArchiveExercise),
+    'todaysOneQuestion': _debugSnap(todaysOneQuestion),
+    'recordHomeSurface': _debugSnap(recordHomeSurface),
+    'showArchiveProgressCards': _debugSnap(showArchiveProgressCards),
+    'readyCapturePolicy': _debugSnap(readyCapturePolicy),
+    'showTesterMission': _debugSnap(showTesterMission),
+    'showRecordCaptureModes': _debugSnap(showRecordCaptureModes),
+    'testerMissionCompact': _debugSnap(testerMissionCompact),
+    'showTesterMissionFull': _debugSnap(showTesterMissionFull),
+    'testerMission': _debugSnap(testerMission),
+    'showThoughtMapRecordCta': _debugSnap(showThoughtMapRecordCta),
+    'showPositiveReinforcementRecordCta': _debugSnap(
+      showPositiveReinforcementRecordCta,
+    ),
+    'showPatternChangedRecordCta': _debugSnap(showPatternChangedRecordCta),
+    'showArchiveSummaryRecordCta': _debugSnap(showArchiveSummaryRecordCta),
+    'showDailyReturnReasonRecordCta': _debugSnap(showDailyReturnReasonRecordCta),
+    'showFirstWeekLoopRecordCta': _debugSnap(showFirstWeekLoopRecordCta),
+  };
+
   final RecordingPhase policyMic;
   final bool policyUserDenied;
   final String? error;
@@ -736,4 +1396,16 @@ class RecordSurfaceViewState {
   final bool showArchiveSummaryRecordCta;
   final bool showDailyReturnReasonRecordCta;
   final bool showFirstWeekLoopRecordCta;
+}
+
+/// Stable characterization snapshot: primitives and enums keep their values,
+/// lists are walked, every other object becomes [Object.toString].
+Object? _debugSnap(Object? value) {
+  if (value == null) return null;
+  if (value is bool || value is num || value is String) return value;
+  if (value is Enum) return value.name;
+  if (value is Iterable) {
+    return [for (final item in value) _debugSnap(item)];
+  }
+  return value.toString();
 }
