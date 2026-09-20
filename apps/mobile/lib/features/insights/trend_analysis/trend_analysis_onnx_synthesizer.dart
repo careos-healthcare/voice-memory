@@ -36,7 +36,7 @@ class TrendAnalysisOnnxSynthesizer {
     required bool usedOnnx,
     DateTime? generatedAt,
   }) {
-    final summary = _composeSummary(metadata, synthesis);
+    final summary = _composeSummary(metadata, synthesis, usedOnnx);
     return WeeklySelfReflectionReport(
       window: metadata.window,
       windowStart: metadata.windowStart,
@@ -44,8 +44,8 @@ class TrendAnalysisOnnxSynthesizer {
       reflectionCount: metadata.reflectionCount,
       metadata: metadata,
       summary: summary,
-      emotionalShifts: _composeEmotionalShifts(metadata, synthesis),
-      cognitiveLoops: _composeCognitiveLoops(metadata, synthesis),
+      emotionalShifts: _composeEmotionalShifts(metadata, synthesis, usedOnnx),
+      cognitiveLoops: _composeCognitiveLoops(metadata, synthesis, usedOnnx),
       synthesisReflection: synthesis,
       usedOnnx: usedOnnx,
       generatedAt: generatedAt ?? DateTime.now().toUtc(),
@@ -108,14 +108,17 @@ class TrendAnalysisOnnxSynthesizer {
   static String _composeSummary(
     TrendAggregatedMetadata metadata,
     ReflectionDto synthesis,
+    bool usedOnnx,
   ) {
-    final observation = synthesis.concreteObservation?.trim();
-    if (observation != null && observation.isNotEmpty) {
-      return observation;
-    }
-    final repeated = synthesis.repeatedSignal?.trim();
-    if (repeated != null && repeated.isNotEmpty) {
-      return repeated;
+    if (usedOnnx) {
+      final observation = synthesis.concreteObservation?.trim();
+      if (observation != null && observation.isNotEmpty) {
+        return observation;
+      }
+      final repeated = synthesis.repeatedSignal?.trim();
+      if (repeated != null && repeated.isNotEmpty) {
+        return repeated;
+      }
     }
     if (metadata.intensityTrend == TrendIntensityDirection.unknown) {
       return 'Based on these entries, your archive noticed recurring focus on '
@@ -129,6 +132,7 @@ class TrendAnalysisOnnxSynthesizer {
   static List<EmotionalShiftLine> _composeEmotionalShifts(
     TrendAggregatedMetadata metadata,
     ReflectionDto synthesis,
+    bool usedOnnx,
   ) {
     final lines = <EmotionalShiftLine>[];
 
@@ -161,14 +165,16 @@ class TrendAnalysisOnnxSynthesizer {
       );
     }
 
-    final tension = synthesis.tensionOrContradiction?.trim();
-    if (tension != null && tension.isNotEmpty) {
-      lines.add(
-        EmotionalShiftLine(
-          headline: 'Tension mentioned in recent entries',
-          detail: tension,
-        ),
-      );
+    if (usedOnnx) {
+      final tension = synthesis.tensionOrContradiction?.trim();
+      if (tension != null && tension.isNotEmpty) {
+        lines.add(
+          EmotionalShiftLine(
+            headline: 'Tension mentioned in recent entries',
+            detail: tension,
+          ),
+        );
+      }
     }
 
     return lines.take(4).toList(growable: false);
@@ -177,6 +183,7 @@ class TrendAnalysisOnnxSynthesizer {
   static List<CognitiveLoopLine> _composeCognitiveLoops(
     TrendAggregatedMetadata metadata,
     ReflectionDto synthesis,
+    bool usedOnnx,
   ) {
     final loops = <CognitiveLoopLine>[];
 
@@ -189,27 +196,28 @@ class TrendAnalysisOnnxSynthesizer {
       );
     }
 
-    for (final theme in synthesis.recurringThemes.take(2)) {
-      final trimmed = theme.trim();
-      if (trimmed.isEmpty) continue;
-      loops.add(
-        CognitiveLoopLine(
-          pattern: 'Recurring focus on $trimmed',
-          occurrences: metadata.themeCounts[trimmed.toLowerCase()] ?? 1,
-          detail: synthesis.exactLanguagePattern,
-        ),
-      );
-    }
-
-    for (final observation in synthesis.patternObservations.take(2)) {
-      final trimmed = observation.trim();
-      if (trimmed.isEmpty) continue;
-      loops.add(
-        CognitiveLoopLine(
-          pattern: trimmed,
-          occurrences: 1,
-        ),
-      );
+    if (usedOnnx) {
+      for (final theme in synthesis.recurringThemes.take(2)) {
+        final trimmed = theme.trim();
+        if (trimmed.isEmpty) continue;
+        loops.add(
+          CognitiveLoopLine(
+            pattern: 'Recurring focus on $trimmed',
+            occurrences: metadata.themeCounts[trimmed.toLowerCase()] ?? 1,
+            detail: synthesis.exactLanguagePattern,
+          ),
+        );
+      }
+      for (final observation in synthesis.patternObservations.take(2)) {
+        final trimmed = observation.trim();
+        if (trimmed.isEmpty) continue;
+        loops.add(
+          CognitiveLoopLine(
+            pattern: trimmed,
+            occurrences: 1,
+          ),
+        );
+      }
     }
 
     return loops.take(6).toList(growable: false);

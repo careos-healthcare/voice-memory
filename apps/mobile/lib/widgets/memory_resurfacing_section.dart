@@ -1,90 +1,25 @@
 import 'package:archiveme_mobile/config/app_config.dart';
 import 'package:archiveme_mobile/features/memory_resurfacing/memory_resurfacing_models.dart';
-import 'package:archiveme_mobile/features/memory_resurfacing/memory_resurfacing_service.dart';
-import 'package:archiveme_mobile/services/app_services.dart';
 import 'package:archiveme_mobile/theme/app_theme.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'dart:async';
 
 /// Home / Archive section — memory resurfacing cards.
-class MemoryResurfacingSection extends StatefulWidget {
+class MemoryResurfacingSection extends StatelessWidget {
   const MemoryResurfacingSection({
     super.key,
-    this.limit = MemoryResurfacingService.defaultHomeLimit,
-    this.showStats = false,
+    required this.cards,
+    this.stats,
+    required this.onCardTap,
   });
 
-  final int limit;
-  final bool showStats;
-
-  @override
-  State<MemoryResurfacingSection> createState() =>
-      _MemoryResurfacingSectionState();
-}
-
-class _MemoryResurfacingSectionState extends State<MemoryResurfacingSection> {
-  List<MemoryResurfacingCardData> _cards = const [];
-  MemoryResurfacingStats? _stats;
-  bool _loading = true;
-
-  @override
-  void initState() {
-    super.initState();
-    unawaited(_load());
-  }
-
-  Future<void> _load() async {
-    if (!AppConfig.resurfacingImplemented) {
-      if (mounted) setState(() => _loading = false);
-      return;
-    }
-
-    setState(() => _loading = true);
-    final service = AppServices.instance.memoryResurfacing;
-    final withBelief = await selectResurfacingForJournal(
-      service: service,
-      loadEntries: AppServices.instance.journal.loadAll,
-      limit: widget.limit,
-    );
-
-    if (!mounted) return;
-    if (withBelief.isNotEmpty) {
-      await service.markShown(withBelief.map((c) => c.entry.id));
-    }
-
-    final stats = widget.showStats ? await service.stats() : null;
-    if (!mounted) return;
-    setState(() {
-      _cards = withBelief;
-      _stats = stats;
-      _loading = false;
-    });
-  }
-
-  Future<void> _openCard(MemoryResurfacingCardData card) async {
-    await AppServices.instance.memoryResurfacing.markOpened(card.entry.id);
-    if (!mounted) return;
-    await context.push('/entry/${card.entry.id}');
-    if (mounted) await _load();
-  }
+  final List<MemoryResurfacingCardData> cards;
+  final MemoryResurfacingStats? stats;
+  final ValueChanged<MemoryResurfacingCardData> onCardTap;
 
   @override
   Widget build(BuildContext context) {
     if (!AppConfig.resurfacingImplemented) return const SizedBox.shrink();
-    if (_loading) {
-      return const Padding(
-        padding: EdgeInsets.symmetric(vertical: 12),
-        child: Center(
-          child: SizedBox(
-            width: 22,
-            height: 22,
-            child: CircularProgressIndicator(strokeWidth: 2),
-          ),
-        ),
-      );
-    }
-    if (_cards.isEmpty) return const SizedBox.shrink();
+    if (cards.isEmpty) return const SizedBox.shrink();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -101,20 +36,71 @@ class _MemoryResurfacingSectionState extends State<MemoryResurfacingSection> {
                 ),
               ),
             ),
-            if (_stats != null)
+            if (stats != null)
               Text(
-                'Shown ${_stats!.resurfacedCount} · Opened ${_stats!.openedCount}',
+                'Shown ${stats!.resurfacedCount} · Opened ${stats!.openedCount}',
                 style: const TextStyle(fontSize: 11, color: AppTheme.muted),
               ),
           ],
         ),
         const SizedBox(height: 10),
-        ..._cards.map(
+        ...cards.map(
           (card) => Padding(
             padding: const EdgeInsets.only(bottom: 10),
             child: _MemoryResurfacingCard(
               data: card,
-              onTap: () => _openCard(card),
+              onTap: () => onCardTap(card),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+/// Home / Archive section — "On this day" calendar-anniversary cards.
+///
+/// Surfaces recordings from previous years whose local month and day match
+/// today. Complements [MemoryResurfacingSection]; these cards are un-rationed
+/// and do not call [MemoryResurfacingService.markShown].
+class OnThisDaySection extends StatelessWidget {
+  const OnThisDaySection({
+    super.key,
+    required this.cards,
+    required this.onCardTap,
+  });
+
+  final List<MemoryResurfacingCardData> cards;
+  final ValueChanged<MemoryResurfacingCardData> onCardTap;
+
+  @override
+  Widget build(BuildContext context) {
+    if (!AppConfig.resurfacingImplemented) return const SizedBox.shrink();
+    if (cards.isEmpty) return const SizedBox.shrink();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        const Text(
+          'On this day',
+          style: TextStyle(
+            fontSize: 13,
+            fontWeight: FontWeight.w600,
+            color: AppTheme.foreground,
+          ),
+        ),
+        const SizedBox(height: 2),
+        const Text(
+          'From past years on this date',
+          style: TextStyle(fontSize: 11, color: AppTheme.muted),
+        ),
+        const SizedBox(height: 10),
+        ...cards.map(
+          (card) => Padding(
+            padding: const EdgeInsets.only(bottom: 10),
+            child: _MemoryResurfacingCard(
+              data: card,
+              onTap: () => onCardTap(card),
             ),
           ),
         ),
@@ -165,15 +151,17 @@ class _MemoryResurfacingCard extends StatelessWidget {
                 data.originalDateLabel,
                 style: const TextStyle(fontSize: 12, color: AppTheme.muted),
               ),
-              const SizedBox(height: 6),
-              Text(
-                data.beliefRelation,
-                style: const TextStyle(
-                  fontSize: 12,
-                  color: AppTheme.muted,
-                  height: 1.35,
+              if (data.beliefRelation.isNotEmpty) ...[
+                const SizedBox(height: 6),
+                Text(
+                  data.beliefRelation,
+                  style: const TextStyle(
+                    fontSize: 12,
+                    color: AppTheme.muted,
+                    height: 1.35,
+                  ),
                 ),
-              ),
+              ],
             ],
           ),
         ),
