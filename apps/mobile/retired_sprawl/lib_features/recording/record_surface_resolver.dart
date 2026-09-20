@@ -69,6 +69,136 @@ abstract final class RecordSurfaceResolver {
     );
   }
 
+  static ({
+    RecordCtaPolicyResolution readyCapturePolicy,
+    bool showTesterMission,
+    bool showRecordCaptureModes,
+    bool testerMissionCompact,
+    bool showTesterMissionFull,
+    TesterMissionResult? testerMission,
+    bool showThoughtMapRecordCta,
+    bool showPositiveReinforcementRecordCta,
+    bool showPatternChangedRecordCta,
+    bool showArchiveSummaryRecordCta,
+    bool showDailyReturnReasonRecordCta,
+    bool showFirstWeekLoopRecordCta,
+  })
+  resolveCaptureCtas({
+    required RecordSurfaceInput input,
+    required RecordingPhase policyMic,
+    required bool policyUserDenied,
+    required RecordSurfaceFlags flags,
+    required bool firstUseSimplifiedRecord,
+    required bool showReturningWatchTargetFocusedUi,
+    required bool showConfirmedRepeatThoughtMapOnRecord,
+    required ThoughtMapResult? confirmedRepeatThoughtMap,
+    required bool showPositiveReinforcementOnRecord,
+    required PositiveReinforcementResult? positiveReinforcement,
+    required bool showPatternChanged,
+    required PatternChangedResult? patternChangedCandidate,
+    required bool showArchiveSummaryOnRecord,
+    required bool showDailyReturnReasonOnRecord,
+    required bool showFirstWeekLoopOnRecord,
+    required FirstWeekLoop? firstWeekLoopCandidate,
+  }) {
+    final readyCapturePolicy = RecordSurfaceCapturePolicy.resolve(input, micPhase: policyMic, userDeniedThisSession: policyUserDenied);
+    final showTesterMission =
+        TesterMissionGates.shouldShow(
+          dismissed: TesterMissionStore.isDismissed,
+          ui: input.ui,
+          entryCountLoaded: input.entryCountLoaded,
+          isRecording: flags.isRecording,
+          isPostSave: input.isPostSave,
+        ) &&
+        !firstUseSimplifiedRecord &&
+        !showReturningWatchTargetFocusedUi;
+    final showRecordCaptureModes =
+        flags.isReady &&
+        RecordCaptureModeEngine.shouldShow(
+          loaded: input.entryCountLoaded,
+          isReady: true,
+          isPostSave: input.isPostSave,
+        ) &&
+        !firstUseSimplifiedRecord &&
+        !showReturningWatchTargetFocusedUi;
+    final testerMissionCompact =
+        showTesterMission &&
+        TesterMissionGates.useCompactPresentation(
+          entryCount: input.entryCount,
+          firstUseSimplifiedRecord: firstUseSimplifiedRecord,
+        );
+    final showTesterMissionFull = showTesterMission && !testerMissionCompact;
+    final testerMission = showTesterMission
+        ? TesterMissionEngine.build(
+            entryCount: input.entryCount,
+            entries: input.journalEntries,
+            compactAtEntryZero: firstUseSimplifiedRecord,
+            feedbackAnswered: CoreValueFeedbackStore.cached.answered,
+          )
+        : null;
+    final showThoughtMapRecordCta =
+        showConfirmedRepeatThoughtMapOnRecord &&
+        confirmedRepeatThoughtMap?.firstMissingSection != null &&
+        ConfirmedRepeatThoughtMapGates.showRecordMissingPieceCta(
+          policy: readyCapturePolicy,
+          hideCardRecordButtons: RecordSurfaceCapturePolicy.shouldHideCardRecordButtons(input, readyCapturePolicy),
+          promoteMicCaptureActions: RecordSurfaceCapturePolicy.shouldPromoteMicCaptureActions(readyCapturePolicy),
+        );
+    final showPositiveReinforcementRecordCta =
+        showPositiveReinforcementOnRecord &&
+        positiveReinforcement != null &&
+        PositiveReinforcementGates.showRecordAgainCta(
+          policy: readyCapturePolicy,
+          hideCardRecordButtons: RecordSurfaceCapturePolicy.shouldHideCardRecordButtons(input, readyCapturePolicy),
+          promoteMicCaptureActions: RecordSurfaceCapturePolicy.shouldPromoteMicCaptureActions(readyCapturePolicy),
+          isCompletion: positiveReinforcement.isCompletion,
+        );
+    final showPatternChangedRecordCta =
+        showPatternChanged &&
+        patternChangedCandidate != null &&
+        PatternChangedGates.showRecordCta(
+          policy: readyCapturePolicy,
+          hideCardRecordButtons: RecordSurfaceCapturePolicy.shouldHideCardRecordButtons(input, readyCapturePolicy),
+          promoteMicCaptureActions: RecordSurfaceCapturePolicy.shouldPromoteMicCaptureActions(readyCapturePolicy),
+        );
+    final showArchiveSummaryRecordCta =
+        showArchiveSummaryOnRecord &&
+        ArchiveSummaryGates.showRecordNextCta(
+          policy: readyCapturePolicy,
+          hideCardRecordButtons: RecordSurfaceCapturePolicy.shouldHideCardRecordButtons(input, readyCapturePolicy),
+          promoteMicCaptureActions: RecordSurfaceCapturePolicy.shouldPromoteMicCaptureActions(readyCapturePolicy),
+        );
+    final showDailyReturnReasonRecordCta =
+        showDailyReturnReasonOnRecord &&
+        DailyReturnReasonGates.showRecordCta(
+          policy: readyCapturePolicy,
+          hideCardRecordButtons: RecordSurfaceCapturePolicy.shouldHideCardRecordButtons(input, readyCapturePolicy),
+          promoteMicCaptureActions: RecordSurfaceCapturePolicy.shouldPromoteMicCaptureActions(readyCapturePolicy),
+        );
+    final showFirstWeekLoopRecordCta =
+        showFirstWeekLoopOnRecord &&
+        firstWeekLoopCandidate != null &&
+        FirstWeekLoopGates.showRecordCta(
+          policy: readyCapturePolicy,
+          hideCardRecordButtons: RecordSurfaceCapturePolicy.shouldHideCardRecordButtons(input, readyCapturePolicy),
+          promoteMicCaptureActions: RecordSurfaceCapturePolicy.shouldPromoteMicCaptureActions(readyCapturePolicy),
+        );
+    return (
+      readyCapturePolicy: readyCapturePolicy,
+      showTesterMission: showTesterMission,
+      showRecordCaptureModes: showRecordCaptureModes,
+      testerMissionCompact: testerMissionCompact,
+      showTesterMissionFull: showTesterMissionFull,
+      testerMission: testerMission,
+      showThoughtMapRecordCta: showThoughtMapRecordCta,
+      showPositiveReinforcementRecordCta: showPositiveReinforcementRecordCta,
+      showPatternChangedRecordCta: showPatternChangedRecordCta,
+      showArchiveSummaryRecordCta: showArchiveSummaryRecordCta,
+      showDailyReturnReasonRecordCta: showDailyReturnReasonRecordCta,
+      showFirstWeekLoopRecordCta: showFirstWeekLoopRecordCta,
+    );
+  }
+
   static RecordSurfaceViewState resolve(RecordSurfaceInput input) {
     final (
       :flags,
@@ -4043,89 +4173,37 @@ abstract final class RecordSurfaceResolver {
         : input.canShowArchiveProgressCards;
 
 
-    final readyCapturePolicy = RecordSurfaceCapturePolicy.resolve(input, micPhase: policyMic, userDeniedThisSession: policyUserDenied);
-    final showTesterMission =
-        TesterMissionGates.shouldShow(
-          dismissed: TesterMissionStore.isDismissed,
-          ui: input.ui,
-          entryCountLoaded: input.entryCountLoaded,
-          isRecording: flags.isRecording,
-          isPostSave: input.isPostSave,
-        ) &&
-        !firstUseSimplifiedRecord &&
-        !showReturningWatchTargetFocusedUi;
-    final showRecordCaptureModes =
-        flags.isReady &&
-        RecordCaptureModeEngine.shouldShow(
-          loaded: input.entryCountLoaded,
-          isReady: true,
-          isPostSave: input.isPostSave,
-        ) &&
-        !firstUseSimplifiedRecord &&
-        !showReturningWatchTargetFocusedUi;
-    final testerMissionCompact =
-        showTesterMission &&
-        TesterMissionGates.useCompactPresentation(
-          entryCount: input.entryCount,
-          firstUseSimplifiedRecord: firstUseSimplifiedRecord,
-        );
-    final showTesterMissionFull = showTesterMission && !testerMissionCompact;
-    final testerMission = showTesterMission
-        ? TesterMissionEngine.build(
-            entryCount: input.entryCount,
-            entries: input.journalEntries,
-            compactAtEntryZero: firstUseSimplifiedRecord,
-            feedbackAnswered: CoreValueFeedbackStore.cached.answered,
-          )
-        : null;
-    final showThoughtMapRecordCta =
-        showConfirmedRepeatThoughtMapOnRecord &&
-        confirmedRepeatThoughtMap?.firstMissingSection != null &&
-        ConfirmedRepeatThoughtMapGates.showRecordMissingPieceCta(
-          policy: readyCapturePolicy,
-          hideCardRecordButtons: RecordSurfaceCapturePolicy.shouldHideCardRecordButtons(input, readyCapturePolicy),
-          promoteMicCaptureActions: RecordSurfaceCapturePolicy.shouldPromoteMicCaptureActions(readyCapturePolicy),
-        );
-    final showPositiveReinforcementRecordCta =
-        showPositiveReinforcementOnRecord &&
-        positiveReinforcement != null &&
-        PositiveReinforcementGates.showRecordAgainCta(
-          policy: readyCapturePolicy,
-          hideCardRecordButtons: RecordSurfaceCapturePolicy.shouldHideCardRecordButtons(input, readyCapturePolicy),
-          promoteMicCaptureActions: RecordSurfaceCapturePolicy.shouldPromoteMicCaptureActions(readyCapturePolicy),
-          isCompletion: positiveReinforcement.isCompletion,
-        );
-    final showPatternChangedRecordCta =
-        showPatternChanged &&
-        patternChangedCandidate != null &&
-        PatternChangedGates.showRecordCta(
-          policy: readyCapturePolicy,
-          hideCardRecordButtons: RecordSurfaceCapturePolicy.shouldHideCardRecordButtons(input, readyCapturePolicy),
-          promoteMicCaptureActions: RecordSurfaceCapturePolicy.shouldPromoteMicCaptureActions(readyCapturePolicy),
-        );
-    final showArchiveSummaryRecordCta =
-        showArchiveSummaryOnRecord &&
-        ArchiveSummaryGates.showRecordNextCta(
-          policy: readyCapturePolicy,
-          hideCardRecordButtons: RecordSurfaceCapturePolicy.shouldHideCardRecordButtons(input, readyCapturePolicy),
-          promoteMicCaptureActions: RecordSurfaceCapturePolicy.shouldPromoteMicCaptureActions(readyCapturePolicy),
-        );
-    final showDailyReturnReasonRecordCta =
-        showDailyReturnReasonOnRecord &&
-        DailyReturnReasonGates.showRecordCta(
-          policy: readyCapturePolicy,
-          hideCardRecordButtons: RecordSurfaceCapturePolicy.shouldHideCardRecordButtons(input, readyCapturePolicy),
-          promoteMicCaptureActions: RecordSurfaceCapturePolicy.shouldPromoteMicCaptureActions(readyCapturePolicy),
-        );
-    final showFirstWeekLoopRecordCta =
-        showFirstWeekLoopOnRecord &&
-        firstWeekLoopCandidate != null &&
-        FirstWeekLoopGates.showRecordCta(
-          policy: readyCapturePolicy,
-          hideCardRecordButtons: RecordSurfaceCapturePolicy.shouldHideCardRecordButtons(input, readyCapturePolicy),
-          promoteMicCaptureActions: RecordSurfaceCapturePolicy.shouldPromoteMicCaptureActions(readyCapturePolicy),
-        );
-
+    final (
+      :readyCapturePolicy,
+      :showTesterMission,
+      :showRecordCaptureModes,
+      :testerMissionCompact,
+      :showTesterMissionFull,
+      :testerMission,
+      :showThoughtMapRecordCta,
+      :showPositiveReinforcementRecordCta,
+      :showPatternChangedRecordCta,
+      :showArchiveSummaryRecordCta,
+      :showDailyReturnReasonRecordCta,
+      :showFirstWeekLoopRecordCta,
+    ) = resolveCaptureCtas(
+      input: input,
+      policyMic: policyMic,
+      policyUserDenied: policyUserDenied,
+      flags: flags,
+      firstUseSimplifiedRecord: firstUseSimplifiedRecord,
+      showReturningWatchTargetFocusedUi: showReturningWatchTargetFocusedUi,
+      showConfirmedRepeatThoughtMapOnRecord: showConfirmedRepeatThoughtMapOnRecord,
+      confirmedRepeatThoughtMap: confirmedRepeatThoughtMap,
+      showPositiveReinforcementOnRecord: showPositiveReinforcementOnRecord,
+      positiveReinforcement: positiveReinforcement,
+      showPatternChanged: showPatternChanged,
+      patternChangedCandidate: patternChangedCandidate,
+      showArchiveSummaryOnRecord: showArchiveSummaryOnRecord,
+      showDailyReturnReasonOnRecord: showDailyReturnReasonOnRecord,
+      showFirstWeekLoopOnRecord: showFirstWeekLoopOnRecord,
+      firstWeekLoopCandidate: firstWeekLoopCandidate,
+    );
 
     return RecordSurfaceViewState.build(
       policyMic: policyMic,
