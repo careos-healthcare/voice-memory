@@ -1,14 +1,17 @@
+import 'dart:async';
+
+import 'package:archiveme_mobile/core/config/v1_capability_registry.dart';
 import 'package:archiveme_mobile/features/belief_changes/belief_change_moment_analytics.dart';
 import 'package:archiveme_mobile/features/belief_changes/belief_change_moment_copy.dart';
 import 'package:archiveme_mobile/features/belief_changes/belief_change_moment_model.dart';
 import 'package:archiveme_mobile/features/belief_changes/ui/belief_change_pattern_card.dart';
+import 'package:archiveme_mobile/features/belief_evidence/ui/provenance_recovery_action.dart';
 import 'package:archiveme_mobile/features/pro_packaging/pro_value_copy.dart';
 import 'package:archiveme_mobile/theme/app_spacing.dart';
 import 'package:archiveme_mobile/widgets/common/contextual_privacy_reassurance.dart';
 import 'package:archiveme_mobile/widgets/common/pro_packaging_bridge_line.dart';
 import 'package:archiveme_mobile/widgets/patterns/archive_change_timeline_card.dart';
 import 'package:flutter/material.dart';
-import 'dart:async';
 
 /// Emotional payoff when a repeat pattern may be softening — evidence only.
 class BeliefChangeMomentCard extends StatefulWidget {
@@ -66,6 +69,9 @@ class _BeliefChangeMomentCardState extends State<BeliefChangeMomentCard> {
       key: const Key('belief_change_moment_card'),
       moment: widget.moment,
       compact: widget.compact,
+      recoveryBuilder: V1CapabilityRegistry.provenanceRecovery
+          ? ProvenanceRecoveryAction.productionBuilder
+          : null,
       footer: widget.showProPackagingBridge || widget.showPrivacyReassurance
           ? Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,

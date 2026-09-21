@@ -1,8 +1,10 @@
+import 'package:archiveme_mobile/features/belief_evidence/evidence/legacy_transcript_registry.dart';
 import 'package:archiveme_mobile/features/belief_evidence/evidence/transcript_evidence_index.dart';
 import 'package:archiveme_mobile/features/belief_evidence/insight_evidence_line.dart';
 import 'package:archiveme_mobile/features/belief_evidence/ui/evidence_citation_card.dart';
 import 'package:archiveme_mobile/features/belief_evidence/ui/evidence_citation_copy.dart';
 import 'package:archiveme_mobile/features/belief_evidence/ui/evidence_trust_copy.dart';
+import 'package:archiveme_mobile/features/belief_evidence/ui/legacy_provenance_notice.dart';
 import 'package:archiveme_mobile/features/belief_evidence/ui/verified_source_proof_sheet.dart';
 import 'package:archiveme_mobile/features/belief_evidence/ui/view_source_proof_section.dart';
 import 'package:archiveme_mobile/theme/app_theme.dart';
@@ -35,8 +37,14 @@ Widget _host(Widget child) => MaterialApp(
 );
 
 void main() {
-  setUp(TranscriptEvidenceIndex.resetForTest);
-  tearDown(TranscriptEvidenceIndex.resetForTest);
+  setUp(() {
+    TranscriptEvidenceIndex.resetForTest();
+    LegacyTranscriptRegistry.resetForTest();
+  });
+  tearDown(() {
+    TranscriptEvidenceIndex.resetForTest();
+    LegacyTranscriptRegistry.resetForTest();
+  });
 
   group('ViewSourceProofSection with grounded evidence', () {
     setUp(() {
@@ -195,6 +203,57 @@ void main() {
       );
 
       expect(find.byKey(VerifiedSourceProofLink.linkKey), findsNothing);
+    });
+
+    testWidgets('legacy-only lines show the provenance notice, not a link', (
+      tester,
+    ) async {
+      LegacyTranscriptRegistry.remember(
+        const LegacyTranscriptRecord(entryId: 'legacy'),
+      );
+
+      await tester.pumpWidget(
+        _host(
+          ViewSourceProofSection.fromLines(
+            lines: [
+              _line(entryId: 'legacy', quote: 'I said yes before checking'),
+            ],
+          ),
+        ),
+      );
+
+      // Provenance-unverified is not ungrounded: the archive still holds the
+      // entry, so shrinking (the old empty path) would hide a real state.
+      expect(find.byKey(LegacyProvenanceNotice.noticeKey), findsOneWidget);
+      expect(find.byKey(ViewSourceProofSection.sectionKey), findsNothing);
+      expect(find.byKey(VerifiedSourceProofLink.linkKey), findsNothing);
+      expect(find.text(EvidenceTrustCopy.viewSourceProof), findsNothing);
+      expect(find.byKey(const Key('recovery_slot')), findsNothing);
+    });
+
+    testWidgets('a recovery builder is shown on the legacy notice', (
+      tester,
+    ) async {
+      LegacyTranscriptRegistry.remember(
+        const LegacyTranscriptRecord(entryId: 'legacy'),
+      );
+
+      await tester.pumpWidget(
+        _host(
+          ViewSourceProofSection.fromLines(
+            lines: [
+              _line(entryId: 'legacy', quote: 'I said yes before checking'),
+            ],
+            recoveryBuilder: (context, entryIds) {
+              expect(entryIds, ['legacy']);
+              return const SizedBox(key: Key('recovery_slot'));
+            },
+          ),
+        ),
+      );
+
+      expect(find.byKey(LegacyProvenanceNotice.noticeKey), findsOneWidget);
+      expect(find.byKey(const Key('recovery_slot')), findsOneWidget);
     });
 
     testWidgets('the sheet refuses to open with no verified evidence', (

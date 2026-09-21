@@ -5,6 +5,7 @@ import 'dart:typed_data';
 import 'package:archiveme_mobile/api/models/capture_dto.dart';
 import 'package:archiveme_mobile/models/encrypted_payload_dto.dart';
 import 'package:cryptography/cryptography.dart';
+import 'package:flutter/foundation.dart' show visibleForTesting;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 export 'package:archiveme_mobile/models/encrypted_payload_dto.dart';
@@ -126,6 +127,11 @@ class SecureSyncCryptoKeyStore implements SyncCryptoKeyStore {
 
   final FlutterSecureStorage _secureStorage;
   final String _storageKey;
+
+  /// Keychain slot this store reads/writes. Test-only: production code
+  /// must go through [readKeyBytes]/[writeKeyBytes]/[ensureKey].
+  @visibleForTesting
+  String get storageKey => _storageKey;
 
   @override
   Future<List<int>?> readKeyBytes() async {

@@ -14,6 +14,7 @@ abstract final class RouteCatalog {
 
   /// Beta / deferred surfaces — not on the V1 launch allowlist by default.
   static const askArchive = '/ask-archive';
+  static const explorePatterns = '/explore';
   static const onboardingLifeStage = '/onboarding/life-stage';
   static const onboardingBacklogImport = '/onboarding/backlog-import';
 

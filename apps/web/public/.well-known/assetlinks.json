@@ -1,0 +1,14 @@
+[
+  {
+    "relation": [
+      "delegate_permission/common.handle_all_urls"
+    ],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.voicememory.mobile",
+      "sha256_cert_fingerprints": [
+        "DE:FD:2F:05:1A:63:7D:A9:E3:E2:81:C0:64:4B:05:E8:08:CA:9F:2B:81:1C:7C:8A:84:D5:86:BC:C8:13:17:55"
+      ]
+    }
+  }
+]

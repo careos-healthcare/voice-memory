@@ -147,9 +147,19 @@ flutter {
     source = "../.."
 }
 
+// flutter_onnxruntime declares onnxruntime-android:1.23.0. Force 1.27.0 so
+// libonnxruntime.so and libonnxruntime4j_jni.so stay a matched pair.
+configurations.configureEach {
+    resolutionStrategy {
+        force("com.microsoft.onnxruntime:onnxruntime-android:1.27.0")
+    }
+}
+
 dependencies {
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")
+    implementation("com.microsoft.onnxruntime:onnxruntime-android:1.27.0")
 }
+
 
 fun Task.isReleaseArtifactTask(): Boolean {
     if (!name.contains("Release", ignoreCase = true)) {

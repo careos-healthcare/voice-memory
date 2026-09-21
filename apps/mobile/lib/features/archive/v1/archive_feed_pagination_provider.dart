@@ -5,7 +5,10 @@ import 'package:archiveme_mobile/api/api_exceptions.dart';
 import 'package:archiveme_mobile/core/di/archive_feed_providers.dart';
 import 'package:archiveme_mobile/features/archive/v1/archive_belief_load_state.dart';
 import 'package:archiveme_mobile/features/archive/v1/archive_belief_repository.dart';
+import 'package:archiveme_mobile/features/memory_resurfacing/memory_resurfacing_models.dart';
+import 'package:archiveme_mobile/features/memory_resurfacing/memory_resurfacing_service.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
+import 'package:archiveme_mobile/services/app_services.dart';
 import 'package:archiveme_mobile/storage/sqlite/journal_sqlite_repository.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -16,6 +19,8 @@ class ArchiveFeedState {
     this.entries = const [],
     this.proofContextEntries = const [],
     this.verifiedProofEntries = const [],
+    this.resurfacingCards = const [],
+    this.anniversaryCards = const [],
     this.totalCount = 0,
     this.archiveTotalCount = 0,
     this.hasMore = false,
@@ -29,6 +34,8 @@ class ArchiveFeedState {
   final List<JournalEntry> entries;
   final List<JournalEntry> proofContextEntries;
   final List<JournalEntry> verifiedProofEntries;
+  final List<MemoryResurfacingCardData> resurfacingCards;
+  final List<MemoryResurfacingCardData> anniversaryCards;
   final int totalCount;
   /// Active entries in the archive before the current search filter.
   final int archiveTotalCount;
@@ -49,6 +56,8 @@ class ArchiveFeedState {
     List<JournalEntry>? entries,
     List<JournalEntry>? proofContextEntries,
     List<JournalEntry>? verifiedProofEntries,
+    List<MemoryResurfacingCardData>? resurfacingCards,
+    List<MemoryResurfacingCardData>? anniversaryCards,
     int? totalCount,
     int? archiveTotalCount,
     bool? hasMore,
@@ -60,6 +69,8 @@ class ArchiveFeedState {
       entries: entries ?? this.entries,
       proofContextEntries: proofContextEntries ?? this.proofContextEntries,
       verifiedProofEntries: verifiedProofEntries ?? this.verifiedProofEntries,
+      resurfacingCards: resurfacingCards ?? this.resurfacingCards,
+      anniversaryCards: anniversaryCards ?? this.anniversaryCards,
       totalCount: totalCount ?? this.totalCount,
       archiveTotalCount: archiveTotalCount ?? this.archiveTotalCount,
       hasMore: hasMore ?? this.hasMore,
@@ -96,11 +107,32 @@ class ArchiveFeedPaginationNotifier extends Notifier<ArchiveFeedState> {
       final proofContext = await _repository.fetchProofContextStubs();
       final verifiedProofEntries = await _repository.fetchVerifiedProofEntries();
 
+      var resurfacingCards = const <MemoryResurfacingCardData>[];
+      var anniversaryCards = const <MemoryResurfacingCardData>[];
+      if (AppServices.isInitialized) {
+        final resurfacingService = AppServices.instance.memoryResurfacing;
+        resurfacingCards = await selectResurfacingForJournal(
+          service: resurfacingService,
+          loadEntries: AppServices.instance.journal.loadAll,
+        );
+        if (resurfacingCards.isNotEmpty) {
+          await resurfacingService.markShown(
+            resurfacingCards.map((c) => c.entry.id),
+          );
+        }
+        anniversaryCards = await selectAnniversaryForJournal(
+          service: resurfacingService,
+          loadEntries: AppServices.instance.journal.loadAll,
+        );
+      }
+
       state = ArchiveFeedState(
         loadState: ArchiveBeliefLoadState.loaded,
         entries: firstPage,
         proofContextEntries: proofContext,
         verifiedProofEntries: verifiedProofEntries,
+        resurfacingCards: resurfacingCards,
+        anniversaryCards: anniversaryCards,
         totalCount: totalCount,
         archiveTotalCount: archiveTotalCount,
         hasMore: firstPage.length < totalCount,

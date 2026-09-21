@@ -47,6 +47,7 @@ abstract final class V1RouteRegistry {
     termsPath,
     '/about',
     exportPath,
+    RouteCatalog.explorePatterns,
     deleteAccountPath,
     supportFeedbackPath,
     accountCreatePath,

@@ -62,6 +62,20 @@ class CaregiverPermissions {
       };
 }
 
+class CaregiverRedemptionInvite {
+  const CaregiverRedemptionInvite({
+    required this.linkToken,
+    required this.manualCode,
+    required this.reference,
+    this.emailSent = false,
+  });
+
+  final String linkToken;
+  final String manualCode;
+  final String reference;
+  final bool emailSent;
+}
+
 class MonitoringConsentToken {
   const MonitoringConsentToken({
     required this.tokenId,
@@ -72,6 +86,7 @@ class MonitoringConsentToken {
     required this.expiresAt,
     required this.policyVersion,
     required this.signature,
+    this.redemption,
   });
 
   factory MonitoringConsentToken.fromJson(Map<String, dynamic> json) {
@@ -98,6 +113,7 @@ class MonitoringConsentToken {
   final DateTime expiresAt;
   final int policyVersion;
   final String signature;
+  final CaregiverRedemptionInvite? redemption;
 
   Map<String, dynamic> toJson() => {
         'tokenId': tokenId,

@@ -99,11 +99,11 @@ export function runConsumerBrandAuditTests(root = process.cwd()): { failures: st
   });
 
   check("marketing site defaults to archiveme.app", () => {
-    if (MARKETING_SITE_URL !== "https://archiveme.app") {
+    if (MARKETING_SITE_URL !== "https://thoughtprint.xyz") {
       throw new Error(`unexpected MARKETING_SITE_URL: ${MARKETING_SITE_URL}`);
     }
-    if (resolveMarketingSiteUrl({}) !== "https://archiveme.app") {
-      throw new Error("resolveMarketingSiteUrl default should be archiveme.app");
+    if (resolveMarketingSiteUrl({}) !== "https://thoughtprint.xyz") {
+      throw new Error("resolveMarketingSiteUrl default should be thoughtprint.xyz");
     }
   });
 
@@ -122,7 +122,7 @@ export function runConsumerBrandAuditTests(root = process.cwd()): { failures: st
         throw new Error(`ArchiveMe missing from ${rel} metadata`);
       }
     }
-    if (CONTACT_EMAIL !== "hello@archiveme.app") {
+    if (CONTACT_EMAIL !== "hello@thoughtprint.xyz") {
       throw new Error(`unexpected CONTACT_EMAIL: ${CONTACT_EMAIL}`);
     }
   });

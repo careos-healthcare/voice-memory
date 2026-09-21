@@ -573,7 +573,7 @@ export '../proof_specificity/proof_specificity_engine.dart';
 export '../proof_specificity_boost/proof_specificity_boost_engine.dart';
 export '../proof_specificity_boost/proof_specificity_boost_model.dart';
 export '../quality/first_insight_specificity_store.dart';
-export '../quick_help/quick_help_model.dart';
+export '../../widgets/quick_help/quick_help_model.dart';
 export '../quiet_signal/quiet_signal_engine.dart';
 export '../record/daily_mirror_engine.dart';
 export '../record/daily_mirror_model.dart';

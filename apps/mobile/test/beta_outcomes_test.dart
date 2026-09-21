@@ -11,11 +11,8 @@ import 'package:archiveme_mobile/features/pressure_retention/shareable_archive_p
 import 'package:archiveme_mobile/features/pro_interest/pro_interest_models.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/models/reflection.dart';
-import 'package:archiveme_mobile/screens/support_feedback_screen.dart';
 import 'package:archiveme_mobile/security/sensitive_screen_guard.dart';
 import 'package:archiveme_mobile/storage/journal_store.dart';
-import 'package:archiveme_mobile/theme/app_theme.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 const _bannedWords = [
@@ -310,38 +307,10 @@ void main() {
   });
 
   group('Beta outcomes routing', () {
-    test(
-      'route is registered, sensitive, and linked from Support & feedback',
-      () {
-        final router = File('lib/router/app_router.dart').readAsStringSync();
-        final support = File(
-          'lib/screens/support_feedback_screen.dart',
-        ).readAsStringSync();
-        expect(router, contains("path: '/beta-outcomes'"));
-        expect(SensitiveRoutes.isSensitiveRoute('/beta-outcomes'), isTrue);
-        expect(support, contains("context.push('/beta-outcomes')"));
-        expect(support, contains('support_feedback_open_beta_outcomes'));
-      },
-    );
-
-    testWidgets('Support & feedback shows Open beta outcomes button', (
-      tester,
-    ) async {
-      await tester.pumpWidget(
-        MaterialApp(
-          theme: AppTheme.light(),
-          home: const SupportFeedbackScreen(),
-        ),
-      );
-      await tester.pump();
-      expect(
-        find.byKey(const Key('support_feedback_open_beta_outcomes')),
-        findsOneWidget,
-      );
-      expect(
-        find.text(BetaOutcomesCopy.openBetaOutcomesButton),
-        findsOneWidget,
-      );
+    test('route is registered and sensitive', () {
+      final router = File('lib/router/app_router.dart').readAsStringSync();
+      expect(router, contains("path: '/beta-outcomes'"));
+      expect(SensitiveRoutes.isSensitiveRoute('/beta-outcomes'), isTrue);
     });
   });
 }

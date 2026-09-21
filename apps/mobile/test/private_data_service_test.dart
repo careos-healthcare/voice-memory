@@ -113,4 +113,21 @@ void main() {
     expect(json, isNot(contains('/tmp/secret.m4a')));
     expect(json, isNot(contains('syncStatus')));
   });
+
+  test('export evidenceTrails round-trips archiveFacts from prefs', () async {
+    final archiveFacts = <String, dynamic>{
+      'fact-1': <String, dynamic>{
+        'statement': 'Sleep dropped after late meetings',
+        'entryCount': 3,
+      },
+    };
+    await prefs.writeMap('archiveFacts', archiveFacts);
+
+    final payload = await service.buildSanitizedExport();
+    final json = payload.toJson();
+
+    expect(payload.evidenceTrails['archiveFacts'], equals(archiveFacts));
+    expect(json, contains('"archiveFacts"'));
+    expect(json, contains('Sleep dropped after late meetings'));
+  });
 }

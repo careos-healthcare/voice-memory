@@ -49,7 +49,6 @@ analyzer:
     - lib/features/action_items_v1_gate/**
     - lib/features/activation/**
     - lib/features/aha/**
-    - lib/features/ai_engines/**
     - lib/features/anchor_calibration/**
     - lib/features/android_after_ios_proof/**
     - lib/features/annual_plan_future/**
@@ -103,7 +102,6 @@ analyzer:
     - lib/features/archive_thought_map/**
     - lib/features/archive_timeline_spine/**
     - lib/features/archive_v1/**
-    - lib/features/archive_value/**
     - lib/features/archive_watchlist/**
     - lib/features/ask_archive/**
     - lib/features/b2b_workplace_pressure_future/**
@@ -217,7 +215,6 @@ analyzer:
     - lib/features/interpretation/**
     - lib/features/journal/**
     - lib/features/journal_entry/**
-    - lib/features/landing_continuity/**
     - lib/features/language/**
     - lib/features/lenses/**
     - lib/features/life_chapters/**
@@ -276,7 +273,6 @@ analyzer:
     - lib/features/paywall_value_sharpening/**
     - lib/features/perspective/**
     - lib/features/physical_device_smoke/**
-    - lib/features/pins/**
     - lib/features/positive_archive_reinforcement/**
     - lib/features/post_proof_pro_cta/**
     - lib/features/post_save/**
@@ -328,10 +324,8 @@ analyzer:
     - lib/features/proof_specificity_boost/**
     - lib/features/proof_trail_positioning/**
     - lib/features/prove_enough/**
-    - lib/features/purchase_confidence/**
     - lib/features/purchase_smoke_test/**
     - lib/features/quality/**
-    - lib/features/quick_help/**
     - lib/features/quiet_signal/**
     - lib/features/record_capture_modes/**
     - lib/features/recording/**

@@ -1,7 +1,7 @@
 import 'package:archiveme_mobile/features/beta_invite/beta_invite_models.dart';
 import 'package:archiveme_mobile/features/capacity_loop/capacity_activation_fit_copy.dart';
 import 'package:archiveme_mobile/features/capacity_loop/capacity_three_moment_copy.dart';
-import 'package:archiveme_mobile/features/landing_continuity/landing_app_continuity_copy.dart';
+import 'package:archiveme_mobile/product/landing_app_continuity_copy.dart';
 
 /// Copy for beta tester invite packs — crisp, local-only recruitment scripts.
 abstract final class BetaInviteCopy {

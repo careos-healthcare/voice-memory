@@ -8,7 +8,6 @@ import 'package:archiveme_mobile/features/capacity_loop/capacity_beta_mission_st
 import 'package:archiveme_mobile/features/capacity_loop/capacity_beta_signal_copy.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/models/reflection.dart';
-import 'package:archiveme_mobile/screens/support_feedback_screen.dart';
 import 'package:archiveme_mobile/security/sensitive_screen_guard.dart';
 import 'package:archiveme_mobile/theme/app_theme.dart';
 import 'package:archiveme_mobile/widgets/capacity_beta_mission_card.dart';
@@ -482,15 +481,6 @@ void main() {
       expect(invite, contains('capacityWedgeActive: true'));
     });
 
-    test('appears in Support and Feedback beta tools', () {
-      final support = File(
-        'lib/screens/support_feedback_screen.dart',
-      ).readAsStringSync();
-      expect(support, contains('support_feedback_capacity_beta_mission'));
-      expect(support, contains('support_feedback_open_capacity_beta_mission'));
-      expect(support, contains('CapacityBetaMissionCopy.route'));
-    });
-
     test('beta signal dashboard links back to mission', () {
       final screen = File(
         '../../packages/archiveme_research/lib/screens/capacity_beta_signal_screen.dart',
@@ -509,26 +499,6 @@ void main() {
       expect(archive, contains('archive_home_capacity_beta_mission'));
       expect(archive, contains('showOnArchiveHome'));
       expect(archive, contains('compact: true'));
-    });
-
-    testWidgets('Support and feedback links to capacity beta mission', (
-      tester,
-    ) async {
-      await tester.pumpWidget(
-        MaterialApp(
-          theme: AppTheme.light(),
-          home: const SupportFeedbackScreen(),
-        ),
-      );
-      await tester.pump();
-      expect(
-        find.byKey(const Key('support_feedback_open_capacity_beta_mission')),
-        findsOneWidget,
-      );
-      expect(
-        find.text(CapacityBetaMissionCopy.startMissionCta),
-        findsOneWidget,
-      );
     });
   });
 }

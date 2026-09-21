@@ -10,7 +10,7 @@ import 'package:archiveme_mobile/screens/belief_evidence_screen.dart';
 import 'package:archiveme_mobile/theme/app_theme.dart';
 import 'package:archiveme_mobile/widgets/archive/archive_home_summary_card.dart';
 import 'package:archiveme_mobile/widgets/archive/archive_insight_feedback_controls.dart';
-import 'package:archiveme_mobile/widgets/archive/weekly_archive_review_card.dart';
+import 'package:archiveme_mobile/widgets/archive/archive_research_weekly_review_card.dart';
 import 'package:archiveme_mobile/widgets/record/belief_update_payoff_card.dart';
 import 'package:archiveme_research/screens/weekly_archive_review_screen.dart';
 import 'package:flutter/material.dart';
@@ -280,7 +280,7 @@ void main() {
           theme: AppTheme.light(),
           home: Scaffold(
             body: SingleChildScrollView(
-              child: WeeklyArchiveReviewCard(review: review),
+              child: ArchiveResearchWeeklyReviewCard(review: review),
             ),
           ),
         ),
@@ -296,7 +296,7 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           theme: AppTheme.light(),
-          home: Scaffold(body: WeeklyArchiveReviewCard(review: review)),
+          home: Scaffold(body: ArchiveResearchWeeklyReviewCard(review: review)),
         ),
       );
       await tester.pump();

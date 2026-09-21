@@ -1,4 +1,4 @@
-import 'package:archiveme_mobile/features/landing_continuity/landing_app_continuity_copy.dart';
+import 'package:archiveme_mobile/product/landing_app_continuity_copy.dart';
 
 /// User-facing copy for the beta early-archive tester script.
 abstract final class BetaTestScriptCopy {

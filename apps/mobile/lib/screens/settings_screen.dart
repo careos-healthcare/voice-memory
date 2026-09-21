@@ -23,7 +23,7 @@ import 'package:archiveme_mobile/features/memory_transparency/memory_transparenc
 import 'package:archiveme_mobile/features/privacy/on_device_processing_store.dart';
 import 'package:archiveme_mobile/features/privacy/privacy_security_control_center_copy.dart';
 import 'package:archiveme_mobile/features/consent_audit/consent_audit_service.dart';
-import 'package:archiveme_mobile/features/pins/pinned_evidence_store.dart';
+import 'package:archiveme_mobile/widgets/pins/pinned_evidence_store.dart';
 import 'package:archiveme_mobile/features/privacy_trust/privacy_trust_copy.dart';
 import 'package:archiveme_mobile/features/pro_evidence_value/pro_evidence_value_engine.dart';
 import 'package:archiveme_mobile/features/revenue_metrics/revenue_readiness_engine.dart';
@@ -51,6 +51,7 @@ import 'package:archiveme_mobile/widgets/settings/privacy_security_trust_section
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:archiveme_mobile/features/settings/ui/crisis_resources_copy.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -286,6 +287,20 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 onTap: () => context.push('/caregiver-access'),
               ),
             const CaregiverEntryPoint(),
+            ListTile(
+              key: const Key('settings_crisis_resources_tile'),
+              contentPadding: EdgeInsets.zero,
+              title: Text(
+                CrisisResourcesCopy.settingsTitle,
+                style: ArchiveMobileTypography.listTitle(context),
+              ),
+              subtitle: Text(
+                CrisisResourcesCopy.settingsSubtitle,
+                style: ArchiveMobileTypography.listSubtitle(context),
+              ),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () => context.push('/crisis-resources'),
+            ),
             ListTile(
               key: const Key('settings_privacy_security_control_center_tile'),
               contentPadding: EdgeInsets.zero,

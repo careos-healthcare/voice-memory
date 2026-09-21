@@ -292,7 +292,7 @@ void main() {
       expect(review!.whatHelped?.isSupported, isFalse);
       expect(
         review.whatHelped?.body,
-        WeeklyArchiveReviewCopy.notEnoughEvidenceYet,
+        WeeklyArchiveReviewCopy.helpedFallback,
       );
     });
 

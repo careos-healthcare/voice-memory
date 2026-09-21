@@ -1,4 +1,4 @@
-import 'package:archiveme_mobile/features/pins/pinned_evidence_store.dart';
+import 'package:archiveme_mobile/widgets/pins/pinned_evidence_store.dart';
 import 'package:archiveme_mobile/services/activation_funnel_analytics.dart';
 import 'package:archiveme_mobile/theme/app_colors.dart';
 import 'package:flutter/material.dart';

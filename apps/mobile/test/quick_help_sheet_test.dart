@@ -1,4 +1,4 @@
-import 'package:archiveme_mobile/features/quick_help/quick_help_model.dart';
+import 'package:archiveme_mobile/widgets/quick_help/quick_help_model.dart';
 import 'package:archiveme_mobile/widgets/quick_help/quick_help_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';

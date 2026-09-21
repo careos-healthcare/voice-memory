@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:archiveme_mobile/features/beta_analytics/beta_analytics_hooks.dart';
 import 'package:archiveme_mobile/api/api_error_message.dart';
+import 'package:archiveme_mobile/security/export_pdf_renderer.dart';
 import 'package:archiveme_mobile/security/private_data_service.dart';
 import 'package:archiveme_mobile/services/app_services.dart';
 import 'package:archiveme_mobile/theme/app_theme.dart';
@@ -11,6 +12,8 @@ import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 
+enum _ExportKind { json, pdf }
+
 class ExportScreen extends StatefulWidget {
   const ExportScreen({super.key});
 
@@ -19,22 +22,30 @@ class ExportScreen extends StatefulWidget {
 }
 
 class _ExportScreenState extends State<ExportScreen> {
-  bool _busy = false;
+  _ExportKind? _busyKind;
   String? _message;
 
-  Future<void> _exportAndShare() async {
+  bool get _busy => _busyKind != null;
+
+  Future<void> _exportAndShare(_ExportKind kind) async {
     setState(() {
-      _busy = true;
+      _busyKind = kind;
       _message = null;
     });
     try {
       final payload = await PrivateDataService(
         journalStore: AppServices.instance.journalStore,
+        prefs: AppServices.instance.prefs,
       ).buildSanitizedExport();
-      final json = payload.toJson();
       final dir = await getTemporaryDirectory();
-      final file = File('${dir.path}/archiveme_export.json');
-      await file.writeAsString(json);
+      final file = kind == _ExportKind.pdf
+          ? File('${dir.path}/${ExportPdfRenderer.fileName}')
+          : File('${dir.path}/archiveme_export.json');
+      if (kind == _ExportKind.pdf) {
+        await file.writeAsBytes(await ExportPdfRenderer.render(payload));
+      } else {
+        await file.writeAsString(payload.toJson());
+      }
       await Share.shareXFiles([
         XFile(file.path),
       ], subject: 'ArchiveMe journal export');
@@ -42,7 +53,7 @@ class _ExportScreenState extends State<ExportScreen> {
       setState(
         () => _message = 'Export ready (${payload.entries.length} entries).',
       );
-    } catch (e, stackTrace) {
+    } catch (e) {
       await BetaAnalyticsHooks.exportResult(success: false);
       ReleaseLogger.exceptionFailure(
         event: 'export_build_failed',
@@ -56,7 +67,7 @@ class _ExportScreenState extends State<ExportScreen> {
         ),
       );
     } finally {
-      setState(() => _busy = false);
+      setState(() => _busyKind = null);
     }
   }
 
@@ -70,23 +81,26 @@ class _ExportScreenState extends State<ExportScreen> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             const Text(
-              'Exports your locally saved reflections as JSON. '
+              'Exports your locally saved reflections as JSON or PDF. '
               'Internal sync paths and audio file locations are not included. '
               'Sign in and sync first if you want a server-backed export.',
               style: TextStyle(color: AppTheme.muted, height: 1.4),
             ),
             const SizedBox(height: 24),
-            FilledButton.icon(
-              key: const Key('export_and_share_button'),
-              onPressed: _busy ? null : _exportAndShare,
-              icon: _busy
-                  ? const SizedBox(
-                      width: 18,
-                      height: 18,
-                      child: CircularProgressIndicator(strokeWidth: 2),
-                    )
-                  : const Icon(Icons.share_outlined),
-              label: Text(_busy ? 'Exporting…' : 'Export and share JSON'),
+            _ExportButton(
+              buttonKey: const Key('export_and_share_button'),
+              busy: _busyKind == _ExportKind.json,
+              enabled: !_busy,
+              label: 'Export and share JSON',
+              onPressed: () => _exportAndShare(_ExportKind.json),
+            ),
+            const SizedBox(height: 12),
+            _ExportButton(
+              buttonKey: const Key('export_and_share_pdf_button'),
+              busy: _busyKind == _ExportKind.pdf,
+              enabled: !_busy,
+              label: 'Export and share PDF',
+              onPressed: () => _exportAndShare(_ExportKind.pdf),
             ),
             if (_message != null) ...[
               const SizedBox(height: 16),
@@ -95,6 +109,38 @@ class _ExportScreenState extends State<ExportScreen> {
           ],
         ),
       ),
+    );
+  }
+}
+
+class _ExportButton extends StatelessWidget {
+  const _ExportButton({
+    required this.buttonKey,
+    required this.busy,
+    required this.enabled,
+    required this.label,
+    required this.onPressed,
+  });
+
+  final Key buttonKey;
+  final bool busy;
+  final bool enabled;
+  final String label;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return FilledButton.icon(
+      key: buttonKey,
+      onPressed: enabled ? onPressed : null,
+      icon: busy
+          ? const SizedBox(
+              width: 18,
+              height: 18,
+              child: CircularProgressIndicator(strokeWidth: 2),
+            )
+          : const Icon(Icons.share_outlined),
+      label: Text(busy ? 'Exporting…' : label),
     );
   }
 }

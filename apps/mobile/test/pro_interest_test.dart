@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:archiveme_mobile/billing/archive_paywall_copy.dart';
 import 'package:archiveme_mobile/features/archive_export/archive_export_pack.dart';
 import 'package:archiveme_mobile/features/beta_feedback/beta_feedback_models.dart';
 import 'package:archiveme_mobile/features/beta_outcomes/beta_outcomes_engine.dart';
@@ -370,7 +371,7 @@ void main() {
         find.byKey(const Key('support_feedback_pro_interest_row')),
         findsOneWidget,
       );
-      expect(find.text(ProInterestCopy.supportTitle), findsOneWidget);
+      expect(find.text(ArchivePaywallCopy.screenTitle), findsOneWidget);
     });
 
     testWidgets('archive link card hidden below gate', (tester) async {

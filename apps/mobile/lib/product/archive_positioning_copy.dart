@@ -1,4 +1,4 @@
-import 'package:archiveme_mobile/features/landing_continuity/landing_app_continuity_copy.dart';
+import 'package:archiveme_mobile/product/landing_app_continuity_copy.dart';
 
 /// Public ArchiveMe positioning — umbrella brand with capacity-yes as first path.
 abstract final class ArchivePositioningCopy {

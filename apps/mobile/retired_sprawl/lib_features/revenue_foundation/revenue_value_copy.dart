@@ -1,4 +1,4 @@
-import 'package:archiveme_mobile/features/landing_continuity/landing_app_continuity_copy.dart';
+import 'package:archiveme_mobile/product/landing_app_continuity_copy.dart';
 import 'package:archiveme_mobile/features/paywall_alignment/paywall_alignment_copy.dart';
 
 /// Canonical revenue value copy — display only, no billing logic.

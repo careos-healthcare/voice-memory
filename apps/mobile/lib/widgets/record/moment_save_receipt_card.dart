@@ -1,5 +1,7 @@
+import 'package:archiveme_mobile/core/config/v1_capability_registry.dart';
 import 'package:archiveme_mobile/design/archive_mobile_typography.dart';
 import 'package:archiveme_mobile/features/evidence_contract/evidence_eligibility_policy.dart';
+import 'package:archiveme_mobile/features/insights/pattern_exploration_conversation_state.dart';
 import 'package:archiveme_mobile/features/post_save/moment_save_receipt_copy.dart';
 import 'package:archiveme_mobile/features/post_save/moment_save_receipt_model.dart';
 import 'package:archiveme_mobile/features/post_save/post_save_repeat_copy.dart';
@@ -10,11 +12,13 @@ import 'package:archiveme_mobile/features/trust/pending_transcript_recovery_copy
 import 'package:archiveme_mobile/features/voice_capture/voice_capture_copy.dart';
 import 'package:archiveme_mobile/features/voice_capture/voice_capture_quality.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
+import 'package:archiveme_mobile/router/route_catalog.dart';
 import 'package:archiveme_mobile/theme/app_colors.dart';
 import 'package:archiveme_mobile/theme/app_spacing.dart';
 import 'package:archiveme_mobile/theme/voicememory_cards.dart';
 import 'package:archiveme_mobile/widgets/record/remote_processing_skipped_card.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 /// Single post-save receipt for focused beta — local confirmation, transcript,
 /// actions, and optional remote status. No stacked milestone or proof cards.
@@ -174,6 +178,7 @@ class MomentSaveReceiptCard extends StatelessWidget {
               onPressed: onViewArchive,
               child: const Text(MomentSaveReceiptCopy.viewArchive),
             ),
+            _ContinueExploringCta(entry: entry),
           ],
         ),
       ),
@@ -220,5 +225,34 @@ class MomentSaveReceiptCard extends StatelessWidget {
           ],
         );
     }
+  }
+}
+
+class _ContinueExploringCta extends StatelessWidget {
+  const _ContinueExploringCta({required this.entry});
+
+  final JournalEntry entry;
+
+  static const String _label = 'Continue exploring this';
+
+  @override
+  Widget build(BuildContext context) {
+    if (!V1CapabilityRegistry.patternExploration) {
+      return const SizedBox.shrink();
+    }
+    return Padding(
+      padding: const EdgeInsets.only(top: AppSpacing.xs),
+      child: OutlinedButton(
+        key: const Key('moment_save_receipt_continue_exploring'),
+        onPressed: () => context.push(
+          RouteCatalog.explorePatterns,
+          extra: ExplorePatternsSeed(
+            entryId: entry.id,
+            transcript: entry.transcript,
+          ),
+        ),
+        child: const Text(_label),
+      ),
+    );
   }
 }

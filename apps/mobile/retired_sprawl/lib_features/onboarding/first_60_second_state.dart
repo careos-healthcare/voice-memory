@@ -7,7 +7,7 @@
 /// memory-architecture talk, and nothing that blocks recording.
 library;
 
-import 'package:archiveme_mobile/features/landing_continuity/landing_app_continuity_copy.dart';
+import 'package:archiveme_mobile/product/landing_app_continuity_copy.dart';
 
 /// Stable stage ids for analytics — fixed constants, never user text.
 enum First60Stage {

@@ -18,10 +18,12 @@ import 'package:archiveme_mobile/data/network/http_billing_api_client.dart';
 import 'package:archiveme_mobile/data/network/http_capture_api_client.dart';
 import 'package:archiveme_mobile/data/network/http_caregiver_consent_api_client.dart';
 import 'package:archiveme_mobile/data/network/http_coach_consent_api_client.dart';
+import 'package:archiveme_mobile/data/network/http_insights_conversation_api_client.dart';
 import 'package:archiveme_mobile/data/network/http_live_audio_api_client.dart';
 import 'package:archiveme_mobile/data/network/http_push_api_client.dart';
 import 'package:archiveme_mobile/data/network/http_sync_api_client.dart';
 import 'package:archiveme_mobile/data/network/http_user_relationship_api_client.dart';
+import 'package:archiveme_mobile/data/network/insights_conversation_api_client.dart';
 import 'package:archiveme_mobile/data/network/live_audio_api_client.dart';
 import 'package:archiveme_mobile/data/network/push_api_client.dart';
 import 'package:archiveme_mobile/data/network/retrofit_auth_api_client.dart';
@@ -46,6 +48,7 @@ class VoiceMemoryApiClientBundle {
     required this.coachConsent,
     required this.caregiverConsent,
     required this.userRelationships,
+    required this.insightsConversation,
     required this.insights,
     Dio? retrofitDio,
     this.sessionCookieCapture,
@@ -63,6 +66,7 @@ class VoiceMemoryApiClientBundle {
   final CoachConsentApiClient coachConsent;
   final CaregiverConsentApiClient caregiverConsent;
   final UserRelationshipApiClient userRelationships;
+  final InsightsConversationApiClient insightsConversation;
   final ApiService insights;
   final SessionCookieCapture? sessionCookieCapture;
 
@@ -96,6 +100,7 @@ class VoiceMemoryApiClientBundle {
         coachConsent: HttpCoachConsentApiClient(transport),
         caregiverConsent: HttpCaregiverConsentApiClient(transport),
         userRelationships: HttpUserRelationshipApiClient(transport),
+        insightsConversation: HttpInsightsConversationApiClient(transport),
         insights: ApiService(transport),
         retrofitDio: dio,
         sessionCookieCapture: capture,
@@ -115,6 +120,7 @@ class VoiceMemoryApiClientBundle {
       coachConsent: HttpCoachConsentApiClient(transport),
       caregiverConsent: HttpCaregiverConsentApiClient(transport),
       userRelationships: HttpUserRelationshipApiClient(transport),
+      insightsConversation: HttpInsightsConversationApiClient(transport),
       insights: ApiService(transport),
     );
   }

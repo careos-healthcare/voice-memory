@@ -7,9 +7,7 @@ import 'package:archiveme_mobile/core/network/api_result.dart';
 import 'package:archiveme_mobile/core/network/network_cancel_token.dart';
 import 'package:archiveme_mobile/data/network/capture_api_client.dart';
 import 'package:archiveme_mobile/features/live_audio/domain/models/offline_vault_manifest.dart';
-import 'package:archiveme_mobile/features/privacy/on_device_processing_store.dart';
 import 'package:archiveme_mobile/features/proof_admission/proof_admission_models.dart';
-import 'package:archiveme_mobile/features/proof_admission/remote_processing_consent_store.dart';
 import 'package:archiveme_mobile/features/timeline/timeline_entry_display.dart';
 import 'package:archiveme_mobile/features/voice_capture/transcription/transcription_service.dart';
 import 'package:archiveme_mobile/features/voice_capture/voice_capture_copy.dart';
@@ -22,6 +20,8 @@ import 'package:archiveme_mobile/models/sync_status.dart';
 import 'package:archiveme_mobile/security/api_usage_guard.dart';
 import 'package:archiveme_mobile/services/app_services.dart';
 import 'package:archiveme_mobile/services/capture_pipeline/capture_pipeline_models.dart';
+import 'package:archiveme_mobile/features/proof_admission/remote_processing_purpose.dart';
+import 'package:archiveme_mobile/features/privacy/on_device_processing_store.dart';
 import 'package:archiveme_mobile/services/capture_save_messages.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -122,7 +122,12 @@ Future<void> _initPipeline(_TranscriptionPipelineFakeApi api) async {
     'test-capture-token',
     expiresInSeconds: 3600,
   );
-  await RemoteProcessingConsentStore(AppServices.instance.prefs).grant();
+  await AppServices.instance.remoteProcessingConsentStore.grant(
+    purposes: {
+      RemoteProcessingPurpose.remoteTranscription,
+      RemoteProcessingPurpose.remoteReflection,
+    },
+  );
   await OnDeviceProcessingStore.clearForGrantedRemoteConsent();
 }
 

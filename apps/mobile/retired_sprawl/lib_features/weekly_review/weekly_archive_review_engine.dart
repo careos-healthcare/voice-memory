@@ -221,7 +221,7 @@ abstract final class WeeklyArchiveReviewEngine {
     if (grounded.isEmpty) {
       return const WeeklyArchiveReviewSection(
         label: WeeklyArchiveReviewCopy.whatRepeatedLabel,
-        body: WeeklyArchiveReviewCopy.notEnoughEvidenceYet,
+        body: WeeklyArchiveReviewCopy.repeatedFallback,
         isSupported: false,
       );
     }
@@ -277,17 +277,26 @@ abstract final class WeeklyArchiveReviewEngine {
     }
 
     final choice = RepeatReturnCheckTrendEngine.latestChoice(returnChecks);
-    if (choice == RepeatReturnCheckChoice.softer) {
-      return const WeeklyArchiveReviewSection(
+    final returnCheckLine = switch (choice) {
+      RepeatReturnCheckChoice.softer =>
+        'One later entry sounded more aware of checking capacity.',
+      RepeatReturnCheckChoice.stronger =>
+        'One later entry sounded more aware of the pressure.',
+      RepeatReturnCheckChoice.same =>
+        'Later entries stayed about the same this week.',
+      RepeatReturnCheckChoice.changed || null => null,
+    };
+    if (returnCheckLine != null) {
+      return WeeklyArchiveReviewSection(
         label: WeeklyArchiveReviewCopy.whatChangedLabel,
-        body: 'One later entry sounded more aware of checking capacity.',
+        body: returnCheckLine,
         isSupported: true,
       );
     }
 
     return const WeeklyArchiveReviewSection(
       label: WeeklyArchiveReviewCopy.whatChangedLabel,
-      body: WeeklyArchiveReviewCopy.notEnoughEvidenceYet,
+      body: WeeklyArchiveReviewCopy.changedFallback,
       isSupported: false,
     );
   }
@@ -302,11 +311,19 @@ abstract final class WeeklyArchiveReviewEngine {
       returnChecks: returnChecks,
       positivePattern: positivePattern,
     );
-    if (fromMarkers != null) return fromMarkers;
+    if (fromMarkers != null) {
+      if (fromMarkers.evidencePhrases.isEmpty) return fromMarkers;
+      return WeeklyArchiveReviewSection(
+        label: fromMarkers.label,
+        body: '${WeeklyArchiveReviewCopy.helpedPrefix} ${fromMarkers.body}',
+        isSupported: fromMarkers.isSupported,
+        evidencePhrases: fromMarkers.evidencePhrases,
+      );
+    }
 
     return const WeeklyArchiveReviewSection(
       label: WeeklyArchiveReviewCopy.whatHelpedLabel,
-      body: WeeklyArchiveReviewCopy.notEnoughEvidenceYet,
+      body: WeeklyArchiveReviewCopy.helpedFallback,
       isSupported: false,
     );
   }

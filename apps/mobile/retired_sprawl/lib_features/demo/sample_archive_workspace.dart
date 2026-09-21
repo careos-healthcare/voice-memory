@@ -17,12 +17,12 @@ import 'package:archiveme_mobile/widgets/archive/archive_evidence_map_card.dart'
 import 'package:archiveme_mobile/widgets/archive/archive_health_action_plan_card.dart';
 import 'package:archiveme_mobile/widgets/archive/archive_health_card.dart';
 import 'package:archiveme_mobile/widgets/archive/archive_home_summary_card.dart';
+import 'package:archiveme_mobile/widgets/archive/archive_research_weekly_review_card.dart';
 import 'package:archiveme_mobile/widgets/archive/archive_workspace_quick_actions_card.dart';
 import 'package:archiveme_mobile/widgets/archive/archive_workspace_section_heading.dart';
 import 'package:archiveme_mobile/widgets/archive/belief_history_timeline_card.dart';
 import 'package:archiveme_mobile/widgets/archive/context_insights_card.dart';
 import 'package:archiveme_mobile/widgets/archive/evidence_attention_filters_card.dart';
-import 'package:archiveme_mobile/widgets/archive/weekly_archive_review_card.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'dart:async';
@@ -183,7 +183,7 @@ abstract final class SampleArchiveWorkspace {
           widgets.add(const SizedBox(height: AppSpacing.md));
         }
         widgets.add(
-          WeeklyArchiveReviewCard(
+          ArchiveResearchWeeklyReviewCard(
             review: weeklyReview,
             compact: true,
             onViewFullReview: () => _showExampleOnly(context),

@@ -16,4 +16,9 @@ abstract class VoiceMemoryConsentApi {
   Future<ConsentVerifyResponseDto> verifyToken(
     @Body() Map<String, dynamic> body,
   );
+
+  @POST('/api/coach/consent/redeem')
+  Future<ConsentRedeemResponseDto> redeemToken(
+    @Body() Map<String, dynamic> body,
+  );
 }

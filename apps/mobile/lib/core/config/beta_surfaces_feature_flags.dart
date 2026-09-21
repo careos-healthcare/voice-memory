@@ -25,7 +25,8 @@ abstract final class BetaSurfacesFeatureFlags {
   /// Thematic life-stage lenses (`activeLens`) and onboarding selector.
   static bool get thematicLenses => enableBetaSurfaces;
 
-  /// Ask My Archive — entry bar on ArchiveBeliefScreen + `/ask-archive` route.
+  /// Ask My Archive — entry bar on Archive home; `/ask-archive` is registered
+  /// but V1-quarantined like `/explore` (not reachable in V1).
   static bool get askArchive => enableBetaSurfaces;
 
   /// Professional / coach tier routing and account surfaces.

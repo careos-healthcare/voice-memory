@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:archiveme_mobile/billing/archive_entitlement_reader.dart';
 import 'package:archiveme_mobile/dev/visual_audit_overrides.dart';
-import 'package:archiveme_mobile/features/landing_continuity/landing_app_continuity_copy.dart';
+import 'package:archiveme_mobile/product/landing_app_continuity_copy.dart';
 import 'package:archiveme_mobile/features/onboarding/first_60_second_state.dart';
 import 'package:archiveme_mobile/features/onboarding/first_60_second_store.dart';
 import 'package:archiveme_mobile/features/onboarding/record_return_pro_state.dart';

@@ -31,7 +31,7 @@ import 'package:archiveme_mobile/features/aha/aha_moment_candidate.dart';
 import 'package:archiveme_mobile/features/aha/aha_moment_engine.dart';
 import 'package:archiveme_mobile/features/aha/aha_moment_store.dart';
 import 'package:archiveme_mobile/widgets/aha/first_aha_moment_card.dart';
-import 'package:archiveme_mobile/features/pins/pinned_evidence_store.dart';
+import 'package:archiveme_mobile/widgets/pins/pinned_evidence_store.dart';
 import 'package:archiveme_mobile/features/pressure_retention/pressure_check_in_record.dart';
 import 'package:archiveme_mobile/features/pressure_retention/pressure_check_in_store.dart';
 import 'package:archiveme_mobile/features/timeline/timeline_entry_display.dart';
