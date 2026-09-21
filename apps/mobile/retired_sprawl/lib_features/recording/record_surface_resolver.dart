@@ -2167,30 +2167,7 @@ abstract final class RecordSurfaceResolver {
     );
   }
 
-  static ({
-    RecordPostSaveSurfaceBag postSaveBag,
-    ProofSpecificityResult proofSpecificityPostSaveCandidate,
-    ProofSpecificityBoostResult proofSpecificityBoostPostSaveCandidate,
-    ProofQualityResponseResult proofQualityResponseFirstProofCandidate,
-    ProofQualityResponseResult proofQualityResponseTimelinePostSaveCandidate,
-    BetaProofLiftResult betaProofLiftFirstProofCandidate,
-    BetaProofLiftResult betaProofLiftTimelinePostSaveCandidate,
-    ReturnAfterProofResult returnAfterProofPostSaveCandidate,
-    bool firstProofPayoffParentVisible,
-    bool showProofQualityResponseOnFirstProofPayoff,
-    bool timelineProofPostSaveParentVisible,
-    bool showProofQualityResponseOnTimelineProofPostSave,
-    ReturnAfterProofLiftV2Result returnAfterProofLiftV2PostSaveCandidate,
-    ProBridgeTimingLoosenSignals postSaveLoosenSignalsPreAudit,
-    EvidenceAnchorExtractionResult postSaveEvidenceAnchorPreAudit,
-    ProofQualityFeedbackState postSaveFeedbackStateForLift,
-    bool hasProEngagementOnPostSave,
-    ProUnderstandingLiftVisibilityInput proUnderstandingLiftPostSaveInput,
-    ProUnderstandingLiftResult? base,
-    ProUnderstandingLiftResult? proUnderstandingLiftPostSaveResult,
-    ProVisibilityLiftResult? proVisibilityLiftPostSaveResult,
-    MonthlyPrivateReportPreview? monthlyPrivateReportPreviewPostSave,
-  }) resolvePostSaveCardsA({
+  static RecordPostSaveSurfaceBag resolvePostSaveCardsA({
     required RecordSurfaceInput input,
     required RecordSurfaceFlags flags,
     required List<JournalEntry> entriesAfterSave,
@@ -2206,16 +2183,17 @@ abstract final class RecordSurfaceResolver {
     required TimelineProofMomentResult? timelineProofMomentPostSaveCandidate,
   }) {
     final postSaveBag = RecordPostSaveSurfaceBag();
-    postSaveBag.showTimelineProofMomentOnFirstProofPayoff =
-        TimelineProofMomentEngine.shouldShowOnFirstProofPayoffPostSave(
-          result: timelineProofMomentPostSaveCandidate,
-          showFirstProofPayoff: readyBag.showFirstProofPayoff,
-          isDegradedPostSave:
-              entriesAfterSave.isNotEmpty &&
-              VoiceCaptureQuality.isDegradedVoiceCapture(entriesAfterSave.last),
-          whatChangedQuestionActive: showWhatChangedV2,
-          patternReviewInboxHasActiveItems: patternReviewInboxActivePostSave,
-        );
+    postSaveBag.registerTimelineProofMoment(
+      TimelineProofMomentEngine.shouldShowOnFirstProofPayoffPostSave(
+        result: timelineProofMomentPostSaveCandidate,
+        showFirstProofPayoff: readyBag.showFirstProofPayoff,
+        isDegradedPostSave:
+            entriesAfterSave.isNotEmpty &&
+            VoiceCaptureQuality.isDegradedVoiceCapture(entriesAfterSave.last),
+        whatChangedQuestionActive: showWhatChangedV2,
+        patternReviewInboxHasActiveItems: patternReviewInboxActivePostSave,
+      ),
+    );
     final proofSpecificityPostSaveCandidate = entriesAfterSave.length >= 3
         ? ProofSpecificityEngine.build(
             entries: entriesAfterSave,
@@ -2227,17 +2205,18 @@ abstract final class RecordSurfaceResolver {
             beliefSurfaceVisible: false,
             source: 'record_post_save',
           );
-    postSaveBag.showProofSpecificityOnFirstProofPayoff =
-        flags.isDone &&
-        readyBag.showFirstProofPayoff &&
-        ProofSpecificityEngine.shouldShowOnFirstProofPayoff(
-          result: proofSpecificityPostSaveCandidate,
-          isPostSaveDegradedState:
-              entriesAfterSave.isNotEmpty &&
-              VoiceCaptureQuality.isDegradedVoiceCapture(entriesAfterSave.last),
-          whatChangedQuestionActive: showWhatChangedV2,
-          patternReviewInboxHasActiveItems: patternReviewInboxActivePostSave,
-        );
+    postSaveBag.registerProofSpecificity(
+      flags.isDone &&
+          readyBag.showFirstProofPayoff &&
+          ProofSpecificityEngine.shouldShowOnFirstProofPayoff(
+            result: proofSpecificityPostSaveCandidate,
+            isPostSaveDegradedState:
+                entriesAfterSave.isNotEmpty &&
+                VoiceCaptureQuality.isDegradedVoiceCapture(entriesAfterSave.last),
+            whatChangedQuestionActive: showWhatChangedV2,
+            patternReviewInboxHasActiveItems: patternReviewInboxActivePostSave,
+          ),
+    );
     final proofSpecificityBoostPostSaveCandidate =
         ProofSpecificityBoostEngine.build(
           entries: entriesAfterSave,
@@ -2284,20 +2263,21 @@ abstract final class RecordSurfaceResolver {
     );
     final firstProofPayoffParentVisible =
         readyBag.showFirstProofPayoff && firstProofPayoffCandidate != null;
-    postSaveBag.showProofSpecificityBoostOnFirstProofPayoff =
-        flags.isDone &&
-        ProofSpecificityBoostEngine.shouldRender(
-          result: proofSpecificityBoostPostSaveCandidate,
-          surface: ProofSpecificityBoostSurface.firstProofPayoff,
-          parentVisible: firstProofPayoffParentVisible,
-          timelineProofVisible: false,
-          firstProofPayoffVisible: firstProofPayoffParentVisible,
-          isRecording: flags.isRecording,
-          isDegradedTranscriptState: false,
-          isPostSaveDegradedState: postSaveDegraded,
-          whatChangedQuestionActive: showWhatChangedV2,
-          patternReviewInboxHasActiveItems: patternReviewInboxActivePostSave,
-        );
+    postSaveBag.registerProofSpecificityBoostOnFirstProof(
+      flags.isDone &&
+          ProofSpecificityBoostEngine.shouldRender(
+            result: proofSpecificityBoostPostSaveCandidate,
+            surface: ProofSpecificityBoostSurface.firstProofPayoff,
+            parentVisible: firstProofPayoffParentVisible,
+            timelineProofVisible: false,
+            firstProofPayoffVisible: firstProofPayoffParentVisible,
+            isRecording: flags.isRecording,
+            isDegradedTranscriptState: false,
+            isPostSaveDegradedState: postSaveDegraded,
+            whatChangedQuestionActive: showWhatChangedV2,
+            patternReviewInboxHasActiveItems: patternReviewInboxActivePostSave,
+          ),
+    );
     final showProofQualityResponseOnFirstProofPayoff =
         flags.isDone &&
         ProofQualityResponseEngine.shouldRender(
@@ -2323,25 +2303,26 @@ abstract final class RecordSurfaceResolver {
           whatChangedQuestionActive: showWhatChangedV2,
           patternReviewInboxHasActiveItems: patternReviewInboxActivePostSave,
         )) {
-      postSaveBag.showProofSpecificityBoostOnFirstProofPayoff = false;
+      postSaveBag.suppressProofSpecificityBoostOnFirstProof();
     }
     final timelineProofPostSaveParentVisible =
         postSaveBag.showTimelineProofMomentOnFirstProofPayoff &&
         timelineProofMomentPostSaveCandidate != null;
-    postSaveBag.showProofSpecificityBoostOnTimelineProofPostSave =
-        flags.isDone &&
-        ProofSpecificityBoostEngine.shouldRender(
-          result: proofSpecificityBoostPostSaveCandidate,
-          surface: ProofSpecificityBoostSurface.timelineProofMoment,
-          parentVisible: timelineProofPostSaveParentVisible,
-          timelineProofVisible: timelineProofPostSaveParentVisible,
-          firstProofPayoffVisible: false,
-          isRecording: flags.isRecording,
-          isDegradedTranscriptState: false,
-          isPostSaveDegradedState: postSaveDegraded,
-          whatChangedQuestionActive: showWhatChangedV2,
-          patternReviewInboxHasActiveItems: patternReviewInboxActivePostSave,
-        );
+    postSaveBag.registerProofSpecificityBoostOnTimeline(
+      flags.isDone &&
+          ProofSpecificityBoostEngine.shouldRender(
+            result: proofSpecificityBoostPostSaveCandidate,
+            surface: ProofSpecificityBoostSurface.timelineProofMoment,
+            parentVisible: timelineProofPostSaveParentVisible,
+            timelineProofVisible: timelineProofPostSaveParentVisible,
+            firstProofPayoffVisible: false,
+            isRecording: flags.isRecording,
+            isDegradedTranscriptState: false,
+            isPostSaveDegradedState: postSaveDegraded,
+            whatChangedQuestionActive: showWhatChangedV2,
+            patternReviewInboxHasActiveItems: patternReviewInboxActivePostSave,
+          ),
+    );
     final showProofQualityResponseOnTimelineProofPostSave =
         flags.isDone &&
         ProofQualityResponseEngine.shouldRender(
@@ -2367,36 +2348,38 @@ abstract final class RecordSurfaceResolver {
           whatChangedQuestionActive: showWhatChangedV2,
           patternReviewInboxHasActiveItems: patternReviewInboxActivePostSave,
         )) {
-      postSaveBag.showProofSpecificityBoostOnTimelineProofPostSave = false;
+      postSaveBag.suppressProofSpecificityBoostOnTimeline();
     }
-    postSaveBag.showBetaProofLiftOnFirstProofPayoff =
-        flags.isDone &&
-        BetaProofLiftEngine.shouldRender(
-          result: betaProofLiftFirstProofCandidate,
-          qualityResponse: proofQualityResponseFirstProofCandidate,
-          parentVisible: firstProofPayoffParentVisible,
-          timelineProofVisible: false,
-          firstProofPayoffVisible: firstProofPayoffParentVisible,
-          isRecording: flags.isRecording,
-          isDegradedTranscriptState: false,
-          isPostSaveDegradedState: postSaveDegraded,
-          whatChangedQuestionActive: showWhatChangedV2,
-          patternReviewInboxHasActiveItems: patternReviewInboxActivePostSave,
-        );
-    postSaveBag.showBetaProofLiftUnderTimelineProofPostSave =
-        flags.isDone &&
-        BetaProofLiftEngine.shouldRender(
-          result: betaProofLiftTimelinePostSaveCandidate,
-          qualityResponse: proofQualityResponseTimelinePostSaveCandidate,
-          parentVisible: timelineProofPostSaveParentVisible,
-          timelineProofVisible: timelineProofPostSaveParentVisible,
-          firstProofPayoffVisible: false,
-          isRecording: flags.isRecording,
-          isDegradedTranscriptState: false,
-          isPostSaveDegradedState: postSaveDegraded,
-          whatChangedQuestionActive: showWhatChangedV2,
-          patternReviewInboxHasActiveItems: patternReviewInboxActivePostSave,
-        );
+    postSaveBag.registerBetaProofLiftOnFirstProof(
+      flags.isDone &&
+          BetaProofLiftEngine.shouldRender(
+            result: betaProofLiftFirstProofCandidate,
+            qualityResponse: proofQualityResponseFirstProofCandidate,
+            parentVisible: firstProofPayoffParentVisible,
+            timelineProofVisible: false,
+            firstProofPayoffVisible: firstProofPayoffParentVisible,
+            isRecording: flags.isRecording,
+            isDegradedTranscriptState: false,
+            isPostSaveDegradedState: postSaveDegraded,
+            whatChangedQuestionActive: showWhatChangedV2,
+            patternReviewInboxHasActiveItems: patternReviewInboxActivePostSave,
+          ),
+    );
+    postSaveBag.registerBetaProofLiftOnTimeline(
+      flags.isDone &&
+          BetaProofLiftEngine.shouldRender(
+            result: betaProofLiftTimelinePostSaveCandidate,
+            qualityResponse: proofQualityResponseTimelinePostSaveCandidate,
+            parentVisible: timelineProofPostSaveParentVisible,
+            timelineProofVisible: timelineProofPostSaveParentVisible,
+            firstProofPayoffVisible: false,
+            isRecording: flags.isRecording,
+            isDegradedTranscriptState: false,
+            isPostSaveDegradedState: postSaveDegraded,
+            whatChangedQuestionActive: showWhatChangedV2,
+            patternReviewInboxHasActiveItems: patternReviewInboxActivePostSave,
+          ),
+    );
     if (BetaProofLiftEngine.coversLegacyBoost(
       result: betaProofLiftFirstProofCandidate,
       parentVisible: firstProofPayoffParentVisible,
@@ -2408,7 +2391,7 @@ abstract final class RecordSurfaceResolver {
       whatChangedQuestionActive: showWhatChangedV2,
       patternReviewInboxHasActiveItems: patternReviewInboxActivePostSave,
     )) {
-      postSaveBag.showProofSpecificityBoostOnFirstProofPayoff = false;
+      postSaveBag.suppressProofSpecificityBoostOnFirstProof();
     }
     if (BetaProofLiftEngine.coversLegacyBoost(
       result: betaProofLiftTimelinePostSaveCandidate,
@@ -2421,33 +2404,32 @@ abstract final class RecordSurfaceResolver {
       whatChangedQuestionActive: showWhatChangedV2,
       patternReviewInboxHasActiveItems: patternReviewInboxActivePostSave,
     )) {
-      postSaveBag.showProofSpecificityBoostOnTimelineProofPostSave = false;
+      postSaveBag.suppressProofSpecificityBoostOnTimeline();
     }
-    postSaveBag.showReturnAfterProofStrengthenedOnFirstProofPayoff =
-        flags.isDone &&
-        ReturnAfterProofEngine.shouldShowStrengthenedOnFirstProofPayoffPostSave(
-          result: returnAfterProofPostSaveCandidate,
-          showFirstProofPayoff: readyBag.showFirstProofPayoff,
-          isRecording: flags.isRecording,
-          isPostSaveDegraded: postSaveDegraded,
-          whatChangedQuestionActive: showWhatChangedV2,
-          patternReviewInboxHasActiveItems: patternReviewInboxActivePostSave,
-          dismissedForToday: ReturnAfterProofStore.isDismissedToday,
-        );
-    postSaveBag.showReturnAfterProofGenericOnFirstProofPayoff =
-        flags.isDone &&
-        ReturnAfterProofEngine.shouldShowGenericOnFirstProofPayoffPostSave(
-          result: returnAfterProofPostSaveCandidate,
-          showFirstProofPayoff: readyBag.showFirstProofPayoff,
-          isRecording: flags.isRecording,
-          isPostSaveDegraded: postSaveDegraded,
-          whatChangedQuestionActive: showWhatChangedV2,
-          patternReviewInboxHasActiveItems: patternReviewInboxActivePostSave,
-          dismissedForToday: ReturnAfterProofStore.isDismissedToday,
-        );
-    postSaveBag.showReturnAfterProofOnFirstProofPayoff =
-        postSaveBag.showReturnAfterProofStrengthenedOnFirstProofPayoff ||
-        postSaveBag.showReturnAfterProofGenericOnFirstProofPayoff;
+    postSaveBag.registerReturnAfterProof(
+      strengthened:
+          flags.isDone &&
+          ReturnAfterProofEngine.shouldShowStrengthenedOnFirstProofPayoffPostSave(
+            result: returnAfterProofPostSaveCandidate,
+            showFirstProofPayoff: readyBag.showFirstProofPayoff,
+            isRecording: flags.isRecording,
+            isPostSaveDegraded: postSaveDegraded,
+            whatChangedQuestionActive: showWhatChangedV2,
+            patternReviewInboxHasActiveItems: patternReviewInboxActivePostSave,
+            dismissedForToday: ReturnAfterProofStore.isDismissedToday,
+          ),
+      generic:
+          flags.isDone &&
+          ReturnAfterProofEngine.shouldShowGenericOnFirstProofPayoffPostSave(
+            result: returnAfterProofPostSaveCandidate,
+            showFirstProofPayoff: readyBag.showFirstProofPayoff,
+            isRecording: flags.isRecording,
+            isPostSaveDegraded: postSaveDegraded,
+            whatChangedQuestionActive: showWhatChangedV2,
+            patternReviewInboxHasActiveItems: patternReviewInboxActivePostSave,
+            dismissedForToday: ReturnAfterProofStore.isDismissedToday,
+          ),
+    );
     final returnAfterProofLiftV2PostSaveCandidate =
         ReturnAfterProofLiftV2Engine.build(
           entries: entriesAfterSave,
@@ -2457,17 +2439,18 @@ abstract final class RecordSurfaceResolver {
               postSaveBag.showTimelineProofMomentOnFirstProofPayoff &&
               timelineProofMomentPostSaveCandidate != null,
         );
-    postSaveBag.showReturnAfterProofLiftV2OnPostSave =
-        ReturnAfterProofLiftV2Engine.shouldShow(
-          result: returnAfterProofLiftV2PostSaveCandidate,
-          isReady: false,
-          isRecording: flags.isRecording,
-          isPostSave: flags.isDone,
-          isDegradedTranscriptState: false,
-          isPostSaveDegradedState: postSaveDegraded,
-          whatChangedQuestionActive: showWhatChangedV2,
-          patternReviewInboxHasActiveItems: patternReviewInboxActivePostSave,
-        );
+    postSaveBag.registerReturnAfterProofLiftV2(
+      ReturnAfterProofLiftV2Engine.shouldShow(
+        result: returnAfterProofLiftV2PostSaveCandidate,
+        isReady: false,
+        isRecording: flags.isRecording,
+        isPostSave: flags.isDone,
+        isDegradedTranscriptState: false,
+        isPostSaveDegradedState: postSaveDegraded,
+        whatChangedQuestionActive: showWhatChangedV2,
+        patternReviewInboxHasActiveItems: patternReviewInboxActivePostSave,
+      ),
+    );
     final postSaveLoosenSignalsPreAudit =
         ProBridgeTimingLoosenEngine.resolveSignals(
           entries: entriesAfterSave,
@@ -2512,14 +2495,15 @@ abstract final class RecordSurfaceResolver {
           whatChangedQuestionActive: showWhatChangedV2,
           patternReviewInboxHasActiveItems: patternReviewInboxActivePostSave,
         );
-    postSaveBag.showProUnderstandingLiftOnPostSave =
-        flags.isDone &&
-        entriesAfterSave.isNotEmpty &&
-        readyBag.showFirstProofPayoff &&
-        firstProofPayoffCandidate != null &&
-        ProUnderstandingLiftEngine.shouldShowCard(
-          input: proUnderstandingLiftPostSaveInput,
-        );
+    postSaveBag.registerProUnderstandingLift(
+      flags.isDone &&
+          entriesAfterSave.isNotEmpty &&
+          readyBag.showFirstProofPayoff &&
+          firstProofPayoffCandidate != null &&
+          ProUnderstandingLiftEngine.shouldShowCard(
+            input: proUnderstandingLiftPostSaveInput,
+          ),
+    );
     ProUnderstandingLiftResult? base;
     ProUnderstandingLiftResult? proUnderstandingLiftPostSaveResult;
     if (postSaveBag.showProUnderstandingLiftOnPostSave) {
@@ -2533,30 +2517,31 @@ abstract final class RecordSurfaceResolver {
           ) ??
           base;
     }
-    postSaveBag.showProVisibilityLiftOnPostSave =
-        flags.isDone &&
-        entriesAfterSave.isNotEmpty &&
-        readyBag.showFirstProofPayoff &&
-        firstProofPayoffCandidate != null &&
-        ProVisibilityLiftEngine.shouldShowCard(
-          entryCount: postSaveEntryCount,
-          isPro: input.userProState.isPro,
-          hasUsefulProof:
-              postSaveFeedbackStateForLift == ProofQualityFeedbackState.useful,
-          confidenceLevel:
-              postSaveLoosenSignalsPreAudit.confidenceLevel ??
-              ProofConfidenceLevel.watchOnly,
-          feedbackState: postSaveFeedbackStateForLift,
-          hasPaywallSeen: input.betaActivationLoopCounts.paywallSeen > 0,
-          hasFreshReturnAfterCorrection:
-              postSaveLoosenSignalsPreAudit.hasFreshReturnAfterCorrection,
-          hasChangeAnchor: postSaveEvidenceAnchorPreAudit.hasChangeAnchor,
-          isRecording: flags.isRecording,
-          isDegradedTranscriptState: false,
-          isPostSaveDegradedState: postSaveDegraded,
-          whatChangedQuestionActive: showWhatChangedV2,
-          patternReviewInboxHasActiveItems: patternReviewInboxActivePostSave,
-        );
+    postSaveBag.registerProVisibilityLift(
+      flags.isDone &&
+          entriesAfterSave.isNotEmpty &&
+          readyBag.showFirstProofPayoff &&
+          firstProofPayoffCandidate != null &&
+          ProVisibilityLiftEngine.shouldShowCard(
+            entryCount: postSaveEntryCount,
+            isPro: input.userProState.isPro,
+            hasUsefulProof:
+                postSaveFeedbackStateForLift == ProofQualityFeedbackState.useful,
+            confidenceLevel:
+                postSaveLoosenSignalsPreAudit.confidenceLevel ??
+                ProofConfidenceLevel.watchOnly,
+            feedbackState: postSaveFeedbackStateForLift,
+            hasPaywallSeen: input.betaActivationLoopCounts.paywallSeen > 0,
+            hasFreshReturnAfterCorrection:
+                postSaveLoosenSignalsPreAudit.hasFreshReturnAfterCorrection,
+            hasChangeAnchor: postSaveEvidenceAnchorPreAudit.hasChangeAnchor,
+            isRecording: flags.isRecording,
+            isDegradedTranscriptState: false,
+            isPostSaveDegradedState: postSaveDegraded,
+            whatChangedQuestionActive: showWhatChangedV2,
+            patternReviewInboxHasActiveItems: patternReviewInboxActivePostSave,
+          ),
+    );
     final proVisibilityLiftPostSaveResult = postSaveBag.showProVisibilityLiftOnPostSave
         ? ProVisibilityLiftEngine.build(
             surface: ProVisibilityLiftSurface.recordPostSave,
@@ -2581,12 +2566,12 @@ abstract final class RecordSurfaceResolver {
             patternReviewInboxHasActiveItems: patternReviewInboxActivePostSave,
           )
         : null;
-    postSaveBag.showProEvidenceValuePostSave =
-        flags.isDone &&
-        entriesAfterSave.isNotEmpty &&
-        readyBag.showFirstProofPayoff &&
-        firstProofPayoffCandidate != null &&
-        ProEvidenceValueEngine.shouldShowCard(
+    postSaveBag.registerProEvidenceValue(
+      flags.isDone &&
+          entriesAfterSave.isNotEmpty &&
+          readyBag.showFirstProofPayoff &&
+          firstProofPayoffCandidate != null &&
+          ProEvidenceValueEngine.shouldShowCard(
           ProEvidenceValueEngine.buildContext(
             surface: ProEvidenceValueSurface.recordPostSaveAfterPayoff,
             entryCount: postSaveEntryCount,
@@ -2601,188 +2586,189 @@ abstract final class RecordSurfaceResolver {
             whatChangedQuestionActive: showWhatChangedV2,
             firstProofPayoffVisible: true,
           ),
-        );
-    postSaveBag.showBetaInviteLoopPostSave =
-        flags.isDone &&
-        entriesAfterSave.isNotEmpty &&
-        readyBag.showFirstProofPayoff &&
-        firstProofPayoffCandidate != null &&
-        BetaInviteLoopEngine.shouldShowCard(
-          BetaInviteLoopEngine.buildContext(
-            surface: BetaInviteLoopSurface.recordPostSave,
-            source: 'record_post_save',
-            entryCount: postSaveEntryCount,
-            entries: entriesAfterSave,
-            beliefSurfaceVisible: archiveBeliefSurfaceCandidate.shouldShow,
-            beliefEvidencePhrases:
-                archiveBeliefSurfaceCandidate.evidencePhrases,
-            isPostSaveDegradedState: postSaveDegraded,
-            whatChangedQuestionActive: showWhatChangedV2,
-            patternReviewInboxHasActiveItems: patternReviewInboxActivePostSave,
           ),
-        );
-    postSaveBag.showProPreviewPostSave =
-        flags.isDone &&
-        entriesAfterSave.isNotEmpty &&
-        readyBag.showFirstProofPayoff &&
-        firstProofPayoffCandidate != null &&
-        ProPreviewEngine.shouldShowCard(
-          ProPreviewEngine.buildContext(
-            surface: ProPreviewSurface.recordPostSave,
-            source: 'record_post_save',
-            entryCount: postSaveEntryCount,
-            isPro: input.userProState.isPro,
-            dismissed: ProPreviewEngine.isDismissed(),
-            entries: entriesAfterSave,
-            hasTimelineProofVisible:
-                postSaveBag.showTimelineProofMomentOnFirstProofPayoff &&
-                timelineProofMomentPostSaveCandidate != null,
-            firstProofPayoffVisible: readyBag.showFirstProofPayoff,
-            isPostSaveDegradedState: postSaveDegraded,
-            firstProofTruthQuestionActive: showFirstProofTruth,
-            whatChangedQuestionActive: showWhatChangedV2,
-            patternReviewInboxHasActiveItems: patternReviewInboxActivePostSave,
+    );
+    postSaveBag.registerBetaInviteLoop(
+      flags.isDone &&
+          entriesAfterSave.isNotEmpty &&
+          readyBag.showFirstProofPayoff &&
+          firstProofPayoffCandidate != null &&
+          BetaInviteLoopEngine.shouldShowCard(
+            BetaInviteLoopEngine.buildContext(
+              surface: BetaInviteLoopSurface.recordPostSave,
+              source: 'record_post_save',
+              entryCount: postSaveEntryCount,
+              entries: entriesAfterSave,
+              beliefSurfaceVisible: archiveBeliefSurfaceCandidate.shouldShow,
+              beliefEvidencePhrases:
+                  archiveBeliefSurfaceCandidate.evidencePhrases,
+              isPostSaveDegradedState: postSaveDegraded,
+              whatChangedQuestionActive: showWhatChangedV2,
+              patternReviewInboxHasActiveItems: patternReviewInboxActivePostSave,
+            ),
           ),
-        );
-    postSaveBag.showProBridgeVisibilityPostSave =
-        flags.isDone &&
-        entriesAfterSave.isNotEmpty &&
-        readyBag.showFirstProofPayoff &&
-        firstProofPayoffCandidate != null &&
-        ProBridgeVisibilityEngine.shouldShow(
-          input: ProBridgeTimingLoosenEngine.enrichVisibilityInput(
-            base: ProBridgeVisibilityInput(
-              surface: ProBridgeVisibilitySurface.recordPostSaveAfterPayoff,
+    );
+    postSaveBag.registerProPreview(
+      flags.isDone &&
+          entriesAfterSave.isNotEmpty &&
+          readyBag.showFirstProofPayoff &&
+          firstProofPayoffCandidate != null &&
+          ProPreviewEngine.shouldShowCard(
+            ProPreviewEngine.buildContext(
+              surface: ProPreviewSurface.recordPostSave,
               source: 'record_post_save',
               entryCount: postSaveEntryCount,
               isPro: input.userProState.isPro,
-              postProofProBridgeEnabled: showPostProofProBridgeOnRecord,
-              hasFirstProof: true,
+              dismissed: ProPreviewEngine.isDismissed(),
+              entries: entriesAfterSave,
+              hasTimelineProofVisible: postSaveBag.hasTimelineProofVisible(
+                timelineProofMomentPostSaveCandidate,
+              ),
+              firstProofPayoffVisible: readyBag.showFirstProofPayoff,
               isPostSaveDegradedState: postSaveDegraded,
-              hasFirstProofPayoffVisible: readyBag.showFirstProofPayoff,
-              hasTimelineProofVisible:
-                  postSaveBag.showTimelineProofMomentOnFirstProofPayoff &&
-                  timelineProofMomentPostSaveCandidate != null,
-              hasBetaProofLiftVisible:
-                  postSaveBag.showBetaProofLiftOnFirstProofPayoff ||
-                  postSaveBag.showBetaProofLiftUnderTimelineProofPostSave,
+              firstProofTruthQuestionActive: showFirstProofTruth,
+              whatChangedQuestionActive: showWhatChangedV2,
+              patternReviewInboxHasActiveItems: patternReviewInboxActivePostSave,
+            ),
+          ),
+    );
+    postSaveBag.registerProBridgeVisibility(
+      flags.isDone &&
+          entriesAfterSave.isNotEmpty &&
+          readyBag.showFirstProofPayoff &&
+          firstProofPayoffCandidate != null &&
+          ProBridgeVisibilityEngine.shouldShow(
+            input: ProBridgeTimingLoosenEngine.enrichVisibilityInput(
+              base: ProBridgeVisibilityInput(
+                surface: ProBridgeVisibilitySurface.recordPostSaveAfterPayoff,
+                source: 'record_post_save',
+                entryCount: postSaveEntryCount,
+                isPro: input.userProState.isPro,
+                postProofProBridgeEnabled: showPostProofProBridgeOnRecord,
+                hasFirstProof: true,
+                isPostSaveDegradedState: postSaveDegraded,
+                hasFirstProofPayoffVisible: readyBag.showFirstProofPayoff,
+                hasTimelineProofVisible: postSaveBag.hasTimelineProofVisible(
+                  timelineProofMomentPostSaveCandidate,
+                ),
+                hasBetaProofLiftVisible: postSaveBag.hasBetaProofLiftVisible,
+                hasReturnAfterProofStrengthenedVisible:
+                    postSaveBag.showReturnAfterProofStrengthenedOnFirstProofPayoff,
+                feedbackState: ProMomentTimingEngine.resolveFeedbackState(
+                  entries: entriesAfterSave,
+                  surface: ProofQualityResponseSurface.firstProofPayoff,
+                ),
+                whatChangedQuestionActive: showWhatChangedV2,
+                patternReviewInboxHasActiveItems:
+                    patternReviewInboxActivePostSave,
+                hasSeenFirstRepeat: DelayedPaywallProofStore.hasSeenFirstRepeat,
+                hasOpenedEvidenceTrail:
+                    DelayedPaywallProofStore.hasOpenedEvidenceTrail,
+              ),
+              entries: entriesAfterSave,
+              beliefSurfaceVisible: archiveBeliefSurfaceCandidate.shouldShow,
+              beliefEvidencePhrases:
+                  archiveBeliefSurfaceCandidate.evidencePhrases,
+              hasBetaProofLiftVisible: postSaveBag.hasBetaProofLiftVisible,
               hasReturnAfterProofStrengthenedVisible:
                   postSaveBag.showReturnAfterProofStrengthenedOnFirstProofPayoff,
-              feedbackState: ProMomentTimingEngine.resolveFeedbackState(
-                entries: entriesAfterSave,
-                surface: ProofQualityResponseSurface.firstProofPayoff,
-              ),
-              whatChangedQuestionActive: showWhatChangedV2,
-              patternReviewInboxHasActiveItems:
-                  patternReviewInboxActivePostSave,
-              hasSeenFirstRepeat: DelayedPaywallProofStore.hasSeenFirstRepeat,
-              hasOpenedEvidenceTrail:
-                  DelayedPaywallProofStore.hasOpenedEvidenceTrail,
             ),
-            entries: entriesAfterSave,
-            beliefSurfaceVisible: archiveBeliefSurfaceCandidate.shouldShow,
-            beliefEvidencePhrases:
-                archiveBeliefSurfaceCandidate.evidencePhrases,
-            hasBetaProofLiftVisible:
-                postSaveBag.showBetaProofLiftOnFirstProofPayoff ||
-                postSaveBag.showBetaProofLiftUnderTimelineProofPostSave,
-            hasReturnAfterProofStrengthenedVisible:
-                postSaveBag.showReturnAfterProofStrengthenedOnFirstProofPayoff,
           ),
-        );
-    postSaveBag.showProLockMomentPostSave =
-        flags.isDone &&
-        entriesAfterSave.isNotEmpty &&
-        readyBag.showFirstProofPayoff &&
-        firstProofPayoffCandidate != null &&
-        !postSaveBag.showProBridgeVisibilityPostSave &&
-        !postSaveBag.showProEvidenceValuePostSave &&
-        ProLockMomentEngine.shouldShowCard(
-          ProLockMomentEngine.buildContext(
-            entryCount: postSaveEntryCount,
-            isPro: input.userProState.isPro,
-            dismissed: ProLockMomentDismissStore.isDismissed(),
-            entries: entriesAfterSave,
-            returnChecks: RepeatReturnCheckStore.cached,
-            isPostSaveDegradedState: VoiceCaptureQuality.isDegradedVoiceCapture(
-              entriesAfterSave.last,
-            ),
-            firstProofTruthQuestionActive: showFirstProofTruth,
-            whatChangedQuestionActive: showWhatChangedV2,
-            firstProofPayoffVisible: true,
-            proEvidenceValueVisible: postSaveBag.showProEvidenceValuePostSave,
-          ),
-        );
-    final monthlyPrivateReportPreviewPostSave =
-        flags.isDone && entriesAfterSave.isNotEmpty
-        ? MonthlyPrivateReportEngine.build(
-            entries: entriesAfterSave,
-            returnChecks: RepeatReturnCheckStore.cached,
-            isPostSave: true,
-          )
-        : null;
-    postSaveBag.showMonthlyPrivateReportPreviewPostSave =
-        flags.isDone &&
-        entriesAfterSave.isNotEmpty &&
-        readyBag.showFirstProofPayoff &&
-        firstProofPayoffCandidate != null &&
-        !postSaveBag.showProBridgeVisibilityPostSave &&
-        !postSaveBag.showProEvidenceValuePostSave &&
-        !postSaveBag.showProLockMomentPostSave &&
-        monthlyPrivateReportPreviewPostSave != null &&
-        MonthlyPrivateReportEngine.shouldShowCard(
-          MonthlyPrivateReportEngine.buildContext(
-            surface: MonthlyPrivateReportSurface.recordPostSaveAfterProof,
-            entryCount: postSaveEntryCount,
-            isPro: input.userProState.isPro,
-            dismissed: MonthlyPrivateReportDismissStore.isDismissed(),
-            entries: entriesAfterSave,
-            returnChecks: RepeatReturnCheckStore.cached,
-            preview: monthlyPrivateReportPreviewPostSave,
-            isPostSaveDegradedState: postSaveDegraded,
-            firstProofTruthQuestionActive: showFirstProofTruth,
-            whatChangedQuestionActive: showWhatChangedV2,
-            proLockMomentVisible: postSaveBag.showProLockMomentPostSave,
-            proEvidenceValueVisible: postSaveBag.showProEvidenceValuePostSave,
-            isPostSave: true,
-          ),
-        );
-    return (
-      postSaveBag: postSaveBag,
-      proofSpecificityPostSaveCandidate: proofSpecificityPostSaveCandidate,
-      proofSpecificityBoostPostSaveCandidate: proofSpecificityBoostPostSaveCandidate,
-      proofQualityResponseFirstProofCandidate: proofQualityResponseFirstProofCandidate,
-      proofQualityResponseTimelinePostSaveCandidate: proofQualityResponseTimelinePostSaveCandidate,
-      betaProofLiftFirstProofCandidate: betaProofLiftFirstProofCandidate,
-      betaProofLiftTimelinePostSaveCandidate: betaProofLiftTimelinePostSaveCandidate,
-      returnAfterProofPostSaveCandidate: returnAfterProofPostSaveCandidate,
-      firstProofPayoffParentVisible: firstProofPayoffParentVisible,
-      showProofQualityResponseOnFirstProofPayoff: showProofQualityResponseOnFirstProofPayoff,
-      timelineProofPostSaveParentVisible: timelineProofPostSaveParentVisible,
-      showProofQualityResponseOnTimelineProofPostSave: showProofQualityResponseOnTimelineProofPostSave,
-      returnAfterProofLiftV2PostSaveCandidate: returnAfterProofLiftV2PostSaveCandidate,
-      postSaveLoosenSignalsPreAudit: postSaveLoosenSignalsPreAudit,
-      postSaveEvidenceAnchorPreAudit: postSaveEvidenceAnchorPreAudit,
-      postSaveFeedbackStateForLift: postSaveFeedbackStateForLift,
-      hasProEngagementOnPostSave: hasProEngagementOnPostSave,
-      proUnderstandingLiftPostSaveInput: proUnderstandingLiftPostSaveInput,
-      base: base,
-      proUnderstandingLiftPostSaveResult: proUnderstandingLiftPostSaveResult,
-      proVisibilityLiftPostSaveResult: proVisibilityLiftPostSaveResult,
-      monthlyPrivateReportPreviewPostSave: monthlyPrivateReportPreviewPostSave,
     );
+    postSaveBag.registerProLockMoment(
+      flags.isDone &&
+          entriesAfterSave.isNotEmpty &&
+          readyBag.showFirstProofPayoff &&
+          firstProofPayoffCandidate != null &&
+          !postSaveBag.showProBridgeVisibilityPostSave &&
+          !postSaveBag.showProEvidenceValuePostSave &&
+          ProLockMomentEngine.shouldShowCard(
+            ProLockMomentEngine.buildContext(
+              entryCount: postSaveEntryCount,
+              isPro: input.userProState.isPro,
+              dismissed: ProLockMomentDismissStore.isDismissed(),
+              entries: entriesAfterSave,
+              returnChecks: RepeatReturnCheckStore.cached,
+              isPostSaveDegradedState: VoiceCaptureQuality.isDegradedVoiceCapture(
+                entriesAfterSave.last,
+              ),
+              firstProofTruthQuestionActive: showFirstProofTruth,
+              whatChangedQuestionActive: showWhatChangedV2,
+              firstProofPayoffVisible: true,
+              proEvidenceValueVisible: postSaveBag.showProEvidenceValuePostSave,
+            ),
+          ),
+    );
+    postSaveBag.storeMonthlyReportPreview(
+      flags.isDone && entriesAfterSave.isNotEmpty
+          ? MonthlyPrivateReportEngine.build(
+              entries: entriesAfterSave,
+              returnChecks: RepeatReturnCheckStore.cached,
+              isPostSave: true,
+            )
+          : null,
+    );
+    postSaveBag.registerMonthlyPrivateReport(
+      flags.isDone &&
+          entriesAfterSave.isNotEmpty &&
+          readyBag.showFirstProofPayoff &&
+          firstProofPayoffCandidate != null &&
+          !postSaveBag.showProBridgeVisibilityPostSave &&
+          !postSaveBag.showProEvidenceValuePostSave &&
+          !postSaveBag.showProLockMomentPostSave &&
+          postSaveBag.monthlyPrivateReportPreviewPostSave != null &&
+          MonthlyPrivateReportEngine.shouldShowCard(
+            MonthlyPrivateReportEngine.buildContext(
+              surface: MonthlyPrivateReportSurface.recordPostSaveAfterProof,
+              entryCount: postSaveEntryCount,
+              isPro: input.userProState.isPro,
+              dismissed: MonthlyPrivateReportDismissStore.isDismissed(),
+              entries: entriesAfterSave,
+              returnChecks: RepeatReturnCheckStore.cached,
+              preview: postSaveBag.monthlyPrivateReportPreviewPostSave,
+              isPostSaveDegradedState: postSaveDegraded,
+              firstProofTruthQuestionActive: showFirstProofTruth,
+              whatChangedQuestionActive: showWhatChangedV2,
+              proLockMomentVisible: postSaveBag.showProLockMomentPostSave,
+              proEvidenceValueVisible: postSaveBag.showProEvidenceValuePostSave,
+              isPostSave: true,
+            ),
+          ),
+    );
+    postSaveBag.storeProofSpecificityCandidate(proofSpecificityPostSaveCandidate);
+    postSaveBag.storeProofSupportCandidates(
+      boost: proofSpecificityBoostPostSaveCandidate,
+      firstProofQuality: proofQualityResponseFirstProofCandidate,
+      timelineQuality: proofQualityResponseTimelinePostSaveCandidate,
+      firstProofLift: betaProofLiftFirstProofCandidate,
+      timelineLift: betaProofLiftTimelinePostSaveCandidate,
+      returnAfterProof: returnAfterProofPostSaveCandidate,
+    );
+    postSaveBag.storeParentVisibility(
+      firstProofPayoff: firstProofPayoffParentVisible,
+      timelineProof: timelineProofPostSaveParentVisible,
+    );
+    postSaveBag.storeQualityResponseShows(
+      onFirstProofPayoff: showProofQualityResponseOnFirstProofPayoff,
+      onTimelineProof: showProofQualityResponseOnTimelineProofPostSave,
+    );
+    postSaveBag.storeLiftV2Candidate(returnAfterProofLiftV2PostSaveCandidate);
+    postSaveBag.storeLoosenAndEngagement(
+      loosen: postSaveLoosenSignalsPreAudit,
+      evidence: postSaveEvidenceAnchorPreAudit,
+      feedback: postSaveFeedbackStateForLift,
+      hasProEngagement: hasProEngagementOnPostSave,
+      understandingInput: proUnderstandingLiftPostSaveInput,
+    );
+    postSaveBag.storeProUnderstandingResults(
+      builtBase: base,
+      result: proUnderstandingLiftPostSaveResult,
+    );
+    postSaveBag.storeProVisibilityResult(proVisibilityLiftPostSaveResult);
+    return postSaveBag;
   }
 
-  static ({
-    PostSaveReturnHandoff? postSaveReturnHandoffCandidate,
-    ReturnTomorrowCue? returnTomorrowCuePostSave,
-    bool postSaveDegradedForReturnCue,
-    ComeBackTomorrowPostSaveWatch? comeBackTomorrowV2PostSaveWatch,
-    bool showPostSaveCuriosityHook,
-    BetaFeedbackCaptureResult betaFeedbackCapturePostSavePreAudit,
-    ProofFloorRescueInput postSaveProofFloorRescueInput,
-    bool blocksProByProofFloorOnPostSave,
-  }) resolvePostSaveCardsB({
+  static void resolvePostSaveCardsB({
     required RecordSurfaceInput input,
     required RecordSurfaceFlags flags,
     required List<JournalEntry> entriesAfterSave,
@@ -2800,7 +2786,6 @@ abstract final class RecordSurfaceResolver {
     required bool suppressNoisyFirstSaveCards,
     required bool patternReviewInboxActivePostSave,
     required TimelineProofMomentResult? timelineProofMomentPostSaveCandidate,
-    required ProBridgeTimingLoosenSignals postSaveLoosenSignalsPreAudit,
     required ArchiveBeliefSurface archiveBeliefSurfaceCandidate,
   }) {
     final postSaveReturnHandoffCandidate =
@@ -2824,9 +2809,9 @@ abstract final class RecordSurfaceResolver {
             firstProofUnlocked: showFirstProofMoment,
           )
         : null;
-    postSaveBag.showComeBackTomorrowV2PostSave =
-        !suppressNoisyFirstSaveCards &&
-        ComeBackTomorrowV2Gates.shouldShowPostSave(
+    postSaveBag.registerComeBackTomorrow(
+      !suppressNoisyFirstSaveCards &&
+          ComeBackTomorrowV2Gates.shouldShowPostSave(
           isPostSaveDone: flags.isDone,
           isDegradedPostSave: postSaveDegradedForReturnCue,
           watch: comeBackTomorrowV2PostSaveWatch,
@@ -2835,7 +2820,8 @@ abstract final class RecordSurfaceResolver {
           showFirstProofActionLoop: showFirstProofActionLoop,
           showWhatChangedV2Display: showWhatChangedV2Display,
           showHelpedTracking: showHelpedTracking,
-        );
+        ),
+    );
     final showPostSaveCuriosityHook = CuriosityHookGates.shouldShowPostSaveCard(
       isPostSaveDone: flags.isDone,
       hook: input.postSaveCuriosityHook,
@@ -2898,18 +2884,14 @@ abstract final class RecordSurfaceResolver {
             ),
           )
         : BetaFeedbackCaptureResult.hidden;
-    postSaveBag.showBetaFeedbackCapturePostSave =
-        betaFeedbackCapturePostSavePreAudit.shouldShow;
-    postSaveBag.betaFeedbackCapturePostSaveResult =
-        betaFeedbackCapturePostSavePreAudit.shouldShow
-        ? betaFeedbackCapturePostSavePreAudit
-        : null;
+    postSaveBag.registerBetaFeedbackCapture(
+      show: betaFeedbackCapturePostSavePreAudit.shouldShow,
+      result: betaFeedbackCapturePostSavePreAudit.shouldShow
+          ? betaFeedbackCapturePostSavePreAudit
+          : null,
+    );
     if (!ReturningRecordWatchTargetUiGates.showBetaRecordSurfaces()) {
-      postSaveBag.showBetaProofLiftOnFirstProofPayoff = false;
-      postSaveBag.showBetaProofLiftUnderTimelineProofPostSave = false;
-      postSaveBag.showBetaInviteLoopPostSave = false;
-      postSaveBag.showBetaFeedbackCapturePostSave = false;
-      postSaveBag.betaFeedbackCapturePostSaveResult = null;
+      postSaveBag.suppressBetaSurfaces();
     }
     final postSaveProofFloorRescueInput = ProofFloorRescueEngine.inputFromStore(
       entryCount: postSaveEntryCount,
@@ -2922,9 +2904,9 @@ abstract final class RecordSurfaceResolver {
         entriesAfterSave,
       ),
       confidenceLevel:
-          postSaveLoosenSignalsPreAudit.confidenceLevel ??
+          postSaveBag.postSaveLoosenSignalsPreAudit.confidenceLevel ??
           ProofConfidenceLevel.watchOnly,
-      hasSafeAnchor: postSaveLoosenSignalsPreAudit.hasSafeAnchor,
+      hasSafeAnchor: postSaveBag.postSaveLoosenSignalsPreAudit.hasSafeAnchor,
       hasLowMatchQuality: ProofFloorRescueEngine.resolveHasLowMatchQuality(
         entries: entriesAfterSave,
         beliefSurfaceVisible: archiveBeliefSurfaceCandidate.shouldShow,
@@ -2941,30 +2923,26 @@ abstract final class RecordSurfaceResolver {
           postSaveProofFloorRescueInput,
         );
     if (blocksProByProofFloorOnPostSave) {
-      postSaveBag.showProUnderstandingLiftOnPostSave = false;
-      postSaveBag.showProVisibilityLiftOnPostSave = false;
-      postSaveBag.showProPreviewPostSave = false;
-      postSaveBag.showProBridgeVisibilityPostSave = false;
-      postSaveBag.showProEvidenceValuePostSave = false;
-      postSaveBag.showProLockMomentPostSave = false;
-      postSaveBag.showMonthlyPrivateReportPreviewPostSave = false;
+      postSaveBag.suppressProCardsByProofFloor();
     }
     if (ProofFloorRescueEngine.shouldSuppressStrongProofPayoff(
       postSaveProofFloorRescueInput,
     )) {
-      postSaveBag.showBetaProofLiftOnFirstProofPayoff = false;
-      postSaveBag.showBetaProofLiftUnderTimelineProofPostSave = false;
+      postSaveBag.suppressStrongProofPayoff();
     }
-    return (
-      postSaveReturnHandoffCandidate: postSaveReturnHandoffCandidate,
-      returnTomorrowCuePostSave: returnTomorrowCuePostSave,
-      postSaveDegradedForReturnCue: postSaveDegradedForReturnCue,
-      comeBackTomorrowV2PostSaveWatch: comeBackTomorrowV2PostSaveWatch,
-      showPostSaveCuriosityHook: showPostSaveCuriosityHook,
-      betaFeedbackCapturePostSavePreAudit: betaFeedbackCapturePostSavePreAudit,
-      postSaveProofFloorRescueInput: postSaveProofFloorRescueInput,
-      blocksProByProofFloorOnPostSave: blocksProByProofFloorOnPostSave,
+    postSaveBag.storeReturnCueState(
+      handoff: postSaveReturnHandoffCandidate,
+      returnCue: returnTomorrowCuePostSave,
+      degradedForReturnCue: postSaveDegradedForReturnCue,
+      watch: comeBackTomorrowV2PostSaveWatch,
+      curiosityHook: showPostSaveCuriosityHook,
     );
+    postSaveBag.storeProofFloor(
+      input: postSaveProofFloorRescueInput,
+      blocksPro: blocksProByProofFloorOnPostSave,
+    );
+    postSaveBag.betaFeedbackCapturePostSavePreAudit =
+        betaFeedbackCapturePostSavePreAudit;
   }
 
   static ({
@@ -2986,9 +2964,6 @@ abstract final class RecordSurfaceResolver {
     required ArchiveBeliefSurface archiveBeliefSurfaceCandidate,
     required bool patternReviewInboxActivePostSave,
     required TimelineProofMomentResult? timelineProofMomentPostSaveCandidate,
-    required ProofSpecificityResult proofSpecificityPostSaveCandidate,
-    required BetaFeedbackCaptureResult betaFeedbackCapturePostSavePreAudit,
-    required bool blocksProByProofFloorOnPostSave,
   }) {
     SurfacePriorityResult? recordPostSaveSurfacePriority;
     ProBridgeTimingLoosenSignals? postSaveLoosenSignals;
@@ -3013,18 +2988,16 @@ abstract final class RecordSurfaceResolver {
               timelineProofMomentPostSaveCandidate != null,
           proofSpecificityPostSave:
               postSaveBag.showProofSpecificityOnFirstProofPayoff &&
-              proofSpecificityPostSaveCandidate.shouldShow,
+              postSaveBag.proofSpecificityPostSaveCandidate.shouldShow,
           betaProofFeedback:
               readyBag.showFirstProofPayoff && firstProofPayoffCandidate != null,
           betaInviteLoop: postSaveBag.showBetaInviteLoopPostSave,
-          betaProofLift:
-              postSaveBag.showBetaProofLiftOnFirstProofPayoff ||
-              postSaveBag.showBetaProofLiftUnderTimelineProofPostSave,
+          betaProofLift: postSaveBag.hasBetaProofLiftVisible,
           returnAfterProofStrengthened:
               postSaveBag.showReturnAfterProofStrengthenedOnFirstProofPayoff,
           returnAfterProofLiftV2: postSaveBag.showReturnAfterProofLiftV2OnPostSave,
           returnAfterProof: postSaveBag.showReturnAfterProofGenericOnFirstProofPayoff,
-          proofFloorRescue: blocksProByProofFloorOnPostSave,
+          proofFloorRescue: postSaveBag.blocksProByProofFloorOnPostSave,
           proPreview: postSaveBag.showProPreviewPostSave,
           proUnderstandingLift: postSaveBag.showProUnderstandingLiftOnPostSave,
           proVisibilityLift: postSaveBag.showProVisibilityLiftOnPostSave,
@@ -3043,82 +3016,12 @@ abstract final class RecordSurfaceResolver {
       )) {
         readyBag.showFirstProofPayoff = false;
       }
-      postSaveBag.showTimelineProofMomentOnFirstProofPayoff = audit.isVisible(
-        SurfacePriorityCardKey.timelineProofMomentPostSave,
-        candidate:
-            postSaveBag.showTimelineProofMomentOnFirstProofPayoff &&
-            timelineProofMomentPostSaveCandidate != null,
+      postSaveBag.applyPriorityAudit(
+        audit,
+        timelineProof: timelineProofMomentPostSaveCandidate,
+        firstProofPayoffVisible: readyBag.showFirstProofPayoff,
+        firstProofPayoffCandidate: firstProofPayoffCandidate,
       );
-      postSaveBag.showProofSpecificityOnFirstProofPayoff = audit.isVisible(
-        SurfacePriorityCardKey.proofSpecificityPostSave,
-        candidate:
-            postSaveBag.showProofSpecificityOnFirstProofPayoff &&
-            proofSpecificityPostSaveCandidate.shouldShow,
-      );
-      postSaveBag.showReturnAfterProofStrengthenedOnFirstProofPayoff = audit.isVisible(
-        SurfacePriorityCardKey.returnAfterProofStrengthened,
-        candidate:
-            postSaveBag.showReturnAfterProofStrengthenedOnFirstProofPayoff &&
-            readyBag.showFirstProofPayoff &&
-            firstProofPayoffCandidate != null,
-      );
-      postSaveBag.showReturnAfterProofGenericOnFirstProofPayoff = audit.isVisible(
-        SurfacePriorityCardKey.returnAfterProof,
-        candidate:
-            postSaveBag.showReturnAfterProofGenericOnFirstProofPayoff &&
-            readyBag.showFirstProofPayoff &&
-            firstProofPayoffCandidate != null,
-      );
-      postSaveBag.showReturnAfterProofOnFirstProofPayoff =
-          postSaveBag.showReturnAfterProofStrengthenedOnFirstProofPayoff ||
-          postSaveBag.showReturnAfterProofGenericOnFirstProofPayoff;
-      postSaveBag.showReturnAfterProofLiftV2OnPostSave = audit.isVisible(
-        SurfacePriorityCardKey.returnAfterProofLiftV2,
-        candidate:
-            postSaveBag.showReturnAfterProofLiftV2OnPostSave &&
-            readyBag.showFirstProofPayoff &&
-            firstProofPayoffCandidate != null,
-      );
-      if (postSaveBag.showReturnAfterProofLiftV2OnPostSave) {
-        postSaveBag.showReturnAfterProofStrengthenedOnFirstProofPayoff = false;
-        postSaveBag.showReturnAfterProofGenericOnFirstProofPayoff = false;
-        postSaveBag.showReturnAfterProofOnFirstProofPayoff = false;
-      }
-      postSaveBag.showProPreviewPostSave = audit.isVisible(
-        SurfacePriorityCardKey.proPreview,
-        candidate: postSaveBag.showProPreviewPostSave,
-      );
-      postSaveBag.showBetaInviteLoopPostSave = audit.isVisible(
-        SurfacePriorityCardKey.betaInviteLoop,
-        candidate: postSaveBag.showBetaInviteLoopPostSave,
-      );
-      postSaveBag.showProBridgeVisibilityPostSave = audit.isVisible(
-        SurfacePriorityCardKey.proBridgeVisibility,
-        candidate: postSaveBag.showProBridgeVisibilityPostSave,
-      );
-      postSaveBag.showProUnderstandingLiftOnPostSave = audit.isVisible(
-        SurfacePriorityCardKey.proUnderstandingLift,
-        candidate: postSaveBag.showProUnderstandingLiftOnPostSave,
-      );
-      postSaveBag.showProVisibilityLiftOnPostSave = audit.isVisible(
-        SurfacePriorityCardKey.proVisibilityLift,
-        candidate: postSaveBag.showProVisibilityLiftOnPostSave,
-      );
-      postSaveBag.showProEvidenceValuePostSave = audit.isVisible(
-        SurfacePriorityCardKey.proEvidenceValue,
-        candidate: postSaveBag.showProEvidenceValuePostSave,
-      );
-      postSaveBag.showProLockMomentPostSave = audit.isVisible(
-        SurfacePriorityCardKey.proLockMoment,
-        candidate: postSaveBag.showProLockMomentPostSave,
-      );
-      postSaveBag.showBetaFeedbackCapturePostSave = audit.isVisible(
-        SurfacePriorityCardKey.betaFeedbackCapture,
-        candidate: postSaveBag.showBetaFeedbackCapturePostSave,
-      );
-      postSaveBag.betaFeedbackCapturePostSaveResult = postSaveBag.showBetaFeedbackCapturePostSave
-          ? betaFeedbackCapturePostSavePreAudit
-          : null;
       postSaveLoosenSignals = ProBridgeTimingLoosenEngine.resolveSignals(
         entries: entriesAfterSave,
         source: 'record_post_save',
@@ -3138,9 +3041,7 @@ abstract final class RecordSurfaceResolver {
         hasFirstProofPayoffVisible: readyBag.showFirstProofPayoff,
         hasMonthlyPrivateReportPreviewVisible:
             postSaveBag.showMonthlyPrivateReportPreviewPostSave,
-        hasBetaProofLiftVisible:
-            postSaveBag.showBetaProofLiftOnFirstProofPayoff ||
-            postSaveBag.showBetaProofLiftUnderTimelineProofPostSave,
+        hasBetaProofLiftVisible: postSaveBag.hasBetaProofLiftVisible,
         hasReturnAfterProofStrengthenedVisible:
             postSaveBag.showReturnAfterProofStrengthenedOnFirstProofPayoff,
         feedbackState: ProMomentTimingEngine.resolveFeedbackState(
@@ -3156,56 +3057,7 @@ abstract final class RecordSurfaceResolver {
         hasSolidStrongPatternWithSafeAnchors:
             postSaveLoosenSignals.hasSolidStrongPatternWithSafeAnchors,
       );
-      postSaveBag.showProPreviewPostSave = ProMomentTimingEngine.applyGate(
-        candidate: postSaveBag.showProPreviewPostSave,
-        timing: postSaveProTiming.copyWith(
-          proSlotAvailable:
-              !postSaveBag.showProUnderstandingLiftOnPostSave &&
-              !postSaveBag.showProVisibilityLiftOnPostSave,
-        ),
-      );
-      postSaveBag.showProBridgeVisibilityPostSave = ProMomentTimingEngine.applyGate(
-        candidate: postSaveBag.showProBridgeVisibilityPostSave,
-        timing: postSaveProTiming.copyWith(
-          proSlotAvailable:
-              !postSaveBag.showProUnderstandingLiftOnPostSave &&
-              !postSaveBag.showProVisibilityLiftOnPostSave &&
-              !postSaveBag.showProPreviewPostSave,
-        ),
-      );
-      postSaveBag.showProEvidenceValuePostSave = ProMomentTimingEngine.applyGate(
-        candidate: postSaveBag.showProEvidenceValuePostSave,
-        timing: postSaveProTiming.copyWith(
-          proSlotAvailable:
-              !postSaveBag.showProUnderstandingLiftOnPostSave &&
-              !postSaveBag.showProVisibilityLiftOnPostSave &&
-              !postSaveBag.showProPreviewPostSave &&
-              !postSaveBag.showProBridgeVisibilityPostSave,
-        ),
-      );
-      postSaveBag.showProLockMomentPostSave = ProMomentTimingEngine.applyGate(
-        candidate: postSaveBag.showProLockMomentPostSave,
-        timing: postSaveProTiming.copyWith(
-          proSlotAvailable:
-              postSaveBag.showProLockMomentPostSave &&
-              !postSaveBag.showProUnderstandingLiftOnPostSave &&
-              !postSaveBag.showProVisibilityLiftOnPostSave &&
-              !postSaveBag.showProPreviewPostSave &&
-              !postSaveBag.showProBridgeVisibilityPostSave,
-        ),
-      );
-      postSaveBag.showMonthlyPrivateReportPreviewPostSave = ProMomentTimingEngine.applyGate(
-        candidate: postSaveBag.showMonthlyPrivateReportPreviewPostSave,
-        timing: postSaveProTiming.copyWith(
-          hasMonthlyPrivateReportPreviewVisible: true,
-          proSlotAvailable:
-              postSaveBag.showMonthlyPrivateReportPreviewPostSave &&
-              !postSaveBag.showProUnderstandingLiftOnPostSave &&
-              !postSaveBag.showProVisibilityLiftOnPostSave &&
-              !postSaveBag.showProPreviewPostSave &&
-              !postSaveBag.showProBridgeVisibilityPostSave,
-        ),
-      );
+      postSaveBag.applyProMomentGates(postSaveProTiming);
       betaFeedbackCapturePostSaveFinal = BetaFeedbackCaptureEngine.build(
         context: BetaFeedbackCaptureEngine.buildContext(
           surface: BetaFeedbackCaptureSurface.recordPostSave,
@@ -3257,12 +3109,7 @@ abstract final class RecordSurfaceResolver {
               ),
         ),
       );
-      postSaveBag.showBetaFeedbackCapturePostSave =
-          postSaveBag.showBetaFeedbackCapturePostSave &&
-          betaFeedbackCapturePostSaveFinal.shouldShow;
-      postSaveBag.betaFeedbackCapturePostSaveResult = postSaveBag.showBetaFeedbackCapturePostSave
-          ? betaFeedbackCapturePostSaveFinal
-          : null;
+      postSaveBag.applyBetaFeedbackResult(betaFeedbackCapturePostSaveFinal);
     }
     return (
       recordPostSaveSurfacePriority: recordPostSaveSurfacePriority,
@@ -4285,30 +4132,7 @@ abstract final class RecordSurfaceResolver {
             compact: true,
           )
         : null;
-    final (
-      :postSaveBag,
-      :proofSpecificityPostSaveCandidate,
-      :proofSpecificityBoostPostSaveCandidate,
-      :proofQualityResponseFirstProofCandidate,
-      :proofQualityResponseTimelinePostSaveCandidate,
-      :betaProofLiftFirstProofCandidate,
-      :betaProofLiftTimelinePostSaveCandidate,
-      :returnAfterProofPostSaveCandidate,
-      :firstProofPayoffParentVisible,
-      :showProofQualityResponseOnFirstProofPayoff,
-      :timelineProofPostSaveParentVisible,
-      :showProofQualityResponseOnTimelineProofPostSave,
-      :returnAfterProofLiftV2PostSaveCandidate,
-      :postSaveLoosenSignalsPreAudit,
-      :postSaveEvidenceAnchorPreAudit,
-      :postSaveFeedbackStateForLift,
-      :hasProEngagementOnPostSave,
-      :proUnderstandingLiftPostSaveInput,
-      :base,
-      :proUnderstandingLiftPostSaveResult,
-      :proVisibilityLiftPostSaveResult,
-      :monthlyPrivateReportPreviewPostSave,
-    ) = resolvePostSaveCardsA(
+    final postSaveBag = resolvePostSaveCardsA(
       input: input,
       flags: flags,
       entriesAfterSave: entriesAfterSave,
@@ -4551,16 +4375,7 @@ abstract final class RecordSurfaceResolver {
           showPrivateArchiveReportOnRecord &&
           privateArchiveReportCandidate != null,
     );
-    final (
-      :postSaveReturnHandoffCandidate,
-      :returnTomorrowCuePostSave,
-      :postSaveDegradedForReturnCue,
-      :comeBackTomorrowV2PostSaveWatch,
-      :showPostSaveCuriosityHook,
-      :betaFeedbackCapturePostSavePreAudit,
-      :postSaveProofFloorRescueInput,
-      :blocksProByProofFloorOnPostSave,
-    ) = resolvePostSaveCardsB(
+    resolvePostSaveCardsB(
       input: input,
       flags: flags,
       entriesAfterSave: entriesAfterSave,
@@ -4578,7 +4393,6 @@ abstract final class RecordSurfaceResolver {
       suppressNoisyFirstSaveCards: suppressNoisyFirstSaveCards,
       patternReviewInboxActivePostSave: patternReviewInboxActivePostSave,
       timelineProofMomentPostSaveCandidate: timelineProofMomentPostSaveCandidate,
-      postSaveLoosenSignalsPreAudit: postSaveLoosenSignalsPreAudit,
       archiveBeliefSurfaceCandidate: archiveBeliefSurfaceCandidate,
     );
     final (
@@ -4600,9 +4414,6 @@ abstract final class RecordSurfaceResolver {
       archiveBeliefSurfaceCandidate: archiveBeliefSurfaceCandidate,
       patternReviewInboxActivePostSave: patternReviewInboxActivePostSave,
       timelineProofMomentPostSaveCandidate: timelineProofMomentPostSaveCandidate,
-      proofSpecificityPostSaveCandidate: proofSpecificityPostSaveCandidate,
-      betaFeedbackCapturePostSavePreAudit: betaFeedbackCapturePostSavePreAudit,
-      blocksProByProofFloorOnPostSave: blocksProByProofFloorOnPostSave,
     );
     final proPreviewPostSaveResult = postSaveBag.showProPreviewPostSave
         ? ProPreviewEngine.build(
@@ -4613,9 +4424,9 @@ abstract final class RecordSurfaceResolver {
               isPro: input.userProState.isPro,
               dismissed: ProPreviewEngine.isDismissed(),
               entries: entriesAfterSave,
-              hasTimelineProofVisible:
-                  postSaveBag.showTimelineProofMomentOnFirstProofPayoff &&
-                  timelineProofMomentPostSaveCandidate != null,
+              hasTimelineProofVisible: postSaveBag.hasTimelineProofVisible(
+                timelineProofMomentPostSaveCandidate,
+              ),
               firstProofPayoffVisible: readyBag.showFirstProofPayoff,
               isPostSaveDegradedState: postSaveDegraded,
               firstProofTruthQuestionActive: showFirstProofTruth,
@@ -4654,12 +4465,10 @@ abstract final class RecordSurfaceResolver {
                 hasFirstProof: true,
                 isPostSaveDegradedState: postSaveDegraded,
                 hasFirstProofPayoffVisible: readyBag.showFirstProofPayoff,
-                hasTimelineProofVisible:
-                    postSaveBag.showTimelineProofMomentOnFirstProofPayoff &&
-                    timelineProofMomentPostSaveCandidate != null,
-                hasBetaProofLiftVisible:
-                    postSaveBag.showBetaProofLiftOnFirstProofPayoff ||
-                    postSaveBag.showBetaProofLiftUnderTimelineProofPostSave,
+                hasTimelineProofVisible: postSaveBag.hasTimelineProofVisible(
+                  timelineProofMomentPostSaveCandidate,
+                ),
+                hasBetaProofLiftVisible: postSaveBag.hasBetaProofLiftVisible,
                 hasReturnAfterProofStrengthenedVisible:
                     postSaveBag.showReturnAfterProofStrengthenedOnFirstProofPayoff,
                 feedbackState: ProMomentTimingEngine.resolveFeedbackState(
@@ -4677,9 +4486,7 @@ abstract final class RecordSurfaceResolver {
               beliefSurfaceVisible: archiveBeliefSurfaceCandidate.shouldShow,
               beliefEvidencePhrases:
                   archiveBeliefSurfaceCandidate.evidencePhrases,
-              hasBetaProofLiftVisible:
-                  postSaveBag.showBetaProofLiftOnFirstProofPayoff ||
-                  postSaveBag.showBetaProofLiftUnderTimelineProofPostSave,
+              hasBetaProofLiftVisible: postSaveBag.hasBetaProofLiftVisible,
               hasReturnAfterProofStrengthenedVisible:
                   postSaveBag.showReturnAfterProofStrengthenedOnFirstProofPayoff,
             ),
@@ -4691,8 +4498,8 @@ abstract final class RecordSurfaceResolver {
         !postSaveBag.showComeBackTomorrowV2PostSave &&
         ReturnTomorrowCueGates.shouldShowPostSave(
           isPostSaveDone: flags.isDone,
-          isDegradedPostSave: postSaveDegradedForReturnCue,
-          cue: returnTomorrowCuePostSave,
+          isDegradedPostSave: postSaveBag.postSaveDegradedForReturnCue,
+          cue: postSaveBag.returnTomorrowCuePostSave,
         );
     final firstWeekProgressPostSave =
         flags.isDone && entriesAfterSave.isNotEmpty
@@ -4704,7 +4511,7 @@ abstract final class RecordSurfaceResolver {
     final showFirstWeekProgressPostSave =
         FirstWeekProgressGates.shouldShowPostSave(
           isPostSaveDone: flags.isDone,
-          isDegradedPostSave: postSaveDegradedForReturnCue,
+          isDegradedPostSave: postSaveBag.postSaveDegradedForReturnCue,
           progress: firstWeekProgressPostSave,
           showReturnTomorrowCue: showReturnTomorrowCuePostSave,
         );
@@ -4713,8 +4520,8 @@ abstract final class RecordSurfaceResolver {
         PostSaveReturnHandoffGates.shouldShow(
           isPostSaveDone: flags.isDone,
           entryCount: postSaveEntryCount,
-          isDegradedPostSave: postSaveDegradedForReturnCue,
-          handoff: postSaveReturnHandoffCandidate,
+          isDegradedPostSave: postSaveBag.postSaveDegradedForReturnCue,
+          handoff: postSaveBag.postSaveReturnHandoffCandidate,
         ) &&
         !showReturnTomorrowCuePostSave &&
         !postSaveBag.showComeBackTomorrowV2PostSave;
@@ -4774,7 +4581,7 @@ abstract final class RecordSurfaceResolver {
         ? const ArchiveThoughtMapEngine().build(entriesAfterSave)
         : null;
     if (suppressNoisyRepeatPostSaveCards) {
-      postSaveBag.showComeBackTomorrowV2PostSave = false;
+      postSaveBag.suppressComeBackTomorrow();
     }
     final showDegradedTranscriptFocusedPostSave =
         flags.isDone &&
@@ -5119,43 +4926,43 @@ abstract final class RecordSurfaceResolver {
       patternReviewInboxActivePostSave: patternReviewInboxActivePostSave,
       timelineProofMomentPostSaveCandidate: timelineProofMomentPostSaveCandidate,
       showTimelineProofMomentOnFirstProofPayoff: postSaveBag.showTimelineProofMomentOnFirstProofPayoff,
-      proofSpecificityPostSaveCandidate: proofSpecificityPostSaveCandidate,
+      proofSpecificityPostSaveCandidate: postSaveBag.proofSpecificityPostSaveCandidate,
       showProofSpecificityOnFirstProofPayoff: postSaveBag.showProofSpecificityOnFirstProofPayoff,
-      proofSpecificityBoostPostSaveCandidate: proofSpecificityBoostPostSaveCandidate,
-      proofQualityResponseFirstProofCandidate: proofQualityResponseFirstProofCandidate,
-      proofQualityResponseTimelinePostSaveCandidate: proofQualityResponseTimelinePostSaveCandidate,
-      betaProofLiftFirstProofCandidate: betaProofLiftFirstProofCandidate,
-      betaProofLiftTimelinePostSaveCandidate: betaProofLiftTimelinePostSaveCandidate,
-      returnAfterProofPostSaveCandidate: returnAfterProofPostSaveCandidate,
-      firstProofPayoffParentVisible: firstProofPayoffParentVisible,
+      proofSpecificityBoostPostSaveCandidate: postSaveBag.proofSpecificityBoostPostSaveCandidate,
+      proofQualityResponseFirstProofCandidate: postSaveBag.proofQualityResponseFirstProofCandidate,
+      proofQualityResponseTimelinePostSaveCandidate: postSaveBag.proofQualityResponseTimelinePostSaveCandidate,
+      betaProofLiftFirstProofCandidate: postSaveBag.betaProofLiftFirstProofCandidate,
+      betaProofLiftTimelinePostSaveCandidate: postSaveBag.betaProofLiftTimelinePostSaveCandidate,
+      returnAfterProofPostSaveCandidate: postSaveBag.returnAfterProofPostSaveCandidate,
+      firstProofPayoffParentVisible: postSaveBag.firstProofPayoffParentVisible,
       showProofSpecificityBoostOnFirstProofPayoff: postSaveBag.showProofSpecificityBoostOnFirstProofPayoff,
-      showProofQualityResponseOnFirstProofPayoff: showProofQualityResponseOnFirstProofPayoff,
-      timelineProofPostSaveParentVisible: timelineProofPostSaveParentVisible,
+      showProofQualityResponseOnFirstProofPayoff: postSaveBag.showProofQualityResponseOnFirstProofPayoff,
+      timelineProofPostSaveParentVisible: postSaveBag.timelineProofPostSaveParentVisible,
       showProofSpecificityBoostOnTimelineProofPostSave: postSaveBag.showProofSpecificityBoostOnTimelineProofPostSave,
-      showProofQualityResponseOnTimelineProofPostSave: showProofQualityResponseOnTimelineProofPostSave,
+      showProofQualityResponseOnTimelineProofPostSave: postSaveBag.showProofQualityResponseOnTimelineProofPostSave,
       showBetaProofLiftOnFirstProofPayoff: postSaveBag.showBetaProofLiftOnFirstProofPayoff,
       showBetaProofLiftUnderTimelineProofPostSave: postSaveBag.showBetaProofLiftUnderTimelineProofPostSave,
       showReturnAfterProofStrengthenedOnFirstProofPayoff: postSaveBag.showReturnAfterProofStrengthenedOnFirstProofPayoff,
       showReturnAfterProofGenericOnFirstProofPayoff: postSaveBag.showReturnAfterProofGenericOnFirstProofPayoff,
       showReturnAfterProofOnFirstProofPayoff: postSaveBag.showReturnAfterProofOnFirstProofPayoff,
-      returnAfterProofLiftV2PostSaveCandidate: returnAfterProofLiftV2PostSaveCandidate,
+      returnAfterProofLiftV2PostSaveCandidate: postSaveBag.returnAfterProofLiftV2PostSaveCandidate,
       showReturnAfterProofLiftV2OnPostSave: postSaveBag.showReturnAfterProofLiftV2OnPostSave,
-      postSaveLoosenSignalsPreAudit: postSaveLoosenSignalsPreAudit,
-      postSaveEvidenceAnchorPreAudit: postSaveEvidenceAnchorPreAudit,
-      postSaveFeedbackStateForLift: postSaveFeedbackStateForLift,
-      hasProEngagementOnPostSave: hasProEngagementOnPostSave,
-      proUnderstandingLiftPostSaveInput: proUnderstandingLiftPostSaveInput,
+      postSaveLoosenSignalsPreAudit: postSaveBag.postSaveLoosenSignalsPreAudit,
+      postSaveEvidenceAnchorPreAudit: postSaveBag.postSaveEvidenceAnchorPreAudit,
+      postSaveFeedbackStateForLift: postSaveBag.postSaveFeedbackStateForLift,
+      hasProEngagementOnPostSave: postSaveBag.hasProEngagementOnPostSave,
+      proUnderstandingLiftPostSaveInput: postSaveBag.proUnderstandingLiftPostSaveInput,
       showProUnderstandingLiftOnPostSave: postSaveBag.showProUnderstandingLiftOnPostSave,
-      proUnderstandingLiftPostSaveResult: proUnderstandingLiftPostSaveResult,
-      base: base,
+      proUnderstandingLiftPostSaveResult: postSaveBag.proUnderstandingLiftPostSaveResult,
+      base: postSaveBag.base,
       showProVisibilityLiftOnPostSave: postSaveBag.showProVisibilityLiftOnPostSave,
-      proVisibilityLiftPostSaveResult: proVisibilityLiftPostSaveResult,
+      proVisibilityLiftPostSaveResult: postSaveBag.proVisibilityLiftPostSaveResult,
       showProEvidenceValuePostSave: postSaveBag.showProEvidenceValuePostSave,
       showBetaInviteLoopPostSave: postSaveBag.showBetaInviteLoopPostSave,
       showProPreviewPostSave: postSaveBag.showProPreviewPostSave,
       showProBridgeVisibilityPostSave: postSaveBag.showProBridgeVisibilityPostSave,
       showProLockMomentPostSave: postSaveBag.showProLockMomentPostSave,
-      monthlyPrivateReportPreviewPostSave: monthlyPrivateReportPreviewPostSave,
+      monthlyPrivateReportPreviewPostSave: postSaveBag.monthlyPrivateReportPreviewPostSave,
       showMonthlyPrivateReportPreviewPostSave: postSaveBag.showMonthlyPrivateReportPreviewPostSave,
       betaFeedbackIntelligenceSurfaceOnRecordReady: betaFeedbackIntelligenceSurfaceOnRecordReady,
       betaFeedbackIntelligenceSurfacePostSave: betaFeedbackIntelligenceSurfacePostSave,
@@ -5180,17 +4987,17 @@ abstract final class RecordSurfaceResolver {
       showReturnedAfterDelayRecovery: showReturnedAfterDelayRecovery,
       nextBestActionCandidate: nextBestActionCandidate,
       showNextBestActionOnRecord: showNextBestActionOnRecord,
-      postSaveReturnHandoffCandidate: postSaveReturnHandoffCandidate,
-      returnTomorrowCuePostSave: returnTomorrowCuePostSave,
-      postSaveDegradedForReturnCue: postSaveDegradedForReturnCue,
-      comeBackTomorrowV2PostSaveWatch: comeBackTomorrowV2PostSaveWatch,
+      postSaveReturnHandoffCandidate: postSaveBag.postSaveReturnHandoffCandidate,
+      returnTomorrowCuePostSave: postSaveBag.returnTomorrowCuePostSave,
+      postSaveDegradedForReturnCue: postSaveBag.postSaveDegradedForReturnCue,
+      comeBackTomorrowV2PostSaveWatch: postSaveBag.comeBackTomorrowV2PostSaveWatch,
       showComeBackTomorrowV2PostSave: postSaveBag.showComeBackTomorrowV2PostSave,
-      showPostSaveCuriosityHook: showPostSaveCuriosityHook,
-      betaFeedbackCapturePostSavePreAudit: betaFeedbackCapturePostSavePreAudit,
+      showPostSaveCuriosityHook: postSaveBag.showPostSaveCuriosityHook,
+      betaFeedbackCapturePostSavePreAudit: postSaveBag.betaFeedbackCapturePostSavePreAudit,
       showBetaFeedbackCapturePostSave: postSaveBag.showBetaFeedbackCapturePostSave,
       betaFeedbackCapturePostSaveResult: postSaveBag.betaFeedbackCapturePostSaveResult,
-      postSaveProofFloorRescueInput: postSaveProofFloorRescueInput,
-      blocksProByProofFloorOnPostSave: blocksProByProofFloorOnPostSave,
+      postSaveProofFloorRescueInput: postSaveBag.postSaveProofFloorRescueInput,
+      blocksProByProofFloorOnPostSave: postSaveBag.blocksProByProofFloorOnPostSave,
       recordPostSaveSurfacePriority: recordPostSaveSurfacePriority,
       postSaveLoosenSignals: postSaveLoosenSignals,
       postSaveProTiming: postSaveProTiming,
