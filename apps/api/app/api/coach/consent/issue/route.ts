@@ -116,7 +116,6 @@ export async function POST(request: Request) {
         grantKind: "caregiverMonitoring",
         subjectAccountId: session.userId,
         partyId: caregiverId,
-        permissions,
         issuedAt: token.issuedAt,
         expiresAt: token.expiresAt,
       });
