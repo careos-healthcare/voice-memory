@@ -2967,6 +2967,311 @@ abstract final class RecordSurfaceResolver {
     );
   }
 
+  static ({
+    SurfacePriorityResult? recordPostSaveSurfacePriority,
+    ProBridgeTimingLoosenSignals? postSaveLoosenSignals,
+    ProMomentTimingContext? postSaveProTiming,
+    BetaFeedbackCaptureResult? betaFeedbackCapturePostSaveFinal,
+  }) auditPostSaveSurfaces({
+    required RecordSurfaceInput input,
+    required RecordSurfaceFlags flags,
+    required List<JournalEntry> entriesAfterSave,
+    required int postSaveEntryCount,
+    required RecordPostSaveSurfaceBag postSaveBag,
+    required RecordReadySurfaceBag readyBag,
+    required FirstProofPayoff? firstProofPayoffCandidate,
+    required bool postSaveDegraded,
+    required bool showWhatChangedV2,
+    required bool showWhatChangedV2Display,
+    required ArchiveBeliefSurface archiveBeliefSurfaceCandidate,
+    required bool patternReviewInboxActivePostSave,
+    required TimelineProofMomentResult? timelineProofMomentPostSaveCandidate,
+    required ProofSpecificityResult proofSpecificityPostSaveCandidate,
+    required BetaFeedbackCaptureResult betaFeedbackCapturePostSavePreAudit,
+    required bool blocksProByProofFloorOnPostSave,
+  }) {
+    SurfacePriorityResult? recordPostSaveSurfacePriority;
+    ProBridgeTimingLoosenSignals? postSaveLoosenSignals;
+    ProMomentTimingContext? postSaveProTiming;
+    BetaFeedbackCaptureResult? betaFeedbackCapturePostSaveFinal;
+    if (flags.isDone) {
+      recordPostSaveSurfacePriority = SurfacePriorityEngine.auditRecordPostSave(
+        entryCount: postSaveEntryCount,
+        source: 'record_post_save',
+        candidates: SurfacePriorityCandidates.recordPostSave(
+          lowFrictionReturn: readyBag.showLowFrictionReturnCard,
+          whatToNoticeNext: readyBag.showWhatToNoticeNextCard,
+          betaTodaySummary: readyBag.showBetaTodaySummaryCard,
+          openCapturePromptChips: readyBag.showOpenCapturePromptChips,
+          captureFreedomLine: readyBag.showCaptureFreedomLine,
+          firstProofPayoff:
+              readyBag.showFirstProofPayoff && firstProofPayoffCandidate != null,
+          whatChanged: showWhatChangedV2 || showWhatChangedV2Display,
+          returnPayoff: postSaveBag.showComeBackTomorrowV2PostSave,
+          timelineProofMomentPostSave:
+              postSaveBag.showTimelineProofMomentOnFirstProofPayoff &&
+              timelineProofMomentPostSaveCandidate != null,
+          proofSpecificityPostSave:
+              postSaveBag.showProofSpecificityOnFirstProofPayoff &&
+              proofSpecificityPostSaveCandidate.shouldShow,
+          betaProofFeedback:
+              readyBag.showFirstProofPayoff && firstProofPayoffCandidate != null,
+          betaInviteLoop: postSaveBag.showBetaInviteLoopPostSave,
+          betaProofLift:
+              postSaveBag.showBetaProofLiftOnFirstProofPayoff ||
+              postSaveBag.showBetaProofLiftUnderTimelineProofPostSave,
+          returnAfterProofStrengthened:
+              postSaveBag.showReturnAfterProofStrengthenedOnFirstProofPayoff,
+          returnAfterProofLiftV2: postSaveBag.showReturnAfterProofLiftV2OnPostSave,
+          returnAfterProof: postSaveBag.showReturnAfterProofGenericOnFirstProofPayoff,
+          proofFloorRescue: blocksProByProofFloorOnPostSave,
+          proPreview: postSaveBag.showProPreviewPostSave,
+          proUnderstandingLift: postSaveBag.showProUnderstandingLiftOnPostSave,
+          proVisibilityLift: postSaveBag.showProVisibilityLiftOnPostSave,
+          proBridgeVisibility: postSaveBag.showProBridgeVisibilityPostSave,
+          proEvidenceValue: postSaveBag.showProEvidenceValuePostSave,
+          proLockMoment: postSaveBag.showProLockMomentPostSave,
+          privateReportProBridge: postSaveBag.showMonthlyPrivateReportPreviewPostSave,
+          betaFeedbackCapture: postSaveBag.showBetaFeedbackCapturePostSave,
+        ),
+      );
+      SurfacePriorityAnalytics.seen(result: recordPostSaveSurfacePriority);
+      final audit = recordPostSaveSurfacePriority;
+      if (audit.isVisible(
+        SurfacePriorityCardKey.whatChanged,
+        candidate: showWhatChangedV2 || showWhatChangedV2Display,
+      )) {
+        readyBag.showFirstProofPayoff = false;
+      }
+      postSaveBag.showTimelineProofMomentOnFirstProofPayoff = audit.isVisible(
+        SurfacePriorityCardKey.timelineProofMomentPostSave,
+        candidate:
+            postSaveBag.showTimelineProofMomentOnFirstProofPayoff &&
+            timelineProofMomentPostSaveCandidate != null,
+      );
+      postSaveBag.showProofSpecificityOnFirstProofPayoff = audit.isVisible(
+        SurfacePriorityCardKey.proofSpecificityPostSave,
+        candidate:
+            postSaveBag.showProofSpecificityOnFirstProofPayoff &&
+            proofSpecificityPostSaveCandidate.shouldShow,
+      );
+      postSaveBag.showReturnAfterProofStrengthenedOnFirstProofPayoff = audit.isVisible(
+        SurfacePriorityCardKey.returnAfterProofStrengthened,
+        candidate:
+            postSaveBag.showReturnAfterProofStrengthenedOnFirstProofPayoff &&
+            readyBag.showFirstProofPayoff &&
+            firstProofPayoffCandidate != null,
+      );
+      postSaveBag.showReturnAfterProofGenericOnFirstProofPayoff = audit.isVisible(
+        SurfacePriorityCardKey.returnAfterProof,
+        candidate:
+            postSaveBag.showReturnAfterProofGenericOnFirstProofPayoff &&
+            readyBag.showFirstProofPayoff &&
+            firstProofPayoffCandidate != null,
+      );
+      postSaveBag.showReturnAfterProofOnFirstProofPayoff =
+          postSaveBag.showReturnAfterProofStrengthenedOnFirstProofPayoff ||
+          postSaveBag.showReturnAfterProofGenericOnFirstProofPayoff;
+      postSaveBag.showReturnAfterProofLiftV2OnPostSave = audit.isVisible(
+        SurfacePriorityCardKey.returnAfterProofLiftV2,
+        candidate:
+            postSaveBag.showReturnAfterProofLiftV2OnPostSave &&
+            readyBag.showFirstProofPayoff &&
+            firstProofPayoffCandidate != null,
+      );
+      if (postSaveBag.showReturnAfterProofLiftV2OnPostSave) {
+        postSaveBag.showReturnAfterProofStrengthenedOnFirstProofPayoff = false;
+        postSaveBag.showReturnAfterProofGenericOnFirstProofPayoff = false;
+        postSaveBag.showReturnAfterProofOnFirstProofPayoff = false;
+      }
+      postSaveBag.showProPreviewPostSave = audit.isVisible(
+        SurfacePriorityCardKey.proPreview,
+        candidate: postSaveBag.showProPreviewPostSave,
+      );
+      postSaveBag.showBetaInviteLoopPostSave = audit.isVisible(
+        SurfacePriorityCardKey.betaInviteLoop,
+        candidate: postSaveBag.showBetaInviteLoopPostSave,
+      );
+      postSaveBag.showProBridgeVisibilityPostSave = audit.isVisible(
+        SurfacePriorityCardKey.proBridgeVisibility,
+        candidate: postSaveBag.showProBridgeVisibilityPostSave,
+      );
+      postSaveBag.showProUnderstandingLiftOnPostSave = audit.isVisible(
+        SurfacePriorityCardKey.proUnderstandingLift,
+        candidate: postSaveBag.showProUnderstandingLiftOnPostSave,
+      );
+      postSaveBag.showProVisibilityLiftOnPostSave = audit.isVisible(
+        SurfacePriorityCardKey.proVisibilityLift,
+        candidate: postSaveBag.showProVisibilityLiftOnPostSave,
+      );
+      postSaveBag.showProEvidenceValuePostSave = audit.isVisible(
+        SurfacePriorityCardKey.proEvidenceValue,
+        candidate: postSaveBag.showProEvidenceValuePostSave,
+      );
+      postSaveBag.showProLockMomentPostSave = audit.isVisible(
+        SurfacePriorityCardKey.proLockMoment,
+        candidate: postSaveBag.showProLockMomentPostSave,
+      );
+      postSaveBag.showBetaFeedbackCapturePostSave = audit.isVisible(
+        SurfacePriorityCardKey.betaFeedbackCapture,
+        candidate: postSaveBag.showBetaFeedbackCapturePostSave,
+      );
+      postSaveBag.betaFeedbackCapturePostSaveResult = postSaveBag.showBetaFeedbackCapturePostSave
+          ? betaFeedbackCapturePostSavePreAudit
+          : null;
+      postSaveLoosenSignals = ProBridgeTimingLoosenEngine.resolveSignals(
+        entries: entriesAfterSave,
+        source: 'record_post_save',
+        beliefSurfaceVisible: archiveBeliefSurfaceCandidate.shouldShow,
+        beliefEvidencePhrases: archiveBeliefSurfaceCandidate.evidencePhrases,
+      );
+      postSaveProTiming = ProMomentTimingContext(
+        surface: ProMomentTimingSurface.recordPostSave,
+        source: 'record_post_save',
+        entryCount: postSaveEntryCount,
+        isPostSaveDegradedState: postSaveDegraded,
+        hasFirstProof:
+            readyBag.showFirstProofPayoff && firstProofPayoffCandidate != null,
+        hasTimelineProofVisible:
+            postSaveBag.showTimelineProofMomentOnFirstProofPayoff &&
+            timelineProofMomentPostSaveCandidate != null,
+        hasFirstProofPayoffVisible: readyBag.showFirstProofPayoff,
+        hasMonthlyPrivateReportPreviewVisible:
+            postSaveBag.showMonthlyPrivateReportPreviewPostSave,
+        hasBetaProofLiftVisible:
+            postSaveBag.showBetaProofLiftOnFirstProofPayoff ||
+            postSaveBag.showBetaProofLiftUnderTimelineProofPostSave,
+        hasReturnAfterProofStrengthenedVisible:
+            postSaveBag.showReturnAfterProofStrengthenedOnFirstProofPayoff,
+        feedbackState: ProMomentTimingEngine.resolveFeedbackState(
+          entries: entriesAfterSave,
+          surface: ProofQualityResponseSurface.firstProofPayoff,
+        ),
+        whatChangedQuestionActive: showWhatChangedV2,
+        patternReviewInboxHasActiveItems: patternReviewInboxActivePostSave,
+        confidenceLevel: postSaveLoosenSignals.confidenceLevel,
+        hasSafeAnchor: postSaveLoosenSignals.hasSafeAnchor,
+        hasFreshReturnAfterCorrection:
+            postSaveLoosenSignals.hasFreshReturnAfterCorrection,
+        hasSolidStrongPatternWithSafeAnchors:
+            postSaveLoosenSignals.hasSolidStrongPatternWithSafeAnchors,
+      );
+      postSaveBag.showProPreviewPostSave = ProMomentTimingEngine.applyGate(
+        candidate: postSaveBag.showProPreviewPostSave,
+        timing: postSaveProTiming.copyWith(
+          proSlotAvailable:
+              !postSaveBag.showProUnderstandingLiftOnPostSave &&
+              !postSaveBag.showProVisibilityLiftOnPostSave,
+        ),
+      );
+      postSaveBag.showProBridgeVisibilityPostSave = ProMomentTimingEngine.applyGate(
+        candidate: postSaveBag.showProBridgeVisibilityPostSave,
+        timing: postSaveProTiming.copyWith(
+          proSlotAvailable:
+              !postSaveBag.showProUnderstandingLiftOnPostSave &&
+              !postSaveBag.showProVisibilityLiftOnPostSave &&
+              !postSaveBag.showProPreviewPostSave,
+        ),
+      );
+      postSaveBag.showProEvidenceValuePostSave = ProMomentTimingEngine.applyGate(
+        candidate: postSaveBag.showProEvidenceValuePostSave,
+        timing: postSaveProTiming.copyWith(
+          proSlotAvailable:
+              !postSaveBag.showProUnderstandingLiftOnPostSave &&
+              !postSaveBag.showProVisibilityLiftOnPostSave &&
+              !postSaveBag.showProPreviewPostSave &&
+              !postSaveBag.showProBridgeVisibilityPostSave,
+        ),
+      );
+      postSaveBag.showProLockMomentPostSave = ProMomentTimingEngine.applyGate(
+        candidate: postSaveBag.showProLockMomentPostSave,
+        timing: postSaveProTiming.copyWith(
+          proSlotAvailable:
+              postSaveBag.showProLockMomentPostSave &&
+              !postSaveBag.showProUnderstandingLiftOnPostSave &&
+              !postSaveBag.showProVisibilityLiftOnPostSave &&
+              !postSaveBag.showProPreviewPostSave &&
+              !postSaveBag.showProBridgeVisibilityPostSave,
+        ),
+      );
+      postSaveBag.showMonthlyPrivateReportPreviewPostSave = ProMomentTimingEngine.applyGate(
+        candidate: postSaveBag.showMonthlyPrivateReportPreviewPostSave,
+        timing: postSaveProTiming.copyWith(
+          hasMonthlyPrivateReportPreviewVisible: true,
+          proSlotAvailable:
+              postSaveBag.showMonthlyPrivateReportPreviewPostSave &&
+              !postSaveBag.showProUnderstandingLiftOnPostSave &&
+              !postSaveBag.showProVisibilityLiftOnPostSave &&
+              !postSaveBag.showProPreviewPostSave &&
+              !postSaveBag.showProBridgeVisibilityPostSave,
+        ),
+      );
+      betaFeedbackCapturePostSaveFinal = BetaFeedbackCaptureEngine.build(
+        context: BetaFeedbackCaptureEngine.buildContext(
+          surface: BetaFeedbackCaptureSurface.recordPostSave,
+          source: 'record_post_save',
+          entryCount: postSaveEntryCount,
+          isPostSave: true,
+          isRecording: flags.isRecording,
+          isPostSaveDegradedState: postSaveDegraded,
+          whatChangedQuestionActive: showWhatChangedV2,
+          patternReviewInboxHasActiveItems: patternReviewInboxActivePostSave,
+          hasPaywallSeen: input.betaActivationLoopCounts.paywallSeen > 0,
+          hasPurchaseCtaTapped: input.betaActivationLoopCounts.purchaseTapped > 0,
+          isPro: input.userProState.isPro,
+          timelineProofVisible:
+              postSaveBag.showTimelineProofMomentOnFirstProofPayoff &&
+              timelineProofMomentPostSaveCandidate != null,
+          proPreviewVisible: postSaveBag.showProPreviewPostSave,
+          existingProofFeedbackVisible:
+              BetaFeedbackCaptureEngine.existingProofFeedbackVisible(
+                surface: BetaProofFeedbackSurface.timelineProofMoment,
+                parentVisible:
+                    postSaveBag.showTimelineProofMomentOnFirstProofPayoff &&
+                    timelineProofMomentPostSaveCandidate != null,
+                entryCount: postSaveEntryCount,
+                hasConfirmedRepeat:
+                    EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(
+                      entriesAfterSave,
+                    ),
+                isRecording: flags.isRecording,
+                isPostSaveDegraded: postSaveDegraded,
+                whatChangedQuestionActive: showWhatChangedV2,
+                patternReviewInboxHasActiveItems:
+                    patternReviewInboxActivePostSave,
+              ) ||
+              BetaFeedbackCaptureEngine.existingProofFeedbackVisible(
+                surface: BetaProofFeedbackSurface.firstProofPayoff,
+                parentVisible:
+                    readyBag.showFirstProofPayoff && firstProofPayoffCandidate != null,
+                entryCount: postSaveEntryCount,
+                hasConfirmedRepeat:
+                    EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(
+                      entriesAfterSave,
+                    ),
+                isRecording: flags.isRecording,
+                isPostSaveDegraded: postSaveDegraded,
+                whatChangedQuestionActive: showWhatChangedV2,
+                patternReviewInboxHasActiveItems:
+                    patternReviewInboxActivePostSave,
+              ),
+        ),
+      );
+      postSaveBag.showBetaFeedbackCapturePostSave =
+          postSaveBag.showBetaFeedbackCapturePostSave &&
+          betaFeedbackCapturePostSaveFinal.shouldShow;
+      postSaveBag.betaFeedbackCapturePostSaveResult = postSaveBag.showBetaFeedbackCapturePostSave
+          ? betaFeedbackCapturePostSaveFinal
+          : null;
+    }
+    return (
+      recordPostSaveSurfacePriority: recordPostSaveSurfacePriority,
+      postSaveLoosenSignals: postSaveLoosenSignals,
+      postSaveProTiming: postSaveProTiming,
+      betaFeedbackCapturePostSaveFinal: betaFeedbackCapturePostSaveFinal,
+    );
+  }
+
   static RecordSurfaceViewState resolve(RecordSurfaceInput input) {
     final (
       :flags,
@@ -4276,280 +4581,29 @@ abstract final class RecordSurfaceResolver {
       postSaveLoosenSignalsPreAudit: postSaveLoosenSignalsPreAudit,
       archiveBeliefSurfaceCandidate: archiveBeliefSurfaceCandidate,
     );
-    SurfacePriorityResult? recordPostSaveSurfacePriority;
-    ProBridgeTimingLoosenSignals? postSaveLoosenSignals;
-    ProMomentTimingContext? postSaveProTiming;
-    BetaFeedbackCaptureResult? betaFeedbackCapturePostSaveFinal;
-    if (flags.isDone) {
-      recordPostSaveSurfacePriority = SurfacePriorityEngine.auditRecordPostSave(
-        entryCount: postSaveEntryCount,
-        source: 'record_post_save',
-        candidates: SurfacePriorityCandidates.recordPostSave(
-          lowFrictionReturn: readyBag.showLowFrictionReturnCard,
-          whatToNoticeNext: readyBag.showWhatToNoticeNextCard,
-          betaTodaySummary: readyBag.showBetaTodaySummaryCard,
-          openCapturePromptChips: readyBag.showOpenCapturePromptChips,
-          captureFreedomLine: readyBag.showCaptureFreedomLine,
-          firstProofPayoff:
-              readyBag.showFirstProofPayoff && firstProofPayoffCandidate != null,
-          whatChanged: showWhatChangedV2 || showWhatChangedV2Display,
-          returnPayoff: postSaveBag.showComeBackTomorrowV2PostSave,
-          timelineProofMomentPostSave:
-              postSaveBag.showTimelineProofMomentOnFirstProofPayoff &&
-              timelineProofMomentPostSaveCandidate != null,
-          proofSpecificityPostSave:
-              postSaveBag.showProofSpecificityOnFirstProofPayoff &&
-              proofSpecificityPostSaveCandidate.shouldShow,
-          betaProofFeedback:
-              readyBag.showFirstProofPayoff && firstProofPayoffCandidate != null,
-          betaInviteLoop: postSaveBag.showBetaInviteLoopPostSave,
-          betaProofLift:
-              postSaveBag.showBetaProofLiftOnFirstProofPayoff ||
-              postSaveBag.showBetaProofLiftUnderTimelineProofPostSave,
-          returnAfterProofStrengthened:
-              postSaveBag.showReturnAfterProofStrengthenedOnFirstProofPayoff,
-          returnAfterProofLiftV2: postSaveBag.showReturnAfterProofLiftV2OnPostSave,
-          returnAfterProof: postSaveBag.showReturnAfterProofGenericOnFirstProofPayoff,
-          proofFloorRescue: blocksProByProofFloorOnPostSave,
-          proPreview: postSaveBag.showProPreviewPostSave,
-          proUnderstandingLift: postSaveBag.showProUnderstandingLiftOnPostSave,
-          proVisibilityLift: postSaveBag.showProVisibilityLiftOnPostSave,
-          proBridgeVisibility: postSaveBag.showProBridgeVisibilityPostSave,
-          proEvidenceValue: postSaveBag.showProEvidenceValuePostSave,
-          proLockMoment: postSaveBag.showProLockMomentPostSave,
-          privateReportProBridge: postSaveBag.showMonthlyPrivateReportPreviewPostSave,
-          betaFeedbackCapture: postSaveBag.showBetaFeedbackCapturePostSave,
-        ),
-      );
-      SurfacePriorityAnalytics.seen(result: recordPostSaveSurfacePriority);
-      final audit = recordPostSaveSurfacePriority;
-      if (audit.isVisible(
-        SurfacePriorityCardKey.whatChanged,
-        candidate: showWhatChangedV2 || showWhatChangedV2Display,
-      )) {
-        readyBag.showFirstProofPayoff = false;
-      }
-      postSaveBag.showTimelineProofMomentOnFirstProofPayoff = audit.isVisible(
-        SurfacePriorityCardKey.timelineProofMomentPostSave,
-        candidate:
-            postSaveBag.showTimelineProofMomentOnFirstProofPayoff &&
-            timelineProofMomentPostSaveCandidate != null,
-      );
-      postSaveBag.showProofSpecificityOnFirstProofPayoff = audit.isVisible(
-        SurfacePriorityCardKey.proofSpecificityPostSave,
-        candidate:
-            postSaveBag.showProofSpecificityOnFirstProofPayoff &&
-            proofSpecificityPostSaveCandidate.shouldShow,
-      );
-      postSaveBag.showReturnAfterProofStrengthenedOnFirstProofPayoff = audit.isVisible(
-        SurfacePriorityCardKey.returnAfterProofStrengthened,
-        candidate:
-            postSaveBag.showReturnAfterProofStrengthenedOnFirstProofPayoff &&
-            readyBag.showFirstProofPayoff &&
-            firstProofPayoffCandidate != null,
-      );
-      postSaveBag.showReturnAfterProofGenericOnFirstProofPayoff = audit.isVisible(
-        SurfacePriorityCardKey.returnAfterProof,
-        candidate:
-            postSaveBag.showReturnAfterProofGenericOnFirstProofPayoff &&
-            readyBag.showFirstProofPayoff &&
-            firstProofPayoffCandidate != null,
-      );
-      postSaveBag.showReturnAfterProofOnFirstProofPayoff =
-          postSaveBag.showReturnAfterProofStrengthenedOnFirstProofPayoff ||
-          postSaveBag.showReturnAfterProofGenericOnFirstProofPayoff;
-      postSaveBag.showReturnAfterProofLiftV2OnPostSave = audit.isVisible(
-        SurfacePriorityCardKey.returnAfterProofLiftV2,
-        candidate:
-            postSaveBag.showReturnAfterProofLiftV2OnPostSave &&
-            readyBag.showFirstProofPayoff &&
-            firstProofPayoffCandidate != null,
-      );
-      if (postSaveBag.showReturnAfterProofLiftV2OnPostSave) {
-        postSaveBag.showReturnAfterProofStrengthenedOnFirstProofPayoff = false;
-        postSaveBag.showReturnAfterProofGenericOnFirstProofPayoff = false;
-        postSaveBag.showReturnAfterProofOnFirstProofPayoff = false;
-      }
-      postSaveBag.showProPreviewPostSave = audit.isVisible(
-        SurfacePriorityCardKey.proPreview,
-        candidate: postSaveBag.showProPreviewPostSave,
-      );
-      postSaveBag.showBetaInviteLoopPostSave = audit.isVisible(
-        SurfacePriorityCardKey.betaInviteLoop,
-        candidate: postSaveBag.showBetaInviteLoopPostSave,
-      );
-      postSaveBag.showProBridgeVisibilityPostSave = audit.isVisible(
-        SurfacePriorityCardKey.proBridgeVisibility,
-        candidate: postSaveBag.showProBridgeVisibilityPostSave,
-      );
-      postSaveBag.showProUnderstandingLiftOnPostSave = audit.isVisible(
-        SurfacePriorityCardKey.proUnderstandingLift,
-        candidate: postSaveBag.showProUnderstandingLiftOnPostSave,
-      );
-      postSaveBag.showProVisibilityLiftOnPostSave = audit.isVisible(
-        SurfacePriorityCardKey.proVisibilityLift,
-        candidate: postSaveBag.showProVisibilityLiftOnPostSave,
-      );
-      postSaveBag.showProEvidenceValuePostSave = audit.isVisible(
-        SurfacePriorityCardKey.proEvidenceValue,
-        candidate: postSaveBag.showProEvidenceValuePostSave,
-      );
-      postSaveBag.showProLockMomentPostSave = audit.isVisible(
-        SurfacePriorityCardKey.proLockMoment,
-        candidate: postSaveBag.showProLockMomentPostSave,
-      );
-      postSaveBag.showBetaFeedbackCapturePostSave = audit.isVisible(
-        SurfacePriorityCardKey.betaFeedbackCapture,
-        candidate: postSaveBag.showBetaFeedbackCapturePostSave,
-      );
-      postSaveBag.betaFeedbackCapturePostSaveResult = postSaveBag.showBetaFeedbackCapturePostSave
-          ? betaFeedbackCapturePostSavePreAudit
-          : null;
-      postSaveLoosenSignals = ProBridgeTimingLoosenEngine.resolveSignals(
-        entries: entriesAfterSave,
-        source: 'record_post_save',
-        beliefSurfaceVisible: archiveBeliefSurfaceCandidate.shouldShow,
-        beliefEvidencePhrases: archiveBeliefSurfaceCandidate.evidencePhrases,
-      );
-      postSaveProTiming = ProMomentTimingContext(
-        surface: ProMomentTimingSurface.recordPostSave,
-        source: 'record_post_save',
-        entryCount: postSaveEntryCount,
-        isPostSaveDegradedState: postSaveDegraded,
-        hasFirstProof:
-            readyBag.showFirstProofPayoff && firstProofPayoffCandidate != null,
-        hasTimelineProofVisible:
-            postSaveBag.showTimelineProofMomentOnFirstProofPayoff &&
-            timelineProofMomentPostSaveCandidate != null,
-        hasFirstProofPayoffVisible: readyBag.showFirstProofPayoff,
-        hasMonthlyPrivateReportPreviewVisible:
-            postSaveBag.showMonthlyPrivateReportPreviewPostSave,
-        hasBetaProofLiftVisible:
-            postSaveBag.showBetaProofLiftOnFirstProofPayoff ||
-            postSaveBag.showBetaProofLiftUnderTimelineProofPostSave,
-        hasReturnAfterProofStrengthenedVisible:
-            postSaveBag.showReturnAfterProofStrengthenedOnFirstProofPayoff,
-        feedbackState: ProMomentTimingEngine.resolveFeedbackState(
-          entries: entriesAfterSave,
-          surface: ProofQualityResponseSurface.firstProofPayoff,
-        ),
-        whatChangedQuestionActive: showWhatChangedV2,
-        patternReviewInboxHasActiveItems: patternReviewInboxActivePostSave,
-        confidenceLevel: postSaveLoosenSignals.confidenceLevel,
-        hasSafeAnchor: postSaveLoosenSignals.hasSafeAnchor,
-        hasFreshReturnAfterCorrection:
-            postSaveLoosenSignals.hasFreshReturnAfterCorrection,
-        hasSolidStrongPatternWithSafeAnchors:
-            postSaveLoosenSignals.hasSolidStrongPatternWithSafeAnchors,
-      );
-      postSaveBag.showProPreviewPostSave = ProMomentTimingEngine.applyGate(
-        candidate: postSaveBag.showProPreviewPostSave,
-        timing: postSaveProTiming.copyWith(
-          proSlotAvailable:
-              !postSaveBag.showProUnderstandingLiftOnPostSave &&
-              !postSaveBag.showProVisibilityLiftOnPostSave,
-        ),
-      );
-      postSaveBag.showProBridgeVisibilityPostSave = ProMomentTimingEngine.applyGate(
-        candidate: postSaveBag.showProBridgeVisibilityPostSave,
-        timing: postSaveProTiming.copyWith(
-          proSlotAvailable:
-              !postSaveBag.showProUnderstandingLiftOnPostSave &&
-              !postSaveBag.showProVisibilityLiftOnPostSave &&
-              !postSaveBag.showProPreviewPostSave,
-        ),
-      );
-      postSaveBag.showProEvidenceValuePostSave = ProMomentTimingEngine.applyGate(
-        candidate: postSaveBag.showProEvidenceValuePostSave,
-        timing: postSaveProTiming.copyWith(
-          proSlotAvailable:
-              !postSaveBag.showProUnderstandingLiftOnPostSave &&
-              !postSaveBag.showProVisibilityLiftOnPostSave &&
-              !postSaveBag.showProPreviewPostSave &&
-              !postSaveBag.showProBridgeVisibilityPostSave,
-        ),
-      );
-      postSaveBag.showProLockMomentPostSave = ProMomentTimingEngine.applyGate(
-        candidate: postSaveBag.showProLockMomentPostSave,
-        timing: postSaveProTiming.copyWith(
-          proSlotAvailable:
-              postSaveBag.showProLockMomentPostSave &&
-              !postSaveBag.showProUnderstandingLiftOnPostSave &&
-              !postSaveBag.showProVisibilityLiftOnPostSave &&
-              !postSaveBag.showProPreviewPostSave &&
-              !postSaveBag.showProBridgeVisibilityPostSave,
-        ),
-      );
-      postSaveBag.showMonthlyPrivateReportPreviewPostSave = ProMomentTimingEngine.applyGate(
-        candidate: postSaveBag.showMonthlyPrivateReportPreviewPostSave,
-        timing: postSaveProTiming.copyWith(
-          hasMonthlyPrivateReportPreviewVisible: true,
-          proSlotAvailable:
-              postSaveBag.showMonthlyPrivateReportPreviewPostSave &&
-              !postSaveBag.showProUnderstandingLiftOnPostSave &&
-              !postSaveBag.showProVisibilityLiftOnPostSave &&
-              !postSaveBag.showProPreviewPostSave &&
-              !postSaveBag.showProBridgeVisibilityPostSave,
-        ),
-      );
-      betaFeedbackCapturePostSaveFinal = BetaFeedbackCaptureEngine.build(
-        context: BetaFeedbackCaptureEngine.buildContext(
-          surface: BetaFeedbackCaptureSurface.recordPostSave,
-          source: 'record_post_save',
-          entryCount: postSaveEntryCount,
-          isPostSave: true,
-          isRecording: flags.isRecording,
-          isPostSaveDegradedState: postSaveDegraded,
-          whatChangedQuestionActive: showWhatChangedV2,
-          patternReviewInboxHasActiveItems: patternReviewInboxActivePostSave,
-          hasPaywallSeen: input.betaActivationLoopCounts.paywallSeen > 0,
-          hasPurchaseCtaTapped: input.betaActivationLoopCounts.purchaseTapped > 0,
-          isPro: input.userProState.isPro,
-          timelineProofVisible:
-              postSaveBag.showTimelineProofMomentOnFirstProofPayoff &&
-              timelineProofMomentPostSaveCandidate != null,
-          proPreviewVisible: postSaveBag.showProPreviewPostSave,
-          existingProofFeedbackVisible:
-              BetaFeedbackCaptureEngine.existingProofFeedbackVisible(
-                surface: BetaProofFeedbackSurface.timelineProofMoment,
-                parentVisible:
-                    postSaveBag.showTimelineProofMomentOnFirstProofPayoff &&
-                    timelineProofMomentPostSaveCandidate != null,
-                entryCount: postSaveEntryCount,
-                hasConfirmedRepeat:
-                    EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(
-                      entriesAfterSave,
-                    ),
-                isRecording: flags.isRecording,
-                isPostSaveDegraded: postSaveDegraded,
-                whatChangedQuestionActive: showWhatChangedV2,
-                patternReviewInboxHasActiveItems:
-                    patternReviewInboxActivePostSave,
-              ) ||
-              BetaFeedbackCaptureEngine.existingProofFeedbackVisible(
-                surface: BetaProofFeedbackSurface.firstProofPayoff,
-                parentVisible:
-                    readyBag.showFirstProofPayoff && firstProofPayoffCandidate != null,
-                entryCount: postSaveEntryCount,
-                hasConfirmedRepeat:
-                    EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(
-                      entriesAfterSave,
-                    ),
-                isRecording: flags.isRecording,
-                isPostSaveDegraded: postSaveDegraded,
-                whatChangedQuestionActive: showWhatChangedV2,
-                patternReviewInboxHasActiveItems:
-                    patternReviewInboxActivePostSave,
-              ),
-        ),
-      );
-      postSaveBag.showBetaFeedbackCapturePostSave =
-          postSaveBag.showBetaFeedbackCapturePostSave &&
-          betaFeedbackCapturePostSaveFinal.shouldShow;
-      postSaveBag.betaFeedbackCapturePostSaveResult = postSaveBag.showBetaFeedbackCapturePostSave
-          ? betaFeedbackCapturePostSaveFinal
-          : null;
-    }
+    final (
+      :recordPostSaveSurfacePriority,
+      :postSaveLoosenSignals,
+      :postSaveProTiming,
+      :betaFeedbackCapturePostSaveFinal,
+    ) = auditPostSaveSurfaces(
+      input: input,
+      flags: flags,
+      entriesAfterSave: entriesAfterSave,
+      postSaveEntryCount: postSaveEntryCount,
+      postSaveBag: postSaveBag,
+      readyBag: readyBag,
+      firstProofPayoffCandidate: firstProofPayoffCandidate,
+      postSaveDegraded: postSaveDegraded,
+      showWhatChangedV2: showWhatChangedV2,
+      showWhatChangedV2Display: showWhatChangedV2Display,
+      archiveBeliefSurfaceCandidate: archiveBeliefSurfaceCandidate,
+      patternReviewInboxActivePostSave: patternReviewInboxActivePostSave,
+      timelineProofMomentPostSaveCandidate: timelineProofMomentPostSaveCandidate,
+      proofSpecificityPostSaveCandidate: proofSpecificityPostSaveCandidate,
+      betaFeedbackCapturePostSavePreAudit: betaFeedbackCapturePostSavePreAudit,
+      blocksProByProofFloorOnPostSave: blocksProByProofFloorOnPostSave,
+    );
     final proPreviewPostSaveResult = postSaveBag.showProPreviewPostSave
         ? ProPreviewEngine.build(
             context: ProPreviewEngine.buildContext(
