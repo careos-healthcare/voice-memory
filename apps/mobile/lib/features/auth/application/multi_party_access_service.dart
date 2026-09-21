@@ -72,10 +72,16 @@ class MultiPartyAccessService {
         final expiresAt = _parseUtc(meta['expiresAt']);
         if (expiresAt != null && !clock.isBefore(expiresAt)) continue;
 
+        final role = MultiPartyAccessRole.fromWire(meta['role']?.toString()) ??
+            MultiPartyAccessRole.caregiver;
+        if (role == MultiPartyAccessRole.observer) continue;
+
         grantsById[grantId] = MultiPartyAccessGrant(
           grantId: grantId,
-          partyId: meta['caregiverId']?.toString() ?? 'Caregiver',
-          role: MultiPartyAccessRole.caregiver,
+          partyId: meta['partyId']?.toString() ??
+              meta['caregiverId']?.toString() ??
+              role.label,
+          role: role,
           grantedAt: grantedAt,
           expiresAt: expiresAt,
         );
@@ -290,15 +296,17 @@ class MultiPartyAccessService {
     MultiPartyAccessRole.observer => null,
   };
 
+  static String? _tokenKeyFor(MultiPartyAccessRole role) => switch (role) {
+        MultiPartyAccessRole.caregiver => caregiverTokenKey,
+        MultiPartyAccessRole.coach => coachTokenKey,
+        MultiPartyAccessRole.observer => null,
+      };
+
   Future<Map<String, dynamic>?> _storedTokenFor(
     MobilePrefsStore prefs,
     MultiPartyAccessGrant grant,
   ) async {
-    final tokenKey = switch (grant.role) {
-      MultiPartyAccessRole.caregiver => caregiverTokenKey,
-      MultiPartyAccessRole.coach => coachTokenKey,
-      MultiPartyAccessRole.observer => null,
-    };
+    final tokenKey = _tokenKeyFor(grant.role);
     if (tokenKey == null) return null;
     final raw = await prefs.readJsonMap(tokenKey);
     if (raw == null || raw.isEmpty) return null;
@@ -394,6 +402,57 @@ class MultiPartyAccessService {
     });
     await prefs.writeJsonMap(caregiverAuditKey, {'entries': entries});
     return entryId;
+  }
+
+  /// Records a freshly-issued grant so it appears in [loadActiveGrants] and
+  /// can be found again by [revokeGrant] / [renewGrant].
+  ///
+  /// Two writes: the audit row is the durable history at /consent-audit;
+  /// the role-specific token prefs row is what [_storedTokenFor] keys off.
+  /// Observer has no token store and no server domain — calling this for
+  /// that role is a programming error, not a silent no-op.
+  Future<void> recordIssuedGrant({
+    required MultiPartyAccessRole role,
+    required String partyId,
+    required String tokenId,
+    required DateTime issuedAt,
+    required DateTime expiresAt,
+  }) async {
+    final prefs = _prefs;
+    if (prefs == null) {
+      throw StateError(
+        'MultiPartyAccessService requires prefs to record an issued grant',
+      );
+    }
+    final tokenKey = _tokenKeyFor(role);
+    if (tokenKey == null) {
+      throw UnsupportedError(
+        'recordIssuedGrant has no token store for ${role.wireValue}',
+      );
+    }
+
+    final entries = await _readAuditEntries(prefs);
+    entries.add({
+      'entryId': 'grant_${tokenId}_${issuedAt.toUtc().millisecondsSinceEpoch}',
+      'sessionId': 'settings_consent_panel',
+      'action': 'consent_granted',
+      'resourceType': 'consent_token',
+      'resourceId': tokenId,
+      'timestamp': issuedAt.toUtc().toIso8601String(),
+      'metadata': {
+        'partyId': partyId,
+        'role': role.wireValue,
+        'expiresAt': expiresAt.toUtc().toIso8601String(),
+      },
+    });
+    await prefs.writeJsonMap(caregiverAuditKey, {'entries': entries});
+    await prefs.writeJsonMap(tokenKey, {
+      'tokenId': tokenId,
+      if (role == MultiPartyAccessRole.caregiver) 'caregiverId': partyId,
+      if (role == MultiPartyAccessRole.coach) 'coachId': partyId,
+      'issuedAt': issuedAt.toUtc().toIso8601String(),
+      'expiresAt': expiresAt.toUtc().toIso8601String(),
+    });
   }
 
   /// Records that the owner confirmed a renewal and the server acted on it.
