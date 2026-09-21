@@ -39,6 +39,9 @@ class CaregiverGrantConsentAdapter implements CaregiverGrantIssuer {
           await (verificationService ?? ConsentVerificationService()).issueToken(
         subjectAccountId: subjectAccountId,
         caregiverId: request.caregiverId,
+<<<<<<< HEAD
+        permissions: CaregiverPermissions.defaultScopes,
+=======
         permissions: CaregiverPermissions(
           evidenceStreamIds: [
             if (request.shareJournal) CaregiverPermissions.journalStream,
@@ -51,6 +54,7 @@ class CaregiverGrantConsentAdapter implements CaregiverGrantIssuer {
         caregiverEmail:
             request.sendInviteEmail ? request.contact.email : null,
         sendInviteEmail: request.sendInviteEmail,
+>>>>>>> origin/main
       );
       // issueToken signals "backend not configured" by throwing StateError, so
       // a consent screen has to surface it as a failed grant rather than crash.
@@ -76,7 +80,10 @@ class CaregiverGrantConsentAdapter implements CaregiverGrantIssuer {
     return CaregiverGrantGranted(
       tokenId: token.tokenId,
       expiresAt: token.expiresAt,
+<<<<<<< HEAD
+=======
       redemption: token.redemption,
+>>>>>>> origin/main
     );
   }
 }
