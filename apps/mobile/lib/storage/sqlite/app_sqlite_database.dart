@@ -58,7 +58,8 @@ class AppSqliteDatabase {
         _cachedKeyAlias = null;
       }
 
-      final resolvedPassword = password ??
+      final resolvedPassword =
+          password ??
           (_isFlutterTest
               ? SqliteDatabaseInitializer.testEncryptionPassword
               : (SqliteDatabaseInitializer.encryptionEnabled

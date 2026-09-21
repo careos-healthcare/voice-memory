@@ -287,7 +287,8 @@ final class RecordPostSaveSurfaceBag {
   }) {
     showTimelineProofMomentOnFirstProofPayoff = audit.isVisible(
       SurfacePriorityCardKey.timelineProofMomentPostSave,
-      candidate: showTimelineProofMomentOnFirstProofPayoff && timelineProof != null,
+      candidate:
+          showTimelineProofMomentOnFirstProofPayoff && timelineProof != null,
     );
     showProofSpecificityOnFirstProofPayoff = audit.isVisible(
       SurfacePriorityCardKey.proofSpecificityPostSave,
