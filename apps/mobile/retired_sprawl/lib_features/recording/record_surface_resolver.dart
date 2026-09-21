@@ -1,4 +1,5 @@
 import 'package:archiveme_mobile/core/config/v1_feature_flags.dart';
+import 'package:archiveme_mobile/features/recording/record_proof_stack_snapshot.dart';
 import 'package:archiveme_mobile/features/recording/record_surface_capture_policy.dart';
 import 'package:archiveme_mobile/features/recording/record_surface_input.dart';
 import 'package:archiveme_mobile/features/recording/record_surface_view_state.dart';
@@ -69,236 +70,13 @@ abstract final class RecordSurfaceResolver {
     );
   }
 
-  static ({
-    RecordCtaPolicyResolution readyCapturePolicy,
-    bool showTesterMission,
-    bool showRecordCaptureModes,
-    bool testerMissionCompact,
-    bool showTesterMissionFull,
-    TesterMissionResult? testerMission,
-    bool showThoughtMapRecordCta,
-    bool showPositiveReinforcementRecordCta,
-    bool showPatternChangedRecordCta,
-    bool showArchiveSummaryRecordCta,
-    bool showDailyReturnReasonRecordCta,
-    bool showFirstWeekLoopRecordCta,
-  })
-  resolveCaptureCtas({
+  static RecordProofStackSnapshot resolveArchiveProofStack({
     required RecordSurfaceInput input,
-    required RecordingPhase policyMic,
-    required bool policyUserDenied,
     required RecordSurfaceFlags flags,
-    required bool firstUseSimplifiedRecord,
-    required bool showReturningWatchTargetFocusedUi,
-    required bool showConfirmedRepeatThoughtMapOnRecord,
-    required ThoughtMapResult? confirmedRepeatThoughtMap,
-    required bool showPositiveReinforcementOnRecord,
-    required PositiveReinforcementResult? positiveReinforcement,
-    required bool showPatternChanged,
-    required PatternChangedResult? patternChangedCandidate,
-    required bool showArchiveSummaryOnRecord,
-    required bool showDailyReturnReasonOnRecord,
-    required bool showFirstWeekLoopOnRecord,
-    required FirstWeekLoop? firstWeekLoopCandidate,
+    required ConfirmedRepeatTriggerPayoff? confirmedRepeatTriggerPayoff,
+    required ConfirmedRepeatHelpfulActionPayoff? confirmedRepeatHelpfulActionPayoff,
+    required ConfirmedRepeatChangeNotice? confirmedRepeatChangeNotice,
   }) {
-    final readyCapturePolicy = RecordSurfaceCapturePolicy.resolve(input, micPhase: policyMic, userDeniedThisSession: policyUserDenied);
-    final showTesterMission =
-        TesterMissionGates.shouldShow(
-          dismissed: TesterMissionStore.isDismissed,
-          ui: input.ui,
-          entryCountLoaded: input.entryCountLoaded,
-          isRecording: flags.isRecording,
-          isPostSave: input.isPostSave,
-        ) &&
-        !firstUseSimplifiedRecord &&
-        !showReturningWatchTargetFocusedUi;
-    final showRecordCaptureModes =
-        flags.isReady &&
-        RecordCaptureModeEngine.shouldShow(
-          loaded: input.entryCountLoaded,
-          isReady: true,
-          isPostSave: input.isPostSave,
-        ) &&
-        !firstUseSimplifiedRecord &&
-        !showReturningWatchTargetFocusedUi;
-    final testerMissionCompact =
-        showTesterMission &&
-        TesterMissionGates.useCompactPresentation(
-          entryCount: input.entryCount,
-          firstUseSimplifiedRecord: firstUseSimplifiedRecord,
-        );
-    final showTesterMissionFull = showTesterMission && !testerMissionCompact;
-    final testerMission = showTesterMission
-        ? TesterMissionEngine.build(
-            entryCount: input.entryCount,
-            entries: input.journalEntries,
-            compactAtEntryZero: firstUseSimplifiedRecord,
-            feedbackAnswered: CoreValueFeedbackStore.cached.answered,
-          )
-        : null;
-    final showThoughtMapRecordCta =
-        showConfirmedRepeatThoughtMapOnRecord &&
-        confirmedRepeatThoughtMap?.firstMissingSection != null &&
-        ConfirmedRepeatThoughtMapGates.showRecordMissingPieceCta(
-          policy: readyCapturePolicy,
-          hideCardRecordButtons: RecordSurfaceCapturePolicy.shouldHideCardRecordButtons(input, readyCapturePolicy),
-          promoteMicCaptureActions: RecordSurfaceCapturePolicy.shouldPromoteMicCaptureActions(readyCapturePolicy),
-        );
-    final showPositiveReinforcementRecordCta =
-        showPositiveReinforcementOnRecord &&
-        positiveReinforcement != null &&
-        PositiveReinforcementGates.showRecordAgainCta(
-          policy: readyCapturePolicy,
-          hideCardRecordButtons: RecordSurfaceCapturePolicy.shouldHideCardRecordButtons(input, readyCapturePolicy),
-          promoteMicCaptureActions: RecordSurfaceCapturePolicy.shouldPromoteMicCaptureActions(readyCapturePolicy),
-          isCompletion: positiveReinforcement.isCompletion,
-        );
-    final showPatternChangedRecordCta =
-        showPatternChanged &&
-        patternChangedCandidate != null &&
-        PatternChangedGates.showRecordCta(
-          policy: readyCapturePolicy,
-          hideCardRecordButtons: RecordSurfaceCapturePolicy.shouldHideCardRecordButtons(input, readyCapturePolicy),
-          promoteMicCaptureActions: RecordSurfaceCapturePolicy.shouldPromoteMicCaptureActions(readyCapturePolicy),
-        );
-    final showArchiveSummaryRecordCta =
-        showArchiveSummaryOnRecord &&
-        ArchiveSummaryGates.showRecordNextCta(
-          policy: readyCapturePolicy,
-          hideCardRecordButtons: RecordSurfaceCapturePolicy.shouldHideCardRecordButtons(input, readyCapturePolicy),
-          promoteMicCaptureActions: RecordSurfaceCapturePolicy.shouldPromoteMicCaptureActions(readyCapturePolicy),
-        );
-    final showDailyReturnReasonRecordCta =
-        showDailyReturnReasonOnRecord &&
-        DailyReturnReasonGates.showRecordCta(
-          policy: readyCapturePolicy,
-          hideCardRecordButtons: RecordSurfaceCapturePolicy.shouldHideCardRecordButtons(input, readyCapturePolicy),
-          promoteMicCaptureActions: RecordSurfaceCapturePolicy.shouldPromoteMicCaptureActions(readyCapturePolicy),
-        );
-    final showFirstWeekLoopRecordCta =
-        showFirstWeekLoopOnRecord &&
-        firstWeekLoopCandidate != null &&
-        FirstWeekLoopGates.showRecordCta(
-          policy: readyCapturePolicy,
-          hideCardRecordButtons: RecordSurfaceCapturePolicy.shouldHideCardRecordButtons(input, readyCapturePolicy),
-          promoteMicCaptureActions: RecordSurfaceCapturePolicy.shouldPromoteMicCaptureActions(readyCapturePolicy),
-        );
-    return (
-      readyCapturePolicy: readyCapturePolicy,
-      showTesterMission: showTesterMission,
-      showRecordCaptureModes: showRecordCaptureModes,
-      testerMissionCompact: testerMissionCompact,
-      showTesterMissionFull: showTesterMissionFull,
-      testerMission: testerMission,
-      showThoughtMapRecordCta: showThoughtMapRecordCta,
-      showPositiveReinforcementRecordCta: showPositiveReinforcementRecordCta,
-      showPatternChangedRecordCta: showPatternChangedRecordCta,
-      showArchiveSummaryRecordCta: showArchiveSummaryRecordCta,
-      showDailyReturnReasonRecordCta: showDailyReturnReasonRecordCta,
-      showFirstWeekLoopRecordCta: showFirstWeekLoopRecordCta,
-    );
-  }
-
-  static RecordSurfaceViewState resolve(RecordSurfaceInput input) {
-    final (
-      :flags,
-      :policyMic,
-      :policyUserDenied,
-      :firstUseSimplifiedRecord,
-      :error,
-      :localSaveTitle,
-      :syncNote,
-      :stageLabel,
-      :entriesAfterSave,
-      :lastCaptureAnalysisSucceeded,
-    ) = resolveInputOverlay(input);
-
-    final canRecord = flags.canRecord;
-    final showFraming = flags.showFraming;
-    final compact = input.compactLayout;
-    final stack = input.stackDecision;
-    final suppressPostResultNextCheckCompetitors =
-        stack.suppressDuplicateUseTomorrowCtas;
-    final auditPresentation = VisualAuditOverrides.active
-        ? VisualAuditOverrides.peekRecordPresentation()
-        : null;
-    final justSavedFirstEntry =
-        input.recordReturnProJustSaved ||
-        (auditPresentation?.justSavedFirst ?? false);
-    final postSaveEntryCount = entriesAfterSave.isNotEmpty
-        ? entriesAfterSave.length
-        : input.entryCount;
-    final suppressNoisyFirstSaveCards =
-        FirstThreeSessionGates.suppressNoisyPostSaveCards(
-          justSavedFirst: justSavedFirstEntry,
-          entryCount: flags.isDone && justSavedFirstEntry
-              ? postSaveEntryCount
-              : input.entryCount,
-        );
-    final suppressEarlyPatternClaimCards =
-        FirstThreeSessionGates.suppressEarlyPatternClaimCards(
-          entryCount: input.entryCount,
-          hasGroundedRepeatMatch:
-              input.secondSessionComparison?.hasEnoughData == true &&
-              const SecondSessionSignalEngine().hasGroundedRepeatMatch(
-                input.entriesAfterSave.isNotEmpty
-                    ? input.entriesAfterSave
-                    : input.journalEntries,
-              ),
-        );
-    final suppressLatestSaveArchiveInsight =
-        flags.isDone &&
-        ArchiveEntrySignalGuard.newestEntryIsLowSignal(entriesAfterSave);
-    final secondSessionPayoff =
-        flags.isDone &&
-            entriesAfterSave.isNotEmpty &&
-            !suppressLatestSaveArchiveInsight
-        ? SecondSessionPayoffEngine.build(
-            entries: entriesAfterSave,
-            analysisSucceeded: lastCaptureAnalysisSucceeded,
-          )
-        : null;
-    final thirdEntryBeliefPayoff =
-        flags.isDone &&
-            entriesAfterSave.isNotEmpty &&
-            !suppressLatestSaveArchiveInsight
-        ? ThirdEntryBeliefPayoffEngine.build(
-            entries: entriesAfterSave,
-            analysisSucceeded: lastCaptureAnalysisSucceeded,
-          )
-        : null;
-    final confirmedRepeatTriggerPayoff =
-        flags.isDone &&
-            entriesAfterSave.isNotEmpty &&
-            input.savedFromConfirmedRepeatTrigger
-        ? EarlyFirstSignalEngine.buildTriggerCapturePayoff(
-            entries: entriesAfterSave,
-            savedFromTriggerPrompt: true,
-          )
-        : null;
-    final confirmedRepeatHelpfulActionPayoff =
-        flags.isDone &&
-            entriesAfterSave.isNotEmpty &&
-            input.savedFromHelpfulAction
-        ? EarlyFirstSignalEngine.buildHelpfulActionPayoff(
-            entries: entriesAfterSave,
-            savedFromHelpfulActionPrompt: true,
-          )
-        : null;
-    final confirmedRepeatChangeNotice =
-        flags.isDone &&
-            entriesAfterSave.isNotEmpty &&
-            !input.savedFromConfirmedRepeatTrigger &&
-            !input.savedFromHelpfulAction
-        ? EarlyFirstSignalEngine.buildChangeNotice(entries: entriesAfterSave)
-        : null;
-    final repeatReturnCheckOffer =
-        flags.isDone && entriesAfterSave.isNotEmpty
-        ? RepeatReturnCheckEngine.pendingForSave(
-            entriesAfterSave: entriesAfterSave,
-            records: RepeatReturnCheckStore.cached,
-          )
-        : null;
     final earlyEvidenceTimeline =
         flags.isReady &&
             input.entryCountLoaded &&
@@ -832,6 +610,369 @@ abstract final class RecordSurfaceResolver {
     final showDailyReturnReasonOnRecord =
         recordProofStack.showDailyReturnReason;
     final showPostProofProBridgeOnRecord = recordProofStack.showProBridge;
+    return RecordProofStackSnapshot(
+      earlyEvidenceTimeline: earlyEvidenceTimeline,
+      showEarlyEvidenceTimeline: showEarlyEvidenceTimeline,
+      suppressEarlyRepeatPayoffCompetitors: suppressEarlyRepeatPayoffCompetitors,
+      earlyFirstSignalOnRecord: earlyFirstSignalOnRecord,
+      returnTomorrowCueReady: returnTomorrowCueReady,
+      returnDayFlowCandidate: returnDayFlowCandidate,
+      showReturnDayFlow: showReturnDayFlow,
+      showReturnTomorrowCueReady: showReturnTomorrowCueReady,
+      firstWeekProgressReady: firstWeekProgressReady,
+      showFirstWeekProgressReady: showFirstWeekProgressReady,
+      showEarlyReturnReminder: showEarlyReturnReminder,
+      viewingConfirmedRepeatOnRecord: viewingConfirmedRepeatOnRecord,
+      suppressConfirmedRepeatInlineFeedback: suppressConfirmedRepeatInlineFeedback,
+      showConfirmedRepeatBetaFeedback: showConfirmedRepeatBetaFeedback,
+      repeatReturnChangeProof: repeatReturnChangeProof,
+      patternChangedCandidate: patternChangedCandidate,
+      patternChangedDismissed: patternChangedDismissed,
+      confirmedRepeatThoughtMap: confirmedRepeatThoughtMap,
+      positivePattern: positivePattern,
+      helpfulActionAppearedCandidate: helpfulActionAppearedCandidate,
+      showHelpfulActionAppearedEligible: showHelpfulActionAppearedEligible,
+      positiveReinforcement: positiveReinforcement,
+      archiveSummaryCandidate: archiveSummaryCandidate,
+      archiveBeliefSurfaceCandidate: archiveBeliefSurfaceCandidate,
+      patternNamePrompt: patternNamePrompt,
+      showArchiveCurrentBeliefEligible: showArchiveCurrentBeliefEligible,
+      dailyReturnReasonCandidate: dailyReturnReasonCandidate,
+      hasChangeOverTimeProof: hasChangeOverTimeProof,
+      postProofArchiveProof: postProofArchiveProof,
+      archiveSummaryVisibleForProGate: archiveSummaryVisibleForProGate,
+      weeklyArchiveReviewVisibleForProGate: weeklyArchiveReviewVisibleForProGate,
+      hasConfirmedRepeatForProGate: hasConfirmedRepeatForProGate,
+      privateArchiveReportForProGate: privateArchiveReportForProGate,
+      privateArchiveReportPreviewForProGate: privateArchiveReportPreviewForProGate,
+      patternChangedForProGate: patternChangedForProGate,
+      hasReturnCheckAnsweredForProGate: hasReturnCheckAnsweredForProGate,
+      showPostProofProBridge: showPostProofProBridge,
+      proofSurfaceLayout: proofSurfaceLayout,
+      showArchiveSummary: showArchiveSummary,
+      archiveSummary: archiveSummary,
+      showDailyReturnReason: showDailyReturnReason,
+      dailyReturnReason: dailyReturnReason,
+      archiveWatchingCandidate: archiveWatchingCandidate,
+      archiveWatching: archiveWatching,
+      weeklyArchiveReview: weeklyArchiveReview,
+      showWeeklyArchiveReview: showWeeklyArchiveReview,
+      privateArchiveReportCandidate: privateArchiveReportCandidate,
+      showPrivateArchiveReport: showPrivateArchiveReport,
+      showConfirmedRepeatWhyMatters: showConfirmedRepeatWhyMatters,
+      showConfirmedRepeatThoughtMap: showConfirmedRepeatThoughtMap,
+      showPositiveReinforcement: showPositiveReinforcement,
+      firstWeekLoopCandidate: firstWeekLoopCandidate,
+      firstWeekLoopProGated: firstWeekLoopProGated,
+      recordProofStack: recordProofStack,
+      showPatternChanged: showPatternChanged,
+      showArchiveCurrentBeliefOnRecord: showArchiveCurrentBeliefOnRecord,
+      showEarlyEvidenceTimelineOnRecord: showEarlyEvidenceTimelineOnRecord,
+      showWeeklyArchiveReviewOnRecord: showWeeklyArchiveReviewOnRecord,
+      showPrivateArchiveReportOnRecord: showPrivateArchiveReportOnRecord,
+      showDailyReturnReasonOnRecord: showDailyReturnReasonOnRecord,
+      showPostProofProBridgeOnRecord: showPostProofProBridgeOnRecord,
+    );
+  }
+
+  static ({
+    RecordCtaPolicyResolution readyCapturePolicy,
+    bool showTesterMission,
+    bool showRecordCaptureModes,
+    bool testerMissionCompact,
+    bool showTesterMissionFull,
+    TesterMissionResult? testerMission,
+    bool showThoughtMapRecordCta,
+    bool showPositiveReinforcementRecordCta,
+    bool showPatternChangedRecordCta,
+    bool showArchiveSummaryRecordCta,
+    bool showDailyReturnReasonRecordCta,
+    bool showFirstWeekLoopRecordCta,
+  })
+  resolveCaptureCtas({
+    required RecordSurfaceInput input,
+    required RecordingPhase policyMic,
+    required bool policyUserDenied,
+    required RecordSurfaceFlags flags,
+    required bool firstUseSimplifiedRecord,
+    required bool showReturningWatchTargetFocusedUi,
+    required bool showConfirmedRepeatThoughtMapOnRecord,
+    required ThoughtMapResult? confirmedRepeatThoughtMap,
+    required bool showPositiveReinforcementOnRecord,
+    required PositiveReinforcementResult? positiveReinforcement,
+    required bool showPatternChanged,
+    required PatternChangedResult? patternChangedCandidate,
+    required bool showArchiveSummaryOnRecord,
+    required bool showDailyReturnReasonOnRecord,
+    required bool showFirstWeekLoopOnRecord,
+    required FirstWeekLoop? firstWeekLoopCandidate,
+  }) {
+    final readyCapturePolicy = RecordSurfaceCapturePolicy.resolve(input, micPhase: policyMic, userDeniedThisSession: policyUserDenied);
+    final showTesterMission =
+        TesterMissionGates.shouldShow(
+          dismissed: TesterMissionStore.isDismissed,
+          ui: input.ui,
+          entryCountLoaded: input.entryCountLoaded,
+          isRecording: flags.isRecording,
+          isPostSave: input.isPostSave,
+        ) &&
+        !firstUseSimplifiedRecord &&
+        !showReturningWatchTargetFocusedUi;
+    final showRecordCaptureModes =
+        flags.isReady &&
+        RecordCaptureModeEngine.shouldShow(
+          loaded: input.entryCountLoaded,
+          isReady: true,
+          isPostSave: input.isPostSave,
+        ) &&
+        !firstUseSimplifiedRecord &&
+        !showReturningWatchTargetFocusedUi;
+    final testerMissionCompact =
+        showTesterMission &&
+        TesterMissionGates.useCompactPresentation(
+          entryCount: input.entryCount,
+          firstUseSimplifiedRecord: firstUseSimplifiedRecord,
+        );
+    final showTesterMissionFull = showTesterMission && !testerMissionCompact;
+    final testerMission = showTesterMission
+        ? TesterMissionEngine.build(
+            entryCount: input.entryCount,
+            entries: input.journalEntries,
+            compactAtEntryZero: firstUseSimplifiedRecord,
+            feedbackAnswered: CoreValueFeedbackStore.cached.answered,
+          )
+        : null;
+    final showThoughtMapRecordCta =
+        showConfirmedRepeatThoughtMapOnRecord &&
+        confirmedRepeatThoughtMap?.firstMissingSection != null &&
+        ConfirmedRepeatThoughtMapGates.showRecordMissingPieceCta(
+          policy: readyCapturePolicy,
+          hideCardRecordButtons: RecordSurfaceCapturePolicy.shouldHideCardRecordButtons(input, readyCapturePolicy),
+          promoteMicCaptureActions: RecordSurfaceCapturePolicy.shouldPromoteMicCaptureActions(readyCapturePolicy),
+        );
+    final showPositiveReinforcementRecordCta =
+        showPositiveReinforcementOnRecord &&
+        positiveReinforcement != null &&
+        PositiveReinforcementGates.showRecordAgainCta(
+          policy: readyCapturePolicy,
+          hideCardRecordButtons: RecordSurfaceCapturePolicy.shouldHideCardRecordButtons(input, readyCapturePolicy),
+          promoteMicCaptureActions: RecordSurfaceCapturePolicy.shouldPromoteMicCaptureActions(readyCapturePolicy),
+          isCompletion: positiveReinforcement.isCompletion,
+        );
+    final showPatternChangedRecordCta =
+        showPatternChanged &&
+        patternChangedCandidate != null &&
+        PatternChangedGates.showRecordCta(
+          policy: readyCapturePolicy,
+          hideCardRecordButtons: RecordSurfaceCapturePolicy.shouldHideCardRecordButtons(input, readyCapturePolicy),
+          promoteMicCaptureActions: RecordSurfaceCapturePolicy.shouldPromoteMicCaptureActions(readyCapturePolicy),
+        );
+    final showArchiveSummaryRecordCta =
+        showArchiveSummaryOnRecord &&
+        ArchiveSummaryGates.showRecordNextCta(
+          policy: readyCapturePolicy,
+          hideCardRecordButtons: RecordSurfaceCapturePolicy.shouldHideCardRecordButtons(input, readyCapturePolicy),
+          promoteMicCaptureActions: RecordSurfaceCapturePolicy.shouldPromoteMicCaptureActions(readyCapturePolicy),
+        );
+    final showDailyReturnReasonRecordCta =
+        showDailyReturnReasonOnRecord &&
+        DailyReturnReasonGates.showRecordCta(
+          policy: readyCapturePolicy,
+          hideCardRecordButtons: RecordSurfaceCapturePolicy.shouldHideCardRecordButtons(input, readyCapturePolicy),
+          promoteMicCaptureActions: RecordSurfaceCapturePolicy.shouldPromoteMicCaptureActions(readyCapturePolicy),
+        );
+    final showFirstWeekLoopRecordCta =
+        showFirstWeekLoopOnRecord &&
+        firstWeekLoopCandidate != null &&
+        FirstWeekLoopGates.showRecordCta(
+          policy: readyCapturePolicy,
+          hideCardRecordButtons: RecordSurfaceCapturePolicy.shouldHideCardRecordButtons(input, readyCapturePolicy),
+          promoteMicCaptureActions: RecordSurfaceCapturePolicy.shouldPromoteMicCaptureActions(readyCapturePolicy),
+        );
+    return (
+      readyCapturePolicy: readyCapturePolicy,
+      showTesterMission: showTesterMission,
+      showRecordCaptureModes: showRecordCaptureModes,
+      testerMissionCompact: testerMissionCompact,
+      showTesterMissionFull: showTesterMissionFull,
+      testerMission: testerMission,
+      showThoughtMapRecordCta: showThoughtMapRecordCta,
+      showPositiveReinforcementRecordCta: showPositiveReinforcementRecordCta,
+      showPatternChangedRecordCta: showPatternChangedRecordCta,
+      showArchiveSummaryRecordCta: showArchiveSummaryRecordCta,
+      showDailyReturnReasonRecordCta: showDailyReturnReasonRecordCta,
+      showFirstWeekLoopRecordCta: showFirstWeekLoopRecordCta,
+    );
+  }
+
+  static RecordSurfaceViewState resolve(RecordSurfaceInput input) {
+    final (
+      :flags,
+      :policyMic,
+      :policyUserDenied,
+      :firstUseSimplifiedRecord,
+      :error,
+      :localSaveTitle,
+      :syncNote,
+      :stageLabel,
+      :entriesAfterSave,
+      :lastCaptureAnalysisSucceeded,
+    ) = resolveInputOverlay(input);
+
+    final canRecord = flags.canRecord;
+    final showFraming = flags.showFraming;
+    final compact = input.compactLayout;
+    final stack = input.stackDecision;
+    final suppressPostResultNextCheckCompetitors =
+        stack.suppressDuplicateUseTomorrowCtas;
+    final auditPresentation = VisualAuditOverrides.active
+        ? VisualAuditOverrides.peekRecordPresentation()
+        : null;
+    final justSavedFirstEntry =
+        input.recordReturnProJustSaved ||
+        (auditPresentation?.justSavedFirst ?? false);
+    final postSaveEntryCount = entriesAfterSave.isNotEmpty
+        ? entriesAfterSave.length
+        : input.entryCount;
+    final suppressNoisyFirstSaveCards =
+        FirstThreeSessionGates.suppressNoisyPostSaveCards(
+          justSavedFirst: justSavedFirstEntry,
+          entryCount: flags.isDone && justSavedFirstEntry
+              ? postSaveEntryCount
+              : input.entryCount,
+        );
+    final suppressEarlyPatternClaimCards =
+        FirstThreeSessionGates.suppressEarlyPatternClaimCards(
+          entryCount: input.entryCount,
+          hasGroundedRepeatMatch:
+              input.secondSessionComparison?.hasEnoughData == true &&
+              const SecondSessionSignalEngine().hasGroundedRepeatMatch(
+                input.entriesAfterSave.isNotEmpty
+                    ? input.entriesAfterSave
+                    : input.journalEntries,
+              ),
+        );
+    final suppressLatestSaveArchiveInsight =
+        flags.isDone &&
+        ArchiveEntrySignalGuard.newestEntryIsLowSignal(entriesAfterSave);
+    final secondSessionPayoff =
+        flags.isDone &&
+            entriesAfterSave.isNotEmpty &&
+            !suppressLatestSaveArchiveInsight
+        ? SecondSessionPayoffEngine.build(
+            entries: entriesAfterSave,
+            analysisSucceeded: lastCaptureAnalysisSucceeded,
+          )
+        : null;
+    final thirdEntryBeliefPayoff =
+        flags.isDone &&
+            entriesAfterSave.isNotEmpty &&
+            !suppressLatestSaveArchiveInsight
+        ? ThirdEntryBeliefPayoffEngine.build(
+            entries: entriesAfterSave,
+            analysisSucceeded: lastCaptureAnalysisSucceeded,
+          )
+        : null;
+    final confirmedRepeatTriggerPayoff =
+        flags.isDone &&
+            entriesAfterSave.isNotEmpty &&
+            input.savedFromConfirmedRepeatTrigger
+        ? EarlyFirstSignalEngine.buildTriggerCapturePayoff(
+            entries: entriesAfterSave,
+            savedFromTriggerPrompt: true,
+          )
+        : null;
+    final confirmedRepeatHelpfulActionPayoff =
+        flags.isDone &&
+            entriesAfterSave.isNotEmpty &&
+            input.savedFromHelpfulAction
+        ? EarlyFirstSignalEngine.buildHelpfulActionPayoff(
+            entries: entriesAfterSave,
+            savedFromHelpfulActionPrompt: true,
+          )
+        : null;
+    final confirmedRepeatChangeNotice =
+        flags.isDone &&
+            entriesAfterSave.isNotEmpty &&
+            !input.savedFromConfirmedRepeatTrigger &&
+            !input.savedFromHelpfulAction
+        ? EarlyFirstSignalEngine.buildChangeNotice(entries: entriesAfterSave)
+        : null;
+    final repeatReturnCheckOffer =
+        flags.isDone && entriesAfterSave.isNotEmpty
+        ? RepeatReturnCheckEngine.pendingForSave(
+            entriesAfterSave: entriesAfterSave,
+            records: RepeatReturnCheckStore.cached,
+          )
+        : null;
+    final proofStack = resolveArchiveProofStack(
+      input: input,
+      flags: flags,
+      confirmedRepeatTriggerPayoff: confirmedRepeatTriggerPayoff,
+      confirmedRepeatHelpfulActionPayoff: confirmedRepeatHelpfulActionPayoff,
+      confirmedRepeatChangeNotice: confirmedRepeatChangeNotice,
+    );
+    final earlyEvidenceTimeline = proofStack.earlyEvidenceTimeline;
+    final showEarlyEvidenceTimeline = proofStack.showEarlyEvidenceTimeline;
+    final suppressEarlyRepeatPayoffCompetitors = proofStack.suppressEarlyRepeatPayoffCompetitors;
+    final earlyFirstSignalOnRecord = proofStack.earlyFirstSignalOnRecord;
+    final returnTomorrowCueReady = proofStack.returnTomorrowCueReady;
+    final returnDayFlowCandidate = proofStack.returnDayFlowCandidate;
+    final showReturnDayFlow = proofStack.showReturnDayFlow;
+    final showReturnTomorrowCueReady = proofStack.showReturnTomorrowCueReady;
+    final firstWeekProgressReady = proofStack.firstWeekProgressReady;
+    final showFirstWeekProgressReady = proofStack.showFirstWeekProgressReady;
+    final showEarlyReturnReminder = proofStack.showEarlyReturnReminder;
+    final viewingConfirmedRepeatOnRecord = proofStack.viewingConfirmedRepeatOnRecord;
+    final suppressConfirmedRepeatInlineFeedback = proofStack.suppressConfirmedRepeatInlineFeedback;
+    final showConfirmedRepeatBetaFeedback = proofStack.showConfirmedRepeatBetaFeedback;
+    final repeatReturnChangeProof = proofStack.repeatReturnChangeProof;
+    final patternChangedCandidate = proofStack.patternChangedCandidate;
+    final patternChangedDismissed = proofStack.patternChangedDismissed;
+    final confirmedRepeatThoughtMap = proofStack.confirmedRepeatThoughtMap;
+    final positivePattern = proofStack.positivePattern;
+    final helpfulActionAppearedCandidate = proofStack.helpfulActionAppearedCandidate;
+    final showHelpfulActionAppearedEligible = proofStack.showHelpfulActionAppearedEligible;
+    final positiveReinforcement = proofStack.positiveReinforcement;
+    final archiveSummaryCandidate = proofStack.archiveSummaryCandidate;
+    final archiveBeliefSurfaceCandidate = proofStack.archiveBeliefSurfaceCandidate;
+    final patternNamePrompt = proofStack.patternNamePrompt;
+    final showArchiveCurrentBeliefEligible = proofStack.showArchiveCurrentBeliefEligible;
+    final dailyReturnReasonCandidate = proofStack.dailyReturnReasonCandidate;
+    final hasChangeOverTimeProof = proofStack.hasChangeOverTimeProof;
+    final postProofArchiveProof = proofStack.postProofArchiveProof;
+    final archiveSummaryVisibleForProGate = proofStack.archiveSummaryVisibleForProGate;
+    final weeklyArchiveReviewVisibleForProGate = proofStack.weeklyArchiveReviewVisibleForProGate;
+    final hasConfirmedRepeatForProGate = proofStack.hasConfirmedRepeatForProGate;
+    final privateArchiveReportForProGate = proofStack.privateArchiveReportForProGate;
+    final privateArchiveReportPreviewForProGate = proofStack.privateArchiveReportPreviewForProGate;
+    final patternChangedForProGate = proofStack.patternChangedForProGate;
+    final hasReturnCheckAnsweredForProGate = proofStack.hasReturnCheckAnsweredForProGate;
+    final showPostProofProBridge = proofStack.showPostProofProBridge;
+    final proofSurfaceLayout = proofStack.proofSurfaceLayout;
+    final showArchiveSummary = proofStack.showArchiveSummary;
+    final archiveSummary = proofStack.archiveSummary;
+    final showDailyReturnReason = proofStack.showDailyReturnReason;
+    final dailyReturnReason = proofStack.dailyReturnReason;
+    final archiveWatchingCandidate = proofStack.archiveWatchingCandidate;
+    final archiveWatching = proofStack.archiveWatching;
+    final weeklyArchiveReview = proofStack.weeklyArchiveReview;
+    final showWeeklyArchiveReview = proofStack.showWeeklyArchiveReview;
+    final privateArchiveReportCandidate = proofStack.privateArchiveReportCandidate;
+    final showPrivateArchiveReport = proofStack.showPrivateArchiveReport;
+    final showConfirmedRepeatWhyMatters = proofStack.showConfirmedRepeatWhyMatters;
+    final showConfirmedRepeatThoughtMap = proofStack.showConfirmedRepeatThoughtMap;
+    final showPositiveReinforcement = proofStack.showPositiveReinforcement;
+    final firstWeekLoopCandidate = proofStack.firstWeekLoopCandidate;
+    final firstWeekLoopProGated = proofStack.firstWeekLoopProGated;
+    final recordProofStack = proofStack.recordProofStack;
+    final showPatternChanged = proofStack.showPatternChanged;
+    final showArchiveCurrentBeliefOnRecord = proofStack.showArchiveCurrentBeliefOnRecord;
+    final showEarlyEvidenceTimelineOnRecord = proofStack.showEarlyEvidenceTimelineOnRecord;
+    final showWeeklyArchiveReviewOnRecord = proofStack.showWeeklyArchiveReviewOnRecord;
+    final showPrivateArchiveReportOnRecord = proofStack.showPrivateArchiveReportOnRecord;
+    final showDailyReturnReasonOnRecord = proofStack.showDailyReturnReasonOnRecord;
+    final showPostProofProBridgeOnRecord = proofStack.showPostProofProBridgeOnRecord;
     final firstProofPayoffSeenOnRecord =
         FirstProofPayoffEngine.build(entries: input.journalEntries) != null;
     final isDegradedTranscriptOnRecord =
