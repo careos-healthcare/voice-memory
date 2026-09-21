@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:archiveme_mobile/core/utils/app_logger.dart';
 import 'package:archiveme_mobile/security/sqlite/secure_sqlite_lock_service.dart';
 import 'package:archiveme_mobile/security/sqlite/sqlite_encryption_key_store.dart';
 import 'package:archiveme_mobile/storage/sqlite/profiling/sqlite_profiling_database.dart';
@@ -58,7 +59,8 @@ class AppSqliteDatabase {
         _cachedKeyAlias = null;
       }
 
-      final resolvedPassword = password ??
+      final resolvedPassword =
+          password ??
           (_isFlutterTest
               ? SqliteDatabaseInitializer.testEncryptionPassword
               : (SqliteDatabaseInitializer.encryptionEnabled
@@ -109,8 +111,12 @@ class AppSqliteDatabase {
     // here, not pushed out to every caller individually.
     try {
       await _db.close();
-    } on Object catch (_) {
-      // Already closed.
+    } on Object catch (e, stackTrace) {
+      AppLogger.debug(
+        'Database close best-effort cleanup failed',
+        error: e,
+        stackTrace: stackTrace,
+      );
     }
     if (_cached == _db) {
       _cached = null;
