@@ -1,5 +1,6 @@
 import 'package:archiveme_mobile/core/config/v1_feature_flags.dart';
 import 'package:archiveme_mobile/features/recording/record_proof_stack_snapshot.dart';
+import 'package:archiveme_mobile/features/recording/record_ready_surface_bag.dart';
 import 'package:archiveme_mobile/features/recording/record_surface_capture_policy.dart';
 import 'package:archiveme_mobile/features/recording/record_surface_input.dart';
 import 'package:archiveme_mobile/features/recording/record_surface_view_state.dart';
@@ -989,7 +990,8 @@ abstract final class RecordSurfaceResolver {
           entries: input.journalEntries,
           returnChecks: RepeatReturnCheckStore.cached,
         );
-    var showCurrentRelevanceOnRecordReady =
+    final readyBag = RecordReadySurfaceBag();
+    readyBag.showCurrentRelevanceOnRecordReady =
         flags.isReady &&
         CurrentRelevanceEngine.shouldShowOnRecordReady(
           state: currentRelevanceCandidate,
@@ -1005,15 +1007,15 @@ abstract final class RecordSurfaceResolver {
     final currentRelevanceQuestionActiveOnRecord =
         CurrentRelevanceEngine.isQuestionActive(
           state: currentRelevanceCandidate,
-          visible: showCurrentRelevanceOnRecordReady,
+          visible: readyBag.showCurrentRelevanceOnRecordReady,
         );
     final correctionMemoryCandidate = CorrectionMemoryEngine.build(
       entries: input.journalEntries,
       source: 'record',
     );
-    var showCorrectionMemoryOnRecordReady =
+    readyBag.showCorrectionMemoryOnRecordReady =
         flags.isReady &&
-        showCurrentRelevanceOnRecordReady &&
+        readyBag.showCurrentRelevanceOnRecordReady &&
         CorrectionMemoryEngine.shouldShowOnRecordReady(
           result: correctionMemoryCandidate,
           isDegradedTranscriptState: isDegradedTranscriptOnRecord,
@@ -1026,7 +1028,7 @@ abstract final class RecordSurfaceResolver {
             beliefSurfaceVisible: archiveBeliefSurfaceCandidate.shouldShow,
           )
         : null;
-    var showEvidenceWeightingOnRecordReady =
+    readyBag.showEvidenceWeightingOnRecordReady =
         flags.isReady &&
         EvidenceWeightingEngine.shouldShowOnRecordReady(
           result: evidenceWeightingCandidate,
@@ -1052,7 +1054,7 @@ abstract final class RecordSurfaceResolver {
             beliefSurfaceVisible: false,
             source: 'record',
           );
-    var showProofSpecificityOnRecordReady =
+    readyBag.showProofSpecificityOnRecordReady =
         flags.isReady &&
         ProofSpecificityEngine.shouldShowOnRecordReady(
           result: proofSpecificityCandidate,
@@ -1070,7 +1072,7 @@ abstract final class RecordSurfaceResolver {
             source: 'record',
           )
         : null;
-    var showPresentDayRelevanceOnRecordReady =
+    readyBag.showPresentDayRelevanceOnRecordReady =
         flags.isReady &&
         PresentDayRelevanceEngine.shouldShowOnRecordReady(
           result: presentDayRelevanceCandidate,
@@ -1083,7 +1085,7 @@ abstract final class RecordSurfaceResolver {
           whatChangedQuestionActive: false,
           patternReviewInboxHasActiveItems: patternReviewInboxActiveOnRecord,
         );
-    var showCaptureFreedomLine =
+    readyBag.showCaptureFreedomLine =
         ProofSpecificityEngine.shouldShowCaptureFreedomLine(
           isReady: flags.isReady,
           isRecording: flags.isRecording,
@@ -1097,21 +1099,21 @@ abstract final class RecordSurfaceResolver {
     );
     final otherEducationCardsOnRecord =
         TimelinePositioningEngine.countOtherEducationCards(
-          captureFreedomLineVisible: showCaptureFreedomLine,
+          captureFreedomLineVisible: readyBag.showCaptureFreedomLine,
           currentRelevanceVisible:
-              showCurrentRelevanceOnRecordReady &&
+              readyBag.showCurrentRelevanceOnRecordReady &&
               currentRelevanceCandidate != null,
           evidenceWeightingVisible:
-              showEvidenceWeightingOnRecordReady &&
+              readyBag.showEvidenceWeightingOnRecordReady &&
               evidenceWeightingCandidate != null,
           proofSpecificityVisible:
-              showProofSpecificityOnRecordReady &&
+              readyBag.showProofSpecificityOnRecordReady &&
               proofSpecificityCandidate.shouldShow,
           presentDayRelevanceVisible:
-              showPresentDayRelevanceOnRecordReady &&
+              readyBag.showPresentDayRelevanceOnRecordReady &&
               presentDayRelevanceCandidate != null,
         );
-    var showTimelinePositioningOnRecordReady =
+    readyBag.showTimelinePositioningOnRecordReady =
         flags.isReady &&
         TimelinePositioningEngine.shouldShowOnRecordReady(
           result: timelinePositioningCandidate,
@@ -1125,22 +1127,22 @@ abstract final class RecordSurfaceResolver {
         );
     final patternConfidenceEducationCount =
         PatternConfidenceEngine.countOtherEducationCards(
-          captureFreedomLineVisible: showCaptureFreedomLine,
-          timelinePositioningVisible: showTimelinePositioningOnRecordReady,
+          captureFreedomLineVisible: readyBag.showCaptureFreedomLine,
+          timelinePositioningVisible: readyBag.showTimelinePositioningOnRecordReady,
           currentRelevanceVisible:
-              showCurrentRelevanceOnRecordReady &&
+              readyBag.showCurrentRelevanceOnRecordReady &&
               currentRelevanceCandidate != null,
           correctionMemoryVisible:
-              showCorrectionMemoryOnRecordReady &&
+              readyBag.showCorrectionMemoryOnRecordReady &&
               correctionMemoryCandidate != null,
           evidenceWeightingVisible:
-              showEvidenceWeightingOnRecordReady &&
+              readyBag.showEvidenceWeightingOnRecordReady &&
               evidenceWeightingCandidate != null,
           proofSpecificityVisible:
-              showProofSpecificityOnRecordReady &&
+              readyBag.showProofSpecificityOnRecordReady &&
               proofSpecificityCandidate.shouldShow,
           presentDayRelevanceVisible:
-              showPresentDayRelevanceOnRecordReady &&
+              readyBag.showPresentDayRelevanceOnRecordReady &&
               presentDayRelevanceCandidate != null,
         );
     final patternConfidenceExplanationCandidate =
@@ -1153,7 +1155,7 @@ abstract final class RecordSurfaceResolver {
           viewingConfirmedRepeatOrTimeline: viewingConfirmedRepeatOnRecord,
           helpfulActionCapturedMilestone: input.earlyEvidenceHelpfulCaptured,
         );
-    var showPatternConfidenceExplanationOnRecordReady =
+    readyBag.showPatternConfidenceExplanationOnRecordReady =
         flags.isReady &&
         PatternConfidenceEngine.shouldShowExplanationOnRecordReady(
           result: patternConfidenceExplanationCandidate,
@@ -1162,7 +1164,7 @@ abstract final class RecordSurfaceResolver {
           patternReviewInboxHasActiveItems: patternReviewInboxActiveOnRecord,
           otherEducationCardCount: patternConfidenceEducationCount,
         );
-    var showProEvidenceValueOnRecordReady =
+    readyBag.showProEvidenceValueOnRecordReady =
         showPostProofProBridgeOnRecord &&
         ProEvidenceValueEngine.shouldShowCard(
           ProEvidenceValueEngine.buildContext(
@@ -1180,8 +1182,8 @@ abstract final class RecordSurfaceResolver {
                 currentRelevanceQuestionActiveOnRecord,
           ),
         );
-    var showProBridgeVisibilityOnRecordReady = false;
-    var showProEvidenceValuePrivateReportOnRecord =
+    readyBag.showProBridgeVisibilityOnRecordReady = false;
+    readyBag.showProEvidenceValuePrivateReportOnRecord =
         showPrivateArchiveReportOnRecord &&
         privateArchiveReportPreviewForProGate &&
         ProEvidenceValueEngine.shouldShowCard(
@@ -1219,7 +1221,7 @@ abstract final class RecordSurfaceResolver {
         flags.isDone && entriesAfterSave.isNotEmpty
         ? FirstProofPayoffEngine.build(entries: entriesAfterSave)
         : null;
-    var showFirstProofPayoff = FirstProofPayoffGates.shouldShow(
+    readyBag.showFirstProofPayoff = FirstProofPayoffGates.shouldShow(
       isPostSaveDone: flags.isDone,
       entryCount: postSaveEntryCount,
       isDegradedPostSave:
@@ -1240,11 +1242,11 @@ abstract final class RecordSurfaceResolver {
             input.journalEntries,
           ),
       firstProofPayoffVisible:
-          showFirstProofPayoff && firstProofPayoffCandidate != null,
+          readyBag.showFirstProofPayoff && firstProofPayoffCandidate != null,
       challenge: threeDayChallengeCandidate,
     );
     final firstProofPatternConfidence =
-        showFirstProofPayoff && firstProofPayoffCandidate != null
+        readyBag.showFirstProofPayoff && firstProofPayoffCandidate != null
         ? PatternConfidenceEngine.build(
             entries: entriesAfterSave,
             returnChecks: RepeatReturnCheckStore.cached,
@@ -1252,11 +1254,11 @@ abstract final class RecordSurfaceResolver {
             hideNotEnoughYet: true,
           )
         : null;
-    final firstProofTruthProofKey = showFirstProofPayoff
+    final firstProofTruthProofKey = readyBag.showFirstProofPayoff
         ? FirstProofTruthGates.proofKeyForEntries(entriesAfterSave)
         : '';
     final showFirstProofTruth = FirstProofTruthGates.shouldShow(
-      showFirstProofPayoff: showFirstProofPayoff,
+      showFirstProofPayoff: readyBag.showFirstProofPayoff,
       payoff: firstProofPayoffCandidate,
       entries: entriesAfterSave,
       proofKey: firstProofTruthProofKey,
@@ -1268,7 +1270,7 @@ abstract final class RecordSurfaceResolver {
         ? FirstProofTruthStore.answerFor(firstProofTruthProofKey)
         : null;
     final showFirstProofActionLoop = FirstProofActionLoopGates.shouldShow(
-      showFirstProofPayoff: showFirstProofPayoff,
+      showFirstProofPayoff: readyBag.showFirstProofPayoff,
       payoff: firstProofPayoffCandidate,
       proofKey: firstProofTruthProofKey,
       hasAnsweredForProof:
@@ -1285,7 +1287,7 @@ abstract final class RecordSurfaceResolver {
             payoff: firstProofPayoffCandidate,
           )
         : null;
-    final showFirstProofMoment = showFirstProofPayoff;
+    final showFirstProofMoment = readyBag.showFirstProofPayoff;
     final postSaveHasConfirmedRepeat =
         EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(entriesAfterSave);
     final postSaveHasFirstProof = CoreValueFeedbackGates.hasFirstProof(
@@ -1296,7 +1298,7 @@ abstract final class RecordSurfaceResolver {
         entriesAfterSave.isNotEmpty &&
         VoiceCaptureQuality.isDegradedVoiceCapture(entriesAfterSave.last);
     final showCoreValueFeedbackOnRecordPostFirstProof =
-        !showFirstProofPayoff &&
+        !readyBag.showFirstProofPayoff &&
         CoreValueFeedbackGates.shouldShowOnRecordPostFirstProof(
           showFirstProofMoment: showFirstProofMoment,
           isPostSaveDone: flags.isDone,
@@ -1344,25 +1346,25 @@ abstract final class RecordSurfaceResolver {
           showFirstProofMoment: showFirstProofMoment,
           display: whatChangedV2Display,
         );
-    var showOpenCapturePromptChips = OpenCaptureEngine.shouldShow(
+    readyBag.showOpenCapturePromptChips = OpenCaptureEngine.shouldShow(
       isReady: flags.isReady,
       isRecording: flags.isRecording,
       isPostSave: input.isPostSave,
       isDegradedTranscriptState: isDegradedTranscriptOnRecord,
       firstProofPayoffVisible:
-          showFirstProofPayoff && firstProofPayoffCandidate != null,
+          readyBag.showFirstProofPayoff && firstProofPayoffCandidate != null,
       whatChangedQuestionActive: showWhatChangedV2,
       patternReviewInboxHasActiveItems: patternReviewInboxActiveOnRecord,
       isPermissionBlocked: flags.isPermissionBlocked,
       entryCount: input.entryCount,
     );
-    var showLowFrictionReturnCard = LowFrictionReturnEngine.shouldShow(
+    readyBag.showLowFrictionReturnCard = LowFrictionReturnEngine.shouldShow(
       isReady: flags.isReady,
       isRecording: flags.isRecording,
       isPostSave: input.isPostSave,
       isDegradedTranscriptState: isDegradedTranscriptOnRecord,
       firstProofPayoffVisible:
-          showFirstProofPayoff && firstProofPayoffCandidate != null,
+          readyBag.showFirstProofPayoff && firstProofPayoffCandidate != null,
       whatChangedQuestionActive: showWhatChangedV2,
       patternReviewInboxHasActiveItems: patternReviewInboxActiveOnRecord,
       isPermissionBlocked: flags.isPermissionBlocked,
@@ -1378,21 +1380,21 @@ abstract final class RecordSurfaceResolver {
       entryCount: input.entryCount,
       source: 'record',
     );
-    var firstSessionCaptureRepairCandidate =
+    readyBag.firstSessionCaptureRepairCandidate =
         FirstSessionProofRepairEngine.buildCapture(
           entryCount: input.entryCount,
           source: 'record',
         );
     final openingRepairOverride = BetaRepairLabEngine.openingCaptureOverride(
-      base: firstSessionCaptureRepairCandidate,
+      base: readyBag.firstSessionCaptureRepairCandidate,
       betaMissionEnabled: ArchiveBetaMissionGate.isEnabled,
     );
     if (openingRepairOverride != null) {
-      firstSessionCaptureRepairCandidate = openingRepairOverride;
+      readyBag.firstSessionCaptureRepairCandidate = openingRepairOverride;
     }
-    var showFirstSessionCaptureRepairCard =
+    readyBag.showFirstSessionCaptureRepairCard =
         FirstSessionProofRepairEngine.shouldShowCapture(
-          result: firstSessionCaptureRepairCandidate,
+          result: readyBag.firstSessionCaptureRepairCandidate,
           betaMissionEnabled: ArchiveBetaMissionGate.isEnabled,
           isReady: flags.isReady,
           isRecording: flags.isRecording,
@@ -1405,7 +1407,7 @@ abstract final class RecordSurfaceResolver {
       entryCount: input.entryCount,
       source: 'record',
     );
-    var showFirstSessionLiftCard = FirstSessionLiftEngine.shouldShow(
+    readyBag.showFirstSessionLiftCard = FirstSessionLiftEngine.shouldShow(
       result: firstSessionLiftCandidate,
       betaMissionEnabled: ArchiveBetaMissionGate.isEnabled,
       isReady: flags.isReady,
@@ -1415,7 +1417,7 @@ abstract final class RecordSurfaceResolver {
       isPermissionBlocked: flags.isPermissionBlocked,
       entryCount: input.entryCount,
     );
-    var showFirstSaveLiftCard = FirstSaveLiftEngine.shouldShow(
+    readyBag.showFirstSaveLiftCard = FirstSaveLiftEngine.shouldShow(
       result: firstSaveLiftCandidate,
       betaMissionEnabled: ArchiveBetaMissionGate.isEnabled,
       isReady: flags.isReady,
@@ -1427,19 +1429,19 @@ abstract final class RecordSurfaceResolver {
     );
     if (BetaRepairLabEngine.suppressFirstSessionLiftWhenOpeningRepairActive(
       betaMissionEnabled: ArchiveBetaMissionGate.isEnabled,
-      showOpeningRepair: showFirstSessionCaptureRepairCard,
+      showOpeningRepair: readyBag.showFirstSessionCaptureRepairCard,
     )) {
-      showFirstSessionLiftCard = false;
-      showFirstSaveLiftCard = false;
+      readyBag.showFirstSessionLiftCard = false;
+      readyBag.showFirstSaveLiftCard = false;
     }
-    var showFirstMomentCaptureCard = FirstMomentCaptureEngine.shouldShow(
+    readyBag.showFirstMomentCaptureCard = FirstMomentCaptureEngine.shouldShow(
       result: firstMomentCaptureCandidate,
       isReady: flags.isReady,
       isRecording: flags.isRecording,
       isPostSave: input.isPostSave,
       isDegradedTranscriptState: isDegradedTranscriptOnRecord,
       firstProofPayoffVisible:
-          showFirstProofPayoff && firstProofPayoffCandidate != null,
+          readyBag.showFirstProofPayoff && firstProofPayoffCandidate != null,
       isPermissionBlocked: flags.isPermissionBlocked,
       entryCount: input.entryCount,
     );
@@ -1447,14 +1449,14 @@ abstract final class RecordSurfaceResolver {
       entries: input.journalEntries,
       source: 'record',
     );
-    var showSecondMomentReturnCard = SecondMomentReturnEngine.shouldShow(
+    readyBag.showSecondMomentReturnCard = SecondMomentReturnEngine.shouldShow(
       result: secondMomentReturnCandidate,
       isReady: flags.isReady,
       isRecording: flags.isRecording,
       isPostSave: input.isPostSave,
       isDegradedTranscriptState: isDegradedTranscriptOnRecord,
       firstProofPayoffVisible:
-          showFirstProofPayoff && firstProofPayoffCandidate != null,
+          readyBag.showFirstProofPayoff && firstProofPayoffCandidate != null,
       whatChangedQuestionActive: showWhatChangedV2,
       patternReviewInboxHasActiveItems: patternReviewInboxActiveOnRecord,
       entryCount: input.entryCount,
@@ -1463,7 +1465,7 @@ abstract final class RecordSurfaceResolver {
       entryCount: input.entryCount,
       source: 'record',
     );
-    var showThreeMomentCompletionCard = ThreeMomentCompletionEngine.shouldShow(
+    readyBag.showThreeMomentCompletionCard = ThreeMomentCompletionEngine.shouldShow(
       result: threeMomentCompletionCandidate,
       isReady: flags.isReady,
       isRecording: flags.isRecording,
@@ -1479,7 +1481,7 @@ abstract final class RecordSurfaceResolver {
       entryCount: input.entryCount,
       source: 'record',
     );
-    var showFirstRunPositioningCard = FirstRunPositioningEngine.shouldShow(
+    readyBag.showFirstRunPositioningCard = FirstRunPositioningEngine.shouldShow(
       result: firstRunPositioningCandidate,
       isReady: flags.isReady,
       isRecording: flags.isRecording,
@@ -1494,14 +1496,14 @@ abstract final class RecordSurfaceResolver {
       beliefSurfaceVisible: archiveBeliefSurfaceCandidate.shouldShow,
       source: 'record',
     );
-    var showBetaTodaySummaryCard = BetaTodaySummaryEngine.shouldShow(
+    readyBag.showBetaTodaySummaryCard = BetaTodaySummaryEngine.shouldShow(
       result: betaTodaySummaryCandidate,
       isReady: flags.isReady,
       isRecording: flags.isRecording,
       isPostSave: input.isPostSave,
       isDegradedTranscriptState: isDegradedTranscriptOnRecord,
       firstProofPayoffVisible:
-          showFirstProofPayoff && firstProofPayoffCandidate != null,
+          readyBag.showFirstProofPayoff && firstProofPayoffCandidate != null,
       whatChangedQuestionActive: showWhatChangedV2,
       patternReviewInboxHasActiveItems: patternReviewInboxActiveOnRecord,
     );
@@ -1518,36 +1520,36 @@ abstract final class RecordSurfaceResolver {
       source: 'record',
       timelineSpine: archiveTimelineSpineCandidate,
     );
-    var showWhatToNoticeNextCard = WhatToNoticeNextEngine.shouldShow(
+    readyBag.showWhatToNoticeNextCard = WhatToNoticeNextEngine.shouldShow(
       result: whatToNoticeNextCandidate,
       isReady: flags.isReady,
       isRecording: flags.isRecording,
       isPostSave: input.isPostSave,
       isDegradedTranscriptState: isDegradedTranscriptOnRecord,
       firstProofPayoffVisible:
-          showFirstProofPayoff && firstProofPayoffCandidate != null,
+          readyBag.showFirstProofPayoff && firstProofPayoffCandidate != null,
       whatChangedQuestionActive: showWhatChangedV2,
       patternReviewInboxHasActiveItems: patternReviewInboxActiveOnRecord,
       entryCount: input.entryCount,
-      lowFrictionReturnVisible: showLowFrictionReturnCard,
-      betaTodaySummaryVisible: showBetaTodaySummaryCard,
-      openCapturePromptChipsVisible: showOpenCapturePromptChips,
+      lowFrictionReturnVisible: readyBag.showLowFrictionReturnCard,
+      betaTodaySummaryVisible: readyBag.showBetaTodaySummaryCard,
+      openCapturePromptChipsVisible: readyBag.showOpenCapturePromptChips,
     );
-    var showArchiveTimelineSpineOnRecord =
+    readyBag.showArchiveTimelineSpineOnRecord =
         flags.isReady &&
         ArchiveTimelineSpineEngine.shouldShowOnRecordReady(
           result: archiveTimelineSpineCandidate,
           isDegradedTranscriptState: isDegradedTranscriptOnRecord,
           isPostSaveDegradedState: false,
           firstProofPayoffVisible:
-              showFirstProofPayoff && firstProofPayoffCandidate != null,
+              readyBag.showFirstProofPayoff && firstProofPayoffCandidate != null,
           whatChangedQuestionActive: showWhatChangedV2,
           patternReviewInboxHasActiveItems: patternReviewInboxActiveOnRecord,
         );
     final suppressLegacyEducationCardsForSpineOnRecord =
         ArchiveTimelineSpineEngine.suppressLegacyEducationCards(
           result: archiveTimelineSpineCandidate,
-          visible: showArchiveTimelineSpineOnRecord,
+          visible: readyBag.showArchiveTimelineSpineOnRecord,
         );
     final timelineProofMomentCandidate = archiveTimelineSpineCandidate != null
         ? TimelineProofMomentEngine.buildFromSpine(
@@ -1556,7 +1558,7 @@ abstract final class RecordSurfaceResolver {
             source: 'record',
           )
         : null;
-    var showTimelineProofMomentOnRecord =
+    readyBag.showTimelineProofMomentOnRecord =
         TimelineProofMomentEngine.shouldShowOnRecordReady(
           result: timelineProofMomentCandidate,
           isDegradedTranscriptState: isDegradedTranscriptOnRecord,
@@ -1569,17 +1571,17 @@ abstract final class RecordSurfaceResolver {
       source: 'record',
       timelineSpine: archiveTimelineSpineCandidate,
     );
-    var showBetaTesterReportOnRecord = BetaTesterReportEngine.shouldShow(
+    readyBag.showBetaTesterReportOnRecord = BetaTesterReportEngine.shouldShow(
       result: betaTesterReportCandidate,
       isReady: flags.isReady,
       isRecording: flags.isRecording,
       isDegradedTranscriptState: isDegradedTranscriptOnRecord,
       firstProofPayoffVisible:
-          showFirstProofPayoff && firstProofPayoffCandidate != null,
+          readyBag.showFirstProofPayoff && firstProofPayoffCandidate != null,
       whatChangedQuestionActive: showWhatChangedV2,
       patternReviewInboxHasActiveItems: patternReviewInboxActiveOnRecord,
     );
-    showProBridgeVisibilityOnRecordReady = false;
+    readyBag.showProBridgeVisibilityOnRecordReady = false;
     final notRelevantRecoveryCandidate = NotRelevantRecoveryEngine.build(
       entries: input.journalEntries,
       source: 'record',
@@ -1610,11 +1612,11 @@ abstract final class RecordSurfaceResolver {
       source: 'record',
       firstProofSeen: firstProofPayoffSeenOnRecord,
       timelineProofVisible:
-          showTimelineProofMomentOnRecord &&
+          readyBag.showTimelineProofMomentOnRecord &&
           timelineProofMomentCandidate != null,
-      betaTesterReportVisible: showBetaTesterReportOnRecord,
+      betaTesterReportVisible: readyBag.showBetaTesterReportOnRecord,
     );
-    var showReturnAfterProofStrengthenedOnRecordReady =
+    readyBag.showReturnAfterProofStrengthenedOnRecordReady =
         ReturnAfterProofEngine.shouldShowStrengthenedOnRecordReady(
           result: returnAfterProofRecordCandidate,
           isReady: flags.isReady,
@@ -1624,11 +1626,11 @@ abstract final class RecordSurfaceResolver {
           patternReviewInboxHasActiveItems: patternReviewInboxActiveOnRecord,
           firstProofSeen: firstProofPayoffSeenOnRecord,
           timelineProofVisible:
-              showTimelineProofMomentOnRecord &&
+              readyBag.showTimelineProofMomentOnRecord &&
               timelineProofMomentCandidate != null,
           dismissedForToday: ReturnAfterProofStore.isDismissedToday,
         );
-    var showReturnAfterProofGenericOnRecordReady =
+    readyBag.showReturnAfterProofGenericOnRecordReady =
         ReturnAfterProofEngine.shouldShowGenericOnRecordReady(
           result: returnAfterProofRecordCandidate,
           isReady: flags.isReady,
@@ -1638,23 +1640,23 @@ abstract final class RecordSurfaceResolver {
           patternReviewInboxHasActiveItems: patternReviewInboxActiveOnRecord,
           firstProofSeen: firstProofPayoffSeenOnRecord,
           timelineProofVisible:
-              showTimelineProofMomentOnRecord &&
+              readyBag.showTimelineProofMomentOnRecord &&
               timelineProofMomentCandidate != null,
-          betaTesterReportVisible: showBetaTesterReportOnRecord,
+          betaTesterReportVisible: readyBag.showBetaTesterReportOnRecord,
           dismissedForToday: ReturnAfterProofStore.isDismissedToday,
         );
-    var showReturnAfterProofOnRecordReady =
-        showReturnAfterProofStrengthenedOnRecordReady ||
-        showReturnAfterProofGenericOnRecordReady;
+    readyBag.showReturnAfterProofOnRecordReady =
+        readyBag.showReturnAfterProofStrengthenedOnRecordReady ||
+        readyBag.showReturnAfterProofGenericOnRecordReady;
     final returnAfterProofLiftV2Candidate = ReturnAfterProofLiftV2Engine.build(
       entries: input.journalEntries,
       source: 'record',
       firstProofSeen: firstProofPayoffSeenOnRecord,
       timelineProofVisible:
-          showTimelineProofMomentOnRecord &&
+          readyBag.showTimelineProofMomentOnRecord &&
           timelineProofMomentCandidate != null,
     );
-    var showReturnAfterProofLiftV2OnRecordReady =
+    readyBag.showReturnAfterProofLiftV2OnRecordReady =
         ReturnAfterProofLiftV2Engine.shouldShow(
           result: returnAfterProofLiftV2Candidate,
           isReady: flags.isReady,
@@ -1696,7 +1698,7 @@ abstract final class RecordSurfaceResolver {
       whatChangedQuestionActive: showWhatChangedV2,
       patternReviewInboxHasActiveItems: patternReviewInboxActiveOnRecord,
       hasTimelineProofVisible:
-          showTimelineProofMomentOnRecord &&
+          readyBag.showTimelineProofMomentOnRecord &&
           timelineProofMomentCandidate != null,
       hasConfirmedRepeat: EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(
         input.journalEntries,
@@ -1712,36 +1714,36 @@ abstract final class RecordSurfaceResolver {
           timelineFeedbackType == BetaProofFeedbackType.notRelevant,
       betaMissionEnabled: ArchiveBetaMissionGate.isEnabled,
     );
-    var showBetaRepairLabProPlacementOnRecord =
+    readyBag.showBetaRepairLabProPlacementOnRecord =
         BetaRepairLabEngine.shouldShowProPlacement(input: betaRepairLabInput);
     final betaRepairLabProPlacementResult =
-        showBetaRepairLabProPlacementOnRecord
+        readyBag.showBetaRepairLabProPlacementOnRecord
         ? BetaRepairLabEngine.buildProPlacement(input: betaRepairLabInput)
         : BetaRepairLabProPlacementResult.hidden;
-    var showBetaRepairLabPricingValueFramingOnRecord =
+    readyBag.showBetaRepairLabPricingValueFramingOnRecord =
         PricingValueFramingEngine.shouldShow(input: betaRepairLabInput);
     final betaRepairLabPricingValueFramingResult =
-        showBetaRepairLabPricingValueFramingOnRecord
+        readyBag.showBetaRepairLabPricingValueFramingOnRecord
         ? PricingValueFramingEngine.build(input: betaRepairLabInput)
         : PricingValueFramingResult.hidden;
-    var showBetaRepairLabPaywallValueOnRecord =
+    readyBag.showBetaRepairLabPaywallValueOnRecord =
         PaywallValueRepairEngine.shouldShow(input: betaRepairLabInput);
     final betaRepairLabPaywallValueResult =
-        showBetaRepairLabPaywallValueOnRecord
+        readyBag.showBetaRepairLabPaywallValueOnRecord
         ? PaywallValueRepairEngine.build(input: betaRepairLabInput)
         : PaywallValueRepairResult.hidden;
     final hasProEngagementOnRecord =
         input.betaActivationLoopCounts.paywallSeen > 0 ||
         input.betaActivationLoopCounts.purchaseTapped > 0 ||
         input.betaActivationLoopCounts.proBoundarySeen > 0;
-    var showBetaRepairLabPricingValidationOnRecord =
+    readyBag.showBetaRepairLabPricingValidationOnRecord =
         PricingValidationEngine.shouldShow(
           input: betaRepairLabInput,
           hasProEngagement: hasProEngagementOnRecord,
         );
-    var showBetaRepairLabEvidenceTrailClarityOnRecord = false;
+    readyBag.showBetaRepairLabEvidenceTrailClarityOnRecord = false;
     final betaRepairLabPricingValidationResult =
-        showBetaRepairLabPricingValidationOnRecord
+        readyBag.showBetaRepairLabPricingValidationOnRecord
         ? PricingValidationEngine.build(
             input: betaRepairLabInput,
             hasProEngagement: hasProEngagementOnRecord,
@@ -1769,11 +1771,11 @@ abstract final class RecordSurfaceResolver {
           whatChangedQuestionActive: showWhatChangedV2,
           patternReviewInboxHasActiveItems: patternReviewInboxActiveOnRecord,
         );
-    var showProUnderstandingLiftOnRecordReady =
+    readyBag.showProUnderstandingLiftOnRecordReady =
         ProUnderstandingLiftEngine.shouldShowCard(
           input: proUnderstandingLiftRecordReadyInput,
         );
-    var showProVisibilityLiftOnRecordReady =
+    readyBag.showProVisibilityLiftOnRecordReady =
         ProVisibilityLiftEngine.shouldShowCard(
           entryCount: input.entryCount,
           isPro: input.userProState.isPro,
@@ -1793,22 +1795,22 @@ abstract final class RecordSurfaceResolver {
           whatChangedQuestionActive: showWhatChangedV2,
           patternReviewInboxHasActiveItems: patternReviewInboxActiveOnRecord,
         );
-    var proUnderstandingLiftRecordReadyResult =
-        showProUnderstandingLiftOnRecordReady
+    readyBag.proUnderstandingLiftRecordReadyResult =
+        readyBag.showProUnderstandingLiftOnRecordReady
         ? ProUnderstandingLiftEngine.build(
             input: proUnderstandingLiftRecordReadyInput,
           )
         : null;
-    if (proUnderstandingLiftRecordReadyResult != null) {
-      proUnderstandingLiftRecordReadyResult =
+    if (readyBag.proUnderstandingLiftRecordReadyResult != null) {
+      readyBag.proUnderstandingLiftRecordReadyResult =
           BetaRepairLabEngine.applyProExplanationCopy(
-            base: proUnderstandingLiftRecordReadyResult,
+            base: readyBag.proUnderstandingLiftRecordReadyResult!,
             betaMissionEnabled: ArchiveBetaMissionGate.isEnabled,
           ) ??
-          proUnderstandingLiftRecordReadyResult;
+          readyBag.proUnderstandingLiftRecordReadyResult;
     }
     final proVisibilityLiftRecordReadyResult =
-        showProVisibilityLiftOnRecordReady
+        readyBag.showProVisibilityLiftOnRecordReady
         ? ProVisibilityLiftEngine.build(
             surface: ProVisibilityLiftSurface.recordReady,
             source: 'record_ready',
@@ -1831,14 +1833,14 @@ abstract final class RecordSurfaceResolver {
             patternReviewInboxHasActiveItems: patternReviewInboxActiveOnRecord,
           )
         : null;
-    var showProofQualityResponseOnRecordReady =
+    readyBag.showProofQualityResponseOnRecordReady =
         flags.isReady &&
         proofQualityResponseTimelineCandidate.shouldShow &&
         ProofQualityResponseEngine.shouldRender(
           result: proofQualityResponseTimelineCandidate,
           parentVisible: true,
           timelineProofVisible:
-              showTimelineProofMomentOnRecord &&
+              readyBag.showTimelineProofMomentOnRecord &&
               timelineProofMomentCandidate != null,
           firstProofPayoffVisible: false,
           isRecording: flags.isRecording,
@@ -1847,7 +1849,7 @@ abstract final class RecordSurfaceResolver {
           whatChangedQuestionActive: showWhatChangedV2,
           patternReviewInboxHasActiveItems: patternReviewInboxActiveOnRecord,
         );
-    var showNotRelevantRecoveryOnRecordReady =
+    readyBag.showNotRelevantRecoveryOnRecordReady =
         flags.isReady &&
         notRelevantRecoveryCandidate.shouldShow &&
         NotRelevantRecoveryEngine.shouldRender(
@@ -1859,9 +1861,9 @@ abstract final class RecordSurfaceResolver {
           whatChangedQuestionActive: showWhatChangedV2,
           patternReviewInboxHasActiveItems: patternReviewInboxActiveOnRecord,
         );
-    var showBetaProofLiftOnRecordReady =
+    readyBag.showBetaProofLiftOnRecordReady =
         flags.isReady &&
-        showTimelineProofMomentOnRecord &&
+        readyBag.showTimelineProofMomentOnRecord &&
         timelineProofMomentCandidate != null &&
         BetaProofLiftEngine.shouldRender(
           result: betaProofLiftTimelineCandidate,
@@ -1875,7 +1877,7 @@ abstract final class RecordSurfaceResolver {
           whatChangedQuestionActive: showWhatChangedV2,
           patternReviewInboxHasActiveItems: patternReviewInboxActiveOnRecord,
         );
-    showProBridgeVisibilityOnRecordReady =
+    readyBag.showProBridgeVisibilityOnRecordReady =
         showPostProofProBridgeOnRecord &&
         ProBridgeVisibilityEngine.shouldShow(
           input: ProBridgeTimingLoosenEngine.enrichVisibilityInput(
@@ -1896,11 +1898,11 @@ abstract final class RecordSurfaceResolver {
                   input.entryCount <= 1 && !firstProofPayoffSeenOnRecord,
               isDegradedTranscriptState: isDegradedTranscriptOnRecord,
               hasTimelineProofVisible:
-                  showTimelineProofMomentOnRecord &&
+                  readyBag.showTimelineProofMomentOnRecord &&
                   timelineProofMomentCandidate != null,
-              hasBetaTesterReportVisible: showBetaTesterReportOnRecord,
+              hasBetaTesterReportVisible: readyBag.showBetaTesterReportOnRecord,
               hasCorrectionMemoryVisible:
-                  showCorrectionMemoryOnRecordReady &&
+                  readyBag.showCorrectionMemoryOnRecordReady &&
                   correctionMemoryCandidate != null,
               feedbackState: ProMomentTimingEngine.resolveFeedbackState(
                 entries: input.journalEntries,
@@ -1918,9 +1920,9 @@ abstract final class RecordSurfaceResolver {
             beliefSurfaceVisible: archiveBeliefSurfaceCandidate.shouldShow,
             beliefEvidencePhrases:
                 archiveBeliefSurfaceCandidate.evidencePhrases,
-            hasBetaProofLiftVisible: showBetaProofLiftOnRecordReady,
+            hasBetaProofLiftVisible: readyBag.showBetaProofLiftOnRecordReady,
             hasReturnAfterProofStrengthenedVisible:
-                showReturnAfterProofStrengthenedOnRecordReady,
+                readyBag.showReturnAfterProofStrengthenedOnRecordReady,
           ),
         );
     final betaActivationPathPreAuditContext =
@@ -1928,14 +1930,14 @@ abstract final class RecordSurfaceResolver {
           source: 'record',
           entryCount: input.entryCount,
           hasTimelineProof:
-              showTimelineProofMomentOnRecord ||
-              showArchiveTimelineSpineOnRecord,
+              readyBag.showTimelineProofMomentOnRecord ||
+              readyBag.showArchiveTimelineSpineOnRecord,
           hasPaywallSeen: input.betaActivationLoopCounts.paywallSeen > 0,
           hasPurchaseCtaTapped: input.betaActivationLoopCounts.purchaseTapped > 0,
           strongerProCardVisible:
-              showProBridgeVisibilityOnRecordReady ||
-              showProEvidenceValueOnRecordReady ||
-              showProVisibilityLiftOnRecordReady,
+              readyBag.showProBridgeVisibilityOnRecordReady ||
+              readyBag.showProEvidenceValueOnRecordReady ||
+              readyBag.showProVisibilityLiftOnRecordReady,
           isReady: flags.isReady,
           isRecording: flags.isRecording,
           isPostSave: input.isPostSave,
@@ -1947,9 +1949,8 @@ abstract final class RecordSurfaceResolver {
     final betaActivationPathPreAuditResult = BetaActivationPathEngine.build(
       context: betaActivationPathPreAuditContext,
     );
-    var showBetaActivationPathCard =
+    readyBag.showBetaActivationPathCard =
         betaActivationPathPreAuditResult.shouldShow;
-    BetaActivationPathResult? betaActivationPathResult;
     final betaFeedbackCaptureRecordReadyPreAudit =
         BetaFeedbackCaptureEngine.build(
           context: BetaFeedbackCaptureEngine.buildContext(
@@ -1965,13 +1966,13 @@ abstract final class RecordSurfaceResolver {
             hasPurchaseCtaTapped: input.betaActivationLoopCounts.purchaseTapped > 0,
             isPro: input.userProState.isPro,
             timelineProofVisible:
-                showTimelineProofMomentOnRecord &&
+                readyBag.showTimelineProofMomentOnRecord &&
                 timelineProofMomentCandidate != null,
             existingProofFeedbackVisible:
                 BetaFeedbackCaptureEngine.existingProofFeedbackVisible(
                   surface: BetaProofFeedbackSurface.timelineProofMoment,
                   parentVisible:
-                      showTimelineProofMomentOnRecord &&
+                      readyBag.showTimelineProofMomentOnRecord &&
                       timelineProofMomentCandidate != null,
                   entryCount: input.entryCount,
                   hasConfirmedRepeat:
@@ -1985,14 +1986,14 @@ abstract final class RecordSurfaceResolver {
                       patternReviewInboxActiveOnRecord,
                 ),
             coreCaptureCtaVisible:
-                showFirstMomentCaptureCard ||
-                showThreeMomentCompletionCard ||
-                showSecondMomentReturnCard,
+                readyBag.showFirstMomentCaptureCard ||
+                readyBag.showThreeMomentCompletionCard ||
+                readyBag.showSecondMomentReturnCard,
           ),
         );
-    var showBetaFeedbackCaptureRecordReady =
+    readyBag.showBetaFeedbackCaptureRecordReady =
         betaFeedbackCaptureRecordReadyPreAudit.shouldShow;
-    var betaFeedbackCaptureRecordReadyResult =
+    readyBag.betaFeedbackCaptureRecordReadyResult =
         betaFeedbackCaptureRecordReadyPreAudit.shouldShow
         ? betaFeedbackCaptureRecordReadyPreAudit
         : null;
@@ -2001,7 +2002,7 @@ abstract final class RecordSurfaceResolver {
     final betaProofFeedbackRowVisibleOnTimeline =
         FirstSessionProofRepairEngine.betaProofFeedbackRowVisible(
           parentVisible:
-              showTimelineProofMomentOnRecord &&
+              readyBag.showTimelineProofMomentOnRecord &&
               timelineProofMomentCandidate != null,
           entryCount: input.entryCount,
           hasConfirmedRepeat:
@@ -2017,7 +2018,7 @@ abstract final class RecordSurfaceResolver {
       entryCount: input.entryCount,
       source: 'record_ready',
       hasTimelineProofVisible:
-          showTimelineProofMomentOnRecord &&
+          readyBag.showTimelineProofMomentOnRecord &&
           timelineProofMomentCandidate != null,
       hasConfirmedRepeat: EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(
         input.journalEntries,
@@ -2033,11 +2034,11 @@ abstract final class RecordSurfaceResolver {
       whatChangedQuestionActive: showWhatChangedV2,
       patternReviewInboxHasActiveItems: patternReviewInboxActiveOnRecord,
     );
-    var showProofQualityRepairOnRecord =
+    readyBag.showProofQualityRepairOnRecord =
         FirstSessionProofRepairEngine.shouldShowProof(
           input: proofQualityRepairInput,
         );
-    final proofQualityRepairResult = showProofQualityRepairOnRecord
+    final proofQualityRepairResult = readyBag.showProofQualityRepairOnRecord
         ? FirstSessionProofRepairEngine.buildProof(
             input: proofQualityRepairInput,
           )
@@ -2047,7 +2048,7 @@ abstract final class RecordSurfaceResolver {
       source: 'record_ready',
       isPro: input.userProState.isPro,
       hasTimelineProofVisible:
-          showTimelineProofMomentOnRecord &&
+          readyBag.showTimelineProofMomentOnRecord &&
           timelineProofMomentCandidate != null,
       hasConfirmedRepeat: EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(
         input.journalEntries,
@@ -2067,46 +2068,46 @@ abstract final class RecordSurfaceResolver {
       whatChangedQuestionActive: showWhatChangedV2,
       patternReviewInboxHasActiveItems: patternReviewInboxActiveOnRecord,
     );
-    var showProofFloorRescueOnRecord = ProofFloorRescueEngine.shouldShowCard(
+    readyBag.showProofFloorRescueOnRecord = ProofFloorRescueEngine.shouldShowCard(
       input: proofFloorRescueInput,
     );
-    final proofFloorRescueResult = showProofFloorRescueOnRecord
+    final proofFloorRescueResult = readyBag.showProofFloorRescueOnRecord
         ? ProofFloorRescueEngine.build(input: proofFloorRescueInput)
         : ProofFloorRescueResult.hidden;
     final blocksProByProofFloorOnRecord =
         ProofFloorRescueEngine.blocksProMonetization(proofFloorRescueInput);
     if (blocksProByProofFloorOnRecord) {
-      showProUnderstandingLiftOnRecordReady = false;
-      showProVisibilityLiftOnRecordReady = false;
-      showProBridgeVisibilityOnRecordReady = false;
-      showProEvidenceValueOnRecordReady = false;
-      showProEvidenceValuePrivateReportOnRecord = false;
-      showBetaRepairLabProPlacementOnRecord = false;
-      showBetaRepairLabPaywallValueOnRecord = false;
-      showBetaRepairLabPricingValueFramingOnRecord = false;
-      showBetaRepairLabPricingValidationOnRecord = false;
-      showBetaRepairLabEvidenceTrailClarityOnRecord = false;
+      readyBag.showProUnderstandingLiftOnRecordReady = false;
+      readyBag.showProVisibilityLiftOnRecordReady = false;
+      readyBag.showProBridgeVisibilityOnRecordReady = false;
+      readyBag.showProEvidenceValueOnRecordReady = false;
+      readyBag.showProEvidenceValuePrivateReportOnRecord = false;
+      readyBag.showBetaRepairLabProPlacementOnRecord = false;
+      readyBag.showBetaRepairLabPaywallValueOnRecord = false;
+      readyBag.showBetaRepairLabPricingValueFramingOnRecord = false;
+      readyBag.showBetaRepairLabPricingValidationOnRecord = false;
+      readyBag.showBetaRepairLabEvidenceTrailClarityOnRecord = false;
     }
     if (ProofFloorRescueEngine.shouldSuppressStrongProofPayoff(
       proofFloorRescueInput,
     )) {
-      showBetaProofLiftOnRecordReady = false;
+      readyBag.showBetaProofLiftOnRecordReady = false;
     }
-    if (showProofFloorRescueOnRecord) {
-      showProofQualityRepairOnRecord = false;
+    if (readyBag.showProofFloorRescueOnRecord) {
+      readyBag.showProofQualityRepairOnRecord = false;
     }
-    var showBetaRepairLabProofOnRecord = BetaRepairLabEngine.shouldShowProof(
+    readyBag.showBetaRepairLabProofOnRecord = BetaRepairLabEngine.shouldShowProof(
       input: betaRepairLabInput,
     );
-    final betaRepairLabProofResult = showBetaRepairLabProofOnRecord
+    final betaRepairLabProofResult = readyBag.showBetaRepairLabProofOnRecord
         ? BetaRepairLabEngine.buildProof(input: betaRepairLabInput)
         : BetaRepairLabProofResult.hidden;
     final blocksProCardsByProofProtectionOnRecord =
         BetaRepairLabEngine.blocksProWhenProofRepairActive(
           input: betaRepairLabInput,
-          showProofRepair: showBetaRepairLabProofOnRecord,
+          showProofRepair: readyBag.showBetaRepairLabProofOnRecord,
         );
-    showBetaRepairLabEvidenceTrailClarityOnRecord =
+    readyBag.showBetaRepairLabEvidenceTrailClarityOnRecord =
         EvidenceTrailClarityEngine.shouldShow(
           input: betaRepairLabInput,
           hasSafeAnchor: recordLoosenSignalsPreAudit.hasSafeAnchor,
@@ -2115,7 +2116,7 @@ abstract final class RecordSurfaceResolver {
               blocksProCardsByProofProtectionOnRecord,
         );
     final betaRepairLabEvidenceTrailClarityResult =
-        showBetaRepairLabEvidenceTrailClarityOnRecord
+        readyBag.showBetaRepairLabEvidenceTrailClarityOnRecord
         ? EvidenceTrailClarityEngine.build(
             input: betaRepairLabInput,
             hasSafeAnchor: recordLoosenSignalsPreAudit.hasSafeAnchor,
@@ -2126,41 +2127,41 @@ abstract final class RecordSurfaceResolver {
         : EvidenceTrailClarityResult.hidden;
     if (BetaRepairLabEngine.suppressProofFloorRescueWhenProofRepairActive(
       betaMissionEnabled: ArchiveBetaMissionGate.isEnabled,
-      showProofRepair: showBetaRepairLabProofOnRecord,
+      showProofRepair: readyBag.showBetaRepairLabProofOnRecord,
     )) {
-      showProofFloorRescueOnRecord = false;
-      showProofQualityRepairOnRecord = false;
+      readyBag.showProofFloorRescueOnRecord = false;
+      readyBag.showProofQualityRepairOnRecord = false;
     }
     if (BetaRepairLabEngine.blocksProWhenProofRepairActive(
           input: betaRepairLabInput,
-          showProofRepair: showBetaRepairLabProofOnRecord,
+          showProofRepair: readyBag.showBetaRepairLabProofOnRecord,
         ) ||
         BetaRepairLabEngine.blocksOtherProCardsWhenPlacementRepairActive(
           betaMissionEnabled: ArchiveBetaMissionGate.isEnabled,
-          showProPlacement: showBetaRepairLabProPlacementOnRecord,
+          showProPlacement: readyBag.showBetaRepairLabProPlacementOnRecord,
         ) ||
         PaywallValueRepairEngine.blocksOtherProCardsWhenPaywallValueRepairActive(
           betaMissionEnabled: ArchiveBetaMissionGate.isEnabled,
-          showPaywallValue: showBetaRepairLabPaywallValueOnRecord,
+          showPaywallValue: readyBag.showBetaRepairLabPaywallValueOnRecord,
         ) ||
         PricingValueFramingEngine.blocksOtherProCardsWhenPricingValueFramingActive(
           betaMissionEnabled: ArchiveBetaMissionGate.isEnabled,
-          showPricingValueFraming: showBetaRepairLabPricingValueFramingOnRecord,
+          showPricingValueFraming: readyBag.showBetaRepairLabPricingValueFramingOnRecord,
         ) ||
         PricingValidationEngine.blocksOtherProCardsWhenPricingValidationActive(
           betaMissionEnabled: ArchiveBetaMissionGate.isEnabled,
-          showPricingValidation: showBetaRepairLabPricingValidationOnRecord,
+          showPricingValidation: readyBag.showBetaRepairLabPricingValidationOnRecord,
         ) ||
         EvidenceTrailClarityEngine.blocksOtherProCardsWhenEvidenceTrailClarityActive(
           betaMissionEnabled: ArchiveBetaMissionGate.isEnabled,
           showEvidenceTrailClarity:
-              showBetaRepairLabEvidenceTrailClarityOnRecord,
+              readyBag.showBetaRepairLabEvidenceTrailClarityOnRecord,
         )) {
-      showProUnderstandingLiftOnRecordReady = false;
-      showProVisibilityLiftOnRecordReady = false;
-      showProBridgeVisibilityOnRecordReady = false;
-      showProEvidenceValueOnRecordReady = false;
-      showProEvidenceValuePrivateReportOnRecord = false;
+      readyBag.showProUnderstandingLiftOnRecordReady = false;
+      readyBag.showProVisibilityLiftOnRecordReady = false;
+      readyBag.showProBridgeVisibilityOnRecordReady = false;
+      readyBag.showProEvidenceValueOnRecordReady = false;
+      readyBag.showProEvidenceValuePrivateReportOnRecord = false;
     }
     SurfacePriorityResult? recordReadySurfacePriority;
     ProBridgeTimingLoosenSignals? recordLoosenSignals;
@@ -2171,230 +2172,230 @@ abstract final class RecordSurfaceResolver {
         entryCount: input.entryCount,
         source: 'record',
         candidates: SurfacePriorityCandidates.recordReady(
-          firstSessionProofRepair: showFirstSessionCaptureRepairCard,
-          firstSessionLift: showFirstSessionLiftCard,
-          firstSaveLift: showFirstSaveLiftCard,
+          firstSessionProofRepair: readyBag.showFirstSessionCaptureRepairCard,
+          firstSessionLift: readyBag.showFirstSessionLiftCard,
+          firstSaveLift: readyBag.showFirstSaveLiftCard,
           betaActivationPath:
-              showBetaActivationPathCard &&
+              readyBag.showBetaActivationPathCard &&
               betaActivationPathPreAuditResult.slot ==
                   BetaActivationPathSlot.guidance,
           betaActivationPathRevenue:
-              showBetaActivationPathCard &&
+              readyBag.showBetaActivationPathCard &&
               betaActivationPathPreAuditResult.slot ==
                   BetaActivationPathSlot.revenue,
-          threeMomentCompletion: showThreeMomentCompletionCard,
-          firstMomentCapture: showFirstMomentCaptureCard,
-          secondMomentReturn: showSecondMomentReturnCard,
+          threeMomentCompletion: readyBag.showThreeMomentCompletionCard,
+          firstMomentCapture: readyBag.showFirstMomentCaptureCard,
+          secondMomentReturn: readyBag.showSecondMomentReturnCard,
           returnAfterProofStrengthened:
-              showReturnAfterProofStrengthenedOnRecordReady,
-          returnAfterProofLiftV2: showReturnAfterProofLiftV2OnRecordReady,
-          returnAfterProof: showReturnAfterProofGenericOnRecordReady,
-          lowFrictionReturn: showLowFrictionReturnCard,
-          whatToNoticeNext: showWhatToNoticeNextCard,
-          betaTodaySummary: showBetaTodaySummaryCard,
-          openCapturePromptChips: showOpenCapturePromptChips,
-          captureFreedomLine: showCaptureFreedomLine,
-          firstRunPositioning: showFirstRunPositioningCard,
+              readyBag.showReturnAfterProofStrengthenedOnRecordReady,
+          returnAfterProofLiftV2: readyBag.showReturnAfterProofLiftV2OnRecordReady,
+          returnAfterProof: readyBag.showReturnAfterProofGenericOnRecordReady,
+          lowFrictionReturn: readyBag.showLowFrictionReturnCard,
+          whatToNoticeNext: readyBag.showWhatToNoticeNextCard,
+          betaTodaySummary: readyBag.showBetaTodaySummaryCard,
+          openCapturePromptChips: readyBag.showOpenCapturePromptChips,
+          captureFreedomLine: readyBag.showCaptureFreedomLine,
+          firstRunPositioning: readyBag.showFirstRunPositioningCard,
           timelineProofMoment:
-              showTimelineProofMomentOnRecord &&
+              readyBag.showTimelineProofMomentOnRecord &&
               timelineProofMomentCandidate != null,
           archiveTimelineSpine:
-              showArchiveTimelineSpineOnRecord &&
+              readyBag.showArchiveTimelineSpineOnRecord &&
               archiveTimelineSpineCandidate != null,
-          timelinePositioning: showTimelinePositioningOnRecordReady,
+          timelinePositioning: readyBag.showTimelinePositioningOnRecordReady,
           currentRelevance:
-              showCurrentRelevanceOnRecordReady &&
+              readyBag.showCurrentRelevanceOnRecordReady &&
               currentRelevanceCandidate != null,
           correctionMemory:
-              showCorrectionMemoryOnRecordReady &&
+              readyBag.showCorrectionMemoryOnRecordReady &&
               correctionMemoryCandidate != null,
           notRelevantRecovery:
-              showNotRelevantRecoveryOnRecordReady &&
+              readyBag.showNotRelevantRecoveryOnRecordReady &&
               notRelevantRecoveryCandidate.shouldShow,
           proofQualityResponse:
-              showProofQualityResponseOnRecordReady &&
+              readyBag.showProofQualityResponseOnRecordReady &&
               proofQualityResponseTimelineCandidate.shouldShow,
-          proofQualityRepair: showProofQualityRepairOnRecord,
-          proofFloorRescue: showProofFloorRescueOnRecord,
-          betaProofLift: showBetaProofLiftOnRecordReady,
+          proofQualityRepair: readyBag.showProofQualityRepairOnRecord,
+          proofFloorRescue: readyBag.showProofFloorRescueOnRecord,
+          betaProofLift: readyBag.showBetaProofLiftOnRecordReady,
           evidenceWeighting:
-              showEvidenceWeightingOnRecordReady &&
+              readyBag.showEvidenceWeightingOnRecordReady &&
               evidenceWeightingCandidate != null,
           proofSpecificity:
-              showProofSpecificityOnRecordReady &&
+              readyBag.showProofSpecificityOnRecordReady &&
               proofSpecificityCandidate.shouldShow,
           presentDayRelevance:
-              showPresentDayRelevanceOnRecordReady &&
+              readyBag.showPresentDayRelevanceOnRecordReady &&
               presentDayRelevanceCandidate != null,
           patternConfidence:
-              showPatternConfidenceExplanationOnRecordReady &&
+              readyBag.showPatternConfidenceExplanationOnRecordReady &&
               patternConfidenceExplanationCandidate != null,
-          betaTesterReport: showBetaTesterReportOnRecord,
-          proUnderstandingLift: showProUnderstandingLiftOnRecordReady,
-          proVisibilityLift: showProVisibilityLiftOnRecordReady,
-          proBridgeVisibility: showProBridgeVisibilityOnRecordReady,
-          proEvidenceValue: showProEvidenceValueOnRecordReady,
-          privateReportProBridge: showProEvidenceValuePrivateReportOnRecord,
+          betaTesterReport: readyBag.showBetaTesterReportOnRecord,
+          proUnderstandingLift: readyBag.showProUnderstandingLiftOnRecordReady,
+          proVisibilityLift: readyBag.showProVisibilityLiftOnRecordReady,
+          proBridgeVisibility: readyBag.showProBridgeVisibilityOnRecordReady,
+          proEvidenceValue: readyBag.showProEvidenceValueOnRecordReady,
+          privateReportProBridge: readyBag.showProEvidenceValuePrivateReportOnRecord,
           suppressLegacyEducation: suppressLegacyEducationCardsForSpineOnRecord,
-          betaFeedbackCapture: showBetaFeedbackCaptureRecordReady,
+          betaFeedbackCapture: readyBag.showBetaFeedbackCaptureRecordReady,
         ),
       );
       SurfacePriorityAnalytics.seen(result: recordReadySurfacePriority);
       final audit = recordReadySurfacePriority;
-      showFirstSessionCaptureRepairCard = audit.isVisible(
+      readyBag.showFirstSessionCaptureRepairCard = audit.isVisible(
         SurfacePriorityCardKey.firstSessionProofRepair,
-        candidate: showFirstSessionCaptureRepairCard,
+        candidate: readyBag.showFirstSessionCaptureRepairCard,
       );
-      showFirstSessionLiftCard = audit.isVisible(
+      readyBag.showFirstSessionLiftCard = audit.isVisible(
         SurfacePriorityCardKey.firstSessionLift,
-        candidate: showFirstSessionLiftCard,
+        candidate: readyBag.showFirstSessionLiftCard,
       );
-      showFirstSaveLiftCard = audit.isVisible(
+      readyBag.showFirstSaveLiftCard = audit.isVisible(
         SurfacePriorityCardKey.firstSaveLift,
-        candidate: showFirstSaveLiftCard,
+        candidate: readyBag.showFirstSaveLiftCard,
       );
-      showFirstMomentCaptureCard = audit.isVisible(
+      readyBag.showFirstMomentCaptureCard = audit.isVisible(
         SurfacePriorityCardKey.firstMomentCapture,
-        candidate: showFirstMomentCaptureCard,
+        candidate: readyBag.showFirstMomentCaptureCard,
       );
-      showThreeMomentCompletionCard = audit.isVisible(
+      readyBag.showThreeMomentCompletionCard = audit.isVisible(
         SurfacePriorityCardKey.threeMomentCompletion,
-        candidate: showThreeMomentCompletionCard,
+        candidate: readyBag.showThreeMomentCompletionCard,
       );
-      showSecondMomentReturnCard = audit.isVisible(
+      readyBag.showSecondMomentReturnCard = audit.isVisible(
         SurfacePriorityCardKey.secondMomentReturn,
-        candidate: showSecondMomentReturnCard,
+        candidate: readyBag.showSecondMomentReturnCard,
       );
-      showReturnAfterProofStrengthenedOnRecordReady = audit.isVisible(
+      readyBag.showReturnAfterProofStrengthenedOnRecordReady = audit.isVisible(
         SurfacePriorityCardKey.returnAfterProofStrengthened,
-        candidate: showReturnAfterProofStrengthenedOnRecordReady,
+        candidate: readyBag.showReturnAfterProofStrengthenedOnRecordReady,
       );
-      showReturnAfterProofLiftV2OnRecordReady = audit.isVisible(
+      readyBag.showReturnAfterProofLiftV2OnRecordReady = audit.isVisible(
         SurfacePriorityCardKey.returnAfterProofLiftV2,
-        candidate: showReturnAfterProofLiftV2OnRecordReady,
+        candidate: readyBag.showReturnAfterProofLiftV2OnRecordReady,
       );
-      showReturnAfterProofGenericOnRecordReady = audit.isVisible(
+      readyBag.showReturnAfterProofGenericOnRecordReady = audit.isVisible(
         SurfacePriorityCardKey.returnAfterProof,
-        candidate: showReturnAfterProofGenericOnRecordReady,
+        candidate: readyBag.showReturnAfterProofGenericOnRecordReady,
       );
-      showReturnAfterProofOnRecordReady =
-          showReturnAfterProofStrengthenedOnRecordReady ||
-          showReturnAfterProofGenericOnRecordReady;
-      showLowFrictionReturnCard = audit.isVisible(
+      readyBag.showReturnAfterProofOnRecordReady =
+          readyBag.showReturnAfterProofStrengthenedOnRecordReady ||
+          readyBag.showReturnAfterProofGenericOnRecordReady;
+      readyBag.showLowFrictionReturnCard = audit.isVisible(
         SurfacePriorityCardKey.lowFrictionReturn,
-        candidate: showLowFrictionReturnCard,
+        candidate: readyBag.showLowFrictionReturnCard,
       );
-      showWhatToNoticeNextCard = audit.isVisible(
+      readyBag.showWhatToNoticeNextCard = audit.isVisible(
         SurfacePriorityCardKey.whatToNoticeNext,
-        candidate: showWhatToNoticeNextCard,
+        candidate: readyBag.showWhatToNoticeNextCard,
       );
-      showBetaTodaySummaryCard = audit.isVisible(
+      readyBag.showBetaTodaySummaryCard = audit.isVisible(
         SurfacePriorityCardKey.betaTodaySummary,
-        candidate: showBetaTodaySummaryCard,
+        candidate: readyBag.showBetaTodaySummaryCard,
       );
-      showOpenCapturePromptChips = audit.isVisible(
+      readyBag.showOpenCapturePromptChips = audit.isVisible(
         SurfacePriorityCardKey.openCapturePromptChips,
-        candidate: showOpenCapturePromptChips,
+        candidate: readyBag.showOpenCapturePromptChips,
       );
-      showCaptureFreedomLine = audit.isVisible(
+      readyBag.showCaptureFreedomLine = audit.isVisible(
         SurfacePriorityCardKey.captureFreedomLine,
-        candidate: showCaptureFreedomLine,
+        candidate: readyBag.showCaptureFreedomLine,
       );
-      showFirstRunPositioningCard = audit.isVisible(
+      readyBag.showFirstRunPositioningCard = audit.isVisible(
         SurfacePriorityCardKey.firstRunPositioning,
-        candidate: showFirstRunPositioningCard,
+        candidate: readyBag.showFirstRunPositioningCard,
       );
-      showTimelineProofMomentOnRecord = audit.isVisible(
+      readyBag.showTimelineProofMomentOnRecord = audit.isVisible(
         SurfacePriorityCardKey.timelineProofMoment,
         candidate:
-            showTimelineProofMomentOnRecord &&
+            readyBag.showTimelineProofMomentOnRecord &&
             timelineProofMomentCandidate != null,
       );
-      showArchiveTimelineSpineOnRecord = audit.isVisible(
+      readyBag.showArchiveTimelineSpineOnRecord = audit.isVisible(
         SurfacePriorityCardKey.archiveTimelineSpine,
         candidate:
-            showArchiveTimelineSpineOnRecord &&
+            readyBag.showArchiveTimelineSpineOnRecord &&
             archiveTimelineSpineCandidate != null,
       );
-      showTimelinePositioningOnRecordReady = audit.isVisible(
+      readyBag.showTimelinePositioningOnRecordReady = audit.isVisible(
         SurfacePriorityCardKey.timelinePositioning,
-        candidate: showTimelinePositioningOnRecordReady,
+        candidate: readyBag.showTimelinePositioningOnRecordReady,
       );
-      showCurrentRelevanceOnRecordReady = audit.isVisible(
+      readyBag.showCurrentRelevanceOnRecordReady = audit.isVisible(
         SurfacePriorityCardKey.currentRelevance,
         candidate:
-            showCurrentRelevanceOnRecordReady &&
+            readyBag.showCurrentRelevanceOnRecordReady &&
             currentRelevanceCandidate != null,
       );
-      showCorrectionMemoryOnRecordReady = audit.isVisible(
+      readyBag.showCorrectionMemoryOnRecordReady = audit.isVisible(
         SurfacePriorityCardKey.correctionMemory,
         candidate:
-            showCorrectionMemoryOnRecordReady &&
+            readyBag.showCorrectionMemoryOnRecordReady &&
             correctionMemoryCandidate != null,
       );
-      showNotRelevantRecoveryOnRecordReady = audit.isVisible(
+      readyBag.showNotRelevantRecoveryOnRecordReady = audit.isVisible(
         SurfacePriorityCardKey.notRelevantRecovery,
         candidate:
-            showNotRelevantRecoveryOnRecordReady &&
+            readyBag.showNotRelevantRecoveryOnRecordReady &&
             notRelevantRecoveryCandidate.shouldShow,
       );
-      showProofQualityResponseOnRecordReady = audit.isVisible(
+      readyBag.showProofQualityResponseOnRecordReady = audit.isVisible(
         SurfacePriorityCardKey.proofQualityResponse,
         candidate:
-            showProofQualityResponseOnRecordReady &&
+            readyBag.showProofQualityResponseOnRecordReady &&
             proofQualityResponseTimelineCandidate.shouldShow,
       );
-      showBetaProofLiftOnRecordReady = audit.isVisible(
+      readyBag.showBetaProofLiftOnRecordReady = audit.isVisible(
         SurfacePriorityCardKey.betaProofLift,
-        candidate: showBetaProofLiftOnRecordReady,
+        candidate: readyBag.showBetaProofLiftOnRecordReady,
       );
-      showEvidenceWeightingOnRecordReady = audit.isVisible(
+      readyBag.showEvidenceWeightingOnRecordReady = audit.isVisible(
         SurfacePriorityCardKey.evidenceWeighting,
         candidate:
-            showEvidenceWeightingOnRecordReady &&
+            readyBag.showEvidenceWeightingOnRecordReady &&
             evidenceWeightingCandidate != null,
       );
-      showProofSpecificityOnRecordReady = audit.isVisible(
+      readyBag.showProofSpecificityOnRecordReady = audit.isVisible(
         SurfacePriorityCardKey.proofSpecificity,
         candidate:
-            showProofSpecificityOnRecordReady &&
+            readyBag.showProofSpecificityOnRecordReady &&
             proofSpecificityCandidate.shouldShow,
       );
-      showPresentDayRelevanceOnRecordReady = audit.isVisible(
+      readyBag.showPresentDayRelevanceOnRecordReady = audit.isVisible(
         SurfacePriorityCardKey.presentDayRelevance,
         candidate:
-            showPresentDayRelevanceOnRecordReady &&
+            readyBag.showPresentDayRelevanceOnRecordReady &&
             presentDayRelevanceCandidate != null,
       );
-      showPatternConfidenceExplanationOnRecordReady = audit.isVisible(
+      readyBag.showPatternConfidenceExplanationOnRecordReady = audit.isVisible(
         SurfacePriorityCardKey.patternConfidence,
         candidate:
-            showPatternConfidenceExplanationOnRecordReady &&
+            readyBag.showPatternConfidenceExplanationOnRecordReady &&
             patternConfidenceExplanationCandidate != null,
       );
-      showBetaTesterReportOnRecord = audit.isVisible(
+      readyBag.showBetaTesterReportOnRecord = audit.isVisible(
         SurfacePriorityCardKey.betaTesterReport,
-        candidate: showBetaTesterReportOnRecord,
+        candidate: readyBag.showBetaTesterReportOnRecord,
       );
-      showProBridgeVisibilityOnRecordReady = audit.isVisible(
+      readyBag.showProBridgeVisibilityOnRecordReady = audit.isVisible(
         SurfacePriorityCardKey.proBridgeVisibility,
-        candidate: showProBridgeVisibilityOnRecordReady,
+        candidate: readyBag.showProBridgeVisibilityOnRecordReady,
       );
-      showProUnderstandingLiftOnRecordReady = audit.isVisible(
+      readyBag.showProUnderstandingLiftOnRecordReady = audit.isVisible(
         SurfacePriorityCardKey.proUnderstandingLift,
-        candidate: showProUnderstandingLiftOnRecordReady,
+        candidate: readyBag.showProUnderstandingLiftOnRecordReady,
       );
-      showProVisibilityLiftOnRecordReady = audit.isVisible(
+      readyBag.showProVisibilityLiftOnRecordReady = audit.isVisible(
         SurfacePriorityCardKey.proVisibilityLift,
-        candidate: showProVisibilityLiftOnRecordReady,
+        candidate: readyBag.showProVisibilityLiftOnRecordReady,
       );
-      showProEvidenceValueOnRecordReady = audit.isVisible(
+      readyBag.showProEvidenceValueOnRecordReady = audit.isVisible(
         SurfacePriorityCardKey.proEvidenceValue,
-        candidate: showProEvidenceValueOnRecordReady,
+        candidate: readyBag.showProEvidenceValueOnRecordReady,
       );
-      showProEvidenceValuePrivateReportOnRecord = audit.isVisible(
+      readyBag.showProEvidenceValuePrivateReportOnRecord = audit.isVisible(
         SurfacePriorityCardKey.privateReportProBridge,
-        candidate: showProEvidenceValuePrivateReportOnRecord,
+        candidate: readyBag.showProEvidenceValuePrivateReportOnRecord,
       );
       recordLoosenSignals = ProBridgeTimingLoosenEngine.resolveSignals(
         entries: input.journalEntries,
@@ -2417,15 +2418,15 @@ abstract final class RecordSurfaceResolver {
               input.journalEntries,
             ),
         hasTimelineProofVisible:
-            showTimelineProofMomentOnRecord &&
+            readyBag.showTimelineProofMomentOnRecord &&
             timelineProofMomentCandidate != null,
-        hasBetaTesterReportVisible: showBetaTesterReportOnRecord,
+        hasBetaTesterReportVisible: readyBag.showBetaTesterReportOnRecord,
         hasCorrectionMemoryVisible:
-            showCorrectionMemoryOnRecordReady &&
+            readyBag.showCorrectionMemoryOnRecordReady &&
             correctionMemoryCandidate != null,
-        hasBetaProofLiftVisible: showBetaProofLiftOnRecordReady,
+        hasBetaProofLiftVisible: readyBag.showBetaProofLiftOnRecordReady,
         hasReturnAfterProofStrengthenedVisible:
-            showReturnAfterProofStrengthenedOnRecordReady,
+            readyBag.showReturnAfterProofStrengthenedOnRecordReady,
         feedbackState: ProMomentTimingEngine.resolveFeedbackState(
           entries: input.journalEntries,
           surface: ProofQualityResponseSurface.timelineProofMoment,
@@ -2438,34 +2439,34 @@ abstract final class RecordSurfaceResolver {
         hasSolidStrongPatternWithSafeAnchors:
             recordLoosenSignals.hasSolidStrongPatternWithSafeAnchors,
       );
-      showProBridgeVisibilityOnRecordReady = ProMomentTimingEngine.applyGate(
-        candidate: showProBridgeVisibilityOnRecordReady,
+      readyBag.showProBridgeVisibilityOnRecordReady = ProMomentTimingEngine.applyGate(
+        candidate: readyBag.showProBridgeVisibilityOnRecordReady,
         timing: recordReadyProTiming.copyWith(
           proSlotAvailable:
-              !showProUnderstandingLiftOnRecordReady &&
-              !showProVisibilityLiftOnRecordReady,
+              !readyBag.showProUnderstandingLiftOnRecordReady &&
+              !readyBag.showProVisibilityLiftOnRecordReady,
         ),
       );
-      showProEvidenceValueOnRecordReady = ProMomentTimingEngine.applyGate(
-        candidate: showProEvidenceValueOnRecordReady,
+      readyBag.showProEvidenceValueOnRecordReady = ProMomentTimingEngine.applyGate(
+        candidate: readyBag.showProEvidenceValueOnRecordReady,
         timing: recordReadyProTiming.copyWith(
           proSlotAvailable:
-              !showProUnderstandingLiftOnRecordReady &&
-              !showProVisibilityLiftOnRecordReady &&
-              !showProBridgeVisibilityOnRecordReady,
+              !readyBag.showProUnderstandingLiftOnRecordReady &&
+              !readyBag.showProVisibilityLiftOnRecordReady &&
+              !readyBag.showProBridgeVisibilityOnRecordReady,
         ),
       );
-      showProEvidenceValuePrivateReportOnRecord =
+      readyBag.showProEvidenceValuePrivateReportOnRecord =
           ProMomentTimingEngine.applyGate(
-            candidate: showProEvidenceValuePrivateReportOnRecord,
+            candidate: readyBag.showProEvidenceValuePrivateReportOnRecord,
             timing: recordReadyProTiming.copyWith(
               hasMonthlyPrivateReportPreviewVisible: true,
               proSlotAvailable:
-                  showProEvidenceValuePrivateReportOnRecord &&
-                  !showProUnderstandingLiftOnRecordReady &&
-                  !showProVisibilityLiftOnRecordReady &&
-                  !showProBridgeVisibilityOnRecordReady &&
-                  !showProEvidenceValueOnRecordReady,
+                  readyBag.showProEvidenceValuePrivateReportOnRecord &&
+                  !readyBag.showProUnderstandingLiftOnRecordReady &&
+                  !readyBag.showProVisibilityLiftOnRecordReady &&
+                  !readyBag.showProBridgeVisibilityOnRecordReady &&
+                  !readyBag.showProEvidenceValueOnRecordReady,
             ),
           );
       betaActivationPathFinalContext =
@@ -2473,15 +2474,15 @@ abstract final class RecordSurfaceResolver {
             source: 'record',
             entryCount: input.entryCount,
             hasTimelineProof:
-                showTimelineProofMomentOnRecord ||
-                showArchiveTimelineSpineOnRecord,
+                readyBag.showTimelineProofMomentOnRecord ||
+                readyBag.showArchiveTimelineSpineOnRecord,
             hasPaywallSeen: input.betaActivationLoopCounts.paywallSeen > 0,
             hasPurchaseCtaTapped: input.betaActivationLoopCounts.purchaseTapped > 0,
             strongerProCardVisible:
-                showProBridgeVisibilityOnRecordReady ||
-                showProEvidenceValueOnRecordReady ||
-                showProUnderstandingLiftOnRecordReady ||
-                showProVisibilityLiftOnRecordReady,
+                readyBag.showProBridgeVisibilityOnRecordReady ||
+                readyBag.showProEvidenceValueOnRecordReady ||
+                readyBag.showProUnderstandingLiftOnRecordReady ||
+                readyBag.showProVisibilityLiftOnRecordReady,
             isReady: flags.isReady,
             isRecording: flags.isRecording,
             isPostSave: input.isPostSave,
@@ -2490,64 +2491,64 @@ abstract final class RecordSurfaceResolver {
             patternReviewInboxHasActiveItems: patternReviewInboxActiveOnRecord,
             isPermissionBlocked: flags.isPermissionBlocked,
           );
-      betaActivationPathResult = BetaActivationPathEngine.build(
+      readyBag.betaActivationPathResult = BetaActivationPathEngine.build(
         context: betaActivationPathFinalContext,
       );
-      showBetaActivationPathCard = betaActivationPathResult.shouldShow;
-      if (betaActivationPathResult.slot == BetaActivationPathSlot.guidance) {
-        showBetaActivationPathCard = audit.isVisible(
+      readyBag.showBetaActivationPathCard = readyBag.betaActivationPathResult!.shouldShow;
+      if (readyBag.betaActivationPathResult!.slot == BetaActivationPathSlot.guidance) {
+        readyBag.showBetaActivationPathCard = audit.isVisible(
           SurfacePriorityCardKey.betaActivationPath,
-          candidate: showBetaActivationPathCard,
+          candidate: readyBag.showBetaActivationPathCard,
         );
-      } else if (betaActivationPathResult.slot ==
+      } else if (readyBag.betaActivationPathResult!.slot ==
           BetaActivationPathSlot.revenue) {
-        showBetaActivationPathCard = audit.isVisible(
+        readyBag.showBetaActivationPathCard = audit.isVisible(
           SurfacePriorityCardKey.betaActivationPathRevenue,
-          candidate: showBetaActivationPathCard,
+          candidate: readyBag.showBetaActivationPathCard,
         );
       } else {
-        showBetaActivationPathCard = false;
+        readyBag.showBetaActivationPathCard = false;
       }
-      showProofQualityRepairOnRecord = audit.isVisible(
+      readyBag.showProofQualityRepairOnRecord = audit.isVisible(
         SurfacePriorityCardKey.proofQualityRepair,
-        candidate: showProofQualityRepairOnRecord,
+        candidate: readyBag.showProofQualityRepairOnRecord,
       );
-      showProofFloorRescueOnRecord = audit.isVisible(
+      readyBag.showProofFloorRescueOnRecord = audit.isVisible(
         SurfacePriorityCardKey.proofFloorRescue,
-        candidate: showProofFloorRescueOnRecord,
+        candidate: readyBag.showProofFloorRescueOnRecord,
       );
-      if (showProofFloorRescueOnRecord) {
-        showProofQualityRepairOnRecord = false;
+      if (readyBag.showProofFloorRescueOnRecord) {
+        readyBag.showProofQualityRepairOnRecord = false;
       }
-      if (showFirstSessionCaptureRepairCard) {
-        showFirstSessionLiftCard = false;
-        showFirstSaveLiftCard = false;
-        showBetaActivationPathCard = false;
-      } else if (showFirstSessionLiftCard) {
-        showFirstSaveLiftCard = false;
-        showBetaActivationPathCard = false;
-      } else if (showFirstSaveLiftCard) {
-        showBetaActivationPathCard = false;
+      if (readyBag.showFirstSessionCaptureRepairCard) {
+        readyBag.showFirstSessionLiftCard = false;
+        readyBag.showFirstSaveLiftCard = false;
+        readyBag.showBetaActivationPathCard = false;
+      } else if (readyBag.showFirstSessionLiftCard) {
+        readyBag.showFirstSaveLiftCard = false;
+        readyBag.showBetaActivationPathCard = false;
+      } else if (readyBag.showFirstSaveLiftCard) {
+        readyBag.showBetaActivationPathCard = false;
       }
-      if (showBetaActivationPathCard &&
-          betaActivationPathResult.slot == BetaActivationPathSlot.guidance) {
-        showThreeMomentCompletionCard = false;
-        showFirstMomentCaptureCard = false;
-        showSecondMomentReturnCard = false;
+      if (readyBag.showBetaActivationPathCard &&
+          readyBag.betaActivationPathResult!.slot == BetaActivationPathSlot.guidance) {
+        readyBag.showThreeMomentCompletionCard = false;
+        readyBag.showFirstMomentCaptureCard = false;
+        readyBag.showSecondMomentReturnCard = false;
       }
-      showBetaFeedbackCaptureRecordReady = audit.isVisible(
+      readyBag.showBetaFeedbackCaptureRecordReady = audit.isVisible(
         SurfacePriorityCardKey.betaFeedbackCapture,
-        candidate: showBetaFeedbackCaptureRecordReady,
+        candidate: readyBag.showBetaFeedbackCaptureRecordReady,
       );
-      betaFeedbackCaptureRecordReadyResult = showBetaFeedbackCaptureRecordReady
+      readyBag.betaFeedbackCaptureRecordReadyResult = readyBag.showBetaFeedbackCaptureRecordReady
           ? betaFeedbackCaptureRecordReadyPreAudit
           : null;
     }
-    if (showTimelineProofMomentOnRecord &&
+    if (readyBag.showTimelineProofMomentOnRecord &&
         timelineProofMomentCandidate != null) {
       ShareableProofSeenLatch.markTimelineProofMomentSeen();
     }
-    if (showBetaTesterReportOnRecord) {
+    if (readyBag.showBetaTesterReportOnRecord) {
       ShareableProofSeenLatch.markBetaTesterReportSeen();
     }
     final shareableNonPrivateProofResult = ShareableProofEngine.build(
@@ -2571,7 +2572,7 @@ abstract final class RecordSurfaceResolver {
       beliefEvidencePhrases: archiveBeliefSurfaceCandidate.evidencePhrases,
     );
     final timelineProofParentVisible =
-        showTimelineProofMomentOnRecord && timelineProofMomentCandidate != null;
+        readyBag.showTimelineProofMomentOnRecord && timelineProofMomentCandidate != null;
     var showProofSpecificityBoostOnTimelineProof =
         flags.isReady &&
         ProofSpecificityBoostEngine.shouldRender(
@@ -2587,7 +2588,7 @@ abstract final class RecordSurfaceResolver {
           patternReviewInboxHasActiveItems: patternReviewInboxActiveOnRecord,
         );
     final showProofQualityResponseUnderTimelineProof =
-        showTimelineProofMomentOnRecord &&
+        readyBag.showTimelineProofMomentOnRecord &&
         timelineProofMomentCandidate != null &&
         ProofQualityResponseEngine.shouldRender(
           result: proofQualityResponseTimelineCandidate,
@@ -2601,7 +2602,7 @@ abstract final class RecordSurfaceResolver {
           patternReviewInboxHasActiveItems: patternReviewInboxActiveOnRecord,
         );
     final showProofQualityResponseUnderArchiveSpine =
-        showArchiveTimelineSpineOnRecord &&
+        readyBag.showArchiveTimelineSpineOnRecord &&
         archiveTimelineSpineCandidate != null &&
         !showProofQualityResponseUnderTimelineProof &&
         ProofQualityResponseEngine.shouldRender(
@@ -2616,7 +2617,7 @@ abstract final class RecordSurfaceResolver {
           patternReviewInboxHasActiveItems: patternReviewInboxActiveOnRecord,
         );
     var showNotRelevantRecoveryUnderTimelineProof =
-        showTimelineProofMomentOnRecord &&
+        readyBag.showTimelineProofMomentOnRecord &&
         timelineProofMomentCandidate != null &&
         NotRelevantRecoveryEngine.shouldRender(
           result: notRelevantRecoveryCandidate,
@@ -2628,11 +2629,11 @@ abstract final class RecordSurfaceResolver {
           patternReviewInboxHasActiveItems: patternReviewInboxActiveOnRecord,
         );
     if (showNotRelevantRecoveryUnderTimelineProof) {
-      showNotRelevantRecoveryOnRecordReady = false;
+      readyBag.showNotRelevantRecoveryOnRecordReady = false;
     }
     if (showProofQualityResponseUnderTimelineProof ||
         showProofQualityResponseUnderArchiveSpine) {
-      showProofQualityResponseOnRecordReady = false;
+      readyBag.showProofQualityResponseOnRecordReady = false;
       if (ProofQualityResponseEngine.coversLegacyBoost(
         result: proofQualityResponseTimelineCandidate,
         parentVisible: true,
@@ -2669,12 +2670,12 @@ abstract final class RecordSurfaceResolver {
             patternReviewInboxHasActiveItems: patternReviewInboxActiveOnRecord,
           )) {
         showNotRelevantRecoveryUnderTimelineProof = false;
-        showNotRelevantRecoveryOnRecordReady = false;
+        readyBag.showNotRelevantRecoveryOnRecordReady = false;
       }
     }
     final showBetaProofLiftUnderTimelineProof =
-        showBetaProofLiftOnRecordReady &&
-        showTimelineProofMomentOnRecord &&
+        readyBag.showBetaProofLiftOnRecordReady &&
+        readyBag.showTimelineProofMomentOnRecord &&
         timelineProofMomentCandidate != null;
     if (BetaProofLiftEngine.coversLegacyBoost(
       result: betaProofLiftTimelineCandidate,
@@ -2690,76 +2691,76 @@ abstract final class RecordSurfaceResolver {
       showProofSpecificityBoostOnTimelineProof = false;
     }
     final showReturnAfterProofLiftV2BelowProofOnRecord =
-        showReturnAfterProofLiftV2OnRecordReady &&
-        ((showTimelineProofMomentOnRecord &&
+        readyBag.showReturnAfterProofLiftV2OnRecordReady &&
+        ((readyBag.showTimelineProofMomentOnRecord &&
                 timelineProofMomentCandidate != null) ||
-            showBetaTesterReportOnRecord);
+            readyBag.showBetaTesterReportOnRecord);
     final showReturnAfterProofLiftV2InGuidanceStack =
-        showReturnAfterProofLiftV2OnRecordReady &&
+        readyBag.showReturnAfterProofLiftV2OnRecordReady &&
         !showReturnAfterProofLiftV2BelowProofOnRecord;
     final showReturnAfterProofBelowProofOnRecord =
-        showReturnAfterProofOnRecordReady &&
-        !showReturnAfterProofLiftV2OnRecordReady &&
-        ((showTimelineProofMomentOnRecord &&
+        readyBag.showReturnAfterProofOnRecordReady &&
+        !readyBag.showReturnAfterProofLiftV2OnRecordReady &&
+        ((readyBag.showTimelineProofMomentOnRecord &&
                 timelineProofMomentCandidate != null) ||
-            showBetaTesterReportOnRecord);
+            readyBag.showBetaTesterReportOnRecord);
     final showReturnAfterProofInGuidanceStack =
-        showReturnAfterProofOnRecordReady &&
+        readyBag.showReturnAfterProofOnRecordReady &&
         !showReturnAfterProofBelowProofOnRecord;
     if (firstUseSimplifiedRecord) {
-      showFirstSaveLiftCard = false;
-      showFirstSessionLiftCard = false;
-      showFirstSessionCaptureRepairCard = false;
-      showSecondMomentReturnCard = false;
-      showBetaActivationPathCard = false;
-      showCaptureFreedomLine = false;
-      showLowFrictionReturnCard = false;
-      showBetaTodaySummaryCard = false;
-      showWhatToNoticeNextCard = false;
-      showFirstMomentCaptureCard = false;
-      showThreeMomentCompletionCard = false;
-      showOpenCapturePromptChips = false;
+      readyBag.showFirstSaveLiftCard = false;
+      readyBag.showFirstSessionLiftCard = false;
+      readyBag.showFirstSessionCaptureRepairCard = false;
+      readyBag.showSecondMomentReturnCard = false;
+      readyBag.showBetaActivationPathCard = false;
+      readyBag.showCaptureFreedomLine = false;
+      readyBag.showLowFrictionReturnCard = false;
+      readyBag.showBetaTodaySummaryCard = false;
+      readyBag.showWhatToNoticeNextCard = false;
+      readyBag.showFirstMomentCaptureCard = false;
+      readyBag.showThreeMomentCompletionCard = false;
+      readyBag.showOpenCapturePromptChips = false;
     }
     final showProUnderstandingLiftBelowProofOnRecord =
-        showProUnderstandingLiftOnRecordReady &&
-        ((showTimelineProofMomentOnRecord &&
+        readyBag.showProUnderstandingLiftOnRecordReady &&
+        ((readyBag.showTimelineProofMomentOnRecord &&
                 timelineProofMomentCandidate != null) ||
-            showBetaTesterReportOnRecord ||
+            readyBag.showBetaTesterReportOnRecord ||
             showReturnAfterProofLiftV2BelowProofOnRecord);
     final showBetaRepairLabEvidenceTrailClarityBelowProofOnRecord =
-        showBetaRepairLabEvidenceTrailClarityOnRecord &&
+        readyBag.showBetaRepairLabEvidenceTrailClarityOnRecord &&
         betaRepairLabEvidenceTrailClarityResult.shouldShow &&
-        ((showTimelineProofMomentOnRecord &&
+        ((readyBag.showTimelineProofMomentOnRecord &&
                 timelineProofMomentCandidate != null) ||
-            showBetaTesterReportOnRecord ||
+            readyBag.showBetaTesterReportOnRecord ||
             showReturnAfterProofLiftV2BelowProofOnRecord);
     final showBetaRepairLabPricingValidationBelowProofOnRecord =
-        showBetaRepairLabPricingValidationOnRecord &&
+        readyBag.showBetaRepairLabPricingValidationOnRecord &&
         betaRepairLabPricingValidationResult.shouldShow &&
-        ((showTimelineProofMomentOnRecord &&
+        ((readyBag.showTimelineProofMomentOnRecord &&
                 timelineProofMomentCandidate != null) ||
-            showBetaTesterReportOnRecord ||
+            readyBag.showBetaTesterReportOnRecord ||
             showReturnAfterProofLiftV2BelowProofOnRecord);
     final showBetaRepairLabPricingValueFramingBelowProofOnRecord =
-        showBetaRepairLabPricingValueFramingOnRecord &&
+        readyBag.showBetaRepairLabPricingValueFramingOnRecord &&
         betaRepairLabPricingValueFramingResult.shouldShow &&
-        ((showTimelineProofMomentOnRecord &&
+        ((readyBag.showTimelineProofMomentOnRecord &&
                 timelineProofMomentCandidate != null) ||
-            showBetaTesterReportOnRecord ||
+            readyBag.showBetaTesterReportOnRecord ||
             showReturnAfterProofLiftV2BelowProofOnRecord);
     final showBetaRepairLabPaywallValueBelowProofOnRecord =
-        showBetaRepairLabPaywallValueOnRecord &&
+        readyBag.showBetaRepairLabPaywallValueOnRecord &&
         betaRepairLabPaywallValueResult.shouldShow &&
-        ((showTimelineProofMomentOnRecord &&
+        ((readyBag.showTimelineProofMomentOnRecord &&
                 timelineProofMomentCandidate != null) ||
-            showBetaTesterReportOnRecord ||
+            readyBag.showBetaTesterReportOnRecord ||
             showReturnAfterProofLiftV2BelowProofOnRecord);
     final showBetaRepairLabProPlacementBelowProofOnRecord =
-        showBetaRepairLabProPlacementOnRecord &&
+        readyBag.showBetaRepairLabProPlacementOnRecord &&
         betaRepairLabProPlacementResult.shouldShow &&
-        ((showTimelineProofMomentOnRecord &&
+        ((readyBag.showTimelineProofMomentOnRecord &&
                 timelineProofMomentCandidate != null) ||
-            showBetaTesterReportOnRecord ||
+            readyBag.showBetaTesterReportOnRecord ||
             showReturnAfterProofLiftV2BelowProofOnRecord);
     if (ArchiveBetaMissionGate.isEnabled) {
       ProPlacementTriggerAuditEngine.updateLatestInput(
@@ -2783,7 +2784,7 @@ abstract final class RecordSurfaceResolver {
                 input.journalEntries,
               ),
           hasTimelineProofVisible:
-              showTimelineProofMomentOnRecord &&
+              readyBag.showTimelineProofMomentOnRecord &&
               timelineProofMomentCandidate != null,
           feedbackType: timelineFeedbackType,
           hasUsefulOrStrongProof:
@@ -2793,7 +2794,7 @@ abstract final class RecordSurfaceResolver {
                     recordLoosenSignalsPreAudit.confidenceLevel ??
                     ProofConfidenceLevel.watchOnly,
               ),
-          proPlacementEligible: showBetaRepairLabProPlacementOnRecord,
+          proPlacementEligible: readyBag.showBetaRepairLabProPlacementOnRecord,
           proPlacementShown: showBetaRepairLabProPlacementBelowProofOnRecord,
           proPlacementBlocked:
               BetaRepairLabEngine.isRepairActive(
@@ -2806,32 +2807,32 @@ abstract final class RecordSurfaceResolver {
       );
     }
     final showProUnderstandingLiftInProSectionOnRecord =
-        showProUnderstandingLiftOnRecordReady &&
+        readyBag.showProUnderstandingLiftOnRecordReady &&
         !showProUnderstandingLiftBelowProofOnRecord;
     final showProVisibilityLiftBelowProofOnRecord =
-        showProVisibilityLiftOnRecordReady &&
-        !showProUnderstandingLiftOnRecordReady &&
-        ((showTimelineProofMomentOnRecord &&
+        readyBag.showProVisibilityLiftOnRecordReady &&
+        !readyBag.showProUnderstandingLiftOnRecordReady &&
+        ((readyBag.showTimelineProofMomentOnRecord &&
                 timelineProofMomentCandidate != null) ||
-            showBetaTesterReportOnRecord ||
+            readyBag.showBetaTesterReportOnRecord ||
             showReturnAfterProofLiftV2BelowProofOnRecord);
     final showProVisibilityLiftInProSectionOnRecord =
-        showProVisibilityLiftOnRecordReady &&
+        readyBag.showProVisibilityLiftOnRecordReady &&
         !showProVisibilityLiftBelowProofOnRecord;
     final showProBridgeBelowProofOnRecord =
-        showProBridgeVisibilityOnRecordReady &&
-        !showProUnderstandingLiftOnRecordReady &&
-        !showProVisibilityLiftOnRecordReady &&
-        ((showTimelineProofMomentOnRecord &&
+        readyBag.showProBridgeVisibilityOnRecordReady &&
+        !readyBag.showProUnderstandingLiftOnRecordReady &&
+        !readyBag.showProVisibilityLiftOnRecordReady &&
+        ((readyBag.showTimelineProofMomentOnRecord &&
                 timelineProofMomentCandidate != null) ||
-            showBetaTesterReportOnRecord ||
-            showReturnAfterProofStrengthenedOnRecordReady);
+            readyBag.showBetaTesterReportOnRecord ||
+            readyBag.showReturnAfterProofStrengthenedOnRecordReady);
     final showProBridgeInProSectionOnRecord =
-        showProBridgeVisibilityOnRecordReady &&
-        !showProUnderstandingLiftOnRecordReady &&
-        !showProVisibilityLiftOnRecordReady &&
+        readyBag.showProBridgeVisibilityOnRecordReady &&
+        !readyBag.showProUnderstandingLiftOnRecordReady &&
+        !readyBag.showProVisibilityLiftOnRecordReady &&
         !showProBridgeBelowProofOnRecord;
-    final proBridgeVisibilityRecordResult = showProBridgeVisibilityOnRecordReady
+    final proBridgeVisibilityRecordResult = readyBag.showProBridgeVisibilityOnRecordReady
         ? ProBridgeVisibilityEngine.build(
             input: ProBridgeTimingLoosenEngine.enrichVisibilityInput(
               base: ProBridgeVisibilityInput(
@@ -2846,15 +2847,15 @@ abstract final class RecordSurfaceResolver {
                       input.journalEntries,
                     ),
                 hasTimelineProofVisible:
-                    showTimelineProofMomentOnRecord &&
+                    readyBag.showTimelineProofMomentOnRecord &&
                     timelineProofMomentCandidate != null,
-                hasBetaTesterReportVisible: showBetaTesterReportOnRecord,
+                hasBetaTesterReportVisible: readyBag.showBetaTesterReportOnRecord,
                 hasCorrectionMemoryVisible:
-                    showCorrectionMemoryOnRecordReady &&
+                    readyBag.showCorrectionMemoryOnRecordReady &&
                     correctionMemoryCandidate != null,
-                hasBetaProofLiftVisible: showBetaProofLiftOnRecordReady,
+                hasBetaProofLiftVisible: readyBag.showBetaProofLiftOnRecordReady,
                 hasReturnAfterProofStrengthenedVisible:
-                    showReturnAfterProofStrengthenedOnRecordReady,
+                    readyBag.showReturnAfterProofStrengthenedOnRecordReady,
                 feedbackState: ProMomentTimingEngine.resolveFeedbackState(
                   entries: input.journalEntries,
                   surface: ProofQualityResponseSurface.timelineProofMoment,
@@ -2868,9 +2869,9 @@ abstract final class RecordSurfaceResolver {
               beliefSurfaceVisible: archiveBeliefSurfaceCandidate.shouldShow,
               beliefEvidencePhrases:
                   archiveBeliefSurfaceCandidate.evidencePhrases,
-              hasBetaProofLiftVisible: showBetaProofLiftOnRecordReady,
+              hasBetaProofLiftVisible: readyBag.showBetaProofLiftOnRecordReady,
               hasReturnAfterProofStrengthenedVisible:
-                  showReturnAfterProofStrengthenedOnRecordReady,
+                  readyBag.showReturnAfterProofStrengthenedOnRecordReady,
             ),
           )
         : null;
@@ -2890,7 +2891,7 @@ abstract final class RecordSurfaceResolver {
     var showTimelineProofMomentOnFirstProofPayoff =
         TimelineProofMomentEngine.shouldShowOnFirstProofPayoffPostSave(
           result: timelineProofMomentPostSaveCandidate,
-          showFirstProofPayoff: showFirstProofPayoff,
+          showFirstProofPayoff: readyBag.showFirstProofPayoff,
           isDegradedPostSave:
               entriesAfterSave.isNotEmpty &&
               VoiceCaptureQuality.isDegradedVoiceCapture(entriesAfterSave.last),
@@ -2910,7 +2911,7 @@ abstract final class RecordSurfaceResolver {
           );
     var showProofSpecificityOnFirstProofPayoff =
         flags.isDone &&
-        showFirstProofPayoff &&
+        readyBag.showFirstProofPayoff &&
         ProofSpecificityEngine.shouldShowOnFirstProofPayoff(
           result: proofSpecificityPostSaveCandidate,
           isPostSaveDegradedState:
@@ -2964,7 +2965,7 @@ abstract final class RecordSurfaceResolver {
       betaTesterReportVisible: false,
     );
     final firstProofPayoffParentVisible =
-        showFirstProofPayoff && firstProofPayoffCandidate != null;
+        readyBag.showFirstProofPayoff && firstProofPayoffCandidate != null;
     var showProofSpecificityBoostOnFirstProofPayoff =
         flags.isDone &&
         ProofSpecificityBoostEngine.shouldRender(
@@ -3108,7 +3109,7 @@ abstract final class RecordSurfaceResolver {
         flags.isDone &&
         ReturnAfterProofEngine.shouldShowStrengthenedOnFirstProofPayoffPostSave(
           result: returnAfterProofPostSaveCandidate,
-          showFirstProofPayoff: showFirstProofPayoff,
+          showFirstProofPayoff: readyBag.showFirstProofPayoff,
           isRecording: flags.isRecording,
           isPostSaveDegraded: postSaveDegraded,
           whatChangedQuestionActive: showWhatChangedV2,
@@ -3119,7 +3120,7 @@ abstract final class RecordSurfaceResolver {
         flags.isDone &&
         ReturnAfterProofEngine.shouldShowGenericOnFirstProofPayoffPostSave(
           result: returnAfterProofPostSaveCandidate,
-          showFirstProofPayoff: showFirstProofPayoff,
+          showFirstProofPayoff: readyBag.showFirstProofPayoff,
           isRecording: flags.isRecording,
           isPostSaveDegraded: postSaveDegraded,
           whatChangedQuestionActive: showWhatChangedV2,
@@ -3196,7 +3197,7 @@ abstract final class RecordSurfaceResolver {
     var showProUnderstandingLiftOnPostSave =
         flags.isDone &&
         entriesAfterSave.isNotEmpty &&
-        showFirstProofPayoff &&
+        readyBag.showFirstProofPayoff &&
         firstProofPayoffCandidate != null &&
         ProUnderstandingLiftEngine.shouldShowCard(
           input: proUnderstandingLiftPostSaveInput,
@@ -3217,7 +3218,7 @@ abstract final class RecordSurfaceResolver {
     var showProVisibilityLiftOnPostSave =
         flags.isDone &&
         entriesAfterSave.isNotEmpty &&
-        showFirstProofPayoff &&
+        readyBag.showFirstProofPayoff &&
         firstProofPayoffCandidate != null &&
         ProVisibilityLiftEngine.shouldShowCard(
           entryCount: postSaveEntryCount,
@@ -3265,7 +3266,7 @@ abstract final class RecordSurfaceResolver {
     var showProEvidenceValuePostSave =
         flags.isDone &&
         entriesAfterSave.isNotEmpty &&
-        showFirstProofPayoff &&
+        readyBag.showFirstProofPayoff &&
         firstProofPayoffCandidate != null &&
         ProEvidenceValueEngine.shouldShowCard(
           ProEvidenceValueEngine.buildContext(
@@ -3286,7 +3287,7 @@ abstract final class RecordSurfaceResolver {
     var showBetaInviteLoopPostSave =
         flags.isDone &&
         entriesAfterSave.isNotEmpty &&
-        showFirstProofPayoff &&
+        readyBag.showFirstProofPayoff &&
         firstProofPayoffCandidate != null &&
         BetaInviteLoopEngine.shouldShowCard(
           BetaInviteLoopEngine.buildContext(
@@ -3305,7 +3306,7 @@ abstract final class RecordSurfaceResolver {
     var showProPreviewPostSave =
         flags.isDone &&
         entriesAfterSave.isNotEmpty &&
-        showFirstProofPayoff &&
+        readyBag.showFirstProofPayoff &&
         firstProofPayoffCandidate != null &&
         ProPreviewEngine.shouldShowCard(
           ProPreviewEngine.buildContext(
@@ -3318,7 +3319,7 @@ abstract final class RecordSurfaceResolver {
             hasTimelineProofVisible:
                 showTimelineProofMomentOnFirstProofPayoff &&
                 timelineProofMomentPostSaveCandidate != null,
-            firstProofPayoffVisible: showFirstProofPayoff,
+            firstProofPayoffVisible: readyBag.showFirstProofPayoff,
             isPostSaveDegradedState: postSaveDegraded,
             firstProofTruthQuestionActive: showFirstProofTruth,
             whatChangedQuestionActive: showWhatChangedV2,
@@ -3328,7 +3329,7 @@ abstract final class RecordSurfaceResolver {
     var showProBridgeVisibilityPostSave =
         flags.isDone &&
         entriesAfterSave.isNotEmpty &&
-        showFirstProofPayoff &&
+        readyBag.showFirstProofPayoff &&
         firstProofPayoffCandidate != null &&
         ProBridgeVisibilityEngine.shouldShow(
           input: ProBridgeTimingLoosenEngine.enrichVisibilityInput(
@@ -3340,7 +3341,7 @@ abstract final class RecordSurfaceResolver {
               postProofProBridgeEnabled: showPostProofProBridgeOnRecord,
               hasFirstProof: true,
               isPostSaveDegradedState: postSaveDegraded,
-              hasFirstProofPayoffVisible: showFirstProofPayoff,
+              hasFirstProofPayoffVisible: readyBag.showFirstProofPayoff,
               hasTimelineProofVisible:
                   showTimelineProofMomentOnFirstProofPayoff &&
                   timelineProofMomentPostSaveCandidate != null,
@@ -3374,7 +3375,7 @@ abstract final class RecordSurfaceResolver {
     var showProLockMomentPostSave =
         flags.isDone &&
         entriesAfterSave.isNotEmpty &&
-        showFirstProofPayoff &&
+        readyBag.showFirstProofPayoff &&
         firstProofPayoffCandidate != null &&
         !showProBridgeVisibilityPostSave &&
         !showProEvidenceValuePostSave &&
@@ -3405,7 +3406,7 @@ abstract final class RecordSurfaceResolver {
     var showMonthlyPrivateReportPreviewPostSave =
         flags.isDone &&
         entriesAfterSave.isNotEmpty &&
-        showFirstProofPayoff &&
+        readyBag.showFirstProofPayoff &&
         firstProofPayoffCandidate != null &&
         !showProBridgeVisibilityPostSave &&
         !showProEvidenceValuePostSave &&
@@ -3457,7 +3458,7 @@ abstract final class RecordSurfaceResolver {
             firstProofTruthQuestionActive: showFirstProofTruth,
             whatChangedQuestionActive: showWhatChangedV2,
             firstProofPayoffVisible:
-                showFirstProofPayoff && firstProofPayoffCandidate != null,
+                readyBag.showFirstProofPayoff && firstProofPayoffCandidate != null,
           )
         : null;
     final helpedTrackingPrompt =
@@ -3474,7 +3475,7 @@ abstract final class RecordSurfaceResolver {
           )
         : null;
     final showHelpedTracking =
-        helpedTrackingPrompt != null && !showFirstProofPayoff;
+        helpedTrackingPrompt != null && !readyBag.showFirstProofPayoff;
     final showReturnCheckPayoff = ReturnCheckPayoffGates.shouldShow(
       isPostSaveDone: flags.isDone,
       entryCount: postSaveEntryCount,
@@ -3545,7 +3546,7 @@ abstract final class RecordSurfaceResolver {
           )
         : null;
     final firstProofLoopActive =
-        showFirstProofPayoff || showFirstProofTruth || showFirstProofActionLoop;
+        readyBag.showFirstProofPayoff || showFirstProofTruth || showFirstProofActionLoop;
     final showDailyArchiveMemory = !V1FeatureFlags.enableV1Only && DailyArchiveMemoryGates.shouldShow(
             loaded: input.entryCountLoaded,
             entryCount: input.entryCount,
@@ -3573,35 +3574,35 @@ abstract final class RecordSurfaceResolver {
         recordReadyShowsWatchTargetOnly ||
         ReturningRecordWatchTargetUiGates.suppressDailyStreakPressureToday();
     if (showReturningWatchTargetFocusedUi) {
-      showOpenCapturePromptChips = false;
-      showLowFrictionReturnCard = false;
-      showCaptureFreedomLine = false;
-      showBetaTodaySummaryCard = false;
-      showBetaActivationPathCard = false;
-      showBetaTesterReportOnRecord = false;
-      showBetaFeedbackCaptureRecordReady = false;
-      betaFeedbackCaptureRecordReadyResult = null;
-      showBetaProofLiftOnRecordReady = false;
-      showBetaRepairLabProPlacementOnRecord = false;
-      showBetaRepairLabPricingValueFramingOnRecord = false;
-      showBetaRepairLabPaywallValueOnRecord = false;
-      showBetaRepairLabPricingValidationOnRecord = false;
-      showBetaRepairLabEvidenceTrailClarityOnRecord = false;
-      showBetaRepairLabProofOnRecord = false;
+      readyBag.showOpenCapturePromptChips = false;
+      readyBag.showLowFrictionReturnCard = false;
+      readyBag.showCaptureFreedomLine = false;
+      readyBag.showBetaTodaySummaryCard = false;
+      readyBag.showBetaActivationPathCard = false;
+      readyBag.showBetaTesterReportOnRecord = false;
+      readyBag.showBetaFeedbackCaptureRecordReady = false;
+      readyBag.betaFeedbackCaptureRecordReadyResult = null;
+      readyBag.showBetaProofLiftOnRecordReady = false;
+      readyBag.showBetaRepairLabProPlacementOnRecord = false;
+      readyBag.showBetaRepairLabPricingValueFramingOnRecord = false;
+      readyBag.showBetaRepairLabPaywallValueOnRecord = false;
+      readyBag.showBetaRepairLabPricingValidationOnRecord = false;
+      readyBag.showBetaRepairLabEvidenceTrailClarityOnRecord = false;
+      readyBag.showBetaRepairLabProofOnRecord = false;
     }
     if (!ReturningRecordWatchTargetUiGates.showBetaRecordSurfaces()) {
-      showBetaTodaySummaryCard = false;
-      showBetaActivationPathCard = false;
-      showBetaTesterReportOnRecord = false;
-      showBetaFeedbackCaptureRecordReady = false;
-      betaFeedbackCaptureRecordReadyResult = null;
-      showBetaProofLiftOnRecordReady = false;
-      showBetaRepairLabProPlacementOnRecord = false;
-      showBetaRepairLabPricingValueFramingOnRecord = false;
-      showBetaRepairLabPaywallValueOnRecord = false;
-      showBetaRepairLabPricingValidationOnRecord = false;
-      showBetaRepairLabEvidenceTrailClarityOnRecord = false;
-      showBetaRepairLabProofOnRecord = false;
+      readyBag.showBetaTodaySummaryCard = false;
+      readyBag.showBetaActivationPathCard = false;
+      readyBag.showBetaTesterReportOnRecord = false;
+      readyBag.showBetaFeedbackCaptureRecordReady = false;
+      readyBag.betaFeedbackCaptureRecordReadyResult = null;
+      readyBag.showBetaProofLiftOnRecordReady = false;
+      readyBag.showBetaRepairLabProPlacementOnRecord = false;
+      readyBag.showBetaRepairLabPricingValueFramingOnRecord = false;
+      readyBag.showBetaRepairLabPaywallValueOnRecord = false;
+      readyBag.showBetaRepairLabPricingValidationOnRecord = false;
+      readyBag.showBetaRepairLabEvidenceTrailClarityOnRecord = false;
+      readyBag.showBetaRepairLabProofOnRecord = false;
     }
     final betaTestScriptCardCandidate =
         flags.isReady && input.entryCountLoaded
@@ -3683,7 +3684,7 @@ abstract final class RecordSurfaceResolver {
           isPostSaveDone: flags.isDone,
           isDegradedPostSave: postSaveDegradedForReturnCue,
           watch: comeBackTomorrowV2PostSaveWatch,
-          showFirstProofPayoff: showFirstProofPayoff,
+          showFirstProofPayoff: readyBag.showFirstProofPayoff,
           showFirstProofTruth: showFirstProofTruth,
           showFirstProofActionLoop: showFirstProofActionLoop,
           showWhatChangedV2Display: showWhatChangedV2Display,
@@ -3735,7 +3736,7 @@ abstract final class RecordSurfaceResolver {
                   BetaFeedbackCaptureEngine.existingProofFeedbackVisible(
                     surface: BetaProofFeedbackSurface.firstProofPayoff,
                     parentVisible:
-                        showFirstProofPayoff &&
+                        readyBag.showFirstProofPayoff &&
                         firstProofPayoffCandidate != null,
                     entryCount: postSaveEntryCount,
                     hasConfirmedRepeat:
@@ -3817,13 +3818,13 @@ abstract final class RecordSurfaceResolver {
         entryCount: postSaveEntryCount,
         source: 'record_post_save',
         candidates: SurfacePriorityCandidates.recordPostSave(
-          lowFrictionReturn: showLowFrictionReturnCard,
-          whatToNoticeNext: showWhatToNoticeNextCard,
-          betaTodaySummary: showBetaTodaySummaryCard,
-          openCapturePromptChips: showOpenCapturePromptChips,
-          captureFreedomLine: showCaptureFreedomLine,
+          lowFrictionReturn: readyBag.showLowFrictionReturnCard,
+          whatToNoticeNext: readyBag.showWhatToNoticeNextCard,
+          betaTodaySummary: readyBag.showBetaTodaySummaryCard,
+          openCapturePromptChips: readyBag.showOpenCapturePromptChips,
+          captureFreedomLine: readyBag.showCaptureFreedomLine,
           firstProofPayoff:
-              showFirstProofPayoff && firstProofPayoffCandidate != null,
+              readyBag.showFirstProofPayoff && firstProofPayoffCandidate != null,
           whatChanged: showWhatChangedV2 || showWhatChangedV2Display,
           returnPayoff: showComeBackTomorrowV2PostSave,
           timelineProofMomentPostSave:
@@ -3833,7 +3834,7 @@ abstract final class RecordSurfaceResolver {
               showProofSpecificityOnFirstProofPayoff &&
               proofSpecificityPostSaveCandidate.shouldShow,
           betaProofFeedback:
-              showFirstProofPayoff && firstProofPayoffCandidate != null,
+              readyBag.showFirstProofPayoff && firstProofPayoffCandidate != null,
           betaInviteLoop: showBetaInviteLoopPostSave,
           betaProofLift:
               showBetaProofLiftOnFirstProofPayoff ||
@@ -3859,7 +3860,7 @@ abstract final class RecordSurfaceResolver {
         SurfacePriorityCardKey.whatChanged,
         candidate: showWhatChangedV2 || showWhatChangedV2Display,
       )) {
-        showFirstProofPayoff = false;
+        readyBag.showFirstProofPayoff = false;
       }
       showTimelineProofMomentOnFirstProofPayoff = audit.isVisible(
         SurfacePriorityCardKey.timelineProofMomentPostSave,
@@ -3877,14 +3878,14 @@ abstract final class RecordSurfaceResolver {
         SurfacePriorityCardKey.returnAfterProofStrengthened,
         candidate:
             showReturnAfterProofStrengthenedOnFirstProofPayoff &&
-            showFirstProofPayoff &&
+            readyBag.showFirstProofPayoff &&
             firstProofPayoffCandidate != null,
       );
       showReturnAfterProofGenericOnFirstProofPayoff = audit.isVisible(
         SurfacePriorityCardKey.returnAfterProof,
         candidate:
             showReturnAfterProofGenericOnFirstProofPayoff &&
-            showFirstProofPayoff &&
+            readyBag.showFirstProofPayoff &&
             firstProofPayoffCandidate != null,
       );
       showReturnAfterProofOnFirstProofPayoff =
@@ -3894,7 +3895,7 @@ abstract final class RecordSurfaceResolver {
         SurfacePriorityCardKey.returnAfterProofLiftV2,
         candidate:
             showReturnAfterProofLiftV2OnPostSave &&
-            showFirstProofPayoff &&
+            readyBag.showFirstProofPayoff &&
             firstProofPayoffCandidate != null,
       );
       if (showReturnAfterProofLiftV2OnPostSave) {
@@ -3949,11 +3950,11 @@ abstract final class RecordSurfaceResolver {
         entryCount: postSaveEntryCount,
         isPostSaveDegradedState: postSaveDegraded,
         hasFirstProof:
-            showFirstProofPayoff && firstProofPayoffCandidate != null,
+            readyBag.showFirstProofPayoff && firstProofPayoffCandidate != null,
         hasTimelineProofVisible:
             showTimelineProofMomentOnFirstProofPayoff &&
             timelineProofMomentPostSaveCandidate != null,
-        hasFirstProofPayoffVisible: showFirstProofPayoff,
+        hasFirstProofPayoffVisible: readyBag.showFirstProofPayoff,
         hasMonthlyPrivateReportPreviewVisible:
             showMonthlyPrivateReportPreviewPostSave,
         hasBetaProofLiftVisible:
@@ -4061,7 +4062,7 @@ abstract final class RecordSurfaceResolver {
               BetaFeedbackCaptureEngine.existingProofFeedbackVisible(
                 surface: BetaProofFeedbackSurface.firstProofPayoff,
                 parentVisible:
-                    showFirstProofPayoff && firstProofPayoffCandidate != null,
+                    readyBag.showFirstProofPayoff && firstProofPayoffCandidate != null,
                 entryCount: postSaveEntryCount,
                 hasConfirmedRepeat:
                     EarlyFirstSignalEngine.hasConfirmedRepeatFoundation(
@@ -4094,7 +4095,7 @@ abstract final class RecordSurfaceResolver {
               hasTimelineProofVisible:
                   showTimelineProofMomentOnFirstProofPayoff &&
                   timelineProofMomentPostSaveCandidate != null,
-              firstProofPayoffVisible: showFirstProofPayoff,
+              firstProofPayoffVisible: readyBag.showFirstProofPayoff,
               isPostSaveDegradedState: postSaveDegraded,
               firstProofTruthQuestionActive: showFirstProofTruth,
               whatChangedQuestionActive: showWhatChangedV2,
@@ -4131,7 +4132,7 @@ abstract final class RecordSurfaceResolver {
                 postProofProBridgeEnabled: showPostProofProBridgeOnRecord,
                 hasFirstProof: true,
                 isPostSaveDegradedState: postSaveDegraded,
-                hasFirstProofPayoffVisible: showFirstProofPayoff,
+                hasFirstProofPayoffVisible: readyBag.showFirstProofPayoff,
                 hasTimelineProofVisible:
                     showTimelineProofMomentOnFirstProofPayoff &&
                     timelineProofMomentPostSaveCandidate != null,
@@ -4165,7 +4166,7 @@ abstract final class RecordSurfaceResolver {
         : null;
     final showReturnTomorrowCuePostSave =
         !suppressNoisyFirstSaveCards &&
-        !showFirstProofPayoff &&
+        !readyBag.showFirstProofPayoff &&
         !showComeBackTomorrowV2PostSave &&
         ReturnTomorrowCueGates.shouldShowPostSave(
           isPostSaveDone: flags.isDone,
@@ -4438,26 +4439,26 @@ abstract final class RecordSurfaceResolver {
       isDegradedTranscriptOnRecord: isDegradedTranscriptOnRecord,
       currentRelevanceCandidate: currentRelevanceCandidate,
       patternReviewInboxActiveOnRecord: patternReviewInboxActiveOnRecord,
-      showCurrentRelevanceOnRecordReady: showCurrentRelevanceOnRecordReady,
+      showCurrentRelevanceOnRecordReady: readyBag.showCurrentRelevanceOnRecordReady,
       currentRelevanceQuestionActiveOnRecord: currentRelevanceQuestionActiveOnRecord,
       correctionMemoryCandidate: correctionMemoryCandidate,
-      showCorrectionMemoryOnRecordReady: showCorrectionMemoryOnRecordReady,
+      showCorrectionMemoryOnRecordReady: readyBag.showCorrectionMemoryOnRecordReady,
       evidenceWeightingCandidate: evidenceWeightingCandidate,
-      showEvidenceWeightingOnRecordReady: showEvidenceWeightingOnRecordReady,
+      showEvidenceWeightingOnRecordReady: readyBag.showEvidenceWeightingOnRecordReady,
       proofSpecificityCandidate: proofSpecificityCandidate,
-      showProofSpecificityOnRecordReady: showProofSpecificityOnRecordReady,
+      showProofSpecificityOnRecordReady: readyBag.showProofSpecificityOnRecordReady,
       presentDayRelevanceCandidate: presentDayRelevanceCandidate,
-      showPresentDayRelevanceOnRecordReady: showPresentDayRelevanceOnRecordReady,
-      showCaptureFreedomLine: showCaptureFreedomLine,
+      showPresentDayRelevanceOnRecordReady: readyBag.showPresentDayRelevanceOnRecordReady,
+      showCaptureFreedomLine: readyBag.showCaptureFreedomLine,
       timelinePositioningCandidate: timelinePositioningCandidate,
       otherEducationCardsOnRecord: otherEducationCardsOnRecord,
-      showTimelinePositioningOnRecordReady: showTimelinePositioningOnRecordReady,
+      showTimelinePositioningOnRecordReady: readyBag.showTimelinePositioningOnRecordReady,
       patternConfidenceEducationCount: patternConfidenceEducationCount,
       patternConfidenceExplanationCandidate: patternConfidenceExplanationCandidate,
-      showPatternConfidenceExplanationOnRecordReady: showPatternConfidenceExplanationOnRecordReady,
-      showProEvidenceValueOnRecordReady: showProEvidenceValueOnRecordReady,
-      showProBridgeVisibilityOnRecordReady: showProBridgeVisibilityOnRecordReady,
-      showProEvidenceValuePrivateReportOnRecord: showProEvidenceValuePrivateReportOnRecord,
+      showPatternConfidenceExplanationOnRecordReady: readyBag.showPatternConfidenceExplanationOnRecordReady,
+      showProEvidenceValueOnRecordReady: readyBag.showProEvidenceValueOnRecordReady,
+      showProBridgeVisibilityOnRecordReady: readyBag.showProBridgeVisibilityOnRecordReady,
+      showProEvidenceValuePrivateReportOnRecord: readyBag.showProEvidenceValuePrivateReportOnRecord,
       showConfirmedRepeatWhyMattersOnRecord: showConfirmedRepeatWhyMattersOnRecord,
       showConfirmedRepeatThoughtMapOnRecord: showConfirmedRepeatThoughtMapOnRecord,
       showPositiveReinforcementOnRecord: showPositiveReinforcementOnRecord,
@@ -4465,7 +4466,7 @@ abstract final class RecordSurfaceResolver {
       showChangeProofOnRecord: showChangeProofOnRecord,
       showFirstWeekLoopOnRecord: showFirstWeekLoopOnRecord,
       firstProofPayoffCandidate: firstProofPayoffCandidate,
-      showFirstProofPayoff: showFirstProofPayoff,
+      showFirstProofPayoff: readyBag.showFirstProofPayoff,
       threeDayChallengeCandidate: threeDayChallengeCandidate,
       showThreeDayChallengeOnRecord: showThreeDayChallengeOnRecord,
       firstProofPatternConfidence: firstProofPatternConfidence,
@@ -4484,85 +4485,85 @@ abstract final class RecordSurfaceResolver {
       whatChangedV2Display: whatChangedV2Display,
       showWhatChangedV2: showWhatChangedV2,
       showWhatChangedV2Display: showWhatChangedV2Display,
-      showOpenCapturePromptChips: showOpenCapturePromptChips,
-      showLowFrictionReturnCard: showLowFrictionReturnCard,
+      showOpenCapturePromptChips: readyBag.showOpenCapturePromptChips,
+      showLowFrictionReturnCard: readyBag.showLowFrictionReturnCard,
       firstMomentCaptureCandidate: firstMomentCaptureCandidate,
       firstSaveLiftCandidate: firstSaveLiftCandidate,
-      firstSessionCaptureRepairCandidate: firstSessionCaptureRepairCandidate,
+      firstSessionCaptureRepairCandidate: readyBag.firstSessionCaptureRepairCandidate,
       openingRepairOverride: openingRepairOverride,
-      showFirstSessionCaptureRepairCard: showFirstSessionCaptureRepairCard,
+      showFirstSessionCaptureRepairCard: readyBag.showFirstSessionCaptureRepairCard,
       firstSessionLiftCandidate: firstSessionLiftCandidate,
-      showFirstSessionLiftCard: showFirstSessionLiftCard,
-      showFirstSaveLiftCard: showFirstSaveLiftCard,
-      showFirstMomentCaptureCard: showFirstMomentCaptureCard,
+      showFirstSessionLiftCard: readyBag.showFirstSessionLiftCard,
+      showFirstSaveLiftCard: readyBag.showFirstSaveLiftCard,
+      showFirstMomentCaptureCard: readyBag.showFirstMomentCaptureCard,
       secondMomentReturnCandidate: secondMomentReturnCandidate,
-      showSecondMomentReturnCard: showSecondMomentReturnCard,
+      showSecondMomentReturnCard: readyBag.showSecondMomentReturnCard,
       threeMomentCompletionCandidate: threeMomentCompletionCandidate,
-      showThreeMomentCompletionCard: showThreeMomentCompletionCard,
+      showThreeMomentCompletionCard: readyBag.showThreeMomentCompletionCard,
       firstRunPositioningCandidate: firstRunPositioningCandidate,
-      showFirstRunPositioningCard: showFirstRunPositioningCard,
+      showFirstRunPositioningCard: readyBag.showFirstRunPositioningCard,
       betaTodaySummaryCandidate: betaTodaySummaryCandidate,
-      showBetaTodaySummaryCard: showBetaTodaySummaryCard,
+      showBetaTodaySummaryCard: readyBag.showBetaTodaySummaryCard,
       archiveTimelineSpineCandidate: archiveTimelineSpineCandidate,
       whatToNoticeNextCandidate: whatToNoticeNextCandidate,
-      showWhatToNoticeNextCard: showWhatToNoticeNextCard,
-      showArchiveTimelineSpineOnRecord: showArchiveTimelineSpineOnRecord,
+      showWhatToNoticeNextCard: readyBag.showWhatToNoticeNextCard,
+      showArchiveTimelineSpineOnRecord: readyBag.showArchiveTimelineSpineOnRecord,
       suppressLegacyEducationCardsForSpineOnRecord: suppressLegacyEducationCardsForSpineOnRecord,
       timelineProofMomentCandidate: timelineProofMomentCandidate,
-      showTimelineProofMomentOnRecord: showTimelineProofMomentOnRecord,
+      showTimelineProofMomentOnRecord: readyBag.showTimelineProofMomentOnRecord,
       betaTesterReportCandidate: betaTesterReportCandidate,
-      showBetaTesterReportOnRecord: showBetaTesterReportOnRecord,
+      showBetaTesterReportOnRecord: readyBag.showBetaTesterReportOnRecord,
       notRelevantRecoveryCandidate: notRelevantRecoveryCandidate,
       proofQualityResponseTimelineCandidate: proofQualityResponseTimelineCandidate,
       proofQualityResponseSpineCandidate: proofQualityResponseSpineCandidate,
       betaProofLiftTimelineCandidate: betaProofLiftTimelineCandidate,
       returnAfterProofRecordCandidate: returnAfterProofRecordCandidate,
-      showReturnAfterProofStrengthenedOnRecordReady: showReturnAfterProofStrengthenedOnRecordReady,
-      showReturnAfterProofGenericOnRecordReady: showReturnAfterProofGenericOnRecordReady,
-      showReturnAfterProofOnRecordReady: showReturnAfterProofOnRecordReady,
+      showReturnAfterProofStrengthenedOnRecordReady: readyBag.showReturnAfterProofStrengthenedOnRecordReady,
+      showReturnAfterProofGenericOnRecordReady: readyBag.showReturnAfterProofGenericOnRecordReady,
+      showReturnAfterProofOnRecordReady: readyBag.showReturnAfterProofOnRecordReady,
       returnAfterProofLiftV2Candidate: returnAfterProofLiftV2Candidate,
-      showReturnAfterProofLiftV2OnRecordReady: showReturnAfterProofLiftV2OnRecordReady,
+      showReturnAfterProofLiftV2OnRecordReady: readyBag.showReturnAfterProofLiftV2OnRecordReady,
       recordReadySurfacePriority: recordReadySurfacePriority,
       recordLoosenSignalsPreAudit: recordLoosenSignalsPreAudit,
       recordEvidenceAnchorPreAudit: recordEvidenceAnchorPreAudit,
       recordFeedbackStateForLift: recordFeedbackStateForLift,
       timelineFeedbackType: timelineFeedbackType,
       betaRepairLabInput: betaRepairLabInput,
-      showBetaRepairLabProPlacementOnRecord: showBetaRepairLabProPlacementOnRecord,
+      showBetaRepairLabProPlacementOnRecord: readyBag.showBetaRepairLabProPlacementOnRecord,
       betaRepairLabProPlacementResult: betaRepairLabProPlacementResult,
-      showBetaRepairLabPricingValueFramingOnRecord: showBetaRepairLabPricingValueFramingOnRecord,
+      showBetaRepairLabPricingValueFramingOnRecord: readyBag.showBetaRepairLabPricingValueFramingOnRecord,
       betaRepairLabPricingValueFramingResult: betaRepairLabPricingValueFramingResult,
-      showBetaRepairLabPaywallValueOnRecord: showBetaRepairLabPaywallValueOnRecord,
+      showBetaRepairLabPaywallValueOnRecord: readyBag.showBetaRepairLabPaywallValueOnRecord,
       betaRepairLabPaywallValueResult: betaRepairLabPaywallValueResult,
       hasProEngagementOnRecord: hasProEngagementOnRecord,
-      showBetaRepairLabPricingValidationOnRecord: showBetaRepairLabPricingValidationOnRecord,
-      showBetaRepairLabEvidenceTrailClarityOnRecord: showBetaRepairLabEvidenceTrailClarityOnRecord,
+      showBetaRepairLabPricingValidationOnRecord: readyBag.showBetaRepairLabPricingValidationOnRecord,
+      showBetaRepairLabEvidenceTrailClarityOnRecord: readyBag.showBetaRepairLabEvidenceTrailClarityOnRecord,
       betaRepairLabPricingValidationResult: betaRepairLabPricingValidationResult,
       proUnderstandingLiftRecordReadyInput: proUnderstandingLiftRecordReadyInput,
-      showProUnderstandingLiftOnRecordReady: showProUnderstandingLiftOnRecordReady,
-      showProVisibilityLiftOnRecordReady: showProVisibilityLiftOnRecordReady,
-      proUnderstandingLiftRecordReadyResult: proUnderstandingLiftRecordReadyResult,
+      showProUnderstandingLiftOnRecordReady: readyBag.showProUnderstandingLiftOnRecordReady,
+      showProVisibilityLiftOnRecordReady: readyBag.showProVisibilityLiftOnRecordReady,
+      proUnderstandingLiftRecordReadyResult: readyBag.proUnderstandingLiftRecordReadyResult,
       proVisibilityLiftRecordReadyResult: proVisibilityLiftRecordReadyResult,
-      showProofQualityResponseOnRecordReady: showProofQualityResponseOnRecordReady,
-      showNotRelevantRecoveryOnRecordReady: showNotRelevantRecoveryOnRecordReady,
-      showBetaProofLiftOnRecordReady: showBetaProofLiftOnRecordReady,
+      showProofQualityResponseOnRecordReady: readyBag.showProofQualityResponseOnRecordReady,
+      showNotRelevantRecoveryOnRecordReady: readyBag.showNotRelevantRecoveryOnRecordReady,
+      showBetaProofLiftOnRecordReady: readyBag.showBetaProofLiftOnRecordReady,
       betaActivationPathPreAuditContext: betaActivationPathPreAuditContext,
       betaActivationPathPreAuditResult: betaActivationPathPreAuditResult,
-      showBetaActivationPathCard: showBetaActivationPathCard,
-      betaActivationPathResult: betaActivationPathResult,
+      showBetaActivationPathCard: readyBag.showBetaActivationPathCard,
+      betaActivationPathResult: readyBag.betaActivationPathResult,
       betaFeedbackCaptureRecordReadyPreAudit: betaFeedbackCaptureRecordReadyPreAudit,
-      showBetaFeedbackCaptureRecordReady: showBetaFeedbackCaptureRecordReady,
-      betaFeedbackCaptureRecordReadyResult: betaFeedbackCaptureRecordReadyResult,
+      showBetaFeedbackCaptureRecordReady: readyBag.showBetaFeedbackCaptureRecordReady,
+      betaFeedbackCaptureRecordReadyResult: readyBag.betaFeedbackCaptureRecordReadyResult,
       betaProofFeedbackCounts: betaProofFeedbackCounts,
       betaProofFeedbackRowVisibleOnTimeline: betaProofFeedbackRowVisibleOnTimeline,
       proofQualityRepairInput: proofQualityRepairInput,
-      showProofQualityRepairOnRecord: showProofQualityRepairOnRecord,
+      showProofQualityRepairOnRecord: readyBag.showProofQualityRepairOnRecord,
       proofQualityRepairResult: proofQualityRepairResult,
       proofFloorRescueInput: proofFloorRescueInput,
-      showProofFloorRescueOnRecord: showProofFloorRescueOnRecord,
+      showProofFloorRescueOnRecord: readyBag.showProofFloorRescueOnRecord,
       proofFloorRescueResult: proofFloorRescueResult,
       blocksProByProofFloorOnRecord: blocksProByProofFloorOnRecord,
-      showBetaRepairLabProofOnRecord: showBetaRepairLabProofOnRecord,
+      showBetaRepairLabProofOnRecord: readyBag.showBetaRepairLabProofOnRecord,
       betaRepairLabProofResult: betaRepairLabProofResult,
       blocksProCardsByProofProtectionOnRecord: blocksProCardsByProofProtectionOnRecord,
       betaRepairLabEvidenceTrailClarityResult: betaRepairLabEvidenceTrailClarityResult,
