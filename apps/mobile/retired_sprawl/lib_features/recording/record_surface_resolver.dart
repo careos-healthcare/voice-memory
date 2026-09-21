@@ -806,190 +806,110 @@ abstract final class RecordSurfaceResolver {
     );
   }
 
-  static RecordSurfaceViewState resolve(RecordSurfaceInput input) {
-    final (
-      :flags,
-      :policyMic,
-      :policyUserDenied,
-      :firstUseSimplifiedRecord,
-      :error,
-      :localSaveTitle,
-      :syncNote,
-      :stageLabel,
-      :entriesAfterSave,
-      :lastCaptureAnalysisSucceeded,
-    ) = resolveInputOverlay(input);
-
-    final canRecord = flags.canRecord;
-    final showFraming = flags.showFraming;
-    final compact = input.compactLayout;
-    final stack = input.stackDecision;
-    final suppressPostResultNextCheckCompetitors =
-        stack.suppressDuplicateUseTomorrowCtas;
-    final auditPresentation = VisualAuditOverrides.active
-        ? VisualAuditOverrides.peekRecordPresentation()
-        : null;
-    final justSavedFirstEntry =
-        input.recordReturnProJustSaved ||
-        (auditPresentation?.justSavedFirst ?? false);
-    final postSaveEntryCount = entriesAfterSave.isNotEmpty
-        ? entriesAfterSave.length
-        : input.entryCount;
-    final suppressNoisyFirstSaveCards =
-        FirstThreeSessionGates.suppressNoisyPostSaveCards(
-          justSavedFirst: justSavedFirstEntry,
-          entryCount: flags.isDone && justSavedFirstEntry
-              ? postSaveEntryCount
-              : input.entryCount,
-        );
-    final suppressEarlyPatternClaimCards =
-        FirstThreeSessionGates.suppressEarlyPatternClaimCards(
-          entryCount: input.entryCount,
-          hasGroundedRepeatMatch:
-              input.secondSessionComparison?.hasEnoughData == true &&
-              const SecondSessionSignalEngine().hasGroundedRepeatMatch(
-                input.entriesAfterSave.isNotEmpty
-                    ? input.entriesAfterSave
-                    : input.journalEntries,
-              ),
-        );
-    final suppressLatestSaveArchiveInsight =
-        flags.isDone &&
-        ArchiveEntrySignalGuard.newestEntryIsLowSignal(entriesAfterSave);
-    final secondSessionPayoff =
-        flags.isDone &&
-            entriesAfterSave.isNotEmpty &&
-            !suppressLatestSaveArchiveInsight
-        ? SecondSessionPayoffEngine.build(
-            entries: entriesAfterSave,
-            analysisSucceeded: lastCaptureAnalysisSucceeded,
-          )
-        : null;
-    final thirdEntryBeliefPayoff =
-        flags.isDone &&
-            entriesAfterSave.isNotEmpty &&
-            !suppressLatestSaveArchiveInsight
-        ? ThirdEntryBeliefPayoffEngine.build(
-            entries: entriesAfterSave,
-            analysisSucceeded: lastCaptureAnalysisSucceeded,
-          )
-        : null;
-    final confirmedRepeatTriggerPayoff =
-        flags.isDone &&
-            entriesAfterSave.isNotEmpty &&
-            input.savedFromConfirmedRepeatTrigger
-        ? EarlyFirstSignalEngine.buildTriggerCapturePayoff(
-            entries: entriesAfterSave,
-            savedFromTriggerPrompt: true,
-          )
-        : null;
-    final confirmedRepeatHelpfulActionPayoff =
-        flags.isDone &&
-            entriesAfterSave.isNotEmpty &&
-            input.savedFromHelpfulAction
-        ? EarlyFirstSignalEngine.buildHelpfulActionPayoff(
-            entries: entriesAfterSave,
-            savedFromHelpfulActionPrompt: true,
-          )
-        : null;
-    final confirmedRepeatChangeNotice =
-        flags.isDone &&
-            entriesAfterSave.isNotEmpty &&
-            !input.savedFromConfirmedRepeatTrigger &&
-            !input.savedFromHelpfulAction
-        ? EarlyFirstSignalEngine.buildChangeNotice(entries: entriesAfterSave)
-        : null;
-    final repeatReturnCheckOffer =
-        flags.isDone && entriesAfterSave.isNotEmpty
-        ? RepeatReturnCheckEngine.pendingForSave(
-            entriesAfterSave: entriesAfterSave,
-            records: RepeatReturnCheckStore.cached,
-          )
-        : null;
-    final proofStack = resolveArchiveProofStack(
-      input: input,
-      flags: flags,
-      confirmedRepeatTriggerPayoff: confirmedRepeatTriggerPayoff,
-      confirmedRepeatHelpfulActionPayoff: confirmedRepeatHelpfulActionPayoff,
-      confirmedRepeatChangeNotice: confirmedRepeatChangeNotice,
-    );
-    final earlyEvidenceTimeline = proofStack.earlyEvidenceTimeline;
-    final showEarlyEvidenceTimeline = proofStack.showEarlyEvidenceTimeline;
-    final suppressEarlyRepeatPayoffCompetitors = proofStack.suppressEarlyRepeatPayoffCompetitors;
-    final earlyFirstSignalOnRecord = proofStack.earlyFirstSignalOnRecord;
-    final returnTomorrowCueReady = proofStack.returnTomorrowCueReady;
-    final returnDayFlowCandidate = proofStack.returnDayFlowCandidate;
-    final showReturnDayFlow = proofStack.showReturnDayFlow;
-    final showReturnTomorrowCueReady = proofStack.showReturnTomorrowCueReady;
-    final firstWeekProgressReady = proofStack.firstWeekProgressReady;
-    final showFirstWeekProgressReady = proofStack.showFirstWeekProgressReady;
-    final showEarlyReturnReminder = proofStack.showEarlyReturnReminder;
-    final viewingConfirmedRepeatOnRecord = proofStack.viewingConfirmedRepeatOnRecord;
-    final suppressConfirmedRepeatInlineFeedback = proofStack.suppressConfirmedRepeatInlineFeedback;
-    final showConfirmedRepeatBetaFeedback = proofStack.showConfirmedRepeatBetaFeedback;
-    final repeatReturnChangeProof = proofStack.repeatReturnChangeProof;
-    final patternChangedCandidate = proofStack.patternChangedCandidate;
-    final patternChangedDismissed = proofStack.patternChangedDismissed;
-    final confirmedRepeatThoughtMap = proofStack.confirmedRepeatThoughtMap;
-    final positivePattern = proofStack.positivePattern;
-    final helpfulActionAppearedCandidate = proofStack.helpfulActionAppearedCandidate;
-    final showHelpfulActionAppearedEligible = proofStack.showHelpfulActionAppearedEligible;
-    final positiveReinforcement = proofStack.positiveReinforcement;
-    final archiveSummaryCandidate = proofStack.archiveSummaryCandidate;
-    final archiveBeliefSurfaceCandidate = proofStack.archiveBeliefSurfaceCandidate;
-    final patternNamePrompt = proofStack.patternNamePrompt;
-    final showArchiveCurrentBeliefEligible = proofStack.showArchiveCurrentBeliefEligible;
-    final dailyReturnReasonCandidate = proofStack.dailyReturnReasonCandidate;
-    final hasChangeOverTimeProof = proofStack.hasChangeOverTimeProof;
-    final postProofArchiveProof = proofStack.postProofArchiveProof;
-    final archiveSummaryVisibleForProGate = proofStack.archiveSummaryVisibleForProGate;
-    final weeklyArchiveReviewVisibleForProGate = proofStack.weeklyArchiveReviewVisibleForProGate;
-    final hasConfirmedRepeatForProGate = proofStack.hasConfirmedRepeatForProGate;
-    final privateArchiveReportForProGate = proofStack.privateArchiveReportForProGate;
-    final privateArchiveReportPreviewForProGate = proofStack.privateArchiveReportPreviewForProGate;
-    final patternChangedForProGate = proofStack.patternChangedForProGate;
-    final hasReturnCheckAnsweredForProGate = proofStack.hasReturnCheckAnsweredForProGate;
-    final showPostProofProBridge = proofStack.showPostProofProBridge;
-    final proofSurfaceLayout = proofStack.proofSurfaceLayout;
-    final showArchiveSummary = proofStack.showArchiveSummary;
-    final archiveSummary = proofStack.archiveSummary;
-    final showDailyReturnReason = proofStack.showDailyReturnReason;
-    final dailyReturnReason = proofStack.dailyReturnReason;
-    final archiveWatchingCandidate = proofStack.archiveWatchingCandidate;
-    final archiveWatching = proofStack.archiveWatching;
-    final weeklyArchiveReview = proofStack.weeklyArchiveReview;
-    final showWeeklyArchiveReview = proofStack.showWeeklyArchiveReview;
-    final privateArchiveReportCandidate = proofStack.privateArchiveReportCandidate;
-    final showPrivateArchiveReport = proofStack.showPrivateArchiveReport;
-    final showConfirmedRepeatWhyMatters = proofStack.showConfirmedRepeatWhyMatters;
-    final showConfirmedRepeatThoughtMap = proofStack.showConfirmedRepeatThoughtMap;
-    final showPositiveReinforcement = proofStack.showPositiveReinforcement;
-    final firstWeekLoopCandidate = proofStack.firstWeekLoopCandidate;
-    final firstWeekLoopProGated = proofStack.firstWeekLoopProGated;
-    final recordProofStack = proofStack.recordProofStack;
-    final showPatternChanged = proofStack.showPatternChanged;
-    final showArchiveCurrentBeliefOnRecord = proofStack.showArchiveCurrentBeliefOnRecord;
-    final showEarlyEvidenceTimelineOnRecord = proofStack.showEarlyEvidenceTimelineOnRecord;
-    final showWeeklyArchiveReviewOnRecord = proofStack.showWeeklyArchiveReviewOnRecord;
-    final showPrivateArchiveReportOnRecord = proofStack.showPrivateArchiveReportOnRecord;
-    final showDailyReturnReasonOnRecord = proofStack.showDailyReturnReasonOnRecord;
-    final showPostProofProBridgeOnRecord = proofStack.showPostProofProBridgeOnRecord;
-    final firstProofPayoffSeenOnRecord =
-        FirstProofPayoffEngine.build(entries: input.journalEntries) != null;
-    final isDegradedTranscriptOnRecord =
-        input.journalEntries.isNotEmpty &&
-        VoiceCaptureQuality.isDegradedVoiceCapture(input.journalEntries.last);
-    final currentRelevanceCandidate = input.entryCount >= 3
-        ? CurrentRelevanceEngine.build(
-            entries: input.journalEntries,
-            beliefSurfaceVisible: archiveBeliefSurfaceCandidate.shouldShow,
-          )
-        : null;
-    final patternReviewInboxActiveOnRecord =
-        CurrentRelevanceEngine.patternReviewInboxHasActiveItems(
-          entries: input.journalEntries,
-          returnChecks: RepeatReturnCheckStore.cached,
-        );
+  static ({
+    RecordReadySurfaceBag readyBag,
+    bool currentRelevanceQuestionActiveOnRecord,
+    CorrectionMemoryResult? correctionMemoryCandidate,
+    EvidenceWeightingResult? evidenceWeightingCandidate,
+    ProofSpecificityResult proofSpecificityCandidate,
+    PresentDayRelevanceResult? presentDayRelevanceCandidate,
+    TimelinePositioningResult timelinePositioningCandidate,
+    int otherEducationCardsOnRecord,
+    int patternConfidenceEducationCount,
+    PatternConfidenceExplanationResult? patternConfidenceExplanationCandidate,
+    bool showConfirmedRepeatWhyMattersOnRecord,
+    bool showConfirmedRepeatThoughtMapOnRecord,
+    bool showPositiveReinforcementOnRecord,
+    bool showHelpfulActionAppearedOnRecord,
+    bool showChangeProofOnRecord,
+    bool showFirstWeekLoopOnRecord,
+    FirstProofPayoff? firstProofPayoffCandidate,
+    ThreeDayChallengeState? threeDayChallengeCandidate,
+    bool showThreeDayChallengeOnRecord,
+    PatternConfidence? firstProofPatternConfidence,
+    String firstProofTruthProofKey,
+    bool showFirstProofTruth,
+    FirstProofTruthAnswer? firstProofTruthAnswer,
+    bool showFirstProofActionLoop,
+    FirstProofActionLoopContent? firstProofActionLoopContent,
+    bool showFirstProofMoment,
+    bool postSaveHasConfirmedRepeat,
+    bool postSaveHasFirstProof,
+    bool postSaveDegraded,
+    bool showCoreValueFeedbackOnRecordPostFirstProof,
+    ReturnCheckPayoff? returnCheckPayoffCandidate,
+    WhatChangedV2Prompt? whatChangedV2Prompt,
+    WhatChangedV2Prompt? whatChangedV2Display,
+    bool showWhatChangedV2,
+    bool showWhatChangedV2Display,
+    FirstMomentCaptureResult firstMomentCaptureCandidate,
+    FirstSaveLiftResult firstSaveLiftCandidate,
+    FirstSessionCaptureRepairResult? openingRepairOverride,
+    FirstSessionLiftResult firstSessionLiftCandidate,
+    SecondMomentReturnResult secondMomentReturnCandidate,
+    ThreeMomentCompletionResult threeMomentCompletionCandidate,
+    FirstRunPositioningResult firstRunPositioningCandidate,
+    BetaTodaySummaryResult betaTodaySummaryCandidate,
+    ArchiveTimelineSpineResult? archiveTimelineSpineCandidate,
+    WhatToNoticeNextResult whatToNoticeNextCandidate,
+    bool suppressLegacyEducationCardsForSpineOnRecord,
+    TimelineProofMomentResult? timelineProofMomentCandidate,
+    BetaTesterReportResult betaTesterReportCandidate,
+    NotRelevantRecoveryResult notRelevantRecoveryCandidate,
+    ProofQualityResponseResult proofQualityResponseTimelineCandidate,
+    ProofQualityResponseResult proofQualityResponseSpineCandidate,
+    BetaProofLiftResult betaProofLiftTimelineCandidate,
+    ReturnAfterProofResult returnAfterProofRecordCandidate,
+    ReturnAfterProofLiftV2Result returnAfterProofLiftV2Candidate,
+    ProBridgeTimingLoosenSignals recordLoosenSignalsPreAudit,
+    EvidenceAnchorExtractionResult recordEvidenceAnchorPreAudit,
+    ProofQualityFeedbackState recordFeedbackStateForLift,
+    BetaProofFeedbackType? timelineFeedbackType,
+    BetaRepairLabVisibilityInput betaRepairLabInput,
+    BetaRepairLabProPlacementResult betaRepairLabProPlacementResult,
+    PricingValueFramingResult betaRepairLabPricingValueFramingResult,
+    PaywallValueRepairResult betaRepairLabPaywallValueResult,
+    bool hasProEngagementOnRecord,
+    PricingValidationResult betaRepairLabPricingValidationResult,
+    ProUnderstandingLiftVisibilityInput proUnderstandingLiftRecordReadyInput,
+    ProVisibilityLiftResult? proVisibilityLiftRecordReadyResult,
+    BetaActivationPathContext betaActivationPathPreAuditContext,
+    BetaActivationPathResult betaActivationPathPreAuditResult,
+    BetaFeedbackCaptureResult betaFeedbackCaptureRecordReadyPreAudit,
+    ({int useful, int negative}) betaProofFeedbackCounts,
+    bool betaProofFeedbackRowVisibleOnTimeline,
+    ProofQualityRepairVisibilityInput proofQualityRepairInput,
+    ProofQualityRepairResult proofQualityRepairResult,
+    ProofFloorRescueInput proofFloorRescueInput,
+    ProofFloorRescueResult proofFloorRescueResult,
+    bool blocksProByProofFloorOnRecord,
+    BetaRepairLabProofResult betaRepairLabProofResult,
+    bool blocksProCardsByProofProtectionOnRecord,
+    EvidenceTrailClarityResult betaRepairLabEvidenceTrailClarityResult,
+  }) resolveReadySurface({
+    required RecordSurfaceInput input,
+    required RecordSurfaceFlags flags,
+    required List<JournalEntry> entriesAfterSave,
+    required bool compact,
+    required int postSaveEntryCount,
+    required bool viewingConfirmedRepeatOnRecord,
+    required RepeatReturnCheckChangeProof? repeatReturnChangeProof,
+    required ArchiveBeliefSurface archiveBeliefSurfaceCandidate,
+    required bool privateArchiveReportPreviewForProGate,
+    required ArchiveProofSurfaceLayout proofSurfaceLayout,
+    required bool showConfirmedRepeatWhyMatters,
+    required bool showConfirmedRepeatThoughtMap,
+    required bool showPositiveReinforcement,
+    required FirstWeekLoop? firstWeekLoopCandidate,
+    required bool firstWeekLoopProGated,
+    required RecordProofStackDecision recordProofStack,
+    required bool showPrivateArchiveReportOnRecord,
+    required bool showPostProofProBridgeOnRecord,
+    required bool firstProofPayoffSeenOnRecord,
+    required bool isDegradedTranscriptOnRecord,
+    required CurrentRelevanceState? currentRelevanceCandidate,
+    required bool patternReviewInboxActiveOnRecord,
+  }) {
     final readyBag = RecordReadySurfaceBag();
     readyBag.showCurrentRelevanceOnRecordReady =
         flags.isReady &&
@@ -2163,6 +2083,377 @@ abstract final class RecordSurfaceResolver {
       readyBag.showProEvidenceValueOnRecordReady = false;
       readyBag.showProEvidenceValuePrivateReportOnRecord = false;
     }
+    return (
+      readyBag: readyBag,
+      currentRelevanceQuestionActiveOnRecord: currentRelevanceQuestionActiveOnRecord,
+      correctionMemoryCandidate: correctionMemoryCandidate,
+      evidenceWeightingCandidate: evidenceWeightingCandidate,
+      proofSpecificityCandidate: proofSpecificityCandidate,
+      presentDayRelevanceCandidate: presentDayRelevanceCandidate,
+      timelinePositioningCandidate: timelinePositioningCandidate,
+      otherEducationCardsOnRecord: otherEducationCardsOnRecord,
+      patternConfidenceEducationCount: patternConfidenceEducationCount,
+      patternConfidenceExplanationCandidate: patternConfidenceExplanationCandidate,
+      showConfirmedRepeatWhyMattersOnRecord: showConfirmedRepeatWhyMattersOnRecord,
+      showConfirmedRepeatThoughtMapOnRecord: showConfirmedRepeatThoughtMapOnRecord,
+      showPositiveReinforcementOnRecord: showPositiveReinforcementOnRecord,
+      showHelpfulActionAppearedOnRecord: showHelpfulActionAppearedOnRecord,
+      showChangeProofOnRecord: showChangeProofOnRecord,
+      showFirstWeekLoopOnRecord: showFirstWeekLoopOnRecord,
+      firstProofPayoffCandidate: firstProofPayoffCandidate,
+      threeDayChallengeCandidate: threeDayChallengeCandidate,
+      showThreeDayChallengeOnRecord: showThreeDayChallengeOnRecord,
+      firstProofPatternConfidence: firstProofPatternConfidence,
+      firstProofTruthProofKey: firstProofTruthProofKey,
+      showFirstProofTruth: showFirstProofTruth,
+      firstProofTruthAnswer: firstProofTruthAnswer,
+      showFirstProofActionLoop: showFirstProofActionLoop,
+      firstProofActionLoopContent: firstProofActionLoopContent,
+      showFirstProofMoment: showFirstProofMoment,
+      postSaveHasConfirmedRepeat: postSaveHasConfirmedRepeat,
+      postSaveHasFirstProof: postSaveHasFirstProof,
+      postSaveDegraded: postSaveDegraded,
+      showCoreValueFeedbackOnRecordPostFirstProof: showCoreValueFeedbackOnRecordPostFirstProof,
+      returnCheckPayoffCandidate: returnCheckPayoffCandidate,
+      whatChangedV2Prompt: whatChangedV2Prompt,
+      whatChangedV2Display: whatChangedV2Display,
+      showWhatChangedV2: showWhatChangedV2,
+      showWhatChangedV2Display: showWhatChangedV2Display,
+      firstMomentCaptureCandidate: firstMomentCaptureCandidate,
+      firstSaveLiftCandidate: firstSaveLiftCandidate,
+      openingRepairOverride: openingRepairOverride,
+      firstSessionLiftCandidate: firstSessionLiftCandidate,
+      secondMomentReturnCandidate: secondMomentReturnCandidate,
+      threeMomentCompletionCandidate: threeMomentCompletionCandidate,
+      firstRunPositioningCandidate: firstRunPositioningCandidate,
+      betaTodaySummaryCandidate: betaTodaySummaryCandidate,
+      archiveTimelineSpineCandidate: archiveTimelineSpineCandidate,
+      whatToNoticeNextCandidate: whatToNoticeNextCandidate,
+      suppressLegacyEducationCardsForSpineOnRecord: suppressLegacyEducationCardsForSpineOnRecord,
+      timelineProofMomentCandidate: timelineProofMomentCandidate,
+      betaTesterReportCandidate: betaTesterReportCandidate,
+      notRelevantRecoveryCandidate: notRelevantRecoveryCandidate,
+      proofQualityResponseTimelineCandidate: proofQualityResponseTimelineCandidate,
+      proofQualityResponseSpineCandidate: proofQualityResponseSpineCandidate,
+      betaProofLiftTimelineCandidate: betaProofLiftTimelineCandidate,
+      returnAfterProofRecordCandidate: returnAfterProofRecordCandidate,
+      returnAfterProofLiftV2Candidate: returnAfterProofLiftV2Candidate,
+      recordLoosenSignalsPreAudit: recordLoosenSignalsPreAudit,
+      recordEvidenceAnchorPreAudit: recordEvidenceAnchorPreAudit,
+      recordFeedbackStateForLift: recordFeedbackStateForLift,
+      timelineFeedbackType: timelineFeedbackType,
+      betaRepairLabInput: betaRepairLabInput,
+      betaRepairLabProPlacementResult: betaRepairLabProPlacementResult,
+      betaRepairLabPricingValueFramingResult: betaRepairLabPricingValueFramingResult,
+      betaRepairLabPaywallValueResult: betaRepairLabPaywallValueResult,
+      hasProEngagementOnRecord: hasProEngagementOnRecord,
+      betaRepairLabPricingValidationResult: betaRepairLabPricingValidationResult,
+      proUnderstandingLiftRecordReadyInput: proUnderstandingLiftRecordReadyInput,
+      proVisibilityLiftRecordReadyResult: proVisibilityLiftRecordReadyResult,
+      betaActivationPathPreAuditContext: betaActivationPathPreAuditContext,
+      betaActivationPathPreAuditResult: betaActivationPathPreAuditResult,
+      betaFeedbackCaptureRecordReadyPreAudit: betaFeedbackCaptureRecordReadyPreAudit,
+      betaProofFeedbackCounts: betaProofFeedbackCounts,
+      betaProofFeedbackRowVisibleOnTimeline: betaProofFeedbackRowVisibleOnTimeline,
+      proofQualityRepairInput: proofQualityRepairInput,
+      proofQualityRepairResult: proofQualityRepairResult,
+      proofFloorRescueInput: proofFloorRescueInput,
+      proofFloorRescueResult: proofFloorRescueResult,
+      blocksProByProofFloorOnRecord: blocksProByProofFloorOnRecord,
+      betaRepairLabProofResult: betaRepairLabProofResult,
+      blocksProCardsByProofProtectionOnRecord: blocksProCardsByProofProtectionOnRecord,
+      betaRepairLabEvidenceTrailClarityResult: betaRepairLabEvidenceTrailClarityResult,
+    );
+  }
+
+  static RecordSurfaceViewState resolve(RecordSurfaceInput input) {
+    final (
+      :flags,
+      :policyMic,
+      :policyUserDenied,
+      :firstUseSimplifiedRecord,
+      :error,
+      :localSaveTitle,
+      :syncNote,
+      :stageLabel,
+      :entriesAfterSave,
+      :lastCaptureAnalysisSucceeded,
+    ) = resolveInputOverlay(input);
+
+    final canRecord = flags.canRecord;
+    final showFraming = flags.showFraming;
+    final compact = input.compactLayout;
+    final stack = input.stackDecision;
+    final suppressPostResultNextCheckCompetitors =
+        stack.suppressDuplicateUseTomorrowCtas;
+    final auditPresentation = VisualAuditOverrides.active
+        ? VisualAuditOverrides.peekRecordPresentation()
+        : null;
+    final justSavedFirstEntry =
+        input.recordReturnProJustSaved ||
+        (auditPresentation?.justSavedFirst ?? false);
+    final postSaveEntryCount = entriesAfterSave.isNotEmpty
+        ? entriesAfterSave.length
+        : input.entryCount;
+    final suppressNoisyFirstSaveCards =
+        FirstThreeSessionGates.suppressNoisyPostSaveCards(
+          justSavedFirst: justSavedFirstEntry,
+          entryCount: flags.isDone && justSavedFirstEntry
+              ? postSaveEntryCount
+              : input.entryCount,
+        );
+    final suppressEarlyPatternClaimCards =
+        FirstThreeSessionGates.suppressEarlyPatternClaimCards(
+          entryCount: input.entryCount,
+          hasGroundedRepeatMatch:
+              input.secondSessionComparison?.hasEnoughData == true &&
+              const SecondSessionSignalEngine().hasGroundedRepeatMatch(
+                input.entriesAfterSave.isNotEmpty
+                    ? input.entriesAfterSave
+                    : input.journalEntries,
+              ),
+        );
+    final suppressLatestSaveArchiveInsight =
+        flags.isDone &&
+        ArchiveEntrySignalGuard.newestEntryIsLowSignal(entriesAfterSave);
+    final secondSessionPayoff =
+        flags.isDone &&
+            entriesAfterSave.isNotEmpty &&
+            !suppressLatestSaveArchiveInsight
+        ? SecondSessionPayoffEngine.build(
+            entries: entriesAfterSave,
+            analysisSucceeded: lastCaptureAnalysisSucceeded,
+          )
+        : null;
+    final thirdEntryBeliefPayoff =
+        flags.isDone &&
+            entriesAfterSave.isNotEmpty &&
+            !suppressLatestSaveArchiveInsight
+        ? ThirdEntryBeliefPayoffEngine.build(
+            entries: entriesAfterSave,
+            analysisSucceeded: lastCaptureAnalysisSucceeded,
+          )
+        : null;
+    final confirmedRepeatTriggerPayoff =
+        flags.isDone &&
+            entriesAfterSave.isNotEmpty &&
+            input.savedFromConfirmedRepeatTrigger
+        ? EarlyFirstSignalEngine.buildTriggerCapturePayoff(
+            entries: entriesAfterSave,
+            savedFromTriggerPrompt: true,
+          )
+        : null;
+    final confirmedRepeatHelpfulActionPayoff =
+        flags.isDone &&
+            entriesAfterSave.isNotEmpty &&
+            input.savedFromHelpfulAction
+        ? EarlyFirstSignalEngine.buildHelpfulActionPayoff(
+            entries: entriesAfterSave,
+            savedFromHelpfulActionPrompt: true,
+          )
+        : null;
+    final confirmedRepeatChangeNotice =
+        flags.isDone &&
+            entriesAfterSave.isNotEmpty &&
+            !input.savedFromConfirmedRepeatTrigger &&
+            !input.savedFromHelpfulAction
+        ? EarlyFirstSignalEngine.buildChangeNotice(entries: entriesAfterSave)
+        : null;
+    final repeatReturnCheckOffer =
+        flags.isDone && entriesAfterSave.isNotEmpty
+        ? RepeatReturnCheckEngine.pendingForSave(
+            entriesAfterSave: entriesAfterSave,
+            records: RepeatReturnCheckStore.cached,
+          )
+        : null;
+    final proofStack = resolveArchiveProofStack(
+      input: input,
+      flags: flags,
+      confirmedRepeatTriggerPayoff: confirmedRepeatTriggerPayoff,
+      confirmedRepeatHelpfulActionPayoff: confirmedRepeatHelpfulActionPayoff,
+      confirmedRepeatChangeNotice: confirmedRepeatChangeNotice,
+    );
+    final earlyEvidenceTimeline = proofStack.earlyEvidenceTimeline;
+    final showEarlyEvidenceTimeline = proofStack.showEarlyEvidenceTimeline;
+    final suppressEarlyRepeatPayoffCompetitors = proofStack.suppressEarlyRepeatPayoffCompetitors;
+    final earlyFirstSignalOnRecord = proofStack.earlyFirstSignalOnRecord;
+    final returnTomorrowCueReady = proofStack.returnTomorrowCueReady;
+    final returnDayFlowCandidate = proofStack.returnDayFlowCandidate;
+    final showReturnDayFlow = proofStack.showReturnDayFlow;
+    final showReturnTomorrowCueReady = proofStack.showReturnTomorrowCueReady;
+    final firstWeekProgressReady = proofStack.firstWeekProgressReady;
+    final showFirstWeekProgressReady = proofStack.showFirstWeekProgressReady;
+    final showEarlyReturnReminder = proofStack.showEarlyReturnReminder;
+    final viewingConfirmedRepeatOnRecord = proofStack.viewingConfirmedRepeatOnRecord;
+    final suppressConfirmedRepeatInlineFeedback = proofStack.suppressConfirmedRepeatInlineFeedback;
+    final showConfirmedRepeatBetaFeedback = proofStack.showConfirmedRepeatBetaFeedback;
+    final repeatReturnChangeProof = proofStack.repeatReturnChangeProof;
+    final patternChangedCandidate = proofStack.patternChangedCandidate;
+    final patternChangedDismissed = proofStack.patternChangedDismissed;
+    final confirmedRepeatThoughtMap = proofStack.confirmedRepeatThoughtMap;
+    final positivePattern = proofStack.positivePattern;
+    final helpfulActionAppearedCandidate = proofStack.helpfulActionAppearedCandidate;
+    final showHelpfulActionAppearedEligible = proofStack.showHelpfulActionAppearedEligible;
+    final positiveReinforcement = proofStack.positiveReinforcement;
+    final archiveSummaryCandidate = proofStack.archiveSummaryCandidate;
+    final archiveBeliefSurfaceCandidate = proofStack.archiveBeliefSurfaceCandidate;
+    final patternNamePrompt = proofStack.patternNamePrompt;
+    final showArchiveCurrentBeliefEligible = proofStack.showArchiveCurrentBeliefEligible;
+    final dailyReturnReasonCandidate = proofStack.dailyReturnReasonCandidate;
+    final hasChangeOverTimeProof = proofStack.hasChangeOverTimeProof;
+    final postProofArchiveProof = proofStack.postProofArchiveProof;
+    final archiveSummaryVisibleForProGate = proofStack.archiveSummaryVisibleForProGate;
+    final weeklyArchiveReviewVisibleForProGate = proofStack.weeklyArchiveReviewVisibleForProGate;
+    final hasConfirmedRepeatForProGate = proofStack.hasConfirmedRepeatForProGate;
+    final privateArchiveReportForProGate = proofStack.privateArchiveReportForProGate;
+    final privateArchiveReportPreviewForProGate = proofStack.privateArchiveReportPreviewForProGate;
+    final patternChangedForProGate = proofStack.patternChangedForProGate;
+    final hasReturnCheckAnsweredForProGate = proofStack.hasReturnCheckAnsweredForProGate;
+    final showPostProofProBridge = proofStack.showPostProofProBridge;
+    final proofSurfaceLayout = proofStack.proofSurfaceLayout;
+    final showArchiveSummary = proofStack.showArchiveSummary;
+    final archiveSummary = proofStack.archiveSummary;
+    final showDailyReturnReason = proofStack.showDailyReturnReason;
+    final dailyReturnReason = proofStack.dailyReturnReason;
+    final archiveWatchingCandidate = proofStack.archiveWatchingCandidate;
+    final archiveWatching = proofStack.archiveWatching;
+    final weeklyArchiveReview = proofStack.weeklyArchiveReview;
+    final showWeeklyArchiveReview = proofStack.showWeeklyArchiveReview;
+    final privateArchiveReportCandidate = proofStack.privateArchiveReportCandidate;
+    final showPrivateArchiveReport = proofStack.showPrivateArchiveReport;
+    final showConfirmedRepeatWhyMatters = proofStack.showConfirmedRepeatWhyMatters;
+    final showConfirmedRepeatThoughtMap = proofStack.showConfirmedRepeatThoughtMap;
+    final showPositiveReinforcement = proofStack.showPositiveReinforcement;
+    final firstWeekLoopCandidate = proofStack.firstWeekLoopCandidate;
+    final firstWeekLoopProGated = proofStack.firstWeekLoopProGated;
+    final recordProofStack = proofStack.recordProofStack;
+    final showPatternChanged = proofStack.showPatternChanged;
+    final showArchiveCurrentBeliefOnRecord = proofStack.showArchiveCurrentBeliefOnRecord;
+    final showEarlyEvidenceTimelineOnRecord = proofStack.showEarlyEvidenceTimelineOnRecord;
+    final showWeeklyArchiveReviewOnRecord = proofStack.showWeeklyArchiveReviewOnRecord;
+    final showPrivateArchiveReportOnRecord = proofStack.showPrivateArchiveReportOnRecord;
+    final showDailyReturnReasonOnRecord = proofStack.showDailyReturnReasonOnRecord;
+    final showPostProofProBridgeOnRecord = proofStack.showPostProofProBridgeOnRecord;
+    final firstProofPayoffSeenOnRecord =
+        FirstProofPayoffEngine.build(entries: input.journalEntries) != null;
+    final isDegradedTranscriptOnRecord =
+        input.journalEntries.isNotEmpty &&
+        VoiceCaptureQuality.isDegradedVoiceCapture(input.journalEntries.last);
+    final currentRelevanceCandidate = input.entryCount >= 3
+        ? CurrentRelevanceEngine.build(
+            entries: input.journalEntries,
+            beliefSurfaceVisible: archiveBeliefSurfaceCandidate.shouldShow,
+          )
+        : null;
+    final patternReviewInboxActiveOnRecord =
+        CurrentRelevanceEngine.patternReviewInboxHasActiveItems(
+          entries: input.journalEntries,
+          returnChecks: RepeatReturnCheckStore.cached,
+        );
+    final (
+      :readyBag,
+      :currentRelevanceQuestionActiveOnRecord,
+      :correctionMemoryCandidate,
+      :evidenceWeightingCandidate,
+      :proofSpecificityCandidate,
+      :presentDayRelevanceCandidate,
+      :timelinePositioningCandidate,
+      :otherEducationCardsOnRecord,
+      :patternConfidenceEducationCount,
+      :patternConfidenceExplanationCandidate,
+      :showConfirmedRepeatWhyMattersOnRecord,
+      :showConfirmedRepeatThoughtMapOnRecord,
+      :showPositiveReinforcementOnRecord,
+      :showHelpfulActionAppearedOnRecord,
+      :showChangeProofOnRecord,
+      :showFirstWeekLoopOnRecord,
+      :firstProofPayoffCandidate,
+      :threeDayChallengeCandidate,
+      :showThreeDayChallengeOnRecord,
+      :firstProofPatternConfidence,
+      :firstProofTruthProofKey,
+      :showFirstProofTruth,
+      :firstProofTruthAnswer,
+      :showFirstProofActionLoop,
+      :firstProofActionLoopContent,
+      :showFirstProofMoment,
+      :postSaveHasConfirmedRepeat,
+      :postSaveHasFirstProof,
+      :postSaveDegraded,
+      :showCoreValueFeedbackOnRecordPostFirstProof,
+      :returnCheckPayoffCandidate,
+      :whatChangedV2Prompt,
+      :whatChangedV2Display,
+      :showWhatChangedV2,
+      :showWhatChangedV2Display,
+      :firstMomentCaptureCandidate,
+      :firstSaveLiftCandidate,
+      :openingRepairOverride,
+      :firstSessionLiftCandidate,
+      :secondMomentReturnCandidate,
+      :threeMomentCompletionCandidate,
+      :firstRunPositioningCandidate,
+      :betaTodaySummaryCandidate,
+      :archiveTimelineSpineCandidate,
+      :whatToNoticeNextCandidate,
+      :suppressLegacyEducationCardsForSpineOnRecord,
+      :timelineProofMomentCandidate,
+      :betaTesterReportCandidate,
+      :notRelevantRecoveryCandidate,
+      :proofQualityResponseTimelineCandidate,
+      :proofQualityResponseSpineCandidate,
+      :betaProofLiftTimelineCandidate,
+      :returnAfterProofRecordCandidate,
+      :returnAfterProofLiftV2Candidate,
+      :recordLoosenSignalsPreAudit,
+      :recordEvidenceAnchorPreAudit,
+      :recordFeedbackStateForLift,
+      :timelineFeedbackType,
+      :betaRepairLabInput,
+      :betaRepairLabProPlacementResult,
+      :betaRepairLabPricingValueFramingResult,
+      :betaRepairLabPaywallValueResult,
+      :hasProEngagementOnRecord,
+      :betaRepairLabPricingValidationResult,
+      :proUnderstandingLiftRecordReadyInput,
+      :proVisibilityLiftRecordReadyResult,
+      :betaActivationPathPreAuditContext,
+      :betaActivationPathPreAuditResult,
+      :betaFeedbackCaptureRecordReadyPreAudit,
+      :betaProofFeedbackCounts,
+      :betaProofFeedbackRowVisibleOnTimeline,
+      :proofQualityRepairInput,
+      :proofQualityRepairResult,
+      :proofFloorRescueInput,
+      :proofFloorRescueResult,
+      :blocksProByProofFloorOnRecord,
+      :betaRepairLabProofResult,
+      :blocksProCardsByProofProtectionOnRecord,
+      :betaRepairLabEvidenceTrailClarityResult,
+    ) = resolveReadySurface(
+      input: input,
+      flags: flags,
+      entriesAfterSave: entriesAfterSave,
+      compact: compact,
+      postSaveEntryCount: postSaveEntryCount,
+      viewingConfirmedRepeatOnRecord: viewingConfirmedRepeatOnRecord,
+      repeatReturnChangeProof: repeatReturnChangeProof,
+      archiveBeliefSurfaceCandidate: archiveBeliefSurfaceCandidate,
+      privateArchiveReportPreviewForProGate: privateArchiveReportPreviewForProGate,
+      proofSurfaceLayout: proofSurfaceLayout,
+      showConfirmedRepeatWhyMatters: showConfirmedRepeatWhyMatters,
+      showConfirmedRepeatThoughtMap: showConfirmedRepeatThoughtMap,
+      showPositiveReinforcement: showPositiveReinforcement,
+      firstWeekLoopCandidate: firstWeekLoopCandidate,
+      firstWeekLoopProGated: firstWeekLoopProGated,
+      recordProofStack: recordProofStack,
+      showPrivateArchiveReportOnRecord: showPrivateArchiveReportOnRecord,
+      showPostProofProBridgeOnRecord: showPostProofProBridgeOnRecord,
+      firstProofPayoffSeenOnRecord: firstProofPayoffSeenOnRecord,
+      isDegradedTranscriptOnRecord: isDegradedTranscriptOnRecord,
+      currentRelevanceCandidate: currentRelevanceCandidate,
+      patternReviewInboxActiveOnRecord: patternReviewInboxActiveOnRecord,
+    );
     SurfacePriorityResult? recordReadySurfacePriority;
     ProBridgeTimingLoosenSignals? recordLoosenSignals;
     ProMomentTimingContext? recordReadyProTiming;
