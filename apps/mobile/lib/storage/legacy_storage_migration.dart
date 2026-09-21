@@ -279,7 +279,7 @@ abstract class LegacyStorageMigration {
       legacyMap = raw.trim().isEmpty
           ? <String, dynamic>{}
           : jsonDecode(raw) as Map<String, dynamic>;
-    } catch (_, stackTrace) { // ignore: silent_catch_audit — legacy migration best-effort cleanup
+    } on Object catch (_, stackTrace) { // ignore: silent_catch_audit — legacy migration best-effort cleanup
       // Corrupt legacy prefs — nothing safe to relocate, but this must not
       // block journal/entitlements migration or crash the app.
       return;

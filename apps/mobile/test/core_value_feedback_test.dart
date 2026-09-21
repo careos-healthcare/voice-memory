@@ -79,7 +79,7 @@ void main() {
     ArchiveBetaMissionGate.resetForTest();
     ActivationFunnelAnalytics.resetForTest();
     DeveloperSettingsGate.resetForTest();
-    await CoreValueFeedbackStore.resetForTest();
+    CoreValueFeedbackStore.resetCachedStateForTest();
   });
 
   group('CoreValueFeedbackGates', () {
@@ -268,7 +268,10 @@ void main() {
       await CoreValueFeedbackStore.resetForTest();
     });
 
-    tearDown(() => sandbox.dispose());
+    tearDown(() async {
+      await CoreValueFeedbackStore.resetForTest();
+      await sandbox.dispose();
+    });
 
     test('Yes answer persists locally', () async {
       final store = CoreValueFeedbackStore(prefs);

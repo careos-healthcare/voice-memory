@@ -1,4 +1,6 @@
 import 'package:archiveme_mobile/features/archive_changes/archive_changes_adapter.dart';
+import 'package:archiveme_mobile/features/belief_evidence/evidence/legacy_transcript_registry.dart';
+import 'package:archiveme_mobile/features/belief_evidence/evidence/transcript_evidence_index.dart';
 import 'package:archiveme_mobile/features/belief_evidence/ui/evidence_citation_copy.dart';
 import 'package:archiveme_mobile/features/belief_evidence/ui/evidence_trust_copy.dart';
 import 'package:archiveme_mobile/features/belief_evidence/ui/verified_source_proof_sheet.dart';
@@ -6,6 +8,7 @@ import 'package:archiveme_mobile/features/proof_admission/proof_admission_models
 import 'package:archiveme_mobile/features/proof_admission/proof_admission_service.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/models/reflection.dart';
+import 'package:archiveme_mobile/models/transcript_provenance.dart';
 import 'package:archiveme_mobile/product/consumer_ui_copy.dart';
 import 'package:archiveme_mobile/security/user_content_safety.dart';
 import 'package:archiveme_mobile/theme/app_theme.dart';
@@ -78,10 +81,20 @@ JournalEntry _entry({
       repeatedSignal: 'signal',
     ),
     verifiedProof: proof,
+    transcriptProvenance: TranscriptProvenance.speechToText,
   );
 }
 
 void main() {
+  setUp(() {
+    TranscriptEvidenceIndex.resetForTest();
+    LegacyTranscriptRegistry.resetForTest();
+  });
+  tearDown(() {
+    TranscriptEvidenceIndex.resetForTest();
+    LegacyTranscriptRegistry.resetForTest();
+  });
+
   group('Archive widget trust copy', () {
     testWidgets('verified changes section hedges archive read vs user words', (
       tester,

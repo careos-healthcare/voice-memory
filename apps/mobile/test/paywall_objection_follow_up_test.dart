@@ -16,6 +16,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 
+import 'helpers/app_provider_scope.dart';
 import 'support/memory_pressure_stores.dart';
 
 MobilePrefsStore _dummyPrefs() =>
@@ -86,7 +87,7 @@ void main() {
     await tester.binding.setSurfaceSize(const Size(390, 2200));
     addTearDown(() => tester.binding.setSurfaceSize(null));
     await tester.pumpWidget(
-      MaterialApp.router(
+      withAppProviderScope(MaterialApp.router(
         routerConfig: GoRouter(
           routes: [
             GoRoute(
@@ -110,7 +111,7 @@ void main() {
             ),
           ],
         ),
-      ),
+      )),
     );
     await tester.pump();
     for (var i = 0; i < 40; i++) {

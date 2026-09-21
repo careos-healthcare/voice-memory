@@ -28,7 +28,16 @@ Future<void> _pump(
   VoidCallback? onCancel,
   void Function(CaregiverGrantGranted)? onGranted,
   double textScale = 1,
+  Size viewSize = const Size(400, 4000),
 }) {
+  // The four new sharing toggles push later content well below the
+  // default 800x600 test window, where a lazy ListView never builds its
+  // offscreen children and a finder reports them as missing rather than
+  // unbuilt -- same pattern as caregiver_grant_settings_entry_test.dart.
+  tester.view.physicalSize = viewSize;
+  tester.view.devicePixelRatio = 1;
+  addTearDown(tester.view.resetPhysicalSize);
+  addTearDown(tester.view.resetDevicePixelRatio);
   return tester.pumpWidget(
     MaterialApp(
       theme: AppTheme.light(),
@@ -182,6 +191,58 @@ void main() {
       expect(granted?.tokenId, 'token-1');
     });
 
+    testWidgets('all four sharing toggles default to off', (tester) async {
+      final issuer = _RecordingIssuer();
+      await _pump(tester, issuer: issuer);
+
+      await tester.enterText(
+        find.byKey(CaregiverConsentForm.nameFieldKey),
+        'Sam Rivera',
+      );
+      await tester.enterText(
+        find.byKey(CaregiverConsentForm.emailFieldKey),
+        'sam@example.com',
+      );
+      await tester.tap(find.byKey(CaregiverConsentForm.grantKey));
+      await tester.pumpAndSettle();
+
+      final request = issuer.requests.single;
+      expect(request.shareJournal, isFalse);
+      expect(request.shareProofTrail, isFalse);
+      expect(request.shareTimeline, isFalse);
+      expect(request.shareReviewSummaries, isFalse);
+    });
+
+    testWidgets('toggling a switch flows through to the request', (
+      tester,
+    ) async {
+      final issuer = _RecordingIssuer();
+      await _pump(tester, issuer: issuer);
+
+      await tester.enterText(
+        find.byKey(CaregiverConsentForm.nameFieldKey),
+        'Sam Rivera',
+      );
+      await tester.enterText(
+        find.byKey(CaregiverConsentForm.emailFieldKey),
+        'sam@example.com',
+      );
+      await tester.tap(find.byKey(CaregiverConsentForm.journalToggleKey));
+      await tester.tap(find.byKey(CaregiverConsentForm.timelineToggleKey));
+      await tester.tap(
+        find.byKey(CaregiverConsentForm.reviewSummariesToggleKey),
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(CaregiverConsentForm.grantKey));
+      await tester.pumpAndSettle();
+
+      final request = issuer.requests.single;
+      expect(request.shareJournal, isTrue);
+      expect(request.shareProofTrail, isFalse);
+      expect(request.shareTimeline, isTrue);
+      expect(request.shareReviewSummaries, isTrue);
+    });
+
     testWidgets('a refused grant shows a recoverable error', (tester) async {
       final issuer = _RecordingIssuer(
         outcome: const CaregiverGrantFailed('backend not configured'),
@@ -221,13 +282,14 @@ void main() {
     });
 
     testWidgets('stays usable at 3x text scale', (tester) async {
-      tester.view.physicalSize = const Size(360 * 3, 900 * 3);
-      tester.view.devicePixelRatio = 3;
-      addTearDown(tester.view.resetPhysicalSize);
-      addTearDown(tester.view.resetDevicePixelRatio);
-
       final issuer = _RecordingIssuer();
-      await _pump(tester, issuer: issuer, textScale: 3);
+      await _pump(
+        tester,
+        issuer: issuer,
+        textScale: 3,
+        viewSize: const Size(360 * 3, 4000),
+      );
+      tester.view.devicePixelRatio = 3;
 
       expect(tester.takeException(), isNull);
 

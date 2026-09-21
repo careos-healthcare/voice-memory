@@ -12,7 +12,8 @@ import 'package:flutter/material.dart';
 /// Proof trail sections for a belief update — not a generic journal list.
 class BeliefEvidenceTrailCard extends StatelessWidget {
   const BeliefEvidenceTrailCard({
-    required this.trail, super.key,
+    required this.trail,
+    super.key,
     this.onAddAnother,
   });
 
@@ -63,6 +64,7 @@ class BeliefEvidenceTrailCard extends StatelessWidget {
       showControls: ArchiveInsightFeedbackGate.showForBeliefEvidence(
         hasEnoughEvidence: trail.hasEnoughEvidence,
       ),
+      sourceEntryIds: trail.sourceEntryIds,
       childBuilder: (context) {
         const target = ArchiveInsightTarget.beliefEvidence;
         final adaptedChangeLine = trail.whatChangedLine == null

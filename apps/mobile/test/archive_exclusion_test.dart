@@ -70,12 +70,12 @@ void main() {
     sandbox = TestStorageSandbox.create();
     ArchiveControlAnalytics.resetForTest();
     ActivationFunnelAnalytics.resetForTest();
-    await ArchiveExclusionStore.resetForTest();
     await AppServices.resetForTest(
       journalPath: sandbox.journalPath,
       prefsPath: sandbox.prefsPath,
       skipRevenueCat: true,
     );
+    await ArchiveExclusionStore.resetForTest();
   });
 
   tearDown(() => sandbox.dispose());

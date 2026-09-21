@@ -1,0 +1,134 @@
+{
+  "doNotRegenerate": true,
+  "phase": 0,
+  "issue": 281,
+  "capturedFrom": "current production code on archive-me/extract-archiveme-ui; AES blobs include a random IV/nonce and must stay frozen",
+  "fixedKeyHex": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+  "schema": {
+    "sqliteVaultCrypto": {
+      "keyByteLength": 32,
+      "ivByteLength": 12,
+      "digestByteLength": 32,
+      "plaintextLayout": "[database bytes][32-byte SHA-256]",
+      "wireLayout": "[12-byte IV][ciphertext+GCM tag]"
+    },
+    "encryptedJsonStorage": {
+      "envelopeKeys": [
+        "cipher",
+        "nonce",
+        "mac"
+      ],
+      "nonceByteLength": 12,
+      "macByteLength": 16
+    },
+    "encryptedJsonFileStore": {
+      "envelopeVersion": 1,
+      "envelopeKeys": [
+        "v",
+        "n",
+        "c",
+        "m"
+      ],
+      "nonceByteLength": 12,
+      "macByteLength": 16
+    },
+    "noWireFormat": [
+      "encrypted_json_file_hooks.dart",
+      "encrypted_json_file_outcome.dart"
+    ],
+    "sqlcipherDerivation": "not PBKDF2; v2 password is the base64 of 32 raw bytes; v1 password is utf8(base64_decode(stored))",
+    "secureStoragePhysicalPrefix": "vm_flutter_",
+    "vaultKeyStoreUsesFlutterSecureStorageDirectly": true
+  },
+  "sqliteVaultCrypto": {
+    "plaintextHex": "53514c69746520666f726d61742033000102030405",
+    "sealedBlobHex": "6f03399088ebf48a9c399c5d387bd8b29b2ff4c3f10264f34dbd67d32f55120a5bbfcff3307e71a9deba5773df1cc40d76b9a6218b461a7a77966b2a6b6bea036abca486be3de899b36b90632af464fd8a",
+    "sealedBlobFile": "sqlite_vault_sealed.bin"
+  },
+  "encryptedJsonStorage": {
+    "plaintext": {
+      "schema": "crypto_extract_golden_v1",
+      "entryId": "golden-entry-001",
+      "transcript": "fixed words for wire-format lock"
+    },
+    "envelopeFile": "encrypted_json_storage_envelope.json",
+    "envelope": {
+      "cipher": "fvurtshL14jJqDytB09JiGjdsFhlQq4cqb58nAxCEMbccx53cPO5xUnpVQGrngHXAuIRX/9XNreOS+3Eueyf7DiR4UgprYflIzJkFWAyjShtqelwU+5O+YWIHIPrNYivt08tRK2g5/7XCIxTHEuMVMCA",
+      "nonce": "56tNQztq5yPFB5d9",
+      "mac": "mmQ0LKLOAaid52Ycs6rA0A=="
+    }
+  },
+  "encryptedJsonFileStore": {
+    "plaintext": [
+      {
+        "id": "golden-entry-001",
+        "transcript": "fixed words for wire-format lock"
+      }
+    ],
+    "envelopeFile": "encrypted_json_file_store_envelope.json",
+    "envelope": {
+      "v": 1,
+      "n": "WPS+ZO02Co9tSFlD",
+      "c": "rkX54PrGkB+gMTYzhXWaPgp3Uh15JAS9FsAsHImEuKb75zaiEAy2Solg8PGWIJEZSECw6EvRXGCfVAtwcqzqM5a73DDXwGNmZxiv",
+      "m": "YggMQcXTtObVYX5EoD2odw=="
+    }
+  },
+  "keychainEntries": {
+    "sqlite_encryption_key_v2": {
+      "logicalKey": "sqlite_encryption_key_v2",
+      "physicalKey": "vm_flutter_sqlite_encryption_key_v2",
+      "storedValue": "AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8="
+    },
+    "sqlite_encryption_key_v2__guest": {
+      "logicalKey": "sqlite_encryption_key_v2__guest",
+      "physicalKey": "vm_flutter_sqlite_encryption_key_v2__guest",
+      "storedValue": "AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8="
+    },
+    "sqlite_encryption_passphrase_v1": {
+      "logicalKey": "sqlite_encryption_passphrase_v1",
+      "physicalKey": "vm_flutter_sqlite_encryption_passphrase_v1",
+      "storedValue": "bGVnYWN5LXBhc3NwaHJhc2UtdGhpcnR5LXR3by1jaGFycy1taW4hIQ=="
+    },
+    "private_journal_encryption_key_v1": {
+      "logicalKey": "private_journal_encryption_key_v1",
+      "physicalKey": "vm_flutter_private_journal_encryption_key_v1",
+      "storedValue": "AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8="
+    },
+    "private_journal_encryption_key_v1__guest": {
+      "logicalKey": "private_journal_encryption_key_v1__guest",
+      "physicalKey": "vm_flutter_private_journal_encryption_key_v1__guest",
+      "storedValue": "AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8="
+    },
+    "sqlite_vault_aes_key_v1__guest": {
+      "logicalKey": "sqlite_vault_aes_key_v1__guest",
+      "physicalKey": "sqlite_vault_aes_key_v1__guest",
+      "storedValue": "AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8=",
+      "note": "Vault key store talks to FlutterSecureStorage directly — no vm_flutter_ prefix."
+    }
+  },
+  "observedKeychainKeys": [
+    "sqlite_vault_aes_key_v1__guest",
+    "vm_flutter_private_journal_encryption_key_v1",
+    "vm_flutter_private_journal_encryption_key_v1__guest",
+    "vm_flutter_sqlite_encryption_key_v2",
+    "vm_flutter_sqlite_encryption_key_v2__guest",
+    "vm_flutter_sqlite_encryption_passphrase_v1"
+  ],
+  "sqlcipherFromStored": {
+    "v2": {
+      "stored": "AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8=",
+      "sqlcipherPassword": "AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8=",
+      "rawKeyBytesHex": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f"
+    },
+    "v1Legacy": {
+      "stored": "bGVnYWN5LXBhc3NwaHJhc2UtdGhpcnR5LXR3by1jaGFycy1taW4hIQ==",
+      "sqlcipherPassword": "legacy-passphrase-thirty-two-chars-min!!",
+      "rawKeyBytes": null,
+      "passphrase": "legacy-passphrase-thirty-two-chars-min!!"
+    },
+    "testInstance": {
+      "sqlcipherPassword": "QkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkJCQkI=",
+      "rawKeyBytesHex": "4242424242424242424242424242424242424242424242424242424242424242"
+    }
+  }
+}

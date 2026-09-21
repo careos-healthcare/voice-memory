@@ -1,4 +1,5 @@
 import 'package:archiveme_mobile/billing/archive_loop_entitlement_ids.dart';
+import 'package:archiveme_mobile/core/config/v1_billing_capability.dart';
 import 'package:archiveme_mobile/subscriptions/domain/subscription_models.dart';
 import 'package:flutter/foundation.dart';
 
@@ -25,10 +26,6 @@ class RevenueCatConfiguration {
     this.coachSeatOfferingId,
   });
 
-  static const bool purchasesEnabledAtBuildTime = bool.fromEnvironment(
-    'REVENUECAT_PURCHASES_ENABLED',
-    defaultValue: true,
-  );
   static const bool sandboxBuild = bool.fromEnvironment(
     'REVENUECAT_SANDBOX_BUILD',
   );
@@ -58,7 +55,9 @@ class RevenueCatConfiguration {
         : kReleaseMode
         ? RevenueCatBuildEnvironment.production
         : RevenueCatBuildEnvironment.development,
-    purchasesEnabled: purchasesEnabledAtBuildTime,
+    // Single source of truth for the billing gate — the canonical
+    // V1BillingCapability, not a duplicated bool.fromEnvironment check.
+    purchasesEnabled: V1BillingCapability.isProductionReachable,
   );
 
   final String iosPublicSdkKey;

@@ -15,6 +15,11 @@ abstract final class WeeklyArchiveReviewCopy {
   static const whatToWatchLabel = 'What to watch next';
 
   static const notEnoughEvidenceYet = 'Not enough evidence yet.';
+  static const repeatedFallback = 'No clear repeat yet.';
+  static const changedFallback = 'Not enough return checks yet.';
+  static const helpedFallback =
+      'No repeated helpful evidence in your words yet.';
+  static const helpedPrefix = 'ArchiveMe noticed this in your words before:';
   static const watchBeforeAgree = 'Watch the moment before you agree.';
 
   static const viewWeeklyReviewCta = 'View weekly review';

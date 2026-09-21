@@ -1,9 +1,14 @@
 import 'dart:async';
 
 import 'package:archiveme_mobile/core/config/v1_capability_registry.dart';
+import 'package:archiveme_mobile/core/di/app_provider_container.dart';
+import 'package:archiveme_mobile/core/di/network_providers.dart';
 import 'package:archiveme_mobile/design/archive_mobile_typography.dart';
+import 'package:archiveme_mobile/features/caregiver/consent_verification_service.dart';
+import 'package:archiveme_mobile/features/caregiver_grant/caregiver_grant_consent_adapter.dart';
 import 'package:archiveme_mobile/features/caregiver_grant/caregiver_grant_copy.dart';
 import 'package:archiveme_mobile/features/caregiver_grant/caregiver_grant_flow.dart';
+import 'package:archiveme_mobile/features/caregiver_grant/caregiver_grant_issuer.dart';
 import 'package:archiveme_mobile/theme/app_colors.dart';
 import 'package:archiveme_mobile/theme/app_spacing.dart';
 import 'package:flutter/material.dart';
@@ -31,7 +36,15 @@ class CaregiverEntryPoint extends StatelessWidget {
       override();
       return;
     }
-    unawaited(CaregiverGrantFlow.start(context));
+    final container = boundAppProviderContainer;
+    final issuer = container != null
+        ? CaregiverGrantConsentAdapter(
+            verificationService: ConsentVerificationService(
+              consentApi: container.read(caregiverConsentApiClientProvider),
+            ),
+          )
+        : const UnwiredCaregiverGrantIssuer();
+    unawaited(CaregiverGrantFlow.start(context, issuer: issuer));
   }
 
   @override

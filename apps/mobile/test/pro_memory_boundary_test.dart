@@ -270,27 +270,28 @@ void main() {
     });
   });
 
-  group('ProMemoryBoundaryEngine private report gating', () {
-    test('free user cannot export full private report', () {
+  group('private recap export is free forever', () {
+    test('free and Pro users can both export the full private report', () {
       expect(
         ProMemoryBoundaryEngine.canExportPrivateReport(isPro: false),
-        isFalse,
-      );
-      expect(
-        ProMemoryBoundaryEngine.showPrivateReportPreviewNote(isPro: false),
         isTrue,
       );
-      expect(PrivateArchiveReportGates.showFullExport(isPro: false), isFalse);
-    });
-
-    test('Pro user can export full private report', () {
       expect(
         ProMemoryBoundaryEngine.canExportPrivateReport(isPro: true),
         isTrue,
       );
+      expect(PrivateArchiveReportGates.showFullExport(isPro: false), isTrue);
+      expect(PrivateArchiveReportGates.showFullExport(isPro: true), isTrue);
+    });
+
+    test('the export shows no Pro preview note, even for free users', () {
+      expect(PrivateArchiveReportGates.showPreviewNote(isPro: false), isFalse);
       expect(
-        ProMemoryBoundaryEngine.showPrivateReportPreviewNote(isPro: true),
-        isFalse,
+        PrivateArchiveReportGates.includeSectionInPreview(
+          sectionIndex: 99,
+          isPro: false,
+        ),
+        isTrue,
       );
     });
   });

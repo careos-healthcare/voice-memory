@@ -75,12 +75,12 @@ class VadSegmentWriter {
     if (sink == null) return;
     try {
       await sink.flush();
-    } catch (e, stackTrace) {
+    } on FileSystemException catch (e, stackTrace) {
       AppLogger.error('Unhandled error caught', error: e, stackTrace: stackTrace);
       }
     try {
       await sink.close();
-    } catch (e, stackTrace) {
+    } on FileSystemException catch (e, stackTrace) {
       AppLogger.error('Unhandled error caught', error: e, stackTrace: stackTrace);
       }
   }

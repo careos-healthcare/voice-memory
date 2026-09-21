@@ -11,7 +11,6 @@ import 'package:archiveme_mobile/features/first_week_path/first_week_path_models
 import 'package:archiveme_mobile/features/help/help_reviewer_guide_copy.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/models/reflection.dart';
-import 'package:archiveme_mobile/screens/support_feedback_screen.dart';
 import 'package:archiveme_mobile/theme/app_theme.dart';
 import 'package:archiveme_mobile/widgets/first_week_path_card.dart';
 import 'package:flutter/material.dart';
@@ -247,30 +246,9 @@ void main() {
   });
 
   group('Support and reviewer guide links', () {
-    testWidgets('Support & feedback links to first week path', (tester) async {
-      await tester.pumpWidget(
-        MaterialApp(
-          theme: AppTheme.light(),
-          home: const SupportFeedbackScreen(),
-        ),
-      );
-      await tester.pump();
-
-      expect(find.text(FirstWeekPathCopy.supportSectionTitle), findsOneWidget);
-      expect(
-        find.byKey(const Key('support_feedback_open_first_week_path')),
-        findsOneWidget,
-      );
-      expect(find.text(FirstWeekPathCopy.openPathCta), findsOneWidget);
-    });
-
     test('router registers first week path route', () {
       final router = File('lib/router/app_router.dart').readAsStringSync();
-      final support = File(
-        'lib/screens/support_feedback_screen.dart',
-      ).readAsStringSync();
       expect(router, contains("path: '/first-week-path'"));
-      expect(support, contains('FirstWeekPathCopy.route'));
     });
 
     test('Help & reviewer guide mentions guided first-week path', () {

@@ -9,6 +9,7 @@ import 'package:archiveme_mobile/features/caregiver_grant/widgets/caregiver_gran
 import 'package:archiveme_mobile/theme/app_colors.dart';
 import 'package:archiveme_mobile/theme/app_spacing.dart';
 import 'package:flutter/material.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:uuid/uuid.dart';
 
 /// Final step: who the grant is for, then Grant Access.
@@ -30,6 +31,12 @@ class CaregiverConsentForm extends StatefulWidget {
   static const Key cancelKey = Key('caregiver_grant_form_cancel');
   static const Key grantKey = Key('caregiver_grant_form_submit');
   static const Key errorKey = Key('caregiver_grant_form_error');
+  static const Key journalToggleKey = Key('caregiver_grant_journal_toggle');
+  static const Key proofTrailToggleKey = Key('caregiver_grant_proof_trail_toggle');
+  static const Key timelineToggleKey = Key('caregiver_grant_timeline_toggle');
+  static const Key reviewSummariesToggleKey = Key('caregiver_grant_review_summaries_toggle');
+  static const Key sendInviteEmailToggleKey =
+      Key('caregiver_grant_send_invite_email_toggle');
 
   final CaregiverGrantIssuer issuer;
   final VoidCallback? onCancel;
@@ -46,6 +53,11 @@ class _CaregiverConsentFormState extends State<CaregiverConsentForm> {
 
   bool _busy = false;
   String? _submitError;
+  bool _shareJournal = false;
+  bool _shareProofTrail = false;
+  bool _shareTimeline = false;
+  bool _shareReviewSummaries = false;
+  bool _sendInviteEmail = false;
 
   @override
   void dispose() {
@@ -85,6 +97,11 @@ class _CaregiverConsentFormState extends State<CaregiverConsentForm> {
           name: _nameController.text.trim(),
           email: _emailController.text.trim(),
         ),
+        shareJournal: _shareJournal,
+        shareProofTrail: _shareProofTrail,
+        shareTimeline: _shareTimeline,
+        shareReviewSummaries: _shareReviewSummaries,
+        sendInviteEmail: _sendInviteEmail,
       ),
     );
     if (!mounted) return;
@@ -92,6 +109,17 @@ class _CaregiverConsentFormState extends State<CaregiverConsentForm> {
     switch (outcome) {
       case CaregiverGrantGranted():
         setState(() => _busy = false);
+        final redemption = outcome.redemption;
+        if (redemption != null) {
+          await _showInviteShareDialog(
+            reference: redemption.reference,
+            manualCode: redemption.manualCode,
+            linkToken: redemption.linkToken,
+            emailSent: redemption.emailSent,
+            contactName: _nameController.text.trim(),
+          );
+          if (!mounted) return;
+        }
         final onGranted = widget.onGranted;
         if (onGranted != null) {
           onGranted(outcome);
@@ -104,6 +132,65 @@ class _CaregiverConsentFormState extends State<CaregiverConsentForm> {
           _submitError = CaregiverGrantCopy.grantUnavailable;
         });
     }
+  }
+
+  Future<void> _showInviteShareDialog({
+    required String reference,
+    required String manualCode,
+    required String linkToken,
+    required bool emailSent,
+    required String contactName,
+  }) {
+    final inviteUrl = Uri.https(
+      'thoughtprint.xyz',
+      '/caregiver/invite',
+      {'token': linkToken},
+    ).toString();
+    final shareMessage =
+        '$inviteUrl\n\nIf the link does not open, enter reference $reference '
+        'and code $manualCode.';
+
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Invite ready'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Reference: $reference',
+              style: ArchiveMobileTypography.explanationBody(context),
+            ),
+            const SizedBox(height: AppSpacing.sm),
+            Text(
+              'Code: $manualCode',
+              style: ArchiveMobileTypography.explanationBody(context),
+            ),
+            if (emailSent) ...[
+              const SizedBox(height: AppSpacing.sm),
+              Text(
+                'Emailed to $contactName',
+                style: ArchiveMobileTypography.explanationBody(context),
+              ),
+            ],
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              unawaited(Share.share(shareMessage));
+            },
+            child: const Text('Share Invite'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(dialogContext).pop(),
+            child: const Text('Done'),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -168,6 +255,65 @@ class _CaregiverConsentFormState extends State<CaregiverConsentForm> {
                       ),
                       validator: _validateEmail,
                       onFieldSubmitted: (_) => unawaited(_submit()),
+                    ),
+                    const SizedBox(height: AppSpacing.lg),
+                    Text(
+                      CaregiverGrantCopy.permissionsHeading,
+                      style: ArchiveMobileTypography.listTitle(context),
+                    ),
+                    SwitchListTile(
+                      key: CaregiverConsentForm.journalToggleKey,
+                      contentPadding: EdgeInsets.zero,
+                      value: _shareJournal,
+                      onChanged: _busy
+                          ? null
+                          : (value) => setState(() => _shareJournal = value),
+                      title: const Text(CaregiverGrantCopy.journalToggleLabel),
+                      subtitle: const Text(CaregiverGrantCopy.journalToggleSubtitle),
+                    ),
+                    SwitchListTile(
+                      key: CaregiverConsentForm.proofTrailToggleKey,
+                      contentPadding: EdgeInsets.zero,
+                      value: _shareProofTrail,
+                      onChanged: _busy
+                          ? null
+                          : (value) => setState(() => _shareProofTrail = value),
+                      title: const Text(CaregiverGrantCopy.proofTrailToggleLabel),
+                      subtitle: const Text(CaregiverGrantCopy.proofTrailToggleSubtitle),
+                    ),
+                    SwitchListTile(
+                      key: CaregiverConsentForm.timelineToggleKey,
+                      contentPadding: EdgeInsets.zero,
+                      value: _shareTimeline,
+                      onChanged: _busy
+                          ? null
+                          : (value) => setState(() => _shareTimeline = value),
+                      title: const Text(CaregiverGrantCopy.timelineToggleLabel),
+                      subtitle: const Text(CaregiverGrantCopy.timelineToggleSubtitle),
+                    ),
+                    SwitchListTile(
+                      key: CaregiverConsentForm.reviewSummariesToggleKey,
+                      contentPadding: EdgeInsets.zero,
+                      value: _shareReviewSummaries,
+                      onChanged: _busy
+                          ? null
+                          : (value) =>
+                              setState(() => _shareReviewSummaries = value),
+                      title: const Text(CaregiverGrantCopy.reviewSummariesToggleLabel),
+                      subtitle:
+                          const Text(CaregiverGrantCopy.reviewSummariesToggleSubtitle),
+                    ),
+                    SwitchListTile(
+                      key: CaregiverConsentForm.sendInviteEmailToggleKey,
+                      contentPadding: EdgeInsets.zero,
+                      value: _sendInviteEmail,
+                      onChanged: _busy
+                          ? null
+                          : (value) => setState(() => _sendInviteEmail = value),
+                      title: const Text(CaregiverGrantCopy.sendInviteEmailToggleLabel),
+                      subtitle: const Text(
+                        CaregiverGrantCopy.sendInviteEmailToggleSubtitle,
+                      ),
                     ),
                     const SizedBox(height: AppSpacing.md),
                     Text(

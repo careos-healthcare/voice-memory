@@ -1,5 +1,6 @@
 import 'package:archiveme_mobile/design/archive_mobile_typography.dart';
 import 'package:archiveme_mobile/features/belief_evidence/provenance_recovery/provenance_recovery_port.dart';
+import 'package:archiveme_mobile/features/belief_evidence/provenance_recovery/provenance_recovery_wiring.dart';
 import 'package:archiveme_mobile/features/belief_evidence/ui/evidence_citation_palette.dart';
 import 'package:archiveme_mobile/features/belief_evidence/ui/legacy_provenance_copy.dart';
 import 'package:archiveme_mobile/features/privacy/on_device_processing_store.dart';
@@ -27,6 +28,32 @@ class ProvenanceRecoveryAction extends StatefulWidget {
     this.port = const UnwiredProvenanceRecoveryPort(),
     this.onDeviceSettingName = OnDeviceProcessingCopy.title,
   });
+
+  /// Production construction: real adapter when AppServices / the bound
+  /// container can supply deps, otherwise the unwired stub.
+  ///
+  /// The unnamed constructor stays fail-closed for tests and previews.
+  factory ProvenanceRecoveryAction.production({
+    required List<String> entryIds,
+    Key? key,
+    String onDeviceSettingName = OnDeviceProcessingCopy.title,
+  }) {
+    return ProvenanceRecoveryAction(
+      key: key,
+      entryIds: entryIds,
+      planner: ProvenanceRecoveryWiring.planner(),
+      port: ProvenanceRecoveryWiring.port(),
+      onDeviceSettingName: onDeviceSettingName,
+    );
+  }
+
+  /// Drop-in for `EvidenceCitationList.recoveryBuilder`.
+  static Widget productionBuilder(
+    BuildContext _,
+    List<String> entryIds,
+  ) {
+    return ProvenanceRecoveryAction.production(entryIds: entryIds);
+  }
 
   final List<String> entryIds;
   final ProvenanceRecoveryPlanner planner;

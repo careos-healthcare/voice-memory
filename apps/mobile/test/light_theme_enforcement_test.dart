@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'support/record_screen_library_source.dart';
 
 import 'package:flutter_test/flutter_test.dart';
 
@@ -9,6 +8,7 @@ void main() {
     'lib/screens',
     'lib/widgets',
     'lib/router',
+    'lib/features/capture_flow/ui',
     'lib/widgets/main_shell.dart',
     'lib/app.dart',
   ];
@@ -62,7 +62,9 @@ void main() {
 
   test('consumer routes use warm light scaffold background', () {
     for (final path in [
-      ...recordScreenLibraryPaths,
+      'lib/features/capture_flow/ui/capture_screen.dart',
+      'lib/features/capture_flow/ui/capture_screen_host.dart',
+      'lib/features/capture_flow/ui/capture_flow_panels.dart',
       'lib/screens/archive_belief_screen.dart',
       'lib/screens/account_screen.dart',
       'lib/screens/settings_screen.dart',

@@ -1,7 +1,7 @@
-import 'package:archiveme_mobile/features/archive_value/archive_value_progress.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/theme/voicememory_colors.dart';
 import 'package:archiveme_mobile/theme/voicememory_typography.dart';
+import 'package:archiveme_mobile/widgets/archive_value_progress.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 

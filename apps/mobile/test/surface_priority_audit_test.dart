@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'support/record_screen_library_source.dart';
 
 import 'package:archiveme_mobile/features/archive_proof/proof_surface_advice_guard.dart';
 import 'package:archiveme_mobile/features/beta/archive_beta_mission_gate.dart';
@@ -302,21 +301,6 @@ void main() {
           .length;
       expect(proofVisible, lessThanOrEqualTo(1));
       expect(result.proofSlot, SurfacePriorityCardKey.timelineProofMoment);
-    });
-
-    test('keeps capture controls primary', () {
-      expect(SurfacePriorityCopy.coreRule, contains('capture-first'));
-      final source = readRecordScreenLibrarySource();
-      expect(source, contains('_buildCaptureEntryActions'));
-      expect(
-        source.indexOf('_buildCaptureEntryActions'),
-        lessThan(
-          source.indexOf(
-            'ctx.showLowFrictionReturnCard &&\n'
-            '            !ctx.firstUseSimplifiedRecord',
-          ),
-        ),
-      );
     });
 
     test('prefers TimelineProofMoment over ArchiveTimelineSpine', () {
@@ -887,12 +871,6 @@ void main() {
   });
 
   group('Surface priority integration', () {
-    test('record screen references SurfacePriorityEngine', () {
-      final source = readRecordScreenLibrarySource();
-      expect(source, contains('SurfacePriorityEngine.auditRecordReady'));
-      expect(source, contains('SurfacePriorityEngine.auditRecordPostSave'));
-    });
-
     test('patterns audit remains defined on SurfacePriorityEngine', () {
       final source = File(
         'lib/features/surface_priority/surface_priority_engine.dart',

@@ -112,14 +112,17 @@ void main() {
   late TestStorageSandbox sandbox;
   setUp(() async {
     sandbox = TestStorageSandbox.create();
-    await WhatChangedV2Store.resetForTest();
     await ComeBackTomorrowV2Store.resetForTest(null);
     PatternLifecycleAnalytics.resetForTest();
+    // AppServices.resetForTest must run first so the prefs-backed reset below
+    // writes into this test's fresh sandbox and not the previous test's
+    // already-disposed one.
     await AppServices.resetForTest(
       journalPath: sandbox.journalPath,
       prefsPath: sandbox.prefsPath,
       skipRevenueCat: true,
     );
+    await WhatChangedV2Store.resetForTest();
   });
 
   tearDown(() => sandbox.dispose());
@@ -132,6 +135,7 @@ void main() {
       expect(lifecycle, isNotNull);
       expect(lifecycle!.state, PatternLifecycleState.forming);
       expect(lifecycle.label, PatternLifecycleCopy.formingLabel);
+      expect(lifecycle.contributingEntryIds, ['e1', 'e2']);
     });
 
     test('3 related entries resolve Repeated', () {
@@ -142,6 +146,7 @@ void main() {
       expect(lifecycle, isNotNull);
       expect(lifecycle!.state, PatternLifecycleState.repeated);
       expect(lifecycle.label, PatternLifecycleCopy.repeatedLabel);
+      expect(lifecycle.contributingEntryIds, ['e1', 'e2', 'e3']);
     });
 
     test('active watch target resolves Watching', () {
@@ -454,6 +459,69 @@ void main() {
           .map((e) => '${e.key}:${e.value}')
           .join(' ');
       expect(blob.toLowerCase(), isNot(contains('said yes')));
+    });
+
+    testWidgets('view evidence is absent without contributing ids', (
+      tester,
+    ) async {
+      const lifecycle = PatternLifecycle(
+        state: PatternLifecycleState.watching,
+        label: PatternLifecycleCopy.watchingLabel,
+        body: PatternLifecycleCopy.watchingBody,
+      );
+
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: Scaffold(
+            body: PatternLifecycleBadge(
+              lifecycle: lifecycle,
+              entryCount: 3,
+              source: 'pattern_detail',
+              skipAnalytics: true,
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+
+      expect(
+        find.byKey(const Key('pattern_lifecycle_view_evidence')),
+        findsNothing,
+      );
+    });
+
+    testWidgets('view evidence fires when contributing ids are present', (
+      tester,
+    ) async {
+      var opened = false;
+      const lifecycle = PatternLifecycle(
+        state: PatternLifecycleState.repeated,
+        label: PatternLifecycleCopy.repeatedLabel,
+        body: PatternLifecycleCopy.repeatedBody,
+        contributingEntryIds: ['e1', 'e2', 'e3'],
+      );
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: PatternLifecycleBadge(
+              lifecycle: lifecycle,
+              entryCount: 3,
+              source: 'pattern_detail',
+              skipAnalytics: true,
+              onViewEvidence: () => opened = true,
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+
+      final cta = find.byKey(const Key('pattern_lifecycle_view_evidence'));
+      expect(cta, findsOneWidget);
+      expect(find.textContaining('View evidence'), findsOneWidget);
+      await tester.tap(cta);
+      await tester.pump();
+      expect(opened, isTrue);
     });
   });
 

@@ -1,21 +1,14 @@
+import 'package:archiveme_mobile/billing/archive_paywall_copy.dart';
+import 'package:archiveme_mobile/billing/paywall_route_args.dart';
+import 'package:archiveme_mobile/billing/paywall_source.dart';
 import 'package:archiveme_mobile/design/archive_mobile_typography.dart';
 import 'package:archiveme_mobile/features/archive_calendar/archive_calendar_copy.dart';
-import 'package:archiveme_mobile/features/archive_clarity/archive_clarity_copy.dart';
-import 'package:archiveme_mobile/features/beta_feedback/beta_feedback_copy.dart';
-import 'package:archiveme_mobile/features/beta_invite/beta_invite_copy.dart';
-import 'package:archiveme_mobile/features/beta_outcomes/beta_outcomes_copy.dart';
-import 'package:archiveme_mobile/features/capacity_loop/capacity_beta_mission_copy.dart';
-import 'package:archiveme_mobile/features/capacity_loop/capacity_beta_signal_copy.dart';
-import 'package:archiveme_mobile/features/first_week_path/first_week_path_copy.dart';
 import 'package:archiveme_mobile/features/insight_feedback/insight_feedback_copy.dart';
-import 'package:archiveme_mobile/features/milestone_share/milestone_share_copy.dart';
-import 'package:archiveme_mobile/features/paid_intent/paid_intent_confirmation_copy.dart';
-import 'package:archiveme_mobile/features/pro_interest/pro_interest_copy.dart';
 import 'package:archiveme_mobile/features/review_ritual/view_ritual_copy.dart';
 import 'package:archiveme_mobile/features/share/archive_share_actions.dart';
 import 'package:archiveme_mobile/features/support/support_feedback_copy.dart';
 import 'package:archiveme_mobile/features/then_now/then_now_copy.dart';
-import 'package:archiveme_mobile/features/todays_question/todays_question_copy.dart';
+import 'package:archiveme_mobile/product/consumer_ui_copy.dart';
 import 'package:archiveme_mobile/theme/app_colors.dart';
 import 'package:archiveme_mobile/theme/app_spacing.dart';
 import 'package:archiveme_mobile/widgets/pushed_screen_shell.dart';
@@ -89,66 +82,6 @@ class SupportFeedbackScreen extends StatelessWidget {
             ),
             _section(
               context,
-              key: const Key('support_feedback_beta_feedback'),
-              title: BetaFeedbackCopy.supportSectionTitle,
-              body: BetaFeedbackCopy.supportSectionBody,
-            ),
-            SizedBox(
-              width: double.infinity,
-              child: OutlinedButton(
-                key: const Key('support_feedback_open_beta_feedback'),
-                onPressed: () => context.push('/beta-feedback'),
-                child: const Text(BetaFeedbackCopy.openBetaFeedbackButton),
-              ),
-            ),
-            const SizedBox(height: AppSpacing.sm),
-            _section(
-              context,
-              key: const Key('support_feedback_first_week_path'),
-              title: FirstWeekPathCopy.supportSectionTitle,
-              body: FirstWeekPathCopy.supportSectionBody,
-            ),
-            SizedBox(
-              width: double.infinity,
-              child: OutlinedButton(
-                key: const Key('support_feedback_open_first_week_path'),
-                onPressed: () => context.push(FirstWeekPathCopy.route),
-                child: const Text(FirstWeekPathCopy.openPathCta),
-              ),
-            ),
-            const SizedBox(height: AppSpacing.sm),
-            _section(
-              context,
-              key: const Key('support_feedback_archive_clarity'),
-              title: ArchiveClarityCopy.supportSectionTitle,
-              body: ArchiveClarityCopy.supportSectionBody,
-            ),
-            SizedBox(
-              width: double.infinity,
-              child: OutlinedButton(
-                key: const Key('support_feedback_open_archive_clarity'),
-                onPressed: () => context.push(ArchiveClarityCopy.route),
-                child: const Text(ArchiveClarityCopy.viewClarityCta),
-              ),
-            ),
-            const SizedBox(height: AppSpacing.sm),
-            _section(
-              context,
-              key: const Key('support_feedback_todays_one_question'),
-              title: TodaysQuestionCopy.supportSectionTitle,
-              body: TodaysQuestionCopy.supportSectionBody,
-            ),
-            SizedBox(
-              width: double.infinity,
-              child: OutlinedButton(
-                key: const Key('support_feedback_open_todays_one_question'),
-                onPressed: () => context.push(TodaysQuestionCopy.route),
-                child: const Text(TodaysQuestionCopy.eyebrow),
-              ),
-            ),
-            const SizedBox(height: AppSpacing.sm),
-            _section(
-              context,
               key: const Key('support_feedback_then_vs_now'),
               title: ThenNowCopy.supportSectionTitle,
               body: ThenNowCopy.supportSectionBody,
@@ -194,119 +127,33 @@ class SupportFeedbackScreen extends StatelessWidget {
             const SizedBox(height: AppSpacing.sm),
             _section(
               context,
-              key: const Key('support_feedback_milestone_share'),
-              title: MilestoneShareCopy.supportSectionTitle,
-              body: MilestoneShareCopy.supportSectionBody,
-            ),
-            SizedBox(
-              width: double.infinity,
-              child: OutlinedButton(
-                key: const Key('support_feedback_open_milestone_share'),
-                onPressed: () => context.push(MilestoneShareCopy.route),
-                child: const Text(MilestoneShareCopy.openMilestoneCardsCta),
-              ),
-            ),
-            const SizedBox(height: AppSpacing.sm),
-            _section(
-              context,
               key: const Key('support_feedback_insight_feedback'),
               title: InsightFeedbackCopy.supportSectionTitle,
               body: InsightFeedbackCopy.supportSectionBody,
-            ),
-            const SizedBox(height: AppSpacing.sm),
-            _section(
-              context,
-              key: const Key('support_feedback_beta_outcomes'),
-              title: BetaOutcomesCopy.supportSectionTitle,
-              body: BetaOutcomesCopy.supportSectionBody,
-            ),
-            SizedBox(
-              width: double.infinity,
-              child: OutlinedButton(
-                key: const Key('support_feedback_open_beta_outcomes'),
-                onPressed: () => context.push('/beta-outcomes'),
-                child: const Text(BetaOutcomesCopy.openBetaOutcomesButton),
-              ),
-            ),
-            const SizedBox(height: AppSpacing.sm),
-            _section(
-              context,
-              key: const Key('support_feedback_capacity_beta_mission'),
-              title: CapacityBetaMissionCopy.supportTitle,
-              body: CapacityBetaMissionCopy.supportSubtitle,
-            ),
-            SizedBox(
-              width: double.infinity,
-              child: OutlinedButton(
-                key: const Key('support_feedback_open_capacity_beta_mission'),
-                onPressed: () => context.push(CapacityBetaMissionCopy.route),
-                child: const Text(CapacityBetaMissionCopy.startMissionCta),
-              ),
-            ),
-            const SizedBox(height: AppSpacing.sm),
-            _section(
-              context,
-              key: const Key('support_feedback_capacity_beta_signals'),
-              title: CapacityBetaSignalCopy.supportTitle,
-              body: CapacityBetaSignalCopy.supportSubtitle,
-            ),
-            SizedBox(
-              width: double.infinity,
-              child: OutlinedButton(
-                key: const Key('support_feedback_open_capacity_beta_signals'),
-                onPressed: () => context.push(CapacityBetaSignalCopy.route),
-                child: const Text(CapacityBetaSignalCopy.openFromSupportButton),
-              ),
-            ),
-            const SizedBox(height: AppSpacing.sm),
-            _section(
-              context,
-              key: const Key('support_feedback_paid_intent'),
-              title: PaidIntentConfirmationCopy.supportSectionTitle,
-              body: PaidIntentConfirmationCopy.supportSectionBody,
-            ),
-            SizedBox(
-              width: double.infinity,
-              child: OutlinedButton(
-                key: const Key('support_feedback_open_paid_intent'),
-                onPressed: () => context.push(CapacityBetaSignalCopy.route),
-                child: const Text(
-                  PaidIntentConfirmationCopy.supportOpenDashboardCta,
-                ),
-              ),
-            ),
-            const SizedBox(height: AppSpacing.sm),
-            _section(
-              context,
-              key: const Key('support_feedback_beta_invite'),
-              title: BetaInviteCopy.supportTitle,
-              body: BetaInviteCopy.supportSubtitle,
-            ),
-            SizedBox(
-              width: double.infinity,
-              child: OutlinedButton(
-                key: const Key('support_feedback_open_beta_invite_pack'),
-                onPressed: () => context.push('/beta-invite-pack'),
-                child: const Text(BetaInviteCopy.openBetaInviteButton),
-              ),
             ),
             const SizedBox(height: AppSpacing.sm),
             ListTile(
               key: const Key('support_feedback_pro_interest_row'),
               contentPadding: EdgeInsets.zero,
               title: Text(
-                ProInterestCopy.supportTitle,
+                ArchivePaywallCopy.screenTitle,
                 style: ArchiveMobileTypography.listTitle(context),
               ),
               subtitle: Text(
-                ProInterestCopy.supportSubtitle,
+                ConsumerUiCopy.paywallSubhead,
                 style: ArchiveMobileTypography.explanationBody(
                   context,
                   color: AppColors.textSecondary,
                 ),
               ),
               trailing: const Icon(Icons.chevron_right),
-              onTap: () => context.push('/pro-interest'),
+              onTap: () => context.push(
+                '/subscription',
+                extra: const PaywallRouteArgs(
+                  source: PaywallSource.generalPro,
+                  sourceRoute: '/support-feedback',
+                ),
+              ),
             ),
             const SizedBox(height: AppSpacing.sm),
             _bulletsSection(
@@ -334,15 +181,6 @@ class SupportFeedbackScreen extends StatelessWidget {
                 key: const Key('support_feedback_copy_checklist'),
                 onPressed: () => _copyChecklist(context),
                 child: const Text(SupportFeedbackCopy.copyChecklistButton),
-              ),
-            ),
-            const SizedBox(height: AppSpacing.sm),
-            SizedBox(
-              width: double.infinity,
-              child: OutlinedButton(
-                key: const Key('support_feedback_open_help_guide'),
-                onPressed: () => context.push('/help-reviewer-guide'),
-                child: const Text(SupportFeedbackCopy.openHelpGuideButton),
               ),
             ),
             const SizedBox(height: AppSpacing.sm),

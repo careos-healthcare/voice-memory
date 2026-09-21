@@ -11,7 +11,7 @@ abstract final class PersonalContentEncryptedStorage {
     required String keyAlias,
   }) async {
     final keyStore = SecurePrivateDataEncryptionKeyStore(
-      secure: secureStorage,
+      store: secureStorage,
       keyAlias: keyAlias,
     );
     final keyBytes = await keyStore.ensureKey();
@@ -20,7 +20,8 @@ abstract final class PersonalContentEncryptedStorage {
 
   static EncryptedJsonStorage forTest({List<int>? masterKeyBytes}) {
     return EncryptedJsonStorage(
-      masterKeyBytes: masterKeyBytes ?? List<int>.generate(32, (index) => index + 1),
+      masterKeyBytes:
+          masterKeyBytes ?? List<int>.generate(32, (index) => index + 1),
     );
   }
 }

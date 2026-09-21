@@ -1,4 +1,5 @@
 import 'package:archiveme_mobile/features/archive_change_feed/archive_change_feed_models.dart';
+import 'package:archiveme_mobile/features/archive_proof/visible_archive_proof_copy.dart';
 import 'package:archiveme_mobile/features/archive_evidence/archive_evidence.dart';
 import 'package:archiveme_mobile/features/archive_explanations/archive_explanation_engine.dart';
 import 'package:archiveme_mobile/features/archive_explanations/explanation_models.dart';
@@ -10,6 +11,28 @@ import 'package:archiveme_mobile/models/journal_entry.dart';
 const _engine = ArchiveExplanationEngine();
 
 /// Builds [EvidenceTrailPayload] from existing archive engines — no AI.
+/// Builds a trail from cited entry ids — no archive-confidence percent.
+EvidenceTrailPayload? buildEvidenceTrailForSourceEntryIds({
+  required List<String> sourceEntryIds,
+  required List<JournalEntry> entries,
+  String title = VisibleArchiveProofCopy.beliefEvidenceTrailTitle,
+  String whySummary = VisibleArchiveProofCopy.beliefEvidenceSourceLine,
+}) {
+  if (sourceEntryIds.isEmpty) return null;
+  final byId = {for (final entry in entries) entry.id: entry};
+  final matched = [
+    for (final id in sourceEntryIds)
+      if (byId[id] != null) byId[id]!,
+  ];
+  if (matched.isEmpty) return null;
+  return EvidenceTrailPayload(
+    title: title,
+    whySummary: whySummary,
+    evidenceCount: matched.length,
+    sources: _sourcesFromEntries(matched),
+  );
+}
+
 EvidenceTrailPayload? buildEvidenceTrailForInsight({
   required ArchiveInsightRef ref,
   required List<JournalEntry> entries,

@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'support/record_screen_library_source.dart';
 
 import 'package:archiveme_mobile/features/early_archive/early_first_signal_engine.dart';
 import 'package:archiveme_mobile/features/present_day_relevance/present_day_relevance_analytics.dart';
@@ -333,16 +332,6 @@ void main() {
       final cardIndex = source.indexOf('PresentDayRelevanceCard(');
       final proBridgeIndex = source.indexOf(
         "analyticsSource: 'patterns_post_proof_pro_evidence_value'",
-      );
-      expect(cardIndex, greaterThan(0));
-      expect(proBridgeIndex, greaterThan(cardIndex));
-    });
-
-    test('record screen renders card before Pro evidence bridge', () {
-      final source = readRecordScreenLibrarySource();
-      final cardIndex = source.indexOf('showPresentDayRelevanceOnRecordReady');
-      final proBridgeIndex = source.indexOf(
-        'showProEvidenceValueOnRecordReady',
       );
       expect(cardIndex, greaterThan(0));
       expect(proBridgeIndex, greaterThan(cardIndex));

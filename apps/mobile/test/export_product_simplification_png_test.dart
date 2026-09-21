@@ -6,27 +6,47 @@ import 'package:archiveme_mobile/screens/belief_changes_screen.dart';
 import 'package:archiveme_mobile/screens/beliefs_screen.dart';
 import 'package:archiveme_mobile/screens/onboarding_screen.dart';
 import 'package:archiveme_mobile/screens/record_screen.dart';
+import 'package:archiveme_mobile/services/app_services.dart';
 import 'package:archiveme_mobile/theme/app_theme.dart';
 import 'package:archiveme_mobile/widgets/belief_empty_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+
+import 'support/test_storage_sandbox.dart';
 
 /// Host PNG export for product simplification review.
 void main() {
   testWidgets('export simplified product screens', (tester) async {
-    // Manual asset export — skip in automated full-suite runs (RecordScreen bootstrap hangs).
+    // Manual asset export — skip in automated full-suite runs (screens need
+    // AppServices + a real display; run on a device with ARCHIVEME_RUN_PNG_EXPORT=true).
     if (Platform.environment['ARCHIVEME_RUN_PNG_EXPORT'] != 'true') return;
 
     const size = Size(393, 852);
     await tester.binding.setSurfaceSize(size);
     addTearDown(() => tester.binding.setSurfaceSize(null));
 
+    // Every screen here (belief screens and CaptureScreenHost) reads
+    // AppServices.instance in initState, so initialize it before pumping. Real
+    // disk/DB (drift) setup -> runAsync. NOTE: only reachable behind the env gate
+    // above; on a headless VM the drift/sqflite plugins are unavailable
+    // (MissingPluginException), so this path is verified on a real device only.
+    final sandbox = TestStorageSandbox.create();
+    addTearDown(sandbox.dispose);
+    await tester.runAsync(
+      () => AppServices.resetForTest(
+        journalPath: sandbox.journalPath,
+        prefsPath: sandbox.prefsPath,
+        skipRevenueCat: true,
+      ),
+    );
+
     final home = Platform.environment['HOME'] ?? '';
     final outDir = home.isNotEmpty
         ? '$home/Desktop/upload12/screenshots'
         : 'build/product_screenshots';
-    await Directory(outDir).create(recursive: true);
+    await tester.runAsync(() => Directory(outDir).create(recursive: true));
 
     final screens = <(String name, Widget child)>[
       ('onboarding-1', const OnboardingScreen()),
@@ -34,7 +54,12 @@ void main() {
       ('archive-beliefs', const ArchiveBeliefScreen()),
       ('beliefs-explorer', const BeliefsScreen()),
       ('belief-changes', const BeliefChangesScreen()),
-      ('record', const RecordScreen()),
+      // Live capture surface. CaptureScreenHost is the routed V1 record tab;
+      // RecordScreen is deprecated and not routed. It is a ConsumerWidget, so it
+      // needs an ambient ProviderScope (and, like the other screens here, an
+      // initialized AppServices at run time — this manual export runs on a real
+      // device where that DI is present).
+      ('record', const ProviderScope(child: CaptureScreenHost())),
     ];
 
     for (final s in screens) {
@@ -59,11 +84,16 @@ void main() {
       final boundary = tester.renderObject<RenderRepaintBoundary>(
         find.byType(RepaintBoundary).first,
       );
-      final image = await boundary.toImage(pixelRatio: 2);
-      final bytes = await image.toByteData(format: ui.ImageByteFormat.png);
-      await File(
-        '$outDir/${s.$1}.png',
-      ).writeAsBytes(bytes!.buffer.asUint8List());
+      // Real GPU + file I/O: toImage()/toByteData()/writeAsBytes() never complete
+      // inside the fake-async testWidgets zone, so run them under runAsync (pumps
+      // stay outside). Same pattern as the pattern_name_test.dart fix (PR #251).
+      await tester.runAsync(() async {
+        final image = await boundary.toImage(pixelRatio: 2);
+        final bytes = await image.toByteData(format: ui.ImageByteFormat.png);
+        await File(
+          '$outDir/${s.$1}.png',
+        ).writeAsBytes(bytes!.buffer.asUint8List());
+      });
     }
 
     // ignore: avoid_print

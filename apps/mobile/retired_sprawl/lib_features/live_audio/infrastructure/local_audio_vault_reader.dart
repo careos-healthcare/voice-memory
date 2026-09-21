@@ -4,6 +4,7 @@ import 'dart:typed_data';
 
 import 'package:archiveme_mobile/features/live_audio/live_audio_constants.dart';
 import 'package:archiveme_mobile/storage/private_data_encryption_key_store.dart';
+import 'package:archiveme_mobile/storage/secure_storage.dart';
 import 'package:cryptography/cryptography.dart';
 
 /// Reads encrypted offline vault files for local fallback recovery.
@@ -11,7 +12,9 @@ class LocalAudioVaultReader {
   LocalAudioVaultReader({
     PrivateDataEncryptionKeyStore? keyStore,
     AesGcm? algorithm,
-  }) : _keyStore = keyStore ?? SecurePrivateDataEncryptionKeyStore(),
+  }) : _keyStore =
+           keyStore ??
+           SecurePrivateDataEncryptionKeyStore(store: SecureStorageService()),
        _algorithm = algorithm ?? AesGcm.with256bits();
 
   static const _magic = [0x41, 0x56, 0x4d, 0x45];

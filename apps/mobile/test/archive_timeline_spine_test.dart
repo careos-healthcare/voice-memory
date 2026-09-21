@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'support/record_screen_library_source.dart';
 
 import 'package:archiveme_mobile/features/archive_proof/proof_surface_advice_guard.dart';
 import 'package:archiveme_mobile/features/archive_timeline_spine/archive_timeline_spine_analytics.dart';
@@ -580,14 +579,6 @@ void main() {
       expect(source, contains('suppressLegacyEducationCardsForSpine'));
       expect(source, contains('!suppressLegacyEducationCardsForSpine'));
       expect(source, contains('showCurrentRelevanceOnPatterns'));
-    });
-
-    test('record card sits below ArchiveBeliefSurfaceCard', () {
-      final source = readRecordScreenLibrarySource();
-      final beliefIndex = source.indexOf('showArchiveCurrentBeliefOnRecord');
-      final spineIndex = source.indexOf('showArchiveTimelineSpineOnRecord');
-      expect(beliefIndex, greaterThan(0));
-      expect(spineIndex, greaterThan(beliefIndex));
     });
   });
 

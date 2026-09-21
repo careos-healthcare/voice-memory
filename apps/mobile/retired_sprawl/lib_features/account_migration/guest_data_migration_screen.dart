@@ -134,7 +134,7 @@ class _GuestDataMigrationScreenState extends State<GuestDataMigrationScreen> {
   Widget build(BuildContext context) {
     return PushedScreenShell(
       title: 'Data from before sign-in',
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.fromLTRB(16, 8, 16, 88),
         child: _loading
             ? const Center(child: CircularProgressIndicator())

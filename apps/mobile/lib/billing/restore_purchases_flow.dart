@@ -77,7 +77,7 @@ class RestorePurchasesFlow {
         outcome: RestorePurchasesOutcome.unavailable,
         error: e,
       );
-    } catch (e, stackTrace) {
+    } on Object catch (e, stackTrace) {
       return RestorePurchasesResult(
         outcome: RestorePurchasesOutcome.error,
         error: e,

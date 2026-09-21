@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:archiveme_mobile/billing/archive_loop_entitlement_ids.dart';
 import 'package:archiveme_mobile/billing/revenuecat_configuration.dart';
 import 'package:archiveme_mobile/billing/revenuecat_service.dart';
+import 'package:archiveme_mobile/core/config/v1_billing_capability.dart';
 import 'package:archiveme_mobile/core/utils/app_logger.dart';
 import 'package:archiveme_mobile/features/billing/application/billing_notifier.dart';
 import 'package:flutter/foundation.dart';
@@ -33,7 +34,7 @@ class SubscriptionState {
     this.isLoading = true,
     this.errorMessage,
     this.billingConfigured = false,
-    this.purchasesEnabled = RevenueCatConfiguration.purchasesEnabledAtBuildTime,
+    this.purchasesEnabled = V1BillingCapability.isProductionReachable,
     this.monthlyPriceLabel,
     this.yearlyPriceLabel,
   });
@@ -124,7 +125,7 @@ class SubscriptionNotifier extends Notifier<SubscriptionState> {
   Future<void> _initRevenueCat() async {
     if (!ref.mounted) return;
 
-    if (!RevenueCatConfiguration.purchasesEnabledAtBuildTime) {
+    if (!V1BillingCapability.isProductionReachable) {
       state = state.copyWith(isLoading: false, billingConfigured: false);
       return;
     }
@@ -137,7 +138,7 @@ class SubscriptionNotifier extends Notifier<SubscriptionState> {
       ref.read(billingProvider.notifier).startListening();
       await checkSubscriptionStatus();
       await _refreshOfferingsPriceLabels();
-    } catch (e, stackTrace) {
+    } on Exception catch (e, stackTrace) {
       if (!ref.mounted) return;
       state = state.copyWith(
         isLoading: false,
@@ -150,7 +151,7 @@ class SubscriptionNotifier extends Notifier<SubscriptionState> {
   Future<void> checkSubscriptionStatus() async {
     if (!ref.mounted) return;
 
-    if (!RevenueCatConfiguration.purchasesEnabledAtBuildTime) {
+    if (!V1BillingCapability.isProductionReachable) {
       state = state.copyWith(isLoading: false, billingConfigured: false);
       return;
     }
@@ -169,7 +170,7 @@ class SubscriptionNotifier extends Notifier<SubscriptionState> {
         isLoading: false,
         billingConfigured: _revenueCat.isConfigured,
       );
-    } catch (e, stackTrace) {
+    } on Exception catch (e, stackTrace) {
       if (!ref.mounted) return;
       state = state.copyWith(
         isLoading: false,
@@ -190,7 +191,7 @@ class SubscriptionNotifier extends Notifier<SubscriptionState> {
         billingConfigured: true,
       );
       return entitlements.isPro;
-    } catch (e, stackTrace) {
+    } on Exception catch (e, stackTrace) {
       state = state.copyWith(isLoading: false, errorMessage: e.toString());
       return false;
     }
@@ -206,7 +207,7 @@ class SubscriptionNotifier extends Notifier<SubscriptionState> {
         isLoading: false,
         billingConfigured: _revenueCat.isConfigured,
       );
-    } catch (e, stackTrace) {
+    } on Exception catch (e, stackTrace) {
       state = state.copyWith(
         isLoading: false,
         billingConfigured: _revenueCat.isConfigured,
@@ -241,7 +242,7 @@ class SubscriptionNotifier extends Notifier<SubscriptionState> {
         monthlyPriceLabel: monthly,
         yearlyPriceLabel: yearly,
       );
-    } catch (e, stackTrace) {
+    } on Exception catch (e, stackTrace) {
       AppLogger.error('Unhandled error caught', error: e, stackTrace: stackTrace);
       AppLogger.debug('SubscriptionNotifier: offerings refresh skipped — $e');
     }

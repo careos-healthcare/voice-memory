@@ -27,6 +27,7 @@ dependencies:
   record: ^7.1.1
   audioplayers: ^6.4.0
   share_plus: ^10.1.4
+  pdf: ^3.11.1
   file_picker: ^8.1.7
   url_launcher: ^6.3.1
   uuid: ^4.5.1
@@ -62,6 +63,10 @@ dependencies:
   code_assets: ^1.0.0
   sqlite3: ^3.5.1
   sqflite_sqlcipher: ^3.4.1
+  archiveme_crypto:
+    path: ../../packages/archiveme_crypto
+  archiveme_ui:
+    path: ../../packages/archiveme_ui
   llama_cpp_dart:
     path: ../../packages/llama_cpp_dart
   sherpa_onnx: ^1.13.6
@@ -75,6 +80,7 @@ dependencies:
   flutter_gemma_speech: ^0.4.3
   icloud_storage: ^2.2.0
   workmanager: ^0.10.9
+  app_links: ^7.2.1
 
 dev_dependencies:
   flutter_test:

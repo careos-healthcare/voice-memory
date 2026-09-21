@@ -17,6 +17,19 @@ class MobilePrefsStore {
   /// fire-and-forget metric writes) cannot lose updates or corrupt the file.
   Future<void> _mutex = Future<void>.value();
 
+  /// Completes when every write already enqueued on [_mutex] has finished.
+  ///
+  /// The Future already exists — callers that drop `writeMap` / `updateMap`
+  /// still enqueue here. Bound so a stalled disk cannot hang a test tearDown
+  /// the way an unbounded await did.
+  static const Duration drainTimeout = Duration(seconds: 3);
+
+  Future<void> drainPendingWrites({
+    Duration timeout = drainTimeout,
+  }) {
+    return _mutex.timeout(timeout, onTimeout: () {});
+  }
+
   Future<void> _update(void Function(Map<String, dynamic>) mutate) {
     final completer = Completer<void>();
     final previous = _mutex;
@@ -44,7 +57,17 @@ class MobilePrefsStore {
   }
 
   Future<Map<String, dynamic>> _read() async {
-    final raw = await file.readAsString();
+    final String raw;
+    try {
+      raw = await file.readAsString();
+    } on PathNotFoundException {
+      // A missing prefs file is not an error — it just means nothing has been
+      // written yet (first launch, or a freshly-created test sandbox before its
+      // first write). Treat it as empty; the next _write creates the file. A
+      // read-modify-write (_update) previously threw here before _write could
+      // create the file.
+      return {};
+    }
     if (raw.trim().isEmpty) return {};
     return jsonDecode(raw) as Map<String, dynamic>;
   }
@@ -52,7 +75,27 @@ class MobilePrefsStore {
   Future<void> _write(Map<String, dynamic> data) async {
     // Write to a temp file then rename so readers never see a partial file.
     final tmp = File('${file.path}.tmp');
-    await tmp.writeAsString(jsonEncode(data), flush: true);
+    try {
+      await tmp.writeAsString(jsonEncode(data), flush: true);
+    } on PathNotFoundException {
+      // The backing directory is gone. In production the app's documents dir is
+      // stable, so this cannot happen; under test it means we are writing to a
+      // *disposed* sandbox — almost always a prefs-backed store reset (e.g.
+      // WhatChangedV2Store.resetForTest) running before AppServices.resetForTest
+      // re-points AppServices at the current test's sandbox. Fail loudly and
+      // specifically instead of surfacing an opaque dart:io error, and never
+      // silently recreate the directory (that would write to a stale sandbox).
+      if (!file.parent.existsSync()) {
+        throw StateError(
+          'MobilePrefsStore: cannot write "${file.path}" — its directory does '
+          'not exist. This almost always means a prefs-backed reset ran against '
+          'a disposed test sandbox. In test setUp, call AppServices.resetForTest '
+          'before any store resetForTest/resetPersistedState so writes land in '
+          'the current sandbox.',
+        );
+      }
+      rethrow;
+    }
     await tmp.rename(file.path);
   }
 

@@ -4,14 +4,36 @@
 Builds a transitive closure over import/export/part edges, resolving symlinks
 and deduplicating by realpath. Over-approximates reachability everywhere it is
 ambiguous, so the "unreachable" set is a lower bound.
+
+This is the generator for `.reach_state.json`. Consumers are `.reach_safety.py`,
+`.reach_block.py`, and `.reach_preflight.py`. Re-run this script from
+`apps/mobile` whenever a significant retired_sprawl change lands — module
+moves, RecordScreen-scale cleanups — rather than leaving the cache stale.
+Paths written to `.reach_state.json` are relative to this directory so the
+cache is not machine-specific.
 """
 import os, re, sys, json
 from collections import defaultdict, deque
 
 ROOT = os.path.abspath(os.path.dirname(__file__))
+ROOT_REAL = os.path.realpath(ROOT)
 PKG = "archiveme_mobile"
 LIB = os.path.join(ROOT, "lib")
 RETIRED = os.path.join(ROOT, "retired_sprawl")
+
+
+def rel_real(path):
+    """Symlink-collapsed path relative to apps/mobile."""
+    return os.path.relpath(os.path.realpath(path), ROOT_REAL)
+
+
+def rel_logical(path):
+    """Checkout-relative path that keeps lib/features symlink identity."""
+    abs_path = os.path.abspath(path)
+    rel = os.path.relpath(abs_path, ROOT)
+    if not rel.startswith(".."):
+        return rel
+    return os.path.relpath(os.path.realpath(abs_path), ROOT_REAL)
 
 def rp(p):
     return os.path.realpath(p)
@@ -166,19 +188,43 @@ report = {
 print(json.dumps(report, indent=2))
 
 with open(os.path.join(ROOT, ".reach_spec_unreach.txt"), "w") as fh:
-    fh.write("\n".join(os.path.relpath(p, ROOT) for p in spec_unreach) + "\n")
+    fh.write("\n".join(rel_real(p) for p in spec_unreach) + "\n")
 with open(os.path.join(ROOT, ".reach_cons_unreach.txt"), "w") as fh:
-    fh.write("\n".join(os.path.relpath(p, ROOT) for p in cons_unreach) + "\n")
+    fh.write("\n".join(rel_real(p) for p in cons_unreach) + "\n")
 
-# Save graph state for later phases.
+# Save graph state for later phases. Store paths relative to apps/mobile —
+# absolute realpaths made the cache unusable on any other machine.
 state = {
-    "edges": {k: sorted(v) for k, v in edges.items()},
-    "kinds": {k: {kk: sorted(vv) for kk, vv in v.items()} for k, v in kinds.items()},
-    "C_main": sorted(C_main), "C_test": sorted(C_test),
-    "C_livelib": sorted(C_livelib), "C_itest": sorted(C_itest),
-    "retired": sorted(retired_files),
-    "logical": {k: sorted(v) for k, v in logical_paths.items()},
+    "edges": {rel_real(k): sorted(rel_real(v) for v in vs) for k, vs in edges.items()},
+    "kinds": {
+        rel_real(k): {kk: sorted(rel_real(v) for v in vv) for kk, vv in kinds_for.items()}
+        for k, kinds_for in kinds.items()
+    },
+    "C_main": sorted(rel_real(p) for p in C_main),
+    "C_test": sorted(rel_real(p) for p in C_test),
+    "C_livelib": sorted(rel_real(p) for p in C_livelib),
+    "C_itest": sorted(rel_real(p) for p in C_itest),
+    "retired": sorted(rel_real(p) for p in retired_files),
+    "logical": {
+        rel_real(k): sorted(rel_logical(v) for v in vs) for k, vs in logical_paths.items()
+    },
 }
+
+
+def _assert_relative(obj):
+    if isinstance(obj, str):
+        if os.path.isabs(obj):
+            raise SystemExit(f"refusing to write absolute path: {obj}")
+    elif isinstance(obj, dict):
+        for key, val in obj.items():
+            _assert_relative(key)
+            _assert_relative(val)
+    elif isinstance(obj, list):
+        for item in obj:
+            _assert_relative(item)
+
+
+_assert_relative(state)
 with open(os.path.join(ROOT, ".reach_state.json"), "w") as fh:
     json.dump(state, fh)
 print("\nwrote .reach_spec_unreach.txt / .reach_cons_unreach.txt / .reach_state.json")

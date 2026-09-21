@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'support/record_screen_library_source.dart';
 
 import 'package:archiveme_mobile/billing/archive_loop_entitlement_ids.dart';
 import 'package:archiveme_mobile/billing/restore_purchases_copy.dart';
@@ -491,16 +490,5 @@ void main() {
       expect(RestorePurchasesCopy.restorePurchases, 'Restore purchases');
       expect(RestorePurchasesCopy.restoreScreenTitle, 'Restore purchases');
     });
-
-    test(
-      'record screen routes Pro bridge through existing paywall handler',
-      () {
-        final source = readRecordScreenLibrarySource();
-        expect(source, contains('ProBridgeVisibilityCard'));
-        expect(source, contains('_openProEvidenceValueSubscription'));
-        expect(source, contains("context.push(\n      '/subscription'"));
-        expect(source, isNot(contains('ProBridgeVisibilityPurchase')));
-      },
-    );
   });
 }

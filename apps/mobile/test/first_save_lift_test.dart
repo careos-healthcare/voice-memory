@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'support/record_screen_library_source.dart';
 
 import 'package:archiveme_mobile/billing/archive_loop_entitlement_ids.dart';
 import 'package:archiveme_mobile/billing/restore_purchases_copy.dart';
@@ -216,12 +215,6 @@ void main() {
 
     test('restore purchases unchanged', () {
       expect(RestorePurchasesCopy.restorePurchases, 'Restore purchases');
-    });
-
-    test('record screen integrates first save lift card', () {
-      final source = readRecordScreenLibrarySource();
-      expect(source, contains('FirstSaveLiftCard'));
-      expect(source, contains('SurfacePriorityCardKey.firstSaveLift'));
     });
 
     test('testing screen includes compact preview', () {

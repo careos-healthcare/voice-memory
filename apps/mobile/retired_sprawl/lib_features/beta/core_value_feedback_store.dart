@@ -98,15 +98,21 @@ class CoreValueFeedbackStore {
   }
 
   static Future<void> resetPersistedState() async {
+    resetCachedStateForTest();
+    if (!AppServices.isInitialized) return;
+    final prefs = AppServices.instance.prefs;
+    await prefs.writeMap(prefsKey, {});
+    await prefs.writeMap(dismissPrefsKey, {});
+  }
+
+  /// In-memory dismiss/answer state only — does not write prefs.
+  @visibleForTesting
+  static void resetCachedStateForTest() {
     _cached = CoreValueFeedbackRecord.empty;
     _answerLoaded = false;
     _sessionDismissed = false;
     _dismissedUntilDay = null;
     _dismissLoaded = false;
-    if (!AppServices.isInitialized) return;
-    final prefs = AppServices.instance.prefs;
-    await prefs.writeMap(prefsKey, {});
-    await prefs.writeMap(dismissPrefsKey, {});
   }
 
   @visibleForTesting

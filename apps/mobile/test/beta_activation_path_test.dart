@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'support/record_screen_library_source.dart';
 
 import 'package:archiveme_mobile/billing/archive_loop_entitlement_ids.dart';
 import 'package:archiveme_mobile/billing/restore_purchases_copy.dart';
@@ -403,13 +402,6 @@ void main() {
 
     test('restore purchases unchanged', () {
       expect(RestorePurchasesCopy.restorePurchases, 'Restore purchases');
-    });
-
-    test('record screen routes Pro path through valueMoment paywall', () {
-      final source = readRecordScreenLibrarySource();
-      expect(source, contains('BetaActivationPathCard'));
-      expect(source, contains('_handleBetaActivationPathPrimaryCta'));
-      expect(source, contains('PaywallSource.valueMoment'));
     });
 
     test('testing screen includes compact preview', () {

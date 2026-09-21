@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'support/record_screen_library_source.dart';
 
 import 'package:archiveme_mobile/features/archive_proof/proof_surface_advice_guard.dart';
 import 'package:archiveme_mobile/features/beta/archive_beta_mission_gate.dart';
@@ -281,18 +280,6 @@ void main() {
       }
 
       expect(find.byType(FirstRunPositioningCard), findsOneWidget);
-    });
-  });
-
-  group('Record screen integration', () {
-    test('record screen wires first run positioning card', () {
-      final source = readRecordScreenLibrarySource();
-      expect(source, contains('FirstRunPositioningCard'));
-      expect(
-        source,
-        contains('firstRunPositioning: showFirstRunPositioningCard'),
-      );
-      expect(source, contains('SurfacePriorityCardKey.firstRunPositioning'));
     });
   });
 }

@@ -42,7 +42,7 @@ extension RecordPreCaptureCards on _RecordScreenState {
         const SizedBox(height: 16),
       ],
       if (ctx.showTesterMissionFull &&
-          ctx.testerMission! != null &&
+          ctx.testerMission != null &&
           !ctx.showReturningWatchTargetFocusedUi) ...[
         TesterMissionCard(
           mission: ctx.testerMission!,
@@ -51,7 +51,7 @@ extension RecordPreCaptureCards on _RecordScreenState {
         const SizedBox(height: 12),
       ],
       if (ctx.recordHomeSurface.showDailyMapPrompt &&
-          ctx.dailyArchiveExercise! != null &&
+          ctx.dailyArchiveExercise != null &&
           !ctx.showReturningWatchTargetFocusedUi) ...[
         DailyArchiveExerciseRecordCard(
           exercise: ctx.dailyArchiveExercise!,
@@ -62,7 +62,7 @@ extension RecordPreCaptureCards on _RecordScreenState {
         const SizedBox(height: 12),
       ],
       if (ctx.showReturningWatchTargetFocusedUi &&
-          ctx.dailyArchiveMemoryCandidate! != null) ...[
+          ctx.dailyArchiveMemoryCandidate != null) ...[
         DailyArchiveMemoryCard(
           memory: ctx.dailyArchiveMemoryCandidate!,
           entryCount: _journalEntryCount,
@@ -88,7 +88,7 @@ extension RecordPreCaptureCards on _RecordScreenState {
             entryCount: _journalEntryCount,
           ) &&
           ctx.showProBridgeBelowProofOnRecord &&
-          ctx.proBridgeVisibilityRecordResult! != null) ...[
+          ctx.proBridgeVisibilityRecordResult != null) ...[
         ProBridgeVisibilityCard(
           result: ctx.proBridgeVisibilityRecordResult!,
           onSeePro: () => _openProEvidenceValueSubscription(
@@ -141,7 +141,7 @@ extension RecordPreCaptureCards on _RecordScreenState {
           const SizedBox(height: 12),
         ],
         if (ctx.recordHomeSurface.showReturningUserToday &&
-            ctx.returningUserToday! != null &&
+            ctx.returningUserToday != null &&
             !ctx.showReturningWatchTargetFocusedUi) ...[
           ReturningUserTodayCard(
             model: ctx.returningUserToday!,
@@ -156,7 +156,7 @@ extension RecordPreCaptureCards on _RecordScreenState {
           const SizedBox(height: 12),
         ],
         if (ctx.recordHomeSurface.showNextMomentPrompt &&
-            ctx.nextMomentPrompt! != null &&
+            ctx.nextMomentPrompt != null &&
             !ctx.showReturningWatchTargetFocusedUi) ...[
           NextMomentPromptCard(
             prompt: ctx.nextMomentPrompt!,
@@ -172,7 +172,7 @@ extension RecordPreCaptureCards on _RecordScreenState {
           const SizedBox(height: 12),
         ],
         if (ctx.recordHomeSurface.showTodaysOneQuestion &&
-            ctx.todaysOneQuestion! != null &&
+            ctx.todaysOneQuestion != null &&
             !ctx.showReturningWatchTargetFocusedUi) ...[
           TodaysOneQuestionCard(
             question: ctx.todaysOneQuestion!,
@@ -244,7 +244,7 @@ extension RecordPreCaptureCards on _RecordScreenState {
           ),
           const SizedBox(height: 8),
         ],
-        if (ctx.recordReadySurfacePriority! != null) ...[
+        if (ctx.recordReadySurfacePriority != null) ...[
           SurfacePriorityDebugBadge(
             result: ctx.recordReadySurfacePriority!,
           ),
@@ -335,7 +335,7 @@ extension RecordPreCaptureCards on _RecordScreenState {
         ],
         if (ctx.showBetaActivationPathCard &&
             ReturningRecordWatchTargetUiGates.showBetaRecordSurfaces() &&
-            ctx.betaActivationPathResult! != null &&
+            ctx.betaActivationPathResult != null &&
             !ctx.firstUseSimplifiedRecord) ...[
           BetaActivationPathCard(
             result: ctx.betaActivationPathResult!,
@@ -512,7 +512,7 @@ extension RecordPreCaptureCards on _RecordScreenState {
           const SizedBox(height: 12),
         ],
         if (ctx.showThreeDayChallengeOnRecord &&
-            ctx.threeDayChallengeCandidate! != null &&
+            ctx.threeDayChallengeCandidate != null &&
             !ctx.firstUseSimplifiedRecord &&
             !ctx.recordReadySuppressStreakPressure) ...[
           ThreeDayChallengeCard(
@@ -522,7 +522,7 @@ extension RecordPreCaptureCards on _RecordScreenState {
         ],
         if (ctx.ui == RecordUiState.ready &&
             ctx.showNextBestActionOnRecord &&
-            ctx.nextBestActionCandidate! != null &&
+            ctx.nextBestActionCandidate != null &&
             !ctx.firstUseSimplifiedRecord &&
             !ctx.showReturningWatchTargetFocusedUi) ...[
           NextBestActionLine(
@@ -553,7 +553,7 @@ extension RecordPreCaptureCards on _RecordScreenState {
           const SizedBox(height: 12),
         ],
         if (ctx.showReturnDayFlow &&
-            ctx.returnDayFlowCandidate! != null &&
+            ctx.returnDayFlowCandidate != null &&
             !ctx.recordReadySuppressStreakPressure) ...[
           ReturnDayFlowCard(
             flow: ctx.returnDayFlowCandidate!,
@@ -574,7 +574,7 @@ extension RecordPreCaptureCards on _RecordScreenState {
           const SizedBox(height: 12),
         ],
         if (ctx.showQuietSignalOnRecord &&
-            ctx.quietSignalCandidate! != null &&
+            ctx.quietSignalCandidate != null &&
             !ctx.recordReadySuppressStreakPressure) ...[
           QuietSignalRecordCard(
             signal: ctx.quietSignalCandidate!,
@@ -586,7 +586,7 @@ extension RecordPreCaptureCards on _RecordScreenState {
           const SizedBox(height: 12),
         ],
         if (ctx.showReturnTomorrowCueReady &&
-            ctx.returnTomorrowCueReady! != null &&
+            ctx.returnTomorrowCueReady != null &&
             !ctx.recordReadySuppressStreakPressure) ...[
           ReturnTomorrowCueCard(
             cue: ctx.returnTomorrowCueReady!,
@@ -596,7 +596,7 @@ extension RecordPreCaptureCards on _RecordScreenState {
           const SizedBox(height: 12),
         ],
         if (ctx.showFirstWeekProgressReady &&
-            ctx.firstWeekProgressReady! != null &&
+            ctx.firstWeekProgressReady != null &&
             !ctx.recordReadySuppressStreakPressure) ...[
           FirstWeekProgressLine(
             progress: ctx.firstWeekProgressReady!,
@@ -614,7 +614,7 @@ extension RecordPreCaptureCards on _RecordScreenState {
         ],
         if (ctx.showDailyArchiveMemory &&
             !ctx.showReturningWatchTargetFocusedUi &&
-            ctx.dailyArchiveMemoryCandidate! != null) ...[
+            ctx.dailyArchiveMemoryCandidate != null) ...[
           DailyArchiveMemoryCard(
             memory: ctx.dailyArchiveMemoryCandidate!,
             entryCount: _journalEntryCount,
@@ -674,7 +674,7 @@ extension RecordPreCaptureCards on _RecordScreenState {
           ],
         ],
         if (ctx.showPatternChanged &&
-            ctx.patternChangedCandidate! != null) ...[
+            ctx.patternChangedCandidate != null) ...[
           PatternChangedCard(
             result: ctx.patternChangedCandidate!,
             entryCount: _journalEntryCount,
@@ -698,7 +698,7 @@ extension RecordPreCaptureCards on _RecordScreenState {
               ),
             ),
           ),
-          if (ctx.patternNamePrompt! != null) ...[
+          if (ctx.patternNamePrompt != null) ...[
             const SizedBox(height: 12),
             PatternNameConfirmationCard(
               prompt: ctx.patternNamePrompt!,
@@ -710,7 +710,7 @@ extension RecordPreCaptureCards on _RecordScreenState {
           const SizedBox(height: 12),
         ],
         if (ctx.showTimelineProofMomentOnRecord &&
-            ctx.timelineProofMomentCandidate! != null) ...[
+            ctx.timelineProofMomentCandidate != null) ...[
           TimelineProofMomentCard(
             result: ctx.timelineProofMomentCandidate!,
             source: 'record',
@@ -830,7 +830,7 @@ extension RecordPreCaptureCards on _RecordScreenState {
         ],
         if (ctx.showReturnAfterProofLiftV2BelowProofOnRecord &&
             ctx.showTimelineProofMomentOnRecord &&
-            ctx.timelineProofMomentCandidate! != null) ...[
+            ctx.timelineProofMomentCandidate != null) ...[
           ReturnAfterProofLiftV2Card(
             result: ctx.returnAfterProofLiftV2Candidate,
             onPrimaryCta: () => unawaited(
@@ -847,7 +847,7 @@ extension RecordPreCaptureCards on _RecordScreenState {
           const SizedBox(height: 12),
         ] else if (ctx.showReturnAfterProofBelowProofOnRecord &&
             ctx.showTimelineProofMomentOnRecord &&
-            ctx.timelineProofMomentCandidate! != null) ...[
+            ctx.timelineProofMomentCandidate != null) ...[
           ReturnAfterProofCard(
             result: ctx.returnAfterProofRecordCandidate,
             useStrengthenedLayout:
@@ -861,7 +861,7 @@ extension RecordPreCaptureCards on _RecordScreenState {
         if (ctx.showBetaFeedbackCaptureRecordReady &&
             ReturningRecordWatchTargetUiGates.showBetaRecordSurfaces() &&
             !ctx.showReturningWatchTargetFocusedUi &&
-            ctx.betaFeedbackCaptureRecordReadyResult! != null) ...[
+            ctx.betaFeedbackCaptureRecordReadyResult != null) ...[
           BetaFeedbackCaptureCard(
             result: ctx.betaFeedbackCaptureRecordReadyResult!,
             proofFeedbackSurface:
@@ -875,7 +875,7 @@ extension RecordPreCaptureCards on _RecordScreenState {
           const SizedBox(height: 12),
         ],
         if (ctx.showArchiveTimelineSpineOnRecord &&
-            ctx.archiveTimelineSpineCandidate! != null) ...[
+            ctx.archiveTimelineSpineCandidate != null) ...[
           ArchiveTimelineSpineCard(
             result: ctx.archiveTimelineSpineCandidate!,
             source: 'record',
@@ -1003,7 +1003,7 @@ extension RecordPreCaptureCards on _RecordScreenState {
           ),
           const SizedBox(height: 12),
         ] else if (ctx.showProUnderstandingLiftBelowProofOnRecord &&
-            ctx.proUnderstandingLiftRecordReadyResult! !=
+            ctx.proUnderstandingLiftRecordReadyResult !=
                 null) ...[
           ProUnderstandingLiftCard(
             result: ctx.proUnderstandingLiftRecordReadyResult!,
@@ -1015,7 +1015,7 @@ extension RecordPreCaptureCards on _RecordScreenState {
           ),
           const SizedBox(height: 12),
         ] else if (ctx.showProVisibilityLiftBelowProofOnRecord &&
-            ctx.proVisibilityLiftRecordReadyResult! != null) ...[
+            ctx.proVisibilityLiftRecordReadyResult != null) ...[
           ProVisibilityLiftCard(
             result: ctx.proVisibilityLiftRecordReadyResult!,
             compact: ctx.proofSurfaceLayout.proBridgeCompact,
@@ -1025,7 +1025,7 @@ extension RecordPreCaptureCards on _RecordScreenState {
           ),
           const SizedBox(height: 12),
         ] else if (ctx.showProBridgeBelowProofOnRecord &&
-            ctx.proBridgeVisibilityRecordResult! != null) ...[
+            ctx.proBridgeVisibilityRecordResult != null) ...[
           ProBridgeVisibilityCard(
             result: ctx.proBridgeVisibilityRecordResult!,
             onSeePro: () => _openProEvidenceValueSubscription(
@@ -1046,7 +1046,7 @@ extension RecordPreCaptureCards on _RecordScreenState {
         ],
         if (!ctx.suppressLegacyEducationCardsForSpineOnRecord &&
             ctx.showCurrentRelevanceOnRecordReady &&
-            ctx.currentRelevanceCandidate! != null) ...[
+            ctx.currentRelevanceCandidate != null) ...[
           CurrentRelevanceCard(
             state: ctx.currentRelevanceCandidate!,
             source: 'record',
@@ -1056,7 +1056,7 @@ extension RecordPreCaptureCards on _RecordScreenState {
         ],
         if (!ctx.suppressLegacyEducationCardsForSpineOnRecord &&
             ctx.showCorrectionMemoryOnRecordReady &&
-            ctx.correctionMemoryCandidate! != null) ...[
+            ctx.correctionMemoryCandidate != null) ...[
           CorrectionMemoryCard(
             result: ctx.correctionMemoryCandidate!,
             source: 'record',
@@ -1086,7 +1086,7 @@ extension RecordPreCaptureCards on _RecordScreenState {
         ],
         if (!ctx.suppressLegacyEducationCardsForSpineOnRecord &&
             ctx.showEvidenceWeightingOnRecordReady &&
-            ctx.evidenceWeightingCandidate! != null) ...[
+            ctx.evidenceWeightingCandidate != null) ...[
           EvidenceWeightingCard(
             result: ctx.evidenceWeightingCandidate!,
             source: 'record',
@@ -1103,7 +1103,7 @@ extension RecordPreCaptureCards on _RecordScreenState {
         ],
         if (!ctx.suppressLegacyEducationCardsForSpineOnRecord &&
             ctx.showPresentDayRelevanceOnRecordReady &&
-            ctx.presentDayRelevanceCandidate! != null) ...[
+            ctx.presentDayRelevanceCandidate != null) ...[
           PresentDayRelevanceCard(
             result: ctx.presentDayRelevanceCandidate!,
             source: 'record',
@@ -1112,7 +1112,7 @@ extension RecordPreCaptureCards on _RecordScreenState {
         ],
         if (!ctx.suppressLegacyEducationCardsForSpineOnRecord &&
             ctx.showPatternConfidenceExplanationOnRecordReady &&
-            ctx.patternConfidenceExplanationCandidate! !=
+            ctx.patternConfidenceExplanationCandidate !=
                 null) ...[
           PatternConfidenceCard(
             result: ctx.patternConfidenceExplanationCandidate!,
@@ -1124,7 +1124,7 @@ extension RecordPreCaptureCards on _RecordScreenState {
         if (!ctx.showReturningWatchTargetFocusedUi &&
             ctx.showArchiveSummaryOnRecord &&
             ctx.ui == RecordUiState.ready &&
-            ctx.archiveSummary! != null) ...[
+            ctx.archiveSummary != null) ...[
           ArchiveSummaryCard(
             summary: ctx.archiveSummary!,
             showRecordNextCta: ctx.showArchiveSummaryRecordCta,
@@ -1137,7 +1137,7 @@ extension RecordPreCaptureCards on _RecordScreenState {
           const SizedBox(height: 12),
         ],
         if (ctx.showDailyReturnReasonOnRecord &&
-            ctx.dailyReturnReason! != null) ...[
+            ctx.dailyReturnReason != null) ...[
           DailyReturnReasonCard(
             reason: ctx.dailyReturnReason!,
             showRecordCta: ctx.showDailyReturnReasonRecordCta,
@@ -1173,7 +1173,7 @@ extension RecordPreCaptureCards on _RecordScreenState {
           const SizedBox(height: 12),
         ],
         if (ctx.showWeeklyArchiveReviewOnRecord &&
-            ctx.weeklyArchiveReview! != null) ...[
+            ctx.weeklyArchiveReview != null) ...[
           weekly_review_surface.WeeklyArchiveReviewCard(
             review: ctx.weeklyArchiveReview!,
             onViewReview: () =>
@@ -1182,7 +1182,7 @@ extension RecordPreCaptureCards on _RecordScreenState {
           const SizedBox(height: 12),
         ],
         if (ctx.showPrivateArchiveReportOnRecord &&
-            ctx.privateArchiveReportCandidate! != null) ...[
+            ctx.privateArchiveReportCandidate != null) ...[
           PrivateArchiveReportCard(
             report: ctx.privateArchiveReportCandidate!,
             entryCount: _journalEntryCount,
@@ -1251,7 +1251,7 @@ extension RecordPreCaptureCards on _RecordScreenState {
           const SizedBox(height: 12),
         ],
         if (ctx.showConfirmedRepeatThoughtMapOnRecord &&
-            ctx.confirmedRepeatThoughtMap! != null) ...[
+            ctx.confirmedRepeatThoughtMap != null) ...[
           ConfirmedRepeatThoughtMapCard(
             result: ctx.confirmedRepeatThoughtMap!,
             showRecordMissingPieceCta:
@@ -1264,7 +1264,7 @@ extension RecordPreCaptureCards on _RecordScreenState {
           const SizedBox(height: 12),
         ],
         if (ctx.showHelpfulActionAppearedOnRecord &&
-            ctx.helpfulActionAppearedCandidate! != null) ...[
+            ctx.helpfulActionAppearedCandidate != null) ...[
           HelpfulActionAppearedCard(
             result: ctx.helpfulActionAppearedCandidate!,
             entryCount: _journalEntryCount,
@@ -1273,7 +1273,7 @@ extension RecordPreCaptureCards on _RecordScreenState {
           const SizedBox(height: 12),
         ],
         if (ctx.showPositiveReinforcementOnRecord &&
-            ctx.positiveReinforcement! != null) ...[
+            ctx.positiveReinforcement != null) ...[
           PositiveReinforcementCard(
             reinforcement: ctx.positiveReinforcement!,
             showRecordAgainCta:
@@ -1286,7 +1286,7 @@ extension RecordPreCaptureCards on _RecordScreenState {
           const SizedBox(height: 12),
         ],
         if (ctx.showChangeProofOnRecord &&
-            ctx.repeatReturnChangeProof! != null) ...[
+            ctx.repeatReturnChangeProof != null) ...[
           RepeatReturnCheckChangeProofCard(
             proof: ctx.repeatReturnChangeProof!,
             entryCount: _journalEntryCount,
@@ -1311,7 +1311,7 @@ extension RecordPreCaptureCards on _RecordScreenState {
           const SizedBox(height: 12),
         ],
         if (ctx.showFirstWeekLoopOnRecord &&
-            ctx.firstWeekLoopCandidate! != null &&
+            ctx.firstWeekLoopCandidate != null &&
             !ctx.recordReadySuppressStreakPressure) ...[
           FirstWeekLoopCard(
             loop: ctx.firstWeekLoopCandidate!,
@@ -1326,7 +1326,7 @@ extension RecordPreCaptureCards on _RecordScreenState {
         if (ctx.showBetaTestScriptCard &&
             ReturningRecordWatchTargetUiGates.showBetaRecordSurfaces() &&
             !ctx.showReturningWatchTargetFocusedUi &&
-            ctx.betaTestScriptCardCandidate! != null) ...[
+            ctx.betaTestScriptCardCandidate != null) ...[
           BetaTestScriptCard(
             card: ctx.betaTestScriptCardCandidate!,
             onViewSteps: () {
@@ -1354,7 +1354,7 @@ extension RecordPreCaptureCards on _RecordScreenState {
           const SizedBox(height: 12),
         ],
         if (ctx.showProUnderstandingLiftInProSectionOnRecord &&
-            ctx.proUnderstandingLiftRecordReadyResult! !=
+            ctx.proUnderstandingLiftRecordReadyResult !=
                 null) ...[
           ProUnderstandingLiftCard(
             result: ctx.proUnderstandingLiftRecordReadyResult!,
@@ -1366,7 +1366,7 @@ extension RecordPreCaptureCards on _RecordScreenState {
           ),
           const SizedBox(height: 12),
         ] else if (ctx.showProVisibilityLiftInProSectionOnRecord &&
-            ctx.proVisibilityLiftRecordReadyResult! != null) ...[
+            ctx.proVisibilityLiftRecordReadyResult != null) ...[
           ProVisibilityLiftCard(
             result: ctx.proVisibilityLiftRecordReadyResult!,
             compact: ctx.proofSurfaceLayout.proBridgeCompact,
@@ -1376,7 +1376,7 @@ extension RecordPreCaptureCards on _RecordScreenState {
           ),
           const SizedBox(height: 12),
         ] else if (ctx.showProBridgeInProSectionOnRecord &&
-            ctx.proBridgeVisibilityRecordResult! != null) ...[
+            ctx.proBridgeVisibilityRecordResult != null) ...[
           ProBridgeVisibilityCard(
             result: ctx.proBridgeVisibilityRecordResult!,
             onSeePro: () => _openProEvidenceValueSubscription(
@@ -1399,7 +1399,7 @@ extension RecordPreCaptureCards on _RecordScreenState {
           ),
           const SizedBox(height: 12),
         ],
-        if (ctx.betaFeedbackIntelligenceSurfaceOnRecordReady! !=
+        if (ctx.betaFeedbackIntelligenceSurfaceOnRecordReady !=
                 null &&
             ReturningRecordWatchTargetUiGates.showBetaRecordSurfaces() &&
             !ctx.showReturningWatchTargetFocusedUi) ...[

@@ -1507,11 +1507,16 @@ void main() {
     late TestStorageSandbox sandbox;
     late List<({String event, Map<String, Object> properties})> captured;
 
-    setUp(() {
+    setUp(() async {
       sandbox = TestStorageSandbox.create();
       captured = [];
       ActivationFunnelAnalytics.resetForTest();
       EarlyArchiveProofAnalytics.resetForTest();
+      await AppServices.resetForTest(
+        journalPath: sandbox.journalPath,
+        prefsPath: sandbox.prefsPath,
+        skipRevenueCat: true,
+      );
       ActivationFunnelAnalytics.captureForTest(
         (event, properties) =>
             captured.add((event: event, properties: properties)),

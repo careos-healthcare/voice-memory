@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:archiveme_mobile/features/sync/application/background_sync_state.dart';
 import 'package:archiveme_mobile/features/sync/application/sync_status_provider.dart';
 import 'package:archiveme_mobile/features/sync/presentation/sync_status_snapshot.dart';
+import 'package:archiveme_mobile/features/sync/presentation/widgets/provider_scope_probe.dart';
 import 'package:archiveme_mobile/features/sync/presentation/widgets/sync_status_banner.dart';
 import 'package:archiveme_mobile/features/sync/presentation/widgets/sync_status_header_indicator.dart';
 import 'package:flutter/material.dart';
@@ -47,6 +48,10 @@ class _SyncStatusShellState extends ConsumerState<SyncStatusShell> {
 
   @override
   Widget build(BuildContext context) {
+    // Non-essential shell chrome: if pumped without a ProviderScope (some
+    // lightweight widget tests), render just the wrapped content rather than
+    // throwing. Inert in production, which always provides a scope at the root.
+    if (!hasRiverpodScope(context)) return widget.child;
     final status = ref.watch(syncStatusProvider);
     _syncRetryTicker(status);
 

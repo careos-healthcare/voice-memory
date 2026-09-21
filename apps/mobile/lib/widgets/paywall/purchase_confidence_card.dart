@@ -1,9 +1,9 @@
 import 'package:archiveme_mobile/design/archive_mobile_typography.dart';
-import 'package:archiveme_mobile/features/purchase_confidence/purchase_confidence_analytics.dart';
-import 'package:archiveme_mobile/features/purchase_confidence/purchase_confidence_copy.dart';
 import 'package:archiveme_mobile/theme/app_colors.dart';
 import 'package:archiveme_mobile/theme/app_spacing.dart';
 import 'package:archiveme_mobile/theme/voicememory_cards.dart';
+import 'package:archiveme_mobile/widgets/paywall/purchase_confidence_analytics.dart';
+import 'package:archiveme_mobile/widgets/paywall/purchase_confidence_copy.dart';
 import 'package:flutter/material.dart';
 
 /// Privacy and control reassurance near the paywall purchase decision.

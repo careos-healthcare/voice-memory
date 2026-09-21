@@ -1,7 +1,7 @@
 import 'package:archiveme_mobile/features/activation/activation_tracker.dart';
 import 'package:archiveme_mobile/features/language/localized_copy.dart';
-import 'package:archiveme_mobile/features/quick_help/quick_help_engine.dart';
-import 'package:archiveme_mobile/features/quick_help/quick_help_model.dart';
+import 'package:archiveme_mobile/widgets/quick_help/quick_help_engine.dart';
+import 'package:archiveme_mobile/widgets/quick_help/quick_help_model.dart';
 import 'package:archiveme_mobile/features/tomorrow_return/tomorrow_check_in_coordinator.dart';
 import 'package:archiveme_mobile/theme/app_colors.dart';
 import 'package:archiveme_mobile/theme/app_spacing.dart';

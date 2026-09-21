@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 
+import 'helpers/app_provider_scope.dart';
 import 'helpers/fake_account_api_client.dart';
 import 'support/test_storage_sandbox.dart';
 
@@ -37,7 +38,9 @@ void main() {
   tearDown(() => sandbox.dispose());
 
   Future<void> pumpScreen(WidgetTester tester) async {
-    await tester.pumpWidget(const MaterialApp(home: DeleteAccountScreen()));
+    await tester.pumpWidget(
+      withAppProviderScope(const MaterialApp(home: DeleteAccountScreen())),
+    );
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 300));
   }
@@ -61,9 +64,11 @@ void main() {
       ],
     );
     await tester.pumpWidget(
-      MaterialApp.router(
-        scaffoldMessengerKey: messengerKey,
-        routerConfig: router,
+      withAppProviderScope(
+        MaterialApp.router(
+          scaffoldMessengerKey: messengerKey,
+          routerConfig: router,
+        ),
       ),
     );
     await tester.pump();
@@ -239,14 +244,16 @@ void main() {
       addTearDown(() => tester.binding.setSurfaceSize(null));
 
       await tester.pumpWidget(
-        MaterialApp(
-          builder: (context, child) => MediaQuery(
-            data: MediaQuery.of(
-              context,
-            ).copyWith(textScaler: const TextScaler.linear(3)),
-            child: child!,
+        withAppProviderScope(
+          MaterialApp(
+            builder: (context, child) => MediaQuery(
+              data: MediaQuery.of(
+                context,
+              ).copyWith(textScaler: const TextScaler.linear(3)),
+              child: child!,
+            ),
+            home: const DeleteAccountScreen(),
           ),
-          home: const DeleteAccountScreen(),
         ),
       );
       await tester.pump();
@@ -285,14 +292,16 @@ void main() {
       addTearDown(() => tester.binding.setSurfaceSize(null));
 
       await tester.pumpWidget(
-        MaterialApp(
-          builder: (context, child) => MediaQuery(
-            data: MediaQuery.of(
-              context,
-            ).copyWith(textScaler: const TextScaler.linear(2)),
-            child: child!,
+        withAppProviderScope(
+          MaterialApp(
+            builder: (context, child) => MediaQuery(
+              data: MediaQuery.of(
+                context,
+              ).copyWith(textScaler: const TextScaler.linear(2)),
+              child: child!,
+            ),
+            home: const DeleteAccountScreen(),
           ),
-          home: const DeleteAccountScreen(),
         ),
       );
       await tester.pump();

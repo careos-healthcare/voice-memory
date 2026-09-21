@@ -134,10 +134,6 @@ void main() {
         findsOneWidget,
       );
       expect(
-        find.byKey(const Key('support_feedback_open_help_guide')),
-        findsOneWidget,
-      );
-      expect(
         find.byKey(const Key('support_feedback_open_sample_archive')),
         findsOneWidget,
       );

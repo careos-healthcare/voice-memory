@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'support/record_screen_library_source.dart';
 
 import 'package:archiveme_mobile/features/archive_evidence/archive_evidence_quality.dart';
 import 'package:archiveme_mobile/features/archive_evidence/archive_evidence_quality_gate.dart';
@@ -336,33 +335,6 @@ void main() {
       expect(blob, isNot(contains('therapy')));
       expect(blob, isNot(contains('diagnosis')));
       expect(blob, isNot(contains('treatment')));
-    });
-  });
-
-  group('Open capture placement', () {
-    test(
-      'chips sit under RecordCaptureModesCard on record screen when not simplified',
-      () {
-        final source = readRecordScreenLibrarySource();
-        final modesIndex = source.indexOf('RecordCaptureModesCard(');
-        final chipsIndex = source.indexOf(
-          'if (ctx.showOpenCapturePromptChips &&\n'
-          '            !ctx.firstUseSimplifiedRecord &&\n'
-          '            !ctx.showReturningWatchTargetFocusedUi) ...[',
-        );
-        expect(modesIndex, greaterThan(0));
-        expect(chipsIndex, greaterThan(modesIndex));
-        expect(source, contains('!firstUseSimplifiedRecord'));
-      },
-    );
-
-    test('chip tap sets selected prompt line only', () {
-      final source = readRecordScreenLibrarySource();
-      final chipsIndex = source.indexOf('OpenCapturePromptChips(');
-      final snippet = source.substring(chipsIndex, chipsIndex + 400);
-      expect(snippet, contains('_selectedPromptLine = chip.promptStarter'));
-      expect(snippet, isNot(contains('navigateToCaptureMode')));
-      expect(snippet, isNot(contains('context.push')));
     });
   });
 

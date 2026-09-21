@@ -1,9 +1,12 @@
 import 'dart:io';
 
+import 'package:archiveme_mobile/features/encrypted_sync/sync_master_key_store.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/models/reflection.dart';
 import 'package:archiveme_mobile/services/app_services.dart';
 import 'package:archiveme_mobile/storage/account_namespace.dart';
+import 'package:archiveme_mobile/workers/embedding/embedding_index_worker_service.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 /// The single most important correctness test in this task: proves that
@@ -23,6 +26,40 @@ String _uniqueSuffix() =>
     '${DateTime.now().microsecondsSinceEpoch}_${_uniqueSuffixCounter++}';
 
 void main() {
+  setUp(() {
+    // `_switchToNamespace` persists the active namespace via
+    // `SecureStorageService()` (not the in-memory store `resetForTest`
+    // installs). Without this stub the unawaited write fails the suite
+    // under `flutter test`.
+    const secureStorage = MethodChannel(
+      'plugins.it_nomads.com/flutter_secure_storage',
+    );
+    final secureValues = <String, String>{};
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(secureStorage, (call) async {
+          final args = call.arguments as Map<Object?, Object?>? ?? const {};
+          final key = args['key'] as String?;
+          switch (call.method) {
+            case 'read':
+              return key == null ? null : secureValues[key];
+            case 'write':
+              if (key != null) {
+                secureValues[key] = args['value'] as String? ?? '';
+              }
+              return null;
+            case 'containsKey':
+              return key != null && secureValues.containsKey(key);
+            case 'readAll':
+              return Map<String, String>.of(secureValues);
+            case 'delete':
+              if (key != null) secureValues.remove(key);
+              return null;
+            default:
+              return null;
+          }
+        });
+  });
+
   Reflection sampleReflection() => const Reflection(
     mood: 'calm',
     emotionalIntensity: 4,
@@ -178,4 +215,63 @@ void main() {
     );
     expect(aVersion?.transcript, "A's version");
   });
+
+  test(
+    'switch rebuilds sync master key and embedding alias for the new namespace',
+    () async {
+      final namespaceA = await resetForFreshAccount('account-a');
+      final namespaceB = AccountNamespace.forUserId(
+        'account-b-${_uniqueSuffix()}',
+      );
+
+      await AppServices.switchNamespaceForTest(namespaceB);
+
+      expect(AppServices.instance.activeNamespace, namespaceB);
+
+      final keyStore = AppServices.instance.syncMasterKeyStore;
+      expect(keyStore, isA<SecureSyncMasterKeyStore>());
+      final storageKey = (keyStore as SecureSyncCryptoKeyStore).storageKey;
+      expect(
+        storageKey,
+        contains(namespaceB.key),
+        reason:
+            'sync master key must be keyed to the incoming namespace, '
+            'not left on the outgoing one',
+      );
+      expect(storageKey, isNot(contains(namespaceA.key)));
+      expect(storageKey, isNot(contains(AccountNamespace.guest.key)));
+
+      expect(
+        EmbeddingIndexWorkerService.instance.defaultKeyAlias,
+        namespaceB.key,
+        reason:
+            'embedding worker default alias must follow the incoming '
+            'namespace, not the outgoing one',
+      );
+      expect(
+        EmbeddingIndexWorkerService.instance.defaultKeyAlias,
+        isNot(namespaceA.key),
+      );
+      expect(
+        EmbeddingIndexWorkerService.instance.defaultKeyAlias,
+        isNot(AccountNamespace.guest.key),
+      );
+
+      expect(
+        AppServices.instance.activeSqliteFilePath,
+        contains('/accounts/${namespaceB.key}/'),
+        reason:
+            'embedding/graph workers are constructed from '
+            'activeSqliteFilePath; it must point at B after the switch',
+      );
+      expect(
+        AppServices.instance.activeSqliteFilePath,
+        isNot(contains('/accounts/${namespaceA.key}/')),
+      );
+      expect(
+        AppServices.instance.activeSqliteFilePath,
+        isNot(contains('/accounts/${AccountNamespace.guest.key}/')),
+      );
+    },
+  );
 }

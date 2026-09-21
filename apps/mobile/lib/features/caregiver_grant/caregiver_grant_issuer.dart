@@ -1,3 +1,4 @@
+import 'package:archiveme_mobile/features/caregiver/caregiver_models.dart';
 import 'package:archiveme_mobile/features/caregiver_grant/caregiver_grant_contact_store.dart';
 
 /// One grant, as the form collects it.
@@ -11,10 +12,26 @@ class CaregiverGrantRequest {
   const CaregiverGrantRequest({
     required this.caregiverId,
     required this.contact,
+    this.shareJournal = false,
+    this.shareProofTrail = false,
+    this.shareTimeline = false,
+    this.shareReviewSummaries = false,
+    this.sendInviteEmail = false,
   });
 
   final String caregiverId;
   final CaregiverGrantContact contact;
+
+  // Plain booleans, not a CaregiverPermissions field: this file deliberately
+  // does not import lib/features/caregiver/ (see the class comment on
+  // CaregiverGrantIssuer below), so the actual permissions model gets built
+  // from these in CaregiverGrantConsentAdapter, the one file allowed to cross
+  // that boundary.
+  final bool shareJournal;
+  final bool shareProofTrail;
+  final bool shareTimeline;
+  final bool shareReviewSummaries;
+  final bool sendInviteEmail;
 }
 
 /// Result of trying to issue a grant.
@@ -23,10 +40,15 @@ sealed class CaregiverGrantOutcome {
 }
 
 class CaregiverGrantGranted extends CaregiverGrantOutcome {
-  const CaregiverGrantGranted({required this.tokenId, required this.expiresAt});
+  const CaregiverGrantGranted({
+    required this.tokenId,
+    required this.expiresAt,
+    this.redemption,
+  });
 
   final String tokenId;
   final DateTime expiresAt;
+  final CaregiverRedemptionInvite? redemption;
 }
 
 class CaregiverGrantFailed extends CaregiverGrantOutcome {

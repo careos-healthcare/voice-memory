@@ -37,78 +37,83 @@ void main() {
     if (tempDir.existsSync()) await tempDir.delete(recursive: true);
   });
 
-  group('the consent step says what it changes before the customer acts', () {
-    testWidgets('the setting-change copy sits above both buttons',
-        (tester) async {
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: RemoteProcessingConsentStep(onDecision: (_) {}),
+  group(
+    'the consent step says what the grant covers before the customer acts',
+    () {
+      testWidgets('the change-later line sits above both buttons', (
+        tester,
+      ) async {
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Scaffold(
+              body: RemoteProcessingConsentStep(onDecision: (_) {}),
+            ),
           ),
-        ),
-      );
-      await tester.pumpAndSettle();
+        );
+        await tester.pumpAndSettle();
 
-      final change = find.byKey(
-        const Key('remote_processing_consent_setting_change'),
-      );
-      final scope = find.byKey(
-        const Key('remote_processing_consent_setting_scope'),
-      );
-      final allow = find.byKey(const Key('remote_processing_consent_allow'));
-      final decline = find.byKey(
-        const Key('remote_processing_consent_decline'),
-      );
+        final footnote = find.byKey(
+          const Key('remote_processing_consent_change_later'),
+        );
+        final allow = find.byKey(const Key('remote_processing_consent_allow'));
+        final decline = find.byKey(
+          const Key('remote_processing_consent_decline'),
+        );
 
-      expect(change, findsOneWidget);
-      expect(scope, findsOneWidget);
-      expect(allow, findsOneWidget);
-      expect(decline, findsOneWidget);
-
-      // Before, not after, and in the same scroll column as the buttons.
-      for (final explanation in [change, scope]) {
+        expect(footnote, findsOneWidget);
         expect(
-          tester.getTopLeft(explanation).dy,
+          find.byKey(const Key('remote_processing_consent_setting_change')),
+          findsNothing,
+        );
+        expect(
+          find.byKey(const Key('remote_processing_consent_setting_scope')),
+          findsNothing,
+        );
+        expect(allow, findsOneWidget);
+        expect(decline, findsOneWidget);
+
+        expect(
+          tester.getTopLeft(footnote).dy,
           lessThan(tester.getTopLeft(allow).dy),
         );
         expect(
-          tester.getTopLeft(explanation).dy,
+          tester.getTopLeft(footnote).dy,
           lessThan(tester.getTopLeft(decline).dy),
         );
-      }
-    });
+      });
 
-    test('the copy names the switch, the condition, and no absolutes', () {
-      const change = RemoteProcessingConsentCopy.settingChangeBody;
-      const scope = RemoteProcessingConsentCopy.settingChangeScope;
+      test('the copy names the switch, the condition, and no absolutes', () {
+        const change = RemoteProcessingConsentCopy.settingChangeBody;
+        const scope = RemoteProcessingConsentCopy.settingChangeScope;
 
-      expect(change, contains('on-device-only switch'));
-      expect(change, contains('Settings'));
-      expect(
-        change,
-        contains(RemoteProcessingConsentCopy.allowCta),
-        reason: 'the copy has to name the button it describes',
-      );
-      expect(
-        change.toLowerCase(),
-        contains('remote processing stays off'),
-        reason: 'states that the switch still vetoes remote work',
-      );
-      expect(scope, contains('transcription and reflection'));
+        expect(change, contains('on-device-only switch'));
+        expect(change, contains('Settings'));
+        expect(
+          change,
+          contains(RemoteProcessingConsentCopy.allowCta),
+          reason: 'the copy has to name the button it describes',
+        );
+        expect(
+          change.toLowerCase(),
+          contains('remote processing stays off'),
+          reason: 'states that the switch still vetoes remote work',
+        );
+        expect(scope, contains('transcription and reflection'));
 
-      for (final absolute in [
-        '100%',
-        'zero',
-        'entirely',
-        'always',
-        'never',
-        'only ever',
-      ]) {
-        expect(change.toLowerCase(), isNot(contains(absolute)));
-        expect(scope.toLowerCase(), isNot(contains(absolute)));
-      }
-    });
-  });
+        for (final absolute in [
+          '100%',
+          'zero',
+          'entirely',
+          'always',
+          'never',
+          'only ever',
+        ]) {
+          expect(change.toLowerCase(), isNot(contains(absolute)));
+          expect(scope.toLowerCase(), isNot(contains(absolute)));
+        }
+      });
+    },
+  );
 
   group('granting in onboarding takes effect', () {
     test('granting clears the on-device-only toggle', () async {
@@ -151,25 +156,27 @@ void main() {
       }
     });
 
-    test('granting on Android leaves the already-off toggle permitted',
-        () async {
-      await OnDeviceProcessingStore.resetForTest();
-      OnDeviceProcessingStore.debugPlatformOverride = 'android';
-      expect(OnDeviceProcessingStore.enabled, isFalse);
+    test(
+      'granting on Android leaves the already-off toggle permitted',
+      () async {
+        await OnDeviceProcessingStore.resetForTest();
+        OnDeviceProcessingStore.debugPlatformOverride = 'android';
+        expect(OnDeviceProcessingStore.enabled, isFalse);
 
-      await OnboardingRemoteProcessingDecision.record(
-        allow: true,
-        consentStore: consentStore,
-      );
+        await OnboardingRemoteProcessingDecision.record(
+          allow: true,
+          consentStore: consentStore,
+        );
 
-      expect(OnDeviceProcessingStore.enabled, isFalse);
-      expect(
-        await gate.isPurposePermittedNow(
-          RemoteProcessingPurpose.remoteTranscription,
-        ),
-        isTrue,
-      );
-    });
+        expect(OnDeviceProcessingStore.enabled, isFalse);
+        expect(
+          await gate.isPurposePermittedNow(
+            RemoteProcessingPurpose.remoteTranscription,
+          ),
+          isTrue,
+        );
+      },
+    );
 
     test('clearing the toggle cannot permit an ungranted purpose', () async {
       await consentStore.grant(
@@ -194,37 +201,39 @@ void main() {
   });
 
   group('existing installs are not migrated', () {
-    test('a stored on-device-only choice survives prior remote consent',
-        () async {
-      // The install this change must not touch: consent granted under the old
-      // behaviour, on-device-only explicitly on, and no in-flow grant since.
-      await consentStore.grant(
-        purposes: RemoteProcessingPurposeStorage.onboardingGrant,
-      );
-      await storeForTest.setEnabled(true);
+    test(
+      'a stored on-device-only choice survives prior remote consent',
+      () async {
+        // The install this change must not touch: consent granted under the old
+        // behaviour, on-device-only explicitly on, and no in-flow grant since.
+        await consentStore.grant(
+          purposes: RemoteProcessingPurposeStorage.onboardingGrant,
+        );
+        await storeForTest.setEnabled(true);
 
-      expect(await storeForTest.readExplicit(), isTrue);
-      await OnDeviceProcessingStore.resetForTest();
-      OnDeviceProcessingStore.debugPlatformOverride = 'ios';
+        expect(await storeForTest.readExplicit(), isTrue);
+        await OnDeviceProcessingStore.resetForTest();
+        OnDeviceProcessingStore.debugPlatformOverride = 'ios';
 
-      // Nothing on this path runs a migration, so the stored value is still
-      // the stored value and the gate still vetoes.
-      expect(await storeForTest.readExplicit(), isTrue);
-      expect(
-        await storeForTest.readEnabled(),
-        isTrue,
-        reason: 'no migration may flip a privacy setting behind the customer',
-      );
+        // Nothing on this path runs a migration, so the stored value is still
+        // the stored value and the gate still vetoes.
+        expect(await storeForTest.readExplicit(), isTrue);
+        expect(
+          await storeForTest.readEnabled(),
+          isTrue,
+          reason: 'no migration may flip a privacy setting behind the customer',
+        );
 
-      await OnDeviceProcessingStore.setEnabled(
-        await storeForTest.readEnabled(),
-      );
-      for (final purpose in RemoteProcessingPurpose.values) {
-        final decision = await gate.evaluateFor(purpose);
-        expect(decision.permitted, isFalse);
-        expect(decision.currentPermission, isTrue);
-      }
-    });
+        await OnDeviceProcessingStore.setEnabled(
+          await storeForTest.readEnabled(),
+        );
+        for (final purpose in RemoteProcessingPurpose.values) {
+          final decision = await gate.evaluateFor(purpose);
+          expect(decision.permitted, isFalse);
+          expect(decision.currentPermission, isTrue);
+        }
+      },
+    );
 
     test('an Android install that chose on-device-only keeps it', () async {
       await storeForTest.setEnabled(true);
@@ -239,8 +248,7 @@ void main() {
       );
     });
 
-    test('nothing under lib/ clears the toggle outside the known call sites',
-        () {
+    test('nothing under lib/ clears the toggle outside the known call sites', () {
       // A migration would have to clear the toggle from somewhere. Enumerating
       // the callers is how a future one gets noticed in review.
       const allowed = {
@@ -286,33 +294,39 @@ void main() {
   });
 
   group('re-enabling the toggle vetoes everything', () {
-    test('after granting in onboarding, turning it back on stops remote',
-        () async {
-      await OnboardingRemoteProcessingDecision.record(
-        allow: true,
-        consentStore: consentStore,
-      );
-
-      // Control: with the toggle off, both purposes are permitted. Without
-      // this, the veto assertion below could pass because consent never landed.
-      for (final purpose in RemoteProcessingPurpose.values) {
-        expect(await gate.isPurposePermittedNow(purpose), isTrue);
-      }
-
-      await OnDeviceProcessingStore.setEnabled(true);
-
-      for (final purpose in RemoteProcessingPurpose.values) {
-        final decision = await gate.evaluateFor(purpose);
-        expect(decision.permitted, isFalse, reason: '$purpose after re-enable');
-        expect(decision.consentAtProcessingTime, isFalse);
-        expect(
-          decision.currentPermission,
-          isTrue,
-          reason: 'the veto is the switch, not a withdrawal of consent',
+    test(
+      'after granting in onboarding, turning it back on stops remote',
+      () async {
+        await OnboardingRemoteProcessingDecision.record(
+          allow: true,
+          consentStore: consentStore,
         );
-        expect(decision.onDeviceProcessingOnly, isTrue);
-      }
-      expect(await gate.isPermittedNow(), isFalse);
-    });
+
+        // Control: with the toggle off, both purposes are permitted. Without
+        // this, the veto assertion below could pass because consent never landed.
+        for (final purpose in RemoteProcessingPurpose.values) {
+          expect(await gate.isPurposePermittedNow(purpose), isTrue);
+        }
+
+        await OnDeviceProcessingStore.setEnabled(true);
+
+        for (final purpose in RemoteProcessingPurpose.values) {
+          final decision = await gate.evaluateFor(purpose);
+          expect(
+            decision.permitted,
+            isFalse,
+            reason: '$purpose after re-enable',
+          );
+          expect(decision.consentAtProcessingTime, isFalse);
+          expect(
+            decision.currentPermission,
+            isTrue,
+            reason: 'the veto is the switch, not a withdrawal of consent',
+          );
+          expect(decision.onDeviceProcessingOnly, isTrue);
+        }
+        expect(await gate.isPermittedNow(), isFalse);
+      },
+    );
   });
 }

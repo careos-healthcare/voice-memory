@@ -20,6 +20,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
 
+import 'helpers/app_provider_scope.dart';
 import 'helpers/test_billing_service.dart';
 
 class _FakeStoreBilling implements StoreBillingPort {
@@ -246,7 +247,9 @@ void main() {
           ),
         ],
       );
-      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+      await tester.pumpWidget(
+        withAppProviderScope(MaterialApp.router(routerConfig: router)),
+      );
       await tester.pump();
       for (var i = 0; i < 300; i++) {
         await tester.pump(const Duration(milliseconds: 50));
@@ -326,7 +329,9 @@ void main() {
       );
       await tester.binding.setSurfaceSize(const Size(390, 1800));
       addTearDown(() => tester.binding.setSurfaceSize(null));
-      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+      await tester.pumpWidget(
+        withAppProviderScope(MaterialApp.router(routerConfig: router)),
+      );
       await tester.pump();
       await tester.tap(find.text('Open paywall'));
       await tester.pump();

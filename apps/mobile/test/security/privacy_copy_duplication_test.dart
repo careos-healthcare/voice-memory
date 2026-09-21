@@ -106,9 +106,7 @@ void main() {
       for (final name in const [
         'pillar2Title',
         'pillar3Title',
-        'pillarLocalTitle',
-        'pillarRemoteBody',
-        'storageStatusBody',
+        'lede',
         'architectureHeading',
         'onDeviceProcessingTitle',
         'cardTitle',

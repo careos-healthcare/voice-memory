@@ -3,22 +3,61 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'consent_dto.g.dart';
 
+/// Redemption invite carried alongside an issued caregiver consent token.
+class ConsentRedemptionDto {
+  const ConsentRedemptionDto({
+    required this.linkToken,
+    required this.manualCode,
+    required this.reference,
+    this.emailSent = false,
+  });
+
+  factory ConsentRedemptionDto.fromJson(Map<String, dynamic> json) =>
+      ConsentRedemptionDto(
+        linkToken: JsonConverters.string(json['linkToken'], field: 'linkToken'),
+        manualCode: JsonConverters.string(
+          json['manualCode'],
+          field: 'manualCode',
+        ),
+        reference: JsonConverters.string(json['reference'], field: 'reference'),
+        emailSent: JsonConverters.boolOrFalse(json['emailSent']),
+      );
+
+  final String linkToken;
+  final String manualCode;
+  final String reference;
+  final bool emailSent;
+
+  Map<String, dynamic> toJson() => {
+        'linkToken': linkToken,
+        'manualCode': manualCode,
+        'reference': reference,
+        'emailSent': emailSent,
+      };
+}
+
 /// Wire response for `POST /api/coach/consent/issue`.
 @JsonSerializable(createFactory: false)
 class ConsentIssueResponseDto {
   const ConsentIssueResponseDto({
     required this.token,
     this.ok,
+    this.redemption,
   });
 
   factory ConsentIssueResponseDto.fromJson(Map<String, dynamic> json) =>
       ConsentIssueResponseDto(
         ok: JsonConverters.nullableBool(json['ok']),
         token: JsonConverters.requiredStringMap(json['token'], field: 'token'),
+        redemption: JsonConverters.nullableObject(
+          json['redemption'],
+          ConsentRedemptionDto.fromJson,
+        ),
       );
 
   final bool? ok;
   final Map<String, dynamic> token;
+  final ConsentRedemptionDto? redemption;
 
   Map<String, dynamic> toJson() => _$ConsentIssueResponseDtoToJson(this);
 }
@@ -44,6 +83,29 @@ class ConsentVerifyResponseDto {
   final Map<String, dynamic>? session;
 
   Map<String, dynamic> toJson() => _$ConsentVerifyResponseDtoToJson(this);
+}
+
+/// Wire response for `POST /api/coach/consent/redeem`.
+///
+/// Hand-rolled rather than `@JsonSerializable`, matching
+/// ConsentRevokeResponseDto's own precedent, so this addition does not
+/// require regenerating `consent_dto.g.dart`.
+class ConsentRedeemResponseDto {
+  const ConsentRedeemResponseDto({required this.token, this.ok});
+
+  factory ConsentRedeemResponseDto.fromJson(Map<String, dynamic> json) =>
+      ConsentRedeemResponseDto(
+        ok: JsonConverters.nullableBool(json['ok']),
+        token: JsonConverters.requiredStringMap(json['token'], field: 'token'),
+      );
+
+  final bool? ok;
+  final Map<String, dynamic> token;
+
+  Map<String, dynamic> toJson() => {
+    if (ok != null) 'ok': ok,
+    'token': token,
+  };
 }
 
 /// Wire response for `POST /api/coach/consent/revoke`.

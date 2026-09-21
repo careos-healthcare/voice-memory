@@ -88,6 +88,8 @@ retired_sprawl/lib_features/comparison/comparison_copy.dart
     - NAME referenced outside retired tree: tool/copy_render_path_baseline.txt:1215
     - NAME referenced outside retired tree: tool/copy_render_path_baseline.txt:1216
     - NAME referenced outside retired tree: tool/copy_render_path_baseline.txt:1217
+retired_sprawl/lib_features/comparison_engine/infrastructure/comparison_preference_store.dart
+    - NAME referenced outside retired tree: lib/features/comparison_engine/views/comparison_explorer_screen.dart:10
 retired_sprawl/lib_features/comparison_engine/presentation/comparison_explorer_copy.dart
     - NAME referenced outside retired tree: lib/features/comparison_engine/views/comparison_explorer_screen.dart:12
     - NAME referenced outside retired tree: tool/copy_render_path_baseline.txt:1218
@@ -337,8 +339,6 @@ retired_sprawl/lib_features/onboarding/brain_dump_copy.dart
     - NAME referenced outside retired tree: tool/copy_render_path_baseline.txt:1822
     - NAME referenced outside retired tree: tool/copy_render_path_baseline.txt:1823
     - NAME referenced outside retired tree: tool/copy_render_path_baseline.txt:1824
-retired_sprawl/lib_features/onboarding/brain_dump_upload_service.dart
-    - NAME referenced outside retired tree: lib/features/onboarding/ui/on_device_hero_copy.dart:44
 retired_sprawl/lib_features/onboarding/chatgpt_vs_evidence_builder.dart
     - NAME referenced outside retired tree: lib/features/onboarding/views/archive_onboarding_screen.dart:4
     - NAME referenced outside retired tree: lib/features/onboarding/widgets/chatgpt_vs_evidence_card.dart:1

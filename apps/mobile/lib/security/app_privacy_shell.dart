@@ -33,7 +33,7 @@ class _AppPrivacyShellState extends State<AppPrivacyShell> {
         prefs,
       );
       if (mounted) setState(() => _hideInAppSwitcher = hide);
-    } catch (e, stackTrace) {
+    } on Object catch (e, stackTrace) {
       AppLogger.error('Unhandled error caught', error: e, stackTrace: stackTrace);
       // Tests may run without AppServices — default stays false.
     }

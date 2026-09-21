@@ -56,6 +56,7 @@ class ArchiveBeliefsPresenter {
               'Named from recurring themes across your reflections.',
           section: ArchiveBeliefSection.current,
           timeline: _timelineFromEntries(belief.supportingEntries),
+          sourceEntryIds: _idsFromEntries(belief.supportingEntries),
           conclusion: 'This pattern appears consistently in what you record.',
         ),
       );
@@ -80,6 +81,10 @@ class ArchiveBeliefsPresenter {
               'Observed across ${spot.evidenceCount} reflection${spot.evidenceCount == 1 ? '' : 's'}.',
           whyExplanation: spot.observation,
           section: ArchiveBeliefSection.hiddenPattern,
+          sourceEntryIds: [
+            for (final id in spot.entryIds)
+              if (id.isNotEmpty) id,
+          ],
         ),
       );
     }
@@ -129,6 +134,7 @@ class ArchiveBeliefsPresenter {
           'ArchiveMe ranked this from recurring themes in your reflections.',
       section: section,
       timeline: _timelineFromEntries(t.supportingEntries),
+      sourceEntryIds: _idsFromEntries(t.supportingEntries),
       conclusion: 'This pattern has enough reflections to show up clearly.',
     );
   }
@@ -295,6 +301,11 @@ class ArchiveBeliefsPresenter {
         .whereType<BeliefEvidenceQuote>()
         .toList();
   }
+
+  static List<String> _idsFromEntries(List<JournalEntry> entries) => [
+    for (final entry in entries)
+      if (entry.id.isNotEmpty) entry.id,
+  ];
 
   static String _idFor(String statement) =>
       'belief-${statement.hashCode.abs()}';

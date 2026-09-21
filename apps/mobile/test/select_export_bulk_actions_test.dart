@@ -14,7 +14,7 @@ import 'package:archiveme_mobile/features/memory/memory_control_model.dart';
 import 'package:archiveme_mobile/features/memory/memory_influence_level.dart';
 import 'package:archiveme_mobile/features/memory/memory_scope.dart';
 import 'package:archiveme_mobile/features/memory/memory_scope_policy.dart';
-import 'package:archiveme_mobile/features/pins/pinned_evidence_store.dart';
+import 'package:archiveme_mobile/widgets/pins/pinned_evidence_store.dart';
 import 'package:archiveme_mobile/features/pressure_retention/pressure_check_in_record.dart';
 import 'package:archiveme_mobile/features/pressure_retention/pressure_check_in_store.dart';
 import 'package:archiveme_mobile/features/prove_enough/prove_enough_pattern_report_pdf_exporter.dart';

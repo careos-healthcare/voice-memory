@@ -18,6 +18,7 @@ import 'package:archiveme_mobile/product/consumer_ui_copy.dart';
 import 'package:archiveme_mobile/screens/belief_detail_screen.dart';
 import 'package:archiveme_mobile/storage/mobile_prefs_store.dart';
 import 'package:archiveme_mobile/theme/app_theme.dart';
+import 'package:archiveme_mobile/widgets/belief_clarity_card.dart';
 import 'package:archiveme_mobile/widgets/patterns/archive_belief_surface_card.dart';
 import 'package:archiveme_mobile/widgets/patterns/archive_timeline_truth_feedback_card.dart';
 import 'package:flutter/material.dart';
@@ -384,6 +385,67 @@ void main() {
       expect(find.text(ConsumerUiCopy.labelWhy), findsOneWidget);
       expect(find.text(belief.statement), findsOneWidget);
       expect(find.text(belief.whyExplanation), findsOneWidget);
+    });
+  });
+
+  group('BeliefClarityCard evidence link', () {
+    testWidgets('view evidence fires when source entry ids are present', (
+      tester,
+    ) async {
+      var opened = false;
+      const belief = ArchiveBeliefCardModel(
+        id: 'belief-clarity',
+        statement: 'Work pressure keeps showing up before you agree.',
+        confidencePercent: 72,
+        evidenceSummary: 'Appeared in 3 reflections.',
+        whyExplanation:
+            'ArchiveMe noticed this topic repeating across months of reflections.',
+        section: ArchiveBeliefSection.current,
+        sourceEntryIds: ['e1', 'e2', 'e3'],
+      );
+
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: AppTheme.light(),
+          home: Scaffold(
+            body: BeliefClarityCard(
+              belief: belief,
+              onViewEvidence: () => opened = true,
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+
+      final cta = find.byKey(const Key('belief_clarity_view_evidence'));
+      expect(cta, findsOneWidget);
+      await tester.tap(cta);
+      await tester.pump();
+      expect(opened, isTrue);
+    });
+
+    testWidgets('hides view evidence when source entry ids are empty', (
+      tester,
+    ) async {
+      const belief = ArchiveBeliefCardModel(
+        id: 'belief-clarity-empty',
+        statement: 'Work pressure keeps showing up before you agree.',
+        confidencePercent: 72,
+        evidenceSummary: 'Appeared in 3 reflections.',
+        whyExplanation:
+            'ArchiveMe noticed this topic repeating across months of reflections.',
+        section: ArchiveBeliefSection.current,
+      );
+
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: AppTheme.light(),
+          home: const Scaffold(body: BeliefClarityCard(belief: belief)),
+        ),
+      );
+      await tester.pump();
+
+      expect(find.byKey(const Key('belief_clarity_view_evidence')), findsNothing);
     });
   });
 }

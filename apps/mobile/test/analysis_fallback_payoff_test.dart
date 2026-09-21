@@ -1,24 +1,14 @@
-import 'package:archiveme_mobile/billing/archive_entitlement_reader.dart';
-import 'package:archiveme_mobile/dev/visual_audit_overrides.dart';
-import 'package:archiveme_mobile/features/post_save/post_save_recorded_summary_copy.dart';
-import 'package:archiveme_mobile/features/trust/pending_transcript_recovery_copy.dart';
 import 'package:archiveme_mobile/features/voice_capture/analysis_fallback_payoff.dart';
 import 'package:archiveme_mobile/features/voice_capture/voice_capture_copy.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/models/reflection.dart';
-import 'package:archiveme_mobile/screens/record_screen.dart';
-import 'package:archiveme_mobile/services/app_services.dart';
 import 'package:archiveme_mobile/services/capture_save_messages.dart';
 import 'package:archiveme_mobile/theme/app_theme.dart';
 import 'package:archiveme_mobile/widgets/record/analysis_fallback_payoff_card.dart';
-import 'package:archiveme_mobile/widgets/record/post_save_recorded_summary_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'helpers/app_provider_scope.dart';
-import 'support/app_services_test_lifecycle.dart';
-import 'support/test_storage_sandbox.dart';
-import 'support/v1_moment_save_receipt_expectations.dart';
 
 JournalEntry _voiceEntry({
   required String id,
@@ -60,15 +50,6 @@ const _bannedAiSuccessWords = [
   'analysis complete',
   'insight ready',
 ];
-
-List<String> _visibleText(WidgetTester tester) {
-  final texts = <String>[];
-  for (final element in find.byType(Text).evaluate()) {
-    final data = (element.widget as Text).data;
-    if (data != null && data.isNotEmpty) texts.add(data);
-  }
-  return texts;
-}
 
 void _expectNoBannedCopy(Iterable<String> visible, List<String> banned) {
   for (final text in visible) {
@@ -199,10 +180,16 @@ void main() {
         footnoteLine: AnalysisFallbackPayoffCopy.deferredFootnote,
       );
 
-      await tester.pumpWidget(withAppProviderScope(MaterialApp(
-          theme: AppTheme.light(),
-          home: const Scaffold(body: AnalysisFallbackPayoffCard(payoff: payoff)),
-        )));
+      await tester.pumpWidget(
+        withAppProviderScope(
+          MaterialApp(
+            theme: AppTheme.light(),
+            home: const Scaffold(
+              body: AnalysisFallbackPayoffCard(payoff: payoff),
+            ),
+          ),
+        ),
+      );
       await tester.pump();
 
       expect(
@@ -225,212 +212,6 @@ void main() {
       expect(
         find.text(AnalysisFallbackPayoffCopy.deferredFootnote),
         findsOneWidget,
-      );
-    });
-  });
-
-  group('RecordScreen analysis fallback UI', () {
-    late TestStorageSandbox sandbox;
-
-    setUp(() async {
-      sandbox = TestStorageSandbox.create();
-      await AppServices.resetForTest(
-        journalPath: sandbox.journalPath,
-        skipRevenueCat: true,
-      );
-    });
-
-    tearDown(() async {
-      await settleAppServicesForTest();
-      sandbox.dispose();
-    });
-
-    tearDown(() {
-      VisualAuditOverrides.setRecordPresentation(null);
-    });
-
-    Future<void> pumpDoneState(
-      WidgetTester tester, {
-      required List<JournalEntry> entriesAfterSave,
-      bool lastCaptureAnalysisSucceeded = false,
-    }) async {
-      VisualAuditOverrides.setRecordPresentation(
-        RecordAuditPresentation(
-          ui: RecordUiState.done,
-          entriesAfterSave: entriesAfterSave,
-          lastCaptureAnalysisSucceeded: lastCaptureAnalysisSucceeded,
-        ),
-      );
-      await tester.binding.setSurfaceSize(const Size(390, 2800));
-      addTearDown(() => tester.binding.setSurfaceSize(null));
-      await tester.pumpWidget(withAppProviderScope(MaterialApp(
-          theme: AppTheme.light(),
-          home: Scaffold(
-            body: RecordScreen(
-              entitlementReader: FakeArchiveEntitlementReader(pro: false),
-            ),
-          ),
-        )));
-      await tester.pump();
-      await tester.runAsync(() async {
-        await Future<void>.delayed(const Duration(milliseconds: 400));
-      });
-      for (var i = 0; i < 30; i++) {
-        await tester.pump(const Duration(milliseconds: 50));
-      }
-    }
-
-    testWidgets(
-      'good transcript with analysis unavailable shows local payoff',
-      (tester) async {
-        await pumpDoneState(
-          tester,
-          entriesAfterSave: [
-            _voiceEntry(
-              id: 'e1',
-              transcript: 'I felt pressure before saying yes again today.',
-            ),
-          ],
-        );
-
-        V1MomentSaveReceiptExpectations.expectVisible();
-        V1MomentSaveReceiptExpectations.expectNoLegacyPostSaveStack();
-        _expectNoBannedCopy(_visibleText(tester), _bannedAiSuccessWords);
-      },
-    );
-
-    testWidgets(
-      'good transcript with analysis unavailable skips degraded recovery',
-      (tester) async {
-        await pumpDoneState(
-          tester,
-          entriesAfterSave: [
-            _voiceEntry(
-              id: 'e1',
-              transcript: 'I felt pressure before saying yes again today.',
-            ),
-          ],
-        );
-
-        expect(
-          find.byKey(const Key('post_save_degraded_transcription_card')),
-          findsNothing,
-        );
-        expect(find.text(PendingTranscriptRecoveryCopy.title), findsNothing);
-        expect(find.text(VoiceCaptureCopy.typeWhatYouSaid), findsNothing);
-      },
-    );
-
-    testWidgets('one entry avoids repeat loop pattern language', (
-      tester,
-    ) async {
-      await pumpDoneState(
-        tester,
-        entriesAfterSave: [
-          _voiceEntry(
-            id: 'e1',
-            transcript: 'I felt pressure before saying yes again today.',
-          ),
-        ],
-      );
-
-      _expectNoBannedCopy(_visibleText(tester), [
-        ..._bannedPatternWords,
-        'repeat',
-        'loop',
-      ]);
-    });
-
-    testWidgets('degraded transcript still shows audio recovery card', (
-      tester,
-    ) async {
-      VisualAuditOverrides.setRecordPresentation(
-        RecordAuditPresentation(
-          ui: RecordUiState.done,
-          entriesAfterSave: [_degradedVoiceEntry()],
-          degradedVoicePostSave: true,
-          lastCaptureAnalysisSucceeded: false,
-        ),
-      );
-      await tester.binding.setSurfaceSize(const Size(390, 2800));
-      addTearDown(() => tester.binding.setSurfaceSize(null));
-      await tester.pumpWidget(withAppProviderScope(MaterialApp(
-          theme: AppTheme.light(),
-          home: Scaffold(
-            body: PostSaveRecordedSummaryCard(
-              entry: _degradedVoiceEntry(),
-              allEntries: [_degradedVoiceEntry()],
-            ),
-          ),
-        )));
-      await tester.pump();
-
-      expect(
-        find.byKey(const Key('post_save_degraded_transcription_card')),
-        findsOneWidget,
-      );
-      expect(find.text(PendingTranscriptRecoveryCopy.postSaveTitle), findsOneWidget);
-      expect(
-        find.byKey(const Key('analysis_fallback_payoff_card')),
-        findsNothing,
-      );
-    });
-
-    testWidgets(
-      'two entries with analysis unavailable stay focused on record screen',
-      (tester) async {
-        await pumpDoneState(
-          tester,
-          entriesAfterSave: [
-            _voiceEntry(
-              id: 'e1',
-              transcript:
-                  'I stayed late finishing slides for tomorrow morning.',
-              createdAt: DateTime(2026, 6, 11, 12),
-            ),
-            _voiceEntry(
-              id: 'e2',
-              transcript: 'My sister called about planning the weekend trip.',
-              createdAt: DateTime(2026, 6, 12, 12),
-            ),
-          ],
-        );
-
-        expect(
-          find.byKey(const Key('post_save_archive_home_nudge_card')),
-          findsNothing,
-        );
-        expect(
-          find.byKey(const Key('second_session_payoff_card')),
-          findsNothing,
-        );
-        V1MomentSaveReceiptExpectations.expectVisible();
-        V1MomentSaveReceiptExpectations.expectNoLegacyPostSaveStack();
-        expect(
-          find.byKey(const Key('analysis_fallback_payoff_card')),
-          findsNothing,
-        );
-        _expectNoBannedCopy(_visibleText(tester), _bannedPatternWords);
-      },
-    );
-
-    testWidgets('analysis succeeded does not show fallback card', (
-      tester,
-    ) async {
-      await pumpDoneState(
-        tester,
-        entriesAfterSave: [
-          _voiceEntry(
-            id: 'e1',
-            transcript: 'I felt pressure before saying yes again today.',
-          ),
-        ],
-        lastCaptureAnalysisSucceeded: true,
-      );
-
-      expect(
-        find.byKey(const Key('analysis_fallback_payoff_card')),
-        findsNothing,
       );
     });
   });

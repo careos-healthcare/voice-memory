@@ -12,6 +12,7 @@ import 'package:archiveme_mobile/data/network/billing_api_client.dart';
 import 'package:archiveme_mobile/data/network/capture_api_client.dart';
 import 'package:archiveme_mobile/data/network/caregiver_consent_api_client.dart';
 import 'package:archiveme_mobile/data/network/coach_consent_api_client.dart';
+import 'package:archiveme_mobile/data/network/insights_conversation_api_client.dart';
 import 'package:archiveme_mobile/data/network/live_audio_api_client.dart';
 import 'package:archiveme_mobile/data/network/push_api_client.dart';
 import 'package:archiveme_mobile/data/network/sync_api_client.dart';
@@ -27,6 +28,7 @@ import 'package:archiveme_mobile/services/api_service.dart';
 import 'package:archiveme_mobile/storage/entitlement_cache.dart';
 import 'package:archiveme_mobile/storage/secure_storage.dart';
 import 'package:archiveme_mobile/storage/session_cookie_store.dart';
+import 'package:archiveme_mobile/widgets/billing/paywall_gate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 import 'package:riverpod/misc.dart' show Override;
@@ -139,6 +141,12 @@ final userRelationshipApiClientProvider = Provider<UserRelationshipApiClient>(
   (ref) => ref.watch(voiceMemoryApiClientBundleProvider).userRelationships,
 );
 
+final insightsConversationApiClientProvider =
+    Provider<InsightsConversationApiClient>(
+      (ref) =>
+          ref.watch(voiceMemoryApiClientBundleProvider).insightsConversation,
+    );
+
 final insightsApiServiceProvider = Provider<ApiService>(
   (ref) => ref.watch(voiceMemoryApiClientBundleProvider).insights,
 );
@@ -247,6 +255,7 @@ ProviderContainer createNetworkProviderContainer({
         voiceMemoryApiBaseUrlProvider.overrideWithValue(apiBaseUrl),
       if (storeBilling != null)
         storeBillingPortProvider.overrideWithValue(storeBilling),
+      ...paywallGateHostOverrides,
       ...?networkOverrides,
     ],
   );

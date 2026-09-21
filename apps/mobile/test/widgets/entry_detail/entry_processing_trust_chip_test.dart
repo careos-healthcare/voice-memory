@@ -95,16 +95,21 @@ void main() {
   });
 
   group('an on-device-only entry shows its provenance', () {
-    test('the pre-fix rule rendered nothing for a SFSpeechRecognizer entry', () {
-      // The defect, before the fix: the more private path got less
-      // information than the one that uploaded audio.
-      expect(_preFixLabelFor(_nativeSttEntry()), isNull);
-    });
+    test(
+      'the pre-fix rule rendered nothing for a SFSpeechRecognizer entry',
+      () {
+        // The defect, before the fix: the more private path got less
+        // information than the one that uploaded audio.
+        expect(_preFixLabelFor(_nativeSttEntry()), isNull);
+      },
+    );
 
     testWidgets('a native-STT entry renders a chip', (tester) async {
       await tester.pumpWidget(
         MaterialApp(
-          home: Scaffold(body: EntryProcessingTrustChip(entry: _nativeSttEntry())),
+          home: Scaffold(
+            body: EntryProcessingTrustChip(entry: _nativeSttEntry()),
+          ),
         ),
       );
 
@@ -118,14 +123,20 @@ void main() {
       // `_saveProvisionalNativeTranscript` saves `analysisSucceeded: false`
       // and `SyncStatus.pendingUpload`, so "Processed on your device" would
       // name a step that did not run and imply the entry is not queued to go
-      // anywhere.
+      // anywhere. The chip is path-conditional: only this arm, not Whisper.
+      expect(
+        EntryProcessingCopy.transcribedOnDevice,
+        'Voice-to-text: On device',
+      );
       await tester.pumpWidget(
         MaterialApp(
-          home: Scaffold(body: EntryProcessingTrustChip(entry: _nativeSttEntry())),
+          home: Scaffold(
+            body: EntryProcessingTrustChip(entry: _nativeSttEntry()),
+          ),
         ),
       );
 
-      expect(find.text(EntryProcessingCopy.transcribedOnDevice), findsOneWidget);
+      expect(find.text('Voice-to-text: On device'), findsOneWidget);
       expect(find.text(EntryProcessingCopy.processedOnDevice), findsNothing);
     });
 

@@ -14,6 +14,9 @@ class ConsumerScreenBackHeader extends StatelessWidget {
   final String fallbackRoute;
   final bool showLabel;
 
+  /// Same 48pt minimum as View evidence / source-proof links.
+  static const double minTapTarget = 48;
+
   Future<void> _onBack(BuildContext context) async {
     final popped = await Navigator.maybePop(context);
     if (!popped && context.mounted) {
@@ -29,9 +32,11 @@ class ConsumerScreenBackHeader extends StatelessWidget {
         key: const Key('consumer_screen_back_header'),
         style: TextButton.styleFrom(
           foregroundColor: AppColors.textSecondary,
-          padding: EdgeInsets.zero,
-          minimumSize: Size.zero,
-          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+          minimumSize: const Size(
+            ConsumerScreenBackHeader.minTapTarget,
+            ConsumerScreenBackHeader.minTapTarget,
+          ),
+          tapTargetSize: MaterialTapTargetSize.padded,
         ),
         onPressed: () => _onBack(context),
         icon: const Icon(

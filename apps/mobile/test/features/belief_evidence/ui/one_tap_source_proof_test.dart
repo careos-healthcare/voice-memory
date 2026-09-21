@@ -1,8 +1,10 @@
 import 'package:archiveme_mobile/features/belief_changes/belief_change_moment_model.dart';
 import 'package:archiveme_mobile/features/belief_changes/ui/belief_change_pattern_card.dart';
+import 'package:archiveme_mobile/features/belief_evidence/evidence/legacy_transcript_registry.dart';
 import 'package:archiveme_mobile/features/belief_evidence/evidence/transcript_evidence_index.dart';
 import 'package:archiveme_mobile/features/belief_evidence/ui/evidence_citation_card.dart';
 import 'package:archiveme_mobile/features/belief_evidence/ui/evidence_citation_copy.dart';
+import 'package:archiveme_mobile/features/belief_evidence/ui/legacy_provenance_notice.dart';
 import 'package:archiveme_mobile/features/belief_evidence/ui/verified_source_proof_sheet.dart';
 import 'package:archiveme_mobile/theme/app_theme.dart';
 import 'package:flutter/material.dart';
@@ -70,8 +72,14 @@ void _rememberBothEntries() {
 }
 
 void main() {
-  setUp(TranscriptEvidenceIndex.resetForTest);
-  tearDown(TranscriptEvidenceIndex.resetForTest);
+  setUp(() {
+    TranscriptEvidenceIndex.resetForTest();
+    LegacyTranscriptRegistry.resetForTest();
+  });
+  tearDown(() {
+    TranscriptEvidenceIndex.resetForTest();
+    LegacyTranscriptRegistry.resetForTest();
+  });
 
   group('BeliefChangePatternCard', () {
     testWidgets('a single tap opens the proof sheet with verified quotes', (
@@ -117,6 +125,52 @@ void main() {
 
       expect(find.byKey(VerifiedSourceProofLink.linkKey), findsNothing);
       expect(find.byKey(UngroundedEvidenceNotice.noticeKey), findsOneWidget);
+      expect(find.byKey(LegacyProvenanceNotice.noticeKey), findsNothing);
+    });
+
+    testWidgets('legacy snippets show the provenance notice, not ungrounded', (
+      tester,
+    ) async {
+      LegacyTranscriptRegistry.remember(
+        const LegacyTranscriptRecord(entryId: 'e1'),
+      );
+      LegacyTranscriptRegistry.remember(
+        const LegacyTranscriptRecord(entryId: 'e2'),
+      );
+
+      await tester.pumpWidget(
+        _host(const BeliefChangePatternCard(moment: _groundedMoment)),
+      );
+
+      expect(find.byKey(LegacyProvenanceNotice.noticeKey), findsOneWidget);
+      expect(find.byKey(UngroundedEvidenceNotice.noticeKey), findsNothing);
+      expect(find.byKey(VerifiedSourceProofLink.linkKey), findsNothing);
+    });
+
+    testWidgets('legacy notice includes recovery when a builder is passed', (
+      tester,
+    ) async {
+      LegacyTranscriptRegistry.remember(
+        const LegacyTranscriptRecord(entryId: 'e1'),
+      );
+      LegacyTranscriptRegistry.remember(
+        const LegacyTranscriptRecord(entryId: 'e2'),
+      );
+
+      await tester.pumpWidget(
+        _host(
+          BeliefChangePatternCard(
+            moment: _groundedMoment,
+            recoveryBuilder: (context, entryIds) {
+              expect(entryIds, ['e1', 'e2']);
+              return const SizedBox(key: Key('recovery_slot'));
+            },
+          ),
+        ),
+      );
+
+      expect(find.byKey(LegacyProvenanceNotice.noticeKey), findsOneWidget);
+      expect(find.byKey(const Key('recovery_slot')), findsOneWidget);
     });
   });
 }

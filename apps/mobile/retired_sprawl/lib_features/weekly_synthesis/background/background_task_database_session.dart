@@ -40,7 +40,7 @@ final class BackgroundTaskDatabaseSession {
     }
 
     final keyStore = SecureSqliteEncryptionKeyStore(
-      secure: SecureStorageService(),
+      store: SecureStorageService(),
       keyAlias: namespace.key,
     );
 

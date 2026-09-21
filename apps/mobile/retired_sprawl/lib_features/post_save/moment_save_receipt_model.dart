@@ -21,8 +21,10 @@ MomentSaveRemoteStatus resolveMomentSaveRemoteStatus({
   if (analysisSucceeded || note.isEmpty) {
     return MomentSaveRemoteStatus.none;
   }
-  if (note.contains('Turn on remote analysis') ||
-      note.contains('stays on this device only')) {
+  if (note == VoiceCaptureCopy.remoteProcessingConsentPausedNote ||
+      note.contains('Turn on remote analysis') ||
+      note.contains('stays on this device only') ||
+      note.contains('was not sent for a deeper read')) {
     return MomentSaveRemoteStatus.none;
   }
   if (note == VoiceCaptureCopy.analysisUnavailableNote) {

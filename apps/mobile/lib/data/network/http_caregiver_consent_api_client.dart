@@ -23,6 +23,8 @@ class HttpCaregiverConsentApiClient
     required String subjectAccountId,
     required String caregiverId,
     required CaregiverPermissions permissions,
+    String? caregiverEmail,
+    bool sendInviteEmail = false,
     NetworkCancelToken? cancelToken,
   }) async {
     if (_transport.tryUri(VoiceMemoryApiRoutes.coachConsentIssue.path) == null) {
@@ -35,6 +37,10 @@ class HttpCaregiverConsentApiClient
         'consentDomain': _consentDomain,
         'caregiverId': caregiverId,
         'permissions': permissions.toJson(),
+        if (sendInviteEmail &&
+            caregiverEmail != null &&
+            caregiverEmail.isNotEmpty)
+          'caregiverEmail': caregiverEmail,
       },
       cancelToken: cancelToken,
     );
@@ -50,7 +56,27 @@ class HttpCaregiverConsentApiClient
         return _transport.decodeEnvelope(
           response,
           parseData: ConsentIssueResponseDto.fromJson,
-          toDomain: (dto) => MonitoringConsentToken.fromJson(dto.token),
+          toDomain: (dto) {
+            final token = MonitoringConsentToken.fromJson(dto.token);
+            final redemption = dto.redemption;
+            if (redemption == null) return token;
+            return MonitoringConsentToken(
+              tokenId: token.tokenId,
+              subjectAccountId: token.subjectAccountId,
+              caregiverId: token.caregiverId,
+              permissions: token.permissions,
+              issuedAt: token.issuedAt,
+              expiresAt: token.expiresAt,
+              policyVersion: token.policyVersion,
+              signature: token.signature,
+              redemption: CaregiverRedemptionInvite(
+                linkToken: redemption.linkToken,
+                manualCode: redemption.manualCode,
+                reference: redemption.reference,
+                emailSent: redemption.emailSent,
+              ),
+            );
+          },
           missingDataMessage: 'Caregiver consent token missing',
         );
       },

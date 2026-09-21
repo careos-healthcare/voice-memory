@@ -113,7 +113,10 @@ void main() {
         MaterialApp(
           theme: AppTheme.light(),
           home: Scaffold(
-            body: OnDeviceHeroScreen(onContinue: () {}, onSeeDetails: () {}),
+            body: OnDeviceHeroScreen(
+              allowedRemote: false,
+              onContinue: () {},
+            ),
           ),
         ),
       ),

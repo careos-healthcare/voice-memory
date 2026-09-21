@@ -58,6 +58,7 @@ abstract final class V1ProductionAllowlist {
     'ArchiveEvidenceContextScreen',
     'EntryDetailScreen',
     'BeliefsScreen',
+    'CaregiverAccessScreen',
     'BeliefDetailScreen',
     'SampleArchiveContextScreen',
     'DeleteAccountScreen',

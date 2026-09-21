@@ -17,8 +17,9 @@ void main() {
     final preview = buildProValuePreview(_context(PaywallTrigger.fullHistory));
     expect(preview.type, ProValuePreviewType.memoryLimit);
     expect(preview.title, 'Your pattern memory is growing');
-    expect(preview.body, contains('first 7 key moments'));
+    expect(preview.body, contains('longer proof trail'));
     expect(preview.body, contains('weeks and months'));
+    expect(preview.body, isNot(contains('7 key moments')));
     expect(preview.previewBullets, contains('Keep older moments'));
     expect(preview.ctaLabel, ConsumerUiCopy.unlockFullMemoryCta);
   });
@@ -29,7 +30,11 @@ void main() {
     );
     expect(preview.type, ProValuePreviewType.keyMomentSearch);
     expect(preview.title, 'Your pattern memory is growing');
-    expect(preview.previewBullets, contains('Search all your moments'));
+    expect(preview.previewBullets, contains('Compare then vs now over time'));
+    expect(
+      preview.previewBullets,
+      isNot(contains('Search all your moments')),
+    );
   });
 
   test('patternMap preview copy', () {

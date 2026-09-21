@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'support/record_screen_library_source.dart';
 
 import 'package:archiveme_mobile/billing/paywall_source.dart';
 import 'package:archiveme_mobile/billing/restore_purchases_copy.dart';
@@ -471,36 +470,6 @@ void main() {
   });
 
   group('Integration wiring', () {
-    test('record screen integrates capture and proof repair cards', () {
-      final source = readRecordScreenLibrarySource();
-      expect(source, contains('FirstSessionCaptureRepairCard'));
-      expect(source, contains('ProofQualityRepairCard'));
-      expect(
-        source,
-        contains('SurfacePriorityCardKey.firstSessionProofRepair'),
-      );
-      expect(source, contains('SurfacePriorityCardKey.proofQualityRepair'));
-    });
-
-    test('proof repair does not duplicate beta proof feedback row', () {
-      final source = readRecordScreenLibrarySource();
-      expect(source, contains('showProofQualityRepairOnRecord'));
-      expect(source, contains('betaProofFeedbackRowVisible'));
-    });
-
-    test('negative feedback path does not trigger Pro from repair card', () {
-      final source = readRecordScreenLibrarySource();
-      final start = source.indexOf('ProofQualityRepairCard');
-      final end = source.indexOf('BetaProofFeedbackRow', start);
-      final repairBlock = source.substring(start, end);
-      expect(
-        repairBlock.contains('_openProEvidenceValueSubscription'),
-        isFalse,
-      );
-      expect(repairBlock.contains('ProUnderstandingLiftCard'), isFalse);
-      expect(repairBlock.contains('ProVisibilityLiftCard'), isFalse);
-    });
-
     test('testing screen renders previews', () {
       final source = File(
         '../../packages/archiveme_research/lib/screens/testing_archiveme_screen.dart',

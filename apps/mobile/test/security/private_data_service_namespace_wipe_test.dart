@@ -6,6 +6,7 @@ import 'package:archiveme_mobile/security/private_data_service.dart';
 import 'package:archiveme_mobile/services/app_services.dart';
 import 'package:archiveme_mobile/storage/account_namespace.dart';
 import 'package:archiveme_mobile/storage/journal_store.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 /// Unique per test, for the same reason the other namespacing tests are:
@@ -17,6 +18,40 @@ String _uniqueSuffix() =>
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
+
+  setUp(() {
+    // `_switchToNamespace` persists the active namespace via
+    // `SecureStorageService()` (not the in-memory store `resetForTest`
+    // installs). Without this stub the unawaited write fails the suite
+    // under `flutter test`.
+    const secureStorage = MethodChannel(
+      'plugins.it_nomads.com/flutter_secure_storage',
+    );
+    final secureValues = <String, String>{};
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(secureStorage, (call) async {
+          final args = call.arguments as Map<Object?, Object?>? ?? const {};
+          final key = args['key'] as String?;
+          switch (call.method) {
+            case 'read':
+              return key == null ? null : secureValues[key];
+            case 'write':
+              if (key != null) {
+                secureValues[key] = args['value'] as String? ?? '';
+              }
+              return null;
+            case 'containsKey':
+              return key != null && secureValues.containsKey(key);
+            case 'readAll':
+              return Map<String, String>.of(secureValues);
+            case 'delete':
+              if (key != null) secureValues.remove(key);
+              return null;
+            default:
+              return null;
+          }
+        });
+  });
 
   Reflection sampleReflection() => const Reflection(
     mood: 'calm',

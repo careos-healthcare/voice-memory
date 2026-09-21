@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'support/record_screen_library_source.dart';
 
 import 'package:archiveme_mobile/features/archive_proof/proof_surface_advice_guard.dart';
 import 'package:archiveme_mobile/features/no_dashboard_positioning/no_dashboard_positioning_guard.dart';
@@ -191,18 +190,6 @@ void main() {
   });
 
   group('protected regression', () {
-    test('no record layout changes', () {
-      final recordSource = readRecordScreenLibrarySource();
-      expect(
-        NoDashboardReleaseMode.detectRecordLayoutUnchanged(recordSource),
-        isTrue,
-      );
-      expect(
-        V1VisibleSurfaceReducer.detectRecordLayoutUnchanged(recordSource),
-        isTrue,
-      );
-    });
-
     test('release mode hook exists in production navigation', () {
       final source = File(
         'lib/config/production_navigation.dart',

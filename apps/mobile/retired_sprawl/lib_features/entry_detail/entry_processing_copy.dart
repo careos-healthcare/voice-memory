@@ -17,5 +17,5 @@ abstract final class EntryProcessingCopy {
   /// entry is queued to be uploaded. Saying "Processed on your device" would
   /// claim a step that did not run and imply a durability the sync queue
   /// contradicts. This names the one act that did happen on the device.
-  static const transcribedOnDevice = 'Transcribed on this device';
+  static const transcribedOnDevice = 'Voice-to-text: On device';
 }

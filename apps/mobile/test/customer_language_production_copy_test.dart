@@ -136,7 +136,7 @@ void main() {
     expect(CustomerLanguage.feedbackPartlyFits, 'Partly fits');
     expect(CustomerLanguage.feedbackNotForMe, 'Not for me');
     expect(CustomerLanguage.feedbackHide, 'Hide');
-    expect(CustomerLanguage.contactEmail, 'hello@archiveme.app');
+    expect(CustomerLanguage.contactEmail, 'hello@thoughtprint.xyz');
   });
 
   test('evidence eligibility copy uses canonical pattern labels', () {

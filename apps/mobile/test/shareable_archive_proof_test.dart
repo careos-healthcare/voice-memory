@@ -412,6 +412,38 @@ void main() {
       expect(shared, proof.shareText);
     });
 
+    testWidgets('view evidence stays off share text and opens from ids', (
+      tester,
+    ) async {
+      final proof = engine.buildFromJournal(entries: _journalEntries(5));
+      var opened = false;
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: AppTheme.light(),
+          home: Scaffold(
+            body: ShareableArchiveProofCard(
+              proof: proof,
+              sourceEntryIds: const ['e0', 'e1', 'e2'],
+              onViewEvidence: () => opened = true,
+              onShare: (_) async {},
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+
+      expect(
+        find.byKey(const Key('shareable_proof_view_evidence')),
+        findsOneWidget,
+      );
+      expect(proof.shareText, isNot(contains('View evidence')));
+      expect(proof.shareText, isNot(contains('e0')));
+
+      await tester.tap(find.byKey(const Key('shareable_proof_view_evidence')));
+      await tester.pump();
+      expect(opened, isTrue);
+    });
+
     testWidgets('renders nothing without proof', (tester) async {
       await tester.pumpWidget(
         MaterialApp(

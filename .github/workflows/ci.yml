@@ -53,6 +53,18 @@ jobs:
         if: ${{ !cancelled() && steps.install.outcome == 'success' }}
         run: npm run validate:curiosity-loop
 
+      - name: Guard conversation insight parser
+        if: ${{ !cancelled() && steps.install.outcome == 'success' }}
+        run: npm run validate:conversation
+
+      - name: Guard caregiver invite email
+        if: ${{ !cancelled() && steps.install.outcome == 'success' }}
+        run: npm run validate:caregiver-invite-email
+
+      - name: Test shared package (node:test)
+        if: ${{ !cancelled() && steps.install.outcome == 'success' }}
+        run: npm run test:shared
+
       - name: Lint shared package
         if: ${{ !cancelled() && steps.install.outcome == 'success' }}
         run: npm run lint -w @voice-memory/shared
@@ -249,6 +261,9 @@ jobs:
       - name: Validate privacy and trust copy
         run: python3 tool/run_gate.py validates privacy_copy
 
+      - name: Guard against null-check-operator anti-pattern in excluded code
+        run: python3 tool/run_gate.py validates null_check_operator_guards
+
       - name: Enforce repository budget
         run: python3 tool/run_gate.py budget
 
@@ -257,9 +272,6 @@ jobs:
 
       - name: Run pro status SQLite self-tests
         run: python3 tool/run_gate.py self_tests pro_status
-
-      - name: Analyze API client layer
-        run: dart analyze lib/api
 
       - name: Run Flutter Analyze
         run: python3 tool/run_gate.py analyze

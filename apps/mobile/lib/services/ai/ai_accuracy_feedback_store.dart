@@ -1,4 +1,4 @@
-import 'package:archiveme_mobile/features/ai_engines/models/ai_accuracy_feedback.dart';
+import 'package:archiveme_mobile/services/ai/ai_accuracy_feedback.dart';
 import 'package:archiveme_mobile/storage/mobile_prefs_store.dart';
 
 class AiAccuracyFeedbackStore {

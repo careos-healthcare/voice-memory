@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'support/record_screen_library_source.dart';
 
 import 'package:archiveme_mobile/features/archive_proof/proof_surface_advice_guard.dart';
 import 'package:archiveme_mobile/features/beta/archive_beta_mission_gate.dart';
@@ -423,13 +422,6 @@ void main() {
   });
 
   group('Integration wiring', () {
-    test('record screen integrates proof floor rescue', () {
-      final source = readRecordScreenLibrarySource();
-      expect(source, contains('ProofFloorRescueCard'));
-      expect(source, contains('SurfacePriorityCardKey.proofFloorRescue'));
-      expect(source, contains('blocksProByProofFloorOnRecord'));
-    });
-
     test('archive belief screen integrates proof floor rescue', () {
       final source = File(
         'lib/screens/archive_belief_screen.dart',

@@ -16,7 +16,8 @@ abstract final class WeeklyArchiveReviewNavigation {
 abstract final class WeeklyArchiveReviewCopy {
   static const String title = VisibleArchiveProofCopy.weeklyArchiveReviewTitle;
 
-  static const String subtitle = VisibleArchiveProofCopy.weeklyArchiveReviewSubtitle;
+  static const String subtitle =
+      VisibleArchiveProofCopy.weeklyArchiveReviewSubtitle;
 
   static const String notConclusion =
       VisibleArchiveProofCopy.weeklyArchiveReviewNotConclusion;
@@ -72,6 +73,7 @@ class WeeklyArchiveReview {
     this.strongestThreadLine,
     this.whatChangedLine,
     this.evidenceRows = const [],
+    this.sourceEntryIds = const [],
     this.uncertaintyLine,
     this.nextActionLine,
     this.primaryCta,
@@ -97,6 +99,7 @@ class WeeklyArchiveReview {
   final String? strongestThreadLine;
   final String? whatChangedLine;
   final List<String> evidenceRows;
+  final List<String> sourceEntryIds;
   final String? uncertaintyLine;
   final String? nextActionLine;
   final String? primaryCta;
@@ -128,9 +131,10 @@ abstract final class WeeklyArchiveReviewEngine {
     final weekAnalysis = _heuristics.analyze(weekEntries);
     final fullAnalysis = _heuristics.analyze(entries);
     final evidenceWeak = payoff.evidenceWeak;
-    final evidenceRows = _evidenceRows(
+    final evidence = _evidenceCitations(
       weekEntries.isNotEmpty ? weekEntries : eligible,
     );
+    final evidenceRows = evidence.rows;
     final contextCopy = ContextAwareArchiveCopyEngine.build(entries: entries);
 
     return WeeklyArchiveReview(
@@ -150,6 +154,7 @@ abstract final class WeeklyArchiveReviewEngine {
         evidenceWeak: evidenceWeak,
       ),
       evidenceRows: evidenceRows,
+      sourceEntryIds: evidence.ids,
       uncertaintyLine: evidenceWeak
           ? WeeklyArchiveReviewCopy.evidenceStillThin
           : (contextCopy.showLines ? contextCopy.summaryLine : null),
@@ -236,8 +241,11 @@ abstract final class WeeklyArchiveReviewEngine {
     return VisibleArchiveProofCopy.weeklyArchiveReviewWhatChangedDefault;
   }
 
-  static List<String> _evidenceRows(List<JournalEntry> entries) {
+  static ({List<String> rows, List<String> ids}) _evidenceCitations(
+    List<JournalEntry> entries,
+  ) {
     final rows = <String>[];
+    final ids = <String>[];
     for (final entry in entries.reversed) {
       final snippet = FactLedgerCitationService.resolvedSnippet(
         entryId: entry.id,
@@ -246,9 +254,10 @@ abstract final class WeeklyArchiveReviewEngine {
       );
       if (snippet.isEmpty) continue;
       rows.add(snippet);
+      ids.add(entry.id);
       if (rows.length >= 3) break;
     }
-    return rows.reversed.toList();
+    return (rows: rows.reversed.toList(), ids: ids.reversed.toList());
   }
 
   static String _entryText(JournalEntry entry) {

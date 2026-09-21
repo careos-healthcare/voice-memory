@@ -44,7 +44,7 @@ abstract final class OnDeviceArchitectureCopy {
   OnDeviceArchitectureCopy._();
 
   static const String architectureHeading =
-      PrivacyClaimCatalogue.onDeviceByDefaultHeading;
+      PrivacyClaimCatalogue.whatYouSaveStaysHereHeading;
 
   static const String architectureBody =
       'Local-first storage is the architecture, not a bolted-on feature. By '

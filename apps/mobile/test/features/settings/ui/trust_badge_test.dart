@@ -52,7 +52,10 @@ void main() {
       expect(all, isNot(contains('entirely')));
       expect(all, isNot(contains('encrypt')));
       expect(all, isNot(contains('sqlite')));
-      expect(TrustBadgeCopy.onDeviceProcessing.toLowerCase(), contains('by default'));
+      expect(
+        TrustBadgeCopy.onDeviceProcessing,
+        'You choose what leaves your phone',
+      );
       expect(
         TrustBadgeCopy.onDeviceDetail,
         contains(PrivacyCopyPolicy.nothingSentUnlessFeatureChosen),

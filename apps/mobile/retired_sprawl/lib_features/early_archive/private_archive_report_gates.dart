@@ -38,15 +38,18 @@ abstract final class PrivateArchiveReportGates {
     returnChecks: returnChecks,
   );
 
-  static bool showFullExport({required bool isPro}) => isPro;
+  // Private recap export is free forever (launch product contract, capability
+  // "Export and deletion") — never gated behind Pro. These stay parameterized
+  // on [isPro] so callers are unchanged, but the export is always complete.
+  static bool showFullExport({required bool isPro}) => true;
 
-  static bool showPreviewNote({required bool isPro}) => !isPro;
+  static bool showPreviewNote({required bool isPro}) => false;
 
   static bool includeSectionInPreview({
     required int sectionIndex,
     required bool isPro,
     int previewSectionCount = 1,
-  }) => isPro || sectionIndex < previewSectionCount;
+  }) => true;
 
   static bool passesActivationGate(int entryCount) =>
       entryCount > FirstThreeSessionGates.minEntriesForUsefulArchive;

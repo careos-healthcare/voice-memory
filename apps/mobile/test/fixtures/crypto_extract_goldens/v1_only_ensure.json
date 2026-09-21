@@ -1,0 +1,21 @@
+{
+  "doNotRegenerate": true,
+  "phase": 0,
+  "issue": 281,
+  "capturedFrom": "current production SecureSqliteEncryptionKeyStore; v1-only keychain then ensureEncryptionKey (the first-boot path)",
+  "productionBehavior": "ensureEncryptionKey on a v1-only install returns the v1 passphrase and does not write sqlite_encryption_key_v2. There is no write-forward migration; v1 remains the SQLCipher password.",
+  "beforeEnsure": {
+    "logicalKeysPresent": [
+      "sqlite_encryption_passphrase_v1"
+    ],
+    "sqlite_encryption_passphrase_v1": "bGVnYWN5LXBhc3NwaHJhc2UtdGhpcnR5LXR3by1jaGFycy1taW4hIQ==",
+    "sqlite_encryption_key_v2": null
+  },
+  "afterEnsure": {
+    "sqlcipherPassword": "legacy-passphrase-thirty-two-chars-min!!",
+    "rawKeyBytes": null,
+    "sqlite_encryption_passphrase_v1": "bGVnYWN5LXBhc3NwaHJhc2UtdGhpcnR5LXR3by1jaGFycy1taW4hIQ==",
+    "sqlite_encryption_key_v2": null,
+    "readEncryptionKeyMatchesEnsure": true
+  }
+}

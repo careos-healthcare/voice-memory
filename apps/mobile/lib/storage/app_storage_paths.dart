@@ -85,7 +85,7 @@ abstract class AppStoragePaths {
     }
     try {
       return await getApplicationDocumentsDirectory();
-    } catch (e, stackTrace) {
+    } on Object catch (e, stackTrace) {
       if (kDebugMode && Platform.isIOS) {
         return debugSimulatorDocumentsDirectorySync(reason: e);
       }
@@ -102,7 +102,7 @@ abstract class AppStoragePaths {
     }
     try {
       return await getTemporaryDirectory();
-    } catch (e, stackTrace) {
+    } on Object catch (e, stackTrace) {
       if (kDebugMode && Platform.isIOS) {
         return debugSimulatorTemporaryDirectorySync(reason: e);
       }

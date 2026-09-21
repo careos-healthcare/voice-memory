@@ -14,12 +14,14 @@ import 'package:archiveme_mobile/features/voice_capture/voice_capture_copy.dart'
 import 'package:archiveme_mobile/features/voice_capture/voice_capture_post_save.dart';
 import 'package:archiveme_mobile/features/voice_capture/voice_capture_quality.dart';
 import 'package:archiveme_mobile/models/attest_result.dart';
+import 'package:archiveme_mobile/models/transcript_provenance.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/models/reflection.dart';
 import 'package:archiveme_mobile/models/sync_status.dart';
 import 'package:archiveme_mobile/product/consumer_ui_copy.dart';
 import 'package:archiveme_mobile/security/api_usage_guard.dart';
 import 'package:archiveme_mobile/services/app_services.dart';
+import 'package:archiveme_mobile/services/capture_pipeline/capture_pipeline_models.dart';
 import 'package:archiveme_mobile/services/capture_save_messages.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -298,11 +300,11 @@ void main() {
       );
       await AppServices.instance.journalStore.save(degraded);
 
-      final result = await AppServices.instance.pipeline
+      final result = (await AppServices.instance.pipeline
           .attachTypedTextToVoiceEntry(
             entry: degraded,
             transcript: 'I said yes when I had no capacity left.',
-          );
+          )).getOrThrow();
 
       expect(result.attachedTypedTextToVoiceEntry, isTrue);
       expect(
@@ -338,6 +340,7 @@ void main() {
       final applied = applyFinalTranscriptToVoiceEntry(
         entry,
         finalTranscript: null,
+        provenance: TranscriptProvenance.speechToText,
         draftPlaceholder: draft,
       );
       expect(applied.transcript, _spokenTranscript);
@@ -362,10 +365,10 @@ void main() {
         );
         final audio = await usableAudioFile();
 
-        final result = await AppServices.instance.pipeline.run(
+        final result = (await AppServices.instance.pipeline.run(
           audioFile: audio,
           durationSeconds: 20,
-        );
+        )).getOrThrow();
 
         expect(result.syncSucceeded, isFalse);
         expect(
@@ -407,10 +410,10 @@ void main() {
       );
       final audio = await usableAudioFile();
 
-      final result = await AppServices.instance.pipeline.run(
+      final result = (await AppServices.instance.pipeline.run(
         audioFile: audio,
         durationSeconds: 20,
-      );
+      )).getOrThrow();
 
       expect(result.syncSucceeded, isFalse);
       expect(

@@ -205,7 +205,7 @@ class LocalBackupRestoreService {
     final backup = validation.backup!;
     try {
       await _replaceArchiveWithBackup(backup);
-      await reloadArchiveStores();
+      await reloadArchiveStores(prefs: prefs);
       recomputeArchiveSurfaces(backup.entries);
 
       LocalBackupAnalytics.restored(
@@ -249,7 +249,15 @@ class LocalBackupRestoreService {
     }
   }
 
-  static Future<void> reloadArchiveStores() async {
+  /// Rehydrates in-memory archive caches after backup prefs are on disk.
+  ///
+  /// Exclusions load from [prefs] — the same handle restore just wrote —
+  /// so a silent `!AppServices.isInitialized` no-op cannot fail-open the
+  /// exclusion cache. Other stores still go through their AppServices
+  /// gates; this method is only invoked after [restoreBackup] has already
+  /// required initialization, except in tests that inject [prefs] to
+  /// exercise that exclusion race.
+  static Future<void> reloadArchiveStores({MobilePrefsStore? prefs}) async {
     PatternNameStore.resetPersistedState();
     HelpedTrackingStore.invalidateAfterRestore();
     WhatChangedV2Store.invalidateAfterRestore();
@@ -260,7 +268,7 @@ class LocalBackupRestoreService {
     await PatternNameStore.ensureLoaded();
     await HelpedTrackingStore.ensureLoaded();
     await WhatChangedV2Store.ensureLoaded();
-    await ArchiveExclusionStore.ensureLoaded();
+    await ArchiveExclusionStore.ensureLoaded(prefs: prefs);
     await EntryImportanceStore.ensureLoaded();
     await FirstProofTruthStore.ensureLoaded();
   }

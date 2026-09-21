@@ -1,5 +1,6 @@
 import 'package:archiveme_mobile/features/auth/application/multi_party_access_service.dart';
 import 'package:archiveme_mobile/features/auth/domain/caregiver_access_copy.dart';
+import 'package:archiveme_mobile/features/caregiver_grant/caregiver_grant_copy.dart';
 import 'package:archiveme_mobile/features/auth/domain/consent_revocation_outcome.dart';
 import 'package:archiveme_mobile/features/auth/domain/multi_party_access_grant.dart';
 import 'package:archiveme_mobile/features/auth/infrastructure/consent_revocation_store.dart';
@@ -100,6 +101,16 @@ void main() {
       expect(find.text(CaregiverAccessCopy.cannotSeeHeading), findsOneWidget);
       expect(find.text(CaregiverAccessCopy.caregiverCanSeeTitle), findsOneWidget);
       expect(find.text(CaregiverAccessCopy.coachCanSeeTitle), findsOneWidget);
+      expect(find.text(CaregiverAccessCopy.caregiverCanSeeBody), findsOneWidget);
+      expect(find.text(CaregiverAccessCopy.coachCanSeeBody), findsOneWidget);
+      expect(
+        find.textContaining(CaregiverGrantCopy.canSeeRecent),
+        findsWidgets,
+      );
+      expect(find.textContaining('insight summaries'), findsNothing);
+      expect(find.textContaining('categories you approved'), findsNothing);
+      expect(find.textContaining('priority alerts'), findsNothing);
+      expect(find.textContaining('Read-only summaries'), findsNothing);
       expect(find.text('caregiver-sam'), findsOneWidget);
       expect(find.text('coach-ada'), findsOneWidget);
       expect(find.text(CaregiverAccessCopy.revokeAccessCta), findsNWidgets(2));

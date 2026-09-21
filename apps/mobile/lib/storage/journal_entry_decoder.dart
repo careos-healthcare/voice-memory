@@ -111,7 +111,7 @@ abstract final class JournalEntryDecoder {
         return const JournalDecodeQuarantined([JournalDecodeIssue.emptyId]);
       }
       return JournalDecodeAccepted(entry);
-    } catch (_, stackTrace) {
+    } on Object catch (_, stackTrace) {
       return JournalDecodeQuarantined(const [
         JournalDecodeIssue.parseException,
       ], rawId: id is String ? id : null);

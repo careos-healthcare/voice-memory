@@ -1,10 +1,14 @@
+import 'package:archiveme_mobile/core/config/v1_capability_registry.dart';
 import 'package:archiveme_mobile/design/archive_mobile_typography.dart';
 import 'package:archiveme_mobile/features/belief_changes/belief_change_moment_copy.dart';
 import 'package:archiveme_mobile/features/belief_changes/belief_change_moment_model.dart';
 import 'package:archiveme_mobile/features/belief_evidence/evidence/transcript_evidence_index.dart';
 import 'package:archiveme_mobile/features/belief_evidence/evidence/verbatim_evidence.dart';
+import 'package:archiveme_mobile/features/belief_evidence/insight_evidence_line.dart';
 import 'package:archiveme_mobile/features/belief_evidence/ui/evidence_citation_card.dart';
 import 'package:archiveme_mobile/features/belief_evidence/ui/evidence_trust_copy.dart';
+import 'package:archiveme_mobile/features/belief_evidence/ui/legacy_provenance_notice.dart';
+import 'package:archiveme_mobile/features/belief_evidence/ui/provenance_recovery_action.dart';
 import 'package:archiveme_mobile/features/belief_evidence/ui/source_quote_chip.dart';
 import 'package:archiveme_mobile/features/belief_evidence/ui/view_source_proof_section.dart';
 import 'package:archiveme_mobile/theme/app_colors.dart';
@@ -25,12 +29,17 @@ class BeliefChangePatternCard extends StatelessWidget {
     this.compact = false,
     this.footer,
     this.trailing,
+    this.recoveryBuilder,
   });
 
   final BeliefChangeMoment moment;
   final bool compact;
   final Widget? footer;
   final Widget? trailing;
+
+  /// Same injection as [EvidenceCitationList.recoveryBuilder].
+  final Widget Function(BuildContext context, List<String> entryIds)?
+  recoveryBuilder;
 
   static const Key cardKey = Key('belief_change_pattern_card');
 
@@ -93,14 +102,10 @@ class BeliefChangePatternCard extends StatelessWidget {
               child: SourceQuoteChip(evidence: laterEvidence),
             ),
           ],
-          if (verified.isEmpty)
-            ...[
-              const SizedBox(height: AppSpacing.xs),
-              UngroundedEvidenceNotice(
-                failure: _failureFor(moment.earlierSnippet),
-              ),
-            ]
-          else
+          if (verified.isEmpty) ...[
+            const SizedBox(height: AppSpacing.xs),
+            _emptyVerifyNotice(context),
+          ] else
             ViewSourceProofSection(
               evidence: verified,
               claimContext: BeliefChangeMomentCopy.title,
@@ -114,6 +119,42 @@ class BeliefChangePatternCard extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  Widget _emptyVerifyNotice(BuildContext context) {
+    final lines = _linesFor(moment);
+    if (EvidenceCitationList.stateFor(lines) ==
+        EvidenceCitationState.provenanceUnverified) {
+      return LegacyProvenanceNotice(
+        recovery: _effectiveRecoveryBuilder?.call(
+          context,
+          EvidenceCitationList.legacyEntryIds(lines),
+        ),
+      );
+    }
+    return UngroundedEvidenceNotice(
+      failure: _failureFor(moment.earlierSnippet),
+    );
+  }
+
+  Widget Function(BuildContext context, List<String> entryIds)?
+  get _effectiveRecoveryBuilder =>
+      recoveryBuilder ??
+      (V1CapabilityRegistry.provenanceRecovery
+          ? ProvenanceRecoveryAction.productionBuilder
+          : null);
+
+  static List<InsightEvidenceLine> _linesFor(BeliefChangeMoment moment) {
+    InsightEvidenceLine line(BeliefChangeEvidenceSnippet snippet) =>
+        InsightEvidenceLine(
+          entryId: snippet.entryId,
+          quote: snippet.quote,
+          recordedAt:
+              TranscriptEvidenceIndex.recordedAtFor(snippet.entryId) ??
+              DateTime.fromMillisecondsSinceEpoch(0),
+          label: snippet.label,
+        );
+    return [line(moment.earlierSnippet), line(moment.laterSnippet)];
   }
 
   static EvidenceGrounding _ground(BeliefChangeEvidenceSnippet snippet) {

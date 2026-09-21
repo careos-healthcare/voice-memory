@@ -15,6 +15,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 
+import 'helpers/app_provider_scope.dart';
+
 PressureCheckInRecord _record({
   required String id,
   int daysAgo = 0,
@@ -43,17 +45,19 @@ Future<void> _pumpPaywall(WidgetTester tester, {PaywallRouteArgs? args}) async {
   await tester.binding.setSurfaceSize(const Size(390, 1800));
   addTearDown(() => tester.binding.setSurfaceSize(null));
   await tester.pumpWidget(
-    MaterialApp.router(
-      routerConfig: GoRouter(
-        routes: [
-          GoRoute(
-            path: '/',
-            builder: (context, state) => PaywallScreen(
-              triggerArgs: args,
-              delayedPaywallProofGateOverride: () => true,
+    withAppProviderScope(
+      MaterialApp.router(
+        routerConfig: GoRouter(
+          routes: [
+            GoRoute(
+              path: '/',
+              builder: (context, state) => PaywallScreen(
+                triggerArgs: args,
+                delayedPaywallProofGateOverride: () => true,
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     ),
   );
@@ -101,7 +105,9 @@ Future<PaywallRouteArgs? Function()> _pumpInsightsWithPaywallCapture(
     ],
   );
 
-  await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+  await tester.pumpWidget(
+    withAppProviderScope(MaterialApp.router(routerConfig: router)),
+  );
   await tester.pumpAndSettle();
   return () => captured;
 }

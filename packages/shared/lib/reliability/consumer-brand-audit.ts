@@ -68,8 +68,10 @@ export const CONSUMER_BRAND_ALLOWLIST_PATHS = [
 
 /** Documented exceptions — not product branding. */
 export const CONSUMER_BRAND_LITERAL_ALLOWLIST = {
-  "hello@archiveme.app": "Primary customer contact email",
-  "support@archiveme.app": "Billing/support alias — same inbox via DNS forward",
+  "hello@archiveme.app": "Primary customer contact email (legacy, pre-migration)",
+  "hello@thoughtprint.xyz": "Primary customer contact email",
+  "support@archiveme.app": "Billing/support alias (legacy, pre-migration)",
+  "support@thoughtprint.xyz": "Billing/support alias — same inbox via DNS forward",
   "hello@voicememory.app": "Legacy inbound — internal redirect only, not published",
 } as const;
 

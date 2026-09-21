@@ -1,6 +1,6 @@
 import 'package:archiveme_mobile/config/app_config.dart';
-import 'package:archiveme_mobile/features/archive_value/archive_value_progress.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
+import 'package:archiveme_mobile/widgets/archive_value_progress.dart';
 
 /// When to show first-recording conversation starters vs. the continue message.
 abstract class ExamplePromptVisibility {

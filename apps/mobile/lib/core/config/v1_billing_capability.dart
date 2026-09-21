@@ -13,9 +13,13 @@ abstract final class V1BillingCapability {
   static const bool registryEnabled = V1CapabilityRegistry.storeBilling;
 
   /// Optional build-time override (`REVENUECAT_PURCHASES_ENABLED`).
+  ///
+  /// Defaults to `false` so billing fails closed: enabling it requires an
+  /// explicit `--dart-define`, even after [registryEnabled] flips true for
+  /// commercial re-entry. On its own it can only narrow, never widen, billing.
   static const bool buildPurchasesFlag = bool.fromEnvironment(
     'REVENUECAT_PURCHASES_ENABLED',
-    defaultValue: true,
+    defaultValue: false,
   );
 
   /// Billing may initialize SDK, listen for entitlements, and accept purchases.

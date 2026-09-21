@@ -29,7 +29,7 @@ class LocalAuthBiometricAuthenticator implements BiometricAuthenticator {
   Future<bool> available() async {
     try {
       return await _auth.isDeviceSupported() && await _auth.canCheckBiometrics;
-    } catch (_, stackTrace) {
+    } on Object catch (_, stackTrace) {
       return false;
     }
   }
@@ -41,7 +41,7 @@ class LocalAuthBiometricAuthenticator implements BiometricAuthenticator {
         localizedReason: reason,
         biometricOnly: true,
       );
-    } catch (_, stackTrace) {
+    } on Object catch (_, stackTrace) {
       return false;
     }
   }

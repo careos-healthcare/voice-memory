@@ -20,7 +20,7 @@ void main() {
 
     setUp(() {
       secure = InMemorySecureStorageService();
-      store = SecureSqliteEncryptionKeyStore(secure: secure);
+      store = SecureSqliteEncryptionKeyStore(store: secure);
     });
 
     test('ensureEncryptionKey generates a 256-bit key on first boot', () async {

@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:archiveme_mobile/security/sqlite/sqlite_encryption_key_store.dart';
+import 'package:archiveme_mobile/storage/secure_storage.dart';
 import 'package:archiveme_mobile/storage/sqlite/sqlite_database_initializer.dart';
 import 'package:archiveme_mobile/storage/sqlite/sqlite_hybrid_search_initializer.dart';
 import 'package:archiveme_mobile/storage/sqlite/sqlite_migration_manager.dart';
@@ -36,8 +37,13 @@ abstract final class IsolateSafeSqliteDatabaseInitializer {
 
   /// Resolves the SQLCipher password in the current isolate.
   ///
-  /// Reads from secure storage via [keyStore] or [SecureSqliteEncryptionKeyStore]
-  /// when [keyAlias] is provided. Never consults [SecureSqliteLockService].
+  /// An explicit [passwordOverride] or [keyStore] is always honoured. Otherwise
+  /// secure storage is consulted via [keyAlias] only when encryption is actually
+  /// enabled (iOS/Android); on desktop/`flutter test` it falls back to the
+  /// shared test password so a worker connection matches the main-isolate
+  /// connection — mirroring [SqliteDatabaseInitializer.resolvePassword], which
+  /// also returns the test password when encryption is disabled. Never consults
+  /// [SecureSqliteLockService] (unavailable in a worker isolate).
   static Future<String> resolvePassword({
     String? passwordOverride,
     String? keyAlias,
@@ -47,25 +53,39 @@ abstract final class IsolateSafeSqliteDatabaseInitializer {
       return passwordOverride;
     }
 
-    final shouldReadFromStore =
-        keyStore != null ||
-        (keyAlias != null && keyAlias.isNotEmpty) ||
-        SqliteDatabaseInitializer.encryptionEnabled;
-
-    if (shouldReadFromStore) {
-      final store =
-          keyStore ??
-          SecureSqliteEncryptionKeyStore(keyAlias: keyAlias ?? '');
-      final key = await store.readEncryptionKey();
-      if (key == null) {
-        throw StateError(
-          'SQLCipher encryption key not found for alias "${keyAlias ?? ''}".',
-        );
-      }
-      return key.sqlcipherPassword;
+    // An explicitly-provided store is authoritative regardless of platform
+    // (used by encryption tests and callers managing their own key).
+    if (keyStore != null) {
+      return _readRequiredPassword(keyStore, keyAlias);
     }
 
-    return SqliteDatabaseInitializer.testEncryptionPassword;
+    // No explicit store: only read secure storage (by alias) when encryption is
+    // on. On desktop/test the store is neither seeded nor reachable from a
+    // worker isolate, so use the shared test password instead of throwing.
+    if (!SqliteDatabaseInitializer.encryptionEnabled) {
+      return SqliteDatabaseInitializer.testEncryptionPassword;
+    }
+
+    return _readRequiredPassword(
+      SecureSqliteEncryptionKeyStore(
+        store: SecureStorageService(),
+        keyAlias: keyAlias ?? '',
+      ),
+      keyAlias,
+    );
+  }
+
+  static Future<String> _readRequiredPassword(
+    SqliteEncryptionKeyStore store,
+    String? keyAlias,
+  ) async {
+    final key = await store.readEncryptionKey();
+    if (key == null) {
+      throw StateError(
+        'SQLCipher encryption key not found for alias "${keyAlias ?? ''}".',
+      );
+    }
+    return key.sqlcipherPassword;
   }
 
   /// Opens a worker-owned SQLite connection with [singleInstance: false].

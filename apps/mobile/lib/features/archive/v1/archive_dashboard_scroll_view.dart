@@ -1,8 +1,15 @@
+import 'dart:async';
+
 import 'package:archiveme_mobile/design/archive_responsive_layout.dart';
 import 'package:archiveme_mobile/features/archive/ui/trust_status_footer.dart';
 import 'package:archiveme_mobile/features/archive/v1/archive_belief_load_state.dart';
 import 'package:archiveme_mobile/features/archive/v1/archive_feed_pagination_provider.dart';
+import 'package:archiveme_mobile/features/archive_changes/archive_changes_adapter.dart';
+import 'package:archiveme_mobile/features/ask_archive/ask_archive_entry_bar.dart';
+import 'package:archiveme_mobile/features/insights/pattern_exploration_entry_card.dart';
+import 'package:archiveme_mobile/features/insights/trend_pattern_summary_card.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
+import 'package:archiveme_mobile/services/app_services.dart';
 import 'package:archiveme_mobile/theme/app_colors.dart';
 import 'package:archiveme_mobile/widgets/archive/archive_changes_section.dart';
 import 'package:archiveme_mobile/widgets/archive/archive_changes_unavailable_notice.dart';
@@ -10,9 +17,12 @@ import 'package:archiveme_mobile/widgets/archive/archive_empty_state.dart';
 import 'package:archiveme_mobile/widgets/archive/archive_entry_card.dart';
 import 'package:archiveme_mobile/widgets/archive/archive_search_field.dart';
 import 'package:archiveme_mobile/widgets/archive/archive_status_banner.dart';
+import 'package:archiveme_mobile/widgets/archive/archive_home_choose_what_leaves_tile.dart';
 import 'package:archiveme_mobile/widgets/archive/archive_verified_changes_section.dart';
 import 'package:archiveme_mobile/widgets/insight_share/insight_share_exporter.dart';
+import 'package:archiveme_mobile/widgets/memory_resurfacing_section.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 /// Responsive [CustomScrollView] slivers for the Archive Home dashboard.
 class ArchiveDashboardScrollView extends StatelessWidget {
@@ -27,6 +37,7 @@ class ArchiveDashboardScrollView extends StatelessWidget {
     required this.onQueryChanged,
     required this.onCapture,
     super.key,
+    this.previewChangesSnapshot,
   });
 
   final ScrollController controller;
@@ -38,6 +49,11 @@ class ArchiveDashboardScrollView extends StatelessWidget {
   final ValueChanged<String> onEntryTap;
   final ValueChanged<String> onQueryChanged;
   final VoidCallback onCapture;
+
+  /// Skips [ArchiveChangesAdapter.load] so widget tests can pump the feed
+  /// without initializing AppServices.
+  @visibleForTesting
+  final ArchiveChangesSnapshot? previewChangesSnapshot;
 
   @override
   Widget build(BuildContext context) {
@@ -69,6 +85,39 @@ class ArchiveDashboardScrollView extends StatelessWidget {
                     loadState: loadState,
                     showChangesUnavailable: showChangesUnavailable,
                   ),
+                ),
+              ),
+              SliverPadding(
+                padding: EdgeInsets.fromLTRB(
+                  sliverPadding.left,
+                  0,
+                  sliverPadding.right,
+                  0,
+                ),
+                sliver: const SliverToBoxAdapter(
+                  child: AskArchiveEntryBar(),
+                ),
+              ),
+              SliverPadding(
+                padding: EdgeInsets.fromLTRB(
+                  sliverPadding.left,
+                  0,
+                  sliverPadding.right,
+                  0,
+                ),
+                sliver: const SliverToBoxAdapter(
+                  child: PatternExplorationEntryCard(),
+                ),
+              ),
+              SliverPadding(
+                padding: EdgeInsets.fromLTRB(
+                  sliverPadding.left,
+                  0,
+                  sliverPadding.right,
+                  0,
+                ),
+                sliver: const SliverToBoxAdapter(
+                  child: TrendPatternSummaryCard(),
                 ),
               ),
               if (loadState == ArchiveBeliefLoadState.loading &&
@@ -122,7 +171,11 @@ class ArchiveDashboardScrollView extends StatelessWidget {
                 ),
                 SliverPadding(
                   padding: EdgeInsets.symmetric(horizontal: sliverPadding.left),
-                  sliver: const SliverToBoxAdapter(child: ArchiveChangesSection()),
+                  sliver: SliverToBoxAdapter(
+                    child: ArchiveChangesSection(
+                      previewSnapshot: previewChangesSnapshot,
+                    ),
+                  ),
                 ),
                 SliverPadding(
                   padding: EdgeInsets.symmetric(horizontal: sliverPadding.left),
@@ -131,6 +184,50 @@ class ArchiveDashboardScrollView extends StatelessWidget {
                       children: [
                         InsightShareExporter(entries: feed.proofContextEntries),
                         SizedBox(height: ArchiveResponsiveLayout.gap(context)),
+                      ],
+                    ),
+                  ),
+                ),
+                SliverPadding(
+                  padding: EdgeInsets.symmetric(horizontal: sliverPadding.left),
+                  sliver: SliverToBoxAdapter(
+                    child: Column(
+                      children: [
+                        if (feed.resurfacingCards.isNotEmpty) ...[
+                          MemoryResurfacingSection(
+                            cards: feed.resurfacingCards,
+                            onCardTap: (card) {
+                              unawaited(
+                                AppServices.instance.memoryResurfacing
+                                    .markOpened(card.entry.id),
+                              );
+                              onEntryTap(card.entry.id);
+                            },
+                          ),
+                          SizedBox(height: ArchiveResponsiveLayout.gap(context)),
+                        ],
+                      ],
+                    ),
+                  ),
+                ),
+                SliverPadding(
+                  padding: EdgeInsets.symmetric(horizontal: sliverPadding.left),
+                  sliver: SliverToBoxAdapter(
+                    child: Column(
+                      children: [
+                        if (feed.anniversaryCards.isNotEmpty) ...[
+                          OnThisDaySection(
+                            cards: feed.anniversaryCards,
+                            onCardTap: (card) {
+                              unawaited(
+                                AppServices.instance.memoryResurfacing
+                                    .markOpened(card.entry.id),
+                              );
+                              onEntryTap(card.entry.id);
+                            },
+                          ),
+                          SizedBox(height: ArchiveResponsiveLayout.gap(context)),
+                        ],
                       ],
                     ),
                   ),
@@ -184,7 +281,10 @@ class ArchiveDashboardScrollView extends StatelessWidget {
                         final itemCount =
                             visibleEntries.length + (feed.isLoadingMore ? 1 : 0);
 
-                        if (columns <= 1) {
+                        if (ArchiveResponsiveLayout.prefersEntryList(
+                          crossAxisCount: columns,
+                          textScaler: MediaQuery.textScalerOf(context),
+                        )) {
                           return SliverList(
                             delegate: SliverChildBuilderDelegate(
                               (context, index) => _entryTile(
@@ -269,6 +369,15 @@ class _IntroSection extends StatelessWidget {
           style: theme.textTheme.bodySmall?.copyWith(
             color: theme.colorScheme.onSurfaceVariant,
           ),
+        ),
+        const SizedBox(height: 12),
+        ArchiveHomeChooseWhatLeavesTile(
+          onTap: () {
+            final router = GoRouter.maybeOf(context);
+            if (router != null) {
+              router.push('/privacy-trust-centre');
+            }
+          },
         ),
         if (loadState == ArchiveBeliefLoadState.offline) ...[
           const SizedBox(height: 12),

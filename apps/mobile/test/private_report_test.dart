@@ -107,13 +107,16 @@ void main() {
   setUp(() async {
     sandbox = TestStorageSandbox.create();
     PrivateReportAnalytics.resetForTest();
-    await WhatChangedV2Store.resetForTest();
-    await HelpedTrackingStore.resetForTest();
+    // AppServices.resetForTest must run first so the prefs-backed resets below
+    // write into this test's fresh sandbox and not the previous test's
+    // already-disposed one.
     await AppServices.resetForTest(
       journalPath: sandbox.journalPath,
       prefsPath: sandbox.prefsPath,
       skipRevenueCat: true,
     );
+    await WhatChangedV2Store.resetForTest();
+    await HelpedTrackingStore.resetForTest();
   });
 
   tearDown(() => sandbox.dispose());

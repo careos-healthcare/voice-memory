@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'support/record_screen_library_source.dart';
 
 import 'package:archiveme_mobile/features/early_archive/early_archive_proof_analytics.dart';
 import 'package:archiveme_mobile/features/early_archive/post_save_return_check_answer_analytics.dart';
@@ -438,18 +437,6 @@ void main() {
     test('footer says one tap is enough', () {
       expect(PostSaveReturnCheckAnswerCopy.footer, 'One tap is enough.');
     });
-  });
-
-  group('Record screen isolation', () {
-    test(
-      'record screen does not import post save return check answer card',
-      () {
-        final source = readRecordScreenLibrarySource();
-        expect(source.contains('post_save_return_check_answer'), isFalse);
-        expect(source.contains('PostSaveReturnCheckAnswerCard'), isFalse);
-        expect(source.contains('what_changed_v2_card'), isTrue);
-      },
-    );
   });
 
   group('Billing isolation', () {

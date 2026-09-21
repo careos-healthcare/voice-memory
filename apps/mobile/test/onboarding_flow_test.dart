@@ -1,6 +1,7 @@
 import 'package:archiveme_mobile/features/loop_mode/loop_mode_coordinator.dart';
 import 'package:archiveme_mobile/features/loop_mode/loop_mode_model.dart';
 import 'package:archiveme_mobile/features/onboarding/ui/remote_processing_consent_copy.dart';
+import 'package:archiveme_mobile/onboarding/onboarding_pages.dart';
 import 'package:archiveme_mobile/product/consumer_ui_copy.dart';
 import 'package:archiveme_mobile/product/loop_mode_copy.dart';
 import 'package:archiveme_mobile/router/onboarding_gate.dart';
@@ -77,14 +78,17 @@ void main() {
     await tester.pumpWidget(MaterialApp.router(routerConfig: router));
     await _pumpFrames(tester);
 
+    expect(find.byKey(const Key('onboarding_progress_dots')), findsOneWidget);
+
     await tester.tap(find.text(ConsumerUiCopy.onboardingContinueCta));
-    await _pumpFrames(tester, frames: 5);
-    await tester.tap(find.byKey(const Key('evidence_method_onboarding_continue')));
     await _pumpFrames(tester, frames: 5);
 
     expect(find.text(RemoteProcessingConsentCopy.title), findsOneWidget);
-    expect(find.byKey(const Key('remote_processing_consent_decline')),
-        findsOneWidget);
+    expect(
+      find.byKey(const Key('remote_processing_consent_decline')),
+      findsOneWidget,
+    );
+    expect(find.byKey(const Key('onboarding_progress_dots')), findsOneWidget);
   });
 
   test(

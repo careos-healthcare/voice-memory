@@ -11,6 +11,7 @@ import 'package:archiveme_mobile/models/reflection.dart';
 import 'package:archiveme_mobile/storage/journal_store.dart';
 import 'package:archiveme_mobile/workers/embedding/embedding_index_worker_service.dart';
 import 'package:crypto/crypto.dart';
+import 'package:sqflite/sqflite.dart';
 
 /// Background worker that embeds reflections and LLM summaries off the UI thread.
 class ReflectionEmbeddingIndexWorker {
@@ -27,7 +28,8 @@ class ReflectionEmbeddingIndexWorker {
        _sqliteFilePath = sqliteFilePath,
        _sqliteKeyAlias = sqliteKeyAlias,
        _sqliteEncryptionPassword = sqliteEncryptionPassword,
-       _embeddingWorker = embeddingWorker ?? EmbeddingIndexWorkerService.instance,
+       _embeddingWorker =
+           embeddingWorker ?? EmbeddingIndexWorkerService.instance,
        _debounce = debounce;
 
   final ReflectionEmbeddingRepository _repository;
@@ -95,6 +97,15 @@ class ReflectionEmbeddingIndexWorker {
     });
   }
 
+  /// Test hook: cancels a pending debounced flush so it cannot fire after the
+  /// test completes and run against a database the next test is about to close.
+  /// Only cancels the timer — it never disposes the worker or closes the DB, so
+  /// shared setUpAll harnesses keep working. See flutter_test_config.dart.
+  void quiesceForTest() {
+    _debounceTimer?.cancel();
+    _debounceTimer = null;
+  }
+
   Future<int> flush() async {
     if (_flushInFlight) return 0;
     _flushInFlight = true;
@@ -111,6 +122,13 @@ class ReflectionEmbeddingIndexWorker {
         if (didIndex) indexed++;
       }
       return indexed;
+    } on DatabaseException catch (e) {
+      // A debounced background flush can race app/DB shutdown (and, in tests,
+      // teardown) and find the connection already closed. That is expected
+      // best-effort behaviour, not a failure — stop quietly rather than leak an
+      // unhandled error.
+      if (e.isDatabaseClosedError()) return 0;
+      rethrow;
     } finally {
       _flushInFlight = false;
     }
@@ -143,7 +161,8 @@ class ReflectionEmbeddingIndexWorker {
     final pendingText = _pendingReflectionText.remove(entryId);
     if (pendingText != null) {
       indexed =
-          await _indexReflection(entryId: entryId, text: pendingText) || indexed;
+          await _indexReflection(entryId: entryId, text: pendingText) ||
+          indexed;
     } else {
       final entry = await _journalStore.getById(entryId);
       if (entry != null) {

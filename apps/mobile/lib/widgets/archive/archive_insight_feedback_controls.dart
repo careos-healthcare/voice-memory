@@ -1,20 +1,27 @@
+import 'dart:async';
+
 import 'package:archiveme_mobile/design/archive_mobile_typography.dart';
 import 'package:archiveme_mobile/features/activation/archive_insight_feedback.dart';
 import 'package:archiveme_mobile/features/activation/archive_insight_feedback_adaptation.dart';
+import 'package:archiveme_mobile/features/evidence_trail/evidence_trail_navigation.dart';
 import 'package:archiveme_mobile/theme/app_colors.dart';
 import 'package:archiveme_mobile/theme/app_spacing.dart';
 import 'package:flutter/material.dart';
-import 'dart:async';
 
 /// Compact local feedback row for archive belief/review insight cards.
 class ArchiveInsightFeedbackControls extends StatefulWidget {
   const ArchiveInsightFeedbackControls({
-    required this.insightId, super.key,
+    required this.insightId,
+    super.key,
+    this.sourceEntryIds = const [],
+    this.onViewEvidence,
     this.onHidden,
     this.onFeedbackChanged,
   });
 
   final String insightId;
+  final List<String> sourceEntryIds;
+  final VoidCallback? onViewEvidence;
   final VoidCallback? onHidden;
   final VoidCallback? onFeedbackChanged;
 
@@ -76,6 +83,19 @@ class _ArchiveInsightFeedbackControlsState
   void _skipCorrectionNote() {
     _showCorrectionEditor = false;
     if (mounted) setState(() {});
+  }
+
+  bool get _canViewEvidence =>
+      widget.onViewEvidence != null || widget.sourceEntryIds.isNotEmpty;
+
+  Future<void> _openEvidence() async {
+    if (!mounted) return;
+    await openEvidenceTrailForSourceEntryIds(
+      context,
+      sourceEntryIds: widget.sourceEntryIds,
+      surface: 'archive_insight_feedback',
+      onViewEvidence: widget.onViewEvidence,
+    );
   }
 
   Future<void> _hide() async {
@@ -176,6 +196,19 @@ class _ArchiveInsightFeedbackControlsState
                 style: chipStyle,
               ),
             ),
+            if (_canViewEvidence)
+              TextButton(
+                key: const Key('archive_insight_feedback_view_evidence'),
+                onPressed: () => unawaited(_openEvidence()),
+                style: TextButton.styleFrom(
+                  visualDensity: VisualDensity.compact,
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                ),
+                child: Text(
+                  ArchiveInsightFeedbackCopy.viewEvidence,
+                  style: chipStyle,
+                ),
+              ),
           ],
         ),
         if (_showCorrectionEditor) ...[
@@ -274,12 +307,19 @@ class _ArchiveInsightFeedbackControlsState
 /// Hides [childBuilder] output locally when the user dismisses an insight card.
 class ArchiveInsightFeedbackHost extends StatefulWidget {
   const ArchiveInsightFeedbackHost({
-    required this.insightId, required this.showControls, required this.childBuilder, super.key,
+    required this.insightId,
+    required this.showControls,
+    required this.childBuilder,
+    super.key,
+    this.sourceEntryIds = const [],
+    this.onViewEvidence,
   });
 
   final String insightId;
   final bool showControls;
   final WidgetBuilder childBuilder;
+  final List<String> sourceEntryIds;
+  final VoidCallback? onViewEvidence;
 
   @override
   State<ArchiveInsightFeedbackHost> createState() =>
@@ -324,6 +364,8 @@ class _ArchiveInsightFeedbackHostState
         if (widget.showControls)
           ArchiveInsightFeedbackControls(
             insightId: widget.insightId,
+            sourceEntryIds: widget.sourceEntryIds,
+            onViewEvidence: widget.onViewEvidence,
             onHidden: _onHidden,
             onFeedbackChanged: () => setState(() {}),
           ),

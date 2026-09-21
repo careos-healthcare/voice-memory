@@ -56,3 +56,11 @@
 -keepclassmembers class kotlinx.** {
     volatile <fields>;
 }
+
+# Flutter embedding ships PlayStoreDeferredComponentManager / FlutterPlayStoreSplitApplication
+# which reference Play Core. This app does not use deferred components; -dontwarn lets R8
+# ignore those unused references without changing runtime behavior.
+-dontwarn com.google.android.play.core.splitcompat.**
+-dontwarn com.google.android.play.core.splitinstall.**
+-dontwarn com.google.android.play.core.tasks.**
+

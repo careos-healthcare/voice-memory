@@ -26,8 +26,10 @@ void main() {
         OnboardingPages.pages.first.title,
         ConsumerUiCopy.onboardingPositioningHeadline,
       );
-      expect(ConsumerUiCopy.onboardingPositioningHeadline,
-          'Save the moment. See what returns.');
+      expect(
+        ConsumerUiCopy.onboardingPositioningHeadline,
+        'When it comes back, we show you the words.',
+      );
     });
 
     test('loop acquisition copy lists prove_enough first', () {

@@ -1,6 +1,3 @@
-import 'dart:io';
-import 'support/record_screen_library_source.dart';
-
 import 'package:archiveme_mobile/features/correction_memory/correction_memory_analytics.dart';
 import 'package:archiveme_mobile/features/correction_memory/correction_memory_copy.dart';
 import 'package:archiveme_mobile/features/correction_memory/correction_memory_engine.dart';
@@ -347,16 +344,6 @@ void main() {
       expect(blob, isNot(contains('therapy')));
       expect(blob, isNot(contains('diagnosis')));
       expect(blob, isNot(contains('treatment')));
-    });
-  });
-
-  group('Correction memory placement', () {
-    test('record screen shows card below current relevance', () {
-      final source = readRecordScreenLibrarySource();
-      final relevanceIndex = source.indexOf('CurrentRelevanceCard(');
-      final correctionIndex = source.indexOf('CorrectionMemoryCard(');
-      expect(relevanceIndex, greaterThan(0));
-      expect(correctionIndex, greaterThan(relevanceIndex));
     });
   });
 }

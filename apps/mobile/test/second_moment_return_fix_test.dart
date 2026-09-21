@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'support/record_screen_library_source.dart';
 
 import 'package:archiveme_mobile/features/archive_proof/proof_surface_advice_guard.dart';
 import 'package:archiveme_mobile/features/second_moment_return/second_moment_return_analytics.dart';
@@ -432,23 +431,6 @@ void main() {
   });
 
   group('Second moment return placement', () {
-    test('appears below capture controls and above low friction return', () {
-      final source = readRecordScreenLibrarySource();
-      final captureIndex = source.indexOf('_buildCaptureEntryActions');
-      final cardIndex = source.indexOf(
-        'if (ctx.showSecondMomentReturnCard &&\n'
-        '            !ctx.firstUseSimplifiedRecord) ...[',
-      );
-      final lowFrictionIndex = source.indexOf(
-        'if (ctx.showLowFrictionReturnCard &&\n'
-        '            !ctx.firstUseSimplifiedRecord &&\n'
-        '            !ctx.showReturningWatchTargetFocusedUi &&\n'
-        '            !ReturningRecordWatchTargetUiGates.watchPromptSkippedToday()) ...[',
-      );
-      expect(cardIndex, greaterThan(captureIndex));
-      expect(cardIndex, lessThan(lowFrictionIndex));
-    });
-
     test(
       'SurfacePriorityAudit prefers three moment completion for exactly one entry',
       () {

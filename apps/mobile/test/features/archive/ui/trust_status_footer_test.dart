@@ -49,7 +49,10 @@ void main() {
         ),
       );
 
-      expect(find.text(TrustStatusFooterCopy.processedOnDevice), findsOneWidget);
+      expect(
+        find.text(TrustStatusFooterCopy.processedOnDevice),
+        findsOneWidget,
+      );
       expect(find.text(TrustStatusFooterCopy.storedOnDevice), findsNothing);
     });
 
@@ -81,14 +84,22 @@ void main() {
       }
     });
 
-    test('the default variant scopes the local claim to storage and search', () {
-      final lower = TrustStatusFooterCopy.storedOnDeviceSemanticLabel
-          .toLowerCase();
-      expect(lower, contains('stored and searched on this device'));
-      expect(lower, contains('on our servers when you allow that'));
-    });
+    test(
+      'the default variant scopes the local claim to storage and search',
+      () {
+        final lower = TrustStatusFooterCopy.storedOnDeviceSemanticLabel
+            .toLowerCase();
+        expect(lower, contains('stored and searched on this device'));
+        expect(lower, contains('on our servers when you allow that'));
+      },
+    );
 
     test('the selector follows the flag rather than a constant', () {
+      expect(TrustStatusFooterCopy.storedOnDevice, 'Stored on this phone');
+      expect(
+        TrustStatusFooterCopy.processedOnDevice,
+        'Processed here — not sent',
+      );
       expect(
         TrustStatusFooterCopy.labelFor(processingUsedOnDevice: false),
         TrustStatusFooterCopy.storedOnDevice,

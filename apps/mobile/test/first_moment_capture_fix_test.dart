@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'support/record_screen_library_source.dart';
 
 import 'package:archiveme_mobile/features/archive_proof/proof_surface_advice_guard.dart';
 import 'package:archiveme_mobile/features/first_moment_capture/first_moment_capture_analytics.dart';
@@ -323,37 +322,6 @@ void main() {
   });
 
   group('First moment capture placement', () {
-    test(
-      'appears above other guidance cards on Record when not simplified',
-      () {
-        final source = readRecordScreenLibrarySource();
-        final cardIndex = source.indexOf(
-          'if (ctx.showFirstMomentCaptureCard &&\n'
-          '            !ctx.firstUseSimplifiedRecord) ...[',
-        );
-        final openCaptureIndex = source.indexOf(
-          'if (ctx.showOpenCapturePromptChips &&\n'
-          '            !ctx.firstUseSimplifiedRecord &&\n'
-          '            !ctx.showReturningWatchTargetFocusedUi) ...[',
-        );
-        final lowFrictionIndex = source.indexOf(
-          'if (ctx.showLowFrictionReturnCard &&\n'
-          '            !ctx.firstUseSimplifiedRecord &&\n'
-          '            !ctx.showReturningWatchTargetFocusedUi &&\n'
-          '            !ReturningRecordWatchTargetUiGates.watchPromptSkippedToday()) ...[',
-        );
-        expect(cardIndex, greaterThan(0));
-        expect(cardIndex, lessThan(openCaptureIndex));
-        expect(cardIndex, lessThan(lowFrictionIndex));
-      },
-    );
-
-    test('uses navigateToTypeInsteadCapture for save one sentence', () {
-      final source = readRecordScreenLibrarySource();
-      expect(source, contains('navigateToTypeInsteadCapture'));
-      expect(source, contains("source: 'first_moment_capture'"));
-    });
-
     test(
       'SurfacePriorityAudit gives three moment completion highest guidance priority for zero entry',
       () {

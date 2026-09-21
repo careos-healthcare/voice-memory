@@ -8,6 +8,7 @@ import 'package:archiveme_mobile/features/live_audio/infrastructure/live_audio_p
 import 'package:archiveme_mobile/features/live_audio/infrastructure/local_audio_vault_reader.dart';
 import 'package:archiveme_mobile/features/live_audio/live_audio_constants.dart';
 import 'package:archiveme_mobile/storage/private_data_encryption_key_store.dart';
+import 'package:archiveme_mobile/storage/secure_storage.dart';
 import 'package:cryptography/cryptography.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -19,7 +20,9 @@ class LocalAudioVault {
     PrivateDataEncryptionKeyStore? keyStore,
     AesGcm? algorithm,
     VaultDirectoryResolver? resolveCacheDirectory,
-  }) : _keyStore = keyStore ?? SecurePrivateDataEncryptionKeyStore(),
+  }) : _keyStore =
+           keyStore ??
+           SecurePrivateDataEncryptionKeyStore(store: SecureStorageService()),
        _algorithm = algorithm ?? AesGcm.with256bits(),
        _resolveCacheDirectory = resolveCacheDirectory ?? _defaultVaultDirectory;
 

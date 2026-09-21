@@ -1,8 +1,10 @@
 import 'dart:io';
 
-import 'package:archiveme_mobile/features/recording/recording_dependencies.dart' show AppServices;
+import 'package:archiveme_mobile/features/recording/recording_dependencies.dart'
+    show AppServices;
 
 import 'package:archiveme_mobile/services/app_services.dart' show AppServices;
+import 'package:flutter_test/flutter_test.dart';
 
 /// Fixed clock for deterministic test fixtures.
 class TestClock {
@@ -102,9 +104,27 @@ class TestStorageSandbox {
     return dir;
   }
 
-  void dispose() {
+  /// Drains in-flight prefs writes for this sandbox, then deletes the directory.
+  ///
+  /// Fire-and-forget tracker writes are already on [MobilePrefsStore]'s mutex.
+  /// Awaiting that mutex here (on the real event loop) closes the late-write
+  /// race without hanging fake-async `testWidgets` tearDowns.
+  Future<void> dispose() async {
+    await _drainPrefsWritesForThisSandbox();
     if (root.existsSync()) {
       root.deleteSync(recursive: true);
     }
+  }
+
+  Future<void> _drainPrefsWritesForThisSandbox() async {
+    if (!AppServices.isInitialized) return;
+    final prefs = AppServices.instance.prefs;
+    final prefsPath = prefs.file.path;
+    if (prefsPath != root.path && !prefsPath.startsWith('${root.path}/')) {
+      return;
+    }
+    await TestWidgetsFlutterBinding.instance.runAsync(
+      () => prefs.drainPendingWrites(),
+    );
   }
 }

@@ -21,11 +21,13 @@ class PatternConfidence {
     required this.state,
     required this.label,
     required this.body,
+    this.contributingEntryIds = const [],
   });
 
   final PatternConfidenceState state;
   final String label;
   final String body;
+  final List<String> contributingEntryIds;
 
   bool get shouldShow => true;
 }
@@ -66,6 +68,7 @@ class PatternConfidenceExplanationResult {
     required this.body,
     required this.footer,
     required this.differentiationLine,
+    this.contributingEntryIds = const [],
   });
 
   final bool shouldShow;
@@ -80,4 +83,5 @@ class PatternConfidenceExplanationResult {
   final String body;
   final String footer;
   final String differentiationLine;
+  final List<String> contributingEntryIds;
 }

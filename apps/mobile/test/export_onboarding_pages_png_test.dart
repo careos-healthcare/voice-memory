@@ -34,7 +34,7 @@ void main() {
         (home.isNotEmpty
             ? '$home/Desktop/upload12/screenshots'
             : 'build/onboarding_screenshots');
-    await Directory(outDir).create(recursive: true);
+    await tester.runAsync(() => Directory(outDir).create(recursive: true));
 
     for (var i = 0; i < OnboardingPages.pageCount; i++) {
       final page = OnboardingPages.pages[i];
@@ -173,7 +173,9 @@ class _OnboardingExportFrame extends StatelessWidget {
                     child: isLast
                         ? FilledButton(
                             onPressed: () {},
-                            child: const Text(ConsumerUiCopy.onboardingFinalCta),
+                            child: const Text(
+                              ConsumerUiCopy.onboardingFinalCta,
+                            ),
                           )
                         : FilledButton(
                             onPressed: () {},
@@ -197,8 +199,13 @@ Future<void> _writePng({
   final boundary = tester.renderObject<RenderRepaintBoundary>(
     find.byType(RepaintBoundary).first,
   );
-  final image = await boundary.toImage(pixelRatio: 3);
-  final bytes = await image.toByteData(format: ui.ImageByteFormat.png);
-  expect(bytes, isNotNull);
-  await File(path).writeAsBytes(bytes!.buffer.asUint8List());
+  // Real GPU + file I/O under runAsync (the caller's pumps stay outside):
+  // toImage()/toByteData()/writeAsBytes() never complete in the fake-async
+  // testWidgets zone. Same pattern as the pattern_name_test.dart fix (PR #251).
+  await tester.runAsync(() async {
+    final image = await boundary.toImage(pixelRatio: 3);
+    final bytes = await image.toByteData(format: ui.ImageByteFormat.png);
+    expect(bytes, isNotNull);
+    await File(path).writeAsBytes(bytes!.buffer.asUint8List());
+  });
 }

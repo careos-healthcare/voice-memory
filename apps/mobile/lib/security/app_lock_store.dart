@@ -68,7 +68,7 @@ class AppLockStore {
   Future<bool> enabled() async {
     try {
       return await _store.read(enabledKey) == 'true';
-    } catch (_, stackTrace) {
+    } on Object catch (_, stackTrace) {
       return false;
     }
   }
@@ -76,7 +76,7 @@ class AppLockStore {
   Future<bool> biometricsEnabled() async {
     try {
       return await _store.read(biometricsKey) == 'true';
-    } catch (_, stackTrace) {
+    } on Object catch (_, stackTrace) {
       return false;
     }
   }
@@ -102,7 +102,7 @@ class AppLockStore {
       final salt = await _store.read(pinSaltKey);
       if (hash == null || salt == null) return null;
       return (hash: hash, salt: salt);
-    } catch (_, stackTrace) {
+    } on Object catch (_, stackTrace) {
       return null;
     }
   }
