@@ -1,3 +1,4 @@
+import 'package:archiveme_mobile/billing/utility/usage_progress_bar.dart';
 import 'package:archiveme_mobile/config/production_navigation.dart';
 import 'package:archiveme_mobile/features/sync/presentation/widgets/sync_status_app_bar_action.dart';
 import 'package:archiveme_mobile/theme/app_theme.dart';
@@ -70,6 +71,7 @@ class _AppDrawer extends StatelessWidget {
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
             ),
           ),
+          const UsageProgressBarSlot(compact: true),
           for (final r in routes)
             ListTile(
               leading: Icon(r.$3),

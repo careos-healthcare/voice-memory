@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:archiveme_mobile/billing/utility/usage_progress_bar.dart';
 import 'package:archiveme_mobile/config/developer_settings_gate.dart';
 import 'package:archiveme_mobile/config/production_navigation.dart';
 import 'package:archiveme_mobile/core/config/v1_navigation_guard.dart';
@@ -195,6 +196,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
         child: ListView(
           padding: EdgeInsets.zero,
           children: [
+            const UsageProgressBarSlot(),
+            const SizedBox(height: AppSpacing.md),
             const AccountPrivacyControlsSection(),
             const SizedBox(height: AppSpacing.md),
             ListTile(
