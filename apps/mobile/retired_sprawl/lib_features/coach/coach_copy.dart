@@ -9,7 +9,7 @@ abstract final class CoachCopy {
   static const stepScopeTitle = 'Choose what your coach can see';
   static const stepReviewTitle = 'Review coach access';
   static const stepConfirmTitle = 'Confirm and sign consent';
-  static const factLedgerLabel = 'Saved fact ledger details';
+  static const factLedgerLabel = 'Core Memory';
   static const confidenceInsightsLabel = 'Confidence-banded insights';
   static const beliefsLabel = 'Beliefs';
   static const blindSpotsLabel = 'Blind spots';

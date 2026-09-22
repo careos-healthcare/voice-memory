@@ -112,7 +112,7 @@ abstract final class ArchiveCommandCatalog {
     ),
     ArchiveCommand(
       id: 'theories',
-      title: 'Working theories',
+      title: 'Life Patterns',
       subtitle: 'How ideas are tracking',
       route: '/theories',
       keywords: ['ideas'],

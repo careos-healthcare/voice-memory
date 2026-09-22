@@ -4,12 +4,12 @@ import 'package:archiveme_mobile/features/archive_theory/theory_tracker_models.d
 abstract final class TheoryPageCopy {
   TheoryPageCopy._();
 
-  static const eyebrow = 'Working theories';
-  static const title = 'Theories your archive is testing';
+  static const eyebrow = 'Life Patterns';
+  static const title = 'Insights';
   static const lead =
-      'Falsifiable hypotheses from patterns in your saved reflections — not fixed labels.';
+      'Patterns from your saved reflections — not fixed labels.';
   static const disclaimer =
-      'Not advice, not clinical labeling, and not a fixed identity label — only hypotheses tied to your saved reflections.';
+      'Not advice, not clinical labeling, and not a fixed identity label — only patterns tied to your saved reflections.';
 
   static const activeTitle = 'Active';
   static const strengtheningTitle = 'Strengthening';
@@ -20,9 +20,9 @@ abstract final class TheoryPageCopy {
   static const supportingLabel = 'Supporting';
   static const contradictingLabel = 'Contradicting';
   static const confidenceLabel = 'Confidence';
-  static const emptyTitle = 'No working theories yet';
+  static const emptyTitle = 'No insights yet';
   static const emptyBody =
-      'After a few reflections, ArchiveMe can surface falsifiable hypotheses from patterns already in your archive.';
+      'After a few reflections, ArchiveMe can surface life patterns already in your archive.';
   static const loadingBody = 'Reading your thinking history…';
   static const showEvidence = 'Show evidence';
   static const hideEvidence = 'Hide evidence';
@@ -43,7 +43,7 @@ abstract final class EvolvingViewCardCopy {
 
   static const headline = 'Your archive has started forming a view.';
   static const subline = 'Each new reflection can change that view.';
-  static const totalTheories = 'Theories tracked';
+  static const totalTheories = 'Life patterns';
   static const underReview = 'Under review';
   static const strengthening = 'Strengthening';
   static const weakeningResolved = 'Weakening or resolved';

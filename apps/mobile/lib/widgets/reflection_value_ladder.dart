@@ -15,7 +15,7 @@ class ReflectionValueLadder extends StatelessWidget {
       (1, 'One data point'),
       (2, 'Possible repeat'),
       (3, 'Pattern forming'),
-      (4, 'Theory under review'),
+      (4, 'Insight under review'),
       (5, 'Evidence-based pattern review'),
     ];
 

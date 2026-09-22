@@ -7,13 +7,13 @@ abstract final class ExperimentHCopy {
       'See how ArchiveMe treats your first moment differently from a standard chatbot.';
   static const toggleLabel = 'Compare against Chat AI';
   static const toggleHint =
-      'Slide to compare ephemeral chat memory vs permanent fact ledger storage.';
+      'Slide to compare ephemeral chat memory vs permanent core memory.';
   static const chatPanelTitle = 'Standard Chatbot / ChatGPT (Ephemeral)';
   static const chatPanelSubtitle =
       'Generative summary · no citations · lost when the chat ends';
   static const evidencePanelTitle = 'ArchiveMe Evidence Engine (Verifiable)';
   static const evidencePanelSubtitle =
-      'Permanent fact ledger · verbatim quotes · exact timestamps';
+      'Permanent core memory · verbatim quotes · exact timestamps';
   static const emptyEntryBody =
       'Save a little more detail in your first moment to compare evidence quality.';
   static const shortEntryBody =
@@ -23,7 +23,7 @@ abstract final class ExperimentHCopy {
   static const architectureEphemeral =
       'Ephemeral context window — nothing is permanently citable.';
   static const architectureLedger =
-      'Permanent fact ledger — every quote links back to your saved entry.';
+      'Permanent core memory — every quote links back to your saved entry.';
   static const assumptionGenerative =
       'Generative assumptions — cannot be falsified against your words.';
   static const assumptionCitable =
