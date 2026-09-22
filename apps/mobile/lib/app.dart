@@ -1,4 +1,5 @@
 import 'package:archiveme_mobile/config/app_config.dart';
+import 'package:archiveme_mobile/desktop/archive_command_palette.dart';
 import 'package:archiveme_mobile/core/di/app_provider_container.dart';
 import 'package:archiveme_mobile/features/capture/widgets/capture_module_bootstrap.dart';
 import 'package:archiveme_mobile/features/caregiver_grant/caregiver_invitation_link_listener.dart';
@@ -31,7 +32,8 @@ class ArchiveMeApp extends StatelessWidget {
         darkTheme: AppTheme.dark(),
         themeMode: ThemeMode.system,
         routerConfig: appRouter,
-        builder: (context, child) => LocalLlmAppLifecycleListener(
+        builder: (context, child) => CommandPaletteHost(
+          child: LocalLlmAppLifecycleListener(
           child: SecureDatabaseGate(
             child: AppLockGate(
               child: AppPrivacyShell(

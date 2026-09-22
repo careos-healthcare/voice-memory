@@ -1,3 +1,4 @@
+import 'package:archiveme_mobile/core/theme/responsive_breakpoints.dart';
 import 'package:archiveme_mobile/features/sync/presentation/widgets/sync_status_badge.dart';
 import 'package:archiveme_mobile/features/sync/presentation/widgets/sync_status_shell.dart';
 import 'package:archiveme_mobile/l10n/localized_consumer_ui.dart';
@@ -122,6 +123,7 @@ class MainShell extends StatelessWidget {
       child: NavigationRail(
         selectedIndex: selected.shellIndex,
         extended: extended,
+        minWidth: ResponsiveBreakpoints.desktopTouchTarget,
         onDestinationSelected: (index) =>
             _goBranch(context, PrimaryDestination.fromShellIndex(index)),
         destinations: [
@@ -167,7 +169,7 @@ class MainShell extends StatelessWidget {
                 child: navigationShell,
               ),
             );
-            if (constraints.maxWidth < 700) {
+            if (ResponsiveBreakpoints.isMobile(constraints.maxWidth)) {
               return Scaffold(
                 backgroundColor: AppColors.backgroundPrimary,
                 body: Column(
@@ -190,7 +192,9 @@ class MainShell extends StatelessWidget {
                         _railNavigation(
                           context,
                           selected,
-                          extended: constraints.maxWidth >= 1000,
+                          extended: ResponsiveBreakpoints.isDesktop(
+                            constraints.maxWidth,
+                          ),
                         ),
                         const VerticalDivider(width: 1),
                         Expanded(child: body),
