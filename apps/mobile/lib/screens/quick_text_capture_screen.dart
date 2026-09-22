@@ -5,9 +5,13 @@ import 'package:archiveme_mobile/core/utils/app_logger.dart';
 import 'package:archiveme_mobile/design/archive_mobile_typography.dart';
 import 'package:archiveme_mobile/features/first_use_wording/first_use_wording_analytics.dart';
 import 'package:archiveme_mobile/features/first_use_wording/first_use_wording_model.dart';
+import 'package:archiveme_mobile/features/guided_entry/presentation/controllers/entry_controller.dart';
+import 'package:archiveme_mobile/features/guided_entry/presentation/models/rich_import_copy.dart';
+import 'package:archiveme_mobile/features/guided_entry/presentation/widgets/empty_state_view.dart';
 import 'package:archiveme_mobile/features/record_capture_modes/record_capture_mode_copy.dart';
 import 'package:archiveme_mobile/features/record_capture_modes/record_capture_mode_engine.dart';
 import 'package:archiveme_mobile/features/voice_capture/voice_capture_copy.dart';
+import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/product/consumer_ui_copy.dart';
 import 'package:archiveme_mobile/record/quick_text_capture_copy.dart';
 import 'package:archiveme_mobile/record/start_here_visibility.dart';
@@ -81,6 +85,7 @@ class _QuickTextCaptureScreenState extends State<QuickTextCaptureScreen> {
   bool _focusedStarterSelected = false;
 
   late final CapturePipelineService _pipeline;
+  EntryController? _richImportController;
 
   late final V1AccountDependencies _accountDeps =
       widget.accountDependencies ?? V1AccountDependencies.fromAppServices();
@@ -174,6 +179,36 @@ class _QuickTextCaptureScreenState extends State<QuickTextCaptureScreen> {
       !_isVoiceFallback;
 
   bool get _showPromptHelper => _promptHint != null && _controller.text.isEmpty;
+
+  bool get _showGuidedEmptyState =>
+      !_isVoiceFallback && _controller.text.trim().isEmpty;
+
+  EntryController get _importsController =>
+      _richImportController ??= EntryController(
+        writer: (entry) => _accountDeps.journalStore.save(
+          entry,
+          first25Source: 'rich_media_import',
+        ),
+      );
+
+  void _onRichDraftCreated(JournalEntry _) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text(RichImportCopy.draftSaved)),
+    );
+  }
+
+  Widget _guidedEmptyState({bool compact = false}) {
+    if (!_showGuidedEmptyState) return const SizedBox.shrink();
+    return Padding(
+      padding: EdgeInsets.only(bottom: compact ? 8 : 12),
+      child: EmptyStateView(
+        controller: _importsController,
+        onDraftCreated: _onRichDraftCreated,
+        compact: compact,
+      ),
+    );
+  }
 
   String? get _modeHelperText {
     final helper = _guidedStyleHelper?.trim();
@@ -319,6 +354,7 @@ class _QuickTextCaptureScreenState extends State<QuickTextCaptureScreen> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
+                _guidedEmptyState(compact: true),
                 TextField(
                   key: const Key('quick_text_capture_field'),
                   controller: _controller,
@@ -504,6 +540,7 @@ class _QuickTextCaptureScreenState extends State<QuickTextCaptureScreen> {
                   ),
                 ],
                 const SizedBox(height: 16),
+                _guidedEmptyState(),
                 TextField(
                   key: const Key('quick_text_capture_field'),
                   controller: _controller,
