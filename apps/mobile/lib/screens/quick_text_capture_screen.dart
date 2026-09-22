@@ -10,11 +10,14 @@ import 'package:archiveme_mobile/features/guided_entry/presentation/models/rich_
 import 'package:archiveme_mobile/features/guided_entry/presentation/widgets/empty_state_view.dart';
 import 'package:archiveme_mobile/features/record_capture_modes/record_capture_mode_copy.dart';
 import 'package:archiveme_mobile/features/record_capture_modes/record_capture_mode_engine.dart';
+import 'package:archiveme_mobile/features/voice/data/record_dictation_engine.dart';
+import 'package:archiveme_mobile/features/voice/presentation/dictation_mic_bar.dart';
 import 'package:archiveme_mobile/features/voice_capture/voice_capture_copy.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/product/consumer_ui_copy.dart';
 import 'package:archiveme_mobile/record/quick_text_capture_copy.dart';
 import 'package:archiveme_mobile/record/start_here_visibility.dart';
+import 'package:archiveme_mobile/router/route_catalog.dart';
 import 'package:archiveme_mobile/services/capture_pipeline_service.dart';
 import 'package:archiveme_mobile/services/product_analytics.dart';
 import 'package:archiveme_mobile/theme/app_spacing.dart';
@@ -72,6 +75,7 @@ class QuickTextCaptureScreen extends StatefulWidget {
 
 class _QuickTextCaptureScreenState extends State<QuickTextCaptureScreen> {
   final _controller = TextEditingController();
+  final _dictation = RecordDictationEngine();
   bool _saving = false;
   bool _saved = false;
   bool _abandonLogged = false;
@@ -373,6 +377,7 @@ class _QuickTextCaptureScreenState extends State<QuickTextCaptureScreen> {
                     ),
                   ),
                 ),
+                _dictationBar(),
                 if (_error != null) ...[
                   const SizedBox(height: 8),
                   Text(
@@ -555,6 +560,7 @@ class _QuickTextCaptureScreenState extends State<QuickTextCaptureScreen> {
                     border: const OutlineInputBorder(),
                   ),
                 ),
+                _dictationBar(),
                 MomentQualityCard(text: _controller.text),
                 const SizedBox(height: 8),
                 Text(
@@ -611,6 +617,14 @@ class _QuickTextCaptureScreenState extends State<QuickTextCaptureScreen> {
           ),
         );
       },
+    );
+  }
+
+  Widget _dictationBar() {
+    return DictationMicBar(
+      controller: _controller,
+      engine: _dictation,
+      onVoiceCall: () => context.push(RouteCatalog.voiceCall),
     );
   }
 }

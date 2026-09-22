@@ -25,4 +25,7 @@ abstract final class RouteCatalog {
   /// Professional coach tier (beta + compile-time gated).
   static const coachHome = '/coach';
   static const coachClientConsent = '/coach/client-consent';
+
+  /// Hands-free conversational capture.
+  static const voiceCall = '/voice-call';
 }
