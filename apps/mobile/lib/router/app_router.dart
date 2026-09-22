@@ -1,6 +1,7 @@
 import 'package:archiveme_mobile/features/archive_theory/views/theories_screen.dart';
 import 'package:archiveme_mobile/features/capture/capture_module_config.dart';
 import 'package:archiveme_mobile/features/capture_flow/capture_flow_phase.dart';
+import 'package:archiveme_mobile/features/onboarding/presentation/conversational_onboarding_screen.dart';
 import 'package:archiveme_mobile/features/sync/screens/offline_sync_verification_screen.dart';
 import 'package:archiveme_mobile/features/relationships/presentation/relationship_graph_screen.dart';
 import 'package:archiveme_mobile/features/voice/presentation/voice_call_screen.dart';
@@ -42,7 +43,6 @@ import 'package:archiveme_mobile/screens/consent_audit_screen.dart';
 import 'package:archiveme_mobile/screens/export_screen.dart';
 import 'package:archiveme_mobile/screens/journal_bulk_export_screen.dart';
 import 'package:archiveme_mobile/screens/memory_transparency_screen.dart';
-import 'package:archiveme_mobile/screens/onboarding_screen.dart';
 import 'package:archiveme_mobile/screens/record_screen.dart';
 import 'package:archiveme_mobile/screens/sample_archive_context_screen.dart';
 import 'package:archiveme_mobile/screens/security_settings_screen.dart';
@@ -183,7 +183,7 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/onboarding',
       parentNavigatorKey: _rootNavigatorKey,
-      builder: (context, state) => const OnboardingScreen(),
+      builder: (context, state) => const ConversationalOnboardingScreen(),
     ),
     GoRoute(
       path: '/onboarding-intent',
