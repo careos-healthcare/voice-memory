@@ -2,6 +2,7 @@ import 'package:archiveme_mobile/features/archive_theory/views/theories_screen.d
 import 'package:archiveme_mobile/features/capture/capture_module_config.dart';
 import 'package:archiveme_mobile/features/capture_flow/capture_flow_phase.dart';
 import 'package:archiveme_mobile/features/sync/screens/offline_sync_verification_screen.dart';
+import 'package:archiveme_mobile/features/relationships/presentation/relationship_graph_screen.dart';
 import 'package:archiveme_mobile/features/voice/presentation/voice_call_screen.dart';
 import 'package:archiveme_mobile/config/production_navigation.dart';
 import 'package:archiveme_mobile/config/screenshot_mode.dart';
@@ -268,6 +269,11 @@ final GoRouter appRouter = GoRouter(
       path: RouteCatalog.voiceCall,
       parentNavigatorKey: _rootNavigatorKey,
       builder: (context, state) => const VoiceCallScreen(),
+    ),
+    GoRoute(
+      path: RouteCatalog.relationships,
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) => const RelationshipGraphScreen(),
     ),
     GoRoute(
       path: '/privacy-security',

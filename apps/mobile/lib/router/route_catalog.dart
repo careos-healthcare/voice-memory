@@ -28,4 +28,7 @@ abstract final class RouteCatalog {
 
   /// Hands-free conversational capture.
   static const voiceCall = '/voice-call';
+
+  /// People mentioned across saved entries.
+  static const relationships = '/relationships';
 }
