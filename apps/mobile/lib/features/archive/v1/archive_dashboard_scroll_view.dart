@@ -8,6 +8,7 @@ import 'package:archiveme_mobile/features/archive_changes/archive_changes_adapte
 import 'package:archiveme_mobile/features/ask_archive/ask_archive_entry_bar.dart';
 import 'package:archiveme_mobile/features/insights/pattern_exploration_entry_card.dart';
 import 'package:archiveme_mobile/features/insights/trend_pattern_summary_card.dart';
+import 'package:archiveme_mobile/features/sync/presentation/modals/conflict_resolution_modal.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/services/app_services.dart';
 import 'package:archiveme_mobile/theme/app_colors.dart';
@@ -425,6 +426,14 @@ Widget _entryTile(
   final entry = entries[index];
   return ArchiveEntryCard(
     entry: entry,
-    onTap: () => onEntryTap(entry.id),
+    onTap: () {
+      unawaited(
+        openEntryRespectingConflict(
+          context: context,
+          entry: entry,
+          onOpen: () => onEntryTap(entry.id),
+        ),
+      );
+    },
   );
 }

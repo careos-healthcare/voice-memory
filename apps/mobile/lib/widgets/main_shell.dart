@@ -1,3 +1,4 @@
+import 'package:archiveme_mobile/features/sync/presentation/widgets/sync_status_badge.dart';
 import 'package:archiveme_mobile/features/sync/presentation/widgets/sync_status_shell.dart';
 import 'package:archiveme_mobile/l10n/localized_consumer_ui.dart';
 import 'package:archiveme_mobile/router/primary_destination.dart';
@@ -169,21 +170,33 @@ class MainShell extends StatelessWidget {
             if (constraints.maxWidth < 700) {
               return Scaffold(
                 backgroundColor: AppColors.backgroundPrimary,
-                body: body,
+                body: Column(
+                  children: [
+                    const SyncStatusBadgeSlot(),
+                    Expanded(child: body),
+                  ],
+                ),
                 bottomNavigationBar: _phoneNavigation(context, selected),
               );
             }
             return Scaffold(
               backgroundColor: AppColors.backgroundPrimary,
-              body: Row(
+              body: Column(
                 children: [
-                  _railNavigation(
-                    context,
-                    selected,
-                    extended: constraints.maxWidth >= 1000,
+                  const SyncStatusBadgeSlot(),
+                  Expanded(
+                    child: Row(
+                      children: [
+                        _railNavigation(
+                          context,
+                          selected,
+                          extended: constraints.maxWidth >= 1000,
+                        ),
+                        const VerticalDivider(width: 1),
+                        Expanded(child: body),
+                      ],
+                    ),
                   ),
-                  const VerticalDivider(width: 1),
-                  Expanded(child: body),
                 ],
               ),
             );

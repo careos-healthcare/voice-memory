@@ -1,4 +1,5 @@
 import 'package:archiveme_mobile/features/archive/v1/archive_entry_hero_tags.dart';
+import 'package:archiveme_mobile/features/sync/presentation/widgets/entry_sync_indicator.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -77,6 +78,8 @@ class ArchiveEntryCardMeta extends StatelessWidget {
             color: theme.colorScheme.primary,
           ),
         ),
+        const SizedBox(height: 4),
+        EntrySyncIndicator(status: entry.syncStatus),
       ],
     );
   }
