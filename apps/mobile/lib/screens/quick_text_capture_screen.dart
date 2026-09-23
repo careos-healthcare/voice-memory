@@ -3,9 +3,13 @@ import 'dart:async';
 import 'package:archiveme_mobile/core/di/v1_account_dependencies.dart';
 import 'package:archiveme_mobile/core/utils/app_logger.dart';
 import 'package:archiveme_mobile/design/archive_mobile_typography.dart';
+import 'package:archiveme_mobile/features/evidence_trail/evidence_trail_navigation.dart';
 import 'package:archiveme_mobile/features/first_use_wording/first_use_wording_analytics.dart';
 import 'package:archiveme_mobile/features/first_use_wording/first_use_wording_model.dart';
+import 'package:archiveme_mobile/features/guided_entry/presentation/archive_template_materializer.dart';
+import 'package:archiveme_mobile/features/guided_entry/presentation/archive_template_sqlite_writer.dart';
 import 'package:archiveme_mobile/features/guided_entry/presentation/controllers/entry_controller.dart';
+import 'package:archiveme_mobile/features/guided_entry/presentation/models/archive_entry_template.dart';
 import 'package:archiveme_mobile/features/guided_entry/presentation/models/rich_import_copy.dart';
 import 'package:archiveme_mobile/features/guided_entry/presentation/widgets/empty_state_view.dart';
 import 'package:archiveme_mobile/features/record_capture_modes/record_capture_mode_copy.dart';
@@ -18,8 +22,10 @@ import 'package:archiveme_mobile/product/consumer_ui_copy.dart';
 import 'package:archiveme_mobile/record/quick_text_capture_copy.dart';
 import 'package:archiveme_mobile/record/start_here_visibility.dart';
 import 'package:archiveme_mobile/router/route_catalog.dart';
+import 'package:archiveme_mobile/services/app_services.dart';
 import 'package:archiveme_mobile/services/capture_pipeline_service.dart';
 import 'package:archiveme_mobile/services/product_analytics.dart';
+import 'package:archiveme_mobile/storage/sqlite/journal_sqlite_repository.dart';
 import 'package:archiveme_mobile/theme/app_spacing.dart';
 import 'package:archiveme_mobile/theme/voicememory_cards.dart';
 import 'package:archiveme_mobile/theme/voicememory_colors.dart';
@@ -42,6 +48,8 @@ class QuickTextCaptureScreen extends StatefulWidget {
     this.showFirstUseWordingHelper = false,
     this.focusedRecordTypeEntry = false,
     this.accountDependencies,
+    this.editorTranscript,
+    this.templateWriter,
   });
 
   /// Optional prompt hint from conversation starters — never prefilled as editable text.
@@ -68,6 +76,12 @@ class QuickTextCaptureScreen extends StatefulWidget {
   final bool focusedRecordTypeEntry;
 
   final V1AccountDependencies? accountDependencies;
+
+  /// Page body already saved from a template. Fills the field and hides the gallery.
+  final String? editorTranscript;
+
+  /// Overrides the SQLite writer. Production uses the open journal database.
+  final ArchiveTemplateSqliteWriter? templateWriter;
 
   @override
   State<QuickTextCaptureScreen> createState() => _QuickTextCaptureScreenState();
@@ -101,6 +115,10 @@ class _QuickTextCaptureScreenState extends State<QuickTextCaptureScreen> {
   void initState() {
     super.initState();
     _pipeline = _accountDeps.pipeline;
+    final editorSeed = widget.editorTranscript?.trim();
+    if (editorSeed != null && editorSeed.isNotEmpty) {
+      _controller.text = editorSeed;
+    }
     final focusedEntry =
         widget.focusedRecordTypeEntry &&
         widget.entryId?.trim().isNotEmpty != true;
@@ -202,6 +220,72 @@ class _QuickTextCaptureScreenState extends State<QuickTextCaptureScreen> {
     );
   }
 
+  ArchiveTemplateSqliteWriter get _templateWriter =>
+      widget.templateWriter ??
+      ArchiveTemplateSqliteWriter(
+        JournalSqliteRepository(AppServices.instance.sqliteDatabase),
+      );
+
+  Future<ArchiveTemplateDraft> _persistTemplate(
+    ArchiveEntryTemplate template,
+  ) {
+    return _templateWriter.apply(template);
+  }
+
+  Future<void> _openTemplateInEditor(ArchiveEntryTemplate template) async {
+    try {
+      final draft = await _persistTemplate(template);
+      if (!mounted) return;
+      unawaited(
+        Navigator.of(context).push(
+          MaterialPageRoute<void>(
+            settings: const RouteSettings(name: '/editor'),
+            builder: (_) => QuickTextCaptureScreen(
+              editorTranscript: draft.page.transcript,
+              accountDependencies: _accountDeps,
+              templateWriter: widget.templateWriter,
+            ),
+          ),
+        ),
+      );
+    } on Object catch (error, stackTrace) {
+      AppLogger.error(
+        'archive_template_open_failed',
+        name: 'QuickTextCaptureScreen',
+        error: error,
+        stackTrace: stackTrace,
+      );
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Could not open this template.')),
+      );
+    }
+  }
+
+  void _onTemplateEvidence(ArchiveTemplateDraft draft) {
+    unawaited(_showTemplateEvidence(draft));
+  }
+
+  Future<void> _showTemplateEvidence(ArchiveTemplateDraft draft) async {
+    try {
+      await _persistTemplate(draft.template);
+    } on Object catch (error, stackTrace) {
+      AppLogger.error(
+        'archive_template_evidence_save_failed',
+        name: 'QuickTextCaptureScreen',
+        error: error,
+        stackTrace: stackTrace,
+      );
+    }
+    if (!mounted) return;
+    await openEvidenceTrailForSourceEntryIds(
+      context,
+      sourceEntryIds: draft.evidenceEntryIds,
+      surface: 'archive_template_card',
+      entries: draft.entries,
+    );
+  }
+
   Widget _guidedEmptyState({bool compact = false}) {
     if (!_showGuidedEmptyState) return const SizedBox.shrink();
     return Padding(
@@ -209,6 +293,8 @@ class _QuickTextCaptureScreenState extends State<QuickTextCaptureScreen> {
       child: EmptyStateView(
         controller: _importsController,
         onDraftCreated: _onRichDraftCreated,
+        onOpenTemplate: _openTemplateInEditor,
+        onViewTemplateEvidence: _onTemplateEvidence,
         compact: compact,
       ),
     );
@@ -311,6 +397,9 @@ class _QuickTextCaptureScreenState extends State<QuickTextCaptureScreen> {
         if (didPop) _logAbandonedIfNeeded();
       },
       child: Scaffold(
+        key: widget.editorTranscript?.trim().isNotEmpty == true
+            ? const Key('archive_template_editor')
+            : null,
         resizeToAvoidBottomInset: true,
         appBar: AppBar(
           title: Text(

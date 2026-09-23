@@ -9,6 +9,7 @@ import 'package:archiveme_mobile/record/start_here_catalog.dart';
 import 'package:archiveme_mobile/screens/quick_text_capture_screen.dart';
 import 'package:archiveme_mobile/services/app_services.dart';
 import 'package:archiveme_mobile/services/capture_save_messages.dart';
+import 'package:archiveme_mobile/storage/sqlite/journal_sqlite_repository.dart';
 import 'package:archiveme_mobile/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -87,6 +88,46 @@ void main() {
 
   tearDown(() => sandbox.dispose());
   group('QuickTextCaptureScreen prompt handling', () {
+    testWidgets('template card saves into sqlite and opens the editor', (
+      tester,
+    ) async {
+      await pumpScreen(tester);
+
+      final card = find.byKey(
+        const Key('archive_template_card_leave-before-dinner'),
+      );
+      await tester.ensureVisible(card);
+      await tester.pump();
+      await tester.runAsync(() async {
+        await tester.tap(card);
+        await Future<void>.delayed(const Duration(seconds: 2));
+      });
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 50));
+
+      expect(find.byKey(const Key('archive_template_editor')), findsOneWidget);
+      final editorField = tester.widget<TextField>(
+        find.descendant(
+          of: find.byKey(const Key('archive_template_editor')),
+          matching: find.byKey(const Key('quick_text_capture_field')),
+        ),
+      );
+      expect(
+        editorField.controller?.text,
+        contains('Leaving the office before dinner'),
+      );
+
+      final stored = await tester.runAsync(() {
+        return JournalSqliteRepository(
+          AppServices.instance.sqliteDatabase,
+        ).fetchPage(offset: 0, limit: 20);
+      });
+      expect(
+        stored!.map((entry) => entry.id),
+        contains('template-leave-before-dinner-page'),
+      );
+    });
+
     testWidgets('opens with empty text field', (tester) async {
       await pumpScreen(tester);
 
