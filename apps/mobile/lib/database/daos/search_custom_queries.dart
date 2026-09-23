@@ -1,6 +1,7 @@
 import 'package:archiveme_mobile/core/constants/database_constants.dart';
 import 'package:archiveme_mobile/database/app_database.dart';
 import 'package:archiveme_mobile/database/daos/journal_dao.dart';
+import 'package:archiveme_mobile/features/security/private_vault_gate.dart';
 import 'package:drift/drift.dart';
 
 /// FTS5 / hybrid search queries that cannot be expressed with typed Drift selects.
@@ -20,6 +21,7 @@ class SearchCustomQueries {
       afterId: afterId,
       tableAlias: 'je',
     );
+    final hidden = await _privateVaultSql();
     final rows = await _db.customSelect(
       '''
       SELECT
@@ -46,6 +48,7 @@ class SearchCustomQueries {
         GROUP BY entry_id
       ) ranked ON ranked.entry_id = je.id
       WHERE je.deleted_at IS NULL
+        $hidden
         ${keyset.clause}
       ORDER BY ranked.best_rank ASC, je.created_at DESC, je.id DESC
       LIMIT ?
@@ -63,11 +66,13 @@ class SearchCustomQueries {
   }
 
   Future<int> countActiveFts({required String ftsMatchQuery}) async {
+    final hidden = await _privateVaultSql();
     final row = await _db.customSelect(
       '''
       SELECT COUNT(DISTINCT je.id) AS count
       FROM ${DatabaseConstants.journalEntriesTable} je
       WHERE je.deleted_at IS NULL
+        $hidden
         AND je.id IN (
           SELECT entry_id FROM ${DatabaseConstants.ftsTable}
           WHERE transcript MATCH ?
@@ -83,6 +88,18 @@ class SearchCustomQueries {
       readsFrom: {_db.journalEntries},
     ).getSingle();
     return row.read<int>('count');
+  }
+
+  Future<String> _privateVaultSql() async {
+    if (PrivateVaultGate.unlocked) return '';
+    final rows = await _db
+        .customSelect(
+          'PRAGMA table_info(${DatabaseConstants.journalEntriesTable})',
+        )
+        .get();
+    final present = rows.any((row) => row.data['name'] == 'is_hidden');
+    if (!present) return '';
+    return PrivateVaultGate.filterSql('je');
   }
 
   ({String clause, List<Variable<Object>> variables}) _keysetSql({

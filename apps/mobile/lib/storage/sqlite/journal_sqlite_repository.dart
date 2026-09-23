@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:archiveme_mobile/core/constants/database_constants.dart';
+import 'package:archiveme_mobile/features/security/private_vault_gate.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/models/reflection.dart';
 import 'package:archiveme_mobile/storage/sqlite/reflection_knowledge_graph_repository.dart';
@@ -172,6 +173,7 @@ class JournalSqliteRepository {
     final ftsQuery = _ftsMatchQuery(searchQuery);
     if (ftsQuery != null) {
       try {
+        final hidden = await PrivateVaultGate.andSql(_sqlite.database, 'je');
         final rows = await _sqlite.database.rawQuery(
           '''
           SELECT
@@ -187,6 +189,7 @@ class JournalSqliteRepository {
           INNER JOIN (${_unifiedFtsRankSubquery()}) ranked
             ON ranked.entry_id = je.id
           WHERE je.deleted_at IS NULL
+            $hidden
           ORDER BY ranked.best_rank ASC, je.created_at DESC, je.id DESC
           LIMIT ? OFFSET ?
           ''',
@@ -199,6 +202,7 @@ class JournalSqliteRepository {
     }
 
     final whereClause = _activeWhereClause(searchQuery);
+    final hidden = await PrivateVaultGate.andSql(_sqlite.database, '');
     final rows = await _sqlite.database.rawQuery(
       '''
       SELECT
@@ -211,7 +215,7 @@ class JournalSqliteRepository {
         has_verified_proof,
         payload_json
       FROM $table
-      WHERE $whereClause
+      WHERE $whereClause$hidden
       ORDER BY created_at DESC, id DESC
       LIMIT ? OFFSET ?
       ''',

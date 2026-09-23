@@ -343,6 +343,7 @@ save_a_repeat_habit
 search
 second_moment_return
 secrets_rotation_gate
+security
 session_movement
 share
 share_card

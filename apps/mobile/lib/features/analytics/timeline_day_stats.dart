@@ -1,4 +1,5 @@
 import 'package:archiveme_mobile/features/metadata/ambient_metadata.dart';
+import 'package:archiveme_mobile/features/security/private_vault_gate.dart';
 import 'package:archiveme_mobile/storage/sqlite/migrations/migration_021_ambient_metadata.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -190,26 +191,23 @@ String clusterId(double latitude, double longitude) {
 
 /// Reads journal rows, including coordinates stored in ambient metadata.
 abstract final class TimelineHeatmapStore {
-  static const _queryWithMetadata = '''
-    SELECT id, created_at, transcript, ambient_metadata
-    FROM journal_entries
-    WHERE deleted_at IS NULL
-    ORDER BY created_at DESC, id DESC
-  ''';
-
-  static const _queryWithoutMetadata = '''
-    SELECT id, created_at, transcript
-    FROM journal_entries
-    WHERE deleted_at IS NULL
-    ORDER BY created_at DESC, id DESC
-  ''';
-
   static Future<List<TimelineMapEntry>> load(DatabaseExecutor db) async {
+    final hidden = await PrivateVaultGate.andSql(db, '');
     try {
-      final rows = await db.rawQuery(_queryWithMetadata);
+      final rows = await db.rawQuery('''
+        SELECT id, created_at, transcript, ambient_metadata
+        FROM journal_entries
+        WHERE deleted_at IS NULL$hidden
+        ORDER BY created_at DESC, id DESC
+      ''');
       return rows.map(_entry).toList(growable: false);
     } on Object {
-      final rows = await db.rawQuery(_queryWithoutMetadata);
+      final rows = await db.rawQuery('''
+        SELECT id, created_at, transcript
+        FROM journal_entries
+        WHERE deleted_at IS NULL$hidden
+        ORDER BY created_at DESC, id DESC
+      ''');
       return rows.map(_entry).toList(growable: false);
     }
   }

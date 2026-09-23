@@ -7,10 +7,16 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class ArchiveEntryCard extends StatelessWidget {
-  const ArchiveEntryCard({required this.entry, required this.onTap, super.key});
+  const ArchiveEntryCard({
+    required this.entry,
+    required this.onTap,
+    super.key,
+    this.onMoveToPrivateVault,
+  });
 
   final JournalEntry entry;
   final VoidCallback onTap;
+  final VoidCallback? onMoveToPrivateVault;
 
   @override
   Widget build(BuildContext context) {
@@ -36,6 +42,11 @@ class ArchiveEntryCard extends StatelessWidget {
                       ArchiveEntryCardMeta(entry: entry),
                       const SizedBox(height: 10),
                       ArchiveEntryCardPreview(entry: entry),
+                      TextButton(
+                        key: const Key('move_to_private_vault'),
+                        onPressed: onMoveToPrivateVault,
+                        child: const Text('Move to Private Vault'),
+                      ),
                       EntryCardTile(
                         transcript: entry.transcript,
                         metadata: AmbientMetadataService.shared.metadataFor(

@@ -22,6 +22,7 @@ import 'package:archiveme_mobile/storage/sqlite/migrations/migration_021_ambient
 import 'package:archiveme_mobile/storage/sqlite/migrations/migration_022_life_memos.dart';
 import 'package:archiveme_mobile/storage/sqlite/migrations/migration_023_attachment_text.dart';
 import 'package:archiveme_mobile/storage/sqlite/migrations/migration_024_chat_messages.dart';
+import 'package:archiveme_mobile/storage/sqlite/migrations/migration_025_private_vault.dart';
 import 'package:archiveme_mobile/storage/sqlite/sqlite_migration.dart';
 
 /// Ordered, validated catalog of [SqliteMigration] steps for the local DB.
@@ -56,6 +57,7 @@ class SqliteMigrationRegistry {
     Migration022LifeMemos(),
     Migration023AttachmentText(),
     Migration024ChatMessages(),
+    Migration025PrivateVault(),
   ];
 
   static int get latestVersion =>
