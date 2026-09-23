@@ -61,7 +61,7 @@ void main() {
       registry.migrationForVersion(18),
       isA<Migration018TranscriptProvenance>(),
     );
-    expect(SqliteMigrationRegistry.latestVersion, 28);
+    expect(SqliteMigrationRegistry.latestVersion, 29);
   });
 
   test('the schema step touches no journal rows', () async {

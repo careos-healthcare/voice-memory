@@ -4,6 +4,7 @@ action_items
 action_items_v1_gate
 activation
 aha
+ai_coaching
 ai_engines
 analytics
 anchor_calibration
@@ -377,6 +378,7 @@ timeline_proof_moment
 todays_question
 tomorrow_return
 trail_language_guard
+transcript
 transcript_correction
 trial
 trust
