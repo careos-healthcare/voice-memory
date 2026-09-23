@@ -382,6 +382,7 @@ v1_surface_scope
 v1_visible_surface_reducer
 value_prop_ranking_diagnostic
 voice_capture
+wearable
 weekly_review
 weekly_story
 what_changed
