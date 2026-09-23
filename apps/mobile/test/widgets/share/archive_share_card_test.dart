@@ -64,16 +64,47 @@ void main() {
         isA<ArchiveShareCardCaptureException>().having(
           (error) => error.message,
           'message',
-          contains('still painting'),
+          'Frame not fully painted',
         ),
       ),
     );
   });
 
-  test('rejects a missing capture boundary', () {
+  testWidgets('rejects a missing or zero-size capture boundary', (
+    tester,
+  ) async {
     expect(
       () => ArchiveShareCard.readyBoundary(GlobalKey()),
-      throwsA(isA<ArchiveShareCardCaptureException>()),
+      throwsA(
+        isA<ArchiveShareCardCaptureException>().having(
+          (error) => error.message,
+          'message',
+          'Frame not fully painted',
+        ),
+      ),
+    );
+
+    final key = GlobalKey();
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Center(
+          child: RepaintBoundary(
+            key: key,
+            child: const SizedBox.square(dimension: 0),
+          ),
+        ),
+      ),
+    );
+    await tester.pump();
+    expect(
+      () => ArchiveShareCard.readyBoundary(key),
+      throwsA(
+        isA<ArchiveShareCardCaptureException>().having(
+          (error) => error.message,
+          'message',
+          'Frame not fully painted',
+        ),
+      ),
     );
   });
 
@@ -98,6 +129,30 @@ void main() {
     await tester.tap(find.text('· View evidence'));
     await tester.pump();
     expect(sawEvidence, isTrue);
+  });
+
+  testWidgets('shows a snackbar when the frame is not painted', (tester) async {
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: Scaffold(body: ArchiveShareCardPanel(content: content)),
+      ),
+    );
+    await tester.pump();
+
+    tester.binding.addPostFrameCallback((_) {
+      for (final boundary in tester.renderObjectList<RenderRepaintBoundary>(
+        find.byType(RepaintBoundary),
+      )) {
+        if (boundary.size == const Size(360, 480)) {
+          boundary.markNeedsPaint();
+        }
+      }
+    });
+    await tester.tap(find.byKey(const Key('archive_share_card_share')));
+    await tester.pump();
+    await tester.pump();
+
+    expect(find.text('Frame not fully painted'), findsOneWidget);
   });
 
   test('writes a timestamped png and deletes it after sharing', () async {
@@ -141,6 +196,29 @@ void main() {
           (error) => error.message,
           'message',
           contains('storage access'),
+        ),
+      ),
+    );
+    expect(dir.listSync(), isEmpty);
+    dir.deleteSync(recursive: true);
+  });
+
+  test('deletes the temp png when sharing is cancelled', () async {
+    final dir = Directory.systemTemp.createTempSync('archive-share-card');
+    await expectLater(
+      ArchiveShareCard.sharePngBytes(
+        bytes: Uint8List.fromList(const [137, 80, 78, 71]),
+        directory: dir,
+        capturedAt: DateTime.utc(2026, 9, 23, 12, 1),
+        shareFile: (file, text) async {
+          throw Exception('cancelled');
+        },
+      ),
+      throwsA(
+        isA<ArchiveShareCardCaptureException>().having(
+          (error) => error.message,
+          'message',
+          'Could not share this card.',
         ),
       ),
     );

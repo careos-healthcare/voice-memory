@@ -65,30 +65,27 @@ class ArchiveShareCard extends StatelessWidget {
 
   /// True when the boundary still needs a frame, which would snapshot blank.
   ///
-  /// `debugNeedsPaint` is only assigned in debug builds, so release skips it.
+  /// `debugNeedsPaint` is unset when asserts are stripped, so release skips it.
   static bool frameNeedsPaint(RenderRepaintBoundary boundary) {
-    if (!kDebugMode) return false;
-    return boundary.debugNeedsPaint;
+    if (kReleaseMode) return false;
+    var needsPaint = false;
+    assert(() {
+      needsPaint = boundary.debugNeedsPaint;
+      return true;
+    }(), 'debugNeedsPaint is only read outside release builds');
+    return needsPaint;
   }
 
-  /// Resolves the capture boundary after null and frame checks.
+  /// Resolves the capture boundary after null, size, and paint checks.
   static RenderRepaintBoundary readyBoundary(GlobalKey boundaryKey) {
+    const failure = ArchiveShareCardCaptureException('Frame not fully painted');
     final context = boundaryKey.currentContext;
-    if (context == null) {
-      throw const ArchiveShareCardCaptureException(
-        'The card is not on screen yet.',
-      );
-    }
-    final renderObject = context.findRenderObject();
+    final renderObject = context?.findRenderObject();
     if (renderObject is! RenderRepaintBoundary) {
-      throw const ArchiveShareCardCaptureException(
-        'The card is not ready to capture.',
-      );
+      throw failure;
     }
-    if (frameNeedsPaint(renderObject) || renderObject.size.isEmpty) {
-      throw const ArchiveShareCardCaptureException(
-        'The card is still painting, so the snapshot would be blank.',
-      );
+    if (renderObject.size.isEmpty || frameNeedsPaint(renderObject)) {
+      throw failure;
     }
     return renderObject;
   }
@@ -132,9 +129,7 @@ class ArchiveShareCard extends StatelessWidget {
     RenderRepaintBoundary boundary,
   ) async {
     if (frameNeedsPaint(boundary) || boundary.size.isEmpty) {
-      throw const ArchiveShareCardCaptureException(
-        'The card is still painting, so the snapshot would be blank.',
-      );
+      throw const ArchiveShareCardCaptureException('Frame not fully painted');
     }
     final ui.Image image;
     try {
@@ -186,9 +181,16 @@ class ArchiveShareCard extends StatelessWidget {
     ArchiveShareCardCaptureException? failure;
     try {
       await sender(xFile, text);
+    } on ArchiveShareCardCaptureException catch (error) {
+      failure = error;
     } on FileSystemException catch (error) {
       failure = ArchiveShareCardCaptureException(
         'Could not share this card. Check file access and try again.',
+        cause: error,
+      );
+    } on Object catch (error) {
+      failure = ArchiveShareCardCaptureException(
+        'Could not share this card.',
         cause: error,
       );
     } finally {
