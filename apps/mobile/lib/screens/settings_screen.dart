@@ -6,6 +6,7 @@ import 'package:archiveme_mobile/config/production_navigation.dart';
 import 'package:archiveme_mobile/core/config/v1_navigation_guard.dart';
 import 'package:archiveme_mobile/core/config/v1_capability_registry.dart';
 import 'package:archiveme_mobile/core/config/v1_feature_flags.dart';
+import 'package:archiveme_mobile/core/diagnostics/system_diagnostics_screen.dart';
 import 'package:archiveme_mobile/design/archive_mobile_typography.dart';
 import 'package:archiveme_mobile/design/archive_responsive_layout.dart';
 import 'package:archiveme_mobile/features/action_items/archive_action_item.dart';
@@ -543,6 +544,25 @@ class _SettingsScreenState extends State<SettingsScreen> {
             const TrustStatusFooter(),
             if (DeveloperSettingsGate.canShowDeveloperSettings) ...[
               const Divider(height: 28),
+              ListTile(
+                key: const Key('settings_system_health_tile'),
+                contentPadding: EdgeInsets.zero,
+                title: Text(
+                  'System health',
+                  style: ArchiveMobileTypography.listTitle(context),
+                ),
+                subtitle: const Text('Backups, index, and background tasks'),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () {
+                  unawaited(
+                    Navigator.of(context).push(
+                      MaterialPageRoute<void>(
+                        builder: (context) => const SystemDiagnosticsScreen(),
+                      ),
+                    ),
+                  );
+                },
+              ),
               _tile(
                 'Developer diagnostics',
                 onTap: () => context.push('/developer-diagnostics'),

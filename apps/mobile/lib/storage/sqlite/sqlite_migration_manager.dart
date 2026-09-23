@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:archiveme_mobile/core/diagnostics/database_health_service.dart';
 import 'package:archiveme_mobile/storage/sqlite/sqlite_migration.dart';
 import 'package:archiveme_mobile/storage/sqlite/sqlite_migration_registry.dart';
 import 'package:sqflite/sqflite.dart';
@@ -28,6 +31,7 @@ class SqliteMigrationManager {
 
     var version = await _readUserVersion(db);
     final pending = _registry.pendingAfter(version);
+    await _prepareForSchemaChange(db, pending);
 
     for (final migration in pending) {
       await _applyMigration(db, migration);
@@ -54,6 +58,7 @@ class SqliteMigrationManager {
     final pending = _registry
         .pendingAfter(version)
         .where((migration) => migration.version <= targetVersion);
+    await _prepareForSchemaChange(db, pending);
 
     for (final migration in pending) {
       await _applyMigration(db, migration);
@@ -61,6 +66,24 @@ class SqliteMigrationManager {
     }
 
     return version;
+  }
+
+  Future<void> _prepareForSchemaChange(
+    Database db,
+    Iterable<SqliteMigration> pending,
+  ) async {
+    final health = DatabaseHealthService();
+    try {
+      DatabaseHealthService.lastReport = await health.checkOpen(db);
+    } on Object {
+      DatabaseHealthService.lastReport = const DatabaseHealthReport.failed();
+    }
+    if (pending.isEmpty) return;
+    try {
+      await health.retainRollingBackup(File(db.path));
+    } on Object {
+      return;
+    }
   }
 
   Future<void> _applyMigration(Database db, SqliteMigration migration) async {

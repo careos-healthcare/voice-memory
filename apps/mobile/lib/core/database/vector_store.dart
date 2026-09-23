@@ -1,6 +1,8 @@
+import 'dart:io';
 import 'dart:math' as math;
 import 'dart:typed_data';
 
+import 'package:archiveme_mobile/core/diagnostics/database_health_service.dart';
 import 'package:archiveme_mobile/storage/sqlite/migrations/migration_005_hybrid_search.dart';
 import 'package:archiveme_mobile/storage/sqlite/migrations/migration_009_reflection_embeddings.dart';
 import 'package:sqflite/sqflite.dart';
@@ -43,6 +45,14 @@ abstract final class VectorStore {
 
   /// Runs TurboQuant when the extension accepts it, then enables SIMD scan.
   static Future<VectorQuantizeReport> initialize(DatabaseExecutor db) async {
+    if (db is Database) {
+      try {
+        await DatabaseHealthService().retainRollingBackup(File(db.path));
+      } on Object catch (error) {
+        // Quantization continues when the rolling copy cannot be written.
+        error.runtimeType;
+      }
+    }
     final applied = <String, bool>{};
     for (final table in _tables) {
       final statement = table == 'embeddings'
