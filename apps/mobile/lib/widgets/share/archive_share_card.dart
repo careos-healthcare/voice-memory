@@ -47,19 +47,6 @@ class ArchiveShareCard extends StatelessWidget {
   static const double logicalWidth = 360;
   static const double logicalHeight = 480;
 
-  static Future<ui.Image> captureImage(
-    GlobalKey boundaryKey, {
-    double pixelRatio = 3,
-  }) async {
-    final boundary =
-        boundaryKey.currentContext?.findRenderObject()
-            as RenderRepaintBoundary?;
-    if (boundary == null) {
-      throw StateError('Archive share card is not ready to capture.');
-    }
-    return boundary.toImage(pixelRatio: pixelRatio);
-  }
-
   static Future<File> writePngFile({
     required Uint8List bytes,
     required String filename,
@@ -71,44 +58,35 @@ class ArchiveShareCard extends StatelessWidget {
     return file;
   }
 
-  static Future<File> capturePng(
+  /// Captures the card, writes a temporary PNG, and opens the system share sheet.
+  static Future<XFile> exportCard(
     GlobalKey boundaryKey, {
-    String filename = 'archive-share-card.png',
+    String text = '',
     Directory? directory,
-    double pixelRatio = 3,
+    Future<void> Function(XFile file, String text)? shareFile,
   }) async {
-    final image = await captureImage(boundaryKey, pixelRatio: pixelRatio);
-    final bytes = await image.toByteData(format: ui.ImageByteFormat.png);
-    if (bytes == null) {
+    final boundary =
+        boundaryKey.currentContext!.findRenderObject()! as RenderRepaintBoundary;
+    final image = await boundary.toImage(pixelRatio: 3.0);
+    final byteData = await image.toByteData(format: ui.ImageByteFormat.png);
+    image.dispose();
+    if (byteData == null) {
       throw StateError('Archive share card PNG was empty.');
     }
-    return writePngFile(
-      bytes: bytes.buffer.asUint8List(),
-      filename: filename,
+    final file = await writePngFile(
+      bytes: byteData.buffer.asUint8List(),
+      filename: 'archive-share-card.png',
       directory: directory,
     );
-  }
-
-  /// Writes the card image, then opens the native share sheet.
-  static Future<void> share(
-    GlobalKey boundaryKey, {
-    required String text,
-    String filename = 'archive-share-card.png',
-    Directory? directory,
-    Future<void> Function(File file, String text)? shareFile,
-  }) async {
-    final file = await capturePng(
-      boundaryKey,
-      filename: filename,
-      directory: directory,
-    );
+    final xFile = XFile(file.path, mimeType: 'image/png');
     final sender = shareFile ?? _shareWithSystemSheet;
-    await sender(file, text);
+    await sender(xFile, text);
+    return xFile;
   }
 
-  static Future<void> _shareWithSystemSheet(File file, String text) {
+  static Future<void> _shareWithSystemSheet(XFile file, String text) {
     return Share.shareXFiles(
-      [XFile(file.path, mimeType: 'image/png')],
+      [file],
       text: text,
       subject: 'ArchiveMe',
     );
@@ -230,7 +208,7 @@ class ArchiveShareCardPanel extends StatefulWidget {
 
   final ArchiveShareCardContent content;
   final VoidCallback? onViewEvidence;
-  final Future<void> Function(File file, String text)? shareFile;
+  final Future<void> Function(XFile file, String text)? shareFile;
   final Directory? captureDirectory;
 
   @override
@@ -246,7 +224,7 @@ class _ArchiveShareCardPanelState extends State<ArchiveShareCardPanel> {
     setState(() => _sharing = true);
     try {
       await WidgetsBinding.instance.endOfFrame;
-      await ArchiveShareCard.share(
+      await ArchiveShareCard.exportCard(
         _boundaryKey,
         text: widget.content.shareText,
         shareFile: widget.shareFile,
