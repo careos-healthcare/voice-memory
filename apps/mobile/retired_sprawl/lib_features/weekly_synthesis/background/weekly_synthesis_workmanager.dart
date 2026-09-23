@@ -1,6 +1,8 @@
 import 'dart:io';
 
 import 'package:archiveme_mobile/core/config/v1_capability_registry.dart';
+import 'package:archiveme_mobile/features/memos/life_memo_background.dart';
+import 'package:archiveme_mobile/features/memos/life_memo_schedule.dart';
 import 'package:archiveme_mobile/features/weekly_synthesis/background/weekly_synthesis_background_constraints.dart';
 import 'package:archiveme_mobile/features/weekly_synthesis/background/weekly_synthesis_background_runner.dart';
 import 'package:archiveme_mobile/features/weekly_synthesis/weekly_synthesis_config.dart';
@@ -11,6 +13,9 @@ import 'package:workmanager/workmanager.dart';
 @pragma('vm:entry-point')
 void weeklySynthesisCallbackDispatcher() {
   Workmanager().executeTask((taskName, _) async {
+    if (taskName == LifeMemoSchedule.taskName) {
+      return LifeMemoBackgroundRunner.run();
+    }
     if (taskName != WeeklySynthesisConfig.taskName) {
       return true;
     }

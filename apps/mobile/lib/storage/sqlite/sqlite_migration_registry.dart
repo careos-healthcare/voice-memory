@@ -19,6 +19,7 @@ import 'package:archiveme_mobile/storage/sqlite/migrations/migration_018_transcr
 import 'package:archiveme_mobile/storage/sqlite/migrations/migration_019_time_capsules_and_daily_checkins.dart';
 import 'package:archiveme_mobile/storage/sqlite/migrations/migration_020_entity_graph.dart';
 import 'package:archiveme_mobile/storage/sqlite/migrations/migration_021_ambient_metadata.dart';
+import 'package:archiveme_mobile/storage/sqlite/migrations/migration_022_life_memos.dart';
 import 'package:archiveme_mobile/storage/sqlite/sqlite_migration.dart';
 
 /// Ordered, validated catalog of [SqliteMigration] steps for the local DB.
@@ -50,6 +51,7 @@ class SqliteMigrationRegistry {
     Migration019TimeCapsulesAndDailyCheckins(),
     Migration020EntityGraph(),
     Migration021AmbientMetadata(),
+    Migration022LifeMemos(),
   ];
 
   static int get latestVersion =>
