@@ -172,6 +172,7 @@ first_week_path
 freeze_drift_scanner
 future_expansion_roadmap
 future_revenue_scope
+habits
 help
 helped_tracking
 health

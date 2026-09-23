@@ -21,7 +21,7 @@ void main() {
         SqliteMigrationManager.latestVersion,
       );
       expect(registry.migrations.length, SqliteMigrationManager.latestVersion);
-      expect(SqliteMigrationManager.latestVersion, 25);
+      expect(SqliteMigrationManager.latestVersion, 26);
     });
 
     test('rejects non-sequential migration versions', () {
