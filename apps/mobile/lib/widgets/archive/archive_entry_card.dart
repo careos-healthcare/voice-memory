@@ -1,4 +1,6 @@
 import 'package:archiveme_mobile/features/archive/v1/archive_entry_hero_tags.dart';
+import 'package:archiveme_mobile/features/metadata/ambient_metadata_service.dart';
+import 'package:archiveme_mobile/features/metadata/entry_metadata_views.dart';
 import 'package:archiveme_mobile/features/sync/presentation/widgets/entry_sync_indicator.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:flutter/material.dart';
@@ -34,6 +36,13 @@ class ArchiveEntryCard extends StatelessWidget {
                       ArchiveEntryCardMeta(entry: entry),
                       const SizedBox(height: 10),
                       ArchiveEntryCardPreview(entry: entry),
+                      EntryCardTile(
+                        transcript: entry.transcript,
+                        metadata: AmbientMetadataService.shared.metadataFor(
+                          entry.id,
+                        ),
+                        showTranscript: false,
+                      ),
                     ],
                   ),
                 ),

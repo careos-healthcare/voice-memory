@@ -12,6 +12,7 @@ import 'package:archiveme_mobile/core/di/hardware_audio_providers.dart';
 import 'package:archiveme_mobile/core/utils/app_logger.dart';
 import 'package:archiveme_mobile/features/capture/vad/vad_models.dart';
 import 'package:archiveme_mobile/features/capture/vad/vad_segmented_recording_coordinator.dart';
+import 'package:archiveme_mobile/features/metadata/ambient_metadata_service.dart';
 import 'package:archiveme_mobile/core/di/app_provider_container.dart';
 import 'package:archiveme_mobile/features/voice_capture/audio/audio_capture_diagnostics.dart';
 import 'package:archiveme_mobile/features/voice_capture/audio/audio_diag_log.dart';
@@ -185,6 +186,7 @@ class RecordingService extends Notifier<RecordingState> {
     await _permissionManager.assertCanStartRecording(
       permissionVerified: permissionVerified,
     );
+    AmbientMetadataService.shared.begin();
 
     if (_testMode) {
       recorderStartCallCount++;

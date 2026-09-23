@@ -5,6 +5,10 @@ import 'package:archiveme_mobile/features/archive/v1/archive_entry_hero_tags.dar
 import 'package:archiveme_mobile/features/entry_detail/entry_detail_copy.dart';
 import 'package:archiveme_mobile/features/memory/memory_surfacing_mode.dart';
 import 'package:archiveme_mobile/features/memory/sensitive_surfacing_policy.dart';
+import 'package:archiveme_mobile/features/metadata/ambient_metadata.dart';
+import 'package:archiveme_mobile/features/metadata/ambient_metadata_service.dart';
+import 'package:archiveme_mobile/features/metadata/ambient_metadata_store.dart';
+import 'package:archiveme_mobile/features/metadata/entry_metadata_views.dart';
 import 'package:archiveme_mobile/features/timeline/timeline_entry_display.dart';
 import 'package:archiveme_mobile/features/voice_capture/voice_capture_copy.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
@@ -40,6 +44,7 @@ class EntryDetailScreen extends StatefulWidget {
 
 class _EntryDetailScreenState extends State<EntryDetailScreen> {
   JournalEntry? _entry;
+  AmbientMetadata? _metadata;
   bool _advancedExpanded = false;
 
   late final V1AccountDependencies _accountDeps =
@@ -78,6 +83,24 @@ class _EntryDetailScreenState extends State<EntryDetailScreen> {
       }
     }
     if (mounted) setState(() => _entry = e);
+    await _loadAmbientMetadata();
+  }
+
+  Future<void> _loadAmbientMetadata() async {
+    if (!AppServices.isInitialized) return;
+    try {
+      final metadata = await AmbientMetadataStore.read(
+        AppServices.instance.sqliteDatabase.database,
+        widget.entryId,
+      );
+      if (metadata != null) {
+        AmbientMetadataService.shared.stored[widget.entryId] = metadata;
+      }
+      if (!mounted) return;
+      setState(() => _metadata = metadata);
+    } on Object {
+      return;
+    }
   }
 
   Future<void> _confirmDelete(JournalEntry entry) async {
@@ -213,10 +236,10 @@ class _EntryDetailScreenState extends State<EntryDetailScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          view.primary,
-          key: const Key('entry_detail_recorded_body'),
-          style: const TextStyle(height: 1.45),
+        EntryDetailView(
+          transcript: view.primary,
+          metadata:
+              _metadata ?? AmbientMetadataService.shared.metadataFor(entry.id),
         ),
         if (speakableText != null) ...[
           const SizedBox(height: 8),

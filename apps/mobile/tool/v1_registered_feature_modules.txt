@@ -198,6 +198,7 @@ low_friction_return
 media
 memory
 memory_resurfacing
+metadata
 milestone_share
 moment_quality
 moments
