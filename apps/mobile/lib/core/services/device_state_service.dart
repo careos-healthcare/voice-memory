@@ -15,8 +15,10 @@ class DeviceConditions {
   final bool isCharging;
   final bool isWifiConnected;
 
-  /// Vector indexing and P2P sync run only on power and Wi-Fi.
-  bool get allowsHeavyWork => isCharging && isWifiConnected;
+  /// Vector indexing and mesh sync run when the device is charging or on Wi-Fi.
+  bool get hasWiFi => isWifiConnected;
+
+  bool get allowsHeavyWork => isCharging || hasWiFi;
 }
 
 /// Latest charging and Wi-Fi readings.
@@ -55,7 +57,9 @@ class ManualDeviceState implements DeviceStateSource {
 
   void emit(DeviceConditions next) {
     _current = next;
-    for (final listener in List<void Function(DeviceConditions)>.of(_listeners)) {
+    for (final listener in List<void Function(DeviceConditions)>.of(
+      _listeners,
+    )) {
       listener(next);
     }
   }

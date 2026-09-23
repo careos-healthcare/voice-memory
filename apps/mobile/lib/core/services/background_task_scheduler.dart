@@ -4,7 +4,7 @@ import 'package:archiveme_mobile/core/database/sqlite_vec_indexer.dart';
 import 'package:archiveme_mobile/core/services/device_state_service.dart';
 import 'package:archiveme_mobile/core/services/task_queue_manager.dart';
 
-/// Drains vector-index and P2P jobs only while the device is charging on Wi-Fi.
+/// Drains vector-index and mesh jobs when the device is charging or on Wi-Fi.
 class BackgroundTaskScheduler {
   BackgroundTaskScheduler({
     required this.device,
@@ -24,7 +24,7 @@ class BackgroundTaskScheduler {
     await drain();
   }
 
-  /// Starts automatic drains when power and Wi-Fi become available together.
+  /// Starts automatic drains when charging or Wi-Fi becomes available.
   void start() {
     _subscription ??= device.watch().listen((conditions) {
       if (conditions.allowsHeavyWork) {
@@ -38,9 +38,10 @@ class BackgroundTaskScheduler {
     _subscription = null;
   }
 
-  /// Processes pending jobs. Returns how many finished.
+  /// Processes pending jobs in enqueue order. Returns how many finished.
   ///
-  /// On battery or off Wi-Fi the queue stays `pending` and nothing runs.
+  /// With neither charging nor Wi-Fi the queue stays `pending` and nothing runs.
+  /// Each SQLite status update yields so the current UI frame is not held.
   Future<int> drain() async {
     final conditions = await device.refresh();
     if (!conditions.allowsHeavyWork) return 0;
@@ -49,7 +50,9 @@ class BackgroundTaskScheduler {
     for (final job in jobs) {
       final still = await device.refresh();
       if (!still.allowsHeavyWork) break;
+      await Future<void>.delayed(Duration.zero);
       await _indexer.execute(job);
+      await Future<void>.delayed(Duration.zero);
       await queue.complete(job.id);
       finished++;
     }

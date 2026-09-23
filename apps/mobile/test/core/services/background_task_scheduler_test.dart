@@ -11,9 +11,9 @@ import '../../storage/sqlite/support/configure_sqlite_test_ffi.dart';
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  test('defers vector and sync jobs until charging on Wi-Fi', () async {
+  test('defers mesh and embedding jobs until charging or Wi-Fi', () async {
     final device = ManualDeviceState(
-      const DeviceConditions(isCharging: false, isWifiConnected: true),
+      const DeviceConditions(isCharging: false, isWifiConnected: false),
     );
     final queue = MemoryTaskQueue();
     final scheduler = BackgroundTaskScheduler(
@@ -35,12 +35,6 @@ void main() {
     device.emit(
       const DeviceConditions(isCharging: true, isWifiConnected: false),
     );
-    expect(await scheduler.drain(), 0);
-    expect(await queue.pending(), isNotEmpty);
-
-    device.emit(
-      const DeviceConditions(isCharging: true, isWifiConnected: true),
-    );
     final monitor = FrameBudgetMonitor();
     expect(await scheduler.drain(), 1);
     monitor.record(
@@ -48,6 +42,28 @@ void main() {
       raster: const Duration(milliseconds: 2),
     );
     expect(monitor.droppedFrames, 0);
+    expect(await queue.pending(), isEmpty);
+  });
+
+  test('Wi-Fi alone drains a pending embedding job', () async {
+    final device = ManualDeviceState(
+      const DeviceConditions(isCharging: false, isWifiConnected: true),
+    );
+    final queue = MemoryTaskQueue();
+    final scheduler = BackgroundTaskScheduler(
+      device: DeviceStateService(source: device),
+      queue: queue,
+    );
+    await queue.enqueue(
+      const BackgroundTask(
+        id: 'vec-wifi',
+        kind: BackgroundTask.kindVectorIndex,
+        entryId: 'entry-wifi',
+        payload: '1,0',
+        status: BackgroundTask.statusPending,
+      ),
+    );
+    expect(await scheduler.drain(), 1);
     expect(await queue.pending(), isEmpty);
   });
 
@@ -91,11 +107,40 @@ void main() {
         entryId: 'entry-3',
         payload: '1,0',
         status: BackgroundTask.statusPending,
+        enqueuedAt: 5,
       ),
     );
     final pending = await queue.pending();
     expect(pending.single.status, BackgroundTask.statusPending);
+    await queue.enqueue(
+      const BackgroundTask(
+        id: 'sync-later',
+        kind: BackgroundTask.kindP2pSync,
+        entryId: 'entry-4',
+        payload: 'peer',
+        status: BackgroundTask.statusPending,
+        enqueuedAt: 20,
+      ),
+    );
+    await queue.enqueue(
+      const BackgroundTask(
+        id: 'vec-earlier',
+        kind: BackgroundTask.kindVectorIndex,
+        entryId: 'entry-5',
+        payload: '0,1',
+        status: BackgroundTask.statusPending,
+        enqueuedAt: 10,
+      ),
+    );
+    final ordered = await queue.pending();
+    expect(ordered.map((task) => task.id).toList(), [
+      'vec-2',
+      'vec-earlier',
+      'sync-later',
+    ]);
     await queue.complete('vec-2');
+    await queue.complete('vec-earlier');
+    await queue.complete('sync-later');
     expect(await queue.pending(), isEmpty);
   });
 
