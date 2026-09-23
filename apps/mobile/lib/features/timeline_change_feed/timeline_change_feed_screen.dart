@@ -38,7 +38,6 @@ class _TimelineFeed extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final range = ref.watch(timelineDateRangeProvider);
-    final expansion = ref.watch(timelineSectionExpansionProvider);
     final sections = ArchiveChangeFeedTimeline.sections(
       entries: entries,
       year: range.year,
@@ -53,46 +52,7 @@ class _TimelineFeed extends ConsumerWidget {
       key: const Key('timeline_change_feed'),
       slivers: [
         SliverToBoxAdapter(
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(
-              AppTokens.spacing4,
-              AppTokens.spacing4,
-              AppTokens.spacing4,
-              AppTokens.spacing2,
-            ),
-            child: Wrap(
-              spacing: AppTokens.spacing2,
-              runSpacing: AppTokens.spacing2,
-              children: [
-                ChoiceChip(
-                  key: const Key('timeline_change_feed_all'),
-                  label: const Text('All'),
-                  selected: range.year == null,
-                  onSelected: (_) => ref
-                      .read(timelineDateRangeProvider.notifier)
-                      .selectYear(null),
-                ),
-                for (final year in years)
-                  ChoiceChip(
-                    key: Key('timeline_change_feed_year_$year'),
-                    label: Text('$year'),
-                    selected: range.year == year,
-                    onSelected: (_) => ref
-                        .read(timelineDateRangeProvider.notifier)
-                        .selectYear(year),
-                  ),
-                for (final month in months)
-                  ChoiceChip(
-                    key: Key('timeline_change_feed_month_${range.year}_$month'),
-                    label: Text(ArchiveChangeFeedSection.monthNames[month - 1]),
-                    selected: range.month == month,
-                    onSelected: (_) => ref
-                        .read(timelineDateRangeProvider.notifier)
-                        .selectMonth(range.month == month ? null : month),
-                  ),
-              ],
-            ),
-          ),
+          child: _DateRangeFilters(range: range, years: years, months: months),
         ),
         if (sections.isEmpty)
           const SliverToBoxAdapter(
@@ -104,28 +64,98 @@ class _TimelineFeed extends ConsumerWidget {
               ),
             ),
           ),
-        for (final section in sections)
-          SliverMainAxisGroup(
-            slivers: [
-              SliverPersistentHeader(
-                pinned: true,
-                delegate: _MonthHeaderDelegate(
-                  section: section,
-                  expanded: expansion.isExpanded(section.storageKey),
-                  onToggle: () => ref
-                      .read(timelineSectionExpansionProvider.notifier)
-                      .toggle(section.storageKey),
-                ),
-              ),
-              if (expansion.isExpanded(section.storageKey))
-                SliverList(
-                  delegate: SliverChildBuilderDelegate((context, index) {
-                    return _TimelineRow(entry: section.entries[index]);
-                  }, childCount: section.entries.length),
-                ),
-            ],
-          ),
+        for (final section in sections) _MonthGroup(section: section),
         const SliverToBoxAdapter(child: SizedBox(height: AppTokens.spacing8)),
+      ],
+    );
+  }
+}
+
+class _DateRangeFilters extends ConsumerWidget {
+  const _DateRangeFilters({
+    required this.range,
+    required this.years,
+    required this.months,
+  });
+
+  final TimelineDateRange range;
+  final List<int> years;
+  final List<int> months;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(
+        AppTokens.spacing4,
+        AppTokens.spacing4,
+        AppTokens.spacing4,
+        AppTokens.spacing2,
+      ),
+      child: Wrap(
+        spacing: AppTokens.spacing2,
+        runSpacing: AppTokens.spacing2,
+        children: [
+          ChoiceChip(
+            key: const Key('timeline_change_feed_all'),
+            label: const Text('All'),
+            selected: range.year == null,
+            onSelected: (_) =>
+                ref.read(timelineDateRangeProvider.notifier).selectYear(null),
+          ),
+          for (final year in years)
+            ChoiceChip(
+              key: Key('timeline_change_feed_year_$year'),
+              label: Text('$year'),
+              selected: range.year == year,
+              onSelected: (_) =>
+                  ref.read(timelineDateRangeProvider.notifier).selectYear(year),
+            ),
+          for (final month in months)
+            ChoiceChip(
+              key: Key('timeline_change_feed_month_${range.year}_$month'),
+              label: Text(ArchiveChangeFeedSection.monthNames[month - 1]),
+              selected: range.month == month,
+              onSelected: (_) => ref
+                  .read(timelineDateRangeProvider.notifier)
+                  .selectMonth(range.month == month ? null : month),
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+/// One month. Watches only its own expanded flag so other months stay mounted.
+class _MonthGroup extends ConsumerWidget {
+  const _MonthGroup({required this.section});
+
+  final ArchiveChangeFeedSection section;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final expanded = ref.watch(
+      timelineSectionExpansionProvider.select(
+        (state) => state.isExpanded(section.storageKey),
+      ),
+    );
+    return SliverMainAxisGroup(
+      slivers: [
+        SliverPersistentHeader(
+          pinned: true,
+          delegate: _MonthHeaderDelegate(
+            section: section,
+            expanded: expanded,
+            onToggle: () => ref
+                .read(timelineSectionExpansionProvider.notifier)
+                .toggle(section.storageKey),
+          ),
+        ),
+        if (expanded)
+          SliverList(
+            delegate: SliverChildBuilderDelegate((context, index) {
+              return _TimelineRow(entry: section.entries[index]);
+            }, childCount: section.entries.length),
+          ),
       ],
     );
   }

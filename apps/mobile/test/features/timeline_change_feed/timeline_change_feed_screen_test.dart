@@ -128,6 +128,47 @@ void main() {
       expect(find.text('Last winter.'), findsOneWidget);
     },
   );
+
+  testWidgets('collapsing one month leaves the other month mounted', (
+    tester,
+  ) async {
+    await tester.binding.setSurfaceSize(const Size(400, 900));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+
+    await tester.pumpWidget(
+      _host([
+        _entry(
+          'voice',
+          DateTime.utc(2026, 9, 20),
+          'Walked after lunch.',
+          voice: true,
+        ),
+        _entry('older', DateTime.utc(2025, 1, 4), 'Last winter.'),
+      ]),
+    );
+    await tester.pumpAndSettle();
+
+    final older = tester.widget(
+      find.byKey(const Key('timeline_change_feed_text_older')),
+    );
+    await tester.tap(
+      find.byKey(const Key('timeline_change_feed_header_2026-9')),
+    );
+    await tester.pump();
+
+    expect(
+      find.byKey(const Key('timeline_change_feed_voice_voice')),
+      findsNothing,
+    );
+    expect(
+      identical(
+        older,
+        tester.widget(find.byKey(const Key('timeline_change_feed_text_older'))),
+      ),
+      isTrue,
+    );
+    expect(find.text('January 2025'), findsOneWidget);
+  });
 }
 
 Widget _host(List<JournalEntry> entries) {
