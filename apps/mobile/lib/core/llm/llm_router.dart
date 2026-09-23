@@ -55,7 +55,10 @@ class CloudByokSettings {
   Uri? get requestUri {
     if (!hasValidKey) return null;
     return switch (provider) {
-      CloudByokProvider.claude => Uri.https('api.anthropic.com', '/v1/messages'),
+      CloudByokProvider.claude => Uri.https(
+        'api.anthropic.com',
+        '/v1/messages',
+      ),
       CloudByokProvider.openAi => Uri.https(
         'api.openai.com',
         '/v1/chat/completions',
@@ -88,7 +91,8 @@ class LlmRouter {
   }) : local = local ?? _localExtract;
 
   final Future<String> Function(String prompt) local;
-  final Future<String> Function(CloudByokSettings settings, String prompt)? cloud;
+  final Future<String> Function(CloudByokSettings settings, String prompt)?
+  cloud;
   final CloudByokSettings settings;
   final http.Client? httpClient;
 
@@ -100,6 +104,23 @@ class LlmRouter {
       return LlmExecutionTarget.cloudByok;
     }
     return LlmExecutionTarget.localOffline;
+  }
+
+  /// Yields word tokens for [prompt] as soon as the routed text is ready.
+  Stream<String> streamTokens({
+    required LlmWorkload workload,
+    required String prompt,
+  }) async* {
+    final result = await run(workload: workload, prompt: prompt);
+    yield* wordTokens(result.text);
+  }
+
+  /// Splits [text] into words, keeping the whitespace that follows each one.
+  static Stream<String> wordTokens(String text) async* {
+    for (final match in RegExp(r'\S+\s*').allMatches(text)) {
+      final token = match.group(0);
+      if (token != null && token.isNotEmpty) yield token;
+    }
   }
 
   Future<LlmRouteResult> run({

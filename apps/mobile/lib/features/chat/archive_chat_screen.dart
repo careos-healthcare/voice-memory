@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:archiveme_mobile/features/audio/local_speech_synthesizer.dart';
 import 'package:archiveme_mobile/features/chat/archive_chat_service.dart';
 import 'package:archiveme_mobile/features/chat/chat_notifier.dart';
 import 'package:archiveme_mobile/features/metadata/entry_metadata_views.dart';
@@ -13,6 +14,19 @@ const archiveChatSuggestions = <String>[
   'Summarize my progress on career goals',
   'When was the last time I saw Ada?',
 ];
+
+/// Which assistant bubble is currently read aloud.
+class ReadAloudSelection extends Notifier<String?> {
+  @override
+  String? build() => null;
+
+  set selected(String? messageId) => state = messageId;
+}
+
+final readAloudSelectionProvider =
+    NotifierProvider<ReadAloudSelection, String?>(
+      ReadAloudSelection.new,
+    );
 
 /// Conversational archive chat with streaming replies and source chips.
 class ArchiveChatScreen extends ConsumerStatefulWidget {
@@ -44,6 +58,31 @@ class _ArchiveChatScreenState extends ConsumerState<ArchiveChatScreen> {
   @override
   Widget build(BuildContext context) {
     final chat = ref.watch(chatNotifierProvider);
+    ref.listen(chatNotifierProvider, (previous, next) {
+      final selected = ref.read(readAloudSelectionProvider);
+      if (selected == null) return;
+      ChatMessage? message;
+      for (final candidate in next.messages) {
+        if (candidate.id == selected) message = candidate;
+      }
+      if (message == null) return;
+      String? priorBody;
+      for (final candidate in previous?.messages ?? const <ChatMessage>[]) {
+        if (candidate.id == selected) priorBody = candidate.body;
+      }
+      if (priorBody != null && message.body.length > priorBody.length) {
+        unawaited(
+          ref
+              .read(localSpeechSynthesizerProvider.notifier)
+              .pushToken(message.body.substring(priorBody.length)),
+        );
+      }
+      if ((previous?.streaming ?? false) && !next.streaming) {
+        unawaited(
+          ref.read(localSpeechSynthesizerProvider.notifier).finishUtterance(),
+        );
+      }
+    });
     _keepLatestVisible();
     return Scaffold(
       key: const Key('archive_chat_screen'),
@@ -148,14 +187,15 @@ class _ArchiveChatScreenState extends ConsumerState<ArchiveChatScreen> {
   }
 }
 
-class _ChatBubble extends StatelessWidget {
+class _ChatBubble extends ConsumerWidget {
   const _ChatBubble({required this.message});
 
   final ChatMessage message;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final isUser = message.role == ChatMessageRole.user;
+    final readingAloud = ref.watch(readAloudSelectionProvider) == message.id;
     final width = MediaQuery.sizeOf(context).width * 0.82;
     return Padding(
       padding: const EdgeInsets.only(bottom: AppTokens.spacing3),
@@ -190,6 +230,24 @@ class _ChatBubble extends StatelessWidget {
               ),
             ),
           ),
+          if (!isUser && message.body.trim().isNotEmpty)
+            TextButton(
+              key: Key('chat_read_aloud_${message.id}'),
+              onPressed: () {
+                final selection = ref.read(readAloudSelectionProvider.notifier);
+                final synthesizer = ref.read(
+                  localSpeechSynthesizerProvider.notifier,
+                );
+                if (readingAloud) {
+                  synthesizer.interrupt();
+                  selection.selected = null;
+                  return;
+                }
+                selection.selected = message.id;
+                unawaited(synthesizer.speakText(message.body));
+              },
+              child: const Text('Read aloud'),
+            ),
           if (!isUser && message.sources.isNotEmpty) ...[
             const SizedBox(height: AppTokens.spacing2),
             Text(

@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:archiveme_mobile/features/audio/dual_mode_audio_timing.dart';
+import 'package:archiveme_mobile/features/audio/local_speech_synthesizer.dart';
 import 'package:archiveme_mobile/features/audio/sherpa_dual_mode_backend.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -217,6 +218,14 @@ class DualModeAudioEngine extends AsyncNotifier<DualModeAudioSnapshot> {
   }
 
   Future<void> pushSamples(Float32List samples) {
+    final snapshot = _current;
+    if (snapshot.recording &&
+        snapshot.mode == DualAudioMode.interactive &&
+        samples.isNotEmpty &&
+        _ports.isSpeech(samples) &&
+        ref.read(localSpeechSynthesizerProvider).speaking) {
+      ref.read(localSpeechSynthesizerProvider.notifier).interrupt();
+    }
     final task = _work.then((_) => _pushSamples(samples));
     _work = task;
     return task;

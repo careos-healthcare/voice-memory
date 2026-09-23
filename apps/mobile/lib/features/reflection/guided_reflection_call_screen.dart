@@ -1,8 +1,10 @@
 import 'dart:async';
 import 'dart:math' as math;
 
+import 'package:archiveme_mobile/core/llm/llm_router.dart';
 import 'package:archiveme_mobile/design/archive_mobile_typography.dart';
 import 'package:archiveme_mobile/features/audio/dual_mode_audio_engine.dart';
+import 'package:archiveme_mobile/features/audio/local_speech_synthesizer.dart';
 import 'package:archiveme_mobile/features/reflection/reflection_prompts.dart';
 import 'package:archiveme_mobile/theme/app_tokens.dart';
 import 'package:flutter/material.dart';
@@ -51,11 +53,18 @@ class _GuidedReflectionCallScreenState
   var _showTranscript = false;
   var _saved = false;
   var _started = false;
+  var _speakingReply = false;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) => _begin());
+  }
+
+  @override
+  void deactivate() {
+    ref.read(localSpeechSynthesizerProvider.notifier).interrupt();
+    super.deactivate();
   }
 
   Future<void> _begin() async {
@@ -77,6 +86,20 @@ class _GuidedReflectionCallScreenState
         .join('\n');
   }
 
+  Future<void> _speakReply(String reply) async {
+    if (!mounted) return;
+    setState(() => _speakingReply = true);
+    await ref
+        .read(localSpeechSynthesizerProvider.notifier)
+        .speakRouted(
+          LlmRouter(local: (_) async => reply),
+          workload: LlmWorkload.chatReply,
+          prompt: reply,
+        );
+    if (!mounted) return;
+    setState(() => _speakingReply = false);
+  }
+
   Future<void> _save(DualModeAudioSnapshot snapshot) async {
     final transcript = _transcript(snapshot);
     await widget.onSave?.call(transcript);
@@ -86,10 +109,19 @@ class _GuidedReflectionCallScreenState
 
   @override
   Widget build(BuildContext context) {
+    ref.listen(dualModeAudioEngineProvider, (previous, next) {
+      final reply = next.value?.lastReply;
+      final prior = previous?.value?.lastReply;
+      if (reply == null || reply.isEmpty || reply == prior) return;
+      final spoken = reply;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        unawaited(_speakReply(spoken));
+      });
+    });
     final asyncSnapshot = ref.watch(dualModeAudioEngineProvider);
     final snapshot = asyncSnapshot.value ?? const DualModeAudioSnapshot();
-    final listening = snapshot.recording && !snapshot.playingResponse;
-    final playing = snapshot.playingResponse;
+    final playing = snapshot.playingResponse || _speakingReply;
+    final listening = snapshot.recording && !playing;
     final transcript = _transcript(snapshot);
 
     return Scaffold(
@@ -104,8 +136,9 @@ class _GuidedReflectionCallScreenState
               Text(
                 widget.promptTitle,
                 key: const Key('reflection_prompt_title'),
-                style: ArchiveMobileTypography.responsivePageTitle(context)
-                    .copyWith(color: Colors.white),
+                style: ArchiveMobileTypography.responsivePageTitle(
+                  context,
+                ).copyWith(color: Colors.white),
               ),
               const Spacer(),
               _AmbientPulse(
@@ -116,8 +149,9 @@ class _GuidedReflectionCallScreenState
               Text(
                 playing ? 'Playing a response' : 'Listening',
                 textAlign: TextAlign.center,
-                style: ArchiveMobileTypography.responsiveSectionTitle(context)
-                    .copyWith(color: AppTokens.neutral200),
+                style: ArchiveMobileTypography.responsiveSectionTitle(
+                  context,
+                ).copyWith(color: AppTokens.neutral200),
               ),
               const Spacer(),
               if (_saved)
@@ -226,7 +260,9 @@ class _AmbientPulseState extends State<_AmbientPulse>
             ),
             painter: _PulsePainter(
               t: active ? _pulse.value : 0,
-              color: widget.playing ? AppTokens.primary200 : AppTokens.primary400,
+              color: widget.playing
+                  ? AppTokens.primary200
+                  : AppTokens.primary400,
             ),
             child: const SizedBox(width: 180, height: 120),
           );
