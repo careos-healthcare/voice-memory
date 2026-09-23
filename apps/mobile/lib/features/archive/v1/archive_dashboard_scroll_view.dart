@@ -12,6 +12,7 @@ import 'package:archiveme_mobile/features/sync/presentation/modals/conflict_reso
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/services/app_services.dart';
 import 'package:archiveme_mobile/theme/app_colors.dart';
+import 'package:archiveme_mobile/widgets/archive/archive_change_feed.dart';
 import 'package:archiveme_mobile/widgets/archive/archive_changes_section.dart';
 import 'package:archiveme_mobile/widgets/archive/archive_changes_unavailable_notice.dart';
 import 'package:archiveme_mobile/widgets/archive/archive_empty_state.dart';
@@ -286,16 +287,29 @@ class ArchiveDashboardScrollView extends StatelessWidget {
                           crossAxisCount: columns,
                           textScaler: MediaQuery.textScalerOf(context),
                         )) {
-                          return SliverList(
-                            delegate: SliverChildBuilderDelegate(
-                              (context, index) => _entryTile(
-                                context,
-                                visibleEntries,
-                                feed,
-                                index,
-                                onEntryTap,
-                              ),
-                              childCount: itemCount,
+                          return ArchiveChangeFeed(
+                            asSliver: true,
+                            showTitle: false,
+                            entries: visibleEntries,
+                            trailing: feed.isLoadingMore
+                                ? const Padding(
+                                    padding: EdgeInsets.symmetric(vertical: 16),
+                                    child: Center(
+                                      child: CircularProgressIndicator(),
+                                    ),
+                                  )
+                                : null,
+                            itemBuilder: (context, entry) => ArchiveEntryCard(
+                              entry: entry,
+                              onTap: () {
+                                unawaited(
+                                  openEntryRespectingConflict(
+                                    context: context,
+                                    entry: entry,
+                                    onOpen: () => onEntryTap(entry.id),
+                                  ),
+                                );
+                              },
                             ),
                           );
                         }
