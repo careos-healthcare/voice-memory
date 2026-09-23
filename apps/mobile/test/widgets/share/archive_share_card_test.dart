@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'package:archiveme_mobile/widgets/share/archive_share_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:image/image.dart' as img;
 
 void main() {
   const content = ArchiveShareCardContent(
@@ -65,6 +66,22 @@ void main() {
     );
     expect(await file.readAsBytes(), [137, 80, 78, 71, 13, 10, 26, 10]);
     dir.deleteSync(recursive: true);
+  });
+
+  test('encodes raw rgba pixels as a png', () {
+    final png = ArchiveShareCard.pngBytesFromRgba(
+      rgba: Uint8List.fromList(const [255, 0, 0, 255]),
+      width: 1,
+      height: 1,
+    );
+    final decoded = img.decodePng(png);
+    expect(decoded, isNotNull);
+    expect(decoded!.width, 1);
+    expect(decoded.height, 1);
+    final pixel = decoded.getPixel(0, 0);
+    expect(pixel.r, 255);
+    expect(pixel.g, 0);
+    expect(pixel.b, 0);
   });
 
   test('share text keeps the insight and the moments behind it', () {

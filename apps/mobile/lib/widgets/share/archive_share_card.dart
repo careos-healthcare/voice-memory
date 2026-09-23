@@ -6,6 +6,7 @@ import 'package:archiveme_mobile/theme/archive_design_tokens.dart';
 import 'package:archiveme_mobile/widgets/archive/view_evidence_inline_link.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:image/image.dart' as img;
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -58,7 +59,23 @@ class ArchiveShareCard extends StatelessWidget {
     return file;
   }
 
-  /// Captures the card, writes a temporary PNG, and opens the system share sheet.
+  /// Encodes straight RGBA pixels from [ui.Image.toByteData] into a PNG.
+  static Uint8List pngBytesFromRgba({
+    required Uint8List rgba,
+    required int width,
+    required int height,
+  }) {
+    final bitmap = img.Image.fromBytes(
+      width: width,
+      height: height,
+      bytes: rgba.buffer,
+      bytesOffset: rgba.offsetInBytes,
+      order: img.ChannelOrder.rgba,
+    );
+    return Uint8List.fromList(img.encodePng(bitmap));
+  }
+
+  /// Captures the card as RGBA, writes a temporary PNG, and opens the share sheet.
   static Future<XFile> exportCard(
     GlobalKey boundaryKey, {
     String text = '',
@@ -68,13 +85,19 @@ class ArchiveShareCard extends StatelessWidget {
     final boundary =
         boundaryKey.currentContext!.findRenderObject()! as RenderRepaintBoundary;
     final image = await boundary.toImage(pixelRatio: 3.0);
-    final byteData = await image.toByteData(format: ui.ImageByteFormat.png);
+    final byteData = await image.toByteData(format: ui.ImageByteFormat.rawRgba);
+    final width = image.width;
+    final height = image.height;
     image.dispose();
     if (byteData == null) {
-      throw StateError('Archive share card PNG was empty.');
+      throw StateError('Archive share card image was empty.');
     }
+    final rgba = byteData.buffer.asUint8List(
+      byteData.offsetInBytes,
+      byteData.lengthInBytes,
+    );
     final file = await writePngFile(
-      bytes: byteData.buffer.asUint8List(),
+      bytes: pngBytesFromRgba(rgba: rgba, width: width, height: height),
       filename: 'archive-share-card.png',
       directory: directory,
     );
