@@ -4,9 +4,13 @@ import 'package:archiveme_mobile/config/screenshot_sample_data.dart';
 import 'package:archiveme_mobile/design/archive_mobile_typography.dart';
 import 'package:archiveme_mobile/design/archive_responsive_layout.dart';
 import 'package:archiveme_mobile/features/privacy_trust/privacy_trust_copy.dart';
+import 'package:archiveme_mobile/features/wearable/wearable_ingestion_worker.dart';
+import 'package:archiveme_mobile/features/wearable/wearable_sync_service.dart';
+import 'package:archiveme_mobile/features/wearable/widgets/wearable_settings_tile.dart';
 import 'package:archiveme_mobile/l10n/localized_consumer_ui.dart';
 import 'package:archiveme_mobile/l10n/generated/app_localizations.dart';
 import 'package:archiveme_mobile/product/consumer_ui_copy.dart';
+import 'package:archiveme_mobile/router/v1_route_registry.dart';
 import 'package:archiveme_mobile/services/app_services.dart';
 import 'package:archiveme_mobile/theme/app_colors.dart';
 import 'package:archiveme_mobile/theme/app_spacing.dart';
@@ -30,6 +34,8 @@ class _AccountScreenState extends State<AccountScreen> {
   String _status = '';
   bool _busy = false;
   bool _showSignIn = false;
+  WearableSyncService? _wearable;
+  var _wearableSync = true;
 
   @override
   void initState() {
@@ -40,7 +46,34 @@ class _AccountScreenState extends State<AccountScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
       unawaited(_refresh());
+      unawaited(_bindWearable());
     });
+  }
+
+  @override
+  void dispose() {
+    _wearable?.dispose();
+    super.dispose();
+  }
+
+  Future<void> _bindWearable() async {
+    final binding = WidgetsBinding.instance.runtimeType.toString();
+    if (binding.contains('Test')) return;
+    if (!AppServices.isInitialized) return;
+    try {
+      final service = WearableSyncService(
+        worker: WearableIngestionWorker(
+          database: AppServices.instance.sqliteDatabase.database,
+        ),
+      );
+      _wearable = service;
+      await service.bind();
+      _wearableSync = service.backgroundSync;
+    } on Object {
+      // A missing watch channel leaves the tile on its defaults.
+    }
+    if (!mounted) return;
+    setState(() {});
   }
 
   Future<void> _refresh() async {
@@ -127,6 +160,31 @@ class _AccountScreenState extends State<AccountScreen> {
                 const SizedBox(height: AppSpacing.md),
                 const AccountPrivacyControlsSection(),
                 const SizedBox(height: AppSpacing.md),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+                  child: Material(
+                    color: AppColors.backgroundSecondary,
+                    borderRadius: BorderRadius.circular(16),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: AppSpacing.md,
+                      ),
+                      child: WearableSettingsTile(
+                        connected: _wearable?.connected ?? false,
+                        backgroundSync: _wearableSync,
+                        pendingCount: _wearable?.pending.length ?? 0,
+                        onBackgroundSyncChanged: (enabled) {
+                          setState(() => _wearableSync = enabled);
+                          final wearable = _wearable;
+                          if (wearable == null) return;
+                          unawaited(
+                            wearable.setBackgroundSync(enabled: enabled),
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                ),
                 _sectionTile(
                   title: l10n.syncStatus,
                   subtitle: syncSubtitle,
@@ -142,6 +200,11 @@ class _AccountScreenState extends State<AccountScreen> {
                   key: const Key('account_privacy_trust_centre_tile'),
                   title: PrivacyTrustCopy.title,
                   onTap: () => context.push('/privacy-trust-centre'),
+                ),
+                _sectionTile(
+                  key: const Key('account_system_health_tile'),
+                  title: 'System Health & Diagnostics',
+                  onTap: () => context.push(V1RouteRegistry.syncStatusPath),
                 ),
                 _sectionTile(
                   title: l10n.deleteAccount,
@@ -225,7 +288,8 @@ class _AccountScreenState extends State<AccountScreen> {
   }
 
   Widget _sectionTile({
-    required String title, Key? key,
+    required String title,
+    Key? key,
     String? subtitle,
     VoidCallback? onTap,
     Widget? trailing,

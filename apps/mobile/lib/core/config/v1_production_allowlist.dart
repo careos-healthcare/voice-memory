@@ -49,6 +49,7 @@ abstract final class V1ProductionAllowlist {
     'CaptureScreenHost',
     'CaptureScreen',
     'ArchiveBeliefScreen',
+    'ArchiveChatScreen',
     'BeliefChangesScreen',
     'AccountScreen',
     'SecuritySettingsScreen',

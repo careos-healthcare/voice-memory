@@ -9,6 +9,7 @@ import 'package:archiveme_mobile/features/voice/presentation/voice_call_screen.d
 import 'package:archiveme_mobile/config/production_navigation.dart';
 import 'package:archiveme_mobile/config/screenshot_mode.dart';
 import 'package:archiveme_mobile/config/trial_mode.dart';
+import 'package:archiveme_mobile/core/diagnostics/sync_status_route.dart';
 import 'package:archiveme_mobile/core/config/v1_capability_registry.dart';
 import 'package:archiveme_mobile/core/config/v1_feature_flags.dart';
 import 'package:archiveme_mobile/core/config/v1_navigation_guard.dart';
@@ -29,6 +30,7 @@ import 'package:archiveme_mobile/router/primary_navigation_controller.dart';
 import 'package:archiveme_mobile/router/record_navigation_activity_controller.dart';
 import 'package:archiveme_mobile/router/route_catalog.dart';
 import 'package:archiveme_mobile/router/v1_quarantine_redirects.dart';
+import 'package:archiveme_mobile/router/v1_route_registry.dart';
 import 'package:archiveme_mobile/screens/about_screen.dart';
 import 'package:archiveme_mobile/screens/account_auth_screen.dart';
 import 'package:archiveme_mobile/screens/account_screen.dart';
@@ -52,6 +54,8 @@ import 'package:archiveme_mobile/features/settings/ui/caregiver_access_screen.da
 import 'package:archiveme_mobile/features/caregiver_grant/caregiver_consent_entry_screen.dart';
 import 'package:archiveme_mobile/features/caregiver_grant/caregiver_dashboard_screen.dart';
 import 'package:archiveme_mobile/features/ask_archive/ask_archive_screen.dart';
+import 'package:archiveme_mobile/features/chat/archive_chat_screen.dart';
+import 'package:archiveme_mobile/features/habits/habits_dashboard_route.dart';
 import 'package:archiveme_mobile/features/insights/explore_patterns_screen.dart';
 import 'package:archiveme_mobile/features/insights/pattern_exploration_conversation_state.dart';
 import 'package:archiveme_mobile/features/settings/ui/crisis_resources_screen.dart';
@@ -76,7 +80,7 @@ String? resolveInstantCaptureDeepLink(Uri uri) {
   final action = uri.host.isNotEmpty
       ? uri.host.toLowerCase()
       : uri.path.replaceFirst(RegExp('^/+'), '').toLowerCase();
-    final path = switch (action) {
+  final path = switch (action) {
     'record' => CaptureDeepLinkUris.recordLaunchRoute,
     'quick-capture' =>
       V1FeatureFlags.enableV1Only ? '/quick-capture' : '/quick-yes-capture',
@@ -119,7 +123,9 @@ final GoRouter appRouter = GoRouter(
 
     // Isolates an active caregiver session from the owner's app. Returns null
     // without touching storage while the capability is compiled out.
-    final caregiverRedirect = await CaregiverModeController.tryRedirectFor(path);
+    final caregiverRedirect = await CaregiverModeController.tryRedirectFor(
+      path,
+    );
     if (caregiverRedirect != null) return caregiverRedirect;
 
     if (path == '/start') {
@@ -428,6 +434,30 @@ final GoRouter appRouter = GoRouter(
       builder: (context, state) => const DeleteAccountScreen(),
     ),
     GoRoute(
+      path: V1RouteRegistry.chatPath,
+      parentNavigatorKey: _rootNavigatorKey,
+      pageBuilder: (context, state) => _featurePage(
+        key: state.pageKey,
+        child: const ArchiveChatScreen(),
+      ),
+    ),
+    GoRoute(
+      path: V1RouteRegistry.habitsPath,
+      parentNavigatorKey: _rootNavigatorKey,
+      pageBuilder: (context, state) => _featurePage(
+        key: state.pageKey,
+        child: const HabitsDashboardRoute(),
+      ),
+    ),
+    GoRoute(
+      path: V1RouteRegistry.syncStatusPath,
+      parentNavigatorKey: _rootNavigatorKey,
+      pageBuilder: (context, state) => _featurePage(
+        key: state.pageKey,
+        child: const SyncStatusRoute(),
+      ),
+    ),
+    GoRoute(
       path: '/settings',
       parentNavigatorKey: _rootNavigatorKey,
       builder: (context, state) => const SettingsScreen(),
@@ -468,3 +498,25 @@ final GoRouter appRouter = GoRouter(
       ...V1QuarantineRedirects.routes(rootNavigatorKey: _rootNavigatorKey),
   ],
 );
+
+CustomTransitionPage<void> _featurePage({
+  required LocalKey key,
+  required Widget child,
+}) {
+  return CustomTransitionPage<void>(
+    key: key,
+    child: child,
+    transitionDuration: const Duration(milliseconds: 240),
+    reverseTransitionDuration: const Duration(milliseconds: 200),
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      final slide = Tween<Offset>(
+        begin: const Offset(0.06, 0),
+        end: Offset.zero,
+      ).animate(CurvedAnimation(parent: animation, curve: Curves.easeOutCubic));
+      return FadeTransition(
+        opacity: animation,
+        child: SlideTransition(position: slide, child: child),
+      );
+    },
+  );
+}
