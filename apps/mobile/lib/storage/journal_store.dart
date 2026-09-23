@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -12,6 +13,7 @@ import 'package:archiveme_mobile/features/memory/entry_save_coordinator.dart';
 import 'package:archiveme_mobile/features/monetization/paywall_milestone.dart';
 import 'package:archiveme_mobile/features/monetization/paywall_milestone_coordinator.dart';
 import 'package:archiveme_mobile/features/referral/invite_funnel_metrics.dart';
+import 'package:archiveme_mobile/features/sync/mesh_offload_optimistic.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/models/sync_status.dart';
 import 'package:archiveme_mobile/features/beta_analytics/beta_analytics_milestone_coordinator.dart';
@@ -198,6 +200,12 @@ class JournalStore {
           savedAt: toPersist.createdAt,
           activeDayKeys: dayKeys,
           isFirstEntryOnSavedDay: entriesOnSavedDay == 1,
+        );
+        unawaited(
+          MeshOffloadOptimisticCoordinator.instance.beginArchiveSave(
+            id: toPersist.id,
+            preview: toPersist.transcript,
+          ),
         );
       }
     }

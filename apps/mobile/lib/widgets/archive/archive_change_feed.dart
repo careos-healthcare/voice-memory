@@ -1,3 +1,5 @@
+import 'package:archiveme_mobile/features/sync/mesh_offload_optimistic.dart';
+import 'package:archiveme_mobile/features/sync/presentation/widgets/mesh_offload_save_row.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/widgets/archive/archive_change_feed_timeline.dart';
 import 'package:flutter/material.dart';
@@ -34,6 +36,22 @@ class _ArchiveChangeFeedState extends State<ArchiveChangeFeed> {
   final Set<String> _collapsed = <String>{};
 
   @override
+  void initState() {
+    super.initState();
+    MeshOffloadOptimisticCoordinator.instance.addListener(_onMeshSave);
+  }
+
+  @override
+  void dispose() {
+    MeshOffloadOptimisticCoordinator.instance.removeListener(_onMeshSave);
+    super.dispose();
+  }
+
+  void _onMeshSave() {
+    if (mounted) setState(() {});
+  }
+
+  @override
   Widget build(BuildContext context) {
     final children = _children(context);
     if (widget.asSliver) {
@@ -60,8 +78,22 @@ class _ArchiveChangeFeedState extends State<ArchiveChangeFeed> {
             year: _year!,
           );
 
+    final coordinator = MeshOffloadOptimisticCoordinator.instance;
+    final openSaves = coordinator.saves
+        .where(
+          (save) =>
+              save.phase != MeshOffloadSavePhase.settled ||
+              !widget.entries.any((entry) => entry.id == save.id),
+        )
+        .toList();
+    final coveredIds = coordinator.saves
+        .where((save) => save.phase != MeshOffloadSavePhase.settled)
+        .map((save) => save.id)
+        .toSet();
+
     return [
       _filters(theme, years, months),
+      if (openSaves.isNotEmpty) MeshOffloadOptimisticList(saves: openSaves),
       if (sections.isEmpty)
         const Padding(
           padding: EdgeInsets.only(top: 12, bottom: 8),
@@ -73,7 +105,8 @@ class _ArchiveChangeFeedState extends State<ArchiveChangeFeed> {
       for (final section in sections) ...[
         _header(theme, section),
         if (!_collapsed.contains(section.storageKey))
-          for (final entry in section.entries) _row(context, entry),
+          for (final entry in section.entries)
+            if (!coveredIds.contains(entry.id)) _row(context, entry),
       ],
       ?widget.trailing,
     ];
