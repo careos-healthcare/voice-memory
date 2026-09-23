@@ -106,6 +106,7 @@ bulk_actions
 capacity_loop
 capture_flow
 change_trail_clarity
+chat
 chat_differentiation
 collections
 come_back_tomorrow

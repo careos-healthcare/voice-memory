@@ -57,7 +57,7 @@ void main() {
   test('018 is registered as the newest migration', () {
     final registry = SqliteMigrationRegistry();
     expect(registry.migrationForVersion(18), isA<Migration018TranscriptProvenance>());
-    expect(SqliteMigrationRegistry.latestVersion, 23);
+    expect(SqliteMigrationRegistry.latestVersion, 24);
   });
 
   test('the schema step touches no journal rows', () async {

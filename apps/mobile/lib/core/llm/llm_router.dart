@@ -18,6 +18,9 @@ enum LlmWorkload {
 
   /// A long graph summary. Cloud only when the user enabled a key.
   longitudinalGraphSummary,
+
+  /// A chat reply over retrieved moments. Cloud only when a key is set.
+  chatReply,
 }
 
 /// Which hosted API a bring-your-own-key setting targets.
@@ -90,8 +93,10 @@ class LlmRouter {
   final http.Client? httpClient;
 
   LlmExecutionTarget targetFor(LlmWorkload workload) {
-    if (workload == LlmWorkload.longitudinalGraphSummary &&
-        settings.hasValidKey) {
+    final cloudAllowed =
+        workload == LlmWorkload.longitudinalGraphSummary ||
+        workload == LlmWorkload.chatReply;
+    if (cloudAllowed && settings.hasValidKey) {
       return LlmExecutionTarget.cloudByok;
     }
     return LlmExecutionTarget.localOffline;
