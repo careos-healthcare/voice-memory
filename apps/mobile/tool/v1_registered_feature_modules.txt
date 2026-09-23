@@ -135,6 +135,7 @@ daily_discoveries
 daily_question
 debug
 demo
+desktop
 discover
 early_archive
 early_insights
