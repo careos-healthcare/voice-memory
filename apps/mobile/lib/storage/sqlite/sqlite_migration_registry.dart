@@ -16,12 +16,14 @@ import 'package:archiveme_mobile/storage/sqlite/migrations/migration_015_vec_chu
 import 'package:archiveme_mobile/storage/sqlite/migrations/migration_016_audio_processing_queue.dart';
 import 'package:archiveme_mobile/storage/sqlite/migrations/migration_017_capture_audio_metadata.dart';
 import 'package:archiveme_mobile/storage/sqlite/migrations/migration_018_transcript_provenance.dart';
+import 'package:archiveme_mobile/storage/sqlite/migrations/migration_019_time_capsules_and_daily_checkins.dart';
+import 'package:archiveme_mobile/storage/sqlite/migrations/migration_020_entity_graph.dart';
 import 'package:archiveme_mobile/storage/sqlite/sqlite_migration.dart';
 
 /// Ordered, validated catalog of [SqliteMigration] steps for the local DB.
 class SqliteMigrationRegistry {
   SqliteMigrationRegistry([List<SqliteMigration>? migrations])
-      : migrations = List.unmodifiable(migrations ?? defaultMigrations) {
+    : migrations = List.unmodifiable(migrations ?? defaultMigrations) {
     _validate();
   }
 
@@ -44,6 +46,8 @@ class SqliteMigrationRegistry {
     Migration016AudioProcessingQueue(),
     Migration017CaptureAudioMetadata(),
     Migration018TranscriptProvenance(),
+    Migration019TimeCapsulesAndDailyCheckins(),
+    Migration020EntityGraph(),
   ];
 
   static int get latestVersion =>
@@ -68,7 +72,9 @@ class SqliteMigrationRegistry {
 
   void _validate() {
     if (migrations.isEmpty) {
-      throw StateError('SqliteMigrationRegistry requires at least one migration');
+      throw StateError(
+        'SqliteMigrationRegistry requires at least one migration',
+      );
     }
 
     final seenVersions = <int>{};
