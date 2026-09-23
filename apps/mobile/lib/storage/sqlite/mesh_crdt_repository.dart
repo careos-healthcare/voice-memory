@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:archiveme_mobile/core/database/vector_store.dart';
 import 'package:archiveme_mobile/features/sample_vault/sample_vault_embedder.dart';
+import 'package:archiveme_mobile/storage/sqlite/crsql_delta_ingestor.dart';
 import 'package:archiveme_mobile/storage/sqlite/migrations/migration_005_hybrid_search.dart';
 import 'package:archiveme_mobile/storage/sqlite/migrations/migration_020_entity_graph.dart';
 import 'package:archiveme_mobile/storage/sqlite/migrations/migration_026_habits.dart';
@@ -181,6 +182,7 @@ class MeshCrdtRepository {
       }
     }
     final hits = await _refreshVectors(mergedEntries);
+    await CrsqlDeltaIngestor(database).retryAfterMeshSync();
     return SyncMergeResult(
       applied: applied,
       keptLocal: keptLocal,
