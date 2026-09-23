@@ -3,8 +3,8 @@ import 'dart:typed_data';
 
 import 'package:archiveme_mobile/widgets/share/archive_share_card.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:image/image.dart' as img;
 
 void main() {
   const content = ArchiveShareCardContent(
@@ -32,6 +32,49 @@ void main() {
     expect(find.text('ArchiveMe'), findsOneWidget);
     expect(tester.getSize(find.byKey(key)), const Size(360, 480));
     expect(find.textContaining('theory'), findsNothing);
+
+    final boundary = ArchiveShareCard.readyBoundary(key);
+    expect(boundary, isA<RenderRepaintBoundary>());
+    expect(boundary.debugNeedsPaint, isFalse);
+    expect(boundary.size, const Size(360, 480));
+  });
+
+  testWidgets('refuses a capture while the card still needs paint', (
+    tester,
+  ) async {
+    final key = GlobalKey();
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: ArchiveShareCard(content: content, boundaryKey: key),
+        ),
+      ),
+    );
+    await tester.pump();
+
+    final renderObject = key.currentContext?.findRenderObject();
+    if (renderObject is! RenderRepaintBoundary) {
+      fail('missing capture boundary');
+    }
+    renderObject.markNeedsPaint();
+    expect(renderObject.debugNeedsPaint, isTrue);
+    expect(
+      () => ArchiveShareCard.readyBoundary(key),
+      throwsA(
+        isA<ArchiveShareCardCaptureException>().having(
+          (error) => error.message,
+          'message',
+          contains('still painting'),
+        ),
+      ),
+    );
+  });
+
+  test('rejects a missing capture boundary', () {
+    expect(
+      () => ArchiveShareCard.readyBoundary(GlobalKey()),
+      throwsA(isA<ArchiveShareCardCaptureException>()),
+    );
   });
 
   testWidgets('keeps a reachable evidence link beside the share action', (
@@ -57,31 +100,75 @@ void main() {
     expect(sawEvidence, isTrue);
   });
 
-  test('writes the captured bytes as a png', () async {
+  test('writes a timestamped png and deletes it after sharing', () async {
     final dir = Directory.systemTemp.createTempSync('archive-share-card');
-    final file = await ArchiveShareCard.writePngFile(
-      bytes: Uint8List.fromList(const [137, 80, 78, 71, 13, 10, 26, 10]),
-      filename: 'archive-share-card.png',
+    final capturedAt = DateTime.utc(2026, 9, 23, 12);
+    final png = Uint8List.fromList(const [137, 80, 78, 71, 13, 10, 26, 10]);
+    String? sharedPath;
+    String? sharedMime;
+    final exported = await ArchiveShareCard.sharePngBytes(
+      bytes: png,
+      text: content.shareText,
       directory: dir,
+      capturedAt: capturedAt,
+      shareFile: (file, text) async {
+        sharedPath = file.path;
+        sharedMime = file.mimeType;
+        expect(text, content.shareText);
+        expect(await File(file.path).readAsBytes(), png);
+      },
     );
-    expect(await file.readAsBytes(), [137, 80, 78, 71, 13, 10, 26, 10]);
+    final stamp = capturedAt.millisecondsSinceEpoch;
+    expect(exported.path, endsWith('archive-share-card-$stamp.png'));
+    expect(exported.mimeType, 'image/png');
+    expect(sharedPath, exported.path);
+    expect(sharedMime, 'image/png');
+    expect(await File(exported.path).exists(), isFalse);
     dir.deleteSync(recursive: true);
   });
 
-  test('encodes raw rgba pixels as a png', () {
-    final png = ArchiveShareCard.pngBytesFromRgba(
-      rgba: Uint8List.fromList(const [255, 0, 0, 255]),
-      width: 1,
-      height: 1,
+  test('reports a storage failure and leaves no partial file', () async {
+    final dir = Directory.systemTemp.createTempSync('archive-share-card');
+    final missing = Directory('${dir.path}/missing');
+    await expectLater(
+      ArchiveShareCard.writePngFile(
+        bytes: Uint8List.fromList(const [137, 80, 78, 71]),
+        filename: 'archive-share-card.png',
+        directory: missing,
+      ),
+      throwsA(
+        isA<ArchiveShareCardCaptureException>().having(
+          (error) => error.message,
+          'message',
+          contains('storage access'),
+        ),
+      ),
     );
-    final decoded = img.decodePng(png);
-    expect(decoded, isNotNull);
-    expect(decoded!.width, 1);
-    expect(decoded.height, 1);
-    final pixel = decoded.getPixel(0, 0);
-    expect(pixel.r, 255);
-    expect(pixel.g, 0);
-    expect(pixel.b, 0);
+    expect(dir.listSync(), isEmpty);
+    dir.deleteSync(recursive: true);
+  });
+
+  test('deletes the temp png when sharing is denied', () async {
+    final dir = Directory.systemTemp.createTempSync('archive-share-card');
+    await expectLater(
+      ArchiveShareCard.sharePngBytes(
+        bytes: Uint8List.fromList(const [137, 80, 78, 71]),
+        directory: dir,
+        capturedAt: DateTime.utc(2026, 9, 23, 12),
+        shareFile: (file, text) async {
+          throw const FileSystemException('denied');
+        },
+      ),
+      throwsA(
+        isA<ArchiveShareCardCaptureException>().having(
+          (error) => error.message,
+          'message',
+          contains('file access'),
+        ),
+      ),
+    );
+    expect(dir.listSync(), isEmpty);
+    dir.deleteSync(recursive: true);
   });
 
   test('share text keeps the insight and the moments behind it', () {
