@@ -67,6 +67,7 @@ archive_watchlist
 # the Archive tab (ArchiveBeliefScreen / archive_belief) via AskArchiveEntryBar;
 # the dedicated route is a pushed full-screen surface, not a separate shell tab.
 ask_archive
+audio
 auth
 b2b_workplace_pressure_future
 belief_change
