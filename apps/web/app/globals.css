@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@config "../tailwind.config.ts";
 
 :root,
 [data-tone="deep-dark"] {
@@ -7,6 +8,38 @@
   --vm-muted: #a1a1aa;
   --vm-border: rgb(255 255 255 / 0.06);
   --vm-accent: rgb(139 92 246 / 0.8);
+  --archive-background: #f8f6f1;
+  --archive-surface: #ffffff;
+  --archive-surface-alt: #f3f0ea;
+  --archive-foreground: #172033;
+  --archive-muted: #667085;
+  --archive-subtle: #4b5568;
+  --archive-border: #e5e0d8;
+  --archive-accent: #2563eb;
+  --archive-accent-hover: #1d4ed8;
+  --archive-accent-soft: #eaf2ff;
+  --archive-on-accent: #ffffff;
+  --archive-secondary: #0f766e;
+  --archive-focus: #1d4ed8;
+  --archive-success: #15803d;
+  --archive-warning: #b45309;
+  --archive-danger: #dc2626;
+  --archive-space-xs: 8px;
+  --archive-space-sm: 16px;
+  --archive-space-md: 24px;
+  --archive-space-lg: 32px;
+  --archive-space-xl: 48px;
+  --archive-touch: 44px;
+  --archive-control: 48px;
+  --archive-button: 56px;
+  --archive-radius-control: 16px;
+  --archive-radius-button: 28px;
+  --archive-font-headline: 32px;
+  --archive-font-section: 22px;
+  --archive-font-card: 18px;
+  --archive-font-body: 16px;
+  --archive-font-caption: 14px;
+  --archive-font-writing: 17px;
 }
 
 [data-tone="soft-dark"] {
@@ -89,9 +122,9 @@ body {
 
 /* Mobile readability & thumb reach */
 .mobile-prose {
-  font-size: 0.9375rem;
-  line-height: 1.75;
-  letter-spacing: 0.01em;
+  font-size: var(--archive-font-body);
+  line-height: 1.5;
+  letter-spacing: 0;
 }
 
 .mobile-entry-scroll {
@@ -101,8 +134,8 @@ body {
 }
 
 .mobile-touch-target {
-  min-height: 44px;
-  min-width: 44px;
+  min-height: var(--archive-touch);
+  min-width: var(--archive-touch);
 }
 
 .mobile-recorder-zone {

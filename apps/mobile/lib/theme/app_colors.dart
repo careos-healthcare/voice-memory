@@ -1,3 +1,4 @@
+import 'package:archiveme_mobile/theme/archive_design_tokens.dart';
 import 'package:flutter/material.dart';
 
 /// ArchiveMe consumer light palette — calm, premium, ambition-pressure tracking.
@@ -5,44 +6,24 @@ class AppColors {
   AppColors._();
 
   /// Page background — warm off-white.
-  static const Color backgroundPrimary = Color(0xFFF8F6F1);
-
-  /// Cards, sheets, nav bar.
-  static const Color backgroundSecondary = Color(0xFFFFFFFF);
-
-  /// Subtle grouped sections.
-  static const Color surfaceAlt = Color(0xFFF3F0EA);
-
-  static const Color textPrimary = Color(0xFF172033);
-  static const Color textSecondary = Color(0xFF667085);
-
-  /// De-emphasized text (timestamps, helper captions) — darker than
-  /// [textSecondary] on [surfaceAlt]/[locked] backgrounds to keep WCAG AA
-  /// (>=4.5:1) instead of the older gray-on-gray combination.
-  static const Color textMuted = Color(0xFF4B5568);
-
-  static const Color borderSubtle = Color(0xFFE5E0D8);
-
-  /// Focus ring for keyboard/switch-control navigation.
-  static const Color focusRing = Color(0xFF1D4ED8);
-
-  /// Primary CTA / links.
-  static const Color accentPrimary = Color(0xFF2563EB);
-
-  /// Loop Mode / secondary emphasis.
-  static const Color accentSecondary = Color(0xFF0F766E);
-
-  /// Soft highlight fills (chips, selected states).
-  static const Color accentLight = Color(0xFFEAF2FF);
-
-  static const Color onAccent = Color(0xFFFFFFFF);
-
-  static const Color warning = Color(0xFFB45309);
-  static const Color success = Color(0xFF15803D);
-  static const Color error = Color(0xFFDC2626);
+  static const Color backgroundPrimary = ArchiveDesignTokens.background;
+  static const Color backgroundSecondary = ArchiveDesignTokens.surface;
+  static const Color surfaceAlt = ArchiveDesignTokens.surfaceAlt;
+  static const Color textPrimary = ArchiveDesignTokens.foreground;
+  static const Color textSecondary = ArchiveDesignTokens.muted;
+  static const Color textMuted = ArchiveDesignTokens.subtle;
+  static const Color borderSubtle = ArchiveDesignTokens.border;
+  static const Color focusRing = ArchiveDesignTokens.focus;
+  static const Color accentPrimary = ArchiveDesignTokens.accent;
+  static const Color accentSecondary = ArchiveDesignTokens.secondary;
+  static const Color accentLight = ArchiveDesignTokens.accentSoft;
+  static const Color onAccent = ArchiveDesignTokens.onAccent;
+  static const Color warning = ArchiveDesignTokens.warning;
+  static const Color success = ArchiveDesignTokens.success;
+  static const Color error = ArchiveDesignTokens.danger;
 
   /// Destructive actions (delete account, clear archive, ignore-forever).
-  static const Color destructive = Color(0xFFDC2626);
+  static const Color destructive = ArchiveDesignTokens.danger;
   static const Color destructiveLight = Color(0xFFFDECEC);
 
   /// Locked/unavailable (Pro-gated) surfaces. [lockedText] on [lockedSurface]

@@ -1,5 +1,6 @@
 import 'package:archiveme_mobile/theme/app_colors.dart';
 import 'package:archiveme_mobile/theme/app_spacing.dart';
+import 'package:archiveme_mobile/theme/archive_design_tokens.dart';
 import 'package:archiveme_mobile/theme/voicememory_cards.dart';
 import 'package:archiveme_mobile/theme/voicememory_colors.dart';
 import 'package:archiveme_mobile/theme/voicememory_typography.dart';
@@ -107,10 +108,15 @@ class AppTheme {
         style: FilledButton.styleFrom(
           backgroundColor: AppColors.accentPrimary,
           foregroundColor: AppColors.onAccent,
-          minimumSize: const Size(double.infinity, 56),
+          minimumSize: const Size(
+            double.infinity,
+            ArchiveDesignTokens.spaceButton,
+          ),
           padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(28),
+            borderRadius: BorderRadius.circular(
+              ArchiveDesignTokens.radiusButton,
+            ),
           ),
           elevation: 0,
         ),
@@ -118,16 +124,24 @@ class AppTheme {
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
           foregroundColor: AppColors.accentPrimary,
-          minimumSize: const Size(48, 48),
+          minimumSize: const Size(
+            ArchiveDesignTokens.spaceControl,
+            ArchiveDesignTokens.spaceControl,
+          ),
         ),
       ),
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
           foregroundColor: AppColors.accentPrimary,
           side: const BorderSide(color: AppColors.borderSubtle),
-          minimumSize: const Size(48, 48),
+          minimumSize: const Size(
+            ArchiveDesignTokens.spaceControl,
+            ArchiveDesignTokens.spaceControl,
+          ),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(28),
+            borderRadius: BorderRadius.circular(
+              ArchiveDesignTokens.radiusButton,
+            ),
           ),
         ),
       ),
@@ -148,7 +162,11 @@ class AppTheme {
           color: AppColors.accentPrimary,
         ),
         side: const BorderSide(color: AppColors.borderSubtle),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(
+            ArchiveDesignTokens.radiusControl,
+          ),
+        ),
       ),
       dividerTheme: const DividerThemeData(
         color: AppColors.borderSubtle,
@@ -171,15 +189,21 @@ class AppTheme {
           color: VoiceMemoryColors.textTertiary,
         ),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(
+            ArchiveDesignTokens.radiusControl,
+          ),
           borderSide: const BorderSide(color: AppColors.borderSubtle),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(
+            ArchiveDesignTokens.radiusControl,
+          ),
           borderSide: const BorderSide(color: AppColors.borderSubtle),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(
+            ArchiveDesignTokens.radiusControl,
+          ),
           borderSide: const BorderSide(
             color: AppColors.accentPrimary,
             width: 1.5,
@@ -194,7 +218,9 @@ class AppTheme {
         behavior: SnackBarBehavior.floating,
         elevation: 2,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(
+            ArchiveDesignTokens.radiusControl,
+          ),
           side: const BorderSide(color: AppColors.borderSubtle),
         ),
       ),
@@ -289,10 +315,15 @@ class AppTheme {
         style: FilledButton.styleFrom(
           backgroundColor: _darkAccentPrimary,
           foregroundColor: AppColors.onAccent,
-          minimumSize: const Size(double.infinity, 56),
+          minimumSize: const Size(
+            double.infinity,
+            ArchiveDesignTokens.spaceButton,
+          ),
           padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(28),
+            borderRadius: BorderRadius.circular(
+              ArchiveDesignTokens.radiusButton,
+            ),
           ),
           elevation: 0,
         ),
@@ -300,16 +331,24 @@ class AppTheme {
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
           foregroundColor: _darkAccentPrimary,
-          minimumSize: const Size(48, 48),
+          minimumSize: const Size(
+            ArchiveDesignTokens.spaceControl,
+            ArchiveDesignTokens.spaceControl,
+          ),
         ),
       ),
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
           foregroundColor: _darkAccentPrimary,
           side: const BorderSide(color: _darkBorderSubtle),
-          minimumSize: const Size(48, 48),
+          minimumSize: const Size(
+            ArchiveDesignTokens.spaceControl,
+            ArchiveDesignTokens.spaceControl,
+          ),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(28),
+            borderRadius: BorderRadius.circular(
+              ArchiveDesignTokens.radiusButton,
+            ),
           ),
         ),
       ),
@@ -332,7 +371,11 @@ class AppTheme {
           color: _darkAccentPrimary,
         ),
         side: const BorderSide(color: _darkBorderSubtle),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(
+            ArchiveDesignTokens.radiusControl,
+          ),
+        ),
       ),
       dividerTheme: const DividerThemeData(
         color: _darkBorderSubtle,
@@ -369,15 +412,21 @@ class AppTheme {
           color: _darkTextTertiary,
         ),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(
+            ArchiveDesignTokens.radiusControl,
+          ),
           borderSide: const BorderSide(color: _darkBorderSubtle),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(
+            ArchiveDesignTokens.radiusControl,
+          ),
           borderSide: const BorderSide(color: _darkBorderSubtle),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(
+            ArchiveDesignTokens.radiusControl,
+          ),
           borderSide: const BorderSide(
             color: _darkAccentPrimary,
             width: 1.5,
@@ -392,7 +441,9 @@ class AppTheme {
         behavior: SnackBarBehavior.floating,
         elevation: 2,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(
+            ArchiveDesignTokens.radiusControl,
+          ),
           side: const BorderSide(color: _darkBorderSubtle),
         ),
       ),

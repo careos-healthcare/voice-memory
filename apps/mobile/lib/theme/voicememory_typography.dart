@@ -1,3 +1,4 @@
+import 'package:archiveme_mobile/theme/archive_design_tokens.dart';
 import 'package:archiveme_mobile/theme/voicememory_colors.dart';
 import 'package:flutter/material.dart';
 
@@ -5,28 +6,29 @@ import 'package:flutter/material.dart';
 class VoiceMemoryTypography {
   VoiceMemoryTypography._();
 
-  static const double headline = 32;
-  static const double sectionTitle = 22;
-  static const double body = 16;
-  static const double caption = 14;
+  static const double headline = ArchiveDesignTokens.fontHeadline;
+  static const double sectionTitle = ArchiveDesignTokens.fontSection;
+  static const double body = ArchiveDesignTokens.fontBody;
+  static const double caption = ArchiveDesignTokens.fontCaption;
 
   static const double pageTitle = headline;
-  static const double cardTitle = 18;
+  static const double cardTitle = ArchiveDesignTokens.fontCard;
   static const double metadata = caption;
   static const double secondary = caption;
 
   static TextStyle headlineStyle({Color? color}) => TextStyle(
     fontSize: headline,
-    fontWeight: FontWeight.w700,
-    height: 1.35,
+    fontWeight: ArchiveDesignTokens.weightHeadline,
+    height: ArchiveDesignTokens.leadingHeadline,
+    letterSpacing: ArchiveDesignTokens.trackingHeadline,
     color: color ?? VoiceMemoryColors.textPrimary,
-    letterSpacing: -0.4,
   );
 
   static TextStyle sectionTitleStyle({Color? color}) => TextStyle(
     fontSize: sectionTitle,
-    fontWeight: FontWeight.w600,
-    height: 1.4,
+    fontWeight: ArchiveDesignTokens.weightSection,
+    height: ArchiveDesignTokens.leadingSection,
+    letterSpacing: ArchiveDesignTokens.trackingSection,
     color: color ?? VoiceMemoryColors.textPrimary,
   );
 
@@ -35,22 +37,34 @@ class VoiceMemoryTypography {
 
   static TextStyle cardTitleStyle({Color? color}) => TextStyle(
     fontSize: cardTitle,
-    fontWeight: FontWeight.w600,
-    height: 1.4,
+    fontWeight: ArchiveDesignTokens.weightCard,
+    height: ArchiveDesignTokens.leadingCard,
+    letterSpacing: ArchiveDesignTokens.trackingCard,
     color: color ?? VoiceMemoryColors.textPrimary,
   );
 
   static TextStyle bodyStyle({Color? color}) => TextStyle(
     fontSize: body,
-    fontWeight: FontWeight.w400,
-    height: 1.5,
+    fontWeight: ArchiveDesignTokens.weightBody,
+    height: ArchiveDesignTokens.leadingBody,
+    letterSpacing: ArchiveDesignTokens.trackingBody,
+    color: color ?? VoiceMemoryColors.textPrimary,
+  );
+
+  /// Writing-canvas body — editorial leading for long-form typing.
+  static TextStyle writingCanvasStyle({Color? color}) => TextStyle(
+    fontSize: ArchiveDesignTokens.fontWriting,
+    fontWeight: ArchiveDesignTokens.weightWriting,
+    height: ArchiveDesignTokens.leadingWriting,
+    letterSpacing: ArchiveDesignTokens.trackingWriting,
     color: color ?? VoiceMemoryColors.textPrimary,
   );
 
   static TextStyle metadataStyle({Color? color}) => TextStyle(
     fontSize: caption,
-    fontWeight: FontWeight.w400,
-    height: 1.45,
+    fontWeight: ArchiveDesignTokens.weightCaption,
+    height: ArchiveDesignTokens.leadingCaption,
+    letterSpacing: ArchiveDesignTokens.trackingCaption,
     color: color ?? VoiceMemoryColors.textSecondary,
   );
 
