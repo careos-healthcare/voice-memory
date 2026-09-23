@@ -9,6 +9,8 @@ import 'package:archiveme_mobile/features/demo/archive_me_demo_archive.dart';
 import 'package:archiveme_mobile/features/first25/first25_journal_hooks.dart';
 import 'package:archiveme_mobile/features/journal/infrastructure/journal_save_interceptor_pipeline.dart';
 import 'package:archiveme_mobile/features/memory/entry_save_coordinator.dart';
+import 'package:archiveme_mobile/features/monetization/paywall_milestone.dart';
+import 'package:archiveme_mobile/features/monetization/paywall_milestone_coordinator.dart';
 import 'package:archiveme_mobile/features/referral/invite_funnel_metrics.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/models/sync_status.dart';
@@ -176,6 +178,27 @@ class JournalStore {
       );
       if (activeCountAfter == 1) {
         InviteFunnelMetrics.firstSave();
+      }
+      if (!Platform.environment.containsKey('FLUTTER_TEST')) {
+        final savedDay = PaywallMilestoneEngine.dayKey(toPersist.createdAt);
+        final dayKeys = <String>{
+          for (final saved in next)
+            if (!saved.isDeleted)
+              PaywallMilestoneEngine.dayKey(saved.createdAt),
+        };
+        final entriesOnSavedDay = next
+            .where(
+              (saved) =>
+                  !saved.isDeleted &&
+                  PaywallMilestoneEngine.dayKey(saved.createdAt) == savedDay,
+            )
+            .length;
+        await PaywallMilestoneCoordinator.onDurableSave(
+          activeCountAfter: activeCountAfter,
+          savedAt: toPersist.createdAt,
+          activeDayKeys: dayKeys,
+          isFirstEntryOnSavedDay: entriesOnSavedDay == 1,
+        );
       }
     }
     await First25JournalHooks.onJournalSave(
