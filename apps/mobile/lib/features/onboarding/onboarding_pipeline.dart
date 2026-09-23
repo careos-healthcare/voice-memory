@@ -5,6 +5,7 @@ import 'package:archiveme_mobile/features/onboarding/onboarding_router.dart';
 import 'package:archiveme_mobile/features/onboarding/sample_graph_explorer_screen.dart';
 import 'package:archiveme_mobile/features/onboarding/trial_completion_store.dart';
 import 'package:archiveme_mobile/features/onboarding/trial_voice_entry_screen.dart';
+import 'package:archiveme_mobile/features/sample_vault/interactive_vault_demo_screen.dart';
 import 'package:archiveme_mobile/router/onboarding_gate.dart';
 import 'package:archiveme_mobile/router/route_catalog.dart';
 import 'package:archiveme_mobile/services/app_services.dart';
@@ -124,6 +125,9 @@ class _OnboardingPipelineState extends State<OnboardingPipeline> {
       ),
       OnboardingStep.sampleGraph => SampleGraphExplorerScreen(
         onContinue: _goNext,
+      ),
+      OnboardingStep.vaultDemo => InteractiveVaultDemoScreen(
+        onUnlock: () => setState(() => _step = OnboardingStep.paywall),
       ),
       OnboardingStep.paywall => Column(
         children: [

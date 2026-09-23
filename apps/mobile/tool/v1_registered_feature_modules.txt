@@ -334,6 +334,7 @@ routine
 safe_exports_future
 safe_sharing
 safe_sharing_future
+sample_vault
 save_a_repeat_habit
 search
 second_moment_return

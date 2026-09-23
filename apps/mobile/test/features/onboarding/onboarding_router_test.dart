@@ -36,6 +36,13 @@ void main() {
         current: OnboardingStep.sampleGraph,
         hasCompletedTrial: true,
       ),
+      OnboardingStep.vaultDemo,
+    );
+    expect(
+      OnboardingRouter.next(
+        current: OnboardingStep.vaultDemo,
+        hasCompletedTrial: true,
+      ),
       OnboardingStep.paywall,
     );
     expect(
@@ -116,6 +123,11 @@ void main() {
     expect(find.byKey(const Key('sample_graph_hit_sample-ada')), findsOneWidget);
 
     await tester.tap(find.byKey(const Key('sample_graph_continue')));
+    await tester.pump();
+    expect(find.byKey(const Key('interactive_vault_demo')), findsOneWidget);
+    expect(find.text('Unlock Your Personal Vault'), findsOneWidget);
+
+    await tester.tap(find.byKey(const Key('vault_unlock')));
     await tester.pump();
     expect(find.byKey(const Key('onboarding_paywall')), findsOneWidget);
   });

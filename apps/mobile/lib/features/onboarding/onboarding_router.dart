@@ -4,6 +4,7 @@ enum OnboardingStep {
   valueTrust,
   trialVoice,
   sampleGraph,
+  vaultDemo,
   paywall,
 }
 
@@ -20,6 +21,7 @@ abstract final class OnboardingRouter {
     OnboardingStep.valueTrust,
     OnboardingStep.trialVoice,
     OnboardingStep.sampleGraph,
+    OnboardingStep.vaultDemo,
     OnboardingStep.paywall,
   ];
 
