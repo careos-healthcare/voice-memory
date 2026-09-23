@@ -5,6 +5,7 @@ action_items_v1_gate
 activation
 aha
 ai_engines
+analytics
 anchor_calibration
 android_after_ios_proof
 annual_plan_future
