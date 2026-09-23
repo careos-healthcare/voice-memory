@@ -1,5 +1,6 @@
 import 'package:archiveme_mobile/theme/app_colors.dart';
 import 'package:archiveme_mobile/theme/app_spacing.dart';
+import 'package:archiveme_mobile/theme/app_tokens.dart';
 import 'package:archiveme_mobile/theme/archive_design_tokens.dart';
 import 'package:archiveme_mobile/theme/voicememory_cards.dart';
 import 'package:archiveme_mobile/theme/voicememory_colors.dart';
@@ -33,9 +34,9 @@ class AppTheme {
   static ThemeData light() {
     final scheme =
         ColorScheme.fromSeed(
-          seedColor: AppColors.accentPrimary,
+          seedColor: AppTokens.primary600,
         ).copyWith(
-          primary: AppColors.accentPrimary,
+          primary: AppTokens.primary600,
           onPrimary: AppColors.onAccent,
           primaryContainer: AppColors.accentLight,
           onPrimaryContainer: AppColors.textPrimary,
@@ -106,13 +107,13 @@ class AppTheme {
       ),
       filledButtonTheme: FilledButtonThemeData(
         style: FilledButton.styleFrom(
-          backgroundColor: AppColors.accentPrimary,
+          backgroundColor: AppTokens.primary600,
           foregroundColor: AppColors.onAccent,
           minimumSize: const Size(
             double.infinity,
             ArchiveDesignTokens.spaceButton,
           ),
-          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
+          padding: const EdgeInsets.symmetric(horizontal: AppTokens.spacing4),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(
               ArchiveDesignTokens.radiusButton,
@@ -173,14 +174,14 @@ class AppTheme {
         thickness: 1,
       ),
       textTheme: TextTheme(
-        headlineLarge: VoiceMemoryTypography.headlineStyle(),
-        headlineMedium: VoiceMemoryTypography.headlineStyle(),
-        titleLarge: VoiceMemoryTypography.sectionTitleStyle(),
-        titleMedium: VoiceMemoryTypography.cardTitleStyle(),
-        bodyLarge: VoiceMemoryTypography.bodyStyle(),
-        bodyMedium: VoiceMemoryTypography.metadataStyle(),
-        bodySmall: VoiceMemoryTypography.secondaryStyle(),
-        labelLarge: VoiceMemoryTypography.cardTitleStyle(),
+        headlineLarge: AppTokens.headline(),
+        headlineMedium: AppTokens.headline(),
+        titleLarge: AppTokens.section(),
+        titleMedium: AppTokens.card(),
+        bodyLarge: AppTokens.body(),
+        bodyMedium: AppTokens.caption(),
+        bodySmall: AppTokens.caption(),
+        labelLarge: AppTokens.card(),
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,

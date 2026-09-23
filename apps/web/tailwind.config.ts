@@ -2,7 +2,8 @@ import type { Config } from "tailwindcss";
 
 import { archiveDesignTokens } from "@voice-memory/shared/lib/design/archive-design-tokens";
 
-const { color, space, radius, type } = archiveDesignTokens;
+const { color, primary, neutral, space, spacing, radius, type } =
+  archiveDesignTokens;
 
 function px(value: number): string {
   return `${value}px`;
@@ -24,6 +25,8 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
+        primary,
+        neutral,
         archive: {
           background: color.light.background,
           surface: color.light.surface,
@@ -53,6 +56,9 @@ const config: Config = {
         },
       },
       spacing: {
+        ...Object.fromEntries(
+          Object.entries(spacing).map(([step, value]) => [step, px(value)]),
+        ),
         "archive-xs": px(space.xs),
         "archive-sm": px(space.sm),
         "archive-md": px(space.md),

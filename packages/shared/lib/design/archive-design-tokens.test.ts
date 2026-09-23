@@ -47,4 +47,20 @@ test("Flutter and web themes carry the same archive tokens", () => {
 
   assert.match(tailwind, /archive-design-tokens/);
   assert.match(css, /@config "\.\.\/tailwind\.config\.ts"/);
+
+  const tokens = readFileSync(
+    join(root, "apps/mobile/lib/theme/app_tokens.dart"),
+    "utf8",
+  ).toUpperCase();
+  for (const scale of [archiveDesignTokens.primary, archiveDesignTokens.neutral]) {
+    for (const hex of Object.values(scale)) {
+      const bare = hex.slice(1);
+      assert.match(tokens, new RegExp(bare, "i"));
+      assert.match(css, new RegExp(bare, "i"));
+    }
+  }
+  for (const [step, size] of Object.entries(archiveDesignTokens.spacing)) {
+    assert.match(tokens, new RegExp(`SPACING${step} = ${size}\\.0`));
+    assert.match(css, new RegExp(`--spacing-${step}: ${size}px`));
+  }
 });
