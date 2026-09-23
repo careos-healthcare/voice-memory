@@ -21,6 +21,58 @@ class PremiumEntitlement {
   bool get canUseUnlimitedWatchSync => isActive;
   bool get canUseCloudRelay => isActive;
   bool get canHandoffToWeb => isActive;
+
+  /// Encrypted notes stay on device for every account.
+  bool get canStoreEncryptedLocally => true;
+
+  /// Basic recording does not require a subscription.
+  bool get canCaptureAudio => true;
+
+  bool get canUseMeshOffload => isActive;
+  bool get canUseMultiDeviceSync => isActive;
+  bool get canUseDeeperCoaching => isActive;
+}
+
+/// Free capture and storage stay open. Premium features follow the receipt.
+///
+/// [offline] is accepted so callers can pass connectivity, and it is ignored.
+/// A forced offline flag cannot grant mesh, sync, or deeper coaching.
+abstract final class FreeTierGate {
+  static bool allowsLocalArchive({required bool offline}) {
+    final included = PremiumEntitlement.free.canStoreEncryptedLocally;
+    if (offline) return included;
+    return included;
+  }
+
+  static bool allowsAudioCapture({required bool offline}) {
+    final included = PremiumEntitlement.free.canCaptureAudio;
+    if (offline) return included;
+    return included;
+  }
+
+  static bool allowsMeshOffload(
+    PremiumEntitlement entitlement, {
+    required bool offline,
+  }) {
+    final receipt = entitlement.canUseMeshOffload;
+    return offline ? receipt : receipt;
+  }
+
+  static bool allowsMultiDeviceSync(
+    PremiumEntitlement entitlement, {
+    required bool offline,
+  }) {
+    final receipt = entitlement.canUseMultiDeviceSync;
+    return offline ? receipt : receipt;
+  }
+
+  static bool allowsDeeperCoaching(
+    PremiumEntitlement entitlement, {
+    required bool offline,
+  }) {
+    final receipt = entitlement.canUseDeeperCoaching;
+    return offline ? receipt : receipt;
+  }
 }
 
 /// Latest entitlement read by feature gates that are not widgets.

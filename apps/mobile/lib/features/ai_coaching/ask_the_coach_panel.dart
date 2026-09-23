@@ -1,17 +1,19 @@
 import 'package:archiveme_mobile/features/ai_coaching/ask_the_coach_service.dart';
+import 'package:archiveme_mobile/features/monetization/revenuecat_service.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 /// Chat box for asking the local coach about past notes.
-class AskTheCoachPanel extends StatefulWidget {
+class AskTheCoachPanel extends ConsumerStatefulWidget {
   const AskTheCoachPanel({required this.service, super.key});
 
   final AskTheCoachService service;
 
   @override
-  State<AskTheCoachPanel> createState() => _AskTheCoachPanelState();
+  ConsumerState<AskTheCoachPanel> createState() => _AskTheCoachPanelState();
 }
 
-class _AskTheCoachPanelState extends State<AskTheCoachPanel> {
+class _AskTheCoachPanelState extends ConsumerState<AskTheCoachPanel> {
   final _question = TextEditingController();
   final _turns = <_CoachTurn>[];
   var _busy = false;
@@ -52,6 +54,18 @@ class _AskTheCoachPanelState extends State<AskTheCoachPanel> {
   Future<void> _send() async {
     final question = _question.text.trim();
     if (question.isEmpty || _busy) return;
+    final entitlement = ref.read(premiumEntitlementProvider);
+    if (!FreeTierGate.allowsDeeperCoaching(entitlement, offline: false)) {
+      setState(() {
+        _turns.add(
+          const _CoachTurn(
+            'coach_locked',
+            'Deeper coaching is part of Premium. Your notes stay on this device.',
+          ),
+        );
+      });
+      return;
+    }
     setState(() {
       _busy = true;
       _turns.add(_CoachTurn('you:${_turns.length}', question));

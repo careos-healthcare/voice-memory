@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-/// Local storage beside the premium mesh and GPT-5 rows on the upgrade sheet.
+/// Free capture and storage beside the premium mesh, sync, and coaching rows.
 class UpgradeTierIndicators extends StatelessWidget {
   const UpgradeTierIndicators({super.key});
 
@@ -10,22 +10,36 @@ class UpgradeTierIndicators extends StatelessWidget {
       children: [
         _TierRow(
           id: 'upgrade_tier_local',
-          title: 'Local storage',
-          body: 'Standard notes stay on this device.',
+          title: 'Encrypted local storage',
+          body: 'Notes stay encrypted on this device.',
+          badge: 'Included',
+          premium: false,
+        ),
+        _TierRow(
+          id: 'upgrade_tier_capture',
+          title: 'Basic audio capture',
+          body: 'Recording stays available when you are offline.',
           badge: 'Included',
           premium: false,
         ),
         _TierRow(
           id: 'upgrade_tier_p2p',
           title: 'P2P mesh',
-          body: 'Premium opens a private mesh between your devices.',
+          body: 'Premium opens mesh offload between your devices.',
           badge: 'Premium',
           premium: true,
         ),
         _TierRow(
-          id: 'upgrade_tier_gpt5',
-          title: 'GPT-5',
-          body: 'Premium adds GPT-5 writing on top of the local note.',
+          id: 'upgrade_tier_sync',
+          title: 'Multi-device sync',
+          body: 'Premium syncs an encrypted copy to your other devices.',
+          badge: 'Premium',
+          premium: true,
+        ),
+        _TierRow(
+          id: 'upgrade_tier_coaching',
+          title: 'Deeper coaching',
+          body: 'Premium unlocks longer coaching questions on your notes.',
           badge: 'Premium',
           premium: true,
         ),

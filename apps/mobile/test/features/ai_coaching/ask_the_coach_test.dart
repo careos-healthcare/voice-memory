@@ -3,10 +3,12 @@ import 'package:archiveme_mobile/features/ai_coaching/ask_the_coach_service.dart
 import 'package:archiveme_mobile/features/ai_coaching/coach_action_plan.dart';
 import 'package:archiveme_mobile/features/ai_coaching/coach_action_store.dart';
 import 'package:archiveme_mobile/features/ai_coaching/recording_coach_hook.dart';
+import 'package:archiveme_mobile/features/monetization/revenuecat_service.dart';
 import 'package:archiveme_mobile/features/search/vec_search_service.dart';
 import 'package:archiveme_mobile/features/transcript/ui/transcript_detail_view.dart';
 import 'package:archiveme_mobile/features/voice_capture/transcription/transcription_service.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -103,8 +105,15 @@ void main() {
     expect(service, isNotNull);
 
     await tester.pumpWidget(
-      MaterialApp(
-        home: Scaffold(body: AskTheCoachPanel(service: service!)),
+      ProviderScope(
+        overrides: [
+          monetizationRevenueCatServiceProvider.overrideWithValue(
+            MonetizationRevenueCatService(seed: PremiumEntitlement.active),
+          ),
+        ],
+        child: MaterialApp(
+          home: Scaffold(body: AskTheCoachPanel(service: service!)),
+        ),
       ),
     );
     await tester.enterText(

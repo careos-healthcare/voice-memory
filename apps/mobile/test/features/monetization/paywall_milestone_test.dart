@@ -113,10 +113,11 @@ void main() {
 
     expect(find.text('Start Premium'), findsOneWidget);
     expect(find.byKey(const Key('upgrade_tier_local')), findsOneWidget);
+    expect(find.byKey(const Key('upgrade_tier_capture')), findsOneWidget);
     expect(find.byKey(const Key('upgrade_tier_p2p')), findsOneWidget);
-    expect(find.byKey(const Key('upgrade_tier_gpt5')), findsOneWidget);
-    expect(find.text('Included'), findsOneWidget);
+    expect(find.byKey(const Key('upgrade_tier_coaching')), findsOneWidget);
+    expect(find.text('Included'), findsWidgets);
     expect(find.text('P2P mesh'), findsOneWidget);
-    expect(find.text('GPT-5'), findsOneWidget);
+    expect(find.text('Deeper coaching'), findsWidgets);
   });
 }

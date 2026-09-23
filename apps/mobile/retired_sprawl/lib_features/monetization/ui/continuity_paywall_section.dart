@@ -26,21 +26,21 @@ class ContinuityPaywallSection extends ConsumerWidget {
               UpgradeTierIndicators(),
               _ContinuityPoint(
                 id: 'paywall_benefit_watch',
-                title: 'Unlimited Watch Sync',
+                title: 'P2P mesh offload',
                 body:
-                    'Free keeps one Watch recording. Unlimited Watch Sync removes that cap and unlocks unlimited Apple Watch synchronization for standalone Watch recordings.',
+                    'Free keeps every recording on this device. Premium mesh offload moves an encrypted copy to another device you own.',
               ),
               _ContinuityPoint(
                 id: 'paywall_benefit_relay',
-                title: 'E2EE Cloud Relay',
+                title: 'Multi-device sync',
                 body:
-                    'E2EE cloud relay backup stores an encrypted copy in an encrypted cloud bucket for a secondary phone or tablet when that device is offline.',
+                    'Multi-device sync is a premium extra. Going offline does not turn it on, and it does not lock capture.',
               ),
               _ContinuityPoint(
                 id: 'paywall_benefit_web',
-                title: 'Web & Desktop Dashboard Handoff',
+                title: 'Deeper coaching',
                 body:
-                    'Web and desktop dashboard handoff opens the same note at https://archiveme.app.',
+                    'Deeper coaching questions stay behind Premium. The transcript and the recording stay available without it. Open a paid handoff at https://archiveme.app.',
               ),
             ],
           ),
