@@ -179,7 +179,7 @@ class AppTheme {
         titleLarge: AppTokens.section(),
         titleMedium: AppTokens.card(),
         bodyLarge: AppTokens.body(),
-        bodyMedium: AppTokens.caption(),
+        bodyMedium: AppTokens.writing(),
         bodySmall: AppTokens.caption(),
         labelLarge: AppTokens.card(),
       ),

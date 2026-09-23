@@ -85,7 +85,9 @@ export const archiveDesignTokens = {
     10: 40,
     11: 44,
     12: 48,
+    13: 52,
     14: 56,
+    15: 60,
     16: 64,
   },
   radius: {

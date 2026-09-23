@@ -40,7 +40,9 @@ abstract final class AppTokens {
   static const double spacing10 = 40.0;
   static const double spacing11 = 44.0;
   static const double spacing12 = 48.0;
+  static const double spacing13 = 52.0;
   static const double spacing14 = 56.0;
+  static const double spacing15 = 60.0;
   static const double spacing16 = 64.0;
 
   static TextStyle headline({Color? color}) => TextStyle(
