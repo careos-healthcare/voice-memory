@@ -12,6 +12,8 @@ import 'package:archiveme_mobile/features/guided_entry/presentation/controllers/
 import 'package:archiveme_mobile/features/guided_entry/presentation/models/archive_entry_template.dart';
 import 'package:archiveme_mobile/features/guided_entry/presentation/models/rich_import_copy.dart';
 import 'package:archiveme_mobile/features/guided_entry/presentation/widgets/empty_state_view.dart';
+import 'package:archiveme_mobile/features/playback/local_ai_coach.dart';
+import 'package:archiveme_mobile/features/playback/local_ai_coaching_parameters_store.dart';
 import 'package:archiveme_mobile/features/record_capture_modes/record_capture_mode_copy.dart';
 import 'package:archiveme_mobile/features/record_capture_modes/record_capture_mode_engine.dart';
 import 'package:archiveme_mobile/features/voice/data/record_dictation_engine.dart';
@@ -32,6 +34,7 @@ import 'package:archiveme_mobile/theme/voicememory_colors.dart';
 import 'package:archiveme_mobile/widgets/moment_quality_card.dart';
 import 'package:archiveme_mobile/widgets/record/first_use_wording_helper_card.dart';
 import 'package:archiveme_mobile/widgets/record/focused_type_entry_examples_panel.dart';
+import 'package:archiveme_mobile/widgets/record/local_ai_coaching_parameter_toggles.dart';
 import 'package:archiveme_mobile/widgets/record/start_here_recording_section.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -101,6 +104,8 @@ class _QuickTextCaptureScreenState extends State<QuickTextCaptureScreen> {
   bool _journalLoaded = false;
   bool _examplesExpanded = false;
   bool _focusedStarterSelected = false;
+  LocalAiCoachingParameters _coachingParameters =
+      const LocalAiCoachingParameters();
 
   late final CapturePipelineService _pipeline;
   EntryController? _richImportController;
@@ -149,6 +154,18 @@ class _QuickTextCaptureScreenState extends State<QuickTextCaptureScreen> {
           StartHereVisibility.hasCompletedFirstArchiveMilestone(all);
       _journalLoaded = true;
     });
+    final coaching = await LocalAiCoachingParametersStore(
+      _accountDeps.prefs,
+    ).load();
+    if (!mounted) return;
+    setState(() => _coachingParameters = coaching);
+  }
+
+  Future<void> _updateCoachingParameters(
+    LocalAiCoachingParameters next,
+  ) async {
+    setState(() => _coachingParameters = next);
+    await LocalAiCoachingParametersStore(_accountDeps.prefs).save(next);
   }
 
   void _onStartHereSelected(String prompt) {
@@ -173,6 +190,14 @@ class _QuickTextCaptureScreenState extends State<QuickTextCaptureScreen> {
         isPostSave: false,
       ) &&
       (widget.showFirstUseWordingHelper || widget.captureModeId != null);
+
+  Widget _coachingToggles() {
+    return LocalAiCoachingParameterToggles(
+      successfulEntryCount: _recordingCount,
+      parameters: _coachingParameters,
+      onChanged: (next) => unawaited(_updateCoachingParameters(next)),
+    );
+  }
 
   void _onTextChanged() {
     if (mounted) setState(() {});
@@ -529,6 +554,7 @@ class _QuickTextCaptureScreenState extends State<QuickTextCaptureScreen> {
                     });
                   },
                 ),
+                _coachingToggles(),
               ],
             ),
           ),
@@ -683,6 +709,7 @@ class _QuickTextCaptureScreenState extends State<QuickTextCaptureScreen> {
                         : Text(_saveButtonLabel),
                   ),
                 ),
+                _coachingToggles(),
                 if (_canQuietDaySave) ...[
                   const SizedBox(height: 8),
                   SizedBox(

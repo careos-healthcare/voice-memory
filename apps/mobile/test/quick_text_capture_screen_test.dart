@@ -485,4 +485,42 @@ void main() {
       expect(find.text('What did you say?'), findsOneWidget);
     });
   });
+
+  group('QuickTextCaptureScreen coaching disclosure', () {
+    testWidgets('hides coaching switches until three entries are saved', (
+      tester,
+    ) async {
+      await pumpScreen(tester);
+
+      expect(find.byKey(const Key('quick_text_capture_field')), findsOneWidget);
+      expect(
+        find.byKey(const Key('local_ai_coaching_parameters')),
+        findsNothing,
+      );
+    });
+
+    testWidgets('shows coaching switches after three saved entries', (
+      tester,
+    ) async {
+      await tester.runAsync(() async {
+        for (var i = 0; i < 3; i++) {
+          await AppServices.instance.journalStore.save(
+            _degradedVoiceEntry(id: 'saved-$i'),
+          );
+        }
+      });
+
+      await pumpScreen(tester);
+      await tester.runAsync(() async {
+        await Future<void>.delayed(const Duration(milliseconds: 300));
+      });
+      await tester.pump();
+
+      expect(find.byKey(const Key('quick_text_capture_field')), findsOneWidget);
+      await tester.ensureVisible(
+        find.byKey(const Key('local_ai_coaching_parameters')),
+      );
+      expect(find.text('Notice pauses'), findsOneWidget);
+    });
+  });
 }
