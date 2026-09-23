@@ -30,6 +30,7 @@ import 'package:archiveme_mobile/features/pro_evidence_value/pro_evidence_value_
 import 'package:archiveme_mobile/features/revenue_metrics/revenue_readiness_engine.dart';
 import 'package:archiveme_mobile/features/auth/domain/caregiver_access_copy.dart';
 import 'package:archiveme_mobile/features/settings/ui/trust_status_footer.dart';
+import 'package:archiveme_mobile/features/sync/sync_status_center_screen.dart';
 import 'package:archiveme_mobile/features/tomorrow_return/check_in_reminder_service.dart';
 import 'package:archiveme_mobile/features/tomorrow_return/tomorrow_check_in_coordinator.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
@@ -200,6 +201,23 @@ class _SettingsScreenState extends State<SettingsScreen> {
             const SizedBox(height: AppSpacing.md),
             const AccountPrivacyControlsSection(),
             const SizedBox(height: AppSpacing.md),
+            ListTile(
+              key: const Key('settings_mesh_sync_tile'),
+              contentPadding: EdgeInsets.zero,
+              title: Text(
+                'Mesh sync',
+                style: ArchiveMobileTypography.listTitle(context),
+              ),
+              subtitle: const Text('Devices, indexing, and key status'),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute<void>(
+                    builder: (context) => const SyncStatusCenterScreen(),
+                  ),
+                );
+              },
+            ),
             ListTile(
               key: const Key('settings_privacy_trust_centre_tile'),
               contentPadding: EdgeInsets.zero,
