@@ -1,5 +1,6 @@
 import 'package:archiveme_mobile/core/copy_with_unset.dart';
 import 'package:archiveme_mobile/core/json/json_converters.dart';
+import 'package:archiveme_mobile/models/ambient_context.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'journal_display_metadata.freezed.dart';
@@ -28,6 +29,7 @@ abstract class JournalDisplayMetadata with _$JournalDisplayMetadata {
     @Default(false) bool preserveOriginal,
     String? captureContextTag,
     String? captureSource,
+    AmbientContext? ambientContext,
   }) = _JournalDisplayMetadata;
 
   factory JournalDisplayMetadata.fromJson(Map<String, dynamic> json) {
@@ -56,6 +58,11 @@ abstract class JournalDisplayMetadata with _$JournalDisplayMetadata {
       preserveOriginal: json['preserveOriginal'] == true,
       captureContextTag: JsonConverters.nullableString(json['captureContextTag']),
       captureSource: JsonConverters.nullableString(json['captureSource']),
+      ambientContext: json['ambientContext'] is Map
+          ? AmbientContext.fromJson(
+              Map<String, dynamic>.from(json['ambientContext'] as Map),
+            )
+          : null,
     );
   }
 
@@ -75,6 +82,8 @@ abstract class JournalDisplayMetadata with _$JournalDisplayMetadata {
     if (preserveOriginal) 'preserveOriginal': true,
     if (captureContextTag != null) 'captureContextTag': captureContextTag,
     if (captureSource != null) 'captureSource': captureSource,
+    if (ambientContext != null && !ambientContext!.isEmpty)
+      'ambientContext': ambientContext!.toJson(),
   };
 
   JournalDisplayMetadata copyWith({
@@ -93,6 +102,7 @@ abstract class JournalDisplayMetadata with _$JournalDisplayMetadata {
     bool? preserveOriginal,
     Object? captureContextTag = copyWithUnset,
     Object? captureSource = copyWithUnset,
+    Object? ambientContext = copyWithUnset,
   }) => JournalDisplayMetadata(
     treatAsNew: treatAsNew ?? this.treatAsNew,
     connectionApproved: connectionApproved ?? this.connectionApproved,
@@ -121,6 +131,9 @@ abstract class JournalDisplayMetadata with _$JournalDisplayMetadata {
     captureSource: identical(captureSource, copyWithUnset)
         ? this.captureSource
         : captureSource as String?,
+    ambientContext: identical(ambientContext, copyWithUnset)
+        ? this.ambientContext
+        : ambientContext as AmbientContext?,
   );
 
   @override
@@ -141,7 +154,8 @@ abstract class JournalDisplayMetadata with _$JournalDisplayMetadata {
           other.memorySurfacing == memorySurfacing &&
           other.preserveOriginal == preserveOriginal &&
           other.captureContextTag == captureContextTag &&
-          other.captureSource == captureSource;
+          other.captureSource == captureSource &&
+          other.ambientContext == ambientContext;
 
   @override
   int get hashCode => Object.hash(
@@ -160,5 +174,6 @@ abstract class JournalDisplayMetadata with _$JournalDisplayMetadata {
         preserveOriginal,
         captureContextTag,
         captureSource,
+        ambientContext,
       );
 }
