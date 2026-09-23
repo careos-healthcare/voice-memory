@@ -27,7 +27,8 @@ Future<void> _insertRow(
     'is_archived': 0,
     'transcript': 'stored transcript for $id',
     'has_verified_proof': 0,
-    'payload_json': rawPayload ?? (payload == null ? null : jsonEncode(payload)),
+    'payload_json':
+        rawPayload ?? (payload == null ? null : jsonEncode(payload)),
   });
 }
 
@@ -56,14 +57,22 @@ void main() {
 
   test('018 is registered as the newest migration', () {
     final registry = SqliteMigrationRegistry();
-    expect(registry.migrationForVersion(18), isA<Migration018TranscriptProvenance>());
-    expect(SqliteMigrationRegistry.latestVersion, 26);
+    expect(
+      registry.migrationForVersion(18),
+      isA<Migration018TranscriptProvenance>(),
+    );
+    expect(SqliteMigrationRegistry.latestVersion, 27);
   });
 
   test('the schema step touches no journal rows', () async {
     final app = await openTestAppSqliteDatabase();
     final db = app.database;
-    await _insertRow(db, id: 'a', createdAt: 1, payload: {'durationSeconds': 5});
+    await _insertRow(
+      db,
+      id: 'a',
+      createdAt: 1,
+      payload: {'durationSeconds': 5},
+    );
     final before = await _rowOf(db, 'a');
 
     await Migration018TranscriptProvenance().up(db);
@@ -74,8 +83,18 @@ void main() {
   test('stamps legacy payloads with the untrusted value', () async {
     final app = await openTestAppSqliteDatabase();
     final db = app.database;
-    await _insertRow(db, id: 'a', createdAt: 1, payload: {'durationSeconds': 5});
-    await _insertRow(db, id: 'b', createdAt: 2, payload: {'durationSeconds': 9});
+    await _insertRow(
+      db,
+      id: 'a',
+      createdAt: 1,
+      payload: {'durationSeconds': 5},
+    );
+    await _insertRow(
+      db,
+      id: 'b',
+      createdAt: 2,
+      payload: {'durationSeconds': 9},
+    );
 
     final stamped = await TranscriptProvenanceBackfill.run(db);
 
@@ -94,10 +113,15 @@ void main() {
     final db = app.database;
     final original = {
       'durationSeconds': 42,
-      'reflection': {'mood': 'tired', 'recurringThemes': ['work', 'rest']},
+      'reflection': {
+        'mood': 'tired',
+        'recurringThemes': ['work', 'rest'],
+      },
       'transcriptStatus': 'provisional',
       'revision': 7,
-      'nested': {'deep': {'value': true}},
+      'nested': {
+        'deep': {'value': true},
+      },
     };
     await _insertRow(db, id: 'a', createdAt: 1, payload: original);
     final rowBefore = await _rowOf(db, 'a');
@@ -121,24 +145,36 @@ void main() {
   test('never overwrites a stamp that is already there', () async {
     final app = await openTestAppSqliteDatabase();
     final db = app.database;
-    await _insertRow(db, id: 'spoken', createdAt: 1, payload: {
-      'durationSeconds': 5,
-      'transcriptProvenance': TranscriptProvenance.speechToText.storageValue,
-    });
-    await _insertRow(db, id: 'edited', createdAt: 2, payload: {
-      'durationSeconds': 5,
-      'transcriptProvenance': TranscriptProvenance.userEdited.storageValue,
-    });
+    await _insertRow(
+      db,
+      id: 'spoken',
+      createdAt: 1,
+      payload: {
+        'durationSeconds': 5,
+        'transcriptProvenance': TranscriptProvenance.speechToText.storageValue,
+      },
+    );
+    await _insertRow(
+      db,
+      id: 'edited',
+      createdAt: 2,
+      payload: {
+        'durationSeconds': 5,
+        'transcriptProvenance': TranscriptProvenance.userEdited.storageValue,
+      },
+    );
 
     final stamped = await TranscriptProvenanceBackfill.run(db);
 
     expect(stamped, 0);
     expect(
-      (jsonDecode((await _payloadOf(db, 'spoken'))!) as Map)['transcriptProvenance'],
+      (jsonDecode((await _payloadOf(db, 'spoken'))!)
+          as Map)['transcriptProvenance'],
       TranscriptProvenance.speechToText.storageValue,
     );
     expect(
-      (jsonDecode((await _payloadOf(db, 'edited'))!) as Map)['transcriptProvenance'],
+      (jsonDecode((await _payloadOf(db, 'edited'))!)
+          as Map)['transcriptProvenance'],
       TranscriptProvenance.userEdited.storageValue,
     );
   });
@@ -147,7 +183,12 @@ void main() {
     final app = await openTestAppSqliteDatabase();
     final db = app.database;
     for (var i = 0; i < 5; i++) {
-      await _insertRow(db, id: 'e$i', createdAt: i, payload: {'durationSeconds': i});
+      await _insertRow(
+        db,
+        id: 'e$i',
+        createdAt: i,
+        payload: {'durationSeconds': i},
+      );
     }
 
     expect(await TranscriptProvenanceBackfill.run(db), 5);
@@ -167,7 +208,12 @@ void main() {
     final app = await openTestAppSqliteDatabase();
     final db = app.database;
     for (var i = 0; i < 10; i++) {
-      await _insertRow(db, id: 'e$i', createdAt: i, payload: {'durationSeconds': i});
+      await _insertRow(
+        db,
+        id: 'e$i',
+        createdAt: i,
+        payload: {'durationSeconds': i},
+      );
     }
 
     // Stands in for the process dying after the first batch committed.
@@ -192,21 +238,31 @@ void main() {
     }
   });
 
-  test('a capped run leaves the rest pending rather than claiming success',
-      () async {
-    final app = await openTestAppSqliteDatabase();
-    final db = app.database;
-    for (var i = 0; i < 8; i++) {
-      await _insertRow(db, id: 'e$i', createdAt: i, payload: {'durationSeconds': i});
-    }
+  test(
+    'a capped run leaves the rest pending rather than claiming success',
+    () async {
+      final app = await openTestAppSqliteDatabase();
+      final db = app.database;
+      for (var i = 0; i < 8; i++) {
+        await _insertRow(
+          db,
+          id: 'e$i',
+          createdAt: i,
+          payload: {'durationSeconds': i},
+        );
+      }
 
-    final stamped =
-        await TranscriptProvenanceBackfill.run(db, batchSize: 2, maxBatches: 2);
+      final stamped = await TranscriptProvenanceBackfill.run(
+        db,
+        batchSize: 2,
+        maxBatches: 2,
+      );
 
-    expect(stamped, 4);
-    expect(await TranscriptProvenanceBackfill.isPending(db), isTrue);
-    expect(await TranscriptProvenanceBackfill.pendingCount(db), 4);
-  });
+      expect(stamped, 4);
+      expect(await TranscriptProvenanceBackfill.isPending(db), isTrue);
+      expect(await TranscriptProvenanceBackfill.pendingCount(db), 4);
+    },
+  );
 
   test('rows the stamp cannot be written to do not stall the pass', () async {
     final app = await openTestAppSqliteDatabase();
@@ -214,7 +270,12 @@ void main() {
     await _insertRow(db, id: 'null-payload', createdAt: 1);
     await _insertRow(db, id: 'empty-payload', createdAt: 2, rawPayload: '');
     await _insertRow(db, id: 'corrupt', createdAt: 3, rawPayload: '{not json');
-    await _insertRow(db, id: 'good', createdAt: 4, payload: {'durationSeconds': 5});
+    await _insertRow(
+      db,
+      id: 'good',
+      createdAt: 4,
+      payload: {'durationSeconds': 5},
+    );
 
     // Terminates rather than looping forever on rows json_set cannot rewrite,
     // and a malformed payload does not abort the statement for the good rows.
@@ -225,7 +286,8 @@ void main() {
     expect(await _payloadOf(db, 'null-payload'), isNull);
     expect(await _payloadOf(db, 'corrupt'), '{not json');
     expect(
-      (jsonDecode((await _payloadOf(db, 'good'))!) as Map)['transcriptProvenance'],
+      (jsonDecode((await _payloadOf(db, 'good'))!)
+          as Map)['transcriptProvenance'],
       TranscriptProvenance.unknownLegacy.storageValue,
     );
   });
@@ -236,15 +298,23 @@ void main() {
     const total = 250;
     await db.transaction((txn) async {
       for (var i = 0; i < total; i++) {
-        await _insertRow(txn, id: 'e$i', createdAt: i, payload: {'durationSeconds': i});
+        await _insertRow(
+          txn,
+          id: 'e$i',
+          createdAt: i,
+          payload: {'durationSeconds': i},
+        );
       }
     });
 
     var stamped = 0;
     // Each call stands for one app launch with a deliberately small budget.
     while (await TranscriptProvenanceBackfill.isPending(db)) {
-      stamped +=
-          await TranscriptProvenanceBackfill.run(db, batchSize: 25, maxBatches: 2);
+      stamped += await TranscriptProvenanceBackfill.run(
+        db,
+        batchSize: 25,
+        maxBatches: 2,
+      );
     }
 
     expect(stamped, total);

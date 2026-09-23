@@ -21,7 +21,7 @@ void main() {
         SqliteMigrationManager.latestVersion,
       );
       expect(registry.migrations.length, SqliteMigrationManager.latestVersion);
-      expect(SqliteMigrationManager.latestVersion, 26);
+      expect(SqliteMigrationManager.latestVersion, 27);
     });
 
     test('rejects non-sequential migration versions', () {
@@ -53,17 +53,19 @@ void main() {
       await harness.expectVersion(db, 0);
     });
 
-    test('applies pending migrations in ascending order inside transactions',
-        () async {
-      final db = await harness.openEmpty();
-      addTearDown(db.close);
+    test(
+      'applies pending migrations in ascending order inside transactions',
+      () async {
+        final db = await harness.openEmpty();
+        addTearDown(db.close);
 
-      final version = await harness.manager.run(db);
-      expect(version, 2);
-      await harness.expectVersion(db, 2);
-      await harness.expectTableExists(db, 'user_relationships');
-      await harness.expectTableExists(db, 'fact_ledger');
-    });
+        final version = await harness.manager.run(db);
+        expect(version, 2);
+        await harness.expectVersion(db, 2);
+        await harness.expectTableExists(db, 'user_relationships');
+        await harness.expectTableExists(db, 'fact_ledger');
+      },
+    );
 
     test('runToVersion stops at the requested schema version', () async {
       final db = await harness.openAtVersion(1);
