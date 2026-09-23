@@ -175,10 +175,12 @@ class _MonthHeaderDelegate extends SliverPersistentHeaderDelegate {
                 Expanded(
                   child: Text(
                     section.label,
-                    style: theme.textTheme.titleMedium,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: AppTokens.section(),
                   ),
                 ),
-                Text(mix, style: theme.textTheme.bodySmall),
+                Text(mix, style: AppTokens.caption()),
                 Icon(expanded ? Icons.expand_less : Icons.expand_more),
               ],
             ),
@@ -251,17 +253,15 @@ class _TimelineRow extends StatelessWidget {
                           entry.durationSeconds,
                         ),
                         key: Key('timeline_change_feed_duration_${entry.id}'),
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color: accent,
-                        ),
+                        style: AppTokens.caption(color: accent),
                       ),
                     Text(
                       entry.transcript,
                       maxLines: voice ? 2 : 4,
                       overflow: TextOverflow.ellipsis,
                       style: voice
-                          ? theme.textTheme.bodyMedium
-                          : theme.textTheme.bodyLarge,
+                          ? AppTokens.body(color: accent)
+                          : AppTokens.writing(),
                     ),
                   ],
                 ),

@@ -69,6 +69,22 @@ void main() {
         findsOneWidget,
       );
       expect(find.text('0:12'), findsOneWidget);
+      expect(
+        tester.widget<Text>(find.text('Walked after lunch.')).style?.fontSize,
+        AppTokens.body().fontSize,
+      );
+      expect(
+        tester.widget<Text>(find.text('Wrote note 0.')).style?.fontSize,
+        AppTokens.writing().fontSize,
+      );
+      expect(
+        tester.widget<Text>(find.text('Wrote note 0.')).style?.height,
+        AppTokens.writing().height,
+      );
+      expect(
+        tester.widget<Text>(find.text('September 2026')).style?.fontSize,
+        AppTokens.section().fontSize,
+      );
 
       final voiceBox = tester.widget<DecoratedBox>(
         find.byKey(const Key('timeline_change_feed_voice_voice')),
