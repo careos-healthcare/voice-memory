@@ -4,6 +4,7 @@ import 'package:archiveme_mobile/features/capture_flow/capture_flow_phase.dart';
 import 'package:archiveme_mobile/features/memos/archive_home_host.dart';
 import 'package:archiveme_mobile/features/onboarding/privacy_onboarding_flow.dart';
 import 'package:archiveme_mobile/features/sync/screens/offline_sync_verification_screen.dart';
+import 'package:archiveme_mobile/features/sync/sync_dashboard_screen.dart';
 import 'package:archiveme_mobile/features/relationships/presentation/relationship_graph_screen.dart';
 import 'package:archiveme_mobile/features/voice/presentation/voice_call_screen.dart';
 import 'package:archiveme_mobile/config/production_navigation.dart';
@@ -453,6 +454,14 @@ final GoRouter appRouter = GoRouter(
       pageBuilder: (context, state) => _featurePage(
         key: state.pageKey,
         child: const HabitsDashboardRoute(),
+      ),
+    ),
+    GoRoute(
+      path: V1RouteRegistry.syncDashboardPath,
+      parentNavigatorKey: _rootNavigatorKey,
+      pageBuilder: (context, state) => _featurePage(
+        key: state.pageKey,
+        child: const SyncDashboardScreen(),
       ),
     ),
     GoRoute(

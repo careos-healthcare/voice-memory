@@ -30,6 +30,7 @@ abstract final class V1RouteRegistry {
   static const chatPath = '/chat';
   static const habitsPath = '/habits';
   static const syncStatusPath = '/sync-status';
+  static const syncDashboardPath = '/sync-dashboard';
 
   static const primaryShellPaths = RouteCatalog.primaryRoutes;
 
@@ -60,6 +61,7 @@ abstract final class V1RouteRegistry {
     chatPath,
     habitsPath,
     syncStatusPath,
+    syncDashboardPath,
   ];
 
   // FOOTGUN — intentionally empty during the focused-beta billing freeze.

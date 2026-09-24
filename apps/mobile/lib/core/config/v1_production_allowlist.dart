@@ -73,6 +73,7 @@ abstract final class V1ProductionAllowlist {
     'TermsScreen',
     'MainShell',
     'OfflineSyncVerificationScreen',
+    'SyncDashboardScreen',
   };
 
   /// Deferred screens that must never appear as production route builders.
