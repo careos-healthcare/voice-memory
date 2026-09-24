@@ -21,7 +21,6 @@ import 'package:archiveme_mobile/widgets/archive/archive_empty_state.dart';
 import 'package:archiveme_mobile/widgets/archive/archive_entry_card.dart';
 import 'package:archiveme_mobile/widgets/archive/archive_search_field.dart';
 import 'package:archiveme_mobile/widgets/archive/archive_status_banner.dart';
-import 'package:archiveme_mobile/widgets/archive/archive_home_choose_what_leaves_tile.dart';
 import 'package:archiveme_mobile/widgets/archive/archive_verified_changes_section.dart';
 import 'package:archiveme_mobile/widgets/insight_share/insight_share_exporter.dart';
 import 'package:archiveme_mobile/widgets/memory_resurfacing_section.dart';
@@ -317,28 +316,10 @@ class _IntroSection extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Text(
-          'Your recordings, typed moments, and transcripts — exactly as you '
-          'captured them. Archive interpretations above stay separate from your '
-          'own wording.',
+          'Your recordings and typed moments, in your words.',
           style: theme.textTheme.bodyLarge?.copyWith(
             color: theme.colorScheme.onSurfaceVariant,
           ),
-        ),
-        const SizedBox(height: 8),
-        Text(
-          'Not therapy or medical advice.',
-          style: theme.textTheme.bodySmall?.copyWith(
-            color: theme.colorScheme.onSurfaceVariant,
-          ),
-        ),
-        const SizedBox(height: 12),
-        ArchiveHomeChooseWhatLeavesTile(
-          onTap: () {
-            final router = GoRouter.maybeOf(context);
-            if (router != null) {
-              router.push('/privacy-trust-centre');
-            }
-          },
         ),
       ],
     );

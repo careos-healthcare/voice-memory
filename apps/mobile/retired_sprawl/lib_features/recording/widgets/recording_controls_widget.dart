@@ -366,19 +366,7 @@ extension RecordingControlsWidget on _RecordScreenState {
       }
     }
     if (ui == RecordUiState.recording) {
-      actions.add(
-        SizedBox(
-          height: 48,
-          width: double.infinity,
-          child: FilledButton.icon(
-            onPressed: _stopAndProcess,
-            icon: const Icon(Icons.stop),
-            label: Text(
-              policyForUi().primaryLabel ?? ConsumerUiCopy.stopRecordingCta,
-            ),
-          ),
-        ),
-      );
+      // Stop lives on the full-screen recording canvas.
       // Still changeable while recording — the choice applies at save.
       if (_journalEntryCountReady && _journalEntryCount > 0) {
         actions.add(CleanSlatePromptSection(entryCount: _journalEntryCount));

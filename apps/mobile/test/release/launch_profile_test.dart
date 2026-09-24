@@ -15,6 +15,14 @@ void main() {
     '${repoRoot.path}/config/launch_profiles/beta_1.json',
   );
 
+  test('apps/mobile launch profile keeps dark mode off', () {
+    final file = File('${packageRoot.path}/config/launch_profile.json');
+    expect(file.existsSync(), isTrue, reason: file.path);
+    final decoded = jsonDecode(file.readAsStringSync());
+    final profile = Map<String, dynamic>.from(decoded as Map);
+    expect(profile['THOUGHTPRINT_DARK_MODE_READY'], isFalse);
+  });
+
   test('beta_1.json matches the compile-time flags and leaves them off', () {
     expect(profileFile.existsSync(), isTrue, reason: profileFile.path);
 

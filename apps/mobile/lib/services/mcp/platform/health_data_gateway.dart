@@ -1,5 +1,3 @@
-import 'package:health/health.dart';
-
 /// Normalized local health metric sample.
 class McpHealthMetricSample {
   const McpHealthMetricSample({
@@ -55,99 +53,28 @@ class McpHealthQuery {
   final DateTime end;
   final List<String>? metricTypes;
 
-  List<HealthDataType> resolveDataTypes() {
-    final requested = metricTypes ?? defaultMetricTypeNames;
-    final resolved = <HealthDataType>[];
-    for (final name in requested) {
-      final type = _healthDataTypeFromName(name);
-      if (type != null) resolved.add(type);
-    }
-    return resolved.isEmpty ? defaultHealthDataTypes : resolved;
-  }
-
   static const defaultMetricTypeNames = [
     'steps',
     'heart_rate',
     'sleep_asleep',
     'active_energy',
   ];
-
-  static const defaultHealthDataTypes = [
-    HealthDataType.STEPS,
-    HealthDataType.HEART_RATE,
-    HealthDataType.SLEEP_ASLEEP,
-    HealthDataType.ACTIVE_ENERGY_BURNED,
-  ];
 }
 
-HealthDataType? _healthDataTypeFromName(String raw) => switch (raw) {
-  'steps' => HealthDataType.STEPS,
-  'heart_rate' => HealthDataType.HEART_RATE,
-  'sleep_asleep' => HealthDataType.SLEEP_ASLEEP,
-  'active_energy' => HealthDataType.ACTIVE_ENERGY_BURNED,
-  'resting_heart_rate' => HealthDataType.RESTING_HEART_RATE,
-  'distance_walking_running' => HealthDataType.DISTANCE_WALKING_RUNNING,
-  _ => null,
-};
-
-String _healthDataTypeName(HealthDataType type) => switch (type) {
-  HealthDataType.STEPS => 'steps',
-  HealthDataType.HEART_RATE => 'heart_rate',
-  HealthDataType.SLEEP_ASLEEP => 'sleep_asleep',
-  HealthDataType.ACTIVE_ENERGY_BURNED => 'active_energy',
-  HealthDataType.RESTING_HEART_RATE => 'resting_heart_rate',
-  HealthDataType.DISTANCE_WALKING_RUNNING => 'distance_walking_running',
-  _ => type.name,
-};
-
 /// Platform health reads — injectable for tests.
+///
+/// The native HealthKit / Health Connect package is not linked. This gateway
+/// returns no samples so the store binary does not request health permissions.
 abstract class HealthDataGateway {
   Future<List<McpHealthMetricSample>> fetchMetrics(McpHealthQuery query);
 }
 
 class HealthKitGateway implements HealthDataGateway {
-  HealthKitGateway({Health? health}) : _health = health ?? Health();
-
-  final Health _health;
+  const HealthKitGateway();
 
   @override
   Future<List<McpHealthMetricSample>> fetchMetrics(McpHealthQuery query) async {
-    await _health.configure();
-    final types = query.resolveDataTypes();
-    final authorized = await _health.requestAuthorization(types);
-    if (!authorized) return const [];
-
-    final points = await _health.getHealthDataFromTypes(
-      types: types,
-      startTime: query.start,
-      endTime: query.end,
-    );
-
-    final samples = <McpHealthMetricSample>[];
-    for (final point in points) {
-      final numeric = _numericValue(point.value);
-      if (numeric == null) continue;
-
-      samples.add(
-        McpHealthMetricSample(
-          type: _healthDataTypeName(point.type),
-          value: numeric,
-          unit: point.unit.name,
-          recordedAt: point.dateFrom.toUtc(),
-          sourceName: point.sourceName,
-        ),
-      );
-    }
-
-    samples.sort((a, b) => a.recordedAt.compareTo(b.recordedAt));
-    return samples;
-  }
-
-  double? _numericValue(HealthValue value) {
-    if (value is NumericHealthValue) {
-      return value.numericValue.toDouble();
-    }
-    return null;
+    return const [];
   }
 }
 

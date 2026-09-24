@@ -169,7 +169,7 @@ void main() {
         find.byKey(const Key('archive_tab_entry_state_empty')),
         findsOneWidget,
       );
-      expect(find.text('Go to Record'), findsOneWidget);
+      expect(find.text('Record'), findsOneWidget);
       expect(find.byKey(const Key('archive_search_field')), findsNothing);
       expect(tester.takeException(), isNull);
     });

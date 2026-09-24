@@ -16,9 +16,10 @@ AppLocalizations? _appLocalizations(BuildContext context) =>
     Localizations.of<AppLocalizations>(context, AppLocalizations);
 
 class _RecordingStatusCard extends ConsumerWidget {
-  const _RecordingStatusCard({required this.stageLabel});
+  const _RecordingStatusCard({required this.stageLabel, required this.onStop});
 
   final String stageLabel;
+  final VoidCallback onStop;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -36,55 +37,72 @@ class _RecordingStatusCard extends ConsumerWidget {
         : stageLabel;
     final stopHint =
         l10n?.recordingStopAndSaveHint ?? _recordingStopAndSaveHintFallback;
+    final height = MediaQuery.sizeOf(context).height * 0.72;
 
     return Semantics(
       label: semanticsLabel,
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 20),
-        decoration: BoxDecoration(
-          color: VoiceMemoryColors.surface,
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-            color: VoiceMemoryColors.primaryIndigo.withValues(alpha: 0.35),
+      child: SizedBox(
+        key: const Key('recording_fullscreen'),
+        height: height,
+        width: double.infinity,
+        child: DecoratedBox(
+          decoration: const BoxDecoration(
+            color: Color(0xFF0F1419),
+            borderRadius: BorderRadius.all(Radius.circular(28)),
           ),
-          boxShadow: [
-            BoxShadow(
-              color: VoiceMemoryColors.primaryIndigo.withValues(alpha: 0.18),
-              blurRadius: 24,
-              spreadRadius: 2,
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(20, 28, 20, 20),
+            child: Column(
+              children: [
+                Text(
+                  statusText,
+                  style: const TextStyle(color: Color(0xFFB7C0CC), fontSize: 14),
+                ),
+                const Spacer(),
+                Text(
+                  timer,
+                  style: const TextStyle(
+                    color: Color(0xFFF8F6F1),
+                    fontSize: 64,
+                    fontWeight: FontWeight.w500,
+                    letterSpacing: 1.4,
+                    fontFeatures: [FontFeature.tabularFigures()],
+                  ),
+                ),
+                const SizedBox(height: 28),
+                RecordingWaveform(
+                  controller: ref.read(recordingWaveformControllerProvider),
+                  height: 96,
+                  color: const Color(0xFFE7E1D6),
+                  ambientWhenIdle: true,
+                ),
+                const Spacer(),
+                Text(
+                  stopHint,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(fontSize: 13, color: Color(0xFF8E99A8)),
+                ),
+                const SizedBox(height: 16),
+                SizedBox(
+                  width: double.infinity,
+                  height: 64,
+                  child: FilledButton.icon(
+                    key: const Key('recording_stop'),
+                    style: FilledButton.styleFrom(
+                      backgroundColor: const Color(0xFFF8F6F1),
+                      foregroundColor: const Color(0xFF0F1419),
+                    ),
+                    onPressed: onStop,
+                    icon: const Icon(Icons.stop_rounded, size: 28),
+                    label: Text(
+                      ConsumerUiCopy.stopRecordingCta,
+                      style: const TextStyle(fontSize: 18),
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            RecordingWaveform(
-              controller: ref.read(recordingWaveformControllerProvider),
-            ),
-            const SizedBox(height: 12),
-            const Icon(Icons.mic, size: 36, color: VoiceMemoryColors.primaryIndigo),
-            const SizedBox(height: 14),
-            RecordingTranscriptionView(text: statusText, isLive: true),
-            const SizedBox(height: 8),
-            Text(
-              timer,
-              style: const TextStyle(
-                fontSize: 28,
-                fontWeight: FontWeight.w600,
-                letterSpacing: 1.2,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              stopHint,
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                fontSize: 12,
-                color: VoiceMemoryColors.textSecondary,
-                height: 1.4,
-              ),
-            ),
-          ],
+          ),
         ),
       ),
     );
