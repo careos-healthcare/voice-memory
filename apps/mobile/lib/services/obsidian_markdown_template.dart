@@ -9,6 +9,7 @@ class ObsidianTemplateValues {
     required this.tags,
     required this.transcript,
     required this.patterns,
+    this.extractedTags = '',
     this.locality = '',
     this.weather = '',
     this.steps = '',
@@ -28,6 +29,11 @@ class ObsidianTemplateValues {
           .where((pattern) => pattern.isNotEmpty)
           .map((pattern) => '- $pattern')
           .join('\n'),
+      extractedTags: note.extractedTags
+          .map((tag) => tag.trim())
+          .where((tag) => tag.isNotEmpty)
+          .map((tag) => '  - $tag')
+          .join('\n'),
       locality: note.ambient.locality?.trim() ?? '',
       weather: note.ambient.weather?.trim() ?? '',
       steps: note.ambient.steps?.toString() ?? '',
@@ -41,6 +47,7 @@ class ObsidianTemplateValues {
   final String tags;
   final String transcript;
   final String patterns;
+  final String extractedTags;
   final String locality;
   final String weather;
   final String steps;
@@ -53,6 +60,7 @@ class ObsidianTemplateValues {
     'tags': tags,
     'transcript': transcript,
     'patterns': patterns,
+    'extracted_tags': extractedTags,
     'locality': locality,
     'weather': weather,
     'steps': steps,
@@ -75,6 +83,9 @@ date: {{date}}
 tags:
 {{tags}}
 mood: {{mood}}
+{{#extracted_tags}}extracted_tags:
+{{extracted_tags}}
+{{/extracted_tags}}
 {{#locality}}ambient_locality: {{locality}}
 {{/locality}}{{#weather}}ambient_weather: {{weather}}
 {{/weather}}{{#steps}}ambient_steps: {{steps}}

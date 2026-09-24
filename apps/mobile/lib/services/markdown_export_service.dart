@@ -37,6 +37,7 @@ class MarkdownNote {
     required this.tags,
     this.ambient = const MarkdownAmbient(),
     this.patterns = const [],
+    this.extractedTags = const [],
   });
 
   factory MarkdownNote.fromEntry(JournalEntry entry) {
@@ -53,6 +54,13 @@ class MarkdownNote {
           : entry.reflection.mood.trim(),
       tags: ['journal', ...themes],
       patterns: themes,
+      extractedTags: [
+        for (final tag in themes)
+          if (tag.startsWith('person:') ||
+              tag.startsWith('place:') ||
+              tag.startsWith('mood:'))
+            tag,
+      ],
       ambient: ambientFromDisplayJson(entry.display.toJson()),
     );
   }
@@ -64,6 +72,7 @@ class MarkdownNote {
   final List<String> tags;
   final MarkdownAmbient ambient;
   final List<String> patterns;
+  final List<String> extractedTags;
 
   String get fileName {
     final day = _isoDay(createdAt);
@@ -117,16 +126,19 @@ class MarkdownExportService {
     MarkdownVaultStore? vault,
     Future<void> Function(String path, String contents)? writeFile,
     Future<String?> Function(String path)? readFile,
+    Future<DateTime?> Function(String path)? readModifiedAt,
     this.template,
   }) : _pick = pickDirectory ?? pickMarkdownVaultDirectory,
        _vault = vault ?? MemoryMarkdownVaultStore(),
        _write = writeFile ?? writeMarkdownFile,
-       _read = readFile ?? _readMarkdownFile;
+       _read = readFile ?? _readMarkdownFile,
+       _modifiedAt = readModifiedAt ?? _vaultModifiedAt;
 
   final Future<String?> Function() _pick;
   final MarkdownVaultStore _vault;
   final Future<void> Function(String path, String contents) _write;
   final Future<String?> Function(String path) _read;
+  final Future<DateTime?> Function(String path) _modifiedAt;
   final ObsidianMarkdownTemplate? template;
   final Map<String, String> _lastPushedHash = {};
 
@@ -158,6 +170,8 @@ class MarkdownExportService {
         localMarkdown: contents,
         vaultMarkdown: vaultMarkdown,
         lastPushedHash: _lastPushedHash[note.id],
+        localUpdatedAt: entry.updatedAt,
+        vaultModifiedAt: await _modifiedAt(path),
       );
       if (decision != ObsidianVaultPush.write) continue;
       await _write(path, contents);
@@ -180,6 +194,12 @@ class MarkdownExportService {
     if (layout == null) return renderMarkdownNote(note);
     return layout.render(ObsidianTemplateValues.fromNote(note));
   }
+}
+
+Future<DateTime?> _vaultModifiedAt(String path) async {
+  final file = File(path);
+  if (!file.existsSync()) return null;
+  return (await file.stat()).modified.toUtc();
 }
 
 Future<String?> _readMarkdownFile(String path) async {

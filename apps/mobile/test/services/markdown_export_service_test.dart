@@ -125,6 +125,48 @@ mood: {{mood}}
       ),
       ObsidianVaultPush.keepVault,
     );
+    final localTime = DateTime.utc(2026, 3, 3, 9);
+    expect(
+      ObsidianVaultDiff.resolve(
+        localMarkdown: 'newer local',
+        vaultMarkdown: 'older vault',
+        lastPushedHash: null,
+        localUpdatedAt: localTime,
+        vaultModifiedAt: localTime.subtract(const Duration(hours: 1)),
+      ),
+      ObsidianVaultPush.write,
+    );
+    expect(
+      ObsidianVaultDiff.resolve(
+        localMarkdown: 'local',
+        vaultMarkdown: 'vault edited later',
+        lastPushedHash: null,
+        localUpdatedAt: localTime,
+        vaultModifiedAt: localTime.add(const Duration(hours: 2)),
+      ),
+      ObsidianVaultPush.keepVault,
+    );
+  });
+
+  test('a template includes extracted person and place tags', () {
+    final note = MarkdownNote.fromEntry(
+      _entry('Met Ada.').copyWith(
+        reflection: const Reflection(
+          mood: 'calm',
+          emotionalIntensity: 1,
+          recurringThemes: ['person:Ada', 'place:London', 'morning'],
+          exactLanguagePattern: '',
+          concreteObservation: '',
+          repeatedSignal: '',
+        ),
+      ),
+    );
+    final markdown = const ObsidianMarkdownTemplate(
+      ObsidianMarkdownTemplate.defaultSource,
+    ).render(ObsidianTemplateValues.fromNote(note));
+    expect(markdown, contains('person:Ada'));
+    expect(markdown, contains('place:London'));
+    expect(markdown, isNot(contains('extracted_tags:\n  - morning')));
   });
 }
 
