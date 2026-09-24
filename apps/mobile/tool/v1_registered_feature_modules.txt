@@ -155,6 +155,7 @@ evidence_weighting
 export
 fact_ledger
 feature_noise_reduction
+feature_unlock
 feedback
 first25
 first_five_minutes

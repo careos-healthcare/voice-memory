@@ -5,6 +5,7 @@ import 'package:archiveme_mobile/features/archive/ui/trust_status_footer.dart';
 import 'package:archiveme_mobile/features/archive/v1/archive_belief_load_state.dart';
 import 'package:archiveme_mobile/features/archive/v1/archive_feed_pagination_provider.dart';
 import 'package:archiveme_mobile/features/archive_changes/archive_changes_adapter.dart';
+import 'package:archiveme_mobile/features/feature_unlock/feature_unlock_service.dart';
 import 'package:archiveme_mobile/features/sync/presentation/modals/conflict_resolution_modal.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/services/app_services.dart';
@@ -16,8 +17,10 @@ import 'package:archiveme_mobile/widgets/archive/archive_entry_card.dart';
 import 'package:archiveme_mobile/widgets/archive/archive_search_field.dart';
 import 'package:archiveme_mobile/widgets/archive/archive_status_banner.dart';
 import 'package:archiveme_mobile/widgets/archive/archive_home_choose_what_leaves_tile.dart';
+import 'package:archiveme_mobile/widgets/archive/feature_unlock_tools.dart';
 import 'package:archiveme_mobile/widgets/memory_resurfacing_section.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 /// Responsive [CustomScrollView] slivers for the Archive Home dashboard.
@@ -65,7 +68,7 @@ class ArchiveDashboardScrollView extends StatelessWidget {
         );
 
         return RefreshIndicator(
-          onRefresh: onRefresh,
+          onRefresh: () => _refreshDashboard(context),
           child: CustomScrollView(
             controller: controller,
             physics: const AlwaysScrollableScrollPhysics(),
@@ -287,6 +290,20 @@ class ArchiveDashboardScrollView extends StatelessWidget {
       },
     );
   }
+
+  Future<void> _refreshDashboard(BuildContext context) async {
+    final scoped =
+        context.findAncestorWidgetOfExactType<ProviderScope>() != null ||
+        context.findAncestorWidgetOfExactType<UncontrolledProviderScope>() !=
+            null;
+    if (scoped) {
+      await ProviderScope.containerOf(
+        context,
+        listen: false,
+      ).read(featureUnlockProvider.notifier).refresh();
+    }
+    await onRefresh();
+  }
 }
 
 class _IntroSection extends StatelessWidget {
@@ -349,6 +366,8 @@ class _IntroSection extends StatelessWidget {
             ),
           ),
         ],
+        const SizedBox(height: 16),
+        const FeatureUnlockDashboardSlot(),
         const SizedBox(height: 16),
         if (showChangesUnavailable) const ArchiveChangesUnavailableNotice(),
       ],
