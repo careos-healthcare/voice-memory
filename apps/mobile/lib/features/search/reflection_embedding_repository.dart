@@ -1,8 +1,11 @@
+import 'dart:convert';
 import 'dart:math' as math;
 import 'dart:typed_data';
 
 import 'package:archiveme_mobile/features/insight_engine/hybrid_search_models.dart';
 import 'package:archiveme_mobile/features/search/reflection_embedding_contract.dart';
+import 'package:archiveme_mobile/features/search/reflection_text_processor.dart';
+import 'package:crypto/crypto.dart';
 import 'package:archiveme_mobile/storage/sqlite/app_sqlite_database.dart';
 import 'package:archiveme_mobile/storage/sqlite/migrations/migration_009_reflection_embeddings.dart';
 import 'package:archiveme_mobile/storage/sqlite/sqlite_vector_support.dart';
@@ -63,6 +66,30 @@ class ReflectionEmbeddingRepository {
     if (await _hasLegacyVec0Table()) {
       await _upsertLegacyVec0(entryId: entryId, embedding: embedding);
     }
+  }
+
+  /// Embeds a new transcript locally and stores it in the vector tables.
+  ///
+  /// Returns false when the text is too short or the stored hash already matches.
+  Future<bool> indexTranscript({
+    required String entryId,
+    required String transcript,
+    required Future<List<double>> Function(String text) embed,
+  }) async {
+    final trimmed = transcript.trim();
+    if (entryId.isEmpty ||
+        trimmed.length < ReflectionTextProcessor.minTextChars) {
+      return false;
+    }
+    final contentHash = sha256.convert(utf8.encode(trimmed)).toString();
+    if (await readContentHash(entryId) == contentHash) return false;
+    final embedding = await embed(trimmed);
+    await upsertEmbedding(
+      entryId: entryId,
+      embedding: embedding,
+      contentHash: contentHash,
+    );
+    return true;
   }
 
   Future<void> deleteEmbedding(String entryId) async {

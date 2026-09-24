@@ -90,6 +90,35 @@ void main() {
       expect(hits.first.cosineSimilarity, greaterThan(0));
     });
 
+    test('indexTranscript stores a vector that a raw query can find', () async {
+      final created = DateTime.utc(2026, 8, 12);
+      await sqlite.database.insert('journal_entries', {
+        'id': 'entry-harbor',
+        'created_at': created.millisecondsSinceEpoch,
+        'updated_at': created.millisecondsSinceEpoch,
+        'transcript': 'A calm walk by the harbor with Ada',
+      });
+      expect(
+        await search.indexTranscript(
+          entryId: 'entry-harbor',
+          transcript: 'A calm walk by the harbor with Ada',
+        ),
+        isTrue,
+      );
+      expect(
+        await search.indexTranscript(
+          entryId: 'entry-harbor',
+          transcript: 'A calm walk by the harbor with Ada',
+        ),
+        isFalse,
+      );
+
+      final entries = await search.queryTimeline('harbor walk with Ada', k: 3);
+      expect(entries, isNotEmpty);
+      expect(entries.first.entryId, 'entry-harbor');
+      expect(entries.first.transcript, contains('harbor'));
+    });
+
     test('queryTimeline embeds the question and returns nearest entries', () async {
       final created = DateTime.utc(2026, 8, 11);
       await sqlite.database.insert('journal_entries', {

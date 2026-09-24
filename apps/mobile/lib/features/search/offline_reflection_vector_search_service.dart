@@ -100,6 +100,18 @@ class OfflineReflectionVectorSearchService {
     });
   }
 
+  /// Generates a local embedding for [transcript] and stores it for search.
+  Future<bool> indexTranscript({
+    required String entryId,
+    required String transcript,
+  }) {
+    return _repository.indexTranscript(
+      entryId: entryId,
+      transcript: transcript,
+      embed: embedText,
+    );
+  }
+
   /// Embeds [input] locally and returns the [k] nearest timeline entries.
   Future<List<TimelineSemanticEntry>> queryTimeline(
     String input, {
