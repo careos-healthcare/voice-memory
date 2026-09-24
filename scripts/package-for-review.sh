@@ -11,10 +11,13 @@ zip -r "$OUT" . \
   -x '*/node_modules/*' 'node_modules/*' \
   -x '*/.git/*' '.git/*' \
   -x '*/build/*' 'build/*' \
-  -x '*/Pods/*' 'Pods/*' \
-  -x '*/.symlinks/*' '.symlinks/*' \
-  -x '*/ephemeral/*' 'ephemeral/*' \
   -x '*/.dart_tool/*' '.dart_tool/*' \
+  -x '*/ios/Pods/*' 'ios/Pods/*' \
+  -x '*/ios/.symlinks/*' 'ios/.symlinks/*' \
+  -x '*/ios/Flutter/ephemeral/*' 'ios/Flutter/ephemeral/*' \
+  -x '*/android/.gradle/*' 'android/.gradle/*' \
+  -x '*/android/.kotlin/*' 'android/.kotlin/*' \
+  -x '*/linux/flutter/ephemeral/*' 'linux/flutter/ephemeral/*' \
   -x "$(basename "$OUT")"
 
 echo "Wrote $OUT"

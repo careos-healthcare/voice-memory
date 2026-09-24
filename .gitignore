@@ -30,9 +30,16 @@ node_modules/
 **/IFR/
 flutter_*.log
 **/pwrun/
+**/.pwrun/
 **/test/tmp/
 **/test/failures/
 .flutter-plugins-dependencies*
+.flutter-plugins-dependencies\ 2
+.flutter-plugins-dependencies\ 3
+**/tool/screenshots/revenuecat_e2e/
+**/tool/screenshots/revenuecat_production/
+**/tool/screenshots/settings_audit/
+**/intentional_empty_*.png
 **/ios/Pods/
 **/linux/flutter/ephemeral/
 
