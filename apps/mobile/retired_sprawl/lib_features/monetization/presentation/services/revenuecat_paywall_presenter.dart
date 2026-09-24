@@ -13,13 +13,14 @@ import 'package:purchases_ui_flutter/purchases_ui_flutter.dart' as purchases_ui;
 /// Presents the remotely managed RevenueCat paywall sheet.
 class RevenueCatPaywallPresenter {
   const RevenueCatPaywallPresenter({
-    this._revenueCatService,
-    this._canOpenPaywall,
+    RevenueCatService? revenueCatService,
+    Future<bool> Function()? canOpenPaywall,
     this.presentPaywallOverride,
     this.presentPaywallIfNeededOverride,
     this.getCustomerInfoOverride,
     this.openFallbackRouteOverride,
-  });
+  }) : _revenueCatService = revenueCatService,
+       _canOpenPaywall = canOpenPaywall;
 
   final RevenueCatService? _revenueCatService;
   final Future<bool> Function()? _canOpenPaywall;
@@ -227,6 +228,10 @@ class RevenueCatPaywallPresenter {
   }
 
   Future<Offering?> _resolveOffering(String? specificOfferingId) async {
+    if (presentPaywallOverride != null ||
+        presentPaywallIfNeededOverride != null) {
+      return null;
+    }
     final offerings = await _revenueCat.fetchOfferings();
     if (offerings == null) return null;
 
