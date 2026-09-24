@@ -109,7 +109,7 @@ class _InteractiveAudioPlayerBarState extends State<InteractiveAudioPlayerBar> {
         SwitchListTile(
           key: const Key('audio_skip_silence'),
           contentPadding: EdgeInsets.zero,
-          title: const Text('Trim silence'),
+          title: const Text('Skip silence'),
           value: widget.skipSilence,
           onChanged: widget.onSkipSilence,
         ),

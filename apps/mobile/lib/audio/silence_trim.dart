@@ -5,8 +5,8 @@ abstract final class PlaybackReviewSpeeds {
   static const speeds = <double>[1, 1.25, 1.5, 2];
 
   static String label(double speed) {
-    if (speed == speed.roundToDouble()) return '${speed.toStringAsFixed(0)}x';
-    return '${speed}x';
+    if (speed == 1.25 || speed == 1.5) return '${speed}x';
+    return '${speed.toStringAsFixed(1)}x';
   }
 
   static bool allows(double speed) => speeds.contains(speed);

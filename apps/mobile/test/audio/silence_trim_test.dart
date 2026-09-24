@@ -4,10 +4,10 @@ import 'package:archiveme_mobile/audio/silence_trim.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  test('review speeds are 1x, 1.25x, 1.5x, and 2x', () {
+  test('review speeds are 1.0x, 1.25x, 1.5x, and 2.0x', () {
     expect(
       PlaybackReviewSpeeds.speeds.map(PlaybackReviewSpeeds.label),
-      ['1x', '1.25x', '1.5x', '2x'],
+      ['1.0x', '1.25x', '1.5x', '2.0x'],
     );
     expect(PlaybackReviewSpeeds.allows(1.25), isTrue);
     expect(PlaybackReviewSpeeds.allows(3), isFalse);
