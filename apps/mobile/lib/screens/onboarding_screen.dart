@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:archiveme_mobile/core/config/v1_capability_registry.dart';
 import 'package:archiveme_mobile/features/beta_analytics/beta_analytics_consent_boundary.dart';
 import 'package:archiveme_mobile/features/beta_analytics/beta_analytics_hooks.dart';
 import 'package:archiveme_mobile/features/onboarding/remote_processing_consent_decision.dart';
@@ -14,6 +15,7 @@ import 'package:archiveme_mobile/product/consumer_ui_copy.dart';
 import 'package:archiveme_mobile/router/onboarding_gate.dart';
 import 'package:archiveme_mobile/services/app_services.dart';
 import 'package:archiveme_mobile/theme/app_colors.dart';
+import 'package:archiveme_mobile/widgets/onboarding/onboarding_import_first_step.dart';
 import 'package:archiveme_mobile/theme/app_spacing.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -36,10 +38,15 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   // four trust pillars during onboarding after all.
   int _step = 0;
 
-  static const int _conceptualStepCount = 3;
+  bool get _importFirst => V1CapabilityRegistry.onboardingImportFirst;
 
-  bool get _showingTrustStep => _step == 1;
-  bool get _showingConsentStep => _step == 2;
+  int get _conceptualStepCount => _importFirst ? 4 : 3;
+
+  bool get _showingImportStep => _importFirst && _step == 1;
+
+  bool get _showingTrustStep => _step == (_importFirst ? 2 : 1);
+
+  bool get _showingConsentStep => _step == (_importFirst ? 3 : 2);
   int get _stepIndex => _step;
 
   @override
@@ -122,7 +129,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   ),
                 ),
                 Expanded(
-                  child: _showingConsentStep
+                  child: _showingImportStep
+                      ? OnboardingImportFirstStep(onSkip: _advance)
+                      : _showingConsentStep
                       ? RemoteProcessingConsentStep(
                           submitting: _completing,
                           showActions: false,
@@ -174,7 +183,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     AppSpacing.md,
                     AppSpacing.md,
                   ),
-                  child: _showingConsentStep
+                  child: _showingImportStep
+                      ? const SizedBox.shrink()
+                      : _showingConsentStep
                       ? _ChoiceActions(
                           submitting: _completing,
                           onDecision: _recordConsentDecision,

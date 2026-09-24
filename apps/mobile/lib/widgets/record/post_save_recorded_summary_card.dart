@@ -1,4 +1,7 @@
+import 'package:archiveme_mobile/core/config/v1_capability_registry.dart';
 import 'package:archiveme_mobile/design/archive_mobile_typography.dart';
+import 'package:archiveme_mobile/features/onboarding/first_session_evidence.dart';
+import 'package:archiveme_mobile/widgets/onboarding/first_save_quote_receipt.dart';
 import 'package:archiveme_mobile/features/archive_evidence/archive_entry_signal_guard.dart';
 import 'package:archiveme_mobile/features/post_save/post_save_archive_hierarchy.dart';
 import 'package:archiveme_mobile/features/post_save/post_save_recorded_summary_copy.dart';
@@ -263,11 +266,19 @@ class PostSaveRecordedSummaryCard extends StatelessWidget {
               ),
               const SizedBox(height: 4),
             ],
-            Text(
-              PostSaveRecordedSummaryCopy.firstEntryFootnote,
-              key: const Key('post_save_first_entry_footnote'),
-              style: footnoteStyle,
-            ),
+            if (V1CapabilityRegistry.firstSaveQuoteBack &&
+                !FirstSessionEvidenceSession.didImport &&
+                FirstSaveQuotePresenter.quotesFor(entry).isNotEmpty)
+              FirstSaveQuoteReceipt(
+                quotes: FirstSaveQuotePresenter.quotesFor(entry),
+                audioPath: entry.localAudioPath,
+              )
+            else
+              Text(
+                PostSaveRecordedSummaryCopy.firstEntryFootnote,
+                key: const Key('post_save_first_entry_footnote'),
+                style: footnoteStyle,
+              ),
           ] else if (_shows(PostSavePrimaryArchiveKind.savedPrivately) &&
               result != null &&
               !result.hasGroundedEvidence &&

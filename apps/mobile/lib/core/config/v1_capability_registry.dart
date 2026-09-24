@@ -65,6 +65,14 @@ abstract final class V1CapabilityRegistry {
   /// Apple Watch quick-record companion — see `docs/WATCHOS_SETUP.md`.
   static bool get watchCompanion => WatchCompanionFeatureFlags.enableWatchCompanion;
 
+  /// Second onboarding screen offers the existing notes importer.
+  /// Left off until reviewed.
+  static const bool onboardingImportFirst = false;
+
+  /// After the first save, quote the recording back with no interpretation.
+  /// Left off until reviewed.
+  static const bool firstSaveQuoteBack = false;
+
   static const Set<String> androidPermissionAllowlist = {
     'android.permission.INTERNET',
     'android.permission.RECORD_AUDIO',
