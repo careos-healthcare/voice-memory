@@ -2,7 +2,7 @@ import 'package:archiveme_mobile/features/archive_theory/views/theories_screen.d
 import 'package:archiveme_mobile/features/capture/capture_module_config.dart';
 import 'package:archiveme_mobile/features/capture_flow/capture_flow_phase.dart';
 import 'package:archiveme_mobile/features/memos/archive_home_host.dart';
-import 'package:archiveme_mobile/features/onboarding/onboarding_pipeline.dart';
+import 'package:archiveme_mobile/features/onboarding/privacy_onboarding_flow.dart';
 import 'package:archiveme_mobile/features/sync/screens/offline_sync_verification_screen.dart';
 import 'package:archiveme_mobile/features/relationships/presentation/relationship_graph_screen.dart';
 import 'package:archiveme_mobile/features/voice/presentation/voice_call_screen.dart';
@@ -192,7 +192,7 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/onboarding',
       parentNavigatorKey: _rootNavigatorKey,
-      builder: (context, state) => const OnboardingPipeline(),
+      builder: (context, state) => const PrivacyOnboardingFlow(),
     ),
     GoRoute(
       path: '/onboarding-intent',
