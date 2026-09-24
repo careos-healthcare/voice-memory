@@ -1,4 +1,6 @@
+import 'package:archiveme_mobile/core/config/v1_capability_registry.dart';
 import 'package:archiveme_mobile/design/archive_mobile_typography.dart';
+import 'package:archiveme_mobile/features/voice_capture/transcription/live_draft_transcript.dart';
 import 'package:archiveme_mobile/features/capture_flow/capture_flow_phase.dart';
 import 'package:archiveme_mobile/features/insights/rag/routine_rag_models.dart';
 import 'package:archiveme_mobile/features/voice_capture/microphone_permission_copy.dart';
@@ -296,17 +298,32 @@ class CaptureRecordingPanel extends StatelessWidget {
     required this.duration,
     required this.onStop,
     required this.onCancel,
+    required this.onPause,
+    required this.onResume,
+    this.paused = false,
+    this.levels = const [],
+    this.draftText,
     super.key,
   });
 
   final Duration duration;
   final VoidCallback onStop;
   final VoidCallback onCancel;
+  final VoidCallback onPause;
+  final VoidCallback onResume;
+  final bool paused;
+  final List<double> levels;
+  final String? draftText;
+
+  bool get _showDraft =>
+      V1CapabilityRegistry.liveDraftTranscript &&
+      LiveDraftTranscript.supportsOnDeviceStreaming;
 
   @override
   Widget build(BuildContext context) {
     final minutes = duration.inMinutes.remainder(60).toString().padLeft(2, '0');
     final seconds = duration.inSeconds.remainder(60).toString().padLeft(2, '0');
+    final reduceMotion = MediaQuery.disableAnimationsOf(context);
 
     return Container(
       decoration: VoiceMemoryCards.standard(),
@@ -319,32 +336,221 @@ class CaptureRecordingPanel extends StatelessWidget {
             style: ArchiveMobileTypography.responsiveSectionTitle(context),
           ),
           const SizedBox(height: AppSpacing.md),
-          FilledButton(
-            key: const Key('capture_stop_voice'),
-            onPressed: onStop,
-            child: Text(ConsumerUiCopy.stopRecordingCta),
+          SizedBox(
+            key: const Key('capture_level_meter'),
+            height: 64,
+            width: double.infinity,
+            child: CustomPaint(
+              painter: _CaptureLevelPainter(
+                levels: levels,
+                color: context.palette.accentPrimary,
+                reduceMotion: reduceMotion,
+              ),
+            ),
           ),
-          TextButton(onPressed: onCancel, child: const Text('Cancel')),
+          if (_showDraft) ...[
+            const SizedBox(height: AppSpacing.sm),
+            Text(
+              'Draft — final text is saved after you stop',
+              key: const Key('capture_draft_label'),
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                color: context.palette.textMuted,
+                fontStyle: FontStyle.italic,
+              ),
+            ),
+            if (draftText != null && draftText!.trim().isNotEmpty)
+              Text(
+                draftText!,
+                key: const Key('capture_draft_text'),
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: context.palette.textMuted,
+                  fontStyle: FontStyle.italic,
+                ),
+              ),
+          ],
+          const SizedBox(height: AppSpacing.md),
+          Semantics(
+            button: true,
+            label: paused ? 'Resume recording' : 'Pause recording',
+            child: IconButton(
+              key: const Key('capture_pause_voice'),
+              onPressed: paused ? onResume : onPause,
+              icon: Icon(paused ? Icons.play_arrow : Icons.pause),
+            ),
+          ),
+          Semantics(
+            button: true,
+            label: 'Stop recording',
+            child: FilledButton(
+              key: const Key('capture_stop_voice'),
+              style: FilledButton.styleFrom(
+                minimumSize: const Size.fromHeight(64),
+              ),
+              onPressed: onStop,
+              child: Text(ConsumerUiCopy.stopRecordingCta),
+            ),
+          ),
+          Semantics(
+            button: true,
+            label: 'Cancel recording',
+            child: TextButton(
+              key: const Key('capture_cancel_voice'),
+              onPressed: () => _cancel(context),
+              child: const Text('Cancel'),
+            ),
+          ),
         ],
       ),
     );
   }
+
+  Future<void> _cancel(BuildContext context) async {
+    if (duration.inSeconds <= 10) {
+      onCancel();
+      return;
+    }
+    final discard = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Discard this recording?'),
+        content: const Text('This recording is longer than 10 seconds.'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Keep recording'),
+          ),
+          TextButton(
+            key: const Key('capture_cancel_confirm'),
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text('Discard'),
+          ),
+        ],
+      ),
+    );
+    if (discard == true) onCancel();
+  }
+}
+
+class _CaptureLevelPainter extends CustomPainter {
+  _CaptureLevelPainter({
+    required this.levels,
+    required this.color,
+    required this.reduceMotion,
+  });
+
+  final List<double> levels;
+  final Color color;
+  final bool reduceMotion;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()..color = color;
+    if (reduceMotion) {
+      final level = levels.isEmpty ? 0.0 : levels.last.clamp(0.0, 1.0);
+      final height = size.height * (0.08 + 0.92 * level);
+      canvas.drawRRect(
+        RRect.fromRectAndRadius(
+          Rect.fromLTWH(0, size.height - height, size.width, height),
+          const Radius.circular(4),
+        ),
+        paint,
+      );
+      return;
+    }
+    const count = 40;
+    final gap = size.width * 0.012;
+    final barWidth = (size.width - gap * (count - 1)) / count;
+    for (var i = 0; i < count; i++) {
+      final sourceIndex = levels.length - count + i;
+      final level = sourceIndex >= 0 && sourceIndex < levels.length
+          ? levels[sourceIndex].clamp(0.0, 1.0)
+          : 0.0;
+      final height = size.height * (0.08 + 0.92 * level);
+      final left = i * (barWidth + gap);
+      canvas.drawRRect(
+        RRect.fromRectAndRadius(
+          Rect.fromLTWH(left, size.height - height, barWidth, height),
+          const Radius.circular(2),
+        ),
+        paint,
+      );
+    }
+  }
+
+  @override
+  bool shouldRepaint(_CaptureLevelPainter oldDelegate) =>
+      oldDelegate.reduceMotion != reduceMotion ||
+      oldDelegate.color != color ||
+      oldDelegate.levels != levels;
 }
 
 class CaptureBusyPanel extends StatelessWidget {
-  const CaptureBusyPanel({required this.label, super.key});
+  const CaptureBusyPanel({
+    required this.label,
+    this.savedOnDevice = false,
+    this.transcript,
+    super.key,
+  });
 
   final String? label;
+  final bool savedOnDevice;
+  final String? transcript;
 
   @override
   Widget build(BuildContext context) {
+    final spoken = transcript?.trim() ?? '';
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        const CircularProgressIndicator(),
+        if (savedOnDevice)
+          Text(
+            MicrophonePermissionCopy.savedOnDevice,
+            key: const Key('capture_saved_on_device'),
+            textAlign: TextAlign.center,
+            style: Theme.of(context).textTheme.titleMedium,
+          ),
+        const SizedBox(height: AppSpacing.md),
+        if (spoken.isEmpty)
+          const _ReceiptSkeleton(key: Key('capture_receipt_skeleton'))
+        else
+          Text(
+            spoken,
+            key: const Key('capture_receipt_transcript'),
+            textAlign: TextAlign.center,
+          ),
         if (label != null && label!.isNotEmpty) ...[
           const SizedBox(height: AppSpacing.md),
           Text(label!, textAlign: TextAlign.center),
         ],
+      ],
+    );
+  }
+}
+
+class _ReceiptSkeleton extends StatelessWidget {
+  const _ReceiptSkeleton({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final color = context.palette.borderSubtle;
+    return Column(
+      children: [
+        for (final width in [1.0, 0.85, 0.6])
+          Padding(
+            padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+            child: Align(
+              child: Container(
+                height: 12,
+                width: MediaQuery.sizeOf(context).width * width * 0.7,
+                decoration: BoxDecoration(
+                  color: color,
+                  borderRadius: BorderRadius.circular(6),
+                ),
+              ),
+            ),
+          ),
       ],
     );
   }

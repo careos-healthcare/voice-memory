@@ -83,6 +83,11 @@ import workmanager_apple
     channel.setMethodCallHandler { [weak self] call, result in
       self?.nativeSpeechTranscriptionHandler.handle(call, result: result)
     }
+    let draftEvents = FlutterEventChannel(
+      name: "archive_me/native_speech_transcription_draft",
+      binaryMessenger: controller.binaryMessenger
+    )
+    draftEvents.setStreamHandler(IosLiveDraftSpeech.shared)
   }
 
   private func setupHardwareMonitorChannel(controller: FlutterViewController) {

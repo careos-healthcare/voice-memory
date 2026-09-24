@@ -86,6 +86,11 @@ abstract final class V1CapabilityRegistry {
   /// Left off until reviewed. No server push.
   static const bool gentleReminders = false;
 
+  /// On-device partial transcript while recording. Display only.
+  /// The saved transcript still comes from the final pipeline.
+  /// Left off until reviewed.
+  static const bool liveDraftTranscript = false;
+
   static const Set<String> androidPermissionAllowlist = {
     'android.permission.INTERNET',
     'android.permission.RECORD_AUDIO',

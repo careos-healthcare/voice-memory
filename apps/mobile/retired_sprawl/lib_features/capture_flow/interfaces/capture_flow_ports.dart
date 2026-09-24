@@ -23,6 +23,10 @@ abstract interface class AudioRecorderAdapter {
   Future<void> pauseRecording();
   Future<void> resumeRecording();
 
+  /// Current microphone level in dBFS, about every 60 ms. Empty when the
+  /// recorder cannot report amplitude.
+  Stream<double> watchAmplitude();
+
   /// Thought chunks emitted while recording (VAD sidecar). Null when unsupported.
   Stream<VadSegmentEvent>? get thoughtSegmentEvents;
 }

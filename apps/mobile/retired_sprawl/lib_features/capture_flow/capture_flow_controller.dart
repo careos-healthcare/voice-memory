@@ -4,7 +4,9 @@ import 'dart:io';
 import 'package:archiveme_mobile/audio/recording_types.dart' show RecordingException;
 import 'package:archiveme_mobile/features/capture/vad/vad_models.dart';
 import 'package:archiveme_mobile/features/beta_analytics/beta_analytics_hooks.dart';
+import 'package:archiveme_mobile/core/config/v1_capability_registry.dart';
 import 'package:archiveme_mobile/features/capture_flow/capture_flow_dependencies.dart';
+import 'package:archiveme_mobile/features/capture_flow/recording_feedback.dart';
 import 'package:archiveme_mobile/features/capture_flow/capture_flow_log.dart';
 import 'package:archiveme_mobile/features/capture_flow/capture_flow_phase.dart';
 import 'package:archiveme_mobile/features/capture_flow/capture_flow_transition_guard.dart';
@@ -14,6 +16,7 @@ import 'package:archiveme_mobile/features/proof_admission/remote_processing_purp
 import 'package:archiveme_mobile/features/voice_capture/microphone_permission_copy.dart';
 import 'package:archiveme_mobile/features/voice_capture/microphone_permission_state.dart';
 import 'package:archiveme_mobile/features/voice_capture/voice_capture_copy.dart';
+import 'package:archiveme_mobile/features/voice_capture/transcription/live_draft_transcript.dart';
 import 'package:archiveme_mobile/features/voice_capture/transcription/speech_locale.dart';
 import 'package:archiveme_mobile/features/voice_capture/transcription/transcription_capability_policy.dart';
 import 'package:archiveme_mobile/features/voice_capture/voice_capture_quality.dart';
@@ -44,6 +47,11 @@ class CaptureFlowController extends ChangeNotifier {
   );
 
   StreamSubscription<int>? _durationSubscription;
+  StreamSubscription<double>? _amplitudeSubscription;
+  Timer? _elapsedTimer;
+  RecordingElapsedClock? _elapsed;
+  RecordingAmplitudeSeries _amplitudes = RecordingAmplitudeSeries();
+  StreamSubscription<String>? _draftSubscription;
   StreamSubscription<PipelineState>? _pipelineStageSubscription;
   StreamSubscription<VadSegmentEvent>? _thoughtSegmentSubscription;
   final Set<String> _enqueuedThoughtSegmentPaths = {};
@@ -188,18 +196,14 @@ class CaptureFlowController extends ChangeNotifier {
       });
       await _deps.audio.startRecording(permissionVerified: true);
       _deps.telemetry.recorderStarted(success: true);
-      _durationSubscription?.cancel();
-      _durationSubscription = _deps.audio.durationSeconds.listen((seconds) {
-        _emit(
-          _snapshot.copyWith(
-            recordingDuration: Duration(seconds: seconds),
-          ),
-        );
-      });
+      _startRecordingFeedback();
       _emit(
         _snapshot.copyWith(
           phase: CaptureFlowPhase.recording,
           recordingDuration: Duration.zero,
+          recordingPaused: false,
+          amplitudeBars: _amplitudes.displayBars,
+          clearDraft: true,
           clearError: true,
         ),
       );
@@ -218,6 +222,32 @@ class CaptureFlowController extends ChangeNotifier {
     }
   }
 
+  Future<void> pauseVoiceCapture() async {
+    if (_snapshot.phase != CaptureFlowPhase.recording) return;
+    if (_snapshot.recordingPaused) return;
+    await _deps.audio.pauseRecording();
+    _elapsed?.pause();
+    _emit(
+      _snapshot.copyWith(
+        recordingPaused: true,
+        recordingDuration: _elapsed?.elapsed ?? _snapshot.recordingDuration,
+      ),
+    );
+  }
+
+  Future<void> resumeVoiceCapture() async {
+    if (_snapshot.phase != CaptureFlowPhase.recording) return;
+    if (!_snapshot.recordingPaused) return;
+    await _deps.audio.resumeRecording();
+    _elapsed?.resume();
+    _emit(
+      _snapshot.copyWith(
+        recordingPaused: false,
+        recordingDuration: _elapsed?.elapsed ?? _snapshot.recordingDuration,
+      ),
+    );
+  }
+
   Future<void> cancelVoiceCapture() async {
     if (_backgroundCaptureUi) {
       _backgroundCaptureUi = false;
@@ -234,8 +264,7 @@ class CaptureFlowController extends ChangeNotifier {
       return;
     }
     if (_snapshot.phase != CaptureFlowPhase.recording) return;
-    await _durationSubscription?.cancel();
-    _durationSubscription = null;
+    await _stopRecordingFeedback();
     await _thoughtSegmentSubscription?.cancel();
     _thoughtSegmentSubscription = null;
     _enqueuedThoughtSegmentPaths.clear();
@@ -269,8 +298,8 @@ class CaptureFlowController extends ChangeNotifier {
     }
     if (_snapshot.phase != CaptureFlowPhase.recording) return;
     if (!_transition(CaptureFlowPhase.stopping)) return;
-    await _durationSubscription?.cancel();
-    _durationSubscription = null;
+    final pausedAwareSeconds = _elapsed?.elapsed.inSeconds ?? 0;
+    await _stopRecordingFeedback();
     await _thoughtSegmentSubscription?.cancel();
     _thoughtSegmentSubscription = null;
 
@@ -315,7 +344,9 @@ class CaptureFlowController extends ChangeNotifier {
       );
       await _persistVoice(
         file: stopResult.file,
-        durationSeconds: stopResult.durationSeconds,
+        durationSeconds: pausedAwareSeconds > 0
+            ? pausedAwareSeconds
+            : stopResult.durationSeconds,
       );
     } on RecordingException catch (e, stackTrace) {
       _deps.telemetry.recorderStopped(success: false);
@@ -447,8 +478,7 @@ class CaptureFlowController extends ChangeNotifier {
   }
 
   Future<void> resetToReady() async {
-    await _durationSubscription?.cancel();
-    _durationSubscription = null;
+    await _stopRecordingFeedback();
     _emit(
       CaptureFlowSnapshot(
         phase: CaptureFlowPhase.ready,
@@ -466,10 +496,55 @@ class CaptureFlowController extends ChangeNotifier {
     await _recoverPendingIfNeeded();
   }
 
+  void _startRecordingFeedback() {
+    _elapsed = RecordingElapsedClock()..start();
+    _amplitudes = RecordingAmplitudeSeries();
+    _elapsedTimer?.cancel();
+    _elapsedTimer = Timer.periodic(const Duration(milliseconds: 200), (_) {
+      if (_disposed || _snapshot.phase != CaptureFlowPhase.recording) return;
+      if (_elapsed?.isPaused ?? false) return;
+      _emit(_snapshot.copyWith(recordingDuration: _elapsed!.elapsed));
+    });
+    unawaited(_amplitudeSubscription?.cancel());
+    _amplitudeSubscription = _deps.audio.watchAmplitude().listen((db) {
+      if (_disposed || (_elapsed?.isPaused ?? false)) return;
+      _amplitudes.addDb(db);
+      _emit(_snapshot.copyWith(amplitudeBars: _amplitudes.displayBars));
+    });
+    if (V1CapabilityRegistry.liveDraftTranscript &&
+        LiveDraftTranscript.supportsOnDeviceStreaming) {
+      unawaited(_startLiveDraft());
+    }
+  }
+
+  Future<void> _startLiveDraft() async {
+    await _draftSubscription?.cancel();
+    _draftSubscription = LiveDraftTranscript.partials().listen((text) {
+      if (_disposed || text.trim().isEmpty) return;
+      _emit(_snapshot.copyWith(draftTranscript: text));
+    });
+    await LiveDraftTranscript.start();
+  }
+
+  Future<void> _stopRecordingFeedback() async {
+    _elapsedTimer?.cancel();
+    _elapsedTimer = null;
+    _elapsed = null;
+    await _amplitudeSubscription?.cancel();
+    _amplitudeSubscription = null;
+    await _durationSubscription?.cancel();
+    _durationSubscription = null;
+    await _draftSubscription?.cancel();
+    _draftSubscription = null;
+    if (V1CapabilityRegistry.liveDraftTranscript) {
+      await LiveDraftTranscript.stop();
+    }
+  }
+
   @override
   void dispose() {
     _disposed = true;
-    unawaited(_durationSubscription?.cancel());
+    unawaited(_stopRecordingFeedback());
     unawaited(_pipelineStageSubscription?.cancel());
     unawaited(_thoughtSegmentSubscription?.cancel());
     super.dispose();
@@ -525,6 +600,9 @@ class CaptureFlowController extends ChangeNotifier {
         throw CapturePipelineFailure(VoiceCaptureCopy.notEnoughAudio);
       }
 
+      await _amplitudes.writeBeside(file);
+      _emit(_snapshot.copyWith(deviceSaveVisible: true));
+
       // Measured before the save so the answer describes this device and this
       // permission rather than whatever the upload happened to do. Nothing here
       // touches the network.
@@ -536,7 +614,12 @@ class CaptureFlowController extends ChangeNotifier {
       if (transcriptionAllowed || reflectionAllowed) {
         _deps.telemetry.remoteProcessingStarted(kind: 'voice');
         if (_transition(CaptureFlowPhase.processingRemote)) {
-          _emit(_snapshot.copyWith(stageLabel: 'Transcribing…'));
+          _emit(
+            _snapshot.copyWith(
+              stageLabel: 'Transcribing…',
+              deviceSaveVisible: true,
+            ),
+          );
         }
       }
 
@@ -786,12 +869,16 @@ class CaptureFlowController extends ChangeNotifier {
     _emit(
       _snapshot.copyWith(
         phase: phase,
-        savedEntry: result.entry,
+        savedEntry: RecordingDraftPolicy.entryKeepingPipelineTranscript(
+          entry: result.entry,
+          draft: _snapshot.draftTranscript,
+        ),
         pipelineResult: result,
         entryCount: count,
         hasLocalSave: result.localSaved,
         hasLocalDraft: false,
         recoveryKind: CaptureRecoveryKind.none,
+        clearDraft: true,
         clearError: true,
         clearStage: true,
       ),

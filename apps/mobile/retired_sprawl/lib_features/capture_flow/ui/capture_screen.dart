@@ -173,10 +173,17 @@ class _CaptureScreenState extends State<CaptureScreen>
         CaptureFlowPhase.savingLocal ||
         CaptureFlowPhase.processingRemote => CaptureBusyPanel(
           label: snapshot.stageLabel,
+          savedOnDevice: snapshot.deviceSaveVisible,
+          transcript: snapshot.savedEntry?.transcript,
         ),
         CaptureFlowPhase.recording => CaptureRecordingPanel(
           duration: snapshot.recordingDuration,
+          levels: snapshot.amplitudeBars,
+          paused: snapshot.recordingPaused,
+          draftText: snapshot.draftTranscript,
           onStop: _controller.stopVoiceCapture,
+          onPause: _controller.pauseVoiceCapture,
+          onResume: _controller.resumeVoiceCapture,
           onCancel: _controller.cancelVoiceCapture,
         ),
         CaptureFlowPhase.recoverableFailure => CaptureFailurePanel(

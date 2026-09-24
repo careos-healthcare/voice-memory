@@ -49,6 +49,10 @@ class CaptureFlowSnapshot {
     this.routinePromptLoading = false,
     this.transcriptionChoiceRequired = false,
     this.speechLocaleChoiceRequired = false,
+    this.amplitudeBars = const [],
+    this.recordingPaused = false,
+    this.draftTranscript,
+    this.deviceSaveVisible = false,
   });
 
   final CaptureFlowPhase phase;
@@ -85,6 +89,17 @@ class CaptureFlowSnapshot {
   /// different questions and only one of them is about privacy. Also never set
   /// by a request failure.
   final bool speechLocaleChoiceRequired;
+
+  /// Last ~40 normalised levels for the live meter. Not the saved series.
+  final List<double> amplitudeBars;
+
+  final bool recordingPaused;
+
+  /// On-screen partials only. Never written to [JournalEntry.transcript].
+  final String? draftTranscript;
+
+  /// True once the recording file is accepted for a local save.
+  final bool deviceSaveVisible;
 
   bool get showsRoutinePrompt =>
       !isAttachMode &&
@@ -129,6 +144,11 @@ class CaptureFlowSnapshot {
     bool? routinePromptLoading,
     bool? transcriptionChoiceRequired,
     bool? speechLocaleChoiceRequired,
+    List<double>? amplitudeBars,
+    bool? recordingPaused,
+    String? draftTranscript,
+    bool? deviceSaveVisible,
+    bool clearDraft = false,
     bool clearRoutinePrompt = false,
     bool clearError = false,
     bool clearStage = false,
@@ -163,6 +183,11 @@ class CaptureFlowSnapshot {
           transcriptionChoiceRequired ?? this.transcriptionChoiceRequired,
       speechLocaleChoiceRequired:
           speechLocaleChoiceRequired ?? this.speechLocaleChoiceRequired,
+      amplitudeBars: amplitudeBars ?? this.amplitudeBars,
+      recordingPaused: recordingPaused ?? this.recordingPaused,
+      draftTranscript:
+          clearDraft ? null : (draftTranscript ?? this.draftTranscript),
+      deviceSaveVisible: deviceSaveVisible ?? this.deviceSaveVisible,
     );
   }
 }

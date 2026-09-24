@@ -494,6 +494,32 @@ class RecordingService extends Notifier<RecordingState> {
     final recorder = _recorder;
     if (recorder != null) unawaited(recorder.dispose());
   }
+
+  Future<void> pauseActiveRecording() async {
+    final recorder = _recorder;
+    if (recorder == null) return;
+    if (await recorder.isRecording()) {
+      await recorder.pause();
+    }
+  }
+
+  Future<void> resumeActiveRecording() async {
+    final recorder = _recorder;
+    if (recorder == null) return;
+    if (await recorder.isPaused()) {
+      await recorder.resume();
+    }
+  }
+
+  Stream<double> watchAmplitude({
+    Duration interval = const Duration(milliseconds: 60),
+  }) {
+    final recorder = _recorder;
+    if (recorder == null) return const Stream.empty();
+    return recorder
+        .onAmplitudeChanged(interval)
+        .map((sample) => sample.current);
+  }
 }
 
 final recordingServiceProvider =

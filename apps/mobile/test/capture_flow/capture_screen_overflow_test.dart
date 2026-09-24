@@ -53,6 +53,9 @@ class _FakeAudio implements AudioRecorderAdapter {
   Future<void> resumeRecording() async {}
 
   @override
+  Stream<double> watchAmplitude() => const Stream.empty();
+
+  @override
   Stream<VadSegmentEvent>? get thoughtSegmentEvents => null;
 
   @override
