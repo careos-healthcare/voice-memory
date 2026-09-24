@@ -68,28 +68,46 @@ abstract final class V1CapabilityRegistry {
 
   /// Second onboarding screen offers the existing notes importer.
   /// Left off until reviewed.
-  static const bool onboardingImportFirst = false;
+  static const bool onboardingImportFirst = bool.fromEnvironment(
+    'VOICEMEMORY_ENABLE_ONBOARDING_IMPORT_FIRST',
+    defaultValue: false,
+  );
 
   /// After the first save, quote the recording back with no interpretation.
   /// Left off until reviewed.
-  static const bool firstSaveQuoteBack = false;
+  static const bool firstSaveQuoteBack = bool.fromEnvironment(
+    'VOICEMEMORY_ENABLE_FIRST_SAVE_QUOTE_BACK',
+    defaultValue: false,
+  );
 
   /// Widget, Siri, Control Center, Live Activity, and Watch capture.
   /// Left off until reviewed.
-  static const bool nativeQuickCapture = false;
+  static const bool nativeQuickCapture = bool.fromEnvironment(
+    'VOICEMEMORY_ENABLE_NATIVE_QUICK_CAPTURE',
+    defaultValue: false,
+  );
 
   /// Passphrase-sealed archive backup to iCloud or a user-picked drive file.
   /// Left off until reviewed.
-  static const bool encryptedBackup = false;
+  static const bool encryptedBackup = bool.fromEnvironment(
+    'VOICEMEMORY_ENABLE_ENCRYPTED_BACKUP',
+    defaultValue: false,
+  );
 
   /// Optional local reminders: daily nudge, on this day, and check back.
   /// Left off until reviewed. No server push.
-  static const bool gentleReminders = false;
+  static const bool gentleReminders = bool.fromEnvironment(
+    'VOICEMEMORY_ENABLE_GENTLE_REMINDERS',
+    defaultValue: false,
+  );
 
   /// On-device partial transcript while recording. Display only.
   /// The saved transcript still comes from the final pipeline.
   /// Left off until reviewed.
-  static const bool liveDraftTranscript = false;
+  static const bool liveDraftTranscript = bool.fromEnvironment(
+    'VOICEMEMORY_ENABLE_LIVE_DRAFT_TRANSCRIPT',
+    defaultValue: false,
+  );
 
   static const Set<String> androidPermissionAllowlist = {
     'android.permission.INTERNET',
