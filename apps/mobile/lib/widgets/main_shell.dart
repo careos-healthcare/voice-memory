@@ -1,4 +1,5 @@
 import 'package:archiveme_mobile/core/theme/responsive_breakpoints.dart';
+import 'package:archiveme_mobile/desktop/desktop_window_host.dart';
 import 'package:archiveme_mobile/features/sync/presentation/widgets/sync_status_badge.dart';
 import 'package:archiveme_mobile/features/sync/presentation/widgets/sync_status_shell.dart';
 import 'package:archiveme_mobile/l10n/localized_consumer_ui.dart';
@@ -220,6 +221,7 @@ class MainShell extends ConsumerWidget {
               floatingActionButton: _captureButton(context),
               body: Column(
                 children: [
+                  DesktopWindowHost.chrome(),
                   const SyncStatusBadgeSlot(),
                   Expanded(
                     child: Row(

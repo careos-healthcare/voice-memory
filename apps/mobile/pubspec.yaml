@@ -79,6 +79,7 @@ dependencies:
   audio_service: ^0.18.19
   ffi: ^2.2.0
   shimmer: ^3.0.0
+  window_manager: ^0.4.3
   flutter_gemma: ^1.6.1
   flutter_gemma_litertlm: ^1.4.0
   flutter_gemma_speech: ^0.4.3

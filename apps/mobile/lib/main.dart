@@ -6,6 +6,7 @@ import 'package:archiveme_mobile/features/ambient_capture/ambient_capture_router
 import 'package:archiveme_mobile/features/ambient_capture/home_screen_shortcuts.dart';
 import 'package:archiveme_mobile/features/ambient_capture/record_widget_launch.dart';
 import 'package:archiveme_mobile/features/ambient_capture/shortcut_record_launch.dart';
+import 'package:archiveme_mobile/desktop/desktop_window_host.dart';
 import 'package:archiveme_mobile/config/app_config.dart';
 import 'package:archiveme_mobile/config/force_screenshot_repeat_card.dart';
 import 'package:archiveme_mobile/core/config/v1_capability_registry.dart';
@@ -22,6 +23,7 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await ShortcutRecordLaunch.beginBeforeUi();
   await bindAmbientCaptureEntryPoints();
+  await DesktopWindowHost.initialize();
   if (V1CapabilityRegistry.backgroundProcessing &&
       WeeklySynthesisWorkScheduler.isSupported) {
     await WeeklySynthesisWorkScheduler.initialize();
