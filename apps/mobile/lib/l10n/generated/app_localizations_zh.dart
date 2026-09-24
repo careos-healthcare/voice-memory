@@ -4,92 +4,90 @@ import 'app_localizations.dart';
 
 // ignore_for_file: type=lint
 
-/// The translations for Spanish Castilian (`es`).
-class AppLocalizationsEs extends AppLocalizations {
-  AppLocalizationsEs([String locale = 'es']) : super(locale);
+/// The translations for Chinese (`zh`).
+class AppLocalizationsZh extends AppLocalizations {
+  AppLocalizationsZh([String locale = 'zh']) : super(locale);
 
   @override
-  String get accountAuthCodeBody =>
-      'Introduce el código de inicio de sesión que acabamos de enviarte.';
+  String get accountAuthCodeBody => 'Enter the sign-in code we just sent you.';
 
   @override
-  String get accountAuthCodeCta => 'Continuar';
+  String get accountAuthCodeCta => 'Continue';
 
   @override
-  String get accountAuthCodeLabel => 'Código';
+  String get accountAuthCodeLabel => 'Code';
 
   @override
-  String get accountAuthCodeSent => 'Código enviado — revisa tu correo.';
+  String get accountAuthCodeSent => 'Code sent — check your email.';
 
   @override
-  String get accountAuthCodeTitle => 'Revisa tu correo';
+  String get accountAuthCodeTitle => 'Check your email';
 
   @override
-  String get accountAuthContinueWithoutAccount => 'Continuar sin cuenta';
+  String get accountAuthContinueWithoutAccount => 'Continue without an account';
 
   @override
   String get accountAuthCreateBody =>
-      'Thoughtprint es un diario de voz privado que convierte tus pensamientos hablados en una historia de vida unificada e inteligencia personal profunda. Crea una cuenta para restaurar el acceso más tarde.';
+      'Thoughtprint is a private voice journal that turns your spoken thoughts into a unified life story and deep personal intelligence. Create an account to restore access later.';
 
   @override
-  String get accountAuthCreateCta => 'Crear cuenta';
+  String get accountAuthCreateCta => 'Create account';
 
   @override
-  String get accountAuthCreateTitle => 'Crea tu cuenta de Thoughtprint';
+  String get accountAuthCreateTitle => 'Create your Thoughtprint account';
 
   @override
-  String get accountAuthEmailLabel => 'Correo electrónico';
+  String get accountAuthEmailLabel => 'Email';
 
   @override
-  String get accountAuthInvalidCode => 'Introduce el código de tu correo.';
+  String get accountAuthInvalidCode => 'Enter the code from your email.';
 
   @override
-  String get accountAuthInvalidEmail =>
-      'Introduce una dirección de correo válida.';
+  String get accountAuthInvalidEmail => 'Enter a valid email address.';
 
   @override
   String get accountAuthPrivacyLine =>
-      'Tu archivo permanece privado. No incluimos tus grabaciones en analíticas.';
+      'Your archive stays private. We do not include your recordings in analytics.';
 
   @override
-  String get accountAuthResendCode => 'Reenviar código';
+  String get accountAuthResendCode => 'Resend code';
 
   @override
-  String get accountAuthSendCodeFailed => 'No se pudo enviar el código.';
+  String get accountAuthSendCodeFailed => 'Could not send the code.';
 
   @override
-  String get accountAuthSignInCta => 'Iniciar sesión';
+  String get accountAuthSignInCta => 'Sign in';
 
   @override
   String get accountAuthSignInFailed =>
-      'Error al iniciar sesión. Comprueba el código e inténtalo de nuevo.';
+      'Sign-in failed. Check the code and try again.';
 
   @override
-  String get accountAuthSignInTitle => 'Inicia sesión en Thoughtprint';
+  String get accountAuthSignInTitle => 'Sign in to Thoughtprint';
 
   @override
-  String get accountAuthSignOut => 'Cerrar sesión';
+  String get accountAuthSignOut => 'Sign out';
 
   @override
   String get accountAuthSignOutKeepsArchive =>
-      'Al cerrar sesión, tus grabaciones permanecen en este dispositivo.';
+      'Signing out keeps your recordings on this device.';
 
   @override
   String get accountAuthTimingNote =>
-      'Thoughtprint es un diario de voz privado que convierte tus pensamientos hablados en una historia de vida unificada e inteligencia personal profunda. Puedes usarlo localmente sin cuenta.';
+      'Thoughtprint is a private voice journal that turns your spoken thoughts into a unified life story and deep personal intelligence. You can use it locally without an account.';
 
   @override
-  String get accountScreenLabel => 'Pantalla de cuenta';
+  String get accountScreenLabel => 'Account screen';
 
   @override
   String get appTitle => 'Thoughtprint';
 
   @override
-  String get archiveAddMoment => 'Añadir un momento';
+  String get archiveAddMoment => 'Add a moment';
 
   @override
   String archiveCurrentObservation(String statement) {
-    return 'Tu observación actual más clara es: $statement';
+    return 'Your clearest current observation is: $statement';
   }
 
   @override
@@ -97,140 +95,139 @@ class AppLocalizationsEs extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count momentos guardados disponibles para comparar.',
-      one: '1 momento guardado disponible para comparar.',
+      other: '$count saved moments available for comparison.',
+      one: '1 saved moment available for comparison.',
     );
     return '$_temp0';
   }
 
   @override
-  String get archiveEvidenceTitle => 'Evidencia';
+  String get archiveEvidenceTitle => 'Evidence';
 
   @override
   String get archiveNeedsComparison =>
-      'Añade otro momento para que Thoughtprint pueda comparar lo que cambió.';
+      'Add another moment so Thoughtprint can compare what changed.';
 
   @override
   String get archiveNeedsSupportedMoments =>
-      'Thoughtprint necesita al menos dos momentos compatibles antes de explicar un patrón.';
+      'Thoughtprint needs at least two supported moments before explaining a pattern.';
 
   @override
   String get archiveNextMomentGuidance =>
-      'Graba o escribe un momento específico. Una segunda observación compatible hace visible el cambio.';
+      'Record or type one specific moment. A second supported observation makes change visible.';
 
   @override
-  String get archiveNextStepsTitle => 'Próximos pasos';
+  String get archiveNextStepsTitle => 'Next steps';
 
   @override
-  String get archiveScreenLabel => 'Pantalla de archivo';
+  String get archiveScreenLabel => 'Archive screen';
 
   @override
-  String get archiveTitle => 'Archivo';
+  String get archiveTitle => 'Archive';
 
   @override
-  String get archiveWhatChangedTitle => '¿Qué cambió?';
+  String get archiveWhatChangedTitle => 'What changed?';
 
   @override
-  String get archiveWhyTitle => '¿Por qué?';
+  String get archiveWhyTitle => 'Why?';
 
   @override
-  String get authTriggerArchiveChangedReturnCta => 'Proteger archivo';
+  String get authTriggerArchiveChangedReturnCta => 'Protect archive';
 
   @override
   String get authTriggerArchiveChangedReturnLead =>
-      'Inicia sesión para proteger tu archivo después de que pueda haber cambiado.';
+      'Sign in to protect your archive after it may have shifted.';
 
   @override
   String get authTriggerArchiveChangedReturnTitle =>
-      'Mira en qué cree tu archivo ahora';
+      'See what your archive believes now';
 
   @override
-  String get authTriggerCrossDeviceCta => 'Inicia sesión para continuar';
+  String get authTriggerCrossDeviceCta => 'Sign in to continue';
 
   @override
   String get authTriggerCrossDeviceLead =>
-      'Inicia sesión para retomar tu archivo donde lo dejaste.';
+      'Sign in to pick up your archive where you left off.';
 
   @override
-  String get authTriggerCrossDeviceTitle => 'Continuar en otro dispositivo';
+  String get authTriggerCrossDeviceTitle => 'Continue on another device';
 
   @override
-  String get authTriggerExportCta => 'Inicia sesión para exportar';
+  String get authTriggerExportCta => 'Sign in to export';
 
   @override
-  String get authTriggerExportLead =>
-      'Inicia sesión antes de exportar tu archivo.';
+  String get authTriggerExportLead => 'Sign in before exporting your archive.';
 
   @override
-  String get authTriggerExportTitle => 'Exportar con una cuenta protegida';
+  String get authTriggerExportTitle => 'Export with a protected account';
 
   @override
-  String get authTriggerFirstWorkingBeliefCta => 'Proteger esta creencia';
+  String get authTriggerFirstWorkingBeliefCta => 'Protect this belief';
 
   @override
   String get authTriggerFirstWorkingBeliefLead =>
-      'Inicia sesión para proteger la creencia que está formando tu archivo.';
+      'Sign in to protect the belief your archive is forming.';
 
   @override
   String get authTriggerFirstWorkingBeliefTitle =>
-      'Tu archivo tiene una creencia en formación';
+      'Your archive has a working belief';
 
   @override
-  String get authTriggerKeepTrackingProCta => 'Inicia sesión para continuar';
+  String get authTriggerKeepTrackingProCta => 'Sign in to continue';
 
   @override
   String get authTriggerKeepTrackingProLead =>
-      'Inicia sesión antes de actualizar para que tu archivo siga respaldado.';
+      'Sign in before upgrading so your archive stays backed up.';
 
   @override
-  String get authTriggerKeepTrackingProTitle => 'Sigue registrando con Pro';
+  String get authTriggerKeepTrackingProTitle => 'Keep tracking with Pro';
 
   @override
-  String get authTriggerProPaywallCta => 'Continuar con correo';
+  String get authTriggerProPaywallCta => 'Continue with email';
 
   @override
   String get authTriggerProPaywallLead =>
-      'La compra necesita una cuenta para proteger tu archivo.';
+      'Checkout needs an account to protect your archive.';
 
   @override
-  String get authTriggerProPaywallTitle => 'Inicia sesión para Pro';
+  String get authTriggerProPaywallTitle => 'Sign in for Pro';
 
   @override
-  String get authTriggerProtectArchiveCta => 'Proteger con correo';
+  String get authTriggerProtectArchiveCta => 'Protect with email';
 
   @override
   String get authTriggerProtectArchiveLead =>
-      'Inicia sesión con correo para cifrar una copia de seguridad de lo que construiste en este dispositivo.';
+      'Sign in with email to encrypt a backup of what you built on this device.';
 
   @override
-  String get authTriggerProtectArchiveTitle => 'Proteger este archivo';
+  String get authTriggerProtectArchiveTitle => 'Protect this archive';
 
   @override
-  String get authTriggerSyncArchiveCta => 'Inicia sesión para sincronizar';
+  String get authTriggerSyncArchiveCta => 'Sign in to sync';
 
   @override
   String get authTriggerSyncArchiveLead =>
-      'El inicio de sesión con correo habilita la sincronización cifrada en este dispositivo.';
+      'Email sign-in enables encrypted sync on this device.';
 
   @override
-  String get authTriggerSyncArchiveTitle => 'Respaldar tu archivo';
+  String get authTriggerSyncArchiveTitle => 'Back up your archive';
 
   @override
-  String get changesScreenLabel => 'Pantalla de cambios';
+  String get changesScreenLabel => 'Changes screen';
 
   @override
   String coachingConfidence(int percentage) {
-    return '$percentage% de confianza';
+    return '$percentage% confidence';
   }
 
   @override
   String coachingConfidenceSemantics(int percentage) {
-    return 'Confianza $percentage por ciento';
+    return 'Confidence $percentage percent';
   }
 
   @override
   String get coachingInsightHint =>
-      'Reflexión generada por IA basada en evidencia reciente del diario.';
+      'AI-generated reflection based on recent journal evidence.';
 
   @override
   String coachingInsightSemantics(
@@ -238,56 +235,55 @@ class AppLocalizationsEs extends AppLocalizations {
     int percentage,
     String content,
   ) {
-    return '$category. Confianza $percentage por ciento. $content';
+    return '$category. Confidence $percentage percent. $content';
   }
 
   @override
-  String get commonNotNow => 'Ahora no';
+  String get commonNotNow => 'Not now';
 
   @override
   String get dataPortabilityTrustFooter =>
-      'Exportado desde tu dispositivo. Tu propia voz — no terapia ni diagnóstico.';
+      'Exported from your device. Your own voice — not therapy or diagnosis.';
 
   @override
-  String get exportJsonCta => 'Exportar JSON';
+  String get exportJsonCta => 'Export JSON';
 
   @override
-  String get exportPortabilityBusy => 'Preparando exportación…';
+  String get exportPortabilityBusy => 'Building export…';
 
   @override
-  String get exportPortabilityCta => 'Descargar archivo completo (ZIP)';
+  String get exportPortabilityCta => 'Download full archive (ZIP)';
 
   @override
-  String get exportPortabilityFailed =>
-      'Error al exportar. Inténtalo de nuevo.';
+  String get exportPortabilityFailed => 'Export failed. Try again.';
 
   @override
   String get exportPortabilitySuccess =>
-      'Exportación lista — comparte o guarda el archivo ZIP.';
+      'Export ready — share or save the ZIP file.';
 
   @override
   String get exportScreenLead =>
-      'Descarga una copia portable de tu archivo para respaldo o migración.';
+      'Download a portable copy of your archive for backup or migration.';
 
   @override
-  String get exportScreenTitle => 'Exportar';
+  String get exportScreenTitle => 'Export';
 
   @override
   String get memoryGraphActionBarHint =>
-      'Desliza horizontalmente para explorar más acciones del gráfico.';
+      'Swipe horizontally to explore more graph actions.';
 
   @override
-  String get memoryGraphActionBarLabel => 'Acciones del gráfico de memoria';
+  String get memoryGraphActionBarLabel => 'Memory Graph actions';
 
   @override
   String get memoryGraphActionButtonHint =>
-      'Toca dos veces para activar esta acción del gráfico.';
+      'Double tap to activate this graph action.';
 
   @override
-  String get memoryGraphClosePreview => 'Cerrar vista previa';
+  String get memoryGraphClosePreview => 'Close Preview';
 
   @override
-  String get memoryGraphCloseRewind => 'Cerrar retroceso';
+  String get memoryGraphCloseRewind => 'Close Rewind';
 
   @override
   String memoryGraphClusters(int count) {
@@ -295,506 +291,502 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
-  String get memoryGraphDocuments => 'Documentos';
+  String get memoryGraphDocuments => 'Documents';
 
   @override
-  String get memoryGraphLifeDashboard => 'Panel de vida';
+  String get memoryGraphLifeDashboard => 'Life Dashboard';
 
   @override
-  String get memoryGraphLifeSimulator => 'Simulador de vida';
+  String get memoryGraphLifeSimulator => 'Life Simulator';
 
   @override
   String memoryGraphNodeCount(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count nodos',
-      one: '1 nodo',
+      other: '$count nodes',
+      one: '1 node',
     );
     return '$_temp0';
   }
 
   @override
-  String get memoryGraphPreview => 'Vista previa del gráfico';
+  String get memoryGraphPreview => 'Preview Graph';
 
   @override
-  String get memoryGraphReturnToPresent => 'Volver al presente';
+  String get memoryGraphReturnToPresent => 'Return to Present';
 
   @override
-  String get memoryGraphSampleBadge => 'Mente de ejemplo · ilustrativo';
+  String get memoryGraphSampleBadge => 'Sample Mind · illustrative';
 
   @override
-  String get memoryGraphSmallSteps => 'Pequeños pasos';
+  String get memoryGraphSmallSteps => 'Small steps';
 
   @override
-  String get memoryGraphTimeMachine => 'Máquina del tiempo';
+  String get memoryGraphTimeMachine => 'Time Machine';
 
   @override
-  String get memoryGraphWeekly => 'Semanal';
+  String get memoryGraphWeekly => 'Weekly';
 
   @override
   String get memoryGraphWidgets => 'Widgets';
 
   @override
-  String get meshNoPeers => 'No hay dispositivos emparejados cerca.';
+  String get meshNoPeers => 'No paired devices are nearby.';
 
   @override
-  String get meshPairDevice => 'Emparejar un dispositivo';
+  String get meshPairDevice => 'Pair a device';
 
   @override
   String get meshPrivacyDescription =>
-      'El descubrimiento cercano solo anuncia un identificador rotativo. Los metadatos del archivo se intercambian tras el emparejamiento cifrado.';
+      'Nearby discovery advertises only a rotating identifier. Archive metadata is exchanged after encrypted pairing.';
 
   @override
-  String get meshReadOnlyBranch => 'Rama compartida de solo lectura';
+  String get meshReadOnlyBranch => 'Read-only shared branch';
 
   @override
-  String get meshShareCluster => 'Compartir este cluster';
+  String get meshShareCluster => 'Share this cluster';
 
   @override
-  String get meshStatusComplete => 'Sincronización local completa';
+  String get meshStatusComplete => 'Local sync complete';
 
   @override
-  String get meshStatusConnected => 'Conectado de forma segura';
+  String get meshStatusConnected => 'Connected securely';
 
   @override
-  String get meshStatusSearching => 'Buscando cerca';
+  String get meshStatusSearching => 'Searching nearby';
 
   @override
-  String get meshStatusTitle => 'Sincronización cifrada cercana';
+  String get meshStatusTitle => 'Nearby encrypted sync';
 
   @override
-  String get meshSyncNow => 'Sincronizar cerca';
+  String get meshSyncNow => 'Sync nearby';
 
   @override
-  String get navigationAccount => 'Cuenta';
+  String get navigationAccount => 'Account';
 
   @override
-  String get navigationArchive => 'Archivo';
+  String get navigationArchive => 'Archive';
 
   @override
-  String get navigationChanges => 'Cambios';
+  String get navigationChanges => 'Changes';
 
   @override
-  String get navigationRecord => 'Grabar';
+  String get navigationRecord => 'Record';
 
   @override
-  String get primaryNavigationLabel => 'Navegación principal';
+  String get primaryNavigationLabel => 'Primary navigation';
 
   @override
-  String get recapCopied => 'Resumen copiado.';
+  String get recapCopied => 'Recap copied.';
 
   @override
-  String get recordScreenLabel => 'Pantalla de grabación';
+  String get recordScreenLabel => 'Record screen';
 
   @override
-  String get recordingCopyRecap => 'Copiar resumen';
+  String get recordingCopyRecap => 'Copy recap';
 
   @override
-  String get recordingEnoughForNow => 'Suficiente por ahora';
+  String get recordingEnoughForNow => 'That\'s enough for now';
 
   @override
   String recordingInProgressSeconds(int seconds) {
     String _temp0 = intl.Intl.pluralLogic(
       seconds,
       locale: localeName,
-      other: '$seconds segundos',
-      one: '1 segundo',
+      other: '$seconds seconds',
+      one: '1 second',
     );
-    return 'Grabación en curso, $_temp0';
+    return 'Recording in progress, $_temp0';
   }
 
   @override
   String get recordingPlainLanguageHint =>
-      'Dilo con claridad. Thoughtprint busca patrones, no juicios.';
+      'Say it plainly. Thoughtprint looks for patterns, not judgment.';
 
   @override
-  String get recordingProcessingStatus => 'Procesando';
+  String get recordingProcessingStatus => 'Processing';
 
   @override
   String get recordingPromptNudgeBody =>
-      'Thoughtprint usa lo que grabas para mostrar cada día cosas más claras que merecen la pena comprobar.';
+      'Thoughtprint uses what you record to surface sharper things worth checking each day.';
 
   @override
   String get recordingPromptNudgeTitle =>
-      'Mejora tus indicaciones diarias del archivo';
+      'Keep your daily archive prompts improving';
 
   @override
-  String get recordingReadyStatus => 'Listo para grabar';
+  String get recordingReadyStatus => 'Ready to record';
 
   @override
   String get recordingSavedBackgroundTranscription =>
-      'Grabación guardada. La transcripción terminará en segundo plano.';
+      'Recording saved. Transcription will finish in the background.';
 
   @override
-  String get recordingSavedStatus => 'Guardado';
+  String get recordingSavedStatus => 'Saved';
 
   @override
-  String get recordingStatus => 'Grabando';
+  String get recordingStatus => 'Recording';
 
   @override
   String get recordingStopAndSaveHint =>
-      'Toca Detener y guardar cuando hayas terminado.';
+      'Tap Stop and save when you are finished.';
 
   @override
-  String get recordingUnlockPro => 'Desbloquear Pro';
+  String get recordingUnlockPro => 'Unlock Pro';
 
   @override
-  String get savedForNextCheckIn => 'Guardado para tu próximo registro.';
+  String get savedForNextCheckIn => 'Saved for your next check-in.';
 
   @override
-  String get savedForNextMonthCheck =>
-      'Guardado para el registro del próximo mes.';
+  String get savedForNextMonthCheck => 'Saved for next month\'s check.';
 
   @override
-  String get savedForTomorrowCheck =>
-      'Guardado para la comprobación de mañana.';
+  String get savedForTomorrowCheck => 'Saved for tomorrow\'s check.';
 
   @override
   String get textJournalPanelLead =>
-      'No hace falta micrófono — unas frases bastan para tu archivo.';
+      'No microphone needed — a few sentences is enough for your archive.';
 
   @override
-  String get textJournalPanelTitle => 'Escribe un momento';
+  String get textJournalPanelTitle => 'Type a moment';
 
   @override
-  String get textJournalSaveCta => 'Guardar pensamiento';
+  String get textJournalSaveCta => 'Save thought';
 
   @override
-  String get tomorrowCheckSet => 'La comprobación de mañana está programada.';
+  String get tomorrowCheckSet => 'Tomorrow\'s check is set.';
 
   @override
-  String get watchQuickRecordCta => 'Empezar a grabar';
+  String get watchQuickRecordCta => 'Start recording';
 
   @override
-  String get watchQuickRecordTitle => 'Grabación rápida';
+  String get watchQuickRecordTitle => 'Quick record';
 
   @override
-  String get widgetQuickCaptureAction => 'Grabar';
+  String get widgetQuickCaptureAction => 'Record';
 
   @override
   String get widgetQuickCaptureBody =>
-      'Captura un momento desde la pantalla de inicio.';
+      'Capture a moment from your home screen.';
 
   @override
-  String get accountTitle => 'Cuenta de Thoughtprint';
+  String get accountTitle => 'Thoughtprint account';
 
   @override
-  String get syncStatus => 'Estado de sincronización';
+  String get syncStatus => 'Sync status';
 
   @override
   String get syncNotAvailableTestFlight =>
-      'La sincronización no está disponible en esta versión de TestFlight.';
+      'Sync is not available in this TestFlight build.';
 
   @override
-  String get syncOnDeviceOnly => 'En este dispositivo';
+  String get syncOnDeviceOnly => 'On this device';
 
   @override
-  String get syncNow => 'Sincronizar ahora';
+  String get syncNow => 'Sync now';
 
   @override
   String get accountPrivacyNote =>
-      'Tus grabaciones permanecen en este dispositivo a menos que inicies sesión para sincronizar.';
+      'Your recordings stay on this device unless you sign in to sync.';
 
   @override
-  String get deleteAccount => 'Eliminar cuenta';
+  String get deleteAccount => 'Delete account';
 
   @override
-  String get settings => 'Ajustes';
+  String get settings => 'Settings';
 
   @override
-  String get accountSessionLoading => 'Cargando…';
+  String get accountSessionLoading => 'Loading…';
 
   @override
-  String get accountNotSignedIn => 'Sin sesión iniciada';
+  String get accountNotSignedIn => 'Not signed in';
 
   @override
-  String get accountSignedIn => 'Sesión iniciada';
+  String get accountSignedIn => 'Signed in';
 
   @override
-  String get accountSignedInForSync => 'Sesión iniciada para sincronizar';
+  String get accountSignedInForSync => 'Signed in for sync';
 
   @override
-  String get accountLastSyncedToday => 'Última sincronización hoy';
+  String get accountLastSyncedToday => 'Last synced today';
 
   @override
-  String get recordTitle => '¿Qué tienes en mente?';
+  String get recordTitle => 'What is on your mind?';
 
   @override
-  String get recordSubtitle => 'Di una cosa pequeña de hoy.';
+  String get recordSubtitle => 'Say one small thing from today.';
 
   @override
-  String get recordOneMomentCta => 'Grabar un momento';
+  String get recordOneMomentCta => 'Record one moment';
 
   @override
-  String get recordMomentCta => 'Grabar momento';
+  String get recordMomentCta => 'Record moment';
 
   @override
-  String get stopRecordingCta => 'Detener grabación';
+  String get stopRecordingCta => 'Stop recording';
 
   @override
-  String get recordAnotherCta => 'Grabar otro';
+  String get recordAnotherCta => 'Record another';
 
   @override
-  String get recordNextMomentCta => 'Grabar el siguiente momento';
+  String get recordNextMomentCta => 'Record next moment';
 
   @override
-  String get startRecording => 'Empezar a grabar';
+  String get startRecording => 'Start recording';
 
   @override
-  String get trySayingOneOfThese => 'Prueba decir una de estas';
+  String get trySayingOneOfThese => 'Try saying one of these';
 
   @override
-  String get recordHelpSheetTitle => 'Elige un indicio';
+  String get recordHelpSheetTitle => 'Pick a prompt';
 
   @override
-  String get recordHelpSheetHelper => 'Elige uno y graba una frase.';
+  String get recordHelpSheetHelper => 'Choose one, then record one sentence.';
 
   @override
-  String get reflectionSavedTitle => 'Reflexión guardada';
+  String get reflectionSavedTitle => 'Reflection saved';
 
   @override
-  String get postSaveRecordAnother => 'Grabar otro momento';
+  String get postSaveRecordAnother => 'Record another moment';
 
   @override
-  String get viewPatternsCta => 'Ver patrones';
+  String get viewPatternsCta => 'View patterns';
 
   @override
-  String get back => 'Atrás';
+  String get back => 'Back';
 
   @override
-  String get firstSavePostSaveTitle => 'Guardado.';
+  String get firstSavePostSaveTitle => 'Saved.';
 
   @override
-  String get firstSavePostSaveBody => 'Vuelve cuando esto aparezca de nuevo.';
+  String get firstSavePostSaveBody => 'Come back when this shows up again.';
 
   @override
-  String get finishRecordingFirst => 'Termina o cancela la grabación primero.';
+  String get finishRecordingFirst => 'Finish or cancel the recording first.';
 
   @override
-  String get paywallHeadline => 'Viste la primera repetición útil.';
+  String get paywallHeadline => 'You saw the first useful repeat.';
 
   @override
   String get paywallSubhead =>
-      'Gratis muestra la primera prueba útil. Pro conserva el historial más largo.';
+      'Free shows the first useful proof. Pro keeps the longer trail.';
 
   @override
-  String get paywallPrimaryCta => 'Conservar el historial más largo';
+  String get paywallPrimaryCta => 'Keep the longer trail';
 
   @override
-  String get paywallSecondaryCta => 'Ahora no';
+  String get paywallSecondaryCta => 'Not now';
 
   @override
-  String get paywallContinue => 'Conservar el historial más largo';
+  String get paywallContinue => 'Keep the longer trail';
 
   @override
   String get paywallDifferentiation =>
-      'Thoughtprint no intenta responder mejor que ChatGPT. Intenta recordar de otra manera.';
+      'Thoughtprint is not trying to answer better than ChatGPT. It is trying to remember differently.';
 
   @override
   String get paywallTrust =>
-      'Tus guardados siguen siendo gratis. Gestiona o cancela cuando quieras en el App Store.';
+      'Your saves stay free. Manage or cancel anytime in the App Store.';
 
   @override
   String get paywallBackupLine =>
-      'Estás acumulando evidencia con el tiempo. Pro conserva el historial de pruebas más largo cuando los momentos regresan, cambian o se desvanecen.';
+      'You are building evidence over time. Pro keeps the longer proof trail as moments return, change, or fade.';
 
   @override
   String get paywallPrimaryValueBlock =>
-      'Pro conserva un archivo privado más largo: más momentos, más continuidad, más evidencia con el tiempo.';
+      'Pro keeps a longer private archive — more moments, more continuity, more evidence over time.';
 
   @override
-  String get paywallBackToPatterns => 'Volver a Patrones';
+  String get paywallBackToPatterns => 'Back to Patterns';
 
   @override
-  String get restorePurchases => 'Restaurar compras';
+  String get restorePurchases => 'Restore purchases';
 
   @override
   String get paywallAnchorPositioningLine =>
-      'Mantén creciendo tu línea de tiempo verificada.';
+      'Keep your verified timeline growing.';
 
   @override
   String get paywallProofConnectedLine =>
-      'Pro conserva un archivo privado más largo: más momentos, más continuidad, más evidencia con el tiempo.';
+      'Pro keeps a longer private archive — more moments, more continuity, more evidence over time.';
 
   @override
   String get paywallSecondaryReassurance =>
-      'Tú mantienes el control. Puedes eliminar entradas y corregir lo que guardaste.';
+      'You stay in control. You can delete entries and correct what you saved.';
 
   @override
-  String get paywallBenefitBullet1 =>
-      'Historial de evidencia más largo en este dispositivo';
+  String get paywallBenefitBullet1 => 'Longer evidence history on this device';
 
   @override
   String get paywallBenefitBullet2 =>
-      'Más momentos archivados durante semanas y meses';
+      'More archived moments over weeks and months';
 
   @override
   String get paywallBenefitBullet3 =>
-      'Continuidad cuando los patrones regresan o cambian';
+      'Continuity when patterns return or change';
 
   @override
   String get paywallSetupUnavailableBody =>
-      'Los planes no están disponibles en este momento.';
+      'Plans are not available right now.';
 
   @override
-  String get paywallUnavailablePlansLoading => 'Cargando planes…';
+  String get paywallUnavailablePlansLoading => 'Loading plans…';
 
   @override
-  String get valueMomentProTitle =>
-      'Conserva el historial de pruebas más largo';
+  String get valueMomentProTitle => 'Keep the longer proof trail';
 
   @override
-  String get valueMomentProCta => 'Ver Pro';
+  String get valueMomentProCta => 'See Pro';
 
   @override
-  String get valueMomentProDismiss => 'Ahora no';
+  String get valueMomentProDismiss => 'Not now';
 
   @override
   String get valueMomentThreadReturnBody =>
-      'Este hilo ha regresado antes. Pro conserva el historial de evidencia para que Thoughtprint pueda mostrar si se fortalece, se suaviza o cambia.';
+      'This thread has returned before. Pro keeps the evidence history so Thoughtprint can show whether it gets stronger, softer, or changes.';
 
   @override
   String get valueMomentBeliefBody =>
-      'Una frase similar a una creencia apareció de nuevo. Pro conserva la línea de tiempo de lo que cambió en tu archivo.';
+      'A belief-like phrase showed up again. Pro keeps the timeline of what changed across your archive.';
 
   @override
   String get valueMomentWeeklyBody =>
-      'Tu revisión semanal encontró algo para comparar. Pro conserva las revisiones semanales del archivo para que Thoughtprint pueda seguir lo que cambió con el tiempo.';
+      'Your weekly review found something to compare. Pro keeps weekly archive reviews so Thoughtprint can track what changed over time.';
 
   @override
   String get valueMomentProofCounterBody =>
-      'Tu archivo tiene grabaciones conectadas. Pro conserva todo el historial de evidencia a medida que crece el rastro.';
+      'Your archive has connected recordings. Pro keeps the full evidence history as the trail grows.';
 
   @override
   String get valueMomentFallbackBody =>
-      'Tu primera repetición es gratis. Pro conserva el historial de evidencia para que Thoughtprint pueda mostrar si los patrones se fortalecen, se suavizan o cambian con el tiempo.';
+      'Your first repeat is free. Pro keeps the evidence history so Thoughtprint can show whether patterns get stronger, softer, or change over time.';
 
   @override
   String get subscriptionPaywallNoOfferings =>
-      'No hay planes de suscripción disponibles.';
+      'No subscription plans are available.';
 
   @override
-  String get purchaseSuccess => 'Pro está activo.';
+  String get purchaseSuccess => 'Pro is active.';
 
   @override
-  String get restorePurchasesError => 'No se pudieron restaurar las compras.';
+  String get restorePurchasesError => 'Could not restore purchases.';
 
   @override
-  String get patternsTabLabel => 'Archivo';
+  String get patternsTabLabel => 'Archive';
 
   @override
-  String get patternsEmptyPageTitle => 'Graba algunos momentos reales';
+  String get patternsEmptyPageTitle => 'Record a few real moments';
 
   @override
   String get patternsEarlyStateBody =>
-      'Graba algunos momentos reales. Thoughtprint buscará lo que se repite entre ellos.';
+      'Record a few real moments. Thoughtprint will look for what repeats across them.';
 
   @override
-  String get patternsEmptyCta => 'Grabar momento';
+  String get patternsEmptyCta => 'Record moment';
 
   @override
-  String get patternsHeroHeading => 'LO QUE SIGUE REPITIÉNDOSE EN TU VIDA';
+  String get patternsHeroHeading => 'WHAT KEEPS REPEATING IN YOUR LIFE';
 
   @override
-  String get patternsShiftingHeading => 'LO QUE PUEDE ESTAR CAMBIANDO';
+  String get patternsShiftingHeading => 'WHAT MAY BE CHANGING';
 
   @override
-  String get patternsEvolutionHeading => 'CAMBIANDO CON EL TIEMPO';
+  String get patternsEvolutionHeading => 'CHANGING OVER TIME';
 
   @override
-  String get patternsSectionCurrent => 'Patrones que siguen repitiéndose';
+  String get patternsSectionCurrent => 'Patterns that keep repeating';
 
   @override
-  String get patternsSectionEmerging => 'Se está formando un patrón';
+  String get patternsSectionEmerging => 'A pattern is forming';
 
   @override
-  String get patternsSectionChanging => 'Esto parece estar cambiando';
+  String get patternsSectionChanging => 'This seems to be changing';
 
   @override
-  String get patternsFirstEntrySavedTitle => 'Primer momento guardado';
+  String get patternsFirstEntrySavedTitle => 'First moment saved';
 
   @override
   String get patternsFirstEntrySavedBody =>
-      'Graba un momento más claro y Thoughtprint podrá comparar lo que se repite.';
+      'Record one more clear moment and Thoughtprint can compare what repeats.';
 
   @override
-  String get patternsFirstEntrySavedCta => 'Grabar otro momento';
+  String get patternsFirstEntrySavedCta => 'Record another moment';
 
   @override
-  String get patternsFirstEntryViewSavedCta => 'Ver entrada guardada';
+  String get patternsFirstEntryViewSavedCta => 'View saved entry';
 
   @override
-  String get patternsHowItWorksTitle => 'Cómo funciona';
+  String get patternsHowItWorksTitle => 'How it works';
 
   @override
   String get patternsPrivacyReassurance =>
-      'Privado en tu dispositivo. Nada se comparte sin que tú lo elijas.';
+      'Private on your device. Nothing is shared without you choosing to.';
 
   @override
-  String get allPatternsTitle => 'Todos los patrones';
+  String get allPatternsTitle => 'All patterns';
 
   @override
   String get allPatternsLead =>
-      'Patrones y temas que Thoughtprint sigue notando en tus reflexiones.';
+      'Patterns and themes Thoughtprint keeps noticing in your reflections.';
 
   @override
-  String get patternsCheckInWaitingTitle => 'Registro pendiente';
+  String get patternsCheckInWaitingTitle => 'Check-in waiting';
 
   @override
   String get patternsCheckInWaitingBody =>
-      'Thoughtprint tiene una pregunta de tu último momento.';
+      'Thoughtprint has a question from your last moment.';
 
   @override
-  String get patternsCheckInWaitingCta => 'Responder ahora';
+  String get patternsCheckInWaitingCta => 'Answer it now';
 
   @override
-  String get patternsLoopClosedTitle => 'Bucle cerrado';
+  String get patternsLoopClosedTitle => 'Loop closed';
 
   @override
-  String get patternsRecordAnotherMomentCta => 'Grabar otro momento';
+  String get patternsRecordAnotherMomentCta => 'Record another moment';
 
   @override
-  String get patternsResultUseCheckCta => 'Usar esta comprobación';
+  String get patternsResultUseCheckCta => 'Use this check';
 
   @override
-  String get patternsSignalsWaitingTitle => 'Señales esperando claridad';
+  String get patternsSignalsWaitingTitle => 'Signals waiting for clarity';
 
   @override
   String get patternsWatchingSignalTitle =>
-      'Thoughtprint está observando esta señal';
+      'Thoughtprint is watching this signal';
 
   @override
   String get patternsWatchingSignalBody =>
-      'Graba un momento más para comprobar si se repite.';
+      'Record one more moment to test whether it repeats.';
 
   @override
-  String get archiveDiscoverPatternsLink => 'Ver todos los patrones';
+  String get archiveDiscoverPatternsLink => 'See all patterns';
 
   @override
-  String get archiveTimelineLink => 'Línea de tiempo';
+  String get archiveTimelineLink => 'Timeline';
 
   @override
-  String get archiveSearchLink => 'Buscar en el archivo';
+  String get archiveSearchLink => 'Search archive';
 
   @override
-  String get activePatternCurrentTitle => 'Patrón actual';
+  String get activePatternCurrentTitle => 'Current pattern';
 
   @override
-  String get activePatternRecordTodayCta => 'Grabar hoy';
+  String get activePatternRecordTodayCta => 'Record today';
 
   @override
-  String get seeWhatChanged => 'Ver qué cambió';
+  String get seeWhatChanged => 'See what changed';
 
   @override
-  String get patternsComeBackTitle => '¿Por qué volver mañana?';
+  String get patternsComeBackTitle => 'Why come back tomorrow?';
 
   @override
   String get patternsComeBackBody =>
-      'Thoughtprint compara lo que guardas con el tiempo.';
+      'Thoughtprint compares what you save over time.';
 
   @override
-  String get patternsComeBackRecordCta => 'Grabar la reflexión de hoy';
+  String get patternsComeBackRecordCta => 'Record today\'s reflection';
 
   @override
   String get v1Copy0000 => 'When it repeats, record it.';
@@ -3961,4 +3953,9 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get v1Copy1051 =>
       'Want to be reminded to look at this entry in a week?';
+}
+
+/// The translations for Chinese, using the Han script (`zh_Hans`).
+class AppLocalizationsZhHans extends AppLocalizationsZh {
+  AppLocalizationsZhHans() : super('zh_Hans');
 }
