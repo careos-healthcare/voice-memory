@@ -3,6 +3,8 @@ import 'dart:io';
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/models/reflection.dart';
 import 'package:archiveme_mobile/services/markdown_export_service.dart';
+import 'package:archiveme_mobile/services/obsidian_markdown_template.dart';
+import 'package:archiveme_mobile/services/obsidian_vault_diff.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -51,6 +53,61 @@ void main() {
     final written = await service.syncStream([updated]).toList();
     expect(written.single.path, file.path);
     expect(await file.readAsString(), contains('lighter still'));
+  });
+
+  test('a user template places the transcript, metadata, and patterns', () {
+    const template = ObsidianMarkdownTemplate('''
+# {{date}}
+mood: {{mood}}
+{{#patterns}}
+## Patterns
+{{patterns}}
+{{/patterns}}
+
+{{transcript}}
+''');
+    final note = MarkdownNote(
+      id: 'e1',
+      createdAt: DateTime.utc(2026, 3, 3),
+      body: 'Said it out loud.',
+      mood: 'steady',
+      tags: const ['journal'],
+      patterns: const ['morning'],
+    );
+
+    final markdown = template.render(ObsidianTemplateValues.fromNote(note));
+
+    expect(markdown, contains('# 2026-03-03'));
+    expect(markdown, contains('mood: steady'));
+    expect(markdown, contains('## Patterns\n- morning'));
+    expect(markdown, contains('Said it out loud.'));
+  });
+
+  test('vault diff skips duplicates and keeps an edited note', () async {
+    final directory = await Directory.systemTemp.createTemp('obsidian_diff');
+    addTearDown(() => directory.delete(recursive: true));
+    final service = MarkdownExportService(
+      pickDirectory: () async => directory.path,
+    );
+    final entry = _entry('First wording.');
+    expect(await service.chooseVault(), directory.path);
+    expect(await service.sync([entry]), 1);
+
+    expect(await service.sync([entry]), 0);
+
+    final file = File('${directory.path}/2026-03-03-e1.md');
+    await file.writeAsString('edited in the vault\n');
+    final updated = _entry('Second wording.');
+    expect(await service.sync([updated]), 0);
+    expect(await file.readAsString(), 'edited in the vault\n');
+    expect(
+      ObsidianVaultDiff.resolve(
+        localMarkdown: 'local',
+        vaultMarkdown: 'vault',
+        lastPushedHash: ObsidianVaultDiff.hashOf('local'),
+      ),
+      ObsidianVaultPush.keepVault,
+    );
   });
 }
 

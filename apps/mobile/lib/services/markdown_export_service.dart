@@ -1,6 +1,8 @@
 import 'dart:io';
 
 import 'package:archiveme_mobile/models/journal_entry.dart';
+import 'package:archiveme_mobile/services/obsidian_markdown_template.dart';
+import 'package:archiveme_mobile/services/obsidian_vault_diff.dart';
 import 'package:file_picker/file_picker.dart';
 
 /// Surroundings written into Obsidian frontmatter when they were captured.
@@ -33,12 +35,14 @@ class MarkdownNote {
     required this.mood,
     required this.tags,
     this.ambient = const MarkdownAmbient(),
+    this.patterns = const [],
   });
 
   factory MarkdownNote.fromEntry(JournalEntry entry) {
     final themes = entry.reflection.recurringThemes
         .map((tag) => tag.trim())
-        .where((tag) => tag.isNotEmpty);
+        .where((tag) => tag.isNotEmpty)
+        .toList();
     return MarkdownNote(
       id: entry.id,
       createdAt: entry.createdAt,
@@ -47,6 +51,7 @@ class MarkdownNote {
           ? 'unspecified'
           : entry.reflection.mood.trim(),
       tags: ['journal', ...themes],
+      patterns: themes,
       ambient: ambientFromDisplayJson(entry.display.toJson()),
     );
   }
@@ -57,6 +62,7 @@ class MarkdownNote {
   final String mood;
   final List<String> tags;
   final MarkdownAmbient ambient;
+  final List<String> patterns;
 
   String get fileName {
     final day = _isoDay(createdAt);
@@ -109,13 +115,19 @@ class MarkdownExportService {
     Future<String?> Function()? pickDirectory,
     MarkdownVaultStore? vault,
     Future<void> Function(String path, String contents)? writeFile,
+    Future<String?> Function(String path)? readFile,
+    this.template,
   }) : _pick = pickDirectory ?? pickMarkdownVaultDirectory,
        _vault = vault ?? MemoryMarkdownVaultStore(),
-       _write = writeFile ?? writeMarkdownFile;
+       _write = writeFile ?? writeMarkdownFile,
+       _read = readFile ?? _readMarkdownFile;
 
   final Future<String?> Function() _pick;
   final MarkdownVaultStore _vault;
   final Future<void> Function(String path, String contents) _write;
+  final Future<String?> Function(String path) _read;
+  final ObsidianMarkdownTemplate? template;
+  final Map<String, String> _lastPushedHash = {};
 
   /// Asks for a vault folder and remembers it for later syncs.
   Future<String?> chooseVault() async {
@@ -133,8 +145,16 @@ class MarkdownExportService {
     for (final entry in entries) {
       final note = MarkdownNote.fromEntry(entry);
       final path = _join(directory.trim(), note.fileName);
-      final contents = renderMarkdownNote(note);
+      final contents = renderNote(note);
+      final vaultMarkdown = await _read(path);
+      final decision = ObsidianVaultDiff.resolve(
+        localMarkdown: contents,
+        vaultMarkdown: vaultMarkdown,
+        lastPushedHash: _lastPushedHash[note.id],
+      );
+      if (decision != ObsidianVaultPush.write) continue;
       await _write(path, contents);
+      _lastPushedHash[note.id] = ObsidianVaultDiff.hashOf(contents);
       yield MarkdownWrittenFile(path: path, contents: contents);
     }
   }
@@ -146,6 +166,19 @@ class MarkdownExportService {
     }
     return count;
   }
+
+  /// Uses the user template when one is set, otherwise the Dataview layout.
+  String renderNote(MarkdownNote note) {
+    final layout = template;
+    if (layout == null) return renderMarkdownNote(note);
+    return layout.render(ObsidianTemplateValues.fromNote(note));
+  }
+}
+
+Future<String?> _readMarkdownFile(String path) async {
+  final file = File(path);
+  if (!file.existsSync()) return null;
+  return file.readAsString();
 }
 
 /// YAML frontmatter plus the transcript. Dataview can read every field.
@@ -161,7 +194,9 @@ String renderMarkdownNote(MarkdownNote note) {
   buffer.writeln('mood: ${_yamlScalar(note.mood)}');
   final ambient = note.ambient;
   if (ambient.locality != null && ambient.locality!.trim().isNotEmpty) {
-    buffer.writeln('ambient_locality: ${_yamlScalar(ambient.locality!.trim())}');
+    buffer.writeln(
+      'ambient_locality: ${_yamlScalar(ambient.locality!.trim())}',
+    );
   }
   if (ambient.weather != null && ambient.weather!.trim().isNotEmpty) {
     buffer.writeln('ambient_weather: ${_yamlScalar(ambient.weather!.trim())}');
@@ -170,7 +205,9 @@ String renderMarkdownNote(MarkdownNote note) {
     buffer.writeln('ambient_steps: ${ambient.steps}');
   }
   if (ambient.calendar != null && ambient.calendar!.trim().isNotEmpty) {
-    buffer.writeln('ambient_calendar: ${_yamlScalar(ambient.calendar!.trim())}');
+    buffer.writeln(
+      'ambient_calendar: ${_yamlScalar(ambient.calendar!.trim())}',
+    );
   }
   buffer
     ..writeln('---')
