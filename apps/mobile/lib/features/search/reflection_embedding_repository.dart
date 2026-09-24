@@ -81,6 +81,34 @@ class ReflectionEmbeddingRepository {
     }
   }
 
+  /// Journal snippets for [entryIds], keyed by id, in no particular order.
+  Future<Map<String, ({String transcript, DateTime? createdAt})>>
+  timelineRowsFor(List<String> entryIds) async {
+    if (entryIds.isEmpty) return const {};
+    final placeholders = List.filled(entryIds.length, '?').join(', ');
+    final rows = await _db.rawQuery(
+      '''
+      SELECT id, created_at, transcript
+      FROM journal_entries
+      WHERE id IN ($placeholders)
+      ''',
+      entryIds,
+    );
+    return {
+      for (final row in rows)
+        if (row['id'] is String)
+          row['id']! as String: (
+            transcript: row['transcript'] as String? ?? '',
+            createdAt: _millis(row['created_at']),
+          ),
+    };
+  }
+
+  static DateTime? _millis(Object? value) {
+    if (value is! num) return null;
+    return DateTime.fromMillisecondsSinceEpoch(value.round(), isUtc: true);
+  }
+
   Future<List<VectorSearchHit>> vectorSearchWithScores({
     required List<double> queryEmbedding,
     int limit = 20,

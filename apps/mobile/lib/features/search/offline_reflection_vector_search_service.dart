@@ -9,6 +9,21 @@ import 'package:archiveme_mobile/features/search/reflection_embedding_text.dart'
 import 'package:archiveme_mobile/features/search/reflection_text_processor.dart';
 import 'package:archiveme_mobile/models/reflection.dart';
 
+/// A timeline entry ranked by sqlite-vec nearest neighbors.
+class TimelineSemanticEntry {
+  const TimelineSemanticEntry({
+    required this.entryId,
+    required this.transcript,
+    required this.score,
+    this.createdAt,
+  });
+
+  final String entryId;
+  final String transcript;
+  final double score;
+  final DateTime? createdAt;
+}
+
 /// A semantic similarity hit against locally indexed reflection embeddings.
 class ReflectionSearchHit {
   const ReflectionSearchHit({
@@ -83,6 +98,29 @@ class OfflineReflectionVectorSearchService {
           )
           .toList(growable: false);
     });
+  }
+
+  /// Embeds [input] locally and returns the [k] nearest timeline entries.
+  Future<List<TimelineSemanticEntry>> queryTimeline(
+    String input, {
+    int k = 8,
+  }) async {
+    final trimmed = input.trim();
+    if (trimmed.isEmpty || k <= 0) return const [];
+    final neighbors = await searchSimilarText(query: trimmed, limit: k);
+    if (neighbors.isEmpty) return const [];
+    final rows = await _repository.timelineRowsFor(
+      neighbors.map((hit) => hit.entryId).toList(),
+    );
+    return [
+      for (final neighbor in neighbors)
+        TimelineSemanticEntry(
+          entryId: neighbor.entryId,
+          transcript: rows[neighbor.entryId]?.transcript ?? '',
+          createdAt: rows[neighbor.entryId]?.createdAt,
+          score: neighbor.cosineSimilarity,
+        ),
+    ];
   }
 
   Future<List<ReflectionSearchHit>> searchSimilarReflection({

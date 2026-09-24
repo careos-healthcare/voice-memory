@@ -90,6 +90,37 @@ void main() {
       expect(hits.first.cosineSimilarity, greaterThan(0));
     });
 
+    test('queryTimeline embeds the question and returns nearest entries', () async {
+      final created = DateTime.utc(2026, 8, 11);
+      await sqlite.database.insert('journal_entries', {
+        'id': 'entry-work-stress',
+        'created_at': created.millisecondsSinceEpoch,
+        'updated_at': created.millisecondsSinceEpoch,
+        'transcript': 'I keep accepting more work',
+      });
+      await repository.upsertEmbedding(
+        entryId: 'entry-work-stress',
+        contentHash: 'timeline',
+        embedding: await search.embedReflection(
+          _reflection(
+            mood: 'overwhelmed',
+            tension: 'I want rest but keep accepting more work',
+          ),
+        ),
+      );
+
+      final entries = await search.queryTimeline(
+        'work stress rest boundaries overwhelmed',
+        k: 3,
+      );
+
+      expect(entries, isNotEmpty);
+      expect(entries.first.entryId, 'entry-work-stress');
+      expect(entries.first.transcript, 'I keep accepting more work');
+      expect(entries.first.createdAt, created);
+      expect(entries.first.score, greaterThan(0));
+    });
+
     test('embedReflectionDto produces stable vectors', () async {
       const dto = ReflectionDto(
         mood: 'hopeful',
