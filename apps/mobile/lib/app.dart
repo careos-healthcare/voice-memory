@@ -6,6 +6,7 @@ import 'package:archiveme_mobile/features/llm/providers/llm_providers.dart';
 import 'package:archiveme_mobile/features/live_audio/presentation/widgets/offline_vault_recovery_host.dart';
 import 'package:archiveme_mobile/features/recording/audio_processing_queue_listener_host.dart';
 import 'package:archiveme_mobile/l10n/generated/app_localizations.dart';
+import 'package:archiveme_mobile/l10n/release_supported_locales.dart';
 import 'package:archiveme_mobile/router/app_router.dart';
 import 'package:archiveme_mobile/security/app_lock_gate.dart';
 import 'package:archiveme_mobile/security/app_privacy_shell.dart';
@@ -26,7 +27,7 @@ class ArchiveMeApp extends StatelessWidget {
         title: AppConfig.appName,
         debugShowCheckedModeBanner: false,
         localizationsDelegates: AppLocalizations.localizationsDelegates,
-        supportedLocales: AppLocalizations.supportedLocales,
+        supportedLocales: archiveSupportedLocales(),
         theme: AppTheme.light(),
         darkTheme: AppTheme.dark(),
         themeMode: ThemeMode.system,
