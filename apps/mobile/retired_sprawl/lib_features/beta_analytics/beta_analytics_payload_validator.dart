@@ -107,8 +107,7 @@ class BetaAnalyticsPayloadValidator {
       final key = _normalizeKey(entry.key);
       if (key.isEmpty) continue;
 
-      if (forbiddenExactKeys.contains(key) ||
-          _hasForbiddenSubstring(key)) {
+      if (forbiddenExactKeys.contains(key) || _hasForbiddenSubstring(key)) {
         _record(eventName, key, BetaAnalyticsValidationReason.forbiddenKey);
         continue;
       }
@@ -188,7 +187,9 @@ class BetaAnalyticsPayloadValidator {
       );
     }
     if (kDebugMode) {
-      AppLogger.debug('BetaAnalyticsPayloadValidator: dropped $event.$key ($reason)');
+      AppLogger.debug(
+        'BetaAnalyticsPayloadValidator: dropped $event.$key ($reason)',
+      );
     }
   }
 }

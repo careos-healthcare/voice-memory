@@ -11,14 +11,16 @@ import 'dart:async';
 /// Completion or archive-home card for the capacity return trigger.
 class CapacityReturnTriggerCard extends StatelessWidget {
   const CapacityReturnTriggerCard({
-    required this.result, super.key,
+    required this.result,
+    super.key,
     this.onPrimaryDismiss,
     this.onSecondary,
     this.sampleMode = false,
   });
 
   const CapacityReturnTriggerCard.test({
-    required this.result, super.key,
+    required this.result,
+    super.key,
     this.onPrimaryDismiss,
     this.onSecondary,
     this.sampleMode = false,

@@ -31,9 +31,7 @@ void main() {
         debugPrint = oldDebugPrint;
       });
 
-      final snapshot = await IosNativeAudioSession.configureForCapture(
-        
-      );
+      final snapshot = await IosNativeAudioSession.configureForCapture();
 
       expect(snapshot?.configured, isTrue);
       expect(snapshot?.mode, 'spokenAudio');

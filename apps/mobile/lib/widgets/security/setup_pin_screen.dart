@@ -15,7 +15,8 @@ import 'package:flutter/services.dart';
 /// stored; the controllers are cleared as soon as the PIN is saved.
 class SetupPinScreen extends StatefulWidget {
   const SetupPinScreen({
-    required this.service, super.key,
+    required this.service,
+    super.key,
     this.changeExisting = false,
   });
 

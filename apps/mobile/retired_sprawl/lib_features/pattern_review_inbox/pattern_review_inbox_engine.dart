@@ -192,7 +192,9 @@ abstract final class PatternReviewInboxEngine {
 
   static PatternReviewInboxItem? _buildPatternCorrectionItem({
     required List<JournalEntry> entries,
-    required List<RepeatReturnCheckRecord> returnChecks, required bool viewingConfirmedRepeatOrTimeline, RepeatReturnCheckChangeProof? changeProof,
+    required List<RepeatReturnCheckRecord> returnChecks,
+    required bool viewingConfirmedRepeatOrTimeline,
+    RepeatReturnCheckChangeProof? changeProof,
     EarlyFirstSignalModel? confirmedRepeat,
   }) {
     if (!PatternCorrectionGates.shouldShowForEntries(

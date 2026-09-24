@@ -9,7 +9,8 @@ import 'package:flutter/material.dart';
 /// One-tap rating after tomorrow check-in is created.
 class CheckInWorthRatingPrompt extends StatelessWidget {
   const CheckInWorthRatingPrompt({
-    required this.checkInId, super.key,
+    required this.checkInId,
+    super.key,
     this.onRated,
   });
 

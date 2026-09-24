@@ -11,21 +11,60 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   const localKey = <int>[
-    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16,
-    17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24,
+    25,
+    26,
+    27,
+    28,
+    29,
+    30,
+    31,
+    32,
   ];
 
-  test('AES-GCM 256 handshake opens with the same key and fails with another', () async {
-    final check = await MeshKeyVerifier.verifyLocal(localKey);
-    expect(check.valid, isTrue);
-    expect(check.fingerprint, hasLength(8));
+  test(
+    'AES-GCM 256 handshake opens with the same key and fails with another',
+    () async {
+      final check = await MeshKeyVerifier.verifyLocal(localKey);
+      expect(check.valid, isTrue);
+      expect(check.fingerprint, hasLength(8));
 
-    final handshake = await MeshKeyVerifier.seal(localKey);
-    expect(await MeshKeyVerifier.open(key: localKey, handshake: handshake), isTrue);
+      final handshake = await MeshKeyVerifier.seal(localKey);
+      expect(
+        await MeshKeyVerifier.open(key: localKey, handshake: handshake),
+        isTrue,
+      );
 
-    final other = List<int>.from(localKey)..[0] = 9;
-    expect(await MeshKeyVerifier.open(key: other, handshake: handshake), isFalse);
-  });
+      final other = List<int>.from(localKey)..[0] = 9;
+      expect(
+        await MeshKeyVerifier.open(key: other, handshake: handshake),
+        isFalse,
+      );
+    },
+  );
 
   test('last write wins on the moment time and keeps local graph edits', () {
     final local = MeshEntryVersion(
@@ -50,7 +89,10 @@ void main() {
       updatedAt: DateTime.utc(2026, 9, 23, 9),
     );
     expect(
-      MeshConflictResolver.resolve(local: local, remote: olderRemote).vectorGeneration,
+      MeshConflictResolver.resolve(
+        local: local,
+        remote: olderRemote,
+      ).vectorGeneration,
       2,
     );
   });
@@ -79,10 +121,12 @@ void main() {
     await container.read(meshSyncManagerProvider.future);
 
     await container.read(meshSyncManagerProvider.notifier).scan();
-    container.read(meshSyncManagerProvider.notifier).setVectorQueue(
-      pending: 3,
-      completed: 1,
-    );
+    container
+        .read(meshSyncManagerProvider.notifier)
+        .setVectorQueue(
+          pending: 3,
+          completed: 1,
+        );
     final state = container.read(meshSyncManagerProvider).requireValue;
     expect(state.peers, isEmpty);
     expect(state.meshEnabled, isFalse);
@@ -130,10 +174,12 @@ void main() {
     expect(find.text('Rotate Master Keys'), findsOneWidget);
     expect(find.text('Trigger Mesh Scan'), findsOneWidget);
 
-    container.read(meshSyncManagerProvider.notifier).setVectorQueue(
-      pending: 3,
-      completed: 1,
-    );
+    container
+        .read(meshSyncManagerProvider.notifier)
+        .setVectorQueue(
+          pending: 3,
+          completed: 1,
+        );
     await tester.pump();
     expect(
       container.read(meshSyncManagerProvider).requireValue.pendingVectors,

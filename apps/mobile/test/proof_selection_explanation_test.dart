@@ -80,23 +80,24 @@ List<JournalEntry> _specificRepeatEntries() => [
   ),
 ];
 
-BetaRepairLabVisibilityInput _repairInput() => const BetaRepairLabVisibilityInput(
-  mode: BetaRepairLabMode.evidenceTrailTimelineClarity,
-  entryCount: 4,
-  source: 'test',
-  isPro: false,
-  isRecording: false,
-  isDegradedTranscriptState: false,
-  whatChangedQuestionActive: false,
-  patternReviewInboxHasActiveItems: false,
-  hasTimelineProofVisible: true,
-  hasConfirmedRepeat: true,
-  confidenceLevel: ProofConfidenceLevel.watchOnly,
-  hasUsefulProofFeedback: false,
-  feedbackType: null,
-  isNegativeFeedback: false,
-  betaMissionEnabled: true,
-);
+BetaRepairLabVisibilityInput _repairInput() =>
+    const BetaRepairLabVisibilityInput(
+      mode: BetaRepairLabMode.evidenceTrailTimelineClarity,
+      entryCount: 4,
+      source: 'test',
+      isPro: false,
+      isRecording: false,
+      isDegradedTranscriptState: false,
+      whatChangedQuestionActive: false,
+      patternReviewInboxHasActiveItems: false,
+      hasTimelineProofVisible: true,
+      hasConfirmedRepeat: true,
+      confidenceLevel: ProofConfidenceLevel.watchOnly,
+      hasUsefulProofFeedback: false,
+      feedbackType: null,
+      isNegativeFeedback: false,
+      betaMissionEnabled: true,
+    );
 
 ProofDetailRepairResult _strongDetail() => ProofDetailRepairEngine.build(
   level: ProofConfidenceLevel.strong,

@@ -12,7 +12,10 @@ import 'package:flutter/material.dart';
 /// Beta-only feedback card — opens structured beta feedback sheet.
 class BetaFeedbackIntelligenceCard extends StatefulWidget {
   const BetaFeedbackIntelligenceCard({
-    required this.surface, required this.entryCount, required this.reachedFirstProof, super.key,
+    required this.surface,
+    required this.entryCount,
+    required this.reachedFirstProof,
+    super.key,
     this.compact = false,
     this.onSubmitted,
   });

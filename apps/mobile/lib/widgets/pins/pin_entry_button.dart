@@ -9,7 +9,10 @@ import 'package:flutter/material.dart';
 /// entry text or entry ids.
 class PinEntryButton extends StatefulWidget {
   const PinEntryButton({
-    required this.entryId, required this.isPinned, required this.store, super.key,
+    required this.entryId,
+    required this.isPinned,
+    required this.store,
+    super.key,
     this.source = 'entry_detail',
     this.onChanged,
   });

@@ -24,7 +24,8 @@ import 'dart:async';
 /// Compact memory correction actions on memory-used cards.
 class MemoryConnectionActionsRow extends StatefulWidget {
   const MemoryConnectionActionsRow({
-    required this.cardType, super.key,
+    required this.cardType,
+    super.key,
     this.onChanged,
   });
 

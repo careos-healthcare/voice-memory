@@ -28,7 +28,8 @@ Dio createVoiceMemoryDio({
         'Accept': 'application/json',
         'Content-Type': 'application/json',
       },
-      validateStatus: (status) => status != null && status >= 100 && status < 600,
+      validateStatus: (status) =>
+          status != null && status >= 100 && status < 600,
     ),
   );
 
@@ -39,7 +40,9 @@ Dio createVoiceMemoryDio({
     );
   }
   if (kDebugMode) {
-    dio.interceptors.add(LogInterceptor(requestBody: true, responseBody: false));
+    dio.interceptors.add(
+      LogInterceptor(requestBody: true, responseBody: false),
+    );
   }
 
   return dio;

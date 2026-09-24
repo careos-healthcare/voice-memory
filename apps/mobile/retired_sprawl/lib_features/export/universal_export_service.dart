@@ -85,7 +85,8 @@ class UniversalExportService {
         if (value != null && !tags.contains(value)) tags.add(value);
       }
     }
-    final location = _joinLocation(locationMap) ??
+    final location =
+        _joinLocation(locationMap) ??
         _string(context['locality']) ??
         _string(payload['location']) ??
         '';
@@ -96,7 +97,8 @@ class UniversalExportService {
     if (source != null) metadata['captureSource'] = source;
     final city = _string(locationMap['city']);
     if (city != null) metadata['city'] = city;
-    final locality = _string(locationMap['locality']) ?? _string(context['locality']);
+    final locality =
+        _string(locationMap['locality']) ?? _string(context['locality']);
     if (locality != null) metadata['locality'] = locality;
     return UniversalExportEntry(
       id: row['id'] as String? ?? '',
@@ -116,14 +118,19 @@ class UniversalExportService {
     var sidecarBytes = 0;
     var recordingCount = 0;
     for (final entry in request.entries) {
-      markdownBytes += utf8.encode(UniversalExportMarkdown.document(entry)).length;
+      markdownBytes += utf8
+          .encode(UniversalExportMarkdown.document(entry))
+          .length;
       final recording = _recording(entry);
       if (recording == null) continue;
       recordingCount += 1;
       audioBytes += recording.bytes.length;
       sidecarBytes += utf8
           .encode(
-            UniversalExportMarkdown.sidecar(entry, bytes: recording.bytes.length),
+            UniversalExportMarkdown.sidecar(
+              entry,
+              bytes: recording.bytes.length,
+            ),
           )
           .length;
     }
@@ -214,7 +221,8 @@ class UniversalExportService {
     );
   }
 
-  static String _entryPath(String id, int index) => 'entries/${_safeId(id, index)}.md';
+  static String _entryPath(String id, int index) =>
+      'entries/${_safeId(id, index)}.md';
 
   static String _safeId(String id, int index) {
     final cleaned = id.replaceAll(RegExp('[^A-Za-z0-9_-]'), '_');
@@ -234,7 +242,10 @@ class UniversalExportService {
     return const {};
   }
 
-  static Map<String, Object?> _nestedMap(Map<String, Object?> json, String key) {
+  static Map<String, Object?> _nestedMap(
+    Map<String, Object?> json,
+    String key,
+  ) {
     final value = json[key];
     if (value is Map) return Map<String, Object?>.from(value);
     return const {};
@@ -256,7 +267,8 @@ class UniversalExportService {
   }
 
   static DateTime _time(Object? value) {
-    if (value is int) return DateTime.fromMillisecondsSinceEpoch(value, isUtc: true);
+    if (value is int)
+      return DateTime.fromMillisecondsSinceEpoch(value, isUtc: true);
     if (value is num) {
       return DateTime.fromMillisecondsSinceEpoch(value.round(), isUtc: true);
     }

@@ -171,7 +171,9 @@ void _requireChunkSize(int chunkSize) {
   }
 }
 
-Future<StreamingCryptoReport> _encryptStreamingFile(StreamingCryptoJob job) async {
+Future<StreamingCryptoReport> _encryptStreamingFile(
+  StreamingCryptoJob job,
+) async {
   final watch = Stopwatch()..start();
   final source = File(job.sourcePath);
   final sourceLength = source.lengthSync();
@@ -236,7 +238,9 @@ Future<StreamingCryptoReport> _encryptStreamingFile(StreamingCryptoJob job) asyn
   );
 }
 
-Future<StreamingCryptoReport> _decryptStreamingFile(StreamingCryptoJob job) async {
+Future<StreamingCryptoReport> _decryptStreamingFile(
+  StreamingCryptoJob job,
+) async {
   final watch = Stopwatch()..start();
   final input = File(job.sourcePath).openSync();
   final output = File(job.destinationPath).openSync(mode: FileMode.write);
@@ -284,7 +288,10 @@ Future<StreamingCryptoReport> _decryptStreamingFile(StreamingCryptoJob job) asyn
   }
 }
 
-Future<void> _rejectWrongPassphrase(File encryptedFile, String passphrase) async {
+Future<void> _rejectWrongPassphrase(
+  File encryptedFile,
+  String passphrase,
+) async {
   final input = encryptedFile.openSync();
   try {
     final header = _readExact(input, StreamingCryptoFormat.headerLength);
@@ -464,7 +471,11 @@ Uint8List _headerAad(int iterations, Uint8List salt) {
   final aad = Uint8List(4 + 4 + salt.length);
   ByteData.sublistView(aad).setUint32(4, iterations);
   aad
-    ..setRange(0, StreamingCryptoFormat.magic.length, StreamingCryptoFormat.magic)
+    ..setRange(
+      0,
+      StreamingCryptoFormat.magic.length,
+      StreamingCryptoFormat.magic,
+    )
     ..setRange(8, aad.length, salt);
   return aad;
 }
@@ -472,7 +483,11 @@ Uint8List _headerAad(int iterations, Uint8List salt) {
 Uint8List _chunkAad(int nonceIndex) {
   final aad = Uint8List(8);
   ByteData.sublistView(aad).setUint32(4, nonceIndex);
-  aad.setRange(0, StreamingCryptoFormat.magic.length, StreamingCryptoFormat.magic);
+  aad.setRange(
+    0,
+    StreamingCryptoFormat.magic.length,
+    StreamingCryptoFormat.magic,
+  );
   return aad;
 }
 

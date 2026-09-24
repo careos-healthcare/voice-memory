@@ -29,7 +29,9 @@ void main() {
 
     setUp(() async {
       tempDir = await Directory.systemTemp.createTemp('coach_sync_test_');
-      final db = await openTestAppSqliteDatabase(filePath: '${tempDir.path}/relationships.db');
+      final db = await openTestAppSqliteDatabase(
+        filePath: '${tempDir.path}/relationships.db',
+      );
       repository = UserRelationshipRepository(db);
       final prefs = await MobilePrefsStore.open('${tempDir.path}/prefs.json');
       relationshipStore = CoachClientRelationshipStore(prefs);

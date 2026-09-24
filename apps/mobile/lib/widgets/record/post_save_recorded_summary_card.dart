@@ -24,7 +24,8 @@ import 'package:flutter/material.dart';
 /// Post-save card: heard excerpt first, then what this moment added to the archive.
 class PostSaveRecordedSummaryCard extends StatelessWidget {
   const PostSaveRecordedSummaryCard({
-    required this.entry, super.key,
+    required this.entry,
+    super.key,
     this.allEntries = const [],
     this.mirror,
     this.showAnalysisPendingNote = false,

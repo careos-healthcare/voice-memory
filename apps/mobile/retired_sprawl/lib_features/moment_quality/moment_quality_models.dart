@@ -1,4 +1,5 @@
-import 'package:archiveme_mobile/features/moment_quality/moment_quality_engine.dart' show MomentQualityEngine;
+import 'package:archiveme_mobile/features/moment_quality/moment_quality_engine.dart'
+    show MomentQualityEngine;
 
 /// Local quality band for moment draft/saved text — not a score.
 enum MomentQualityLevel { veryShort, someDetail, strongDetail }

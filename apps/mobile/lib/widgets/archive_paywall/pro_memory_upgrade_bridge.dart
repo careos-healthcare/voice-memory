@@ -11,7 +11,8 @@ import 'package:flutter/material.dart';
 /// Compact upgrade bridge for longer archive memory surfaces.
 class ProMemoryUpgradeBridge extends StatelessWidget {
   const ProMemoryUpgradeBridge({
-    required this.onSeePro, super.key,
+    required this.onSeePro,
+    super.key,
     this.onNotNow,
     this.compact = false,
     this.showNotNow = true,

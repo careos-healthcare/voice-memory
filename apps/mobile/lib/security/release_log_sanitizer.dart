@@ -44,8 +44,13 @@ abstract final class ReleaseLogSanitizer {
   };
 
   static final RegExp _safeToken = RegExp(r'^[a-z][a-z0-9_]{0,47}$');
-  static final RegExp _pathLike = RegExp(r'[/\\]|\.m4a|\.wav|\.caf|\.mp3|/tmp/');
-  static final RegExp _emailLike = RegExp(r'@[a-z0-9.-]+\.[a-z]{2,}', caseSensitive: false);
+  static final RegExp _pathLike = RegExp(
+    r'[/\\]|\.m4a|\.wav|\.caf|\.mp3|/tmp/',
+  );
+  static final RegExp _emailLike = RegExp(
+    r'@[a-z0-9.-]+\.[a-z]{2,}',
+    caseSensitive: false,
+  );
   static final RegExp _tokenLike = RegExp(
     r'Bearer\s+|sk-[A-Za-z0-9]{8,}|rk_[A-Za-z0-9]{8,}|whsec_[A-Za-z0-9]{8,}',
   );
@@ -118,7 +123,8 @@ abstract final class ReleaseLogSanitizer {
     if (error is ApiFailure) return errorCodeFromApiFailure(error);
     if (error is FormatException) return 'parse_error';
     if (error is StateError) return 'invalid_state';
-    return sanitizeReasonCode(error.runtimeType.toString()) ?? 'operation_failed';
+    return sanitizeReasonCode(error.runtimeType.toString()) ??
+        'operation_failed';
   }
 
   static String bytesBucket(int bytes) {

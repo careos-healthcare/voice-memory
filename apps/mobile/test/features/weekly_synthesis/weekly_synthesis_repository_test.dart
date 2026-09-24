@@ -15,50 +15,53 @@ void main() {
   });
 
   group('RecurrentTopicNodeQuery', () {
-    test('returns theme clusters indexed in FTS5 with min mention count', () async {
-      final dir = await Directory.systemTemp.createTemp('weekly_topics_');
-      final dbPath = '${dir.path}/graph.db';
-      final db = await databaseFactory.openDatabase(dbPath);
-      await SqliteMigrationManager().runToVersion(db, 11);
+    test(
+      'returns theme clusters indexed in FTS5 with min mention count',
+      () async {
+        final dir = await Directory.systemTemp.createTemp('weekly_topics_');
+        final dbPath = '${dir.path}/graph.db';
+        final db = await databaseFactory.openDatabase(dbPath);
+        await SqliteMigrationManager().runToVersion(db, 11);
 
-      final now = DateTime.utc(2026, 8, 20, 12);
-      final weekAgo = now.subtract(const Duration(days: 3));
+        final now = DateTime.utc(2026, 8, 20, 12);
+        final weekAgo = now.subtract(const Duration(days: 3));
 
-      await _insertThemeNode(
-        db,
-        id: 'theme:work:1',
-        entryId: 'entry-1',
-        label: 'Work pressure',
-        updatedAt: weekAgo,
-      );
-      await _insertThemeNode(
-        db,
-        id: 'theme:work:2',
-        entryId: 'entry-2',
-        label: 'work pressure',
-        updatedAt: weekAgo,
-      );
-      await _insertThemeNode(
-        db,
-        id: 'theme:sleep:1',
-        entryId: 'entry-3',
-        label: 'Sleep',
-        updatedAt: weekAgo,
-      );
+        await _insertThemeNode(
+          db,
+          id: 'theme:work:1',
+          entryId: 'entry-1',
+          label: 'Work pressure',
+          updatedAt: weekAgo,
+        );
+        await _insertThemeNode(
+          db,
+          id: 'theme:work:2',
+          entryId: 'entry-2',
+          label: 'work pressure',
+          updatedAt: weekAgo,
+        );
+        await _insertThemeNode(
+          db,
+          id: 'theme:sleep:1',
+          entryId: 'entry-3',
+          label: 'Sleep',
+          updatedAt: weekAgo,
+        );
 
-      final query = RecurrentTopicNodeQuery(db);
-      final clusters = await query.fetchRecurrentTopics(
-        since: now.subtract(const Duration(days: 7)),
-        minMentions: 2,
-      );
+        final query = RecurrentTopicNodeQuery(db);
+        final clusters = await query.fetchRecurrentTopics(
+          since: now.subtract(const Duration(days: 7)),
+          minMentions: 2,
+        );
 
-      expect(clusters, hasLength(1));
-      expect(clusters.single.displayLabel, 'Work pressure');
-      expect(clusters.single.mentionCount, 2);
+        expect(clusters, hasLength(1));
+        expect(clusters.single.displayLabel, 'Work pressure');
+        expect(clusters.single.mentionCount, 2);
 
-      await db.close();
-      await dir.delete(recursive: true);
-    });
+        await db.close();
+        await dir.delete(recursive: true);
+      },
+    );
   });
 
   group('WeeklySynthesisRepository', () {

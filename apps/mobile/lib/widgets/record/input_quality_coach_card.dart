@@ -13,7 +13,11 @@ import 'package:flutter/material.dart';
 /// or result is generated. Shows one sharpening prompt per reflection.
 class InputQualityCoachCard extends StatefulWidget {
   const InputQualityCoachCard({
-    required this.result, required this.originalText, required this.onAddSentence, required this.onUseAnyway, super.key,
+    required this.result,
+    required this.originalText,
+    required this.onAddSentence,
+    required this.onUseAnyway,
+    super.key,
     this.languageCode = 'en',
   });
 

@@ -11,9 +11,11 @@ abstract final class PaywallAlignmentCopy {
   static const String secondaryReassurance =
       PaywallValueSharpeningCopy.secondaryReassurance;
 
-  static const String corePaidReason = PaywallValueSharpeningCopy.corePaidReason;
+  static const String corePaidReason =
+      PaywallValueSharpeningCopy.corePaidReason;
 
-  static const List<String> benefitBullets = PaywallValueSharpeningCopy.benefitBullets;
+  static const List<String> benefitBullets =
+      PaywallValueSharpeningCopy.benefitBullets;
 
   /// Compact bridge line — avoids repeating the full paywall body on lock cards.
   static const lockMomentPaidReason =

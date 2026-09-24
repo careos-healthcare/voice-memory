@@ -31,8 +31,14 @@ void main() {
       expect(doc, contains(_supportUrl));
       expect(doc, contains('0.2.0'));
       final pubspec = File('pubspec.yaml').readAsStringSync();
-      final buildMatch = RegExp(r'version:\s*[\d.]+\+(\d+)').firstMatch(pubspec);
-      expect(buildMatch, isNotNull, reason: 'pubspec version must include +build');
+      final buildMatch = RegExp(
+        r'version:\s*[\d.]+\+(\d+)',
+      ).firstMatch(pubspec);
+      expect(
+        buildMatch,
+        isNotNull,
+        reason: 'pubspec version must include +build',
+      );
       expect(doc, contains(buildMatch!.group(1)!));
     });
 

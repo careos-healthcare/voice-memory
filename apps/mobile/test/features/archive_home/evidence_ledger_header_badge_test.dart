@@ -22,7 +22,10 @@ void main() {
       ),
     );
 
-    expect(find.byKey(const Key('evidence_ledger_header_badge')), findsOneWidget);
+    expect(
+      find.byKey(const Key('evidence_ledger_header_badge')),
+      findsOneWidget,
+    );
     expect(
       find.text(
         EvidenceLedgerCopy.badgeLabel(citableFactCount: 0, entryCount: 0),

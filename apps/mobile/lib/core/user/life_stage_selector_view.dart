@@ -3,7 +3,8 @@ import 'dart:async';
 import 'package:archiveme_mobile/core/config/beta_surfaces_feature_flags.dart';
 import 'package:archiveme_mobile/core/user/life_stage_lens.dart';
 import 'package:archiveme_mobile/core/user/life_stage_selector_copy.dart';
-import 'package:archiveme_mobile/core/user/user_settings.dart' show UserSettings;
+import 'package:archiveme_mobile/core/user/user_settings.dart'
+    show UserSettings;
 import 'package:archiveme_mobile/core/user/user_settings_store.dart';
 import 'package:archiveme_mobile/design/archive_mobile_typography.dart';
 import 'package:archiveme_mobile/router/route_catalog.dart';

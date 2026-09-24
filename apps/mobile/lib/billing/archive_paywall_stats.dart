@@ -1,5 +1,6 @@
 import 'package:archiveme_mobile/billing/archive_paywall_copy.dart';
-import 'package:archiveme_mobile/features/archive_change_feed/archive_change_feed_models.dart' show ArchiveChangeFeedView;
+import 'package:archiveme_mobile/features/archive_change_feed/archive_change_feed_models.dart'
+    show ArchiveChangeFeedView;
 import 'package:archiveme_mobile/features/archive_evidence/archive_evidence.dart';
 import 'package:archiveme_mobile/features/archive_v1/archive_v1_models.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';

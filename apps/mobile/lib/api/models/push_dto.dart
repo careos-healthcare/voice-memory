@@ -42,8 +42,10 @@ class SendTestPushResponseDto {
         ok: JsonConverters.boolValue(json['ok'], field: 'ok'),
         messageId: JsonConverters.string(json['messageId'], field: 'messageId'),
         deviceId: JsonConverters.string(json['deviceId'], field: 'deviceId'),
-        targetRoute:
-            JsonConverters.string(json['targetRoute'], field: 'targetRoute'),
+        targetRoute: JsonConverters.string(
+          json['targetRoute'],
+          field: 'targetRoute',
+        ),
         delivery: JsonConverters.string(json['delivery'], field: 'delivery'),
       );
 

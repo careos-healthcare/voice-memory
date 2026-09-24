@@ -11,7 +11,8 @@ import 'package:flutter/material.dart';
 /// Renders nothing without real proof. Optional and passive — never blocks flow.
 class ShareableArchiveProofCard extends StatefulWidget {
   const ShareableArchiveProofCard({
-    required this.proof, super.key,
+    required this.proof,
+    super.key,
     this.sourceEntryIds = const [],
     this.onViewEvidence,
     this.onShare,

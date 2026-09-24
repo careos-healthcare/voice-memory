@@ -1,6 +1,8 @@
-import 'package:archiveme_mobile/features/activation/activation_tracker.dart' show ActivationTracker;
+import 'package:archiveme_mobile/features/activation/activation_tracker.dart'
+    show ActivationTracker;
 
-import 'package:archiveme_mobile/features/recording/recording_dependencies.dart' show ActivationTracker;
+import 'package:archiveme_mobile/features/recording/recording_dependencies.dart'
+    show ActivationTracker;
 
 import 'package:archiveme_mobile/storage/mobile_prefs_store.dart';
 

@@ -116,7 +116,8 @@ _Responder _confirms(
       ),
     );
 
-_Responder _fails(ApiFailure failure) => (_) => ApiFailureResult(failure);
+_Responder _fails(ApiFailure failure) =>
+    (_) => ApiFailureResult(failure);
 
 const _offline = ApiFailureOffline();
 const _forbidden = ApiFailureServer(
@@ -125,7 +126,8 @@ const _forbidden = ApiFailureServer(
   serverCode: 'FORBIDDEN',
 );
 const _lapsed = ApiFailureServer(
-  message: 'This access window has ended. Granting access again starts a new one.',
+  message:
+      'This access window has ended. Granting access again starts a new one.',
   statusCode: 409,
   serverCode: 'GRANT_EXPIRED',
 );
@@ -241,29 +243,34 @@ void main() {
       expect(outcome.failureCode, isNull);
     });
 
-    test('the previous grant stops being listed and the successor takes over', () async {
-      await storeCaregiverToken('token-care-1');
+    test(
+      'the previous grant stops being listed and the successor takes over',
+      () async {
+        await storeCaregiverToken('token-care-1');
 
-      await service().renewGrant(
-        _grant('token-care-1', MultiPartyAccessRole.caregiver),
-        ownerConfirmedAt: confirmedAt,
-      );
+        await service().renewGrant(
+          _grant('token-care-1', MultiPartyAccessRole.caregiver),
+          ownerConfirmedAt: confirmedAt,
+        );
 
-      expect(
-        ConsentRevocationStore.isRevoked('token-care-1'),
-        isTrue,
-        reason: 'the server withdrew it, so this device must stop listing it',
-      );
-      expect(
-        (await prefs.readJsonMap(MultiPartyAccessService.caregiverTokenKey))?['tokenId'],
-        'token-care-2',
-      );
+        expect(
+          ConsentRevocationStore.isRevoked('token-care-1'),
+          isTrue,
+          reason: 'the server withdrew it, so this device must stop listing it',
+        );
+        expect(
+          (await prefs.readJsonMap(
+            MultiPartyAccessService.caregiverTokenKey,
+          ))?['tokenId'],
+          'token-care-2',
+        );
 
-      final grants = await service().loadActiveGrants(
-        now: DateTime.utc(2026, 6, 10),
-      );
-      expect(grants.map((g) => g.grantId), ['token-care-2']);
-    });
+        final grants = await service().loadActiveGrants(
+          now: DateTime.utc(2026, 6, 10),
+        );
+        expect(grants.map((g) => g.grantId), ['token-care-2']);
+      },
+    );
 
     test('a session bound to the withdrawn token is cleared', () async {
       await storeCaregiverToken('token-care-1');
@@ -290,8 +297,9 @@ void main() {
         ownerConfirmedAt: confirmedAt,
       );
 
-      final row = (await auditEntries())
-          .firstWhere((entry) => entry['action'] == 'consent_renewed');
+      final row = (await auditEntries()).firstWhere(
+        (entry) => entry['action'] == 'consent_renewed',
+      );
       expect(row['resourceId'], 'token-care-2');
       final metadata = Map<String, Object?>.from(
         row['metadata']! as Map<Object?, Object?>,
@@ -331,7 +339,9 @@ void main() {
       expect(outcome.failureCode, ConsentRenewalFailureCode.notGrantOwner);
       expect(ConsentRevocationStore.isRevoked('token-care-1'), isFalse);
       expect(
-        (await prefs.readJsonMap(MultiPartyAccessService.caregiverTokenKey))?['tokenId'],
+        (await prefs.readJsonMap(
+          MultiPartyAccessService.caregiverTokenKey,
+        ))?['tokenId'],
         'token-care-1',
       );
       expect(
@@ -359,7 +369,9 @@ void main() {
         );
         expect(outcome.failureCode, ConsentRenewalFailureCode.notConfirmed);
         expect(
-          (await prefs.readJsonMap(MultiPartyAccessService.caregiverTokenKey))?['tokenId'],
+          (await prefs.readJsonMap(
+            MultiPartyAccessService.caregiverTokenKey,
+          ))?['tokenId'],
           'token-care-1',
         );
         expect(ConsentRevocationStore.isRevoked('token-care-1'), isFalse);
@@ -395,7 +407,11 @@ void main() {
       expect(outcome.renewed, isFalse);
       expect(outcome.failureCode, ConsentRenewalFailureCode.notRenewable);
       expect(outcome.shouldOfferFreshGrant, isTrue);
-      expect(api.calls, isEmpty, reason: 'no scope to renew, so nothing to ask');
+      expect(
+        api.calls,
+        isEmpty,
+        reason: 'no scope to renew, so nothing to ask',
+      );
     });
 
     test('a coach grant is refused without reaching the server', () async {

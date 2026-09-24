@@ -14,7 +14,9 @@ import 'package:flutter/material.dart';
 /// once shown so it survives parent rebuilds until closed.
 class ReviewPromptSection extends StatefulWidget {
   const ReviewPromptSection({
-    required this.entryCount, required this.hasWeeklyReview, super.key,
+    required this.entryCount,
+    required this.hasWeeklyReview,
+    super.key,
     this.store,
     this.launcher,
   });
@@ -110,7 +112,11 @@ class _ReviewPromptSectionState extends State<ReviewPromptSection> {
 /// no follow-up, no second ask.
 class ReviewPromptCard extends StatelessWidget {
   const ReviewPromptCard({
-    required this.source, required this.entryCount, required this.launcher, required this.onClosed, super.key,
+    required this.source,
+    required this.entryCount,
+    required this.launcher,
+    required this.onClosed,
+    super.key,
   });
 
   /// Stable id of the value moment that made the prompt eligible.

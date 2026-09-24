@@ -64,11 +64,17 @@ void main() {
 
     test('maps dB thresholds by aggressiveness', () {
       expect(
-        WebRtcVadEngine.isSpeechFromDb(-41, aggressiveness: VadAggressiveness.quality),
+        WebRtcVadEngine.isSpeechFromDb(
+          -41,
+          aggressiveness: VadAggressiveness.quality,
+        ),
         isTrue,
       );
       expect(
-        WebRtcVadEngine.isSpeechFromDb(-43, aggressiveness: VadAggressiveness.quality),
+        WebRtcVadEngine.isSpeechFromDb(
+          -43,
+          aggressiveness: VadAggressiveness.quality,
+        ),
         isFalse,
       );
     });

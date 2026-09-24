@@ -12,13 +12,16 @@ import 'package:flutter/material.dart';
 /// Beta-only activation path card — generic copy, no fake entries.
 class BetaActivationPathCard extends StatefulWidget {
   const BetaActivationPathCard({
-    required this.result, required this.onPrimaryCta, super.key,
+    required this.result,
+    required this.onPrimaryCta,
+    super.key,
     this.compact = false,
     this.showDiagnosis = false,
   });
 
   const BetaActivationPathCard.test({
-    required this.result, super.key,
+    required this.result,
+    super.key,
     this.onPrimaryCta,
     this.compact = false,
     this.showDiagnosis = false,

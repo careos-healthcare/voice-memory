@@ -167,10 +167,16 @@ void main() {
 
   group('FirstUseWordingHelperCard', () {
     testWidgets('renders all prompts with use-opening actions', (tester) async {
-      await tester.pumpWidget(withAppProviderScope(MaterialApp(
-          theme: AppTheme.light(),
-          home: Scaffold(body: FirstUseWordingHelperCard(onUseOpening: (_) {})),
-        )));
+      await tester.pumpWidget(
+        withAppProviderScope(
+          MaterialApp(
+            theme: AppTheme.light(),
+            home: Scaffold(
+              body: FirstUseWordingHelperCard(onUseOpening: (_) {}),
+            ),
+          ),
+        ),
+      );
 
       expect(
         find.byKey(const Key('first_use_wording_helper_card')),
@@ -193,16 +199,20 @@ void main() {
     testWidgets('use-opening invokes callback without saving', (tester) async {
       FirstUseWordingPrompt? tapped;
 
-      await tester.pumpWidget(withAppProviderScope(MaterialApp(
-          theme: AppTheme.light(),
-          home: Scaffold(
-            body: FirstUseWordingHelperCard(
-              onUseOpening: (prompt) {
-                tapped = prompt;
-              },
+      await tester.pumpWidget(
+        withAppProviderScope(
+          MaterialApp(
+            theme: AppTheme.light(),
+            home: Scaffold(
+              body: FirstUseWordingHelperCard(
+                onUseOpening: (prompt) {
+                  tapped = prompt;
+                },
+              ),
             ),
           ),
-        )));
+        ),
+      );
 
       await tester.tap(
         find.byKey(const Key('first_use_wording_use_opening_today_i_noticed')),
@@ -258,7 +268,9 @@ void main() {
         ],
       );
 
-      await tester.pumpWidget(withAppProviderScope(MaterialApp.router(routerConfig: router)));
+      await tester.pumpWidget(
+        withAppProviderScope(MaterialApp.router(routerConfig: router)),
+      );
       await tester.pump();
       await tester.tap(find.text('open'));
       await tester.pump();
@@ -269,7 +281,8 @@ void main() {
 
       expect(find.byKey(const Key('quick_text_capture_field')), findsOneWidget);
       final field = tester.widget<TextField>(
-        find.byKey(const Key('quick_text_capture_field')));
+        find.byKey(const Key('quick_text_capture_field')),
+      );
       expect(field.decoration?.hintText, 'I felt pressure when…');
       expect(field.controller!.text, isEmpty);
 
@@ -282,7 +295,9 @@ void main() {
     Future<void> pumpCapture(WidgetTester tester, Widget child) async {
       await tester.binding.setSurfaceSize(const Size(420, 1400));
       addTearDown(() => tester.binding.setSurfaceSize(null));
-      await tester.pumpWidget(withAppProviderScope(MaterialApp(theme: AppTheme.light(), home: child)));
+      await tester.pumpWidget(
+        withAppProviderScope(MaterialApp(theme: AppTheme.light(), home: child)),
+      );
       await tester.pump();
       await tester.runAsync(() async {
         await AppServices.instance.journal.loadAll();
@@ -411,14 +426,18 @@ void main() {
       );
       await tester.binding.setSurfaceSize(const Size(390, 2800));
       addTearDown(() => tester.binding.setSurfaceSize(null));
-      await tester.pumpWidget(withAppProviderScope(MaterialApp(
-          theme: AppTheme.light(),
-          home: Scaffold(
-            body: RecordScreen(
-              entitlementReader: FakeArchiveEntitlementReader(pro: false),
+      await tester.pumpWidget(
+        withAppProviderScope(
+          MaterialApp(
+            theme: AppTheme.light(),
+            home: Scaffold(
+              body: RecordScreen(
+                entitlementReader: FakeArchiveEntitlementReader(pro: false),
+              ),
             ),
           ),
-        )));
+        ),
+      );
       await tester.pump();
       await tester.runAsync(() async {
         await Future<void>.delayed(const Duration(milliseconds: 400));
@@ -476,19 +495,23 @@ void main() {
     testWidgets('capture modes card remains visible with wording helper', (
       tester,
     ) async {
-      await tester.pumpWidget(withAppProviderScope(MaterialApp(
-          theme: AppTheme.light(),
-          home: Scaffold(
-            body: SingleChildScrollView(
-              child: Column(
-                children: [
-                  FirstUseWordingHelperCard(onUseOpening: (_) {}),
-                  RecordCaptureModesCard(onModeTap: (_) {}),
-                ],
+      await tester.pumpWidget(
+        withAppProviderScope(
+          MaterialApp(
+            theme: AppTheme.light(),
+            home: Scaffold(
+              body: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    FirstUseWordingHelperCard(onUseOpening: (_) {}),
+                    RecordCaptureModesCard(onModeTap: (_) {}),
+                  ],
+                ),
               ),
             ),
           ),
-        )));
+        ),
+      );
 
       expect(
         find.byKey(const Key('first_use_wording_helper_card')),

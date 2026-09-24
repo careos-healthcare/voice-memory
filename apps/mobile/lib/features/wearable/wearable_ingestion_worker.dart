@@ -152,9 +152,7 @@ class WearableSherpaTranscriber {
 
   Future<String> transcribePath(String path) async {
     final loader = readBytes;
-    final bytes = loader == null
-        ? await _readFile(path)
-        : await loader(path);
+    final bytes = loader == null ? await _readFile(path) : await loader(path);
     return transcribeBytes(bytes);
   }
 

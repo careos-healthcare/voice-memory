@@ -78,26 +78,28 @@ class ArchiveTheoryHeroCard extends StatelessWidget {
                       theory.statement,
                       maxLines: 3,
                       overflow: TextOverflow.ellipsis,
-                      style: VoiceMemoryTypography.bodyStyle(
-                        color: onPrimary,
-                      ).copyWith(
-                        fontSize: 17,
-                        fontWeight: FontWeight.w600,
-                        height: 1.35,
-                      ),
+                      style:
+                          VoiceMemoryTypography.bodyStyle(
+                            color: onPrimary,
+                          ).copyWith(
+                            fontSize: 17,
+                            fontWeight: FontWeight.w600,
+                            height: 1.35,
+                          ),
                     ),
                     const SizedBox(height: 12),
                     for (final line in bullets) _bullet(line),
                     const SizedBox(height: 8),
                     Text(
                       ArchiveV1Copy.showMeWhyCta,
-                      style: VoiceMemoryTypography.bodyStyle(
-                        color: onPrimary,
-                      ).copyWith(
-                        fontWeight: FontWeight.w600,
-                        decoration: TextDecoration.underline,
-                        decorationColor: onPrimary,
-                      ),
+                      style:
+                          VoiceMemoryTypography.bodyStyle(
+                            color: onPrimary,
+                          ).copyWith(
+                            fontWeight: FontWeight.w600,
+                            decoration: TextDecoration.underline,
+                            decorationColor: onPrimary,
+                          ),
                     ),
                   ],
                 ),
@@ -159,12 +161,13 @@ class ArchiveTheoryHeroCard extends StatelessWidget {
                   onTap: onOpenEvidenceTrail,
                   child: Text(
                     ArchiveV1Copy.evidenceTrailCta,
-                    style: VoiceMemoryTypography.secondaryStyle(
-                      color: onPrimary.withValues(alpha: 0.85),
-                    ).copyWith(
-                      decoration: TextDecoration.underline,
-                      decorationColor: onPrimary.withValues(alpha: 0.85),
-                    ),
+                    style:
+                        VoiceMemoryTypography.secondaryStyle(
+                          color: onPrimary.withValues(alpha: 0.85),
+                        ).copyWith(
+                          decoration: TextDecoration.underline,
+                          decorationColor: onPrimary.withValues(alpha: 0.85),
+                        ),
                   ),
                 ),
               ],

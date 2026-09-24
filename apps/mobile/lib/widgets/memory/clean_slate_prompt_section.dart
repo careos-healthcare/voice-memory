@@ -15,7 +15,8 @@ import 'dart:async';
 /// Loads pressure records and shows [CleanSlatePromptCard] when warranted.
 class CleanSlatePromptSection extends StatefulWidget {
   const CleanSlatePromptSection({
-    required this.entryCount, super.key,
+    required this.entryCount,
+    super.key,
     this.cardType = MemoryCardType.threadReturn,
     this.source = 'record',
   });

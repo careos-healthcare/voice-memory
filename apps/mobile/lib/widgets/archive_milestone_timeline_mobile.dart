@@ -5,7 +5,8 @@ import 'package:flutter/material.dart';
 
 class ArchiveMilestoneTimelineMobile extends StatelessWidget {
   const ArchiveMilestoneTimelineMobile({
-    required this.milestones, super.key,
+    required this.milestones,
+    super.key,
     this.emptyMessage,
   });
 
@@ -27,9 +28,7 @@ class ArchiveMilestoneTimelineMobile extends StatelessWidget {
       children: [
         Text(
           'Archive History',
-          style: VoiceMemoryTypography.sectionLabelStyle(
-            
-          ),
+          style: VoiceMemoryTypography.sectionLabelStyle(),
         ),
         const SizedBox(height: 12),
         ...milestones.reversed.map(

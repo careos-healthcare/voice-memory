@@ -38,8 +38,8 @@ class CaregiverAccessService {
   CaregiverAccessService({
     required CaregiverAuditStore auditStore,
     required CaregiverModeStore modeStore,
-  })  : _auditStore = auditStore,
-        _modeStore = modeStore;
+  }) : _auditStore = auditStore,
+       _modeStore = modeStore;
 
   final CaregiverAuditStore _auditStore;
   final CaregiverModeStore _modeStore;

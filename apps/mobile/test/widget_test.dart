@@ -18,11 +18,11 @@ void main() {
     const channel = MethodChannel('dev.fluttercommunity.plus/connectivity');
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(channel, (call) async {
-      if (call.method == 'check') {
-        return ['wifi'];
-      }
-      return null;
-    });
+          if (call.method == 'check') {
+            return ['wifi'];
+          }
+          return null;
+        });
   });
 
   setUp(() async {

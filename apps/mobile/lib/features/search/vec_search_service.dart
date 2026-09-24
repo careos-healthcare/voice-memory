@@ -67,19 +67,20 @@ class VecSearchService {
     for (final entry in graph.entries) {
       scores.putIfAbsent(entry.key, _Score.new).graph = entry.value;
     }
-    final ranked = scores.entries.map((entry) {
-      final score = entry.value;
-      return HybridEntityHit(
-        entryId: entry.key,
-        score: score.vector + score.graph,
-        graphWeight: score.graph,
-        vectorDistance: score.distance,
-      );
-    }).toList()..sort((a, b) {
-      final byScore = b.score.compareTo(a.score);
-      if (byScore != 0) return byScore;
-      return a.entryId.compareTo(b.entryId);
-    });
+    final ranked =
+        scores.entries.map((entry) {
+          final score = entry.value;
+          return HybridEntityHit(
+            entryId: entry.key,
+            score: score.vector + score.graph,
+            graphWeight: score.graph,
+            vectorDistance: score.distance,
+          );
+        }).toList()..sort((a, b) {
+          final byScore = b.score.compareTo(a.score);
+          if (byScore != 0) return byScore;
+          return a.entryId.compareTo(b.entryId);
+        });
     return ranked.take(limit).toList(growable: false);
   }
 

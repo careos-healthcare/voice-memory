@@ -11,7 +11,8 @@ import 'dart:async';
 /// One-tap usefulness rating after check-in loop is closed.
 class CheckInResultRatingPrompt extends StatefulWidget {
   const CheckInResultRatingPrompt({
-    required this.checkInId, super.key,
+    required this.checkInId,
+    super.key,
     this.onRated,
   });
 

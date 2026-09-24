@@ -11,7 +11,10 @@ import 'package:flutter/material.dart';
 /// First-save payoff — one calm saved state with a single next-step path.
 class FirstSaveEvidenceCard extends StatelessWidget {
   const FirstSaveEvidenceCard({
-    required this.onViewArchive, required this.onRecordAnother, required this.onDoneForToday, super.key,
+    required this.onViewArchive,
+    required this.onRecordAnother,
+    required this.onDoneForToday,
+    super.key,
   });
 
   final VoidCallback onViewArchive;

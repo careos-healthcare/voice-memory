@@ -132,15 +132,19 @@ Future<void> _pumpRecordWithEntries(
   addTearDown(() => VisualAuditOverrides.setRecordPresentation(null));
   await tester.binding.setSurfaceSize(const Size(390, 3200));
   addTearDown(() => tester.binding.setSurfaceSize(null));
-  await tester.pumpWidget(withAppProviderScope(MaterialApp(
-      theme: AppTheme.light(),
-      home: Scaffold(
-        body: RecordScreen(
-          suggestionAttributionStore: MemorySuggestionAttributionStore(),
-          entitlementReader: FakeArchiveEntitlementReader(pro: false),
+  await tester.pumpWidget(
+    withAppProviderScope(
+      MaterialApp(
+        theme: AppTheme.light(),
+        home: Scaffold(
+          body: RecordScreen(
+            suggestionAttributionStore: MemorySuggestionAttributionStore(),
+            entitlementReader: FakeArchiveEntitlementReader(pro: false),
+          ),
         ),
       ),
-    )));
+    ),
+  );
   await tester.pump();
   await tester.pump(const Duration(milliseconds: 400));
 }
@@ -148,10 +152,14 @@ Future<void> _pumpRecordWithEntries(
 Future<void> _pumpCard(WidgetTester tester, Widget card) async {
   await tester.binding.setSurfaceSize(const Size(390, 2000));
   addTearDown(() => tester.binding.setSurfaceSize(null));
-  await tester.pumpWidget(withAppProviderScope(MaterialApp(
-      theme: AppTheme.light(),
-      home: Scaffold(body: SingleChildScrollView(child: card)),
-    )));
+  await tester.pumpWidget(
+    withAppProviderScope(
+      MaterialApp(
+        theme: AppTheme.light(),
+        home: Scaffold(body: SingleChildScrollView(child: card)),
+      ),
+    ),
+  );
   await tester.pump();
 }
 

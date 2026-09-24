@@ -36,12 +36,13 @@ class HttpLiveAudioApiClient implements LiveAudioApiClient {
         if (response.statusCode < 200 || response.statusCode >= 300) {
           return ApiFailureResult(ApiFailureMapper.fromResponse(response));
         }
-        return _transport.decodeEnvelope<Map<String, dynamic>, LiveAudioSessionConfig>(
-          response,
-          parseData: (json) => json,
-          toDomain: LiveAudioSessionConfig.fromJson,
-          missingDataMessage: 'Live audio session mint failed',
-        );
+        return _transport
+            .decodeEnvelope<Map<String, dynamic>, LiveAudioSessionConfig>(
+              response,
+              parseData: (json) => json,
+              toDomain: LiveAudioSessionConfig.fromJson,
+              missingDataMessage: 'Live audio session mint failed',
+            );
       },
       onFailure: ApiFailureResult.new,
     );

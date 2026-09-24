@@ -245,7 +245,10 @@ List<RagRankHit> rankFilteredVectors(RagRankRequest request) {
       final cursor = statement.selectCursor(args);
       while (cursor.moveNext()) {
         final row = cursor.current;
-        final similarity = _cosine(request.query, row['embedding'] as Uint8List);
+        final similarity = _cosine(
+          request.query,
+          row['embedding'] as Uint8List,
+        );
         _consider(
           best,
           request.limit,

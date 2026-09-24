@@ -180,7 +180,11 @@ class ReviewPromptStore {
     try {
       await prefs.writeMap(prefsKey, {'asked': true});
     } catch (e, stackTrace) {
-      AppLogger.error('Unhandled error caught', error: e, stackTrace: stackTrace);
+      AppLogger.error(
+        'Unhandled error caught',
+        error: e,
+        stackTrace: stackTrace,
+      );
       // Persistence must never break the surface that hosts the prompt.
     }
   }

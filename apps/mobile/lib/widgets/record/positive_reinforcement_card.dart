@@ -9,7 +9,9 @@ import 'package:flutter/material.dart';
 /// Gentle loop after a helpful action pattern — repeat, notice, record again.
 class PositiveReinforcementCard extends StatelessWidget {
   const PositiveReinforcementCard({
-    required this.reinforcement, required this.showRecordAgainCta, super.key,
+    required this.reinforcement,
+    required this.showRecordAgainCta,
+    super.key,
     this.onRecordAgain,
   });
 

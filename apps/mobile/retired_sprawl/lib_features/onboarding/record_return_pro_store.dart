@@ -103,7 +103,11 @@ class RecordReturnProStore {
     try {
       await prefs.writeMap(prefsKey, state.toJson());
     } catch (e, stackTrace) {
-      AppLogger.error('Unhandled error caught', error: e, stackTrace: stackTrace);
-      }
+      AppLogger.error(
+        'Unhandled error caught',
+        error: e,
+        stackTrace: stackTrace,
+      );
+    }
   }
 }

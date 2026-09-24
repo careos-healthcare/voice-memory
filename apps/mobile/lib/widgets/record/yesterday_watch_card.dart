@@ -12,7 +12,9 @@ import 'dart:async';
 /// Next-day return loop — reminds what ArchiveMe was watching yesterday.
 class YesterdayWatchCard extends StatefulWidget {
   const YesterdayWatchCard({
-    required this.watch, required this.entryCount, super.key,
+    required this.watch,
+    required this.entryCount,
+    super.key,
     this.store,
     this.skipPrefsLoad = false,
     this.initialAnswer,
@@ -22,7 +24,9 @@ class YesterdayWatchCard extends StatefulWidget {
   });
 
   const YesterdayWatchCard.test({
-    required this.watch, required this.entryCount, super.key,
+    required this.watch,
+    required this.entryCount,
+    super.key,
     this.store,
     this.onAnswered,
     this.onCameBack,

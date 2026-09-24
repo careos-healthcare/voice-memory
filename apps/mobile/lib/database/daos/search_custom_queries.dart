@@ -26,7 +26,9 @@ class SearchCustomQueries {
     final capsule = sqlite == null
         ? null
         : await TimeCapsuleVisibility.searchWindow(sqlite);
-    final hidden = sqlite == null ? '' : await PrivateVaultGate.andSql(sqlite, 'je');
+    final hidden = sqlite == null
+        ? ''
+        : await PrivateVaultGate.andSql(sqlite, 'je');
     final rows = await _db
         .customSelect(
           '''
@@ -79,7 +81,9 @@ class SearchCustomQueries {
     final capsule = sqlite == null
         ? null
         : await TimeCapsuleVisibility.searchWindow(sqlite);
-    final hidden = sqlite == null ? '' : await PrivateVaultGate.andSql(sqlite, 'je');
+    final hidden = sqlite == null
+        ? ''
+        : await PrivateVaultGate.andSql(sqlite, 'je');
     final row = await _db
         .customSelect(
           '''

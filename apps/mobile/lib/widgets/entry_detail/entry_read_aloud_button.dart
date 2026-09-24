@@ -138,13 +138,17 @@ class _EntryReadAloudButtonState extends State<EntryReadAloudButton> {
     final label = _speaking
         ? (_preparing ? EntryReadAloudCopy.loading : EntryReadAloudCopy.stop)
         : EntryReadAloudCopy.listen;
-    final icon = _speaking ? Icons.stop_circle_outlined : Icons.volume_up_outlined;
+    final icon = _speaking
+        ? Icons.stop_circle_outlined
+        : Icons.volume_up_outlined;
 
     return Align(
       alignment: Alignment.centerLeft,
       child: TextButton.icon(
         key: const Key('entry_read_aloud_button'),
-        onPressed: (service == null && _resolving) || _preparing ? null : _toggle,
+        onPressed: (service == null && _resolving) || _preparing
+            ? null
+            : _toggle,
         icon: _preparing
             ? const SizedBox(
                 width: 18,

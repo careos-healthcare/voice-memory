@@ -119,8 +119,7 @@ class LiveAudioSessionCoordinator {
     // mid-session must stop the stream coming back up.
     _remoteStreamingPermitted = false;
     final gate = _consentGate;
-    if (gate == null ||
-        !await gate.isPurposePermittedNow(streamingPurpose)) {
+    if (gate == null || !await gate.isPurposePermittedNow(streamingPurpose)) {
       throw const RemoteProcessingConsentRequired(
         RemoteProcessingPurpose.remoteTranscription,
       );

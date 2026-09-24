@@ -73,9 +73,11 @@ class SyncPushStatusMatrix {
     return SyncPushStatusMatrix(
       raw
           .whereType<Map>()
-          .map((entry) => SyncBlobStatusMatrixEntry.fromJson(
-                Map<String, dynamic>.from(entry),
-              ))
+          .map(
+            (entry) => SyncBlobStatusMatrixEntry.fromJson(
+              Map<String, dynamic>.from(entry),
+            ),
+          )
           .toList(),
     );
   }
@@ -223,20 +225,22 @@ class SyncEngine {
     Map<String, dynamic> body, {
     bool Function(ApiFailure failure)? shouldRetry,
   }) async {
-    final execResult = await _syncStrategy.pushWithRetry<
-        ({Map<String, dynamic> body, SyncPushStatusMatrix matrix})>(
-      shouldRetry: shouldRetry,
-      push: () async {
-        final result = await _syncApi.syncPush(body);
-        return result.when(
-          success: (value) => ApiSuccess((
-            body: value,
-            matrix: SyncPushStatusMatrix.fromResponse(value),
-          )),
-          onFailure: ApiFailureResult.new,
+    final execResult = await _syncStrategy
+        .pushWithRetry<
+          ({Map<String, dynamic> body, SyncPushStatusMatrix matrix})
+        >(
+          shouldRetry: shouldRetry,
+          push: () async {
+            final result = await _syncApi.syncPush(body);
+            return result.when(
+              success: (value) => ApiSuccess((
+                body: value,
+                matrix: SyncPushStatusMatrix.fromResponse(value),
+              )),
+              onFailure: ApiFailureResult.new,
+            );
+          },
         );
-      },
-    );
 
     return execResult.when(
       success: (value) => ApiSuccess(value),

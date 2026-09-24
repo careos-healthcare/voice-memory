@@ -4,7 +4,7 @@ import 'package:archiveme_mobile/features/sync/application/background_sync_state
 /// Pure transition logic for background sync phases.
 class BackgroundSyncStateMachine {
   BackgroundSyncStateMachine({BackgroundSyncState? initial})
-      : _state = initial ?? const BackgroundSyncState();
+    : _state = initial ?? const BackgroundSyncState();
 
   BackgroundSyncState _state;
 

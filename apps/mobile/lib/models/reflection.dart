@@ -19,17 +19,19 @@ class Reflection {
       mood: JsonConverters.stringOrEmpty(json['mood']),
       emotionalIntensity: JsonConverters.intOrZero(json['emotionalIntensity']),
       recurringThemes: JsonConverters.stringList(json['recurringThemes']),
-      exactLanguagePattern:
-          JsonConverters.stringOrEmpty(json['exactLanguagePattern']),
-      concreteObservation:
-          JsonConverters.stringOrEmpty(json['concreteObservation']),
+      exactLanguagePattern: JsonConverters.stringOrEmpty(
+        json['exactLanguagePattern'],
+      ),
+      concreteObservation: JsonConverters.stringOrEmpty(
+        json['concreteObservation'],
+      ),
       repeatedSignal: JsonConverters.stringOrEmpty(json['repeatedSignal']),
-      tensionOrContradiction:
-          _optionalString(json['tensionOrContradiction']),
+      tensionOrContradiction: _optionalString(json['tensionOrContradiction']),
       avoidedOrVagueArea: _optionalString(json['avoidedOrVagueArea']),
       nextSmallAction: _optionalString(json['nextSmallAction']),
-      patternObservations:
-          JsonConverters.stringList(json['patternObservations']),
+      patternObservations: JsonConverters.stringList(
+        json['patternObservations'],
+      ),
     );
   }
 
@@ -45,22 +47,22 @@ class Reflection {
   final List<String> patternObservations;
 
   Map<String, dynamic> toJson() => {
-        'mood': mood,
-        'emotionalIntensity': emotionalIntensity,
-        'recurringThemes': recurringThemes,
-        'hiddenConcern': '',
-        'positiveSignal': '',
-        'recommendation': '',
-        'exactLanguagePattern': exactLanguagePattern,
-        'concreteObservation': concreteObservation,
-        'repeatedSignal': repeatedSignal,
-        if (tensionOrContradiction != null)
-          'tensionOrContradiction': tensionOrContradiction,
-        if (avoidedOrVagueArea != null) 'avoidedOrVagueArea': avoidedOrVagueArea,
-        if (nextSmallAction != null) 'nextSmallAction': nextSmallAction,
-        if (patternObservations.isNotEmpty)
-          'patternObservations': patternObservations,
-      };
+    'mood': mood,
+    'emotionalIntensity': emotionalIntensity,
+    'recurringThemes': recurringThemes,
+    'hiddenConcern': '',
+    'positiveSignal': '',
+    'recommendation': '',
+    'exactLanguagePattern': exactLanguagePattern,
+    'concreteObservation': concreteObservation,
+    'repeatedSignal': repeatedSignal,
+    if (tensionOrContradiction != null)
+      'tensionOrContradiction': tensionOrContradiction,
+    if (avoidedOrVagueArea != null) 'avoidedOrVagueArea': avoidedOrVagueArea,
+    if (nextSmallAction != null) 'nextSmallAction': nextSmallAction,
+    if (patternObservations.isNotEmpty)
+      'patternObservations': patternObservations,
+  };
 
   static String? _optionalString(Object? value) {
     if (value is! String) return null;
@@ -93,15 +95,15 @@ class Reflection {
 
   @override
   int get hashCode => Object.hash(
-        mood,
-        emotionalIntensity,
-        Object.hashAll(recurringThemes),
-        exactLanguagePattern,
-        concreteObservation,
-        repeatedSignal,
-        tensionOrContradiction,
-        avoidedOrVagueArea,
-        nextSmallAction,
-        Object.hashAll(patternObservations),
-      );
+    mood,
+    emotionalIntensity,
+    Object.hashAll(recurringThemes),
+    exactLanguagePattern,
+    concreteObservation,
+    repeatedSignal,
+    tensionOrContradiction,
+    avoidedOrVagueArea,
+    nextSmallAction,
+    Object.hashAll(patternObservations),
+  );
 }

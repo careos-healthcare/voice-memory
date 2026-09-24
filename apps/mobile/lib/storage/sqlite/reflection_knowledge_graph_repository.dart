@@ -8,10 +8,10 @@ export 'package:archiveme_mobile/database/daos/reflection_graph_dao.dart'
 /// SQLite persistence + FTS5 search for offline reflection knowledge graphs.
 class ReflectionKnowledgeGraphRepository {
   ReflectionKnowledgeGraphRepository(Database db)
-      : _dao = ReflectionGraphDao(AppDatabase.fromSqflite(db));
+    : _dao = ReflectionGraphDao(AppDatabase.fromSqflite(db));
 
   ReflectionKnowledgeGraphRepository.fromAppDatabase(AppDatabase db)
-      : _dao = db.reflectionGraphDao;
+    : _dao = db.reflectionGraphDao;
 
   final ReflectionGraphDao _dao;
 
@@ -24,8 +24,7 @@ class ReflectionKnowledgeGraphRepository {
   Future<void> replaceGraphTxn(
     Transaction txn,
     OfflineReflectionKnowledgeGraph graph,
-  ) =>
-      _dao.replaceGraphInTransaction(graph);
+  ) => _dao.replaceGraphInTransaction(graph);
 
   Future<void> deleteForEntry(String entryId) => _dao.deleteForEntry(entryId);
 
@@ -35,14 +34,12 @@ class ReflectionKnowledgeGraphRepository {
   Future<List<ReflectionGraphSearchHit>> searchNodes({
     required String query,
     int limit = 20,
-  }) =>
-      _dao.searchNodes(query: query, limit: limit);
+  }) => _dao.searchNodes(query: query, limit: limit);
 
   Future<List<String>> searchEntryIds({
     required String query,
     int limit = 20,
-  }) =>
-      _dao.searchEntryIds(query: query, limit: limit);
+  }) => _dao.searchEntryIds(query: query, limit: limit);
 
   Future<void> syncFromJournalEntry({
     required String entryId,
@@ -66,8 +63,7 @@ class ReflectionKnowledgeGraphRepository {
   static Future<void> deleteAbsentEntries(
     Database db, {
     required Set<String> keepEntryIds,
-  }) =>
-      ReflectionGraphDao(AppDatabase.fromSqflite(db)).deleteAbsentEntries(
-        keepEntryIds,
-      );
+  }) => ReflectionGraphDao(AppDatabase.fromSqflite(db)).deleteAbsentEntries(
+    keepEntryIds,
+  );
 }

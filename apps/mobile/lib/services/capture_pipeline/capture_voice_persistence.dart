@@ -97,7 +97,8 @@ class CaptureVoicePersistence {
           ),
       syncStatus: SyncStatus.pendingUpload,
       localAudioPath: audioFile.path,
-      transcriptStatus: partialTranscript != null && partialTranscript.trim().isNotEmpty
+      transcriptStatus:
+          partialTranscript != null && partialTranscript.trim().isNotEmpty
           ? TranscriptStatus.finalTranscript
           : TranscriptStatus.pending,
     );

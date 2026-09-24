@@ -23,7 +23,10 @@ import 'package:flutter/material.dart';
 /// Emotional first-proof payoff — user evidence first, calm CTAs elsewhere.
 class FirstProofPayoffCard extends StatefulWidget {
   const FirstProofPayoffCard({
-    required this.payoff, required this.entryCount, required this.onWatchThisNext, super.key,
+    required this.payoff,
+    required this.entryCount,
+    required this.onWatchThisNext,
+    super.key,
     this.onViewPatternDetails,
     this.suppressCtas = false,
     this.patternConfidence,

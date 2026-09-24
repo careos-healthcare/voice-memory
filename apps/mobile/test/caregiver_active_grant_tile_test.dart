@@ -17,7 +17,9 @@ CaregiverActiveGrant _sampleGrant({bool isCurrentSession = true}) {
 }
 
 void main() {
-  testWidgets('shows caregiver id, session badge, and revoke action', (tester) async {
+  testWidgets('shows caregiver id, session badge, and revoke action', (
+    tester,
+  ) async {
     await tester.pumpWidget(
       MaterialApp(
         theme: AppTheme.light(),
@@ -52,7 +54,9 @@ void main() {
       ),
     );
 
-    await tester.tap(find.byKey(const Key('caregiver_revoke_access_token-tile-1')));
+    await tester.tap(
+      find.byKey(const Key('caregiver_revoke_access_token-tile-1')),
+    );
     await tester.pump();
 
     expect(revokeCount, 1);
@@ -84,7 +88,9 @@ void main() {
     expect(revokeCount, 0);
   });
 
-  testWidgets('hides current session badge when not active session', (tester) async {
+  testWidgets('hides current session badge when not active session', (
+    tester,
+  ) async {
     await tester.pumpWidget(
       MaterialApp(
         theme: AppTheme.light(),

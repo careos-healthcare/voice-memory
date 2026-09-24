@@ -5,7 +5,9 @@ import 'package:flutter/material.dart';
 /// Quiet Pro positioning line after a value moment — no paywall CTA.
 class ProPackagingBridgeLine extends StatelessWidget {
   const ProPackagingBridgeLine({
-    required this.line, required this.lineKey, super.key,
+    required this.line,
+    required this.lineKey,
+    super.key,
   });
 
   final String line;

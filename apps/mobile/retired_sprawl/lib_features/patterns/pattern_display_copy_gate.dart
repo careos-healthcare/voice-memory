@@ -46,7 +46,8 @@ class PatternDisplayCopyCheckResult {
 abstract class PatternDisplayCopyGate {
   PatternDisplayCopyGate._();
 
-  static const String heroFallback = PatternHumanCopy.fallbackEvidenceFirstHeroBody;
+  static const String heroFallback =
+      PatternHumanCopy.fallbackEvidenceFirstHeroBody;
   static const String currentBeliefFallback =
       PatternHumanCopy.fallbackMainObservationEvidence;
   static const String evidenceFallback = PatternHumanCopy.fallbackEvidenceBody;
@@ -55,9 +56,11 @@ abstract class PatternDisplayCopyGate {
   static const String whatToTestFallback =
       PatternHumanCopy.fallbackWhatToNoticeEvidence;
 
-  static const List<String> _blockedSubstrings = LegacyPatternCopyGuard.blockedSubstrings;
+  static const List<String> _blockedSubstrings =
+      LegacyPatternCopyGuard.blockedSubstrings;
 
-  static final List<RegExp> _blockedPatterns = LegacyPatternCopyGuard.blockedPatterns;
+  static final List<RegExp> _blockedPatterns =
+      LegacyPatternCopyGuard.blockedPatterns;
 
   static const _phraseBoundaryModals = {'should', 'could', 'would', 'may'};
   static const _badPhraseStarts = {

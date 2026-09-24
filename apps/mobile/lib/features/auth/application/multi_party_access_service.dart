@@ -72,13 +72,15 @@ class MultiPartyAccessService {
         final expiresAt = _parseUtc(meta['expiresAt']);
         if (expiresAt != null && !clock.isBefore(expiresAt)) continue;
 
-        final role = MultiPartyAccessRole.fromWire(meta['role']?.toString()) ??
+        final role =
+            MultiPartyAccessRole.fromWire(meta['role']?.toString()) ??
             MultiPartyAccessRole.caregiver;
         if (role == MultiPartyAccessRole.observer) continue;
 
         grantsById[grantId] = MultiPartyAccessGrant(
           grantId: grantId,
-          partyId: meta['partyId']?.toString() ??
+          partyId:
+              meta['partyId']?.toString() ??
               meta['caregiverId']?.toString() ??
               role.label,
           role: role,
@@ -297,10 +299,10 @@ class MultiPartyAccessService {
   };
 
   static String? _tokenKeyFor(MultiPartyAccessRole role) => switch (role) {
-        MultiPartyAccessRole.caregiver => caregiverTokenKey,
-        MultiPartyAccessRole.coach => coachTokenKey,
-        MultiPartyAccessRole.observer => null,
-      };
+    MultiPartyAccessRole.caregiver => caregiverTokenKey,
+    MultiPartyAccessRole.coach => coachTokenKey,
+    MultiPartyAccessRole.observer => null,
+  };
 
   Future<Map<String, dynamic>?> _storedTokenFor(
     MobilePrefsStore prefs,
@@ -331,7 +333,8 @@ class MultiPartyAccessService {
     final expiresAt = _parseUtc(raw['expiresAt']);
     if (expiresAt != null && !clock.isBefore(expiresAt)) return;
 
-    final partyId = raw['caregiverId']?.toString() ??
+    final partyId =
+        raw['caregiverId']?.toString() ??
         raw['coachId']?.toString() ??
         role.label;
     final grantedAt = _parseUtc(raw['issuedAt']) ?? clock;

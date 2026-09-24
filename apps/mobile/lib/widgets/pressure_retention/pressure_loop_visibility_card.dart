@@ -15,7 +15,8 @@ import 'package:flutter/material.dart';
 /// confidence label.
 class PressureLoopVisibilityCard extends StatelessWidget {
   const PressureLoopVisibilityCard({
-    required this.visibility, super.key,
+    required this.visibility,
+    super.key,
     this.locked = false,
     this.confidence,
     this.entryCount = PressureInsightsCopy.minEntriesForLoopLanguage,

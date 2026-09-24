@@ -27,8 +27,9 @@ class DeferredProofAdmissionReconciler {
   /// `CapturePipelineMiddleware.analyzeWithAuthRetry` only enforces the API
   /// usage guard, so nothing downstream re-checks consent: this predicate is
   /// the last thing between a stored transcript and `/api/analyze`.
-  Future<bool> _remoteReflectionAllowed() => _consentGate
-      .isPurposePermittedNow(RemoteProcessingPurpose.remoteReflection);
+  Future<bool> _remoteReflectionAllowed() => _consentGate.isPurposePermittedNow(
+    RemoteProcessingPurpose.remoteReflection,
+  );
 
   static bool needsDeferredProofAdmission(JournalEntry entry) {
     if (entry.isDeleted) return false;

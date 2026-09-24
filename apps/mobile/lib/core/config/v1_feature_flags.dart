@@ -22,13 +22,11 @@ abstract final class V1FeatureFlags {
   static bool get enableAnalyst => !enableV1Only && _enableAnalyst;
 
   /// Remember-this / action items settings row and `/action-items`.
-  static bool get enableActionItems =>
-      !enableV1Only && _enableActionItems;
+  static bool get enableActionItems => !enableV1Only && _enableActionItems;
 
   /// Home-screen widgets and today's-check objective chrome.
   static bool get enableWidgets => !enableV1Only && _enableWidgets;
 
   /// Weekly review, private reports, insight quality, range review.
-  static bool get enableCustomReports =>
-      !enableV1Only && _enableCustomReports;
+  static bool get enableCustomReports => !enableV1Only && _enableCustomReports;
 }

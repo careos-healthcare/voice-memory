@@ -88,52 +88,56 @@ void main() {
       }
     });
 
-    test('saves with local reflection without remote transcribe or analyze', () async {
-      final api = _NoRemoteCaptureApi();
-      final built = await buildCapturePipelineFacade(
-        prefs: prefs,
-        journal: journal,
-        consentStore: consentStore,
-        api: api,
-      );
-      final facade = CapturePipelineFacade.standard(
-        built.facade.dependencies.copyWith(
-          localAiPipeline: _StubLocalAiPort(
-            transcript:
-                'Work has been heavy but I keep taking on more. '
-                'Tomorrow I will leave on time and rest.',
-            reflection: const Reflection(
-              mood: 'reflective',
-              emotionalIntensity: 6,
-              recurringThemes: ['work'],
-              exactLanguagePattern: 'keep taking on more',
-              concreteObservation: 'Work has been heavy',
-              repeatedSignal: 'Repeated "work" in this entry.',
-              tensionOrContradiction: 'wants rest but keeps accepting more work',
-              nextSmallAction: 'leave on time and rest',
+    test(
+      'saves with local reflection without remote transcribe or analyze',
+      () async {
+        final api = _NoRemoteCaptureApi();
+        final built = await buildCapturePipelineFacade(
+          prefs: prefs,
+          journal: journal,
+          consentStore: consentStore,
+          api: api,
+        );
+        final facade = CapturePipelineFacade.standard(
+          built.facade.dependencies.copyWith(
+            localAiPipeline: _StubLocalAiPort(
+              transcript:
+                  'Work has been heavy but I keep taking on more. '
+                  'Tomorrow I will leave on time and rest.',
+              reflection: const Reflection(
+                mood: 'reflective',
+                emotionalIntensity: 6,
+                recurringThemes: ['work'],
+                exactLanguagePattern: 'keep taking on more',
+                concreteObservation: 'Work has been heavy',
+                repeatedSignal: 'Repeated "work" in this entry.',
+                tensionOrContradiction:
+                    'wants rest but keeps accepting more work',
+                nextSmallAction: 'leave on time and rest',
+              ),
             ),
           ),
-        ),
-      );
+        );
 
-      final wav = await _writeTestWav(tempDir);
-      final result = (await facade.run(
-        audioFile: wav,
-        durationSeconds: 8,
-      )).getOrThrow();
+        final wav = await _writeTestWav(tempDir);
+        final result = (await facade.run(
+          audioFile: wav,
+          durationSeconds: 8,
+        )).getOrThrow();
 
-      expect(result.localSaved, isTrue);
-      expect(result.analysisSucceeded, isTrue);
-      expect(result.syncSucceeded, isFalse);
-      expect(api.transcribeCalls, 0);
-      expect(api.analyzeCalls, 0);
+        expect(result.localSaved, isTrue);
+        expect(result.analysisSucceeded, isTrue);
+        expect(result.syncSucceeded, isFalse);
+        expect(api.transcribeCalls, 0);
+        expect(api.analyzeCalls, 0);
 
-      final saved = await journal.loadAll();
-      expect(saved, hasLength(1));
-      expect(saved.single.transcript, contains('Work has been heavy'));
-      expect(saved.single.reflection.emotionalIntensity, 6);
-      expect(saved.single.reflection.tensionOrContradiction, isNotNull);
-    });
+        final saved = await journal.loadAll();
+        expect(saved, hasLength(1));
+        expect(saved.single.transcript, contains('Work has been heavy'));
+        expect(saved.single.reflection.emotionalIntensity, 6);
+        expect(saved.single.reflection.tensionOrContradiction, isNotNull);
+      },
+    );
   });
 }
 

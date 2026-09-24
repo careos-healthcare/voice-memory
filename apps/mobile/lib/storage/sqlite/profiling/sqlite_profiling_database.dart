@@ -69,8 +69,7 @@ final class SqliteProfilingDatabase implements Database {
     String method,
     String sql, [
     List<Object?>? arguments,
-  ]) =>
-      _delegate.devInvokeSqlMethod<T>(method, sql, arguments);
+  ]) => _delegate.devInvokeSqlMethod<T>(method, sql, arguments);
 
   @override
   Future<void> execute(String sql, [List<Object?>? arguments]) =>
@@ -86,13 +85,12 @@ final class SqliteProfilingDatabase implements Database {
     Map<String, Object?> values, {
     String? nullColumnHack,
     ConflictAlgorithm? conflictAlgorithm,
-  }) =>
-      _executor.insert(
-        table,
-        values,
-        nullColumnHack: nullColumnHack,
-        conflictAlgorithm: conflictAlgorithm,
-      );
+  }) => _executor.insert(
+    table,
+    values,
+    nullColumnHack: nullColumnHack,
+    conflictAlgorithm: conflictAlgorithm,
+  );
 
   @override
   Future<List<Map<String, Object?>>> query(
@@ -106,38 +104,35 @@ final class SqliteProfilingDatabase implements Database {
     String? orderBy,
     int? limit,
     int? offset,
-  }) =>
-      _executor.query(
-        table,
-        distinct: distinct,
-        columns: columns,
-        where: where,
-        whereArgs: whereArgs,
-        groupBy: groupBy,
-        having: having,
-        orderBy: orderBy,
-        limit: limit,
-        offset: offset,
-      );
+  }) => _executor.query(
+    table,
+    distinct: distinct,
+    columns: columns,
+    where: where,
+    whereArgs: whereArgs,
+    groupBy: groupBy,
+    having: having,
+    orderBy: orderBy,
+    limit: limit,
+    offset: offset,
+  );
 
   @override
   Future<List<Map<String, Object?>>> rawQuery(
     String sql, [
     List<Object?>? arguments,
-  ]) =>
-      _executor.rawQuery(sql, arguments);
+  ]) => _executor.rawQuery(sql, arguments);
 
   @override
   Future<QueryCursor> rawQueryCursor(
     String sql,
     List<Object?>? arguments, {
     int? bufferSize,
-  }) =>
-      _executor.rawQueryCursor(
-        sql,
-        arguments,
-        bufferSize: bufferSize,
-      );
+  }) => _executor.rawQueryCursor(
+    sql,
+    arguments,
+    bufferSize: bufferSize,
+  );
 
   @override
   Future<QueryCursor> queryCursor(
@@ -152,20 +147,19 @@ final class SqliteProfilingDatabase implements Database {
     int? limit,
     int? offset,
     int? bufferSize,
-  }) =>
-      _executor.queryCursor(
-        table,
-        distinct: distinct,
-        columns: columns,
-        where: where,
-        whereArgs: whereArgs,
-        groupBy: groupBy,
-        having: having,
-        orderBy: orderBy,
-        limit: limit,
-        offset: offset,
-        bufferSize: bufferSize,
-      );
+  }) => _executor.queryCursor(
+    table,
+    distinct: distinct,
+    columns: columns,
+    where: where,
+    whereArgs: whereArgs,
+    groupBy: groupBy,
+    having: having,
+    orderBy: orderBy,
+    limit: limit,
+    offset: offset,
+    bufferSize: bufferSize,
+  );
 
   @override
   Future<int> rawUpdate(String sql, [List<Object?>? arguments]) =>
@@ -178,14 +172,13 @@ final class SqliteProfilingDatabase implements Database {
     String? where,
     List<Object?>? whereArgs,
     ConflictAlgorithm? conflictAlgorithm,
-  }) =>
-      _executor.update(
-        table,
-        values,
-        where: where,
-        whereArgs: whereArgs,
-        conflictAlgorithm: conflictAlgorithm,
-      );
+  }) => _executor.update(
+    table,
+    values,
+    where: where,
+    whereArgs: whereArgs,
+    conflictAlgorithm: conflictAlgorithm,
+  );
 
   @override
   Future<int> rawDelete(String sql, [List<Object?>? arguments]) =>
@@ -196,8 +189,7 @@ final class SqliteProfilingDatabase implements Database {
     String table, {
     String? where,
     List<Object?>? whereArgs,
-  }) =>
-      _executor.delete(table, where: where, whereArgs: whereArgs);
+  }) => _executor.delete(table, where: where, whereArgs: whereArgs);
 }
 
 final class _SqliteProfilingTransaction implements Transaction {
@@ -231,13 +223,12 @@ final class _SqliteProfilingTransaction implements Transaction {
     Map<String, Object?> values, {
     String? nullColumnHack,
     ConflictAlgorithm? conflictAlgorithm,
-  }) =>
-      _executor.insert(
-        table,
-        values,
-        nullColumnHack: nullColumnHack,
-        conflictAlgorithm: conflictAlgorithm,
-      );
+  }) => _executor.insert(
+    table,
+    values,
+    nullColumnHack: nullColumnHack,
+    conflictAlgorithm: conflictAlgorithm,
+  );
 
   @override
   Future<List<Map<String, Object?>>> query(
@@ -251,38 +242,35 @@ final class _SqliteProfilingTransaction implements Transaction {
     String? orderBy,
     int? limit,
     int? offset,
-  }) =>
-      _executor.query(
-        table,
-        distinct: distinct,
-        columns: columns,
-        where: where,
-        whereArgs: whereArgs,
-        groupBy: groupBy,
-        having: having,
-        orderBy: orderBy,
-        limit: limit,
-        offset: offset,
-      );
+  }) => _executor.query(
+    table,
+    distinct: distinct,
+    columns: columns,
+    where: where,
+    whereArgs: whereArgs,
+    groupBy: groupBy,
+    having: having,
+    orderBy: orderBy,
+    limit: limit,
+    offset: offset,
+  );
 
   @override
   Future<List<Map<String, Object?>>> rawQuery(
     String sql, [
     List<Object?>? arguments,
-  ]) =>
-      _executor.rawQuery(sql, arguments);
+  ]) => _executor.rawQuery(sql, arguments);
 
   @override
   Future<QueryCursor> rawQueryCursor(
     String sql,
     List<Object?>? arguments, {
     int? bufferSize,
-  }) =>
-      _executor.rawQueryCursor(
-        sql,
-        arguments,
-        bufferSize: bufferSize,
-      );
+  }) => _executor.rawQueryCursor(
+    sql,
+    arguments,
+    bufferSize: bufferSize,
+  );
 
   @override
   Future<QueryCursor> queryCursor(
@@ -297,20 +285,19 @@ final class _SqliteProfilingTransaction implements Transaction {
     int? limit,
     int? offset,
     int? bufferSize,
-  }) =>
-      _executor.queryCursor(
-        table,
-        distinct: distinct,
-        columns: columns,
-        where: where,
-        whereArgs: whereArgs,
-        groupBy: groupBy,
-        having: having,
-        orderBy: orderBy,
-        limit: limit,
-        offset: offset,
-        bufferSize: bufferSize,
-      );
+  }) => _executor.queryCursor(
+    table,
+    distinct: distinct,
+    columns: columns,
+    where: where,
+    whereArgs: whereArgs,
+    groupBy: groupBy,
+    having: having,
+    orderBy: orderBy,
+    limit: limit,
+    offset: offset,
+    bufferSize: bufferSize,
+  );
 
   @override
   Future<int> rawUpdate(String sql, [List<Object?>? arguments]) =>
@@ -323,14 +310,13 @@ final class _SqliteProfilingTransaction implements Transaction {
     String? where,
     List<Object?>? whereArgs,
     ConflictAlgorithm? conflictAlgorithm,
-  }) =>
-      _executor.update(
-        table,
-        values,
-        where: where,
-        whereArgs: whereArgs,
-        conflictAlgorithm: conflictAlgorithm,
-      );
+  }) => _executor.update(
+    table,
+    values,
+    where: where,
+    whereArgs: whereArgs,
+    conflictAlgorithm: conflictAlgorithm,
+  );
 
   @override
   Future<int> rawDelete(String sql, [List<Object?>? arguments]) =>
@@ -341,8 +327,7 @@ final class _SqliteProfilingTransaction implements Transaction {
     String table, {
     String? where,
     List<Object?>? whereArgs,
-  }) =>
-      _executor.delete(table, where: where, whereArgs: whereArgs);
+  }) => _executor.delete(table, where: where, whereArgs: whereArgs);
 }
 
 final class _SqliteProfilingExecutor {

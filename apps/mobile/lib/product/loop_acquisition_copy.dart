@@ -68,7 +68,11 @@ abstract class LoopAcquisitionCopy {
     cohortRoutePath: '/start/prove-enough',
   );
 
-  static const List<LoopAcquisitionVariant> all = [proveEnough, capacityYes, generic];
+  static const List<LoopAcquisitionVariant> all = [
+    proveEnough,
+    capacityYes,
+    generic,
+  ];
 
   static LoopAcquisitionVariant get primaryWedge => proveEnough;
 

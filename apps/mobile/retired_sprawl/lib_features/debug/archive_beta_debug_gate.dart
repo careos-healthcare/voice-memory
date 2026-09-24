@@ -1,5 +1,6 @@
 import 'package:archiveme_mobile/config/app_config.dart' show AppConfig;
-import 'package:archiveme_mobile/features/recording/recording_dependencies.dart' show AppConfig;
+import 'package:archiveme_mobile/features/recording/recording_dependencies.dart'
+    show AppConfig;
 import 'package:flutter/foundation.dart';
 
 /// Gates ArchiveMe loop-map beta debug controls from profile/release builds.

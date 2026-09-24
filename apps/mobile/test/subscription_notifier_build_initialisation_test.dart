@@ -16,48 +16,53 @@ void main() {
     expect(container.read(subscriptionProvider).isLoading, isTrue);
   });
 
-  test('build still starts the billing bootstrap, and it can be awaited',
-      () async {
-    final container = ProviderContainer();
-    addTearDown(container.dispose);
+  test(
+    'build still starts the billing bootstrap, and it can be awaited',
+    () async {
+      final container = ProviderContainer();
+      addTearDown(container.dispose);
 
-    final seen = <bool>[];
-    container.listen<SubscriptionState>(
-      subscriptionProvider,
-      (previous, next) => seen.add(next.isLoading),
-      fireImmediately: true,
-    );
+      final seen = <bool>[];
+      container.listen<SubscriptionState>(
+        subscriptionProvider,
+        (previous, next) => seen.add(next.isLoading),
+        fireImmediately: true,
+      );
 
-    // Nobody called `ensureInitialized`; the notifier owns its own kickoff.
-    await container.read(subscriptionProvider.notifier).bootstrapped;
+      // Nobody called `ensureInitialized`; the notifier owns its own kickoff.
+      await container.read(subscriptionProvider.notifier).bootstrapped;
 
-    expect(
-      seen.first,
-      isTrue,
-      reason: 'build must hand out a loading state synchronously',
-    );
-    expect(
-      seen.last,
-      isFalse,
-      reason: 'deferring the bootstrap must not turn it into a no-op — the '
-          'state has to leave loading on its own',
-    );
-    expect(container.read(subscriptionProvider).isLoading, isFalse);
-  });
+      expect(
+        seen.first,
+        isTrue,
+        reason: 'build must hand out a loading state synchronously',
+      );
+      expect(
+        seen.last,
+        isFalse,
+        reason:
+            'deferring the bootstrap must not turn it into a no-op — the '
+            'state has to leave loading on its own',
+      );
+      expect(container.read(subscriptionProvider).isLoading, isFalse);
+    },
+  );
 
-  test('a concurrent ensureInitialized joins the bootstrap build started',
-      () async {
-    final container = ProviderContainer();
-    addTearDown(container.dispose);
+  test(
+    'a concurrent ensureInitialized joins the bootstrap build started',
+    () async {
+      final container = ProviderContainer();
+      addTearDown(container.dispose);
 
-    final notifier = container.read(subscriptionProvider.notifier);
-    // Same microtask turn as `build`, before its deferred kickoff has run.
-    final joined = notifier.ensureInitialized();
+      final notifier = container.read(subscriptionProvider.notifier);
+      // Same microtask turn as `build`, before its deferred kickoff has run.
+      final joined = notifier.ensureInitialized();
 
-    await Future.wait([joined, notifier.bootstrapped]);
+      await Future.wait([joined, notifier.bootstrapped]);
 
-    expect(container.read(subscriptionProvider).isLoading, isFalse);
-  });
+      expect(container.read(subscriptionProvider).isLoading, isFalse);
+    },
+  );
 
   test('disposing mid-bootstrap does not write to a dead provider', () async {
     final container = ProviderContainer();

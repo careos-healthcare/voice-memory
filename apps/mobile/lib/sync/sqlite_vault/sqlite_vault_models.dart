@@ -8,8 +8,9 @@ sealed class SqliteVaultUploadResult {
     required int sealedByteLength,
   }) = SqliteVaultUploadSuccess;
 
-  const factory SqliteVaultUploadResult.failure(SqliteVaultUploadFailure failure) =
-      SqliteVaultUploadFailureResult;
+  const factory SqliteVaultUploadResult.failure(
+    SqliteVaultUploadFailure failure,
+  ) = SqliteVaultUploadFailureResult;
 }
 
 final class SqliteVaultUploadSuccess extends SqliteVaultUploadResult {
@@ -50,8 +51,9 @@ sealed class SqliteVaultRestoreResult {
     required String cloudRelativePath,
   }) = SqliteVaultRestoreSuccess;
 
-  const factory SqliteVaultRestoreResult.failure(SqliteVaultRestoreFailure failure) =
-      SqliteVaultRestoreFailureResult;
+  const factory SqliteVaultRestoreResult.failure(
+    SqliteVaultRestoreFailure failure,
+  ) = SqliteVaultRestoreFailureResult;
 }
 
 final class SqliteVaultRestoreSuccess extends SqliteVaultRestoreResult {

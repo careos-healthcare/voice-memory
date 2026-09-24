@@ -10,11 +10,17 @@ void main() {
       expect(instruction, isNotEmpty);
       expect(instruction, contains('THE EVIDENCE METHOD'));
       expect(instruction, contains('open-ended follow-up question'));
-      expect(instruction, contains('Never use clinical, diagnostic, therapeutic'));
+      expect(
+        instruction,
+        contains('Never use clinical, diagnostic, therapeutic'),
+      );
       expect(instruction, contains('Never use CBT, IFS, DBT'));
       expect(instruction, contains('CBT'));
       expect(instruction, contains('diagnosis'));
-      expect(instruction, isNot(contains('KNOWN USER EVIDENCE (cite only these')));
+      expect(
+        instruction,
+        isNot(contains('KNOWN USER EVIDENCE (cite only these')),
+      );
       expect(instruction, isNot(contains('ACTIVE LIFE STAGE LENS')));
     });
 
@@ -37,20 +43,26 @@ void main() {
       );
 
       expect(instruction, contains('KNOWN USER EVIDENCE'));
-      expect(instruction, contains('[belief] Core belief: I am not good enough at work'));
+      expect(
+        instruction,
+        contains('[belief] Core belief: I am not good enough at work'),
+      );
       expect(instruction, contains('[contradiction] Contradiction:'));
       expect(instruction, contains('do not invent archive history'));
     });
 
-    test('appends lens-specific listening instructions when lens is active', () {
-      final instruction = LiveConversationalPersona.buildSystemInstruction(
-        activeLens: LifeStageLens.recovery,
-      );
+    test(
+      'appends lens-specific listening instructions when lens is active',
+      () {
+        final instruction = LiveConversationalPersona.buildSystemInstruction(
+          activeLens: LifeStageLens.recovery,
+        );
 
-      expect(instruction, contains('ACTIVE LIFE STAGE LENS'));
-      expect(instruction, contains('RECOVERY / SOBRIETY LENS'));
-      expect(instruction, contains('setback-and-return cycles'));
-    });
+        expect(instruction, contains('ACTIVE LIFE STAGE LENS'));
+        expect(instruction, contains('RECOVERY / SOBRIETY LENS'));
+        expect(instruction, contains('setback-and-return cycles'));
+      },
+    );
 
     test('forbids medical and clinical terminology in hard constraints', () {
       final instruction = LiveConversationalPersona.buildSystemInstruction(

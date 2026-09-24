@@ -1,7 +1,10 @@
 part of '../recording_screen.dart';
 
 extension RecordScreenScaffold on _RecordScreenState {
-  Widget _buildRecordScreenScaffold(BuildContext context, RecordBuildContext ctx) {
+  Widget _buildRecordScreenScaffold(
+    BuildContext context,
+    RecordBuildContext ctx,
+  ) {
     return ColoredBox(
       color: recordScreenBackground,
       child: SafeArea(

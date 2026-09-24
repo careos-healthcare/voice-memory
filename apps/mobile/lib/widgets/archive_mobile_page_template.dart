@@ -7,7 +7,10 @@ import 'package:flutter/material.dart';
 /// Shared archive experience layout — light scaffold, generous spacing.
 class ArchiveMobilePageTemplate extends StatelessWidget {
   const ArchiveMobilePageTemplate({
-    required this.eyebrow, required this.title, required this.mainContent, super.key,
+    required this.eyebrow,
+    required this.title,
+    required this.mainContent,
+    super.key,
     this.lead,
     this.currentArchiveState,
     this.whatChanged,

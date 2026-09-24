@@ -134,46 +134,50 @@ void main() {
       expect(api.wasCalled, isFalse);
     });
 
-    test('the locale the customer confirmed is what crosses the channel',
-        () async {
-      final platform = SwiftContractNativeSpeechPlatform();
-      NativeSpeechTranscription.debugPlatformOverride = 'ios';
-      NativeSpeechTranscription.testPlatform = platform;
+    test(
+      'the locale the customer confirmed is what crosses the channel',
+      () async {
+        final platform = SwiftContractNativeSpeechPlatform();
+        NativeSpeechTranscription.debugPlatformOverride = 'ios';
+        NativeSpeechTranscription.testPlatform = platform;
 
-      await _transcribe(
-        audio: _recording('vm_on_device_locale_'),
-        speechLocale: ConfirmedSpeechLocale.confirmed('gu-IN'),
-        onDeviceOnly: true,
-        api: _ForbiddenTranscribeApi(),
-      );
+        await _transcribe(
+          audio: _recording('vm_on_device_locale_'),
+          speechLocale: ConfirmedSpeechLocale.confirmed('gu-IN'),
+          onDeviceOnly: true,
+          api: _ForbiddenTranscribeApi(),
+        );
 
-      expect(platform.calls.single['localeIdentifier'], 'gu-IN');
-      expect(platform.calls.single['preferOnDevice'], isTrue);
-    });
+        expect(platform.calls.single['localeIdentifier'], 'gu-IN');
+        expect(platform.calls.single['preferOnDevice'], isTrue);
+      },
+    );
 
-    test('a locale_not_specified answer yields no transcript, as it did',
-        () async {
-      // The defect, pinned. This is what every iOS install returned: the
-      // handler refused for want of a language, the empty transcript read as
-      // "unavailable", and the entry saved with no text. The fix is the locale
-      // now being on the wire; the handling of a refusal is unchanged and must
-      // stay a non-answer rather than becoming an empty quotation.
-      final platform = _LocaleBlindNativeSpeechPlatform();
-      NativeSpeechTranscription.debugPlatformOverride = 'ios';
-      NativeSpeechTranscription.testPlatform = platform;
+    test(
+      'a locale_not_specified answer yields no transcript, as it did',
+      () async {
+        // The defect, pinned. This is what every iOS install returned: the
+        // handler refused for want of a language, the empty transcript read as
+        // "unavailable", and the entry saved with no text. The fix is the locale
+        // now being on the wire; the handling of a refusal is unchanged and must
+        // stay a non-answer rather than becoming an empty quotation.
+        final platform = _LocaleBlindNativeSpeechPlatform();
+        NativeSpeechTranscription.debugPlatformOverride = 'ios';
+        NativeSpeechTranscription.testPlatform = platform;
 
-      final outcome = await _transcribe(
-        audio: _recording('vm_locale_blind_'),
-        speechLocale: english,
-        onDeviceOnly: true,
-        api: _ForbiddenTranscribeApi(),
-      );
+        final outcome = await _transcribe(
+          audio: _recording('vm_locale_blind_'),
+          speechLocale: english,
+          onDeviceOnly: true,
+          api: _ForbiddenTranscribeApi(),
+        );
 
-      expect(platform.callCount, 1);
-      expect(outcome.succeeded, isFalse);
-      expect(outcome.transcript, isNull);
-      expect(outcome.failureReason, 'native_stt_unavailable');
-    });
+        expect(platform.callCount, 1);
+        expect(outcome.succeeded, isFalse);
+        expect(outcome.transcript, isNull);
+        expect(outcome.failureReason, 'native_stt_unavailable');
+      },
+    );
 
     test('the transcript is final, not provisional', () async {
       // Provisional means "the server will send a better one". In this mode no
@@ -195,27 +199,29 @@ void main() {
   });
 
   group('no language is ever inferred from the device', () {
-    test('an unconfirmed language skips recognition instead of guessing',
-        () async {
-      final platform = SwiftContractNativeSpeechPlatform();
-      NativeSpeechTranscription.debugPlatformOverride = 'ios';
-      NativeSpeechTranscription.testPlatform = platform;
+    test(
+      'an unconfirmed language skips recognition instead of guessing',
+      () async {
+        final platform = SwiftContractNativeSpeechPlatform();
+        NativeSpeechTranscription.debugPlatformOverride = 'ios';
+        NativeSpeechTranscription.testPlatform = platform;
 
-      final outcome = await _transcribe(
-        audio: _recording('vm_on_device_nolocale_'),
-        speechLocale: null,
-        onDeviceOnly: true,
-        api: _ForbiddenTranscribeApi(),
-      );
+        final outcome = await _transcribe(
+          audio: _recording('vm_on_device_nolocale_'),
+          speechLocale: null,
+          onDeviceOnly: true,
+          api: _ForbiddenTranscribeApi(),
+        );
 
-      expect(outcome.succeeded, isFalse);
-      expect(outcome.skippedReason, 'speech_language_not_confirmed');
-      expect(
-        platform.callCount,
-        0,
-        reason: 'the channel must not be asked to guess a language',
-      );
-    });
+        expect(outcome.succeeded, isFalse);
+        expect(outcome.skippedReason, 'speech_language_not_confirmed');
+        expect(
+          platform.callCount,
+          0,
+          reason: 'the channel must not be asked to guess a language',
+        );
+      },
+    );
 
     test('an unconfirmed language does not open the network either', () async {
       // The tempting "fix" is to upload when the device cannot help. That
@@ -246,29 +252,33 @@ void main() {
       expect(ConfirmedSpeechLocale.confirmed(null), isNull);
     });
 
-    test('an unanswered store reads as null, not as a platform default',
-        () async {
-      final dir = await Directory.systemTemp.createTemp('vm_speech_locale_');
-      addTearDown(() async {
-        if (dir.existsSync()) await dir.delete(recursive: true);
-      });
-      final store = SpeechLocaleStore(
-        await MobilePrefsStore.open('${dir.path}/prefs.json'),
-      );
+    test(
+      'an unanswered store reads as null, not as a platform default',
+      () async {
+        final dir = await Directory.systemTemp.createTemp('vm_speech_locale_');
+        addTearDown(() async {
+          if (dir.existsSync()) await dir.delete(recursive: true);
+        });
+        final store = SpeechLocaleStore(
+          await MobilePrefsStore.open('${dir.path}/prefs.json'),
+        );
 
-      expect(await store.read(), isNull);
-      expect(await store.hasConfirmed(), isFalse);
+        expect(await store.read(), isNull);
+        expect(await store.hasConfirmed(), isFalse);
 
-      await store.confirm(ConfirmedSpeechLocale.confirmed('hi-IN')!);
-      expect((await store.read())?.identifier, 'hi-IN');
-      expect(await store.hasConfirmed(), isTrue);
+        await store.confirm(ConfirmedSpeechLocale.confirmed('hi-IN')!);
+        expect((await store.read())?.identifier, 'hi-IN');
+        expect(await store.hasConfirmed(), isTrue);
 
-      await store.clear();
-      expect(await store.read(), isNull);
-    });
+        await store.clear();
+        expect(await store.read(), isNull);
+      },
+    );
 
     test('an unreadable store reads as unanswered, not as a guess', () async {
-      final dir = await Directory.systemTemp.createTemp('vm_speech_locale_bad_');
+      final dir = await Directory.systemTemp.createTemp(
+        'vm_speech_locale_bad_',
+      );
       addTearDown(() async {
         if (dir.existsSync()) await dir.delete(recursive: true);
       });
@@ -277,19 +287,23 @@ void main() {
       expect(await failing.read(), isNull);
     });
 
-    test('a stored identifier this build no longer offers reads as unanswered',
-        () async {
-      final dir = await Directory.systemTemp.createTemp('vm_speech_locale_old_');
-      addTearDown(() async {
-        if (dir.existsSync()) await dir.delete(recursive: true);
-      });
-      final prefs = await MobilePrefsStore.open('${dir.path}/prefs.json');
-      await prefs.writeJsonMap(SpeechLocaleStore.prefsKey, {
-        'localeIdentifier': 'xx-YY',
-      });
+    test(
+      'a stored identifier this build no longer offers reads as unanswered',
+      () async {
+        final dir = await Directory.systemTemp.createTemp(
+          'vm_speech_locale_old_',
+        );
+        addTearDown(() async {
+          if (dir.existsSync()) await dir.delete(recursive: true);
+        });
+        final prefs = await MobilePrefsStore.open('${dir.path}/prefs.json');
+        await prefs.writeJsonMap(SpeechLocaleStore.prefsKey, {
+          'localeIdentifier': 'xx-YY',
+        });
 
-      expect(await SpeechLocaleStore(prefs).read(), isNull);
-    });
+        expect(await SpeechLocaleStore(prefs).read(), isNull);
+      },
+    );
   });
 
   group('uncertain recognition never becomes quotable text', () {
@@ -389,16 +403,18 @@ void main() {
   });
 
   group('the toggle decides the mode', () {
-    test('on-device-only on an unsupported platform is disabled, not server',
-        () {
-      NativeSpeechTranscription.debugPlatformOverride = 'android';
+    test(
+      'on-device-only on an unsupported platform is disabled, not server',
+      () {
+        NativeSpeechTranscription.debugPlatformOverride = 'android';
 
-      expect(
-        TranscriptionService.activeMode(onDeviceOnly: true),
-        TranscriptionMode.disabled,
-        reason: 'the setting says never send; silence is the honest answer',
-      );
-    });
+        expect(
+          TranscriptionService.activeMode(onDeviceOnly: true),
+          TranscriptionMode.disabled,
+          reason: 'the setting says never send; silence is the honest answer',
+        );
+      },
+    );
 
     test('on-device-only off keeps the server path', () {
       NativeSpeechTranscription.debugPlatformOverride = 'ios';

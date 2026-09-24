@@ -295,7 +295,9 @@ class HttpTransport {
       return const ApiFailureResult(ApiFailureCancelled());
     }
     try {
-      OfflineImageEmbeddingGuard.assertOfflineBlocked(operation: 'http_transport');
+      OfflineImageEmbeddingGuard.assertOfflineBlocked(
+        operation: 'http_transport',
+      );
       final response = await request().timeout(timeout);
       if (cancelToken?.isCancelled ?? false) {
         return const ApiFailureResult(ApiFailureCancelled());

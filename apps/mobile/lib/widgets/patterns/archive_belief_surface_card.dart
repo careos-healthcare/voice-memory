@@ -23,7 +23,9 @@ import 'package:flutter/material.dart';
 /// Archive belief proof surface — primary post-first-proof card on Archive/Patterns.
 class ArchiveBeliefSurfaceCard extends StatefulWidget {
   const ArchiveBeliefSurfaceCard({
-    required this.surface, required this.onRecordNext, super.key,
+    required this.surface,
+    required this.onRecordNext,
+    super.key,
     this.onViewPatternDetails,
     this.onDismissed,
     this.patternConfidence,

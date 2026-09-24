@@ -276,20 +276,21 @@ void main() {
   });
 
   group('NotRelevantRecoveryCard', () {
-    NotRelevantRecoveryResult visibleResult() => const NotRelevantRecoveryResult(
-      shouldShow: true,
-      proofKey: '1|2|3',
-      entryCount: 3,
-      source: 'test',
-      hasConfirmedRepeat: true,
-      hasFreshReturn: false,
-      title: NotRelevantRecoveryCopy.title,
-      body: NotRelevantRecoveryCopy.body,
-      correctionLine: NotRelevantRecoveryCopy.correctionLine,
-      returnLine: NotRelevantRecoveryCopy.returnLine,
-      returnedAfterCorrectionLine:
-          NotRelevantRecoveryCopy.returnedAfterCorrectionLine,
-    );
+    NotRelevantRecoveryResult visibleResult() =>
+        const NotRelevantRecoveryResult(
+          shouldShow: true,
+          proofKey: '1|2|3',
+          entryCount: 3,
+          source: 'test',
+          hasConfirmedRepeat: true,
+          hasFreshReturn: false,
+          title: NotRelevantRecoveryCopy.title,
+          body: NotRelevantRecoveryCopy.body,
+          correctionLine: NotRelevantRecoveryCopy.correctionLine,
+          returnLine: NotRelevantRecoveryCopy.returnLine,
+          returnedAfterCorrectionLine:
+              NotRelevantRecoveryCopy.returnedAfterCorrectionLine,
+        );
 
     testWidgets('renders title and background copy', (tester) async {
       await _pumpCard(tester, visibleResult());

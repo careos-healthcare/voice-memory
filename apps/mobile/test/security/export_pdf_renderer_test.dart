@@ -30,10 +30,9 @@ String _pdfWords(Uint8List bytes) {
       // Non-deflate streams (xref) are ignored.
     }
   }
-  return RegExp(r'\[\((.*?)\)\]TJ')
-      .allMatches(buffer.toString())
-      .map((match) => match.group(1)!)
-      .join(' ');
+  return RegExp(
+    r'\[\((.*?)\)\]TJ',
+  ).allMatches(buffer.toString()).map((match) => match.group(1)!).join(' ');
 }
 
 void main() {

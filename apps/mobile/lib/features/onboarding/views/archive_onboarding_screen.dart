@@ -17,7 +17,8 @@ import 'package:go_router/go_router.dart';
 /// Post-capture onboarding proof — Experiment H ("Not ChatGPT").
 class ArchiveOnboardingScreen extends StatefulWidget {
   const ArchiveOnboardingScreen({
-    required this.source, super.key,
+    required this.source,
+    super.key,
     this.entryId,
     this.continueRoute = '/record',
   });
@@ -27,7 +28,8 @@ class ArchiveOnboardingScreen extends StatefulWidget {
   final String continueRoute;
 
   @override
-  State<ArchiveOnboardingScreen> createState() => _ArchiveOnboardingScreenState();
+  State<ArchiveOnboardingScreen> createState() =>
+      _ArchiveOnboardingScreenState();
 }
 
 class _ArchiveOnboardingScreenState extends State<ArchiveOnboardingScreen> {
@@ -84,10 +86,12 @@ class _ArchiveOnboardingScreenState extends State<ArchiveOnboardingScreen> {
     }
 
     final entry = _entry;
-    final payload = entry == null ? null : ChatGptVsEvidenceBuilder.fromEntry(
-      entry,
-      insight: _insight,
-    );
+    final payload = entry == null
+        ? null
+        : ChatGptVsEvidenceBuilder.fromEntry(
+            entry,
+            insight: _insight,
+          );
 
     return Scaffold(
       backgroundColor: AppColors.backgroundPrimary,

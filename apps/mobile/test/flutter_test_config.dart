@@ -24,15 +24,14 @@ Future<void> testExecutable(Future<void> Function() testMain) async {
     // "online" stub for the whole suite; individual tests may override it.
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(_connectivityChannel, (call) async {
-      if (call.method == 'check') return <String>['wifi'];
-      return null;
-    });
+          if (call.method == 'check') return <String>['wifi'];
+          return null;
+        });
 
     await AppSqliteDatabase.resetForTest();
     SecureSqliteLockService.instance
       ..resetForTest()
-      ..session
-          .unlock(SqliteDatabaseInitializer.testEncryptionPassword);
+      ..session.unlock(SqliteDatabaseInitializer.testEncryptionPassword);
     await ReleaseSuiteStaticStateReset.resetCachedState();
   });
   await testMain();

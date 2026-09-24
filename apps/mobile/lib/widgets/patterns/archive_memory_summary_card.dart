@@ -15,7 +15,8 @@ import 'package:flutter/material.dart';
 /// the archive has been building over time.
 class ArchiveMemorySummaryCard extends StatefulWidget {
   const ArchiveMemorySummaryCard({
-    required this.summary, super.key,
+    required this.summary,
+    super.key,
     this.onOpenPatternMap,
     this.onFindMoments,
     this.onUseCheck,
@@ -62,9 +63,7 @@ class _ArchiveMemorySummaryCardState extends State<ArchiveMemorySummaryCard> {
   @override
   Widget build(BuildContext context) {
     final summary = widget.summary;
-    final quality =
-        widget.quality ??
-        buildMemoryQuality(summary: summary);
+    final quality = widget.quality ?? buildMemoryQuality(summary: summary);
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.md),

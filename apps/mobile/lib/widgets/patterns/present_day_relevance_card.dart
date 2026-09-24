@@ -9,11 +9,15 @@ import 'package:flutter/material.dart';
 /// Explains why past evidence may matter now — no Pro CTA, no transcript text.
 class PresentDayRelevanceCard extends StatefulWidget {
   const PresentDayRelevanceCard({
-    required this.result, required this.source, super.key,
+    required this.result,
+    required this.source,
+    super.key,
   });
 
   const PresentDayRelevanceCard.test({
-    required this.result, required this.source, super.key,
+    required this.result,
+    required this.source,
+    super.key,
   });
 
   final PresentDayRelevanceResult result;

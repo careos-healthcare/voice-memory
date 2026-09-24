@@ -11,14 +11,16 @@ import 'package:flutter/material.dart';
 /// Archive Home card for later-cost check-ins — cost types only, no journal text.
 class CapacityCostLaterCard extends StatefulWidget {
   const CapacityCostLaterCard({
-    required this.result, super.key,
+    required this.result,
+    super.key,
     this.onSaved,
     this.store,
     this.sampleMode = false,
   });
 
   const CapacityCostLaterCard.test({
-    required this.result, super.key,
+    required this.result,
+    super.key,
     this.onSaved,
     this.store,
     this.sampleMode = false,

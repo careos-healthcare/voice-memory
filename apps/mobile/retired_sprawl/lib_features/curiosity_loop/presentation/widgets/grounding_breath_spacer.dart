@@ -5,7 +5,8 @@ import 'package:flutter/material.dart';
 /// Short breath-pacing step shown before grounded hook responses unlock.
 class GroundingBreathSpacer extends StatefulWidget {
   const GroundingBreathSpacer({
-    required this.onPacingComplete, super.key,
+    required this.onPacingComplete,
+    super.key,
     this.pacingDuration = const Duration(seconds: 4),
   });
 

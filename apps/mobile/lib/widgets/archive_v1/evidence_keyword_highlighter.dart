@@ -36,7 +36,9 @@ abstract final class EvidenceKeywordHighlighter {
     var start = 0;
     for (final match in pattern.allMatches(quote)) {
       if (match.start > start) {
-        spans.add(TextSpan(text: quote.substring(start, match.start), style: baseStyle));
+        spans.add(
+          TextSpan(text: quote.substring(start, match.start), style: baseStyle),
+        );
       }
       spans.add(TextSpan(text: match.group(0), style: highlightStyle));
       start = match.end;

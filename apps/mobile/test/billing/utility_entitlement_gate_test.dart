@@ -72,7 +72,9 @@ void main() {
     gate.requireExport();
   });
 
-  testWidgets('progress bar shows remaining tokens and storage', (tester) async {
+  testWidgets('progress bar shows remaining tokens and storage', (
+    tester,
+  ) async {
     final container = _gatedContainer(
       quota: const FreemiumQuota(
         billingReachable: true,
@@ -117,7 +119,10 @@ void main() {
     await tester.tap(find.text('Export'));
     await tester.pumpAndSettle();
     expect(find.byKey(const Key('utility_paywall_modal')), findsOneWidget);
-    expect(find.textContaining('Journaling and on-device search stay free'), findsOneWidget);
+    expect(
+      find.textContaining('Journaling and on-device search stay free'),
+      findsOneWidget,
+    );
     expect(presenter.calls, 1);
   });
 }

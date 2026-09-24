@@ -86,7 +86,9 @@ class _BeliefChangesScreenState extends State<BeliefChangesScreen> {
   }
 
   void _redirectIfLegacyDeepLinkIneligible(ArchiveChangesSnapshot snapshot) {
-    if (_redirectedIneligible || !mounted || widget.previewTimeline != null && snapshot.eligible) {
+    if (_redirectedIneligible ||
+        !mounted ||
+        widget.previewTimeline != null && snapshot.eligible) {
       return;
     }
     if (!_isLegacyChangesRoute(context) || snapshot.eligible) return;
@@ -160,7 +162,8 @@ class _BeliefChangesScreenState extends State<BeliefChangesScreen> {
       );
     }
 
-    if (_showEmpty && isIntentionalEmptyArchive(_snapshot?.entries ?? const [])) {
+    if (_showEmpty &&
+        isIntentionalEmptyArchive(_snapshot?.entries ?? const [])) {
       return _primarySurface(
         Scaffold(
           backgroundColor: AppColors.backgroundPrimary,

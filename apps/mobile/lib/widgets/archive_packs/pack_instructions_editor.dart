@@ -7,7 +7,8 @@ import 'package:flutter/material.dart';
 /// Edits pack instructions — local only, never logged.
 class PackInstructionsEditor extends StatefulWidget {
   const PackInstructionsEditor({
-    required this.packId, super.key,
+    required this.packId,
+    super.key,
     this.store,
     this.initialInstructions = '',
     this.onSaved,

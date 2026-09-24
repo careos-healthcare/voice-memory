@@ -13,7 +13,11 @@ import 'package:flutter/material.dart';
 /// Beta-only core value feedback — small, calm, never blocks proof payoff.
 class CoreValueFeedbackCard extends StatefulWidget {
   const CoreValueFeedbackCard({
-    required this.source, required this.entryCount, required this.hasConfirmedRepeat, required this.hasFirstProof, super.key,
+    required this.source,
+    required this.entryCount,
+    required this.hasConfirmedRepeat,
+    required this.hasFirstProof,
+    super.key,
     this.onChanged,
     this.store,
     this.skipPrefsLoad = false,
@@ -22,7 +26,11 @@ class CoreValueFeedbackCard extends StatefulWidget {
   });
 
   const CoreValueFeedbackCard.test({
-    required this.source, required this.entryCount, required this.hasConfirmedRepeat, required this.hasFirstProof, super.key,
+    required this.source,
+    required this.entryCount,
+    required this.hasConfirmedRepeat,
+    required this.hasFirstProof,
+    super.key,
     this.onChanged,
     this.store,
     bool dismissed = false,

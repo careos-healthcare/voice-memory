@@ -105,7 +105,8 @@ class RelationshipExtractor {
 }
 
 class _Accum {
-  _Accum(this.name, this.relationship) : lastContact = DateTime.fromMillisecondsSinceEpoch(0);
+  _Accum(this.name, this.relationship)
+    : lastContact = DateTime.fromMillisecondsSinceEpoch(0);
 
   final String name;
   String relationship;

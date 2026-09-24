@@ -17,7 +17,8 @@ import 'helpers/test_billing_service.dart';
 class _FakeStoreBilling implements StoreBillingPort {
   _FakeStoreBilling({
     PremiumEntitlements? restoreResult,
-  }) : configured = true, _restoreResult = restoreResult ?? PremiumEntitlements.free();
+  }) : configured = true,
+       _restoreResult = restoreResult ?? PremiumEntitlements.free();
 
   final bool configured;
   final PremiumEntitlements _restoreResult;

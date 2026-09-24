@@ -400,7 +400,8 @@ class RecordSurfaceViewState {
     required SecondSessionPayoff? secondSessionPayoff,
     required ThirdEntryBeliefPayoff? thirdEntryBeliefPayoff,
     required ConfirmedRepeatTriggerPayoff? confirmedRepeatTriggerPayoff,
-    required ConfirmedRepeatHelpfulActionPayoff? confirmedRepeatHelpfulActionPayoff,
+    required ConfirmedRepeatHelpfulActionPayoff?
+    confirmedRepeatHelpfulActionPayoff,
     required ConfirmedRepeatChangeNotice? confirmedRepeatChangeNotice,
     required RepeatReturnCheckOffer? repeatReturnCheckOffer,
     required EarlyEvidenceTimeline? earlyEvidenceTimeline,
@@ -483,7 +484,8 @@ class RecordSurfaceViewState {
     required int otherEducationCardsOnRecord,
     required bool showTimelinePositioningOnRecordReady,
     required int patternConfidenceEducationCount,
-    required PatternConfidenceExplanationResult? patternConfidenceExplanationCandidate,
+    required PatternConfidenceExplanationResult?
+    patternConfidenceExplanationCandidate,
     required bool showPatternConfidenceExplanationOnRecordReady,
     required bool showProEvidenceValueOnRecordReady,
     required bool showProBridgeVisibilityOnRecordReady,
@@ -568,7 +570,8 @@ class RecordSurfaceViewState {
     required bool showBetaRepairLabPricingValidationOnRecord,
     required bool showBetaRepairLabEvidenceTrailClarityOnRecord,
     required PricingValidationResult betaRepairLabPricingValidationResult,
-    required ProUnderstandingLiftVisibilityInput proUnderstandingLiftRecordReadyInput,
+    required ProUnderstandingLiftVisibilityInput
+    proUnderstandingLiftRecordReadyInput,
     required bool showProUnderstandingLiftOnRecordReady,
     required bool showProVisibilityLiftOnRecordReady,
     required ProUnderstandingLiftResult? proUnderstandingLiftRecordReadyResult,
@@ -631,7 +634,8 @@ class RecordSurfaceViewState {
     required bool showProofSpecificityOnFirstProofPayoff,
     required ProofSpecificityBoostResult proofSpecificityBoostPostSaveCandidate,
     required ProofQualityResponseResult proofQualityResponseFirstProofCandidate,
-    required ProofQualityResponseResult proofQualityResponseTimelinePostSaveCandidate,
+    required ProofQualityResponseResult
+    proofQualityResponseTimelinePostSaveCandidate,
     required BetaProofLiftResult betaProofLiftFirstProofCandidate,
     required BetaProofLiftResult betaProofLiftTimelinePostSaveCandidate,
     required ReturnAfterProofResult returnAfterProofPostSaveCandidate,
@@ -646,13 +650,15 @@ class RecordSurfaceViewState {
     required bool showReturnAfterProofStrengthenedOnFirstProofPayoff,
     required bool showReturnAfterProofGenericOnFirstProofPayoff,
     required bool showReturnAfterProofOnFirstProofPayoff,
-    required ReturnAfterProofLiftV2Result returnAfterProofLiftV2PostSaveCandidate,
+    required ReturnAfterProofLiftV2Result
+    returnAfterProofLiftV2PostSaveCandidate,
     required bool showReturnAfterProofLiftV2OnPostSave,
     required ProBridgeTimingLoosenSignals postSaveLoosenSignalsPreAudit,
     required EvidenceAnchorExtractionResult postSaveEvidenceAnchorPreAudit,
     required ProofQualityFeedbackState postSaveFeedbackStateForLift,
     required bool hasProEngagementOnPostSave,
-    required ProUnderstandingLiftVisibilityInput proUnderstandingLiftPostSaveInput,
+    required ProUnderstandingLiftVisibilityInput
+    proUnderstandingLiftPostSaveInput,
     required bool showProUnderstandingLiftOnPostSave,
     required ProUnderstandingLiftResult? proUnderstandingLiftPostSaveResult,
     required ProUnderstandingLiftResult? base,
@@ -665,8 +671,10 @@ class RecordSurfaceViewState {
     required bool showProLockMomentPostSave,
     required MonthlyPrivateReportPreview? monthlyPrivateReportPreviewPostSave,
     required bool showMonthlyPrivateReportPreviewPostSave,
-    required BetaFeedbackIntelligenceSurface? betaFeedbackIntelligenceSurfaceOnRecordReady,
-    required BetaFeedbackIntelligenceSurface? betaFeedbackIntelligenceSurfacePostSave,
+    required BetaFeedbackIntelligenceSurface?
+    betaFeedbackIntelligenceSurfaceOnRecordReady,
+    required BetaFeedbackIntelligenceSurface?
+    betaFeedbackIntelligenceSurfacePostSave,
     required HelpedTrackingPrompt? helpedTrackingPrompt,
     required bool showHelpedTracking,
     required bool showReturnCheckPayoff,
@@ -753,7 +761,8 @@ class RecordSurfaceViewState {
       showFraming: showFraming,
       compact: compact,
       stack: stack,
-      suppressPostResultNextCheckCompetitors: suppressPostResultNextCheckCompetitors,
+      suppressPostResultNextCheckCompetitors:
+          suppressPostResultNextCheckCompetitors,
       auditPresentation: auditPresentation,
       justSavedFirstEntry: justSavedFirstEntry,
       postSaveEntryCount: postSaveEntryCount,
@@ -768,7 +777,8 @@ class RecordSurfaceViewState {
       repeatReturnCheckOffer: repeatReturnCheckOffer,
       earlyEvidenceTimeline: earlyEvidenceTimeline,
       showEarlyEvidenceTimeline: showEarlyEvidenceTimeline,
-      suppressEarlyRepeatPayoffCompetitors: suppressEarlyRepeatPayoffCompetitors,
+      suppressEarlyRepeatPayoffCompetitors:
+          suppressEarlyRepeatPayoffCompetitors,
       earlyFirstSignalOnRecord: earlyFirstSignalOnRecord,
       returnTomorrowCueReady: returnTomorrowCueReady,
       returnDayFlowCandidate: returnDayFlowCandidate,
@@ -778,7 +788,8 @@ class RecordSurfaceViewState {
       showFirstWeekProgressReady: showFirstWeekProgressReady,
       showEarlyReturnReminder: showEarlyReturnReminder,
       viewingConfirmedRepeatOnRecord: viewingConfirmedRepeatOnRecord,
-      suppressConfirmedRepeatInlineFeedback: suppressConfirmedRepeatInlineFeedback,
+      suppressConfirmedRepeatInlineFeedback:
+          suppressConfirmedRepeatInlineFeedback,
       showConfirmedRepeatBetaFeedback: showConfirmedRepeatBetaFeedback,
       repeatReturnChangeProof: repeatReturnChangeProof,
       patternChangedCandidate: patternChangedCandidate,
@@ -796,10 +807,12 @@ class RecordSurfaceViewState {
       hasChangeOverTimeProof: hasChangeOverTimeProof,
       postProofArchiveProof: postProofArchiveProof,
       archiveSummaryVisibleForProGate: archiveSummaryVisibleForProGate,
-      weeklyArchiveReviewVisibleForProGate: weeklyArchiveReviewVisibleForProGate,
+      weeklyArchiveReviewVisibleForProGate:
+          weeklyArchiveReviewVisibleForProGate,
       hasConfirmedRepeatForProGate: hasConfirmedRepeatForProGate,
       privateArchiveReportForProGate: privateArchiveReportForProGate,
-      privateArchiveReportPreviewForProGate: privateArchiveReportPreviewForProGate,
+      privateArchiveReportPreviewForProGate:
+          privateArchiveReportPreviewForProGate,
       patternChangedForProGate: patternChangedForProGate,
       hasReturnCheckAnsweredForProGate: hasReturnCheckAnsweredForProGate,
       showPostProofProBridge: showPostProofProBridge,
@@ -832,7 +845,8 @@ class RecordSurfaceViewState {
       currentRelevanceCandidate: currentRelevanceCandidate,
       patternReviewInboxActiveOnRecord: patternReviewInboxActiveOnRecord,
       showCurrentRelevanceOnRecordReady: showCurrentRelevanceOnRecordReady,
-      currentRelevanceQuestionActiveOnRecord: currentRelevanceQuestionActiveOnRecord,
+      currentRelevanceQuestionActiveOnRecord:
+          currentRelevanceQuestionActiveOnRecord,
       correctionMemoryCandidate: correctionMemoryCandidate,
       showCorrectionMemoryOnRecordReady: showCorrectionMemoryOnRecordReady,
       evidenceWeightingCandidate: evidenceWeightingCandidate,
@@ -840,19 +854,27 @@ class RecordSurfaceViewState {
       proofSpecificityCandidate: proofSpecificityCandidate,
       showProofSpecificityOnRecordReady: showProofSpecificityOnRecordReady,
       presentDayRelevanceCandidate: presentDayRelevanceCandidate,
-      showPresentDayRelevanceOnRecordReady: showPresentDayRelevanceOnRecordReady,
+      showPresentDayRelevanceOnRecordReady:
+          showPresentDayRelevanceOnRecordReady,
       showCaptureFreedomLine: showCaptureFreedomLine,
       timelinePositioningCandidate: timelinePositioningCandidate,
       otherEducationCardsOnRecord: otherEducationCardsOnRecord,
-      showTimelinePositioningOnRecordReady: showTimelinePositioningOnRecordReady,
+      showTimelinePositioningOnRecordReady:
+          showTimelinePositioningOnRecordReady,
       patternConfidenceEducationCount: patternConfidenceEducationCount,
-      patternConfidenceExplanationCandidate: patternConfidenceExplanationCandidate,
-      showPatternConfidenceExplanationOnRecordReady: showPatternConfidenceExplanationOnRecordReady,
+      patternConfidenceExplanationCandidate:
+          patternConfidenceExplanationCandidate,
+      showPatternConfidenceExplanationOnRecordReady:
+          showPatternConfidenceExplanationOnRecordReady,
       showProEvidenceValueOnRecordReady: showProEvidenceValueOnRecordReady,
-      showProBridgeVisibilityOnRecordReady: showProBridgeVisibilityOnRecordReady,
-      showProEvidenceValuePrivateReportOnRecord: showProEvidenceValuePrivateReportOnRecord,
-      showConfirmedRepeatWhyMattersOnRecord: showConfirmedRepeatWhyMattersOnRecord,
-      showConfirmedRepeatThoughtMapOnRecord: showConfirmedRepeatThoughtMapOnRecord,
+      showProBridgeVisibilityOnRecordReady:
+          showProBridgeVisibilityOnRecordReady,
+      showProEvidenceValuePrivateReportOnRecord:
+          showProEvidenceValuePrivateReportOnRecord,
+      showConfirmedRepeatWhyMattersOnRecord:
+          showConfirmedRepeatWhyMattersOnRecord,
+      showConfirmedRepeatThoughtMapOnRecord:
+          showConfirmedRepeatThoughtMapOnRecord,
       showPositiveReinforcementOnRecord: showPositiveReinforcementOnRecord,
       showHelpfulActionAppearedOnRecord: showHelpfulActionAppearedOnRecord,
       showChangeProofOnRecord: showChangeProofOnRecord,
@@ -871,7 +893,8 @@ class RecordSurfaceViewState {
       postSaveHasConfirmedRepeat: postSaveHasConfirmedRepeat,
       postSaveHasFirstProof: postSaveHasFirstProof,
       postSaveDegraded: postSaveDegraded,
-      showCoreValueFeedbackOnRecordPostFirstProof: showCoreValueFeedbackOnRecordPostFirstProof,
+      showCoreValueFeedbackOnRecordPostFirstProof:
+          showCoreValueFeedbackOnRecordPostFirstProof,
       returnCheckPayoffCandidate: returnCheckPayoffCandidate,
       whatChangedV2Prompt: whatChangedV2Prompt,
       whatChangedV2Display: whatChangedV2Display,
@@ -900,54 +923,74 @@ class RecordSurfaceViewState {
       whatToNoticeNextCandidate: whatToNoticeNextCandidate,
       showWhatToNoticeNextCard: showWhatToNoticeNextCard,
       showArchiveTimelineSpineOnRecord: showArchiveTimelineSpineOnRecord,
-      suppressLegacyEducationCardsForSpineOnRecord: suppressLegacyEducationCardsForSpineOnRecord,
+      suppressLegacyEducationCardsForSpineOnRecord:
+          suppressLegacyEducationCardsForSpineOnRecord,
       timelineProofMomentCandidate: timelineProofMomentCandidate,
       showTimelineProofMomentOnRecord: showTimelineProofMomentOnRecord,
       betaTesterReportCandidate: betaTesterReportCandidate,
       showBetaTesterReportOnRecord: showBetaTesterReportOnRecord,
       notRelevantRecoveryCandidate: notRelevantRecoveryCandidate,
-      proofQualityResponseTimelineCandidate: proofQualityResponseTimelineCandidate,
+      proofQualityResponseTimelineCandidate:
+          proofQualityResponseTimelineCandidate,
       proofQualityResponseSpineCandidate: proofQualityResponseSpineCandidate,
       betaProofLiftTimelineCandidate: betaProofLiftTimelineCandidate,
       returnAfterProofRecordCandidate: returnAfterProofRecordCandidate,
-      showReturnAfterProofStrengthenedOnRecordReady: showReturnAfterProofStrengthenedOnRecordReady,
-      showReturnAfterProofGenericOnRecordReady: showReturnAfterProofGenericOnRecordReady,
+      showReturnAfterProofStrengthenedOnRecordReady:
+          showReturnAfterProofStrengthenedOnRecordReady,
+      showReturnAfterProofGenericOnRecordReady:
+          showReturnAfterProofGenericOnRecordReady,
       showReturnAfterProofOnRecordReady: showReturnAfterProofOnRecordReady,
       returnAfterProofLiftV2Candidate: returnAfterProofLiftV2Candidate,
-      showReturnAfterProofLiftV2OnRecordReady: showReturnAfterProofLiftV2OnRecordReady,
+      showReturnAfterProofLiftV2OnRecordReady:
+          showReturnAfterProofLiftV2OnRecordReady,
       recordReadySurfacePriority: recordReadySurfacePriority,
       recordLoosenSignalsPreAudit: recordLoosenSignalsPreAudit,
       recordEvidenceAnchorPreAudit: recordEvidenceAnchorPreAudit,
       recordFeedbackStateForLift: recordFeedbackStateForLift,
       timelineFeedbackType: timelineFeedbackType,
       betaRepairLabInput: betaRepairLabInput,
-      showBetaRepairLabProPlacementOnRecord: showBetaRepairLabProPlacementOnRecord,
+      showBetaRepairLabProPlacementOnRecord:
+          showBetaRepairLabProPlacementOnRecord,
       betaRepairLabProPlacementResult: betaRepairLabProPlacementResult,
-      showBetaRepairLabPricingValueFramingOnRecord: showBetaRepairLabPricingValueFramingOnRecord,
-      betaRepairLabPricingValueFramingResult: betaRepairLabPricingValueFramingResult,
-      showBetaRepairLabPaywallValueOnRecord: showBetaRepairLabPaywallValueOnRecord,
+      showBetaRepairLabPricingValueFramingOnRecord:
+          showBetaRepairLabPricingValueFramingOnRecord,
+      betaRepairLabPricingValueFramingResult:
+          betaRepairLabPricingValueFramingResult,
+      showBetaRepairLabPaywallValueOnRecord:
+          showBetaRepairLabPaywallValueOnRecord,
       betaRepairLabPaywallValueResult: betaRepairLabPaywallValueResult,
       hasProEngagementOnRecord: hasProEngagementOnRecord,
-      showBetaRepairLabPricingValidationOnRecord: showBetaRepairLabPricingValidationOnRecord,
-      showBetaRepairLabEvidenceTrailClarityOnRecord: showBetaRepairLabEvidenceTrailClarityOnRecord,
-      betaRepairLabPricingValidationResult: betaRepairLabPricingValidationResult,
-      proUnderstandingLiftRecordReadyInput: proUnderstandingLiftRecordReadyInput,
-      showProUnderstandingLiftOnRecordReady: showProUnderstandingLiftOnRecordReady,
+      showBetaRepairLabPricingValidationOnRecord:
+          showBetaRepairLabPricingValidationOnRecord,
+      showBetaRepairLabEvidenceTrailClarityOnRecord:
+          showBetaRepairLabEvidenceTrailClarityOnRecord,
+      betaRepairLabPricingValidationResult:
+          betaRepairLabPricingValidationResult,
+      proUnderstandingLiftRecordReadyInput:
+          proUnderstandingLiftRecordReadyInput,
+      showProUnderstandingLiftOnRecordReady:
+          showProUnderstandingLiftOnRecordReady,
       showProVisibilityLiftOnRecordReady: showProVisibilityLiftOnRecordReady,
-      proUnderstandingLiftRecordReadyResult: proUnderstandingLiftRecordReadyResult,
+      proUnderstandingLiftRecordReadyResult:
+          proUnderstandingLiftRecordReadyResult,
       proVisibilityLiftRecordReadyResult: proVisibilityLiftRecordReadyResult,
-      showProofQualityResponseOnRecordReady: showProofQualityResponseOnRecordReady,
-      showNotRelevantRecoveryOnRecordReady: showNotRelevantRecoveryOnRecordReady,
+      showProofQualityResponseOnRecordReady:
+          showProofQualityResponseOnRecordReady,
+      showNotRelevantRecoveryOnRecordReady:
+          showNotRelevantRecoveryOnRecordReady,
       showBetaProofLiftOnRecordReady: showBetaProofLiftOnRecordReady,
       betaActivationPathPreAuditContext: betaActivationPathPreAuditContext,
       betaActivationPathPreAuditResult: betaActivationPathPreAuditResult,
       showBetaActivationPathCard: showBetaActivationPathCard,
       betaActivationPathResult: betaActivationPathResult,
-      betaFeedbackCaptureRecordReadyPreAudit: betaFeedbackCaptureRecordReadyPreAudit,
+      betaFeedbackCaptureRecordReadyPreAudit:
+          betaFeedbackCaptureRecordReadyPreAudit,
       showBetaFeedbackCaptureRecordReady: showBetaFeedbackCaptureRecordReady,
-      betaFeedbackCaptureRecordReadyResult: betaFeedbackCaptureRecordReadyResult,
+      betaFeedbackCaptureRecordReadyResult:
+          betaFeedbackCaptureRecordReadyResult,
       betaProofFeedbackCounts: betaProofFeedbackCounts,
-      betaProofFeedbackRowVisibleOnTimeline: betaProofFeedbackRowVisibleOnTimeline,
+      betaProofFeedbackRowVisibleOnTimeline:
+          betaProofFeedbackRowVisibleOnTimeline,
       proofQualityRepairInput: proofQualityRepairInput,
       showProofQualityRepairOnRecord: showProofQualityRepairOnRecord,
       proofQualityRepairResult: proofQualityRepairResult,
@@ -957,60 +1000,96 @@ class RecordSurfaceViewState {
       blocksProByProofFloorOnRecord: blocksProByProofFloorOnRecord,
       showBetaRepairLabProofOnRecord: showBetaRepairLabProofOnRecord,
       betaRepairLabProofResult: betaRepairLabProofResult,
-      blocksProCardsByProofProtectionOnRecord: blocksProCardsByProofProtectionOnRecord,
-      betaRepairLabEvidenceTrailClarityResult: betaRepairLabEvidenceTrailClarityResult,
+      blocksProCardsByProofProtectionOnRecord:
+          blocksProCardsByProofProtectionOnRecord,
+      betaRepairLabEvidenceTrailClarityResult:
+          betaRepairLabEvidenceTrailClarityResult,
       recordLoosenSignals: recordLoosenSignals,
       recordReadyProTiming: recordReadyProTiming,
       betaActivationPathFinalContext: betaActivationPathFinalContext,
       shareableNonPrivateProofResult: shareableNonPrivateProofResult,
-      showShareableNonPrivateProofOnRecord: showShareableNonPrivateProofOnRecord,
+      showShareableNonPrivateProofOnRecord:
+          showShareableNonPrivateProofOnRecord,
       proofSpecificityBoostCandidate: proofSpecificityBoostCandidate,
       timelineProofParentVisible: timelineProofParentVisible,
-      showProofSpecificityBoostOnTimelineProof: showProofSpecificityBoostOnTimelineProof,
-      showProofQualityResponseUnderTimelineProof: showProofQualityResponseUnderTimelineProof,
-      showProofQualityResponseUnderArchiveSpine: showProofQualityResponseUnderArchiveSpine,
-      showNotRelevantRecoveryUnderTimelineProof: showNotRelevantRecoveryUnderTimelineProof,
+      showProofSpecificityBoostOnTimelineProof:
+          showProofSpecificityBoostOnTimelineProof,
+      showProofQualityResponseUnderTimelineProof:
+          showProofQualityResponseUnderTimelineProof,
+      showProofQualityResponseUnderArchiveSpine:
+          showProofQualityResponseUnderArchiveSpine,
+      showNotRelevantRecoveryUnderTimelineProof:
+          showNotRelevantRecoveryUnderTimelineProof,
       showBetaProofLiftUnderTimelineProof: showBetaProofLiftUnderTimelineProof,
-      showReturnAfterProofLiftV2BelowProofOnRecord: showReturnAfterProofLiftV2BelowProofOnRecord,
-      showReturnAfterProofLiftV2InGuidanceStack: showReturnAfterProofLiftV2InGuidanceStack,
-      showReturnAfterProofBelowProofOnRecord: showReturnAfterProofBelowProofOnRecord,
+      showReturnAfterProofLiftV2BelowProofOnRecord:
+          showReturnAfterProofLiftV2BelowProofOnRecord,
+      showReturnAfterProofLiftV2InGuidanceStack:
+          showReturnAfterProofLiftV2InGuidanceStack,
+      showReturnAfterProofBelowProofOnRecord:
+          showReturnAfterProofBelowProofOnRecord,
       showReturnAfterProofInGuidanceStack: showReturnAfterProofInGuidanceStack,
-      showProUnderstandingLiftBelowProofOnRecord: showProUnderstandingLiftBelowProofOnRecord,
-      showBetaRepairLabEvidenceTrailClarityBelowProofOnRecord: showBetaRepairLabEvidenceTrailClarityBelowProofOnRecord,
-      showBetaRepairLabPricingValidationBelowProofOnRecord: showBetaRepairLabPricingValidationBelowProofOnRecord,
-      showBetaRepairLabPricingValueFramingBelowProofOnRecord: showBetaRepairLabPricingValueFramingBelowProofOnRecord,
-      showBetaRepairLabPaywallValueBelowProofOnRecord: showBetaRepairLabPaywallValueBelowProofOnRecord,
-      showBetaRepairLabProPlacementBelowProofOnRecord: showBetaRepairLabProPlacementBelowProofOnRecord,
-      showProUnderstandingLiftInProSectionOnRecord: showProUnderstandingLiftInProSectionOnRecord,
-      showProVisibilityLiftBelowProofOnRecord: showProVisibilityLiftBelowProofOnRecord,
-      showProVisibilityLiftInProSectionOnRecord: showProVisibilityLiftInProSectionOnRecord,
+      showProUnderstandingLiftBelowProofOnRecord:
+          showProUnderstandingLiftBelowProofOnRecord,
+      showBetaRepairLabEvidenceTrailClarityBelowProofOnRecord:
+          showBetaRepairLabEvidenceTrailClarityBelowProofOnRecord,
+      showBetaRepairLabPricingValidationBelowProofOnRecord:
+          showBetaRepairLabPricingValidationBelowProofOnRecord,
+      showBetaRepairLabPricingValueFramingBelowProofOnRecord:
+          showBetaRepairLabPricingValueFramingBelowProofOnRecord,
+      showBetaRepairLabPaywallValueBelowProofOnRecord:
+          showBetaRepairLabPaywallValueBelowProofOnRecord,
+      showBetaRepairLabProPlacementBelowProofOnRecord:
+          showBetaRepairLabProPlacementBelowProofOnRecord,
+      showProUnderstandingLiftInProSectionOnRecord:
+          showProUnderstandingLiftInProSectionOnRecord,
+      showProVisibilityLiftBelowProofOnRecord:
+          showProVisibilityLiftBelowProofOnRecord,
+      showProVisibilityLiftInProSectionOnRecord:
+          showProVisibilityLiftInProSectionOnRecord,
       showProBridgeBelowProofOnRecord: showProBridgeBelowProofOnRecord,
       showProBridgeInProSectionOnRecord: showProBridgeInProSectionOnRecord,
       proBridgeVisibilityRecordResult: proBridgeVisibilityRecordResult,
       patternReviewInboxActivePostSave: patternReviewInboxActivePostSave,
-      timelineProofMomentPostSaveCandidate: timelineProofMomentPostSaveCandidate,
-      showTimelineProofMomentOnFirstProofPayoff: showTimelineProofMomentOnFirstProofPayoff,
+      timelineProofMomentPostSaveCandidate:
+          timelineProofMomentPostSaveCandidate,
+      showTimelineProofMomentOnFirstProofPayoff:
+          showTimelineProofMomentOnFirstProofPayoff,
       proofSpecificityPostSaveCandidate: proofSpecificityPostSaveCandidate,
-      showProofSpecificityOnFirstProofPayoff: showProofSpecificityOnFirstProofPayoff,
-      proofSpecificityBoostPostSaveCandidate: proofSpecificityBoostPostSaveCandidate,
-      proofQualityResponseFirstProofCandidate: proofQualityResponseFirstProofCandidate,
-      proofQualityResponseTimelinePostSaveCandidate: proofQualityResponseTimelinePostSaveCandidate,
+      showProofSpecificityOnFirstProofPayoff:
+          showProofSpecificityOnFirstProofPayoff,
+      proofSpecificityBoostPostSaveCandidate:
+          proofSpecificityBoostPostSaveCandidate,
+      proofQualityResponseFirstProofCandidate:
+          proofQualityResponseFirstProofCandidate,
+      proofQualityResponseTimelinePostSaveCandidate:
+          proofQualityResponseTimelinePostSaveCandidate,
       betaProofLiftFirstProofCandidate: betaProofLiftFirstProofCandidate,
-      betaProofLiftTimelinePostSaveCandidate: betaProofLiftTimelinePostSaveCandidate,
+      betaProofLiftTimelinePostSaveCandidate:
+          betaProofLiftTimelinePostSaveCandidate,
       returnAfterProofPostSaveCandidate: returnAfterProofPostSaveCandidate,
       firstProofPayoffParentVisible: firstProofPayoffParentVisible,
-      showProofSpecificityBoostOnFirstProofPayoff: showProofSpecificityBoostOnFirstProofPayoff,
-      showProofQualityResponseOnFirstProofPayoff: showProofQualityResponseOnFirstProofPayoff,
+      showProofSpecificityBoostOnFirstProofPayoff:
+          showProofSpecificityBoostOnFirstProofPayoff,
+      showProofQualityResponseOnFirstProofPayoff:
+          showProofQualityResponseOnFirstProofPayoff,
       timelineProofPostSaveParentVisible: timelineProofPostSaveParentVisible,
-      showProofSpecificityBoostOnTimelineProofPostSave: showProofSpecificityBoostOnTimelineProofPostSave,
-      showProofQualityResponseOnTimelineProofPostSave: showProofQualityResponseOnTimelineProofPostSave,
+      showProofSpecificityBoostOnTimelineProofPostSave:
+          showProofSpecificityBoostOnTimelineProofPostSave,
+      showProofQualityResponseOnTimelineProofPostSave:
+          showProofQualityResponseOnTimelineProofPostSave,
       showBetaProofLiftOnFirstProofPayoff: showBetaProofLiftOnFirstProofPayoff,
-      showBetaProofLiftUnderTimelineProofPostSave: showBetaProofLiftUnderTimelineProofPostSave,
-      showReturnAfterProofStrengthenedOnFirstProofPayoff: showReturnAfterProofStrengthenedOnFirstProofPayoff,
-      showReturnAfterProofGenericOnFirstProofPayoff: showReturnAfterProofGenericOnFirstProofPayoff,
-      showReturnAfterProofOnFirstProofPayoff: showReturnAfterProofOnFirstProofPayoff,
-      returnAfterProofLiftV2PostSaveCandidate: returnAfterProofLiftV2PostSaveCandidate,
-      showReturnAfterProofLiftV2OnPostSave: showReturnAfterProofLiftV2OnPostSave,
+      showBetaProofLiftUnderTimelineProofPostSave:
+          showBetaProofLiftUnderTimelineProofPostSave,
+      showReturnAfterProofStrengthenedOnFirstProofPayoff:
+          showReturnAfterProofStrengthenedOnFirstProofPayoff,
+      showReturnAfterProofGenericOnFirstProofPayoff:
+          showReturnAfterProofGenericOnFirstProofPayoff,
+      showReturnAfterProofOnFirstProofPayoff:
+          showReturnAfterProofOnFirstProofPayoff,
+      returnAfterProofLiftV2PostSaveCandidate:
+          returnAfterProofLiftV2PostSaveCandidate,
+      showReturnAfterProofLiftV2OnPostSave:
+          showReturnAfterProofLiftV2OnPostSave,
       postSaveLoosenSignalsPreAudit: postSaveLoosenSignalsPreAudit,
       postSaveEvidenceAnchorPreAudit: postSaveEvidenceAnchorPreAudit,
       postSaveFeedbackStateForLift: postSaveFeedbackStateForLift,
@@ -1027,9 +1106,12 @@ class RecordSurfaceViewState {
       showProBridgeVisibilityPostSave: showProBridgeVisibilityPostSave,
       showProLockMomentPostSave: showProLockMomentPostSave,
       monthlyPrivateReportPreviewPostSave: monthlyPrivateReportPreviewPostSave,
-      showMonthlyPrivateReportPreviewPostSave: showMonthlyPrivateReportPreviewPostSave,
-      betaFeedbackIntelligenceSurfaceOnRecordReady: betaFeedbackIntelligenceSurfaceOnRecordReady,
-      betaFeedbackIntelligenceSurfacePostSave: betaFeedbackIntelligenceSurfacePostSave,
+      showMonthlyPrivateReportPreviewPostSave:
+          showMonthlyPrivateReportPreviewPostSave,
+      betaFeedbackIntelligenceSurfaceOnRecordReady:
+          betaFeedbackIntelligenceSurfaceOnRecordReady,
+      betaFeedbackIntelligenceSurfacePostSave:
+          betaFeedbackIntelligenceSurfacePostSave,
       helpedTrackingPrompt: helpedTrackingPrompt,
       showHelpedTracking: showHelpedTracking,
       showReturnCheckPayoff: showReturnCheckPayoff,
@@ -1081,8 +1163,10 @@ class RecordSurfaceViewState {
       postSaveArchiveHierarchy: postSaveArchiveHierarchy,
       suppressNoisyRepeatPostSaveCards: suppressNoisyRepeatPostSaveCards,
       repeatPostSaveThoughtMapPreview: repeatPostSaveThoughtMapPreview,
-      showDegradedTranscriptFocusedPostSave: showDegradedTranscriptFocusedPostSave,
-      suppressDegradedTranscriptPostSaveCompetitors: suppressDegradedTranscriptPostSaveCompetitors,
+      showDegradedTranscriptFocusedPostSave:
+          showDegradedTranscriptFocusedPostSave,
+      suppressDegradedTranscriptPostSaveCompetitors:
+          suppressDegradedTranscriptPostSaveCompetitors,
       returningUserToday: returningUserToday,
       nextMomentPrompt: nextMomentPrompt,
       dailyArchiveExercise: dailyArchiveExercise,
@@ -1128,7 +1212,9 @@ class RecordSurfaceViewState {
     'justSavedFirstEntry': _debugSnap(justSavedFirstEntry),
     'postSaveEntryCount': _debugSnap(postSaveEntryCount),
     'suppressNoisyFirstSaveCards': _debugSnap(suppressNoisyFirstSaveCards),
-    'suppressEarlyPatternClaimCards': _debugSnap(suppressEarlyPatternClaimCards),
+    'suppressEarlyPatternClaimCards': _debugSnap(
+      suppressEarlyPatternClaimCards,
+    ),
     'suppressLatestSaveArchiveInsight': _debugSnap(
       suppressLatestSaveArchiveInsight,
     ),
@@ -1153,7 +1239,9 @@ class RecordSurfaceViewState {
     'firstWeekProgressReady': _debugSnap(firstWeekProgressReady),
     'showFirstWeekProgressReady': _debugSnap(showFirstWeekProgressReady),
     'showEarlyReturnReminder': _debugSnap(showEarlyReturnReminder),
-    'viewingConfirmedRepeatOnRecord': _debugSnap(viewingConfirmedRepeatOnRecord),
+    'viewingConfirmedRepeatOnRecord': _debugSnap(
+      viewingConfirmedRepeatOnRecord,
+    ),
     'suppressConfirmedRepeatInlineFeedback': _debugSnap(
       suppressConfirmedRepeatInlineFeedback,
     ),
@@ -1165,7 +1253,9 @@ class RecordSurfaceViewState {
     'patternChangedDismissed': _debugSnap(patternChangedDismissed),
     'confirmedRepeatThoughtMap': _debugSnap(confirmedRepeatThoughtMap),
     'positivePattern': _debugSnap(positivePattern),
-    'helpfulActionAppearedCandidate': _debugSnap(helpfulActionAppearedCandidate),
+    'helpfulActionAppearedCandidate': _debugSnap(
+      helpfulActionAppearedCandidate,
+    ),
     'showHelpfulActionAppearedEligible': _debugSnap(
       showHelpfulActionAppearedEligible,
     ),
@@ -1186,7 +1276,9 @@ class RecordSurfaceViewState {
       weeklyArchiveReviewVisibleForProGate,
     ),
     'hasConfirmedRepeatForProGate': _debugSnap(hasConfirmedRepeatForProGate),
-    'privateArchiveReportForProGate': _debugSnap(privateArchiveReportForProGate),
+    'privateArchiveReportForProGate': _debugSnap(
+      privateArchiveReportForProGate,
+    ),
     'privateArchiveReportPreviewForProGate': _debugSnap(
       privateArchiveReportPreviewForProGate,
     ),
@@ -1226,7 +1318,9 @@ class RecordSurfaceViewState {
       showPrivateArchiveReportOnRecord,
     ),
     'showDailyReturnReasonOnRecord': _debugSnap(showDailyReturnReasonOnRecord),
-    'showPostProofProBridgeOnRecord': _debugSnap(showPostProofProBridgeOnRecord),
+    'showPostProofProBridgeOnRecord': _debugSnap(
+      showPostProofProBridgeOnRecord,
+    ),
     'firstProofPayoffSeenOnRecord': _debugSnap(firstProofPayoffSeenOnRecord),
     'isDegradedTranscriptOnRecord': _debugSnap(isDegradedTranscriptOnRecord),
     'currentRelevanceCandidate': _debugSnap(currentRelevanceCandidate),
@@ -1438,7 +1532,9 @@ class RecordSurfaceViewState {
     'showNotRelevantRecoveryOnRecordReady': _debugSnap(
       showNotRelevantRecoveryOnRecordReady,
     ),
-    'showBetaProofLiftOnRecordReady': _debugSnap(showBetaProofLiftOnRecordReady),
+    'showBetaProofLiftOnRecordReady': _debugSnap(
+      showBetaProofLiftOnRecordReady,
+    ),
     'betaActivationPathPreAuditContext': _debugSnap(
       betaActivationPathPreAuditContext,
     ),
@@ -1461,13 +1557,17 @@ class RecordSurfaceViewState {
       betaProofFeedbackRowVisibleOnTimeline,
     ),
     'proofQualityRepairInput': _debugSnap(proofQualityRepairInput),
-    'showProofQualityRepairOnRecord': _debugSnap(showProofQualityRepairOnRecord),
+    'showProofQualityRepairOnRecord': _debugSnap(
+      showProofQualityRepairOnRecord,
+    ),
     'proofQualityRepairResult': _debugSnap(proofQualityRepairResult),
     'proofFloorRescueInput': _debugSnap(proofFloorRescueInput),
     'showProofFloorRescueOnRecord': _debugSnap(showProofFloorRescueOnRecord),
     'proofFloorRescueResult': _debugSnap(proofFloorRescueResult),
     'blocksProByProofFloorOnRecord': _debugSnap(blocksProByProofFloorOnRecord),
-    'showBetaRepairLabProofOnRecord': _debugSnap(showBetaRepairLabProofOnRecord),
+    'showBetaRepairLabProofOnRecord': _debugSnap(
+      showBetaRepairLabProofOnRecord,
+    ),
     'betaRepairLabProofResult': _debugSnap(betaRepairLabProofResult),
     'blocksProCardsByProofProtectionOnRecord': _debugSnap(
       blocksProCardsByProofProtectionOnRecord,
@@ -1477,12 +1577,18 @@ class RecordSurfaceViewState {
     ),
     'recordLoosenSignals': _debugSnap(recordLoosenSignals),
     'recordReadyProTiming': _debugSnap(recordReadyProTiming),
-    'betaActivationPathFinalContext': _debugSnap(betaActivationPathFinalContext),
-    'shareableNonPrivateProofResult': _debugSnap(shareableNonPrivateProofResult),
+    'betaActivationPathFinalContext': _debugSnap(
+      betaActivationPathFinalContext,
+    ),
+    'shareableNonPrivateProofResult': _debugSnap(
+      shareableNonPrivateProofResult,
+    ),
     'showShareableNonPrivateProofOnRecord': _debugSnap(
       showShareableNonPrivateProofOnRecord,
     ),
-    'proofSpecificityBoostCandidate': _debugSnap(proofSpecificityBoostCandidate),
+    'proofSpecificityBoostCandidate': _debugSnap(
+      proofSpecificityBoostCandidate,
+    ),
     'timelineProofParentVisible': _debugSnap(timelineProofParentVisible),
     'showProofSpecificityBoostOnTimelineProof': _debugSnap(
       showProofSpecificityBoostOnTimelineProof,
@@ -1618,7 +1724,9 @@ class RecordSurfaceViewState {
       showReturnAfterProofLiftV2OnPostSave,
     ),
     'postSaveLoosenSignalsPreAudit': _debugSnap(postSaveLoosenSignalsPreAudit),
-    'postSaveEvidenceAnchorPreAudit': _debugSnap(postSaveEvidenceAnchorPreAudit),
+    'postSaveEvidenceAnchorPreAudit': _debugSnap(
+      postSaveEvidenceAnchorPreAudit,
+    ),
     'postSaveFeedbackStateForLift': _debugSnap(postSaveFeedbackStateForLift),
     'hasProEngagementOnPostSave': _debugSnap(hasProEngagementOnPostSave),
     'proUnderstandingLiftPostSaveInput': _debugSnap(
@@ -1684,16 +1792,22 @@ class RecordSurfaceViewState {
     'betaTestScriptCardCandidate': _debugSnap(betaTestScriptCardCandidate),
     'showBetaTestScriptCard': _debugSnap(showBetaTestScriptCard),
     'daysSinceLastEntry': _debugSnap(daysSinceLastEntry),
-    'showReturnedAfterDelayRecovery': _debugSnap(showReturnedAfterDelayRecovery),
+    'showReturnedAfterDelayRecovery': _debugSnap(
+      showReturnedAfterDelayRecovery,
+    ),
     'nextBestActionCandidate': _debugSnap(nextBestActionCandidate),
     'showNextBestActionOnRecord': _debugSnap(showNextBestActionOnRecord),
-    'postSaveReturnHandoffCandidate': _debugSnap(postSaveReturnHandoffCandidate),
+    'postSaveReturnHandoffCandidate': _debugSnap(
+      postSaveReturnHandoffCandidate,
+    ),
     'returnTomorrowCuePostSave': _debugSnap(returnTomorrowCuePostSave),
     'postSaveDegradedForReturnCue': _debugSnap(postSaveDegradedForReturnCue),
     'comeBackTomorrowV2PostSaveWatch': _debugSnap(
       comeBackTomorrowV2PostSaveWatch,
     ),
-    'showComeBackTomorrowV2PostSave': _debugSnap(showComeBackTomorrowV2PostSave),
+    'showComeBackTomorrowV2PostSave': _debugSnap(
+      showComeBackTomorrowV2PostSave,
+    ),
     'showPostSaveCuriosityHook': _debugSnap(showPostSaveCuriosityHook),
     'betaFeedbackCapturePostSavePreAudit': _debugSnap(
       betaFeedbackCapturePostSavePreAudit,
@@ -1759,7 +1873,9 @@ class RecordSurfaceViewState {
     ),
     'showPatternChangedRecordCta': _debugSnap(showPatternChangedRecordCta),
     'showArchiveSummaryRecordCta': _debugSnap(showArchiveSummaryRecordCta),
-    'showDailyReturnReasonRecordCta': _debugSnap(showDailyReturnReasonRecordCta),
+    'showDailyReturnReasonRecordCta': _debugSnap(
+      showDailyReturnReasonRecordCta,
+    ),
     'showFirstWeekLoopRecordCta': _debugSnap(showFirstWeekLoopRecordCta),
   };
 
@@ -1869,7 +1985,8 @@ class RecordSurfaceViewState {
   final int otherEducationCardsOnRecord;
   final bool showTimelinePositioningOnRecordReady;
   final int patternConfidenceEducationCount;
-  final PatternConfidenceExplanationResult? patternConfidenceExplanationCandidate;
+  final PatternConfidenceExplanationResult?
+  patternConfidenceExplanationCandidate;
   final bool showPatternConfidenceExplanationOnRecordReady;
   final bool showProEvidenceValueOnRecordReady;
   final bool showProBridgeVisibilityOnRecordReady;
@@ -1954,7 +2071,8 @@ class RecordSurfaceViewState {
   final bool showBetaRepairLabPricingValidationOnRecord;
   final bool showBetaRepairLabEvidenceTrailClarityOnRecord;
   final PricingValidationResult betaRepairLabPricingValidationResult;
-  final ProUnderstandingLiftVisibilityInput proUnderstandingLiftRecordReadyInput;
+  final ProUnderstandingLiftVisibilityInput
+  proUnderstandingLiftRecordReadyInput;
   final bool showProUnderstandingLiftOnRecordReady;
   final bool showProVisibilityLiftOnRecordReady;
   final ProUnderstandingLiftResult? proUnderstandingLiftRecordReadyResult;
@@ -2017,7 +2135,8 @@ class RecordSurfaceViewState {
   final bool showProofSpecificityOnFirstProofPayoff;
   final ProofSpecificityBoostResult proofSpecificityBoostPostSaveCandidate;
   final ProofQualityResponseResult proofQualityResponseFirstProofCandidate;
-  final ProofQualityResponseResult proofQualityResponseTimelinePostSaveCandidate;
+  final ProofQualityResponseResult
+  proofQualityResponseTimelinePostSaveCandidate;
   final BetaProofLiftResult betaProofLiftFirstProofCandidate;
   final BetaProofLiftResult betaProofLiftTimelinePostSaveCandidate;
   final ReturnAfterProofResult returnAfterProofPostSaveCandidate;
@@ -2051,8 +2170,10 @@ class RecordSurfaceViewState {
   final bool showProLockMomentPostSave;
   final MonthlyPrivateReportPreview? monthlyPrivateReportPreviewPostSave;
   final bool showMonthlyPrivateReportPreviewPostSave;
-  final BetaFeedbackIntelligenceSurface? betaFeedbackIntelligenceSurfaceOnRecordReady;
-  final BetaFeedbackIntelligenceSurface? betaFeedbackIntelligenceSurfacePostSave;
+  final BetaFeedbackIntelligenceSurface?
+  betaFeedbackIntelligenceSurfaceOnRecordReady;
+  final BetaFeedbackIntelligenceSurface?
+  betaFeedbackIntelligenceSurfacePostSave;
   final HelpedTrackingPrompt? helpedTrackingPrompt;
   final bool showHelpedTracking;
   final bool showReturnCheckPayoff;

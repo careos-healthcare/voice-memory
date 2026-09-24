@@ -13,7 +13,9 @@ import 'package:flutter/material.dart';
 /// Shown before a strong cross-thread memory claim renders.
 class CrossThreadConfirmationCard extends StatelessWidget {
   const CrossThreadConfirmationCard({
-    required this.cardType, required this.onChanged, super.key,
+    required this.cardType,
+    required this.onChanged,
+    super.key,
   });
 
   final MemoryCardType cardType;

@@ -336,21 +336,24 @@ abstract class Copy {
       }
     });
 
-    test('the plaintext-audio veto cannot be overridden by an allowed context', () {
-      // Both halves of the veto's contract: a claim that pairs recorded audio
-      // with encryption reports even when it also matches an approved context,
-      // and the reason names the audit rather than the missing context, so the
-      // failure explains which store contradicts it.
-      final violations = PrivacyCopyPolicy.violationsInLiteral(
-        'Your encrypted audio is included in the encrypted backup.',
-      );
-      expect(violations, isNotEmpty);
-      expect(
-        violations.any((v) => v.contains('PrivateStorageAudit')),
-        isTrue,
-        reason: 'the veto, not the missing-context rule, should fire',
-      );
-    });
+    test(
+      'the plaintext-audio veto cannot be overridden by an allowed context',
+      () {
+        // Both halves of the veto's contract: a claim that pairs recorded audio
+        // with encryption reports even when it also matches an approved context,
+        // and the reason names the audit rather than the missing context, so the
+        // failure explains which store contradicts it.
+        final violations = PrivacyCopyPolicy.violationsInLiteral(
+          'Your encrypted audio is included in the encrypted backup.',
+        );
+        expect(violations, isNotEmpty);
+        expect(
+          violations.any((v) => v.contains('PrivateStorageAudit')),
+          isTrue,
+          reason: 'the veto, not the missing-context rule, should fire',
+        );
+      },
+    );
   });
 
   group('Machine identifier literals', () {

@@ -45,7 +45,11 @@ abstract final class CuriosityNotificationLaunchController {
         await handleHookIdTap(coldStartHookId, repository: repository);
       }
     } catch (e, stackTrace) {
-      AppLogger.error('Unhandled error caught', error: e, stackTrace: stackTrace);
+      AppLogger.error(
+        'Unhandled error caught',
+        error: e,
+        stackTrace: stackTrace,
+      );
       // Notification routing is optional; never crash startup.
     }
   }
@@ -63,7 +67,11 @@ abstract final class CuriosityNotificationLaunchController {
         _pendingHook = null;
       }
     } catch (e, stackTrace) {
-      AppLogger.error('Unhandled error caught', error: e, stackTrace: stackTrace);
+      AppLogger.error(
+        'Unhandled error caught',
+        error: e,
+        stackTrace: stackTrace,
+      );
       // Ignore tap handling failures.
     }
   }

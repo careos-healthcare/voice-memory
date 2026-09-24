@@ -10,7 +10,8 @@ import 'package:flutter/material.dart';
 /// Compact dashboard — current signal, evidence progress, quick links.
 class ArchiveHomeDashboard extends StatelessWidget {
   const ArchiveHomeDashboard({
-    required this.snapshot, super.key,
+    required this.snapshot,
+    super.key,
     this.onOpenPatterns,
   });
 

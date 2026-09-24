@@ -209,14 +209,30 @@ abstract final class JournalConflictResolver {
     final pick = pickLocalOnConflict ? local : remote;
     final other = pickLocalOnConflict ? remote : local;
 
-    final mergedReflection = _mergeReflection(local.reflection, remote.reflection, pickLocalOnConflict);
-    final mergedDisplay = _mergeDisplay(local.display, remote.display, pickLocalOnConflict);
-    final mergedProof = _mergeProof(local.proof, remote.proof, pickLocalOnConflict);
+    final mergedReflection = _mergeReflection(
+      local.reflection,
+      remote.reflection,
+      pickLocalOnConflict,
+    );
+    final mergedDisplay = _mergeDisplay(
+      local.display,
+      remote.display,
+      pickLocalOnConflict,
+    );
+    final mergedProof = _mergeProof(
+      local.proof,
+      remote.proof,
+      pickLocalOnConflict,
+    );
 
     return JournalEntry(
       id: local.id,
       createdAt: local.createdAt,
-      transcript: _pick(local.transcript, remote.transcript, pickLocalOnConflict),
+      transcript: _pick(
+        local.transcript,
+        remote.transcript,
+        pickLocalOnConflict,
+      ),
       durationSeconds: _pick(
         local.durationSeconds,
         remote.durationSeconds,
@@ -241,7 +257,12 @@ abstract final class JournalConflictResolver {
       ownerKey: remote.ownerKey ?? local.ownerKey,
       display: mergedDisplay,
       proof: mergedProof,
-      sync: _mergeSyncMetadata(local: local, remote: remote, pick: pick, other: other),
+      sync: _mergeSyncMetadata(
+        local: local,
+        remote: remote,
+        pick: pick,
+        other: other,
+      ),
     );
   }
 
@@ -300,7 +321,9 @@ abstract final class JournalConflictResolver {
       ),
       recurringThemes: _listEqual(local.recurringThemes, remote.recurringThemes)
           ? local.recurringThemes
-          : (pickLocalOnConflict ? local.recurringThemes : remote.recurringThemes),
+          : (pickLocalOnConflict
+                ? local.recurringThemes
+                : remote.recurringThemes),
       exactLanguagePattern: _pick(
         local.exactLanguagePattern,
         remote.exactLanguagePattern,
@@ -346,7 +369,11 @@ abstract final class JournalConflictResolver {
     bool pickLocalOnConflict,
   ) {
     return JournalDisplayMetadata(
-      treatAsNew: _pick(local.treatAsNew, remote.treatAsNew, pickLocalOnConflict),
+      treatAsNew: _pick(
+        local.treatAsNew,
+        remote.treatAsNew,
+        pickLocalOnConflict,
+      ),
       connectionApproved: _pick(
         local.connectionApproved,
         remote.connectionApproved,
@@ -357,7 +384,11 @@ abstract final class JournalConflictResolver {
         remote.keepExactDetails,
         pickLocalOnConflict,
       ),
-      keepSeparate: _pick(local.keepSeparate, remote.keepSeparate, pickLocalOnConflict),
+      keepSeparate: _pick(
+        local.keepSeparate,
+        remote.keepSeparate,
+        pickLocalOnConflict,
+      ),
       archiveThreadId: _pickOptional(
         local.archiveThreadId,
         remote.archiveThreadId,
@@ -369,8 +400,16 @@ abstract final class JournalConflictResolver {
         pickLocalOnConflict,
       ),
       isPinned: _pick(local.isPinned, remote.isPinned, pickLocalOnConflict),
-      pinnedAt: _pickOptional(local.pinnedAt, remote.pinnedAt, pickLocalOnConflict),
-      isArchived: _pick(local.isArchived, remote.isArchived, pickLocalOnConflict),
+      pinnedAt: _pickOptional(
+        local.pinnedAt,
+        remote.pinnedAt,
+        pickLocalOnConflict,
+      ),
+      isArchived: _pick(
+        local.isArchived,
+        remote.isArchived,
+        pickLocalOnConflict,
+      ),
       archivedAt: _pickOptional(
         local.archivedAt,
         remote.archivedAt,
@@ -456,7 +495,10 @@ abstract final class JournalConflictResolver {
     return pickLocalOnConflict ? local : remote;
   }
 
-  static JournalEntry _asSynced(JournalEntry remote, {required JournalEntry local}) {
+  static JournalEntry _asSynced(
+    JournalEntry remote, {
+    required JournalEntry local,
+  }) {
     return remote.copyWith(
       localAudioPath: local.localAudioPath,
       ownerKey: remote.ownerKey ?? local.ownerKey,
@@ -498,7 +540,11 @@ abstract final class JournalConflictResolver {
     }
 
     compareField('transcript', local.transcript, remote.transcript);
-    compareField('durationSeconds', local.durationSeconds, remote.durationSeconds);
+    compareField(
+      'durationSeconds',
+      local.durationSeconds,
+      remote.durationSeconds,
+    );
     compareField('deletedAt', local.deletedAt, remote.deletedAt);
     compareField('isPinned', local.isPinned, remote.isPinned);
     compareField('isArchived', local.isArchived, remote.isArchived);

@@ -12,7 +12,9 @@ import 'package:flutter/material.dart';
 /// Post-save emotional payoff after the third related save — no extra CTAs.
 class FirstProofMomentCard extends StatefulWidget {
   const FirstProofMomentCard({
-    required this.moment, required this.entryCount, super.key,
+    required this.moment,
+    required this.entryCount,
+    super.key,
   });
 
   final FirstProofMoment moment;

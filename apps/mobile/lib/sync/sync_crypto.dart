@@ -47,7 +47,9 @@ class SyncCrypto {
   }
 
   /// Encrypts [reflection] locally into an [EncryptedPayloadDto] for sync.
-  Future<EncryptedPayloadDto> encryptReflection(ReflectionDto reflection) async {
+  Future<EncryptedPayloadDto> encryptReflection(
+    ReflectionDto reflection,
+  ) async {
     final envelope = await encryptJson(reflection.toJson());
     return EncryptedPayloadDto.fromDomain(envelope);
   }
@@ -218,7 +220,9 @@ class ReflectionEncryptionService {
     return SyncCrypto(keyBytes);
   }
 
-  Future<EncryptedPayloadDto> encryptReflection(ReflectionDto reflection) async {
+  Future<EncryptedPayloadDto> encryptReflection(
+    ReflectionDto reflection,
+  ) async {
     return (await _crypto()).encryptReflection(reflection);
   }
 

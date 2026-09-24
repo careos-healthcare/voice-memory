@@ -9,11 +9,15 @@ import 'package:flutter/material.dart';
 /// Surfaces a saved archive correction — no transcript text, no Pro CTA.
 class CorrectionMemoryCard extends StatefulWidget {
   const CorrectionMemoryCard({
-    required this.result, required this.source, super.key,
+    required this.result,
+    required this.source,
+    super.key,
   });
 
   const CorrectionMemoryCard.test({
-    required this.result, required this.source, super.key,
+    required this.result,
+    required this.source,
+    super.key,
   });
 
   final CorrectionMemoryResult result;

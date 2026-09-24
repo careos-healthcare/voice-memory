@@ -46,7 +46,9 @@ void main() {
     expect(count, 15);
     expect(themes.map((row) => row['theme']), ['career', 'health', 'projects']);
     expect(width, 384 * 4);
-    final anxious = await service.search('Find times I felt anxious about work');
+    final anxious = await service.search(
+      'Find times I felt anxious about work',
+    );
     final milestones = await service.search('Show project milestones');
     final sleep = await service.search('How have I been sleeping');
 
@@ -56,7 +58,10 @@ void main() {
     expect(anxious.map((hit) => hit.entry.id), contains('career-review'));
 
     expect(milestones.first.entry.theme, 'projects');
-    expect(milestones.map((hit) => hit.entry.id), contains('project-prototype'));
+    expect(
+      milestones.map((hit) => hit.entry.id),
+      contains('project-prototype'),
+    );
 
     expect(sleep.first.entry.theme, 'health');
     expect(SampleMemoryVaultService.vecQuery, contains('MATCH'));
@@ -81,11 +86,16 @@ void main() {
     expect(find.text('Unlock Your Personal Vault'), findsOneWidget);
 
     await tester.tap(find.byKey(const Key('vault_prompt_milestones')));
-    await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 300)));
+    await tester.runAsync(
+      () => Future<void>.delayed(const Duration(milliseconds: 300)),
+    );
     await tester.pump();
 
     expect(find.textContaining('Relevance'), findsWidgets);
-    expect(find.byKey(const Key('vault_hit_project-prototype')), findsOneWidget);
+    expect(
+      find.byKey(const Key('vault_hit_project-prototype')),
+      findsOneWidget,
+    );
 
     await tester.tap(find.byKey(const Key('vault_unlock')));
     await tester.pump();

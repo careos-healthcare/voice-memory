@@ -30,7 +30,8 @@ const sampleVaultRows = <({String id, String theme, String title, String body})>
     id: 'career-quarter',
     theme: 'career',
     title: 'Quarter close',
-    body: 'Grateful for the team after we closed the quarter. Work felt lighter.',
+    body:
+        'Grateful for the team after we closed the quarter. Work felt lighter.',
   ),
   (
     id: 'career-interview',
@@ -50,7 +51,8 @@ const sampleVaultRows = <({String id, String theme, String title, String body})>
     id: 'project-reading',
     theme: 'projects',
     title: 'Reading list',
-    body: 'Shipped the reading list project milestone after three quiet weekends.',
+    body:
+        'Shipped the reading list project milestone after three quiet weekends.',
   ),
   (
     id: 'project-photos',
@@ -69,7 +71,8 @@ const sampleVaultRows = <({String id, String theme, String title, String body})>
     id: 'project-bookshelf',
     theme: 'projects',
     title: 'Bookshelf',
-    body: 'Built the bookshelf project and marked the paint job as a milestone.',
+    body:
+        'Built the bookshelf project and marked the paint job as a milestone.',
   ),
   (
     id: 'wellness-sleep',
@@ -93,7 +96,8 @@ const sampleVaultRows = <({String id, String theme, String title, String body})>
     id: 'wellness-rest',
     theme: 'health',
     title: 'Rest day',
-    body: 'Rest day. No meetings, just a slow walk, earlier sleep, and an early night.',
+    body:
+        'Rest day. No meetings, just a slow walk, earlier sleep, and an early night.',
   ),
   (
     id: 'wellness-evening',

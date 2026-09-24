@@ -242,23 +242,26 @@ void main() {
       );
     });
 
-    test('denied OS status does not become ready from the recorder plugin', () async {
-      MicrophonePermissionEnvironment.setIosPhysicalForTest(true);
-      final gateway = FakeMicrophonePermissionGateway(
-        statusValue: PermissionStatus.denied,
-      );
-      final recording = RecordingService.create(
-        testMode: true,
-        permissionGateway: gateway,
-      );
+    test(
+      'denied OS status does not become ready from the recorder plugin',
+      () async {
+        MicrophonePermissionEnvironment.setIosPhysicalForTest(true);
+        final gateway = FakeMicrophonePermissionGateway(
+          statusValue: PermissionStatus.denied,
+        );
+        final recording = RecordingService.create(
+          testMode: true,
+          permissionGateway: gateway,
+        );
 
-      expect(
-        await recording.checkMicrophone(),
-        RecordingPhase.permissionDenied,
-      );
-      final resolution = await recording.evaluateMicrophonePermission();
-      expect(resolution.state, MicrophonePermissionState.deniedCanAskAgain);
-    });
+        expect(
+          await recording.checkMicrophone(),
+          RecordingPhase.permissionDenied,
+        );
+        final resolution = await recording.evaluateMicrophonePermission();
+        expect(resolution.state, MicrophonePermissionState.deniedCanAskAgain);
+      },
+    );
 
     test('denied OS status does not start capture', () async {
       MicrophonePermissionEnvironment.setIosPhysicalForTest(true);

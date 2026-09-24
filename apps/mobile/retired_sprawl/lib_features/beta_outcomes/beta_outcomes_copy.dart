@@ -33,7 +33,8 @@ abstract final class BetaOutcomesCopy {
   static const String proInterestNotePresentLabel =
       ProInterestCopy.betaOutcomesNotePresentLabel;
 
-  static const String betaInviteCopiedLabel = BetaInviteCopy.betaOutcomesTotalLabel;
+  static const String betaInviteCopiedLabel =
+      BetaInviteCopy.betaOutcomesTotalLabel;
   static const String betaInviteLastVariantLabel =
       BetaInviteCopy.betaOutcomesLastVariantLabel;
   static const String betaInviteTaskCopiedLabel =
@@ -42,7 +43,8 @@ abstract final class BetaOutcomesCopy {
   static const firstWeekPathProgressLabel = 'First week path progress';
   static const archiveClarityStageLabel = 'Archive clarity stage';
 
-  static const String openBetaInvitePackButton = BetaInviteCopy.openBetaInviteButton;
+  static const String openBetaInvitePackButton =
+      BetaInviteCopy.openBetaInviteButton;
 
   static const yesLabel = 'Yes';
   static const noLabel = 'No';

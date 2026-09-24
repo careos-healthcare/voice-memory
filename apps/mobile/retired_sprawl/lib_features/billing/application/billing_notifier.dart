@@ -5,7 +5,8 @@ import 'package:archiveme_mobile/billing/store_billing_port.dart';
 import 'package:archiveme_mobile/core/di/network_providers.dart';
 import 'package:archiveme_mobile/core/di/storage_providers.dart';
 import 'package:archiveme_mobile/features/monetization/subscription_manager.dart';
-import 'package:archiveme_mobile/features/auth/application/auth_session_notifier.dart' show AuthSessionNotifier;
+import 'package:archiveme_mobile/features/auth/application/auth_session_notifier.dart'
+    show AuthSessionNotifier;
 import 'package:archiveme_mobile/features/billing/application/billing_startup_result.dart';
 import 'package:archiveme_mobile/features/billing/application/billing_state.dart';
 import 'package:archiveme_mobile/features/paywall/archive_loop_entitlements.dart';
@@ -260,7 +261,9 @@ class BillingNotifier extends Notifier<BillingState> {
   Future<void> _syncLoopProFlag({required bool isPro}) async {
     if (!isPro || !AppServices.isInitialized) return;
     try {
-      await ArchiveLoopEntitlementStore(AppServices.instance.prefs).setPro(true);
+      await ArchiveLoopEntitlementStore(
+        AppServices.instance.prefs,
+      ).setPro(true);
     } catch (e) {
       _logException('loop_pro_flag_sync_skipped', e);
     }

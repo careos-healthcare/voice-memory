@@ -19,7 +19,8 @@ import 'dart:async';
 /// Compact archive milestones card — computed locally, no journal writes.
 class ArchiveMilestonesCard extends StatefulWidget {
   const ArchiveMilestonesCard({
-    required this.entries, super.key,
+    required this.entries,
+    super.key,
     this.onAddMoment,
     this.watchlistStore,
     this.returnRitualStore,
@@ -31,7 +32,8 @@ class ArchiveMilestonesCard extends StatefulWidget {
   });
 
   const ArchiveMilestonesCard.test({
-    required this.entries, super.key,
+    required this.entries,
+    super.key,
     this.initialWatchlistCount = 0,
     this._initialReturnRitual,
     this.onAddMoment,

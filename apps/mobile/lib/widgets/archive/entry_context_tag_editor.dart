@@ -9,7 +9,10 @@ import 'package:flutter/material.dart';
 /// Shows the current context tag and lets users edit it later.
 class EntryContextTagEditor extends StatelessWidget {
   const EntryContextTagEditor({
-    required this.entry, required this.journalStore, required this.onChanged, super.key,
+    required this.entry,
+    required this.journalStore,
+    required this.onChanged,
+    super.key,
   });
 
   final JournalEntry entry;

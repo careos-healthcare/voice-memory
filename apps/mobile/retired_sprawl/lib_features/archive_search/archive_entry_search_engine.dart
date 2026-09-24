@@ -32,7 +32,8 @@ class ArchiveEntrySearchEngine {
 
   List<ArchiveEntrySearchResult> search({
     required List<JournalEntry> entries,
-    required ArchiveEntrySearchQuery query, List<PressureCheckInRecord> records = const [],
+    required ArchiveEntrySearchQuery query,
+    List<PressureCheckInRecord> records = const [],
     List<ArchiveCollection> collections = const [],
     List<ArchiveThread> threads = const [],
     List<ArchivePack> packs = const [],
@@ -131,9 +132,9 @@ class ArchiveEntrySearchEngine {
           ],
           threadLabel: _threadLabel(entry.archiveThreadId, threads),
           packLabel: _packLabel(entry.archivePackId, packs),
-          entryTypeLabel:
-              EntryAboutness.fromId(entry.displayPresentation.entryAboutness)
-                  .label,
+          entryTypeLabel: EntryAboutness.fromId(
+            entry.displayPresentation.entryAboutness,
+          ).label,
           surfacingLabel: surfacingChip,
           preservedOriginalLabel: preservedChip,
           savedDetailLabel: savedDetailChip,

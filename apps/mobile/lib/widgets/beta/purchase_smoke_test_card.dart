@@ -81,13 +81,15 @@ class _PurchaseSmokeTestCardState extends State<PurchaseSmokeTestCard> {
       callback(context);
       return;
     }
-    unawaited(context.push(
-      '/subscription',
-      extra: const PaywallRouteArgs(
-        source: PaywallSource.generalPro,
-        sourceRoute: 'purchase_smoke_test',
+    unawaited(
+      context.push(
+        '/subscription',
+        extra: const PaywallRouteArgs(
+          source: PaywallSource.generalPro,
+          sourceRoute: 'purchase_smoke_test',
+        ),
       ),
-    ));
+    );
   }
 
   @override

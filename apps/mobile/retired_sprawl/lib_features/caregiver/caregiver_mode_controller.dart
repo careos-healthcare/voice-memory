@@ -59,9 +59,9 @@ class CaregiverModeController {
   final ConsentVerificationService _verificationService;
 
   CaregiverAccessService get accessService => CaregiverAccessService(
-        auditStore: _auditStore,
-        modeStore: _modeStore,
-      );
+    auditStore: _auditStore,
+    modeStore: _modeStore,
+  );
 
   CaregiverAuditStore get auditStore => _auditStore;
 

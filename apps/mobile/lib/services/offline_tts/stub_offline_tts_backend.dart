@@ -42,10 +42,15 @@ final class StubOfflineTtsBackend implements OfflineTtsBackend {
     }
 
     _cancelRequested = false;
-    final words = trimmed.split(RegExp(r'\s+')).where((word) => word.isNotEmpty);
+    final words = trimmed
+        .split(RegExp(r'\s+'))
+        .where((word) => word.isNotEmpty);
     final wordCount = math.max(1, words.length);
     final totalDurationSeconds = wordCount * chunkDurationSeconds * 4;
-    final totalChunks = math.max(1, (totalDurationSeconds / chunkDurationSeconds).ceil());
+    final totalChunks = math.max(
+      1,
+      (totalDurationSeconds / chunkDurationSeconds).ceil(),
+    );
 
     for (var chunkIndex = 0; chunkIndex < totalChunks; chunkIndex++) {
       if (_cancelRequested) {

@@ -117,7 +117,9 @@ void main() {
       ),
     );
 
-    final box = tester.getRect(find.byKey(const Key('audio_waveform_visualizer')));
+    final box = tester.getRect(
+      find.byKey(const Key('audio_waveform_visualizer')),
+    );
     await tester.tapAt(box.centerLeft + Offset(box.width * 0.1, 0));
     await tester.pump();
     expect(seeks.last, closeTo(0.1, 0.02));

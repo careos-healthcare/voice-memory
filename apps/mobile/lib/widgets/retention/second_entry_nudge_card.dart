@@ -12,7 +12,9 @@ import 'package:flutter/material.dart';
 /// Light nudge for users with exactly one entry — dismissible, once per session.
 class SecondEntryNudgeCard extends StatelessWidget {
   const SecondEntryNudgeCard({
-    required this.onRecord, required this.onDismiss, super.key,
+    required this.onRecord,
+    required this.onDismiss,
+    super.key,
     this.source = 'record',
   });
 

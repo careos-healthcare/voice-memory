@@ -62,8 +62,9 @@ class _AuditLogRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final timestamp =
-        DateFormat.yMMMd().add_jm().format(entry.timestamp.toLocal());
+    final timestamp = DateFormat.yMMMd().add_jm().format(
+      entry.timestamp.toLocal(),
+    );
     final action = PrivacySecurityControlCenterCopy.auditActionLabel(
       entry.action,
     );

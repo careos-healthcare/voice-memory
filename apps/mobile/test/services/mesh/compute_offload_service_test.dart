@@ -51,8 +51,7 @@ class FakeMeshDesktopServer {
 
   Future<void> close() => _server.close();
 
-  MeshPeerCapabilities get capabilities =>
-      _desktopPeer(host: host, port: port);
+  MeshPeerCapabilities get capabilities => _desktopPeer(host: host, port: port);
 
   Future<void> _handleConnection(Socket socket) async {
     try {
@@ -176,11 +175,16 @@ void main() {
     test('denies when local network permission revoked', () async {
       final gate = MeshPermissionGate(
         meshFeatureEnabled: true,
-        localNetworkPermission: FakeLocalNetworkPermissionGateway(granted: false),
+        localNetworkPermission: FakeLocalNetworkPermissionGateway(
+          granted: false,
+        ),
       );
       final decision = await gate.evaluate();
       expect(decision.permitted, isFalse);
-      expect(decision.reason, MeshPermissionBlockReason.localNetworkPermissionDenied);
+      expect(
+        decision.reason,
+        MeshPermissionBlockReason.localNetworkPermissionDenied,
+      );
     });
   });
 
@@ -196,7 +200,9 @@ void main() {
       final service = ComputeOffloadService(
         permissionGate: MeshPermissionGate(
           meshFeatureEnabled: true,
-          localNetworkPermission: FakeLocalNetworkPermissionGateway(granted: false),
+          localNetworkPermission: FakeLocalNetworkPermissionGateway(
+            granted: false,
+          ),
         ),
       );
 
@@ -205,7 +211,10 @@ void main() {
       );
 
       expect(response.route, LlamaInferenceRoute.onDevice);
-      expect(response.fallbackReason, MeshOffloadFallbackReason.localNetworkPermissionDenied);
+      expect(
+        response.fallbackReason,
+        MeshOffloadFallbackReason.localNetworkPermissionDenied,
+      );
       expect(response.text, startsWith('[local-llama:'));
     });
 
@@ -252,7 +261,10 @@ void main() {
       );
 
       expect(response.route, LlamaInferenceRoute.onDevice);
-      expect(response.fallbackReason, MeshOffloadFallbackReason.handshakeTimeout);
+      expect(
+        response.fallbackReason,
+        MeshOffloadFallbackReason.handshakeTimeout,
+      );
     });
 
     test('routes inference to mesh peer over encrypted socket', () async {
@@ -293,7 +305,10 @@ void main() {
       );
 
       expect(response.route, LlamaInferenceRoute.onDevice);
-      expect(response.fallbackReason, MeshOffloadFallbackReason.inferenceTimeout);
+      expect(
+        response.fallbackReason,
+        MeshOffloadFallbackReason.inferenceTimeout,
+      );
     });
   });
 
@@ -310,7 +325,10 @@ void main() {
       );
 
       expect(response.route, LlamaInferenceRoute.onDevice);
-      expect(response.fallbackReason, MeshOffloadFallbackReason.featureDisabled);
+      expect(
+        response.fallbackReason,
+        MeshOffloadFallbackReason.featureDisabled,
+      );
     });
   });
 

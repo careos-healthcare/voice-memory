@@ -169,7 +169,9 @@ class SpeechToTextWorkerService implements PersistentIsolateWorkerClient {
 }
 
 /// Top-level entry for the speech-to-text worker isolate.
-Future<void> speechToTextWorkerIsolateEntry(IsolateWorkerStartup startup) async {
+Future<void> speechToTextWorkerIsolateEntry(
+  IsolateWorkerStartup startup,
+) async {
   IsolateSafeSqliteDatabaseInitializer.ensureWorkerRuntime(
     initializeTestFfi: startup.initializeTestFfi,
     rootIsolateToken: startup.rootIsolateToken,

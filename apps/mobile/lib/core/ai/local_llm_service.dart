@@ -113,8 +113,9 @@ final class ExtractiveInferenceEngine implements LocalInferenceEngine {
 
 /// Prompt shared by GGUF, ONNX, and MediaPipe bindings.
 String summaryPrompt(SummarySource source) {
-  final buffer = StringBuffer('Summarize this journal entry in two sentences.\n')
-    ..writeln(source.entryText.trim());
+  final buffer = StringBuffer(
+    'Summarize this journal entry in two sentences.\n',
+  )..writeln(source.entryText.trim());
   if (source.passages.isNotEmpty) {
     buffer.writeln('Related moments:');
     for (final passage in source.passages.take(3)) {

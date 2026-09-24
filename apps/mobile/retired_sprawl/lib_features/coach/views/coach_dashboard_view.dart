@@ -90,15 +90,18 @@ class _CoachDashboardViewState extends State<CoachDashboardView> {
       body: _loading
           ? const Center(child: CircularProgressIndicator())
           : _error != null
-              ? _messageBody(_error!)
-              : _dashboardBody(context, _snapshot!),
+          ? _messageBody(_error!)
+          : _dashboardBody(context, _snapshot!),
     );
   }
 
   Widget _messageBody(String message) {
     return Padding(
       padding: const EdgeInsets.all(AppSpacing.lg),
-      child: Text(message, style: ArchiveMobileTypography.explanationBody(context)),
+      child: Text(
+        message,
+        style: ArchiveMobileTypography.explanationBody(context),
+      ),
     );
   }
 
@@ -202,7 +205,10 @@ class _CoachDashboardViewState extends State<CoachDashboardView> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(row.title, style: ArchiveMobileTypography.sectionTitle(context)),
+              Text(
+                row.title,
+                style: ArchiveMobileTypography.sectionTitle(context),
+              ),
               if (row.confidenceBand != null) ...[
                 const SizedBox(height: AppSpacing.xs),
                 Text(

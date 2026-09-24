@@ -9,13 +9,15 @@ import 'package:flutter/material.dart';
 /// Compact daily archive change card — fixed copy only, no journal text.
 class ArchiveDailyChangeCard extends StatelessWidget {
   const ArchiveDailyChangeCard({
-    required this.result, super.key,
+    required this.result,
+    super.key,
     this.onDismiss,
     this.compact = false,
   });
 
   const ArchiveDailyChangeCard.test({
-    required this.result, super.key,
+    required this.result,
+    super.key,
     this.onDismiss,
     this.compact = false,
   });
@@ -129,7 +131,8 @@ class ArchiveDailyChangeCard extends StatelessWidget {
 /// Reusable section for capacity loop and weekly review screens.
 class ArchiveDailyChangeSection extends StatelessWidget {
   const ArchiveDailyChangeSection({
-    required this.result, super.key,
+    required this.result,
+    super.key,
     this.useWeeklyTitle = false,
   });
 

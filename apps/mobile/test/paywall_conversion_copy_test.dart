@@ -811,39 +811,48 @@ void main() {
       });
     });
 
-    test('plan selection taps log paywall_plan_selected, and confidence renders '
-        'in scroll content before the sticky purchase CTA', () {
-      final source = File('lib/screens/paywall_screen.dart').readAsStringSync();
-      final stickySource = File(
-        'lib/widgets/paywall/paywall_sticky_checkout_bar.dart',
-      ).readAsStringSync();
-      // The tap handler fires the funnel event with the stable plan id —
-      // and only the tap handler, never the purchase path.
-      expect(
-        RegExp(
-          r'setState\(\(\) => _paywallController\.selectPlan\(plan\)\);\s*'
-          r'_trackPlanSelected\(plan\);\s*'
-          r'ActivationFunnelAnalytics\.track\(\s*'
-          r'ActivationFunnelAnalytics\.paywallPlanSelected,\s*'
-          r'source: _attributionSource\.id,\s*'
-          r'plan: _planIdFor\(plan\),\s*'
-          r'\);',
-        ).hasMatch(source),
-        isTrue,
-        reason: 'selecting a plan must log paywall_plan_selected',
-      );
-      expect(
-        RegExp(
-          r'paywallPlanSelected,[\s\S]{0,400}_continue\(\)',
-        ).hasMatch(source.substring(source.indexOf('Future<void> _continue'))),
-        isFalse,
-        reason: 'the purchase path must not log paywall_plan_selected',
-      );
-      final blockIdx = source.indexOf('PlanSelectionConfidenceBlock(');
-      final purchaseCtaIdx = stickySource.indexOf('onPressed: isBusy ? null : onPurchase');
-      expect(blockIdx, greaterThan(-1));
-      expect(purchaseCtaIdx, greaterThan(-1));
-    });
+    test(
+      'plan selection taps log paywall_plan_selected, and confidence renders '
+      'in scroll content before the sticky purchase CTA',
+      () {
+        final source = File(
+          'lib/screens/paywall_screen.dart',
+        ).readAsStringSync();
+        final stickySource = File(
+          'lib/widgets/paywall/paywall_sticky_checkout_bar.dart',
+        ).readAsStringSync();
+        // The tap handler fires the funnel event with the stable plan id —
+        // and only the tap handler, never the purchase path.
+        expect(
+          RegExp(
+            r'setState\(\(\) => _paywallController\.selectPlan\(plan\)\);\s*'
+            r'_trackPlanSelected\(plan\);\s*'
+            r'ActivationFunnelAnalytics\.track\(\s*'
+            r'ActivationFunnelAnalytics\.paywallPlanSelected,\s*'
+            r'source: _attributionSource\.id,\s*'
+            r'plan: _planIdFor\(plan\),\s*'
+            r'\);',
+          ).hasMatch(source),
+          isTrue,
+          reason: 'selecting a plan must log paywall_plan_selected',
+        );
+        expect(
+          RegExp(
+            r'paywallPlanSelected,[\s\S]{0,400}_continue\(\)',
+          ).hasMatch(
+            source.substring(source.indexOf('Future<void> _continue')),
+          ),
+          isFalse,
+          reason: 'the purchase path must not log paywall_plan_selected',
+        );
+        final blockIdx = source.indexOf('PlanSelectionConfidenceBlock(');
+        final purchaseCtaIdx = stickySource.indexOf(
+          'onPressed: isBusy ? null : onPurchase',
+        );
+        expect(blockIdx, greaterThan(-1));
+        expect(purchaseCtaIdx, greaterThan(-1));
+      },
+    );
 
     test('no savings claim, no VoiceMemory, no pressure or lockout words', () {
       final all = [

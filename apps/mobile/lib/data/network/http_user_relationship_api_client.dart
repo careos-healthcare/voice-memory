@@ -17,7 +17,8 @@ class HttpUserRelationshipApiClient implements UserRelationshipApiClient {
   Future<ApiResult<List<UserRelationship>>> listForCurrentUser({
     NetworkCancelToken? cancelToken,
   }) async {
-    if (_transport.tryUri(VoiceMemoryApiRoutes.userRelationships.path) == null) {
+    if (_transport.tryUri(VoiceMemoryApiRoutes.userRelationships.path) ==
+        null) {
       return const ApiFailureResult(ApiFailureBackendNotConfigured());
     }
 
@@ -52,7 +53,8 @@ class HttpUserRelationshipApiClient implements UserRelationshipApiClient {
     String? activeConsentTokenId,
     NetworkCancelToken? cancelToken,
   }) async {
-    if (_transport.tryUri(VoiceMemoryApiRoutes.userRelationships.path) == null) {
+    if (_transport.tryUri(VoiceMemoryApiRoutes.userRelationships.path) ==
+        null) {
       return const ApiFailureResult(ApiFailureBackendNotConfigured());
     }
 
@@ -81,7 +83,8 @@ class HttpUserRelationshipApiClient implements UserRelationshipApiClient {
         return _transport.decodeEnvelope(
           response,
           parseData: UserRelationshipResponseDto.fromJson,
-          toDomain: (dto) => UserRelationship.fromJson(dto.relationship.toJson()),
+          toDomain: (dto) =>
+              UserRelationship.fromJson(dto.relationship.toJson()),
           missingDataMessage: 'Relationship missing from response',
         );
       },
@@ -117,7 +120,8 @@ class HttpUserRelationshipApiClient implements UserRelationshipApiClient {
         return _transport.decodeEnvelope(
           response,
           parseData: UserRelationshipResponseDto.fromJson,
-          toDomain: (dto) => UserRelationship.fromJson(dto.relationship.toJson()),
+          toDomain: (dto) =>
+              UserRelationship.fromJson(dto.relationship.toJson()),
           missingDataMessage: 'Relationship missing from response',
         );
       },

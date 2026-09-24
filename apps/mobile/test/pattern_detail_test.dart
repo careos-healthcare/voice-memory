@@ -192,7 +192,10 @@ void main() {
         signal.evidencePhrases,
         entries,
       );
-      await PatternNameStore.setCustomName(grounded.first, 'Agreeing when tired');
+      await PatternNameStore.setCustomName(
+        grounded.first,
+        'Agreeing when tired',
+      );
 
       final detail = _detailFor(entries);
       expect(detail.patternLabel, 'Agreeing when tired');
@@ -209,7 +212,10 @@ void main() {
         signal.evidencePhrases,
         entries,
       );
-      await PatternNameStore.setCustomName(grounded.first, 'Custom renamed label');
+      await PatternNameStore.setCustomName(
+        grounded.first,
+        'Custom renamed label',
+      );
 
       final detail = _detailFor(entries);
       expect(detail.evidencePhrases, grounded);

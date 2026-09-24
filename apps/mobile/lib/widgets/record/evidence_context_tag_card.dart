@@ -10,7 +10,9 @@ import 'package:flutter/material.dart';
 /// card never returns. One tag only, picked from a fixed short list.
 class EvidenceContextTagCard extends StatefulWidget {
   const EvidenceContextTagCard({
-    required this.onSaveTag, required this.onSkip, super.key,
+    required this.onSaveTag,
+    required this.onSkip,
+    super.key,
   });
 
   /// Called with the single chosen tag.

@@ -133,7 +133,10 @@ class ArchiveChatService {
     }
   }
 
-  Future<List<ChatContextMoment>> _rankMoments(String prompt, DateTime now) async {
+  Future<List<ChatContextMoment>> _rankMoments(
+    String prompt,
+    DateTime now,
+  ) async {
     final database = this.database;
     if (database == null) return const [];
     final rows = await database.rawQuery('''
@@ -153,7 +156,11 @@ class ArchiveChatService {
       vectors.add(VectorStoreRow(id: id, values: embed(transcript)));
     }
     final scored = <String, double>{};
-    for (final hit in VectorStore.scan(rows: vectors, query: query, limit: topK)) {
+    for (final hit in VectorStore.scan(
+      rows: vectors,
+      query: query,
+      limit: topK,
+    )) {
       scored[hit.id] = hit.score;
     }
     for (final id in linked) {

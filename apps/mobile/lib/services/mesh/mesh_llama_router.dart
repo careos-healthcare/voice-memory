@@ -10,8 +10,8 @@ class MeshLlamaRouter implements LlamaInference {
   MeshLlamaRouter({
     ComputeOffloadService? offloadService,
     LlamaInference? localInference,
-  })  : _offloadService = offloadService ?? ComputeOffloadService(),
-        _localInference = localInference ?? const LocalLlamaInference();
+  }) : _offloadService = offloadService ?? ComputeOffloadService(),
+       _localInference = localInference ?? const LocalLlamaInference();
 
   final ComputeOffloadService _offloadService;
   final LlamaInference _localInference;

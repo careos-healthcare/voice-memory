@@ -8,7 +8,8 @@ import 'package:flutter/material.dart';
 /// one moment so the loop can start.
 class FirstLoopStartCard extends StatelessWidget {
   const FirstLoopStartCard({
-    required this.onRecord, super.key,
+    required this.onRecord,
+    super.key,
     this.showRecordCta = true,
   });
 

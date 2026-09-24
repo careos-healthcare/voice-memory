@@ -35,7 +35,8 @@ void main() {
     'TrustBadgeCopy.storageDetail': TrustBadgeCopy.storageDetail,
     'OnDeviceArchitectureCopy.architectureBody':
         OnDeviceArchitectureCopy.architectureBody,
-    'OnDeviceArchitectureCopy.storageBody': OnDeviceArchitectureCopy.storageBody,
+    'OnDeviceArchitectureCopy.storageBody':
+        OnDeviceArchitectureCopy.storageBody,
     'OnDeviceArchitectureCopy.remoteCallout':
         OnDeviceArchitectureCopy.remoteCallout,
     'OnDeviceProcessingCopy.subtitle': OnDeviceProcessingCopy.subtitle,

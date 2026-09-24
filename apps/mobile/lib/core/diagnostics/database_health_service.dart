@@ -212,7 +212,8 @@ class DatabaseHealthService {
     return !file.existsSync();
   }
 
-  bool _sameFile(File left, File right) => p.normalize(left.path) == p.normalize(right.path);
+  bool _sameFile(File left, File right) =>
+      p.normalize(left.path) == p.normalize(right.path);
 
   Future<DatabaseHealthReport> _checkFile(
     File file, {

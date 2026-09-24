@@ -9,7 +9,10 @@ import 'package:flutter/material.dart';
 /// Compact post-save nudge — points to Archive Home instead of duplicating payoff cards.
 class PostSaveArchiveHomeNudgeCard extends StatelessWidget {
   const PostSaveArchiveHomeNudgeCard({
-    required this.summary, required this.onViewArchive, required this.onAddMoment, super.key,
+    required this.summary,
+    required this.onViewArchive,
+    required this.onAddMoment,
+    super.key,
   });
 
   final ArchiveHomeSummary summary;

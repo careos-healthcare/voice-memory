@@ -6,7 +6,8 @@ import 'package:flutter/material.dart';
 
 class RecordBeliefPromptsSection extends StatelessWidget {
   const RecordBeliefPromptsSection({
-    required this.onSelectPrompt, super.key,
+    required this.onSelectPrompt,
+    super.key,
     this.selectedPrompt,
   });
 

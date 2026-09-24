@@ -184,19 +184,21 @@ void main() {
     expect(api.postTranscribeCallCount, 0);
   });
 
-  test('consent for a different purpose does not unlock transcription',
-      () async {
-    await OnDeviceProcessingStore.setEnabled(false);
-    await consentStore.grant(
-      purposes: {RemoteProcessingPurpose.remoteReflection},
-    );
+  test(
+    'consent for a different purpose does not unlock transcription',
+    () async {
+      await OnDeviceProcessingStore.setEnabled(false);
+      await consentStore.grant(
+        purposes: {RemoteProcessingPurpose.remoteReflection},
+      );
 
-    final entry = provisionalEntry();
-    await journalStore.save(entry, first25Source: 'test');
+      final entry = provisionalEntry();
+      await journalStore.save(entry, first25Source: 'test');
 
-    expect(await reconciler.reconcileEntry(entry), isFalse);
-    expect(api.postTranscribeCallCount, 0);
-  });
+      expect(await reconciler.reconcileEntry(entry), isFalse);
+      expect(api.postTranscribeCallCount, 0);
+    },
+  );
 
   test('neither gate open means no upload', () async {
     await consentStore.withdraw();
@@ -208,42 +210,46 @@ void main() {
     expect(api.postTranscribeCallCount, 0);
   });
 
-  test('a sweep of the whole archive uploads nothing under the default',
-      () async {
-    // The shape a bulk recovery migration would take. Under shipped defaults
-    // it must move no audio at all.
-    await consentStore.grantPurpose(
-      RemoteProcessingPurpose.remoteTranscription,
-    );
-    for (var i = 0; i < 5; i++) {
-      await journalStore.save(
-        provisionalEntry(id: 'entry-$i'),
-        first25Source: 'test',
+  test(
+    'a sweep of the whole archive uploads nothing under the default',
+    () async {
+      // The shape a bulk recovery migration would take. Under shipped defaults
+      // it must move no audio at all.
+      await consentStore.grantPurpose(
+        RemoteProcessingPurpose.remoteTranscription,
       );
-    }
+      for (var i = 0; i < 5; i++) {
+        await journalStore.save(
+          provisionalEntry(id: 'entry-$i'),
+          first25Source: 'test',
+        );
+      }
 
-    expect(await reconciler.reconcileAll(), 0);
-    expect(api.postTranscribeCallCount, 0);
-  });
+      expect(await reconciler.reconcileAll(), 0);
+      expect(api.postTranscribeCallCount, 0);
+    },
+  );
 
-  test('both gates open re-transcribes and stamps the result speech-to-text',
-      () async {
-    // The permissive case, so the refusals above are shown to be gates rather
-    // than an unconditional no.
-    await OnDeviceProcessingStore.setEnabled(false);
-    await consentStore.grantPurpose(
-      RemoteProcessingPurpose.remoteTranscription,
-    );
+  test(
+    'both gates open re-transcribes and stamps the result speech-to-text',
+    () async {
+      // The permissive case, so the refusals above are shown to be gates rather
+      // than an unconditional no.
+      await OnDeviceProcessingStore.setEnabled(false);
+      await consentStore.grantPurpose(
+        RemoteProcessingPurpose.remoteTranscription,
+      );
 
-    final entry = provisionalEntry();
-    await journalStore.save(entry, first25Source: 'test');
+      final entry = provisionalEntry();
+      await journalStore.save(entry, first25Source: 'test');
 
-    expect(await reconciler.reconcileEntry(entry), isTrue);
-    expect(api.postTranscribeCallCount, 1);
+      expect(await reconciler.reconcileEntry(entry), isTrue);
+      expect(api.postTranscribeCallCount, 1);
 
-    final stored = await journalStore.getById(entry.id);
-    expect(stored, isNotNull);
-    expect(stored!.transcriptProvenance, TranscriptProvenance.speechToText);
-    expect(stored.transcriptStatus, TranscriptStatus.finalTranscript);
-  });
+      final stored = await journalStore.getById(entry.id);
+      expect(stored, isNotNull);
+      expect(stored!.transcriptProvenance, TranscriptProvenance.speechToText);
+      expect(stored.transcriptStatus, TranscriptStatus.finalTranscript);
+    },
+  );
 }

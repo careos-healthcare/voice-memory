@@ -89,16 +89,17 @@ void main() {
       'entity_id': 'locations:harbor',
     });
 
-    final hits = await VecSearchService(
-      loadDistances: (db, query, limit) async => const [
-        VecDistanceHit(entryId: 'moment-a', distance: 1),
-        VecDistanceHit(entryId: 'moment-b', distance: 0.25),
-      ],
-    ).search(
-      db: db,
-      queryEmbedding: const [0.1, 0.2],
-      entityIds: const ['people:ada'],
-    );
+    final hits =
+        await VecSearchService(
+          loadDistances: (db, query, limit) async => const [
+            VecDistanceHit(entryId: 'moment-a', distance: 1),
+            VecDistanceHit(entryId: 'moment-b', distance: 0.25),
+          ],
+        ).search(
+          db: db,
+          queryEmbedding: const [0.1, 0.2],
+          entityIds: const ['people:ada'],
+        );
 
     expect(hits.map((hit) => hit.entryId).toList(), ['moment-b', 'moment-a']);
     expect(hits.first.vectorDistance, 0.25);

@@ -15,12 +15,20 @@ import 'package:flutter/material.dart';
 /// One-entry return card — notice prompts only, no daily pressure.
 class SecondMomentReturnCard extends StatefulWidget {
   const SecondMomentReturnCard({
-    required this.result, required this.onNoticedSomething, required this.onPromptSelected, required this.onSaveOneSentence, super.key,
+    required this.result,
+    required this.onNoticedSomething,
+    required this.onPromptSelected,
+    required this.onSaveOneSentence,
+    super.key,
     this.store,
   });
 
   const SecondMomentReturnCard.test({
-    required this.result, required this.onNoticedSomething, required this.onPromptSelected, required this.onSaveOneSentence, super.key,
+    required this.result,
+    required this.onNoticedSomething,
+    required this.onPromptSelected,
+    required this.onSaveOneSentence,
+    super.key,
     this.store,
   });
 

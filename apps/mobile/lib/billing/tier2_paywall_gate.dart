@@ -13,8 +13,7 @@ import 'package:go_router/go_router.dart';
 abstract final class Tier2PaywallGate {
   Tier2PaywallGate._();
 
-  static ArchiveFeature featureForComparison() =>
-      ArchiveFeature.fullHistory;
+  static ArchiveFeature featureForComparison() => ArchiveFeature.fullHistory;
 
   static ArchiveFeature featureForWeeklyReview() =>
       ArchiveFeature.tier2WeeklyReview;
@@ -53,7 +52,9 @@ abstract final class Tier2PaywallGate {
 /// Inline intercept when a Tier 2 surface is Pro-only.
 class Tier2PaywallDeniedBody extends StatelessWidget {
   const Tier2PaywallDeniedBody({
-    required this.feature, required this.onDismiss, super.key,
+    required this.feature,
+    required this.onDismiss,
+    super.key,
     this.priceHint = SubscriptionState.proPriceRangeHint,
   });
 
@@ -96,7 +97,10 @@ class Tier2PaywallDeniedBody extends StatelessWidget {
             child: const Text(SubscriptionBillingCopy.upgradeCta),
           ),
           const SizedBox(height: 8),
-          TextButton(onPressed: onDismiss, child: const Text(ConsumerUiCopy.paywallSecondaryCta)),
+          TextButton(
+            onPressed: onDismiss,
+            child: const Text(ConsumerUiCopy.paywallSecondaryCta),
+          ),
         ],
       ),
     );
@@ -106,7 +110,9 @@ class Tier2PaywallDeniedBody extends StatelessWidget {
 /// Inline intercept when a Tier 2 surface is Pro-only.
 class Tier2PaywallIntercept extends ConsumerWidget {
   const Tier2PaywallIntercept({
-    required this.feature, required this.onContinueFree, super.key,
+    required this.feature,
+    required this.onContinueFree,
+    super.key,
     this.momentCount = 0,
   });
 

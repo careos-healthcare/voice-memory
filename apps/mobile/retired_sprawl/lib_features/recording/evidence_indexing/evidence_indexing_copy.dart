@@ -3,8 +3,7 @@ abstract final class EvidenceIndexingCopy {
   EvidenceIndexingCopy._();
 
   static const title = 'Indexing evidence';
-  static const listeningBody =
-      'Listening for citable facts in your recording…';
+  static const listeningBody = 'Listening for citable facts in your recording…';
   static const extractingBody = 'Committing citable anchors to your ledger…';
   static const emptyBody =
       'No citable anchors found yet — your moment is still saved locally.';

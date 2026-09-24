@@ -19,7 +19,8 @@ import 'dart:async';
 /// Post-save confirmation after completing a due tomorrow check-in.
 class CheckInCompletedCard extends StatefulWidget {
   const CheckInCompletedCard({
-    required this.checkIn, super.key,
+    required this.checkIn,
+    super.key,
     this.showBetterResult = false,
     this.betterResultIntensity = HookRescueIntensity.normal,
     this.notUsefulReason,

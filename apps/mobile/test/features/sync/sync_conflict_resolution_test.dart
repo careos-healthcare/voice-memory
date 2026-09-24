@@ -94,7 +94,9 @@ void main() {
     });
   });
 
-  testWidgets('header badge updates when network state changes', (tester) async {
+  testWidgets('header badge updates when network state changes', (
+    tester,
+  ) async {
     final container = ProviderContainer();
     addTearDown(container.dispose);
     await tester.pumpWidget(
@@ -107,17 +109,21 @@ void main() {
     );
     expect(find.text('Local Only'), findsOneWidget);
 
-    container.read(syncStateProvider.notifier).reportNetwork(
-      cloudReachable: true,
-      meshHandshake: true,
-    );
+    container
+        .read(syncStateProvider.notifier)
+        .reportNetwork(
+          cloudReachable: true,
+          meshHandshake: true,
+        );
     await tester.pump();
     expect(find.text('Synced (Mesh/Cloud)'), findsOneWidget);
 
-    container.read(syncStateProvider.notifier).stageConflict(
-      entryId: 'e1',
-      remoteTranscript: 'incoming',
-    );
+    container
+        .read(syncStateProvider.notifier)
+        .stageConflict(
+          entryId: 'e1',
+          remoteTranscript: 'incoming',
+        );
     await tester.pump();
     expect(find.text('Conflict Detected'), findsOneWidget);
   });

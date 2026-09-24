@@ -40,11 +40,10 @@ void main() {
     Duration? seenDelay;
     await LifeMemoWorkScheduler.registerSundayTask(
       now: DateTime(2026, 9, 23, 10),
-      register:
-          ({required frequency, required initialDelay}) async {
-            seenFrequency = frequency;
-            seenDelay = initialDelay;
-          },
+      register: ({required frequency, required initialDelay}) async {
+        seenFrequency = frequency;
+        seenDelay = initialDelay;
+      },
     );
     expect(seenFrequency, const Duration(days: 7));
     expect(seenDelay, isNotNull);

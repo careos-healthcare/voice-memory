@@ -73,8 +73,9 @@ void main() {
     auditDoc = File(_auditDocPath).readAsStringSync();
     accountAuthScreenSource = File(_accountAuthScreenPath).readAsStringSync();
     authServiceSource = File(_authServicePath).readAsStringSync();
-    journalOwnershipGuardSource =
-        File(_journalOwnershipGuardPath).readAsStringSync();
+    journalOwnershipGuardSource = File(
+      _journalOwnershipGuardPath,
+    ).readAsStringSync();
     appLockStoreSource = File(_appLockStorePath).readAsStringSync();
     pinHashSource = File(_pinHashPath).readAsStringSync();
   });

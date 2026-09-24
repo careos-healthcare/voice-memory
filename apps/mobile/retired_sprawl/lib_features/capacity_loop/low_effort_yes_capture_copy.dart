@@ -12,7 +12,8 @@ abstract final class LowEffortYesCaptureCopy {
   static const route = '/quick-yes-capture';
   static const recordRoute = '/record';
 
-  static const String corePromise = ArchivePositioningCopy.quickCaptureTimingFlex;
+  static const String corePromise =
+      ArchivePositioningCopy.quickCaptureTimingFlex;
 
   static const String title = ArchivePositioningCopy.quickYesMoment;
   static const body =

@@ -1,6 +1,8 @@
-import 'package:archiveme_mobile/core/network/http_transport.dart' show HttpTransport;
+import 'package:archiveme_mobile/core/network/http_transport.dart'
+    show HttpTransport;
 
-import 'package:archiveme_mobile/data/repositories/auth_repository.dart' show AuthRepository;
+import 'package:archiveme_mobile/data/repositories/auth_repository.dart'
+    show AuthRepository;
 
 import 'package:archiveme_mobile/storage/session_cookie_store.dart';
 

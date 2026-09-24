@@ -16,7 +16,9 @@ void main() {
       final half = ByteData.view(bytes.buffer).getInt16(2, Endian.little);
       expect(half, closeTo(16383, 1));
 
-      final negativeHalf = ByteData.view(bytes.buffer).getInt16(4, Endian.little);
+      final negativeHalf = ByteData.view(
+        bytes.buffer,
+      ).getInt16(4, Endian.little);
       expect(negativeHalf, closeTo(-16383, 1));
 
       final max = ByteData.view(bytes.buffer).getInt16(6, Endian.little);

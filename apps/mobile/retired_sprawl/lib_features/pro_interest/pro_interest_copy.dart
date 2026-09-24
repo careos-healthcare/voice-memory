@@ -13,7 +13,8 @@ abstract final class ProInterestCopy {
   static const interestOnlyNote =
       'This is interest only. No payment is taken. The free archive flow '
       'remains usable.';
-  static const String purchasesUnavailableNote = ProValueCopy.purchaseUnavailableNote;
+  static const String purchasesUnavailableNote =
+      ProValueCopy.purchaseUnavailableNote;
 
   static const valueSectionTitle = 'What would make Pro worth it?';
   static const pricingSectionTitle = 'Pricing signal';
@@ -94,7 +95,8 @@ abstract final class ProInterestCopy {
       };
 
   static const List<ProInterestValueId> allValueIds = ProInterestValueId.values;
-  static const List<ProInterestPricingIntentId> allPricingIds = ProInterestPricingIntentId.values;
+  static const List<ProInterestPricingIntentId> allPricingIds =
+      ProInterestPricingIntentId.values;
 
   static String buildSafeSummary(ProInterestState state) {
     final values = state.selectedValueIds.map(labelForValue).join(', ');

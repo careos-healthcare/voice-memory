@@ -6,7 +6,9 @@ class WeeklyArchiveStory {
     required this.topThemes,
     required this.growingThemes,
     required this.decliningThemes,
-    required this.reflectionCountThisWeek, required this.hasSufficientData, this.primaryBelief,
+    required this.reflectionCountThisWeek,
+    required this.hasSufficientData,
+    this.primaryBelief,
   });
 
   final DateTime weekStart;

@@ -148,9 +148,9 @@ void main() {
     );
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(connectivity, (call) async {
-      if (call.method == 'check') return ['wifi'];
-      return null;
-    });
+          if (call.method == 'check') return ['wifi'];
+          return null;
+        });
 
     const secureStorage = MethodChannel(
       'plugins.it_nomads.com/flutter_secure_storage',
@@ -158,28 +158,29 @@ void main() {
     final secureValues = <String, String>{};
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(secureStorage, (call) async {
-      final args = call.arguments as Map<Object?, Object?>? ?? const {};
-      final key = args['key'] as String?;
-      switch (call.method) {
-        case 'read':
-          return key == null ? null : secureValues[key];
-        case 'write':
-          if (key != null) secureValues[key] = args['value'] as String? ?? '';
-          return null;
-        case 'containsKey':
-          return key != null && secureValues.containsKey(key);
-        case 'readAll':
-          return Map<String, String>.of(secureValues);
-        case 'delete':
-          secureValues.remove(key);
-          return null;
-        case 'deleteAll':
-          secureValues.clear();
-          return null;
-        default:
-          return null;
-      }
-    });
+          final args = call.arguments as Map<Object?, Object?>? ?? const {};
+          final key = args['key'] as String?;
+          switch (call.method) {
+            case 'read':
+              return key == null ? null : secureValues[key];
+            case 'write':
+              if (key != null)
+                secureValues[key] = args['value'] as String? ?? '';
+              return null;
+            case 'containsKey':
+              return key != null && secureValues.containsKey(key);
+            case 'readAll':
+              return Map<String, String>.of(secureValues);
+            case 'delete':
+              secureValues.remove(key);
+              return null;
+            case 'deleteAll':
+              secureValues.clear();
+              return null;
+            default:
+              return null;
+          }
+        });
   });
 
   setUp(() async {
@@ -226,8 +227,9 @@ void main() {
   }
 
   group('rendering the new surfaces sends nothing', () {
-    testWidgets('the onboarding consent step makes no remote call',
-        (tester) async {
+    testWidgets('the onboarding consent step makes no remote call', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(body: RemoteProcessingConsentStep(onDecision: (_) {})),
@@ -237,8 +239,9 @@ void main() {
       expect(api.transcribeCalls, 0);
     });
 
-    testWidgets('the unavailability card sends nothing, including on decline',
-        (tester) async {
+    testWidgets('the unavailability card sends nothing, including on decline', (
+      tester,
+    ) async {
       var declined = false;
       await tester.pumpWidget(
         MaterialApp(
@@ -261,40 +264,44 @@ void main() {
   });
 
   group('the default state sends nothing', () {
-    test('iOS default: on-device-only on, capability check stays local',
-        () async {
-      OnDeviceProcessingStore.debugPlatformOverride = 'ios';
-      NativeSpeechTranscription.debugPlatformOverride = 'ios';
-      expect(OnDeviceProcessingStore.enabled, isTrue);
+    test(
+      'iOS default: on-device-only on, capability check stays local',
+      () async {
+        OnDeviceProcessingStore.debugPlatformOverride = 'ios';
+        NativeSpeechTranscription.debugPlatformOverride = 'ios';
+        expect(OnDeviceProcessingStore.enabled, isTrue);
 
-      final outcome = await policyFor(
-        PlatformLocalTranscriptionAvailability(
-          confirmedLocale: speechLocaleStore.read,
-        ),
-      ).evaluate();
+        final outcome = await policyFor(
+          PlatformLocalTranscriptionAvailability(
+            confirmedLocale: speechLocaleStore.read,
+          ),
+        ).evaluate();
 
-      expect(outcome, TranscriptionCapabilityOutcome.proceed);
-      expect(api.transcribeCalls, 0);
-    });
+        expect(outcome, TranscriptionCapabilityOutcome.proceed);
+        expect(api.transcribeCalls, 0);
+      },
+    );
 
-    test('Android default: on-device-only off but nothing consented yet',
-        () async {
-      OnDeviceProcessingStore.debugPlatformOverride = 'android';
-      NativeSpeechTranscription.debugPlatformOverride = 'android';
-      expect(OnDeviceProcessingStore.enabled, isFalse);
+    test(
+      'Android default: on-device-only off but nothing consented yet',
+      () async {
+        OnDeviceProcessingStore.debugPlatformOverride = 'android';
+        NativeSpeechTranscription.debugPlatformOverride = 'android';
+        expect(OnDeviceProcessingStore.enabled, isFalse);
 
-      final outcome = await policyFor(
-        PlatformLocalTranscriptionAvailability(
-          confirmedLocale: speechLocaleStore.read,
-        ),
-      ).evaluate();
+        final outcome = await policyFor(
+          PlatformLocalTranscriptionAvailability(
+            confirmedLocale: speechLocaleStore.read,
+          ),
+        ).evaluate();
 
-      // The Android default clears the veto, and clearing the veto alone
-      // permits nothing: with no consent on record this is the ask, not an
-      // upload.
-      expect(outcome, TranscriptionCapabilityOutcome.askOnce);
-      expect(api.transcribeCalls, 0);
-    });
+        // The Android default clears the veto, and clearing the veto alone
+        // permits nothing: with no consent on record this is the ask, not an
+        // upload.
+        expect(outcome, TranscriptionCapabilityOutcome.askOnce);
+        expect(api.transcribeCalls, 0);
+      },
+    );
 
     test('a stored "no transcription" answer still sends nothing', () async {
       OnDeviceProcessingStore.debugPlatformOverride = 'android';
@@ -313,46 +320,49 @@ void main() {
   });
 
   group('positive controls', () {
-    test('control: accepting the prompt grants transcription and clears veto',
-        () async {
-      OnDeviceProcessingStore.debugPlatformOverride = 'ios';
-      NativeSpeechTranscription.debugPlatformOverride = 'android';
-      final gate = RemoteProcessingConsentGate(consentStore);
+    test(
+      'control: accepting the prompt grants transcription and clears veto',
+      () async {
+        OnDeviceProcessingStore.debugPlatformOverride = 'ios';
+        NativeSpeechTranscription.debugPlatformOverride = 'android';
+        final gate = RemoteProcessingConsentGate(consentStore);
 
-      expect(
-        await gate.isPurposePermittedNow(
-          RemoteProcessingPurpose.remoteTranscription,
-        ),
-        isFalse,
-        reason: 'precondition: nothing is permitted before the answer',
-      );
+        expect(
+          await gate.isPurposePermittedNow(
+            RemoteProcessingPurpose.remoteTranscription,
+          ),
+          isFalse,
+          reason: 'precondition: nothing is permitted before the answer',
+        );
 
-      await policyFor(
-        StaticLocalTranscriptionAvailability.unavailable(
-          LocalTranscriptionUnavailableReason.platformUnsupported,
-        ),
-      ).recordChoice(allowRemote: true);
+        await policyFor(
+          StaticLocalTranscriptionAvailability.unavailable(
+            LocalTranscriptionUnavailableReason.platformUnsupported,
+          ),
+        ).recordChoice(allowRemote: true);
 
-      expect(OnDeviceProcessingStore.enabled, isFalse);
-      expect(
-        await gate.isPurposePermittedNow(
-          RemoteProcessingPurpose.remoteTranscription,
-        ),
-        isTrue,
-      );
-      expect(
-        await gate.isPurposePermittedNow(
-          RemoteProcessingPurpose.remoteReflection,
-        ),
-        isFalse,
-        reason: 'the prompt asks about transcription, so it grants that alone',
-      );
-      expect(
-        await choiceStore.read(),
-        LocalTranscriptionChoice.remoteTranscription,
-      );
-      expect(api.transcribeCalls, 0, reason: 'answering is not uploading');
-    });
+        expect(OnDeviceProcessingStore.enabled, isFalse);
+        expect(
+          await gate.isPurposePermittedNow(
+            RemoteProcessingPurpose.remoteTranscription,
+          ),
+          isTrue,
+        );
+        expect(
+          await gate.isPurposePermittedNow(
+            RemoteProcessingPurpose.remoteReflection,
+          ),
+          isFalse,
+          reason:
+              'the prompt asks about transcription, so it grants that alone',
+        );
+        expect(
+          await choiceStore.read(),
+          LocalTranscriptionChoice.remoteTranscription,
+        );
+        expect(api.transcribeCalls, 0, reason: 'answering is not uploading');
+      },
+    );
 
     test('control: with the answer recorded, an upload does happen', () async {
       // Flips exactly one variable against the "sends nothing" cases above: the
@@ -368,7 +378,10 @@ void main() {
       final audio = File('${dir.path}/voice.m4a')
         ..writeAsBytesSync(List.filled(VoiceCaptureQuality.minAudioBytes, 1));
       final entry = _provisionalEntry(audio.path);
-      await AppServices.instance.journalStore.save(entry, first25Source: 'test');
+      await AppServices.instance.journalStore.save(
+        entry,
+        first25Source: 'test',
+      );
 
       api.allowCalls = true;
       final reconciler = ProvisionalTranscriptReconciler(
@@ -394,7 +407,10 @@ void main() {
       final audio = File('${dir.path}/voice.m4a')
         ..writeAsBytesSync(List.filled(VoiceCaptureQuality.minAudioBytes, 1));
       final entry = _provisionalEntry(audio.path);
-      await AppServices.instance.journalStore.save(entry, first25Source: 'test');
+      await AppServices.instance.journalStore.save(
+        entry,
+        first25Source: 'test',
+      );
 
       final reconciler = ProvisionalTranscriptReconciler(
         captureRepository: appProviderContainer.read(captureRepositoryProvider),

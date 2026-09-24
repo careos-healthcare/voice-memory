@@ -35,7 +35,9 @@ abstract class AiPromptBoundary {
   static Map<String, Object> logFields(String preparedText) {
     return {
       'user_text_length_bucket': _lengthBucket(preparedText.length),
-      'prompt_injection': UserContentSafety.looksLikePromptInjection(preparedText),
+      'prompt_injection': UserContentSafety.looksLikePromptInjection(
+        preparedText,
+      ),
     };
   }
 

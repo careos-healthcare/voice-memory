@@ -9,7 +9,7 @@ import 'package:sqflite/sqflite.dart';
 @Deprecated('Use SqliteMigrationManager instead.')
 class SqliteMigrationRunner {
   SqliteMigrationRunner({List<SqliteMigration>? migrations})
-      : _manager = SqliteMigrationManager(migrations: migrations);
+    : _manager = SqliteMigrationManager(migrations: migrations);
 
   static const schemaMigrationsTable =
       SqliteMigrationManager.legacySchemaMigrationsTable;

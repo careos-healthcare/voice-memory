@@ -9,7 +9,8 @@ import 'package:archiveme_mobile/models/journal_entry.dart';
 class ArchiveMilestonesEngine {
   const ArchiveMilestonesEngine();
 
-  static const List<ArchiveMilestoneId> _milestoneOrder = ArchiveMilestoneId.values;
+  static const List<ArchiveMilestoneId> _milestoneOrder =
+      ArchiveMilestoneId.values;
 
   ArchiveMilestonesResult build({
     required List<JournalEntry> entries,

@@ -13,7 +13,8 @@ abstract final class ArchiveBackupBridgeCopy {
 
   static const deviceBackupToday = 'Today, keep your device backed up.';
 
-  static const String proPreservation = PaywallAlignmentCopy.backupProPreservation;
+  static const String proPreservation =
+      PaywallAlignmentCopy.backupProPreservation;
 
   static const cta = 'How to preserve it';
 

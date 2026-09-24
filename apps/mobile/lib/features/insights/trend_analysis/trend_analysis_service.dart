@@ -43,8 +43,7 @@ class TrendAnalysisService {
       journalDatabase: journalDatabase,
       reportStore: reportStore,
       aggregator: aggregator ?? const TrendAnalysisAggregator(),
-      synthesizer:
-          synthesizer ?? await TrendAnalysisOnnxSynthesizer.create(),
+      synthesizer: synthesizer ?? await TrendAnalysisOnnxSynthesizer.create(),
     );
   }
 
@@ -106,11 +105,12 @@ class TrendAnalysisService {
           .subtract(Duration(days: window.dayCount - 1))
           .copyWith(hour: 0, minute: 0, second: 0, millisecond: 0);
 
-      final records = await TrendAnalysisDriftQueries.fetchReflectionRecordsInWindow(
-        _journalDatabase,
-        windowStart: windowStart,
-        windowEnd: windowEnd,
-      );
+      final records =
+          await TrendAnalysisDriftQueries.fetchReflectionRecordsInWindow(
+            _journalDatabase,
+            windowStart: windowStart,
+            windowEnd: windowEnd,
+          );
 
       final metadata = _aggregator.aggregate(
         window: window,

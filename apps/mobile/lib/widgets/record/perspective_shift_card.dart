@@ -15,7 +15,8 @@ import 'package:flutter/material.dart';
 /// for the Patterns surface and [fromPatterns] so the right counters fire.
 class PerspectiveShiftCard extends StatefulWidget {
   const PerspectiveShiftCard({
-    required this.reflectionText, super.key,
+    required this.reflectionText,
+    super.key,
     this.resultHint,
     this.checkInQuestion,
     this.patternTitle = '',

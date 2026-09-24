@@ -7,7 +7,9 @@ import 'package:flutter/material.dart';
 /// Mobile-first bottom sheet — recording excerpts, dates, confidence factors.
 class EvidenceTrailSheet extends StatelessWidget {
   const EvidenceTrailSheet({
-    required this.payload, required this.surface, super.key,
+    required this.payload,
+    required this.surface,
+    super.key,
     this.onOpenFullExplanation,
   });
 
@@ -81,9 +83,7 @@ class EvidenceTrailSheet extends StatelessWidget {
                       const SizedBox(height: 16),
                       Text(
                         'CONFIDENCE FACTORS',
-                        style: VoiceMemoryTypography.sectionLabelStyle(
-                          
-                        ),
+                        style: VoiceMemoryTypography.sectionLabelStyle(),
                       ),
                       const SizedBox(height: 8),
                       for (final f in payload.confidenceFactors)
@@ -116,9 +116,7 @@ class EvidenceTrailSheet extends StatelessWidget {
                     const SizedBox(height: 16),
                     Text(
                       'RECORDING EXCERPTS',
-                      style: VoiceMemoryTypography.sectionLabelStyle(
-                        
-                      ),
+                      style: VoiceMemoryTypography.sectionLabelStyle(),
                     ),
                     const SizedBox(height: 10),
                     if (!payload.hasSources)

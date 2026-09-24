@@ -23,7 +23,9 @@ class NetworkConnectivityNotifier extends Notifier<bool> {
 
   void _handleOnlineChanged(bool isOnline) {
     state = isOnline;
-    ref.read(backgroundSyncProvider.notifier).setConnectivity(isOnline: isOnline);
+    ref
+        .read(backgroundSyncProvider.notifier)
+        .setConnectivity(isOnline: isOnline);
   }
 }
 

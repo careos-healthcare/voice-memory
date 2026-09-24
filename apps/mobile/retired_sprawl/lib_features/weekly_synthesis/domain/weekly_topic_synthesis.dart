@@ -20,6 +20,7 @@ class WeeklyTopicSynthesis {
   final List<String> recurringThemeLabels;
   final DateTime generatedAt;
 
-  String get entryId => '${WeeklySynthesisConfig.synthesisEntryIdPrefix}:$weekKey';
+  String get entryId =>
+      '${WeeklySynthesisConfig.synthesisEntryIdPrefix}:$weekKey';
   String get nodeId => '$entryId:summary';
 }

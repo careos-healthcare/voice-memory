@@ -105,23 +105,24 @@ List<JournalEntry> _keptCheckingEntries() {
   ];
 }
 
-BetaRepairLabVisibilityInput _repairInput() => const BetaRepairLabVisibilityInput(
-  mode: BetaRepairLabMode.evidenceTrailTimelineClarity,
-  entryCount: 4,
-  source: 'test',
-  isPro: false,
-  isRecording: false,
-  isDegradedTranscriptState: false,
-  whatChangedQuestionActive: false,
-  patternReviewInboxHasActiveItems: false,
-  hasTimelineProofVisible: true,
-  hasConfirmedRepeat: true,
-  confidenceLevel: ProofConfidenceLevel.watchOnly,
-  hasUsefulProofFeedback: false,
-  feedbackType: BetaProofFeedbackType.tooVague,
-  isNegativeFeedback: true,
-  betaMissionEnabled: true,
-);
+BetaRepairLabVisibilityInput _repairInput() =>
+    const BetaRepairLabVisibilityInput(
+      mode: BetaRepairLabMode.evidenceTrailTimelineClarity,
+      entryCount: 4,
+      source: 'test',
+      isPro: false,
+      isRecording: false,
+      isDegradedTranscriptState: false,
+      whatChangedQuestionActive: false,
+      patternReviewInboxHasActiveItems: false,
+      hasTimelineProofVisible: true,
+      hasConfirmedRepeat: true,
+      confidenceLevel: ProofConfidenceLevel.watchOnly,
+      hasUsefulProofFeedback: false,
+      feedbackType: BetaProofFeedbackType.tooVague,
+      isNegativeFeedback: true,
+      betaMissionEnabled: true,
+    );
 
 ProofDetailRepairResult _strongDetail() => ProofDetailRepairEngine.build(
   level: ProofConfidenceLevel.strong,

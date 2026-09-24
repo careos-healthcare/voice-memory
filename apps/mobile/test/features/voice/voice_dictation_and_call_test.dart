@@ -45,60 +45,68 @@ void main() {
     expect(find.byKey(const Key('dictation_sound_bars')), findsNothing);
   });
 
-  test('headset changes keep the socket and the reply stays under 500ms', () async {
-    final transport = LoopbackVoiceTransport();
-    final capture = ManualVoiceCapture();
-    final routes = StreamController<VoiceAudioDevice>();
-    final service = VoiceCallService(
-      transport: transport,
-      capture: capture,
-      routes: routes.stream,
-    );
-    await service.start();
-    capture.emit(Uint8List.fromList([0, 0, 40, 0]), 0.4);
-    await Future<void>.delayed(Duration.zero);
+  test(
+    'headset changes keep the socket and the reply stays under 500ms',
+    () async {
+      final transport = LoopbackVoiceTransport();
+      final capture = ManualVoiceCapture();
+      final routes = StreamController<VoiceAudioDevice>();
+      final service = VoiceCallService(
+        transport: transport,
+        capture: capture,
+        routes: routes.stream,
+      );
+      await service.start();
+      capture.emit(Uint8List.fromList([0, 0, 40, 0]), 0.4);
+      await Future<void>.delayed(Duration.zero);
 
-    expect(service.lastTurnaround!.inMilliseconds, lessThan(500));
-    expect(service.isConnected, isTrue);
+      expect(service.lastTurnaround!.inMilliseconds, lessThan(500));
+      expect(service.isConnected, isTrue);
 
-    routes.add(const VoiceAudioDevice(id: 'bt-1', label: 'Bluetooth headphones'));
-    await Future<void>.delayed(Duration.zero);
-    expect(capture.rebindCount, 1);
-    expect(service.isConnected, isTrue);
-    expect(transport.isConnected, isTrue);
+      routes.add(
+        const VoiceAudioDevice(id: 'bt-1', label: 'Bluetooth headphones'),
+      );
+      await Future<void>.delayed(Duration.zero);
+      expect(capture.rebindCount, 1);
+      expect(service.isConnected, isTrue);
+      expect(transport.isConnected, isTrue);
 
-    service.addLine('I keep coming back to the same worry.');
-    final transcript = await service.end();
-    expect(transcript, contains('same worry'));
-    expect(service.isConnected, isFalse);
-    await routes.close();
-  });
+      service.addLine('I keep coming back to the same worry.');
+      final transcript = await service.end();
+      expect(transcript, contains('same worry'));
+      expect(service.isConnected, isFalse);
+      await routes.close();
+    },
+  );
 
-  test('ending a call saves the transcript and life patterns for indexing', () async {
-    JournalEntryCapture? indexed;
-    final pipeline = VoiceJournalPipeline(
-      idFactory: () => 'call-1',
-      clock: () => DateTime.utc(2026, 9, 22, 20),
-      save: (entry) async {},
-      index: (entry, patterns) async {
-        indexed = JournalEntryCapture(entry.transcript, patterns);
-      },
-    );
+  test(
+    'ending a call saves the transcript and life patterns for indexing',
+    () async {
+      JournalEntryCapture? indexed;
+      final pipeline = VoiceJournalPipeline(
+        idFactory: () => 'call-1',
+        clock: () => DateTime.utc(2026, 9, 22, 20),
+        save: (entry) async {},
+        index: (entry, patterns) async {
+          indexed = JournalEntryCapture(entry.transcript, patterns);
+        },
+      );
 
-    final result = await pipeline.complete(
-      'I keep coming back to the same worry. The morning feels lighter.',
-    );
+      final result = await pipeline.complete(
+        'I keep coming back to the same worry. The morning feels lighter.',
+      );
 
-    expect(result.entry.transcript, contains('same worry'));
-    expect(result.lifePatterns, [
-      'I keep coming back to the same worry',
-      'The morning feels lighter',
-    ]);
-    expect(result.entry.reflection.recurringThemes, result.lifePatterns);
-    expect(indexed?.transcript, result.entry.transcript);
-    expect(indexed?.patterns, result.lifePatterns);
-    expect(result.entry.toJson()['transcript'], result.entry.transcript);
-  });
+      expect(result.entry.transcript, contains('same worry'));
+      expect(result.lifePatterns, [
+        'I keep coming back to the same worry',
+        'The morning feels lighter',
+      ]);
+      expect(result.entry.reflection.recurringThemes, result.lifePatterns);
+      expect(indexed?.transcript, result.entry.transcript);
+      expect(indexed?.patterns, result.lifePatterns);
+      expect(result.entry.toJson()['transcript'], result.entry.transcript);
+    },
+  );
 
   testWidgets('voice call orb ends into a saved life pattern line', (
     tester,

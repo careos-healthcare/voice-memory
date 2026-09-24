@@ -195,7 +195,11 @@ class RevenueReadinessDashboardV2Dashboard {
     required this.subtitle,
     required this.liftFocus,
     required this.repairFocus,
-    required this.sections, required this.diagnoses, required this.decisionRule, required this.validationDecision, this.proofFloorRescueFocus,
+    required this.sections,
+    required this.diagnoses,
+    required this.decisionRule,
+    required this.validationDecision,
+    this.proofFloorRescueFocus,
   });
 
   final String title;

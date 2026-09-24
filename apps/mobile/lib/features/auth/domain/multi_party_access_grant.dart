@@ -5,23 +5,23 @@ enum MultiPartyAccessRole {
   coach;
 
   String get label => switch (this) {
-        MultiPartyAccessRole.caregiver => 'Caregiver',
-        MultiPartyAccessRole.observer => 'Observer',
-        MultiPartyAccessRole.coach => 'Coach',
-      };
+    MultiPartyAccessRole.caregiver => 'Caregiver',
+    MultiPartyAccessRole.observer => 'Observer',
+    MultiPartyAccessRole.coach => 'Coach',
+  };
 
   static MultiPartyAccessRole? fromWire(String? raw) => switch (raw) {
-        'caregiver' || 'caregiver_monitoring' => MultiPartyAccessRole.caregiver,
-        'observer' => MultiPartyAccessRole.observer,
-        'coach' || 'coach_client' => MultiPartyAccessRole.coach,
-        _ => null,
-      };
+    'caregiver' || 'caregiver_monitoring' => MultiPartyAccessRole.caregiver,
+    'observer' => MultiPartyAccessRole.observer,
+    'coach' || 'coach_client' => MultiPartyAccessRole.coach,
+    _ => null,
+  };
 
   String get wireValue => switch (this) {
-        MultiPartyAccessRole.caregiver => 'caregiver',
-        MultiPartyAccessRole.observer => 'observer',
-        MultiPartyAccessRole.coach => 'coach',
-      };
+    MultiPartyAccessRole.caregiver => 'caregiver',
+    MultiPartyAccessRole.observer => 'observer',
+    MultiPartyAccessRole.coach => 'coach',
+  };
 }
 
 /// Active HMAC-signed consent grant for multi-party archive access.

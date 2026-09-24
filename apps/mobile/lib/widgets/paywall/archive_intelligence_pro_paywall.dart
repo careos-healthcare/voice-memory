@@ -24,7 +24,8 @@ List<ProPaywallFeatureItem> buildDefaultProPaywallFeatures() {
     ProPaywallFeatureItem(
       icon: Icons.timeline_outlined,
       title: bullets[0],
-      subtitle: 'Your verified timeline stays on this device as you add moments.',
+      subtitle:
+          'Your verified timeline stays on this device as you add moments.',
     ),
     ProPaywallFeatureItem(
       icon: Icons.inventory_2_outlined,
@@ -173,11 +174,12 @@ class _ArchiveIntelligenceProPaywallState
                               ),
                             if (_stats != null)
                               SizedBox(
-                                height: ArchiveResponsiveLayout.gap(context) +
-                                    10,
+                                height:
+                                    ArchiveResponsiveLayout.gap(context) + 10,
                               ),
                             StaggeredProFeatureList(
-                              sectionTitle: ArchivePaywallCopy.lockedSectionTitle,
+                              sectionTitle:
+                                  ArchivePaywallCopy.lockedSectionTitle,
                               features: features,
                             ),
                             if (widget.extraScrollContent != null) ...[
@@ -187,8 +189,8 @@ class _ArchiveIntelligenceProPaywallState
                             PaywallSubscriptionDetailsSection(
                               monthlyPrice: widget.monthlyPrice,
                               yearlyPrice: widget.yearlyPrice,
-                              plansAvailable: widget.hasMonthly ||
-                                  widget.hasYearly,
+                              plansAvailable:
+                                  widget.hasMonthly || widget.hasYearly,
                             ),
                             if (widget.errorMessage != null) ...[
                               const SizedBox(height: 12),

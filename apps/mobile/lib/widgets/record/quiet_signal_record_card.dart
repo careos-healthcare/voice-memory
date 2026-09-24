@@ -12,14 +12,18 @@ import 'package:flutter/material.dart';
 /// Quiet signal card on the Record ready surface.
 class QuietSignalRecordCard extends StatefulWidget {
   const QuietSignalRecordCard({
-    required this.signal, required this.entryCount, super.key,
+    required this.signal,
+    required this.entryCount,
+    super.key,
     this.store,
     this.skipPersist = false,
     this.onKeepWatching,
   });
 
   const QuietSignalRecordCard.test({
-    required this.signal, required this.entryCount, super.key,
+    required this.signal,
+    required this.entryCount,
+    super.key,
     this.store,
     this.onKeepWatching,
   }) : skipPersist = true;

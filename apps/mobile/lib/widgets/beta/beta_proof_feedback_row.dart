@@ -15,7 +15,16 @@ import 'package:flutter/material.dart';
 /// Compact beta-only feedback row for high-value proof surfaces.
 class BetaProofFeedbackRow extends StatefulWidget {
   const BetaProofFeedbackRow({
-    required this.surface, required this.source, required this.entryCount, required this.hasConfirmedRepeat, required this.parentVisible, required this.isRecording, required this.isPostSaveDegraded, required this.whatChangedQuestionActive, required this.patternReviewInboxHasActiveItems, super.key,
+    required this.surface,
+    required this.source,
+    required this.entryCount,
+    required this.hasConfirmedRepeat,
+    required this.parentVisible,
+    required this.isRecording,
+    required this.isPostSaveDegraded,
+    required this.whatChangedQuestionActive,
+    required this.patternReviewInboxHasActiveItems,
+    super.key,
     this.onChanged,
     this.onNotRelevantAnswered,
     this.store,
@@ -24,7 +33,12 @@ class BetaProofFeedbackRow extends StatefulWidget {
   });
 
   const BetaProofFeedbackRow.test({
-    required this.surface, required this.source, required this.entryCount, required this.hasConfirmedRepeat, required this.parentVisible, super.key,
+    required this.surface,
+    required this.source,
+    required this.entryCount,
+    required this.hasConfirmedRepeat,
+    required this.parentVisible,
+    super.key,
     this.isRecording = false,
     this.isPostSaveDegraded = false,
     this.whatChangedQuestionActive = false,

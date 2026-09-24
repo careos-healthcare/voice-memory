@@ -53,7 +53,8 @@ class OfflineSyncProductionEvidence {
       'evidence_preserved': evidencePreserved,
       'timestamp': DateTime.now().toUtc().toIso8601String(),
       'marketing_version': packageInfo.version,
-      'build_number': int.tryParse(packageInfo.buildNumber) ?? packageInfo.buildNumber,
+      'build_number':
+          int.tryParse(packageInfo.buildNumber) ?? packageInfo.buildNumber,
       if (sourceCommitSha.isNotEmpty) 'commit_sha': sourceCommitSha,
       if (!physicalDevice)
         'note': 'Physical device required — emulator/simulator does not count',

@@ -24,7 +24,10 @@ void main() {
       await pumpWithLens(tester, LifeStageLens.newParent);
 
       expect(find.text(NewParentLens.beliefChangesEntryTitle), findsOneWidget);
-      expect(find.text(NewParentLens.beliefChangesFortnightCta), findsOneWidget);
+      expect(
+        find.text(NewParentLens.beliefChangesFortnightCta),
+        findsOneWidget,
+      );
       expect(find.text(NewParentLens.beliefChangesMonthCta), findsOneWidget);
     });
 
@@ -34,7 +37,10 @@ void main() {
       await pumpWithLens(tester, LifeStageLens.griefLoss);
 
       expect(find.text(GriefLossLens.beliefChangesEntryTitle), findsOneWidget);
-      expect(find.text(GriefLossLens.beliefChangesFortnightCta), findsOneWidget);
+      expect(
+        find.text(GriefLossLens.beliefChangesFortnightCta),
+        findsOneWidget,
+      );
       expect(find.text(GriefLossLens.beliefChangesMonthCta), findsOneWidget);
     });
 

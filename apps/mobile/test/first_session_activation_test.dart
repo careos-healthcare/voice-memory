@@ -78,9 +78,13 @@ PressureCheckInRecord _record({String id = 'a'}) {
 Future<void> _pumpCard(WidgetTester tester, Widget child) async {
   await tester.binding.setSurfaceSize(const Size(390, 1600));
   addTearDown(() => tester.binding.setSurfaceSize(null));
-  await tester.pumpWidget(withAppProviderScope(MaterialApp(
-      home: Scaffold(body: SingleChildScrollView(child: child)),
-    )));
+  await tester.pumpWidget(
+    withAppProviderScope(
+      MaterialApp(
+        home: Scaffold(body: SingleChildScrollView(child: child)),
+      ),
+    ),
+  );
   await tester.pump();
 }
 
@@ -91,16 +95,20 @@ Future<void> _pumpInsights(
 }) async {
   await tester.binding.setSurfaceSize(const Size(390, 2400));
   addTearDown(() => tester.binding.setSurfaceSize(null));
-  await tester.pumpWidget(withAppProviderScope(MaterialApp(
-      home: PressureInsightsScreen(
-        entitlementReader: FakeArchiveEntitlementReader(pro: pro),
-        // In-memory stores: AppServices may be initialized by earlier tests
-        // in this file, and live stores would do file IO in the widget zone.
-        microExperimentStore: MemoryExperimentStore(),
-        returnTriggerStore: MemoryReturnTriggerStore(),
-        records: records,
+  await tester.pumpWidget(
+    withAppProviderScope(
+      MaterialApp(
+        home: PressureInsightsScreen(
+          entitlementReader: FakeArchiveEntitlementReader(pro: pro),
+          // In-memory stores: AppServices may be initialized by earlier tests
+          // in this file, and live stores would do file IO in the widget zone.
+          microExperimentStore: MemoryExperimentStore(),
+          returnTriggerStore: MemoryReturnTriggerStore(),
+          records: records,
+        ),
       ),
-    )));
+    ),
+  );
   await tester.pumpAndSettle();
 }
 
@@ -431,7 +439,9 @@ void main() {
         ],
       );
 
-      await tester.pumpWidget(withAppProviderScope(MaterialApp.router(routerConfig: router)));
+      await tester.pumpWidget(
+        withAppProviderScope(MaterialApp.router(routerConfig: router)),
+      );
       await tester.pump();
 
       await tester.tap(find.text("I couldn't stop even though I wanted to"));
@@ -587,15 +597,19 @@ void main() {
       );
       await tester.binding.setSurfaceSize(const Size(390, 3200));
       addTearDown(() => tester.binding.setSurfaceSize(null));
-      await tester.pumpWidget(withAppProviderScope(MaterialApp(
-          theme: AppTheme.light(),
-          home: Scaffold(
-            body: RecordScreen(
-              suggestionAttributionStore: MemorySuggestionAttributionStore(),
-              entitlementReader: FakeArchiveEntitlementReader(pro: false),
+      await tester.pumpWidget(
+        withAppProviderScope(
+          MaterialApp(
+            theme: AppTheme.light(),
+            home: Scaffold(
+              body: RecordScreen(
+                suggestionAttributionStore: MemorySuggestionAttributionStore(),
+                entitlementReader: FakeArchiveEntitlementReader(pro: false),
+              ),
             ),
           ),
-        )));
+        ),
+      );
       await tester.pump();
       await tester.runAsync(() async {
         await Future<void>.delayed(const Duration(milliseconds: 400));
@@ -782,15 +796,19 @@ void main() {
       );
       await tester.binding.setSurfaceSize(const Size(390, 3200));
       addTearDown(() => tester.binding.setSurfaceSize(null));
-      await tester.pumpWidget(withAppProviderScope(MaterialApp(
-          theme: AppTheme.light(),
-          home: Scaffold(
-            body: RecordScreen(
-              suggestionAttributionStore: MemorySuggestionAttributionStore(),
-              entitlementReader: FakeArchiveEntitlementReader(pro: false),
+      await tester.pumpWidget(
+        withAppProviderScope(
+          MaterialApp(
+            theme: AppTheme.light(),
+            home: Scaffold(
+              body: RecordScreen(
+                suggestionAttributionStore: MemorySuggestionAttributionStore(),
+                entitlementReader: FakeArchiveEntitlementReader(pro: false),
+              ),
             ),
           ),
-        )));
+        ),
+      );
       await tester.pump();
       await tester.runAsync(() async {
         await Future<void>.delayed(const Duration(milliseconds: 400));
@@ -1157,15 +1175,19 @@ void main() {
     Future<void> pumpRecordScreen(WidgetTester tester) async {
       await tester.binding.setSurfaceSize(const Size(390, 3200));
       addTearDown(() => tester.binding.setSurfaceSize(null));
-      await tester.pumpWidget(withAppProviderScope(MaterialApp(
-          theme: AppTheme.light(),
-          home: Scaffold(
-            body: RecordScreen(
-              suggestionAttributionStore: MemorySuggestionAttributionStore(),
-              entitlementReader: FakeArchiveEntitlementReader(pro: false),
+      await tester.pumpWidget(
+        withAppProviderScope(
+          MaterialApp(
+            theme: AppTheme.light(),
+            home: Scaffold(
+              body: RecordScreen(
+                suggestionAttributionStore: MemorySuggestionAttributionStore(),
+                entitlementReader: FakeArchiveEntitlementReader(pro: false),
+              ),
             ),
           ),
-        )));
+        ),
+      );
       await tester.pump();
       await tester.runAsync(() async {
         await Future<void>.delayed(const Duration(milliseconds: 400));
@@ -1562,16 +1584,20 @@ void main() {
     }) async {
       await tester.binding.setSurfaceSize(const Size(390, 3200));
       addTearDown(() => tester.binding.setSurfaceSize(null));
-      await tester.pumpWidget(withAppProviderScope(MaterialApp(
-          theme: AppTheme.light(),
-          home: Scaffold(
-            body: RecordScreen(
-              suggestionAttributionStore: MemorySuggestionAttributionStore(),
-              entitlementReader: FakeArchiveEntitlementReader(pro: false),
-              inviteAttributionStore: store,
+      await tester.pumpWidget(
+        withAppProviderScope(
+          MaterialApp(
+            theme: AppTheme.light(),
+            home: Scaffold(
+              body: RecordScreen(
+                suggestionAttributionStore: MemorySuggestionAttributionStore(),
+                entitlementReader: FakeArchiveEntitlementReader(pro: false),
+                inviteAttributionStore: store,
+              ),
             ),
           ),
-        )));
+        ),
+      );
       await tester.pump();
       await tester.runAsync(() async {
         await Future<void>.delayed(const Duration(milliseconds: 400));
@@ -1997,16 +2023,20 @@ void main() {
     }) async {
       await tester.binding.setSurfaceSize(const Size(390, 3200));
       addTearDown(() => tester.binding.setSurfaceSize(null));
-      await tester.pumpWidget(withAppProviderScope(MaterialApp(
-          theme: AppTheme.light(),
-          home: Scaffold(
-            body: RecordScreen(
-              suggestionAttributionStore: MemorySuggestionAttributionStore(),
-              entitlementReader: FakeArchiveEntitlementReader(pro: false),
-              inviteAttributionStore: store,
+      await tester.pumpWidget(
+        withAppProviderScope(
+          MaterialApp(
+            theme: AppTheme.light(),
+            home: Scaffold(
+              body: RecordScreen(
+                suggestionAttributionStore: MemorySuggestionAttributionStore(),
+                entitlementReader: FakeArchiveEntitlementReader(pro: false),
+                inviteAttributionStore: store,
+              ),
             ),
           ),
-        )));
+        ),
+      );
       await tester.pump();
       await tester.runAsync(() async {
         await Future<void>.delayed(const Duration(milliseconds: 400));

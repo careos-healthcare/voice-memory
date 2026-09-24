@@ -34,7 +34,8 @@ class ArchiveAnalystEngine {
 
   Future<ArchiveAnalystReport> build({
     required List<JournalEntry> entries,
-    required BeliefEvolutionService evolutionService, ArchiveStateObjectV3? state,
+    required BeliefEvolutionService evolutionService,
+    ArchiveStateObjectV3? state,
   }) async {
     final eligible = archiveEligibleEvidenceEntries(entries);
     final count = eligible.length;

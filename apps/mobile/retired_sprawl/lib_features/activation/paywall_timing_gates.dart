@@ -14,7 +14,8 @@ abstract class PaywallTimingGates {
   static const minMagicMomentsForPaywall = minEvidenceMilestonesForPaywall;
 
   /// @deprecated Prefer [minEvidenceMilestonesForPaywall].
-  static const minFullArchiveHistoryEntryCount = minEvidenceMilestonesForPaywall;
+  static const minFullArchiveHistoryEntryCount =
+      minEvidenceMilestonesForPaywall;
 
   /// Soft Pro bridge: never on first save, never without archive proof.
   static bool showSoftProBridge({

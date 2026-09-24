@@ -13,7 +13,8 @@ import 'package:share_plus/share_plus.dart';
 /// Fixed-size privacy-safe share card for PNG export.
 class ShareCardImage extends StatelessWidget {
   const ShareCardImage({
-    required this.model, super.key,
+    required this.model,
+    super.key,
     this.exportKey,
     this.fixedWidth = exportWidth,
   });

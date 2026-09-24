@@ -7,13 +7,15 @@ abstract final class RecordHowItWorksCopy {
 
   static const sheetTitle = 'How it works';
 
-  static const List<({String body, String title})> steps = FirstSessionOnboardingCopy.steps;
+  static const List<({String body, String title})> steps =
+      FirstSessionOnboardingCopy.steps;
 
   static const String chatGptLine = FirstSessionOnboardingCopy.notChatFootnote;
 
   static const timelineHeading = 'Timeline';
 
-  static const List<String> timelineBullets = TimelinePositioningCopy.timelineBullets;
+  static const List<String> timelineBullets =
+      TimelinePositioningCopy.timelineBullets;
 
   static const doneLabel = 'Done';
 }

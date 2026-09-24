@@ -5,7 +5,10 @@ import 'package:flutter/material.dart';
 /// daily suggestion. Dismissible, shows at most once per session, and never
 /// appears for Pro users or before three saved entries.
 class SuggestionProNudgeCard extends StatelessWidget {
-  const SuggestionProNudgeCard({required this.onUnlock, required this.onDismiss, super.key,
+  const SuggestionProNudgeCard({
+    required this.onUnlock,
+    required this.onDismiss,
+    super.key,
   });
 
   final VoidCallback onUnlock;

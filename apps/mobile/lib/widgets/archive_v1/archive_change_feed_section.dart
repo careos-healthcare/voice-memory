@@ -15,7 +15,9 @@ import 'dart:async';
 /// What changed since the last archive review.
 class ArchiveChangeFeedSection extends StatelessWidget {
   const ArchiveChangeFeedSection({
-    required this.feed, required this.entries, super.key,
+    required this.feed,
+    required this.entries,
+    super.key,
   });
 
   final ArchiveChangeFeedView feed;
@@ -118,9 +120,7 @@ class ArchiveChangeFeedSection extends StatelessWidget {
   Widget _title() {
     return Text(
       ArchiveChangeFeedCopy.sectionTitle,
-      style: VoiceMemoryTypography.sectionLabelStyle(
-        
-      ),
+      style: VoiceMemoryTypography.sectionLabelStyle(),
     );
   }
 
@@ -193,11 +193,13 @@ class ArchiveChangeFeedSection extends StatelessWidget {
                   row: row,
                   entries: entries,
                 );
-                unawaited(showEvidenceTrailSheet(
-                  context,
-                  payload: payload,
-                  surface: 'change_feed_belief',
-                ));
+                unawaited(
+                  showEvidenceTrailSheet(
+                    context,
+                    payload: payload,
+                    surface: 'change_feed_belief',
+                  ),
+                );
               },
             ),
           ),
@@ -246,11 +248,13 @@ class ArchiveChangeFeedSection extends StatelessWidget {
                   row: row,
                   entries: entries,
                 );
-                unawaited(showEvidenceTrailSheet(
-                  context,
-                  payload: payload,
-                  surface: 'change_feed_contradiction',
-                ));
+                unawaited(
+                  showEvidenceTrailSheet(
+                    context,
+                    payload: payload,
+                    surface: 'change_feed_contradiction',
+                  ),
+                );
               },
             ),
           ),
@@ -302,11 +306,13 @@ class ArchiveChangeFeedSection extends StatelessWidget {
                   row: row,
                   entries: entries,
                 );
-                unawaited(showEvidenceTrailSheet(
-                  context,
-                  payload: payload,
-                  surface: 'change_feed_theme',
-                ));
+                unawaited(
+                  showEvidenceTrailSheet(
+                    context,
+                    payload: payload,
+                    surface: 'change_feed_theme',
+                  ),
+                );
               },
             ),
           ),

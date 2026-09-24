@@ -15,7 +15,11 @@ import 'package:flutter/material.dart';
 /// recording, structured follow-up stored locally only.
 class ConfirmedRepeatBetaFeedbackCard extends StatefulWidget {
   const ConfirmedRepeatBetaFeedbackCard({
-    required this.entryCount, required this.surface, required this.viewingConfirmedRepeat, required this.isRecording, super.key,
+    required this.entryCount,
+    required this.surface,
+    required this.viewingConfirmedRepeat,
+    required this.isRecording,
+    super.key,
     this.store,
     this.skipPrefsLoad = false,
     this.initialState,
@@ -23,7 +27,11 @@ class ConfirmedRepeatBetaFeedbackCard extends StatefulWidget {
   });
 
   const ConfirmedRepeatBetaFeedbackCard.test({
-    required this.entryCount, required this.surface, required this.viewingConfirmedRepeat, required this.isRecording, super.key,
+    required this.entryCount,
+    required this.surface,
+    required this.viewingConfirmedRepeat,
+    required this.isRecording,
+    super.key,
     this.store,
     this.onChanged,
     this.initialState,

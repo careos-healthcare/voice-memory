@@ -14,7 +14,9 @@ import 'dart:async';
 /// Return-day watch question — v2 copy with grounded phrase line.
 class ReturnWatchQuestionCard extends StatefulWidget {
   const ReturnWatchQuestionCard({
-    required this.question, required this.entryCount, super.key,
+    required this.question,
+    required this.entryCount,
+    super.key,
     this.store,
     this.returnDayStore,
     this.skipPrefsLoad = false,
@@ -25,7 +27,9 @@ class ReturnWatchQuestionCard extends StatefulWidget {
   });
 
   const ReturnWatchQuestionCard.test({
-    required this.question, required this.entryCount, super.key,
+    required this.question,
+    required this.entryCount,
+    super.key,
     this.store,
     this.returnDayStore,
     this.onAnswered,

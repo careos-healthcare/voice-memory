@@ -52,7 +52,8 @@ void main() {
       expect(
         ConsentRevocationStore.isRevoked('any-token-at-all'),
         isTrue,
-        reason: 'a tokenIds field we cannot parse used to read as an empty '
+        reason:
+            'a tokenIds field we cannot parse used to read as an empty '
             'revocation list, which reinstates every revoked grant',
       );
     });
@@ -68,7 +69,8 @@ void main() {
       expect(
         ConsentRevocationStore.isRevoked('some-other-token'),
         isTrue,
-        reason: 'one unreadable entry means the list is not trustworthy; '
+        reason:
+            'one unreadable entry means the list is not trustworthy; '
             'dropping it silently loses a revocation',
       );
     });
@@ -87,7 +89,8 @@ void main() {
       expect(
         ConsentRevocationStore.isRevoked('any-token-at-all'),
         isFalse,
-        reason: 'a first run has revoked nothing; denying here would break '
+        reason:
+            'a first run has revoked nothing; denying here would break '
             'every grant on every fresh install',
       );
     });

@@ -77,9 +77,7 @@ void main() {
     test(
       'buildComparisonPlan prunes oversized pro history before prompt build',
       () {
-        const prunedExecutor = PatternComparisonExecutor(
-          
-        );
+        const prunedExecutor = PatternComparisonExecutor();
         final history = [
           for (var day = 1; day <= 35; day++)
             ArchiveMomentRecord(

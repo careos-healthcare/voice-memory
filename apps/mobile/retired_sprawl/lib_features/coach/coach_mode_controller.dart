@@ -1,6 +1,7 @@
 import 'package:archiveme_mobile/config/app_mode_config.dart';
 import 'package:archiveme_mobile/core/config/beta_surfaces_feature_flags.dart';
-import 'package:archiveme_mobile/features/caregiver/caregiver_mode_controller.dart' show CaregiverModeController;
+import 'package:archiveme_mobile/features/caregiver/caregiver_mode_controller.dart'
+    show CaregiverModeController;
 import 'package:archiveme_mobile/features/caregiver/caregiver_models.dart';
 import 'package:archiveme_mobile/features/coach/client_consent_verification_service.dart';
 import 'package:archiveme_mobile/features/coach/coach_client_relationship_store.dart';
@@ -47,7 +48,8 @@ class CoachModeController {
     CoachRelationshipSyncService? relationshipSync,
   }) {
     final relationshipStore = CoachClientRelationshipStore(prefs);
-    final sync = relationshipSync ??
+    final sync =
+        relationshipSync ??
         (relationshipRepository == null
             ? null
             : CoachRelationshipSyncService(

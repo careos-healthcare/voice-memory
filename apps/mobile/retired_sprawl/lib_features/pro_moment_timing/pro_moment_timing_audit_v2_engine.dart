@@ -13,7 +13,8 @@ import 'package:archiveme_mobile/features/surface_priority/surface_priority_mode
 abstract final class ProMomentTimingAuditV2Engine {
   ProMomentTimingAuditV2Engine._();
 
-  static const PaywallSource expectedProBridgePaywallSource = PaywallSource.valueMoment;
+  static const PaywallSource expectedProBridgePaywallSource =
+      PaywallSource.valueMoment;
 
   static bool shouldShow({required bool betaMissionEnabled}) =>
       betaMissionEnabled;

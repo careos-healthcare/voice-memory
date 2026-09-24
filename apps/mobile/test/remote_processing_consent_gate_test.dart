@@ -155,10 +155,11 @@ Future<_ConsentGateFakeApi> _initPipeline({
   return api;
 }
 
-RemoteProcessingConsentGate get _gate =>
-    RemoteProcessingConsentGate(RemoteProcessingConsentStore(
-      AppServices.instance.prefs,
-    ));
+RemoteProcessingConsentGate get _gate => RemoteProcessingConsentGate(
+  RemoteProcessingConsentStore(
+    AppServices.instance.prefs,
+  ),
+);
 
 /// Asserts what the gate answers before the pipeline runs.
 ///
@@ -196,9 +197,9 @@ void main() {
     );
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(connectivity, (call) async {
-      if (call.method == 'check') return ['wifi'];
-      return null;
-    });
+          if (call.method == 'check') return ['wifi'];
+          return null;
+        });
 
     // Saving an entry schedules an automated-graph flush that reads secure
     // storage on a later turn of the event loop. Whether it lands inside the
@@ -210,28 +211,29 @@ void main() {
     final secureValues = <String, String>{};
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(secureStorage, (call) async {
-      final args = call.arguments as Map<Object?, Object?>? ?? const {};
-      final key = args['key'] as String?;
-      switch (call.method) {
-        case 'read':
-          return key == null ? null : secureValues[key];
-        case 'write':
-          if (key != null) secureValues[key] = args['value'] as String? ?? '';
-          return null;
-        case 'containsKey':
-          return key != null && secureValues.containsKey(key);
-        case 'readAll':
-          return Map<String, String>.of(secureValues);
-        case 'delete':
-          secureValues.remove(key);
-          return null;
-        case 'deleteAll':
-          secureValues.clear();
-          return null;
-        default:
-          return null;
-      }
-    });
+          final args = call.arguments as Map<Object?, Object?>? ?? const {};
+          final key = args['key'] as String?;
+          switch (call.method) {
+            case 'read':
+              return key == null ? null : secureValues[key];
+            case 'write':
+              if (key != null)
+                secureValues[key] = args['value'] as String? ?? '';
+              return null;
+            case 'containsKey':
+              return key != null && secureValues.containsKey(key);
+            case 'readAll':
+              return Map<String, String>.of(secureValues);
+            case 'delete':
+              secureValues.remove(key);
+              return null;
+            case 'deleteAll':
+              secureValues.clear();
+              return null;
+            default:
+              return null;
+          }
+        });
   });
 
   setUp(ApiUsageGuard.resetForTest);
@@ -241,25 +243,27 @@ void main() {
   });
 
   group('both gates open', () {
-    test('consent granted: transcription and analysis proceed normally',
-        () async {
-      final api = await _initPipeline(
-        grantConsentByDefault: true,
-        onDeviceOnly: false,
-      );
-      await _expectPermitted(transcription: true, reflection: true);
-      api.allowCalls = true;
-      final audio = await _usableAudioFile();
+    test(
+      'consent granted: transcription and analysis proceed normally',
+      () async {
+        final api = await _initPipeline(
+          grantConsentByDefault: true,
+          onDeviceOnly: false,
+        );
+        await _expectPermitted(transcription: true, reflection: true);
+        api.allowCalls = true;
+        final audio = await _usableAudioFile();
 
-      final result = (await AppServices.instance.pipeline.run(
-        audioFile: audio,
-        durationSeconds: 20,
-      )).getOrThrow();
+        final result = (await AppServices.instance.pipeline.run(
+          audioFile: audio,
+          durationSeconds: 20,
+        )).getOrThrow();
 
-      expect(result.analysisSucceeded, isTrue);
-      expect(api.postTranscribeCallCount, 1);
-      expect(api.postAnalyzeRawCallCount, 1);
-    });
+        expect(result.analysisSucceeded, isTrue);
+        expect(api.postTranscribeCallCount, 1);
+        expect(api.postAnalyzeRawCallCount, 1);
+      },
+    );
 
     test('stamp-at-creation-time: a withdrawal that lands during the network '
         'round trip is reflected in what gets stamped, not the stale answer '
@@ -316,7 +320,8 @@ void main() {
       expect(
         result.entry.transcript,
         contains('Recording saved locally'),
-        reason: 'local-only voice receipt uses draft placeholder, not remote STT',
+        reason:
+            'local-only voice receipt uses draft placeholder, not remote STT',
       );
       expect(result.entry.syncStatus, SyncStatus.pendingUpload);
     });
@@ -378,8 +383,9 @@ void main() {
 
         // The first leg above is the positive control for the second: same
         // pipeline, same audio shape, one variable changed.
-        await RemoteProcessingConsentStore(AppServices.instance.prefs)
-            .withdraw();
+        await RemoteProcessingConsentStore(
+          AppServices.instance.prefs,
+        ).withdraw();
         await _expectPermitted(transcription: false, reflection: false);
         api.allowCalls = false;
 
@@ -426,45 +432,85 @@ void main() {
       );
     });
 
-    test('control: saveTextThought does reach analyze once consent is given',
-        () async {
-      // Same call, same transcript, consent the only difference. Without this
-      // the case above would also pass if `saveTextThought` had simply stopped
-      // calling the network for an unrelated reason.
-      final api = await _initPipeline(
-        grantConsentByDefault: true,
-        onDeviceOnly: false,
-      );
-      await _expectPermitted(transcription: true, reflection: true);
-      api.allowCalls = true;
+    test(
+      'control: saveTextThought does reach analyze once consent is given',
+      () async {
+        // Same call, same transcript, consent the only difference. Without this
+        // the case above would also pass if `saveTextThought` had simply stopped
+        // calling the network for an unrelated reason.
+        final api = await _initPipeline(
+          grantConsentByDefault: true,
+          onDeviceOnly: false,
+        );
+        await _expectPermitted(transcription: true, reflection: true);
+        api.allowCalls = true;
 
-      final result = (await AppServices.instance.pipeline.saveTextThought(
-        transcript: 'I keep saying yes when I have no capacity left.',
-      )).getOrThrow();
+        final result = (await AppServices.instance.pipeline.saveTextThought(
+          transcript: 'I keep saying yes when I have no capacity left.',
+        )).getOrThrow();
 
-      expect(api.postAnalyzeRawCallCount, 1);
-      expect(result.localSaved, isTrue);
-    });
+        expect(api.postAnalyzeRawCallCount, 1);
+        expect(result.localSaved, isTrue);
+      },
+    );
   });
 
   group('consent open, veto closed', () {
-    test('the on-device-only veto alone blocks a fully consented capture',
-        () async {
-      // The mirror of the group above: consent is granted, so anything refused
-      // here is refused by the local switch and nothing else.
-      final api = await _initPipeline(
-        grantConsentByDefault: true,
-        onDeviceOnly: true,
-      );
-      final store = RemoteProcessingConsentStore(AppServices.instance.prefs);
-      for (final purpose in RemoteProcessingPurpose.values) {
-        expect(
-          await store.isPurposeGrantedNow(purpose),
-          isTrue,
-          reason: 'precondition: consent itself is on record for $purpose',
+    test(
+      'the on-device-only veto alone blocks a fully consented capture',
+      () async {
+        // The mirror of the group above: consent is granted, so anything refused
+        // here is refused by the local switch and nothing else.
+        final api = await _initPipeline(
+          grantConsentByDefault: true,
+          onDeviceOnly: true,
         );
-      }
-      await _expectPermitted(transcription: false, reflection: false);
+        final store = RemoteProcessingConsentStore(AppServices.instance.prefs);
+        for (final purpose in RemoteProcessingPurpose.values) {
+          expect(
+            await store.isPurposeGrantedNow(purpose),
+            isTrue,
+            reason: 'precondition: consent itself is on record for $purpose',
+          );
+        }
+        await _expectPermitted(transcription: false, reflection: false);
+        final audio = await _usableAudioFile();
+
+        final result = (await AppServices.instance.pipeline.run(
+          audioFile: audio,
+          durationSeconds: 20,
+        )).getOrThrow();
+
+        expect(api.postTranscribeCallCount, 0);
+        expect(api.postAnalyzeRawCallCount, 0);
+        expect(result.localSaved, isTrue);
+      },
+    );
+  });
+
+  test(
+    'remote failure after consent does not erase a locally saved entry',
+    () async {
+      final dir = Directory.systemTemp.createTempSync(
+        'vm_consent_fail_journal_',
+      );
+      final api = _ConsentGateFakeApi()..allowCalls = true;
+      await AppServices.resetForTest(
+        journalPath: '${dir.path}/journal.json',
+        networkOverrides: [
+          captureApiClientProvider.overrideWith(
+            (ref) => _AnalyzeFailingApi(api),
+          ),
+        ],
+        grantRemoteProcessingConsentByDefault: true,
+      );
+      await OnDeviceProcessingStore.resetForTest();
+      await OnDeviceProcessingStore.setEnabled(false);
+      AppServices.instance.tokenCache.setToken(
+        'test-capture-token',
+        expiresInSeconds: 3600,
+      );
+      await _expectPermitted(transcription: true, reflection: true);
       final audio = await _usableAudioFile();
 
       final result = (await AppServices.instance.pipeline.run(
@@ -472,45 +518,13 @@ void main() {
         durationSeconds: 20,
       )).getOrThrow();
 
-      expect(api.postTranscribeCallCount, 0);
-      expect(api.postAnalyzeRawCallCount, 0);
       expect(result.localSaved, isTrue);
-    });
-  });
-
-  test('remote failure after consent does not erase a locally saved entry',
-      () async {
-    final dir = Directory.systemTemp.createTempSync('vm_consent_fail_journal_');
-    final api = _ConsentGateFakeApi()..allowCalls = true;
-    await AppServices.resetForTest(
-      journalPath: '${dir.path}/journal.json',
-      networkOverrides: [
-        captureApiClientProvider.overrideWith(
-          (ref) => _AnalyzeFailingApi(api),
-        ),
-      ],
-      grantRemoteProcessingConsentByDefault: true,
-    );
-    await OnDeviceProcessingStore.resetForTest();
-    await OnDeviceProcessingStore.setEnabled(false);
-    AppServices.instance.tokenCache.setToken(
-      'test-capture-token',
-      expiresInSeconds: 3600,
-    );
-    await _expectPermitted(transcription: true, reflection: true);
-    final audio = await _usableAudioFile();
-
-    final result = (await AppServices.instance.pipeline.run(
-      audioFile: audio,
-      durationSeconds: 20,
-    )).getOrThrow();
-
-    expect(result.localSaved, isTrue);
-    expect(result.entry.transcript, _spokenTranscript);
-    final reloaded = await AppServices.instance.journalStore.loadAll();
-    expect(reloaded, isNotEmpty);
-    expect(reloaded.first.transcript, _spokenTranscript);
-  });
+      expect(result.entry.transcript, _spokenTranscript);
+      final reloaded = await AppServices.instance.journalStore.loadAll();
+      expect(reloaded, isNotEmpty);
+      expect(reloaded.first.transcript, _spokenTranscript);
+    },
+  );
 }
 
 class _AnalyzeFailingApi implements CaptureApiClient {
@@ -522,8 +536,7 @@ class _AnalyzeFailingApi implements CaptureApiClient {
   Future<ApiResult<AttestResult>> postCaptureAttest(
     String deviceId, {
     NetworkCancelToken? cancelToken,
-  }) =>
-      _inner.postCaptureAttest(deviceId, cancelToken: cancelToken);
+  }) => _inner.postCaptureAttest(deviceId, cancelToken: cancelToken);
 
   @override
   Future<ApiResult<String>> postTranscribe({
@@ -532,14 +545,13 @@ class _AnalyzeFailingApi implements CaptureApiClient {
     required String captureToken,
     String? idempotencyKey,
     NetworkCancelToken? cancelToken,
-  }) =>
-      _inner.postTranscribe(
-        audioFile: audioFile,
-        durationSeconds: durationSeconds,
-        captureToken: captureToken,
-        idempotencyKey: idempotencyKey,
-        cancelToken: cancelToken,
-      );
+  }) => _inner.postTranscribe(
+    audioFile: audioFile,
+    durationSeconds: durationSeconds,
+    captureToken: captureToken,
+    idempotencyKey: idempotencyKey,
+    cancelToken: cancelToken,
+  );
 
   @override
   Future<ApiResult<RawModelResponse>> postAnalyzeRaw({

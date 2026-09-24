@@ -1,5 +1,6 @@
 import 'package:archiveme_mobile/features/comparison_engine/domain/models/archive_moment_record.dart';
-import 'package:archiveme_mobile/features/comparison_engine/presentation/widgets/pattern_evidence_card.dart' show PatternEvidenceCard;
+import 'package:archiveme_mobile/features/comparison_engine/presentation/widgets/pattern_evidence_card.dart'
+    show PatternEvidenceCard;
 
 /// Passive presentation model for [PatternEvidenceCard].
 class PatternEvidenceViewState {

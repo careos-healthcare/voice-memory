@@ -91,8 +91,8 @@ void main() {
     test('clears after typed correction', () async {
       final degraded = _degradedVoiceEntry();
       await AppServices.instance.journalStore.save(degraded);
-      final result = (await AppServices.instance.pipeline
-          .attachTypedTextToVoiceEntry(
+      final result =
+          (await AppServices.instance.pipeline.attachTypedTextToVoiceEntry(
             entry: degraded,
             transcript: _typedCorrection,
           )).getOrThrow();
@@ -189,8 +189,8 @@ void main() {
       final degraded = _degradedVoiceEntry();
       await AppServices.instance.journalStore.save(degraded);
 
-      final result = (await AppServices.instance.pipeline
-          .attachTypedTextToVoiceEntry(
+      final result =
+          (await AppServices.instance.pipeline.attachTypedTextToVoiceEntry(
             entry: degraded,
             transcript: _typedCorrection,
           )).getOrThrow();
@@ -207,8 +207,8 @@ void main() {
         final degraded = _degradedVoiceEntry();
         await AppServices.instance.journalStore.save(degraded);
 
-        final result = (await AppServices.instance.pipeline
-            .attachTypedTextToVoiceEntry(
+        final result =
+            (await AppServices.instance.pipeline.attachTypedTextToVoiceEntry(
               entry: degraded,
               transcript: _typedCorrection,
             )).getOrThrow();
@@ -256,8 +256,8 @@ void main() {
       () async {
         final degraded = _degradedVoiceEntry();
         await AppServices.instance.journalStore.save(degraded);
-        final result = (await AppServices.instance.pipeline
-            .attachTypedTextToVoiceEntry(
+        final result =
+            (await AppServices.instance.pipeline.attachTypedTextToVoiceEntry(
               entry: degraded,
               transcript: _typedCorrection,
             )).getOrThrow();

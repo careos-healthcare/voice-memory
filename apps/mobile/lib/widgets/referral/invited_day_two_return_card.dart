@@ -12,7 +12,10 @@ import 'package:flutter/material.dart';
 /// CTA into the existing recording/check flow; never blocks recording.
 class InvitedDayTwoReturnCard extends StatelessWidget {
   const InvitedDayTwoReturnCard({
-    required this.source, required this.entryCount, required this.onCheck, super.key,
+    required this.source,
+    required this.entryCount,
+    required this.onCheck,
+    super.key,
   });
 
   /// Stable invite attribution source id; unknown values render the

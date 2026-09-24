@@ -29,8 +29,8 @@ Uint8List synthesizePcm16Sine({
   final view = ByteData.view(bytes.buffer);
   for (var index = 0; index < sampleCount; index++) {
     final t = index / sampleRateHz;
-    final value =
-        (math.sin(2 * math.pi * frequencyHz * t) * amplitude * 32767).round();
+    final value = (math.sin(2 * math.pi * frequencyHz * t) * amplitude * 32767)
+        .round();
     view.setInt16(index * 2, value.clamp(-32768, 32767), Endian.little);
   }
   return bytes;

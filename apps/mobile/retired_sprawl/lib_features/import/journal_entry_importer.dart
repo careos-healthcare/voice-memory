@@ -39,15 +39,19 @@ abstract final class JournalEntryImporter {
     final existing = await store.loadAll();
     final existingTexts = skipDuplicates
         ? existing
-            .map((e) => '${e.createdAt.toIso8601String()}|${e.transcript.trim()}')
-            .toSet()
+              .map(
+                (e) =>
+                    '${e.createdAt.toIso8601String()}|${e.transcript.trim()}',
+              )
+              .toSet()
         : <String>{};
 
     var imported = 0;
     var skipped = 0;
     for (final record in records) {
       final entry = toJournalEntry(record);
-      final key = '${entry.createdAt.toIso8601String()}|${entry.transcript.trim()}';
+      final key =
+          '${entry.createdAt.toIso8601String()}|${entry.transcript.trim()}';
       if (skipDuplicates && existingTexts.contains(key)) {
         skipped += 1;
         continue;

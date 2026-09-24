@@ -48,10 +48,13 @@ abstract final class SqliteQueryProfiler {
 
     final stopwatch = Stopwatch()..start();
     final task = TimelineTask()
-      ..start('sqlite:$kind', arguments: {
-        'label': label,
-        ...timelineArgs,
-      });
+      ..start(
+        'sqlite:$kind',
+        arguments: {
+          'label': label,
+          ...timelineArgs,
+        },
+      );
     try {
       final result = await action();
       _finishProfile(

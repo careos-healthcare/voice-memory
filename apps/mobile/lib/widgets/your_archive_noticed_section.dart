@@ -11,7 +11,8 @@ import 'package:flutter/material.dart';
 /// Discover feed: top surprise / challenge / emerging patterns.
 class YourArchiveNoticedSection extends StatelessWidget {
   const YourArchiveNoticedSection({
-    required this.entries, super.key,
+    required this.entries,
+    super.key,
     this.state,
   });
 

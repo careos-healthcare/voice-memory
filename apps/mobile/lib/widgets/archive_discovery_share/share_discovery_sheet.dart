@@ -13,10 +13,12 @@ Future<void> showArchiveDiscoveryShareSheet(
   required ArchiveDiscoveryShareCardModel card,
   required String surface,
 }) {
-  unawaited(First25UserMetrics.trackShareCardOpened(
-    surface: surface,
-    cardType: card.type.analyticsValue,
-  ));
+  unawaited(
+    First25UserMetrics.trackShareCardOpened(
+      surface: surface,
+      cardType: card.type.analyticsValue,
+    ),
+  );
   return showModalBottomSheet<void>(
     context: context,
     isScrollControlled: true,

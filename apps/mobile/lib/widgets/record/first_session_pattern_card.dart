@@ -25,7 +25,8 @@ import 'package:flutter/material.dart';
 /// Post-save card for the first saved reflection — named pattern + tomorrow watch-for.
 class FirstSessionPatternCard extends StatefulWidget {
   const FirstSessionPatternCard({
-    required this.pattern, super.key,
+    required this.pattern,
+    super.key,
     this.reflectionText = '',
     this.onPatternChanged,
     this.onAccept,

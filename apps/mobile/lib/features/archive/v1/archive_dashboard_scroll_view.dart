@@ -123,7 +123,9 @@ class ArchiveDashboardScrollView extends StatelessWidget {
                       child: Column(
                         children: [
                           ArchiveSearchField(onQueryChanged: onQueryChanged),
-                          SizedBox(height: ArchiveResponsiveLayout.gap(context)),
+                          SizedBox(
+                            height: ArchiveResponsiveLayout.gap(context),
+                          ),
                         ],
                       ),
                     ),
@@ -144,7 +146,9 @@ class ArchiveDashboardScrollView extends StatelessWidget {
                               onEntryTap(card.entry.id);
                             },
                           ),
-                          SizedBox(height: ArchiveResponsiveLayout.gap(context)),
+                          SizedBox(
+                            height: ArchiveResponsiveLayout.gap(context),
+                          ),
                         ],
                       ],
                     ),
@@ -166,7 +170,9 @@ class ArchiveDashboardScrollView extends StatelessWidget {
                               onEntryTap(card.entry.id);
                             },
                           ),
-                          SizedBox(height: ArchiveResponsiveLayout.gap(context)),
+                          SizedBox(
+                            height: ArchiveResponsiveLayout.gap(context),
+                          ),
                         ],
                       ],
                     ),
@@ -216,10 +222,11 @@ class ArchiveDashboardScrollView extends StatelessWidget {
                       builder: (context, constraints) {
                         final columns =
                             ArchiveResponsiveLayout.entryGridColumnsForWidth(
-                          constraints.crossAxisExtent,
-                        );
+                              constraints.crossAxisExtent,
+                            );
                         final itemCount =
-                            visibleEntries.length + (feed.isLoadingMore ? 1 : 0);
+                            visibleEntries.length +
+                            (feed.isLoadingMore ? 1 : 0);
 
                         if (ArchiveResponsiveLayout.prefersEntryList(
                           crossAxisCount: columns,
@@ -255,9 +262,9 @@ class ArchiveDashboardScrollView extends StatelessWidget {
                         return SliverGrid(
                           gridDelegate:
                               ArchiveResponsiveLayout.entryGridDelegate(
-                            context: context,
-                            crossAxisCount: columns,
-                          ),
+                                context: context,
+                                crossAxisCount: columns,
+                              ),
                           delegate: SliverChildBuilderDelegate(
                             (context, index) => _entryTile(
                               context,

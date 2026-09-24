@@ -11,7 +11,10 @@ import 'package:flutter/material.dart';
 /// never implies the user failed to buy.
 class PurchaseIntentReturnCueCard extends StatelessWidget {
   const PurchaseIntentReturnCueCard({
-    required this.intent, required this.onSeePro, required this.onDismiss, super.key,
+    required this.intent,
+    required this.onSeePro,
+    required this.onDismiss,
+    super.key,
   });
 
   final PendingPurchaseIntent intent;

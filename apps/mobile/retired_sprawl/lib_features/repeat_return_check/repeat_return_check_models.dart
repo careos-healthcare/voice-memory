@@ -39,7 +39,9 @@ enum RepeatReturnCheckChoice {
 class RepeatReturnCheckRecord {
   const RepeatReturnCheckRecord({
     required this.entryId,
-    required this.entryCountAtCapture, required this.createdAt, this.choice,
+    required this.entryCountAtCapture,
+    required this.createdAt,
+    this.choice,
     this.dismissed = false,
   });
 

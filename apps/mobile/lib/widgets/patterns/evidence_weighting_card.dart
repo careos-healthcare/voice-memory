@@ -11,11 +11,15 @@ import 'package:flutter/material.dart';
 /// Explains how ArchiveMe weights recent vs older evidence — no monetisation CTA.
 class EvidenceWeightingCard extends StatefulWidget {
   const EvidenceWeightingCard({
-    required this.result, required this.source, super.key,
+    required this.result,
+    required this.source,
+    super.key,
   });
 
   const EvidenceWeightingCard.test({
-    required this.result, required this.source, super.key,
+    required this.result,
+    required this.source,
+    super.key,
   });
 
   final EvidenceWeightingResult result;

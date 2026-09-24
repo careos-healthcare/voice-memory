@@ -9,7 +9,14 @@ abstract final class CapacityCostTypeIds {
   static const resentment = 'resentment';
   static const none = 'none';
 
-  static const List<String> all = [time, energy, attention, workSpillover, resentment, none];
+  static const List<String> all = [
+    time,
+    energy,
+    attention,
+    workSpillover,
+    resentment,
+    none,
+  ];
 }
 
 /// Local check-in status — metadata only.

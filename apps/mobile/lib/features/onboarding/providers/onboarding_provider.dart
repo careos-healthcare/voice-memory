@@ -192,7 +192,9 @@ class OnboardingSession extends ChangeNotifier {
     if (phase == OnboardingPhase.done) return;
     if (_answers[step].trim().isEmpty) {
       _answers[step] = _tapLine(step);
-      transcript = _answers.where((answer) => answer.trim().isNotEmpty).join(' ');
+      transcript = _answers
+          .where((answer) => answer.trim().isNotEmpty)
+          .join(' ');
     }
     _advance();
   }
@@ -211,9 +213,7 @@ class OnboardingSession extends ChangeNotifier {
         .where((answer) => answer.isNotEmpty)
         .toList();
     final spoken = lines.join(' ');
-    final coreMemory = spoken.isEmpty
-        ? 'A first moment in ArchiveMe.'
-        : spoken;
+    final coreMemory = spoken.isEmpty ? 'A first moment in ArchiveMe.' : spoken;
     final lifePatterns = extractLifePatterns(coreMemory);
     final createdAt = _clock().toUtc();
     final core = _entry(
@@ -315,14 +315,15 @@ class OnboardingSession extends ChangeNotifier {
 }
 
 /// Session for a [ProviderScope]. The screen can also construct its own.
-final Provider<OnboardingSession> onboardingSessionProvider = Provider.autoDispose<OnboardingSession>((
-  ref,
-) {
-  final session = OnboardingSession(
-    store: AppServices.isInitialized
-        ? PrefsOnboardingCompletionStore(AppServices.instance.prefs)
-        : MemoryOnboardingCompletionStore(),
-  );
-  ref.onDispose(session.dispose);
-  return session;
-});
+final Provider<OnboardingSession> onboardingSessionProvider =
+    Provider.autoDispose<OnboardingSession>((
+      ref,
+    ) {
+      final session = OnboardingSession(
+        store: AppServices.isInitialized
+            ? PrefsOnboardingCompletionStore(AppServices.instance.prefs)
+            : MemoryOnboardingCompletionStore(),
+      );
+      ref.onDispose(session.dispose);
+      return session;
+    });

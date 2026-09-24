@@ -11,7 +11,9 @@ import 'package:flutter/material.dart';
 /// Useful / Not quite feedback for the first-aha card.
 class AhaMomentFeedbackRow extends StatefulWidget {
   const AhaMomentFeedbackRow({
-    required this.candidate, required this.onFeedback, super.key,
+    required this.candidate,
+    required this.onFeedback,
+    super.key,
     this.source = 'record',
   });
 

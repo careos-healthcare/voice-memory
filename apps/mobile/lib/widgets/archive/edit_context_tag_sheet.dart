@@ -102,7 +102,9 @@ class _EditContextTagSheetState extends State<EditContextTagSheet> {
                       action: EditContextTagAction.cancel,
                     ),
                   ),
-                  child: const Text(VisibleArchiveProofCopy.entryContextTagCancel),
+                  child: const Text(
+                    VisibleArchiveProofCopy.entryContextTagCancel,
+                  ),
                 ),
                 if (widget.initialTagId != null)
                   TextButton(
@@ -112,7 +114,9 @@ class _EditContextTagSheetState extends State<EditContextTagSheet> {
                         action: EditContextTagAction.clear,
                       ),
                     ),
-                    child: const Text(VisibleArchiveProofCopy.entryContextTagClear),
+                    child: const Text(
+                      VisibleArchiveProofCopy.entryContextTagClear,
+                    ),
                   ),
                 FilledButton(
                   key: const Key('edit_context_tag_save'),
@@ -124,7 +128,9 @@ class _EditContextTagSheetState extends State<EditContextTagSheet> {
                             tagId: _selectedId,
                           ),
                         ),
-                  child: const Text(VisibleArchiveProofCopy.captureContextTagSave),
+                  child: const Text(
+                    VisibleArchiveProofCopy.captureContextTagSave,
+                  ),
                 ),
               ],
             ),

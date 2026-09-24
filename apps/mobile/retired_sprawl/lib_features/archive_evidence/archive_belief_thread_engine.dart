@@ -143,7 +143,10 @@ class ArchiveBeliefThreadEngine {
     );
   }
 
-  String _beliefFallback(SecondSessionComparison comparison, JournalEntry latest) {
+  String _beliefFallback(
+    SecondSessionComparison comparison,
+    JournalEntry latest,
+  ) {
     final latestPattern = _patternEngine.build(latest);
     if (comparison.whatRepeated?.trim().isNotEmpty == true) {
       final repeated = comparison.whatRepeated!.trim();

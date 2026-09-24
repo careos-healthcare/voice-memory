@@ -134,7 +134,9 @@ abstract class MemoryCardVisibilityGate {
 /// memory-used insight cards.
 class MemoryCardVisibilityControls extends StatefulWidget {
   const MemoryCardVisibilityControls({
-    required this.cardType, required this.memoryUsed, super.key,
+    required this.cardType,
+    required this.memoryUsed,
+    super.key,
     this.entryCount = 1,
     this.records = const [],
     this.reliability,

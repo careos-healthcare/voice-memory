@@ -7,7 +7,10 @@ import 'package:flutter/material.dart';
 /// Collapsible example starters — hidden until the user taps “Examples”.
 class FocusedTypeEntryExamplesPanel extends StatelessWidget {
   const FocusedTypeEntryExamplesPanel({
-    required this.expanded, required this.onToggle, required this.onStarterSelected, super.key,
+    required this.expanded,
+    required this.onToggle,
+    required this.onStarterSelected,
+    super.key,
   });
 
   final bool expanded;

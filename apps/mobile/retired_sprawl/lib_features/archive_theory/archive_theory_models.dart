@@ -1,4 +1,5 @@
-import 'package:archiveme_mobile/features/archive_theory/archive_theory_engine.dart' show ArchiveTheoryEngine;
+import 'package:archiveme_mobile/features/archive_theory/archive_theory_engine.dart'
+    show ArchiveTheoryEngine;
 
 /// Archive's current working theory (evidence-backed, no AI at read time).
 class ArchiveCurrentTheory {

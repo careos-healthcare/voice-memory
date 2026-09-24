@@ -167,7 +167,9 @@ void main() {
       final hits = await searchRepo.keywordSearch(query: 'updated', limit: 5);
       expect(hits, ['e2']);
 
-      final ftsRows = await db.database.query(Migration005HybridSearch.ftsTable);
+      final ftsRows = await db.database.query(
+        Migration005HybridSearch.ftsTable,
+      );
       expect(ftsRows, hasLength(2));
     });
 
@@ -181,7 +183,9 @@ void main() {
         _entry(id: 'e1', transcript: 'keep me'),
       ]);
 
-      final ftsRows = await db.database.query(Migration005HybridSearch.ftsTable);
+      final ftsRows = await db.database.query(
+        Migration005HybridSearch.ftsTable,
+      );
       expect(ftsRows, hasLength(1));
       expect(ftsRows.single['entry_id'], 'e1');
     });
@@ -242,22 +246,24 @@ void main() {
       expect(rows.single['id'], 'keep');
     });
 
-    test('mirrorEntireRemoteState deletes 2000+ absent rows without SQL variable overflow',
-        () async {
-      final initial = List.generate(
-        2100,
-        (index) => _entry(id: 'entry-$index', transcript: 'seed $index'),
-      );
-      await repo.mirrorEntireRemoteState(initial);
+    test(
+      'mirrorEntireRemoteState deletes 2000+ absent rows without SQL variable overflow',
+      () async {
+        final initial = List.generate(
+          2100,
+          (index) => _entry(id: 'entry-$index', transcript: 'seed $index'),
+        );
+        await repo.mirrorEntireRemoteState(initial);
 
-      await repo.mirrorEntireRemoteState([
-        _entry(id: 'entry-0', transcript: 'only survivor'),
-      ]);
+        await repo.mirrorEntireRemoteState([
+          _entry(id: 'entry-0', transcript: 'only survivor'),
+        ]);
 
-      final rows = await db.database.query(JournalSqliteRepository.table);
-      expect(rows, hasLength(1));
-      expect(rows.single['id'], 'entry-0');
-    });
+        final rows = await db.database.query(JournalSqliteRepository.table);
+        expect(rows, hasLength(1));
+        expect(rows.single['id'], 'entry-0');
+      },
+    );
   });
 
   group('JournalSqliteRepository findByCaptureContextTag', () {
@@ -329,39 +335,42 @@ void main() {
       expect(hits.single.id, 'alpha');
     });
 
-    test('fetchPage matches knowledge graph theme labels via unified FTS', () async {
-      await repo.mirrorEntireRemoteState([
-        _entry(id: 'graph-hit', transcript: 'unrelated transcript'),
-        JournalEntry(
-          id: 'miss',
-          createdAt: DateTime(2026, 1, 2),
-          transcript: 'another transcript',
-          durationSeconds: 45,
-          reflection: const Reflection(
-            mood: 'calm',
-            emotionalIntensity: 2,
-            recurringThemes: ['sleep'],
-            exactLanguagePattern: 'pattern',
-            concreteObservation: 'observation',
-            repeatedSignal: 'signal',
+    test(
+      'fetchPage matches knowledge graph theme labels via unified FTS',
+      () async {
+        await repo.mirrorEntireRemoteState([
+          _entry(id: 'graph-hit', transcript: 'unrelated transcript'),
+          JournalEntry(
+            id: 'miss',
+            createdAt: DateTime(2026, 1, 2),
+            transcript: 'another transcript',
+            durationSeconds: 45,
+            reflection: const Reflection(
+              mood: 'calm',
+              emotionalIntensity: 2,
+              recurringThemes: ['sleep'],
+              exactLanguagePattern: 'pattern',
+              concreteObservation: 'observation',
+              repeatedSignal: 'signal',
+            ),
           ),
-        ),
-      ]);
+        ]);
 
-      final hits = await repo.fetchPage(
-        offset: 0,
-        limit: 10,
-        searchQuery: 'focus',
-      );
-      expect(hits, hasLength(1));
-      expect(hits.single.id, 'graph-hit');
+        final hits = await repo.fetchPage(
+          offset: 0,
+          limit: 10,
+          searchQuery: 'focus',
+        );
+        expect(hits, hasLength(1));
+        expect(hits.single.id, 'graph-hit');
 
-      final nodeHits = await repo.searchKnowledgeGraphNodes(
-        query: 'focus',
-        limit: 5,
-      );
-      expect(nodeHits.any((hit) => hit.entryId == 'graph-hit'), isTrue);
-    });
+        final nodeHits = await repo.searchKnowledgeGraphNodes(
+          query: 'focus',
+          limit: 5,
+        );
+        expect(nodeHits.any((hit) => hit.entryId == 'graph-hit'), isTrue);
+      },
+    );
 
     test('mirrorEntireRemoteState syncs reflection graph FTS rows', () async {
       await repo.mirrorEntireRemoteState([
@@ -373,7 +382,9 @@ void main() {
       );
       expect(graphRows, isNotEmpty);
       expect(
-        graphRows.any((row) => row['entry_id'] == 'e1' && row['label'] == 'focus'),
+        graphRows.any(
+          (row) => row['entry_id'] == 'e1' && row['label'] == 'focus',
+        ),
         isTrue,
       );
     });
@@ -421,57 +432,60 @@ void main() {
       );
     });
 
-    test('fetchPageAfter deep page stays faster than fetchPage offset', () async {
-      final entries = List.generate(
-        5000,
-        (index) => _entry(
-          id: 'entry-${index.toString().padLeft(4, '0')}',
-          createdAt: DateTime.utc(2026, 1, 1).add(Duration(minutes: index)),
-          transcript: 'entry $index',
-        ),
-      );
-      await repo.mirrorEntireRemoteState(entries);
+    test(
+      'fetchPageAfter deep page stays faster than fetchPage offset',
+      () async {
+        final entries = List.generate(
+          5000,
+          (index) => _entry(
+            id: 'entry-${index.toString().padLeft(4, '0')}',
+            createdAt: DateTime.utc(2026, 1, 1).add(Duration(minutes: index)),
+            transcript: 'entry $index',
+          ),
+        );
+        await repo.mirrorEntireRemoteState(entries);
 
-      const pageSize = JournalSqliteRepository.defaultPageSize;
-      const deepPageIndex = 200;
-      final deepOffset = pageSize * deepPageIndex;
+        const pageSize = JournalSqliteRepository.defaultPageSize;
+        const deepPageIndex = 200;
+        final deepOffset = pageSize * deepPageIndex;
 
-      var cursorCreatedAt = null as DateTime?;
-      var cursorId = null as String?;
-      for (var page = 0; page < deepPageIndex; page++) {
-        final nextPage = await repo.fetchPageAfter(
+        var cursorCreatedAt = null as DateTime?;
+        var cursorId = null as String?;
+        for (var page = 0; page < deepPageIndex; page++) {
+          final nextPage = await repo.fetchPageAfter(
+            limit: pageSize,
+            afterCreatedAt: cursorCreatedAt,
+            afterId: cursorId,
+          );
+          expect(nextPage, isNotEmpty);
+          cursorCreatedAt = nextPage.last.createdAt;
+          cursorId = nextPage.last.id;
+        }
+
+        final keysetStopwatch = Stopwatch()..start();
+        final keysetPage = await repo.fetchPageAfter(
           limit: pageSize,
           afterCreatedAt: cursorCreatedAt,
           afterId: cursorId,
         );
-        expect(nextPage, isNotEmpty);
-        cursorCreatedAt = nextPage.last.createdAt;
-        cursorId = nextPage.last.id;
-      }
+        keysetStopwatch.stop();
 
-      final keysetStopwatch = Stopwatch()..start();
-      final keysetPage = await repo.fetchPageAfter(
-        limit: pageSize,
-        afterCreatedAt: cursorCreatedAt,
-        afterId: cursorId,
-      );
-      keysetStopwatch.stop();
+        final offsetStopwatch = Stopwatch()..start();
+        final offsetPage = await repo.fetchPage(
+          offset: deepOffset,
+          limit: pageSize,
+        );
+        offsetStopwatch.stop();
 
-      final offsetStopwatch = Stopwatch()..start();
-      final offsetPage = await repo.fetchPage(
-        offset: deepOffset,
-        limit: pageSize,
-      );
-      offsetStopwatch.stop();
-
-      expect(keysetPage, hasLength(pageSize));
-      expect(offsetPage, hasLength(pageSize));
-      expect(keysetPage.first.id, offsetPage.first.id);
-      expect(
-        keysetStopwatch.elapsedMicroseconds,
-        lessThan(offsetStopwatch.elapsedMicroseconds),
-      );
-    });
+        expect(keysetPage, hasLength(pageSize));
+        expect(offsetPage, hasLength(pageSize));
+        expect(keysetPage.first.id, offsetPage.first.id);
+        expect(
+          keysetStopwatch.elapsedMicroseconds,
+          lessThan(offsetStopwatch.elapsedMicroseconds),
+        );
+      },
+    );
   });
 
   group('JournalSqliteRepository defensive decoding', () {
@@ -504,39 +518,45 @@ void main() {
       expect(page.single.id, 'good');
     });
 
-    test('findByCaptureContextTag returns null for corrupted payload_json', () async {
-      final tag = 'corrupt-tag';
-      await db.database.insert(JournalSqliteRepository.table, {
-        'id': 'corrupt',
-        'created_at': DateTime.utc(2026, 2, 1).millisecondsSinceEpoch,
-        'updated_at': DateTime.utc(2026, 2, 1).millisecondsSinceEpoch,
-        'deleted_at': null,
-        'is_archived': 0,
-        'transcript': 'ignored transcript',
-        'has_verified_proof': 0,
-        'payload_json': '{not-json',
-      });
+    test(
+      'findByCaptureContextTag returns null for corrupted payload_json',
+      () async {
+        final tag = 'corrupt-tag';
+        await db.database.insert(JournalSqliteRepository.table, {
+          'id': 'corrupt',
+          'created_at': DateTime.utc(2026, 2, 1).millisecondsSinceEpoch,
+          'updated_at': DateTime.utc(2026, 2, 1).millisecondsSinceEpoch,
+          'deleted_at': null,
+          'is_archived': 0,
+          'transcript': 'ignored transcript',
+          'has_verified_proof': 0,
+          'payload_json': '{not-json',
+        });
 
-      expect(await repo.findByCaptureContextTag(tag), isNull);
-    });
+        expect(await repo.findByCaptureContextTag(tag), isNull);
+      },
+    );
 
-    test('toResidualJson matches legacy strip-based payload encoding', () async {
-      final entry = _entry(
-        id: 'residual',
-        transcript: 'residual transcript',
-        captureContextTag: 'ctx-tag',
-      );
+    test(
+      'toResidualJson matches legacy strip-based payload encoding',
+      () async {
+        final entry = _entry(
+          id: 'residual',
+          transcript: 'residual transcript',
+          captureContextTag: 'ctx-tag',
+        );
 
-      final legacyPayload = Map<String, dynamic>.from(entry.toJson())
-        ..remove('id')
-        ..remove('createdAt')
-        ..remove('updatedAt')
-        ..remove('deletedAt')
-        ..remove('transcript')
-        ..remove('isArchived');
+        final legacyPayload = Map<String, dynamic>.from(entry.toJson())
+          ..remove('id')
+          ..remove('createdAt')
+          ..remove('updatedAt')
+          ..remove('deletedAt')
+          ..remove('transcript')
+          ..remove('isArchived');
 
-      expect(entry.toResidualJson(), legacyPayload);
-      expect(jsonEncode(entry.toResidualJson()), isNot(contains('"id"')));
-    });
+        expect(entry.toResidualJson(), legacyPayload);
+        expect(jsonEncode(entry.toResidualJson()), isNot(contains('"id"')));
+      },
+    );
   });
 }

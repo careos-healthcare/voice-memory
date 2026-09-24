@@ -9,15 +9,15 @@ enum RelationshipType {
 
 extension RelationshipTypeWire on RelationshipType {
   String get wireValue => switch (this) {
-        RelationshipType.professional => 'professional',
-        RelationshipType.caregiver => 'caregiver',
-      };
+    RelationshipType.professional => 'professional',
+    RelationshipType.caregiver => 'caregiver',
+  };
 
   static RelationshipType? fromWire(String? raw) => switch (raw) {
-        'professional' => RelationshipType.professional,
-        'caregiver' => RelationshipType.caregiver,
-        _ => null,
-      };
+    'professional' => RelationshipType.professional,
+    'caregiver' => RelationshipType.caregiver,
+    _ => null,
+  };
 }
 
 enum ConsentStatus {
@@ -28,17 +28,17 @@ enum ConsentStatus {
 
 extension ConsentStatusWire on ConsentStatus {
   String get wireValue => switch (this) {
-        ConsentStatus.pending => 'pending',
-        ConsentStatus.active => 'active',
-        ConsentStatus.revoked => 'revoked',
-      };
+    ConsentStatus.pending => 'pending',
+    ConsentStatus.active => 'active',
+    ConsentStatus.revoked => 'revoked',
+  };
 
   static ConsentStatus? fromWire(String? raw) => switch (raw) {
-        'pending' => ConsentStatus.pending,
-        'active' => ConsentStatus.active,
-        'revoked' => ConsentStatus.revoked,
-        _ => null,
-      };
+    'pending' => ConsentStatus.pending,
+    'active' => ConsentStatus.active,
+    'revoked' => ConsentStatus.revoked,
+    _ => null,
+  };
 }
 
 class UserRelationship {
@@ -58,11 +58,13 @@ class UserRelationship {
       id: json['id']?.toString() ?? '',
       clientId: json['clientId']?.toString() ?? '',
       professionalId: json['professionalId']?.toString() ?? '',
-      relationshipType: RelationshipTypeWire.fromWire(
+      relationshipType:
+          RelationshipTypeWire.fromWire(
             json['relationshipType']?.toString(),
           ) ??
           RelationshipType.professional,
-      consentStatus: ConsentStatusWire.fromWire(
+      consentStatus:
+          ConsentStatusWire.fromWire(
             json['consentStatus']?.toString(),
           ) ??
           ConsentStatus.pending,
@@ -77,11 +79,13 @@ class UserRelationship {
       id: map['id']?.toString() ?? '',
       clientId: map['client_id']?.toString() ?? '',
       professionalId: map['professional_id']?.toString() ?? '',
-      relationshipType: RelationshipTypeWire.fromWire(
+      relationshipType:
+          RelationshipTypeWire.fromWire(
             map['relationship_type']?.toString(),
           ) ??
           RelationshipType.professional,
-      consentStatus: ConsentStatusWire.fromWire(
+      consentStatus:
+          ConsentStatusWire.fromWire(
             map['consent_status']?.toString(),
           ) ??
           ConsentStatus.pending,
@@ -125,26 +129,26 @@ class UserRelationship {
   }
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'clientId': clientId,
-        'professionalId': professionalId,
-        'relationshipType': relationshipType.wireValue,
-        'consentStatus': consentStatus.wireValue,
-        'agreedScope': agreedScope,
-        'createdAt': createdAt.toUtc().toIso8601String(),
-        'updatedAt': updatedAt.toUtc().toIso8601String(),
-      };
+    'id': id,
+    'clientId': clientId,
+    'professionalId': professionalId,
+    'relationshipType': relationshipType.wireValue,
+    'consentStatus': consentStatus.wireValue,
+    'agreedScope': agreedScope,
+    'createdAt': createdAt.toUtc().toIso8601String(),
+    'updatedAt': updatedAt.toUtc().toIso8601String(),
+  };
 
   Map<String, Object?> toMap() => {
-        'id': id,
-        'client_id': clientId,
-        'professional_id': professionalId,
-        'relationship_type': relationshipType.wireValue,
-        'consent_status': consentStatus.wireValue,
-        'agreed_scope': jsonEncode(agreedScope),
-        'created_at': createdAt.toUtc().millisecondsSinceEpoch,
-        'updated_at': updatedAt.toUtc().millisecondsSinceEpoch,
-      };
+    'id': id,
+    'client_id': clientId,
+    'professional_id': professionalId,
+    'relationship_type': relationshipType.wireValue,
+    'consent_status': consentStatus.wireValue,
+    'agreed_scope': jsonEncode(agreedScope),
+    'created_at': createdAt.toUtc().millisecondsSinceEpoch,
+    'updated_at': updatedAt.toUtc().millisecondsSinceEpoch,
+  };
 }
 
 Map<String, dynamic> _parseScope(Object? raw) {
@@ -159,8 +163,12 @@ Map<String, dynamic> _parseScope(Object? raw) {
         return decoded.map((key, value) => MapEntry('$key', value));
       }
     } catch (e, stackTrace) {
-      AppLogger.error('Unhandled error caught', error: e, stackTrace: stackTrace);
-      }
+      AppLogger.error(
+        'Unhandled error caught',
+        error: e,
+        stackTrace: stackTrace,
+      );
+    }
   }
   return const {};
 }

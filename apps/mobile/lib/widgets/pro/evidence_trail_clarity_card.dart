@@ -9,12 +9,16 @@ import 'package:flutter/material.dart';
 
 class EvidenceTrailClarityCard extends StatefulWidget {
   const EvidenceTrailClarityCard({
-    required this.result, required this.onSeePro, super.key,
+    required this.result,
+    required this.onSeePro,
+    super.key,
     this.compact = false,
   });
 
   const EvidenceTrailClarityCard.test({
-    required this.result, required this.onSeePro, super.key,
+    required this.result,
+    required this.onSeePro,
+    super.key,
     this.compact = false,
   });
 

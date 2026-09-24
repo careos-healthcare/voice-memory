@@ -31,7 +31,11 @@ class GraphRepository {
       maxDepth: maxDepth,
     );
     if (entryIds.isEmpty) {
-      return GraphTopology(seedEntryId: seedEntryId, nodes: const [], links: const []);
+      return GraphTopology(
+        seedEntryId: seedEntryId,
+        nodes: const [],
+        links: const [],
+      );
     }
 
     final nodes = await _loadNodeMetadata(
@@ -39,7 +43,11 @@ class GraphRepository {
       maxNodes: maxNodes,
     );
     if (nodes.isEmpty) {
-      return GraphTopology(seedEntryId: seedEntryId, nodes: const [], links: const []);
+      return GraphTopology(
+        seedEntryId: seedEntryId,
+        nodes: const [],
+        links: const [],
+      );
     }
 
     final nodeEntryIds = nodes.map((node) => node.entryId).toSet();
@@ -82,7 +90,8 @@ class GraphRepository {
           (row) => _EntryEdgeRow(
             sourceEntryId: row['source_entry_id'] as String? ?? '',
             targetEntryId: row['target_entry_id'] as String? ?? '',
-            relation: row['relation'] as String? ??
+            relation:
+                row['relation'] as String? ??
                 Migration013EntryEdges.relationSemanticSimilarity,
             weight: (row['weight'] as num?)?.toDouble() ?? 0,
           ),

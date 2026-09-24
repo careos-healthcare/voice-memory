@@ -27,7 +27,8 @@ class HttpCaregiverConsentApiClient
     bool sendInviteEmail = false,
     NetworkCancelToken? cancelToken,
   }) async {
-    if (_transport.tryUri(VoiceMemoryApiRoutes.coachConsentIssue.path) == null) {
+    if (_transport.tryUri(VoiceMemoryApiRoutes.coachConsentIssue.path) ==
+        null) {
       return const ApiFailureResult(ApiFailureBackendNotConfigured());
     }
 
@@ -89,7 +90,8 @@ class HttpCaregiverConsentApiClient
     required MonitoringConsentToken token,
     NetworkCancelToken? cancelToken,
   }) async {
-    if (_transport.tryUri(VoiceMemoryApiRoutes.coachConsentVerify.path) == null) {
+    if (_transport.tryUri(VoiceMemoryApiRoutes.coachConsentVerify.path) ==
+        null) {
       return const ApiFailureResult(ApiFailureBackendNotConfigured());
     }
 
@@ -175,7 +177,8 @@ class HttpCaregiverConsentApiClient
     required DateTime ownerConfirmedAt,
     NetworkCancelToken? cancelToken,
   }) async {
-    if (_transport.tryUri(VoiceMemoryApiRoutes.coachConsentRenew.path) == null) {
+    if (_transport.tryUri(VoiceMemoryApiRoutes.coachConsentRenew.path) ==
+        null) {
       return const ApiFailureResult(ApiFailureBackendNotConfigured());
     }
 

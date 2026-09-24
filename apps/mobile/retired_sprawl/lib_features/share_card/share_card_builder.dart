@@ -122,7 +122,8 @@ abstract final class ShareCardBuilder {
 
   static String? _primaryGroundedPhrase({
     required List<JournalEntry> entries,
-    required PatternDetailResult detail, EarlyFirstSignalModel? confirmedRepeat,
+    required PatternDetailResult detail,
+    EarlyFirstSignalModel? confirmedRepeat,
   }) {
     if (detail.evidencePhrases.isNotEmpty) {
       return detail.evidencePhrases.first;

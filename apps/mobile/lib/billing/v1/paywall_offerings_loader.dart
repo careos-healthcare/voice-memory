@@ -17,7 +17,9 @@ class PaywallLoadResult {
     required this.entitlements,
     required this.selectedPlan,
     required this.billingConfigured,
-    required this.unavailable, required this.loadReason, this.errorMessage,
+    required this.unavailable,
+    required this.loadReason,
+    this.errorMessage,
   });
 
   final Offerings? offerings;
@@ -151,8 +153,7 @@ class PaywallOfferingsLoader {
         loadReason = 'load_timeout';
         error = SubscriptionCopy.paywallNoOfferings;
         entitlements =
-            await _deps.loadCachedEntitlements() ??
-            _deps.latestEntitlements;
+            await _deps.loadCachedEntitlements() ?? _deps.latestEntitlements;
         RevenueCatOfferingsDebugLog.paywallLoadEarlyExit(reason: loadReason);
         RevenueCatDiagnosticsLog.paywallFallback(
           reason: loadReason,
@@ -163,12 +164,12 @@ class PaywallOfferingsLoader {
         loadReason = 'load_error';
         error = SubscriptionCopy.paywallNoOfferings;
         entitlements =
-            await _deps.loadCachedEntitlements() ??
-            _deps.latestEntitlements;
+            await _deps.loadCachedEntitlements() ?? _deps.latestEntitlements;
         RevenueCatOfferingsDebugLog.paywallLoadEarlyExit(reason: loadReason);
         RevenueCatDiagnosticsLog.paywallFallback(
           reason: loadReason,
-          error: error, stackTrace: stackTrace,
+          error: error,
+          stackTrace: stackTrace,
           isRetry: isRetry,
         );
       }
@@ -208,8 +209,7 @@ class PaywallOfferingsLoader {
         monthlyPackageFound: monthly != null,
         annualPackageFound: yearly != null,
         purchasePlansAvailable: purchasePlansAvailable,
-        showingUnavailable:
-            !purchasePlansAvailable && !entitlements.isPro,
+        showingUnavailable: !purchasePlansAvailable && !entitlements.isPro,
         reason: loadReason,
         error: error,
       );
@@ -235,7 +235,8 @@ class PaywallOfferingsLoader {
       error = SubscriptionCopy.paywallNoOfferings;
       RevenueCatDiagnosticsLog.paywallFallback(
         reason: loadReason,
-        error: error, stackTrace: stackTrace,
+        error: error,
+        stackTrace: stackTrace,
         isRetry: isRetry,
       );
       return PaywallLoadResult(

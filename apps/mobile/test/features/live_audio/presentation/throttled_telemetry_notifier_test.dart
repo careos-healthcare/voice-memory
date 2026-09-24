@@ -120,15 +120,16 @@ class _FakeTelemetrySource implements LiveVoiceTelemetrySource {
   LiveVoiceCaptureState get captureState => _captureState;
 
   @override
-  LiveVoiceDiagnosticsSnapshot get diagnostics => const LiveVoiceDiagnosticsSnapshot(
-    pcmChunksSent: 0,
-    audioChunksReceived: 0,
-    audioBytesReceived: 0,
-    reconnectAttempts: 0,
-    sessionFaults: 0,
-    firstAudioLatencyMs: null,
-    playbackQueueDepth: 0,
-  );
+  LiveVoiceDiagnosticsSnapshot get diagnostics =>
+      const LiveVoiceDiagnosticsSnapshot(
+        pcmChunksSent: 0,
+        audioChunksReceived: 0,
+        audioBytesReceived: 0,
+        reconnectAttempts: 0,
+        sessionFaults: 0,
+        firstAudioLatencyMs: null,
+        playbackQueueDepth: 0,
+      );
 
   void emitCaptureStateChange(LiveVoiceCaptureState next) {
     _captureState = next;

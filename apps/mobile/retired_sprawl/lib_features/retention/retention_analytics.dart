@@ -26,13 +26,17 @@ class RetentionAnalytics {
   }
 
   static void evidenceOpened({required String context}) {
-    unawaited(ProductAnalytics.trackStrings('evidence_opened', {'context': context}));
+    unawaited(
+      ProductAnalytics.trackStrings('evidence_opened', {'context': context}),
+    );
   }
 
   static void evidenceRecordOpened({required String surface}) {
-    unawaited(ProductAnalytics.trackStrings('evidence_record_opened', {
-      'surface': surface,
-    }));
+    unawaited(
+      ProductAnalytics.trackStrings('evidence_record_opened', {
+        'surface': surface,
+      }),
+    );
   }
 
   static void progressIdentityViewed() {

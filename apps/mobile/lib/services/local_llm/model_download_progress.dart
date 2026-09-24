@@ -17,11 +17,10 @@ final class ModelDownloadProgress {
     this.errorMessage,
   });
 
-  const ModelDownloadProgress.idle()
-      : this(phase: ModelDownloadPhase.idle);
+  const ModelDownloadProgress.idle() : this(phase: ModelDownloadPhase.idle);
 
   const ModelDownloadProgress.deleted()
-      : this(phase: ModelDownloadPhase.deleted);
+    : this(phase: ModelDownloadPhase.deleted);
 
   final ModelDownloadPhase phase;
   final int receivedBytes;

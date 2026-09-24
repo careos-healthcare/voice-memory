@@ -59,22 +59,28 @@ class ArchiveV1Body extends StatelessWidget {
             theory: view.theory!,
             onShowMeWhy: () {
               if (!ArchiveDeepDiveGate.canOpenDeepDive(view)) return;
-              unawaited(First25UserMetrics.trackDeepDiveOpened(
-                surface: 'archive_theory_cta',
-              ));
+              unawaited(
+                First25UserMetrics.trackDeepDiveOpened(
+                  surface: 'archive_theory_cta',
+                ),
+              );
               unawaited(context.push('/archive-deep-dive', extra: view));
             },
             onWhyAmISeeingThis: () {
-              unawaited(First25UserMetrics.trackTheoryOpened(surface: 'archive_theory'));
+              unawaited(
+                First25UserMetrics.trackTheoryOpened(surface: 'archive_theory'),
+              );
               final payload = buildEvidenceTrailForArchiveV1(view);
               if (payload == null) return;
-              unawaited(showEvidenceTrailSheet(
-                context,
-                payload: payload,
-                surface: 'archive_theory',
-                ref: ArchiveInsightRef.belief(),
-                entries: view.eligibleEntries,
-              ));
+              unawaited(
+                showEvidenceTrailSheet(
+                  context,
+                  payload: payload,
+                  surface: 'archive_theory',
+                  ref: ArchiveInsightRef.belief(),
+                  entries: view.eligibleEntries,
+                ),
+              );
             },
             technicalActions: [
               OutlinedButton(

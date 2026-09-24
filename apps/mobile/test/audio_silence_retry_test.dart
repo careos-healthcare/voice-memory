@@ -89,16 +89,14 @@ final class _EligibleHardwareAudioConfig implements HardwareAudioConfig {
     required bool likelySilent,
     String? portType,
     String? portName,
-  }) =>
-      false;
+  }) => false;
 
   @override
   String? captureInputRecommendation({
     required bool likelySilent,
     String? portType,
     String? portName,
-  }) =>
-      null;
+  }) => null;
 
   @override
   String? captureInputDebugLabel({String? portName, String? portType}) => null;
@@ -136,16 +134,14 @@ final class _IneligibleHardwareAudioConfig implements HardwareAudioConfig {
     required bool likelySilent,
     String? portType,
     String? portName,
-  }) =>
-      false;
+  }) => false;
 
   @override
   String? captureInputRecommendation({
     required bool likelySilent,
     String? portType,
     String? portName,
-  }) =>
-      null;
+  }) => null;
 
   @override
   String? captureInputDebugLabel({String? portName, String? portType}) => null;

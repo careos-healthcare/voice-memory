@@ -13,7 +13,8 @@ import 'package:flutter/material.dart';
 /// Compact preview of how one pattern has changed over time.
 class ArchiveEvolutionTimelineCard extends StatefulWidget {
   const ArchiveEvolutionTimelineCard({
-    required this.timeline, super.key,
+    required this.timeline,
+    super.key,
     this.onOpenTimeline,
     this.onUseCheck,
     this.showOpenTimeline = true,

@@ -18,7 +18,9 @@ class JournalDao extends DatabaseAccessor<AppDatabase> with _$JournalDaoMixin {
   }) async {
     final query = select(journalEntries)
       ..where((t) => t.deletedAt.isNull())
-      ..where(_keysetCondition(afterCreatedAt: afterCreatedAt, afterId: afterId))
+      ..where(
+        _keysetCondition(afterCreatedAt: afterCreatedAt, afterId: afterId),
+      )
       ..orderBy([
         (t) => OrderingTerm.desc(t.createdAt),
         (t) => OrderingTerm.desc(t.id),
@@ -43,7 +45,9 @@ class JournalDao extends DatabaseAccessor<AppDatabase> with _$JournalDaoMixin {
     return rows.map(Map<String, dynamic>.from).toList(growable: false);
   }
 
-  Future<Map<String, Object?>?> findActiveRowByCaptureContextTag(String tag) async {
+  Future<Map<String, Object?>?> findActiveRowByCaptureContextTag(
+    String tag,
+  ) async {
     final row = await customSelect(
       '''
       SELECT
@@ -67,13 +71,14 @@ class JournalDao extends DatabaseAccessor<AppDatabase> with _$JournalDaoMixin {
   }
 
   Future<List<Map<String, Object?>>> fetchAllActiveRows() async {
-    final rows = await (select(journalEntries)
-          ..where((t) => t.deletedAt.isNull())
-          ..orderBy([
-            (t) => OrderingTerm.asc(t.createdAt),
-            (t) => OrderingTerm.asc(t.id),
-          ]))
-        .get();
+    final rows =
+        await (select(journalEntries)
+              ..where((t) => t.deletedAt.isNull())
+              ..orderBy([
+                (t) => OrderingTerm.asc(t.createdAt),
+                (t) => OrderingTerm.asc(t.id),
+              ]))
+            .get();
     return rows.map(_journalRowToSqlMap).toList(growable: false);
   }
 
@@ -99,9 +104,9 @@ class JournalDao extends DatabaseAccessor<AppDatabase> with _$JournalDaoMixin {
   }
 
   Future<List<Map<String, Object?>>> fetchProofContextStubRows() async {
-    final rows = await (select(journalEntries)
-          ..where((t) => t.deletedAt.isNull()))
-        .get();
+    final rows = await (select(
+      journalEntries,
+    )..where((t) => t.deletedAt.isNull())).get();
     return rows
         .map(
           (row) => {
@@ -115,12 +120,13 @@ class JournalDao extends DatabaseAccessor<AppDatabase> with _$JournalDaoMixin {
   }
 
   Future<List<Map<String, Object?>>> fetchVerifiedProofRows() async {
-    final rows = await (select(journalEntries)
-          ..where(
-            (t) => t.deletedAt.isNull() & t.hasVerifiedProof.equals(1),
-          )
-          ..orderBy([(t) => OrderingTerm.desc(t.createdAt)]))
-        .get();
+    final rows =
+        await (select(journalEntries)
+              ..where(
+                (t) => t.deletedAt.isNull() & t.hasVerifiedProof.equals(1),
+              )
+              ..orderBy([(t) => OrderingTerm.desc(t.createdAt)]))
+            .get();
     return rows.map(_journalRowToSqlMap).toList(growable: false);
   }
 
@@ -129,7 +135,9 @@ class JournalDao extends DatabaseAccessor<AppDatabase> with _$JournalDaoMixin {
   ) async {
     if (ids.isEmpty) return const {};
 
-    final rows = await (select(journalEntries)..where((t) => t.id.isIn(ids))).get();
+    final rows = await (select(
+      journalEntries,
+    )..where((t) => t.id.isIn(ids))).get();
     return {
       for (final row in rows)
         row.id: ExistingJournalSyncState(

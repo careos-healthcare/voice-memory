@@ -8,7 +8,9 @@ import 'package:flutter/material.dart';
 /// Hero belief card — evidence-backed only.
 class ArchiveBeliefHeroCard extends StatelessWidget {
   const ArchiveBeliefHeroCard({
-    required this.belief, required this.onShowMeWhy, super.key,
+    required this.belief,
+    required this.onShowMeWhy,
+    super.key,
     this.onOpenEvidenceTrail,
   });
 

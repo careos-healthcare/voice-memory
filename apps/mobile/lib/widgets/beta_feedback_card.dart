@@ -14,7 +14,8 @@ import 'dart:async';
 /// Lightweight archive-home beta feedback card — local only, 3+ real entries.
 class BetaFeedbackCard extends StatefulWidget {
   const BetaFeedbackCard({
-    required this.entries, super.key,
+    required this.entries,
+    super.key,
     this.store,
     this.engine = const BetaFeedbackEngine(),
     this.sampleMode = false,
@@ -23,7 +24,8 @@ class BetaFeedbackCard extends StatefulWidget {
   }) : _initialState = null;
 
   const BetaFeedbackCard.test({
-    required this.entries, super.key,
+    required this.entries,
+    super.key,
     this.store,
     this.engine = const BetaFeedbackEngine(),
     this.sampleMode = false,

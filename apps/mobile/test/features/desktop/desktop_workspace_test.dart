@@ -129,7 +129,8 @@ void main() {
     addTearDown(window.dispose);
     var recordings = 0;
     var exports = 0;
-    final playback = DesktopPlaybackController()..select('moment-2', hasAudio: true);
+    final playback = DesktopPlaybackController()
+      ..select('moment-2', hasAudio: true);
     addTearDown(playback.dispose);
 
     await tester.pumpWidget(

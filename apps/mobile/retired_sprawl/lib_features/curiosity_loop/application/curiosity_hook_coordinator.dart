@@ -149,7 +149,11 @@ class CuriosityHookCoordinator {
         );
       }
     } catch (e, stackTrace) {
-      AppLogger.error('Unhandled error caught', error: e, stackTrace: stackTrace);
+      AppLogger.error(
+        'Unhandled error caught',
+        error: e,
+        stackTrace: stackTrace,
+      );
       // Notification failures must never disrupt the voice save loop.
     }
   }

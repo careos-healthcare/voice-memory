@@ -21,7 +21,8 @@ class PatternsCheckInStatusCard extends StatelessWidget {
       onUseCheck = null;
 
   const PatternsCheckInStatusCard.closed({
-    required this.completed, super.key,
+    required this.completed,
+    super.key,
     this.betterResultIntensity = HookRescueIntensity.normal,
     this.notUsefulReason,
     this.onUseCheck,

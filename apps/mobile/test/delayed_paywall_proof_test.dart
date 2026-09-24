@@ -155,17 +155,20 @@ void main() {
       );
     });
 
-    test('passesDelayedPaywallProofGate false without evidence trail', () async {
-      await DelayedPaywallProofStore.markFirstRepeatSeen();
-      await _seedMagicMoments();
+    test(
+      'passesDelayedPaywallProofGate false without evidence trail',
+      () async {
+        await DelayedPaywallProofStore.markFirstRepeatSeen();
+        await _seedMagicMoments();
 
-      expect(
-        ProBridgeVisibilityEngine.passesDelayedPaywallProofGate(
-          _allowedInput(hasOpenedEvidenceTrail: false),
-        ),
-        isFalse,
-      );
-    });
+        expect(
+          ProBridgeVisibilityEngine.passesDelayedPaywallProofGate(
+            _allowedInput(hasOpenedEvidenceTrail: false),
+          ),
+          isFalse,
+        );
+      },
+    );
   });
 
   group('PaywallAccess delayed paywall gate', () {

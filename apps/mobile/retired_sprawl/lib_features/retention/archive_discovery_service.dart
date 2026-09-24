@@ -60,7 +60,8 @@ class ArchiveDiscoveryService {
   /// Latest notice if newer than [lastViewedAt] and fingerprint changed.
   ArchiveDiscoveryNotice? detectNotice({
     required List<JournalEntry> entries,
-    required DateTime? lastViewedAt, ArchiveStateObjectV3? state,
+    required DateTime? lastViewedAt,
+    ArchiveStateObjectV3? state,
     String? storedFingerprint,
   }) {
     if (entries.length < 2) return null;
@@ -109,7 +110,8 @@ class ArchiveDiscoveryService {
 
   Future<void> acknowledgeDiscovery({
     required List<JournalEntry> entries,
-    required DateTime viewedAt, ArchiveStateObjectV3? state,
+    required DateTime viewedAt,
+    ArchiveStateObjectV3? state,
   }) async {
     await markDiscoveryViewed(viewedAt);
     await _writeFingerprint(_fingerprint(entries, state));

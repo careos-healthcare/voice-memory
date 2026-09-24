@@ -26,7 +26,8 @@ final isProUserProvider = Provider<bool>(
 );
 
 /// Backward-compatible alias for screens that call `ensureInitialized()`.
-final Provider<SubscriptionNotifier> subscriptionControllerProvider = subscriptionNotifierProvider;
+final Provider<SubscriptionNotifier> subscriptionControllerProvider =
+    subscriptionNotifierProvider;
 
 class SubscriptionState {
   const SubscriptionState({
@@ -49,10 +50,9 @@ class SubscriptionState {
 
   static const String proPriceRangeHint = r'$7–$9/month';
 
-  String get monthlyPriceDisplay =>
-      monthlyPriceLabel?.trim().isNotEmpty == true
-          ? monthlyPriceLabel!
-          : proPriceRangeHint;
+  String get monthlyPriceDisplay => monthlyPriceLabel?.trim().isNotEmpty == true
+      ? monthlyPriceLabel!
+      : proPriceRangeHint;
 
   SubscriptionState copyWith({
     bool? isPro,
@@ -112,7 +112,8 @@ class SubscriptionNotifier extends Notifier<SubscriptionState> {
 
   Future<void> refreshEntitlements() => checkSubscriptionStatus();
 
-  Future<void> openManageSubscriptions() => _revenueCat.openManageSubscriptions();
+  Future<void> openManageSubscriptions() =>
+      _revenueCat.openManageSubscriptions();
 
   Future<void> _runBootstrap() async {
     try {
@@ -243,7 +244,11 @@ class SubscriptionNotifier extends Notifier<SubscriptionState> {
         yearlyPriceLabel: yearly,
       );
     } on Exception catch (e, stackTrace) {
-      AppLogger.error('Unhandled error caught', error: e, stackTrace: stackTrace);
+      AppLogger.error(
+        'Unhandled error caught',
+        error: e,
+        stackTrace: stackTrace,
+      );
       AppLogger.debug('SubscriptionNotifier: offerings refresh skipped — $e');
     }
   }

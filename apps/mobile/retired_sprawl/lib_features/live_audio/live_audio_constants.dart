@@ -1,4 +1,5 @@
-import 'package:archiveme_mobile/security/api_usage_guard.dart' show ApiUsageGuard;
+import 'package:archiveme_mobile/security/api_usage_guard.dart'
+    show ApiUsageGuard;
 
 /// PCM input for Gemini Live — 16-bit LE @ 16 kHz.
 const liveInputAudioMime = 'audio/pcm;rate=16000';

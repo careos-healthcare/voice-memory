@@ -10,7 +10,8 @@ import 'package:flutter/material.dart';
 /// Local beta readiness checklist — read-only release safety surface.
 class BetaReadinessCheckSheet extends StatelessWidget {
   const BetaReadinessCheckSheet({
-    required this.report, super.key,
+    required this.report,
+    super.key,
     this.source = 'testing_archiveme_screen',
   });
 

@@ -14,7 +14,10 @@ import 'package:flutter/material.dart';
 /// CTA. With no reminder path, accepting stores a local return cue only.
 class First60ReturnCueCard extends StatelessWidget {
   const First60ReturnCueCard({
-    required this.reminderAvailable, required this.onRemind, required this.onLocalCue, super.key,
+    required this.reminderAvailable,
+    required this.onRemind,
+    required this.onLocalCue,
+    super.key,
   });
 
   /// True when the existing reminder offer is open for this user.

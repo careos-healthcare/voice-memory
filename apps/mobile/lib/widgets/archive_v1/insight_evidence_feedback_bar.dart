@@ -7,7 +7,10 @@ import 'package:flutter/material.dart';
 /// Agree / disagree / correct actions anchored beneath cited evidence.
 class InsightEvidenceFeedbackBar extends StatelessWidget {
   const InsightEvidenceFeedbackBar({
-    required this.onAgree, required this.onDisagree, required this.onCorrect, super.key,
+    required this.onAgree,
+    required this.onDisagree,
+    required this.onCorrect,
+    super.key,
     this.busy = false,
   });
 

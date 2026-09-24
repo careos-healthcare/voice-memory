@@ -11,7 +11,9 @@ import 'package:go_router/go_router.dart';
 /// Single Pro utility card — history, export, and private report preview rows.
 class ProUtilityExpansionSection extends StatelessWidget {
   const ProUtilityExpansionSection({
-    required this.entryCount, required this.hasMeaningfulProof, super.key,
+    required this.entryCount,
+    required this.hasMeaningfulProof,
+    super.key,
     this.compact = false,
   });
 

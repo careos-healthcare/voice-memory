@@ -137,8 +137,7 @@ class _EvidenceCitationCardState extends State<EvidenceCitationCard> {
                 alignment: AlignmentDirectional.centerStart,
                 child: TextButton(
                   key: EvidenceCitationCard.openEntryKey,
-                  onPressed: () =>
-                      widget.onOpenEntry!(widget.evidence.entryId),
+                  onPressed: () => widget.onOpenEntry!(widget.evidence.entryId),
                   style: TextButton.styleFrom(
                     minimumSize: const Size(
                       EvidenceCitationCard.minTapTarget,
@@ -208,9 +207,7 @@ class _ExpandableQuote extends StatelessWidget {
                   : EvidenceCitationMetrics.collapsedQuoteLines,
               // Ellipsis rather than a clip so a shortened quote never looks
               // like the whole of what was said.
-              overflow: expanded
-                  ? TextOverflow.clip
-                  : TextOverflow.ellipsis,
+              overflow: expanded ? TextOverflow.clip : TextOverflow.ellipsis,
             ),
             if (overflows)
               TextButton(

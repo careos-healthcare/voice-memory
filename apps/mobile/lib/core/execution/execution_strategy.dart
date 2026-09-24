@@ -28,7 +28,8 @@ class ExecutionPolicy {
 
   Duration retryDelayForAttempt(int attempt) {
     if (attempt <= 1) return initialRetryDelay;
-    final scaledMs = initialRetryDelay.inMilliseconds *
+    final scaledMs =
+        initialRetryDelay.inMilliseconds *
         _pow(retryDelayMultiplier, attempt - 1);
     final cappedMs = scaledMs > maxRetryDelay.inMilliseconds
         ? maxRetryDelay.inMilliseconds

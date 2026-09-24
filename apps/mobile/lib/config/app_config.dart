@@ -3,8 +3,10 @@ import 'dart:io' show Platform;
 import 'package:archiveme_mobile/config/backend_url_resolver.dart';
 import 'package:archiveme_mobile/config/developer_settings_gate.dart';
 import 'package:archiveme_mobile/core/utils/app_logger.dart';
-import 'package:archiveme_mobile/data/repositories/sync_repository.dart' show SyncRepository;
-import 'package:archiveme_mobile/features/recording/recording_dependencies.dart' show AppServices;
+import 'package:archiveme_mobile/data/repositories/sync_repository.dart'
+    show SyncRepository;
+import 'package:archiveme_mobile/features/recording/recording_dependencies.dart'
+    show AppServices;
 import 'package:archiveme_mobile/screens/terms_screen.dart' show TermsScreen;
 import 'package:archiveme_mobile/services/app_services.dart' show AppServices;
 import 'package:archiveme_mobile/storage/app_storage_paths.dart';

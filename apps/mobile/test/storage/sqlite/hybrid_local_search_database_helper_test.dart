@@ -162,69 +162,82 @@ void main() {
 
       expect(hits.map((hit) => hit.entryId), ['near', 'far']);
       expect(hits.first.rank, 1);
-      expect(hits.first.cosineSimilarity, greaterThan(hits.last.cosineSimilarity));
+      expect(
+        hits.first.cosineSimilarity,
+        greaterThan(hits.last.cosineSimilarity),
+      );
     });
 
-    test('search fuses keyword and semantic channels for hybrid query', () async {
-      await journalRepo.mirrorEntireRemoteState([
-        _entry(id: 'both', transcript: 'budget planning for the quarter'),
-        _entry(id: 'keyword-only', transcript: 'budget spreadsheet review'),
-        _entry(id: 'vector-only', transcript: 'unrelated transcript text'),
-      ]);
+    test(
+      'search fuses keyword and semantic channels for hybrid query',
+      () async {
+        await journalRepo.mirrorEntireRemoteState([
+          _entry(id: 'both', transcript: 'budget planning for the quarter'),
+          _entry(id: 'keyword-only', transcript: 'budget spreadsheet review'),
+          _entry(id: 'vector-only', transcript: 'unrelated transcript text'),
+        ]);
 
-      final queryEmbedding = _unitVector(2);
-      await searchRepo.upsertEmbedding(
-        entryId: 'both',
-        embedding: _blendVectors(queryEmbedding, _unitVector(3), weightA: 0.92),
-      );
-      await searchRepo.upsertEmbedding(
-        entryId: 'keyword-only',
-        embedding: _unitVector(200),
-      );
-      await searchRepo.upsertEmbedding(
-        entryId: 'vector-only',
-        embedding: queryEmbedding,
-      );
+        final queryEmbedding = _unitVector(2);
+        await searchRepo.upsertEmbedding(
+          entryId: 'both',
+          embedding: _blendVectors(
+            queryEmbedding,
+            _unitVector(3),
+            weightA: 0.92,
+          ),
+        );
+        await searchRepo.upsertEmbedding(
+          entryId: 'keyword-only',
+          embedding: _unitVector(200),
+        );
+        await searchRepo.upsertEmbedding(
+          entryId: 'vector-only',
+          embedding: queryEmbedding,
+        );
 
-      // The helper only opens the semantic channel for an encoder that claims
-      // to carry meaning — see [SemanticVectorFusion]. The stand-in used
-      // elsewhere in this file does not, so the fusion path needs a stand-in
-      // that does.
-      final fusing = DatabaseHelper(
-        searchRepository: searchRepo,
-        embeddingInference: _SemanticEncoderDouble(),
-      );
-      SemanticVectorFusion.debugEnabled = true;
-      addTearDown(() => SemanticVectorFusion.debugEnabled = null);
+        // The helper only opens the semantic channel for an encoder that claims
+        // to carry meaning — see [SemanticVectorFusion]. The stand-in used
+        // elsewhere in this file does not, so the fusion path needs a stand-in
+        // that does.
+        final fusing = DatabaseHelper(
+          searchRepository: searchRepo,
+          embeddingInference: _SemanticEncoderDouble(),
+        );
+        SemanticVectorFusion.debugEnabled = true;
+        addTearDown(() => SemanticVectorFusion.debugEnabled = null);
 
-      final hits = await fusing.search(
-        'budget planning',
-        limit: 3,
-      );
+        final hits = await fusing.search(
+          'budget planning',
+          limit: 3,
+        );
 
-      expect(hits, isNotEmpty);
-      expect(hits.first.entryId, 'both');
-      expect(hits.first.keywordRank, isNotNull);
-      expect(hits.first.vectorRank, isNotNull);
-      expect(hits.first.score, greaterThan(hits[1].score));
-    });
+        expect(hits, isNotEmpty);
+        expect(hits.first.entryId, 'both');
+        expect(hits.first.keywordRank, isNotNull);
+        expect(hits.first.vectorRank, isNotNull);
+        expect(hits.first.score, greaterThan(hits[1].score));
+      },
+    );
 
-    test('search returns BM25 ranking alone for the stand-in encoder', () async {
-      await journalRepo.mirrorEntireRemoteState([
-        _entry(id: 'both', transcript: 'budget planning for the quarter'),
-        _entry(id: 'keyword-only', transcript: 'budget spreadsheet review'),
-        _entry(id: 'vector-only', transcript: 'unrelated transcript text'),
-      ]);
-      await searchRepo.upsertEmbedding(
-        entryId: 'vector-only',
-        embedding: _unitVector(2),
-      );
+    test(
+      'search returns BM25 ranking alone for the stand-in encoder',
+      () async {
+        await journalRepo.mirrorEntireRemoteState([
+          _entry(id: 'both', transcript: 'budget planning for the quarter'),
+          _entry(id: 'keyword-only', transcript: 'budget spreadsheet review'),
+          _entry(id: 'vector-only', transcript: 'unrelated transcript text'),
+        ]);
+        await searchRepo.upsertEmbedding(
+          entryId: 'vector-only',
+          embedding: _unitVector(2),
+        );
 
-      final hits = await helper.search('budget planning', limit: 3);
+        final hits = await helper.search('budget planning', limit: 3);
 
-      expect(hits.map((hit) => hit.entryId), isNot(contains('vector-only')));
-      expect(hits.map((hit) => hit.vectorRank), everyElement(isNull));
-    });
+        expect(hits.map((hit) => hit.entryId), isNot(contains('vector-only')));
+        expect(hits.map((hit) => hit.vectorRank), everyElement(isNull));
+      },
+    );
 
     test('mergeAndRank preserves keyword-only ordering', () {
       final hits = helper.mergeAndRank(

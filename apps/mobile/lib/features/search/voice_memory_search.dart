@@ -34,7 +34,8 @@ class SearchResult {
 class VoiceMemorySearchIndex {
   VoiceMemorySearchIndex({
     required this.entries,
-    required this.discoverFeed, this.archiveState,
+    required this.discoverFeed,
+    this.archiveState,
   });
 
   final List<JournalEntry> entries;

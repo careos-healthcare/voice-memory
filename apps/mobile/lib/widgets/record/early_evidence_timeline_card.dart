@@ -19,7 +19,8 @@ import 'package:flutter/material.dart';
 /// Sequential early evidence timeline — repeat, trigger, softening, helpful action.
 class EarlyEvidenceTimelineCard extends StatelessWidget {
   const EarlyEvidenceTimelineCard({
-    required this.timeline, super.key,
+    required this.timeline,
+    super.key,
     this.compact = false,
     this.nearbyConfirmedRepeat = false,
     this.suppressEvidencePhrases = false,

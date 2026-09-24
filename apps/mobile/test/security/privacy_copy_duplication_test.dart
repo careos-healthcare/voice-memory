@@ -74,15 +74,16 @@ void main() {
         byValue.putIfAbsent(value, () => []).add(declaration);
       }
 
-      final duplicated = byValue.entries
-          .where((entry) => entry.value.length > 1)
-          .map(
-            (entry) =>
-                '"${entry.key}"\n    '
-                '${entry.value.map((d) => '${d.location} ${d.name}').join('\n    ')}',
-          )
-          .toList()
-        ..sort();
+      final duplicated =
+          byValue.entries
+              .where((entry) => entry.value.length > 1)
+              .map(
+                (entry) =>
+                    '"${entry.key}"\n    '
+                    '${entry.value.map((d) => '${d.location} ${d.name}').join('\n    ')}',
+              )
+              .toList()
+            ..sort();
 
       expect(
         duplicated,

@@ -7,7 +7,8 @@ import 'package:flutter/material.dart';
 /// Collapsed-by-default evidence reasons behind an early archive insight.
 class EarlyArchiveInsightWhySection extends StatefulWidget {
   const EarlyArchiveInsightWhySection({
-    required this.reasons, super.key,
+    required this.reasons,
+    super.key,
     this.insightKey = 'default',
   });
 

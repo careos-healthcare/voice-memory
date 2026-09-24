@@ -48,7 +48,6 @@ class TextCaptureHandler {
         return _saveTextLocalOnly(
           transcript: trimmed,
           syncNote: VoiceCaptureCopy.remoteProcessingConsentPausedNote,
-          
         );
       }
 
@@ -59,7 +58,6 @@ class TextCaptureHandler {
           scopeKey: scopeKey,
           entryId: entryId,
           sourceType: ProofSourceType.userTyped,
-          
         );
         _stageEmitter(PipelineStage.saving);
         final entry = JournalEntry(
@@ -82,18 +80,19 @@ class TextCaptureHandler {
         _middleware.clearCaptureToken();
 
         _stageEmitter(PipelineStage.done);
-        return pipelineSuccess(CapturePipelineResult(
-          entry: entry,
-          localSaved: true,
-          syncSucceeded: true,
-        ));
+        return pipelineSuccess(
+          CapturePipelineResult(
+            entry: entry,
+            localSaved: true,
+            syncSucceeded: true,
+          ),
+        );
       } on AnalyzeBlockedException catch (e, stackTrace) {
         return _saveTextLocalOnly(
           transcript: trimmed,
           syncNote: e.reason.isNotEmpty
               ? e.reason
               : VoiceCaptureCopy.transcriptionFailedDegraded,
-          
         );
       }
     } catch (e, stackTrace) {
@@ -107,7 +106,6 @@ class TextCaptureHandler {
       return _saveTextLocalOnly(
         transcript: trimmed,
         syncNote: CapturePipelineApiErrors.syncNoteFor(e),
-        
       );
     }
   }
@@ -115,19 +113,20 @@ class TextCaptureHandler {
   Future<CapturePipelineOutcome> _saveTextLocalOnly({
     required String transcript,
     required String syncNote,
-    
   }) async {
     _stageEmitter(PipelineStage.saving);
     try {
       final entry = await _saveOfflineTextDraft(transcript);
       _middleware.clearCaptureToken();
       _stageEmitter(PipelineStage.done);
-      return pipelineSuccess(CapturePipelineResult(
-        entry: entry,
-        localSaved: true,
-        syncSucceeded: false,
-        syncNote: syncNote,
-      ));
+      return pipelineSuccess(
+        CapturePipelineResult(
+          entry: entry,
+          localSaved: true,
+          syncSucceeded: false,
+          syncNote: syncNote,
+        ),
+      );
     } catch (e, stackTrace) {
       return pipelineFailure(
         CapturePipelineFailure(
@@ -143,7 +142,9 @@ class TextCaptureHandler {
       id: JournalSyncIds.newOfflineEntryId(),
       createdAt: DateTime.now().toUtc(),
       transcript: trimmed,
-      durationSeconds: CaptureVoicePersistence.estimatedDurationSeconds(trimmed),
+      durationSeconds: CaptureVoicePersistence.estimatedDurationSeconds(
+        trimmed,
+      ),
       reflection: const Reflection(
         mood: 'neutral',
         emotionalIntensity: 0,

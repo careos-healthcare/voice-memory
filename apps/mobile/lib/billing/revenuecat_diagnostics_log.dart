@@ -7,7 +7,10 @@ import 'package:purchases_flutter/purchases_flutter.dart';
 abstract final class RevenueCatDiagnosticsLog {
   RevenueCatDiagnosticsLog._();
 
-  static void _log(String message, {ReleaseLogSeverity severity = ReleaseLogSeverity.info}) {
+  static void _log(
+    String message, {
+    ReleaseLogSeverity severity = ReleaseLogSeverity.info,
+  }) {
     ReleaseLogger.emit(
       event: 'revenuecat_diagnostics',
       category: ReleaseLogCategory.billing,
@@ -106,7 +109,10 @@ abstract final class RevenueCatDiagnosticsLog {
     StackTrace? stackTrace,
     ReleaseLogSeverity severity = ReleaseLogSeverity.warn,
   }) {
-    _log('operationFailed operation=$operation error=$error', severity: severity);
+    _log(
+      'operationFailed operation=$operation error=$error',
+      severity: severity,
+    );
     if (stackTrace != null) {
       ReleaseLogger.debugDetail(
         event: 'revenuecat_operation_failed_detail',

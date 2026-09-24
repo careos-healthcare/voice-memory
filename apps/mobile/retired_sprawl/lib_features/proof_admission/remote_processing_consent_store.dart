@@ -91,7 +91,9 @@ class RemoteProcessingConsentState {
     'permittedCategories': List<String>.of(permittedCategories),
   };
 
-  static Set<RemoteProcessingPurpose> _purposesFromStorageList(List<dynamic> raw) {
+  static Set<RemoteProcessingPurpose> _purposesFromStorageList(
+    List<dynamic> raw,
+  ) {
     final purposes = <RemoteProcessingPurpose>{};
     for (final item in raw) {
       if (item is! String) continue;

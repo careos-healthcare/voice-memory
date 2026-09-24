@@ -8,7 +8,8 @@ import 'package:flutter/material.dart';
 /// Copy / Share / Save buttons for keeping a private copy of a recap.
 class PrivateRecapActions extends StatelessWidget {
   const PrivateRecapActions({
-    required this.recap, super.key,
+    required this.recap,
+    super.key,
     this.onCopy,
     this.onShare,
     this.onSave,

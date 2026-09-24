@@ -74,7 +74,10 @@ class QuickCaptureWidgetService {
     return _outbox.enqueue(payload);
   }
 
-  Future<String> enqueueTextNote(String text, {String source = 'quick_action'}) {
+  Future<String> enqueueTextNote(
+    String text, {
+    String source = 'quick_action',
+  }) {
     return enqueueCapture(
       QuickCaptureOutboxPayload(
         captureId: generateUlid(),

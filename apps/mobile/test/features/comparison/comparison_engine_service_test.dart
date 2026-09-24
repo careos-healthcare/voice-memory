@@ -185,40 +185,49 @@ void main() {
       expect(result.now.citations.map((c) => c.entryId), ['y2025', 'y2026']);
     });
 
-    test('maps confidence percent to PatternMatchConfidenceBand on periods', () {
-      final entries = [
-        _entry(
-          id: 'baseline',
-          createdAt: anchor.subtract(const Duration(days: 400)),
-          transcript: 'Baseline belief with enough usable transcript length',
-        ),
-        _entry(
-          id: 'baseline-2',
-          createdAt: anchor.subtract(const Duration(days: 380)),
-          transcript: 'Baseline again with enough usable transcript length',
-        ),
-        _entry(
-          id: 'current',
-          createdAt: anchor.subtract(const Duration(days: 5)),
-          transcript: 'Current belief with enough usable transcript length',
-        ),
-        _entry(
-          id: 'current-2',
-          createdAt: anchor.subtract(const Duration(days: 3)),
-          transcript: 'Current again with enough usable transcript length',
-        ),
-      ];
+    test(
+      'maps confidence percent to PatternMatchConfidenceBand on periods',
+      () {
+        final entries = [
+          _entry(
+            id: 'baseline',
+            createdAt: anchor.subtract(const Duration(days: 400)),
+            transcript: 'Baseline belief with enough usable transcript length',
+          ),
+          _entry(
+            id: 'baseline-2',
+            createdAt: anchor.subtract(const Duration(days: 380)),
+            transcript: 'Baseline again with enough usable transcript length',
+          ),
+          _entry(
+            id: 'current',
+            createdAt: anchor.subtract(const Duration(days: 5)),
+            transcript: 'Current belief with enough usable transcript length',
+          ),
+          _entry(
+            id: 'current-2',
+            createdAt: anchor.subtract(const Duration(days: 3)),
+            transcript: 'Current again with enough usable transcript length',
+          ),
+        ];
 
-      final result = ComparisonEngineService.build(
-        range: ComparisonTemporalRange.oneYearVsToday,
-        entries: entries,
-        facts: const [],
-        beliefEvolution: BeliefEvolutionState.empty(),
-        now: anchor,
-      );
+        final result = ComparisonEngineService.build(
+          range: ComparisonTemporalRange.oneYearVsToday,
+          entries: entries,
+          facts: const [],
+          beliefEvolution: BeliefEvolutionState.empty(),
+          now: anchor,
+        );
 
-      expect(result.then.confidenceBand, isNot(PatternMatchConfidenceBand.weak));
-      expect(result.now.confidenceBand, isNot(PatternMatchConfidenceBand.weak));
-    });
+        expect(
+          result.then.confidenceBand,
+          isNot(PatternMatchConfidenceBand.weak),
+        );
+        expect(
+          result.now.confidenceBand,
+          isNot(PatternMatchConfidenceBand.weak),
+        );
+      },
+    );
   });
 }

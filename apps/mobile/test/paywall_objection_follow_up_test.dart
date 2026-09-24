@@ -87,31 +87,34 @@ void main() {
     await tester.binding.setSurfaceSize(const Size(390, 2200));
     addTearDown(() => tester.binding.setSurfaceSize(null));
     await tester.pumpWidget(
-      withAppProviderScope(MaterialApp.router(
-        routerConfig: GoRouter(
-          routes: [
-            GoRoute(
-              path: '/',
-              builder: (context, state) => PaywallScreen(
-                triggerArgs: const PaywallRouteArgs(
-                  source: PaywallSource.valueMoment,
+      withAppProviderScope(
+        MaterialApp.router(
+          routerConfig: GoRouter(
+            routes: [
+              GoRoute(
+                path: '/',
+                builder: (context, state) => PaywallScreen(
+                  triggerArgs: const PaywallRouteArgs(
+                    source: PaywallSource.valueMoment,
+                  ),
+                  attributionStore: _MemoryAttributionStore(),
+                  suggestionAttributionStore:
+                      MemorySuggestionAttributionStore(),
+                  objectionStore: store,
+                  sessionTracker: sessionTracker,
+                  delayedPaywallProofGateOverride: () => true,
+                  billingReadyOverride: () => false,
                 ),
-                attributionStore: _MemoryAttributionStore(),
-                suggestionAttributionStore: MemorySuggestionAttributionStore(),
-                objectionStore: store,
-                sessionTracker: sessionTracker,
-                delayedPaywallProofGateOverride: () => true,
-                billingReadyOverride: () => false,
               ),
-            ),
-            GoRoute(
-              path: '/record',
-              builder: (context, state) =>
-                  const Scaffold(body: Text('RECORD HOME')),
-            ),
-          ],
+              GoRoute(
+                path: '/record',
+                builder: (context, state) =>
+                    const Scaffold(body: Text('RECORD HOME')),
+              ),
+            ],
+          ),
         ),
-      )),
+      ),
     );
     await tester.pump();
     for (var i = 0; i < 40; i++) {

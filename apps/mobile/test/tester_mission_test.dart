@@ -431,9 +431,13 @@ void main() {
         compactAtEntryZero: false,
       );
 
-      await tester.pumpWidget(withAppProviderScope(MaterialApp(
-          home: Scaffold(body: TesterMissionCard.test(mission: mission)),
-        )));
+      await tester.pumpWidget(
+        withAppProviderScope(
+          MaterialApp(
+            home: Scaffold(body: TesterMissionCard.test(mission: mission)),
+          ),
+        ),
+      );
 
       expect(find.byKey(const Key('tester_mission_card')), findsOneWidget);
       expect(find.text(TesterMissionCopy.mission), findsOneWidget);
@@ -505,16 +509,20 @@ void main() {
       }
       await tester.binding.setSurfaceSize(const Size(390, 2800));
       addTearDown(() => tester.binding.setSurfaceSize(null));
-      await tester.pumpWidget(withAppProviderScope(MaterialApp(
-          theme: AppTheme.light(),
-          home: Scaffold(
-            body: RecordScreen(
-              pressureCheckInStore: MemoryPressureCheckInStore(),
-              suggestionAttributionStore: MemorySuggestionAttributionStore(),
-              entitlementReader: FakeArchiveEntitlementReader(pro: false),
+      await tester.pumpWidget(
+        withAppProviderScope(
+          MaterialApp(
+            theme: AppTheme.light(),
+            home: Scaffold(
+              body: RecordScreen(
+                pressureCheckInStore: MemoryPressureCheckInStore(),
+                suggestionAttributionStore: MemorySuggestionAttributionStore(),
+                entitlementReader: FakeArchiveEntitlementReader(pro: false),
+              ),
             ),
           ),
-        )));
+        ),
+      );
       await tester.pump();
       await tester.runAsync(() async {
         await Future<void>.delayed(const Duration(milliseconds: 400));

@@ -7,7 +7,8 @@ import 'package:flutter/material.dart';
 /// Compact post-save card: shows that ArchiveMe is remembering this pattern.
 class PatternMemoryAfterSaveCard extends StatelessWidget {
   const PatternMemoryAfterSaveCard({
-    required this.memory, super.key,
+    required this.memory,
+    super.key,
     this.onUseNext,
   });
 

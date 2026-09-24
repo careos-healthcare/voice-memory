@@ -48,7 +48,8 @@ const _annotatedLiteralAllowlist = <String, String>{
   'Free shows the first useful proof. Pro keeps the longer trail.':
       'Legacy paywall — tracked for paywall refresh',
   'Longer proof trail': 'Legacy paywall — tracked for paywall refresh',
-  'Pro keeps the longer proof trail': 'Legacy paywall — tracked for paywall refresh',
+  'Pro keeps the longer proof trail':
+      'Legacy paywall — tracked for paywall refresh',
   'customer_language.dart': 'Defines banned term list',
   'globalBannedPhrases': 'Privacy policy guard list',
   'bannedPrimaryUiTerms': 'Self-reference in glossary constants file',

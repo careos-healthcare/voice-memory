@@ -176,8 +176,7 @@ void main() {
         decide(
           localAvailable: false,
           remotePermitted: false,
-          reason:
-              LocalTranscriptionUnavailableReason.speechLanguageUnconfirmed,
+          reason: LocalTranscriptionUnavailableReason.speechLanguageUnconfirmed,
         ),
         TranscriptionCapabilityOutcome.askSpeechLanguage,
       );
@@ -188,8 +187,7 @@ void main() {
         decide(
           localAvailable: false,
           remotePermitted: true,
-          reason:
-              LocalTranscriptionUnavailableReason.speechLanguageUnconfirmed,
+          reason: LocalTranscriptionUnavailableReason.speechLanguageUnconfirmed,
         ),
         TranscriptionCapabilityOutcome.proceed,
       );
@@ -201,8 +199,7 @@ void main() {
           localAvailable: false,
           remotePermitted: false,
           choice: LocalTranscriptionChoice.noTranscription,
-          reason:
-              LocalTranscriptionUnavailableReason.speechLanguageUnconfirmed,
+          reason: LocalTranscriptionUnavailableReason.speechLanguageUnconfirmed,
         ),
         TranscriptionCapabilityOutcome.respectNoTranscription,
       );
@@ -263,8 +260,7 @@ void main() {
       for (final localAvailable in [true, false]) {
         for (final remotePermitted in [true, false]) {
           for (final choice in LocalTranscriptionChoice.values) {
-            for (final reason
-                in LocalTranscriptionUnavailableReason.values) {
+            for (final reason in LocalTranscriptionUnavailableReason.values) {
               final first = decide(
                 localAvailable: localAvailable,
                 remotePermitted: remotePermitted,
@@ -379,8 +375,9 @@ void main() {
   });
 
   group('the card offers two real answers', () {
-    testWidgets('both buttons report a choice and neither is a dismissal',
-        (tester) async {
+    testWidgets('both buttons report a choice and neither is a dismissal', (
+      tester,
+    ) async {
       final choices = <bool>[];
       await tester.pumpWidget(
         MaterialApp(
@@ -396,8 +393,10 @@ void main() {
         find.byKey(const Key('local_transcription_unavailable_card')),
         findsOneWidget,
       );
-      expect(find.text(LocalTranscriptionUnavailableCopy.remoteDetail),
-          findsOneWidget);
+      expect(
+        find.text(LocalTranscriptionUnavailableCopy.remoteDetail),
+        findsOneWidget,
+      );
 
       await tester.tap(
         find.byKey(const Key('local_transcription_choose_remote')),

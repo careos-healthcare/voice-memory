@@ -11,7 +11,8 @@ import 'package:flutter/material.dart';
 /// Shown once when user returns after missing a due check-in.
 class MissedCheckInReasonPrompt extends StatefulWidget {
   const MissedCheckInReasonPrompt({
-    required this.checkIn, super.key,
+    required this.checkIn,
+    super.key,
     this.onAnswered,
   });
 

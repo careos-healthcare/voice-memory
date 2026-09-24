@@ -21,7 +21,8 @@ void main() {
                     onPressed: () => InsightEvidenceDetailSheet.show(
                       context,
                       payload: InsightEvidenceDetailPayload(
-                        insightText: 'You often push through exhaustion at work',
+                        insightText:
+                            'You often push through exhaustion at work',
                         confidenceBand: PatternMatchConfidenceBand.solid,
                         quotes: quotes,
                       ),
@@ -52,12 +53,20 @@ void main() {
         ],
       );
 
-      expect(find.byKey(const Key('insight_evidence_detail_sheet')), findsOneWidget);
       expect(
-        find.byKey(const Key('insight_evidence_confidence_band_Single mention')),
+        find.byKey(const Key('insight_evidence_detail_sheet')),
         findsOneWidget,
       );
-      expect(find.byKey(const Key('insight_evidence_source_entry-1')), findsOneWidget);
+      expect(
+        find.byKey(
+          const Key('insight_evidence_confidence_band_Single mention'),
+        ),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(const Key('insight_evidence_source_entry-1')),
+        findsOneWidget,
+      );
       expect(find.text('Open journal entry'), findsOneWidget);
     });
 
@@ -81,11 +90,19 @@ void main() {
       );
 
       expect(
-        find.byKey(const Key('insight_evidence_confidence_band_Strong pattern')),
+        find.byKey(
+          const Key('insight_evidence_confidence_band_Strong pattern'),
+        ),
         findsOneWidget,
       );
-      expect(find.byKey(const Key('insight_evidence_source_entry-older')), findsOneWidget);
-      expect(find.byKey(const Key('insight_evidence_source_entry-newer')), findsOneWidget);
+      expect(
+        find.byKey(const Key('insight_evidence_source_entry-older')),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(const Key('insight_evidence_source_entry-newer')),
+        findsOneWidget,
+      );
 
       final older = tester.getTopLeft(
         find.byKey(const Key('insight_evidence_source_entry-older')),
@@ -125,9 +142,14 @@ void main() {
       await tester.tap(find.byKey(const Key('show_evidence_affordance')));
       await tester.pumpAndSettle();
 
-      expect(find.byKey(const Key('insight_evidence_detail_sheet')), findsOneWidget);
       expect(
-        find.byKey(const Key('insight_evidence_confidence_band_Possible pattern')),
+        find.byKey(const Key('insight_evidence_detail_sheet')),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(
+          const Key('insight_evidence_confidence_band_Possible pattern'),
+        ),
         findsOneWidget,
       );
     });

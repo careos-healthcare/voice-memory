@@ -5,7 +5,8 @@ import 'package:flutter/material.dart';
 /// Three one-tap entry starters for the Record screen.
 class EntryDirectionStarters extends StatelessWidget {
   const EntryDirectionStarters({
-    required this.onSelect, super.key,
+    required this.onSelect,
+    super.key,
     this.selectedPrompt,
   });
 
@@ -55,7 +56,10 @@ class EntryDirectionStarters extends StatelessWidget {
 
 class _StarterChip extends StatelessWidget {
   const _StarterChip({
-    required this.label, required this.selected, required this.onTap, super.key,
+    required this.label,
+    required this.selected,
+    required this.onTap,
+    super.key,
   });
 
   final String label;

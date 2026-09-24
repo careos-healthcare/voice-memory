@@ -35,7 +35,9 @@ class MeshSyncManager extends StreamNotifier<MeshSyncState> {
 
   Future<void> scan() async {
     final enabled = _latest.meshEnabled;
-    final peers = enabled ? await (discoverPeers ?? _noPeers)() : const <MeshPeer>[];
+    final peers = enabled
+        ? await (discoverPeers ?? _noPeers)()
+        : const <MeshPeer>[];
     var inbound = 0;
     var outbound = 0;
     for (final peer in peers) {

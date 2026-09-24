@@ -10,7 +10,8 @@ import 'package:go_router/go_router.dart';
 /// Teaser before full archive paywall — theory visible, synthesis locked.
 class ArchiveIntelligenceUpgradeCard extends StatelessWidget {
   const ArchiveIntelligenceUpgradeCard({
-    required this.view, super.key,
+    required this.view,
+    super.key,
     this.compact = false,
   });
 

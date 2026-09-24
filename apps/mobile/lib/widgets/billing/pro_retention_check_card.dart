@@ -13,7 +13,8 @@ import 'package:flutter/material.dart';
 /// cancellation flow.
 class ProRetentionCheckCard extends StatefulWidget {
   const ProRetentionCheckCard({
-    required this.cardType, super.key,
+    required this.cardType,
+    super.key,
     this.entryCount = 0,
     this.hasConnectedThread = false,
   });

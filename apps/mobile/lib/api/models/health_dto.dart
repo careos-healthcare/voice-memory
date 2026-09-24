@@ -39,20 +39,20 @@ class HealthChecksDto {
     this.productionEnvOk,
   });
 
-  factory HealthChecksDto.fromJson(Map<String, dynamic> json) =>
-      HealthChecksDto(
-        databaseConfigured:
-            JsonConverters.nullableBool(json['databaseConfigured']),
-        databaseReachable:
-            JsonConverters.nullableBool(json['databaseReachable']),
-        migrationsOk: JsonConverters.nullableBool(json['migrationsOk']),
-        rateLimiterMode: JsonConverters.nullableString(json['rateLimiterMode']),
-        globalRateLimiterMode:
-            JsonConverters.nullableString(json['globalRateLimiterMode']),
-        stripeConfigured: JsonConverters.nullableBool(json['stripeConfigured']),
-        emailMode: JsonConverters.nullableString(json['emailMode']),
-        productionEnvOk: JsonConverters.nullableBool(json['productionEnvOk']),
-      );
+  factory HealthChecksDto.fromJson(
+    Map<String, dynamic> json,
+  ) => HealthChecksDto(
+    databaseConfigured: JsonConverters.nullableBool(json['databaseConfigured']),
+    databaseReachable: JsonConverters.nullableBool(json['databaseReachable']),
+    migrationsOk: JsonConverters.nullableBool(json['migrationsOk']),
+    rateLimiterMode: JsonConverters.nullableString(json['rateLimiterMode']),
+    globalRateLimiterMode: JsonConverters.nullableString(
+      json['globalRateLimiterMode'],
+    ),
+    stripeConfigured: JsonConverters.nullableBool(json['stripeConfigured']),
+    emailMode: JsonConverters.nullableString(json['emailMode']),
+    productionEnvOk: JsonConverters.nullableBool(json['productionEnvOk']),
+  );
 
   final bool? databaseConfigured;
   final bool? databaseReachable;

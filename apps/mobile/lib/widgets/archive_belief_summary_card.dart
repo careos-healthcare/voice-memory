@@ -5,7 +5,8 @@ import 'package:go_router/go_router.dart';
 
 class ArchiveBeliefSummaryCard extends StatelessWidget {
   const ArchiveBeliefSummaryCard({
-    required this.belief, super.key,
+    required this.belief,
+    super.key,
     this.compact = false,
   });
 

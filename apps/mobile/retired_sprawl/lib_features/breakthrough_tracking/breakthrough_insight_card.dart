@@ -9,7 +9,8 @@ import 'package:flutter/material.dart';
 /// High-impact Breakthrough card for mobile insight feeds.
 class BreakthroughInsightCard extends StatelessWidget {
   const BreakthroughInsightCard({
-    required this.shift, super.key,
+    required this.shift,
+    super.key,
   });
 
   final BreakthroughShift shift;
@@ -37,7 +38,11 @@ class BreakthroughInsightCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              const Icon(Icons.auto_awesome, size: 18, color: AppColors.warning),
+              const Icon(
+                Icons.auto_awesome,
+                size: 18,
+                color: AppColors.warning,
+              ),
               const SizedBox(width: 6),
               Text(
                 BreakthroughFeedCopy.eyebrow,

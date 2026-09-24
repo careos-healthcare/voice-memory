@@ -29,17 +29,18 @@ void main() {
   });
 
   test('a model mention is kept when the local scan misses the name', () async {
-    final people = await RelationshipExtractor(
-      llm: (text) async => const [
-        ExtractedMention(name: 'sam', relationship: 'friend'),
-      ],
-    ).extract([
-      RelationshipSource(
-        entryId: 'walk',
-        createdAt: DateTime.utc(2026, 4, 2),
-        text: 'sam and i walked by the river.',
-      ),
-    ]);
+    final people =
+        await RelationshipExtractor(
+          llm: (text) async => const [
+            ExtractedMention(name: 'sam', relationship: 'friend'),
+          ],
+        ).extract([
+          RelationshipSource(
+            entryId: 'walk',
+            createdAt: DateTime.utc(2026, 4, 2),
+            text: 'sam and i walked by the river.',
+          ),
+        ]);
 
     expect(people.single.name, 'Sam');
     expect(people.single.relationship, 'friend');
@@ -66,7 +67,10 @@ void main() {
 
     expect(find.byKey(const Key('relationship_graph_screen')), findsOneWidget);
     expect(find.byKey(const Key('relationship_person_Alex')), findsOneWidget);
-    expect(find.byKey(const Key('relationship_sentiment_Alex')), findsOneWidget);
+    expect(
+      find.byKey(const Key('relationship_sentiment_Alex')),
+      findsOneWidget,
+    );
     expect(find.textContaining('View evidence'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });

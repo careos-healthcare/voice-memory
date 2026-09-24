@@ -14,11 +14,10 @@ const _owner = 'owner-1';
 const _statement = 'Stress at work came right before you skipped the meeting.';
 final _at = DateTime.utc(2026, 7);
 
-String _framing(String statement) =>
-    ProofFingerprints.semanticFraming(
-      statement: statement,
-      proofType: 'currentObservation',
-    );
+String _framing(String statement) => ProofFingerprints.semanticFraming(
+  statement: statement,
+  proofType: 'currentObservation',
+);
 
 VerifiedProof _proof({
   String statement = _statement,
@@ -114,21 +113,23 @@ void main() {
     if (dir.existsSync()) await dir.delete(recursive: true);
   });
 
-  test('non-recovery lens allows materially new evidence to lift suppression',
-      () async {
-    ArchiveCorrectionStore.instance.configure(prefs);
+  test(
+    'non-recovery lens allows materially new evidence to lift suppression',
+    () async {
+      ArchiveCorrectionStore.instance.configure(prefs);
 
-    await ArchiveCorrectionStore.instance.recordForProof(
-      proof: _proof(),
-      choice: ArchiveCorrectionChoice.wrong,
-      sourceSurface: 'test',
-      now: _at,
-    );
+      await ArchiveCorrectionStore.instance.recordForProof(
+        proof: _proof(),
+        choice: ArchiveCorrectionChoice.wrong,
+        sourceSurface: 'test',
+        now: _at,
+      );
 
-    final decision = ArchiveCorrectionStore.instance.decide(
-      _query(sources: const {'entry-1', 'entry-2'}),
-    );
+      final decision = ArchiveCorrectionStore.instance.decide(
+        _query(sources: const {'entry-1', 'entry-2'}),
+      );
 
-    expect(decision.suppressed, isFalse);
-  });
+      expect(decision.suppressed, isFalse);
+    },
+  );
 }

@@ -8,7 +8,9 @@ import 'package:flutter/material.dart';
 
 class VerifiedProofCorrectionControls extends StatefulWidget {
   const VerifiedProofCorrectionControls({
-    required this.proof, required this.sourceSurface, super.key,
+    required this.proof,
+    required this.sourceSurface,
+    super.key,
   });
 
   static const String prompt = 'Was this right?';
@@ -195,10 +197,12 @@ class _VerifiedProofCorrectionControlsState
   String _label(ArchiveCorrectionChoice choice) {
     if (V1FeatureFlags.enableV1Only) {
       return switch (choice) {
-        ArchiveCorrectionChoice.exactlyRight => EvidenceEligibilityCopy.feedbackFits,
+        ArchiveCorrectionChoice.exactlyRight =>
+          EvidenceEligibilityCopy.feedbackFits,
         ArchiveCorrectionChoice.partlyRight =>
           EvidenceEligibilityCopy.feedbackPartlyFits,
-        ArchiveCorrectionChoice.wrong => EvidenceEligibilityCopy.feedbackNotForMe,
+        ArchiveCorrectionChoice.wrong =>
+          EvidenceEligibilityCopy.feedbackNotForMe,
         ArchiveCorrectionChoice.wrongWording => 'Wrong wording',
         ArchiveCorrectionChoice.wrongEvidence => 'Wrong evidence',
         ArchiveCorrectionChoice.ignoreForever => 'Ignore forever',

@@ -113,7 +113,9 @@ final class SherpaOnnxTtsBackend implements OfflineTtsBackend {
           controller.add(
             OfflineTtsPcmChunk(
               pcmBytes: const [],
-              sampleRateHz: audio.sampleRate == 0 ? tts.sampleRate : audio.sampleRate,
+              sampleRateHz: audio.sampleRate == 0
+                  ? tts.sampleRate
+                  : audio.sampleRate,
               progress: 1,
               isFinal: true,
             ),

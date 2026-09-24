@@ -51,7 +51,8 @@ class CaregiverAccessGrantList extends StatefulWidget {
   final Future<bool> Function(
     BuildContext context,
     MultiPartyAccessGrant grant,
-  )? confirmRevokeOverride;
+  )?
+  confirmRevokeOverride;
 
   /// Clock seam, so a test can hold the confirmation dialog open across a span
   /// the server would reject and check which instant was sent.
@@ -276,7 +277,9 @@ class _CaregiverAccessGrantListState extends State<CaregiverAccessGrantList> {
   }
 
   void _showSnack(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(message)));
   }
 
   static String _formatDay(DateTime day) =>
@@ -414,9 +417,9 @@ class _GrantRow extends StatelessWidget {
                           CaregiverAccessCopy.currentSessionBadge,
                           style: ArchiveMobileTypography.cardLabel(context)
                               .copyWith(
-                            color: AppColors.accentPrimary,
-                            fontSize: 11,
-                          ),
+                                color: AppColors.accentPrimary,
+                                fontSize: 11,
+                              ),
                         ),
                       ),
                   ],

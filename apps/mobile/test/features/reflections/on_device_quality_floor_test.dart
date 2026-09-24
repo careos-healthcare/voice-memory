@@ -61,25 +61,28 @@ void main() {
   });
 
   group('on-device-only quality floor', () {
-    test('a below-floor local reflection is reported as unscored, not passed',
-        () async {
-      await OnDeviceProcessingStore.setEnabled(true);
+    test(
+      'a below-floor local reflection is reported as unscored, not passed',
+      () async {
+        await OnDeviceProcessingStore.setEnabled(true);
 
-      final result = await _runAudio(_pipeline(sttConfidence: 0.20));
+        final result = await _runAudio(_pipeline(sttConfidence: 0.20));
 
-      expect(
-        result.overallConfidence,
-        lessThan(LocalAiConfidence.onDeviceOnlyQualityFloor),
-        reason: 'fixture must sit below the floor for this test to mean '
-            'anything',
-      );
-      // The point of the change: the reflection is still returned and still
-      // kept on-device, but it is no longer indistinguishable from one that
-      // cleared a bar.
-      expect(result.reflection, isNotNull);
-      expect(result.fellBackToRemote, isFalse);
-      expect(result.fallbackBlockedReason, 'on_device_processing_only');
-    });
+        expect(
+          result.overallConfidence,
+          lessThan(LocalAiConfidence.onDeviceOnlyQualityFloor),
+          reason:
+              'fixture must sit below the floor for this test to mean '
+              'anything',
+        );
+        // The point of the change: the reflection is still returned and still
+        // kept on-device, but it is no longer indistinguishable from one that
+        // cleared a bar.
+        expect(result.reflection, isNotNull);
+        expect(result.fellBackToRemote, isFalse);
+        expect(result.fallbackBlockedReason, 'on_device_processing_only');
+      },
+    );
 
     test('an above-floor local reflection still passes unmarked', () async {
       await OnDeviceProcessingStore.setEnabled(true);
@@ -96,49 +99,54 @@ void main() {
       expect(result.fellBackToRemote, isFalse);
     });
 
-    test('no request leaves the device in on-device-only mode, at any score',
-        () async {
-      await OnDeviceProcessingStore.setEnabled(true);
+    test(
+      'no request leaves the device in on-device-only mode, at any score',
+      () async {
+        await OnDeviceProcessingStore.setEnabled(true);
 
-      for (final score in <double>[0.05, 0.20, 0.54, 0.90]) {
+        for (final score in <double>[0.05, 0.20, 0.54, 0.90]) {
+          final result = await _runAudio(
+            _pipeline(
+              sttConfidence: score,
+              // Fails from inside the call rather than counting afterwards, so a
+              // miscounted or swallowed invocation cannot pass silently.
+              remoteApi: _FailingCaptureApi(),
+            ),
+            captureToken: 'capture-token',
+          );
+          expect(result.fellBackToRemote, isFalse);
+          expect(result.reflection, isNotNull);
+        }
+      },
+    );
+
+    test(
+      'positive control: the same wiring does call out when permitted, so the '
+      'zero-call assertion above is not vacuous',
+      () async {
+        await OnDeviceProcessingStore.setEnabled(false);
+
+        final calls = <String>[];
         final result = await _runAudio(
           _pipeline(
-            sttConfidence: score,
-            // Fails from inside the call rather than counting afterwards, so a
-            // miscounted or swallowed invocation cannot pass silently.
-            remoteApi: _FailingCaptureApi(),
+            sttConfidence: 0.20,
+            remoteApi: _CountingCaptureApi(calls.add),
           ),
           captureToken: 'capture-token',
         );
-        expect(result.fellBackToRemote, isFalse);
-        expect(result.reflection, isNotNull);
-      }
-    });
 
-    test(
-        'positive control: the same wiring does call out when permitted, so the '
-        'zero-call assertion above is not vacuous', () async {
-      await OnDeviceProcessingStore.setEnabled(false);
-
-      final calls = <String>[];
-      final result = await _runAudio(
-        _pipeline(
-          sttConfidence: 0.20,
-          remoteApi: _CountingCaptureApi(calls.add),
-        ),
-        captureToken: 'capture-token',
-      );
-
-      // Same pipeline, same score, same call site — only the toggle differs.
-      // These are the exact methods `_FailingCaptureApi` fails from, so the
-      // zero-call assertion above is testing a path that does fire.
-      expect(
-        calls,
-        ['transcribe', 'analyze'],
-        reason: 'if this is empty the on-device-only assertion proves nothing',
-      );
-      expect(result.fellBackToRemote, isTrue);
-    });
+        // Same pipeline, same score, same call site — only the toggle differs.
+        // These are the exact methods `_FailingCaptureApi` fails from, so the
+        // zero-call assertion above is testing a path that does fire.
+        expect(
+          calls,
+          ['transcribe', 'analyze'],
+          reason:
+              'if this is empty the on-device-only assertion proves nothing',
+        );
+        expect(result.fellBackToRemote, isTrue);
+      },
+    );
   });
 
   group('save decision is unchanged', () {
@@ -160,7 +168,8 @@ void main() {
       // the gate that decides whether the entry is written at all.
       final saveThreshold =
           await LocalAiConfidence.effectiveRemoteFallbackThreshold();
-      final wouldSave = result.succeeded &&
+      final wouldSave =
+          result.succeeded &&
           result.overallConfidence >= saveThreshold &&
           result.toDomainReflection() != null &&
           (result.transcript?.trim().isNotEmpty ?? false);
@@ -191,13 +200,17 @@ void main() {
 
       const corpus = <String, String>{
         'rich (tension + action + theme)': _transcript,
-        'tension only': 'I said I was fine but I have not been sleeping much '
+        'tension only':
+            'I said I was fine but I have not been sleeping much '
             'at all this week.',
-        'action only': 'Tomorrow I will call the clinic and book the '
+        'action only':
+            'Tomorrow I will call the clinic and book the '
             'appointment I keep putting off.',
-        'hedged, no spans': 'Today was maybe kind of a lot, I am not really '
+        'hedged, no spans':
+            'Today was maybe kind of a lot, I am not really '
             'sure how to put it.',
-        'flat narration, no spans': 'I went to the shop and then I walked '
+        'flat narration, no spans':
+            'I went to the shop and then I walked '
             'home along the river path.',
       };
 
@@ -221,9 +234,9 @@ void main() {
           transcript: entry.value,
         );
         String overallAt(double t) => LocalAiConfidence.overall(
-              transcription: t,
-              reflection: reflection,
-            ).toStringAsFixed(3);
+          transcription: t,
+          reflection: reflection,
+        ).toStringAsFixed(3);
 
         lines.add(
           '${entry.key.padRight(32)} '

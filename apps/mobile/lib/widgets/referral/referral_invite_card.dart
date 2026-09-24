@@ -14,7 +14,10 @@ import 'package:flutter/services.dart';
 /// survives parent rebuilds until dismissed.
 class ReferralInviteSection extends StatefulWidget {
   const ReferralInviteSection({
-    required this.entryCount, required this.hasWeeklyReview, required this.hasConnectedProofCounter, super.key,
+    required this.entryCount,
+    required this.hasWeeklyReview,
+    required this.hasConnectedProofCounter,
+    super.key,
   });
 
   final int entryCount;
@@ -84,7 +87,9 @@ class _ReferralInviteSectionState extends State<ReferralInviteSection> {
 /// text is a compile-time constant.
 class ReferralInviteCard extends StatefulWidget {
   const ReferralInviteCard({
-    required this.source, required this.onDismissed, super.key,
+    required this.source,
+    required this.onDismissed,
+    super.key,
   });
 
   /// Stable id of the value moment that made the invite eligible.

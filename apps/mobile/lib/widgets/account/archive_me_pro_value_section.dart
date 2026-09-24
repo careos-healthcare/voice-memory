@@ -8,7 +8,8 @@ import 'package:flutter/material.dart';
 /// Free vs Pro value split for Account and paywall surfaces.
 class ArchiveMeProValueSection extends StatelessWidget {
   const ArchiveMeProValueSection({
-    required this.packaging, super.key,
+    required this.packaging,
+    super.key,
     this.showTitle = true,
     this.compact = false,
   });

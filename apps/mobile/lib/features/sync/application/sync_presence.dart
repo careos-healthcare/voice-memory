@@ -114,8 +114,10 @@ final syncStateProvider = NotifierProvider<SyncStateProvider, SyncPresence>(
 
 /// Persists a resolved transcript through the journal store when one is bound.
 class JournalConflictResolutionStore implements ConflictResolutionStore {
-  JournalConflictResolutionStore(this._holder, {ConflictResolutionStore? memory})
-    : _memory = memory ?? MemoryConflictResolutionStore();
+  JournalConflictResolutionStore(
+    this._holder, {
+    ConflictResolutionStore? memory,
+  }) : _memory = memory ?? MemoryConflictResolutionStore();
 
   final JournalStoreHolder _holder;
   final ConflictResolutionStore _memory;

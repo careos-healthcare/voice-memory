@@ -17,7 +17,8 @@ import 'dart:async';
 
 class MainShell extends ConsumerWidget {
   const MainShell({
-    required this.navigationShell, super.key,
+    required this.navigationShell,
+    super.key,
     this.primaryNavigationController,
     this.recordNavigationActivityController,
   });
@@ -50,7 +51,10 @@ class MainShell extends ConsumerWidget {
       return;
     }
     final reselected = destination.shellIndex == navigationShell.currentIndex;
-    navigationShell.goBranch(destination.shellIndex, initialLocation: reselected);
+    navigationShell.goBranch(
+      destination.shellIndex,
+      initialLocation: reselected,
+    );
     _primaryController.activate(destination, reselected: reselected);
     ref
         .read(primaryNavigationProvider.notifier)
@@ -174,8 +178,9 @@ class MainShell extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     ref.watch(primaryNavigationProvider);
-    final selected =
-        PrimaryDestination.fromShellIndex(navigationShell.currentIndex);
+    final selected = PrimaryDestination.fromShellIndex(
+      navigationShell.currentIndex,
+    );
     if (_primaryController.activeDestination != selected) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         _primaryController.activate(selected);
@@ -249,6 +254,7 @@ class MainShell extends ConsumerWidget {
   }
 }
 
-final PrimaryNavigationController globalPrimaryNavigationController = primaryNavigationController;
-final RecordNavigationActivityController globalRecordNavigationActivityController =
-    recordNavigationActivityController;
+final PrimaryNavigationController globalPrimaryNavigationController =
+    primaryNavigationController;
+final RecordNavigationActivityController
+globalRecordNavigationActivityController = recordNavigationActivityController;

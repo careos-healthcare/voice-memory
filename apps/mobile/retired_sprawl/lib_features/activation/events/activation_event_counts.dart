@@ -58,10 +58,9 @@ class ActivationEventCounts {
   int get secondReflectionSaved => count('secondReflectionSaved');
   int get thirdReflectionSaved => count('thirdReflectionSaved');
   int get firstPatternShown => count('firstPatternShown');
-  int get firstPatternAccepted =>
-      count('firstPatternAccepted') > 0
-          ? count('firstPatternAccepted')
-          : watchForPromptAccepted;
+  int get firstPatternAccepted => count('firstPatternAccepted') > 0
+      ? count('firstPatternAccepted')
+      : watchForPromptAccepted;
   int get firstPatternCorrected => count('first_pattern_corrected');
   int get watchForPromptShown => count('watch_for_prompt_shown');
   int get watchForPromptAccepted => count('watch_for_prompt_accepted');

@@ -48,7 +48,9 @@ class CaregiverActiveGrantTile extends StatelessWidget {
             const SizedBox(height: AppSpacing.xs),
             Text(
               CaregiverCopy.currentSessionBadge,
-              key: Key('caregiver_active_grant_current_session_${grant.tokenId}'),
+              key: Key(
+                'caregiver_active_grant_current_session_${grant.tokenId}',
+              ),
               style: ArchiveMobileTypography.cardLabel(context),
             ),
           ],

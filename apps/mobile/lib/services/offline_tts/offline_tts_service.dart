@@ -13,9 +13,9 @@ final class OfflineTtsService {
     OfflineTtsBackend? backend,
     PlaybackService? playback,
     OfflineTtsProgressCallback? onPcmChunk,
-  })  : _backend = backend ?? _defaultBackend(),
-        _playback = playback,
-        _onPcmChunk = onPcmChunk;
+  }) : _backend = backend ?? _defaultBackend(),
+       _playback = playback,
+       _onPcmChunk = onPcmChunk;
 
   final OfflineTtsBackend _backend;
   PlaybackService? _playback;
@@ -148,31 +148,31 @@ final class OfflineTtsService {
           ),
         )
         .listen(
-      (chunk) {
-        if (generation != _speakGeneration) {
-          return;
-        }
+          (chunk) {
+            if (generation != _speakGeneration) {
+              return;
+            }
 
-        _activeSampleRateHz = chunk.sampleRateHz;
-        if (chunk.pcmBytes.isNotEmpty) {
-          _activeChunkCount++;
-          _activeTotalPcmBytes += chunk.pcmBytes.length;
-          _onPcmChunk?.call(chunk);
-          playback?.feedLivePcm(chunk.pcmBytes);
-        }
+            _activeSampleRateHz = chunk.sampleRateHz;
+            if (chunk.pcmBytes.isNotEmpty) {
+              _activeChunkCount++;
+              _activeTotalPcmBytes += chunk.pcmBytes.length;
+              _onPcmChunk?.call(chunk);
+              playback?.feedLivePcm(chunk.pcmBytes);
+            }
 
-        if (chunk.isFinal) {
-          completeActiveSpeak();
-        }
-      },
-      onError: (Object error, StackTrace stackTrace) {
-        if (!completer.isCompleted) {
-          completer.completeError(error, stackTrace);
-        }
-      },
-      onDone: completeActiveSpeak,
-      cancelOnError: true,
-    );
+            if (chunk.isFinal) {
+              completeActiveSpeak();
+            }
+          },
+          onError: (Object error, StackTrace stackTrace) {
+            if (!completer.isCompleted) {
+              completer.completeError(error, stackTrace);
+            }
+          },
+          onDone: completeActiveSpeak,
+          cancelOnError: true,
+        );
 
     return completer.future.whenComplete(() {
       if (identical(_activeSpeakCompleter, completer)) {

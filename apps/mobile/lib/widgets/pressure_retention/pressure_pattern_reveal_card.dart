@@ -12,7 +12,10 @@ import 'package:flutter/material.dart';
 /// experiment, and confidence.
 class PressurePatternRevealCard extends StatelessWidget {
   const PressurePatternRevealCard({
-    required this.reveal, required this.isPro, required this.onTryInterruption, super.key,
+    required this.reveal,
+    required this.isPro,
+    required this.onTryInterruption,
+    super.key,
     this.onUnlock,
   });
 

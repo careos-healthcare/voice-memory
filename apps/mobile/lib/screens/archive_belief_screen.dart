@@ -134,7 +134,8 @@ class _ArchiveBeliefScreenState extends State<ArchiveBeliefScreen> {
   @override
   Widget build(BuildContext context) {
     final feed = _feedState;
-    final uri = GoRouter.maybeOf(context)?.state.uri ??
+    final uri =
+        GoRouter.maybeOf(context)?.state.uri ??
         Uri(path: RouteCatalog.archiveHome);
 
     return Scaffold(

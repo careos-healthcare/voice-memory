@@ -7,7 +7,8 @@ import 'package:go_router/go_router.dart';
 
 class ArchiveValueBanner extends StatelessWidget {
   const ArchiveValueBanner({
-    required this.entries, super.key,
+    required this.entries,
+    super.key,
     this.compact = false,
   });
 
@@ -34,9 +35,7 @@ class ArchiveValueBanner extends StatelessWidget {
         children: [
           Text(
             'Archive value',
-            style: VoiceMemoryTypography.sectionLabelStyle(
-              
-            ),
+            style: VoiceMemoryTypography.sectionLabelStyle(),
           ),
           const SizedBox(height: 8),
           Text(

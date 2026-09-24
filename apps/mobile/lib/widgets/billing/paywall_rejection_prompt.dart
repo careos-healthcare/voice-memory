@@ -52,7 +52,9 @@ class _PaywallRejectionPromptState extends State<PaywallRejectionPrompt> {
     // Brief thanks, then the sheet closes itself — nothing else to do.
     _closeTimer = Timer(const Duration(milliseconds: 900), () {
       if (!mounted) return;
-      unawaited(Navigator.of(context).maybePop(PaywallRejectionPrompt.resultAnswered));
+      unawaited(
+        Navigator.of(context).maybePop(PaywallRejectionPrompt.resultAnswered),
+      );
     });
   }
 
@@ -62,7 +64,9 @@ class _PaywallRejectionPromptState extends State<PaywallRejectionPrompt> {
       ActivationFunnelAnalytics.paywallRejectionPromptSkipped,
       source: widget.source,
     );
-    unawaited(Navigator.of(context).maybePop(PaywallRejectionPrompt.resultSkipped));
+    unawaited(
+      Navigator.of(context).maybePop(PaywallRejectionPrompt.resultSkipped),
+    );
   }
 
   @override

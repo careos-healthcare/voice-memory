@@ -12,7 +12,11 @@ import 'package:flutter/material.dart';
 /// Compact confirmation for a grounded pattern label on Patterns / belief surfaces.
 class PatternNameConfirmationCard extends StatefulWidget {
   const PatternNameConfirmationCard({
-    required this.prompt, required this.source, required this.entryCount, required this.onChanged, super.key,
+    required this.prompt,
+    required this.source,
+    required this.entryCount,
+    required this.onChanged,
+    super.key,
   });
 
   final PatternNamePrompt prompt;

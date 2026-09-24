@@ -16,7 +16,10 @@ import 'package:flutter/material.dart';
 /// Evidence-first insight card shell for archive feed surfaces.
 class ArchiveInsightFeedCard extends StatefulWidget {
   const ArchiveInsightFeedCard({
-    required this.insightText, required this.confidenceBand, required this.quotes, super.key,
+    required this.insightText,
+    required this.confidenceBand,
+    required this.quotes,
+    super.key,
     this.highlightTerms,
     this.headerLabel,
     this.borderColor,

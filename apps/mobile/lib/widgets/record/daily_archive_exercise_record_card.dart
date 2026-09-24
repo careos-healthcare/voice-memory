@@ -9,7 +9,8 @@ import 'package:flutter/material.dart';
 /// Compact daily exercise prompt on Record — metadata only.
 class DailyArchiveExerciseRecordCard extends StatelessWidget {
   const DailyArchiveExerciseRecordCard({
-    required this.exercise, super.key,
+    required this.exercise,
+    super.key,
     this.onPrimary,
   });
 

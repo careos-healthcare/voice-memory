@@ -22,7 +22,8 @@ Future<ArchiveCollection?> showCreateCollectionSheet(
 
 class CreateCollectionSheet extends StatefulWidget {
   const CreateCollectionSheet({
-    required this.store, super.key,
+    required this.store,
+    super.key,
     this.source = 'collections',
   });
 

@@ -442,8 +442,9 @@ class _EvidenceConnectionGraphSheetState
                 return Center(
                   child: Text(
                     EvidenceConnectionGraphSheet.loadError,
-                    style: ArchiveMobileTypography.explanationBody(context)
-                        .copyWith(color: AppColors.error),
+                    style: ArchiveMobileTypography.explanationBody(
+                      context,
+                    ).copyWith(color: AppColors.error),
                     textAlign: TextAlign.center,
                   ),
                 );

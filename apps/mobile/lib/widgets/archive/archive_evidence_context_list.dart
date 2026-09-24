@@ -14,7 +14,11 @@ import 'package:flutter/material.dart';
 /// One eligible entry row in an evidence map context drilldown.
 class ArchiveEvidenceContextList extends StatelessWidget {
   const ArchiveEvidenceContextList({
-    required this.entries, required this.journalStore, required this.onEntriesChanged, required this.onOpenEntry, super.key,
+    required this.entries,
+    required this.journalStore,
+    required this.onEntriesChanged,
+    required this.onOpenEntry,
+    super.key,
   });
 
   final List<JournalEntry> entries;
@@ -105,7 +109,9 @@ class ArchiveEvidenceContextList extends StatelessWidget {
                     OutlinedButton(
                       key: Key('archive_evidence_context_edit_${entry.id}'),
                       onPressed: () => _editContext(context, entry),
-                      child: const Text(VisibleArchiveProofCopy.entryContextTagEdit),
+                      child: const Text(
+                        VisibleArchiveProofCopy.entryContextTagEdit,
+                      ),
                     ),
                     FilledButton(
                       key: Key('archive_evidence_context_open_${entry.id}'),

@@ -10,7 +10,8 @@ import 'package:go_router/go_router.dart';
 /// Patterns hero card for the thread the user is continuing.
 class ActivePatternThreadCard extends StatelessWidget {
   const ActivePatternThreadCard({
-    required this.thread, super.key,
+    required this.thread,
+    super.key,
     this.compact = false,
   });
 

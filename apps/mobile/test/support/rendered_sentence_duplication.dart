@@ -71,7 +71,10 @@ Map<String, List<String>> duplicatedRenderedSentences(WidgetTester tester) {
 }
 
 /// Asserts no sentence is rendered twice on the pumped screen.
-void expectNoDuplicatedSentences(WidgetTester tester, {required String screen}) {
+void expectNoDuplicatedSentences(
+  WidgetTester tester, {
+  required String screen,
+}) {
   final duplicates = duplicatedRenderedSentences(tester);
   if (duplicates.isEmpty) return;
 

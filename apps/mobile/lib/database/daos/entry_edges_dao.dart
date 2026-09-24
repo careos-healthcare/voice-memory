@@ -31,10 +31,11 @@ class EntryEdgesDao extends DatabaseAccessor<AppDatabase>
   Future<List<EntryEdge>> readOutgoingEdges(String sourceEntryId) async {
     if (sourceEntryId.isEmpty) return const [];
 
-    final rows = await (select(entryEdges)
-          ..where((t) => t.sourceEntryId.equals(sourceEntryId))
-          ..orderBy([(t) => OrderingTerm.desc(t.weight)]))
-        .get();
+    final rows =
+        await (select(entryEdges)
+              ..where((t) => t.sourceEntryId.equals(sourceEntryId))
+              ..orderBy([(t) => OrderingTerm.desc(t.weight)]))
+            .get();
 
     return rows.map(_rowToEdge).toList(growable: false);
   }
@@ -107,7 +108,10 @@ class EntryEdgesDao extends DatabaseAccessor<AppDatabase>
       targetEntryId: row.targetEntryId,
       relation: row.relation,
       weight: row.weight,
-      createdAt: DateTime.fromMillisecondsSinceEpoch(row.createdAt, isUtc: true),
+      createdAt: DateTime.fromMillisecondsSinceEpoch(
+        row.createdAt,
+        isUtc: true,
+      ),
     );
   }
 }

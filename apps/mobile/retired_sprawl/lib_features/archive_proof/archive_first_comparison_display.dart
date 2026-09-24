@@ -10,7 +10,9 @@ class ArchiveFirstComparisonDisplay {
     required this.show,
     required this.title,
     required this.body,
-    required this.primaryIsViewEvidence, required this.hasGroundedPattern, this.evidenceLine,
+    required this.primaryIsViewEvidence,
+    required this.hasGroundedPattern,
+    this.evidenceLine,
     this.whatChangedLine,
   });
 

@@ -10,7 +10,9 @@ import 'package:go_router/go_router.dart';
 
 class ScaffoldShell extends ConsumerWidget {
   const ScaffoldShell({
-    required this.title, required this.body, super.key,
+    required this.title,
+    required this.body,
+    super.key,
     this.showTrustBanner = !kReleaseMode,
     this.actions,
   });

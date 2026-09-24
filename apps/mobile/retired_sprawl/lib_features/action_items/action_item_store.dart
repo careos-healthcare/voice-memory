@@ -103,7 +103,11 @@ class ActionItemStore {
           entryCount: entries.where((e) => !e.isArchived).length,
         );
       } catch (e, stackTrace) {
-        AppLogger.error('Unhandled error caught', error: e, stackTrace: stackTrace);
+        AppLogger.error(
+          'Unhandled error caught',
+          error: e,
+          stackTrace: stackTrace,
+        );
         // Trust receipt is optional — action item save still succeeded.
       }
     }

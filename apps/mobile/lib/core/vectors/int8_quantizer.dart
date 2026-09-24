@@ -21,7 +21,11 @@ final class Int8Embedding {
   Int8Embedding({required Int8List codes, required this.alpha})
     : codes = Int8List.fromList(codes) {
     if (alpha.isNaN || alpha.isInfinite || alpha <= 0) {
-      throw ArgumentError.value(alpha, 'alpha', 'must be a positive finite scale');
+      throw ArgumentError.value(
+        alpha,
+        'alpha',
+        'must be a positive finite scale',
+      );
     }
   }
 
@@ -45,7 +49,11 @@ final class Int8Embedding {
 /// Maps Float32 embeddings in `[-1, 1]` onto Int8 codes in `[-127, 127]`.
 Int8Embedding quantizeSymmetric(Float32List values) {
   if (values.isEmpty) {
-    throw ArgumentError.value(values, 'values', 'must contain at least one lane');
+    throw ArgumentError.value(
+      values,
+      'values',
+      'must contain at least one lane',
+    );
   }
   var peak = 0.0;
   for (var i = 0; i < values.length; i++) {
@@ -194,7 +202,8 @@ final class Int8Corpus {
       }
       final score = queryNorm == 0 || _codeNorms[index] == 0
           ? 0.0
-          : _rawCodeDot(query, document.codes) / (queryNorm * _codeNorms[index]);
+          : _rawCodeDot(query, document.codes) /
+                (queryNorm * _codeNorms[index]);
       _keepTop(bestIndexes, bestScores, index, score, limit);
     }
     return [

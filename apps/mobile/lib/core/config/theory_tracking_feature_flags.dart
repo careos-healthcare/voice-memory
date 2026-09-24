@@ -15,6 +15,5 @@ abstract final class TheoryTrackingFeatureFlags {
   @visibleForTesting
   static bool? debugOverride;
 
-  static bool get enableTheoryTracking =>
-      debugOverride ?? _compileTimeDefault;
+  static bool get enableTheoryTracking => debugOverride ?? _compileTimeDefault;
 }

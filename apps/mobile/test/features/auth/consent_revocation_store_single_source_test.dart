@@ -33,35 +33,45 @@ void main() {
   });
 
   group('ConsentRevocationStore has one source of truth', () {
-    test('revoke through the auth path is visible on the consent-audit path',
-        () async {
-      await auth_store.ConsentRevocationStore.ensureLoaded();
-      await consent_audit_store.ConsentRevocationStore.ensureLoaded();
+    test(
+      'revoke through the auth path is visible on the consent-audit path',
+      () async {
+        await auth_store.ConsentRevocationStore.ensureLoaded();
+        await consent_audit_store.ConsentRevocationStore.ensureLoaded();
 
-      await auth_store.ConsentRevocationStore.revoke('token-shared-1');
+        await auth_store.ConsentRevocationStore.revoke('token-shared-1');
 
-      expect(
-        consent_audit_store.ConsentRevocationStore.isRevoked('token-shared-1'),
-        isTrue,
-        reason: 'caregiver/coach verification reads the consent_audit URI, so a '
-            'revoke recorded through MultiPartyAccessService must reach it',
-      );
-    });
+        expect(
+          consent_audit_store.ConsentRevocationStore.isRevoked(
+            'token-shared-1',
+          ),
+          isTrue,
+          reason:
+              'caregiver/coach verification reads the consent_audit URI, so a '
+              'revoke recorded through MultiPartyAccessService must reach it',
+        );
+      },
+    );
 
-    test('revoke through the consent-audit path is visible on the auth path',
-        () async {
-      await consent_audit_store.ConsentRevocationStore.ensureLoaded();
-      await auth_store.ConsentRevocationStore.ensureLoaded();
+    test(
+      'revoke through the consent-audit path is visible on the auth path',
+      () async {
+        await consent_audit_store.ConsentRevocationStore.ensureLoaded();
+        await auth_store.ConsentRevocationStore.ensureLoaded();
 
-      await consent_audit_store.ConsentRevocationStore.revoke('token-shared-2');
+        await consent_audit_store.ConsentRevocationStore.revoke(
+          'token-shared-2',
+        );
 
-      expect(
-        auth_store.ConsentRevocationStore.isRevoked('token-shared-2'),
-        isTrue,
-        reason: 'the active-grants list reads the auth URI, so a revoke '
-            'recorded by ConsentAuditService must hide the grant there too',
-      );
-    });
+        expect(
+          auth_store.ConsentRevocationStore.isRevoked('token-shared-2'),
+          isTrue,
+          reason:
+              'the active-grants list reads the auth URI, so a revoke '
+              'recorded by ConsentAuditService must hide the grant there too',
+        );
+      },
+    );
 
     test('both URIs name the same prefs key', () {
       expect(
@@ -70,59 +80,68 @@ void main() {
       );
     });
 
-    test('a revoke on one path lands in the shared prefs key exactly once',
-        () async {
-      await auth_store.ConsentRevocationStore.ensureLoaded();
-      await auth_store.ConsentRevocationStore.revoke('token-shared-3');
-      await consent_audit_store.ConsentRevocationStore.revoke('token-shared-4');
+    test(
+      'a revoke on one path lands in the shared prefs key exactly once',
+      () async {
+        await auth_store.ConsentRevocationStore.ensureLoaded();
+        await auth_store.ConsentRevocationStore.revoke('token-shared-3');
+        await consent_audit_store.ConsentRevocationStore.revoke(
+          'token-shared-4',
+        );
 
-      expect(
-        await _storedIds(prefs),
-        containsAll(<String>['token-shared-3', 'token-shared-4']),
-      );
-    });
+        expect(
+          await _storedIds(prefs),
+          containsAll(<String>['token-shared-3', 'token-shared-4']),
+        );
+      },
+    );
   });
 
   group('persistence never shrinks the stored set', () {
-    test('a revoke made with a stale in-memory set keeps stored revocations',
-        () async {
-      // `ensureLoaded` marks itself done without reading anything when no prefs
-      // store is available, so the in-memory set is not always a superset of the
-      // file. Persisting that set verbatim wiped the file.
-      auth_store.ConsentRevocationStore.debugPrefsOverride = null;
-      await auth_store.ConsentRevocationStore.ensureLoaded();
-      await prefs.writeJsonMap(auth_store.ConsentRevocationStore.prefsKey, {
-        'tokenIds': ['token-already-revoked'],
-      });
-      auth_store.ConsentRevocationStore.debugPrefsOverride = prefs;
+    test(
+      'a revoke made with a stale in-memory set keeps stored revocations',
+      () async {
+        // `ensureLoaded` marks itself done without reading anything when no prefs
+        // store is available, so the in-memory set is not always a superset of the
+        // file. Persisting that set verbatim wiped the file.
+        auth_store.ConsentRevocationStore.debugPrefsOverride = null;
+        await auth_store.ConsentRevocationStore.ensureLoaded();
+        await prefs.writeJsonMap(auth_store.ConsentRevocationStore.prefsKey, {
+          'tokenIds': ['token-already-revoked'],
+        });
+        auth_store.ConsentRevocationStore.debugPrefsOverride = prefs;
 
-      await auth_store.ConsentRevocationStore.revoke('token-newly-revoked');
+        await auth_store.ConsentRevocationStore.revoke('token-newly-revoked');
 
-      expect(
-        await _storedIds(prefs),
-        containsAll(<String>['token-already-revoked', 'token-newly-revoked']),
-        reason: 'writing the in-memory set verbatim would reinstate access the '
-            'user had already withdrawn',
-      );
-    });
+        expect(
+          await _storedIds(prefs),
+          containsAll(<String>['token-already-revoked', 'token-newly-revoked']),
+          reason:
+              'writing the in-memory set verbatim would reinstate access the '
+              'user had already withdrawn',
+        );
+      },
+    );
 
-    test('a write by another holder of the key survives the next revoke',
-        () async {
-      await auth_store.ConsentRevocationStore.ensureLoaded();
-      await auth_store.ConsentRevocationStore.revoke('token-first');
+    test(
+      'a write by another holder of the key survives the next revoke',
+      () async {
+        await auth_store.ConsentRevocationStore.ensureLoaded();
+        await auth_store.ConsentRevocationStore.revoke('token-first');
 
-      await _revokeOutOfBand(prefs, 'token-out-of-band');
-      await auth_store.ConsentRevocationStore.revoke('token-second');
+        await _revokeOutOfBand(prefs, 'token-out-of-band');
+        await auth_store.ConsentRevocationStore.revoke('token-second');
 
-      expect(
-        await _storedIds(prefs),
-        containsAll(<String>[
-          'token-first',
-          'token-out-of-band',
-          'token-second',
-        ]),
-      );
-    });
+        expect(
+          await _storedIds(prefs),
+          containsAll(<String>[
+            'token-first',
+            'token-out-of-band',
+            'token-second',
+          ]),
+        );
+      },
+    );
 
     test('a stored revoke is loaded back on both paths', () async {
       await prefs.writeJsonMap(auth_store.ConsentRevocationStore.prefsKey, {
@@ -145,35 +164,40 @@ void main() {
   });
 
   group('MultiPartyAccessService revocation reaches verification', () {
-    test('a grant revoked in settings is revoked for consent verification',
-        () async {
-      await prefs.writeJsonMap(MultiPartyAccessService.caregiverTokenKey, {
-        'tokenId': 'token-cross-path',
-        'caregiverId': 'caregiver-ada',
-        'issuedAt': '2026-06-01T12:00:00.000Z',
-        'expiresAt': '2027-06-01T12:00:00.000Z',
-      });
+    test(
+      'a grant revoked in settings is revoked for consent verification',
+      () async {
+        await prefs.writeJsonMap(MultiPartyAccessService.caregiverTokenKey, {
+          'tokenId': 'token-cross-path',
+          'caregiverId': 'caregiver-ada',
+          'issuedAt': '2026-06-01T12:00:00.000Z',
+          'expiresAt': '2027-06-01T12:00:00.000Z',
+        });
 
-      final service = MultiPartyAccessService(prefs: prefs);
-      final grants = await service.loadActiveGrants(now: DateTime.utc(2026, 7));
-      expect(grants.single.role, MultiPartyAccessRole.caregiver);
+        final service = MultiPartyAccessService(prefs: prefs);
+        final grants = await service.loadActiveGrants(
+          now: DateTime.utc(2026, 7),
+        );
+        expect(grants.single.role, MultiPartyAccessRole.caregiver);
 
-      await service.revokeGrant(grants.single);
+        await service.revokeGrant(grants.single);
 
-      expect(
-        consent_audit_store.ConsentRevocationStore.isRevoked(
-          'token-cross-path',
-        ),
-        isTrue,
-        reason: 'ConsentVerificationService.verify consults the consent_audit '
-            'URI; if it cannot see this revoke, a caregiver whose access was '
-            'revoked in Settings still passes local verification',
-      );
-      expect(
-        await service.loadActiveGrants(now: DateTime.utc(2026, 7)),
-        isEmpty,
-      );
-    });
+        expect(
+          consent_audit_store.ConsentRevocationStore.isRevoked(
+            'token-cross-path',
+          ),
+          isTrue,
+          reason:
+              'ConsentVerificationService.verify consults the consent_audit '
+              'URI; if it cannot see this revoke, a caregiver whose access was '
+              'revoked in Settings still passes local verification',
+        );
+        expect(
+          await service.loadActiveGrants(now: DateTime.utc(2026, 7)),
+          isEmpty,
+        );
+      },
+    );
   });
 }
 

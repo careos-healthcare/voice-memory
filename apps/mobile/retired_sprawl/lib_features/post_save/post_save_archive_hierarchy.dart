@@ -5,7 +5,8 @@ import 'package:archiveme_mobile/features/record/daily_mirror_stage.dart';
 import 'package:archiveme_mobile/features/record_capture_modes/record_capture_mode_engine.dart';
 import 'package:archiveme_mobile/features/timeline/timeline_entry_display.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
-import 'package:archiveme_mobile/widgets/record/first_proof_moment_card.dart' show FirstProofMomentCard;
+import 'package:archiveme_mobile/widgets/record/first_proof_moment_card.dart'
+    show FirstProofMomentCard;
 
 /// Which single archive result to show below the heard excerpt on Record post-save.
 enum PostSavePrimaryArchiveKind {

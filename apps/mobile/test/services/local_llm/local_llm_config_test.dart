@@ -31,15 +31,21 @@ void main() {
   });
 
   group('LocalLlmBootstrap', () {
-    test('productionConfig disables worker ChatML wrapping and raises token cap', () {
-      final config = LocalLlmBootstrap.productionConfig(
-        modelPath: '/tmp/mobile-q4_k_m.gguf',
-        requirePreferredQuantization: false,
-      );
+    test(
+      'productionConfig disables worker ChatML wrapping and raises token cap',
+      () {
+        final config = LocalLlmBootstrap.productionConfig(
+          modelPath: '/tmp/mobile-q4_k_m.gguf',
+          requirePreferredQuantization: false,
+        );
 
-      expect(config.useChatMlFormat, isFalse);
-      expect(config.maxTokens, LocalLlmModelContract.sharedProductionMaxTokens);
-    });
+        expect(config.useChatMlFormat, isFalse);
+        expect(
+          config.maxTokens,
+          LocalLlmModelContract.sharedProductionMaxTokens,
+        );
+      },
+    );
   });
 
   group('LocalLlmConfig mobile load command', () {

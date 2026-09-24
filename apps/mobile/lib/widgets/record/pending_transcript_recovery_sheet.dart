@@ -32,7 +32,10 @@ abstract final class PendingTranscriptRecovery {
 /// Bottom sheet for attaching typed correction to an existing pending entry.
 class PendingTranscriptRecoverySheet extends StatefulWidget {
   const PendingTranscriptRecoverySheet({
-    required this.entry, required this.source, required this.entryCount, super.key,
+    required this.entry,
+    required this.source,
+    required this.entryCount,
+    super.key,
   });
 
   final JournalEntry entry;
@@ -101,9 +104,11 @@ class _PendingTranscriptRecoverySheetState
         throw CapturePipelineFailure(PendingTranscriptRecoveryCopy.saveFailed);
       }
 
-      final result = (await AppServices.instance.pipeline
-          .attachTypedTextToVoiceEntry(entry: existing, transcript: text))
-          .getOrThrow();
+      final result =
+          (await AppServices.instance.pipeline.attachTypedTextToVoiceEntry(
+            entry: existing,
+            transcript: text,
+          )).getOrThrow();
 
       PendingTranscriptRecoveryAnalytics.saved(
         source: widget.source,

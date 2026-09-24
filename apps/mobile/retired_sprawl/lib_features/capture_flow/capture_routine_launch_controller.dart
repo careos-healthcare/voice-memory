@@ -24,7 +24,11 @@ abstract final class CaptureRoutineLaunchController {
     try {
       handleNotificationPayload(CheckInReminderService.consumeTapPayload());
     } catch (e, stackTrace) {
-      AppLogger.error('Unhandled error caught', error: e, stackTrace: stackTrace);
+      AppLogger.error(
+        'Unhandled error caught',
+        error: e,
+        stackTrace: stackTrace,
+      );
       // Notification routing must never block startup.
     }
   }
@@ -53,7 +57,8 @@ abstract final class CaptureRoutineLaunchController {
     try {
       appRouter.go(captureRecordPath(routine: routine));
       _pendingRoutine = null;
-    } catch (_, stackTrace) { // ignore: silent_catch_audit — deferred capture route navigation
+    } catch (_, stackTrace) {
+      // ignore: silent_catch_audit — deferred capture route navigation
       _pendingRoutine = routine;
     }
   }

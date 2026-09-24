@@ -99,14 +99,20 @@ class _MemoryTransparencyScreenState extends State<MemoryTransparencyScreen> {
                             Text(
                               '${EvidenceConfidenceBandCopy.labelFor(band: record.confidenceBand, sourceCount: record.sourceCount)} · '
                               '${record.sourceCount} ${MemoryTransparencyCopy.sourcesLabel}',
-                              style: ArchiveMobileTypography.listSubtitle(context),
+                              style: ArchiveMobileTypography.listSubtitle(
+                                context,
+                              ),
                             ),
                             Align(
                               alignment: Alignment.centerLeft,
                               child: TextButton(
-                                key: Key('memory_transparency_flag_${record.id}'),
+                                key: Key(
+                                  'memory_transparency_flag_${record.id}',
+                                ),
                                 onPressed: () => _flagInaccurate(record),
-                                child: const Text(MemoryTransparencyCopy.notAccurateCta),
+                                child: const Text(
+                                  MemoryTransparencyCopy.notAccurateCta,
+                                ),
                               ),
                             ),
                           ],

@@ -6,8 +6,10 @@ abstract final class FirstSaveLiftCopy {
 
   static const String title = RevenueLiftExperimentV2Copy.firstSaveTitle;
   static const String body = RevenueLiftExperimentV2Copy.firstSaveBody;
-  static const String primaryCta = RevenueLiftExperimentV2Copy.firstSavePrimaryCta;
-  static const String secondaryCta = RevenueLiftExperimentV2Copy.firstSaveSecondaryCta;
+  static const String primaryCta =
+      RevenueLiftExperimentV2Copy.firstSavePrimaryCta;
+  static const String secondaryCta =
+      RevenueLiftExperimentV2Copy.firstSaveSecondaryCta;
 
   static const exampleKeptCheckingAgain = 'I kept checking again';
   static const exampleAvoidedMessage = 'I avoided the message';

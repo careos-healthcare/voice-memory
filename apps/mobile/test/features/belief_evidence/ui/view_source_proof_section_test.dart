@@ -71,7 +71,10 @@ void main() {
         _host(
           ViewSourceProofSection.fromLines(
             lines: [
-              _line(entryId: 'e1', quote: 'I said yes before checking my calendar'),
+              _line(
+                entryId: 'e1',
+                quote: 'I said yes before checking my calendar',
+              ),
               _line(entryId: 'e2', quote: 'I paused and checked first'),
             ],
           ),
@@ -99,7 +102,10 @@ void main() {
             // Lower-cased and differently spaced on purpose: the sheet must
             // show the stored spelling, not what the caller passed in.
             lines: [
-              _line(entryId: 'e1', quote: 'i said   YES before checking my calendar'),
+              _line(
+                entryId: 'e1',
+                quote: 'i said   YES before checking my calendar',
+              ),
             ],
           ),
         ),
@@ -123,42 +129,62 @@ void main() {
         _host(
           ViewSourceProofSection.fromLines(
             lines: [
-              _line(entryId: 'e1', quote: 'I said yes before checking my calendar'),
+              _line(
+                entryId: 'e1',
+                quote: 'I said yes before checking my calendar',
+              ),
               // Not present in any stored transcript.
-              _line(entryId: 'e1', quote: 'you are avoiding your own boundaries'),
+              _line(
+                entryId: 'e1',
+                quote: 'you are avoiding your own boundaries',
+              ),
             ],
           ),
         ),
       );
 
-      expect(find.text(EvidenceTrustCopy.supportedByEntries(1)), findsOneWidget);
-      expect(find.textContaining(EvidenceTrustCopy.sourceCount(1)), findsOneWidget);
-    });
-
-    testWidgets('link meets the minimum touch target and is a labelled button', (
-      tester,
-    ) async {
-      await tester.pumpWidget(
-        _host(
-          ViewSourceProofSection.fromLines(
-            lines: [
-              _line(entryId: 'e1', quote: 'I said yes before checking my calendar'),
-            ],
-          ),
-        ),
-      );
-
-      final size = tester.getSize(find.byKey(VerifiedSourceProofLink.linkKey));
       expect(
-        size.height,
-        greaterThanOrEqualTo(VerifiedSourceProofLink.minTapTarget),
+        find.text(EvidenceTrustCopy.supportedByEntries(1)),
+        findsOneWidget,
       );
-
-      final semantics = tester.getSemantics(
-        find.byKey(VerifiedSourceProofLink.linkKey),
+      expect(
+        find.textContaining(EvidenceTrustCopy.sourceCount(1)),
+        findsOneWidget,
       );
-      expect(semantics.label, contains(EvidenceTrustCopy.viewSourceProof));
     });
+
+    testWidgets(
+      'link meets the minimum touch target and is a labelled button',
+      (
+        tester,
+      ) async {
+        await tester.pumpWidget(
+          _host(
+            ViewSourceProofSection.fromLines(
+              lines: [
+                _line(
+                  entryId: 'e1',
+                  quote: 'I said yes before checking my calendar',
+                ),
+              ],
+            ),
+          ),
+        );
+
+        final size = tester.getSize(
+          find.byKey(VerifiedSourceProofLink.linkKey),
+        );
+        expect(
+          size.height,
+          greaterThanOrEqualTo(VerifiedSourceProofLink.minTapTarget),
+        );
+
+        final semantics = tester.getSemantics(
+          find.byKey(VerifiedSourceProofLink.linkKey),
+        );
+        expect(semantics.label, contains(EvidenceTrustCopy.viewSourceProof));
+      },
+    );
   });
 
   group('ViewSourceProofSection without grounded evidence', () {
@@ -172,7 +198,10 @@ void main() {
         _host(
           ViewSourceProofSection.fromLines(
             lines: [
-              _line(entryId: 'missing', quote: 'you avoid difficult conversations'),
+              _line(
+                entryId: 'missing',
+                quote: 'you avoid difficult conversations',
+              ),
             ],
           ),
         ),
@@ -196,7 +225,10 @@ void main() {
           ViewSourceProofSection.fromLines(
             lines: [
               // A plausible summary of the stored transcript, but not its words.
-              _line(entryId: 'e1', quote: 'You agree to things before you check.'),
+              _line(
+                entryId: 'e1',
+                quote: 'You agree to things before you check.',
+              ),
             ],
           ),
         ),

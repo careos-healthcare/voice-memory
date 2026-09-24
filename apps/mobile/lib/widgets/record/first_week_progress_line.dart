@@ -8,7 +8,8 @@ import 'package:flutter/material.dart';
 /// Small first-week progress line — no CTAs, no gamification.
 class FirstWeekProgressLine extends StatelessWidget {
   const FirstWeekProgressLine({
-    required this.progress, super.key,
+    required this.progress,
+    super.key,
     this.entryCount,
     this.surface = 'record',
   });

@@ -10,21 +10,21 @@ enum LifeStageLens {
 
 extension LifeStageLensWire on LifeStageLens {
   String get wireValue => switch (this) {
-        LifeStageLens.defaultLens => 'default',
-        LifeStageLens.newParent => 'newParent',
-        LifeStageLens.careerTransition => 'careerTransition',
-        LifeStageLens.recovery => 'recovery',
-        LifeStageLens.griefLoss => 'griefLoss',
-      };
+    LifeStageLens.defaultLens => 'default',
+    LifeStageLens.newParent => 'newParent',
+    LifeStageLens.careerTransition => 'careerTransition',
+    LifeStageLens.recovery => 'recovery',
+    LifeStageLens.griefLoss => 'griefLoss',
+  };
 
   static LifeStageLens? fromWire(String? raw) => switch (raw) {
-        'default' || null || '' => LifeStageLens.defaultLens,
-        'newParent' => LifeStageLens.newParent,
-        'careerTransition' => LifeStageLens.careerTransition,
-        'recovery' => LifeStageLens.recovery,
-        'griefLoss' => LifeStageLens.griefLoss,
-        _ => null,
-      };
+    'default' || null || '' => LifeStageLens.defaultLens,
+    'newParent' => LifeStageLens.newParent,
+    'careerTransition' => LifeStageLens.careerTransition,
+    'recovery' => LifeStageLens.recovery,
+    'griefLoss' => LifeStageLens.griefLoss,
+    _ => null,
+  };
 
   bool get isThematic => this != LifeStageLens.defaultLens;
 }

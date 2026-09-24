@@ -46,10 +46,10 @@ class ConsentAuditService {
     CoachModeStore? coachStore,
     CaregiverAuditStore? auditStore,
     ServerConsentRevocationCoordinator? serverRevocations,
-  })  : _caregiverStore = caregiverStore ?? CaregiverModeStore(prefs),
-        _coachStore = coachStore ?? CoachModeStore(prefs),
-        _auditStore = auditStore ?? CaregiverAuditStore(prefs),
-        _serverRevocations = serverRevocations;
+  }) : _caregiverStore = caregiverStore ?? CaregiverModeStore(prefs),
+       _coachStore = coachStore ?? CoachModeStore(prefs),
+       _auditStore = auditStore ?? CaregiverAuditStore(prefs),
+       _serverRevocations = serverRevocations;
 
   final CaregiverModeStore _caregiverStore;
   final CoachModeStore _coachStore;
@@ -90,7 +90,9 @@ class ConsentAuditService {
   /// of the two happened so a surface can say so — a caller that reports
   /// success unconditionally tells an offline user the server has stopped
   /// honouring a token it is still honouring.
-  Future<ConsentRevocationOutcome> revokeGrant(ConsentGrantRecord record) async {
+  Future<ConsentRevocationOutcome> revokeGrant(
+    ConsentGrantRecord record,
+  ) async {
     if (record.kind == ConsentGrantKind.caregiverMonitoring) {
       // Read before clearing — offered to the server as ownership proof for
       // grants issued before it kept an issuance registry.

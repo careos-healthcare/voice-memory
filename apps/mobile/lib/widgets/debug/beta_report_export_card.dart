@@ -7,13 +7,15 @@ import 'package:flutter/services.dart';
 /// Developer-only beta report copy action — clipboard only, no user content.
 class BetaReportExportCard extends StatelessWidget {
   const BetaReportExportCard({
-    required this.report, super.key,
+    required this.report,
+    super.key,
     this.onCopied,
     this.copyText,
   });
 
   const BetaReportExportCard.test({
-    required this.report, super.key,
+    required this.report,
+    super.key,
     this.onCopied,
     this.copyText,
   });

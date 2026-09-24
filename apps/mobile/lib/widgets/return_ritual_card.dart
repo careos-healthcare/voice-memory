@@ -11,7 +11,8 @@ import 'dart:async';
 /// Personal return ritual — local choice only, no notifications or streaks.
 class ReturnRitualCard extends StatefulWidget {
   const ReturnRitualCard({
-    required this.entryCount, super.key,
+    required this.entryCount,
+    super.key,
     this.onAddMoment,
     this.store,
     this._initialChoice,
@@ -19,7 +20,9 @@ class ReturnRitualCard extends StatefulWidget {
 
   /// Test hook — skip async prefs load when set.
   const ReturnRitualCard.test({
-    required this.entryCount, required this._initialChoice, super.key,
+    required this.entryCount,
+    required this._initialChoice,
+    super.key,
     this.onAddMoment,
     this.store,
   });

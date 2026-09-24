@@ -11,7 +11,9 @@ import 'dart:async';
 /// user saves — no auto-extraction from reflections or summaries.
 class RememberThisButton extends StatefulWidget {
   const RememberThisButton({
-    required this.entry, required this.store, super.key,
+    required this.entry,
+    required this.store,
+    super.key,
     this.source = 'entry_detail',
     this.compact = false,
     this.onSaved,

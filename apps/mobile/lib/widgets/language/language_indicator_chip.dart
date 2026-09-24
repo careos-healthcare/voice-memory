@@ -12,7 +12,10 @@ import 'package:flutter/material.dart';
 /// non-English language is in play.
 class LanguageIndicatorChip extends StatelessWidget {
   const LanguageIndicatorChip({
-    required this.languageCode, required this.detectedCode, required this.onSelected, super.key,
+    required this.languageCode,
+    required this.detectedCode,
+    required this.onSelected,
+    super.key,
   });
 
   /// Currently active UI language code.

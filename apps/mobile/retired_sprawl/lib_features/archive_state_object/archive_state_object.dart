@@ -7,7 +7,12 @@ enum ArchiveHealthV3 { strong, developing, uncertain }
 
 class ArchiveStateObjectV3 {
   const ArchiveStateObjectV3({
-    required this.changeSummary, required this.watchItem, required this.health, required this.hasMinimumEvidence, required this.evidenceReflectionCount, this.belief,
+    required this.changeSummary,
+    required this.watchItem,
+    required this.health,
+    required this.hasMinimumEvidence,
+    required this.evidenceReflectionCount,
+    this.belief,
     this.evidenceSummary,
     this.strongestEvidenceQuote,
   });

@@ -39,12 +39,18 @@ List<double> _unitVector(int index) {
   return vector;
 }
 
-List<double> _blendVectors(List<double> a, List<double> b, {required double weightA}) {
+List<double> _blendVectors(
+  List<double> a,
+  List<double> b, {
+  required double weightA,
+}) {
   final blended = List<double>.filled(memoryTranscriptEmbeddingDimensions, 0);
   for (var i = 0; i < memoryTranscriptEmbeddingDimensions; i++) {
     blended[i] = (a[i] * weightA) + (b[i] * (1 - weightA));
   }
-  final norm = math.sqrt(blended.fold<double>(0, (sum, value) => sum + value * value));
+  final norm = math.sqrt(
+    blended.fold<double>(0, (sum, value) => sum + value * value),
+  );
   if (norm == 0) return blended;
   return blended.map((value) => value / norm).toList(growable: false);
 }
@@ -108,7 +114,9 @@ void main() {
         _entry(id: 'e1', transcript: 'quiet morning walk'),
       ]);
 
-      final ftsRows = await db.database.query(Migration005HybridSearch.ftsTable);
+      final ftsRows = await db.database.query(
+        Migration005HybridSearch.ftsTable,
+      );
       expect(ftsRows, hasLength(1));
       expect(ftsRows.single['entry_id'], 'e1');
     });

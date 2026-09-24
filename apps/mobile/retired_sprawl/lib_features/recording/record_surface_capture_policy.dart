@@ -1,6 +1,7 @@
 import 'package:archiveme_mobile/audio/recording_service.dart';
 import 'package:archiveme_mobile/features/recording/record_surface_input.dart';
-import 'package:archiveme_mobile/features/recording/recording_dependencies.dart' show BuildContext;
+import 'package:archiveme_mobile/features/recording/recording_dependencies.dart'
+    show BuildContext;
 import 'package:archiveme_mobile/features/voice_capture/microphone_permission_state.dart';
 import 'package:archiveme_mobile/features/voice_capture/record_cta_policy.dart';
 import 'package:archiveme_mobile/features/voice_capture/record_microphone_permission_ui.dart';
@@ -56,7 +57,9 @@ abstract final class RecordSurfaceCapturePolicy {
     return RecordCtaPolicy.shouldHideCardRecordCtas(policy);
   }
 
-  static bool shouldPromoteMicCaptureActions(RecordCtaPolicyResolution policy) =>
+  static bool shouldPromoteMicCaptureActions(
+    RecordCtaPolicyResolution policy,
+  ) =>
       policy.showMainBottomCta &&
       policy.action != null &&
       policy.action != RecordCtaAction.startRecording;

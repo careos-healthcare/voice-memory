@@ -43,7 +43,8 @@ abstract final class EvidenceLedgerInspectBuilder {
           confidenceBand: EvidenceProofCalculator.bandFromConfidencePercent(
             belief.confidencePercent,
           ),
-          referenceDate: belief.lastUpdated ??
+          referenceDate:
+              belief.lastUpdated ??
               _latestEntryDate(belief.supportingEntries.map((e) => e.id), byId),
         ),
       );
@@ -80,8 +81,9 @@ abstract final class EvidenceLedgerInspectBuilder {
     }
 
     items.sort((a, b) {
-      final bandCompare =
-          a.confidenceBand.ledgerSortRank.compareTo(b.confidenceBand.ledgerSortRank);
+      final bandCompare = a.confidenceBand.ledgerSortRank.compareTo(
+        b.confidenceBand.ledgerSortRank,
+      );
       if (bandCompare != 0) return bandCompare;
       final aDate = a.referenceDate ?? DateTime.fromMillisecondsSinceEpoch(0);
       final bDate = b.referenceDate ?? DateTime.fromMillisecondsSinceEpoch(0);
@@ -135,11 +137,15 @@ abstract final class EvidenceLedgerInspectFilter {
   ) {
     return switch (filter) {
       EvidenceLedgerDateFilter.all => null,
-      EvidenceLedgerDateFilter.last7Days => anchor.subtract(const Duration(days: 7)),
-      EvidenceLedgerDateFilter.last30Days =>
-        anchor.subtract(const Duration(days: 30)),
-      EvidenceLedgerDateFilter.last90Days =>
-        anchor.subtract(const Duration(days: 90)),
+      EvidenceLedgerDateFilter.last7Days => anchor.subtract(
+        const Duration(days: 7),
+      ),
+      EvidenceLedgerDateFilter.last30Days => anchor.subtract(
+        const Duration(days: 30),
+      ),
+      EvidenceLedgerDateFilter.last90Days => anchor.subtract(
+        const Duration(days: 90),
+      ),
     };
   }
 

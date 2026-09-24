@@ -77,15 +77,15 @@ class _StubCaregiverConsentApiClient implements CaregiverConsentApiClient {
 }
 
 MonitoringConsentToken _testToken() => MonitoringConsentToken(
-      tokenId: 'token-revoke-1',
-      subjectAccountId: 'subject-1',
-      caregiverId: 'caregiver-ada',
-      permissions: CaregiverPermissions.defaultScopes,
-      issuedAt: DateTime.utc(2026, 2, 1),
-      expiresAt: DateTime.utc(2026, 12, 31),
-      policyVersion: ConsentVerificationService.currentPolicyVersion,
-      signature: 'server-signature',
-    );
+  tokenId: 'token-revoke-1',
+  subjectAccountId: 'subject-1',
+  caregiverId: 'caregiver-ada',
+  permissions: CaregiverPermissions.defaultScopes,
+  issuedAt: DateTime.utc(2026, 2, 1),
+  expiresAt: DateTime.utc(2026, 12, 31),
+  policyVersion: ConsentVerificationService.currentPolicyVersion,
+  signature: 'server-signature',
+);
 
 void main() {
   setUp(() async {

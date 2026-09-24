@@ -11,12 +11,14 @@ import 'package:go_router/go_router.dart';
 /// Compact Archive Calendar card for Archive Home — counts only.
 class ArchiveCalendarCard extends StatelessWidget {
   const ArchiveCalendarCard({
-    required this.result, super.key,
+    required this.result,
+    super.key,
     this.onPrimaryAction,
   });
 
   const ArchiveCalendarCard.test({
-    required this.result, super.key,
+    required this.result,
+    super.key,
     this.onPrimaryAction,
   });
 

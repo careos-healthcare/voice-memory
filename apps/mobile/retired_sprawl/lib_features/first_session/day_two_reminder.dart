@@ -169,7 +169,11 @@ class DayTwoReminderCoordinator {
         'resolved_at': _now().toIso8601String(),
       });
     } catch (e, stackTrace) {
-      AppLogger.error('Unhandled error caught', error: e, stackTrace: stackTrace);
+      AppLogger.error(
+        'Unhandled error caught',
+        error: e,
+        stackTrace: stackTrace,
+      );
       // Persistence failures never surface; worst case the offer is gone
       // for this session anyway.
     }

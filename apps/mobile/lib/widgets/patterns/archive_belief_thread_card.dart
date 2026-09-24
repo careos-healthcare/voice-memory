@@ -16,7 +16,9 @@ import 'package:flutter/material.dart';
 /// Archive belief card — evolving evidence thread with correction loop.
 class ArchiveBeliefThreadCard extends StatefulWidget {
   const ArchiveBeliefThreadCard({
-    required this.thread, required this.onRecordMoreEvidence, super.key,
+    required this.thread,
+    required this.onRecordMoreEvidence,
+    super.key,
     this.onDismissed,
   });
 

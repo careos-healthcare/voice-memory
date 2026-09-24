@@ -101,8 +101,12 @@ abstract final class ApiFailureMapper {
       message = parsed.message ?? message;
       code = parsed.code;
     } catch (e, stackTrace) {
-      AppLogger.error('Unhandled error caught', error: e, stackTrace: stackTrace);
-      }
+      AppLogger.error(
+        'Unhandled error caught',
+        error: e,
+        stackTrace: stackTrace,
+      );
+    }
 
     switch (response.statusCode) {
       case 401:

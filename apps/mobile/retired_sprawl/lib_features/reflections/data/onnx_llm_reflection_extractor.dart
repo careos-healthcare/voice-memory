@@ -52,14 +52,16 @@ class OnnxLlmReflectionExtractor {
 
     final runtime = OnnxRuntime();
     final session = await runtime.createSessionFromAsset(assetPath);
-    final inputName = session.inputNames.contains(
-      LlmReflectionModelContract.inputIdsName,
-    )
+    final inputName =
+        session.inputNames.contains(
+          LlmReflectionModelContract.inputIdsName,
+        )
         ? LlmReflectionModelContract.inputIdsName
         : session.inputNames.first;
-    final outputName = session.outputNames.contains(
-      LlmReflectionModelContract.generatedIdsOutputName,
-    )
+    final outputName =
+        session.outputNames.contains(
+          LlmReflectionModelContract.generatedIdsOutputName,
+        )
         ? LlmReflectionModelContract.generatedIdsOutputName
         : session.outputNames.contains(
             LlmReflectionModelContract.logitsOutputName,
@@ -134,8 +136,9 @@ class OnnxLlmReflectionExtractor {
     if (start < 0 || end <= start) return null;
 
     try {
-      final map = jsonDecode(generated.substring(start, end + 1))
-          as Map<String, dynamic>;
+      final map =
+          jsonDecode(generated.substring(start, end + 1))
+              as Map<String, dynamic>;
       final generatedIntensity = map['emotionalIntensity'] as num?;
       return ReflectionDto(
         mood: map['mood'] as String? ?? ReflectionModelContract.unknownMood,
@@ -145,8 +148,7 @@ class OnnxLlmReflectionExtractor {
         recurringThemes: (map['recurringThemes'] as List<dynamic>? ?? [])
             .whereType<String>()
             .toList(),
-        tensionOrContradiction:
-            _optionalString(map['tensionOrContradiction']),
+        tensionOrContradiction: _optionalString(map['tensionOrContradiction']),
         nextSmallAction: _optionalString(map['nextSmallAction']),
         exactLanguagePattern: transcript.length > 80
             ? '${transcript.substring(0, 77)}…'
@@ -230,8 +232,7 @@ class LocalReflectionExtractor {
       return llm.extract(transcript: transcript, entryId: entryId);
     }
 
-    final source =
-        _logitsSource ?? await LocalReflectionDataSource.create();
+    final source = _logitsSource ?? await LocalReflectionDataSource.create();
     final result = await source.inferFromTranscript(
       transcript: transcript,
       entryId: entryId,

@@ -1,5 +1,6 @@
 import 'package:archiveme_mobile/services/sync_service.dart' show SyncService;
-import 'package:archiveme_mobile/storage/mobile_prefs_store.dart' show MobilePrefsStore;
+import 'package:archiveme_mobile/storage/mobile_prefs_store.dart'
+    show MobilePrefsStore;
 
 /// P0 fix — cross-account archive leakage.
 ///

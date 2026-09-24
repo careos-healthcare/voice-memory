@@ -13,7 +13,8 @@ import 'package:flutter/material.dart';
 /// Beta-only guided test mission — informational, never blocks recording.
 class TesterMissionCard extends StatefulWidget {
   const TesterMissionCard({
-    required this.mission, super.key,
+    required this.mission,
+    super.key,
     this.onDismissed,
     this.store,
     this.skipPrefsLoad = false,
@@ -21,7 +22,8 @@ class TesterMissionCard extends StatefulWidget {
   });
 
   const TesterMissionCard.test({
-    required this.mission, super.key,
+    required this.mission,
+    super.key,
     this.onDismissed,
     this.store,
     bool dismissed = false,

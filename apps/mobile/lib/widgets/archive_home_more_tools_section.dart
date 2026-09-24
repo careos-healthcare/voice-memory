@@ -9,7 +9,8 @@ import 'package:flutter/material.dart';
 /// Collapsible secondary Archive Home tools — keeps the top area calm.
 class ArchiveHomeMoreToolsSection extends StatefulWidget {
   const ArchiveHomeMoreToolsSection({
-    required this.children, super.key,
+    required this.children,
+    super.key,
     this.initiallyExpanded = false,
   });
 

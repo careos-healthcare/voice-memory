@@ -11,8 +11,7 @@ enum RecordingMode {
 
 extension RecordingModeLabels on RecordingMode {
   String get toggleLabel => switch (this) {
-    RecordingMode.passiveJournaling =>
-      LiveVoiceSessionCopy.reflectiveModeLabel,
+    RecordingMode.passiveJournaling => LiveVoiceSessionCopy.reflectiveModeLabel,
     RecordingMode.conversationalJournaling =>
       LiveVoiceSessionCopy.liveConversationLabel,
   };

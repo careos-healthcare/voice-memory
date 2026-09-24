@@ -1,10 +1,13 @@
-import 'package:archiveme_mobile/features/activation/activation_tracker.dart' show ActivationTracker;
+import 'package:archiveme_mobile/features/activation/activation_tracker.dart'
+    show ActivationTracker;
 import 'package:archiveme_mobile/features/activation/events/core_evidence_events.dart';
 import 'package:archiveme_mobile/features/activation/events/onboarding_events.dart';
 import 'package:archiveme_mobile/features/activation/events/paywall_events.dart';
-import 'package:archiveme_mobile/features/activation/events/tier4_funnel_events.dart' show Tier4FunnelEvents;
+import 'package:archiveme_mobile/features/activation/events/tier4_funnel_events.dart'
+    show Tier4FunnelEvents;
 import 'package:archiveme_mobile/features/onboarding/experiment_h_events.dart';
-import 'package:archiveme_mobile/features/recording/recording_dependencies.dart' show ActivationTracker;
+import 'package:archiveme_mobile/features/recording/recording_dependencies.dart'
+    show ActivationTracker;
 
 /// v1-scoped event names accepted by [ActivationTracker.trackEvent].
 ///

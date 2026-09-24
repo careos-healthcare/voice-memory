@@ -88,8 +88,10 @@ void main() {
     late MemoryTranscriptSearchRepository searchRepo;
     late List<double> queryEmbedding;
 
-    Future<List<double>> embed(String text) => LocalReflectionEmbeddingInference()
-        .embed(ReflectionTextProcessor.buildInputTensor(text));
+    Future<List<double>> embed(String text) =>
+        LocalReflectionEmbeddingInference().embed(
+          ReflectionTextProcessor.buildInputTensor(text),
+        );
 
     HybridSearchEngine engineWithFusion({required bool enabled}) =>
         HybridSearchEngine(
@@ -130,43 +132,47 @@ void main() {
       expect(hits.last.entryId, 'budget-deck');
     });
 
-    test('before: fusion admits an entry sharing no word with the query',
-        () async {
-      final hits = await engineWithFusion(enabled: true).search(
-        keywordQuery: _query,
-        queryEmbedding: queryEmbedding,
-        limit: 10,
-      );
+    test(
+      'before: fusion admits an entry sharing no word with the query',
+      () async {
+        final hits = await engineWithFusion(enabled: true).search(
+          keywordQuery: _query,
+          queryEmbedding: queryEmbedding,
+          limit: 10,
+        );
 
-      expect(
-        hits.map((hit) => hit.entryId),
-        contains('anxious-money'),
-        reason: 'the vector leg contributed a result BM25 never matched',
-      );
-    });
+        expect(
+          hits.map((hit) => hit.entryId),
+          contains('anxious-money'),
+          reason: 'the vector leg contributed a result BM25 never matched',
+        );
+      },
+    );
 
-    test('before: fusion drops the BM25 top hit below both other entries',
-        () async {
-      // A candidate limit smaller than the corpus is what production sees at
-      // scale: the vector leg fills its slots before the keyword winner gets
-      // one, so the winner earns a single reciprocal-rank vote and anything
-      // appearing in both lists overtakes it.
-      final hits = await engineWithFusion(enabled: true).search(
-        keywordQuery: _query,
-        queryEmbedding: queryEmbedding,
-        limit: 10,
-        candidateLimit: 2,
-      );
+    test(
+      'before: fusion drops the BM25 top hit below both other entries',
+      () async {
+        // A candidate limit smaller than the corpus is what production sees at
+        // scale: the vector leg fills its slots before the keyword winner gets
+        // one, so the winner earns a single reciprocal-rank vote and anything
+        // appearing in both lists overtakes it.
+        final hits = await engineWithFusion(enabled: true).search(
+          keywordQuery: _query,
+          queryEmbedding: queryEmbedding,
+          limit: 10,
+          candidateLimit: 2,
+        );
 
-      final ids = hits.map((hit) => hit.entryId).toList(growable: false);
-      expect(ids.first, 'budget-cycle', reason: 'BM25 ranked this second');
-      expect(
-        ids.indexOf('budget-deck'),
-        greaterThan(ids.indexOf('anxious-money')),
-        reason:
-            'the BM25 top hit now sits below an entry with no query term in it',
-      );
-    });
+        final ids = hits.map((hit) => hit.entryId).toList(growable: false);
+        expect(ids.first, 'budget-cycle', reason: 'BM25 ranked this second');
+        expect(
+          ids.indexOf('budget-deck'),
+          greaterThan(ids.indexOf('anxious-money')),
+          reason:
+              'the BM25 top hit now sits below an entry with no query term in it',
+        );
+      },
+    );
 
     test('after: the shipped engine returns BM25 ranking untouched', () async {
       final hits = await engineWithFusion(enabled: false).search(
@@ -192,18 +198,23 @@ void main() {
         limit: 10,
       );
 
-      expect(defaults.map((hit) => hit.entryId), ['budget-deck', 'budget-cycle']);
+      expect(defaults.map((hit) => hit.entryId), [
+        'budget-deck',
+        'budget-cycle',
+      ]);
     });
 
-    test('exact-duplicate detection still works through vector search',
-        () async {
-      final hits = await searchRepo.vectorSearchWithScores(
-        queryEmbedding: await embed(_corpus['budget-deck']!),
-        limit: 5,
-      );
+    test(
+      'exact-duplicate detection still works through vector search',
+      () async {
+        final hits = await searchRepo.vectorSearchWithScores(
+          queryEmbedding: await embed(_corpus['budget-deck']!),
+          limit: 5,
+        );
 
-      expect(hits.first.entryId, 'budget-deck');
-      expect(hits.first.cosineSimilarity, closeTo(1, 1e-6));
-    });
+        expect(hits.first.entryId, 'budget-deck');
+        expect(hits.first.cosineSimilarity, closeTo(1, 1e-6));
+      },
+    );
   });
 }

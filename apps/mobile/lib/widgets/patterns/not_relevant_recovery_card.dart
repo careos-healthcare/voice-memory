@@ -14,7 +14,9 @@ import 'package:flutter/material.dart';
 /// Makes not-relevant correction visible and lets users refine timeline weight.
 class NotRelevantRecoveryCard extends StatefulWidget {
   const NotRelevantRecoveryCard({
-    required this.result, required this.source, super.key,
+    required this.result,
+    required this.source,
+    super.key,
     this.store,
     this.onChanged,
     this.skipPrefsLoad = false,
@@ -22,7 +24,9 @@ class NotRelevantRecoveryCard extends StatefulWidget {
   });
 
   const NotRelevantRecoveryCard.test({
-    required this.result, required this.source, super.key,
+    required this.result,
+    required this.source,
+    super.key,
     this.store,
     this.onChanged,
     this.initialAction,

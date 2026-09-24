@@ -106,11 +106,14 @@ void main() {
     endTimestampMs: 4000,
   );
 
-  CitationPlaybackLauncher launcherThatMustNotPlay() => CitationPlaybackLauncher(
-    playerFactory: () {
-      fail('a player was constructed for a session that must not hear audio');
-    },
-  );
+  CitationPlaybackLauncher launcherThatMustNotPlay() =>
+      CitationPlaybackLauncher(
+        playerFactory: () {
+          fail(
+            'a player was constructed for a session that must not hear audio',
+          );
+        },
+      );
 
   /// Goes through the production factory on purpose. It used to hand back the
   /// first call's service for every later call in a process, so these tests
@@ -208,29 +211,31 @@ void main() {
       );
     });
 
-    test('the unstubbed lookup denies when nothing has loaded a persona',
-        () async {
-      // No probe, no controller, and `AppServices.instance` throws. This runs
-      // the real resolution path rather than the test seam.
-      CaregiverFeatureFlags.debugOverride = true;
-      expect(CaregiverModeController.isConfigured, isFalse);
-      final service = playback(testMode: true);
+    test(
+      'the unstubbed lookup denies when nothing has loaded a persona',
+      () async {
+        // No probe, no controller, and `AppServices.instance` throws. This runs
+        // the real resolution path rather than the test seam.
+        CaregiverFeatureFlags.debugOverride = true;
+        expect(CaregiverModeController.isConfigured, isFalse);
+        final service = playback(testMode: true);
 
-      await expectLater(
-        service.playFile(recording.path),
-        throwsA(
-          isA<CaregiverAccessDeniedException>().having(
-            (e) => e.decision,
-            'decision',
-            CaregiverAccessDecision.deniedUnknownSession,
+        await expectLater(
+          service.playFile(recording.path),
+          throwsA(
+            isA<CaregiverAccessDeniedException>().having(
+              (e) => e.decision,
+              'decision',
+              CaregiverAccessDecision.deniedUnknownSession,
+            ),
           ),
-        ),
-      );
-      await expectLater(
-        launcherThatMustNotPlay().play(quote: quote, entries: [entry()]),
-        throwsA(isA<CaregiverAccessDeniedException>()),
-      );
-    });
+        );
+        await expectLater(
+          launcherThatMustNotPlay().play(quote: quote, entries: [entry()]),
+          throwsA(isA<CaregiverAccessDeniedException>()),
+        );
+      },
+    );
   });
 
   group('the owner still hears their own archive', () {
@@ -257,23 +262,25 @@ void main() {
       expect(player.playedPaths, [recording.path]);
     });
 
-    test('with the capability compiled out playback consults no storage',
-        () async {
-      CaregiverFeatureFlags.debugOverride = false;
-      CaregiverSessionGuard.debugModeProbe = () async {
-        fail('storage must not be read while the capability is off');
-      };
-      final service = playback(testMode: true);
+    test(
+      'with the capability compiled out playback consults no storage',
+      () async {
+        CaregiverFeatureFlags.debugOverride = false;
+        CaregiverSessionGuard.debugModeProbe = () async {
+          fail('storage must not be read while the capability is off');
+        };
+        final service = playback(testMode: true);
 
-      await service.playFile(recording.path);
-      await launcherThatMustNotPlay().play(
-        quote: const TheoryEvidenceQuote(
-          entryId: 'entry-with-audio',
-          dateLabel: '12 June',
-          quote: 'a quote with no citation audio behind it',
-        ),
-        entries: [entry()],
-      );
-    });
+        await service.playFile(recording.path);
+        await launcherThatMustNotPlay().play(
+          quote: const TheoryEvidenceQuote(
+            entryId: 'entry-with-audio',
+            dateLabel: '12 June',
+            quote: 'a quote with no citation audio behind it',
+          ),
+          entries: [entry()],
+        );
+      },
+    );
   });
 }

@@ -10,7 +10,9 @@ import 'package:flutter/material.dart';
 /// Safe priority explanation — no notes, ids, dates, or names.
 class MemoryPriorityExplanationSheet extends StatelessWidget {
   const MemoryPriorityExplanationSheet({
-    required this.cardType, required this.safeExplanationId, super.key,
+    required this.cardType,
+    required this.safeExplanationId,
+    super.key,
   });
 
   final MemoryCardType cardType;

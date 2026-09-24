@@ -92,10 +92,13 @@ void main() {
       final grants = await service.loadActiveGrants(
         now: DateTime.utc(2026, 7, 1),
       );
-      expect(grants.map((g) => g.grantId), containsAll([
-        'token-issued-care',
-        'token-issued-coach',
-      ]));
+      expect(
+        grants.map((g) => g.grantId),
+        containsAll([
+          'token-issued-care',
+          'token-issued-coach',
+        ]),
+      );
       expect(
         grants.firstWhere((g) => g.grantId == 'token-issued-care').role,
         MultiPartyAccessRole.caregiver,
@@ -126,7 +129,10 @@ void main() {
         await service.loadActiveGrants(now: DateTime.utc(2026, 7, 1)),
         isEmpty,
       );
-      expect(await prefs.readJsonMap(MultiPartyAccessService.caregiverAuditKey), isNull);
+      expect(
+        await prefs.readJsonMap(MultiPartyAccessService.caregiverAuditKey),
+        isNull,
+      );
     });
 
     test('recordIssuedGrant rejects missing prefs', () async {
@@ -143,30 +149,32 @@ void main() {
       );
     });
 
-    test('loadActiveGrants reads partyId from legacy caregiverId audit rows',
-        () async {
-      await prefs.writeJsonMap(MultiPartyAccessService.caregiverAuditKey, {
-        'entries': [
-          {
-            'action': 'consent_granted',
-            'resourceId': 'token-legacy',
-            'timestamp': '2026-06-01T12:00:00.000Z',
-            'metadata': {
-              'caregiverId': 'caregiver-ada',
-              'expiresAt': '2027-06-01T12:00:00.000Z',
+    test(
+      'loadActiveGrants reads partyId from legacy caregiverId audit rows',
+      () async {
+        await prefs.writeJsonMap(MultiPartyAccessService.caregiverAuditKey, {
+          'entries': [
+            {
+              'action': 'consent_granted',
+              'resourceId': 'token-legacy',
+              'timestamp': '2026-06-01T12:00:00.000Z',
+              'metadata': {
+                'caregiverId': 'caregiver-ada',
+                'expiresAt': '2027-06-01T12:00:00.000Z',
+              },
             },
-          },
-        ],
-      });
+          ],
+        });
 
-      final service = MultiPartyAccessService(prefs: prefs);
-      final grants = await service.loadActiveGrants(
-        now: DateTime.utc(2026, 7, 1),
-      );
-      expect(grants, hasLength(1));
-      expect(grants.first.grantId, 'token-legacy');
-      expect(grants.first.partyId, 'caregiver-ada');
-      expect(grants.first.role, MultiPartyAccessRole.caregiver);
-    });
+        final service = MultiPartyAccessService(prefs: prefs);
+        final grants = await service.loadActiveGrants(
+          now: DateTime.utc(2026, 7, 1),
+        );
+        expect(grants, hasLength(1));
+        expect(grants.first.grantId, 'token-legacy');
+        expect(grants.first.partyId, 'caregiver-ada');
+        expect(grants.first.role, MultiPartyAccessRole.caregiver);
+      },
+    );
   });
 }

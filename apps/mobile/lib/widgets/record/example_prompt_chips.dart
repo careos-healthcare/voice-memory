@@ -8,7 +8,10 @@ import 'dart:async';
 /// Conversation starters for first-time capture — compact chips, wraps on narrow screens.
 class ExamplePromptChips extends StatefulWidget {
   const ExamplePromptChips({
-    required this.recordingCount, required this.firstArchiveMilestoneCompleted, required this.onPromptSelected, super.key,
+    required this.recordingCount,
+    required this.firstArchiveMilestoneCompleted,
+    required this.onPromptSelected,
+    super.key,
     this.surface = 'record',
   });
 
@@ -49,11 +52,13 @@ class _ExamplePromptChipsState extends State<ExamplePromptChips> {
 
   void _onTap(String prompt) {
     final mode = widget.surface == 'text_capture' ? 'text' : 'voice';
-    unawaited(ExamplePromptAnalytics.tapped(
-      promptText: prompt,
-      surface: widget.surface,
-      captureMode: mode,
-    ));
+    unawaited(
+      ExamplePromptAnalytics.tapped(
+        promptText: prompt,
+        surface: widget.surface,
+        captureMode: mode,
+      ),
+    );
     widget.onPromptSelected(prompt);
   }
 

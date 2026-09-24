@@ -78,7 +78,10 @@ class CoachOnnxResponseSynthesizer implements CoachResponseSynthesizer {
     );
   }
 
-  static String _primaryFollowUp(ReflectionDto reflection, CoachRagQuery query) {
+  static String _primaryFollowUp(
+    ReflectionDto reflection,
+    CoachRagQuery query,
+  ) {
     final action = reflection.nextSmallAction?.trim();
     if (action != null && action.isNotEmpty) {
       return 'One honest next step: $action';
@@ -122,7 +125,9 @@ class CoachOnnxResponseSynthesizer implements CoachResponseSynthesizer {
     }
 
     if (prompts.isEmpty) {
-      prompts.add('What would you want your future self to remember from this?');
+      prompts.add(
+        'What would you want your future self to remember from this?',
+      );
     }
 
     return prompts.take(4).toList(growable: false);

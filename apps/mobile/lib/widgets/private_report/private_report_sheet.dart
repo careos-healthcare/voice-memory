@@ -12,7 +12,13 @@ import 'package:flutter/material.dart';
 /// Full private archive report in a bottom sheet — text only, copy or share.
 class PrivateReportSheet extends StatelessWidget {
   const PrivateReportSheet({
-    required this.report, required this.entryCount, required this.source, required this.isPro, required this.hasChange, required this.hasHelped, super.key,
+    required this.report,
+    required this.entryCount,
+    required this.source,
+    required this.isPro,
+    required this.hasChange,
+    required this.hasHelped,
+    super.key,
     this.onCopy,
     this.onShare,
   });

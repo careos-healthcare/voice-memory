@@ -21,7 +21,8 @@ class HttpCoachConsentApiClient implements CoachConsentApiClient {
     required String clientAffirmationHash,
     NetworkCancelToken? cancelToken,
   }) async {
-    if (_transport.tryUri(VoiceMemoryApiRoutes.coachConsentIssue.path) == null) {
+    if (_transport.tryUri(VoiceMemoryApiRoutes.coachConsentIssue.path) ==
+        null) {
       return const ApiFailureResult(ApiFailureBackendNotConfigured());
     }
 
@@ -60,7 +61,8 @@ class HttpCoachConsentApiClient implements CoachConsentApiClient {
     required CoachConsentToken token,
     NetworkCancelToken? cancelToken,
   }) async {
-    if (_transport.tryUri(VoiceMemoryApiRoutes.coachConsentVerify.path) == null) {
+    if (_transport.tryUri(VoiceMemoryApiRoutes.coachConsentVerify.path) ==
+        null) {
       return const ApiFailureResult(ApiFailureBackendNotConfigured());
     }
 

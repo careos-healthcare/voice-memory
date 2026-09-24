@@ -19,11 +19,16 @@ void main() {
       ),
     );
 
-    expect(find.byKey(const Key('evidence_method_onboarding_screen')), findsOneWidget);
+    expect(
+      find.byKey(const Key('evidence_method_onboarding_screen')),
+      findsOneWidget,
+    );
     expect(find.text(EvidenceMethodOnboardingCopy.title), findsOneWidget);
     expect(find.text(EvidenceMethodOnboardingCopy.bullet1), findsOneWidget);
 
-    await tester.tap(find.byKey(const Key('evidence_method_onboarding_continue')));
+    await tester.tap(
+      find.byKey(const Key('evidence_method_onboarding_continue')),
+    );
     await tester.pump();
 
     expect(advanced, isTrue);

@@ -5,7 +5,10 @@ enum FirstWeekPathStep { day1, day2, day3, day4, day5, day6, day7 }
 class FirstWeekPathInput {
   const FirstWeekPathInput({
     required this.realSavedMomentCount,
-    required this.hasWatchTheme, required this.betaFeedbackCaptured, required this.hasWeeklyReviewAvailable, this.usableEvidenceCount,
+    required this.hasWatchTheme,
+    required this.betaFeedbackCaptured,
+    required this.hasWeeklyReviewAvailable,
+    this.usableEvidenceCount,
     this.sampleMode = false,
   });
 

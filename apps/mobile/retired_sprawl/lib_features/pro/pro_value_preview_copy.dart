@@ -27,7 +27,8 @@ abstract final class ProValuePreviewCopy {
   static const String whyBodyTwo = ProValueCopy.whyBodyTwo;
 
   static const String purchaseTitle = ProValueCopy.purchaseSectionTitle;
-  static const String purchaseUnavailable = ProValueCopy.purchaseUnavailableNote;
+  static const String purchaseUnavailable =
+      ProValueCopy.purchaseUnavailableNote;
   static const String purchaseKeepFree = ProValueCopy.purchaseKeepFreeNote;
   static const String purchaseAfterSetup = ProValueCopy.purchaseAfterSetupNote;
   static const String accountRestoreNote = ProValueCopy.accountRestoreNote;

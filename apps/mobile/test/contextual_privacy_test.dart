@@ -304,8 +304,10 @@ void main() {
           home: Scaffold(
             body: Builder(
               builder: (context) => TextButton(
-                onPressed: () =>
-                    const ContextualPrivacyReassurance(source: 'test', entryCount: 1),
+                onPressed: () => const ContextualPrivacyReassurance(
+                  source: 'test',
+                  entryCount: 1,
+                ),
                 child: const Text('open'),
               ),
             ),

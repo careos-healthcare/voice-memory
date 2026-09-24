@@ -32,11 +32,18 @@ void main() {
   testWidgets('keeps a 48pt minimum tap target', (tester) async {
     await pumpLink(tester, claimContext: claim);
 
-    final size = tester.getSize(find.byKey(const Key('view_evidence_under_test')));
-    expect(size.height, greaterThanOrEqualTo(ViewEvidenceInlineLink.minTapTarget));
+    final size = tester.getSize(
+      find.byKey(const Key('view_evidence_under_test')),
+    );
+    expect(
+      size.height,
+      greaterThanOrEqualTo(ViewEvidenceInlineLink.minTapTarget),
+    );
   });
 
-  testWidgets('screen-reader label includes the adjacent claim', (tester) async {
+  testWidgets('screen-reader label includes the adjacent claim', (
+    tester,
+  ) async {
     final handle = tester.ensureSemantics();
     await pumpLink(tester, claimContext: claim);
 
@@ -68,9 +75,13 @@ void main() {
 
   testWidgets('tap still opens evidence via the override', (tester) async {
     var opened = false;
-    await pumpLink(tester, claimContext: claim, onViewEvidence: () {
-      opened = true;
-    });
+    await pumpLink(
+      tester,
+      claimContext: claim,
+      onViewEvidence: () {
+        opened = true;
+      },
+    );
 
     await tester.tap(find.byKey(const Key('view_evidence_under_test')));
     await tester.pump();

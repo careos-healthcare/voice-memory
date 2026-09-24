@@ -1,6 +1,7 @@
 import 'dart:async';
 
-import 'package:archiveme_mobile/billing/v1/paywall_controller.dart' show PaywallController;
+import 'package:archiveme_mobile/billing/v1/paywall_controller.dart'
+    show PaywallController;
 import 'package:archiveme_mobile/models/entitlement.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
 

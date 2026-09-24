@@ -15,7 +15,9 @@ void main() {
   test(
     'chunked AES-GCM backups stay under 30MB and reject a bad passphrase fast',
     () async {
-      final directory = Directory.systemTemp.createTempSync('stream-backup-bench');
+      final directory = Directory.systemTemp.createTempSync(
+        'stream-backup-bench',
+      );
       addTearDown(() => directory.deleteSync(recursive: true));
       final results = <Map<String, Object?>>[];
       Object? failure;
@@ -81,7 +83,10 @@ Future<void> _roundTrip({
   await service.encryptStream(source, _passphrase, encrypted);
   await service.decryptStream(encrypted, _passphrase, restored);
   expect(_filesEqual(source, restored), isTrue);
-  expect(encrypted.lengthSync(), greaterThan(StreamingCryptoFormat.headerLength));
+  expect(
+    encrypted.lengthSync(),
+    greaterThan(StreamingCryptoFormat.headerLength),
+  );
 }
 
 Future<Map<String, Object?>> _measureSize({
@@ -99,15 +104,16 @@ Future<Map<String, Object?>> _measureSize({
   final baselineRss = ProcessInfo.currentRss;
   var peakRss = baselineRss;
   var ticks = 0;
-  final subscription = Stream<void>.periodic(
-    const Duration(milliseconds: 5),
-  ).listen((_) {
-    ticks += 1;
-    final rss = ProcessInfo.currentRss;
-    if (rss > peakRss) {
-      peakRss = rss;
-    }
-  });
+  final subscription =
+      Stream<void>.periodic(
+        const Duration(milliseconds: 5),
+      ).listen((_) {
+        ticks += 1;
+        final rss = ProcessInfo.currentRss;
+        if (rss > peakRss) {
+          peakRss = rss;
+        }
+      });
   final encryptWatch = Stopwatch()..start();
   final encryptedReport = await service.encryptStream(
     source,
@@ -125,9 +131,13 @@ Future<Map<String, Object?>> _measureSize({
   await service.decryptStream(encrypted, _passphrase, restored);
   decryptWatch.stop();
 
-  final verified = _filesEqual(source, restored) && _sqliteRowCount(restored.path) > 0;
+  final verified =
+      _filesEqual(source, restored) && _sqliteRowCount(restored.path) > 0;
   final headerOnlyMilliseconds = await _rejectHeaderOnly(directory, encrypted);
-  final wrongPassphraseMilliseconds = await _rejectFullFile(encrypted, restored);
+  final wrongPassphraseMilliseconds = await _rejectFullFile(
+    encrypted,
+    restored,
+  );
 
   final sourceBytes = source.lengthSync();
   return <String, Object?>{
@@ -221,7 +231,9 @@ void _writeSqlite(String path, int targetBytes) {
 
 int _sqliteRowCount(String path) {
   final database = sql.sqlite3.open(path);
-  final count = database.select('SELECT COUNT(*) AS c FROM blob_store').first['c'];
+  final count = database
+      .select('SELECT COUNT(*) AS c FROM blob_store')
+      .first['c'];
   database.close();
   return count! as int;
 }

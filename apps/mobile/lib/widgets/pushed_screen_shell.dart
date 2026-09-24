@@ -7,7 +7,9 @@ import 'package:go_router/go_router.dart';
 /// Standard pushed-route chrome: back, scroll body, optional bottom Done.
 class PushedScreenShell extends ConsumerWidget {
   const PushedScreenShell({
-    required this.title, required this.body, super.key,
+    required this.title,
+    required this.body,
+    super.key,
     this.doneLabel = 'Done',
     this.showBottomDone = true,
     this.fallbackRoute = '/archive-belief',

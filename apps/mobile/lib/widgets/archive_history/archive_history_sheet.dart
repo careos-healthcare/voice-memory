@@ -20,7 +20,9 @@ import 'package:flutter/material.dart';
 /// Bottom sheet listing saved moments with trust/status chips.
 class ArchiveHistorySheet extends StatefulWidget {
   const ArchiveHistorySheet({
-    required this.content, required this.entryCount, super.key,
+    required this.content,
+    required this.entryCount,
+    super.key,
   });
 
   final ArchiveHistoryContent content;

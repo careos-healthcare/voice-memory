@@ -9,7 +9,10 @@ import 'package:flutter/material.dart';
 /// One calm return action after save — replaces scattered preview/reminder cards.
 class DayTwoReturnLoopCard extends StatefulWidget {
   const DayTwoReturnLoopCard({
-    required this.payoff, required this.onAddAnother, required this.onViewArchive, super.key,
+    required this.payoff,
+    required this.onAddAnother,
+    required this.onViewArchive,
+    super.key,
     this.reminderCoordinator,
     this.onReminderAccepted,
     this.onReminderDeclined,

@@ -9,7 +9,9 @@ import 'package:flutter/material.dart';
 /// Loop map card after confirmed-repeat proof — prompts only when unknown.
 class ConfirmedRepeatThoughtMapCard extends StatelessWidget {
   const ConfirmedRepeatThoughtMapCard({
-    required this.result, required this.showRecordMissingPieceCta, super.key,
+    required this.result,
+    required this.showRecordMissingPieceCta,
+    super.key,
     this.onRecordMissingPiece,
   });
 

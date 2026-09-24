@@ -10,7 +10,9 @@ import 'package:permission_handler/permission_handler.dart';
 /// Denied-microphone recovery UI on the Record screen.
 class MicrophonePermissionBlockedPanel extends StatelessWidget {
   const MicrophonePermissionBlockedPanel({
-    required this.onOpenSettings, required this.onTypeInstead, super.key,
+    required this.onOpenSettings,
+    required this.onTypeInstead,
+    super.key,
     this.showSimulatorHelper = false,
   });
 

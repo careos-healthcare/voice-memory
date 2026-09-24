@@ -8,7 +8,9 @@ import 'package:flutter/material.dart';
 /// Sheet for renaming a grounded pattern label — display only.
 class RenamePatternSheet extends StatefulWidget {
   const RenamePatternSheet({
-    required this.initialName, required this.onSave, super.key,
+    required this.initialName,
+    required this.onSave,
+    super.key,
   });
 
   final String initialName;

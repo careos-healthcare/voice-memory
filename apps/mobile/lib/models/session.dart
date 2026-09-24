@@ -13,8 +13,9 @@ class UserSession {
     return UserSession(
       userId: JsonConverters.stringOrEmpty(user['id']),
       email: JsonConverters.stringOrEmpty(user['email']),
-      signedInAt:
-          signedInAtRaw == null ? null : DateTime.tryParse(signedInAtRaw),
+      signedInAt: signedInAtRaw == null
+          ? null
+          : DateTime.tryParse(signedInAtRaw),
     );
   }
 

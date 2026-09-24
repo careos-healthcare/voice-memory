@@ -53,8 +53,14 @@ void main() {
       ),
       OnboardingStep.paywall,
     );
-    expect(OnboardingRouter.trialWindowClosed(const Duration(seconds: 30)), isTrue);
-    expect(OnboardingRouter.trialWindowClosed(const Duration(seconds: 29)), isFalse);
+    expect(
+      OnboardingRouter.trialWindowClosed(const Duration(seconds: 30)),
+      isTrue,
+    );
+    expect(
+      OnboardingRouter.trialWindowClosed(const Duration(seconds: 29)),
+      isFalse,
+    );
   });
 
   test('has_completed_trial is stored in local prefs', () async {
@@ -120,7 +126,10 @@ void main() {
 
     await tester.enterText(find.byKey(const Key('sample_graph_query')), 'Ada');
     await tester.pump();
-    expect(find.byKey(const Key('sample_graph_hit_sample-ada')), findsOneWidget);
+    expect(
+      find.byKey(const Key('sample_graph_hit_sample-ada')),
+      findsOneWidget,
+    );
 
     await tester.tap(find.byKey(const Key('sample_graph_continue')));
     await tester.pump();

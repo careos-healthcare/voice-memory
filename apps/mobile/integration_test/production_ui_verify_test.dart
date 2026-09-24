@@ -34,7 +34,9 @@ void main() {
       if (!projectDir.existsSync()) {
         projectDir.createSync(recursive: true);
       }
-      final probe = File('${projectDir.path}${Platform.pathSeparator}.write_probe');
+      final probe = File(
+        '${projectDir.path}${Platform.pathSeparator}.write_probe',
+      );
       await probe.writeAsString('ok', flush: true);
       await probe.delete();
       outDir = projectDir;
@@ -129,7 +131,10 @@ void main() {
     expect(find.text(ConsumerUiCopy.settings), findsOneWidget);
     expect(find.text(ConsumerUiCopy.privacy), findsOneWidget);
     expect(find.text(ConsumerUiCopy.termsOfUse), findsOneWidget);
-    expect(find.byKey(const Key('settings_support_feedback_tile')), findsOneWidget);
+    expect(
+      find.byKey(const Key('settings_support_feedback_tile')),
+      findsOneWidget,
+    );
     await tester.scrollUntilVisible(
       find.text(ConsumerUiCopy.deleteAccount),
       120,
@@ -211,10 +216,16 @@ void main() {
     await go(tester, '/record');
     await waitForRecordFirstUse(tester);
 
-    expect(find.byKey(const Key('record_first_run_screen_card')), findsOneWidget);
+    expect(
+      find.byKey(const Key('record_first_run_screen_card')),
+      findsOneWidget,
+    );
     expect(find.text(RecordFirstRunPromiseCopy.title), findsOneWidget);
     expect(find.text(RecordFirstRunPromiseCopy.body), findsOneWidget);
-    expect(find.byKey(const Key('record_top_archive_promise_hero')), findsNothing);
+    expect(
+      find.byKey(const Key('record_top_archive_promise_hero')),
+      findsNothing,
+    );
     for (final step in VisibleArchiveProofCopy.firstRunPromiseSteps) {
       expect(find.text(step), findsNothing);
     }
@@ -222,19 +233,31 @@ void main() {
     expect(find.byType(CaptureEntryActions), findsOneWidget);
 
     final primaryLabelVisible =
-        find.text(MicrophonePermissionCopy.requestMicrophoneCta).evaluate().isNotEmpty ||
-        find.text(MicrophonePermissionCopy.openSettingsCta).evaluate().isNotEmpty;
+        find
+            .text(MicrophonePermissionCopy.requestMicrophoneCta)
+            .evaluate()
+            .isNotEmpty ||
+        find
+            .text(MicrophonePermissionCopy.openSettingsCta)
+            .evaluate()
+            .isNotEmpty;
     expect(primaryLabelVisible, isTrue);
 
     expect(find.text(EmptyArchiveCopy.typeInsteadCta), findsOneWidget);
     expect(find.byKey(const Key('record_see_example_link')), findsOneWidget);
     expect(find.text(RecordScreenFramingCopy.seeExampleLink), findsOneWidget);
     expect(find.byKey(const Key('capture_how_it_works_link')), findsOneWidget);
-    expect(find.text(RecordScreenFramingCopy.firstRunPrivacyLink), findsOneWidget);
+    expect(
+      find.text(RecordScreenFramingCopy.firstRunPrivacyLink),
+      findsOneWidget,
+    );
     expect(find.text(RecordFirstRunPromiseCopy.proLine), findsOneWidget);
 
     expect(find.text(DailyArchiveExerciseCopy.recordLabel), findsNothing);
-    expect(find.byKey(const Key('daily_archive_exercise_record_card')), findsNothing);
+    expect(
+      find.byKey(const Key('daily_archive_exercise_record_card')),
+      findsNothing,
+    );
     expect(find.textContaining('private mind map'), findsNothing);
     expect(find.text("Today's exercise"), findsNothing);
     expect(find.text(TodaysQuestionCopy.eyebrow), findsNothing);

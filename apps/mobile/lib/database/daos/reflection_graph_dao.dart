@@ -73,8 +73,9 @@ class ReflectionGraphDao extends DatabaseAccessor<AppDatabase>
       'DELETE FROM $ftsTable WHERE entry_id = ?',
       [entryId],
     );
-    await (delete(reflectionGraphNodes)..where((t) => t.entryId.equals(entryId)))
-        .go();
+    await (delete(
+      reflectionGraphNodes,
+    )..where((t) => t.entryId.equals(entryId))).go();
   }
 
   Future<void> deleteAbsentEntries(Set<String> keepEntryIds) async {
@@ -207,16 +208,16 @@ class ReflectionGraphDao extends DatabaseAccessor<AppDatabase>
   }
 
   Future<bool> hasWeeklySynthesisForWeek(String weekKey) async {
-    final entryId =
-        '${WeeklySynthesisConfig.synthesisEntryIdPrefix}:$weekKey';
-    final row = await (select(reflectionGraphNodes)
-          ..where(
-            (t) =>
-                t.entryId.equals(entryId) &
-                t.kind.equals(WeeklySynthesisConfig.synthesisNodeKind),
-          )
-          ..limit(1))
-        .getSingleOrNull();
+    final entryId = '${WeeklySynthesisConfig.synthesisEntryIdPrefix}:$weekKey';
+    final row =
+        await (select(reflectionGraphNodes)
+              ..where(
+                (t) =>
+                    t.entryId.equals(entryId) &
+                    t.kind.equals(WeeklySynthesisConfig.synthesisNodeKind),
+              )
+              ..limit(1))
+            .getSingleOrNull();
     return row != null;
   }
 
@@ -328,6 +329,10 @@ class ReflectionGraphDao extends DatabaseAccessor<AppDatabase>
 
   List<String> _splitCsv(String? raw) {
     if (raw == null || raw.isEmpty) return const [];
-    return raw.split(',').map((part) => part.trim()).where((part) => part.isNotEmpty).toList();
+    return raw
+        .split(',')
+        .map((part) => part.trim())
+        .where((part) => part.isNotEmpty)
+        .toList();
   }
 }

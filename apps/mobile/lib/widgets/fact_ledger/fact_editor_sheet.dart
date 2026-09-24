@@ -32,7 +32,8 @@ Future<bool> showFactEditorSheet(
 
 class FactEditorSheet extends StatefulWidget {
   const FactEditorSheet({
-    required this.store, super.key,
+    required this.store,
+    super.key,
     this.existing,
     this.entry,
     this.prefillLabel,

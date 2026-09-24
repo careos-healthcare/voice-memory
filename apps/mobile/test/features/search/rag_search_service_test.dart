@@ -15,8 +15,7 @@ void main() {
     final service = RagSearchService(
       embedder: (text) async => hashTranscriptEmbedding(text),
       store: store,
-      createdAtFor: (id) =>
-          id == 'burnt' ? DateTime.utc(2026, 3, 3) : null,
+      createdAtFor: (id) => id == 'burnt' ? DateTime.utc(2026, 3, 3) : null,
     );
 
     final answer = await service.search(

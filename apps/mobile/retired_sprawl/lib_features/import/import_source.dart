@@ -8,9 +8,9 @@ enum ExternalImportSource {
 
 extension ExternalImportSourceLabels on ExternalImportSource {
   String get label => switch (this) {
-        ExternalImportSource.dayOneJson => 'Day One (JSON)',
-        ExternalImportSource.appleNotesJson => 'Apple Notes (JSON)',
-        ExternalImportSource.appleNotesCsv => 'Apple Notes (CSV)',
-        ExternalImportSource.plainText => 'Plain text',
-      };
+    ExternalImportSource.dayOneJson => 'Day One (JSON)',
+    ExternalImportSource.appleNotesJson => 'Apple Notes (JSON)',
+    ExternalImportSource.appleNotesCsv => 'Apple Notes (CSV)',
+    ExternalImportSource.plainText => 'Plain text',
+  };
 }

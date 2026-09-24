@@ -484,8 +484,7 @@ class BacklogImportService {
     if (textChunks.isEmpty) return null;
 
     textChunks.sort((left, right) {
-      final leftDate =
-          left.createdAt ?? DateTime.fromMillisecondsSinceEpoch(0);
+      final leftDate = left.createdAt ?? DateTime.fromMillisecondsSinceEpoch(0);
       final rightDate =
           right.createdAt ?? DateTime.fromMillisecondsSinceEpoch(0);
       return rightDate.compareTo(leftDate);
@@ -748,7 +747,9 @@ List<List<String>> _parseCsvRows(String content) {
     }
 
     if ((char == '\n' || char == '\r') && !inQuotes) {
-      if (char == '\r' && index + 1 < content.length && content[index + 1] == '\n') {
+      if (char == '\r' &&
+          index + 1 < content.length &&
+          content[index + 1] == '\n') {
         index += 1;
       }
       row.add(buffer.toString());

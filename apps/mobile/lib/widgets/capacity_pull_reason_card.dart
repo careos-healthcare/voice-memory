@@ -11,14 +11,16 @@ import 'package:flutter/material.dart';
 /// Archive Home card for pull reasons — fixed reason ids only.
 class CapacityPullReasonCard extends StatefulWidget {
   const CapacityPullReasonCard({
-    required this.result, super.key,
+    required this.result,
+    super.key,
     this.onSaved,
     this.store,
     this.sampleMode = false,
   });
 
   const CapacityPullReasonCard.test({
-    required this.result, super.key,
+    required this.result,
+    super.key,
     this.onSaved,
     this.store,
     this.sampleMode = false,

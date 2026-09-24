@@ -8,7 +8,8 @@ import 'package:flutter/material.dart';
 /// Compact status card for tomorrow's check retention loop.
 class RetentionStateCard extends StatefulWidget {
   const RetentionStateCard({
-    required this.state, super.key,
+    required this.state,
+    super.key,
     this.checkWhyThisCheck,
     this.checkExampleAnswer,
     this.onPrimaryTap,

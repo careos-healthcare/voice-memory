@@ -1,6 +1,7 @@
 import 'package:archiveme_mobile/features/activation/activation_tracker.dart';
 import 'package:archiveme_mobile/features/feedback/archive_feedback_model.dart';
-import 'package:archiveme_mobile/features/recording/recording_dependencies.dart' show CheckInCompletedCard;
+import 'package:archiveme_mobile/features/recording/recording_dependencies.dart'
+    show CheckInCompletedCard;
 import 'package:archiveme_mobile/features/routine/routine_anchor_model.dart';
 import 'package:archiveme_mobile/features/tomorrow_return/compelling_check_engine.dart';
 import 'package:archiveme_mobile/features/tomorrow_return/compelling_check_model.dart';
@@ -13,7 +14,8 @@ import 'package:archiveme_mobile/theme/app_colors.dart';
 import 'package:archiveme_mobile/theme/app_spacing.dart';
 import 'package:archiveme_mobile/theme/voicememory_typography.dart';
 import 'package:archiveme_mobile/widgets/feedback/archive_feedback_chips.dart';
-import 'package:archiveme_mobile/widgets/record/check_in_completed_card.dart' show CheckInCompletedCard;
+import 'package:archiveme_mobile/widgets/record/check_in_completed_card.dart'
+    show CheckInCompletedCard;
 import 'package:archiveme_mobile/widgets/tomorrow_return/compelling_check_preview.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
@@ -25,7 +27,8 @@ import 'dart:async';
 /// action lets the user pick a different check.
 class ResultNextCheckCard extends StatefulWidget {
   const ResultNextCheckCard({
-    required this.checkIn, super.key,
+    required this.checkIn,
+    super.key,
     this.notUsefulReason,
     this.onCreateCheckIn,
     this.routineAnchorPicker,

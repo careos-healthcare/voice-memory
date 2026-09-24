@@ -87,7 +87,10 @@ void main() {
           'reflection': _reflection().toJson(),
           'transcriptProvenance': raw,
         });
-        expect(decoded.transcriptProvenance, TranscriptProvenance.unknownLegacy);
+        expect(
+          decoded.transcriptProvenance,
+          TranscriptProvenance.unknownLegacy,
+        );
       }
     });
 
@@ -97,8 +100,14 @@ void main() {
         TranscriptProvenance.fromStorage('on_device_whisper_v3'),
         TranscriptProvenance.unknownLegacy,
       );
-      expect(TranscriptProvenance.fromStorage('final'), TranscriptProvenance.unknownLegacy);
-      expect(TranscriptProvenance.fromStorage(''), TranscriptProvenance.unknownLegacy);
+      expect(
+        TranscriptProvenance.fromStorage('final'),
+        TranscriptProvenance.unknownLegacy,
+      );
+      expect(
+        TranscriptProvenance.fromStorage(''),
+        TranscriptProvenance.unknownLegacy,
+      );
     });
 
     test('the constructor default is the untrusted value', () {
@@ -114,14 +123,18 @@ void main() {
         withoutStamp.transcriptProvenance,
         TranscriptProvenance.unknownLegacy,
       );
-      expect(withoutStamp.copyWith().transcriptProvenance,
-          TranscriptProvenance.unknownLegacy);
+      expect(
+        withoutStamp.copyWith().transcriptProvenance,
+        TranscriptProvenance.unknownLegacy,
+      );
     });
   });
 
   group('serialization writes the field every time', () {
     test('toJson emits it even when it equals the default', () {
-      final json = _entry(provenance: TranscriptProvenance.unknownLegacy).toJson();
+      final json = _entry(
+        provenance: TranscriptProvenance.unknownLegacy,
+      ).toJson();
 
       expect(json.containsKey('transcriptProvenance'), isTrue);
       expect(json['transcriptProvenance'], 'unknown_legacy');
@@ -264,7 +277,8 @@ void main() {
     });
 
     test('a user correction is stamped as user-edited and stays quotable', () {
-      const corrected = 'I said yes to the extra project while already stretched.';
+      const corrected =
+          'I said yes to the extra project while already stretched.';
       final stamped = applyFinalTranscriptToVoiceEntry(
         _entry(provenance: TranscriptProvenance.unknownLegacy),
         finalTranscript: corrected,
@@ -289,7 +303,10 @@ void main() {
       );
 
       expect(unchanged.transcript, _spoken);
-      expect(unchanged.transcriptProvenance, TranscriptProvenance.unknownLegacy);
+      expect(
+        unchanged.transcriptProvenance,
+        TranscriptProvenance.unknownLegacy,
+      );
     });
   });
 
@@ -308,10 +325,16 @@ void main() {
         updatedAt: DateTime.utc(2026, 6, 2),
       );
 
-      final merged = JournalConflictResolver.resolve(local: local, remote: remote);
+      final merged = JournalConflictResolver.resolve(
+        local: local,
+        remote: remote,
+      );
 
       expect(merged.entry.transcript, local.transcript);
-      expect(merged.entry.transcriptProvenance, TranscriptProvenance.speechToText);
+      expect(
+        merged.entry.transcriptProvenance,
+        TranscriptProvenance.speechToText,
+      );
     });
 
     test('a merge that takes remote text takes remote provenance', () {
@@ -328,10 +351,16 @@ void main() {
         updatedAt: DateTime.utc(2026, 6, 4),
       );
 
-      final merged = JournalConflictResolver.resolve(local: local, remote: remote);
+      final merged = JournalConflictResolver.resolve(
+        local: local,
+        remote: remote,
+      );
 
       expect(merged.entry.transcript, remote.transcript);
-      expect(merged.entry.transcriptProvenance, TranscriptProvenance.speechToText);
+      expect(
+        merged.entry.transcriptProvenance,
+        TranscriptProvenance.speechToText,
+      );
     });
 
     test('the encrypted sync snapshot round-trips every member', () {
@@ -364,8 +393,9 @@ void main() {
       // Simulates a peer or server that re-serialises the entry without
       // understanding provenance. The value is lost, and what is read back is
       // the untrusted member rather than the one the sender actually held.
-      final json = _entry(provenance: TranscriptProvenance.speechToText).toJson()
-        ..remove('transcriptProvenance');
+      final json = _entry(
+        provenance: TranscriptProvenance.speechToText,
+      ).toJson()..remove('transcriptProvenance');
 
       expect(
         JournalEntry.fromJson(json).transcriptProvenance,

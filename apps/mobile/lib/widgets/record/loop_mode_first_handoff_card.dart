@@ -10,7 +10,9 @@ import 'dart:async';
 /// Loop-specific first recording handoff — no fake examples.
 class LoopModeFirstHandoffCard extends StatelessWidget {
   const LoopModeFirstHandoffCard({
-    required this.loop, required this.onStartRecording, super.key,
+    required this.loop,
+    required this.onStartRecording,
+    super.key,
     this.showRecordCta = true,
   });
 
@@ -69,9 +71,11 @@ class LoopModeFirstHandoffCard extends StatelessWidget {
               height: 44,
               child: FilledButton(
                 onPressed: () {
-                  unawaited(RetentionMetricsTracker.track(
-                    RetentionMetricsTracker.firstRecordCtaTapped,
-                  ));
+                  unawaited(
+                    RetentionMetricsTracker.track(
+                      RetentionMetricsTracker.firstRecordCtaTapped,
+                    ),
+                  );
                   onStartRecording();
                 },
                 child: Text(cta),

@@ -14,7 +14,8 @@ import 'dart:async';
 /// Archive home — one high-value discovery for today when new entries arrive.
 class DailyArchiveNoticedSection extends StatefulWidget {
   const DailyArchiveNoticedSection({
-    required this.entries, super.key,
+    required this.entries,
+    super.key,
     this.state,
   });
 

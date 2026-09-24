@@ -33,7 +33,8 @@ abstract final class ProEvidenceValueCopy {
   ];
 
   static const proSectionTitle = 'Pro';
-  static const List<String> proBulletsLive = PaywallAlignmentCopy.benefitBullets;
+  static const List<String> proBulletsLive =
+      PaywallAlignmentCopy.benefitBullets;
 
   static const proExportReportsPlanned = 'Exportable reports (planned)';
 

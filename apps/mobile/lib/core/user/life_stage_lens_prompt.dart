@@ -30,8 +30,8 @@ abstract final class LifeStageLensPrompt {
       header,
       instruction,
       'ArchiveInsightKind taxonomy is unchanged — still choose among belief, '
-      'beliefChange, theme, contradiction, blindSpot, chapter, weeklyStory, '
-      'surprise, and challenge.',
+          'beliefChange, theme, contradiction, blindSpot, chapter, weeklyStory, '
+          'surprise, and challenge.',
       'This lens adjusts contextual reading of fact_ledger entries only.',
     ].join('\n');
   }

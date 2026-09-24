@@ -281,7 +281,10 @@ void main() {
     final stamp = DateTime.now().microsecondsSinceEpoch.toString();
     await _reset(stamp);
     await ActivationEventsStore(AppServices.instance.prefs).write(
-      ActivationEventCounts.fromMap({'tomorrowCheckInCreated': 2, 'tomorrowCheckInCompleted': 1,}),
+      ActivationEventCounts.fromMap({
+        'tomorrowCheckInCreated': 2,
+        'tomorrowCheckInCompleted': 1,
+      }),
     );
     final summary = await const TrialSummaryEngine().build();
     expect(summary.checkInCompletionRate, 0.5);
@@ -304,7 +307,10 @@ void main() {
     final stamp = DateTime.now().microsecondsSinceEpoch.toString();
     await _reset(stamp);
     await ActivationEventsStore(AppServices.instance.prefs).write(
-      ActivationEventCounts.fromMap({'firstReflectionSaved': 1, 'watchForPromptAccepted': 0,}),
+      ActivationEventCounts.fromMap({
+        'firstReflectionSaved': 1,
+        'watchForPromptAccepted': 0,
+      }),
     );
     final summary = await const TrialSummaryEngine().build();
     expect(summary.trialFrictionVerdict, TrialFrictionVerdict.hookIssue);
@@ -314,7 +320,12 @@ void main() {
     final stamp = DateTime.now().microsecondsSinceEpoch.toString();
     await _reset(stamp);
     await ActivationEventsStore(AppServices.instance.prefs).write(
-      ActivationEventCounts.fromMap({'firstReflectionSaved': 1, 'firstPatternShown': 1, 'watchForPromptAccepted': 0, 'returnedNextDay': 0,}),
+      ActivationEventCounts.fromMap({
+        'firstReflectionSaved': 1,
+        'firstPatternShown': 1,
+        'watchForPromptAccepted': 0,
+        'returnedNextDay': 0,
+      }),
     );
 
     final summary = await const TrialSummaryEngine().build();
@@ -360,7 +371,10 @@ void main() {
     final stamp = DateTime.now().microsecondsSinceEpoch.toString();
     await _reset(stamp);
     await ActivationEventsStore(AppServices.instance.prefs).write(
-      ActivationEventCounts.fromMap({'tomorrowCheckInCreated': 3, 'tomorrowCheckInDueShown': 3,}),
+      ActivationEventCounts.fromMap({
+        'tomorrowCheckInCreated': 3,
+        'tomorrowCheckInDueShown': 3,
+      }),
     );
     final hook = HookDiagnosisStore(AppServices.instance.prefs);
     await hook.append(missed(HookDiagnosisMissedReason.confusing, 'c1'));
@@ -375,7 +389,10 @@ void main() {
     final stamp = DateTime.now().microsecondsSinceEpoch.toString();
     await _reset(stamp);
     await ActivationEventsStore(AppServices.instance.prefs).write(
-      ActivationEventCounts.fromMap({'tomorrowCheckInCreated': 2, 'tomorrowCheckInDueShown': 2,}),
+      ActivationEventCounts.fromMap({
+        'tomorrowCheckInCreated': 2,
+        'tomorrowCheckInDueShown': 2,
+      }),
     );
     final hook = HookDiagnosisStore(AppServices.instance.prefs);
     await hook.append(missed(HookDiagnosisMissedReason.didNotCare, 'd1'));
@@ -398,7 +415,10 @@ void main() {
     final stamp = DateTime.now().microsecondsSinceEpoch.toString();
     await _reset(stamp);
     await ActivationEventsStore(AppServices.instance.prefs).write(
-      ActivationEventCounts.fromMap({'tomorrowCheckInCreated': 2, 'tomorrowCheckInDueShown': 0,}),
+      ActivationEventCounts.fromMap({
+        'tomorrowCheckInCreated': 2,
+        'tomorrowCheckInDueShown': 0,
+      }),
     );
     final hook = HookDiagnosisStore(AppServices.instance.prefs);
     await hook.append(missed(HookDiagnosisMissedReason.forgot, 'f1'));
@@ -413,7 +433,10 @@ void main() {
     final stamp = DateTime.now().microsecondsSinceEpoch.toString();
     await _reset(stamp);
     await ActivationEventsStore(AppServices.instance.prefs).write(
-      ActivationEventCounts.fromMap({'tomorrowCheckInCreated': 2, 'tomorrowCheckInDueShown': 0,}),
+      ActivationEventCounts.fromMap({
+        'tomorrowCheckInCreated': 2,
+        'tomorrowCheckInDueShown': 0,
+      }),
     );
     final hook = HookDiagnosisStore(AppServices.instance.prefs);
     await hook.append(questionRated(HookDiagnosisRating.yes, 'q1'));
@@ -429,7 +452,11 @@ void main() {
     final stamp = DateTime.now().microsecondsSinceEpoch.toString();
     await _reset(stamp);
     await ActivationEventsStore(AppServices.instance.prefs).write(
-      ActivationEventCounts.fromMap({'firstReflectionSaved': 1, 'tomorrowCheckInCreated': 2, 'tomorrowCheckInDueShown': 2,}),
+      ActivationEventCounts.fromMap({
+        'firstReflectionSaved': 1,
+        'tomorrowCheckInCreated': 2,
+        'tomorrowCheckInDueShown': 2,
+      }),
     );
     final hook = HookDiagnosisStore(AppServices.instance.prefs);
     await hook.append(missed(HookDiagnosisMissedReason.confusing, 'c1'));
@@ -446,7 +473,11 @@ void main() {
       final stamp = DateTime.now().microsecondsSinceEpoch.toString();
       await _reset(stamp);
       await ActivationEventsStore(AppServices.instance.prefs).write(
-        ActivationEventCounts.fromMap({'firstReflectionSaved': 1, 'tomorrowCheckInCreated': 5, 'tomorrowCheckInDueShown': 5,}),
+        ActivationEventCounts.fromMap({
+          'firstReflectionSaved': 1,
+          'tomorrowCheckInCreated': 5,
+          'tomorrowCheckInDueShown': 5,
+        }),
       );
       final hook = HookDiagnosisStore(AppServices.instance.prefs);
       await hook.append(missed(HookDiagnosisMissedReason.didNotCare, 'd1'));
@@ -467,7 +498,14 @@ void main() {
     final stamp = DateTime.now().microsecondsSinceEpoch.toString();
     await _reset(stamp);
     await ActivationEventsStore(AppServices.instance.prefs).write(
-      ActivationEventCounts.fromMap({'reminderPermissionRequested': 3, 'reminderPermissionGranted': 2, 'reminderPermissionDenied': 1, 'reminderScheduled': 2, 'reminderCancelled': 1, 'reminderTapped': 1,}),
+      ActivationEventCounts.fromMap({
+        'reminderPermissionRequested': 3,
+        'reminderPermissionGranted': 2,
+        'reminderPermissionDenied': 1,
+        'reminderScheduled': 2,
+        'reminderCancelled': 1,
+        'reminderTapped': 1,
+      }),
     );
     await CheckInReminderService.setRemindersEnabled(true);
     addTearDown(() => CheckInReminderService.setRemindersEnabled(false));
@@ -486,7 +524,10 @@ void main() {
     final stamp = DateTime.now().microsecondsSinceEpoch.toString();
     await _reset(stamp);
     await ActivationEventsStore(AppServices.instance.prefs).write(
-      ActivationEventCounts.fromMap({'patternMemoryCreated': 1, 'patternMemoryUpdated': 2,}),
+      ActivationEventCounts.fromMap({
+        'patternMemoryCreated': 1,
+        'patternMemoryUpdated': 2,
+      }),
     );
     await PatternMemoryStore(AppServices.instance.prefs).saveActive(
       PatternMemory(
@@ -511,7 +552,12 @@ void main() {
     final stamp = DateTime.now().microsecondsSinceEpoch.toString();
     await _reset(stamp);
     await ActivationEventsStore(AppServices.instance.prefs).write(
-      ActivationEventCounts.fromMap({'patternProgressMomentCreated': 2, 'patternProgressCardShown': 3, 'patternNextActionCreated': 4, 'patternNextActionUsed': 1,}),
+      ActivationEventCounts.fromMap({
+        'patternProgressMomentCreated': 2,
+        'patternProgressCardShown': 3,
+        'patternNextActionCreated': 4,
+        'patternNextActionUsed': 1,
+      }),
     );
     await PatternProgressStore(AppServices.instance.prefs).saveLatest(
       PatternProgressMoment(
@@ -560,7 +606,11 @@ void main() {
     final stamp = DateTime.now().microsecondsSinceEpoch.toString();
     await _reset(stamp);
     await ActivationEventsStore(AppServices.instance.prefs).write(
-      ActivationEventCounts.fromMap({'habitProofCreated': 3, 'habitProofShown': 5, 'habitProofCtaTapped': 2,}),
+      ActivationEventCounts.fromMap({
+        'habitProofCreated': 3,
+        'habitProofShown': 5,
+        'habitProofCtaTapped': 2,
+      }),
     );
     await HabitProofStore(AppServices.instance.prefs).saveLatest(
       HabitProofMoment(
@@ -590,7 +640,15 @@ void main() {
     final stamp = DateTime.now().microsecondsSinceEpoch.toString();
     await _reset(stamp);
     await ActivationEventsStore(AppServices.instance.prefs).write(
-      ActivationEventCounts.fromMap({'weeklyPatternRecapCreated': 2, 'weeklyPatternRecapShown': 4, 'weeklyPatternRecapCtaTapped': 1, 'patternShareCardShown': 5, 'patternShareCopied': 3, 'patternShareOpened': 2, 'patternShareFailed': 1,}),
+      ActivationEventCounts.fromMap({
+        'weeklyPatternRecapCreated': 2,
+        'weeklyPatternRecapShown': 4,
+        'weeklyPatternRecapCtaTapped': 1,
+        'patternShareCardShown': 5,
+        'patternShareCopied': 3,
+        'patternShareOpened': 2,
+        'patternShareFailed': 1,
+      }),
     );
     await WeeklyPatternRecapStore(AppServices.instance.prefs).saveLatest(
       WeeklyPatternRecap(
@@ -675,7 +733,14 @@ void main() {
     final stamp = DateTime.now().microsecondsSinceEpoch.toString();
     await _reset(stamp);
     await ActivationEventsStore(AppServices.instance.prefs).write(
-      ActivationEventCounts.fromMap({'firstReflectionSaved': 1, 'firstPatternAccepted': 1, 'returnedNextDay': 1, 'tomorrowCheckInCompleted': 1, 'usefulnessYes': 1, 'resultNextCheckUsed': 1,}),
+      ActivationEventCounts.fromMap({
+        'firstReflectionSaved': 1,
+        'firstPatternAccepted': 1,
+        'returnedNextDay': 1,
+        'tomorrowCheckInCompleted': 1,
+        'usefulnessYes': 1,
+        'resultNextCheckUsed': 1,
+      }),
     );
 
     final summary = await const TrialSummaryEngine().build();
@@ -693,7 +758,14 @@ void main() {
     final stamp = DateTime.now().microsecondsSinceEpoch.toString();
     await _reset(stamp);
     await ActivationEventsStore(AppServices.instance.prefs).write(
-      ActivationEventCounts.fromMap({'positioningComprehensionAsked': 5, 'positioningComprehensionAnswered': 5, 'positioningUnderstoodArchiveMemory': 3, 'positioningJournal': 1, 'positioningChat': 1, 'positioningNotSure': 0,}),
+      ActivationEventCounts.fromMap({
+        'positioningComprehensionAsked': 5,
+        'positioningComprehensionAnswered': 5,
+        'positioningUnderstoodArchiveMemory': 3,
+        'positioningJournal': 1,
+        'positioningChat': 1,
+        'positioningNotSure': 0,
+      }),
     );
 
     final summary = await const TrialSummaryEngine().build();
@@ -713,7 +785,18 @@ void main() {
       final stamp = DateTime.now().microsecondsSinceEpoch.toString();
       await _reset(stamp);
       await ActivationEventsStore(AppServices.instance.prefs).write(
-        ActivationEventCounts.fromMap({'compellingCheckShown': 4, 'compellingCheckSelected': 3, 'compellingCheckMostSpecificSelected': 2, 'compellingCheckAccepted': 1, 'realReminderPermissionRequested': 2, 'realReminderPermissionGranted': 1, 'realReminderPermissionDenied': 1, 'realReminderScheduled': 1, 'realReminderCancelled': 1, 'realReminderUnavailable': 1,}),
+        ActivationEventCounts.fromMap({
+          'compellingCheckShown': 4,
+          'compellingCheckSelected': 3,
+          'compellingCheckMostSpecificSelected': 2,
+          'compellingCheckAccepted': 1,
+          'realReminderPermissionRequested': 2,
+          'realReminderPermissionGranted': 1,
+          'realReminderPermissionDenied': 1,
+          'realReminderScheduled': 1,
+          'realReminderCancelled': 1,
+          'realReminderUnavailable': 1,
+        }),
       );
 
       final summary = await const TrialSummaryEngine().build();
@@ -772,7 +855,12 @@ void main() {
     final stamp = DateTime.now().microsecondsSinceEpoch.toString();
     await _reset(stamp);
     await ActivationEventsStore(AppServices.instance.prefs).write(
-      ActivationEventCounts.fromMap({'objectiveWidgetRefreshAttempted': 3, 'objectiveWidgetRefreshSucceeded': 2, 'objectiveWidgetRefreshFailed': 1, 'objectiveWidgetCleared': 1,}),
+      ActivationEventCounts.fromMap({
+        'objectiveWidgetRefreshAttempted': 3,
+        'objectiveWidgetRefreshSucceeded': 2,
+        'objectiveWidgetRefreshFailed': 1,
+        'objectiveWidgetCleared': 1,
+      }),
     );
 
     final summary = await const TrialSummaryEngine().build();

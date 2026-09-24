@@ -9,8 +9,7 @@ abstract final class EvidenceMethodOnboardingCopy {
       'entries behind it. Generated reads stay separate from your original '
       'words — you can correct or hide anything that misses.';
 
-  static const bullet1 =
-      'Every read can show which saved entries support it';
+  static const bullet1 = 'Every read can show which saved entries support it';
   static const bullet2 =
       'Tap View Source Proof to inspect the cited transcript text';
   static const bullet3 =

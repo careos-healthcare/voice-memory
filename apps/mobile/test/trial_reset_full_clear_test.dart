@@ -27,7 +27,11 @@ void main() {
 
       // Seed state across the loop.
       await ActivationEventsStore(prefs).write(
-        ActivationEventCounts.fromMap({'firstReflectionSaved': 3, 'tomorrowCheckInCreated': 2, 'returnDayLoopClosed': 1,}),
+        ActivationEventCounts.fromMap({
+          'firstReflectionSaved': 3,
+          'tomorrowCheckInCreated': 2,
+          'returnDayLoopClosed': 1,
+        }),
       );
       await FirstLoopActivationStore(prefs).markFirstMomentSaved();
       await FirstLoopActivationStore(

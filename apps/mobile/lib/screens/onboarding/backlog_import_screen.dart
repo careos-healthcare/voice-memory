@@ -76,12 +76,12 @@ class BacklogImportScreen extends ConsumerWidget {
                         id: progress.insight!.id,
                         insightText: progress.insight!.insightText,
                         kind:
-                            ArchiveInsightKind.values.asNameMap()[progress
-                                .insight!
-                                .kind] ??
+                            ArchiveInsightKind.values
+                                .asNameMap()[progress.insight!.kind] ??
                             ArchiveInsightKind.theme,
                         confidenceBand:
-                            PatternMatchConfidenceBand.values.asNameMap()[progress
+                            PatternMatchConfidenceBand.values
+                                .asNameMap()[progress
                                 .insight!
                                 .confidenceBand] ??
                             PatternMatchConfidenceBand.weak,

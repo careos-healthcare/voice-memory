@@ -66,35 +66,42 @@ void main() {
       });
     }
 
-    test('recursive CTE expands neighborhood without payload columns', () async {
-      await seedEntry('e1');
-      await seedEntry('e2');
-      await seedEntry('e3');
-      await seedGraph('e1');
-      await seedGraph('e2');
-      await seedGraph('e3');
-      await seedEdge(source: 'e1', target: 'e2');
-      await seedEdge(source: 'e2', target: 'e3');
+    test(
+      'recursive CTE expands neighborhood without payload columns',
+      () async {
+        await seedEntry('e1');
+        await seedEntry('e2');
+        await seedEntry('e3');
+        await seedGraph('e1');
+        await seedGraph('e2');
+        await seedGraph('e3');
+        await seedEdge(source: 'e1', target: 'e2');
+        await seedEdge(source: 'e2', target: 'e3');
 
-      final topology = await repository.loadNeighborhood(
-        seedEntryId: 'e1',
-        maxDepth: 2,
-      );
+        final topology = await repository.loadNeighborhood(
+          seedEntryId: 'e1',
+          maxDepth: 2,
+        );
 
-      expect(topology.nodes.map((node) => node.entryId).toSet(), {'e1', 'e2', 'e3'});
-      expect(topology.links, isNotEmpty);
+        expect(topology.nodes.map((node) => node.entryId).toSet(), {
+          'e1',
+          'e2',
+          'e3',
+        });
+        expect(topology.links, isNotEmpty);
 
-      final rows = await db.database.rawQuery(
-        '''
+        final rows = await db.database.rawQuery(
+          '''
         SELECT id, entry_id, kind, label
         FROM ${GraphRepository.nodesTable}
         WHERE entry_id = ?
         LIMIT 1
         ''',
-        ['e1'],
-      );
-      expect(rows.single.keys.toSet(), {'id', 'entry_id', 'kind', 'label'});
-    });
+          ['e1'],
+        );
+        expect(rows.single.keys.toSet(), {'id', 'entry_id', 'kind', 'label'});
+      },
+    );
 
     test('depth limit keeps expansion local', () async {
       await seedEntry('e1');

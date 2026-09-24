@@ -12,7 +12,9 @@ import 'dart:async';
 /// Visible receipt when a memory card used archive context.
 class MemoryUsedReceipt extends StatelessWidget {
   const MemoryUsedReceipt({
-    required this.cardType, required this.memoryUsed, super.key,
+    required this.cardType,
+    required this.memoryUsed,
+    super.key,
     this.entryCount = 1,
     this.governance,
     this.priority,
@@ -89,11 +91,13 @@ class MemoryUsedReceipt extends StatelessWidget {
                 ActivationFunnelAnalytics.memoryUsedReceiptOpened,
                 cardType: cardType.id,
               );
-              unawaited(MemoryPriorityExplanationSheet.show(
-                context,
-                cardType,
-                safeExplanationId: priority?.safeExplanationId,
-              ));
+              unawaited(
+                MemoryPriorityExplanationSheet.show(
+                  context,
+                  cardType,
+                  safeExplanationId: priority?.safeExplanationId,
+                ),
+              );
             },
             child: Text(
               MemoryControlCopy.whyLabel,

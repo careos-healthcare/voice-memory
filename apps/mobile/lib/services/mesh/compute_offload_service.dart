@@ -21,13 +21,13 @@ class ComputeOffloadService {
     Duration discoveryTimeout = const Duration(seconds: 2),
     Duration handshakeTimeout = const Duration(seconds: 3),
     Duration inferenceTimeout = const Duration(seconds: 30),
-  })  : _discovery = discovery ?? StubMeshDiscoveryService(),
-        _transport = transport ?? MeshPeerTransport(),
-        _permissionGate = permissionGate ?? MeshPermissionGate(),
-        _clientId = clientId ?? 'archiveme-mobile',
-        _discoveryTimeout = discoveryTimeout,
-        _handshakeTimeout = handshakeTimeout,
-        _inferenceTimeout = inferenceTimeout;
+  }) : _discovery = discovery ?? StubMeshDiscoveryService(),
+       _transport = transport ?? MeshPeerTransport(),
+       _permissionGate = permissionGate ?? MeshPermissionGate(),
+       _clientId = clientId ?? 'archiveme-mobile',
+       _discoveryTimeout = discoveryTimeout,
+       _handshakeTimeout = handshakeTimeout,
+       _inferenceTimeout = inferenceTimeout;
 
   final MeshDiscoveryService _discovery;
   final MeshPeerTransport _transport;
@@ -67,7 +67,11 @@ class ComputeOffloadService {
 
     final session = await _resolveSession(bestPeer);
     if (session == null) {
-      return _fallback(local, request, MeshOffloadFallbackReason.handshakeTimeout);
+      return _fallback(
+        local,
+        request,
+        MeshOffloadFallbackReason.handshakeTimeout,
+      );
     }
 
     final wireResponse = await _transport.infer(
@@ -78,7 +82,11 @@ class ComputeOffloadService {
 
     if (wireResponse == null) {
       _invalidateSession();
-      return _fallback(local, request, MeshOffloadFallbackReason.inferenceTimeout);
+      return _fallback(
+        local,
+        request,
+        MeshOffloadFallbackReason.inferenceTimeout,
+      );
     }
 
     if (wireResponse.error != null && wireResponse.error!.isNotEmpty) {

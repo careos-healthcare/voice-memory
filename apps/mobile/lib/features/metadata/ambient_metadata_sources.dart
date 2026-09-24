@@ -108,9 +108,11 @@ class LocationServiceGeoReader extends AmbientGeoReader {
 
 /// Open-Meteo forecast with an in-memory cache keyed by rounded coordinates.
 class OpenMeteoForecastReader extends AmbientForecastReader {
-  OpenMeteoForecastReader({http.Client? client, Map<String, AmbientWeather>? cache})
-    : _client = client,
-      cache = cache ?? <String, AmbientWeather>{};
+  OpenMeteoForecastReader({
+    http.Client? client,
+    Map<String, AmbientWeather>? cache,
+  }) : _client = client,
+       cache = cache ?? <String, AmbientWeather>{};
 
   final http.Client? _client;
   final Map<String, AmbientWeather> cache;

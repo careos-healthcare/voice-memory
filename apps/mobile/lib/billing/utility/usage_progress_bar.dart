@@ -6,7 +6,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 /// Remaining free cloud answers and media storage.
 class UsageProgressBar extends StatelessWidget {
-  const UsageProgressBar({required this.quota, super.key, this.compact = false});
+  const UsageProgressBar({
+    required this.quota,
+    super.key,
+    this.compact = false,
+  });
 
   final FreemiumQuota quota;
   final bool compact;

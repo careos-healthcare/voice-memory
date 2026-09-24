@@ -56,23 +56,25 @@ void main() {
       expect(OnDeviceProcessingStore.defaultEnabledFor('android'), isFalse);
     });
 
-    test('an explicitly set preference is untouched on both platforms',
-        () async {
-      for (final platform in ['ios', 'android']) {
-        for (final choice in [true, false]) {
-          await OnDeviceProcessingStore.resetForTest();
-          OnDeviceProcessingStore.debugPlatformOverride = platform;
-          await OnDeviceProcessingStore.setEnabled(choice);
+    test(
+      'an explicitly set preference is untouched on both platforms',
+      () async {
+        for (final platform in ['ios', 'android']) {
+          for (final choice in [true, false]) {
+            await OnDeviceProcessingStore.resetForTest();
+            OnDeviceProcessingStore.debugPlatformOverride = platform;
+            await OnDeviceProcessingStore.setEnabled(choice);
 
-          expect(OnDeviceProcessingStore.hasExplicitPreference, isTrue);
-          expect(
-            OnDeviceProcessingStore.enabled,
-            choice,
-            reason: 'explicit $choice on $platform must survive the default',
-          );
+            expect(OnDeviceProcessingStore.hasExplicitPreference, isTrue);
+            expect(
+              OnDeviceProcessingStore.enabled,
+              choice,
+              reason: 'explicit $choice on $platform must survive the default',
+            );
+          }
         }
-      }
-    });
+      },
+    );
 
     test('storage distinguishes unset from explicitly set to on', () async {
       expect(
@@ -88,42 +90,50 @@ void main() {
       expect(await storeForTest.readExplicit(), isFalse);
     });
 
-    test('the platform default is only consulted when nothing is stored',
-        () async {
-      OnDeviceProcessingStore.debugPlatformOverride = 'android';
-      expect(OnDeviceProcessingStore.enabled, isFalse);
+    test(
+      'the platform default is only consulted when nothing is stored',
+      () async {
+        OnDeviceProcessingStore.debugPlatformOverride = 'android';
+        expect(OnDeviceProcessingStore.enabled, isFalse);
 
-      // The same install, having chosen on-device-only before this version.
-      await OnDeviceProcessingStore.setEnabled(true);
-      expect(OnDeviceProcessingStore.enabled, isTrue);
+        // The same install, having chosen on-device-only before this version.
+        await OnDeviceProcessingStore.setEnabled(true);
+        expect(OnDeviceProcessingStore.enabled, isTrue);
 
-      // And the Android default cannot claw it back.
-      expect(OnDeviceProcessingStore.defaultEnabled, isFalse);
-      expect(OnDeviceProcessingStore.enabled, isTrue);
-    });
+        // And the Android default cannot claw it back.
+        expect(OnDeviceProcessingStore.defaultEnabled, isFalse);
+        expect(OnDeviceProcessingStore.enabled, isTrue);
+      },
+    );
   });
 
   group('fail closed', () {
-    test('the fail-closed value is on, independent of the platform default',
-        () {
-      OnDeviceProcessingStore.debugPlatformOverride = 'android';
-      expect(OnDeviceProcessingStore.defaultEnabled, isFalse);
-      expect(
-        OnDeviceProcessingStore.failClosedEnabled,
-        isTrue,
-        reason: 'reusing the Android default here would fail open',
-      );
-    });
+    test(
+      'the fail-closed value is on, independent of the platform default',
+      () {
+        OnDeviceProcessingStore.debugPlatformOverride = 'android';
+        expect(OnDeviceProcessingStore.defaultEnabled, isFalse);
+        expect(
+          OnDeviceProcessingStore.failClosedEnabled,
+          isTrue,
+          reason: 'reusing the Android default here would fail open',
+        );
+      },
+    );
 
-    test('a gate read error permits nothing, even with consent granted',
-        () async {
-      await RemoteProcessingConsentStore(prefs).grant();
-      await OnDeviceProcessingStore.setEnabled(false);
+    test(
+      'a gate read error permits nothing, even with consent granted',
+      () async {
+        await RemoteProcessingConsentStore(prefs).grant();
+        await OnDeviceProcessingStore.setEnabled(false);
 
-      final gate = RemoteProcessingConsentGate(_UnreadableConsentStore(prefs));
-      for (final purpose in RemoteProcessingPurpose.values) {
-        expect(await gate.isPurposePermittedNow(purpose), isFalse);
-      }
-    });
+        final gate = RemoteProcessingConsentGate(
+          _UnreadableConsentStore(prefs),
+        );
+        for (final purpose in RemoteProcessingPurpose.values) {
+          expect(await gate.isPurposePermittedNow(purpose), isFalse);
+        }
+      },
+    );
   });
 }

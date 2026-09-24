@@ -34,7 +34,10 @@ abstract final class TranscriptCorrection {
 /// Bottom sheet for correcting an existing saved transcript.
 class CorrectTranscriptSheet extends StatefulWidget {
   const CorrectTranscriptSheet({
-    required this.entry, required this.source, required this.entryCount, super.key,
+    required this.entry,
+    required this.source,
+    required this.entryCount,
+    super.key,
     this.initialText,
   });
 

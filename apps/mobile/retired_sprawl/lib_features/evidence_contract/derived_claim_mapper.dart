@@ -64,10 +64,10 @@ abstract final class DerivedClaimMapper {
         evidenceRefs: refs,
         hasExplicitComparison: refs.length >= 2,
       ),
-      DerivedClaimKind.savedContent => EvidenceEligibilityPolicy
-          .evaluateSavedContentOnly(
-        EvidenceEligibilityPolicy.admittedMomentCount(refs),
-      ),
+      DerivedClaimKind.savedContent =>
+        EvidenceEligibilityPolicy.evaluateSavedContentOnly(
+          EvidenceEligibilityPolicy.admittedMomentCount(refs),
+        ),
     };
     return outcome.name;
   }

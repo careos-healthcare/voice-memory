@@ -76,7 +76,9 @@ abstract final class ProMomentTimingAnalytics {
     required String source,
     required String surface,
     required int entryCount,
-    required bool hasTimelineProof, required String feedbackState, String? reason,
+    required bool hasTimelineProof,
+    required String feedbackState,
+    String? reason,
     String? blockedReason,
   }) {
     final props = <String, Object>{

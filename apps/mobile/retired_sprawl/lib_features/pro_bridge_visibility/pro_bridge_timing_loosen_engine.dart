@@ -138,9 +138,7 @@ abstract final class ProBridgeTimingLoosenEngine {
     List<String> beliefEvidencePhrases = const [],
   }) {
     if (entries.length < minEntryCount) {
-      return const ProBridgeTimingLoosenSignals(
-        
-      );
+      return const ProBridgeTimingLoosenSignals();
     }
 
     final anchorExtraction = EvidenceAnchorEngine.build(

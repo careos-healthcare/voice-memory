@@ -15,7 +15,9 @@ import 'dart:async';
 /// Soft Pro teaser after a confirmed capacity loop review — not a hard wall.
 class LoopPaywallTeaserCard extends StatefulWidget {
   const LoopPaywallTeaserCard({
-    required this.shouldShow, required this.entitlements, super.key,
+    required this.shouldShow,
+    required this.entitlements,
+    super.key,
     this.loopModeId,
     this.onDismissed,
   });

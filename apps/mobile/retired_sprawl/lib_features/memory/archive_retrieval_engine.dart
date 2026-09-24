@@ -1,8 +1,11 @@
-import 'package:archiveme_mobile/features/memory/archive_retrieval_policy.dart' show ArchiveRetrievalPolicy;
+import 'package:archiveme_mobile/features/memory/archive_retrieval_policy.dart'
+    show ArchiveRetrievalPolicy;
 import 'package:archiveme_mobile/features/memory/archive_retrieval_score.dart';
-import 'package:archiveme_mobile/features/memory/memory_scope_policy.dart' show MemoryScopePolicy;
+import 'package:archiveme_mobile/features/memory/memory_scope_policy.dart'
+    show MemoryScopePolicy;
 import 'package:archiveme_mobile/features/pressure_retention/pressure_check_in_record.dart';
-import 'package:archiveme_mobile/features/recording/recording_dependencies.dart' show MemoryScopePolicy;
+import 'package:archiveme_mobile/features/recording/recording_dependencies.dart'
+    show MemoryScopePolicy;
 
 /// Pure, deterministic retrieval scoring over already-eligible archive
 /// records. No AI calls, no backend search — only decay-aware recency,

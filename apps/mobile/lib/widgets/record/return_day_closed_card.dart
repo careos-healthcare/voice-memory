@@ -7,7 +7,11 @@ import 'package:flutter/material.dart';
 /// not bury the user under a wall of cards.
 class ReturnDayClosedCard extends StatelessWidget {
   const ReturnDayClosedCard({
-    required this.resultHeadline, required this.usefulLine, required this.nextCheck, required this.onDone, super.key,
+    required this.resultHeadline,
+    required this.usefulLine,
+    required this.nextCheck,
+    required this.onDone,
+    super.key,
     this.onRecordAnother,
   });
 

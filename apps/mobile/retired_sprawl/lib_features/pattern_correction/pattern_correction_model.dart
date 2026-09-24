@@ -25,7 +25,11 @@ class PatternCorrectionContext {
   const PatternCorrectionContext({
     required this.source,
     required this.entryCount,
-    required this.canRenamePattern, required this.canCorrectTranscript, required this.canRemoveFromPattern, required this.canDeleteMoment, this.patternKey,
+    required this.canRenamePattern,
+    required this.canCorrectTranscript,
+    required this.canRemoveFromPattern,
+    required this.canDeleteMoment,
+    this.patternKey,
     this.patternLabel,
     this.latestEntryId,
     this.onMomentChanged,

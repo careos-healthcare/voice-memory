@@ -13,7 +13,9 @@ import 'package:intl/intl.dart';
 /// Expanding in-card drawer for timestamped fact-ledger quotes.
 class InlineEvidenceDrawerWidget extends StatelessWidget {
   const InlineEvidenceDrawerWidget({
-    required this.quotes, required this.highlightTerms, super.key,
+    required this.quotes,
+    required this.highlightTerms,
+    super.key,
     this.onAgree,
     this.onDisagree,
     this.onCorrect,

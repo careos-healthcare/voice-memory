@@ -19,7 +19,9 @@ import 'package:flutter/material.dart';
 /// never any query text.
 class ArchiveFilterChips extends StatelessWidget {
   const ArchiveFilterChips({
-    required this.query, required this.onChanged, super.key,
+    required this.query,
+    required this.onChanged,
+    super.key,
     this.availableContextTags = const [],
     this.availableCollections = const [],
     this.availableThreads = const [],

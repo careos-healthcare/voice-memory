@@ -133,7 +133,8 @@ abstract final class EvidenceEligibilityPolicy {
   /// Admission-time source minimums shared with proof admission.
   static int admissionSourceMinimumFor(ProofClaimKind kind) =>
       EvidenceEligibilityPolicyConfig.admissionSourceMinimums[kind.name] ??
-      EvidenceEligibilityPolicyConfig.admissionSourceMinimums['mainObservation']!;
+      EvidenceEligibilityPolicyConfig
+          .admissionSourceMinimums['mainObservation']!;
 
   static String? admissionFailureFor({
     required ProofClaimKind kind,

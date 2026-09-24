@@ -81,8 +81,9 @@ class VadStreamingService {
 
     _pcmSubscription = pcmStream.listen(
       (chunk) {
-        _pcmProcessingChain =
-            _pcmProcessingChain.then((_) => _handlePcmChunk(chunk));
+        _pcmProcessingChain = _pcmProcessingChain.then(
+          (_) => _handlePcmChunk(chunk),
+        );
       },
       onError: (Object error, StackTrace stackTrace) {
         AppLogger.debug('VAD pcm stream error: $error');
@@ -136,7 +137,11 @@ class VadStreamingService {
     if (_state == VadStreamState.idle) return;
 
     final frameBytes = _config.frameSampleCount * 2;
-    for (var offset = 0; offset + frameBytes <= chunk.length; offset += frameBytes) {
+    for (
+      var offset = 0;
+      offset + frameBytes <= chunk.length;
+      offset += frameBytes
+    ) {
       final frame = Uint8List.sublistView(chunk, offset, offset + frameBytes);
       final speech = await _classifyPcmFrame(frame);
       await _advanceState(isSpeech: speech, pcmFrame: frame);
@@ -162,11 +167,12 @@ class VadStreamingService {
       floats[i] = sample / 32768.0;
     }
     final result = await _inference.classifyFrame(floats);
-    return result ?? WebRtcVadEngine.isSpeechBytes(
-      frame,
-      sampleRateHz: _config.sampleRateHz,
-      aggressiveness: _config.aggressiveness,
-    );
+    return result ??
+        WebRtcVadEngine.isSpeechBytes(
+          frame,
+          sampleRateHz: _config.sampleRateHz,
+          aggressiveness: _config.aggressiveness,
+        );
   }
 
   Future<void> _advanceState({
@@ -212,7 +218,8 @@ class VadStreamingService {
   void _bufferPreSpeech(Uint8List frame) {
     _preSpeechChunks.add(Uint8List.fromList(frame));
     _preSpeechBufferBytes += frame.length;
-    final maxBytes = (_config.preSpeechPaddingMs / _config.frameDurationMs).ceil() *
+    final maxBytes =
+        (_config.preSpeechPaddingMs / _config.frameDurationMs).ceil() *
         frame.length;
     while (_preSpeechBufferBytes > maxBytes && _preSpeechChunks.isNotEmpty) {
       final removed = _preSpeechChunks.removeAt(0);

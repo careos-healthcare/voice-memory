@@ -10,14 +10,17 @@ void main() {
     expect(RecoveryLens.coldStartSubtitle, contains('Neutral mirror'));
   });
 
-  test('system prompt injection prohibits clinical and therapeutic language', () {
-    const injection = RecoveryLens.systemPromptInjection;
-    expect(injection, contains('RECOVERY / SOBRIETY LENS'));
-    expect(injection, contains('STRICT PROHIBITIONS'));
-    expect(injection, contains('clinical advice'));
-    expect(injection, contains('therapeutic directives'));
-    expect(injection, contains('rationalizations'));
-  });
+  test(
+    'system prompt injection prohibits clinical and therapeutic language',
+    () {
+      const injection = RecoveryLens.systemPromptInjection;
+      expect(injection, contains('RECOVERY / SOBRIETY LENS'));
+      expect(injection, contains('STRICT PROHIBITIONS'));
+      expect(injection, contains('clinical advice'));
+      expect(injection, contains('therapeutic directives'));
+      expect(injection, contains('rationalizations'));
+    },
+  );
 
   test('matches recovery lens only', () {
     expect(RecoveryLens.matches(LifeStageLens.recovery), isTrue);
@@ -26,9 +29,13 @@ void main() {
 
   test('suppression multiplier scales negative history counts', () {
     expect(RecoveryLens.scaleSuppressionCount(0), 0);
-    expect(RecoveryLens.scaleSuppressionCount(1),
-        RecoveryLens.suppressionHistoryMultiplier);
-    expect(RecoveryLens.scaleSuppressionCount(2),
-        2 * RecoveryLens.suppressionHistoryMultiplier);
+    expect(
+      RecoveryLens.scaleSuppressionCount(1),
+      RecoveryLens.suppressionHistoryMultiplier,
+    );
+    expect(
+      RecoveryLens.scaleSuppressionCount(2),
+      2 * RecoveryLens.suppressionHistoryMultiplier,
+    );
   });
 }

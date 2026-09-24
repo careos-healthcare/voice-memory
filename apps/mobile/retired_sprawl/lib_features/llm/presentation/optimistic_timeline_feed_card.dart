@@ -23,9 +23,7 @@ class OptimisticTimelineFeedCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final date = DateFormat.yMMMMd()
-        .add_jm()
-        .format(state.createdAt.toLocal());
+    final date = DateFormat.yMMMMd().add_jm().format(state.createdAt.toLocal());
 
     return Semantics(
       button: onTap != null,
@@ -119,25 +117,23 @@ class _AnalysisSection extends StatelessWidget {
         AnimatedSwitcher(
           duration: const Duration(milliseconds: 220),
           child: switch (state.status) {
-            LlmAnalysisStatus.pendingAnalysis =>
-              _PendingAnalysisBody(key: ValueKey(state.captureId)),
+            LlmAnalysisStatus.pendingAnalysis => _PendingAnalysisBody(
+              key: ValueKey(state.captureId),
+            ),
             LlmAnalysisStatus.processing ||
-            LlmAnalysisStatus.streaming =>
-              _StreamingAnalysisBody(
-                key: ValueKey('${state.captureId}_stream'),
-                state: state,
-                tokenStream: tokenStream,
-              ),
-            LlmAnalysisStatus.completed =>
-              _CompletedAnalysisBody(
-                key: ValueKey('${state.captureId}_done'),
-                state: state,
-              ),
-            LlmAnalysisStatus.error =>
-              _ErrorAnalysisBody(
-                key: ValueKey('${state.captureId}_error'),
-                message: state.errorMessage,
-              ),
+            LlmAnalysisStatus.streaming => _StreamingAnalysisBody(
+              key: ValueKey('${state.captureId}_stream'),
+              state: state,
+              tokenStream: tokenStream,
+            ),
+            LlmAnalysisStatus.completed => _CompletedAnalysisBody(
+              key: ValueKey('${state.captureId}_done'),
+              state: state,
+            ),
+            LlmAnalysisStatus.error => _ErrorAnalysisBody(
+              key: ValueKey('${state.captureId}_error'),
+              message: state.errorMessage,
+            ),
           },
         ),
       ],

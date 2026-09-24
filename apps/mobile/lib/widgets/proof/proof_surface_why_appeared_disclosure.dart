@@ -7,7 +7,9 @@ import 'package:flutter/material.dart';
 /// Collapsed-by-default one-line explainability disclosure for proof cards.
 class ProofSurfaceWhyAppearedDisclosure extends StatefulWidget {
   const ProofSurfaceWhyAppearedDisclosure({
-    required this.body, required this.surfaceKey, super.key,
+    required this.body,
+    required this.surfaceKey,
+    super.key,
     this.expanded,
     this.onExpandedChanged,
   });

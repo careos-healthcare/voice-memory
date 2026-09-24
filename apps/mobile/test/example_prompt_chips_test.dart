@@ -43,17 +43,21 @@ List<PressureCheckInRecord> _workThread3() => [
 void main() {
   group('ExamplePromptChips', () {
     testWidgets('renders section title and all prompts', (tester) async {
-      await tester.pumpWidget(withAppProviderScope(MaterialApp(
-          theme: AppTheme.light(),
-          home: Scaffold(
-            body: ExamplePromptChips(
-              recordingCount: 0,
-              firstArchiveMilestoneCompleted: false,
-              onPromptSelected: (_) {},
-              surface: 'test',
+      await tester.pumpWidget(
+        withAppProviderScope(
+          MaterialApp(
+            theme: AppTheme.light(),
+            home: Scaffold(
+              body: ExamplePromptChips(
+                recordingCount: 0,
+                firstArchiveMilestoneCompleted: false,
+                onPromptSelected: (_) {},
+                surface: 'test',
+              ),
             ),
           ),
-        )));
+        ),
+      );
 
       expect(find.text(ExamplePromptCatalog.sectionTitle), findsOneWidget);
       for (final prompt in ExamplePromptCatalog.prompts) {
@@ -67,17 +71,21 @@ void main() {
 
     testWidgets('tap invokes callback with prompt text', (tester) async {
       String? tapped;
-      await tester.pumpWidget(withAppProviderScope(MaterialApp(
-          theme: AppTheme.light(),
-          home: Scaffold(
-            body: ExamplePromptChips(
-              recordingCount: 1,
-              firstArchiveMilestoneCompleted: false,
-              onPromptSelected: (p) => tapped = p,
-              surface: 'test',
+      await tester.pumpWidget(
+        withAppProviderScope(
+          MaterialApp(
+            theme: AppTheme.light(),
+            home: Scaffold(
+              body: ExamplePromptChips(
+                recordingCount: 1,
+                firstArchiveMilestoneCompleted: false,
+                onPromptSelected: (p) => tapped = p,
+                surface: 'test',
+              ),
             ),
           ),
-        )));
+        ),
+      );
 
       await tester.tap(find.text(ExamplePromptCatalog.prompts.first));
       await tester.pump();
@@ -87,17 +95,21 @@ void main() {
     testWidgets('hides chips after threshold and shows continue copy', (
       tester,
     ) async {
-      await tester.pumpWidget(withAppProviderScope(MaterialApp(
-          theme: AppTheme.light(),
-          home: Scaffold(
-            body: ExamplePromptChips(
-              recordingCount: 5,
-              firstArchiveMilestoneCompleted: false,
-              onPromptSelected: (_) {},
-              surface: 'test',
+      await tester.pumpWidget(
+        withAppProviderScope(
+          MaterialApp(
+            theme: AppTheme.light(),
+            home: Scaffold(
+              body: ExamplePromptChips(
+                recordingCount: 5,
+                firstArchiveMilestoneCompleted: false,
+                onPromptSelected: (_) {},
+                surface: 'test',
+              ),
             ),
           ),
-        )));
+        ),
+      );
 
       expect(find.text(ExamplePromptCatalog.sectionTitle), findsNothing);
       expect(
@@ -109,17 +121,21 @@ void main() {
     testWidgets('chips have accessible conversation starter labels', (
       tester,
     ) async {
-      await tester.pumpWidget(withAppProviderScope(MaterialApp(
-          theme: AppTheme.light(),
-          home: Scaffold(
-            body: ExamplePromptChips(
-              recordingCount: 0,
-              firstArchiveMilestoneCompleted: false,
-              onPromptSelected: (_) {},
-              surface: 'test',
+      await tester.pumpWidget(
+        withAppProviderScope(
+          MaterialApp(
+            theme: AppTheme.light(),
+            home: Scaffold(
+              body: ExamplePromptChips(
+                recordingCount: 0,
+                firstArchiveMilestoneCompleted: false,
+                onPromptSelected: (_) {},
+                surface: 'test',
+              ),
             ),
           ),
-        )));
+        ),
+      );
 
       final chipSemantics = tester.widgetList<Semantics>(
         find.byWidgetPredicate(
@@ -180,16 +196,22 @@ void main() {
       await tester.binding.setSurfaceSize(const Size(390, 3000));
       addTearDown(() => tester.binding.setSurfaceSize(null));
 
-      await tester.pumpWidget(withAppProviderScope(MaterialApp(
-          theme: AppTheme.light(),
-          home: Scaffold(
-            body: RecordScreen(
-              pressureCheckInStore: MemoryPressureCheckInStore(_workThread3()),
-              suggestionAttributionStore: MemorySuggestionAttributionStore(),
-              entitlementReader: FakeArchiveEntitlementReader(pro: false),
+      await tester.pumpWidget(
+        withAppProviderScope(
+          MaterialApp(
+            theme: AppTheme.light(),
+            home: Scaffold(
+              body: RecordScreen(
+                pressureCheckInStore: MemoryPressureCheckInStore(
+                  _workThread3(),
+                ),
+                suggestionAttributionStore: MemorySuggestionAttributionStore(),
+                entitlementReader: FakeArchiveEntitlementReader(pro: false),
+              ),
             ),
           ),
-        )));
+        ),
+      );
       await tester.pump();
       for (var i = 0; i < 20; i++) {
         await tester.pump(const Duration(milliseconds: 100));

@@ -10,16 +10,18 @@ abstract final class LocalReflectionRagDriftQueries {
     JournalDatabase db, {
     int limit = 32,
   }) async {
-    final rows = await db.customSelect(
-      '''
+    final rows = await db
+        .customSelect(
+          '''
       SELECT entry_id, updated_at
       FROM reflection_embeddings
       ORDER BY updated_at DESC
       LIMIT ?
       ''',
-      variables: [Variable<int>(limit)],
-      readsFrom: {db.reflectionEmbeddings},
-    ).get();
+          variables: [Variable<int>(limit)],
+          readsFrom: {db.reflectionEmbeddings},
+        )
+        .get();
 
     return rows
         .map((row) {
@@ -40,9 +42,9 @@ abstract final class LocalReflectionRagDriftQueries {
 
   static Future<int> countIndexedReflections(JournalDatabase db) async {
     final count = db.reflectionEmbeddings.entryId.count();
-    final row = await (db.selectOnly(db.reflectionEmbeddings)
-          ..addColumns([count]))
-        .getSingle();
+    final row = await (db.selectOnly(
+      db.reflectionEmbeddings,
+    )..addColumns([count])).getSingle();
     return row.read(count) ?? 0;
   }
 }

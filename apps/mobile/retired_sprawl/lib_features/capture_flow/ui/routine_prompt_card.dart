@@ -20,8 +20,9 @@ class RoutinePromptCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final helperStyle = ArchiveMobileTypography.responsiveHelper(context)
-        .copyWith(color: AppColors.textSecondary, height: 1.45);
+    final helperStyle = ArchiveMobileTypography.responsiveHelper(
+      context,
+    ).copyWith(color: AppColors.textSecondary, height: 1.45);
 
     return Container(
       key: const Key('routine_prompt_card'),
@@ -56,8 +57,9 @@ class RoutinePromptCard extends StatelessWidget {
           Text(
             prompt.primaryPrompt,
             key: const Key('routine_prompt_primary'),
-            style: ArchiveMobileTypography.responsiveSectionTitle(context)
-                .copyWith(fontSize: 18, height: 1.35),
+            style: ArchiveMobileTypography.responsiveSectionTitle(
+              context,
+            ).copyWith(fontSize: 18, height: 1.35),
           ),
           if (prompt.supportingPrompts.isNotEmpty) ...[
             const SizedBox(height: AppSpacing.sm),

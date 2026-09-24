@@ -8,7 +8,9 @@ abstract final class UniversalExportMarkdown {
     final buffer = StringBuffer()
       ..writeln('---')
       ..writeln('id: ${_quote(entry.id)}')
-      ..writeln('createdAt: ${_quote(entry.createdAt.toUtc().toIso8601String())}')
+      ..writeln(
+        'createdAt: ${_quote(entry.createdAt.toUtc().toIso8601String())}',
+      )
       ..writeln(
         'updatedAt: ${_quote((entry.updatedAt ?? entry.createdAt).toUtc().toIso8601String())}',
       );
@@ -41,7 +43,9 @@ abstract final class UniversalExportMarkdown {
     return jsonEncode({
       'entryId': entry.id,
       'createdAt': entry.createdAt.toUtc().toIso8601String(),
-      'updatedAt': (entry.updatedAt ?? entry.createdAt).toUtc().toIso8601String(),
+      'updatedAt': (entry.updatedAt ?? entry.createdAt)
+          .toUtc()
+          .toIso8601String(),
       'location': entry.location,
       'tags': entry.tags,
       'bytes': bytes,
@@ -68,7 +72,9 @@ abstract final class UniversalExportMarkdown {
   }
 
   static String _yamlKey(String key) {
-    return RegExp(r'^[A-Za-z_][A-Za-z0-9_]*$').hasMatch(key) ? key : _quote(key);
+    return RegExp(r'^[A-Za-z_][A-Za-z0-9_]*$').hasMatch(key)
+        ? key
+        : _quote(key);
   }
 
   static String _yamlValue(Object? value) {

@@ -10,7 +10,9 @@ import 'dart:async';
 /// One recording excerpt in the evidence trail sheet.
 class EvidenceSourceCard extends StatelessWidget {
   const EvidenceSourceCard({
-    required this.source, required this.analyticsSurface, super.key,
+    required this.source,
+    required this.analyticsSurface,
+    super.key,
   });
 
   final EvidenceTrailSource source;

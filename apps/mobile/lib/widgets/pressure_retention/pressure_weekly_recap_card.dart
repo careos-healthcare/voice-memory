@@ -12,7 +12,8 @@ import 'package:flutter/material.dart';
 /// "where it repeats" insight locked). Pro users see the full recap.
 class PressureWeeklyRecapCard extends StatelessWidget {
   const PressureWeeklyRecapCard({
-    required this.recap, super.key,
+    required this.recap,
+    super.key,
     this.locked = false,
     this.entryCount = PressureInsightsCopy.minEntriesForLoopLanguage,
   });

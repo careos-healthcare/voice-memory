@@ -56,7 +56,9 @@ abstract class JournalSyncMetadata with _$JournalSyncMetadata {
     final revision = JsonConverters.nullableInt(json['revision']);
     final changeId = JsonConverters.nullableString(json['changeId']);
     return JournalSyncMetadata(
-      syncStatus: _parseSync(JsonConverters.nullableString(json['_syncStatus'])),
+      syncStatus: _parseSync(
+        JsonConverters.nullableString(json['_syncStatus']),
+      ),
       updatedAt: DateTime.tryParse(
         JsonConverters.stringOrEmpty(json['updatedAt']),
       ),
@@ -145,13 +147,13 @@ abstract class JournalSyncMetadata with _$JournalSyncMetadata {
 
   @override
   int get hashCode => Object.hash(
-        syncStatus,
-        updatedAt,
-        revision,
-        changeId,
-        deletedAt,
-        schemaVersion,
-      );
+    syncStatus,
+    updatedAt,
+    revision,
+    changeId,
+    deletedAt,
+    schemaVersion,
+  );
 }
 
 /// Deterministic id generation used only for legacy-entry migration.

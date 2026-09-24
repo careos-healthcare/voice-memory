@@ -74,7 +74,9 @@ void main() {
   test('zip contains markdown, archive_me.db, and audio sidecars', () async {
     final zip = await service.export(request);
     final decoded = ZipDecoder().decodeBytes(await zip.readAsBytes());
-    final markdown = utf8.decode(decoded.findFile('entries/moment-1.md')!.content);
+    final markdown = utf8.decode(
+      decoded.findFile('entries/moment-1.md')!.content,
+    );
     expect(markdown, contains('createdAt: "2026-09-23T10:00:00.000Z"'));
     expect(markdown, contains('- "career"'));
     expect(markdown, contains('location: "Banstead"'));
@@ -82,9 +84,11 @@ void main() {
     expect(markdown, contains('Anxious about the Monday review.'));
     expect(decoded.findFile('archive_me.db')!.content, [1, 2, 3, 4]);
     expect(decoded.findFile('audio/moment-1.wav')!.content.length, 32);
-    final sidecar = jsonDecode(
-      utf8.decode(decoded.findFile('audio/moment-1.json')!.content),
-    ) as Map<String, dynamic>;
+    final sidecar =
+        jsonDecode(
+              utf8.decode(decoded.findFile('audio/moment-1.json')!.content),
+            )
+            as Map<String, dynamic>;
     expect(sidecar['format'], 'wav');
     expect(sidecar['location'], 'Banstead');
     expect(decoded.findFile('audio/moment-2.mp3'), isNull);
@@ -96,7 +100,12 @@ void main() {
       service.export(request, cancel: token),
       throwsA(isA<ExecutionCancelledException>()),
     );
-    expect(File('${request.outputDirectory.path}/archive_me_export.zip').existsSync(), isFalse);
+    expect(
+      File(
+        '${request.outputDirectory.path}/archive_me_export.zip',
+      ).existsSync(),
+      isFalse,
+    );
   });
 
   test('reads tags and location from journal rows', () async {
@@ -176,7 +185,9 @@ void main() {
     await tester.pump();
 
     expect(
-      File('${request.outputDirectory.path}/archive_me_export.zip').existsSync(),
+      File(
+        '${request.outputDirectory.path}/archive_me_export.zip',
+      ).existsSync(),
       isTrue,
     );
   });

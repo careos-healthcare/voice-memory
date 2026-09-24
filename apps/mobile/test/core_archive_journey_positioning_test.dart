@@ -17,23 +17,24 @@ import 'package:archiveme_mobile/features/surface_priority/surface_priority_mode
 import 'package:archiveme_mobile/features/value_prop_ranking_diagnostic/value_prop_ranking_diagnostic.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-BetaRepairLabVisibilityInput _repairInput() => const BetaRepairLabVisibilityInput(
-  mode: BetaRepairLabMode.evidenceTrailTimelineClarity,
-  entryCount: 4,
-  source: 'test',
-  isPro: false,
-  isRecording: false,
-  isDegradedTranscriptState: false,
-  whatChangedQuestionActive: false,
-  patternReviewInboxHasActiveItems: false,
-  hasTimelineProofVisible: true,
-  hasConfirmedRepeat: true,
-  confidenceLevel: ProofConfidenceLevel.watchOnly,
-  hasUsefulProofFeedback: false,
-  feedbackType: null,
-  isNegativeFeedback: false,
-  betaMissionEnabled: true,
-);
+BetaRepairLabVisibilityInput _repairInput() =>
+    const BetaRepairLabVisibilityInput(
+      mode: BetaRepairLabMode.evidenceTrailTimelineClarity,
+      entryCount: 4,
+      source: 'test',
+      isPro: false,
+      isRecording: false,
+      isDegradedTranscriptState: false,
+      whatChangedQuestionActive: false,
+      patternReviewInboxHasActiveItems: false,
+      hasTimelineProofVisible: true,
+      hasConfirmedRepeat: true,
+      confidenceLevel: ProofConfidenceLevel.watchOnly,
+      hasUsefulProofFeedback: false,
+      feedbackType: null,
+      isNegativeFeedback: false,
+      betaMissionEnabled: true,
+    );
 
 void main() {
   group('CoreArchiveJourney steps', () {

@@ -137,8 +137,9 @@ class CaptureFlowSnapshot {
       stageLabel: clearStage ? null : (stageLabel ?? this.stageLabel),
       errorMessage: clearError ? null : (errorMessage ?? this.errorMessage),
       savedEntry: clearSaved ? null : (savedEntry ?? this.savedEntry),
-      pipelineResult:
-          clearPipeline ? null : (pipelineResult ?? this.pipelineResult),
+      pipelineResult: clearPipeline
+          ? null
+          : (pipelineResult ?? this.pipelineResult),
       entryCount: entryCount ?? this.entryCount,
       hasLocalDraft: hasLocalDraft ?? this.hasLocalDraft,
       hasLocalSave: hasLocalSave ?? this.hasLocalSave,
@@ -148,8 +149,9 @@ class CaptureFlowSnapshot {
       attachToEntryId: attachToEntryId ?? this.attachToEntryId,
       recoveryKind: recoveryKind ?? this.recoveryKind,
       routineKind: routineKind ?? this.routineKind,
-      routinePrompt:
-          clearRoutinePrompt ? null : (routinePrompt ?? this.routinePrompt),
+      routinePrompt: clearRoutinePrompt
+          ? null
+          : (routinePrompt ?? this.routinePrompt),
       routinePromptDismissed:
           routinePromptDismissed ?? this.routinePromptDismissed,
       routinePromptLoading: routinePromptLoading ?? this.routinePromptLoading,

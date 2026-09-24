@@ -60,22 +60,19 @@ class BlindSpotInsightEngine {
     if (pct < 25) return null;
     if (positiveMentions >= mentions.length ~/ 3) return null;
 
-    final evidence = mentions
-        .take(5)
-        .map(
-          (e) {
-            final rawQuote = archiveQuotableStatementText(e) ?? '';
-            return InsightEvidenceLine(
-              entryId: e.id,
-              quote: FactLedgerCitationService.resolve(
-                entryId: e.id,
-                fallback: rawQuote,
-              ),
-              recordedAt: e.createdAt,
-            );
-          },
-        )
-        .toList();
+    final evidence = mentions.take(5).map(
+      (e) {
+        final rawQuote = archiveQuotableStatementText(e) ?? '';
+        return InsightEvidenceLine(
+          entryId: e.id,
+          quote: FactLedgerCitationService.resolve(
+            entryId: e.id,
+            fallback: rawQuote,
+          ),
+          recordedAt: e.createdAt,
+        );
+      },
+    ).toList();
 
     final title = _topicLabel(topic);
     final summary =
@@ -126,22 +123,19 @@ class BlindSpotInsightEngine {
       return const [];
     }
 
-    final evidence = achievementHits
-        .take(4)
-        .map(
-          (e) {
-            final rawQuote = archiveQuotableStatementText(e) ?? '';
-            return InsightEvidenceLine(
-              entryId: e.id,
-              quote: FactLedgerCitationService.resolve(
-                entryId: e.id,
-                fallback: rawQuote,
-              ),
-              recordedAt: e.createdAt,
-            );
-          },
-        )
-        .toList();
+    final evidence = achievementHits.take(4).map(
+      (e) {
+        final rawQuote = archiveQuotableStatementText(e) ?? '';
+        return InsightEvidenceLine(
+          entryId: e.id,
+          quote: FactLedgerCitationService.resolve(
+            entryId: e.id,
+            fallback: rawQuote,
+          ),
+          recordedAt: e.createdAt,
+        );
+      },
+    ).toList();
 
     return [
       BlindSpotInsight(

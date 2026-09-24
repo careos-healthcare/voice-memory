@@ -10,7 +10,9 @@ import 'package:go_router/go_router.dart';
 /// Compact card summarizing archive changes since last visit — no notifications.
 class ArchiveReturnChangesCard extends StatelessWidget {
   const ArchiveReturnChangesCard({
-    required this.result, required this.onMarkSeen, super.key,
+    required this.result,
+    required this.onMarkSeen,
+    super.key,
   });
 
   final ArchiveReturnChangesResult result;

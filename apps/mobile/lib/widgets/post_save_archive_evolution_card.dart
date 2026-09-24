@@ -10,7 +10,8 @@ import 'package:go_router/go_router.dart';
 /// Record screen — archive updating, then one evolution line with tap to view.
 class PostSaveArchiveEvolutionCard extends StatelessWidget {
   const PostSaveArchiveEvolutionCard({
-    required this.loading, super.key,
+    required this.loading,
+    super.key,
     this.evolution,
   });
 

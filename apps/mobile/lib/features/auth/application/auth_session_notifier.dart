@@ -1,10 +1,12 @@
-import 'package:archiveme_mobile/audio/recording_service.dart' show RecordingService;
+import 'package:archiveme_mobile/audio/recording_service.dart'
+    show RecordingService;
 import 'package:archiveme_mobile/auth/account_auth.dart';
 import 'package:archiveme_mobile/core/di/network_providers.dart';
 import 'package:archiveme_mobile/core/network/api_failure.dart';
 import 'package:archiveme_mobile/data/repositories/auth_repository.dart';
 import 'package:archiveme_mobile/features/auth/application/auth_session_state.dart';
-import 'package:archiveme_mobile/features/recording/recording_dependencies.dart' show RecordingService;
+import 'package:archiveme_mobile/features/recording/recording_dependencies.dart'
+    show RecordingService;
 import 'package:archiveme_mobile/models/session.dart';
 import 'package:archiveme_mobile/services/activation_funnel_analytics.dart';
 import 'package:archiveme_mobile/security/release_logger.dart';

@@ -28,17 +28,23 @@ void main() {
       await db.close();
     });
 
-    test('insertPendingOptimistic writes pending_analysis within budget', () async {
-      final row = await store.insertPendingOptimistic(
-        id: 'capture-1',
-        filePath: '/tmp/capture-1.m4a',
-        createdAt: DateTime.utc(2026, 1, 1),
-      );
+    test(
+      'insertPendingOptimistic writes pending_analysis within budget',
+      () async {
+        final row = await store.insertPendingOptimistic(
+          id: 'capture-1',
+          filePath: '/tmp/capture-1.m4a',
+          createdAt: DateTime.utc(2026, 1, 1),
+        );
 
-      expect(row.status, Migration017CaptureAudioMetadata.statusPendingAnalysis);
-      final loaded = await store.findById('capture-1');
-      expect(loaded?.filePath, '/tmp/capture-1.m4a');
-    });
+        expect(
+          row.status,
+          Migration017CaptureAudioMetadata.statusPendingAnalysis,
+        );
+        final loaded = await store.findById('capture-1');
+        expect(loaded?.filePath, '/tmp/capture-1.m4a');
+      },
+    );
 
     test('completeProcessing deletes file and marks completed', () async {
       final tempDir = await Directory.systemTemp.createTemp('capture-meta');

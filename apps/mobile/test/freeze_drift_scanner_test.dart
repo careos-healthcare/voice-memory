@@ -15,7 +15,8 @@ import 'package:archiveme_mobile/features/surface_priority/surface_priority_mode
 import 'package:flutter_test/flutter_test.dart';
 
 FreezeDriftScannerInput _input({
-  required FreezeDriftCategory category, bool freezeActive = true,
+  required FreezeDriftCategory category,
+  bool freezeActive = true,
   bool fixesFirstJourneyComprehension = false,
   bool fixesCriticalProofTrust = false,
 }) => FreezeDriftScannerInput(

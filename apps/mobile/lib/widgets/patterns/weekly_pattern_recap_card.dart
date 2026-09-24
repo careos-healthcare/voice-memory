@@ -8,7 +8,8 @@ import 'package:flutter/material.dart';
 
 class WeeklyPatternRecapCard extends StatelessWidget {
   const WeeklyPatternRecapCard({
-    required this.recap, super.key,
+    required this.recap,
+    super.key,
     this.onRecordNext,
   });
 

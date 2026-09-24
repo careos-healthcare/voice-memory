@@ -21,7 +21,11 @@ import 'package:flutter/material.dart';
 /// Post-save prove_enough payoff: enoughness, choice vs pressure, stop-cost.
 class ProveEnoughPostRecordPayoff extends StatefulWidget {
   const ProveEnoughPostRecordPayoff({
-    required this.entryId, required this.entry, required this.activeLoop, required this.pattern, super.key,
+    required this.entryId,
+    required this.entry,
+    required this.activeLoop,
+    required this.pattern,
+    super.key,
     this.priorEntries = const [],
     this.feedback = const [],
     this.selectedSignal,

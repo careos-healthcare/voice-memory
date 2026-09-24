@@ -1,4 +1,5 @@
-import 'package:archiveme_mobile/features/pressure_retention/pressure_micro_experiment_store.dart' show PressureMicroExperimentStore;
+import 'package:archiveme_mobile/features/pressure_retention/pressure_micro_experiment_store.dart'
+    show PressureMicroExperimentStore;
 
 import 'package:archiveme_mobile/services/app_services.dart';
 import 'package:archiveme_mobile/storage/mobile_prefs_store.dart';

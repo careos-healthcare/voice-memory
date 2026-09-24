@@ -5,7 +5,8 @@ abstract final class PaywallCtaLiftCopy {
 
   static const String title = RevenueLiftExperimentV2Copy.paywallCtaTitle;
   static const String body = RevenueLiftExperimentV2Copy.paywallCtaBody;
-  static const String supportLine = RevenueLiftExperimentV2Copy.paywallCtaSupportLine;
+  static const String supportLine =
+      RevenueLiftExperimentV2Copy.paywallCtaSupportLine;
   static const String purchaseCtaLine =
       RevenueLiftExperimentV2Copy.paywallPurchaseCtaLine;
 }

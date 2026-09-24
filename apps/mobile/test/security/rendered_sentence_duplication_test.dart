@@ -157,7 +157,10 @@ void main() {
         const MaterialApp(
           home: Scaffold(
             body: Column(
-              children: [Text('Privacy & Security'), Text('Privacy & Security')],
+              children: [
+                Text('Privacy & Security'),
+                Text('Privacy & Security'),
+              ],
             ),
           ),
         ),

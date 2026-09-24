@@ -12,7 +12,8 @@ import 'package:go_router/go_router.dart';
 /// Archive section — contradiction-backed possible belief change.
 class PossibleBeliefChangeSection extends StatelessWidget {
   const PossibleBeliefChangeSection({
-    required this.entries, super.key,
+    required this.entries,
+    super.key,
     this.currentBelief,
   });
 

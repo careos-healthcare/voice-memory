@@ -12,7 +12,9 @@ import 'package:flutter/material.dart';
 /// referral, or security screens.
 class MemoryUsedIndicator extends StatelessWidget {
   const MemoryUsedIndicator({
-    required this.connected, required this.source, super.key,
+    required this.connected,
+    required this.source,
+    super.key,
   });
 
   /// Whether this surface used archive memory (true) or is a fresh,

@@ -8,7 +8,10 @@ void main() {
       expect(FreeTierGate.allowsAudioCapture(offline: offline), isTrue);
       expect(FreeTierGate.allowsTextCapture(offline: offline), isTrue);
       expect(
-        FreeTierGate.allowsCloudBackup(PremiumEntitlement.free, offline: offline),
+        FreeTierGate.allowsCloudBackup(
+          PremiumEntitlement.free,
+          offline: offline,
+        ),
         isFalse,
       );
       expect(

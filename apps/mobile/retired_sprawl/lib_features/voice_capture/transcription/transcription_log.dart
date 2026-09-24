@@ -44,8 +44,9 @@ abstract class TranscriptionLog {
       category: ReleaseLogCategory.transcription,
       fields: {
         'success': true,
-        'transcript_length_bucket':
-            ReleaseLogSanitizer.lengthBucket(transcriptLength),
+        'transcript_length_bucket': ReleaseLogSanitizer.lengthBucket(
+          transcriptLength,
+        ),
       },
     );
   }
@@ -67,8 +68,9 @@ abstract class TranscriptionLog {
       category: ReleaseLogCategory.transcription,
       severity: ReleaseLogSeverity.warn,
       fields: {
-        'transcript_length_bucket':
-            ReleaseLogSanitizer.lengthBucket(transcriptLength),
+        'transcript_length_bucket': ReleaseLogSanitizer.lengthBucket(
+          transcriptLength,
+        ),
         'error_code': ReleaseLogSanitizer.sanitizeReasonCode(reason),
       },
     );

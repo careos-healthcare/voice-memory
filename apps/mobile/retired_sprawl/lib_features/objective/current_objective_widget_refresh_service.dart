@@ -29,7 +29,8 @@ class CurrentObjectiveWidgetRefreshService {
   }) {
     return _instance ??= CurrentObjectiveWidgetRefreshService(
       snapshotStore: snapshotStore ?? CurrentObjectiveSnapshotStore.instance(),
-      bridge: bridge ??
+      bridge:
+          bridge ??
           (V1CapabilityRegistry.nativeExtensions
               ? MethodChannelCurrentObjectiveWidgetBridge()
               : const NoOpCurrentObjectiveWidgetBridge()),
@@ -67,7 +68,8 @@ class CurrentObjectiveWidgetRefreshService {
       final snapshot = await _snapshotStore.loadWidgetSnapshot();
       await _bridge.update(buildWidgetPayload(snapshot));
       await ActivationTracker.trackObjectiveWidgetRefreshSucceeded();
-    } catch (_, stackTrace) { // ignore: silent_catch_audit — widget extension best-effort
+    } catch (_, stackTrace) {
+      // ignore: silent_catch_audit — widget extension best-effort
       await ActivationTracker.trackObjectiveWidgetRefreshFailed();
     }
   }
@@ -83,7 +85,8 @@ class CurrentObjectiveWidgetRefreshService {
       await _snapshotStore.saveWidgetSnapshot(snapshot);
       await _bridge.update(buildWidgetPayload(snapshot));
       await ActivationTracker.trackObjectiveWidgetRefreshSucceeded();
-    } catch (_, stackTrace) { // ignore: silent_catch_audit — widget extension best-effort
+    } catch (_, stackTrace) {
+      // ignore: silent_catch_audit — widget extension best-effort
       await ActivationTracker.trackObjectiveWidgetRefreshFailed();
     }
   }
@@ -97,7 +100,8 @@ class CurrentObjectiveWidgetRefreshService {
         await _bridge.clear();
       }
       await ActivationTracker.trackObjectiveWidgetCleared();
-    } catch (_, stackTrace) { // ignore: silent_catch_audit — widget extension best-effort
+    } catch (_, stackTrace) {
+      // ignore: silent_catch_audit — widget extension best-effort
       await ActivationTracker.trackObjectiveWidgetRefreshFailed();
     }
   }

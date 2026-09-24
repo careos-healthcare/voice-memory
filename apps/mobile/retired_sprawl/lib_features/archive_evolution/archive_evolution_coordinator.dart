@@ -53,7 +53,9 @@ class ArchiveEvolutionCoordinator {
 
   Future<ArchiveEvolution?> _resolve({
     required List<JournalEntry> entries,
-    required MobilePrefsStore prefs, required bool afterRecording, ArchiveStateObjectV3? state,
+    required MobilePrefsStore prefs,
+    required bool afterRecording,
+    ArchiveStateObjectV3? state,
     ArchiveStateSnapshot? snapshotBaseline,
   }) async {
     final store = ArchiveEvolutionStore(prefs);

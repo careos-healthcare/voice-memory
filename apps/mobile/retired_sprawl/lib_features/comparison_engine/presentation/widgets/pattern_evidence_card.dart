@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 
 class PatternEvidenceCard extends StatelessWidget {
   const PatternEvidenceCard({
-    required this.viewState, super.key,
+    required this.viewState,
+    super.key,
     this.onProUpgradeTapped,
   });
 

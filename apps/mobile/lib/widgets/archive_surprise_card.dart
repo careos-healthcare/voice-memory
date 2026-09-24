@@ -16,7 +16,9 @@ import 'dart:async';
 /// Archive home hero — one surprise with Why, Evidence, and Timeline.
 class ArchiveSurpriseCard extends StatefulWidget {
   const ArchiveSurpriseCard({
-    required this.surprise, required this.entries, super.key,
+    required this.surprise,
+    required this.entries,
+    super.key,
     this.onDismissed,
   });
 

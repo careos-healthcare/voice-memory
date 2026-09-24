@@ -9,7 +9,8 @@ import 'package:flutter/material.dart';
 /// Session 3 — archive usefulness card for Patterns / archive surfaces.
 class ThirdSessionArchiveUsefulnessCard extends StatelessWidget {
   const ThirdSessionArchiveUsefulnessCard({
-    required this.usefulness, super.key,
+    required this.usefulness,
+    super.key,
   });
 
   final ThirdSessionArchiveUsefulness usefulness;

@@ -14,11 +14,13 @@ class AmbientMetadataService {
     AmbientActivityReader? activity,
     this.persist,
     DateTime Function()? clock,
-  }) : _geo = geo ??
+  }) : _geo =
+           geo ??
            (V1CapabilityRegistry.location
                ? LocationServiceGeoReader()
                : const DisabledGeoReader()),
-       _forecast = forecast ??
+       _forecast =
+           forecast ??
            (V1CapabilityRegistry.internet
                ? OpenMeteoForecastReader()
                : const DisabledForecastReader()),
@@ -30,7 +32,8 @@ class AmbientMetadataService {
   final AmbientGeoReader _geo;
   final AmbientForecastReader _forecast;
   final AmbientActivityReader _activity;
-  final Future<void> Function(String entryId, AmbientMetadata metadata)? persist;
+  final Future<void> Function(String entryId, AmbientMetadata metadata)?
+  persist;
   final DateTime Function() _clock;
 
   AmbientMetadata? pending;

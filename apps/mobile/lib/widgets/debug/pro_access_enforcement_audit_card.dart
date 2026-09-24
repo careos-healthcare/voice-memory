@@ -12,7 +12,8 @@ import 'package:flutter/material.dart';
 /// Developer-only Pro access enforcement dashboard.
 class ProAccessEnforcementAuditCard extends StatelessWidget {
   const ProAccessEnforcementAuditCard({
-    required this.dashboard, super.key,
+    required this.dashboard,
+    super.key,
     this.storeReadinessBridge,
   });
 

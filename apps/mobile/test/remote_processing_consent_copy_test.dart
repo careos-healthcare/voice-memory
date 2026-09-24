@@ -15,14 +15,10 @@ void main() {
     });
 
     test('onboarding copy matches transcription and reflection data map', () {
-      final transcription =
-          RemoteProcessingDataFlow.purposeFlows[
-            RemoteProcessingPurpose.remoteTranscription
-          ]!;
-      final reflection =
-          RemoteProcessingDataFlow.purposeFlows[
-            RemoteProcessingPurpose.remoteReflection
-          ]!;
+      final transcription = RemoteProcessingDataFlow
+          .purposeFlows[RemoteProcessingPurpose.remoteTranscription]!;
+      final reflection = RemoteProcessingDataFlow
+          .purposeFlows[RemoteProcessingPurpose.remoteReflection]!;
 
       expect(transcription.sendsAudio, isTrue);
       expect(transcription.sendsText, isFalse);

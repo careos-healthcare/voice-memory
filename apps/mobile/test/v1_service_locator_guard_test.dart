@@ -5,7 +5,8 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   test('V1 critical paths do not access AppServices.instance', () {
-    final mobileRoot = File('lib/core/di/v1_critical_path_files.dart').existsSync()
+    final mobileRoot =
+        File('lib/core/di/v1_critical_path_files.dart').existsSync()
         ? Directory.current
         : Directory('apps/mobile');
 

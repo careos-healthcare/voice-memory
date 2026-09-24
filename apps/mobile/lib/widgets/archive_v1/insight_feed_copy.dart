@@ -7,7 +7,8 @@ abstract final class InsightFeedCopy {
     return 'Backed by $count verbatim $noun · Tap to verify';
   }
 
-  static const evidencePillEmpty = 'No cited ledger entries yet · Tap to inspect';
+  static const evidencePillEmpty =
+      'No cited ledger entries yet · Tap to inspect';
   static const drawerEmptyBody =
       'Not enough linked recordings yet. Save another moment with a little more detail.';
   static const agreeLabel = 'Fits';

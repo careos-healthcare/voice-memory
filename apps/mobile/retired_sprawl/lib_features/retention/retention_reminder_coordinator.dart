@@ -27,7 +27,11 @@ abstract class RetentionReminderCoordinator {
         unawaited(ActivationTracker.trackReminderScheduledFromRetention());
       }
     } catch (e, stackTrace) {
-      AppLogger.error('Unhandled error caught', error: e, stackTrace: stackTrace);
+      AppLogger.error(
+        'Unhandled error caught',
+        error: e,
+        stackTrace: stackTrace,
+      );
       // Fail softly when summary or backend is unavailable.
     }
   }

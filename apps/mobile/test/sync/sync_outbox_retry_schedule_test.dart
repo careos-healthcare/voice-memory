@@ -27,7 +27,9 @@ const _blob = SyncBlobPushDto(
 
 class _FailingSyncApiClient implements SyncApiClient {
   @override
-  Future<ApiResult<Map<String, dynamic>>> syncChanges({required int since}) async {
+  Future<ApiResult<Map<String, dynamic>>> syncChanges({
+    required int since,
+  }) async {
     return const ApiSuccess({'changes': []});
   }
 

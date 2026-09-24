@@ -339,7 +339,9 @@ EntryDetailRecordedView entryDetailRecordedView(JournalEntry entry) {
     final isProvisional = entryHasProvisionalTranscript(entry);
     return EntryDetailRecordedView(
       primary: transcript,
-      secondary: isProvisional ? ProvisionalTranscriptCopy.detailFootnote : null,
+      secondary: isProvisional
+          ? ProvisionalTranscriptCopy.detailFootnote
+          : null,
       isProvisionalTranscript: isProvisional,
     );
   }

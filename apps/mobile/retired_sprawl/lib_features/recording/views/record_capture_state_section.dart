@@ -88,8 +88,7 @@ extension RecordCaptureStateSection on _RecordScreenState {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  ConsumerUiCopy
-                      .postSaveInsightRecordThisNext,
+                  ConsumerUiCopy.postSaveInsightRecordThisNext,
                   style: ArchiveMobileTypography.cardLabel(
                     context,
                   ),
@@ -97,10 +96,9 @@ extension RecordCaptureStateSection on _RecordScreenState {
                 const SizedBox(height: 6),
                 Text(
                   _nextEvidencePrompt!,
-                  style:
-                      ArchiveMobileTypography.explanationBody(
-                        context,
-                      ),
+                  style: ArchiveMobileTypography.explanationBody(
+                    context,
+                  ),
                 ),
               ],
             ),
@@ -114,8 +112,7 @@ extension RecordCaptureStateSection on _RecordScreenState {
           const SizedBox(height: 12),
           ActivePatternThreadPromptCard(
             thread: _activePatternThread!,
-            onAddMoment: () =>
-                unawaited(_onRecordPressed(source: 'moment')),
+            onAddMoment: () => unawaited(_onRecordPressed(source: 'moment')),
             onPause: () async {
               await ActivePatternThreadCoordinator.pauseThread();
               if (!mounted) return;
@@ -177,8 +174,7 @@ extension RecordCaptureStateSection on _RecordScreenState {
               await SignalReviewCoordinator.keepWatching(
                 reviewId: _signalReview!.id,
               );
-              final journey =
-                  await SignalJourneyCoordinator.loadActive();
+              final journey = await SignalJourneyCoordinator.loadActive();
               if (journey != null) {
                 unawaited(
                   NextEvidenceReminderService.schedule(
@@ -217,16 +213,14 @@ extension RecordCaptureStateSection on _RecordScreenState {
               );
               unawaited(_loadSignalArchive());
             },
-            onViewPattern: () =>
-                context.go('/archive-belief'),
+            onViewPattern: () => context.go('/archive-belief'),
           ),
         ] else if (ctx.ui == RecordUiState.ready &&
             !ctx.showReturningWatchTargetFocusedUi &&
             ctx.showArchiveProgressCards &&
             _postSavePattern == null &&
             _showRetentionJourneyCards &&
-            _signalArchiveSnapshot?.hasActiveSignal ==
-                true) ...[
+            _signalArchiveSnapshot?.hasActiveSignal == true) ...[
           const SizedBox(height: 12),
           ArchiveWatchingCard(
             snapshot: _signalArchiveSnapshot!,
@@ -241,8 +235,7 @@ extension RecordCaptureStateSection on _RecordScreenState {
           const SizedBox(height: 12),
           TodaysWatchForCard(
             pending: _pendingWatchForToday!,
-            onRecord: () =>
-                unawaited(_onRecordPressed(source: 'moment')),
+            onRecord: () => unawaited(_onRecordPressed(source: 'moment')),
             onSkip: () async {
               await WatchForCoordinator.skipPendingForToday();
               if (!mounted) return;
@@ -270,7 +263,9 @@ extension RecordCaptureStateSection on _RecordScreenState {
                   ).primaryLabel ??
                   OneSmallRecording.recordCtaLabel,
               onRecordThis: (p) {
-                unawaited(ActivationTracker.trackActivationStarterPromptSelected());
+                unawaited(
+                  ActivationTracker.trackActivationStarterPromptSelected(),
+                );
                 setState(() => _selectedPromptLine = p);
                 unawaited(
                   _onRecordPressed(
@@ -292,7 +287,9 @@ extension RecordCaptureStateSection on _RecordScreenState {
               selectedPrompt: _selectedPromptLine,
               onSuggestionTap: _onDailySuggestionTapped,
               onSelectPrompt: (p) {
-                unawaited(ActivationTracker.trackActivationStarterPromptSelected());
+                unawaited(
+                  ActivationTracker.trackActivationStarterPromptSelected(),
+                );
                 setState(() => _selectedPromptLine = p);
               },
             ),
@@ -304,7 +301,9 @@ extension RecordCaptureStateSection on _RecordScreenState {
               personalPrompts: _personalReturnPrompts,
               deemphasized: _oneSmallRecording.hasRecording,
               onSelectPrompt: (p) {
-                unawaited(ActivationTracker.trackActivationStarterPromptSelected());
+                unawaited(
+                  ActivationTracker.trackActivationStarterPromptSelected(),
+                );
                 _pendingSuggestionSource = null;
                 _pendingTappedSuggestion = null;
                 setState(() => _selectedPromptLine = p);
@@ -323,8 +322,7 @@ extension RecordCaptureStateSection on _RecordScreenState {
             QuickHelpButton(
               languageCode: _languageCode,
               patternTitle: _activePatternThread?.title,
-              onStartRecording: () =>
-                  _onRecordPressed(source: 'main'),
+              onStartRecording: () => _onRecordPressed(source: 'main'),
             ),
           ],
         ],
@@ -341,107 +339,106 @@ extension RecordCaptureStateSection on _RecordScreenState {
       ],
       const SizedBox(height: 8),
       if (!_usesV1MomentSaveReceipt(ctx)) ...[
-      if (ctx.showCoreValueFeedbackOnRecordPostFirstProof) ...[
-        CoreValueFeedbackCard(
-          source:
-              CoreValueFeedbackSource.recordPostFirstProof,
-          entryCount: ctx.postSaveEntryCount,
-          hasConfirmedRepeat: ctx.postSaveHasConfirmedRepeat,
-          hasFirstProof: ctx.postSaveHasFirstProof,
-          onChanged: () {
-            if (mounted) setState(() {});
-          },
-        ),
-        const SizedBox(height: 16),
-      ],
-      if (ctx.showWhatChangedV2Display &&
-          ctx.whatChangedV2Display != null) ...[
-        WhatChangedV2Card(
-          key: ValueKey(ctx.whatChangedV2Display!.entryId),
-          prompt: ctx.whatChangedV2Display!,
-          source: 'record_post_save',
-          onSomethingHelped: () {
-            if (mounted) setState(() {});
-          },
-          onChanged: () {
-            if (mounted) setState(() {});
-          },
-        ),
-        const SizedBox(height: 16),
-      ],
-      if (ctx.showHelpedTracking && ctx.helpedTrackingPrompt != null) ...[
-        HelpedTrackingCard(
-          key: ValueKey(ctx.helpedTrackingPrompt!.entryId),
-          prompt: ctx.helpedTrackingPrompt!,
-          source: 'record_post_save',
-          onChanged: () {
-            if (mounted) setState(() {});
-          },
-        ),
-        const SizedBox(height: 16),
-      ],
-      if (ctx.showReturnCheckPayoff &&
-          ctx.returnCheckPayoffCandidate != null) ...[
-        ReturnCheckPayoffCard(
-          payoff: ctx.returnCheckPayoffCandidate!,
-          entryCount: ctx.postSaveEntryCount,
-        ),
-        const SizedBox(height: 16),
-      ],
-      if (ctx.showFirstWeekProgressPostSave &&
-          ctx.firstWeekProgressPostSave != null) ...[
-        FirstWeekProgressLine(
-          progress: ctx.firstWeekProgressPostSave!,
-          entryCount: ctx.postSaveEntryCount,
-          surface: 'record_post_save',
-        ),
-        const SizedBox(height: 12),
-      ],
-      if (ctx.showPostSaveCuriosityHook &&
-          _postSaveCuriosityHook != null) ...[
-        ConnectedCuriosityHookCard.fromDomain(
-          hook: _postSaveCuriosityHook!,
-          sourceEntry: _lastSavedEntry,
-          onSubmit: (responseText, {required wasGrounded}) =>
-              _saveCuriosityHookResponse(
-                hook: _postSaveCuriosityHook!,
-                responseText: responseText,
-                wasGrounded: wasGrounded,
-              ),
-        ),
-        const SizedBox(height: 16),
-      ],
-      if (ctx.showComeBackTomorrowV2PostSave &&
-          !ctx.suppressNoisyRepeatPostSaveCards &&
-          !ctx.suppressDegradedTranscriptPostSaveCompetitors &&
-          ctx.comeBackTomorrowV2PostSaveWatch != null) ...[
-        ComeBackTomorrowCard(
-          watch: ctx.comeBackTomorrowV2PostSaveWatch!,
-          entryCount: ctx.postSaveEntryCount,
-        ),
-        const SizedBox(height: 16),
-      ],
-      if (ctx.showReturnTomorrowCuePostSave &&
-          !ctx.suppressNoisyRepeatPostSaveCards &&
-          !ctx.suppressDegradedTranscriptPostSaveCompetitors &&
-          ctx.returnTomorrowCuePostSave != null) ...[
-        ReturnTomorrowCueCard(
-          cue: ctx.returnTomorrowCuePostSave!,
-          entryCount: ctx.postSaveEntryCount,
-          surface: 'record_post_save',
-        ),
-        const SizedBox(height: 16),
-      ],
-      if (ctx.showPostSaveReturnHandoff &&
-          !ctx.suppressNoisyRepeatPostSaveCards &&
-          !ctx.suppressDegradedTranscriptPostSaveCompetitors &&
-          ctx.postSaveReturnHandoffCandidate != null) ...[
-        PostSaveReturnHandoffCard(
-          handoff: ctx.postSaveReturnHandoffCandidate!,
-          entryCount: ctx.postSaveEntryCount,
-        ),
-        const SizedBox(height: 16),
-      ],
+        if (ctx.showCoreValueFeedbackOnRecordPostFirstProof) ...[
+          CoreValueFeedbackCard(
+            source: CoreValueFeedbackSource.recordPostFirstProof,
+            entryCount: ctx.postSaveEntryCount,
+            hasConfirmedRepeat: ctx.postSaveHasConfirmedRepeat,
+            hasFirstProof: ctx.postSaveHasFirstProof,
+            onChanged: () {
+              if (mounted) setState(() {});
+            },
+          ),
+          const SizedBox(height: 16),
+        ],
+        if (ctx.showWhatChangedV2Display &&
+            ctx.whatChangedV2Display != null) ...[
+          WhatChangedV2Card(
+            key: ValueKey(ctx.whatChangedV2Display!.entryId),
+            prompt: ctx.whatChangedV2Display!,
+            source: 'record_post_save',
+            onSomethingHelped: () {
+              if (mounted) setState(() {});
+            },
+            onChanged: () {
+              if (mounted) setState(() {});
+            },
+          ),
+          const SizedBox(height: 16),
+        ],
+        if (ctx.showHelpedTracking && ctx.helpedTrackingPrompt != null) ...[
+          HelpedTrackingCard(
+            key: ValueKey(ctx.helpedTrackingPrompt!.entryId),
+            prompt: ctx.helpedTrackingPrompt!,
+            source: 'record_post_save',
+            onChanged: () {
+              if (mounted) setState(() {});
+            },
+          ),
+          const SizedBox(height: 16),
+        ],
+        if (ctx.showReturnCheckPayoff &&
+            ctx.returnCheckPayoffCandidate != null) ...[
+          ReturnCheckPayoffCard(
+            payoff: ctx.returnCheckPayoffCandidate!,
+            entryCount: ctx.postSaveEntryCount,
+          ),
+          const SizedBox(height: 16),
+        ],
+        if (ctx.showFirstWeekProgressPostSave &&
+            ctx.firstWeekProgressPostSave != null) ...[
+          FirstWeekProgressLine(
+            progress: ctx.firstWeekProgressPostSave!,
+            entryCount: ctx.postSaveEntryCount,
+            surface: 'record_post_save',
+          ),
+          const SizedBox(height: 12),
+        ],
+        if (ctx.showPostSaveCuriosityHook &&
+            _postSaveCuriosityHook != null) ...[
+          ConnectedCuriosityHookCard.fromDomain(
+            hook: _postSaveCuriosityHook!,
+            sourceEntry: _lastSavedEntry,
+            onSubmit: (responseText, {required wasGrounded}) =>
+                _saveCuriosityHookResponse(
+                  hook: _postSaveCuriosityHook!,
+                  responseText: responseText,
+                  wasGrounded: wasGrounded,
+                ),
+          ),
+          const SizedBox(height: 16),
+        ],
+        if (ctx.showComeBackTomorrowV2PostSave &&
+            !ctx.suppressNoisyRepeatPostSaveCards &&
+            !ctx.suppressDegradedTranscriptPostSaveCompetitors &&
+            ctx.comeBackTomorrowV2PostSaveWatch != null) ...[
+          ComeBackTomorrowCard(
+            watch: ctx.comeBackTomorrowV2PostSaveWatch!,
+            entryCount: ctx.postSaveEntryCount,
+          ),
+          const SizedBox(height: 16),
+        ],
+        if (ctx.showReturnTomorrowCuePostSave &&
+            !ctx.suppressNoisyRepeatPostSaveCards &&
+            !ctx.suppressDegradedTranscriptPostSaveCompetitors &&
+            ctx.returnTomorrowCuePostSave != null) ...[
+          ReturnTomorrowCueCard(
+            cue: ctx.returnTomorrowCuePostSave!,
+            entryCount: ctx.postSaveEntryCount,
+            surface: 'record_post_save',
+          ),
+          const SizedBox(height: 16),
+        ],
+        if (ctx.showPostSaveReturnHandoff &&
+            !ctx.suppressNoisyRepeatPostSaveCards &&
+            !ctx.suppressDegradedTranscriptPostSaveCompetitors &&
+            ctx.postSaveReturnHandoffCandidate != null) ...[
+          PostSaveReturnHandoffCard(
+            handoff: ctx.postSaveReturnHandoffCandidate!,
+            entryCount: ctx.postSaveEntryCount,
+          ),
+          const SizedBox(height: 16),
+        ],
       ],
     ];
   }

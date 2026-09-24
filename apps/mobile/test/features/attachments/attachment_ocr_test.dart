@@ -74,29 +74,31 @@ void main() {
       'payload_json': '{}',
     });
 
-    final result = await AttachmentOcrIngestion(
-      processor: LocalOcrProcessor(
-        photosEnabled: true,
-        recognize: (bytes) async => ocrDocumentFromMlKit(
-          text: 'Met Ada at Banstead. I want to finish the project milestone.',
-          blocks: const [
-            MlKitTextBlock(
-              text: 'Met Ada at Banstead.',
-              left: 1,
-              top: 2,
-              right: 30,
-              bottom: 12,
-              confidence: 0.88,
+    final result =
+        await AttachmentOcrIngestion(
+          processor: LocalOcrProcessor(
+            photosEnabled: true,
+            recognize: (bytes) async => ocrDocumentFromMlKit(
+              text:
+                  'Met Ada at Banstead. I want to finish the project milestone.',
+              blocks: const [
+                MlKitTextBlock(
+                  text: 'Met Ada at Banstead.',
+                  left: 1,
+                  top: 2,
+                  right: 30,
+                  bottom: 12,
+                  confidence: 0.88,
+                ),
+              ],
             ),
-          ],
-        ),
-      ),
-    ).ingest(
-      db: db,
-      entryId: 'moment-1',
-      imageBytes: Uint8List.fromList([9]),
-      filePath: 'scans/page.png',
-    );
+          ),
+        ).ingest(
+          db: db,
+          entryId: 'moment-1',
+          imageBytes: Uint8List.fromList([9]),
+          filePath: 'scans/page.png',
+        );
 
     final entry = await db.query(
       'journal_entries',

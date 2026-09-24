@@ -1,7 +1,11 @@
-import 'package:archiveme_mobile/core/config/beta_surfaces_feature_flags.dart' show BetaSurfacesFeatureFlags;
-import 'package:archiveme_mobile/core/config/image_evidence_feature_flags.dart' show ImageEvidenceFeatureFlags;
-import 'package:archiveme_mobile/core/config/theory_tracking_feature_flags.dart' show TheoryTrackingFeatureFlags;
-import 'package:archiveme_mobile/features/caregiver/caregiver_feature_flags.dart' show CaregiverFeatureFlags;
+import 'package:archiveme_mobile/core/config/beta_surfaces_feature_flags.dart'
+    show BetaSurfacesFeatureFlags;
+import 'package:archiveme_mobile/core/config/image_evidence_feature_flags.dart'
+    show ImageEvidenceFeatureFlags;
+import 'package:archiveme_mobile/core/config/theory_tracking_feature_flags.dart'
+    show TheoryTrackingFeatureFlags;
+import 'package:archiveme_mobile/features/caregiver/caregiver_feature_flags.dart'
+    show CaregiverFeatureFlags;
 
 /// Guards internal insight-science scoring from consumer UI surfaces.
 ///

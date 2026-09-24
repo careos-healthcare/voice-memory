@@ -12,13 +12,17 @@ import 'dart:async';
 /// Post-save watch card — no CTAs; Record screen owns Done / Record another.
 class ComeBackTomorrowCard extends StatefulWidget {
   const ComeBackTomorrowCard({
-    required this.watch, required this.entryCount, super.key,
+    required this.watch,
+    required this.entryCount,
+    super.key,
     this.store,
     this.skipPersist = false,
   });
 
   const ComeBackTomorrowCard.test({
-    required this.watch, required this.entryCount, super.key,
+    required this.watch,
+    required this.entryCount,
+    super.key,
     this.store,
   }) : skipPersist = true;
 

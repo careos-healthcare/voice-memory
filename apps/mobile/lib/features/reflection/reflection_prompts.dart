@@ -118,7 +118,10 @@ String reflectionPromptTitle({
 }
 
 /// Next local instant strictly after [now] for [template].
-DateTime nextReflectionInstant(ReflectionPromptTemplate template, DateTime now) {
+DateTime nextReflectionInstant(
+  ReflectionPromptTemplate template,
+  DateTime now,
+) {
   var day = DateTime(now.year, now.month, now.day);
   for (var offset = 0; offset < 8; offset++) {
     final candidate = DateTime(

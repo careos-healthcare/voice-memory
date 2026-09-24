@@ -28,7 +28,10 @@ void main() {
       final second = await store.ensureEncryptionKey();
 
       expect(first.rawKeyBytes, isNotNull);
-      expect(first.rawKeyBytes!.length, SqliteDatabaseEncryptionKey.keyByteLength);
+      expect(
+        first.rawKeyBytes!.length,
+        SqliteDatabaseEncryptionKey.keyByteLength,
+      );
       expect(second.rawKeyBytes, first.rawKeyBytes);
     });
 

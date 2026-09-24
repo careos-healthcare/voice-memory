@@ -10,7 +10,10 @@ import 'package:flutter/material.dart';
 /// Sample early evidence preview for zero- or one-entry Patterns states.
 class EarlyEvidenceTimelineDemoCta extends StatelessWidget {
   const EarlyEvidenceTimelineDemoCta({
-    required this.onTap, required this.entryCount, required this.surface, super.key,
+    required this.onTap,
+    required this.entryCount,
+    required this.surface,
+    super.key,
   });
 
   final VoidCallback onTap;
@@ -48,7 +51,10 @@ class EarlyEvidenceTimelineDemoCta extends StatelessWidget {
 
 class EarlyEvidenceTimelineDemoSection extends StatelessWidget {
   const EarlyEvidenceTimelineDemoSection({
-    required this.onHide, required this.entryCount, required this.surface, super.key,
+    required this.onHide,
+    required this.entryCount,
+    required this.surface,
+    super.key,
   });
 
   final VoidCallback onHide;

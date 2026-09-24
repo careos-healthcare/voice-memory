@@ -8,7 +8,8 @@ import 'package:flutter/material.dart';
 /// Lightweight beta truth question after timeline engagement.
 class ArchiveTimelineTruthFeedbackCard extends StatefulWidget {
   const ArchiveTimelineTruthFeedbackCard({
-    required this.store, super.key,
+    required this.store,
+    super.key,
     this.onAnswered,
   });
 

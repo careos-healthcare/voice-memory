@@ -12,7 +12,9 @@ import 'package:flutter/material.dart';
 /// the existing starter prompt cards. Renders nothing without suggestions.
 class DailyReturnSuggestionsCard extends StatelessWidget {
   const DailyReturnSuggestionsCard({
-    required this.suggestionSet, required this.onSelectPrompt, super.key,
+    required this.suggestionSet,
+    required this.onSelectPrompt,
+    super.key,
     this.selectedPrompt,
     this.onSuggestionTap,
     this.startHereOnly = false,

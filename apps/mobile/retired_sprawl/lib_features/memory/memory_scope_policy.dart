@@ -1,7 +1,9 @@
 import 'package:archiveme_mobile/features/memory/memory_scope.dart';
-import 'package:archiveme_mobile/features/memory/memory_scope_store.dart' show MemoryScopeStore;
+import 'package:archiveme_mobile/features/memory/memory_scope_store.dart'
+    show MemoryScopeStore;
 import 'package:archiveme_mobile/features/pressure_retention/pressure_check_in_record.dart';
-import 'package:archiveme_mobile/features/recording/recording_dependencies.dart' show MemoryScopeStore;
+import 'package:archiveme_mobile/features/recording/recording_dependencies.dart'
+    show MemoryScopeStore;
 import 'package:flutter/foundation.dart';
 
 /// Central memory policy — the single place that decides which saved

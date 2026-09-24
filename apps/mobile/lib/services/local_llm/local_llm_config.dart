@@ -17,11 +17,11 @@ final class LocalLlmConfig {
     this.useChatMlFormat = true,
     this.requirePreferredQuantization = true,
     this.kvCacheQuantization = LlamaKvCacheType.q8_0,
-  })  : assert(contextSize > 0, 'contextSize must be positive'),
-        assert(batchSize > 0, 'batchSize must be positive'),
-        assert(microBatchSize > 0, 'microBatchSize must be positive'),
-        assert(threadCount > 0, 'threadCount must be positive'),
-        assert(maxTokens > 0, 'maxTokens must be positive');
+  }) : assert(contextSize > 0, 'contextSize must be positive'),
+       assert(batchSize > 0, 'batchSize must be positive'),
+       assert(microBatchSize > 0, 'microBatchSize must be positive'),
+       assert(threadCount > 0, 'threadCount must be positive'),
+       assert(maxTokens > 0, 'maxTokens must be positive');
 
   final String modelPath;
   final String? libraryPath;
@@ -49,10 +49,15 @@ final class LocalLlmConfig {
     return LocalLlmConfig(
       modelPath: modelPath,
       libraryPath: libraryPath,
-      contextSize: contextSize.clamp(512, LocalLlmModelContract.defaultMaxContextSize),
+      contextSize: contextSize.clamp(
+        512,
+        LocalLlmModelContract.defaultMaxContextSize,
+      ),
       batchSize: LocalLlmModelContract.defaultBatchSize.clamp(1, contextSize),
-      microBatchSize: LocalLlmModelContract.defaultMicroBatchSize
-          .clamp(1, LocalLlmModelContract.defaultBatchSize),
+      microBatchSize: LocalLlmModelContract.defaultMicroBatchSize.clamp(
+        1,
+        LocalLlmModelContract.defaultBatchSize,
+      ),
       threadCount: LocalLlmModelContract.defaultThreadCount,
       gpuLayers: 0,
       maxTokens: maxTokens.clamp(1, contextSize ~/ 2),

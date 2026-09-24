@@ -64,7 +64,11 @@ void main() {
       await service.startPcmStream(controller.stream);
 
       final speechFrame = _pcmFrame(sampleRateHz: 16000, frameDurationMs: 20);
-      final silenceFrame = _pcmFrame(sampleRateHz: 16000, frameDurationMs: 20, amplitude: 0);
+      final silenceFrame = _pcmFrame(
+        sampleRateHz: 16000,
+        frameDurationMs: 20,
+        amplitude: 0,
+      );
 
       for (var i = 0; i < 20; i++) {
         controller.add(speechFrame);

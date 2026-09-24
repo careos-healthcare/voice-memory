@@ -340,7 +340,9 @@ void main() {
     });
 
     test('copy avoids advice coaching therapy and personality language', () {
-      AdaptiveDailyQuestionCopy.allVisibleStrings.forEach(_expectNoAdviceLanguage);
+      AdaptiveDailyQuestionCopy.allVisibleStrings.forEach(
+        _expectNoAdviceLanguage,
+      );
 
       final sample = AdaptiveDailyQuestionEngine.build(
         entries: _fourRelatedRepeatWithHelpfulAction(),

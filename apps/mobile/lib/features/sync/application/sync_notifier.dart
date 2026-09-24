@@ -1,7 +1,8 @@
 import 'package:archiveme_mobile/core/di/network_providers.dart';
 import 'package:archiveme_mobile/core/network/api_failure.dart';
 import 'package:archiveme_mobile/data/repositories/sync_repository.dart';
-import 'package:archiveme_mobile/features/auth/application/auth_session_notifier.dart' show AuthSessionNotifier;
+import 'package:archiveme_mobile/features/auth/application/auth_session_notifier.dart'
+    show AuthSessionNotifier;
 import 'package:archiveme_mobile/features/sync/application/sync_failure_result.dart';
 import 'package:archiveme_mobile/features/sync/application/sync_state.dart';
 import 'package:archiveme_mobile/services/sync_service.dart';

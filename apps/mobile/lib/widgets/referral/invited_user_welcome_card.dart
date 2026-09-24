@@ -12,7 +12,10 @@ import 'package:flutter/material.dart';
 /// invited users so the screen never gets more crowded.
 class InvitedUserWelcomeCard extends StatelessWidget {
   const InvitedUserWelcomeCard({
-    required this.source, required this.onRecord, required this.onDismiss, super.key,
+    required this.source,
+    required this.onRecord,
+    required this.onDismiss,
+    super.key,
   });
 
   /// Stable invite attribution source id; unknown values render the

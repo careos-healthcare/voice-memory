@@ -9,12 +9,18 @@ import 'package:flutter/material.dart';
 /// Compact open-capture chips — prompt context only, stays on Record.
 class OpenCapturePromptChips extends StatefulWidget {
   const OpenCapturePromptChips({
-    required this.source, required this.entryCount, required this.onChipTap, super.key,
+    required this.source,
+    required this.entryCount,
+    required this.onChipTap,
+    super.key,
     this.usePromptPrefill = true,
   });
 
   const OpenCapturePromptChips.test({
-    required this.source, required this.entryCount, required this.onChipTap, super.key,
+    required this.source,
+    required this.entryCount,
+    required this.onChipTap,
+    super.key,
     this.usePromptPrefill = true,
   });
 

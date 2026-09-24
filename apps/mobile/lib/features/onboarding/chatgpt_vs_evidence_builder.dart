@@ -40,7 +40,8 @@ abstract final class ChatGptVsEvidenceBuilder {
     Insight? insight,
   }) {
     final transcript = entry.transcript.trim();
-    final isEmpty = transcript.isEmpty &&
+    final isEmpty =
+        transcript.isEmpty &&
         entry.reflection.concreteObservation.trim().isEmpty;
     final isShort = !isEmpty && transcript.length < _minUsableChars;
 
@@ -49,7 +50,8 @@ abstract final class ChatGptVsEvidenceBuilder {
       entry.createdAt.toLocal(),
     );
 
-    final band = insight?.confidenceBand ??
+    final band =
+        insight?.confidenceBand ??
         EvidenceProofCalculator.resolveBand(citationCount: 1);
 
     final themes = entry.reflection.recurringThemes
@@ -60,14 +62,15 @@ abstract final class ChatGptVsEvidenceBuilder {
 
     final ephemeralSummary = isEmpty
         ? 'It sounds like you are working through something — many chatbots would '
-            'offer general reassurance here without saving your exact words.'
+              'offer general reassurance here without saving your exact words.'
         : isShort
         ? 'You mentioned something about $themeHint. A chatbot might reflect that '
-            'back generically, but would not keep a permanent, citable record.'
+              'back generically, but would not keep a permanent, citable record.'
         : 'You seem to be noticing a pattern around $themeHint. Standard chat '
-            'summaries often smooth over your wording and forget prior sessions.';
+              'summaries often smooth over your wording and forget prior sessions.';
 
-    final evidenceSummary = insight?.insightText ??
+    final evidenceSummary =
+        insight?.insightText ??
         (isEmpty
             ? ExperimentHCopy.emptyEntryBody
             : 'ArchiveMe saved this as a citable ledger moment — not a one-off reply.');

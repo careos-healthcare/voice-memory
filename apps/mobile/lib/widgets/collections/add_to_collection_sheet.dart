@@ -31,7 +31,9 @@ Future<void> showAddToCollectionSheet(
 
 class AddToCollectionSheet extends StatefulWidget {
   const AddToCollectionSheet({
-    required this.store, required this.entryId, super.key,
+    required this.store,
+    required this.entryId,
+    super.key,
     this.source = 'entry_detail',
   });
 

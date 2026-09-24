@@ -93,7 +93,8 @@ class _NodeGraphViewerState extends State<NodeGraphViewer> {
             onOpenEntry: expanded.isNavigable
                 ? () => _openEntry(expanded)
                 : null,
-            onCitationPlay: expanded.supportsCitationPlayback &&
+            onCitationPlay:
+                expanded.supportsCitationPlayback &&
                     widget.onCitationPlay != null
                 ? () => widget.onCitationPlay!(expanded.quote!)
                 : null,
@@ -321,7 +322,11 @@ class NodeGraphPainter extends CustomPainter {
     }
   }
 
-  void _paintNode(Canvas canvas, InsightGraphNode node, {required bool expanded}) {
+  void _paintNode(
+    Canvas canvas,
+    InsightGraphNode node, {
+    required bool expanded,
+  }) {
     final color = colorForKind(node.kind);
     final radius = TheoryConnectionGraphBuilder.nodeRadius;
     final ringPaint = Paint()
@@ -393,9 +398,10 @@ Future<void> showTheoryConnectionGraphSheet(
                 theory.statement,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
-                style: ArchiveMobileTypography.explanationBody(context).copyWith(
-                  color: AppColors.textSecondary,
-                ),
+                style: ArchiveMobileTypography.explanationBody(context)
+                    .copyWith(
+                      color: AppColors.textSecondary,
+                    ),
               ),
               const SizedBox(height: AppSpacing.sm),
               Expanded(

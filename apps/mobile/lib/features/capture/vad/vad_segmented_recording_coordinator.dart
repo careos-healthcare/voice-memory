@@ -83,8 +83,12 @@ class VadSegmentedRecordingCoordinator {
     try {
       await _pcmRecorder?.cancel();
     } catch (e, stackTrace) {
-      AppLogger.error('Unhandled error caught', error: e, stackTrace: stackTrace);
-      }
+      AppLogger.error(
+        'Unhandled error caught',
+        error: e,
+        stackTrace: stackTrace,
+      );
+    }
     await _pcmRecorder?.dispose();
     _pcmRecorder = null;
 
@@ -106,7 +110,11 @@ class VadSegmentedRecordingCoordinator {
           await file.delete();
         }
       } on Object catch (error, stackTrace) {
-        AppLogger.error('Unhandled error caught', error: error, stackTrace: stackTrace);
+        AppLogger.error(
+          'Unhandled error caught',
+          error: error,
+          stackTrace: stackTrace,
+        );
         AppLogger.debug('VAD segment cleanup failed: $error');
       }
     }

@@ -72,7 +72,8 @@ abstract final class ProBridgeVisibilityEngine {
     if (input.isPro) return false;
     if (!input.postProofProBridgeEnabled) return false;
     if (ProEvidenceValueDismissStore.isDismissed()) return false;
-    if (DelayedPaywallProofStore.resolveEvidenceMilestoneCount() < minEntryCount) {
+    if (DelayedPaywallProofStore.resolveEvidenceMilestoneCount() <
+        minEntryCount) {
       return false;
     }
 

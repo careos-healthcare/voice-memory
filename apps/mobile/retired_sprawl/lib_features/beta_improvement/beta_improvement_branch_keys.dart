@@ -2,8 +2,10 @@ import 'package:archiveme_mobile/features/beta_decision/beta_decision_model.dart
 import 'package:archiveme_mobile/features/beta_improvement/beta_improvement_model.dart';
 import 'package:archiveme_mobile/features/beta_improvement/beta_improvement_recommendation_gate.dart';
 import 'package:archiveme_mobile/features/beta_improvement/proof_to_pro_path_engine.dart';
-import 'package:archiveme_mobile/features/recording/recording_dependencies.dart' show FirstProofPayoffCard;
-import 'package:archiveme_mobile/widgets/record/first_proof_payoff_card.dart' show FirstProofPayoffCard;
+import 'package:archiveme_mobile/features/recording/recording_dependencies.dart'
+    show FirstProofPayoffCard;
+import 'package:archiveme_mobile/widgets/record/first_proof_payoff_card.dart'
+    show FirstProofPayoffCard;
 
 /// Canonical widget/test keys for beta improvement branch surfaces.
 abstract final class BetaImprovementBranchKeys {

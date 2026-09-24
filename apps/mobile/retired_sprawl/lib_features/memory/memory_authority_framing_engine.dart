@@ -57,7 +57,8 @@ class MemoryAuthorityFramingEngine {
 
   MemoryAuthorityFraming frame(
     List<PressureCheckInRecord> records, {
-    required MemoryCardType cardType, DateTime? now,
+    required MemoryCardType cardType,
+    DateTime? now,
   }) {
     final scope = MemoryScopePolicy.scope;
     if (scope == MemoryScope.off) {

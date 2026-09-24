@@ -17,10 +17,12 @@ class FactLedgerEntries extends Table {
   IntColumn get updatedAt => integer().named('updated_at')();
   TextColumn get factType => text().named('fact_type')();
   TextColumn get archivePackId => text().named('archive_pack_id').nullable()();
-  TextColumn get archiveThreadId => text().named('archive_thread_id').nullable()();
+  TextColumn get archiveThreadId =>
+      text().named('archive_thread_id').nullable()();
   TextColumn get collectionIdsJson =>
       text().named('collection_ids_json').withDefault(const Constant('[]'))();
-  IntColumn get isPinned => integer().named('is_pinned').withDefault(const Constant(0))();
+  IntColumn get isPinned =>
+      integer().named('is_pinned').withDefault(const Constant(0))();
   IntColumn get preserveOriginal =>
       integer().named('preserve_original').withDefault(const Constant(1))();
 

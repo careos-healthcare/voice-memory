@@ -152,14 +152,19 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.byKey(const Key('node_graph_interactive_viewer')), findsOneWidget);
+      expect(
+        find.byKey(const Key('node_graph_interactive_viewer')),
+        findsOneWidget,
+      );
       expect(find.byKey(const Key('node_graph_canvas')), findsOneWidget);
       expect(find.text('Theme'), findsOneWidget);
       expect(find.text('Memory'), findsOneWidget);
       expect(find.text('Counter-evidence'), findsOneWidget);
     });
 
-    testWidgets('expands memory node on tap and fires callbacks', (tester) async {
+    testWidgets('expands memory node on tap and fires callbacks', (
+      tester,
+    ) async {
       final theory = _sampleTheory(
         supporting: [
           _quote(entryId: 'entry-a', withPlayback: true),
@@ -190,7 +195,10 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(tapped?.entryId, 'entry-a');
-      expect(find.byKey(const Key('node_graph_expanded_memory-entry-a')), findsOneWidget);
+      expect(
+        find.byKey(const Key('node_graph_expanded_memory-entry-a')),
+        findsOneWidget,
+      );
       expect(find.text('Open transcript'), findsOneWidget);
 
       await tester.tap(find.byKey(const Key('citation_badge_chunk-entry-a')));

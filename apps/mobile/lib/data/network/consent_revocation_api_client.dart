@@ -21,8 +21,9 @@ enum ConsentRevocationDomain {
     'caregiverMonitoring' ||
     'caregiver' ||
     'caregiver_monitoring' => ConsentRevocationDomain.caregiverMonitoring,
-    'coachClient' || 'coach' || 'coach_client' =>
-      ConsentRevocationDomain.coachClient,
+    'coachClient' ||
+    'coach' ||
+    'coach_client' => ConsentRevocationDomain.coachClient,
     _ => null,
   };
 }

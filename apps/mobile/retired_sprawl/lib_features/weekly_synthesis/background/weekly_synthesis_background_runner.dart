@@ -123,10 +123,10 @@ abstract final class WeeklySynthesisBackgroundRunner {
   static String _weekKey(DateTime weekStartUtc) {
     final year = weekStartUtc.year;
     final jan4 = DateTime.utc(year, 1, 4);
-    final jan4WeekStart =
-        jan4.subtract(Duration(days: jan4.weekday - DateTime.monday));
-    final weekNumber =
-        1 + weekStartUtc.difference(jan4WeekStart).inDays ~/ 7;
+    final jan4WeekStart = jan4.subtract(
+      Duration(days: jan4.weekday - DateTime.monday),
+    );
+    final weekNumber = 1 + weekStartUtc.difference(jan4WeekStart).inDays ~/ 7;
     return '$year-W${weekNumber.toString().padLeft(2, '0')}';
   }
 }

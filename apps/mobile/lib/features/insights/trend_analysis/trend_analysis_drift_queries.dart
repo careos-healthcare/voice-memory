@@ -19,8 +19,9 @@ abstract final class TrendAnalysisDriftQueries {
     final startMillis = windowStart.toUtc().millisecondsSinceEpoch;
     final endMillis = windowEnd.toUtc().millisecondsSinceEpoch;
 
-    final rows = await db.customSelect(
-      '''
+    final rows = await db
+        .customSelect(
+          '''
       SELECT
         id,
         created_at,
@@ -33,13 +34,14 @@ abstract final class TrendAnalysisDriftQueries {
       ORDER BY created_at ASC, id ASC
       LIMIT ?
       ''',
-      variables: [
-        Variable<int>(startMillis),
-        Variable<int>(endMillis),
-        Variable<int>(limit),
-      ],
-      readsFrom: {db.journalEntries},
-    ).get();
+          variables: [
+            Variable<int>(startMillis),
+            Variable<int>(endMillis),
+            Variable<int>(limit),
+          ],
+          readsFrom: {db.journalEntries},
+        )
+        .get();
 
     return rows
         .map(_mapRow)
@@ -56,7 +58,10 @@ abstract final class TrendAnalysisDriftQueries {
 
     return TrendReflectionRecord(
       entryId: entryId,
-      createdAt: DateTime.fromMillisecondsSinceEpoch(createdAtMillis, isUtc: true),
+      createdAt: DateTime.fromMillisecondsSinceEpoch(
+        createdAtMillis,
+        isUtc: true,
+      ),
       mood: reflection.mood,
       emotionalIntensity: reflection.emotionalIntensity,
       recurringThemes: reflection.recurringThemes,

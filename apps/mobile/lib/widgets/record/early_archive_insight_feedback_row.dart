@@ -12,7 +12,10 @@ import 'dart:async';
 /// Compact accuracy feedback under early archive proof cards and timelines.
 class EarlyArchiveInsightFeedbackRow extends StatefulWidget {
   const EarlyArchiveInsightFeedbackRow({
-    required this.insightType, required this.surface, required this.entryCount, super.key,
+    required this.insightType,
+    required this.surface,
+    required this.entryCount,
+    super.key,
   });
 
   final EarlyArchiveInsightType insightType;
@@ -68,7 +71,11 @@ class _EarlyArchiveInsightFeedbackRowState
     try {
       await EarlyArchiveInsightFeedbackStore.instance().save(record);
     } catch (e, stackTrace) {
-      AppLogger.error('Unhandled error caught', error: e, stackTrace: stackTrace);
+      AppLogger.error(
+        'Unhandled error caught',
+        error: e,
+        stackTrace: stackTrace,
+      );
       // Local persistence is best-effort — feedback still registers in analytics.
     }
   }

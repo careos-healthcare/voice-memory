@@ -59,7 +59,10 @@ void main() {
       ),
     );
 
-    expect(find.byKey(const Key('graph_canvas_interactive_viewer')), findsOneWidget);
+    expect(
+      find.byKey(const Key('graph_canvas_interactive_viewer')),
+      findsOneWidget,
+    );
     expect(find.byKey(const Key('graph_canvas_painter')), findsOneWidget);
 
     await tester.pump(const Duration(milliseconds: 100));

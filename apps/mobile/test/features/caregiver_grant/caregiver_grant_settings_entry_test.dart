@@ -27,9 +27,9 @@ void main() {
     const channel = MethodChannel('dev.fluttercommunity.plus/connectivity');
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(channel, (call) async {
-      if (call.method == 'check') return ['wifi'];
-      return null;
-    });
+          if (call.method == 'check') return ['wifi'];
+          return null;
+        });
   });
 
   setUp(() async {
@@ -62,8 +62,9 @@ void main() {
     await tester.pumpAndSettle();
   }
 
-  testWidgets('the grant entry point is absent while the capability is off',
-      (tester) async {
+  testWidgets('the grant entry point is absent while the capability is off', (
+    tester,
+  ) async {
     CaregiverFeatureFlags.debugOverride = false;
 
     await pumpSettings(tester);
@@ -73,8 +74,9 @@ void main() {
     expect(find.text(CaregiverGrantCopy.entryTitle), findsNothing);
   });
 
-  testWidgets('the grant entry point appears once the capability is on',
-      (tester) async {
+  testWidgets('the grant entry point appears once the capability is on', (
+    tester,
+  ) async {
     CaregiverFeatureFlags.debugOverride = true;
 
     await pumpSettings(tester);
@@ -84,8 +86,9 @@ void main() {
     expect(find.text(CaregiverGrantCopy.entryTitle), findsOneWidget);
   });
 
-  testWidgets('it sits inside the Settings list, not floating in the tree',
-      (tester) async {
+  testWidgets('it sits inside the Settings list, not floating in the tree', (
+    tester,
+  ) async {
     CaregiverFeatureFlags.debugOverride = true;
 
     await pumpSettings(tester);

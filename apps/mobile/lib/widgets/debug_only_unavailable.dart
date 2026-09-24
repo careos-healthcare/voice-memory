@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 /// Shown when a verification route is opened without the developer gate.
 class DebugOnlyUnavailableScreen extends StatelessWidget {
   const DebugOnlyUnavailableScreen({
-    required this.title, super.key,
+    required this.title,
+    super.key,
     this.message =
         'This tool is only available in debug builds or after unlocking developer settings.',
   });

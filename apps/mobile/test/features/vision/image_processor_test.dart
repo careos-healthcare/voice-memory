@@ -32,7 +32,10 @@ void main() {
 
     test('l2Normalize produces unit length', () {
       final normalized = ImageProcessor.l2Normalize([3, 4]);
-      final norm = normalized.fold<double>(0, (sum, value) => sum + value * value);
+      final norm = normalized.fold<double>(
+        0,
+        (sum, value) => sum + value * value,
+      );
       expect(norm, closeTo(1, 1e-9));
     });
   });

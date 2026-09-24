@@ -25,8 +25,7 @@ class _StubConsentApi implements CaregiverConsentApiClient {
     String? caregiverEmail,
     bool sendInviteEmail = false,
     NetworkCancelToken? cancelToken,
-  }) async =>
-      ApiSuccess(_token());
+  }) async => ApiSuccess(_token());
 
   @override
   Future<ApiResult<CaregiverTokenVerificationResult>> verifyToken({
@@ -58,26 +57,25 @@ class _StubConsentApi implements CaregiverConsentApiClient {
     String? reason,
     Map<String, dynamic>? token,
     NetworkCancelToken? cancelToken,
-  }) async =>
-      ApiSuccess(
-        ConsentRevocationConfirmation(
-          tokenId: tokenId,
-          revoked: true,
-          alreadyRevoked: false,
-        ),
-      );
+  }) async => ApiSuccess(
+    ConsentRevocationConfirmation(
+      tokenId: tokenId,
+      revoked: true,
+      alreadyRevoked: false,
+    ),
+  );
 }
 
 MonitoringConsentToken _token() => MonitoringConsentToken(
-      tokenId: 'token-isolation-1',
-      subjectAccountId: 'subject-1',
-      caregiverId: 'caregiver-ada',
-      permissions: CaregiverPermissions.defaultScopes,
-      issuedAt: DateTime.utc(2026, 2),
-      expiresAt: DateTime.utc(2026, 12, 31),
-      policyVersion: ConsentVerificationService.currentPolicyVersion,
-      signature: 'server-signature',
-    );
+  tokenId: 'token-isolation-1',
+  subjectAccountId: 'subject-1',
+  caregiverId: 'caregiver-ada',
+  permissions: CaregiverPermissions.defaultScopes,
+  issuedAt: DateTime.utc(2026, 2),
+  expiresAt: DateTime.utc(2026, 12, 31),
+  policyVersion: ConsentVerificationService.currentPolicyVersion,
+  signature: 'server-signature',
+);
 
 /// The surfaces a caregiver session must be pushed off, beyond the shell.
 const _ownerOnlyPaths = <String>[
@@ -118,11 +116,14 @@ void main() {
     return CaregiverModeController.instance;
   }
 
-  test('tryRedirectFor is a no-op until the controller is configured', () async {
-    CaregiverFeatureFlags.debugOverride = true;
+  test(
+    'tryRedirectFor is a no-op until the controller is configured',
+    () async {
+      CaregiverFeatureFlags.debugOverride = true;
 
-    expect(await CaregiverModeController.tryRedirectFor('/export'), isNull);
-  });
+      expect(await CaregiverModeController.tryRedirectFor('/export'), isNull);
+    },
+  );
 
   test('the owner reaches every owner surface untouched', () async {
     CaregiverFeatureFlags.debugOverride = true;
@@ -137,34 +138,38 @@ void main() {
     }
   });
 
-  test('an active caregiver session is pushed off every owner surface',
-      () async {
-    CaregiverFeatureFlags.debugOverride = true;
-    final controller = await configure();
-    await controller.activateWithToken(_token());
-    expect(controller.hasValidSession, isTrue);
+  test(
+    'an active caregiver session is pushed off every owner surface',
+    () async {
+      CaregiverFeatureFlags.debugOverride = true;
+      final controller = await configure();
+      await controller.activateWithToken(_token());
+      expect(controller.hasValidSession, isTrue);
 
-    for (final path in _ownerOnlyPaths) {
+      for (final path in _ownerOnlyPaths) {
+        expect(
+          await controller.redirectFor(path),
+          RouteCatalog.caregiverHome,
+          reason: '$path stayed reachable from a caregiver session',
+        );
+      }
+    },
+  );
+
+  test(
+    'an unrecognised path is redirected too, not defaulted through',
+    () async {
+      // The whitelist is what makes a route added tomorrow safe by default.
+      CaregiverFeatureFlags.debugOverride = true;
+      final controller = await configure();
+      await controller.activateWithToken(_token());
+
       expect(
-        await controller.redirectFor(path),
+        await controller.redirectFor('/some-route-invented-later'),
         RouteCatalog.caregiverHome,
-        reason: '$path stayed reachable from a caregiver session',
       );
-    }
-  });
-
-  test('an unrecognised path is redirected too, not defaulted through',
-      () async {
-    // The whitelist is what makes a route added tomorrow safe by default.
-    CaregiverFeatureFlags.debugOverride = true;
-    final controller = await configure();
-    await controller.activateWithToken(_token());
-
-    expect(
-      await controller.redirectFor('/some-route-invented-later'),
-      RouteCatalog.caregiverHome,
-    );
-  });
+    },
+  );
 
   test('the caregiver session keeps its own two paths', () async {
     CaregiverFeatureFlags.debugOverride = true;
@@ -178,17 +183,19 @@ void main() {
     );
   });
 
-  test('caregiver mode with no valid session lands on consent, not the app',
-      () async {
-    CaregiverFeatureFlags.debugOverride = true;
-    final controller = await configure();
-    await controller.activateWithToken(_token());
-    await controller.revokeGrant('token-isolation-1');
+  test(
+    'caregiver mode with no valid session lands on consent, not the app',
+    () async {
+      CaregiverFeatureFlags.debugOverride = true;
+      final controller = await configure();
+      await controller.activateWithToken(_token());
+      await controller.revokeGrant('token-isolation-1');
 
-    // Revoke returns the device to the owner; the owner surface is theirs
-    // again.
-    expect(await controller.redirectFor('/export'), isNull);
-  });
+      // Revoke returns the device to the owner; the owner surface is theirs
+      // again.
+      expect(await controller.redirectFor('/export'), isNull);
+    },
+  );
 
   test('with the capability compiled out only caregiver paths move', () async {
     CaregiverFeatureFlags.debugOverride = false;

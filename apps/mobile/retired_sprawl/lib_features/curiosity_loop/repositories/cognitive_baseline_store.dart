@@ -1,6 +1,7 @@
 import 'package:archiveme_mobile/core/utils/app_logger.dart';
 import 'package:archiveme_mobile/features/curiosity_loop/domain/models/cognitive_biomarkers.dart';
-import 'package:archiveme_mobile/features/curiosity_loop/presentation/models/telemetry_data_point.dart' show TelemetryDataPoint;
+import 'package:archiveme_mobile/features/curiosity_loop/presentation/models/telemetry_data_point.dart'
+    show TelemetryDataPoint;
 import 'package:archiveme_mobile/services/app_services.dart';
 import 'package:archiveme_mobile/storage/encrypted_json_storage.dart';
 import 'package:archiveme_mobile/storage/mobile_prefs_store.dart';
@@ -9,7 +10,8 @@ import 'package:flutter/foundation.dart';
 /// Persisted EWMA cognitive baseline snapshot.
 class CognitiveBaselineSnapshot {
   CognitiveBaselineSnapshot({
-    required this.updatedAt, CognitiveBiomarkers? baseline,
+    required this.updatedAt,
+    CognitiveBiomarkers? baseline,
     CognitiveBiomarkers? biomarkers,
     this.lastEntryId = 'entry_1',
     this.observationCount = 1,

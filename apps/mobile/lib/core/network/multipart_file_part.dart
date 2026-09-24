@@ -1,12 +1,12 @@
 import 'dart:async';
 
-import 'package:archiveme_mobile/core/network/http_transport.dart' show HttpTransport;
+import 'package:archiveme_mobile/core/network/http_transport.dart'
+    show HttpTransport;
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 
 /// One file part for [HttpTransport.postMultipart].
 sealed class MultipartFilePart {
-
   factory MultipartFilePart.fromPath({
     required String field,
     required String path,

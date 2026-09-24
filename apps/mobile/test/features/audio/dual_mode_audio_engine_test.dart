@@ -78,36 +78,39 @@ void main() {
     expect(snapshot.lastReply, 'Heard that.');
   });
 
-  test('passive mode transcribes the whole take when recording stops', () async {
-    Float32List? captured;
-    final container = ProviderContainer(
-      overrides: [
-        dualModeAudioPortsProvider.overrideWithValue(
-          DualModeAudioPorts(
-            isSpeech: (_) => false,
-            transcribe: (samples) async {
-              captured = samples;
-              return 'A quiet evening.';
-            },
-            reply: (_) async => '',
-            play: (_) async {},
+  test(
+    'passive mode transcribes the whole take when recording stops',
+    () async {
+      Float32List? captured;
+      final container = ProviderContainer(
+        overrides: [
+          dualModeAudioPortsProvider.overrideWithValue(
+            DualModeAudioPorts(
+              isSpeech: (_) => false,
+              transcribe: (samples) async {
+                captured = samples;
+                return 'A quiet evening.';
+              },
+              reply: (_) async => '',
+              play: (_) async {},
+            ),
           ),
-        ),
-      ],
-    );
-    addTearDown(container.dispose);
-    await container.read(dualModeAudioEngineProvider.future);
-    final engine = container.read(dualModeAudioEngineProvider.notifier);
+        ],
+      );
+      addTearDown(container.dispose);
+      await container.read(dualModeAudioEngineProvider.future);
+      final engine = container.read(dualModeAudioEngineProvider.notifier);
 
-    await engine.start();
-    await engine.pushSamples(Float32List.fromList(const [0.1, 0.2]));
-    await engine.stop();
+      await engine.start();
+      await engine.pushSamples(Float32List.fromList(const [0.1, 0.2]));
+      await engine.stop();
 
-    final snapshot = container.read(dualModeAudioEngineProvider).value!;
-    expect(snapshot.recording, isFalse);
-    expect(snapshot.mode, DualAudioMode.passive);
-    expect(snapshot.partialTranscript, 'A quiet evening.');
-    expect(captured, isNotNull);
-    expect(captured!.length, 2);
-  });
+      final snapshot = container.read(dualModeAudioEngineProvider).value!;
+      expect(snapshot.recording, isFalse);
+      expect(snapshot.mode, DualAudioMode.passive);
+      expect(snapshot.partialTranscript, 'A quiet evening.');
+      expect(captured, isNotNull);
+      expect(captured!.length, 2);
+    },
+  );
 }

@@ -80,8 +80,7 @@ abstract final class LifeMemoGenerator {
     ]..sort((a, b) => a.createdAt.compareTo(b.createdAt));
     final newEntities = [
       for (final entity in entities)
-        if (!entity.createdAt.isBefore(start) &&
-            !entity.createdAt.isAfter(end))
+        if (!entity.createdAt.isBefore(start) && !entity.createdAt.isAfter(end))
           entity,
     ];
     final title = period == LifeMemoPeriod.weekly
@@ -91,7 +90,8 @@ abstract final class LifeMemoGenerator {
     final themes = _themes(inWindow, newEntities);
     final health = _health(inWindow);
     final actions = _actions(inWindow, newEntities);
-    final markdown = '''
+    final markdown =
+        '''
 # $title
 
 ## Key Achievements
@@ -106,7 +106,7 @@ $health
 ## Open Action Items
 $actions
 '''
-        .trim();
+            .trim();
     return LifeMemo(
       id: '${period.name}-${end.millisecondsSinceEpoch}',
       period: period,

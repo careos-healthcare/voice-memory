@@ -141,12 +141,13 @@ class ServerConsentRevocationCoordinator {
     }
 
     return switch (result) {
-      ApiSuccess(:final value) => value.isConfirmed
-          ? const _RevocationAttempt(confirmed: true)
-          : const _RevocationAttempt(
-              confirmed: false,
-              failureCode: ConsentRevocationFailureCode.notConfirmed,
-            ),
+      ApiSuccess(:final value) =>
+        value.isConfirmed
+            ? const _RevocationAttempt(confirmed: true)
+            : const _RevocationAttempt(
+                confirmed: false,
+                failureCode: ConsentRevocationFailureCode.notConfirmed,
+              ),
       ApiFailureResult(:final failure) => _RevocationAttempt(
         confirmed: false,
         failureCode: _failureCodeFor(failure),

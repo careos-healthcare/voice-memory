@@ -10,7 +10,9 @@ import 'package:go_router/go_router.dart';
 /// Patterns-tab status for an active or completed tomorrow commitment.
 class TomorrowReturnStatusCard extends StatelessWidget {
   const TomorrowReturnStatusCard({
-    required this.commitment, required this.state, super.key,
+    required this.commitment,
+    required this.state,
+    super.key,
   });
 
   final TomorrowCommitment commitment;

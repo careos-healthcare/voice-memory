@@ -49,8 +49,9 @@ class AccountDeleteResponseDto {
           AccountDeleteStoreResultDto.fromJson,
           field: 'stores',
         ),
-        sessionRevokeError:
-            JsonConverters.nullableString(json['sessionRevokeError']),
+        sessionRevokeError: JsonConverters.nullableString(
+          json['sessionRevokeError'],
+        ),
         error: JsonConverters.nullableString(json['error']),
         message: JsonConverters.string(json['message'], field: 'message'),
       );

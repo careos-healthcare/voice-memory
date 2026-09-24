@@ -138,8 +138,7 @@ void main() {
         entryCount: 3,
         surface: 'record',
       );
-      var counts =
-          await BetaActivationLoopTracker.readCounts();
+      var counts = await BetaActivationLoopTracker.readCounts();
       for (
         var i = 0;
         i < 50 &&

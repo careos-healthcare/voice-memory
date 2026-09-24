@@ -7,7 +7,8 @@ import 'package:flutter/material.dart';
 /// ("not exotic"). No semantic search, no saved filters.
 class ArchiveSearchField extends StatefulWidget {
   const ArchiveSearchField({
-    required this.onQueryChanged, super.key,
+    required this.onQueryChanged,
+    super.key,
     this.debounce = const Duration(milliseconds: 250),
   });
 

@@ -417,7 +417,9 @@ class ProofAnalyticsGuard {
       );
     }
     if (kDebugMode) {
-      AppLogger.debug('ProofAnalyticsGuard: dropped $event.$key (${reason.name})');
+      AppLogger.debug(
+        'ProofAnalyticsGuard: dropped $event.$key (${reason.name})',
+      );
     }
   }
 }

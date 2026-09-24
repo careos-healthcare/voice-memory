@@ -107,7 +107,10 @@ void main() {
       keyBeliefs: ['Networking changed my career'],
       importantQuotes: [
         const LifeChapterQuote(quote: 'I hate networking', entryId: 'a'),
-        const LifeChapterQuote(quote: 'Networking changed my career', entryId: 'b'),
+        const LifeChapterQuote(
+          quote: 'Networking changed my career',
+          entryId: 'b',
+        ),
       ],
       evidenceIds: ['a', 'b'],
     );

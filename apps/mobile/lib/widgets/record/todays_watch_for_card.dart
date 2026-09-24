@@ -16,7 +16,8 @@ import 'package:flutter/material.dart';
 /// Shown at the top of Record when a pending watch-for is due today.
 class TodaysWatchForCard extends StatefulWidget {
   const TodaysWatchForCard({
-    required this.pending, super.key,
+    required this.pending,
+    super.key,
     this.persistSelection,
     this.loadSelection,
     this.trackActivation = true,
@@ -195,9 +196,7 @@ class _TodaysWatchForCardState extends State<TodaysWatchForCard> {
             Wrap(
               spacing: 8,
               runSpacing: 8,
-              children: _capture.quickAnswers
-                  .map(_quickAnswerChip)
-                  .toList(),
+              children: _capture.quickAnswers.map(_quickAnswerChip).toList(),
             ),
           ],
           if (selected != null) ...[

@@ -20,11 +20,12 @@ class _FakeStoreBillingPort implements StoreBillingPort {
   _FakeStoreBillingPort({
     this.refreshError,
   }) : refreshResult = const PremiumEntitlements(
-      tier: BillingTier.pro,
-      entitlementIds: ['archive_loop_pro'],
-      billingConnected: true,
-      source: 'revenuecat',
-    ), configured = true;
+         tier: BillingTier.pro,
+         entitlementIds: ['archive_loop_pro'],
+         billingConnected: true,
+         source: 'revenuecat',
+       ),
+       configured = true;
 
   final bool configured;
   final PremiumEntitlements refreshResult;
@@ -34,8 +35,7 @@ class _FakeStoreBillingPort implements StoreBillingPort {
   bool get isConfigured => configured;
 
   @override
-  Stream<PremiumEntitlements> get entitlementStream =>
-      const Stream.empty();
+  Stream<PremiumEntitlements> get entitlementStream => const Stream.empty();
 
   @override
   Future<PremiumEntitlements> refreshEntitlements() async {
@@ -61,50 +61,55 @@ void main() {
     await AppSqliteDatabase.resetForTest();
   });
 
-  test('initializeOnStartup uses sqlite cache when RevenueCat is offline', () async {
-    final sqlite = await openTestAppSqliteDatabase();
-    final proRepo = ProStatusSqliteRepository(sqlite);
-    await proRepo.save(
-      const PremiumEntitlements(
-        tier: BillingTier.pro,
-        entitlementIds: ['archive_loop_pro'],
-        billingConnected: true,
-        source: 'revenuecat',
-      ),
-      syncedFrom: 'sqlite_cache',
-    );
+  test(
+    'initializeOnStartup uses sqlite cache when RevenueCat is offline',
+    () async {
+      final sqlite = await openTestAppSqliteDatabase();
+      final proRepo = ProStatusSqliteRepository(sqlite);
+      await proRepo.save(
+        const PremiumEntitlements(
+          tier: BillingTier.pro,
+          entitlementIds: ['archive_loop_pro'],
+          billingConnected: true,
+          source: 'revenuecat',
+        ),
+        syncedFrom: 'sqlite_cache',
+      );
 
-    final cacheDir = await Directory.systemTemp.createTemp('billing_startup_');
-    final entitlementCache = await EntitlementCache.open(
-      '${cacheDir.path}/entitlements.json',
-    );
+      final cacheDir = await Directory.systemTemp.createTemp(
+        'billing_startup_',
+      );
+      final entitlementCache = await EntitlementCache.open(
+        '${cacheDir.path}/entitlements.json',
+      );
 
-    final container = ProviderContainer(
-      overrides: [
-        storeBillingPortProvider.overrideWithValue(
-          _FakeStoreBillingPort(
-            refreshError: Exception('offline'),
+      final container = ProviderContainer(
+        overrides: [
+          storeBillingPortProvider.overrideWithValue(
+            _FakeStoreBillingPort(
+              refreshError: Exception('offline'),
+            ),
           ),
-        ),
-        entitlementCacheHolderProvider.overrideWithValue(
-          EntitlementCacheHolder()..value = entitlementCache,
-        ),
-        appSqliteDatabaseHolderProvider.overrideWithValue(
-          AppSqliteDatabaseHolder()..value = sqlite,
-        ),
-      ],
-    );
-    addTearDown(container.dispose);
+          entitlementCacheHolderProvider.overrideWithValue(
+            EntitlementCacheHolder()..value = entitlementCache,
+          ),
+          appSqliteDatabaseHolderProvider.overrideWithValue(
+            AppSqliteDatabaseHolder()..value = sqlite,
+          ),
+        ],
+      );
+      addTearDown(container.dispose);
 
-    final result = await container
-        .read(billingProvider.notifier)
-        .initializeOnStartup();
+      final result = await container
+          .read(billingProvider.notifier)
+          .initializeOnStartup();
 
-    expect(result.source, BillingStartupSource.sqliteCache);
-    expect(result.isPro, isTrue);
-    expect(result.revenueCatChecked, isTrue);
-    expect(result.revenueCatReachable, isFalse);
-  });
+      expect(result.source, BillingStartupSource.sqliteCache);
+      expect(result.isPro, isTrue);
+      expect(result.revenueCatChecked, isTrue);
+      expect(result.revenueCatReachable, isFalse);
+    },
+  );
 
   test('initializeOnStartup refreshes from RevenueCat when online', () async {
     final sqlite = await openTestAppSqliteDatabase();

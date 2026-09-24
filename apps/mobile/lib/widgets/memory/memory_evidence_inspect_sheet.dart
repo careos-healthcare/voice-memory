@@ -254,17 +254,23 @@ class _MemoryEvidenceInspectSheetState
                   OutlinedButton(
                     key: const Key('memory_keep_connected_action'),
                     onPressed: _keepConnected,
-                    child: const Text(MemoryEvidenceInspectCopy.keepConnectedLabel),
+                    child: const Text(
+                      MemoryEvidenceInspectCopy.keepConnectedLabel,
+                    ),
                   ),
                   OutlinedButton(
                     key: const Key('memory_inspect_not_related_action'),
                     onPressed: _notRelated,
-                    child: const Text(MemoryEvidenceInspectCopy.notRelatedLabel),
+                    child: const Text(
+                      MemoryEvidenceInspectCopy.notRelatedLabel,
+                    ),
                   ),
                   OutlinedButton(
                     key: const Key('memory_future_fresh_action'),
                     onPressed: _futureFresh,
-                    child: const Text(MemoryEvidenceInspectCopy.futureFreshLabel),
+                    child: const Text(
+                      MemoryEvidenceInspectCopy.futureFreshLabel,
+                    ),
                   ),
                 ],
               ),

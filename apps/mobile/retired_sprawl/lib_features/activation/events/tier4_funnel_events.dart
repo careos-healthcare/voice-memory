@@ -1,5 +1,7 @@
-import 'package:archiveme_mobile/features/activation/events/activation_event_counts_deferred.dart' show ActivationEventCountsDeferred;
-import 'package:archiveme_mobile/features/activation/events/v1_event_registry.dart' show V1EventRegistry;
+import 'package:archiveme_mobile/features/activation/events/activation_event_counts_deferred.dart'
+    show ActivationEventCountsDeferred;
+import 'package:archiveme_mobile/features/activation/events/v1_event_registry.dart'
+    show V1EventRegistry;
 
 /// Tier 4 — funnel and monetization analytics (deferred from consumer V1).
 ///

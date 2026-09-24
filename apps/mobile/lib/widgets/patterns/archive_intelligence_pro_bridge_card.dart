@@ -11,7 +11,9 @@ import 'package:flutter/material.dart';
 /// Soft Pro boundary for full archive history — never blocks insight or recording.
 class ArchiveIntelligenceProBridgeCard extends StatelessWidget {
   const ArchiveIntelligenceProBridgeCard({
-    required this.onSeePro, required this.onNotNow, super.key,
+    required this.onSeePro,
+    required this.onNotNow,
+    super.key,
     this.compact = false,
   });
 

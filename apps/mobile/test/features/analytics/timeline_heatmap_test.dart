@@ -81,7 +81,9 @@ void main() {
     expect(place.single.id, 'c');
   });
 
-  testWidgets('a calendar square and a map pin filter the list', (tester) async {
+  testWidgets('a calendar square and a map pin filter the list', (
+    tester,
+  ) async {
     await tester.pumpWidget(
       MaterialApp(
         home: TimelineHeatmapScreen(
@@ -108,8 +110,14 @@ void main() {
     );
     await tester.pump();
 
-    expect(find.byKey(const Key('timeline_filtered_entry_harbor')), findsOneWidget);
-    expect(find.byKey(const Key('timeline_filtered_entry_sam')), findsOneWidget);
+    expect(
+      find.byKey(const Key('timeline_filtered_entry_harbor')),
+      findsOneWidget,
+    );
+    expect(
+      find.byKey(const Key('timeline_filtered_entry_sam')),
+      findsOneWidget,
+    );
 
     final calendar = tester.renderObject<RenderContributionCalendar>(
       find.byType(ContributionCalendar),
@@ -120,7 +128,10 @@ void main() {
     );
     await tester.pump();
 
-    expect(find.byKey(const Key('timeline_filtered_entry_harbor')), findsOneWidget);
+    expect(
+      find.byKey(const Key('timeline_filtered_entry_harbor')),
+      findsOneWidget,
+    );
     expect(find.byKey(const Key('timeline_filtered_entry_sam')), findsNothing);
     expect(find.text('1 moment on 23 Sep'), findsOneWidget);
 
@@ -131,8 +142,14 @@ void main() {
     await tester.tap(find.byKey(const Key('timeline_map_cluster_51.30_-0.20')));
     await tester.pump();
 
-    expect(find.byKey(const Key('timeline_filtered_entry_harbor')), findsOneWidget);
-    expect(find.byKey(const Key('timeline_filtered_entry_sam')), findsOneWidget);
+    expect(
+      find.byKey(const Key('timeline_filtered_entry_harbor')),
+      findsOneWidget,
+    );
+    expect(
+      find.byKey(const Key('timeline_filtered_entry_sam')),
+      findsOneWidget,
+    );
     expect(find.text('2 moments near this place'), findsOneWidget);
   });
 

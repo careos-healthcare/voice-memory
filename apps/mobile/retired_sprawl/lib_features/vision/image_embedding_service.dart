@@ -16,10 +16,10 @@ class ImageEmbeddingService {
     required ImageEmbeddingInference inference,
     required ImageAttachmentEmbeddingRepository repository,
     JournalSqliteRepository? journalSqlite,
-  })  : _processor = processor ?? const ImageProcessor(),
-        _inference = inference,
-        _repository = repository,
-        _journalSqlite = journalSqlite;
+  }) : _processor = processor ?? const ImageProcessor(),
+       _inference = inference,
+       _repository = repository,
+       _journalSqlite = journalSqlite;
 
   final ImageProcessor _processor;
   final ImageEmbeddingInference _inference;
@@ -32,7 +32,8 @@ class ImageEmbeddingService {
     JournalSqliteRepository? journalSqlite,
     ImageEmbeddingInference? inferenceOverride,
   }) async {
-    final inference = inferenceOverride ??
+    final inference =
+        inferenceOverride ??
         await OnnxImageEmbeddingInference.tryCreateFromAsset() ??
         LocalVisualProjectionInference();
     return ImageEmbeddingService(

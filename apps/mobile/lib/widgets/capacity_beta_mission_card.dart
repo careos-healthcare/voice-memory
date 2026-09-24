@@ -10,7 +10,8 @@ import 'package:go_router/go_router.dart';
 /// Compact or full mission card for beta surfaces and Archive Home.
 class CapacityBetaMissionCard extends StatelessWidget {
   const CapacityBetaMissionCard({
-    required this.result, super.key,
+    required this.result,
+    super.key,
     this.compact = false,
     this.onOpen,
     this.onDismiss,

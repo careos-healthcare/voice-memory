@@ -44,7 +44,9 @@ class BillingSettingsScreen extends ConsumerWidget {
                           : SubscriptionBillingCopy.freeChipLabel,
                       style: const TextStyle(color: Colors.white),
                     ),
-                    backgroundColor: subState.isPro ? Colors.green : Colors.grey,
+                    backgroundColor: subState.isPro
+                        ? Colors.green
+                        : Colors.grey,
                   ),
           ),
           if (!subState.isPro && subState.purchasesEnabled) ...[
@@ -88,7 +90,9 @@ class BillingSettingsScreen extends ConsumerWidget {
             contentPadding: EdgeInsets.zero,
             leading: const Icon(Icons.cancel_outlined),
             title: const Text(SubscriptionBillingCopy.cancelSubscriptionTitle),
-            subtitle: const Text(SubscriptionBillingCopy.cancelSubscriptionBody),
+            subtitle: const Text(
+              SubscriptionBillingCopy.cancelSubscriptionBody,
+            ),
             onTap: () => _openStoreSubscriptions(ref),
           ),
           ListTile(
@@ -111,7 +115,10 @@ class BillingSettingsScreen extends ConsumerWidget {
           ),
           if (subState.errorMessage case final error?) ...[
             const SizedBox(height: 12),
-            Text(error, style: TextStyle(color: Theme.of(context).colorScheme.error)),
+            Text(
+              error,
+              style: TextStyle(color: Theme.of(context).colorScheme.error),
+            ),
           ],
         ],
       ),
@@ -123,7 +130,11 @@ class BillingSettingsScreen extends ConsumerWidget {
       await ref.read(subscriptionNotifierProvider).openManageSubscriptions();
       return;
     } catch (e, stackTrace) {
-      AppLogger.error('Unhandled error caught', error: e, stackTrace: stackTrace);
+      AppLogger.error(
+        'Unhandled error caught',
+        error: e,
+        stackTrace: stackTrace,
+      );
       // Fall through to platform store URL.
     }
 

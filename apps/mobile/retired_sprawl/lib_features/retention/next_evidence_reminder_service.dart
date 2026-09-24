@@ -100,7 +100,9 @@ abstract class NextEvidenceReminderService {
     return 'next_evidence:$journeyId';
   }
 
-  static JournalRoutineKind? _routineForVariant(ReminderTimingVariant? variant) {
+  static JournalRoutineKind? _routineForVariant(
+    ReminderTimingVariant? variant,
+  ) {
     return switch (variant) {
       ReminderTimingVariant.tomorrowMorning => JournalRoutineKind.morning,
       ReminderTimingVariant.tomorrowEvening => JournalRoutineKind.evening,

@@ -25,8 +25,7 @@ abstract final class RoutineKindResolver {
       RoutineAnchorType.evening ||
       RoutineAnchorType.beforeSleep => JournalRoutineKind.evening,
       RoutineAnchorType.afterWork => JournalRoutineKind.evening,
-      RoutineAnchorType.afterHardMoment ||
-      RoutineAnchorType.custom => null,
+      RoutineAnchorType.afterHardMoment || RoutineAnchorType.custom => null,
     };
   }
 

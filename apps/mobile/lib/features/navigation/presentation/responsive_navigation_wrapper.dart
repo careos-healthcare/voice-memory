@@ -104,7 +104,8 @@ class _Sidebar extends StatelessWidget {
                   for (final destination in destinations)
                     NavigationRailDestination(
                       icon: destination.icon,
-                      selectedIcon: destination.selectedIcon ?? destination.icon,
+                      selectedIcon:
+                          destination.selectedIcon ?? destination.icon,
                       label: Text(destination.label),
                     ),
                 ],

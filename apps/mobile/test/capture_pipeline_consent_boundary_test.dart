@@ -88,9 +88,9 @@ void main() {
     );
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(connectivity, (call) async {
-      if (call.method == 'check') return ['wifi'];
-      return null;
-    });
+          if (call.method == 'check') return ['wifi'];
+          return null;
+        });
 
     // Capture attestation reads a device id from secure storage. Only the
     // positive control gets far enough to need it — which is the point of
@@ -101,28 +101,29 @@ void main() {
     final secureValues = <String, String>{};
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(secureStorage, (call) async {
-      final args = call.arguments as Map<Object?, Object?>? ?? const {};
-      final key = args['key'] as String?;
-      switch (call.method) {
-        case 'read':
-          return key == null ? null : secureValues[key];
-        case 'write':
-          if (key != null) secureValues[key] = args['value'] as String? ?? '';
-          return null;
-        case 'containsKey':
-          return key != null && secureValues.containsKey(key);
-        case 'readAll':
-          return Map<String, String>.of(secureValues);
-        case 'delete':
-          secureValues.remove(key);
-          return null;
-        case 'deleteAll':
-          secureValues.clear();
-          return null;
-        default:
-          return null;
-      }
-    });
+          final args = call.arguments as Map<Object?, Object?>? ?? const {};
+          final key = args['key'] as String?;
+          switch (call.method) {
+            case 'read':
+              return key == null ? null : secureValues[key];
+            case 'write':
+              if (key != null)
+                secureValues[key] = args['value'] as String? ?? '';
+              return null;
+            case 'containsKey':
+              return key != null && secureValues.containsKey(key);
+            case 'readAll':
+              return Map<String, String>.of(secureValues);
+            case 'delete':
+              secureValues.remove(key);
+              return null;
+            case 'deleteAll':
+              secureValues.clear();
+              return null;
+            default:
+              return null;
+          }
+        });
   });
 
   setUp(ApiUsageGuard.resetForTest);
@@ -155,7 +156,9 @@ void main() {
     return RemoteProcessingConsentStore(AppServices.instance.prefs);
   }
 
-  Future<JournalEntry> saveProvisionalEntry({String id = 'entry-provisional'}) async {
+  Future<JournalEntry> saveProvisionalEntry({
+    String id = 'entry-provisional',
+  }) async {
     final audio = await _usableAudioFile();
     final entry = JournalEntry(
       id: id,
@@ -189,34 +192,37 @@ void main() {
     );
   }
 
-  test('revoked transcription consent blocks provisional reconcile retries',
-      () async {
-    final api = _ReconcileSpyApi();
-    final consentStore = await initBoundary(api: api, onDeviceOnly: false);
-    final gate = RemoteProcessingConsentGate(consentStore);
+  test(
+    'revoked transcription consent blocks provisional reconcile retries',
+    () async {
+      final api = _ReconcileSpyApi();
+      final consentStore = await initBoundary(api: api, onDeviceOnly: false);
+      final gate = RemoteProcessingConsentGate(consentStore);
 
-    // With the veto off and consent on record the retry is genuinely available,
-    // so the refusal below can only come from the withdrawal.
-    expect(
-      await gate.isPurposePermittedNow(
-        RemoteProcessingPurpose.remoteTranscription,
-      ),
-      isTrue,
-      reason: 'precondition: the retry is permitted before consent is revoked',
-    );
+      // With the veto off and consent on record the retry is genuinely available,
+      // so the refusal below can only come from the withdrawal.
+      expect(
+        await gate.isPurposePermittedNow(
+          RemoteProcessingPurpose.remoteTranscription,
+        ),
+        isTrue,
+        reason:
+            'precondition: the retry is permitted before consent is revoked',
+      );
 
-    final entry = await saveProvisionalEntry();
-    await consentStore.withdraw();
+      final entry = await saveProvisionalEntry();
+      await consentStore.withdraw();
 
-    expect(
-      await gate.isPurposePermittedNow(
-        RemoteProcessingPurpose.remoteTranscription,
-      ),
-      isFalse,
-    );
-    expect(await reconcilerFor(consentStore).reconcileEntry(entry), isFalse);
-    expect(api.postTranscribeCallCount, 0);
-  });
+      expect(
+        await gate.isPurposePermittedNow(
+          RemoteProcessingPurpose.remoteTranscription,
+        ),
+        isFalse,
+      );
+      expect(await reconcilerFor(consentStore).reconcileEntry(entry), isFalse);
+      expect(api.postTranscribeCallCount, 0);
+    },
+  );
 
   test('control: the same retry does upload while consent stands', () async {
     // The positive control the case above needs. One variable differs — no

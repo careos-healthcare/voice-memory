@@ -44,7 +44,11 @@ class _ProtectArchiveBannerState extends State<ProtectArchiveBanner> {
       );
       if (mounted) setState(() => _visible = show);
     } catch (e, stackTrace) {
-      AppLogger.error('Unhandled error caught', error: e, stackTrace: stackTrace);
+      AppLogger.error(
+        'Unhandled error caught',
+        error: e,
+        stackTrace: stackTrace,
+      );
       AppLogger.debug('ProtectArchiveBanner: load failed — $e');
       if (kDebugMode) AppLogger.debug('$stackTrace');
     }

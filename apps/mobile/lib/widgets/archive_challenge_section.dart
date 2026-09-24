@@ -79,9 +79,7 @@ class _ArchiveChallengeSectionState extends State<ArchiveChallengeSection> {
       children: [
         Text(
           WarmArchiveCopy.challengeSectionTitle,
-          style: VoiceMemoryTypography.sectionLabelStyle(
-            
-          ),
+          style: VoiceMemoryTypography.sectionLabelStyle(),
         ),
         const SizedBox(height: 10),
         Container(
@@ -115,10 +113,12 @@ class _ArchiveChallengeSectionState extends State<ArchiveChallengeSection> {
               TextButton(
                 onPressed: () {
                   ArchiveExplanationAnalytics.challengeViewed(refId: c.id);
-                  unawaited(ProductAnalytics.trackStrings(
-                    'archive_challenge_why_opened',
-                    {'id': c.id},
-                  ));
+                  unawaited(
+                    ProductAnalytics.trackStrings(
+                      'archive_challenge_why_opened',
+                      {'id': c.id},
+                    ),
+                  );
                   openArchiveExplanation(
                     context,
                     ref: c.insightRef,

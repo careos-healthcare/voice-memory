@@ -164,7 +164,10 @@ void main() {
     });
     expect(service.connected, isTrue);
     expect(service.pending, isEmpty);
-    expect((await harness.db.query('journal_entries')).single['transcript'], 'Later.');
+    expect(
+      (await harness.db.query('journal_entries')).single['transcript'],
+      'Later.',
+    );
     service.dispose();
   });
 

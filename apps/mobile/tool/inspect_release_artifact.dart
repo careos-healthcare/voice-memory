@@ -37,7 +37,9 @@ String _findMobileRoot() {
     if (File('${dir.path}/pubspec.yaml').existsSync()) return dir.path;
     final parent = dir.parent;
     if (parent.path == dir.path) {
-      throw StateError('Could not find pubspec.yaml from ${Directory.current.path}');
+      throw StateError(
+        'Could not find pubspec.yaml from ${Directory.current.path}',
+      );
     }
     dir = parent;
   }
@@ -82,7 +84,9 @@ void _checkIosEntitlements(String root, List<String> failures) {
     final pbxText = pbx.readAsStringSync();
     if (!V1CapabilityRegistry.nativeExtensions &&
         pbxText.contains('TodayCheckWidget')) {
-      failures.add('TodayCheckWidget target present while nativeExtensions=false');
+      failures.add(
+        'TodayCheckWidget target present while nativeExtensions=false',
+      );
     }
   }
 }
@@ -107,8 +111,10 @@ void _checkDisabledCapabilityInit(String root, List<String> failures) {
 
 void _checkVersionIdentity(String root, List<String> failures) {
   final pubspec = File('$root/pubspec.yaml').readAsStringSync();
-  final match = RegExp(r'^version:\s*(\d+\.\d+\.\d+)\+(\d+)\s*$', multiLine: true)
-      .firstMatch(pubspec);
+  final match = RegExp(
+    r'^version:\s*(\d+\.\d+\.\d+)\+(\d+)\s*$',
+    multiLine: true,
+  ).firstMatch(pubspec);
   if (match == null) {
     failures.add('pubspec.yaml missing version: semver+build');
     return;
@@ -140,7 +146,9 @@ void _checkLegalLinks(String root, List<String> failures) {
       .map((f) => f.readAsStringSync())
       .join('\n');
   if (combined.isEmpty) {
-    failures.add('missing app_config.dart / customer_language.dart for legal URLs');
+    failures.add(
+      'missing app_config.dart / customer_language.dart for legal URLs',
+    );
     return;
   }
   for (final url in required) {
@@ -154,7 +162,9 @@ void _checkApiHost(String root, List<String> failures) {
   final config = File('$root/lib/config/app_config.dart');
   if (!config.existsSync()) return;
   final text = config.readAsStringSync();
-  final match = RegExp(r"productionApiBaseUrl\s*=\s*'([^']+)'").firstMatch(text);
+  final match = RegExp(
+    r"productionApiBaseUrl\s*=\s*'([^']+)'",
+  ).firstMatch(text);
   final url = match?.group(1) ?? '';
   if (url.startsWith('http://')) {
     failures.add('production API host uses insecure http://');

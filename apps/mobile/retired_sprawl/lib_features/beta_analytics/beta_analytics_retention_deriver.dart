@@ -42,7 +42,9 @@ abstract final class BetaAnalyticsRetentionDeriver {
   }
 
   /// App-resume hook for users who saved a second moment later.
-  static Future<void> evaluateOnResume(BetaAnalyticsMilestoneStore store) async {
+  static Future<void> evaluateOnResume(
+    BetaAnalyticsMilestoneStore store,
+  ) async {
     final state = await store.read();
     if (state.saveCount < 2 && state.firstSaveAtUtc == null) return;
     await evaluateAfterSave(

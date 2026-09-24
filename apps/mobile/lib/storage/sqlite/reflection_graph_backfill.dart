@@ -22,7 +22,8 @@ abstract final class ReflectionGraphBackfill {
       return false;
     }
 
-    final nodeCount = Sqflite.firstIntValue(
+    final nodeCount =
+        Sqflite.firstIntValue(
           await db.rawQuery('SELECT COUNT(*) FROM $_nodesTable'),
         ) ??
         0;
@@ -59,7 +60,10 @@ abstract final class ReflectionGraphBackfill {
     return rows.isNotEmpty;
   }
 
-  static Future<bool> _tableExists(DatabaseExecutor db, String tableName) async {
+  static Future<bool> _tableExists(
+    DatabaseExecutor db,
+    String tableName,
+  ) async {
     final rows = await db.rawQuery(
       "SELECT name FROM sqlite_master WHERE type = 'table' AND name = ?",
       [tableName],
@@ -111,8 +115,9 @@ abstract final class ReflectionGraphBackfill {
           'entry_id': entryId,
           'kind': node.kind,
           'label': node.label,
-          'payload_json':
-              node.payload.isEmpty ? null : jsonEncode(node.payload),
+          'payload_json': node.payload.isEmpty
+              ? null
+              : jsonEncode(node.payload),
           'updated_at': updatedAt,
         });
         batch.insert(_ftsTable, {

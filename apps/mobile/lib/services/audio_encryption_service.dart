@@ -64,7 +64,11 @@ class AudioEncryptionService {
   /// securely deletes [rawAudio] after the encrypted file is flushed to disk.
   Future<File> encryptAudioFile(File rawAudio) async {
     if (!await rawAudio.exists()) {
-      throw ArgumentError.value(rawAudio.path, 'rawAudio', 'file does not exist');
+      throw ArgumentError.value(
+        rawAudio.path,
+        'rawAudio',
+        'file does not exist',
+      );
     }
 
     final plainBytes = await rawAudio.readAsBytes();
@@ -83,7 +87,11 @@ class AudioEncryptionService {
     final outputFile = File(outputPath);
     final payload = Uint8List(fileIv.length + encrypted.bytes.length)
       ..setRange(0, fileIv.length, fileIv)
-      ..setRange(fileIv.length, fileIv.length + encrypted.bytes.length, encrypted.bytes);
+      ..setRange(
+        fileIv.length,
+        fileIv.length + encrypted.bytes.length,
+        encrypted.bytes,
+      );
 
     await outputFile.parent.create(recursive: true);
     final tempFile = File('$outputPath.tmp');
@@ -182,7 +190,11 @@ class AudioEncryptionService {
         }
       }
     } on FileSystemException catch (e, stackTrace) {
-      AppLogger.error('Unhandled error caught', error: e, stackTrace: stackTrace);
+      AppLogger.error(
+        'Unhandled error caught',
+        error: e,
+        stackTrace: stackTrace,
+      );
       // Best-effort overwrite — still attempt deletion below.
     }
 

@@ -72,7 +72,10 @@ void main() {
         OnDeviceHeroCopy.bodyFor(allowedRemote: false),
         OnDeviceHeroCopy.declinedBody,
       );
-      expect(OnDeviceHeroCopy.allowedTitle, isNot(OnDeviceHeroCopy.declinedTitle));
+      expect(
+        OnDeviceHeroCopy.allowedTitle,
+        isNot(OnDeviceHeroCopy.declinedTitle),
+      );
     });
 
     test('passes the privacy copy policy block by block', () {

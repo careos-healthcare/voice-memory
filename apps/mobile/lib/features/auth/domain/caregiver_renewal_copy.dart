@@ -40,7 +40,8 @@ abstract final class CaregiverRenewalCopy {
   static String confirmCta(int days) =>
       days == 1 ? 'Confirm for 1 more day' : 'Confirm for $days more days';
 
-  static String successSnack(String endsOn) => 'Access continues until $endsOn.';
+  static String successSnack(String endsOn) =>
+      'Access continues until $endsOn.';
 
   /// Covers both settled refusals, so it names neither.
   ///
@@ -66,6 +67,5 @@ abstract final class CaregiverRenewalCopy {
 
   static String _dayCount(int days) => days == 1 ? '1 day' : '$days days';
 
-  static String _hyphenatedDays(int days) =>
-      days == 1 ? '1-day' : '$days-day';
+  static String _hyphenatedDays(int days) => days == 1 ? '1-day' : '$days-day';
 }

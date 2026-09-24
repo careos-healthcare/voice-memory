@@ -13,7 +13,8 @@ import 'package:flutter/material.dart';
 /// Top Themes table — Discover and Archive.
 class TopThemesSection extends StatelessWidget {
   const TopThemesSection({
-    required this.entries, super.key,
+    required this.entries,
+    super.key,
     this.baselineCounts,
   });
 

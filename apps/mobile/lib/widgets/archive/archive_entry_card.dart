@@ -74,9 +74,7 @@ class ArchiveEntryCard extends StatelessWidget {
 
   String get _semanticsLabel {
     final source = entry.durationSeconds > 0 ? 'Voice' : 'Text';
-    final date = DateFormat.yMMMMd()
-        .add_jm()
-        .format(entry.createdAt.toLocal());
+    final date = DateFormat.yMMMMd().add_jm().format(entry.createdAt.toLocal());
     return '$source saved moment from $date';
   }
 }
@@ -90,9 +88,7 @@ class ArchiveEntryCardMeta extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final source = entry.durationSeconds > 0 ? 'Voice' : 'Text';
-    final date = DateFormat.yMMMMd()
-        .add_jm()
-        .format(entry.createdAt.toLocal());
+    final date = DateFormat.yMMMMd().add_jm().format(entry.createdAt.toLocal());
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

@@ -23,7 +23,9 @@ class TranscriptCitationReference {
   final int endUtf16;
 
   bool get hasPlayback =>
-      audioId.isNotEmpty && startTimestampMs >= 0 && endTimestampMs > startTimestampMs;
+      audioId.isNotEmpty &&
+      startTimestampMs >= 0 &&
+      endTimestampMs > startTimestampMs;
 }
 
 /// Maps journal transcripts to playback-ready citation metadata.
@@ -41,12 +43,16 @@ class TranscriptCitationResolver {
     final durationMs = (entry.durationSeconds * 1000).clamp(0, 86400000);
     final startTimestampMs = durationMs == 0 || transcript.isEmpty
         ? 0
-        : ((span.$1 / transcript.length) * durationMs).round().clamp(0, durationMs);
+        : ((span.$1 / transcript.length) * durationMs).round().clamp(
+            0,
+            durationMs,
+          );
     final endTimestampMs = durationMs == 0 || transcript.isEmpty
         ? 0
-        : ((span.$2 / transcript.length) * durationMs)
-            .round()
-            .clamp(startTimestampMs, durationMs);
+        : ((span.$2 / transcript.length) * durationMs).round().clamp(
+            startTimestampMs,
+            durationMs,
+          );
 
     final audioId = entry.id;
     final chunkId = '$audioId:$startTimestampMs';
@@ -92,12 +98,15 @@ class TranscriptCitationResolver {
 
   (int, int) _resolveSpan(String transcript, String quote) {
     if (transcript.isEmpty) return (0, 0);
-    if (quote.isEmpty) return (0, transcript.length.clamp(0, transcript.length));
+    if (quote.isEmpty)
+      return (0, transcript.length.clamp(0, transcript.length));
 
     final direct = transcript.indexOf(quote);
     if (direct >= 0) return (direct, direct + quote.length);
 
-    final normalizedTranscript = transcript.replaceAll(RegExp(r'\s+'), ' ').trim();
+    final normalizedTranscript = transcript
+        .replaceAll(RegExp(r'\s+'), ' ')
+        .trim();
     final normalizedQuote = quote.replaceAll(RegExp(r'\s+'), ' ').trim();
     final normalizedIndex = normalizedTranscript.indexOf(normalizedQuote);
     if (normalizedIndex >= 0) {
@@ -113,7 +122,9 @@ class TranscriptCitationResolver {
     final probe = normalizedQuote.length > 24
         ? normalizedQuote.substring(0, 24)
         : normalizedQuote;
-    final probeIndex = normalizedTranscript.toLowerCase().indexOf(probe.toLowerCase());
+    final probeIndex = normalizedTranscript.toLowerCase().indexOf(
+      probe.toLowerCase(),
+    );
     if (probeIndex >= 0) {
       final mapped = _mapNormalizedSpan(
         transcript,
@@ -136,9 +147,10 @@ class TranscriptCitationResolver {
     if (normalized.isEmpty || original.isEmpty) return null;
     final ratio = original.length / normalized.length;
     final start = (normalizedStart * ratio).round().clamp(0, original.length);
-    final end = ((normalizedStart + normalizedLength) * ratio)
-        .round()
-        .clamp(start, original.length);
+    final end = ((normalizedStart + normalizedLength) * ratio).round().clamp(
+      start,
+      original.length,
+    );
     return (start, end);
   }
 

@@ -11,7 +11,9 @@ import 'package:flutter/material.dart';
 /// nothing here claims a pattern after one entry.
 class FirstRecordingValueCard extends StatelessWidget {
   const FirstRecordingValueCard({
-    required this.onViewArchive, required this.onRecordAnother, super.key,
+    required this.onViewArchive,
+    required this.onRecordAnother,
+    super.key,
   });
 
   /// Opens the existing archive view.

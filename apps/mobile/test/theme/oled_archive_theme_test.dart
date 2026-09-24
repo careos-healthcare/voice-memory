@@ -17,7 +17,10 @@ void main() {
     expect(theme.textTheme.bodyLarge?.color, isNot(const Color(0xFFFFFFFF)));
 
     expect(
-      OledArchiveTheme.contrastRatio(OledArchiveTheme.text, OledArchiveTheme.black),
+      OledArchiveTheme.contrastRatio(
+        OledArchiveTheme.text,
+        OledArchiveTheme.black,
+      ),
       greaterThanOrEqualTo(12),
     );
     expect(

@@ -69,22 +69,25 @@ void main() {
   });
 
   group('LocalReflectionDataSource', () {
-    test('heuristic inference returns graph edges for offline knowledge', () async {
-      final source = await LocalReflectionDataSource.create();
-      final result = await source.inferFromTranscript(
-        entryId: 'offline-entry',
-        transcript:
-            'Work has been heavy but I keep taking on more. '
-            'Tomorrow I will leave on time and rest.',
-      );
+    test(
+      'heuristic inference returns graph edges for offline knowledge',
+      () async {
+        final source = await LocalReflectionDataSource.create();
+        final result = await source.inferFromTranscript(
+          entryId: 'offline-entry',
+          transcript:
+              'Work has been heavy but I keep taking on more. '
+              'Tomorrow I will leave on time and rest.',
+        );
 
-      expect(result.usedOnnx, isFalse);
-      expect(result.reflection.mood, isEmpty);
-      expect(result.knowledgeGraph.entryId, 'offline-entry');
-      expect(result.knowledgeGraph.tensionOrContradiction, isNotNull);
-      expect(result.knowledgeGraph.nextSmallAction, isNotNull);
-      expect(result.knowledgeGraph.edges, isNotEmpty);
-    });
+        expect(result.usedOnnx, isFalse);
+        expect(result.reflection.mood, isEmpty);
+        expect(result.knowledgeGraph.entryId, 'offline-entry');
+        expect(result.knowledgeGraph.tensionOrContradiction, isNotNull);
+        expect(result.knowledgeGraph.nextSmallAction, isNotNull);
+        expect(result.knowledgeGraph.edges, isNotEmpty);
+      },
+    );
 
     test('rejects very short transcripts', () async {
       final source = await LocalReflectionDataSource.create();

@@ -104,7 +104,8 @@ class _ClientConsentVerificationViewState
         SwitchListTile(
           title: const Text(CoachCopy.confidenceInsightsLabel),
           value: _shareConfidenceInsights,
-          onChanged: (value) => setState(() => _shareConfidenceInsights = value),
+          onChanged: (value) =>
+              setState(() => _shareConfidenceInsights = value),
         ),
         SwitchListTile(
           title: const Text(CoachCopy.beliefsLabel),
@@ -134,7 +135,9 @@ class _ClientConsentVerificationViewState
           style: ArchiveMobileTypography.sectionTitle(context),
         ),
         const SizedBox(height: AppSpacing.md),
-        Text('${CoachCopy.factLedgerLabel}: ${permissions.factLedger ? 'Yes' : 'No'}'),
+        Text(
+          '${CoachCopy.factLedgerLabel}: ${permissions.factLedger ? 'Yes' : 'No'}',
+        ),
         Text(
           'Confidence insights: '
           '${permissions.confidenceBandedInsights ? 'Yes' : 'No'}',

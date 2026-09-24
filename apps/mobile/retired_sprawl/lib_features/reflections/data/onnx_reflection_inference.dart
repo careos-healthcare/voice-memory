@@ -47,7 +47,8 @@ class OnnxReflectionInference implements ReflectionInference {
 
   @override
   Future<List<double>> runReflectionLogits(Float32List inputTensor) async {
-    if (inputTensor.length != ReflectionTranscriptProcessor.tensorElementCount) {
+    if (inputTensor.length !=
+        ReflectionTranscriptProcessor.tensorElementCount) {
       throw ArgumentError.value(
         inputTensor.length,
         'inputTensor.length',

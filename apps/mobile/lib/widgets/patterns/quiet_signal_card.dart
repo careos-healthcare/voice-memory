@@ -13,7 +13,10 @@ import 'package:flutter/material.dart';
 /// Quiet / not-seen-recently card on Patterns and related surfaces.
 class QuietSignalCard extends StatefulWidget {
   const QuietSignalCard({
-    required this.signal, required this.entryCount, required this.source, super.key,
+    required this.signal,
+    required this.entryCount,
+    required this.source,
+    super.key,
     this.store,
     this.skipPersist = false,
     this.onKeepWatching,
@@ -23,7 +26,10 @@ class QuietSignalCard extends StatefulWidget {
   });
 
   const QuietSignalCard.test({
-    required this.signal, required this.entryCount, required this.source, super.key,
+    required this.signal,
+    required this.entryCount,
+    required this.source,
+    super.key,
     this.store,
     this.onKeepWatching,
     this.onViewPatternDetails,

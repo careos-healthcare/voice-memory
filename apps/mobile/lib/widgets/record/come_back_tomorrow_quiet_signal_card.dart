@@ -10,14 +10,18 @@ import 'package:flutter/material.dart';
 /// Quiet signal when an active watch target has not appeared recently.
 class ComeBackTomorrowQuietSignalCard extends StatefulWidget {
   const ComeBackTomorrowQuietSignalCard({
-    required this.signal, required this.entryCount, super.key,
+    required this.signal,
+    required this.entryCount,
+    super.key,
     this.store,
     this.skipPersist = false,
     this.onKeepWatching,
   });
 
   const ComeBackTomorrowQuietSignalCard.test({
-    required this.signal, required this.entryCount, super.key,
+    required this.signal,
+    required this.entryCount,
+    super.key,
     this.store,
     this.onKeepWatching,
   }) : skipPersist = true;

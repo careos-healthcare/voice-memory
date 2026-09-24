@@ -23,31 +23,42 @@ void main() {
     await _writeMarker(live.path, 'two');
     await health.retainRollingBackup(live);
 
-    expect(await _readMarker('${directory.path}/archive_me_backup_1.db'), 'two');
-    expect(await _readMarker('${directory.path}/archive_me_backup_2.db'), 'one');
-  });
-
-  test('startup restores the newest backup when the index is corrupt', () async {
-    final directory = await Directory.systemTemp.createTemp('db-recover');
-    final live = File('${directory.path}/archive.db');
-    final health = DatabaseHealthService();
-    await _writeMarker(live.path, 'keep');
-    await health.retainRollingBackup(live);
-    await live.writeAsString('not a database');
-
-    final report = await health.runStartupCheck(
-      databasePath: live.path,
-      openDatabase: databaseFactory.openDatabase,
+    expect(
+      await _readMarker('${directory.path}/archive_me_backup_1.db'),
+      'two',
     );
-
-    expect(report.recovered, isTrue);
-    expect(report.restoredFrom, 'archive_me_backup_1.db');
-    expect(await _readMarker(live.path), 'keep');
+    expect(
+      await _readMarker('${directory.path}/archive_me_backup_2.db'),
+      'one',
+    );
   });
+
+  test(
+    'startup restores the newest backup when the index is corrupt',
+    () async {
+      final directory = await Directory.systemTemp.createTemp('db-recover');
+      final live = File('${directory.path}/archive.db');
+      final health = DatabaseHealthService();
+      await _writeMarker(live.path, 'keep');
+      await health.retainRollingBackup(live);
+      await live.writeAsString('not a database');
+
+      final report = await health.runStartupCheck(
+        databasePath: live.path,
+        openDatabase: databaseFactory.openDatabase,
+      );
+
+      expect(report.recovered, isTrue);
+      expect(report.restoredFrom, 'archive_me_backup_1.db');
+      expect(await _readMarker(live.path), 'keep');
+    },
+  );
 
   test('a loaded vec index without vec_chunks is inconsistent', () async {
     final directory = await Directory.systemTemp.createTemp('db-vec');
-    final db = await databaseFactory.openDatabase('${directory.path}/archive.db');
+    final db = await databaseFactory.openDatabase(
+      '${directory.path}/archive.db',
+    );
     addTearDown(db.close);
 
     final report = await DatabaseHealthService().checkOpen(
@@ -62,7 +73,9 @@ void main() {
 
   test('schema migration keeps a rolling backup beside the database', () async {
     final directory = await Directory.systemTemp.createTemp('db-migrate');
-    final db = await databaseFactory.openDatabase('${directory.path}/archive.db');
+    final db = await databaseFactory.openDatabase(
+      '${directory.path}/archive.db',
+    );
     addTearDown(db.close);
 
     await SqliteMigrationManager(migrations: [_MarkerMigration()]).run(db);
@@ -76,7 +89,9 @@ void main() {
 
   test('vacuum removes orphaned temp files', () async {
     final directory = await Directory.systemTemp.createTemp('db-vacuum');
-    final db = await databaseFactory.openDatabase('${directory.path}/archive.db');
+    final db = await databaseFactory.openDatabase(
+      '${directory.path}/archive.db',
+    );
     addTearDown(db.close);
     final scratch = Directory('${directory.path}/scratch')..createSync();
     File('${scratch.path}/orphan.tmp').writeAsStringSync('temp');
@@ -138,7 +153,10 @@ void main() {
     expect(find.text('Connection open'), findsOneWidget);
     expect(find.text('Versions 1-20'), findsOneWidget);
     expect(find.text('Schema version 23'), findsOneWidget);
-    expect(find.textContaining('Not scheduled on this device.'), findsOneWidget);
+    expect(
+      find.textContaining('Not scheduled on this device.'),
+      findsOneWidget,
+    );
     expect(
       find.textContaining('Mesh discovery is off on this device.'),
       findsOneWidget,

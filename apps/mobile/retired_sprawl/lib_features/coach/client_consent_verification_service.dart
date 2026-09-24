@@ -28,13 +28,14 @@ class ClientConsentVerificationService {
     FlutterSecureStorage? secureStorage,
     this._signingSecretOverride,
     this._consentApi,
-  })  : _secureStorage = secureStorage ??
-            const FlutterSecureStorage(
-              aOptions: AndroidOptions(encryptedSharedPreferences: true),
-              iOptions: IOSOptions(
-                accessibility: KeychainAccessibility.first_unlock,
-              ),
-            );
+  }) : _secureStorage =
+           secureStorage ??
+           const FlutterSecureStorage(
+             aOptions: AndroidOptions(encryptedSharedPreferences: true),
+             iOptions: IOSOptions(
+               accessibility: KeychainAccessibility.first_unlock,
+             ),
+           );
 
   static const _secretStorageKey = 'coach_client_consent_hmac_secret_v1';
 
@@ -188,16 +189,16 @@ class ClientConsentVerificationService {
   }
 
   Map<String, Object?> _canonicalPayload(CoachConsentToken token) => {
-        'tokenId': token.tokenId,
-        'relationshipId': token.relationshipId,
-        'clientAccountId': token.clientAccountId,
-        'coachId': token.coachId,
-        'permissions': token.permissions.toJson(),
-        'issuedAt': token.issuedAt.toUtc().toIso8601String(),
-        'expiresAt': token.expiresAt.toUtc().toIso8601String(),
-        'policyVersion': token.policyVersion,
-        'clientAffirmationHash': token.clientAffirmationHash,
-      };
+    'tokenId': token.tokenId,
+    'relationshipId': token.relationshipId,
+    'clientAccountId': token.clientAccountId,
+    'coachId': token.coachId,
+    'permissions': token.permissions.toJson(),
+    'issuedAt': token.issuedAt.toUtc().toIso8601String(),
+    'expiresAt': token.expiresAt.toUtc().toIso8601String(),
+    'policyVersion': token.policyVersion,
+    'clientAffirmationHash': token.clientAffirmationHash,
+  };
 
   Future<String> _signPayload(Map<String, Object?> payload) async {
     final secret = await _signingSecret();
@@ -214,7 +215,9 @@ class ClientConsentVerificationService {
       if (value is Map<String, Object?>) {
         out[key] = _sortMap(value);
       } else if (value is Map) {
-        out[key] = _sortMap(Map<String, Object?>.from(value.cast<String, Object?>()));
+        out[key] = _sortMap(
+          Map<String, Object?>.from(value.cast<String, Object?>()),
+        );
       } else if (value is List) {
         out[key] = List<Object?>.from(value);
       } else {
@@ -260,9 +263,9 @@ class ClientConsentVerificationService {
     return switch (result) {
       ApiSuccess(:final value) => value,
       ApiFailureResult() => const CoachTokenVerificationResult(
-          valid: false,
-          reason: 'Server consent verification failed',
-        ),
+        valid: false,
+        reason: 'Server consent verification failed',
+      ),
     };
   }
 }

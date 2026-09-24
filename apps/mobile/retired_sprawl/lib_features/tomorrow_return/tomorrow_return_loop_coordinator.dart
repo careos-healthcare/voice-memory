@@ -86,7 +86,8 @@ abstract class TomorrowReturnLoopCoordinator {
         store: DailyDiscoveryStore(AppServices.instance.prefs),
         entries: entries,
       );
-    } catch (_, stackTrace) { // ignore: silent_catch_audit — discovery engine best-effort
+    } catch (_, stackTrace) {
+      // ignore: silent_catch_audit — discovery engine best-effort
       discovery = null;
     }
 

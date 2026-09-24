@@ -8,7 +8,9 @@ import 'package:flutter/material.dart';
 
 class PostSaveClearerMomentBanner extends StatelessWidget {
   const PostSaveClearerMomentBanner({
-    required this.prompt, required this.onRecordNext, super.key,
+    required this.prompt,
+    required this.onRecordNext,
+    super.key,
     this.title,
     this.lead,
   });

@@ -24,9 +24,9 @@ class CaregiverAuditStore {
       ..clear()
       ..addAll(
         rows is List
-            ? rows
-                .whereType<Map>()
-                .map((row) => AuditLogEntry.fromJson(Map<String, dynamic>.from(row)))
+            ? rows.whereType<Map>().map(
+                (row) => AuditLogEntry.fromJson(Map<String, dynamic>.from(row)),
+              )
             : const <AuditLogEntry>[],
       );
     _loaded = true;
@@ -43,7 +43,9 @@ class CaregiverAuditStore {
     await ensureLoaded();
     final timestamp = (now ?? DateTime.now()).toUtc();
     final entry = AuditLogEntry(
-      entryId: _digest('$sessionId|${action.wireValue}|${timestamp.toIso8601String()}'),
+      entryId: _digest(
+        '$sessionId|${action.wireValue}|${timestamp.toIso8601String()}',
+      ),
       sessionId: sessionId,
       action: action,
       resourceType: resourceType,

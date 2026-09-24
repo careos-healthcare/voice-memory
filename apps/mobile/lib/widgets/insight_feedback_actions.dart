@@ -12,14 +12,20 @@ import 'dart:async';
 /// Compact local insight feedback actions — no private text, no network.
 class InsightFeedbackActions extends StatefulWidget {
   const InsightFeedbackActions({
-    required this.insightId, required this.insightType, required this.sourceRoute, super.key,
+    required this.insightId,
+    required this.insightType,
+    required this.sourceRoute,
+    super.key,
     this.show = true,
     this.onSaved,
     this.watchlistRoute = ThenNowCopy.archiveHomeRoute,
   });
 
   const InsightFeedbackActions.test({
-    required this.insightId, required this.insightType, required this.sourceRoute, super.key,
+    required this.insightId,
+    required this.insightType,
+    required this.sourceRoute,
+    super.key,
     this.show = true,
     this.onSaved,
     this.watchlistRoute = ThenNowCopy.archiveHomeRoute,

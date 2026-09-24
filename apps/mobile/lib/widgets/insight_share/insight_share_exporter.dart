@@ -115,8 +115,7 @@ class _InsightShareExporterState extends State<InsightShareExporter> {
               crossAxisAlignment: WrapCrossAlignment.center,
               children: [
                 Text(model.headline, style: theme.textTheme.titleMedium),
-                if (widget.onViewEvidence != null ||
-                    _sourceEntryIds.isNotEmpty)
+                if (widget.onViewEvidence != null || _sourceEntryIds.isNotEmpty)
                   ViewEvidenceInlineLink(
                     key: const Key('insight_share_view_evidence'),
                     entryIds: _sourceEntryIds,

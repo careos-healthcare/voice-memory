@@ -15,7 +15,8 @@ import 'package:go_router/go_router.dart';
 /// Shown immediately after a successful save — first 30-second win.
 class InstantArchiveBeliefCard extends StatefulWidget {
   const InstantArchiveBeliefCard({
-    required this.entries, super.key,
+    required this.entries,
+    super.key,
     this.state,
     this.onDismiss,
   });

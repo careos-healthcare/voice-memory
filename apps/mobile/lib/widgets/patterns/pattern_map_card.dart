@@ -12,7 +12,8 @@ import 'package:flutter/material.dart';
 /// how it feels, what makes it lighter or heavier, and the next useful check.
 class PatternMapCard extends StatelessWidget {
   const PatternMapCard({
-    required this.map, super.key,
+    required this.map,
+    super.key,
     this.onUseCheck,
     this.showTitle = true,
     this.quality,

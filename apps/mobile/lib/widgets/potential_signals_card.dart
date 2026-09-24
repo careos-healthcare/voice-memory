@@ -9,7 +9,8 @@ import 'package:flutter/material.dart';
 /// Post-save card: what ArchiveMe noticed today and early pattern hints.
 class PotentialSignalsCard extends StatelessWidget {
   const PotentialSignalsCard({
-    required this.signals, super.key,
+    required this.signals,
+    super.key,
     this.noticedToday,
     this.showPatternHint = false,
   });

@@ -11,7 +11,11 @@ import 'package:flutter/material.dart';
 /// Compact payoff card when a signal journey reaches 3 supporting moments.
 class SignalReviewCard extends StatelessWidget {
   const SignalReviewCard({
-    required this.review, required this.onConfirm, required this.onCorrect, required this.onKeepWatching, super.key,
+    required this.review,
+    required this.onConfirm,
+    required this.onCorrect,
+    required this.onKeepWatching,
+    super.key,
     this.onViewFull,
   });
 

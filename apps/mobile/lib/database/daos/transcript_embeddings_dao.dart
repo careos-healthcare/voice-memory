@@ -28,12 +28,13 @@ class TranscriptEmbeddingsDao extends DatabaseAccessor<AppDatabase>
 
   Future<void> deleteTranscriptEmbedding(String entryId) async {
     if (entryId.isEmpty) return;
-    await (delete(memoryTranscriptEmbeddings)
-          ..where((t) => t.entryId.equals(entryId)))
-        .go();
+    await (delete(
+      memoryTranscriptEmbeddings,
+    )..where((t) => t.entryId.equals(entryId))).go();
   }
 
-  Future<List<({String entryId, Uint8List embedding})>> loadAllTranscriptEmbeddings({
+  Future<List<({String entryId, Uint8List embedding})>>
+  loadAllTranscriptEmbeddings({
     int? limit,
   }) async {
     final query = select(memoryTranscriptEmbeddings);
@@ -65,16 +66,16 @@ class TranscriptEmbeddingsDao extends DatabaseAccessor<AppDatabase>
 
   Future<void> deleteImageEmbeddingsForEntry(String entryId) async {
     if (entryId.isEmpty) return;
-    await (delete(journalImageEmbeddings)
-          ..where((t) => t.entryId.equals(entryId)))
-        .go();
+    await (delete(
+      journalImageEmbeddings,
+    )..where((t) => t.entryId.equals(entryId))).go();
   }
 
   Future<List<({String evidenceId, String entryId, Uint8List embedding})>>
   loadImageEmbeddingsForEntry(String entryId) async {
-    final rows = await (select(journalImageEmbeddings)
-          ..where((t) => t.entryId.equals(entryId)))
-        .get();
+    final rows = await (select(
+      journalImageEmbeddings,
+    )..where((t) => t.entryId.equals(entryId))).get();
     return rows
         .map(
           (row) => (
@@ -115,7 +116,8 @@ class TranscriptEmbeddingsDao extends DatabaseAccessor<AppDatabase>
       offset < toDelete.length;
       offset += DatabaseConstants.deleteNotInChunkSize
     ) {
-      final end = offset + DatabaseConstants.deleteNotInChunkSize > toDelete.length
+      final end =
+          offset + DatabaseConstants.deleteNotInChunkSize > toDelete.length
           ? toDelete.length
           : offset + DatabaseConstants.deleteNotInChunkSize;
       final chunk = toDelete.sublist(offset, end);

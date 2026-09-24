@@ -60,7 +60,10 @@ class RecordPipelineCaptureTelemetry implements CaptureTelemetry {
   }
 
   @override
-  void remoteProcessingCompleted({required bool success, required String kind}) {
+  void remoteProcessingCompleted({
+    required bool success,
+    required String kind,
+  }) {
     RecordPipelineLog.remoteProcessingCompleted(success: success, kind: kind);
     final elapsed = _remoteTimers.remove(kind)?.elapsed ?? Duration.zero;
     unawaited(
@@ -82,7 +85,10 @@ class RecordPipelineCaptureTelemetry implements CaptureTelemetry {
   }
 
   @override
-  void recoverableFailure({required String reason, required bool hasLocalSave}) {
+  void recoverableFailure({
+    required String reason,
+    required bool hasLocalSave,
+  }) {
     RecordPipelineLog.recoverableCaptureFailure(
       reason: reason,
       hasLocalSave: hasLocalSave,

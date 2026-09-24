@@ -139,13 +139,19 @@ void main() {
       expect(emitted, isEmpty);
     });
 
-    test('sentinel transcript in entry does not enter analytics payload', () async {
-      await journal.save(entry(id: 'safe'), captureKind: 'voice');
+    test(
+      'sentinel transcript in entry does not enter analytics payload',
+      () async {
+        await journal.save(entry(id: 'safe'), captureKind: 'voice');
 
-      final last = BetaAnalyticsTracker.localLog.last;
-      expect(last.payload.values, isNot(contains('SENTINEL_TRANSCRIPT_LEAK')));
-      expect(last.payload.values.join(' '), isNot(contains('SENTINEL')));
-    });
+        final last = BetaAnalyticsTracker.localLog.last;
+        expect(
+          last.payload.values,
+          isNot(contains('SENTINEL_TRANSCRIPT_LEAK')),
+        );
+        expect(last.payload.values.join(' '), isNot(contains('SENTINEL')));
+      },
+    );
   });
 
   group('payload validation', () {

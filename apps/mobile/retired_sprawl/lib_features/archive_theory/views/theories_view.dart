@@ -62,7 +62,11 @@ class TheoriesView extends StatelessWidget {
           reflectionCount: reflectionCount,
         ),
         const SizedBox(height: AppSpacing.lg),
-        _section(context, TheoryPageCopy.strengtheningTitle, report.strengthening),
+        _section(
+          context,
+          TheoryPageCopy.strengtheningTitle,
+          report.strengthening,
+        ),
         _section(context, TheoryPageCopy.weakeningTitle, report.weakening),
         _section(context, TheoryPageCopy.activeTitle, report.active),
         _section(context, TheoryPageCopy.resolvedTitle, report.resolved),
@@ -92,20 +96,22 @@ class TheoriesView extends StatelessWidget {
         children: [
           Text(title, style: ArchiveMobileTypography.cardLabel(context)),
           const SizedBox(height: AppSpacing.sm),
-          ...theories.map((theory) => Padding(
-                padding: const EdgeInsets.only(bottom: AppSpacing.sm),
-                child: TheoryCard(
-                  theory: theory,
-                  onCitationTap: onCitationTap,
-                  onConnectionMapTap: onConnectionMapTap == null
-                      ? null
-                      : () => _openConnectionMap(theory),
-                  showXRay: showXRay,
-                  onXRayTap: theory.inspection == null
-                      ? null
-                      : () => _openXRay(theory),
-                ),
-              )),
+          ...theories.map(
+            (theory) => Padding(
+              padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+              child: TheoryCard(
+                theory: theory,
+                onCitationTap: onCitationTap,
+                onConnectionMapTap: onConnectionMapTap == null
+                    ? null
+                    : () => _openConnectionMap(theory),
+                showXRay: showXRay,
+                onXRayTap: theory.inspection == null
+                    ? null
+                    : () => _openXRay(theory),
+              ),
+            ),
+          ),
         ],
       ),
     );

@@ -15,7 +15,8 @@ class SessionMovementSummaryEngine {
 
   Future<SessionMovementSummaryView?> build({
     required List<JournalEntry> entriesAfter,
-    required TheorySnapshotStore snapshots, String? newEntryId,
+    required TheorySnapshotStore snapshots,
+    String? newEntryId,
   }) async {
     final eligible = ArchiveEvidenceGuard.eligibleEntries(
       entriesAfter,
@@ -24,7 +25,9 @@ class SessionMovementSummaryEngine {
     if (eligible.isEmpty) return null;
 
     final entriesBefore = newEntryId == null
-        ? (eligible.length > 1 ? eligible.sublist(0, eligible.length - 1) : <JournalEntry>[])
+        ? (eligible.length > 1
+              ? eligible.sublist(0, eligible.length - 1)
+              : <JournalEntry>[])
         : eligible.where((e) => e.id != newEntryId).toList();
 
     final reportBefore = await theoryEngine.build(
@@ -48,7 +51,9 @@ class SessionMovementSummaryEngine {
       }
     }
 
-    if (lead != null && leadBefore != null && leadBefore.status != lead.status) {
+    if (lead != null &&
+        leadBefore != null &&
+        leadBefore.status != lead.status) {
       return _view(
         SessionMovementKind.beliefChanged,
         SessionMovementCopy.beliefChanged,
@@ -70,7 +75,8 @@ class SessionMovementSummaryEngine {
       );
     }
 
-    final beforeSupport = leadBefore?.supportingEvidenceCount ?? entriesBefore.length;
+    final beforeSupport =
+        leadBefore?.supportingEvidenceCount ?? entriesBefore.length;
     final afterSupport = lead?.supportingEvidenceCount ?? eligible.length;
     if (afterSupport > beforeSupport) {
       return _view(
@@ -79,13 +85,16 @@ class SessionMovementSummaryEngine {
         lead != null
             ? 'Supporting reflections for this thread: $beforeSupport → $afterSupport.'
             : 'Your archive now holds ${eligible.length} reflection${eligible.length == 1 ? '' : 's'} to compare.',
-        lead != null ? '$beforeSupport → $afterSupport supporting reflections' : null,
+        lead != null
+            ? '$beforeSupport → $afterSupport supporting reflections'
+            : null,
         lead?.id,
       );
     }
 
     if (lead != null &&
-        lead.contradictingEvidenceCount > (leadBefore?.contradictingEvidenceCount ?? 0)) {
+        lead.contradictingEvidenceCount >
+            (leadBefore?.contradictingEvidenceCount ?? 0)) {
       return _view(
         SessionMovementKind.contradictionAppeared,
         SessionMovementCopy.contradiction,
@@ -109,7 +118,8 @@ class SessionMovementSummaryEngine {
     }
 
     if (lead != null &&
-        (lead.status == TheoryStatus.strengthening || lead.confidenceDelta > 0)) {
+        (lead.status == TheoryStatus.strengthening ||
+            lead.confidenceDelta > 0)) {
       return _view(
         SessionMovementKind.beliefStrengthened,
         SessionMovementCopy.beliefStrengthened,

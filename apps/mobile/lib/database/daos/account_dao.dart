@@ -14,9 +14,9 @@ class AccountDao extends DatabaseAccessor<AppDatabase> with _$AccountDaoMixin {
   static const proStatusSingletonId = 1;
 
   Future<ProStatusRecord?> loadProStatus() async {
-    final row = await (select(accountProStatus)
-          ..where((t) => t.id.equals(proStatusSingletonId)))
-        .getSingleOrNull();
+    final row = await (select(
+      accountProStatus,
+    )..where((t) => t.id.equals(proStatusSingletonId))).getSingleOrNull();
     if (row == null) return null;
     return _proStatusFromRow(row);
   }
@@ -41,9 +41,9 @@ class AccountDao extends DatabaseAccessor<AppDatabase> with _$AccountDaoMixin {
   }
 
   Future<void> clearProStatus() async {
-    await (delete(accountProStatus)
-          ..where((t) => t.id.equals(proStatusSingletonId)))
-        .go();
+    await (delete(
+      accountProStatus,
+    )..where((t) => t.id.equals(proStatusSingletonId))).go();
   }
 
   Future<UserRelationship> requestConnection({
@@ -69,8 +69,9 @@ class AccountDao extends DatabaseAccessor<AppDatabase> with _$AccountDaoMixin {
       consentStatus: status,
       updatedAt: DateTime.now().toUtc(),
     );
-    await (update(userRelationships)..where((t) => t.id.equals(relationshipId)))
-        .write(
+    await (update(
+      userRelationships,
+    )..where((t) => t.id.equals(relationshipId))).write(
       UserRelationshipsCompanion(
         consentStatus: Value(updated.consentStatus.wireValue),
         updatedAt: Value(updated.updatedAt.millisecondsSinceEpoch),
@@ -90,8 +91,9 @@ class AccountDao extends DatabaseAccessor<AppDatabase> with _$AccountDaoMixin {
       agreedScope: agreedScope,
       updatedAt: DateTime.now().toUtc(),
     );
-    await (update(userRelationships)..where((t) => t.id.equals(relationshipId)))
-        .write(
+    await (update(
+      userRelationships,
+    )..where((t) => t.id.equals(relationshipId))).write(
       UserRelationshipsCompanion(
         agreedScope: Value(jsonEncode(updated.agreedScope)),
         updatedAt: Value(updated.updatedAt.millisecondsSinceEpoch),
@@ -103,50 +105,61 @@ class AccountDao extends DatabaseAccessor<AppDatabase> with _$AccountDaoMixin {
   Future<List<UserRelationship>> getActiveProfessionalsForClient(
     String clientId,
   ) async {
-    final rows = await (select(userRelationships)
-          ..where(
-            (t) =>
-                t.clientId.equals(clientId) &
-                t.relationshipType.equals(RelationshipType.professional.wireValue) &
-                t.consentStatus.equals(ConsentStatus.active.wireValue),
-          )
-          ..orderBy([(t) => OrderingTerm.desc(t.updatedAt)]))
-        .get();
+    final rows =
+        await (select(userRelationships)
+              ..where(
+                (t) =>
+                    t.clientId.equals(clientId) &
+                    t.relationshipType.equals(
+                      RelationshipType.professional.wireValue,
+                    ) &
+                    t.consentStatus.equals(ConsentStatus.active.wireValue),
+              )
+              ..orderBy([(t) => OrderingTerm.desc(t.updatedAt)]))
+            .get();
     return rows.map(_relationshipFromRow).toList();
   }
 
   Future<List<UserRelationship>> getConsentingClientsForProfessional(
     String professionalId,
   ) async {
-    final rows = await (select(userRelationships)
-          ..where(
-            (t) =>
-                t.professionalId.equals(professionalId) &
-                t.relationshipType.equals(RelationshipType.professional.wireValue) &
-                t.consentStatus.equals(ConsentStatus.active.wireValue),
-          )
-          ..orderBy([(t) => OrderingTerm.desc(t.updatedAt)]))
-        .get();
+    final rows =
+        await (select(userRelationships)
+              ..where(
+                (t) =>
+                    t.professionalId.equals(professionalId) &
+                    t.relationshipType.equals(
+                      RelationshipType.professional.wireValue,
+                    ) &
+                    t.consentStatus.equals(ConsentStatus.active.wireValue),
+              )
+              ..orderBy([(t) => OrderingTerm.desc(t.updatedAt)]))
+            .get();
     return rows.map(_relationshipFromRow).toList();
   }
 
-  Future<List<UserRelationship>> listRelationshipsForClient(String clientId) async {
-    final rows = await (select(userRelationships)
-          ..where((t) => t.clientId.equals(clientId))
-          ..orderBy([(t) => OrderingTerm.desc(t.updatedAt)]))
-        .get();
+  Future<List<UserRelationship>> listRelationshipsForClient(
+    String clientId,
+  ) async {
+    final rows =
+        await (select(userRelationships)
+              ..where((t) => t.clientId.equals(clientId))
+              ..orderBy([(t) => OrderingTerm.desc(t.updatedAt)]))
+            .get();
     return rows.map(_relationshipFromRow).toList();
   }
 
   Future<UserRelationship?> getRelationshipById(String relationshipId) async {
-    final row = await (select(userRelationships)
-          ..where((t) => t.id.equals(relationshipId)))
-        .getSingleOrNull();
+    final row = await (select(
+      userRelationships,
+    )..where((t) => t.id.equals(relationshipId))).getSingleOrNull();
     if (row == null) return null;
     return _relationshipFromRow(row);
   }
 
-  Future<UserRelationship> upsertRelationship(UserRelationship relationship) async {
+  Future<UserRelationship> upsertRelationship(
+    UserRelationship relationship,
+  ) async {
     final now = DateTime.now().toUtc();
     final updated = relationship.copyWith(updatedAt: now);
     final epoch = now.millisecondsSinceEpoch;
@@ -200,13 +213,21 @@ class AccountDao extends DatabaseAccessor<AppDatabase> with _$AccountDaoMixin {
       id: row.id,
       clientId: row.clientId,
       professionalId: row.professionalId,
-      relationshipType: RelationshipTypeWire.fromWire(row.relationshipType) ??
+      relationshipType:
+          RelationshipTypeWire.fromWire(row.relationshipType) ??
           RelationshipType.professional,
-      consentStatus: ConsentStatusWire.fromWire(row.consentStatus) ??
+      consentStatus:
+          ConsentStatusWire.fromWire(row.consentStatus) ??
           ConsentStatus.pending,
       agreedScope: agreedScope,
-      createdAt: DateTime.fromMillisecondsSinceEpoch(row.createdAt, isUtc: true),
-      updatedAt: DateTime.fromMillisecondsSinceEpoch(row.updatedAt, isUtc: true),
+      createdAt: DateTime.fromMillisecondsSinceEpoch(
+        row.createdAt,
+        isUtc: true,
+      ),
+      updatedAt: DateTime.fromMillisecondsSinceEpoch(
+        row.updatedAt,
+        isUtc: true,
+      ),
     );
   }
 
@@ -229,7 +250,10 @@ class AccountDao extends DatabaseAccessor<AppDatabase> with _$AccountDaoMixin {
         source: row.source,
       ),
       syncedFrom: row.syncedFrom,
-      updatedAt: DateTime.fromMillisecondsSinceEpoch(row.updatedAt, isUtc: true),
+      updatedAt: DateTime.fromMillisecondsSinceEpoch(
+        row.updatedAt,
+        isUtc: true,
+      ),
     );
   }
 }

@@ -352,14 +352,18 @@ void main() {
       WidgetTester tester, {
       VoidCallback? onRecord,
     }) async {
-      await tester.pumpWidget(withAppProviderScope(MaterialApp(
-          theme: AppTheme.light(),
-          home: Scaffold(
-            body: SingleChildScrollView(
-              child: First60IntroCard(onRecord: onRecord ?? () {}),
+      await tester.pumpWidget(
+        withAppProviderScope(
+          MaterialApp(
+            theme: AppTheme.light(),
+            home: Scaffold(
+              body: SingleChildScrollView(
+                child: First60IntroCard(onRecord: onRecord ?? () {}),
+              ),
             ),
           ),
-        )));
+        ),
+      );
       await tester.pump();
     }
 
@@ -404,17 +408,21 @@ void main() {
     testWidgets('renders exact copy and fires events', (tester) async {
       var viewed = false;
       var recordedAnother = false;
-      await tester.pumpWidget(withAppProviderScope(MaterialApp(
-          theme: AppTheme.light(),
-          home: Scaffold(
-            body: SingleChildScrollView(
-              child: FirstRecordingValueCard(
-                onViewArchive: () => viewed = true,
-                onRecordAnother: () => recordedAnother = true,
+      await tester.pumpWidget(
+        withAppProviderScope(
+          MaterialApp(
+            theme: AppTheme.light(),
+            home: Scaffold(
+              body: SingleChildScrollView(
+                child: FirstRecordingValueCard(
+                  onViewArchive: () => viewed = true,
+                  onRecordAnother: () => recordedAnother = true,
+                ),
               ),
             ),
           ),
-        )));
+        ),
+      );
       await tester.pump();
 
       expect(find.text(First60Copy.valueTitle), findsOneWidget);
@@ -447,18 +455,22 @@ void main() {
       VoidCallback? onRemind,
       VoidCallback? onLocalCue,
     }) async {
-      await tester.pumpWidget(withAppProviderScope(MaterialApp(
-          theme: AppTheme.light(),
-          home: Scaffold(
-            body: SingleChildScrollView(
-              child: First60ReturnCueCard(
-                reminderAvailable: reminderAvailable,
-                onRemind: onRemind ?? () {},
-                onLocalCue: onLocalCue ?? () {},
+      await tester.pumpWidget(
+        withAppProviderScope(
+          MaterialApp(
+            theme: AppTheme.light(),
+            home: Scaffold(
+              body: SingleChildScrollView(
+                child: First60ReturnCueCard(
+                  reminderAvailable: reminderAvailable,
+                  onRemind: onRemind ?? () {},
+                  onLocalCue: onLocalCue ?? () {},
+                ),
               ),
             ),
           ),
-        )));
+        ),
+      );
       await tester.pump();
     }
 
@@ -539,19 +551,23 @@ void main() {
       VoidCallback? onSeePro,
       VoidCallback? onNotNow,
     }) async {
-      await tester.pumpWidget(withAppProviderScope(MaterialApp(
-          theme: AppTheme.light(),
-          home: Scaffold(
-            body: SingleChildScrollView(
-              child: ProContinuityBridgeCard(
-                entryCount: 1,
-                source: 'record',
-                onSeePro: onSeePro ?? () {},
-                onNotNow: onNotNow ?? () {},
+      await tester.pumpWidget(
+        withAppProviderScope(
+          MaterialApp(
+            theme: AppTheme.light(),
+            home: Scaffold(
+              body: SingleChildScrollView(
+                child: ProContinuityBridgeCard(
+                  entryCount: 1,
+                  source: 'record',
+                  onSeePro: onSeePro ?? () {},
+                  onNotNow: onNotNow ?? () {},
+                ),
               ),
             ),
           ),
-        )));
+        ),
+      );
       await tester.pump();
     }
 
@@ -617,15 +633,19 @@ void main() {
     Future<void> pumpRecordScreen(WidgetTester tester) async {
       await tester.binding.setSurfaceSize(const Size(390, 3000));
       addTearDown(() => tester.binding.setSurfaceSize(null));
-      await tester.pumpWidget(withAppProviderScope(MaterialApp(
-          theme: AppTheme.light(),
-          home: Scaffold(
-            body: RecordScreen(
-              suggestionAttributionStore: MemorySuggestionAttributionStore(),
-              entitlementReader: FakeArchiveEntitlementReader(pro: false),
+      await tester.pumpWidget(
+        withAppProviderScope(
+          MaterialApp(
+            theme: AppTheme.light(),
+            home: Scaffold(
+              body: RecordScreen(
+                suggestionAttributionStore: MemorySuggestionAttributionStore(),
+                entitlementReader: FakeArchiveEntitlementReader(pro: false),
+              ),
             ),
           ),
-        )));
+        ),
+      );
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 300));
     }
@@ -720,10 +740,14 @@ void main() {
       addTearDown(() => tester.binding.setSurfaceSize(null));
       await tester.runAsync(() async {
         // A fresh key forces fresh screen state on re-pumps.
-        await tester.pumpWidget(withAppProviderScope(MaterialApp(
-            theme: AppTheme.light(),
-            home: JournalScreen(key: UniqueKey()),
-          )));
+        await tester.pumpWidget(
+          withAppProviderScope(
+            MaterialApp(
+              theme: AppTheme.light(),
+              home: JournalScreen(key: UniqueKey()),
+            ),
+          ),
+        );
         await Future<void>.delayed(const Duration(milliseconds: 100));
       });
       await tester.pump();

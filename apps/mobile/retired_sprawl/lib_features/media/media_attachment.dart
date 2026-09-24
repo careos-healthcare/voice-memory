@@ -14,7 +14,8 @@ enum MediaAttachmentKind {
 class MediaAttachment {
   MediaAttachment({
     required this.id,
-    required DateTime createdAt, String? localPath,
+    required DateTime createdAt,
+    String? localPath,
     String? encryptedFilePath,
     this.mimeType = 'image/jpeg',
     int? fileSize,

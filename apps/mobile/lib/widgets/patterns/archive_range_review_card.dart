@@ -7,7 +7,8 @@ import 'package:flutter/material.dart';
 /// Compact card summarising what the archive remembers from a period.
 class ArchiveRangeReviewCard extends StatelessWidget {
   const ArchiveRangeReviewCard({
-    required this.review, super.key,
+    required this.review,
+    super.key,
     this.onOpenReview,
     this.onUseCheck,
   });

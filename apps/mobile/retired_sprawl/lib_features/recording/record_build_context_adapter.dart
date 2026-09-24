@@ -43,7 +43,8 @@ abstract final class RecordBuildContextAdapter {
       showFraming: view.showFraming,
       compact: view.compact,
       stack: view.stack,
-      suppressPostResultNextCheckCompetitors: view.suppressPostResultNextCheckCompetitors,
+      suppressPostResultNextCheckCompetitors:
+          view.suppressPostResultNextCheckCompetitors,
       auditPresentation: view.auditPresentation,
       justSavedFirstEntry: view.justSavedFirstEntry,
       postSaveEntryCount: view.postSaveEntryCount,
@@ -53,12 +54,14 @@ abstract final class RecordBuildContextAdapter {
       secondSessionPayoff: view.secondSessionPayoff,
       thirdEntryBeliefPayoff: view.thirdEntryBeliefPayoff,
       confirmedRepeatTriggerPayoff: view.confirmedRepeatTriggerPayoff,
-      confirmedRepeatHelpfulActionPayoff: view.confirmedRepeatHelpfulActionPayoff,
+      confirmedRepeatHelpfulActionPayoff:
+          view.confirmedRepeatHelpfulActionPayoff,
       confirmedRepeatChangeNotice: view.confirmedRepeatChangeNotice,
       repeatReturnCheckOffer: view.repeatReturnCheckOffer,
       earlyEvidenceTimeline: view.earlyEvidenceTimeline,
       showEarlyEvidenceTimeline: view.showEarlyEvidenceTimeline,
-      suppressEarlyRepeatPayoffCompetitors: view.suppressEarlyRepeatPayoffCompetitors,
+      suppressEarlyRepeatPayoffCompetitors:
+          view.suppressEarlyRepeatPayoffCompetitors,
       earlyFirstSignalOnRecord: view.earlyFirstSignalOnRecord,
       returnTomorrowCueReady: view.returnTomorrowCueReady,
       returnDayFlowCandidate: view.returnDayFlowCandidate,
@@ -68,7 +71,8 @@ abstract final class RecordBuildContextAdapter {
       showFirstWeekProgressReady: view.showFirstWeekProgressReady,
       showEarlyReturnReminder: view.showEarlyReturnReminder,
       viewingConfirmedRepeatOnRecord: view.viewingConfirmedRepeatOnRecord,
-      suppressConfirmedRepeatInlineFeedback: view.suppressConfirmedRepeatInlineFeedback,
+      suppressConfirmedRepeatInlineFeedback:
+          view.suppressConfirmedRepeatInlineFeedback,
       showConfirmedRepeatBetaFeedback: view.showConfirmedRepeatBetaFeedback,
       repeatReturnChangeProof: view.repeatReturnChangeProof,
       patternChangedCandidate: view.patternChangedCandidate,
@@ -86,10 +90,12 @@ abstract final class RecordBuildContextAdapter {
       hasChangeOverTimeProof: view.hasChangeOverTimeProof,
       postProofArchiveProof: view.postProofArchiveProof,
       archiveSummaryVisibleForProGate: view.archiveSummaryVisibleForProGate,
-      weeklyArchiveReviewVisibleForProGate: view.weeklyArchiveReviewVisibleForProGate,
+      weeklyArchiveReviewVisibleForProGate:
+          view.weeklyArchiveReviewVisibleForProGate,
       hasConfirmedRepeatForProGate: view.hasConfirmedRepeatForProGate,
       privateArchiveReportForProGate: view.privateArchiveReportForProGate,
-      privateArchiveReportPreviewForProGate: view.privateArchiveReportPreviewForProGate,
+      privateArchiveReportPreviewForProGate:
+          view.privateArchiveReportPreviewForProGate,
       patternChangedForProGate: view.patternChangedForProGate,
       hasReturnCheckAnsweredForProGate: view.hasReturnCheckAnsweredForProGate,
       showPostProofProBridge: view.showPostProofProBridge,
@@ -122,27 +128,37 @@ abstract final class RecordBuildContextAdapter {
       currentRelevanceCandidate: view.currentRelevanceCandidate,
       patternReviewInboxActiveOnRecord: view.patternReviewInboxActiveOnRecord,
       showCurrentRelevanceOnRecordReady: view.showCurrentRelevanceOnRecordReady,
-      currentRelevanceQuestionActiveOnRecord: view.currentRelevanceQuestionActiveOnRecord,
+      currentRelevanceQuestionActiveOnRecord:
+          view.currentRelevanceQuestionActiveOnRecord,
       correctionMemoryCandidate: view.correctionMemoryCandidate,
       showCorrectionMemoryOnRecordReady: view.showCorrectionMemoryOnRecordReady,
       evidenceWeightingCandidate: view.evidenceWeightingCandidate,
-      showEvidenceWeightingOnRecordReady: view.showEvidenceWeightingOnRecordReady,
+      showEvidenceWeightingOnRecordReady:
+          view.showEvidenceWeightingOnRecordReady,
       proofSpecificityCandidate: view.proofSpecificityCandidate,
       showProofSpecificityOnRecordReady: view.showProofSpecificityOnRecordReady,
       presentDayRelevanceCandidate: view.presentDayRelevanceCandidate,
-      showPresentDayRelevanceOnRecordReady: view.showPresentDayRelevanceOnRecordReady,
+      showPresentDayRelevanceOnRecordReady:
+          view.showPresentDayRelevanceOnRecordReady,
       showCaptureFreedomLine: view.showCaptureFreedomLine,
       timelinePositioningCandidate: view.timelinePositioningCandidate,
       otherEducationCardsOnRecord: view.otherEducationCardsOnRecord,
-      showTimelinePositioningOnRecordReady: view.showTimelinePositioningOnRecordReady,
+      showTimelinePositioningOnRecordReady:
+          view.showTimelinePositioningOnRecordReady,
       patternConfidenceEducationCount: view.patternConfidenceEducationCount,
-      patternConfidenceExplanationCandidate: view.patternConfidenceExplanationCandidate,
-      showPatternConfidenceExplanationOnRecordReady: view.showPatternConfidenceExplanationOnRecordReady,
+      patternConfidenceExplanationCandidate:
+          view.patternConfidenceExplanationCandidate,
+      showPatternConfidenceExplanationOnRecordReady:
+          view.showPatternConfidenceExplanationOnRecordReady,
       showProEvidenceValueOnRecordReady: view.showProEvidenceValueOnRecordReady,
-      showProBridgeVisibilityOnRecordReady: view.showProBridgeVisibilityOnRecordReady,
-      showProEvidenceValuePrivateReportOnRecord: view.showProEvidenceValuePrivateReportOnRecord,
-      showConfirmedRepeatWhyMattersOnRecord: view.showConfirmedRepeatWhyMattersOnRecord,
-      showConfirmedRepeatThoughtMapOnRecord: view.showConfirmedRepeatThoughtMapOnRecord,
+      showProBridgeVisibilityOnRecordReady:
+          view.showProBridgeVisibilityOnRecordReady,
+      showProEvidenceValuePrivateReportOnRecord:
+          view.showProEvidenceValuePrivateReportOnRecord,
+      showConfirmedRepeatWhyMattersOnRecord:
+          view.showConfirmedRepeatWhyMattersOnRecord,
+      showConfirmedRepeatThoughtMapOnRecord:
+          view.showConfirmedRepeatThoughtMapOnRecord,
       showPositiveReinforcementOnRecord: view.showPositiveReinforcementOnRecord,
       showHelpfulActionAppearedOnRecord: view.showHelpfulActionAppearedOnRecord,
       showChangeProofOnRecord: view.showChangeProofOnRecord,
@@ -161,7 +177,8 @@ abstract final class RecordBuildContextAdapter {
       postSaveHasConfirmedRepeat: view.postSaveHasConfirmedRepeat,
       postSaveHasFirstProof: view.postSaveHasFirstProof,
       postSaveDegraded: view.postSaveDegraded,
-      showCoreValueFeedbackOnRecordPostFirstProof: view.showCoreValueFeedbackOnRecordPostFirstProof,
+      showCoreValueFeedbackOnRecordPostFirstProof:
+          view.showCoreValueFeedbackOnRecordPostFirstProof,
       returnCheckPayoffCandidate: view.returnCheckPayoffCandidate,
       whatChangedV2Prompt: view.whatChangedV2Prompt,
       whatChangedV2Display: view.whatChangedV2Display,
@@ -171,7 +188,8 @@ abstract final class RecordBuildContextAdapter {
       showLowFrictionReturnCard: view.showLowFrictionReturnCard,
       firstMomentCaptureCandidate: view.firstMomentCaptureCandidate,
       firstSaveLiftCandidate: view.firstSaveLiftCandidate,
-      firstSessionCaptureRepairCandidate: view.firstSessionCaptureRepairCandidate,
+      firstSessionCaptureRepairCandidate:
+          view.firstSessionCaptureRepairCandidate,
       openingRepairOverride: view.openingRepairOverride,
       showFirstSessionCaptureRepairCard: view.showFirstSessionCaptureRepairCard,
       firstSessionLiftCandidate: view.firstSessionLiftCandidate,
@@ -190,53 +208,77 @@ abstract final class RecordBuildContextAdapter {
       whatToNoticeNextCandidate: view.whatToNoticeNextCandidate,
       showWhatToNoticeNextCard: view.showWhatToNoticeNextCard,
       showArchiveTimelineSpineOnRecord: view.showArchiveTimelineSpineOnRecord,
-      suppressLegacyEducationCardsForSpineOnRecord: view.suppressLegacyEducationCardsForSpineOnRecord,
+      suppressLegacyEducationCardsForSpineOnRecord:
+          view.suppressLegacyEducationCardsForSpineOnRecord,
       timelineProofMomentCandidate: view.timelineProofMomentCandidate,
       showTimelineProofMomentOnRecord: view.showTimelineProofMomentOnRecord,
       betaTesterReportCandidate: view.betaTesterReportCandidate,
       showBetaTesterReportOnRecord: view.showBetaTesterReportOnRecord,
       notRelevantRecoveryCandidate: view.notRelevantRecoveryCandidate,
-      proofQualityResponseTimelineCandidate: view.proofQualityResponseTimelineCandidate,
-      proofQualityResponseSpineCandidate: view.proofQualityResponseSpineCandidate,
+      proofQualityResponseTimelineCandidate:
+          view.proofQualityResponseTimelineCandidate,
+      proofQualityResponseSpineCandidate:
+          view.proofQualityResponseSpineCandidate,
       betaProofLiftTimelineCandidate: view.betaProofLiftTimelineCandidate,
       returnAfterProofRecordCandidate: view.returnAfterProofRecordCandidate,
-      showReturnAfterProofStrengthenedOnRecordReady: view.showReturnAfterProofStrengthenedOnRecordReady,
-      showReturnAfterProofGenericOnRecordReady: view.showReturnAfterProofGenericOnRecordReady,
+      showReturnAfterProofStrengthenedOnRecordReady:
+          view.showReturnAfterProofStrengthenedOnRecordReady,
+      showReturnAfterProofGenericOnRecordReady:
+          view.showReturnAfterProofGenericOnRecordReady,
       showReturnAfterProofOnRecordReady: view.showReturnAfterProofOnRecordReady,
       returnAfterProofLiftV2Candidate: view.returnAfterProofLiftV2Candidate,
-      showReturnAfterProofLiftV2OnRecordReady: view.showReturnAfterProofLiftV2OnRecordReady,
+      showReturnAfterProofLiftV2OnRecordReady:
+          view.showReturnAfterProofLiftV2OnRecordReady,
       recordLoosenSignalsPreAudit: view.recordLoosenSignalsPreAudit,
       recordEvidenceAnchorPreAudit: view.recordEvidenceAnchorPreAudit,
       recordFeedbackStateForLift: view.recordFeedbackStateForLift,
       timelineFeedbackType: view.timelineFeedbackType,
       betaRepairLabInput: view.betaRepairLabInput,
-      showBetaRepairLabProPlacementOnRecord: view.showBetaRepairLabProPlacementOnRecord,
+      showBetaRepairLabProPlacementOnRecord:
+          view.showBetaRepairLabProPlacementOnRecord,
       betaRepairLabProPlacementResult: view.betaRepairLabProPlacementResult,
-      showBetaRepairLabPricingValueFramingOnRecord: view.showBetaRepairLabPricingValueFramingOnRecord,
-      betaRepairLabPricingValueFramingResult: view.betaRepairLabPricingValueFramingResult,
-      showBetaRepairLabPaywallValueOnRecord: view.showBetaRepairLabPaywallValueOnRecord,
+      showBetaRepairLabPricingValueFramingOnRecord:
+          view.showBetaRepairLabPricingValueFramingOnRecord,
+      betaRepairLabPricingValueFramingResult:
+          view.betaRepairLabPricingValueFramingResult,
+      showBetaRepairLabPaywallValueOnRecord:
+          view.showBetaRepairLabPaywallValueOnRecord,
       betaRepairLabPaywallValueResult: view.betaRepairLabPaywallValueResult,
       hasProEngagementOnRecord: view.hasProEngagementOnRecord,
-      showBetaRepairLabPricingValidationOnRecord: view.showBetaRepairLabPricingValidationOnRecord,
-      showBetaRepairLabEvidenceTrailClarityOnRecord: view.showBetaRepairLabEvidenceTrailClarityOnRecord,
-      betaRepairLabPricingValidationResult: view.betaRepairLabPricingValidationResult,
-      proUnderstandingLiftRecordReadyInput: view.proUnderstandingLiftRecordReadyInput,
-      showProUnderstandingLiftOnRecordReady: view.showProUnderstandingLiftOnRecordReady,
-      showProVisibilityLiftOnRecordReady: view.showProVisibilityLiftOnRecordReady,
-      proUnderstandingLiftRecordReadyResult: view.proUnderstandingLiftRecordReadyResult,
-      proVisibilityLiftRecordReadyResult: view.proVisibilityLiftRecordReadyResult,
-      showProofQualityResponseOnRecordReady: view.showProofQualityResponseOnRecordReady,
-      showNotRelevantRecoveryOnRecordReady: view.showNotRelevantRecoveryOnRecordReady,
+      showBetaRepairLabPricingValidationOnRecord:
+          view.showBetaRepairLabPricingValidationOnRecord,
+      showBetaRepairLabEvidenceTrailClarityOnRecord:
+          view.showBetaRepairLabEvidenceTrailClarityOnRecord,
+      betaRepairLabPricingValidationResult:
+          view.betaRepairLabPricingValidationResult,
+      proUnderstandingLiftRecordReadyInput:
+          view.proUnderstandingLiftRecordReadyInput,
+      showProUnderstandingLiftOnRecordReady:
+          view.showProUnderstandingLiftOnRecordReady,
+      showProVisibilityLiftOnRecordReady:
+          view.showProVisibilityLiftOnRecordReady,
+      proUnderstandingLiftRecordReadyResult:
+          view.proUnderstandingLiftRecordReadyResult,
+      proVisibilityLiftRecordReadyResult:
+          view.proVisibilityLiftRecordReadyResult,
+      showProofQualityResponseOnRecordReady:
+          view.showProofQualityResponseOnRecordReady,
+      showNotRelevantRecoveryOnRecordReady:
+          view.showNotRelevantRecoveryOnRecordReady,
       showBetaProofLiftOnRecordReady: view.showBetaProofLiftOnRecordReady,
       betaActivationPathPreAuditContext: view.betaActivationPathPreAuditContext,
       betaActivationPathPreAuditResult: view.betaActivationPathPreAuditResult,
       showBetaActivationPathCard: view.showBetaActivationPathCard,
       betaActivationPathResult: view.betaActivationPathResult,
-      betaFeedbackCaptureRecordReadyPreAudit: view.betaFeedbackCaptureRecordReadyPreAudit,
-      showBetaFeedbackCaptureRecordReady: view.showBetaFeedbackCaptureRecordReady,
-      betaFeedbackCaptureRecordReadyResult: view.betaFeedbackCaptureRecordReadyResult,
+      betaFeedbackCaptureRecordReadyPreAudit:
+          view.betaFeedbackCaptureRecordReadyPreAudit,
+      showBetaFeedbackCaptureRecordReady:
+          view.showBetaFeedbackCaptureRecordReady,
+      betaFeedbackCaptureRecordReadyResult:
+          view.betaFeedbackCaptureRecordReadyResult,
       betaProofFeedbackCounts: view.betaProofFeedbackCounts,
-      betaProofFeedbackRowVisibleOnTimeline: view.betaProofFeedbackRowVisibleOnTimeline,
+      betaProofFeedbackRowVisibleOnTimeline:
+          view.betaProofFeedbackRowVisibleOnTimeline,
       proofQualityRepairInput: view.proofQualityRepairInput,
       showProofQualityRepairOnRecord: view.showProofQualityRepairOnRecord,
       proofQualityRepairResult: view.proofQualityRepairResult,
@@ -246,65 +288,107 @@ abstract final class RecordBuildContextAdapter {
       blocksProByProofFloorOnRecord: view.blocksProByProofFloorOnRecord,
       showBetaRepairLabProofOnRecord: view.showBetaRepairLabProofOnRecord,
       betaRepairLabProofResult: view.betaRepairLabProofResult,
-      blocksProCardsByProofProtectionOnRecord: view.blocksProCardsByProofProtectionOnRecord,
-      betaRepairLabEvidenceTrailClarityResult: view.betaRepairLabEvidenceTrailClarityResult,
+      blocksProCardsByProofProtectionOnRecord:
+          view.blocksProCardsByProofProtectionOnRecord,
+      betaRepairLabEvidenceTrailClarityResult:
+          view.betaRepairLabEvidenceTrailClarityResult,
       recordReadySurfacePriority: view.recordReadySurfacePriority,
       shareableNonPrivateProofResult: view.shareableNonPrivateProofResult,
-      showShareableNonPrivateProofOnRecord: view.showShareableNonPrivateProofOnRecord,
+      showShareableNonPrivateProofOnRecord:
+          view.showShareableNonPrivateProofOnRecord,
       proofSpecificityBoostCandidate: view.proofSpecificityBoostCandidate,
       timelineProofParentVisible: view.timelineProofParentVisible,
-      showProofSpecificityBoostOnTimelineProof: view.showProofSpecificityBoostOnTimelineProof,
-      showProofQualityResponseUnderTimelineProof: view.showProofQualityResponseUnderTimelineProof,
-      showProofQualityResponseUnderArchiveSpine: view.showProofQualityResponseUnderArchiveSpine,
-      showNotRelevantRecoveryUnderTimelineProof: view.showNotRelevantRecoveryUnderTimelineProof,
-      showBetaProofLiftUnderTimelineProof: view.showBetaProofLiftUnderTimelineProof,
-      showReturnAfterProofLiftV2BelowProofOnRecord: view.showReturnAfterProofLiftV2BelowProofOnRecord,
-      showReturnAfterProofLiftV2InGuidanceStack: view.showReturnAfterProofLiftV2InGuidanceStack,
-      showReturnAfterProofBelowProofOnRecord: view.showReturnAfterProofBelowProofOnRecord,
-      showReturnAfterProofInGuidanceStack: view.showReturnAfterProofInGuidanceStack,
-      showProUnderstandingLiftBelowProofOnRecord: view.showProUnderstandingLiftBelowProofOnRecord,
-      showBetaRepairLabEvidenceTrailClarityBelowProofOnRecord: view.showBetaRepairLabEvidenceTrailClarityBelowProofOnRecord,
-      showBetaRepairLabPricingValidationBelowProofOnRecord: view.showBetaRepairLabPricingValidationBelowProofOnRecord,
-      showBetaRepairLabPricingValueFramingBelowProofOnRecord: view.showBetaRepairLabPricingValueFramingBelowProofOnRecord,
-      showBetaRepairLabPaywallValueBelowProofOnRecord: view.showBetaRepairLabPaywallValueBelowProofOnRecord,
-      showBetaRepairLabProPlacementBelowProofOnRecord: view.showBetaRepairLabProPlacementBelowProofOnRecord,
-      showProUnderstandingLiftInProSectionOnRecord: view.showProUnderstandingLiftInProSectionOnRecord,
-      showProVisibilityLiftBelowProofOnRecord: view.showProVisibilityLiftBelowProofOnRecord,
-      showProVisibilityLiftInProSectionOnRecord: view.showProVisibilityLiftInProSectionOnRecord,
+      showProofSpecificityBoostOnTimelineProof:
+          view.showProofSpecificityBoostOnTimelineProof,
+      showProofQualityResponseUnderTimelineProof:
+          view.showProofQualityResponseUnderTimelineProof,
+      showProofQualityResponseUnderArchiveSpine:
+          view.showProofQualityResponseUnderArchiveSpine,
+      showNotRelevantRecoveryUnderTimelineProof:
+          view.showNotRelevantRecoveryUnderTimelineProof,
+      showBetaProofLiftUnderTimelineProof:
+          view.showBetaProofLiftUnderTimelineProof,
+      showReturnAfterProofLiftV2BelowProofOnRecord:
+          view.showReturnAfterProofLiftV2BelowProofOnRecord,
+      showReturnAfterProofLiftV2InGuidanceStack:
+          view.showReturnAfterProofLiftV2InGuidanceStack,
+      showReturnAfterProofBelowProofOnRecord:
+          view.showReturnAfterProofBelowProofOnRecord,
+      showReturnAfterProofInGuidanceStack:
+          view.showReturnAfterProofInGuidanceStack,
+      showProUnderstandingLiftBelowProofOnRecord:
+          view.showProUnderstandingLiftBelowProofOnRecord,
+      showBetaRepairLabEvidenceTrailClarityBelowProofOnRecord:
+          view.showBetaRepairLabEvidenceTrailClarityBelowProofOnRecord,
+      showBetaRepairLabPricingValidationBelowProofOnRecord:
+          view.showBetaRepairLabPricingValidationBelowProofOnRecord,
+      showBetaRepairLabPricingValueFramingBelowProofOnRecord:
+          view.showBetaRepairLabPricingValueFramingBelowProofOnRecord,
+      showBetaRepairLabPaywallValueBelowProofOnRecord:
+          view.showBetaRepairLabPaywallValueBelowProofOnRecord,
+      showBetaRepairLabProPlacementBelowProofOnRecord:
+          view.showBetaRepairLabProPlacementBelowProofOnRecord,
+      showProUnderstandingLiftInProSectionOnRecord:
+          view.showProUnderstandingLiftInProSectionOnRecord,
+      showProVisibilityLiftBelowProofOnRecord:
+          view.showProVisibilityLiftBelowProofOnRecord,
+      showProVisibilityLiftInProSectionOnRecord:
+          view.showProVisibilityLiftInProSectionOnRecord,
       showProBridgeBelowProofOnRecord: view.showProBridgeBelowProofOnRecord,
       showProBridgeInProSectionOnRecord: view.showProBridgeInProSectionOnRecord,
       proBridgeVisibilityRecordResult: view.proBridgeVisibilityRecordResult,
       patternReviewInboxActivePostSave: view.patternReviewInboxActivePostSave,
-      timelineProofMomentPostSaveCandidate: view.timelineProofMomentPostSaveCandidate,
-      showTimelineProofMomentOnFirstProofPayoff: view.showTimelineProofMomentOnFirstProofPayoff,
+      timelineProofMomentPostSaveCandidate:
+          view.timelineProofMomentPostSaveCandidate,
+      showTimelineProofMomentOnFirstProofPayoff:
+          view.showTimelineProofMomentOnFirstProofPayoff,
       proofSpecificityPostSaveCandidate: view.proofSpecificityPostSaveCandidate,
-      showProofSpecificityOnFirstProofPayoff: view.showProofSpecificityOnFirstProofPayoff,
-      proofSpecificityBoostPostSaveCandidate: view.proofSpecificityBoostPostSaveCandidate,
-      proofQualityResponseFirstProofCandidate: view.proofQualityResponseFirstProofCandidate,
-      proofQualityResponseTimelinePostSaveCandidate: view.proofQualityResponseTimelinePostSaveCandidate,
+      showProofSpecificityOnFirstProofPayoff:
+          view.showProofSpecificityOnFirstProofPayoff,
+      proofSpecificityBoostPostSaveCandidate:
+          view.proofSpecificityBoostPostSaveCandidate,
+      proofQualityResponseFirstProofCandidate:
+          view.proofQualityResponseFirstProofCandidate,
+      proofQualityResponseTimelinePostSaveCandidate:
+          view.proofQualityResponseTimelinePostSaveCandidate,
       betaProofLiftFirstProofCandidate: view.betaProofLiftFirstProofCandidate,
-      betaProofLiftTimelinePostSaveCandidate: view.betaProofLiftTimelinePostSaveCandidate,
+      betaProofLiftTimelinePostSaveCandidate:
+          view.betaProofLiftTimelinePostSaveCandidate,
       returnAfterProofPostSaveCandidate: view.returnAfterProofPostSaveCandidate,
       firstProofPayoffParentVisible: view.firstProofPayoffParentVisible,
-      showProofSpecificityBoostOnFirstProofPayoff: view.showProofSpecificityBoostOnFirstProofPayoff,
-      showProofQualityResponseOnFirstProofPayoff: view.showProofQualityResponseOnFirstProofPayoff,
-      timelineProofPostSaveParentVisible: view.timelineProofPostSaveParentVisible,
-      showProofSpecificityBoostOnTimelineProofPostSave: view.showProofSpecificityBoostOnTimelineProofPostSave,
-      showProofQualityResponseOnTimelineProofPostSave: view.showProofQualityResponseOnTimelineProofPostSave,
-      showBetaProofLiftOnFirstProofPayoff: view.showBetaProofLiftOnFirstProofPayoff,
-      showBetaProofLiftUnderTimelineProofPostSave: view.showBetaProofLiftUnderTimelineProofPostSave,
-      showReturnAfterProofStrengthenedOnFirstProofPayoff: view.showReturnAfterProofStrengthenedOnFirstProofPayoff,
-      showReturnAfterProofGenericOnFirstProofPayoff: view.showReturnAfterProofGenericOnFirstProofPayoff,
-      showReturnAfterProofOnFirstProofPayoff: view.showReturnAfterProofOnFirstProofPayoff,
-      returnAfterProofLiftV2PostSaveCandidate: view.returnAfterProofLiftV2PostSaveCandidate,
-      showReturnAfterProofLiftV2OnPostSave: view.showReturnAfterProofLiftV2OnPostSave,
+      showProofSpecificityBoostOnFirstProofPayoff:
+          view.showProofSpecificityBoostOnFirstProofPayoff,
+      showProofQualityResponseOnFirstProofPayoff:
+          view.showProofQualityResponseOnFirstProofPayoff,
+      timelineProofPostSaveParentVisible:
+          view.timelineProofPostSaveParentVisible,
+      showProofSpecificityBoostOnTimelineProofPostSave:
+          view.showProofSpecificityBoostOnTimelineProofPostSave,
+      showProofQualityResponseOnTimelineProofPostSave:
+          view.showProofQualityResponseOnTimelineProofPostSave,
+      showBetaProofLiftOnFirstProofPayoff:
+          view.showBetaProofLiftOnFirstProofPayoff,
+      showBetaProofLiftUnderTimelineProofPostSave:
+          view.showBetaProofLiftUnderTimelineProofPostSave,
+      showReturnAfterProofStrengthenedOnFirstProofPayoff:
+          view.showReturnAfterProofStrengthenedOnFirstProofPayoff,
+      showReturnAfterProofGenericOnFirstProofPayoff:
+          view.showReturnAfterProofGenericOnFirstProofPayoff,
+      showReturnAfterProofOnFirstProofPayoff:
+          view.showReturnAfterProofOnFirstProofPayoff,
+      returnAfterProofLiftV2PostSaveCandidate:
+          view.returnAfterProofLiftV2PostSaveCandidate,
+      showReturnAfterProofLiftV2OnPostSave:
+          view.showReturnAfterProofLiftV2OnPostSave,
       postSaveLoosenSignalsPreAudit: view.postSaveLoosenSignalsPreAudit,
       postSaveEvidenceAnchorPreAudit: view.postSaveEvidenceAnchorPreAudit,
       postSaveFeedbackStateForLift: view.postSaveFeedbackStateForLift,
       hasProEngagementOnPostSave: view.hasProEngagementOnPostSave,
       proUnderstandingLiftPostSaveInput: view.proUnderstandingLiftPostSaveInput,
-      showProUnderstandingLiftOnPostSave: view.showProUnderstandingLiftOnPostSave,
-      proUnderstandingLiftPostSaveResult: view.proUnderstandingLiftPostSaveResult,
+      showProUnderstandingLiftOnPostSave:
+          view.showProUnderstandingLiftOnPostSave,
+      proUnderstandingLiftPostSaveResult:
+          view.proUnderstandingLiftPostSaveResult,
       showProVisibilityLiftOnPostSave: view.showProVisibilityLiftOnPostSave,
       proVisibilityLiftPostSaveResult: view.proVisibilityLiftPostSaveResult,
       showProEvidenceValuePostSave: view.showProEvidenceValuePostSave,
@@ -312,10 +396,14 @@ abstract final class RecordBuildContextAdapter {
       showProPreviewPostSave: view.showProPreviewPostSave,
       showProBridgeVisibilityPostSave: view.showProBridgeVisibilityPostSave,
       showProLockMomentPostSave: view.showProLockMomentPostSave,
-      monthlyPrivateReportPreviewPostSave: view.monthlyPrivateReportPreviewPostSave,
-      showMonthlyPrivateReportPreviewPostSave: view.showMonthlyPrivateReportPreviewPostSave,
-      betaFeedbackIntelligenceSurfaceOnRecordReady: view.betaFeedbackIntelligenceSurfaceOnRecordReady,
-      betaFeedbackIntelligenceSurfacePostSave: view.betaFeedbackIntelligenceSurfacePostSave,
+      monthlyPrivateReportPreviewPostSave:
+          view.monthlyPrivateReportPreviewPostSave,
+      showMonthlyPrivateReportPreviewPostSave:
+          view.showMonthlyPrivateReportPreviewPostSave,
+      betaFeedbackIntelligenceSurfaceOnRecordReady:
+          view.betaFeedbackIntelligenceSurfaceOnRecordReady,
+      betaFeedbackIntelligenceSurfacePostSave:
+          view.betaFeedbackIntelligenceSurfacePostSave,
       helpedTrackingPrompt: view.helpedTrackingPrompt,
       showHelpedTracking: view.showHelpedTracking,
       showReturnCheckPayoff: view.showReturnCheckPayoff,
@@ -342,7 +430,8 @@ abstract final class RecordBuildContextAdapter {
       comeBackTomorrowV2PostSaveWatch: view.comeBackTomorrowV2PostSaveWatch,
       showComeBackTomorrowV2PostSave: view.showComeBackTomorrowV2PostSave,
       showPostSaveCuriosityHook: view.showPostSaveCuriosityHook,
-      betaFeedbackCapturePostSavePreAudit: view.betaFeedbackCapturePostSavePreAudit,
+      betaFeedbackCapturePostSavePreAudit:
+          view.betaFeedbackCapturePostSavePreAudit,
       showBetaFeedbackCapturePostSave: view.showBetaFeedbackCapturePostSave,
       betaFeedbackCapturePostSaveResult: view.betaFeedbackCapturePostSaveResult,
       postSaveProofFloorRescueInput: view.postSaveProofFloorRescueInput,
@@ -362,8 +451,10 @@ abstract final class RecordBuildContextAdapter {
       postSaveArchiveHierarchy: view.postSaveArchiveHierarchy,
       suppressNoisyRepeatPostSaveCards: view.suppressNoisyRepeatPostSaveCards,
       repeatPostSaveThoughtMapPreview: view.repeatPostSaveThoughtMapPreview,
-      showDegradedTranscriptFocusedPostSave: view.showDegradedTranscriptFocusedPostSave,
-      suppressDegradedTranscriptPostSaveCompetitors: view.suppressDegradedTranscriptPostSaveCompetitors,
+      showDegradedTranscriptFocusedPostSave:
+          view.showDegradedTranscriptFocusedPostSave,
+      suppressDegradedTranscriptPostSaveCompetitors:
+          view.suppressDegradedTranscriptPostSaveCompetitors,
       returningUserToday: view.returningUserToday,
       nextMomentPrompt: view.nextMomentPrompt,
       dailyArchiveExercise: view.dailyArchiveExercise,
@@ -376,7 +467,8 @@ abstract final class RecordBuildContextAdapter {
       showTesterMissionFull: view.showTesterMissionFull,
       testerMission: view.testerMission,
       showThoughtMapRecordCta: view.showThoughtMapRecordCta,
-      showPositiveReinforcementRecordCta: view.showPositiveReinforcementRecordCta,
+      showPositiveReinforcementRecordCta:
+          view.showPositiveReinforcementRecordCta,
       showPatternChangedRecordCta: view.showPatternChangedRecordCta,
       showArchiveSummaryRecordCta: view.showArchiveSummaryRecordCta,
       showDailyReturnReasonRecordCta: view.showDailyReturnReasonRecordCta,

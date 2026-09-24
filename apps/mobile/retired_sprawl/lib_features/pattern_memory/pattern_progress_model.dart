@@ -27,7 +27,10 @@ class PatternProgressMoment {
     required this.type,
     required this.headline,
     required this.body,
-    required this.nextLine, required this.checkInCount, required this.shouldShow, this.beforeLine,
+    required this.nextLine,
+    required this.checkInCount,
+    required this.shouldShow,
+    this.beforeLine,
     this.helpedLine,
   });
 

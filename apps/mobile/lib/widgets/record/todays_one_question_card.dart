@@ -9,7 +9,8 @@ import 'package:flutter/material.dart';
 /// Compact today's one question card on Record — metadata only.
 class TodaysOneQuestionCard extends StatelessWidget {
   const TodaysOneQuestionCard({
-    required this.question, super.key,
+    required this.question,
+    super.key,
     this.onPrimary,
     this.onViewFull,
   });

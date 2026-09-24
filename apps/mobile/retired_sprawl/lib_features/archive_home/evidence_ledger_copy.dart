@@ -19,8 +19,9 @@ abstract final class EvidenceLedgerCopy {
     required int citableFactCount,
     required int entryCount,
   }) {
-    final factsLabel =
-        citableFactCount == 1 ? '1 Citable Fact' : '$citableFactCount Citable Facts';
+    final factsLabel = citableFactCount == 1
+        ? '1 Citable Fact'
+        : '$citableFactCount Citable Facts';
     final entriesLabel = entryCount == 1 ? '1 Entry' : '$entryCount Entries';
     return '$factsLabel • $entriesLabel';
   }

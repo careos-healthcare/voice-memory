@@ -45,12 +45,13 @@ class HttpCaptureApiClient implements CaptureApiClient {
         if (response.statusCode < 200 || response.statusCode >= 300) {
           return ApiFailureResult(ApiFailureMapper.fromResponse(response));
         }
-        return _transport.decodeEnvelope<CaptureAttestResponseDto, AttestResult>(
-          response,
-          parseData: CaptureAttestResponseDto.fromJson,
-          toDomain: _mapAttestResult,
-          missingDataMessage: 'Attest failed',
-        );
+        return _transport
+            .decodeEnvelope<CaptureAttestResponseDto, AttestResult>(
+              response,
+              parseData: CaptureAttestResponseDto.fromJson,
+              toDomain: _mapAttestResult,
+              missingDataMessage: 'Attest failed',
+            );
       },
       onFailure: ApiFailureResult.new,
     );
@@ -99,8 +100,12 @@ class HttpCaptureApiClient implements CaptureApiClient {
             reason = body['error'] as String? ?? reason;
             code = body['code'] as String?;
           } catch (e, stackTrace) {
-            AppLogger.error('Unhandled error caught', error: e, stackTrace: stackTrace);
-            }
+            AppLogger.error(
+              'Unhandled error caught',
+              error: e,
+              stackTrace: stackTrace,
+            );
+          }
           AnalysisLog.failed(
             status: response.statusCode,
             code: code,
@@ -108,32 +113,33 @@ class HttpCaptureApiClient implements CaptureApiClient {
           );
           return ApiFailureResult(ApiFailureMapper.fromResponse(response));
         }
-        return _transport.decodeEnvelope<Map<String, dynamic>, RawModelResponse>(
-          response,
-          parseData: (json) => json,
-          toDomain: (body) {
-            final reflection = body['reflection'] as Map<String, dynamic>?;
-            if (reflection == null) {
-              AnalysisLog.failed(
-                status: response.statusCode,
-                reason: 'No reflection in response',
-              );
-              throw const FormatException('No reflection in response');
-            }
-            final parsed = Reflection.fromJson(reflection);
-            AnalysisLog.success(
-              observationLength: parsed.concreteObservation.trim().length,
+        return _transport
+            .decodeEnvelope<Map<String, dynamic>, RawModelResponse>(
+              response,
+              parseData: (json) => json,
+              toDomain: (body) {
+                final reflection = body['reflection'] as Map<String, dynamic>?;
+                if (reflection == null) {
+                  AnalysisLog.failed(
+                    status: response.statusCode,
+                    reason: 'No reflection in response',
+                  );
+                  throw const FormatException('No reflection in response');
+                }
+                final parsed = Reflection.fromJson(reflection);
+                AnalysisLog.success(
+                  observationLength: parsed.concreteObservation.trim().length,
+                );
+                return RawModelResponse(
+                  payload: body,
+                  receivedAt: DateTime.now().toUtc(),
+                  providerResponseId:
+                      response.headers['x-request-id'] ??
+                      response.headers['request-id'],
+                );
+              },
+              missingDataMessage: 'No reflection in response',
             );
-            return RawModelResponse(
-              payload: body,
-              receivedAt: DateTime.now().toUtc(),
-              providerResponseId:
-                  response.headers['x-request-id'] ??
-                  response.headers['request-id'],
-            );
-          },
-          missingDataMessage: 'No reflection in response',
-        );
       },
       onFailure: (failure) {
         AnalysisLog.failed(reason: failure.message);

@@ -68,29 +68,32 @@ void main() {
     expect(AppTokens.spacing12, 48);
   });
 
-  test('AppTheme.light uses the warm page background and shared type scale', () {
-    final theme = AppTheme.light();
-    const page = Color(0xFFF8F6F1);
-    expect(theme.scaffoldBackgroundColor, page);
-    expect(theme.canvasColor, page);
-    expect(AppTheme.background, page);
-    expect(theme.colorScheme.primary, const Color(0xFF2563EB));
+  test(
+    'AppTheme.light uses the warm page background and shared type scale',
+    () {
+      final theme = AppTheme.light();
+      const page = Color(0xFFF8F6F1);
+      expect(theme.scaffoldBackgroundColor, page);
+      expect(theme.canvasColor, page);
+      expect(AppTheme.background, page);
+      expect(theme.colorScheme.primary, const Color(0xFF2563EB));
 
-    expect(theme.textTheme.headlineLarge?.fontSize, 32);
-    expect(theme.textTheme.headlineLarge?.fontWeight, FontWeight.w700);
-    expect(theme.textTheme.headlineLarge?.height, 1.35);
-    expect(theme.textTheme.headlineLarge?.letterSpacing, -0.4);
-    expect(theme.textTheme.titleLarge?.fontSize, 22);
-    expect(theme.textTheme.titleLarge?.fontWeight, FontWeight.w600);
-    expect(theme.textTheme.titleMedium?.fontSize, 18);
-    expect(theme.textTheme.titleMedium?.fontWeight, FontWeight.w600);
-    expect(theme.textTheme.bodyLarge?.fontSize, 16);
-    expect(theme.textTheme.bodyLarge?.fontWeight, FontWeight.w400);
-    expect(theme.textTheme.bodySmall?.fontSize, 14);
-    expect(theme.textTheme.bodySmall?.fontWeight, FontWeight.w400);
-    expect(theme.textTheme.bodyMedium?.fontSize, 17);
-    expect(theme.textTheme.bodyMedium?.fontWeight, FontWeight.w400);
-    expect(theme.textTheme.bodyMedium?.height, 1.7);
-    expect(theme.textTheme.bodyMedium?.letterSpacing, 0.15);
-  });
+      expect(theme.textTheme.headlineLarge?.fontSize, 32);
+      expect(theme.textTheme.headlineLarge?.fontWeight, FontWeight.w700);
+      expect(theme.textTheme.headlineLarge?.height, 1.35);
+      expect(theme.textTheme.headlineLarge?.letterSpacing, -0.4);
+      expect(theme.textTheme.titleLarge?.fontSize, 22);
+      expect(theme.textTheme.titleLarge?.fontWeight, FontWeight.w600);
+      expect(theme.textTheme.titleMedium?.fontSize, 18);
+      expect(theme.textTheme.titleMedium?.fontWeight, FontWeight.w600);
+      expect(theme.textTheme.bodyLarge?.fontSize, 16);
+      expect(theme.textTheme.bodyLarge?.fontWeight, FontWeight.w400);
+      expect(theme.textTheme.bodySmall?.fontSize, 14);
+      expect(theme.textTheme.bodySmall?.fontWeight, FontWeight.w400);
+      expect(theme.textTheme.bodyMedium?.fontSize, 17);
+      expect(theme.textTheme.bodyMedium?.fontWeight, FontWeight.w400);
+      expect(theme.textTheme.bodyMedium?.height, 1.7);
+      expect(theme.textTheme.bodyMedium?.letterSpacing, 0.15);
+    },
+  );
 }

@@ -30,7 +30,8 @@ class EncryptionStatusCard extends StatelessWidget {
                 child: Text(
                   encryptionActive
                       ? PrivacySecurityControlCenterCopy.encryptionActiveLabel
-                      : PrivacySecurityControlCenterCopy.encryptionInactiveLabel,
+                      : PrivacySecurityControlCenterCopy
+                            .encryptionInactiveLabel,
                   key: const Key('encryption_status_title'),
                   style: ArchiveMobileTypography.listTitle(context),
                 ),

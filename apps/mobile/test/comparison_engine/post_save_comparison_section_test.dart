@@ -176,7 +176,9 @@ void main() {
 
 class _TransitionHarness extends StatefulWidget {
   const _TransitionHarness({
-    required this.phase, required this.onPhaseChanged, super.key,
+    required this.phase,
+    required this.onPhaseChanged,
+    super.key,
   });
 
   final PostSaveComparisonUiState phase;

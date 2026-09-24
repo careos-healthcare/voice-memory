@@ -53,8 +53,9 @@ void main() {
       );
 
       expect(
-        (await gate.evaluateFor(RemoteProcessingPurpose.remoteTranscription))
-            .permitted,
+        (await gate.evaluateFor(
+          RemoteProcessingPurpose.remoteTranscription,
+        )).permitted,
         isTrue,
       );
       expect((await gate.evaluate()).permitted, isFalse);
@@ -74,22 +75,24 @@ void main() {
       expect(restored.consentAtProcessingTime, isTrue);
     });
 
-    test('on-device-only vetoes every purpose, whatever consent says',
-        () async {
-      final store = RemoteProcessingConsentStore(prefs);
-      await store.grant();
-      await OnDeviceProcessingStore.setEnabled(true);
+    test(
+      'on-device-only vetoes every purpose, whatever consent says',
+      () async {
+        final store = RemoteProcessingConsentStore(prefs);
+        await store.grant();
+        await OnDeviceProcessingStore.setEnabled(true);
 
-      for (final purpose in RemoteProcessingPurpose.values) {
-        final decision = await gate.evaluateFor(purpose);
-        expect(decision.permitted, isFalse);
-        expect(decision.consentAtProcessingTime, isFalse);
-        expect(decision.onDeviceProcessingOnly, isTrue);
-        // Consent itself is untouched — the veto is the local switch.
-        expect(decision.currentPermission, isTrue);
-      }
-      expect(await gate.isPermittedNow(), isFalse);
-    });
+        for (final purpose in RemoteProcessingPurpose.values) {
+          final decision = await gate.evaluateFor(purpose);
+          expect(decision.permitted, isFalse);
+          expect(decision.consentAtProcessingTime, isFalse);
+          expect(decision.onDeviceProcessingOnly, isTrue);
+          // Consent itself is untouched — the veto is the local switch.
+          expect(decision.currentPermission, isTrue);
+        }
+        expect(await gate.isPermittedNow(), isFalse);
+      },
+    );
 
     test('withdrawn while queued — recheck blocks upload', () async {
       final store = RemoteProcessingConsentStore(prefs);

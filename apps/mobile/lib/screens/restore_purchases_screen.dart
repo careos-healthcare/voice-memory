@@ -138,7 +138,9 @@ class _RestorePurchasesScreenState extends State<RestorePurchasesScreen> {
             const SizedBox(height: 8),
             TextButton(
               onPressed: () {
-                unawaited(Clipboard.setData(ClipboardData(text: _evidenceJson!)));
+                unawaited(
+                  Clipboard.setData(ClipboardData(text: _evidenceJson!)),
+                );
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text('Evidence JSON copied')),
                 );

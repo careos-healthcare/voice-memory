@@ -124,7 +124,10 @@ void main() {
     });
 
     test('a finished check that found nothing leaves the entry untouched', () {
-      expect(ProvenanceRecoveryCopy.outcomeNoneRecovered, contains('untouched'));
+      expect(
+        ProvenanceRecoveryCopy.outcomeNoneRecovered,
+        contains('untouched'),
+      );
     });
   });
 

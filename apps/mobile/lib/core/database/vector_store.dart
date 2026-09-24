@@ -93,7 +93,10 @@ abstract final class VectorStore {
     return math.max(rows, 1);
   }
 
-  static Future<bool> _tryQuantize(DatabaseExecutor db, String statement) async {
+  static Future<bool> _tryQuantize(
+    DatabaseExecutor db,
+    String statement,
+  ) async {
     try {
       await db.rawQuery(statement);
       return true;
@@ -102,7 +105,11 @@ abstract final class VectorStore {
     }
   }
 
-  static void _insert(List<VectorStoreHit> best, VectorStoreHit hit, int limit) {
+  static void _insert(
+    List<VectorStoreHit> best,
+    VectorStoreHit hit,
+    int limit,
+  ) {
     if (best.length < limit) {
       best
         ..add(hit)
@@ -127,8 +134,18 @@ abstract final class VectorStore {
     var index = 0;
     final width = a.length - (a.length % 4);
     while (index < width) {
-      final left = Float32x4(a[index], a[index + 1], a[index + 2], a[index + 3]);
-      final right = Float32x4(b[index], b[index + 1], b[index + 2], b[index + 3]);
+      final left = Float32x4(
+        a[index],
+        a[index + 1],
+        a[index + 2],
+        a[index + 3],
+      );
+      final right = Float32x4(
+        b[index],
+        b[index + 1],
+        b[index + 2],
+        b[index + 3],
+      );
       dot += left * right;
       aNorm += left * left;
       bNorm += right * right;

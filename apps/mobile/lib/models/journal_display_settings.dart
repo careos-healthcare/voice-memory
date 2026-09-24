@@ -5,5 +5,7 @@ export 'package:archiveme_mobile/features/journal/presentation/models/journal_di
 
 /// Deprecated alias — use [JournalDisplayMetadata] for persistence and
 /// [JournalDisplayPresentation] for UI-facing display state.
-@Deprecated('Use JournalDisplayMetadata for persistence or JournalDisplayPresentation for UI.')
+@Deprecated(
+  'Use JournalDisplayMetadata for persistence or JournalDisplayPresentation for UI.',
+)
 typedef JournalDisplaySettings = JournalDisplayMetadata;

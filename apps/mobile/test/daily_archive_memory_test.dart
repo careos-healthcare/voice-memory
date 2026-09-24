@@ -406,18 +406,22 @@ void main() {
         canShowPatternDetail: true,
       );
 
-      await tester.pumpWidget(withAppProviderScope(MaterialApp(
-          theme: AppTheme.light(),
-          home: Scaffold(
-            body: DailyArchiveMemoryCard(
-              memory: watch,
-              entryCount: 3,
-              source: 'record',
-              onRecord: () {},
-              onViewPatternDetails: () {},
+      await tester.pumpWidget(
+        withAppProviderScope(
+          MaterialApp(
+            theme: AppTheme.light(),
+            home: Scaffold(
+              body: DailyArchiveMemoryCard(
+                memory: watch,
+                entryCount: 3,
+                source: 'record',
+                onRecord: () {},
+                onViewPatternDetails: () {},
+              ),
             ),
           ),
-        )));
+        ),
+      );
 
       expect(
         find.byKey(const Key('daily_archive_memory_card')),
@@ -505,14 +509,18 @@ void main() {
       );
       await tester.binding.setSurfaceSize(const Size(390, 2800));
       addTearDown(() => tester.binding.setSurfaceSize(null));
-      await tester.pumpWidget(withAppProviderScope(MaterialApp(
-          theme: AppTheme.light(),
-          home: Scaffold(
-            body: RecordScreen(
-              entitlementReader: FakeArchiveEntitlementReader(pro: false),
+      await tester.pumpWidget(
+        withAppProviderScope(
+          MaterialApp(
+            theme: AppTheme.light(),
+            home: Scaffold(
+              body: RecordScreen(
+                entitlementReader: FakeArchiveEntitlementReader(pro: false),
+              ),
             ),
           ),
-        )));
+        ),
+      );
       await tester.pump();
       await tester.runAsync(() async {
         await Future<void>.delayed(const Duration(milliseconds: 400));

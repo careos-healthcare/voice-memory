@@ -101,7 +101,9 @@ class _PreserveOriginalControlState extends State<PreserveOriginalControl> {
 /// Entry-detail preserve toggle with persistence.
 class PreserveOriginalEditor extends StatelessWidget {
   const PreserveOriginalEditor({
-    required this.entry, required this.onChanged, super.key,
+    required this.entry,
+    required this.onChanged,
+    super.key,
   });
 
   final JournalEntry entry;

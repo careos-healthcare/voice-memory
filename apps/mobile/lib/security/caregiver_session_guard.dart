@@ -99,8 +99,7 @@ abstract final class CaregiverSessionGuard {
   }
 
   /// Convenience for callers that only branch on allow/deny.
-  static Future<bool> isOwnerSession() async =>
-      (await evaluate()).isAllowed;
+  static Future<bool> isOwnerSession() async => (await evaluate()).isAllowed;
 
   /// Throws [CaregiverAccessDeniedException] unless the owner is driving.
   static Future<void> assertOwnerAccess(String surface) async {
@@ -122,7 +121,9 @@ abstract final class CaregiverSessionGuard {
     // Nothing has loaded the controller in this process. Read the persisted
     // record directly rather than assuming the owner: a caregiver session
     // written by an earlier run is still on this device.
-    final state = await CaregiverModeStore(AppServices.instance.prefs).readMode();
+    final state = await CaregiverModeStore(
+      AppServices.instance.prefs,
+    ).readMode();
     return state.mode;
   }
 }

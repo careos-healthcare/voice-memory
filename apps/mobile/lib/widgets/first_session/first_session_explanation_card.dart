@@ -11,7 +11,9 @@ import 'package:flutter/material.dart';
 /// carousel, never blocking recording.
 class FirstSessionExplanationCard extends StatelessWidget {
   const FirstSessionExplanationCard({
-    required this.onLogPressure, required this.onRecord, super.key,
+    required this.onLogPressure,
+    required this.onRecord,
+    super.key,
   });
 
   final VoidCallback onLogPressure;

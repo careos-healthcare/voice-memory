@@ -15,7 +15,7 @@ abstract class MeshDiscoveryService {
 /// Gated by [MeshPermissionGate]; callers should evaluate permission first.
 class StubMeshDiscoveryService implements MeshDiscoveryService {
   StubMeshDiscoveryService({MeshPermissionGate? permissionGate})
-      : _permissionGate = permissionGate ?? MeshPermissionGate();
+    : _permissionGate = permissionGate ?? MeshPermissionGate();
 
   final MeshPermissionGate _permissionGate;
 
@@ -34,8 +34,10 @@ class StubMeshDiscoveryService implements MeshDiscoveryService {
 
 /// In-memory discovery for unit tests and desktop simulators.
 class FakeMeshDiscoveryService implements MeshDiscoveryService {
-  FakeMeshDiscoveryService({List<MeshPeerCapabilities>? peers, this.delay = Duration.zero})
-      : _peers = List<MeshPeerCapabilities>.from(peers ?? const []);
+  FakeMeshDiscoveryService({
+    List<MeshPeerCapabilities>? peers,
+    this.delay = Duration.zero,
+  }) : _peers = List<MeshPeerCapabilities>.from(peers ?? const []);
 
   final List<MeshPeerCapabilities> _peers;
   final Duration delay;

@@ -98,11 +98,31 @@ class _BannerIcon extends StatelessWidget {
           color: color,
         ),
       ),
-      SyncStatusVisualKind.error => Icon(Icons.error_outline, size: 18, color: color),
-      SyncStatusVisualKind.offline => Icon(Icons.cloud_off_outlined, size: 18, color: color),
-      SyncStatusVisualKind.waiting => Icon(Icons.schedule, size: 18, color: color),
-      SyncStatusVisualKind.pending => Icon(Icons.cloud_upload_outlined, size: 18, color: color),
-      SyncStatusVisualKind.idle => Icon(Icons.cloud_done_outlined, size: 18, color: color),
+      SyncStatusVisualKind.error => Icon(
+        Icons.error_outline,
+        size: 18,
+        color: color,
+      ),
+      SyncStatusVisualKind.offline => Icon(
+        Icons.cloud_off_outlined,
+        size: 18,
+        color: color,
+      ),
+      SyncStatusVisualKind.waiting => Icon(
+        Icons.schedule,
+        size: 18,
+        color: color,
+      ),
+      SyncStatusVisualKind.pending => Icon(
+        Icons.cloud_upload_outlined,
+        size: 18,
+        color: color,
+      ),
+      SyncStatusVisualKind.idle => Icon(
+        Icons.cloud_done_outlined,
+        size: 18,
+        color: color,
+      ),
     };
   }
 }

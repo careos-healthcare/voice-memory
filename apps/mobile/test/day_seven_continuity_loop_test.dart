@@ -220,17 +220,21 @@ void main() {
       bool hasConnectedThread = false,
       VoidCallback? onViewWeeklyReview,
     }) async {
-      await tester.pumpWidget(withAppProviderScope(MaterialApp(
-          theme: AppTheme.light(),
-          home: Scaffold(
-            body: DaySevenContinuityCard(
-              loop: loop,
-              entryCount: entryCount,
-              hasConnectedThread: hasConnectedThread,
-              onViewWeeklyReview: onViewWeeklyReview ?? () {},
+      await tester.pumpWidget(
+        withAppProviderScope(
+          MaterialApp(
+            theme: AppTheme.light(),
+            home: Scaffold(
+              body: DaySevenContinuityCard(
+                loop: loop,
+                entryCount: entryCount,
+                hasConnectedThread: hasConnectedThread,
+                onViewWeeklyReview: onViewWeeklyReview ?? () {},
+              ),
             ),
           ),
-        )));
+        ),
+      );
       await tester.pump();
     }
 
@@ -365,7 +369,11 @@ void main() {
           ),
         ],
       );
-      await tester.pumpWidget(withAppProviderScope(MaterialApp.router(theme: AppTheme.light(), routerConfig: router)));
+      await tester.pumpWidget(
+        withAppProviderScope(
+          MaterialApp.router(theme: AppTheme.light(), routerConfig: router),
+        ),
+      );
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 300));
     }

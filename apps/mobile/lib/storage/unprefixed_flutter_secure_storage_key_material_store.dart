@@ -42,6 +42,5 @@ class UnprefixedFlutterSecureStorageKeyMaterialStore
       _storage.write(key: logicalKey, value: base64Encode(material));
 
   @override
-  Future<void> deleteKey(String logicalKey) =>
-      _storage.delete(key: logicalKey);
+  Future<void> deleteKey(String logicalKey) => _storage.delete(key: logicalKey);
 }

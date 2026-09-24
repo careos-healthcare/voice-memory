@@ -120,7 +120,10 @@ class TimelineHeatmapIndex {
       }
       if (cluster == null) return const [];
       final ids = cluster.entryIds.toSet();
-      return [for (final entry in entries) if (ids.contains(entry.id)) entry];
+      return [
+        for (final entry in entries)
+          if (ids.contains(entry.id)) entry,
+      ];
     }
     return entries;
   }

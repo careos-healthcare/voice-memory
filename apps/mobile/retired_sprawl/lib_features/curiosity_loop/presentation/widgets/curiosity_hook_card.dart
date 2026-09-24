@@ -1,7 +1,8 @@
 import 'dart:async';
 
 import 'package:archiveme_mobile/features/curiosity_loop/domain/models/cognitive_biomarkers.dart';
-import 'package:archiveme_mobile/features/curiosity_loop/domain/models/curiosity_hook.dart' as domain;
+import 'package:archiveme_mobile/features/curiosity_loop/domain/models/curiosity_hook.dart'
+    as domain;
 import 'package:archiveme_mobile/features/curiosity_loop/domain/services/cognitive_anomaly_detector.dart';
 import 'package:archiveme_mobile/features/curiosity_loop/domain/services/cognitive_trajectory_evaluator.dart';
 import 'package:archiveme_mobile/features/curiosity_loop/presentation/models/curiosity_hook_presentation.dart';
@@ -35,7 +36,8 @@ class CuriosityHookCard extends StatefulWidget {
   }) : presentation = presentation ?? hook!;
 
   CuriosityHookCard.fromDomain({
-    required domain.CuriosityHook hook, super.key,
+    required domain.CuriosityHook hook,
+    super.key,
     JournalEntry? sourceEntry,
     CognitiveBiomarkers? currentMetrics,
     CognitiveBiomarkers? baselineMetrics,
@@ -228,7 +230,8 @@ class _CuriosityHookCardState extends State<CuriosityHookCard> {
 /// Loads EWMA baseline metrics and renders [CuriosityHookCard] with anomaly detection.
 class ConnectedCuriosityHookCard extends StatelessWidget {
   const ConnectedCuriosityHookCard({
-    required this.hook, super.key,
+    required this.hook,
+    super.key,
     this.sourceEntry,
     this.onSubmit,
     this.baselineStore,
@@ -238,7 +241,8 @@ class ConnectedCuriosityHookCard extends StatelessWidget {
   });
 
   const ConnectedCuriosityHookCard.fromDomain({
-    required this.hook, super.key,
+    required this.hook,
+    super.key,
     this.sourceEntry,
     this.onSubmit,
     this.baselineStore,
@@ -272,7 +276,8 @@ class ConnectedCuriosityHookCard extends StatelessWidget {
 class _ConnectedCuriosityHookCardScope extends StatefulWidget {
   const _ConnectedCuriosityHookCardScope({
     required this.hook,
-    required this.groundingPacingDuration, this.sourceEntry,
+    required this.groundingPacingDuration,
+    this.sourceEntry,
     this.onSubmit,
     this.baselineStore,
     this.journalService,

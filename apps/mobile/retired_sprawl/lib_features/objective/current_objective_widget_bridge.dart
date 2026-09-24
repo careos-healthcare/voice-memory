@@ -49,7 +49,8 @@ class MethodChannelCurrentObjectiveWidgetBridge
       return false;
     } on PlatformException {
       return false;
-    } catch (_, stackTrace) { // ignore: silent_catch_audit — widget extension best-effort
+    } catch (_, stackTrace) {
+      // ignore: silent_catch_audit — widget extension best-effort
       return false;
     }
   }
@@ -65,7 +66,8 @@ class MethodChannelCurrentObjectiveWidgetBridge
       return;
     } on PlatformException {
       return;
-    } catch (_, stackTrace) { // ignore: silent_catch_audit — widget extension best-effort
+    } catch (_, stackTrace) {
+      // ignore: silent_catch_audit — widget extension best-effort
       return;
     }
   }
@@ -78,7 +80,8 @@ class MethodChannelCurrentObjectiveWidgetBridge
       return;
     } on PlatformException {
       return;
-    } catch (_, stackTrace) { // ignore: silent_catch_audit — widget extension best-effort
+    } catch (_, stackTrace) {
+      // ignore: silent_catch_audit — widget extension best-effort
       return;
     }
   }
@@ -94,7 +97,8 @@ class MethodChannelCurrentObjectiveWidgetBridge
       return '';
     } on PlatformException {
       return '';
-    } catch (_, stackTrace) { // ignore: silent_catch_audit — widget extension best-effort
+    } catch (_, stackTrace) {
+      // ignore: silent_catch_audit — widget extension best-effort
       return '';
     }
   }

@@ -16,7 +16,9 @@ abstract final class WeeklyTopicSynthesisPrompt {
       ..writeln('Recurrent topics (label × mention count):');
 
     for (final topic in topics) {
-      buffer.writeln('- ${topic.displayLabel} (${topic.mentionCount} mentions)');
+      buffer.writeln(
+        '- ${topic.displayLabel} (${topic.mentionCount} mentions)',
+      );
     }
 
     buffer

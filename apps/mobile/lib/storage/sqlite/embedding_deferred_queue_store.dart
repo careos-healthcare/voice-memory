@@ -9,7 +9,7 @@ export 'package:archiveme_mobile/database/daos/queue_dao.dart'
 /// SQLite-backed queue for deferred reflection/transcript embedding work.
 final class EmbeddingDeferredQueueStore {
   EmbeddingDeferredQueueStore(Database db)
-      : _dao = QueueDao(AppDatabase.fromSqflite(db));
+    : _dao = QueueDao(AppDatabase.fromSqflite(db));
 
   final QueueDao _dao;
 
@@ -22,15 +22,14 @@ final class EmbeddingDeferredQueueStore {
     required String sqliteFilePath,
     String? keyAlias,
     String? encryptionPassword,
-  }) =>
-      _dao.enqueueDeferredReflection(
-        entryId: entryId,
-        text: text,
-        contentHash: contentHash,
-        sqliteFilePath: sqliteFilePath,
-        keyAlias: keyAlias,
-        encryptionPassword: encryptionPassword,
-      );
+  }) => _dao.enqueueDeferredReflection(
+    entryId: entryId,
+    text: text,
+    contentHash: contentHash,
+    sqliteFilePath: sqliteFilePath,
+    keyAlias: keyAlias,
+    encryptionPassword: encryptionPassword,
+  );
 
   Future<void> enqueueLlmSummary({
     required String entryId,
@@ -38,14 +37,13 @@ final class EmbeddingDeferredQueueStore {
     required String sqliteFilePath,
     String? keyAlias,
     String? encryptionPassword,
-  }) =>
-      _dao.enqueueDeferredLlmSummary(
-        entryId: entryId,
-        llmSummary: llmSummary,
-        sqliteFilePath: sqliteFilePath,
-        keyAlias: keyAlias,
-        encryptionPassword: encryptionPassword,
-      );
+  }) => _dao.enqueueDeferredLlmSummary(
+    entryId: entryId,
+    llmSummary: llmSummary,
+    sqliteFilePath: sqliteFilePath,
+    keyAlias: keyAlias,
+    encryptionPassword: encryptionPassword,
+  );
 
   @Deprecated('Use enqueueLlmSummary')
   Future<void> enqueueTranscript({
@@ -54,14 +52,13 @@ final class EmbeddingDeferredQueueStore {
     required String sqliteFilePath,
     String? keyAlias,
     String? encryptionPassword,
-  }) =>
-      enqueueLlmSummary(
-        entryId: entryId,
-        llmSummary: text,
-        sqliteFilePath: sqliteFilePath,
-        keyAlias: keyAlias,
-        encryptionPassword: encryptionPassword,
-      );
+  }) => enqueueLlmSummary(
+    entryId: entryId,
+    llmSummary: text,
+    sqliteFilePath: sqliteFilePath,
+    keyAlias: keyAlias,
+    encryptionPassword: encryptionPassword,
+  );
 
   Future<List<EmbeddingDeferredTask>> listPending({int? limit}) =>
       _dao.listDeferredPending(limit: limit);

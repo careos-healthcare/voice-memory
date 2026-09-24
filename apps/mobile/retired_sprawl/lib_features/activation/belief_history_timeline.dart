@@ -9,9 +9,11 @@ import 'package:archiveme_mobile/models/journal_entry.dart';
 
 /// User-facing copy for the five-plus entry belief history surface.
 abstract final class BeliefHistoryTimelineCopy {
-  static const String titleChanged = VisibleArchiveProofCopy.beliefHistoryTitleChanged;
+  static const String titleChanged =
+      VisibleArchiveProofCopy.beliefHistoryTitleChanged;
 
-  static const String bodyChanged = VisibleArchiveProofCopy.beliefHistoryBodyChanged;
+  static const String bodyChanged =
+      VisibleArchiveProofCopy.beliefHistoryBodyChanged;
 
   static const String titleBuilding =
       VisibleArchiveProofCopy.beliefHistoryTitleBuilding;

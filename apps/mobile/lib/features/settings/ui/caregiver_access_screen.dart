@@ -31,7 +31,8 @@ class CaregiverAccessScreen extends StatelessWidget {
   final Future<bool> Function(
     BuildContext context,
     MultiPartyAccessGrant grant,
-  )? confirmRevokeOverride;
+  )?
+  confirmRevokeOverride;
 
   static const Key screenKey = Key('caregiver_access_screen');
 
@@ -75,7 +76,9 @@ class CaregiverAccessScreen extends StatelessWidget {
               body: CaregiverAccessCopy.intentBody,
             ),
             const SizedBox(height: AppSpacing.lg),
-            const _SectionHeading(text: CaregiverAccessCopy.activeGrantsHeading),
+            const _SectionHeading(
+              text: CaregiverAccessCopy.activeGrantsHeading,
+            ),
             const SizedBox(height: AppSpacing.sm),
             CaregiverAccessGrantList(
               accessService: accessService,
@@ -115,7 +118,9 @@ class _ControlCallout extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppColors.accentLight.withValues(alpha: 0.35),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.accentPrimary.withValues(alpha: 0.25)),
+        border: Border.all(
+          color: AppColors.accentPrimary.withValues(alpha: 0.25),
+        ),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,

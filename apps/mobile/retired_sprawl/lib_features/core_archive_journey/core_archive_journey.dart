@@ -29,7 +29,8 @@ extension CoreArchiveJourneyStepCopy on CoreArchiveJourneyStep {
 abstract final class CoreArchiveJourney {
   CoreArchiveJourney._();
 
-  static const List<CoreArchiveJourneyStep> steps = CoreArchiveJourneyStep.values;
+  static const List<CoreArchiveJourneyStep> steps =
+      CoreArchiveJourneyStep.values;
 
   static CoreArchiveJourneySnapshot snapshot() =>
       const CoreArchiveJourneySnapshot(

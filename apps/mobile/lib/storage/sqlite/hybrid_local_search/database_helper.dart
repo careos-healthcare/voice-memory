@@ -17,9 +17,9 @@ final class DatabaseHelper {
     required MemoryTranscriptSearchRepository searchRepository,
     required ReflectionEmbeddingInference embeddingInference,
     HybridSearchResultMerger? merger,
-  })  : _searchRepository = searchRepository,
-        _embeddingInference = embeddingInference,
-        _merger = merger ?? const HybridSearchResultMerger();
+  }) : _searchRepository = searchRepository,
+       _embeddingInference = embeddingInference,
+       _merger = merger ?? const HybridSearchResultMerger();
 
   final MemoryTranscriptSearchRepository _searchRepository;
   final ReflectionEmbeddingInference _embeddingInference;
@@ -111,14 +111,13 @@ final class DatabaseHelper {
     if (trimmed.isEmpty || limit <= 0) return const [];
 
     if (trimmed.length < ReflectionTextProcessor.minTextChars) {
-      return searchKeywords(trimmed, limit: limit)
-          .then(
-            (keywordHits) => mergeAndRank(
-              keywordHits: keywordHits,
-              semanticHits: const [],
-              limit: limit,
-            ),
-          );
+      return searchKeywords(trimmed, limit: limit).then(
+        (keywordHits) => mergeAndRank(
+          keywordHits: keywordHits,
+          semanticHits: const [],
+          limit: limit,
+        ),
+      );
     }
 
     // Same degrade path the embedding failure below takes, for the same

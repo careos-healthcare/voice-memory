@@ -54,7 +54,8 @@ abstract final class ReturnDayFlowGates {
     required bool isReady,
     required bool isRecording,
     required bool isPostSave,
-    required bool dismissedToday, ReturnDayFlow? flow,
+    required bool dismissedToday,
+    ReturnDayFlow? flow,
   }) =>
       isReady && !isRecording && !isPostSave && flow != null && !dismissedToday;
 

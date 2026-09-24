@@ -11,14 +11,18 @@ import 'package:flutter/material.dart';
 /// Generic share card — fixed copy only, explicit tap to share or copy.
 class ShareableProofCard extends StatefulWidget {
   const ShareableProofCard({
-    required this.result, required this.source, super.key,
+    required this.result,
+    required this.source,
+    super.key,
     this.surface = 'record',
     this.onShare,
     this.onCopy,
   });
 
   const ShareableProofCard.test({
-    required this.result, required this.source, super.key,
+    required this.result,
+    required this.source,
+    super.key,
     this.surface = 'record',
     this.onShare,
     this.onCopy,
@@ -40,7 +44,8 @@ class ShareableProofCard extends StatefulWidget {
 
 class _ShareableProofCardState extends State<ShareableProofCard> {
   var _trackedSeen = false;
-  ShareableProofTemplate _selectedTemplate = ShareableProofTemplate.defaultTemplate;
+  ShareableProofTemplate _selectedTemplate =
+      ShareableProofTemplate.defaultTemplate;
   var _copied = false;
 
   @override

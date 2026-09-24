@@ -774,22 +774,31 @@ void main() {
         );
       });
 
-      test('positive-pattern helped line uses noticed-in-your-words prefix', () {
-        final review = review_surface.WeeklyArchiveReviewEngine.build(
-          entries: mixedRepeatAndWalkEntries(),
-          viewingConfirmedRepeatOrTimeline: true,
-        );
-        expect(review!.whatHelped?.isSupported, isTrue);
-        expect(
-          review.whatHelped!.body,
-          startsWith(
-            '${review_surface_copy.WeeklyArchiveReviewCopy.helpedPrefix} ',
-          ),
-        );
-        expect(review.whatHelped!.body.toLowerCase(), contains('walked outside'));
-        expect(review.whatHelped!.body, isNot(contains('You marked that you')));
-        expect(review.whatHelped!.body, isNot(contains('The last time you')));
-      });
+      test(
+        'positive-pattern helped line uses noticed-in-your-words prefix',
+        () {
+          final review = review_surface.WeeklyArchiveReviewEngine.build(
+            entries: mixedRepeatAndWalkEntries(),
+            viewingConfirmedRepeatOrTimeline: true,
+          );
+          expect(review!.whatHelped?.isSupported, isTrue);
+          expect(
+            review.whatHelped!.body,
+            startsWith(
+              '${review_surface_copy.WeeklyArchiveReviewCopy.helpedPrefix} ',
+            ),
+          );
+          expect(
+            review.whatHelped!.body.toLowerCase(),
+            contains('walked outside'),
+          );
+          expect(
+            review.whatHelped!.body,
+            isNot(contains('You marked that you')),
+          );
+          expect(review.whatHelped!.body, isNot(contains('The last time you')));
+        },
+      );
     });
 
     group('copy safety', () {

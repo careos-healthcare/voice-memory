@@ -5,7 +5,8 @@ import 'package:flutter/material.dart';
 /// Current archive belief — must render above all other archive content on mobile.
 class ArchiveBeliefHeaderMobile extends StatelessWidget {
   const ArchiveBeliefHeaderMobile({
-    required this.beliefText, super.key,
+    required this.beliefText,
+    super.key,
     this.confidenceLabel,
     this.statusLabel,
     this.reputationLabel,

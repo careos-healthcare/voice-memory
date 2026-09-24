@@ -155,16 +155,20 @@ void main() {
         offerReminder: true,
       );
 
-      await tester.pumpWidget(withAppProviderScope(MaterialApp(
-          theme: AppTheme.light(),
-          home: Scaffold(
-            body: DayTwoReturnLoopCard(
-              payoff: payoff,
-              onAddAnother: () {},
-              onViewArchive: () {},
+      await tester.pumpWidget(
+        withAppProviderScope(
+          MaterialApp(
+            theme: AppTheme.light(),
+            home: Scaffold(
+              body: DayTwoReturnLoopCard(
+                payoff: payoff,
+                onAddAnother: () {},
+                onViewArchive: () {},
+              ),
             ),
           ),
-        )));
+        ),
+      );
       await tester.pump();
 
       expect(find.byKey(const Key('day_two_return_loop_card')), findsOneWidget);
@@ -205,14 +209,18 @@ void main() {
       );
       await tester.binding.setSurfaceSize(const Size(390, 3200));
       addTearDown(() => tester.binding.setSurfaceSize(null));
-      await tester.pumpWidget(withAppProviderScope(MaterialApp(
-          theme: AppTheme.light(),
-          home: Scaffold(
-            body: RecordScreen(
-              entitlementReader: FakeArchiveEntitlementReader(pro: false),
+      await tester.pumpWidget(
+        withAppProviderScope(
+          MaterialApp(
+            theme: AppTheme.light(),
+            home: Scaffold(
+              body: RecordScreen(
+                entitlementReader: FakeArchiveEntitlementReader(pro: false),
+              ),
             ),
           ),
-        )));
+        ),
+      );
       await tester.pump();
       await tester.runAsync(() async {
         await Future<void>.delayed(const Duration(milliseconds: 400));

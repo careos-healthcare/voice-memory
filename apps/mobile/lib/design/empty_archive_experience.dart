@@ -58,7 +58,9 @@ const double kIntentionalEmptyArchiveMaxWidth = 400;
 /// Headline + one sentence + optional single CTA — no metrics or analytics tone.
 class EmptyArchivePanel extends StatelessWidget {
   const EmptyArchivePanel({
-    required this.title, required this.body, super.key,
+    required this.title,
+    required this.body,
+    super.key,
     this.ctaLabel,
     this.onCta,
     this.showCaptureActions = false,

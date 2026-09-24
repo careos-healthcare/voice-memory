@@ -25,7 +25,8 @@ class LocalLlamaInference implements LlamaInference {
     final digest = sha256.convert(utf8.encode(prompt)).toString();
     final tokenBudget = request.maxTokens.clamp(1, 512);
     final snippet = digest.substring(0, 16);
-    final text = '[local-llama:$snippet] ${prompt.length > 64 ? '${prompt.substring(0, 64)}…' : prompt}';
+    final text =
+        '[local-llama:$snippet] ${prompt.length > 64 ? '${prompt.substring(0, 64)}…' : prompt}';
 
     return LlamaInferenceResponse(
       text: text,

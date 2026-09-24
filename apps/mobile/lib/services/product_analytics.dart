@@ -1,7 +1,8 @@
 import 'package:archiveme_mobile/config/archive_me_demo_state.dart';
 import 'package:archiveme_mobile/config/creator_demo_mode.dart';
 import 'package:archiveme_mobile/core/utils/app_logger.dart';
-import 'package:archiveme_mobile/features/recording/recording_dependencies.dart' show AppServices;
+import 'package:archiveme_mobile/features/recording/recording_dependencies.dart'
+    show AppServices;
 import 'package:archiveme_mobile/push/firebase_bootstrap.dart';
 import 'package:archiveme_mobile/services/app_services.dart' show AppServices;
 import 'package:archiveme_mobile/features/beta_analytics/beta_analytics_event_registry.dart';
@@ -51,7 +52,9 @@ class ProductAnalytics {
       );
     } catch (e, stackTrace) {
       if (kDebugMode) {
-        AppLogger.debug('ProductAnalytics: Firebase Analytics unavailable — $e');
+        AppLogger.debug(
+          'ProductAnalytics: Firebase Analytics unavailable — $e',
+        );
       }
       _analytics = null;
       _consentGranted = false;
@@ -86,7 +89,9 @@ class ProductAnalytics {
     // Production graph: only focused-beta registry events may reach Firebase.
     if (!BetaAnalyticsEventRegistry.isProductionEvent(event)) {
       if (kDebugMode) {
-        AppLogger.debug('ProductAnalytics: dropped unregistered event — $event');
+        AppLogger.debug(
+          'ProductAnalytics: dropped unregistered event — $event',
+        );
       }
       return;
     }

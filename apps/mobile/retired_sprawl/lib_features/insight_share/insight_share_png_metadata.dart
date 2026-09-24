@@ -31,8 +31,11 @@ abstract final class InsightSharePngMetadata {
       output.setRange(cursor, cursor + chunk.length, chunk);
       cursor += chunk.length;
     }
-    output.setRange(cursor, cursor + (pngBytes.length - iendOffset),
-        pngBytes.sublist(iendOffset));
+    output.setRange(
+      cursor,
+      cursor + (pngBytes.length - iendOffset),
+      pngBytes.sublist(iendOffset),
+    );
     return output;
   }
 

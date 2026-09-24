@@ -41,7 +41,8 @@ class GraphForceSimulation {
       final record = topology.nodes[i];
       final angle = (i / math.max(1, topology.nodes.length)) * math.pi * 2;
       final jitter = random.nextDouble() * 24 - 12;
-      final position = center +
+      final position =
+          center +
           Offset(
             math.cos(angle) * (radius + jitter),
             math.sin(angle) * (radius + jitter),

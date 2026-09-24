@@ -19,14 +19,17 @@ class UserSettings {
 
   LifeStageLens get resolvedLens => activeLens ?? LifeStageLens.defaultLens;
 
-  UserSettings copyWith({LifeStageLens? activeLens, bool clearActiveLens = false}) {
+  UserSettings copyWith({
+    LifeStageLens? activeLens,
+    bool clearActiveLens = false,
+  }) {
     return UserSettings(
       activeLens: clearActiveLens ? null : (activeLens ?? this.activeLens),
     );
   }
 
   Map<String, dynamic> toJson() => {
-        if (activeLens != null && activeLens!.isThematic)
-          'activeLens': activeLens!.wireValue,
-      };
+    if (activeLens != null && activeLens!.isThematic)
+      'activeLens': activeLens!.wireValue,
+  };
 }

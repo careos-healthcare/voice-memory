@@ -24,15 +24,15 @@ sealed class ExecutionResult<T> {
   }
 
   T? get valueOrNull => switch (this) {
-        ExecutionSuccess(:final value) => value,
-        _ => null,
-      };
+    ExecutionSuccess(:final value) => value,
+    _ => null,
+  };
 
   ExecutionFailureState? get failureOrNull => switch (this) {
-        ExecutionFailureResult(:final failure) => failure,
-        ExecutionDeferred(:final reason) => reason,
-        _ => null,
-      };
+    ExecutionFailureResult(:final failure) => failure,
+    ExecutionDeferred(:final reason) => reason,
+    _ => null,
+  };
 }
 
 final class ExecutionSuccess<T> extends ExecutionResult<T> {

@@ -9,7 +9,9 @@ import 'package:flutter/material.dart';
 /// Privacy and control reassurance near the paywall purchase decision.
 class PurchaseConfidenceCard extends StatefulWidget {
   const PurchaseConfidenceCard({
-    required this.source, required this.surface, super.key,
+    required this.source,
+    required this.surface,
+    super.key,
     this.entryCount,
   });
 

@@ -8,7 +8,8 @@ import 'package:flutter/material.dart';
 /// what helped, and one check to carry into next month.
 class MonthlyPatternReviewCard extends StatelessWidget {
   const MonthlyPatternReviewCard({
-    required this.review, super.key,
+    required this.review,
+    super.key,
     this.onUseCheck,
     this.showTitle = true,
   });

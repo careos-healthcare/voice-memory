@@ -37,8 +37,14 @@ void main() {
       expect(pack, contains('0.2.0'));
       expect(pack, contains('focused_beta_status.json'));
       final pubspec = File('pubspec.yaml').readAsStringSync();
-      final buildMatch = RegExp(r'version:\s*[\d.]+\+(\d+)').firstMatch(pubspec);
-      expect(buildMatch, isNotNull, reason: 'pubspec version must include +build');
+      final buildMatch = RegExp(
+        r'version:\s*[\d.]+\+(\d+)',
+      ).firstMatch(pubspec);
+      expect(
+        buildMatch,
+        isNotNull,
+        reason: 'pubspec version must include +build',
+      );
       expect(pubspec, contains('0.2.0+${buildMatch!.group(1)}'));
     });
 

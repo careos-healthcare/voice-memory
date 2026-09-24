@@ -10,7 +10,9 @@ import 'package:flutter/material.dart';
 /// again — no Collections or bulk actions in the first session.
 class FirstArchiveValueCard extends StatelessWidget {
   const FirstArchiveValueCard({
-    required this.onSearch, required this.onRecordAnother, super.key,
+    required this.onSearch,
+    required this.onRecordAnother,
+    super.key,
     this.onPin,
   });
 

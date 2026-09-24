@@ -185,15 +185,19 @@ void main() {
       final prefs = _MemoryPrefs();
       final store = ArchiveBetaMissionStore(prefs);
 
-      await tester.pumpWidget(withAppProviderScope(MaterialApp(
-          home: Scaffold(
-            body: ArchiveBetaMissionCard.test(
-              showStartCta: true,
-              store: store,
-              onStart: () {},
+      await tester.pumpWidget(
+        withAppProviderScope(
+          MaterialApp(
+            home: Scaffold(
+              body: ArchiveBetaMissionCard.test(
+                showStartCta: true,
+                store: store,
+                onStart: () {},
+              ),
             ),
           ),
-        )));
+        ),
+      );
       await tester.pumpAndSettle();
 
       expect(
@@ -255,16 +259,20 @@ void main() {
     Future<void> pumpEmptyRecord(WidgetTester tester) async {
       await tester.binding.setSurfaceSize(const Size(390, 2800));
       addTearDown(() => tester.binding.setSurfaceSize(null));
-      await tester.pumpWidget(withAppProviderScope(MaterialApp(
-          theme: AppTheme.light(),
-          home: Scaffold(
-            body: RecordScreen(
-              pressureCheckInStore: MemoryPressureCheckInStore(),
-              suggestionAttributionStore: MemorySuggestionAttributionStore(),
-              entitlementReader: FakeArchiveEntitlementReader(pro: false),
+      await tester.pumpWidget(
+        withAppProviderScope(
+          MaterialApp(
+            theme: AppTheme.light(),
+            home: Scaffold(
+              body: RecordScreen(
+                pressureCheckInStore: MemoryPressureCheckInStore(),
+                suggestionAttributionStore: MemorySuggestionAttributionStore(),
+                entitlementReader: FakeArchiveEntitlementReader(pro: false),
+              ),
             ),
           ),
-        )));
+        ),
+      );
       await tester.pump();
       await tester.runAsync(() async {
         await Future<void>.delayed(const Duration(milliseconds: 400));

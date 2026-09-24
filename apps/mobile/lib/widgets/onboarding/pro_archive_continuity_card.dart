@@ -1,7 +1,9 @@
 import 'package:archiveme_mobile/design/archive_mobile_typography.dart';
 import 'package:archiveme_mobile/features/onboarding/record_return_pro_state.dart';
-import 'package:archiveme_mobile/features/onboarding/record_return_pro_store.dart' show RecordReturnProStore;
-import 'package:archiveme_mobile/features/recording/recording_dependencies.dart' show RecordReturnProStore;
+import 'package:archiveme_mobile/features/onboarding/record_return_pro_store.dart'
+    show RecordReturnProStore;
+import 'package:archiveme_mobile/features/recording/recording_dependencies.dart'
+    show RecordReturnProStore;
 import 'package:archiveme_mobile/services/activation_funnel_analytics.dart';
 import 'package:archiveme_mobile/theme/app_colors.dart';
 import 'package:archiveme_mobile/theme/app_spacing.dart';
@@ -12,7 +14,11 @@ import 'package:flutter/material.dart';
 /// Never interrupts recording; resolved once via [RecordReturnProStore].
 class ProArchiveContinuityCard extends StatelessWidget {
   const ProArchiveContinuityCard({
-    required this.entryCount, required this.source, required this.onSeePro, required this.onNotNow, super.key,
+    required this.entryCount,
+    required this.source,
+    required this.onSeePro,
+    required this.onNotNow,
+    super.key,
   });
 
   final int entryCount;

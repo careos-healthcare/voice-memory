@@ -139,7 +139,9 @@ class WebSocketVoiceTransport implements VoiceByteTransport {
     }
     if (message is! String) {
       if (message is List<int>) {
-        _incoming.add(VoicePacket(outputLevel: _rms(Uint8List.fromList(message))));
+        _incoming.add(
+          VoicePacket(outputLevel: _rms(Uint8List.fromList(message))),
+        );
       }
       return;
     }
@@ -177,7 +179,9 @@ class RecordVoiceCapture implements VoiceCapturePort {
   AudioRecorder get _mic => _active ??= _recorder ?? AudioRecorder();
 
   @override
-  Future<void> start(void Function(Uint8List frame, double level) onFrame) async {
+  Future<void> start(
+    void Function(Uint8List frame, double level) onFrame,
+  ) async {
     _onFrame = onFrame;
     await _open();
   }
@@ -221,11 +225,11 @@ class RecordVoiceCapture implements VoiceCapturePort {
         device: selected,
       ),
     );
-    _levels = mic
-        .onAmplitudeChanged(const Duration(milliseconds: 50))
-        .listen((amplitude) {
-          _level = _normalizeDb(amplitude.current);
-        });
+    _levels = mic.onAmplitudeChanged(const Duration(milliseconds: 50)).listen((
+      amplitude,
+    ) {
+      _level = _normalizeDb(amplitude.current);
+    });
     _frames = stream.listen((frame) {
       _onFrame?.call(frame, _level);
     });
@@ -248,7 +252,9 @@ class ManualVoiceCapture implements VoiceCapturePort {
   var started = false;
 
   @override
-  Future<void> start(void Function(Uint8List frame, double level) onFrame) async {
+  Future<void> start(
+    void Function(Uint8List frame, double level) onFrame,
+  ) async {
     this.onFrame = onFrame;
     started = true;
   }

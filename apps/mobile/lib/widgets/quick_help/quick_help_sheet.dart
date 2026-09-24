@@ -13,7 +13,8 @@ import 'package:flutter/material.dart';
 /// intents and gets a single grounded response.
 Future<void> showQuickHelpSheet(
   BuildContext context, {
-  required Future<void> Function() onStartRecording, String languageCode = 'en',
+  required Future<void> Function() onStartRecording,
+  String languageCode = 'en',
   String? latestReflectionText,
   String? patternTitle,
   String? resultHint,
@@ -43,7 +44,8 @@ Future<void> showQuickHelpSheet(
 
 class QuickHelpSheet extends StatefulWidget {
   const QuickHelpSheet({
-    required this.onStartRecording, super.key,
+    required this.onStartRecording,
+    super.key,
     this.languageCode = 'en',
     this.latestReflectionText,
     this.patternTitle,
@@ -216,7 +218,10 @@ class _QuickHelpSheetState extends State<QuickHelpSheet> {
               ),
             ),
             const SizedBox(height: AppSpacing.md),
-            if (_response == null) _optionsView() else _responseView(_response!),
+            if (_response == null)
+              _optionsView()
+            else
+              _responseView(_response!),
           ],
         ),
       ),

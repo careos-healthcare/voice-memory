@@ -10,7 +10,8 @@ import 'package:flutter/material.dart';
 /// view model already produced.
 class ProofDetailSheet extends StatelessWidget {
   const ProofDetailSheet({
-    required this.proof, super.key,
+    required this.proof,
+    super.key,
     this.onOpenEvidence,
     this.correctionControls,
   });

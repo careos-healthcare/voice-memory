@@ -4,7 +4,7 @@ import 'package:archiveme_mobile/features/insight_engine/reciprocal_rank_fusion.
 /// Merges FTS5 keyword and vec0 semantic ranked lists into a single hybrid ranking.
 final class HybridSearchResultMerger {
   const HybridSearchResultMerger({ReciprocalRankFusion? fusion})
-      : _fusion = fusion ?? const ReciprocalRankFusion();
+    : _fusion = fusion ?? const ReciprocalRankFusion();
 
   final ReciprocalRankFusion _fusion;
 
@@ -22,10 +22,12 @@ final class HybridSearchResultMerger {
   }) {
     if (limit <= 0) return const [];
 
-    final keywordIds =
-        keywordHits.map((hit) => hit.entryId).toList(growable: false);
-    final semanticIds =
-        semanticHits.map((hit) => hit.entryId).toList(growable: false);
+    final keywordIds = keywordHits
+        .map((hit) => hit.entryId)
+        .toList(growable: false);
+    final semanticIds = semanticHits
+        .map((hit) => hit.entryId)
+        .toList(growable: false);
 
     if (keywordIds.isEmpty && semanticIds.isEmpty) return const [];
 

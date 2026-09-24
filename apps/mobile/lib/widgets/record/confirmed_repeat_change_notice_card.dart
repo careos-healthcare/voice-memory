@@ -14,7 +14,10 @@ import 'package:flutter/material.dart';
 /// Grounded change notice after a confirmed repeat returns softer.
 class ConfirmedRepeatChangeNoticeCard extends StatelessWidget {
   const ConfirmedRepeatChangeNoticeCard({
-    required this.notice, required this.onRecordWhatHelped, required this.onViewEvidence, super.key,
+    required this.notice,
+    required this.onRecordWhatHelped,
+    required this.onViewEvidence,
+    super.key,
     this.analyticsSurface,
     this.entryCount,
     this.entriesForWhy,

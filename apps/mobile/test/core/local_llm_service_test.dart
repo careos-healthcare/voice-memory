@@ -46,35 +46,42 @@ void main() {
     expect(remoteCalls, isEmpty);
   });
 
-  test('remote model is used when the network and precision are available', () async {
-    String? seenPrompt;
-    final service = LocalInferenceService(
-      onDevice: BoundLocalEngine(
-        runtime: LocalRuntime.onnx,
-        complete: (prompt) async => 'local',
-      ),
-      remote: (prompt) async {
-        seenPrompt = prompt;
-        return 'Remote summary.';
-      },
-      retrieve: (_) async => const [
-        RetrievedPassage(entryId: 'entry-1', text: 'Coffee with Sam.', similarity: 0.9),
-      ],
-    );
-    final summary = await service.summarize(
-      entryText: 'Met Sam before work.',
-      query: 'sam',
-      networkAvailable: true,
-      higherPrecisionAvailable: true,
-    );
+  test(
+    'remote model is used when the network and precision are available',
+    () async {
+      String? seenPrompt;
+      final service = LocalInferenceService(
+        onDevice: BoundLocalEngine(
+          runtime: LocalRuntime.onnx,
+          complete: (prompt) async => 'local',
+        ),
+        remote: (prompt) async {
+          seenPrompt = prompt;
+          return 'Remote summary.';
+        },
+        retrieve: (_) async => const [
+          RetrievedPassage(
+            entryId: 'entry-1',
+            text: 'Coffee with Sam.',
+            similarity: 0.9,
+          ),
+        ],
+      );
+      final summary = await service.summarize(
+        entryText: 'Met Sam before work.',
+        query: 'sam',
+        networkAvailable: true,
+        higherPrecisionAvailable: true,
+      );
 
-    expect(summary.route, InferenceRoute.remote);
-    expect(summary.runtimeName, 'remote');
-    expect(summary.text, 'Remote summary.');
-    expect(summary.passages, hasLength(1));
-    expect(seenPrompt, contains('Met Sam before work.'));
-    expect(seenPrompt, contains('Coffee with Sam.'));
-  });
+      expect(summary.route, InferenceRoute.remote);
+      expect(summary.runtimeName, 'remote');
+      expect(summary.text, 'Remote summary.');
+      expect(summary.passages, hasLength(1));
+      expect(seenPrompt, contains('Met Sam before work.'));
+      expect(seenPrompt, contains('Coffee with Sam.'));
+    },
+  );
 
   test('extractive engine covers offline summaries without weights', () async {
     final service = LocalInferenceService(

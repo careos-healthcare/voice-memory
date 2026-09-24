@@ -943,9 +943,11 @@ void main() {
       final triggerSaved = ConfirmedRepeatTriggerCapture.resolveSave(
         capturePrompt: EarlyFirstSignalCopy.recordTriggerGuidedPrompt,
       );
-      final helpfulSaved = !triggerSaved && ConfirmedRepeatHelpfulActionCapture.resolveSave(
-              capturePrompt: EarlyFirstSignalCopy.recordWhatHelpedGuidedPrompt,
-            );
+      final helpfulSaved =
+          !triggerSaved &&
+          ConfirmedRepeatHelpfulActionCapture.resolveSave(
+            capturePrompt: EarlyFirstSignalCopy.recordWhatHelpedGuidedPrompt,
+          );
 
       expect(triggerSaved, isTrue);
       expect(helpfulSaved, isFalse);

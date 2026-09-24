@@ -12,10 +12,7 @@ class FirstPatternCorrectionStore {
     final map = await _prefs.readMap(_key);
     final raw = map?['items'];
     if (raw is! List) return [];
-    return raw
-        .whereType<Map>()
-        .map(Map<String, dynamic>.from)
-        .toList();
+    return raw.whereType<Map>().map(Map<String, dynamic>.from).toList();
   }
 
   Future<void> record({

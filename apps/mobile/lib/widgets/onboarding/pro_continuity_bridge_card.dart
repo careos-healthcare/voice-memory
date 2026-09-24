@@ -12,7 +12,11 @@ import 'package:flutter/material.dart';
 /// continuity and archive usefulness.
 class ProContinuityBridgeCard extends StatelessWidget {
   const ProContinuityBridgeCard({
-    required this.entryCount, required this.source, required this.onSeePro, required this.onNotNow, super.key,
+    required this.entryCount,
+    required this.source,
+    required this.onSeePro,
+    required this.onNotNow,
+    super.key,
   });
 
   final int entryCount;

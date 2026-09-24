@@ -34,23 +34,24 @@ ProofClarityImportanceSummary _stableSummary({int totalTesters = 30}) =>
       wantsRankingImportanceCount: totalTesters == 20 ? 3 : 5,
     );
 
-BetaRepairLabVisibilityInput _repairInput() => const BetaRepairLabVisibilityInput(
-  mode: BetaRepairLabMode.evidenceTrailTimelineClarity,
-  entryCount: 4,
-  source: 'test',
-  isPro: false,
-  isRecording: false,
-  isDegradedTranscriptState: false,
-  whatChangedQuestionActive: false,
-  patternReviewInboxHasActiveItems: false,
-  hasTimelineProofVisible: true,
-  hasConfirmedRepeat: true,
-  confidenceLevel: ProofConfidenceLevel.watchOnly,
-  hasUsefulProofFeedback: false,
-  feedbackType: null,
-  isNegativeFeedback: false,
-  betaMissionEnabled: true,
-);
+BetaRepairLabVisibilityInput _repairInput() =>
+    const BetaRepairLabVisibilityInput(
+      mode: BetaRepairLabMode.evidenceTrailTimelineClarity,
+      entryCount: 4,
+      source: 'test',
+      isPro: false,
+      isRecording: false,
+      isDegradedTranscriptState: false,
+      whatChangedQuestionActive: false,
+      patternReviewInboxHasActiveItems: false,
+      hasTimelineProofVisible: true,
+      hasConfirmedRepeat: true,
+      confidenceLevel: ProofConfidenceLevel.watchOnly,
+      hasUsefulProofFeedback: false,
+      feedbackType: null,
+      isNegativeFeedback: false,
+      betaMissionEnabled: true,
+    );
 
 void main() {
   group('ProofClarityImportanceDiagnostic thresholds', () {

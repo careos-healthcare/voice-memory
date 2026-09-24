@@ -63,7 +63,8 @@ class AmbientContext {
   /// One line for the entry card, omitting anything we could not read.
   String? get pillText {
     final parts = <String>[
-      if (locality != null && locality!.trim().isNotEmpty) '📍 ${locality!.trim()}',
+      if (locality != null && locality!.trim().isNotEmpty)
+        '📍 ${locality!.trim()}',
       if (weatherLabel != null && weatherLabel!.trim().isNotEmpty)
         '$weatherGlyph ${weatherLabel!.trim()}',
       if (stepCount != null) '🚶 ${_formatSteps(stepCount!)} steps',

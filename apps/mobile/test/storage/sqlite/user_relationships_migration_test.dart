@@ -28,7 +28,10 @@ void main() {
     );
 
     final versionRows = await database.rawQuery('PRAGMA user_version');
-    expect(versionRows.single['user_version'], SqliteMigrationManager.latestVersion);
+    expect(
+      versionRows.single['user_version'],
+      SqliteMigrationManager.latestVersion,
+    );
 
     final now = DateTime.now().toUtc().millisecondsSinceEpoch;
     await database.insert('account_identities', {

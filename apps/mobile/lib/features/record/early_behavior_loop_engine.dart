@@ -8,7 +8,8 @@ import 'package:archiveme_mobile/product/consumer_copy_guard.dart';
 class EarlyBehaviorLoopEngine {
   const EarlyBehaviorLoopEngine();
 
-  static const String _fallbackEvidence = EarlyBehaviorLoopCopy.evidenceFallback;
+  static const String _fallbackEvidence =
+      EarlyBehaviorLoopCopy.evidenceFallback;
 
   static final _loops = <_LoopDefinition>[
     const _LoopDefinition(

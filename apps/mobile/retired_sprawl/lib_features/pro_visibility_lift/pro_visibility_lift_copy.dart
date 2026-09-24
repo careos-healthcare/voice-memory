@@ -5,7 +5,8 @@ abstract final class ProVisibilityLiftCopy {
 
   static const String title = RevenueLiftExperimentV2Copy.proVisibilityTitle;
   static const String body = RevenueLiftExperimentV2Copy.proVisibilityBody;
-  static const String primaryCta = RevenueLiftExperimentV2Copy.proVisibilityPrimaryCta;
+  static const String primaryCta =
+      RevenueLiftExperimentV2Copy.proVisibilityPrimaryCta;
   static const String secondaryCta =
       RevenueLiftExperimentV2Copy.proVisibilitySecondaryCta;
 }

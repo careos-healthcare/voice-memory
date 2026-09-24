@@ -371,12 +371,14 @@ extension RecordingStateHandlers on _RecordScreenState {
       if (!mounted) return;
       final panelContext = _permissionPanelKey.currentContext;
       if (panelContext != null) {
-        unawaited(Scrollable.ensureVisible(
-          panelContext,
-          duration: const Duration(milliseconds: 300),
-          curve: Curves.easeInOut,
-          alignment: 0.1,
-        ));
+        unawaited(
+          Scrollable.ensureVisible(
+            panelContext,
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeInOut,
+            alignment: 0.1,
+          ),
+        );
       }
     });
   }

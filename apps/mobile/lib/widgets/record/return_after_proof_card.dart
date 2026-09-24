@@ -13,13 +13,17 @@ import 'package:flutter/material.dart';
 /// One clear reason to return after proof — prompt line only, no fake entries.
 class ReturnAfterProofCard extends StatefulWidget {
   const ReturnAfterProofCard({
-    required this.result, required this.onPromptSelected, super.key,
+    required this.result,
+    required this.onPromptSelected,
+    super.key,
     this.useStrengthenedLayout = false,
     this.store,
   });
 
   const ReturnAfterProofCard.test({
-    required this.result, required this.onPromptSelected, super.key,
+    required this.result,
+    required this.onPromptSelected,
+    super.key,
     this.useStrengthenedLayout = false,
     this.store,
   });

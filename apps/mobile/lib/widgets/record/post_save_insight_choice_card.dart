@@ -45,7 +45,10 @@ enum _PostSaveInsightPhase {
 /// Post-save insight choice with A/B reads, strength scoring, and next prompt.
 class PostSaveInsightChoiceCard extends StatefulWidget {
   const PostSaveInsightChoiceCard({
-    required this.pattern, required this.onSaveSignal, required this.onRecordNext, super.key,
+    required this.pattern,
+    required this.onSaveSignal,
+    required this.onRecordNext,
+    super.key,
     this.onViewPatterns,
     this.entryId,
     this.onRecordNextEvidence,
@@ -1238,7 +1241,10 @@ class _SavedWithPromptView extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  const Icon(Icons.check_circle_outline, color: AppColors.success),
+                  const Icon(
+                    Icons.check_circle_outline,
+                    color: AppColors.success,
+                  ),
                   const SizedBox(width: AppSpacing.sm),
                   Expanded(
                     child: Text(

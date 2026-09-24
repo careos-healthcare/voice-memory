@@ -16,7 +16,9 @@ void main() {
   test(
     'vector search latency, memory, and database size',
     () {
-      final directory = Directory.systemTemp.createTempSync('vector-search-bench');
+      final directory = Directory.systemTemp.createTempSync(
+        'vector-search-bench',
+      );
       addTearDown(() => directory.deleteSync(recursive: true));
       final results = <Map<String, Object?>>[];
       Object? failure;
@@ -386,7 +388,9 @@ void _assertThresholds(List<Map<String, Object?>> results) {
 }
 
 Map<String, Object?> _top10(List<Map<String, Object?>> results, int count) {
-  final top10 = results.firstWhere((row) => row['entryCount'] == count)['top10'];
+  final top10 = results.firstWhere(
+    (row) => row['entryCount'] == count,
+  )['top10'];
   if (top10 is! Map<String, Object?>) {
     throw StateError('missing top-10 stats for $count entries');
   }

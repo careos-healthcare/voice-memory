@@ -86,7 +86,9 @@ void main() {
 
   group('Future revenue scope doc', () {
     test('doc exists and references proof trail', () {
-      final doc = File('docs/architecture/future_revenue_scope.md').readAsStringSync();
+      final doc = File(
+        'docs/architecture/future_revenue_scope.md',
+      ).readAsStringSync();
       expect(doc.toLowerCase(), contains('longer proof trail'));
       expect(doc.toLowerCase(), contains('testflight'));
     });

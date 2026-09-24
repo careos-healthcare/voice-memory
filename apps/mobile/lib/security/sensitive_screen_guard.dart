@@ -73,7 +73,8 @@ abstract class SensitiveRoutes {
 /// Obscures archive content in the app switcher and on lifecycle pause.
 class SensitiveScreenGuard extends StatefulWidget {
   const SensitiveScreenGuard({
-    required this.child, super.key,
+    required this.child,
+    super.key,
     this.appLock,
     this.hideInAppSwitcher = false,
     this.routeIsSensitive = false,

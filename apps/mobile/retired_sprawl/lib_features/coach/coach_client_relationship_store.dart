@@ -14,9 +14,11 @@ class CoachClientRelationshipStore {
     if (raw == null || raw.isEmpty) return const [];
     return raw.values
         .whereType<Map>()
-        .map((value) => CoachClientRelationship.fromJson(
-              Map<String, dynamic>.from(value),
-            ))
+        .map(
+          (value) => CoachClientRelationship.fromJson(
+            Map<String, dynamic>.from(value),
+          ),
+        )
         .toList();
   }
 

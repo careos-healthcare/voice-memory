@@ -81,8 +81,7 @@ final class _RecordingDatabase implements Database {
     String method,
     String sql, [
     List<Object?>? arguments,
-  ]) async =>
-      throw UnimplementedError();
+  ]) async => throw UnimplementedError();
 
   @override
   Future<void> execute(String sql, [List<Object?>? arguments]) async {}
@@ -96,8 +95,7 @@ final class _RecordingDatabase implements Database {
     Map<String, Object?> values, {
     String? nullColumnHack,
     ConflictAlgorithm? conflictAlgorithm,
-  }) async =>
-      0;
+  }) async => 0;
 
   @override
   Future<List<Map<String, Object?>>> query(
@@ -111,8 +109,7 @@ final class _RecordingDatabase implements Database {
     String? orderBy,
     int? limit,
     int? offset,
-  }) async =>
-      [];
+  }) async => [];
 
   @override
   Future<List<Map<String, Object?>>> rawQuery(
@@ -120,7 +117,9 @@ final class _RecordingDatabase implements Database {
     List<Object?>? arguments,
   ]) async {
     rawQueryCalls++;
-    return const [{'value': 1}];
+    return const [
+      {'value': 1},
+    ];
   }
 
   @override
@@ -128,8 +127,7 @@ final class _RecordingDatabase implements Database {
     String sql,
     List<Object?>? arguments, {
     int? bufferSize,
-  }) =>
-      throw UnimplementedError();
+  }) => throw UnimplementedError();
 
   @override
   Future<QueryCursor> queryCursor(
@@ -144,8 +142,7 @@ final class _RecordingDatabase implements Database {
     int? limit,
     int? offset,
     int? bufferSize,
-  }) =>
-      throw UnimplementedError();
+  }) => throw UnimplementedError();
 
   @override
   Future<int> rawUpdate(String sql, [List<Object?>? arguments]) async => 0;
@@ -157,8 +154,7 @@ final class _RecordingDatabase implements Database {
     String? where,
     List<Object?>? whereArgs,
     ConflictAlgorithm? conflictAlgorithm,
-  }) async =>
-      0;
+  }) async => 0;
 
   @override
   Future<int> rawDelete(String sql, [List<Object?>? arguments]) async => 0;
@@ -168,8 +164,7 @@ final class _RecordingDatabase implements Database {
     String table, {
     String? where,
     List<Object?>? whereArgs,
-  }) async =>
-      0;
+  }) async => 0;
 }
 
 final class _RecordingTransaction implements Transaction {
@@ -195,8 +190,7 @@ final class _RecordingTransaction implements Transaction {
     Map<String, Object?> values, {
     String? nullColumnHack,
     ConflictAlgorithm? conflictAlgorithm,
-  }) async =>
-      0;
+  }) async => 0;
 
   @override
   Future<List<Map<String, Object?>>> query(
@@ -210,23 +204,20 @@ final class _RecordingTransaction implements Transaction {
     String? orderBy,
     int? limit,
     int? offset,
-  }) async =>
-      [];
+  }) async => [];
 
   @override
   Future<List<Map<String, Object?>>> rawQuery(
     String sql, [
     List<Object?>? arguments,
-  ]) async =>
-      [];
+  ]) async => [];
 
   @override
   Future<QueryCursor> rawQueryCursor(
     String sql,
     List<Object?>? arguments, {
     int? bufferSize,
-  }) =>
-      throw UnimplementedError();
+  }) => throw UnimplementedError();
 
   @override
   Future<QueryCursor> queryCursor(
@@ -241,8 +232,7 @@ final class _RecordingTransaction implements Transaction {
     int? limit,
     int? offset,
     int? bufferSize,
-  }) =>
-      throw UnimplementedError();
+  }) => throw UnimplementedError();
 
   @override
   Future<int> rawUpdate(String sql, [List<Object?>? arguments]) async => 0;
@@ -254,8 +244,7 @@ final class _RecordingTransaction implements Transaction {
     String? where,
     List<Object?>? whereArgs,
     ConflictAlgorithm? conflictAlgorithm,
-  }) async =>
-      0;
+  }) async => 0;
 
   @override
   Future<int> rawDelete(String sql, [List<Object?>? arguments]) async => 0;
@@ -265,8 +254,7 @@ final class _RecordingTransaction implements Transaction {
     String table, {
     String? where,
     List<Object?>? whereArgs,
-  }) async =>
-      0;
+  }) async => 0;
 }
 
 final class _RecordingBatch implements Batch {

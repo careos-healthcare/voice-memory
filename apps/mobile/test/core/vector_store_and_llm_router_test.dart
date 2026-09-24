@@ -12,20 +12,23 @@ void main() {
     databaseFactory = databaseFactoryFfi;
   });
 
-  test('TurboQuant statement is attempted and a missing extension is ignored', () async {
-    expect(
-      VectorStore.turboQuantStatement,
-      "SELECT vector_quantize('embeddings', 'embedding', 'qtype=TURBO,qbits=4')",
-    );
-    final db = await databaseFactory.openDatabase(
-      '${Directory.systemTemp.path}/vector_store_${DateTime.now().microsecondsSinceEpoch}.db',
-    );
-    final report = await VectorStore.initialize(db);
-    expect(report.anyApplied, isFalse);
-    expect(report.applied['embeddings'], isFalse);
-    expect(VectorStore.simdInMemoryScan, isTrue);
-    await db.close();
-  });
+  test(
+    'TurboQuant statement is attempted and a missing extension is ignored',
+    () async {
+      expect(
+        VectorStore.turboQuantStatement,
+        "SELECT vector_quantize('embeddings', 'embedding', 'qtype=TURBO,qbits=4')",
+      );
+      final db = await databaseFactory.openDatabase(
+        '${Directory.systemTemp.path}/vector_store_${DateTime.now().microsecondsSinceEpoch}.db',
+      );
+      final report = await VectorStore.initialize(db);
+      expect(report.anyApplied, isFalse);
+      expect(report.applied['embeddings'], isFalse);
+      expect(VectorStore.simdInMemoryScan, isTrue);
+      await db.close();
+    },
+  );
 
   test('SIMD scan keeps the nearest vector inside the memory budget', () {
     final hits = VectorStore.scan(

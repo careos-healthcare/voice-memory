@@ -8,7 +8,10 @@ import 'dart:async';
 /// Start Here prompts above the record CTA — until first archive milestone.
 class StartHereRecordingSection extends StatefulWidget {
   const StartHereRecordingSection({
-    required this.recordingCount, required this.firstArchiveMilestoneCompleted, required this.onPromptSelected, super.key,
+    required this.recordingCount,
+    required this.firstArchiveMilestoneCompleted,
+    required this.onPromptSelected,
+    super.key,
     this.surface = 'record',
     this.captureMode = 'voice',
     this.compactPrompts = false,
@@ -61,11 +64,13 @@ class _StartHereRecordingSectionState extends State<StartHereRecordingSection> {
   }
 
   void _onTap(String prompt) {
-    unawaited(StartHereAnalytics.selected(
-      promptText: prompt,
-      surface: widget.surface,
-      captureMode: widget.captureMode,
-    ));
+    unawaited(
+      StartHereAnalytics.selected(
+        promptText: prompt,
+        surface: widget.surface,
+        captureMode: widget.captureMode,
+      ),
+    );
     widget.onPromptSelected(prompt);
   }
 

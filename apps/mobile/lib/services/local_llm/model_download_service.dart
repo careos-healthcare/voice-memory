@@ -15,12 +15,12 @@ final class ModelDownloadService {
     Dio? dio,
     String? remoteModelUrl,
     Future<Directory> Function()? documentsDirectory,
-  })  : _dio = dio ?? Dio(),
-        _remoteModelUrl = ModelDownloadContract.remoteModelUrl(
-          override: remoteModelUrl,
-        ),
-        _documentsDirectory =
-            documentsDirectory ?? AppStoragePaths.applicationDocumentsDirectory;
+  }) : _dio = dio ?? Dio(),
+       _remoteModelUrl = ModelDownloadContract.remoteModelUrl(
+         override: remoteModelUrl,
+       ),
+       _documentsDirectory =
+           documentsDirectory ?? AppStoragePaths.applicationDocumentsDirectory;
 
   final Dio _dio;
   final String _remoteModelUrl;

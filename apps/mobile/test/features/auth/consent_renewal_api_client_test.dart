@@ -32,7 +32,10 @@ void main() {
       baseUrl: 'http://test.invalid',
     );
     addTearDown(transport.dispose);
-    return (client: HttpCaregiverConsentApiClient(transport), requests: requests);
+    return (
+      client: HttpCaregiverConsentApiClient(transport),
+      requests: requests,
+    );
   }
 
   Map<String, dynamic> successorToken() => {
@@ -122,7 +125,8 @@ void main() {
       ownerConfirmedAt: DateTime.utc(2026, 6, 7, 8, 59).toLocal(),
     );
 
-    final body = jsonDecode(harness.requests.single.body) as Map<String, dynamic>;
+    final body =
+        jsonDecode(harness.requests.single.body) as Map<String, dynamic>;
     final confirmation = body['ownerConfirmation'] as Map<String, dynamic>;
     expect(confirmation['acknowledgedAt'], '2026-06-07T08:59:00.000Z');
   });
@@ -179,24 +183,27 @@ void main() {
     expect(result.failureOrNull, isA<ApiFailureAuthRequired>());
   });
 
-  test('the server code survives so 409 answers stay distinguishable', () async {
-    final lapsed = clientReturning(() => error(409, 'GRANT_EXPIRED'));
-    final settled = clientReturning(() => error(409, 'GRANT_NOT_RENEWABLE'));
+  test(
+    'the server code survives so 409 answers stay distinguishable',
+    () async {
+      final lapsed = clientReturning(() => error(409, 'GRANT_EXPIRED'));
+      final settled = clientReturning(() => error(409, 'GRANT_NOT_RENEWABLE'));
 
-    final lapsedResult = await lapsed.client.renewCaregiverConsent(
-      tokenId: 'token-1',
-      token: heldToken,
-      ownerConfirmedAt: DateTime.utc(2026, 6, 7, 8, 59),
-    );
-    final settledResult = await settled.client.renewCaregiverConsent(
-      tokenId: 'token-1',
-      token: heldToken,
-      ownerConfirmedAt: DateTime.utc(2026, 6, 7, 8, 59),
-    );
+      final lapsedResult = await lapsed.client.renewCaregiverConsent(
+        tokenId: 'token-1',
+        token: heldToken,
+        ownerConfirmedAt: DateTime.utc(2026, 6, 7, 8, 59),
+      );
+      final settledResult = await settled.client.renewCaregiverConsent(
+        tokenId: 'token-1',
+        token: heldToken,
+        ownerConfirmedAt: DateTime.utc(2026, 6, 7, 8, 59),
+      );
 
-    expect(lapsedResult.failureOrNull?.code, 'GRANT_EXPIRED');
-    expect(settledResult.failureOrNull?.code, 'GRANT_NOT_RENEWABLE');
-  });
+      expect(lapsedResult.failureOrNull?.code, 'GRANT_EXPIRED');
+      expect(settledResult.failureOrNull?.code, 'GRANT_NOT_RENEWABLE');
+    },
+  );
 
   test('403 and 503 keep their status codes', () async {
     final forbidden = clientReturning(() => error(403, 'FORBIDDEN'));
@@ -230,13 +237,14 @@ void main() {
     );
     addTearDown(transport.dispose);
 
-    final result = await HttpCaregiverConsentApiClient(
-      transport,
-    ).renewCaregiverConsent(
-      tokenId: 'token-1',
-      token: heldToken,
-      ownerConfirmedAt: DateTime.utc(2026, 6, 7, 8, 59),
-    );
+    final result =
+        await HttpCaregiverConsentApiClient(
+          transport,
+        ).renewCaregiverConsent(
+          tokenId: 'token-1',
+          token: heldToken,
+          ownerConfirmedAt: DateTime.utc(2026, 6, 7, 8, 59),
+        );
 
     expect(result.failureOrNull, isA<ApiFailureBackendNotConfigured>());
     expect(requests, isEmpty);

@@ -36,7 +36,8 @@ abstract final class AnalysisFallbackPayoffCopy {
   static const nextActionTwoEntries =
       'Add one more moment when this comes up again.';
 
-  static const String deferredFootnote = VoiceCaptureCopy.analysisUnavailableNote;
+  static const String deferredFootnote =
+      VoiceCaptureCopy.analysisUnavailableNote;
 }
 
 /// Cautious local payoff when analysis is unavailable but transcript exists.
@@ -46,7 +47,8 @@ class AnalysisFallbackPayoff {
     required this.body,
     required this.evidenceLine,
     required this.nextActionLine,
-    required this.footnoteLine, this.secondaryLine,
+    required this.footnoteLine,
+    this.secondaryLine,
   });
 
   final String title;

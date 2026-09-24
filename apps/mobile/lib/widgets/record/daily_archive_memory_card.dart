@@ -10,7 +10,10 @@ import 'package:flutter/material.dart';
 /// Quiet returning-user memory card on Record ready.
 class DailyArchiveMemoryCard extends StatefulWidget {
   const DailyArchiveMemoryCard({
-    required this.memory, required this.entryCount, required this.source, super.key,
+    required this.memory,
+    required this.entryCount,
+    required this.source,
+    super.key,
     this.onRecord,
     this.onTypeInstead,
     this.onNotToday,

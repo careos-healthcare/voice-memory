@@ -11,7 +11,9 @@ import 'package:go_router/go_router.dart';
 
 class ArchiveHeroBeliefCard extends StatelessWidget {
   const ArchiveHeroBeliefCard({
-    required this.belief, required this.reflectionsAnalysed, super.key,
+    required this.belief,
+    required this.reflectionsAnalysed,
+    super.key,
   });
 
   final ArchiveBeliefCardModel belief;

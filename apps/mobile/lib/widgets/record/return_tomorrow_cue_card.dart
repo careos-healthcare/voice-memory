@@ -9,7 +9,8 @@ import 'package:flutter/material.dart';
 /// Lightweight return-tomorrow guidance — no CTAs, no notifications.
 class ReturnTomorrowCueCard extends StatelessWidget {
   const ReturnTomorrowCueCard({
-    required this.cue, super.key,
+    required this.cue,
+    super.key,
     this.entryCount,
     this.surface = 'record',
   });

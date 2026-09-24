@@ -11,7 +11,10 @@ abstract final class WhisperAudioProcessor {
   static Float32List? buildMelFeaturesFromFile(File audioFile) {
     final bytes = _readWavPcm(audioFile);
     if (bytes == null || bytes.isEmpty) return null;
-    return buildMelFeaturesFromPcm(bytes, sampleRateHz: WhisperModelContract.sampleRateHz);
+    return buildMelFeaturesFromPcm(
+      bytes,
+      sampleRateHz: WhisperModelContract.sampleRateHz,
+    );
   }
 
   static Float32List buildMelFeaturesFromPcm(
@@ -19,7 +22,8 @@ abstract final class WhisperAudioProcessor {
     required int sampleRateHz,
   }) {
     final maxSamples =
-        WhisperModelContract.sampleRateHz * WhisperModelContract.maxAudioSeconds;
+        WhisperModelContract.sampleRateHz *
+        WhisperModelContract.maxAudioSeconds;
     final clipped = pcm.length > maxSamples
         ? Int16List.sublistView(pcm, 0, maxSamples)
         : pcm;
@@ -115,7 +119,10 @@ abstract final class WhisperAudioProcessor {
     return out;
   }
 
-  static List<Float32List> _computeLogMel(Float32List samples, {required int sampleRateHz}) {
+  static List<Float32List> _computeLogMel(
+    Float32List samples, {
+    required int sampleRateHz,
+  }) {
     final hop = WhisperModelContract.hopLength;
     final fft = WhisperModelContract.fftSize;
     final frames = <Float32List>[];
@@ -158,7 +165,10 @@ abstract final class WhisperAudioProcessor {
     return power;
   }
 
-  static Float32List _melProjection(Float32List power, {required int sampleRateHz}) {
+  static Float32List _melProjection(
+    Float32List power, {
+    required int sampleRateHz,
+  }) {
     final mel = Float32List(WhisperModelContract.nMelBins);
     for (var m = 0; m < mel.length; m++) {
       final lowHz = _melToHz(m / (mel.length + 1) * 40);

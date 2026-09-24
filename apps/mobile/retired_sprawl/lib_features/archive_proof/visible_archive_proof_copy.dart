@@ -154,7 +154,8 @@ abstract final class VisibleArchiveProofCopy {
 
   static const String patternsOneEntryBody = firstSavePostSaveBody;
 
-  static const String patternsOneEntryReassurance = firstSavePostSaveReassurance;
+  static const String patternsOneEntryReassurance =
+      firstSavePostSaveReassurance;
 
   static const patternsOneEntryBeliefRow = 'Not enough evidence yet';
   static const patternsOneEntryEvidenceRow = '1 saved moment';
@@ -263,7 +264,8 @@ abstract final class VisibleArchiveProofCopy {
   static const beliefUpdateViewEvidenceCta = 'View evidence';
 
   // Belief evidence drilldown — proof trail behind belief updates.
-  static const beliefEvidenceTrailTitle = 'Evidence behind this possible pattern';
+  static const beliefEvidenceTrailTitle =
+      'Evidence behind this possible pattern';
 
   static const beliefEvidenceNotConclusion =
       'This is only what your saved words suggest so far.';
@@ -295,7 +297,8 @@ abstract final class VisibleArchiveProofCopy {
       'Add another moment when this shows up again.';
 
   // Five-plus entry belief history — cautious change-over-time surface.
-  static const beliefHistoryTitleChanged = 'A possible pattern in your archive may have changed.';
+  static const beliefHistoryTitleChanged =
+      'A possible pattern in your archive may have changed.';
 
   static const beliefHistoryBodyChanged =
       'Earlier, your archive was mostly seeing pressure around one moment. '
@@ -504,7 +507,8 @@ abstract final class VisibleArchiveProofCopy {
 
   static const String returningUserViewArchiveCta = firstSaveViewArchiveCta;
 
-  static const String returningUserViewEvidenceCta = beliefUpdateViewEvidenceCta;
+  static const String returningUserViewEvidenceCta =
+      beliefUpdateViewEvidenceCta;
 
   static const String returningUserViewReviewCta = archiveHomeViewReviewCta;
 
@@ -522,7 +526,8 @@ abstract final class VisibleArchiveProofCopy {
       'ArchiveMe has two moments to compare. '
       'A third can help it form a cautious first possible pattern.';
 
-  static const nextMomentThreeTitle = 'Test this possible pattern with one more moment.';
+  static const nextMomentThreeTitle =
+      'Test this possible pattern with one more moment.';
 
   static const nextMomentThreeBody =
       'Your archive is starting to see a possible pattern. '
@@ -555,7 +560,8 @@ abstract final class VisibleArchiveProofCopy {
       'You marked an archive insight as not quite right. '
       'Save the next example that shows what ArchiveMe missed.';
 
-  static const correctionNextFourTitle = 'Help ArchiveMe retest this possible pattern.';
+  static const correctionNextFourTitle =
+      'Help ArchiveMe retest this possible pattern.';
 
   static const correctionNextFourBody =
       'Your note says this insight missed something. '
@@ -718,7 +724,8 @@ abstract final class VisibleArchiveProofCopy {
   static const archiveHealthFirstBeliefStatus =
       'Your archive has enough to form a cautious first possible pattern.';
 
-  static const archiveHealthFirstBeliefBody = 'Possible patterns are not conclusions.';
+  static const archiveHealthFirstBeliefBody =
+      'Possible patterns are not conclusions.';
 
   static const archiveHealthBeliefUpdateStatus =
       'Your archive has enough evidence to update a possible pattern.';
@@ -1029,8 +1036,7 @@ abstract final class VisibleArchiveProofCopy {
   static const archiveWorkspaceQuickActionViewWeeklyReview =
       'View weekly review';
 
-  static const archiveWorkspaceQuickActionShareProofSafely =
-      'Share safely';
+  static const archiveWorkspaceQuickActionShareProofSafely = 'Share safely';
 
   static const archiveWorkspaceHintIntroTitle =
       'This is your private archive workspace.';

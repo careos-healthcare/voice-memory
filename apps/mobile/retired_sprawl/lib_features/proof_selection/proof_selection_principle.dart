@@ -27,7 +27,8 @@ extension ProofSelectionPrincipleRuleLabel on ProofSelectionPrincipleRule {
 abstract final class ProofSelectionPrinciple {
   ProofSelectionPrinciple._();
 
-  static const List<ProofSelectionPrincipleRule> rules = ProofSelectionPrincipleRule.values;
+  static const List<ProofSelectionPrincipleRule> rules =
+      ProofSelectionPrincipleRule.values;
 
   static ProofSelectionPrincipleSnapshot snapshot() =>
       const ProofSelectionPrincipleSnapshot(

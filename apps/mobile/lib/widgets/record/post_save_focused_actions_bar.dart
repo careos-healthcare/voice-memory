@@ -5,7 +5,10 @@ import 'package:flutter/material.dart';
 /// Compact post-save actions — evidence and Patterns live off the Record stack.
 class PostSaveFocusedActionsBar extends StatelessWidget {
   const PostSaveFocusedActionsBar({
-    required this.onViewEvidence, required this.onViewPatterns, required this.onAddOneMoreMoment, super.key,
+    required this.onViewEvidence,
+    required this.onViewPatterns,
+    required this.onAddOneMoreMoment,
+    super.key,
     this.showViewEvidence = true,
   });
 

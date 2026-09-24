@@ -117,7 +117,10 @@ class _SereneEntranceState extends State<SereneEntrance>
 
   @override
   Widget build(BuildContext context) {
-    final fade = CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic);
+    final fade = CurvedAnimation(
+      parent: _controller,
+      curve: Curves.easeOutCubic,
+    );
     final rise = Tween<Offset>(
       begin: const Offset(0, 0.06),
       end: Offset.zero,

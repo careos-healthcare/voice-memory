@@ -11,7 +11,9 @@ import 'package:flutter/material.dart';
 /// Single first-use capture block on Record — one primary path, no competing cards.
 class RecordFirstUseCaptureSection extends StatelessWidget {
   const RecordFirstUseCaptureSection({
-    required this.onRecord, required this.recordButtonLabel, super.key,
+    required this.onRecord,
+    required this.recordButtonLabel,
+    super.key,
     this.recordButtonKey = const Key('capture_entry_record_cta'),
     this.typeCapturePrompt,
     this.onTextThoughtSaved,

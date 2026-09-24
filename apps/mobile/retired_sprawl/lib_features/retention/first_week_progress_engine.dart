@@ -46,7 +46,9 @@ abstract final class FirstWeekProgressGates {
     required bool isReady,
     required bool isRecording,
     required bool isPostSave,
-    required bool showReturnDayFlow, required bool showReturnTomorrowCue, FirstWeekProgress? progress,
+    required bool showReturnDayFlow,
+    required bool showReturnTomorrowCue,
+    FirstWeekProgress? progress,
   }) =>
       isReady &&
       !isRecording &&
@@ -58,7 +60,8 @@ abstract final class FirstWeekProgressGates {
   static bool shouldShowPostSave({
     required bool isPostSaveDone,
     required bool isDegradedPostSave,
-    required bool showReturnTomorrowCue, FirstWeekProgress? progress,
+    required bool showReturnTomorrowCue,
+    FirstWeekProgress? progress,
   }) =>
       isPostSaveDone &&
       !isDegradedPostSave &&

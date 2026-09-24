@@ -37,7 +37,8 @@ JournalEntry _entry({
     createdAt: DateTime.utc(2026, 8, 19),
     transcript: transcript,
     durationSeconds: 30,
-    reflection: reflection ?? _reflection(tension: 'fallback reflection for $id'),
+    reflection:
+        reflection ?? _reflection(tension: 'fallback reflection for $id'),
   );
 }
 
@@ -120,7 +121,9 @@ void main() {
       await journal.save(weekendWalk);
 
       final workEmbedding = await search.embedReflection(workStress.reflection);
-      final walkEmbedding = await search.embedReflection(weekendWalk.reflection);
+      final walkEmbedding = await search.embedReflection(
+        weekendWalk.reflection,
+      );
       await embeddingRepository.upsertEmbedding(
         entryId: workStress.id,
         contentHash: 'work',
@@ -138,7 +141,9 @@ void main() {
 
       expect(built, 1);
 
-      final storedHash = await embeddingRepository.readContentHash(newWorkEntry.id);
+      final storedHash = await embeddingRepository.readContentHash(
+        newWorkEntry.id,
+      );
       expect(storedHash, isNotNull);
 
       final edges = await edgesRepository.readOutgoingEdges(newWorkEntry.id);

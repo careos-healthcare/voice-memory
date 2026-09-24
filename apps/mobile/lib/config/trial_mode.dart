@@ -1,5 +1,7 @@
-import 'package:archiveme_mobile/config/screenshot_mode.dart' show ScreenshotMode;
-import 'package:archiveme_mobile/features/recording/recording_dependencies.dart' show ScreenshotMode;
+import 'package:archiveme_mobile/config/screenshot_mode.dart'
+    show ScreenshotMode;
+import 'package:archiveme_mobile/features/recording/recording_dependencies.dart'
+    show ScreenshotMode;
 
 /// 5-user activation trial — compile with
 /// `--dart-define=ARCHIVEME_TRIAL_MODE=true`

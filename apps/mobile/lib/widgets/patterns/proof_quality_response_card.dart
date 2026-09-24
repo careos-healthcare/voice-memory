@@ -14,7 +14,9 @@ import 'package:flutter/material.dart';
 /// Adapts the next proof surface based on beta proof feedback quality.
 class ProofQualityResponseCard extends StatefulWidget {
   const ProofQualityResponseCard({
-    required this.result, required this.source, super.key,
+    required this.result,
+    required this.source,
+    super.key,
     this.store,
     this.onChanged,
     this.skipPrefsLoad = false,
@@ -22,7 +24,9 @@ class ProofQualityResponseCard extends StatefulWidget {
   });
 
   const ProofQualityResponseCard.test({
-    required this.result, required this.source, super.key,
+    required this.result,
+    required this.source,
+    super.key,
     this.store,
     this.onChanged,
     this.initialRecord,

@@ -11,7 +11,9 @@ import 'package:flutter/material.dart';
 /// Shown when a journey reaches 3 supporting evidence moments.
 class SignalJourneyCompletionCard extends StatelessWidget {
   const SignalJourneyCompletionCard({
-    required this.journey, required this.onKeepWatching, super.key,
+    required this.journey,
+    required this.onKeepWatching,
+    super.key,
     this.onViewPattern,
   });
 

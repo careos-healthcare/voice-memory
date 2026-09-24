@@ -1,4 +1,5 @@
-import 'package:archiveme_mobile/features/anchor_calibration/anchor_calibration_engine.dart' show AnchorCalibrationEngine;
+import 'package:archiveme_mobile/features/anchor_calibration/anchor_calibration_engine.dart'
+    show AnchorCalibrationEngine;
 import 'package:archiveme_mobile/features/archive_evidence/archive_evidence_guard.dart';
 import 'package:archiveme_mobile/features/archive_evidence/archive_evidence_quality_gate.dart';
 import 'package:archiveme_mobile/features/correction_memory/correction_memory_engine.dart';
@@ -14,7 +15,8 @@ import 'package:archiveme_mobile/features/not_relevant_recovery/not_relevant_rec
 import 'package:archiveme_mobile/features/pattern_match_quality/pattern_match_quality_analytics.dart';
 import 'package:archiveme_mobile/features/pattern_match_quality/pattern_match_quality_copy.dart';
 import 'package:archiveme_mobile/features/pattern_match_quality/pattern_match_quality_model.dart';
-import 'package:archiveme_mobile/features/proof_confidence_calibration/proof_confidence_calibration_engine.dart' show ProofConfidenceCalibrationEngine;
+import 'package:archiveme_mobile/features/proof_confidence_calibration/proof_confidence_calibration_engine.dart'
+    show ProofConfidenceCalibrationEngine;
 import 'package:archiveme_mobile/features/proof_protection/anchor_specificity_guard.dart';
 import 'package:archiveme_mobile/features/retention/second_session_signal_engine.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';

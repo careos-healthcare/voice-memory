@@ -9,7 +9,8 @@ import 'dart:async';
 /// Top-of-Archive hook after leaving Discover — unfinished archive curiosity.
 class ArchiveReturnReasonCard extends StatelessWidget {
   const ArchiveReturnReasonCard({
-    required this.card, super.key,
+    required this.card,
+    super.key,
     this.onDismiss,
   });
 
@@ -49,9 +50,7 @@ class ArchiveReturnReasonCard extends StatelessWidget {
                     children: [
                       Text(
                         c.leadLine,
-                        style: VoiceMemoryTypography.sectionLabelStyle(
-                          
-                        ),
+                        style: VoiceMemoryTypography.sectionLabelStyle(),
                       ),
                       const SizedBox(height: 10),
                       for (final line in c.bodyLines)
@@ -98,7 +97,9 @@ class ArchiveReturnReasonCard extends StatelessWidget {
             const SizedBox(height: 12),
             FilledButton(
               onPressed: () {
-                unawaited(ProductAnalytics.track('return_reason_record_tapped'));
+                unawaited(
+                  ProductAnalytics.track('return_reason_record_tapped'),
+                );
                 context.go('/record');
               },
               style: FilledButton.styleFrom(

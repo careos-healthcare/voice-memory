@@ -7,7 +7,10 @@ import 'package:flutter/material.dart';
 /// Prominent tappable pill summarizing ledger citation count.
 class EvidencePill extends StatelessWidget {
   const EvidencePill({
-    required this.quoteCount, required this.expanded, required this.onTap, super.key,
+    required this.quoteCount,
+    required this.expanded,
+    required this.onTap,
+    super.key,
   });
 
   final int quoteCount;

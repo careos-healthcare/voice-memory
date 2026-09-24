@@ -79,13 +79,15 @@ void main() {
     expect(
       scanned,
       greaterThan(500),
-      reason: 'the scan walked $scanned Dart files, too few to have covered '
+      reason:
+          'the scan walked $scanned Dart files, too few to have covered '
           'lib/ — check that symlinked feature directories are still followed',
     );
     expect(
       allowlistSeen,
       unorderedEquals(_rawAccessorAllowlist),
-      reason: 'every allowlisted path must actually be found, otherwise the '
+      reason:
+          'every allowlisted path must actually be found, otherwise the '
           'allowlist is stale and the scan is not looking where it thinks',
     );
 
@@ -133,7 +135,8 @@ void main() {
       expect(
         located,
         isNotNull,
-        reason: 'tool/check_remote_egress_gating.py was not found from '
+        reason:
+            'tool/check_remote_egress_gating.py was not found from '
             '${Directory.current.path}. It is the boundary discovery scan; '
             'without it this test asserts nothing.',
       );
@@ -158,7 +161,8 @@ void main() {
       expect(
         result.exitCode,
         0,
-        reason: 'user content can reach the network without passing '
+        reason:
+            'user content can reach the network without passing '
             'RemoteProcessingConsentGate:\n\n$output',
       );
     },

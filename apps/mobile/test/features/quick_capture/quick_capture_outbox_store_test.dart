@@ -17,7 +17,9 @@ void main() {
 
   test('enqueue deduplicates active capture ids', () async {
     final sqlite = await openTestAppSqliteDatabase();
-    final store = QuickCaptureOutboxStore(AppDatabase.fromSqflite(sqlite.database));
+    final store = QuickCaptureOutboxStore(
+      AppDatabase.fromSqflite(sqlite.database),
+    );
     final captureId = generateUlid();
     final payload = QuickCaptureOutboxPayload(
       captureId: captureId,
@@ -42,7 +44,9 @@ void main() {
 
   test('markDone removes entry from pending queue', () async {
     final sqlite = await openTestAppSqliteDatabase();
-    final store = QuickCaptureOutboxStore(AppDatabase.fromSqflite(sqlite.database));
+    final store = QuickCaptureOutboxStore(
+      AppDatabase.fromSqflite(sqlite.database),
+    );
     final outboxId = await store.enqueue(
       QuickCaptureOutboxPayload(
         captureId: generateUlid(),

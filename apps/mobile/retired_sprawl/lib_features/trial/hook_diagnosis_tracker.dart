@@ -12,8 +12,12 @@ abstract class HookDiagnosisTracker {
     try {
       await action();
     } catch (e, stackTrace) {
-      AppLogger.error('Unhandled error caught', error: e, stackTrace: stackTrace);
-      }
+      AppLogger.error(
+        'Unhandled error caught',
+        error: e,
+        stackTrace: stackTrace,
+      );
+    }
   }
 
   static Future<void> _append({

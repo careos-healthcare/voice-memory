@@ -10,7 +10,10 @@ import 'package:flutter/material.dart';
 /// existing ArchiveMe Pro subscription flow.
 class PressureProUpgradeCard extends StatelessWidget {
   const PressureProUpgradeCard({
-    required this.title, required this.body, required this.onUnlock, super.key,
+    required this.title,
+    required this.body,
+    required this.onUnlock,
+    super.key,
   });
 
   final String title;

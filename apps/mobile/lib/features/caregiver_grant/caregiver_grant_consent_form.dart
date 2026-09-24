@@ -32,11 +32,16 @@ class CaregiverConsentForm extends StatefulWidget {
   static const Key grantKey = Key('caregiver_grant_form_submit');
   static const Key errorKey = Key('caregiver_grant_form_error');
   static const Key journalToggleKey = Key('caregiver_grant_journal_toggle');
-  static const Key proofTrailToggleKey = Key('caregiver_grant_proof_trail_toggle');
+  static const Key proofTrailToggleKey = Key(
+    'caregiver_grant_proof_trail_toggle',
+  );
   static const Key timelineToggleKey = Key('caregiver_grant_timeline_toggle');
-  static const Key reviewSummariesToggleKey = Key('caregiver_grant_review_summaries_toggle');
-  static const Key sendInviteEmailToggleKey =
-      Key('caregiver_grant_send_invite_email_toggle');
+  static const Key reviewSummariesToggleKey = Key(
+    'caregiver_grant_review_summaries_toggle',
+  );
+  static const Key sendInviteEmailToggleKey = Key(
+    'caregiver_grant_send_invite_email_toggle',
+  );
 
   final CaregiverGrantIssuer issuer;
   final VoidCallback? onCancel;
@@ -269,7 +274,9 @@ class _CaregiverConsentFormState extends State<CaregiverConsentForm> {
                           ? null
                           : (value) => setState(() => _shareJournal = value),
                       title: const Text(CaregiverGrantCopy.journalToggleLabel),
-                      subtitle: const Text(CaregiverGrantCopy.journalToggleSubtitle),
+                      subtitle: const Text(
+                        CaregiverGrantCopy.journalToggleSubtitle,
+                      ),
                     ),
                     SwitchListTile(
                       key: CaregiverConsentForm.proofTrailToggleKey,
@@ -278,8 +285,12 @@ class _CaregiverConsentFormState extends State<CaregiverConsentForm> {
                       onChanged: _busy
                           ? null
                           : (value) => setState(() => _shareProofTrail = value),
-                      title: const Text(CaregiverGrantCopy.proofTrailToggleLabel),
-                      subtitle: const Text(CaregiverGrantCopy.proofTrailToggleSubtitle),
+                      title: const Text(
+                        CaregiverGrantCopy.proofTrailToggleLabel,
+                      ),
+                      subtitle: const Text(
+                        CaregiverGrantCopy.proofTrailToggleSubtitle,
+                      ),
                     ),
                     SwitchListTile(
                       key: CaregiverConsentForm.timelineToggleKey,
@@ -289,7 +300,9 @@ class _CaregiverConsentFormState extends State<CaregiverConsentForm> {
                           ? null
                           : (value) => setState(() => _shareTimeline = value),
                       title: const Text(CaregiverGrantCopy.timelineToggleLabel),
-                      subtitle: const Text(CaregiverGrantCopy.timelineToggleSubtitle),
+                      subtitle: const Text(
+                        CaregiverGrantCopy.timelineToggleSubtitle,
+                      ),
                     ),
                     SwitchListTile(
                       key: CaregiverConsentForm.reviewSummariesToggleKey,
@@ -298,10 +311,13 @@ class _CaregiverConsentFormState extends State<CaregiverConsentForm> {
                       onChanged: _busy
                           ? null
                           : (value) =>
-                              setState(() => _shareReviewSummaries = value),
-                      title: const Text(CaregiverGrantCopy.reviewSummariesToggleLabel),
-                      subtitle:
-                          const Text(CaregiverGrantCopy.reviewSummariesToggleSubtitle),
+                                setState(() => _shareReviewSummaries = value),
+                      title: const Text(
+                        CaregiverGrantCopy.reviewSummariesToggleLabel,
+                      ),
+                      subtitle: const Text(
+                        CaregiverGrantCopy.reviewSummariesToggleSubtitle,
+                      ),
                     ),
                     SwitchListTile(
                       key: CaregiverConsentForm.sendInviteEmailToggleKey,
@@ -310,7 +326,9 @@ class _CaregiverConsentFormState extends State<CaregiverConsentForm> {
                       onChanged: _busy
                           ? null
                           : (value) => setState(() => _sendInviteEmail = value),
-                      title: const Text(CaregiverGrantCopy.sendInviteEmailToggleLabel),
+                      title: const Text(
+                        CaregiverGrantCopy.sendInviteEmailToggleLabel,
+                      ),
                       subtitle: const Text(
                         CaregiverGrantCopy.sendInviteEmailToggleSubtitle,
                       ),

@@ -48,15 +48,18 @@ abstract class JournalDisplayMetadata with _$JournalDisplayMetadata {
       archivedAt: DateTime.tryParse(
         JsonConverters.stringOrEmpty(json['archivedAt']),
       ),
-      entryAboutness: JsonConverters.stringOrEmpty(json['entryAboutness']).isEmpty
+      entryAboutness:
+          JsonConverters.stringOrEmpty(json['entryAboutness']).isEmpty
           ? 'about_me'
           : JsonConverters.stringOrEmpty(json['entryAboutness']),
       memorySurfacing:
           JsonConverters.stringOrEmpty(json['memorySurfacing']).isEmpty
-              ? 'normal'
-              : JsonConverters.stringOrEmpty(json['memorySurfacing']),
+          ? 'normal'
+          : JsonConverters.stringOrEmpty(json['memorySurfacing']),
       preserveOriginal: json['preserveOriginal'] == true,
-      captureContextTag: JsonConverters.nullableString(json['captureContextTag']),
+      captureContextTag: JsonConverters.nullableString(
+        json['captureContextTag'],
+      ),
       captureSource: JsonConverters.nullableString(json['captureSource']),
       ambientContext: json['ambientContext'] is Map
           ? AmbientContext.fromJson(
@@ -159,21 +162,21 @@ abstract class JournalDisplayMetadata with _$JournalDisplayMetadata {
 
   @override
   int get hashCode => Object.hash(
-        treatAsNew,
-        connectionApproved,
-        keepExactDetails,
-        keepSeparate,
-        archiveThreadId,
-        archivePackId,
-        isPinned,
-        pinnedAt,
-        isArchived,
-        archivedAt,
-        entryAboutness,
-        memorySurfacing,
-        preserveOriginal,
-        captureContextTag,
-        captureSource,
-        ambientContext,
-      );
+    treatAsNew,
+    connectionApproved,
+    keepExactDetails,
+    keepSeparate,
+    archiveThreadId,
+    archivePackId,
+    isPinned,
+    pinnedAt,
+    isArchived,
+    archivedAt,
+    entryAboutness,
+    memorySurfacing,
+    preserveOriginal,
+    captureContextTag,
+    captureSource,
+    ambientContext,
+  );
 }

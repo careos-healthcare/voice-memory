@@ -186,20 +186,18 @@ class CapturePipelineFacade {
   Future<CapturePipelineOutcome> run({
     required File audioFile,
     required int durationSeconds,
-  }) =>
-      _voiceHandler.run(
-        audioFile: audioFile,
-        durationSeconds: durationSeconds,
-      );
+  }) => _voiceHandler.run(
+    audioFile: audioFile,
+    durationSeconds: durationSeconds,
+  );
 
   Future<CapturePipelineOutcome> attachTypedTextToVoiceEntry({
     required JournalEntry entry,
     required String transcript,
-  }) =>
-      _voiceHandler.attachTypedTextToVoiceEntry(
-        entry: entry,
-        transcript: transcript,
-      );
+  }) => _voiceHandler.attachTypedTextToVoiceEntry(
+    entry: entry,
+    transcript: transcript,
+  );
 
   Future<CapturePipelineOutcome> saveTextThought({
     required String transcript,
@@ -208,43 +206,38 @@ class CapturePipelineFacade {
   Future<CapturePipelineOutcome> saveLiveVoiceTranscript({
     required String transcript,
     required int durationSeconds,
-  }) =>
-      _liveVoiceHandler.saveLiveVoiceTranscript(
-        transcript: transcript,
-        durationSeconds: durationSeconds,
-      );
+  }) => _liveVoiceHandler.saveLiveVoiceTranscript(
+    transcript: transcript,
+    durationSeconds: durationSeconds,
+  );
 
   Future<CapturePipelineOutcome> saveImageCaptionEntry({
     required String caption,
     required ImageEvidence imageEvidence,
-  }) =>
-      _imageCaptionHandler.saveImageCaptionEntry(
-        caption: caption,
-        imageEvidence: imageEvidence,
-      );
+  }) => _imageCaptionHandler.saveImageCaptionEntry(
+    caption: caption,
+    imageEvidence: imageEvidence,
+  );
 
   Future<CapturePipelineOutcome> saveRecoveredVaultEntry({
     required String transcript,
     required Map<String, dynamic> reflectionJson,
     required int durationSeconds,
     required bool remoteProcessingConsented,
-  }) =>
-      _liveVoiceHandler.saveRecoveredVaultEntry(
-        transcript: transcript,
-        reflectionJson: reflectionJson,
-        durationSeconds: durationSeconds,
-        remoteProcessingConsented: remoteProcessingConsented,
-      );
+  }) => _liveVoiceHandler.saveRecoveredVaultEntry(
+    transcript: transcript,
+    reflectionJson: reflectionJson,
+    durationSeconds: durationSeconds,
+    remoteProcessingConsented: remoteProcessingConsented,
+  );
 
   Future<CapturePipelineOutcome> runWatchCapture({
     required String audioFilePath,
     int? durationSeconds,
-  }) =>
-      run(
-        audioFile: File(audioFilePath),
-        durationSeconds:
-            durationSeconds ?? _watchCaptureFallbackDurationSeconds,
-      );
+  }) => run(
+    audioFile: File(audioFilePath),
+    durationSeconds: durationSeconds ?? _watchCaptureFallbackDurationSeconds,
+  );
 
   /// Saves or updates a linked local detail entry — no network, no parent overwrite.
   Future<PostSaveMomentDetailOutcome> savePostSaveMomentDetail({
@@ -257,8 +250,7 @@ class CapturePipelineFacade {
       return Left(CapturePipelineFailure('Enter a thought before saving.'));
     }
 
-    final lockKey =
-        '${parentEntry.id}:${detailType.analyticsValue}';
+    final lockKey = '${parentEntry.id}:${detailType.analyticsValue}';
     return _postSaveDetailLocks.runLocked(
       lockKey,
       () => _savePostSaveMomentDetailLocked(

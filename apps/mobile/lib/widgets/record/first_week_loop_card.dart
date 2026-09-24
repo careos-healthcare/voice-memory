@@ -9,7 +9,9 @@ import 'package:flutter/material.dart';
 /// First-week return loop — subtle secondary record CTA only when safe.
 class FirstWeekLoopCard extends StatelessWidget {
   const FirstWeekLoopCard({
-    required this.loop, required this.entryCount, super.key,
+    required this.loop,
+    required this.entryCount,
+    super.key,
     this.showRecordCta = true,
     this.onRecord,
   });

@@ -229,18 +229,22 @@ void main() {
       VoidCallback? onSeePro,
       VoidCallback? onDismiss,
     }) async {
-      await tester.pumpWidget(withAppProviderScope(MaterialApp(
-          home: Scaffold(
-            body: PurchaseIntentReturnCueCard(
-              intent: const PendingPurchaseIntent(
-                source: 'value_moment',
-                plan: 'yearly',
+      await tester.pumpWidget(
+        withAppProviderScope(
+          MaterialApp(
+            home: Scaffold(
+              body: PurchaseIntentReturnCueCard(
+                intent: const PendingPurchaseIntent(
+                  source: 'value_moment',
+                  plan: 'yearly',
+                ),
+                onSeePro: onSeePro ?? () {},
+                onDismiss: onDismiss ?? () {},
               ),
-              onSeePro: onSeePro ?? () {},
-              onDismiss: onDismiss ?? () {},
             ),
           ),
-        )));
+        ),
+      );
       await tester.pump();
     }
 

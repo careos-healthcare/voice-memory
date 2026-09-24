@@ -14,7 +14,8 @@ import 'package:intl/intl.dart';
 /// Interactive proof card — occurrence math, confidence band, and citation trail.
 class EvidenceProofArtifactView extends StatefulWidget {
   const EvidenceProofArtifactView({
-    required this.artifact, super.key,
+    required this.artifact,
+    super.key,
     this.openShareOnLaunch = false,
   });
 
@@ -190,7 +191,9 @@ class _EvidenceProofArtifactViewState extends State<EvidenceProofArtifactView> {
               for (var i = 0; i < artifact.citations.length; i++)
                 _TimelineEntry(
                   citation: artifact.citations[i],
-                  dateLabel: dateFormat.format(artifact.citations[i].recordedAt),
+                  dateLabel: dateFormat.format(
+                    artifact.citations[i].recordedAt,
+                  ),
                   redactQuotes: _redactQuotes,
                   showDivider: i < artifact.citations.length - 1,
                   onOpenEntry: () =>
@@ -294,13 +297,10 @@ class _TimelineEntry extends StatelessWidget {
           ),
           const SizedBox(height: 6),
           Text(
-            redactQuotes
-                ? EvidenceArtifactCopy.redactedQuote
-                : citation.quote,
+            redactQuotes ? EvidenceArtifactCopy.redactedQuote : citation.quote,
             style: VoiceMemoryTypography.bodyStyle().copyWith(
               height: 1.45,
-              fontStyle:
-                  redactQuotes ? FontStyle.italic : FontStyle.normal,
+              fontStyle: redactQuotes ? FontStyle.italic : FontStyle.normal,
               color: redactQuotes
                   ? VoiceMemoryColors.textSecondary
                   : VoiceMemoryColors.textPrimary,
@@ -309,7 +309,9 @@ class _TimelineEntry extends StatelessWidget {
           if (showDivider)
             Padding(
               padding: const EdgeInsets.only(top: AppSpacing.sm),
-              child: Divider(color: VoiceMemoryColors.border.withValues(alpha: 0.6)),
+              child: Divider(
+                color: VoiceMemoryColors.border.withValues(alpha: 0.6),
+              ),
             ),
         ],
       ),

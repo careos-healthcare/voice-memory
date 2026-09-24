@@ -50,7 +50,8 @@ abstract final class BetaInviteCopy {
   static const variantFounderCreatorTitle = 'Founder / creator';
   static const variantPrivateArchiveTitle = 'Private archive';
 
-  static const String capacityYesBetaTaskLine = CapacityThreeMomentCopy.betaTaskLine;
+  static const String capacityYesBetaTaskLine =
+      CapacityThreeMomentCopy.betaTaskLine;
   static const String capacityActivationFitBetaLine =
       CapacityActivationFitCopy.betaTaskLine;
 

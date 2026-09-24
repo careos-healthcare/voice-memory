@@ -48,23 +48,26 @@ void main() {
     expect(restored.display.ambientContext, ambient);
   });
 
-  test('a denied permission and a slow probe finish as empty context', () async {
-    final service = AmbientContextService(
-      places: _SlowPlaceReader(),
-      steps: _ThrowingStepReader(),
-      calendar: _CalendarReader(null),
-      budget: const Duration(milliseconds: 500),
-    );
+  test(
+    'a denied permission and a slow probe finish as empty context',
+    () async {
+      final service = AmbientContextService(
+        places: _SlowPlaceReader(),
+        steps: _ThrowingStepReader(),
+        calendar: _CalendarReader(null),
+        budget: const Duration(milliseconds: 500),
+      );
 
-    final started = DateTime.now();
-    final captured = await service.capture();
-    final elapsed = DateTime.now().difference(started);
+      final started = DateTime.now();
+      final captured = await service.capture();
+      final elapsed = DateTime.now().difference(started);
 
-    expect(captured.isEmpty, isTrue);
-    expect(elapsed.inMilliseconds, lessThan(800));
-    final saved = await service.attach(entry());
-    expect(saved.toResidualJson().containsKey('ambientContext'), isFalse);
-  });
+      expect(captured.isEmpty, isTrue);
+      expect(elapsed.inMilliseconds, lessThan(800));
+      final saved = await service.attach(entry());
+      expect(saved.toResidualJson().containsKey('ambientContext'), isFalse);
+    },
+  );
 
   testWidgets('entry card fades in the ambient line on a phone width', (
     tester,

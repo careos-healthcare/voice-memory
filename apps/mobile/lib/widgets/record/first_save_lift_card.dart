@@ -12,11 +12,19 @@ import 'package:flutter/material.dart';
 
 class FirstSaveLiftCard extends StatefulWidget {
   const FirstSaveLiftCard({
-    required this.result, required this.onTypeOneSentence, required this.onRecordInstead, required this.onExampleSelected, super.key,
+    required this.result,
+    required this.onTypeOneSentence,
+    required this.onRecordInstead,
+    required this.onExampleSelected,
+    super.key,
   });
 
   const FirstSaveLiftCard.test({
-    required this.result, required this.onTypeOneSentence, required this.onRecordInstead, required this.onExampleSelected, super.key,
+    required this.result,
+    required this.onTypeOneSentence,
+    required this.onRecordInstead,
+    required this.onExampleSelected,
+    super.key,
   });
 
   final FirstSaveLiftResult result;

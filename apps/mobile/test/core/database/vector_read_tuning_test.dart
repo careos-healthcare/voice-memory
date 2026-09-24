@@ -43,11 +43,12 @@ void main() {
 
   test('ranking 50k entries leaves the main isolate free', () async {
     var ticks = 0;
-    final timer = Stream<void>.periodic(
-      const Duration(milliseconds: 1),
-    ).listen((_) {
-      ticks += 1;
-    });
+    final timer =
+        Stream<void>.periodic(
+          const Duration(milliseconds: 1),
+        ).listen((_) {
+          ticks += 1;
+        });
     final query = Float32List(benchmarkEmbeddingDimensions);
     fillBenchmarkVector(query, 7);
 

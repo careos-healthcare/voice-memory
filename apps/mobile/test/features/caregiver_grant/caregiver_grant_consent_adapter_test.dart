@@ -14,8 +14,8 @@ import '../../support/test_storage_sandbox.dart';
 class _FakeVerificationService implements ConsentVerificationService {
   _FakeVerificationService.succeeds(this._token) : _error = null;
   _FakeVerificationService.fails(String message)
-      : _token = null,
-        _error = message;
+    : _token = null,
+      _error = message;
 
   final MonitoringConsentToken? _token;
   final String? _error;
@@ -77,9 +77,9 @@ void main() {
     const channel = MethodChannel('dev.fluttercommunity.plus/connectivity');
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(channel, (call) async {
-      if (call.method == 'check') return ['wifi'];
-      return null;
-    });
+          if (call.method == 'check') return ['wifi'];
+          return null;
+        });
   });
 
   setUp(() async {
@@ -135,8 +135,9 @@ void main() {
   test('a failed issue never records a grant', () async {
     final recorder = _RecordingMultiPartyAccessService();
     final adapter = CaregiverGrantConsentAdapter(
-      verificationService:
-          _FakeVerificationService.fails('backend not configured'),
+      verificationService: _FakeVerificationService.fails(
+        'backend not configured',
+      ),
       contactStore: await CaregiverGrantContactStore.open(),
       multiPartyAccessService: recorder,
     );
@@ -178,32 +179,35 @@ void main() {
     expect(verification.issueCalls.single.caregiverEmail, contact.email);
   });
 
-  test('emailSent on the issued token surfaces on the granted outcome', () async {
-    final token = MonitoringConsentToken(
-      tokenId: 'token-1',
-      subjectAccountId: 'user-1',
-      caregiverId: 'caregiver-1',
-      permissions: CaregiverPermissions.defaultScopes,
-      issuedAt: issuedAt,
-      expiresAt: expiresAt,
-      policyVersion: 1,
-      signature: 'sig',
-      redemption: const CaregiverRedemptionInvite(
-        linkToken: 'link-1',
-        manualCode: 'code-1',
-        reference: 'ref-1',
-        emailSent: true,
-      ),
-    );
-    final adapter = CaregiverGrantConsentAdapter(
-      verificationService: _FakeVerificationService.succeeds(token),
-      contactStore: await CaregiverGrantContactStore.open(),
-      multiPartyAccessService: _RecordingMultiPartyAccessService(),
-    );
+  test(
+    'emailSent on the issued token surfaces on the granted outcome',
+    () async {
+      final token = MonitoringConsentToken(
+        tokenId: 'token-1',
+        subjectAccountId: 'user-1',
+        caregiverId: 'caregiver-1',
+        permissions: CaregiverPermissions.defaultScopes,
+        issuedAt: issuedAt,
+        expiresAt: expiresAt,
+        policyVersion: 1,
+        signature: 'sig',
+        redemption: const CaregiverRedemptionInvite(
+          linkToken: 'link-1',
+          manualCode: 'code-1',
+          reference: 'ref-1',
+          emailSent: true,
+        ),
+      );
+      final adapter = CaregiverGrantConsentAdapter(
+        verificationService: _FakeVerificationService.succeeds(token),
+        contactStore: await CaregiverGrantContactStore.open(),
+        multiPartyAccessService: _RecordingMultiPartyAccessService(),
+      );
 
-    final outcome = await adapter.issue(request);
+      final outcome = await adapter.issue(request);
 
-    expect(outcome, isA<CaregiverGrantGranted>());
-    expect((outcome as CaregiverGrantGranted).redemption?.emailSent, isTrue);
-  });
+      expect(outcome, isA<CaregiverGrantGranted>());
+      expect((outcome as CaregiverGrantGranted).redemption?.emailSent, isTrue);
+    },
+  );
 }

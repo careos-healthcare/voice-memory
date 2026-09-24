@@ -73,15 +73,19 @@ void main() {
     }
     await tester.binding.setSurfaceSize(const Size(390, 1200));
     addTearDown(() => tester.binding.setSurfaceSize(null));
-    await tester.pumpWidget(withAppProviderScope(MaterialApp(
-        theme: AppTheme.light(),
-        home: Scaffold(
-          body: RecordScreen(
-            suggestionAttributionStore: MemorySuggestionAttributionStore(),
-            entitlementReader: FakeArchiveEntitlementReader(pro: false),
+    await tester.pumpWidget(
+      withAppProviderScope(
+        MaterialApp(
+          theme: AppTheme.light(),
+          home: Scaffold(
+            body: RecordScreen(
+              suggestionAttributionStore: MemorySuggestionAttributionStore(),
+              entitlementReader: FakeArchiveEntitlementReader(pro: false),
+            ),
           ),
         ),
-      )));
+      ),
+    );
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 400));
   }
@@ -134,14 +138,18 @@ void main() {
     testWidgets('zero-entry users also start collapsed', (tester) async {
       await tester.binding.setSurfaceSize(const Size(390, 2400));
       addTearDown(() => tester.binding.setSurfaceSize(null));
-      await tester.pumpWidget(withAppProviderScope(MaterialApp(
-          theme: AppTheme.light(),
-          home: const Scaffold(
-            body: SingleChildScrollView(
-              child: EntryOptionsSection(),
+      await tester.pumpWidget(
+        withAppProviderScope(
+          MaterialApp(
+            theme: AppTheme.light(),
+            home: const Scaffold(
+              body: SingleChildScrollView(
+                child: EntryOptionsSection(),
+              ),
             ),
           ),
-        )));
+        ),
+      );
       await tester.pump();
 
       expect(

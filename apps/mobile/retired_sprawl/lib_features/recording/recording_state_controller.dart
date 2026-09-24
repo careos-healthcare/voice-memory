@@ -817,12 +817,14 @@ class _RecordScreenState extends ConsumerState<RecordScreen>
       });
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (!mounted) return;
-        unawaited(showQuickHelpSheet(
-          context,
-          languageCode: _languageCode,
-          onStartRecording: () => _onRecordPressed(source: 'main'),
-          initialIntent: QuickHelpIntent.whatToRecord,
-        ));
+        unawaited(
+          showQuickHelpSheet(
+            context,
+            languageCode: _languageCode,
+            onStartRecording: () => _onRecordPressed(source: 'main'),
+            initialIntent: QuickHelpIntent.whatToRecord,
+          ),
+        );
       });
       return;
     }
@@ -1667,13 +1669,15 @@ class _RecordScreenState extends ConsumerState<RecordScreen>
     EarlyArchiveProofAnalytics.proScreenOpenedAfterTimeline(
       source: analyticsSource,
     );
-    unawaited(context.push(
-      '/subscription',
-      extra: PaywallRouteArgs(
-        source: PaywallSource.valueMoment,
-        sourceRoute: '/record',
+    unawaited(
+      context.push(
+        '/subscription',
+        extra: PaywallRouteArgs(
+          source: PaywallSource.valueMoment,
+          sourceRoute: '/record',
+        ),
       ),
-    ));
+    );
   }
 
   void _handleBetaActivationPathPrimaryCta(BetaActivationPathResult result) {

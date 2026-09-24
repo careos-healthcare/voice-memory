@@ -43,7 +43,8 @@ class HabitsDashboardScreen extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.all(AppTokens.spacing3),
         children: [
-          for (final card in cards) _HabitPanel(card: card, onOpen: onOpenMoment),
+          for (final card in cards)
+            _HabitPanel(card: card, onOpen: onOpenMoment),
         ],
       ),
     );
@@ -66,7 +67,10 @@ class _HabitPanel extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(card.habit.title, style: Theme.of(context).textTheme.titleMedium),
+          Text(
+            card.habit.title,
+            style: Theme.of(context).textTheme.titleMedium,
+          ),
           const SizedBox(height: AppTokens.spacing2),
           Text('${window.weeklyStreak}-week streak'),
           Text(

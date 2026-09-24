@@ -83,11 +83,12 @@ void main() {
       addTearDown(() => directory.delete(recursive: true));
       final path = '${directory.path}/bench.db';
       var ticks = 0;
-      final timer = Stream<void>.periodic(
-        const Duration(milliseconds: 4),
-      ).listen((_) {
-        ticks += 1;
-      });
+      final timer =
+          Stream<void>.periodic(
+            const Duration(milliseconds: 4),
+          ).listen((_) {
+            ticks += 1;
+          });
 
       final report = await BenchmarkSeederIsolate.seed(
         BenchmarkSeedRequest(databasePath: path, entryCount: 10000),

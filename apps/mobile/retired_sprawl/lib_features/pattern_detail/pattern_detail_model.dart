@@ -8,7 +8,8 @@ import 'package:archiveme_mobile/models/journal_entry.dart';
 class PatternDetailBuildInput {
   const PatternDetailBuildInput({
     required this.entries,
-    required this.viewingConfirmedRepeatOrTimeline, this.confirmedRepeat,
+    required this.viewingConfirmedRepeatOrTimeline,
+    this.confirmedRepeat,
     this.changeProof,
     this.returnChecks = const [],
     this.triggerCapturedMilestone = false,

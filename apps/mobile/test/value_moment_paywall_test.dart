@@ -110,9 +110,7 @@ void main() {
 
   group('Value moment trigger — eligibility', () {
     test('no bridge before proof-first milestones are met', () {
-      DelayedPaywallProofStore.seedForTest(
-        
-      );
+      DelayedPaywallProofStore.seedForTest();
       expect(
         trigger.build(_workThread3(), isPro: false, now: _base).show,
         isFalse,

@@ -58,7 +58,9 @@ void main() {
       local: (prompt) async => 'local',
     );
     final service = ArchiveChatService(router: router);
-    final retrieval = await service.retrieve('When was the last time I saw Ada?');
+    final retrieval = await service.retrieve(
+      'When was the last time I saw Ada?',
+    );
     expect(retrieval.target, LlmExecutionTarget.cloudByok);
     final parts = await service
         .streamReply(

@@ -76,8 +76,7 @@ class DeviceCalendarGateway implements CalendarDataGateway {
   @override
   Future<List<McpCalendarEvent>> fetchEvents(McpCalendarQuery query) async {
     final permissionsResult = await _plugin.hasPermissions();
-    if (permissionsResult.isSuccess != true ||
-        permissionsResult.data != true) {
+    if (permissionsResult.isSuccess != true || permissionsResult.data != true) {
       final requested = await _plugin.requestPermissions();
       if (requested.isSuccess != true || requested.data != true) {
         return const [];

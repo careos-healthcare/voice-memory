@@ -8,7 +8,8 @@ import 'package:flutter/material.dart';
 /// Low-risk record prompt for capacity-yes users — no journal text.
 class CapacityYesRecordPromptCard extends StatelessWidget {
   const CapacityYesRecordPromptCard({
-    required this.onSaveMoment, super.key,
+    required this.onSaveMoment,
+    super.key,
     this.showRecordCta = true,
   });
 

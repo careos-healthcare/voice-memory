@@ -86,13 +86,15 @@ class MemoryResurfacingService {
       return created.month == clockLocal.month &&
           created.day == clockLocal.day &&
           created.year < clockLocal.year;
-    }).toList()
-      ..sort((a, b) => a.createdAt.compareTo(b.createdAt));
+    }).toList()..sort((a, b) => a.createdAt.compareTo(b.createdAt));
 
     return matches.map((entry) {
       final base = _toCard(entry, now: clock, themes: themes, belief: belief);
-      final hasGenuineConnection =
-          _relatesToArchiveThemes(entry, themes, belief);
+      final hasGenuineConnection = _relatesToArchiveThemes(
+        entry,
+        themes,
+        belief,
+      );
       return MemoryResurfacingCardData(
         entry: base.entry,
         headline: anniversaryHeadline(entry.createdAt, clock),

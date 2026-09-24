@@ -42,43 +42,45 @@ class FailingAnalyzer extends CaptureProofAnalyzer {
 
 void main() {
   group('CapturePipelineMiddleware', () {
-    test('analyzeWithAuthRetry throws AnalyzeBlockedException when guard blocks',
-        () async {
-      final dir = await Directory.systemTemp.createTemp('middleware_test_');
-      final prefs = await MobilePrefsStore.open('${dir.path}/prefs.json');
-      final consentStore = RemoteProcessingConsentStore(prefs);
-      await consentStore.grant();
+    test(
+      'analyzeWithAuthRetry throws AnalyzeBlockedException when guard blocks',
+      () async {
+        final dir = await Directory.systemTemp.createTemp('middleware_test_');
+        final prefs = await MobilePrefsStore.open('${dir.path}/prefs.json');
+        final consentStore = RemoteProcessingConsentStore(prefs);
+        await consentStore.grant();
 
-      final built = await buildCapturePipelineFacade(
-        prefs: prefs,
-        journal: JournalStore(file: File('${dir.path}/journal.json')),
-        consentStore: consentStore,
-      );
-      final blockingDeps = CapturePipelineDependencies(
-        captureRepository: built.facade.dependencies.captureRepository,
-        attest: built.facade.dependencies.attest,
-        journalStore: built.facade.dependencies.journalStore,
-        consentStore: consentStore,
-        usageGuard: BlockingUsageGuard(),
-        proofAdmission: CanonicalProofAdmissionService(),
-        scopeProvider: const FixedScopeProvider(),
-      );
-      final middleware = CapturePipelineMiddleware(
-        blockingDeps,
-        FailingAnalyzer(blockingDeps),
-      );
+        final built = await buildCapturePipelineFacade(
+          prefs: prefs,
+          journal: JournalStore(file: File('${dir.path}/journal.json')),
+          consentStore: consentStore,
+        );
+        final blockingDeps = CapturePipelineDependencies(
+          captureRepository: built.facade.dependencies.captureRepository,
+          attest: built.facade.dependencies.attest,
+          journalStore: built.facade.dependencies.journalStore,
+          consentStore: consentStore,
+          usageGuard: BlockingUsageGuard(),
+          proofAdmission: CanonicalProofAdmissionService(),
+          scopeProvider: const FixedScopeProvider(),
+        );
+        final middleware = CapturePipelineMiddleware(
+          blockingDeps,
+          FailingAnalyzer(blockingDeps),
+        );
 
-      expect(
-        () => middleware.analyzeWithAuthRetry(
-          transcript: 'long enough transcript for analyze path',
-          scopeKey: 'text:test',
-          entryId: 'entry-1',
-          sourceType: ProofSourceType.userTyped,
-        ),
-        throwsA(isA<AnalyzeBlockedException>()),
-      );
+        expect(
+          () => middleware.analyzeWithAuthRetry(
+            transcript: 'long enough transcript for analyze path',
+            scopeKey: 'text:test',
+            entryId: 'entry-1',
+            sourceType: ProofSourceType.userTyped,
+          ),
+          throwsA(isA<AnalyzeBlockedException>()),
+        );
 
-      await dir.delete(recursive: true);
-    });
+        await dir.delete(recursive: true);
+      },
+    );
   });
 }

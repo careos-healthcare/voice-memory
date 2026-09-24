@@ -568,11 +568,9 @@ Map<String, dynamic> _metrics(
       .toList();
 
   final visiblePollution = _visibleTraitPollution(analyst);
-  final zeroConfidenceListed =
-      visiblePollution['zeroConfidence']!;
+  final zeroConfidenceListed = visiblePollution['zeroConfidence']!;
   final zeroEvidenceListed = visiblePollution['zeroEvidence']!;
-  final traitTemplatesListed =
-      visiblePollution['traitTemplates']!;
+  final traitTemplatesListed = visiblePollution['traitTemplates']!;
 
   final highCounterLowSupport = analyst.currentBeliefs
       .where((b) => b.counterEvidenceCount > b.evidenceCount)

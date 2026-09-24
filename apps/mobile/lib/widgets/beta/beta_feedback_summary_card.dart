@@ -11,7 +11,8 @@ import 'package:flutter/material.dart';
 /// Founder-facing beta signal summary — safe buckets only.
 class BetaFeedbackSummaryCard extends StatelessWidget {
   const BetaFeedbackSummaryCard({
-    required this.entries, super.key,
+    required this.entries,
+    super.key,
     this.summary,
   });
 

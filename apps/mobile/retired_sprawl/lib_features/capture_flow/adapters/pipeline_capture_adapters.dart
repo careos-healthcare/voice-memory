@@ -115,7 +115,8 @@ class PipelineRemoteReflectionGateway implements RemoteReflectionGateway {
 }
 
 /// Composes device capability, purpose permission, and the stored answer.
-class StoreTranscriptionCapabilityPolicy implements TranscriptionCapabilityPort {
+class StoreTranscriptionCapabilityPolicy
+    implements TranscriptionCapabilityPort {
   StoreTranscriptionCapabilityPolicy({
     required RemoteProcessingConsentStore consentStore,
     required LocalTranscriptionChoiceStore choiceStore,
@@ -129,7 +130,8 @@ class StoreTranscriptionCapabilityPolicy implements TranscriptionCapabilityPort 
        // Defaulted from the store rather than left to a caller, because the
        // version of this that defaulted to a locale-less availability check
        // reported iOS "available" on every device and the policy believed it.
-       _availability = availability ??
+       _availability =
+           availability ??
            PlatformLocalTranscriptionAvailability(
              confirmedLocale: speechLocaleStore.read,
            );

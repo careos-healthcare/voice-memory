@@ -216,15 +216,19 @@ void main() {
 
   group('ArchiveHistorySheet', () {
     testWidgets('renders empty state copy', (tester) async {
-      await tester.pumpWidget(withAppProviderScope(MaterialApp(
-          theme: AppTheme.light(),
-          home: const Scaffold(
-            body: ArchiveHistorySheet(
-              content: ArchiveHistoryContent(items: [], isEmpty: true),
-              entryCount: 0,
+      await tester.pumpWidget(
+        withAppProviderScope(
+          MaterialApp(
+            theme: AppTheme.light(),
+            home: const Scaffold(
+              body: ArchiveHistorySheet(
+                content: ArchiveHistoryContent(items: [], isEmpty: true),
+                entryCount: 0,
+              ),
             ),
           ),
-        )));
+        ),
+      );
 
       expect(find.text(ArchiveHistoryCopy.emptyTitle), findsOneWidget);
       expect(find.text(ArchiveHistoryCopy.emptyBody), findsOneWidget);
@@ -238,12 +242,16 @@ void main() {
         ],
       );
 
-      await tester.pumpWidget(withAppProviderScope(MaterialApp(
-          theme: AppTheme.light(),
-          home: Scaffold(
-            body: ArchiveHistorySheet(content: content, entryCount: 2),
+      await tester.pumpWidget(
+        withAppProviderScope(
+          MaterialApp(
+            theme: AppTheme.light(),
+            home: Scaffold(
+              body: ArchiveHistorySheet(content: content, entryCount: 2),
+            ),
           ),
-        )));
+        ),
+      );
 
       expect(find.text(ArchiveHistoryCopy.addWordsCta), findsOneWidget);
       expect(
@@ -261,12 +269,16 @@ void main() {
         entries: [_textEntry(id: 'saved', transcript: _realMoment)],
       );
 
-      await tester.pumpWidget(withAppProviderScope(MaterialApp(
-          theme: AppTheme.light(),
-          home: Scaffold(
-            body: ArchiveHistorySheet(content: content, entryCount: 1),
+      await tester.pumpWidget(
+        withAppProviderScope(
+          MaterialApp(
+            theme: AppTheme.light(),
+            home: Scaffold(
+              body: ArchiveHistorySheet(content: content, entryCount: 1),
+            ),
           ),
-        )));
+        ),
+      );
 
       expect(find.text(ArchiveHistoryCopy.sheetTitle), findsOneWidget);
       expect(find.text(ArchiveHistoryCopy.sheetSubtitle), findsOneWidget);
@@ -284,12 +296,16 @@ void main() {
         ],
       );
 
-      await tester.pumpWidget(withAppProviderScope(MaterialApp(
-          theme: AppTheme.light(),
-          home: Scaffold(
-            body: ArchiveHistorySheet(content: content, entryCount: 1),
+      await tester.pumpWidget(
+        withAppProviderScope(
+          MaterialApp(
+            theme: AppTheme.light(),
+            home: Scaffold(
+              body: ArchiveHistorySheet(content: content, entryCount: 1),
+            ),
           ),
-        )));
+        ),
+      );
 
       expect(
         find.byKey(const Key('archive_history_chip_ignored_for_patterns')),
@@ -321,12 +337,16 @@ void main() {
       ];
       final content = ArchiveHistoryEngine.build(entries: entries);
 
-      await tester.pumpWidget(withAppProviderScope(MaterialApp(
-          theme: AppTheme.light(),
-          home: Scaffold(
-            body: ArchiveHistorySheet(content: content, entryCount: 2),
+      await tester.pumpWidget(
+        withAppProviderScope(
+          MaterialApp(
+            theme: AppTheme.light(),
+            home: Scaffold(
+              body: ArchiveHistorySheet(content: content, entryCount: 2),
+            ),
           ),
-        )));
+        ),
+      );
 
       expect(
         find.byKey(const Key('archive_history_chip_used_as_evidence')),
@@ -362,14 +382,18 @@ void main() {
       await tester.binding.setSurfaceSize(const Size(390, 2800));
       addTearDown(() => tester.binding.setSurfaceSize(null));
 
-      await tester.pumpWidget(withAppProviderScope(MaterialApp(
-          theme: AppTheme.light(),
-          home: Scaffold(
-            body: RecordScreen(
-              entitlementReader: FakeArchiveEntitlementReader(pro: false),
+      await tester.pumpWidget(
+        withAppProviderScope(
+          MaterialApp(
+            theme: AppTheme.light(),
+            home: Scaffold(
+              body: RecordScreen(
+                entitlementReader: FakeArchiveEntitlementReader(pro: false),
+              ),
             ),
           ),
-        )));
+        ),
+      );
       await tester.pump();
       await tester.runAsync(() async {
         await Future<void>.delayed(const Duration(milliseconds: 400));

@@ -10,7 +10,8 @@ import 'package:flutter/material.dart';
 /// Surfaces what ArchiveMe noticed today after a successful save.
 class TodayNoticedPostSaveCard extends StatelessWidget {
   const TodayNoticedPostSaveCard({
-    required this.loop, super.key,
+    required this.loop,
+    super.key,
     this.showPossiblePattern = false,
   });
 

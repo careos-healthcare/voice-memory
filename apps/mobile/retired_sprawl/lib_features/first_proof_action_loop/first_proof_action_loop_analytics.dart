@@ -53,7 +53,9 @@ abstract final class FirstProofActionLoopAnalytics {
       );
     }
 
-    unawaited(BetaActivationSummaryTracker.trackFirstProofActionSelected(action));
+    unawaited(
+      BetaActivationSummaryTracker.trackFirstProofActionSelected(action),
+    );
   }
 
   @visibleForTesting

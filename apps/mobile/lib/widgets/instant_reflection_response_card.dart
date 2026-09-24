@@ -19,9 +19,7 @@ class InstantReflectionResponseCard extends StatelessWidget {
       children: [
         Text(
           sectionLabel,
-          style: VoiceMemoryTypography.sectionLabelStyle(
-            
-          ),
+          style: VoiceMemoryTypography.sectionLabelStyle(),
         ),
         const SizedBox(height: 10),
         Container(

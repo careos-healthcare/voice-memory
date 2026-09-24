@@ -112,7 +112,8 @@ class ArchiveDailyChangeEngine {
     required List<CapacityCostRecord> costRecords,
     required List<CapacityDecisionOutcomeRecord> outcomeRecords,
     required CapacityBoundaryResponseSelection? boundarySelection,
-    required bool weeklyReviewAvailable, CapacityActivationFitRecord? activationFitRecord,
+    required bool weeklyReviewAvailable,
+    CapacityActivationFitRecord? activationFitRecord,
     bool sampleMode = false,
   }) {
     final realEntries = SampleArchiveMode.excludeSampleEntries(entries);

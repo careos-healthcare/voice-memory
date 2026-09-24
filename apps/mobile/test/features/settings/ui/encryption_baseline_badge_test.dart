@@ -40,7 +40,8 @@ void main() {
       final detail = tester.widget<Text>(
         find.text(PrivacyCopyPolicy.encryptionBaselineDetail),
       );
-      final bodyFontSize = AppTheme.light().textTheme.bodyMedium?.fontSize ?? 14;
+      final bodyFontSize =
+          AppTheme.light().textTheme.bodyMedium?.fontSize ?? 14;
 
       expect(label.style?.fontSize, lessThan(bodyFontSize));
       expect(detail.style?.fontSize, lessThan(label.style!.fontSize!));

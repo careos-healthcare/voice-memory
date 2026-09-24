@@ -28,7 +28,9 @@ void main() {
     late CapturePipelineFacade facade;
 
     setUp(() async {
-      tempDir = await Directory.systemTemp.createTemp('capture_pipeline_facade_');
+      tempDir = await Directory.systemTemp.createTemp(
+        'capture_pipeline_facade_',
+      );
       journal = JournalStore(file: File('${tempDir.path}/journal.json'));
       prefs = await MobilePrefsStore.open('${tempDir.path}/prefs.json');
       await OnDeviceProcessingStore.resetForTest();
@@ -58,7 +60,8 @@ void main() {
       await consentStore.withdraw();
 
       final result = (await facade.saveTextThought(
-        transcript: 'I keep saying I want more balance but I still take on extra work.',
+        transcript:
+            'I keep saying I want more balance but I still take on extra work.',
       )).getOrThrow();
 
       expect(result.localSaved, isTrue);
@@ -79,7 +82,8 @@ void main() {
         }
       });
       final result = (await facade.saveTextThought(
-        transcript: 'I keep saying I want more balance but I still take on extra work every week.',
+        transcript:
+            'I keep saying I want more balance but I still take on extra work every week.',
       )).getOrThrow();
       await doneStage.future;
       await subscription.cancel();
@@ -215,52 +219,55 @@ void main() {
       },
     );
 
-    test('savePostSaveMomentDetail preserves inner exception on failure', () async {
-      final parent = JournalEntry(
-        id: 'fail-parent',
-        createdAt: DateTime.utc(2026, 8, 18),
-        transcript: 'Failure parent',
-        durationSeconds: 8,
-        reflection: const Reflection(
-          mood: 'neutral',
-          emotionalIntensity: 0,
-          recurringThemes: [],
-          exactLanguagePattern: '',
-          concreteObservation: '',
-          repeatedSignal: '',
-        ),
-      );
+    test(
+      'savePostSaveMomentDetail preserves inner exception on failure',
+      () async {
+        final parent = JournalEntry(
+          id: 'fail-parent',
+          createdAt: DateTime.utc(2026, 8, 18),
+          transcript: 'Failure parent',
+          durationSeconds: 8,
+          reflection: const Reflection(
+            mood: 'neutral',
+            emotionalIntensity: 0,
+            recurringThemes: [],
+            exactLanguagePattern: '',
+            concreteObservation: '',
+            repeatedSignal: '',
+          ),
+        );
 
-      final throwingJournal = _ThrowingJournalStore(
-        file: File('${tempDir.path}/throwing-journal.json'),
-      );
-      await throwingJournal.save(parent);
+        final throwingJournal = _ThrowingJournalStore(
+          file: File('${tempDir.path}/throwing-journal.json'),
+        );
+        await throwingJournal.save(parent);
 
-      final injected = StateError('journal save failed');
-      throwingJournal.nextError = injected;
+        final injected = StateError('journal save failed');
+        throwingJournal.nextError = injected;
 
-      final built = await buildCapturePipelineFacade(
-        prefs: prefs,
-        journal: throwingJournal,
-        consentStore: consentStore,
-      );
-      final failingFacade = built.facade;
+        final built = await buildCapturePipelineFacade(
+          prefs: prefs,
+          journal: throwingJournal,
+          consentStore: consentStore,
+        );
+        final failingFacade = built.facade;
 
-      final outcome = await failingFacade.savePostSaveMomentDetail(
-        parentEntry: parent,
-        detailType: PostSaveMomentDetailType.stoodOut,
-        detailText: 'Should fail.',
-      );
+        final outcome = await failingFacade.savePostSaveMomentDetail(
+          parentEntry: parent,
+          detailType: PostSaveMomentDetailType.stoodOut,
+          detailText: 'Should fail.',
+        );
 
-      expect(outcome.isLeft(), isTrue);
-      outcome.fold(
-        (failure) {
-          expect(identical(failure.innerException, injected), isTrue);
-          expect(identical(failure.cause, injected), isTrue);
-        },
-        (_) => fail('expected Left'),
-      );
-    });
+        expect(outcome.isLeft(), isTrue);
+        outcome.fold(
+          (failure) {
+            expect(identical(failure.innerException, injected), isTrue);
+            expect(identical(failure.cause, injected), isTrue);
+          },
+          (_) => fail('expected Left'),
+        );
+      },
+    );
   });
 }
 

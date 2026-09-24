@@ -161,9 +161,9 @@ void main() {
     );
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(connectivity, (call) async {
-      if (call.method == 'check') return ['wifi'];
-      return null;
-    });
+          if (call.method == 'check') return ['wifi'];
+          return null;
+        });
 
     // Capture attestation reads a device id from secure storage; without this
     // the positive controls below never reach the upload they must prove.
@@ -173,28 +173,29 @@ void main() {
     final secureValues = <String, String>{};
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(secureStorage, (call) async {
-      final args = call.arguments as Map<Object?, Object?>? ?? const {};
-      final key = args['key'] as String?;
-      switch (call.method) {
-        case 'read':
-          return key == null ? null : secureValues[key];
-        case 'write':
-          if (key != null) secureValues[key] = args['value'] as String? ?? '';
-          return null;
-        case 'containsKey':
-          return key != null && secureValues.containsKey(key);
-        case 'readAll':
-          return Map<String, String>.of(secureValues);
-        case 'delete':
-          secureValues.remove(key);
-          return null;
-        case 'deleteAll':
-          secureValues.clear();
-          return null;
-        default:
-          return null;
-      }
-    });
+          final args = call.arguments as Map<Object?, Object?>? ?? const {};
+          final key = args['key'] as String?;
+          switch (call.method) {
+            case 'read':
+              return key == null ? null : secureValues[key];
+            case 'write':
+              if (key != null)
+                secureValues[key] = args['value'] as String? ?? '';
+              return null;
+            case 'containsKey':
+              return key != null && secureValues.containsKey(key);
+            case 'readAll':
+              return Map<String, String>.of(secureValues);
+            case 'delete':
+              secureValues.remove(key);
+              return null;
+            case 'deleteAll':
+              secureValues.clear();
+              return null;
+            default:
+              return null;
+          }
+        });
   });
 
   setUp(() async {
@@ -290,64 +291,76 @@ void main() {
   // Positive controls. Without these, the two assertions above could pass for
   // an unrelated reason (a mis-wired spy, a usage guard, a missing file) and
   // silently stop proving anything about the on-device-only setting.
-  test('control: provisional reconcile does upload once on-device-only is off',
-      () async {
-    await OnDeviceProcessingStore.setEnabled(false);
-    final audio = await _usableAudioFile();
-    final entry = _entry(
-      id: 'entry-provisional-control',
-      transcriptStatus: TranscriptStatus.provisional,
-      localAudioPath: audio.path,
-    );
-    await AppServices.instance.journalStore.save(entry, first25Source: 'test');
+  test(
+    'control: provisional reconcile does upload once on-device-only is off',
+    () async {
+      await OnDeviceProcessingStore.setEnabled(false);
+      final audio = await _usableAudioFile();
+      final entry = _entry(
+        id: 'entry-provisional-control',
+        transcriptStatus: TranscriptStatus.provisional,
+        localAudioPath: audio.path,
+      );
+      await AppServices.instance.journalStore.save(
+        entry,
+        first25Source: 'test',
+      );
 
-    final reconciler = ProvisionalTranscriptReconciler(
-      captureRepository: appProviderContainer.read(captureRepositoryProvider),
-      attest: AppServices.instance.attest,
-      journalStore: AppServices.instance.journalStore,
-      consentStore: consentStore,
-    );
+      final reconciler = ProvisionalTranscriptReconciler(
+        captureRepository: appProviderContainer.read(captureRepositoryProvider),
+        attest: AppServices.instance.attest,
+        journalStore: AppServices.instance.journalStore,
+        consentStore: consentStore,
+      );
 
-    expect(await reconciler.reconcileEntry(entry), isTrue);
-    expect(api.postTranscribeCallCount, 1);
-  });
+      expect(await reconciler.reconcileEntry(entry), isTrue);
+      expect(api.postTranscribeCallCount, 1);
+    },
+  );
 
-  test('control: deferred admission does analyze once on-device-only is off',
-      () async {
-    await OnDeviceProcessingStore.setEnabled(false);
-    final entry = _entry(
-      id: 'entry-deferred-control',
-      transcriptStatus: TranscriptStatus.finalTranscript,
-    );
-    await AppServices.instance.journalStore.save(entry, first25Source: 'test');
+  test(
+    'control: deferred admission does analyze once on-device-only is off',
+    () async {
+      await OnDeviceProcessingStore.setEnabled(false);
+      final entry = _entry(
+        id: 'entry-deferred-control',
+        transcriptStatus: TranscriptStatus.finalTranscript,
+      );
+      await AppServices.instance.journalStore.save(
+        entry,
+        first25Source: 'test',
+      );
 
-    final reconciler = DeferredProofAdmissionReconciler(
-      middleware: _middlewareFor(consentStore),
-      journalStore: AppServices.instance.journalStore,
-      consentStore: consentStore,
-    );
+      final reconciler = DeferredProofAdmissionReconciler(
+        middleware: _middlewareFor(consentStore),
+        journalStore: AppServices.instance.journalStore,
+        consentStore: consentStore,
+      );
 
-    // Whether the proof is admitted depends on evidence-quality rules that are
-    // irrelevant here; what matters is that the transcript reached the server.
-    await reconciler.reconcileEntry(entry);
-    expect(api.postAnalyzeRawCallCount, 1);
-  });
+      // Whether the proof is admitted depends on evidence-quality rules that are
+      // irrelevant here; what matters is that the transcript reached the server.
+      await reconciler.reconcileEntry(entry);
+      expect(api.postAnalyzeRawCallCount, 1);
+    },
+  );
 
-  test('consent gate composes on-device-only with per-purpose consent',
-      () async {
-    final gate = RemoteProcessingConsentGate(consentStore);
+  test(
+    'consent gate composes on-device-only with per-purpose consent',
+    () async {
+      final gate = RemoteProcessingConsentGate(consentStore);
 
-    for (final purpose in RemoteProcessingPurpose.values) {
-      final decision = await gate.evaluateFor(purpose);
-      expect(decision.permitted, isFalse, reason: '$purpose while on-device');
-      expect(decision.currentPermission, isTrue);
-      expect(await gate.isPurposePermittedNow(purpose), isFalse);
-    }
+      for (final purpose in RemoteProcessingPurpose.values) {
+        final decision = await gate.evaluateFor(purpose);
+        expect(decision.permitted, isFalse, reason: '$purpose while on-device');
+        expect(decision.currentPermission, isTrue);
+        expect(await gate.isPurposePermittedNow(purpose), isFalse);
+      }
 
-    await OnDeviceProcessingStore.setEnabled(false);
+      await OnDeviceProcessingStore.setEnabled(false);
 
-    for (final purpose in RemoteProcessingPurpose.values) {
-      expect(await gate.isPurposePermittedNow(purpose), isTrue);
-    }
-  });
+      for (final purpose in RemoteProcessingPurpose.values) {
+        expect(await gate.isPurposePermittedNow(purpose), isTrue);
+      }
+    },
+  );
 }

@@ -89,8 +89,7 @@ class _MeshStatusBody extends ConsumerWidget {
           onChanged: (enabled) => manager.setLogging(enabled: enabled),
         ),
         if (state.loggingEnabled)
-          for (final line in state.logs)
-            Text(line, key: Key('mesh_log_$line')),
+          for (final line in state.logs) Text(line, key: Key('mesh_log_$line')),
       ],
     );
   }

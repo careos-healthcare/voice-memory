@@ -53,28 +53,31 @@ class ReflectionDto {
   });
 
   factory ReflectionDto.fromJson(Map<String, dynamic> json) => ReflectionDto(
-        mood: JsonConverters.string(json['mood'], field: 'mood'),
-        emotionalIntensity: JsonConverters.intValue(
-          json['emotionalIntensity'],
-          field: 'emotionalIntensity',
-        ),
-        recurringThemes: JsonConverters.stringList(json['recurringThemes']),
-        hiddenConcern: JsonConverters.stringOrEmpty(json['hiddenConcern']),
-        positiveSignal: JsonConverters.stringOrEmpty(json['positiveSignal']),
-        recommendation: JsonConverters.stringOrEmpty(json['recommendation']),
-        exactLanguagePattern:
-            JsonConverters.nullableString(json['exactLanguagePattern']),
-        concreteObservation:
-            JsonConverters.nullableString(json['concreteObservation']),
-        repeatedSignal: JsonConverters.nullableString(json['repeatedSignal']),
-        tensionOrContradiction:
-            JsonConverters.nullableString(json['tensionOrContradiction']),
-        avoidedOrVagueArea:
-            JsonConverters.nullableString(json['avoidedOrVagueArea']),
-        nextSmallAction: JsonConverters.nullableString(json['nextSmallAction']),
-        patternObservations:
-            JsonConverters.stringList(json['patternObservations']),
-      );
+    mood: JsonConverters.string(json['mood'], field: 'mood'),
+    emotionalIntensity: JsonConverters.intValue(
+      json['emotionalIntensity'],
+      field: 'emotionalIntensity',
+    ),
+    recurringThemes: JsonConverters.stringList(json['recurringThemes']),
+    hiddenConcern: JsonConverters.stringOrEmpty(json['hiddenConcern']),
+    positiveSignal: JsonConverters.stringOrEmpty(json['positiveSignal']),
+    recommendation: JsonConverters.stringOrEmpty(json['recommendation']),
+    exactLanguagePattern: JsonConverters.nullableString(
+      json['exactLanguagePattern'],
+    ),
+    concreteObservation: JsonConverters.nullableString(
+      json['concreteObservation'],
+    ),
+    repeatedSignal: JsonConverters.nullableString(json['repeatedSignal']),
+    tensionOrContradiction: JsonConverters.nullableString(
+      json['tensionOrContradiction'],
+    ),
+    avoidedOrVagueArea: JsonConverters.nullableString(
+      json['avoidedOrVagueArea'],
+    ),
+    nextSmallAction: JsonConverters.nullableString(json['nextSmallAction']),
+    patternObservations: JsonConverters.stringList(json['patternObservations']),
+  );
 
   final String mood;
   final int emotionalIntensity;
@@ -117,7 +120,10 @@ class TranscribeResponseDto {
 
   factory TranscribeResponseDto.fromJson(Map<String, dynamic> json) =>
       TranscribeResponseDto(
-        transcript: JsonConverters.string(json['transcript'], field: 'transcript'),
+        transcript: JsonConverters.string(
+          json['transcript'],
+          field: 'transcript',
+        ),
       );
 
   final String transcript;

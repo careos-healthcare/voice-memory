@@ -80,7 +80,10 @@ class _FakePrivacyControls extends LocalPrivacyDataControls {
   }
 
   @override
-  Future<int> stopIgnoring(ArchiveCorrection correction, {DateTime? now}) async {
+  Future<int> stopIgnoring(
+    ArchiveCorrection correction, {
+    DateTime? now,
+  }) async {
     stopIgnoringCalls++;
     if (stopIgnoringThrows) {
       throw StateError('undo failed');
@@ -131,7 +134,10 @@ void main() {
     await _pumpSheet(tester, _FakePrivacyControls());
 
     expect(find.byKey(const Key('stopped_observations_empty')), findsOneWidget);
-    expect(find.text(PrivacyTrustCopy.stoppedObservationsEmpty), findsOneWidget);
+    expect(
+      find.text(PrivacyTrustCopy.stoppedObservationsEmpty),
+      findsOneWidget,
+    );
     expect(find.text('Nothing stopped.'), findsOneWidget);
   });
 
@@ -185,7 +191,10 @@ void main() {
         findsOneWidget,
       );
       expect(find.text(fallback), findsOneWidget);
-      expect(find.text('Stopped · ${formatUserFacingDate(createdAt)}'), findsOneWidget);
+      expect(
+        find.text('Stopped · ${formatUserFacingDate(createdAt)}'),
+        findsOneWidget,
+      );
     },
   );
 
@@ -206,7 +215,10 @@ void main() {
         find.byKey(const Key('stopped_observations_undo_confirm')),
         findsOneWidget,
       );
-      expect(find.text(PrivacyTrustCopy.stoppedObservationsUndoTitle), findsOneWidget);
+      expect(
+        find.text(PrivacyTrustCopy.stoppedObservationsUndoTitle),
+        findsOneWidget,
+      );
       expect(controls.stopIgnoringCalls, 0);
     },
   );
@@ -236,7 +248,10 @@ void main() {
         find.byKey(const Key('stopped_observations_row_c-confirm')),
         findsNothing,
       );
-      expect(find.text(PrivacyTrustCopy.stoppedObservationsEmpty), findsOneWidget);
+      expect(
+        find.text(PrivacyTrustCopy.stoppedObservationsEmpty),
+        findsOneWidget,
+      );
     },
   );
 

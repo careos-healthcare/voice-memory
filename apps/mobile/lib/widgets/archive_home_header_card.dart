@@ -7,7 +7,10 @@ import 'package:flutter/material.dart';
 /// Home hero — your archive at a glance with large stat numbers.
 class ArchiveHomeHeaderCard extends StatelessWidget {
   const ArchiveHomeHeaderCard({
-    required this.recordings, required this.beliefs, required this.insights, super.key,
+    required this.recordings,
+    required this.beliefs,
+    required this.insights,
+    super.key,
   });
 
   final int recordings;

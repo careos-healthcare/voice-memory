@@ -27,11 +27,12 @@ class SqliteVecIndexer {
 
   Future<Object> execute(BackgroundTask task) {
     return switch (task.kind) {
-      BackgroundTask.kindVectorIndex => IsolateComputeJob.run<String, List<double>>(
-        label: 'sqlite_vec_index',
-        payload: task.payload,
-        computeFn: parseAndNormalizeVector,
-      ),
+      BackgroundTask.kindVectorIndex =>
+        IsolateComputeJob.run<String, List<double>>(
+          label: 'sqlite_vec_index',
+          payload: task.payload,
+          computeFn: parseAndNormalizeVector,
+        ),
       _ => IsolateComputeJob.run<String, int>(
         label: 'p2p_sync_seal',
         payload: task.payload,

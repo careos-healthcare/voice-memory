@@ -16,7 +16,8 @@ import 'dart:async';
 /// Compact milestone share card for Archive Home.
 class MilestoneShareHomeCard extends StatefulWidget {
   const MilestoneShareHomeCard({
-    required this.entries, super.key,
+    required this.entries,
+    super.key,
     this.watchlistStore,
     this.engine = const MilestoneShareEngine(),
     this.initialWatchlistCount = 0,
@@ -26,7 +27,8 @@ class MilestoneShareHomeCard extends StatefulWidget {
   });
 
   const MilestoneShareHomeCard.test({
-    required this.entries, super.key,
+    required this.entries,
+    super.key,
     this.initialWatchlistCount = 0,
     this.engine = const MilestoneShareEngine(),
     this.onPrimaryAction,

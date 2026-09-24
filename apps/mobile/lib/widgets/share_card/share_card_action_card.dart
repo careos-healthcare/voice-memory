@@ -10,7 +10,9 @@ import 'package:flutter/material.dart';
 /// Compact share card entry point on Patterns / Pattern detail.
 class ShareCardActionCard extends StatelessWidget {
   const ShareCardActionCard({
-    required this.model, required this.source, super.key,
+    required this.model,
+    required this.source,
+    super.key,
   });
 
   final ShareCardModel model;

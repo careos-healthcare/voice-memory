@@ -36,7 +36,8 @@ class PaywallModal extends StatefulWidget {
     required EntitlementRequiredException exception,
     PurchaseSheetPresenter? presenter,
   }) {
-    final PurchaseSheetPresenter resolved = presenter ??
+    final PurchaseSheetPresenter resolved =
+        presenter ??
         (hasRiverpodScope(context)
             ? ProviderScope.containerOf(
                 context,

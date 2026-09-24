@@ -20,7 +20,9 @@ void main() {
   });
 
   test('palette lists the primary keyboard actions', () {
-    final titles = ArchiveCommandCatalog.commands.map((command) => command.title);
+    final titles = ArchiveCommandCatalog.commands.map(
+      (command) => command.title,
+    );
     expect(titles, contains('Create Entry'));
     expect(titles, contains('Search Archives'));
     expect(titles, contains('Toggle Theme'));

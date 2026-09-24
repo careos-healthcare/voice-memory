@@ -10,7 +10,8 @@ class QuickCaptureOutboxEntries extends Table {
   TextColumn get kind => text()();
   TextColumn get payloadJson => text().named('payload_json')();
   TextColumn get status => text().withDefault(const Constant('pending'))();
-  IntColumn get attemptCount => integer().named('attempt_count').withDefault(const Constant(0))();
+  IntColumn get attemptCount =>
+      integer().named('attempt_count').withDefault(const Constant(0))();
   TextColumn get lastError => text().named('last_error').nullable()();
   IntColumn get createdAt => integer().named('created_at')();
   IntColumn get updatedAt => integer().named('updated_at')();
@@ -64,7 +65,8 @@ class CaptureAudioMetadataEntries extends Table {
   TextColumn get id => text()();
   TextColumn get filePath => text().named('file_path')();
   IntColumn get createdAt => integer().named('created_at')();
-  TextColumn get status => text().withDefault(const Constant('pending_analysis'))();
+  TextColumn get status =>
+      text().withDefault(const Constant('pending_analysis'))();
 
   @override
   Set<Column<Object>> get primaryKey => {id};

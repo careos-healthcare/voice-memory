@@ -42,7 +42,8 @@ class _OnboardingPipelineState extends State<OnboardingPipeline> {
   @override
   void initState() {
     super.initState();
-    _store = widget.store ??
+    _store =
+        widget.store ??
         (AppServices.isInitialized
             ? PrefsTrialCompletionStore(AppServices.instance.prefs)
             : MemoryTrialCompletionStore());
@@ -171,7 +172,11 @@ class _ValuePage extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text(title, key: const Key('onboarding_value_title'), style: AppTokens.section()),
+          Text(
+            title,
+            key: const Key('onboarding_value_title'),
+            style: AppTokens.section(),
+          ),
           const SizedBox(height: AppTokens.spacing4),
           Text(body, style: AppTokens.body()),
           const Spacer(),

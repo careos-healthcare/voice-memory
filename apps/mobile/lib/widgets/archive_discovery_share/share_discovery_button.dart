@@ -8,7 +8,9 @@ import 'package:flutter/material.dart';
 /// In-context "Share Discovery" affordance on archive insight surfaces.
 class ShareDiscoveryButton extends StatelessWidget {
   const ShareDiscoveryButton({
-    required this.card, required this.surface, super.key,
+    required this.card,
+    required this.surface,
+    super.key,
   });
 
   final ArchiveDiscoveryShareCardModel card;

@@ -29,10 +29,10 @@ abstract final class ReflectionOutputParser {
       padded[ReflectionModelContract.actionSpanEndIndex],
     );
 
-    final tension = _finalizeField(tensionSpan) ??
-        _heuristicTension(transcript, padded);
-    final action = _finalizeField(actionSpan) ??
-        _heuristicAction(transcript, padded);
+    final tension =
+        _finalizeField(tensionSpan) ?? _heuristicTension(transcript, padded);
+    final action =
+        _finalizeField(actionSpan) ?? _heuristicAction(transcript, padded);
 
     final exactLanguage = _extractExactLanguage(transcript);
     final observation = _extractConcreteObservation(transcript);
@@ -236,8 +236,7 @@ abstract final class ReflectionOutputParser {
   ) {
     final patterns = <String>[];
     for (var i = 0; i < ReflectionModelContract.patternLogitCount; i++) {
-      final score =
-          logits[ReflectionModelContract.patternLogitStart + i];
+      final score = logits[ReflectionModelContract.patternLogitStart + i];
       if (score <= 0.45) continue;
       patterns.add(_patternLabel(i));
     }

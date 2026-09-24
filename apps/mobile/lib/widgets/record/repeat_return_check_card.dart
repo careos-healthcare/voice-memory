@@ -12,7 +12,10 @@ import 'dart:async';
 /// Optional post-save check — stronger, same, or softer than the last repeat.
 class RepeatReturnCheckCard extends StatefulWidget {
   const RepeatReturnCheckCard({
-    required this.entryId, required this.entryCount, required this.surface, super.key,
+    required this.entryId,
+    required this.entryCount,
+    required this.surface,
+    super.key,
     this.store,
     this.skipPrefsLoad = false,
     this.initialRecord,
@@ -20,7 +23,10 @@ class RepeatReturnCheckCard extends StatefulWidget {
   });
 
   const RepeatReturnCheckCard.test({
-    required this.entryId, required this.entryCount, required this.surface, super.key,
+    required this.entryId,
+    required this.entryCount,
+    required this.surface,
+    super.key,
     this.store,
     this.onChanged,
     this.initialRecord,

@@ -37,7 +37,6 @@ abstract class PreferenceStore {
 }
 
 class PostSaveComparisonController extends ChangeNotifier {
-
   PostSaveComparisonController({
     required this._apiClient,
     required this._prefs,
@@ -73,8 +72,8 @@ class PostSaveComparisonController extends ChangeNotifier {
     );
 
     try {
-      final systemPrompt = systemPromptAddendum == null ||
-              systemPromptAddendum.trim().isEmpty
+      final systemPrompt =
+          systemPromptAddendum == null || systemPromptAddendum.trim().isEmpty
           ? plan.systemPrompt
           : '${plan.systemPrompt}\n\n$systemPromptAddendum';
       final rawModelOutput = await _apiClient.evaluatePrompts(

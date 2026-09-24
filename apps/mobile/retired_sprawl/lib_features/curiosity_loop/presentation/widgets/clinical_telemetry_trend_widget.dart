@@ -2,7 +2,6 @@ import 'package:archiveme_mobile/features/curiosity_loop/domain/services/telemet
 import 'package:flutter/material.dart';
 
 class ClinicalTelemetryTrendWidget extends StatelessWidget {
-
   const ClinicalTelemetryTrendWidget({required this.summaries, super.key});
   final List<WeeklyTelemetrySummary> summaries;
 
@@ -122,7 +121,6 @@ class ClinicalTelemetryTrendWidget extends StatelessWidget {
 }
 
 class _MetricStat extends StatelessWidget {
-
   const _MetricStat({
     required this.label,
     required this.value,

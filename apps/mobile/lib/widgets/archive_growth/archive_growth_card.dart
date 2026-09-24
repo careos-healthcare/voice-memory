@@ -10,7 +10,8 @@ import 'package:flutter/material.dart';
 /// Archive Growth Metrics V1 — confidence, evidence count, maturity level.
 class ArchiveGrowthCard extends StatelessWidget {
   const ArchiveGrowthCard({
-    required this.confidence, super.key,
+    required this.confidence,
+    super.key,
     this.compact = false,
     this.showExplanation = true,
   });
@@ -85,7 +86,10 @@ class ArchiveGrowthCard extends StatelessWidget {
 
 class _MetricColumn extends StatelessWidget {
   const _MetricColumn({
-    required this.label, required this.value, required this.compact, super.key,
+    required this.label,
+    required this.value,
+    required this.compact,
+    super.key,
   });
 
   final String label;

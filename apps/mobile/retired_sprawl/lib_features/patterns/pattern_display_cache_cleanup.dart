@@ -44,7 +44,9 @@ abstract class PatternDisplayCacheCleanup {
     }
 
     if (cleared) {
-      AppLogger.debug('ARCHIVEME_PATTERN_CACHE_CLEARED reason=bad_copy_quality_v4');
+      AppLogger.debug(
+        'ARCHIVEME_PATTERN_CACHE_CLEARED reason=bad_copy_quality_v4',
+      );
     }
 
     await prefs.writeBool(_cleanupFlagKey, true);

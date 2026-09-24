@@ -9,7 +9,8 @@ class CuriosityHookPresentation {
     required this.id,
     required this.prompt,
     required this.isMemoryRecallCheck,
-    required this.isLowCognitiveLoad, this.sourceEntryId,
+    required this.isLowCognitiveLoad,
+    this.sourceEntryId,
   });
 
   /// Maps a domain-level [CuriosityHook] to the presentation surface model.
@@ -39,7 +40,8 @@ class CuriosityHookPresentation {
           hook.isMemoryRecallCheck &&
           sourceLexicalDiversity != null &&
           sourceLexicalDiversity <
-              const DefaultCuriosityPromptGenerator().lowLexicalDiversityThreshold;
+              const DefaultCuriosityPromptGenerator()
+                  .lowLexicalDiversityThreshold;
 
       lowLoadActive = hasLowLoadTail || isRestrictedSource;
     }

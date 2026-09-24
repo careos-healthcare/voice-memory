@@ -6,7 +6,9 @@ import 'package:flutter/material.dart';
 /// The emotional endpoint of the first session: confirm tomorrow's check is set.
 class FirstLoopReadyCard extends StatelessWidget {
   const FirstLoopReadyCard({
-    required this.question, required this.onDone, super.key,
+    required this.question,
+    required this.onDone,
+    super.key,
     this.onRecordAnother,
   });
 

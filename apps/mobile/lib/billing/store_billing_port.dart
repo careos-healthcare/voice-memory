@@ -1,4 +1,5 @@
-import 'package:archiveme_mobile/billing/billing_service.dart' show BillingService;
+import 'package:archiveme_mobile/billing/billing_service.dart'
+    show BillingService;
 
 import 'package:archiveme_mobile/models/entitlement.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';

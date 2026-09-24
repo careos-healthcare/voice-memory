@@ -29,7 +29,8 @@ class PrefsTrialCompletionStore implements TrialCompletionStore {
   static const key = 'has_completed_trial';
 
   @override
-  Future<bool> hasCompletedTrial() async => (await prefs.readBool(key)) ?? false;
+  Future<bool> hasCompletedTrial() async =>
+      (await prefs.readBool(key)) ?? false;
 
   @override
   Future<void> markTrialCompleted() => prefs.writeBool(key, true);

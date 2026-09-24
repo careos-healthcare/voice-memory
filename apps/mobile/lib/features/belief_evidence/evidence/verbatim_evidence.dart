@@ -150,7 +150,8 @@ abstract final class VerbatimEvidenceVerifier {
     return verify(
       entryId: line.entryId,
       candidate: line.quote,
-      sourceText: sourceText ?? TranscriptEvidenceIndex.transcriptFor(line.entryId),
+      sourceText:
+          sourceText ?? TranscriptEvidenceIndex.transcriptFor(line.entryId),
       recordedAt: line.recordedAt,
       label: line.label,
     );

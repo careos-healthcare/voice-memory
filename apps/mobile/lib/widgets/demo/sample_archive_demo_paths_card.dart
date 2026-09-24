@@ -8,7 +8,9 @@ import 'package:flutter/material.dart';
 /// Quick demo path rows — Sample Archive only, example data never persisted.
 class SampleArchiveDemoPathsCard extends StatelessWidget {
   const SampleArchiveDemoPathsCard({
-    required this.scrollController, required this.evidenceMapKey, super.key,
+    required this.scrollController,
+    required this.evidenceMapKey,
+    super.key,
   });
 
   final ScrollController scrollController;

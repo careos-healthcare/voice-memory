@@ -45,15 +45,39 @@ class XRayPanel extends StatelessWidget {
         ),
         const SizedBox(height: AppSpacing.lg),
         _sectionTitle(context, 'Final scores'),
-        _metricRow(context, 'Confidence', '${inspection.finalConfidencePercent}%'),
+        _metricRow(
+          context,
+          'Confidence',
+          '${inspection.finalConfidencePercent}%',
+        ),
         _metricRow(context, 'Rank score', '${inspection.finalRankScore}'),
         const SizedBox(height: AppSpacing.lg),
         _sectionTitle(context, 'Confidence breakdown'),
         _scoreLine(context, 'Volume', confidence.volumePoints, positive: true),
-        _scoreLine(context, 'Consistency', confidence.consistencyPoints, positive: true),
-        _scoreLine(context, 'Recency', confidence.recencyPoints, positive: true),
-        _scoreLine(context, 'Contradiction penalty', confidence.contradictionPenalty, positive: false),
-        _scoreLine(context, 'Counter-evidence penalty', confidence.counterPenalty, positive: false),
+        _scoreLine(
+          context,
+          'Consistency',
+          confidence.consistencyPoints,
+          positive: true,
+        ),
+        _scoreLine(
+          context,
+          'Recency',
+          confidence.recencyPoints,
+          positive: true,
+        ),
+        _scoreLine(
+          context,
+          'Contradiction penalty',
+          confidence.contradictionPenalty,
+          positive: false,
+        ),
+        _scoreLine(
+          context,
+          'Counter-evidence penalty',
+          confidence.counterPenalty,
+          positive: false,
+        ),
         if (confidence.lowEvidenceMultiplierApplied)
           _modifierChip(context, '×0.6 low evidence (<3 mentions)'),
         if (confidence.staleMultiplierApplied)
@@ -66,11 +90,31 @@ class XRayPanel extends StatelessWidget {
         const SizedBox(height: AppSpacing.lg),
         _sectionTitle(context, 'Rank breakdown'),
         _scoreLine(context, 'Volume', rank.volumePoints, positive: true),
-        _scoreLine(context, 'Consistency', rank.consistencyPoints, positive: true),
+        _scoreLine(
+          context,
+          'Consistency',
+          rank.consistencyPoints,
+          positive: true,
+        ),
         _scoreLine(context, 'Recency', rank.recencyPoints, positive: true),
-        _scoreLine(context, 'Contradiction relevance', rank.contradictionPoints, positive: true),
-        _scoreLine(context, 'Surprise signal', rank.surprisePoints, positive: true),
-        _scoreLine(context, 'Counter quality', rank.counterQualityPoints, positive: true),
+        _scoreLine(
+          context,
+          'Contradiction relevance',
+          rank.contradictionPoints,
+          positive: true,
+        ),
+        _scoreLine(
+          context,
+          'Surprise signal',
+          rank.surprisePoints,
+          positive: true,
+        ),
+        _scoreLine(
+          context,
+          'Counter quality',
+          rank.counterQualityPoints,
+          positive: true,
+        ),
         const SizedBox(height: AppSpacing.lg),
         _sectionTitle(context, 'Retrieved context'),
         if (inspection.retrievedChunks.isEmpty)
@@ -79,7 +123,9 @@ class XRayPanel extends StatelessWidget {
             style: ArchiveMobileTypography.responsiveHelper(context),
           )
         else
-          ...inspection.retrievedChunks.map((chunk) => _chunkTile(context, chunk)),
+          ...inspection.retrievedChunks.map(
+            (chunk) => _chunkTile(context, chunk),
+          ),
       ],
     );
   }
@@ -97,11 +143,16 @@ class XRayPanel extends StatelessWidget {
       child: Row(
         children: [
           Expanded(
-            child: Text(label, style: ArchiveMobileTypography.explanationBody(context)),
+            child: Text(
+              label,
+              style: ArchiveMobileTypography.explanationBody(context),
+            ),
           ),
           Text(
             value,
-            style: ArchiveMobileTypography.listTitle(context).copyWith(fontSize: 15),
+            style: ArchiveMobileTypography.listTitle(
+              context,
+            ).copyWith(fontSize: 15),
           ),
         ],
       ),
@@ -121,7 +172,10 @@ class XRayPanel extends StatelessWidget {
       child: Row(
         children: [
           Expanded(
-            child: Text(label, style: ArchiveMobileTypography.explanationBody(context)),
+            child: Text(
+              label,
+              style: ArchiveMobileTypography.explanationBody(context),
+            ),
           ),
           Text(
             '$prefix$points',
@@ -175,7 +229,10 @@ class XRayPanel extends StatelessWidget {
             children: [
               _roleChip(context, chunk.role),
               const Spacer(),
-              Text(dateLabel, style: ArchiveMobileTypography.responsiveHelper(context)),
+              Text(
+                dateLabel,
+                style: ArchiveMobileTypography.responsiveHelper(context),
+              ),
             ],
           ),
           const SizedBox(height: 6),
@@ -191,7 +248,11 @@ class XRayPanel extends StatelessWidget {
             runSpacing: 4,
             children: [
               if (chunk.keywordOverlap != null)
-                _statChip(context, 'Keyword overlap', '${chunk.keywordOverlap}'),
+                _statChip(
+                  context,
+                  'Keyword overlap',
+                  '${chunk.keywordOverlap}',
+                ),
               if (chunk.vectorSimilarity != null)
                 _statChip(
                   context,

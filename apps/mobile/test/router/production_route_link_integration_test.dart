@@ -46,7 +46,8 @@ GoRouter buildProductionRouterHarness({GlobalKey<NavigatorState>? rootKey}) {
         builder: (context, state, navigationShell) => MainShell(
           navigationShell: navigationShell,
           primaryNavigationController: primaryNavigationController,
-          recordNavigationActivityController: recordNavigationActivityController,
+          recordNavigationActivityController:
+              recordNavigationActivityController,
         ),
         branches: [
           StatefulShellBranch(

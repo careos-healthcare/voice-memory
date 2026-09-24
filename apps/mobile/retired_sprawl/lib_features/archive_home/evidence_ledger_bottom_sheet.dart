@@ -70,7 +70,8 @@ class _EvidenceLedgerBottomSheetState extends State<EvidenceLedgerBottomSheet> {
   Future<void> _loadItems() async {
     setState(() => _loading = true);
     try {
-      final entries = widget.entries ??
+      final entries =
+          widget.entries ??
           await (widget.journalStore ?? AppServices.instance.journalStore)
               .loadAll();
       final items = await EvidenceLedgerInspectBuilder.buildFromEntries(
@@ -135,7 +136,9 @@ class _EvidenceLedgerBottomSheetState extends State<EvidenceLedgerBottomSheet> {
             const SizedBox(height: AppSpacing.md),
             Text(
               EvidenceLedgerCopy.sheetTitle,
-              style: VoiceMemoryTypography.cardTitleStyle().copyWith(fontSize: 18),
+              style: VoiceMemoryTypography.cardTitleStyle().copyWith(
+                fontSize: 18,
+              ),
             ),
             const SizedBox(height: AppSpacing.xs),
             Text(
@@ -198,7 +201,8 @@ class _EvidenceLedgerBottomSheetState extends State<EvidenceLedgerBottomSheet> {
                 child: ListView.separated(
                   shrinkWrap: true,
                   itemCount: visibleItems.length,
-                  separatorBuilder: (_, _) => const SizedBox(height: AppSpacing.sm),
+                  separatorBuilder: (_, _) =>
+                      const SizedBox(height: AppSpacing.sm),
                   itemBuilder: (context, index) {
                     final item = visibleItems[index];
                     return _InspectRow(item: item);
@@ -230,7 +234,9 @@ class _EmptyState extends StatelessWidget {
         children: [
           Text(
             EvidenceLedgerCopy.emptyTitle,
-            style: VoiceMemoryTypography.cardTitleStyle().copyWith(fontSize: 16),
+            style: VoiceMemoryTypography.cardTitleStyle().copyWith(
+              fontSize: 16,
+            ),
           ),
           const SizedBox(height: AppSpacing.xs),
           Text(
@@ -277,7 +283,10 @@ class _InspectRow extends StatelessWidget {
                   ),
                 ),
               ),
-              PatternMatchConfidenceBadge(band: item.confidenceBand, compact: true),
+              PatternMatchConfidenceBadge(
+                band: item.confidenceBand,
+                compact: true,
+              ),
             ],
           ),
           const SizedBox(height: AppSpacing.xs),

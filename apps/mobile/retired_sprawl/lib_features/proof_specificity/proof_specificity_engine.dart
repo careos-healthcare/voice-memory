@@ -78,7 +78,8 @@ abstract final class ProofSpecificityEngine {
     required bool isPostSaveDegradedState,
     required bool whatChangedQuestionActive,
     required bool patternReviewInboxHasActiveItems,
-    required bool firstProofPayoffVisible, bool allowDuringFirstProofPayoff = false,
+    required bool firstProofPayoffVisible,
+    bool allowDuringFirstProofPayoff = false,
   }) {
     if (!result.shouldShow) return false;
     if (isZeroEntryState) return false;

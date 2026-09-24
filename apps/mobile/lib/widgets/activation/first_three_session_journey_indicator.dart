@@ -6,7 +6,8 @@ import 'package:flutter/material.dart';
 /// Compact three-step journey indicator — not gamified, just the product path.
 class FirstThreeSessionJourneyIndicator extends StatelessWidget {
   const FirstThreeSessionJourneyIndicator({
-    required this.activeStepIndex, super.key,
+    required this.activeStepIndex,
+    super.key,
     this.compact = false,
   });
 

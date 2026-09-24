@@ -100,8 +100,15 @@ void main() {
       tester,
     ) async {
       const transcript = 'I said yes again before checking my calendar.';
-      final proof = _admittedProof(entryId: 'proof-entry', transcript: transcript);
-      final entry = _entry(id: 'proof-entry', transcript: transcript, proof: proof);
+      final proof = _admittedProof(
+        entryId: 'proof-entry',
+        transcript: transcript,
+      );
+      final entry = _entry(
+        id: 'proof-entry',
+        transcript: transcript,
+        proof: proof,
+      );
 
       await tester.pumpWidget(
         MaterialApp(

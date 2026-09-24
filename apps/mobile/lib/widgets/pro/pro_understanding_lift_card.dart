@@ -11,12 +11,16 @@ import 'package:flutter/material.dart';
 
 class ProUnderstandingLiftCard extends StatefulWidget {
   const ProUnderstandingLiftCard({
-    required this.result, required this.onSeePro, super.key,
+    required this.result,
+    required this.onSeePro,
+    super.key,
     this.compact = false,
   });
 
   const ProUnderstandingLiftCard.test({
-    required this.result, required this.onSeePro, super.key,
+    required this.result,
+    required this.onSeePro,
+    super.key,
     this.compact = false,
   });
 

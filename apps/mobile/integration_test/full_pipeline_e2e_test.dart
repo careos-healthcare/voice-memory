@@ -235,8 +235,8 @@ class _PipelineHarnessState extends State<_PipelineHarness> {
       ),
       _PipelinePhase.home || _PipelinePhase.saved => _home(),
       _PipelinePhase.chat ||
-          _PipelinePhase.searched ||
-          _PipelinePhase.synced => _chat(),
+      _PipelinePhase.searched ||
+      _PipelinePhase.synced => _chat(),
     };
   }
 
@@ -399,7 +399,11 @@ class _SqliteInt8ChunkStore implements TranscriptChunkStore {
       ..add(chunk);
     final quantized = quantizeSymmetric(Float32List.fromList(chunk.embedding));
     final blob = Uint8List(quantized.codes.length);
-    blob.buffer.asInt8List().setRange(0, quantized.codes.length, quantized.codes);
+    blob.buffer.asInt8List().setRange(
+      0,
+      quantized.codes.length,
+      quantized.codes,
+    );
     await _database.rawInsert(
       '''
       INSERT OR REPLACE INTO pipeline_entries (id, transcript, embedding, alpha)

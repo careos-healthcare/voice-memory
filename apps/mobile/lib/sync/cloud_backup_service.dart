@@ -226,16 +226,15 @@ class EncryptedCloudBackupService {
 
   static CloudBackupImportFailure _mapImportFailure(String code) {
     return switch (code) {
-      'WRONG_PASSPHRASE' || 'PASSPHRASE_TOO_SHORT' =>
-        CloudBackupImportFailure.wrongPassphrase,
+      'WRONG_PASSPHRASE' ||
+      'PASSPHRASE_TOO_SHORT' => CloudBackupImportFailure.wrongPassphrase,
       'INTEGRITY_CHECK_FAILED' => CloudBackupImportFailure.integrityFailed,
       'INVALID_ENVELOPE' ||
       'INVALID_SNAPSHOT_PAYLOAD' ||
       'INVALID_ENCRYPTED_PAYLOAD' ||
       'UNSUPPORTED_KDF' ||
       'UNSUPPORTED_KDF_ITERATIONS' ||
-      'INVALID_BACKUP_SALT' =>
-        CloudBackupImportFailure.invalidEnvelope,
+      'INVALID_BACKUP_SALT' => CloudBackupImportFailure.invalidEnvelope,
       _ => CloudBackupImportFailure.restoreFailed,
     };
   }

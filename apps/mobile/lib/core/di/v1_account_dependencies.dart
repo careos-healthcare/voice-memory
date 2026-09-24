@@ -42,8 +42,9 @@ class V1AccountDependencies {
       accountRepository: services.accountRepository,
       auth: services.auth,
       billing: services.billing,
-      liveVoiceCapture:
-          V1CapabilityRegistry.liveVoice ? services.liveVoiceCapture : null,
+      liveVoiceCapture: V1CapabilityRegistry.liveVoice
+          ? services.liveVoiceCapture
+          : null,
       offlineTts: null,
     );
   }

@@ -17,7 +17,8 @@ import 'dart:async';
 /// Compact first-week path card for Archive Home — local metadata only.
 class FirstWeekPathCard extends StatefulWidget {
   const FirstWeekPathCard({
-    required this.entries, super.key,
+    required this.entries,
+    super.key,
     this.onPrimaryAction,
     this.watchlistStore,
     this.engine = const FirstWeekPathEngine(),
@@ -27,7 +28,9 @@ class FirstWeekPathCard extends StatefulWidget {
   });
 
   const FirstWeekPathCard.test({
-    required this.entries, required FirstWeekPathResult this._initialResult, super.key,
+    required this.entries,
+    required FirstWeekPathResult this._initialResult,
+    super.key,
     this.onPrimaryAction,
     this.watchlistStore,
     this.engine = const FirstWeekPathEngine(),

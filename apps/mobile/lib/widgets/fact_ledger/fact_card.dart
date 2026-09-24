@@ -15,7 +15,9 @@ import 'dart:async';
 /// One saved detail in the Details list.
 class FactCard extends StatelessWidget {
   const FactCard({
-    required this.fact, required this.store, super.key,
+    required this.fact,
+    required this.store,
+    super.key,
     this.sourceEntry,
     this.packLabel,
     this.threadLabel,

@@ -40,7 +40,9 @@ void main() {
     );
 
     expect(
-      await analyzer.isPurposeGranted(RemoteProcessingPurpose.remoteTranscription),
+      await analyzer.isPurposeGranted(
+        RemoteProcessingPurpose.remoteTranscription,
+      ),
       isFalse,
     );
     expect(

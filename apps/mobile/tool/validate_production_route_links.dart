@@ -31,7 +31,9 @@ String _findMobileRoot() {
     if (File('${dir.path}/pubspec.yaml').existsSync()) return dir.path;
     final parent = dir.parent;
     if (parent.path == dir.path) {
-      throw StateError('Could not find pubspec.yaml from ${Directory.current.path}');
+      throw StateError(
+        'Could not find pubspec.yaml from ${Directory.current.path}',
+      );
     }
     dir = parent;
   }

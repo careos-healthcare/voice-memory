@@ -64,23 +64,24 @@ class SyncOutboxStore {
     final nowMillis = now.millisecondsSinceEpoch;
     final payloadJson = jsonEncode(blob.toJson());
 
-    final existing = await (_db.select(_db.syncOutboxEntries)
-          ..where(
-            (row) =>
-                row.blobId.equals(blob.id) &
-                row.blobType.equals(blob.type) &
-                row.status.isIn([
-                  SyncOutboxStatus.pending.storageValue,
-                  SyncOutboxStatus.inFlight.storageValue,
-                ]),
-          )
-          ..limit(1))
-        .getSingleOrNull();
+    final existing =
+        await (_db.select(_db.syncOutboxEntries)
+              ..where(
+                (row) =>
+                    row.blobId.equals(blob.id) &
+                    row.blobType.equals(blob.type) &
+                    row.status.isIn([
+                      SyncOutboxStatus.pending.storageValue,
+                      SyncOutboxStatus.inFlight.storageValue,
+                    ]),
+              )
+              ..limit(1))
+            .getSingleOrNull();
 
     if (existing != null) {
-      await (_db.update(_db.syncOutboxEntries)
-            ..where((row) => row.outboxId.equals(existing.outboxId)))
-          .write(
+      await (_db.update(
+        _db.syncOutboxEntries,
+      )..where((row) => row.outboxId.equals(existing.outboxId))).write(
         SyncOutboxEntriesCompanion(
           payloadJson: Value(payloadJson),
           status: Value(SyncOutboxStatus.pending.storageValue),
@@ -93,33 +94,36 @@ class SyncOutboxStore {
     }
 
     final outboxId = generateUlid();
-    await _db.into(_db.syncOutboxEntries).insert(
-      SyncOutboxEntriesCompanion.insert(
-        outboxId: outboxId,
-        blobId: blob.id,
-        blobType: blob.type,
-        payloadJson: payloadJson,
-        status: SyncOutboxStatus.pending.storageValue,
-        attemptCount: 0,
-        createdAt: nowMillis,
-        updatedAt: nowMillis,
-      ),
-    );
+    await _db
+        .into(_db.syncOutboxEntries)
+        .insert(
+          SyncOutboxEntriesCompanion.insert(
+            outboxId: outboxId,
+            blobId: blob.id,
+            blobType: blob.type,
+            payloadJson: payloadJson,
+            status: SyncOutboxStatus.pending.storageValue,
+            attemptCount: 0,
+            createdAt: nowMillis,
+            updatedAt: nowMillis,
+          ),
+        );
     return outboxId;
   }
 
   Future<List<SyncOutboxEntry>> pending({int limit = 32}) async {
     final nowMillis = DateTime.now().toUtc().millisecondsSinceEpoch;
-    final rows = await (_db.select(_db.syncOutboxEntries)
-          ..where(
-            (row) =>
-                row.status.equals(SyncOutboxStatus.pending.storageValue) &
-                (row.nextRetryAt.isNull() |
-                    row.nextRetryAt.isSmallerOrEqualValue(nowMillis)),
-          )
-          ..orderBy([(row) => OrderingTerm.asc(row.createdAt)])
-          ..limit(limit))
-        .get();
+    final rows =
+        await (_db.select(_db.syncOutboxEntries)
+              ..where(
+                (row) =>
+                    row.status.equals(SyncOutboxStatus.pending.storageValue) &
+                    (row.nextRetryAt.isNull() |
+                        row.nextRetryAt.isSmallerOrEqualValue(nowMillis)),
+              )
+              ..orderBy([(row) => OrderingTerm.asc(row.createdAt)])
+              ..limit(limit))
+            .get();
     return rows.map(_mapRow).toList(growable: false);
   }
 
@@ -162,14 +166,14 @@ class SyncOutboxStore {
 
   Future<void> markInFlight(String outboxId) async {
     final nowMillis = DateTime.now().toUtc().millisecondsSinceEpoch;
-    final row = await (_db.select(_db.syncOutboxEntries)
-          ..where((entry) => entry.outboxId.equals(outboxId)))
-        .getSingleOrNull();
+    final row = await (_db.select(
+      _db.syncOutboxEntries,
+    )..where((entry) => entry.outboxId.equals(outboxId))).getSingleOrNull();
     if (row == null) return;
 
-    await (_db.update(_db.syncOutboxEntries)
-          ..where((entry) => entry.outboxId.equals(outboxId)))
-        .write(
+    await (_db.update(
+      _db.syncOutboxEntries,
+    )..where((entry) => entry.outboxId.equals(outboxId))).write(
       SyncOutboxEntriesCompanion(
         status: Value(SyncOutboxStatus.inFlight.storageValue),
         updatedAt: Value(nowMillis),
@@ -180,9 +184,9 @@ class SyncOutboxStore {
 
   Future<void> markSent(String outboxId) async {
     final nowMillis = DateTime.now().toUtc().millisecondsSinceEpoch;
-    await (_db.update(_db.syncOutboxEntries)
-          ..where((row) => row.outboxId.equals(outboxId)))
-        .write(
+    await (_db.update(
+      _db.syncOutboxEntries,
+    )..where((row) => row.outboxId.equals(outboxId))).write(
       SyncOutboxEntriesCompanion(
         status: Value(SyncOutboxStatus.sent.storageValue),
         updatedAt: Value(nowMillis),
@@ -194,16 +198,16 @@ class SyncOutboxStore {
 
   Future<void> markFailed(String outboxId, String error) async {
     final nowMillis = DateTime.now().toUtc().millisecondsSinceEpoch;
-    final row = await (_db.select(_db.syncOutboxEntries)
-          ..where((entry) => entry.outboxId.equals(outboxId)))
-        .getSingleOrNull();
+    final row = await (_db.select(
+      _db.syncOutboxEntries,
+    )..where((entry) => entry.outboxId.equals(outboxId))).getSingleOrNull();
     if (row == null) return;
 
     final attemptCount = row.attemptCount;
     if (!_backoff.hasAttemptsRemaining(attemptCount)) {
-      await (_db.update(_db.syncOutboxEntries)
-            ..where((entry) => entry.outboxId.equals(outboxId)))
-          .write(
+      await (_db.update(
+        _db.syncOutboxEntries,
+      )..where((entry) => entry.outboxId.equals(outboxId))).write(
         SyncOutboxEntriesCompanion(
           status: Value(SyncOutboxStatus.failed.storageValue),
           updatedAt: Value(nowMillis),
@@ -214,10 +218,12 @@ class SyncOutboxStore {
       return;
     }
 
-    final retryAt = _backoff.scheduleAfterAttempt(attemptCount).millisecondsSinceEpoch;
-    await (_db.update(_db.syncOutboxEntries)
-          ..where((entry) => entry.outboxId.equals(outboxId)))
-        .write(
+    final retryAt = _backoff
+        .scheduleAfterAttempt(attemptCount)
+        .millisecondsSinceEpoch;
+    await (_db.update(
+      _db.syncOutboxEntries,
+    )..where((entry) => entry.outboxId.equals(outboxId))).write(
       SyncOutboxEntriesCompanion(
         status: Value(SyncOutboxStatus.pending.storageValue),
         updatedAt: Value(nowMillis),
@@ -252,8 +258,14 @@ class SyncOutboxStore {
       blob: SyncBlobPushDto.fromJson(payload),
       status: SyncOutboxStatus.parse(row.status),
       attemptCount: row.attemptCount,
-      createdAt: DateTime.fromMillisecondsSinceEpoch(row.createdAt, isUtc: true),
-      updatedAt: DateTime.fromMillisecondsSinceEpoch(row.updatedAt, isUtc: true),
+      createdAt: DateTime.fromMillisecondsSinceEpoch(
+        row.createdAt,
+        isUtc: true,
+      ),
+      updatedAt: DateTime.fromMillisecondsSinceEpoch(
+        row.updatedAt,
+        isUtc: true,
+      ),
       lastError: row.lastError,
       nextRetryAt: row.nextRetryAt == null
           ? null

@@ -31,9 +31,10 @@ class OnnxWhisperTranscription {
     final runtime = OnnxRuntime();
     final session = await runtime.createSessionFromAsset(assetPath);
 
-    final inputName = session.inputNames.contains(
-      WhisperModelContract.inputFeaturesName,
-    )
+    final inputName =
+        session.inputNames.contains(
+          WhisperModelContract.inputFeaturesName,
+        )
         ? WhisperModelContract.inputFeaturesName
         : session.inputNames.contains(WhisperModelContract.melInputName)
         ? WhisperModelContract.melInputName
@@ -50,9 +51,10 @@ class OnnxWhisperTranscription {
       outputName = WhisperModelContract.tokenIdsOutputName;
       kind = _WhisperOutputKind.tokenIds;
     } else {
-      outputName = session.outputNames.contains(
-        WhisperModelContract.logitsOutputName,
-      )
+      outputName =
+          session.outputNames.contains(
+            WhisperModelContract.logitsOutputName,
+          )
           ? WhisperModelContract.logitsOutputName
           : session.outputNames.first;
       kind = _WhisperOutputKind.logits;

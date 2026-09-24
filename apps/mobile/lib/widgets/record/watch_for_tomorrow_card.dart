@@ -14,7 +14,8 @@ import 'package:flutter/material.dart';
 /// Post-save card suggesting one specific watch-for for tomorrow.
 class WatchForTomorrowCard extends StatefulWidget {
   const WatchForTomorrowCard({
-    required this.suggestion, super.key,
+    required this.suggestion,
+    super.key,
     this.onChooseAnother,
     this.onAccept,
   });
@@ -127,7 +128,9 @@ class _WatchForTomorrowCardState extends State<WatchForTomorrowCard> {
                   (c) => Chip(
                     label: Text(c),
                     backgroundColor: AppColors.backgroundSecondary,
-                    side: const BorderSide(color: WatchForTomorrowCard._warmBorder),
+                    side: const BorderSide(
+                      color: WatchForTomorrowCard._warmBorder,
+                    ),
                     labelStyle: VoiceMemoryTypography.bodyStyle(
                       color: AppColors.textSecondary,
                     ).copyWith(fontSize: 13),

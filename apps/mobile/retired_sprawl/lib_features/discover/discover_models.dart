@@ -42,7 +42,8 @@ class DiscoverBeliefCard {
     required this.statement,
     required this.confidencePercent,
     required this.evidenceCount,
-    required this.supportingEntries, this.firstObserved,
+    required this.supportingEntries,
+    this.firstObserved,
     this.lastReinforced,
   });
 
@@ -208,7 +209,8 @@ class DiscoverYourselfSnapshot {
     required this.mode,
     required this.generatedAt,
     required this.header,
-    required this.askPrompts, this.belief,
+    required this.askPrompts,
+    this.belief,
     this.beliefChanges = const [],
     this.themes = const [],
     this.contradictions = const [],

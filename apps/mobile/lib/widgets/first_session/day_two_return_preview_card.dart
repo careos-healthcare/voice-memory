@@ -12,7 +12,8 @@ import 'package:flutter/material.dart';
 /// happened or the archive holds 3+ entries.
 class DayTwoReturnPreviewCard extends StatelessWidget {
   const DayTwoReturnPreviewCard({
-    required this.preview, super.key,
+    required this.preview,
+    super.key,
     this.entryCount,
   });
 

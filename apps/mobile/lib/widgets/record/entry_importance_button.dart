@@ -11,7 +11,10 @@ import 'package:flutter/material.dart';
 /// Toggle for marking one saved moment as important.
 class EntryImportanceButton extends StatefulWidget {
   const EntryImportanceButton({
-    required this.entryId, required this.source, required this.entryCount, super.key,
+    required this.entryId,
+    required this.source,
+    required this.entryCount,
+    super.key,
     this.onChanged,
     this.compact = false,
   });

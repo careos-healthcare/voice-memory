@@ -9,12 +9,16 @@ import 'package:flutter/material.dart';
 /// Explains why a proof moment is showing — generic safe copy only.
 class BetaProofLiftCard extends StatefulWidget {
   const BetaProofLiftCard({
-    required this.result, required this.source, super.key,
+    required this.result,
+    required this.source,
+    super.key,
     this.surface = 'record',
   });
 
   const BetaProofLiftCard.test({
-    required this.result, required this.source, super.key,
+    required this.result,
+    required this.source,
+    super.key,
     this.surface = 'record',
   });
 

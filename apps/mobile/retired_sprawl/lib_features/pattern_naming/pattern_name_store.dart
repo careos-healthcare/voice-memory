@@ -86,7 +86,8 @@ abstract final class PatternNameStore {
     final raw = await AppServices.instance.prefs.readMap(_prefsKey);
     if (raw != null) {
       applyLoaded(
-        confirmed: (raw['confirmed'] as List<dynamic>? ?? []).whereType<String>(),
+        confirmed: (raw['confirmed'] as List<dynamic>? ?? [])
+            .whereType<String>(),
       );
     }
     _customNames

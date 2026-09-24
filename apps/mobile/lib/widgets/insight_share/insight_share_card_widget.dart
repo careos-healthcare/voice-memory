@@ -39,7 +39,9 @@ class InsightShareCardWidget extends StatelessWidget {
               end: Alignment.bottomRight,
               colors: [Color(0xFF09090B), Color(0xFF18181B)],
             ),
-            border: Border.all(color: AppColors.accentPrimary.withValues(alpha: 0.35)),
+            border: Border.all(
+              color: AppColors.accentPrimary.withValues(alpha: 0.35),
+            ),
             boxShadow: VoiceMemoryCards.standard().boxShadow,
           ),
           child: Column(

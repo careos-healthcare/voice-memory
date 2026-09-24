@@ -46,8 +46,7 @@ class CoachRelationshipSyncService {
   Future<UserRelationship> syncFromToken(
     CoachConsentToken token, {
     String? clientDisplayName,
-    CoachClientRelationshipStatus status =
-        CoachClientRelationshipStatus.active,
+    CoachClientRelationshipStatus status = CoachClientRelationshipStatus.active,
   }) async {
     final coach = CoachClientRelationship(
       relationshipId: token.relationshipId,
@@ -112,11 +111,9 @@ class CoachRelationshipSyncService {
     return switch (status) {
       CoachClientRelationshipStatus.active => ConsentStatus.active,
       CoachClientRelationshipStatus.revoked ||
-      CoachClientRelationshipStatus.expired =>
-        ConsentStatus.revoked,
+      CoachClientRelationshipStatus.expired => ConsentStatus.revoked,
       CoachClientRelationshipStatus.invited ||
-      CoachClientRelationshipStatus.consentPending =>
-        ConsentStatus.pending,
+      CoachClientRelationshipStatus.consentPending => ConsentStatus.pending,
     };
   }
 

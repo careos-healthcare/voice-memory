@@ -14,18 +14,18 @@ String userMessageForApiFailure(
 }) {
   return switch (failure) {
     ApiFailureOffline(:final detail) => _nullableMessageOrFallback(
-        detail,
-        ApiErrorCopy.networkUnreachable,
-      ),
+      detail,
+      ApiErrorCopy.networkUnreachable,
+    ),
     ApiFailureBackendNotConfigured() => cloudBackendUnavailableMessage,
     ApiFailureAuthRequired(:final detail) => _nullableMessageOrFallback(
-        detail,
-        ApiErrorCopy.signInRequired,
-      ),
+      detail,
+      ApiErrorCopy.signInRequired,
+    ),
     ApiFailureRateLimited(:final message) => _messageOrFallback(
-        message,
-        ApiErrorCopy.tooManyRequests,
-      ),
+      message,
+      ApiErrorCopy.tooManyRequests,
+    ),
     ApiFailureBillingUnavailable() => SubscriptionCopy.temporarilyUnavailable,
     ApiFailureInvalidResponse(
       :final message,
@@ -61,22 +61,22 @@ String userMessageForApiException(
   return switch (error) {
     BackendNotConfiguredException() => cloudBackendUnavailableMessage,
     AuthRequiredException(:final message) => _messageOrFallback(
-        message,
-        ApiErrorCopy.signInRequired,
-      ),
+      message,
+      ApiErrorCopy.signInRequired,
+    ),
     NetworkOfflineException(:final message) => _messageOrFallback(
-        message,
-        ApiErrorCopy.networkUnreachable,
-      ),
+      message,
+      ApiErrorCopy.networkUnreachable,
+    ),
     BillingUnavailableException() => SubscriptionCopy.temporarilyUnavailable,
     NotImplementedNativeException(:final message) => _messageOrFallback(
-        message,
-        fallback,
-      ),
+      message,
+      fallback,
+    ),
     RateLimitedException(:final message) => _messageOrFallback(
-        message,
-        ApiErrorCopy.tooManyRequests,
-      ),
+      message,
+      ApiErrorCopy.tooManyRequests,
+    ),
     ApiException(:final message, :final statusCode, :final code) =>
       userMessageForGenericApiException(
         message: message,

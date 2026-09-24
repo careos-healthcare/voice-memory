@@ -29,11 +29,11 @@ class ConsentRedemptionDto {
   final bool emailSent;
 
   Map<String, dynamic> toJson() => {
-        'linkToken': linkToken,
-        'manualCode': manualCode,
-        'reference': reference,
-        'emailSent': emailSent,
-      };
+    'linkToken': linkToken,
+    'manualCode': manualCode,
+    'reference': reference,
+    'emailSent': emailSent,
+  };
 }
 
 /// Wire response for `POST /api/coach/consent/issue`.

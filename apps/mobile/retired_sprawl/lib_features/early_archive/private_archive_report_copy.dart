@@ -8,7 +8,8 @@ abstract final class PrivateArchiveReportCopy {
 
   static const String intro = PrivateReportCopy.subtitle;
 
-  static const String whatRepeatedHeading = PrivateReportCopy.whatRepeatedHeading;
+  static const String whatRepeatedHeading =
+      PrivateReportCopy.whatRepeatedHeading;
 
   static const String whatChangedHeading = PrivateReportCopy.whatChangedHeading;
 
@@ -19,7 +20,8 @@ abstract final class PrivateArchiveReportCopy {
 
   static const String evidenceHeading = PrivateReportCopy.evidenceHeading;
 
-  static const String missingEvidenceFallback = PrivateReportCopy.notEnoughEvidence;
+  static const String missingEvidenceFallback =
+      PrivateReportCopy.notEnoughEvidence;
 
   static const String previewTitle = PrivateReportCopy.previewTitle;
 
@@ -30,9 +32,11 @@ abstract final class PrivateArchiveReportCopy {
   static List<String> get exportIncludedItems =>
       PrivateReportCopy.includedItems;
 
-  static const String exportNotIncludedHeading = PrivateReportCopy.notIncludedHeading;
+  static const String exportNotIncludedHeading =
+      PrivateReportCopy.notIncludedHeading;
 
-  static const List<String> exportNotIncludedItems = PrivateReportCopy.notIncludedItems;
+  static const List<String> exportNotIncludedItems =
+      PrivateReportCopy.notIncludedItems;
 
   static const String previewProCta = PrivateReportCopy.previewProCta;
 

@@ -30,7 +30,10 @@ void main() {
       baseUrl: 'http://test.invalid',
     );
     addTearDown(transport.dispose);
-    return (client: HttpCaregiverConsentApiClient(transport), requests: requests);
+    return (
+      client: HttpCaregiverConsentApiClient(transport),
+      requests: requests,
+    );
   }
 
   http.Response issued({bool emailSent = false}) => http.Response(
@@ -95,7 +98,10 @@ void main() {
       'caregiverEmail': 'sam@example.com',
     });
     expect(
-      (result as ApiSuccess<MonitoringConsentToken>).value.redemption?.emailSent,
+      (result as ApiSuccess<MonitoringConsentToken>)
+          .value
+          .redemption
+          ?.emailSent,
       isTrue,
     );
   });

@@ -28,7 +28,8 @@ class InteractiveVaultDemoScreen extends StatefulWidget {
       _InteractiveVaultDemoScreenState();
 }
 
-class _InteractiveVaultDemoScreenState extends State<InteractiveVaultDemoScreen> {
+class _InteractiveVaultDemoScreenState
+    extends State<InteractiveVaultDemoScreen> {
   late final SampleMemoryVaultService _service =
       widget.service ?? SampleMemoryVaultService();
   List<SampleVaultHit> _hits = const [];

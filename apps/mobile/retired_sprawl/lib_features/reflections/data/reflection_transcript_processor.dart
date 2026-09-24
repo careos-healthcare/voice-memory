@@ -27,10 +27,7 @@ abstract final class ReflectionTranscriptProcessor {
   }
 
   static String _normalize(String transcript) {
-    return transcript
-        .replaceAll(RegExp(r'\s+'), ' ')
-        .trim()
-        .toLowerCase();
+    return transcript.replaceAll(RegExp(r'\s+'), ' ').trim().toLowerCase();
   }
 
   static List<int> _tokenize(String normalized) {
@@ -84,7 +81,9 @@ abstract final class ReflectionTranscriptProcessor {
       final index = lower.indexOf(marker);
       if (index < 0) continue;
       final start = index / transcript.length;
-      final end = min(transcript.length, index + marker.length + 48) / transcript.length;
+      final end =
+          min(transcript.length, index + marker.length + 48) /
+          transcript.length;
       return (start: start, end: end.clamp(0.0, 1.0));
     }
     return null;
@@ -106,7 +105,9 @@ abstract final class ReflectionTranscriptProcessor {
       final index = lower.indexOf(marker);
       if (index < 0) continue;
       final start = index / transcript.length;
-      final end = min(transcript.length, index + marker.length + 64) / transcript.length;
+      final end =
+          min(transcript.length, index + marker.length + 64) /
+          transcript.length;
       return (start: start, end: end.clamp(0.0, 1.0));
     }
     return null;

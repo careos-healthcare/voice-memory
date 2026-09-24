@@ -9,11 +9,19 @@ import 'package:flutter/material.dart';
 
 class FirstSessionLiftCard extends StatefulWidget {
   const FirstSessionLiftCard({
-    required this.result, required this.onTypeOneSentence, required this.onUseVoiceInstead, required this.onChipSelected, super.key,
+    required this.result,
+    required this.onTypeOneSentence,
+    required this.onUseVoiceInstead,
+    required this.onChipSelected,
+    super.key,
   });
 
   const FirstSessionLiftCard.test({
-    required this.result, required this.onTypeOneSentence, required this.onUseVoiceInstead, required this.onChipSelected, super.key,
+    required this.result,
+    required this.onTypeOneSentence,
+    required this.onUseVoiceInstead,
+    required this.onChipSelected,
+    super.key,
   });
 
   final FirstSessionLiftResult result;

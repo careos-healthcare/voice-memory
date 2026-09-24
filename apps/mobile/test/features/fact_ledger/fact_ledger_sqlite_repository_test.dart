@@ -73,18 +73,21 @@ void main() {
       final prefs = await MobilePrefsStore.open('${tempDir.path}/prefs.json');
       final now = DateTime.utc(2026, 2).toIso8601String();
 
-      await prefs.updateMap('archiveFacts', (_) => {
-        'fact_1': {
-          'id': 'fact_1',
-          'sourceEntryId': 'entry_1',
-          'label': 'Label',
-          'value': 'Value',
-          'note': '',
-          'createdAt': now,
-          'updatedAt': now,
-          'factType': FactType.projectDetail.id,
+      await prefs.updateMap(
+        'archiveFacts',
+        (_) => {
+          'fact_1': {
+            'id': 'fact_1',
+            'sourceEntryId': 'entry_1',
+            'label': 'Label',
+            'value': 'Value',
+            'note': '',
+            'createdAt': now,
+            'updatedAt': now,
+            'factType': FactType.projectDetail.id,
+          },
         },
-      });
+      );
 
       await repository.ensureBackfilledFromPrefs(prefs);
 

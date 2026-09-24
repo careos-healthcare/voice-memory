@@ -36,49 +36,56 @@ void main() {
     return jsonDecode(raw) as Map<String, dynamic>;
   }
 
-  test('migrates legacy plaintext correctionNotes into encrypted blob', () async {
-    final prefs = AppServices.instance.prefs;
-    await prefs.writeMap('archive_insight_feedback', {
-      'hidden': <String>[],
-      'feelsRight': <String, int>{},
-      'notQuite': <String, int>{},
-      'correctionNotes': {'beliefUpdate': _fixtureSecret},
-    });
+  test(
+    'migrates legacy plaintext correctionNotes into encrypted blob',
+    () async {
+      final prefs = AppServices.instance.prefs;
+      await prefs.writeMap('archive_insight_feedback', {
+        'hidden': <String>[],
+        'feelsRight': <String, int>{},
+        'notQuite': <String, int>{},
+        'correctionNotes': {'beliefUpdate': _fixtureSecret},
+      });
 
-    await ArchiveInsightFeedbackStore.ensureLoaded();
+      await ArchiveInsightFeedbackStore.ensureLoaded();
 
-    expect(
-      ArchiveInsightFeedbackStore.correctionNote('beliefUpdate'),
-      _fixtureSecret,
-    );
+      expect(
+        ArchiveInsightFeedbackStore.correctionNote('beliefUpdate'),
+        _fixtureSecret,
+      );
 
-    final prefsJson = await _readPrefsJson();
-    final legacy = prefsJson['archive_insight_feedback'] as Map<String, dynamic>;
-    expect(legacy.containsKey('correctionNotes'), isFalse);
+      final prefsJson = await _readPrefsJson();
+      final legacy =
+          prefsJson['archive_insight_feedback'] as Map<String, dynamic>;
+      expect(legacy.containsKey('correctionNotes'), isFalse);
 
-    final encryptedSlot =
-        prefsJson['secure_archive_insight_correction_notes_v1'] as String?;
-    expect(encryptedSlot, isNotNull);
-    expect(encryptedSlot, isNot(contains(_fixtureSecret)));
-  });
+      final encryptedSlot =
+          prefsJson['secure_archive_insight_correction_notes_v1'] as String?;
+      expect(encryptedSlot, isNotNull);
+      expect(encryptedSlot, isNot(contains(_fixtureSecret)));
+    },
+  );
 
-  test('re-running migration is a no-op and does not duplicate content', () async {
-    final prefs = AppServices.instance.prefs;
-    await prefs.writeMap('archive_insight_feedback', {
-      'correctionNotes': {'beliefUpdate': _fixtureSecret},
-    });
+  test(
+    're-running migration is a no-op and does not duplicate content',
+    () async {
+      final prefs = AppServices.instance.prefs;
+      await prefs.writeMap('archive_insight_feedback', {
+        'correctionNotes': {'beliefUpdate': _fixtureSecret},
+      });
 
-    await ArchiveInsightFeedbackStore.ensureLoaded();
-    final firstSlot = (await _readPrefsJson())[
-      'secure_archive_insight_correction_notes_v1'];
+      await ArchiveInsightFeedbackStore.ensureLoaded();
+      final firstSlot =
+          (await _readPrefsJson())['secure_archive_insight_correction_notes_v1'];
 
-    await ArchiveInsightFeedbackStore.ensureLoaded();
-    final secondSlot = (await _readPrefsJson())[
-      'secure_archive_insight_correction_notes_v1'];
+      await ArchiveInsightFeedbackStore.ensureLoaded();
+      final secondSlot =
+          (await _readPrefsJson())['secure_archive_insight_correction_notes_v1'];
 
-    expect(secondSlot, firstSlot);
-    expect(ArchiveInsightFeedbackStore.correctionNoteCount(), 1);
-  });
+      expect(secondSlot, firstSlot);
+      expect(ArchiveInsightFeedbackStore.correctionNoteCount(), 1);
+    },
+  );
 
   test(
     'failure before plaintext deletion preserves recoverable legacy copy',
@@ -112,7 +119,8 @@ void main() {
 
       expect(deleteAttempted, isTrue);
       final prefsJson = await _readPrefsJson();
-      final legacy = prefsJson['archive_insight_feedback'] as Map<String, dynamic>;
+      final legacy =
+          prefsJson['archive_insight_feedback'] as Map<String, dynamic>;
       expect(legacy['correctionNotes'], isA<Map>());
       expect(
         (legacy['correctionNotes'] as Map)['weeklyReview'],
@@ -121,39 +129,44 @@ void main() {
     },
   );
 
-  test('save awaits persistence — no plaintext secret in prefs after flush',
-      () async {
-    expect(
-      await ArchiveInsightFeedbackStore.saveCorrectionNote(
-        'beliefEvidence',
+  test(
+    'save awaits persistence — no plaintext secret in prefs after flush',
+    () async {
+      expect(
+        await ArchiveInsightFeedbackStore.saveCorrectionNote(
+          'beliefEvidence',
+          _fixtureSecret,
+        ),
+        isTrue,
+      );
+      await ArchiveInsightFeedbackStore.flushForTest();
+
+      final prefsRaw = await File(sandbox.prefsPath).readAsString();
+      expect(prefsRaw.contains(_fixtureSecret), isFalse);
+
+      expect(
+        ArchiveInsightFeedbackStore.correctionNote('beliefEvidence'),
         _fixtureSecret,
-      ),
-      isTrue,
-    );
-    await ArchiveInsightFeedbackStore.flushForTest();
+      );
+    },
+  );
 
-    final prefsRaw = await File(sandbox.prefsPath).readAsString();
-    expect(prefsRaw.contains(_fixtureSecret), isFalse);
+  test(
+    'app data directory scan keeps fixture secret out of prefs file',
+    () async {
+      await ArchiveInsightFeedbackStore.saveCorrectionNote(
+        'archive_home_three',
+        _fixtureSecret,
+      );
+      await ArchiveInsightFeedbackStore.flushForTest();
 
-    expect(
-      ArchiveInsightFeedbackStore.correctionNote('beliefEvidence'),
-      _fixtureSecret,
-    );
-  });
+      final prefsRaw = await File(sandbox.prefsPath).readAsString();
+      expect(prefsRaw.contains(_fixtureSecret), isFalse);
 
-  test('app data directory scan keeps fixture secret out of prefs file', () async {
-    await ArchiveInsightFeedbackStore.saveCorrectionNote(
-      'archive_home_three',
-      _fixtureSecret,
-    );
-    await ArchiveInsightFeedbackStore.flushForTest();
-
-    final prefsRaw = await File(sandbox.prefsPath).readAsString();
-    expect(prefsRaw.contains(_fixtureSecret), isFalse);
-
-    final journalRaw = await File(sandbox.journalPath).readAsString();
-    expect(journalRaw.contains(_fixtureSecret), isFalse);
-  });
+      final journalRaw = await File(sandbox.journalPath).readAsString();
+      expect(journalRaw.contains(_fixtureSecret), isFalse);
+    },
+  );
 
   test('export includes correction notes with labels', () async {
     await ArchiveInsightFeedbackStore.saveCorrectionNote(
@@ -202,7 +215,8 @@ void main() {
 }
 
 class _VerifyThenFailStorage extends EncryptedJsonStorage {
-  _VerifyThenFailStorage(this._inner) : super(masterKeyBytes: List.filled(32, 9));
+  _VerifyThenFailStorage(this._inner)
+    : super(masterKeyBytes: List.filled(32, 9));
 
   final EncryptedJsonStorage _inner;
 

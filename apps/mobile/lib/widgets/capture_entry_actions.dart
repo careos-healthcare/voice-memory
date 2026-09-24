@@ -18,7 +18,8 @@ enum CapturePressureMomentPresentation { button, textLink, none }
 
 class CaptureEntryActions extends StatelessWidget {
   const CaptureEntryActions({
-    required this.onRecord, super.key,
+    required this.onRecord,
+    super.key,
     this.onGradient = false,
     this.typeCapturePrompt,
     this.recordButtonLabel,
@@ -81,7 +82,9 @@ class CaptureEntryActions extends StatelessWidget {
     }
     ScaffoldMessenger.of(
       context,
-    ).showSnackBar(const SnackBar(content: Text(StartHereSaveReceipt.defaultTitle)));
+    ).showSnackBar(
+      const SnackBar(content: Text(StartHereSaveReceipt.defaultTitle)),
+    );
   }
 
   @override

@@ -206,7 +206,8 @@ class _ModeTile extends StatelessWidget {
 
 class BetaRepairLabProofCard extends StatefulWidget {
   const BetaRepairLabProofCard({
-    required this.result, super.key,
+    required this.result,
+    super.key,
     this.onChanged,
     this.onNotRelevantAnswered,
     this.store,
@@ -216,7 +217,8 @@ class BetaRepairLabProofCard extends StatefulWidget {
   });
 
   const BetaRepairLabProofCard.test({
-    required this.result, super.key,
+    required this.result,
+    super.key,
     this.onChanged,
     this.onNotRelevantAnswered,
     this.store,
@@ -372,12 +374,16 @@ class _BetaRepairLabProofCardState extends State<BetaRepairLabProofCard> {
 
 class BetaRepairLabProPlacementCard extends StatefulWidget {
   const BetaRepairLabProPlacementCard({
-    required this.result, required this.onSeePro, super.key,
+    required this.result,
+    required this.onSeePro,
+    super.key,
     this.compact = false,
   });
 
   const BetaRepairLabProPlacementCard.test({
-    required this.result, required this.onSeePro, super.key,
+    required this.result,
+    required this.onSeePro,
+    super.key,
     this.compact = false,
   });
 

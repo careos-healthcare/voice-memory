@@ -22,64 +22,72 @@ void main() {
     focusTerms: const ['walk'],
   );
 
-  test('surfaces an older matching moment and prepares a GPT-5 request', () async {
-    final dir = await Directory.systemTemp.createTemp('actionable_memory_');
-    addTearDown(() => dir.delete(recursive: true));
-    final sqlite = await openTestAppSqliteDatabase(
-      filePath: '${dir.path}/journal.sqlite',
-    );
-    addTearDown(sqlite.close);
-    final db = sqlite.database;
+  test(
+    'surfaces an older matching moment and prepares a GPT-5 request',
+    () async {
+      final dir = await Directory.systemTemp.createTemp('actionable_memory_');
+      addTearDown(() => dir.delete(recursive: true));
+      final sqlite = await openTestAppSqliteDatabase(
+        filePath: '${dir.path}/journal.sqlite',
+      );
+      addTearDown(sqlite.close);
+      final db = sqlite.database;
 
-    await _insert(
-      db,
-      id: 'recent',
-      at: DateTime.parse('2026-09-23T17:00:00.000Z'),
-      transcript: 'A walk along the harbor before dinner.',
-    );
-    await _insert(
-      db,
-      id: 'older-walk',
-      at: DateTime.parse('2026-03-02T18:10:00.000Z'),
-      transcript: 'Left for a walk after lunch.',
-      payload: '{"locality":"Harbor"}',
-    );
-    await _insert(
-      db,
-      id: 'unrelated',
-      at: DateTime.parse('2026-01-04T09:00:00.000Z'),
-      transcript: 'Bought new notebooks.',
-    );
-    await _insert(
-      db,
-      id: 'locked',
-      at: DateTime.parse('2025-06-01T18:00:00.000Z'),
-      transcript: 'A long walk I am not ready to open.',
-      timeCapsule: true,
-      unlockDate: DateTime.parse('2027-01-01T00:00:00.000Z'),
-    );
+      await _insert(
+        db,
+        id: 'recent',
+        at: DateTime.parse('2026-09-23T17:00:00.000Z'),
+        transcript: 'A walk along the harbor before dinner.',
+      );
+      await _insert(
+        db,
+        id: 'older-walk',
+        at: DateTime.parse('2026-03-02T18:10:00.000Z'),
+        transcript: 'Left for a walk after lunch.',
+        payload: '{"locality":"Harbor"}',
+      );
+      await _insert(
+        db,
+        id: 'unrelated',
+        at: DateTime.parse('2026-01-04T09:00:00.000Z'),
+        transcript: 'Bought new notebooks.',
+      );
+      await _insert(
+        db,
+        id: 'locked',
+        at: DateTime.parse('2025-06-01T18:00:00.000Z'),
+        transcript: 'A long walk I am not ready to open.',
+        timeCapsule: true,
+        unlockDate: DateTime.parse('2027-01-01T00:00:00.000Z'),
+      );
 
-    final outbox = ActionableMemoryOutbox();
-    final result = await ActionableMemorySurfacingService(
-      notifier: outbox,
-    ).surface(db: db, context: context);
+      final outbox = ActionableMemoryOutbox();
+      final result = await ActionableMemorySurfacingService(
+        notifier: outbox,
+      ).surface(db: db, context: context);
 
-    expect(result, isNotNull);
-    expect(result!.notification.leadEntryId, 'older-walk');
-    expect(result.notification.sourceEntryIds, isNot(contains('locked')));
-    expect(result.notification.sourceEntryIds, isNot(contains('recent')));
-    expect(result.notification.title, 'You wrote about this before');
-    expect(result.notification.body, contains('Left for a walk after lunch.'));
-    expect(result.request.model, Gpt5MemorySynthesisRequest.modelId);
-    expect(result.request.moments.single['id'], 'older-walk');
-    expect(result.readyForRemoteSynthesis, isFalse);
-    expect(outbox.latest?.leadEntryId, 'older-walk');
-    _expectCustomerLanguage(result.notification.title);
-    _expectCustomerLanguage(result.notification.body);
-  });
+      expect(result, isNotNull);
+      expect(result!.notification.leadEntryId, 'older-walk');
+      expect(result.notification.sourceEntryIds, isNot(contains('locked')));
+      expect(result.notification.sourceEntryIds, isNot(contains('recent')));
+      expect(result.notification.title, 'You wrote about this before');
+      expect(
+        result.notification.body,
+        contains('Left for a walk after lunch.'),
+      );
+      expect(result.request.model, Gpt5MemorySynthesisRequest.modelId);
+      expect(result.request.moments.single['id'], 'older-walk');
+      expect(result.readyForRemoteSynthesis, isFalse);
+      expect(outbox.latest?.leadEntryId, 'older-walk');
+      _expectCustomerLanguage(result.notification.title);
+      _expectCustomerLanguage(result.notification.body);
+    },
+  );
 
   test('stays quiet when nothing in the current context can match', () async {
-    final dir = await Directory.systemTemp.createTemp('actionable_memory_empty_');
+    final dir = await Directory.systemTemp.createTemp(
+      'actionable_memory_empty_',
+    );
     addTearDown(() => dir.delete(recursive: true));
     final sqlite = await openTestAppSqliteDatabase(
       filePath: '${dir.path}/journal.sqlite',

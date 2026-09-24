@@ -37,7 +37,11 @@ abstract final class LifeMemoBackgroundRunner {
       Duration(days: LifeMemoPeriod.monthly.days),
     );
     final entries = await LifeMemoStore.entriesIn(db, start: start, end: slot);
-    final entities = await LifeMemoStore.entitiesIn(db, start: start, end: slot);
+    final entities = await LifeMemoStore.entitiesIn(
+      db,
+      start: start,
+      end: slot,
+    );
     final memos = LifeMemoGenerator.generateDue(
       now: now,
       entries: entries,

@@ -7,7 +7,9 @@ import 'package:flutter/material.dart';
 /// Return Day Flow v2 — next-day return loop on record ready.
 class ReturnDayFlowCard extends StatelessWidget {
   const ReturnDayFlowCard({
-    required this.flow, required this.entryCount, super.key,
+    required this.flow,
+    required this.entryCount,
+    super.key,
     this.store,
     this.skipPrefsLoad = false,
     this.initialAnswer,
@@ -17,7 +19,9 @@ class ReturnDayFlowCard extends StatelessWidget {
   });
 
   const ReturnDayFlowCard.test({
-    required this.flow, required this.entryCount, super.key,
+    required this.flow,
+    required this.entryCount,
+    super.key,
     this.store,
     this.onAnswered,
     this.onCameBack,

@@ -7,7 +7,9 @@ import 'package:flutter/material.dart';
 /// Calm one-line recovery hint — no extra CTAs, capture-first.
 class CaptureRecoveryHintStrip extends StatelessWidget {
   const CaptureRecoveryHintStrip({
-    required this.title, required this.body, super.key,
+    required this.title,
+    required this.body,
+    super.key,
     this.hintKey,
   });
 

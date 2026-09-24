@@ -38,7 +38,8 @@ class FrameBudgetOverlay extends StatefulWidget {
 }
 
 class _FrameBudgetOverlayState extends State<FrameBudgetOverlay> {
-  late final FrameBudgetMonitor _monitor = widget.monitor ?? FrameBudgetMonitor();
+  late final FrameBudgetMonitor _monitor =
+      widget.monitor ?? FrameBudgetMonitor();
 
   @override
   void initState() {

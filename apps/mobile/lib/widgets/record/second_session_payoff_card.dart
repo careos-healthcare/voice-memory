@@ -8,7 +8,10 @@ import 'package:flutter/material.dart';
 /// Second-entry payoff — one clear comparison moment after the second save.
 class SecondSessionPayoffCard extends StatelessWidget {
   const SecondSessionPayoffCard({
-    required this.payoff, required this.onAddAnother, required this.onViewArchive, super.key,
+    required this.payoff,
+    required this.onAddAnother,
+    required this.onViewArchive,
+    super.key,
   });
 
   final SecondSessionPayoff payoff;

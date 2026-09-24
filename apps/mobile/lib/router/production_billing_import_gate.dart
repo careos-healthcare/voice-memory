@@ -74,7 +74,9 @@ abstract final class ProductionBillingImportGate {
       final line = lines[i];
       for (final pattern in billingImportPatterns) {
         if (line.contains(pattern)) {
-          failures.add('$path:${i + 1}: billing import while capability disabled');
+          failures.add(
+            '$path:${i + 1}: billing import while capability disabled',
+          );
         }
       }
       for (final pattern in billingRoutePatterns) {

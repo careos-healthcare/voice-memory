@@ -80,56 +80,60 @@ void main() {
     expect(NativeSpeechTranscription.isSupported, isTrue);
   });
 
-  test('transcribeFile refuses to invoke the platform channel on Android',
-      () async {
-    NativeSpeechTranscription.debugPlatformOverride = 'android';
-    final platform = _spyPlatform();
-    NativeSpeechTranscription.testPlatform = platform;
+  test(
+    'transcribeFile refuses to invoke the platform channel on Android',
+    () async {
+      NativeSpeechTranscription.debugPlatformOverride = 'android';
+      final platform = _spyPlatform();
+      NativeSpeechTranscription.testPlatform = platform;
 
-    final audio = File(
-      '${Directory.systemTemp.createTempSync('vm_android_stt_').path}/v.m4a',
-    )..writeAsBytesSync(List.filled(VoiceCaptureQuality.minAudioBytes, 3));
+      final audio = File(
+        '${Directory.systemTemp.createTempSync('vm_android_stt_').path}/v.m4a',
+      )..writeAsBytesSync(List.filled(VoiceCaptureQuality.minAudioBytes, 3));
 
-    expect(
-      await NativeSpeechTranscription.transcribeFile(
-        audio,
-        locale: ConfirmedSpeechLocale.confirmed('en-GB')!,
-      ),
-      isNull,
-    );
-    expect(platform.callCount, 0);
-  });
+      expect(
+        await NativeSpeechTranscription.transcribeFile(
+          audio,
+          locale: ConfirmedSpeechLocale.confirmed('en-GB')!,
+        ),
+        isNull,
+      );
+      expect(platform.callCount, 0);
+    },
+  );
 
-  test('offline server failure does not fall back to native STT on Android',
-      () async {
-    NativeSpeechTranscription.debugPlatformOverride = 'android';
-    CaptureAudioCompressor.testPlatform = _FakeCompressorPlatform();
-    final platform = _spyPlatform();
-    NativeSpeechTranscription.testPlatform = platform;
+  test(
+    'offline server failure does not fall back to native STT on Android',
+    () async {
+      NativeSpeechTranscription.debugPlatformOverride = 'android';
+      CaptureAudioCompressor.testPlatform = _FakeCompressorPlatform();
+      final platform = _spyPlatform();
+      NativeSpeechTranscription.testPlatform = platform;
 
-    final audio = File(
-      '${Directory.systemTemp.createTempSync('vm_android_off_').path}/v.m4a',
-    )..writeAsBytesSync(List.filled(VoiceCaptureQuality.minAudioBytes, 2));
+      final audio = File(
+        '${Directory.systemTemp.createTempSync('vm_android_off_').path}/v.m4a',
+      )..writeAsBytesSync(List.filled(VoiceCaptureQuality.minAudioBytes, 2));
 
-    final outcome = await TranscriptionService.transcribeRecording(
-      audioFile: audio,
-      durationSeconds: 12,
-      captureRepository: CaptureRepository(
-        api: _OfflineTranscribeApi(),
-        requestScope: NetworkRequestScope(),
-      ),
-      ensureCaptureToken: ({forceRefresh = false}) async => 'token',
-      scopeKey: 'android-offline-native',
-      usageGuard: ApiUsageGuard.shared,
-      speechLocale: ConfirmedSpeechLocale.confirmed('en-GB'),
-      onDeviceOnly: false,
-    );
+      final outcome = await TranscriptionService.transcribeRecording(
+        audioFile: audio,
+        durationSeconds: 12,
+        captureRepository: CaptureRepository(
+          api: _OfflineTranscribeApi(),
+          requestScope: NetworkRequestScope(),
+        ),
+        ensureCaptureToken: ({forceRefresh = false}) async => 'token',
+        scopeKey: 'android-offline-native',
+        usageGuard: ApiUsageGuard.shared,
+        speechLocale: ConfirmedSpeechLocale.confirmed('en-GB'),
+        onDeviceOnly: false,
+      );
 
-    expect(platform.callCount, 0);
-    expect(outcome.succeeded, isFalse);
-    expect(outcome.isProvisional, isFalse);
-    expect(outcome.mode, isNot(TranscriptionMode.local));
-  });
+      expect(platform.callCount, 0);
+      expect(outcome.succeeded, isFalse);
+      expect(outcome.isProvisional, isFalse);
+      expect(outcome.mode, isNot(TranscriptionMode.local));
+    },
+  );
 
   test('android native speech source contains no acoustic loopback', () {
     final file = resolveRepoScanFile(_androidSpeechKotlin);

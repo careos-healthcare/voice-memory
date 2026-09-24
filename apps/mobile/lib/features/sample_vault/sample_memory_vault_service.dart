@@ -104,7 +104,9 @@ class SampleMemoryVaultService {
           embedding float[${SampleVaultEmbedder.dimensions}]
         )
       ''');
-      final existing = await db.rawQuery('SELECT COUNT(*) AS count FROM $vecTable');
+      final existing = await db.rawQuery(
+        'SELECT COUNT(*) AS count FROM $vecTable',
+      );
       final count = existing.first['count'] as int? ?? 0;
       if (count > 0) return;
       final rows = await db.query(

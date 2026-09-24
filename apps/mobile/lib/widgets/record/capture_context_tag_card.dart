@@ -9,7 +9,9 @@ import 'package:flutter/material.dart';
 /// Optional post-save context tag picker — one tag, always skippable.
 class CaptureContextTagCard extends StatefulWidget {
   const CaptureContextTagCard({
-    required this.onSaveTag, required this.onSkip, super.key,
+    required this.onSaveTag,
+    required this.onSkip,
+    super.key,
   });
 
   final ValueChanged<String> onSaveTag;
@@ -71,7 +73,9 @@ class _CaptureContextTagCardState extends State<CaptureContextTagCard> {
               TextButton(
                 key: const Key('capture_context_tag_skip'),
                 onPressed: widget.onSkip,
-                child: const Text(VisibleArchiveProofCopy.captureContextTagSkip),
+                child: const Text(
+                  VisibleArchiveProofCopy.captureContextTagSkip,
+                ),
               ),
               FilledButton(
                 key: const Key('capture_context_tag_save'),
@@ -84,7 +88,9 @@ class _CaptureContextTagCardState extends State<CaptureContextTagCard> {
                 onPressed: _selectedId == null
                     ? null
                     : () => widget.onSaveTag(_selectedId!),
-                child: const Text(VisibleArchiveProofCopy.captureContextTagSave),
+                child: const Text(
+                  VisibleArchiveProofCopy.captureContextTagSave,
+                ),
               ),
             ],
           ),

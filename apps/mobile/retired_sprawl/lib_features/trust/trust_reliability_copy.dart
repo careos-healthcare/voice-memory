@@ -6,7 +6,8 @@ abstract final class TrustReliabilityCopy {
 
   static const sectionTitle = 'Privacy and control';
 
-  static const archivePrivateTitle = PrivacyClaimCatalogue.archiveIsPrivateTitle;
+  static const archivePrivateTitle =
+      PrivacyClaimCatalogue.archiveIsPrivateTitle;
   static const archivePrivateSubtitle =
       'Recordings and reflections stay in your archive on this device.';
 

@@ -14,7 +14,9 @@ import 'dart:async';
 /// Full 3-day beta tester script sheet.
 class BetaTestScriptSheet extends StatefulWidget {
   const BetaTestScriptSheet({
-    required this.plan, required this.source, super.key,
+    required this.plan,
+    required this.source,
+    super.key,
     this.onReset,
     this.onSendFeedback,
   });
@@ -116,11 +118,13 @@ class _BetaTestScriptSheetState extends State<BetaTestScriptSheet> {
     );
     widget.onSendFeedback?.call();
     Navigator.of(context).pop();
-    unawaited(BetaFeedbackSheet.show(
-      context,
-      source: widget.source,
-      entryCount: widget.plan.progress.entryCount,
-    ));
+    unawaited(
+      BetaFeedbackSheet.show(
+        context,
+        source: widget.source,
+        entryCount: widget.plan.progress.entryCount,
+      ),
+    );
   }
 
   @override

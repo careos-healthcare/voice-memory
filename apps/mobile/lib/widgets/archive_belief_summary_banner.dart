@@ -13,7 +13,8 @@ import 'package:flutter/material.dart';
 /// North-star summary: what the archive currently believes about you.
 class ArchiveBeliefSummaryBanner extends StatelessWidget {
   const ArchiveBeliefSummaryBanner({
-    required this.entries, super.key,
+    required this.entries,
+    super.key,
     this.state,
   });
 

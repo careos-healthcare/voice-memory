@@ -14,7 +14,11 @@ import 'package:flutter/material.dart';
 /// Compact Pro evidence value bridge — opens Free vs Pro sheet.
 class ProEvidenceValueCard extends StatefulWidget {
   const ProEvidenceValueCard({
-    required this.surface, required this.entryCount, required this.onSeePro, required this.onDismiss, super.key,
+    required this.surface,
+    required this.entryCount,
+    required this.onSeePro,
+    required this.onDismiss,
+    super.key,
     this.compact = false,
   });
 

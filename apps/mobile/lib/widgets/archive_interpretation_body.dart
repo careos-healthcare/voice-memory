@@ -12,7 +12,14 @@ import 'dart:async';
 /// Archive Explanation V2 — evidence-grounded interpretation journey.
 class ArchiveInterpretationBody extends StatefulWidget {
   const ArchiveInterpretationBody({
-    required this.interpretation, required this.accent, required this.onOpenEntry, required this.onOpenTheme, required this.onOpenContradiction, required this.onOpenBlindSpot, required this.onRecordToExplore, super.key,
+    required this.interpretation,
+    required this.accent,
+    required this.onOpenEntry,
+    required this.onOpenTheme,
+    required this.onOpenContradiction,
+    required this.onOpenBlindSpot,
+    required this.onRecordToExplore,
+    super.key,
   });
 
   final ArchiveInterpretation interpretation;
@@ -39,10 +46,12 @@ class _ArchiveInterpretationBodyState extends State<ArchiveInterpretationBody> {
 
   void _openDeeper() {
     if (!_deeperExpanded) {
-      unawaited(ArchiveExplanationV2Analytics.goDeeperOpened(
-        insightId: i.insightId,
-        kind: i.kind.name,
-      ));
+      unawaited(
+        ArchiveExplanationV2Analytics.goDeeperOpened(
+          insightId: i.insightId,
+          kind: i.kind.name,
+        ),
+      );
       setState(() => _deeperExpanded = true);
       _maybeLogFollowupViewed();
     }
@@ -56,16 +65,20 @@ class _ArchiveInterpretationBodyState extends State<ArchiveInterpretationBody> {
         AppServices.instance.prefs,
       ).markFollowupQuestionSeen(i.followUpQuestion),
     );
-    unawaited(ArchiveExplanationV2Analytics.followupQuestionViewed(
-      insightId: i.insightId,
-      kind: i.kind.name,
-    ));
-    if (!_loggedCompleted) {
-      _loggedCompleted = true;
-      unawaited(ArchiveExplanationV2Analytics.interpretationCompleted(
+    unawaited(
+      ArchiveExplanationV2Analytics.followupQuestionViewed(
         insightId: i.insightId,
         kind: i.kind.name,
-      ));
+      ),
+    );
+    if (!_loggedCompleted) {
+      _loggedCompleted = true;
+      unawaited(
+        ArchiveExplanationV2Analytics.interpretationCompleted(
+          insightId: i.insightId,
+          kind: i.kind.name,
+        ),
+      );
     }
   }
 
@@ -254,10 +267,12 @@ class _ArchiveInterpretationBodyState extends State<ArchiveInterpretationBody> {
                 setState(() => _showAllContradicting = true),
             onOpenEntry: widget.onOpenEntry,
             onRecordToExplore: () {
-              unawaited(ArchiveExplanationV2Analytics.followupQuestionUsed(
-                insightId: i.insightId,
-                kind: i.kind.name,
-              ));
+              unawaited(
+                ArchiveExplanationV2Analytics.followupQuestionUsed(
+                  insightId: i.insightId,
+                  kind: i.kind.name,
+                ),
+              );
               widget.onRecordToExplore();
             },
           ),

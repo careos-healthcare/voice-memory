@@ -11,7 +11,9 @@ import 'package:go_router/go_router.dart';
 /// Compact Loop Mode progress on Record and Patterns tabs.
 class LoopModeProgressCard extends StatelessWidget {
   const LoopModeProgressCard({
-    required this.loop, required this.onRecordNext, super.key,
+    required this.loop,
+    required this.onRecordNext,
+    super.key,
     this.compact = false,
     this.showRecordCta = true,
   });

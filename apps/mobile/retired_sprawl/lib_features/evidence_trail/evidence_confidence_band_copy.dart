@@ -15,11 +15,9 @@ abstract final class EvidenceConfidenceBandCopy {
     if (sourceCount <= 1) return singleMention;
     return switch (band) {
       PatternMatchConfidenceBand.strong ||
-      PatternMatchConfidenceBand.solid =>
-        strongPattern,
+      PatternMatchConfidenceBand.solid => strongPattern,
       PatternMatchConfidenceBand.emerging ||
-      PatternMatchConfidenceBand.weak =>
-        possiblePattern,
+      PatternMatchConfidenceBand.weak => possiblePattern,
     };
   }
 

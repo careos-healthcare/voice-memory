@@ -13,7 +13,9 @@ import 'package:flutter/material.dart';
 /// Pro users see every section.
 class PressurePatternReviewCard extends StatelessWidget {
   const PressurePatternReviewCard({
-    required this.review, required this.isPro, super.key,
+    required this.review,
+    required this.isPro,
+    super.key,
     this.onUnlock,
   });
 

@@ -25,5 +25,6 @@ class QuickCaptureOutboxStore {
   Future<void> markFailed(String outboxId, String error) =>
       _db.queueDao.markQuickCaptureFailed(outboxId, error);
 
-  Future<int> requeueProcessing() => _db.queueDao.requeueQuickCaptureProcessing();
+  Future<int> requeueProcessing() =>
+      _db.queueDao.requeueQuickCaptureProcessing();
 }

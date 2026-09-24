@@ -141,8 +141,12 @@ abstract class EntrySaveCoordinator {
     try {
       await PressureCheckInStore.instance().syncFromJournalEntry(entry);
     } catch (e, stackTrace) {
-      AppLogger.error('Unhandled error caught', error: e, stackTrace: stackTrace);
-      }
+      AppLogger.error(
+        'Unhandled error caught',
+        error: e,
+        stackTrace: stackTrace,
+      );
+    }
   }
 
   /// Only ever used to *assign* (never clear) these fields — every other

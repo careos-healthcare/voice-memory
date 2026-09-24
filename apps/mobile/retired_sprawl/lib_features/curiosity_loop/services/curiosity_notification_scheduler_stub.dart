@@ -30,8 +30,7 @@ class CuriosityNotificationScheduler {
     CuriosityHook hook, {
     Duration scheduleAfter = defaultScheduleAfter,
     String? promptBody,
-  }) async =>
-      false;
+  }) async => false;
 
   Future<void> cancelCuriosityNotification(String hookId) async {}
 

@@ -12,14 +12,16 @@ import 'package:flutter/material.dart';
 /// Lightweight post-save return check question — no extra primary CTAs.
 class PostSaveReturnCheckAnswerCard extends StatefulWidget {
   const PostSaveReturnCheckAnswerCard({
-    required this.answer, super.key,
+    required this.answer,
+    super.key,
     this.store,
     this.skipPrefsLoad = false,
     this.onChanged,
   });
 
   const PostSaveReturnCheckAnswerCard.test({
-    required this.answer, super.key,
+    required this.answer,
+    super.key,
     this.store,
     this.onChanged,
   }) : skipPrefsLoad = true;

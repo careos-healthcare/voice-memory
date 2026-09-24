@@ -48,7 +48,8 @@ abstract final class LiveVoiceSessionCopy {
 
   /// Shown when the gate refuses: consent for remote transcription is missing,
   /// or "Never send to server" is on.
-  static const remoteProcessingRequiredTitle = 'Live voice needs remote '
+  static const remoteProcessingRequiredTitle =
+      'Live voice needs remote '
       'processing';
   static const remoteProcessingRequiredBody =
       'This session works by sending audio to our server as you speak, so it '

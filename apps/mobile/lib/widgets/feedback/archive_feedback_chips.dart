@@ -12,7 +12,8 @@ import 'package:flutter/material.dart';
 /// more than one of these per result screen.
 class ArchiveFeedbackChips extends StatefulWidget {
   const ArchiveFeedbackChips({
-    required this.targetType, super.key,
+    required this.targetType,
+    super.key,
     this.targetId,
     this.patternTitle,
     this.resultHint,

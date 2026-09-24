@@ -9,7 +9,8 @@ import 'package:flutter/material.dart';
 /// Post-save invitation to commit to returning tomorrow.
 class TomorrowCommitmentCard extends StatefulWidget {
   const TomorrowCommitmentCard({
-    required this.loop, super.key,
+    required this.loop,
+    super.key,
     this.onRemindTomorrow,
   });
 
