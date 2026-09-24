@@ -1,3 +1,4 @@
+import 'package:archiveme_mobile/core/hardware/hardware_monitor_channel.dart';
 import 'package:archiveme_mobile/core/services/background_task_scheduler.dart';
 import 'package:archiveme_mobile/core/services/device_state_service.dart';
 import 'package:archiveme_mobile/core/services/frame_budget_overlay.dart';
@@ -142,6 +143,82 @@ void main() {
     await queue.complete('vec-earlier');
     await queue.complete('sync-later');
     expect(await queue.pending(), isEmpty);
+  });
+
+  test(
+    'pattern synthesis waits for idle, charge, and a safe battery',
+    () async {
+      final device = ManualDeviceState(
+        const DeviceConditions(isCharging: true, isWifiConnected: false),
+      );
+      final queue = MemoryTaskQueue();
+      final scheduler = BackgroundTaskScheduler(
+        device: DeviceStateService(source: device),
+        queue: queue,
+      );
+      await queue.enqueue(
+        const BackgroundTask(
+          id: 'patterns',
+          kind: BackgroundTask.kindPatternSynthesis,
+          entryId: 'entry-p',
+          payload: 'week',
+          status: BackgroundTask.statusPending,
+        ),
+      );
+      expect(await scheduler.drain(), 0);
+      expect((await queue.pending()).single.id, 'patterns');
+
+      device.emit(
+        const DeviceConditions(
+          isCharging: true,
+          isWifiConnected: false,
+          isIdle: true,
+          batteryLevel: 40,
+        ),
+      );
+      expect(await scheduler.drain(), 1);
+      expect(await queue.pending(), isEmpty);
+    },
+  );
+
+  test('serious heat suspends coaching and transcription', () async {
+    final device = ManualDeviceState(
+      const DeviceConditions(
+        isCharging: true,
+        isWifiConnected: true,
+        isIdle: true,
+        batteryLevel: 80,
+        thermalStatus: DeviceThermalStatus.serious,
+      ),
+    );
+    final queue = MemoryTaskQueue();
+    final scheduler = BackgroundTaskScheduler(
+      device: DeviceStateService(source: device),
+      queue: queue,
+    );
+    await queue.enqueue(
+      const BackgroundTask(
+        id: 'coach',
+        kind: BackgroundTask.kindLocalCoaching,
+        entryId: 'entry-c',
+        payload: 'note',
+        status: BackgroundTask.statusPending,
+      ),
+    );
+    await queue.enqueue(
+      const BackgroundTask(
+        id: 'transcript',
+        kind: BackgroundTask.kindOnDeviceTranscription,
+        entryId: 'entry-t',
+        payload: 'audio',
+        status: BackgroundTask.statusPending,
+      ),
+    );
+    expect(await scheduler.drain(), 0);
+    expect((await queue.pending()).map((task) => task.id), [
+      'coach',
+      'transcript',
+    ]);
   });
 
   testWidgets('debug overlay stays stable inside the 8.3ms budget', (

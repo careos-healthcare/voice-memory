@@ -13,6 +13,25 @@ class BackgroundTask {
 
   static const kindVectorIndex = 'vector_index';
   static const kindP2pSync = 'p2p_sync';
+  static const kindLocalCoaching = 'local_coaching';
+  static const kindEncryptedStorage = 'encrypted_storage';
+  static const kindBulkTranscription = 'bulk_transcription';
+  static const kindPatternSynthesis = 'pattern_synthesis';
+  static const kindOnDeviceTranscription = 'on_device_transcription';
+
+  static const heavyProcessingKinds = {
+    kindLocalCoaching,
+    kindEncryptedStorage,
+    kindBulkTranscription,
+    kindPatternSynthesis,
+    kindOnDeviceTranscription,
+  };
+
+  static const idlePowerKinds = {
+    kindBulkTranscription,
+    kindPatternSynthesis,
+    kindOnDeviceTranscription,
+  };
   static const statusPending = 'pending';
   static const statusDone = 'done';
 

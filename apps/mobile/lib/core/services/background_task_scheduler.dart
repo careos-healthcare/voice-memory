@@ -4,7 +4,11 @@ import 'package:archiveme_mobile/core/database/sqlite_vec_indexer.dart';
 import 'package:archiveme_mobile/core/services/device_state_service.dart';
 import 'package:archiveme_mobile/core/services/task_queue_manager.dart';
 
-/// Drains vector-index and mesh jobs when the device is charging or on Wi-Fi.
+/// Drains heavy jobs when device power, idle, and thermal checks allow them.
+///
+/// Vector indexing and mesh sync still run on charge or Wi-Fi. Pattern
+/// synthesis and on-device transcription also require an idle, charging
+/// device with a safe battery. Serious heat suspends every pending job.
 class BackgroundTaskScheduler {
   BackgroundTaskScheduler({
     required this.device,
@@ -24,13 +28,26 @@ class BackgroundTaskScheduler {
     await drain();
   }
 
-  /// Starts automatic drains when charging or Wi-Fi becomes available.
+  /// Starts automatic drains when power, idle, or thermal state changes.
   void start() {
     _subscription ??= device.watch().listen((conditions) {
-      if (conditions.allowsHeavyWork) {
+      if (conditions.allowsHeavyWork ||
+          conditions.allowsPatternAndTranscription) {
         unawaited(drain());
       }
     });
+  }
+
+  /// True when [job] may run under the latest device snapshot.
+  static bool admits(BackgroundTask job, DeviceConditions conditions) {
+    if (!conditions.thermalAllowsWork) return false;
+    if (BackgroundTask.idlePowerKinds.contains(job.kind)) {
+      return conditions.allowsPatternAndTranscription;
+    }
+    if (BackgroundTask.heavyProcessingKinds.contains(job.kind)) {
+      return conditions.isCharging && conditions.batteryIsSafe;
+    }
+    return conditions.allowsHeavyWork;
   }
 
   Future<void> dispose() async {
@@ -43,13 +60,12 @@ class BackgroundTaskScheduler {
   /// With neither charging nor Wi-Fi the queue stays `pending` and nothing runs.
   /// Each SQLite status update yields so the current UI frame is not held.
   Future<int> drain() async {
-    final conditions = await device.refresh();
-    if (!conditions.allowsHeavyWork) return 0;
+    await device.refresh();
     final jobs = await queue.pending();
     var finished = 0;
     for (final job in jobs) {
       final still = await device.refresh();
-      if (!still.allowsHeavyWork) break;
+      if (!admits(job, still)) continue;
       await Future<void>.delayed(Duration.zero);
       await _indexer.execute(job);
       await Future<void>.delayed(Duration.zero);
