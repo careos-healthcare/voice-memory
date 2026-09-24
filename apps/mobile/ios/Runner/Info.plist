@@ -62,6 +62,8 @@
 	</array>
 	<key>NSSpeechRecognitionUsageDescription</key>
 	<string>Thoughtprint turns a recording into text on this device when you ask it to.</string>
+	<key>NSSupportsLiveActivities</key>
+	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>

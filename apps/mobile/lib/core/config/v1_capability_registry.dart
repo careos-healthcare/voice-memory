@@ -73,6 +73,10 @@ abstract final class V1CapabilityRegistry {
   /// Left off until reviewed.
   static const bool firstSaveQuoteBack = false;
 
+  /// Widget, Siri, Control Center, Live Activity, and Watch capture.
+  /// Left off until reviewed.
+  static const bool nativeQuickCapture = false;
+
   static const Set<String> androidPermissionAllowlist = {
     'android.permission.INTERNET',
     'android.permission.RECORD_AUDIO',

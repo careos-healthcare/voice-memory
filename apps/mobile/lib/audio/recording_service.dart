@@ -10,6 +10,7 @@ import 'package:archiveme_mobile/audio/recording_types.dart';
 import 'package:archiveme_mobile/audio/silence_retry_policy.dart';
 import 'package:archiveme_mobile/core/di/hardware_audio_providers.dart';
 import 'package:archiveme_mobile/core/utils/app_logger.dart';
+import 'package:archiveme_mobile/features/capture/native_quick_capture.dart';
 import 'package:archiveme_mobile/features/capture/vad/vad_models.dart';
 import 'package:archiveme_mobile/features/capture/vad/vad_segmented_recording_coordinator.dart';
 import 'package:archiveme_mobile/core/di/app_provider_container.dart';
@@ -250,6 +251,7 @@ class RecordingService extends Notifier<RecordingState> {
   }
 
   Future<RecordingResult> stopRecording() async {
+    unawaited(NativeQuickCapture.recordingStopped());
     if (_testMode) {
       final path = state.activePath ?? _pathResolver.testRecordingPath();
       final file = File(path);
@@ -356,6 +358,7 @@ class RecordingService extends Notifier<RecordingState> {
       AudioCaptureDiagnostics.iosCaptureConfig,
       path: path,
     );
+    unawaited(NativeQuickCapture.recordingStarted());
     final captureEvents = _captureEvents;
     if (captureEvents == null) return;
     captureEvents.levelMonitor.resetStats();

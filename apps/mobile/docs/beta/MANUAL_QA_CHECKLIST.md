@@ -77,6 +77,21 @@ Use this before inviting external testers or after each TestFlight build. Check 
 
 ---
 
+## Native quick capture (flag off until reviewed)
+
+`V1CapabilityRegistry.nativeQuickCapture` stays false. Do not expect these surfaces in a default build. When the flag is turned on for a device build:
+
+- [ ] Home Screen small and medium Thoughtprint widgets open `/record?autostart=1` and recording starts
+- [ ] Lock Screen accessory widget opens the same route
+- [ ] Siri and Shortcuts “Start recording” and “Quick text entry” open the app
+- [ ] Action Button and the iOS 18 Control Center Record control run `StartRecordingIntent`
+- [ ] A Live Activity shows elapsed time while recording and Stop ends the recording
+- [ ] Lock the screen during a recording; audio keeps capturing until Stop
+- [ ] Watch Quick record sends the audio file to the phone and the phone capture pipeline saves an entry
+- [ ] With the flag still false, none of the above start a recording
+
+---
+
 ## Sign-off
 
 | Field | Value |

@@ -17,6 +17,7 @@ import 'package:archiveme_mobile/features/tomorrow_return/check_in_reminder_serv
 import 'package:archiveme_mobile/features/capture_flow/capture_routine_launch_controller.dart';
 import 'package:archiveme_mobile/features/curiosity_loop/services/curiosity_notification_launch_controller.dart';
 import 'package:archiveme_mobile/features/watch/watch_session_coordinator.dart';
+import 'package:archiveme_mobile/router/app_router.dart';
 import 'package:archiveme_mobile/router/onboarding_gate.dart';
 import 'package:archiveme_mobile/security/private_storage_audit.dart';
 import 'package:archiveme_mobile/services/app_services.dart';
@@ -65,6 +66,14 @@ abstract final class V1StartupCoordinator {
     }
     if (V1CapabilityRegistry.nativeExtensions) {
       await CurrentObjectiveWidgetRefreshService.capturePendingLaunchRoute();
+    }
+    if (V1CapabilityRegistry.nativeQuickCapture && AppServices.isInitialized) {
+      final service = AppServices.instance.quickCaptureWidgetService;
+      final route = await service?.capturePendingLaunchRoute();
+      if (route != null && route.startsWith('/record')) {
+        appRouter.go(route);
+        await service?.clearPendingLaunchRoute();
+      }
     }
     if (AppServices.isInitialized && V1CapabilityRegistry.nativeExtensions) {
       unawaited(QuickCaptureWidgetService.runStartupTasks());

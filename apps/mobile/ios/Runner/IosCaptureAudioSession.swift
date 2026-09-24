@@ -50,6 +50,8 @@ enum IosCaptureAudioSession {
       options.insert(.allowBluetoothA2DP)
     }
 
+    // playAndRecord plus UIBackgroundModes audio keeps the recorder alive
+    // after the screen locks. Do not deactivate the session on resign-active.
     try session.setCategory(.playAndRecord, mode: avMode, options: options)
     try session.setPreferredSampleRate(44100)
     try session.setPreferredInputNumberOfChannels(1)

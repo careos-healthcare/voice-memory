@@ -1,4 +1,5 @@
 import 'package:archiveme_mobile/core/di/v1_account_dependencies.dart';
+import 'package:archiveme_mobile/features/capture/native_quick_capture.dart';
 import 'package:archiveme_mobile/features/capture/providers/capture_module_providers.dart';
 import 'package:archiveme_mobile/features/capture_flow/capture_flow_phase.dart';
 import 'package:archiveme_mobile/features/capture_flow/ui/capture_screen.dart';
@@ -32,13 +33,21 @@ class CaptureScreenHost extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final params = routeState?.uri.queryParameters ?? const {};
-    final allowBackgroundRecording = params['background'] == '1';
-    final adoptBackgroundCapture = allowBackgroundRecording &&
-        (params['autostart'] == '1' || params['instant'] == '1');
+    final nativeAutostart = NativeQuickCapture.autostartRequested(params);
+    final allowBackgroundRecording =
+        params['background'] == '1' || nativeAutostart;
+    final adoptBackgroundCapture = nativeAutostart ||
+        (allowBackgroundRecording &&
+            (params['autostart'] == '1' || params['instant'] == '1'));
     final backgroundCapture = ref.watch(backgroundCaptureServiceProvider);
 
-    return CaptureScreen(
-      initialInputMode: initialInputMode,
+    return _NativeQuickCaptureStopHook(
+      stop: NativeQuickCapture.stopRequested(params),
+      onStop: backgroundCapture?.stopBackgroundCapture,
+      child: CaptureScreen(
+      initialInputMode: NativeQuickCapture.textEntryRequested(params)
+          ? CaptureInputMode.typed
+          : initialInputMode,
       attachToEntryId: attachToEntryId,
       initialTypedText: initialTypedText,
       routineKindOverride: routineKindOverride,
@@ -47,6 +56,38 @@ class CaptureScreenHost extends ConsumerWidget {
       allowBackgroundRecording: allowBackgroundRecording,
       adoptBackgroundCapture: adoptBackgroundCapture,
       stopBackgroundCapture: backgroundCapture?.stopBackgroundCapture,
+    ),
     );
   }
+}
+
+class _NativeQuickCaptureStopHook extends StatefulWidget {
+  const _NativeQuickCaptureStopHook({
+    required this.stop,
+    required this.child,
+    this.onStop,
+  });
+
+  final bool stop;
+  final Widget child;
+  final Future<void> Function()? onStop;
+
+  @override
+  State<_NativeQuickCaptureStopHook> createState() =>
+      _NativeQuickCaptureStopHookState();
+}
+
+class _NativeQuickCaptureStopHookState extends State<_NativeQuickCaptureStopHook> {
+  @override
+  void initState() {
+    super.initState();
+    if (widget.stop) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        widget.onStop?.call();
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) => widget.child;
 }

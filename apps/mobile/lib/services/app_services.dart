@@ -801,7 +801,8 @@ class AppServices {
     if (V1CapabilityRegistry.notifications) {
       await s.fcm.initialize();
     }
-    if (V1CapabilityRegistry.watchCompanion) {
+    if (V1CapabilityRegistry.watchCompanion &&
+        V1CapabilityRegistry.nativeQuickCapture) {
       s._watchAudioIngest = WatchAudioIngestService(
         store: WatchAudioIngestStore(s.prefs),
         pipeline: s.pipeline,
@@ -1273,7 +1274,8 @@ class AppServices {
   }
 
   static void _wireQuickCaptureWidgetService(AppServices s) {
-    final bridge = V1CapabilityRegistry.nativeExtensions
+    final bridge = V1CapabilityRegistry.nativeExtensions ||
+            V1CapabilityRegistry.nativeQuickCapture
         ? MethodChannelQuickCaptureWidgetBridge()
         : const NoOpQuickCaptureWidgetBridge();
     final sharedStorage = QuickCaptureSharedStorage(

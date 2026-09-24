@@ -68,8 +68,20 @@ GlobalKey<NavigatorState> get appRootNavigatorKey => _rootNavigatorKey;
 const instantCapturePaths = {'/quick-capture', '/quick-yes-capture'};
 
 /// Converts custom-scheme widget and wearable launches into internal routes.
+///
+/// `voicememory://record?autostart=1` is the native quick-capture link
+/// (widgets, Siri, Control Center, Live Activity Stop). It starts a recording
+/// only when [V1CapabilityRegistry.nativeQuickCapture] is on.
 String? resolveInstantCaptureDeepLink(Uri uri) {
-  if (uri.scheme.toLowerCase() != 'archiveme') return null;
+  final scheme = uri.scheme.toLowerCase();
+  final nativeQuickCaptureLink = scheme == 'voicememory';
+  if (scheme != 'archiveme' && !nativeQuickCaptureLink) return null;
+  if (nativeQuickCaptureLink && !V1CapabilityRegistry.nativeQuickCapture) {
+    return CaptureDeepLinkUris.recordRoute;
+  }
+  if (nativeQuickCaptureLink && uri.queryParameters['stop'] == '1') {
+    return '${CaptureDeepLinkUris.recordRoute}?stop=1';
+  }
   final action = uri.host.isNotEmpty
       ? uri.host.toLowerCase()
       : uri.path.replaceFirst(RegExp('^/+'), '').toLowerCase();

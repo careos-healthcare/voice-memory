@@ -42,6 +42,7 @@ import workmanager_apple
       setupNativeSpeechChannel(controller: controller)
       setupHardwareMonitorChannel(controller: controller)
       quickCaptureWidgetChannelHandler.attach(to: controller)
+      setupNativeQuickCaptureChannel(controller: controller)
       liveAudioLifecycleBridge.attach(to: controller)
     }
     WatchSessionBridge.shared.activate()
@@ -123,6 +124,25 @@ import workmanager_apple
         result(paths)
       case "isWatchSessionSupported":
         result(WCSession.isSupported())
+      default:
+        result(FlutterMethodNotImplemented)
+      }
+    }
+  }
+
+  private func setupNativeQuickCaptureChannel(controller: FlutterViewController) {
+    let channel = FlutterMethodChannel(
+      name: "archive_me/native_quick_capture",
+      binaryMessenger: controller.binaryMessenger
+    )
+    channel.setMethodCallHandler { call, result in
+      switch call.method {
+      case "liveActivityStart":
+        RecordingLiveActivityController.start()
+        result(nil)
+      case "liveActivityStop":
+        RecordingLiveActivityController.stop()
+        result(nil)
       default:
         result(FlutterMethodNotImplemented)
       }
