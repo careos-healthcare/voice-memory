@@ -127,10 +127,9 @@ class MomentSaveReceiptCard extends StatelessWidget {
               Semantics(
                 label: 'Saved text',
                 readOnly: true,
-                child: Text(
-                  heardText,
+                child: UserWordsQuote(
                   key: const Key('moment_save_receipt_transcript'),
-                  style: bodyStyle,
+                  text: heardText,
                 ),
               ),
               if (onCorrectText != null &&

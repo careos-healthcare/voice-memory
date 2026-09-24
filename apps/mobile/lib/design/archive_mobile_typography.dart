@@ -17,6 +17,36 @@ abstract class ArchiveMobileTypography {
   static const double minHelperSizeWide = 14.5;
   static const double minCtaSize = 16;
 
+  /// Serif for the person's own words. Sans for everything the app writes.
+  static const String userWordsFamily = 'Newsreader';
+  static const String uiFamily = 'Inter';
+
+  static TextStyle userWords(BuildContext context, {Color? color}) => TextStyle(
+    fontFamily: userWordsFamily,
+    fontSize: 17,
+    height: 1.5,
+    fontWeight: FontWeight.w400,
+    color: color ?? Theme.of(context).colorScheme.onSurface,
+  );
+
+  static TextStyle userWordsQuote(BuildContext context, {Color? color}) =>
+      userWords(context, color: color).copyWith(fontStyle: FontStyle.italic);
+
+  static TextStyle uiTitle(BuildContext context, {Color? color}) =>
+      responsiveSectionTitle(context).copyWith(
+        fontFamily: uiFamily,
+        color: color,
+      );
+
+  static TextStyle uiBody(BuildContext context, {Color? color}) =>
+      responsiveBody(context, color: color).copyWith(fontFamily: uiFamily);
+
+  static TextStyle uiLabel(BuildContext context, {Color? color}) =>
+      cardLabel(context, color: color).copyWith(fontFamily: uiFamily);
+
+  static TextStyle uiHelper(BuildContext context, {Color? color}) =>
+      responsiveHelper(context, color: color).copyWith(fontFamily: uiFamily);
+
   static bool _wide(BuildContext context) =>
       ArchiveResponsiveLayout.isTabletOrDesktop(context);
 
@@ -106,4 +136,39 @@ abstract class ArchiveMobileTypography {
   static TextStyle body(BuildContext context) => responsiveBody(context);
 
   static TextStyle caption(BuildContext context) => responsiveHelper(context);
+}
+
+/// A person's words set as a quotation: italic serif and a left rule.
+class UserWordsQuote extends StatelessWidget {
+  const UserWordsQuote({
+    required this.text,
+    super.key,
+    this.maxLines,
+    this.color,
+  });
+
+  final String text;
+  final int? maxLines;
+  final Color? color;
+
+  @override
+  Widget build(BuildContext context) {
+    final ink = color ?? Theme.of(context).colorScheme.onSurface;
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        border: Border(
+          left: BorderSide(color: ink.withValues(alpha: 0.45), width: 2),
+        ),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.only(left: 12),
+        child: Text(
+          text,
+          maxLines: maxLines,
+          overflow: maxLines == null ? TextOverflow.clip : TextOverflow.ellipsis,
+          style: ArchiveMobileTypography.userWordsQuote(context, color: ink),
+        ),
+      ),
+    );
+  }
 }

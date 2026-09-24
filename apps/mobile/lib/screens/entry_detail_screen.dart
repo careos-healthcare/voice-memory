@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:archiveme_mobile/core/di/v1_account_dependencies.dart';
+import 'package:archiveme_mobile/design/archive_mobile_typography.dart';
 import 'package:archiveme_mobile/features/archive/v1/archive_entry_hero_tags.dart';
 import 'package:archiveme_mobile/features/entry_detail/entry_detail_copy.dart';
 import 'package:archiveme_mobile/features/entry_detail/entry_detail_edits.dart';
@@ -302,7 +303,7 @@ class _EntryDetailScreenState extends State<EntryDetailScreen> {
         Text(
           view.primary,
           key: const Key('entry_detail_recorded_body'),
-          style: const TextStyle(height: 1.45),
+          style: ArchiveMobileTypography.userWords(context),
         ),
         if (speakableText != null && widget.accountDependencies != null)
           Offstage(
@@ -323,7 +324,10 @@ class _EntryDetailScreenState extends State<EntryDetailScreen> {
           const SizedBox(height: 8),
           Text(
             view.secondary!,
-            style: TextStyle(color: context.palette.textSecondary, height: 1.45),
+            style: ArchiveMobileTypography.uiHelper(
+              context,
+              color: context.palette.textSecondary,
+            ),
           ),
         ],
         if (view.isDegradedTranscription) ...[

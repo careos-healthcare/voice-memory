@@ -53,6 +53,7 @@ class AppTheme {
 
     final base = ThemeData(
       useMaterial3: true,
+      fontFamily: VoiceMemoryTypography.fontFamily,
       brightness: Brightness.light,
       colorScheme: scheme,
       scaffoldBackgroundColor: AppColors.backgroundPrimary,
@@ -227,6 +228,7 @@ class AppTheme {
 
     final base = ThemeData(
       useMaterial3: true,
+      fontFamily: VoiceMemoryTypography.fontFamily,
       brightness: Brightness.dark,
       colorScheme: scheme,
       scaffoldBackgroundColor: _darkBackgroundPrimary,

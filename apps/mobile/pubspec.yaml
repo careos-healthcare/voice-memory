@@ -113,6 +113,15 @@ flutter:
   uses-material-design: true
   assets:
     - config/backend_url.txt
+  fonts:
+    - family: Newsreader
+      fonts:
+        - asset: assets/fonts/Newsreader-Regular.ttf
+        - asset: assets/fonts/Newsreader-Italic.ttf
+          style: italic
+    - family: Inter
+      fonts:
+        - asset: assets/fonts/Inter-Variable.ttf
 
 dependency_overrides:
   pointycastle: ^3.7.4

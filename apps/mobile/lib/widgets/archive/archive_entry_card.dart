@@ -1,3 +1,4 @@
+import 'package:archiveme_mobile/design/archive_mobile_typography.dart';
 import 'package:archiveme_mobile/features/archive/v1/archive_entry_hero_tags.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:flutter/material.dart';
@@ -89,14 +90,16 @@ class ArchiveEntryCardPreview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     final text = entry.transcript.trim();
 
+    final pending = text.isEmpty;
     return Text(
-      text.isEmpty ? 'Transcript processing…' : text,
+      pending ? 'Transcript processing…' : text,
       maxLines: 4,
       overflow: TextOverflow.ellipsis,
-      style: theme.textTheme.bodyLarge,
+      style: pending
+          ? ArchiveMobileTypography.uiBody(context)
+          : ArchiveMobileTypography.userWords(context),
     );
   }
 }
