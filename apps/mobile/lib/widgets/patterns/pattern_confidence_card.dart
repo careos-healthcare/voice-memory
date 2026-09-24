@@ -7,7 +7,7 @@ import 'package:archiveme_mobile/theme/voicememory_cards.dart';
 import 'package:archiveme_mobile/widgets/archive/view_evidence_inline_link.dart';
 import 'package:flutter/material.dart';
 
-/// Explains why ArchiveMe shows a pattern — human labels only, no Pro CTA.
+/// Explains why Thoughtprint shows a pattern — human labels only, no Pro CTA.
 class PatternConfidenceCard extends StatefulWidget {
   const PatternConfidenceCard({
     required this.result,

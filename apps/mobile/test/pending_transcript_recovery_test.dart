@@ -73,7 +73,7 @@ void main() {
       expect(PendingTranscriptRecoveryCopy.title, 'Transcript pending');
       expect(
         PendingTranscriptRecoveryCopy.body,
-        'This moment is saved, but ArchiveMe cannot compare it yet.',
+        'This moment is saved, but Thoughtprint cannot compare it yet.',
       );
       expect(PendingTranscriptRecoveryCopy.primaryAction, 'Add what you said');
       expect(PendingTranscriptRecoveryCopy.saveButton, 'Save text');

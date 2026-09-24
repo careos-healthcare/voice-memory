@@ -18,21 +18,21 @@ abstract class AhaMomentCopy {
   AhaMomentCopy._();
 
   static const String title = 'This came back again';
-  static const String body = 'ArchiveMe noticed this returned in your archive.';
+  static const String body = 'Thoughtprint noticed this returned in your archive.';
   static const String helperLine =
       'You can check the evidence or mark it as not related.';
 
   static const String cautiousTitle = 'This may be returning';
   static const String cautiousBody =
-      'ArchiveMe found related evidence, but it is being treated cautiously.';
+      'Thoughtprint found related evidence, but it is being treated cautiously.';
 
   static const String showEvidenceLabel = 'Show evidence';
   static const String usefulLabel = 'Useful';
   static const String notQuiteLabel = 'Not quite';
   static const String usefulThanks =
-      'Thanks — ArchiveMe will give this connection more weight.';
+      'Thanks — Thoughtprint will give this connection more weight.';
   static const String notQuiteThanks =
-      'Thanks — ArchiveMe will treat this cautiously.';
+      'Thanks — Thoughtprint will treat this cautiously.';
 
   static const List<String> all = [
     title,

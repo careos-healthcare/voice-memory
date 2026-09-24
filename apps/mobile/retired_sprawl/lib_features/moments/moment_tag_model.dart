@@ -1,4 +1,4 @@
-/// Lightweight, automatic tags ArchiveMe applies to a moment so it can later be
+/// Lightweight, automatic tags Thoughtprint applies to a moment so it can later be
 /// found by what it was about — no manual organising required.
 enum MomentTag {
   work,

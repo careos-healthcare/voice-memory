@@ -7,8 +7,8 @@ import 'package:archiveme_mobile/models/reflection.dart';
 
 /// Synthetic three-moment archive for screenshot / video capture — never real
 /// user data, never written to disk.
-abstract final class ArchiveMeDemoArchive {
-  ArchiveMeDemoArchive._();
+abstract final class ThoughtprintDemoArchive {
+  ThoughtprintDemoArchive._();
 
   static const firstMomentBody =
       'I said yes again even though I was already tired from work today.';
@@ -36,7 +36,7 @@ abstract final class ArchiveMeDemoArchive {
       required String transcript,
     }) {
       return JournalEntry(
-        id: '${ArchiveMeDemoState.entryIdPrefix}$suffix',
+        id: '${ThoughtprintDemoState.entryIdPrefix}$suffix',
         createdAt: anchor.subtract(Duration(days: daysAgo, hours: 2)),
         transcript: transcript,
         durationSeconds: 24,

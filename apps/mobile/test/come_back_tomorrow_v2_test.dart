@@ -510,12 +510,12 @@ void main() {
       final yesterday = now.subtract(const Duration(days: 1));
       final entries = [_entry('1', _strongRepeat, createdAt: yesterday)];
       final flow = ReturnDayFlowEngine.build(entries: entries, now: now);
-      final memory = DailyArchiveMemoryEngine.build(entries: entries);
+      final memory = DailyThoughtprintmoryEngine.build(entries: entries);
 
       expect(flow, isNotNull);
       expect(memory, isNotNull);
       expect(
-        DailyArchiveMemoryGates.shouldShow(
+        DailyThoughtprintmoryGates.shouldShow(
           loaded: true,
           entryCount: entries.length,
           isReady: true,

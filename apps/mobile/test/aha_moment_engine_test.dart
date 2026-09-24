@@ -243,7 +243,7 @@ void main() {
       expect(AhaMomentCopy.title, 'This came back again');
       expect(
         AhaMomentCopy.body,
-        'ArchiveMe noticed this returned in your archive.',
+        'Thoughtprint noticed this returned in your archive.',
       );
       expect(
         AhaMomentCopy.helperLine,
@@ -252,7 +252,7 @@ void main() {
       expect(AhaMomentCopy.cautiousTitle, 'This may be returning');
       expect(
         AhaMomentCopy.cautiousBody,
-        'ArchiveMe found related evidence, but it is being treated cautiously.',
+        'Thoughtprint found related evidence, but it is being treated cautiously.',
       );
     });
 

@@ -253,10 +253,10 @@ void main() {
       );
     });
 
-    test('oneLinePositioning says ArchiveMe shows what keeps coming back', () {
+    test('oneLinePositioning says Thoughtprint shows what keeps coming back', () {
       expect(
         FirstFiveMinutesSimplificationCopy.oneLinePositioning,
-        'ArchiveMe shows what keeps coming back.',
+        'Thoughtprint shows what keeps coming back.',
       );
     });
 
@@ -287,12 +287,12 @@ void main() {
     );
 
     test(
-      'whatHappensNextLine says after enough real moments ArchiveMe can show first useful proof',
+      'whatHappensNextLine says after enough real moments Thoughtprint can show first useful proof',
       () {
         expect(
           FirstFiveMinutesSimplificationCopy.whatHappensNextLine,
           contains(
-            'After enough real moments, ArchiveMe can show the first useful proof',
+            'After enough real moments, Thoughtprint can show the first useful proof',
           ),
         );
       },
@@ -306,14 +306,14 @@ void main() {
       expect(line, contains('context work'));
     });
 
-    test('notChatLine distinguishes ChatGPT from ArchiveMe evidence trail', () {
+    test('notChatLine distinguishes ChatGPT from Thoughtprint evidence trail', () {
       expect(
         FirstFiveMinutesSimplificationCopy.notChatLine,
         contains('ChatGPT can suggest what to do'),
       );
       expect(
         FirstFiveMinutesSimplificationCopy.notChatLine,
-        contains('ArchiveMe shows what you already said before'),
+        contains('Thoughtprint shows what you already said before'),
       );
     });
 
@@ -354,7 +354,7 @@ void main() {
       }
     });
 
-    test('copy does not position ArchiveMe as voice chat', () {
+    test('copy does not position Thoughtprint as voice chat', () {
       for (final text
           in FirstFiveMinutesSimplificationCopy.allVisibleStrings()) {
         final lower = text.toLowerCase();
@@ -446,7 +446,7 @@ void main() {
       );
       expect(
         TrailLanguageGuard.isAllowedCopy(
-          'ArchiveMe keeps your proof trail over time.',
+          'Thoughtprint keeps your proof trail over time.',
         ).isAllowed,
         isTrue,
       );

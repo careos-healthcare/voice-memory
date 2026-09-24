@@ -58,7 +58,7 @@ class PatternProgressEngine {
         nextLine = 'Next, watch what was different.';
       case PatternProgressType.notEnoughYet:
         headline = 'Keep checking this pattern.';
-        body = 'A few more check-ins and ArchiveMe can show what changed.';
+        body = 'A few more check-ins and Thoughtprint can show what changed.';
         nextLine = 'Next, check this pattern again.';
     }
 

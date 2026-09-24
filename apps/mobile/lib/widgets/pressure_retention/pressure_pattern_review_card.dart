@@ -27,7 +27,7 @@ class PressurePatternReviewCard extends StatelessWidget {
   static const lockedRowLabel = 'Unlock full review';
   static const lockedHint =
       "Your full review — costs, changes, and next week's experiment — is "
-      'part of ArchiveMe Pro.';
+      'part of Thoughtprint Pro.';
 
   @override
   Widget build(BuildContext context) {

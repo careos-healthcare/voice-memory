@@ -699,7 +699,7 @@ class AppServices {
     await TempRecordingCleanup.purgeStaleOnStartup(
       journalStore: s.journalStore,
     );
-    await ArchiveMeDemoState.hydrateFromPrefs(s.prefs);
+    await ThoughtprintDemoState.hydrateFromPrefs(s.prefs);
     await ExcludedNativeCapabilityCleanup.runIfNeeded(s.prefs);
 
     if (resumedSession != null) {
@@ -1634,7 +1634,7 @@ class AppServices {
     await TesterMissionStore.resetPersistedState();
     await ConfirmedRepeatWhyMattersStore.resetPersistedState();
     await ConfirmedRepeatThoughtMapStore.resetPersistedState();
-    ArchiveMeDemoState.resetPersistedState();
+    ThoughtprintDemoState.resetPersistedState();
     await RepeatReturnCheckStore.resetPersistedState();
     await ComeBackTomorrowV2Store.resetPersistedState(s.prefs);
     await FirstProofTruthStore.resetPersistedState(s.prefs);

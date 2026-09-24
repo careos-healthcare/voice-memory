@@ -18,7 +18,7 @@ class SupportedLanguage {
   final String displayName;
 }
 
-/// The languages ArchiveMe can adapt user-facing copy into. English is the
+/// The languages Thoughtprint can adapt user-facing copy into. English is the
 /// safe fallback for anything unsupported or unclear.
 const List<SupportedLanguage> kSupportedLanguages = [
   SupportedLanguage('en', 'English'),

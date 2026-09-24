@@ -208,7 +208,7 @@ void main() {
         ),
       );
       final summary = BetaOutcomesCopy.buildSafeSummary(snapshot);
-      expect(summary, contains('ArchiveMe beta summary'));
+      expect(summary, contains('Thoughtprint beta summary'));
       expect(summary, contains('4 saved moments'));
       expect(summary, contains('3 usable evidence moments'));
       expect(summary, contains('cautious belief forming'));
@@ -240,14 +240,14 @@ void main() {
   });
 
   group('Beta outcomes copy', () {
-    test('uses ArchiveMe branding and avoids banned language', () {
+    test('uses Thoughtprint branding and avoids banned language', () {
       _expectNoBannedCopy(BetaOutcomesCopy.allVisibleCopy());
       for (final text in BetaOutcomesCopy.allVisibleCopy()) {
         expect(text.toLowerCase(), isNot(contains('voicememory')));
       }
       expect(
         BetaOutcomesCopy.allVisibleCopy(),
-        anyElement(contains('ArchiveMe')),
+        anyElement(contains('Thoughtprint')),
       );
     });
 

@@ -229,8 +229,8 @@ abstract class ScreenshotSampleData {
     confidenceLabel: 'Based on 8 check-ins',
   );
 
-  static ArchiveMemorySummary get archiveMemorySummarySample =>
-      ArchiveMemorySummary(
+  static ThoughtprintmorySummary get archiveMemorySummarySample =>
+      ThoughtprintmorySummary(
         id: 'screenshot-archive-memory',
         patternTitle: 'Taking responsibility before asking for help',
         primaryMemoryLine:
@@ -464,7 +464,7 @@ abstract class ScreenshotSampleData {
     }
     plainText
       ..writeln()
-      ..write('Made with ArchiveMe');
+      ..write('Made with Thoughtprint');
     return PatternShareRecap(
       id: 'share_weekly_screenshot',
       createdAt: DateTime(2026, 5, 25, 10, 15),
@@ -576,7 +576,7 @@ abstract class ScreenshotSampleData {
   static TomorrowReturnLoop get tomorrowReturnLoop => TomorrowReturnLoop(
     noticedToday: returnLoopTodayNoticed,
     comeBackTomorrow:
-        'After another reflection tomorrow, ArchiveMe can compare '
+        'After another reflection tomorrow, Thoughtprint can compare '
         'today with what you add next.',
     watchForNextTime:
         'Whether responsibility shows up before you ask for help.',

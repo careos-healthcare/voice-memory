@@ -116,13 +116,13 @@ abstract final class CorrectionMemoryEngine {
     }
     return switch (correction.state) {
       CorrectionMemoryState.stillCurrent =>
-        'You marked this as still affecting you. ArchiveMe will treat fresh returns as stronger evidence.',
+        'You marked this as still affecting you. Thoughtprint will treat fresh returns as stronger evidence.',
       CorrectionMemoryState.partlyCurrent =>
-        'You marked this as only partly current. ArchiveMe will keep it in view, but not treat it as the whole story.',
+        'You marked this as only partly current. Thoughtprint will keep it in view, but not treat it as the whole story.',
       CorrectionMemoryState.faded =>
-        'You marked this as not really current. ArchiveMe will treat it as background unless it returns.',
+        'You marked this as not really current. Thoughtprint will treat it as background unless it returns.',
       CorrectionMemoryState.unsure =>
-        'You were not sure. ArchiveMe will keep this lightly in view and wait for stronger evidence.',
+        'You were not sure. Thoughtprint will keep this lightly in view and wait for stronger evidence.',
     };
   }
 
@@ -139,11 +139,11 @@ abstract final class CorrectionMemoryEngine {
       CorrectionMemoryState.stillCurrent when isRepeatedState =>
         'You marked this as still affecting you. Fresh returns count as stronger evidence.',
       CorrectionMemoryState.partlyCurrent =>
-        '$fallback ArchiveMe will keep this in view, but not as the whole story.',
+        '$fallback Thoughtprint will keep this in view, but not as the whole story.',
       CorrectionMemoryState.faded =>
-        '$fallback ArchiveMe will treat this as background unless it returns.',
+        '$fallback Thoughtprint will treat this as background unless it returns.',
       CorrectionMemoryState.unsure =>
-        '$fallback ArchiveMe will keep this lightly in view until stronger evidence appears.',
+        '$fallback Thoughtprint will keep this lightly in view until stronger evidence appears.',
       _ => fallback,
     };
   }

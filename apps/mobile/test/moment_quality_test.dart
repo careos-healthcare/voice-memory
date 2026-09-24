@@ -113,14 +113,14 @@ void main() {
   });
 
   group('Moment quality copy', () {
-    test('uses ArchiveMe branding and avoids banned language', () {
+    test('uses Thoughtprint branding and avoids banned language', () {
       _expectNoBannedCopy(MomentQualityCopy.allVisibleCopy());
       for (final text in MomentQualityCopy.allVisibleCopy()) {
         expect(text.toLowerCase(), isNot(contains('voicememory')));
       }
       expect(
         MomentQualityCopy.allVisibleCopy(),
-        anyElement(contains('ArchiveMe')),
+        anyElement(contains('Thoughtprint')),
       );
     });
   });

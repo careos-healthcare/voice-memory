@@ -1,4 +1,4 @@
-/// Trial-only answer to “What did ArchiveMe feel most like?”
+/// Trial-only answer to “What did Thoughtprint feel most like?”
 enum PositioningComprehensionAnswer { archiveMemory, journal, chat, notSure }
 
 extension PositioningComprehensionAnswerIds on PositioningComprehensionAnswer {
@@ -19,7 +19,7 @@ PositioningComprehensionAnswer? positioningComprehensionAnswerFromId(
 abstract class PositioningComprehensionCopy {
   PositioningComprehensionCopy._();
 
-  static const String question = 'What did ArchiveMe feel most like?';
+  static const String question = 'What did Thoughtprint feel most like?';
   static const String followUpQuestion = 'What made you choose that?';
   static const String archiveMemoryLabel = 'A memory for patterns';
   static const String journalLabel = 'A journal';

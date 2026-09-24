@@ -11,7 +11,7 @@ void main() {
       expect(RevenueValueCopy.comparesMomentsLine, contains('not a chat'));
       expect(
         RevenueValueCopy.positioningHeadline,
-        contains('ArchiveMe shows what you already said before'),
+        contains('Thoughtprint shows what you already said before'),
       );
     });
 

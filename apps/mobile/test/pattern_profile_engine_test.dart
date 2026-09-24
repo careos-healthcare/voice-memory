@@ -21,7 +21,7 @@ KeyMoment _moment(
   resultHint: resultHint,
 );
 
-ArchiveMemorySummary _summary({String? nextCheck}) => ArchiveMemorySummary(
+ThoughtprintmorySummary _summary({String? nextCheck}) => ThoughtprintmorySummary(
   id: 's1',
   patternTitle: 'Pressure before yes',
   primaryMemoryLine: 'You often say yes before checking in.',

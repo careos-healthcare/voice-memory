@@ -148,7 +148,7 @@ void main() {
       );
       expect(
         RepeatRecordingNudgeCopy.day2Body,
-        'Record today and ArchiveMe can begin comparing what feels new, '
+        'Record today and Thoughtprint can begin comparing what feels new, '
         'repeated, or quieter.',
       );
       expect(RepeatRecordingNudgeCopy.day2Cta, 'Record today');

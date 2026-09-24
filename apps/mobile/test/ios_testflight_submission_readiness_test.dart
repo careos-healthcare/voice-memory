@@ -30,7 +30,7 @@ void main() {
   group('APP_STORE_SUBMISSION_PACK.md', () {
     test('exists and states core release identity', () {
       expect(File(_packPath).existsSync(), isTrue);
-      expect(pack, contains('ArchiveMe'));
+      expect(pack, contains('Thoughtprint'));
       expect(pack, contains(_bundleId));
       expect(pack, contains(_supportUrl));
       expect(pack, contains('ios/Runner.xcworkspace'));
@@ -79,15 +79,15 @@ void main() {
   });
 
   group('Reviewer docs alignment', () {
-    test('APP_STORE_COPY uses ArchiveMe not VoiceMemory as public name', () {
-      expect(storeCopy, contains('ArchiveMe'));
+    test('APP_STORE_COPY uses Thoughtprint not VoiceMemory as public name', () {
+      expect(storeCopy, contains('Thoughtprint'));
       expect(storeCopy, isNot(contains('VoiceMemory')));
     });
 
     test(
       'APP_REVIEW_NOTES contains reviewer path, review code, and support URL',
       () {
-        expect(reviewNotes, contains('ArchiveMe'));
+        expect(reviewNotes, contains('Thoughtprint'));
         expect(reviewNotes, contains(_bundleId));
         expect(reviewNotes, contains(_supportUrl));
         expect(reviewNotes, contains('ARCHIVEME-REVIEW-2026'));

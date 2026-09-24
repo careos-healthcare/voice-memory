@@ -13,7 +13,7 @@ import 'package:go_router/go_router.dart';
 PatternProfile _profile() => PatternProfile(
   patternTitle: 'Pressure before yes',
   clarityLabel: 'Clear pattern',
-  archiveMemorySummary: const ArchiveMemorySummary(
+  archiveMemorySummary: const ThoughtprintmorySummary(
     id: 's1',
     patternTitle: 'Pressure before yes',
     primaryMemoryLine: 'You often say yes before checking in.',
@@ -104,7 +104,7 @@ void main() {
     expect(find.text('Pattern profile'), findsOneWidget);
     expect(find.text('Pressure before yes'), findsOneWidget);
     expect(find.text('Clear pattern'), findsOneWidget);
-    expect(find.text('What ArchiveMe remembers'), findsOneWidget);
+    expect(find.text('What Thoughtprint remembers'), findsOneWidget);
     expect(find.text('Pattern map'), findsOneWidget);
     expect(find.text('Pattern timeline'), findsOneWidget);
     expect(find.text('Key moments'), findsOneWidget);
@@ -142,7 +142,7 @@ void main() {
     await _pump(tester);
 
     expect(
-      find.text('Record a few moments and ArchiveMe will build this pattern.'),
+      find.text('Record a few moments and Thoughtprint will build this pattern.'),
       findsOneWidget,
     );
   });

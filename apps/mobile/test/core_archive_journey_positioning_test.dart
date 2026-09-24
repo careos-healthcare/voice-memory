@@ -81,10 +81,10 @@ void main() {
   });
 
   group('CoreArchiveJourneyCopy', () {
-    test('headline says ArchiveMe shows what keeps repeating', () {
+    test('headline says Thoughtprint shows what keeps repeating', () {
       expect(
         CoreArchiveJourneyCopy.headline,
-        'ArchiveMe shows what keeps repeating',
+        'Thoughtprint shows what keeps repeating',
       );
     });
 
@@ -181,7 +181,7 @@ void main() {
     test('positioningLine is exactly ChatGPT answers today line', () {
       expect(
         CoreArchiveJourneyCopy.positioningLine,
-        'ChatGPT answers today. ArchiveMe shows what keeps repeating across your life.',
+        'ChatGPT answers today. Thoughtprint shows what keeps repeating across your life.',
       );
     });
 
@@ -228,7 +228,7 @@ void main() {
       );
     });
 
-    test('copy does not claim ArchiveMe is better than ChatGPT Voice', () {
+    test('copy does not claim Thoughtprint is better than ChatGPT Voice', () {
       for (final text in [
         CoreArchiveJourneyCopy.headline,
         CoreArchiveJourneyCopy.subheadline,

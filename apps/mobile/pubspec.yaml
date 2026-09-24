@@ -2,9 +2,9 @@
 #   • Dart package `name:` → archiveme_mobile (developer/build identity).
 #   • Legacy identifiers kept: bundle ID (com.voicememory.mobile), storage keys,
 #     deep links, and backend migration paths — do not rename without IDENTIFIERS.md migration plan.
-#   • User-facing branding everywhere else → ArchiveMe.
+#   • User-facing branding everywhere else → Thoughtprint.
 name: archiveme_mobile
-description: ArchiveMe native iOS/Android — MVP core loop (record, transcribe, analyze, local journal).
+description: Thoughtprint native iOS/Android — MVP core loop (record, transcribe, analyze, local journal).
 publish_to: "none"
 version: 0.2.0+48
 
@@ -34,7 +34,6 @@ dependencies:
   crypto: ^3.0.7
   cryptography: ^2.7.0
   firebase_core: ^3.8.1
-  firebase_analytics: ^11.3.6
   device_info_plus: ^11.3.3
   package_info_plus: ^8.3.0
   purchases_flutter: ^8.1.0

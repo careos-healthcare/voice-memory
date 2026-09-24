@@ -39,7 +39,7 @@ class _JournalBulkExportScreenState extends State<JournalBulkExportScreen> {
       await file.writeAsString(payload.toJsonString());
       await Share.shareXFiles(
         [XFile(file.path)],
-        subject: 'ArchiveMe journal export',
+        subject: 'Thoughtprint journal export',
       );
       setState(
         () => _message = 'Exported ${payload.entryCount} entries to JSON.',

@@ -1,6 +1,6 @@
 /// Archive Search 2.0 — filters and consumer copy.
 ///
-/// ArchiveMe is a searchable evidence archive, not a flat pile of
+/// Thoughtprint is a searchable evidence archive, not a flat pile of
 /// recordings. Filters are deterministic and local; they read entry
 /// metadata only and never change memory state, scope, or entries.
 library;
@@ -51,7 +51,7 @@ enum ArchiveDateFilter {
 /// Memory status filter — evidence framing labels, mirroring the
 /// authority states memory cards already use. Derived read-only from
 /// saved metadata; filtering never changes any memory state.
-enum ArchiveMemoryStatus {
+enum ThoughtprintmoryStatus {
   stillCurrent,
   mayBeStale,
   changedLater,
@@ -61,21 +61,21 @@ enum ArchiveMemoryStatus {
 
   /// Stable analytics-safe id.
   String get id => switch (this) {
-    ArchiveMemoryStatus.stillCurrent => 'still_current',
-    ArchiveMemoryStatus.mayBeStale => 'may_be_stale',
-    ArchiveMemoryStatus.changedLater => 'changed_later',
-    ArchiveMemoryStatus.mixedEvidence => 'mixed_evidence',
-    ArchiveMemoryStatus.freshEntry => 'fresh_entry',
-    ArchiveMemoryStatus.userConfirmed => 'user_confirmed',
+    ThoughtprintmoryStatus.stillCurrent => 'still_current',
+    ThoughtprintmoryStatus.mayBeStale => 'may_be_stale',
+    ThoughtprintmoryStatus.changedLater => 'changed_later',
+    ThoughtprintmoryStatus.mixedEvidence => 'mixed_evidence',
+    ThoughtprintmoryStatus.freshEntry => 'fresh_entry',
+    ThoughtprintmoryStatus.userConfirmed => 'user_confirmed',
   };
 
   String get label => switch (this) {
-    ArchiveMemoryStatus.stillCurrent => 'Still current',
-    ArchiveMemoryStatus.mayBeStale => 'May be stale',
-    ArchiveMemoryStatus.changedLater => 'Changed later',
-    ArchiveMemoryStatus.mixedEvidence => 'Mixed evidence',
-    ArchiveMemoryStatus.freshEntry => 'Fresh entry',
-    ArchiveMemoryStatus.userConfirmed => 'User confirmed',
+    ThoughtprintmoryStatus.stillCurrent => 'Still current',
+    ThoughtprintmoryStatus.mayBeStale => 'May be stale',
+    ThoughtprintmoryStatus.changedLater => 'Changed later',
+    ThoughtprintmoryStatus.mixedEvidence => 'Mixed evidence',
+    ThoughtprintmoryStatus.freshEntry => 'Fresh entry',
+    ThoughtprintmoryStatus.userConfirmed => 'User confirmed',
   };
 }
 

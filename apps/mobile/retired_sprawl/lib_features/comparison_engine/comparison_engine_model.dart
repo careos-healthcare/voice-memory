@@ -68,7 +68,7 @@ class ComparisonEngineOutput {
     final change = whatChanged?.trim();
     final changeLine = (change != null && change.isNotEmpty)
         ? change
-        : 'ArchiveMe is still comparing your saved words.';
+        : 'Thoughtprint is still comparing your saved words.';
     return 'This may connect to: $thread. What changed: $changeLine.';
   }
 }

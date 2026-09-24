@@ -20,7 +20,7 @@ PatternShareRecap _recap() => PatternShareRecap(
   plainText:
       'This week\u2019s pattern\n\nThis pattern kept showing up '
       'this week.\n\n- You checked it 4 times and caught it more than '
-      'once.\n\nMade with ArchiveMe',
+      'once.\n\nMade with Thoughtprint',
 );
 
 void main() {

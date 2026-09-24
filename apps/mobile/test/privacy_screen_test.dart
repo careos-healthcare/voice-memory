@@ -70,9 +70,9 @@ void main() {
   }
 
   group('Privacy screen copy', () {
-    testWidgets('contains ArchiveMe', (tester) async {
+    testWidgets('contains Thoughtprint', (tester) async {
       await pumpPrivacy(tester);
-      expect(find.textContaining('ArchiveMe'), findsWidgets);
+      expect(find.textContaining('Thoughtprint'), findsWidgets);
     });
 
     testWidgets('where-words-go callout sits above the existing sections', (

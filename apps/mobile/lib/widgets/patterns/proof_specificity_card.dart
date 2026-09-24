@@ -7,7 +7,7 @@ import 'package:archiveme_mobile/theme/app_spacing.dart';
 import 'package:archiveme_mobile/theme/voicememory_cards.dart';
 import 'package:flutter/material.dart';
 
-/// Explains why ArchiveMe noticed a repeat — safe labels only, no Pro CTA.
+/// Explains why Thoughtprint noticed a repeat — safe labels only, no Pro CTA.
 class ProofSpecificityCard extends StatefulWidget {
   const ProofSpecificityCard({required this.result, super.key});
 

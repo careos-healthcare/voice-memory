@@ -17,12 +17,12 @@ class FirstSessionExplanationCard extends StatelessWidget {
   final VoidCallback onLogPressure;
   final VoidCallback onRecord;
 
-  static const title = 'How ArchiveMe works';
+  static const title = 'How Thoughtprint works';
 
   /// The core loop in three short steps — no claims beyond noticing.
   static const steps = [
     'Record one small thing.',
-    'After a second moment, ArchiveMe can start comparing your own words.',
+    'After a second moment, Thoughtprint can start comparing your own words.',
     'Tomorrow, check whether it returned, faded, or changed.',
   ];
 

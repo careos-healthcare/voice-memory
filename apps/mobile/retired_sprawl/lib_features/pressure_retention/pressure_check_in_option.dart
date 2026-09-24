@@ -1,6 +1,6 @@
 /// The five low-friction pressure moments a user can log in one tap.
 ///
-/// Copy stays inside the ArchiveMe product rule: catching the moment you do
+/// Copy stays inside the Thoughtprint product rule: catching the moment you do
 /// more because stopping makes you feel behind, not a generic mood tracker.
 enum PressureCheckInOption {
   didMoreToNotFeelBehind(

@@ -107,7 +107,7 @@ void main() {
 
     final payload = await service.buildSanitizedExport();
     final json = payload.toJson();
-    expect(json, contains('"app": "ArchiveMe"'));
+    expect(json, contains('"app": "Thoughtprint"'));
     expect(json, contains('My reflection'));
     expect(json, isNot(contains('secret-id')));
     expect(json, isNot(contains('/tmp/secret.m4a')));

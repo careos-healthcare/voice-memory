@@ -131,7 +131,7 @@ class ArchiveBeliefsPresenter {
       evidenceSummary:
           'Appeared in ${t.evidenceCount} reflection${t.evidenceCount == 1 ? '' : 's'}.',
       whyExplanation:
-          'ArchiveMe ranked this from recurring themes in your reflections.',
+          'Thoughtprint ranked this from recurring themes in your reflections.',
       section: section,
       timeline: _timelineFromEntries(t.supportingEntries),
       sourceEntryIds: _idsFromEntries(t.supportingEntries),
@@ -209,7 +209,7 @@ class ArchiveBeliefsPresenter {
           confidencePercent: (55 + e.value * 4).clamp(55, 75),
           evidenceSummary: 'Mentioned in ${e.value} recordings.',
           whyExplanation:
-              'ArchiveMe noticed this topic repeating across months of reflections.',
+              'Thoughtprint noticed this topic repeating across months of reflections.',
           section: ArchiveBeliefSection.hiddenPattern,
         ),
       );
@@ -352,7 +352,7 @@ class ArchiveBeliefsPresenter {
   /// Themes reach here lowercased from `DiscoverLocalEngine.themeCounts`, so
   /// the first letter is raised for readability. Title Case Like This was
   /// compensating for that, but it reads as a headline or a quotation, and
-  /// these are patterns ArchiveMe derived rather than anything the user said.
+  /// these are patterns Thoughtprint derived rather than anything the user said.
   static String _sentenceCase(String raw) {
     final t = raw.trim();
     if (t.isEmpty) return t;

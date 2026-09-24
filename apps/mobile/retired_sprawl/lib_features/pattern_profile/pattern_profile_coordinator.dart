@@ -18,7 +18,7 @@ abstract class PatternProfileCoordinator {
     }
     try {
       final memory = await PatternMemoryCoordinator.loadActive();
-      final summary = await ArchiveMemorySummaryCoordinator.loadLatest();
+      final summary = await ThoughtprintmorySummaryCoordinator.loadLatest();
       final timeline = await ArchiveEvolutionCoordinator.loadLatest();
       final moments = await KeyMomentStore.instance().loadAll();
       final map = memory != null

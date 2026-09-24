@@ -299,9 +299,9 @@ class RecordBuildContext {
     required this.quietSignalCandidate,
     required this.showQuietSignalOnRecord,
     required this.showLowEvidenceGuidanceOnRecord,
-    required this.dailyArchiveMemoryCandidate,
+    required this.dailyThoughtprintmoryCandidate,
     required this.firstProofLoopActive,
-    required this.showDailyArchiveMemory,
+    required this.showDailyThoughtprintmory,
     required this.showReturningWatchTargetFocusedUi,
     required this.recordReadyShowsWatchTargetOnly,
     required this.recordReadySuppressStreakPressure,
@@ -659,9 +659,9 @@ class RecordBuildContext {
   final QuietSignal? quietSignalCandidate;
   final bool showQuietSignalOnRecord;
   final bool showLowEvidenceGuidanceOnRecord;
-  final DailyArchiveMemoryResult? dailyArchiveMemoryCandidate;
+  final DailyThoughtprintmoryResult? dailyThoughtprintmoryCandidate;
   final bool firstProofLoopActive;
-  final bool showDailyArchiveMemory;
+  final bool showDailyThoughtprintmory;
   final bool showReturningWatchTargetFocusedUi;
   final bool recordReadyShowsWatchTargetOnly;
   final bool recordReadySuppressStreakPressure;

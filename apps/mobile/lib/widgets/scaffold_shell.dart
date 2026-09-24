@@ -66,7 +66,7 @@ class _AppDrawer extends StatelessWidget {
           const Padding(
             padding: EdgeInsets.all(16),
             child: Text(
-              'ArchiveMe',
+              'Thoughtprint',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
             ),
           ),

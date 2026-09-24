@@ -94,10 +94,10 @@ void main() {
       );
     });
 
-    test('short and long text include ArchiveMe', () {
+    test('short and long text include Thoughtprint', () {
       for (final variant in TestFlightInviteVariant.values) {
-        expect(TestFlightInviteCopy.shortText(variant), contains('ArchiveMe'));
-        expect(TestFlightInviteCopy.longText(variant), contains('ArchiveMe'));
+        expect(TestFlightInviteCopy.shortText(variant), contains('Thoughtprint'));
+        expect(TestFlightInviteCopy.longText(variant), contains('Thoughtprint'));
       }
     });
 

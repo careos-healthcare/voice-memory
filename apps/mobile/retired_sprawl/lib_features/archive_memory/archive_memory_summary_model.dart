@@ -1,10 +1,10 @@
-/// What ArchiveMe remembers about one recurring pattern, in plain language.
+/// What Thoughtprint remembers about one recurring pattern, in plain language.
 ///
 /// This is a faithful, conservative summary built from what is already stored —
 /// pattern memory, the pattern map, key moments, progress, and weekly recaps.
 /// Lines are omitted when their source is unknown; nothing is invented.
-class ArchiveMemorySummary {
-  const ArchiveMemorySummary({
+class ThoughtprintmorySummary {
+  const ThoughtprintmorySummary({
     required this.id,
     required this.patternTitle,
     required this.primaryMemoryLine,
@@ -43,7 +43,7 @@ class ArchiveMemorySummary {
     return 'Based on $basedOnMomentCount $moments across $basedOnWeekCount $weeks.';
   }
 
-  ArchiveMemorySummary copyWith({
+  ThoughtprintmorySummary copyWith({
     String? id,
     String? patternTitle,
     String? primaryMemoryLine,
@@ -58,7 +58,7 @@ class ArchiveMemorySummary {
     String? clarityLabel,
     String? nextCheck,
   }) {
-    return ArchiveMemorySummary(
+    return ThoughtprintmorySummary(
       id: id ?? this.id,
       patternTitle: patternTitle ?? this.patternTitle,
       primaryMemoryLine: primaryMemoryLine ?? this.primaryMemoryLine,
@@ -93,12 +93,12 @@ class ArchiveMemorySummary {
     if (nextCheck != null) 'nextCheck': nextCheck,
   };
 
-  static ArchiveMemorySummary? fromJson(Map<String, dynamic>? map) {
+  static ThoughtprintmorySummary? fromJson(Map<String, dynamic>? map) {
     if (map == null || map.isEmpty) return null;
     final id = map['id'] as String?;
     final primary = map['primaryMemoryLine'] as String?;
     if (id == null || primary == null) return null;
-    return ArchiveMemorySummary(
+    return ThoughtprintmorySummary(
       id: id,
       patternTitle: map['patternTitle'] as String? ?? '',
       primaryMemoryLine: primary,

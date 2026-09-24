@@ -25,7 +25,7 @@ abstract class PrivateStorageAudit {
 
   static const String logPrefix = 'ARCHIVEME_SECURITY_AUDIT:';
 
-  /// Known storage backends in ArchiveMe.
+  /// Known storage backends in Thoughtprint.
   static List<PrivateStorageAuditReport> knownStores() => const [
     PrivateStorageAuditReport(
       store: 'JournalStore',

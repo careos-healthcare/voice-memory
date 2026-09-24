@@ -4,17 +4,17 @@ import 'package:archiveme_mobile/features/product_language_consistency/product_l
 import 'package:archiveme_mobile/features/single_launch_checklist/single_launch_checklist.dart';
 
 /// Archive memory after V1 gate — future enhancement after V1 proof.
-abstract final class ArchiveMemoryAfterV1Gate {
-  ArchiveMemoryAfterV1Gate._();
+abstract final class ThoughtprintmoryAfterV1Gate {
+  ThoughtprintmoryAfterV1Gate._();
 
   static const ruleCount = 5;
 
-  static const List<ArchiveMemoryAfterV1RuleId> canonicalRuleOrder = [
-    ArchiveMemoryAfterV1RuleId.futureEnhancementOnly,
-    ArchiveMemoryAfterV1RuleId.notPartOfFirstFiveMinutes,
-    ArchiveMemoryAfterV1RuleId.notPrimaryProPromise,
-    ArchiveMemoryAfterV1RuleId.supportsProofTrailNotStorage,
-    ArchiveMemoryAfterV1RuleId.noNewLiveV1Ui,
+  static const List<ThoughtprintmoryAfterV1RuleId> canonicalRuleOrder = [
+    ThoughtprintmoryAfterV1RuleId.futureEnhancementOnly,
+    ThoughtprintmoryAfterV1RuleId.notPartOfFirstFiveMinutes,
+    ThoughtprintmoryAfterV1RuleId.notPrimaryProPromise,
+    ThoughtprintmoryAfterV1RuleId.supportsProofTrailNotStorage,
+    ThoughtprintmoryAfterV1RuleId.noNewLiveV1Ui,
   ];
 
   static const primaryProPromiseViolationMarkers = [
@@ -34,22 +34,22 @@ abstract final class ArchiveMemoryAfterV1Gate {
     'archive memory storage',
   ];
 
-  static ArchiveMemoryAfterV1GateResult build(
-    ArchiveMemoryAfterV1GateInput input,
+  static ThoughtprintmoryAfterV1GateResult build(
+    ThoughtprintmoryAfterV1GateInput input,
   ) {
     final rules = _buildRules(input);
     final rulesPass = rules.every(
-      (rule) => rule.status == ArchiveMemoryAfterV1RuleStatus.pass,
+      (rule) => rule.status == ThoughtprintmoryAfterV1RuleStatus.pass,
     );
     final betaProofComplete = input.paidIntentBetaComplete ?? false;
     final decision = rulesPass && betaProofComplete
-        ? ArchiveMemoryAfterV1GateDecision.futureArchiveMemoryDocumented
-        : ArchiveMemoryAfterV1GateDecision.archiveMemoryFrozen;
-    return ArchiveMemoryAfterV1GateResult(
+        ? ThoughtprintmoryAfterV1GateDecision.futureThoughtprintmoryDocumented
+        : ThoughtprintmoryAfterV1GateDecision.archiveMemoryFrozen;
+    return ThoughtprintmoryAfterV1GateResult(
       decision: decision,
-      message: ArchiveMemoryAfterV1Copy.messageFor(decision),
-      recommendation: ArchiveMemoryAfterV1Copy.recommendationFor(decision),
-      positioning: ArchiveMemoryAfterV1Copy.positioning,
+      message: ThoughtprintmoryAfterV1Copy.messageFor(decision),
+      recommendation: ThoughtprintmoryAfterV1Copy.recommendationFor(decision),
+      positioning: ThoughtprintmoryAfterV1Copy.positioning,
       rules: rules,
       ruleOrder: canonicalRuleOrder,
       rulesPass: rulesPass,
@@ -59,52 +59,52 @@ abstract final class ArchiveMemoryAfterV1Gate {
       storageFramingBlocked: true,
       firstFiveMinutesSurfacingBlocked: true,
       earliestRuleFailure: rules
-          .where((rule) => rule.status == ArchiveMemoryAfterV1RuleStatus.fail)
+          .where((rule) => rule.status == ThoughtprintmoryAfterV1RuleStatus.fail)
           .map((rule) => rule.id)
           .firstOrNull,
     );
   }
 
-  static ArchiveMemoryAfterV1GateReport report(
-    ArchiveMemoryAfterV1GateResult result,
-  ) => ArchiveMemoryAfterV1GateReport(
-    headline: ArchiveMemoryAfterV1Copy.headline,
-    body: ArchiveMemoryAfterV1Copy.body,
-    positioning: ArchiveMemoryAfterV1Copy.positioning,
-    orderLine: ArchiveMemoryAfterV1Copy.orderLine,
-    guardrail: ArchiveMemoryAfterV1Copy.guardrail,
+  static ThoughtprintmoryAfterV1GateReport report(
+    ThoughtprintmoryAfterV1GateResult result,
+  ) => ThoughtprintmoryAfterV1GateReport(
+    headline: ThoughtprintmoryAfterV1Copy.headline,
+    body: ThoughtprintmoryAfterV1Copy.body,
+    positioning: ThoughtprintmoryAfterV1Copy.positioning,
+    orderLine: ThoughtprintmoryAfterV1Copy.orderLine,
+    guardrail: ThoughtprintmoryAfterV1Copy.guardrail,
     result: result,
   );
 
-  static ArchiveMemoryAfterV1GateInput composeInput({
+  static ThoughtprintmoryAfterV1GateInput composeInput({
     bool? paidIntentBetaComplete,
     bool? withinFirstFiveMinutes,
     bool? memorySurfacingRequested,
-    bool? v1ArchiveMemoryUiRequested,
+    bool? v1ThoughtprintmoryUiRequested,
     SingleLaunchChecklistInput? launchChecklist,
     PaidIntentBetaProofResult? paidIntentBeta,
-  }) => ArchiveMemoryAfterV1GateInput(
+  }) => ThoughtprintmoryAfterV1GateInput(
     paidIntentBetaComplete:
         paidIntentBetaComplete ??
         launchChecklist?.paidIntentBetaComplete ??
         _paidIntentBetaCompleteFrom(paidIntentBeta),
     withinFirstFiveMinutes: withinFirstFiveMinutes,
     memorySurfacingRequested: memorySurfacingRequested,
-    v1ArchiveMemoryUiRequested: v1ArchiveMemoryUiRequested,
+    v1ThoughtprintmoryUiRequested: v1ThoughtprintmoryUiRequested,
   );
 
-  static ArchiveMemoryAfterV1GateInput fromRepoSignals({
+  static ThoughtprintmoryAfterV1GateInput fromRepoSignals({
     required String archiveMemoryAfterV1DocSource,
     required String gateCopySource,
     bool? paidIntentBetaComplete,
     bool? withinFirstFiveMinutes,
     bool? memorySurfacingRequested,
-    bool? v1ArchiveMemoryUiRequested,
-  }) => ArchiveMemoryAfterV1GateInput(
+    bool? v1ThoughtprintmoryUiRequested,
+  }) => ThoughtprintmoryAfterV1GateInput(
     paidIntentBetaComplete: paidIntentBetaComplete,
     withinFirstFiveMinutes: withinFirstFiveMinutes,
     memorySurfacingRequested: memorySurfacingRequested,
-    v1ArchiveMemoryUiRequested: v1ArchiveMemoryUiRequested,
+    v1ThoughtprintmoryUiRequested: v1ThoughtprintmoryUiRequested,
     docListsRules: detectDocListsRules(archiveMemoryAfterV1DocSource),
     guardrailPresentInCopy: detectGuardrailPresentInCopy(gateCopySource),
   );
@@ -144,49 +144,49 @@ abstract final class ArchiveMemoryAfterV1Gate {
     return result.paidIntentSignalPromising;
   }
 
-  static List<ArchiveMemoryAfterV1Rule> _buildRules(
-    ArchiveMemoryAfterV1GateInput input,
+  static List<ThoughtprintmoryAfterV1Rule> _buildRules(
+    ThoughtprintmoryAfterV1GateInput input,
   ) {
     final copyBundle = [
-      ArchiveMemoryAfterV1Copy.positioning,
-      ArchiveMemoryAfterV1Copy.guardrail,
-      ArchiveMemoryAfterV1Copy.body,
+      ThoughtprintmoryAfterV1Copy.positioning,
+      ThoughtprintmoryAfterV1Copy.guardrail,
+      ThoughtprintmoryAfterV1Copy.body,
     ].join(' ');
-    final guardrailLower = ArchiveMemoryAfterV1Copy.guardrail.toLowerCase();
+    final guardrailLower = ThoughtprintmoryAfterV1Copy.guardrail.toLowerCase();
     final memorySurfacingRequested = input.memorySurfacingRequested ?? false;
     final withinFirstFiveMinutes = input.withinFirstFiveMinutes ?? false;
     final betaProofComplete = input.paidIntentBetaComplete ?? false;
     return [
       _rule(
-        id: ArchiveMemoryAfterV1RuleId.futureEnhancementOnly,
+        id: ThoughtprintmoryAfterV1RuleId.futureEnhancementOnly,
         passes:
             guardrailLower.contains('future enhancement') &&
             guardrailLower.contains('archive memory after v1'),
       ),
       _rule(
-        id: ArchiveMemoryAfterV1RuleId.notPartOfFirstFiveMinutes,
+        id: ThoughtprintmoryAfterV1RuleId.notPartOfFirstFiveMinutes,
         passes:
             guardrailLower.contains('not part of first five minutes') &&
             (!withinFirstFiveMinutes || !memorySurfacingRequested),
       ),
       _rule(
-        id: ArchiveMemoryAfterV1RuleId.notPrimaryProPromise,
+        id: ThoughtprintmoryAfterV1RuleId.notPrimaryProPromise,
         passes:
             evaluateCopyPassesRules(copyBundle) &&
             guardrailLower.contains('not the primary pro promise'),
       ),
       _rule(
-        id: ArchiveMemoryAfterV1RuleId.supportsProofTrailNotStorage,
+        id: ThoughtprintmoryAfterV1RuleId.supportsProofTrailNotStorage,
         passes:
             evaluateCopyPassesRules(copyBundle) &&
             guardrailLower.contains('proof trail') &&
             guardrailLower.contains('not storage'),
       ),
       _rule(
-        id: ArchiveMemoryAfterV1RuleId.noNewLiveV1Ui,
+        id: ThoughtprintmoryAfterV1RuleId.noNewLiveV1Ui,
         passes:
             guardrailLower.contains('no new live v1 ui') &&
-            (!(input.v1ArchiveMemoryUiRequested ?? false) || betaProofComplete),
+            (!(input.v1ThoughtprintmoryUiRequested ?? false) || betaProofComplete),
       ),
     ];
   }
@@ -220,27 +220,27 @@ abstract final class ArchiveMemoryAfterV1Gate {
     return false;
   }
 
-  static ArchiveMemoryAfterV1Rule _rule({
-    required ArchiveMemoryAfterV1RuleId id,
+  static ThoughtprintmoryAfterV1Rule _rule({
+    required ThoughtprintmoryAfterV1RuleId id,
     required bool passes,
-  }) => ArchiveMemoryAfterV1Rule(
+  }) => ThoughtprintmoryAfterV1Rule(
     id: id,
-    label: ArchiveMemoryAfterV1Copy.ruleLabelFor(id),
+    label: ThoughtprintmoryAfterV1Copy.ruleLabelFor(id),
     status: passes
-        ? ArchiveMemoryAfterV1RuleStatus.pass
-        : ArchiveMemoryAfterV1RuleStatus.fail,
+        ? ThoughtprintmoryAfterV1RuleStatus.pass
+        : ThoughtprintmoryAfterV1RuleStatus.fail,
     detailLabel: passes
-        ? ArchiveMemoryAfterV1Copy.detailPass
-        : ArchiveMemoryAfterV1Copy.detailFail,
+        ? ThoughtprintmoryAfterV1Copy.detailPass
+        : ThoughtprintmoryAfterV1Copy.detailFail,
   );
 }
 
-class ArchiveMemoryAfterV1GateInput {
-  const ArchiveMemoryAfterV1GateInput({
+class ThoughtprintmoryAfterV1GateInput {
+  const ThoughtprintmoryAfterV1GateInput({
     this.paidIntentBetaComplete,
     this.withinFirstFiveMinutes,
     this.memorySurfacingRequested,
-    this.v1ArchiveMemoryUiRequested,
+    this.v1ThoughtprintmoryUiRequested,
     this.docListsRules = true,
     this.guardrailPresentInCopy = true,
   });
@@ -248,27 +248,27 @@ class ArchiveMemoryAfterV1GateInput {
   final bool? paidIntentBetaComplete;
   final bool? withinFirstFiveMinutes;
   final bool? memorySurfacingRequested;
-  final bool? v1ArchiveMemoryUiRequested;
+  final bool? v1ThoughtprintmoryUiRequested;
   final bool docListsRules;
   final bool guardrailPresentInCopy;
 }
 
-class ArchiveMemoryAfterV1Rule {
-  const ArchiveMemoryAfterV1Rule({
+class ThoughtprintmoryAfterV1Rule {
+  const ThoughtprintmoryAfterV1Rule({
     required this.id,
     required this.label,
     required this.status,
     required this.detailLabel,
   });
 
-  final ArchiveMemoryAfterV1RuleId id;
+  final ThoughtprintmoryAfterV1RuleId id;
   final String label;
-  final ArchiveMemoryAfterV1RuleStatus status;
+  final ThoughtprintmoryAfterV1RuleStatus status;
   final String detailLabel;
 }
 
-class ArchiveMemoryAfterV1GateResult {
-  const ArchiveMemoryAfterV1GateResult({
+class ThoughtprintmoryAfterV1GateResult {
+  const ThoughtprintmoryAfterV1GateResult({
     required this.decision,
     required this.message,
     required this.recommendation,
@@ -284,23 +284,23 @@ class ArchiveMemoryAfterV1GateResult {
     required this.earliestRuleFailure,
   });
 
-  final ArchiveMemoryAfterV1GateDecision decision;
+  final ThoughtprintmoryAfterV1GateDecision decision;
   final String message;
   final String recommendation;
   final String positioning;
-  final List<ArchiveMemoryAfterV1Rule> rules;
-  final List<ArchiveMemoryAfterV1RuleId> ruleOrder;
+  final List<ThoughtprintmoryAfterV1Rule> rules;
+  final List<ThoughtprintmoryAfterV1RuleId> ruleOrder;
   final bool rulesPass;
   final bool betaProofComplete;
   final bool v1LiveUiBlocked;
   final bool primaryProPromiseBlocked;
   final bool storageFramingBlocked;
   final bool firstFiveMinutesSurfacingBlocked;
-  final ArchiveMemoryAfterV1RuleId? earliestRuleFailure;
+  final ThoughtprintmoryAfterV1RuleId? earliestRuleFailure;
 }
 
-class ArchiveMemoryAfterV1GateReport {
-  const ArchiveMemoryAfterV1GateReport({
+class ThoughtprintmoryAfterV1GateReport {
+  const ThoughtprintmoryAfterV1GateReport({
     required this.headline,
     required this.body,
     required this.positioning,
@@ -314,5 +314,5 @@ class ArchiveMemoryAfterV1GateReport {
   final String positioning;
   final String orderLine;
   final String guardrail;
-  final ArchiveMemoryAfterV1GateResult result;
+  final ThoughtprintmoryAfterV1GateResult result;
 }

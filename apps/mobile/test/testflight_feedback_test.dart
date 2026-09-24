@@ -27,11 +27,11 @@ void main() {
       expect(uri.query, isNotNull);
       expect(
         Uri.decodeQueryComponent(uri.query),
-        contains('subject=ArchiveMe TestFlight feedback'),
+        contains('subject=Thoughtprint TestFlight feedback'),
       );
       expect(
         Uri.decodeQueryComponent(uri.query),
-        contains('Hi ArchiveMe team'),
+        contains('Hi Thoughtprint team'),
       );
       expect(Uri.decodeQueryComponent(uri.query), contains('What felt clear'));
       expect(
@@ -66,7 +66,7 @@ void main() {
         GoRoute(path: '/', builder: (context, state) => const SettingsScreen()),
         GoRoute(
           path: '/testing-archiveme',
-          builder: (context, state) => const TestingArchiveMeScreen(),
+          builder: (context, state) => const TestingThoughtprintScreen(),
         ),
       ],
     );
@@ -77,7 +77,7 @@ void main() {
       await tester.pump(const Duration(milliseconds: 100));
     }
 
-    testWidgets('shows Testing ArchiveMe row when beta mission enabled', (
+    testWidgets('shows Testing Thoughtprint row when beta mission enabled', (
       tester,
     ) async {
       ArchiveBetaMissionGate.enabledOverride = true;
@@ -102,7 +102,7 @@ void main() {
       );
     });
 
-    testWidgets('tapping row opens Testing ArchiveMe guide screen', (
+    testWidgets('tapping row opens Testing Thoughtprint guide screen', (
       tester,
     ) async {
       ArchiveBetaMissionGate.enabledOverride = true;

@@ -65,7 +65,7 @@ class _AboutScreenState extends State<AboutScreen> {
         : '${_info!.version} (${_info!.buildNumber})';
 
     return PushedScreenShell(
-      title: 'About ArchiveMe',
+      title: 'About Thoughtprint',
       body: ListView(
         padding: const EdgeInsets.fromLTRB(16, 8, 16, 88),
         children: [

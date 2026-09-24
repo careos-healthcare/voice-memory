@@ -112,7 +112,7 @@ void main() {
     test('uses exact rescue copy', () {
       expect(
         ProofFloorRescueCopy.waitTitle,
-        'ArchiveMe is still watching this',
+        'Thoughtprint is still watching this',
       );
       expect(
         ProofFloorRescueCopy.feedbackTitle,
@@ -121,7 +121,7 @@ void main() {
       expect(ProofFloorRescueCopy.sharpenTitle, 'Make the next proof sharper');
       expect(
         ProofFloorRescueCopy.suppressTitle,
-        'ArchiveMe will back off this thread',
+        'Thoughtprint will back off this thread',
       );
       expect(ProofFloorRescueCopy.dashboardFocusTitle, 'Protect proof floor');
     });

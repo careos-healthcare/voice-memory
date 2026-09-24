@@ -105,9 +105,9 @@ void main() {
     expect(r.type, PatternShareRecapType.fallback);
   });
 
-  test('plainText includes Made with ArchiveMe', () {
+  test('plainText includes Made with Thoughtprint', () {
     final r = _engine.build(weekly: _weekly());
-    expect(r.plainText, contains('Made with ArchiveMe'));
+    expect(r.plainText, contains('Made with Thoughtprint'));
     expect(r.plainText, contains('This week\u2019s pattern'));
     expect(
       r.plainText,

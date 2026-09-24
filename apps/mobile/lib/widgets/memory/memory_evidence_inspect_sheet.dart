@@ -33,11 +33,11 @@ abstract class MemoryEvidenceInspectCopy {
   static const String confirmedMarker = 'You confirmed this';
   static const String keepConnectedLabel = 'Keep connected';
   static const String keepConnectedDone =
-      'Marked as connected. ArchiveMe will treat this as user-confirmed '
+      'Marked as connected. Thoughtprint will treat this as user-confirmed '
       'evidence.';
   static const String notRelatedLabel = 'Not related';
   static const String notRelatedDone =
-      'Thanks — ArchiveMe will treat this as separate.';
+      'Thanks — Thoughtprint will treat this as separate.';
   static const String futureFreshLabel = 'Treat future entries as new';
   static const String futureFreshDone =
       'Future entries here start as new. You can keep a connection later '

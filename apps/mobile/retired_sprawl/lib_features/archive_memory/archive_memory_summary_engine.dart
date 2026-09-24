@@ -8,13 +8,13 @@ import 'package:archiveme_mobile/features/pattern_memory/pattern_progress_model.
 import 'package:archiveme_mobile/features/pattern_memory/weekly_pattern_recap_model.dart';
 import 'package:archiveme_mobile/features/tomorrow_return/result_next_check_model.dart';
 
-/// Builds a single, plain-language summary of what ArchiveMe remembers about a
+/// Builds a single, plain-language summary of what Thoughtprint remembers about a
 /// pattern — pulling only from what is already stored.
 ///
 /// Everything is conservative: lines are omitted when their source is unknown,
 /// counts never overstate, and the summary is withheld until there are at least
 /// three usable moments/check-ins. Returns null when there is not yet enough.
-ArchiveMemorySummary? buildArchiveMemorySummary({
+ThoughtprintmorySummary? buildThoughtprintmorySummary({
   PatternMemory? memory,
   PatternMap? patternMap,
   List<KeyMoment> keyMoments = const [],
@@ -69,7 +69,7 @@ ArchiveMemorySummary? buildArchiveMemorySummary({
     memory?.nextBestQuestion,
   ]);
 
-  return ArchiveMemorySummary(
+  return ThoughtprintmorySummary(
     id: memory?.id ?? 'memory-summary',
     patternTitle: patternTitle ?? '',
     primaryMemoryLine: primaryMemoryLine,

@@ -8,8 +8,8 @@ import 'package:archiveme_mobile/theme/voicememory_cards.dart';
 import 'package:flutter/material.dart';
 
 /// Quiet returning-user memory card on Record ready.
-class DailyArchiveMemoryCard extends StatefulWidget {
-  const DailyArchiveMemoryCard({
+class DailyThoughtprintmoryCard extends StatefulWidget {
+  const DailyThoughtprintmoryCard({
     required this.memory, required this.entryCount, required this.source, super.key,
     this.onRecord,
     this.onTypeInstead,
@@ -18,7 +18,7 @@ class DailyArchiveMemoryCard extends StatefulWidget {
     this.showFocusedCaptureActions = false,
   });
 
-  final DailyArchiveMemoryResult memory;
+  final DailyThoughtprintmoryResult memory;
   final int entryCount;
   final String source;
   final VoidCallback? onRecord;
@@ -30,10 +30,10 @@ class DailyArchiveMemoryCard extends StatefulWidget {
   final bool showFocusedCaptureActions;
 
   @override
-  State<DailyArchiveMemoryCard> createState() => _DailyArchiveMemoryCardState();
+  State<DailyThoughtprintmoryCard> createState() => _DailyThoughtprintmoryCardState();
 }
 
-class _DailyArchiveMemoryCardState extends State<DailyArchiveMemoryCard> {
+class _DailyThoughtprintmoryCardState extends State<DailyThoughtprintmoryCard> {
   bool _seenTracked = false;
   var _dismissedToday = false;
 
@@ -46,7 +46,7 @@ class _DailyArchiveMemoryCardState extends State<DailyArchiveMemoryCard> {
   void _trackSeen() {
     if (_seenTracked) return;
     _seenTracked = true;
-    DailyArchiveMemoryAnalytics.seen(
+    DailyThoughtprintmoryAnalytics.seen(
       source: widget.source,
       entryCount: widget.entryCount,
       hasWatchTarget: widget.memory.hasWatchTarget,
@@ -54,7 +54,7 @@ class _DailyArchiveMemoryCardState extends State<DailyArchiveMemoryCard> {
   }
 
   void _onRecord() {
-    DailyArchiveMemoryAnalytics.ctaTapped(
+    DailyThoughtprintmoryAnalytics.ctaTapped(
       source: widget.source,
       entryCount: widget.entryCount,
       actionType: 'record_what_happened',
@@ -63,7 +63,7 @@ class _DailyArchiveMemoryCardState extends State<DailyArchiveMemoryCard> {
   }
 
   void _onTypeInstead() {
-    DailyArchiveMemoryAnalytics.ctaTapped(
+    DailyThoughtprintmoryAnalytics.ctaTapped(
       source: widget.source,
       entryCount: widget.entryCount,
       actionType: 'type_instead',
@@ -72,7 +72,7 @@ class _DailyArchiveMemoryCardState extends State<DailyArchiveMemoryCard> {
   }
 
   void _onNotToday() {
-    DailyArchiveMemoryAnalytics.ctaTapped(
+    DailyThoughtprintmoryAnalytics.ctaTapped(
       source: widget.source,
       entryCount: widget.entryCount,
       actionType: 'not_today',
@@ -83,7 +83,7 @@ class _DailyArchiveMemoryCardState extends State<DailyArchiveMemoryCard> {
   }
 
   void _onViewPatternDetails() {
-    DailyArchiveMemoryAnalytics.ctaTapped(
+    DailyThoughtprintmoryAnalytics.ctaTapped(
       source: widget.source,
       entryCount: widget.entryCount,
       actionType: 'view_pattern_details',
@@ -126,7 +126,7 @@ class _DailyArchiveMemoryCardState extends State<DailyArchiveMemoryCard> {
         children: [
           if (focused && watchPhrase != null) ...[
             Text(
-              DailyArchiveMemoryCopy.watchPrompt(watchPhrase),
+              DailyThoughtprintmoryCopy.watchPrompt(watchPhrase),
               key: const Key('daily_archive_memory_watch_prompt'),
               style: bodyStyle,
             ),
@@ -147,7 +147,7 @@ class _DailyArchiveMemoryCardState extends State<DailyArchiveMemoryCard> {
             if (watchPhrase != null) ...[
               const SizedBox(height: AppSpacing.xs),
               Text(
-                DailyArchiveMemoryCopy.quotedWatchPhrase(watchPhrase),
+                DailyThoughtprintmoryCopy.quotedWatchPhrase(watchPhrase),
                 key: const Key('daily_archive_memory_watch_phrase'),
                 style: phraseStyle,
               ),
@@ -169,7 +169,7 @@ class _DailyArchiveMemoryCardState extends State<DailyArchiveMemoryCard> {
               child: FilledButton(
                 key: const Key('daily_archive_memory_record_cta'),
                 onPressed: _onRecord,
-                child: const Text(DailyArchiveMemoryCopy.recordCta),
+                child: const Text(DailyThoughtprintmoryCopy.recordCta),
               ),
             ),
           ],
@@ -181,7 +181,7 @@ class _DailyArchiveMemoryCardState extends State<DailyArchiveMemoryCard> {
               child: OutlinedButton(
                 key: const Key('daily_archive_memory_type_instead_cta'),
                 onPressed: _onTypeInstead,
-                child: const Text(DailyArchiveMemoryCopy.typeInsteadCta),
+                child: const Text(DailyThoughtprintmoryCopy.typeInsteadCta),
               ),
             ),
           ],
@@ -195,7 +195,7 @@ class _DailyArchiveMemoryCardState extends State<DailyArchiveMemoryCard> {
                   foregroundColor: AppColors.textSecondary,
                   minimumSize: const Size(48, 44),
                 ),
-                child: const Text(DailyArchiveMemoryCopy.notTodayCta),
+                child: const Text(DailyThoughtprintmoryCopy.notTodayCta),
               ),
             ),
           ],
@@ -214,7 +214,7 @@ class _DailyArchiveMemoryCardState extends State<DailyArchiveMemoryCard> {
                   tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 ),
                 child: Text(
-                  DailyArchiveMemoryCopy.recordCta,
+                  DailyThoughtprintmoryCopy.recordCta,
                   style: actionStyle,
                 ),
               ),
@@ -236,7 +236,7 @@ class _DailyArchiveMemoryCardState extends State<DailyArchiveMemoryCard> {
                   tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 ),
                 child: Text(
-                  DailyArchiveMemoryCopy.viewPatternDetailsCta,
+                  DailyThoughtprintmoryCopy.viewPatternDetailsCta,
                   style: actionStyle.copyWith(color: AppColors.textSecondary),
                 ),
               ),

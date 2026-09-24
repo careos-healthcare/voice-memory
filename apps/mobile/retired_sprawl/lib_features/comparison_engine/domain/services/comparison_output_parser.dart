@@ -98,7 +98,7 @@ class ComparisonOutputParser {
       pastQuote: past,
       currentQuote: current,
       whatChangedText: whatChanged.isEmpty
-          ? 'ArchiveMe needs more moments to be sure.'
+          ? 'Thoughtprint needs more moments to be sure.'
           : whatChanged.trim(),
     );
   }

@@ -160,8 +160,8 @@ void main() {
       expect(copy, isNot(contains('anthropic')));
     });
 
-    test('central product copy uses ArchiveMe', () {
-      expect(AppConfig.appName, 'ArchiveMe');
+    test('central product copy uses Thoughtprint', () {
+      expect(AppConfig.appName, 'Thoughtprint');
       expect(
         ConsumerUiCopy.paywallHeadline.toLowerCase(),
         isNot(contains('voicememory')),

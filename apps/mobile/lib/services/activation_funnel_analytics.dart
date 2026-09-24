@@ -244,7 +244,7 @@ abstract class ActivationFunnelAnalytics {
       'memory_why_this_appeared_opened';
   static const String memoryUsedIndicatorSeen = 'memory_used_indicator_seen';
 
-  /// Memory Scope — the persistent setting for when ArchiveMe connects
+  /// Memory Scope — the persistent setting for when Thoughtprint connects
   /// entries, plus the ask-mode connect prompt. Fixed scope ids and
   /// counts only; never entry text.
   static const String memoryScopeSeen = 'memory_scope_seen';

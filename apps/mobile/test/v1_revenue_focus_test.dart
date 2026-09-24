@@ -281,7 +281,7 @@ void main() {
     test('habit copy teaches save-compare loop', () {
       expect(
         AudienceWedgeHabitCopy.saveLine,
-        contains('ArchiveMe compares it later'),
+        contains('Thoughtprint compares it later'),
       );
       expect(
         AudienceWedge.doingMoreToFeelEnough.firstPrompt,

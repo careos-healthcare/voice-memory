@@ -126,7 +126,7 @@ void main() {
     test('evaluateCopyPassesRules rejects therapy tool copy', () {
       expect(
         NicheLandingRevenuePlan.evaluateCopyPassesRules(
-          'ArchiveMe is your therapy tool for anxiety.',
+          'Thoughtprint is your therapy tool for anxiety.',
         ),
         isFalse,
       );

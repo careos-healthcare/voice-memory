@@ -33,6 +33,7 @@ flutter_*.log
 **/.pwrun/
 **/test/tmp/
 **/test/failures/
+**/test/release/failures/
 .flutter-plugins-dependencies*
 .flutter-plugins-dependencies\ 2
 .flutter-plugins-dependencies\ 3

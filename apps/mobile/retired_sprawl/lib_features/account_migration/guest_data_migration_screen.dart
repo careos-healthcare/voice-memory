@@ -115,7 +115,7 @@ class _GuestDataMigrationScreenState extends State<GuestDataMigrationScreen> {
       await file.writeAsString(json);
       await Share.shareXFiles([
         XFile(file.path),
-      ], subject: 'ArchiveMe signed-out data export');
+      ], subject: 'Thoughtprint signed-out data export');
       if (!mounted) return;
       setState(
         () => _message =

@@ -14,7 +14,7 @@ KeyMoment _moment(String id, DateTime date) => KeyMoment(
   shortSummary: 'text',
 );
 
-ArchiveMemorySummary _summary() => const ArchiveMemorySummary(
+ThoughtprintmorySummary _summary() => const ThoughtprintmorySummary(
   id: 's1',
   patternTitle: 'Pressure before yes',
   primaryMemoryLine: 'You often say yes before checking in.',

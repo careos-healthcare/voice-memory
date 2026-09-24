@@ -124,12 +124,12 @@ void main() {
     });
   });
 
-  group('TestingArchiveMeScreen', () {
+  group('TestingThoughtprintScreen', () {
     Future<void> pumpScreen(WidgetTester tester) async {
       await tester.pumpWidget(
         MaterialApp(
           theme: AppTheme.light(),
-          home: const TestingArchiveMeScreen(),
+          home: const TestingThoughtprintScreen(),
         ),
       );
       await tester.pump();

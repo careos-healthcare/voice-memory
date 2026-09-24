@@ -66,12 +66,12 @@ class _ExportScreenState extends State<ExportScreen> {
           ),
         );
       } else {
-        file = File('${dir.path}/archiveme_export.json');
+        file = File('${dir.path}/thoughtprint_export.json');
         await file.writeAsString(payload.toJson());
       }
       await Share.shareXFiles([
         XFile(file.path),
-      ], subject: 'ArchiveMe journal export');
+      ], subject: 'Thoughtprint journal export');
       await BetaAnalyticsHooks.exportResult(success: true);
       setState(
         () => _message = 'Export ready (${payload.entries.length} entries).',

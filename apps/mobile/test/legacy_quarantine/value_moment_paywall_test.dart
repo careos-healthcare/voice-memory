@@ -326,7 +326,7 @@ void main() {
       // The body is the moment-specific one — not the generic fallback.
       expect(find.text(ValueMomentBridge.threadReturnBody), findsOneWidget);
       expect(
-        find.textContaining('ArchiveMe has started connecting'),
+        find.textContaining('Thoughtprint has started connecting'),
         findsNothing,
       );
       expect(find.text('See Pro'), findsOneWidget);

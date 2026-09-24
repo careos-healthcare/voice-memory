@@ -14,7 +14,7 @@ const int kMonthlyReviewMinRepeatedPatterns = 3;
 const int _repeatedThreshold = 2;
 
 /// Builds a [MonthlyPatternReview] from this month's saved moments and what
-/// ArchiveMe remembers about recurring patterns. Returns null when there is not
+/// Thoughtprint remembers about recurring patterns. Returns null when there is not
 /// yet enough to look back on.
 MonthlyPatternReview? buildMonthlyPatternReview({
   List<KeyMoment> moments = const [],

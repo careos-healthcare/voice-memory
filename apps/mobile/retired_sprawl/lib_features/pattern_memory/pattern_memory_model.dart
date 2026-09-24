@@ -29,7 +29,7 @@ abstract class PatternMemoryResultHint {
   }
 }
 
-/// What ArchiveMe remembers about how one pattern changes over time.
+/// What Thoughtprint remembers about how one pattern changes over time.
 class PatternMemory {
   const PatternMemory({
     required this.id,

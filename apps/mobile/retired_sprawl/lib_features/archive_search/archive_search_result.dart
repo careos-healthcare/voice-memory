@@ -29,7 +29,7 @@ class ArchiveEntrySearchResult {
 
   final bool isPinned;
   final bool isExactEvidence;
-  final ArchiveMemoryStatus? memoryStatus;
+  final ThoughtprintmoryStatus? memoryStatus;
 
   /// Names of the collections this entry belongs to — user-private
   /// text, shown in the UI only and never logged.

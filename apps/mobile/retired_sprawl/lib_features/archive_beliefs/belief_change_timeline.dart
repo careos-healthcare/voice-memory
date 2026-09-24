@@ -99,7 +99,7 @@ List<BeliefChangeTimelineItem> buildBeliefChangeTimeline({
 /// Sentence case, not title case. Themes arrive lowercased from
 /// `DiscoverLocalEngine.themeCounts`, so the first letter is raised for
 /// readability — but Title Case Like This reads as a headline or a quotation,
-/// and these are themes ArchiveMe derived rather than anything the user said.
+/// and these are themes Thoughtprint derived rather than anything the user said.
 String _sentenceCase(String raw) {
   final t = raw.trim();
   if (t.isEmpty) return t;

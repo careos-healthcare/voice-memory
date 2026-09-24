@@ -22,12 +22,12 @@ abstract class RepeatRecordingNudgeCopy {
 
   static const String secondEntryTitle = 'Add one more entry';
   static const String secondEntryBody =
-      'A second entry helps ArchiveMe show what changed, returned, or faded.';
+      'A second entry helps Thoughtprint show what changed, returned, or faded.';
   static const String secondEntryCta = 'Record again';
 
   static const String day2Title = 'This is where the archive starts working';
   static const String day2Body =
-      'Record today and ArchiveMe can begin comparing what feels new, '
+      'Record today and Thoughtprint can begin comparing what feels new, '
       'repeated, or quieter.';
   static const String day2BodyMemoryOff =
       'Record today to keep building your archive.';

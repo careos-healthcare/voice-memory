@@ -250,7 +250,7 @@ class MonthlyAmbitionPressureReviewEngine {
   }) {
     if (direction == AmbitionPressureDirection.unclear) {
       return const [
-        'ArchiveMe needs more proving moments before calling a direction.',
+        'Thoughtprint needs more proving moments before calling a direction.',
       ];
     }
 

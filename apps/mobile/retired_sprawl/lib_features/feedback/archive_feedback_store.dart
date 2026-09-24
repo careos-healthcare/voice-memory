@@ -3,7 +3,7 @@ import 'package:archiveme_mobile/features/feedback/archive_feedback_summary_engi
 import 'package:archiveme_mobile/services/app_services.dart';
 import 'package:archiveme_mobile/storage/mobile_prefs_store.dart';
 
-/// Local store for quick feedback on ArchiveMe's output.
+/// Local store for quick feedback on Thoughtprint's output.
 ///
 /// Newest first, capped at [_maxRows], de-duped by id. Kept in its own prefs
 /// key so the rest of the schema is untouched.

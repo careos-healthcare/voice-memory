@@ -44,7 +44,7 @@ class PatternsStackDecision {
 /// Proof-layer order: check-in → return proof → timeline → radar → experiment → manual.
 PatternsStackDecision decidePatternsStack({
   required bool hasActiveCheckIn,
-  required bool hasArchiveMemory,
+  required bool hasThoughtprintmory,
   required bool hasNextCheck,
   required bool hasArchiveCleanView,
   required bool hasPatternProfile,
@@ -68,10 +68,10 @@ PatternsStackDecision decidePatternsStack({
   if (hasTimeline) {
     sections.add(PatternsSectionType.timeline);
   }
-  if (hasArchiveMemory) {
+  if (hasThoughtprintmory) {
     sections.add(PatternsSectionType.archiveMemory);
   }
-  if (hasNextCheck && !hasArchiveMemory) {
+  if (hasNextCheck && !hasThoughtprintmory) {
     sections.add(PatternsSectionType.nextCheck);
   }
   if (hasPatternProfile) {
@@ -92,7 +92,7 @@ PatternsStackDecision decidePatternsStack({
   if (hasArchiveCleanView) {
     sections.add(PatternsSectionType.archiveNavigation);
   }
-  if (!hasAnyMoment && !hasArchiveMemory) {
+  if (!hasAnyMoment && !hasThoughtprintmory) {
     sections.add(PatternsSectionType.emptyState);
   }
 
@@ -105,7 +105,7 @@ PatternsStackDecision decidePatternsStack({
     suppressSeparateFindMomentCard: suppressNav,
     suppressSeparatePatternMapCard: suppressNav || suppressFromProfile,
     suppressSeparateTimelineCard: suppressNav,
-    suppressLowerPriorityCtas: hasArchiveMemory && hasNextCheck,
+    suppressLowerPriorityCtas: hasThoughtprintmory && hasNextCheck,
     showCurrentObjectiveCard: !hasDueCheckStatusCard,
   );
 }

@@ -4,7 +4,7 @@ class ComparisonEngineConfig {
   /// Generates the strict system prompt for comparing a new moment to historical words.
   String buildSystemPrompt() {
     return '''
-You are the private comparison engine for ArchiveMe. Your only job is to compare a new saved moment with previous saved moments to see if a life pattern is repeating or changing.
+You are the private comparison engine for Thoughtprint. Your only job is to compare a new saved moment with previous saved moments to see if a life pattern is repeating or changing.
 
 CRITICAL INSTRUCTIONS:
 1. Use ONLY the user's direct saved words as evidence. Never invent data.
@@ -31,7 +31,7 @@ Connection: [1-2 sentences explaining how they may relate using a cautious phras
 Evidence:
 - Past: "[Direct quote from past moment]"
 - Present: "[Direct quote from current moment]"
-What Changed: [Describe the precise text difference or state "ArchiveMe needs more moments to be sure."]
+What Changed: [Describe the precise text difference or state "Thoughtprint needs more moments to be sure."]
 ---
 ''';
   }

@@ -14,10 +14,10 @@ import 'package:archiveme_mobile/features/pressure_retention/thread_return_evide
 ///   (guided thread plan first, then daily suggestion evidence) so the
 ///   receipt closes the loop the user just recorded on.
 /// - With a thread term: "You added words to the work thread." and
-///   "Tomorrow ArchiveMe can check whether this returned, faded, or changed."
+///   "Tomorrow Thoughtprint can check whether this returned, faded, or changed."
 /// - Without one: the generic affect label — "You added one piece today."
 ///   at a single entry, or a thread label once comparison is possible.
-///   Tomorrow ArchiveMe can check whether it shows up again. Nothing
+///   Tomorrow Thoughtprint can check whether it shows up again. Nothing
 ///   fabricated, nothing claimed beyond naming.
 class DoneForTodayReceiptEngine {
   const DoneForTodayReceiptEngine();
@@ -56,7 +56,7 @@ class DoneForTodayReceiptEngine {
       tomorrowLine: isSingleEntry
           ? VisibleArchiveProofCopy.oneEntryTomorrowLine
           : term != null
-          ? 'Tomorrow ArchiveMe can check whether this returned, faded, '
+          ? 'Tomorrow Thoughtprint can check whether this returned, faded, '
                 'or changed.'
           : VisibleArchiveProofCopy.oneEntryTomorrowLine,
       tomorrowCueTitle: DoneForTodayReceipt.defaultTomorrowCueTitle,

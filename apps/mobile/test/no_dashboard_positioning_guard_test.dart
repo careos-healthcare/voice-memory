@@ -24,7 +24,7 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   group('NoDashboardPositioningGuard.evaluate', () {
     test('proof trail language allowed', () {
-      const copy = 'ArchiveMe keeps your proof trail over time.';
+      const copy = 'Thoughtprint keeps your proof trail over time.';
       final result = NoDashboardPositioningGuard.evaluate(copy);
       expect(result.action, NoDashboardPositioningGuardAction.allowed);
       expect(
@@ -90,7 +90,7 @@ void main() {
 
     test('dashboard positioning blocked', () {
       final result = NoDashboardPositioningGuard.evaluate(
-        'ArchiveMe is your life dashboard.',
+        'Thoughtprint is your life dashboard.',
       );
       expect(result.action, NoDashboardPositioningGuardAction.block);
       expect(
@@ -101,7 +101,7 @@ void main() {
 
     test('command center positioning blocked', () {
       final result = NoDashboardPositioningGuard.evaluate(
-        'ArchiveMe is your command center for life.',
+        'Thoughtprint is your command center for life.',
       );
       expect(result.action, NoDashboardPositioningGuardAction.block);
       expect(
@@ -112,7 +112,7 @@ void main() {
 
     test('life operating system positioning blocked', () {
       final result = NoDashboardPositioningGuard.evaluate(
-        'Build your life operating system inside ArchiveMe.',
+        'Build your life operating system inside Thoughtprint.',
       );
       expect(result.action, NoDashboardPositioningGuardAction.block);
       expect(
@@ -123,7 +123,7 @@ void main() {
 
     test('second brain positioning blocked', () {
       final result = NoDashboardPositioningGuard.evaluate(
-        'Build your second brain inside ArchiveMe.',
+        'Build your second brain inside Thoughtprint.',
       );
       expect(result.action, NoDashboardPositioningGuardAction.block);
       expect(
@@ -134,7 +134,7 @@ void main() {
 
     test('productivity system positioning blocked', () {
       final result = NoDashboardPositioningGuard.evaluate(
-        'ArchiveMe is your productivity system for everything.',
+        'Thoughtprint is your productivity system for everything.',
       );
       expect(result.action, NoDashboardPositioningGuardAction.block);
       expect(
@@ -167,7 +167,7 @@ void main() {
 
     test('action plan manager positioning blocked', () {
       final result = NoDashboardPositioningGuard.evaluate(
-        'Use ArchiveMe as your action plan manager.',
+        'Use Thoughtprint as your action plan manager.',
       );
       expect(result.action, NoDashboardPositioningGuardAction.block);
       expect(
@@ -210,17 +210,17 @@ void main() {
 
     test('not-a-dashboard negation allowed', () {
       final result = NoDashboardPositioningGuard.evaluate(
-        'ArchiveMe is not a dashboard for your whole life.',
+        'Thoughtprint is not a dashboard for your whole life.',
       );
       expect(result.action, NoDashboardPositioningGuardAction.allowed);
     });
   });
 
   group('NoDashboardPositioningGuardCopy', () {
-    test('headline says ArchiveMe is not a life dashboard', () {
+    test('headline says Thoughtprint is not a life dashboard', () {
       expect(
         NoDashboardPositioningGuardCopy.headline,
-        'ArchiveMe is not a life dashboard',
+        'Thoughtprint is not a life dashboard',
       );
     });
 
@@ -378,7 +378,7 @@ void main() {
       );
       expect(
         TrailLanguageGuard.isAllowedCopy(
-          'ArchiveMe keeps your proof trail over time.',
+          'Thoughtprint keeps your proof trail over time.',
         ).isAllowed,
         isTrue,
       );

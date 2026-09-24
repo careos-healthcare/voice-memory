@@ -4,20 +4,20 @@ abstract final class ExperimentHCopy {
 
   static const screenTitle = 'Not ChatGPT';
   static const screenLead =
-      'See how ArchiveMe treats your first moment differently from a standard chatbot.';
+      'See how Thoughtprint treats your first moment differently from a standard chatbot.';
   static const toggleLabel = 'Compare against Chat AI';
   static const toggleHint =
       'Slide to compare ephemeral chat memory vs permanent fact ledger storage.';
   static const chatPanelTitle = 'Standard Chatbot / ChatGPT (Ephemeral)';
   static const chatPanelSubtitle =
       'Generative summary · no citations · lost when the chat ends';
-  static const evidencePanelTitle = 'ArchiveMe Evidence Engine (Verifiable)';
+  static const evidencePanelTitle = 'Thoughtprint Evidence Engine (Verifiable)';
   static const evidencePanelSubtitle =
       'Permanent fact ledger · verbatim quotes · exact timestamps';
   static const emptyEntryBody =
       'Save a little more detail in your first moment to compare evidence quality.';
   static const shortEntryBody =
-      'Your entry is short — ArchiveMe still cites exactly what you said.';
+      'Your entry is short — Thoughtprint still cites exactly what you said.';
   static const verifyCta = 'This is why it is different';
   static const continueCta = 'Continue';
   static const architectureEphemeral =

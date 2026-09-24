@@ -406,7 +406,7 @@ void main() {
       contains('You checked it 4 times and caught it more than once.'),
     );
     expect(recap.lines, contains('It often starts around: before saying yes'));
-    expect(recap.plainText, contains('Made with ArchiveMe'));
+    expect(recap.plainText, contains('Made with Thoughtprint'));
   });
 
   test('journey step override is inactive in unit tests', () {

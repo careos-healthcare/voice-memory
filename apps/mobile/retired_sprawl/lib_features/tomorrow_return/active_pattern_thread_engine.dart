@@ -70,7 +70,7 @@ class ActivePatternThreadEngine {
     required bool needsOneMoreMoment,
   }) {
     if (needsOneMoreMoment) {
-      return 'Today, add one more moment so ArchiveMe can compare this pattern.';
+      return 'Today, add one more moment so Thoughtprint can compare this pattern.';
     }
     switch (status) {
       case ActivePatternThreadStatus.easing:

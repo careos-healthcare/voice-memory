@@ -8,7 +8,7 @@ import 'package:archiveme_mobile/storage/mobile_prefs_store.dart';
 
 /// Local store for structured pressure check-in records, keyed by entry id.
 ///
-/// Backed by the same on-device prefs file as other ArchiveMe local state —
+/// Backed by the same on-device prefs file as other Thoughtprint local state —
 /// no backend dependency.
 class PressureCheckInStore {
   PressureCheckInStore(this._prefs);

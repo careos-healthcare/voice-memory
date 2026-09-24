@@ -7,11 +7,11 @@ void main() {
   test('confidence shift uses reflective phrasing not percent deltas', () {
     expect(
       WarmArchiveCopy.confidenceShiftPhrase(prior: 73, current: 55),
-      'ArchiveMe is less certain about this than before.',
+      'Thoughtprint is less certain about this than before.',
     );
     expect(
       WarmArchiveCopy.confidenceShiftPhrase(prior: 55, current: 73),
-      'ArchiveMe feels more certain about this than before.',
+      'Thoughtprint feels more certain about this than before.',
     );
     expect(
       LivingArchiveCopy.confidenceChangeHeadline(61, 73),
@@ -35,11 +35,11 @@ void main() {
       label: 'Confidence',
       before: '70%',
       after: '52%',
-      displayText: 'ArchiveMe is less certain about this than before.',
+      displayText: 'Thoughtprint is less certain about this than before.',
     );
     expect(
       WarmArchiveCopy.formatWhatChangedLine(line),
-      'ArchiveMe is less certain about this than before.',
+      'Thoughtprint is less certain about this than before.',
     );
   });
 

@@ -10,7 +10,7 @@ import 'package:archiveme_mobile/features/pattern_memory/pattern_progress_model.
 
 /// Builds a conservative memory-quality read from saved local data only.
 MemoryQuality buildMemoryQuality({
-  ArchiveMemorySummary? summary,
+  ThoughtprintmorySummary? summary,
   PatternMemory? memory,
   List<KeyMoment> keyMoments = const [],
   ArchiveEvolutionTimeline? timeline,
@@ -105,7 +105,7 @@ int _weekCountFromMoments(List<KeyMoment> moments) {
 }
 
 bool _hasChangedRecently({
-  ArchiveMemorySummary? summary,
+  ThoughtprintmorySummary? summary,
   PatternMemory? memory,
   PatternProgressMoment? progress,
   ArchiveEvolutionTimeline? timeline,

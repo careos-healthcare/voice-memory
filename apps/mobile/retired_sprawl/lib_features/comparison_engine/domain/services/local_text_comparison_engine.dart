@@ -52,7 +52,7 @@ class LocalTextComparisonEngine {
         connectionSummary: 'A repeating thread may be forming.',
         matchedPastQuote: pastQuote,
         matchedCurrentQuote: currentQuote,
-        evolutionAnalysis: 'ArchiveMe needs more moments to be sure.',
+        evolutionAnalysis: 'Thoughtprint needs more moments to be sure.',
       );
     }
 
@@ -65,7 +65,7 @@ class LocalTextComparisonEngine {
       matchedPastQuote: pastQuote,
       matchedCurrentQuote: currentQuote,
       evolutionAnalysis: evolution == null || evolution.isEmpty
-          ? 'ArchiveMe needs more moments to be sure.'
+          ? 'Thoughtprint needs more moments to be sure.'
           : evolution,
     );
   }

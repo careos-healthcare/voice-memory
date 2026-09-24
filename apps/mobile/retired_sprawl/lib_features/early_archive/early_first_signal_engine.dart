@@ -364,7 +364,7 @@ abstract final class EarlyFirstSignalEngine {
     return ConfirmedRepeatTriggerPayoff(
       title: EarlyFirstSignalCopy.triggerPayoffTitle,
       body: insight.triggerSummary != null
-          ? '${insight.triggerSummary!} That gives ArchiveMe stronger evidence for what starts this loop.'
+          ? '${insight.triggerSummary!} That gives Thoughtprint stronger evidence for what starts this loop.'
           : EarlyArchiveInsightQualityCopy.triggerPayoffBodyFallback,
       evidenceLines: [
         insight.repeatSummary ??

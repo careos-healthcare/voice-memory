@@ -2,7 +2,7 @@
 abstract final class ArchiveJourneyCopy {
   ArchiveJourneyCopy._();
 
-  static const title = 'How ArchiveMe works';
+  static const title = 'How Thoughtprint works';
 
   static const step1Title = 'Record one real moment';
 
@@ -10,17 +10,17 @@ abstract final class ArchiveJourneyCopy {
 
   static const step2Title = 'Come back when it repeats';
 
-  static const step2Body = 'ArchiveMe needs similar moments to compare.';
+  static const step2Body = 'Thoughtprint needs similar moments to compare.';
 
   static const step3Title = 'Unlock first proof';
 
   static const step3Body =
-      'Three related moments let ArchiveMe show the repeat back to you.';
+      'Three related moments let Thoughtprint show the repeat back to you.';
 
   static const step4Title = 'Track what changes';
 
   static const step4Body =
-      'ArchiveMe watches whether it gets stronger, softer, different, or helpful.';
+      'Thoughtprint watches whether it gets stronger, softer, different, or helpful.';
 
   static const step5Title = 'Keep the longer proof trail';
 

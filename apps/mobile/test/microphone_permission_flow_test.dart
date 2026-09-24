@@ -1084,13 +1084,13 @@ void main() {
   });
 
   group('Info.plist microphone strings', () {
-    test('contains NSMicrophoneUsageDescription with ArchiveMe copy', () {
+    test('contains NSMicrophoneUsageDescription with Thoughtprint copy', () {
       final plist = File('ios/Runner/Info.plist').readAsStringSync();
       expect(plist, contains('<key>NSMicrophoneUsageDescription</key>'));
       expect(
         plist,
         contains(
-          'ArchiveMe uses the microphone to record spoken thoughts for your private voice journal and unified life story.',
+          'Thoughtprint uses the microphone to record spoken thoughts for your private voice journal and unified life story.',
         ),
       );
     });

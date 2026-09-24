@@ -1,7 +1,7 @@
 /// What a piece of archive evidence *is* — the explicit separation
 /// between raw user material, derived patterns, and generated text.
 ///
-/// ArchiveMe preserves exact evidence: raw entries are the source of
+/// Thoughtprint preserves exact evidence: raw entries are the source of
 /// truth, extracted facts and user-marked details reference them,
 /// patterns reference supporting evidence, and generated
 /// interpretations are temporary views that can never become evidence

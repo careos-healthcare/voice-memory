@@ -1,6 +1,6 @@
 import 'package:archiveme_mobile/security/privacy_copy_policy.dart';
 
-/// Every trust and privacy claim ArchiveMe makes, stated once.
+/// Every trust and privacy claim Thoughtprint makes, stated once.
 ///
 /// [PrivacyCopyPolicy] owns the *sensitive* promises and the rules that decide
 /// whether a sentence is allowed to ship. This catalogue is the layer above it:

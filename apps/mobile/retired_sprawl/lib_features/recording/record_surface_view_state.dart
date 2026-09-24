@@ -312,9 +312,9 @@ class RecordSurfaceViewState {
     required this.quietSignalCandidate,
     required this.showQuietSignalOnRecord,
     required this.showLowEvidenceGuidanceOnRecord,
-    required this.dailyArchiveMemoryCandidate,
+    required this.dailyThoughtprintmoryCandidate,
     required this.firstProofLoopActive,
-    required this.showDailyArchiveMemory,
+    required this.showDailyThoughtprintmory,
     required this.showReturningWatchTargetFocusedUi,
     required this.recordReadyShowsWatchTargetOnly,
     required this.recordReadySuppressStreakPressure,
@@ -676,9 +676,9 @@ class RecordSurfaceViewState {
     required QuietSignal? quietSignalCandidate,
     required bool showQuietSignalOnRecord,
     required bool showLowEvidenceGuidanceOnRecord,
-    required DailyArchiveMemoryResult? dailyArchiveMemoryCandidate,
+    required DailyThoughtprintmoryResult? dailyThoughtprintmoryCandidate,
     required bool firstProofLoopActive,
-    required bool showDailyArchiveMemory,
+    required bool showDailyThoughtprintmory,
     required bool showReturningWatchTargetFocusedUi,
     required bool recordReadyShowsWatchTargetOnly,
     required bool recordReadySuppressStreakPressure,
@@ -1039,9 +1039,9 @@ class RecordSurfaceViewState {
       quietSignalCandidate: quietSignalCandidate,
       showQuietSignalOnRecord: showQuietSignalOnRecord,
       showLowEvidenceGuidanceOnRecord: showLowEvidenceGuidanceOnRecord,
-      dailyArchiveMemoryCandidate: dailyArchiveMemoryCandidate,
+      dailyThoughtprintmoryCandidate: dailyThoughtprintmoryCandidate,
       firstProofLoopActive: firstProofLoopActive,
-      showDailyArchiveMemory: showDailyArchiveMemory,
+      showDailyThoughtprintmory: showDailyThoughtprintmory,
       showReturningWatchTargetFocusedUi: showReturningWatchTargetFocusedUi,
       recordReadyShowsWatchTargetOnly: recordReadyShowsWatchTargetOnly,
       recordReadySuppressStreakPressure: recordReadySuppressStreakPressure,
@@ -1669,9 +1669,9 @@ class RecordSurfaceViewState {
     'showLowEvidenceGuidanceOnRecord': _debugSnap(
       showLowEvidenceGuidanceOnRecord,
     ),
-    'dailyArchiveMemoryCandidate': _debugSnap(dailyArchiveMemoryCandidate),
+    'dailyThoughtprintmoryCandidate': _debugSnap(dailyThoughtprintmoryCandidate),
     'firstProofLoopActive': _debugSnap(firstProofLoopActive),
-    'showDailyArchiveMemory': _debugSnap(showDailyArchiveMemory),
+    'showDailyThoughtprintmory': _debugSnap(showDailyThoughtprintmory),
     'showReturningWatchTargetFocusedUi': _debugSnap(
       showReturningWatchTargetFocusedUi,
     ),
@@ -2062,9 +2062,9 @@ class RecordSurfaceViewState {
   final QuietSignal? quietSignalCandidate;
   final bool showQuietSignalOnRecord;
   final bool showLowEvidenceGuidanceOnRecord;
-  final DailyArchiveMemoryResult? dailyArchiveMemoryCandidate;
+  final DailyThoughtprintmoryResult? dailyThoughtprintmoryCandidate;
   final bool firstProofLoopActive;
-  final bool showDailyArchiveMemory;
+  final bool showDailyThoughtprintmory;
   final bool showReturningWatchTargetFocusedUi;
   final bool recordReadyShowsWatchTargetOnly;
   final bool recordReadySuppressStreakPressure;

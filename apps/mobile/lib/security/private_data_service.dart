@@ -42,7 +42,7 @@ class ArchiveExportPayload {
   final Map<String, dynamic> evidenceTrails;
 
   String toJson() => const JsonEncoder.withIndent('  ').convert({
-    'app': 'ArchiveMe',
+    'app': 'Thoughtprint',
     'exportedAt': exportedAt.toUtc().toIso8601String(),
     'entryCount': entries.length,
     'insightCorrectionNotes': insightCorrectionNotes,

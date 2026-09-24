@@ -1,4 +1,4 @@
-/// Day 2 Return Preview — a lightweight, passive preview of what ArchiveMe
+/// Day 2 Return Preview — a lightweight, passive preview of what Thoughtprint
 /// will check tomorrow, shown right after the first save to make the reason
 /// to come back feel specific.
 ///
@@ -18,16 +18,16 @@ class DayTwoReturnPreview {
 
   /// Exactly one safe context tag — names the thread with its safe label.
   static String singleContextBody(String label) =>
-      'ArchiveMe will check whether the $label thread returned, faded, or '
+      'Thoughtprint will check whether the $label thread returned, faded, or '
       'changed.';
 
   /// Multiple safe contexts — one thread reference, no label picking.
   static const String multiContextBody =
-      'ArchiveMe will check whether this thread returned, faded, or changed.';
+      'Thoughtprint will check whether this thread returned, faded, or changed.';
 
   /// No safe label — never guesses, never quotes.
   static const String genericBody =
-      'ArchiveMe will check whether this returned, faded, or changed.';
+      'Thoughtprint will check whether this returned, faded, or changed.';
 
   static const String smallLine = 'One check is enough.';
 }

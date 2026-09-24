@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-/// ArchiveMe consumer light palette — calm, premium, ambition-pressure tracking.
+/// Thoughtprint consumer light palette — calm, premium, ambition-pressure tracking.
 class AppColors {
   AppColors._();
 

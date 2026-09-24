@@ -175,7 +175,7 @@ void main() {
     expect(find.text(ConsumerUiCopy.tomorrowCheckInRecordCta), findsOneWidget);
     expect(find.text('Short is fine. One sentence is enough.'), findsOneWidget);
     expect(
-      find.textContaining('ArchiveMe can compare today with yesterday'),
+      find.textContaining('Thoughtprint can compare today with yesterday'),
       findsOneWidget,
     );
   });
@@ -229,7 +229,7 @@ void main() {
       hasArchiveProof: false,
     );
     expect(d.showDueCheckCard, isTrue);
-    expect(d.showArchiveMemoryDemo, isFalse);
+    expect(d.showThoughtprintmoryDemo, isFalse);
   });
 
   test('due check suppresses duplicate retention card', () {

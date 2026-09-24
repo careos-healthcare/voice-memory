@@ -5,11 +5,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  testWidgets('shows What ArchiveMe will remember preview', (tester) async {
+  testWidgets('shows What Thoughtprint will remember preview', (tester) async {
     await tester.pumpWidget(
       MaterialApp(
         theme: AppTheme.light(),
-        home: Scaffold(body: ArchiveMemoryEmptyPreviewCard(onRecord: () {})),
+        home: Scaffold(body: ThoughtprintmoryEmptyPreviewCard(onRecord: () {})),
       ),
     );
     expect(find.text(ConsumerUiCopy.archiveMemoryPreviewTitle), findsOneWidget);
@@ -25,7 +25,7 @@ void main() {
       MaterialApp(
         theme: AppTheme.light(),
         home: Scaffold(
-          body: ArchiveMemoryEmptyPreviewCard(onRecord: () => tapped = true),
+          body: ThoughtprintmoryEmptyPreviewCard(onRecord: () => tapped = true),
         ),
       ),
     );

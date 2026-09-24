@@ -790,33 +790,33 @@ void main() {
       expect(MemoryScopeCopy.automaticLabel, 'Automatic when useful');
       expect(
         MemoryScopeCopy.automaticHelper,
-        'ArchiveMe can connect entries when there is enough evidence.',
+        'Thoughtprint can connect entries when there is enough evidence.',
       );
       expect(MemoryScopeCopy.askLabel, 'Ask before connecting');
       expect(
         MemoryScopeCopy.askHelper,
-        'ArchiveMe will ask before using a new entry to suggest a '
+        'Thoughtprint will ask before using a new entry to suggest a '
         'connection.',
       );
       expect(MemoryScopeCopy.threadOnlyLabel, 'Only within chosen threads');
       expect(
         MemoryScopeCopy.threadOnlyHelper,
-        'ArchiveMe will not connect unrelated entries automatically.',
+        'Thoughtprint will not connect unrelated entries automatically.',
       );
       expect(MemoryScopeCopy.offLabel, 'Memory off');
       expect(
         MemoryScopeCopy.offHelper,
-        'ArchiveMe will save entries without using them to suggest '
+        'Thoughtprint will save entries without using them to suggest '
         'connections.',
       );
       expect(
         MemoryScopeCopy.settingsBody,
-        'Choose when ArchiveMe connects entries.',
+        'Choose when Thoughtprint connects entries.',
       );
       expect(MemoryScopeCopy.offNoticeTitle, 'Memory is off.');
       expect(
         MemoryScopeCopy.offNoticeBody,
-        'Your entries are saved, but ArchiveMe is not connecting them '
+        'Your entries are saved, but Thoughtprint is not connecting them '
         'right now.',
       );
       expect(MemoryScopeCopy.offNoticeCta, 'Change memory setting');

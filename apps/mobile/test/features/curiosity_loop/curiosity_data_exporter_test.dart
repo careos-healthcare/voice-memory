@@ -107,7 +107,7 @@ void main() {
         end: windowEnd,
       );
 
-      expect(markdown, contains('# ArchiveMe — Curiosity Loop Export'));
+      expect(markdown, contains('# Thoughtprint — Curiosity Loop Export'));
       expect(markdown, contains('2026-06-11 → 2026-06-18'));
       expect(markdown, contains('## Reaction summary'));
       expect(markdown, contains('| Reaction | Count | Share |'));

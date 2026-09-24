@@ -206,7 +206,7 @@ abstract class ArchiveLoopPaywallCopy {
   static const productUnavailableTitle =
       'Subscriptions are not available right now';
   static const productUnavailableBody =
-      'ArchiveMe could not load subscription options. You can still use your free loop map and try again later.';
+      'Thoughtprint could not load subscription options. You can still use your free loop map and try again later.';
   static const tryAgainCta = 'Try again';
   static const purchaseFailedHint =
       'Purchase did not complete. You can try again or continue with your free map.';
@@ -217,9 +217,9 @@ abstract class ArchiveLoopPaywallCopy {
   static const subscriptionDetailsTitle = 'Subscription details';
   static const subscriptionAutoRenewingSummary =
       'Monthly or yearly auto-renewing subscription.';
-  static const subscriptionMonthlyTitle = 'ArchiveMe Pro Monthly';
+  static const subscriptionMonthlyTitle = 'Thoughtprint Pro Monthly';
   static const subscriptionMonthlyDuration = 'Monthly plan renews every month.';
-  static const subscriptionYearlyTitle = 'ArchiveMe Pro Yearly';
+  static const subscriptionYearlyTitle = 'Thoughtprint Pro Yearly';
   static const subscriptionYearlyDuration = 'Yearly plan renews every year.';
   static const subscriptionPriceUnavailable =
       'Price shown by Apple at purchase.';

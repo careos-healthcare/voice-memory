@@ -115,7 +115,7 @@ void main() {
     test('Too vague response waits for clearer evidence', () {
       expect(
         BetaRepairLabCopy.proofFeedbackTooVagueResponse,
-        'Got it. ArchiveMe will wait for clearer evidence before showing this again.',
+        'Got it. Thoughtprint will wait for clearer evidence before showing this again.',
       );
       expect(
         FirstSessionProofRepairCopy.proofNextStepTooVague,
@@ -126,7 +126,7 @@ void main() {
     test('Not relevant response avoids useful pattern treatment', () {
       expect(
         BetaRepairLabCopy.proofFeedbackNotRelevantResponse,
-        'Got it. ArchiveMe will not treat this as a useful pattern.',
+        'Got it. Thoughtprint will not treat this as a useful pattern.',
       );
       expect(
         FirstSessionProofRepairCopy.proofNextStepNotRelevant,
@@ -226,12 +226,12 @@ void main() {
   group('empty states', () {
     test('empty states point back to recording real moments', () {
       const target =
-          'Record a few real moments. ArchiveMe will look for what repeats across them.';
+          'Record a few real moments. Thoughtprint will look for what repeats across them.';
       expect(ConsumerUiCopy.patternsEarlyStateBody, target);
       expect(ArchiveHistoryCopy.emptyBody, target);
       expect(
         VisibleArchiveProofCopy.patternsMindMapEmptyBody,
-        'ArchiveMe will look for what repeats across them.',
+        'Thoughtprint will look for what repeats across them.',
       );
       expect(
         EmptyArchiveCopy.intentionalEmptyOpening,

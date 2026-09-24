@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  group('ArchiveMe light theme', () {
+  group('Thoughtprint light theme', () {
     test('app entry follows system theme mode with light and dark themes', () {
       final app = File('lib/app.dart').readAsStringSync();
       expect(app, contains('ThemeMode.system'));
@@ -28,7 +28,7 @@ void main() {
       expect(bg, isNot(Colors.black));
     });
 
-    test('primary accent is ArchiveMe blue', () {
+    test('primary accent is Thoughtprint blue', () {
       expect(AppColors.accentPrimary, const Color(0xFF2563EB));
       expect(AppTheme.light().colorScheme.primary, AppColors.accentPrimary);
     });

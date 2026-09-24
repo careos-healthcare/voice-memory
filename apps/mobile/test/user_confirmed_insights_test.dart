@@ -248,7 +248,7 @@ void main() {
   group('InsightFeedbackEngine', () {
     setUp(InsightFeedbackStore.resetForTest);
 
-    test('copy uses ArchiveMe and avoids banned language', () {
+    test('copy uses Thoughtprint and avoids banned language', () {
       final copy = InsightFeedbackCopy.allVisibleStrings
           .join(' ')
           .toLowerCase();

@@ -21,7 +21,7 @@ class ThirdSessionArchiveUsefulnessEngine {
         ? comparison.whatRepeated!.trim()
         : (comparison.possibleRepeat
               ? 'Similar themes may be showing up across your recent moments.'
-              : 'ArchiveMe is still gathering enough to name what keeps returning.');
+              : 'Thoughtprint is still gathering enough to name what keeps returning.');
 
     final changedSince = comparison.whatChanged?.trim().isNotEmpty == true
         ? comparison.whatChanged!.trim()

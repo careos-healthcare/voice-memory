@@ -175,7 +175,7 @@ void main() {
       }
     });
 
-    test('copy uses ArchiveMe and avoids banned language', () {
+    test('copy uses Thoughtprint and avoids banned language', () {
       final copy = DailyArchiveExerciseCopy.allVisibleStrings
           .join(' ')
           .toLowerCase();

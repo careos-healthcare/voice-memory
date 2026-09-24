@@ -147,13 +147,13 @@ abstract class EntryMemoryModeCopy {
   static const String entryOptionsTitle = 'Entry options';
   static const String advancedSaveOptionsTitle = 'Advanced save options';
   static const String advancedSaveOptionsCollapsedHelper =
-      'Most entries can use the default. ArchiveMe will compare this with '
+      'Most entries can use the default. Thoughtprint will compare this with '
       'future entries when there is enough to compare.';
   static const String useLabel = 'Use archive context';
   static const String treatAsNewLabel = 'Treat as new';
   static const String keepSeparateLabel = 'Keep separate';
   static const String useArchiveContextHelper =
-      'ArchiveMe may compare this with related entries when memory is allowed.';
+      'Thoughtprint may compare this with related entries when memory is allowed.';
   static const String treatAsNewHelper =
       'Save this without using earlier entries to shape it.';
   static const String keepSeparateHelper =

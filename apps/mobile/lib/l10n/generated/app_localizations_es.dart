@@ -3396,7 +3396,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get v1Copy0860 => 'Need an idea?';
 
   @override
-  String get v1Copy0861 => 'ARCHIVEME NOTICED';
+  String get v1Copy0861 => 'THOUGHTPRINT NOTICED';
 
   @override
   String get v1Copy0862 => 'Today Thoughtprint noticed';

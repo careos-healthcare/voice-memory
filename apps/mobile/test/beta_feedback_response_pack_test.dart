@@ -306,7 +306,7 @@ void main() {
       }
     });
 
-    test('no ArchiveMe knows in copy', () {
+    test('no Thoughtprint knows in copy', () {
       for (final text in BetaFeedbackResponseCopy.allVisibleStrings()) {
         expect(text.toLowerCase(), isNot(contains('archiveme knows')));
       }

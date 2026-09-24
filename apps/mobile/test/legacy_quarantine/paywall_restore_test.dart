@@ -145,7 +145,7 @@ void main() {
             .data,
         contains(ConsumerUiCopy.paywallSetupUnavailableBody),
       );
-      expect(find.text('Continue with ArchiveMe Pro'), findsNothing);
+      expect(find.text('Continue with Thoughtprint Pro'), findsNothing);
     });
   });
 }

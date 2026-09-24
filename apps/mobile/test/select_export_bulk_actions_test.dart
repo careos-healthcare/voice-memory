@@ -170,11 +170,11 @@ void main() {
     test('export filename is safe', () {
       expect(
         SelectedArchiveExport.fileName(DateTime(2026, 6, 12)),
-        'archiveme-export-2026-06-12.md',
+        'thoughtprint-export-2026-06-12.md',
       );
       expect(
         SelectedArchiveExport.fileName(DateTime(2026, 1, 5)),
-        'archiveme-export-2026-01-05.md',
+        'thoughtprint-export-2026-01-05.md',
       );
     });
 
@@ -189,7 +189,7 @@ void main() {
         now: _base,
       );
 
-      expect(markdown, contains('# ArchiveMe export'));
+      expect(markdown, contains('# Thoughtprint export'));
       expect(markdown, contains('Export date: 12 June 2026'));
       expect(markdown, contains('Entries: 2'));
       expect(markdown, contains('Selected thought one'));
@@ -634,7 +634,7 @@ void main() {
         isFalse,
         reason: 'unselected entries are never exported',
       );
-      expect(capturedName, startsWith('archiveme-export-'));
+      expect(capturedName, startsWith('thoughtprint-export-'));
       expect(find.byKey(const Key('export_complete_receipt')), findsOneWidget);
       expect(find.text('Export complete'), findsOneWidget);
 

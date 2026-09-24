@@ -18,7 +18,7 @@ abstract class MemoryQualityCoordinator {
     }
     if (!AppServices.isInitialized) return MemoryQuality.hidden;
     try {
-      final summary = await ArchiveMemorySummaryCoordinator.loadLatest();
+      final summary = await ThoughtprintmorySummaryCoordinator.loadLatest();
       final memory = await PatternMemoryCoordinator.loadActive();
       final keyMoments = await KeyMomentStore.instance().loadAll();
       final timeline = await ArchiveEvolutionCoordinator.loadLatest();

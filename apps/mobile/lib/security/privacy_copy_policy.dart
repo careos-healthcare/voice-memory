@@ -55,7 +55,7 @@ abstract class PrivacyCopyPolicy {
       'Keys stay in secure storage on this device and are never transmitted. '
       'Preferences and archive metadata are not covered.';
 
-  static const String lockArchiveMe = 'Protect this archive';
+  static const String lockThoughtprint = 'Protect this archive';
 
   /// Calm first-run / legal disclaimer — no encryption or therapy claims.
   static const String personalNotMedicalDisclaimer =

@@ -104,7 +104,7 @@ void main() {
       expect(QuietSignalCopy.title, 'This has not shown up recently');
       expect(
         QuietSignalCopy.body,
-        'ArchiveMe was watching this thread, but your recent moments did not show it.',
+        'Thoughtprint was watching this thread, but your recent moments did not show it.',
       );
       expect(QuietSignalCopy.footer, 'That may matter too.');
       expect(QuietSignalCopy.ctaKeepWatching, 'Keep watching');
@@ -324,7 +324,7 @@ void main() {
         entries: entries,
         now: DateTime(2026, 6, 15, 12),
       );
-      final memory = DailyArchiveMemoryEngine.build(entries: entries);
+      final memory = DailyThoughtprintmoryEngine.build(entries: entries);
       final showQuiet = QuietSignalGates.shouldShowOnRecordReady(
         isReady: true,
         isRecording: false,
@@ -335,7 +335,7 @@ void main() {
       expect(showQuiet, isTrue);
       expect(memory, isNotNull);
       expect(
-        DailyArchiveMemoryGates.shouldShow(
+        DailyThoughtprintmoryGates.shouldShow(
           loaded: true,
           entryCount: entries.length,
           isReady: true,

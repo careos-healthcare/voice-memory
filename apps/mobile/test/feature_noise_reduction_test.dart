@@ -446,7 +446,7 @@ void main() {
       }
     });
 
-    test('copy does not position ArchiveMe as voice chat', () {
+    test('copy does not position Thoughtprint as voice chat', () {
       for (final text in FeatureNoiseReductionCopy.allVisibleStrings()) {
         final lower = text.toLowerCase();
         expect(lower.contains('voice chat'), isFalse, reason: text);
@@ -517,7 +517,7 @@ void main() {
       );
       expect(
         TrailLanguageGuard.isAllowedCopy(
-          'ArchiveMe keeps your proof trail over time.',
+          'Thoughtprint keeps your proof trail over time.',
         ).isAllowed,
         isTrue,
       );

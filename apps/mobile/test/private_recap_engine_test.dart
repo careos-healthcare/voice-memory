@@ -25,7 +25,7 @@ void main() {
       expect(text, contains('- Gets lighter when: I paused'));
       expect(text, contains('Next check'));
       expect(text, contains('What happens right before it shows up?'));
-      expect(text.trim().endsWith('Made with ArchiveMe'), isTrue);
+      expect(text.trim().endsWith('Made with Thoughtprint'), isTrue);
     });
 
     test('omits empty sections without leaving dangling headings', () {
@@ -37,7 +37,7 @@ void main() {
       expect(text, isNot(contains('Useful moments')));
       expect(text, isNot(contains('Next check')));
       expect(text, contains('A moment'));
-      expect(text, contains('Made with ArchiveMe'));
+      expect(text, contains('Made with Thoughtprint'));
     });
   });
 

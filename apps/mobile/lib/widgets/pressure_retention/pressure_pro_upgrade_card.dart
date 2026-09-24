@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 /// Soft Pro upgrade card used across the pressure insights surface.
 ///
 /// Never blocks the free loop — it sits beside free content and points at the
-/// existing ArchiveMe Pro subscription flow.
+/// existing Thoughtprint Pro subscription flow.
 class PressureProUpgradeCard extends StatelessWidget {
   const PressureProUpgradeCard({
     required this.title, required this.body, required this.onUnlock, super.key,

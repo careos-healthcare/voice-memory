@@ -60,7 +60,7 @@ abstract final class BetaFeedbackIntelligenceEngine {
     if (!context.betaMissionEnabled) return false;
     if (_isBlocked(context)) return false;
     return switch (context.surface) {
-      BetaFeedbackIntelligenceSurface.testingArchiveMe => true,
+      BetaFeedbackIntelligenceSurface.testingThoughtprint => true,
       BetaFeedbackIntelligenceSurface.settingsBeta =>
         context.firstProofPayoffSeen,
       BetaFeedbackIntelligenceSurface.afterProEvidenceSheet =>

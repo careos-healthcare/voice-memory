@@ -30,7 +30,7 @@ List<ArchiveCleanSection> _sampleSections() => const [
   ArchiveCleanSection(
     type: ArchiveCleanSectionType.askArchive,
     title: 'Ask my Archive',
-    subtitle: 'Find what ArchiveMe remembers.',
+    subtitle: 'Find what Thoughtprint remembers.',
     primaryCtaLabel: 'Search moments',
     route: '/ask-archive',
   ),

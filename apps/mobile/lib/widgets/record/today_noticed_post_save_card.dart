@@ -7,7 +7,7 @@ import 'package:archiveme_mobile/theme/app_spacing.dart';
 import 'package:archiveme_mobile/theme/voicememory_cards.dart';
 import 'package:flutter/material.dart';
 
-/// Surfaces what ArchiveMe noticed today after a successful save.
+/// Surfaces what Thoughtprint noticed today after a successful save.
 class TodayNoticedPostSaveCard extends StatelessWidget {
   const TodayNoticedPostSaveCard({
     required this.loop, super.key,
@@ -32,7 +32,7 @@ class TodayNoticedPostSaveCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            ConsumerUiCopy.todayArchiveMeNoticed,
+            ConsumerUiCopy.todayThoughtprintNoticed,
             style: ArchiveMobileTypography.cardLabel(context),
           ),
           const SizedBox(height: AppSpacing.sm),

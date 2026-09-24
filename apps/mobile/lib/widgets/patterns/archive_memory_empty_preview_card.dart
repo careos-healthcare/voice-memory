@@ -5,9 +5,9 @@ import 'package:archiveme_mobile/theme/app_spacing.dart';
 import 'package:archiveme_mobile/theme/voicememory_typography.dart';
 import 'package:flutter/material.dart';
 
-/// Day-zero preview of what ArchiveMe will remember once enough moments exist.
-class ArchiveMemoryEmptyPreviewCard extends StatefulWidget {
-  const ArchiveMemoryEmptyPreviewCard({required this.onRecord, super.key});
+/// Day-zero preview of what Thoughtprint will remember once enough moments exist.
+class ThoughtprintmoryEmptyPreviewCard extends StatefulWidget {
+  const ThoughtprintmoryEmptyPreviewCard({required this.onRecord, super.key});
 
   final VoidCallback onRecord;
 
@@ -15,20 +15,20 @@ class ArchiveMemoryEmptyPreviewCard extends StatefulWidget {
   static const Color _warmBorder = AppColors.warmBorder;
 
   @override
-  State<ArchiveMemoryEmptyPreviewCard> createState() =>
-      _ArchiveMemoryEmptyPreviewCardState();
+  State<ThoughtprintmoryEmptyPreviewCard> createState() =>
+      _ThoughtprintmoryEmptyPreviewCardState();
 }
 
-class _ArchiveMemoryEmptyPreviewCardState
-    extends State<ArchiveMemoryEmptyPreviewCard> {
+class _ThoughtprintmoryEmptyPreviewCardState
+    extends State<ThoughtprintmoryEmptyPreviewCard> {
   @override
   void initState() {
     super.initState();
-    ActivationTracker.trackArchiveMemoryPreviewShown();
+    ActivationTracker.trackThoughtprintmoryPreviewShown();
   }
 
   void _onRecord() {
-    ActivationTracker.trackArchiveMemoryPreviewCtaTapped();
+    ActivationTracker.trackThoughtprintmoryPreviewCtaTapped();
     widget.onRecord();
   }
 
@@ -38,9 +38,9 @@ class _ArchiveMemoryEmptyPreviewCardState
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
-        color: ArchiveMemoryEmptyPreviewCard._warmSurface,
+        color: ThoughtprintmoryEmptyPreviewCard._warmSurface,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: ArchiveMemoryEmptyPreviewCard._warmBorder),
+        border: Border.all(color: ThoughtprintmoryEmptyPreviewCard._warmBorder),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

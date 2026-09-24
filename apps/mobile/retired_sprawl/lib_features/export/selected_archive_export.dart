@@ -26,7 +26,7 @@ class SelectedArchiveExport {
 
   static const _statusEngine = ArchiveEntrySearchEngine();
 
-  /// Safe export filename: archiveme-export-YYYY-MM-DD plus extension.
+  /// Safe export filename: thoughtprint-export-YYYY-MM-DD plus extension.
   static String fileName(
     DateTime now, {
     ArchiveExportFormat format = ArchiveExportFormat.markdown,
@@ -34,7 +34,7 @@ class SelectedArchiveExport {
     final local = now.toLocal();
     final month = local.month.toString().padLeft(2, '0');
     final day = local.day.toString().padLeft(2, '0');
-    return 'archiveme-export-${local.year}-$month-$day'
+    return 'thoughtprint-export-${local.year}-$month-$day'
         '.${format.fileExtension}';
   }
 
@@ -84,7 +84,7 @@ class SelectedArchiveExport {
       ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
 
     final buffer = StringBuffer()
-      ..writeln('# ArchiveMe export')
+      ..writeln('# Thoughtprint export')
       ..writeln()
       ..writeln('Export date: ${formatUserFacingDate(clock)}')
       ..writeln('Entries: ${entries.length}');

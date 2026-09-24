@@ -52,7 +52,7 @@ NEW PARENT COMPARISON — compare 2-week and 1-month intervals:
 
   static const coldStartTitle = 'Capture your shift';
   static const coldStartSubtitle =
-      'Name who you were before and who shows up now — dates and roles help ArchiveMe '
+      'Name who you were before and who shows up now — dates and roles help Thoughtprint '
       'track capacity changes across weeks.';
 
   static const comparisonExplorerHeadline =

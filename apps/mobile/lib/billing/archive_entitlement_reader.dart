@@ -3,7 +3,7 @@ import 'package:archiveme_mobile/core/config/v1_billing_capability.dart';
 import 'package:archiveme_mobile/models/entitlement.dart';
 import 'package:archiveme_mobile/services/app_services.dart';
 
-/// Reads whether the user has ArchiveMe Pro — injectable for tests.
+/// Reads whether the user has Thoughtprint Pro — injectable for tests.
 abstract class ArchiveEntitlementReader {
   const ArchiveEntitlementReader();
 

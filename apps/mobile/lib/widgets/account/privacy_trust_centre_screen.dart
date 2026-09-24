@@ -201,7 +201,7 @@ class _PrivacyTrustCentreScreenState extends State<PrivacyTrustCentreScreen> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             // Migrated from `/privacy`, which now redirects here. The two
-            // sections that used to open this screen — "What ArchiveMe
+            // sections that used to open this screen — "What Thoughtprint
             // stores" and "What stays private" — went with it: each was a
             // one-sentence version of a claim this block already makes in
             // full ("What stays on your device" and "Private by default"),

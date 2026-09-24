@@ -28,7 +28,7 @@ abstract final class ComparisonManifestFormatter {
       pastQuote: _quote(pastEntry),
       presentQuote: _quote(currentEntry),
       whatChanged: changed == null || changed.isEmpty
-          ? 'ArchiveMe needs more moments to be sure.'
+          ? 'Thoughtprint needs more moments to be sure.'
           : changed,
     );
   }

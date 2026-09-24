@@ -371,17 +371,17 @@ void main() {
     ) async {
       const expected = {
         MemoryInfluenceLevel.blocked:
-            'Memory is off, so ArchiveMe is not using previous entries here.',
+            'Memory is off, so Thoughtprint is not using previous entries here.',
         MemoryInfluenceLevel.suppress:
             'This entry is being kept separate from connection suggestions.',
         MemoryInfluenceLevel.background:
-            'ArchiveMe found related evidence, but it is being treated '
+            'Thoughtprint found related evidence, but it is being treated '
             'cautiously.',
         MemoryInfluenceLevel.compare:
-            'ArchiveMe found enough eligible evidence to compare this with '
+            'Thoughtprint found enough eligible evidence to compare this with '
             'your archive.',
         MemoryInfluenceLevel.highAuthority:
-            'You previously confirmed this connection, so ArchiveMe gives '
+            'You previously confirmed this connection, so Thoughtprint gives '
             'it more weight.',
       };
       for (final level in MemoryInfluenceLevel.values) {
@@ -421,7 +421,7 @@ void main() {
         'How this memory was used',
         'Compared with archive',
         'Repeated evidence',
-        'ArchiveMe found enough eligible evidence to compare this with '
+        'Thoughtprint found enough eligible evidence to compare this with '
             'your archive.',
         'You can mark a connection as not related if it does not fit.',
       };

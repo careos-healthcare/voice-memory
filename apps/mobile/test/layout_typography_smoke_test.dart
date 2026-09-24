@@ -65,7 +65,7 @@ void main() {
         'fallback renders without overflow at ${size.width.toInt()}w',
         (tester) async {
           await pumpAtSize(tester, size, const PaywallScreen());
-          expect(find.text('ArchiveMe Pro'), findsWidgets);
+          expect(find.text('Thoughtprint Pro'), findsWidgets);
         },
       );
     }
@@ -101,7 +101,7 @@ void main() {
   group('onboarding', () {
     testWidgets('renders without overflow on iPad width', (tester) async {
       await pumpAtSize(tester, const Size(820, 1180), const OnboardingScreen());
-      expect(find.text('ArchiveMe'), findsOneWidget);
+      expect(find.text('Thoughtprint'), findsOneWidget);
       expect(find.text(OnboardingPages.pages[0].title), findsOneWidget);
     });
   });

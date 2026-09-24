@@ -418,12 +418,12 @@ void main() {
         ),
       ];
       final md = const FactLedgerExport().buildMarkdown(facts: facts);
-      expect(md, contains('# ArchiveMe details'));
+      expect(md, contains('# Thoughtprint details'));
       expect(md, contains('Host'));
       expect(md, contains('db.example'));
       expect(
         FactLedgerExport.fileName(DateTime(2026, 6, 12)),
-        'archiveme-details-2026-06-12.md',
+        'thoughtprint-details-2026-06-12.md',
       );
     });
 

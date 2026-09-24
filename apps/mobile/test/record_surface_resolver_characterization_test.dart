@@ -101,7 +101,7 @@ void main() {
     expect(map['firstUseSimplifiedRecord'], isTrue);
     expect(map['showEarlyReturnReminder'], isFalse);
     expect(map['showWeeklyArchiveReviewOnRecord'], isFalse);
-    expect(map['showDailyArchiveMemory'], isFalse);
+    expect(map['showDailyThoughtprintmory'], isFalse);
     _expectStable(emptyRecordSurfaceInput());
   });
 
@@ -554,9 +554,9 @@ const _constructorFieldNames = <String>[
   'quietSignalCandidate',
   'showQuietSignalOnRecord',
   'showLowEvidenceGuidanceOnRecord',
-  'dailyArchiveMemoryCandidate',
+  'dailyThoughtprintmoryCandidate',
   'firstProofLoopActive',
-  'showDailyArchiveMemory',
+  'showDailyThoughtprintmory',
   'showReturningWatchTargetFocusedUi',
   'recordReadyShowsWatchTargetOnly',
   'recordReadySuppressStreakPressure',

@@ -267,7 +267,7 @@ void main() {
       await tester.pump();
     }
 
-    testWidgets('renders Your first ArchiveMe report', (tester) async {
+    testWidgets('renders Your first Thoughtprint report', (tester) async {
       await pumpCard(tester);
       expect(find.text(BetaTesterReportCopy.title), findsOneWidget);
     });

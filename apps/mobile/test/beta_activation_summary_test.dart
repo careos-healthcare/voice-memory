@@ -173,7 +173,7 @@ void main() {
 
       final copy = BetaActivationSummaryEngine.buildCopyText(summary);
 
-      expect(copy, contains('ArchiveMe beta progress summary'));
+      expect(copy, contains('Thoughtprint beta progress summary'));
       expect(copy, contains('Activation status'));
       expect(copy, contains('First proof reached'));
       expect(copy, contains('App opens: 2'));
@@ -257,8 +257,8 @@ void main() {
     });
   });
 
-  group('Testing ArchiveMe scope', () {
-    test('beta progress summary lives in Testing ArchiveMe screen only', () {
+  group('Testing Thoughtprint scope', () {
+    test('beta progress summary lives in Testing Thoughtprint screen only', () {
       final testingSource = File(
         '../../packages/archiveme_research/lib/screens/testing_archiveme_screen.dart',
       ).readAsStringSync();
@@ -282,13 +282,13 @@ void main() {
       );
     });
 
-    testWidgets('Testing ArchiveMe shows beta progress summary when enabled', (
+    testWidgets('Testing Thoughtprint shows beta progress summary when enabled', (
       tester,
     ) async {
       ArchiveBetaMissionGate.enabledOverride = true;
 
       await tester.pumpWidget(
-        const MaterialApp(home: TestingArchiveMeScreen()),
+        const MaterialApp(home: TestingThoughtprintScreen()),
       );
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 50));
@@ -300,13 +300,13 @@ void main() {
       expect(find.text(BetaActivationSummaryCopy.openLink), findsOneWidget);
     });
 
-    testWidgets('Testing ArchiveMe hides mission content when beta flag off', (
+    testWidgets('Testing Thoughtprint hides mission content when beta flag off', (
       tester,
     ) async {
       ArchiveBetaMissionGate.enabledOverride = false;
 
       await tester.pumpWidget(
-        const MaterialApp(home: TestingArchiveMeScreen()),
+        const MaterialApp(home: TestingThoughtprintScreen()),
       );
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 50));

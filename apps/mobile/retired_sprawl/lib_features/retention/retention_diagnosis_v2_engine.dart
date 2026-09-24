@@ -4,7 +4,7 @@ import 'package:archiveme_mobile/features/acquisition/audience_wedge_model.dart'
 import 'package:archiveme_mobile/features/quality/first_insight_specificity_store.dart';
 import 'package:archiveme_mobile/features/quality/interpretation_quality_signal_model.dart';
 
-/// Primary bottleneck in the early ArchiveMe loop — trial/debug only.
+/// Primary bottleneck in the early Thoughtprint loop — trial/debug only.
 enum RetentionBottleneckV2 {
   noFirstMoment,
   weakInterpretation,

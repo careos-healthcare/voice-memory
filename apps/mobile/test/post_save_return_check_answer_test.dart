@@ -170,7 +170,7 @@ void main() {
       final answer = _requireAnswer(_fourRelatedRepeatEntries());
       expect(answer.hasPhrase, isTrue);
       expect(answer.body, contains('said yes'));
-      expect(answer.body, startsWith('ArchiveMe matched this to “'));
+      expect(answer.body, startsWith('Thoughtprint matched this to “'));
     });
 
     test('fallback body when phrase unavailable', () {

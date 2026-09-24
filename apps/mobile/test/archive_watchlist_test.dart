@@ -251,14 +251,14 @@ void main() {
   });
 
   group('Archive watchlist copy', () {
-    test('uses ArchiveMe and avoids banned language', () {
+    test('uses Thoughtprint and avoids banned language', () {
       _expectNoBannedCopy(ArchiveWatchlistCopy.allVisibleCopy());
       for (final text in ArchiveWatchlistCopy.allVisibleCopy()) {
         expect(text.toLowerCase(), isNot(contains('voicememory')));
       }
       expect(
         ArchiveWatchlistCopy.allVisibleCopy(),
-        anyElement(contains('ArchiveMe')),
+        anyElement(contains('Thoughtprint')),
       );
     });
 
@@ -409,7 +409,7 @@ void main() {
       expect(pack.plainText, isNot(contains('archiveWatchlistItems')));
       expect(
         pack.plainText,
-        isNot(contains('What should ArchiveMe watch for?')),
+        isNot(contains('What should Thoughtprint watch for?')),
       );
     });
 

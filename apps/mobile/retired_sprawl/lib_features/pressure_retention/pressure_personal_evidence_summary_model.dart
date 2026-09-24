@@ -1,4 +1,4 @@
-/// Why ArchiveMe believes a pressure pattern exists, grounded in the user's
+/// Why Thoughtprint believes a pressure pattern exists, grounded in the user's
 /// own repeated terms — never generic, never diagnostic, never certain.
 class PressurePersonalEvidenceSummary {
   const PressurePersonalEvidenceSummary({

@@ -144,7 +144,7 @@ void main() {
       () {
         final summary = ArchiveHomeSummaryEngine.build(entries: _entries(3));
         expect(summary.stage, ArchiveHomeStage.three);
-        expect(summary.title, 'ArchiveMe is starting to form a belief.');
+        expect(summary.title, 'Thoughtprint is starting to form a belief.');
         expect(summary.body, contains('saved words suggest so far'));
         expect(
           summary.currentBeliefLine,

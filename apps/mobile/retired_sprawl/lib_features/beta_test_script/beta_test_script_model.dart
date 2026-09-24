@@ -33,7 +33,7 @@ class BetaTestScriptDayPlan {
   final List<String> checklist;
 }
 
-/// Progress summary for the Testing ArchiveMe screen.
+/// Progress summary for the Testing Thoughtprint screen.
 class BetaTestScriptProgressSummary {
   const BetaTestScriptProgressSummary({
     required this.day1Status,

@@ -28,7 +28,7 @@ abstract class AppLockCopy {
   static const String setupSaveLabel = 'Save PIN';
 
   // Lock screen.
-  static const String lockTitle = 'Unlock ArchiveMe';
+  static const String lockTitle = 'Unlock Thoughtprint';
   static const String lockBody = 'Enter your PIN';
   static const String lockBiometricsLabel = 'Use biometrics';
   static const String lockTryAgain = 'Try again';

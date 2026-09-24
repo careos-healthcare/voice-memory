@@ -53,7 +53,7 @@ void main() {
       final result = ArchiveCopyRepetitionAudit.checkScreen(
         screenName: 'evidence_screen',
         visiblePhrases: [
-          'ArchiveMe has one more piece of evidence.',
+          'Thoughtprint has one more piece of evidence.',
           'What changed since your earlier recording.',
           'Record the next time this shows up.',
           'Your words point to pressure before the check.',

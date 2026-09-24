@@ -57,7 +57,7 @@ void main() {
     test('teaches save-a-repeat habit', () {
       expect(
         AudienceWedgeHabitCopy.saveLine,
-        contains('ArchiveMe compares it later'),
+        contains('Thoughtprint compares it later'),
       );
       expect(
         AudienceWedgeHabitCopy.notesLine,

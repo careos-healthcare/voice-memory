@@ -156,7 +156,7 @@ void main() {
       expect(wantToTryLonger.title, 'Try longer first');
       expect(
         wantToTryLonger.body,
-        'Keep using ArchiveMe for free. Pro is for when you want the '
+        'Keep using Thoughtprint for free. Pro is for when you want the '
         'archive to keep connecting over time.',
       );
 

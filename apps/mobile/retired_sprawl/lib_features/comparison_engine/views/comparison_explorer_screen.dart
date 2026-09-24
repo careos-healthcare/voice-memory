@@ -491,7 +491,7 @@ class _ComparisonResultBody extends StatelessWidget {
         return _InsufficientDataCard(
           title: ComparisonExplorerCopy.insufficientMomentsTitle,
           body:
-              'ArchiveMe needs more aligned moments in ${snap.window.label} to surface a pattern.',
+              'Thoughtprint needs more aligned moments in ${snap.window.label} to surface a pattern.',
         );
       }
 

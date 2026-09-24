@@ -134,7 +134,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     }
   }
 
-  void _openTestingArchiveMeGuide() {
+  void _openTestingThoughtprintGuide() {
     if (!ArchiveBetaMissionGate.isEnabled) return;
     unawaited(context.push('/testing-archiveme'));
   }
@@ -247,7 +247,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   style: ArchiveMobileTypography.listSubtitle(context),
                 ),
                 trailing: const Icon(Icons.chevron_right),
-                onTap: _openTestingArchiveMeGuide,
+                onTap: _openTestingThoughtprintGuide,
               ),
             if (showSettingsBetaFeedbackCard) ...[
               const SizedBox(height: AppSpacing.sm),
@@ -398,7 +398,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 value: _remindersEnabled,
                 onChanged: _remindersBusy ? null : _toggleReminders,
               ),
-            // Memory: when ArchiveMe may connect entries. Persistent and
+            // Memory: when Thoughtprint may connect entries. Persistent and
             // user-only — "Memory off" stays off until changed here.
             const Padding(
               padding: EdgeInsets.symmetric(vertical: AppSpacing.xs),

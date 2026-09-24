@@ -7,19 +7,19 @@ import 'package:archiveme_mobile/features/moments/key_moment_store.dart';
 import 'package:archiveme_mobile/features/pattern_map/pattern_map_engine.dart';
 import 'package:archiveme_mobile/features/pattern_memory/pattern_memory_coordinator.dart';
 
-/// Builds and persists the latest "What ArchiveMe remembers" summary from
+/// Builds and persists the latest "What Thoughtprint remembers" summary from
 /// everything the archive already stores. Always fails softly so it can never
 /// block the Patterns tab from loading.
-abstract class ArchiveMemorySummaryCoordinator {
-  ArchiveMemorySummaryCoordinator._();
+abstract class ThoughtprintmorySummaryCoordinator {
+  ThoughtprintmorySummaryCoordinator._();
 
-  static ArchiveMemorySummaryStore _store() =>
-      ArchiveMemorySummaryStore.instance();
+  static ThoughtprintmorySummaryStore _store() =>
+      ThoughtprintmorySummaryStore.instance();
 
   /// Rebuilds the summary from current memory/progress/recap/key moments,
   /// saves it as the latest, and returns it. Returns null when there is not
   /// yet enough, or in the rare case something goes wrong.
-  static Future<ArchiveMemorySummary?> refresh() async {
+  static Future<ThoughtprintmorySummary?> refresh() async {
     if (ScreenshotMode.enabled) {
       return ScreenshotSampleData.archiveMemorySummarySample;
     }
@@ -33,7 +33,7 @@ abstract class ArchiveMemorySummaryCoordinator {
           ? null
           : buildPatternMap(memory: memory, moments: moments);
 
-      final summary = buildArchiveMemorySummary(
+      final summary = buildThoughtprintmorySummary(
         memory: memory,
         patternMap: patternMap,
         keyMoments: moments,
@@ -55,7 +55,7 @@ abstract class ArchiveMemorySummaryCoordinator {
 
   /// The most recently saved summary, if any. In screenshot mode this returns
   /// the polished sample.
-  static Future<ArchiveMemorySummary?> loadLatest() async {
+  static Future<ThoughtprintmorySummary?> loadLatest() async {
     if (ScreenshotMode.enabled) {
       return ScreenshotSampleData.archiveMemorySummarySample;
     }

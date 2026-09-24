@@ -310,9 +310,9 @@ abstract final class BetaProofLiftEngine {
     }
     return switch (evidenceWeighting.primaryState) {
       EvidenceWeightState.softened =>
-        'ArchiveMe is watching whether this feels lighter, helped, avoided, or unchanged.',
+        'Thoughtprint is watching whether this feels lighter, helped, avoided, or unchanged.',
       EvidenceWeightState.needsFreshProof =>
-        'ArchiveMe is waiting for fresher evidence before treating this as current.',
+        'Thoughtprint is waiting for fresher evidence before treating this as current.',
       _ => BetaProofLiftCopy.fallbackWhatChanged,
     };
   }
@@ -327,7 +327,7 @@ abstract final class BetaProofLiftEngine {
       PresentDayRelevanceState.current =>
         'Recent evidence matters more than older evidence.',
       PresentDayRelevanceState.fading =>
-        'ArchiveMe gives less weight when this has not appeared recently.',
+        'Thoughtprint gives less weight when this has not appeared recently.',
       PresentDayRelevanceState.softened =>
         'This may still matter, but recent evidence looks lighter.',
       PresentDayRelevanceState.unclear =>

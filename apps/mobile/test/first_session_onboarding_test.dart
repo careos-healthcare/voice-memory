@@ -77,7 +77,7 @@ void main() {
       expect(FirstSessionOnboardingCopy.steps, hasLength(3));
       expect(
         FirstSessionOnboardingCopy.notChatFootnote,
-        'ChatGPT can suggest what to do. ArchiveMe shows what you already said before.',
+        'ChatGPT can suggest what to do. Thoughtprint shows what you already said before.',
       );
     });
 

@@ -276,13 +276,13 @@ void main() {
     });
   });
 
-  group('TestingArchiveMeScreen', () {
+  group('TestingThoughtprintScreen', () {
     testWidgets('testing screen includes card', (tester) async {
       ArchiveBetaMissionGate.enabledOverride = true;
       await tester.pumpWidget(
         MaterialApp(
           theme: AppTheme.light(),
-          home: const TestingArchiveMeScreen(),
+          home: const TestingThoughtprintScreen(),
         ),
       );
       await tester.pump();

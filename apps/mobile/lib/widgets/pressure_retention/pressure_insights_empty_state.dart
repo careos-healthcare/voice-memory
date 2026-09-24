@@ -13,7 +13,7 @@ class PressureInsightsEmptyState extends StatelessWidget {
 
   static const title = 'Your archive needs one pressure moment first.';
   static const body =
-      "Log the moment you feel behind, keep going, or can't stop. ArchiveMe "
+      "Log the moment you feel behind, keep going, or can't stop. Thoughtprint "
       'will start showing where that pressure repeats.';
   static const ctaLabel = 'Log pressure moment';
 

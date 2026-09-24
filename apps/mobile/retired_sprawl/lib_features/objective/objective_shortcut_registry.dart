@@ -14,7 +14,7 @@ class ObjectiveShortcutAction {
   final String route;
 }
 
-/// Supported shortcut actions for ArchiveMe objective flows.
+/// Supported shortcut actions for Thoughtprint objective flows.
 abstract class ObjectiveShortcutRegistry {
   ObjectiveShortcutRegistry._();
 

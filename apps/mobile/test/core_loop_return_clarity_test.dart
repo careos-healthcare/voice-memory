@@ -145,7 +145,7 @@ void main() {
     test('patterns one-entry body avoids generic add-more framing', () {
       expect(
         ConsumerUiCopy.patternsFirstEntrySavedBody,
-        'Record one more clear moment and ArchiveMe can compare what repeats.',
+        'Record one more clear moment and Thoughtprint can compare what repeats.',
       );
       expect(
         ConsumerUiCopy.patternsFirstEntrySavedCta,
@@ -184,12 +184,12 @@ void main() {
         MaterialApp(
           theme: AppTheme.light(),
           home: Scaffold(
-            body: DailyArchiveMemoryCard(
-              memory: const DailyArchiveMemoryResult(
-                title: DailyArchiveMemoryCopy.watchTitle,
-                body: DailyArchiveMemoryCopy.watchBody,
+            body: DailyThoughtprintmoryCard(
+              memory: const DailyThoughtprintmoryResult(
+                title: DailyThoughtprintmoryCopy.watchTitle,
+                body: DailyThoughtprintmoryCopy.watchBody,
                 watchPhrase: 'checking again',
-                footer: DailyArchiveMemoryCopy.footer,
+                footer: DailyThoughtprintmoryCopy.footer,
                 hasWatchTarget: true,
                 canShowPatternDetail: false,
               ),
@@ -206,7 +206,7 @@ void main() {
       await tester.pump();
 
       expect(
-        find.text(DailyArchiveMemoryCopy.watchPrompt('checking again')),
+        find.text(DailyThoughtprintmoryCopy.watchPrompt('checking again')),
         findsOneWidget,
       );
       expect(find.text('Record what happened'), findsOneWidget);

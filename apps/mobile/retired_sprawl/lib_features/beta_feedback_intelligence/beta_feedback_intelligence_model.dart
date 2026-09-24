@@ -30,7 +30,7 @@ enum BetaStrongestMomentBucket {
 }
 
 enum BetaFeedbackIntelligenceSurface {
-  testingArchiveMe('testing_archiveme'),
+  testingThoughtprint('testing_archiveme'),
   settingsBeta('settings_beta'),
   afterProEvidenceSheet('after_pro_evidence_sheet'),
   afterFirstProofPayoff('after_first_proof_payoff');
@@ -71,7 +71,7 @@ class BetaFeedbackIntelligenceState {
   final String? submittedDateKey;
   final DateTime? updatedAt;
 
-  bool? get testerUnderstoodArchiveMe => switch (chatGptDifferenceAnswer) {
+  bool? get testerUnderstoodThoughtprint => switch (chatGptDifferenceAnswer) {
     BetaChatGptDifferenceAnswer.yes => true,
     BetaChatGptDifferenceAnswer.notSure => null,
     BetaChatGptDifferenceAnswer.no => false,

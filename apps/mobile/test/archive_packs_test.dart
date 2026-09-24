@@ -315,7 +315,7 @@ void main() {
     test('export filename is safe', () {
       expect(
         PackArchiveExport.fileName(DateTime(2026, 6, 12)),
-        'archiveme-pack-export-2026-06-12.md',
+        'thoughtprint-pack-export-2026-06-12.md',
       );
     });
   });

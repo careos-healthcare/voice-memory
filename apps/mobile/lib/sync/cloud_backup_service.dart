@@ -128,9 +128,9 @@ class EncryptedCloudBackupService {
                 name: path.split('/').last,
               ),
             ],
-            subject: 'ArchiveMe encrypted backup',
+            subject: 'Thoughtprint encrypted backup',
             text:
-                'Zero-knowledge encrypted ArchiveMe backup — store in your personal '
+                'Zero-knowledge encrypted Thoughtprint backup — store in your personal '
                 'iCloud Drive or Google Drive folder.',
           );
       await share(exported.outputPath!);

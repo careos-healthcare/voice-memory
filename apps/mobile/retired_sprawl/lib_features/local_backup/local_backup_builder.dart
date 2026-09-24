@@ -5,7 +5,7 @@ import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/storage/journal_store.dart';
 import 'package:archiveme_mobile/storage/mobile_prefs_store.dart';
 
-/// Builds and validates local ArchiveMe backup payloads — JSON, not encrypted.
+/// Builds and validates local Thoughtprint backup payloads — JSON, not encrypted.
 abstract final class LocalBackupBuilder {
   LocalBackupBuilder._();
 

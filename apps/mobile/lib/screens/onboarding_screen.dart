@@ -121,7 +121,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   child: Row(
                     children: [
                       Text(
-                        'ArchiveMe',
+                        'Thoughtprint',
                         style: OnboardingTypography.label(
                           color: context.palette.accentPrimary,
                         ),

@@ -21,7 +21,7 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   group('TrailLanguageGuard.isAllowedCopy', () {
     test('proof trail language allowed', () {
-      const copy = 'ArchiveMe keeps your proof trail over time.';
+      const copy = 'Thoughtprint keeps your proof trail over time.';
       final result = TrailLanguageGuard.isAllowedCopy(copy);
       expect(result.isAllowed, isTrue);
       expect(result.reason, TrailLanguageGuardReason.allowedProofTrailLanguage);
@@ -82,8 +82,8 @@ void main() {
       expect(TrailLanguageGuard.containsPreferredTrailLanguage(copy), isTrue);
     });
 
-    test('ArchiveMe compares later language allowed', () {
-      const copy = 'ArchiveMe compares it later when the repeat returns.';
+    test('Thoughtprint compares later language allowed', () {
+      const copy = 'Thoughtprint compares it later when the repeat returns.';
       final result = TrailLanguageGuard.isAllowedCopy(copy);
       expect(result.isAllowed, isTrue);
       expect(TrailLanguageGuard.containsPreferredTrailLanguage(copy), isTrue);
@@ -115,7 +115,7 @@ void main() {
 
     test('daily tracker blocked', () {
       final result = TrailLanguageGuard.isAllowedCopy(
-        'Use ArchiveMe as your daily tracker.',
+        'Use Thoughtprint as your daily tracker.',
       );
       expect(result.isAllowed, isFalse);
       expect(result.reason, TrailLanguageGuardReason.blockedDailyTracker);
@@ -131,7 +131,7 @@ void main() {
 
     test('dashboard to maintain blocked', () {
       final result = TrailLanguageGuard.isAllowedCopy(
-        'ArchiveMe is a dashboard to maintain.',
+        'Thoughtprint is a dashboard to maintain.',
       );
       expect(result.isAllowed, isFalse);
       expect(
@@ -142,7 +142,7 @@ void main() {
 
     test('storage app positioning blocked', () {
       final result = TrailLanguageGuard.isAllowedCopy(
-        'ArchiveMe is a storage app for everything you think.',
+        'Thoughtprint is a storage app for everything you think.',
       );
       expect(result.isAllowed, isFalse);
       expect(result.reason, TrailLanguageGuardReason.blockedStoragePositioning);
@@ -150,7 +150,7 @@ void main() {
 
     test('second brain positioning blocked', () {
       final result = TrailLanguageGuard.isAllowedCopy(
-        'Build your second brain inside ArchiveMe.',
+        'Build your second brain inside Thoughtprint.',
       );
       expect(result.isAllowed, isFalse);
       expect(result.reason, TrailLanguageGuardReason.blockedStoragePositioning);
@@ -166,7 +166,7 @@ void main() {
 
     test('therapy language blocked', () {
       final result = TrailLanguageGuard.isAllowedCopy(
-        'ArchiveMe provides therapy support for your patterns.',
+        'Thoughtprint provides therapy support for your patterns.',
       );
       expect(result.isAllowed, isFalse);
       expect(result.reason, TrailLanguageGuardReason.blockedTherapyLanguage);
@@ -190,8 +190,8 @@ void main() {
   });
 
   group('TrailLanguageGuardCopy', () {
-    test('headline says ArchiveMe builds a trail', () {
-      expect(TrailLanguageGuardCopy.headline, 'ArchiveMe builds a trail');
+    test('headline says Thoughtprint builds a trail', () {
+      expect(TrailLanguageGuardCopy.headline, 'Thoughtprint builds a trail');
     });
 
     test('body says user does not maintain a mind map', () {
@@ -205,7 +205,7 @@ void main() {
       expect(TrailLanguageGuardCopy.body, contains('save small real moments'));
     });
 
-    test('body says ArchiveMe builds proof trail over time', () {
+    test('body says Thoughtprint builds proof trail over time', () {
       expect(
         TrailLanguageGuardCopy.body,
         contains('builds the proof trail over time'),
@@ -277,7 +277,7 @@ void main() {
       }
     });
 
-    test('copy does not position ArchiveMe as voice chat', () {
+    test('copy does not position Thoughtprint as voice chat', () {
       for (final text in TrailLanguageGuardCopy.allVisibleStrings()) {
         final lower = text.toLowerCase();
         expect(lower.contains('voice chat'), isFalse, reason: text);

@@ -106,13 +106,13 @@ void main() {
       );
       expect(
         BetaInviteCopy.loopCardBody,
-        'ArchiveMe works best when someone saves a few real moments and comes back when something returns.',
+        'Thoughtprint works best when someone saves a few real moments and comes back when something returns.',
       );
       expect(BetaInviteCopy.loopCta, 'Copy beta invite');
       expect(BetaInviteCopy.loopSecondary, 'Not now');
       expect(
         BetaInviteCopy.loopInviteText,
-        'Want to test ArchiveMe? It is a private timeline app. You save small moments when something stands out, and it shows what returns, changes, or fades over time. No daily journal required.',
+        'Want to test Thoughtprint? It is a private timeline app. You save small moments when something stands out, and it shows what returns, changes, or fades over time. No daily journal required.',
       );
     });
   });

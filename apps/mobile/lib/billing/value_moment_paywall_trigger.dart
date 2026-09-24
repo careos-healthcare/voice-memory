@@ -28,18 +28,18 @@ class ValueMomentBridge {
   // snippets, belief phrases, or source terms.
   static const String threadReturnBody =
       'This thread has returned before. Pro keeps the evidence history so '
-      'ArchiveMe can show whether it gets stronger, softer, or changes.';
+      'Thoughtprint can show whether it gets stronger, softer, or changes.';
   static const String beliefBody =
       'A belief-like phrase showed up again. Pro keeps the timeline of what '
       'changed across your archive.';
   static const String weeklyBody =
       'Your weekly review found something to compare. Pro keeps weekly archive '
-      'reviews so ArchiveMe can track what changed over time.';
+      'reviews so Thoughtprint can track what changed over time.';
   static const String proofCounterBody =
       'Your archive has connected recordings. Pro keeps the full evidence '
       'history as the trail grows.';
   static const String fallbackBody =
-      'Your first repeat is free. Pro keeps the evidence history so ArchiveMe '
+      'Your first repeat is free. Pro keeps the evidence history so Thoughtprint '
       'can show whether patterns get stronger, softer, or change over time.';
 
   final bool show;

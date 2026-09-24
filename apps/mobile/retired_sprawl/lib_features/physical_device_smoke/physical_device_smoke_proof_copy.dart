@@ -18,7 +18,7 @@ abstract final class PhysicalDeviceSmokeProofCopy {
   static const statusBlocked = 'Blocked';
 
   static const checkFreshInstallOpens = 'Fresh install opens';
-  static const checkAppNameArchiveMe = 'App name Thoughtprint';
+  static const checkAppNameThoughtprint = 'App name Thoughtprint';
   static const checkLaunchScreenOk = 'Launch screen OK';
   static const checkMicPermissionAcceptPath = 'Mic permission accept path';
   static const checkMicPermissionDenyPath = 'Mic permission deny path';
@@ -61,7 +61,7 @@ abstract final class PhysicalDeviceSmokeProofCopy {
 
   static String labelFor(PhysicalDeviceSmokeProofCheckId id) => switch (id) {
     PhysicalDeviceSmokeProofCheckId.freshInstallOpens => checkFreshInstallOpens,
-    PhysicalDeviceSmokeProofCheckId.appNameArchiveMe => checkAppNameArchiveMe,
+    PhysicalDeviceSmokeProofCheckId.appNameThoughtprint => checkAppNameThoughtprint,
     PhysicalDeviceSmokeProofCheckId.launchScreenOk => checkLaunchScreenOk,
     PhysicalDeviceSmokeProofCheckId.micPermissionAcceptPath =>
       checkMicPermissionAcceptPath,
@@ -97,7 +97,7 @@ abstract final class PhysicalDeviceSmokeProofCopy {
     yield statusPending;
     yield statusBlocked;
     yield checkFreshInstallOpens;
-    yield checkAppNameArchiveMe;
+    yield checkAppNameThoughtprint;
     yield checkLaunchScreenOk;
     yield checkMicPermissionAcceptPath;
     yield checkMicPermissionDenyPath;
@@ -128,7 +128,7 @@ abstract final class PhysicalDeviceSmokeProofCopy {
 
 enum PhysicalDeviceSmokeProofCheckId {
   freshInstallOpens,
-  appNameArchiveMe,
+  appNameThoughtprint,
   launchScreenOk,
   micPermissionAcceptPath,
   micPermissionDenyPath,

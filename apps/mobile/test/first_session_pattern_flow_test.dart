@@ -130,7 +130,7 @@ void main() {
       find.text(ConsumerUiCopy.firstSessionUseTomorrowCta),
       findsOneWidget,
     );
-    expect(find.textContaining('ArchiveMe noticed'), findsOneWidget);
+    expect(find.textContaining('Thoughtprint noticed'), findsOneWidget);
 
     final visible = find
         .byType(Text)
@@ -394,7 +394,7 @@ void main() {
     final sample = ScreenshotSampleData.firstSessionPatternSample;
     expect(sample.title, contains('Taking responsibility'));
     expect(sample.matchedPhrases, isNotEmpty);
-    expect(sample.noticedBecauseLine, contains('ArchiveMe noticed'));
+    expect(sample.noticedBecauseLine, contains('Thoughtprint noticed'));
     expect(sample.chips, hasLength(3));
   });
 

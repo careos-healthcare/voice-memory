@@ -443,7 +443,7 @@ class _QuickTextCaptureScreenState extends State<QuickTextCaptureScreen> {
                 const SizedBox(height: 8),
                 Text(
                   _isVoiceFallback
-                      ? 'ArchiveMe could not turn your recording into text. Type the words here so this moment stays usable.'
+                      ? 'Thoughtprint could not turn your recording into text. Type the words here so this moment stays usable.'
                       : 'A few sentences is enough — same as speaking a short thought.',
                   style: const TextStyle(
                     color: VoiceMemoryColors.textSecondary,

@@ -177,7 +177,7 @@ void main() {
       expect(model.transcriptWeak, isTrue);
       expect(
         model.enoughnessLabel,
-        'ArchiveMe needs a clearer moment to score this well.',
+        'Thoughtprint needs a clearer moment to score this well.',
       );
       expect(model.whatLookedLikeChoice, isEmpty);
       expect(model.whatLookedLikePressure, isEmpty);

@@ -322,13 +322,13 @@ void main() {
       );
     });
 
-    test('copy uses ArchiveMe and avoids VoiceMemory branding', () {
+    test('copy uses Thoughtprint and avoids VoiceMemory branding', () {
       _expectNoBannedCopy(MilestoneShareCopy.allVisibleStrings);
       expect(
         MilestoneShareCopy.shareTextFor(
           engine.build(_input(realSavedMomentCount: 1)).primaryCard!,
         ),
-        contains('ArchiveMe'),
+        contains('Thoughtprint'),
       );
       expect(
         MilestoneShareCopy.allVisibleStrings.join(' ').toLowerCase(),
@@ -422,7 +422,7 @@ void main() {
         milestoneId: MilestoneShareId.firstSavedMoment,
         title: 'First saved moment',
         body: 'Your archive started with one honest save.',
-        safeShareText: 'I saved my first moment in ArchiveMe.',
+        safeShareText: 'I saved my first moment in Thoughtprint.',
         proofLabel: '1 moment saved',
         ctaLabel: MilestoneShareCopy.saveMomentCta,
         ctaRoute: MilestoneShareCopy.recordRoute,
@@ -432,7 +432,7 @@ void main() {
         rank: 1,
       );
       final shareText = MilestoneShareCopy.shareTextFor(card);
-      expect(shareText, contains('I saved my first moment in ArchiveMe.'));
+      expect(shareText, contains('I saved my first moment in Thoughtprint.'));
       expect(shareText, contains('No private entries shared.'));
       expect(shareText.toLowerCase(), isNot(contains(_privateSnippet)));
     });

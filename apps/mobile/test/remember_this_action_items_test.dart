@@ -398,7 +398,7 @@ void main() {
       expect(markdown.contains('Dismissed item'), isFalse);
       expect(
         ActionItemsExport.fileName(DateTime(2026, 6, 12)),
-        'archiveme-action-items-2026-06-12.md',
+        'thoughtprint-action-items-2026-06-12.md',
       );
     });
 

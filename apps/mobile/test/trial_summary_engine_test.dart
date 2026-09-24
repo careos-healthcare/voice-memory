@@ -693,18 +693,18 @@ void main() {
     final stamp = DateTime.now().microsecondsSinceEpoch.toString();
     await _reset(stamp);
     await ActivationEventsStore(AppServices.instance.prefs).write(
-      ActivationEventCounts.fromMap({'positioningComprehensionAsked': 5, 'positioningComprehensionAnswered': 5, 'positioningUnderstoodArchiveMemory': 3, 'positioningJournal': 1, 'positioningChat': 1, 'positioningNotSure': 0,}),
+      ActivationEventCounts.fromMap({'positioningComprehensionAsked': 5, 'positioningComprehensionAnswered': 5, 'positioningUnderstoodThoughtprintmory': 3, 'positioningJournal': 1, 'positioningChat': 1, 'positioningNotSure': 0,}),
     );
 
     final summary = await const TrialSummaryEngine().build();
     expect(summary.positioningComprehensionAskedCount, 5);
     expect(summary.positioningComprehensionAnsweredCount, 5);
-    expect(summary.positioningUnderstoodArchiveMemoryCount, 3);
+    expect(summary.positioningUnderstoodThoughtprintmoryCount, 3);
     expect(summary.positioningJournalCount, 1);
     expect(summary.positioningChatCount, 1);
     expect(summary.positioningNotSureCount, 0);
     expect(summary.positioningComprehensionPass, isTrue);
-    expect(summary.positioningArchiveMemoryRate, 0.6);
+    expect(summary.positioningThoughtprintmoryRate, 0.6);
   });
 
   test(

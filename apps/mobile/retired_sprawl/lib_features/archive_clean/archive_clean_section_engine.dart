@@ -9,7 +9,7 @@ import 'package:archiveme_mobile/features/pattern_memory/pattern_memory_model.da
 List<ArchiveCleanSection> buildArchiveCleanSections({
   required List<KeyMoment> keyMoments,
   PatternMemory? memory,
-  ArchiveMemorySummary? summary,
+  ThoughtprintmorySummary? summary,
   ArchiveEvolutionTimeline? timeline,
   bool hasCheckInToday = false,
   bool hasCompressionGroups = false,
@@ -82,7 +82,7 @@ List<ArchiveCleanSection> buildArchiveCleanSections({
       const ArchiveCleanSection(
         type: ArchiveCleanSectionType.askArchive,
         title: 'Ask my Archive',
-        subtitle: 'Find what ArchiveMe remembers.',
+        subtitle: 'Find what Thoughtprint remembers.',
         primaryCtaLabel: 'Search moments',
         route: '/ask-archive',
       ),
@@ -119,7 +119,7 @@ List<ArchiveCleanSection> buildArchiveCleanSections({
 
 String _patternSubtitle(
   PatternMemory? memory,
-  ArchiveMemorySummary? summary,
+  ThoughtprintmorySummary? summary,
   ArchiveEvolutionTimeline? timeline,
 ) {
   final title =

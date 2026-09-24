@@ -67,7 +67,7 @@ class ArchiveFirstComparisonDisplay {
 
     final change =
         _usableLine(comparison.whatChanged) ??
-        'ArchiveMe is still comparing your saved words.';
+        'Thoughtprint is still comparing your saved words.';
 
     return ArchiveFirstComparisonDisplay(
       show: true,

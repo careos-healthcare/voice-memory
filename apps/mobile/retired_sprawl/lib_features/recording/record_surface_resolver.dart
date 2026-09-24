@@ -4343,9 +4343,9 @@ abstract final class RecordSurfaceResolver {
         !showReturnTomorrowCueReady &&
         !showReturnDayFlow &&
         !showQuietSignalOnRecord;
-    final dailyArchiveMemoryCandidate =
+    final dailyThoughtprintmoryCandidate =
         flags.isReady && input.entryCountLoaded && !input.isPostSave
-        ? DailyArchiveMemoryEngine.build(
+        ? DailyThoughtprintmoryEngine.build(
             entries: input.journalEntries,
             confirmedRepeat: earlyFirstSignalOnRecord,
             changeProof: repeatReturnChangeProof,
@@ -4361,15 +4361,15 @@ abstract final class RecordSurfaceResolver {
         readyBag.showFirstProofPayoff ||
         showFirstProofTruth ||
         showFirstProofActionLoop;
-    final showDailyArchiveMemory =
+    final showDailyThoughtprintmory =
         !V1FeatureFlags.enableV1Only &&
-        DailyArchiveMemoryGates.shouldShow(
+        DailyThoughtprintmoryGates.shouldShow(
           loaded: input.entryCountLoaded,
           entryCount: input.entryCount,
           isReady: flags.isReady,
           isRecording: flags.isRecording,
           isPostSave: input.isPostSave,
-          memory: dailyArchiveMemoryCandidate,
+          memory: dailyThoughtprintmoryCandidate,
           showReturnDayFlow: showReturnDayFlow,
           showReturnTomorrowCueReady: showReturnTomorrowCueReady,
           showLowEvidenceGuidance: showLowEvidenceGuidanceOnRecord,
@@ -4379,8 +4379,8 @@ abstract final class RecordSurfaceResolver {
         );
     final showReturningWatchTargetFocusedUi =
         ReturningRecordWatchTargetUiGates.showFocusedSurface(
-          showDailyArchiveMemory: showDailyArchiveMemory,
-          dailyArchiveMemory: dailyArchiveMemoryCandidate,
+          showDailyThoughtprintmory: showDailyThoughtprintmory,
+          dailyThoughtprintmory: dailyThoughtprintmoryCandidate,
         );
     final recordReadyShowsWatchTargetOnly =
         showReturningWatchTargetFocusedUi && flags.isReady && !input.isPostSave;
@@ -5161,9 +5161,9 @@ abstract final class RecordSurfaceResolver {
       quietSignalCandidate: quietSignalCandidate,
       showQuietSignalOnRecord: showQuietSignalOnRecord,
       showLowEvidenceGuidanceOnRecord: showLowEvidenceGuidanceOnRecord,
-      dailyArchiveMemoryCandidate: dailyArchiveMemoryCandidate,
+      dailyThoughtprintmoryCandidate: dailyThoughtprintmoryCandidate,
       firstProofLoopActive: firstProofLoopActive,
-      showDailyArchiveMemory: showDailyArchiveMemory,
+      showDailyThoughtprintmory: showDailyThoughtprintmory,
       showReturningWatchTargetFocusedUi: showReturningWatchTargetFocusedUi,
       recordReadyShowsWatchTargetOnly: recordReadyShowsWatchTargetOnly,
       recordReadySuppressStreakPressure: recordReadySuppressStreakPressure,

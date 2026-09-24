@@ -6,7 +6,7 @@ void main() {
     test('active check-in appears first', () {
       final d = decidePatternsStack(
         hasActiveCheckIn: true,
-        hasArchiveMemory: true,
+        hasThoughtprintmory: true,
         hasNextCheck: true,
         hasArchiveCleanView: true,
         hasPatternProfile: true,
@@ -24,7 +24,7 @@ void main() {
     test('archive memory appears before manual navigation', () {
       final d = decidePatternsStack(
         hasActiveCheckIn: false,
-        hasArchiveMemory: true,
+        hasThoughtprintmory: true,
         hasNextCheck: true,
         hasArchiveCleanView: true,
         hasPatternProfile: true,
@@ -51,7 +51,7 @@ void main() {
       () {
         final d = decidePatternsStack(
           hasActiveCheckIn: false,
-          hasArchiveMemory: true,
+          hasThoughtprintmory: true,
           hasNextCheck: false,
           hasArchiveCleanView: true,
           hasPatternProfile: false,
@@ -74,7 +74,7 @@ void main() {
       () {
         final d = decidePatternsStack(
           hasActiveCheckIn: false,
-          hasArchiveMemory: true,
+          hasThoughtprintmory: true,
           hasNextCheck: true,
           hasArchiveCleanView: true,
           hasPatternProfile: true,
@@ -99,7 +99,7 @@ void main() {
     test('empty state only when no moments and no archive memory', () {
       final empty = decidePatternsStack(
         hasActiveCheckIn: false,
-        hasArchiveMemory: false,
+        hasThoughtprintmory: false,
         hasNextCheck: false,
         hasArchiveCleanView: false,
         hasPatternProfile: false,
@@ -115,7 +115,7 @@ void main() {
 
       final withMemory = decidePatternsStack(
         hasActiveCheckIn: false,
-        hasArchiveMemory: true,
+        hasThoughtprintmory: true,
         hasNextCheck: false,
         hasArchiveCleanView: false,
         hasPatternProfile: false,
@@ -135,7 +135,7 @@ void main() {
       () {
         final d = decidePatternsStack(
           hasActiveCheckIn: false,
-          hasArchiveMemory: true,
+          hasThoughtprintmory: true,
           hasNextCheck: true,
           hasArchiveCleanView: false,
           hasPatternProfile: false,
@@ -154,7 +154,7 @@ void main() {
     test('standalone next check section when no archive memory', () {
       final d = decidePatternsStack(
         hasActiveCheckIn: false,
-        hasArchiveMemory: false,
+        hasThoughtprintmory: false,
         hasNextCheck: true,
         hasArchiveCleanView: false,
         hasPatternProfile: false,
@@ -173,7 +173,7 @@ void main() {
     test('recap and share appear lower in stack', () {
       final d = decidePatternsStack(
         hasActiveCheckIn: false,
-        hasArchiveMemory: true,
+        hasThoughtprintmory: true,
         hasNextCheck: false,
         hasArchiveCleanView: true,
         hasPatternProfile: true,
@@ -197,7 +197,7 @@ void main() {
     test('range review appears after pattern profile', () {
       final d = decidePatternsStack(
         hasActiveCheckIn: false,
-        hasArchiveMemory: true,
+        hasThoughtprintmory: true,
         hasNextCheck: false,
         hasArchiveCleanView: true,
         hasPatternProfile: true,
@@ -218,7 +218,7 @@ void main() {
     test('archive compression appears after pattern profile', () {
       final d = decidePatternsStack(
         hasActiveCheckIn: false,
-        hasArchiveMemory: true,
+        hasThoughtprintmory: true,
         hasNextCheck: false,
         hasArchiveCleanView: true,
         hasPatternProfile: true,
@@ -240,7 +240,7 @@ void main() {
     test('due check status suppresses compact objective', () {
       final d = decidePatternsStack(
         hasActiveCheckIn: true,
-        hasArchiveMemory: false,
+        hasThoughtprintmory: false,
         hasNextCheck: false,
         hasArchiveCleanView: false,
         hasPatternProfile: false,
@@ -259,7 +259,7 @@ void main() {
     test('shows compact objective when no due status card', () {
       final d = decidePatternsStack(
         hasActiveCheckIn: false,
-        hasArchiveMemory: true,
+        hasThoughtprintmory: true,
         hasNextCheck: true,
         hasArchiveCleanView: false,
         hasPatternProfile: false,

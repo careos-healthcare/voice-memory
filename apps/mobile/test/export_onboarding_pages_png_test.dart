@@ -105,7 +105,7 @@ class _OnboardingExportFrame extends StatelessWidget {
                       0,
                     ),
                     child: Text(
-                      'ArchiveMe',
+                      'Thoughtprint',
                       style: OnboardingTypography.label(
                         color: AppColors.accentPrimary,
                       ),

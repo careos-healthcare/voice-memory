@@ -58,7 +58,7 @@ void main() {
       expect(find.text(ConsumerUiCopy.settings), findsOneWidget);
     });
 
-    testWidgets('about shell shows ArchiveMe not VoiceMemory', (tester) async {
+    testWidgets('about shell shows Thoughtprint not VoiceMemory', (tester) async {
       final router = GoRouter(
         routes: [
           GoRoute(path: '/', builder: (context, state) => const AboutScreen()),
@@ -71,11 +71,11 @@ void main() {
       );
       await tester.pump();
       expect(find.textContaining('VoiceMemory'), findsNothing);
-      expect(find.textContaining('ArchiveMe'), findsWidgets);
+      expect(find.textContaining('Thoughtprint'), findsWidgets);
     });
 
-    test('material app title uses ArchiveMe', () {
-      expect(AppConfig.appName, 'ArchiveMe');
+    test('material app title uses Thoughtprint', () {
+      expect(AppConfig.appName, 'Thoughtprint');
     });
   });
 }

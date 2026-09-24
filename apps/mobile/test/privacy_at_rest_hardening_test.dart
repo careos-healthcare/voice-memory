@@ -205,7 +205,7 @@ void main() {
 
       final payload = await service.buildSanitizedExport();
       final json = payload.toJson();
-      expect(json, contains('"app": "ArchiveMe"'));
+      expect(json, contains('"app": "Thoughtprint"'));
       expect(json, contains('Private reflection text'));
       expect(json, isNot(contains('secret-id')));
       expect(json, isNot(contains('/tmp/secret.m4a')));
@@ -216,7 +216,7 @@ void main() {
   group('Privacy copy hardening', () {
     test('canonical promises stay honest', () {
       expect(PrivacyCopyPolicy.privateByDefault, 'Private by default');
-      expect(PrivacyCopyPolicy.lockArchiveMe, 'Protect this archive');
+      expect(PrivacyCopyPolicy.lockThoughtprint, 'Protect this archive');
       expect(PrivacyCopyPolicy.deleteLocalArchive, 'Delete local archive');
       expect(
         PrivacyCopyPolicy.transcriptionAnalysisWhenUsed,

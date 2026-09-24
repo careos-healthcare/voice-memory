@@ -22,7 +22,7 @@ abstract class PaywallObjectionFollowUpCopy {
 
   static const String wantToTryLongerTitle = 'Try longer first';
   static const String wantToTryLongerBody =
-      'Keep using ArchiveMe for free. Pro is for when you want the archive '
+      'Keep using Thoughtprint for free. Pro is for when you want the archive '
       'to keep connecting over time.';
 
   static const String tooExpensiveTitle = 'Only if the continuity is worth it';

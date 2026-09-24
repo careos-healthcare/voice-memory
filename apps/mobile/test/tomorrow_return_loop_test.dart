@@ -195,7 +195,7 @@ void main() {
     await tester.pump();
 
     expect(tester.takeException(), isNull);
-    expect(find.text(ConsumerUiCopy.todayArchiveMeNoticed), findsOneWidget);
+    expect(find.text(ConsumerUiCopy.todayThoughtprintNoticed), findsOneWidget);
     expect(
       find.text(ScreenshotSampleData.returnLoopTodayNoticed),
       findsOneWidget,

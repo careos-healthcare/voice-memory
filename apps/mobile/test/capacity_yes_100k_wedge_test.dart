@@ -63,8 +63,8 @@ void main() {
       }
     });
 
-    test('ArchiveMe identity and primary wedge', () {
-      expect(allDocs, contains('ArchiveMe'));
+    test('Thoughtprint identity and primary wedge', () {
+      expect(allDocs, contains('Thoughtprint'));
       expect(allDocs.toLowerCase(), contains('overcommitted professionals'));
       expect(
         allDocs.toLowerCase(),
@@ -103,7 +103,7 @@ void main() {
       expect(interview, contains('What made you save the first moment?'));
       expect(
         interview,
-        contains('Did ArchiveMe show anything you did not expect?'),
+        contains('Did Thoughtprint show anything you did not expect?'),
       );
       expect(
         interview,
@@ -140,7 +140,7 @@ void main() {
         contains('Stop guessing why you keep taking on too much.'),
       );
       expect(landing, contains('Save the moment. See the pattern.'));
-      expect(landing, contains('ArchiveMe shows what keeps returning.'));
+      expect(landing, contains('Thoughtprint shows what keeps returning.'));
     });
   });
 

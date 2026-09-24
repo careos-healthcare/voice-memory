@@ -168,7 +168,7 @@ void main() {
   tearDown(() => sandbox.dispose());
   group('ProMemoryBoundaryCopy', () {
     test('defines upgrade bridge and fallback copy', () {
-      expect(ProMemoryBoundaryCopy.upgradeBridgeTitle, 'ArchiveMe Pro');
+      expect(ProMemoryBoundaryCopy.upgradeBridgeTitle, 'Thoughtprint Pro');
       expect(
         ProMemoryBoundaryCopy.upgradeBridgeBody,
         contains('longer proof trail'),

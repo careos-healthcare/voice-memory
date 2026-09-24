@@ -8,14 +8,14 @@ import 'package:archiveme_mobile/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 
 /// Shows the first frame immediately, then runs staged V1 startup.
-class ArchiveMeBootstrapApp extends StatefulWidget {
-  const ArchiveMeBootstrapApp({super.key});
+class ThoughtprintBootstrapApp extends StatefulWidget {
+  const ThoughtprintBootstrapApp({super.key});
 
   @override
-  State<ArchiveMeBootstrapApp> createState() => _ArchiveMeBootstrapAppState();
+  State<ThoughtprintBootstrapApp> createState() => _ThoughtprintBootstrapAppState();
 }
 
-class _ArchiveMeBootstrapAppState extends State<ArchiveMeBootstrapApp> {
+class _ThoughtprintBootstrapAppState extends State<ThoughtprintBootstrapApp> {
   bool _ready = false;
   bool _startupFailed = false;
 
@@ -47,7 +47,7 @@ class _ArchiveMeBootstrapAppState extends State<ArchiveMeBootstrapApp> {
   @override
   Widget build(BuildContext context) {
     if (_ready && !_startupFailed) {
-      return const ArchiveMeApp();
+      return const ThoughtprintApp();
     }
     if (_ready && _startupFailed) {
       return const MaterialApp(
@@ -77,7 +77,7 @@ class _ArchiveMeBootstrapAppState extends State<ArchiveMeBootstrapApp> {
 }
 
 /// Completes startup for hosts that defer local storage until after first frame.
-Future<void> completeArchiveMeStartup({
+Future<void> completeThoughtprintStartup({
   bool awaitOptionalServices = false,
 }) async {
   await V1StartupCoordinator.runEssentialPhases();

@@ -92,7 +92,7 @@ void main() {
   group('BetaTestScriptCopy', () {
     test('exact v1 copy', () {
       expect(BetaTestScriptCopy.settingsTileTitle, 'Early archive test');
-      expect(BetaTestScriptCopy.screenTitle, 'ArchiveMe early test');
+      expect(BetaTestScriptCopy.screenTitle, 'Thoughtprint early test');
       expect(BetaTestScriptCopy.day1Title, 'Step 1 — Save one small moment');
       expect(
         BetaTestScriptCopy.day2Title,
@@ -292,12 +292,12 @@ void main() {
     });
   });
 
-  group('TestingArchiveMeScreen', () {
+  group('TestingThoughtprintScreen', () {
     Future<void> pumpScreen(WidgetTester tester) async {
       await tester.pumpWidget(
         MaterialApp(
           theme: AppTheme.light(),
-          home: const TestingArchiveMeScreen(),
+          home: const TestingThoughtprintScreen(),
         ),
       );
       await tester.pumpAndSettle();

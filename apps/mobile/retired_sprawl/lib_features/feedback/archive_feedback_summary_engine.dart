@@ -1,6 +1,6 @@
 import 'package:archiveme_mobile/features/feedback/archive_feedback_model.dart';
 
-/// A plain count of the feedback ArchiveMe has received so far, plus the one
+/// A plain count of the feedback Thoughtprint has received so far, plus the one
 /// issue (if any) worth gently adjusting future output for.
 class ArchiveFeedbackSummary {
   const ArchiveFeedbackSummary({

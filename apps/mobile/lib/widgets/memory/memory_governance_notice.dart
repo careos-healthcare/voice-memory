@@ -8,7 +8,7 @@ abstract class MemoryGovernanceCopy {
 
   static const String noArchiveContextUsed = 'No archive context used';
   static const String keptSeparateHelper =
-      'ArchiveMe kept this separate because it did not match the current entry.';
+      'Thoughtprint kept this separate because it did not match the current entry.';
   static const String backgroundOnlyLabel = 'Related, but not used as a claim';
 
   static const List<String> all = [

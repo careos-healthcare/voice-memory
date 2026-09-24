@@ -30,7 +30,7 @@ void main() {
   });
 
   testWidgets(
-    'paywall screen shows ArchiveMe fallback when billing unavailable',
+    'paywall screen shows Thoughtprint fallback when billing unavailable',
     (tester) async {
       await tester.pumpWidget(
         MaterialApp.router(

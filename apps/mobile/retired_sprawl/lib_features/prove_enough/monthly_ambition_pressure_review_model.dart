@@ -16,7 +16,7 @@ enum AmbitionPressureDirection {
       case AmbitionPressureDirection.mixed:
         return 'The evidence is mixed.';
       case AmbitionPressureDirection.unclear:
-        return 'ArchiveMe needs more moments before calling a direction.';
+        return 'Thoughtprint needs more moments before calling a direction.';
     }
   }
 }

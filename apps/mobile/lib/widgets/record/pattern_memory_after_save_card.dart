@@ -4,7 +4,7 @@ import 'package:archiveme_mobile/theme/app_spacing.dart';
 import 'package:archiveme_mobile/theme/voicememory_typography.dart';
 import 'package:flutter/material.dart';
 
-/// Compact post-save card: shows that ArchiveMe is remembering this pattern.
+/// Compact post-save card: shows that Thoughtprint is remembering this pattern.
 class PatternMemoryAfterSaveCard extends StatelessWidget {
   const PatternMemoryAfterSaveCard({
     required this.memory, super.key,

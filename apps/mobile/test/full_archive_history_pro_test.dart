@@ -310,7 +310,7 @@ void main() {
       );
       expect(
         ArchiveBeliefThreadCopy.fullArchiveHistoryBody,
-        'Your first repeat is free. Pro keeps the longer proof trail so ArchiveMe '
+        'Your first repeat is free. Pro keeps the longer proof trail so Thoughtprint '
         'can show what returns, changes, fades, or gets corrected over time.',
       );
       expect(

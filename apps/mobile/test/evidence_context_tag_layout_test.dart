@@ -108,8 +108,8 @@ void main() {
       },
     );
 
-    test('save label and share copy remain ArchiveMe-branded', () {
-      expect(ProTrustCopy.shareTextTemplate, contains('ArchiveMe'));
+    test('save label and share copy remain Thoughtprint-branded', () {
+      expect(ProTrustCopy.shareTextTemplate, contains('Thoughtprint'));
       expect(ProTrustCopy.shareCopyCta, isNotEmpty);
       expect(ArchiveShareActions.copyConfirmation, 'Share text copied');
     });

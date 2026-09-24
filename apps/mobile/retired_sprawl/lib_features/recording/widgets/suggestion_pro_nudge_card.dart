@@ -33,7 +33,7 @@ class SuggestionProNudgeCard extends StatelessWidget {
           ),
           const SizedBox(height: 4),
           const Text(
-            'ArchiveMe uses what you record to surface sharper things '
+            'Thoughtprint uses what you record to surface sharper things '
             'worth checking each day.',
             style: TextStyle(
               fontSize: 13,

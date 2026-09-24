@@ -123,11 +123,11 @@ void main() {
         ),
       );
 
-      expect(find.text('How ArchiveMe works'), findsOneWidget);
+      expect(find.text('How Thoughtprint works'), findsOneWidget);
       expect(find.text('Record one small thing.'), findsOneWidget);
       expect(
         find.text(
-          'After a second moment, ArchiveMe can start comparing your own words.',
+          'After a second moment, Thoughtprint can start comparing your own words.',
         ),
         findsOneWidget,
       );
@@ -876,7 +876,7 @@ void main() {
     test('day 1 plan for a brand-new user', () {
       final path = engine.build(entryCount: 0, now: now);
       expect(path.stage, TwoDayActivationStage.dayOneIntro);
-      expect(path.title, 'Try ArchiveMe for 2 days');
+      expect(path.title, 'Try Thoughtprint for 2 days');
       expect(path.lines, const [
         'Today: record one small thing.',
         'Tomorrow: check whether it returned, faded, or changed.',
@@ -889,7 +889,7 @@ void main() {
       expect(first.stage, TwoDayActivationStage.dayOneComplete);
       expect(first.title, 'Day 1 complete');
       expect(first.lines, const [
-        'Tomorrow, ArchiveMe can compare this with what shows up next.',
+        'Tomorrow, Thoughtprint can compare this with what shows up next.',
         'Tomorrow\u2019s check is simple: did this return, fade, or change?',
       ]);
       expect(engine.buildPostSave(entryCount: 0).show, isFalse);
@@ -1044,7 +1044,7 @@ void main() {
       );
 
       expect(find.byKey(const Key('two_day_activation_card')), findsOneWidget);
-      expect(find.text('Try ArchiveMe for 2 days'), findsOneWidget);
+      expect(find.text('Try Thoughtprint for 2 days'), findsOneWidget);
       expect(find.text('Today: record one small thing.'), findsOneWidget);
       expect(
         find.text('Tomorrow: check whether it returned, faded, or changed.'),
@@ -1095,7 +1095,7 @@ void main() {
       expect(find.text('Day 1 complete'), findsOneWidget);
       expect(
         find.text(
-          'Tomorrow, ArchiveMe can compare this with what shows up next.',
+          'Tomorrow, Thoughtprint can compare this with what shows up next.',
         ),
         findsOneWidget,
       );
@@ -1286,7 +1286,7 @@ void main() {
       );
       expect(
         InvitedUserWelcome.bodyFor('weekly_review'),
-        'Start with one small recording. Later, ArchiveMe can compare what '
+        'Start with one small recording. Later, Thoughtprint can compare what '
         'returned, faded, or changed.',
       );
       expect(
@@ -1295,7 +1295,7 @@ void main() {
       );
       expect(
         InvitedUserWelcome.bodyFor('thread_return'),
-        'Start with one small recording. ArchiveMe can help notice what '
+        'Start with one small recording. Thoughtprint can help notice what '
         'keeps returning.',
       );
       expect(
@@ -1304,7 +1304,7 @@ void main() {
       );
       expect(
         InvitedUserWelcome.bodyFor('belief_distance'),
-        'Start with one small recording. ArchiveMe can help notice repeated '
+        'Start with one small recording. Thoughtprint can help notice repeated '
         'phrases over time.',
       );
       expect(
@@ -1313,27 +1313,27 @@ void main() {
       );
       expect(
         InvitedUserWelcome.bodyFor('proof_counter'),
-        'Start with one small recording. ArchiveMe can help connect '
+        'Start with one small recording. Thoughtprint can help connect '
         'evidence over time.',
       );
       expect(
         InvitedUserWelcome.titleFor('pro_retention_yes'),
-        'You were invited by someone using ArchiveMe',
+        'You were invited by someone using Thoughtprint',
       );
       expect(
         InvitedUserWelcome.bodyFor('pro_retention_yes'),
-        'Start with one small recording. ArchiveMe helps keep track of what '
+        'Start with one small recording. Thoughtprint helps keep track of what '
         'returns, fades, or changes.',
       );
       // Unknown and default sources get the default copy.
       for (final source in const ['default', 'something_else', '']) {
         expect(
           InvitedUserWelcome.titleFor(source),
-          'You were invited to try ArchiveMe',
+          'You were invited to try Thoughtprint',
         );
         expect(
           InvitedUserWelcome.bodyFor(source),
-          'Start with one small recording. ArchiveMe helps notice what '
+          'Start with one small recording. Thoughtprint helps notice what '
           'keeps returning, fading, or changing.',
         );
       }
@@ -1690,7 +1690,7 @@ void main() {
       );
       expect(
         InvitedDayTwoReturn.bodyFor('thread_return'),
-        'ArchiveMe can help notice whether the same thread is showing up '
+        'Thoughtprint can help notice whether the same thread is showing up '
         'again.',
       );
       expect(
@@ -1708,7 +1708,7 @@ void main() {
       );
       expect(
         InvitedDayTwoReturn.bodyFor('proof_counter'),
-        'A second recording can help ArchiveMe compare what is beginning to '
+        'A second recording can help Thoughtprint compare what is beginning to '
         'connect.',
       );
       expect(
@@ -1865,7 +1865,7 @@ void main() {
       expect(find.text('Check whether it came back'), findsOneWidget);
       expect(
         find.text(
-          'ArchiveMe can help notice whether the same thread is showing up '
+          'Thoughtprint can help notice whether the same thread is showing up '
           'again.',
         ),
         findsOneWidget,

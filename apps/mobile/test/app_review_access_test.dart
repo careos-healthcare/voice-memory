@@ -14,14 +14,14 @@ void main() {
 
   setUp(() async {
     ArchiveAppReviewAccessGate.enabledOverride = true;
-    ArchiveMeDemoState.resetForTest();
+    ThoughtprintDemoState.resetForTest();
     tempDir = Directory.systemTemp.createTempSync('app_review_access_');
     prefs = await MobilePrefsStore.open('${tempDir.path}/prefs.json');
   });
 
   tearDown(() {
     ArchiveAppReviewAccessGate.resetForTest();
-    ArchiveMeDemoState.resetForTest();
+    ThoughtprintDemoState.resetForTest();
   });
 
   group('ArchiveAppReviewAccess', () {
@@ -36,7 +36,7 @@ void main() {
       );
       expect(ok, isFalse);
       expect(await ArchiveAppReviewAccess.isUnlocked(prefs), isFalse);
-      expect(ArchiveMeDemoState.isActive, isFalse);
+      expect(ThoughtprintDemoState.isActive, isFalse);
     });
 
     test('valid code unlocks Pro and demo archive', () async {
@@ -46,7 +46,7 @@ void main() {
       );
       expect(ok, isTrue);
       expect(await ArchiveAppReviewAccess.isUnlocked(prefs), isTrue);
-      expect(ArchiveMeDemoState.isActive, isTrue);
+      expect(ThoughtprintDemoState.isActive, isTrue);
 
       final loop = await ArchiveLoopEntitlementStore(prefs).load();
       expect(loop.isPro, isTrue);
@@ -59,12 +59,12 @@ void main() {
         prefs: prefs,
       );
 
-      final entries = ArchiveMeDemoArchive.journalEntries();
+      final entries = ThoughtprintDemoArchive.journalEntries();
       expect(entries.length, greaterThanOrEqualTo(3));
-      expect(ArchiveMeDemoArchive.hasConfirmedRepeat, isTrue);
-      expect(ArchiveMeDemoArchive.hasBeliefProof, isTrue);
+      expect(ThoughtprintDemoArchive.hasConfirmedRepeat, isTrue);
+      expect(ThoughtprintDemoArchive.hasBeliefProof, isTrue);
       expect(
-        entries.every((e) => e.id.startsWith(ArchiveMeDemoState.entryIdPrefix)),
+        entries.every((e) => e.id.startsWith(ThoughtprintDemoState.entryIdPrefix)),
         isTrue,
       );
     });
@@ -83,11 +83,11 @@ void main() {
         code: ArchiveAppReviewAccessGate.reviewCode,
         prefs: prefs,
       );
-      ArchiveMeDemoState.resetForTest();
+      ThoughtprintDemoState.resetForTest();
 
-      await ArchiveMeDemoState.hydrateFromPrefs(prefs);
-      expect(ArchiveMeDemoState.reviewDemoUnlocked, isTrue);
-      expect(ArchiveMeDemoState.isActive, isTrue);
+      await ThoughtprintDemoState.hydrateFromPrefs(prefs);
+      expect(ThoughtprintDemoState.reviewDemoUnlocked, isTrue);
+      expect(ThoughtprintDemoState.isActive, isTrue);
     });
   });
 

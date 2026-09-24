@@ -34,7 +34,7 @@ void main() {
         ProofSurfaceWhyAppearedCopy.line(
           ProofSurfaceWhyAppearedCopy.firstProof,
         ),
-        'Why this appeared: ArchiveMe saw related evidence across three moments.',
+        'Why this appeared: Thoughtprint saw related evidence across three moments.',
       );
       expect(
         ProofSurfaceWhyAppearedCopy.line(

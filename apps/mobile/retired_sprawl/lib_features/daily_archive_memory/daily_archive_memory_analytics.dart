@@ -3,8 +3,8 @@ import 'package:archiveme_mobile/services/activation_funnel_analytics.dart';
 import 'package:flutter/foundation.dart';
 
 /// Safe analytics for daily archive memory — metadata only.
-abstract final class DailyArchiveMemoryAnalytics {
-  DailyArchiveMemoryAnalytics._();
+abstract final class DailyThoughtprintmoryAnalytics {
+  DailyThoughtprintmoryAnalytics._();
 
   static const seenEvent = 'daily_archive_memory_seen';
   static const ctaTappedEvent = 'daily_archive_memory_cta_tapped';

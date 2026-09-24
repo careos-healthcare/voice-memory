@@ -74,7 +74,7 @@ void main() {
       () {
         expect(
           ConsumerUiCopy.paywallDifferentiation,
-          'ArchiveMe is not trying to answer better than ChatGPT. It is trying to remember differently.',
+          'Thoughtprint is not trying to answer better than ChatGPT. It is trying to remember differently.',
         );
         expect(
           ConsumerUiCopy.paywallTrust,

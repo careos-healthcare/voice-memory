@@ -89,7 +89,7 @@ class _ContradictionCaptureCardState extends State<ContradictionCaptureCard> {
           ),
           const SizedBox(height: AppSpacing.xs),
           Text(
-            'ArchiveMe should track evidence that proves the loop wrong too.',
+            'Thoughtprint should track evidence that proves the loop wrong too.',
             style: ArchiveMobileTypography.body(
               context,
             ).copyWith(color: AppColors.textSecondary),

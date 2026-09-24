@@ -17,8 +17,8 @@ import 'package:archiveme_mobile/features/return_day/return_day_flow_engine.dart
 import 'package:archiveme_mobile/models/journal_entry.dart';
 
 /// Visibility gates for the daily archive memory card.
-abstract final class DailyArchiveMemoryGates {
-  DailyArchiveMemoryGates._();
+abstract final class DailyThoughtprintmoryGates {
+  DailyThoughtprintmoryGates._();
 
   static bool archiveAllows(List<JournalEntry> entries) {
     if (entries.isEmpty) return false;
@@ -39,7 +39,7 @@ abstract final class DailyArchiveMemoryGates {
     required bool isReady,
     required bool isRecording,
     required bool isPostSave,
-    required DailyArchiveMemoryResult? memory,
+    required DailyThoughtprintmoryResult? memory,
     required bool showReturnDayFlow,
     required bool showReturnTomorrowCueReady,
     required bool showLowEvidenceGuidance,
@@ -71,10 +71,10 @@ abstract final class DailyArchiveMemoryGates {
 }
 
 /// Builds returning-user memory copy from existing watch-target engines only.
-abstract final class DailyArchiveMemoryEngine {
-  DailyArchiveMemoryEngine._();
+abstract final class DailyThoughtprintmoryEngine {
+  DailyThoughtprintmoryEngine._();
 
-  static DailyArchiveMemoryResult? build({
+  static DailyThoughtprintmoryResult? build({
     required List<JournalEntry> entries,
     EarlyFirstSignalModel? confirmedRepeat,
     RepeatReturnCheckChangeProof? changeProof,
@@ -85,7 +85,7 @@ abstract final class DailyArchiveMemoryEngine {
     bool isRecording = false,
     bool isPostSave = false,
   }) {
-    if (!DailyArchiveMemoryGates.archiveAllows(entries)) return null;
+    if (!DailyThoughtprintmoryGates.archiveAllows(entries)) return null;
 
     final eligible = ArchiveEvidenceGuard.eligibleEntries(entries);
     final watchPhrase = _resolveWatchPhrase(
@@ -109,19 +109,19 @@ abstract final class DailyArchiveMemoryEngine {
         );
 
     if (watchPhrase != null) {
-      return DailyArchiveMemoryResult(
-        title: DailyArchiveMemoryCopy.watchTitle,
-        body: DailyArchiveMemoryCopy.watchBody,
+      return DailyThoughtprintmoryResult(
+        title: DailyThoughtprintmoryCopy.watchTitle,
+        body: DailyThoughtprintmoryCopy.watchBody,
         watchPhrase: watchPhrase,
-        footer: DailyArchiveMemoryCopy.footer,
+        footer: DailyThoughtprintmoryCopy.footer,
         hasWatchTarget: true,
         canShowPatternDetail: canShowPatternDetail,
       );
     }
 
-    return const DailyArchiveMemoryResult(
-      title: DailyArchiveMemoryCopy.fallbackTitle,
-      body: DailyArchiveMemoryCopy.fallbackBody,
+    return const DailyThoughtprintmoryResult(
+      title: DailyThoughtprintmoryCopy.fallbackTitle,
+      body: DailyThoughtprintmoryCopy.fallbackBody,
       hasWatchTarget: false,
       canShowPatternDetail: false,
     );

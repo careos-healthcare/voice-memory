@@ -316,8 +316,8 @@ class TrialSummaryEngine {
       positioningComprehensionAskedCount: events.positioningComprehensionAsked,
       positioningComprehensionAnsweredCount:
           events.positioningComprehensionAnswered,
-      positioningUnderstoodArchiveMemoryCount:
-          events.positioningUnderstoodArchiveMemory,
+      positioningUnderstoodThoughtprintmoryCount:
+          events.positioningUnderstoodThoughtprintmory,
       positioningJournalCount: events.positioningJournal,
       positioningChatCount: events.positioningChat,
       positioningNotSureCount: events.positioningNotSure,

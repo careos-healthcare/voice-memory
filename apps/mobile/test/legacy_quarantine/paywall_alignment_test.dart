@@ -164,7 +164,7 @@ void main() {
       expect(ArchivePaywallCopy.primaryCta, 'Keep the longer trail');
       expect(
         ArchivePaywallCopy.purchaseSuccess,
-        'Pro is active. ArchiveMe keeps the longer proof trail over time.',
+        'Pro is active. Thoughtprint keeps the longer proof trail over time.',
       );
       expect(
         ArchivePaywallCopy.restoreSuccess,

@@ -88,7 +88,7 @@ class ArchivePaywallStats {
   /// Variant B pre-CTA with pattern / theory / contradiction counts.
   String preCtaVariantB() {
     if (!hasPreCtaCounts) return ArchivePaywallCopy.preCtaFallback;
-    final lines = <String>['ArchiveMe has noticed:'];
+    final lines = <String>['Thoughtprint has noticed:'];
     if (recurringThemeCount > 0) {
       lines.add(
         '$recurringThemeCount recurring '
@@ -115,7 +115,7 @@ class ArchivePaywallStats {
 
   String preCtaLegacy() {
     if (!hasRichStats) return ArchivePaywallCopy.preCtaFallback;
-    return 'ArchiveMe has reviewed $recordingCount '
+    return 'Thoughtprint has reviewed $recordingCount '
         'reflection${recordingCount == 1 ? '' : 's'} and noticed '
         '$recurringThemeCount recurring '
         'pattern${recurringThemeCount == 1 ? '' : 's'}.';

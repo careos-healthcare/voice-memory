@@ -263,7 +263,7 @@ class CapacityBetaSignalEngine {
     required bool boundaryResponseSelected,
   }) {
     final parts = <String>[
-      'ArchiveMe capacity beta signal: $momentCount yes moments',
+      'Thoughtprint capacity beta signal: $momentCount yes moments',
       'fit response $fitResponseLabel',
       '$outcomeRecordCount outcomes',
       '$laterCostRecordCount later costs',

@@ -83,7 +83,7 @@ class LoopTriggerMapModel {
   });
 
   static const notEnoughDataCopy =
-      'ArchiveMe needs a few more proving moments before it can map triggers.';
+      'Thoughtprint needs a few more proving moments before it can map triggers.';
   static const enoughDataHeadline =
       'Your proving loop appears most often after:';
 

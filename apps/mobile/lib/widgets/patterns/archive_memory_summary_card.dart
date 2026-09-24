@@ -11,10 +11,10 @@ import 'package:archiveme_mobile/widgets/feedback/archive_feedback_chips.dart';
 import 'package:archiveme_mobile/widgets/patterns/memory_quality_chip.dart';
 import 'package:flutter/material.dart';
 
-/// "What ArchiveMe remembers" — one clear, plain-language summary of a pattern
+/// "What Thoughtprint remembers" — one clear, plain-language summary of a pattern
 /// the archive has been building over time.
-class ArchiveMemorySummaryCard extends StatefulWidget {
-  const ArchiveMemorySummaryCard({
+class ThoughtprintmorySummaryCard extends StatefulWidget {
+  const ThoughtprintmorySummaryCard({
     required this.summary, super.key,
     this.onOpenPatternMap,
     this.onFindMoments,
@@ -24,7 +24,7 @@ class ArchiveMemorySummaryCard extends StatefulWidget {
     this.quality,
   });
 
-  final ArchiveMemorySummary summary;
+  final ThoughtprintmorySummary summary;
 
   /// Opens the full Pattern map.
   final VoidCallback? onOpenPatternMap;
@@ -48,15 +48,15 @@ class ArchiveMemorySummaryCard extends StatefulWidget {
   static const Color _warmBorder = AppColors.warmBorder;
 
   @override
-  State<ArchiveMemorySummaryCard> createState() =>
-      _ArchiveMemorySummaryCardState();
+  State<ThoughtprintmorySummaryCard> createState() =>
+      _ThoughtprintmorySummaryCardState();
 }
 
-class _ArchiveMemorySummaryCardState extends State<ArchiveMemorySummaryCard> {
+class _ThoughtprintmorySummaryCardState extends State<ThoughtprintmorySummaryCard> {
   @override
   void initState() {
     super.initState();
-    ActivationTracker.trackArchiveMemorySummaryShown();
+    ActivationTracker.trackThoughtprintmorySummaryShown();
   }
 
   @override
@@ -69,15 +69,15 @@ class _ArchiveMemorySummaryCardState extends State<ArchiveMemorySummaryCard> {
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
-        color: ArchiveMemorySummaryCard._warmSurface,
+        color: ThoughtprintmorySummaryCard._warmSurface,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: ArchiveMemorySummaryCard._warmBorder),
+        border: Border.all(color: ThoughtprintmorySummaryCard._warmBorder),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'What ArchiveMe remembers',
+            'What Thoughtprint remembers',
             style: VoiceMemoryTypography.metadataStyle(
               color: AppColors.textSecondary,
             ).copyWith(fontSize: 12, fontWeight: FontWeight.w700),
@@ -193,19 +193,19 @@ class _ArchiveMemorySummaryCardState extends State<ArchiveMemorySummaryCard> {
   }
 
   void _onOpenPatternMap() {
-    ActivationTracker.trackArchiveMemoryOpenPatternMapTapped();
+    ActivationTracker.trackThoughtprintmoryOpenPatternMapTapped();
     widget.onOpenPatternMap?.call();
   }
 
   void _onFindMoments() {
-    ActivationTracker.trackArchiveMemoryFindMomentsTapped();
+    ActivationTracker.trackThoughtprintmoryFindMomentsTapped();
     widget.onFindMoments?.call();
   }
 
   void _onUseCheck() {
     final next = widget.summary.nextCheck?.trim() ?? '';
     if (next.isEmpty) return;
-    ActivationTracker.trackArchiveMemoryUseCheckTapped();
+    ActivationTracker.trackThoughtprintmoryUseCheckTapped();
     widget.onUseCheck?.call(next);
   }
 }

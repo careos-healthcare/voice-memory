@@ -59,13 +59,13 @@ void main() {
     expect(sample.chips, hasLength(3));
   });
 
-  test('consumer copy uses ArchiveMe not VoiceMemory', () {
-    expect(ConsumerUiCopy.patternsEmptySubtitle, contains('ArchiveMe'));
+  test('consumer copy uses Thoughtprint not VoiceMemory', () {
+    expect(ConsumerUiCopy.patternsEmptySubtitle, contains('Thoughtprint'));
     expect(
       ConsumerUiCopy.patternsEmptySubtitle,
       isNot(contains('VoiceMemory')),
     );
-    expect(ConsumerUiCopy.tomorrowCommitmentTitle, contains('ArchiveMe'));
-    expect(ConsumerUiCopy.activePatternPostSaveLine, contains('ArchiveMe'));
+    expect(ConsumerUiCopy.tomorrowCommitmentTitle, contains('Thoughtprint'));
+    expect(ConsumerUiCopy.activePatternPostSaveLine, contains('Thoughtprint'));
   });
 }

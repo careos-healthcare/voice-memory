@@ -1,4 +1,4 @@
-/// Focused painful loop ArchiveMe optimizes around.
+/// Focused painful loop Thoughtprint optimizes around.
 class LoopMode {
   const LoopMode({
     required this.id,

@@ -67,7 +67,7 @@ abstract final class BetaActivationSummaryEngine {
 
   static String buildCopyText(BetaActivationSummary summary) {
     final buffer = StringBuffer()
-      ..writeln('ArchiveMe beta progress summary')
+      ..writeln('Thoughtprint beta progress summary')
       ..writeln()
       ..writeln(
         '${BetaActivationSummaryCopy.statusHeading}: '

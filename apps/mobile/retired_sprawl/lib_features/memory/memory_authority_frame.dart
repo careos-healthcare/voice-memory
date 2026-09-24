@@ -115,17 +115,17 @@ abstract class MemoryAuthorityCopy {
 
   /// Sheet body by influence level.
   static const String blockedBody =
-      'Memory is off, so ArchiveMe is not using previous entries here.';
+      'Memory is off, so Thoughtprint is not using previous entries here.';
   static const String suppressBody =
       'This entry is being kept separate from connection suggestions.';
   static const String backgroundBody =
-      'ArchiveMe found related evidence, but it is being treated '
+      'Thoughtprint found related evidence, but it is being treated '
       'cautiously.';
   static const String compareBody =
-      'ArchiveMe found enough eligible evidence to compare this with '
+      'Thoughtprint found enough eligible evidence to compare this with '
       'your archive.';
   static const String highAuthorityBody =
-      'You previously confirmed this connection, so ArchiveMe gives it '
+      'You previously confirmed this connection, so Thoughtprint gives it '
       'more weight.';
 
   static const String sheetFooter =

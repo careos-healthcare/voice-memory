@@ -5,7 +5,7 @@ extension PrivateRecapTypeIds on PrivateRecapType {
   String get id => name;
 }
 
-/// A private, keepable recap of what ArchiveMe noticed.
+/// A private, keepable recap of what Thoughtprint noticed.
 ///
 /// This is a plain-text snapshot the user can copy, share, or save for
 /// themselves. It is never posted anywhere — there is no social surface.
@@ -27,7 +27,7 @@ class PrivateRecap {
   final String? nextCheck;
 
   /// Trailing line attached to every recap.
-  static const String madeWith = 'Made with ArchiveMe';
+  static const String madeWith = 'Made with Thoughtprint';
 
   bool get hasNextCheck => (nextCheck ?? '').trim().isNotEmpty;
 
@@ -45,7 +45,7 @@ class PrivateRecap {
   /// Next check
   /// ...
   ///
-  /// Made with ArchiveMe
+  /// Made with Thoughtprint
   /// ```
   ///
   /// Empty sections are omitted so the text never has dangling headings.

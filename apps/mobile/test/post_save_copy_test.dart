@@ -70,7 +70,7 @@ void main() {
     }
   });
 
-  testWidgets('post-save cards use ArchiveMe copy and hide cloud strings', (
+  testWidgets('post-save cards use Thoughtprint copy and hide cloud strings', (
     tester,
   ) async {
     final loop = TomorrowReturnLoop(
@@ -98,7 +98,7 @@ void main() {
       ),
     );
 
-    expect(find.text(ConsumerUiCopy.todayArchiveMeNoticed), findsNWidgets(2));
+    expect(find.text(ConsumerUiCopy.todayThoughtprintNoticed), findsNWidgets(2));
     expect(find.text(ConsumerUiCopy.savedPrivatelyOnDevice), findsNothing);
     expect(find.textContaining('Cloud processing pending'), findsNothing);
     expect(find.textContaining('Cloud sync is unavailable'), findsNothing);
@@ -130,7 +130,7 @@ void main() {
       );
 
       expect(find.text(ConsumerUiCopy.savedPrivatelyOnDevice), findsOneWidget);
-      expect(find.text(ConsumerUiCopy.todayArchiveMeNoticed), findsNothing);
+      expect(find.text(ConsumerUiCopy.todayThoughtprintNoticed), findsNothing);
       expect(find.textContaining('Cloud processing pending'), findsNothing);
       expect(find.textContaining('Today VoiceMemory noticed'), findsNothing);
     },
@@ -152,7 +152,7 @@ void main() {
       ),
     );
 
-    expect(find.text(ConsumerUiCopy.todayArchiveMeNoticed), findsNothing);
+    expect(find.text(ConsumerUiCopy.todayThoughtprintNoticed), findsNothing);
     expect(find.textContaining('Cloud processing pending'), findsNothing);
   });
 }

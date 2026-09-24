@@ -180,7 +180,7 @@ void main() {
       expect(
         summary.keepsRepeating.bodyLines.any(
           (line) =>
-              line.contains('evidence') || line.contains('ArchiveMe found'),
+              line.contains('evidence') || line.contains('Thoughtprint found'),
         ),
         isTrue,
       );

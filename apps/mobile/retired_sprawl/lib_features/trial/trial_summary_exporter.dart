@@ -28,7 +28,7 @@ class TrialSummaryExporter {
         rate == null ? '—' : '${(rate * 100).toStringAsFixed(0)}%';
 
     return '''
-# ArchiveMe trial summary
+# Thoughtprint trial summary
 
 **Participant:** $participant  
 **Generated:** ${summary.generatedAt.toIso8601String()}  
@@ -291,7 +291,7 @@ ${_retentionDiagnosisSection(summary)}
 - Refresh failed: ${summary.objectiveWidgetRefreshFailedCount}
 - Cleared: ${summary.objectiveWidgetClearedCount}
 
-## What ArchiveMe remembers
+## What Thoughtprint remembers
 
 - Summary shown: ${summary.archiveMemorySummaryShownCount}
 - Open pattern map tapped: ${summary.archiveMemoryOpenPatternMapTappedCount}
@@ -308,11 +308,11 @@ ${_retentionDiagnosisSection(summary)}
 
 - Asked: ${summary.positioningComprehensionAskedCount}
 - Answered: ${summary.positioningComprehensionAnsweredCount}
-- Understood archive memory: ${summary.positioningUnderstoodArchiveMemoryCount}
+- Understood archive memory: ${summary.positioningUnderstoodThoughtprintmoryCount}
 - Journal: ${summary.positioningJournalCount}
 - Chat: ${summary.positioningChatCount}
 - Not sure: ${summary.positioningNotSureCount}
-- Rate: ${summary.positioningArchiveMemoryRate == null ? 'n/a' : '${(summary.positioningArchiveMemoryRate! * 100).toStringAsFixed(0)}%'}
+- Rate: ${summary.positioningThoughtprintmoryRate == null ? 'n/a' : '${(summary.positioningThoughtprintmoryRate! * 100).toStringAsFixed(0)}%'}
 - Pass (≥3/5 archive memory): ${summary.positioningComprehensionPass ? 'yes' : 'no'}
 
 ## Pattern memory

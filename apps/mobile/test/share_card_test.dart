@@ -123,7 +123,7 @@ void main() {
   });
   group('ShareCardCopy', () {
     test('defines privacy-safe share card copy', () {
-      expect(ShareCardCopy.headline, 'ArchiveMe found a repeat');
+      expect(ShareCardCopy.headline, 'Thoughtprint found a repeat');
       expect(ShareCardCopy.footer, 'Private by default');
       expect(ShareCardCopy.createShareCardCta, 'Create share card');
       expect(ShareCardCopy.confirmationTitle, 'Create private share card?');

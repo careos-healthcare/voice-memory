@@ -33,10 +33,10 @@ Future<void> main() async {
   }
 
   if (await AppStoragePaths.shouldDeferLocalStorageUntilFirstFrame()) {
-    runApp(const ArchiveMeBootstrapApp());
+    runApp(const ThoughtprintBootstrapApp());
     return;
   }
 
-  await completeArchiveMeStartup();
-  runApp(const ArchiveMeApp());
+  await completeThoughtprintStartup();
+  runApp(const ThoughtprintApp());
 }

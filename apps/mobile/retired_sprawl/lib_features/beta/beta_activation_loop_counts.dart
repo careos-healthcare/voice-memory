@@ -229,7 +229,7 @@ class BetaActivationLoopCounts {
   };
 
   String toSummaryText() {
-    final buffer = StringBuffer('ArchiveMe beta activation loop\n');
+    final buffer = StringBuffer('Thoughtprint beta activation loop\n');
     for (final entry in fieldLabels.entries) {
       buffer.writeln('${entry.value}: ${valueForField(entry.key)}');
     }

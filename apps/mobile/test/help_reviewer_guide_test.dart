@@ -41,7 +41,7 @@ void _expectNoBannedCopy(Iterable<String> visible) {
 
 void main() {
   group('Help reviewer guide copy', () {
-    test('uses ArchiveMe and explains testing paths safely', () {
+    test('uses Thoughtprint and explains testing paths safely', () {
       final visible = [
         HelpReviewerGuideCopy.screenTitle,
         HelpReviewerGuideCopy.settingsTitle,

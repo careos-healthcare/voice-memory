@@ -65,7 +65,7 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   group('Return ritual copy', () {
-    test('uses ArchiveMe branding and avoids banned language', () {
+    test('uses Thoughtprint branding and avoids banned language', () {
       const visible = [
         ReturnRitualCopy.chooseTitle,
         ReturnRitualCopy.chooseBody,
@@ -84,7 +84,7 @@ void main() {
         expect(text.toLowerCase(), isNot(contains('voicememory')));
         expect(text.toLowerCase(), isNot(contains('voice memory')));
       }
-      expect(ReturnRitualCopy.chooseBody, contains('ArchiveMe'));
+      expect(ReturnRitualCopy.chooseBody, contains('Thoughtprint'));
       expect(ReturnRitualCopy.presets, hasLength(5));
     });
 

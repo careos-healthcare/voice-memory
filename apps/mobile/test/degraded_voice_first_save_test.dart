@@ -155,11 +155,11 @@ void main() {
     test('recovery copy matches pending transcript spec', () {
       expect(
         PendingTranscriptRecoveryCopy.postSaveTitle,
-        'Saved, but ArchiveMe could not hear enough.',
+        'Saved, but Thoughtprint could not hear enough.',
       );
       expect(
         PendingTranscriptRecoveryCopy.postSaveBody,
-        'Add one short sentence so ArchiveMe can compare this moment later.',
+        'Add one short sentence so Thoughtprint can compare this moment later.',
       );
       expect(PendingTranscriptRecoveryCopy.primaryAction, 'Add what you said');
       expect(RecordReturnProCopy.evidenceTitle, 'Saved.');

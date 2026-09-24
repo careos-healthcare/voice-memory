@@ -10,7 +10,7 @@ import 'package:archiveme_mobile/theme/app_spacing.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-/// The privacy disclosure ArchiveMe owes a reader, as one embeddable block.
+/// The privacy disclosure Thoughtprint owes a reader, as one embeddable block.
 ///
 /// This was the body of `PrivacyScreen`. It moved here because `/privacy` now
 /// redirects to `/privacy-trust-centre`, and the disclosure had to arrive at

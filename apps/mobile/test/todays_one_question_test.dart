@@ -200,7 +200,7 @@ void main() {
       expect(result.helperText, contains('Example only'));
     });
 
-    test('copy uses ArchiveMe and avoids banned language', () {
+    test('copy uses Thoughtprint and avoids banned language', () {
       final copy = TodaysQuestionCopy.allVisibleStrings.join(' ').toLowerCase();
       expect(copy, contains('archiveme'));
       _expectNoBannedCopy(TodaysQuestionCopy.allVisibleStrings);
@@ -292,7 +292,7 @@ void main() {
         findsOneWidget,
       );
       expect(
-        find.text('ArchiveMe needs a second moment to compare.'),
+        find.text('Thoughtprint needs a second moment to compare.'),
         findsOneWidget,
       );
     });

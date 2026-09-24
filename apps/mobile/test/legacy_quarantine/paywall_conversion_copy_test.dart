@@ -149,7 +149,7 @@ void main() {
       expect(copy.headline, 'Ask your archive what keeps repeating');
       expect(
         copy.subheadline,
-        'ArchiveMe uses your saved moments to show patterns with '
+        'Thoughtprint uses your saved moments to show patterns with '
         'evidence, not generic advice.',
       );
       expect(copy.bullets, const [
@@ -685,7 +685,7 @@ void main() {
       );
       expect(
         PaywallPlanSelectionConfidence.yearlyHelper,
-        'Yearly is for people who want ArchiveMe to keep connecting '
+        'Yearly is for people who want Thoughtprint to keep connecting '
         'patterns over time.',
       );
       expect(

@@ -2,7 +2,7 @@ import 'package:archiveme_mobile/features/moments/key_moment_model.dart';
 import 'package:archiveme_mobile/features/pattern_map/pattern_map_model.dart';
 import 'package:archiveme_mobile/features/pattern_memory/pattern_memory_model.dart';
 
-/// Builds a [PatternMap] from what ArchiveMe already remembers about a pattern.
+/// Builds a [PatternMap] from what Thoughtprint already remembers about a pattern.
 ///
 /// The pattern memory is the primary source. Key moments only fill gaps (the
 /// "starts before", "lighter when", "heavier when" lines) when the memory has

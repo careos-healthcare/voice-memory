@@ -18,11 +18,11 @@ void main() {
       expect(ArchiveCopyNormalizer.hasResidualMalformedText(fixed), isFalse);
     });
 
-    test('normalizes ArchiveMeis spacing', () {
+    test('normalizes Thoughtprintis spacing', () {
       const raw =
-          'ArchiveMeis seeing the same pressure return in stronger words.';
+          'Thoughtprintis seeing the same pressure return in stronger words.';
       const fixed =
-          'ArchiveMe is seeing the same pressure return in stronger words.';
+          'Thoughtprint is seeing the same pressure return in stronger words.';
 
       expect(ArchiveCopyNormalizer.normalize(raw), fixed);
       expect(ArchiveCopyNormalizer.hasResidualMalformedText(fixed), isFalse);
@@ -48,10 +48,10 @@ void main() {
       expect(ArchiveCopyNormalizer.hasResidualMalformedText(fixed), isFalse);
     });
 
-    test('normalizes ArchiveMeshould spacing', () {
-      const raw = 'ArchiveMeshould wait for one more signal before naming it.';
+    test('normalizes Thoughtprintshould spacing', () {
+      const raw = 'Thoughtprintshould wait for one more signal before naming it.';
       const fixed =
-          'ArchiveMe should wait for one more signal before naming it.';
+          'Thoughtprint should wait for one more signal before naming it.';
 
       expect(ArchiveCopyNormalizer.normalize(raw), fixed);
       expect(ArchiveCopyNormalizer.hasResidualMalformedText(fixed), isFalse);
@@ -87,8 +87,8 @@ void main() {
       );
       expect(ArchiveCopyNormalizer.normalize('aneed'), 'a need');
       expect(
-        ArchiveCopyNormalizer.normalize('ArchiveMeisbasing this on:'),
-        'ArchiveMe is basing this on:',
+        ArchiveCopyNormalizer.normalize('Thoughtprintisbasing this on:'),
+        'Thoughtprint is basing this on:',
       );
       expect(
         ArchiveCopyNormalizer.normalize('The app needs towork properly.'),
@@ -96,9 +96,9 @@ void main() {
       );
       expect(
         ArchiveCopyNormalizer.normalize(
-          'This helps ArchiveMe separateuseful checking from reassurance.',
+          'This helps Thoughtprint separateuseful checking from reassurance.',
         ),
-        'This helps ArchiveMe separate useful checking from reassurance.',
+        'This helps Thoughtprint separate useful checking from reassurance.',
       );
       for (final fixed in [
         'That thought turns into another check.',

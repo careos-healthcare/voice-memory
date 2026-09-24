@@ -123,7 +123,7 @@ List<String> _consumerCopy() => [
   PinnedEvidenceCopy.emptyTitle,
   PinnedEvidenceCopy.emptyHelper,
   for (final f in ArchiveDateFilter.values) f.label,
-  for (final s in ArchiveMemoryStatus.values) s.label,
+  for (final s in ThoughtprintmoryStatus.values) s.label,
 ];
 
 void main() {
@@ -250,14 +250,14 @@ void main() {
       ];
       ArchiveRetrievalPolicy.markRecordNotQuite('mixed');
 
-      ArchiveEntrySearchQuery q(ArchiveMemoryStatus status) =>
+      ArchiveEntrySearchQuery q(ThoughtprintmoryStatus status) =>
           ArchiveEntrySearchQuery(memoryStatus: status);
 
       expect(
         _search(
           entries,
           records: records,
-          query: q(ArchiveMemoryStatus.freshEntry),
+          query: q(ThoughtprintmoryStatus.freshEntry),
         ).map((r) => r.entry.id),
         ['fresh'],
       );
@@ -265,7 +265,7 @@ void main() {
         _search(
           entries,
           records: records,
-          query: q(ArchiveMemoryStatus.userConfirmed),
+          query: q(ThoughtprintmoryStatus.userConfirmed),
         ).map((r) => r.entry.id),
         ['confirmed'],
       );
@@ -273,7 +273,7 @@ void main() {
         _search(
           entries,
           records: records,
-          query: q(ArchiveMemoryStatus.mixedEvidence),
+          query: q(ThoughtprintmoryStatus.mixedEvidence),
         ).map((r) => r.entry.id),
         ['mixed'],
       );
@@ -281,7 +281,7 @@ void main() {
         _search(
           entries,
           records: records,
-          query: q(ArchiveMemoryStatus.changedLater),
+          query: q(ThoughtprintmoryStatus.changedLater),
         ).map((r) => r.entry.id),
         ['changed'],
       );
@@ -289,7 +289,7 @@ void main() {
         _search(
           entries,
           records: records,
-          query: q(ArchiveMemoryStatus.mayBeStale),
+          query: q(ThoughtprintmoryStatus.mayBeStale),
         ).map((r) => r.entry.id),
         ['stale'],
       );
@@ -297,7 +297,7 @@ void main() {
         _search(
           entries,
           records: records,
-          query: q(ArchiveMemoryStatus.stillCurrent),
+          query: q(ThoughtprintmoryStatus.stillCurrent),
         ).map((r) => r.entry.id),
         ['current'],
       );
@@ -535,7 +535,7 @@ void main() {
         find.byKey(const Key('archive_filter_status_may_be_stale')),
       );
       await tester.pump();
-      expect(query.memoryStatus, ArchiveMemoryStatus.mayBeStale);
+      expect(query.memoryStatus, ThoughtprintmoryStatus.mayBeStale);
 
       await tester.tap(find.byKey(const Key('archive_filter_pinned')));
       await tester.pump();
@@ -574,7 +574,7 @@ void main() {
         contextTagLabels: const ['Work'],
         isPinned: true,
         isExactEvidence: true,
-        memoryStatus: ArchiveMemoryStatus.stillCurrent,
+        memoryStatus: ThoughtprintmoryStatus.stillCurrent,
       );
       await tester.pumpWidget(
         MaterialApp(

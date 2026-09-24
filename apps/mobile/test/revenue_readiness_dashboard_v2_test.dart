@@ -466,7 +466,7 @@ void main() {
     });
   });
 
-  group('TestingArchiveMeScreen', () {
+  group('TestingThoughtprintScreen', () {
     late TestStorageSandbox sandbox;
     setUp(() async {
       sandbox = TestStorageSandbox.create();
@@ -484,7 +484,7 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           theme: AppTheme.light(),
-          home: const TestingArchiveMeScreen(),
+          home: const TestingThoughtprintScreen(),
         ),
       );
       await tester.pump();

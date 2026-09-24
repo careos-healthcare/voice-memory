@@ -288,7 +288,7 @@ void main() {
       expect(quickActions.showCard, isFalse);
     });
 
-    test('first-run copy uses ArchiveMe not VoiceMemory', () {
+    test('first-run copy uses Thoughtprint not VoiceMemory', () {
       const archiveMeStrings = [
         ArchiveTabFourStateCopy.oneBody,
         ConsumerUiCopy.patternsFirstEntrySavedBody,
@@ -296,7 +296,7 @@ void main() {
         VisibleArchiveProofCopy.recordHeroTitle,
       ];
       for (final text in archiveMeStrings) {
-        expect(text, contains('ArchiveMe'), reason: text);
+        expect(text, contains('Thoughtprint'), reason: text);
         expect(
           text.toLowerCase(),
           isNot(contains('voicememory')),

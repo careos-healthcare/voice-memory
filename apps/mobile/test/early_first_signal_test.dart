@@ -1215,7 +1215,7 @@ void main() {
       );
       expect(
         find.text(
-          'ArchiveMe is tracking what repeats, what starts it, and what may help '
+          'Thoughtprint is tracking what repeats, what starts it, and what may help '
           'it soften.',
         ),
         findsNothing,
@@ -1441,7 +1441,7 @@ void main() {
       );
       await tester.pump();
 
-      expect(find.text('See how ArchiveMe works'), findsOneWidget);
+      expect(find.text('See how Thoughtprint works'), findsOneWidget);
       expect(find.byKey(const Key('early_evidence_demo_cta')), findsOneWidget);
     });
 

@@ -3,7 +3,7 @@ import 'dart:io';
 
 import 'package:archiveme_mobile/api/api_exceptions.dart';
 
-/// Account flow copy. ArchiveMe's existing auth provider is the backend
+/// Account flow copy. Thoughtprint's existing auth provider is the backend
 /// email + one-time sign-in code flow (passwordless) — so there are no
 /// password fields, nothing password-shaped to store, and "forgot
 /// password" is replaced by resending a fresh code. Calm, factual lines:
@@ -12,13 +12,13 @@ abstract class AccountAuthCopy {
   AccountAuthCopy._();
 
   // Create account.
-  static const String createTitle = 'Create your ArchiveMe account';
+  static const String createTitle = 'Create your Thoughtprint account';
   static const String createBody =
       'Use this to restore access and keep your archive connected later.';
   static const String createCta = 'Create account';
 
   // Sign in.
-  static const String signInTitle = 'Sign in to ArchiveMe';
+  static const String signInTitle = 'Sign in to Thoughtprint';
   static const String signInCta = 'Sign in';
 
   // Shared fields and code step (the provider emails a one-time code —
@@ -48,7 +48,7 @@ abstract class AccountAuthCopy {
 
   /// Shown on account surfaces — local use first; account optional until value.
   static const String accountTimingNote =
-      'You can use ArchiveMe locally without an account. Create one when you '
+      'You can use Thoughtprint locally without an account. Create one when you '
       'want to restore access or connect Pro later.';
 }
 

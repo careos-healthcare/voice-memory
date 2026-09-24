@@ -1,6 +1,6 @@
 /// Copy for the daily archive memory card — returning-user recall only.
-abstract final class DailyArchiveMemoryCopy {
-  DailyArchiveMemoryCopy._();
+abstract final class DailyThoughtprintmoryCopy {
+  DailyThoughtprintmoryCopy._();
 
   static const watchTitle = 'Did this come back?';
 

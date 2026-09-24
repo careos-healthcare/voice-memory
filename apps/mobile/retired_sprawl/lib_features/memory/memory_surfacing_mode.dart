@@ -141,7 +141,7 @@ abstract class MemorySurfacingCopy {
   static const String sensitiveLabel = 'Sensitive';
   static const String doNotSurfaceLabel = 'Do not surface';
   static const String normalHelper =
-      'ArchiveMe can use this in archive moments when allowed.';
+      'Thoughtprint can use this in archive moments when allowed.';
   static const String sensitiveHelper =
       'Keep this saved, but treat it carefully.';
   static const String doNotSurfaceHelper =
@@ -151,7 +151,7 @@ abstract class MemorySurfacingCopy {
       'Saved without proactive resurfacing.';
   static const String updatedTitle = 'Surfacing updated';
   static const String updatedHelper =
-      'ArchiveMe will respect this choice going forward.';
+      'Thoughtprint will respect this choice going forward.';
   static const String changeSurfacingLabel = 'Change surfacing';
   static const String searchFilterLabel = 'Surfacing';
 

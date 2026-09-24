@@ -132,7 +132,7 @@ class TomorrowReturnLoopEngine {
   }) {
     if (discoverFeed != null && discoverFeed.newItems.isNotEmpty) {
       final theme = _titleCase(discoverFeed.newItems.first.title);
-      return 'After one or two more reflections, ArchiveMe can tell if '
+      return 'After one or two more reflections, Thoughtprint can tell if '
           '$theme is becoming a steady pattern — check back tomorrow.';
     }
 

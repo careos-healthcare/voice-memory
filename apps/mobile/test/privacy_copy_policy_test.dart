@@ -25,7 +25,7 @@ void main() {
         PrivacyCopyPolicy.exportDeleteAnytime,
         'You can export or delete your local archive at any time.',
       );
-      expect(PrivacyCopyPolicy.lockArchiveMe, 'Protect this archive');
+      expect(PrivacyCopyPolicy.lockThoughtprint, 'Protect this archive');
     });
   });
 
@@ -244,7 +244,7 @@ abstract class Copy {
         // No cue at all — the phrases Task 1 removed must stay detectable.
         'AI processing happens entirely on this device',
         'AI processing happens locally on this device',
-        'ArchiveMe replaces therapy',
+        'Thoughtprint replaces therapy',
         'Get a diagnosis from your archive',
         // Far enough back that the cue no longer governs.
         'We do not sell your data, and every reflection you read here is '
@@ -297,7 +297,7 @@ abstract class Copy {
         'Uploading encrypted changes…',
         'Backing up encrypted vault…',
         '[draft] entries in encrypted journal + localAudioPath (audio plaintext)',
-        'ArchiveMe stores your journal file encrypted on this device. Archive '
+        'Thoughtprint stores your journal file encrypted on this device. Archive '
             'metadata and prefs remain in plaintext JSON. Share cards do not '
             'include your raw entries.',
       ]) {

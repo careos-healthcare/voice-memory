@@ -252,7 +252,7 @@ void main() {
       }
       expect(
         ArchiveBeliefThreadCopy.trustNotTherapy,
-        'ArchiveMe is not therapy or diagnosis.',
+        'Thoughtprint is not therapy or diagnosis.',
       );
     });
   });

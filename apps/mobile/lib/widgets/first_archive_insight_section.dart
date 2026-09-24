@@ -78,7 +78,7 @@ class FirstArchiveInsightSection extends StatelessWidget {
               const ArchiveInsightField(
                 label: 'Observation',
                 value:
-                    'Add a little more detail in your recording and ArchiveMe can summarize what you focused on.',
+                    'Add a little more detail in your recording and Thoughtprint can summarize what you focused on.',
               ),
           ],
         ),

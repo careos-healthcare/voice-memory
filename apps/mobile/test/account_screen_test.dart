@@ -22,7 +22,7 @@ void main() {
     await _resetServices();
   });
 
-  testWidgets('account title is ArchiveMe account', (tester) async {
+  testWidgets('account title is Thoughtprint account', (tester) async {
     await tester.pumpWidget(
       const MaterialApp(
         localizationsDelegates: AppLocalizations.localizationsDelegates,

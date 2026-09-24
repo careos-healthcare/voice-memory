@@ -9,7 +9,7 @@ import 'package:archiveme_mobile/theme/voicememory_cards.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 
-/// Next-day return loop — reminds what ArchiveMe was watching yesterday.
+/// Next-day return loop — reminds what Thoughtprint was watching yesterday.
 class YesterdayWatchCard extends StatefulWidget {
   const YesterdayWatchCard({
     required this.watch, required this.entryCount, super.key,

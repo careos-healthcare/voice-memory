@@ -106,9 +106,9 @@ void main() {
   });
 
   group('Docs and branding', () {
-    test('README states ArchiveMe public name and canonical bundle id', () {
+    test('README states Thoughtprint public name and canonical bundle id', () {
       final readme = File('README.md').readAsStringSync();
-      expect(readme, contains('ArchiveMe'));
+      expect(readme, contains('Thoughtprint'));
       expect(readme, contains(_canonicalBundleId));
       expect(readme, contains('Runner.xcworkspace'));
       expect(readme, contains('IDENTIFIERS.md'));
@@ -116,7 +116,7 @@ void main() {
 
     test('IDENTIFIERS.md documents canonical ids and policy', () {
       final doc = File('IDENTIFIERS.md').readAsStringSync();
-      expect(doc, contains('ArchiveMe'));
+      expect(doc, contains('Thoughtprint'));
       expect(doc, contains(_canonicalBundleId));
       expect(doc, contains('archiveme_mobile'));
       expect(doc, contains('do not change'));

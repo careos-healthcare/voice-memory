@@ -257,7 +257,7 @@ abstract final class ProofSurfaceAdviceGuard {
     ...ThreeMomentActivationCopy.allVisibleStrings(),
     ...BetaExpansionProofCopy.allVisibleStrings(),
     ...AndroidAfterIosProofCopy.allVisibleStrings(),
-    ...ArchiveMemoryAfterV1Copy.allVisibleStrings(),
+    ...ThoughtprintmoryAfterV1Copy.allVisibleStrings(),
     ...PremiumTiersFutureCopy.allVisibleStrings(),
     ...PostProofProCtaCopy.allVisibleStrings(),
     ...PriceObjectionFeedbackCopy.allVisibleStrings(),

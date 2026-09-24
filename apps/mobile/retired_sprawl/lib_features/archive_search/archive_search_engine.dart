@@ -6,7 +6,7 @@ import 'package:archiveme_mobile/features/pattern_map/pattern_map_model.dart';
 import 'package:archiveme_mobile/features/pattern_memory/pattern_memory_model.dart';
 
 /// Local search over saved moments, patterns, and checks. No cloud, no invented
-/// results — only what ArchiveMe already remembers.
+/// results — only what Thoughtprint already remembers.
 List<ArchiveSearchResult> searchArchive({
   required ArchiveSearchQuery query,
   required List<KeyMoment> moments,

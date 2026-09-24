@@ -255,7 +255,7 @@ void main() {
     });
 
     testWidgets(
-      'tapping chip shows "Start anywhere. ArchiveMe looks for the pattern later."',
+      'tapping chip shows "Start anywhere. Thoughtprint looks for the pattern later."',
       (tester) async {
         await pumpChips(tester);
 

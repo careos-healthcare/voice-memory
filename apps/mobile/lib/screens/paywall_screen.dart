@@ -63,7 +63,7 @@ import 'package:archiveme_mobile/widgets/pushed_screen_shell.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-/// Production RevenueCat paywall — ArchiveMe Pro monthly / yearly.
+/// Production RevenueCat paywall — Thoughtprint Pro monthly / yearly.
 class PaywallScreen extends StatefulWidget {
   const PaywallScreen({
     super.key,
@@ -199,7 +199,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
   Widget _freeVsProComparisonSection() {
     return Padding(
       padding: const EdgeInsets.only(top: 4),
-      child: ArchiveMeProValueSection(
+      child: ThoughtprintProValueSection(
         key: const Key('paywall_free_vs_pro_comparison'),
         packaging: _packaging,
         showTitle: false,

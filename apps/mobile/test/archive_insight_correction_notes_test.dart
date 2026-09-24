@@ -158,7 +158,7 @@ void main() {
         find.byKey(const Key('archive_insight_feedback_correction_affordance')),
         findsOneWidget,
       );
-      expect(find.text('Tell ArchiveMe what it missed'), findsOneWidget);
+      expect(find.text('Tell Thoughtprint what it missed'), findsOneWidget);
       expect(
         find.byKey(const Key('archive_insight_feedback_correction_field')),
         findsOneWidget,

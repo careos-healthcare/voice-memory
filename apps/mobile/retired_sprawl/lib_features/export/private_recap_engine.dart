@@ -4,7 +4,7 @@ import 'package:archiveme_mobile/features/monthly_review/monthly_pattern_review_
 import 'package:archiveme_mobile/features/pattern_map/pattern_map_model.dart';
 import 'package:archiveme_mobile/features/pattern_memory/weekly_pattern_recap_model.dart';
 
-/// Builds [PrivateRecap]s from what ArchiveMe already knows. Pure mapping — no
+/// Builds [PrivateRecap]s from what Thoughtprint already knows. Pure mapping — no
 /// I/O, no invented facts. Empty inputs stay empty.
 abstract class PrivateRecapEngine {
   PrivateRecapEngine._();

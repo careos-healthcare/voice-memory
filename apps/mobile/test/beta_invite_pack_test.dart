@@ -140,9 +140,9 @@ void main() {
       }
     });
 
-    test('uses ArchiveMe not VoiceMemory', () {
+    test('uses Thoughtprint not VoiceMemory', () {
       final joined = BetaInviteCopy.allVisibleCopy().join('\n');
-      expect(joined, contains('ArchiveMe'));
+      expect(joined, contains('Thoughtprint'));
       expect(joined, isNot(contains('VoiceMemory')));
     });
 

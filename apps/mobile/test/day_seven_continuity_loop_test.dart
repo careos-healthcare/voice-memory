@@ -142,7 +142,7 @@ void main() {
       expect(loop.title, 'Keep the thread visible');
       expect(
         loop.body,
-        'One more recording this week can help ArchiveMe see what is '
+        'One more recording this week can help Thoughtprint see what is '
         'returning, fading, or changing.',
       );
       expect(loop.helper, 'Only if it still feels worth checking.');
@@ -154,7 +154,7 @@ void main() {
       expect(loop.title, 'Your archive is starting to compare');
       expect(
         loop.body,
-        'ArchiveMe has enough evidence to notice early movement. A few more '
+        'Thoughtprint has enough evidence to notice early movement. A few more '
         'recordings can make the weekly review clearer.',
       );
       expect(loop.helper, 'No need to record everything.');

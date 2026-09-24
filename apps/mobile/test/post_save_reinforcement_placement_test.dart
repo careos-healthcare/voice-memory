@@ -195,7 +195,7 @@ void main() {
       );
     });
 
-    test('body says ArchiveMe has something real to compare later', () {
+    test('body says Thoughtprint has something real to compare later', () {
       expect(
         PostSaveReinforcementPlacementCopy.body,
         contains('something real to compare later'),
@@ -328,7 +328,7 @@ void main() {
       }
     });
 
-    test('copy does not position ArchiveMe as voice chat', () {
+    test('copy does not position Thoughtprint as voice chat', () {
       for (final text
           in PostSaveReinforcementPlacementCopy.allVisibleStrings()) {
         final lower = text.toLowerCase();

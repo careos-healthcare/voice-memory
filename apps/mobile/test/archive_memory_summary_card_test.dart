@@ -4,8 +4,8 @@ import 'package:archiveme_mobile/widgets/patterns/memory_quality_chip.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-ArchiveMemorySummary _summary({String? nextCheck = 'Did you ask for help?'}) =>
-    ArchiveMemorySummary(
+ThoughtprintmorySummary _summary({String? nextCheck = 'Did you ask for help?'}) =>
+    ThoughtprintmorySummary(
       id: 'm1',
       patternTitle: 'Taking responsibility before asking for help',
       primaryMemoryLine:
@@ -20,7 +20,7 @@ ArchiveMemorySummary _summary({String? nextCheck = 'Did you ask for help?'}) =>
 
 Future<void> _pump(
   WidgetTester tester,
-  ArchiveMemorySummary summary, {
+  ThoughtprintmorySummary summary, {
   VoidCallback? onOpenPatternMap,
   VoidCallback? onFindMoments,
   void Function(String)? onUseCheck,
@@ -30,7 +30,7 @@ Future<void> _pump(
     MaterialApp(
       home: Scaffold(
         body: SingleChildScrollView(
-          child: ArchiveMemorySummaryCard(
+          child: ThoughtprintmorySummaryCard(
             summary: summary,
             showFeedback: showFeedback,
             onOpenPatternMap: onOpenPatternMap,
@@ -48,7 +48,7 @@ void main() {
     tester,
   ) async {
     await _pump(tester, _summary());
-    expect(find.text('What ArchiveMe remembers'), findsOneWidget);
+    expect(find.text('What Thoughtprint remembers'), findsOneWidget);
     expect(find.text('Clear pattern'), findsOneWidget);
     expect(
       find.text('You often take responsibility before asking for help.'),

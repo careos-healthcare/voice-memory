@@ -26,7 +26,7 @@ JournalEntry _entry({
 }
 
 void main() {
-  test('searchArchiveMe finds recordings by transcript and tags', () {
+  test('searchThoughtprint finds recordings by transcript and tags', () {
     final index = VoiceMemorySearchIndex(
       entries: [
         _entry(id: '1', transcript: 'Meeting stress today', themes: ['work']),
@@ -41,13 +41,13 @@ void main() {
       ),
     );
 
-    final results = searchArchiveMe(index, 'stress');
+    final results = searchThoughtprint(index, 'stress');
     expect(results, isNotEmpty);
     expect(results.first.type, SearchResultType.recording);
     expect(results.first.route, '/entry/1');
   });
 
-  test('searchArchiveMe finds discovery titles', () {
+  test('searchThoughtprint finds discovery titles', () {
     final index = VoiceMemorySearchIndex(
       entries: const [],
       discoverFeed: const DiscoverLocalFeed(
@@ -66,12 +66,12 @@ void main() {
       ),
     );
 
-    final results = searchArchiveMe(index, 'boundaries');
+    final results = searchThoughtprint(index, 'boundaries');
     expect(results.single.type, SearchResultType.discovery);
     expect(results.single.route, '/discover-yourself');
   });
 
-  test('searchArchiveMe returns empty for blank query', () {
+  test('searchThoughtprint returns empty for blank query', () {
     final index = VoiceMemorySearchIndex(
       entries: [_entry(id: '1', transcript: 'hello')],
       discoverFeed: const DiscoverLocalFeed(
@@ -83,6 +83,6 @@ void main() {
         evidenceMovements: [],
       ),
     );
-    expect(searchArchiveMe(index, '   '), isEmpty);
+    expect(searchThoughtprint(index, '   '), isEmpty);
   });
 }

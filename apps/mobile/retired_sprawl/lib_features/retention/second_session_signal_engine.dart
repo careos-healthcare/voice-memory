@@ -20,7 +20,7 @@ class SecondSessionSignalEngine {
   static const _heuristics = ArchiveEvidenceHeuristics();
 
   static const _defaultChangeFallback =
-      'ArchiveMe is still comparing your saved words.';
+      'Thoughtprint is still comparing your saved words.';
 
   static const _threadStopwords = {
     'something',

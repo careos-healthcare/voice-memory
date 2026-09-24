@@ -5,7 +5,7 @@ import 'package:archiveme_mobile/storage/mobile_prefs_store.dart';
 import 'package:flutter/foundation.dart';
 
 /// App Store Review Prompt After Value — one calm, dismissible rating ask
-/// shown only after ArchiveMe has demonstrably shown value this session.
+/// shown only after Thoughtprint has demonstrably shown value this session.
 ///
 /// Guardrails by construction:
 /// - Never on first launch, never before the second entry, never before a
@@ -19,11 +19,11 @@ import 'package:flutter/foundation.dart';
 abstract class ReviewPromptAfterValue {
   ReviewPromptAfterValue._();
 
-  static const String title = 'Is ArchiveMe worth a quick rating?';
+  static const String title = 'Is Thoughtprint worth a quick rating?';
   static const String body =
       'If it helped you notice something useful, a rating would help others '
       'find it.';
-  static const String ctaLabel = 'Rate ArchiveMe';
+  static const String ctaLabel = 'Rate Thoughtprint';
   static const String dismissLabel = 'Not now';
 
   /// The only source ids a review prompt event can carry.

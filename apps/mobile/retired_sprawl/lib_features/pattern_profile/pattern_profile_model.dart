@@ -16,7 +16,7 @@ class PatternProfile {
   });
 
   final String patternTitle;
-  final ArchiveMemorySummary? archiveMemorySummary;
+  final ThoughtprintmorySummary? archiveMemorySummary;
   final PatternMap? patternMap;
   final ArchiveEvolutionTimeline? archiveEvolutionTimeline;
   final List<KeyMoment> keyMoments;

@@ -104,12 +104,12 @@ class FirstSessionPattern {
     if (matchedPhrases.isEmpty) return matchReason;
     final parts = matchedPhrases.take(3).toList();
     if (parts.length == 1) {
-      return 'ArchiveMe noticed this because you mentioned ${parts.first}.';
+      return 'Thoughtprint noticed this because you mentioned ${parts.first}.';
     }
     if (parts.length == 2) {
-      return 'ArchiveMe noticed this because you mentioned ${parts[0]} and ${parts[1]}.';
+      return 'Thoughtprint noticed this because you mentioned ${parts[0]} and ${parts[1]}.';
     }
-    return 'ArchiveMe noticed this because you mentioned ${parts[0]}, ${parts[1]}, and ${parts[2]}.';
+    return 'Thoughtprint noticed this because you mentioned ${parts[0]}, ${parts[1]}, and ${parts[2]}.';
   }
 
   FirstSessionPattern copyWith({

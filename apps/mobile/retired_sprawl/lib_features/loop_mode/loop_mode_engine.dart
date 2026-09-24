@@ -155,7 +155,7 @@ class LoopModeEngine {
   String unsupportedTitle(LoopMode mode) {
     if (mode.isCapacityYes) return LoopModeCopy.capacityUnsupportedTitle;
     if (mode.isProveEnough) return LoopModeCopy.proveEnoughUnsupportedTitle;
-    return 'ArchiveMe did not see this loop clearly yet.';
+    return 'Thoughtprint did not see this loop clearly yet.';
   }
 
   String unsupportedPrompt(LoopMode mode) {
@@ -167,7 +167,7 @@ class LoopModeEngine {
   String postSaveTitle(LoopMode mode) {
     if (mode.isCapacityYes) return LoopModeCopy.capacityPostSaveTitle;
     if (mode.isProveEnough) return LoopModeCopy.proveEnoughPostSaveTitle;
-    return 'ArchiveMe is checking this loop';
+    return 'Thoughtprint is checking this loop';
   }
 
   String postSaveSubtitle(LoopMode mode) {
@@ -637,7 +637,7 @@ class LoopModeEngine {
       confirmSignals: const [],
       contradictionSignals: const [],
       reminderCopy: '',
-      reviewTitle: 'ArchiveMe reviewed your loop',
+      reviewTitle: 'Thoughtprint reviewed your loop',
     );
   }
 }

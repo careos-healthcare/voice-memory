@@ -21,7 +21,7 @@ abstract class InvitedDayTwoReturn {
   // thread_return
   static const String threadReturnTitle = 'Check whether it came back';
   static const String threadReturnBody =
-      'ArchiveMe can help notice whether the same thread is showing up again.';
+      'Thoughtprint can help notice whether the same thread is showing up again.';
 
   // belief_distance
   static const String beliefDistanceTitle = 'Check what keeps showing up';
@@ -32,7 +32,7 @@ abstract class InvitedDayTwoReturn {
   // proof_counter
   static const String proofCounterTitle = 'Start connecting evidence';
   static const String proofCounterBody =
-      'A second recording can help ArchiveMe compare what is beginning to '
+      'A second recording can help Thoughtprint compare what is beginning to '
       'connect.';
 
   // pro_retention_yes

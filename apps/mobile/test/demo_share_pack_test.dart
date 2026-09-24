@@ -43,7 +43,7 @@ void _expectNoBannedCopy(Iterable<String> visible) {
 
 void main() {
   group('Demo share pack copy', () {
-    test('uses ArchiveMe and labels sample data clearly', () {
+    test('uses Thoughtprint and labels sample data clearly', () {
       const visible = [
         SampleArchiveCopy.demoShareTitle,
         SampleArchiveCopy.demoShareSubtitle,
@@ -62,7 +62,7 @@ void main() {
         expect(text.toLowerCase(), isNot(contains('voicememory')));
         expect(text.toLowerCase(), isNot(contains('voice memory')));
       }
-      expect(SampleArchiveCopy.demoShareTitle, contains('ArchiveMe'));
+      expect(SampleArchiveCopy.demoShareTitle, contains('Thoughtprint'));
       expect(SampleArchiveCopy.demoShareSubtitle, contains('Example data'));
     });
   });

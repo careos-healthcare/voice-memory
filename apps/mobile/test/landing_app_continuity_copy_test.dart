@@ -54,7 +54,7 @@ void main() {
       );
       expect(
         LandingAppContinuityCopy.chatGptDifferentiation,
-        'ChatGPT can suggest what to do. ArchiveMe shows what you already said before.',
+        'ChatGPT can suggest what to do. Thoughtprint shows what you already said before.',
       );
       expect(
         LandingAppContinuityCopy.proPaidReason,
@@ -142,7 +142,7 @@ void main() {
       expect(
         doc,
         contains(
-          'ChatGPT can suggest what to do. ArchiveMe shows what you already said before.',
+          'ChatGPT can suggest what to do. Thoughtprint shows what you already said before.',
         ),
       );
       expect(doc, contains('Headline: `${ProSinglePromiseCopy.headline}`'));

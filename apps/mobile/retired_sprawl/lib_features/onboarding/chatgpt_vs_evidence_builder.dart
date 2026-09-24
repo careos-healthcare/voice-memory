@@ -70,7 +70,7 @@ abstract final class ChatGptVsEvidenceBuilder {
     final evidenceSummary = insight?.insightText ??
         (isEmpty
             ? ExperimentHCopy.emptyEntryBody
-            : 'ArchiveMe saved this as a citable ledger moment — not a one-off reply.');
+            : 'Thoughtprint saved this as a citable ledger moment — not a one-off reply.');
 
     final factLedgerLines = <String>[
       'entryId: ${entry.id}',

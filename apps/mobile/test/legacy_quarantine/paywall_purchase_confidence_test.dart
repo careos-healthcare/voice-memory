@@ -29,7 +29,7 @@ void main() {
       expect(ArchivePaywallCopy.purchaseStarting, 'Starting secure purchase…');
       expect(
         ArchivePaywallCopy.purchaseSuccess,
-        'Pro is active. ArchiveMe keeps the longer proof trail over time.',
+        'Pro is active. Thoughtprint keeps the longer proof trail over time.',
       );
       expect(
         ArchivePaywallCopy.restoreChecking,

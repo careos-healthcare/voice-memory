@@ -122,7 +122,7 @@ void main() {
     const long =
         'Today I said yes to another project even though I was already stretched thin and carrying too much.';
     final body = NextEvidenceReminderService.bodyFor(prompt: long);
-    expect(body, contains('ArchiveMe is watching:'));
+    expect(body, contains('Thoughtprint is watching:'));
     expect(body.length, lessThan(long.length));
     expect(body, isNot(contains('stretched thin and carrying')));
   });

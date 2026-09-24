@@ -112,7 +112,7 @@ abstract class ArchiveRetrievalCopy {
   ArchiveRetrievalCopy._();
 
   static const String whyRecentLine =
-      'ArchiveMe found recent and related evidence.';
+      'Thoughtprint found recent and related evidence.';
   static const String whyOlderLine =
       'Older entries are used only when they still seem relevant.';
 }

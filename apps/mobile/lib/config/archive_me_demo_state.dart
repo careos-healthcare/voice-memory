@@ -2,7 +2,7 @@ import 'package:archiveme_mobile/config/screenshot_mode.dart';
 import 'package:archiveme_mobile/storage/mobile_prefs_store.dart';
 import 'package:flutter/foundation.dart';
 
-/// Clean ArchiveMe demo archive for screenshots and short videos.
+/// Clean Thoughtprint demo archive for screenshots and short videos.
 ///
 /// Compile-time (recommended):
 /// ```bash
@@ -12,8 +12,8 @@ import 'package:flutter/foundation.dart';
 ///
 /// Debug session toggle: enable from Developer diagnostics (debug builds only).
 /// Restart the app or tap Reset demo to return to a real local archive.
-abstract class ArchiveMeDemoState {
-  ArchiveMeDemoState._();
+abstract class ThoughtprintDemoState {
+  ThoughtprintDemoState._();
 
   static const entryIdPrefix = 'archive_me_demo_';
   static const reviewDemoPrefsKey = 'archiveAppReviewDemoUnlocked';

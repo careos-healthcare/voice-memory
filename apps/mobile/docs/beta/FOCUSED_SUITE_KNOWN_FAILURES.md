@@ -8,7 +8,7 @@ The August baseline was 269 passed and 15 failed. The extra failures are the sam
 
 | # | Test | This run |
 | --- | --- | --- |
-| 1 | consumer_ui_copy has no VoiceMemory | Fails on `ARCHIVEME NOTICED`, not VoiceMemory. Stale brand assertion. |
+| 1 | consumer_ui_copy has no VoiceMemory | Fails on `THOUGHTPRINT NOTICED`, not VoiceMemory. Stale brand assertion. |
 | 2 | privacy_copy_policy has no VoiceMemory | Passed. |
 | 3 | first save card stays calm | Passed. |
 | 4 | share-safe proof excludes transcripts | Still fails in the batch. The August isolated re-run passed; the batch failure was an async prefs write. |

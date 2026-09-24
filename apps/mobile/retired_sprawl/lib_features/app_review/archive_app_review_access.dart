@@ -37,7 +37,7 @@ abstract class ArchiveAppReviewAccess {
     if (!state.hasCompletedFirstLoop) {
       state = await entitlementStore.markFirstLoopCompleted();
     }
-    await ArchiveMeDemoState.enableReviewDemo(prefs);
+    await ThoughtprintDemoState.enableReviewDemo(prefs);
     await prefs.writeBool(unlockedPrefsKey, true);
 
     AppLogger.debug('ARCHIVEME_APP_REVIEW_ACCESS_UNLOCKED');

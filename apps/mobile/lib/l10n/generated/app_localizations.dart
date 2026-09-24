@@ -6186,7 +6186,7 @@ abstract class AppLocalizations {
   /// No description provided for @v1Copy0861.
   ///
   /// In en, this message translates to:
-  /// **'ARCHIVEME NOTICED'**
+  /// **'THOUGHTPRINT NOTICED'**
   String get v1Copy0861;
 
   /// No description provided for @v1Copy0862.

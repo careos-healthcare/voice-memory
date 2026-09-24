@@ -3,7 +3,7 @@ import 'package:archiveme_mobile/features/objective/current_objective_widget_sna
 
 /// Default home-screen copy when snapshot data is missing.
 const String kWidgetPayloadDefaultTitle = 'Today\u2019s check';
-const String kWidgetPayloadDefaultBody = 'Open ArchiveMe to continue.';
+const String kWidgetPayloadDefaultBody = 'Open Thoughtprint to continue.';
 const String kWidgetPayloadDefaultAction = 'Open';
 const String kWidgetPayloadDefaultRoute = '/record';
 

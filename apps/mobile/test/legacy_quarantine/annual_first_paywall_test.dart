@@ -30,7 +30,7 @@ void main() {
     expect(ArchivePaywallPlanCopy.monthlyLabel, 'Monthly');
     expect(
       ArchivePaywallPlanCopy.monthlyHelper,
-      'Keep ArchiveMe Pro month to month.',
+      'Keep Thoughtprint Pro month to month.',
     );
   });
 }

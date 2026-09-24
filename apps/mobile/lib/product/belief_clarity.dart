@@ -55,10 +55,10 @@ abstract class BeliefClarity {
     final count = n > 0 ? n : reflectionsAnalysed;
     final themes = _themeHint(belief.statement);
     if (themes != null) {
-      return 'ArchiveMe noticed this across reflections about $themes.';
+      return 'Thoughtprint noticed this across reflections about $themes.';
     }
     if (count > 0) {
-      return 'ArchiveMe noticed this across $count '
+      return 'Thoughtprint noticed this across $count '
           'reflection${count == 1 ? '' : 's'} in your own words.';
     }
     return belief.whyExplanation;

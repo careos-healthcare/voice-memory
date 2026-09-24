@@ -2,7 +2,7 @@
 abstract final class EvidenceMethodOnboardingCopy {
   EvidenceMethodOnboardingCopy._();
 
-  static const title = 'How ArchiveMe finds patterns';
+  static const title = 'How Thoughtprint finds patterns';
   static const body =
       'Insights come from what you actually said — not guesses. '
       'Each pattern is graded by how often your journal moments support it, '

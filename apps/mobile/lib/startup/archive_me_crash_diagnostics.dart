@@ -3,9 +3,9 @@ import 'package:archiveme_mobile/security/release_logger.dart';
 import 'package:archiveme_mobile/security/release_log_sanitizer.dart';
 import 'package:flutter/foundation.dart';
 
-/// Global Flutter / platform error logging for ArchiveMe field diagnostics.
-abstract class ArchiveMeCrashDiagnostics {
-  ArchiveMeCrashDiagnostics._();
+/// Global Flutter / platform error logging for Thoughtprint field diagnostics.
+abstract class ThoughtprintCrashDiagnostics {
+  ThoughtprintCrashDiagnostics._();
 
   static void install() {
     final priorFlutterOnError = FlutterError.onError;

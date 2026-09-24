@@ -1,7 +1,7 @@
-# ArchiveMe mobile — identifier policy
+# Thoughtprint mobile — identifier policy
 
 This document is the **single source of truth** for naming boundaries after the
-VoiceMemory → ArchiveMe rebrand. If something looks like a partial rename, check
+VoiceMemory → Thoughtprint rebrand. If something looks like a partial rename, check
 here first.
 
 **Policy in one sentence:** rebrand **user-visible copy** and **developer package
@@ -66,10 +66,10 @@ rename without a migration plan and dual-read window.
 
 | Before | After | Notes |
 | --- | --- | --- |
-| User-visible strings `VoiceMemory` | `ArchiveMe` | Onboarding, paywall, export subject, legal copy, etc. |
+| User-visible strings `VoiceMemory` | `Thoughtprint` | Onboarding, paywall, export subject, legal copy, etc. |
 | Dart package `voicememory_mobile` | `archiveme_mobile` | `pubspec.yaml` `name:` — affects imports only |
 | Repo path `apps/voicememory_mobile/` | `apps/mobile/` | Docs may still reference old path; see `voicememory_mobile/README.md` parity shim |
-| Root widget class `VoiceMemoryApp` | `ArchiveMeApp` | Symbol rename; `MaterialApp.title` uses `AppConfig.appName` |
+| Root widget class `VoiceMemoryApp` | `ThoughtprintApp` | Symbol rename; `MaterialApp.title` uses `AppConfig.appName` |
 
 ---
 
@@ -84,7 +84,7 @@ registration is a **new-app migration**, not a rename:
 4. **Platform extensions** — widgets, App Groups, Watch targets, and Kotlin/Java package paths all hang off `com.voicememory.mobile`.
 5. **Deep links & OAuth** — `voicememory://` handlers remain for installs that bookmarked legacy URLs.
 
-The rebrand intentionally separated **marketing name** (ArchiveMe) from **platform
+The rebrand intentionally separated **marketing name** (Thoughtprint) from **platform
 identity** (com.voicememory.mobile). That matches the original rebrand rule: *do
 not change bundle IDs unless a separate infra migration is approved*.
 
