@@ -16,7 +16,7 @@ class ArchiveBeliefViewModel {
   ArchiveBeliefLoadState loadState = ArchiveBeliefLoadState.loading;
   List<JournalEntry>? entries;
 
-  bool get showSearchField => (entries?.length ?? 0) > 1;
+  bool get showSearchField => (entries?.length ?? 0) >= 1;
 
   List<JournalEntry> get visibleEntries {
     final loaded = entries;

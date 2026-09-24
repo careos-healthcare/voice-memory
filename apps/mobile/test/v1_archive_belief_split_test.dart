@@ -150,13 +150,16 @@ void main() {
       expect(viewModel.entries!.length, 1);
     });
 
-    test('shows search field only when more than one entry exists', () async {
-      await store.save(_entry(id: 'e1', createdAt: DateTime(2026, 3)));
+    test('shows search field once at least one entry exists', () async {
       final viewModel = ArchiveBeliefViewModel(
         repository: await _repositoryFor(store),
       );
       await viewModel.reload();
       expect(viewModel.showSearchField, isFalse);
+
+      await store.save(_entry(id: 'e1', createdAt: DateTime(2026, 3)));
+      await viewModel.reload();
+      expect(viewModel.showSearchField, isTrue);
 
       await store.save(_entry(id: 'e2', createdAt: DateTime(2026, 3, 2)));
       await viewModel.reload();

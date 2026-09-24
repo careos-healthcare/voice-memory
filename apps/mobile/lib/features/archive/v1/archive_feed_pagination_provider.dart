@@ -43,7 +43,7 @@ class ArchiveFeedState {
   final bool isLoadingMore;
   final String searchQuery;
 
-  bool get showSearchField => archiveTotalCount > 1;
+  bool get showSearchField => archiveTotalCount >= 1;
 
   bool get showsNoSearchResults =>
       loadState == ArchiveBeliefLoadState.loaded &&

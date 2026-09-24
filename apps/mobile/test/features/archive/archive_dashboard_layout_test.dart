@@ -250,4 +250,98 @@ void main() {
       },
     );
   });
+
+  group('Archive home above the fold', () {
+    Future<void> pumpFeed(
+      WidgetTester tester, {
+      required List<JournalEntry> entries,
+      Size surface = const Size(375, 667),
+    }) async {
+      await tester.binding.setSurfaceSize(surface);
+      addTearDown(() => tester.binding.setSurfaceSize(null));
+      final controller = ScrollController();
+      addTearDown(controller.dispose);
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: AppTheme.light(),
+          home: Scaffold(
+            body: ArchiveDashboardScrollView(
+              controller: controller,
+              feed: ArchiveFeedState(
+                loadState: ArchiveBeliefLoadState.loaded,
+                entries: entries,
+                archiveTotalCount: entries.length,
+                totalCount: entries.length,
+              ),
+              loadState: ArchiveBeliefLoadState.loaded,
+              visibleEntries: entries,
+              showChangesUnavailable: false,
+              previewChangesSnapshot: _absentChanges,
+              onRefresh: () async {},
+              onEntryTap: (_) {},
+              onQueryChanged: (_) {},
+              onCapture: () {},
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+    }
+
+    testWidgets('first entry card is visible without scrolling', (tester) async {
+      final today = DateTime.now();
+      final entries = [
+        _entry(id: 'a').copyWith(createdAt: today),
+        _entry(id: 'b').copyWith(
+          createdAt: today.subtract(const Duration(days: 1)),
+        ),
+        _entry(id: 'c').copyWith(
+          createdAt: today.subtract(const Duration(days: 2)),
+        ),
+      ];
+      await pumpFeed(tester, entries: entries);
+
+      final card = tester.getRect(find.byType(ArchiveEntryCard).first);
+      expect(card.top, greaterThanOrEqualTo(0));
+      expect(card.top, lessThan(667));
+      expect(find.byKey(const Key('archive_noticed_row')), findsNothing);
+    });
+
+    testWidgets('calendar day filter keeps only that day', (tester) async {
+      final today = DateTime.now();
+      final earlier = today.subtract(const Duration(days: 4));
+      final entries = [
+        _entry(id: 'today').copyWith(createdAt: today),
+        _entry(id: 'earlier').copyWith(
+          createdAt: earlier,
+          transcript: 'earlier-only-words',
+        ),
+        _entry(id: 'also-today').copyWith(
+          createdAt: DateTime(today.year, today.month, today.day, 8),
+        ),
+      ];
+      final earlierKey =
+          'archive_day_${earlier.year}-${earlier.month.toString().padLeft(2, '0')}-${earlier.day.toString().padLeft(2, '0')}';
+      await pumpFeed(tester, entries: entries);
+      final day = find.byKey(Key(earlierKey));
+      await tester.ensureVisible(day);
+      await tester.tap(day);
+      await tester.pump();
+
+      expect(find.byType(ArchiveEntryCard), findsOneWidget);
+      final todayChip = find.byKey(const Key('archive_calendar_today'));
+      await tester.ensureVisible(todayChip);
+      await tester.tap(todayChip);
+      await tester.pump();
+      await tester.drag(find.byType(CustomScrollView), const Offset(0, -600));
+      await tester.pump();
+      expect(find.byType(ArchiveEntryCard), findsNWidgets(3));
+    });
+
+    testWidgets('empty Noticed row renders nothing', (tester) async {
+      await pumpFeed(tester, entries: [_entry(id: 'only')]);
+      expect(find.byKey(const Key('archive_noticed_row')), findsNothing);
+      expect(find.text('Noticed'), findsNothing);
+    });
+  });
 }
