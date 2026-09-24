@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer' as developer;
 
 import 'package:archiveme_mobile/storage/sqlite/migrations/migration_029_coach_action_items.dart';
 import 'package:archiveme_mobile/storage/sqlite/migrations/migration_030_sync_purgatory.dart';
@@ -73,9 +74,22 @@ class CrsqlIngestResult {
 /// Foreign keys are off only while the batch transaction is open. They are
 /// turned back on as soon as that transaction finishes.
 class CrsqlDeltaIngestor {
-  CrsqlDeltaIngestor(this.database, {this.pragmaTrace});
+  CrsqlDeltaIngestor(
+    this.database, {
+    this.pragmaTrace,
+    this.warningSink,
+  });
+
+  /// Notified with the database file path after a parked-row flush.
+  ///
+  /// The purgatory evaluator installs this so a completed P2P batch starts
+  /// the background worker without this class importing that service.
+  static void Function(String filePath)? onBatchEvaluated;
 
   final DatabaseExecutor database;
+
+  /// Receives non-fatal warnings when a parked row still has no parent.
+  final void Function(String message)? warningSink;
 
   /// Records `OFF` and `ON` when set, so tests can see the pragma window.
   final List<String>? pragmaTrace;
@@ -118,36 +132,105 @@ class CrsqlDeltaIngestor {
 
   /// Replays parked packets after a mesh sync once their parent transcript exists.
   Future<int> retryAfterMeshSync() async {
-    if (!await _tableExists(Migration030SyncPurgatory.table)) return 0;
     await Future<void>.delayed(Duration.zero);
-    final useCrsql = await _crsqlChangesExists(database);
-    var restored = 0;
-    while (true) {
-      final waiting = await _loadParked();
-      if (waiting.isEmpty) break;
-      final ordered = [...waiting]
-        ..sort(
-          (a, b) => _rank(a.packet).compareTo(_rank(b.packet)),
-        );
-      var progressed = 0;
-      for (final parked in ordered) {
-        if (await _parentMissing(database, parked.packet)) continue;
-        try {
-          await _applyPacket(database, parked.packet, useCrsql: useCrsql);
-          await database.delete(
-            Migration030SyncPurgatory.table,
-            where: 'id = ?',
-            whereArgs: [parked.id],
-          );
-          progressed += 1;
-          restored += 1;
-        } on Object catch (error) {
-          if (!_isForeignKey(error)) rethrow;
-        }
-      }
-      if (progressed == 0) break;
+    final restored = await evaluateInTransaction();
+    final db = database;
+    final hook = onBatchEvaluated;
+    if (hook != null && db is Database) {
+      hook(db.path);
     }
     return restored;
+  }
+
+  /// Flushes every `sync_purgatory` row inside one transaction.
+  ///
+  /// A row whose parent is still missing stays parked. That case is logged
+  /// and the loop continues so one orphan cannot roll back the rows that
+  /// did apply. Foreign keys stay on for this pass.
+  Future<int> evaluateInTransaction() async {
+    if (!await _tableExists(Migration030SyncPurgatory.table)) return 0;
+    final db = database;
+    final useCrsql = await _crsqlChangesExists(db);
+    if (db is! Database) {
+      return _flushParked(db, useCrsql: useCrsql);
+    }
+    var restored = 0;
+    await db.transaction((txn) async {
+      restored = await _flushParked(txn, useCrsql: useCrsql);
+    });
+    return restored;
+  }
+
+  Future<int> _flushParked(
+    DatabaseExecutor db, {
+    required bool useCrsql,
+  }) async {
+    final waiting = await _loadParked(db);
+    if (waiting.isEmpty) return 0;
+    final ordered = [...waiting]
+      ..sort(
+        (a, b) => _rank(a.packet).compareTo(_rank(b.packet)),
+      );
+    var restored = 0;
+    for (final parked in ordered) {
+      if (await _parentMissing(db, parked.packet)) {
+        _warn(
+          'Parked ${parked.packet.table}/${parked.packet.pk} is still '
+          'waiting for its parent transcript.',
+        );
+        continue;
+      }
+      final applied = await _applyParkedRow(
+        db,
+        parked,
+        useCrsql: useCrsql,
+      );
+      if (applied) restored += 1;
+    }
+    return restored;
+  }
+
+  Future<bool> _applyParkedRow(
+    DatabaseExecutor db,
+    _ParkedPacket parked, {
+    required bool useCrsql,
+  }) async {
+    await db.execute('SAVEPOINT purgatory_row');
+    try {
+      await _applyPacket(db, parked.packet, useCrsql: useCrsql);
+      await db.delete(
+        Migration030SyncPurgatory.table,
+        where: 'id = ?',
+        whereArgs: [parked.id],
+      );
+      await db.execute('RELEASE purgatory_row');
+      return true;
+    } on Object catch (error) {
+      await _rollbackSavepoint(db);
+      _warn(
+        'Parked ${parked.packet.table}/${parked.packet.pk} stayed in '
+        'sync_purgatory: $error',
+      );
+      return false;
+    }
+  }
+
+  Future<void> _rollbackSavepoint(DatabaseExecutor db) async {
+    try {
+      await db.execute('ROLLBACK TO purgatory_row');
+      await db.execute('RELEASE purgatory_row');
+    } on Object {
+      // The statement failure already undid the savepoint.
+    }
+  }
+
+  void _warn(String message) {
+    final sink = warningSink;
+    if (sink != null) {
+      sink(message);
+      return;
+    }
+    developer.log(message, name: 'PurgatoryEvaluator', level: 900);
   }
 
   Future<(int, int)> _ingestBatch(
@@ -318,8 +401,8 @@ class CrsqlDeltaIngestor {
     );
   }
 
-  Future<List<_ParkedPacket>> _loadParked() async {
-    final rows = await database.query(
+  Future<List<_ParkedPacket>> _loadParked(DatabaseExecutor db) async {
+    final rows = await db.query(
       Migration030SyncPurgatory.table,
       orderBy: 'id ASC',
     );

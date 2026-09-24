@@ -14,6 +14,7 @@ import 'package:archiveme_mobile/router/app_router.dart';
 import 'package:archiveme_mobile/security/app_lock_gate.dart';
 import 'package:archiveme_mobile/security/app_privacy_shell.dart';
 import 'package:archiveme_mobile/security/secure_database_gate.dart';
+import 'package:archiveme_mobile/storage/sqlite/purgatory_evaluator_host.dart';
 import 'package:archiveme_mobile/workers/local_llm/local_llm_app_lifecycle_listener.dart';
 import 'package:archiveme_mobile/theme/app_theme.dart';
 import 'package:flutter/material.dart';
@@ -48,18 +49,20 @@ class ArchiveMeApp extends StatelessWidget {
             darkTheme: AppTheme.dark(),
             themeMode: ThemeMode.system,
             routerConfig: appRouter,
-            builder: (context, child) => CommandPaletteHost(
-              child: LocalLlmAppLifecycleListener(
-                child: SecureDatabaseGate(
-                  child: AppLockGate(
-                    child: AppPrivacyShell(
-                      child: OfflineVaultRecoveryHost(
-                        child: CaptureModuleBootstrap(
-                          child: LlmAnalysisBootstrap(
-                            child: AudioProcessingQueueListenerHost(
-                              child: PaywallMilestoneHost(
-                                child: CaregiverInvitationLinkListenerHost(
-                                  child: child ?? const SizedBox.shrink(),
+            builder: (context, child) => PurgatoryEvaluatorHost(
+              child: CommandPaletteHost(
+                child: LocalLlmAppLifecycleListener(
+                  child: SecureDatabaseGate(
+                    child: AppLockGate(
+                      child: AppPrivacyShell(
+                        child: OfflineVaultRecoveryHost(
+                          child: CaptureModuleBootstrap(
+                            child: LlmAnalysisBootstrap(
+                              child: AudioProcessingQueueListenerHost(
+                                child: PaywallMilestoneHost(
+                                  child: CaregiverInvitationLinkListenerHost(
+                                    child: child ?? const SizedBox.shrink(),
+                                  ),
                                 ),
                               ),
                             ),

@@ -6,6 +6,7 @@ import 'dart:typed_data';
 import 'package:archiveme_mobile/models/encrypted_payload_dto.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/storage/isolate/local_database_worker_protocol.dart';
+import 'package:archiveme_mobile/storage/sqlite/crsql_delta_ingestor.dart';
 import 'package:archiveme_mobile/storage/sqlite/isolate_safe_sqlite_database_initializer.dart';
 import 'package:archiveme_mobile/storage/sqlite/journal_sqlite_bulk_sync.dart';
 import 'package:archiveme_mobile/storage/sqlite/reflection_graph_backfill.dart';
@@ -85,6 +86,10 @@ final class _LocalDatabaseWorkerRuntime {
         return await ReflectionGraphBackfill.fromJournalEntries(
           await _databaseFor(request.payload),
         );
+      case LocalDatabaseWorkerOperation.purgatoryEvaluate:
+        return CrsqlDeltaIngestor(
+          await _databaseFor(request.payload),
+        ).evaluateInTransaction();
       case LocalDatabaseWorkerOperation.encryptJsonBatch:
         return _encryptJsonBatch(request.payload);
       case LocalDatabaseWorkerOperation.decryptJsonBatch:
@@ -100,8 +105,7 @@ final class _LocalDatabaseWorkerRuntime {
       throw ArgumentError('filePath is required for database operations.');
     }
     final passwordOverride = payload['encryptionPassword'] as String?;
-    final keyAlias =
-        payload['keyAlias'] as String? ?? defaultKeyAlias;
+    final keyAlias = payload['keyAlias'] as String? ?? defaultKeyAlias;
     final cacheKey = '$filePath|${keyAlias ?? passwordOverride ?? ''}';
 
     final cached = _connections[cacheKey];
@@ -142,7 +146,9 @@ final class _LocalDatabaseWorkerRuntime {
       if (item is! Map) {
         continue;
       }
-      final envelope = await crypto.encryptJson(Map<String, dynamic>.from(item));
+      final envelope = await crypto.encryptJson(
+        Map<String, dynamic>.from(item),
+      );
       encrypted.add(envelope.toJson());
     }
     return encrypted;
@@ -162,7 +168,9 @@ final class _LocalDatabaseWorkerRuntime {
       if (item is! Map) {
         continue;
       }
-      final envelope = EncryptedPayload.fromJson(Map<String, dynamic>.from(item));
+      final envelope = EncryptedPayload.fromJson(
+        Map<String, dynamic>.from(item),
+      );
       decrypted.add(await crypto.decryptJson(envelope));
     }
     return decrypted;
