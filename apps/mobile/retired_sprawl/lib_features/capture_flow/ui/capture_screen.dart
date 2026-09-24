@@ -147,8 +147,7 @@ class _CaptureScreenState extends State<CaptureScreen>
       return _buildReceipt(context, snapshot);
     }
 
-    return SingleChildScrollView(
-      child: switch (snapshot.phase) {
+    return switch (snapshot.phase) {
         CaptureFlowPhase.ready => CaptureReadyPanel(
           inputMode: snapshot.inputMode,
           attachMode: snapshot.isAttachMode,
@@ -157,6 +156,8 @@ class _CaptureScreenState extends State<CaptureScreen>
           onSwitchMode: _controller.setInputMode,
           permissionBlocked: snapshot.permissionBlocked,
           permissionRequiresSettings: snapshot.permissionRequiresSettings,
+          microphoneGranted: snapshot.microphoneGranted,
+          onPromptContext: _handlePromptContext,
           errorMessage: snapshot.errorMessage,
           typedController: _typedController,
           saving: false,
@@ -188,8 +189,7 @@ class _CaptureScreenState extends State<CaptureScreen>
         ),
         CaptureFlowPhase.savedLocal ||
         CaptureFlowPhase.savedWithReflection => const SizedBox.shrink(),
-      },
-    );
+      };
   }
 
   Widget _buildReceipt(BuildContext context, CaptureFlowSnapshot snapshot) {
@@ -240,6 +240,12 @@ class _CaptureScreenState extends State<CaptureScreen>
         ],
       ),
     );
+  }
+
+  String? _promptContext;
+
+  void _handlePromptContext(String line) {
+    _promptContext = line.trim();
   }
 
   void _handleRoutinePromptSelected(String line) {

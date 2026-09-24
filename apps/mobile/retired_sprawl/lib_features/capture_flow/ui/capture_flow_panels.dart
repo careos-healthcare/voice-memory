@@ -1,9 +1,9 @@
 import 'package:archiveme_mobile/design/archive_mobile_typography.dart';
 import 'package:archiveme_mobile/features/capture_flow/capture_flow_phase.dart';
-import 'package:archiveme_mobile/features/capture_flow/ui/routine_prompt_card.dart';
 import 'package:archiveme_mobile/features/insights/rag/routine_rag_models.dart';
 import 'package:archiveme_mobile/features/voice_capture/microphone_permission_copy.dart';
 import 'package:archiveme_mobile/product/consumer_ui_copy.dart';
+import 'package:archiveme_mobile/record/example_prompt_catalog.dart';
 import 'package:archiveme_mobile/record/quick_text_capture_copy.dart';
 import 'package:archiveme_mobile/theme/app_palette.dart';
 import 'package:archiveme_mobile/theme/app_spacing.dart';
@@ -19,6 +19,7 @@ class CaptureReadyPanel extends StatelessWidget {
     required this.onSwitchMode,
     required this.permissionBlocked,
     required this.permissionRequiresSettings,
+    required this.microphoneGranted,
     required this.errorMessage,
     required this.typedController,
     required this.saving,
@@ -26,6 +27,8 @@ class CaptureReadyPanel extends StatelessWidget {
     this.routinePromptLoading = false,
     this.onSelectRoutinePrompt,
     this.onDismissRoutinePrompt,
+    this.onPromptContext,
+    this.now,
     super.key,
   });
 
@@ -36,6 +39,7 @@ class CaptureReadyPanel extends StatelessWidget {
   final ValueChanged<CaptureInputMode> onSwitchMode;
   final bool permissionBlocked;
   final bool permissionRequiresSettings;
+  final bool microphoneGranted;
   final String? errorMessage;
   final TextEditingController typedController;
   final bool saving;
@@ -44,101 +48,243 @@ class CaptureReadyPanel extends StatelessWidget {
   final ValueChanged<String>? onSelectRoutinePrompt;
   final VoidCallback? onDismissRoutinePrompt;
 
+  /// Selects a starter line without leaving voice capture.
+  final ValueChanged<String>? onPromptContext;
+
+  /// Clock for the date line. Defaults to [DateTime.now].
+  final DateTime? now;
+
+  bool get _showsPermissionCopy =>
+      MicrophonePermissionCopy.showsPermissionExplanation(
+        granted: microphoneGranted,
+        blocked: permissionBlocked,
+        requiresSettings: permissionRequiresSettings,
+      );
+
   @override
   Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final viewport = constraints.maxHeight.isFinite
+            ? constraints.maxHeight
+            : 667.0;
+        return SingleChildScrollView(
+          key: const Key('capture_ready_scroll'),
+          child: ConstrainedBox(
+            constraints: BoxConstraints(minHeight: viewport),
+            child: inputMode == CaptureInputMode.typed || attachMode
+                ? _typedLayout(context, viewport)
+                : _voiceLayout(context, viewport),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _voiceLayout(BuildContext context, double viewport) {
     final bodyStyle = ArchiveMobileTypography.responsiveHelper(
       context,
     ).copyWith(color: context.palette.textSecondary, height: 1.45);
+    final muted = ArchiveMobileTypography.responsiveHelper(
+      context,
+    ).copyWith(color: context.palette.textMuted, fontSize: 12);
 
-    // All children are intrinsically sized (no Expanded/Spacer/Flexible), so a
-    // scroll wrap is safe. Required: 200% text scale overflows a short screen.
-    return SingleChildScrollView(
-      key: const Key('capture_ready_scroll'),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          if (routinePromptLoading)
-            const Padding(
-              padding: EdgeInsets.only(bottom: AppSpacing.lg),
-              child: LinearProgressIndicator(minHeight: 2),
-            )
-          else if (routinePrompt != null &&
-              onSelectRoutinePrompt != null &&
-              onDismissRoutinePrompt != null) ...[
-            RoutinePromptCard(
-              prompt: routinePrompt!,
-              onSelectPrompt: onSelectRoutinePrompt!,
-              onDismiss: onDismissRoutinePrompt!,
-            ),
-            const SizedBox(height: AppSpacing.lg),
-          ],
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Text(
+          captureDateLine(now ?? DateTime.now()),
+          key: const Key('capture_date_line'),
+          style: muted,
+        ),
+        const SizedBox(height: AppSpacing.sm),
+        if (!attachMode)
+          _PromptChip(
+            onSelected: (line) {
+              onPromptContext?.call(line);
+            },
+          ),
+        if (_showsPermissionCopy) ...[
+          const SizedBox(height: AppSpacing.lg),
           Text(
             MicrophonePermissionCopy.neededTitle,
             style: ArchiveMobileTypography.responsiveSectionTitle(context),
           ),
           const SizedBox(height: AppSpacing.sm),
           Text(MicrophonePermissionCopy.neededBody, style: bodyStyle),
-          if (errorMessage != null && errorMessage!.trim().isNotEmpty) ...[
-            const SizedBox(height: AppSpacing.sm),
-            Text(
-              errorMessage!,
-              style: bodyStyle.copyWith(color: context.palette.error),
-            ),
-          ],
-          const SizedBox(height: AppSpacing.lg),
-          if (!attachMode)
-            SegmentedButton<CaptureInputMode>(
-              segments: const [
-                ButtonSegment(
-                  value: CaptureInputMode.voice,
-                  label: Text('Voice'),
+          const SizedBox(height: AppSpacing.md),
+          TextButton(
+            onPressed: saving ? null : onStartVoice,
+            child: const Text(MicrophonePermissionCopy.requestMicrophoneCta),
+          ),
+        ],
+        if (errorMessage != null && errorMessage!.trim().isNotEmpty) ...[
+          const SizedBox(height: AppSpacing.sm),
+          Text(
+            errorMessage!,
+            style: bodyStyle.copyWith(color: context.palette.error),
+          ),
+        ],
+        if (permissionRequiresSettings) ...[
+          const SizedBox(height: AppSpacing.sm),
+          Text(MicrophonePermissionCopy.statusBlocked, style: bodyStyle),
+        ] else if (permissionBlocked) ...[
+          const SizedBox(height: AppSpacing.sm),
+          Text(
+            MicrophonePermissionCopy.typeInsteadBlockedHelper,
+            style: bodyStyle,
+          ),
+        ],
+        SizedBox(height: viewport * 0.28),
+        Center(
+          child: KeyedSubtree(
+            key: const Key('capture_start_voice'),
+            child: Semantics(
+              button: true,
+              label: MicrophonePermissionCopy.startRecordingLabel,
+              child: Material(
+                key: const Key('capture_record_button'),
+                color: context.palette.accentPrimary,
+                shape: const CircleBorder(),
+                clipBehavior: Clip.antiAlias,
+                child: InkWell(
+                  onTap: saving ? null : onStartVoice,
+                  customBorder: const CircleBorder(),
+                  child: const SizedBox(
+                    width: 96,
+                    height: 96,
+                    child: Icon(Icons.mic, color: Colors.white, size: 36),
+                  ),
                 ),
-                ButtonSegment(
-                  value: CaptureInputMode.typed,
-                  label: Text('Type'),
-                ),
-              ],
-              selected: {inputMode},
-              onSelectionChanged: (selection) => onSwitchMode(selection.first),
-            ),
-          if (!attachMode) const SizedBox(height: AppSpacing.lg),
-          if (!attachMode && inputMode == CaptureInputMode.voice)
-            FilledButton(
-              key: const Key('capture_start_voice'),
-              onPressed: saving ? null : onStartVoice,
-              child: Text(MicrophonePermissionCopy.requestMicrophoneCta),
-            )
-          else ...[
-            TextField(
-              key: const Key('capture_typed_field'),
-              controller: typedController,
-              maxLines: 4,
-              decoration: InputDecoration(
-                hintText: routinePrompt?.primaryPrompt.trim().isNotEmpty == true
-                    ? routinePrompt!.primaryPrompt
-                    : QuickTextCaptureCopy.focusedPlaceholder,
-                border: const OutlineInputBorder(),
               ),
             ),
-            const SizedBox(height: AppSpacing.md),
-            FilledButton(
-              key: const Key('capture_save_typed'),
-              onPressed: saving
-                  ? null
-                  : () => onSaveTyped(typedController.text.trim()),
-              child: const Text('Record'),
+          ),
+        ),
+        if (!attachMode) ...[
+          const SizedBox(height: AppSpacing.sm),
+          TextButton(
+            key: const Key('capture_type_instead'),
+            onPressed: saving
+                ? null
+                : () => onSwitchMode(CaptureInputMode.typed),
+            child: Text(MicrophonePermissionCopy.typeInsteadCta),
+          ),
+        ],
+        const SizedBox(height: AppSpacing.xs),
+        Text(
+          MicrophonePermissionCopy.savedOnDevice,
+          textAlign: TextAlign.center,
+          style: muted,
+        ),
+      ],
+    );
+  }
+
+  Widget _typedLayout(BuildContext context, double viewport) {
+    final hint = routinePrompt?.primaryPrompt.trim().isNotEmpty == true
+        ? routinePrompt!.primaryPrompt
+        : QuickTextCaptureCopy.focusedPlaceholder;
+    final fieldHeight = viewport * 0.62;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        SizedBox(
+          height: fieldHeight < 120 ? 120 : fieldHeight,
+          child: TextField(
+            key: const Key('capture_typed_field'),
+            controller: typedController,
+            autofocus: true,
+            expands: true,
+            maxLines: null,
+            textAlignVertical: TextAlignVertical.top,
+            decoration: InputDecoration(
+              hintText: hint,
+              border: const OutlineInputBorder(),
             ),
-          ],
-          if (permissionRequiresSettings) ...[
-            const SizedBox(height: AppSpacing.sm),
-            Text(MicrophonePermissionCopy.statusBlocked, style: bodyStyle),
-          ] else if (permissionBlocked) ...[
-            const SizedBox(height: AppSpacing.sm),
-            Text(
-              MicrophonePermissionCopy.typeInsteadBlockedHelper,
-              style: bodyStyle,
+          ),
+        ),
+        const SizedBox(height: AppSpacing.md),
+        FilledButton(
+          key: const Key('capture_save_typed'),
+          onPressed: saving
+              ? null
+              : () => onSaveTyped(typedController.text.trim()),
+          child: const Text(MicrophonePermissionCopy.saveTypedCta),
+        ),
+        if (!attachMode)
+          TextButton(
+            key: const Key('capture_back_to_voice'),
+            onPressed: saving
+                ? null
+                : () => onSwitchMode(CaptureInputMode.voice),
+            child: const Text(MicrophonePermissionCopy.backToVoiceCta),
+          ),
+      ],
+    );
+  }
+}
+
+String captureDateLine(DateTime date) {
+  const weekdays = [
+    'Monday',
+    'Tuesday',
+    'Wednesday',
+    'Thursday',
+    'Friday',
+    'Saturday',
+    'Sunday',
+  ];
+  const months = [
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December',
+  ];
+  return '${weekdays[date.weekday - 1]}, ${date.day} ${months[date.month - 1]}';
+}
+
+class _PromptChip extends StatefulWidget {
+  const _PromptChip({required this.onSelected});
+
+  final ValueChanged<String> onSelected;
+
+  @override
+  State<_PromptChip> createState() => _PromptChipState();
+}
+
+class _PromptChipState extends State<_PromptChip> {
+  var _index = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    final prompts = ExamplePromptCatalog.prompts;
+    if (prompts.isEmpty) return const SizedBox.shrink();
+    final line = prompts[_index % prompts.length];
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: Row(
+        children: [
+          Flexible(
+            child: ActionChip(
+              key: const Key('capture_prompt_chip'),
+              label: Text(line, maxLines: 2, overflow: TextOverflow.ellipsis),
+              onPressed: () => widget.onSelected(line),
             ),
-          ],
+          ),
+          IconButton(
+            key: const Key('capture_prompt_refresh'),
+            tooltip: 'Another prompt',
+            onPressed: () => setState(() => _index++),
+            icon: const Icon(Icons.refresh),
+          ),
         ],
       ),
     );

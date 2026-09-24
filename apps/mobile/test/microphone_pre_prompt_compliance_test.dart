@@ -32,6 +32,28 @@ void main() {
       }
     });
 
+    test('granted microphone hides the explanation; other states keep it', () {
+      expect(
+        MicrophonePermissionCopy.showsPermissionExplanation(
+          granted: true,
+          blocked: false,
+          requiresSettings: false,
+        ),
+        isFalse,
+      );
+      expect(
+        MicrophonePermissionCopy.showsPermissionExplanation(
+          granted: false,
+          blocked: false,
+          requiresSettings: false,
+        ),
+        isTrue,
+      );
+      expect(MicrophonePermissionCopy.saveTypedCta, 'Save');
+      expect(MicrophonePermissionCopy.savedOnDevice, 'Saved on this device.');
+      expect(MicrophonePermissionCopy.startRecordingLabel, 'Start recording');
+    });
+
     test('requesting status avoids Allow/OK wording', () {
       final status = MicrophonePermissionCopy.statusRequesting.toLowerCase();
       expect(status, isNot(contains('allow')));

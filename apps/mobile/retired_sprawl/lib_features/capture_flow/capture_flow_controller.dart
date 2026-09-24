@@ -67,6 +67,8 @@ class CaptureFlowController extends ChangeNotifier {
         snapshot = snapshot.copyWith(savedEntry: entry);
       }
     }
+    final permission = await _deps.audio.evaluatePermission();
+    snapshot = snapshot.copyWith(microphoneGranted: permission.isRecordable);
     _emit(snapshot);
     _pipelineStageSubscription ??=
         _deps.moments.pipelineStates.listen((state) {
@@ -163,6 +165,7 @@ class CaptureFlowController extends ChangeNotifier {
       _emit(
         _snapshot.copyWith(
           phase: CaptureFlowPhase.ready,
+          microphoneGranted: false,
           permissionBlocked:
               resolution.state == MicrophonePermissionState.deniedCanAskAgain,
           permissionRequiresSettings:
@@ -173,6 +176,7 @@ class CaptureFlowController extends ChangeNotifier {
       return;
     }
 
+    _emit(_snapshot.copyWith(microphoneGranted: true, clearError: true));
     if (!_transition(CaptureFlowPhase.recording)) return;
     try {
       _enqueuedThoughtSegmentPaths.clear();

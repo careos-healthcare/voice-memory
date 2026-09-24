@@ -40,6 +40,7 @@ class CaptureFlowSnapshot {
     this.hasLocalSave = false,
     this.permissionBlocked = false,
     this.permissionRequiresSettings = false,
+    this.microphoneGranted = false,
     this.attachToEntryId,
     this.recoveryKind = CaptureRecoveryKind.none,
     this.routineKind,
@@ -62,6 +63,9 @@ class CaptureFlowSnapshot {
   final bool hasLocalSave;
   final bool permissionBlocked;
   final bool permissionRequiresSettings;
+
+  /// True after a check finds the microphone already usable.
+  final bool microphoneGranted;
   final String? attachToEntryId;
   final CaptureRecoveryKind recoveryKind;
   final JournalRoutineKind? routineKind;
@@ -116,6 +120,7 @@ class CaptureFlowSnapshot {
     bool? hasLocalSave,
     bool? permissionBlocked,
     bool? permissionRequiresSettings,
+    bool? microphoneGranted,
     String? attachToEntryId,
     CaptureRecoveryKind? recoveryKind,
     JournalRoutineKind? routineKind,
@@ -145,6 +150,7 @@ class CaptureFlowSnapshot {
       permissionBlocked: permissionBlocked ?? this.permissionBlocked,
       permissionRequiresSettings:
           permissionRequiresSettings ?? this.permissionRequiresSettings,
+      microphoneGranted: microphoneGranted ?? this.microphoneGranted,
       attachToEntryId: attachToEntryId ?? this.attachToEntryId,
       recoveryKind: recoveryKind ?? this.recoveryKind,
       routineKind: routineKind ?? this.routineKind,
