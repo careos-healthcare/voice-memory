@@ -5,23 +5,17 @@ import 'package:archiveme_mobile/features/archive/ui/trust_status_footer.dart';
 import 'package:archiveme_mobile/features/archive/v1/archive_belief_load_state.dart';
 import 'package:archiveme_mobile/features/archive/v1/archive_feed_pagination_provider.dart';
 import 'package:archiveme_mobile/features/archive_changes/archive_changes_adapter.dart';
-import 'package:archiveme_mobile/features/ask_archive/ask_archive_entry_bar.dart';
-import 'package:archiveme_mobile/features/insights/pattern_exploration_entry_card.dart';
-import 'package:archiveme_mobile/features/insights/trend_pattern_summary_card.dart';
 import 'package:archiveme_mobile/features/sync/presentation/modals/conflict_resolution_modal.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/services/app_services.dart';
 import 'package:archiveme_mobile/theme/app_colors.dart';
 import 'package:archiveme_mobile/widgets/archive/archive_change_feed.dart';
-import 'package:archiveme_mobile/widgets/archive/archive_changes_section.dart';
 import 'package:archiveme_mobile/widgets/archive/archive_changes_unavailable_notice.dart';
 import 'package:archiveme_mobile/widgets/archive/archive_empty_state.dart';
 import 'package:archiveme_mobile/widgets/archive/archive_entry_card.dart';
 import 'package:archiveme_mobile/widgets/archive/archive_search_field.dart';
 import 'package:archiveme_mobile/widgets/archive/archive_status_banner.dart';
 import 'package:archiveme_mobile/widgets/archive/archive_home_choose_what_leaves_tile.dart';
-import 'package:archiveme_mobile/widgets/archive/archive_verified_changes_section.dart';
-import 'package:archiveme_mobile/widgets/insight_share/insight_share_exporter.dart';
 import 'package:archiveme_mobile/widgets/memory_resurfacing_section.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -55,6 +49,8 @@ class ArchiveDashboardScrollView extends StatelessWidget {
   /// Skips [ArchiveChangesAdapter.load] so widget tests can pump the feed
   /// without initializing AppServices.
   @visibleForTesting
+  // Kept so existing dashboard callers can still pass a snapshot.
+  // ignore: unused_field
   final ArchiveChangesSnapshot? previewChangesSnapshot;
 
   @override
@@ -87,39 +83,6 @@ class ArchiveDashboardScrollView extends StatelessWidget {
                     loadState: loadState,
                     showChangesUnavailable: showChangesUnavailable,
                   ),
-                ),
-              ),
-              SliverPadding(
-                padding: EdgeInsets.fromLTRB(
-                  sliverPadding.left,
-                  0,
-                  sliverPadding.right,
-                  0,
-                ),
-                sliver: const SliverToBoxAdapter(
-                  child: AskArchiveEntryBar(),
-                ),
-              ),
-              SliverPadding(
-                padding: EdgeInsets.fromLTRB(
-                  sliverPadding.left,
-                  0,
-                  sliverPadding.right,
-                  0,
-                ),
-                sliver: const SliverToBoxAdapter(
-                  child: PatternExplorationEntryCard(),
-                ),
-              ),
-              SliverPadding(
-                padding: EdgeInsets.fromLTRB(
-                  sliverPadding.left,
-                  0,
-                  sliverPadding.right,
-                  0,
-                ),
-                sliver: const SliverToBoxAdapter(
-                  child: TrendPatternSummaryCard(),
                 ),
               ),
               if (loadState == ArchiveBeliefLoadState.loading &&
@@ -162,34 +125,6 @@ class ArchiveDashboardScrollView extends StatelessWidget {
                       ),
                     ),
                   ),
-                SliverPadding(
-                  padding: EdgeInsets.symmetric(horizontal: sliverPadding.left),
-                  sliver: SliverToBoxAdapter(
-                    child: ArchiveVerifiedChangesSection(
-                      proofCandidates: feed.verifiedProofEntries,
-                      proofContextEntries: feed.proofContextEntries,
-                    ),
-                  ),
-                ),
-                SliverPadding(
-                  padding: EdgeInsets.symmetric(horizontal: sliverPadding.left),
-                  sliver: SliverToBoxAdapter(
-                    child: ArchiveChangesSection(
-                      previewSnapshot: previewChangesSnapshot,
-                    ),
-                  ),
-                ),
-                SliverPadding(
-                  padding: EdgeInsets.symmetric(horizontal: sliverPadding.left),
-                  sliver: SliverToBoxAdapter(
-                    child: Column(
-                      children: [
-                        InsightShareExporter(entries: feed.proofContextEntries),
-                        SizedBox(height: ArchiveResponsiveLayout.gap(context)),
-                      ],
-                    ),
-                  ),
-                ),
                 SliverPadding(
                   padding: EdgeInsets.symmetric(horizontal: sliverPadding.left),
                   sliver: SliverToBoxAdapter(

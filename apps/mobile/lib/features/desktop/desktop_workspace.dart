@@ -1,4 +1,5 @@
 import 'package:archiveme_mobile/features/desktop/desktop_drop_ingestion.dart';
+import 'package:archiveme_mobile/router/primary_destination.dart';
 import 'package:archiveme_mobile/features/desktop/desktop_master_detail_layout.dart';
 import 'package:archiveme_mobile/features/desktop/desktop_shortcut_manager.dart';
 import 'package:flutter/material.dart';
@@ -48,14 +49,11 @@ class _DesktopWorkspaceState extends State<DesktopWorkspace> {
           playback: _playback,
           searchFocus: _searchFocus,
           destinations: [
-            for (final label in const ['Record', 'Archive', 'Account'])
+            for (final destination in PrimaryDestination.shellValues)
               DesktopNavDestination(
-                label: label,
-                selected: label == _section,
-                onTap: () {
-                  if (label == 'Record') widget.onNewRecording();
-                  setState(() => _section = label);
-                },
+                label: destination.label,
+                selected: destination.label == _section,
+                onTap: () => setState(() => _section = destination.label),
               ),
           ],
         ),

@@ -3,7 +3,7 @@ import 'package:flutter/foundation.dart';
 
 /// Announces primary branch activation without creating a second router.
 class PrimaryNavigationController extends ChangeNotifier {
-  PrimaryDestination _activeDestination = PrimaryDestination.record;
+  PrimaryDestination _activeDestination = PrimaryDestination.archive;
   int _revision = 0;
 
   PrimaryDestination get activeDestination => _activeDestination;
@@ -18,7 +18,7 @@ class PrimaryNavigationController extends ChangeNotifier {
 
   @visibleForTesting
   void reset() {
-    _activeDestination = PrimaryDestination.record;
+    _activeDestination = PrimaryDestination.archive;
     _revision = 0;
     notifyListeners();
   }

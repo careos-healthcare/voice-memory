@@ -4,14 +4,17 @@ import 'package:archiveme_mobile/features/sync/presentation/widgets/sync_status_
 import 'package:archiveme_mobile/l10n/localized_consumer_ui.dart';
 import 'package:archiveme_mobile/router/primary_destination.dart';
 import 'package:archiveme_mobile/router/primary_navigation_controller.dart';
+import 'package:archiveme_mobile/router/primary_navigation_provider.dart';
 import 'package:archiveme_mobile/router/record_navigation_activity_controller.dart';
+import 'package:archiveme_mobile/router/route_catalog.dart';
 import 'package:archiveme_mobile/theme/app_colors.dart';
 import 'package:archiveme_mobile/widgets/accessibility/accessible_primary_surface.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'dart:async';
 
-class MainShell extends StatelessWidget {
+class MainShell extends ConsumerWidget {
   const MainShell({
     required this.navigationShell, super.key,
     this.primaryNavigationController,
@@ -29,7 +32,11 @@ class MainShell extends StatelessWidget {
       recordNavigationActivityController ??
       globalRecordNavigationActivityController;
 
-  void _goBranch(BuildContext context, PrimaryDestination destination) {
+  void _goBranch(
+    BuildContext context,
+    WidgetRef ref,
+    PrimaryDestination destination,
+  ) {
     if (_recordActivityController.isNavigationLocked &&
         destination.shellIndex != navigationShell.currentIndex) {
       ScaffoldMessenger.of(context)
@@ -44,12 +51,19 @@ class MainShell extends StatelessWidget {
     final reselected = destination.shellIndex == navigationShell.currentIndex;
     navigationShell.goBranch(destination.shellIndex, initialLocation: reselected);
     _primaryController.activate(destination, reselected: reselected);
+    ref
+        .read(primaryNavigationProvider.notifier)
+        .activate(destination, reselected: reselected);
   }
 
   bool _activeBranchCanPop(PrimaryDestination destination) =>
       primaryBranchNavigatorKeys[destination]?.currentState?.canPop() ?? false;
 
-  void _handleBlockedPop(BuildContext context, PrimaryDestination destination) {
+  void _handleBlockedPop(
+    BuildContext context,
+    WidgetRef ref,
+    PrimaryDestination destination,
+  ) {
     if (_recordActivityController.isNavigationLocked) {
       ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
@@ -65,8 +79,8 @@ class MainShell extends StatelessWidget {
       unawaited(navigator!.maybePop());
       return;
     }
-    if (destination != PrimaryDestination.record) {
-      _goBranch(context, PrimaryDestination.record);
+    if (destination != PrimaryDestination.archive) {
+      _goBranch(context, ref, PrimaryDestination.archive);
     }
   }
 
@@ -87,14 +101,18 @@ class MainShell extends StatelessWidget {
     );
   }
 
-  Widget _phoneNavigation(BuildContext context, PrimaryDestination selected) {
+  Widget _phoneNavigation(
+    BuildContext context,
+    WidgetRef ref,
+    PrimaryDestination selected,
+  ) {
     return Semantics(
       container: true,
       label: 'Primary navigation',
       child: NavigationBar(
         selectedIndex: selected.shellIndex,
         onDestinationSelected: (index) =>
-            _goBranch(context, PrimaryDestination.fromShellIndex(index)),
+            _goBranch(context, ref, PrimaryDestination.fromShellIndex(index)),
         destinations: [
           for (final destination in PrimaryDestination.shellValues)
             _destinationSemantics(
@@ -114,6 +132,7 @@ class MainShell extends StatelessWidget {
 
   Widget _railNavigation(
     BuildContext context,
+    WidgetRef ref,
     PrimaryDestination selected, {
     required bool extended,
   }) {
@@ -125,7 +144,7 @@ class MainShell extends StatelessWidget {
         extended: extended,
         minWidth: ResponsiveBreakpoints.desktopTouchTarget,
         onDestinationSelected: (index) =>
-            _goBranch(context, PrimaryDestination.fromShellIndex(index)),
+            _goBranch(context, ref, PrimaryDestination.fromShellIndex(index)),
         destinations: [
           for (final destination in PrimaryDestination.shellValues)
             NavigationRailDestination(
@@ -139,13 +158,27 @@ class MainShell extends StatelessWidget {
     );
   }
 
+  void _startVoiceCapture(BuildContext context) {
+    context.push(RouteCatalog.recordHome);
+  }
+
+  Widget _captureButton(BuildContext context) {
+    return FloatingActionButton.extended(
+      onPressed: () => _startVoiceCapture(context),
+      icon: const Icon(Icons.mic),
+      label: const Text('Record'),
+    );
+  }
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    ref.watch(primaryNavigationProvider);
     final selected =
         PrimaryDestination.fromShellIndex(navigationShell.currentIndex);
     if (_primaryController.activeDestination != selected) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         _primaryController.activate(selected);
+        ref.read(primaryNavigationProvider.notifier).activate(selected);
       });
     }
     final branchCanPop = _activeBranchCanPop(selected);
@@ -157,9 +190,9 @@ class MainShell extends StatelessWidget {
       builder: (context, _) => PopScope<Object?>(
         canPop:
             !_recordActivityController.isNavigationLocked &&
-            (branchCanPop || selected == PrimaryDestination.record),
+            (branchCanPop || selected == PrimaryDestination.archive),
         onPopInvokedWithResult: (didPop, result) {
-          if (!didPop) _handleBlockedPop(context, selected);
+          if (!didPop) _handleBlockedPop(context, ref, selected);
         },
         child: LayoutBuilder(
           builder: (context, constraints) {
@@ -172,17 +205,19 @@ class MainShell extends StatelessWidget {
             if (ResponsiveBreakpoints.isMobile(constraints.maxWidth)) {
               return Scaffold(
                 backgroundColor: AppColors.backgroundPrimary,
+                floatingActionButton: _captureButton(context),
                 body: Column(
                   children: [
                     const SyncStatusBadgeSlot(),
                     Expanded(child: body),
                   ],
                 ),
-                bottomNavigationBar: _phoneNavigation(context, selected),
+                bottomNavigationBar: _phoneNavigation(context, ref, selected),
               );
             }
             return Scaffold(
               backgroundColor: AppColors.backgroundPrimary,
+              floatingActionButton: _captureButton(context),
               body: Column(
                 children: [
                   const SyncStatusBadgeSlot(),
@@ -191,6 +226,7 @@ class MainShell extends StatelessWidget {
                       children: [
                         _railNavigation(
                           context,
+                          ref,
                           selected,
                           extended: ResponsiveBreakpoints.isDesktop(
                             constraints.maxWidth,

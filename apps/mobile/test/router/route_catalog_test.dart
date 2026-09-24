@@ -8,8 +8,8 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   test('V1 shell exposes three ordered canonical destinations', () {
     expect(RouteCatalog.primaryRoutes, [
-      '/record',
       '/archive-belief',
+      '/insights',
       '/account',
     ]);
     expect(RouteCatalog.primaryRoutes, hasLength(3));
@@ -56,13 +56,13 @@ void main() {
     }
   });
 
-  test('router starts on Record and never treats context as onboarding', () {
+  test('router starts on the archive timeline', () {
     final router = File('lib/router/app_router.dart').readAsStringSync();
-    expect(router, contains('initialLocation: RouteCatalog.recordHome'));
+    expect(router, contains('initialLocation: RouteCatalog.archiveHome'));
     expect(
       router,
       contains(
-        "GoRoute(path: '/', redirect: (context, state) => RouteCatalog.recordHome)",
+        "GoRoute(path: '/', redirect: (context, state) => RouteCatalog.archiveHome)",
       ),
     );
     final onboardingPaths = router.substring(

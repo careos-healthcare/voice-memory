@@ -7,6 +7,7 @@ import 'package:archiveme_mobile/router/record_navigation_activity_controller.da
 import 'package:archiveme_mobile/router/route_catalog.dart';
 import 'package:archiveme_mobile/widgets/main_shell.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 
@@ -20,8 +21,8 @@ void main() {
   group('primary destination model', () {
     test('has exactly three ordered shell routes and excludes graph', () {
       expect(PrimaryDestination.shellValues, [
-        PrimaryDestination.record,
         PrimaryDestination.archive,
+        PrimaryDestination.insights,
         PrimaryDestination.account,
       ]);
       expect(
@@ -33,7 +34,7 @@ void main() {
   });
 
   group('three-branch shell behavior', () {
-    testWidgets('defaults to Record and exposes three destinations in order', (
+    testWidgets('defaults to Archive and exposes three destinations in order', (
       tester,
     ) async {
       final harness = _ShellHarness();
@@ -41,12 +42,16 @@ void main() {
       await _pumpHarness(tester, harness);
 
       expect(find.byType(NavigationBar), findsOneWidget);
-      expect(_navigationLabels(tester), ['Record', 'Archive', 'Account']);
+      expect(_navigationLabels(tester), ['Archive', 'Insights', 'Account']);
       expect(find.text('Changes'), findsNothing);
       expect(find.text('Intelligence'), findsNothing);
       expect(find.text('Memory Graph'), findsNothing);
-      expect(find.text('Record branch'), findsOneWidget);
-      expect(_selectedPhoneIndex(tester), PrimaryDestination.record.shellIndex);
+      expect(find.text('Archive branch'), findsOneWidget);
+      expect(find.byType(FloatingActionButton), findsOneWidget);
+      expect(
+        _selectedPhoneIndex(tester),
+        PrimaryDestination.archive.shellIndex,
+      );
       expect(find.bySemanticsLabel('Primary navigation'), findsOneWidget);
     });
 
@@ -95,7 +100,6 @@ void main() {
       addTearDown(harness.dispose);
       await _pumpHarness(tester, harness);
 
-      await _tapDestination(tester, 'Archive');
       await tester.tap(find.byKey(const Key('archive_detail_button')));
       await tester.pumpAndSettle();
       expect(find.text('Archive detail'), findsOneWidget);
@@ -118,8 +122,8 @@ void main() {
       ]) {
         harness.recordActivity.update(activity);
         await tester.pump();
-        await _tapDestination(tester, 'Archive');
-        expect(find.text('Record branch'), findsOneWidget);
+        await _tapDestination(tester, 'Account');
+        expect(find.text('Archive branch'), findsOneWidget);
         expect(
           find.text('Finish or cancel the recording first.'),
           findsOneWidget,
@@ -128,22 +132,22 @@ void main() {
         await tester.pump();
       }
 
-      await _tapDestination(tester, 'Archive');
-      expect(find.text('Archive branch'), findsOneWidget);
+      await _tapDestination(tester, 'Account');
+      expect(find.text('Account branch'), findsOneWidget);
     });
 
-    testWidgets('root back returns secondary branches to Record', (
+    testWidgets('root back returns secondary branches to Archive', (
       tester,
     ) async {
       for (final destination in [
-        PrimaryDestination.archive,
+        PrimaryDestination.insights,
         PrimaryDestination.account,
       ]) {
         final harness = _ShellHarness(initialLocation: destination.route);
         await _pumpHarness(tester, harness);
         expect(await tester.binding.handlePopRoute(), isTrue);
         await tester.pumpAndSettle();
-        expect(find.text('Record branch'), findsOneWidget);
+        expect(find.text('Archive branch'), findsOneWidget);
         harness.dispose();
       }
     });
@@ -161,7 +165,10 @@ void main() {
       expect(await tester.binding.handlePopRoute(), isTrue);
       await tester.pumpAndSettle();
       expect(find.byKey(const Key('archive_root')), findsOneWidget);
-      expect(_selectedPhoneIndex(tester), PrimaryDestination.archive.shellIndex);
+      expect(
+        _selectedPhoneIndex(tester),
+        PrimaryDestination.archive.shellIndex,
+      );
     });
 
     testWidgets('Settings pops back to Account', (tester) async {
@@ -232,7 +239,7 @@ void main() {
 
       expect(find.byType(NavigationRail), findsOneWidget);
       expect(find.byType(NavigationBar), findsNothing);
-      expect(_navigationLabels(tester), ['Record', 'Archive', 'Account']);
+      expect(_navigationLabels(tester), ['Archive', 'Insights', 'Account']);
       expect(tester.takeException(), isNull);
     });
   });
@@ -275,19 +282,22 @@ void main() {
         RegExp(r'StatefulShellRoute\.indexedStack').allMatches(source),
         hasLength(1),
       );
-      final shellSection = source.split('StatefulShellRoute.indexedStack').skip(1).first;
+      final shellSection = source
+          .split('StatefulShellRoute.indexedStack')
+          .skip(1)
+          .first;
       expect(
         RegExp(r'StatefulShellBranch\s*\(').allMatches(shellSection).length,
         3,
       );
-      for (final route in ['recordHome', 'archiveHome', 'accountHome']) {
+      for (final route in ['archiveHome', 'insightsHome', 'accountHome']) {
         expect(
           RegExp('path: RouteCatalog\\.$route').allMatches(shellSection),
           hasLength(1),
           reason: route,
         );
       }
-      expect(source, contains('initialLocation: RouteCatalog.recordHome'));
+      expect(source, contains('initialLocation: RouteCatalog.archiveHome'));
     });
 
     test('production does not directly push a primary destination', () {
@@ -296,7 +306,7 @@ void main() {
           .whereType<File>()
           .where((file) => file.path.endsWith('.dart'));
       final forbidden = RegExp(
-        r'''context\.push(?:<[^>]+>)?\(\s*(?:RouteCatalog\.(?:recordHome|archiveHome|changesHome|accountHome)|['"]/(?:record|archive-belief|then-vs-now|belief-changes|account)['"])''',
+        r'''context\.push(?:<[^>]+>)?\(\s*(?:RouteCatalog\.(?:archiveHome|changesHome|accountHome)|['"]/(?:archive-belief|then-vs-now|belief-changes|account)['"])''',
       );
       for (final file in files) {
         expect(
@@ -311,7 +321,7 @@ void main() {
 
 class _ShellHarness {
   _ShellHarness({
-    this.initialLocation = RouteCatalog.recordHome,
+    this.initialLocation = RouteCatalog.archiveHome,
     this.textScale = 1,
     this.surfaceSize = const Size(390, 844),
   }) {
@@ -326,15 +336,6 @@ class _ShellHarness {
             recordNavigationActivityController: recordActivity,
           ),
           branches: [
-            StatefulShellBranch(
-              navigatorKey: recordBranchNavigatorKey,
-              routes: [
-                GoRoute(
-                  path: RouteCatalog.recordHome,
-                  builder: (_, _) => const _BranchPage(label: 'Record'),
-                ),
-              ],
-            ),
             StatefulShellBranch(
               navigatorKey: archiveBranchNavigatorKey,
               routes: [
@@ -352,6 +353,15 @@ class _ShellHarness {
                       ),
                     ),
                   ],
+                ),
+              ],
+            ),
+            StatefulShellBranch(
+              navigatorKey: insightsBranchNavigatorKey,
+              routes: [
+                GoRoute(
+                  path: RouteCatalog.insightsHome,
+                  builder: (_, _) => const _BranchPage(label: 'Insights'),
                 ),
               ],
             ),
@@ -456,15 +466,17 @@ Future<void> _pumpHarness(WidgetTester tester, _ShellHarness harness) async {
   await tester.binding.setSurfaceSize(harness.surfaceSize);
   addTearDown(() => tester.binding.setSurfaceSize(null));
   await tester.pumpWidget(
-    MaterialApp.router(
-      routerConfig: harness.router,
-      localizationsDelegates: AppLocalizations.localizationsDelegates,
-      supportedLocales: AppLocalizations.supportedLocales,
-      builder: (context, child) => MediaQuery(
-        data: MediaQuery.of(
-          context,
-        ).copyWith(textScaler: TextScaler.linear(harness.textScale)),
-        child: child!,
+    ProviderScope(
+      child: MaterialApp.router(
+        routerConfig: harness.router,
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        builder: (context, child) => MediaQuery(
+          data: MediaQuery.of(
+            context,
+          ).copyWith(textScaler: TextScaler.linear(harness.textScale)),
+          child: child!,
+        ),
       ),
     ),
   );

@@ -2,13 +2,15 @@
 abstract final class RouteCatalog {
   static const recordHome = '/record';
   static const archiveHome = '/archive-belief';
+
   /// Legacy deep-link path — not a primary shell destination.
   static const changesHome = '/belief-changes';
+  static const insightsHome = '/insights';
   static const accountHome = '/account';
 
   static const List<String> primaryRoutes = [
-    recordHome,
     archiveHome,
+    insightsHome,
     accountHome,
   ];
 

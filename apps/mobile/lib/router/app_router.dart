@@ -42,6 +42,7 @@ import 'package:archiveme_mobile/screens/belief_evidence_screen.dart';
 import 'package:archiveme_mobile/screens/beliefs_screen.dart';
 import 'package:archiveme_mobile/screens/delete_account_screen.dart';
 import 'package:archiveme_mobile/screens/entry_detail_screen.dart';
+import 'package:archiveme_mobile/screens/insights_screen.dart';
 import 'package:archiveme_mobile/screens/consent_audit_screen.dart';
 import 'package:archiveme_mobile/screens/export_screen.dart';
 import 'package:archiveme_mobile/screens/journal_bulk_export_screen.dart';
@@ -102,7 +103,7 @@ String? resolveInstantCaptureDeepLink(Uri uri) {
 
 final GoRouter appRouter = GoRouter(
   navigatorKey: _rootNavigatorKey,
-  initialLocation: RouteCatalog.recordHome,
+  initialLocation: RouteCatalog.archiveHome,
   refreshListenable: onboardingGate,
   redirect: (context, state) async {
     final instantCaptureTarget = resolveInstantCaptureDeepLink(state.uri);
@@ -163,6 +164,7 @@ final GoRouter appRouter = GoRouter(
     if (TrialMode.hideDeveloperSurfaces &&
         path != '/record' &&
         path != '/archive-belief' &&
+        path != '/insights' &&
         path != '/belief-changes' &&
         path != '/account' &&
         path != '/settings' &&
@@ -178,7 +180,7 @@ final GoRouter appRouter = GoRouter(
         return '/record';
       }
     }
-    if (path == '/') return RouteCatalog.recordHome;
+    if (path == '/') return RouteCatalog.archiveHome;
     return null;
   },
   routes: [
@@ -186,7 +188,7 @@ final GoRouter appRouter = GoRouter(
       path: '/offline-sync-verify',
       builder: (context, state) => const OfflineSyncVerificationScreen(),
     ),
-    GoRoute(path: '/', redirect: (context, state) => RouteCatalog.recordHome),
+    GoRoute(path: '/', redirect: (context, state) => RouteCatalog.archiveHome),
     GoRoute(
       path: '/onboarding',
       parentNavigatorKey: _rootNavigatorKey,
@@ -222,22 +224,6 @@ final GoRouter appRouter = GoRouter(
       ),
       branches: [
         StatefulShellBranch(
-          navigatorKey: recordBranchNavigatorKey,
-          routes: [
-            GoRoute(
-              path: RouteCatalog.recordHome,
-              builder: (context, state) {
-                return CaptureScreenHost(
-                  navigationActivityController:
-                      recordNavigationActivityController,
-                  routineKindOverride: journalRoutineKindFromUri(state.uri),
-                  routeState: state,
-                );
-              },
-            ),
-          ],
-        ),
-        StatefulShellBranch(
           navigatorKey: archiveBranchNavigatorKey,
           routes: [
             GoRoute(
@@ -255,6 +241,15 @@ final GoRouter appRouter = GoRouter(
           ],
         ),
         StatefulShellBranch(
+          navigatorKey: insightsBranchNavigatorKey,
+          routes: [
+            GoRoute(
+              path: RouteCatalog.insightsHome,
+              builder: (context, state) => const InsightsScreen(),
+            ),
+          ],
+        ),
+        StatefulShellBranch(
           navigatorKey: accountBranchNavigatorKey,
           routes: [
             GoRoute(
@@ -264,6 +259,17 @@ final GoRouter appRouter = GoRouter(
           ],
         ),
       ],
+    ),
+    GoRoute(
+      path: RouteCatalog.recordHome,
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) {
+        return CaptureScreenHost(
+          navigationActivityController: recordNavigationActivityController,
+          routineKindOverride: journalRoutineKindFromUri(state.uri),
+          routeState: state,
+        );
+      },
     ),
     GoRoute(
       path: RouteCatalog.changesHome,

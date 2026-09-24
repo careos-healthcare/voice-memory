@@ -153,7 +153,7 @@ void main() {
       final mainShell = File('lib/widgets/main_shell.dart').readAsStringSync();
       expect(
         PrimaryDestination.shellValues.map((destination) => destination.label),
-        ['Record', 'Archive', 'Account'],
+        ['Archive', 'Insights', 'Account'],
       );
       expect(mainShell, contains('NavigationDestination('));
       expect(mainShell, contains('NavigationRailDestination('));

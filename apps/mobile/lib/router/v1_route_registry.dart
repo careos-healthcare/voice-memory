@@ -35,6 +35,7 @@ abstract final class V1RouteRegistry {
 
   static const supportingPaths = [
     onboardingPath,
+    RouteCatalog.recordHome,
     RouteCatalog.changesHome,
     '${RouteCatalog.archiveHome}/changes',
     '/entry/:id',
