@@ -1,4 +1,4 @@
-import 'package:archiveme_mobile/features/feature_unlock/feature_unlock_service.dart';
+import 'package:archiveme_mobile/features/archive/v1/feature_unlock_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

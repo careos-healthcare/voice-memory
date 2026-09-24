@@ -5,7 +5,7 @@ import 'package:archiveme_mobile/features/archive/ui/trust_status_footer.dart';
 import 'package:archiveme_mobile/features/archive/v1/archive_belief_load_state.dart';
 import 'package:archiveme_mobile/features/archive/v1/archive_feed_pagination_provider.dart';
 import 'package:archiveme_mobile/features/archive_changes/archive_changes_adapter.dart';
-import 'package:archiveme_mobile/features/feature_unlock/feature_unlock_service.dart';
+import 'package:archiveme_mobile/features/archive/v1/feature_unlock_service.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/models/sync_status.dart';
 import 'package:archiveme_mobile/services/app_services.dart';
