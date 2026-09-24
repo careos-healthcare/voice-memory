@@ -18,7 +18,7 @@ class SecureKeyManager implements SyncCryptoKeyStore {
   }) : _secureStorage =
            secureStorage ??
            const FlutterSecureStorage(
-             aOptions: AndroidOptions(),
+             aOptions: AndroidOptions.defaultOptions,
              iOptions: IOSOptions(
                accessibility: KeychainAccessibility.first_unlock_this_device,
              ),
