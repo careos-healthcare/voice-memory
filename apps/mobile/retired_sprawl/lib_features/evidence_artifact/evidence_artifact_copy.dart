@@ -13,7 +13,7 @@ abstract final class EvidenceArtifactCopy {
   static const redactQuotes = 'Redact verbatim quotes';
   static const redactQuotesHint =
       'Share frequency and confidence only — entry text stays private.';
-  static const shareCardHeadline = 'ArchiveMe Evidence Proof';
+  static const shareCardHeadline = 'Thoughtprint Evidence Proof';
   static const shareCardFooter = 'archiveme.app';
   static const redactedQuote = '[Quote redacted for privacy]';
   static const openEntry = 'Open full entry';

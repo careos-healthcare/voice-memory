@@ -8,7 +8,7 @@ abstract final class MomentQualityCopy {
 
   static const veryShortTitle = 'This is enough to save.';
   static const veryShortBody =
-      'Add one detail if you want ArchiveMe to compare it later.';
+      'Add one detail if you want Thoughtprint to compare it later.';
   static const veryShortSuggestions = [
     'What happened?',
     'Where did it show up?',
@@ -26,7 +26,7 @@ abstract final class MomentQualityCopy {
 
   static const strongDetailTitle = 'Good archive evidence.';
   static const strongDetailBody =
-      'This gives ArchiveMe something clearer to compare later.';
+      'This gives Thoughtprint something clearer to compare later.';
 
   static MomentQualityResult resultFor(MomentQualityLevel level) {
     switch (level) {

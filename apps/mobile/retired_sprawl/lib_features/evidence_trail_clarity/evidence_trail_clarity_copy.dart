@@ -6,14 +6,14 @@ abstract final class EvidenceTrailClarityCopy {
 
   static const title = 'Your evidence trail';
   static const body =
-      'ArchiveMe has found the first useful proof. The longer trail shows whether '
+      'Thoughtprint has found the first useful proof. The longer trail shows whether '
       'this pattern keeps returning, changes, fades, or needs correcting.';
 
   static const timelineNowLabel = 'Now';
   static const timelineNowDetail = 'First useful proof';
   static const timelineNextReturnsLabel = 'Next returns';
   static const timelineNextReturnsDetail =
-      'ArchiveMe checks whether it appears again';
+      'Thoughtprint checks whether it appears again';
   static const timelineChangeLabel = 'Change';
   static const timelineChangeDetail =
       'You see whether it softens, strengthens, or fades';

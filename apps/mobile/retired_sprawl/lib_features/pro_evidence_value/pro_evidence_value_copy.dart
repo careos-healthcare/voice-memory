@@ -20,7 +20,7 @@ abstract final class ProEvidenceValueCopy {
       'Pro is for keeping the evidence, not getting generic advice.';
 
   static const comparesMomentsLine =
-      'ArchiveMe compares saved moments over time — it is not a chat.';
+      'Thoughtprint compares saved moments over time — it is not a chat.';
 
   static const sheetTitle = 'What Pro keeps';
 
@@ -38,10 +38,10 @@ abstract final class ProEvidenceValueCopy {
   static const proExportReportsPlanned = 'Exportable reports (planned)';
 
   static const sheetFooter =
-      'ArchiveMe compares what you saved over time. It is not a chatbot.';
+      'Thoughtprint compares what you saved over time. It is not a chatbot.';
 
   static const productPromise =
-      'ArchiveMe is not a chat. It compares real moments you saved at different times.';
+      'Thoughtprint is not a chat. It compares real moments you saved at different times.';
 
   static const String positioningChatGptToday =
       LandingAppContinuityCopy.chatGptDifferentiation;

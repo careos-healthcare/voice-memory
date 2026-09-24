@@ -5,7 +5,7 @@ abstract final class PositiveReinforcementCopy {
   static const title = 'This appeared in your words again';
 
   static const body =
-      'ArchiveMe noticed this showed up again in calmer moments from your own words.';
+      'Thoughtprint noticed this showed up again in calmer moments from your own words.';
 
   static const recordAgainCta = 'Record when this helps again';
 
@@ -14,5 +14,5 @@ abstract final class PositiveReinforcementCopy {
   static const completionTitle = 'Helpful evidence captured';
 
   static const completionBody =
-      'ArchiveMe noticed this in your words and is watching whether it repeats.';
+      'Thoughtprint noticed this in your words and is watching whether it repeats.';
 }

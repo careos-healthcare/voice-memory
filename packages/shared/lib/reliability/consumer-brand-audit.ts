@@ -5,6 +5,7 @@ export const CONSUMER_BANNED_PATTERNS: ReadonlyArray<{
   re: RegExp;
   label: string;
 }> = [
+  { re: /\bArchiveMe\b/i, label: "ArchiveMe" },
   { re: /\bVoiceMemory\b/i, label: "VoiceMemory" },
   { re: /\bvoice memory\b/i, label: "voice memory" },
   { re: /\bvoicememory\b/i, label: "voicememory" },
@@ -77,7 +78,7 @@ export const CONSUMER_BRAND_LITERAL_ALLOWLIST = {
 
 /** Annotated customer-language exceptions in web copy. */
 export const CUSTOMER_LANGUAGE_LITERAL_ALLOWLIST = {
-  "ArchiveMe resurfaces your own voice reflections. It is not therapy, counseling, medical advice, or a diagnosis.":
+  "Thoughtprint resurfaces your own voice reflections. It is not therapy, counseling, medical advice, or a diagnosis.":
     "Negative disclaimer",
   "No diagnosis":
     "Safety section — negated claim",
@@ -126,6 +127,10 @@ export function scanConsumerCopyFile(
 ): string[] {
   const violations: string[] = [];
   for (const literal of extractStringLiterals(source)) {
+    if (/archiveme\.app/i.test(literal)) continue;
+    if (/com\.voicememory\.|archiveme_mobile|voicememory:\/\//i.test(literal)) {
+      continue;
+    }
     if (/@[a-z0-9.-]+\.[a-z]{2,}/i.test(literal)) continue;
     if (isCustomerLanguageAllowlisted(literal)) continue;
     for (const { re, label } of CONSUMER_BANNED_PATTERNS) {

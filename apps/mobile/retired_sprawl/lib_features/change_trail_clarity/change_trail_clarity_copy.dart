@@ -5,7 +5,7 @@ abstract final class ChangeTrailClarityCopy {
   static const title = 'What the trail shows';
 
   static const body =
-      'After the first proof, ArchiveMe keeps watching the same repeat. The trail '
+      'After the first proof, Thoughtprint keeps watching the same repeat. The trail '
       'shows whether it comes back, changes shape, gets softer, gets stronger, '
       'fades, or gets corrected.';
 
@@ -23,7 +23,7 @@ abstract final class ChangeTrailClarityCopy {
   static const fadesLine = 'Fades: the repeat stops showing up as much.';
 
   static const correctedLine =
-      'Corrected: you marked the proof as too vague or not relevant, so ArchiveMe '
+      'Corrected: you marked the proof as too vague or not relevant, so Thoughtprint '
       'does not treat it as useful proof.';
 
   static const proLine =

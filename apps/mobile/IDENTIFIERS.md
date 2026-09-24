@@ -16,7 +16,7 @@ Historical context: [docs/history/archive/REBRAND_AUDIT.md](../../docs/history/a
 
 | Layer | Canonical value | Who sees it | Rename risk |
 | --- | --- | --- | --- |
-| **User-facing brand** | **ArchiveMe** | Home screen, onboarding, store listing title, in-app copy | Low — copy-only |
+| **User-facing brand** | **Thoughtprint** | Home screen, onboarding, store listing title, in-app copy | Low — copy-only |
 | **Developer / build identity** | **`archiveme_mobile`** (Dart package), `apps/mobile/` (repo path) | `import` paths, CI, tests | Low — tooling only |
 | **Store / platform identity** | **`com.voicememory.mobile`** | Play Console, App Store Connect, adb, RevenueCat, widgets, push | **High — treat as immutable** |
 
@@ -30,7 +30,7 @@ appear in user-facing UI.
 
 | Identifier | Value | Primary source |
 | --- | --- | --- |
-| Public app name | `ArchiveMe` | `lib/config/app_config.dart` → `AppConfig.appName`; iOS `CFBundleDisplayName`; Android `android:label` |
+| Public app name | `Thoughtprint` | `lib/config/app_config.dart` → `AppConfig.appName`; iOS `CFBundleDisplayName`; Android `android:label` |
 | iOS bundle ID | `com.voicememory.mobile` | `ios/Runner.xcodeproj/project.pbxproj`, `AppConfig.bundleId` |
 | Android application ID | `com.voicememory.mobile` | `android/app/build.gradle.kts` (`applicationId`, `namespace`) |
 | Android Kotlin package | `com.voicememory.mobile` | `android/app/src/main/kotlin/com/voicememory/mobile/` |

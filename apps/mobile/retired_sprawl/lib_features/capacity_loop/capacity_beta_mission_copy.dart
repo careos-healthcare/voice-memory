@@ -10,7 +10,7 @@ abstract final class CapacityBetaMissionCopy {
   static const subtitle =
       'Save 3 yes moments, review your loop, and tell us if it fits.';
 
-  static const calmNote = 'This helps test whether ArchiveMe is useful.';
+  static const calmNote = 'This helps test whether Thoughtprint is useful.';
   static const skipNote = 'Skip anything that does not apply.';
 
   static const taskFirstYesMoment = 'Save your first yes moment';

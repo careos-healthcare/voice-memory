@@ -13,7 +13,7 @@ abstract final class CapacityLoopCopy {
       'Built from $count saved moment${count == 1 ? '' : 's'}';
 
   static const emptyStateBody =
-      'Save 3 real moments where you said yes too quickly. ArchiveMe will start building your yes loop.';
+      'Save 3 real moments where you said yes too quickly. Thoughtprint will start building your yes loop.';
 
   static const formingWhatRepeated =
       'Your archive is starting to show moments where agreeing may have come before checking capacity.';

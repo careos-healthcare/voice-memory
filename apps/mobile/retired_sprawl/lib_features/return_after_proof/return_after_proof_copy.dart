@@ -7,10 +7,10 @@ abstract final class ReturnAfterProofCopy {
   static const title = 'What to watch for next';
 
   static const body =
-      'ArchiveMe has enough to start a timeline. The next useful moment is whether this returns or changes.';
+      'Thoughtprint has enough to start a timeline. The next useful moment is whether this returns or changes.';
 
   static const strongBody =
-      'ArchiveMe has a clearer timeline now. The next useful moment is whether this returns or changes.';
+      'Thoughtprint has a clearer timeline now. The next useful moment is whether this returns or changes.';
 
   static const closingLine = 'If nothing stands out, skip today.';
 

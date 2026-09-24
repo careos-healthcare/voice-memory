@@ -6,7 +6,7 @@ abstract final class AdaptiveDailyQuestionCopy {
   static const noEntriesHelper = 'Short is fine. Ten seconds is enough.';
 
   static const oneEntryQuestion = 'Did anything similar happen again?';
-  static const oneEntryHelper = 'ArchiveMe needs a second moment to compare.';
+  static const oneEntryHelper = 'Thoughtprint needs a second moment to compare.';
 
   static const twoNoClearMatchQuestion =
       'What felt similar or different from your last two moments?';
@@ -18,24 +18,24 @@ abstract final class AdaptiveDailyQuestionCopy {
 
   static const confirmedRepeatQuestionFallback =
       'Did this repeat come back today?';
-  static const confirmedRepeatHelper = 'ArchiveMe can compare what changed.';
+  static const confirmedRepeatHelper = 'Thoughtprint can compare what changed.';
 
   static const returnSofterQuestion =
       'Did this feel softer again, or different this time?';
   static const returnSofterHelper =
-      'ArchiveMe is watching whether the shift holds.';
+      'Thoughtprint is watching whether the shift holds.';
 
   static const returnStrongerQuestion =
       'Did this feel stronger again, or different this time?';
-  static const returnStrongerHelper = 'ArchiveMe is watching what changes.';
+  static const returnStrongerHelper = 'Thoughtprint is watching what changes.';
 
   static const returnSameQuestion = 'Did this feel about the same again?';
-  static const returnSameHelper = 'ArchiveMe compares returns over time.';
+  static const returnSameHelper = 'Thoughtprint compares returns over time.';
 
   static const patternChangedQuestion =
       'Did the change hold when this came back?';
   static const patternChangedHelper =
-      'ArchiveMe is watching whether this shift holds.';
+      'Thoughtprint is watching whether this shift holds.';
 
   static const helpfulActionQuestionFallback =
       'Did a helpful action appear again?';

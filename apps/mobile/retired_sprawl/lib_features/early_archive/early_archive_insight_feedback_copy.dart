@@ -7,7 +7,7 @@ abstract final class EarlyArchiveInsightFeedbackCopy {
   static const wrongPattern = 'Wrong pattern';
 
   static const wrongPatternAcknowledgement =
-      'Thanks — ArchiveMe will treat this as uncertain.';
+      'Thanks — Thoughtprint will treat this as uncertain.';
 
   static const savedAcknowledgement = 'Thanks — saved locally.';
 }

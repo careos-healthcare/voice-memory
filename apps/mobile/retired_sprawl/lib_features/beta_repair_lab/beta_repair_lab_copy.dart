@@ -27,7 +27,7 @@ abstract final class BetaRepairLabCopy {
   static const openingPrimaryCta = 'Start typing';
   static const openingSecondaryCta = 'Use voice';
   static const openingMicrocopy =
-      'ArchiveMe needs one real save before it can show what returns.';
+      'Thoughtprint needs one real save before it can show what returns.';
   static const chipCheckedAgain = 'I checked again';
   static const chipAvoidedIt = 'I avoided it';
   static const chipWantedControl = 'I wanted control';
@@ -38,7 +38,7 @@ abstract final class BetaRepairLabCopy {
       'There is not enough clear evidence yet. Save one more moment if it returns.';
   static const proofStrongTitle = 'Here is the specific repeat';
   static const proofStrongBody =
-      'ArchiveMe is showing this because the same kind of moment came back, '
+      'Thoughtprint is showing this because the same kind of moment came back, '
       'not because one entry was important.';
   static const proofStrongWhyAppeared =
       'Why this appeared: this pattern appeared across saved moments.';
@@ -47,9 +47,9 @@ abstract final class BetaRepairLabCopy {
   static const proofFeedbackTooVague = 'Too vague';
   static const proofFeedbackNotRelevant = 'Not relevant';
   static const proofFeedbackTooVagueResponse =
-      'Got it. ArchiveMe will wait for clearer evidence before showing this again.';
+      'Got it. Thoughtprint will wait for clearer evidence before showing this again.';
   static const proofFeedbackNotRelevantResponse =
-      'Got it. ArchiveMe will not treat this as a useful pattern.';
+      'Got it. Thoughtprint will not treat this as a useful pattern.';
 
   static const proPlacementTitle = 'Keep the longer trail';
   static const proPlacementBody =

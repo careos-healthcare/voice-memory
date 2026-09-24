@@ -12,7 +12,7 @@ abstract final class FirstSessionProofRepairCopy {
   static const capturePrimaryCta = 'Type one sentence';
   static const captureSecondaryCta = 'Use voice';
   static const captureMicrocopy =
-      'Thirty seconds is enough. ArchiveMe can only show what returns after the first real save.';
+      'Thirty seconds is enough. Thoughtprint can only show what returns after the first real save.';
   static const typedCapturePrompt = 'One moment that felt familiar was...';
 
   static const chipKeptCheckingAgain = 'I kept checking again';
@@ -52,17 +52,17 @@ abstract final class FirstSessionProofRepairCopy {
   // Proof quality repair
   static const proofTitle = 'Make this proof sharper';
   static const proofBody =
-      'ArchiveMe is better when it knows what felt connected. Mark whether this proof was useful, too vague, something you already knew, or not relevant.';
+      'Thoughtprint is better when it knows what felt connected. Mark whether this proof was useful, too vague, something you already knew, or not relevant.';
   static const proofCta = 'Answer one tap';
 
   static const proofNextStepUseful =
-      'Good. ArchiveMe will watch whether this gets louder, softer, or fades.';
+      'Good. Thoughtprint will watch whether this gets louder, softer, or fades.';
   static const proofNextStepTooVague =
-      'Got it. ArchiveMe will wait for clearer evidence before showing this again.';
+      'Got it. Thoughtprint will wait for clearer evidence before showing this again.';
   static const proofNextStepAlreadyKnew =
-      'Got it. ArchiveMe will look for what changed, not just what repeated.';
+      'Got it. Thoughtprint will look for what changed, not just what repeated.';
   static const proofNextStepNotRelevant =
-      'Got it. ArchiveMe will not treat this as a useful pattern.';
+      'Got it. Thoughtprint will not treat this as a useful pattern.';
 
   static String proofNextStepFor(BetaProofFeedbackType type) => switch (type) {
     BetaProofFeedbackType.useful => proofNextStepUseful,

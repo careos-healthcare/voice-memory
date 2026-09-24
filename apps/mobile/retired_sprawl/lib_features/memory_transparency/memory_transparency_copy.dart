@@ -7,7 +7,7 @@ abstract final class MemoryTransparencyCopy {
       'Review active patterns and flag anything that does not feel accurate.';
   static const emptyTitle = 'No active insights yet';
   static const emptyBody =
-      'Save a few reflections and ArchiveMe will list surfaced patterns here.';
+      'Save a few reflections and Thoughtprint will list surfaced patterns here.';
   static const sourcesLabel = 'sources';
   static const notAccurateCta = 'This isn\'t accurate';
   static const suppressedSnack =

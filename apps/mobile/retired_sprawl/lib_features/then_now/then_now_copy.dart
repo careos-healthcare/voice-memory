@@ -23,13 +23,13 @@ abstract final class ThenNowCopy {
   static const cautionLabel = 'Based on saved moments from your local archive.';
 
   static const earlyHeadline =
-      'ArchiveMe is starting to compare earlier and newer moments.';
+      'Thoughtprint is starting to compare earlier and newer moments.';
   static const earlyThenSummary =
       'Earlier saved moments are beginning to form a baseline.';
   static const earlyNowSummary =
       'This is early. Add more moments to make the comparison clearer.';
   static const earlyWhatThisMeans =
-      'ArchiveMe has enough saved moments to start grouping earlier and '
+      'Thoughtprint has enough saved moments to start grouping earlier and '
       'newer signals. The comparison will get clearer with more evidence.';
 
   static const comparisonHeadline =
@@ -42,19 +42,19 @@ abstract final class ThenNowCopy {
   static const nowAppearingMore =
       'Newer moments suggest it may be appearing more.';
   static const comparisonWhatThisMeans =
-      'ArchiveMe grouped earlier and newer saved moments around a repeated '
+      'Thoughtprint grouped earlier and newer saved moments around a repeated '
       'theme. Open entries to review the evidence yourself.';
 
   static const enoughEvidenceLine =
-      'ArchiveMe has enough evidence to compare earlier and newer moments.';
+      'Thoughtprint has enough evidence to compare earlier and newer moments.';
 
   static const insufficientTitle = 'Then vs Now needs more saved moments.';
   static const insufficientBody =
-      'Save a few more useful moments so ArchiveMe can compare what showed up '
+      'Save a few more useful moments so Thoughtprint can compare what showed up '
       'earlier with what appears now.';
   static const noClearChangeTitle = 'No clear change yet';
   static const noClearChangeBody =
-      'ArchiveMe did not find a repeated theme strong enough to compare. '
+      'Thoughtprint did not find a repeated theme strong enough to compare. '
       'Saving another moment around the same watch theme may help.';
 
   static const supportSectionTitle = 'Then vs now';

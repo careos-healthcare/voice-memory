@@ -13,12 +13,12 @@ abstract final class OnboardingV1Copy {
 
   /// Same claim as the repeating-phrase picture: we show your wording.
   static const welcomeBody =
-      'ArchiveMe is a private voice archive of what you actually said. '
+      'Thoughtprint is a private voice archive of what you actually said. '
       'When a phrase repeats, those moments sit next to each other — '
       'your wording, not a verdict. '
       'It does not diagnose, treat, or promise transformation.';
 
-  static const trustPillarsHeading = 'How ArchiveMe earns trust';
+  static const trustPillarsHeading = 'How Thoughtprint earns trust';
 
   static const pillar1Title = 'Your words are cited as evidence';
   static const pillar1Body =

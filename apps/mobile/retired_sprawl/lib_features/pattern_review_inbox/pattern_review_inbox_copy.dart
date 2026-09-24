@@ -9,11 +9,11 @@ abstract final class PatternReviewInboxCopy {
   static const viewAllCta = 'View all review items';
 
   static const sheetTitle = 'Archive review inbox';
-  static const sheetSubtitle = 'Things ArchiveMe needs your judgement on.';
+  static const sheetSubtitle = 'Things Thoughtprint needs your judgement on.';
 
   static const emptyTitle = 'Nothing needs review right now';
   static const emptyBody =
-      'Keep recording real moments. ArchiveMe will ask for your judgement when something repeats, changes, or needs correcting.';
+      'Keep recording real moments. Thoughtprint will ask for your judgement when something repeats, changes, or needs correcting.';
 
   static const chipNeedsCheck = 'Needs your check';
   static const chipOptional = 'Optional';
@@ -21,26 +21,26 @@ abstract final class PatternReviewInboxCopy {
 
   static const firstProofTruthTitle = 'Does this feel true?';
   static const firstProofTruthBody =
-      'ArchiveMe noticed a repeat. Confirm whether it fits.';
+      'Thoughtprint noticed a repeat. Confirm whether it fits.';
 
   static const whatChangedTitle = 'What changed since last time?';
   static const whatChangedBody = 'Mark what felt different this time.';
 
-  static const patternCorrectionTitle = 'ArchiveMe got this wrong?';
+  static const patternCorrectionTitle = 'Thoughtprint got this wrong?';
   static const patternCorrectionBody =
       'Correct the pattern, remove evidence, or send feedback.';
 
   static const quietSignalTitle = 'This has not shown up recently';
   static const quietSignalBody =
-      'ArchiveMe was watching this thread, but your recent moments did not show it.';
+      'Thoughtprint was watching this thread, but your recent moments did not show it.';
 
   static const helpedTrackingTitle = 'Did something help?';
   static const helpedTrackingBody =
-      'Mark what seemed to help so ArchiveMe can remember it.';
+      'Mark what seemed to help so Thoughtprint can remember it.';
 
   static const patternRenameTitle = 'Name this pattern';
   static const patternRenameBody =
-      'Use your own words for what ArchiveMe noticed.';
+      'Use your own words for what Thoughtprint noticed.';
 
   static const reviewCorrectionCta = 'Review correction options';
   static const keepWatchingCta = 'Keep watching';

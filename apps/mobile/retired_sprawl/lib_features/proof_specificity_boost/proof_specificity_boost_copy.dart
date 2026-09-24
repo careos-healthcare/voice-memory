@@ -5,7 +5,7 @@ abstract final class ProofSpecificityBoostCopy {
   static const title = 'Why this is not just a guess';
 
   static const body =
-      'ArchiveMe is showing this because more than one saved moment pointed '
+      'Thoughtprint is showing this because more than one saved moment pointed '
       'to the same direction.';
 
   static const evidenceHeading = 'The repeated signal';
@@ -25,10 +25,10 @@ abstract final class ProofSpecificityBoostCopy {
   static const correctionPrompt = 'Does this fit?';
 
   static const tooVagueFollowUp =
-      'Got it. ArchiveMe will need clearer evidence before making this feel strong.';
+      'Got it. Thoughtprint will need clearer evidence before making this feel strong.';
 
   static const notRelevantFollowUp =
-      'Got it. ArchiveMe will treat this lightly unless it returns.';
+      'Got it. Thoughtprint will treat this lightly unless it returns.';
 
   static String optionLabel(ProofSpecificityBoostAnswerType answer) =>
       switch (answer) {
@@ -44,7 +44,7 @@ abstract final class ProofSpecificityBoostCopy {
         ProofSpecificityBoostAnswerType.notRelevant => notRelevantFollowUp,
         ProofSpecificityBoostAnswerType.yes ||
         ProofSpecificityBoostAnswerType.aLittle =>
-          'Thanks — that helps ArchiveMe stay calibrated.',
+          'Thanks — that helps Thoughtprint stay calibrated.',
       };
 
   static const List<String> all = [
@@ -61,7 +61,7 @@ abstract final class ProofSpecificityBoostCopy {
     'A little',
     'Too vague',
     'Not relevant',
-    'Thanks — that helps ArchiveMe stay calibrated.',
+    'Thanks — that helps Thoughtprint stay calibrated.',
   ];
 }
 

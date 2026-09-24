@@ -11,7 +11,7 @@ abstract final class PrivacyDataControlsCopy {
 
   static const String dataStaysOnDeviceTitle = PrivacyCopyPolicy.privateByDefault;
   static const dataStaysOnDeviceBody =
-      'ArchiveMe stores your journal file encrypted on this device. Archive '
+      'Thoughtprint stores your journal file encrypted on this device. Archive '
       'metadata and prefs remain in plaintext JSON. Share cards do not include '
       'your raw entries.';
 

@@ -3,9 +3,9 @@ abstract class ArchiveDiscoveryShareCopy {
   ArchiveDiscoveryShareCopy._();
 
   static const String introLine = 'My archive noticed:';
-  static const String footer = 'ArchiveMe';
+  static const String footer = 'Thoughtprint';
   static const String shareDiscoveryLabel = 'Share Discovery';
-  static const String shareSheetText = 'From my ArchiveMe archive';
+  static const String shareSheetText = 'From my Thoughtprint archive';
   static const String sheetTitle = 'Share this discovery';
 
   static String evidenceLine(int recordingCount) {

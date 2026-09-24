@@ -7,7 +7,7 @@ abstract final class PatternLifecycleCopy {
   static const formingLabel = 'Forming';
 
   static const formingBody =
-      'ArchiveMe is collecting evidence. One more related moment may turn this into a pattern.';
+      'Thoughtprint is collecting evidence. One more related moment may turn this into a pattern.';
 
   static const repeatedLabel = 'Repeated';
 
@@ -17,7 +17,7 @@ abstract final class PatternLifecycleCopy {
   static const watchingLabel = 'Watching';
 
   static const watchingBody =
-      'ArchiveMe is watching whether this comes back, changes, or stays quiet.';
+      'Thoughtprint is watching whether this comes back, changes, or stays quiet.';
 
   static const changingLabel = 'Changing';
 

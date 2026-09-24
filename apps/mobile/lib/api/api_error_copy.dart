@@ -6,7 +6,7 @@ abstract final class ApiErrorCopy {
       'Something went wrong. Please try again in a moment.';
 
   static const String networkUnreachable =
-      'ArchiveMe could not connect right now. Check your connection and try again.';
+      'Thoughtprint could not connect right now. Check your connection and try again.';
 
   static const String requestTimedOut =
       'That took longer than expected. Please try again.';
@@ -24,10 +24,10 @@ abstract final class ApiErrorCopy {
   static const String tooManyRequests = 'Please wait a moment, then try again.';
 
   static const String serviceUnavailable =
-      'ArchiveMe is temporarily unavailable. Please try again soon.';
+      'Thoughtprint is temporarily unavailable. Please try again soon.';
 
-  /// When a device cannot reach ArchiveMe — calm copy only, no setup instructions.
+  /// When a device cannot reach Thoughtprint — calm copy only, no setup instructions.
   static const String localDeviceConnectionHint =
-      'ArchiveMe could not connect from this device. Check that you are online '
+      'Thoughtprint could not connect from this device. Check that you are online '
       'and try again.';
 }

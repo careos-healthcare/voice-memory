@@ -7,7 +7,7 @@ abstract class ArchiveBeliefThreadCopy {
   static const String currentBeliefLabel = 'What this may be pointing to';
   static const String evidenceLabel = 'Evidence';
   static const String whatChangedLabel = 'What changed';
-  static const String whatToTestLabel = 'What ArchiveMe is watching next';
+  static const String whatToTestLabel = 'What Thoughtprint is watching next';
 
   static const String timelineTitle = 'This thread over time';
   static const String timelineFirstAppeared = 'First appeared';
@@ -29,7 +29,7 @@ abstract class ArchiveBeliefThreadCopy {
   static const String proNearbyTitle = 'Keep the longer proof trail';
   static const String fullArchiveHistoryTitle = 'Keep the longer proof trail';
   static const String fullArchiveHistoryBody =
-      'Your first repeat is free. Pro keeps the longer proof trail so ArchiveMe '
+      'Your first repeat is free. Pro keeps the longer proof trail so Thoughtprint '
       'can show what returns, changes, fades, or gets corrected over time.';
   static const List<String> fullArchiveHistoryBullets = [
     'Longer proof trail',
@@ -41,15 +41,15 @@ abstract class ArchiveBeliefThreadCopy {
   static const String proKeepsTimeline =
       'Pro keeps the longer proof trail over time.';
   static const String proComparesReturns =
-      'Pro lets ArchiveMe compare returns over time.';
+      'Pro lets Thoughtprint compare returns over time.';
   static const String whyPro =
-      'ArchiveMe becomes more useful as the evidence trail grows.';
+      'Thoughtprint becomes more useful as the evidence trail grows.';
   static const String proDeeperHistory =
-      'Pro keeps the longer proof trail so ArchiveMe can compare returns over time.';
+      'Pro keeps the longer proof trail so Thoughtprint can compare returns over time.';
   static const String proReviewChanges =
       'Pro keeps change tracking across your archive over time.';
   static const String proBridgeBody =
-      'Your first repeat is free. Pro keeps the longer proof trail so ArchiveMe '
+      'Your first repeat is free. Pro keeps the longer proof trail so Thoughtprint '
       'can show what returns, changes, fades, or gets corrected over time.';
   static const String proNearbyBridgeBody =
       'Free shows the first repeat. Pro keeps the longer proof trail over time.';
@@ -62,18 +62,18 @@ abstract class ArchiveBeliefThreadCopy {
   static const String recordMoreEvidence = 'Record more evidence';
 
   static const String saveThreadThanks =
-      'Saved. ArchiveMe will keep watching this thread.';
+      'Saved. Thoughtprint will keep watching this thread.';
   static const String notMeThanks =
-      'Thanks — ArchiveMe will treat this as separate.';
+      'Thanks — Thoughtprint will treat this as separate.';
   static const String closeThanks =
-      'Thanks — that helps ArchiveMe stay closer next time.';
+      'Thanks — that helps Thoughtprint stay closer next time.';
 
   static const String weeklyTitle = "This week, here's what changed.";
   static const String weeklyWhatKeptReturning = 'What kept returning';
   static const String weeklyWhatChanged = 'What changed';
-  static const String weeklyWhatToTestNext = 'What ArchiveMe is watching next';
+  static const String weeklyWhatToTestNext = 'What Thoughtprint is watching next';
   static const String weeklyProContinuity =
-      'Your first repeat is free. Pro keeps weekly reviews so ArchiveMe can compare '
+      'Your first repeat is free. Pro keeps weekly reviews so Thoughtprint can compare '
       'what repeated and changed over time.';
 
   static const String entryStarterRepeated = 'Something repeated';
@@ -84,7 +84,7 @@ abstract class ArchiveBeliefThreadCopy {
   static const String trustDelete = 'You can delete entries.';
   static const String trustControl = 'You control what gets saved.';
   static const String trustNotTherapy =
-      'ArchiveMe is not therapy or diagnosis.';
+      'Thoughtprint is not therapy or diagnosis.';
 
   static const List<String> all = [
     threadTitle,

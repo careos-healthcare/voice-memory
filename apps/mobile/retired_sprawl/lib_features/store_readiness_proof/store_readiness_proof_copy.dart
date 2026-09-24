@@ -5,7 +5,7 @@ abstract final class StoreReadinessProofCopy {
   static const headline = 'Store readiness proof';
 
   static const body =
-      'ArchiveMe should not add more product features until purchase, restore, '
+      'Thoughtprint should not add more product features until purchase, restore, '
       'entitlement, metadata, screenshots, and device smoke are proven.';
 
   static const revenueCatLine =
@@ -18,7 +18,7 @@ abstract final class StoreReadinessProofCopy {
       'Pro state must be readable before and after purchase or restore.';
 
   static const fallbackLine =
-      'When purchases are unavailable, ArchiveMe should explain calmly and keep '
+      'When purchases are unavailable, Thoughtprint should explain calmly and keep '
       'the app usable.';
 
   static const metadataLine =

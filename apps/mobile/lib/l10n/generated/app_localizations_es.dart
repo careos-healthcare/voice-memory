@@ -29,13 +29,13 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get accountAuthCreateBody =>
-      'ArchiveMe es un diario de voz privado que convierte tus pensamientos hablados en una historia de vida unificada e inteligencia personal profunda. Crea una cuenta para restaurar el acceso más tarde.';
+      'Thoughtprint es un diario de voz privado que convierte tus pensamientos hablados en una historia de vida unificada e inteligencia personal profunda. Crea una cuenta para restaurar el acceso más tarde.';
 
   @override
   String get accountAuthCreateCta => 'Crear cuenta';
 
   @override
-  String get accountAuthCreateTitle => 'Crea tu cuenta de ArchiveMe';
+  String get accountAuthCreateTitle => 'Crea tu cuenta de Thoughtprint';
 
   @override
   String get accountAuthEmailLabel => 'Correo electrónico';
@@ -65,7 +65,7 @@ class AppLocalizationsEs extends AppLocalizations {
       'Error al iniciar sesión. Comprueba el código e inténtalo de nuevo.';
 
   @override
-  String get accountAuthSignInTitle => 'Inicia sesión en ArchiveMe';
+  String get accountAuthSignInTitle => 'Inicia sesión en Thoughtprint';
 
   @override
   String get accountAuthSignOut => 'Cerrar sesión';
@@ -76,13 +76,13 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get accountAuthTimingNote =>
-      'ArchiveMe es un diario de voz privado que convierte tus pensamientos hablados en una historia de vida unificada e inteligencia personal profunda. Puedes usarlo localmente sin cuenta.';
+      'Thoughtprint es un diario de voz privado que convierte tus pensamientos hablados en una historia de vida unificada e inteligencia personal profunda. Puedes usarlo localmente sin cuenta.';
 
   @override
   String get accountScreenLabel => 'Pantalla de cuenta';
 
   @override
-  String get appTitle => 'ArchiveMe';
+  String get appTitle => 'Thoughtprint';
 
   @override
   String get archiveAddMoment => 'Añadir un momento';
@@ -108,11 +108,11 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get archiveNeedsComparison =>
-      'Añade otro momento para que ArchiveMe pueda comparar lo que cambió.';
+      'Añade otro momento para que Thoughtprint pueda comparar lo que cambió.';
 
   @override
   String get archiveNeedsSupportedMoments =>
-      'ArchiveMe necesita al menos dos momentos compatibles antes de explicar un patrón.';
+      'Thoughtprint necesita al menos dos momentos compatibles antes de explicar un patrón.';
 
   @override
   String get archiveNextMomentGuidance =>
@@ -406,14 +406,14 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get recordingPlainLanguageHint =>
-      'Dilo con claridad. ArchiveMe busca patrones, no juicios.';
+      'Dilo con claridad. Thoughtprint busca patrones, no juicios.';
 
   @override
   String get recordingProcessingStatus => 'Procesando';
 
   @override
   String get recordingPromptNudgeBody =>
-      'ArchiveMe usa lo que grabas para mostrar cada día cosas más claras que merecen la pena comprobar.';
+      'Thoughtprint usa lo que grabas para mostrar cada día cosas más claras que merecen la pena comprobar.';
 
   @override
   String get recordingPromptNudgeTitle =>
@@ -477,7 +477,7 @@ class AppLocalizationsEs extends AppLocalizations {
       'Captura un momento desde la pantalla de inicio.';
 
   @override
-  String get accountTitle => 'Cuenta de ArchiveMe';
+  String get accountTitle => 'Cuenta de Thoughtprint';
 
   @override
   String get syncStatus => 'Estado de sincronización';
@@ -589,7 +589,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get paywallDifferentiation =>
-      'ArchiveMe no intenta responder mejor que ChatGPT. Intenta recordar de otra manera.';
+      'Thoughtprint no intenta responder mejor que ChatGPT. Intenta recordar de otra manera.';
 
   @override
   String get paywallTrust =>
@@ -652,7 +652,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get valueMomentThreadReturnBody =>
-      'Este hilo ha regresado antes. Pro conserva el historial de evidencia para que ArchiveMe pueda mostrar si se fortalece, se suaviza o cambia.';
+      'Este hilo ha regresado antes. Pro conserva el historial de evidencia para que Thoughtprint pueda mostrar si se fortalece, se suaviza o cambia.';
 
   @override
   String get valueMomentBeliefBody =>
@@ -660,7 +660,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get valueMomentWeeklyBody =>
-      'Tu revisión semanal encontró algo para comparar. Pro conserva las revisiones semanales del archivo para que ArchiveMe pueda seguir lo que cambió con el tiempo.';
+      'Tu revisión semanal encontró algo para comparar. Pro conserva las revisiones semanales del archivo para que Thoughtprint pueda seguir lo que cambió con el tiempo.';
 
   @override
   String get valueMomentProofCounterBody =>
@@ -668,7 +668,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get valueMomentFallbackBody =>
-      'Tu primera repetición es gratis. Pro conserva el historial de evidencia para que ArchiveMe pueda mostrar si los patrones se fortalecen, se suavizan o cambian con el tiempo.';
+      'Tu primera repetición es gratis. Pro conserva el historial de evidencia para que Thoughtprint pueda mostrar si los patrones se fortalecen, se suavizan o cambian con el tiempo.';
 
   @override
   String get subscriptionPaywallNoOfferings =>
@@ -688,7 +688,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get patternsEarlyStateBody =>
-      'Graba algunos momentos reales. ArchiveMe buscará lo que se repite entre ellos.';
+      'Graba algunos momentos reales. Thoughtprint buscará lo que se repite entre ellos.';
 
   @override
   String get patternsEmptyCta => 'Grabar momento';
@@ -716,7 +716,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get patternsFirstEntrySavedBody =>
-      'Graba un momento más claro y ArchiveMe podrá comparar lo que se repite.';
+      'Graba un momento más claro y Thoughtprint podrá comparar lo que se repite.';
 
   @override
   String get patternsFirstEntrySavedCta => 'Grabar otro momento';
@@ -736,14 +736,14 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get allPatternsLead =>
-      'Patrones y temas que ArchiveMe sigue notando en tus reflexiones.';
+      'Patrones y temas que Thoughtprint sigue notando en tus reflexiones.';
 
   @override
   String get patternsCheckInWaitingTitle => 'Registro pendiente';
 
   @override
   String get patternsCheckInWaitingBody =>
-      'ArchiveMe tiene una pregunta de tu último momento.';
+      'Thoughtprint tiene una pregunta de tu último momento.';
 
   @override
   String get patternsCheckInWaitingCta => 'Responder ahora';
@@ -762,7 +762,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get patternsWatchingSignalTitle =>
-      'ArchiveMe está observando esta señal';
+      'Thoughtprint está observando esta señal';
 
   @override
   String get patternsWatchingSignalBody =>
@@ -791,7 +791,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get patternsComeBackBody =>
-      'ArchiveMe compara lo que guardas con el tiempo.';
+      'Thoughtprint compara lo que guardas con el tiempo.';
 
   @override
   String get patternsComeBackRecordCta => 'Grabar la reflexión de hoy';

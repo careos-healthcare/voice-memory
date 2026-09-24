@@ -2,7 +2,7 @@
 abstract final class PrivateReportCopy {
   PrivateReportCopy._();
 
-  static const title = 'My ArchiveMe report';
+  static const title = 'My Thoughtprint report';
 
   static const subtitle =
       'A private summary from your saved moments on this device.';
@@ -16,7 +16,7 @@ abstract final class PrivateReportCopy {
   static const sectionFallback = 'Not enough evidence yet';
 
   static const insufficientEvidence =
-      'ArchiveMe needs more evidence before creating a private report.';
+      'Thoughtprint needs more evidence before creating a private report.';
 
   static const footer =
       'This report is private. It is based on saved moments from this device. '

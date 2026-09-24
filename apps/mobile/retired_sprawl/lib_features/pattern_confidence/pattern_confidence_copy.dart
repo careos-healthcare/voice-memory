@@ -7,7 +7,7 @@ abstract final class PatternConfidenceCopy {
   static const earlySignalLabel = 'Early signal';
 
   static const earlySignalBody =
-      'Seen in 2 saved moments. ArchiveMe needs one more related moment before calling it a pattern.';
+      'Seen in 2 saved moments. Thoughtprint needs one more related moment before calling it a pattern.';
 
   static const repeatedPatternLabel = 'Repeated pattern';
 
@@ -26,7 +26,7 @@ abstract final class PatternConfidenceCopy {
   static const notEnoughYetLabel = 'Not enough yet';
 
   static const notEnoughYetBody =
-      'ArchiveMe needs more real moments before showing a pattern.';
+      'Thoughtprint needs more real moments before showing a pattern.';
 
   static String labelFor(PatternConfidenceState state) => switch (state) {
     PatternConfidenceState.earlySignal => earlySignalLabel,
@@ -58,15 +58,15 @@ abstract final class PatternConfidenceCopy {
     ...allExplanationStrings(),
   ];
 
-  static const explanationTitle = 'Why ArchiveMe is showing this';
+  static const explanationTitle = 'Why Thoughtprint is showing this';
 
   static const explanationIntro =
-      'ArchiveMe uses saved evidence, not a single answer.';
+      'Thoughtprint uses saved evidence, not a single answer.';
 
   static const explanationFooter = 'No single moment proves the whole story.';
 
   static const explanationDifferentiation =
-      'ChatGPT can answer from one conversation. ArchiveMe explains the evidence trail behind a pattern.';
+      'ChatGPT can answer from one conversation. Thoughtprint explains the evidence trail behind a pattern.';
 
   static const explanationEarlySignalLabel = 'Early signal';
   static const explanationEarlySignalBody =
@@ -78,11 +78,11 @@ abstract final class PatternConfidenceCopy {
 
   static const explanationCurrentLabel = 'Current';
   static const explanationCurrentBody =
-      'This has appeared recently, so ArchiveMe gives it more weight.';
+      'This has appeared recently, so Thoughtprint gives it more weight.';
 
   static const explanationFadingLabel = 'Fading';
   static const explanationFadingBody =
-      'This has not appeared recently, so ArchiveMe gives it less weight.';
+      'This has not appeared recently, so Thoughtprint gives it less weight.';
 
   static const explanationSoftenedLabel = 'Softened';
   static const explanationSoftenedBody =
@@ -94,7 +94,7 @@ abstract final class PatternConfidenceCopy {
 
   static const explanationNeedsFreshProofLabel = 'Needs fresh proof';
   static const explanationNeedsFreshProofBody =
-      'This may still matter, but ArchiveMe needs a newer saved moment before treating it as current.';
+      'This may still matter, but Thoughtprint needs a newer saved moment before treating it as current.';
 
   static String explanationLabelFor(PatternConfidenceExplanationState state) =>
       switch (state) {

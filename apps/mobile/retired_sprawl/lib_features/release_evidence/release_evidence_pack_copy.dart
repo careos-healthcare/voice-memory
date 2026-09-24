@@ -5,7 +5,7 @@ abstract final class ReleaseEvidencePackCopy {
   static const headline = 'Release evidence pack';
 
   static const body =
-      'One evidence pack that proves ArchiveMe is ready for TestFlight or '
+      'One evidence pack that proves Thoughtprint is ready for TestFlight or '
       'submission. Proof only — not product work.';
 
   static const notReadyLine =

@@ -22,7 +22,7 @@ abstract final class TheoryPageCopy {
   static const confidenceLabel = 'Confidence';
   static const emptyTitle = 'No working theories yet';
   static const emptyBody =
-      'After a few reflections, ArchiveMe can surface falsifiable hypotheses from patterns already in your archive.';
+      'After a few reflections, Thoughtprint can surface falsifiable hypotheses from patterns already in your archive.';
   static const loadingBody = 'Reading your thinking history…';
   static const showEvidence = 'Show evidence';
   static const hideEvidence = 'Hide evidence';

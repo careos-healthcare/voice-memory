@@ -4,7 +4,7 @@ import 'package:archiveme_mobile/features/proof_confidence_calibration/proof_con
 abstract final class ProofConfidenceCalibrationCopy {
   ProofConfidenceCalibrationCopy._();
 
-  static const watchOnly = 'ArchiveMe is watching this for now.';
+  static const watchOnly = 'Thoughtprint is watching this for now.';
 
   static const emerging = 'This may be starting to repeat.';
 
@@ -13,7 +13,7 @@ abstract final class ProofConfidenceCalibrationCopy {
   static const strong = 'This has a clearer timeline now.';
 
   static const corrected =
-      'You corrected this, so ArchiveMe is treating it lightly.';
+      'You corrected this, so Thoughtprint is treating it lightly.';
 
   static const freshReturn = 'This returned after you marked it as background.';
 
@@ -23,16 +23,16 @@ abstract final class ProofConfidenceCalibrationCopy {
   static const helpedSoftenedLead = 'Recent evidence looks lighter or helped.';
 
   static const watchOnlySubtitle =
-      'ArchiveMe is watching this lightly until the overlap is clearer.';
+      'Thoughtprint is watching this lightly until the overlap is clearer.';
 
   static const firstProofPayoffEmerging =
-      'ArchiveMe noticed the same thread across your saved moments.';
+      'Thoughtprint noticed the same thread across your saved moments.';
 
   static const returnAfterProofEmerging =
-      'ArchiveMe has enough to start a timeline. The next useful moment is whether this returns or changes.';
+      'Thoughtprint has enough to start a timeline. The next useful moment is whether this returns or changes.';
 
   static const returnAfterProofStrong =
-      'ArchiveMe has a clearer timeline now. The next useful moment is whether this returns or changes.';
+      'Thoughtprint has a clearer timeline now. The next useful moment is whether this returns or changes.';
 
   static const bannedIdentityClaims = [
     'you always',

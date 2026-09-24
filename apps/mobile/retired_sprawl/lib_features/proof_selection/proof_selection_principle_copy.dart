@@ -5,7 +5,7 @@ abstract final class ProofSelectionPrincipleCopy {
   static const headline = 'Why this proof appears first';
 
   static const body =
-      'ArchiveMe shows the clearest specific repeat it can compare safely right '
+      'Thoughtprint shows the clearest specific repeat it can compare safely right '
       'now. It is not saying this is the most important thing. You can confirm '
       'it or correct it.';
 
@@ -16,7 +16,7 @@ abstract final class ProofSelectionPrincipleCopy {
   static const decisionLabel = 'Selection, not ranking';
 
   static const whyThisOneLine =
-      'Why this one: ArchiveMe is showing the clearest specific repeat it can '
+      'Why this one: Thoughtprint is showing the clearest specific repeat it can '
       'compare safely right now.';
 
   static const notRankingOrMostImportantLine =

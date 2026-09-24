@@ -5,7 +5,7 @@ abstract final class TestFlightMetricsCopy {
   static const title = 'TestFlight beta metrics';
 
   static const subtitle =
-      'Track whether users reach the ArchiveMe proof moment.';
+      'Track whether users reach the Thoughtprint proof moment.';
 
   static const localCountsNote =
       'Local device counts only — no transcripts or personal text.';

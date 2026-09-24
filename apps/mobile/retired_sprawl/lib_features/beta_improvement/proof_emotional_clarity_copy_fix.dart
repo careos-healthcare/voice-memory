@@ -7,7 +7,7 @@ abstract final class ProofEmotionalClarityCopyFix {
   static const headline = 'This came back.';
 
   static const subheadline =
-      'It is not just one moment now. ArchiveMe found it more than once.';
+      'It is not just one moment now. Thoughtprint found it more than once.';
 
   static const whatCameBackLabel = 'What came back';
   static const whatChangedLabel = 'What changed';
@@ -28,14 +28,14 @@ abstract final class ProofEmotionalClarityCopyFix {
   static const repeatedPayoff = 'This looks like a repeat.';
   static const changedPayoff = 'The pattern changed.';
   static const fadedPayoff = 'It may be fading.';
-  static const notSurePayoff = 'ArchiveMe will keep watching.';
+  static const notSurePayoff = 'Thoughtprint will keep watching.';
 
   static const watchOnlySubhead =
-      'ArchiveMe is watching for whether this comes back.';
+      'Thoughtprint is watching for whether this comes back.';
   static const watchOnlyEvidence = 'There is not enough proof yet.';
 
   static const cautionFooter =
-      'ArchiveMe compares your own words cautiously — not as certainty or a guarantee.';
+      'Thoughtprint compares your own words cautiously — not as certainty or a guarantee.';
 
   static const List<String> bannedWords = [
     'therapy',

@@ -3,9 +3,9 @@ abstract final class EarlyArchiveInsightQualityCopy {
   EarlyArchiveInsightQualityCopy._();
 
   static const repeatFallback =
-      'ArchiveMe has seen this come back across 3 moments.';
+      'Thoughtprint has seen this come back across 3 moments.';
 
-  static const twoEntryRepeatFallback = 'ArchiveMe noticed this came up again.';
+  static const twoEntryRepeatFallback = 'Thoughtprint noticed this came up again.';
 
   static const timelineRepeatFallback = 'Seen across 3 moments.';
 
@@ -17,14 +17,14 @@ abstract final class EarlyArchiveInsightQualityCopy {
       'You mentioned something that may have helped.';
 
   static const timelineSubtitleFallback =
-      'ArchiveMe is tracking what repeats, what starts it, and what may help '
+      'Thoughtprint is tracking what repeats, what starts it, and what may help '
       'it soften.';
 
   static const changeNoticeBodyFallback =
       'The same loop came back, but your archive noticed it may have been softer.';
 
   static const triggerPayoffBodyFallback =
-      'You mentioned what happened right before it. That gives ArchiveMe '
+      'You mentioned what happened right before it. That gives Thoughtprint '
       'stronger evidence for what starts this loop.';
 
   static const helpfulActionPayoffBodyFallback =

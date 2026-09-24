@@ -8,7 +8,7 @@ abstract final class PaywallObjectionCopy {
 
   static const notJournalingQuestion = 'Is this just journaling?';
   static const notJournalingAnswer =
-      'No. You save moments when they stand out. ArchiveMe tracks what returns, '
+      'No. You save moments when they stand out. Thoughtprint tracks what returns, '
       'changes, fades, and becomes useful.';
 
   static const notAiChatQuestion = 'Is this just more AI chat?';

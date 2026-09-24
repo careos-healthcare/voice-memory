@@ -12,7 +12,7 @@ abstract final class ArchiveThoughtMapCopy {
   static const behaviourLabel = 'Behaviour';
   static const reliefLabel = 'Relief';
   static const costLabel = 'Cost';
-  static const alternativeLabel = 'What ArchiveMe is watching next';
+  static const alternativeLabel = 'What Thoughtprint is watching next';
 
   static const connectorBecause = 'because';
   static const connectorSo = 'so';
@@ -26,9 +26,9 @@ abstract final class ArchiveThoughtMapCopy {
   static const notQuiteCta = 'Not quite';
 
   static const feelsRightConfirmation =
-      'Saved. ArchiveMe will keep this thread visible.';
+      'Saved. Thoughtprint will keep this thread visible.';
   static const notQuiteMessage =
-      'ArchiveMe will wait for more evidence before naming this thread.';
+      'Thoughtprint will wait for more evidence before naming this thread.';
 
   static const renameFieldHint = 'Thread title';
   static const renameSaveCta = 'Save title';
@@ -36,7 +36,7 @@ abstract final class ArchiveThoughtMapCopy {
 
   static const whyNodeAppearsTitle = 'Evidence for this node';
   static const nodeEvidenceFallback =
-      'ArchiveMe needs more saved moments before it can explain this node.';
+      'Thoughtprint needs more saved moments before it can explain this node.';
   static const patternSignalDisclaimer =
       'This is a local pattern signal, not a diagnosis.';
   static const recordAnotherMomentCta = 'Record another moment';

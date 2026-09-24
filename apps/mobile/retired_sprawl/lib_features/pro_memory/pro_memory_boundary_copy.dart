@@ -2,7 +2,7 @@
 abstract final class ProMemoryBoundaryCopy {
   ProMemoryBoundaryCopy._();
 
-  static const upgradeBridgeTitle = 'ArchiveMe Pro';
+  static const upgradeBridgeTitle = 'Thoughtprint Pro';
   static const upgradeBridgeBody =
       'Free keeps recent proof. Pro keeps the longer proof trail — older evidence and longer archive history.';
   static const seeProCta = 'See Pro';

@@ -6,9 +6,9 @@ abstract final class BetaTestScriptCopy {
 
   static const settingsTileTitle = 'Early archive test';
   static const settingsTileBody =
-      'Follow the landing promise ArchiveMe needs tested.';
+      'Follow the landing promise Thoughtprint needs tested.';
 
-  static const screenTitle = 'ArchiveMe early test';
+  static const screenTitle = 'Thoughtprint early test';
 
   static const intro =
       'No daily journal required. Save small moments when something stands out, '
@@ -17,7 +17,7 @@ abstract final class BetaTestScriptCopy {
   static const day1Title = 'Step 1 — Save one small moment';
   static const String day1Body = LandingAppContinuityCopy.step1Body;
   static const day1Checklist = [
-    'Open ArchiveMe',
+    'Open Thoughtprint',
     'Save one small moment when something stands out',
     'Check whether you knew what to save',
   ];
@@ -25,7 +25,7 @@ abstract final class BetaTestScriptCopy {
   static const day2Title = 'Step 2 — Come back when something stands out';
   static const String day2Body = LandingAppContinuityCopy.step2Body;
   static const day2Checklist = [
-    'Open ArchiveMe again',
+    'Open Thoughtprint again',
     'Save another moment that stands out',
     'Use the return prompt if it appears',
   ];

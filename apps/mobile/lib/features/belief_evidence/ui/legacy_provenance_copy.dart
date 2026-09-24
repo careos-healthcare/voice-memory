@@ -63,7 +63,7 @@ abstract final class ProvenanceRecoveryCopy {
   /// "sent for processing" is not something a person can weigh.
   static const String remoteDisclosure =
       'Right now this reading happens on a server rather than on this device. '
-      'Your recording would go to the ArchiveMe server, which passes it to '
+      'Your recording would go to the Thoughtprint server, which passes it to '
       'OpenAI Whisper to be turned into text. The text comes back to this '
       'device.';
 

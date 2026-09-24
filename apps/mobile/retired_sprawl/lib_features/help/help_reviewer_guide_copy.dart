@@ -16,15 +16,15 @@ abstract final class HelpReviewerGuideCopy {
   static const screenTitle = 'Help & reviewer guide';
 
   static const settingsTitle = 'Help & reviewer guide';
-  static const settingsSubtitle = 'Learn how to test ArchiveMe safely.';
+  static const settingsSubtitle = 'Learn how to test Thoughtprint safely.';
 
   static const openSampleArchiveButton = 'Open Sample Archive';
   static const sampleArchiveHelpLink = 'Help & reviewer guide';
   static const supportFeedbackLink = 'Support & feedback';
 
-  static const sectionWhatTitle = 'What ArchiveMe does';
+  static const sectionWhatTitle = 'What Thoughtprint does';
   static const sectionWhatBulletOne =
-      'ArchiveMe helps you save moments and see what repeats over time.';
+      'Thoughtprint helps you save moments and see what repeats over time.';
   static const sectionWhatBulletTwo =
       'It shows cautious archive beliefs based on saved evidence.';
 
@@ -51,7 +51,7 @@ abstract final class HelpReviewerGuideCopy {
       'Export archive is explicit and asks you to review before sharing.';
 
   static const sectionExpectationsTitle = 'What not to expect';
-  static const sectionExpectationsBulletOne = 'ArchiveMe does not diagnose.';
+  static const sectionExpectationsBulletOne = 'Thoughtprint does not diagnose.';
   static const sectionExpectationsBulletTwo = 'Beliefs are not conclusions.';
   static const sectionExpectationsBulletThree =
       'It is not a therapy or medical service.';

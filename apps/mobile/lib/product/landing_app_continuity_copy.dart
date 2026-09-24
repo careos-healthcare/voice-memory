@@ -3,7 +3,7 @@ abstract final class LandingAppContinuityCopy {
   LandingAppContinuityCopy._();
 
   static const publicPromise =
-      'When something repeats, save one real moment. ArchiveMe compares it later.';
+      'When something repeats, save one real moment. Thoughtprint compares it later.';
 
   static const subheadline =
       'No daily journal. No streak. No dashboard to maintain.';
@@ -14,10 +14,10 @@ abstract final class LandingAppContinuityCopy {
       '$publicPromise Not a diary. Not ChatGPT. Not homework.';
 
   static const chatGptDifferentiation =
-      'ChatGPT can suggest what to do. ArchiveMe shows what you already said before.';
+      'ChatGPT can suggest what to do. Thoughtprint shows what you already said before.';
 
   static const notesDifferentiation =
-      'Notes store what happened. ArchiveMe checks what returns.';
+      'Notes store what happened. Thoughtprint checks what returns.';
 
   static const proPaidReason = 'Pro keeps the longer proof trail over time.';
 
@@ -30,7 +30,7 @@ abstract final class LandingAppContinuityCopy {
 
   static const step2Title = 'Come back when it repeats';
   static const step2Body =
-      'ArchiveMe compares saved moments later — cautiously, not as homework.';
+      'Thoughtprint compares saved moments later — cautiously, not as homework.';
 
   static const step3Title = 'See what appeared and returned';
   static const step3Body =

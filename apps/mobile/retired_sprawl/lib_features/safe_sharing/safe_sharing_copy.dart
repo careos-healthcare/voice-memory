@@ -8,7 +8,7 @@ abstract final class SafeSharingCopy {
       'A private report may help you explain a pattern to someone you trust.';
 
   static const noDiagnosisDisclaimer =
-      'ArchiveMe does not diagnose, treat, or replace professional support.';
+      'Thoughtprint does not diagnose, treat, or replace professional support.';
 
   static const userControlIncluded = 'You stay in control of what is included.';
 
@@ -22,7 +22,7 @@ abstract final class SafeSharingCopy {
       'Talk about patterns with someone you trust';
 
   static const foundationBody =
-      'ArchiveMe may help you explain evidence from saved moments — only if and when you choose to share.';
+      'Thoughtprint may help you explain evidence from saved moments — only if and when you choose to share.';
 
   /// Terms that must never appear in consumer-facing safe-sharing copy.
   static const bannedTerms = <String>[

@@ -13,20 +13,20 @@ abstract final class EarlyFirstSignalCopy {
   static const oneEntryTitle = 'Add one more moment.';
 
   static const oneEntryBody =
-      'ArchiveMe needs a second moment before it can compare what repeats.';
+      'Thoughtprint needs a second moment before it can compare what repeats.';
 
   // Two moments, no grounded repeat — do not force a pattern.
   static const twoEntryNoPatternTitle = 'Keep adding moments.';
 
   static const twoEntryNoPatternBody =
-      'ArchiveMe has two pieces of evidence, but not enough to call a repeat yet.';
+      'Thoughtprint has two pieces of evidence, but not enough to call a repeat yet.';
 
   // Two moments with a grounded repeat — cautious first signal only.
   static const twoEntryRelatedTitle =
       'One more will confirm whether this repeats.';
 
   static const twoEntryRelatedBody =
-      'ArchiveMe has seen this twice. A third moment makes the pattern clearer.';
+      'Thoughtprint has seen this twice. A third moment makes the pattern clearer.';
 
   /// Legacy alias — prefer [twoEntryRelatedTitle].
   static const String twoEntryPatternStartTitle = twoEntryRelatedTitle;
@@ -41,7 +41,7 @@ abstract final class EarlyFirstSignalCopy {
   static const threeEntryConfirmedTitle = 'This is now a confirmed repeat.';
 
   static const threeEntrySeenThreeTimes =
-      'ArchiveMe found this repeat across 3 moments in your words.';
+      'Thoughtprint found this repeat across 3 moments in your words.';
 
   static const evidenceHeading = 'Evidence from your words:';
 
@@ -51,10 +51,10 @@ abstract final class EarlyFirstSignalCopy {
   static const threeEntryFormingTitle = 'A repeat may be forming.';
 
   static const threeEntryFormingBody =
-      'ArchiveMe needs one more concrete moment before it names this clearly.';
+      'Thoughtprint needs one more concrete moment before it names this clearly.';
 
   static const threeEntryNeedsMoreBody =
-      'ArchiveMe has seen a possible repeat, but it needs one more specific '
+      'Thoughtprint has seen a possible repeat, but it needs one more specific '
       'moment before naming it clearly.';
 
   /// Legacy alias — prefer [evidenceHeading].
@@ -81,7 +81,7 @@ abstract final class EarlyFirstSignalCopy {
       'Now your archive has the repeat and the trigger.';
 
   static const triggerPayoffBody =
-      'You recorded what happened right before it. That gives ArchiveMe '
+      'You recorded what happened right before it. That gives Thoughtprint '
       'stronger evidence for what starts this loop.';
 
   static const triggerPayoffRepeatEvidence = 'Repeat: seen across 3 moments.';
@@ -108,7 +108,7 @@ abstract final class EarlyFirstSignalCopy {
 
   // Payoff after saving from the helpful-action guided prompt.
   static const helpfulActionPayoffTitle =
-      'ArchiveMe captured helpful evidence.';
+      'Thoughtprint captured helpful evidence.';
 
   static const helpfulActionPayoffBody =
       'You mentioned something that may have softened the loop. Your archive is watching whether it shows up again.';

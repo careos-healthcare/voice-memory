@@ -12,7 +12,7 @@ abstract final class ProofClarityImportanceDiagnosticCopy {
       'Was this proof explanation clear enough to judge?';
 
   static const facilitatorQuestionWantsRanking =
-      'Did you want ArchiveMe to rank or prioritize multiple past ideas?';
+      'Did you want Thoughtprint to rank or prioritize multiple past ideas?';
 
   static ProofClarityImportanceReport report(
     ProofClarityImportanceSummary summary,

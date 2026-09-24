@@ -3,7 +3,7 @@ abstract final class ProofCautionGuardCopy {
   ProofCautionGuardCopy._();
 
   static const upgradeBody =
-      'ArchiveMe has enough to treat this as useful, but it is still watching for fresher proof.';
+      'Thoughtprint has enough to treat this as useful, but it is still watching for fresher proof.';
 
   static const bannedMedicalTerms = <String>[
     'therapy',

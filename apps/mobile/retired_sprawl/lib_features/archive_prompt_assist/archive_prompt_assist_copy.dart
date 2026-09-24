@@ -5,7 +5,7 @@ abstract final class ArchivePromptAssistCopy {
   static const headline = 'Not sure what to record?';
 
   static const body =
-      'ArchiveMe can suggest a small prompt from what has already repeated. One '
+      'Thoughtprint can suggest a small prompt from what has already repeated. One '
       'sentence is enough.';
 
   static const safeRepeatPromptPrefix = 'Try one sentence about:';
@@ -25,7 +25,7 @@ abstract final class ArchivePromptAssistCopy {
       'No daily homework. No mind-map maintenance. Save a moment only when it feels real.';
 
   static const chatGptDifferenceLine =
-      'ChatGPT helps you talk now. ArchiveMe helps your past show what keeps coming back.';
+      'ChatGPT helps you talk now. Thoughtprint helps your past show what keeps coming back.';
 
   static const guardrail =
       'Do not turn prompt assist into chat. It should only reduce effort by suggesting '

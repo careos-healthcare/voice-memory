@@ -56,8 +56,8 @@ abstract class RecordScreenFramingCopy {
     'Start your archive',
     'Notice what repeats',
     'Watch what changes',
-    'ArchiveMe is starting to notice',
-    'Each moment helps ArchiveMe remember the pattern',
+    'Thoughtprint is starting to notice',
+    'Each moment helps Thoughtprint remember the pattern',
     'starting to notice',
   ];
 }

@@ -4,8 +4,8 @@ import 'package:archiveme_mobile/features/beta_proof_feedback/beta_proof_feedbac
 abstract final class ProofRelevanceRepairCopy {
   ProofRelevanceRepairCopy._();
 
-  static const strongLead = 'ArchiveMe noticed this repeated:';
-  static const softerLead = 'ArchiveMe may be noticing this:';
+  static const strongLead = 'Thoughtprint noticed this repeated:';
+  static const softerLead = 'Thoughtprint may be noticing this:';
 
   static const whyAppearedPrefix = 'Why this appeared:';
   static const whyAppearedBody = 'similar moments mention this same behaviour.';
@@ -19,10 +19,10 @@ abstract final class ProofRelevanceRepairCopy {
   static const answerNotRelevant = 'Not relevant';
 
   static const tooVagueResponse =
-      'Got it. ArchiveMe will wait for more specific evidence before showing this again.';
+      'Got it. Thoughtprint will wait for more specific evidence before showing this again.';
 
   static const notRelevantResponse =
-      'Got it. ArchiveMe will not treat this as useful proof.';
+      'Got it. Thoughtprint will not treat this as useful proof.';
 
   static const List<BetaProofFeedbackType> relevanceFeedbackTypes = [
     BetaProofFeedbackType.useful,
@@ -58,7 +58,7 @@ abstract final class ProofRelevanceRepairCopy {
   static String responseFor(BetaProofFeedbackType type) => switch (type) {
     BetaProofFeedbackType.tooVague => tooVagueResponse,
     BetaProofFeedbackType.notRelevant => notRelevantResponse,
-    _ => 'Thanks — this helps tune what ArchiveMe shows next.',
+    _ => 'Thanks — this helps tune what Thoughtprint shows next.',
   };
 
   static Iterable<String> allVisibleStrings() sync* {

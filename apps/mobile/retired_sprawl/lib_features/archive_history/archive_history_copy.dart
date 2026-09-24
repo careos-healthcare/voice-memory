@@ -8,7 +8,7 @@ abstract final class ArchiveHistoryCopy {
 
   static const emptyTitle = 'No saved moments yet';
   static const emptyBody =
-      'Record a few real moments. ArchiveMe will look for what repeats across them.';
+      'Record a few real moments. Thoughtprint will look for what repeats across them.';
 
   static const chipUsedAsEvidence = 'Used as evidence';
   static const chipSavedOnly = 'Saved only';
@@ -20,9 +20,9 @@ abstract final class ArchiveHistoryCopy {
   static const pendingPreview =
       'Voice moment saved. Transcript needs your words.';
 
-  static const noteUsedAsEvidence = 'Helped ArchiveMe spot a repeat.';
+  static const noteUsedAsEvidence = 'Helped Thoughtprint spot a repeat.';
   static const noteNeedsYourWords =
-      'Add what you said so ArchiveMe can use it.';
+      'Add what you said so Thoughtprint can use it.';
   static const noteIgnoredForPatterns = 'Saved, but not used as evidence.';
   static const noteExcludedFromPattern =
       'Saved, but not used as evidence for this pattern.';

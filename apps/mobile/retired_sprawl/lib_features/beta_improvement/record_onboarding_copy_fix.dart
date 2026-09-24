@@ -5,7 +5,7 @@ abstract final class RecordOnboardingCopyFix {
   static const title = 'Save one real moment.';
 
   static const body =
-      'When something like it happens again, ArchiveMe will show what returned, '
+      'When something like it happens again, Thoughtprint will show what returned, '
       'changed, faded, or corrected.';
 
   static const notADiaryLine =

@@ -11,7 +11,7 @@ abstract final class ArchiveDepthCopy {
 
   static const whyDepthTitle = 'Why archive depth matters';
   static const whyDepthBodyOne =
-      'Your archive becomes more useful when ArchiveMe has more evidence to compare.';
+      'Your archive becomes more useful when Thoughtprint has more evidence to compare.';
   static const whyDepthBodyTwo =
       'Depth grows as you save usable moments — not from daily pressure or habit scores.';
 
@@ -20,11 +20,11 @@ abstract final class ArchiveDepthCopy {
 
   static const firstEvidenceLabel = 'First evidence saved';
   static const firstEvidenceExplanation =
-      'ArchiveMe has one moment. Add another when this shows up again.';
+      'Thoughtprint has one moment. Add another when this shows up again.';
 
   static const startingToCompareLabel = 'Starting to compare';
   static const startingToCompareExplanation =
-      'ArchiveMe can begin comparing moments.';
+      'Thoughtprint can begin comparing moments.';
 
   static const cautiousBeliefLabel = 'Cautious belief forming';
   static const cautiousBeliefExplanation =
@@ -32,7 +32,7 @@ abstract final class ArchiveDepthCopy {
 
   static const weeklyReviewLabel = 'Weekly review ready';
   static const weeklyReviewExplanation =
-      'ArchiveMe can now create a broader review.';
+      'Thoughtprint can now create a broader review.';
 
   static const longTermLabel = 'Long-term archive building';
   static const longTermExplanation =

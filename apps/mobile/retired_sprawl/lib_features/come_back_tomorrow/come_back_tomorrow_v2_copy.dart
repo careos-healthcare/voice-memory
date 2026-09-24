@@ -5,7 +5,7 @@ abstract final class ComeBackTomorrowV2Copy {
   static const postSaveTitle = 'Watch this tomorrow';
 
   static const postSaveBody =
-      'ArchiveMe will look for whether this comes back:';
+      'Thoughtprint will look for whether this comes back:';
 
   static const postSaveFooter =
       'Tomorrow, record if it came back, changed, or stayed quiet.';
@@ -14,18 +14,18 @@ abstract final class ComeBackTomorrowV2Copy {
 
   static const returnQuestionTitle = 'Did this come back?';
 
-  static const returnQuestionBody = 'Last time, ArchiveMe was watching:';
+  static const returnQuestionBody = 'Last time, Thoughtprint was watching:';
 
   static const yesCameBack = 'Yes, it came back';
   static const notToday = 'Not today';
   static const different = 'Different this time';
 
   static const helperCameBack =
-      'Record the moment so ArchiveMe can compare it.';
+      'Record the moment so Thoughtprint can compare it.';
   static const helperNotToday =
-      'Okay. That matters too. ArchiveMe will keep watching if it returns.';
+      'Okay. That matters too. Thoughtprint will keep watching if it returns.';
   static const helperDifferent =
-      'Record what changed so ArchiveMe can compare it.';
+      'Record what changed so Thoughtprint can compare it.';
 
   static const cameBackRecordPrompt = 'It came back again today.';
   static const differentRecordPrompt = 'Something felt different this time.';
@@ -33,7 +33,7 @@ abstract final class ComeBackTomorrowV2Copy {
   static const quietSignalTitle = 'This has not shown up recently';
 
   static const quietSignalBody =
-      'ArchiveMe was watching this thread, but your recent moments did not show it.';
+      'Thoughtprint was watching this thread, but your recent moments did not show it.';
 
   static const quietSignalFooter = 'That may matter too.';
 

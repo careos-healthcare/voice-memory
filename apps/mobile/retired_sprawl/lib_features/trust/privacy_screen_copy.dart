@@ -1,4 +1,4 @@
-/// In-app privacy and trust copy — ArchiveMe product voice only.
+/// In-app privacy and trust copy — Thoughtprint product voice only.
 library;
 
 import 'package:archiveme_mobile/security/privacy_claim_catalogue.dart';
@@ -10,7 +10,7 @@ abstract class PrivacyScreenCopy {
   static const String screenTitle = 'Privacy';
 
   static const String intro =
-      'Your recordings and reflections are personal. ArchiveMe is private by '
+      'Your recordings and reflections are personal. Thoughtprint is private by '
       'default. Audio and transcript text are sent only when you turn on '
       'remote processing for a new moment.';
 
@@ -57,7 +57,7 @@ abstract class PrivacyScreenCopy {
 
   static const String aiProcessingTitle = 'Cloud transcription and analysis';
   static const String aiProcessingBody =
-      'When remote processing is on, ArchiveMe sends recorded audio for '
+      'When remote processing is on, Thoughtprint sends recorded audio for '
       'transcription and transcript text for reflection. When it is off, '
       'new moments are saved on this device only. Anything already saved '
       'stays exactly as it is.';
@@ -68,11 +68,11 @@ abstract class PrivacyScreenCopy {
       'uploaded, using a key held on this device. The server stores that '
       'backup as ciphertext. Sync is optional.';
 
-  static const String doesNotDoTitle = 'What ArchiveMe does not do';
+  static const String doesNotDoTitle = 'What Thoughtprint does not do';
   static const String doesNotDoBody =
-      'ArchiveMe does not sell your reflections. ArchiveMe does not include '
-      'recording text in analytics. ArchiveMe does not turn every entry into '
-      'personal memory by default. ArchiveMe is not therapy, medical advice, '
+      'Thoughtprint does not sell your reflections. Thoughtprint does not include '
+      'recording text in analytics. Thoughtprint does not turn every entry into '
+      'personal memory by default. Thoughtprint is not therapy, medical advice, '
       'or emergency support.';
 
   /// Heading for the per-entry marking vocabulary.
@@ -88,7 +88,7 @@ abstract class PrivacyScreenCopy {
 
   /// Names the companies that receive content, and what each one gets.
   ///
-  /// This used to read "ArchiveMe may use trusted processing providers […]
+  /// This used to read "Thoughtprint may use trusted processing providers […]
   /// Provider names may appear in the full privacy policy where required",
   /// which named nobody and pointed at a document to name them later. It has
   /// always had a home: `PrivacyScreen` renders it in the

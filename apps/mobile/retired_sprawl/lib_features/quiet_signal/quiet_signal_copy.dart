@@ -5,7 +5,7 @@ abstract final class QuietSignalCopy {
   static const title = 'This has not shown up recently';
 
   static const body =
-      'ArchiveMe was watching this thread, but your recent moments did not show it.';
+      'Thoughtprint was watching this thread, but your recent moments did not show it.';
 
   static const footer = 'That may matter too.';
 
@@ -16,7 +16,7 @@ abstract final class QuietSignalCopy {
   static const patternDetailHeading = 'Last seen';
 
   static const patternDetailBody =
-      'ArchiveMe last saw this thread earlier. Your recent saved moments have not shown it clearly.';
+      'Thoughtprint last saw this thread earlier. Your recent saved moments have not shown it clearly.';
 
   static const weeklyReviewHeading = 'Quiet signal';
 

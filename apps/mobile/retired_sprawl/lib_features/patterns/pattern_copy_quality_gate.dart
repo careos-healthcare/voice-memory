@@ -32,9 +32,9 @@ abstract class PatternCopyQualityGate {
       'Your archive is starting to show a possible thread.';
   static const similarDirection = 'A few moments point in a similar direction.';
   static const needsMoreEvidence =
-      'Record a few more ordinary moments before ArchiveMe names this pattern.';
+      'Record a few more ordinary moments before Thoughtprint names this pattern.';
   static const currentBeliefFallback =
-      'A possible pattern is forming, but ArchiveMe needs more clear evidence before naming it.';
+      'A possible pattern is forming, but Thoughtprint needs more clear evidence before naming it.';
 
   static const _blockedSubstrings = [
     'follow a heavy should',

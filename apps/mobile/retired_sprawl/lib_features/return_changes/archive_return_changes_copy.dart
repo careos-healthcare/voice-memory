@@ -16,7 +16,7 @@ abstract final class ArchiveReturnChangesCopy {
 
   static const beliefUpdatedTitle = 'Your archive belief changed';
   static const beliefUpdatedBody =
-      'ArchiveMe has more evidence to compare. Review what changed.';
+      'Thoughtprint has more evidence to compare. Review what changed.';
 
   static const contextChangedTitle = 'Your evidence map changed';
   static const contextChangedBody =
@@ -24,7 +24,7 @@ abstract final class ArchiveReturnChangesCopy {
 
   static const weeklyReviewTitle = 'Your weekly review is ready';
   static const weeklyReviewBody =
-      'ArchiveMe has enough evidence for a broader review.';
+      'Thoughtprint has enough evidence for a broader review.';
 
   static Iterable<String> allVisibleCopy() sync* {
     yield reviewChangesButton;

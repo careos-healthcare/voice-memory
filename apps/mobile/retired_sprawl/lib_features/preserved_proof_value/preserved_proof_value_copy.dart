@@ -5,7 +5,7 @@ abstract final class PreservedProofValueCopy {
   static const headline = 'Keep the proof you are building';
 
   static const body =
-      'ArchiveMe is useful because your repeats build evidence over time. Pro keeps '
+      'Thoughtprint is useful because your repeats build evidence over time. Pro keeps '
       'the longer trail so you can see what returned, changed, faded, or was corrected.';
 
   static const freeLine = 'Free shows the first useful proof.';
@@ -23,7 +23,7 @@ abstract final class PreservedProofValueCopy {
       'The value is not storage. The value is seeing what your past keeps proving.';
 
   static const repeatLine =
-      'When something repeats, ArchiveMe can show whether it stayed the same, softened, '
+      'When something repeats, Thoughtprint can show whether it stayed the same, softened, '
       'strengthened, faded, or was corrected.';
 
   static const guardrail =

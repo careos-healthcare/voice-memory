@@ -5,7 +5,7 @@ abstract final class SampleArchiveCopy {
   static const emptyStateTitle = 'See an example first';
   static const emptyStateSubtitle =
       'Example only — Day 1: pressure at work. Day 2: saying yes again. '
-      'Day 3: ArchiveMe notices the repeat. Your private archive stays separate.';
+      'Day 3: Thoughtprint notices the repeat. Your private archive stays separate.';
 
   static const settingsTitle = 'View sample archive';
   static const settingsSubtitle =
@@ -28,15 +28,15 @@ abstract final class SampleArchiveCopy {
   static const tourStep1Title = 'Day 1: save a real moment';
   static const tourStep1Body =
       'Example data only — you save one real moment when something stands out. '
-      'ArchiveMe compares it later.';
+      'Thoughtprint compares it later.';
 
   static const tourStep2Title = 'Day 2: something similar returns';
   static const tourStep2Body =
-      'Example data only — a second similar moment gives ArchiveMe something to compare.';
+      'Example data only — a second similar moment gives Thoughtprint something to compare.';
 
   static const tourStep3Title = 'Day 3: see what repeated';
   static const tourStep3Body =
-      'Example data only — around three moments, ArchiveMe can show what repeated. '
+      'Example data only — around three moments, Thoughtprint can show what repeated. '
       'Cautiously, not as a guarantee.';
 
   static const tourStep4Title = 'This is example data only';
@@ -45,15 +45,15 @@ abstract final class SampleArchiveCopy {
 
   static const tourStep5Title = 'Go back to your archive';
   static const tourStep5Body =
-      'Save real moments when something repeats. ArchiveMe compares them later.';
+      'Save real moments when something repeats. Thoughtprint compares them later.';
 
-  static const demoShareTitle = 'ArchiveMe sample archive';
+  static const demoShareTitle = 'Thoughtprint sample archive';
   static const demoShareSubtitle =
       'Example data only — not your private archive';
   static const demoShareBulletOne =
       'After a few real moments, a pattern can appear.';
   static const demoShareBulletTwo =
-      'ArchiveMe compares what returned, changed, faded, or got corrected.';
+      'Thoughtprint compares what returned, changed, faded, or got corrected.';
   static const demoShareBulletThree =
       'Example data only — never your private archive.';
   static const demoShareEvidenceMapHeading = 'Sample evidence map:';
@@ -62,7 +62,7 @@ abstract final class SampleArchiveCopy {
   static const demoSharePrivacyFooter = 'No private entries shared.';
   static const demoShareShareButton = 'Share demo summary';
   static const demoShareCopyButton = 'Copy demo summary';
-  static const demoShareSubject = 'ArchiveMe sample archive';
+  static const demoShareSubject = 'Thoughtprint sample archive';
 
   static String demoShareEvidenceMapRow(String label, int count) =>
       '$label: $count ${count == 1 ? 'moment' : 'moments'}';

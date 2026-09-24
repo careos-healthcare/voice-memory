@@ -1,6 +1,6 @@
 import 'package:archiveme_mobile/product/landing_app_continuity_copy.dart';
 
-/// Public ArchiveMe positioning — umbrella brand with capacity-yes as first path.
+/// Public Thoughtprint positioning — umbrella brand with capacity-yes as first path.
 abstract final class ArchivePositioningCopy {
   ArchivePositioningCopy._();
 
@@ -30,7 +30,7 @@ abstract final class ArchivePositioningCopy {
   // ——— First-use onboarding (capacity start) ———
   static const String firstUseTitle = LandingAppContinuityCopy.hero;
   static const firstUseBody =
-      'Save one real moment when something stands out. ArchiveMe helps you '
+      'Save one real moment when something stands out. Thoughtprint helps you '
       'see what returned over time.';
   static const firstUseFirstPath =
       'Start with saying yes when you have no capacity.';

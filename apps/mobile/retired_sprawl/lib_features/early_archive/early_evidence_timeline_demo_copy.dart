@@ -2,7 +2,7 @@
 abstract final class EarlyEvidenceTimelineDemoCopy {
   EarlyEvidenceTimelineDemoCopy._();
 
-  static const cta = 'See how ArchiveMe works';
+  static const cta = 'See how Thoughtprint works';
 
   static const sampleBadge = 'Sample';
 

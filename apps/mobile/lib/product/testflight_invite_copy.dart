@@ -42,7 +42,7 @@ abstract class TestFlightInviteCopy {
     switch (variant) {
       case TestFlightInviteVariant.proveEnough:
         return '''
-ArchiveMe TestFlight — proving-enough loop
+Thoughtprint TestFlight — proving-enough loop
 
 I'm testing an app for ambitious people who keep doing more because stopping makes them feel behind.
 
@@ -53,7 +53,7 @@ Record one honest moment today, then one tomorrow, and see if the app catches th
 Route: ${cohortRouteFor(variant)} ($cohortRouteLabel)''';
       case TestFlightInviteVariant.capacityYes:
         return '''
-ArchiveMe TestFlight — yes loop wedge
+Thoughtprint TestFlight — yes loop wedge
 
 ${LoopAcquisitionCopy.capacityYes.headline}
 
@@ -62,7 +62,7 @@ Save 3 yes moments where you felt pulled to agree, then review your yes loop.
 Route: ${cohortRouteFor(variant)} ($cohortRouteLabel)''';
       case TestFlightInviteVariant.generic:
         return '''
-ArchiveMe TestFlight
+Thoughtprint TestFlight
 
 ${LoopAcquisitionCopy.generic.headline}
 
@@ -79,9 +79,9 @@ Route: ${cohortRouteFor(variant)} ($cohortRouteLabel)''';
         : '\n\nWhat you will do:\n${landing.bullets.map((b) => '• $b').join('\n')}';
 
     return '''
-Subject: ArchiveMe TestFlight — ${landing.headline}
+Subject: Thoughtprint TestFlight — ${landing.headline}
 
-Hi — you are invited to test ArchiveMe on TestFlight.
+Hi — you are invited to test Thoughtprint on TestFlight.
 
 ${landing.headline}
 
@@ -103,7 +103,7 @@ Reply with what felt clear and what felt confusing after two days.''';
         return 'Record one moment where you kept doing more because stopping felt uncomfortable. Come back tomorrow and record the next proving moment.';
       case TestFlightInviteVariant.generic:
         return 'Save small moments when something stands out. Come back when another '
-            'moment matters and note whether ArchiveMe helped you see what returned.';
+            'moment matters and note whether Thoughtprint helped you see what returned.';
     }
   }
 

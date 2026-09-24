@@ -7,11 +7,11 @@ abstract final class TimelinePositioningCopy {
   static const title = 'Not a chat. A timeline.';
 
   static const body =
-      'ArchiveMe does not try to answer everything. It shows what your saved '
+      'Thoughtprint does not try to answer everything. It shows what your saved '
       'moments are proving over time.';
 
   static const differentiationLine =
-      'ChatGPT helps with this conversation. ArchiveMe shows the timeline behind it.';
+      'ChatGPT helps with this conversation. Thoughtprint shows the timeline behind it.';
 
   static const List<String> timelineBullets = [
     'First seen',
@@ -25,11 +25,11 @@ abstract final class TimelinePositioningCopy {
   static const proBridgeLine = 'Pro keeps the timeline as it grows.';
 
   static const supportingTodayConnection =
-      'ChatGPT can help with what you ask today. ArchiveMe shows whether today '
+      'ChatGPT can help with what you ask today. Thoughtprint shows whether today '
       'connects to what has kept returning.';
 
   static const supportingNotMoreConversation =
-      'ArchiveMe is not more AI conversation. It is a private evidence trail '
+      'Thoughtprint is not more AI conversation. It is a private evidence trail '
       'built from moments you saved.';
 
   static const supportingValueOverTime =

@@ -8,7 +8,7 @@ abstract final class PatternDetailCopy {
 
   static const evidenceHeading = 'Evidence from your words';
   static const evidenceIntro =
-      'These moments helped ArchiveMe spot the repeat.';
+      'These moments helped Thoughtprint spot the repeat.';
 
   static const whatChangedHeading = 'What changed';
   static const notEnoughChangeEvidence = 'Not enough change evidence yet.';

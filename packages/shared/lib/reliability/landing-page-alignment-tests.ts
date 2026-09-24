@@ -11,7 +11,7 @@ const REQUIRED_LANDING_COPY = {
   hero: "See what keeps returning",
   subheadline: "No daily journal required.",
   chatGptDifferentiation:
-    "ChatGPT can answer a conversation. ArchiveMe shows the timeline behind the pattern.",
+    "ChatGPT can answer a conversation. Thoughtprint shows the timeline behind the pattern.",
   proPaidReason: "Pro keeps the full timeline as it grows.",
 } as const;
 

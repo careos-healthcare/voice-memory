@@ -5,7 +5,7 @@ abstract final class ReleaseCandidateFreezeCopy {
   static const headline = 'Release candidate freeze';
 
   static const body =
-      'ArchiveMe should stop adding product features. From here, only fix blockers '
+      'Thoughtprint should stop adding product features. From here, only fix blockers '
       'that affect release, purchase, restore, trust, safety, or the first journey.';
 
   static const allowedLine =
@@ -19,7 +19,7 @@ abstract final class ReleaseCandidateFreezeCopy {
 
   static const firstJourneyLine =
       'Protect the first journey: save one repeat, feel it mattered, understand '
-      'ArchiveMe compares later, then see the first useful proof.';
+      'Thoughtprint compares later, then see the first useful proof.';
 
   static const proLine =
       'Protect the Pro promise: Free shows the first useful proof. Pro keeps the '

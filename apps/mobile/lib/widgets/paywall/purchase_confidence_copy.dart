@@ -8,7 +8,7 @@ abstract final class PurchaseConfidenceCopy {
   static const cardTitle = 'Private by default';
 
   static const body =
-      'Your saved moments stay yours. You can delete entries, correct ArchiveMe, and restore purchases if needed.';
+      'Your saved moments stay yours. You can delete entries, correct Thoughtprint, and restore purchases if needed.';
 
   static const trustBullets = <String>[
     'You control what you save',

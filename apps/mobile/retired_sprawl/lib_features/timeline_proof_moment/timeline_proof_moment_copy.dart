@@ -10,7 +10,7 @@ abstract final class TimelineProofMomentCopy {
   static const compactTitle = 'Your timeline is forming.';
 
   static const body =
-      'ArchiveMe found more than one saved moment pointing in the same direction.';
+      'Thoughtprint found more than one saved moment pointing in the same direction.';
 
   static const firstSeenRow = 'First seen';
 
@@ -21,10 +21,10 @@ abstract final class TimelineProofMomentCopy {
   static const currentWeightRow = 'Current weight';
 
   static const footer =
-      'ArchiveMe is not treating your past as a verdict. It is showing what still has evidence today.';
+      'Thoughtprint is not treating your past as a verdict. It is showing what still has evidence today.';
 
   static const differentiationLine =
-      'ChatGPT can answer a conversation. ArchiveMe shows the timeline behind the pattern.';
+      'ChatGPT can answer a conversation. Thoughtprint shows the timeline behind the pattern.';
 
   static const proLine = 'Pro keeps the longer proof trail over time.';
 

@@ -1,7 +1,7 @@
 import 'package:archiveme_mobile/security/privacy_claim_catalogue.dart';
 import 'package:archiveme_mobile/security/privacy_copy_policy.dart';
 
-/// ArchiveMe's local-first architecture statement — the single source of truth
+/// Thoughtprint's local-first architecture statement — the single source of truth
 /// shared by the settings trust screen and the onboarding consent step.
 ///
 /// The blocks below are contractual product copy and every claim in them is
@@ -16,7 +16,7 @@ import 'package:archiveme_mobile/security/privacy_copy_policy.dart';
 ///   engine would misdescribe the other, and they are protected by different
 ///   mechanisms with different platform scopes — see
 ///   [PrivacyCopyPolicy.encryptionBaselineDetail]. Storage is the whole of the
-///   claim: no model ArchiveMe ships runs here, because the tree carries no
+///   claim: no model Thoughtprint ships runs here, because the tree carries no
 ///   model binaries and `pubspec.yaml` bundles no model assets, so the copy no
 ///   longer says the transcripts and reflections are *produced* on this
 ///   device;

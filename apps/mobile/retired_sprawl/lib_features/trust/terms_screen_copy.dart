@@ -7,12 +7,12 @@ abstract class TermsScreenCopy {
   static const String lastUpdated = 'Last updated: June 2026';
 
   static const String intro =
-      'By using ArchiveMe you agree to these terms. '
-      'ArchiveMe helps you notice what keeps repeating in your own words.';
+      'By using Thoughtprint you agree to these terms. '
+      'Thoughtprint helps you notice what keeps repeating in your own words.';
 
-  static const String serviceTitle = 'What ArchiveMe is';
+  static const String serviceTitle = 'What Thoughtprint is';
   static const String serviceBody =
-      'ArchiveMe is a private archive for your own voice reflections. '
+      'Thoughtprint is a private archive for your own voice reflections. '
       'It is not therapy, medical advice, coaching, or emergency support.';
 
   static const String contentTitle = 'Your content';
@@ -22,7 +22,7 @@ abstract class TermsScreenCopy {
 
   static const String acceptableUseTitle = 'Acceptable use';
   static const String acceptableUseBody =
-      'Do not use ArchiveMe to store illegal content or to harass others. '
+      'Do not use Thoughtprint to store illegal content or to harass others. '
       'Do not attempt to reverse-engineer or abuse app services.';
 
   static const String subscriptionsTitle = 'Subscriptions';
@@ -32,7 +32,7 @@ abstract class TermsScreenCopy {
 
   static const String liabilityTitle = 'Limitation of liability';
   static const String liabilityBody =
-      'ArchiveMe is a software tool, not a crisis service. Summaries and '
+      'Thoughtprint is a software tool, not a crisis service. Summaries and '
       'patterns are based on your own words and are not medical or therapeutic '
       'guidance.';
 

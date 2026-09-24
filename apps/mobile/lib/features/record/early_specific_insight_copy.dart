@@ -6,7 +6,7 @@ abstract class EarlySpecificInsightCopy {
 
   static const String weakCompareTitle = 'Archive started';
   static const String weakCompareBody =
-      'Add one more moment so ArchiveMe has enough to compare.';
+      'Add one more moment so Thoughtprint has enough to compare.';
   static const String weakCompareFootnote =
       'Nothing is guessed. Patterns only appear when your own words support them.';
 

@@ -8,7 +8,7 @@ abstract final class EvidenceLedgerCopy {
   static const searchHint = 'Search moments, patterns, and evidence…';
   static const emptyTitle = 'No indexed evidence yet';
   static const emptyBody =
-      'Save a moment and let ArchiveMe index citable facts — they will appear here.';
+      'Save a moment and let Thoughtprint index citable facts — they will appear here.';
   static const filterAll = 'All time';
   static const filter7Days = '7 days';
   static const filter30Days = '30 days';

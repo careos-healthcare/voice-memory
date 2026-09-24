@@ -13,7 +13,7 @@ abstract final class LowFrictionReturnCopy {
       'You do not need a perfect entry. Save one sentence, skip today, or come back when something stands out.';
 
   static const permissionLine =
-      'ArchiveMe works best with real moments, not forced daily journaling.';
+      'Thoughtprint works best with real moments, not forced daily journaling.';
 
   static const recordAnythingReminder =
       'You can save a thought, decision, win, worry, memory, conversation, pressure, reaction, or random moment.';

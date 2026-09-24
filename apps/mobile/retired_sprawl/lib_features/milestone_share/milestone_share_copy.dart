@@ -60,7 +60,7 @@ abstract final class MilestoneShareCopy {
     MilestoneShareId.firstSavedMoment => (
       title: 'First saved moment',
       body: 'Your archive started with one honest save.',
-      share: 'I saved my first moment in ArchiveMe.',
+      share: 'I saved my first moment in Thoughtprint.',
       proof: '1 moment saved',
       cta: saveMomentCta,
       route: recordRoute,
@@ -76,7 +76,7 @@ abstract final class MilestoneShareCopy {
     MilestoneShareId.firstWatchThemeChosen => (
       title: 'First watch theme chosen',
       body: 'You picked something to watch across your archive.',
-      share: 'I chose my first watch theme in ArchiveMe.',
+      share: 'I chose my first watch theme in Thoughtprint.',
       proof: 'Watch theme active',
       cta: openMilestoneCardsCta,
       route: route,
@@ -84,7 +84,7 @@ abstract final class MilestoneShareCopy {
     MilestoneShareId.firstWeekPathComplete => (
       title: 'First week path complete',
       body: 'You finished the calm first-week return path.',
-      share: 'I completed my first week path in ArchiveMe.',
+      share: 'I completed my first week path in Thoughtprint.',
       proof: '7-day path complete',
       cta: FirstWeekPathCopy.openPathCta,
       route: FirstWeekPathCopy.route,
@@ -100,7 +100,7 @@ abstract final class MilestoneShareCopy {
     MilestoneShareId.firstRepeatingTheme => (
       title: 'First repeating theme',
       body: 'A theme showed up more than once in your archive.',
-      share: 'ArchiveMe helped me notice my first repeating theme.',
+      share: 'Thoughtprint helped me notice my first repeating theme.',
       proof: 'Repeating theme found',
       cta: openMilestoneCardsCta,
       route: route,
@@ -108,7 +108,7 @@ abstract final class MilestoneShareCopy {
     MilestoneShareId.firstThenVsNowAvailable => (
       title: 'Then vs Now available',
       body: 'You can compare earlier and newer saved moments.',
-      share: 'I can now compare earlier and newer moments in ArchiveMe.',
+      share: 'I can now compare earlier and newer moments in Thoughtprint.',
       proof: 'Then vs Now available',
       cta: ThenNowCopy.reviewChangeCta,
       route: ThenNowCopy.route,

@@ -4,7 +4,7 @@ abstract final class PaywallValueRepairCopy {
 
   static const title = 'Keep the evidence trail';
   static const body =
-      'ArchiveMe just showed the first useful proof. Pro keeps the longer '
+      'Thoughtprint just showed the first useful proof. Pro keeps the longer '
       'trail: what returns, what changes, what fades, and what you correct.';
   static const bulletKeepTracking = 'Keep tracking this pattern';
   static const bulletSeeChanges = 'See what changes over time';

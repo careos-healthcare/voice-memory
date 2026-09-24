@@ -1,17 +1,17 @@
-/// Core ArchiveMe journey + anti-voice-assistant positioning copy.
+/// Core Thoughtprint journey + anti-voice-assistant positioning copy.
 abstract final class CoreArchiveJourneyCopy {
   CoreArchiveJourneyCopy._();
 
-  static const headline = 'ArchiveMe shows what keeps repeating';
+  static const headline = 'Thoughtprint shows what keeps repeating';
 
   static const subheadline =
       'Not a better voice assistant. A private archive that proves what returns, '
       'changes, fades, or gets corrected over time.';
 
-  static const journeyTitle = 'The ArchiveMe journey';
+  static const journeyTitle = 'The Thoughtprint journey';
 
   static const firstProof =
-      'First proof: ArchiveMe shows one clear repeat it can compare safely.';
+      'First proof: Thoughtprint shows one clear repeat it can compare safely.';
 
   static const whyThisProofAppeared =
       'Why this proof appeared: it was the clearest specific repeat, not necessarily '
@@ -31,14 +31,14 @@ abstract final class CoreArchiveJourneyCopy {
       'evidence trail.';
 
   static const antiVoiceAssistantGuardrail =
-      'ArchiveMe must not be positioned as a better ChatGPT Voice. It is not voice '
+      'Thoughtprint must not be positioned as a better ChatGPT Voice. It is not voice '
       'chat, transcription, or a general assistant.';
 
   static const positioningLine =
-      'ChatGPT answers today. ArchiveMe shows what keeps repeating across your life.';
+      'ChatGPT answers today. Thoughtprint shows what keeps repeating across your life.';
 
   static const proofOfChangeLine =
-      'ArchiveMe remembers repeats and proves change over time.';
+      'Thoughtprint remembers repeats and proves change over time.';
 
   static const doNotBuildBetterVoiceChat = 'Better voice chat';
   static const doNotBuildGenericTranscription = 'Generic transcription';

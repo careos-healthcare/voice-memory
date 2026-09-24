@@ -19,15 +19,15 @@ abstract class VoiceCaptureCopy {
       'We could not hear enough audio. Try again closer to the microphone.';
 
   static const String transcriptionFailedTitle =
-      'ArchiveMe could not turn this recording into text.';
+      'Thoughtprint could not turn this recording into text.';
 
   static const String savedPrivatelySuccess = 'Recording saved privately.';
 
   static const String transcriptionFailedIssue =
-      'ArchiveMe could not turn this recording into text on this device.';
+      'Thoughtprint could not turn this recording into text on this device.';
 
   static const String lowQualityTranscriptIssue =
-      'ArchiveMe could not hear enough usable words.';
+      'Thoughtprint could not hear enough usable words.';
 
   static const String silentMicrophoneInputDebugWarning =
       'Recording saved, but the iPad microphone input looked silent. '
@@ -41,11 +41,11 @@ abstract class VoiceCaptureCopy {
   static const String recordingSavedTitle = 'Recording saved.';
 
   static const String analysisUnavailableNote =
-      'This moment is saved. ArchiveMe will compare it with future entries.';
+      'This moment is saved. Thoughtprint will compare it with future entries.';
 
   /// First-save receipt on Record — progression toward moment two.
   static const String firstSaveReceiptNote =
-      'This is the first piece of evidence. One more moment lets ArchiveMe compare what repeats.';
+      'This is the first piece of evidence. One more moment lets Thoughtprint compare what repeats.';
 
   /// Legacy alias — prefer [analysisUnavailableNote] for deferred analysis copy.
   static const String analysisDeferredFootnote = analysisUnavailableNote;

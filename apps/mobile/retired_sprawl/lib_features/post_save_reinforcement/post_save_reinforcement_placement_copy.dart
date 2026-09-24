@@ -5,7 +5,7 @@ abstract final class PostSaveReinforcementPlacementCopy {
   static const headline = 'Saved for your archive';
 
   static const body =
-      'That one moment is enough. ArchiveMe now has something real to compare later.';
+      'That one moment is enough. Thoughtprint now has something real to compare later.';
 
   static const firstMomentLine =
       'Saved. One real moment is enough to start your archive.';
@@ -14,11 +14,11 @@ abstract final class PostSaveReinforcementPlacementCopy {
       'Saved. This gives your archive something real to compare later.';
 
   static const repeatRelatedLine =
-      'Saved. This may help ArchiveMe see whether that repeat is returning, '
+      'Saved. This may help Thoughtprint see whether that repeat is returning, '
       'changing, fading, or getting corrected.';
 
   static const notEnoughProofLine =
-      'Saved. No need to force more — ArchiveMe works from real moments over time.';
+      'Saved. No need to force more — Thoughtprint works from real moments over time.';
 
   static const noPressureLine =
       'No daily homework. No streak. No pressure to record more.';

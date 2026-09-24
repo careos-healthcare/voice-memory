@@ -5,13 +5,13 @@ abstract final class ThreeMomentActivationCopy {
   static const momentOneLine = 'One moment starts the archive.';
 
   static const momentTwoLine =
-      'A second similar moment gives ArchiveMe something to compare.';
+      'A second similar moment gives Thoughtprint something to compare.';
 
   static const momentThreeLine =
       'Around three real moments, the first useful repeat can appear.';
 
   static const cautionLine =
-      'ArchiveMe usually needs a few real moments before the first useful repeat can appear.';
+      'Thoughtprint usually needs a few real moments before the first useful repeat can appear.';
 
   static const combinedBody = '$momentOneLine $momentTwoLine $momentThreeLine';
 

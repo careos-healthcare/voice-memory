@@ -3,13 +3,13 @@ abstract final class AudienceWedgeHabitCopy {
   AudienceWedgeHabitCopy._();
 
   static const saveLine =
-      'Save the repeat here because ArchiveMe compares it later.';
+      'Save the repeat here because Thoughtprint compares it later.';
 
   static const notesLine =
-      'Notes store what happened. ArchiveMe checks what returns.';
+      'Notes store what happened. Thoughtprint checks what returns.';
 
   static const chatLine =
-      'ChatGPT can suggest what to do. ArchiveMe shows what you already said before.';
+      'ChatGPT can suggest what to do. Thoughtprint shows what you already said before.';
 
   static const broadRepeatFallbackPrompt =
       'When you notice something repeating, save one real moment here.';

@@ -23,7 +23,7 @@
     <uses-permission android:name="android.permission.health.READ_STEPS" tools:node="remove" />
 
     <application
-        android:label="ArchiveMe"
+        android:label="Thoughtprint"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher"
         android:allowBackup="false"

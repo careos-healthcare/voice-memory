@@ -2,7 +2,7 @@
 abstract final class FirstProofActionLoopCopy {
   FirstProofActionLoopCopy._();
 
-  static const yesTitle = 'Good. ArchiveMe will watch whether it changes.';
+  static const yesTitle = 'Good. Thoughtprint will watch whether it changes.';
   static const sortOfTitle = 'Okay. Make the pattern fit your words.';
   static const noTitle = 'Okay. You stay in control.';
 

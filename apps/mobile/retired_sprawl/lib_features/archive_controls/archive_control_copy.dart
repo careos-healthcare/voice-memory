@@ -16,14 +16,14 @@ abstract final class ArchiveControlCopy {
   static const deleteSuccess = 'Moment deleted';
 
   static const patternNeedsMoreEvidenceFallback =
-      'ArchiveMe needs more evidence before showing this pattern.';
+      'Thoughtprint needs more evidence before showing this pattern.';
 
   static const excludeFromPatternButton = 'Remove from this pattern';
 
   static const excludeDialogTitle = 'Remove from this pattern?';
 
   static const excludeDialogBody =
-      'The moment will stay saved, but ArchiveMe will not use it as evidence for this pattern.';
+      'The moment will stay saved, but Thoughtprint will not use it as evidence for this pattern.';
 
   static const excludeDialogConfirm = 'Remove';
 

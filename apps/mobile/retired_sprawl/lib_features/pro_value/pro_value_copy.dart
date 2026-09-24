@@ -8,7 +8,7 @@ abstract final class ProValueCopy {
       'Free shows the first useful proof. Pro keeps the longer trail.';
 
   static const body =
-      'ArchiveMe Pro is designed for people who want a longer view of what '
+      'Thoughtprint Pro is designed for people who want a longer view of what '
       'keeps repeating, what changed, and what evidence supports it.';
 
   static const valueBullets = <String>[
@@ -35,7 +35,7 @@ abstract final class ProValueCopy {
   static const whyBodyOne =
       'The more evidence you save, the more useful your archive becomes.';
   static const whyBodyTwo =
-      'Pro is for people who want ArchiveMe to stay useful as a long-term '
+      'Pro is for people who want Thoughtprint to stay useful as a long-term '
       'private evidence archive — not a one-week experiment.';
 
   static const purchaseUnavailableNote =
@@ -53,8 +53,8 @@ abstract final class ProValueCopy {
   static const primaryCtaRoute = '/record';
   static const secondaryCtaRoute = '/sample-archive';
 
-  static const screenTitle = 'ArchiveMe Pro';
-  static const settingsTitle = 'ArchiveMe Pro';
+  static const screenTitle = 'Thoughtprint Pro';
+  static const settingsTitle = 'Thoughtprint Pro';
   static const String settingsSubtitle = headline;
 
   static const String archiveCardTitle = headline;

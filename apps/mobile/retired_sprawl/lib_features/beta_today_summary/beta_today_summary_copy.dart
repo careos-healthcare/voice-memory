@@ -8,7 +8,7 @@ abstract final class BetaTodaySummaryCopy {
   static const title = 'Today in your archive';
 
   static const primaryBody =
-      'You do not need to record today. Here is what ArchiveMe is currently watching.';
+      'You do not need to record today. Here is what Thoughtprint is currently watching.';
 
   static const fallbackBody =
       'Save a small moment when something stands out. It does not need to be daily.';
@@ -18,10 +18,10 @@ abstract final class BetaTodaySummaryCopy {
   static const fadingRow = 'One signal is fading';
 
   static const correctionRow =
-      'One correction changed how ArchiveMe treats a pattern';
+      'One correction changed how Thoughtprint treats a pattern';
 
   static const needsFreshProofRow =
-      'ArchiveMe needs fresh proof before treating this as current';
+      'Thoughtprint needs fresh proof before treating this as current';
 
   static const noStrongPatternRow = 'No strong pattern yet';
 

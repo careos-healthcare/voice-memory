@@ -18,19 +18,19 @@ abstract final class NextBestActionCopy {
       'One more related moment unlocks first proof.';
 
   static const firstProofTitle = 'Next: record when it returns.';
-  static const firstProofHelper = 'ArchiveMe will compare what changed.';
+  static const firstProofHelper = 'Thoughtprint will compare what changed.';
 
   static const returnCheckUnansweredTitle = 'Next: answer return check.';
   static const returnCheckUnansweredHelper =
-      'One tap helps ArchiveMe track stronger, softer, same, or different.';
+      'One tap helps Thoughtprint track stronger, softer, same, or different.';
 
   static const returnCheckAnsweredTitle = 'Next: view what changed.';
   static const returnCheckAnsweredHelper =
-      'See what changed and what ArchiveMe is watching.';
+      'See what changed and what Thoughtprint is watching.';
 
   static const patternChangedTitle = 'Next: record when it returns.';
   static const patternChangedHelper =
-      'ArchiveMe is watching whether this shift holds.';
+      'Thoughtprint is watching whether this shift holds.';
 
   static const helpfulActionTitle = 'Next: watch whether it appears again.';
   static const helpfulActionHelper = 'This is evidence, not advice.';

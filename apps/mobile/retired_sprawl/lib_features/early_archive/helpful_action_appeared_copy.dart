@@ -12,10 +12,10 @@ abstract final class HelpfulActionAppearedCopy {
   static const chipLabel = 'Appeared to help';
 
   static const bodyFallback =
-      'ArchiveMe noticed a possible helpful action. Record again when the repeat '
+      'Thoughtprint noticed a possible helpful action. Record again when the repeat '
       'comes back so it can check whether this holds.';
 
   static String bodyWithPhrase(String action) =>
-      'You mentioned "$action". ArchiveMe is watching whether this shows up again '
+      'You mentioned "$action". Thoughtprint is watching whether this shows up again '
       'when the repeat comes back.';
 }

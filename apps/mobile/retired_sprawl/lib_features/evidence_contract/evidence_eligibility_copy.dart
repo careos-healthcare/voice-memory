@@ -4,7 +4,7 @@ abstract final class EvidenceEligibilityCopy {
 
   static const relatedMomentsTitle = 'These moments may be related';
   static const relatedMomentsBody =
-      'ArchiveMe noticed similar wording across two saved moments. '
+      'Thoughtprint noticed similar wording across two saved moments. '
       'This is not an established pattern yet.';
 
   static const possiblePatternTitle = 'Possible pattern';
@@ -22,6 +22,6 @@ abstract final class EvidenceEligibilityCopy {
   static const feedbackNotForMe = 'Not for me';
 
   static const exportYourWordsLabel = 'Your words';
-  static const exportSuggestionLabel = 'ArchiveMe suggestion';
+  static const exportSuggestionLabel = 'Thoughtprint suggestion';
   static const exportReviewStatusLabel = 'Review status';
 }

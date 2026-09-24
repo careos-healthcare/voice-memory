@@ -6,9 +6,9 @@ abstract final class PaidIntentConfirmationCopy {
 
   static const title = 'Would you pay to keep this archive?';
   static const body =
-      'ArchiveMe is still in beta. No payment is taken. This helps decide whether the archive is valuable enough to keep building.';
+      'Thoughtprint is still in beta. No payment is taken. This helps decide whether the archive is valuable enough to keep building.';
   static const question =
-      'If ArchiveMe kept showing what changed in your yes pattern over time, would you pay for it?';
+      'If Thoughtprint kept showing what changed in your yes pattern over time, would you pay for it?';
 
   static const optionYes999 = 'Yes — £9.99/month';
   static const optionMaybe = 'Maybe — if it keeps improving';

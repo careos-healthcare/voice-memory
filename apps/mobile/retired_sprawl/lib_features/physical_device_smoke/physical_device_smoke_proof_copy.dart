@@ -18,7 +18,7 @@ abstract final class PhysicalDeviceSmokeProofCopy {
   static const statusBlocked = 'Blocked';
 
   static const checkFreshInstallOpens = 'Fresh install opens';
-  static const checkAppNameArchiveMe = 'App name ArchiveMe';
+  static const checkAppNameArchiveMe = 'App name Thoughtprint';
   static const checkLaunchScreenOk = 'Launch screen OK';
   static const checkMicPermissionAcceptPath = 'Mic permission accept path';
   static const checkMicPermissionDenyPath = 'Mic permission deny path';

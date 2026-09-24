@@ -26,13 +26,13 @@ abstract final class TodaysQuestionCopy {
       'What should your future archive remember from today?';
   static const comparisonQuestion = 'What felt similar or different today?';
   static const betaFeedbackQuestion =
-      'Did ArchiveMe show anything useful after your first few moments?';
+      'Did Thoughtprint show anything useful after your first few moments?';
   static const watchThemeQuestion = 'Where did your watch theme show up today?';
   static const reviewChangeQuestion =
       'What changed since your earlier moments?';
 
   static const fullScreenWhy =
-      'This gives ArchiveMe one clean moment to compare later.';
+      'This gives Thoughtprint one clean moment to compare later.';
 
   static const screenshotTitle = "Today's one question (sample)";
   static const screenshotQuestion = 'What would be useful to compare later?';

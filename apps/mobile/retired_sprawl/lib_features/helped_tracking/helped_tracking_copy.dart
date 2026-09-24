@@ -10,7 +10,7 @@ abstract final class HelpedTrackingCopy {
   static const cancelCta = 'Cancel';
 
   static const savedMessage =
-      'Saved. ArchiveMe will watch whether that helps again.';
+      'Saved. Thoughtprint will watch whether that helps again.';
 
   static String singleReported(String actionLabel) =>
       'You marked that you $actionLabel this time.';

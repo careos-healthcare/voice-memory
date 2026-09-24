@@ -61,7 +61,7 @@ abstract final class ProofRepairPlaybooksCopy {
 
   static const repairProofAgainTitle = 'Repair proof again';
   static const repairProofAgainProblem =
-      'Useful proof is still below target. ArchiveMe is not yet giving enough '
+      'Useful proof is still below target. Thoughtprint is not yet giving enough '
       'users a useful proof moment.';
   static const repairProofAgainAction =
       'Improve proof usefulness only. Keep Pro, pricing, and timeline work blocked.';

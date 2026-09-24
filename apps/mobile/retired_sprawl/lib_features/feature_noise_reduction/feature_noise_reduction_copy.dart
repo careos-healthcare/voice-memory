@@ -5,7 +5,7 @@ abstract final class FeatureNoiseReductionCopy {
   static const headline = 'Keep the first journey clear';
 
   static const body =
-      'ArchiveMe should show only what helps the user save a repeat, understand the '
+      'Thoughtprint should show only what helps the user save a repeat, understand the '
       'first proof, correct it, and see the longer trail.';
 
   static const coreJourneyLine =

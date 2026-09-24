@@ -1,11 +1,11 @@
-/// No dashboard positioning guard copy — ArchiveMe is a proof trail, not a life dashboard.
+/// No dashboard positioning guard copy — Thoughtprint is a proof trail, not a life dashboard.
 abstract final class NoDashboardPositioningGuardCopy {
   NoDashboardPositioningGuardCopy._();
 
-  static const headline = 'ArchiveMe is not a life dashboard';
+  static const headline = 'Thoughtprint is not a life dashboard';
 
   static const body =
-      'ArchiveMe is a quietly preserved proof trail. Save one repeat, see the first '
+      'Thoughtprint is a quietly preserved proof trail. Save one repeat, see the first '
       'useful proof, and let the longer proof trail show what returned, changed, faded, '
       'or was corrected.';
 
@@ -19,7 +19,7 @@ abstract final class NoDashboardPositioningGuardCopy {
       'action plan manager positioning.';
 
   static const blockLine =
-      'This copy frames ArchiveMe as something users must maintain. Rewrite with proof-trail language.';
+      'This copy frames Thoughtprint as something users must maintain. Rewrite with proof-trail language.';
 
   static const warnLine =
       'This copy may feel like maintenance-heavy product framing. Prefer proof-trail language instead.';

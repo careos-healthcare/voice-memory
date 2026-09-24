@@ -7,7 +7,7 @@ abstract final class PrivacyTrustCopy {
 
   static const title = 'Privacy & your archive';
 
-  // `whatStoresHeading`/`Body` ("What ArchiveMe stores" — "Your saved moments
+  // `whatStoresHeading`/`Body` ("What Thoughtprint stores" — "Your saved moments
   // and local archive signals.") and `whatStaysPrivateHeading`/`Body` ("What
   // stays private" — "Your entries are used to build your archive on this
   // device.") were retired when `/privacy` migrated into this screen. Neither
@@ -18,7 +18,7 @@ abstract final class PrivacyTrustCopy {
 
   static const whatNotIncludedHeading = 'What is not included';
   static const whatNotIncludedBody =
-      'ArchiveMe does not include raw audio in private reports.';
+      'Thoughtprint does not include raw audio in private reports.';
 
   static const yourControlsHeading = 'Your controls';
 

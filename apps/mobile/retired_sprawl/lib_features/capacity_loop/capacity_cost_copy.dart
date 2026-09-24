@@ -12,7 +12,7 @@ abstract final class CapacityCostCopy {
   static const skipCta = 'Skip for now';
   static const saveCheckinCta = 'Save check-in';
   static const earlyStateBody =
-      'After you save a yes moment, ArchiveMe can ask whether it cost you later.';
+      'After you save a yes moment, Thoughtprint can ask whether it cost you later.';
 
   static const costTypeTime = 'Time';
   static const costTypeEnergy = 'Energy';

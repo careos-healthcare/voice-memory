@@ -13,10 +13,10 @@ abstract final class ArchiveExportPackCopy {
       'your archive has something to include.';
 
   static const previewIntro =
-      'This is a private summary from ArchiveMe on this device. Tap Share '
+      'This is a private summary from Thoughtprint on this device. Tap Share '
       'export only when you are ready.';
 
-  static const headerTitle = 'ArchiveMe private archive export';
+  static const headerTitle = 'Thoughtprint private archive export';
 
   static const exportDateLabel = 'Export date';
 
@@ -40,7 +40,7 @@ abstract final class ArchiveExportPackCopy {
 
   static const sharingCta = 'Sharing…';
 
-  static const shareSubject = 'ArchiveMe archive export';
+  static const shareSubject = 'Thoughtprint archive export';
 
   static const previewUnavailable =
       'Saved locally — preview not available yet.';

@@ -2,10 +2,10 @@
 abstract final class TrailLanguageGuardCopy {
   TrailLanguageGuardCopy._();
 
-  static const headline = 'ArchiveMe builds a trail';
+  static const headline = 'Thoughtprint builds a trail';
 
   static const body =
-      'You do not maintain a mind map. You save small real moments, and ArchiveMe '
+      'You do not maintain a mind map. You save small real moments, and Thoughtprint '
       'builds the proof trail over time.';
 
   static const preferredLanguageLine =
@@ -23,7 +23,7 @@ abstract final class TrailLanguageGuardCopy {
       'Pro keeps the longer trail of what returned, changed, faded, or was corrected.';
 
   static const guardrail =
-      'ArchiveMe must sound like a quietly preserved proof trail, not a map, dashboard, '
+      'Thoughtprint must sound like a quietly preserved proof trail, not a map, dashboard, '
       'tracker, or storage system the user has to maintain.';
 
   static Iterable<String> allVisibleStrings() sync* {

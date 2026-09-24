@@ -5,7 +5,7 @@ abstract final class ReturnReasonCopyFix {
   static const day1 = 'Day 1: Save one real moment.';
   static const day2 = 'Day 2: Save it if something similar happens again.';
   static const day3 =
-      'Day 3: ArchiveMe can compare what repeated, changed, or faded.';
+      'Day 3: Thoughtprint can compare what repeated, changed, or faded.';
 
   static const optionalFraming = 'Only if it happens again.';
   static const noStreakFraming = 'No streak required.';

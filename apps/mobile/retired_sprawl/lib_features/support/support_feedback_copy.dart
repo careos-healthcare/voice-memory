@@ -14,7 +14,7 @@ abstract final class SupportFeedbackCopy {
 
   static const sectionNeedHelpTitle = 'Need help?';
   static const sectionNeedHelpBody =
-      'For support, use the ArchiveMe support page.';
+      'For support, use the Thoughtprint support page.';
 
   static const sectionReportTitle = 'Report a problem';
   static const sectionReportBody =
@@ -38,7 +38,7 @@ abstract final class SupportFeedbackCopy {
   static const openHelpGuideButton = 'Open Help & reviewer guide';
   static const openSampleArchiveButton = 'Open Sample Archive';
 
-  static const checklistTitle = 'ArchiveMe support checklist';
+  static const checklistTitle = 'Thoughtprint support checklist';
   static const checklistCopied = 'Support checklist copied';
 
   static String get supportUrl => AppConfig.supportUrl;

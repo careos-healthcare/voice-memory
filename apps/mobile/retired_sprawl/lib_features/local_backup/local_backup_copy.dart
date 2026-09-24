@@ -19,7 +19,7 @@ abstract final class LocalBackupCopy {
 
   static const exportSuccess = 'Backup exported';
   static const restoreSuccess = 'Archive restored';
-  static const invalidBackup = 'This does not look like an ArchiveMe backup.';
+  static const invalidBackup = 'This does not look like an Thoughtprint backup.';
 
   static List<String> allVisibleStrings() => [
     exportControl,

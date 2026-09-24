@@ -6,7 +6,7 @@ abstract final class ReturnRitualCopy {
 
   static const chooseTitle = 'Choose your return ritual';
   static const chooseBody =
-      'ArchiveMe gets more useful when you return at the moment a pattern is happening again.';
+      'Thoughtprint gets more useful when you return at the moment a pattern is happening again.';
 
   static const savedTitle = 'Your return ritual';
   static const savedComeBackPrefix = 'Come back when:';
@@ -23,7 +23,7 @@ abstract final class ReturnRitualCopy {
   static const clearButton = 'Clear ritual';
   static const customPhraseButton = 'Custom phrase';
   static const customPhraseSheetTitle = 'Your return phrase';
-  static const customPhraseHint = 'When will ArchiveMe help most?';
+  static const customPhraseHint = 'When will Thoughtprint help most?';
   static const customPhraseSave = 'Save phrase';
   static const customPhraseCancel = 'Cancel';
 

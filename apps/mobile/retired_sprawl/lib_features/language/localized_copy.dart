@@ -124,7 +124,7 @@ const Map<String, Map<String, String>> _copy = {
     'exampleLabel': 'Example',
     'inputQualityCoachTitle': 'Make this more useful',
     'inputQualityCoachBody':
-        'Add one clear moment so ArchiveMe can find a better pattern.',
+        'Add one clear moment so Thoughtprint can find a better pattern.',
     'addSentenceHint': 'Add one sentence\u2026',
     'firstPatternEarlyReadHint':
         'This may get sharper after one more clear moment.',
@@ -143,7 +143,7 @@ const Map<String, Map<String, String>> _copy = {
     'needHelp': 'Need help?',
     'needHelpNow': 'Need help now?',
     'quickHelpSubtitle':
-        'Pick what you need. ArchiveMe will give one next step.',
+        'Pick what you need. Thoughtprint will give one next step.',
     'quickHelpWhatToRecord': 'I do not know what to record',
     'quickHelpAnotherPerspective': 'I need another perspective',
     'quickHelpPractical': 'I want something practical',
@@ -241,7 +241,7 @@ const Map<String, Map<String, String>> _copy = {
     'needHelp': '¿Necesitas ayuda?',
     'needHelpNow': '¿Necesitas ayuda ahora?',
     'quickHelpSubtitle':
-        'Elige lo que necesitas. ArchiveMe te dará un paso siguiente.',
+        'Elige lo que necesitas. Thoughtprint te dará un paso siguiente.',
     'quickHelpWhatToRecord': 'No sé qué grabar',
     'quickHelpAnotherPerspective': 'Necesito otra perspectiva',
     'quickHelpPractical': 'Quiero algo práctico',
@@ -337,7 +337,7 @@ const Map<String, Map<String, String>> _copy = {
     'needHelp': "Besoin d'aide ?",
     'needHelpNow': "Besoin d'aide maintenant ?",
     'quickHelpSubtitle':
-        'Choisis ce dont tu as besoin. ArchiveMe propose une étape.',
+        'Choisis ce dont tu as besoin. Thoughtprint propose une étape.',
     'quickHelpWhatToRecord': 'Je ne sais pas quoi enregistrer',
     'quickHelpAnotherPerspective': "J'ai besoin d'une autre perspective",
     'quickHelpPractical': 'Je veux quelque chose de pratique',
@@ -442,7 +442,7 @@ const Map<String, Map<String, String>> _copy = {
     'kinderCaution': 'जो सही लगे रखें। जो नहीं, छोड़ दें।',
     'needHelp': 'मदद चाहिए?',
     'needHelpNow': 'अभी मदद चाहिए?',
-    'quickHelpSubtitle': 'जो चाहिए चुनें। ArchiveMe एक अगला कदम देगा।',
+    'quickHelpSubtitle': 'जो चाहिए चुनें। Thoughtprint एक अगला कदम देगा।',
     'quickHelpWhatToRecord': 'मुझे नहीं पता क्या रिकॉर्ड करूँ',
     'quickHelpAnotherPerspective': 'मुझे एक और नज़रिया चाहिए',
     'quickHelpPractical': 'मुझे कुछ व्यावहारिक चाहिए',
@@ -537,7 +537,7 @@ const Map<String, Map<String, String>> _copy = {
     'kinderCaution': 'જે યોગ્ય લાગે તે રાખો. બાકીનું છોડી દો.',
     'needHelp': 'મદદ જોઈએ?',
     'needHelpNow': 'હમણાં મદદ જોઈએ?',
-    'quickHelpSubtitle': 'જે જોઈએ તે પસંદ કરો. ArchiveMe એક આગળનું પગલું આપશે.',
+    'quickHelpSubtitle': 'જે જોઈએ તે પસંદ કરો. Thoughtprint એક આગળનું પગલું આપશે.',
     'quickHelpWhatToRecord': 'મને ખબર નથી શું રેકોર્ડ કરું',
     'quickHelpAnotherPerspective': 'મને બીજો દૃષ્ટિકોણ જોઈએ',
     'quickHelpPractical': 'મને કંઈક વ્યવહારુ જોઈએ',

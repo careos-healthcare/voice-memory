@@ -66,7 +66,7 @@ abstract final class BetaOutcomesCopy {
 
   static const supportSectionTitle = 'Beta outcomes';
   static const supportSectionBody =
-      'See local ArchiveMe validation signals from your archive and beta feedback. '
+      'See local Thoughtprint validation signals from your archive and beta feedback. '
       'Nothing is uploaded.';
   static const openBetaOutcomesButton = 'Open beta outcomes';
 
@@ -105,7 +105,7 @@ abstract final class BetaOutcomesCopy {
 
   static String buildSafeSummary(BetaOutcomesSnapshot snapshot) {
     final depth = snapshot.depthLevelLabel.toLowerCase();
-    return 'ArchiveMe beta summary: ${snapshot.savedMomentCount} saved moments, '
+    return 'Thoughtprint beta summary: ${snapshot.savedMomentCount} saved moments, '
         '${snapshot.usableEvidenceCount} usable evidence moments, '
         'archive depth: $depth, '
         'beta feedback: ${snapshot.feedbackStatusLabel}, '

@@ -9,19 +9,19 @@ export const PRIVATE_BY_DEFAULT_LINE =
   "Local-first and private by default. Your reflections stay on this device unless you choose encrypted backup.";
 
 export const NOT_THERAPY_LINE =
-  "ArchiveMe resurfaces your own voice reflections. It is not therapy, counseling, medical advice, or a diagnosis.";
+  "Thoughtprint resurfaces your own voice reflections. It is not therapy, counseling, medical advice, or a diagnosis.";
 
 export const CRISIS_DISCLAIMER =
-  "ArchiveMe cannot help in an emergency. If you or someone else may be in immediate danger, contact local emergency services. In the UK, Samaritans are available 24/7 on 116 123. In the US, call or text 988 for the Suicide & Crisis Lifeline.";
+  "Thoughtprint cannot help in an emergency. If you or someone else may be in immediate danger, contact local emergency services. In the UK, Samaritans are available 24/7 on 116 123. In the US, call or text 988 for the Suicide & Crisis Lifeline.";
 
 export const LOCAL_FIRST_SUMMARY =
-  "Your reflections, transcripts, mood notes, and memory patterns are stored in this browser (localStorage and IndexedDB for audio). ArchiveMe does not operate a cloud journal database for your entries.";
+  "Your reflections, transcripts, mood notes, and memory patterns are stored in this browser (localStorage and IndexedDB for audio). Thoughtprint does not operate a cloud journal database for your entries.";
 
 export const AI_TRANSCRIPTION_ANALYSIS_SUMMARY =
-  "When you record, ArchiveMe may send audio or transcript text to the app backend so it can transcribe and organize what you said. The result is returned to your archive.";
+  "When you record, Thoughtprint may send audio or transcript text to the app backend so it can transcribe and organize what you said. The result is returned to your archive.";
 
 export const PROCESSING_PROVIDERS_SUMMARY =
-  "ArchiveMe may use trusted processing providers for transcription, analysis, account, billing, or crash diagnostics. Provider names may appear in the full privacy policy where required.";
+  "Thoughtprint may use trusted processing providers for transcription, analysis, account, billing, or crash diagnostics. Provider names may appear in the full privacy policy where required.";
 
 export const ENCRYPTED_SYNC_SUMMARY =
   "If you sign in, your archive is encrypted on this device before backup. Our servers store ciphertext only — not raw transcripts, audio, or reflection text. Sync is optional.";
@@ -35,7 +35,7 @@ export const DATA_DELETION_SUMMARY =
 export const DELETE_ALL_CONFIRM_PHRASE = "DELETE";
 
 export const DELETE_ALL_LOCAL_PROMPT =
-  "Delete ALL local ArchiveMe data on this device? This removes reflections, audio, bookmarks, preferences, and goals. This cannot be undone.";
+  "Delete ALL local Thoughtprint data on this device? This removes reflections, audio, bookmarks, preferences, and goals. This cannot be undone.";
 
 export const DELETE_ACCOUNT_LEAD =
   "Removes encrypted backup blobs and sessions from our servers. Your journal on this device is not deleted until you clear local data in Settings.";
@@ -95,8 +95,8 @@ export const PRIVACY_SECTIONS = [
     body: ENCRYPTED_SYNC_SUMMARY,
   },
   {
-    title: "What ArchiveMe does not do",
-    body: "ArchiveMe does not sell your reflections. ArchiveMe does not include recording text in analytics. ArchiveMe does not turn every entry into personal memory by default.",
+    title: "What Thoughtprint does not do",
+    body: "Thoughtprint does not sell your reflections. Thoughtprint does not include recording text in analytics. Thoughtprint does not turn every entry into personal memory by default.",
   },
   {
     title: "Your controls",
@@ -135,7 +135,7 @@ export const TERMS_SECTIONS = [
   },
   {
     title: "Acceptable use",
-    body: "Do not use ArchiveMe to store illegal content or to harass others. Do not attempt to reverse-engineer or abuse API endpoints.",
+    body: "Do not use Thoughtprint to store illegal content or to harass others. Do not attempt to reverse-engineer or abuse API endpoints.",
   },
   {
     title: "Subscriptions",
@@ -143,14 +143,14 @@ export const TERMS_SECTIONS = [
   },
   {
     title: "Limitation of liability",
-    body: "ArchiveMe is a software tool, not a crisis service. We are not liable for decisions you make based on summaries generated from your transcript. See the Safety page for crisis resources.",
+    body: "Thoughtprint is a software tool, not a crisis service. We are not liable for decisions you make based on summaries generated from your transcript. See the Safety page for crisis resources.",
   },
 ] as const;
 
 export const EMOTIONAL_SAFETY_SECTIONS = [
   {
     title: "Not crisis support",
-    body: "ArchiveMe cannot monitor your safety or respond to emergencies. It does not have human moderators or clinicians on call.",
+    body: "Thoughtprint cannot monitor your safety or respond to emergencies. It does not have human moderators or clinicians on call.",
   },
   {
     title: "Not therapy",

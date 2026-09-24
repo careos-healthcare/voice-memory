@@ -68,7 +68,7 @@ export function runConsumerBrandAuditTests(root = process.cwd()): { failures: st
     }
   });
 
-  check("site header uses ArchiveMe brand and AM logo initials", () => {
+  check("site header uses Thoughtprint brand and TP logo initials", () => {
     const header = readFileSync(join(root, "apps/web/components/SiteHeader.tsx"), "utf8");
     const brand = readFileSync(join(root, "packages/shared/lib/product/brand-copy.ts"), "utf8");
     if (!header.includes("APP_BRAND_NAME")) {
@@ -77,11 +77,14 @@ export function runConsumerBrandAuditTests(root = process.cwd()): { failures: st
     if (!header.includes("APP_LOGO_INITIALS")) {
       throw new Error("SiteHeader missing APP_LOGO_INITIALS");
     }
-    if (!brand.includes('"ArchiveMe"')) {
-      throw new Error("brand-copy missing ArchiveMe");
+    if (!brand.includes('"Thoughtprint"')) {
+      throw new Error("brand-copy missing Thoughtprint");
     }
-    if (!brand.includes('"AM"')) {
-      throw new Error("brand-copy missing AM logo initials");
+    if (/\bArchiveMe\b/.test(brand)) {
+      throw new Error("brand-copy still contains ArchiveMe");
+    }
+    if (!brand.includes('"TP"')) {
+      throw new Error("brand-copy missing TP logo initials");
     }
     if (/\bVoiceMemory\b/.test(header)) {
       throw new Error("SiteHeader still contains VoiceMemory");
@@ -107,7 +110,7 @@ export function runConsumerBrandAuditTests(root = process.cwd()): { failures: st
     }
   });
 
-  check("trust pages use ArchiveMe and canonical contact email", () => {
+  check("trust pages use Thoughtprint and canonical contact email", () => {
     for (const rel of [
       "apps/web/app/privacy/page.tsx",
       "apps/web/app/terms/page.tsx",
@@ -118,8 +121,11 @@ export function runConsumerBrandAuditTests(root = process.cwd()): { failures: st
       if (/VoiceMemory|voice memory/i.test(src)) {
         throw new Error(`legacy brand in ${rel}`);
       }
-      if (!/ArchiveMe/.test(src)) {
-        throw new Error(`ArchiveMe missing from ${rel} metadata`);
+      if (/\bArchiveMe\b/.test(src)) {
+        throw new Error(`ArchiveMe still in ${rel}`);
+      }
+      if (!/Thoughtprint/.test(src)) {
+        throw new Error(`Thoughtprint missing from ${rel} metadata`);
       }
     }
     if (CONTACT_EMAIL !== "hello@thoughtprint.xyz") {
@@ -138,7 +144,7 @@ export function runConsumerBrandAuditTests(root = process.cwd()): { failures: st
 
   check("banned pattern lists cover brand and customer vocabulary", () => {
     const brandLabels = CONSUMER_BANNED_PATTERNS.map((p) => p.label);
-    for (const required of ["ChatGPT", "VoiceMemory", "OpenAI processing"]) {
+    for (const required of ["ArchiveMe", "ChatGPT", "VoiceMemory", "OpenAI processing"]) {
       if (!brandLabels.includes(required)) {
         throw new Error(`missing banned label: ${required}`);
       }

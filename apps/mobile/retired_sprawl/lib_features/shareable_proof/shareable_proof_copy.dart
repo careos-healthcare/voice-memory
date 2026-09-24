@@ -5,17 +5,17 @@ abstract final class ShareableProofCopy {
   static const title = 'Share the idea, not your archive';
 
   static const body =
-      'ArchiveMe helped me notice what keeps returning — without sharing my private moments.';
+      'Thoughtprint helped me notice what keeps returning — without sharing my private moments.';
 
   static const privacyWarning = 'Your saved moments are never included.';
 
   static const shareCta = 'Share non-private summary';
 
   static const templateKeepsReturning =
-      'I started using ArchiveMe to notice what keeps returning. No daily journal required.';
+      'I started using Thoughtprint to notice what keeps returning. No daily journal required.';
 
   static const templateChatGptDifferentiation =
-      'ChatGPT can suggest what to do. ArchiveMe shows what you already said before.';
+      'ChatGPT can suggest what to do. Thoughtprint shows what you already said before.';
 
   static const templateTrackingTimeline =
       'I am tracking what appeared, what returned, and what changed — without sharing my private entries.';

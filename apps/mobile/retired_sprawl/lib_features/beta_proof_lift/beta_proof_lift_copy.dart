@@ -2,7 +2,7 @@
 abstract final class BetaProofLiftCopy {
   BetaProofLiftCopy._();
 
-  static const title = 'Why ArchiveMe is showing this';
+  static const title = 'Why Thoughtprint is showing this';
 
   static const body =
       'This is not a label. It is a timeline signal built from moments you saved.';
@@ -16,7 +16,7 @@ abstract final class BetaProofLiftCopy {
       'More than one saved moment pointed in the same direction.';
 
   static const fallbackWhatChanged =
-      'ArchiveMe is watching whether this feels stronger, lighter, helped, avoided, or unchanged.';
+      'Thoughtprint is watching whether this feels stronger, lighter, helped, avoided, or unchanged.';
 
   static const fallbackWhyItMattersNow =
       'Recent evidence matters more than older evidence.';

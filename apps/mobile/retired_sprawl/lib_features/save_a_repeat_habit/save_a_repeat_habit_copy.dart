@@ -5,7 +5,7 @@ abstract final class SaveARepeatHabitCopy {
   static const headline = 'When it repeats, save it';
 
   static const body =
-      'When something repeats, save one real moment. ArchiveMe compares it later.';
+      'When something repeats, save one real moment. Thoughtprint compares it later.';
 
   static const triggerLine = 'The trigger is simple: I noticed this again.';
 
@@ -15,19 +15,19 @@ abstract final class SaveARepeatHabitCopy {
       'No daily journal. No streak. No dashboard to maintain.';
 
   static const whyItMattersLine =
-      'Saved moments give ArchiveMe evidence to compare later.';
+      'Saved moments give Thoughtprint evidence to compare later.';
 
   static const chatDifferenceLine =
-      'ChatGPT can suggest what to do. ArchiveMe shows what you already said before.';
+      'ChatGPT can suggest what to do. Thoughtprint shows what you already said before.';
 
   static const notesDifferenceLine =
-      'Notes store what happened. ArchiveMe checks what returns.';
+      'Notes store what happened. Thoughtprint checks what returns.';
 
   static const proLine =
       'Free shows the first useful proof. Pro keeps the longer trail.';
 
   static const guardrail =
-      'Make ArchiveMe a low-pressure place to save a repeat, not a daily habit '
+      'Make Thoughtprint a low-pressure place to save a repeat, not a daily habit '
       'tracker, chat app, storage app, or dashboard to maintain.';
 
   static Iterable<String> allVisibleStrings() sync* {

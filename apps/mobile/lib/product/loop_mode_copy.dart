@@ -4,7 +4,7 @@ abstract class LoopModeCopy {
 
   // ——— Onboarding ———
   static const String onboardingTitle =
-      'What loop do you want ArchiveMe to help you catch first?';
+      'What loop do you want Thoughtprint to help you catch first?';
   static const String onboardingStartCta = 'Start this loop';
   static const String onboardingSkip = 'Not sure yet';
 
@@ -12,24 +12,24 @@ abstract class LoopModeCopy {
   static const String capacityHandoffTitle =
       'Catch the yes before it costs you.';
   static const String capacityHandoffBody =
-      'ArchiveMe helps you spot why you keep agreeing before checking your capacity.';
+      'Thoughtprint helps you spot why you keep agreeing before checking your capacity.';
   static const String capacityHandoffPrompt =
       'What are you about to agree to, and what makes it hard to pause?';
   static const String capacityHandoffCta = 'Save yes moment';
 
   // ——— Interpretation unsupported ———
   static const String capacityUnsupportedTitle =
-      'ArchiveMe did not see a clear yes pattern yet.';
+      'Thoughtprint did not see a clear yes pattern yet.';
   static const String capacityUnsupportedPrompt =
       'Try recording what you agreed to, what it cost, and what you felt afterward.';
 
   // ——— Post-save ———
   static const String capacityPostSaveTitle =
-      'ArchiveMe is reviewing your yes moments';
+      'Thoughtprint is reviewing your yes moments';
   static const String capacityPostSaveSubtitle =
       'This is not treated as true yet. Your next moments will test whether it repeats.';
   static const String postSavePossibleLoop = 'Possible loop';
-  static const String postSaveEvidenceUsed = 'Evidence ArchiveMe used';
+  static const String postSaveEvidenceUsed = 'Evidence Thoughtprint used';
   static const String postSaveWouldConfirm = 'What would confirm it';
   static const String postSaveWouldChallenge = 'What would challenge it';
   static const String postSaveRecordNext = 'Record this next';
@@ -56,7 +56,7 @@ abstract class LoopModeCopy {
   static const String capacityReminderPrePromptTitle =
       'Want a reminder to catch the next yes?';
   static const String capacityReminderPrePromptBody =
-      'ArchiveMe can remind you tomorrow to record the next moment you agree before checking capacity.';
+      'Thoughtprint can remind you tomorrow to record the next moment you agree before checking capacity.';
   static const String capacityReminderNotificationTitle = 'Catch the next yes';
   static const String capacityReminderNotificationBody =
       'Record whether you had capacity before you agreed.';
@@ -79,9 +79,9 @@ abstract class LoopModeCopy {
   static const String reviewRecordNextYes = 'Record next yes moment';
   static const String reviewConfirmSaved = 'Saved as a loop to watch.';
   static const String reviewKeepWatchingSaved =
-      'ArchiveMe will keep watching this loop.';
+      'Thoughtprint will keep watching this loop.';
   static const String reviewCostFallback =
-      'ArchiveMe needs clearer future moments to understand the cost.';
+      'Thoughtprint needs clearer future moments to understand the cost.';
   static const String reviewProveWrongCapacity =
       'You freely chose it, had capacity, and did not feel pressure or guilt afterward.';
   static const String reviewConfidenceEarly = 'Early';
@@ -121,7 +121,7 @@ abstract class LoopModeCopy {
   static const String paywallAfterLoopHeadline =
       'Keep tracking this loop over time';
   static const String paywallAfterLoopBody =
-      'ArchiveMe can keep the full evidence trail and show whether this loop fades, gets stronger, or changes.';
+      'Thoughtprint can keep the full evidence trail and show whether this loop fades, gets stronger, or changes.';
   static const List<String> paywallAfterLoopBullets = [
     'Track future yes moments',
     'Keep the full evidence trail',
@@ -146,13 +146,13 @@ abstract class LoopModeCopy {
 
   // ——— prove_enough interpretation unsupported ———
   static const String proveEnoughUnsupportedTitle =
-      'ArchiveMe did not see the proving-enough loop clearly yet.';
+      'Thoughtprint did not see the proving-enough loop clearly yet.';
   static const String proveEnoughUnsupportedPrompt =
       'Try recording what you kept doing, what you were afraid would happen if you stopped, and what felt not enough.';
 
   // ——— prove_enough post-save ———
   static const String proveEnoughPostSaveTitle =
-      'ArchiveMe is checking the proving-enough loop';
+      'Thoughtprint is checking the proving-enough loop';
   static const String proveEnoughPostSaveSubtitle =
       'This is not treated as true yet. Your next moments will test whether it repeats.';
   static const String proveEnoughWouldConfirm =
@@ -166,7 +166,7 @@ abstract class LoopModeCopy {
   static const String proveEnoughRecordCardTitle =
       'Record the next proving moment';
   static const String proveEnoughRecordCardBody =
-      'ArchiveMe is watching whether you do more because stopping feels unsafe.';
+      'Thoughtprint is watching whether you do more because stopping feels unsafe.';
   static const List<String> proveEnoughNextPrompts = [
     'When did you next feel pressure to do more to feel okay?',
     'What did stopping feel like it would cost you?',
@@ -178,7 +178,7 @@ abstract class LoopModeCopy {
   static const String proveEnoughReminderPrePromptTitle =
       'Want a reminder to catch the next proving loop?';
   static const String proveEnoughReminderPrePromptBody =
-      'ArchiveMe can remind you tomorrow to record the next moment you do more because stopping feels unsafe.';
+      'Thoughtprint can remind you tomorrow to record the next moment you do more because stopping feels unsafe.';
   static const String proveEnoughReminderNotificationTitle =
       'Catch the next proving loop';
   static const String proveEnoughReminderNotificationBody =
@@ -186,7 +186,7 @@ abstract class LoopModeCopy {
 
   // ——— prove_enough review ———
   static const String proveEnoughReviewTitle =
-      'ArchiveMe reviewed your proving-enough loop';
+      'Thoughtprint reviewed your proving-enough loop';
   static const String proveEnoughReviewSubtitle =
       'So far, this looks like a loop worth watching.';
   static const String reviewWhatTriggeredEffort =
@@ -208,7 +208,7 @@ abstract class LoopModeCopy {
   static const String proveEnoughPaywallHeadline =
       'Keep tracking the loop over time';
   static const String proveEnoughPaywallBody =
-      'ArchiveMe can keep the full evidence trail and show whether the proving-enough loop fades, gets stronger, or changes.';
+      'Thoughtprint can keep the full evidence trail and show whether the proving-enough loop fades, gets stronger, or changes.';
   static const List<String> proveEnoughPaywallBullets = [
     'Track future proving-enough moments',
     'See whether effort comes from choice or pressure',

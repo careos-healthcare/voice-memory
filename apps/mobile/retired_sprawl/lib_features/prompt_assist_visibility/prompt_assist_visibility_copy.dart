@@ -5,7 +5,7 @@ abstract final class PromptAssistVisibilityCopy {
   static const headline = 'Not sure what to say?';
 
   static const body =
-      'ArchiveMe can suggest one small prompt. Say one real sentence and save it.';
+      'Thoughtprint can suggest one small prompt. Say one real sentence and save it.';
 
   static const safeRepeatLine = 'Try one sentence about:';
 

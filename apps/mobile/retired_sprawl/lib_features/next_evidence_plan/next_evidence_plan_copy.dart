@@ -10,7 +10,7 @@ abstract final class NextEvidencePlanCopy {
 
   static const starterTitle = 'Next evidence plan';
   static const starterBody =
-      'Save one moment first. ArchiveMe will suggest what kind of evidence to add next.';
+      'Save one moment first. Thoughtprint will suggest what kind of evidence to add next.';
 
   static const introBody =
       'Your archive will become clearer if you add one moment when this shows up again.';

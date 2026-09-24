@@ -7,7 +7,7 @@ abstract final class RevenueValueCopy {
 
   static const String positioningHeadline =
       LandingAppContinuityCopy.chatGptDifferentiation;
-  static const positioningSubhead = 'ArchiveMe remembers differently.';
+  static const positioningSubhead = 'Thoughtprint remembers differently.';
 
   static const memoryJob =
       'It compares moments saved over time and shows what returned, changed, softened, disappeared, or helped.';
@@ -23,7 +23,7 @@ abstract final class RevenueValueCopy {
       LandingAppContinuityCopy.chatGptDifferentiation;
 
   static const comparesMomentsLine =
-      'ArchiveMe compares saved moments over time — it is not a chat.';
+      'Thoughtprint compares saved moments over time — it is not a chat.';
 
   static const longTermHistoryHeadline = 'Longer archive history';
 
@@ -49,7 +49,7 @@ abstract final class RevenueValueCopy {
   static const safeSharingBody =
       'Private sharing may help you talk about patterns with someone you trust.';
 
-  static const safeSharingDisclaimer = 'ArchiveMe is not a healthcare product.';
+  static const safeSharingDisclaimer = 'Thoughtprint is not a healthcare product.';
 
   static const safeSharingChoice = 'Only share what you choose.';
 

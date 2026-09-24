@@ -14,7 +14,7 @@ abstract final class FirstWeekPathCopy {
 
   static const startTitle = 'Start your mind map';
   static const startBody =
-      'Save a few real moments so ArchiveMe can start connecting what repeats.';
+      'Save a few real moments so Thoughtprint can start connecting what repeats.';
   static const saveFirstMomentCta = 'Save first moment';
   static const saveMomentCta = 'Save a moment';
   static const openBetaFeedbackCta = 'Open beta feedback';
@@ -32,7 +32,7 @@ abstract final class FirstWeekPathCopy {
 
   static const screenshotCardTitle = 'First week path (sample)';
   static const screenshotCardBody =
-      'ArchiveMe guides early users from a first saved moment through comparison, '
+      'Thoughtprint guides early users from a first saved moment through comparison, '
       'watch themes, and a first weekly review. Example only — no private data.';
 
   static const supportSectionTitle = 'First week path';
@@ -53,13 +53,13 @@ abstract final class FirstWeekPathCopy {
 
   static const day1Reward = 'Your archive has started.';
   static const day1Next =
-      'Come back with one more moment so ArchiveMe can compare.';
+      'Come back with one more moment so Thoughtprint can compare.';
 
-  static const day2Reward = 'ArchiveMe now has comparison material.';
+  static const day2Reward = 'Thoughtprint now has comparison material.';
   static const day2Next =
       'Save one more moment to see whether anything repeats.';
 
-  static const day3Reward = 'ArchiveMe can start checking what repeats.';
+  static const day3Reward = 'Thoughtprint can start checking what repeats.';
   static const day3Next =
       'Open beta feedback and mark whether this was useful.';
 

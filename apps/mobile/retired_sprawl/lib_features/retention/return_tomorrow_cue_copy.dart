@@ -13,16 +13,16 @@ abstract final class ReturnTomorrowCueCopy {
 
   static const afterFirstProofTitle = 'Tomorrow, watch for this';
   static const afterFirstProofBody =
-      'If it shows up again, ArchiveMe can compare whether it felt stronger, softer, or different.';
+      'If it shows up again, Thoughtprint can compare whether it felt stronger, softer, or different.';
 
-  static const nextDayReturnTitle = 'Yesterday, ArchiveMe was watching this';
+  static const nextDayReturnTitle = 'Yesterday, Thoughtprint was watching this';
   static const nextDayReturnBody =
       'Record what happened if it showed up again.';
 
   static String nextDayReturnBodyWithPhrase(String phrase) {
     final trimmed = phrase.trim();
     if (trimmed.isEmpty) return nextDayReturnBody;
-    return 'Yesterday, ArchiveMe was watching: “$trimmed”';
+    return 'Yesterday, Thoughtprint was watching: “$trimmed”';
   }
 
   static const List<String> all = [

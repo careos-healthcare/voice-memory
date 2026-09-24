@@ -5,16 +5,16 @@ abstract final class RevenueLiftExperimentV2Copy {
   // A) First save sharpen
   static const firstSaveTitle = 'Save the moment that keeps pulling at you';
   static const firstSaveBody =
-      'One sentence is enough. ArchiveMe needs one real moment before it can show what comes back.';
+      'One sentence is enough. Thoughtprint needs one real moment before it can show what comes back.';
   static const firstSavePrimaryCta = 'Type one sentence';
   static const firstSaveSecondaryCta = 'Record instead';
 
   // B) Second save return reason
   static const returnReasonLine =
-      'Come back only if it happens again. That is what lets ArchiveMe tell whether this is a one-off or a pattern.';
+      'Come back only if it happens again. That is what lets Thoughtprint tell whether this is a one-off or a pattern.';
 
   // C) Proof payoff sharpen
-  static const proofPayoffTitle = 'This is the part ArchiveMe keeps tracking';
+  static const proofPayoffTitle = 'This is the part Thoughtprint keeps tracking';
   static const proofPayoffBody =
       'You have the first proof now. The next return shows whether it is getting louder, softer, or fading.';
 

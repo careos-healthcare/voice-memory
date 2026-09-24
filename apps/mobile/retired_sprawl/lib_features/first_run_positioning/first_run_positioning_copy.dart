@@ -5,7 +5,7 @@ abstract final class FirstRunPositioningCopy {
   static const title = 'Build a timeline, not a journal';
 
   static const body =
-      'Save small moments when something stands out. ArchiveMe looks for what returns, changes, fades, or becomes useful.';
+      'Save small moments when something stands out. Thoughtprint looks for what returns, changes, fades, or becomes useful.';
 
   static const footer =
       'Free shows the first useful proof. Pro keeps the longer proof trail.';

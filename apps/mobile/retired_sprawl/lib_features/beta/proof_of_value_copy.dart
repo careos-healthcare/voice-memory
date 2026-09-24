@@ -5,7 +5,7 @@ abstract final class ProofOfValueCopy {
   static const cardTitle = 'Proof of value';
 
   static const primaryQuestion =
-      'Did ArchiveMe show something repeating in their own words that they wanted to keep tracking?';
+      'Did Thoughtprint show something repeating in their own words that they wanted to keep tracking?';
 
   static const summaryNotEnoughEvidence = 'Not enough tester evidence yet';
 

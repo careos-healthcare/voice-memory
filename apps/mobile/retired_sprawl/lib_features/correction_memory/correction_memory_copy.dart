@@ -7,19 +7,19 @@ abstract final class CorrectionMemoryCopy {
   static const title = 'Archive correction saved';
 
   static const stillCurrentBody =
-      'You marked this as still affecting you. ArchiveMe will treat fresh returns '
+      'You marked this as still affecting you. Thoughtprint will treat fresh returns '
       'as stronger evidence.';
 
   static const partlyCurrentBody =
-      'You marked this as only partly current. ArchiveMe will keep it in view, '
+      'You marked this as only partly current. Thoughtprint will keep it in view, '
       'but not treat it as the whole story.';
 
   static const fadedBody =
-      'You marked this as not really current. ArchiveMe will treat it as background '
+      'You marked this as not really current. Thoughtprint will treat it as background '
       'unless it returns.';
 
   static const unsureBody =
-      'You were not sure. ArchiveMe will keep this lightly in view and wait for '
+      'You were not sure. Thoughtprint will keep this lightly in view and wait for '
       'stronger evidence.';
 
   static const returnedAfterFadedBody =
@@ -32,7 +32,7 @@ abstract final class CorrectionMemoryCopy {
       'You can correct the archive. Your past is context, not a verdict.';
 
   static const differentiationLine =
-      'ChatGPT responds in the moment. ArchiveMe remembers how you corrected the timeline.';
+      'ChatGPT responds in the moment. Thoughtprint remembers how you corrected the timeline.';
 
   static String bodyFor(CorrectionMemoryState state) => switch (state) {
     CorrectionMemoryState.stillCurrent => stillCurrentBody,

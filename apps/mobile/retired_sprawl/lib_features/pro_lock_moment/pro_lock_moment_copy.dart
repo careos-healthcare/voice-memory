@@ -7,7 +7,7 @@ abstract final class ProLockMomentCopy {
   static const title = 'This is the first proof.';
 
   static const body =
-      'ArchiveMe found something by comparing moments you saved at different times.';
+      'Thoughtprint found something by comparing moments you saved at different times.';
 
   static const String paidReason = PaywallAlignmentCopy.lockMomentPaidReason;
 

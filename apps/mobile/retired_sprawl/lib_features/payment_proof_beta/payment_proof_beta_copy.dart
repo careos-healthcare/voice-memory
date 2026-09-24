@@ -5,7 +5,7 @@ abstract final class PaymentProofBetaCopy {
   static const headline = 'Payment proof, not interest';
 
   static const body =
-      'A tester liking ArchiveMe is not payment proof. Payment proof starts when '
+      'A tester liking Thoughtprint is not payment proof. Payment proof starts when '
       'the user sees value, taps Pro, starts purchase, completes sandbox purchase, '
       'or restores.';
 

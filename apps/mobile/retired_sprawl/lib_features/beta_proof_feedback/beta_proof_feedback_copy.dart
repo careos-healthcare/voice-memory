@@ -14,7 +14,7 @@ abstract final class BetaProofFeedbackCopy {
   static const String answerNotRelevant = ProofRelevanceRepairCopy.answerNotRelevant;
 
   static const thanksMessage =
-      'Thanks — this helps tune what ArchiveMe shows next.';
+      'Thanks — this helps tune what Thoughtprint shows next.';
 
   static String labelFor(BetaProofFeedbackType type) =>
       ProofRelevanceRepairCopy.labelFor(type);

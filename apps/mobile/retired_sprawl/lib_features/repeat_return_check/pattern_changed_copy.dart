@@ -13,10 +13,10 @@ abstract final class PatternChangedCopy {
       'looked different this time.';
 
   static const footer =
-      'ArchiveMe will keep watching whether this shift holds.';
+      'Thoughtprint will keep watching whether this shift holds.';
 
   static String bodyWithPhrases(String oldPhrase, String newPhrase) =>
-      'Earlier, this showed up as "$oldPhrase". This time, ArchiveMe noticed '
+      'Earlier, this showed up as "$oldPhrase". This time, Thoughtprint noticed '
       '"$newPhrase".';
 
   static const recordIfReturnsCta = 'Record when it returns';

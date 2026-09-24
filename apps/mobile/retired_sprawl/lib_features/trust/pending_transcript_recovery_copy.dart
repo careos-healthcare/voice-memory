@@ -4,21 +4,21 @@ abstract final class PendingTranscriptRecoveryCopy {
 
   static const title = 'Transcript pending';
   static const body =
-      'This moment is saved, but ArchiveMe cannot compare it yet.';
+      'This moment is saved, but Thoughtprint cannot compare it yet.';
 
   static const primaryAction = 'Add what you said';
   static const helper = 'One short sentence is enough.';
 
   /// Record post-save recovery card — one calm path after degraded voice save.
-  static const postSaveTitle = 'Saved, but ArchiveMe could not hear enough.';
+  static const postSaveTitle = 'Saved, but Thoughtprint could not hear enough.';
   static const postSaveBody =
-      'Add one short sentence so ArchiveMe can compare this moment later.';
+      'Add one short sentence so Thoughtprint can compare this moment later.';
   static const moreOptionsLabel = 'More options';
   static const bluetoothAccessoryNote =
       'If this keeps happening, disconnect Bluetooth or audio accessories and try again.';
 
   static const inputTitle = 'What did you say?';
-  static const inputHelper = 'Add the part ArchiveMe should use as evidence.';
+  static const inputHelper = 'Add the part Thoughtprint should use as evidence.';
 
   static const saveButton = 'Save text';
   static const cancelButton = 'Cancel';

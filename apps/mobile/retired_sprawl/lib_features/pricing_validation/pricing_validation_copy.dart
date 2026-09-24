@@ -6,7 +6,7 @@ abstract final class PricingValidationCopy {
 
   static const title = 'What would feel fair?';
   static const body =
-      'ArchiveMe Pro keeps the longer evidence trail: what returns, what changes, '
+      'Thoughtprint Pro keeps the longer evidence trail: what returns, what changes, '
       'what fades, and what you correct.';
   static const pricePrompt =
       'If this was useful, what monthly price would feel fair?';

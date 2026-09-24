@@ -6,7 +6,7 @@ abstract final class PricingValueFramingCopy {
 
   static const title = 'Is Pro worth it?';
   static const body =
-      'Only if you want ArchiveMe to keep the evidence trail after the first proof.';
+      'Only if you want Thoughtprint to keep the evidence trail after the first proof.';
   static const valueExplanation =
       'Free can show the first useful signal. Pro is for the longer record: '
       'whether the pattern keeps returning, starts softening, disappears, '

@@ -60,7 +60,7 @@ abstract class PrivacyCopyPolicy {
   /// Calm first-run / legal disclaimer — no encryption or therapy claims.
   static const String personalNotMedicalDisclaimer =
       'Your recordings and reflections are personal. Some data may be stored '
-      'on this device. ArchiveMe is not therapy, medical advice, or emergency '
+      'on this device. Thoughtprint is not therapy, medical advice, or emergency '
       'support.';
 
   /// Shorter variant for compact trust rows — still requires an explicit choice.
@@ -216,7 +216,7 @@ abstract class PrivacyCopyPolicy {
   /// `EncryptedPayloadDto`) and "Backing up encrypted vault…"
   /// (`EncryptedSqliteVaultSyncPipeline.uploadVault` seals the SQLite bytes with
   /// AES-256-GCM before the iCloud transport sees them), and
-  /// `privacy_data_controls_copy.dart`'s "ArchiveMe stores your journal file
+  /// `privacy_data_controls_copy.dart`'s "Thoughtprint stores your journal file
   /// encrypted on this device".
   ///
   /// This recognises the shape instead. It is safe only because
@@ -345,7 +345,7 @@ abstract class PrivacyCopyPolicy {
   /// The acts this product actually performs, and so the only ones an
   /// unconditional denial can be wrong about.
   ///
-  /// Everything ArchiveMe does that a privacy claim could misdescribe is one
+  /// Everything Thoughtprint does that a privacy claim could misdescribe is one
   /// of four things: moving content off the device, choosing where it is
   /// stored, choosing where it is processed, or letting someone other than the
   /// user read it. Each has an exception — sync, transcription, analysis,

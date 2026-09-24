@@ -6,19 +6,19 @@ abstract final class ArchiveTabFourStateCopy {
 
   static const emptyBody =
       'Nothing saved yet. Save one real moment first. '
-      'ArchiveMe needs your words before it can compare anything.';
+      'Thoughtprint needs your words before it can compare anything.';
 
   static const oneBody =
-      'Your archive has started. ArchiveMe needs another real moment '
+      'Your archive has started. Thoughtprint needs another real moment '
       'before it can compare what repeats. Come back when this shows up again. '
       'You do not need to keep working on this now.';
 
   static const twoUnrelatedBody =
-      'ArchiveMe has two moments to compare. No clear repeat yet. '
+      'Thoughtprint has two moments to compare. No clear repeat yet. '
       'One more moment will make the thread easier to see.';
 
   static const twoRelatedLead =
-      'Something came back. ArchiveMe found a pattern across your saved moments.';
+      'Something came back. Thoughtprint found a pattern across your saved moments.';
 
   static const String viewEvidenceCta = PostSaveFocusedActionsCopy.viewEvidence;
 

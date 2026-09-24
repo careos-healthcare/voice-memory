@@ -2,7 +2,7 @@
 ///
 /// Static and always available — not gated behind any capability flag, and
 /// not connected to any detection, monitoring, or third-party notification.
-/// ArchiveMe is not a crisis service; this page only signposts to
+/// Thoughtprint is not a crisis service; this page only signposts to
 /// organizations that are.
 abstract final class CrisisResourcesCopy {
   CrisisResourcesCopy._();
@@ -18,7 +18,7 @@ abstract final class CrisisResourcesCopy {
       'are staffed by trained counselors, day or night.';
 
   static const String disclaimer =
-      "ArchiveMe isn't a crisis service and can't respond in real time — "
+      "Thoughtprint isn't a crisis service and can't respond in real time — "
       'these organizations can.';
 
   static const String emergencyTitle = 'In an immediate emergency';

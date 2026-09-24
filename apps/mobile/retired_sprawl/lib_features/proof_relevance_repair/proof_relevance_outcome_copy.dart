@@ -6,7 +6,7 @@ abstract final class ProofRelevanceOutcomeCopy {
 
   static const guardrail =
       'No Pro, pricing, or timeline changes until users understand what '
-      'ArchiveMe noticed and can judge whether it is right.';
+      'Thoughtprint noticed and can judge whether it is right.';
 
   static ProofRelevanceOutcomeReport report(
     ProofRelevanceOutcomeSummary summary,
@@ -42,7 +42,7 @@ abstract final class ProofRelevanceOutcomeCopy {
       'Too many testers still mark proof as too vague or not relevant after '
           'the relevance copy repair.',
     ProofRelevanceOutcomeDecision.proofNotUnderstood =>
-      'Testers still cannot clearly tell what ArchiveMe noticed or whether '
+      'Testers still cannot clearly tell what Thoughtprint noticed or whether '
           'the proof feels right.',
     ProofRelevanceOutcomeDecision.proofStableReturnToEvidenceTrail =>
       'Proof relevance is holding, but evidence-trail and value signals '

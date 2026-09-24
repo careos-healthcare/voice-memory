@@ -4,7 +4,7 @@ import 'package:archiveme_mobile/features/paywall_alignment/paywall_alignment_co
 abstract final class ProPackagingCopy {
   ProPackagingCopy._();
 
-  static const title = 'ArchiveMe Pro';
+  static const title = 'Thoughtprint Pro';
 
   static const String subtitle = PaywallAlignmentCopy.body;
 

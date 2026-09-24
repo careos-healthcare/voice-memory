@@ -4,7 +4,7 @@ abstract final class MomentQualityFeedbackCopy {
 
   static const specificUsableTitle = 'Good moment for your archive';
   static const specificUsableBody =
-      'This gives ArchiveMe something specific to compare later.';
+      'This gives Thoughtprint something specific to compare later.';
 
   static const savedTitle = 'Saved';
   static const tooShortBody =
@@ -12,12 +12,12 @@ abstract final class MomentQualityFeedbackCopy {
 
   static const quietDayTitle = 'Saved as a quiet day';
   static const quietDayBody =
-      'ArchiveMe will keep watching when something stands out.';
+      'Thoughtprint will keep watching when something stands out.';
 
   static const genericTestBody = 'Saved, but not used for patterns.';
 
   static const pendingTranscriptBody =
-      'Add what you said so ArchiveMe can use this later.';
+      'Add what you said so Thoughtprint can use this later.';
 
   static List<String> allVisibleCopy() => [
     specificUsableTitle,

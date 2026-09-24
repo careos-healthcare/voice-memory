@@ -31,7 +31,7 @@ abstract final class EarlyRepeatProgressCopy {
 
   static const twoUnrelatedCueLabel = 'Next step';
   static const twoUnrelatedCueBody =
-      'Record the next real moment. ArchiveMe will keep looking.';
+      'Record the next real moment. Thoughtprint will keep looking.';
   static const twoUnrelatedCueFooter = 'No need to force a pattern.';
 
   static String oneMomentCueBodyWithPhrase(String phrase) =>

@@ -25,7 +25,7 @@ import 'package:flutter/foundation.dart';
 class AppConfig {
   AppConfig._();
 
-  static const String appName = 'ArchiveMe';
+  static const String appName = 'Thoughtprint';
   static const String bundleId = 'com.voicememory.mobile';
 
   /// Production Next.js API (Vercel). `careosapp.co.uk` is marketing-only and

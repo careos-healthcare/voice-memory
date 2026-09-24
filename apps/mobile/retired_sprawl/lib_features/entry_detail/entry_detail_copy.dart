@@ -10,7 +10,7 @@ abstract class EntryDetailCopy {
   static const String archiveNoteBody =
       'This moment is part of your private archive.';
   static const String archiveNoteHelper =
-      'ArchiveMe can compare it with future entries when there is enough to compare.';
+      'Thoughtprint can compare it with future entries when there is enough to compare.';
   static const String transcriptPending =
       TranscriptPendingCopy.transcriptPendingTitle;
   static const String transcriptPendingBody =

@@ -1,6 +1,6 @@
-# ArchiveMe — Turborepo monorepo
+# Thoughtprint — Turborepo monorepo
 
-**ArchiveMe's canonical consumer product is the Flutter mobile app** at
+**Thoughtprint's canonical consumer product is the Flutter mobile app** at
 [`apps/mobile`](./apps/mobile). This repository is a Turborepo workspace:
 
 | Workspace | Path | Purpose |

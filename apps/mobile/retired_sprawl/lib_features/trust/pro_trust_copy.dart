@@ -43,7 +43,7 @@ abstract class ProTrustCopy {
   static const String shareBody =
       'Share a private summary without your entry text.';
   static const String shareTextTemplate =
-      'My archive noticed something I came back to again.\n\nRecorded with ArchiveMe.';
+      'My archive noticed something I came back to again.\n\nRecorded with Thoughtprint.';
   static const String shareCopyCta = 'Copy share text';
   static const String shareCta = 'Share';
   static const String shareNotNow = 'Not now';

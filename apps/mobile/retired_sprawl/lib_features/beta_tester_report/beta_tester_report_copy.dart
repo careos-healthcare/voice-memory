@@ -5,9 +5,9 @@ abstract final class BetaTesterReportCopy {
   BetaTesterReportCopy._();
 
   static const corePositioning =
-      'Your first ArchiveMe report shows what returned, what changed, what faded, what you corrected, and what ArchiveMe is still unsure about.';
+      'Your first Thoughtprint report shows what returned, what changed, what faded, what you corrected, and what Thoughtprint is still unsure about.';
 
-  static const title = 'Your first ArchiveMe report';
+  static const title = 'Your first Thoughtprint report';
 
   static const subtitle = 'Built from moments you saved.';
 
@@ -15,27 +15,27 @@ abstract final class BetaTesterReportCopy {
   static const whatChangedHeading = 'What changed';
   static const whatFadedHeading = 'What faded';
   static const whatYouCorrectedHeading = 'What you corrected';
-  static const stillUnsureHeading = 'What ArchiveMe is still unsure about';
+  static const stillUnsureHeading = 'What Thoughtprint is still unsure about';
 
   static const whatReturnedBody =
-      'ArchiveMe has started to see what may be coming back.';
+      'Thoughtprint has started to see what may be coming back.';
 
   static const whatChangedBody =
-      'ArchiveMe is watching whether this feels different than before.';
+      'Thoughtprint is watching whether this feels different than before.';
 
   static const whatFadedBody =
       'Some older evidence may matter less if it has not returned.';
 
   static const whatYouCorrectedBody =
-      'Your corrections change how ArchiveMe treats the timeline.';
+      'Your corrections change how Thoughtprint treats the timeline.';
 
   static const stillUnsureBody =
-      'ArchiveMe needs more real moments before treating this as strong evidence.';
+      'Thoughtprint needs more real moments before treating this as strong evidence.';
 
   static const footer = 'No single moment proves the whole story.';
 
   static const betaFeedbackLine =
-      'Your feedback helps improve what ArchiveMe shows next.';
+      'Your feedback helps improve what Thoughtprint shows next.';
 
   static String headingFor(BetaTesterReportSectionId section) =>
       switch (section) {

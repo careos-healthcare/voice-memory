@@ -8,10 +8,10 @@ abstract final class FirstProofTruthCopy {
   static const sortOfOption = 'Sort of';
   static const noOption = 'No';
 
-  static const afterYes = 'Good. ArchiveMe will watch whether it changes.';
+  static const afterYes = 'Good. Thoughtprint will watch whether it changes.';
 
   static const afterSortOf =
-      'Okay. You can rename the pattern or keep recording so ArchiveMe gets clearer.';
+      'Okay. You can rename the pattern or keep recording so Thoughtprint gets clearer.';
 
   static const afterNo =
       'Okay. You can rename it, correct the transcript, or ignore this pattern.';

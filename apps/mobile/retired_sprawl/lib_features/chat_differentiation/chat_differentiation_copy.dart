@@ -1,16 +1,16 @@
-/// Copy explaining how ArchiveMe differs from chat — grounded, non-comparative.
+/// Copy explaining how Thoughtprint differs from chat — grounded, non-comparative.
 abstract final class ChatDifferentiationCopy {
   ChatDifferentiationCopy._();
 
   static const firstProofLine =
-      'ArchiveMe did not answer one message. It compared moments you saved at different times.';
+      'Thoughtprint did not answer one message. It compared moments you saved at different times.';
 
   static const expandLinkLabel = 'Why this is different from chat';
 
   static const sheetTitle = 'Why this is different';
 
   static const sheetBody =
-      'Chat can respond to what you say today. ArchiveMe is built to notice what returns across days, then show the evidence back to you.';
+      'Chat can respond to what you say today. Thoughtprint is built to notice what returns across days, then show the evidence back to you.';
 
   static const timelineFirstSavedLabel = 'First saved';
   static const timelineCameBackLabel = 'Came back';
@@ -23,7 +23,7 @@ abstract final class ChatDifferentiationCopy {
   static const sheetCloseLine = 'That timeline is the product.';
 
   static const onboardingNotChatLine =
-      'ArchiveMe is not a chat. It helps you notice what keeps returning.';
+      'Thoughtprint is not a chat. It helps you notice what keeps returning.';
 
   static const patternDetailWhyHeading = 'Why this matters';
   static const patternDetailWhyBody =

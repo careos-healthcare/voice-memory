@@ -283,7 +283,7 @@ abstract class ArchiveCopyMinimumBar {
     }
 
     final withoutArchiveMe = normalized.replaceAll(
-      RegExp('ArchiveMe', caseSensitive: false),
+      RegExp('Thoughtprint', caseSensitive: false),
       '',
     );
     if (RegExp('[a-z][A-Z]').hasMatch(withoutArchiveMe)) {

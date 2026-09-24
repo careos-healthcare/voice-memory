@@ -5,7 +5,7 @@ abstract final class ContextTrailClarityCopy {
   static const headline = 'Where the repeat shows up';
 
   static const body =
-      'Context helps ArchiveMe show where a repeat appears — work, home, family, '
+      'Context helps Thoughtprint show where a repeat appears — work, home, family, '
       'money, health, decisions, relationships, or somewhere else. You do not need '
       'to tag everything.';
 

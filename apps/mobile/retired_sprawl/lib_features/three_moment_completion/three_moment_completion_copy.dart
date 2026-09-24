@@ -12,12 +12,12 @@ abstract final class ThreeMomentCompletionCopy {
 
   static const secondTitle = 'Add one more moment when something stands out';
   static const secondBody =
-      'A second moment gives ArchiveMe something to compare.';
+      'A second moment gives Thoughtprint something to compare.';
   static const secondPrimaryCta = 'I noticed something';
 
   static const thirdTitle = 'One more moment can reveal what returned';
   static const thirdBody =
-      'A third real moment can help ArchiveMe show whether something returned.';
+      'A third real moment can help Thoughtprint show whether something returned.';
   static const thirdPrimaryCta = 'Save one more moment';
 
   static Iterable<String> allVisibleStrings() sync* {

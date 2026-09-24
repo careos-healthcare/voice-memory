@@ -16,7 +16,7 @@ abstract final class ThreeDayChallengeCopy {
   static const String day3Body = LandingAppContinuityCopy.step3Body;
 
   static const completionBody =
-      'You gave ArchiveMe enough to compare what returned.';
+      'You gave Thoughtprint enough to compare what returned.';
 
   static const List<String> all = [
     title,

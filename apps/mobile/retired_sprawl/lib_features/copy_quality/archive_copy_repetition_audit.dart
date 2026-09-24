@@ -134,7 +134,7 @@ abstract class ArchiveCopyRepetitionAudit {
       fixes.add(switch (phrase) {
         'record another moment' => 'Try "Record the next time this shows up."',
         'your map is getting sharper' || 'your map gets sharper' =>
-          'Try "ArchiveMe has one more piece of evidence."',
+          'Try "Thoughtprint has one more piece of evidence."',
         'this may be about' =>
           'Try "Your words point to…" or "The strongest clue is…"',
         'what changed' => 'Try "What changed since your earlier recording."',

@@ -9,7 +9,7 @@ abstract final class BetaFeedbackCaptureCopy {
   static String titleFor(BetaFeedbackCaptureMoment moment) => switch (moment) {
     BetaFeedbackCaptureMoment.afterFirstSave => 'Was it clear what to do next?',
     BetaFeedbackCaptureMoment.afterThirdSave =>
-      'Do you expect ArchiveMe to show something useful now?',
+      'Do you expect Thoughtprint to show something useful now?',
     BetaFeedbackCaptureMoment.afterTimelineProof => 'Did this proof feel real?',
     BetaFeedbackCaptureMoment.afterProPreview =>
       'Does Pro sound worth keeping?',

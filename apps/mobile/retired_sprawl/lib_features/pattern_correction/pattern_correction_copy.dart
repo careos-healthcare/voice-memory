@@ -10,7 +10,7 @@ import 'package:archiveme_mobile/features/transcript_correction/transcript_corre
 abstract final class PatternCorrectionCopy {
   PatternCorrectionCopy._();
 
-  static const controlLabel = 'ArchiveMe got this wrong';
+  static const controlLabel = 'Thoughtprint got this wrong';
   static const sheetTitle = 'What feels wrong?';
   static const actionsHeading = 'What would help?';
   static const backToReasons = 'Back';

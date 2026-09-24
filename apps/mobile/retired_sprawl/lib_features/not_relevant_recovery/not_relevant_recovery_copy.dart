@@ -5,14 +5,14 @@ abstract final class NotRelevantRecoveryCopy {
   static const title = 'You marked this as not relevant';
 
   static const body =
-      'ArchiveMe will treat this as background unless it returns in newer '
+      'Thoughtprint will treat this as background unless it returns in newer '
       'saved moments.';
 
   static const correctionLine =
       'Your correction changes how the timeline is weighted.';
 
   static const returnLine =
-      'If it comes back later, ArchiveMe can show that it returned after '
+      'If it comes back later, Thoughtprint can show that it returned after '
       'you corrected it.';
 
   static const returnedAfterCorrectionLine =
@@ -23,13 +23,13 @@ abstract final class NotRelevantRecoveryCopy {
   static const relevantAgainLabel = 'It is relevant again';
 
   static const keepAsBackgroundFollowUp =
-      'Saved. ArchiveMe will keep this light unless it returns.';
+      'Saved. Thoughtprint will keep this light unless it returns.';
 
   static const watchLightlyFollowUp =
-      'Saved. ArchiveMe will keep this lightly in view.';
+      'Saved. Thoughtprint will keep this lightly in view.';
 
   static const relevantAgainFollowUp =
-      'Saved. ArchiveMe will treat fresh returns as stronger evidence.';
+      'Saved. Thoughtprint will treat fresh returns as stronger evidence.';
 
   static String actionLabel(NotRelevantRecoveryActionType action) =>
       switch (action) {

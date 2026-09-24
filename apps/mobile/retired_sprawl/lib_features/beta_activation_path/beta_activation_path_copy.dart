@@ -6,25 +6,25 @@ abstract final class BetaActivationPathCopy {
 
   static const firstSaveTitle = 'Start the beta path';
   static const firstSaveBody =
-      'Save one real moment. That gives ArchiveMe something to return to.';
+      'Save one real moment. That gives Thoughtprint something to return to.';
   static const firstSavePrimaryCta = 'Save first moment';
   static const firstSaveSecondaryCta = 'Not now';
 
   static const secondSaveTitle = 'Come back when something stands out';
   static const secondSaveBody =
-      'The second save helps ArchiveMe see whether anything is returning.';
+      'The second save helps Thoughtprint see whether anything is returning.';
   static const secondSavePrimaryCta = 'Save another moment';
   static const secondSaveSecondaryCta = 'Not today';
 
   static const thirdSaveTitle = 'One more moment can unlock the first proof';
   static const thirdSaveBody =
-      'Three real moments are usually enough for ArchiveMe to start showing the timeline.';
+      'Three real moments are usually enough for Thoughtprint to start showing the timeline.';
   static const thirdSavePrimaryCta = 'Save one more moment';
   static const thirdSaveSecondaryCta = 'Not today';
 
   static const proofCheckTitle = 'Check the proof';
   static const proofCheckBody =
-      'Look for whether ArchiveMe shows what returned, changed, or faded.';
+      'Look for whether Thoughtprint shows what returned, changed, or faded.';
   static const proofCheckPrimaryCta = 'View timeline proof';
   static const proofCheckSecondaryCta = 'Not now';
 

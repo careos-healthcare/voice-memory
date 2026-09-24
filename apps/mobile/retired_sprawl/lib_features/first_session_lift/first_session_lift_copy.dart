@@ -8,7 +8,7 @@ abstract final class FirstSessionLiftCopy {
   static const primaryCta = 'Type one sentence';
   static const secondaryCta = 'Use voice instead';
   static const microcopy =
-      'ArchiveMe only needs a real first moment. You can come back later if it repeats.';
+      'Thoughtprint only needs a real first moment. You can come back later if it repeats.';
 
   static const exampleKeptCheckingAgain = 'I kept checking again';
   static const exampleAvoidedReplying = 'I avoided replying';

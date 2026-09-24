@@ -6,10 +6,10 @@ abstract final class EarlyEvidenceTimelineCopy {
 
   static const nearbyTitle = 'How it showed up';
 
-  static const nearbySubtitle = 'These are the moments ArchiveMe used.';
+  static const nearbySubtitle = 'These are the moments Thoughtprint used.';
 
   static const subtitle =
-      'ArchiveMe is tracking what repeats, what starts it, and what may help '
+      'Thoughtprint is tracking what repeats, what starts it, and what may help '
       'it soften.';
 
   static const repeatConfirmedTitle = 'Repeat confirmed';

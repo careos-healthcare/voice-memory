@@ -2,7 +2,7 @@
 abstract final class EarlyArchiveInsightWhyCopy {
   EarlyArchiveInsightWhyCopy._();
 
-  static const linkLabel = 'Why ArchiveMe thinks this';
+  static const linkLabel = 'Why Thoughtprint thinks this';
 
   static String seenAcrossEntries(int count) =>
       'Seen across $count ${count == 1 ? 'entry' : 'entries'}.';

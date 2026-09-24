@@ -9,7 +9,7 @@ abstract final class FirstMomentCaptureCopy {
   static const coreAnythingCounts = 'Anything from today counts.';
 
   static const coreArchiveSense =
-      'ArchiveMe only starts making sense after a few real moments.';
+      'Thoughtprint only starts making sense after a few real moments.';
 
   static const title = 'Start with one sentence';
 

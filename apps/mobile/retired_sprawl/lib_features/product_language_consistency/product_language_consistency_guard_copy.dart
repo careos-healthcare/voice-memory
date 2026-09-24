@@ -8,7 +8,7 @@ abstract final class ProductLanguageConsistencyGuardCopy {
       'Make proof-trail language win over dashboard, story, storage, and report-first framing.';
 
   static const publicPromise =
-      'When something repeats, save one real moment. ArchiveMe compares it later.';
+      'When something repeats, save one real moment. Thoughtprint compares it later.';
 
   static const preferredLanguageLine =
       'Prefer repeat, proof, proof trail, longer proof trail, returns, changes, fades, '

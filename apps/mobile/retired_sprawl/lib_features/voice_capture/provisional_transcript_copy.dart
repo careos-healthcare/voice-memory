@@ -5,11 +5,11 @@ abstract final class ProvisionalTranscriptCopy {
   static const chipLabel = 'Draft transcript';
 
   static const detailFootnote =
-      'This transcript came from your device. ArchiveMe will refine it when connected.';
+      'This transcript came from your device. Thoughtprint will refine it when connected.';
 
   static const historyNote =
-      'ArchiveMe will refine this transcript when connected.';
+      'Thoughtprint will refine this transcript when connected.';
 
   static const postSaveFootnote =
-      'ArchiveMe will refine this transcript when connected.';
+      'Thoughtprint will refine this transcript when connected.';
 }

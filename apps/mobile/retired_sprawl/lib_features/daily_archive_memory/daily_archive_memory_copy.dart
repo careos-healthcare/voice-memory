@@ -20,7 +20,7 @@ abstract final class DailyArchiveMemoryCopy {
   static const fallbackTitle = 'Your archive is ready';
 
   static const fallbackBody =
-      'Record one real moment from today. ArchiveMe will compare it with what came before.';
+      'Record one real moment from today. Thoughtprint will compare it with what came before.';
 
   static String quotedWatchPhrase(String phrase) => "'$phrase'";
 

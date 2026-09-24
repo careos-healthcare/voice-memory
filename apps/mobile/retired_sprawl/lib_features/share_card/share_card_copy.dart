@@ -2,7 +2,7 @@
 abstract final class ShareCardCopy {
   ShareCardCopy._();
 
-  static const headline = 'ArchiveMe found a repeat';
+  static const headline = 'Thoughtprint found a repeat';
   static const footer = 'Private by default';
   static const createShareCardCta = 'Create share card';
 

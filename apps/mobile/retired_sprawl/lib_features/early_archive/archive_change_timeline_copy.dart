@@ -5,7 +5,7 @@ abstract final class ArchiveChangeTimelineCopy {
   static const title = 'Evidence timeline';
 
   static const subtitle =
-      'What repeated, what changed, and what ArchiveMe is still watching.';
+      'What repeated, what changed, and what Thoughtprint is still watching.';
 
   static const firstSeenLabel = 'First seen';
 
@@ -24,7 +24,7 @@ abstract final class ArchiveChangeTimelineCopy {
   static const stillWatchingLabel = 'Still watching';
 
   static const firstSeenBody =
-      'This was the first moment ArchiveMe could compare.';
+      'This was the first moment Thoughtprint could compare.';
 
   static const repeatedBody = 'This showed up again in your words.';
 
@@ -39,5 +39,5 @@ abstract final class ArchiveChangeTimelineCopy {
   static const helpfulActionAppearedBody = 'A helpful action appeared.';
 
   static const stillWatchingBody =
-      'ArchiveMe is still watching whether this holds.';
+      'Thoughtprint is still watching whether this holds.';
 }

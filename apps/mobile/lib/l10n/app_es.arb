@@ -24,17 +24,17 @@
   "@accountAuthContinueWithoutAccount": {
     "description": "English source: Continue without an account"
   },
-  "accountAuthCreateBody": "ArchiveMe es un diario de voz privado que convierte tus pensamientos hablados en una historia de vida unificada e inteligencia personal profunda. Crea una cuenta para restaurar el acceso más tarde.",
+  "accountAuthCreateBody": "Thoughtprint es un diario de voz privado que convierte tus pensamientos hablados en una historia de vida unificada e inteligencia personal profunda. Crea una cuenta para restaurar el acceso más tarde.",
   "@accountAuthCreateBody": {
-    "description": "English source: ArchiveMe is a private voice journal that turns your spoken thoughts into a unified life story and deep personal intelligence. Create an account to restore access later."
+    "description": "English source: Thoughtprint is a private voice journal that turns your spoken thoughts into a unified life story and deep personal intelligence. Create an account to restore access later."
   },
   "accountAuthCreateCta": "Crear cuenta",
   "@accountAuthCreateCta": {
     "description": "English source: Create account"
   },
-  "accountAuthCreateTitle": "Crea tu cuenta de ArchiveMe",
+  "accountAuthCreateTitle": "Crea tu cuenta de Thoughtprint",
   "@accountAuthCreateTitle": {
-    "description": "English source: Create your ArchiveMe account"
+    "description": "English source: Create your Thoughtprint account"
   },
   "accountAuthEmailLabel": "Correo electrónico",
   "@accountAuthEmailLabel": {
@@ -68,9 +68,9 @@
   "@accountAuthSignInFailed": {
     "description": "English source: Sign-in failed. Check the code and try again."
   },
-  "accountAuthSignInTitle": "Inicia sesión en ArchiveMe",
+  "accountAuthSignInTitle": "Inicia sesión en Thoughtprint",
   "@accountAuthSignInTitle": {
-    "description": "English source: Sign in to ArchiveMe"
+    "description": "English source: Sign in to Thoughtprint"
   },
   "accountAuthSignOut": "Cerrar sesión",
   "@accountAuthSignOut": {
@@ -80,17 +80,17 @@
   "@accountAuthSignOutKeepsArchive": {
     "description": "English source: Signing out keeps your recordings on this device."
   },
-  "accountAuthTimingNote": "ArchiveMe es un diario de voz privado que convierte tus pensamientos hablados en una historia de vida unificada e inteligencia personal profunda. Puedes usarlo localmente sin cuenta.",
+  "accountAuthTimingNote": "Thoughtprint es un diario de voz privado que convierte tus pensamientos hablados en una historia de vida unificada e inteligencia personal profunda. Puedes usarlo localmente sin cuenta.",
   "@accountAuthTimingNote": {
-    "description": "English source: ArchiveMe is a private voice journal that turns your spoken thoughts into a unified life story and deep personal intelligence. You can use it locally without an account."
+    "description": "English source: Thoughtprint is a private voice journal that turns your spoken thoughts into a unified life story and deep personal intelligence. You can use it locally without an account."
   },
   "accountScreenLabel": "Pantalla de cuenta",
   "@accountScreenLabel": {
     "description": "English source: Account screen"
   },
-  "appTitle": "ArchiveMe",
+  "appTitle": "Thoughtprint",
   "@appTitle": {
-    "description": "English source: ArchiveMe"
+    "description": "English source: Thoughtprint"
   },
   "archiveAddMoment": "Añadir un momento",
   "@archiveAddMoment": {
@@ -118,13 +118,13 @@
   "@archiveEvidenceTitle": {
     "description": "English source: Evidence"
   },
-  "archiveNeedsComparison": "Añade otro momento para que ArchiveMe pueda comparar lo que cambió.",
+  "archiveNeedsComparison": "Añade otro momento para que Thoughtprint pueda comparar lo que cambió.",
   "@archiveNeedsComparison": {
-    "description": "English source: Add another moment so ArchiveMe can compare what changed."
+    "description": "English source: Add another moment so Thoughtprint can compare what changed."
   },
-  "archiveNeedsSupportedMoments": "ArchiveMe necesita al menos dos momentos compatibles antes de explicar un patrón.",
+  "archiveNeedsSupportedMoments": "Thoughtprint necesita al menos dos momentos compatibles antes de explicar un patrón.",
   "@archiveNeedsSupportedMoments": {
-    "description": "English source: ArchiveMe needs at least two supported moments before explaining a pattern."
+    "description": "English source: Thoughtprint needs at least two supported moments before explaining a pattern."
   },
   "archiveNextMomentGuidance": "Graba o escribe un momento específico. Una segunda observación compatible hace visible el cambio.",
   "@archiveNextMomentGuidance": {
@@ -486,17 +486,17 @@
     },
     "description": "English source: Recording in progress, {seconds, plural, one{1 second} other{{seconds} seconds}}"
   },
-  "recordingPlainLanguageHint": "Dilo con claridad. ArchiveMe busca patrones, no juicios.",
+  "recordingPlainLanguageHint": "Dilo con claridad. Thoughtprint busca patrones, no juicios.",
   "@recordingPlainLanguageHint": {
-    "description": "English source: Say it plainly. ArchiveMe looks for patterns, not judgment."
+    "description": "English source: Say it plainly. Thoughtprint looks for patterns, not judgment."
   },
   "recordingProcessingStatus": "Procesando",
   "@recordingProcessingStatus": {
     "description": "English source: Processing"
   },
-  "recordingPromptNudgeBody": "ArchiveMe usa lo que grabas para mostrar cada día cosas más claras que merecen la pena comprobar.",
+  "recordingPromptNudgeBody": "Thoughtprint usa lo que grabas para mostrar cada día cosas más claras que merecen la pena comprobar.",
   "@recordingPromptNudgeBody": {
-    "description": "English source: ArchiveMe uses what you record to surface sharper things worth checking each day."
+    "description": "English source: Thoughtprint uses what you record to surface sharper things worth checking each day."
   },
   "recordingPromptNudgeTitle": "Mejora tus indicaciones diarias del archivo",
   "@recordingPromptNudgeTitle": {
@@ -570,9 +570,9 @@
   "@widgetQuickCaptureBody": {
     "description": "English source: Capture a moment from your home screen."
   },
-  "accountTitle": "Cuenta de ArchiveMe",
+  "accountTitle": "Cuenta de Thoughtprint",
   "@accountTitle": {
-    "description": "English source: ArchiveMe account"
+    "description": "English source: Thoughtprint account"
   },
   "syncStatus": "Estado de sincronización",
   "@syncStatus": {
@@ -714,9 +714,9 @@
   "@paywallContinue": {
     "description": "English source: Keep the longer trail"
   },
-  "paywallDifferentiation": "ArchiveMe no intenta responder mejor que ChatGPT. Intenta recordar de otra manera.",
+  "paywallDifferentiation": "Thoughtprint no intenta responder mejor que ChatGPT. Intenta recordar de otra manera.",
   "@paywallDifferentiation": {
-    "description": "English source: ArchiveMe is not trying to answer better than ChatGPT. It is trying to remember differently."
+    "description": "English source: Thoughtprint is not trying to answer better than ChatGPT. It is trying to remember differently."
   },
   "paywallTrust": "Tus guardados siguen siendo gratis. Gestiona o cancela cuando quieras en el App Store.",
   "@paywallTrust": {
@@ -782,25 +782,25 @@
   "@valueMomentProDismiss": {
     "description": "English source: Not now"
   },
-  "valueMomentThreadReturnBody": "Este hilo ha regresado antes. Pro conserva el historial de evidencia para que ArchiveMe pueda mostrar si se fortalece, se suaviza o cambia.",
+  "valueMomentThreadReturnBody": "Este hilo ha regresado antes. Pro conserva el historial de evidencia para que Thoughtprint pueda mostrar si se fortalece, se suaviza o cambia.",
   "@valueMomentThreadReturnBody": {
-    "description": "English source: This thread has returned before. Pro keeps the evidence history so ArchiveMe can show whether it gets stronger, softer, or changes."
+    "description": "English source: This thread has returned before. Pro keeps the evidence history so Thoughtprint can show whether it gets stronger, softer, or changes."
   },
   "valueMomentBeliefBody": "Una frase similar a una creencia apareció de nuevo. Pro conserva la línea de tiempo de lo que cambió en tu archivo.",
   "@valueMomentBeliefBody": {
     "description": "English source: A belief-like phrase showed up again. Pro keeps the timeline of what changed across your archive."
   },
-  "valueMomentWeeklyBody": "Tu revisión semanal encontró algo para comparar. Pro conserva las revisiones semanales del archivo para que ArchiveMe pueda seguir lo que cambió con el tiempo.",
+  "valueMomentWeeklyBody": "Tu revisión semanal encontró algo para comparar. Pro conserva las revisiones semanales del archivo para que Thoughtprint pueda seguir lo que cambió con el tiempo.",
   "@valueMomentWeeklyBody": {
-    "description": "English source: Your weekly review found something to compare. Pro keeps weekly archive reviews so ArchiveMe can track what changed over time."
+    "description": "English source: Your weekly review found something to compare. Pro keeps weekly archive reviews so Thoughtprint can track what changed over time."
   },
   "valueMomentProofCounterBody": "Tu archivo tiene grabaciones conectadas. Pro conserva todo el historial de evidencia a medida que crece el rastro.",
   "@valueMomentProofCounterBody": {
     "description": "English source: Your archive has connected recordings. Pro keeps the full evidence history as the trail grows."
   },
-  "valueMomentFallbackBody": "Tu primera repetición es gratis. Pro conserva el historial de evidencia para que ArchiveMe pueda mostrar si los patrones se fortalecen, se suavizan o cambian con el tiempo.",
+  "valueMomentFallbackBody": "Tu primera repetición es gratis. Pro conserva el historial de evidencia para que Thoughtprint pueda mostrar si los patrones se fortalecen, se suavizan o cambian con el tiempo.",
   "@valueMomentFallbackBody": {
-    "description": "English source: Your first repeat is free. Pro keeps the evidence history so ArchiveMe can show whether patterns get stronger, softer, or change over time."
+    "description": "English source: Your first repeat is free. Pro keeps the evidence history so Thoughtprint can show whether patterns get stronger, softer, or change over time."
   },
   "subscriptionPaywallNoOfferings": "No hay planes de suscripción disponibles.",
   "@subscriptionPaywallNoOfferings": {
@@ -822,9 +822,9 @@
   "@patternsEmptyPageTitle": {
     "description": "English source: Record a few real moments"
   },
-  "patternsEarlyStateBody": "Graba algunos momentos reales. ArchiveMe buscará lo que se repite entre ellos.",
+  "patternsEarlyStateBody": "Graba algunos momentos reales. Thoughtprint buscará lo que se repite entre ellos.",
   "@patternsEarlyStateBody": {
-    "description": "English source: Record a few real moments. ArchiveMe will look for what repeats across them."
+    "description": "English source: Record a few real moments. Thoughtprint will look for what repeats across them."
   },
   "patternsEmptyCta": "Grabar momento",
   "@patternsEmptyCta": {
@@ -858,9 +858,9 @@
   "@patternsFirstEntrySavedTitle": {
     "description": "English source: First moment saved"
   },
-  "patternsFirstEntrySavedBody": "Graba un momento más claro y ArchiveMe podrá comparar lo que se repite.",
+  "patternsFirstEntrySavedBody": "Graba un momento más claro y Thoughtprint podrá comparar lo que se repite.",
   "@patternsFirstEntrySavedBody": {
-    "description": "English source: Record one more clear moment and ArchiveMe can compare what repeats."
+    "description": "English source: Record one more clear moment and Thoughtprint can compare what repeats."
   },
   "patternsFirstEntrySavedCta": "Grabar otro momento",
   "@patternsFirstEntrySavedCta": {
@@ -882,17 +882,17 @@
   "@allPatternsTitle": {
     "description": "English source: All patterns"
   },
-  "allPatternsLead": "Patrones y temas que ArchiveMe sigue notando en tus reflexiones.",
+  "allPatternsLead": "Patrones y temas que Thoughtprint sigue notando en tus reflexiones.",
   "@allPatternsLead": {
-    "description": "English source: Patterns and themes ArchiveMe keeps noticing in your reflections."
+    "description": "English source: Patterns and themes Thoughtprint keeps noticing in your reflections."
   },
   "patternsCheckInWaitingTitle": "Registro pendiente",
   "@patternsCheckInWaitingTitle": {
     "description": "English source: Check-in waiting"
   },
-  "patternsCheckInWaitingBody": "ArchiveMe tiene una pregunta de tu último momento.",
+  "patternsCheckInWaitingBody": "Thoughtprint tiene una pregunta de tu último momento.",
   "@patternsCheckInWaitingBody": {
-    "description": "English source: ArchiveMe has a question from your last moment."
+    "description": "English source: Thoughtprint has a question from your last moment."
   },
   "patternsCheckInWaitingCta": "Responder ahora",
   "@patternsCheckInWaitingCta": {
@@ -914,9 +914,9 @@
   "@patternsSignalsWaitingTitle": {
     "description": "English source: Signals waiting for clarity"
   },
-  "patternsWatchingSignalTitle": "ArchiveMe está observando esta señal",
+  "patternsWatchingSignalTitle": "Thoughtprint está observando esta señal",
   "@patternsWatchingSignalTitle": {
-    "description": "English source: ArchiveMe is watching this signal"
+    "description": "English source: Thoughtprint is watching this signal"
   },
   "patternsWatchingSignalBody": "Graba un momento más para comprobar si se repite.",
   "@patternsWatchingSignalBody": {
@@ -950,9 +950,9 @@
   "@patternsComeBackTitle": {
     "description": "English source: Why come back tomorrow?"
   },
-  "patternsComeBackBody": "ArchiveMe compara lo que guardas con el tiempo.",
+  "patternsComeBackBody": "Thoughtprint compara lo que guardas con el tiempo.",
   "@patternsComeBackBody": {
-    "description": "English source: ArchiveMe compares what you save over time."
+    "description": "English source: Thoughtprint compares what you save over time."
   },
   "patternsComeBackRecordCta": "Grabar la reflexión de hoy",
   "@patternsComeBackRecordCta": {

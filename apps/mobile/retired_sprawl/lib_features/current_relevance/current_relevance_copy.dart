@@ -7,12 +7,12 @@ abstract final class CurrentRelevanceCopy {
   static const title = 'Does this still affect today?';
 
   static const body =
-      'ArchiveMe found something that appeared before. '
+      'Thoughtprint found something that appeared before. '
       'That does not mean it matters equally now.';
 
   static const differentiationLine =
       'ChatGPT can respond to one conversation. '
-      'ArchiveMe compares saved moments and lets you correct what still matters.';
+      'Thoughtprint compares saved moments and lets you correct what still matters.';
 
   static const List<String> all = [
     title,
@@ -41,15 +41,15 @@ abstract final class CurrentRelevanceCopy {
   };
 
   static const responseYes =
-      'This looks current. ArchiveMe will keep watching how it shows up now.';
+      'This looks current. Thoughtprint will keep watching how it shows up now.';
   static const responseLittle =
       'This may still matter, but not equally every time. '
-      'ArchiveMe will treat it as a soft signal.';
+      'Thoughtprint will treat it as a soft signal.';
   static const responseNotReally =
-      'Good to know. ArchiveMe will not treat this as urgent '
+      'Good to know. Thoughtprint will not treat this as urgent '
       'just because it appeared before.';
   static const responseNotSure =
-      'ArchiveMe will keep this lightly in view and wait for stronger evidence.';
+      'Thoughtprint will keep this lightly in view and wait for stronger evidence.';
 
   static String responseFor(CurrentRelevanceAnswer answer) => switch (answer) {
     CurrentRelevanceAnswer.yes => responseYes,

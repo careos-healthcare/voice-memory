@@ -15,13 +15,13 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "ArchiveMe — Save the moment. See what returns.",
+  title: "Thoughtprint — Save the moment. See what returns.",
   description:
-    "ArchiveMe is a private mobile app for recording real moments and revisiting them in your own words over time.",
-  applicationName: "ArchiveMe",
+    "Thoughtprint is a private mobile app for recording real moments and revisiting them in your own words over time.",
+  applicationName: "Thoughtprint",
   appleWebApp: {
     capable: true,
-    title: "ArchiveMe",
+    title: "Thoughtprint",
     statusBarStyle: "black-translucent",
   },
   formatDetection: {

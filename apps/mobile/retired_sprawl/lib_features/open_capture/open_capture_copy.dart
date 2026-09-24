@@ -9,13 +9,13 @@ abstract final class OpenCaptureCopy {
   static const subline = 'It does not have to be a pattern yet.';
 
   static const chipSelectedCopy =
-      'Start anywhere. ArchiveMe looks for the pattern later.';
+      'Start anywhere. Thoughtprint looks for the pattern later.';
 
   static const fallbackHelper =
       'Use this as a starting point. You can say anything.';
 
   static const differentiation =
-      'ChatGPT starts with a question. ArchiveMe can start with any moment.';
+      'ChatGPT starts with a question. Thoughtprint can start with any moment.';
 
   static const thoughtLabel = 'Thought';
   static const thoughtPrompt = 'What is on your mind right now?';

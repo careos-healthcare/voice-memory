@@ -17,7 +17,7 @@ abstract final class NoDashboardReleaseModeCopy {
       'first proof, why proof appeared, confirm/correct, what changed, Pro longer trail.';
 
   static const guardrail =
-      'Do not call ArchiveMe a dashboard, command center, second brain, or life OS. '
+      'Do not call Thoughtprint a dashboard, command center, second brain, or life OS. '
       'No UI layout changes unless an existing policy hook allows it. No new features.';
 
   static const detailVisible = 'Visible in release mode';

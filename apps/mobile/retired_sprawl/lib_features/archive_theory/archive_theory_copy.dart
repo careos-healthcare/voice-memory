@@ -2,13 +2,13 @@
 abstract class ArchiveTheoryCopy {
   ArchiveTheoryCopy._();
 
-  static const String heroTitle = 'Possible patterns ArchiveMe is watching';
+  static const String heroTitle = 'Possible patterns Thoughtprint is watching';
 
   static const String notYetConfident =
-      'ArchiveMe does not have enough evidence yet.';
+      'Thoughtprint does not have enough evidence yet.';
 
   static const String needsMoreEvidenceBeforeStrong =
-      'ArchiveMe may need more moments before this feels settled.';
+      'Thoughtprint may need more moments before this feels settled.';
 
   static const String confidenceLabel = 'How often it shows up';
   static const String evidenceLabel = 'Evidence';

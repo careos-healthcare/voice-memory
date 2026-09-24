@@ -2,17 +2,17 @@
 abstract final class FirstProofPayoffCopy {
   FirstProofPayoffCopy._();
 
-  static const headline = 'ArchiveMe noticed this came back';
+  static const headline = 'Thoughtprint noticed this came back';
 
   static const yourWordsLabel = 'Your words:';
 
   static const patternLine = 'That is the pattern.';
 
   static const truthLine =
-      'This is not a diagnosis or advice. It is a repeat ArchiveMe found in your own words.';
+      'This is not a diagnosis or advice. It is a repeat Thoughtprint found in your own words.';
 
   static const fallbackHeadline =
-      'ArchiveMe noticed the same thread across your saved moments.';
+      'Thoughtprint noticed the same thread across your saved moments.';
 
   static const fallbackBody = 'Record one more real moment when it returns.';
 
@@ -23,10 +23,10 @@ abstract final class FirstProofPayoffCopy {
   /// Weak milestone copy that must not lead the payoff card.
   static const bannedMainLeads = [
     'First proof unlocked',
-    'ArchiveMe found a repeat in your words',
+    'Thoughtprint found a repeat in your words',
     'This showed up across three related moments',
     'This came back.',
-    'ArchiveMe found this repeat across three real moments',
+    'Thoughtprint found this repeat across three real moments',
     'Across three moments, your archive noticed:',
     'That may be worth watching.',
   ];

@@ -5,29 +5,29 @@ abstract final class ArchiveSummaryCopy {
   static const title = 'Repeated evidence in your archive';
 
   static const promise =
-      'ArchiveMe tracks repeated evidence from your own words — not conversation history.';
+      'Thoughtprint tracks repeated evidence from your own words — not conversation history.';
 
   static const keepsRepeatingLabel = 'Showed up again';
   static const keepsRepeatingFallback =
       'Your archive is still collecting repeated evidence.';
 
   static const keepsRepeatingForming =
-      'This showed up across three moments. ArchiveMe still needs clearer matching words in your archive.';
+      'This showed up across three moments. Thoughtprint still needs clearer matching words in your archive.';
 
   static String keepsRepeatingWithPhrase(String phrase) =>
-      'ArchiveMe found “$phrase” across your first three moments — evidence from your words.';
+      'Thoughtprint found “$phrase” across your first three moments — evidence from your words.';
 
   static const loopFormingLabel = 'Loop forming';
   static const changingLabel = 'What changed';
   static const changingFallback =
-      'ArchiveMe is watching whether this gets stronger, softer, or about the same since your first proof.';
+      'Thoughtprint is watching whether this gets stronger, softer, or about the same since your first proof.';
   static const whatHelpsLabel = 'Appeared to help';
   static const whatHelpsFallback =
-      'ArchiveMe has not noticed repeated helpful evidence in your words yet.';
-  static const whatHelpsPrefix = 'ArchiveMe noticed this in your words before:';
+      'Thoughtprint has not noticed repeated helpful evidence in your words yet.';
+  static const whatHelpsPrefix = 'Thoughtprint noticed this in your words before:';
 
   static String whatHelpsWithPhrase(String phrase) =>
-      'A helpful action appeared: "$phrase". ArchiveMe is watching whether this '
+      'A helpful action appeared: "$phrase". Thoughtprint is watching whether this '
       'shows up again.';
 
   static const recordNextLabel = 'Record next';

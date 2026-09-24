@@ -62,7 +62,7 @@ abstract class LoopAcquisitionCopy {
     id: 'generic',
     headline: 'When it repeats, save it',
     subheadline:
-        'Save one real moment when something stands out. ArchiveMe compares it later.',
+        'Save one real moment when something stands out. Thoughtprint compares it later.',
     bullets: [],
     cta: 'Start with one moment',
     cohortRoutePath: '/start/prove-enough',

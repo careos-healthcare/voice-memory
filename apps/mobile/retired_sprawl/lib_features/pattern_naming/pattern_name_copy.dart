@@ -3,7 +3,7 @@ abstract final class PatternNameCopy {
   PatternNameCopy._();
 
   static const prompt = 'Does this feel right?';
-  static const currentLabelPrefix = 'ArchiveMe calls this:';
+  static const currentLabelPrefix = 'Thoughtprint calls this:';
 
   static const yesCta = 'Yes';
   static const renameCta = 'Rename';

@@ -2,7 +2,7 @@
 abstract final class BetaFeedbackIntelligenceCopy {
   BetaFeedbackIntelligenceCopy._();
 
-  static const cardTitle = 'Help improve ArchiveMe';
+  static const cardTitle = 'Help improve Thoughtprint';
   static const cardBody =
       'Tell us whether the archive felt different from chat and whether the longer memory felt worth paying for.';
   static const cardCta = 'Give beta feedback';
@@ -10,7 +10,7 @@ abstract final class BetaFeedbackIntelligenceCopy {
   static const sheetTitle = 'Beta feedback';
 
   static const chatGptDifferenceQuestion =
-      'Did ArchiveMe feel different from ChatGPT?';
+      'Did Thoughtprint feel different from ChatGPT?';
   static const chatGptDifferenceYes = 'Yes';
   static const chatGptDifferenceNotSure = 'Not sure';
   static const chatGptDifferenceNo = 'No';

@@ -20,7 +20,7 @@ abstract class AcquisitionStartCopy {
   static const String proveTitle =
       'Catch the moment you do more to feel enough';
   static const String proveBody =
-      'Record a short moment. ArchiveMe will help you test whether the proving-enough loop keeps returning.';
+      'Record a short moment. Thoughtprint will help you test whether the proving-enough loop keeps returning.';
   static const String genericTitle = ArchivePositioningCopy.umbrellaHeadline;
   static const String genericFirstPathLine =
       ArchivePositioningCopy.firstPathIntro;

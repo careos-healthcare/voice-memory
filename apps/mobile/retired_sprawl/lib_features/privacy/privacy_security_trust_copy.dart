@@ -29,7 +29,7 @@ abstract final class PrivacySecurityTrustCopy {
   static const encryptedAtRestTitle = PrivacyCopyPolicy.encryptedAtRestScoped;
   static const encryptedAtRestBody =
       '${PrivacyCopyPolicy.encryptionBaselineDetail} '
-      'Opening ArchiveMe can require Face ID or Touch ID.';
+      'Opening Thoughtprint can require Face ID or Touch ID.';
 
   static const onDeviceProcessingTitle =
       PrivacyClaimCatalogue.onDeviceByDefaultHeading;

@@ -1,7 +1,7 @@
 import 'package:archiveme_mobile/features/archive_proof/visible_archive_proof_copy.dart';
 import 'package:archiveme_mobile/product/consumer_ui_copy.dart';
 
-/// Consumer copy for ArchiveMe's first-three-session product loop.
+/// Consumer copy for Thoughtprint's first-three-session product loop.
 abstract class FirstThreeSessionCopy {
   FirstThreeSessionCopy._();
 

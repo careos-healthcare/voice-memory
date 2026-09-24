@@ -2,13 +2,13 @@
 abstract final class YesterdayWatchCopy {
   YesterdayWatchCopy._();
 
-  static const defaultTitle = 'Yesterday, ArchiveMe was watching this';
+  static const defaultTitle = 'Yesterday, Thoughtprint was watching this';
   static const defaultBody = 'Record what happened if it showed up again.';
 
   static String titleWithPhrase(String phrase) {
     final trimmed = phrase.trim();
     if (trimmed.isEmpty) return defaultTitle;
-    return 'Yesterday, ArchiveMe was watching: “$trimmed”';
+    return 'Yesterday, Thoughtprint was watching: “$trimmed”';
   }
 
   static const phraseBody = 'Did it show up again?';
@@ -18,9 +18,9 @@ abstract final class YesterdayWatchCopy {
   static const different = 'Different this time';
 
   static const helperCameBack =
-      'Record the moment so ArchiveMe can compare it.';
+      'Record the moment so Thoughtprint can compare it.';
   static const helperNotToday =
-      'Okay. ArchiveMe will keep watching when it returns.';
+      'Okay. Thoughtprint will keep watching when it returns.';
   static const helperDifferent = 'Record what felt different.';
 
   static const cameBackRecordPrompt = 'It came back again today.';

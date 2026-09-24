@@ -7,7 +7,7 @@ abstract final class MonthlyPrivateReportCopy {
   static const cardTitle = 'Your private monthly report is forming';
 
   static const cardBody =
-      'ArchiveMe is collecting evidence of what returned, changed, softened, helped, or went quiet.';
+      'Thoughtprint is collecting evidence of what returned, changed, softened, helped, or went quiet.';
 
   static const String proReason = PaywallAlignmentCopy.monthlyReportProReason;
 

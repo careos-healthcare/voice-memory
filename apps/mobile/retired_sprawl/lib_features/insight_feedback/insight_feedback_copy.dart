@@ -17,7 +17,7 @@ abstract final class InsightFeedbackCopy {
   static const localOnlyNote =
       'This only changes your local archive experience.';
   static const signalNotFact =
-      'ArchiveMe will treat this as a signal, not a fact.';
+      'Thoughtprint will treat this as a signal, not a fact.';
 
   static const supportSectionTitle = 'User-confirmed insights';
   static const supportSectionBody =

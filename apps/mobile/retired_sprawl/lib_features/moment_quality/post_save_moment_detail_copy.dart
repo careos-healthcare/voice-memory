@@ -19,7 +19,7 @@ abstract final class PostSaveMomentDetailCopy {
   static String promptHelper(PostSaveMomentDetailType type) => switch (type) {
     PostSaveMomentDetailType.situation => 'One short detail is enough.',
     PostSaveMomentDetailType.changed =>
-      'Keep it short. ArchiveMe will use this as evidence later.',
+      'Keep it short. Thoughtprint will use this as evidence later.',
     PostSaveMomentDetailType.stoodOut =>
       'Add the detail that made this moment noticeable.',
   };

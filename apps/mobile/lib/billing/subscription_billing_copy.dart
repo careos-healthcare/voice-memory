@@ -5,7 +5,7 @@ abstract final class SubscriptionBillingCopy {
   static const title = 'Subscription & billing';
 
   static const currentPlanTitle = 'Current plan';
-  static const proPlanLabel = 'ArchiveMe Pro';
+  static const proPlanLabel = 'Thoughtprint Pro';
   static const freePlanLabel = 'Free';
   static const proPlanBody =
       'Full historical comparisons, weekly archive reviews, and the complete evidence trail across your archive.';
@@ -27,12 +27,12 @@ abstract final class SubscriptionBillingCopy {
   static const cancelStepsIos = [
     'Open Settings on your iPhone',
     'Tap your Apple ID → Subscriptions',
-    'Select ArchiveMe Pro → Cancel Subscription',
+    'Select Thoughtprint Pro → Cancel Subscription',
   ];
   static const cancelStepsAndroid = [
     'Open Google Play Store',
     'Tap Profile → Payments & subscriptions → Subscriptions',
-    'Select ArchiveMe Pro → Cancel subscription',
+    'Select Thoughtprint Pro → Cancel subscription',
   ];
 
   static const restoreTitle = 'Restore purchases';
@@ -44,7 +44,7 @@ abstract final class SubscriptionBillingCopy {
   static const upgradeCta = 'See Pro plans';
 
   static const unavailableBody =
-      'Purchases are not configured on this build. You can keep using ArchiveMe on the free tier.';
+      'Purchases are not configured on this build. You can keep using Thoughtprint on the free tier.';
 
   static const trustSectionTitle = 'Trust & transparency';
   static const evidenceGuaranteeTitle = 'The Evidence Guarantee';
@@ -60,7 +60,7 @@ abstract final class SubscriptionBillingCopy {
       'Guaranteed human response path for any billing disputes.';
   static const billingSupportEmail = 'support@thoughtprint.xyz';
 
-  static const proPlanActiveSubtitle = 'ArchiveMe Pro Active';
+  static const proPlanActiveSubtitle = 'Thoughtprint Pro Active';
   static const freePlanCappedSubtitle = 'Free Tier (Evidence Capped)';
   static const proChipLabel = 'PRO';
   static const freeChipLabel = 'FREE';

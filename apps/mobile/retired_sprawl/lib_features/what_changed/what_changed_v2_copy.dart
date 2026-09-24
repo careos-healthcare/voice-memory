@@ -7,7 +7,7 @@ abstract final class WhatChangedV2Copy {
   static const question = 'What changed since last time?';
 
   static const body =
-      'ArchiveMe has seen this thread before. Mark what felt different this time.';
+      'Thoughtprint has seen this thread before. Mark what felt different this time.';
 
   static const thenLabel = 'Then';
 
@@ -17,14 +17,14 @@ abstract final class WhatChangedV2Copy {
       'Last time it looked stronger. This time it may have softened.';
 
   static const payoffStronger =
-      'This may be getting louder. ArchiveMe will keep watching.';
+      'This may be getting louder. Thoughtprint will keep watching.';
 
   static const payoffSame = 'This looks similar to last time.';
 
   static const payoffDifferent = 'This time, your response changed.';
 
   static const payoffHelped =
-      'Something helped this time. ArchiveMe will remember that.';
+      'Something helped this time. Thoughtprint will remember that.';
 
   static String payoffMessage(WhatChangedV2Option option) => switch (option) {
     WhatChangedV2Option.softer => payoffSofter,

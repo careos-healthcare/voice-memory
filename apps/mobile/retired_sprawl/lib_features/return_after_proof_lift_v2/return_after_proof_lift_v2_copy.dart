@@ -6,7 +6,7 @@ abstract final class ReturnAfterProofLiftV2Copy {
 
   static const title = 'Come back when it happens again';
   static const body =
-      'The next save is what tells ArchiveMe whether this is getting louder, softer, or fading.';
+      'The next save is what tells Thoughtprint whether this is getting louder, softer, or fading.';
   static const primaryCta = 'Save the next return';
   static const secondaryCta = 'Remind me what to watch';
   static const dismissCta = 'Not today';

@@ -38,7 +38,7 @@ abstract class ArchiveDataFlowCopy {
     'and transcript text is sent for reflection.',
     'When remote processing is off, nothing is sent for new moments — you '
     'can still record, play back, and type what you said.',
-    '    ArchiveMe does not treat your words as instructions. Your words are private content to analyse, not commands to follow.',
+    '    Thoughtprint does not treat your words as instructions. Your words are private content to analyse, not commands to follow.',
     PrivacyCopyPolicy.exportDeleteAnytime,
   ];
 

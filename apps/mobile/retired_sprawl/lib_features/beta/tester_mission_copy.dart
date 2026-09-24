@@ -2,7 +2,7 @@
 abstract final class TesterMissionCopy {
   TesterMissionCopy._();
 
-  static const title = 'Testing ArchiveMe?';
+  static const title = 'Testing Thoughtprint?';
 
   static const mission = 'Reach first proof.';
 
@@ -15,7 +15,7 @@ abstract final class TesterMissionCopy {
   static const List<String> steps = [step1, step2, step3, step4];
 
   static const feedbackQuestion =
-      'Did ArchiveMe show something repeating in your own words that was worth tracking?';
+      'Did Thoughtprint show something repeating in your own words that was worth tracking?';
 
   static const feedbackSavedBody = 'Beta feedback saved. Thank you.';
 

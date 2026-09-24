@@ -9,14 +9,14 @@ import {
 } from "@/lib/site/web-marketing-copy";
 
 export const metadata: Metadata = {
-  title: `${WEB_BETA_TITLE} — ArchiveMe`,
+  title: `${WEB_BETA_TITLE} — Thoughtprint`,
   description: WEB_BETA_DESCRIPTION,
 };
 
 export default function BetaPage() {
   return (
     <TrustPageShell
-      eyebrow="ArchiveMe"
+      eyebrow="Thoughtprint"
       title={WEB_BETA_TITLE}
       description={WEB_BETA_DESCRIPTION}
     >

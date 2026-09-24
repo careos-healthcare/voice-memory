@@ -13,7 +13,7 @@ import 'package:archiveme_mobile/security/privacy_copy_policy.dart';
 ///
 /// The processing chip had the same shape of problem and a worse claim. It
 /// rendered "Processed On-Device" unconditionally, with the semantic label
-/// "Local language models run on this device first." No model ArchiveMe ships
+/// "Local language models run on this device first." No model Thoughtprint ships
 /// runs here — the tree carries no model binaries and `pubspec.yaml` bundles
 /// no model assets, so every encoder falls back to a deterministic stand-in.
 /// What is genuinely local is storage and search, so that is what the default

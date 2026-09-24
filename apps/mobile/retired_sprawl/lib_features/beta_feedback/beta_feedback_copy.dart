@@ -4,7 +4,7 @@ import 'package:archiveme_mobile/features/beta_feedback/beta_feedback_models.dar
 abstract final class BetaFeedbackCopy {
   BetaFeedbackCopy._();
 
-  static const cardTitle = 'Did ArchiveMe show you something useful?';
+  static const cardTitle = 'Did Thoughtprint show you something useful?';
   static const cardBody =
       'Your archive is starting to compare moments. Your feedback helps improve '
       'the product.';
@@ -43,7 +43,7 @@ abstract final class BetaFeedbackCopy {
 
   static const supportSectionTitle = 'Beta feedback';
   static const supportSectionBody =
-      'Share whether ArchiveMe felt useful after a few saved moments. '
+      'Share whether Thoughtprint felt useful after a few saved moments. '
       'Feedback stays on this device only.';
   static const openBetaFeedbackButton = 'Open beta feedback';
 
@@ -72,15 +72,15 @@ abstract final class BetaFeedbackCopy {
 
   static const emailCopiedFallback =
       'Could not open email. Feedback copied — paste it into an email to '
-      'hello@archiveme.app.';
+      'hello@thoughtprint.xyz.';
   static const emailSentConfirmation = 'Opening your email app…';
 
   static const testimonialDefault =
-      'ArchiveMe helped me notice a pattern across my own saved moments.';
+      'Thoughtprint helped me notice a pattern across my own saved moments.';
   static const testimonialUnderstood =
-      'ArchiveMe made it easier to compare my own saved moments over time.';
+      'Thoughtprint made it easier to compare my own saved moments over time.';
   static const testimonialNotYet =
-      'I am building an archive in ArchiveMe to see what repeats across my '
+      'I am building an archive in Thoughtprint to see what repeats across my '
       'saved moments.';
 
   static const usefulnessNotAnswered = 'Not answered yet';
@@ -117,7 +117,7 @@ abstract final class BetaFeedbackCopy {
 
   static String buildSummaryText(BetaFeedbackSummary summary) {
     final buffer = StringBuffer()
-      ..writeln('ArchiveMe beta feedback summary')
+      ..writeln('Thoughtprint beta feedback summary')
       ..writeln()
       ..writeln('$summaryMomentsSaved: ${summary.momentsSavedCount}')
       ..writeln('$summaryDepthLevel: ${summary.depthLevelLabel}')
@@ -142,7 +142,7 @@ abstract final class BetaFeedbackCopy {
     String? note,
   }) {
     final buffer = StringBuffer()
-      ..writeln('ArchiveMe beta feedback')
+      ..writeln('Thoughtprint beta feedback')
       ..writeln()
       ..writeln('Surface: $surface')
       ..writeln('Option: $optionLabel')

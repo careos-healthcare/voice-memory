@@ -3,11 +3,11 @@ import 'package:archiveme_mobile/features/archive_proof/visible_archive_proof_co
 /// Cold-start preview copy — watch state, not a conclusion.
 abstract final class ArchiveDemoPreviewCopy {
   static const title =
-      "Here's what ArchiveMe will track if this keeps appearing.";
+      "Here's what Thoughtprint will track if this keeps appearing.";
 
   static const String twoEntryTitle = VisibleArchiveProofCopy.earlyRepeatTitle;
 
-  static const previewBadge = 'Preview — ArchiveMe is watching, not concluding';
+  static const previewBadge = 'Preview — Thoughtprint is watching, not concluding';
 
   static const patternFirstSeenLabel = 'Pattern first seen';
 
@@ -18,7 +18,7 @@ abstract final class ArchiveDemoPreviewCopy {
   static const recordNextLabel = 'What to record next';
 
   static const oneEntryPatternHint =
-      'Not enough evidence yet, but this is what ArchiveMe will watch — '
+      'Not enough evidence yet, but this is what Thoughtprint will watch — '
       'words or situations that come back in your recordings.';
 
   static const oneEntryRepeatHint =

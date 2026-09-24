@@ -2,7 +2,7 @@
 abstract final class BetaReportExportCopy {
   BetaReportExportCopy._();
 
-  static const reportTitle = 'ArchiveMe Beta Report';
+  static const reportTitle = 'Thoughtprint Beta Report';
 
   static const sectionTesterLoop = 'Tester loop:';
 

@@ -5,7 +5,7 @@ abstract final class TranscriptCorrectionCopy {
   static const actionLabel = 'Correct transcript';
   static const sheetTitle = 'Correct transcript';
   static const sheetHelper =
-      'Fix any words ArchiveMe heard wrong. Your correction will be used for future patterns.';
+      'Fix any words Thoughtprint heard wrong. Your correction will be used for future patterns.';
   static const inputLabel = 'What you meant to say';
   static const saveButton = 'Save correction';
   static const cancelButton = 'Cancel';

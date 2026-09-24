@@ -2,21 +2,21 @@
 abstract final class TestFlightFeedbackCopy {
   TestFlightFeedbackCopy._();
 
-  static const settingsTitle = 'Testing ArchiveMe?';
+  static const settingsTitle = 'Testing Thoughtprint?';
 
   static const settingsCta = 'Send feedback';
 
   static const unavailableMessage =
       'Tester guidance is not available in this build.';
 
-  static const emailTo = 'hello@archiveme.app';
+  static const emailTo = 'hello@thoughtprint.xyz';
 
-  static const emailSubject = 'ArchiveMe TestFlight feedback';
+  static const emailSubject = 'Thoughtprint TestFlight feedback';
 
   static const emailBody = '''
-Hi ArchiveMe team,
+Hi Thoughtprint team,
 
-I tested ArchiveMe and noticed:
+I tested Thoughtprint and noticed:
 
 What felt clear:
 
@@ -33,5 +33,5 @@ Device:
 Thanks.''';
 
   static const emailFallbackMessage =
-      'Could not open email. Please send feedback to hello@archiveme.app.';
+      'Could not open email. Please send feedback to hello@thoughtprint.xyz.';
 }

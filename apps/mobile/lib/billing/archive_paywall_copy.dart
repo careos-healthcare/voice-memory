@@ -4,7 +4,7 @@ import 'package:archiveme_mobile/product/consumer_ui_copy.dart';
 abstract class ArchivePaywallCopy {
   ArchivePaywallCopy._();
 
-  static const String screenTitle = 'ArchiveMe Pro';
+  static const String screenTitle = 'Thoughtprint Pro';
 
   static const String headline = ConsumerUiCopy.paywallHeadline;
   static const String headlineB = headline;
@@ -27,22 +27,22 @@ abstract class ArchivePaywallCopy {
   static const String keyValueTitle =
       'The most useful patterns show up over time.';
 
-  static const String lockedSectionTitle = 'Included with ArchiveMe Pro';
+  static const String lockedSectionTitle = 'Included with Thoughtprint Pro';
 
   static const String heroGeneratedFromLabel = 'Generated from';
   static const String heroAcrossLabel = 'across';
 
-  static const String theoryPreviewLabel = 'A pattern ArchiveMe is noticing';
+  static const String theoryPreviewLabel = 'A pattern Thoughtprint is noticing';
   static const String basedOnLabel = 'Based on your moments';
   static const String momentCountLabel = 'Moments reviewed';
 
   static const String preCtaFallback =
       'Pattern memory gets clearer as you add more moments over weeks and months.';
 
-  static const String proActiveTitle = 'ArchiveMe Pro is active';
+  static const String proActiveTitle = 'Thoughtprint Pro is active';
   static const String proActiveBody = ConsumerUiCopy.paywallProActiveBody;
   static const String proActiveConfirmation =
-      'Pro is active. ArchiveMe keeps the longer proof trail over time.';
+      'Pro is active. Thoughtprint keeps the longer proof trail over time.';
 
   static const String checkingProAccess = 'Checking your Pro access…';
   static const String purchaseStarting = 'Starting secure purchase…';
@@ -69,7 +69,7 @@ abstract class ArchivePaywallCopy {
         paywallBackupLine,
       ];
 
-  static const String socialProofTitleA = 'People return to ArchiveMe to see';
+  static const String socialProofTitleA = 'People return to Thoughtprint to see';
   static const List<String> socialProofBulletsA = [
     'which patterns changed',
     'what kept repeating',

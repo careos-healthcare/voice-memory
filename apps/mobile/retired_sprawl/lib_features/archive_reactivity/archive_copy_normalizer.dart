@@ -95,10 +95,10 @@ abstract class ArchiveCopyNormalizer {
     if (normalized.isEmpty) return '';
 
     const literalReplacements = <String, String>{
-      'ArchiveMeshould': 'ArchiveMe should',
-      'ArchiveMeis': 'ArchiveMe is',
-      'ArchiveMewill': 'ArchiveMe will',
-      'ArchiveMenoticed': 'ArchiveMe noticed',
+      'ArchiveMeshould': 'Thoughtprint should',
+      'ArchiveMeis': 'Thoughtprint is',
+      'ArchiveMewill': 'Thoughtprint will',
+      'ArchiveMenoticed': 'Thoughtprint noticed',
       'onemore': 'one more',
       'maysit': 'may sit',
       'mayalso': 'may also',
@@ -163,8 +163,8 @@ abstract class ArchiveCopyNormalizer {
     );
 
     normalized = normalized.replaceAllMapped(
-      RegExp('ArchiveMe([a-z][a-z]+)', caseSensitive: false),
-      (match) => 'ArchiveMe ${match.group(1)!}',
+      RegExp('Thoughtprint([a-z][a-z]+)', caseSensitive: false),
+      (match) => 'Thoughtprint ${match.group(1)!}',
     );
 
     normalized = _applyGlueWords(normalized, 'you', _youGlueWords);
@@ -197,7 +197,7 @@ abstract class ArchiveCopyNormalizer {
     for (final word in _archiveMeGlueWords) {
       normalized = normalized.replaceAll(
         RegExp('archiveme${RegExp.escape(word)}', caseSensitive: false),
-        'ArchiveMe $word',
+        'Thoughtprint $word',
       );
     }
 
@@ -234,7 +234,7 @@ abstract class ArchiveCopyNormalizer {
     if (RegExp(r',[^\s]').hasMatch(normalized)) return true;
 
     final withoutArchiveMe = normalized.replaceAll(
-      RegExp('ArchiveMe', caseSensitive: false),
+      RegExp('Thoughtprint', caseSensitive: false),
       '',
     );
     if (RegExp('[a-z][A-Z]').hasMatch(withoutArchiveMe)) return true;

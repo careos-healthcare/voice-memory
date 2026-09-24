@@ -12,10 +12,10 @@ abstract final class FirstFiveMinutesSimplificationCopy {
   static const headline = 'Save one repeat';
 
   static const body =
-      'ArchiveMe is simple: when something repeats, save one real sentence. Your '
+      'Thoughtprint is simple: when something repeats, save one real sentence. Your '
       'archive compares it later.';
 
-  static const oneLinePositioning = 'ArchiveMe shows what keeps coming back.';
+  static const oneLinePositioning = 'Thoughtprint shows what keeps coming back.';
 
   static const whenToUseLine =
       'Use it when you notice: I have felt this before, done this before, avoided '
@@ -27,7 +27,7 @@ abstract final class FirstFiveMinutesSimplificationCopy {
       'Saved moments give your archive something real to compare.';
 
   static const whatHappensNextLine =
-      'After enough real moments, ArchiveMe can show the first useful proof.';
+      'After enough real moments, Thoughtprint can show the first useful proof.';
 
   static const String firstProofPreviewLine = whatHappensNextLine;
 
@@ -35,7 +35,7 @@ abstract final class FirstFiveMinutesSimplificationCopy {
       'No reports, dashboards, action items, or context work needed now.';
 
   static const notChatLine =
-      'ChatGPT can suggest what to do. ArchiveMe shows what you already said before.';
+      'ChatGPT can suggest what to do. Thoughtprint shows what you already said before.';
 
   static const String threeMomentLine = ThreeMomentActivationCopy.combinedBody;
 
@@ -44,7 +44,7 @@ abstract final class FirstFiveMinutesSimplificationCopy {
 
   static const guardrail =
       'The first five minutes must focus only on saving one repeat and understanding '
-      'that ArchiveMe compares it later.';
+      'that Thoughtprint compares it later.';
 
   static bool previewImpliesProofExists(String text) {
     final lower = text.toLowerCase();

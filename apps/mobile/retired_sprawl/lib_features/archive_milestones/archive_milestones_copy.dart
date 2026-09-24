@@ -7,7 +7,7 @@ abstract final class ArchiveMilestonesCopy {
 
   static const cardTitle = 'Archive milestones';
   static const cardBody =
-      'ArchiveMe gets more useful as your archive has more evidence to compare.';
+      'Thoughtprint gets more useful as your archive has more evidence to compare.';
 
   static const stateDone = 'Done';
   static const stateNow = 'Now';

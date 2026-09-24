@@ -16,7 +16,7 @@ abstract final class RecordCaptureModeCopy {
   static const String keptThinkingPrompt = 'What kept coming back to mind?';
 
   static const String smallWinLabel = 'A small win';
-  static const String smallWinHelper = 'ArchiveMe can track what helps too.';
+  static const String smallWinHelper = 'Thoughtprint can track what helps too.';
   static const String smallWinPrompt = 'What went a little better?';
 
   static const String pressureMomentLabel = 'A pressure moment';
@@ -34,8 +34,8 @@ abstract final class RecordCaptureModeCopy {
   static const String quietDaySaveButton = 'Save as quiet day';
 
   static const String noPatternReassurance =
-      'Saved. ArchiveMe does not need every entry to become a pattern.';
+      'Saved. Thoughtprint does not need every entry to become a pattern.';
   static const String quietDaySaved = 'Saved as a quiet day.';
   static const String quietDayWatching =
-      'ArchiveMe will keep watching when something stands out.';
+      'Thoughtprint will keep watching when something stands out.';
 }

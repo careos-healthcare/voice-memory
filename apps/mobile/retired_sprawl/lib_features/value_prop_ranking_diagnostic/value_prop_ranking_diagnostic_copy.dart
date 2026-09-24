@@ -9,11 +9,11 @@ abstract final class ValuePropRankingDiagnosticCopy {
       'changes, fades, or gets corrected over time.';
 
   static const strongerProofLine =
-      'If you need stronger proof first, keep using free until ArchiveMe has a '
+      'If you need stronger proof first, keep using free until Thoughtprint has a '
       'clearer repeat.';
 
   static const rankingLine =
-      'If you want ranking, ArchiveMe should first confirm whether prioritisation '
+      'If you want ranking, Thoughtprint should first confirm whether prioritisation '
       'would help you pay — without showing ranked lists yet.';
 
   static const valueLine =

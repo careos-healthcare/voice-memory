@@ -4,7 +4,7 @@ abstract final class LifeStageSelectorCopy {
 
   static const title = 'Navigating a major transition?';
   static const subtitle =
-      'Optional — helps ArchiveMe read your entries with situational awareness. '
+      'Optional — helps Thoughtprint read your entries with situational awareness. '
       'Your insight types stay the same.';
   static const skipCta = 'Skip for now';
   static const continueCta = 'Continue';

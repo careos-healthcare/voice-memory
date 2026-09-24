@@ -3,21 +3,21 @@ abstract final class ReleaseCandidateComprehensionCopy {
   ReleaseCandidateComprehensionCopy._();
 
   static const publicPromise =
-      'When something repeats, save one real moment. ArchiveMe compares it later.';
+      'When something repeats, save one real moment. Thoughtprint compares it later.';
 
-  static const headline = 'ArchiveMe is the proof trail';
+  static const headline = 'Thoughtprint is the proof trail';
 
   static const body =
       '$publicPromise Not a diary. Not ChatGPT. Not homework. After enough real '
-      'moments, ArchiveMe shows one clear repeat, explains why it appeared, lets '
+      'moments, Thoughtprint shows one clear repeat, explains why it appeared, lets '
       'you confirm or correct it, and keeps the trail as it returns, changes, '
       'fades, or gets corrected.';
 
   static const notVoiceChatLine =
-      'Not a diary. Not ChatGPT. Not homework. ArchiveMe keeps the evidence trail.';
+      'Not a diary. Not ChatGPT. Not homework. Thoughtprint keeps the evidence trail.';
 
   static const firstProofLine =
-      'First proof: one clear repeat ArchiveMe can compare safely.';
+      'First proof: one clear repeat Thoughtprint can compare safely.';
 
   static const whyAppearedLine =
       'Why it appeared: it was the clearest specific repeat right now, not '
@@ -35,7 +35,7 @@ abstract final class ReleaseCandidateComprehensionCopy {
   static const paymentQuestion = 'Would you pay to keep that trail over time?';
 
   static const guardrail =
-      'Do not ship release-candidate messaging unless users understand ArchiveMe is '
+      'Do not ship release-candidate messaging unless users understand Thoughtprint is '
       'an evidence trail, not voice chat or more AI.';
 
   static const bannedPhrases = [

@@ -7,13 +7,13 @@ abstract final class EvidenceWeightingCopy {
   static const title = 'Not all evidence counts the same.';
 
   static const body =
-      'ArchiveMe weighs recent and repeated moments more heavily. '
+      'Thoughtprint weighs recent and repeated moments more heavily. '
       'Older evidence becomes lighter unless it keeps returning.';
 
   static const footer = 'Your past is context, not a verdict.';
 
   static const differentiationLine =
-      'ChatGPT can respond to what you say now. ArchiveMe can show whether '
+      'ChatGPT can respond to what you say now. Thoughtprint can show whether '
       'older evidence is still active, fading, or no longer important.';
 
   static const List<String> all = [
@@ -46,13 +46,13 @@ abstract final class EvidenceWeightingCopy {
   static const explanationRepeated =
       'Appeared across more than one saved moment.';
   static const explanationFading =
-      'Has not appeared recently, so ArchiveMe treats it more lightly.';
+      'Has not appeared recently, so Thoughtprint treats it more lightly.';
   static const explanationSoftened =
       'Still appears, but with less urgency or force.';
   static const explanationOldSignal =
       'Useful context, but not strong current proof.';
   static const explanationNeedsFreshProof =
-      'ArchiveMe should wait for newer evidence before treating this as current.';
+      'Thoughtprint should wait for newer evidence before treating this as current.';
 
   static String labelFor(EvidenceWeightState state) => switch (state) {
     EvidenceWeightState.fresh => labelFresh,

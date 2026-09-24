@@ -2,7 +2,7 @@
 abstract final class V1ScopeGuardCopy {
   V1ScopeGuardCopy._();
 
-  /// Positioning claims ArchiveMe must not make in consumer-facing launch copy.
+  /// Positioning claims Thoughtprint must not make in consumer-facing launch copy.
   static const bannedPositioningClaims = <String>[
     'generic journal',
     'diary dashboard',

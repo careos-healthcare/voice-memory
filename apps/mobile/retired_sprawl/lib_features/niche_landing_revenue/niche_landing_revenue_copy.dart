@@ -11,7 +11,7 @@ abstract final class NicheLandingRevenueCopy {
   static const positioning =
       'Niche landing pages stay marketing/web only — same core promise, same paid promise, no medical claims.';
 
-  static const corePromise = 'Save one repeat. ArchiveMe compares it later.';
+  static const corePromise = 'Save one repeat. Thoughtprint compares it later.';
 
   static const paidPromise = 'Pro keeps the longer proof trail.';
 
@@ -26,7 +26,7 @@ abstract final class NicheLandingRevenueCopy {
   static const guardrail =
       'Niche landing revenue plan defines marketing/web acquisition pages only — not app V1 feature surfaces. '
       'Avoid medical or wellness-treatment claims. Every landing page points to the same core promise: '
-      '"Save one repeat. ArchiveMe compares it later." Paid promise: "Pro keeps the longer proof trail."';
+      '"Save one repeat. Thoughtprint compares it later." Paid promise: "Pro keeps the longer proof trail."';
 
   static const landingPlanFrozenLine =
       'Keep niche landing pages in marketing/web planning until guardrails pass.';

@@ -5,7 +5,7 @@ abstract final class BeliefChangeMomentCopy {
   static const title = 'Your archive may be changing';
 
   static const body =
-      'ArchiveMe has seen this pattern before. The latest evidence suggests it may be softening.';
+      'Thoughtprint has seen this pattern before. The latest evidence suggests it may be softening.';
 
   static const beliefLine = 'Before, your archive believed:';
 
@@ -18,7 +18,7 @@ abstract final class BeliefChangeMomentCopy {
   static const laterLabel = 'Later:';
 
   static const footer =
-      'This is not advice or a diagnosis. It is a change ArchiveMe noticed in your saved moments.';
+      'This is not advice or a diagnosis. It is a change Thoughtprint noticed in your saved moments.';
 
   static const viewChangeTimelineCta = 'View change timeline';
 

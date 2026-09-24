@@ -5,7 +5,7 @@
 abstract final class CustomerLanguage {
   CustomerLanguage._();
 
-  static const brandName = 'ArchiveMe';
+  static const brandName = 'Thoughtprint';
   static const logoInitials = 'AM';
 
   static const moment = 'Moment';
@@ -25,24 +25,24 @@ abstract final class CustomerLanguage {
   static const feedbackHide = 'Hide';
 
   static const yourWordsLabel = 'Your words';
-  static const archiveSuggestionLabel = 'ArchiveMe suggestion';
+  static const archiveSuggestionLabel = 'Thoughtprint suggestion';
 
   static const onboardingHeadline = 'Save the moment. See what returns.';
   static const onboardingBody =
-      'Save a voice or typed moment in your own words. Over time, ArchiveMe '
+      'Save a voice or typed moment in your own words. Over time, Thoughtprint '
       'may show what repeats — with the moments behind it.';
 
   static const emptyArchiveTitle = 'Record a few real moments';
   static const emptyArchiveBody =
-      'Save one real moment. ArchiveMe compares it later.';
+      'Save one real moment. Thoughtprint compares it later.';
 
   static const oneMomentTitle = 'First moment saved';
   static const oneMomentBody =
-      'Come back when this shows up again. ArchiveMe has one moment to compare later.';
+      'Come back when this shows up again. Thoughtprint has one moment to compare later.';
 
   static const twoMomentsTitle = 'These moments may be related';
   static const twoMomentsBody =
-      'ArchiveMe noticed similar wording across two saved moments. '
+      'Thoughtprint noticed similar wording across two saved moments. '
       'This is not an established pattern yet.';
 
   static const threePlusTitle = possiblePattern;

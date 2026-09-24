@@ -20,7 +20,7 @@ abstract final class ClinicalConsentCopy {
   static const String notForDiagnosisTitle = 'Not for diagnosis or emergency use';
 
   static const String notForDiagnosisBody =
-      'I understand ArchiveMe is not therapy, medical advice, or emergency '
+      'I understand Thoughtprint is not therapy, medical advice, or emergency '
       'support, and I will seek licensed care for urgent needs.';
 
   static const String providerSectionTitle = 'Licensed provider association';

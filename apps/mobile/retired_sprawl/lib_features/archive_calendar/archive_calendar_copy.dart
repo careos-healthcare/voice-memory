@@ -23,11 +23,11 @@ abstract final class ArchiveCalendarCopy {
   static const emptyTitle =
       'Your calendar will appear after your first saved moment.';
   static const emptyBody =
-      'ArchiveMe tracks saved-moment activity by day on this device. '
+      'Thoughtprint tracks saved-moment activity by day on this device. '
       'No private entry text is shown here.';
 
   static const cardHeadlineActive =
-      'ArchiveMe is building a visible history by day.';
+      'Thoughtprint is building a visible history by day.';
   static const cardSummaryActive =
       'See which days you saved moments and how this week compares.';
 

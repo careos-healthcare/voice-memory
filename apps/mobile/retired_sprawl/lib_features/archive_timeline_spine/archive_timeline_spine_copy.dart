@@ -9,12 +9,12 @@ abstract final class ArchiveTimelineSpineCopy {
   static const subtitle = 'Not a chat. A record of what changed over time.';
 
   static const explanation =
-      'ArchiveMe does not treat one moment as the whole truth. It tracks what appeared, what returned, what you corrected, and what still matters now.';
+      'Thoughtprint does not treat one moment as the whole truth. It tracks what appeared, what returned, what you corrected, and what still matters now.';
 
   static const footer = 'Your past is context, not a verdict.';
 
   static const differentiationLine =
-      'ChatGPT can answer a conversation. ArchiveMe shows the timeline behind the pattern.';
+      'ChatGPT can answer a conversation. Thoughtprint shows the timeline behind the pattern.';
 
   static const proBridgeCopy = 'Pro keeps the longer proof trail over time.';
 
@@ -26,18 +26,18 @@ abstract final class ArchiveTimelineSpineCopy {
 
   static const stillCurrentLabel = 'Current';
   static const stillCurrentDetail =
-      'ArchiveMe still treats this as live context.';
+      'Thoughtprint still treats this as live context.';
 
   static const correctedLabel = 'Corrected';
   static const correctedDetail = 'You adjusted how much this still matters.';
 
   static const weightChangedLabel = 'Reweighted';
   static const weightChangedDetail =
-      'How much weight ArchiveMe gives this has shifted.';
+      'How much weight Thoughtprint gives this has shifted.';
 
   static const needsFreshProofLabel = 'Fresh proof needed';
   static const needsFreshProofDetail =
-      'ArchiveMe needs a newer saved moment before treating this as current.';
+      'Thoughtprint needs a newer saved moment before treating this as current.';
 
   static const currentWeightStrong = 'Current weight: strong';
   static const currentWeightLight = 'Current weight: light';

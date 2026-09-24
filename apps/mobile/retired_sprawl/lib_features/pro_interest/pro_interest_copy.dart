@@ -100,7 +100,7 @@ abstract final class ProInterestCopy {
     final values = state.selectedValueIds.map(labelForValue).join(', ');
     final valuesPart = values.isEmpty ? 'none selected' : values;
     final pricing = labelForPricing(state.pricingIntentId);
-    return 'ArchiveMe Pro interest: values selected — $valuesPart. '
+    return 'Thoughtprint Pro interest: values selected — $valuesPart. '
         'Pricing signal: $pricing.';
   }
 

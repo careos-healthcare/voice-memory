@@ -30,7 +30,7 @@ abstract final class ArchiveClarityCopy {
 
   static const screenshotTitle = 'Archive clarity (sample)';
   static const screenshotBody =
-      'ArchiveMe shows archive stage and evidence strength from saved moment counts. '
+      'Thoughtprint shows archive stage and evidence strength from saved moment counts. '
       'Example only — no private data.';
 
   static const stageStarting = 'Starting';
@@ -42,8 +42,8 @@ abstract final class ArchiveClarityCopy {
   static const startingBody =
       'Your archive is ready for its first useful moment.';
   static const comparisonBody =
-      'ArchiveMe has started collecting comparison material.';
-  static const patternBody = 'ArchiveMe can start checking what repeats.';
+      'Thoughtprint has started collecting comparison material.';
+  static const patternBody = 'Thoughtprint can start checking what repeats.';
   static const evidenceBody =
       'Your archive has enough evidence to make early comparisons.';
   static const reviewBody = 'Your first archive review is ready.';

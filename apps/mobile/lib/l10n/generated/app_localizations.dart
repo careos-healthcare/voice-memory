@@ -137,7 +137,7 @@ abstract class AppLocalizations {
   /// No description provided for @accountAuthCreateBody.
   ///
   /// In en, this message translates to:
-  /// **'ArchiveMe is a private voice journal that turns your spoken thoughts into a unified life story and deep personal intelligence. Create an account to restore access later.'**
+  /// **'Thoughtprint is a private voice journal that turns your spoken thoughts into a unified life story and deep personal intelligence. Create an account to restore access later.'**
   String get accountAuthCreateBody;
 
   /// No description provided for @accountAuthCreateCta.
@@ -149,7 +149,7 @@ abstract class AppLocalizations {
   /// No description provided for @accountAuthCreateTitle.
   ///
   /// In en, this message translates to:
-  /// **'Create your ArchiveMe account'**
+  /// **'Create your Thoughtprint account'**
   String get accountAuthCreateTitle;
 
   /// No description provided for @accountAuthEmailLabel.
@@ -203,7 +203,7 @@ abstract class AppLocalizations {
   /// No description provided for @accountAuthSignInTitle.
   ///
   /// In en, this message translates to:
-  /// **'Sign in to ArchiveMe'**
+  /// **'Sign in to Thoughtprint'**
   String get accountAuthSignInTitle;
 
   /// No description provided for @accountAuthSignOut.
@@ -221,7 +221,7 @@ abstract class AppLocalizations {
   /// No description provided for @accountAuthTimingNote.
   ///
   /// In en, this message translates to:
-  /// **'ArchiveMe is a private voice journal that turns your spoken thoughts into a unified life story and deep personal intelligence. You can use it locally without an account.'**
+  /// **'Thoughtprint is a private voice journal that turns your spoken thoughts into a unified life story and deep personal intelligence. You can use it locally without an account.'**
   String get accountAuthTimingNote;
 
   /// No description provided for @accountScreenLabel.
@@ -233,7 +233,7 @@ abstract class AppLocalizations {
   /// No description provided for @appTitle.
   ///
   /// In en, this message translates to:
-  /// **'ArchiveMe'**
+  /// **'Thoughtprint'**
   String get appTitle;
 
   /// No description provided for @archiveAddMoment.
@@ -263,13 +263,13 @@ abstract class AppLocalizations {
   /// No description provided for @archiveNeedsComparison.
   ///
   /// In en, this message translates to:
-  /// **'Add another moment so ArchiveMe can compare what changed.'**
+  /// **'Add another moment so Thoughtprint can compare what changed.'**
   String get archiveNeedsComparison;
 
   /// No description provided for @archiveNeedsSupportedMoments.
   ///
   /// In en, this message translates to:
-  /// **'ArchiveMe needs at least two supported moments before explaining a pattern.'**
+  /// **'Thoughtprint needs at least two supported moments before explaining a pattern.'**
   String get archiveNeedsSupportedMoments;
 
   /// No description provided for @archiveNextMomentGuidance.
@@ -765,7 +765,7 @@ abstract class AppLocalizations {
   /// No description provided for @recordingPlainLanguageHint.
   ///
   /// In en, this message translates to:
-  /// **'Say it plainly. ArchiveMe looks for patterns, not judgment.'**
+  /// **'Say it plainly. Thoughtprint looks for patterns, not judgment.'**
   String get recordingPlainLanguageHint;
 
   /// No description provided for @recordingProcessingStatus.
@@ -777,7 +777,7 @@ abstract class AppLocalizations {
   /// No description provided for @recordingPromptNudgeBody.
   ///
   /// In en, this message translates to:
-  /// **'ArchiveMe uses what you record to surface sharper things worth checking each day.'**
+  /// **'Thoughtprint uses what you record to surface sharper things worth checking each day.'**
   String get recordingPromptNudgeBody;
 
   /// No description provided for @recordingPromptNudgeTitle.
@@ -891,7 +891,7 @@ abstract class AppLocalizations {
   /// No description provided for @accountTitle.
   ///
   /// In en, this message translates to:
-  /// **'ArchiveMe account'**
+  /// **'Thoughtprint account'**
   String get accountTitle;
 
   /// No description provided for @syncStatus.
@@ -1107,7 +1107,7 @@ abstract class AppLocalizations {
   /// No description provided for @paywallDifferentiation.
   ///
   /// In en, this message translates to:
-  /// **'ArchiveMe is not trying to answer better than ChatGPT. It is trying to remember differently.'**
+  /// **'Thoughtprint is not trying to answer better than ChatGPT. It is trying to remember differently.'**
   String get paywallDifferentiation;
 
   /// No description provided for @paywallTrust.
@@ -1209,7 +1209,7 @@ abstract class AppLocalizations {
   /// No description provided for @valueMomentThreadReturnBody.
   ///
   /// In en, this message translates to:
-  /// **'This thread has returned before. Pro keeps the evidence history so ArchiveMe can show whether it gets stronger, softer, or changes.'**
+  /// **'This thread has returned before. Pro keeps the evidence history so Thoughtprint can show whether it gets stronger, softer, or changes.'**
   String get valueMomentThreadReturnBody;
 
   /// No description provided for @valueMomentBeliefBody.
@@ -1221,7 +1221,7 @@ abstract class AppLocalizations {
   /// No description provided for @valueMomentWeeklyBody.
   ///
   /// In en, this message translates to:
-  /// **'Your weekly review found something to compare. Pro keeps weekly archive reviews so ArchiveMe can track what changed over time.'**
+  /// **'Your weekly review found something to compare. Pro keeps weekly archive reviews so Thoughtprint can track what changed over time.'**
   String get valueMomentWeeklyBody;
 
   /// No description provided for @valueMomentProofCounterBody.
@@ -1233,7 +1233,7 @@ abstract class AppLocalizations {
   /// No description provided for @valueMomentFallbackBody.
   ///
   /// In en, this message translates to:
-  /// **'Your first repeat is free. Pro keeps the evidence history so ArchiveMe can show whether patterns get stronger, softer, or change over time.'**
+  /// **'Your first repeat is free. Pro keeps the evidence history so Thoughtprint can show whether patterns get stronger, softer, or change over time.'**
   String get valueMomentFallbackBody;
 
   /// No description provided for @subscriptionPaywallNoOfferings.
@@ -1269,7 +1269,7 @@ abstract class AppLocalizations {
   /// No description provided for @patternsEarlyStateBody.
   ///
   /// In en, this message translates to:
-  /// **'Record a few real moments. ArchiveMe will look for what repeats across them.'**
+  /// **'Record a few real moments. Thoughtprint will look for what repeats across them.'**
   String get patternsEarlyStateBody;
 
   /// No description provided for @patternsEmptyCta.
@@ -1323,7 +1323,7 @@ abstract class AppLocalizations {
   /// No description provided for @patternsFirstEntrySavedBody.
   ///
   /// In en, this message translates to:
-  /// **'Record one more clear moment and ArchiveMe can compare what repeats.'**
+  /// **'Record one more clear moment and Thoughtprint can compare what repeats.'**
   String get patternsFirstEntrySavedBody;
 
   /// No description provided for @patternsFirstEntrySavedCta.
@@ -1359,7 +1359,7 @@ abstract class AppLocalizations {
   /// No description provided for @allPatternsLead.
   ///
   /// In en, this message translates to:
-  /// **'Patterns and themes ArchiveMe keeps noticing in your reflections.'**
+  /// **'Patterns and themes Thoughtprint keeps noticing in your reflections.'**
   String get allPatternsLead;
 
   /// No description provided for @patternsCheckInWaitingTitle.
@@ -1371,7 +1371,7 @@ abstract class AppLocalizations {
   /// No description provided for @patternsCheckInWaitingBody.
   ///
   /// In en, this message translates to:
-  /// **'ArchiveMe has a question from your last moment.'**
+  /// **'Thoughtprint has a question from your last moment.'**
   String get patternsCheckInWaitingBody;
 
   /// No description provided for @patternsCheckInWaitingCta.
@@ -1407,7 +1407,7 @@ abstract class AppLocalizations {
   /// No description provided for @patternsWatchingSignalTitle.
   ///
   /// In en, this message translates to:
-  /// **'ArchiveMe is watching this signal'**
+  /// **'Thoughtprint is watching this signal'**
   String get patternsWatchingSignalTitle;
 
   /// No description provided for @patternsWatchingSignalBody.
@@ -1461,7 +1461,7 @@ abstract class AppLocalizations {
   /// No description provided for @patternsComeBackBody.
   ///
   /// In en, this message translates to:
-  /// **'ArchiveMe compares what you save over time.'**
+  /// **'Thoughtprint compares what you save over time.'**
   String get patternsComeBackBody;
 
   /// No description provided for @patternsComeBackRecordCta.

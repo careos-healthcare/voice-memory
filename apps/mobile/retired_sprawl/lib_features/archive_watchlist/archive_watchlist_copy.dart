@@ -7,17 +7,17 @@ abstract final class ArchiveWatchlistCopy {
 
   static const maxThemes = 3;
 
-  static const cardTitle = 'What should ArchiveMe watch for?';
+  static const cardTitle = 'What should Thoughtprint watch for?';
   static const cardBody =
       'Choose a theme you want your archive to notice over time.';
 
-  static const teaserTitle = 'What should ArchiveMe watch for?';
+  static const teaserTitle = 'What should Thoughtprint watch for?';
   static const teaserBody =
-      'Save one moment first, then choose a theme for ArchiveMe to notice over time.';
+      'Save one moment first, then choose a theme for Thoughtprint to notice over time.';
 
   static const watchingForPrefix = 'Watching for:';
   static const addWhenShowsUp = 'Add moments when this shows up again.';
-  static const matchHeadline = 'ArchiveMe found early evidence for this.';
+  static const matchHeadline = 'Thoughtprint found early evidence for this.';
   static const noMatchHeadline = 'No clear evidence yet.';
   static const noMatchBody = 'Add a moment when this shows up.';
 
@@ -26,7 +26,7 @@ abstract final class ArchiveWatchlistCopy {
   static const removeThemeButton = 'Remove';
   static const customThemeButton = 'Custom theme';
   static const customThemeSheetTitle = 'Your watch theme';
-  static const customThemeHint = 'What should ArchiveMe notice?';
+  static const customThemeHint = 'What should Thoughtprint notice?';
   static const customThemeSave = 'Save theme';
   static const customThemeCancel = 'Cancel';
 

@@ -14,18 +14,18 @@ abstract final class PresentDayRelevanceCopy {
       'This looks current because it has shown up again in recent saved moments.';
 
   static const fadingStateBody =
-      'ArchiveMe gives this less weight when it has not appeared recently.';
+      'Thoughtprint gives this less weight when it has not appeared recently.';
 
   static const softenedStateBody =
       'This may still matter, but it seems to be changing.';
 
   static const unclearStateBody =
-      'ArchiveMe will keep this lightly in view until there is stronger current evidence.';
+      'Thoughtprint will keep this lightly in view until there is stronger current evidence.';
 
   static const footer = 'Your past is context, not a verdict.';
 
   static const differentiationLine =
-      'ChatGPT can help with what you ask today. ArchiveMe shows whether today '
+      'ChatGPT can help with what you ask today. Thoughtprint shows whether today '
       'is connected to what has kept returning.';
 
   static String stateBodyFor(PresentDayRelevanceState state) => switch (state) {

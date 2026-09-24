@@ -4,7 +4,7 @@ abstract final class VisibleArchiveProofCopy {
   static const firstRunRecordTitle = 'When it repeats, save it.';
 
   static const firstRunRecordBody =
-      'Save one real moment. ArchiveMe compares it later.';
+      'Save one real moment. Thoughtprint compares it later.';
 
   static const firstRunRecordSupportingLine =
       'Not a diary. Not homework. One sentence is enough.';
@@ -38,7 +38,7 @@ abstract final class VisibleArchiveProofCopy {
   static const firstUseCaptureCta = 'Record moment';
 
   /// Archive Home empty title — Record uses [firstRunPromiseSteps] instead.
-  static const recordHeroTitle = 'How ArchiveMe works';
+  static const recordHeroTitle = 'How Thoughtprint works';
 
   static const recordHeroBody =
       '$firstRunRecordTitle $firstRunRecordBody $firstRunRecordSupportingLine';
@@ -64,7 +64,7 @@ abstract final class VisibleArchiveProofCopy {
   static const repeatPostSaveRepeatLabel = 'This may be a repeat:';
 
   static const repeatPostSaveBody =
-      'ArchiveMe can now start comparing this pattern.';
+      'Thoughtprint can now start comparing this pattern.';
 
   // Archive tab — first comparison state (two eligible moments).
   static const archiveFirstComparisonTitle = 'This looks like it came back.';
@@ -76,7 +76,7 @@ abstract final class VisibleArchiveProofCopy {
       'This may be the same thread as an earlier saved moment.';
 
   static const archiveFirstComparisonCautionThin =
-      'This looks like it came back, but ArchiveMe needs more moments to be sure.';
+      'This looks like it came back, but Thoughtprint needs more moments to be sure.';
 
   static const archiveFirstComparisonWeakFallback =
       '$twoEntryCompareTitle $twoEntryBodyUngrounded';
@@ -108,7 +108,7 @@ abstract final class VisibleArchiveProofCopy {
       'no private entries.';
 
   static const secondMomentWhyLine =
-      'A second moment lets ArchiveMe compare your own words — cautiously, '
+      'A second moment lets Thoughtprint compare your own words — cautiously, '
       'not as a conclusion.';
 
   static const firstSavePrimaryCta = 'Record if it happens again';
@@ -118,7 +118,7 @@ abstract final class VisibleArchiveProofCopy {
   static const patternsMindMapEmptyTitle = 'Record a few real moments';
 
   static const patternsMindMapEmptyBody =
-      'ArchiveMe will look for what repeats across them.';
+      'Thoughtprint will look for what repeats across them.';
 
   static const patternsMindMapPreviewPatternsLabel = 'Patterns';
   static const patternsMindMapPreviewPatternsValue = 'What keeps repeating';
@@ -131,7 +131,7 @@ abstract final class VisibleArchiveProofCopy {
   // Patterns tab — entries saved but no named belief yet.
   static const patternsMindMapFormingTitle = 'Patterns are still forming';
   static const patternsMindMapFormingBody =
-      'ArchiveMe needs clearer real moments before it can compare what repeats.';
+      'Thoughtprint needs clearer real moments before it can compare what repeats.';
   static const patternsMindMapFormingPrimaryCta = 'Save another moment';
 
   /// Legacy aliases — prefer [patternsMindMapEmpty*] for zero-entry Patterns UI.
@@ -165,7 +165,7 @@ abstract final class VisibleArchiveProofCopy {
 
   // Early repeat / two-entry payoff (cautious).
   static const earlyRepeatTitle =
-      'ArchiveMe is starting to compare your moments.';
+      'Thoughtprint is starting to compare your moments.';
 
   static const earlyRepeatBody =
       'If the same words or situations keep returning, this is where your '
@@ -178,13 +178,13 @@ abstract final class VisibleArchiveProofCopy {
       'Record once more to strengthen the signal.';
 
   // Two-entry comparison payoff (second session).
-  static const twoEntryCompareTitle = 'ArchiveMe has two moments to compare.';
+  static const twoEntryCompareTitle = 'Thoughtprint has two moments to compare.';
 
   static const twoEntryBodyUngrounded =
       'No clear repeat yet. One more moment will make the thread easier to see.';
 
   static const twoEntryBodyGrounded =
-      'These two moments may be related. ArchiveMe is keeping the evidence '
+      'These two moments may be related. Thoughtprint is keeping the evidence '
       'separate until there is more to compare.';
 
   static const String twoEntryPrimaryCta = firstSavePrimaryCta;
@@ -196,22 +196,22 @@ abstract final class VisibleArchiveProofCopy {
 
   // Three-entry belief payoff (cautious, evidence-based).
   static const threeEntryBeliefTitle =
-      'ArchiveMe is starting to see a possible pattern.';
+      'Thoughtprint is starting to see a possible pattern.';
 
   static const threeEntryBeliefCurrentBeliefLine =
       'Still forming — a draft pattern, not a final answer';
 
   static const threeEntryBeliefBodyIntro =
       'This is only what your saved words suggest so far. '
-      'ArchiveMe will keep comparing as you add moments.';
+      'Thoughtprint will keep comparing as you add moments.';
 
   static const threeEntryBeliefBodySource =
-      'ArchiveMe is using your saved words, not guessing.';
+      'Thoughtprint is using your saved words, not guessing.';
 
   static const threeEntryBeliefEvidenceLabel = 'Evidence from your archive';
 
   static const threeEntryBeliefEvidenceThin =
-      'ArchiveMe can compare this more clearly with one more distinct moment.';
+      'Thoughtprint can compare this more clearly with one more distinct moment.';
 
   static const threeEntryBeliefEvidenceThinAction =
       'Add one more moment to make this clearer.';
@@ -242,7 +242,7 @@ abstract final class VisibleArchiveProofCopy {
       'The same feeling appeared again, but with different words.';
 
   static const beliefUpdateChangeEasierCompare =
-      'This is appearing in more than one moment, so ArchiveMe can compare '
+      'This is appearing in more than one moment, so Thoughtprint can compare '
       'it more clearly.';
 
   static const beliefUpdateDefaultBelief =
@@ -269,7 +269,7 @@ abstract final class VisibleArchiveProofCopy {
       'This is only what your saved words suggest so far.';
 
   static const beliefEvidenceSourceLine =
-      'ArchiveMe is using your saved words, not guessing.';
+      'Thoughtprint is using your saved words, not guessing.';
 
   static const beliefEvidenceInsufficientBody =
       'Your archive needs more moments before it can show an evidence trail.';
@@ -327,7 +327,7 @@ abstract final class VisibleArchiveProofCopy {
       'A newer moment may have widened what your archive can compare.';
 
   static const beliefHistoryWhatChangedStillThin =
-      'This is appearing in more than one moment, so ArchiveMe can compare '
+      'This is appearing in more than one moment, so Thoughtprint can compare '
       'it more clearly.';
 
   // Five-plus entry weekly archive review — summary retention hook.
@@ -340,7 +340,7 @@ abstract final class VisibleArchiveProofCopy {
       'This is a draft pattern, not a final answer.';
 
   static const weeklyArchiveReviewSourceLine =
-      'ArchiveMe is using your saved words, not guessing.';
+      'Thoughtprint is using your saved words, not guessing.';
 
   static const weeklyArchiveReviewInsufficientBody =
       'Your archive needs more moments before it can create a review.';
@@ -387,7 +387,7 @@ abstract final class VisibleArchiveProofCopy {
       'Your latest moments may be widening what your archive can compare.';
 
   static const weeklyArchiveReviewWhatChangedStillThin =
-      'This is appearing in more than one moment, so ArchiveMe can compare '
+      'This is appearing in more than one moment, so Thoughtprint can compare '
       'it more clearly.';
 
   // Day-two / return loop — calm next-return framing (no streaks or pressure).
@@ -397,7 +397,7 @@ abstract final class VisibleArchiveProofCopy {
       'One more will confirm whether this repeats.';
 
   static const returnLoopTwoEntryUnrelatedBody =
-      'ArchiveMe needs one more moment before it can compare clearly.';
+      'Thoughtprint needs one more moment before it can compare clearly.';
 
   static const String returnLoopTwoEntryBody = returnLoopTwoEntryRelatedBody;
 
@@ -412,7 +412,7 @@ abstract final class VisibleArchiveProofCopy {
   // One-entry post-save — evidence only, no loop/repeat claims yet.
   static const oneEntryAddedTodayLine = 'You added one piece today.';
   static const oneEntryArchiveLine =
-      'ArchiveMe has one moment to compare later.';
+      'Thoughtprint has one moment to compare later.';
   static const oneEntryTomorrowLine = 'Come back when this shows up again.';
   static const oneEntryAddMoreInvite =
       'Save that moment only if it happens again.';
@@ -422,7 +422,7 @@ abstract final class VisibleArchiveProofCopy {
   static const shareProofTitle = 'Share safely';
 
   static const shareProofSubtitle =
-      'Share ArchiveMe without exposing private entries.';
+      'Share Thoughtprint without exposing private entries.';
 
   static const shareProofVariantA =
       "I'm building evidence about what keeps repeating in my life.";
@@ -431,7 +431,7 @@ abstract final class VisibleArchiveProofCopy {
       'My archive is starting to show what keeps coming back.';
 
   static const shareProofVariantC =
-      'ArchiveMe is helping me notice what repeats — with evidence, not guesses.';
+      'Thoughtprint is helping me notice what repeats — with evidence, not guesses.';
 
   static const shareProofVariantD =
       'I saved moments. My archive started showing the thread.';
@@ -439,7 +439,7 @@ abstract final class VisibleArchiveProofCopy {
   static const shareProofPrivacyFooter = 'No private entries shared.';
 
   static const shareProofProductLine =
-      'ArchiveMe — your private evidence-based life archive.';
+      'Thoughtprint — your private evidence-based life archive.';
 
   // Archive Home command center — one surface across the entry ladder.
   static const String archiveHomeEmptyTitle = recordHeroTitle;
@@ -481,7 +481,7 @@ abstract final class VisibleArchiveProofCopy {
       'One more moment can make the thread clearer.';
 
   static const returningUserTwoBody =
-      'ArchiveMe has two moments to compare. '
+      'Thoughtprint has two moments to compare. '
       'A third can help it form a cautious first possible pattern.';
 
   static const returningUserThreeTitle =
@@ -519,7 +519,7 @@ abstract final class VisibleArchiveProofCopy {
   static const nextMomentTwoTitle = 'Add the moment that makes this clearer.';
 
   static const nextMomentTwoBody =
-      'ArchiveMe has two moments to compare. '
+      'Thoughtprint has two moments to compare. '
       'A third can help it form a cautious first possible pattern.';
 
   static const nextMomentThreeTitle = 'Test this possible pattern with one more moment.';
@@ -553,9 +553,9 @@ abstract final class VisibleArchiveProofCopy {
 
   static const correctionNextGenericBody =
       'You marked an archive insight as not quite right. '
-      'Save the next example that shows what ArchiveMe missed.';
+      'Save the next example that shows what Thoughtprint missed.';
 
-  static const correctionNextFourTitle = 'Help ArchiveMe retest this possible pattern.';
+  static const correctionNextFourTitle = 'Help Thoughtprint retest this possible pattern.';
 
   static const correctionNextFourBody =
       'Your note says this insight missed something. '
@@ -569,7 +569,7 @@ abstract final class VisibleArchiveProofCopy {
       'holds across more than one example.';
 
   static const correctionNextThinEvidenceSuffix =
-      'One more distinct saved moment would help ArchiveMe compare this more '
+      'One more distinct saved moment would help Thoughtprint compare this more '
       'clearly.';
 
   // Archive insight feedback — local trust controls on belief/review surfaces.
@@ -582,7 +582,7 @@ abstract final class VisibleArchiveProofCopy {
   static const insightFeedbackWhySeeing = 'Why am I seeing this?';
 
   static const insightFeedbackWhySource =
-      'ArchiveMe is using your saved words, not guessing.';
+      'Thoughtprint is using your saved words, not guessing.';
 
   static const insightFeedbackWhyNotConclusion =
       'This is only what your saved words suggest so far.';
@@ -604,7 +604,7 @@ abstract final class VisibleArchiveProofCopy {
       'Saved as useful feedback.';
 
   // Private correction notes — local only, never shared.
-  static const insightCorrectionAffordance = 'Tell ArchiveMe what it missed';
+  static const insightCorrectionAffordance = 'Tell Thoughtprint what it missed';
 
   static const insightCorrectionPlaceholder = 'Add a private note\u2026';
 
@@ -621,7 +621,7 @@ abstract final class VisibleArchiveProofCopy {
   static const insightQualityTitle = 'Insight quality';
 
   static const insightQualitySubtitle =
-      'Control what ArchiveMe learns from your feedback. This stays on this device.';
+      'Control what Thoughtprint learns from your feedback. This stays on this device.';
 
   static const insightQualitySettingsTitle = 'Insight quality';
 
@@ -671,7 +671,7 @@ abstract final class VisibleArchiveProofCopy {
   static const insightQualityCautionMild = 'More cautious copy is active.';
 
   static const insightQualityCautionElevated =
-      'ArchiveMe is still testing this insight.';
+      'Thoughtprint is still testing this insight.';
 
   static const insightQualityLabelArchiveHome = 'Archive Home';
 
@@ -787,7 +787,7 @@ abstract final class VisibleArchiveProofCopy {
   static const String archiveHealthActionPlanPrimaryCta = firstSavePrimaryCta;
 
   static const archiveHealthActionOneEntry =
-      'Add one more moment before ArchiveMe compares anything.';
+      'Add one more moment before Thoughtprint compares anything.';
 
   static const archiveHealthActionTwoEntries =
       'Add a third moment to help form a cautious first possible pattern.';
@@ -1036,7 +1036,7 @@ abstract final class VisibleArchiveProofCopy {
       'This is your private archive workspace.';
 
   static const archiveWorkspaceHintIntroBody =
-      'ArchiveMe uses your saved moments to show evidence, patterns, and what to add next.';
+      'Thoughtprint uses your saved moments to show evidence, patterns, and what to add next.';
 
   static const archiveWorkspaceHintNeedsAttentionBody =
       'These shortcuts point to evidence that may need a tag, correction, or another moment.';
@@ -1045,7 +1045,7 @@ abstract final class VisibleArchiveProofCopy {
       'This section shows where your archive has enough evidence, and where it is still thin.';
 
   static const archiveWorkspaceHintReviewHistoryBody =
-      'When you have enough saved moments, ArchiveMe can show how a possible pattern may have changed.';
+      'When you have enough saved moments, Thoughtprint can show how a possible pattern may have changed.';
 
   static const archiveWorkspaceHintSectionPrompt = 'Why this section?';
 

@@ -57,7 +57,7 @@ abstract final class BetaMetricsDecisionCopy {
   static const fixMonetisation = 'Pro boundary / full archive value';
 
   static const coreValueQuestion =
-      'Did ArchiveMe show something repeating in your own words that was worth tracking?';
+      'Did Thoughtprint show something repeating in your own words that was worth tracking?';
 
   static const coreValueFeedbackLabel = 'Core value feedback';
 

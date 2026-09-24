@@ -11,7 +11,7 @@ abstract final class CaptureRecoveryCopy {
   static const saveFailed = 'That moment was not saved. Please try again.';
 
   static const transcriptUnavailable =
-      'ArchiveMe saved the moment, but the transcript may need another try.';
+      'Thoughtprint saved the moment, but the transcript may need another try.';
 
   static const noClearMatchYet =
       'No clear match yet — that is okay. Record the next real moment.';

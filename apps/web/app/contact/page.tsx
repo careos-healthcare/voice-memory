@@ -8,8 +8,8 @@ import {
 } from "@/lib/trust-copy";
 
 export const metadata: Metadata = {
-  title: "Contact — ArchiveMe",
-  description: "Contact ArchiveMe for privacy, safety, and product questions.",
+  title: "Contact — Thoughtprint",
+  description: "Contact Thoughtprint for privacy, safety, and product questions.",
 };
 
 export default function ContactPage() {

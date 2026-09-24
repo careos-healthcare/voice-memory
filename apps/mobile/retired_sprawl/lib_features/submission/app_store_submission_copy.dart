@@ -31,7 +31,7 @@ abstract final class AppStoreSubmissionCopy {
   ];
 
   static const reviewerNoteTypeInstead =
-      'ArchiveMe can be tested without microphone access by using Type instead.';
+      'Thoughtprint can be tested without microphone access by using Type instead.';
   static const reviewerNoteSampleArchive =
       'Sample Archive uses example data only and does not write to the real journal.';
   static const reviewerNoteRevenueCatPaused =

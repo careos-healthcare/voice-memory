@@ -3,22 +3,22 @@ abstract final class ProofQualityResponseCopy {
   ProofQualityResponseCopy._();
 
   static const footer =
-      'Your correction changes how ArchiveMe weights the timeline.';
+      'Your correction changes how Thoughtprint weights the timeline.';
 
   // Too vague
   static const tooVagueTitle = 'Make this more specific';
   static const tooVagueBody =
-      'ArchiveMe needs to show clearer evidence, not just a pattern label.';
+      'Thoughtprint needs to show clearer evidence, not just a pattern label.';
   static const tooVagueFallback =
       'More than one saved moment pointed in the same direction.';
   static const stillTooVagueLabel = 'Still too vague';
   static const stillTooVagueFollowUp =
-      'Got it. ArchiveMe will wait for more specific evidence before showing this again.';
+      'Got it. Thoughtprint will wait for more specific evidence before showing this again.';
 
   static const tooVagueRows = [
     'What repeated',
     'Where it returned',
-    'Why ArchiveMe is showing it now',
+    'Why Thoughtprint is showing it now',
   ];
 
   // Already knew this
@@ -42,18 +42,18 @@ abstract final class ProofQualityResponseCopy {
   static const noChangeLabel = 'No change';
 
   static const cameBackStrongerFollowUp =
-      'Saved. ArchiveMe will treat fresh returns as stronger evidence.';
+      'Saved. Thoughtprint will treat fresh returns as stronger evidence.';
   static const feltLighterFollowUp =
-      'Saved. ArchiveMe will keep this lightly in view.';
+      'Saved. Thoughtprint will keep this lightly in view.';
   static const somethingHelpedFollowUp =
-      'Saved. ArchiveMe noted that something may have helped.';
+      'Saved. Thoughtprint noted that something may have helped.';
   static const noChangeFollowUp =
-      'Saved. ArchiveMe will keep this light unless it returns.';
+      'Saved. Thoughtprint will keep this light unless it returns.';
 
   // Not relevant
   static const notRelevantTitle = 'Treat this as background?';
   static const notRelevantBody =
-      'ArchiveMe can keep this as background unless it returns.';
+      'Thoughtprint can keep this as background unless it returns.';
   static const returnedAfterCorrectionLine =
       'This returned after you marked it as background.';
 
@@ -62,11 +62,11 @@ abstract final class ProofQualityResponseCopy {
   static const relevantAgainLabel = 'Relevant again';
 
   static const keepAsBackgroundFollowUp =
-      'Saved. ArchiveMe will keep this light unless it returns.';
+      'Saved. Thoughtprint will keep this light unless it returns.';
   static const watchLightlyFollowUp =
-      'Saved. ArchiveMe will keep this lightly in view.';
+      'Saved. Thoughtprint will keep this lightly in view.';
   static const relevantAgainFollowUp =
-      'Saved. ArchiveMe will treat fresh returns as stronger evidence.';
+      'Saved. Thoughtprint will treat fresh returns as stronger evidence.';
 
   static String alreadyKnewAnswerLabel(ProofQualityAlreadyKnewAnswer answer) =>
       switch (answer) {

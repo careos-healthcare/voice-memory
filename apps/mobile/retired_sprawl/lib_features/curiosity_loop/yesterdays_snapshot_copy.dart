@@ -17,7 +17,7 @@ abstract final class YesterdaysSnapshotCopy {
   static const typeAnswerCta = 'Type instead';
 
   static const fallbackBulletOne = 'You saved one voice moment yesterday.';
-  static const fallbackBulletTwo = 'ArchiveMe kept the thread for today.';
+  static const fallbackBulletTwo = 'Thoughtprint kept the thread for today.';
   static const fallbackBulletThree = 'One quick check-in is enough.';
 
   static String anchorBullet(String anchor) => 'You were tracking: "$anchor".';

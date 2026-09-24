@@ -4,7 +4,7 @@ import 'package:archiveme_mobile/features/beta_proof_feedback/beta_proof_feedbac
 abstract final class ProofFloorRescueCopy {
   ProofFloorRescueCopy._();
 
-  static const waitTitle = 'ArchiveMe is still watching this';
+  static const waitTitle = 'Thoughtprint is still watching this';
   static const waitBody =
       'There is not enough clear evidence yet to call this a pattern. Save one more moment if it comes back.';
   static const waitPrimaryCta = 'Save if it returns';
@@ -12,7 +12,7 @@ abstract final class ProofFloorRescueCopy {
 
   static const feedbackTitle = 'Was this proof actually useful?';
   static const feedbackBody =
-      'One tap helps ArchiveMe avoid forcing patterns that do not feel real.';
+      'One tap helps Thoughtprint avoid forcing patterns that do not feel real.';
 
   static const sharpenTitle = 'Make the next proof sharper';
   static const sharpenBody =
@@ -20,7 +20,7 @@ abstract final class ProofFloorRescueCopy {
   static const sharpenPrimaryCta = 'Save the next return';
   static const sharpenSecondaryCta = 'Skip';
 
-  static const suppressTitle = 'ArchiveMe will back off this thread';
+  static const suppressTitle = 'Thoughtprint will back off this thread';
   static const suppressBody =
       'This pattern will be treated as weaker unless clearer evidence returns.';
   static const suppressPrimaryCta = 'Continue';

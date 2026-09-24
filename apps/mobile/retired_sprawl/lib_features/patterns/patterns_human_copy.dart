@@ -21,7 +21,7 @@ abstract class PatternHumanCopy {
       'Your archive is starting to show a possible thread.';
   static const fallbackCardTitle = 'Your archive is starting to notice this.';
   static const fallbackMainObservation =
-      'A few moments point in a similar direction, but ArchiveMe needs more clear evidence before naming the pattern.';
+      'A few moments point in a similar direction, but Thoughtprint needs more clear evidence before naming the pattern.';
   static const fallbackEvidenceBody = 'A few entries point toward this.';
   static const fallbackWhatChanged =
       'Your latest moment may relate to something you mentioned before.';
@@ -77,16 +77,16 @@ abstract class PatternHumanCopy {
   static const repeatedWordsLabel = 'Your repeated words:';
   static const evidencePhrasesLabel = 'Words that came up more than once:';
   static const interpretationLabel = 'What this may point to:';
-  static const confidenceLabel = 'How sure ArchiveMe is:';
+  static const confidenceLabel = 'How sure Thoughtprint is:';
   static const whatToNoticeLabel = 'What to notice next:';
   static const evidenceFirstInterpretationPressure =
       'This may be less about the task itself, and more about the pressure that builds around making it work.';
   static const evidenceFirstInterpretationPressureStrong =
       'This may be less about the task itself, and more about the pressure that builds around making it work.';
   static const evidenceFirstInterpretationGeneric =
-      'Your entries may be circling similar language, but ArchiveMe is still gathering enough repeated words to interpret it clearly.';
+      'Your entries may be circling similar language, but Thoughtprint is still gathering enough repeated words to interpret it clearly.';
   static const evidenceFirstConfidenceCautious =
-      'ArchiveMe should not name this too strongly yet, but it is worth watching.';
+      'Thoughtprint should not name this too strongly yet, but it is worth watching.';
   static const evidenceFirstConfidenceWatching =
       'This may be worth watching as more entries come in.';
   static const evidenceFirstWhatToNoticePressure =
@@ -98,7 +98,7 @@ abstract class PatternHumanCopy {
   static const fallbackEvidenceFirstHeroTitle =
       'Your archive is starting to find a thread.';
   static const fallbackEvidenceFirstHeroBody =
-      'A few entries sound related, but ArchiveMe needs more clear evidence before naming the pattern.';
+      'A few entries sound related, but Thoughtprint needs more clear evidence before naming the pattern.';
   static const fallbackMainObservationEvidence =
       'Your latest entries may be circling a similar feeling, but the pattern is not clear enough yet.';
   static const fallbackWhatToNoticeEvidence =

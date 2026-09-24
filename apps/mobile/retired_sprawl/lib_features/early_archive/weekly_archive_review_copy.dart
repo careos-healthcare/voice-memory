@@ -18,11 +18,11 @@ abstract final class WeeklyArchiveWeekReviewCopy {
   static const changedFallback = 'Not enough return checks yet.';
 
   static const helpedLabel = 'Appeared to help';
-  static const helpedPrefix = 'ArchiveMe noticed this in your words before:';
+  static const helpedPrefix = 'Thoughtprint noticed this in your words before:';
   static const helpedFallback =
       'No repeated helpful evidence in your words yet.';
 
-  static const nextToWatchLabel = 'What ArchiveMe is watching next';
+  static const nextToWatchLabel = 'What Thoughtprint is watching next';
   static const nextToWatchFallback = 'Record the next real moment.';
 
   static const recordCta = "Record next week's evidence";

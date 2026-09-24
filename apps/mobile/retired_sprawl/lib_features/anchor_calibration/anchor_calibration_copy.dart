@@ -3,10 +3,10 @@ abstract final class AnchorCalibrationCopy {
   AnchorCalibrationCopy._();
 
   static const changeTrackingBody =
-      'ArchiveMe is tracking whether this changes.';
+      'Thoughtprint is tracking whether this changes.';
 
   static const backgroundUnlessReturnBody =
-      'ArchiveMe will treat this as background unless it returns.';
+      'Thoughtprint will treat this as background unless it returns.';
 
   static const bannedMedicalTerms = <String>[
     'therapy',

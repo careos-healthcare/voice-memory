@@ -2,12 +2,12 @@
 abstract final class WeeklyArchiveReviewCopy {
   WeeklyArchiveReviewCopy._();
 
-  static const title = 'Your week in ArchiveMe';
+  static const title = 'Your week in Thoughtprint';
   static const subtitle = 'A private summary of what your archive noticed.';
 
   static const formingTitle = 'Your week is still forming';
   static const formingBody =
-      'Keep recording small real moments. ArchiveMe does not need every entry to become a pattern.';
+      'Keep recording small real moments. Thoughtprint does not need every entry to become a pattern.';
 
   static const whatRepeatedLabel = 'What repeated';
   static const whatChangedLabel = 'What changed';
@@ -19,7 +19,7 @@ abstract final class WeeklyArchiveReviewCopy {
   static const changedFallback = 'Not enough return checks yet.';
   static const helpedFallback =
       'No repeated helpful evidence in your words yet.';
-  static const helpedPrefix = 'ArchiveMe noticed this in your words before:';
+  static const helpedPrefix = 'Thoughtprint noticed this in your words before:';
   static const watchBeforeAgree = 'Watch the moment before you agree.';
 
   static const viewWeeklyReviewCta = 'View weekly review';

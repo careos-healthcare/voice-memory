@@ -5,14 +5,14 @@ abstract final class ProofTrailPositioningCopy {
   static const headline = 'Not a chat box. A proof trail.';
 
   static const body =
-      'ArchiveMe is not where you store everything. It is where you save small real '
+      'Thoughtprint is not where you store everything. It is where you save small real '
       'moments so your archive can show what keeps coming back.';
 
   static const notChatLine =
-      'ChatGPT can suggest what to do. ArchiveMe shows what you already said before.';
+      'ChatGPT can suggest what to do. Thoughtprint shows what you already said before.';
 
   static const notStorageLine =
-      'Notes store what happened. ArchiveMe checks what returns.';
+      'Notes store what happened. Thoughtprint checks what returns.';
 
   static const proofTrailLine =
       'A proof trail shows the first repeat, why it appeared, what you confirmed or '
@@ -22,7 +22,7 @@ abstract final class ProofTrailPositioningCopy {
       'The value is meaningful resurfacing — not more notes, more dashboards, or more AI.';
 
   static const saveRepeatLine =
-      'Use ArchiveMe when something repeats and you want your future self to see '
+      'Use Thoughtprint when something repeats and you want your future self to see '
       'the pattern.';
 
   static const lowEffortLine =
@@ -32,7 +32,7 @@ abstract final class ProofTrailPositioningCopy {
       'Free shows the first useful proof. Pro keeps the longer proof trail.';
 
   static const guardrail =
-      'ArchiveMe must be positioned as a low-effort proof trail, not a chat box, '
+      'Thoughtprint must be positioned as a low-effort proof trail, not a chat box, '
       'storage app, second brain, or dashboard to maintain.';
 
   static Iterable<String> allVisibleStrings() sync* {

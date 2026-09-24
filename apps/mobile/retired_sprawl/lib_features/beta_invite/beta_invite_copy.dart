@@ -8,11 +8,11 @@ abstract final class BetaInviteCopy {
   BetaInviteCopy._();
 
   static const corePositioning =
-      'Save small moments when something stands out. ArchiveMe shows what keeps returning.';
+      'Save small moments when something stands out. Thoughtprint shows what keeps returning.';
 
   static const screenTitle = 'Invite a beta tester';
   static const subtitle =
-      'Send someone a clear task so you can see whether ArchiveMe makes sense '
+      'Send someone a clear task so you can see whether Thoughtprint makes sense '
       'after a few saved moments.';
 
   static const variantSectionTitle = 'Invite variant';
@@ -56,7 +56,7 @@ abstract final class BetaInviteCopy {
 
   static const testerTask =
       'Save a few small moments when something stands out. After the third, open '
-      'Archive and answer whether ArchiveMe showed what returned.';
+      'Archive and answer whether Thoughtprint showed what returned.';
 
   static const betaSuccessChecklist =
       'Beta success means: save a few real moments, return when something stands out, '
@@ -69,11 +69,11 @@ abstract final class BetaInviteCopy {
 
   static const loopCardTitle = 'Know one person who would test this?';
   static const loopCardBody =
-      'ArchiveMe works best when someone saves a few real moments and comes back when something returns.';
+      'Thoughtprint works best when someone saves a few real moments and comes back when something returns.';
   static const loopCta = 'Copy beta invite';
   static const loopSecondary = 'Not now';
   static const loopInviteText =
-      'Want to test ArchiveMe? It is a private timeline app. You save small moments when something stands out, and it shows what returns, changes, or fades over time. No daily journal required.';
+      'Want to test Thoughtprint? It is a private timeline app. You save small moments when something stands out, and it shows what returns, changes, or fades over time. No daily journal required.';
   static const loopCopiedConfirmation = 'Beta invite copied';
 
   static const loopBannedPrivateTerms = <String>[
@@ -123,46 +123,46 @@ abstract final class BetaInviteCopy {
   };
 
   static const _shortGeneral =
-      "I'm testing ArchiveMe — a private app that helps you see what keeps "
+      "I'm testing Thoughtprint — a private app that helps you see what keeps "
       'returning across your saved moments. The test is simple: save a few small '
       'moments when something stands out and tell me if the archive shows what returned.';
 
   static const _shortWorkPatterns =
-      "I'm testing ArchiveMe for people who keep saying yes when they have "
+      "I'm testing Thoughtprint for people who keep saying yes when they have "
       'no capacity. Save a few real moments when something stands out and tell me '
       'if the archive shows what returned by the third.';
 
   static const _shortJournalingUpgrade =
-      "I'm testing ArchiveMe for people who already capture moments but want a "
+      "I'm testing Thoughtprint for people who already capture moments but want a "
       'timeline of what returned. Save a few small moments when something stands out '
       'and tell me if the archive compares them usefully.';
 
   static const _shortFounderCreator =
-      "I'm testing ArchiveMe for people who make repeated decisions and want to "
+      "I'm testing Thoughtprint for people who make repeated decisions and want to "
       'see what keeps returning across saved moments. Save a few small moments and '
       'tell me if the archive shows anything useful.';
 
   static const _shortPrivateArchive =
-      "I'm testing ArchiveMe as a private archive for reflection without "
+      "I'm testing Thoughtprint as a private archive for reflection without "
       'sharing entries. Save a few small moments when something stands out and tell '
       'me if the archive shows what returned by the third.';
 
   static const String _longGeneral = LandingAppContinuityCopy.heroBody;
 
   static const _longWorkPatterns =
-      'ArchiveMe is a private timeline for overcommitment patterns — save when '
+      'Thoughtprint is a private timeline for overcommitment patterns — save when '
       'something stands out, then compare what returned in your own words.';
 
   static const _longJournalingUpgrade =
-      'If you already capture moments elsewhere, ArchiveMe is meant to turn saved '
+      'If you already capture moments elsewhere, Thoughtprint is meant to turn saved '
       'moments into a timeline of what returned — not a daily journal project.';
 
   static const _longFounderCreator =
-      'ArchiveMe is for people who make repeated decisions and want a longer view '
+      'Thoughtprint is for people who make repeated decisions and want a longer view '
       'of what their own saved moments keep returning to.';
 
   static const _longPrivateArchive =
-      'ArchiveMe keeps your archive local and private. Share-safe proof never '
+      'Thoughtprint keeps your archive local and private. Share-safe proof never '
       'includes raw entries — testers should keep their own moments private too.';
 
   static String fullInvite(BetaInviteVariantId id) {

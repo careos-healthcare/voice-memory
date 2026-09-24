@@ -34,10 +34,10 @@ abstract class WarmArchiveCopy {
   }) {
     final delta = current - prior;
     if (delta <= -LivingArchiveCopy.minConfidenceChangePercent) {
-      return 'ArchiveMe is less certain about this than before.';
+      return 'Thoughtprint is less certain about this than before.';
     }
     if (delta >= LivingArchiveCopy.minConfidenceChangePercent) {
-      return 'ArchiveMe feels more certain about this than before.';
+      return 'Thoughtprint feels more certain about this than before.';
     }
     return 'This appears about as strongly as before.';
   }
@@ -62,10 +62,10 @@ abstract class WarmArchiveCopy {
 
   static String archiveChangedMindConfidenceSummary({String? beliefSnippet}) {
     if (beliefSnippet != null && beliefSnippet.isNotEmpty) {
-      return 'ArchiveMe is less certain about “$beliefSnippet” than it was '
+      return 'Thoughtprint is less certain about “$beliefSnippet” than it was '
           'when your earlier recordings shaped this story.';
     }
-    return 'ArchiveMe is less certain about this than before.';
+    return 'Thoughtprint is less certain about this than before.';
   }
 
   static String beliefChangeNarrative({
@@ -81,9 +81,9 @@ abstract class WarmArchiveCopy {
       );
     }
     if (currentPercent > priorPercent) {
-      return 'ArchiveMe leans toward this more than it did $priorLabel.';
+      return 'Thoughtprint leans toward this more than it did $priorLabel.';
     }
-    return 'ArchiveMe leans toward this less than it did $priorLabel.';
+    return 'Thoughtprint leans toward this less than it did $priorLabel.';
   }
 
   static String beliefTrendLabel(BeliefConfidenceTrend trend) {

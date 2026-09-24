@@ -18,12 +18,12 @@ abstract final class DailyArchiveExerciseCopy {
 
   static const screenshotTitle = "Today's map prompt (sample)";
   static const screenshotPrompt =
-      'ArchiveMe suggests one useful evidence-based action each day. Example only — no private data.';
+      'Thoughtprint suggests one useful evidence-based action each day. Example only — no private data.';
 
   static const firstMomentPrompt =
       'Add one real moment to your private mind map.';
   static const comparisonPrompt =
-      'Add another moment so ArchiveMe can start seeing what connects.';
+      'Add another moment so Thoughtprint can start seeing what connects.';
   static const watchThemePrompt =
       'Record what happened just before this showed up again.';
   static const betaFeedbackPrompt =
@@ -38,7 +38,7 @@ abstract final class DailyArchiveExerciseCopy {
   static const firstMomentHint =
       'One concrete moment is enough to start your private map.';
   static const comparisonHint =
-      'A few real moments help ArchiveMe notice what connects.';
+      'A few real moments help Thoughtprint notice what connects.';
   static const watchThemeHint =
       'Capture what was happening when this thread showed up again.';
   static const betaFeedbackHint = 'Your feedback stays on this device only.';

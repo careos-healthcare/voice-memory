@@ -9,7 +9,7 @@ abstract final class WhatChangedSinceLastTimeCopy {
   static const evidenceLabel = 'Compared evidence';
 
   static const footer =
-      'ArchiveMe gets more useful as it compares returns over time.';
+      'Thoughtprint gets more useful as it compares returns over time.';
 
   static const softerSummary = 'This looked softer than your first proof.';
 
@@ -20,7 +20,7 @@ abstract final class WhatChangedSinceLastTimeCopy {
   static const changedSummary = 'Something looked different this time.';
 
   static const unknownSummary =
-      'ArchiveMe needs one more return before it can compare clearly.';
+      'Thoughtprint needs one more return before it can compare clearly.';
 
   static const firstProofRowLabel = 'First proof';
 

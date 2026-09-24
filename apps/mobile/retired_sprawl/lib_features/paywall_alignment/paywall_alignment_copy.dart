@@ -1,6 +1,6 @@
 import 'package:archiveme_mobile/features/paywall_value_sharpening/paywall_value_sharpening_copy.dart';
 
-/// Canonical ArchiveMe Pro paywall alignment copy — display only, no billing logic.
+/// Canonical Thoughtprint Pro paywall alignment copy — display only, no billing logic.
 abstract final class PaywallAlignmentCopy {
   PaywallAlignmentCopy._();
 

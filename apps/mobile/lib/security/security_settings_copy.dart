@@ -8,7 +8,7 @@ abstract class SecuritySettingsCopy {
 
   static const String title = 'Security';
   static const String subtitle =
-      'Control how ArchiveMe protects this device and your account.';
+      'Control how Thoughtprint protects this device and your account.';
 
   // Sections.
   static const String appLockSection = 'Protect this archive';
@@ -38,7 +38,7 @@ abstract class SecuritySettingsCopy {
       'affected — only data stored on this device is removed.';
   static const String wipeConfirmHint =
       PrivacyClaimCatalogue.deleteArchiveConfirmationPhrase;
-  static const String hideInAppSwitcher = 'Hide ArchiveMe in app switcher';
+  static const String hideInAppSwitcher = 'Hide Thoughtprint in app switcher';
   static const String hideInAppSwitcherBody =
       'Shows a lock screen preview instead of your archive when switching apps.';
 }

@@ -5,7 +5,7 @@ abstract final class EvidenceTrailProUnderstandingCopy {
   static const title = 'Keep the longer trail';
 
   static const body =
-      'ArchiveMe has found one useful repeat. Pro keeps tracking whether it '
+      'Thoughtprint has found one useful repeat. Pro keeps tracking whether it '
       'returns, changes, softens, strengthens, fades, or gets corrected.';
 
   static const supportingLine =

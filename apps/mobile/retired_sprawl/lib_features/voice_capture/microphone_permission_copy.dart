@@ -10,7 +10,7 @@ abstract class MicrophonePermissionCopy {
   static const String neededTitle = 'Record with your voice';
 
   static const String neededBody =
-      'ArchiveMe saves short moments in your own words. '
+      'Thoughtprint saves short moments in your own words. '
       'Ten seconds is enough.';
 
   /// Alias for blocked-panel title — same calm framing when access is denied.

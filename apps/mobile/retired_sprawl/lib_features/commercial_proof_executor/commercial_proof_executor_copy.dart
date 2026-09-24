@@ -5,7 +5,7 @@ abstract final class CommercialProofExecutorCopy {
   static const headline = 'Commercial proof executor';
 
   static const body =
-      'ArchiveMe is commercially ready only when the product promise, store path, '
+      'Thoughtprint is commercially ready only when the product promise, store path, '
       'purchase, restore, entitlement, TestFlight, paid-intent beta, and production '
       'secrets are proven.';
 

@@ -75,6 +75,7 @@ const _consumerFacingSources = [
 ];
 
 const _forbiddenPatterns = <String, String>{
+  r'\bArchiveMe\b': 'ArchiveMe',
   r'\bVoiceMemory\b': 'VoiceMemory',
   r'\bvoice memory\b': 'voice memory',
   r'\bVoice Memory\b': 'Voice Memory',
@@ -155,10 +156,11 @@ List<String> _scanFile(String path) {
 }
 
 void main() {
-  test('iOS display name is ArchiveMe', () {
+  test('iOS display name is Thoughtprint', () {
     final plist = File('ios/Runner/Info.plist').readAsStringSync();
     expect(plist, contains('<key>CFBundleDisplayName</key>'));
-    expect(plist, contains('<string>ArchiveMe</string>'));
+    expect(plist, contains('<string>Thoughtprint</string>'));
+    expect(plist, isNot(contains('<string>ArchiveMe</string>')));
   });
 
   for (final path in _consumerFacingSources) {

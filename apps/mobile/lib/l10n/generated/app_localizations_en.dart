@@ -28,13 +28,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get accountAuthCreateBody =>
-      'ArchiveMe is a private voice journal that turns your spoken thoughts into a unified life story and deep personal intelligence. Create an account to restore access later.';
+      'Thoughtprint is a private voice journal that turns your spoken thoughts into a unified life story and deep personal intelligence. Create an account to restore access later.';
 
   @override
   String get accountAuthCreateCta => 'Create account';
 
   @override
-  String get accountAuthCreateTitle => 'Create your ArchiveMe account';
+  String get accountAuthCreateTitle => 'Create your Thoughtprint account';
 
   @override
   String get accountAuthEmailLabel => 'Email';
@@ -63,7 +63,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'Sign-in failed. Check the code and try again.';
 
   @override
-  String get accountAuthSignInTitle => 'Sign in to ArchiveMe';
+  String get accountAuthSignInTitle => 'Sign in to Thoughtprint';
 
   @override
   String get accountAuthSignOut => 'Sign out';
@@ -74,13 +74,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get accountAuthTimingNote =>
-      'ArchiveMe is a private voice journal that turns your spoken thoughts into a unified life story and deep personal intelligence. You can use it locally without an account.';
+      'Thoughtprint is a private voice journal that turns your spoken thoughts into a unified life story and deep personal intelligence. You can use it locally without an account.';
 
   @override
   String get accountScreenLabel => 'Account screen';
 
   @override
-  String get appTitle => 'ArchiveMe';
+  String get appTitle => 'Thoughtprint';
 
   @override
   String get archiveAddMoment => 'Add a moment';
@@ -106,11 +106,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get archiveNeedsComparison =>
-      'Add another moment so ArchiveMe can compare what changed.';
+      'Add another moment so Thoughtprint can compare what changed.';
 
   @override
   String get archiveNeedsSupportedMoments =>
-      'ArchiveMe needs at least two supported moments before explaining a pattern.';
+      'Thoughtprint needs at least two supported moments before explaining a pattern.';
 
   @override
   String get archiveNextMomentGuidance =>
@@ -402,14 +402,14 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get recordingPlainLanguageHint =>
-      'Say it plainly. ArchiveMe looks for patterns, not judgment.';
+      'Say it plainly. Thoughtprint looks for patterns, not judgment.';
 
   @override
   String get recordingProcessingStatus => 'Processing';
 
   @override
   String get recordingPromptNudgeBody =>
-      'ArchiveMe uses what you record to surface sharper things worth checking each day.';
+      'Thoughtprint uses what you record to surface sharper things worth checking each day.';
 
   @override
   String get recordingPromptNudgeTitle =>
@@ -471,7 +471,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'Capture a moment from your home screen.';
 
   @override
-  String get accountTitle => 'ArchiveMe account';
+  String get accountTitle => 'Thoughtprint account';
 
   @override
   String get syncStatus => 'Sync status';
@@ -583,7 +583,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get paywallDifferentiation =>
-      'ArchiveMe is not trying to answer better than ChatGPT. It is trying to remember differently.';
+      'Thoughtprint is not trying to answer better than ChatGPT. It is trying to remember differently.';
 
   @override
   String get paywallTrust =>
@@ -644,7 +644,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get valueMomentThreadReturnBody =>
-      'This thread has returned before. Pro keeps the evidence history so ArchiveMe can show whether it gets stronger, softer, or changes.';
+      'This thread has returned before. Pro keeps the evidence history so Thoughtprint can show whether it gets stronger, softer, or changes.';
 
   @override
   String get valueMomentBeliefBody =>
@@ -652,7 +652,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get valueMomentWeeklyBody =>
-      'Your weekly review found something to compare. Pro keeps weekly archive reviews so ArchiveMe can track what changed over time.';
+      'Your weekly review found something to compare. Pro keeps weekly archive reviews so Thoughtprint can track what changed over time.';
 
   @override
   String get valueMomentProofCounterBody =>
@@ -660,7 +660,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get valueMomentFallbackBody =>
-      'Your first repeat is free. Pro keeps the evidence history so ArchiveMe can show whether patterns get stronger, softer, or change over time.';
+      'Your first repeat is free. Pro keeps the evidence history so Thoughtprint can show whether patterns get stronger, softer, or change over time.';
 
   @override
   String get subscriptionPaywallNoOfferings =>
@@ -680,7 +680,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get patternsEarlyStateBody =>
-      'Record a few real moments. ArchiveMe will look for what repeats across them.';
+      'Record a few real moments. Thoughtprint will look for what repeats across them.';
 
   @override
   String get patternsEmptyCta => 'Record moment';
@@ -708,7 +708,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get patternsFirstEntrySavedBody =>
-      'Record one more clear moment and ArchiveMe can compare what repeats.';
+      'Record one more clear moment and Thoughtprint can compare what repeats.';
 
   @override
   String get patternsFirstEntrySavedCta => 'Record another moment';
@@ -728,14 +728,14 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get allPatternsLead =>
-      'Patterns and themes ArchiveMe keeps noticing in your reflections.';
+      'Patterns and themes Thoughtprint keeps noticing in your reflections.';
 
   @override
   String get patternsCheckInWaitingTitle => 'Check-in waiting';
 
   @override
   String get patternsCheckInWaitingBody =>
-      'ArchiveMe has a question from your last moment.';
+      'Thoughtprint has a question from your last moment.';
 
   @override
   String get patternsCheckInWaitingCta => 'Answer it now';
@@ -753,7 +753,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get patternsSignalsWaitingTitle => 'Signals waiting for clarity';
 
   @override
-  String get patternsWatchingSignalTitle => 'ArchiveMe is watching this signal';
+  String get patternsWatchingSignalTitle => 'Thoughtprint is watching this signal';
 
   @override
   String get patternsWatchingSignalBody =>
@@ -782,7 +782,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get patternsComeBackBody =>
-      'ArchiveMe compares what you save over time.';
+      'Thoughtprint compares what you save over time.';
 
   @override
   String get patternsComeBackRecordCta => 'Record today\'s reflection';

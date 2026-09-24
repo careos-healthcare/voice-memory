@@ -4,7 +4,7 @@ import 'package:archiveme_mobile/features/pattern_match_quality/pattern_match_qu
 abstract final class PatternMatchQualityCopy {
   PatternMatchQualityCopy._();
 
-  static const weak = 'ArchiveMe is only watching this for now.';
+  static const weak = 'Thoughtprint is only watching this for now.';
 
   static const emerging = 'This may be starting to repeat.';
 
@@ -13,7 +13,7 @@ abstract final class PatternMatchQualityCopy {
   static const strong = 'This has a clear timeline now.';
 
   static const watchOnlySubtitle =
-      'ArchiveMe is watching this lightly until the overlap is clearer.';
+      'Thoughtprint is watching this lightly until the overlap is clearer.';
 
   static const List<String> all = [
     weak,

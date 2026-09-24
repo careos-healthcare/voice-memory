@@ -4,7 +4,7 @@ abstract final class RelationshipCopy {
 
   static const consentManagementTitle = 'Professional access';
   static const consentManagementIntro =
-      'Manage which professionals can view scoped, read-only ArchiveMe data '
+      'Manage which professionals can view scoped, read-only Thoughtprint data '
       'after you grant consent. You can change scopes or revoke access anytime.';
 
   static const addConnectionTitle = 'Connect a professional';
