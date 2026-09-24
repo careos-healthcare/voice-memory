@@ -41,14 +41,8 @@
 		<key>NSAllowsArbitraryLoads</key>
 		<false/>
 	</dict>
-	<key>NSCalendarsFullAccessUsageDescription</key>
-	<string>Thoughtprint reads calendar events you choose so a moment can remember when it happened.</string>
 	<key>NSFaceIDUsageDescription</key>
 	<string>Thoughtprint uses Face ID to unlock the app on this device.</string>
-	<key>NSHealthShareUsageDescription</key>
-	<string>Thoughtprint reads the health details you choose to keep with a moment, and stores them on this device.</string>
-	<key>NSHealthUpdateUsageDescription</key>
-	<string>Thoughtprint writes health details only when you choose to save them with a moment.</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Thoughtprint uses the microphone so you can record a voice note on this device.</string>
 	<key>UIBackgroundModes</key>

@@ -12,11 +12,6 @@ void main() {
     final purposes = _purposeStrings(plist);
 
     final required = <String, List<String>>{
-      'health': [
-        'NSHealthShareUsageDescription',
-        'NSHealthUpdateUsageDescription',
-      ],
-      'device_calendar': ['NSCalendarsFullAccessUsageDescription'],
       'image_picker': [
         'NSPhotoLibraryUsageDescription',
         'NSCameraUsageDescription',
