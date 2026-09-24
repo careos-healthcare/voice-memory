@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:archiveme_mobile/features/monetization/revenuecat_service.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/services/obsidian_markdown_template.dart';
 import 'package:archiveme_mobile/services/obsidian_vault_diff.dart';
@@ -142,6 +143,12 @@ class MarkdownExportService {
   Stream<MarkdownWrittenFile> syncStream(List<JournalEntry> entries) async* {
     final directory = await _vault.readPath();
     if (directory == null || directory.trim().isEmpty) return;
+    if (!FreeTierGate.allowsObsidianSync(
+      PremiumAccess.current,
+      offline: false,
+    )) {
+      return;
+    }
     for (final entry in entries) {
       final note = MarkdownNote.fromEntry(entry);
       final path = _join(directory.trim(), note.fileName);

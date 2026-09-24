@@ -37,18 +37,18 @@ void main() {
 
     expect(find.byKey(const Key('paywall_benefit_watch')), findsOneWidget);
     expect(find.textContaining('on this device'), findsWidgets);
-    expect(find.textContaining('Premium mesh offload'), findsOneWidget);
+    expect(find.textContaining('Encrypted cloud backups'), findsWidgets);
     await tester.scrollUntilVisible(
       find.textContaining('does not turn it on'),
       80,
     );
-    expect(find.textContaining('Multi-device sync'), findsWidgets);
+    expect(find.textContaining('Automated Obsidian sync'), findsWidgets);
     expect(find.textContaining('does not turn it on'), findsOneWidget);
     await tester.scrollUntilVisible(
       find.textContaining('https://archiveme.app'),
       80,
     );
-    expect(find.textContaining('Deeper coaching'), findsWidgets);
+    expect(find.textContaining('Pattern synthesis'), findsWidgets);
     expect(find.textContaining('https://archiveme.app'), findsOneWidget);
 
     await tester.tap(find.byKey(const Key('paywall_restore')));

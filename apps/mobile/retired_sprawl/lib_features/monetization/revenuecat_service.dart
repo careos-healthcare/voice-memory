@@ -8,12 +8,16 @@ import 'package:purchases_flutter/purchases_flutter.dart';
 
 /// Active RevenueCat entitlement for advanced AI and cross-platform continuity.
 class PremiumEntitlement {
-  const PremiumEntitlement({required this.isActive});
+  const PremiumEntitlement({required this.isActive, this.isTrial = false});
 
   final bool isActive;
+  final bool isTrial;
 
   static const free = PremiumEntitlement(isActive: false);
   static const active = PremiumEntitlement(isActive: true);
+  static const trial = PremiumEntitlement(isActive: true, isTrial: true);
+
+  bool get hasPremiumAccess => isActive || isTrial;
 
   bool get canUseSmartSummary => isActive;
   bool get canUseActionItems => isActive;
@@ -28,9 +32,34 @@ class PremiumEntitlement {
   /// Basic recording does not require a subscription.
   bool get canCaptureAudio => true;
 
+  /// Typed capture stays on device for every account.
+  bool get canCaptureText => true;
+
+  bool get canUseCloudBackup => hasPremiumAccess;
+  bool get canUseObsidianSync => hasPremiumAccess;
+  bool get canUsePatternSynthesis => hasPremiumAccess;
+
   bool get canUseMeshOffload => isActive;
   bool get canUseMultiDeviceSync => isActive;
   bool get canUseDeeperCoaching => isActive;
+}
+
+/// One free pattern synthesis, then the engine follows the receipt.
+class PatternSynthesisTrial {
+  static var previewsRemaining = 1;
+
+  static bool allow(PremiumEntitlement entitlement) {
+    if (FreeTierGate.allowsPatternSynthesis(entitlement, offline: false)) {
+      return true;
+    }
+    if (previewsRemaining <= 0) return false;
+    previewsRemaining -= 1;
+    return true;
+  }
+
+  static void reset([int count = 1]) {
+    previewsRemaining = count;
+  }
 }
 
 /// Free capture and storage stay open. Premium features follow the receipt.
@@ -48,6 +77,36 @@ abstract final class FreeTierGate {
     final included = PremiumEntitlement.free.canCaptureAudio;
     if (offline) return included;
     return included;
+  }
+
+  static bool allowsTextCapture({required bool offline}) {
+    final included = PremiumEntitlement.free.canCaptureText;
+    if (offline) return included;
+    return included;
+  }
+
+  static bool allowsCloudBackup(
+    PremiumEntitlement entitlement, {
+    required bool offline,
+  }) {
+    final receipt = entitlement.canUseCloudBackup;
+    return offline ? receipt : receipt;
+  }
+
+  static bool allowsObsidianSync(
+    PremiumEntitlement entitlement, {
+    required bool offline,
+  }) {
+    final receipt = entitlement.canUseObsidianSync;
+    return offline ? receipt : receipt;
+  }
+
+  static bool allowsPatternSynthesis(
+    PremiumEntitlement entitlement, {
+    required bool offline,
+  }) {
+    final receipt = entitlement.canUsePatternSynthesis;
+    return offline ? receipt : receipt;
   }
 
   static bool allowsMeshOffload(

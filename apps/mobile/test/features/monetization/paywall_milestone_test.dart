@@ -114,10 +114,13 @@ void main() {
     expect(find.text('Start Premium'), findsOneWidget);
     expect(find.byKey(const Key('upgrade_tier_local')), findsOneWidget);
     expect(find.byKey(const Key('upgrade_tier_capture')), findsOneWidget);
-    expect(find.byKey(const Key('upgrade_tier_p2p')), findsOneWidget);
-    expect(find.byKey(const Key('upgrade_tier_coaching')), findsOneWidget);
+    expect(find.byKey(const Key('upgrade_tier_text')), findsOneWidget);
+    expect(find.byKey(const Key('upgrade_tier_cloud')), findsOneWidget);
+    expect(find.byKey(const Key('upgrade_tier_obsidian')), findsOneWidget);
+    expect(find.byKey(const Key('upgrade_tier_patterns')), findsOneWidget);
     expect(find.text('Included'), findsWidgets);
-    expect(find.text('P2P mesh'), findsOneWidget);
-    expect(find.text('Deeper coaching'), findsWidgets);
+    expect(find.text('Encrypted cloud backups'), findsOneWidget);
+    expect(find.text('Automated Obsidian sync'), findsOneWidget);
+    expect(find.text('Pattern synthesis'), findsOneWidget);
   });
 }

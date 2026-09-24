@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-/// Free capture and storage beside the premium mesh, sync, and coaching rows.
+/// Free voice and text capture beside cloud backup, Obsidian, and patterns.
 class UpgradeTierIndicators extends StatelessWidget {
   const UpgradeTierIndicators({super.key});
 
@@ -23,23 +23,30 @@ class UpgradeTierIndicators extends StatelessWidget {
           premium: false,
         ),
         _TierRow(
-          id: 'upgrade_tier_p2p',
-          title: 'P2P mesh',
-          body: 'Premium opens mesh offload between your devices.',
+          id: 'upgrade_tier_text',
+          title: 'Basic text capture',
+          body: 'Typed notes stay on this device.',
+          badge: 'Included',
+          premium: false,
+        ),
+        _TierRow(
+          id: 'upgrade_tier_cloud',
+          title: 'Encrypted cloud backups',
+          body: 'Premium keeps an encrypted backup off this device.',
           badge: 'Premium',
           premium: true,
         ),
         _TierRow(
-          id: 'upgrade_tier_sync',
-          title: 'Multi-device sync',
-          body: 'Premium syncs an encrypted copy to your other devices.',
+          id: 'upgrade_tier_obsidian',
+          title: 'Automated Obsidian sync',
+          body: 'Premium writes new notes into your vault.',
           badge: 'Premium',
           premium: true,
         ),
         _TierRow(
-          id: 'upgrade_tier_coaching',
-          title: 'Deeper coaching',
-          body: 'Premium unlocks longer coaching questions on your notes.',
+          id: 'upgrade_tier_patterns',
+          title: 'Pattern synthesis',
+          body: 'Your first synthesis is included. Premium keeps it running.',
           badge: 'Premium',
           premium: true,
         ),

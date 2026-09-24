@@ -26,21 +26,21 @@ class ContinuityPaywallSection extends ConsumerWidget {
               UpgradeTierIndicators(),
               _ContinuityPoint(
                 id: 'paywall_benefit_watch',
-                title: 'P2P mesh offload',
+                title: 'Encrypted cloud backups',
                 body:
-                    'Free keeps every recording on this device. Premium mesh offload moves an encrypted copy to another device you own.',
+                    'Free keeps every recording on this device. Premium keeps an encrypted cloud backup.',
               ),
               _ContinuityPoint(
                 id: 'paywall_benefit_relay',
-                title: 'Multi-device sync',
+                title: 'Automated Obsidian sync',
                 body:
-                    'Multi-device sync is a premium extra. Going offline does not turn it on, and it does not lock capture.',
+                    'Automated Obsidian sync is a premium extra. Going offline does not turn it on, and it does not lock capture.',
               ),
               _ContinuityPoint(
                 id: 'paywall_benefit_web',
-                title: 'Deeper coaching',
+                title: 'Pattern synthesis',
                 body:
-                    'Deeper coaching questions stay behind Premium. The transcript and the recording stay available without it. Open a paid handoff at https://archiveme.app.',
+                    'Your first pattern synthesis is included. Premium keeps the engine running. Open a paid handoff at https://archiveme.app.',
               ),
             ],
           ),

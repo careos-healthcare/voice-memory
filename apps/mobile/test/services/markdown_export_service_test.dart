@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:archiveme_mobile/features/monetization/revenuecat_service.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/models/reflection.dart';
 import 'package:archiveme_mobile/services/markdown_export_service.dart';
@@ -39,6 +40,8 @@ void main() {
   test('choosing a folder keeps rewriting notes into that vault', () async {
     final directory = await Directory.systemTemp.createTemp('obsidian_vault');
     addTearDown(() => directory.delete(recursive: true));
+    PremiumAccess.apply(PremiumEntitlement.active);
+    addTearDown(() => PremiumAccess.apply(PremiumEntitlement.free));
     final service = MarkdownExportService(
       pickDirectory: () async => directory.path,
     );
@@ -83,9 +86,23 @@ mood: {{mood}}
     expect(markdown, contains('Said it out loud.'));
   });
 
+  test('a free account does not write the Obsidian vault', () async {
+    PremiumAccess.apply(PremiumEntitlement.free);
+    final directory = await Directory.systemTemp.createTemp('obsidian_free');
+    addTearDown(() => directory.delete(recursive: true));
+    final service = MarkdownExportService(
+      pickDirectory: () async => directory.path,
+    );
+    expect(await service.chooseVault(), directory.path);
+    expect(await service.sync([_entry('Stays on device.')]), 0);
+    expect(directory.listSync(), isEmpty);
+  });
+
   test('vault diff skips duplicates and keeps an edited note', () async {
     final directory = await Directory.systemTemp.createTemp('obsidian_diff');
     addTearDown(() => directory.delete(recursive: true));
+    PremiumAccess.apply(PremiumEntitlement.active);
+    addTearDown(() => PremiumAccess.apply(PremiumEntitlement.free));
     final service = MarkdownExportService(
       pickDirectory: () async => directory.path,
     );
