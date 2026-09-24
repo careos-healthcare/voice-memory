@@ -16,6 +16,28 @@ class VaultSyncStatus {
     this.lastSyncedAt,
   });
 
+  VaultSyncStatus.compose({
+    required bool encryptionEnabled,
+    required bool p2pEnabled,
+    SyncStatusSnapshot? sync,
+    DateTime? lastSyncedAt,
+  }) : encryption = encryptionEnabled
+           ? VaultEncryptionHealth.protected
+           : VaultEncryptionHealth.unavailable,
+       peers = _peers(p2pEnabled: p2pEnabled, sync: sync),
+       lastSyncedAt = lastSyncedAt ?? sync?.sync.lastCompletedAt;
+
+  /// Live reading from the encryption gate, capability flag, and sync snapshot.
+  VaultSyncStatus.fromApp({
+    SyncStatusSnapshot? sync,
+    DateTime? lastSyncedAt,
+  }) : this.compose(
+         encryptionEnabled: SecureSqliteLockService.encryptionEnabled,
+         p2pEnabled: V1CapabilityRegistry.p2pAndWebRtc,
+         sync: sync,
+         lastSyncedAt: lastSyncedAt,
+       );
+
   /// Calm local reading used when sync services are not mounted.
   static const localFallback = VaultSyncStatus(
     encryption: VaultEncryptionHealth.unavailable,
@@ -47,34 +69,6 @@ class VaultSyncStatus {
     final hour = at.hour.toString().padLeft(2, '0');
     final minute = at.minute.toString().padLeft(2, '0');
     return 'Last synced $month-$day $hour:$minute';
-  }
-
-  static VaultSyncStatus compose({
-    required bool encryptionEnabled,
-    required bool p2pEnabled,
-    SyncStatusSnapshot? sync,
-    DateTime? lastSyncedAt,
-  }) {
-    return VaultSyncStatus(
-      encryption: encryptionEnabled
-          ? VaultEncryptionHealth.protected
-          : VaultEncryptionHealth.unavailable,
-      peers: _peers(p2pEnabled: p2pEnabled, sync: sync),
-      lastSyncedAt: lastSyncedAt ?? sync?.sync.lastCompletedAt,
-    );
-  }
-
-  /// Live reading from the encryption gate, capability flag, and sync snapshot.
-  static VaultSyncStatus fromApp({
-    SyncStatusSnapshot? sync,
-    DateTime? lastSyncedAt,
-  }) {
-    return compose(
-      encryptionEnabled: SecureSqliteLockService.encryptionEnabled,
-      p2pEnabled: V1CapabilityRegistry.p2pAndWebRtc,
-      sync: sync,
-      lastSyncedAt: lastSyncedAt,
-    );
   }
 
   static PeerSyncStatus _peers({

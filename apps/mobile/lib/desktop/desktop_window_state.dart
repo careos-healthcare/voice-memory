@@ -55,7 +55,7 @@ class DesktopWindowStateStore {
   final File _file;
 
   Future<DesktopWindowState?> load() async {
-    if (!await _file.exists()) return null;
+    if (!_file.existsSync()) return null;
     try {
       final raw = jsonDecode(await _file.readAsString());
       if (raw is! Map) return null;
