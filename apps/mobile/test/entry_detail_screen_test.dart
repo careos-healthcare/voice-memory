@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:archiveme_mobile/features/action_items/archive_action_item.dart';
 import 'package:archiveme_mobile/features/archive_evidence/transcript_pending_copy.dart';
 import 'package:archiveme_mobile/features/entry_detail/entry_detail_copy.dart';
+import 'package:archiveme_mobile/features/entry_detail/entry_detail_edits.dart';
 import 'package:archiveme_mobile/features/fact_ledger/archive_fact.dart';
 import 'package:archiveme_mobile/features/memory/curated_memory_marker.dart';
 import 'package:archiveme_mobile/features/memory/entry_aboutness.dart';
@@ -94,9 +95,9 @@ void main() {
 
       expect(find.text(EntryDetailCopy.title), findsOneWidget);
       expect(find.text(EntryDetailCopy.whatYouRecorded), findsOneWidget);
-      expect(find.text(EntryDetailCopy.archiveNoteLabel), findsOneWidget);
-      expect(find.text(EntryDetailCopy.archiveNoteBody), findsOneWidget);
-      expect(find.text(EntryDetailCopy.archiveNoteHelper), findsOneWidget);
+      expect(find.text('Archive note'), findsNothing);
+      expect(find.text(EntryDetailCopy.audioMissing), findsOneWidget);
+      expect(find.byKey(const Key('entry_detail_audio_player')), findsNothing);
     });
 
     testWidgets('hides internal metadata on default view', (tester) async {
@@ -227,11 +228,10 @@ void main() {
     testWidgets('delete shows confirmation dialog', (tester) async {
       await _saveAndPump(tester, entry: _entry(id: 'delete-me'));
 
-      expect(
-        find.byKey(const Key('entry_detail_delete_button')),
-        findsOneWidget,
-      );
-      await tester.tap(find.byKey(const Key('entry_detail_delete_button')));
+      expect(find.byKey(const Key('entry_detail_delete_button')), findsNothing);
+      await tester.tap(find.byKey(const Key('entry_detail_overflow')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text(EntryDetailCopy.delete));
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 200));
 
@@ -240,6 +240,65 @@ void main() {
         find.byKey(const Key('entry_detail_delete_confirm')),
         findsOneWidget,
       );
+    });
+
+    testWidgets('hides the player when the recording file is missing', (
+      tester,
+    ) async {
+      await _saveAndPump(
+        tester,
+        entry: _entry(id: 'no-file', localAudioPath: '${tmp.path}/missing.m4a'),
+      );
+
+      expect(find.byKey(const Key('entry_detail_audio_missing')), findsOneWidget);
+      expect(find.byKey(const Key('entry_detail_audio_player')), findsNothing);
+    });
+
+    testWidgets('speed toggle cycles 1x, 1.5x, and 2x', (tester) async {
+      final audio = File('${tmp.path}/take.m4a')..writeAsBytesSync([1, 2, 3, 4]);
+      await _saveAndPump(
+        tester,
+        entry: _entry(id: 'with-audio', localAudioPath: audio.path),
+      );
+
+      expect(find.byKey(const Key('entry_detail_audio_player')), findsOneWidget);
+      expect(find.text('1×'), findsOneWidget);
+      await tester.tap(find.byKey(const Key('entry_detail_speed')));
+      await tester.pump();
+      expect(find.text('1.5×'), findsOneWidget);
+      await tester.tap(find.byKey(const Key('entry_detail_speed')));
+      await tester.pump();
+      expect(find.text('2×'), findsOneWidget);
+    });
+
+    testWidgets('backdating persists and re-sorts the archive', (tester) async {
+      final newer = _entry(id: 'newer').copyWith(
+        createdAt: DateTime(2026, 9, 20),
+      );
+      final older = _entry(id: 'older').copyWith(
+        createdAt: DateTime(2026, 6, 1),
+      );
+      await tester.runAsync(() async {
+        await _saveEntry(newer);
+        await _saveEntry(older);
+      });
+      EntryDetailScreen.debugCreatedAtOverride = DateTime(2026, 1, 2);
+      addTearDown(() => EntryDetailScreen.debugCreatedAtOverride = null);
+      await _pumpEntryDetail(tester, newer.id);
+      final before = (await AppServices.instance.journalStore.getById('newer'))!;
+
+      await tester.tap(find.byKey(const Key('entry_detail_overflow')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text(EntryDetailCopy.editDateTime));
+      await tester.pumpAndSettle();
+
+      final saved = (await AppServices.instance.journalStore.getById('newer'))!;
+      expect(saved.createdAt, DateTime(2026, 1, 2));
+      expect(saved.revision, before.revision + 1);
+      final ordered = archiveOrder(
+        AppServices.instance.journalStore.loadAllSync(),
+      );
+      expect(ordered.map((entry) => entry.id).toList(), ['older', 'newer']);
     });
   });
 }

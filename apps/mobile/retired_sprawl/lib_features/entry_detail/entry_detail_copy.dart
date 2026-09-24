@@ -6,11 +6,10 @@ abstract class EntryDetailCopy {
 
   static const String title = 'Saved moment';
   static const String whatYouRecorded = 'What you recorded';
-  static const String archiveNoteLabel = 'Archive note';
-  static const String archiveNoteBody =
-      'This moment is part of your private archive.';
-  static const String archiveNoteHelper =
-      'Thoughtprint can compare it with future entries when there is enough to compare.';
+  static const String audioMissing = "Original audio isn't on this device";
+  static const String editDateTime = 'Edit date and time';
+  static const String readAloud = 'Read aloud';
+  static const String titleField = 'Title';
   static const String transcriptPending =
       TranscriptPendingCopy.transcriptPendingTitle;
   static const String transcriptPendingBody =
@@ -24,9 +23,10 @@ abstract class EntryDetailCopy {
   static const List<String> all = [
     title,
     whatYouRecorded,
-    archiveNoteLabel,
-    archiveNoteBody,
-    archiveNoteHelper,
+    audioMissing,
+    editDateTime,
+    readAloud,
+    titleField,
     transcriptPending,
     transcriptPendingBody,
     advancedDetails,

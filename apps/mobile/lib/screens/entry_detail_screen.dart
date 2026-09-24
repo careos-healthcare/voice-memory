@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:archiveme_mobile/core/di/v1_account_dependencies.dart';
 import 'package:archiveme_mobile/features/archive/v1/archive_entry_hero_tags.dart';
 import 'package:archiveme_mobile/features/entry_detail/entry_detail_copy.dart';
+import 'package:archiveme_mobile/features/entry_detail/entry_detail_edits.dart';
 import 'package:archiveme_mobile/features/memory/memory_surfacing_mode.dart';
 import 'package:archiveme_mobile/features/memory/sensitive_surfacing_policy.dart';
 import 'package:archiveme_mobile/features/timeline/timeline_entry_display.dart';
@@ -14,6 +15,7 @@ import 'package:archiveme_mobile/theme/app_palette.dart';
 import 'package:archiveme_mobile/widgets/entry_detail/entry_processing_trust_chip.dart';
 import 'package:archiveme_mobile/widgets/archive/archive_entry_card.dart';
 import 'package:archiveme_mobile/widgets/archive/entry_context_tag_editor.dart';
+import 'package:archiveme_mobile/widgets/entry/entry_audio_player.dart';
 import 'package:archiveme_mobile/widgets/entry_detail/entry_read_aloud_button.dart';
 import 'package:archiveme_mobile/widgets/memory/entry_aboutness_editor.dart';
 import 'package:archiveme_mobile/widgets/memory/memory_surfacing_editor.dart';
@@ -39,6 +41,10 @@ class EntryDetailScreen extends StatefulWidget {
   @visibleForTesting
   final JournalEntry? previewEntry;
 
+  /// When set, Edit date and time writes this instant instead of opening pickers.
+  @visibleForTesting
+  static DateTime? debugCreatedAtOverride;
+
   @override
   State<EntryDetailScreen> createState() => _EntryDetailScreenState();
 }
@@ -46,6 +52,8 @@ class EntryDetailScreen extends StatefulWidget {
 class _EntryDetailScreenState extends State<EntryDetailScreen> {
   JournalEntry? _entry;
   bool _advancedExpanded = false;
+  Future<void> Function()? _readAloud;
+  late final TextEditingController _titleController;
 
   V1AccountDependencies get _accountDeps =>
       widget.accountDependencies ?? V1AccountDependencies.fromAppServices();
@@ -53,9 +61,11 @@ class _EntryDetailScreenState extends State<EntryDetailScreen> {
   @override
   void initState() {
     super.initState();
+    _titleController = TextEditingController();
     final preview = widget.previewEntry;
     if (preview != null) {
       _entry = preview;
+      _titleController.text = preview.display.title ?? '';
       return;
     }
     unawaited(_load());
@@ -73,7 +83,10 @@ class _EntryDetailScreenState extends State<EntryDetailScreen> {
           break;
         }
       }
-      if (mounted) setState(() => _entry = loaded);
+      if (mounted) {
+        setState(() => _entry = loaded);
+        _titleController.text = loaded?.display.title ?? '';
+      }
       return;
     }
 
@@ -87,7 +100,53 @@ class _EntryDetailScreenState extends State<EntryDetailScreen> {
         );
       }
     }
-    if (mounted) setState(() => _entry = e);
+    if (mounted) {
+      setState(() => _entry = e);
+      _titleController.text = e?.display.title ?? '';
+    }
+  }
+
+  @override
+  void dispose() {
+    _titleController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _saveTitle(JournalEntry entry) async {
+    if (widget.previewEntry != null) return;
+    await saveEntryTitle(
+      store: _accountDeps.journalStore,
+      entry: entry,
+      title: _titleController.text,
+    );
+    await _load();
+  }
+
+  Future<void> _editDate(JournalEntry entry) async {
+    if (widget.previewEntry != null) return;
+    final override = EntryDetailScreen.debugCreatedAtOverride;
+    DateTime? next = override;
+    if (next == null) {
+      final date = await showDatePicker(
+        context: context,
+        initialDate: entry.createdAt,
+        firstDate: DateTime(1970),
+        lastDate: DateTime.now().add(const Duration(days: 1)),
+      );
+      if (date == null || !mounted) return;
+      final time = await showTimePicker(
+        context: context,
+        initialTime: TimeOfDay.fromDateTime(entry.createdAt),
+      );
+      if (time == null || !mounted) return;
+      next = DateTime(date.year, date.month, date.day, time.hour, time.minute);
+    }
+    await saveEntryCreatedAt(
+      store: _accountDeps.journalStore,
+      entry: entry,
+      createdAt: next,
+    );
+    await _load();
   }
 
   Future<void> _confirmDelete(JournalEntry entry) async {
@@ -127,6 +186,34 @@ class _EntryDetailScreenState extends State<EntryDetailScreen> {
     return PushedScreenShell(
       title: EntryDetailCopy.title,
       showBottomDone: false,
+      actions: e == null
+          ? null
+          : [
+              PopupMenuButton<String>(
+                key: const Key('entry_detail_overflow'),
+                tooltip: 'More',
+                onSelected: (value) {
+                  if (value == 'date') unawaited(_editDate(e));
+                  if (value == 'read') unawaited(_readAloud?.call());
+                  if (value == 'delete') unawaited(_confirmDelete(e));
+                },
+                itemBuilder: (context) => [
+                  const PopupMenuItem(
+                    value: 'date',
+                    child: Text(EntryDetailCopy.editDateTime),
+                  ),
+                  if (_readAloud != null)
+                    const PopupMenuItem(
+                      value: 'read',
+                      child: Text(EntryDetailCopy.readAloud),
+                    ),
+                  const PopupMenuItem(
+                    value: 'delete',
+                    child: Text(EntryDetailCopy.delete),
+                  ),
+                ],
+              ),
+            ],
       body: e == null
           ? const Center(child: CircularProgressIndicator())
           : ListView(
@@ -148,41 +235,12 @@ class _EntryDetailScreenState extends State<EntryDetailScreen> {
                   ),
                 ),
                 const SizedBox(height: 16),
-                _sectionCard(
-                  label: EntryDetailCopy.archiveNoteLabel,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        EntryDetailCopy.archiveNoteBody,
-                        style: TextStyle(height: 1.45),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        EntryDetailCopy.archiveNoteHelper,
-                        style: TextStyle(color: context.palette.textSecondary, height: 1.45),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 16),
                 if (widget.accountDependencies != null)
                   EntryContextTagEditor(
                     entry: e,
                     journalStore: _accountDeps.journalStore,
                     onChanged: _load,
                   ),
-                const SizedBox(height: 16),
-                SizedBox(
-                  width: double.infinity,
-                  height: 44,
-                  child: OutlinedButton.icon(
-                    key: const Key('entry_detail_delete_button'),
-                    onPressed: () => _confirmDelete(e),
-                    icon: const Icon(Icons.delete_outline, size: 18),
-                    label: const Text(EntryDetailCopy.delete),
-                  ),
-                ),
                 const SizedBox(height: 16),
                 Material(
                   color: context.palette.backgroundSecondary,
@@ -224,21 +282,43 @@ class _EntryDetailScreenState extends State<EntryDetailScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        TextField(
+          key: const Key('entry_detail_title'),
+          controller: _titleController,
+          decoration: const InputDecoration(
+            hintText: EntryDetailCopy.titleField,
+            border: InputBorder.none,
+            isDense: true,
+          ),
+          textInputAction: TextInputAction.done,
+          onSubmitted: (_) => unawaited(_saveTitle(entry)),
+        ),
+        const SizedBox(height: 8),
+        EntryAudioPlayer(
+          audioPath: entry.localAudioPath,
+          durationSeconds: entry.durationSeconds,
+        ),
+        const SizedBox(height: 8),
         Text(
           view.primary,
           key: const Key('entry_detail_recorded_body'),
           style: const TextStyle(height: 1.45),
         ),
-        if (speakableText != null && widget.accountDependencies != null) ...[
-          const SizedBox(height: 8),
-          EntryReadAloudButton(
-            text: speakableText,
-            offlineTts: _accountDeps.offlineTts,
-            resolveOfflineTts: _isFlutterWidgetTest
-                ? null
-                : () => AppServices.instance.resolveOfflineTts(),
+        if (speakableText != null && widget.accountDependencies != null)
+          Offstage(
+            child: EntryReadAloudButton(
+              text: speakableText,
+              visible: false,
+              offlineTts: _accountDeps.offlineTts,
+              registerToggle: (toggle) {
+                _readAloud = toggle;
+                if (mounted) setState(() {});
+              },
+              resolveOfflineTts: _isFlutterWidgetTest
+                  ? null
+                  : () => AppServices.instance.resolveOfflineTts(),
+            ),
           ),
-        ],
         if (view.secondary != null) ...[
           const SizedBox(height: 8),
           Text(

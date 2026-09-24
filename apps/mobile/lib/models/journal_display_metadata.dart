@@ -28,6 +28,7 @@ abstract class JournalDisplayMetadata with _$JournalDisplayMetadata {
     @Default(false) bool preserveOriginal,
     String? captureContextTag,
     String? captureSource,
+    String? title,
   }) = _JournalDisplayMetadata;
 
   factory JournalDisplayMetadata.fromJson(Map<String, dynamic> json) {
@@ -56,6 +57,7 @@ abstract class JournalDisplayMetadata with _$JournalDisplayMetadata {
       preserveOriginal: json['preserveOriginal'] == true,
       captureContextTag: JsonConverters.nullableString(json['captureContextTag']),
       captureSource: JsonConverters.nullableString(json['captureSource']),
+      title: JsonConverters.nullableString(json['title']),
     );
   }
 
@@ -75,6 +77,7 @@ abstract class JournalDisplayMetadata with _$JournalDisplayMetadata {
     if (preserveOriginal) 'preserveOriginal': true,
     if (captureContextTag != null) 'captureContextTag': captureContextTag,
     if (captureSource != null) 'captureSource': captureSource,
+    if (title != null && title!.trim().isNotEmpty) 'title': title,
   };
 
   JournalDisplayMetadata copyWith({
@@ -93,6 +96,7 @@ abstract class JournalDisplayMetadata with _$JournalDisplayMetadata {
     bool? preserveOriginal,
     Object? captureContextTag = copyWithUnset,
     Object? captureSource = copyWithUnset,
+    Object? title = copyWithUnset,
   }) => JournalDisplayMetadata(
     treatAsNew: treatAsNew ?? this.treatAsNew,
     connectionApproved: connectionApproved ?? this.connectionApproved,
@@ -121,6 +125,7 @@ abstract class JournalDisplayMetadata with _$JournalDisplayMetadata {
     captureSource: identical(captureSource, copyWithUnset)
         ? this.captureSource
         : captureSource as String?,
+    title: identical(title, copyWithUnset) ? this.title : title as String?,
   );
 
   @override
@@ -141,7 +146,8 @@ abstract class JournalDisplayMetadata with _$JournalDisplayMetadata {
           other.memorySurfacing == memorySurfacing &&
           other.preserveOriginal == preserveOriginal &&
           other.captureContextTag == captureContextTag &&
-          other.captureSource == captureSource;
+          other.captureSource == captureSource &&
+          other.title == title;
 
   @override
   int get hashCode => Object.hash(
@@ -160,5 +166,6 @@ abstract class JournalDisplayMetadata with _$JournalDisplayMetadata {
         preserveOriginal,
         captureContextTag,
         captureSource,
+        title,
       );
 }

@@ -10,11 +10,15 @@ class EntryReadAloudButton extends StatefulWidget {
     required this.text,
     this.offlineTts,
     this.resolveOfflineTts,
+    this.registerToggle,
+    this.visible = true,
     super.key,
   });
 
   final String text;
   final OfflineTtsService? offlineTts;
+  final void Function(Future<void> Function() toggle)? registerToggle;
+  final bool visible;
 
   /// When null and [offlineTts] is null, the control stays hidden.
   final Future<OfflineTtsService?> Function()? resolveOfflineTts;
@@ -33,6 +37,7 @@ class _EntryReadAloudButtonState extends State<EntryReadAloudButton> {
   void initState() {
     super.initState();
     _service = widget.offlineTts;
+    widget.registerToggle?.call(_toggle);
     if (_service == null && widget.resolveOfflineTts != null) {
       unawaited(_resolveService());
     }
@@ -123,7 +128,7 @@ class _EntryReadAloudButtonState extends State<EntryReadAloudButton> {
   @override
   Widget build(BuildContext context) {
     final trimmed = widget.text.trim();
-    if (trimmed.isEmpty) {
+    if (!widget.visible || trimmed.isEmpty) {
       return const SizedBox.shrink();
     }
 

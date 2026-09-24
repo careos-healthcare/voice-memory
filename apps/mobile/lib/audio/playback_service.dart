@@ -202,6 +202,29 @@ class PlaybackService extends Notifier<PlaybackState> {
     }
   }
 
+  Future<void> pause() async {
+    if (_disposed || _testMode) return;
+    await _player?.pause();
+    state = state.copyWith(phase: PlaybackPhase.paused);
+  }
+
+  Future<void> resume() async {
+    if (_disposed || _testMode) return;
+    await _player?.resume();
+    state = state.copyWith(phase: PlaybackPhase.playing);
+  }
+
+  Future<void> seek(Duration position) async {
+    if (_disposed || _testMode) return;
+    await _player?.seek(position);
+    state = state.copyWith(position: position);
+  }
+
+  Future<void> setPlaybackSpeed(double speed) async {
+    if (_disposed || _testMode) return;
+    await _player?.setPlaybackRate(speed);
+  }
+
   Future<void> stop() async {
     if (_disposed) return;
     _pcmQueue.flush();
@@ -238,6 +261,14 @@ class PlaybackService extends Notifier<PlaybackState> {
     await _player?.dispose();
     _player = _config.playerFactory();
     await _player!.setReleaseMode(ReleaseMode.stop);
+    _player!.onPositionChanged.listen((position) {
+      if (_disposed) return;
+      state = state.copyWith(position: position);
+    });
+    _player!.onDurationChanged.listen((duration) {
+      if (_disposed) return;
+      state = state.copyWith(duration: duration);
+    });
   }
 
   void _syncQueueState({

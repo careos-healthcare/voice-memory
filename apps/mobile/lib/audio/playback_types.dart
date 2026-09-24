@@ -14,6 +14,7 @@ class PlaybackState {
     this.queueDepth = 0,
     this.activeQueueDepth = 0,
     this.position = Duration.zero,
+    this.duration = Duration.zero,
     this.error,
   });
 
@@ -23,6 +24,7 @@ class PlaybackState {
   final int queueDepth;
   final int activeQueueDepth;
   final Duration position;
+  final Duration duration;
   final String? error;
 
   bool get isLiveSpeaking =>
@@ -35,6 +37,7 @@ class PlaybackState {
     int? queueDepth,
     int? activeQueueDepth,
     Duration? position,
+    Duration? duration,
     String? error,
     bool clearFilePath = false,
     bool clearError = false,
@@ -46,6 +49,7 @@ class PlaybackState {
       queueDepth: queueDepth ?? this.queueDepth,
       activeQueueDepth: activeQueueDepth ?? this.activeQueueDepth,
       position: position ?? this.position,
+      duration: duration ?? this.duration,
       error: clearError ? null : (error ?? this.error),
     );
   }
