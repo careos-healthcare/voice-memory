@@ -2,6 +2,7 @@ import 'package:archiveme_mobile/core/constants/database_constants.dart';
 import 'package:archiveme_mobile/database/app_database.dart';
 import 'package:archiveme_mobile/database/daos/journal_dao.dart';
 import 'package:archiveme_mobile/features/security/private_vault_gate.dart';
+import 'package:archiveme_mobile/storage/sqlite/time_capsule_visibility.dart';
 import 'package:drift/drift.dart';
 
 /// FTS5 / hybrid search queries that cannot be expressed with typed Drift selects.
@@ -21,9 +22,14 @@ class SearchCustomQueries {
       afterId: afterId,
       tableAlias: 'je',
     );
-    final hidden = await _privateVaultSql();
-    final rows = await _db.customSelect(
-      '''
+    final sqlite = _db.sqfliteDatabase;
+    final capsule = sqlite == null
+        ? null
+        : await TimeCapsuleVisibility.searchWindow(sqlite);
+    final hidden = sqlite == null ? '' : await PrivateVaultGate.andSql(sqlite, 'je');
+    final rows = await _db
+        .customSelect(
+          '''
       SELECT
         je.id,
         je.created_at,
@@ -48,30 +54,39 @@ class SearchCustomQueries {
         GROUP BY entry_id
       ) ranked ON ranked.entry_id = je.id
       WHERE je.deleted_at IS NULL
+        ${capsule?.andSql('je') ?? ''}
         $hidden
         ${keyset.clause}
       ORDER BY ranked.best_rank ASC, je.created_at DESC, je.id DESC
       LIMIT ?
       ''',
-      variables: [
-        Variable<String>(ftsMatchQuery),
-        Variable<String>(ftsMatchQuery),
-        ...keyset.variables,
-        Variable<int>(limit),
-      ],
-      readsFrom: {_db.journalEntries},
-    ).get();
+          variables: [
+            Variable<String>(ftsMatchQuery),
+            Variable<String>(ftsMatchQuery),
+            ...?capsule?.args.map(Variable<Object>.new),
+            ...keyset.variables,
+            Variable<int>(limit),
+          ],
+          readsFrom: {_db.journalEntries},
+        )
+        .get();
 
     return rows.map((row) => row.data).toList();
   }
 
   Future<int> countActiveFts({required String ftsMatchQuery}) async {
-    final hidden = await _privateVaultSql();
-    final row = await _db.customSelect(
-      '''
+    final sqlite = _db.sqfliteDatabase;
+    final capsule = sqlite == null
+        ? null
+        : await TimeCapsuleVisibility.searchWindow(sqlite);
+    final hidden = sqlite == null ? '' : await PrivateVaultGate.andSql(sqlite, 'je');
+    final row = await _db
+        .customSelect(
+          '''
       SELECT COUNT(DISTINCT je.id) AS count
       FROM ${DatabaseConstants.journalEntriesTable} je
       WHERE je.deleted_at IS NULL
+        ${capsule?.andSql('je') ?? ''}
         $hidden
         AND je.id IN (
           SELECT entry_id FROM ${DatabaseConstants.ftsTable}
@@ -81,25 +96,15 @@ class SearchCustomQueries {
           WHERE ${DatabaseConstants.graphNodeFtsTable} MATCH ?
         )
       ''',
-      variables: [
-        Variable<String>(ftsMatchQuery),
-        Variable<String>(ftsMatchQuery),
-      ],
-      readsFrom: {_db.journalEntries},
-    ).getSingle();
-    return row.read<int>('count');
-  }
-
-  Future<String> _privateVaultSql() async {
-    if (PrivateVaultGate.unlocked) return '';
-    final rows = await _db
-        .customSelect(
-          'PRAGMA table_info(${DatabaseConstants.journalEntriesTable})',
+          variables: [
+            Variable<String>(ftsMatchQuery),
+            Variable<String>(ftsMatchQuery),
+            ...?capsule?.args.map(Variable<Object>.new),
+          ],
+          readsFrom: {_db.journalEntries},
         )
-        .get();
-    final present = rows.any((row) => row.data['name'] == 'is_hidden');
-    if (!present) return '';
-    return PrivateVaultGate.filterSql('je');
+        .getSingle();
+    return row.read<int>('count');
   }
 
   ({String clause, List<Variable<Object>> variables}) _keysetSql({
@@ -114,7 +119,8 @@ class SearchCustomQueries {
     final prefix = tableAlias.isEmpty ? '' : '$tableAlias.';
     final createdAtMillis = afterCreatedAt.toUtc().millisecondsSinceEpoch;
     return (
-      clause: '''
+      clause:
+          '''
         AND (
           ${prefix}created_at < ?
           OR (${prefix}created_at = ? AND ${prefix}id < ?)
@@ -132,8 +138,8 @@ class SearchCustomQueries {
 /// Backward-compatible wrapper for legacy call sites.
 class JournalKeysetQueries {
   JournalKeysetQueries(AppDatabase db)
-      : _dao = JournalDao(db),
-        _search = SearchCustomQueries(db);
+    : _dao = JournalDao(db),
+      _search = SearchCustomQueries(db);
 
   final JournalDao _dao;
   final SearchCustomQueries _search;
@@ -142,25 +148,23 @@ class JournalKeysetQueries {
     required int limit,
     DateTime? afterCreatedAt,
     String? afterId,
-  }) =>
-      _dao.fetchActivePageAfter(
-        limit: limit,
-        afterCreatedAt: afterCreatedAt,
-        afterId: afterId,
-      );
+  }) => _dao.fetchActivePageAfter(
+    limit: limit,
+    afterCreatedAt: afterCreatedAt,
+    afterId: afterId,
+  );
 
   Future<List<Map<String, Object?>>> fetchFtsPageAfter({
     required String ftsMatchQuery,
     required int limit,
     DateTime? afterCreatedAt,
     String? afterId,
-  }) =>
-      _search.fetchFtsPageAfter(
-        ftsMatchQuery: ftsMatchQuery,
-        limit: limit,
-        afterCreatedAt: afterCreatedAt,
-        afterId: afterId,
-      );
+  }) => _search.fetchFtsPageAfter(
+    ftsMatchQuery: ftsMatchQuery,
+    limit: limit,
+    afterCreatedAt: afterCreatedAt,
+    afterId: afterId,
+  );
 
   Future<int> countActiveFts({required String ftsMatchQuery}) =>
       _search.countActiveFts(ftsMatchQuery: ftsMatchQuery);

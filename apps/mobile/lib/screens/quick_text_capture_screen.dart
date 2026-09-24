@@ -31,11 +31,14 @@ import 'package:archiveme_mobile/storage/sqlite/journal_sqlite_repository.dart';
 import 'package:archiveme_mobile/theme/app_spacing.dart';
 import 'package:archiveme_mobile/theme/voicememory_cards.dart';
 import 'package:archiveme_mobile/theme/voicememory_colors.dart';
+import 'package:archiveme_mobile/theme/writing_canvas_theme.dart';
 import 'package:archiveme_mobile/widgets/moment_quality_card.dart';
 import 'package:archiveme_mobile/widgets/record/first_use_wording_helper_card.dart';
 import 'package:archiveme_mobile/widgets/record/focused_type_entry_examples_panel.dart';
 import 'package:archiveme_mobile/widgets/record/local_ai_coaching_parameter_toggles.dart';
 import 'package:archiveme_mobile/widgets/record/start_here_recording_section.dart';
+import 'package:archiveme_mobile/widgets/writing_canvas/writing_canvas_chrome.dart';
+import 'package:archiveme_mobile/widgets/writing_canvas/writing_canvas_press.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -92,7 +95,9 @@ class QuickTextCaptureScreen extends StatefulWidget {
 
 class _QuickTextCaptureScreenState extends State<QuickTextCaptureScreen> {
   final _controller = TextEditingController();
+  final _focusNode = FocusNode();
   final _dictation = RecordDictationEngine();
+  late final WritingCanvasChromeController _chrome;
   bool _saving = false;
   bool _saved = false;
   bool _abandonLogged = false;
@@ -141,7 +146,11 @@ class _QuickTextCaptureScreenState extends State<QuickTextCaptureScreen> {
       _guidedStyleHelper = initialHelper;
     }
     unawaited(ProductAnalytics.track('quick_text_capture_started'));
+    _chrome = WritingCanvasChromeController(
+      idleRestore: WritingCanvasTheme.light.idleRestore,
+    );
     _controller.addListener(_onTextChanged);
+    _focusNode.addListener(_syncChrome);
     unawaited(_loadJournalState());
   }
 
@@ -200,7 +209,15 @@ class _QuickTextCaptureScreenState extends State<QuickTextCaptureScreen> {
   }
 
   void _onTextChanged() {
+    _syncChrome();
     if (mounted) setState(() {});
+  }
+
+  void _syncChrome() {
+    _chrome.onTyped(
+      hasText: _controller.text.trim().isNotEmpty,
+      focused: _focusNode.hasFocus,
+    );
   }
 
   void _logAbandonedIfNeeded() {
@@ -213,6 +230,8 @@ class _QuickTextCaptureScreenState extends State<QuickTextCaptureScreen> {
   @override
   void dispose() {
     _logAbandonedIfNeeded();
+    _focusNode.dispose();
+    _chrome.dispose();
     _controller.dispose();
     super.dispose();
   }
@@ -378,7 +397,9 @@ class _QuickTextCaptureScreenState extends State<QuickTextCaptureScreen> {
         );
         result = attachOutcome.getOrThrow();
       } else {
-        result = (await _pipeline.saveTextThought(transcript: text)).getOrThrow();
+        result = (await _pipeline.saveTextThought(
+          transcript: text,
+        )).getOrThrow();
       }
       _saved = true;
       AppLogger.debug('thought_save_succeeded');
@@ -452,110 +473,132 @@ class _QuickTextCaptureScreenState extends State<QuickTextCaptureScreen> {
 
     return Align(
       alignment: Alignment.topCenter,
-      child: SingleChildScrollView(
-        padding: const EdgeInsets.fromLTRB(
-          horizontalPadding,
-          topPadding,
-          horizontalPadding,
-          bottomPadding,
-        ),
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: maxCardWidth),
-          child: Container(
-            key: const Key('focused_type_entry_card'),
-            width: double.infinity,
-            padding: const EdgeInsets.all(AppSpacing.md),
-            decoration: VoiceMemoryCards.standard(
-              background: const Color(0xFFF6F4FF),
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                _guidedEmptyState(compact: true),
-                TextField(
-                  key: const Key('quick_text_capture_field'),
-                  controller: _controller,
-                  autofocus: true,
-                  minLines: 3,
-                  maxLines: 4,
-                  keyboardType: TextInputType.multiline,
-                  textCapitalization: TextCapitalization.sentences,
-                  decoration: InputDecoration(
-                    hintText: _fieldPlaceholder,
-                    alignLabelWithHint: true,
-                    border: const OutlineInputBorder(),
-                    contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 12,
+      child: NotificationListener<ScrollUpdateNotification>(
+        onNotification: (notification) {
+          final delta = notification.scrollDelta;
+          if (delta != null) _chrome.onScrollDelta(delta);
+          return false;
+        },
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.fromLTRB(
+            horizontalPadding,
+            topPadding,
+            horizontalPadding,
+            bottomPadding,
+          ),
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: maxCardWidth),
+            child: Container(
+              key: const Key('focused_type_entry_card'),
+              width: double.infinity,
+              padding: const EdgeInsets.all(AppSpacing.md),
+              decoration: VoiceMemoryCards.standard(
+                background: const Color(0xFFF6F4FF),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  _guidedEmptyState(compact: true),
+                  TextField(
+                    key: const Key('quick_text_capture_field'),
+                    controller: _controller,
+                    focusNode: _focusNode,
+                    autofocus: true,
+                    minLines: 3,
+                    maxLines: 4,
+                    keyboardType: TextInputType.multiline,
+                    textCapitalization: TextCapitalization.sentences,
+                    style: WritingCanvasTheme.of(context).textStyle,
+                    decoration: InputDecoration(
+                      hintText: _fieldPlaceholder,
+                      alignLabelWithHint: true,
+                      border: const OutlineInputBorder(),
+                      contentPadding: WritingCanvasTheme.of(
+                        context,
+                      ).contentPadding,
                     ),
                   ),
-                ),
-                _dictationBar(),
-                if (_error != null) ...[
-                  const SizedBox(height: 8),
-                  Text(
-                    _error!,
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.error,
-                    ),
-                  ),
-                ],
-                const SizedBox(height: 12),
-                SizedBox(
-                  height: 48,
-                  child: FilledButton(
-                    key: const Key('quick_text_capture_save_button'),
-                    onPressed: _canSave ? () => unawaited(_save()) : null,
-                    child: _saving
-                        ? const SizedBox(
-                            width: 22,
-                            height: 22,
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          )
-                        : Text(_saveButtonLabel),
-                  ),
-                ),
-                const SizedBox(height: 6),
-                Align(
-                  child: TextButton(
-                    key: const Key('focused_type_entry_use_voice_link'),
-                    style: TextButton.styleFrom(
-                      padding: EdgeInsets.zero,
-                      minimumSize: Size.zero,
-                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                      foregroundColor: VoiceMemoryColors.textSecondary,
-                    ),
-                    onPressed: _saving
-                        ? null
-                        : () {
-                            if (Navigator.of(context).canPop()) {
-                              Navigator.of(context).pop();
-                            }
-                          },
-                    child: const Text(
-                      QuickTextCaptureCopy.useVoiceInsteadLink,
+                  _dictationBar(),
+                  if (_error != null) ...[
+                    const SizedBox(height: 8),
+                    Text(
+                      _error!,
                       style: TextStyle(
-                        fontSize: 13,
-                        decoration: TextDecoration.underline,
+                        color: Theme.of(context).colorScheme.error,
+                      ),
+                    ),
+                  ],
+                  const SizedBox(height: 12),
+                  WritingCanvasSpringHost(
+                    child: SizedBox(
+                      height: 48,
+                      child: FilledButton(
+                        key: const Key('quick_text_capture_save_button'),
+                        onPressed: WritingCanvasPress.wrap(
+                          _canSave ? () => unawaited(_save()) : null,
+                        ),
+                        child: _saving
+                            ? const SizedBox(
+                                width: 22,
+                                height: 22,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                ),
+                              )
+                            : Text(_saveButtonLabel),
                       ),
                     ),
                   ),
-                ),
-                const SizedBox(height: 2),
-                FocusedTypeEntryExamplesPanel(
-                  expanded: _examplesExpanded,
-                  onToggle: () =>
-                      setState(() => _examplesExpanded = !_examplesExpanded),
-                  onStarterSelected: (opening) {
-                    setState(() {
-                      _focusedStarterSelected = true;
-                      _promptHint = opening;
-                    });
-                  },
-                ),
-                _coachingToggles(),
-              ],
+                  const SizedBox(height: 6),
+                  WritingCanvasChromeFade(
+                    controller: _chrome,
+                    child: Column(
+                      children: [
+                        Align(
+                          child: TextButton(
+                            key: const Key('focused_type_entry_use_voice_link'),
+                            style: TextButton.styleFrom(
+                              padding: EdgeInsets.zero,
+                              minimumSize: Size.zero,
+                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                              foregroundColor: VoiceMemoryColors.textSecondary,
+                            ),
+                            onPressed: _saving
+                                ? null
+                                : () {
+                                    if (Navigator.of(context).canPop()) {
+                                      Navigator.of(context).pop();
+                                    }
+                                  },
+                            child: const Text(
+                              QuickTextCaptureCopy.useVoiceInsteadLink,
+                              style: TextStyle(
+                                fontSize: 13,
+                                decoration: TextDecoration.underline,
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 2),
+                        FocusedTypeEntryExamplesPanel(
+                          expanded: _examplesExpanded,
+                          onToggle: () => setState(
+                            () => _examplesExpanded = !_examplesExpanded,
+                          ),
+                          onStarterSelected: (opening) {
+                            setState(() {
+                              _focusedStarterSelected = true;
+                              _promptHint = opening;
+                            });
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                  _coachingToggles(),
+                ],
+              ),
             ),
           ),
         ),
@@ -578,157 +621,196 @@ class _QuickTextCaptureScreenState extends State<QuickTextCaptureScreen> {
               double.infinity,
             );
 
-        return SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(
-            horizontalPadding,
-            topPadding,
-            horizontalPadding,
-            bottomPadding,
-          ),
-          child: ConstrainedBox(
-            constraints: BoxConstraints(minHeight: minScrollBodyHeight),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Text(
-                  _isVoiceFallback
-                      ? 'What did you say?'
-                      : "What's on your mind?",
-                  style: ArchiveMobileTypography.pageTitle(context),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  _isVoiceFallback
-                      ? 'ArchiveMe could not turn your recording into text. Type the words here so this moment stays usable.'
-                      : 'A few sentences is enough — same as speaking a short thought.',
-                  style: const TextStyle(
-                    color: VoiceMemoryColors.textSecondary,
-                    height: 1.45,
-                    fontSize: 14,
-                  ),
-                ),
-                if (_modeHelperText != null) ...[
-                  const SizedBox(height: 12),
+        return NotificationListener<ScrollUpdateNotification>(
+          onNotification: (notification) {
+            final delta = notification.scrollDelta;
+            if (delta != null) _chrome.onScrollDelta(delta);
+            return false;
+          },
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.fromLTRB(
+              horizontalPadding,
+              topPadding,
+              horizontalPadding,
+              bottomPadding,
+            ),
+            child: ConstrainedBox(
+              constraints: BoxConstraints(minHeight: minScrollBodyHeight),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
                   Text(
-                    _modeHelperText!,
-                    key: const Key('quick_text_capture_mode_helper'),
-                    style: const TextStyle(
-                      fontSize: 14,
-                      color: VoiceMemoryColors.textSecondary,
-                      height: 1.45,
-                    ),
+                    _isVoiceFallback
+                        ? 'What did you say?'
+                        : "What's on your mind?",
+                    style: ArchiveMobileTypography.pageTitle(context),
                   ),
-                ],
-                if (_showFirstUseWordingCapturePanel) ...[
-                  const SizedBox(height: 12),
-                  FirstUseWordingCapturePanel(
-                    compact: widget.captureModeId != null,
-                    onUseOpening: _onFirstUseWordingOpening,
-                  ),
-                ],
-                if (_journalLoaded && widget.captureModeId == null) ...[
-                  const SizedBox(height: 12),
-                  StartHereRecordingSection(
-                    recordingCount: _recordingCount,
-                    firstArchiveMilestoneCompleted:
-                        _firstArchiveMilestoneCompleted,
-                    onPromptSelected: _onStartHereSelected,
-                    surface: 'text_capture',
-                    captureMode: 'text',
-                    compactPrompts: _isVoiceFallback,
-                    maxPrompts: _isVoiceFallback ? 2 : null,
-                  ),
-                ],
-                if (_showPromptHelper && _modeHelperText == null) ...[
-                  const SizedBox(height: 12),
-                  const Text(
-                    ConsumerUiCopy.trySayingLabel,
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                      color: VoiceMemoryColors.textSecondary,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    _promptHint!,
-                    style: const TextStyle(
-                      fontSize: 13,
-                      color: VoiceMemoryColors.textSecondary,
-                      height: 1.5,
-                    ),
-                  ),
-                ],
-                const SizedBox(height: 16),
-                _guidedEmptyState(),
-                TextField(
-                  key: const Key('quick_text_capture_field'),
-                  controller: _controller,
-                  autofocus: true,
-                  minLines: 4,
-                  maxLines: 8,
-                  keyboardType: TextInputType.multiline,
-                  textCapitalization: TextCapitalization.sentences,
-                  decoration: InputDecoration(
-                    hintText: _fieldPlaceholder,
-                    alignLabelWithHint: true,
-                    border: const OutlineInputBorder(),
-                  ),
-                ),
-                _dictationBar(),
-                MomentQualityCard(text: _controller.text),
-                const SizedBox(height: 8),
-                Text(
-                  '$length characters',
-                  style: const TextStyle(
-                    fontSize: 12,
-                    color: VoiceMemoryColors.textSecondary,
-                  ),
-                ),
-                if (_error != null) ...[
                   const SizedBox(height: 8),
-                  Text(
-                    _error!,
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.error,
+                  WritingCanvasChromeFade(
+                    controller: _chrome,
+                    child: Text(
+                      _isVoiceFallback
+                          ? 'ArchiveMe could not turn your recording into text. Type the words here so this moment stays usable.'
+                          : 'A few sentences is enough — same as speaking a short thought.',
+                      style: const TextStyle(
+                        color: VoiceMemoryColors.textSecondary,
+                        height: 1.45,
+                        fontSize: 14,
+                      ),
                     ),
                   ),
-                ],
-                const SizedBox(height: 16),
-                SizedBox(
-                  height: 48,
-                  child: FilledButton(
-                    key: const Key('quick_text_capture_save_button'),
-                    onPressed: _canSave ? () => unawaited(_save()) : null,
-                    child: _saving
-                        ? const SizedBox(
-                            width: 22,
-                            height: 22,
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          )
-                        : Text(_saveButtonLabel),
+                  WritingCanvasChromeFade(
+                    controller: _chrome,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        if (_modeHelperText != null) ...[
+                          const SizedBox(height: 12),
+                          Text(
+                            _modeHelperText!,
+                            key: const Key('quick_text_capture_mode_helper'),
+                            style: const TextStyle(
+                              fontSize: 14,
+                              color: VoiceMemoryColors.textSecondary,
+                              height: 1.45,
+                            ),
+                          ),
+                        ],
+                        if (_showFirstUseWordingCapturePanel) ...[
+                          const SizedBox(height: 12),
+                          FirstUseWordingCapturePanel(
+                            compact: widget.captureModeId != null,
+                            onUseOpening: _onFirstUseWordingOpening,
+                          ),
+                        ],
+                        if (_journalLoaded && widget.captureModeId == null) ...[
+                          const SizedBox(height: 12),
+                          StartHereRecordingSection(
+                            recordingCount: _recordingCount,
+                            firstArchiveMilestoneCompleted:
+                                _firstArchiveMilestoneCompleted,
+                            onPromptSelected: _onStartHereSelected,
+                            surface: 'text_capture',
+                            captureMode: 'text',
+                            compactPrompts: _isVoiceFallback,
+                            maxPrompts: _isVoiceFallback ? 2 : null,
+                          ),
+                        ],
+                        if (_showPromptHelper && _modeHelperText == null) ...[
+                          const SizedBox(height: 12),
+                          const Text(
+                            ConsumerUiCopy.trySayingLabel,
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                              color: VoiceMemoryColors.textSecondary,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            _promptHint!,
+                            style: const TextStyle(
+                              fontSize: 13,
+                              color: VoiceMemoryColors.textSecondary,
+                              height: 1.5,
+                            ),
+                          ),
+                        ],
+                      ],
+                    ),
                   ),
-                ),
-                _coachingToggles(),
-                if (_canQuietDaySave) ...[
-                  const SizedBox(height: 8),
-                  SizedBox(
-                    height: 44,
-                    child: TextButton(
-                      key: const Key('quick_text_capture_quiet_day_save'),
-                      onPressed: () => unawaited(
-                        _save(
-                          overrideText:
-                              RecordCaptureModeEngine.quietDaySaveText(),
+                  const SizedBox(height: 16),
+                  _guidedEmptyState(),
+                  TextField(
+                    key: const Key('quick_text_capture_field'),
+                    controller: _controller,
+                    focusNode: _focusNode,
+                    autofocus: true,
+                    minLines: 4,
+                    maxLines: 8,
+                    keyboardType: TextInputType.multiline,
+                    textCapitalization: TextCapitalization.sentences,
+                    style: WritingCanvasTheme.of(context).textStyle,
+                    decoration: InputDecoration(
+                      hintText: _fieldPlaceholder,
+                      alignLabelWithHint: true,
+                      border: const OutlineInputBorder(),
+                      contentPadding: WritingCanvasTheme.of(
+                        context,
+                      ).contentPadding,
+                    ),
+                  ),
+                  _dictationBar(),
+                  WritingCanvasChromeFade(
+                    controller: _chrome,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        MomentQualityCard(text: _controller.text),
+                        const SizedBox(height: 8),
+                        Text(
+                          '$length characters',
+                          style: const TextStyle(
+                            fontSize: 12,
+                            color: VoiceMemoryColors.textSecondary,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  if (_error != null) ...[
+                    const SizedBox(height: 8),
+                    Text(
+                      _error!,
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.error,
+                      ),
+                    ),
+                  ],
+                  const SizedBox(height: 16),
+                  WritingCanvasSpringHost(
+                    child: SizedBox(
+                      height: 48,
+                      child: FilledButton(
+                        key: const Key('quick_text_capture_save_button'),
+                        onPressed: WritingCanvasPress.wrap(
+                          _canSave ? () => unawaited(_save()) : null,
+                        ),
+                        child: _saving
+                            ? const SizedBox(
+                                width: 22,
+                                height: 22,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                ),
+                              )
+                            : Text(_saveButtonLabel),
+                      ),
+                    ),
+                  ),
+                  _coachingToggles(),
+                  if (_canQuietDaySave) ...[
+                    const SizedBox(height: 8),
+                    SizedBox(
+                      height: 44,
+                      child: TextButton(
+                        key: const Key('quick_text_capture_quiet_day_save'),
+                        onPressed: WritingCanvasPress.wrap(
+                          () => unawaited(
+                            _save(
+                              overrideText:
+                                  RecordCaptureModeEngine.quietDaySaveText(),
+                            ),
+                          ),
+                        ),
+                        child: const Text(
+                          RecordCaptureModeCopy.quietDaySaveButton,
                         ),
                       ),
-                      child: const Text(
-                        RecordCaptureModeCopy.quietDaySaveButton,
-                      ),
                     ),
-                  ),
+                  ],
                 ],
-              ],
+              ),
             ),
           ),
         );

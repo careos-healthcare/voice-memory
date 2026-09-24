@@ -10,7 +10,7 @@ import 'package:archiveme_mobile/workers/local_llm/local_llm_worker_service.dart
 /// only forwards SendPort messages to the managed llama.cpp worker.
 final class LlamaCppDartBackend implements LocalLlmBackend {
   LlamaCppDartBackend({LocalLlmWorkerService? worker})
-      : _worker = worker ?? LocalLlmWorkerService.instance {
+    : _worker = worker ?? LocalLlmWorkerService.instance {
     _worker.addModelUnloadedListener(_handleModelUnloaded);
   }
 
@@ -46,6 +46,11 @@ final class LlamaCppDartBackend implements LocalLlmBackend {
   Future<void> dispose() async {
     _loaded = false;
     await _worker.disposeModel();
+  }
+
+  @override
+  Future<void> cancelGeneration() {
+    return _worker.cancelGenerationAndAwaitAck();
   }
 }
 

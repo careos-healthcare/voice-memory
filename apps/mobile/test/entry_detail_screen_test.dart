@@ -231,6 +231,10 @@ void main() {
         find.byKey(const Key('entry_detail_delete_button')),
         findsOneWidget,
       );
+      await tester.scrollUntilVisible(
+        find.byKey(const Key('entry_detail_delete_button')),
+        200,
+      );
       await tester.tap(find.byKey(const Key('entry_detail_delete_button')));
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 200));

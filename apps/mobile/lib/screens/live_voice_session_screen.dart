@@ -18,6 +18,7 @@ import 'package:archiveme_mobile/features/live_audio/infrastructure/live_audio_p
 import 'package:archiveme_mobile/features/live_audio/presentation/live_voice_session_copy.dart';
 import 'package:archiveme_mobile/features/live_audio/presentation/live_voice_session_presentation.dart';
 import 'package:archiveme_mobile/features/live_audio/presentation/widgets/live_voice_error_boundary_overlay.dart';
+import 'package:archiveme_mobile/features/voice_capture/transcription/offline_transcription_copy.dart';
 import 'package:archiveme_mobile/security/remote_processing_consent_gate.dart';
 import 'package:archiveme_mobile/services/app_services.dart';
 import 'package:archiveme_mobile/services/capture_pipeline_service.dart';
@@ -315,6 +316,10 @@ class _LiveVoiceSessionScreenState extends State<LiveVoiceSessionScreen>
         if (!mounted) return;
         setState(() {
           _stageLabel = switch (state.stage) {
+            PipelineStage.downloadingLocalModel =>
+              OfflineTranscriptionCopy.downloadingLocalModel,
+            PipelineStage.processingOnDevice =>
+              OfflineTranscriptionCopy.processingOnDevice,
             PipelineStage.attesting => 'Connecting…',
             PipelineStage.transcribing => 'Saving transcript…',
             PipelineStage.analyzing => 'Finding patterns…',

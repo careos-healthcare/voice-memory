@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+import 'package:archiveme_mobile/core/execution/isolate_compute_job.dart';
 import 'package:archiveme_mobile/features/search/reflection_embedding_contract.dart';
 import 'package:archiveme_mobile/features/search/reflection_embedding_inference.dart';
 import 'package:archiveme_mobile/features/search/reflection_text_processor.dart';
@@ -48,7 +49,7 @@ class OnnxReflectionEmbeddingInference implements ReflectionEmbeddingInference {
   }
 
   @override
-  Future<List<double>> embed(Float32List inputTensor) async {
+  Future<List<double>> embed(Float32List inputTensor) {
     if (inputTensor.length != ReflectionTextProcessor.tensorElementCount) {
       throw ArgumentError.value(
         inputTensor.length,
@@ -57,35 +58,43 @@ class OnnxReflectionEmbeddingInference implements ReflectionEmbeddingInference {
       );
     }
 
-    final inputValue = await OrtValue.fromList(
-      inputTensor,
-      [1, ReflectionEmbeddingContract.maxSeqLen],
-    );
+    return IsolateJobThrottle.embedding.run(() {
+      return IsolateComputeJob.trace('embedding.onnx', () async {
+        final inputValue = await OrtValue.fromList(
+          inputTensor,
+          [1, ReflectionEmbeddingContract.maxSeqLen],
+        );
 
-    final outputs = await _session.run({_inputName: inputValue});
-    final outputTensor = outputs[_outputName];
-    if (outputTensor == null) {
-      await inputValue.dispose();
-      throw StateError('ONNX output "$_outputName" missing from session run');
-    }
+        final outputs = await _session.run({_inputName: inputValue});
+        final outputTensor = outputs[_outputName];
+        if (outputTensor == null) {
+          await inputValue.dispose();
+          throw StateError(
+            'ONNX output "$_outputName" missing from session run',
+          );
+        }
 
-    final raw = await outputTensor.asFlattenedList();
-    final flat = raw
-        .map((value) => (value as num).toDouble())
-        .toList(growable: false);
+        final raw = await outputTensor.asFlattenedList();
+        final flat = raw
+            .map((value) => (value as num).toDouble())
+            .toList(growable: false);
 
-    await inputValue.dispose();
-    await outputTensor.dispose();
+        await inputValue.dispose();
+        await outputTensor.dispose();
 
-    if (flat.length < ReflectionEmbeddingContract.dimensions) {
-      throw StateError(
-        'ONNX reflection embedding width ${flat.length} < '
-        '${ReflectionEmbeddingContract.dimensions}',
-      );
-    }
+        if (flat.length < ReflectionEmbeddingContract.dimensions) {
+          throw StateError(
+            'ONNX reflection embedding width ${flat.length} < '
+            '${ReflectionEmbeddingContract.dimensions}',
+          );
+        }
 
-    return ReflectionTextProcessor.l2Normalize(
-      flat.take(ReflectionEmbeddingContract.dimensions).toList(growable: false),
-    );
+        return ReflectionTextProcessor.l2Normalize(
+          flat
+              .take(ReflectionEmbeddingContract.dimensions)
+              .toList(growable: false),
+        );
+      });
+    });
   }
 }

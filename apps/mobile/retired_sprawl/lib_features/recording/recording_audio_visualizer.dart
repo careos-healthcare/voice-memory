@@ -37,55 +37,43 @@ class _RecordingStatusCard extends ConsumerWidget {
     final stopHint =
         l10n?.recordingStopAndSaveHint ?? _recordingStopAndSaveHintFallback;
 
+    final transcript = ref.watch(streamingTranscriptProvider);
+    final ink = Theme.of(context).colorScheme.onSurface;
+
     return Semantics(
       label: semanticsLabel,
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 20),
-        decoration: BoxDecoration(
-          color: VoiceMemoryColors.surface,
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-            color: VoiceMemoryColors.primaryIndigo.withValues(alpha: 0.35),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          RecordingWaveform(
+            controller: ref.read(recordingWaveformControllerProvider),
+            height: 88,
           ),
-          boxShadow: [
-            BoxShadow(
-              color: VoiceMemoryColors.primaryIndigo.withValues(alpha: 0.18),
-              blurRadius: 24,
-              spreadRadius: 2,
+          const SizedBox(height: 16),
+          StreamingTranscriptText(
+            text: transcript.isEmpty ? statusText : transcript,
+          ),
+          const SizedBox(height: 8),
+          Text(
+            timer,
+            style: TextStyle(
+              fontSize: 28,
+              fontWeight: FontWeight.w500,
+              letterSpacing: 1.2,
+              color: ink.withValues(alpha: 0.72),
             ),
-          ],
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            RecordingWaveform(
-              controller: ref.read(recordingWaveformControllerProvider),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            stopHint,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 13,
+              color: ink.withValues(alpha: 0.5),
+              height: 1.4,
             ),
-            const SizedBox(height: 12),
-            const Icon(Icons.mic, size: 36, color: VoiceMemoryColors.primaryIndigo),
-            const SizedBox(height: 14),
-            RecordingTranscriptionView(text: statusText, isLive: true),
-            const SizedBox(height: 8),
-            Text(
-              timer,
-              style: const TextStyle(
-                fontSize: 28,
-                fontWeight: FontWeight.w600,
-                letterSpacing: 1.2,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              stopHint,
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                fontSize: 12,
-                color: VoiceMemoryColors.textSecondary,
-                height: 1.4,
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

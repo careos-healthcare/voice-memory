@@ -1,5 +1,6 @@
 import 'package:archiveme_mobile/design/archive_responsive_layout.dart';
 import 'package:archiveme_mobile/theme/app_spacing.dart';
+import 'package:archiveme_mobile/theme/oled_archive_theme.dart';
 import 'package:flutter/material.dart';
 
 /// Archive Experience spacing — aligned with [AppSpacing].
@@ -16,7 +17,7 @@ class ArchiveMobileSpacing {
   static const double proofStackCardGap = md;
 
   /// Default mobile page padding — prefer [pagePaddingFor] on wide layouts.
-  static const EdgeInsets pagePadding = EdgeInsets.fromLTRB(20, 12, 20, 24);
+  static const EdgeInsets pagePadding = OledArchiveTheme.phonePadding;
 
   static EdgeInsets pagePaddingFor(BuildContext context) =>
       ArchiveResponsiveLayout.pagePadding(context);

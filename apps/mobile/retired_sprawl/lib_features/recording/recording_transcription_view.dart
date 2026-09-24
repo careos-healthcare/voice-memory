@@ -194,6 +194,10 @@ extension _RecordingTranscriptionStateActions on _RecordScreenState {
           if (!mounted) return;
           _setRecordingState(() {
             _stageLabel = switch (state.stage) {
+              PipelineStage.downloadingLocalModel =>
+                OfflineTranscriptionCopy.downloadingLocalModel,
+              PipelineStage.processingOnDevice =>
+                OfflineTranscriptionCopy.processingOnDevice,
               PipelineStage.attesting => 'Uploading audio…',
               PipelineStage.transcribing => 'Transcribing…',
               PipelineStage.analyzing => 'Finding patterns…',
@@ -593,23 +597,29 @@ extension _RecordingTranscriptionStateActions on _RecordScreenState {
         _stageLabel = '';
       }
     });
-    unawaited(ProductAnalytics.trackStrings('immediate_discovery_surfaced', {
-      'has_discovery': discovery != null ? 'yes' : 'no',
-      if (discovery != null) 'type': discovery.type.name,
-    }));
-    unawaited(ProductAnalytics.trackStrings('archive_evolution_after_recording', {
-      'has_evolution': evolution != null ? 'yes' : 'no',
-      if (evolution != null) 'kind': evolution.kind.name,
-    }));
+    unawaited(
+      ProductAnalytics.trackStrings('immediate_discovery_surfaced', {
+        'has_discovery': discovery != null ? 'yes' : 'no',
+        if (discovery != null) 'type': discovery.type.name,
+      }),
+    );
+    unawaited(
+      ProductAnalytics.trackStrings('archive_evolution_after_recording', {
+        'has_evolution': evolution != null ? 'yes' : 'no',
+        if (evolution != null) 'kind': evolution.kind.name,
+      }),
+    );
     await _loadFirstThreeJourney();
     unawaited(_loadSignalArchive());
   }
 
   void _trackInstantReflectionSurfaced(InstantReflectionResponse? response) {
-    unawaited(ProductAnalytics.trackStrings('instant_reflection_surfaced', {
-      'has_response': response != null ? 'yes' : 'no',
-      if (response != null) 'signal': response.signal.name,
-    }));
+    unawaited(
+      ProductAnalytics.trackStrings('instant_reflection_surfaced', {
+        'has_response': response != null ? 'yes' : 'no',
+        if (response != null) 'signal': response.signal.name,
+      }),
+    );
   }
 
   bool get _showInputQualityCoach =>

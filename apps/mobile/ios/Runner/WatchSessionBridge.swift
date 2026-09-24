@@ -44,13 +44,14 @@ final class WatchSessionBridge: NSObject {
 
     let destination = inbox.appendingPathComponent(file.fileURL.lastPathComponent)
     try? FileManager.default.removeItem(at: destination)
-    do {
-      try FileManager.default.copyItem(at: file.fileURL, to: destination)
-      let payload = buildPayload(
-        path: destination.path,
-        metadata: file.metadata ?? [:]
-      )
-      if let onCaptureReceived {
+      do {
+        try FileManager.default.copyItem(at: file.fileURL, to: destination)
+        let payload = buildPayload(
+          path: destination.path,
+          metadata: file.metadata ?? [:]
+        )
+        WatchSyncHandler.shared.receive(file: file)
+        if let onCaptureReceived {
         onCaptureReceived(payload)
       } else {
         pendingCaptures.append(payload)

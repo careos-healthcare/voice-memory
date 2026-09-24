@@ -20,6 +20,7 @@ import 'package:archiveme_mobile/features/beta_analytics/beta_analytics_mileston
 import 'package:archiveme_mobile/services/journal_ownership_guard.dart'
     show JournalOwnershipGuard;
 import 'package:archiveme_mobile/storage/encrypted_json_file_store.dart';
+import 'package:archiveme_mobile/storage/recent_entry_snippet_cache.dart';
 import 'package:archiveme_mobile/storage/journal_entry_decoder.dart';
 import 'package:archiveme_mobile/storage/private_data_encryption_key_store.dart';
 import 'package:archiveme_mobile/storage/secure_storage.dart';
@@ -103,6 +104,10 @@ class JournalStore {
         saveInterceptorPipeline: saveInterceptorPipeline,
       );
       store._cache = store._decodeEntries(await legacyFile.readAsString());
+      RecentEntrySnippetCache.instance.remember(store._cache!);
+      await RecentEntrySnippetCache.instance.hydrateFromFile(
+        File('${legacyFile.parent.path}/${RecentEntrySnippetCache.fileName}'),
+      );
       return store;
     }
 
@@ -130,12 +135,17 @@ class JournalStore {
       saveInterceptorPipeline: saveInterceptorPipeline,
     );
     store._cache = await store._loadEntriesFromEncrypted();
+    RecentEntrySnippetCache.instance.remember(store._cache!);
+    await RecentEntrySnippetCache.instance.hydrateFromFile(
+      File('${encryptedFile.parent.path}/${RecentEntrySnippetCache.fileName}'),
+    );
     return store;
   }
 
   Future<void> clearAll() async {
     if (ArchiveMeDemoState.isActive || CreatorDemoMode.isActive) return;
     _cache = const [];
+    RecentEntrySnippetCache.instance.remember(const []);
     if (_encrypted != null) {
       await _encrypted.writeJson([]);
       return;
@@ -511,6 +521,7 @@ class JournalStore {
   Future<void> _writeAll(List<JournalEntry> entries) async {
     if (ArchiveMeDemoState.isActive || CreatorDemoMode.isActive) return;
     _cache = List<JournalEntry>.from(entries);
+    RecentEntrySnippetCache.instance.remember(_cache!);
     JournalStoreWriteInstrumentation.persistCount++;
     final encoded = entries.map((e) => e.toJson()).toList();
     if (_encrypted != null) {

@@ -17,6 +17,7 @@ import 'package:archiveme_mobile/storage/sqlite/memory_transcript_search_reposit
 import 'package:archiveme_mobile/storage/sqlite/reflection_embedding_vector_search.dart';
 import 'package:archiveme_mobile/storage/sqlite/reflection_embedding_worker_store.dart';
 import 'package:archiveme_mobile/storage/sqlite/migrations/migration_014_embedding_deferred_queue.dart';
+import 'package:archiveme_mobile/storage/sqlite/time_capsule_visibility.dart';
 import 'package:archiveme_mobile/workers/isolate_worker_client.dart';
 import 'package:flutter/foundation.dart' show visibleForTesting;
 import 'package:flutter/services.dart';
@@ -600,6 +601,10 @@ final class _EmbeddingIndexWorkerRuntime {
     }
 
     final db = await _databaseFor(payload);
+    if (await TimeCapsuleVisibility.isEntryLocked(db, entryId)) {
+      await TimeCapsuleVisibility.purgeEmbeddings(db, entryId);
+      return false;
+    }
     final store = ReflectionEmbeddingWorkerStore(db);
     final existingHash = await store.readContentHash(entryId);
     if (existingHash == contentHash) return false;
@@ -626,6 +631,10 @@ final class _EmbeddingIndexWorkerRuntime {
     }
 
     final db = await _databaseFor(payload);
+    if (await TimeCapsuleVisibility.isEntryLocked(db, entryId)) {
+      await TimeCapsuleVisibility.purgeEmbeddings(db, entryId);
+      return false;
+    }
     final transcriptRepo = MemoryTranscriptSearchRepository.fromWorkerDatabase(
       db,
     );

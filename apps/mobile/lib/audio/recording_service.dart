@@ -9,16 +9,17 @@ import 'package:archiveme_mobile/audio/recording_path_resolver.dart';
 import 'package:archiveme_mobile/audio/recording_types.dart';
 import 'package:archiveme_mobile/audio/silence_retry_policy.dart';
 import 'package:archiveme_mobile/core/di/hardware_audio_providers.dart';
+import 'package:archiveme_mobile/core/native/live_activity_service.dart';
 import 'package:archiveme_mobile/core/utils/app_logger.dart';
 import 'package:archiveme_mobile/features/ambient_capture/shortcut_record_launch.dart';
 import 'package:archiveme_mobile/features/capture/vad/vad_models.dart';
 import 'package:archiveme_mobile/features/capture/vad/vad_segmented_recording_coordinator.dart';
-import 'package:archiveme_mobile/features/metadata/ambient_metadata_service.dart';
 import 'package:archiveme_mobile/core/di/app_provider_container.dart';
 import 'package:archiveme_mobile/features/voice_capture/audio/audio_capture_diagnostics.dart';
 import 'package:archiveme_mobile/features/voice_capture/audio/audio_diag_log.dart';
 import 'package:archiveme_mobile/features/voice_capture/audio/audio_level_monitor.dart';
 import 'package:archiveme_mobile/features/voice_capture/audio/ios_audio_session.dart';
+import 'package:archiveme_mobile/features/metadata/ambient_metadata_service.dart';
 import 'package:archiveme_mobile/features/voice_capture/microphone_permission_gateway.dart';
 import 'package:archiveme_mobile/services/record_pipeline_log.dart';
 import 'package:archiveme_mobile/storage/app_storage_paths.dart';
@@ -43,6 +44,7 @@ class RecordingServiceConfig {
     this.hardwareAudioConfig,
     this.silenceRetryPolicy,
     this.hasRecorderOverride,
+    this.liveActivity,
   });
 
   final bool testMode;
@@ -53,6 +55,7 @@ class RecordingServiceConfig {
   final HardwareAudioConfig? hardwareAudioConfig;
   final SilenceRetryPolicy? silenceRetryPolicy;
   final bool? hasRecorderOverride;
+  final LiveActivityService? liveActivity;
 }
 
 final recordingServiceConfigProvider = Provider<RecordingServiceConfig>(
@@ -77,25 +80,29 @@ class RecordingService extends Notifier<RecordingState> {
     HardwareAudioConfig? hardwareAudioConfig,
     SilenceRetryPolicy? silenceRetryPolicy,
     bool? hasRecorderOverride,
+    LiveActivityService? liveActivity,
   }) {
-    final container = createAppChildProviderContainer(
-      overrides: [
-        if (hardwareAudioConfig != null)
-          hardwareAudioConfigProvider.overrideWithValue(hardwareAudioConfig),
-        recordingServiceConfigProvider.overrideWithValue(
-          RecordingServiceConfig(
-            testMode: testMode,
-            recorder: recorder,
-            permissionGateway: permissionGateway,
-            permissionManager: permissionManager,
-            pathResolver: pathResolver,
-            hardwareAudioConfig: hardwareAudioConfig,
-            silenceRetryPolicy: silenceRetryPolicy,
-            hasRecorderOverride: hasRecorderOverride,
-          ),
+    final overrides = [
+      if (hardwareAudioConfig != null)
+        hardwareAudioConfigProvider.overrideWithValue(hardwareAudioConfig),
+      recordingServiceConfigProvider.overrideWithValue(
+        RecordingServiceConfig(
+          testMode: testMode,
+          recorder: recorder,
+          permissionGateway: permissionGateway,
+          permissionManager: permissionManager,
+          pathResolver: pathResolver,
+          hardwareAudioConfig: hardwareAudioConfig,
+          silenceRetryPolicy: silenceRetryPolicy,
+          hasRecorderOverride: hasRecorderOverride,
+          liveActivity: liveActivity,
         ),
-      ],
-    );
+      ),
+    ];
+    // Test doubles must not inherit a previous recorder's permission gateway.
+    final container = testMode
+        ? ProviderContainer(overrides: overrides)
+        : createAppChildProviderContainer(overrides: overrides);
     bindRecordingProviderContainer(container);
     return container.read(recordingServiceProvider.notifier);
   }
@@ -112,6 +119,8 @@ class RecordingService extends Notifier<RecordingState> {
 
   Timer? _testWaveformTimer;
   VadSegmentedRecordingCoordinator? _vadCoordinator;
+  late final LiveActivityService _liveActivity;
+  var _islandPaused = false;
 
   IosCaptureAudioMode _captureAudioMode = IosCaptureAudioMode.spokenAudio;
 
@@ -146,6 +155,11 @@ class RecordingService extends Notifier<RecordingState> {
             recorder: sharedRecorder,
             levelMonitor: levelMonitor,
           );
+    _liveActivity = config.liveActivity ?? LiveActivityService();
+    _liveActivity.bindControls(
+      onTogglePause: toggleRecordingPause,
+      onStop: stopFromLiveActivity,
+    );
     ref.onDispose(_tearDown);
     return const RecordingState();
   }
@@ -199,6 +213,8 @@ class RecordingService extends Notifier<RecordingState> {
         currentDuration: Duration.zero,
         clearError: true,
       );
+      _islandPaused = false;
+      unawaited(_liveActivity.start(recordingId: _recordingActivityId(path)));
       _startTestWaveformSimulation();
       _recordLog('start success (test mode)');
       return;
@@ -225,6 +241,8 @@ class RecordingService extends Notifier<RecordingState> {
       AudioCaptureDiagnostics.logRecorderConfig();
       await _startCaptureAtPath(path);
       await _startThoughtSegmentation();
+      _islandPaused = false;
+      await _liveActivity.start(recordingId: _recordingActivityId(path));
       _recordLog('start success path=$path');
       RecordPipelineLog.recorderStart(success: true, detail: 'path=$path');
     } catch (e, stackTrace) {
@@ -234,6 +252,7 @@ class RecordingService extends Notifier<RecordingState> {
       _silenceRetryPolicy.cancelScheduledCheck();
       _captureEvents?.stop(clearLevelSummary: false);
       waveformController.reset();
+      unawaited(_liveActivity.end());
       _recordLog('start failed $e');
       RecordPipelineLog.recorderStart(success: false, detail: '$e');
       if (kDebugMode) {
@@ -254,6 +273,55 @@ class RecordingService extends Notifier<RecordingState> {
   }
 
   Future<RecordingResult> stopRecording() async {
+    try {
+      return await _finishRecording();
+    } finally {
+      _islandPaused = false;
+      unawaited(_liveActivity.end());
+    }
+  }
+
+  Future<void> toggleRecordingPause() async {
+    if (state.phase != RecordingPhase.recording) return;
+    final nextPaused = !_islandPaused;
+    if (!_testMode) {
+      try {
+        if (nextPaused) {
+          await _activeRecorder.pause();
+        } else {
+          await _activeRecorder.resume();
+        }
+      } on Object catch (error, stackTrace) {
+        AppLogger.debug(
+          'Live Activity pause skipped',
+          error: error,
+          stackTrace: stackTrace,
+        );
+        return;
+      }
+    }
+    _islandPaused = nextPaused;
+    await _liveActivity.setPaused(isPaused: nextPaused);
+  }
+
+  Future<void> stopFromLiveActivity() async {
+    if (state.phase != RecordingPhase.recording) {
+      await _liveActivity.end();
+      return;
+    }
+    try {
+      await stopRecording();
+    } on Object catch (error, stackTrace) {
+      await _liveActivity.end();
+      AppLogger.debug(
+        'Live Activity stop skipped',
+        error: error,
+        stackTrace: stackTrace,
+      );
+    }
+  }
+
+  Future<RecordingResult> _finishRecording() async {
     if (_testMode) {
       final path = state.activePath ?? _pathResolver.testRecordingPath();
       final file = File(path);
@@ -271,7 +339,8 @@ class RecordingService extends Notifier<RecordingState> {
     _silenceRetryPolicy.cancelScheduledCheck();
     final thoughtSegments = await _stopThoughtSegmentation();
 
-    final levelSummary = _captureEvents?.stop() ??
+    final levelSummary =
+        _captureEvents?.stop() ??
         const AudioLevelSummary(
           minDb: double.negativeInfinity,
           maxDb: double.negativeInfinity,
@@ -317,7 +386,9 @@ class RecordingService extends Notifier<RecordingState> {
     _vadCoordinator ??= VadSegmentedRecordingCoordinator();
     if (_vadCoordinator!.isActive) return;
     try {
-      await _vadCoordinator!.start(config: _hardwareAudioConfig.vadStreamConfig);
+      await _vadCoordinator!.start(
+        config: _hardwareAudioConfig.vadStreamConfig,
+      );
     } catch (e, stackTrace) {
       _recordLog('VAD start failed: $e');
       if (kDebugMode) {
@@ -364,7 +435,10 @@ class RecordingService extends Notifier<RecordingState> {
     if (captureEvents == null) return;
     captureEvents.levelMonitor.resetStats();
     captureEvents.start(
-      onAmplitudeSample: waveformController.pushDb,
+      onAmplitudeSample: (db) {
+        waveformController.pushDb(db);
+        _liveActivity.pushDecibel(db);
+      },
       onState: _handleRecordState,
     );
     if (scheduleSilenceRetry) {
@@ -375,17 +449,25 @@ class RecordingService extends Notifier<RecordingState> {
   void _handleRecordState(RecordState recordState) {
     switch (recordState) {
       case RecordState.record:
+        if (_islandPaused) {
+          _islandPaused = false;
+          unawaited(_liveActivity.setPaused(isPaused: false));
+        }
         if (state.phase != RecordingPhase.recording) {
           state = state.copyWith(
             phase: RecordingPhase.recording,
             clearError: true,
           );
         }
+        return;
       case RecordState.pause:
+        _islandPaused = true;
+        unawaited(_liveActivity.setPaused(isPaused: true));
         return;
       case RecordState.stop:
         if (state.phase == RecordingPhase.recording) {
           _recordLog('recorder state stopped unexpectedly');
+          unawaited(_liveActivity.end());
           state = state.copyWith(
             phase: RecordingPhase.error,
             error: 'Recording stopped unexpectedly',
@@ -418,7 +500,11 @@ class RecordingService extends Notifier<RecordingState> {
           await partial.delete();
         }
       } on FileSystemException catch (e, stackTrace) {
-        AppLogger.error('Unhandled error caught', error: e, stackTrace: stackTrace);
+        AppLogger.error(
+          'Unhandled error caught',
+          error: e,
+          stackTrace: stackTrace,
+        );
       }
     }
 
@@ -439,6 +525,7 @@ class RecordingService extends Notifier<RecordingState> {
       _recordLog('silence retry started path=$retryPath mode=measurement');
     } catch (e, stackTrace) {
       _recordLog('silence retry failed $e');
+      unawaited(_liveActivity.end());
       state = state.copyWith(
         phase: RecordingPhase.error,
         error: 'Silence retry failed: $e',
@@ -466,6 +553,12 @@ class RecordingService extends Notifier<RecordingState> {
 
   void dispose() => _tearDown();
 
+  String _recordingActivityId(String path) {
+    final name = path.split(Platform.pathSeparator).last;
+    if (name.isEmpty) return path;
+    return name;
+  }
+
   void _startTestWaveformSimulation() {
     _stopTestWaveformSimulation();
     if (!_testMode) return;
@@ -475,6 +568,7 @@ class RecordingService extends Notifier<RecordingState> {
       final t = tick / 20.0;
       final level = 0.25 + 0.55 * (0.5 + 0.5 * math.sin(t * 2.7));
       waveformController.pushNormalized(level);
+      _liveActivity.pushNormalized(level);
     });
   }
 
@@ -491,6 +585,7 @@ class RecordingService extends Notifier<RecordingState> {
     _vadCoordinator = null;
     _silenceRetryPolicy.dispose();
     _captureEvents?.stop(clearLevelSummary: false);
+    unawaited(_liveActivity.end());
     waveformController.reset();
     final recorder = _recorder;
     if (recorder != null) unawaited(recorder.dispose());
@@ -504,9 +599,10 @@ final recordingDurationSecondsProvider = Provider<int>((ref) {
   return ref.watch(recordingServiceProvider).currentDuration.inSeconds;
 });
 
-final recordingWaveformControllerProvider = Provider<RecordingWaveformController>(
-  (ref) {
-    ref.watch(recordingServiceProvider);
-    return ref.read(recordingServiceProvider.notifier).waveformController;
-  },
-);
+final recordingWaveformControllerProvider =
+    Provider<RecordingWaveformController>(
+      (ref) {
+        ref.watch(recordingServiceProvider);
+        return ref.read(recordingServiceProvider.notifier).waveformController;
+      },
+    );

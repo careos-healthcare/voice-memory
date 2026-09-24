@@ -8,6 +8,7 @@ import 'package:archiveme_mobile/services/activation_funnel_analytics.dart';
 import 'package:archiveme_mobile/theme/app_colors.dart';
 import 'package:archiveme_mobile/theme/app_spacing.dart';
 import 'package:archiveme_mobile/widgets/memory/new_thread_sheet.dart';
+import 'package:archiveme_mobile/widgets/writing_canvas/writing_canvas_press.dart';
 import 'package:flutter/material.dart';
 
 /// Thread/project picker for the entry being saved.
@@ -57,7 +58,9 @@ class _EntryThreadPickerState extends State<EntryThreadPicker> {
               _ScopeTile(
                 scope: threadScope,
                 selected: scope == threadScope,
-                onTap: () => _selectScope(threadScope),
+                onTap: WritingCanvasPress.wrap(
+                  () => _selectScope(threadScope),
+                )!,
               ),
             if (scope == EntryThreadScope.existingThread) ...[
               const SizedBox(height: AppSpacing.xs),
@@ -83,11 +86,13 @@ class _EntryThreadPickerState extends State<EntryThreadPicker> {
                             EntryThreadScopeSession.selectedThreadId ==
                             thread.id,
                         onSelected: (_) {
-                          EntryThreadScopeSession.selectExistingThread(
-                            thread.id,
-                            entryCount: widget.entryCount,
-                          );
-                          setState(() {});
+                          WritingCanvasPress.wrap(() {
+                            EntryThreadScopeSession.selectExistingThread(
+                              thread.id,
+                              entryCount: widget.entryCount,
+                            );
+                            setState(() {});
+                          })!();
                         },
                       ),
                   ],

@@ -95,6 +95,13 @@ class AppDatabase extends _$AppDatabase {
     return created;
   }
 
+  /// Underlying sqflite handle when this database wraps one.
+  sqflite.Database? get sqfliteDatabase {
+    final current = executor;
+    if (current is WrappedSqfliteExecutor) return current.database;
+    return null;
+  }
+
   SearchCustomQueries? _searchCustomQueries;
 
   /// FTS5 / vec0 queries that require [customSelect].

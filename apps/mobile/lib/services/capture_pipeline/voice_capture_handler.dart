@@ -9,6 +9,7 @@ import 'package:archiveme_mobile/features/proof_admission/remote_processing_purp
 import 'package:archiveme_mobile/features/reflections/data/local_ai_confidence.dart';
 import 'package:archiveme_mobile/features/timeline/timeline_entry_display.dart';
 import 'package:archiveme_mobile/features/voice_capture/analysis/analysis_log.dart';
+import 'package:archiveme_mobile/features/voice_capture/transcription/offline_first_transcription.dart';
 import 'package:archiveme_mobile/features/voice_capture/transcription/speech_locale.dart';
 import 'package:archiveme_mobile/features/voice_capture/transcription/transcription_log.dart';
 import 'package:archiveme_mobile/features/voice_capture/transcription/transcription_service.dart';
@@ -53,15 +54,19 @@ class VoiceCaptureHandler {
     required CapturePipelineMiddleware middleware,
     CaptureVoicePersistence? persistence,
     PipelineStageEmitter stageEmitter = noopPipelineStage,
+    OfflineFirstTranscriptionService? offlineTranscription,
   }) : _deps = deps,
        _middleware = middleware,
        _persistence = persistence ?? CaptureVoicePersistence(deps),
-       _stageEmitter = stageEmitter;
+       _stageEmitter = stageEmitter,
+       _offlineTranscription =
+           offlineTranscription ?? OfflineFirstTranscriptionService();
 
   final CapturePipelineDependencies _deps;
   final CapturePipelineMiddleware _middleware;
   final CaptureVoicePersistence _persistence;
   final PipelineStageEmitter _stageEmitter;
+  final OfflineFirstTranscriptionService _offlineTranscription;
 
   Future<CapturePipelineOutcome> run({
     required File audioFile,
@@ -97,10 +102,20 @@ class VoiceCaptureHandler {
         session: session,
       );
       if (localPreflight.completed != null) {
+        final localText = localPreflight.transcript?.trim();
+        if (localText != null && localText.isNotEmpty) {
+          dispatchTranscriptReady(localText, entryId: entryId);
+        }
         return localPreflight.completed!;
       }
       partialTranscript = localPreflight.transcript;
       localReflection = localPreflight.reflection;
+
+      if (!CaptureVoicePersistence.hasUsableTranscript(partialTranscript)) {
+        partialTranscript = await _attemptOfflineWhisper(
+          audioFile: audioFile,
+        );
+      }
 
       if (!CaptureVoicePersistence.hasUsableTranscript(partialTranscript)) {
         // Before any consideration of the network. The bundled Whisper ONNX
@@ -114,8 +129,9 @@ class VoiceCaptureHandler {
         );
       }
 
-      final hasLocalTranscript =
-          CaptureVoicePersistence.hasUsableTranscript(partialTranscript);
+      final hasLocalTranscript = CaptureVoicePersistence.hasUsableTranscript(
+        partialTranscript,
+      );
 
       if (!hasLocalTranscript &&
           !await _middleware.isPurposeGranted(
@@ -134,6 +150,8 @@ class VoiceCaptureHandler {
       }
 
       if (!hasLocalTranscript) {
+        // Cloud endpoint, reached when on-device Whisper returned nothing or
+        // this hardware cannot run it.
         _stageEmitter(PipelineStage.attesting);
         await _middleware.ensureCaptureToken();
 
@@ -173,7 +191,10 @@ class VoiceCaptureHandler {
               localReflection: localReflection,
             );
           }
-          _middleware.logApiGuardBlocked(operation: 'transcribe', reason: reason);
+          _middleware.logApiGuardBlocked(
+            operation: 'transcribe',
+            reason: reason,
+          );
           return _saveLocalOnly(
             audioFile: audioFile,
             durationSeconds: durationSeconds,
@@ -191,10 +212,11 @@ class VoiceCaptureHandler {
           final resolvedAudio = uploadPath != null && uploadPath.isNotEmpty
               ? File(uploadPath)
               : audioFile;
+          dispatchTranscriptReady(partialTranscript!.trim(), entryId: entryId);
           return _saveProvisionalNativeTranscript(
             audioFile: resolvedAudio,
             durationSeconds: durationSeconds,
-            transcript: partialTranscript!.trim(),
+            transcript: partialTranscript.trim(),
           );
         }
       } else {
@@ -223,6 +245,8 @@ class VoiceCaptureHandler {
           localReflection: localReflection,
         );
       }
+
+      dispatchTranscriptReady(trimmedTranscript, entryId: entryId);
 
       _stageEmitter(PipelineStage.analyzing);
       if (!await _middleware.isPurposeGranted(
@@ -284,6 +308,15 @@ class VoiceCaptureHandler {
     }
   }
 
+  /// On-device Whisper. Null leaves the recording for the cloud endpoint below.
+  Future<String?> _attemptOfflineWhisper({required File audioFile}) async {
+    return _offlineTranscription.attemptOnDevice(
+      audioFile: audioFile,
+      speechLocale: await _readConfirmedSpeechLocale(),
+      onStage: _stageEmitter,
+    );
+  }
+
   /// Platform speech recognition, when the customer asked for on-device only.
   ///
   /// Returns null — meaning "no transcript" and never a guess — when the
@@ -317,7 +350,8 @@ class VoiceCaptureHandler {
 
     if (!outcome.succeeded) {
       RecordPipelineLog.transcriptionFallback(
-        reason: outcome.skippedReason ??
+        reason:
+            outcome.skippedReason ??
             outcome.failureReason ??
             'on_device_stt_unavailable',
         audioPath: audioFile.path,
@@ -340,11 +374,14 @@ class VoiceCaptureHandler {
     }
   }
 
-  Future<({
-    CapturePipelineOutcome? completed,
-    String? transcript,
-    Reflection? reflection,
-  })> _attemptLocalAiPipeline({
+  Future<
+    ({
+      CapturePipelineOutcome? completed,
+      String? transcript,
+      Reflection? reflection,
+    })
+  >
+  _attemptLocalAiPipeline({
     required File audioFile,
     required int durationSeconds,
     required String entryId,
@@ -466,12 +503,14 @@ class VoiceCaptureHandler {
     );
     _middleware.clearCaptureToken();
     _stageEmitter(PipelineStage.done);
-    return pipelineSuccess(CapturePipelineResult(
-      entry: entry,
-      localSaved: true,
-      syncSucceeded: false,
-      analysisSucceeded: true,
-    ));
+    return pipelineSuccess(
+      CapturePipelineResult(
+        entry: entry,
+        localSaved: true,
+        syncSucceeded: false,
+        analysisSucceeded: true,
+      ),
+    );
   }
 
   Future<CapturePipelineOutcome> attachTypedTextToVoiceEntry({
@@ -535,7 +574,6 @@ class VoiceCaptureHandler {
     required VerifiedProof verifiedProof,
     required String entryId,
     required AccountSessionGuard session,
-    
   }) async {
     RecordPipelineLog.transcriptLengths(
       transcriptLength: trimmedTranscript.length,
@@ -580,12 +618,14 @@ class VoiceCaptureHandler {
     _middleware.clearCaptureToken();
 
     _stageEmitter(PipelineStage.done);
-    return pipelineSuccess(CapturePipelineResult(
-      entry: entry,
-      localSaved: true,
-      syncSucceeded: true,
-      analysisSucceeded: true,
-    ));
+    return pipelineSuccess(
+      CapturePipelineResult(
+        entry: entry,
+        localSaved: true,
+        syncSucceeded: true,
+        analysisSucceeded: true,
+      ),
+    );
   }
 
   Future<CapturePipelineOutcome> _handleVoiceCaptureFailure({
@@ -621,7 +661,6 @@ class VoiceCaptureHandler {
       durationSeconds: durationSeconds,
       syncNote: CapturePipelineApiErrors.syncNoteFor(error),
       transcriptionFailureReason: reason,
-      
     );
   }
 
@@ -629,7 +668,6 @@ class VoiceCaptureHandler {
     required File audioFile,
     required int durationSeconds,
     required String transcript,
-    
   }) async {
     RecordPipelineLog.transcriptionFallback(
       reason: 'native_provisional_stt',
@@ -674,13 +712,15 @@ class VoiceCaptureHandler {
     );
     _middleware.clearCaptureToken();
     _stageEmitter(PipelineStage.done);
-    return pipelineSuccess(CapturePipelineResult(
-      entry: entry,
-      localSaved: true,
-      syncSucceeded: false,
-      analysisSucceeded: false,
-      syncNote: VoiceCaptureCopy.transcriptionFailedDegraded,
-    ));
+    return pipelineSuccess(
+      CapturePipelineResult(
+        entry: entry,
+        localSaved: true,
+        syncSucceeded: false,
+        analysisSucceeded: false,
+        syncNote: VoiceCaptureCopy.transcriptionFailedDegraded,
+      ),
+    );
   }
 
   Future<CapturePipelineOutcome> _saveAfterAnalysisFailure({
@@ -745,13 +785,15 @@ class VoiceCaptureHandler {
     );
     _middleware.clearCaptureToken();
     RecordPipelineLog.typedTextAttachedToVoiceEntry(entryId: entry.id);
-    return pipelineSuccess(CapturePipelineResult(
-      entry: saved,
-      localSaved: true,
-      syncSucceeded: syncSucceeded,
-      syncNote: syncNote,
-      attachedTypedTextToVoiceEntry: true,
-    ));
+    return pipelineSuccess(
+      CapturePipelineResult(
+        entry: saved,
+        localSaved: true,
+        syncSucceeded: syncSucceeded,
+        syncNote: syncNote,
+        attachedTypedTextToVoiceEntry: true,
+      ),
+    );
   }
 
   Future<CapturePipelineOutcome> _attachTypedTextLocally({
@@ -787,13 +829,15 @@ class VoiceCaptureHandler {
     );
     _middleware.clearCaptureToken();
     RecordPipelineLog.typedTextAttachedToVoiceEntry(entryId: entry.id);
-    return pipelineSuccess(CapturePipelineResult(
-      entry: updated,
-      localSaved: true,
-      syncSucceeded: false,
-      syncNote: syncNote,
-      attachedTypedTextToVoiceEntry: true,
-    ));
+    return pipelineSuccess(
+      CapturePipelineResult(
+        entry: updated,
+        localSaved: true,
+        syncSucceeded: false,
+        syncNote: syncNote,
+        attachedTypedTextToVoiceEntry: true,
+      ),
+    );
   }
 
   Future<CapturePipelineOutcome> _saveLocalOnly({
@@ -829,22 +873,29 @@ class VoiceCaptureHandler {
       _stageEmitter(PipelineStage.done);
       // Judged on extracted content, not on an intensity number: the on-device
       // extractor reports no intensity at all, so it is not a liveness signal.
-      final hasLocalReflection = localReflection != null &&
+      final hasLocalReflection =
+          localReflection != null &&
           (localReflection.recurringThemes.isNotEmpty ||
               localReflection.concreteObservation.trim().isNotEmpty ||
-              (localReflection.tensionOrContradiction ?? '').trim().isNotEmpty ||
+              (localReflection.tensionOrContradiction ?? '')
+                  .trim()
+                  .isNotEmpty ||
               (localReflection.nextSmallAction ?? '').trim().isNotEmpty);
-      return pipelineSuccess(CapturePipelineResult(
-        entry: entry,
-        localSaved: true,
-        syncSucceeded: false,
-        analysisSucceeded:
-            hasLocalReflection ||
-            (analysisFailureReason == null &&
-                CaptureVoicePersistence.hasUsableTranscript(partialTranscript)),
-        syncNote: syncNote,
-        lowQualityTranscript: lowQualityTranscript,
-      ));
+      return pipelineSuccess(
+        CapturePipelineResult(
+          entry: entry,
+          localSaved: true,
+          syncSucceeded: false,
+          analysisSucceeded:
+              hasLocalReflection ||
+              (analysisFailureReason == null &&
+                  CaptureVoicePersistence.hasUsableTranscript(
+                    partialTranscript,
+                  )),
+          syncNote: syncNote,
+          lowQualityTranscript: lowQualityTranscript,
+        ),
+      );
     } catch (e, stackTrace) {
       return pipelineFailure(
         CapturePipelineFailure(

@@ -3,6 +3,7 @@ import 'package:archiveme_mobile/features/metadata/ambient_metadata_service.dart
 import 'package:archiveme_mobile/features/metadata/entry_metadata_views.dart';
 import 'package:archiveme_mobile/features/sync/presentation/widgets/entry_sync_indicator.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
+import 'package:archiveme_mobile/widgets/archive/ambient_context_pills.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -54,6 +55,12 @@ class ArchiveEntryCard extends StatelessWidget {
                         ),
                         showTranscript: false,
                       ),
+                      if (entry.display.ambientContext != null) ...[
+                        const SizedBox(height: 12),
+                        AmbientContextPills(
+                          ambient: entry.display.ambientContext!,
+                        ),
+                      ],
                     ],
                   ),
                 ),

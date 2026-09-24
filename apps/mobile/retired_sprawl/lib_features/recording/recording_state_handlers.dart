@@ -454,39 +454,20 @@ extension RecordingStateHandlers on _RecordScreenState {
     });
     _recordPermissionUiLog('request started');
 
-    var cap = await _recording.checkMicrophone();
+    final cap = await _recording.checkMicrophone();
     _recordLog('permission result $cap');
     if (cap != RecordingPhase.ready) {
-      final resolution = await _recording.evaluateMicrophonePermission();
-      if (resolution.isRecordable) {
-        cap = RecordingPhase.ready;
-        if (!mounted) return;
-        _setRecordingState(() {
-          _mic = RecordingPhase.ready;
-          _micPermissionState = resolution.state;
-          _micPermissionUserDenied = false;
-          _micSessionRequiresOpenSettings = false;
-          _ui = RecordUiState.ready;
-        });
-      } else if (!await MicrophonePermissionEnvironment.shouldSkipPermissionRequest(
-        status: resolution.permissionHandlerStatus ?? PermissionStatus.denied,
-        hasRecorder: resolution.hasRecorder,
-      )) {
-        if (!await _acceptSoftPromptBeforeNativeRequest()) {
-          if (mounted && _ui != RecordUiState.permissionBlocked) {
-            _setRecordingState(() => _ui = _uiForMicPhase(_mic));
-          }
-          return;
+      if (!await _acceptSoftPromptBeforeNativeRequest()) {
+        if (mounted && _ui != RecordUiState.permissionBlocked) {
+          _setRecordingState(() => _ui = _uiForMicPhase(_mic));
         }
-        if (TrialMode.enabled) {
-          await ActivationTracker.trackTrialMicPermissionRequested();
-        }
-        await _recording.requestMicrophone();
-        _recordLog('permission result after request');
-      } else {
-        cap = await _recording.checkMicrophone();
-        _recordLog('permission result after skip-request $cap');
+        return;
       }
+      if (TrialMode.enabled) {
+        await ActivationTracker.trackTrialMicPermissionRequested();
+      }
+      await _recording.requestMicrophone();
+      _recordLog('permission result after request');
     }
     if (!mounted) return;
     await _refreshMic(fromUserRequest: true);

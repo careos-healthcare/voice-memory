@@ -38,6 +38,12 @@ abstract class ArchiveMobileTypography {
         height: 1.3,
       );
 
+  /// Long-form writing canvas — 1.7 leading, editorial tracking.
+  static TextStyle writingCanvas(BuildContext context, {Color? color}) =>
+      VoiceMemoryTypography.writingCanvasStyle(
+        color: color ?? VoiceMemoryColors.textPrimary,
+      ).copyWith(fontSize: _wide(context) ? 18 : 17);
+
   /// Primary readable body — default for subtitles and card copy.
   static TextStyle responsiveBody(BuildContext context, {Color? color}) =>
       VoiceMemoryTypography.bodyStyle(

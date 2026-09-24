@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:archiveme_mobile/core/di/v1_account_dependencies.dart';
+import 'package:archiveme_mobile/features/capture/zero_state_recorder.dart';
 import 'package:archiveme_mobile/features/capture_flow/capture_flow_controller.dart';
 import 'package:archiveme_mobile/features/capture_flow/capture_flow_dependencies.dart';
 import 'package:archiveme_mobile/features/capture_flow/capture_routine_launch_controller.dart';
@@ -59,6 +60,7 @@ class _CaptureScreenState extends State<CaptureScreen>
     with WidgetsBindingObserver {
   late final CaptureFlowController _controller;
   late final TextEditingController _typedController;
+  late final ZeroStateRecorder _zeroState;
 
   V1AccountDependencies get _accountDeps =>
       widget.accountDependencies ?? V1AccountDependencies.fromAppServices();
@@ -67,26 +69,36 @@ class _CaptureScreenState extends State<CaptureScreen>
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    _zeroState = ZeroStateRecorder(
+      request: const DirectRecordRequest(autoStart: false),
+      recordingActive: () =>
+          _controller.snapshot.phase == CaptureFlowPhase.recording,
+    );
     _controller = CaptureFlowController(
-      widget.dependencies ??
-          CaptureFlowDependencies.fromAccount(_accountDeps),
+      widget.dependencies ?? CaptureFlowDependencies.fromAccount(_accountDeps),
       attachToEntryId: widget.attachToEntryId,
       routineKindOverride:
           widget.routineKindOverride ??
           CaptureRoutineLaunchController.takePendingRoutine(),
       stopBackgroundCapture: widget.stopBackgroundCapture,
     );
-    _typedController = TextEditingController(text: widget.initialTypedText ?? '');
+    _typedController = TextEditingController(
+      text: widget.initialTypedText ?? '',
+    );
     _controller.addListener(_syncNavigationActivity);
     _controller.setInputMode(widget.initialInputMode);
-    unawaited(_controller.initialize().then((_) {
-      if (!mounted || !widget.adoptBackgroundCapture) return;
-      _controller.showBackgroundRecordingUi();
-    }));
+    unawaited(_zeroState.arm());
+    unawaited(
+      _controller.initialize().then((_) {
+        if (!mounted || !widget.adoptBackgroundCapture) return;
+        _controller.showBackgroundRecordingUi();
+      }),
+    );
   }
 
   @override
   void dispose() {
+    _zeroState.disarm();
     WidgetsBinding.instance.removeObserver(this);
     _controller.removeListener(_syncNavigationActivity);
     _controller.dispose();
@@ -116,8 +128,7 @@ class _CaptureScreenState extends State<CaptureScreen>
       CaptureFlowPhase.recording => RecordNavigationActivity.recording,
       CaptureFlowPhase.stopping ||
       CaptureFlowPhase.savingLocal ||
-      CaptureFlowPhase.processingRemote =>
-        RecordNavigationActivity.processing,
+      CaptureFlowPhase.processingRemote => RecordNavigationActivity.processing,
       _ => RecordNavigationActivity.idle,
     };
     nav.update(activity);
@@ -170,10 +181,13 @@ class _CaptureScreenState extends State<CaptureScreen>
         CaptureFlowPhase.requestingPermission ||
         CaptureFlowPhase.stopping ||
         CaptureFlowPhase.savingLocal ||
-        CaptureFlowPhase.processingRemote => CaptureBusyPanel(
-          label: snapshot.stageLabel,
+        CaptureFlowPhase.processingRemote => Column(
+          children: [
+            const StreamingTranscriptSlot(),
+            CaptureBusyPanel(label: snapshot.stageLabel),
+          ],
         ),
-        CaptureFlowPhase.recording => CaptureRecordingPanel(
+        CaptureFlowPhase.recording => CaptureLiveRecordingSurface(
           duration: snapshot.recordingDuration,
           onStop: _controller.stopVoiceCapture,
           onCancel: _controller.cancelVoiceCapture,
@@ -227,7 +241,8 @@ class _CaptureScreenState extends State<CaptureScreen>
             onRecordAnother: _controller.resetToReady,
             onViewArchive: () => context.go('/archive-belief'),
             onChooseWhatLeaves: () => context.push('/privacy-trust-centre'),
-            onRetryRemote: remoteStatus == MomentSaveRemoteStatus.failedRetryable
+            onRetryRemote:
+                remoteStatus == MomentSaveRemoteStatus.failedRetryable
                 ? _controller.retryRemoteProcessing
                 : null,
             onCorrectText: TranscriptCorrectionGate.entryAllowsCorrection(entry)

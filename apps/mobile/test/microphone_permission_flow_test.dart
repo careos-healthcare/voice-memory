@@ -190,7 +190,7 @@ void main() {
 
   group('RecordingService permission flow', () {
     test(
-      'simulator policy: permanentlyDenied + hasRecorder prefers recorder in service',
+      'permanentlyDenied stays on the settings fallback without a second prompt',
       () async {
         MicrophonePermissionEnvironment.setIosSimulatorForTest(true);
         final gateway = FakeMicrophonePermissionGateway(
@@ -202,26 +202,28 @@ void main() {
         );
 
         final resolution = await recording.evaluateMicrophonePermission();
-        expect(resolution.state, MicrophonePermissionState.granted);
-        expect(resolution.phase, RecordingPhase.ready);
+        expect(resolution.state, MicrophonePermissionState.deniedOpenSettings);
+        expect(resolution.phase, RecordingPhase.permissionPermanentlyDenied);
+        expect(await recording.requestMicrophone(), resolution.phase);
+        expect(gateway.requestCallCount, 0);
       },
     );
 
-    test(
-      'simulator policy: denied + hasRecorder prefers recorder in service',
-      () async {
-        MicrophonePermissionEnvironment.setIosSimulatorForTest(true);
-        final gateway = FakeMicrophonePermissionGateway(
-          statusValue: PermissionStatus.denied,
-        );
-        final recording = RecordingService.create(
-          testMode: true,
-          permissionGateway: gateway,
-        );
+    test('denied status stays requestable on every platform', () async {
+      MicrophonePermissionEnvironment.setIosSimulatorForTest(true);
+      final gateway = FakeMicrophonePermissionGateway(
+        statusValue: PermissionStatus.denied,
+      );
+      final recording = RecordingService.create(
+        testMode: true,
+        permissionGateway: gateway,
+      );
 
-        expect(await recording.checkMicrophone(), RecordingPhase.ready);
-      },
-    );
+      expect(
+        await recording.checkMicrophone(),
+        RecordingPhase.permissionDenied,
+      );
+    });
 
     test('simulator policy: denied + no recorder stays requestable', () async {
       MicrophonePermissionEnvironment.setIosSimulatorForTest(true);
@@ -240,7 +242,7 @@ void main() {
       );
     });
 
-    test('physical iOS grantedWithMismatch resolves to ready', () async {
+    test('denied OS status does not become ready from the recorder plugin', () async {
       MicrophonePermissionEnvironment.setIosPhysicalForTest(true);
       final gateway = FakeMicrophonePermissionGateway(
         statusValue: PermissionStatus.denied,
@@ -250,34 +252,33 @@ void main() {
         permissionGateway: gateway,
       );
 
-      expect(await recording.checkMicrophone(), RecordingPhase.ready);
-      final resolution = await recording.evaluateMicrophonePermission();
       expect(
-        resolution.state,
-        MicrophonePermissionState.grantedWithPermissionHandlerMismatch,
+        await recording.checkMicrophone(),
+        RecordingPhase.permissionDenied,
       );
+      final resolution = await recording.evaluateMicrophonePermission();
+      expect(resolution.state, MicrophonePermissionState.deniedCanAskAgain);
+    });
+
+    test('denied OS status does not start capture', () async {
+      MicrophonePermissionEnvironment.setIosPhysicalForTest(true);
+      final gateway = FakeMicrophonePermissionGateway(
+        statusValue: PermissionStatus.denied,
+      );
+      final recording = RecordingService.create(
+        testMode: true,
+        permissionGateway: gateway,
+      );
+
+      await expectLater(
+        recording.startRecording(),
+        throwsA(isA<RecordingException>()),
+      );
+      expect(recording.recorderStartCallCount, 0);
     });
 
     test(
-      'physical iOS policy allows recording on mismatch denied + hasRecorder',
-      () async {
-        MicrophonePermissionEnvironment.setIosPhysicalForTest(true);
-        final gateway = FakeMicrophonePermissionGateway(
-          statusValue: PermissionStatus.denied,
-        );
-        final recording = RecordingService.create(
-          testMode: true,
-          permissionGateway: gateway,
-        );
-
-        expect(await recording.checkMicrophone(), RecordingPhase.ready);
-        await recording.startRecording();
-        expect(recording.recorderStartCallCount, 1);
-      },
-    );
-
-    test(
-      'physical iOS mismatch overrides permission_handler permanentlyDenied',
+      'permanentlyDenied OS status stays on the settings fallback',
       () async {
         MicrophonePermissionEnvironment.setIosPhysicalForTest(true);
         final gateway = FakeMicrophonePermissionGateway(
@@ -288,31 +289,29 @@ void main() {
           permissionGateway: gateway,
         );
 
-        expect(await recording.checkMicrophone(), RecordingPhase.ready);
-        final resolution = await recording.evaluateMicrophonePermission();
         expect(
-          resolution.state,
-          MicrophonePermissionState.grantedWithPermissionHandlerMismatch,
+          await recording.checkMicrophone(),
+          RecordingPhase.permissionPermanentlyDenied,
         );
+        final resolution = await recording.evaluateMicrophonePermission();
+        expect(resolution.state, MicrophonePermissionState.deniedOpenSettings);
       },
     );
 
-    test(
-      'physical iOS skips permission request when recorder verified',
-      () async {
-        MicrophonePermissionEnvironment.setIosPhysicalForTest(true);
-        final gateway = FakeMicrophonePermissionGateway(
-          statusValue: PermissionStatus.denied,
-        );
-        final recording = RecordingService.create(
-          testMode: true,
-          permissionGateway: gateway,
-        );
+    test('denied status requests the OS once', () async {
+      MicrophonePermissionEnvironment.setIosPhysicalForTest(true);
+      final gateway = FakeMicrophonePermissionGateway(
+        statusValue: PermissionStatus.denied,
+        requestResult: PermissionStatus.granted,
+      );
+      final recording = RecordingService.create(
+        testMode: true,
+        permissionGateway: gateway,
+      );
 
-        expect(await recording.requestMicrophone(), RecordingPhase.ready);
-        expect(gateway.requestCallCount, 0);
-      },
-    );
+      expect(await recording.requestMicrophone(), RecordingPhase.ready);
+      expect(gateway.requestCallCount, 1);
+    });
 
     test(
       'physical iOS permanentlyDenied without recorder is blocked',
@@ -358,7 +357,7 @@ void main() {
     );
 
     test(
-      'startRecording starts recorder on simulator mismatch denied + hasRecorder',
+      'startRecording stays blocked on simulator when the OS status is denied',
       () async {
         MicrophonePermissionEnvironment.setIosSimulatorForTest(true);
         final gateway = FakeMicrophonePermissionGateway(
@@ -369,8 +368,11 @@ void main() {
           permissionGateway: gateway,
         );
 
-        await recording.startRecording();
-        expect(recording.recorderStartCallCount, 1);
+        await expectLater(
+          recording.startRecording(),
+          throwsA(isA<RecordingException>()),
+        );
+        expect(recording.recorderStartCallCount, 0);
       },
     );
 
@@ -403,7 +405,7 @@ void main() {
     });
 
     test(
-      'startRecording with permissionVerified allows recorder on physical mismatch',
+      'startRecording with permissionVerified still requires an OS grant',
       () async {
         MicrophonePermissionEnvironment.setIosPhysicalForTest(true);
         final gateway = FakeMicrophonePermissionGateway(
@@ -414,8 +416,12 @@ void main() {
           permissionGateway: gateway,
         );
 
-        await recording.startRecording(permissionVerified: true);
-        expect(recording.recorderStartCallCount, 1);
+        await expectLater(
+          recording.startRecording(permissionVerified: true),
+          throwsA(isA<RecordingException>()),
+        );
+        expect(recording.recorderStartCallCount, 0);
+        expect(gateway.requestCallCount, 0);
       },
     );
 

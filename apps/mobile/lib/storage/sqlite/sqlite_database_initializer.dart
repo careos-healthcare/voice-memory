@@ -6,7 +6,7 @@ import 'package:archiveme_mobile/security/sqlite/sqlite_encryption_key_store.dar
 import 'package:archiveme_mobile/security/sqlite/sqlite_encryption_migrator.dart';
 import 'package:archiveme_mobile/storage/sqlite/sqlite_database_encryption_key.dart';
 import 'package:archiveme_mobile/storage/sqlite/sqlite_connection_pragmas.dart';
-import 'package:archiveme_mobile/storage/sqlite/sqlite_hybrid_search_initializer.dart';
+import 'package:archiveme_mobile/startup/cold_start_deferred_work.dart';
 import 'package:archiveme_mobile/storage/sqlite/sqlite_migration_manager.dart';
 import 'package:archiveme_mobile/storage/sqlite/reflection_graph_backfill.dart';
 import 'package:archiveme_mobile/storage/sqlite/transcript_provenance_backfill.dart';
@@ -49,6 +49,7 @@ abstract final class SqliteDatabaseInitializer {
     String? keyAlias,
     bool singleInstance = true,
     bool runDeferredBackfill = true,
+    bool scheduleVectorExtensions = true,
   }) async {
     await Directory(p.dirname(filePath)).create(recursive: true);
 
@@ -70,11 +71,13 @@ abstract final class SqliteDatabaseInitializer {
         filePath: filePath,
         password: password,
         singleInstance: singleInstance,
+        scheduleVectorExtensions: scheduleVectorExtensions,
       );
     } else {
       db = await _openPlaintext(
         filePath: filePath,
         singleInstance: singleInstance,
+        scheduleVectorExtensions: scheduleVectorExtensions,
       );
     }
 
@@ -112,13 +115,17 @@ abstract final class SqliteDatabaseInitializer {
     required String filePath,
     required String password,
     required bool singleInstance,
+    required bool scheduleVectorExtensions,
   }) {
     if (_isFlutterTest) {
       return _openEncryptedViaFfi(
         filePath: filePath,
         password: password,
         singleInstance: singleInstance,
-        onOpen: (db) => _onOpen(db),
+        onOpen: (db) => _onOpen(
+          db,
+          scheduleVectorExtensions: scheduleVectorExtensions,
+        ),
       );
     }
     return sqlcipher.openDatabase(
@@ -128,7 +135,10 @@ abstract final class SqliteDatabaseInitializer {
       singleInstance: singleInstance,
       onConfigure: configureConnection,
       onCreate: _onCreate,
-      onOpen: _onOpen,
+      onOpen: (db) => _onOpen(
+        db,
+        scheduleVectorExtensions: scheduleVectorExtensions,
+      ),
     );
   }
 
@@ -158,6 +168,7 @@ abstract final class SqliteDatabaseInitializer {
   static Future<sqflite.Database> _openPlaintext({
     required String filePath,
     required bool singleInstance,
+    required bool scheduleVectorExtensions,
   }) {
     return sqflite.openDatabase(
       filePath,
@@ -165,7 +176,10 @@ abstract final class SqliteDatabaseInitializer {
       singleInstance: singleInstance,
       onConfigure: configureConnection,
       onCreate: _onCreate,
-      onOpen: _onOpen,
+      onOpen: (db) => _onOpen(
+        db,
+        scheduleVectorExtensions: scheduleVectorExtensions,
+      ),
     );
   }
 
@@ -173,9 +187,13 @@ abstract final class SqliteDatabaseInitializer {
     await SqliteMigrationManager().run(database);
   }
 
-  static Future<void> _onOpen(sqflite.Database database) async {
+  static Future<void> _onOpen(
+    sqflite.Database database, {
+    bool scheduleVectorExtensions = true,
+  }) async {
     await SqliteMigrationManager().run(database);
-    await SqliteHybridSearchInitializer.initialize(database);
+    if (!scheduleVectorExtensions) return;
+    ColdStartDeferredWork.deferHybridSearch(database);
   }
 
   static bool _isInMemoryPath(String filePath) =>

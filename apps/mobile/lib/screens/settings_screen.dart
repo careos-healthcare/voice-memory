@@ -48,6 +48,7 @@ import 'package:archiveme_mobile/widgets/beta/testflight_metrics_dashboard_card.
 import 'package:archiveme_mobile/widgets/debug/revenue_readiness_card.dart';
 import 'package:archiveme_mobile/widgets/memory/memory_scope_settings_section.dart';
 import 'package:archiveme_mobile/widgets/pushed_screen_shell.dart';
+import 'package:archiveme_mobile/widgets/settings/advanced_tools_settings_section.dart';
 import 'package:archiveme_mobile/widgets/settings/app_review_access_settings_section.dart';
 import 'package:archiveme_mobile/widgets/settings/privacy_data_controls_section.dart';
 import 'package:archiveme_mobile/widgets/settings/privacy_security_trust_section.dart';
@@ -76,19 +77,25 @@ class _SettingsScreenState extends State<SettingsScreen> {
     super.initState();
     unawaited(BetaFeedbackIntelligenceStore.ensureLoaded());
     unawaited(_loadJournalEntries());
-    unawaited(PackageInfo.fromPlatform().then((info) {
-      if (mounted) setState(() => _packageInfo = info);
-    }));
+    unawaited(
+      PackageInfo.fromPlatform().then((info) {
+        if (mounted) setState(() => _packageInfo = info);
+      }),
+    );
     if (V1CapabilityRegistry.notifications) {
-      unawaited(CheckInReminderService.remindersEnabled().then((value) {
-        if (mounted) setState(() => _remindersEnabled = value);
-      }));
+      unawaited(
+        CheckInReminderService.remindersEnabled().then((value) {
+          if (mounted) setState(() => _remindersEnabled = value);
+        }),
+      );
     }
-    unawaited(OnDeviceProcessingStore.ensureLoaded().then((_) {
-      if (mounted) {
-        setState(() => _onDeviceProcessing = OnDeviceProcessingStore.enabled);
-      }
-    }));
+    unawaited(
+      OnDeviceProcessingStore.ensureLoaded().then((_) {
+        if (mounted) {
+          setState(() => _onDeviceProcessing = OnDeviceProcessingStore.enabled);
+        }
+      }),
+    );
   }
 
   String get _reminderStateLabel {
@@ -279,9 +286,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               const SizedBox(height: AppSpacing.sm),
               RevenueReadinessCard(dashboard: RevenueReadinessEngine.build()),
               const SizedBox(height: AppSpacing.sm),
-              const TestFlightMetricsDashboardCard(
-                
-              ),
+              const TestFlightMetricsDashboardCard(),
               const SizedBox(height: AppSpacing.sm),
               const BetaConversionDiagnosisCard(),
             ],
@@ -418,6 +423,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               padding: EdgeInsets.symmetric(vertical: AppSpacing.xs),
               child: MemoryScopeSettingsSection(),
             ),
+            const AdvancedToolsSettingsSection(),
             if (V1FeatureFlags.enableCustomReports)
               ListTile(
                 key: const Key('settings_insight_quality_tile'),

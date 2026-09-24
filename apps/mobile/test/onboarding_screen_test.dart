@@ -27,7 +27,10 @@ void main() {
     expect(source.contains('EvidenceMethodOnboardingScreen'), isFalse);
     expect(source.contains('_conceptualStepCount = 3'), isTrue);
     expect(source.contains('OnboardingTrustPillarsSection'), isTrue);
-    expect(source.contains('OnboardingRemoteProcessingDecision.record'), isTrue);
+    expect(
+      source.contains('OnboardingRemoteProcessingDecision.record'),
+      isTrue,
+    );
     expect(source.contains("context.go('/record')"), isTrue);
   });
 
@@ -48,6 +51,10 @@ void main() {
     expect(find.byKey(const Key('onboarding_progress_dots')), findsOneWidget);
     expect(find.byKey(const Key('onboarding_progress_dot_0')), findsOneWidget);
     expect(find.byKey(const Key('onboarding_progress_dot_1')), findsOneWidget);
+    expect(
+      find.byKey(const Key('onboarding_progressive_disclosure_card')),
+      findsOneWidget,
+    );
   });
 
   testWidgets('continue opens the trust pillars, then the send choice', (

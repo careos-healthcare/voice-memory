@@ -5,9 +5,14 @@ import 'package:archiveme_mobile/services/local_llm/local_llm_types.dart';
 abstract interface class LocalLlmBackend {
   Future<void> load(LocalLlmConfig config);
 
-  Stream<LocalLlmTokenEvent> streamCompletion(LocalLlmCompletionRequest request);
+  Stream<LocalLlmTokenEvent> streamCompletion(
+    LocalLlmCompletionRequest request,
+  );
 
   Future<void> dispose();
+
+  /// Cooperative cancel for an in-flight [streamCompletion].
+  Future<void> cancelGeneration();
 
   bool get isLoaded;
 }

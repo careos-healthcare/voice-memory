@@ -48,6 +48,9 @@ final class StubLocalLlmBackend implements LocalLlmBackend {
     _config = null;
   }
 
+  @override
+  Future<void> cancelGeneration() async {}
+
   void _requireLoaded() {
     if (_config == null) {
       throw StateError('StubLocalLlmBackend.load must be called first.');
@@ -64,7 +67,10 @@ final class StubLocalLlmBackend implements LocalLlmBackend {
         return 'Today I took time to reflect on what matters to me.';
       }
       final cleaned = transcript
-          .replaceAll(RegExp(r'\b(um+|uh+|like|you know)\b', caseSensitive: false), '')
+          .replaceAll(
+            RegExp(r'\b(um+|uh+|like|you know)\b', caseSensitive: false),
+            '',
+          )
           .replaceAll(RegExp(r'\s+'), ' ')
           .trim();
       return cleaned.isEmpty

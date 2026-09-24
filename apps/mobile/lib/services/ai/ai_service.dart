@@ -47,7 +47,9 @@ final class AIService {
   static Future<void> _initializeGemma() async {
     await FlutterGemma.initialize(
       inferenceEngines: [LiteRtLmEngine()],
-      sttBackends: supportsOfflineSpeech ? const [LiteRtSttBackend()] : const [],
+      sttBackends: supportsOfflineSpeech
+          ? const [LiteRtSttBackend()]
+          : const [],
     );
     _gemmaInitialized = true;
   }
@@ -98,9 +100,9 @@ final class AIService {
 
     if (FlutterGemma.activeModelSpec == null) {
       await FlutterGemma.installModel(
-        modelType: ModelType.gemmaIt,
-        fileType: ModelFileType.litertlm,
-      )
+            modelType: ModelType.gemmaIt,
+            fileType: ModelFileType.litertlm,
+          )
           .fromNetwork(
             GemmaAiConfig.entityExtractionModelUrl,
             token: huggingFaceToken,
@@ -302,6 +304,45 @@ final class AIService {
     );
   }
 
+  /// Rewrites [userPrompt] with the installed local Gemma model.
+  Future<String> completeLocally({
+    required String systemPrompt,
+    required String userPrompt,
+  }) {
+    return _runLlm(
+      operationLabel: 'gemma_summary',
+      action: () async {
+        final profile = await _resourceGuard.buildInferenceProfile();
+        if (!hasLocalGemmaModel) {
+          throw StateError('On-device model is not installed.');
+        }
+        final model = await FlutterGemma.getActiveModel(
+          maxTokens: GemmaAiConfig.litertlmMinContextTokens,
+          preferredBackend: profile.pauseEmbeddingTasks
+              ? PreferredBackend.cpu
+              : PreferredBackend.gpu,
+        );
+        final chat = await model.createChat(
+          temperature: 0.3,
+          systemInstruction: systemPrompt,
+          maxOutputTokens: profile.maxTokens.clamp(64, 256),
+        );
+        try {
+          await chat.addQueryChunk(
+            Message.text(text: userPrompt, isUser: true),
+          );
+          final response = await chat.generateChatResponse();
+          return switch (response) {
+            TextResponse(:final token) => token,
+            _ => '',
+          };
+        } finally {
+          await chat.session.close();
+        }
+      },
+    );
+  }
+
   Future<T> _runLlm<T>({
     required String operationLabel,
     required Future<T> Function() action,
@@ -317,7 +358,8 @@ final class AIService {
         success: (value) => value,
         onFailure: (failure) => throw StateError(failure.userMessage),
         onDeferred: (reason) => throw StateError(reason.userMessage),
-        onCancelled: () => throw StateError('On-device analysis was cancelled.'),
+        onCancelled: () =>
+            throw StateError('On-device analysis was cancelled.'),
       );
     });
   }

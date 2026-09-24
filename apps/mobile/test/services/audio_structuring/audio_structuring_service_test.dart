@@ -66,26 +66,29 @@ void main() {
       expect(result.structuredEntry, isNotEmpty);
     });
 
-    test('tryCreate reuses injected LocalLlmService without reloading', () async {
-      var loadCount = 0;
-      final sharedLlm = LocalLlmService(
-        backend: _CountingStubBackend(onLoad: () => loadCount++),
-      );
-      await sharedLlm.loadModel(
-        LocalLlmBootstrap.productionConfig(
-          modelPath: '/tmp/stub-model-q4_k_m.gguf',
-          requirePreferredQuantization: false,
-        ),
-      );
+    test(
+      'tryCreate reuses injected LocalLlmService without reloading',
+      () async {
+        var loadCount = 0;
+        final sharedLlm = LocalLlmService(
+          backend: _CountingStubBackend(onLoad: () => loadCount++),
+        );
+        await sharedLlm.loadModel(
+          LocalLlmBootstrap.productionConfig(
+            modelPath: '/tmp/stub-model-q4_k_m.gguf',
+            requirePreferredQuantization: false,
+          ),
+        );
 
-      final service = await AudioStructuringService.tryCreate(
-        localLlmOverride: sharedLlm,
-      );
+        final service = await AudioStructuringService.tryCreate(
+          localLlmOverride: sharedLlm,
+        );
 
-      expect(service, isNotNull);
-      expect(loadCount, 1);
-      expect(service!.isReady, isTrue);
-    });
+        expect(service, isNotNull);
+        expect(loadCount, 1);
+        expect(service!.isReady, isTrue);
+      },
+    );
   });
 }
 
@@ -113,4 +116,7 @@ final class _CountingStubBackend implements LocalLlmBackend {
 
   @override
   Future<void> dispose() => _delegate.dispose();
+
+  @override
+  Future<void> cancelGeneration() => _delegate.cancelGeneration();
 }

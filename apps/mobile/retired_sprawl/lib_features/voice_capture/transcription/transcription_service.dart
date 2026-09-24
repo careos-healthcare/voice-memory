@@ -7,8 +7,10 @@ import 'package:archiveme_mobile/core/network/api_result.dart';
 import 'package:archiveme_mobile/core/network/network_cancel_token.dart';
 import 'package:archiveme_mobile/data/repositories/capture_repository.dart';
 import 'package:archiveme_mobile/features/ai_coaching/entry_entity_tagger.dart';
+import 'package:archiveme_mobile/features/ai_coaching/gemma_tagging_service.dart';
 import 'package:archiveme_mobile/features/ai_coaching/recording_coach_hook.dart';
 import 'package:archiveme_mobile/features/voice_capture/audio/capture_audio_compressor.dart';
+import 'package:archiveme_mobile/features/voice_capture/audio/post_transcription_compressor.dart';
 import 'package:archiveme_mobile/features/voice_capture/transcription/native_speech_transcription.dart';
 import 'package:archiveme_mobile/features/voice_capture/transcription/speech_locale.dart';
 import 'package:archiveme_mobile/features/voice_capture/transcription/transcript_quality.dart';
@@ -109,12 +111,17 @@ class TranscriptionOutcome {
 }
 
 void dispatchTranscriptReady(String transcript, {String? entryId}) {
+  final tagHook = TranscriptionCompletionHooks.afterSuccess;
+  if (tagHook != null) {
+    unawaited(tagHook(transcript, entryId: entryId));
+  }
   unawaited(
     RecordingCoachHook.onTranscriptReady(transcript, entryId: entryId),
   );
   unawaited(
     EntryEntityTagger.onTranscriptReady(transcript, entryId: entryId),
   );
+  unawaited(runBuiltInContextTagging(transcript, entryId: entryId));
 }
 
 /// Voice transcription — on-device first when the customer asked for that,
@@ -216,7 +223,9 @@ abstract class TranscriptionService {
       );
     }
 
-    final compressed = await CaptureAudioCompressor.compressForUpload(audioFile);
+    final compressed = await CaptureAudioCompressor.compressForUpload(
+      audioFile,
+    );
     final uploadFile = compressed.file;
 
     final guard = usageGuard.checkAttempt(
@@ -350,6 +359,10 @@ abstract class TranscriptionService {
       );
     }
 
+    final stored = await PostTranscriptionCompressor().compressAndDiscardRaw(
+      audioFile,
+    );
+
     // Not provisional. Provisional means "a better transcript is coming from
     // the server", and in this mode none ever is, so marking it provisional
     // would leave every entry permanently waiting on a request that will not
@@ -358,6 +371,7 @@ abstract class TranscriptionService {
       mode: TranscriptionMode.local,
       transcript: transcript,
       speechPermissionStatus: speechPermissionStatus,
+      uploadAudioPath: stored.path,
     );
   }
 

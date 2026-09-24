@@ -5,6 +5,7 @@ import 'package:archiveme_mobile/services/activation_funnel_analytics.dart';
 import 'package:archiveme_mobile/theme/app_colors.dart';
 import 'package:archiveme_mobile/theme/app_spacing.dart';
 import 'package:archiveme_mobile/widgets/archive_packs/create_archive_pack_sheet.dart';
+import 'package:archiveme_mobile/widgets/writing_canvas/writing_canvas_press.dart';
 import 'package:flutter/material.dart';
 
 /// Pack picker for the entry being saved — under Entry options.
@@ -53,8 +54,10 @@ class _ArchivePackPickerState extends State<ArchivePackPicker> {
             groupValue: scope,
             onChanged: (value) {
               if (value == null) return;
-              EntryPackScopeSession.selectScope(value);
-              setState(() {});
+              WritingCanvasPress.wrap(() {
+                EntryPackScopeSession.selectScope(value);
+                setState(() {});
+              })!();
             },
           ),
         if (scope == EntryPackScope.existingPack) ...[
@@ -77,8 +80,10 @@ class _ArchivePackPickerState extends State<ArchivePackPicker> {
                     label: Text(pack.name),
                     selected: EntryPackScopeSession.selectedPackId == pack.id,
                     onSelected: (_) {
-                      EntryPackScopeSession.selectExistingPack(pack.id);
-                      setState(() {});
+                      WritingCanvasPress.wrap(() {
+                        EntryPackScopeSession.selectExistingPack(pack.id);
+                        setState(() {});
+                      })!();
                     },
                   ),
               ],

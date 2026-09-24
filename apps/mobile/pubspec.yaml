@@ -23,6 +23,7 @@ dependencies:
   permission_handler: ^11.4.0
   path_provider: ^2.1.6
   sqflite: ^2.4.3
+  sqflite_darwin: ^2.4.3
   path: ^1.9.1
   record: ^7.1.1
   audioplayers: ^6.4.0
@@ -86,8 +87,10 @@ dependencies:
   icloud_storage: ^2.2.0
   workmanager: ^0.10.9
   app_links: ^7.2.1
+  cached_network_image: ^3.4.1
   flutter_map: ^8.2.2
   latlong2: ^0.10.1
+  just_audio: ^0.10.6
 
 dev_dependencies:
   flutter_test:

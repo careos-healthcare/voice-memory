@@ -99,6 +99,8 @@ class MemoryResurfacingService {
         quoteSnippet: base.quoteSnippet,
         originalDateLabel: base.originalDateLabel,
         beliefRelation: hasGenuineConnection ? base.beliefRelation : '',
+        imageUrls: base.imageUrls,
+        place: base.place,
       );
     }).toList();
   }

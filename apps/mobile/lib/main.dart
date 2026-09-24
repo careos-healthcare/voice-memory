@@ -11,6 +11,7 @@ import 'package:archiveme_mobile/config/app_config.dart';
 import 'package:archiveme_mobile/config/force_screenshot_repeat_card.dart';
 import 'package:archiveme_mobile/core/config/v1_capability_registry.dart';
 import 'package:archiveme_mobile/core/utils/app_logger.dart';
+import 'package:archiveme_mobile/features/quick_capture/quick_capture_background_entry.dart';
 import 'package:archiveme_mobile/features/memos/life_memo_background.dart';
 import 'package:archiveme_mobile/features/weekly_synthesis/background/weekly_synthesis_workmanager.dart';
 import 'package:archiveme_mobile/startup/archive_me_startup.dart';
@@ -23,6 +24,10 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await ShortcutRecordLaunch.beginBeforeUi();
   await bindAmbientCaptureEntryPoints();
+  await QuickCaptureHomeWidgetRegistrar.register();
+  await QuickCaptureHomeWidgetRegistrar.writeDesktopShortcutIfPresent(
+    Platform.executableArguments,
+  );
   await DesktopWindowHost.initialize();
   if (V1CapabilityRegistry.backgroundProcessing &&
       WeeklySynthesisWorkScheduler.isSupported) {

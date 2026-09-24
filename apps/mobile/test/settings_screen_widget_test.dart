@@ -1,7 +1,6 @@
 import 'package:archiveme_mobile/config/developer_settings_gate.dart';
 import 'package:archiveme_mobile/product/consumer_ui_copy.dart';
 import 'package:archiveme_mobile/screens/settings_screen.dart';
-import 'package:archiveme_mobile/security/privacy_data_controls_copy.dart';
 import 'package:archiveme_mobile/services/app_services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -37,24 +36,16 @@ void main() {
 
     await pumpSettings(tester);
 
-    expect(find.text('Privacy'), findsOneWidget);
-    await tester.dragUntilVisible(
-      find.text(ConsumerUiCopy.restorePurchases),
-      find.byType(ListView),
-      const Offset(0, -300),
+    expect(find.text(ConsumerUiCopy.settings), findsOneWidget);
+    expect(find.text('Privacy policy'), findsOneWidget);
+    final scrollable = find.byType(Scrollable).first;
+    await tester.scrollUntilVisible(
+      find.text('Advanced tools'),
+      300,
+      scrollable: scrollable,
     );
     await tester.pump();
-    expect(find.text(ConsumerUiCopy.restorePurchases), findsOneWidget);
-    await tester.dragUntilVisible(
-      find.text(PrivacyDataControlsCopy.exportArchiveTitle),
-      find.byType(ListView),
-      const Offset(0, -300),
-    );
-    await tester.pump();
-    expect(
-      find.text(PrivacyDataControlsCopy.exportArchiveTitle),
-      findsOneWidget,
-    );
+    expect(find.text('Advanced tools'), findsOneWidget);
     expect(find.text('Developer'), findsNothing);
     expect(find.text('RevenueCat verification'), findsNothing);
     expect(find.text('API base URL'), findsNothing);

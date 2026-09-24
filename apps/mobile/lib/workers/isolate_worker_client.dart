@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:isolate';
 
+import 'package:archiveme_mobile/core/execution/isolate_compute_job.dart';
 import 'package:flutter/services.dart';
 
 /// Shared startup envelope for persistent worker isolates.
@@ -35,11 +36,11 @@ final class IsolateWorkerRequest {
   final int priority;
 
   Map<String, dynamic> toJson() => {
-        'requestId': requestId,
-        'operation': operation,
-        'payload': payload,
-        'priority': priority,
-      };
+    'requestId': requestId,
+    'operation': operation,
+    'payload': payload,
+    'priority': priority,
+  };
 
   factory IsolateWorkerRequest.fromJson(Map<String, dynamic> json) {
     return IsolateWorkerRequest(
@@ -95,12 +96,12 @@ final class IsolateWorkerResponse {
   final String? controlSignal;
 
   Map<String, dynamic> toJson() => {
-        'requestId': requestId,
-        'done': done,
-        if (result != null) 'result': result,
-        if (error != null) 'error': error,
-        if (controlSignal != null) 'controlSignal': controlSignal,
-      };
+    'requestId': requestId,
+    'done': done,
+    if (result != null) 'result': result,
+    if (error != null) 'error': error,
+    if (controlSignal != null) 'controlSignal': controlSignal,
+  };
 
   factory IsolateWorkerResponse.fromJson(Map<String, dynamic> json) {
     return IsolateWorkerResponse(
@@ -203,14 +204,20 @@ extension PersistentIsolateWorkerClientOps on PersistentIsolateWorkerClient {
       ).toJson(),
     );
 
-    final result = await completer.future.timeout(
-      timeout,
-      onTimeout: () {
-        pending.remove(requestId);
-        throw TimeoutException('Worker timed out for $operation.');
-      },
-    );
-    return result as T;
+    final stopwatch = Stopwatch()..start();
+    try {
+      final result = await completer.future.timeout(
+        timeout,
+        onTimeout: () {
+          pending.remove(requestId);
+          throw TimeoutException('Worker timed out for $operation.');
+        },
+      );
+      return result as T;
+    } finally {
+      stopwatch.stop();
+      IsolateJobTrace.record('worker.$operation', stopwatch.elapsed);
+    }
   }
 
   Stream<Object?> dispatchStreamImpl({
@@ -224,30 +231,32 @@ extension PersistentIsolateWorkerClientOps on PersistentIsolateWorkerClient {
       },
     );
 
-    ensureStarted().then((_) {
-      final port = workerPort;
-      if (port == null) {
-        controller.addError(StateError('Worker isolate is not running.'));
-        unawaited(controller.close());
-        return;
-      }
+    ensureStarted()
+        .then((_) {
+          final port = workerPort;
+          if (port == null) {
+            controller.addError(StateError('Worker isolate is not running.'));
+            unawaited(controller.close());
+            return;
+          }
 
-      final requestId = nextRequestId++;
-      streamPending[requestId] = controller;
+          final requestId = nextRequestId++;
+          streamPending[requestId] = controller;
 
-      port.send(
-        IsolateWorkerRequest(
-          requestId: requestId,
-          operation: operation,
-          payload: payload,
-        ).toJson(),
-      );
-    }).catchError((Object error, StackTrace stackTrace) {
-      if (!controller.isClosed) {
-        controller.addError(error, stackTrace);
-        unawaited(controller.close());
-      }
-    });
+          port.send(
+            IsolateWorkerRequest(
+              requestId: requestId,
+              operation: operation,
+              payload: payload,
+            ).toJson(),
+          );
+        })
+        .catchError((Object error, StackTrace stackTrace) {
+          if (!controller.isClosed) {
+            controller.addError(error, stackTrace);
+            unawaited(controller.close());
+          }
+        });
 
     return controller.stream;
   }
@@ -261,7 +270,8 @@ extension PersistentIsolateWorkerClientOps on PersistentIsolateWorkerClient {
       message.map((key, value) => MapEntry(key.toString(), value)),
     );
 
-    if (response.controlSignal == IsolateWorkerControlSignals.cancelAcknowledged) {
+    if (response.controlSignal ==
+        IsolateWorkerControlSignals.cancelAcknowledged) {
       final completer = pending.remove(response.requestId);
       if (completer != null && !completer.isCompleted) {
         completer.complete(IsolateWorkerControlSignals.cancelAcknowledged);

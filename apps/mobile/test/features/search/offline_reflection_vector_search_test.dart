@@ -61,34 +61,40 @@ void main() {
       );
     });
 
-    test('indexes and retrieves semantically similar reflections offline', () async {
-      await repository.upsertEmbedding(
-        entryId: 'entry-work-stress',
-        contentHash: 'a',
-        embedding: await search.embedReflection(
-          _reflection(
-            mood: 'overwhelmed',
-            tension: 'I want rest but keep accepting more work',
+    test(
+      'indexes and retrieves semantically similar reflections offline',
+      () async {
+        await repository.upsertEmbedding(
+          entryId: 'entry-work-stress',
+          contentHash: 'a',
+          embedding: await search.embedReflection(
+            _reflection(
+              mood: 'overwhelmed',
+              tension: 'I want rest but keep accepting more work',
+            ),
           ),
-        ),
-      );
-      await repository.upsertEmbedding(
-        entryId: 'entry-weekend-walk',
-        contentHash: 'b',
-        embedding: await search.embedReflection(
-          _reflection(mood: 'content', tension: 'Walked outside and felt calm'),
-        ),
-      );
+        );
+        await repository.upsertEmbedding(
+          entryId: 'entry-weekend-walk',
+          contentHash: 'b',
+          embedding: await search.embedReflection(
+            _reflection(
+              mood: 'content',
+              tension: 'Walked outside and felt calm',
+            ),
+          ),
+        );
 
-      final hits = await search.searchSimilarText(
-        query: 'work stress rest boundaries overwhelmed',
-        limit: 5,
-      );
+        final hits = await search.searchSimilarText(
+          query: 'work stress rest boundaries overwhelmed',
+          limit: 5,
+        );
 
-      expect(hits, isNotEmpty);
-      expect(hits.first.entryId, 'entry-work-stress');
-      expect(hits.first.cosineSimilarity, greaterThan(0));
-    });
+        expect(hits, isNotEmpty);
+        expect(hits.first.entryId, 'entry-work-stress');
+        expect(hits.first.cosineSimilarity, greaterThan(0));
+      },
+    );
 
     test('indexTranscript stores a vector that a raw query can find', () async {
       final created = DateTime.utc(2026, 8, 12);
@@ -119,36 +125,39 @@ void main() {
       expect(entries.first.transcript, contains('harbor'));
     });
 
-    test('queryTimeline embeds the question and returns nearest entries', () async {
-      final created = DateTime.utc(2026, 8, 11);
-      await sqlite.database.insert('journal_entries', {
-        'id': 'entry-work-stress',
-        'created_at': created.millisecondsSinceEpoch,
-        'updated_at': created.millisecondsSinceEpoch,
-        'transcript': 'I keep accepting more work',
-      });
-      await repository.upsertEmbedding(
-        entryId: 'entry-work-stress',
-        contentHash: 'timeline',
-        embedding: await search.embedReflection(
-          _reflection(
-            mood: 'overwhelmed',
-            tension: 'I want rest but keep accepting more work',
+    test(
+      'queryTimeline embeds the question and returns nearest entries',
+      () async {
+        final created = DateTime.utc(2026, 8, 11);
+        await sqlite.database.insert('journal_entries', {
+          'id': 'entry-work-stress',
+          'created_at': created.millisecondsSinceEpoch,
+          'updated_at': created.millisecondsSinceEpoch,
+          'transcript': 'I keep accepting more work',
+        });
+        await repository.upsertEmbedding(
+          entryId: 'entry-work-stress',
+          contentHash: 'timeline',
+          embedding: await search.embedReflection(
+            _reflection(
+              mood: 'overwhelmed',
+              tension: 'I want rest but keep accepting more work',
+            ),
           ),
-        ),
-      );
+        );
 
-      final entries = await search.queryTimeline(
-        'work stress rest boundaries overwhelmed',
-        k: 3,
-      );
+        final entries = await search.queryTimeline(
+          'work stress rest boundaries overwhelmed',
+          k: 3,
+        );
 
-      expect(entries, isNotEmpty);
-      expect(entries.first.entryId, 'entry-work-stress');
-      expect(entries.first.transcript, 'I keep accepting more work');
-      expect(entries.first.createdAt, created);
-      expect(entries.first.score, greaterThan(0));
-    });
+        expect(entries, isNotEmpty);
+        expect(entries.first.entryId, 'entry-work-stress');
+        expect(entries.first.transcript, 'I keep accepting more work');
+        expect(entries.first.createdAt, created);
+        expect(entries.first.score, greaterThan(0));
+      },
+    );
 
     test('embedReflectionDto produces stable vectors', () async {
       const dto = ReflectionDto(

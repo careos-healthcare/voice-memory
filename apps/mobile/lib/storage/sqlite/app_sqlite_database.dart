@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:archiveme_mobile/core/utils/app_logger.dart';
 import 'package:archiveme_mobile/features/ai_coaching/entry_entity_tagger.dart';
+import 'package:archiveme_mobile/features/ai_coaching/gemma_tagging_service.dart';
 import 'package:archiveme_mobile/features/ai_coaching/recording_coach_hook.dart';
 import 'package:archiveme_mobile/security/sqlite/secure_sqlite_lock_service.dart';
 import 'package:archiveme_mobile/security/sqlite/sqlite_encryption_key_store.dart';
@@ -37,8 +38,11 @@ class AppSqliteDatabase {
     String? password,
     String? keyAlias,
     SqliteEncryptionKeyStore? keyStore,
+    bool runDeferredBackfill = true,
+    bool scheduleVectorExtensions = true,
   }) async {
     if (_cached != null && _cachedPath == filePath) {
+      bindContextAutoTagging(_cached!);
       EntryEntityTagger.bind(_cached!);
       RecordingCoachHook.bind(_cached!);
       return AppSqliteDatabase._(
@@ -78,6 +82,8 @@ class AppSqliteDatabase {
           keyStore: keyStore,
           passwordOverride: resolvedPassword,
           keyAlias: keyAlias,
+          runDeferredBackfill: runDeferredBackfill,
+          scheduleVectorExtensions: scheduleVectorExtensions,
         ),
       );
 
@@ -85,6 +91,7 @@ class AppSqliteDatabase {
       _cachedPath = filePath;
       _cachedPassword = resolvedPassword;
       _cachedKeyAlias = keyAlias;
+      bindContextAutoTagging(db);
       EntryEntityTagger.bind(db);
       RecordingCoachHook.bind(db);
       return AppSqliteDatabase._(

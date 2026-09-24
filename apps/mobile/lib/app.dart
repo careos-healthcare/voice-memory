@@ -6,6 +6,7 @@ import 'package:archiveme_mobile/features/caregiver_grant/caregiver_invitation_l
 import 'package:archiveme_mobile/features/llm/providers/llm_providers.dart';
 import 'package:archiveme_mobile/features/live_audio/presentation/widgets/offline_vault_recovery_host.dart';
 import 'package:archiveme_mobile/features/monetization/ui/paywall_milestone_host.dart';
+import 'package:archiveme_mobile/features/quick_record/quick_record_action.dart';
 import 'package:archiveme_mobile/features/recording/audio_processing_queue_listener_host.dart';
 import 'package:archiveme_mobile/features/security/biometric_auth_service.dart';
 import 'package:archiveme_mobile/features/security/privacy_shield.dart';
@@ -14,9 +15,10 @@ import 'package:archiveme_mobile/router/app_router.dart';
 import 'package:archiveme_mobile/security/app_lock_gate.dart';
 import 'package:archiveme_mobile/security/app_privacy_shell.dart';
 import 'package:archiveme_mobile/security/secure_database_gate.dart';
+import 'package:archiveme_mobile/startup/cold_start_performance_host.dart';
 import 'package:archiveme_mobile/storage/sqlite/purgatory_evaluator_host.dart';
-import 'package:archiveme_mobile/workers/local_llm/local_llm_app_lifecycle_listener.dart';
 import 'package:archiveme_mobile/theme/app_theme.dart';
+import 'package:archiveme_mobile/workers/local_llm/local_llm_app_lifecycle_listener.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -50,18 +52,25 @@ class ArchiveMeApp extends StatelessWidget {
             themeMode: ThemeMode.system,
             routerConfig: appRouter,
             builder: (context, child) => PurgatoryEvaluatorHost(
-              child: CommandPaletteHost(
-                child: LocalLlmAppLifecycleListener(
-                  child: SecureDatabaseGate(
-                    child: AppLockGate(
-                      child: AppPrivacyShell(
-                        child: OfflineVaultRecoveryHost(
-                          child: CaptureModuleBootstrap(
-                            child: LlmAnalysisBootstrap(
-                              child: AudioProcessingQueueListenerHost(
-                                child: PaywallMilestoneHost(
-                                  child: CaregiverInvitationLinkListenerHost(
-                                    child: child ?? const SizedBox.shrink(),
+              child: ColdStartPerformanceHost(
+                child: CommandPaletteHost(
+                  child: LocalLlmAppLifecycleListener(
+                    child: SecureDatabaseGate(
+                      child: AppLockGate(
+                        child: AppPrivacyShell(
+                          child: OfflineVaultRecoveryHost(
+                            child: CaptureModuleBootstrap(
+                              child: LlmAnalysisBootstrap(
+                                child: AudioProcessingQueueListenerHost(
+                                  child: QuickRecordActionListenerHost(
+                                    child: PaywallMilestoneHost(
+                                      child:
+                                          CaregiverInvitationLinkListenerHost(
+                                            child:
+                                                child ??
+                                                const SizedBox.shrink(),
+                                          ),
+                                    ),
                                   ),
                                 ),
                               ),

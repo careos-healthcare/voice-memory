@@ -52,13 +52,12 @@ class WatchConnectivityService {
     }
     if (_connected) return;
 
-    await _bridge.initialize();
-    _connected = true;
-
     if (onCapture != null) {
       await _captureSubscription?.cancel();
       _captureSubscription = _bridge.captures.listen(onCapture);
     }
+    await _bridge.initialize();
+    _connected = true;
   }
 
   Future<bool> isSupported() async {

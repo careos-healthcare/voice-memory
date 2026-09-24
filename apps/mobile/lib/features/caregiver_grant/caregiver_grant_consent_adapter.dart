@@ -35,27 +35,25 @@ class CaregiverGrantConsentAdapter implements CaregiverGrantIssuer {
         AppServices.instance.auth.currentSession?.userId ?? 'local_guest';
     final MonitoringConsentToken token;
     try {
-      token =
-          await (verificationService ?? ConsentVerificationService()).issueToken(
-        subjectAccountId: subjectAccountId,
-        caregiverId: request.caregiverId,
-<<<<<<< HEAD
-        permissions: CaregiverPermissions.defaultScopes,
-=======
-        permissions: CaregiverPermissions(
-          evidenceStreamIds: [
-            if (request.shareJournal) CaregiverPermissions.journalStream,
-            if (request.shareProofTrail) CaregiverPermissions.proofTrailStream,
-            if (request.shareTimeline) CaregiverPermissions.timelineStream,
-          ],
-          reviewSummaries: request.shareReviewSummaries,
-          thresholdAlerts: false,
-        ),
-        caregiverEmail:
-            request.sendInviteEmail ? request.contact.email : null,
-        sendInviteEmail: request.sendInviteEmail,
->>>>>>> origin/main
-      );
+      token = await (verificationService ?? ConsentVerificationService())
+          .issueToken(
+            subjectAccountId: subjectAccountId,
+            caregiverId: request.caregiverId,
+            permissions: CaregiverPermissions(
+              evidenceStreamIds: [
+                if (request.shareJournal) CaregiverPermissions.journalStream,
+                if (request.shareProofTrail)
+                  CaregiverPermissions.proofTrailStream,
+                if (request.shareTimeline) CaregiverPermissions.timelineStream,
+              ],
+              reviewSummaries: request.shareReviewSummaries,
+              thresholdAlerts: false,
+            ),
+            caregiverEmail: request.sendInviteEmail
+                ? request.contact.email
+                : null,
+            sendInviteEmail: request.sendInviteEmail,
+          );
       // issueToken signals "backend not configured" by throwing StateError, so
       // a consent screen has to surface it as a failed grant rather than crash.
       // ignore: avoid_catching_errors
@@ -69,21 +67,19 @@ class CaregiverGrantConsentAdapter implements CaregiverGrantIssuer {
     // outside the try/catch above: recordIssuedGrant has its own unrelated
     // StateError case (prefs unavailable), and catching that here would
     // misreport a real, already-issued grant as failed.
-    await (multiPartyAccessService ?? MultiPartyAccessService()).recordIssuedGrant(
-      role: MultiPartyAccessRole.caregiver,
-      partyId: request.contact.name,
-      tokenId: token.tokenId,
-      issuedAt: token.issuedAt,
-      expiresAt: token.expiresAt,
-    );
+    await (multiPartyAccessService ?? MultiPartyAccessService())
+        .recordIssuedGrant(
+          role: MultiPartyAccessRole.caregiver,
+          partyId: request.contact.name,
+          tokenId: token.tokenId,
+          issuedAt: token.issuedAt,
+          expiresAt: token.expiresAt,
+        );
 
     return CaregiverGrantGranted(
       tokenId: token.tokenId,
       expiresAt: token.expiresAt,
-<<<<<<< HEAD
-=======
       redemption: token.redemption,
->>>>>>> origin/main
     );
   }
 }

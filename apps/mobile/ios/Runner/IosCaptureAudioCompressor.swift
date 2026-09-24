@@ -104,6 +104,46 @@ final class IosCaptureAudioCompressor {
     ]
   }
 
+  func compressAfterTranscription(inputPath: String, outputPath: String) throws -> [String: Any] {
+    let payload: [String: Any]
+    do {
+      payload = try CaptureAudioCompressor.exportAac(
+        inputPath: inputPath,
+        outputPath: outputPath
+      )
+    } catch {
+      payload = try compress(
+        inputPath: inputPath,
+        outputPath: outputPath,
+        sampleRateHz: 16000,
+        bitRateBps: 24000,
+        channelCount: 1
+      )
+    }
+    var result = payload
+    let stored = payload["path"] as? String ?? outputPath
+    result["codec"] = (payload["codec"] as? String) ?? "aac"
+    result["discardedRaw"] = discardRawSource(inputPath: inputPath, outputPath: stored)
+    return result
+  }
+
+  private func discardRawSource(inputPath: String, outputPath: String) -> Bool {
+    let input = URL(fileURLWithPath: inputPath)
+    let ext = input.pathExtension.lowercased()
+    guard ext == "wav" || ext == "wave" || ext == "pcm", inputPath != outputPath else {
+      return false
+    }
+    let bytes = (try? FileManager.default.attributesOfItem(atPath: outputPath)[.size] as? NSNumber)?
+      .intValue ?? 0
+    guard bytes > 0 else { return false }
+    do {
+      try FileManager.default.removeItem(at: input)
+      return true
+    } catch {
+      return false
+    }
+  }
+
   struct CompressError: LocalizedError {
     let step: String
     let message: String
@@ -133,6 +173,30 @@ final class IosCaptureAudioCompressorHandler {
           sampleRateHz: sampleRateHz,
           bitRateBps: bitRateBps,
           channelCount: channelCount
+        )
+        result(payload)
+      } catch {
+        result(
+          FlutterError(
+            code: "compress_failed",
+            message: error.localizedDescription,
+            details: ["step": (error as? IosCaptureAudioCompressor.CompressError)?.step ?? "unknown"]
+          )
+        )
+      }
+    case "compressAfterTranscription":
+      guard let args = call.arguments as? [String: Any],
+            let inputPath = args["inputPath"] as? String,
+            let outputPath = args["outputPath"] as? String else {
+        result(
+          FlutterError(code: "invalid_args", message: "Expected input/output paths", details: nil)
+        )
+        return
+      }
+      do {
+        let payload = try IosCaptureAudioCompressor.shared.compressAfterTranscription(
+          inputPath: inputPath,
+          outputPath: outputPath
         )
         result(payload)
       } catch {

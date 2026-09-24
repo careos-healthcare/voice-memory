@@ -1,3 +1,4 @@
+import 'package:archiveme_mobile/core/utils/app_logger.dart';
 import 'package:archiveme_mobile/features/live_audio/application/live_voice_capture_service.dart';
 import 'package:archiveme_mobile/features/live_audio/infrastructure/live_audio_pipeline_log.dart';
 import 'package:flutter/foundation.dart';
@@ -17,6 +18,28 @@ class NativeAudioLifecycleBridge {
 
   @visibleForTesting
   Future<void> handleNativeEvent(MethodCall call) => _handleNativeEvent(call);
+
+  /// Control Center and Quick Settings enter here. The native
+  /// `LiveAudioLifecycleBridge` activates the record session, then live
+  /// capture starts.
+  Future<void> startRecordingSequence() async {
+    try {
+      await _channel.invokeMethod<void>('startRecordingSequence');
+    } on MissingPluginException catch (error, stackTrace) {
+      AppLogger.debug(
+        'Live audio record session activation skipped',
+        error: error,
+        stackTrace: stackTrace,
+      );
+    } on PlatformException catch (error, stackTrace) {
+      AppLogger.debug(
+        'Live audio record session activation skipped',
+        error: error,
+        stackTrace: stackTrace,
+      );
+    }
+    await _service.start();
+  }
 
   Future<void> dispose() async {
     _channel.setMethodCallHandler(null);

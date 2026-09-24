@@ -6,7 +6,7 @@ import 'package:archiveme_mobile/features/quiet_signal/quiet_signal_analytics.da
 import 'package:archiveme_mobile/features/quiet_signal/quiet_signal_model.dart';
 import 'package:archiveme_mobile/theme/app_colors.dart';
 import 'package:archiveme_mobile/theme/app_spacing.dart';
-import 'package:archiveme_mobile/theme/voicememory_cards.dart';
+import 'package:archiveme_mobile/widgets/cues/emotional_cues.dart';
 import 'package:flutter/material.dart';
 
 /// Quiet signal card on the Record ready surface.
@@ -76,36 +76,19 @@ class _QuietSignalRecordCardState extends State<QuietSignalRecordCard> {
 
   @override
   Widget build(BuildContext context) {
-    final bodyStyle = ArchiveMobileTypography.explanationBody(
-      context,
-    ).copyWith(color: AppColors.textSecondary);
-
-    return Container(
+    return Padding(
       key: const Key('quiet_signal_record_card'),
-      width: double.infinity,
-      padding: const EdgeInsets.all(AppSpacing.md),
-      decoration: VoiceMemoryCards.standard(
-        background: const Color(0xFFF7F8FA),
-      ),
+      padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text(
-            widget.signal.title,
-            key: const Key('quiet_signal_record_title'),
-            style: ArchiveMobileTypography.responsiveSectionTitle(context),
-          ),
-          const SizedBox(height: AppSpacing.xs),
-          Text(
-            widget.signal.body,
-            key: const Key('quiet_signal_record_body'),
-            style: bodyStyle,
-          ),
-          const SizedBox(height: AppSpacing.xs),
-          Text(
-            widget.signal.footer,
-            key: const Key('quiet_signal_record_footer'),
-            style: bodyStyle,
+          HesitationSignalCue(
+            labelKey: const Key('quiet_signal_record_title'),
+            lineKey: const Key('quiet_signal_record_body'),
+            noteKey: const Key('quiet_signal_record_footer'),
+            label: widget.signal.title,
+            line: widget.signal.body,
+            note: widget.signal.footer,
           ),
           const SizedBox(height: AppSpacing.sm),
           Align(

@@ -1,7 +1,8 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:archiveme_mobile/audio/recording_types.dart' show RecordingException;
+import 'package:archiveme_mobile/audio/recording_types.dart'
+    show RecordingException;
 import 'package:archiveme_mobile/features/capture/vad/vad_models.dart';
 import 'package:archiveme_mobile/features/beta_analytics/beta_analytics_hooks.dart';
 import 'package:archiveme_mobile/features/capture_flow/capture_flow_dependencies.dart';
@@ -14,6 +15,7 @@ import 'package:archiveme_mobile/features/proof_admission/remote_processing_purp
 import 'package:archiveme_mobile/features/voice_capture/microphone_permission_copy.dart';
 import 'package:archiveme_mobile/features/voice_capture/microphone_permission_state.dart';
 import 'package:archiveme_mobile/features/voice_capture/voice_capture_copy.dart';
+import 'package:archiveme_mobile/features/voice_capture/transcription/offline_transcription_copy.dart';
 import 'package:archiveme_mobile/features/voice_capture/transcription/speech_locale.dart';
 import 'package:archiveme_mobile/features/voice_capture/transcription/transcription_capability_policy.dart';
 import 'package:archiveme_mobile/features/voice_capture/voice_capture_quality.dart';
@@ -68,8 +70,7 @@ class CaptureFlowController extends ChangeNotifier {
       }
     }
     _emit(snapshot);
-    _pipelineStageSubscription ??=
-        _deps.moments.pipelineStates.listen((state) {
+    _pipelineStageSubscription ??= _deps.moments.pipelineStates.listen((state) {
       if (_disposed) return;
       _onPipelineStage(state.stage);
     });
@@ -178,8 +179,9 @@ class CaptureFlowController extends ChangeNotifier {
       _enqueuedThoughtSegmentPaths.clear();
       _streamingThoughtSegmentsSaved = 0;
       await _thoughtSegmentSubscription?.cancel();
-      _thoughtSegmentSubscription =
-          _deps.audio.thoughtSegmentEvents?.listen((event) {
+      _thoughtSegmentSubscription = _deps.audio.thoughtSegmentEvents?.listen((
+        event,
+      ) {
         unawaited(_enqueueThoughtSegment(event.segment));
       });
       await _deps.audio.startRecording(permissionVerified: true);
@@ -284,7 +286,8 @@ class CaptureFlowController extends ChangeNotifier {
           if (await stopResult.file.exists()) {
             await stopResult.file.delete();
           }
-        } catch (_, stackTrace) { // ignore: silent_catch_audit — best-effort temp recording cleanup
+        } catch (_, stackTrace) {
+          // ignore: silent_catch_audit — best-effort temp recording cleanup
           // Best-effort temp recording file cleanup after streaming segments saved.
         }
         _emit(
@@ -366,7 +369,10 @@ class CaptureFlowController extends ChangeNotifier {
 
   /// Completes post-save after pending-transcript recovery or typed attach.
   Future<void> completeReturningUserSave(CapturePipelineResult result) async {
-    _completeSave(result, incrementEntryCount: !result.attachedTypedTextToVoiceEntry);
+    _completeSave(
+      result,
+      incrementEntryCount: !result.attachedTypedTextToVoiceEntry,
+    );
   }
 
   Future<void> attachTypedToSavedEntry(String transcript) async {
@@ -407,7 +413,10 @@ class CaptureFlowController extends ChangeNotifier {
       );
       outcome.match(
         (_) {
-          _deps.telemetry.remoteProcessingCompleted(success: false, kind: 'retry');
+          _deps.telemetry.remoteProcessingCompleted(
+            success: false,
+            kind: 'retry',
+          );
           _emit(
             _snapshot.copyWith(
               phase: CaptureFlowPhase.savedLocal,
@@ -480,14 +489,14 @@ class CaptureFlowController extends ChangeNotifier {
     if (await file.length() < VoiceCaptureQuality.minAudioBytes) {
       try {
         await file.delete();
-      } catch (_, stackTrace) { // ignore: silent_catch_audit — best-effort undersized segment delete
+      } catch (_, stackTrace) {
+        // ignore: silent_catch_audit — best-effort undersized segment delete
         // Best-effort delete for undersized streaming segment files.
       }
       return;
     }
 
-    final durationSeconds =
-        (segment.durationMs / 1000).ceil().clamp(1, 999999);
+    final durationSeconds = (segment.durationMs / 1000).ceil().clamp(1, 999999);
     try {
       final outcome = await _deps.moments.saveVoiceCapture(
         audioFile: file,
@@ -526,8 +535,8 @@ class CaptureFlowController extends ChangeNotifier {
       // touches the network.
       final capability = await _evaluateTranscriptionCapability();
 
-      final transcriptionAllowed =
-          await _deps.transcription.transcriptionAllowed();
+      final transcriptionAllowed = await _deps.transcription
+          .transcriptionAllowed();
       final reflectionAllowed = await _deps.reflection.reflectionAllowed();
       if (transcriptionAllowed || reflectionAllowed) {
         _deps.telemetry.remoteProcessingStarted(kind: 'voice');
@@ -562,7 +571,10 @@ class CaptureFlowController extends ChangeNotifier {
           );
         },
         (result) {
-          _deps.telemetry.localSaveCompleted(success: result.localSaved, kind: 'voice');
+          _deps.telemetry.localSaveCompleted(
+            success: result.localSaved,
+            kind: 'voice',
+          );
           _deps.telemetry.remoteProcessingCompleted(
             success: result.analysisSucceeded,
             kind: 'voice',
@@ -600,7 +612,7 @@ class CaptureFlowController extends ChangeNotifier {
   /// raised by a broken probe would be a prompt the customer cannot act on
   /// honestly.
   Future<TranscriptionCapabilityOutcome>
-      _evaluateTranscriptionCapability() async {
+  _evaluateTranscriptionCapability() async {
     try {
       return await _deps.transcriptionCapability.evaluate();
     } on Object {
@@ -655,7 +667,8 @@ class CaptureFlowController extends ChangeNotifier {
     String transcript, {
     JournalEntry? entry,
   }) async {
-    final target = entry ??
+    final target =
+        entry ??
         (_snapshot.attachToEntryId != null
             ? await _deps.moments.loadEntry(_snapshot.attachToEntryId!)
             : _snapshot.savedEntry);
@@ -742,7 +755,10 @@ class CaptureFlowController extends ChangeNotifier {
           entry: failure.entry,
         ),
         (result) {
-          _deps.telemetry.localSaveCompleted(success: result.localSaved, kind: 'typed');
+          _deps.telemetry.localSaveCompleted(
+            success: result.localSaved,
+            kind: 'typed',
+          );
           _deps.telemetry.remoteProcessingCompleted(
             success: result.analysisSucceeded,
             kind: 'typed',
@@ -841,13 +857,7 @@ class CaptureFlowController extends ChangeNotifier {
   }
 
   void _onPipelineStage(PipelineStage stage) {
-    final label = switch (stage) {
-      PipelineStage.attesting => 'Uploading audio…',
-      PipelineStage.transcribing => 'Transcribing…',
-      PipelineStage.analyzing => 'Reviewing your moment…',
-      PipelineStage.saving => 'Saving…',
-      PipelineStage.done => 'Done',
-    };
+    final label = offlineTranscriptionStageLabel(stage);
     _emit(_snapshot.copyWith(stageLabel: label));
   }
 

@@ -1,14 +1,16 @@
 import 'dart:convert';
-import 'dart:math' as math;
 import 'dart:typed_data';
 
+import 'package:archiveme_mobile/core/execution/isolate_compute_job.dart';
 import 'package:archiveme_mobile/features/insight_engine/hybrid_search_models.dart';
 import 'package:archiveme_mobile/features/search/reflection_embedding_contract.dart';
 import 'package:archiveme_mobile/features/search/reflection_text_processor.dart';
 import 'package:crypto/crypto.dart';
 import 'package:archiveme_mobile/storage/sqlite/app_sqlite_database.dart';
+import 'package:archiveme_mobile/storage/sqlite/embedding_blob_ranker.dart';
 import 'package:archiveme_mobile/storage/sqlite/migrations/migration_009_reflection_embeddings.dart';
 import 'package:archiveme_mobile/storage/sqlite/sqlite_vector_support.dart';
+import 'package:archiveme_mobile/storage/sqlite/time_capsule_visibility.dart';
 import 'package:sqflite/sqflite.dart';
 
 /// Semantic vector index over locally stored reflection embeddings.
@@ -17,7 +19,8 @@ class ReflectionEmbeddingRepository {
 
   final AppSqliteDatabase _sqlite;
 
-  static const embeddingsTable = Migration009ReflectionEmbeddings.embeddingsTable;
+  static const embeddingsTable =
+      Migration009ReflectionEmbeddings.embeddingsTable;
   static const vecTable = Migration009ReflectionEmbeddings.vecTable;
 
   Database get _db => _sqlite.database;
@@ -150,11 +153,20 @@ class ReflectionEmbeddingRepository {
     if (limit <= 0) return const [];
 
     if (SqliteVectorSupport.isAvailable) {
-      final sqliteVectorHits = await _vectorSearchSqliteVector(
-        queryEmbedding: queryEmbedding,
-        limit: limit,
+      final sqliteVectorHits = await IsolateComputeJob.trace(
+        'sqlite.vec.vector_full_scan',
+        () => _vectorSearchSqliteVector(
+          queryEmbedding: queryEmbedding,
+          limit: limit,
+        ),
       );
-      if (sqliteVectorHits.isNotEmpty) return sqliteVectorHits;
+      if (sqliteVectorHits.isNotEmpty) {
+        return TimeCapsuleVisibility.withoutLocked(
+          _db,
+          sqliteVectorHits,
+          (hit) => hit.entryId,
+        );
+      }
     }
 
     if (await _hasLegacyVec0Table()) {
@@ -162,12 +174,23 @@ class ReflectionEmbeddingRepository {
         queryEmbedding: queryEmbedding,
         limit: limit,
       );
-      if (vecHits.isNotEmpty) return vecHits;
+      if (vecHits.isNotEmpty) {
+        return TimeCapsuleVisibility.withoutLocked(
+          _db,
+          vecHits,
+          (hit) => hit.entryId,
+        );
+      }
     }
 
-    return _vectorSearchBlob(
+    final blobHits = await _vectorSearchBlob(
       queryEmbedding: queryEmbedding,
       limit: limit,
+    );
+    return TimeCapsuleVisibility.withoutLocked(
+      _db,
+      blobHits,
+      (hit) => hit.entryId,
     );
   }
 
@@ -282,26 +305,25 @@ class ReflectionEmbeddingRepository {
     required List<double> queryEmbedding,
     required int limit,
   }) async {
-    final rows = await _db.query(embeddingsTable, columns: ['entry_id', 'embedding']);
+    final rows = await _db.query(
+      embeddingsTable,
+      columns: ['entry_id', 'embedding'],
+    );
     if (rows.isEmpty) return const [];
 
-    final scored = <VectorSearchHit>[];
+    final blobs = <EmbeddingBlobRow>[];
     for (final row in rows) {
       final entryId = row['entry_id'] as String? ?? '';
       final blob = row['embedding'] as Uint8List?;
       if (entryId.isEmpty || blob == null) continue;
-      final embedding = _blobToEmbedding(blob);
-      final score = _cosineSimilarity(queryEmbedding, embedding);
-      scored.add(VectorSearchHit(entryId: entryId, cosineSimilarity: score));
+      blobs.add(EmbeddingBlobRow(entryId: entryId, blob: blob));
     }
 
-    scored.sort((a, b) {
-      final byScore = b.cosineSimilarity.compareTo(a.cosineSimilarity);
-      if (byScore != 0) return byScore;
-      return a.entryId.compareTo(b.entryId);
-    });
-
-    return scored.take(limit).toList(growable: false);
+    return EmbeddingBlobRanker.rank(
+      queryEmbedding: queryEmbedding,
+      rows: blobs,
+      limit: limit,
+    );
   }
 
   static String _vectorLiteral(List<double> embedding) {
@@ -312,30 +334,5 @@ class ReflectionEmbeddingRepository {
   static Uint8List _embeddingToBlob(List<double> embedding) {
     final bytes = Float32List.fromList(embedding);
     return bytes.buffer.asUint8List();
-  }
-
-  static List<double> _blobToEmbedding(Uint8List blob) {
-    final floats = Float32List.view(
-      blob.buffer,
-      blob.offsetInBytes,
-      blob.lengthInBytes ~/ Float32List.bytesPerElement,
-    );
-    return floats.toList(growable: false);
-  }
-
-  static double _cosineSimilarity(List<double> a, List<double> b) {
-    final length = math.min(a.length, b.length);
-    if (length == 0) return 0;
-
-    var dot = 0.0;
-    var normA = 0.0;
-    var normB = 0.0;
-    for (var i = 0; i < length; i++) {
-      dot += a[i] * b[i];
-      normA += a[i] * a[i];
-      normB += b[i] * b[i];
-    }
-    if (normA == 0 || normB == 0) return 0;
-    return dot / (math.sqrt(normA) * math.sqrt(normB));
   }
 }

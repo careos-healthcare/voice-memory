@@ -1,5 +1,4 @@
-import 'dart:io';
-
+import 'package:archiveme_mobile/core/execution/isolate_compute_job.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/storage/isolate/local_database_worker_service.dart';
 import 'package:sqflite/sqflite.dart';
@@ -23,10 +22,13 @@ abstract final class SqliteHeavyOperationRunner {
   }) {
     return _guardFilePath(
       filePath,
-      () => LocalDatabaseWorkerService.instance.runGraphBackfill(
-        filePath: filePath,
-        encryptionPassword: encryptionPassword,
-        keyAlias: keyAlias,
+      () => IsolateComputeJob.trace(
+        'sqlite.heavy.graph_backfill',
+        () => LocalDatabaseWorkerService.instance.runGraphBackfill(
+          filePath: filePath,
+          encryptionPassword: encryptionPassword,
+          keyAlias: keyAlias,
+        ),
       ),
     );
   }
@@ -39,11 +41,14 @@ abstract final class SqliteHeavyOperationRunner {
   }) {
     return _guardFilePath(
       filePath,
-      () => LocalDatabaseWorkerService.instance.runJournalUpsert(
-        filePath: filePath,
-        encryptionPassword: encryptionPassword,
-        keyAlias: keyAlias,
-        entries: entries,
+      () => IsolateComputeJob.trace(
+        'sqlite.heavy.journal_upsert',
+        () => LocalDatabaseWorkerService.instance.runJournalUpsert(
+          filePath: filePath,
+          encryptionPassword: encryptionPassword,
+          keyAlias: keyAlias,
+          entries: entries,
+        ),
       ),
     );
   }
@@ -56,11 +61,14 @@ abstract final class SqliteHeavyOperationRunner {
   }) {
     return _guardFilePath(
       filePath,
-      () => LocalDatabaseWorkerService.instance.runJournalMirror(
-        filePath: filePath,
-        encryptionPassword: encryptionPassword,
-        keyAlias: keyAlias,
-        entries: entries,
+      () => IsolateComputeJob.trace(
+        'sqlite.heavy.journal_mirror',
+        () => LocalDatabaseWorkerService.instance.runJournalMirror(
+          filePath: filePath,
+          encryptionPassword: encryptionPassword,
+          keyAlias: keyAlias,
+          entries: entries,
+        ),
       ),
     );
   }

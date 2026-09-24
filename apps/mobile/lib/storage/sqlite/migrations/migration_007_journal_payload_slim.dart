@@ -24,7 +24,10 @@ class Migration007JournalPayloadSlim implements SqliteMigration {
         is_archived INTEGER NOT NULL DEFAULT 0,
         transcript TEXT NOT NULL DEFAULT '',
         has_verified_proof INTEGER NOT NULL DEFAULT 0,
-        payload_json TEXT
+        payload_json TEXT,
+        is_time_capsule INTEGER NOT NULL DEFAULT 0,
+        unlock_date INTEGER,
+        unlock_milestone_entry_count INTEGER
       )
     ''');
 
@@ -37,7 +40,10 @@ class Migration007JournalPayloadSlim implements SqliteMigration {
         is_archived,
         transcript,
         has_verified_proof,
-        payload_json
+        payload_json,
+        is_time_capsule,
+        unlock_date,
+        unlock_milestone_entry_count
       )
       SELECT
         id,
@@ -47,7 +53,10 @@ class Migration007JournalPayloadSlim implements SqliteMigration {
         is_archived,
         transcript,
         has_verified_proof,
-        payload_json
+        payload_json,
+        is_time_capsule,
+        unlock_date,
+        unlock_milestone_entry_count
       FROM $table
     ''');
 
