@@ -56,7 +56,7 @@ function main() {
   step(2, "Bump pubspec +N if App Store Connect rejects duplicate build");
   step(
     3,
-    `flutter build ipa --dart-define=VOICE_MEMORY_API_BASE_URL=https://voice-memory-iota.vercel.app --dart-define=SOURCE_COMMIT_SHA=${head} --dart-define=VOICEMEMORY_ENABLE_PATTERN_EXPLORATION=true`,
+    `flutter build ipa --dart-define=VOICE_MEMORY_API_BASE_URL=https://voice-memory-iota.vercel.app --dart-define=SOURCE_COMMIT_SHA=${head} --dart-define=VOICEMEMORY_ENABLE_PATTERN_EXPLORATION=true --dart-define-from-file=config/launch_profile.json`,
   );
   step(4, "Product → Archive → Organizer → Upload to App Store Connect");
   step(5, "Install on physical iPhone from TestFlight internal track");

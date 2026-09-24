@@ -38,7 +38,7 @@ import 'package:archiveme_mobile/product/consumer_ui_copy.dart';
 import 'package:archiveme_mobile/router/route_catalog.dart';
 import 'package:archiveme_mobile/security/security_settings_copy.dart';
 import 'package:archiveme_mobile/services/app_services.dart';
-import 'package:archiveme_mobile/theme/app_colors.dart';
+import 'package:archiveme_mobile/theme/app_palette.dart';
 import 'package:archiveme_mobile/theme/app_spacing.dart';
 import 'package:archiveme_mobile/widgets/account/account_privacy_controls_section.dart';
 import 'package:archiveme_mobile/widgets/beta/beta_conversion_diagnosis_card.dart';
@@ -518,7 +518,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ConsumerUiCopy.appVersion,
               style: ArchiveMobileTypography.cardLabel(
                 context,
-                color: AppColors.textSecondary,
+                color: context.palette.textSecondary,
               ),
             ),
             const SizedBox(height: 4),
@@ -564,7 +564,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       title: Text(
         title,
         style: ArchiveMobileTypography.listTitle(context).copyWith(
-          color: destructive ? AppColors.error : AppColors.textPrimary,
+          color: destructive ? context.palette.error : context.palette.textPrimary,
         ),
       ),
       trailing: trailing ?? const Icon(Icons.chevron_right),

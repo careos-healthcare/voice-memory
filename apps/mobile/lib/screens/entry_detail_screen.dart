@@ -10,7 +10,7 @@ import 'package:archiveme_mobile/features/voice_capture/voice_capture_copy.dart'
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/security/private_data_service.dart';
 import 'package:archiveme_mobile/services/app_services.dart';
-import 'package:archiveme_mobile/theme/app_theme.dart';
+import 'package:archiveme_mobile/theme/app_palette.dart';
 import 'package:archiveme_mobile/widgets/entry_detail/entry_processing_trust_chip.dart';
 import 'package:archiveme_mobile/widgets/archive/archive_entry_card.dart';
 import 'package:archiveme_mobile/widgets/archive/entry_context_tag_editor.dart';
@@ -28,11 +28,16 @@ class EntryDetailScreen extends StatefulWidget {
   const EntryDetailScreen({
     required this.entryId, super.key,
     this.accountDependencies,
+    this.previewEntry,
   });
 
   final String entryId;
 
   final V1AccountDependencies? accountDependencies;
+
+  /// Skips journal loading so a golden can paint the screen without AppServices.
+  @visibleForTesting
+  final JournalEntry? previewEntry;
 
   @override
   State<EntryDetailScreen> createState() => _EntryDetailScreenState();
@@ -42,12 +47,17 @@ class _EntryDetailScreenState extends State<EntryDetailScreen> {
   JournalEntry? _entry;
   bool _advancedExpanded = false;
 
-  late final V1AccountDependencies _accountDeps =
+  V1AccountDependencies get _accountDeps =>
       widget.accountDependencies ?? V1AccountDependencies.fromAppServices();
 
   @override
   void initState() {
     super.initState();
+    final preview = widget.previewEntry;
+    if (preview != null) {
+      _entry = preview;
+      return;
+    }
     unawaited(_load());
   }
 
@@ -128,7 +138,7 @@ class _EntryDetailScreenState extends State<EntryDetailScreen> {
                 Hero(
                   tag: ArchiveEntryHeroTags.surface(widget.entryId),
                   child: Material(
-                    color: AppTheme.surface,
+                    color: context.palette.backgroundSecondary,
                     borderRadius: BorderRadius.circular(12),
                     clipBehavior: Clip.antiAlias,
                     child: _sectionCard(
@@ -140,27 +150,28 @@ class _EntryDetailScreenState extends State<EntryDetailScreen> {
                 const SizedBox(height: 16),
                 _sectionCard(
                   label: EntryDetailCopy.archiveNoteLabel,
-                  child: const Column(
+                  child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
+                      const Text(
                         EntryDetailCopy.archiveNoteBody,
                         style: TextStyle(height: 1.45),
                       ),
-                      SizedBox(height: 8),
+                      const SizedBox(height: 8),
                       Text(
                         EntryDetailCopy.archiveNoteHelper,
-                        style: TextStyle(color: AppTheme.muted, height: 1.45),
+                        style: TextStyle(color: context.palette.textSecondary, height: 1.45),
                       ),
                     ],
                   ),
                 ),
                 const SizedBox(height: 16),
-                EntryContextTagEditor(
-                  entry: e,
-                  journalStore: _accountDeps.journalStore,
-                  onChanged: _load,
-                ),
+                if (widget.accountDependencies != null)
+                  EntryContextTagEditor(
+                    entry: e,
+                    journalStore: _accountDeps.journalStore,
+                    onChanged: _load,
+                  ),
                 const SizedBox(height: 16),
                 SizedBox(
                   width: double.infinity,
@@ -174,7 +185,7 @@ class _EntryDetailScreenState extends State<EntryDetailScreen> {
                 ),
                 const SizedBox(height: 16),
                 Material(
-                  color: AppTheme.surface,
+                  color: context.palette.backgroundSecondary,
                   borderRadius: BorderRadius.circular(12),
                   child: ExpansionTile(
                     key: const Key('entry_detail_advanced_section'),
@@ -218,7 +229,7 @@ class _EntryDetailScreenState extends State<EntryDetailScreen> {
           key: const Key('entry_detail_recorded_body'),
           style: const TextStyle(height: 1.45),
         ),
-        if (speakableText != null) ...[
+        if (speakableText != null && widget.accountDependencies != null) ...[
           const SizedBox(height: 8),
           EntryReadAloudButton(
             text: speakableText,
@@ -232,7 +243,7 @@ class _EntryDetailScreenState extends State<EntryDetailScreen> {
           const SizedBox(height: 8),
           Text(
             view.secondary!,
-            style: const TextStyle(color: AppTheme.muted, height: 1.45),
+            style: TextStyle(color: context.palette.textSecondary, height: 1.45),
           ),
         ],
         if (view.isDegradedTranscription) ...[
@@ -256,17 +267,17 @@ class _EntryDetailScreenState extends State<EntryDetailScreen> {
       width: double.infinity,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppTheme.surface,
+        color: context.palette.backgroundSecondary,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppTheme.accent),
+        border: Border.all(color: context.palette.borderSubtle),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             label,
-            style: const TextStyle(
-              color: AppTheme.muted,
+            style: TextStyle(
+              color: context.palette.textSecondary,
               fontSize: 12,
               fontWeight: FontWeight.w600,
               letterSpacing: 0.4,

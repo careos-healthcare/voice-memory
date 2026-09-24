@@ -1,4 +1,5 @@
 import 'package:archiveme_mobile/theme/app_colors.dart';
+import 'package:archiveme_mobile/theme/app_palette.dart';
 import 'package:archiveme_mobile/theme/app_spacing.dart';
 import 'package:archiveme_mobile/theme/voicememory_cards.dart';
 import 'package:archiveme_mobile/theme/voicememory_colors.dart';
@@ -198,6 +199,7 @@ class AppTheme {
           side: const BorderSide(color: AppColors.borderSubtle),
         ),
       ),
+      extensions: const [AppPalette.light],
     );
   }
 
@@ -396,6 +398,7 @@ class AppTheme {
           side: const BorderSide(color: _darkBorderSubtle),
         ),
       ),
+      extensions: const [AppPalette.dark],
     );
   }
 }

@@ -1,5 +1,6 @@
 import 'package:archiveme_mobile/config/app_config.dart';
 import 'package:archiveme_mobile/core/config/v1_capability_registry.dart';
+import 'package:archiveme_mobile/theme/app_palette.dart';
 import 'package:archiveme_mobile/config/screenshot_mode.dart';
 import 'package:archiveme_mobile/config/screenshot_sample_data.dart';
 import 'package:archiveme_mobile/design/archive_mobile_typography.dart';
@@ -9,7 +10,6 @@ import 'package:archiveme_mobile/l10n/localized_consumer_ui.dart';
 import 'package:archiveme_mobile/l10n/generated/app_localizations.dart';
 import 'package:archiveme_mobile/product/consumer_ui_copy.dart';
 import 'package:archiveme_mobile/services/app_services.dart';
-import 'package:archiveme_mobile/theme/app_colors.dart';
 import 'package:archiveme_mobile/theme/app_spacing.dart';
 import 'package:archiveme_mobile/widgets/accessibility/accessible_primary_surface.dart';
 import 'package:archiveme_mobile/widgets/account/account_privacy_controls_section.dart';
@@ -104,7 +104,7 @@ class _AccountScreenState extends State<AccountScreen> {
         ? ConsumerUiCopy.syncNotAvailableTestFlight
         : (_syncLabel.isEmpty ? ConsumerUiCopy.syncOnDeviceOnly : _syncLabel);
     return Scaffold(
-      backgroundColor: AppColors.backgroundPrimary,
+      backgroundColor: context.palette.backgroundPrimary,
       body: AccessiblePrimarySurface(
         label: l10n.accountScreenLabel,
         child: SafeArea(
@@ -249,18 +249,18 @@ class _AccountScreenState extends State<AccountScreen> {
         child: ExcludeSemantics(
           excluding: onTap != null,
           child: Material(
-            color: AppColors.backgroundSecondary,
+            color: context.palette.backgroundSecondary,
             borderRadius: BorderRadius.circular(16),
             child: ListTile(
               key: key,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(16),
-                side: const BorderSide(color: AppColors.borderSubtle),
+                side: BorderSide(color: context.palette.borderSubtle),
               ),
               title: Text(
                 title,
                 style: ArchiveMobileTypography.listTitle(context).copyWith(
-                  color: destructive ? AppColors.error : AppColors.textPrimary,
+                  color: destructive ? context.palette.error : context.palette.textPrimary,
                 ),
               ),
               subtitle: subtitle != null

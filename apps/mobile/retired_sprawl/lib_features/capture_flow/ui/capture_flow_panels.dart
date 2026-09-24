@@ -5,7 +5,7 @@ import 'package:archiveme_mobile/features/insights/rag/routine_rag_models.dart';
 import 'package:archiveme_mobile/features/voice_capture/microphone_permission_copy.dart';
 import 'package:archiveme_mobile/product/consumer_ui_copy.dart';
 import 'package:archiveme_mobile/record/quick_text_capture_copy.dart';
-import 'package:archiveme_mobile/theme/app_colors.dart';
+import 'package:archiveme_mobile/theme/app_palette.dart';
 import 'package:archiveme_mobile/theme/app_spacing.dart';
 import 'package:archiveme_mobile/theme/voicememory_cards.dart';
 import 'package:flutter/material.dart';
@@ -48,7 +48,7 @@ class CaptureReadyPanel extends StatelessWidget {
   Widget build(BuildContext context) {
     final bodyStyle = ArchiveMobileTypography.responsiveHelper(
       context,
-    ).copyWith(color: AppColors.textSecondary, height: 1.45);
+    ).copyWith(color: context.palette.textSecondary, height: 1.45);
 
     // All children are intrinsically sized (no Expanded/Spacer/Flexible), so a
     // scroll wrap is safe. Required: 200% text scale overflows a short screen.
@@ -82,7 +82,7 @@ class CaptureReadyPanel extends StatelessWidget {
             const SizedBox(height: AppSpacing.sm),
             Text(
               errorMessage!,
-              style: bodyStyle.copyWith(color: AppColors.error),
+              style: bodyStyle.copyWith(color: context.palette.error),
             ),
           ],
           const SizedBox(height: AppSpacing.lg),

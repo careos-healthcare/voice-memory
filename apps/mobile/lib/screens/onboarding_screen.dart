@@ -15,7 +15,7 @@ import 'package:archiveme_mobile/onboarding/onboarding_visuals.dart';
 import 'package:archiveme_mobile/product/consumer_ui_copy.dart';
 import 'package:archiveme_mobile/router/onboarding_gate.dart';
 import 'package:archiveme_mobile/services/app_services.dart';
-import 'package:archiveme_mobile/theme/app_colors.dart';
+import 'package:archiveme_mobile/theme/app_palette.dart';
 import 'package:archiveme_mobile/widgets/onboarding/onboarding_import_first_step.dart';
 import 'package:archiveme_mobile/theme/app_spacing.dart';
 import 'package:flutter/material.dart';
@@ -103,7 +103,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.backgroundPrimary,
+      backgroundColor: context.palette.backgroundPrimary,
       body: SafeArea(
         child: Stack(
           children: [
@@ -123,7 +123,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       Text(
                         'ArchiveMe',
                         style: OnboardingTypography.label(
-                          color: AppColors.accentPrimary,
+                          color: context.palette.accentPrimary,
                         ),
                       ),
                     ],
@@ -167,10 +167,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(2),
                               color: _stepIndex >= i
-                                  ? AppColors.accentPrimary.withValues(
+                                  ? context.palette.accentPrimary.withValues(
                                       alpha: 0.9,
                                     )
-                                  : AppColors.borderSubtle,
+                                  : context.palette.borderSubtle,
                             ),
                           ),
                         ),
@@ -228,12 +228,12 @@ class _ChoiceActions extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        const Text(
+        Text(
           RemoteProcessingConsentCopy.changeLaterFootnote,
-          key: Key('remote_processing_consent_change_later'),
+          key: const Key('remote_processing_consent_change_later'),
           style: TextStyle(
             fontSize: 13,
-            color: AppColors.textSecondary,
+            color: context.palette.textSecondary,
             height: 1.4,
           ),
         ),

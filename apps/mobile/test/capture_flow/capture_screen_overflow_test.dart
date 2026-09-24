@@ -215,6 +215,9 @@ class _FakeTelemetry implements CaptureTelemetry {
   void remoteProcessingStarted({required String kind}) {}
 }
 
+/// Shared with dark-mode goldens so Record idle and Recording use the same fakes.
+CaptureFlowDependencies captureFlowGoldenDependencies() => _deps();
+
 CaptureFlowDependencies _deps() {
   return CaptureFlowDependencies(
     audio: _FakeAudio(),

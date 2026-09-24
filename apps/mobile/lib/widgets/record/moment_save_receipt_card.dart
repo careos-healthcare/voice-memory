@@ -13,7 +13,7 @@ import 'package:archiveme_mobile/features/voice_capture/voice_capture_copy.dart'
 import 'package:archiveme_mobile/features/voice_capture/voice_capture_quality.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/router/route_catalog.dart';
-import 'package:archiveme_mobile/theme/app_colors.dart';
+import 'package:archiveme_mobile/theme/app_palette.dart';
 import 'package:archiveme_mobile/theme/app_spacing.dart';
 import 'package:archiveme_mobile/theme/voicememory_cards.dart';
 import 'package:archiveme_mobile/widgets/record/remote_processing_skipped_card.dart';
@@ -82,8 +82,8 @@ class MomentSaveReceiptCard extends StatelessWidget {
     final titleStyle = ArchiveMobileTypography.responsiveSectionTitle(context);
     final bodyStyle = ArchiveMobileTypography.responsiveHelper(
       context,
-    ).copyWith(color: AppColors.textPrimary, height: 1.45);
-    final secondaryStyle = bodyStyle.copyWith(color: AppColors.textSecondary);
+    ).copyWith(color: context.palette.textPrimary, height: 1.45);
+    final secondaryStyle = bodyStyle.copyWith(color: context.palette.textSecondary);
     final heardText = postSaveRecordedSummary(entry);
 
     return Semantics(
@@ -94,7 +94,7 @@ class MomentSaveReceiptCard extends StatelessWidget {
         width: double.infinity,
         padding: const EdgeInsets.all(AppSpacing.md),
         decoration: VoiceMemoryCards.standard(
-          background: AppColors.backgroundSecondary,
+          background: context.palette.backgroundSecondary,
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,

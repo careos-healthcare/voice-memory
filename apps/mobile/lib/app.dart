@@ -12,6 +12,7 @@ import 'package:archiveme_mobile/security/app_lock_gate.dart';
 import 'package:archiveme_mobile/security/app_privacy_shell.dart';
 import 'package:archiveme_mobile/security/secure_database_gate.dart';
 import 'package:archiveme_mobile/workers/local_llm/local_llm_app_lifecycle_listener.dart';
+import 'package:archiveme_mobile/theme/app_palette.dart';
 import 'package:archiveme_mobile/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -30,7 +31,9 @@ class ArchiveMeApp extends StatelessWidget {
         supportedLocales: archiveSupportedLocales(),
         theme: AppTheme.light(),
         darkTheme: AppTheme.dark(),
-        themeMode: ThemeMode.system,
+        themeMode: thoughtprintDarkModeReady
+            ? ThemeMode.system
+            : ThemeMode.light,
         routerConfig: appRouter,
         builder: (context, child) => LocalLlmAppLifecycleListener(
           child: SecureDatabaseGate(

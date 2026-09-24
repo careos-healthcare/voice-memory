@@ -3,7 +3,7 @@ import 'package:archiveme_mobile/l10n/localized_consumer_ui.dart';
 import 'package:archiveme_mobile/router/primary_destination.dart';
 import 'package:archiveme_mobile/router/primary_navigation_controller.dart';
 import 'package:archiveme_mobile/router/record_navigation_activity_controller.dart';
-import 'package:archiveme_mobile/theme/app_colors.dart';
+import 'package:archiveme_mobile/theme/app_palette.dart';
 import 'package:archiveme_mobile/widgets/accessibility/accessible_primary_surface.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -168,13 +168,13 @@ class MainShell extends StatelessWidget {
             );
             if (constraints.maxWidth < 700) {
               return Scaffold(
-                backgroundColor: AppColors.backgroundPrimary,
+                backgroundColor: context.palette.backgroundPrimary,
                 body: body,
                 bottomNavigationBar: _phoneNavigation(context, selected),
               );
             }
             return Scaffold(
-              backgroundColor: AppColors.backgroundPrimary,
+              backgroundColor: context.palette.backgroundPrimary,
               body: Row(
                 children: [
                   _railNavigation(

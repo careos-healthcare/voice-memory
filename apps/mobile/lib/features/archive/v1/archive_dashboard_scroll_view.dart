@@ -10,7 +10,7 @@ import 'package:archiveme_mobile/features/insights/pattern_exploration_entry_car
 import 'package:archiveme_mobile/features/insights/trend_pattern_summary_card.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/services/app_services.dart';
-import 'package:archiveme_mobile/theme/app_colors.dart';
+import 'package:archiveme_mobile/theme/app_palette.dart';
 import 'package:archiveme_mobile/widgets/archive/archive_changes_section.dart';
 import 'package:archiveme_mobile/widgets/archive/archive_changes_unavailable_notice.dart';
 import 'package:archiveme_mobile/widgets/archive/archive_empty_state.dart';
@@ -259,7 +259,7 @@ class ArchiveDashboardScrollView extends StatelessWidget {
                         'No saved moments match "${feed.searchQuery}".',
                         key: const Key('archive_search_no_results'),
                         style: theme.textTheme.bodyMedium?.copyWith(
-                          color: AppColors.textMuted,
+                          color: context.palette.textMuted,
                         ),
                       ),
                     ),

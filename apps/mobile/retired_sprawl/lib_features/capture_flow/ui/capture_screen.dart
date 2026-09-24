@@ -16,7 +16,7 @@ import 'package:archiveme_mobile/features/transcript_correction/transcript_corre
 import 'package:archiveme_mobile/features/transcript_correction/transcript_correction_gate.dart';
 import 'package:archiveme_mobile/features/trust/pending_transcript_recovery_copy.dart';
 import 'package:archiveme_mobile/features/voice_capture/voice_capture_quality.dart';
-import 'package:archiveme_mobile/theme/app_colors.dart';
+import 'package:archiveme_mobile/theme/app_palette.dart';
 import 'package:archiveme_mobile/widgets/record/correct_transcript_sheet.dart';
 import 'package:archiveme_mobile/widgets/record/moment_save_receipt_card.dart';
 import 'package:archiveme_mobile/widgets/record/pending_transcript_recovery_sheet.dart';
@@ -130,7 +130,7 @@ class _CaptureScreenState extends State<CaptureScreen>
       builder: (context, _) {
         final snapshot = _controller.snapshot;
         return ColoredBox(
-          color: AppColors.backgroundPrimary,
+          color: context.palette.backgroundPrimary,
           child: SafeArea(
             child: Padding(
               padding: const EdgeInsets.all(16),

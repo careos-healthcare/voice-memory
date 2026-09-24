@@ -38,6 +38,7 @@ echo "==> flutter build ios --release --no-codesign"
 flutter build ios --release --no-codesign \
   --dart-define=VOICE_MEMORY_API_BASE_URL=https://voice-memory-iota.vercel.app \
   --dart-define=SOURCE_COMMIT_SHA="$COMMIT_SHA" \
-  --dart-define=VOICEMEMORY_ENABLE_PATTERN_EXPLORATION=true
+  --dart-define=VOICEMEMORY_ENABLE_PATTERN_EXPLORATION=true \
+  --dart-define-from-file=config/launch_profile.json
 
 echo "OK — iOS preflight complete. Archive in Xcode from ios/Runner.xcworkspace for TestFlight upload."
