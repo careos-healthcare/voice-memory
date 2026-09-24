@@ -5,23 +5,22 @@ import 'package:archiveme_mobile/features/archive/ui/trust_status_footer.dart';
 import 'package:archiveme_mobile/features/archive/v1/archive_belief_load_state.dart';
 import 'package:archiveme_mobile/features/archive/v1/archive_feed_pagination_provider.dart';
 import 'package:archiveme_mobile/features/archive_changes/archive_changes_adapter.dart';
-import 'package:archiveme_mobile/features/ask_archive/ask_archive_entry_bar.dart';
-import 'package:archiveme_mobile/features/insights/pattern_exploration_entry_card.dart';
-import 'package:archiveme_mobile/features/insights/trend_pattern_summary_card.dart';
+import 'package:archiveme_mobile/features/archive/v1/feature_unlock_service.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
+import 'package:archiveme_mobile/models/sync_status.dart';
 import 'package:archiveme_mobile/services/app_services.dart';
 import 'package:archiveme_mobile/theme/app_colors.dart';
-import 'package:archiveme_mobile/widgets/archive/archive_changes_section.dart';
+import 'package:archiveme_mobile/widgets/archive/archive_change_feed.dart';
 import 'package:archiveme_mobile/widgets/archive/archive_changes_unavailable_notice.dart';
 import 'package:archiveme_mobile/widgets/archive/archive_empty_state.dart';
 import 'package:archiveme_mobile/widgets/archive/archive_entry_card.dart';
 import 'package:archiveme_mobile/widgets/archive/archive_search_field.dart';
 import 'package:archiveme_mobile/widgets/archive/archive_status_banner.dart';
 import 'package:archiveme_mobile/widgets/archive/archive_home_choose_what_leaves_tile.dart';
-import 'package:archiveme_mobile/widgets/archive/archive_verified_changes_section.dart';
-import 'package:archiveme_mobile/widgets/insight_share/insight_share_exporter.dart';
+import 'package:archiveme_mobile/widgets/archive/feature_unlock_tools.dart';
 import 'package:archiveme_mobile/widgets/memory_resurfacing_section.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 /// Responsive [CustomScrollView] slivers for the Archive Home dashboard.
@@ -53,6 +52,8 @@ class ArchiveDashboardScrollView extends StatelessWidget {
   /// Skips [ArchiveChangesAdapter.load] so widget tests can pump the feed
   /// without initializing AppServices.
   @visibleForTesting
+  // Kept so existing dashboard callers can still pass a snapshot.
+  // ignore: unused_field
   final ArchiveChangesSnapshot? previewChangesSnapshot;
 
   @override
@@ -67,7 +68,7 @@ class ArchiveDashboardScrollView extends StatelessWidget {
         );
 
         return RefreshIndicator(
-          onRefresh: onRefresh,
+          onRefresh: () => _refreshDashboard(context),
           child: CustomScrollView(
             controller: controller,
             physics: const AlwaysScrollableScrollPhysics(),
@@ -85,39 +86,6 @@ class ArchiveDashboardScrollView extends StatelessWidget {
                     loadState: loadState,
                     showChangesUnavailable: showChangesUnavailable,
                   ),
-                ),
-              ),
-              SliverPadding(
-                padding: EdgeInsets.fromLTRB(
-                  sliverPadding.left,
-                  0,
-                  sliverPadding.right,
-                  0,
-                ),
-                sliver: const SliverToBoxAdapter(
-                  child: AskArchiveEntryBar(),
-                ),
-              ),
-              SliverPadding(
-                padding: EdgeInsets.fromLTRB(
-                  sliverPadding.left,
-                  0,
-                  sliverPadding.right,
-                  0,
-                ),
-                sliver: const SliverToBoxAdapter(
-                  child: PatternExplorationEntryCard(),
-                ),
-              ),
-              SliverPadding(
-                padding: EdgeInsets.fromLTRB(
-                  sliverPadding.left,
-                  0,
-                  sliverPadding.right,
-                  0,
-                ),
-                sliver: const SliverToBoxAdapter(
-                  child: TrendPatternSummaryCard(),
                 ),
               ),
               if (loadState == ArchiveBeliefLoadState.loading &&
@@ -155,83 +123,68 @@ class ArchiveDashboardScrollView extends StatelessWidget {
                       child: Column(
                         children: [
                           ArchiveSearchField(onQueryChanged: onQueryChanged),
-                          SizedBox(height: ArchiveResponsiveLayout.gap(context)),
+                          SizedBox(
+                            height: ArchiveResponsiveLayout.gap(context),
+                          ),
                         ],
                       ),
                     ),
                   ),
-                SliverPadding(
-                  padding: EdgeInsets.symmetric(horizontal: sliverPadding.left),
-                  sliver: SliverToBoxAdapter(
-                    child: ArchiveVerifiedChangesSection(
-                      proofCandidates: feed.verifiedProofEntries,
-                      proofContextEntries: feed.proofContextEntries,
+                if (feed.resurfacingCards.isNotEmpty)
+                  SliverPadding(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: sliverPadding.left,
                     ),
-                  ),
-                ),
-                SliverPadding(
-                  padding: EdgeInsets.symmetric(horizontal: sliverPadding.left),
-                  sliver: SliverToBoxAdapter(
-                    child: ArchiveChangesSection(
-                      previewSnapshot: previewChangesSnapshot,
-                    ),
-                  ),
-                ),
-                SliverPadding(
-                  padding: EdgeInsets.symmetric(horizontal: sliverPadding.left),
-                  sliver: SliverToBoxAdapter(
-                    child: Column(
-                      children: [
-                        InsightShareExporter(entries: feed.proofContextEntries),
-                        SizedBox(height: ArchiveResponsiveLayout.gap(context)),
-                      ],
-                    ),
-                  ),
-                ),
-                SliverPadding(
-                  padding: EdgeInsets.symmetric(horizontal: sliverPadding.left),
-                  sliver: SliverToBoxAdapter(
-                    child: Column(
-                      children: [
-                        if (feed.resurfacingCards.isNotEmpty) ...[
-                          MemoryResurfacingSection(
-                            cards: feed.resurfacingCards,
-                            onCardTap: (card) {
-                              unawaited(
-                                AppServices.instance.memoryResurfacing
-                                    .markOpened(card.entry.id),
-                              );
-                              onEntryTap(card.entry.id);
-                            },
+                    sliver: SliverMainAxisGroup(
+                      slivers: [
+                        ...memoryResurfacingFeedSlivers(
+                          title: 'From your archive',
+                          cards: feed.resurfacingCards,
+                          onCardTap: (card) {
+                            unawaited(
+                              AppServices.instance.memoryResurfacing.markOpened(
+                                card.entry.id,
+                              ),
+                            );
+                            onEntryTap(card.entry.id);
+                          },
+                        ),
+                        SliverToBoxAdapter(
+                          child: SizedBox(
+                            height: ArchiveResponsiveLayout.gap(context),
                           ),
-                          SizedBox(height: ArchiveResponsiveLayout.gap(context)),
-                        ],
+                        ),
                       ],
                     ),
                   ),
-                ),
-                SliverPadding(
-                  padding: EdgeInsets.symmetric(horizontal: sliverPadding.left),
-                  sliver: SliverToBoxAdapter(
-                    child: Column(
-                      children: [
-                        if (feed.anniversaryCards.isNotEmpty) ...[
-                          OnThisDaySection(
-                            cards: feed.anniversaryCards,
-                            onCardTap: (card) {
-                              unawaited(
-                                AppServices.instance.memoryResurfacing
-                                    .markOpened(card.entry.id),
-                              );
-                              onEntryTap(card.entry.id);
-                            },
+                if (feed.anniversaryCards.isNotEmpty)
+                  SliverPadding(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: sliverPadding.left,
+                    ),
+                    sliver: SliverMainAxisGroup(
+                      slivers: [
+                        ...memoryResurfacingFeedSlivers(
+                          title: 'On this day',
+                          subtitle: 'From past years on this date',
+                          cards: feed.anniversaryCards,
+                          onCardTap: (card) {
+                            unawaited(
+                              AppServices.instance.memoryResurfacing.markOpened(
+                                card.entry.id,
+                              ),
+                            );
+                            onEntryTap(card.entry.id);
+                          },
+                        ),
+                        SliverToBoxAdapter(
+                          child: SizedBox(
+                            height: ArchiveResponsiveLayout.gap(context),
                           ),
-                          SizedBox(height: ArchiveResponsiveLayout.gap(context)),
-                        ],
+                        ),
                       ],
                     ),
                   ),
-                ),
                 SliverPadding(
                   padding: EdgeInsets.fromLTRB(
                     sliverPadding.left,
@@ -276,25 +229,39 @@ class ArchiveDashboardScrollView extends StatelessWidget {
                       builder: (context, constraints) {
                         final columns =
                             ArchiveResponsiveLayout.entryGridColumnsForWidth(
-                          constraints.crossAxisExtent,
-                        );
+                              constraints.crossAxisExtent,
+                            );
                         final itemCount =
-                            visibleEntries.length + (feed.isLoadingMore ? 1 : 0);
+                            visibleEntries.length +
+                            (feed.isLoadingMore ? 1 : 0);
 
                         if (ArchiveResponsiveLayout.prefersEntryList(
                           crossAxisCount: columns,
                           textScaler: MediaQuery.textScalerOf(context),
                         )) {
-                          return SliverList(
-                            delegate: SliverChildBuilderDelegate(
-                              (context, index) => _entryTile(
-                                context,
-                                visibleEntries,
-                                feed,
-                                index,
-                                onEntryTap,
-                              ),
-                              childCount: itemCount,
+                          return ArchiveChangeFeed(
+                            asSliver: true,
+                            showTitle: false,
+                            entries: visibleEntries,
+                            trailing: feed.isLoadingMore
+                                ? const Padding(
+                                    padding: EdgeInsets.symmetric(vertical: 16),
+                                    child: Center(
+                                      child: CircularProgressIndicator(),
+                                    ),
+                                  )
+                                : null,
+                            itemBuilder: (context, entry) => ArchiveEntryCard(
+                              entry: entry,
+                              onTap: () {
+                                unawaited(
+                                  openEntryRespectingConflict(
+                                    context: context,
+                                    entry: entry,
+                                    onOpen: () => onEntryTap(entry.id),
+                                  ),
+                                );
+                              },
                             ),
                           );
                         }
@@ -302,9 +269,9 @@ class ArchiveDashboardScrollView extends StatelessWidget {
                         return SliverGrid(
                           gridDelegate:
                               ArchiveResponsiveLayout.entryGridDelegate(
-                            context: context,
-                            crossAxisCount: columns,
-                          ),
+                                context: context,
+                                crossAxisCount: columns,
+                              ),
                           delegate: SliverChildBuilderDelegate(
                             (context, index) => _entryTile(
                               context,
@@ -336,6 +303,20 @@ class ArchiveDashboardScrollView extends StatelessWidget {
         );
       },
     );
+  }
+
+  Future<void> _refreshDashboard(BuildContext context) async {
+    final scoped =
+        context.findAncestorWidgetOfExactType<ProviderScope>() != null ||
+        context.findAncestorWidgetOfExactType<UncontrolledProviderScope>() !=
+            null;
+    if (scoped) {
+      await ProviderScope.containerOf(
+        context,
+        listen: false,
+      ).read(featureUnlockProvider.notifier).refresh();
+    }
+    await onRefresh();
   }
 }
 
@@ -400,10 +381,23 @@ class _IntroSection extends StatelessWidget {
           ),
         ],
         const SizedBox(height: 16),
+        const FeatureUnlockDashboardSlot(),
+        const SizedBox(height: 16),
         if (showChangesUnavailable) const ArchiveChangesUnavailableNotice(),
       ],
     );
   }
+}
+
+/// Opens [onOpen] for the entry. A conflicted row still opens here because
+/// the resolution dialog is not mounted on this branch.
+Future<void> openEntryRespectingConflict({
+  required BuildContext context,
+  required JournalEntry entry,
+  required VoidCallback onOpen,
+}) async {
+  if (entry.syncStatus == SyncStatus.conflict && !context.mounted) return;
+  onOpen();
 }
 
 Widget _entryTile(
@@ -425,6 +419,14 @@ Widget _entryTile(
   final entry = entries[index];
   return ArchiveEntryCard(
     entry: entry,
-    onTap: () => onEntryTap(entry.id),
+    onTap: () {
+      unawaited(
+        openEntryRespectingConflict(
+          context: context,
+          entry: entry,
+          onOpen: () => onEntryTap(entry.id),
+        ),
+      );
+    },
   );
 }
