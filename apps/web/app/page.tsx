@@ -3,20 +3,32 @@ import Link from "next/link";
 
 import { SiteFooter } from "@/components/SiteFooter";
 import { SiteHeader } from "@/components/SiteHeader";
+import { WaitlistForm } from "@/components/WaitlistForm";
 import { PrimaryMain } from "@/components/layout/PrimaryMain";
-import { APP_BRAND_NAME } from "@/lib/product/brand-copy";
+import { MARKETING_SITE_URL } from "@/lib/site/marketing-site";
 import { NOT_THERAPY_LINE } from "@/lib/trust-copy";
-import {
-  WEB_MARKETING_BODY,
-  WEB_MARKETING_LEAD,
-  WEB_MARKETING_MOBILE_NOTE,
-  WEB_MARKETING_PROMISE,
-} from "@/lib/site/web-marketing-copy";
+
+const title = "Thoughtprint — A private voice journal";
+const description =
+  "A private voice journal that remembers what you actually said. Free core, forever. Transcribed on your phone. Never metered.";
 
 export const metadata: Metadata = {
-  title: `${APP_BRAND_NAME} — ${WEB_MARKETING_PROMISE}`,
-  description: WEB_MARKETING_LEAD,
+  title,
+  description,
+  openGraph: {
+    title,
+    description,
+    url: MARKETING_SITE_URL,
+    siteName: "Thoughtprint",
+    type: "website",
+  },
 };
+
+const proofPoints = [
+  "Transcribed on your phone.",
+  "Every insight cites your own words.",
+  "You can export or delete everything.",
+];
 
 export default function HomePage() {
   return (
@@ -24,31 +36,30 @@ export default function HomePage() {
       <div className="mx-auto max-w-3xl px-4 pb-20 sm:px-6">
         <SiteHeader />
         <PrimaryMain className="mt-6">
-          <p className="text-xs uppercase tracking-[0.2em] text-violet-200">{APP_BRAND_NAME}</p>
           <h1 className="mt-3 text-4xl font-semibold tracking-tight text-white sm:text-5xl">
-            {WEB_MARKETING_PROMISE}
+            A private voice journal that remembers what you actually said.
           </h1>
-          <p className="mt-5 text-lg leading-relaxed text-zinc-200">{WEB_MARKETING_LEAD}</p>
-          <p className="mt-4 text-sm leading-relaxed text-zinc-400">{WEB_MARKETING_BODY}</p>
-          <p className="mt-4 text-sm leading-relaxed text-zinc-500">{WEB_MARKETING_MOBILE_NOTE}</p>
-          <nav
-            aria-label="Get started"
-            className="mt-10 flex flex-wrap gap-4 text-sm font-medium"
-          >
-            <Link
-              href="/beta"
-              className="rounded-full bg-violet-600 px-5 py-2.5 text-white transition-colors hover:bg-violet-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-400/60"
-            >
-              Beta &amp; download
+          <p className="mt-5 text-lg leading-relaxed text-zinc-200">
+            Free core, forever. Transcribed on your phone. Never metered.
+          </p>
+          <ul className="mt-8 space-y-3 text-sm leading-relaxed text-zinc-300">
+            {proofPoints.map((point) => (
+              <li key={point}>{point}</li>
+            ))}
+          </ul>
+          <WaitlistForm />
+          <section className="mt-12">
+            <h2 className="text-lg font-medium text-white">Coming from another journal?</h2>
+            <p className="mt-2 text-sm leading-relaxed text-zinc-400">
+              Import your Day One or Apple Notes export.
+            </p>
+          </section>
+          <p className="mt-10 text-sm">
+            <Link href="/privacy" className="text-zinc-400 underline-offset-4 hover:text-zinc-200 hover:underline">
+              Privacy
             </Link>
-            <Link
-              href="/contact"
-              className="rounded-full border border-white/15 px-5 py-2.5 text-zinc-200 transition-colors hover:border-white/25 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-400/60"
-            >
-              Contact support
-            </Link>
-          </nav>
-          <p className="mt-10 text-xs leading-relaxed text-zinc-600">{NOT_THERAPY_LINE}</p>
+          </p>
+          <p className="mt-6 text-xs leading-relaxed text-zinc-600">{NOT_THERAPY_LINE}</p>
         </PrimaryMain>
         <SiteFooter className="mt-12" />
       </div>

@@ -182,6 +182,13 @@ export const AUTH_SYNC_SCHEMA_STATEMENTS = [
   `CREATE INDEX IF NOT EXISTS caregiver_redemption_codes_link_idx ON caregiver_redemption_codes (link_token_hash)`,
   `CREATE INDEX IF NOT EXISTS caregiver_redemption_codes_manual_idx ON caregiver_redemption_codes (manual_code_hash)`,
   `CREATE INDEX IF NOT EXISTS caregiver_redemption_codes_token_idx ON caregiver_redemption_codes (token_id)`,
+  `CREATE TABLE IF NOT EXISTS waitlist_signups (
+  email text PRIMARY KEY,
+  unsubscribe_token text NOT NULL UNIQUE,
+  created_at timestamptz NOT NULL DEFAULT now(),
+  unsubscribed_at timestamptz
+)`,
+  `CREATE INDEX IF NOT EXISTS waitlist_signups_created_at_idx ON waitlist_signups (created_at)`,
   ...EVIDENCE_METHOD_SCHEMA_STATEMENTS,
 ] as const;
 
