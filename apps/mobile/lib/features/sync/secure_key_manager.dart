@@ -72,14 +72,46 @@ class SecureKeyManager implements SyncCryptoKeyStore {
     return key;
   }
 
-  /// Premium cloud backup stays off until the shown phrase is entered again.
+  /// Three word positions the user must confirm before backup can turn on.
+  static List<int> selectWordIndexes(
+    String phrase, {
+    int count = 3,
+    Random? random,
+  }) {
+    final words = normalizePhrase(phrase).split(' ');
+    if (words.length < count) {
+      throw const FormatException('Enter the 12-word recovery phrase.');
+    }
+    final indexes = List<int>.generate(words.length, (index) => index);
+    indexes.shuffle(random ?? Random.secure());
+    return indexes.take(count).toList()..sort();
+  }
+
+  /// True when every selected position matches the shown phrase.
+  static bool confirmsSelectedWords({
+    required String shownPhrase,
+    required Map<int, String> answers,
+  }) {
+    final words = normalizePhrase(shownPhrase).split(' ');
+    if (answers.length < 3) return false;
+    for (final entry in answers.entries) {
+      if (entry.key < 0 || entry.key >= words.length) return false;
+      if (normalizePhrase(entry.value) != words[entry.key]) return false;
+    }
+    return true;
+  }
+
+  /// Premium cloud backup stays off until the selected words match.
   Future<bool> enableCloudBackup({
     required bool hasPremium,
     required String shownPhrase,
-    required String enteredPhrase,
+    required Map<int, String> confirmedWords,
   }) async {
     if (!hasPremium) return false;
-    if (normalizePhrase(shownPhrase) != normalizePhrase(enteredPhrase)) {
+    if (!confirmsSelectedWords(
+      shownPhrase: shownPhrase,
+      answers: confirmedWords,
+    )) {
       return false;
     }
     await confirmRecoveryPhrase(shownPhrase);

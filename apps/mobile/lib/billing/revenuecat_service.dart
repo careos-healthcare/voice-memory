@@ -28,6 +28,7 @@ class RevenueCatService implements StoreBillingPort {
 
   bool _configured = false;
   PremiumEntitlements _latest = PremiumEntitlements.free();
+  PremiumEntitlements? _lastConfirmedPro;
   RevenueCatDiagnostics _diagnostics = RevenueCatDiagnostics.initial();
 
   @override
@@ -362,12 +363,18 @@ class RevenueCatService implements StoreBillingPort {
       label: 'refreshEntitlements',
     );
     if (info == null) {
+      final cached = _lastConfirmedPro;
+      if (cached != null) {
+        _emit(cached);
+        return cached;
+      }
       RevenueCatDiagnosticsLog.refreshUnavailableUsingFreeTier();
       final free = PremiumEntitlements.free();
       _emit(free);
       return free;
     }
     final mapped = _mapCustomerInfo(info);
+    _lastConfirmedPro = mapped.isPro ? mapped : null;
     _emit(mapped);
     return mapped;
   }

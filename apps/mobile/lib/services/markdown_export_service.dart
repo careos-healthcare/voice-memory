@@ -157,7 +157,7 @@ class MarkdownExportService {
     if (directory == null || directory.trim().isEmpty) return;
     if (!FreeTierGate.allowsObsidianSync(
       PremiumAccess.current,
-      offline: false,
+      offline: true,
     )) {
       return;
     }

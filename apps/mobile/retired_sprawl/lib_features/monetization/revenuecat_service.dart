@@ -97,8 +97,20 @@ abstract final class FreeTierGate {
     PremiumEntitlement entitlement, {
     required bool offline,
   }) {
-    final receipt = entitlement.canUseObsidianSync;
-    return offline ? receipt : receipt;
+    return OfflinePremiumReceipt.resolve(
+      entitlement,
+      offline: offline,
+    ).canUseObsidianSync;
+  }
+
+  static bool allowsLocalVectorSearch(
+    PremiumEntitlement entitlement, {
+    required bool offline,
+  }) {
+    return OfflinePremiumReceipt.resolve(
+      entitlement,
+      offline: offline,
+    ).hasPremiumAccess;
   }
 
   static bool allowsPatternSynthesis(
@@ -134,12 +146,31 @@ abstract final class FreeTierGate {
   }
 }
 
+/// Last confirmed premium receipt, kept when `purchases_flutter` cannot refresh.
+abstract final class OfflinePremiumReceipt {
+  static PremiumEntitlement? cached;
+
+  static void remember(PremiumEntitlement entitlement) {
+    cached = entitlement.hasPremiumAccess ? entitlement : null;
+  }
+
+  /// Offline reads use the cached receipt. A missing cache stays on [live].
+  static PremiumEntitlement resolve(
+    PremiumEntitlement live, {
+    required bool offline,
+  }) {
+    if (!offline || live.hasPremiumAccess) return live;
+    return cached ?? live;
+  }
+}
+
 /// Latest entitlement read by feature gates that are not widgets.
 abstract final class PremiumAccess {
   static PremiumEntitlement current = PremiumEntitlement.free;
 
   static void apply(PremiumEntitlement entitlement) {
     current = entitlement;
+    OfflinePremiumReceipt.remember(entitlement);
   }
 }
 
