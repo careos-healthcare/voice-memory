@@ -39,7 +39,7 @@ class First60SecondStore {
     }
     try {
       return First60SecondState.fromJson(await prefs.readMap(prefsKey));
-    } catch (_, stackTrace) {
+    } catch (_) {
       return const First60SecondState(
         returnCueResolved: true,
         proBridgeResolved: true,
