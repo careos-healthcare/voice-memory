@@ -5,6 +5,7 @@ import 'package:archiveme_mobile/security/sqlite/secure_sqlite_lock_service.dart
 import 'package:archiveme_mobile/security/sqlite/sqlite_encryption_key_store.dart';
 import 'package:archiveme_mobile/security/sqlite/sqlite_encryption_migrator.dart';
 import 'package:archiveme_mobile/storage/sqlite/sqlite_database_encryption_key.dart';
+import 'package:archiveme_mobile/storage/sqlite/sqlcipher_cipher_guard.dart';
 import 'package:archiveme_mobile/storage/sqlite/sqlite_connection_pragmas.dart';
 import 'package:archiveme_mobile/storage/sqlite/sqlite_hybrid_search_initializer.dart';
 import 'package:archiveme_mobile/storage/sqlite/sqlite_migration_manager.dart';
@@ -38,6 +39,16 @@ abstract final class SqliteDatabaseInitializer {
 
   static Future<void> configureConnection(sqflite.Database database) async {
     await SqliteConnectionPragmas.apply(database);
+  }
+
+  /// Keyed connections must prove SQLCipher is linked before any other pragma.
+  /// An empty `cipher_version` in release throws [SqlcipherUnavailableException]
+  /// and does not reopen the file as plaintext.
+  static Future<void> configureEncryptedConnection(
+    sqflite.Database database,
+  ) async {
+    await SqlcipherCipherGuard.assertReleaseCipher(database);
+    await configureConnection(database);
   }
 
   /// Resolves the encryption key, migrates legacy plaintext files when needed,
@@ -126,7 +137,7 @@ abstract final class SqliteDatabaseInitializer {
       password: password,
       version: 1,
       singleInstance: singleInstance,
-      onConfigure: configureConnection,
+      onConfigure: configureEncryptedConnection,
       onCreate: _onCreate,
       onOpen: _onOpen,
     );
@@ -145,7 +156,7 @@ abstract final class SqliteDatabaseInitializer {
       singleInstance: singleInstance,
       onConfigure: (db) async {
         await db.execute("PRAGMA key = '${_escapeSqlStringLiteral(password)}'");
-        await configureConnection(db);
+        await configureEncryptedConnection(db);
       },
       onCreate: _onCreate,
       onOpen: onOpen,
@@ -238,7 +249,7 @@ abstract final class SqliteDatabaseInitializer {
             targetPath,
             password: password,
             version: 1,
-            onConfigure: configureConnection,
+            onConfigure: configureEncryptedConnection,
             onCreate: _onCreate,
           );
     try {

@@ -158,7 +158,7 @@ abstract final class IsolateSafeSqliteDatabaseInitializer {
       password: password,
       version: 1,
       singleInstance: false,
-      onConfigure: SqliteDatabaseInitializer.configureConnection,
+      onConfigure: SqliteDatabaseInitializer.configureEncryptedConnection,
       onCreate: (db, version) =>
           _onCreate(db, version, runMigrations: runMigrations),
       onOpen: (db) => _onOpen(db, runMigrations: runMigrations),
@@ -176,7 +176,7 @@ abstract final class IsolateSafeSqliteDatabaseInitializer {
       singleInstance: false,
       onConfigure: (db) async {
         await db.execute("PRAGMA key = '${_escapeSqlStringLiteral(password)}'");
-        await SqliteDatabaseInitializer.configureConnection(db);
+        await SqliteDatabaseInitializer.configureEncryptedConnection(db);
       },
       onCreate: (db, version) =>
           _onCreate(db, version, runMigrations: runMigrations),
