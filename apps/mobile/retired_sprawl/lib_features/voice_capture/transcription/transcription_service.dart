@@ -6,6 +6,7 @@ import 'package:archiveme_mobile/core/network/api_failure.dart';
 import 'package:archiveme_mobile/core/network/api_result.dart';
 import 'package:archiveme_mobile/core/network/network_cancel_token.dart';
 import 'package:archiveme_mobile/data/repositories/capture_repository.dart';
+import 'package:archiveme_mobile/features/ai_coaching/entry_entity_tagger.dart';
 import 'package:archiveme_mobile/features/ai_coaching/recording_coach_hook.dart';
 import 'package:archiveme_mobile/features/voice_capture/audio/capture_audio_compressor.dart';
 import 'package:archiveme_mobile/features/voice_capture/transcription/native_speech_transcription.dart';
@@ -110,6 +111,9 @@ class TranscriptionOutcome {
 void dispatchTranscriptReady(String transcript, {String? entryId}) {
   unawaited(
     RecordingCoachHook.onTranscriptReady(transcript, entryId: entryId),
+  );
+  unawaited(
+    EntryEntityTagger.onTranscriptReady(transcript, entryId: entryId),
   );
 }
 
