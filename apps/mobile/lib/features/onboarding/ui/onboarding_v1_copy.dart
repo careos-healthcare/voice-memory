@@ -14,7 +14,7 @@ abstract final class OnboardingV1Copy {
   /// Same claim as the repeating-phrase picture: we show your wording.
   static const welcomeBody =
       'Thoughtprint is a private voice archive of what you actually said. '
-      'When a phrase repeats, those moments sit next to each other — '
+      'When a phrase repeats, those entries sit next to each other — '
       'your wording, not a verdict. '
       'It does not diagnose, treat, or promise transformation.';
 
@@ -22,8 +22,8 @@ abstract final class OnboardingV1Copy {
 
   static const pillar1Title = 'Your words are cited as evidence';
   static const pillar1Body =
-      'Patterns and changes link back to the entries you saved. You can '
-      'inspect source proof before you rely on any read.';
+      'Patterns and changes link back to the entries you recorded. You can '
+      'inspect source evidence before you rely on any read.';
 
   static const String pillar2Title = TrustBadgeCopy.onDeviceProcessing;
   static const pillar2Body =

@@ -30,7 +30,7 @@ void main() {
 
   group('Record first-use copy', () {
     test('primary promise matches spec', () {
-      expect(RecordFirstUsePromptCopy.title, 'Save one real moment.');
+      expect(RecordFirstUsePromptCopy.title, 'Record one real entry.');
       expect(
         RecordFirstUsePromptCopy.body,
         ProgressiveEvidenceStateCopy.zeroBody,
@@ -117,7 +117,7 @@ void main() {
       () {
         expect(ConsumerUiCopy.archiveDiscoverPatternsLink, 'See all patterns');
         expect(ConsumerUiCopy.archiveTimelineLink, 'Timeline');
-        expect(ConsumerUiCopy.archiveSearchLink, 'Find saved moments');
+        expect(ConsumerUiCopy.archiveSearchLink, 'Search archive');
       },
     );
   });

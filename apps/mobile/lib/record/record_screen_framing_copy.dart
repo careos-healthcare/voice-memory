@@ -15,7 +15,7 @@ abstract class RecordScreenFramingCopy {
   /// True empty archive — count 0 only.
   static String get emptyArchiveTitle => BetaImprovementPackEngine.recordTitle(
     entryCount: 0,
-    fallback: 'Save one real moment.',
+    fallback: 'Record one real entry.',
   );
   static String get emptyArchiveBody => BetaImprovementPackEngine.recordBody(
     entryCount: 0,
@@ -37,13 +37,13 @@ abstract class RecordScreenFramingCopy {
 
   /// Low-friction pressure wedge under the first-use capture block.
   static const String firstUsePressureMomentLink =
-      'Or start with: a pressure moment';
+      'Or start with: a pressure entry';
 
   /// One saved moment — calm started state, no pattern claims.
   static const String archiveStartedTitle =
       ProgressiveEvidenceStateCopy.oneTitle;
   static const String archiveStartedBody = ProgressiveEvidenceStateCopy.oneBody;
-  static const String archiveStartedCta = 'Add one more moment';
+  static const String archiveStartedCta = 'Add one more entry';
 
   /// Two–three entries without a grounded repeat yet.
   static const String weakCompareBody = ProgressiveEvidenceStateCopy.twoBody;
@@ -57,7 +57,7 @@ abstract class RecordScreenFramingCopy {
     'Notice what repeats',
     'Watch what changes',
     'Thoughtprint is starting to notice',
-    'Each moment helps Thoughtprint remember the pattern',
+    'Each entry helps Thoughtprint remember the pattern',
     'starting to notice',
   ];
 }
@@ -68,7 +68,7 @@ abstract final class RecordFirstUsePromptCopy {
 
   static String get title => BetaImprovementPackEngine.recordTitle(
     entryCount: 0,
-    fallback: 'Save one real moment.',
+    fallback: 'Record one real entry.',
   );
 
   static String get body => BetaImprovementPackEngine.recordBody(

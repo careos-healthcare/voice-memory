@@ -57,11 +57,11 @@ void main() {
   });
 
   group('first-session clarity', () {
-    test('first-session copy says Save one real moment', () {
-      expect(RecordFirstUsePromptCopy.title, 'Save one real moment.');
+    test('first-session copy says Record one real entry', () {
+      expect(RecordFirstUsePromptCopy.title, 'Record one real entry.');
       expect(
         RecordScreenFramingCopy.emptyArchiveTitle,
-        'Save one real moment.',
+        'Record one real entry.',
       );
       expect(
         RecordFirstUsePromptCopy.body,

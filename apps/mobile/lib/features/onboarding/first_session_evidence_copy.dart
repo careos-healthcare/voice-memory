@@ -9,7 +9,7 @@ abstract final class FirstSessionEvidenceCopy {
   static const quoteTitle = "Here's what you said";
   static const playChip = 'Play';
   static const remindQuestion =
-      'Want to be reminded to check on this in a week?';
+      'Want to be reminded to look at this entry in a week?';
   static const remindYes = 'Yes';
   static const remindNotNow = 'Not now';
 

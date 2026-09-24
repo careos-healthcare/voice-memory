@@ -8,8 +8,8 @@ abstract final class CustomerLanguage {
   static const brandName = 'Thoughtprint';
   static const logoInitials = 'AM';
 
-  static const moment = 'Moment';
-  static const momentLower = 'moment';
+  static const moment = 'Entry';
+  static const momentLower = 'entry';
   static const archive = 'Archive';
   static const archiveLower = 'archive';
   static const possiblePattern = 'Possible pattern';
@@ -27,27 +27,27 @@ abstract final class CustomerLanguage {
   static const yourWordsLabel = 'Your words';
   static const archiveSuggestionLabel = 'Thoughtprint suggestion';
 
-  static const onboardingHeadline = 'Save the moment. See what returns.';
+  static const onboardingHeadline = 'Record the entry. See what returns.';
   static const onboardingBody =
-      'Save a voice or typed moment in your own words. Over time, Thoughtprint '
-      'may show what repeats — with the moments behind it.';
+      'Record a voice or typed entry in your own words. Over time, Thoughtprint '
+      'may show what repeats — with the entries behind it.';
 
-  static const emptyArchiveTitle = 'Record a few real moments';
+  static const emptyArchiveTitle = 'Record a few real entries';
   static const emptyArchiveBody =
-      'Save one real moment. Thoughtprint compares it later.';
+      'Record one real entry. Thoughtprint compares it later.';
 
-  static const oneMomentTitle = 'First moment saved';
+  static const oneMomentTitle = 'First entry recorded';
   static const oneMomentBody =
-      'Come back when this shows up again. Thoughtprint has one moment to compare later.';
+      'Come back when this shows up again. Thoughtprint has one entry to compare later.';
 
-  static const twoMomentsTitle = 'These moments may be related';
+  static const twoMomentsTitle = 'These entries may be related';
   static const twoMomentsBody =
-      'Thoughtprint noticed similar wording across two saved moments. '
+      'Thoughtprint noticed similar wording across two recorded entries. '
       'This is not an established pattern yet.';
 
   static const threePlusTitle = possiblePattern;
   static const threePlusBody =
-      'These moments may repeat a similar theme. Review the evidence '
+      'These entries may repeat a similar theme. Review the evidence '
       'before treating it as settled.';
 
   static const contactEmail = 'hello@thoughtprint.xyz';

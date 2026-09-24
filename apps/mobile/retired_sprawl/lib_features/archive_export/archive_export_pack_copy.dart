@@ -9,7 +9,7 @@ abstract final class ArchiveExportPackCopy {
   static const emptyTitle = 'Nothing to export yet';
 
   static const emptyBody =
-      'Save a moment on this device first. Your export will appear here when '
+      'Record a entry on this device first. Your export will appear here when '
       'your archive has something to include.';
 
   static const previewIntro =
@@ -20,9 +20,9 @@ abstract final class ArchiveExportPackCopy {
 
   static const exportDateLabel = 'Export date';
 
-  static const savedMomentsLabel = 'Saved moments';
+  static const savedMomentsLabel = 'Recorded entries';
 
-  static const usableEvidenceLabel = 'Usable evidence moments';
+  static const usableEvidenceLabel = 'Usable evidence entries';
 
   static const currentBeliefLabel = 'Current possible pattern';
 
@@ -30,7 +30,7 @@ abstract final class ArchiveExportPackCopy {
 
   static const weeklyReviewLabel = 'Weekly review summary';
 
-  static const recentMomentsLabel = 'Recent saved moments';
+  static const recentMomentsLabel = 'Recent recorded entries';
 
   static const privacyNoteDevice = 'This export was created on this device.';
 
@@ -43,7 +43,7 @@ abstract final class ArchiveExportPackCopy {
   static const shareSubject = 'Thoughtprint archive export';
 
   static const previewUnavailable =
-      'Saved locally — preview not available yet.';
+      'Recorded locally — preview not available yet.';
 
   static String evidenceMapRow(String label, int count) =>
       '$label: $count ${count == 1 ? 'moment' : 'moments'}';

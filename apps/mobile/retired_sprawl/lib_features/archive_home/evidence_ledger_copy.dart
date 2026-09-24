@@ -5,10 +5,10 @@ abstract final class EvidenceLedgerCopy {
   static const sheetTitle = 'Evidence ledger';
   static const sheetSubtitle =
       'Possible patterns, changes, and evidence from your archive.';
-  static const searchHint = 'Search moments, patterns, and evidence…';
+  static const searchHint = 'Search entries, patterns, and evidence…';
   static const emptyTitle = 'No indexed evidence yet';
   static const emptyBody =
-      'Save a moment and let Thoughtprint index citable facts — they will appear here.';
+      'Record a entry and let Thoughtprint index citable facts — they will appear here.';
   static const filterAll = 'All time';
   static const filter7Days = '7 days';
   static const filter30Days = '30 days';

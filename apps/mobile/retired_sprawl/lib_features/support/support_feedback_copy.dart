@@ -31,7 +31,7 @@ abstract final class SupportFeedbackCopy {
   static String get sectionTestingBulletOne =>
       'Use $typeInsteadLabel if microphone access is unavailable.';
   static const sectionTestingBulletTwo =
-      'Use Sample Archive to explore the product without adding private moments.';
+      'Use Sample Archive to explore the product without adding private entries.';
 
   static const openSupportPageButton = 'Open support page';
   static const copyChecklistButton = 'Copy support checklist';

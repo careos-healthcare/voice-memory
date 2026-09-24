@@ -126,7 +126,7 @@ class CaptureReadyPanel extends StatelessWidget {
               onPressed: saving
                   ? null
                   : () => onSaveTyped(typedController.text.trim()),
-              child: const Text('Save moment'),
+              child: const Text('Record'),
             ),
           ],
           if (permissionRequiresSettings) ...[
@@ -231,7 +231,7 @@ class CaptureFailurePanel extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.only(top: AppSpacing.sm),
               child: Text(
-                'Your moment is saved on this device.',
+                'Your entry is recorded on this device.',
                 style: Theme.of(context).textTheme.bodyMedium,
               ),
             ),

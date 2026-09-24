@@ -214,7 +214,7 @@ void main() {
     });
 
     test('first-use prompt copy is concrete and not diagnostic', () {
-      expect(RecordFirstUsePromptCopy.title, 'Save one real moment.');
+      expect(RecordFirstUsePromptCopy.title, 'Record one real entry.');
       expect(
         RecordFirstUsePromptCopy.body,
         contains('returned, changed, faded, or corrected'),
@@ -259,7 +259,7 @@ void main() {
     test('empty and started copy match the clean first-load spec', () {
       expect(
         RecordScreenFramingCopy.emptyArchiveTitle,
-        'Save one real moment.',
+        'Record one real entry.',
       );
       expect(
         RecordScreenFramingCopy.emptyArchiveBody,

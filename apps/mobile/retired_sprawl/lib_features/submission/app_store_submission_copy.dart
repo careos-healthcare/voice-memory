@@ -11,7 +11,7 @@ abstract final class AppStoreSubmissionCopy {
 
   static String get typeInsteadLabel => VisibleArchiveProofCopy.typeInsteadCta;
 
-  static const screenshotCaptionSaveMoment = 'Save a private moment';
+  static const screenshotCaptionSaveMoment = 'Record a private entry';
   static const screenshotCaptionRepeatsOverTime = 'See what repeats over time';
   static const screenshotCaptionEvidenceNotGuesses =
       'Review evidence, not guesses';

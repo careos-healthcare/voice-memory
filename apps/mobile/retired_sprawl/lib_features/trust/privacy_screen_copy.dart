@@ -12,7 +12,7 @@ abstract class PrivacyScreenCopy {
   static const String intro =
       'Your recordings and reflections are personal. Thoughtprint is private by '
       'default. Audio and transcript text are sent only when you turn on '
-      'remote processing for a new moment.';
+      'remote processing for a new entry.';
 
   /// First thing on the privacy disclosure — scoped to processing vs sync,
   /// not a blanket "nothing leaves this phone."
@@ -51,7 +51,7 @@ abstract class PrivacyScreenCopy {
 
   static const String onDeviceTitle = 'What stays on your device';
   static const String onDeviceBody =
-      'Your archive entries, saved details, action items, surfacing choices, '
+      'Your archive entries, recorded details, action items, surfacing choices, '
       'memory controls, packs, pins, and collections are stored locally by default. '
       'Archive metadata and prefs stay on this device as well.';
 
@@ -59,7 +59,7 @@ abstract class PrivacyScreenCopy {
   static const String aiProcessingBody =
       'When remote processing is on, Thoughtprint sends recorded audio for '
       'transcription and transcript text for reflection. When it is off, '
-      'new moments are saved on this device only. Anything already saved '
+      'new entries are recorded on this device only. Anything already recorded '
       'stays exactly as it is.';
 
   static const String encryptedBackupTitle = 'Optional encrypted backup';
@@ -127,7 +127,7 @@ abstract class PrivacyScreenCopy {
       'Remote processing is off until you turn it on, and these companies '
       'receive nothing before then. If you turn it on: OpenAI receives a '
       "moment's recorded audio to transcribe it, then the transcript text — "
-      'along with structured details of the earlier moments it is compared '
+      'along with structured details of the earlier entries it is compared '
       'against — to draft a reflection. Google receives streamed audio during '
       'a live conversation, where that feature is available. Encrypted backup '
       'is separate: sync uploads ciphertext, so the server holds backup data '
@@ -137,17 +137,17 @@ abstract class PrivacyScreenCopy {
 
   static const String remoteProcessingSectionTitle = 'Remote processing';
   static const String remoteProcessingSwitchLabel =
-      'Send new moments for transcription and reflection';
+      'Send new entries for transcription and reflection';
   static const String remoteProcessingSwitchBodyOn =
       'On — a new moment\'s audio and transcript may be sent to transcribe '
       'and compare it against what you\'ve said before. Turn this off any '
-      'time; anything already saved stays exactly as it is.';
+      'time; anything already recorded stays exactly as it is.';
   static const String remoteProcessingSwitchBodyOff =
-      'Off — new moments are saved on this device only. Nothing is sent '
+      'Off — new entries are recorded on this device only. Nothing is sent '
       'for transcription or reflection until you turn this on.';
   static const String remoteProcessingConsentedAtPrefix = 'Last turned on ';
   static const String remoteProcessingWithdrawnFootnote =
-      'Withdrawing here only changes what happens next — moments already '
+      'Withdrawing here only changes what happens next — entries already '
       'analyzed keep their existing reflection.';
 
   static const List<PrivacySection> sections = [

@@ -9,7 +9,7 @@ abstract final class SessionMovementCopy {
   static const confidenceMoved = 'Evidence shifted';
   static const newEvidence =
       'Your archive added new evidence to an existing possible pattern.';
-  static const contradiction = 'A moment may not fit the earlier read.';
+  static const contradiction = 'A entry may not fit the earlier read.';
   static const beliefWeakened =
       'A possible pattern may have weakened as new evidence arrived.';
   static const beliefStrengthened =

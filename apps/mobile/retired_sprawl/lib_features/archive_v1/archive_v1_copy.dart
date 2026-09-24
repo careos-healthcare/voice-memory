@@ -14,7 +14,7 @@ abstract class ArchiveV1Copy {
   static const String thenLabel = 'THEN';
   static const String nowLabel = 'NOW';
   static const String contradictionsTitle =
-      'Moments that may not fit';
+      'Entries that may not fit';
   static const String blindSpotsTitle = 'What may be missing';
   static const String evidenceTrailScreenTitle = 'Evidence';
   static const String whyBelieves = 'Why does Thoughtprint suggest this?';

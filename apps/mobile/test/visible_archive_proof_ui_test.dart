@@ -13,8 +13,8 @@ void main() {
   group('Visible archive proof UI', () {
     test('first-run promise uses three scannable steps', () {
       expect(VisibleArchiveProofCopy.firstRunPromiseSteps, [
-        'When it repeats, save it.',
-        'Save one real moment. ArchiveMe compares it later.',
+        'When it repeats, record it.',
+        'Record one real entry. Thoughtprint compares it later.',
         'Not a diary. Not homework. One sentence is enough.',
       ]);
     });

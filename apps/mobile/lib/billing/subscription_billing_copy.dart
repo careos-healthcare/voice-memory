@@ -10,7 +10,7 @@ abstract final class SubscriptionBillingCopy {
   static const proPlanBody =
       'Full historical comparisons, weekly archive reviews, and the complete evidence trail across your archive.';
   static const freePlanBody =
-      'Record moments and keep the evidence trail on your recent entries. Upgrade for Tier 2 historical analysis.';
+      'Record entries and keep the evidence trail on your recent entries. Upgrade for Tier 2 historical analysis.';
 
   static const pricingTitle = 'Pro pricing';
   static const pricingBody =
@@ -22,7 +22,7 @@ abstract final class SubscriptionBillingCopy {
   static const manageCta = 'Open subscription settings';
   static const cancelTitle = 'Cancel anytime';
   static const cancelBody =
-      'Cancellation takes effect at the end of your current billing period. You keep Pro access until then, and your saved moments stay on this device.';
+      'Cancellation takes effect at the end of your current billing period. You keep Pro access until then, and your recorded entries stay on this device.';
   static const cancelStepsTitle = 'How to cancel';
   static const cancelStepsIos = [
     'Open Settings on your iPhone',

@@ -178,7 +178,7 @@ void main() {
 
   group('First-proof journey', () {
     test('expects save, compare, thread, and longer-trail pro value', () {
-      expect(RecordFirstUsePromptCopy.title, 'Save one real moment.');
+      expect(RecordFirstUsePromptCopy.title, 'Record one real entry.');
       expect(FirstProofJourneyCopy.strip, contains('1 Save'));
       expect(FirstProofJourneyCopy.strip, contains('2 Compare'));
       expect(FirstProofJourneyCopy.strip, contains('3 First thread'));
