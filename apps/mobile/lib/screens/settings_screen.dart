@@ -10,6 +10,7 @@ import 'package:archiveme_mobile/design/archive_responsive_layout.dart';
 import 'package:archiveme_mobile/features/action_items/archive_action_item.dart';
 import 'package:archiveme_mobile/features/archive_packs/archive_pack.dart';
 import 'package:archiveme_mobile/features/archive_proof/visible_archive_proof_copy.dart';
+import 'package:archiveme_mobile/features/backup/encrypted_archive_backup_actions.dart';
 import 'package:archiveme_mobile/features/beta/archive_beta_mission_gate.dart';
 import 'package:archiveme_mobile/features/beta_feedback_intelligence/beta_feedback_intelligence_engine.dart';
 import 'package:archiveme_mobile/features/beta_feedback_intelligence/beta_feedback_intelligence_model.dart';
@@ -73,19 +74,25 @@ class _SettingsScreenState extends State<SettingsScreen> {
     super.initState();
     unawaited(BetaFeedbackIntelligenceStore.ensureLoaded());
     unawaited(_loadJournalEntries());
-    unawaited(PackageInfo.fromPlatform().then((info) {
-      if (mounted) setState(() => _packageInfo = info);
-    }));
+    unawaited(
+      PackageInfo.fromPlatform().then((info) {
+        if (mounted) setState(() => _packageInfo = info);
+      }),
+    );
     if (V1CapabilityRegistry.notifications) {
-      unawaited(CheckInReminderService.remindersEnabled().then((value) {
-        if (mounted) setState(() => _remindersEnabled = value);
-      }));
+      unawaited(
+        CheckInReminderService.remindersEnabled().then((value) {
+          if (mounted) setState(() => _remindersEnabled = value);
+        }),
+      );
     }
-    unawaited(OnDeviceProcessingStore.ensureLoaded().then((_) {
-      if (mounted) {
-        setState(() => _onDeviceProcessing = OnDeviceProcessingStore.enabled);
-      }
-    }));
+    unawaited(
+      OnDeviceProcessingStore.ensureLoaded().then((_) {
+        if (mounted) {
+          setState(() => _onDeviceProcessing = OnDeviceProcessingStore.enabled);
+        }
+      }),
+    );
   }
 
   String get _reminderStateLabel {
@@ -257,9 +264,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               const SizedBox(height: AppSpacing.sm),
               RevenueReadinessCard(dashboard: RevenueReadinessEngine.build()),
               const SizedBox(height: AppSpacing.sm),
-              const TestFlightMetricsDashboardCard(
-                
-              ),
+              const TestFlightMetricsDashboardCard(),
               const SizedBox(height: AppSpacing.sm),
               const BetaConversionDiagnosisCard(),
             ],
@@ -315,6 +320,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               trailing: const Icon(Icons.chevron_right),
               onTap: () => context.push('/privacy-security'),
             ),
+            const EncryptedArchiveBackupSettingsTile(),
             const PrivacyDataControlsSection(),
             if (V1CapabilityRegistry.localAiPrivacyControls)
               KeyedSubtree(

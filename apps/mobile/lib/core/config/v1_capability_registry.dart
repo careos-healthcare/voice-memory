@@ -63,7 +63,8 @@ abstract final class V1CapabilityRegistry {
       ProvenanceRecoveryFeatureFlags.isEnabled;
 
   /// Apple Watch quick-record companion — see `docs/WATCHOS_SETUP.md`.
-  static bool get watchCompanion => WatchCompanionFeatureFlags.enableWatchCompanion;
+  static bool get watchCompanion =>
+      WatchCompanionFeatureFlags.enableWatchCompanion;
 
   /// Second onboarding screen offers the existing notes importer.
   /// Left off until reviewed.
@@ -76,6 +77,10 @@ abstract final class V1CapabilityRegistry {
   /// Widget, Siri, Control Center, Live Activity, and Watch capture.
   /// Left off until reviewed.
   static const bool nativeQuickCapture = false;
+
+  /// Passphrase-sealed archive backup to iCloud or a user-picked drive file.
+  /// Left off until reviewed.
+  static const bool encryptedBackup = false;
 
   static const Set<String> androidPermissionAllowlist = {
     'android.permission.INTERNET',

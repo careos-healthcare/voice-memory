@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:archiveme_mobile/core/config/v1_capability_registry.dart';
+import 'package:archiveme_mobile/features/backup/encrypted_archive_backup_actions.dart';
 import 'package:archiveme_mobile/features/beta_analytics/beta_analytics_consent_boundary.dart';
 import 'package:archiveme_mobile/features/beta_analytics/beta_analytics_hooks.dart';
 import 'package:archiveme_mobile/features/onboarding/remote_processing_consent_decision.dart';
@@ -138,15 +139,15 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                           onDecision: _recordConsentDecision,
                         )
                       : _showingTrustStep
-                          ? const SingleChildScrollView(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: AppSpacing.md,
-                              ),
-                              child: OnboardingTrustPillarsSection(),
-                            )
-                          : _OnboardingPage(
-                              page: OnboardingPages.pages.first,
-                            ),
+                      ? const SingleChildScrollView(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: AppSpacing.md,
+                          ),
+                          child: OnboardingTrustPillarsSection(),
+                        )
+                      : _OnboardingPage(
+                          page: OnboardingPages.pages.first,
+                        ),
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(
@@ -190,12 +191,18 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                           submitting: _completing,
                           onDecision: _recordConsentDecision,
                         )
-                      : FilledButton(
-                          key: const Key('onboarding_primary_cta'),
-                          onPressed: _completing ? null : _advance,
-                          child: const Text(
-                            ConsumerUiCopy.onboardingContinueCta,
-                          ),
+                      : Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            if (_step == 0) const RestoreFromBackupButton(),
+                            FilledButton(
+                              key: const Key('onboarding_primary_cta'),
+                              onPressed: _completing ? null : _advance,
+                              child: const Text(
+                                ConsumerUiCopy.onboardingContinueCta,
+                              ),
+                            ),
+                          ],
                         ),
                 ),
               ],
