@@ -1,6 +1,7 @@
 package com.voicememory.mobile
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import io.flutter.embedding.android.FlutterFragmentActivity
 import io.flutter.embedding.engine.FlutterEngine
@@ -25,11 +26,31 @@ class MainActivity : FlutterFragmentActivity() {
             .setMethodCallHandler(::handleNativeSpeechMethod)
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, hardwareMonitorChannelName)
             .setMethodCallHandler(::handleHardwareMonitorMethod)
+        MethodChannel(
+            flutterEngine.dartExecutor.binaryMessenger,
+            ZeroStateMicrophoneHandler.channelName,
+        ).setMethodCallHandler { call, result ->
+            ZeroStateMicrophoneHandler.handle(this, call, result)
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         clearLegacyWidgetSharedPreferences(this)
+        beginShortcutBuffer(intent)
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        beginShortcutBuffer(intent)
+    }
+
+    private fun beginShortcutBuffer(intent: Intent?) {
+        ShortcutAudioBuffer.note(intent)
+        if (ShortcutAudioBuffer.isRecordLaunch(intent)) {
+            ShortcutAudioBuffer.begin(this)
+        }
     }
 
     private fun handleLegacyCleanupMethod(call: MethodCall, result: MethodChannel.Result) {

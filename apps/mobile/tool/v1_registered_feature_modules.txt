@@ -6,6 +6,7 @@ activation
 aha
 ai_coaching
 ai_engines
+ambient_capture
 analytics
 anchor_calibration
 android_after_ios_proof

@@ -32,6 +32,7 @@ import workmanager_apple
 
     GeneratedPluginRegistrant.register(with: self)
     LegacyWidgetSharedDataCleanup.clearIfPresent()
+    noteShortcutLaunch(launchOptions)
 
     let didFinish = super.application(application, didFinishLaunchingWithOptions: launchOptions)
     if let controller = window?.rootViewController as? FlutterViewController {
@@ -43,9 +44,60 @@ import workmanager_apple
       setupHardwareMonitorChannel(controller: controller)
       quickCaptureWidgetChannelHandler.attach(to: controller)
       liveAudioLifecycleBridge.attach(to: controller)
+      ZeroStateRecorderChannel.register(messenger: controller.binaryMessenger)
+    }
+    if let url = launchOptions?[.url] as? URL {
+      rememberRecordLink(url)
     }
     WatchSessionBridge.shared.activate()
     return didFinish
+  }
+
+  override func application(
+    _ app: UIApplication,
+    open url: URL,
+    options: [UIApplication.OpenURLOptionsKey: Any] = [:]
+  ) -> Bool {
+    let handled = rememberRecordLink(url)
+    return handled || super.application(app, open: url, options: options)
+  }
+
+  override func application(
+    _ application: UIApplication,
+    performActionFor shortcutItem: UIApplicationShortcutItem,
+    completionHandler: @escaping (Bool) -> Void
+  ) {
+    completionHandler(handleShortcut(shortcutItem))
+  }
+
+  private func noteShortcutLaunch(_ launchOptions: [UIApplication.LaunchOptionsKey: Any]?) {
+    if let item = launchOptions?[.shortcutItem] as? UIApplicationShortcutItem {
+      handleShortcut(item)
+    }
+    if let url = launchOptions?[.url] as? URL, isRecordURL(url) {
+      ShortcutAudioBuffer.noteLaunch()
+      ShortcutAudioBuffer.begin()
+    }
+  }
+
+  @discardableResult
+  private func handleShortcut(_ item: UIApplicationShortcutItem) -> Bool {
+    guard item.type == "new_voice_entry" else { return false }
+    ShortcutAudioBuffer.noteLaunch()
+    ShortcutAudioBuffer.begin()
+    return true
+  }
+
+  private func isRecordURL(_ url: URL) -> Bool {
+    url.scheme?.lowercased() == "archiveme" && url.host?.lowercased() == "record"
+  }
+
+  @discardableResult
+  private func rememberRecordLink(_ url: URL) -> Bool {
+    guard isRecordURL(url) else { return false }
+    ShortcutAudioBuffer.noteLaunch()
+    ShortcutAudioBuffer.begin()
+    return true
   }
 
   private func setupLegacyCleanupChannel(controller: FlutterViewController) {

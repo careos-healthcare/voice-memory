@@ -56,6 +56,17 @@
 	</array>
 	<key>NSSpeechRecognitionUsageDescription</key>
 	<string>ArchiveMe can transcribe recordings on your device when you are offline.</string>
+	<key>UIApplicationShortcutItems</key>
+	<array>
+		<dict>
+			<key>UIApplicationShortcutItemType</key>
+			<string>new_voice_entry</string>
+			<key>UIApplicationShortcutItemTitle</key>
+			<string>New Voice Entry</string>
+			<key>UIApplicationShortcutItemIconType</key>
+			<string>UIApplicationShortcutIconTypeAudio</string>
+		</dict>
+	</array>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>

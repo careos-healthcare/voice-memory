@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <shortcut
+        android:shortcutId="new_voice_entry"
+        android:enabled="true"
+        android:icon="@drawable/ic_shortcut_voice"
+        android:shortcutShortLabel="@string/shortcut_new_voice_entry"
+        android:shortcutLongLabel="@string/shortcut_new_voice_entry">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="com.voicememory.mobile"
+            android:targetClass="com.voicememory.mobile.MainActivity"
+            android:data="archiveme://record?autostart=1&amp;source=shortcut" />
+    </shortcut>
+</shortcuts>

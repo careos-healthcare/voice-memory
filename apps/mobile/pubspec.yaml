@@ -73,6 +73,7 @@ dependencies:
   sherpa_onnx: ^1.13.6
   battery_plus: ^7.1.1
   home_widget: ^0.9.3
+  quick_actions: ^1.1.0
   audio_service: ^0.18.19
   ffi: ^2.2.0
   shimmer: ^3.0.0

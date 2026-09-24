@@ -10,6 +10,7 @@ import 'package:archiveme_mobile/audio/recording_types.dart';
 import 'package:archiveme_mobile/audio/silence_retry_policy.dart';
 import 'package:archiveme_mobile/core/di/hardware_audio_providers.dart';
 import 'package:archiveme_mobile/core/utils/app_logger.dart';
+import 'package:archiveme_mobile/features/ambient_capture/shortcut_record_launch.dart';
 import 'package:archiveme_mobile/features/capture/vad/vad_models.dart';
 import 'package:archiveme_mobile/features/capture/vad/vad_segmented_recording_coordinator.dart';
 import 'package:archiveme_mobile/features/metadata/ambient_metadata_service.dart';
@@ -183,6 +184,7 @@ class RecordingService extends Notifier<RecordingState> {
 
   Future<void> startRecording({bool permissionVerified = false}) async {
     _recordLog('start requested');
+    await ShortcutRecordLaunch.releaseEarlyBuffer();
     await _permissionManager.assertCanStartRecording(
       permissionVerified: permissionVerified,
     );
