@@ -1,0 +1,3 @@
+tags:
+  legacy:
+    skip: "Retired custom paywall. The shipped purchase surface is RevenueCatPaywallPresenter."

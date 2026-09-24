@@ -1,3 +1,6 @@
+@Tags(['legacy'])
+library;
+
 import 'dart:io';
 
 import 'package:archiveme_mobile/billing/archive_paywall_copy.dart';

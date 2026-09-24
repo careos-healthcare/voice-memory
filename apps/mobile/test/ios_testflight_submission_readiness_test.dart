@@ -3,9 +3,9 @@ import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 
 const _packPath = 'APP_STORE_SUBMISSION_PACK.md';
-const _reviewNotesPath = 'docs/APP_REVIEW_NOTES.md';
-const _storeCopyPath = 'docs/APP_STORE_COPY.md';
-const _iosChecklistPath = 'docs/IOS_RELEASE_CHECKLIST.md';
+const _reviewNotesPath = 'docs/archive/2026-08/APP_REVIEW_NOTES.md';
+const _storeCopyPath = 'docs/archive/2026-08/APP_STORE_COPY.md';
+const _iosChecklistPath = 'docs/archive/2026-08/IOS_RELEASE_CHECKLIST.md';
 
 const _supportUrl = 'https://archiveme.app/contact';
 const _privacyUrl = 'https://archiveme.app/privacy';

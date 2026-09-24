@@ -1,3 +1,6 @@
+@Tags(['legacy'])
+library;
+
 import 'dart:async';
 import 'dart:io';
 
@@ -20,8 +23,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
 
-import 'helpers/app_provider_scope.dart';
-import 'helpers/test_billing_service.dart';
+import '../helpers/app_provider_scope.dart';
+import '../helpers/test_billing_service.dart';
 
 class _FakeStoreBilling implements StoreBillingPort {
   _FakeStoreBilling({

@@ -1,3 +1,6 @@
+@Tags(['legacy'])
+library;
+
 import 'dart:io';
 
 import 'package:archiveme_mobile/billing/paywall_attribution_event.dart';
@@ -16,8 +19,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 
-import 'helpers/app_provider_scope.dart';
-import 'support/memory_pressure_stores.dart';
+import '../helpers/app_provider_scope.dart';
+import '../support/memory_pressure_stores.dart';
 
 MobilePrefsStore _dummyPrefs() =>
     MobilePrefsStore(file: File('test/tmp/objection/unused_prefs.json'));

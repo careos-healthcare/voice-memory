@@ -1,3 +1,6 @@
+@Tags(['legacy'])
+library;
+
 import 'package:archiveme_mobile/billing/archive_paywall_plans.dart';
 import 'package:flutter_test/flutter_test.dart';
 

@@ -1,3 +1,6 @@
+@Tags(['legacy'])
+library;
+
 import 'dart:io';
 
 import 'package:archiveme_mobile/billing/archive_entitlement_reader.dart';
@@ -15,7 +18,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 
-import 'helpers/app_provider_scope.dart';
+import '../helpers/app_provider_scope.dart';
 
 PressureCheckInRecord _record({
   required String id,

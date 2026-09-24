@@ -1,3 +1,6 @@
+@Tags(['legacy'])
+library;
+
 import 'package:archiveme_mobile/billing/paywall_access.dart';
 import 'package:archiveme_mobile/features/pro_bridge_visibility/delayed_paywall_proof_store.dart';
 import 'package:archiveme_mobile/features/pro_bridge_visibility/pro_bridge_visibility_engine.dart';
@@ -10,7 +13,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 
-import 'support/test_storage_sandbox.dart';
+import '../support/test_storage_sandbox.dart';
 
 JournalEntry _entry(
   String id, {

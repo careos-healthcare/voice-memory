@@ -1,3 +1,6 @@
+@Tags(['legacy'])
+library;
+
 import 'package:archiveme_mobile/billing/archive_entitlement_reader.dart';
 import 'package:archiveme_mobile/billing/paywall_route_args.dart';
 import 'package:archiveme_mobile/billing/paywall_source.dart';
@@ -12,7 +15,7 @@ import 'package:archiveme_mobile/features/pro_bridge_visibility/delayed_paywall_
 import 'package:archiveme_mobile/product/consumer_ui_copy.dart';
 import 'package:archiveme_mobile/services/activation_funnel_analytics.dart';
 import 'package:archiveme_mobile/widgets/billing/value_moment_pro_bridge.dart';
-import 'support/localized_test_app.dart';
+import '../support/localized_test_app.dart';
 import 'package:archiveme_research/screens/pressure_insights_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';

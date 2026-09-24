@@ -1,3 +1,6 @@
+@Tags(['legacy'])
+library;
+
 import 'package:archiveme_mobile/billing/v1/app_services_paywall_dependencies.dart';
 import 'package:archiveme_mobile/billing/v1/paywall_controller.dart';
 import 'package:archiveme_mobile/billing/v1/paywall_plan.dart';

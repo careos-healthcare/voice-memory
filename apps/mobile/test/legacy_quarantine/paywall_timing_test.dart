@@ -1,3 +1,6 @@
+@Tags(['legacy'])
+library;
+
 import 'package:archiveme_mobile/billing/restore_purchases_copy.dart';
 import 'package:archiveme_mobile/features/activation/first_three_session_gates.dart';
 import 'package:archiveme_mobile/features/activation/paywall_timing_gates.dart';

@@ -1,3 +1,6 @@
+@Tags(['legacy'])
+library;
+
 import 'package:archiveme_mobile/config/app_config.dart';
 import 'package:archiveme_mobile/features/paywall/archive_loop_entitlements.dart';
 import 'package:archiveme_mobile/features/pro_packaging/pro_value_copy.dart';

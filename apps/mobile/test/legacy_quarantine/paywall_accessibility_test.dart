@@ -1,3 +1,6 @@
+@Tags(['legacy'])
+library;
+
 // Accessibility coverage for the paywall screen: the header restore action,
 // live-region error announcements, plan-selector semantics, and 200%
 // text-scale usability. Complements the copy/behavior assertions in

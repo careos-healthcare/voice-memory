@@ -1,3 +1,6 @@
+@Tags(['legacy'])
+library;
+
 import 'package:archiveme_mobile/billing/archive_paywall_stats.dart';
 import 'package:archiveme_mobile/billing/v1/paywall_plan.dart';
 import 'package:archiveme_mobile/widgets/paywall/archive_intelligence_pro_paywall.dart';
