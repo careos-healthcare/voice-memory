@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:archiveme_mobile/audio/silence_trim.dart';
 import 'package:archiveme_mobile/features/audio/pitch_preserving_playback.dart';
 import 'package:archiveme_mobile/features/audio/waveform_picture.dart';
 import 'package:archiveme_mobile/features/audio/widgets/audio_waveform_visualizer.dart';
@@ -94,10 +95,12 @@ class _InteractiveAudioPlayerBarState extends State<InteractiveAudioPlayerBar> {
         Wrap(
           spacing: AppTokens.spacing2,
           children: [
-            for (final speed in PitchPreservingPlayback.speeds)
+            for (final speed in PlaybackReviewSpeeds.speeds)
               ChoiceChip(
-                key: Key('audio_speed_${speed.toString().replaceAll('.', '_')}'),
-                label: Text(PitchPreservingPlayback.label(speed)),
+                key: Key(
+                  'audio_speed_${speed.toString().replaceAll('.', '_')}',
+                ),
+                label: Text(PlaybackReviewSpeeds.label(speed)),
                 selected: widget.speed == speed,
                 onSelected: (_) => _selectSpeed(speed),
               ),
@@ -106,7 +109,7 @@ class _InteractiveAudioPlayerBarState extends State<InteractiveAudioPlayerBar> {
         SwitchListTile(
           key: const Key('audio_skip_silence'),
           contentPadding: EdgeInsets.zero,
-          title: const Text('Skip Silence'),
+          title: const Text('Trim silence'),
           value: widget.skipSilence,
           onChanged: widget.onSkipSilence,
         ),
