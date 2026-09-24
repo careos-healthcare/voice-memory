@@ -1,4 +1,5 @@
 import 'package:archiveme_mobile/config/app_config.dart';
+import 'package:archiveme_mobile/core/config/v1_capability_registry.dart';
 import 'package:archiveme_mobile/config/screenshot_mode.dart';
 import 'package:archiveme_mobile/config/screenshot_sample_data.dart';
 import 'package:archiveme_mobile/design/archive_mobile_typography.dart';
@@ -124,6 +125,14 @@ class _AccountScreenState extends State<AccountScreen> {
                     style: ArchiveMobileTypography.responsiveHelper(context),
                   ),
                 ),
+                if (!V1CapabilityRegistry.storeBilling) ...[
+                  const SizedBox(height: AppSpacing.sm),
+                  Text(
+                    'Free during beta',
+                    key: const Key('account_free_during_beta'),
+                    style: ArchiveMobileTypography.responsiveHelper(context),
+                  ),
+                ],
                 const SizedBox(height: AppSpacing.md),
                 const AccountPrivacyControlsSection(),
                 const SizedBox(height: AppSpacing.md),

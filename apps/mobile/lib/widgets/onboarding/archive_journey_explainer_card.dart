@@ -1,3 +1,4 @@
+import 'package:archiveme_mobile/core/config/v1_capability_registry.dart';
 import 'package:archiveme_mobile/design/archive_mobile_typography.dart';
 import 'package:archiveme_mobile/features/onboarding/archive_journey_copy.dart';
 import 'package:archiveme_mobile/features/onboarding/archive_journey_model.dart';
@@ -107,6 +108,7 @@ class _FullLayout extends StatelessWidget {
     final bodyStyle = ArchiveMobileTypography.explanationBody(
       context,
     ).copyWith(color: AppColors.textSecondary, fontSize: 14, height: 1.4);
+    final steps = visibleJourneySteps(explainer.steps);
 
     return Container(
       key: const Key('archive_journey_explainer_card_full'),
@@ -124,16 +126,16 @@ class _FullLayout extends StatelessWidget {
             style: titleStyle,
           ),
           const SizedBox(height: AppSpacing.sm),
-          for (var i = 0; i < explainer.steps.length; i++) ...[
+          for (var i = 0; i < steps.length; i++) ...[
             if (i > 0) const SizedBox(height: AppSpacing.sm),
             Text(
-              explainer.steps[i].title,
+              steps[i].title,
               key: Key('archive_journey_explainer_step_title_$i'),
               style: stepTitleStyle,
             ),
             const SizedBox(height: 2),
             Text(
-              explainer.steps[i].body,
+              steps[i].body,
               key: Key('archive_journey_explainer_step_body_$i'),
               style: bodyStyle,
             ),
@@ -142,4 +144,12 @@ class _FullLayout extends StatelessWidget {
       ),
     );
   }
+}
+
+List<ArchiveJourneyStep> visibleJourneySteps(List<ArchiveJourneyStep> steps) {
+  if (V1CapabilityRegistry.storeBilling) return steps;
+  return [
+    for (final step in steps)
+      if (step.body != ArchiveJourneyCopy.step5Body) step,
+  ];
 }

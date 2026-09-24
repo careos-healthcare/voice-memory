@@ -1,3 +1,4 @@
+import 'package:archiveme_mobile/core/config/v1_capability_registry.dart';
 import 'package:archiveme_mobile/design/archive_mobile_typography.dart';
 import 'package:archiveme_mobile/theme/app_colors.dart';
 import 'package:archiveme_mobile/theme/app_spacing.dart';
@@ -21,6 +22,7 @@ class PressureProUpgradeCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (!V1CapabilityRegistry.storeBilling) return const SizedBox.shrink();
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.md),

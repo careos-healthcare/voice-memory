@@ -1,3 +1,4 @@
+import 'package:archiveme_mobile/core/config/v1_capability_registry.dart';
 import 'package:archiveme_mobile/design/archive_mobile_typography.dart';
 import 'package:archiveme_mobile/features/pressure_retention/pressure_pattern_review_model.dart';
 import 'package:archiveme_mobile/theme/app_colors.dart';
@@ -74,7 +75,10 @@ class PressurePatternReviewCard extends StatelessWidget {
               PressurePatternReview.repeatingSectionTitle,
               review.repeatingSummary!,
             ),
-          if (isPro) ..._fullSections(context) else ..._lockedSections(context),
+          if (isPro)
+            ..._fullSections(context)
+          else if (V1CapabilityRegistry.storeBilling)
+            ..._lockedSections(context),
         ],
       ),
     );

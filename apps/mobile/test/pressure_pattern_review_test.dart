@@ -170,11 +170,11 @@ void main() {
       );
       expect(
         find.byKey(const Key('pressure_pattern_review_locked')),
-        findsOneWidget,
+        findsNothing,
       );
       expect(
-        find.text(PressurePatternReviewCard.lockedRowLabel),
-        findsOneWidget,
+        find.text(PressurePatternReviewCard.lockedHint),
+        findsNothing,
       );
       // Full sections stay hidden for free users.
       expect(
@@ -246,7 +246,7 @@ void main() {
       );
     });
 
-    testWidgets('5 entries show reveal + review, and CTA opens subscription', (
+    testWidgets('5 entries show reveal + review without a billing CTA', (
       tester,
     ) async {
       await tester.binding.setSurfaceSize(const Size(390, 4200));
@@ -282,13 +282,11 @@ void main() {
         findsOneWidget,
       );
 
-      final lockedRow = find.byKey(const Key('pressure_pattern_review_locked'));
-      await tester.ensureVisible(lockedRow);
-      await tester.pumpAndSettle();
-      await tester.tap(lockedRow);
-      await tester.pumpAndSettle();
-
-      expect(find.text('SUBSCRIPTION_MARKER'), findsOneWidget);
+      expect(
+        find.byKey(const Key('pressure_pattern_review_locked')),
+        findsNothing,
+      );
+      expect(find.text('SUBSCRIPTION_MARKER'), findsNothing);
     });
 
     testWidgets('pro user sees full review on screen', (tester) async {

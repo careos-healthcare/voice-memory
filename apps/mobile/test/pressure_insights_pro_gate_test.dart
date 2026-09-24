@@ -98,7 +98,7 @@ void main() {
 
     testWidgets('CTA copy appears', (tester) async {
       await _pumpScreen(tester, pro: false, records: sampleRecords());
-      expect(find.text(PressureProUpgradeCard.ctaLabel), findsWidgets);
+      expect(find.text(PressureProUpgradeCard.ctaLabel), findsNothing);
     });
 
     testWidgets('sees Ask the Archive locked', (tester) async {

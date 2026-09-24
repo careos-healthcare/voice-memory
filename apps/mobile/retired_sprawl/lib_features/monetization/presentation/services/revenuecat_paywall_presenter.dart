@@ -1,4 +1,5 @@
 import 'package:archiveme_mobile/billing/paywall_access.dart';
+import 'package:archiveme_mobile/core/config/v1_capability_registry.dart';
 import 'package:archiveme_mobile/billing/paywall_route_args.dart';
 import 'package:archiveme_mobile/billing/revenuecat_diagnostics_log.dart';
 import 'package:archiveme_mobile/billing/revenuecat_service.dart';
@@ -62,6 +63,7 @@ class RevenueCatPaywallPresenter {
     BuildContext? fallbackContext,
     PaywallRouteArgs? fallbackArgs,
   }) async {
+    if (!_billingEnabled) return PaywallResult.notPresented;
     if (!await _canOpen()) {
       _logFallbackStrategy(
         reason: 'paywall_gate_closed',
@@ -141,6 +143,7 @@ class RevenueCatPaywallPresenter {
     BuildContext? fallbackContext,
     PaywallRouteArgs? fallbackArgs,
   }) async {
+    if (!_billingEnabled) return PaywallResult.notPresented;
     if (!await _canOpen()) {
       _logFallbackStrategy(
         reason: 'paywall_gate_closed',
@@ -286,6 +289,7 @@ class RevenueCatPaywallPresenter {
     BuildContext? context,
     PaywallRouteArgs? args,
   ) async {
+    if (!_billingEnabled) return;
     if (openFallbackRouteOverride != null) {
       await openFallbackRouteOverride!(context, args);
       return;
@@ -293,6 +297,18 @@ class RevenueCatPaywallPresenter {
 
     if (context == null || !context.mounted || args == null) return;
     await context.push('/subscription', extra: args);
+  }
+
+  bool get _billingEnabled {
+    if (V1CapabilityRegistry.storeBilling) return true;
+    assert(() {
+      debugPrint(
+        'RevenueCatPaywallPresenter: storeBilling is false; '
+        'skipping paywall navigation',
+      );
+      return true;
+    }());
+    return false;
   }
 
   void _logCriticalFailure(String context, Object error) {

@@ -1,4 +1,5 @@
 import 'package:archiveme_mobile/billing/archive_paywall_copy.dart';
+import 'package:archiveme_mobile/core/config/v1_capability_registry.dart';
 import 'package:archiveme_mobile/billing/paywall_route_args.dart';
 import 'package:archiveme_mobile/billing/paywall_source.dart';
 import 'package:archiveme_mobile/design/archive_mobile_typography.dart';
@@ -131,6 +132,7 @@ class SupportFeedbackScreen extends StatelessWidget {
               title: InsightFeedbackCopy.supportSectionTitle,
               body: InsightFeedbackCopy.supportSectionBody,
             ),
+            if (V1CapabilityRegistry.storeBilling) ...[
             const SizedBox(height: AppSpacing.sm),
             ListTile(
               key: const Key('support_feedback_pro_interest_row'),
@@ -155,6 +157,7 @@ class SupportFeedbackScreen extends StatelessWidget {
                 ),
               ),
             ),
+            ],
             const SizedBox(height: AppSpacing.sm),
             _bulletsSection(
               context,

@@ -1,3 +1,4 @@
+import 'package:archiveme_mobile/core/config/v1_capability_registry.dart';
 import 'package:archiveme_mobile/design/archive_mobile_typography.dart';
 import 'package:archiveme_mobile/features/trust/terms_screen_copy.dart';
 import 'package:archiveme_mobile/theme/app_colors.dart';
@@ -33,7 +34,9 @@ class TermsScreen extends StatelessWidget {
               style: ArchiveMobileTypography.explanationBody(context),
             ),
             const SizedBox(height: AppSpacing.lg),
-            for (final section in TermsScreenCopy.sections) ...[
+            for (final section in TermsScreenCopy.sections)
+              if (V1CapabilityRegistry.storeBilling ||
+                  section.title != TermsScreenCopy.subscriptionsTitle) ...[
               Text(
                 section.title,
                 key: Key('terms_section_${section.title}'),
