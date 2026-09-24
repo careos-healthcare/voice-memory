@@ -6,8 +6,8 @@ import 'package:archiveme_mobile/features/archive/v1/archive_belief_load_state.d
 import 'package:archiveme_mobile/features/archive/v1/archive_feed_pagination_provider.dart';
 import 'package:archiveme_mobile/features/archive_changes/archive_changes_adapter.dart';
 import 'package:archiveme_mobile/features/feature_unlock/feature_unlock_service.dart';
-import 'package:archiveme_mobile/features/sync/presentation/modals/conflict_resolution_modal.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
+import 'package:archiveme_mobile/models/sync_status.dart';
 import 'package:archiveme_mobile/services/app_services.dart';
 import 'package:archiveme_mobile/theme/app_colors.dart';
 import 'package:archiveme_mobile/widgets/archive/archive_change_feed.dart';
@@ -387,6 +387,17 @@ class _IntroSection extends StatelessWidget {
       ],
     );
   }
+}
+
+/// Opens [onOpen] for the entry. A conflicted row still opens here because
+/// the resolution dialog is not mounted on this branch.
+Future<void> openEntryRespectingConflict({
+  required BuildContext context,
+  required JournalEntry entry,
+  required VoidCallback onOpen,
+}) async {
+  if (entry.syncStatus == SyncStatus.conflict && !context.mounted) return;
+  onOpen();
 }
 
 Widget _entryTile(
