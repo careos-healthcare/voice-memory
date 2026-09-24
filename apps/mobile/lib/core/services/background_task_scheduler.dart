@@ -6,9 +6,9 @@ import 'package:archiveme_mobile/core/services/task_queue_manager.dart';
 
 /// Drains heavy jobs when device power, idle, and thermal checks allow them.
 ///
-/// Vector indexing and mesh sync still run on charge or Wi-Fi. Pattern
-/// synthesis and on-device transcription also require an idle, charging
-/// device with a safe battery. Serious heat suspends every pending job.
+/// Bulk re-indexing, vector embeddings, and pattern synthesis wait until the
+/// device is idle, charging, above 20% battery, and cool. Mesh sync still
+/// runs on charge or Wi-Fi. Serious heat suspends every pending job.
 class BackgroundTaskScheduler {
   BackgroundTaskScheduler({
     required this.device,

@@ -37,7 +37,8 @@ class DeviceConditions {
   /// Serious heat and above pauses coaching, storage, and transcription.
   bool get thermalAllowsWork => !thermalStatus.isHigh;
 
-  /// Pattern synthesis and on-device transcription need a quiet, powered device.
+  /// Embeddings, bulk re-indexing, and pattern synthesis need a quiet,
+  /// powered device that is cool and above [safeBatteryPercent].
   bool get allowsPatternAndTranscription =>
       isIdle && isCharging && batteryIsSafe && thermalAllowsWork;
 

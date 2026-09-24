@@ -16,6 +16,7 @@ class BackgroundTask {
   static const kindLocalCoaching = 'local_coaching';
   static const kindEncryptedStorage = 'encrypted_storage';
   static const kindBulkTranscription = 'bulk_transcription';
+  static const kindBulkTranscriptionReindex = 'bulk_transcription_reindex';
   static const kindPatternSynthesis = 'pattern_synthesis';
   static const kindOnDeviceTranscription = 'on_device_transcription';
 
@@ -23,14 +24,18 @@ class BackgroundTask {
     kindLocalCoaching,
     kindEncryptedStorage,
     kindBulkTranscription,
+    kindBulkTranscriptionReindex,
     kindPatternSynthesis,
     kindOnDeviceTranscription,
+    kindVectorIndex,
   };
 
   static const idlePowerKinds = {
     kindBulkTranscription,
+    kindBulkTranscriptionReindex,
     kindPatternSynthesis,
     kindOnDeviceTranscription,
+    kindVectorIndex,
   };
   static const statusPending = 'pending';
   static const statusDone = 'done';

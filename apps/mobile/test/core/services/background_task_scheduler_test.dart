@@ -12,7 +12,7 @@ import '../../storage/sqlite/support/configure_sqlite_test_ffi.dart';
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  test('defers mesh and embedding jobs until charging or Wi-Fi', () async {
+  test('defers an embedding until the device is idle and charging', () async {
     final device = ManualDeviceState(
       const DeviceConditions(isCharging: false, isWifiConnected: false),
     );
@@ -34,7 +34,23 @@ void main() {
     expect((await queue.pending()).single.id, 'vec-1');
 
     device.emit(
-      const DeviceConditions(isCharging: true, isWifiConnected: false),
+      const DeviceConditions(
+        isCharging: true,
+        isWifiConnected: false,
+        isIdle: false,
+        batteryLevel: 80,
+      ),
+    );
+    expect(await scheduler.drain(), 0);
+    expect((await queue.pending()).single.id, 'vec-1');
+
+    device.emit(
+      const DeviceConditions(
+        isCharging: true,
+        isWifiConnected: false,
+        isIdle: true,
+        batteryLevel: 80,
+      ),
     );
     final monitor = FrameBudgetMonitor();
     expect(await scheduler.drain(), 1);
@@ -46,7 +62,7 @@ void main() {
     expect(await queue.pending(), isEmpty);
   });
 
-  test('Wi-Fi alone drains a pending embedding job', () async {
+  test('Wi-Fi alone leaves an embedding job pending', () async {
     final device = ManualDeviceState(
       const DeviceConditions(isCharging: false, isWifiConnected: true),
     );
@@ -64,8 +80,8 @@ void main() {
         status: BackgroundTask.statusPending,
       ),
     );
-    expect(await scheduler.drain(), 1);
-    expect(await queue.pending(), isEmpty);
+    expect(await scheduler.drain(), 0);
+    expect((await queue.pending()).single.id, 'vec-wifi');
   });
 
   test('connecting power and Wi-Fi drains the queue automatically', () async {
@@ -180,6 +196,56 @@ void main() {
       expect(await queue.pending(), isEmpty);
     },
   );
+
+  test('low battery or heat pauses embeddings and re-indexing', () async {
+    final device = ManualDeviceState(
+      const DeviceConditions(
+        isCharging: true,
+        isWifiConnected: false,
+        isIdle: true,
+        batteryLevel: 19,
+      ),
+    );
+    final queue = MemoryTaskQueue();
+    final scheduler = BackgroundTaskScheduler(
+      device: DeviceStateService(source: device),
+      queue: queue,
+    );
+    await queue.enqueue(
+      const BackgroundTask(
+        id: 'reindex',
+        kind: BackgroundTask.kindBulkTranscriptionReindex,
+        entryId: 'entry-r',
+        payload: 'batch',
+        status: BackgroundTask.statusPending,
+      ),
+    );
+    await queue.enqueue(
+      const BackgroundTask(
+        id: 'embed',
+        kind: BackgroundTask.kindVectorIndex,
+        entryId: 'entry-e',
+        payload: '1,0',
+        status: BackgroundTask.statusPending,
+      ),
+    );
+    expect(await scheduler.drain(), 0);
+
+    device.emit(
+      const DeviceConditions(
+        isCharging: true,
+        isWifiConnected: false,
+        isIdle: true,
+        batteryLevel: 80,
+        thermalStatus: DeviceThermalStatus.serious,
+      ),
+    );
+    expect(await scheduler.drain(), 0);
+    expect(
+      (await queue.pending()).map((task) => task.id),
+      unorderedEquals(['reindex', 'embed']),
+    );
+  });
 
   test('serious heat suspends coaching and transcription', () async {
     final device = ManualDeviceState(
