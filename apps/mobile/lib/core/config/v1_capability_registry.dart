@@ -82,6 +82,10 @@ abstract final class V1CapabilityRegistry {
   /// Left off until reviewed.
   static const bool encryptedBackup = false;
 
+  /// Optional local reminders: daily nudge, on this day, and check back.
+  /// Left off until reviewed. No server push.
+  static const bool gentleReminders = false;
+
   static const Set<String> androidPermissionAllowlist = {
     'android.permission.INTERNET',
     'android.permission.RECORD_AUDIO',

@@ -1,13 +1,16 @@
+import 'dart:async';
+
 import 'package:archiveme_mobile/core/config/v1_capability_registry.dart';
 import 'package:archiveme_mobile/design/archive_mobile_typography.dart';
-import 'package:archiveme_mobile/features/onboarding/first_session_evidence.dart';
-import 'package:archiveme_mobile/widgets/onboarding/first_save_quote_receipt.dart';
 import 'package:archiveme_mobile/features/archive_evidence/archive_entry_signal_guard.dart';
+import 'package:archiveme_mobile/features/onboarding/first_session_evidence.dart';
 import 'package:archiveme_mobile/features/post_save/post_save_archive_hierarchy.dart';
 import 'package:archiveme_mobile/features/post_save/post_save_recorded_summary_copy.dart';
 import 'package:archiveme_mobile/features/record/daily_mirror_engine.dart';
 import 'package:archiveme_mobile/features/record/daily_mirror_model.dart';
 import 'package:archiveme_mobile/features/record/daily_mirror_stage.dart';
+import 'package:archiveme_mobile/features/reminders/gentle_reminders_service.dart';
+import 'package:archiveme_mobile/features/reminders/gentle_reminders_settings_section.dart';
 import 'package:archiveme_mobile/features/timeline/timeline_entry_display.dart';
 import 'package:archiveme_mobile/features/transcript_correction/transcript_correction_copy.dart';
 import 'package:archiveme_mobile/features/transcript_correction/transcript_correction_gate.dart';
@@ -16,18 +19,20 @@ import 'package:archiveme_mobile/features/voice_capture/audio/audio_debug_action
 import 'package:archiveme_mobile/features/voice_capture/voice_capture_copy.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/services/app_services.dart';
+import 'package:archiveme_mobile/services/offline_tts/offline_tts_service.dart';
 import 'package:archiveme_mobile/theme/app_colors.dart';
 import 'package:archiveme_mobile/theme/app_spacing.dart';
 import 'package:archiveme_mobile/theme/voicememory_cards.dart';
 import 'package:archiveme_mobile/widgets/entry_detail/entry_read_aloud_button.dart';
+import 'package:archiveme_mobile/widgets/onboarding/first_save_quote_receipt.dart';
 import 'package:archiveme_mobile/widgets/record/entry_importance_button.dart';
-import 'package:archiveme_mobile/services/offline_tts/offline_tts_service.dart';
 import 'package:flutter/material.dart';
 
 /// Post-save card: heard excerpt first, then what this moment added to the archive.
 class PostSaveRecordedSummaryCard extends StatelessWidget {
   const PostSaveRecordedSummaryCard({
-    required this.entry, super.key,
+    required this.entry,
+    super.key,
     this.allEntries = const [],
     this.mirror,
     this.showAnalysisPendingNote = false,
@@ -109,6 +114,7 @@ class PostSaveRecordedSummaryCard extends StatelessWidget {
             style: ArchiveMobileTypography.responsiveSectionTitle(context),
           ),
           const SizedBox(height: AppSpacing.xs),
+          GentleReminderOptIn(entryCount: allEntries.length),
           Text(
             summary,
             key: const Key('post_save_recorded_summary_body'),
@@ -272,6 +278,19 @@ class PostSaveRecordedSummaryCard extends StatelessWidget {
               FirstSaveQuoteReceipt(
                 quotes: FirstSaveQuotePresenter.quotesFor(entry),
                 audioPath: entry.localAudioPath,
+                onRemindYes: V1CapabilityRegistry.gentleReminders
+                    ? () {
+                        final quotes = FirstSaveQuotePresenter.quotesFor(entry);
+                        unawaited(
+                          GentleRemindersService().scheduleCheckBack(
+                            entryId: entry.id,
+                            verbatimQuote: quotes.first.text,
+                            now: DateTime.now(),
+                            previouslyScheduledIds: const [],
+                          ),
+                        );
+                      }
+                    : null,
               )
             else
               Text(
