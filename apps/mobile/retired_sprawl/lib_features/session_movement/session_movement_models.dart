@@ -14,7 +14,8 @@ class SessionMovementSummaryView {
     required this.id,
     required this.kind,
     required this.headline,
-    required this.reason, this.detailLine,
+    required this.reason,
+    this.detailLine,
     this.theoryId,
   });
 

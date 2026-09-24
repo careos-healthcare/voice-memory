@@ -17,7 +17,8 @@ bool postSaveComparisonHasVisibleEvidence(PatternEvidenceViewState viewState) {
 
 class PostSaveComparisonSection extends StatelessWidget {
   const PostSaveComparisonSection({
-    required this.controller, super.key,
+    required this.controller,
+    super.key,
     this.onProUpgradeTapped,
   });
 
@@ -177,7 +178,9 @@ class _TextPlaceholder extends StatelessWidget {
 
 class _ComparisonEvidenceShell extends StatelessWidget {
   const _ComparisonEvidenceShell({
-    required this.viewState, required this.onDismissProPrompt, super.key,
+    required this.viewState,
+    required this.onDismissProPrompt,
+    super.key,
     this.onProUpgradeTapped,
   });
 

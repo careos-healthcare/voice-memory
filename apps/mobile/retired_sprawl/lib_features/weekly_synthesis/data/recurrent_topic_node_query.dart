@@ -12,10 +12,9 @@ final class RecurrentTopicNodeQuery {
     required DateTime since,
     int minMentions = WeeklySynthesisConfig.minTopicMentions,
     int limit = WeeklySynthesisConfig.maxTopicClusters,
-  }) =>
-      _dao.fetchRecurrentTopics(
-        since: since,
-        minMentions: minMentions,
-        limit: limit,
-      );
+  }) => _dao.fetchRecurrentTopics(
+    since: since,
+    minMentions: minMentions,
+    limit: limit,
+  );
 }

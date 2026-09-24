@@ -62,7 +62,10 @@ abstract final class ComparisonExplorerLensSupport {
     return ComparisonTemporalWindow.values;
   }
 
-  static bool isRecommendedWindow(LifeStageLens? lens, ComparisonTemporalWindow window) {
+  static bool isRecommendedWindow(
+    LifeStageLens? lens,
+    ComparisonTemporalWindow window,
+  ) {
     return recommendedWindowsFor(lens).contains(window);
   }
 

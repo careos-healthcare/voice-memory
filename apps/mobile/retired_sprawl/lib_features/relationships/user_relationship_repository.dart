@@ -52,30 +52,26 @@ class UserRelationshipRepository {
   Future<UserRelationship?> updateConsentStatus({
     required String relationshipId,
     required ConsentStatus status,
-  }) =>
-      _db.accountDao.updateConsentStatus(
-        relationshipId: relationshipId,
-        status: status,
-      );
+  }) => _db.accountDao.updateConsentStatus(
+    relationshipId: relationshipId,
+    status: status,
+  );
 
   Future<UserRelationship?> updateAgreedScope({
     required String relationshipId,
     required Map<String, dynamic> agreedScope,
-  }) =>
-      _db.accountDao.updateAgreedScope(
-        relationshipId: relationshipId,
-        agreedScope: agreedScope,
-      );
+  }) => _db.accountDao.updateAgreedScope(
+    relationshipId: relationshipId,
+    agreedScope: agreedScope,
+  );
 
   Future<List<UserRelationship>> getActiveProfessionalsForClient(
     String clientId,
-  ) =>
-      _db.accountDao.getActiveProfessionalsForClient(clientId);
+  ) => _db.accountDao.getActiveProfessionalsForClient(clientId);
 
   Future<List<UserRelationship>> getConsentingClientsForProfessional(
     String professionalId,
-  ) =>
-      _db.accountDao.getConsentingClientsForProfessional(professionalId);
+  ) => _db.accountDao.getConsentingClientsForProfessional(professionalId);
 
   Future<List<UserRelationship>> listForClient(String clientId) =>
       _db.accountDao.listRelationshipsForClient(clientId);
@@ -86,7 +82,8 @@ class UserRelationshipRepository {
   Future<UserRelationship> upsert(UserRelationship relationship) =>
       _db.accountDao.upsertRelationship(relationship);
 
-  Future<void> deleteAllForTest() => _db.accountDao.deleteAllRelationshipsForTest();
+  Future<void> deleteAllForTest() =>
+      _db.accountDao.deleteAllRelationshipsForTest();
 
   static Map<String, dynamic> _parseScopeJson(String scope) {
     if (scope.trim().isEmpty) return const {};
@@ -96,7 +93,11 @@ class UserRelationshipRepository {
         return decoded.map((key, value) => MapEntry('$key', value));
       }
     } catch (e, stackTrace) {
-      AppLogger.error('Unhandled error caught', error: e, stackTrace: stackTrace);
+      AppLogger.error(
+        'Unhandled error caught',
+        error: e,
+        stackTrace: stackTrace,
+      );
     }
     return {'rawScope': scope};
   }

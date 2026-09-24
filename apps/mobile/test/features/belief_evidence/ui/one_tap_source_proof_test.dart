@@ -102,7 +102,9 @@ void main() {
       expect(find.text(EvidenceCitationCopy.verbatimHelper), findsNWidgets(2));
     });
 
-    testWidgets('an ungrounded card offers no proof affordance', (tester) async {
+    testWidgets('an ungrounded card offers no proof affordance', (
+      tester,
+    ) async {
       _rememberBothEntries();
 
       await tester.pumpWidget(

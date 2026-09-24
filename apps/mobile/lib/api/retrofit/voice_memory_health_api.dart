@@ -6,7 +6,8 @@ part 'voice_memory_health_api.g.dart';
 
 @RestApi()
 abstract class VoiceMemoryHealthApi {
-  factory VoiceMemoryHealthApi(Dio dio, {String baseUrl}) = _VoiceMemoryHealthApi;
+  factory VoiceMemoryHealthApi(Dio dio, {String baseUrl}) =
+      _VoiceMemoryHealthApi;
 
   @GET('/api/health')
   Future<HealthCheckResponseDto> health();

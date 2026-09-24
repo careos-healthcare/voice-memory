@@ -11,7 +11,9 @@ import 'package:flutter/material.dart';
 /// Confirmation + optional label edit before generating a private share image.
 class ShareCardPreviewSheet extends StatefulWidget {
   const ShareCardPreviewSheet({
-    required this.model, required this.source, super.key,
+    required this.model,
+    required this.source,
+    super.key,
   });
 
   final ShareCardModel model;

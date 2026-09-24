@@ -85,8 +85,7 @@ final RegExp _localOnlyPattern = RegExp(
 List<String> revocationOverstatementsIn(String line) {
   final reasons = <String>[];
 
-  if (_immediacyPattern.hasMatch(line) &&
-      !_deviceScopePattern.hasMatch(line)) {
+  if (_immediacyPattern.hasMatch(line) && !_deviceScopePattern.hasMatch(line)) {
     reasons.add('immediacy claim not scoped to this device');
   }
   if (_reachPattern.hasMatch(line) &&
@@ -221,20 +220,23 @@ void main() {
       expect(
         stopText,
         contains('server'),
-        reason: 'every revoke path calls POST /api/coach/consent/revoke; copy '
+        reason:
+            'every revoke path calls POST /api/coach/consent/revoke; copy '
             'that leaves the server out tells a user their caregiver can '
             'still read when they cannot',
       );
       expect(
         stopText,
         anyOf(contains('offline'), contains('reconnect')),
-        reason: 'the server half is queued and retried when it does not land, '
+        reason:
+            'the server half is queued and retried when it does not land, '
             'so the bound belongs in the same section as the promise',
       );
       expect(
         CaregiverGrantCopy.stop,
         contains(CaregiverGrantCopy.stopOnThisDevice),
-        reason: 'the device-scoped immediacy claim is the honest one and has '
+        reason:
+            'the device-scoped immediacy claim is the honest one and has '
             'to survive every rewrite of the section around it',
       );
     });
@@ -354,11 +356,14 @@ void main() {
       });
     }
 
-    test('every shipped line passes the same guard the overstatements fail', () {
-      for (final line in CaregiverGrantCopy.all) {
-        expect(overstatementsIn(line), isEmpty, reason: line);
-      }
-    });
+    test(
+      'every shipped line passes the same guard the overstatements fail',
+      () {
+        for (final line in CaregiverGrantCopy.all) {
+          expect(overstatementsIn(line), isEmpty, reason: line);
+        }
+      },
+    );
   });
 
   group('the guard fails on copy that has gone stale the other way', () {
@@ -370,7 +375,8 @@ void main() {
       'Turning access off here does not shut down a pass you already handed '
               'out. It can keep working somewhere else until it runs out.':
           'the shipped local-only claim',
-      'We do not have a way to end a pass early yet.': 'the shipped no-op claim',
+      'We do not have a way to end a pass early yet.':
+          'the shipped no-op claim',
       'A consent token already issued stays valid on the server until its '
               'expiry date.':
           'the confirmation-dialog version of the same claim',

@@ -1,10 +1,16 @@
 import 'package:archiveme_mobile/features/archive_theory/views/theories_screen.dart';
 import 'package:archiveme_mobile/features/capture/capture_module_config.dart';
 import 'package:archiveme_mobile/features/capture_flow/capture_flow_phase.dart';
+import 'package:archiveme_mobile/features/memos/archive_home_host.dart';
+import 'package:archiveme_mobile/features/onboarding/privacy_onboarding_flow.dart';
 import 'package:archiveme_mobile/features/sync/screens/offline_sync_verification_screen.dart';
+import 'package:archiveme_mobile/features/sync/sync_dashboard_screen.dart';
+import 'package:archiveme_mobile/features/relationships/presentation/relationship_graph_screen.dart';
+import 'package:archiveme_mobile/features/voice/presentation/voice_call_screen.dart';
 import 'package:archiveme_mobile/config/production_navigation.dart';
 import 'package:archiveme_mobile/config/screenshot_mode.dart';
 import 'package:archiveme_mobile/config/trial_mode.dart';
+import 'package:archiveme_mobile/core/diagnostics/sync_status_route.dart';
 import 'package:archiveme_mobile/core/config/v1_capability_registry.dart';
 import 'package:archiveme_mobile/core/config/v1_feature_flags.dart';
 import 'package:archiveme_mobile/core/config/v1_navigation_guard.dart';
@@ -25,6 +31,7 @@ import 'package:archiveme_mobile/router/primary_navigation_controller.dart';
 import 'package:archiveme_mobile/router/record_navigation_activity_controller.dart';
 import 'package:archiveme_mobile/router/route_catalog.dart';
 import 'package:archiveme_mobile/router/v1_quarantine_redirects.dart';
+import 'package:archiveme_mobile/router/v1_route_registry.dart';
 import 'package:archiveme_mobile/screens/about_screen.dart';
 import 'package:archiveme_mobile/screens/account_auth_screen.dart';
 import 'package:archiveme_mobile/screens/account_screen.dart';
@@ -36,11 +43,11 @@ import 'package:archiveme_mobile/screens/belief_evidence_screen.dart';
 import 'package:archiveme_mobile/screens/beliefs_screen.dart';
 import 'package:archiveme_mobile/screens/delete_account_screen.dart';
 import 'package:archiveme_mobile/screens/entry_detail_screen.dart';
+import 'package:archiveme_mobile/screens/insights_screen.dart';
 import 'package:archiveme_mobile/screens/consent_audit_screen.dart';
 import 'package:archiveme_mobile/screens/export_screen.dart';
 import 'package:archiveme_mobile/screens/journal_bulk_export_screen.dart';
 import 'package:archiveme_mobile/screens/memory_transparency_screen.dart';
-import 'package:archiveme_mobile/screens/onboarding_screen.dart';
 import 'package:archiveme_mobile/screens/record_screen.dart';
 import 'package:archiveme_mobile/screens/sample_archive_context_screen.dart';
 import 'package:archiveme_mobile/screens/security_settings_screen.dart';
@@ -49,6 +56,8 @@ import 'package:archiveme_mobile/features/settings/ui/caregiver_access_screen.da
 import 'package:archiveme_mobile/features/caregiver_grant/caregiver_consent_entry_screen.dart';
 import 'package:archiveme_mobile/features/caregiver_grant/caregiver_dashboard_screen.dart';
 import 'package:archiveme_mobile/features/ask_archive/ask_archive_screen.dart';
+import 'package:archiveme_mobile/features/chat/archive_chat_screen.dart';
+import 'package:archiveme_mobile/features/habits/habits_dashboard_route.dart';
 import 'package:archiveme_mobile/features/insights/explore_patterns_screen.dart';
 import 'package:archiveme_mobile/features/insights/pattern_exploration_conversation_state.dart';
 import 'package:archiveme_mobile/features/settings/ui/crisis_resources_screen.dart';
@@ -73,7 +82,7 @@ String? resolveInstantCaptureDeepLink(Uri uri) {
   final action = uri.host.isNotEmpty
       ? uri.host.toLowerCase()
       : uri.path.replaceFirst(RegExp('^/+'), '').toLowerCase();
-    final path = switch (action) {
+  final path = switch (action) {
     'record' => CaptureDeepLinkUris.recordLaunchRoute,
     'quick-capture' =>
       V1FeatureFlags.enableV1Only ? '/quick-capture' : '/quick-yes-capture',
@@ -95,7 +104,7 @@ String? resolveInstantCaptureDeepLink(Uri uri) {
 
 final GoRouter appRouter = GoRouter(
   navigatorKey: _rootNavigatorKey,
-  initialLocation: RouteCatalog.recordHome,
+  initialLocation: RouteCatalog.archiveHome,
   refreshListenable: onboardingGate,
   redirect: (context, state) async {
     final instantCaptureTarget = resolveInstantCaptureDeepLink(state.uri);
@@ -116,7 +125,9 @@ final GoRouter appRouter = GoRouter(
 
     // Isolates an active caregiver session from the owner's app. Returns null
     // without touching storage while the capability is compiled out.
-    final caregiverRedirect = await CaregiverModeController.tryRedirectFor(path);
+    final caregiverRedirect = await CaregiverModeController.tryRedirectFor(
+      path,
+    );
     if (caregiverRedirect != null) return caregiverRedirect;
 
     if (path == '/start') {
@@ -154,6 +165,7 @@ final GoRouter appRouter = GoRouter(
     if (TrialMode.hideDeveloperSurfaces &&
         path != '/record' &&
         path != '/archive-belief' &&
+        path != '/insights' &&
         path != '/belief-changes' &&
         path != '/account' &&
         path != '/settings' &&
@@ -169,7 +181,7 @@ final GoRouter appRouter = GoRouter(
         return '/record';
       }
     }
-    if (path == '/') return RouteCatalog.recordHome;
+    if (path == '/') return RouteCatalog.archiveHome;
     return null;
   },
   routes: [
@@ -177,11 +189,11 @@ final GoRouter appRouter = GoRouter(
       path: '/offline-sync-verify',
       builder: (context, state) => const OfflineSyncVerificationScreen(),
     ),
-    GoRoute(path: '/', redirect: (context, state) => RouteCatalog.recordHome),
+    GoRoute(path: '/', redirect: (context, state) => RouteCatalog.archiveHome),
     GoRoute(
       path: '/onboarding',
       parentNavigatorKey: _rootNavigatorKey,
-      builder: (context, state) => const OnboardingScreen(),
+      builder: (context, state) => const PrivacyOnboardingFlow(),
     ),
     GoRoute(
       path: '/onboarding-intent',
@@ -213,33 +225,28 @@ final GoRouter appRouter = GoRouter(
       ),
       branches: [
         StatefulShellBranch(
-          navigatorKey: recordBranchNavigatorKey,
-          routes: [
-            GoRoute(
-              path: RouteCatalog.recordHome,
-              builder: (context, state) {
-                return CaptureScreenHost(
-                  navigationActivityController:
-                      recordNavigationActivityController,
-                  routineKindOverride: journalRoutineKindFromUri(state.uri),
-                  routeState: state,
-                );
-              },
-            ),
-          ],
-        ),
-        StatefulShellBranch(
           navigatorKey: archiveBranchNavigatorKey,
           routes: [
             GoRoute(
               path: RouteCatalog.archiveHome,
-              builder: (context, state) => const ArchiveBeliefScreen(),
+              builder: (context, state) => const ArchiveHomeHost(
+                archive: ArchiveBeliefScreen(),
+              ),
               routes: [
                 GoRoute(
                   path: 'changes',
                   builder: (context, state) => const BeliefChangesScreen(),
                 ),
               ],
+            ),
+          ],
+        ),
+        StatefulShellBranch(
+          navigatorKey: insightsBranchNavigatorKey,
+          routes: [
+            GoRoute(
+              path: RouteCatalog.insightsHome,
+              builder: (context, state) => const InsightsScreen(),
             ),
           ],
         ),
@@ -255,6 +262,17 @@ final GoRouter appRouter = GoRouter(
       ],
     ),
     GoRoute(
+      path: RouteCatalog.recordHome,
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) {
+        return CaptureScreenHost(
+          navigationActivityController: recordNavigationActivityController,
+          routineKindOverride: journalRoutineKindFromUri(state.uri),
+          routeState: state,
+        );
+      },
+    ),
+    GoRoute(
       path: RouteCatalog.changesHome,
       redirect: (context, state) => ArchiveChangesDeepLink.nestedChangesPath,
     ),
@@ -262,6 +280,16 @@ final GoRouter appRouter = GoRouter(
       path: '/security',
       parentNavigatorKey: _rootNavigatorKey,
       builder: (context, state) => const SecuritySettingsScreen(),
+    ),
+    GoRoute(
+      path: RouteCatalog.voiceCall,
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) => const VoiceCallScreen(),
+    ),
+    GoRoute(
+      path: RouteCatalog.relationships,
+      parentNavigatorKey: _rootNavigatorKey,
+      builder: (context, state) => const RelationshipGraphScreen(),
     ),
     GoRoute(
       path: '/privacy-security',
@@ -413,6 +441,38 @@ final GoRouter appRouter = GoRouter(
       builder: (context, state) => const DeleteAccountScreen(),
     ),
     GoRoute(
+      path: V1RouteRegistry.chatPath,
+      parentNavigatorKey: _rootNavigatorKey,
+      pageBuilder: (context, state) => _featurePage(
+        key: state.pageKey,
+        child: const ArchiveChatScreen(),
+      ),
+    ),
+    GoRoute(
+      path: V1RouteRegistry.habitsPath,
+      parentNavigatorKey: _rootNavigatorKey,
+      pageBuilder: (context, state) => _featurePage(
+        key: state.pageKey,
+        child: const HabitsDashboardRoute(),
+      ),
+    ),
+    GoRoute(
+      path: V1RouteRegistry.syncDashboardPath,
+      parentNavigatorKey: _rootNavigatorKey,
+      pageBuilder: (context, state) => _featurePage(
+        key: state.pageKey,
+        child: const SyncDashboardScreen(),
+      ),
+    ),
+    GoRoute(
+      path: V1RouteRegistry.syncStatusPath,
+      parentNavigatorKey: _rootNavigatorKey,
+      pageBuilder: (context, state) => _featurePage(
+        key: state.pageKey,
+        child: const SyncStatusRoute(),
+      ),
+    ),
+    GoRoute(
       path: '/settings',
       parentNavigatorKey: _rootNavigatorKey,
       builder: (context, state) => const SettingsScreen(),
@@ -453,3 +513,25 @@ final GoRouter appRouter = GoRouter(
       ...V1QuarantineRedirects.routes(rootNavigatorKey: _rootNavigatorKey),
   ],
 );
+
+CustomTransitionPage<void> _featurePage({
+  required LocalKey key,
+  required Widget child,
+}) {
+  return CustomTransitionPage<void>(
+    key: key,
+    child: child,
+    transitionDuration: const Duration(milliseconds: 240),
+    reverseTransitionDuration: const Duration(milliseconds: 200),
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      final slide = Tween<Offset>(
+        begin: const Offset(0.06, 0),
+        end: Offset.zero,
+      ).animate(CurvedAnimation(parent: animation, curve: Curves.easeOutCubic));
+      return FadeTransition(
+        opacity: animation,
+        child: SlideTransition(position: slide, child: child),
+      );
+    },
+  );
+}

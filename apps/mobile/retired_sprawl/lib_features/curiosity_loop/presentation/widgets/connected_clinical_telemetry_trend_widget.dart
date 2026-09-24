@@ -5,9 +5,9 @@ import 'package:archiveme_mobile/features/curiosity_loop/presentation/widgets/cl
 import 'package:flutter/material.dart';
 
 class ConnectedClinicalTelemetryTrendWidget extends StatelessWidget {
-
   const ConnectedClinicalTelemetryTrendWidget({
-    required this.history, super.key,
+    required this.history,
+    super.key,
     this.evaluator = const CognitiveTrajectoryEvaluator(),
     this.aggregator = const TelemetryAnalyticsAggregator(),
   });

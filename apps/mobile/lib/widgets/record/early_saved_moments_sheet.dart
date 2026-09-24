@@ -15,7 +15,9 @@ import 'package:flutter/material.dart';
 /// Read-only bottom sheet for reviewing saved moments in the early Record flow.
 class EarlySavedMomentsSheet extends StatelessWidget {
   const EarlySavedMomentsSheet({
-    required this.content, required this.entryCount, super.key,
+    required this.content,
+    required this.entryCount,
+    super.key,
   });
 
   final EarlySavedMomentsSheetContent content;

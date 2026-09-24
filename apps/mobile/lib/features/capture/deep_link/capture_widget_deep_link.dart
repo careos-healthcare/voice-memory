@@ -11,7 +11,8 @@ class CaptureWidgetDeepLinkHandler {
 
   final String appGroupId;
 
-  final StreamController<Uri> _uriController = StreamController<Uri>.broadcast();
+  final StreamController<Uri> _uriController =
+      StreamController<Uri>.broadcast();
 
   Stream<Uri> get uriStream => _uriController.stream;
 

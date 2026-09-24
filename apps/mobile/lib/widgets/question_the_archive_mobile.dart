@@ -10,7 +10,9 @@ import 'package:flutter/material.dart';
 /// Question The Archive — expandable structured answers (no chat).
 class QuestionTheArchiveMobile extends StatefulWidget {
   const QuestionTheArchiveMobile({
-    required this.entries, required this.state, super.key,
+    required this.entries,
+    required this.state,
+    super.key,
   });
 
   final List<JournalEntry> entries;

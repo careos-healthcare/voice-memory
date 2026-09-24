@@ -9,7 +9,8 @@ import 'dart:async';
 /// Focused first-run card after onboarding — no fake day-by-day examples.
 class FirstRecordingHandoffCard extends StatelessWidget {
   const FirstRecordingHandoffCard({
-    required this.onStartRecording, super.key,
+    required this.onStartRecording,
+    super.key,
     this.wedgePrompt,
     this.showRecordCta = true,
   });
@@ -81,9 +82,11 @@ class FirstRecordingHandoffCard extends StatelessWidget {
               height: 44,
               child: FilledButton(
                 onPressed: () {
-                  unawaited(RetentionMetricsTracker.track(
-                    RetentionMetricsTracker.firstRecordCtaTapped,
-                  ));
+                  unawaited(
+                    RetentionMetricsTracker.track(
+                      RetentionMetricsTracker.firstRecordCtaTapped,
+                    ),
+                  );
                   onStartRecording();
                 },
                 child: const Text(ConsumerUiCopy.firstRecordingHandoffCta),

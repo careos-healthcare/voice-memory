@@ -10,7 +10,8 @@ import 'dart:async';
 /// Lightweight beta-only mission card — informational, never blocks recording.
 class ArchiveBetaMissionCard extends StatefulWidget {
   const ArchiveBetaMissionCard({
-    required this.showStartCta, super.key,
+    required this.showStartCta,
+    super.key,
     this.onStart,
     this.onDismissed,
     this.store,
@@ -19,7 +20,8 @@ class ArchiveBetaMissionCard extends StatefulWidget {
   });
 
   const ArchiveBetaMissionCard.test({
-    required this.showStartCta, super.key,
+    required this.showStartCta,
+    super.key,
     this.onStart,
     this.onDismissed,
     this.store,

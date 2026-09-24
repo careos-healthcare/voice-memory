@@ -16,7 +16,9 @@ import 'package:flutter/material.dart';
 /// First honest archive "aha" — shown once when enough evidence exists.
 class FirstAhaMomentCard extends StatefulWidget {
   const FirstAhaMomentCard({
-    required this.candidate, required this.onChanged, super.key,
+    required this.candidate,
+    required this.onChanged,
+    super.key,
     this.source = 'record',
   });
 

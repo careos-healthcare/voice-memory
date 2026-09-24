@@ -1,17 +1,20 @@
-import 'dart:math' as math;
 import 'dart:typed_data';
 
+import 'package:archiveme_mobile/core/execution/isolate_compute_job.dart';
 import 'package:archiveme_mobile/features/insight_engine/hybrid_search_models.dart';
 import 'package:archiveme_mobile/features/search/reflection_embedding_contract.dart';
+import 'package:archiveme_mobile/storage/sqlite/embedding_blob_ranker.dart';
 import 'package:archiveme_mobile/storage/sqlite/migrations/migration_009_reflection_embeddings.dart';
 import 'package:archiveme_mobile/storage/sqlite/sqlite_vector_support.dart';
+import 'package:archiveme_mobile/storage/sqlite/time_capsule_visibility.dart';
 import 'package:sqflite/sqflite.dart';
 
 /// Cosine similarity search over reflection embedding tables (worker-safe).
 abstract final class ReflectionEmbeddingVectorSearch {
   ReflectionEmbeddingVectorSearch._();
 
-  static const embeddingsTable = Migration009ReflectionEmbeddings.embeddingsTable;
+  static const embeddingsTable =
+      Migration009ReflectionEmbeddings.embeddingsTable;
   static const vecTable = Migration009ReflectionEmbeddings.vecTable;
 
   static Future<List<VectorSearchHit>> searchWithScores({
@@ -33,10 +36,13 @@ abstract final class ReflectionEmbeddingVectorSearch {
 
     List<VectorSearchHit> hits;
     if (SqliteVectorSupport.isAvailable) {
-      hits = await _vectorSearchSqliteVector(
-        db: db,
-        queryEmbedding: queryEmbedding,
-        limit: fetchLimit,
+      hits = await IsolateComputeJob.trace(
+        'sqlite.vec.vector_full_scan',
+        () => _vectorSearchSqliteVector(
+          db: db,
+          queryEmbedding: queryEmbedding,
+          limit: fetchLimit,
+        ),
       );
     } else if (await _hasLegacyVec0Table(db)) {
       hits = await _vectorSearchLegacyVec0(
@@ -56,7 +62,12 @@ abstract final class ReflectionEmbeddingVectorSearch {
       hits = hits.where((hit) => hit.entryId != excludeEntryId).toList();
     }
 
-    return hits.take(limit).toList(growable: false);
+    final visible = await TimeCapsuleVisibility.withoutLocked(
+      db,
+      hits,
+      (hit) => hit.entryId,
+    );
+    return visible.take(limit).toList(growable: false);
   }
 
   static Future<bool> _hasLegacyVec0Table(Database db) async {
@@ -125,26 +136,25 @@ abstract final class ReflectionEmbeddingVectorSearch {
     required List<double> queryEmbedding,
     required int limit,
   }) async {
-    final rows = await db.query(embeddingsTable, columns: ['entry_id', 'embedding']);
+    final rows = await db.query(
+      embeddingsTable,
+      columns: ['entry_id', 'embedding'],
+    );
     if (rows.isEmpty) return const [];
 
-    final scored = <VectorSearchHit>[];
+    final blobs = <EmbeddingBlobRow>[];
     for (final row in rows) {
       final entryId = row['entry_id'] as String? ?? '';
       final blob = row['embedding'] as Uint8List?;
       if (entryId.isEmpty || blob == null) continue;
-      final embedding = _blobToEmbedding(blob);
-      final score = _cosineSimilarity(queryEmbedding, embedding);
-      scored.add(VectorSearchHit(entryId: entryId, cosineSimilarity: score));
+      blobs.add(EmbeddingBlobRow(entryId: entryId, blob: blob));
     }
 
-    scored.sort((a, b) {
-      final byScore = b.cosineSimilarity.compareTo(a.cosineSimilarity);
-      if (byScore != 0) return byScore;
-      return a.entryId.compareTo(b.entryId);
-    });
-
-    return scored.take(limit).toList(growable: false);
+    return EmbeddingBlobRanker.rank(
+      queryEmbedding: queryEmbedding,
+      rows: blobs,
+      limit: limit,
+    );
   }
 
   static List<VectorSearchHit> _rowsToHits(List<Map<String, Object?>> rows) {
@@ -170,30 +180,5 @@ abstract final class ReflectionEmbeddingVectorSearch {
   static Uint8List _embeddingToBlob(List<double> embedding) {
     final bytes = Float32List.fromList(embedding);
     return bytes.buffer.asUint8List();
-  }
-
-  static List<double> _blobToEmbedding(Uint8List blob) {
-    final floats = Float32List.view(
-      blob.buffer,
-      blob.offsetInBytes,
-      blob.lengthInBytes ~/ Float32List.bytesPerElement,
-    );
-    return floats.toList(growable: false);
-  }
-
-  static double _cosineSimilarity(List<double> a, List<double> b) {
-    final length = math.min(a.length, b.length);
-    if (length == 0) return 0;
-
-    var dot = 0.0;
-    var normA = 0.0;
-    var normB = 0.0;
-    for (var i = 0; i < length; i++) {
-      dot += a[i] * b[i];
-      normA += a[i] * a[i];
-      normB += b[i] * b[i];
-    }
-    if (normA == 0 || normB == 0) return 0;
-    return dot / (math.sqrt(normA) * math.sqrt(normB));
   }
 }

@@ -1,4 +1,7 @@
 import 'package:archiveme_mobile/core/utils/app_logger.dart';
+import 'package:archiveme_mobile/features/recording/streaming_transcript_session.dart';
+import 'package:archiveme_mobile/features/voice_capture/transcription/offline_transcription_copy.dart';
+import 'package:archiveme_mobile/widgets/record/streaming_transcript_text.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../billing/purchase_intent_return_cue.dart';
@@ -55,14 +58,18 @@ void _recordPermissionUiLog(String message) {
 }
 
 void _recordCtaLog(String message) {
-  AppLogger.debug('${RecordMicrophonePermissionUi.recordCtaLogPrefix} $message');
+  AppLogger.debug(
+    '${RecordMicrophonePermissionUi.recordCtaLogPrefix} $message',
+  );
 }
 
 /// Primary record tab — coordinator widget composing modular recording feature parts.
 ///
 /// **Archived production path:** [CaptureScreenHost] owns all production capture.
 /// Kept for characterization tests and dedicated legacy review — not routed in V1.
-@Deprecated('Use CaptureScreenHost. Legacy controller archived from production.')
+@Deprecated(
+  'Use CaptureScreenHost. Legacy controller archived from production.',
+)
 class RecordScreen extends ConsumerStatefulWidget {
   const RecordScreen({
     super.key,

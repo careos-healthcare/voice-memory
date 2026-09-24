@@ -10,7 +10,9 @@ import 'package:flutter/material.dart';
 /// Patterns tab — signals waiting for confirmation before a full pattern.
 class PatternsSignalsWaitingCard extends StatelessWidget {
   const PatternsSignalsWaitingCard({
-    required this.selected, required this.reflectionCount, super.key,
+    required this.selected,
+    required this.reflectionCount,
+    super.key,
     this.nextPrompt,
     this.onRecord,
     this.onViewDetail,

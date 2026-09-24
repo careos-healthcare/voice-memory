@@ -8,7 +8,8 @@ import 'package:flutter/material.dart';
 /// Post check-in weekly payoff: what kept repeating this week.
 class WeeklyPatternRecapCard extends StatefulWidget {
   const WeeklyPatternRecapCard({
-    required this.recap, super.key,
+    required this.recap,
+    super.key,
     this.onUseNext,
   });
 

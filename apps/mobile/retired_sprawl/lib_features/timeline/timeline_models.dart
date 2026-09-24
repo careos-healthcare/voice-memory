@@ -1,4 +1,5 @@
-import 'package:archiveme_mobile/features/recording/recording_dependencies.dart' show ListView;
+import 'package:archiveme_mobile/features/recording/recording_dependencies.dart'
+    show ListView;
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:flutter/cupertino.dart' show ListView;
 import 'package:flutter/material.dart' show ListView;

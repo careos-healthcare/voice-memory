@@ -9,7 +9,8 @@ import 'package:flutter/material.dart';
 /// Cold-start preview — watch state after first recording, not a conclusion.
 class ArchiveDemoPreviewCard extends StatelessWidget {
   const ArchiveDemoPreviewCard({
-    required this.preview, super.key,
+    required this.preview,
+    super.key,
     this.onRecordNext,
   });
 

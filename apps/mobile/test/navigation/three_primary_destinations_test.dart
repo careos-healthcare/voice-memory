@@ -16,6 +16,7 @@ import 'package:archiveme_mobile/widgets/archive/archive_changes_section.dart';
 import 'package:archiveme_mobile/widgets/archive/archive_changes_unavailable_notice.dart';
 import 'package:archiveme_mobile/widgets/main_shell.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/semantics.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
@@ -24,18 +25,21 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   group('three primary destinations', () {
-    test('shell exposes Record, Archive, Account only', () {
+    test('shell exposes Archive, Insights, Account only', () {
       expect(PrimaryDestination.shellValues, [
-        PrimaryDestination.record,
         PrimaryDestination.archive,
+        PrimaryDestination.insights,
         PrimaryDestination.account,
       ]);
       expect(
         PrimaryDestination.shellValues.map((d) => d.label),
-        ['Record', 'Archive', 'Account'],
+        ['Archive', 'Insights', 'Account'],
       );
       expect(RouteCatalog.primaryRoutes, hasLength(3));
-      expect(RouteCatalog.primaryRoutes, isNot(contains(RouteCatalog.changesHome)));
+      expect(
+        RouteCatalog.primaryRoutes,
+        isNot(contains(RouteCatalog.changesHome)),
+      );
     });
 
     testWidgets('fresh user sees exactly three primary destinations', (
@@ -46,7 +50,7 @@ void main() {
       await _pumpHarness(tester, harness);
 
       expect(find.byType(NavigationBar), findsOneWidget);
-      expect(_navigationLabels(tester), ['Record', 'Archive', 'Account']);
+      expect(_navigationLabels(tester), ['Archive', 'Insights', 'Account']);
       expect(find.text('Changes'), findsNothing);
       expect(find.text('Then vs Now'), findsNothing);
     });
@@ -63,18 +67,18 @@ void main() {
           .where((node) => (node.properties.label ?? '').contains('tab'))
           .map((node) => node.properties.label!)
           .toList();
-      expect(nodes.where((label) => label.contains('Record')), isNotEmpty);
+      expect(nodes.where((label) => label.contains('Archive')), isNotEmpty);
       expect(nodes.where((label) => label.contains('tab 1 of 3')), isNotEmpty);
       expect(nodes.where((label) => label.contains('selected')), isNotEmpty);
 
-      await _tapDestination(tester, 'Archive');
-      final archiveLabels = tester
+      await _tapDestination(tester, 'Insights');
+      final insightsLabels = tester
           .widgetList<Semantics>(find.byType(Semantics))
           .map((node) => node.properties.label ?? '')
-          .where((label) => label.contains('Archive'))
+          .where((label) => label.contains('Insights'))
           .join(' ');
-      expect(archiveLabels, contains('tab 2 of 3'));
-      expect(archiveLabels, contains('selected'));
+      expect(insightsLabels, contains('tab 2 of 3'));
+      expect(insightsLabels, contains('selected'));
     });
   });
 
@@ -96,7 +100,10 @@ void main() {
         reflection: reflection,
       );
       expect(
-        ArchiveChangesEligibility.isEligible(entries: [shortEntry], timeline: const []),
+        ArchiveChangesEligibility.isEligible(
+          entries: [shortEntry],
+          timeline: const [],
+        ),
         isFalse,
       );
 
@@ -105,7 +112,8 @@ void main() {
         (i) => JournalEntry(
           id: 'e$i',
           createdAt: DateTime.utc(2026, 1, i + 1),
-          transcript: 'This is a long enough reflection about work pressure $i.',
+          transcript:
+              'This is a long enough reflection about work pressure $i.',
           durationSeconds: 30,
           reflection: reflection,
         ),
@@ -143,11 +151,16 @@ void main() {
       );
       await tester.pump();
 
-      expect(find.byKey(const Key('archive_changes_section_absent')), findsOneWidget);
+      expect(
+        find.byKey(const Key('archive_changes_section_absent')),
+        findsOneWidget,
+      );
       expect(find.byKey(const Key('archive_changes_heading')), findsNothing);
     });
 
-    testWidgets('eligible archive shows Changes inside Archive', (tester) async {
+    testWidgets('eligible archive shows Changes inside Archive', (
+      tester,
+    ) async {
       const timeline = [
         BeliefChangeTimelineItem(
           kind: BeliefChangeKind.weakening,
@@ -177,7 +190,10 @@ void main() {
 
   group('legacy Changes deep links', () {
     test('legacy path redirects to nested archive route', () {
-      expect(ArchiveChangesDeepLink.nestedChangesPath, '/archive-belief/changes');
+      expect(
+        ArchiveChangesDeepLink.nestedChangesPath,
+        '/archive-belief/changes',
+      );
       expect(ArchiveChangesDeepLink.legacyPath, '/belief-changes');
     });
 
@@ -206,7 +222,8 @@ void main() {
             routes: [
               GoRoute(
                 path: 'changes',
-                builder: (_, _) => const BeliefChangesScreen(previewTimeline: []),
+                builder: (_, _) =>
+                    const BeliefChangesScreen(previewTimeline: []),
               ),
             ],
           ),
@@ -220,14 +237,20 @@ void main() {
 
       expect(router.state.uri.path, RouteCatalog.archiveHome);
       expect(
-        router.state.uri.queryParameters[ArchiveChangesDeepLink.unavailableQueryKey],
+        router.state.uri.queryParameters[ArchiveChangesDeepLink
+            .unavailableQueryKey],
         '1',
       );
-      expect(find.byKey(ArchiveChangesUnavailableNotice.noticeKey), findsOneWidget);
+      expect(
+        find.byKey(ArchiveChangesUnavailableNotice.noticeKey),
+        findsOneWidget,
+      );
       expect(find.text('archive-root'), findsOneWidget);
     });
 
-    testWidgets('eligible legacy deep link shows Changes content', (tester) async {
+    testWidgets('eligible legacy deep link shows Changes content', (
+      tester,
+    ) async {
       const timeline = [
         BeliefChangeTimelineItem(
           kind: BeliefChangeKind.weakening,
@@ -252,13 +275,16 @@ void main() {
   group('release shell graph', () {
     test('router owns exactly three typed primary branches', () {
       final source = File('lib/router/app_router.dart').readAsStringSync();
-      final shellSection = source.split('StatefulShellRoute.indexedStack').skip(1).first;
+      final shellSection = source
+          .split('StatefulShellRoute.indexedStack')
+          .skip(1)
+          .first;
       expect(
         RegExp(r'StatefulShellBranch\s*\(').allMatches(shellSection).length,
         3,
       );
       expect(shellSection, isNot(contains('changesBranchNavigatorKey')));
-      for (final route in ['recordHome', 'archiveHome', 'accountHome']) {
+      for (final route in ['archiveHome', 'insightsHome', 'accountHome']) {
         expect(
           RegExp('path: RouteCatalog\\.$route').allMatches(shellSection),
           hasLength(1),
@@ -267,22 +293,28 @@ void main() {
       }
     });
 
-    testWidgets('production harness does not construct a Changes primary branch', (
-      tester,
-    ) async {
-      final source = File('lib/router/app_router.dart').readAsStringSync();
-      final shellSection = source.split('StatefulShellRoute.indexedStack').skip(1).first;
-      expect(shellSection, isNot(contains('changesBranchNavigatorKey')));
-      expect(
-        RegExp(r'StatefulShellBranch\s*\(').allMatches(shellSection).length,
-        3,
-      );
-    });
+    testWidgets(
+      'production harness does not construct a Changes primary branch',
+      (
+        tester,
+      ) async {
+        final source = File('lib/router/app_router.dart').readAsStringSync();
+        final shellSection = source
+            .split('StatefulShellRoute.indexedStack')
+            .skip(1)
+            .first;
+        expect(shellSection, isNot(contains('changesBranchNavigatorKey')));
+        expect(
+          RegExp(r'StatefulShellBranch\s*\(').allMatches(shellSection).length,
+          3,
+        );
+      },
+    );
   });
 }
 
 class _ThreeTabHarness {
-  _ThreeTabHarness({this.initialLocation = RouteCatalog.recordHome}) {
+  _ThreeTabHarness({this.initialLocation = RouteCatalog.archiveHome}) {
     router = GoRouter(
       initialLocation: initialLocation,
       routes: [
@@ -292,16 +324,18 @@ class _ThreeTabHarness {
             StatefulShellBranch(
               routes: [
                 GoRoute(
-                  path: RouteCatalog.recordHome,
-                  builder: (_, _) => const Scaffold(body: Text('Record branch')),
+                  path: RouteCatalog.archiveHome,
+                  builder: (_, _) =>
+                      const Scaffold(body: Text('Archive branch')),
                 ),
               ],
             ),
             StatefulShellBranch(
               routes: [
                 GoRoute(
-                  path: RouteCatalog.archiveHome,
-                  builder: (_, _) => const Scaffold(body: Text('Archive branch')),
+                  path: RouteCatalog.insightsHome,
+                  builder: (_, _) =>
+                      const Scaffold(body: Text('Insights branch')),
                 ),
               ],
             ),
@@ -309,7 +343,8 @@ class _ThreeTabHarness {
               routes: [
                 GoRoute(
                   path: RouteCatalog.accountHome,
-                  builder: (_, _) => const Scaffold(body: Text('Account branch')),
+                  builder: (_, _) =>
+                      const Scaffold(body: Text('Account branch')),
                 ),
               ],
             ),
@@ -328,7 +363,9 @@ class _ThreeTabHarness {
 Future<void> _pumpHarness(WidgetTester tester, _ThreeTabHarness harness) async {
   await tester.binding.setSurfaceSize(const Size(390, 844));
   addTearDown(() => tester.binding.setSurfaceSize(null));
-  await tester.pumpWidget(MaterialApp.router(routerConfig: harness.router));
+  await tester.pumpWidget(
+    ProviderScope(child: MaterialApp.router(routerConfig: harness.router)),
+  );
   await tester.pumpAndSettle();
 }
 

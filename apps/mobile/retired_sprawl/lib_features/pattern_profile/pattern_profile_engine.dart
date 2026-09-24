@@ -17,7 +17,8 @@ const _conservativeResultHints = {
 
 /// Builds a [PatternProfile] from saved local data only — nothing invented.
 PatternProfile? buildPatternProfile({
-  required List<KeyMoment> keyMoments, PatternMemory? memory,
+  required List<KeyMoment> keyMoments,
+  PatternMemory? memory,
   ArchiveMemorySummary? summary,
   PatternMap? map,
   ArchiveEvolutionTimeline? timeline,

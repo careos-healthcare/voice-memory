@@ -12,7 +12,10 @@ void main() {
     ProfessionalCoachFeatureFlags.debugOverride = false;
 
     expect(V1NavigationGuard.isAllowed(RouteCatalog.coachHome), isFalse);
-    expect(V1NavigationGuard.isAllowed(RouteCatalog.coachClientConsent), isFalse);
+    expect(
+      V1NavigationGuard.isAllowed(RouteCatalog.coachClientConsent),
+      isFalse,
+    );
     expect(
       V1NavigationGuard.redirectFor(RouteCatalog.coachHome),
       V1NavigationGuard.archiveHome,
@@ -23,7 +26,10 @@ void main() {
     ProfessionalCoachFeatureFlags.debugOverride = true;
 
     expect(V1NavigationGuard.isAllowed(RouteCatalog.coachHome), isFalse);
-    expect(V1NavigationGuard.isAllowed(RouteCatalog.coachClientConsent), isFalse);
+    expect(
+      V1NavigationGuard.isAllowed(RouteCatalog.coachClientConsent),
+      isFalse,
+    );
     expect(
       V1NavigationGuard.redirectFor(RouteCatalog.coachHome),
       V1NavigationGuard.archiveHome,

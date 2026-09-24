@@ -41,9 +41,11 @@ class NoOpQuickCaptureWidgetBridge implements QuickCaptureWidgetBridge {
 }
 
 /// Method channel bridge — fails softly when native code is unavailable.
-class MethodChannelQuickCaptureWidgetBridge implements QuickCaptureWidgetBridge {
+class MethodChannelQuickCaptureWidgetBridge
+    implements QuickCaptureWidgetBridge {
   MethodChannelQuickCaptureWidgetBridge({MethodChannel? channel})
-    : _channel = channel ?? const MethodChannel('archive_me/quick_capture_widget');
+    : _channel =
+          channel ?? const MethodChannel('archive_me/quick_capture_widget');
 
   final MethodChannel _channel;
 
@@ -58,7 +60,8 @@ class MethodChannelQuickCaptureWidgetBridge implements QuickCaptureWidgetBridge 
       return false;
     } on PlatformException {
       return false;
-    } catch (_, stackTrace) { // ignore: silent_catch_audit — widget extension best-effort
+    } catch (_, stackTrace) {
+      // ignore: silent_catch_audit — widget extension best-effort
       return false;
     }
   }
@@ -78,7 +81,8 @@ class MethodChannelQuickCaptureWidgetBridge implements QuickCaptureWidgetBridge 
       return const [];
     } on PlatformException {
       return const [];
-    } catch (_, stackTrace) { // ignore: silent_catch_audit — widget extension best-effort
+    } catch (_, stackTrace) {
+      // ignore: silent_catch_audit — widget extension best-effort
       return const [];
     }
   }
@@ -95,7 +99,8 @@ class MethodChannelQuickCaptureWidgetBridge implements QuickCaptureWidgetBridge 
       return;
     } on PlatformException {
       return;
-    } catch (_, stackTrace) { // ignore: silent_catch_audit — widget extension best-effort
+    } catch (_, stackTrace) {
+      // ignore: silent_catch_audit — widget extension best-effort
       return;
     }
   }
@@ -111,7 +116,8 @@ class MethodChannelQuickCaptureWidgetBridge implements QuickCaptureWidgetBridge 
       return;
     } on PlatformException {
       return;
-    } catch (_, stackTrace) { // ignore: silent_catch_audit — widget extension best-effort
+    } catch (_, stackTrace) {
+      // ignore: silent_catch_audit — widget extension best-effort
       return;
     }
   }
@@ -124,7 +130,8 @@ class MethodChannelQuickCaptureWidgetBridge implements QuickCaptureWidgetBridge 
       return;
     } on PlatformException {
       return;
-    } catch (_, stackTrace) { // ignore: silent_catch_audit — widget extension best-effort
+    } catch (_, stackTrace) {
+      // ignore: silent_catch_audit — widget extension best-effort
       return;
     }
   }
@@ -140,7 +147,8 @@ class MethodChannelQuickCaptureWidgetBridge implements QuickCaptureWidgetBridge 
       return '';
     } on PlatformException {
       return '';
-    } catch (_, stackTrace) { // ignore: silent_catch_audit — widget extension best-effort
+    } catch (_, stackTrace) {
+      // ignore: silent_catch_audit — widget extension best-effort
       return '';
     }
   }

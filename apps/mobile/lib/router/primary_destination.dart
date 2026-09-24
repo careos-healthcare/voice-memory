@@ -11,6 +11,14 @@ enum PrimaryDestination {
     selectedIcon: Icons.mic,
     screenLabel: 'Record screen',
   ),
+  insights(
+    route: RouteCatalog.insightsHome,
+    label: 'Insights',
+    accessibilityLabel: 'Insights',
+    icon: Icons.insights_outlined,
+    selectedIcon: Icons.insights,
+    screenLabel: 'Insights screen',
+  ),
   archive(
     route: RouteCatalog.archiveHome,
     label: 'Archive',
@@ -44,17 +52,17 @@ enum PrimaryDestination {
   final IconData selectedIcon;
   final String screenLabel;
 
-  /// Bottom nav / navigation rail — release builds expose exactly these three.
+  /// Bottom nav / navigation rail — timeline, insights, and account.
   static const List<PrimaryDestination> shellValues = [
-    PrimaryDestination.record,
     PrimaryDestination.archive,
+    PrimaryDestination.insights,
     PrimaryDestination.account,
   ];
 
   int get shellIndex => shellValues.indexOf(this);
 
   static PrimaryDestination fromShellIndex(int index) {
-    if (index < 0 || index >= shellValues.length) return record;
+    if (index < 0 || index >= shellValues.length) return archive;
     return shellValues[index];
   }
 
@@ -69,6 +77,9 @@ enum PrimaryDestination {
 final recordBranchNavigatorKey = GlobalKey<NavigatorState>(
   debugLabel: 'recordBranchNavigator',
 );
+final insightsBranchNavigatorKey = GlobalKey<NavigatorState>(
+  debugLabel: 'insightsBranchNavigator',
+);
 final archiveBranchNavigatorKey = GlobalKey<NavigatorState>(
   debugLabel: 'archiveBranchNavigator',
 );
@@ -80,5 +91,6 @@ final primaryBranchNavigatorKeys =
     <PrimaryDestination, GlobalKey<NavigatorState>>{
       PrimaryDestination.record: recordBranchNavigatorKey,
       PrimaryDestination.archive: archiveBranchNavigatorKey,
+      PrimaryDestination.insights: insightsBranchNavigatorKey,
       PrimaryDestination.account: accountBranchNavigatorKey,
     };

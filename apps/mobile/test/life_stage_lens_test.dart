@@ -23,7 +23,10 @@ void main() {
   });
 
   test('LifeStageLensPrompt returns block for thematic lenses only', () {
-    expect(LifeStageLensPrompt.systemBlockFor(LifeStageLens.defaultLens), isNull);
+    expect(
+      LifeStageLensPrompt.systemBlockFor(LifeStageLens.defaultLens),
+      isNull,
+    );
     expect(
       LifeStageLensPrompt.systemBlockFor(LifeStageLens.careerTransition),
       contains('CAREER TRANSITION LENS'),

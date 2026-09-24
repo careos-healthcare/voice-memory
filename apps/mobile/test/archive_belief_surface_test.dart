@@ -445,7 +445,10 @@ void main() {
       );
       await tester.pump();
 
-      expect(find.byKey(const Key('belief_clarity_view_evidence')), findsNothing);
+      expect(
+        find.byKey(const Key('belief_clarity_view_evidence')),
+        findsNothing,
+      );
     });
   });
 }

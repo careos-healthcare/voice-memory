@@ -117,57 +117,63 @@ void main() {
       );
 
       final facts = await store.loadAll();
-      expect(facts.single.id, FactLedgerCitationService.citationIdFor('entry_a', quote));
-    });
-
-    test('ArchiveInsightMapper.fromPrediction resolves ledger-backed quotes', () async {
-      const triggerQuote = 'I keep saying yes at work.';
-      const outcomeQuote = 'I felt drained after the meeting.';
-      final tempDir = await Directory.systemTemp.createTemp('cite_mapper_');
-      addTearDown(() async {
-        if (await tempDir.exists()) await tempDir.delete(recursive: true);
-      });
-      final store = FactLedgerStore(
-        await MobilePrefsStore.open('${tempDir.path}/prefs.json'),
-      );
-
-      await FactLedgerCitationService.indexQuote(
-        sourceEntryId: 'trigger_entry',
-        quote: triggerQuote,
-        provenance: 'test',
-        store: store,
-      );
-      await FactLedgerCitationService.indexQuote(
-        sourceEntryId: 'outcome_entry',
-        quote: outcomeQuote,
-        provenance: 'test',
-        store: store,
-      );
-
-      final insight = ArchiveInsightMapper.fromPrediction(
-        PredictionInsight(
-          id: 'pred-1',
-          title: 'Pattern may repeat',
-          summary: 'Summary',
-          confidence: 70,
-          evidenceCount: 1,
-          outcomeDescription: 'fatigue',
-          supportingEvents: [
-            PredictionEvent(
-              triggerEntryId: 'trigger_entry',
-              outcomeEntryId: 'outcome_entry',
-              triggerQuote: triggerQuote,
-              outcomeQuote: outcomeQuote,
-              recordedAt: DateTime.utc(2026, 3, 3),
-            ),
-          ],
-        ),
-      );
-
       expect(
-        insight.supportingEvidence.single.quote,
-        '$triggerQuote → $outcomeQuote',
+        facts.single.id,
+        FactLedgerCitationService.citationIdFor('entry_a', quote),
       );
     });
+
+    test(
+      'ArchiveInsightMapper.fromPrediction resolves ledger-backed quotes',
+      () async {
+        const triggerQuote = 'I keep saying yes at work.';
+        const outcomeQuote = 'I felt drained after the meeting.';
+        final tempDir = await Directory.systemTemp.createTemp('cite_mapper_');
+        addTearDown(() async {
+          if (await tempDir.exists()) await tempDir.delete(recursive: true);
+        });
+        final store = FactLedgerStore(
+          await MobilePrefsStore.open('${tempDir.path}/prefs.json'),
+        );
+
+        await FactLedgerCitationService.indexQuote(
+          sourceEntryId: 'trigger_entry',
+          quote: triggerQuote,
+          provenance: 'test',
+          store: store,
+        );
+        await FactLedgerCitationService.indexQuote(
+          sourceEntryId: 'outcome_entry',
+          quote: outcomeQuote,
+          provenance: 'test',
+          store: store,
+        );
+
+        final insight = ArchiveInsightMapper.fromPrediction(
+          PredictionInsight(
+            id: 'pred-1',
+            title: 'Pattern may repeat',
+            summary: 'Summary',
+            confidence: 70,
+            evidenceCount: 1,
+            outcomeDescription: 'fatigue',
+            supportingEvents: [
+              PredictionEvent(
+                triggerEntryId: 'trigger_entry',
+                outcomeEntryId: 'outcome_entry',
+                triggerQuote: triggerQuote,
+                outcomeQuote: outcomeQuote,
+                recordedAt: DateTime.utc(2026, 3, 3),
+              ),
+            ],
+          ),
+        );
+
+        expect(
+          insight.supportingEvidence.single.quote,
+          '$triggerQuote → $outcomeQuote',
+        );
+      },
+    );
   });
 }

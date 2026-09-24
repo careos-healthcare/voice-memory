@@ -31,7 +31,8 @@ abstract final class CaregiverCopy {
   static const activeAccessLabel = 'Active access';
   static const accessLogLabel = 'Access history';
   static const revokeAccessCta = 'Revoke access';
-  static const noActiveAccessMessage = 'No active caregiver grants on this device.';
+  static const noActiveAccessMessage =
+      'No active caregiver grants on this device.';
   static const emptyAccessLogMessage = 'No access events recorded yet.';
   static const grantedAtLabel = 'Granted';
   static const expiresAtLabel = 'Expires';

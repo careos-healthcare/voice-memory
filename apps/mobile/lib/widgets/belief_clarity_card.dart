@@ -11,7 +11,8 @@ import 'package:flutter/material.dart';
 /// Answers: what is the belief, why we think so, why it matters.
 class BeliefClarityCard extends StatelessWidget {
   const BeliefClarityCard({
-    required this.belief, super.key,
+    required this.belief,
+    super.key,
     this.reflectionsAnalysed,
     this.showArchiveExplanation = false,
     this.onTap,

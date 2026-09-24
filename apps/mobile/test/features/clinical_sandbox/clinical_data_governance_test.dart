@@ -31,8 +31,9 @@ JournalEntry _entryWithBiomarkers() {
 void main() {
   group('ClinicalDataGovernance', () {
     test('strips clinical fields from outbound journal entries', () {
-      final sanitized =
-          ClinicalDataGovernance.sanitizeEntryForOutboundSync(_entryWithBiomarkers());
+      final sanitized = ClinicalDataGovernance.sanitizeEntryForOutboundSync(
+        _entryWithBiomarkers(),
+      );
 
       expect(sanitized.biomarkers, isNull);
       expect(sanitized.wasGrounded, isFalse);

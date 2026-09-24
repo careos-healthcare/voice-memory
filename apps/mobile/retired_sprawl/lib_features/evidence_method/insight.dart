@@ -20,11 +20,15 @@ class CitedEntry {
       rawText: json['rawText'] as String? ?? json['raw_text'] as String? ?? '',
       createdAt: createdAtRaw != null
           ? DateTime.tryParse(createdAtRaw) ??
-              DateTime.fromMillisecondsSinceEpoch(0)
+                DateTime.fromMillisecondsSinceEpoch(0)
           : DateTime.fromMillisecondsSinceEpoch(0),
       audioId: json['audioId'] as String? ?? json['audio_id'] as String?,
-      startTimestampMs: _readInt(json['startTimestampMs'] ?? json['start_timestamp_ms']),
-      endTimestampMs: _readInt(json['endTimestampMs'] ?? json['end_timestamp_ms']),
+      startTimestampMs: _readInt(
+        json['startTimestampMs'] ?? json['start_timestamp_ms'],
+      ),
+      endTimestampMs: _readInt(
+        json['endTimestampMs'] ?? json['end_timestamp_ms'],
+      ),
       chunkId: json['chunkId'] as String? ?? json['chunk_id'] as String?,
     );
   }
@@ -99,16 +103,17 @@ class Insight {
     return Insight(
       id: json['id'] as String? ?? '',
       insightText: json['insightText'] as String? ?? '',
-      kind: ArchiveInsightKind.values.asNameMap()[kindName] ??
+      kind:
+          ArchiveInsightKind.values.asNameMap()[kindName] ??
           ArchiveInsightKind.theme,
       confidenceBand:
           PatternMatchConfidenceBand.values.asNameMap()[bandName] ??
           PatternMatchConfidenceBand.weak,
       citedEntries: cited is List
           ? cited
-              .whereType<Map<String, dynamic>>()
-              .map(CitedEntry.fromJson)
-              .toList(growable: false)
+                .whereType<Map<String, dynamic>>()
+                .map(CitedEntry.fromJson)
+                .toList(growable: false)
           : const [],
     );
   }

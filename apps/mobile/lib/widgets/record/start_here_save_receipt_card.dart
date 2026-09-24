@@ -15,7 +15,9 @@ import 'package:go_router/go_router.dart';
 /// its own and never blocks recording again — dismissing simply hides it.
 class StartHereSaveReceiptCard extends StatelessWidget {
   const StartHereSaveReceiptCard({
-    required this.receipt, required this.onDismiss, super.key,
+    required this.receipt,
+    required this.onDismiss,
+    super.key,
   });
 
   final StartHereSaveReceipt receipt;

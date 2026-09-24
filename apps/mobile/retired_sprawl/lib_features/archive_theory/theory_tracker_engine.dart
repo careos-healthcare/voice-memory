@@ -109,7 +109,9 @@ class TheoryTrackerEngine {
         .length;
     final strengthening = report.strengthening.length;
     final weakeningOrResolved =
-        report.weakening.length + report.resolved.length + report.retired.length;
+        report.weakening.length +
+        report.resolved.length +
+        report.retired.length;
     DateTime? lastUpdated;
     for (final t in report.all) {
       if (lastUpdated == null || t.updatedAt.isAfter(lastUpdated)) {
@@ -125,11 +127,12 @@ class TheoryTrackerEngine {
     );
   }
 
-  TrackedTheory _fromRanked(RankedTheory ranked, TheorySnapshotStore snapshots) {
+  TrackedTheory _fromRanked(
+    RankedTheory ranked,
+    TheorySnapshotStore snapshots,
+  ) {
     final previous = snapshots.previousConfidenceFor(ranked.candidateId);
-    final delta = previous == null
-        ? 0
-        : ranked.confidencePercent - previous;
+    final delta = previous == null ? 0 : ranked.confidencePercent - previous;
     final status = _resolveStatus(
       confidence: ranked.confidencePercent,
       delta: delta,
@@ -140,19 +143,21 @@ class TheoryTrackerEngine {
     final quotes = ranked.supportingEvidence.isNotEmpty
         ? ranked.supportingEvidence
         : ranked.supportingEntries
-            .take(4)
-            .map(
-              (entry) => TheoryEvidenceQuote(
-                entryId: entry.id,
-                dateLabel: _formatDate(entry.createdAt),
-                quote: _trimQuote(entry.transcript),
-              ),
-            )
-            .toList(growable: false);
+              .take(4)
+              .map(
+                (entry) => TheoryEvidenceQuote(
+                  entryId: entry.id,
+                  dateLabel: _formatDate(entry.createdAt),
+                  quote: _trimQuote(entry.transcript),
+                ),
+              )
+              .toList(growable: false);
 
     final whatChanged = <String>[];
     if (previous != null && delta.abs() >= 1) {
-      whatChanged.add('Confidence moved from $previous% to ${ranked.confidencePercent}%.');
+      whatChanged.add(
+        'Confidence moved from $previous% to ${ranked.confidencePercent}%.',
+      );
     }
     if (ranked.counterEvidenceCount > 0) {
       whatChanged.add(
@@ -200,8 +205,18 @@ class TheoryTrackerEngine {
     final m = dt.month;
     final d = dt.day;
     const months = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
     ];
     return '${months[m - 1]} $d';
   }

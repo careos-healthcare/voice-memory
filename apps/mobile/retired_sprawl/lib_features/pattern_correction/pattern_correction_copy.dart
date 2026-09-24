@@ -29,14 +29,18 @@ abstract final class PatternCorrectionCopy {
     PatternCorrectionReason.notUseful,
   ];
 
-  static const String renamePatternAction = FirstProofActionLoopCopy.renamePatternCta;
+  static const String renamePatternAction =
+      FirstProofActionLoopCopy.renamePatternCta;
   static const String removeFromPatternAction =
       ArchiveControlCopy.excludeFromPatternButton;
-  static const String correctTranscriptAction = TranscriptCorrectionCopy.actionLabel;
-  static const String deleteMomentAction = ArchiveControlCopy.deleteMomentButton;
+  static const String correctTranscriptAction =
+      TranscriptCorrectionCopy.actionLabel;
+  static const String deleteMomentAction =
+      ArchiveControlCopy.deleteMomentButton;
   static const String privacyCentreAction = PrivacyTrustCopy.title;
   static const String betaFeedbackAction = BetaFeedbackCopy.sheetLinkLabel;
-  static const String keepRecordingAction = FirstProofActionLoopCopy.keepRecordingCta;
+  static const String keepRecordingAction =
+      FirstProofActionLoopCopy.keepRecordingCta;
 
   static String reasonLabel(PatternCorrectionReason reason) => switch (reason) {
     PatternCorrectionReason.wrongPattern => wrongPatternReason,

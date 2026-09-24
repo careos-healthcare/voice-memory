@@ -7,6 +7,7 @@ enum LocalDatabaseWorkerOperation {
   journalUpsert,
   journalMirror,
   graphBackfill,
+  purgatoryEvaluate,
   encryptJsonBatch,
   decryptJsonBatch,
   shutdown,
@@ -44,10 +45,10 @@ final class LocalDatabaseWorkerRequest {
   final Map<String, dynamic> payload;
 
   Map<String, dynamic> toJson() => {
-        'requestId': requestId,
-        'operation': operation.name,
-        'payload': payload,
-      };
+    'requestId': requestId,
+    'operation': operation.name,
+    'payload': payload,
+  };
 
   factory LocalDatabaseWorkerRequest.fromJson(Map<String, dynamic> json) {
     return LocalDatabaseWorkerRequest(
@@ -76,10 +77,10 @@ final class LocalDatabaseWorkerResponse {
   final String? error;
 
   Map<String, dynamic> toJson() => {
-        'requestId': requestId,
-        if (result != null) 'result': result,
-        if (error != null) 'error': error,
-      };
+    'requestId': requestId,
+    if (result != null) 'result': result,
+    if (error != null) 'error': error,
+  };
 
   factory LocalDatabaseWorkerResponse.fromJson(Map<String, dynamic> json) {
     return LocalDatabaseWorkerResponse(

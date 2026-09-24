@@ -35,35 +35,38 @@ void main() {
     service.dispose();
   });
 
-  test('connect registers handler and drains pending captures when enabled', () async {
-    WatchCompanionFeatureFlags.debugOverride = true;
-    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-        .setMockMethodCallHandler(channel, (call) async {
-          switch (call.method) {
-            case 'consumePendingWatchAudio':
-              return [
-                {
-                  'path': '/tmp/watch_inbox/watch_capture_1.m4a',
-                  'durationSeconds': 9,
-                  'capturedAt': '2026-01-15T12:00:00.000Z',
-                },
-              ];
-            case 'isWatchSessionSupported':
-              return true;
-            default:
-              return null;
-          }
-        });
+  test(
+    'connect registers handler and drains pending captures when enabled',
+    () async {
+      WatchCompanionFeatureFlags.debugOverride = true;
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(channel, (call) async {
+            switch (call.method) {
+              case 'consumePendingWatchAudio':
+                return [
+                  {
+                    'path': '/tmp/watch_inbox/watch_capture_1.m4a',
+                    'durationSeconds': 9,
+                    'capturedAt': '2026-01-15T12:00:00.000Z',
+                  },
+                ];
+              case 'isWatchSessionSupported':
+                return true;
+              default:
+                return null;
+            }
+          });
 
-    final service = WatchConnectivityService()..forceConnectForTests = true;
-    final received = <WatchAudioCapture>[];
-    await service.connect(onCapture: received.add);
+      final service = WatchConnectivityService()..forceConnectForTests = true;
+      final received = <WatchAudioCapture>[];
+      await service.connect(onCapture: received.add);
 
-    expect(received, hasLength(1));
-    expect(received.single.path, '/tmp/watch_inbox/watch_capture_1.m4a');
-    expect(received.single.durationSeconds, 9);
-    expect(await service.isSupported(), isTrue);
+      expect(received, hasLength(1));
+      expect(received.single.path, '/tmp/watch_inbox/watch_capture_1.m4a');
+      expect(received.single.durationSeconds, 9);
+      expect(await service.isSupported(), isTrue);
 
-    service.dispose();
-  });
+      service.dispose();
+    },
+  );
 }

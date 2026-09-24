@@ -48,7 +48,8 @@ class ArchiveV1Builder {
 
   Future<ArchiveV1View> build({
     required List<JournalEntry> entries,
-    required BeliefEvolutionService evolutionService, ArchiveStateObjectV3? state,
+    required BeliefEvolutionService evolutionService,
+    ArchiveStateObjectV3? state,
     ArchiveStateSnapshot? baseline,
   }) async {
     final hasMin = archiveHasMinimumEvidence(entries);

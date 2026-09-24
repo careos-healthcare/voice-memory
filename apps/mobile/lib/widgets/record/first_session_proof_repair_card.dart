@@ -15,11 +15,19 @@ import 'package:flutter/material.dart';
 
 class FirstSessionCaptureRepairCard extends StatefulWidget {
   const FirstSessionCaptureRepairCard({
-    required this.result, required this.onTypeOneSentence, required this.onUseVoice, required this.onChipSelected, super.key,
+    required this.result,
+    required this.onTypeOneSentence,
+    required this.onUseVoice,
+    required this.onChipSelected,
+    super.key,
   });
 
   const FirstSessionCaptureRepairCard.test({
-    required this.result, required this.onTypeOneSentence, required this.onUseVoice, required this.onChipSelected, super.key,
+    required this.result,
+    required this.onTypeOneSentence,
+    required this.onUseVoice,
+    required this.onChipSelected,
+    super.key,
   });
 
   final FirstSessionCaptureRepairResult result;
@@ -136,7 +144,8 @@ class _FirstSessionCaptureRepairCardState
 
 class ProofQualityRepairCard extends StatefulWidget {
   const ProofQualityRepairCard({
-    required this.result, super.key,
+    required this.result,
+    super.key,
     this.onChanged,
     this.onNotRelevantAnswered,
     this.store,
@@ -146,7 +155,8 @@ class ProofQualityRepairCard extends StatefulWidget {
   });
 
   const ProofQualityRepairCard.test({
-    required this.result, super.key,
+    required this.result,
+    super.key,
     this.onChanged,
     this.onNotRelevantAnswered,
     this.store,

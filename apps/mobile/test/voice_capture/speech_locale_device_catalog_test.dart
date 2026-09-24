@@ -80,21 +80,23 @@ void main() {
   });
 
   group('the hand-maintained catalogue is the defect', () {
-    test('it offers 13 languages and excludes most of what the device knows',
-        () {
-      expect(SpeechLocaleCatalog.offered, hasLength(13));
+    test(
+      'it offers 13 languages and excludes most of what the device knows',
+      () {
+        expect(SpeechLocaleCatalog.offered, hasLength(13));
 
-      // Each of these is a language in which this build offered no private
-      // transcription at all: the customer had to upload audio or keep no
-      // text.
-      for (final identifier in _deviceOnlyIdentifiers) {
-        expect(
-          SpeechLocaleCatalog.entryFor(identifier),
-          isNull,
-          reason: '$identifier was expected to be missing from the 13',
-        );
-      }
-    });
+        // Each of these is a language in which this build offered no private
+        // transcription at all: the customer had to upload audio or keep no
+        // text.
+        for (final identifier in _deviceOnlyIdentifiers) {
+          expect(
+            SpeechLocaleCatalog.entryFor(identifier),
+            isNull,
+            reason: '$identifier was expected to be missing from the 13',
+          );
+        }
+      },
+    );
 
     test('it offers gu-IN, which the recogniser does not support', () {
       // Not merely narrow — wrong in the other direction too. A Gujarati
@@ -107,8 +109,9 @@ void main() {
         reason: 'the device reports no Gujarati recogniser',
       );
       expect(
-        SpeechLocaleCatalog.offeredForDevice(_deviceAnswer)
-            .map((entry) => entry.identifier),
+        SpeechLocaleCatalog.offeredForDevice(
+          _deviceAnswer,
+        ).map((entry) => entry.identifier),
         isNot(contains('gu-IN')),
         reason: 'the device list drops a language the recogniser lacks',
       );
@@ -141,13 +144,15 @@ void main() {
       expect(korean.locale.identifier, 'ko-KR');
     });
 
-    test('an empty answer falls back to the curated list, not an empty picker',
-        () {
-      expect(
-        SpeechLocaleCatalog.offeredForDevice(const []),
-        same(SpeechLocaleCatalog.offered),
-      );
-    });
+    test(
+      'an empty answer falls back to the curated list, not an empty picker',
+      () {
+        expect(
+          SpeechLocaleCatalog.offeredForDevice(const []),
+          same(SpeechLocaleCatalog.offered),
+        );
+      },
+    );
 
     test('identifiers Dart cannot confirm are dropped rather than offered', () {
       final offered = SpeechLocaleCatalog.offeredForDevice(const [

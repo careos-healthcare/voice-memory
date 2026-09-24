@@ -9,7 +9,8 @@ import 'package:flutter/material.dart';
 /// Shows a sharpened tomorrow check with optional tone chooser.
 class CompellingCheckPreview extends StatefulWidget {
   const CompellingCheckPreview({
-    required this.check, super.key,
+    required this.check,
+    super.key,
     this.options,
     this.selectedSharpnessLabel,
     this.onSharpnessSelected,

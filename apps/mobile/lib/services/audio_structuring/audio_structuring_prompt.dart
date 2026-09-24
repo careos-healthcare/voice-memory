@@ -25,7 +25,8 @@ Rules:
       {'role': 'system', 'content': _systemPrompt},
       {
         'role': 'user',
-        'content': '''
+        'content':
+            '''
 Task: $taskMarker
 
 Raw voice transcript:

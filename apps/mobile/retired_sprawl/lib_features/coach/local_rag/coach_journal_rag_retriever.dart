@@ -63,7 +63,8 @@ class CoachJournalRagRetriever implements CoachRagRetriever {
         _chunkFromEntry(
           entry,
           score: scored.value,
-          source: sources[scored.key] ?? CoachRagChunkSource.reflectionEmbedding,
+          source:
+              sources[scored.key] ?? CoachRagChunkSource.reflectionEmbedding,
         ),
       );
       if (chunks.length >= query.maxChunks) break;
@@ -115,7 +116,10 @@ class CoachJournalRagRetriever implements CoachRagRetriever {
         final entryId = entryIds[i];
         final rankBoost = 1 - (i * 0.04);
         scores[entryId] = (scores[entryId] ?? 0) + (0.55 * rankBoost);
-        sources.putIfAbsent(entryId, () => CoachRagChunkSource.transcriptEmbedding);
+        sources.putIfAbsent(
+          entryId,
+          () => CoachRagChunkSource.transcriptEmbedding,
+        );
       }
     } on Object {
       return;

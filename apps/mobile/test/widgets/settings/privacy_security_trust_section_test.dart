@@ -114,8 +114,10 @@ void main() {
               body: ListView(
                 children: [
                   PrivacySecurityTrustSection(
-                    showOnDeviceLink: V1CapabilityRegistry.localAiPrivacyControls,
-                    onScrollToOnDeviceToggle: onScrollToOnDeviceToggle ??
+                    showOnDeviceLink:
+                        V1CapabilityRegistry.localAiPrivacyControls,
+                    onScrollToOnDeviceToggle:
+                        onScrollToOnDeviceToggle ??
                         () {
                           final ctx = onDeviceTargetKey.currentContext;
                           if (ctx != null) {
@@ -134,7 +136,8 @@ void main() {
                     ),
                   ...List.generate(
                     20,
-                    (index) => SizedBox(height: 120, child: Text('filler $index')),
+                    (index) =>
+                        SizedBox(height: 120, child: Text('filler $index')),
                   ),
                 ],
               ),
@@ -171,7 +174,9 @@ void main() {
     ) async {
       await pumpWithRouter(tester);
 
-      await tester.tap(find.byKey(const Key('privacy_security_trust_link_security')));
+      await tester.tap(
+        find.byKey(const Key('privacy_security_trust_link_security')),
+      );
       await tester.pumpAndSettle();
 
       expect(find.byKey(const Key('security_settings_screen')), findsOneWidget);
@@ -207,10 +212,14 @@ void main() {
 
       await pumpWithRouter(tester);
 
-      final toggle = find.byKey(const Key('settings_on_device_processing_toggle'));
+      final toggle = find.byKey(
+        const Key('settings_on_device_processing_toggle'),
+      );
       expect(toggle, findsOneWidget);
 
-      await tester.tap(find.byKey(const Key('privacy_security_trust_link_on_device')));
+      await tester.tap(
+        find.byKey(const Key('privacy_security_trust_link_on_device')),
+      );
       await tester.pumpAndSettle();
 
       await tester.ensureVisible(toggle);

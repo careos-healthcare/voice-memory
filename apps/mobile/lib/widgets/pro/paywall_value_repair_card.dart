@@ -7,12 +7,16 @@ import 'package:flutter/material.dart';
 
 class PaywallValueRepairCard extends StatefulWidget {
   const PaywallValueRepairCard({
-    required this.result, required this.onSeePro, super.key,
+    required this.result,
+    required this.onSeePro,
+    super.key,
     this.compact = false,
   });
 
   const PaywallValueRepairCard.test({
-    required this.result, required this.onSeePro, super.key,
+    required this.result,
+    required this.onSeePro,
+    super.key,
     this.compact = false,
   });
 

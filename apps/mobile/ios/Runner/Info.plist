@@ -22,9 +22,107 @@
 	<string>$(FLUTTER_BUILD_NAME)</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
+	<key>CFBundleDocumentTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeName</key>
+			<string>Audio or video</string>
+			<key>LSHandlerRank</key>
+			<string>Alternate</string>
+			<key>LSItemContentTypes</key>
+			<array>
+				<string>public.audio</string>
+				<string>public.movie</string>
+				<string>com.voicememory.mobile.wav</string>
+				<string>com.voicememory.mobile.m4a</string>
+				<string>com.voicememory.mobile.movie</string>
+			</array>
+		</dict>
+	</array>
+	<key>LSSupportsOpeningDocumentsInPlace</key>
+	<false/>
+	<key>UTImportedTypeDeclarations</key>
+	<array>
+		<dict>
+			<key>UTTypeIdentifier</key>
+			<string>com.voicememory.mobile.wav</string>
+			<key>UTTypeDescription</key>
+			<string>WAV or PCM audio</string>
+			<key>UTTypeConformsTo</key>
+			<array>
+				<string>public.audio</string>
+			</array>
+			<key>UTTypeTagSpecification</key>
+			<dict>
+				<key>public.filename-extension</key>
+				<array>
+					<string>wav</string>
+					<string>wave</string>
+					<string>pcm</string>
+				</array>
+				<key>public.mime-type</key>
+				<array>
+					<string>audio/wav</string>
+					<string>audio/x-wav</string>
+					<string>audio/pcm</string>
+				</array>
+			</dict>
+		</dict>
+		<dict>
+			<key>UTTypeIdentifier</key>
+			<string>com.voicememory.mobile.m4a</string>
+			<key>UTTypeDescription</key>
+			<string>AAC audio</string>
+			<key>UTTypeConformsTo</key>
+			<array>
+				<string>public.audio</string>
+			</array>
+			<key>UTTypeTagSpecification</key>
+			<dict>
+				<key>public.filename-extension</key>
+				<array>
+					<string>m4a</string>
+					<string>mp3</string>
+					<string>ogg</string>
+				</array>
+				<key>public.mime-type</key>
+				<array>
+					<string>audio/mp4</string>
+					<string>audio/mpeg</string>
+					<string>audio/ogg</string>
+				</array>
+			</dict>
+		</dict>
+		<dict>
+			<key>UTTypeIdentifier</key>
+			<string>com.voicememory.mobile.movie</string>
+			<key>UTTypeDescription</key>
+			<string>Video</string>
+			<key>UTTypeConformsTo</key>
+			<array>
+				<string>public.movie</string>
+			</array>
+			<key>UTTypeTagSpecification</key>
+			<dict>
+				<key>public.filename-extension</key>
+				<array>
+					<string>mp4</string>
+					<string>mov</string>
+					<string>m4v</string>
+				</array>
+				<key>public.mime-type</key>
+				<array>
+					<string>video/mp4</string>
+					<string>video/quicktime</string>
+				</array>
+			</dict>
+		</dict>
+	</array>
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
+			<key>CFBundleURLName</key>
+			<string>com.voicememory.mobile</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>voicememory</string>
@@ -45,6 +143,10 @@
 	<string>ArchiveMe uses Face ID to unlock the app on this device.</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>ArchiveMe uses the microphone so you can record short private reflections.</string>
+	<key>NSSupportsLiveActivities</key>
+	<true/>
+	<key>NSSupportsLiveActivitiesFrequentUpdates</key>
+	<true/>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>audio</string>
@@ -56,6 +158,17 @@
 	</array>
 	<key>NSSpeechRecognitionUsageDescription</key>
 	<string>ArchiveMe can transcribe recordings on your device when you are offline.</string>
+	<key>UIApplicationShortcutItems</key>
+	<array>
+		<dict>
+			<key>UIApplicationShortcutItemType</key>
+			<string>new_voice_entry</string>
+			<key>UIApplicationShortcutItemTitle</key>
+			<string>New Voice Entry</string>
+			<key>UIApplicationShortcutItemIconType</key>
+			<string>UIApplicationShortcutIconTypeAudio</string>
+		</dict>
+	</array>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>

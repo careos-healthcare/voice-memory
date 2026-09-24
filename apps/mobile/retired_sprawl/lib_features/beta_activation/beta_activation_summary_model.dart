@@ -1,5 +1,7 @@
-import 'package:archiveme_mobile/features/beta/beta_activation_loop_counts.dart' show BetaActivationLoopCounts;
-import 'package:archiveme_mobile/features/recording/recording_dependencies.dart' show BetaActivationLoopCounts;
+import 'package:archiveme_mobile/features/beta/beta_activation_loop_counts.dart'
+    show BetaActivationLoopCounts;
+import 'package:archiveme_mobile/features/recording/recording_dependencies.dart'
+    show BetaActivationLoopCounts;
 
 /// Highest activation milestone reached on this device.
 enum BetaActivationStatus {

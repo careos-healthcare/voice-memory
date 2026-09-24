@@ -18,13 +18,17 @@ class HttpSyncApiClient implements SyncApiClient {
 
   @override
   Future<ApiResult<Map<String, dynamic>>> syncManifest() async {
-    final responseResult = await _transport.get(VoiceMemoryApiRoutes.syncManifest.path);
+    final responseResult = await _transport.get(
+      VoiceMemoryApiRoutes.syncManifest.path,
+    );
     return _decodeObject(responseResult);
   }
 
   @override
   Future<ApiResult<Map<String, dynamic>>> syncPull() async {
-    final responseResult = await _transport.get(VoiceMemoryApiRoutes.syncPull.path);
+    final responseResult = await _transport.get(
+      VoiceMemoryApiRoutes.syncPull.path,
+    );
     return _decodeObject(responseResult);
   }
 
@@ -43,7 +47,10 @@ class HttpSyncApiClient implements SyncApiClient {
   Future<ApiResult<Map<String, dynamic>>> syncPush(
     Map<String, dynamic> body,
   ) async {
-    final responseResult = await _transport.post(VoiceMemoryApiRoutes.syncPush.path, body: body);
+    final responseResult = await _transport.post(
+      VoiceMemoryApiRoutes.syncPush.path,
+      body: body,
+    );
     return _decodeObject(responseResult);
   }
 
@@ -77,29 +84,30 @@ class HttpSyncApiClient implements SyncApiClient {
         return ApiFailureResult(ApiFailureMapper.fromResponse(response));
       }
 
-      final decoded = _transport.decodeEnvelope<Map<String, dynamic>, (List<JournalEntry>, String?)>(
-        response,
-        parseData: (json) => json,
-        toDomain: (body) {
-          final entries = body['entries'] as List<dynamic>? ?? [];
-          final nextCursor = body['nextCursor'] as String?;
-          final result = paginator.ingestPage(
-            rawEntries: entries,
-            nextCursor: nextCursor,
-            currentCursor: cursor,
+      final decoded = _transport
+          .decodeEnvelope<Map<String, dynamic>, (List<JournalEntry>, String?)>(
+            response,
+            parseData: (json) => json,
+            toDomain: (body) {
+              final entries = body['entries'] as List<dynamic>? ?? [];
+              final nextCursor = body['nextCursor'] as String?;
+              final result = paginator.ingestPage(
+                rawEntries: entries,
+                nextCursor: nextCursor,
+                currentCursor: cursor,
+              );
+              if (result is JournalPullPageAborted) {
+                throw ApiException(
+                  'Journal pull aborted: ${result.reason}',
+                  statusCode: 400,
+                  code: 'JOURNAL_PULL_ABORTED',
+                );
+              }
+              final accepted = result as JournalPullPageAccepted;
+              return (accepted.entries, accepted.nextCursor);
+            },
+            missingDataMessage: 'Journal page payload missing',
           );
-          if (result is JournalPullPageAborted) {
-            throw ApiException(
-              'Journal pull aborted: ${result.reason}',
-              statusCode: 400,
-              code: 'JOURNAL_PULL_ABORTED',
-            );
-          }
-          final accepted = result as JournalPullPageAccepted;
-          return (accepted.entries, accepted.nextCursor);
-        },
-        missingDataMessage: 'Journal page payload missing',
-      );
 
       if (decoded case ApiFailureResult(:final failure)) {
         return ApiFailureResult(failure);

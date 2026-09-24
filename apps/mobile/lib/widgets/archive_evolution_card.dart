@@ -10,7 +10,9 @@ import 'package:flutter/material.dart';
 /// Single living-archive hero — one evolution event and Why CTA.
 class ArchiveEvolutionCard extends StatelessWidget {
   const ArchiveEvolutionCard({
-    required this.evolution, required this.entries, super.key,
+    required this.evolution,
+    required this.entries,
+    super.key,
     this.onDismissed,
   });
 
@@ -108,7 +110,9 @@ class ArchiveEvolutionCard extends StatelessWidget {
 /// Discovery streak + last archive update — anticipation below the hero.
 class ArchiveEvolutionAnticipationRow extends StatelessWidget {
   const ArchiveEvolutionAnticipationRow({
-    required this.discoveryStreakDays, required this.lastArchiveUpdateAt, super.key,
+    required this.discoveryStreakDays,
+    required this.lastArchiveUpdateAt,
+    super.key,
   });
 
   final int discoveryStreakDays;

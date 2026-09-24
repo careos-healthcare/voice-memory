@@ -1,5 +1,7 @@
-import 'package:archiveme_mobile/audio/playback_service.dart' show PlaybackService;
-import 'package:archiveme_mobile/features/recording/recording_dependencies.dart' show PlaybackService;
+import 'package:archiveme_mobile/audio/playback_service.dart'
+    show PlaybackService;
+import 'package:archiveme_mobile/features/recording/recording_dependencies.dart'
+    show PlaybackService;
 
 enum PlaybackPhase { idle, preparing, playing, paused, error }
 
@@ -15,6 +17,8 @@ class PlaybackState {
     this.activeQueueDepth = 0,
     this.position = Duration.zero,
     this.error,
+    this.speed = 1,
+    this.trimSilence = true,
   });
 
   final PlaybackPhase phase;
@@ -24,6 +28,8 @@ class PlaybackState {
   final int activeQueueDepth;
   final Duration position;
   final String? error;
+  final double speed;
+  final bool trimSilence;
 
   bool get isLiveSpeaking =>
       sourceKind == PlaybackSourceKind.livePcm && activeQueueDepth > 0;
@@ -36,6 +42,8 @@ class PlaybackState {
     int? activeQueueDepth,
     Duration? position,
     String? error,
+    double? speed,
+    bool? trimSilence,
     bool clearFilePath = false,
     bool clearError = false,
   }) {
@@ -47,6 +55,8 @@ class PlaybackState {
       activeQueueDepth: activeQueueDepth ?? this.activeQueueDepth,
       position: position ?? this.position,
       error: clearError ? null : (error ?? this.error),
+      speed: speed ?? this.speed,
+      trimSilence: trimSilence ?? this.trimSilence,
     );
   }
 }

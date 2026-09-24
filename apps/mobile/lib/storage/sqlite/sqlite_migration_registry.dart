@@ -16,12 +16,24 @@ import 'package:archiveme_mobile/storage/sqlite/migrations/migration_015_vec_chu
 import 'package:archiveme_mobile/storage/sqlite/migrations/migration_016_audio_processing_queue.dart';
 import 'package:archiveme_mobile/storage/sqlite/migrations/migration_017_capture_audio_metadata.dart';
 import 'package:archiveme_mobile/storage/sqlite/migrations/migration_018_transcript_provenance.dart';
+import 'package:archiveme_mobile/storage/sqlite/migrations/migration_019_time_capsules_and_daily_checkins.dart';
+import 'package:archiveme_mobile/storage/sqlite/migrations/migration_020_entity_graph.dart';
+import 'package:archiveme_mobile/storage/sqlite/migrations/migration_021_ambient_metadata.dart';
+import 'package:archiveme_mobile/storage/sqlite/migrations/migration_022_life_memos.dart';
+import 'package:archiveme_mobile/storage/sqlite/migrations/migration_023_attachment_text.dart';
+import 'package:archiveme_mobile/storage/sqlite/migrations/migration_024_chat_messages.dart';
+import 'package:archiveme_mobile/storage/sqlite/migrations/migration_025_private_vault.dart';
+import 'package:archiveme_mobile/storage/sqlite/migrations/migration_026_habits.dart';
+import 'package:archiveme_mobile/storage/sqlite/migrations/migration_027_sync_changelog.dart';
+import 'package:archiveme_mobile/storage/sqlite/migrations/migration_028_mesh_work_queue.dart';
+import 'package:archiveme_mobile/storage/sqlite/migrations/migration_029_coach_action_items.dart';
+import 'package:archiveme_mobile/storage/sqlite/migrations/migration_030_sync_purgatory.dart';
 import 'package:archiveme_mobile/storage/sqlite/sqlite_migration.dart';
 
 /// Ordered, validated catalog of [SqliteMigration] steps for the local DB.
 class SqliteMigrationRegistry {
   SqliteMigrationRegistry([List<SqliteMigration>? migrations])
-      : migrations = List.unmodifiable(migrations ?? defaultMigrations) {
+    : migrations = List.unmodifiable(migrations ?? defaultMigrations) {
     _validate();
   }
 
@@ -44,6 +56,18 @@ class SqliteMigrationRegistry {
     Migration016AudioProcessingQueue(),
     Migration017CaptureAudioMetadata(),
     Migration018TranscriptProvenance(),
+    Migration019TimeCapsulesAndDailyCheckins(),
+    Migration020EntityGraph(),
+    Migration021AmbientMetadata(),
+    Migration022LifeMemos(),
+    Migration023AttachmentText(),
+    Migration024ChatMessages(),
+    Migration025PrivateVault(),
+    Migration026Habits(),
+    Migration027SyncChangelog(),
+    Migration028MeshWorkQueue(),
+    Migration029CoachActionItems(),
+    Migration030SyncPurgatory(),
   ];
 
   static int get latestVersion =>
@@ -68,7 +92,9 @@ class SqliteMigrationRegistry {
 
   void _validate() {
     if (migrations.isEmpty) {
-      throw StateError('SqliteMigrationRegistry requires at least one migration');
+      throw StateError(
+        'SqliteMigrationRegistry requires at least one migration',
+      );
     }
 
     final seenVersions = <int>{};

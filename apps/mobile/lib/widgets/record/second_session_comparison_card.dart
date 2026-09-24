@@ -9,7 +9,11 @@ import 'package:flutter/material.dart';
 /// Second-recording comparison card — conservative, evidence-focused.
 class SecondSessionComparisonCard extends StatelessWidget {
   const SecondSessionComparisonCard({
-    required this.comparison, required this.onGoDeeper, required this.onRecordNextEvidence, required this.onNotTheSame, super.key,
+    required this.comparison,
+    required this.onGoDeeper,
+    required this.onRecordNextEvidence,
+    required this.onNotTheSame,
+    super.key,
   });
 
   final SecondSessionComparison comparison;

@@ -131,9 +131,7 @@ class _PersistedIds {
 
   const _PersistedIds.absent() : ids = const <String>{}, malformed = false;
 
-  const _PersistedIds.malformed()
-    : ids = const <String>{},
-      malformed = true;
+  const _PersistedIds.malformed() : ids = const <String>{}, malformed = true;
 
   /// Every id that could be read, which may be a subset when [malformed].
   final Set<String> ids;

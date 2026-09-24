@@ -258,7 +258,10 @@ void main() {
 
     test('export route is sensitive/guarded', () {
       expect(SensitiveRoutes.isSensitiveRoute('/archive-export'), isTrue);
-      expect(SensitiveRoutes.isSensitiveRoute(V1RouteRegistry.exportPath), isTrue);
+      expect(
+        SensitiveRoutes.isSensitiveRoute(V1RouteRegistry.exportPath),
+        isTrue,
+      );
     });
 
     test('standard archive controls route to canonical export screen', () {

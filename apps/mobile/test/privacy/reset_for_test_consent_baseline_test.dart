@@ -31,9 +31,9 @@ void main() {
     );
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(connectivity, (call) async {
-      if (call.method == 'check') return ['wifi'];
-      return null;
-    });
+          if (call.method == 'check') return ['wifi'];
+          return null;
+        });
   });
 
   setUp(() async {
@@ -90,7 +90,8 @@ void main() {
       expect(
         await probe.readExplicit(),
         isNull,
-        reason: 'the harness makes no choice here, so the platform default '
+        reason:
+            'the harness makes no choice here, so the platform default '
             'decides and the host platform is what resolves it',
       );
     });
@@ -121,7 +122,8 @@ void main() {
           expect(
             decision.permitted,
             isFalse,
-            reason: 'and yet nothing may be sent, because the veto is on. A '
+            reason:
+                'and yet nothing may be sent, because the veto is on. A '
                 'suite asserting zero remote calls from this starting state '
                 'is measuring the veto, not consent.',
           );
@@ -141,33 +143,35 @@ void main() {
       }
     });
 
-    test('with the veto cleared, the two harness modes finally differ',
-        () async {
-      // The pair that shows the flag is load-bearing at all. Without clearing
-      // the veto both arms answer "not permitted" and the flag is invisible.
-      await reset(grantConsent: false);
-      await OnDeviceProcessingStore.setEnabled(false);
-      final unconsented = RemoteProcessingConsentGate(
-        RemoteProcessingConsentStore(AppServices.instance.prefs),
-      );
-      expect(
-        await unconsented.isPurposePermittedNow(
-          RemoteProcessingPurpose.remoteTranscription,
-        ),
-        isFalse,
-      );
+    test(
+      'with the veto cleared, the two harness modes finally differ',
+      () async {
+        // The pair that shows the flag is load-bearing at all. Without clearing
+        // the veto both arms answer "not permitted" and the flag is invisible.
+        await reset(grantConsent: false);
+        await OnDeviceProcessingStore.setEnabled(false);
+        final unconsented = RemoteProcessingConsentGate(
+          RemoteProcessingConsentStore(AppServices.instance.prefs),
+        );
+        expect(
+          await unconsented.isPurposePermittedNow(
+            RemoteProcessingPurpose.remoteTranscription,
+          ),
+          isFalse,
+        );
 
-      await reset(grantConsent: true);
-      await OnDeviceProcessingStore.setEnabled(false);
-      final consented = RemoteProcessingConsentGate(
-        RemoteProcessingConsentStore(AppServices.instance.prefs),
-      );
-      expect(
-        await consented.isPurposePermittedNow(
-          RemoteProcessingPurpose.remoteTranscription,
-        ),
-        isTrue,
-      );
-    });
+        await reset(grantConsent: true);
+        await OnDeviceProcessingStore.setEnabled(false);
+        final consented = RemoteProcessingConsentGate(
+          RemoteProcessingConsentStore(AppServices.instance.prefs),
+        );
+        expect(
+          await consented.isPurposePermittedNow(
+            RemoteProcessingPurpose.remoteTranscription,
+          ),
+          isTrue,
+        );
+      },
+    );
   });
 }

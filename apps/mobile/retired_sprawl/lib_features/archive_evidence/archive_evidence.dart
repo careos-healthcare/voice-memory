@@ -1,6 +1,7 @@
 import 'package:archiveme_mobile/features/archive_evidence/archive_evidence_guard.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
-import 'package:archiveme_mobile/widgets/evidence_locker_compact.dart' show EvidenceLockerCompact;
+import 'package:archiveme_mobile/widgets/evidence_locker_compact.dart'
+    show EvidenceLockerCompact;
 
 export 'archive_evidence_guard.dart';
 export 'archive_evidence_quality.dart';

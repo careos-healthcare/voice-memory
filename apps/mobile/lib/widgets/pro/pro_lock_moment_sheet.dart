@@ -8,7 +8,12 @@ import 'package:flutter/material.dart';
 /// Sheet for the Pro lock moment — first proof context and Pro value.
 class ProLockMomentSheet extends StatelessWidget {
   const ProLockMomentSheet({
-    required this.source, required this.entryCount, required this.hasFirstProof, required this.hasConfirmedRepeat, required this.onSeePro, super.key,
+    required this.source,
+    required this.entryCount,
+    required this.hasFirstProof,
+    required this.hasConfirmedRepeat,
+    required this.onSeePro,
+    super.key,
   });
 
   final String source;

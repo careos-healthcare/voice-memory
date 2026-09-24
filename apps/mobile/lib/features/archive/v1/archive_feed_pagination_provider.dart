@@ -9,6 +9,7 @@ import 'package:archiveme_mobile/features/memory_resurfacing/memory_resurfacing_
 import 'package:archiveme_mobile/features/memory_resurfacing/memory_resurfacing_service.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/services/app_services.dart';
+import 'package:archiveme_mobile/storage/recent_entry_snippet_cache.dart';
 import 'package:archiveme_mobile/storage/sqlite/journal_sqlite_repository.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -37,6 +38,7 @@ class ArchiveFeedState {
   final List<MemoryResurfacingCardData> resurfacingCards;
   final List<MemoryResurfacingCardData> anniversaryCards;
   final int totalCount;
+
   /// Active entries in the archive before the current search filter.
   final int archiveTotalCount;
   final bool hasMore;
@@ -85,10 +87,20 @@ class ArchiveFeedPaginationNotifier extends Notifier<ArchiveFeedState> {
       ref.read(archiveBeliefRepositoryProvider);
 
   @override
-  ArchiveFeedState build() => const ArchiveFeedState.initial();
+  ArchiveFeedState build() {
+    final preview = RecentEntrySnippetCache.instance.previewEntries();
+    if (preview.isEmpty) return const ArchiveFeedState.initial();
+    return ArchiveFeedState(
+      loadState: ArchiveBeliefLoadState.loaded,
+      entries: preview,
+      totalCount: preview.length,
+      archiveTotalCount: preview.length,
+    );
+  }
 
   Future<void> refresh() async {
-    final isInitialLoad = state.loadState == ArchiveBeliefLoadState.loading &&
+    final isInitialLoad =
+        state.loadState == ArchiveBeliefLoadState.loading &&
         state.entries.isEmpty;
     if (isInitialLoad) {
       state = state.copyWith(loadState: ArchiveBeliefLoadState.loading);
@@ -105,7 +117,8 @@ class ArchiveFeedPaginationNotifier extends Notifier<ArchiveFeedState> {
         searchQuery: state.searchQuery,
       );
       final proofContext = await _repository.fetchProofContextStubs();
-      final verifiedProofEntries = await _repository.fetchVerifiedProofEntries();
+      final verifiedProofEntries = await _repository
+          .fetchVerifiedProofEntries();
 
       var resurfacingCards = const <MemoryResurfacingCardData>[];
       var anniversaryCards = const <MemoryResurfacingCardData>[];
@@ -188,5 +201,5 @@ class ArchiveFeedPaginationNotifier extends Notifier<ArchiveFeedState> {
 
 final archiveFeedPaginationProvider =
     NotifierProvider<ArchiveFeedPaginationNotifier, ArchiveFeedState>(
-  ArchiveFeedPaginationNotifier.new,
-);
+      ArchiveFeedPaginationNotifier.new,
+    );

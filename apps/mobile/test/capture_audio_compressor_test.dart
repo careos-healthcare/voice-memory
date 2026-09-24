@@ -72,62 +72,67 @@ void main() {
     expect(result.outputBytes, greaterThanOrEqualTo(1000));
   });
 
-  test('offline server failure falls back to native provisional transcript', () async {
-    CaptureAudioCompressor.testPlatform = _FakeCompressorPlatform();
-    NativeSpeechTranscription.testPlatform = _nativeSpeechPlatform();
+  test(
+    'offline server failure falls back to native provisional transcript',
+    () async {
+      CaptureAudioCompressor.testPlatform = _FakeCompressorPlatform();
+      NativeSpeechTranscription.testPlatform = _nativeSpeechPlatform();
 
-    final audio = File(
-      '${Directory.systemTemp.createTempSync('vm_offline_stt_').path}/voice.m4a',
-    )..writeAsBytesSync(List.filled(VoiceCaptureQuality.minAudioBytes, 2));
+      final audio = File(
+        '${Directory.systemTemp.createTempSync('vm_offline_stt_').path}/voice.m4a',
+      )..writeAsBytesSync(List.filled(VoiceCaptureQuality.minAudioBytes, 2));
 
-    final outcome = await TranscriptionService.transcribeRecording(
-      audioFile: audio,
-      durationSeconds: 12,
-      captureRepository: CaptureRepository(
-        api: _OfflineTranscribeApi(),
-        requestScope: NetworkRequestScope(),
-      ),
-      ensureCaptureToken: ({forceRefresh = false}) async => 'token',
-      scopeKey: 'offline-native',
-      usageGuard: ApiUsageGuard.shared,
-      speechLocale: ConfirmedSpeechLocale.confirmed('en-GB'),
-      onDeviceOnly: false,
-    );
+      final outcome = await TranscriptionService.transcribeRecording(
+        audioFile: audio,
+        durationSeconds: 12,
+        captureRepository: CaptureRepository(
+          api: _OfflineTranscribeApi(),
+          requestScope: NetworkRequestScope(),
+        ),
+        ensureCaptureToken: ({forceRefresh = false}) async => 'token',
+        scopeKey: 'offline-native',
+        usageGuard: ApiUsageGuard.shared,
+        speechLocale: ConfirmedSpeechLocale.confirmed('en-GB'),
+        onDeviceOnly: false,
+      );
 
-    expect(outcome.succeeded, isTrue);
-    expect(outcome.isProvisional, isTrue);
-    expect(outcome.mode, TranscriptionMode.local);
-    expect(outcome.transcript, _spokenTranscript);
-  });
+      expect(outcome.succeeded, isTrue);
+      expect(outcome.isProvisional, isTrue);
+      expect(outcome.mode, TranscriptionMode.local);
+      expect(outcome.transcript, _spokenTranscript);
+    },
+  );
 
-  test('the offline fallback stays silent when no language was confirmed',
-      () async {
-    // Without a confirmed language there is nothing safe to hand the
-    // recogniser, and the server is already unreachable. No transcript is the
-    // correct outcome; a guessed one would be quoted back as the user's words.
-    CaptureAudioCompressor.testPlatform = _FakeCompressorPlatform();
-    final platform = _nativeSpeechPlatform();
-    NativeSpeechTranscription.testPlatform = platform;
+  test(
+    'the offline fallback stays silent when no language was confirmed',
+    () async {
+      // Without a confirmed language there is nothing safe to hand the
+      // recogniser, and the server is already unreachable. No transcript is the
+      // correct outcome; a guessed one would be quoted back as the user's words.
+      CaptureAudioCompressor.testPlatform = _FakeCompressorPlatform();
+      final platform = _nativeSpeechPlatform();
+      NativeSpeechTranscription.testPlatform = platform;
 
-    final audio = File(
-      '${Directory.systemTemp.createTempSync('vm_offline_nolocale_').path}/v.m4a',
-    )..writeAsBytesSync(List.filled(VoiceCaptureQuality.minAudioBytes, 2));
+      final audio = File(
+        '${Directory.systemTemp.createTempSync('vm_offline_nolocale_').path}/v.m4a',
+      )..writeAsBytesSync(List.filled(VoiceCaptureQuality.minAudioBytes, 2));
 
-    final outcome = await TranscriptionService.transcribeRecording(
-      audioFile: audio,
-      durationSeconds: 12,
-      captureRepository: CaptureRepository(
-        api: _OfflineTranscribeApi(),
-        requestScope: NetworkRequestScope(),
-      ),
-      ensureCaptureToken: ({forceRefresh = false}) async => 'token',
-      scopeKey: 'offline-native-nolocale',
-      usageGuard: ApiUsageGuard.shared,
-      speechLocale: null,
-      onDeviceOnly: false,
-    );
+      final outcome = await TranscriptionService.transcribeRecording(
+        audioFile: audio,
+        durationSeconds: 12,
+        captureRepository: CaptureRepository(
+          api: _OfflineTranscribeApi(),
+          requestScope: NetworkRequestScope(),
+        ),
+        ensureCaptureToken: ({forceRefresh = false}) async => 'token',
+        scopeKey: 'offline-native-nolocale',
+        usageGuard: ApiUsageGuard.shared,
+        speechLocale: null,
+        onDeviceOnly: false,
+      );
 
-    expect(outcome.succeeded, isFalse);
-    expect(platform.callCount, 0);
-  });
+      expect(outcome.succeeded, isFalse);
+      expect(platform.callCount, 0);
+    },
+  );
 }

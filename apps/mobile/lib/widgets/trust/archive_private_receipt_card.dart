@@ -13,7 +13,9 @@ import 'dart:async';
 /// Small trust receipt after an important save — once per session max.
 class ArchivePrivateReceiptCard extends StatelessWidget {
   const ArchivePrivateReceiptCard({
-    required this.entryCount, required this.onDismiss, super.key,
+    required this.entryCount,
+    required this.onDismiss,
+    super.key,
     this.source = 'record',
   });
 

@@ -11,13 +11,15 @@ import 'package:go_router/go_router.dart';
 /// Compact quick-save card for capacity-yes record surfaces.
 class LowEffortYesCaptureCard extends StatelessWidget {
   const LowEffortYesCaptureCard({
-    required this.result, super.key,
+    required this.result,
+    super.key,
     this.sampleMode = false,
     this.compact = false,
   });
 
   const LowEffortYesCaptureCard.test({
-    required this.result, super.key,
+    required this.result,
+    super.key,
     this.sampleMode = false,
     this.compact = false,
   });

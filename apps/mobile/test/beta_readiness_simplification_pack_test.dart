@@ -202,9 +202,7 @@ void main() {
     test('under 3 moments only one primary capacity card is selected', () {
       const engine = ArchiveHomePriorityEngine();
       final plan = engine.build(
-        _calmHomeInput(
-          
-        ),
+        _calmHomeInput(),
       );
       expect(ArchiveHomeCardPriority.onlyOneCapacityPrimaryCard(plan), isTrue);
       expect(

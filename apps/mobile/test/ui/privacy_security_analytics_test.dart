@@ -338,7 +338,9 @@ void main() {
       ).called(1);
     });
 
-    testWidgets('the whole pillar is gated with the capability', (tester) async {
+    testWidgets('the whole pillar is gated with the capability', (
+      tester,
+    ) async {
       CaregiverFeatureFlags.debugOverride = false;
 
       await pumpScreen(tester);

@@ -159,35 +159,37 @@ void main() {
   });
 
   group('a caregiver session cannot export the archive', () {
-    test('the local backup refuses rather than sharing every transcript',
-        () async {
-      await seedArchive();
-      asMode(AppMode.caregiverMonitoring);
-      final share = _RecordingShare();
+    test(
+      'the local backup refuses rather than sharing every transcript',
+      () async {
+        await seedArchive();
+        asMode(AppMode.caregiverMonitoring);
+        final share = _RecordingShare();
 
-      await expectLater(
-        backupService(share).exportBackup(source: 'privacy_trust_centre'),
-        throwsA(
-          isA<CaregiverAccessDeniedException>()
-              .having(
-                (e) => e.surface,
-                'surface',
-                CaregiverSessionGuard.exportLocalBackup,
-              )
-              .having(
-                (e) => e.decision,
-                'decision',
-                CaregiverAccessDecision.deniedCaregiverSession,
-              ),
-        ),
-      );
+        await expectLater(
+          backupService(share).exportBackup(source: 'privacy_trust_centre'),
+          throwsA(
+            isA<CaregiverAccessDeniedException>()
+                .having(
+                  (e) => e.surface,
+                  'surface',
+                  CaregiverSessionGuard.exportLocalBackup,
+                )
+                .having(
+                  (e) => e.decision,
+                  'decision',
+                  CaregiverAccessDecision.deniedCaregiverSession,
+                ),
+          ),
+        );
 
-      expect(
-        share.paths,
-        isEmpty,
-        reason: 'a backup file reached the share sheet anyway',
-      );
-    });
+        expect(
+          share.paths,
+          isEmpty,
+          reason: 'a backup file reached the share sheet anyway',
+        );
+      },
+    );
 
     test('the selected-entries markdown refuses', () async {
       asMode(AppMode.caregiverMonitoring);
@@ -310,66 +312,70 @@ void main() {
       expect(share.paths, isEmpty);
     });
 
-    test('an unstubbed lookup reads a session an earlier run left behind',
-        () async {
-      // The case the fail-closed rule was written for: a caregiver session is
-      // on disk and nothing in this process has loaded it yet. The guard goes
-      // to the store rather than assuming the owner.
-      await seedArchive();
-      CaregiverFeatureFlags.debugOverride = true;
-      await CaregiverModeStore(AppServices.instance.prefs).writeMode(
-        AppModeState(
-          mode: AppMode.caregiverMonitoring,
-          policyVersion: AppModeConfigPolicy.currentPolicyVersion,
-          updatedAt: DateTime.utc(2026, 6, 11),
-        ),
-      );
-      expect(CaregiverModeController.isConfigured, isFalse);
-      final share = _RecordingShare();
-
-      await expectLater(
-        backupService(share).exportBackup(source: 'settings'),
-        throwsA(
-          isA<CaregiverAccessDeniedException>().having(
-            (e) => e.decision,
-            'decision',
-            CaregiverAccessDecision.deniedCaregiverSession,
+    test(
+      'an unstubbed lookup reads a session an earlier run left behind',
+      () async {
+        // The case the fail-closed rule was written for: a caregiver session is
+        // on disk and nothing in this process has loaded it yet. The guard goes
+        // to the store rather than assuming the owner.
+        await seedArchive();
+        CaregiverFeatureFlags.debugOverride = true;
+        await CaregiverModeStore(AppServices.instance.prefs).writeMode(
+          AppModeState(
+            mode: AppMode.caregiverMonitoring,
+            policyVersion: AppModeConfigPolicy.currentPolicyVersion,
+            updatedAt: DateTime.utc(2026, 6, 11),
           ),
-        ),
-      );
-      await expectLater(
-        ownerMarkdown(),
-        throwsA(isA<CaregiverAccessDeniedException>()),
-      );
-      expect(share.paths, isEmpty);
-    });
+        );
+        expect(CaregiverModeController.isConfigured, isFalse);
+        final share = _RecordingShare();
+
+        await expectLater(
+          backupService(share).exportBackup(source: 'settings'),
+          throwsA(
+            isA<CaregiverAccessDeniedException>().having(
+              (e) => e.decision,
+              'decision',
+              CaregiverAccessDecision.deniedCaregiverSession,
+            ),
+          ),
+        );
+        await expectLater(
+          ownerMarkdown(),
+          throwsA(isA<CaregiverAccessDeniedException>()),
+        );
+        expect(share.paths, isEmpty);
+      },
+    );
   });
 
   group('the owner still gets their own archive out', () {
-    test('the local backup reaches the share sheet with the transcripts in it',
-        () async {
-      await seedArchive();
-      asMode(AppMode.selfReflection);
-      final share = _RecordingShare();
+    test(
+      'the local backup reaches the share sheet with the transcripts in it',
+      () async {
+        await seedArchive();
+        asMode(AppMode.selfReflection);
+        final share = _RecordingShare();
 
-      final result = await backupService(
-        share,
-      ).exportBackup(source: 'privacy_trust_centre');
+        final result = await backupService(
+          share,
+        ).exportBackup(source: 'privacy_trust_centre');
 
-      expect(result.succeeded, isTrue, reason: 'failure: ${result.failure}');
-      expect(result.entryCount, 1);
-      expect(share.paths, hasLength(1));
+        expect(result.succeeded, isTrue, reason: 'failure: ${result.failure}');
+        expect(result.entryCount, 1);
+        expect(share.paths, hasLength(1));
 
-      final written = File(share.paths.single);
-      expect(written.existsSync(), isTrue);
-      final payload =
-          jsonDecode(written.readAsStringSync()) as Map<String, dynamic>;
-      expect(
-        jsonEncode(payload['journal_entries']),
-        contains(_transcript),
-        reason: 'the owner got an export with no archive in it',
-      );
-    });
+        final written = File(share.paths.single);
+        expect(written.existsSync(), isTrue);
+        final payload =
+            jsonDecode(written.readAsStringSync()) as Map<String, dynamic>;
+        expect(
+          jsonEncode(payload['journal_entries']),
+          contains(_transcript),
+          reason: 'the owner got an export with no archive in it',
+        );
+      },
+    );
 
     test('the owner gets the selected-entries markdown', () async {
       asMode(AppMode.selfReflection);
@@ -377,20 +383,24 @@ void main() {
       expect(await ownerMarkdown(), contains(_transcript));
     });
 
-    test('with the capability compiled out neither export reads storage',
-        () async {
-      await seedArchive();
-      CaregiverFeatureFlags.debugOverride = false;
-      CaregiverSessionGuard.debugModeProbe = () async {
-        fail('storage must not be read while the capability is off');
-      };
-      final share = _RecordingShare();
+    test(
+      'with the capability compiled out neither export reads storage',
+      () async {
+        await seedArchive();
+        CaregiverFeatureFlags.debugOverride = false;
+        CaregiverSessionGuard.debugModeProbe = () async {
+          fail('storage must not be read while the capability is off');
+        };
+        final share = _RecordingShare();
 
-      final result = await backupService(share).exportBackup(source: 'settings');
+        final result = await backupService(
+          share,
+        ).exportBackup(source: 'settings');
 
-      expect(result.succeeded, isTrue);
-      expect(share.paths, hasLength(1));
-      expect(await ownerMarkdown(), contains(_transcript));
-    });
+        expect(result.succeeded, isTrue);
+        expect(share.paths, hasLength(1));
+        expect(await ownerMarkdown(), contains(_transcript));
+      },
+    );
   });
 }

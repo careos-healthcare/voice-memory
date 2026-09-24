@@ -63,7 +63,8 @@ abstract final class V1CapabilityRegistry {
       ProvenanceRecoveryFeatureFlags.isEnabled;
 
   /// Apple Watch quick-record companion — see `docs/WATCHOS_SETUP.md`.
-  static bool get watchCompanion => WatchCompanionFeatureFlags.enableWatchCompanion;
+  static bool get watchCompanion =>
+      WatchCompanionFeatureFlags.enableWatchCompanion;
 
   static const Set<String> androidPermissionAllowlist = {
     'android.permission.INTERNET',

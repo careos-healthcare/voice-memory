@@ -70,7 +70,9 @@ void main() {
         ),
       );
 
-      final speakFuture = service.speak('One two three four five six seven eight');
+      final speakFuture = service.speak(
+        'One two three four five six seven eight',
+      );
       await Future<void>.delayed(const Duration(milliseconds: 10));
       await service.stop();
 

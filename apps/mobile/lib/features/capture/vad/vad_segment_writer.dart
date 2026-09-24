@@ -76,13 +76,21 @@ class VadSegmentWriter {
     try {
       await sink.flush();
     } on FileSystemException catch (e, stackTrace) {
-      AppLogger.error('Unhandled error caught', error: e, stackTrace: stackTrace);
-      }
+      AppLogger.error(
+        'Unhandled error caught',
+        error: e,
+        stackTrace: stackTrace,
+      );
+    }
     try {
       await sink.close();
     } on FileSystemException catch (e, stackTrace) {
-      AppLogger.error('Unhandled error caught', error: e, stackTrace: stackTrace);
-      }
+      AppLogger.error(
+        'Unhandled error caught',
+        error: e,
+        stackTrace: stackTrace,
+      );
+    }
   }
 
   Uint8List _wavHeaderPlaceholder() {

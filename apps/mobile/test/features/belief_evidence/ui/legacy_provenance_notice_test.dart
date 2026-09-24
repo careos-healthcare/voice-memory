@@ -63,8 +63,11 @@ JournalEntry _entry({
   );
 }
 
-InsightEvidenceLine _line(String entryId, String quote) =>
-    InsightEvidenceLine(entryId: entryId, quote: quote, recordedAt: _recordedAt);
+InsightEvidenceLine _line(String entryId, String quote) => InsightEvidenceLine(
+  entryId: entryId,
+  quote: quote,
+  recordedAt: _recordedAt,
+);
 
 void main() {
   setUp(() {
@@ -309,10 +312,9 @@ void main() {
         ),
       );
 
-      BoxDecoration decorationOf(Key key) => tester
-              .widget<Container>(find.byKey(key))
-              .decoration!
-          as BoxDecoration;
+      BoxDecoration decorationOf(Key key) =>
+          tester.widget<Container>(find.byKey(key)).decoration!
+              as BoxDecoration;
 
       final legacy = decorationOf(LegacyProvenanceNotice.noticeKey);
       final ungrounded = decorationOf(UngroundedEvidenceNotice.noticeKey);

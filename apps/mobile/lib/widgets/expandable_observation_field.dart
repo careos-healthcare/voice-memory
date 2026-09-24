@@ -8,7 +8,9 @@ import 'package:go_router/go_router.dart';
 /// Observation with inline depth — expand, evidence, rationale, related entries.
 class ExpandableObservationField extends StatefulWidget {
   const ExpandableObservationField({
-    required this.label, required this.value, super.key,
+    required this.label,
+    required this.value,
+    super.key,
     this.rationale,
     this.entryId,
     this.relatedEntries = const [],

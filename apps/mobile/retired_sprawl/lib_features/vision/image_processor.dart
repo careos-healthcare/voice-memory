@@ -27,7 +27,9 @@ class ImageProcessor {
   Float32List prepareModelInput(Uint8List imageBytes) {
     final decoded = img.decodeImage(imageBytes);
     if (decoded == null) {
-      throw FormatException('Could not decode image (${imageBytes.length} bytes)');
+      throw FormatException(
+        'Could not decode image (${imageBytes.length} bytes)',
+      );
     }
 
     final resized = img.copyResize(

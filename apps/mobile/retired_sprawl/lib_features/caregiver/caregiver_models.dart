@@ -50,16 +50,16 @@ class CaregiverPermissions {
   /// answer the owner gave to that prompt, so a token that lists a pseudo-stream
   /// id while carrying `false` is still a decline. Unknown ids deny.
   bool allowsStream(String streamId) => switch (streamId) {
-        insightAlertsStream => thresholdAlerts,
-        reviewSummariesStream => reviewSummaries,
-        _ => evidenceStreamIds.contains(streamId),
-      };
+    insightAlertsStream => thresholdAlerts,
+    reviewSummariesStream => reviewSummaries,
+    _ => evidenceStreamIds.contains(streamId),
+  };
 
   Map<String, dynamic> toJson() => {
-        'evidenceStreamIds': List<String>.of(evidenceStreamIds),
-        'reviewSummaries': reviewSummaries,
-        'thresholdAlerts': thresholdAlerts,
-      };
+    'evidenceStreamIds': List<String>.of(evidenceStreamIds),
+    'reviewSummaries': reviewSummaries,
+    'thresholdAlerts': thresholdAlerts,
+  };
 }
 
 class CaregiverRedemptionInvite {
@@ -98,9 +98,15 @@ class MonitoringConsentToken {
       permissions: permissionsRaw is Map<String, dynamic>
           ? CaregiverPermissions.fromJson(permissionsRaw)
           : CaregiverPermissions.defaultScopes,
-      issuedAt: _parseUtc(json['issuedAt']) ?? DateTime.fromMillisecondsSinceEpoch(0, isUtc: true),
-      expiresAt: _parseUtc(json['expiresAt']) ?? DateTime.fromMillisecondsSinceEpoch(0, isUtc: true),
-      policyVersion: json['policyVersion'] is int ? json['policyVersion'] as int : 1,
+      issuedAt:
+          _parseUtc(json['issuedAt']) ??
+          DateTime.fromMillisecondsSinceEpoch(0, isUtc: true),
+      expiresAt:
+          _parseUtc(json['expiresAt']) ??
+          DateTime.fromMillisecondsSinceEpoch(0, isUtc: true),
+      policyVersion: json['policyVersion'] is int
+          ? json['policyVersion'] as int
+          : 1,
       signature: json['signature']?.toString() ?? '',
     );
   }
@@ -116,15 +122,15 @@ class MonitoringConsentToken {
   final CaregiverRedemptionInvite? redemption;
 
   Map<String, dynamic> toJson() => {
-        'tokenId': tokenId,
-        'subjectAccountId': subjectAccountId,
-        'caregiverId': caregiverId,
-        'permissions': permissions.toJson(),
-        'issuedAt': issuedAt.toUtc().toIso8601String(),
-        'expiresAt': expiresAt.toUtc().toIso8601String(),
-        'policyVersion': policyVersion,
-        'signature': signature,
-      };
+    'tokenId': tokenId,
+    'subjectAccountId': subjectAccountId,
+    'caregiverId': caregiverId,
+    'permissions': permissions.toJson(),
+    'issuedAt': issuedAt.toUtc().toIso8601String(),
+    'expiresAt': expiresAt.toUtc().toIso8601String(),
+    'policyVersion': policyVersion,
+    'signature': signature,
+  };
 }
 
 class CaregiverSession {
@@ -143,7 +149,8 @@ class CaregiverSession {
   factory CaregiverSession.fromJson(Map<String, dynamic> json) {
     return CaregiverSession(
       sessionId: json['sessionId']?.toString() ?? '',
-      mode: AppModeJson.fromWire(json['mode']?.toString()) ??
+      mode:
+          AppModeJson.fromWire(json['mode']?.toString()) ??
           AppMode.caregiverMonitoring,
       caregiverId: json['caregiverId']?.toString() ?? '',
       subjectAccountId: json['subjectAccountId']?.toString() ?? '',
@@ -172,16 +179,16 @@ class CaregiverSession {
   bool get isExpired => DateTime.now().toUtc().isAfter(expiresAt);
 
   Map<String, dynamic> toJson() => {
-        'sessionId': sessionId,
-        'mode': mode.wireValue,
-        'caregiverId': caregiverId,
-        'subjectAccountId': subjectAccountId,
-        'permissions': permissions.toJson(),
-        'tokenId': tokenId,
-        'startedAt': startedAt.toUtc().toIso8601String(),
-        'expiresAt': expiresAt.toUtc().toIso8601String(),
-        'validatedAt': validatedAt.toUtc().toIso8601String(),
-      };
+    'sessionId': sessionId,
+    'mode': mode.wireValue,
+    'caregiverId': caregiverId,
+    'subjectAccountId': subjectAccountId,
+    'permissions': permissions.toJson(),
+    'tokenId': tokenId,
+    'startedAt': startedAt.toUtc().toIso8601String(),
+    'expiresAt': expiresAt.toUtc().toIso8601String(),
+    'validatedAt': validatedAt.toUtc().toIso8601String(),
+  };
 }
 
 enum CaregiverAuditAction {
@@ -200,33 +207,33 @@ enum CaregiverAuditAction {
 
 extension CaregiverAuditActionWire on CaregiverAuditAction {
   String get wireValue => switch (this) {
-        CaregiverAuditAction.sessionStarted => 'session_started',
-        CaregiverAuditAction.sessionValidated => 'session_validated',
-        CaregiverAuditAction.sessionExpired => 'session_expired',
-        CaregiverAuditAction.modeSwitched => 'mode_switched',
-        CaregiverAuditAction.consentGranted => 'consent_granted',
-        CaregiverAuditAction.consentRevoked => 'consent_revoked',
-        CaregiverAuditAction.evidenceStreamRead => 'evidence_stream_read',
-        CaregiverAuditAction.reviewSummaryRead => 'review_summary_read',
-        CaregiverAuditAction.thresholdAlertRead => 'threshold_alert_read',
-        CaregiverAuditAction.dashboardViewed => 'dashboard_viewed',
-        CaregiverAuditAction.accessDenied => 'access_denied',
-      };
+    CaregiverAuditAction.sessionStarted => 'session_started',
+    CaregiverAuditAction.sessionValidated => 'session_validated',
+    CaregiverAuditAction.sessionExpired => 'session_expired',
+    CaregiverAuditAction.modeSwitched => 'mode_switched',
+    CaregiverAuditAction.consentGranted => 'consent_granted',
+    CaregiverAuditAction.consentRevoked => 'consent_revoked',
+    CaregiverAuditAction.evidenceStreamRead => 'evidence_stream_read',
+    CaregiverAuditAction.reviewSummaryRead => 'review_summary_read',
+    CaregiverAuditAction.thresholdAlertRead => 'threshold_alert_read',
+    CaregiverAuditAction.dashboardViewed => 'dashboard_viewed',
+    CaregiverAuditAction.accessDenied => 'access_denied',
+  };
 
   static CaregiverAuditAction? fromWire(String? raw) => switch (raw) {
-        'session_started' => CaregiverAuditAction.sessionStarted,
-        'session_validated' => CaregiverAuditAction.sessionValidated,
-        'session_expired' => CaregiverAuditAction.sessionExpired,
-        'mode_switched' => CaregiverAuditAction.modeSwitched,
-        'consent_granted' => CaregiverAuditAction.consentGranted,
-        'consent_revoked' => CaregiverAuditAction.consentRevoked,
-        'evidence_stream_read' => CaregiverAuditAction.evidenceStreamRead,
-        'review_summary_read' => CaregiverAuditAction.reviewSummaryRead,
-        'threshold_alert_read' => CaregiverAuditAction.thresholdAlertRead,
-        'dashboard_viewed' => CaregiverAuditAction.dashboardViewed,
-        'access_denied' => CaregiverAuditAction.accessDenied,
-        _ => null,
-      };
+    'session_started' => CaregiverAuditAction.sessionStarted,
+    'session_validated' => CaregiverAuditAction.sessionValidated,
+    'session_expired' => CaregiverAuditAction.sessionExpired,
+    'mode_switched' => CaregiverAuditAction.modeSwitched,
+    'consent_granted' => CaregiverAuditAction.consentGranted,
+    'consent_revoked' => CaregiverAuditAction.consentRevoked,
+    'evidence_stream_read' => CaregiverAuditAction.evidenceStreamRead,
+    'review_summary_read' => CaregiverAuditAction.reviewSummaryRead,
+    'threshold_alert_read' => CaregiverAuditAction.thresholdAlertRead,
+    'dashboard_viewed' => CaregiverAuditAction.dashboardViewed,
+    'access_denied' => CaregiverAuditAction.accessDenied,
+    _ => null,
+  };
 }
 
 class AuditLogEntry {
@@ -266,14 +273,14 @@ class AuditLogEntry {
   final Map<String, Object?> metadata;
 
   Map<String, dynamic> toJson() => {
-        'entryId': entryId,
-        'sessionId': sessionId,
-        'action': action.wireValue,
-        'resourceType': resourceType,
-        if (resourceId != null) 'resourceId': resourceId,
-        'timestamp': timestamp.toUtc().toIso8601String(),
-        if (metadata.isNotEmpty) 'metadata': metadata,
-      };
+    'entryId': entryId,
+    'sessionId': sessionId,
+    'action': action.wireValue,
+    'resourceType': resourceType,
+    if (resourceId != null) 'resourceId': resourceId,
+    'timestamp': timestamp.toUtc().toIso8601String(),
+    if (metadata.isNotEmpty) 'metadata': metadata,
+  };
 }
 
 class AppModeState {
@@ -286,7 +293,8 @@ class AppModeState {
 
   factory AppModeState.fromJson(Map<String, dynamic> json) {
     return AppModeState(
-      mode: AppModeJson.fromWire(json['mode']?.toString()) ??
+      mode:
+          AppModeJson.fromWire(json['mode']?.toString()) ??
           AppModeConfigPolicy.defaultMode,
       policyVersion: json['policyVersion'] is int
           ? json['policyVersion'] as int
@@ -297,10 +305,10 @@ class AppModeState {
   }
 
   static AppModeState initial() => AppModeState(
-        mode: AppModeConfigPolicy.defaultMode,
-        policyVersion: AppModeConfigPolicy.currentPolicyVersion,
-        updatedAt: DateTime.now().toUtc(),
-      );
+    mode: AppModeConfigPolicy.defaultMode,
+    policyVersion: AppModeConfigPolicy.currentPolicyVersion,
+    updatedAt: DateTime.now().toUtc(),
+  );
 
   final AppMode mode;
   final int policyVersion;
@@ -308,11 +316,11 @@ class AppModeState {
   final String? activeSessionId;
 
   Map<String, dynamic> toJson() => {
-        'mode': mode.wireValue,
-        'policyVersion': policyVersion,
-        'updatedAt': updatedAt.toUtc().toIso8601String(),
-        if (activeSessionId != null) 'activeSessionId': activeSessionId,
-      };
+    'mode': mode.wireValue,
+    'policyVersion': policyVersion,
+    'updatedAt': updatedAt.toUtc().toIso8601String(),
+    if (activeSessionId != null) 'activeSessionId': activeSessionId,
+  };
 }
 
 DateTime? _parseUtc(Object? raw) {

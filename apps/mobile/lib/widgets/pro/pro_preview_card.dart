@@ -9,12 +9,16 @@ import 'package:flutter/material.dart';
 /// Concrete Pro preview before paywall — generic rows only.
 class ProPreviewCard extends StatefulWidget {
   const ProPreviewCard({
-    required this.result, required this.onSeePro, required this.onDismiss, super.key,
+    required this.result,
+    required this.onSeePro,
+    required this.onDismiss,
+    super.key,
     this.compact = false,
   });
 
   const ProPreviewCard.test({
-    required this.result, super.key,
+    required this.result,
+    super.key,
     this.onSeePro,
     this.onDismiss,
     this.compact = false,

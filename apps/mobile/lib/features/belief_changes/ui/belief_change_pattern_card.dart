@@ -172,6 +172,5 @@ class BeliefChangePatternCard extends StatelessWidget {
 
   static EvidenceGroundingFailure _failureFor(
     BeliefChangeEvidenceSnippet snippet,
-  ) =>
-      _ground(snippet).failure ?? EvidenceGroundingFailure.sourceUnavailable;
+  ) => _ground(snippet).failure ?? EvidenceGroundingFailure.sourceUnavailable;
 }

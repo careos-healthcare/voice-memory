@@ -47,8 +47,12 @@ abstract final class TranscriptCorrectionController {
       try {
         await PressureCheckInStore.instance().syncFromJournalEntry(updated);
       } catch (e, stackTrace) {
-        AppLogger.error('Unhandled error caught', error: e, stackTrace: stackTrace);
-        }
+        AppLogger.error(
+          'Unhandled error caught',
+          error: e,
+          stackTrace: stackTrace,
+        );
+      }
     }
 
     return updated;

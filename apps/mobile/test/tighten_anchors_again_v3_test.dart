@@ -424,9 +424,7 @@ void main() {
       () {
         expect(
           EvidenceTrailClarityEngine.shouldShow(
-            input: _repairInput(
-              
-            ),
+            input: _repairInput(),
             hasSafeAnchor: false,
           ),
           isFalse,

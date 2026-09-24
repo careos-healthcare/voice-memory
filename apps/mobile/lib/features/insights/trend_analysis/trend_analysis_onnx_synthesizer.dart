@@ -157,10 +157,9 @@ class TrendAnalysisOnnxSynthesizer {
       lines.add(
         EmotionalShiftLine(
           headline: 'Most common mood label: ${topMood.first.key}',
-          detail:
-              synthesis.mood.trim().isNotEmpty
-                  ? 'Latest synthesis mood: ${synthesis.mood}.'
-                  : 'Most frequent mood label in the window.',
+          detail: synthesis.mood.trim().isNotEmpty
+              ? 'Latest synthesis mood: ${synthesis.mood}.'
+              : 'Most frequent mood label in the window.',
         ),
       );
     }

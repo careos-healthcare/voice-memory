@@ -4,7 +4,8 @@ import 'package:archiveme_mobile/features/pattern_correction/pattern_correction_
 abstract final class PatternCorrectionEngine {
   PatternCorrectionEngine._();
 
-  static const List<PatternCorrectionReason> reasons = PatternCorrectionReason.values;
+  static const List<PatternCorrectionReason> reasons =
+      PatternCorrectionReason.values;
 
   static List<PatternCorrectionAction> actionsFor(
     PatternCorrectionReason reason,

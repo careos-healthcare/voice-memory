@@ -15,7 +15,8 @@ class LocalLlmAppLifecycleListener extends StatefulWidget {
       _LocalLlmAppLifecycleListenerState();
 }
 
-class _LocalLlmAppLifecycleListenerState extends State<LocalLlmAppLifecycleListener> {
+class _LocalLlmAppLifecycleListenerState
+    extends State<LocalLlmAppLifecycleListener> {
   late final AppLifecycleListener _lifecycleListener;
 
   @override

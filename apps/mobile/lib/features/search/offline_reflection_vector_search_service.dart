@@ -1,4 +1,7 @@
 import 'package:archiveme_mobile/api/models/capture_dto.dart';
+import 'package:archiveme_mobile/core/execution/cancel_token.dart';
+import 'package:archiveme_mobile/core/execution/isolate_compute_job.dart';
+import 'package:archiveme_mobile/core/hardware/resource_guard.dart';
 import 'package:archiveme_mobile/features/insight_engine/hybrid_search_models.dart';
 import 'package:archiveme_mobile/features/search/local_reflection_embedding_inference.dart';
 import 'package:archiveme_mobile/features/search/offline_reflection_search_guard.dart';
@@ -8,6 +11,21 @@ import 'package:archiveme_mobile/features/search/reflection_embedding_repository
 import 'package:archiveme_mobile/features/search/reflection_embedding_text.dart';
 import 'package:archiveme_mobile/features/search/reflection_text_processor.dart';
 import 'package:archiveme_mobile/models/reflection.dart';
+
+/// A timeline entry ranked by sqlite-vec nearest neighbors.
+class TimelineSemanticEntry {
+  const TimelineSemanticEntry({
+    required this.entryId,
+    required this.transcript,
+    required this.score,
+    this.createdAt,
+  });
+
+  final String entryId;
+  final String transcript;
+  final double score;
+  final DateTime? createdAt;
+}
 
 /// A semantic similarity hit against locally indexed reflection embeddings.
 class ReflectionSearchHit {
@@ -25,11 +43,14 @@ class OfflineReflectionVectorSearchService {
   OfflineReflectionVectorSearchService({
     required ReflectionEmbeddingRepository repository,
     required ReflectionEmbeddingInference inference,
+    ResourceGuard? resourceGuard,
   }) : _repository = repository,
-       _inference = inference;
+       _inference = inference,
+       _resourceGuard = resourceGuard;
 
   final ReflectionEmbeddingRepository _repository;
   final ReflectionEmbeddingInference _inference;
+  final ResourceGuard? _resourceGuard;
 
   static Future<OfflineReflectionVectorSearchService> create({
     required ReflectionEmbeddingRepository repository,
@@ -45,14 +66,22 @@ class OfflineReflectionVectorSearchService {
     );
   }
 
-  Future<List<double>> embedText(String text) {
+  Future<List<double>> embedText(
+    String text, {
+    ExecutionCancelToken? cancelToken,
+  }) {
     return OfflineReflectionSearchGuard.runOffline(() async {
+      cancelToken?.throwIfCancelled();
+      await _throwIfHardwareBlocks();
       final trimmed = text.trim();
       if (trimmed.length < ReflectionTextProcessor.minTextChars) {
         throw ArgumentError.value(text, 'text', 'too short to embed');
       }
       final tensor = ReflectionTextProcessor.buildInputTensor(trimmed);
-      return _inference.embed(tensor);
+      return IsolateComputeJob.trace(
+        'embedding.generate',
+        () => _inference.embed(tensor),
+      );
     });
   }
 
@@ -67,12 +96,19 @@ class OfflineReflectionVectorSearchService {
   Future<List<ReflectionSearchHit>> searchSimilarText({
     required String query,
     int limit = 20,
+    ExecutionCancelToken? cancelToken,
   }) async {
     return OfflineReflectionSearchGuard.runOffline(() async {
-      final queryEmbedding = await embedText(query);
-      final hits = await _repository.vectorSearchWithScores(
-        queryEmbedding: queryEmbedding,
-        limit: limit,
+      cancelToken?.throwIfCancelled();
+      await _throwIfHardwareBlocks();
+      final queryEmbedding = await embedText(query, cancelToken: cancelToken);
+      cancelToken?.throwIfCancelled();
+      final hits = await IsolateComputeJob.trace(
+        'sqlite.vec.search',
+        () => _repository.vectorSearchWithScores(
+          queryEmbedding: queryEmbedding,
+          limit: limit,
+        ),
       );
       return hits
           .map(
@@ -83,6 +119,55 @@ class OfflineReflectionVectorSearchService {
           )
           .toList(growable: false);
     });
+  }
+
+  /// Generates a local embedding for [transcript] and stores it for search.
+  Future<bool> indexTranscript({
+    required String entryId,
+    required String transcript,
+  }) {
+    return _repository.indexTranscript(
+      entryId: entryId,
+      transcript: transcript,
+      embed: (text) => embedText(text),
+    );
+  }
+
+  /// Embeds [input] locally and returns the [k] nearest timeline entries.
+  Future<List<TimelineSemanticEntry>> queryTimeline(
+    String input, {
+    int k = 8,
+    ExecutionCancelToken? cancelToken,
+  }) async {
+    final trimmed = input.trim();
+    if (trimmed.isEmpty || k <= 0) return const [];
+    final neighbors = await searchSimilarText(
+      query: trimmed,
+      limit: k,
+      cancelToken: cancelToken,
+    );
+    if (neighbors.isEmpty) return const [];
+    final rows = await _repository.timelineRowsFor(
+      neighbors.map((hit) => hit.entryId).toList(),
+    );
+    return [
+      for (final neighbor in neighbors)
+        TimelineSemanticEntry(
+          entryId: neighbor.entryId,
+          transcript: rows[neighbor.entryId]?.transcript ?? '',
+          createdAt: rows[neighbor.entryId]?.createdAt,
+          score: neighbor.cosineSimilarity,
+        ),
+    ];
+  }
+
+  Future<void> _throwIfHardwareBlocks() async {
+    final guard = _resourceGuard;
+    if (guard == null) return;
+    final profile = await guard.buildInferenceProfile();
+    if (!profile.canExecute || profile.shouldQueueLlmJobs) {
+      throw const LocalInferenceDeferredException('hardware_constraints');
+    }
   }
 
   Future<List<ReflectionSearchHit>> searchSimilarReflection({

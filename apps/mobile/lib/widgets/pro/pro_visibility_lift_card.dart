@@ -15,12 +15,16 @@ import 'package:flutter/material.dart';
 
 class ProVisibilityLiftCard extends StatefulWidget {
   const ProVisibilityLiftCard({
-    required this.result, required this.onSeePro, super.key,
+    required this.result,
+    required this.onSeePro,
+    super.key,
     this.compact = false,
   });
 
   const ProVisibilityLiftCard.test({
-    required this.result, required this.onSeePro, super.key,
+    required this.result,
+    required this.onSeePro,
+    super.key,
     this.compact = false,
   });
 

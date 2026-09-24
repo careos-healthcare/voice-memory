@@ -30,20 +30,18 @@ class CapturePipelineMiddleware {
   ApiUsageCheckResult checkUsage({
     required String scopeKey,
     required ApiUsageOperation operation,
-  }) =>
-      _deps.usageGuard.checkAttempt(
-        scopeKey: scopeKey,
-        operation: operation,
-      );
+  }) => _deps.usageGuard.checkAttempt(
+    scopeKey: scopeKey,
+    operation: operation,
+  );
 
   String idempotencyKey({
     required String scopeKey,
     required ApiUsageOperation operation,
-  }) =>
-      _deps.usageGuard.idempotencyKey(
-        scopeKey: scopeKey,
-        operation: operation,
-      );
+  }) => _deps.usageGuard.idempotencyKey(
+    scopeKey: scopeKey,
+    operation: operation,
+  );
 
   void recordUsageAttempt({
     required String scopeKey,
@@ -73,7 +71,7 @@ class CapturePipelineMiddleware {
     required String scopeKey,
     required String entryId,
     required ProofSourceType sourceType,
-    
+
     bool attestFirst = true,
   }) async {
     if (attestFirst) {

@@ -11,7 +11,12 @@ import 'package:flutter/material.dart';
 /// Restrained Pro lock moment after first proof — opens detail sheet.
 class ProLockMomentCard extends StatefulWidget {
   const ProLockMomentCard({
-    required this.entryCount, required this.hasFirstProof, required this.hasConfirmedRepeat, required this.onSeePro, required this.onDismiss, super.key,
+    required this.entryCount,
+    required this.hasFirstProof,
+    required this.hasConfirmedRepeat,
+    required this.onSeePro,
+    required this.onDismiss,
+    super.key,
     this.source = ProLockMomentEngine.recordPostSaveSource,
   });
 

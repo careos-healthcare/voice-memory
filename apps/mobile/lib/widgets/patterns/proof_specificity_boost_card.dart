@@ -14,7 +14,12 @@ import 'package:flutter/material.dart';
 /// Clarifies safe evidence anchors when proof feels too vague — no raw text.
 class ProofSpecificityBoostCard extends StatefulWidget {
   const ProofSpecificityBoostCard({
-    required this.result, required this.surface, required this.source, required this.hasConfirmedRepeat, required this.proofKey, super.key,
+    required this.result,
+    required this.surface,
+    required this.source,
+    required this.hasConfirmedRepeat,
+    required this.proofKey,
+    super.key,
     this.onChanged,
     this.store,
     this.skipPrefsLoad = false,
@@ -22,7 +27,12 @@ class ProofSpecificityBoostCard extends StatefulWidget {
   });
 
   const ProofSpecificityBoostCard.test({
-    required this.result, required this.surface, required this.source, required this.hasConfirmedRepeat, required this.proofKey, super.key,
+    required this.result,
+    required this.surface,
+    required this.source,
+    required this.hasConfirmedRepeat,
+    required this.proofKey,
+    super.key,
     this.onChanged,
     this.store,
     this.initialAnswer,

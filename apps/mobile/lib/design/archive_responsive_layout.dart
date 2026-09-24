@@ -1,3 +1,5 @@
+import 'package:archiveme_mobile/theme/app_spacing.dart';
+import 'package:archiveme_mobile/theme/oled_archive_theme.dart';
 import 'package:flutter/material.dart';
 
 /// Shared max widths and page padding for ArchiveMe high-visibility screens.
@@ -6,10 +8,10 @@ abstract class ArchiveResponsiveLayout {
 
   static const double contentMaxWidth = 720;
   static const double cardMaxWidth = 680;
-  static const double sectionGap = 12;
-  static const double sectionGapWide = 14;
-  static const double cardPadding = 16;
-  static const double cardPaddingWide = 18;
+  static const double sectionGap = AppSpacing.xs;
+  static const double sectionGapWide = AppSpacing.sm;
+  static const double cardPadding = AppSpacing.sm;
+  static const double cardPaddingWide = AppSpacing.md;
 
   static bool isTabletOrDesktop(BuildContext context) =>
       MediaQuery.sizeOf(context).width >= 600;
@@ -75,15 +77,8 @@ abstract class ArchiveResponsiveLayout {
   static double gap(BuildContext context) =>
       isTabletOrDesktop(context) ? sectionGapWide : sectionGap;
 
-  static EdgeInsets pagePadding(BuildContext context) {
-    final wide = isTabletOrDesktop(context);
-    return EdgeInsets.fromLTRB(
-      wide ? 32 : 20,
-      wide ? 12 : 8,
-      wide ? 32 : 20,
-      wide ? 24 : 16,
-    );
-  }
+  static EdgeInsets pagePadding(BuildContext context) =>
+      OledArchiveTheme.paddingForLogicalWidth(MediaQuery.sizeOf(context).width);
 
   static EdgeInsets cardInsets(BuildContext context) {
     final pad = isTabletOrDesktop(context) ? cardPaddingWide : cardPadding;

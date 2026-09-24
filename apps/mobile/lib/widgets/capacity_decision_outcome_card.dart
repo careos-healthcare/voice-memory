@@ -11,14 +11,16 @@ import 'package:flutter/material.dart';
 /// Archive Home card for decision outcomes — outcome ids only, no journal text.
 class CapacityDecisionOutcomeCard extends StatefulWidget {
   const CapacityDecisionOutcomeCard({
-    required this.result, super.key,
+    required this.result,
+    super.key,
     this.onSaved,
     this.store,
     this.sampleMode = false,
   });
 
   const CapacityDecisionOutcomeCard.test({
-    required this.result, super.key,
+    required this.result,
+    super.key,
     this.onSaved,
     this.store,
     this.sampleMode = false,

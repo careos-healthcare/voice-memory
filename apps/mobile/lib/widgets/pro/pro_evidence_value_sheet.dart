@@ -12,7 +12,10 @@ import 'package:flutter/material.dart';
 /// Sheet explaining Free vs Pro evidence value and ChatGPT differentiation.
 class ProEvidenceValueSheet extends StatelessWidget {
   const ProEvidenceValueSheet({
-    required this.surface, required this.entryCount, required this.onSeePro, super.key,
+    required this.surface,
+    required this.entryCount,
+    required this.onSeePro,
+    super.key,
   });
 
   final ProEvidenceValueSurface surface;

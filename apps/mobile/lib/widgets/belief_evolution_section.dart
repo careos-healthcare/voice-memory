@@ -10,7 +10,8 @@ import 'dart:async';
 /// Archive section — loads evolution from journal + persists locally.
 class BeliefEvolutionSection extends StatefulWidget {
   const BeliefEvolutionSection({
-    required this.entries, super.key,
+    required this.entries,
+    super.key,
     this.baseline,
   });
 

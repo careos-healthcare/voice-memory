@@ -130,7 +130,9 @@ void main() {
         audioPath: _fixturePath,
       );
       TranscriptionLog.started(audioPath: _fixturePath);
-      TranscriptionLog.request(url: 'https://api.example.com/transcribe?token=$_fixtureToken');
+      TranscriptionLog.request(
+        url: 'https://api.example.com/transcribe?token=$_fixtureToken',
+      );
 
       final joined = ReleaseLogger.testLines.join('\n');
       for (final secret in [

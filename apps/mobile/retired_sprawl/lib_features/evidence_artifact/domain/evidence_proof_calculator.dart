@@ -71,7 +71,8 @@ abstract final class EvidenceProofCalculator {
   }
 
   static PatternMatchConfidenceBand resolveBand({
-    required int citationCount, PatternMatchConfidenceBand? explicit,
+    required int citationCount,
+    PatternMatchConfidenceBand? explicit,
     int? confidencePercent,
   }) {
     if (explicit != null) return explicit;
@@ -90,7 +91,9 @@ abstract final class EvidenceProofCalculator {
     return PatternMatchConfidenceBand.weak;
   }
 
-  static EvidenceProofStats _computeStats(List<EvidenceProofCitation> citations) {
+  static EvidenceProofStats _computeStats(
+    List<EvidenceProofCitation> citations,
+  ) {
     final count = citations.length;
     if (count == 0) {
       return const EvidenceProofStats(

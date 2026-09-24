@@ -171,13 +171,14 @@ class TheoryRankingEngine {
       rawCounter: rawCounter,
     );
 
-    final total = (volume +
-            consistency +
-            recency +
-            contradiction +
-            surprise +
-            counterQuality)
-        .clamp(0, 100);
+    final total =
+        (volume +
+                consistency +
+                recency +
+                contradiction +
+                surprise +
+                counterQuality)
+            .clamp(0, 100);
 
     return TheoryRankBreakdown(
       volumePoints: volume,
@@ -325,8 +326,18 @@ class TheoryRankingEngine {
 
   String _formatEvidenceDate(DateTime dt) {
     const months = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
     ];
     return '${months[dt.month - 1]} ${dt.day}';
   }

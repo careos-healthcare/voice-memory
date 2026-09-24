@@ -13,7 +13,8 @@ class ArchiveWatchlistItem {
   const ArchiveWatchlistItem({
     required this.id,
     required this.presetId,
-    required this.createdAt, this.customLabel,
+    required this.createdAt,
+    this.customLabel,
   });
 
   factory ArchiveWatchlistItem.fromJson(Map<String, dynamic> json) {

@@ -6,7 +6,9 @@ import 'package:flutter/material.dart';
 /// Switches between passive journaling and live AI conversation on Record.
 class RecordingModeToggle extends StatelessWidget {
   const RecordingModeToggle({
-    required this.mode, required this.onChanged, super.key,
+    required this.mode,
+    required this.onChanged,
+    super.key,
   });
 
   final RecordingMode mode;

@@ -13,8 +13,7 @@ class EntryEdgesRepository {
   AppDatabase? _drift;
   EntryEdgesDao? _dao;
 
-  EntryEdgesDao get _entryEdgesDao =>
-      _dao ??= EntryEdgesDao(_driftDb);
+  EntryEdgesDao get _entryEdgesDao => _dao ??= EntryEdgesDao(_driftDb);
 
   AppDatabase get _driftDb =>
       _drift ??= AppDatabase.fromSqflite(_sqlite.database);

@@ -62,68 +62,71 @@ void main() {
   tearDown(AppSqliteDatabase.resetForTest);
 
   group('ReflectionGraphBackfill', () {
-    test('fromJournalEntries indexes slim and legacy reflection payloads', () async {
-      final db = await openTestAppSqliteDatabase();
-      final database = db.database;
+    test(
+      'fromJournalEntries indexes slim and legacy reflection payloads',
+      () async {
+        final db = await openTestAppSqliteDatabase();
+        final database = db.database;
 
-      await _insertJournalEntry(
-        database,
-        id: 'slim',
-        transcript: 'slim payload',
-        payloadJson: jsonEncode(
-          _slimReflectionPayload(tensionOrContradiction: 'work stress'),
-        ),
-      );
-      await _insertJournalEntry(
-        database,
-        id: 'legacy',
-        transcript: 'legacy payload',
-        payloadJson: jsonEncode({
-          'id': 'legacy',
-          'createdAt': '2026-01-01T00:00:00.000Z',
-          'updatedAt': '2026-01-01T00:00:00.000Z',
-          'transcript': 'legacy payload',
-          'durationSeconds': 45,
-          'reflection': _slimReflectionPayload(
-            recurringThemes: ['sleep'],
-            nextSmallAction: 'wind down earlier',
-          )['reflection'],
-        }),
-      );
-      await _insertJournalEntry(
-        database,
-        id: 'deleted',
-        transcript: 'skip me',
-        deletedAt: DateTime.utc(2026, 1, 2).millisecondsSinceEpoch,
-        payloadJson: jsonEncode(_slimReflectionPayload()),
-      );
-      await _insertJournalEntry(
-        database,
-        id: 'empty',
-        transcript: 'no reflection payload',
-        payloadJson: null,
-      );
+        await _insertJournalEntry(
+          database,
+          id: 'slim',
+          transcript: 'slim payload',
+          payloadJson: jsonEncode(
+            _slimReflectionPayload(tensionOrContradiction: 'work stress'),
+          ),
+        );
+        await _insertJournalEntry(
+          database,
+          id: 'legacy',
+          transcript: 'legacy payload',
+          payloadJson: jsonEncode({
+            'id': 'legacy',
+            'createdAt': '2026-01-01T00:00:00.000Z',
+            'updatedAt': '2026-01-01T00:00:00.000Z',
+            'transcript': 'legacy payload',
+            'durationSeconds': 45,
+            'reflection': _slimReflectionPayload(
+              recurringThemes: ['sleep'],
+              nextSmallAction: 'wind down earlier',
+            )['reflection'],
+          }),
+        );
+        await _insertJournalEntry(
+          database,
+          id: 'deleted',
+          transcript: 'skip me',
+          deletedAt: DateTime.utc(2026, 1, 2).millisecondsSinceEpoch,
+          payloadJson: jsonEncode(_slimReflectionPayload()),
+        );
+        await _insertJournalEntry(
+          database,
+          id: 'empty',
+          transcript: 'no reflection payload',
+          payloadJson: null,
+        );
 
-      final graphRepo = ReflectionKnowledgeGraphRepository(database);
-      final backfilled = await ReflectionGraphBackfill.fromJournalEntries(
-        database,
-      );
+        final graphRepo = ReflectionKnowledgeGraphRepository(database);
+        final backfilled = await ReflectionGraphBackfill.fromJournalEntries(
+          database,
+        );
 
-      expect(backfilled, 2);
+        expect(backfilled, 2);
 
-      final slimHits = await graphRepo.searchNodes(query: 'stress', limit: 5);
-      expect(slimHits.any((hit) => hit.entryId == 'slim'), isTrue);
+        final slimHits = await graphRepo.searchNodes(query: 'stress', limit: 5);
+        expect(slimHits.any((hit) => hit.entryId == 'slim'), isTrue);
 
-      final legacyHits = await graphRepo.searchNodes(query: 'wind', limit: 5);
-      expect(legacyHits.any((hit) => hit.entryId == 'legacy'), isTrue);
+        final legacyHits = await graphRepo.searchNodes(query: 'wind', limit: 5);
+        expect(legacyHits.any((hit) => hit.entryId == 'legacy'), isTrue);
 
-      final deletedRows = await database.query(
-        Migration011ReflectionGraphFts.nodesTable,
-        where: 'entry_id = ?',
-        whereArgs: ['deleted'],
-      );
-      expect(deletedRows, isEmpty);
-    });
+        final deletedRows = await database.query(
+          Migration011ReflectionGraphFts.nodesTable,
+          where: 'entry_id = ?',
+          whereArgs: ['deleted'],
+        );
+        expect(deletedRows, isEmpty);
+      },
+    );
   });
 
   group('Migration011ReflectionGraphFts', () {

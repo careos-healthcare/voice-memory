@@ -58,7 +58,8 @@ class MeshPeerCapabilities {
 
     return MeshPeerCapabilities(
       peerId: json['peerId'] as String? ?? '',
-      role: MeshPeerRole.values.asNameMap()[json['role']] ?? MeshPeerRole.desktop,
+      role:
+          MeshPeerRole.values.asNameMap()[json['role']] ?? MeshPeerRole.desktop,
       host: json['host'] as String? ?? '',
       port: json['port'] as int? ?? 0,
       llamaCppSupported: json['llamaCppSupported'] as bool? ?? false,

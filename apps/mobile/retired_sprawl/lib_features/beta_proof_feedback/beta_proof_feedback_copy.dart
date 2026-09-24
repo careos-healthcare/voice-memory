@@ -11,7 +11,8 @@ abstract final class BetaProofFeedbackCopy {
   static const String answerUseful = ProofRelevanceRepairCopy.answerYes;
   static const String answerTooVague = ProofRelevanceRepairCopy.answerTooVague;
   static const answerAlreadyKnew = 'Already knew this';
-  static const String answerNotRelevant = ProofRelevanceRepairCopy.answerNotRelevant;
+  static const String answerNotRelevant =
+      ProofRelevanceRepairCopy.answerNotRelevant;
 
   static const thanksMessage =
       'Thanks — this helps tune what ArchiveMe shows next.';

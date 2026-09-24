@@ -125,7 +125,9 @@ class ArchiveVerifiedChangesSection extends StatelessWidget {
 
 class _VerifiedChangeCard extends StatelessWidget {
   const _VerifiedChangeCard({
-    required this.entry, required this.view, super.key,
+    required this.entry,
+    required this.view,
+    super.key,
   });
 
   final JournalEntry entry;

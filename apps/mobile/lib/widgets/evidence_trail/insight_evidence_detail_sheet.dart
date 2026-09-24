@@ -155,8 +155,7 @@ class InsightEvidenceDetailSheet extends StatelessWidget {
                         ),
                       )
                     else
-                      for (final quote in quotes)
-                        _SourceSpanCard(quote: quote),
+                      for (final quote in quotes) _SourceSpanCard(quote: quote),
                   ],
                 ),
               ),

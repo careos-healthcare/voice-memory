@@ -291,9 +291,10 @@ class _RecoveryDisclosureSheet extends StatelessWidget {
       ProvenanceRecoveryCopy.transcriptionNotPermittedBlocker,
     ProvenanceRecoveryBlocker.onDeviceOnlyAndNotPermitted =>
       ProvenanceRecoveryCopy.bothBlockers(onDeviceSettingName),
-    ProvenanceRecoveryBlocker.audioMissing => plan.isBulk
-        ? ProvenanceRecoveryCopy.audioMissingBulk
-        : ProvenanceRecoveryCopy.audioMissing,
+    ProvenanceRecoveryBlocker.audioMissing =>
+      plan.isBulk
+          ? ProvenanceRecoveryCopy.audioMissingBulk
+          : ProvenanceRecoveryCopy.audioMissing,
     null => '',
   };
 }

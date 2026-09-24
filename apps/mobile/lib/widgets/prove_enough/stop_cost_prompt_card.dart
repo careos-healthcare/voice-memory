@@ -11,7 +11,8 @@ import 'dart:async';
 /// Stop-cost reflection prompt after a prove_enough recording.
 class StopCostPromptCard extends StatefulWidget {
   const StopCostPromptCard({
-    required this.entryId, super.key,
+    required this.entryId,
+    super.key,
     this.onAnswered,
     this.stopCostStore,
     this.skipInitialLoad = false,

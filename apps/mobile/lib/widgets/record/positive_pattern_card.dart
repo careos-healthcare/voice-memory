@@ -9,7 +9,9 @@ import 'package:flutter/material.dart';
 /// Surfaces repeated helpful actions from the user's own entries.
 class PositivePatternCard extends StatelessWidget {
   const PositivePatternCard({
-    required this.result, required this.showRecordAgainCta, super.key,
+    required this.result,
+    required this.showRecordAgainCta,
+    super.key,
     this.onRecordAgain,
   });
 

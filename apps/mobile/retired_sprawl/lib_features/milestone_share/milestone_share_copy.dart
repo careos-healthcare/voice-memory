@@ -32,8 +32,10 @@ abstract final class MilestoneShareCopy {
       'Milestone cards appear after your first saved moment.';
   static const String emptyCta = saveMomentCta;
 
-  static const String privacyFooter = VisibleArchiveProofCopy.shareProofPrivacyFooter;
-  static const String productLine = VisibleArchiveProofCopy.shareProofProductLine;
+  static const String privacyFooter =
+      VisibleArchiveProofCopy.shareProofPrivacyFooter;
+  static const String productLine =
+      VisibleArchiveProofCopy.shareProofProductLine;
 
   static const supportSectionTitle = 'Milestone cards';
   static const supportSectionBody =

@@ -5,7 +5,8 @@ import 'package:archiveme_mobile/billing/paywall_source.dart';
 /// continuation of the value the user just experienced — never a hard sell.
 class StartHereSaveReceipt {
   const StartHereSaveReceipt({
-    required this.paywallSource, this.title = defaultTitle,
+    required this.paywallSource,
+    this.title = defaultTitle,
     this.explanation = defaultExplanation,
     this.connectedTerms = const [],
     this.returnCueLine = defaultReturnCueLine,

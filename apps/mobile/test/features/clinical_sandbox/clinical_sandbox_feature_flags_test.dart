@@ -16,12 +16,14 @@ void main() {
       expect(ClinicalSandboxFeatureFlags.isEnabled, isTrue);
     });
 
-    test('assertSafeForPublicDistribution is a no-op when compile flag is off',
-        () {
-      expect(
-        ClinicalSandboxFeatureFlags.assertSafeForPublicDistribution,
-        returnsNormally,
-      );
-    });
+    test(
+      'assertSafeForPublicDistribution is a no-op when compile flag is off',
+      () {
+        expect(
+          ClinicalSandboxFeatureFlags.assertSafeForPublicDistribution,
+          returnsNormally,
+        );
+      },
+    );
   });
 }

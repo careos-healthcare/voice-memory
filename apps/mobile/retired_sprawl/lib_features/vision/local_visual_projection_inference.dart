@@ -11,7 +11,7 @@ import 'package:archiveme_mobile/features/vision/image_processor.dart';
 /// through a fixed weight matrix (seeded PRNG) to [imageEmbeddingDimensions].
 class LocalVisualProjectionInference implements ImageEmbeddingInference {
   LocalVisualProjectionInference({math.Random? random})
-      : _random = random ?? math.Random(_seed);
+    : _random = random ?? math.Random(_seed);
 
   static const _seed = 0x764953;
   static const _poolStride = 16;
@@ -20,7 +20,8 @@ class LocalVisualProjectionInference implements ImageEmbeddingInference {
   final math.Random _random;
   late final List<List<double>> _weights = _buildProjectionWeights();
 
-  static int get featureCount => _gridSize * _gridSize * ImageProcessor.channelCount;
+  static int get featureCount =>
+      _gridSize * _gridSize * ImageProcessor.channelCount;
 
   @override
   Future<List<double>> embed(Float32List nchwTensor) async {
@@ -68,7 +69,8 @@ class LocalVisualProjectionInference implements ImageEmbeddingInference {
                   pixelX >= ImageProcessor.inputSize) {
                 continue;
               }
-              final index = channelOffset + (pixelY * ImageProcessor.inputSize) + pixelX;
+              final index =
+                  channelOffset + (pixelY * ImageProcessor.inputSize) + pixelX;
               sum += nchwTensor[index];
               count++;
             }

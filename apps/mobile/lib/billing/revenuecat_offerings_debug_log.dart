@@ -38,7 +38,9 @@ abstract final class RevenueCatOfferingsDebugLog {
     String? error,
   }) {
     if (offerings == null) {
-      _log('fetchOfferingsFinished loaded=false error=${error ?? 'null_offerings'}');
+      _log(
+        'fetchOfferingsFinished loaded=false error=${error ?? 'null_offerings'}',
+      );
       offeringsSnapshot(offerings: null, error: error);
       return;
     }

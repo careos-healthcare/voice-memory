@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:archiveme_mobile/billing/utility/paywall_modal.dart';
 import 'package:archiveme_mobile/features/beta_analytics/beta_analytics_hooks.dart';
 import 'package:archiveme_mobile/api/api_error_message.dart';
 import 'package:archiveme_mobile/security/export_pdf_renderer.dart';
@@ -28,6 +29,11 @@ class _ExportScreenState extends State<ExportScreen> {
   bool get _busy => _busyKind != null;
 
   Future<void> _exportAndShare(_ExportKind kind) async {
+    final allowed = await guardUtilityAction(
+      context,
+      (gate) => gate.requireExport(),
+    );
+    if (!allowed || !mounted) return;
     setState(() {
       _busyKind = kind;
       _message = null;

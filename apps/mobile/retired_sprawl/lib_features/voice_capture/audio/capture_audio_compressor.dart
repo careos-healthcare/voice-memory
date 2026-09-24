@@ -30,7 +30,8 @@ abstract class CaptureAudioCompressorPlatform {
 class MethodChannelCaptureAudioCompressorPlatform
     implements CaptureAudioCompressorPlatform {
   MethodChannelCaptureAudioCompressorPlatform({MethodChannel? channel})
-    : _channel = channel ?? const MethodChannel(CaptureAudioCompressor.channelName);
+    : _channel =
+          channel ?? const MethodChannel(CaptureAudioCompressor.channelName);
 
   final MethodChannel _channel;
 
@@ -71,7 +72,9 @@ abstract final class CaptureAudioCompressor {
       (!kIsWeb && (Platform.isIOS || Platform.isAndroid));
 
   /// Returns a file suitable for upload — compressed when native support exists.
-  static Future<CaptureAudioCompressResult> compressForUpload(File input) async {
+  static Future<CaptureAudioCompressResult> compressForUpload(
+    File input,
+  ) async {
     if (!input.existsSync()) {
       throw StateError('capture_audio_missing');
     }

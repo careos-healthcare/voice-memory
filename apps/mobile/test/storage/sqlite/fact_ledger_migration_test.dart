@@ -20,7 +20,9 @@ void main() {
 
     expect(tables, hasLength(1));
 
-    final columns = await db.database.rawQuery('PRAGMA table_info(fact_ledger)');
+    final columns = await db.database.rawQuery(
+      'PRAGMA table_info(fact_ledger)',
+    );
     final names = columns.map((row) => row['name']).toSet();
     expect(names, contains('source_entry_id'));
     expect(names, contains('updated_at'));

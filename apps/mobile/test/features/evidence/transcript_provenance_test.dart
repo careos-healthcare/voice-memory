@@ -74,21 +74,27 @@ void main() {
     test('the resolver has no parameter a reflection field could enter', () {
       expect(resolveFinalCaptureTranscript(transcript: null), isNull);
       expect(resolveFinalCaptureTranscript(transcript: ''), isNull);
-      expect(resolveFinalCaptureTranscript(transcript: _draftPlaceholder), isNull);
+      expect(
+        resolveFinalCaptureTranscript(transcript: _draftPlaceholder),
+        isNull,
+      );
       expect(
         resolveFinalCaptureTranscript(transcript: _spokenTranscript),
         _spokenTranscript,
       );
     });
 
-    test('display still falls back to reflection text without persisting it', () {
-      final entry = _entry(transcript: '');
-      final resolution = resolveEntryDisplayText(entry);
+    test(
+      'display still falls back to reflection text without persisting it',
+      () {
+        final entry = _entry(transcript: '');
+        final resolution = resolveEntryDisplayText(entry);
 
-      expect(resolution.text, _reflectionObservation);
-      expect(resolution.source, EntryDisplayTextSource.body);
-      expect(entry.transcript, isEmpty);
-    });
+        expect(resolution.text, _reflectionObservation);
+        expect(resolution.source, EntryDisplayTextSource.body);
+        expect(entry.transcript, isEmpty);
+      },
+    );
   });
 
   group('the evidence index cannot ingest generated text', () {
@@ -108,7 +114,10 @@ void main() {
         _entry(transcript: _spokenTranscript),
       );
 
-      expect(TranscriptEvidenceIndex.transcriptFor('entry-1'), _spokenTranscript);
+      expect(
+        TranscriptEvidenceIndex.transcriptFor('entry-1'),
+        _spokenTranscript,
+      );
       expect(
         TranscriptEvidenceIndex.transcriptFor('entry-1'),
         isNot(contains(_reflectionObservation)),
@@ -132,7 +141,10 @@ void main() {
         isNull,
       );
       expect(
-        SpokenTranscript.fromCaptureText(entryId: '', transcript: _spokenTranscript),
+        SpokenTranscript.fromCaptureText(
+          entryId: '',
+          transcript: _spokenTranscript,
+        ),
         isNull,
       );
     });
@@ -140,7 +152,9 @@ void main() {
 
   group('statement selection never quotes a reflection field', () {
     test('the transcript is the head of the matching corpus', () {
-      final texts = archiveStatementTexts(_entry(transcript: _spokenTranscript));
+      final texts = archiveStatementTexts(
+        _entry(transcript: _spokenTranscript),
+      );
 
       expect(texts.first, _spokenTranscript);
       expect(texts, contains(_reflectionObservation));
@@ -165,7 +179,9 @@ void main() {
 
     test('a reflection field is never returned as a quote', () {
       for (final transcript in ['', '   ', _draftPlaceholder, 'too short']) {
-        final quote = archiveQuotableStatementText(_entry(transcript: transcript));
+        final quote = archiveQuotableStatementText(
+          _entry(transcript: transcript),
+        );
         expect(quote, isNot(_reflectionObservation));
         expect(quote, isNot(_reflectionExactLanguage));
         expect(quote, isNot(_reflectionTension));

@@ -253,7 +253,9 @@ abstract final class ArchiveExportPackEngine {
         ..writeln()
         ..writeln('${EvidenceEligibilityCopy.exportSuggestionLabel}:');
       for (final claim in derivedClaims) {
-        buffer.writeln('- ${claim[EvidenceEligibilityCopy.exportSuggestionLabel]}');
+        buffer.writeln(
+          '- ${claim[EvidenceEligibilityCopy.exportSuggestionLabel]}',
+        );
       }
     }
 

@@ -178,7 +178,9 @@ class _ConsentRequestViewState extends State<ConsentRequestView> {
         FilledButton(
           onPressed: _busy ? null : () => unawaited(_onPrimary(context)),
           child: Text(
-            _step < 2 ? CaregiverCopy.continueCta : CaregiverCopy.grantAccessCta,
+            _step < 2
+                ? CaregiverCopy.continueCta
+                : CaregiverCopy.grantAccessCta,
           ),
         ),
       ],
@@ -226,13 +228,13 @@ class _ConsentRequestViewState extends State<ConsentRequestView> {
 
       final subjectAccountId =
           AppServices.instance.auth.currentSession?.userId ?? 'local_guest';
-      final token = await (widget.verificationService ??
-              ConsentVerificationService())
-          .issueToken(
-        subjectAccountId: subjectAccountId,
-        caregiverId: 'caregiver_${subjectAccountId.hashCode.abs()}',
-        permissions: permissions,
-      );
+      final token =
+          await (widget.verificationService ?? ConsentVerificationService())
+              .issueToken(
+                subjectAccountId: subjectAccountId,
+                caregiverId: 'caregiver_${subjectAccountId.hashCode.abs()}',
+                permissions: permissions,
+              );
 
       final result = await _controller.activateWithToken(token);
       if (!result.valid) {

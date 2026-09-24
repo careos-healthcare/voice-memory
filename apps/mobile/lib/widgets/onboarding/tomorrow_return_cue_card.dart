@@ -10,7 +10,10 @@ import 'package:flutter/material.dart';
 /// local intent otherwise. Permission only after an explicit reminder tap.
 class TomorrowReturnCueCard extends StatelessWidget {
   const TomorrowReturnCueCard({
-    required this.reminderAvailable, required this.onLocalCue, required this.onRemind, super.key,
+    required this.reminderAvailable,
+    required this.onLocalCue,
+    required this.onRemind,
+    super.key,
   });
 
   final bool reminderAvailable;

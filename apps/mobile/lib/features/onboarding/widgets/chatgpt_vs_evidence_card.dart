@@ -13,7 +13,8 @@ import 'package:flutter/material.dart';
 /// Side-by-side "ChatGPT vs Evidence Method" proof for first-session onboarding.
 class ChatGptVsEvidenceCard extends StatefulWidget {
   const ChatGptVsEvidenceCard({
-    required this.payload, super.key,
+    required this.payload,
+    super.key,
     this.onVerified,
   });
 
@@ -174,7 +175,9 @@ class _EvidencePanel extends StatelessWidget {
             ),
             const SizedBox(height: 6),
             Text(
-              payload.quote.isEmpty ? '(No transcript saved yet)' : payload.quote,
+              payload.quote.isEmpty
+                  ? '(No transcript saved yet)'
+                  : payload.quote,
               style: VoiceMemoryTypography.bodyStyle().copyWith(
                 height: 1.45,
                 color: VoiceMemoryColors.primaryIndigo,
@@ -244,7 +247,11 @@ class _ArchitectureCompareRow extends StatelessWidget {
 
 class _PanelShell extends StatelessWidget {
   const _PanelShell({
-    required this.title, required this.subtitle, required this.accent, required this.child, super.key,
+    required this.title,
+    required this.subtitle,
+    required this.accent,
+    required this.child,
+    super.key,
   });
 
   final String title;

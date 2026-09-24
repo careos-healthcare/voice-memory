@@ -12,7 +12,8 @@ class ValueMomentPaywallLogic {
 
   static const String copyHeadline = ConsumerUiCopy.paywallHeadline;
   static const String copyBody = ConsumerUiCopy.paywallSubhead;
-  static const String copyPatternMemory = ConsumerUiCopy.archivePatternOverTimeLine;
+  static const String copyPatternMemory =
+      ConsumerUiCopy.archivePatternOverTimeLine;
   static const String ctaLabel = ConsumerUiCopy.paywallPrimaryCta;
   static const String secondaryLabel = ConsumerUiCopy.paywallSecondaryCta;
 

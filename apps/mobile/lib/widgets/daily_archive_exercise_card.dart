@@ -17,7 +17,8 @@ import 'dart:async';
 /// Compact daily archive exercise card for Archive Home — local only.
 class DailyArchiveExerciseCard extends StatefulWidget {
   const DailyArchiveExerciseCard({
-    required this.entries, super.key,
+    required this.entries,
+    super.key,
     this.onPrimaryAction,
     this.watchlistStore,
     this.engine = const DailyArchiveExerciseEngine(),
@@ -26,7 +27,9 @@ class DailyArchiveExerciseCard extends StatefulWidget {
   });
 
   const DailyArchiveExerciseCard.test({
-    required this.entries, required DailyArchiveExerciseResult this._initialResult, super.key,
+    required this.entries,
+    required DailyArchiveExerciseResult this._initialResult,
+    super.key,
     this.onPrimaryAction,
     this.watchlistStore,
     this.engine = const DailyArchiveExerciseEngine(),

@@ -12,7 +12,8 @@ import 'dart:async';
 /// Compact prompt to clean up similar moments on the Patterns tab.
 class ArchiveCompressionCard extends StatefulWidget {
   const ArchiveCompressionCard({
-    required this.group, super.key,
+    required this.group,
+    super.key,
     this.onKept,
     this.onSplit,
     this.onHidden,
@@ -217,7 +218,11 @@ class _GroupPreview extends StatelessWidget {
 /// Shared group row used on the full cleanup screen.
 class ArchiveCompressionGroupTile extends StatelessWidget {
   const ArchiveCompressionGroupTile({
-    required this.group, required this.onKept, required this.onSplit, required this.onHidden, super.key,
+    required this.group,
+    required this.onKept,
+    required this.onSplit,
+    required this.onHidden,
+    super.key,
     this.busy = false,
   });
 

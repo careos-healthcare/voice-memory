@@ -27,14 +27,16 @@ void openArchiveExplanation(
   List<String>? askCitedEntryIds,
 }) {
   ArchiveExplanationAnalytics.whyOpened(insightKind: ref.kind.name);
-  unawaited(context.push(
-    '/archive-explanation/${Uri.encodeComponent(ref.id)}',
-    extra: ArchiveExplanationRouteArgs(
-      ref: ref,
-      askPrompt: askPrompt,
-      askCitedEntryIds: askCitedEntryIds ?? const [],
+  unawaited(
+    context.push(
+      '/archive-explanation/${Uri.encodeComponent(ref.id)}',
+      extra: ArchiveExplanationRouteArgs(
+        ref: ref,
+        askPrompt: askPrompt,
+        askCitedEntryIds: askCitedEntryIds ?? const [],
+      ),
     ),
-  ));
+  );
 }
 
 String decodeArchiveExplanationRouteId(String? raw) {

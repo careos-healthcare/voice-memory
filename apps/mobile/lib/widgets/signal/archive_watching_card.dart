@@ -11,7 +11,8 @@ import 'package:flutter/material.dart';
 /// Today's watch list — up to 3 active archive signals on Record and Patterns.
 class ArchiveWatchingCard extends StatelessWidget {
   const ArchiveWatchingCard({
-    required this.snapshot, super.key,
+    required this.snapshot,
+    super.key,
     this.compact = false,
   });
 

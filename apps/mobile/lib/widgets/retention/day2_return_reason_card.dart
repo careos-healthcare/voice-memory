@@ -13,7 +13,8 @@ import 'package:flutter/material.dart';
 /// comparison; real insight cards take precedence when they exist.
 class Day2ReturnReasonCard extends StatelessWidget {
   const Day2ReturnReasonCard({
-    required this.onRecord, super.key,
+    required this.onRecord,
+    super.key,
     this.onDismiss,
     this.source = 'record',
     this.memoryOff = false,

@@ -18,66 +18,77 @@ void main() {
       await tempDir.delete(recursive: true);
     });
 
-    test('ensureModelDownloaded skips download when model already exists', () async {
-      final modelDir = Directory(p.join(tempDir.path, 'local_llm'));
-      await modelDir.create(recursive: true);
-      final modelFile = File(
-        p.join(modelDir.path, 'model-q4_k_m.gguf'),
-      );
-      await modelFile.writeAsBytes(List.filled(32, 0));
+    test(
+      'ensureModelDownloaded skips download when model already exists',
+      () async {
+        final modelDir = Directory(p.join(tempDir.path, 'local_llm'));
+        await modelDir.create(recursive: true);
+        final modelFile = File(
+          p.join(modelDir.path, 'model-q4_k_m.gguf'),
+        );
+        await modelFile.writeAsBytes(List.filled(32, 0));
 
-      var downloadCalls = 0;
-      final service = ModelDownloadService(
-        documentsDirectory: () async => tempDir,
-        dio: _FakeDio(onDownload: () {
-          downloadCalls++;
-        }),
-      );
+        var downloadCalls = 0;
+        final service = ModelDownloadService(
+          documentsDirectory: () async => tempDir,
+          dio: _FakeDio(
+            onDownload: () {
+              downloadCalls++;
+            },
+          ),
+        );
 
-      final path = await service.ensureModelDownloaded();
+        final path = await service.ensureModelDownloaded();
 
-      expect(path, isNotNull);
-      expect(downloadCalls, 0);
-      expect(await service.isModelInstalled(), isTrue);
-    });
+        expect(path, isNotNull);
+        expect(downloadCalls, 0);
+        expect(await service.isModelInstalled(), isTrue);
+      },
+    );
 
-    test('ensureModelDownloaded emits progress and writes model file', () async {
-      final service = ModelDownloadService(
-        documentsDirectory: () async => tempDir,
-        dio: _FakeDio(
-          payload: List<int>.generate(128, (index) => index),
-        ),
-      );
+    test(
+      'ensureModelDownloaded emits progress and writes model file',
+      () async {
+        final service = ModelDownloadService(
+          documentsDirectory: () async => tempDir,
+          dio: _FakeDio(
+            payload: List<int>.generate(128, (index) => index),
+          ),
+        );
 
-      final progressPhases = <ModelDownloadPhase>[];
-      final sub = service.progressStream.listen(
-        (event) => progressPhases.add(event.phase),
-      );
+        final progressPhases = <ModelDownloadPhase>[];
+        final sub = service.progressStream.listen(
+          (event) => progressPhases.add(event.phase),
+        );
 
-      final path = await service.ensureModelDownloaded();
-      await sub.cancel();
+        final path = await service.ensureModelDownloaded();
+        await sub.cancel();
 
-      expect(path, isNotNull);
-      expect(progressPhases, contains(ModelDownloadPhase.downloading));
-      expect(service.currentProgress.phase, ModelDownloadPhase.completed);
-      expect(File(path!).lengthSync(), 128);
-    });
+        expect(path, isNotNull);
+        expect(progressPhases, contains(ModelDownloadPhase.downloading));
+        expect(service.currentProgress.phase, ModelDownloadPhase.completed);
+        expect(File(path!).lengthSync(), 128);
+      },
+    );
 
-    test('deleteModel removes downloaded file and emits deleted progress', () async {
-      final service = ModelDownloadService(
-        documentsDirectory: () async => tempDir,
-        dio: _FakeDio(payload: const [1, 2, 3, 4]),
-      );
+    test(
+      'deleteModel removes downloaded file and emits deleted progress',
+      () async {
+        final service = ModelDownloadService(
+          documentsDirectory: () async => tempDir,
+          dio: _FakeDio(payload: const [1, 2, 3, 4]),
+        );
 
-      final path = await service.ensureModelDownloaded();
-      expect(path, isNotNull);
-      expect(File(path!).existsSync(), isTrue);
+        final path = await service.ensureModelDownloaded();
+        expect(path, isNotNull);
+        expect(File(path!).existsSync(), isTrue);
 
-      await service.deleteModel();
+        await service.deleteModel();
 
-      expect(service.currentProgress.phase, ModelDownloadPhase.deleted);
-      expect(await service.isModelInstalled(), isFalse);
-    });
+        expect(service.currentProgress.phase, ModelDownloadPhase.deleted);
+        expect(await service.isModelInstalled(), isFalse);
+      },
+    );
 
     test('ensureModelDownloaded is idempotent while in flight', () async {
       final service = ModelDownloadService(

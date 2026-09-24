@@ -109,17 +109,19 @@ void main() {
         );
       });
 
-      test('does not claim this device produces transcripts unconditionally',
-          () {
-        final lower = OnDeviceArchitectureCopy.architectureBody.toLowerCase();
-        // The old wording ran storage and production together: "the audio you
-        // record, the transcripts it becomes, and the reflections you read
-        // stay here" reads as a claim that this device makes them.
-        expect(lower, isNot(contains('the transcripts it becomes')));
-        expect(lower, contains('stay in local databases'));
-        expect(lower, contains('where the system supports it'));
-        expect(lower, contains('on our servers when you allow that'));
-      });
+      test(
+        'does not claim this device produces transcripts unconditionally',
+        () {
+          final lower = OnDeviceArchitectureCopy.architectureBody.toLowerCase();
+          // The old wording ran storage and production together: "the audio you
+          // record, the transcripts it becomes, and the reflections you read
+          // stay here" reads as a claim that this device makes them.
+          expect(lower, isNot(contains('the transcripts it becomes')));
+          expect(lower, contains('stay in local databases'));
+          expect(lower, contains('where the system supports it'));
+          expect(lower, contains('on our servers when you allow that'));
+        },
+      );
     });
 
     test('frames remote processing as a choice the user makes', () {

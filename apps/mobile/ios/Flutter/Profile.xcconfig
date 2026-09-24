@@ -1,2 +1,5 @@
 #include? "Pods/Target Support Files/Pods-Runner/Pods-Runner.profile.xcconfig"
 #include "Generated.xcconfig"
+DEVELOPMENT_TEAM = 4D9MAHRDS3
+IPHONEOS_DEPLOYMENT_TARGET = 17.0
+#include? "Local.xcconfig"

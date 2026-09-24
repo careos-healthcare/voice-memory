@@ -65,8 +65,9 @@ class _EvolvingState {
 
   Map<String, dynamic> toJson() => {
     if (firstWorkingTheorySeenAt != null)
-      'firstWorkingTheorySeenAt':
-          firstWorkingTheorySeenAt!.toUtc().toIso8601String(),
+      'firstWorkingTheorySeenAt': firstWorkingTheorySeenAt!
+          .toUtc()
+          .toIso8601String(),
     'returnedTracked': returnedTracked,
   };
 }

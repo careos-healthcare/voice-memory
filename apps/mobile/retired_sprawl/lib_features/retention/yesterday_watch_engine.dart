@@ -55,7 +55,8 @@ abstract final class YesterdayWatchGates {
     required bool isReady,
     required bool isRecording,
     required bool isPostSave,
-    required bool dismissedToday, YesterdayWatch? watch,
+    required bool dismissedToday,
+    YesterdayWatch? watch,
   }) =>
       isReady &&
       !isRecording &&

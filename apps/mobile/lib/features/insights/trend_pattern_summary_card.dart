@@ -79,7 +79,8 @@ class _TrendPatternSummaryCardState extends State<TrendPatternSummaryCard> {
     }
 
     final report = _report;
-    final showEmpty = !_loading &&
+    final showEmpty =
+        !_loading &&
         (report == null ||
             report.reflectionCount < TrendPatternSummaryCard.minReflections);
 
@@ -107,8 +108,8 @@ class _TrendPatternSummaryCardState extends State<TrendPatternSummaryCard> {
                     ),
                   )
                 : showEmpty
-                    ? _EmptyState()
-                    : _ReportBody(report: report!),
+                ? _EmptyState()
+                : _ReportBody(report: report!),
           ),
         ),
       ),
@@ -212,7 +213,9 @@ class _ReportBody extends StatelessWidget {
 
   String _loopHeadline(CognitiveLoopLine loop) {
     final pattern = loop.pattern.trim();
-    final times = loop.occurrences == 1 ? '1 time' : '${loop.occurrences} times';
+    final times = loop.occurrences == 1
+        ? '1 time'
+        : '${loop.occurrences} times';
     if (pattern.isEmpty) return times;
     return '$pattern · $times';
   }

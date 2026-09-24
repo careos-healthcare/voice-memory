@@ -16,7 +16,8 @@ import 'package:share_plus/share_plus.dart';
 /// Archive Discovery Share Cards V2 — premium PNG export with light/dark palettes.
 class ArchiveDiscoveryShareCard extends StatelessWidget {
   const ArchiveDiscoveryShareCard({
-    required this.card, super.key,
+    required this.card,
+    super.key,
     this.exportKey,
     this.palette,
     this.fixedWidth,

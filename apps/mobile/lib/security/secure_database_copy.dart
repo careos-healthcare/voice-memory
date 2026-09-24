@@ -16,6 +16,5 @@ abstract final class SecureDatabaseCopy {
       'open your archive on this device.';
   static const biometricReason = title;
   static const unlockAction = 'Unlock with biometrics';
-  static const unavailable =
-      'Biometric unlock is unavailable on this device.';
+  static const unavailable = 'Biometric unlock is unavailable on this device.';
 }

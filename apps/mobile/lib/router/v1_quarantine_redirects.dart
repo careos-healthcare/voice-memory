@@ -1,4 +1,5 @@
-import 'package:archiveme_mobile/core/config/v1_feature_flags.dart' show V1FeatureFlags;
+import 'package:archiveme_mobile/core/config/v1_feature_flags.dart'
+    show V1FeatureFlags;
 import 'package:archiveme_mobile/core/config/v1_navigation_guard.dart';
 import 'package:archiveme_mobile/router/route_catalog.dart';
 import 'package:archiveme_mobile/router/v1_route_registry.dart';

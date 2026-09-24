@@ -21,38 +21,47 @@ void main() {
       repository = UserRelationshipRepository(db);
     });
 
-    test('requestProfessionalConnection creates pending relationship', () async {
-      final created = await repository.requestProfessionalConnection(
-        clientId: 'client-a',
-        professionalId: 'coach-a',
-        scope: '{"factLedger":true}',
-      );
+    test(
+      'requestProfessionalConnection creates pending relationship',
+      () async {
+        final created = await repository.requestProfessionalConnection(
+          clientId: 'client-a',
+          professionalId: 'coach-a',
+          scope: '{"factLedger":true}',
+        );
 
-      expect(created.consentStatus, ConsentStatus.pending);
-      expect(created.relationshipType, RelationshipType.professional);
-      expect(created.agreedScope['factLedger'], isTrue);
-    });
+        expect(created.consentStatus, ConsentStatus.pending);
+        expect(created.relationshipType, RelationshipType.professional);
+        expect(created.agreedScope['factLedger'], isTrue);
+      },
+    );
 
-    test('updateConsentStatus activates and lists active professionals', () async {
-      final created = await repository.requestProfessionalConnection(
-        clientId: 'client-a',
-        professionalId: 'coach-a',
-        scope: '{}',
-      );
+    test(
+      'updateConsentStatus activates and lists active professionals',
+      () async {
+        final created = await repository.requestProfessionalConnection(
+          clientId: 'client-a',
+          professionalId: 'coach-a',
+          scope: '{}',
+        );
 
-      await repository.updateConsentStatus(
-        relationshipId: created.id,
-        status: ConsentStatus.active,
-      );
+        await repository.updateConsentStatus(
+          relationshipId: created.id,
+          status: ConsentStatus.active,
+        );
 
-      final active = await repository.getActiveProfessionalsForClient('client-a');
-      expect(active, hasLength(1));
-      expect(active.single.professionalId, 'coach-a');
+        final active = await repository.getActiveProfessionalsForClient(
+          'client-a',
+        );
+        expect(active, hasLength(1));
+        expect(active.single.professionalId, 'coach-a');
 
-      final clients =
-          await repository.getConsentingClientsForProfessional('coach-a');
-      expect(clients, hasLength(1));
-      expect(clients.single.clientId, 'client-a');
-    });
+        final clients = await repository.getConsentingClientsForProfessional(
+          'coach-a',
+        );
+        expect(clients, hasLength(1));
+        expect(clients.single.clientId, 'client-a');
+      },
+    );
   });
 }

@@ -1,5 +1,6 @@
 import 'package:archiveme_mobile/features/archive_growth/archive_confidence_engine.dart';
-import 'package:archiveme_mobile/features/archive_growth/archive_growth_maturity.dart' show ArchiveGrowthMaturity;
+import 'package:archiveme_mobile/features/archive_growth/archive_growth_maturity.dart'
+    show ArchiveGrowthMaturity;
 
 /// V1 growth metrics derived from [ArchiveConfidenceEngine] and [ArchiveGrowthMaturity].
 class ArchiveGrowthMetrics {

@@ -103,6 +103,22 @@ class LocalDatabaseWorkerService {
     );
   }
 
+  /// Flushes `sync_purgatory` on the worker isolate.
+  Future<int> runPurgatoryEvaluate({
+    required String filePath,
+    String? encryptionPassword,
+    String? keyAlias,
+  }) {
+    return _dispatch<int>(
+      operation: LocalDatabaseWorkerOperation.purgatoryEvaluate,
+      payload: _databasePayload(
+        filePath: filePath,
+        encryptionPassword: encryptionPassword,
+        keyAlias: keyAlias,
+      ),
+    );
+  }
+
   /// Encrypts [payloadMaps] with [masterKeyBytes] off the UI thread.
   Future<List<EncryptedPayload>> encryptJsonBatch({
     required Uint8List masterKeyBytes,
@@ -118,7 +134,9 @@ class LocalDatabaseWorkerService {
 
     return result
         .whereType<Map>()
-        .map((item) => EncryptedPayload.fromJson(Map<String, dynamic>.from(item)))
+        .map(
+          (item) => EncryptedPayload.fromJson(Map<String, dynamic>.from(item)),
+        )
         .toList(growable: false);
   }
 

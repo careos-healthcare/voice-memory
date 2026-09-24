@@ -10,19 +10,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 JournalEntry _entry({required String transcript}) => JournalEntry(
-      id: 'entry-1',
-      createdAt: DateTime(2026, 6, 12),
-      transcript: transcript,
-      durationSeconds: 12,
-      reflection: Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 0,
-        recurringThemes: const [],
-        exactLanguagePattern: '',
-        concreteObservation: '',
-        repeatedSignal: '',
-      ),
-    );
+  id: 'entry-1',
+  createdAt: DateTime(2026, 6, 12),
+  transcript: transcript,
+  durationSeconds: 12,
+  reflection: Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 0,
+    recurringThemes: const [],
+    exactLanguagePattern: '',
+    concreteObservation: '',
+    repeatedSignal: '',
+  ),
+);
 
 void main() {
   group('entrySpeakableText', () {

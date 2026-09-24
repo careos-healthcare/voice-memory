@@ -1,4 +1,5 @@
-import 'package:archiveme_mobile/features/first_session/first_session_pattern_engine.dart' show FirstSessionPatternEngine;
+import 'package:archiveme_mobile/features/first_session/first_session_pattern_engine.dart'
+    show FirstSessionPatternEngine;
 
 /// Canonical first-session pattern titles from [FirstSessionPatternEngine].
 abstract class FirstPatternQualityTitles {

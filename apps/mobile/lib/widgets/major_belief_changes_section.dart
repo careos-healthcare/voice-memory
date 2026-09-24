@@ -13,7 +13,8 @@ import 'package:go_router/go_router.dart';
 /// Archive section — major belief shifts with old → current and evidence chain.
 class MajorBeliefChangesSection extends StatelessWidget {
   const MajorBeliefChangesSection({
-    required this.entries, super.key,
+    required this.entries,
+    super.key,
     this.currentBelief,
   });
 

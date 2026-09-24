@@ -16,7 +16,9 @@ import 'dart:async';
 /// Local archive watchlist — themes to notice over time, no raw entry exposure.
 class ArchiveWatchlistCard extends StatefulWidget {
   const ArchiveWatchlistCard({
-    required this.entryCount, required this.entries, super.key,
+    required this.entryCount,
+    required this.entries,
+    super.key,
     this.onAddMoment,
     this.store,
     this.engine = const ArchiveWatchlistEngine(),
@@ -24,7 +26,10 @@ class ArchiveWatchlistCard extends StatefulWidget {
   });
 
   const ArchiveWatchlistCard.test({
-    required this.entryCount, required this.entries, required this._initialItems, super.key,
+    required this.entryCount,
+    required this.entries,
+    required this._initialItems,
+    super.key,
     this.onAddMoment,
     this.store,
     this.engine = const ArchiveWatchlistEngine(),

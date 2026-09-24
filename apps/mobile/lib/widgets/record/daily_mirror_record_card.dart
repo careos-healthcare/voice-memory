@@ -12,7 +12,9 @@ import 'package:flutter/material.dart';
 /// Renders [DailyMirrorResult] on the Record tab — one card, stage-driven copy.
 class DailyMirrorRecordCard extends StatelessWidget {
   const DailyMirrorRecordCard({
-    required this.mirror, required this.onPrimaryCta, super.key,
+    required this.mirror,
+    required this.onPrimaryCta,
+    super.key,
     this.showRecordCta = true,
   });
 

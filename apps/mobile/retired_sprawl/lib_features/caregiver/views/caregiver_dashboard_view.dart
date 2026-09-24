@@ -100,15 +100,18 @@ class _CaregiverDashboardViewState extends State<CaregiverDashboardView> {
       body: _loading
           ? const Center(child: CircularProgressIndicator())
           : _error != null
-              ? _messageBody(_error!)
-              : _dashboardBody(context, _snapshot!, _accessOverview!),
+          ? _messageBody(_error!)
+          : _dashboardBody(context, _snapshot!, _accessOverview!),
     );
   }
 
   Widget _messageBody(String message) {
     return Padding(
       padding: const EdgeInsets.all(AppSpacing.lg),
-      child: Text(message, style: ArchiveMobileTypography.explanationBody(context)),
+      child: Text(
+        message,
+        style: ArchiveMobileTypography.explanationBody(context),
+      ),
     );
   }
 
@@ -199,10 +202,12 @@ class _CaregiverDashboardViewState extends State<CaregiverDashboardView> {
               : Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: snapshot.timelineSummaries
-                      .map((line) => Padding(
-                            padding: const EdgeInsets.only(bottom: AppSpacing.xs),
-                            child: Text('• $line'),
-                          ))
+                      .map(
+                        (line) => Padding(
+                          padding: const EdgeInsets.only(bottom: AppSpacing.xs),
+                          child: Text('• $line'),
+                        ),
+                      )
                       .toList(),
                 ),
         ),
@@ -214,10 +219,12 @@ class _CaregiverDashboardViewState extends State<CaregiverDashboardView> {
               : Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: snapshot.priorityAlerts
-                      .map((alert) => Padding(
-                            padding: const EdgeInsets.only(bottom: AppSpacing.xs),
-                            child: Text('• $alert'),
-                          ))
+                      .map(
+                        (alert) => Padding(
+                          padding: const EdgeInsets.only(bottom: AppSpacing.xs),
+                          child: Text('• $alert'),
+                        ),
+                      )
                       .toList(),
                 ),
         ),
@@ -231,7 +238,11 @@ class _CaregiverDashboardViewState extends State<CaregiverDashboardView> {
   }
 
   Widget _accessLogRow(BuildContext context, AuditLogEntry entry) {
-    final timestamp = entry.timestamp.toLocal().toIso8601String().split('.').first;
+    final timestamp = entry.timestamp
+        .toLocal()
+        .toIso8601String()
+        .split('.')
+        .first;
     final resource = entry.resourceId == null || entry.resourceId!.isEmpty
         ? entry.resourceType
         : '${entry.resourceType} (${entry.resourceId})';

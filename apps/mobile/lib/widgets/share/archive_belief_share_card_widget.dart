@@ -13,7 +13,10 @@ import 'package:flutter/material.dart';
 /// rebuilds until dismissed.
 class ArchiveBeliefShareSection extends StatefulWidget {
   const ArchiveBeliefShareSection({
-    required this.hasBeliefDistance, required this.hasWeeklyReview, required this.hasThreadReturn, super.key,
+    required this.hasBeliefDistance,
+    required this.hasWeeklyReview,
+    required this.hasThreadReturn,
+    super.key,
     this.onShare,
   });
 
@@ -90,7 +93,9 @@ class _ArchiveBeliefShareSectionState extends State<ArchiveBeliefShareSection> {
 /// from the archive can appear here.
 class ArchiveBeliefShareCardWidget extends StatefulWidget {
   const ArchiveBeliefShareCardWidget({
-    required this.source, required this.onDismissed, super.key,
+    required this.source,
+    required this.onDismissed,
+    super.key,
     this.onShare,
   });
 

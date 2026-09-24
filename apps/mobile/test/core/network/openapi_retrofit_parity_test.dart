@@ -73,7 +73,11 @@ void main() {
         .join('\n');
 
     for (final path in _retrofitMobilePaths) {
-      expect(sources.contains("'$path'"), isTrue, reason: 'Retrofit missing $path');
+      expect(
+        sources.contains("'$path'"),
+        isTrue,
+        reason: 'Retrofit missing $path',
+      );
     }
   });
 }
@@ -82,7 +86,8 @@ String _templatePath(String concretePath) {
   if (concretePath.startsWith('/api/user-relationships/')) {
     return '/api/user-relationships/{id}';
   }
-  if (concretePath.startsWith('/api/journal/') && concretePath != '/api/journal/export') {
+  if (concretePath.startsWith('/api/journal/') &&
+      concretePath != '/api/journal/export') {
     return '/api/journal/{id}';
   }
   return concretePath;

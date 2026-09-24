@@ -6,9 +6,9 @@ import 'package:flutter/scheduler.dart';
 
 /// Live capture waveform driven by [RecordingWaveformController].
 ///
-/// Amplitude samples update the controller; a local ticker interpolates bar
-/// heights and repaints via [CustomPaint] only — the parent widget tree is
-/// not rebuilt on every frame.
+/// Microphone levels arrive about once per frame. A display ticker
+/// interpolates the bars and repaints only the [CustomPaint], so the
+/// capture screen stays at the device refresh rate.
 class RecordingWaveform extends StatefulWidget {
   const RecordingWaveform({
     required this.controller,

@@ -92,7 +92,8 @@ extension AcquisitionCohortIdIds on AcquisitionCohortId {
 class AcquisitionCohort {
   const AcquisitionCohort({
     required this.cohortId,
-    required this.assignedAt, this.source = '',
+    required this.assignedAt,
+    this.source = '',
     this.selectedLoopId,
     this.promiseShown = '',
     this.onboardingCompleted = false,

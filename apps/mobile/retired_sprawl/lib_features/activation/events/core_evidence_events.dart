@@ -11,8 +11,10 @@ abstract final class CoreEvidenceEvents {
   static const usefulnessYes = 'usefulnessYes';
   static const usefulnessSortOf = 'usefulnessSortOf';
   static const usefulnessNotReally = 'usefulnessNotReally';
-  static const activationFirstRecordCardShown = 'activationFirstRecordCardShown';
-  static const activationFirstRecordCtaTapped = 'activationFirstRecordCtaTapped';
+  static const activationFirstRecordCardShown =
+      'activationFirstRecordCardShown';
+  static const activationFirstRecordCtaTapped =
+      'activationFirstRecordCtaTapped';
   static const activationStarterPromptSelected =
       'activationStarterPromptSelected';
   static const activationFirstSaveCompleted = 'activationFirstSaveCompleted';

@@ -37,8 +37,9 @@ class UserRelationshipDto {
           json['agreedScope'],
           field: 'agreedScope',
         ),
-        activeConsentTokenId:
-            JsonConverters.nullableString(json['activeConsentTokenId']),
+        activeConsentTokenId: JsonConverters.nullableString(
+          json['activeConsentTokenId'],
+        ),
         createdAt: JsonConverters.string(json['createdAt'], field: 'createdAt'),
         updatedAt: JsonConverters.string(json['updatedAt'], field: 'updatedAt'),
       );
@@ -65,15 +66,14 @@ class UserRelationshipsListResponseDto {
 
   factory UserRelationshipsListResponseDto.fromJson(
     Map<String, dynamic> json,
-  ) =>
-      UserRelationshipsListResponseDto(
-        ok: JsonConverters.boolValue(json['ok'], field: 'ok'),
-        relationships: JsonConverters.objectList(
-          json['relationships'],
-          UserRelationshipDto.fromJson,
-          field: 'relationships',
-        ),
-      );
+  ) => UserRelationshipsListResponseDto(
+    ok: JsonConverters.boolValue(json['ok'], field: 'ok'),
+    relationships: JsonConverters.objectList(
+      json['relationships'],
+      UserRelationshipDto.fromJson,
+      field: 'relationships',
+    ),
+  );
 
   final bool ok;
   final List<UserRelationshipDto> relationships;

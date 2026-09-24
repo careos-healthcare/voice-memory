@@ -199,7 +199,8 @@ abstract final class WeeklyArchiveReviewEngine {
   }
 
   static WeeklyArchiveReviewSection _repeatedSection({
-    required List<JournalEntry> entries, EarlyFirstSignalModel? confirmedRepeat,
+    required List<JournalEntry> entries,
+    EarlyFirstSignalModel? confirmedRepeat,
   }) {
     var phrases = const <String>[];
     if (confirmedRepeat?.showsConfirmedRepeat == true) {

@@ -13,7 +13,10 @@ class AccountIdentities extends Table {
 }
 
 @TableIndex(name: 'idx_user_relationships_client', columns: {#clientId})
-@TableIndex(name: 'idx_user_relationships_professional', columns: {#professionalId})
+@TableIndex(
+  name: 'idx_user_relationships_professional',
+  columns: {#professionalId},
+)
 @TableIndex(name: 'idx_user_relationships_status', columns: {#consentStatus})
 @DataClassName('UserRelationshipRow')
 class UserRelationships extends Table {
@@ -44,7 +47,8 @@ class AccountProStatus extends Table {
   String get tableName => 'account_pro_status';
 
   IntColumn get id => integer()();
-  IntColumn get isPro => integer().named('is_pro').withDefault(const Constant(0))();
+  IntColumn get isPro =>
+      integer().named('is_pro').withDefault(const Constant(0))();
   TextColumn get tier => text().withDefault(const Constant('free'))();
   TextColumn get source => text().withDefault(const Constant('unknown'))();
   TextColumn get entitlementIdsJson =>

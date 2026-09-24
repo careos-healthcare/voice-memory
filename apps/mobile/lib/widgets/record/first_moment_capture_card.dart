@@ -9,11 +9,19 @@ import 'package:flutter/material.dart';
 /// Zero-entry first save card — typed or mic through existing capture flows.
 class FirstMomentCaptureCard extends StatefulWidget {
   const FirstMomentCaptureCard({
-    required this.result, required this.onSaveOneSentence, required this.onRecordInstead, required this.onExampleSelected, super.key,
+    required this.result,
+    required this.onSaveOneSentence,
+    required this.onRecordInstead,
+    required this.onExampleSelected,
+    super.key,
   });
 
   const FirstMomentCaptureCard.test({
-    required this.result, required this.onSaveOneSentence, required this.onRecordInstead, required this.onExampleSelected, super.key,
+    required this.result,
+    required this.onSaveOneSentence,
+    required this.onRecordInstead,
+    required this.onExampleSelected,
+    super.key,
   });
 
   final FirstMomentCaptureResult result;

@@ -15,12 +15,12 @@ final class NetworkSimulatorInterceptor extends Interceptor {
     int? failureStatusCode,
     DioExceptionType connectionFailureType = DioExceptionType.connectionError,
     Object? failureMessage,
-  })  : _offline = offline,
-        _requestDelay = requestDelay,
-        _transientFailureBudget = transientFailureBudget,
-        _failureStatusCode = failureStatusCode,
-        _connectionFailureType = connectionFailureType,
-        _failureMessage = failureMessage;
+  }) : _offline = offline,
+       _requestDelay = requestDelay,
+       _transientFailureBudget = transientFailureBudget,
+       _failureStatusCode = failureStatusCode,
+       _connectionFailureType = connectionFailureType,
+       _failureMessage = failureMessage;
 
   bool _offline;
   Duration _requestDelay;
@@ -132,8 +132,10 @@ final class NetworkSimulatorInterceptor extends Interceptor {
       return DioException(
         requestOptions: options,
         type: _connectionFailureType,
-        error: _failureMessage ?? 'NetworkSimulatorInterceptor: simulated offline',
-        message: _failureMessage?.toString() ??
+        error:
+            _failureMessage ?? 'NetworkSimulatorInterceptor: simulated offline',
+        message:
+            _failureMessage?.toString() ??
             'NetworkSimulatorInterceptor: simulated offline',
       );
     }
@@ -141,7 +143,8 @@ final class NetworkSimulatorInterceptor extends Interceptor {
     return DioException(
       requestOptions: options,
       type: DioExceptionType.badResponse,
-      message: _failureMessage?.toString() ??
+      message:
+          _failureMessage?.toString() ??
           'NetworkSimulatorInterceptor: simulated HTTP $statusCode',
       response: Response<dynamic>(
         requestOptions: options,
@@ -150,7 +153,8 @@ final class NetworkSimulatorInterceptor extends Interceptor {
           'ok': false,
           'error': {
             'code': 'SIMULATED_FAILURE',
-            'message': _failureMessage?.toString() ??
+            'message':
+                _failureMessage?.toString() ??
                 'NetworkSimulatorInterceptor: simulated HTTP $statusCode',
           },
         },
@@ -173,7 +177,8 @@ Dio createNetworkSimulatedTestDio({
   final dio = Dio(
     BaseOptions(
       baseUrl: baseUrl,
-      validateStatus: (status) => status != null && status >= 100 && status < 600,
+      validateStatus: (status) =>
+          status != null && status >= 100 && status < 600,
     ),
   );
   networkSimulator.attachTo(dio);

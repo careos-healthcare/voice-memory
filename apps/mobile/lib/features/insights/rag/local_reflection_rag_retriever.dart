@@ -67,22 +67,25 @@ class LocalReflectionRagRetriever {
         .toSet();
     final normalizedMood = mood?.trim().toLowerCase();
 
-    return entries.where((entry) {
-      if (normalizedMood != null &&
-          normalizedMood.isNotEmpty &&
-          entry.reflection.mood.toLowerCase() == normalizedMood) {
-        return true;
-      }
-      if (normalizedThemes.isEmpty) return false;
-      final entryThemes = ThemeTrackerService.themesForEntry(entry);
-      if (entryThemes.intersection(normalizedThemes).isNotEmpty) return true;
-      for (final theme in entry.reflection.recurringThemes) {
-        if (normalizedThemes.contains(theme.trim().toLowerCase())) {
-          return true;
-        }
-      }
-      return false;
-    }).toList(growable: false);
+    return entries
+        .where((entry) {
+          if (normalizedMood != null &&
+              normalizedMood.isNotEmpty &&
+              entry.reflection.mood.toLowerCase() == normalizedMood) {
+            return true;
+          }
+          if (normalizedThemes.isEmpty) return false;
+          final entryThemes = ThemeTrackerService.themesForEntry(entry);
+          if (entryThemes.intersection(normalizedThemes).isNotEmpty)
+            return true;
+          for (final theme in entry.reflection.recurringThemes) {
+            if (normalizedThemes.contains(theme.trim().toLowerCase())) {
+              return true;
+            }
+          }
+          return false;
+        })
+        .toList(growable: false);
   }
 
   List<RagContextChunk> _rankChunks({
@@ -106,9 +109,9 @@ class LocalReflectionRagRetriever {
       for (final entry in entries) {
         // Without a reading there is nothing to be near, so no proximity boost.
         if (entry.reflection.emotionalIntensity <= 0) continue;
-        final delta = (entry.reflection.emotionalIntensity -
-                query.emotionalIntensity!)
-            .abs();
+        final delta =
+            (entry.reflection.emotionalIntensity - query.emotionalIntensity!)
+                .abs();
         if (delta <= 2) {
           scores[entry.id] = (scores[entry.id] ?? 0) + 0.35;
         }

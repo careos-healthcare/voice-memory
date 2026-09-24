@@ -1,6 +1,8 @@
-import 'package:archiveme_mobile/features/tomorrow_return/return_capture_store.dart' show ReturnCaptureStore;
+import 'package:archiveme_mobile/features/tomorrow_return/return_capture_store.dart'
+    show ReturnCaptureStore;
 import 'package:archiveme_mobile/features/tomorrow_return/tomorrow_commitment_model.dart';
-import 'package:archiveme_mobile/features/tomorrow_return/watch_for_prompt_engine.dart' show WatchForPromptEngine;
+import 'package:archiveme_mobile/features/tomorrow_return/watch_for_prompt_engine.dart'
+    show WatchForPromptEngine;
 
 enum WatchForStatus { pending, checked, skipped }
 

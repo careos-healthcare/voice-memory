@@ -24,7 +24,8 @@ abstract final class ArchiveDailyChangeCopy {
   static const labelWatchPull = 'Watch for the same pull';
 
   // Legacy label aliases kept for tests that reference old names.
-  static const String labelCheckCapacityBeforeAnswering = labelCheckCapacityFirst;
+  static const String labelCheckCapacityBeforeAnswering =
+      labelCheckCapacityFirst;
   static const String labelDelayAnswer = labelDelayBeforeReplying;
   static const String labelCheckCapacity = labelCheckCapacityFirst;
   static const String labelDefaultPause = labelUseDefaultPause;
@@ -53,7 +54,8 @@ abstract final class ArchiveDailyChangeCopy {
       'answering.';
 
   // Legacy aliases for gradual migration in tests.
-  static const String responsibilityRepeatedDelayedLine = repeatedPullNewOutcomeLine;
+  static const String responsibilityRepeatedDelayedLine =
+      repeatedPullNewOutcomeLine;
   static const String urgencyWithLaterCostLine = samePullLaterCostLine;
   static const String responsibilityWithSaidYesLine = samePullSameOutcomeLine;
 

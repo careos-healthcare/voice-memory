@@ -1,8 +1,10 @@
 import 'dart:collection';
 
-import 'package:archiveme_mobile/audio/playback_service.dart' show PlaybackService;
+import 'package:archiveme_mobile/audio/playback_service.dart'
+    show PlaybackService;
 
-import 'package:archiveme_mobile/features/recording/recording_dependencies.dart' show PlaybackService;
+import 'package:archiveme_mobile/features/recording/recording_dependencies.dart'
+    show PlaybackService;
 
 /// Queue + barge-in generation semantics for live PCM chunk playback.
 ///

@@ -194,8 +194,7 @@ class _FakeRoutinePrompts implements RoutinePromptGateway {
     required JournalRoutineKind routine,
     JournalEntry? latestEntry,
     List<JournalEntry>? archiveEntries,
-  }) async =>
-      nextPrompt;
+  }) async => nextPrompt;
 }
 
 class _FakeRoutineAnchors implements RoutineAnchorLoader {
@@ -252,7 +251,8 @@ class _FakeTelemetry implements CaptureTelemetry {
   }
 
   @override
-  void localSaveStarted({required String kind}) => events.add('local_start_$kind');
+  void localSaveStarted({required String kind}) =>
+      events.add('local_start_$kind');
 
   @override
   void permissionChecked({required String status}) =>
@@ -271,12 +271,18 @@ class _FakeTelemetry implements CaptureTelemetry {
       events.add('recorder_stop:$success');
 
   @override
-  void recoverableFailure({required bool hasLocalSave, required String reason}) {
+  void recoverableFailure({
+    required bool hasLocalSave,
+    required String reason,
+  }) {
     events.add('recoverable:$reason:$hasLocalSave');
   }
 
   @override
-  void remoteProcessingCompleted({required bool success, required String kind}) {
+  void remoteProcessingCompleted({
+    required bool success,
+    required String kind,
+  }) {
     events.add('remote_done_$kind:$success');
   }
 
@@ -394,7 +400,11 @@ void main() {
         ..voiceResult = _result(analysis: false)
         ..count = 0;
       final consent = _FakeConsent()..granted = false;
-      final controller = _controller(audio: audio, moments: moments, consent: consent);
+      final controller = _controller(
+        audio: audio,
+        moments: moments,
+        consent: consent,
+      );
       await controller.startVoiceCapture();
       expect(controller.snapshot.phase, CaptureFlowPhase.recording);
       await controller.stopVoiceCapture();
@@ -402,15 +412,18 @@ void main() {
       expect(controller.snapshot.hasLocalSave, isTrue);
     });
 
-    test('voice capture reaches savedWithReflection on remote success', () async {
-      final audio = _FakeAudio()..lastFile = tempAudioFile;
-      final moments = _FakeMoments()..voiceResult = _result(analysis: true);
-      final controller = _controller(audio: audio, moments: moments);
-      await controller.startVoiceCapture();
-      await controller.stopVoiceCapture();
-      expect(controller.snapshot.phase, CaptureFlowPhase.savedWithReflection);
-      expect(controller.snapshot.entryCount, 1);
-    });
+    test(
+      'voice capture reaches savedWithReflection on remote success',
+      () async {
+        final audio = _FakeAudio()..lastFile = tempAudioFile;
+        final moments = _FakeMoments()..voiceResult = _result(analysis: true);
+        final controller = _controller(audio: audio, moments: moments);
+        await controller.startVoiceCapture();
+        await controller.stopVoiceCapture();
+        expect(controller.snapshot.phase, CaptureFlowPhase.savedWithReflection);
+        expect(controller.snapshot.entryCount, 1);
+      },
+    );
 
     test('typed capture saves locally without remote consent', () async {
       final moments = _FakeMoments()
@@ -493,32 +506,34 @@ void main() {
       expect(recovery.pending, isNull);
     });
 
-    test('typed attach to voice entry does not increment entry count', () async {
-      final entry = _entry(id: 'voice-attach');
-      final moments = _FakeMoments()
-        ..count = 2
-        ..entries['voice-attach'] = entry
-        ..attachResult = CapturePipelineResult(
-          entry: entry,
-          localSaved: true,
-          syncSucceeded: true,
-          analysisSucceeded: true,
-          attachedTypedTextToVoiceEntry: true,
+    test(
+      'typed attach to voice entry does not increment entry count',
+      () async {
+        final entry = _entry(id: 'voice-attach');
+        final moments = _FakeMoments()
+          ..count = 2
+          ..entries['voice-attach'] = entry
+          ..attachResult = CapturePipelineResult(
+            entry: entry,
+            localSaved: true,
+            syncSucceeded: true,
+            analysisSucceeded: true,
+            attachedTypedTextToVoiceEntry: true,
+          );
+        final controller = _controller(
+          moments: moments,
+          attachToEntryId: 'voice-attach',
         );
-      final controller = _controller(
-        moments: moments,
-        attachToEntryId: 'voice-attach',
-      );
-      await controller.initialize();
-      await controller.saveTypedCapture('What I meant was no.');
-      expect(moments.attachCalls, 1);
-      expect(controller.snapshot.entryCount, 2);
-      expect(controller.snapshot.phase, CaptureFlowPhase.savedWithReflection);
-    });
+        await controller.initialize();
+        await controller.saveTypedCapture('What I meant was no.');
+        expect(moments.attachCalls, 1);
+        expect(controller.snapshot.entryCount, 2);
+        expect(controller.snapshot.phase, CaptureFlowPhase.savedWithReflection);
+      },
+    );
 
     test('transcript correction updates receipt without new save', () async {
-      final moments = _FakeMoments()
-        ..typedResult = _result(analysis: true);
+      final moments = _FakeMoments()..typedResult = _result(analysis: true);
       final controller = _controller(moments: moments);
       await controller.saveTypedCapture('Original words.');
       final corrected = _entry().copyWith(transcript: 'Corrected words.');
@@ -528,8 +543,7 @@ void main() {
     });
 
     test('returning-user pending recovery completes post-save', () async {
-      final moments = _FakeMoments()
-        ..typedResult = _result(analysis: false);
+      final moments = _FakeMoments()..typedResult = _result(analysis: false);
       final controller = _controller(moments: moments);
       await controller.saveTypedCapture('Pending voice moment.');
       final recoveryResult = CapturePipelineResult(
@@ -808,27 +822,29 @@ void main() {
       expect(controller.snapshot.hasLocalSave, isTrue);
     });
 
-    test('confirming a language records it once and closes the prompt',
-        () async {
-      final audio = _FakeAudio()..lastFile = tempAudioFile;
-      final moments = _FakeMoments()..voiceResult = _result(analysis: false);
-      final capability = _FakeTranscriptionCapability()
-        ..outcome = TranscriptionCapabilityOutcome.askSpeechLanguage;
-      final controller = _controller(
-        audio: audio,
-        moments: moments,
-        transcriptionCapability: capability,
-      );
-      final gujarati = ConfirmedSpeechLocale.confirmed('gu-IN')!;
+    test(
+      'confirming a language records it once and closes the prompt',
+      () async {
+        final audio = _FakeAudio()..lastFile = tempAudioFile;
+        final moments = _FakeMoments()..voiceResult = _result(analysis: false);
+        final capability = _FakeTranscriptionCapability()
+          ..outcome = TranscriptionCapabilityOutcome.askSpeechLanguage;
+        final controller = _controller(
+          audio: audio,
+          moments: moments,
+          transcriptionCapability: capability,
+        );
+        final gujarati = ConfirmedSpeechLocale.confirmed('gu-IN')!;
 
-      await controller.startVoiceCapture();
-      await controller.stopVoiceCapture();
-      await controller.resolveSpeechLocale(gujarati);
-      await controller.resolveSpeechLocale(gujarati);
+        await controller.startVoiceCapture();
+        await controller.stopVoiceCapture();
+        await controller.resolveSpeechLocale(gujarati);
+        await controller.resolveSpeechLocale(gujarati);
 
-      expect(capability.recordedLocales, [gujarati]);
-      expect(controller.snapshot.speechLocaleChoiceRequired, isFalse);
-    });
+        expect(capability.recordedLocales, [gujarati]);
+        expect(controller.snapshot.speechLocaleChoiceRequired, isFalse);
+      },
+    );
 
     test('a failed language write leaves the question open', () async {
       // An answer that did not persist has not been given. Closing the prompt

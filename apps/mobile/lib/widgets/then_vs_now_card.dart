@@ -13,7 +13,9 @@ import 'package:go_router/go_router.dart';
 /// Compact Then vs Now card for Archive Home — summarized signals only.
 class ThenVsNowCard extends StatelessWidget {
   const ThenVsNowCard({
-    required this.entries, required this.result, super.key,
+    required this.entries,
+    required this.result,
+    super.key,
     this.onPrimaryAction,
     this.onSecondaryAction,
     this.engine = const ThenNowEngine(),
@@ -21,7 +23,9 @@ class ThenVsNowCard extends StatelessWidget {
   });
 
   const ThenVsNowCard.test({
-    required this.entries, required this.result, super.key,
+    required this.entries,
+    required this.result,
+    super.key,
     this.onPrimaryAction,
     this.onSecondaryAction,
     this.engine = const ThenNowEngine(),

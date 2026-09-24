@@ -12,7 +12,9 @@ import 'package:flutter/material.dart';
 /// Shown before a strong cross-pack memory claim renders.
 class CrossPackConfirmationCard extends StatelessWidget {
   const CrossPackConfirmationCard({
-    required this.cardType, required this.onChanged, super.key,
+    required this.cardType,
+    required this.onChanged,
+    super.key,
   });
 
   final MemoryCardType cardType;

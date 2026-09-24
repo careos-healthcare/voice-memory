@@ -13,7 +13,9 @@ import 'package:flutter/material.dart';
 /// Dominant Record tab card when user returns with an active signal journey.
 class ReturnDayJourneyCard extends StatefulWidget {
   const ReturnDayJourneyCard({
-    required this.journey, required this.recordedToday, super.key,
+    required this.journey,
+    required this.recordedToday,
+    super.key,
     this.onViewChanged,
   });
 
@@ -29,9 +31,11 @@ class _ReturnDayJourneyCardState extends State<ReturnDayJourneyCard> {
   @override
   void initState() {
     super.initState();
-    unawaited(RetentionMetricsTracker.track(
-      RetentionMetricsTracker.returnDayJourneyCardShown,
-    ));
+    unawaited(
+      RetentionMetricsTracker.track(
+        RetentionMetricsTracker.returnDayJourneyCardShown,
+      ),
+    );
   }
 
   @override
@@ -76,9 +80,11 @@ class _ReturnDayJourneyCardState extends State<ReturnDayJourneyCard> {
           const SizedBox(height: AppSpacing.md),
           FilledButton(
             onPressed: () {
-              unawaited(RetentionMetricsTracker.track(
-                RetentionMetricsTracker.returnDayJourneyCtaTapped,
-              ));
+              unawaited(
+                RetentionMetricsTracker.track(
+                  RetentionMetricsTracker.returnDayJourneyCtaTapped,
+                ),
+              );
               unawaited(
                 NextEvidenceReminderService.schedule(
                   journeyId: widget.journey.id,

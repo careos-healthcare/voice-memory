@@ -8,7 +8,8 @@ import 'package:flutter/material.dart';
 
 class ConsumerRecordPromptsSection extends StatelessWidget {
   const ConsumerRecordPromptsSection({
-    required this.onSelectPrompt, super.key,
+    required this.onSelectPrompt,
+    super.key,
     this.selectedPrompt,
     this.personalPrompts,
     this.deemphasized = false,

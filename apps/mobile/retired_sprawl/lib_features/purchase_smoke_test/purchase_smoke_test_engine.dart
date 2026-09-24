@@ -103,9 +103,7 @@ abstract final class PurchaseSmokeTestEngine {
     final diagnostics = rc.diagnostics;
     final offerings = await rc.fetchOfferings();
     final packages = offerings?.current?.availablePackages ?? const [];
-    final entitlements = await AppServices.instance.billing.loadEntitlements(
-      
-    );
+    final entitlements = await AppServices.instance.billing.loadEntitlements();
 
     return buildFromInput(
       PurchaseSmokeTestInput(

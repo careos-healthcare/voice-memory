@@ -12,7 +12,11 @@ import 'package:flutter/material.dart';
 /// see one extra line tying it to their current pattern.
 class PressureReturnTriggerCard extends StatelessWidget {
   const PressureReturnTriggerCard({
-    required this.trigger, required this.isPro, required this.onAccept, required this.onDismiss, super.key,
+    required this.trigger,
+    required this.isPro,
+    required this.onAccept,
+    required this.onDismiss,
+    super.key,
   });
 
   final PressureReturnTrigger trigger;

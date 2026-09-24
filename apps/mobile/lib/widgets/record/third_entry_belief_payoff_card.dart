@@ -8,7 +8,10 @@ import 'package:flutter/material.dart';
 /// Third-entry payoff — cautious archive belief from saved words.
 class ThirdEntryBeliefPayoffCard extends StatelessWidget {
   const ThirdEntryBeliefPayoffCard({
-    required this.payoff, required this.onAddAnother, required this.onViewArchive, super.key,
+    required this.payoff,
+    required this.onAddAnother,
+    required this.onViewArchive,
+    super.key,
   });
 
   final ThirdEntryBeliefPayoff payoff;

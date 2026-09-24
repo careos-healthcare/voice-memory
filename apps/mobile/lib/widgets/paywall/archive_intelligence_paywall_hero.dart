@@ -38,73 +38,75 @@ class ArchiveIntelligencePaywallHero extends StatelessWidget {
         child: ConstrainedBox(
           constraints: BoxConstraints(minHeight: minHeight),
           child: Stack(
-          fit: StackFit.passthrough,
-          children: [
-            const Positioned.fill(
-              child: DecoratedBox(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [
-                      Color(0xFFF4F0FF),
-                      Color(0xFFE8EEFC),
-                      Color(0xFFFFF8F0),
-                    ],
+            fit: StackFit.passthrough,
+            children: [
+              const Positioned.fill(
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        Color(0xFFF4F0FF),
+                        Color(0xFFE8EEFC),
+                        Color(0xFFFFF8F0),
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
-            Positioned.fill(
-              child: CustomPaint(painter: _ArchiveHeroPatternPainter()),
-            ),
-            Padding(
-              padding: ArchiveResponsiveLayout.cardInsets(context).copyWith(
-                top: wide ? 28 : 22,
-                bottom: wide ? 24 : 18,
+              Positioned.fill(
+                child: CustomPaint(painter: _ArchiveHeroPatternPainter()),
               ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  if (hasRibbon) ...[
-                    _HeroStatsRibbon(stats: stats!),
-                    const SizedBox(height: 14),
-                  ],
-                  Text(
-                    headline,
-                    key: const Key('paywall_hero_headline'),
-                    style: ArchiveMobileTypography.responsivePageTitle(context)
-                        .copyWith(fontSize: wide ? 28 : 24, height: 1.2),
-                    textAlign: TextAlign.center,
-                  ),
-                  if (positioningLine != null) ...[
-                    const SizedBox(height: 8),
+              Padding(
+                padding: ArchiveResponsiveLayout.cardInsets(context).copyWith(
+                  top: wide ? 28 : 22,
+                  bottom: wide ? 24 : 18,
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    if (hasRibbon) ...[
+                      _HeroStatsRibbon(stats: stats!),
+                      const SizedBox(height: 14),
+                    ],
                     Text(
-                      positioningLine!,
-                      key: const Key('paywall_positioning_line'),
-                      style: ArchiveMobileTypography.responsiveSectionTitle(
+                      headline,
+                      key: const Key('paywall_hero_headline'),
+                      style: ArchiveMobileTypography.responsivePageTitle(
                         context,
-                      ).copyWith(fontSize: wide ? 17 : 16),
+                      ).copyWith(fontSize: wide ? 28 : 24, height: 1.2),
                       textAlign: TextAlign.center,
                     ),
+                    if (positioningLine != null) ...[
+                      const SizedBox(height: 8),
+                      Text(
+                        positioningLine!,
+                        key: const Key('paywall_positioning_line'),
+                        style: ArchiveMobileTypography.responsiveSectionTitle(
+                          context,
+                        ).copyWith(fontSize: wide ? 17 : 16),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
+                    const SizedBox(height: 10),
+                    Text(
+                      subheadline,
+                      style: ArchiveMobileTypography.responsiveBody(
+                        context,
+                      ).copyWith(color: VoiceMemoryColors.textSecondary),
+                      textAlign: TextAlign.center,
+                      maxLines: 4,
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ],
-                  const SizedBox(height: 10),
-                  Text(
-                    subheadline,
-                    style: ArchiveMobileTypography.responsiveBody(context)
-                        .copyWith(color: VoiceMemoryColors.textSecondary),
-                    textAlign: TextAlign.center,
-                    maxLines: 4,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
-    ),
     );
   }
 }
@@ -216,7 +218,8 @@ class _ArchiveHeroPatternPainter extends CustomPainter {
       canvas.drawCircle(
         nodes[i],
         2.5,
-        Paint()..color = VoiceMemoryColors.primaryIndigo.withValues(alpha: 0.55),
+        Paint()
+          ..color = VoiceMemoryColors.primaryIndigo.withValues(alpha: 0.55),
       );
     }
   }

@@ -27,9 +27,11 @@ class _AboutScreenState extends State<AboutScreen> {
   @override
   void initState() {
     super.initState();
-    unawaited(PackageInfo.fromPlatform().then((info) {
-      if (mounted) setState(() => _info = info);
-    }));
+    unawaited(
+      PackageInfo.fromPlatform().then((info) {
+        if (mounted) setState(() => _info = info);
+      }),
+    );
   }
 
   Future<void> _onVersionTap() async {

@@ -5,7 +5,9 @@ import 'package:flutter/material.dart';
 /// Preset chips for choosing an archive review period.
 class ArchiveRangeSelector extends StatelessWidget {
   const ArchiveRangeSelector({
-    required this.selected, required this.onPresetSelected, super.key,
+    required this.selected,
+    required this.onPresetSelected,
+    super.key,
     this.enabledPresets = const [
       ArchiveReviewRangePreset.thisWeek,
       ArchiveReviewRangePreset.lastWeek,

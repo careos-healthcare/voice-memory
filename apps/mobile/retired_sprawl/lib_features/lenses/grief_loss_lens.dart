@@ -52,7 +52,7 @@ GRIEF/LOSS COMPARISON — compare 2-week and 1-month intervals:
   static const coldStartTitle = 'Capture what cycles';
   static const coldStartSubtitle =
       'Name when things feel lighter vs heavier — no progress story, just your words '
-      'and dates for the fact ledger.';
+      'and dates for core memory.';
 
   static const comparisonExplorerHeadline =
       'What cycles show up across your archive?';

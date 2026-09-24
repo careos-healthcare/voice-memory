@@ -12,7 +12,8 @@ import 'dart:async';
 /// Correction row for proof emotional clarity — reuses early archive feedback store.
 class ProofEmotionalClarityCorrectionRow extends StatefulWidget {
   const ProofEmotionalClarityCorrectionRow({
-    required this.entryCount, super.key,
+    required this.entryCount,
+    super.key,
     this.surface = 'first_proof_payoff',
   });
 
@@ -68,7 +69,11 @@ class _ProofEmotionalClarityCorrectionRowState
     try {
       await EarlyArchiveInsightFeedbackStore.instance().save(record);
     } catch (e, stackTrace) {
-      AppLogger.error('Unhandled error caught', error: e, stackTrace: stackTrace);
+      AppLogger.error(
+        'Unhandled error caught',
+        error: e,
+        stackTrace: stackTrace,
+      );
       // Local persistence is best-effort.
     }
   }
@@ -135,14 +140,18 @@ class _ProofEmotionalClarityCorrectionRowState
                 onPressed: () =>
                     _save(EarlyArchiveInsightFeedbackValue.notQuite),
                 style: buttonStyle,
-                child: const Text(ProofEmotionalClarityCopyFix.correctionNotQuite),
+                child: const Text(
+                  ProofEmotionalClarityCopyFix.correctionNotQuite,
+                ),
               ),
               TextButton(
                 key: const Key('proof_emotional_clarity_correction_it_changed'),
                 onPressed: () =>
                     _save(EarlyArchiveInsightFeedbackValue.wrongPattern),
                 style: buttonStyle,
-                child: const Text(ProofEmotionalClarityCopyFix.correctionItChanged),
+                child: const Text(
+                  ProofEmotionalClarityCopyFix.correctionItChanged,
+                ),
               ),
             ],
           ),

@@ -14,7 +14,10 @@ class PaywallTriggerContext {
   const PaywallTriggerContext({
     required this.trigger,
     required this.sourceRoute,
-    required this.previewTitle, required this.previewBody, required this.ctaLabel, this.momentCount = 0,
+    required this.previewTitle,
+    required this.previewBody,
+    required this.ctaLabel,
+    this.momentCount = 0,
     this.checkInCount = 0,
     this.weekCount = 0,
   });

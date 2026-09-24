@@ -14,13 +14,20 @@ import 'package:flutter/material.dart';
 /// Private archive report card — evidence summary for personal ownership.
 class PrivateArchiveReportCard extends StatefulWidget {
   const PrivateArchiveReportCard({
-    required this.report, required this.entryCount, required this.surface, required this.isPro, super.key,
+    required this.report,
+    required this.entryCount,
+    required this.surface,
+    required this.isPro,
+    super.key,
     this.onCopy,
     this.onSeePro,
   });
 
   const PrivateArchiveReportCard.test({
-    required this.report, required this.entryCount, required this.surface, super.key,
+    required this.report,
+    required this.entryCount,
+    required this.surface,
+    super.key,
     this.isPro = false,
     this.onCopy,
     this.onSeePro,

@@ -13,13 +13,17 @@ import 'package:flutter/material.dart';
 /// Current relevance bridge — lets users correct what still matters today.
 class CurrentRelevanceCard extends StatefulWidget {
   const CurrentRelevanceCard({
-    required this.state, required this.source, super.key,
+    required this.state,
+    required this.source,
+    super.key,
     this.store,
     this.onChanged,
   });
 
   const CurrentRelevanceCard.test({
-    required this.state, required this.source, super.key,
+    required this.state,
+    required this.source,
+    super.key,
     this.store,
     this.onChanged,
   });

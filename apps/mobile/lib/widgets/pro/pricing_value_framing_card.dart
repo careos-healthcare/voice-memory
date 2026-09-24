@@ -9,12 +9,16 @@ import 'package:flutter/material.dart';
 
 class PricingValueFramingCard extends StatefulWidget {
   const PricingValueFramingCard({
-    required this.result, required this.onSeePro, super.key,
+    required this.result,
+    required this.onSeePro,
+    super.key,
     this.compact = false,
   });
 
   const PricingValueFramingCard.test({
-    required this.result, required this.onSeePro, super.key,
+    required this.result,
+    required this.onSeePro,
+    super.key,
     this.compact = false,
   });
 

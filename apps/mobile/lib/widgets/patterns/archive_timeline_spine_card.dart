@@ -9,11 +9,15 @@ import 'package:flutter/material.dart';
 /// Unified archive timeline spine — one section, no Pro CTA.
 class ArchiveTimelineSpineCard extends StatefulWidget {
   const ArchiveTimelineSpineCard({
-    required this.result, required this.source, super.key,
+    required this.result,
+    required this.source,
+    super.key,
   });
 
   const ArchiveTimelineSpineCard.test({
-    required this.result, required this.source, super.key,
+    required this.result,
+    required this.source,
+    super.key,
   });
 
   final ArchiveTimelineSpineResult result;

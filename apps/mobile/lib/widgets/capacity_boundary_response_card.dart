@@ -15,13 +15,15 @@ import 'package:go_router/go_router.dart';
 /// Compact Archive Home card for capacity boundary response — templates only.
 class CapacityBoundaryResponseCard extends StatelessWidget {
   const CapacityBoundaryResponseCard({
-    required this.result, super.key,
+    required this.result,
+    super.key,
     this.onPrimaryAction,
     this.sampleMode = false,
   });
 
   const CapacityBoundaryResponseCard.test({
-    required this.result, super.key,
+    required this.result,
+    super.key,
     this.onPrimaryAction,
     this.sampleMode = false,
   });
@@ -86,7 +88,8 @@ class CapacityBoundaryResponseCard extends StatelessWidget {
 /// Reusable picker for weekly review and full screen — fixed templates only.
 class CapacityBoundaryResponsePicker extends StatefulWidget {
   const CapacityBoundaryResponsePicker({
-    required this.result, super.key,
+    required this.result,
+    super.key,
     this.compact = false,
     this.onSelectionChanged,
   });

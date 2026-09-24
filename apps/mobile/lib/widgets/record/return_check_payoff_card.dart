@@ -9,7 +9,9 @@ import 'package:flutter/material.dart';
 /// Post-save payoff comparing a related return with the first proof — no CTAs.
 class ReturnCheckPayoffCard extends StatelessWidget {
   const ReturnCheckPayoffCard({
-    required this.payoff, required this.entryCount, super.key,
+    required this.payoff,
+    required this.entryCount,
+    super.key,
   });
 
   final ReturnCheckPayoff payoff;

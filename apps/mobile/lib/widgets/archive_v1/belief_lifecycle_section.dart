@@ -23,9 +23,7 @@ class BeliefLifecycleSection extends StatelessWidget {
       children: [
         Text(
           BeliefLifecycleCopy.sectionTitle,
-          style: VoiceMemoryTypography.sectionLabelStyle(
-            
-          ),
+          style: VoiceMemoryTypography.sectionLabelStyle(),
         ),
         const SizedBox(height: 12),
         if (lifecycle.current != null) ...[

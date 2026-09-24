@@ -4,7 +4,10 @@ abstract final class InsightSharePii {
 
   static const redacted = '[redacted]';
 
-  static final RegExp _email = RegExp(r'[\w.+-]+@[\w.-]+\.\w{2,}', caseSensitive: false);
+  static final RegExp _email = RegExp(
+    r'[\w.+-]+@[\w.-]+\.\w{2,}',
+    caseSensitive: false,
+  );
   static final RegExp _phone = RegExp(
     r'\b(?:\+?\d{1,3}[-.\s]?)?(?:\(?\d{3}\)?[-.\s]?){2}\d{4}\b',
   );
@@ -24,8 +27,7 @@ abstract final class InsightSharePii {
     result = result.replaceAll(RegExp(r'(\[redacted\]\s*){2,}'), '$redacted ');
     result = result.replaceAll(RegExp(r'\s+'), ' ').trim();
 
-    if (result == redacted ||
-        result.replaceAll(redacted, '').trim().isEmpty) {
+    if (result == redacted || result.replaceAll(redacted, '').trim().isEmpty) {
       return '';
     }
     return result;

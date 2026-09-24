@@ -281,7 +281,10 @@ void main() {
         find.text(RemoteProcessingChoiceCopy.skippedNote),
         findsOneWidget,
       );
-      expect(find.byKey(const Key('moment_save_receipt_sync_note')), findsNothing);
+      expect(
+        find.byKey(const Key('moment_save_receipt_sync_note')),
+        findsNothing,
+      );
 
       await tester.tap(find.byKey(RemoteProcessingSkippedCard.ctaKey));
       expect(opened, isTrue);

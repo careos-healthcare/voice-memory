@@ -9,7 +9,8 @@ import 'package:flutter/material.dart';
 /// Record screen prompt to continue an active named pattern thread.
 class ActivePatternThreadPromptCard extends StatelessWidget {
   const ActivePatternThreadPromptCard({
-    required this.thread, super.key,
+    required this.thread,
+    super.key,
     this.onAddMoment,
     this.onPause,
   });

@@ -13,7 +13,11 @@ import 'package:go_router/go_router.dart';
 /// Compact capacity yes loop card for Archive Home — counts only, no journal text.
 class CapacityLoopCard extends StatelessWidget {
   const CapacityLoopCard({
-    required this.entries, required this.result, required this.capacityLoopActive, required this.capacityCohortActive, super.key,
+    required this.entries,
+    required this.result,
+    required this.capacityLoopActive,
+    required this.capacityCohortActive,
+    super.key,
     this.onPrimaryAction,
     this.onSecondaryAction,
     this.engine = const CapacityLoopEngine(),
@@ -21,7 +25,9 @@ class CapacityLoopCard extends StatelessWidget {
   });
 
   const CapacityLoopCard.test({
-    required this.entries, required this.result, super.key,
+    required this.entries,
+    required this.result,
+    super.key,
     this.capacityLoopActive = true,
     this.capacityCohortActive = false,
     this.onPrimaryAction,

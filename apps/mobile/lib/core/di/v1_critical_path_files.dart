@@ -1,6 +1,9 @@
-import 'package:archiveme_mobile/billing/v1/app_services_paywall_dependencies.dart' show AppServicesPaywallDependencies;
-import 'package:archiveme_mobile/core/di/v1_account_dependencies.dart' show V1AccountDependencies;
-import 'package:archiveme_mobile/features/recording/recording_dependencies.dart' show AppServices;
+import 'package:archiveme_mobile/billing/v1/app_services_paywall_dependencies.dart'
+    show AppServicesPaywallDependencies;
+import 'package:archiveme_mobile/core/di/v1_account_dependencies.dart'
+    show V1AccountDependencies;
+import 'package:archiveme_mobile/features/recording/recording_dependencies.dart'
+    show AppServices;
 import 'package:archiveme_mobile/services/app_services.dart' show AppServices;
 
 /// V1 critical-path sources that must not access [AppServices.instance]

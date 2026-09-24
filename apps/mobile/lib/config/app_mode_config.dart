@@ -7,17 +7,17 @@ enum AppMode {
 
 extension AppModeJson on AppMode {
   String get wireValue => switch (this) {
-        AppMode.selfReflection => 'selfReflection',
-        AppMode.caregiverMonitoring => 'caregiverMonitoring',
-        AppMode.professionalCoach => 'professionalCoach',
-      };
+    AppMode.selfReflection => 'selfReflection',
+    AppMode.caregiverMonitoring => 'caregiverMonitoring',
+    AppMode.professionalCoach => 'professionalCoach',
+  };
 
   static AppMode? fromWire(String? raw) => switch (raw) {
-        'selfReflection' => AppMode.selfReflection,
-        'caregiverMonitoring' => AppMode.caregiverMonitoring,
-        'professionalCoach' => AppMode.professionalCoach,
-        _ => null,
-      };
+    'selfReflection' => AppMode.selfReflection,
+    'caregiverMonitoring' => AppMode.caregiverMonitoring,
+    'professionalCoach' => AppMode.professionalCoach,
+    _ => null,
+  };
 }
 
 /// Defaults and policy version for persisted [AppMode] config.

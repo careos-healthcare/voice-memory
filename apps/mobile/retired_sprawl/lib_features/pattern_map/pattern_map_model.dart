@@ -5,7 +5,8 @@ class PatternMap {
   const PatternMap({
     required this.patternTitle,
     required this.seenCount,
-    required this.confidenceLabel, this.lastSeenDate,
+    required this.confidenceLabel,
+    this.lastSeenDate,
     this.usuallyStartsBefore,
     this.oftenFeelsLike,
     this.getsLighterWhen,

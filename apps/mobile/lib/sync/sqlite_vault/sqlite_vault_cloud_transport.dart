@@ -78,13 +78,17 @@ final class ICloudSqliteVaultTransport implements SqliteVaultCloudTransport {
     );
   }
 
-  void _listenProgress(Stream<double> stream, void Function(double) onProgress) {
+  void _listenProgress(
+    Stream<double> stream,
+    void Function(double) onProgress,
+  ) {
     stream.listen(onProgress, onError: (_) {});
   }
 }
 
 /// In-memory transport for unit tests — no network or iCloud required.
-final class InMemorySqliteVaultCloudTransport implements SqliteVaultCloudTransport {
+final class InMemorySqliteVaultCloudTransport
+    implements SqliteVaultCloudTransport {
   final Map<String, List<int>> _objects = {};
 
   @override

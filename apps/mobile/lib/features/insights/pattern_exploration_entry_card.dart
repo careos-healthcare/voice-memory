@@ -53,15 +53,15 @@ class PatternExplorationEntryCard extends StatelessWidget {
                       child: Text(
                         title,
                         style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                              fontWeight: FontWeight.w600,
-                            ),
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ),
                     Text(
                       subtitle,
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: AppColors.textMuted,
-                          ),
+                        color: AppColors.textMuted,
+                      ),
                     ),
                     const SizedBox(width: AppSpacing.xs),
                     const Icon(

@@ -33,7 +33,8 @@ class CaptureScreenHost extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final params = routeState?.uri.queryParameters ?? const {};
     final allowBackgroundRecording = params['background'] == '1';
-    final adoptBackgroundCapture = allowBackgroundRecording &&
+    final adoptBackgroundCapture =
+        allowBackgroundRecording &&
         (params['autostart'] == '1' || params['instant'] == '1');
     final backgroundCapture = ref.watch(backgroundCaptureServiceProvider);
 

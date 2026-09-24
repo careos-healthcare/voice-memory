@@ -14,7 +14,8 @@ class PatternShareRecap {
     required this.title,
     required this.body,
     required this.lines,
-    required this.plainText, this.nextQuestion,
+    required this.plainText,
+    this.nextQuestion,
   });
 
   final String id;

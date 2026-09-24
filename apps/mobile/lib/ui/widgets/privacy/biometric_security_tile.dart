@@ -117,7 +117,9 @@ class _BiometricSecurityTileState extends State<BiometricSecurityTile> {
             style: ArchiveMobileTypography.listTitle(context),
           ),
           value: _gateEnabled,
-          onChanged: SecureSqliteLockService.encryptionEnabled ? _onToggle : null,
+          onChanged: SecureSqliteLockService.encryptionEnabled
+              ? _onToggle
+              : null,
         ),
       ],
     );

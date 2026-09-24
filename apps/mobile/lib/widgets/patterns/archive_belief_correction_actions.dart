@@ -5,7 +5,11 @@ import 'package:flutter/material.dart';
 /// Standard correction actions for archive belief / repeat surfaces.
 class ArchiveBeliefCorrectionActions extends StatelessWidget {
   const ArchiveBeliefCorrectionActions({
-    required this.onNotMe, required this.onCloseButDifferent, required this.onSaveThread, required this.onRecordMoreEvidence, super.key,
+    required this.onNotMe,
+    required this.onCloseButDifferent,
+    required this.onSaveThread,
+    required this.onRecordMoreEvidence,
+    super.key,
     this.compact = false,
   });
 

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -9,13 +10,17 @@ import 'package:archiveme_mobile/features/demo/archive_me_demo_archive.dart';
 import 'package:archiveme_mobile/features/first25/first25_journal_hooks.dart';
 import 'package:archiveme_mobile/features/journal/infrastructure/journal_save_interceptor_pipeline.dart';
 import 'package:archiveme_mobile/features/memory/entry_save_coordinator.dart';
+import 'package:archiveme_mobile/features/monetization/paywall_milestone.dart';
+import 'package:archiveme_mobile/features/monetization/paywall_milestone_coordinator.dart';
 import 'package:archiveme_mobile/features/referral/invite_funnel_metrics.dart';
+import 'package:archiveme_mobile/features/sync/mesh_offload_optimistic.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/models/sync_status.dart';
 import 'package:archiveme_mobile/features/beta_analytics/beta_analytics_milestone_coordinator.dart';
 import 'package:archiveme_mobile/services/journal_ownership_guard.dart'
     show JournalOwnershipGuard;
 import 'package:archiveme_mobile/storage/encrypted_json_file_store.dart';
+import 'package:archiveme_mobile/storage/recent_entry_snippet_cache.dart';
 import 'package:archiveme_mobile/storage/journal_entry_decoder.dart';
 import 'package:archiveme_mobile/storage/private_data_encryption_key_store.dart';
 import 'package:archiveme_mobile/storage/secure_storage.dart';
@@ -99,6 +104,10 @@ class JournalStore {
         saveInterceptorPipeline: saveInterceptorPipeline,
       );
       store._cache = store._decodeEntries(await legacyFile.readAsString());
+      RecentEntrySnippetCache.instance.remember(store._cache!);
+      await RecentEntrySnippetCache.instance.hydrateFromFile(
+        File('${legacyFile.parent.path}/${RecentEntrySnippetCache.fileName}'),
+      );
       return store;
     }
 
@@ -126,12 +135,17 @@ class JournalStore {
       saveInterceptorPipeline: saveInterceptorPipeline,
     );
     store._cache = await store._loadEntriesFromEncrypted();
+    RecentEntrySnippetCache.instance.remember(store._cache!);
+    await RecentEntrySnippetCache.instance.hydrateFromFile(
+      File('${encryptedFile.parent.path}/${RecentEntrySnippetCache.fileName}'),
+    );
     return store;
   }
 
   Future<void> clearAll() async {
     if (ArchiveMeDemoState.isActive || CreatorDemoMode.isActive) return;
     _cache = const [];
+    RecentEntrySnippetCache.instance.remember(const []);
     if (_encrypted != null) {
       await _encrypted.writeJson([]);
       return;
@@ -176,6 +190,33 @@ class JournalStore {
       );
       if (activeCountAfter == 1) {
         InviteFunnelMetrics.firstSave();
+      }
+      if (!Platform.environment.containsKey('FLUTTER_TEST')) {
+        final savedDay = PaywallMilestoneEngine.dayKey(toPersist.createdAt);
+        final dayKeys = <String>{
+          for (final saved in next)
+            if (!saved.isDeleted)
+              PaywallMilestoneEngine.dayKey(saved.createdAt),
+        };
+        final entriesOnSavedDay = next
+            .where(
+              (saved) =>
+                  !saved.isDeleted &&
+                  PaywallMilestoneEngine.dayKey(saved.createdAt) == savedDay,
+            )
+            .length;
+        await PaywallMilestoneCoordinator.onDurableSave(
+          activeCountAfter: activeCountAfter,
+          savedAt: toPersist.createdAt,
+          activeDayKeys: dayKeys,
+          isFirstEntryOnSavedDay: entriesOnSavedDay == 1,
+        );
+        unawaited(
+          MeshOffloadOptimisticCoordinator.instance.beginArchiveSave(
+            id: toPersist.id,
+            preview: toPersist.transcript,
+          ),
+        );
       }
     }
     await First25JournalHooks.onJournalSave(
@@ -480,6 +521,7 @@ class JournalStore {
   Future<void> _writeAll(List<JournalEntry> entries) async {
     if (ArchiveMeDemoState.isActive || CreatorDemoMode.isActive) return;
     _cache = List<JournalEntry>.from(entries);
+    RecentEntrySnippetCache.instance.remember(_cache!);
     JournalStoreWriteInstrumentation.persistCount++;
     final encoded = entries.map((e) => e.toJson()).toList();
     if (_encrypted != null) {

@@ -145,8 +145,7 @@ abstract final class JsonConverters {
     Object? value,
     T Function(Map<String, dynamic> json) parse, {
     String field = 'value',
-  }) =>
-      parse(requiredStringMap(value, field: field));
+  }) => parse(requiredStringMap(value, field: field));
 
   static T? nullableObject<T>(
     Object? value,

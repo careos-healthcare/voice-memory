@@ -11,13 +11,15 @@ import 'package:go_router/go_router.dart';
 /// Compact Archive Home card for capacity weekly review — counts only.
 class CapacityWeeklyReviewCard extends StatelessWidget {
   const CapacityWeeklyReviewCard({
-    required this.result, super.key,
+    required this.result,
+    super.key,
     this.onPrimaryAction,
     this.sampleMode = false,
   });
 
   const CapacityWeeklyReviewCard.test({
-    required this.result, super.key,
+    required this.result,
+    super.key,
     this.onPrimaryAction,
     this.sampleMode = false,
   });

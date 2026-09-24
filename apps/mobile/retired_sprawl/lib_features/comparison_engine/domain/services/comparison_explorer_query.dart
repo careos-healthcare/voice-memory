@@ -38,14 +38,16 @@ abstract final class ComparisonExplorerQuery {
     final anchor = now ?? DateTime.now();
     final windowStart = window.windowStart(now: anchor);
 
-    final moments = ArchiveMomentRecordMapper.fromJournalEntries(entries)
-        .where((moment) => moment.savedWords.trim().isNotEmpty)
-        .where(
-          (moment) =>
-              windowStart == null || !moment.createdAt.isBefore(windowStart),
-        )
-        .toList(growable: false)
-      ..sort((a, b) => a.createdAt.compareTo(b.createdAt));
+    final moments =
+        ArchiveMomentRecordMapper.fromJournalEntries(entries)
+            .where((moment) => moment.savedWords.trim().isNotEmpty)
+            .where(
+              (moment) =>
+                  windowStart == null ||
+                  !moment.createdAt.isBefore(windowStart),
+            )
+            .toList(growable: false)
+          ..sort((a, b) => a.createdAt.compareTo(b.createdAt));
 
     if (moments.isEmpty) {
       return ComparisonExplorerSnapshot(

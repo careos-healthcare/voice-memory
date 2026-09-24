@@ -98,8 +98,8 @@ void main() {
         final degraded = _degradedVoiceEntry();
         await AppServices.instance.journalStore.save(degraded);
 
-        final result = (await AppServices.instance.pipeline
-            .attachTypedTextToVoiceEntry(
+        final result =
+            (await AppServices.instance.pipeline.attachTypedTextToVoiceEntry(
               entry: degraded,
               transcript: 'I said yes when I had no capacity left.',
             )).getOrThrow();

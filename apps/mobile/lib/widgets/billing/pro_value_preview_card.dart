@@ -9,7 +9,9 @@ import 'package:flutter/material.dart';
 /// Shows what Pro unlocks before the user reaches the paywall.
 class ProValuePreviewCard extends StatefulWidget {
   const ProValuePreviewCard({
-    required this.preview, required this.onUnlock, super.key,
+    required this.preview,
+    required this.onUnlock,
+    super.key,
     this.onDismiss,
     this.showActions = true,
     this.trackShown = true,

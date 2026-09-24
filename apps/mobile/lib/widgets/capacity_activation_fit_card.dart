@@ -11,7 +11,8 @@ import 'package:flutter/material.dart';
 /// Archive Home / Capacity Loop card for activation fit — fixed options only.
 class CapacityActivationFitCard extends StatefulWidget {
   const CapacityActivationFitCard({
-    required this.result, super.key,
+    required this.result,
+    super.key,
     this.onSaved,
     this.store,
     this.sampleMode = false,
@@ -20,7 +21,8 @@ class CapacityActivationFitCard extends StatefulWidget {
   });
 
   const CapacityActivationFitCard.test({
-    required this.result, super.key,
+    required this.result,
+    super.key,
     this.onSaved,
     this.store,
     this.sampleMode = false,

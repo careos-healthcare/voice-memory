@@ -16,8 +16,10 @@ class InsightPayloadDto {
   factory InsightPayloadDto.fromJson(Map<String, dynamic> json) =>
       InsightPayloadDto(
         id: JsonConverters.string(json['id'], field: 'id'),
-        insightText:
-            JsonConverters.string(json['insightText'], field: 'insightText'),
+        insightText: JsonConverters.string(
+          json['insightText'],
+          field: 'insightText',
+        ),
         confidenceBand: JsonConverters.string(
           json['confidenceBand'],
           field: 'confidenceBand',
@@ -192,18 +194,25 @@ class ComparisonPayloadDto {
   factory ComparisonPayloadDto.fromJson(Map<String, dynamic> json) =>
       ComparisonPayloadDto(
         id: JsonConverters.string(json['id'], field: 'id'),
-        evolutionText:
-            JsonConverters.string(json['evolutionText'], field: 'evolutionText'),
+        evolutionText: JsonConverters.string(
+          json['evolutionText'],
+          field: 'evolutionText',
+        ),
         confidenceLabel: JsonConverters.string(
           json['confidenceLabel'],
           field: 'confidenceLabel',
         ),
-        whatRepeated:
-            JsonConverters.string(json['whatRepeated'], field: 'whatRepeated'),
-        whatChanged:
-            JsonConverters.string(json['whatChanged'], field: 'whatChanged'),
-        thinEvidencePhrase:
-            JsonConverters.nullableString(json['thinEvidencePhrase']),
+        whatRepeated: JsonConverters.string(
+          json['whatRepeated'],
+          field: 'whatRepeated',
+        ),
+        whatChanged: JsonConverters.string(
+          json['whatChanged'],
+          field: 'whatChanged',
+        ),
+        thinEvidencePhrase: JsonConverters.nullableString(
+          json['thinEvidencePhrase'],
+        ),
         citedEntryIds: JsonConverters.stringList(json['citedEntryIds']),
         periodA: JsonConverters.requiredObject(
           json['periodA'],

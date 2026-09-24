@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:archiveme_mobile/config/developer_settings_gate.dart';
 import 'package:archiveme_mobile/core/config/theory_tracking_feature_flags.dart';
+import 'package:archiveme_mobile/core/user/progressive_disclosure.dart';
+import 'package:archiveme_mobile/core/user/user_milestone_service.dart';
 import 'package:archiveme_mobile/core/di/app_provider_container.dart';
 import 'package:archiveme_mobile/core/di/storage_providers.dart';
 import 'package:archiveme_mobile/design/archive_mobile_typography.dart';
@@ -12,6 +14,8 @@ import 'package:archiveme_mobile/features/archive_theory/theory_tracker_engine.d
 import 'package:archiveme_mobile/features/archive_theory/theory_tracker_models.dart';
 import 'package:archiveme_mobile/features/archive_theory/views/theories_view.dart';
 import 'package:archiveme_mobile/features/archive_theory/views/theory_page_copy.dart';
+import 'package:archiveme_mobile/features/challenging_questions/challenging_question_card.dart';
+import 'package:archiveme_mobile/features/challenging_questions/challenging_question_coordinator.dart';
 import 'package:archiveme_mobile/features/insight_engine/hybrid_search_engine.dart';
 import 'package:archiveme_mobile/features/insights/widgets/node_graph_viewer.dart';
 import 'package:archiveme_mobile/features/insights/widgets/theory_xray_sheet.dart';
@@ -35,6 +39,7 @@ class _TheoriesScreenState extends State<TheoriesScreen> {
   EvolvingViewSnapshot? _evolving;
   var _reflectionCount = 0;
   var _loading = true;
+  var _deepRagUnlocked = false;
   List<JournalEntry> _entries = const [];
   final _citationPlayback = const CitationPlaybackLauncher();
 
@@ -43,6 +48,7 @@ class _TheoriesScreenState extends State<TheoriesScreen> {
     super.initState();
     unawaited(_load());
     unawaited(EvolvingUnderstandingReturnCoordinator.onTheoriesVisit());
+    unawaited(ChallengingQuestionCoordinator.refresh());
   }
 
   Future<void> _load() async {
@@ -63,6 +69,7 @@ class _TheoriesScreenState extends State<TheoriesScreen> {
     await EvolvingUnderstandingReturnCoordinator.recordFirstWorkingTheoryIfNeeded(
       report,
     );
+    final milestones = await UserMilestoneService.fromAppServices().load();
 
     if (!mounted) return;
     setState(() {
@@ -70,6 +77,9 @@ class _TheoriesScreenState extends State<TheoriesScreen> {
       _report = report;
       _evolving = engine.evolvingSnapshot(report);
       _reflectionCount = eligible.length;
+      _deepRagUnlocked = milestones.isUnlocked(
+        ProgressiveSurface.deepRagConfiguration,
+      );
       _loading = false;
     });
   }
@@ -113,7 +123,9 @@ class _TheoriesScreenState extends State<TheoriesScreen> {
 
   MemoryTranscriptSearchRepository? _readSearchRepository() {
     try {
-      return appProviderContainer.read(memoryTranscriptSearchRepositoryProvider);
+      return appProviderContainer.read(
+        memoryTranscriptSearchRepositoryProvider,
+      );
     } on Object {
       return null;
     }
@@ -121,7 +133,8 @@ class _TheoriesScreenState extends State<TheoriesScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final showXRay = DeveloperSettingsGate.canShowDeveloperSettings;
+    final showXRay =
+        DeveloperSettingsGate.canShowDeveloperSettings || _deepRagUnlocked;
     return PushedScreenShell(
       title: TheoryPageCopy.title,
       body: _loading
@@ -147,6 +160,7 @@ class _TheoriesScreenState extends State<TheoriesScreen> {
                     style: ArchiveMobileTypography.responsiveHelper(context),
                   ),
                   const SizedBox(height: AppSpacing.lg),
+                  const ChallengingQuestionCard(),
                   if (_report != null && _evolving != null)
                     TheoriesView(
                       report: _report!,

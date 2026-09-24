@@ -85,7 +85,8 @@ class _PrivacySecurityScreenState extends State<PrivacySecurityScreen> {
             // rather than a tap away. The section keeps its collapse affordance
             // and its "why am I seeing this" explanation.
             PrivacyPillarExpansionSection(
-              cardId: PrivacySecurityEngagementAnalytics.pillar3EncryptionCardId,
+              cardId:
+                  PrivacySecurityEngagementAnalytics.pillar3EncryptionCardId,
               title: PrivacySecurityControlCenterCopy.pillar3Heading,
               initiallyExpanded: true,
               explanationTitle:
@@ -116,7 +117,8 @@ class _PrivacySecurityScreenState extends State<PrivacySecurityScreen> {
             // Open on arrival so the link is reachable without a tap.
             if (V1CapabilityRegistry.caregiverMonitoring) ...[
               PrivacyPillarExpansionSection(
-                cardId: PrivacySecurityEngagementAnalytics.pillar4CaregiverCardId,
+                cardId:
+                    PrivacySecurityEngagementAnalytics.pillar4CaregiverCardId,
                 title: PrivacySecurityControlCenterCopy.pillar4Heading,
                 initiallyExpanded: true,
                 explanationTitle:
@@ -126,7 +128,9 @@ class _PrivacySecurityScreenState extends State<PrivacySecurityScreen> {
                 children: [
                   Text(
                     PrivacySecurityControlCenterCopy.caregiverSectionSubtitle,
-                    key: const Key('privacy_security_caregiver_section_subtitle'),
+                    key: const Key(
+                      'privacy_security_caregiver_section_subtitle',
+                    ),
                     style: ArchiveMobileTypography.listSubtitle(context),
                   ),
                   ListTile(

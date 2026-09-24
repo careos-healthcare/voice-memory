@@ -45,7 +45,8 @@ Future<bool?> showExportSelectedSheet(
 
 class ExportSelectedSheet extends StatefulWidget {
   const ExportSelectedSheet({
-    required this.selectedEntries, super.key,
+    required this.selectedEntries,
+    super.key,
     this.records = const [],
     this.source = 'archive_search',
     this.onShare,
@@ -93,7 +94,11 @@ class _ExportSelectedSheetState extends State<ExportSelectedSheet> {
         actionItems = await ActionItemStore.instance().loadAll();
         facts = await FactLedgerStore.instance().loadAll();
       } catch (e, stackTrace) {
-        AppLogger.error('Unhandled error caught', error: e, stackTrace: stackTrace);
+        AppLogger.error(
+          'Unhandled error caught',
+          error: e,
+          stackTrace: stackTrace,
+        );
         // Optional markers when stores are unavailable.
       }
       final markdown = const SelectedArchiveExport().buildMarkdown(

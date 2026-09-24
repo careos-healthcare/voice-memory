@@ -50,14 +50,16 @@ void main() {
     expect(_actionFinder, findsNothing);
   });
 
-  testWidgets('hides the action when there is only one citation',
-      (tester) async {
+  testWidgets('hides the action when there is only one citation', (
+    tester,
+  ) async {
     await pumpAction(tester, _assistant(citedEntryIds: const ['only-one']));
     expect(_actionFinder, findsNothing);
   });
 
-  testWidgets('shows the action when there are two or more citations',
-      (tester) async {
+  testWidgets('shows the action when there are two or more citations', (
+    tester,
+  ) async {
     await pumpAction(
       tester,
       _assistant(citedEntryIds: const ['a', 'b']),
@@ -65,8 +67,9 @@ void main() {
     expect(_actionFinder, findsOneWidget);
   });
 
-  testWidgets('hides the action when pattern exploration is gated off',
-      (tester) async {
+  testWidgets('hides the action when pattern exploration is gated off', (
+    tester,
+  ) async {
     PatternExplorationFeatureFlags.debugOverride = false;
     await pumpAction(
       tester,
@@ -75,8 +78,9 @@ void main() {
     expect(_actionFinder, findsNothing);
   });
 
-  testWidgets('opens the connection sheet from ExplorePatternsScreen',
-      (tester) async {
+  testWidgets('opens the connection sheet from ExplorePatternsScreen', (
+    tester,
+  ) async {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [

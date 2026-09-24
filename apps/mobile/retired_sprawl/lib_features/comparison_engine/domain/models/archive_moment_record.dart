@@ -11,7 +11,6 @@ enum PatternState {
 }
 
 class ArchiveMomentRecord {
-
   const ArchiveMomentRecord({
     required this.id,
     required this.createdAt,

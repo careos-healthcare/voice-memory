@@ -66,12 +66,11 @@ class JournalEntryBacklinkSnapshot {
   });
 
   const JournalEntryBacklinkSnapshot.empty()
-      : derivedInsights = const [],
-        quoteHighlights = const [];
+    : derivedInsights = const [],
+      quoteHighlights = const [];
 
   final List<JournalEntryDerivedInsight> derivedInsights;
   final List<JournalEntryQuoteHighlight> quoteHighlights;
 
-  bool get isEmpty =>
-      derivedInsights.isEmpty && quoteHighlights.isEmpty;
+  bool get isEmpty => derivedInsights.isEmpty && quoteHighlights.isEmpty;
 }

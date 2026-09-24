@@ -80,7 +80,8 @@ abstract interface class IosOnDeviceRecognitionProbe {
 /// `supportsOnDeviceRecognition` case is added to
 /// `IosNativeSpeechTranscriptionHandler`, this starts telling the truth
 /// with no Dart change.
-class ChannelIosOnDeviceRecognitionProbe implements IosOnDeviceRecognitionProbe {
+class ChannelIosOnDeviceRecognitionProbe
+    implements IosOnDeviceRecognitionProbe {
   const ChannelIosOnDeviceRecognitionProbe();
 
   @override

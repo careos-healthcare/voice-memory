@@ -11,7 +11,10 @@ import 'package:flutter/material.dart';
 /// Patterns / Archive positive payoff — evidence from the user's words, no CTAs.
 class HelpfulActionAppearedCard extends StatelessWidget {
   const HelpfulActionAppearedCard({
-    required this.result, required this.entryCount, required this.source, super.key,
+    required this.result,
+    required this.entryCount,
+    required this.source,
+    super.key,
   });
 
   final HelpfulActionAppeared result;

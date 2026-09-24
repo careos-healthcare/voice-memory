@@ -62,7 +62,8 @@ abstract final class TranscriptProvenanceBackfill {
   /// A NULL or empty payload is excluded as well. `json_set` returns NULL for
   /// those, so including them would rewrite nothing while leaving them matched
   /// — the batch would report progress forever without making any.
-  static const String _pendingWhere = '''
+  static const String _pendingWhere =
+      '''
     payload_json IS NOT NULL
     AND payload_json != ''
     AND json_valid(payload_json) = 1

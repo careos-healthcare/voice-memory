@@ -40,7 +40,11 @@ class _PatternProfileCardState extends State<PatternProfileCard> {
       ),
       child: Row(
         children: [
-          const Icon(Icons.layers_outlined, size: 22, color: AppColors.accentPrimary),
+          const Icon(
+            Icons.layers_outlined,
+            size: 22,
+            color: AppColors.accentPrimary,
+          ),
           const SizedBox(width: AppSpacing.sm),
           Expanded(
             child: Column(

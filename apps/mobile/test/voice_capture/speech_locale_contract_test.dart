@@ -9,11 +9,13 @@ const _speechLocale = '$_transcriptionDir/speech_locale.dart';
 const _speechLocaleStore = '$_transcriptionDir/speech_locale_store.dart';
 const _nativeSpeech = '$_transcriptionDir/native_speech_transcription.dart';
 const _transcriptionService = '$_transcriptionDir/transcription_service.dart';
-const _availability = '$_transcriptionDir/local_transcription_availability.dart';
+const _availability =
+    '$_transcriptionDir/local_transcription_availability.dart';
 const _captureHandler =
     'lib/services/capture_pipeline/voice_capture_handler.dart';
 const _appServices = 'lib/services/app_services.dart';
-const _swiftHandler = 'apps/mobile/ios/Runner/IosNativeSpeechTranscription.swift';
+const _swiftHandler =
+    'apps/mobile/ios/Runner/IosNativeSpeechTranscription.swift';
 
 String _source(String path) {
   final file = resolveRepoScanFile(path);
@@ -27,10 +29,9 @@ String _source(String path) {
 /// must not: these files name `Locale.current` and `fromDeviceLocale` precisely
 /// to say they are forbidden.
 String _code(String path) {
-  return _source(path)
-      .split('\n')
-      .where((line) => !line.trimLeft().startsWith('//'))
-      .join('\n');
+  return _source(
+    path,
+  ).split('\n').where((line) => !line.trimLeft().startsWith('//')).join('\n');
 }
 
 void main() {
@@ -87,7 +88,10 @@ void main() {
     test('the key the Swift handler reads is the one Dart sends', () {
       final swift = _source(_swiftHandler);
       expect(swift, contains('args["localeIdentifier"] as? String'));
-      expect(_source(_nativeSpeech), contains("'localeIdentifier': locale.identifier"));
+      expect(
+        _source(_nativeSpeech),
+        contains("'localeIdentifier': locale.identifier"),
+      );
     });
   });
 
@@ -141,22 +145,27 @@ void main() {
       expect(source, contains('const ConfirmedSpeechLocale._('));
       expect(source, isNot(contains('fromDeviceLocale')));
       expect(source, isNot(contains('defaultLocale')));
-      expect(source, isNot(RegExp(r'ConfirmedSpeechLocale\.confirmed\(.+\)\s*\?\?')));
+      expect(
+        source,
+        isNot(RegExp(r'ConfirmedSpeechLocale\.confirmed\(.+\)\s*\?\?')),
+      );
     });
 
-    test('the catalogue is a list of choices, all of them valid identifiers',
-        () {
-      expect(SpeechLocaleCatalog.offered, isNotEmpty);
-      for (final entry in SpeechLocaleCatalog.offered) {
-        expect(
-          ConfirmedSpeechLocale.confirmed(entry.identifier),
-          isNotNull,
-          reason: 'unofferable identifier ${entry.identifier}',
-        );
-        expect(entry.displayName.trim(), isNotEmpty);
-        expect(entry.endonym.trim(), isNotEmpty);
-      }
-    });
+    test(
+      'the catalogue is a list of choices, all of them valid identifiers',
+      () {
+        expect(SpeechLocaleCatalog.offered, isNotEmpty);
+        for (final entry in SpeechLocaleCatalog.offered) {
+          expect(
+            ConfirmedSpeechLocale.confirmed(entry.identifier),
+            isNotNull,
+            reason: 'unofferable identifier ${entry.identifier}',
+          );
+          expect(entry.displayName.trim(), isNotEmpty);
+          expect(entry.endonym.trim(), isNotEmpty);
+        }
+      },
+    );
 
     test('underscored identifiers normalise rather than being rejected', () {
       // Stored preferences from older code and some platform APIs use `en_GB`.
@@ -195,7 +204,9 @@ void main() {
 
     test('the availability check is given the store too', () {
       expect(
-        _source('lib/features/capture_flow/adapters/pipeline_capture_adapters.dart'),
+        _source(
+          'lib/features/capture_flow/adapters/pipeline_capture_adapters.dart',
+        ),
         contains('confirmedLocale: speechLocaleStore.read'),
       );
     });

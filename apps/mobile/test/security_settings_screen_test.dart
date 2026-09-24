@@ -248,24 +248,27 @@ void main() {
   });
 
   group('Data section', () {
-    testWidgets('export, wipe, and delete remain visible; restore hidden when billing frozen', (
-      tester,
-    ) async {
-      await pumpSecurity(tester);
+    testWidgets(
+      'export, wipe, and delete remain visible; restore hidden when billing frozen',
+      (
+        tester,
+      ) async {
+        await pumpSecurity(tester);
 
-      expect(
-        find.byKey(const Key('security_restore_purchases')),
-        findsNothing,
-      );
-      expect(find.text('Restore purchases'), findsNothing);
-      expect(find.byKey(const Key('security_export')), findsOneWidget);
-      expect(find.byKey(const Key('security_wipe_local')), findsOneWidget);
-      expect(
-        find.byKey(const Key('security_hide_app_switcher')),
-        findsOneWidget,
-      );
-      expect(find.byKey(const Key('security_delete')), findsOneWidget);
-    });
+        expect(
+          find.byKey(const Key('security_restore_purchases')),
+          findsNothing,
+        );
+        expect(find.text('Restore purchases'), findsNothing);
+        expect(find.byKey(const Key('security_export')), findsOneWidget);
+        expect(find.byKey(const Key('security_wipe_local')), findsOneWidget);
+        expect(
+          find.byKey(const Key('security_hide_app_switcher')),
+          findsOneWidget,
+        );
+        expect(find.byKey(const Key('security_delete')), findsOneWidget);
+      },
+    );
   });
 
   group('Entry point', () {

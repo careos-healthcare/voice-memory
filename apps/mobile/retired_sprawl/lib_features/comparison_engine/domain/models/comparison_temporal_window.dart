@@ -15,7 +15,10 @@ enum ComparisonTemporalWindow {
   /// Entire on-device archive — Pro unlocks the full citation thread.
   allTime(days: null, requiresPro: true);
 
-  const ComparisonTemporalWindow({required this.days, required this.requiresPro});
+  const ComparisonTemporalWindow({
+    required this.days,
+    required this.requiresPro,
+  });
 
   final int? days;
   final bool requiresPro;
@@ -29,10 +32,13 @@ enum ComparisonTemporalWindow {
   };
 
   String get headline => switch (this) {
-    ComparisonTemporalWindow.fortnight => 'How have I changed over the last 2 weeks?',
+    ComparisonTemporalWindow.fortnight =>
+      'How have I changed over the last 2 weeks?',
     ComparisonTemporalWindow.recent => 'How have I changed recently?',
-    ComparisonTemporalWindow.quarter => 'How have I changed over the last 3 months?',
-    ComparisonTemporalWindow.halfYear => 'How have I changed over the last 6 months?',
+    ComparisonTemporalWindow.quarter =>
+      'How have I changed over the last 3 months?',
+    ComparisonTemporalWindow.halfYear =>
+      'How have I changed over the last 6 months?',
     ComparisonTemporalWindow.allTime => 'How has my archive evolved?',
   };
 

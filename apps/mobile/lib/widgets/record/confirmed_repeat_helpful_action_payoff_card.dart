@@ -14,7 +14,10 @@ import 'package:flutter/material.dart';
 /// Post-save payoff after the user captures what helped from the change notice.
 class ConfirmedRepeatHelpfulActionPayoffCard extends StatelessWidget {
   const ConfirmedRepeatHelpfulActionPayoffCard({
-    required this.payoff, required this.onKeepWatching, required this.onViewEvidence, super.key,
+    required this.payoff,
+    required this.onKeepWatching,
+    required this.onViewEvidence,
+    super.key,
     this.analyticsSurface,
     this.entryCount,
     this.entriesForWhy,

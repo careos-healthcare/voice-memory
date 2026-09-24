@@ -91,7 +91,8 @@ class FactLedgerStore {
     required String sourceEntryId,
     required String label,
     required String value,
-    required String factType, String note = '',
+    required String factType,
+    String note = '',
     String? archivePackId,
     String? archiveThreadId,
     List<String> collectionIds = const [],
@@ -243,7 +244,11 @@ class FactLedgerStore {
       await AppServices.instance.journalStore.update(updated);
       await PressureCheckInStore.instance().syncFromJournalEntry(updated);
     } catch (e, stackTrace) {
-      AppLogger.error('Unhandled error caught', error: e, stackTrace: stackTrace);
+      AppLogger.error(
+        'Unhandled error caught',
+        error: e,
+        stackTrace: stackTrace,
+      );
       // Preservation is optional — fact save still succeeded.
     }
   }

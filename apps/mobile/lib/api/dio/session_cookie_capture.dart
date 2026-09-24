@@ -15,7 +15,10 @@ class SessionCookieCaptureInterceptor extends Interceptor {
   final SessionCookieCapture _capture;
 
   @override
-  void onResponse(Response<dynamic> response, ResponseInterceptorHandler handler) {
+  void onResponse(
+    Response<dynamic> response,
+    ResponseInterceptorHandler handler,
+  ) {
     final cookie = extractSessionCookieFromHeaders(response.headers);
     if (cookie != null && cookie.isNotEmpty) {
       _capture.lastSetCookie = cookie;

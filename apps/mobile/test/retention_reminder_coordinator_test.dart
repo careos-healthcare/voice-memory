@@ -57,7 +57,10 @@ class _FakeBackend implements CheckInReminderBackend {
 Future<void> _makeReady() async {
   final prefs = AppServices.instance.prefs;
   await ActivationEventsStore(prefs).write(
-    ActivationEventCounts.fromMap({'firstReflectionSaved': 1, 'tomorrowCheckInCreated': 2,}),
+    ActivationEventCounts.fromMap({
+      'firstReflectionSaved': 1,
+      'tomorrowCheckInCreated': 2,
+    }),
   );
   final hook = HookDiagnosisStore(prefs);
   await hook.append(

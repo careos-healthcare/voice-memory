@@ -42,7 +42,8 @@ abstract final class AnchorCalibrationEngine {
 
   static EvidenceAnchorExtractionResult applyExtraction({
     required EvidenceAnchorExtractionResult extraction,
-    required String source, BetaProofFeedbackType? feedbackType,
+    required String source,
+    BetaProofFeedbackType? feedbackType,
     bool hasChangeDelta = false,
     bool hasFreshReturn = false,
     CorrectionMemorySnapshot? correction,
@@ -59,7 +60,8 @@ abstract final class AnchorCalibrationEngine {
 
   static AnchorCalibrationResult apply({
     required EvidenceAnchorExtractionResult extraction,
-    required String source, BetaProofFeedbackType? feedbackType,
+    required String source,
+    BetaProofFeedbackType? feedbackType,
     bool hasChangeDelta = false,
     bool hasFreshReturn = false,
     CorrectionMemorySnapshot? correction,

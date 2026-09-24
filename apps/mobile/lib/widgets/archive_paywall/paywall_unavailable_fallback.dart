@@ -8,7 +8,9 @@ import 'package:flutter/material.dart';
 /// Polished paywall when subscription plans are unavailable.
 class PaywallUnavailableFallback extends StatelessWidget {
   const PaywallUnavailableFallback({
-    required this.body, required this.onDismiss, super.key,
+    required this.body,
+    required this.onDismiss,
+    super.key,
     this.headline,
     this.subhead,
     this.onRestore,

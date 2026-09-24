@@ -9,7 +9,8 @@ import 'package:archiveme_mobile/features/store_readiness_single_source/store_re
 abstract final class ProAccessEnforcementAuditV3 {
   ProAccessEnforcementAuditV3._();
 
-  static const List<String> ciTestBundle = ProAccessEnforcementAuditV2.ciTestBundle;
+  static const List<String> ciTestBundle =
+      ProAccessEnforcementAuditV2.ciTestBundle;
 
   static const Set<StoreReadinessSingleSourceStepId> billingStoreStepIds = {
     StoreReadinessSingleSourceStepId.revenueCatProducts,
@@ -18,7 +19,11 @@ abstract final class ProAccessEnforcementAuditV3 {
     StoreReadinessSingleSourceStepId.entitlementPersistence,
   };
 
-  static const Map<StoreReadinessSingleSourceStepId, ProAccessEnforcementAuditItemId> storeStepToEnforcementItem = {
+  static const Map<
+    StoreReadinessSingleSourceStepId,
+    ProAccessEnforcementAuditItemId
+  >
+  storeStepToEnforcementItem = {
     StoreReadinessSingleSourceStepId.revenueCatProducts:
         ProAccessEnforcementAuditItemId.revenueCatEntitlement,
     StoreReadinessSingleSourceStepId.purchasePath:

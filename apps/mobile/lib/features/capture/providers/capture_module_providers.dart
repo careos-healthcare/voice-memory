@@ -25,15 +25,18 @@ final captureAudioMetadataStoreProvider = Provider<CaptureAudioMetadataStore?>(
   },
 );
 
-final captureWidgetDeepLinkHandlerProvider = Provider<CaptureWidgetDeepLinkHandler>(
-  (ref) {
-    final handler = CaptureWidgetDeepLinkHandler();
-    ref.onDispose(handler.dispose);
-    return handler;
-  },
-);
+final captureWidgetDeepLinkHandlerProvider =
+    Provider<CaptureWidgetDeepLinkHandler>(
+      (ref) {
+        final handler = CaptureWidgetDeepLinkHandler();
+        ref.onDispose(handler.dispose);
+        return handler;
+      },
+    );
 
-final backgroundCaptureServiceProvider = Provider<BackgroundCaptureService?>((ref) {
+final backgroundCaptureServiceProvider = Provider<BackgroundCaptureService?>((
+  ref,
+) {
   final config = ref.watch(captureModuleRuntimeConfigProvider);
   if (config == null) return null;
   return BackgroundCaptureService(config: config);

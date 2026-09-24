@@ -9,7 +9,8 @@ import 'package:flutter/material.dart';
 /// buttons, and never any pressure toward yearly.
 class PlanSelectionConfidenceBlock extends StatelessWidget {
   const PlanSelectionConfidenceBlock({
-    required this.selectedPlanId, super.key,
+    required this.selectedPlanId,
+    super.key,
     this.source,
   });
 

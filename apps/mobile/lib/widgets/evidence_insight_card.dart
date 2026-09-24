@@ -16,7 +16,8 @@ import 'package:flutter/material.dart';
 /// Displays an Evidence Method insight with inline fact-ledger verification.
 class EvidenceInsightCard extends StatefulWidget {
   const EvidenceInsightCard({
-    required this.insight, super.key,
+    required this.insight,
+    super.key,
     this.apiService,
     this.onCorrected,
   });
@@ -113,7 +114,9 @@ class _EvidenceInsightCardState extends State<EvidenceInsightCard> {
           key: const Key('evidence_insight_card'),
           insightText: widget.insight.insightText,
           confidenceBand: widget.insight.confidenceBand,
-          quotes: InlineEvidenceQuote.fromCitedEntries(widget.insight.citedEntries),
+          quotes: InlineEvidenceQuote.fromCitedEntries(
+            widget.insight.citedEntries,
+          ),
           onAgree: _onAgree,
           onDisagree: _onDisagree,
           onCorrect: _openCorrectionSheet,

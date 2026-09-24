@@ -9,7 +9,9 @@ import 'package:flutter/material.dart';
 /// Dismissible local hint for the Archive/Patterns workspace.
 class ArchiveWorkspaceHintCard extends StatelessWidget {
   const ArchiveWorkspaceHintCard({
-    required this.hint, required this.onDismiss, super.key,
+    required this.hint,
+    required this.onDismiss,
+    super.key,
   });
 
   final ArchiveWorkspaceHint hint;

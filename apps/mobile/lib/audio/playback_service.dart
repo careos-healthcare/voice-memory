@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:archiveme_mobile/audio/pcm_chunk_queue_driver.dart';
+import 'package:archiveme_mobile/audio/silence_trim.dart';
 import 'package:archiveme_mobile/audio/playback_types.dart';
 import 'package:archiveme_mobile/core/di/app_provider_container.dart';
 import 'package:archiveme_mobile/features/live_audio/infrastructure/live_audio_pipeline_log.dart';
@@ -93,6 +94,7 @@ class PlaybackService extends Notifier<PlaybackState> {
   final _queueDepthController = StreamController<int>.broadcast();
   AudioPlayer? _player;
   var _pcmDrainInFlight = false;
+  var _reviewSpeed = 1.0;
   var _disposed = false;
 
   @override
@@ -160,6 +162,29 @@ class PlaybackService extends Notifier<PlaybackState> {
     }
   }
 
+  /// Drops long silences from 16-bit PCM before review playback.
+  Uint8List prepareReviewPcm(Uint8List pcm) {
+    if (!state.trimSilence) return pcm;
+    return SilenceTrimmer.trim(pcm);
+  }
+
+  /// Sets review speed to 1x, 1.25x, 1.5x, or 2x without shifting pitch.
+  Future<void> setPlaybackSpeed(double speed) async {
+    if (!PlaybackReviewSpeeds.allows(speed)) {
+      throw ArgumentError.value(
+        speed,
+        'speed',
+        'Use 1x, 1.25x, 1.5x, or 2x',
+      );
+    }
+    _reviewSpeed = speed;
+    if (!_disposed) {
+      state = state.copyWith(speed: speed);
+    }
+    if (_disposed || _testMode) return;
+    await _player?.setPlaybackRate(speed);
+  }
+
   /// Plays a captured recording from disk.
   ///
   /// Ahead of every early return and outside the `try` below on purpose: this
@@ -194,8 +219,9 @@ class PlaybackService extends Notifier<PlaybackState> {
       position: Duration.zero,
     );
     try {
+      await _player!.setPlaybackRate(_reviewSpeed);
       await _player!.play(DeviceFileSource(trimmed));
-      state = state.copyWith(phase: PlaybackPhase.playing);
+      state = state.copyWith(phase: PlaybackPhase.playing, speed: _reviewSpeed);
     } catch (error, stackTrace) {
       state = state.copyWith(phase: PlaybackPhase.error, error: '$error');
       rethrow;

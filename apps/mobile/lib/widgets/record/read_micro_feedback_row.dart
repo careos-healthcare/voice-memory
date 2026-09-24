@@ -6,7 +6,9 @@ import 'package:flutter/material.dart';
 /// Tiny optional feedback after user acts on a post-save read.
 class ReadMicroFeedbackRow extends StatelessWidget {
   const ReadMicroFeedbackRow({
-    required this.onUseful, required this.onNotQuite, super.key,
+    required this.onUseful,
+    required this.onNotQuite,
+    super.key,
   });
 
   final VoidCallback onUseful;

@@ -1,7 +1,9 @@
 import 'package:archiveme_mobile/core/utils/app_logger.dart';
-import 'package:archiveme_mobile/features/first_session/day_two_reminder.dart' show DayTwoReminderCoordinator;
+import 'package:archiveme_mobile/features/first_session/day_two_reminder.dart'
+    show DayTwoReminderCoordinator;
 import 'package:archiveme_mobile/features/onboarding/first_60_second_state.dart';
-import 'package:archiveme_mobile/features/recording/recording_dependencies.dart' show DayTwoReminderCoordinator;
+import 'package:archiveme_mobile/features/recording/recording_dependencies.dart'
+    show DayTwoReminderCoordinator;
 import 'package:archiveme_mobile/services/app_services.dart';
 import 'package:archiveme_mobile/storage/mobile_prefs_store.dart';
 
@@ -39,7 +41,7 @@ class First60SecondStore {
     }
     try {
       return First60SecondState.fromJson(await prefs.readMap(prefsKey));
-    } catch (_, stackTrace) {
+    } catch (_) {
       return const First60SecondState(
         returnCueResolved: true,
         proBridgeResolved: true,
@@ -74,7 +76,11 @@ class First60SecondStore {
     try {
       await prefs.writeMap(prefsKey, state.toJson());
     } catch (e, stackTrace) {
-      AppLogger.error('Unhandled error caught', error: e, stackTrace: stackTrace);
+      AppLogger.error(
+        'Unhandled error caught',
+        error: e,
+        stackTrace: stackTrace,
+      );
       // Persistence failures never surface; worst case the card is gone
       // for this session anyway.
     }

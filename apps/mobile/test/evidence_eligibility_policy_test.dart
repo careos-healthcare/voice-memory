@@ -50,21 +50,23 @@ VerifiedEvidenceSnapshot _snapshot({
   verifiedAt: date,
 );
 
-JournalEntry _entry({String id = 'e1', String transcript = 'I said yes again.'}) =>
-    JournalEntry(
-      id: id,
-      createdAt: DateTime(2026, 8, 12),
-      transcript: transcript,
-      durationSeconds: 10,
-      reflection: Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 0,
-        recurringThemes: const [],
-        exactLanguagePattern: '',
-        concreteObservation: '',
-        repeatedSignal: '',
-      ),
-    );
+JournalEntry _entry({
+  String id = 'e1',
+  String transcript = 'I said yes again.',
+}) => JournalEntry(
+  id: id,
+  createdAt: DateTime(2026, 8, 12),
+  transcript: transcript,
+  durationSeconds: 10,
+  reflection: Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 0,
+    recurringThemes: const [],
+    exactLanguagePattern: '',
+    concreteObservation: '',
+    repeatedSignal: '',
+  ),
+);
 
 DailyMirrorResult _mirror({List<String> terms = const ['yes', 'calendar']}) =>
     DailyMirrorResult(
@@ -253,21 +255,23 @@ void main() {
       );
     });
 
-    test('user correction maps to derived claim status without rewriting moment',
-        () {
-      expect(
-        userStatusFromCorrection('exactlyRight'),
-        DerivedClaimUserStatus.fits,
-      );
-      expect(
-        userStatusFromCorrection('partlyRight'),
-        DerivedClaimUserStatus.partlyFits,
-      );
-      expect(
-        userStatusFromCorrection('ignoreForever'),
-        DerivedClaimUserStatus.notForMe,
-      );
-    });
+    test(
+      'user correction maps to derived claim status without rewriting moment',
+      () {
+        expect(
+          userStatusFromCorrection('exactlyRight'),
+          DerivedClaimUserStatus.fits,
+        );
+        expect(
+          userStatusFromCorrection('partlyRight'),
+          DerivedClaimUserStatus.partlyFits,
+        );
+        expect(
+          userStatusFromCorrection('ignoreForever'),
+          DerivedClaimUserStatus.notForMe,
+        );
+      },
+    );
 
     test('zero moments stays saved-content only', () {
       expect(
@@ -300,7 +304,9 @@ void main() {
   });
 
   group('UI contract', () {
-    testWidgets('one-moment receipt shows no relationship copy', (tester) async {
+    testWidgets('one-moment receipt shows no relationship copy', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           theme: AppTheme.light(),
@@ -316,12 +322,16 @@ void main() {
         ),
       );
       await tester.pumpAndSettle();
-      expect(find.byKey(const Key('moment_save_receipt_relationship')),
-          findsNothing);
+      expect(
+        find.byKey(const Key('moment_save_receipt_relationship')),
+        findsNothing,
+      );
       expect(find.textContaining('pattern'), findsNothing);
     });
 
-    testWidgets('two-moment receipt shows tentative related copy', (tester) async {
+    testWidgets('two-moment receipt shows tentative related copy', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           theme: AppTheme.light(),
@@ -337,9 +347,14 @@ void main() {
         ),
       );
       await tester.pumpAndSettle();
-      expect(find.byKey(const Key('moment_save_receipt_relationship')),
-          findsOneWidget);
-      expect(find.text(EvidenceEligibilityCopy.relatedMomentsBody), findsOneWidget);
+      expect(
+        find.byKey(const Key('moment_save_receipt_relationship')),
+        findsOneWidget,
+      );
+      expect(
+        find.text(EvidenceEligibilityCopy.relatedMomentsBody),
+        findsOneWidget,
+      );
     });
 
     test('two-moment post-save repeat copy stays tentative', () {
@@ -356,10 +371,14 @@ void main() {
     test('requires policy minimum moments and timeline items', () {
       final entries = List.generate(
         3,
-        (index) => _entry(id: 'e$index', transcript: 'Enough detail here $index'),
+        (index) =>
+            _entry(id: 'e$index', transcript: 'Enough detail here $index'),
       );
       expect(
-        ArchiveChangesEligibility.isEligible(entries: entries, timeline: const []),
+        ArchiveChangesEligibility.isEligible(
+          entries: entries,
+          timeline: const [],
+        ),
         isFalse,
       );
     });
@@ -410,7 +429,11 @@ void main() {
             kind: ProofClaimKind.mainObservation,
             text: 'Suggestion text',
             evidence: [
-              _snapshot(id: 'e1', date: DateTime(2026, 8, 1), quote: 'Your words'),
+              _snapshot(
+                id: 'e1',
+                date: DateTime(2026, 8, 1),
+                quote: 'Your words',
+              ),
             ],
           ),
         ],
@@ -442,7 +465,9 @@ void main() {
       );
       final export = DerivedClaimMapper.exportSectionFor(derived);
       expect(export[EvidenceEligibilityCopy.exportSuggestionLabel], isNotNull);
-      expect(export[EvidenceEligibilityCopy.exportYourWordsLabel], ['Your words']);
+      expect(export[EvidenceEligibilityCopy.exportYourWordsLabel], [
+        'Your words',
+      ]);
     });
   });
 

@@ -143,8 +143,8 @@ class _SpeechLanguageChoiceCardState extends State<SpeechLanguageChoiceCard> {
 
   static String _label(OfferedSpeechLocale entry) =>
       entry.endonym == entry.displayName
-          ? entry.displayName
-          : '${entry.endonym} — ${entry.displayName}';
+      ? entry.displayName
+      : '${entry.endonym} — ${entry.displayName}';
 }
 
 class _Body extends StatelessWidget {

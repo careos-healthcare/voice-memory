@@ -81,8 +81,8 @@ class CapturePipelineService {
   /// name. Caregiver consent covers reading named streams, never writing, so a
   /// caregiver session has no path to any of these regardless of scopes.
   Future<void> _assertOwnerCapture() => CaregiverSessionGuard.assertOwnerAccess(
-        CaregiverSessionGuard.captureJournalEntry,
-      );
+    CaregiverSessionGuard.captureJournalEntry,
+  );
 
   Future<CapturePipelineOutcome> run({
     required File audioFile,

@@ -7,7 +7,8 @@ import 'dart:async';
 /// Animated reply waveform — bar speed and height scale with playback queue depth.
 class LiveVoiceSpeakingWaveform extends StatefulWidget {
   const LiveVoiceSpeakingWaveform({
-    required this.queueDepth, super.key,
+    required this.queueDepth,
+    super.key,
     this.barCount = 12,
   });
 

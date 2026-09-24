@@ -27,7 +27,10 @@ class SyncBlobPushDto {
           field: 'encrypted',
         ),
         updatedAt: JsonConverters.string(json['updatedAt'], field: 'updatedAt'),
-        byteLength: JsonConverters.intValue(json['byteLength'], field: 'byteLength'),
+        byteLength: JsonConverters.intValue(
+          json['byteLength'],
+          field: 'byteLength',
+        ),
         binding: JsonConverters.nullableString(json['binding']),
       );
 
@@ -73,7 +76,10 @@ class SyncManifestBlobSummaryDto {
         id: JsonConverters.string(json['id'], field: 'id'),
         type: JsonConverters.string(json['type'], field: 'type'),
         updatedAt: JsonConverters.string(json['updatedAt'], field: 'updatedAt'),
-        byteLength: JsonConverters.intValue(json['byteLength'], field: 'byteLength'),
+        byteLength: JsonConverters.intValue(
+          json['byteLength'],
+          field: 'byteLength',
+        ),
       );
 
   final String id;
@@ -94,7 +100,8 @@ class SyncManifestDto {
     required this.blobs,
   });
 
-  factory SyncManifestDto.fromJson(Map<String, dynamic> json) => SyncManifestDto(
+  factory SyncManifestDto.fromJson(Map<String, dynamic> json) =>
+      SyncManifestDto(
         userId: JsonConverters.string(json['userId'], field: 'userId'),
         version: JsonConverters.intValue(json['version'], field: 'version'),
         updatedAt: JsonConverters.string(json['updatedAt'], field: 'updatedAt'),
@@ -178,7 +185,10 @@ class SyncBlobRecordDto {
           field: 'encrypted',
         ),
         updatedAt: JsonConverters.string(json['updatedAt'], field: 'updatedAt'),
-        byteLength: JsonConverters.intValue(json['byteLength'], field: 'byteLength'),
+        byteLength: JsonConverters.intValue(
+          json['byteLength'],
+          field: 'byteLength',
+        ),
       );
 
   final String id;
@@ -190,12 +200,12 @@ class SyncBlobRecordDto {
   Map<String, dynamic> toJson() => _$SyncBlobRecordDtoToJson(this);
 
   Map<String, dynamic> toEncryptedSyncMap() => {
-        'id': id,
-        'type': type,
-        'encrypted': encrypted.toJson(),
-        'updatedAt': updatedAt,
-        'byteLength': byteLength,
-      };
+    'id': id,
+    'type': type,
+    'encrypted': encrypted.toJson(),
+    'updatedAt': updatedAt,
+    'byteLength': byteLength,
+  };
 }
 
 @JsonSerializable(createFactory: false, explicitToJson: true)
@@ -232,16 +242,16 @@ class SyncChangeRecordDto {
     required this.tombstone,
   });
 
-  factory SyncChangeRecordDto.fromJson(Map<String, dynamic> json) =>
-      SyncChangeRecordDto(
-        sequence: JsonConverters.intValue(json['sequence'], field: 'sequence'),
-        blobType: JsonConverters.string(json['blobType'], field: 'blobType'),
-        blobId: JsonConverters.string(json['blobId'], field: 'blobId'),
-        changeKind:
-            JsonConverters.string(json['changeKind'], field: 'changeKind'),
-        updatedAt: JsonConverters.string(json['updatedAt'], field: 'updatedAt'),
-        tombstone: JsonConverters.boolValue(json['tombstone'], field: 'tombstone'),
-      );
+  factory SyncChangeRecordDto.fromJson(
+    Map<String, dynamic> json,
+  ) => SyncChangeRecordDto(
+    sequence: JsonConverters.intValue(json['sequence'], field: 'sequence'),
+    blobType: JsonConverters.string(json['blobType'], field: 'blobType'),
+    blobId: JsonConverters.string(json['blobId'], field: 'blobId'),
+    changeKind: JsonConverters.string(json['changeKind'], field: 'changeKind'),
+    updatedAt: JsonConverters.string(json['updatedAt'], field: 'updatedAt'),
+    tombstone: JsonConverters.boolValue(json['tombstone'], field: 'tombstone'),
+  );
 
   final int sequence;
   final String blobType;

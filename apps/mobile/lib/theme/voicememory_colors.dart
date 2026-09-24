@@ -1,3 +1,4 @@
+import 'package:archiveme_mobile/theme/archive_design_tokens.dart';
 import 'package:archiveme_mobile/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 
@@ -6,7 +7,7 @@ class VoiceMemoryColors {
   VoiceMemoryColors._();
 
   static const Color primaryIndigo = AppColors.accentPrimary;
-  static const Color primaryIndigoHover = Color(0xFF1D4ED8);
+  static const Color primaryIndigoHover = ArchiveDesignTokens.accentHover;
   static const Color secondaryLavender = AppColors.accentSecondary;
 
   static const Color background = AppColors.backgroundPrimary;

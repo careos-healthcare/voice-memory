@@ -11,7 +11,8 @@ import 'package:flutter_test/flutter_test.dart';
 class _FakeCaregiverConsentApiClient implements CaregiverConsentApiClient {
   _FakeCaregiverConsentApiClient({
     this.verifyFailure = false,
-  }) : issueFailure = false, verifyResult = null;
+  }) : issueFailure = false,
+       verifyResult = null;
 
   final CaregiverTokenVerificationResult? verifyResult;
   final bool issueFailure;

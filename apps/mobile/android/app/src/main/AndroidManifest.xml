@@ -10,6 +10,10 @@
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="com.android.vending.BILLING" />
 
+    <!-- Microphone foreground service stays for on-device recording.
+         Background sync and notification rescheduling stay stripped:
+         FOREGROUND_SERVICE_DATA_SYNC and RECEIVE_BOOT_COMPLETED are removed
+         below while those capabilities are off. -->
     <!-- Strip transitive permissions merged from unused plugin features -->
     <uses-permission android:name="android.permission.BLUETOOTH_SCAN" tools:node="remove" />
     <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" tools:node="remove" />
@@ -42,9 +46,51 @@
               android:name="io.flutter.embedding.android.NormalTheme"
               android:resource="@style/NormalTheme"
               />
+            <meta-data
+                android:name="android.app.shortcuts"
+                android:resource="@xml/shortcuts" />
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+            <intent-filter>
+                <action android:name="es.antonborri.home_widget.action.LAUNCH" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="archiveme" android:host="record" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.SEND"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <data android:mimeType="audio/*"/>
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.SEND"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <data android:mimeType="video/*"/>
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.SEND_MULTIPLE"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <data android:mimeType="audio/*"/>
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.SEND_MULTIPLE"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <data android:mimeType="video/*"/>
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <data android:mimeType="audio/*"/>
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <data android:mimeType="video/*"/>
             </intent-filter>
             <!-- App Links: verified via assetlinks.json at archiveme.app, so the
                  OS opens matching links directly without a disambiguation prompt. -->
@@ -58,6 +104,54 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
+
+        <service
+            android:name=".QuickRecordTileService"
+            android:exported="true"
+            android:icon="@mipmap/ic_launcher"
+            android:label="Record"
+            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
+            <intent-filter>
+                <action android:name="android.service.quicksettings.action.QS_TILE" />
+            </intent-filter>
+        </service>
+
+        <receiver
+            android:name=".RecordLaunchWidgetProvider"
+            android:exported="true"
+            android:label="Record">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/record_launch_widget_info" />
+        </receiver>
+        <receiver
+            android:name=".QuickCaptureWidgetProvider"
+            android:exported="true"
+            android:label="Quick capture">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/quick_capture_widget_info" />
+        </receiver>
+        <receiver
+            android:name=".QuickCaptureReceiver"
+            android:exported="false" />
+        <service
+            android:name=".AudioCaptureService"
+            android:exported="false"
+            android:foregroundServiceType="microphone" />
+        <receiver
+            android:name="es.antonborri.home_widget.HomeWidgetBackgroundReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="es.antonborri.home_widget.action.BACKGROUND" />
+            </intent-filter>
+        </receiver>
 
         <!-- Strip unused background-sync / location / picker components -->
         <receiver

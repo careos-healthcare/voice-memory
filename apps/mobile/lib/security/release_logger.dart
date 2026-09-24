@@ -38,8 +38,7 @@ abstract final class ReleaseLogger {
     forceReleaseSanitizationForTest = false;
   }
 
-  static bool get _release =>
-      forceReleaseSanitizationForTest || kReleaseMode;
+  static bool get _release => forceReleaseSanitizationForTest || kReleaseMode;
 
   static void emit({
     required String event,
@@ -108,7 +107,8 @@ abstract final class ReleaseLogger {
       durationMs: durationMs,
       fields: {
         'success': false,
-        'error_code': ReleaseLogSanitizer.sanitizeReasonCode(errorCode) ??
+        'error_code':
+            ReleaseLogSanitizer.sanitizeReasonCode(errorCode) ??
             'operation_failed',
         if (statusCode != null) 'http_status': statusCode,
         ...fields,

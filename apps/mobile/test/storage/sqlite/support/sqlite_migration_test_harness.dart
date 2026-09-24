@@ -9,7 +9,7 @@ import 'configure_sqlite_test_ffi.dart';
 /// Utilities for automated SQLite migration unit tests.
 class SqliteMigrationTestHarness {
   SqliteMigrationTestHarness({List<SqliteMigration>? migrations})
-      : manager = SqliteMigrationManager(migrations: migrations);
+    : manager = SqliteMigrationManager(migrations: migrations);
 
   final SqliteMigrationManager manager;
 

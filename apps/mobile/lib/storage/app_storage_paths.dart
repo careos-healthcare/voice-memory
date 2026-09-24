@@ -1,7 +1,8 @@
 import 'dart:io';
 
 import 'package:archiveme_mobile/core/utils/app_logger.dart';
-import 'package:archiveme_mobile/features/recording/recording_dependencies.dart' show AppServices;
+import 'package:archiveme_mobile/features/recording/recording_dependencies.dart'
+    show AppServices;
 import 'package:archiveme_mobile/services/app_services.dart' show AppServices;
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/foundation.dart';

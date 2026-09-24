@@ -180,8 +180,7 @@ abstract final class FactLedgerCitationService {
 
     String? best;
     for (final quote in indexed) {
-      if (trimmedFallback.contains(quote) ||
-          quote.contains(trimmedFallback)) {
+      if (trimmedFallback.contains(quote) || quote.contains(trimmedFallback)) {
         if (best == null || quote.length > best.length) {
           best = quote;
         }

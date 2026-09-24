@@ -19,7 +19,8 @@ abstract final class NoDashboardPositioningGuard {
     'fades',
   ];
 
-  static const Map<String, NoDashboardPositioningGuardReason> blockedPositioningPhrases = {
+  static const Map<String, NoDashboardPositioningGuardReason>
+  blockedPositioningPhrases = {
     'command center': NoDashboardPositioningGuardReason.blockedCommandCenter,
     'life operating system':
         NoDashboardPositioningGuardReason.blockedLifeOperatingSystem,

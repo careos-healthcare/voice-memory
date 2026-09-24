@@ -162,7 +162,8 @@ class MomentSaveReceiptCard extends StatelessWidget {
                 ),
               ],
             ],
-            if (_buildRemoteStatus(context, secondaryStyle) case final status?) ...[
+            if (_buildRemoteStatus(context, secondaryStyle)
+                case final status?) ...[
               const SizedBox(height: AppSpacing.sm),
               status,
             ],

@@ -28,8 +28,7 @@ class LocalRoutineRagEngine {
     final vectorSearch = await OfflineReflectionVectorSearchService.create(
       repository: embeddingRepository,
     );
-    final model =
-        reflectionModel ?? await LocalReflectionDataSource.create();
+    final model = reflectionModel ?? await LocalReflectionDataSource.create();
     return LocalRoutineRagEngine(
       retriever: LocalReflectionRagRetriever(
         journalRepository: journalRepository,

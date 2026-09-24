@@ -12,7 +12,8 @@ class CoachSessionInsightRow {
     required this.kind,
     required this.title,
     required this.summary,
-    required this.citedEntryIds, this.confidenceBand,
+    required this.citedEntryIds,
+    this.confidenceBand,
   });
 
   final ArchiveInsightKind kind;
@@ -46,9 +47,10 @@ class CoachReadService {
     required this._modeController,
     ArchiveExplanationEngine? explanationEngine,
     ContradictionDetectionService? contradictionService,
-  })  : _explanationEngine = explanationEngine ?? const ArchiveExplanationEngine(),
-        _contradictionService =
-            contradictionService ?? const ContradictionDetectionService();
+  }) : _explanationEngine =
+           explanationEngine ?? const ArchiveExplanationEngine(),
+       _contradictionService =
+           contradictionService ?? const ContradictionDetectionService();
 
   final JournalStore _journalStore;
   final FactLedgerStore _factLedgerStore;
@@ -74,12 +76,12 @@ class CoachReadService {
         : const <CoachSessionInsightRow>[];
     final blindSpots =
         permissions.allowsInsightKind(ArchiveInsightKind.blindSpot)
-            ? _buildBlindSpots(entries, permissions)
-            : const <CoachSessionInsightRow>[];
+        ? _buildBlindSpots(entries, permissions)
+        : const <CoachSessionInsightRow>[];
     final contradictions =
         permissions.allowsInsightKind(ArchiveInsightKind.contradiction)
-            ? await _buildContradictions(entries, permissions)
-            : const <CoachSessionInsightRow>[];
+        ? await _buildContradictions(entries, permissions)
+        : const <CoachSessionInsightRow>[];
 
     final factLedgerLabels = permissions.factLedger
         ? await _loadFactLedgerLabels()

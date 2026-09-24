@@ -58,142 +58,162 @@ void main() {
   });
 
   group('LocalAiPipeline', () {
-    test('structures local STT transcript before reflection extraction', () async {
-      AudioStructuringService? structuringService;
-      final pipeline = LocalAiPipeline(
-        reflectionExtractor: LocalReflectionExtractor(
-          logitsSource: LocalReflectionDataSource(
-            inference: const LocalReflectionHeuristicInference(),
+    test(
+      'structures local STT transcript before reflection extraction',
+      () async {
+        AudioStructuringService? structuringService;
+        final pipeline = LocalAiPipeline(
+          reflectionExtractor: LocalReflectionExtractor(
+            logitsSource: LocalReflectionDataSource(
+              inference: const LocalReflectionHeuristicInference(),
+            ),
           ),
-        ),
-        audioStructuringResolver: () async {
-          structuringService ??= await AudioStructuringService.createStub();
-          return structuringService;
-        },
-        localSttOverride: (_) async => const WhisperTranscriptionResult(
+          audioStructuringResolver: () async {
+            structuringService ??= await AudioStructuringService.createStub();
+            return structuringService;
+          },
+          localSttOverride: (_) async => const WhisperTranscriptionResult(
+            transcript:
+                'um so work has been heavy but I keep taking on more uh yeah',
+            confidence: 0.9,
+            usedOnnx: true,
+          ),
+        );
+
+        final dir = await Directory.systemTemp.createTemp(
+          'local_ai_structure_',
+        );
+        final wav = File('${dir.path}/voice.wav');
+        await wav.writeAsBytes(_minimalWav(pcmSamples: 8000));
+
+        final result = await pipeline.processAudio(
+          audioFile: wav,
+          durationSeconds: 12,
+          entryId: 'entry-structured',
+        );
+
+        expect(result.succeeded, isTrue);
+        expect(result.usedLocalStt, isTrue);
+        expect(result.usedLocalStructuring, isTrue);
+        expect(
+          result.transcript?.toLowerCase(),
+          contains('work has been heavy'),
+        );
+        expect(result.transcript?.toLowerCase(), isNot(contains(' um ')));
+        await dir.delete(recursive: true);
+      },
+    );
+
+    test(
+      'processTranscript skips structuring when transcript is pre-supplied via processTranscript',
+      () async {
+        var structuringCalls = 0;
+        final pipeline = LocalAiPipeline(
+          reflectionExtractor: LocalReflectionExtractor(
+            logitsSource: LocalReflectionDataSource(
+              inference: const LocalReflectionHeuristicInference(),
+            ),
+          ),
+          audioStructuringResolver: () async {
+            structuringCalls++;
+            return AudioStructuringService.createStub();
+          },
+        );
+
+        final result = await pipeline.processTranscript(
           transcript:
-              'um so work has been heavy but I keep taking on more uh yeah',
-          confidence: 0.9,
-          usedOnnx: true,
-        ),
-      );
+              'Work has been heavy but I keep taking on more. '
+              'Tomorrow I will leave on time and rest.',
+          durationSeconds: 12,
+          entryId: 'entry-local',
+        );
 
-      final dir = await Directory.systemTemp.createTemp('local_ai_structure_');
-      final wav = File('${dir.path}/voice.wav');
-      await wav.writeAsBytes(_minimalWav(pcmSamples: 8000));
+        expect(result.succeeded, isTrue);
+        expect(result.usedLocalStructuring, isFalse);
+        expect(structuringCalls, 0);
+      },
+    );
 
-      final result = await pipeline.processAudio(
-        audioFile: wav,
-        durationSeconds: 12,
-        entryId: 'entry-structured',
-      );
-
-      expect(result.succeeded, isTrue);
-      expect(result.usedLocalStt, isTrue);
-      expect(result.usedLocalStructuring, isTrue);
-      expect(result.transcript?.toLowerCase(), contains('work has been heavy'));
-      expect(result.transcript?.toLowerCase(), isNot(contains(' um ')));
-      await dir.delete(recursive: true);
-    });
-
-    test('processTranscript skips structuring when transcript is pre-supplied via processTranscript', () async {
-      var structuringCalls = 0;
-      final pipeline = LocalAiPipeline(
-        reflectionExtractor: LocalReflectionExtractor(
-          logitsSource: LocalReflectionDataSource(
-            inference: const LocalReflectionHeuristicInference(),
+    test(
+      'processTranscript succeeds with heuristic extractor offline',
+      () async {
+        final pipeline = LocalAiPipeline(
+          reflectionExtractor: LocalReflectionExtractor(
+            logitsSource: LocalReflectionDataSource(
+              inference: const LocalReflectionHeuristicInference(),
+            ),
           ),
-        ),
-        audioStructuringResolver: () async {
-          structuringCalls++;
-          return AudioStructuringService.createStub();
-        },
-      );
+        );
 
-      final result = await pipeline.processTranscript(
-        transcript:
-            'Work has been heavy but I keep taking on more. '
-            'Tomorrow I will leave on time and rest.',
-        durationSeconds: 12,
-        entryId: 'entry-local',
-      );
+        final result = await pipeline.processTranscript(
+          transcript:
+              'Work has been heavy but I keep taking on more. '
+              'Tomorrow I will leave on time and rest.',
+          durationSeconds: 12,
+          entryId: 'entry-local',
+        );
 
-      expect(result.succeeded, isTrue);
-      expect(result.usedLocalStructuring, isFalse);
-      expect(structuringCalls, 0);
-    });
+        expect(result.succeeded, isTrue);
+        expect(result.reflection, isNotNull);
+        expect(result.reflection!.tensionOrContradiction, isNotNull);
+        expect(result.reflection!.nextSmallAction, isNotNull);
+        expect(result.overallConfidence, greaterThan(0.5));
+        expect(result.fellBackToRemote, isFalse);
+      },
+    );
 
-    test('processTranscript succeeds with heuristic extractor offline', () async {
-      final pipeline = LocalAiPipeline(
-        reflectionExtractor: LocalReflectionExtractor(
-          logitsSource: LocalReflectionDataSource(
-            inference: const LocalReflectionHeuristicInference(),
+    test(
+      'never invokes remote fallback when on-device-only mode is enabled',
+      () async {
+        await OnDeviceProcessingStore.resetForTest();
+        await OnDeviceProcessingStore.setEnabled(true);
+
+        var analyzeCalls = 0;
+        final pipeline = LocalAiPipeline(
+          reflectionExtractor: LocalReflectionExtractor(
+            logitsSource: LocalReflectionDataSource(
+              inference: const LocalReflectionHeuristicInference(),
+            ),
           ),
-        ),
-      );
-
-      final result = await pipeline.processTranscript(
-        transcript:
-            'Work has been heavy but I keep taking on more. '
-            'Tomorrow I will leave on time and rest.',
-        durationSeconds: 12,
-        entryId: 'entry-local',
-      );
-
-      expect(result.succeeded, isTrue);
-      expect(result.reflection, isNotNull);
-      expect(result.reflection!.tensionOrContradiction, isNotNull);
-      expect(result.reflection!.nextSmallAction, isNotNull);
-      expect(result.overallConfidence, greaterThan(0.5));
-      expect(result.fellBackToRemote, isFalse);
-    });
-
-    test('never invokes remote fallback when on-device-only mode is enabled', () async {
-      await OnDeviceProcessingStore.resetForTest();
-      await OnDeviceProcessingStore.setEnabled(true);
-
-      var analyzeCalls = 0;
-      final pipeline = LocalAiPipeline(
-        reflectionExtractor: LocalReflectionExtractor(
-          logitsSource: LocalReflectionDataSource(
-            inference: const LocalReflectionHeuristicInference(),
+          remoteFallback: LocalAiRemoteFallback(
+            _CountingCaptureApi(onAnalyze: () => analyzeCalls++),
           ),
-        ),
-        remoteFallback: LocalAiRemoteFallback(
-          _CountingCaptureApi(onAnalyze: () => analyzeCalls++),
-        ),
-        confidenceThreshold: 0.99,
-      );
+          confidenceThreshold: 0.99,
+        );
 
-      final result = await pipeline.processTranscript(
-        transcript:
-            'Work has been heavy but I keep taking on more. '
-            'Tomorrow I will leave on time and rest.',
-        durationSeconds: 12,
-        entryId: 'entry-never-remote',
-        captureToken: 'capture-token',
-      );
+        final result = await pipeline.processTranscript(
+          transcript:
+              'Work has been heavy but I keep taking on more. '
+              'Tomorrow I will leave on time and rest.',
+          durationSeconds: 12,
+          entryId: 'entry-never-remote',
+          captureToken: 'capture-token',
+        );
 
-      expect(analyzeCalls, 0);
-      expect(result.fellBackToRemote, isFalse);
-      expect(result.succeeded, isTrue);
-    });
+        expect(analyzeCalls, 0);
+        expect(result.fellBackToRemote, isFalse);
+        expect(result.succeeded, isTrue);
+      },
+    );
 
-    test('returns failure when transcript is empty and no remote fallback', () async {
-      final pipeline = await LocalAiPipeline.create();
-      final dir = await Directory.systemTemp.createTemp('local_ai_empty_');
-      final empty = File('${dir.path}/empty.wav');
-      await empty.writeAsBytes(_minimalWav(pcmSamples: 0));
+    test(
+      'returns failure when transcript is empty and no remote fallback',
+      () async {
+        final pipeline = await LocalAiPipeline.create();
+        final dir = await Directory.systemTemp.createTemp('local_ai_empty_');
+        final empty = File('${dir.path}/empty.wav');
+        await empty.writeAsBytes(_minimalWav(pcmSamples: 0));
 
-      final result = await pipeline.processAudio(
-        audioFile: empty,
-        durationSeconds: 1,
-        entryId: 'entry-empty',
-      );
+        final result = await pipeline.processAudio(
+          audioFile: empty,
+          durationSeconds: 1,
+          entryId: 'entry-empty',
+        );
 
-      expect(result.succeeded, isFalse);
-      await dir.delete(recursive: true);
-    });
+        expect(result.succeeded, isFalse);
+        await dir.delete(recursive: true);
+      },
+    );
   });
 }
 

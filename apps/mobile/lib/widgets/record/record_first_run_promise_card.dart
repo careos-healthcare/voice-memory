@@ -10,7 +10,9 @@ import 'package:flutter/material.dart';
 /// One calm first-run card: promise copy and exactly two capture actions.
 class RecordFirstRunScreenCard extends StatelessWidget {
   const RecordFirstRunScreenCard({
-    required this.onRecord, required this.recordButtonLabel, super.key,
+    required this.onRecord,
+    required this.recordButtonLabel,
+    super.key,
     this.recordButtonKey = const Key('capture_entry_record_cta'),
     this.onTextThoughtSaved,
     this.minimalFirstRun = true,

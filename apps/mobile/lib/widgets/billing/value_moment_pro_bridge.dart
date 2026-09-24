@@ -13,7 +13,10 @@ import 'package:flutter/material.dart';
 /// keep everything they saved.
 class ValueMomentProBridge extends StatelessWidget {
   const ValueMomentProBridge({
-    required this.bridge, required this.onSeePro, required this.onDismiss, super.key,
+    required this.bridge,
+    required this.onSeePro,
+    required this.onDismiss,
+    super.key,
   });
 
   final ValueMomentBridge bridge;

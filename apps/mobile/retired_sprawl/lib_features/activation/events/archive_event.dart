@@ -6,7 +6,7 @@ class ArchiveEvent {
   final Map<String, String> payload;
 
   ArchiveEvent withPayload(Map<String, String> extra) => ArchiveEvent(
-        name,
-        payload: {...payload, ...extra},
-      );
+    name,
+    payload: {...payload, ...extra},
+  );
 }

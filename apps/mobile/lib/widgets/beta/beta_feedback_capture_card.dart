@@ -16,7 +16,8 @@ import 'package:flutter/material.dart';
 /// Compact beta-only feedback card — metadata answers, optional local text.
 class BetaFeedbackCaptureCard extends StatefulWidget {
   const BetaFeedbackCaptureCard({
-    required this.result, super.key,
+    required this.result,
+    super.key,
     this.onChanged,
     this.compact = false,
     this.proofFeedbackSurface,
@@ -24,7 +25,8 @@ class BetaFeedbackCaptureCard extends StatefulWidget {
   });
 
   const BetaFeedbackCaptureCard.test({
-    required this.result, super.key,
+    required this.result,
+    super.key,
     this.onChanged,
     this.compact = false,
     this.proofFeedbackSurface,

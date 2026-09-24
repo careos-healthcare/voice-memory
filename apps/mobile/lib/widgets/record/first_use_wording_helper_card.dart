@@ -94,7 +94,8 @@ class FirstUseWordingHelperCard extends StatelessWidget {
 /// Compact first-use wording helper inside typed capture for early users.
 class FirstUseWordingCapturePanel extends StatelessWidget {
   const FirstUseWordingCapturePanel({
-    required this.onUseOpening, super.key,
+    required this.onUseOpening,
+    super.key,
     this.compact = false,
   });
 

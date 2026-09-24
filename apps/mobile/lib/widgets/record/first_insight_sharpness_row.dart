@@ -6,7 +6,10 @@ import 'package:flutter/material.dart';
 /// First-use sharpness check after user acts on a post-save read.
 class FirstInsightSharpnessRow extends StatelessWidget {
   const FirstInsightSharpnessRow({
-    required this.onYesSpecific, required this.onTooGeneric, required this.onWrongAngle, super.key,
+    required this.onYesSpecific,
+    required this.onTooGeneric,
+    required this.onWrongAngle,
+    super.key,
   });
 
   final VoidCallback onYesSpecific;

@@ -1,4 +1,8 @@
+import 'package:archiveme_mobile/storage/sqlite/migration_manager.dart';
 import 'package:archiveme_mobile/storage/sqlite/migrations/migration_001_user_relationships.dart';
+import 'package:archiveme_mobile/storage/sqlite/migrations/migration_029_coach_action_items.dart';
+import 'package:archiveme_mobile/storage/sqlite/sqlite_migration.dart';
+import 'package:sqflite/sqflite.dart';
 import 'package:archiveme_mobile/storage/sqlite/migrations/migration_002_fact_ledger.dart';
 import 'package:archiveme_mobile/storage/sqlite/migrations/migration_011_reflection_graph_fts.dart';
 import 'package:archiveme_mobile/storage/sqlite/migrations/migration_013_entry_edges.dart';
@@ -21,7 +25,7 @@ void main() {
         SqliteMigrationManager.latestVersion,
       );
       expect(registry.migrations.length, SqliteMigrationManager.latestVersion);
-      expect(SqliteMigrationManager.latestVersion, 18);
+      expect(SqliteMigrationManager.latestVersion, 30);
     });
 
     test('rejects non-sequential migration versions', () {
@@ -53,17 +57,19 @@ void main() {
       await harness.expectVersion(db, 0);
     });
 
-    test('applies pending migrations in ascending order inside transactions',
-        () async {
-      final db = await harness.openEmpty();
-      addTearDown(db.close);
+    test(
+      'applies pending migrations in ascending order inside transactions',
+      () async {
+        final db = await harness.openEmpty();
+        addTearDown(db.close);
 
-      final version = await harness.manager.run(db);
-      expect(version, 2);
-      await harness.expectVersion(db, 2);
-      await harness.expectTableExists(db, 'user_relationships');
-      await harness.expectTableExists(db, 'fact_ledger');
-    });
+        final version = await harness.manager.run(db);
+        expect(version, 2);
+        await harness.expectVersion(db, 2);
+        await harness.expectTableExists(db, 'user_relationships');
+        await harness.expectTableExists(db, 'fact_ledger');
+      },
+    );
 
     test('runToVersion stops at the requested schema version', () async {
       final db = await harness.openAtVersion(1);
@@ -127,7 +133,81 @@ void main() {
         db,
         Migration014EmbeddingDeferredQueue.queueTable,
       );
+      await harness.expectTableExists(db, Migration029CoachActionItems.table);
+      await harness.expectTableExists(
+        db,
+        Migration029CoachActionItems.clipsTable,
+      );
+      final columns = await db.rawQuery(
+        'PRAGMA table_info(${Migration029CoachActionItems.table})',
+      );
+      final clipId = columns.singleWhere(
+        (row) => row['name'] == Migration029CoachActionItems.clipIdColumn,
+      );
+      expect(clipId['notnull'], 0);
       await harness.expectIdempotent(db);
     });
   });
+
+  group('MigrationManager additive scripts', () {
+    test(
+      'rejects drop, rename column, and a required column without default',
+      () {
+        expect(
+          () => MigrationManager.assertAdditive(
+            'ALTER TABLE notes DROP COLUMN body',
+          ),
+          throwsStateError,
+        );
+        expect(
+          () => MigrationManager.assertAdditive(
+            'ALTER TABLE notes RENAME COLUMN body TO text',
+          ),
+          throwsStateError,
+        );
+        expect(
+          () => MigrationManager.assertAdditive('DROP TABLE notes'),
+          throwsStateError,
+        );
+        expect(
+          () => MigrationManager.assertAdditive(
+            'ALTER TABLE notes ADD COLUMN title TEXT NOT NULL',
+          ),
+          throwsStateError,
+        );
+        MigrationManager.assertAdditive(
+          'ALTER TABLE notes ADD COLUMN title TEXT',
+        );
+        MigrationManager.assertAdditive(
+          'ALTER TABLE notes ADD COLUMN title TEXT NOT NULL DEFAULT ""',
+        );
+      },
+    );
+
+    test('the executor rejects a destructive script', () async {
+      final harness = SqliteMigrationTestHarness(
+        migrations: [_DestructiveMigration()],
+      );
+      final manager = MigrationManager(
+        migrations: [_DestructiveMigration()],
+        additiveFromVersion: 1,
+      );
+      final db = await harness.openEmpty();
+      addTearDown(db.close);
+      expect(manager.run(db), throwsStateError);
+    });
+  });
+}
+
+class _DestructiveMigration implements SqliteMigration {
+  @override
+  int get version => 1;
+
+  @override
+  String get id => 'destructive';
+
+  @override
+  Future<void> up(DatabaseExecutor db) {
+    return db.execute('DROP TABLE journal_entries');
+  }
 }

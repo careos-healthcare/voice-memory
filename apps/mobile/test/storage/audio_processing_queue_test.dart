@@ -32,19 +32,22 @@ void main() {
       }
     });
 
-    test('copies recorder output into documents pending_audio directory', () async {
-      final tempFile = File(p.join(docsDir.path, 'tmp_capture.m4a'))
-        ..writeAsBytesSync(const [1, 2, 3, 4]);
+    test(
+      'copies recorder output into documents pending_audio directory',
+      () async {
+        final tempFile = File(p.join(docsDir.path, 'tmp_capture.m4a'))
+          ..writeAsBytesSync(const [1, 2, 3, 4]);
 
-      final storedPath = await storage.saveRecordingFile(
-        sourceFile: tempFile,
-        recordingId: 'rec-123',
-      );
+        final storedPath = await storage.saveRecordingFile(
+          sourceFile: tempFile,
+          recordingId: 'rec-123',
+        );
 
-      expect(storedPath, contains('pending_audio'));
-      expect(File(storedPath).existsSync(), isTrue);
-      expect(File(storedPath).readAsBytesSync(), const [1, 2, 3, 4]);
-    });
+        expect(storedPath, contains('pending_audio'));
+        expect(File(storedPath).existsSync(), isTrue);
+        expect(File(storedPath).readAsBytesSync(), const [1, 2, 3, 4]);
+      },
+    );
   });
 
   group('AudioProcessingQueueService', () {
@@ -89,7 +92,9 @@ void main() {
       expect(item.status, AudioProcessingQueueStatus.pending);
       expect(File(item.filePath).existsSync(), isTrue);
 
-      final row = await AudioProcessingQueueRepository(sqlite).findById(item.id);
+      final row = await AudioProcessingQueueRepository(
+        sqlite,
+      ).findById(item.id);
       expect(row?.durationMs, 4200);
       expect(row?.status, AudioProcessingQueueStatus.pending);
     });
@@ -105,7 +110,9 @@ void main() {
       await service.completeProcessing(item.id);
 
       expect(File(item.filePath).existsSync(), isFalse);
-      final row = await AudioProcessingQueueRepository(sqlite).findById(item.id);
+      final row = await AudioProcessingQueueRepository(
+        sqlite,
+      ).findById(item.id);
       expect(row?.status, AudioProcessingQueueStatus.completed);
     });
   });

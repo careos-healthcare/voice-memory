@@ -10,14 +10,20 @@ import 'package:flutter/material.dart';
 /// Capacity-specific pause card — no journal text, optional compact layout.
 class BeforeYouSayYesCard extends StatelessWidget {
   const BeforeYouSayYesCard({
-    required this.result, required this.onPauseBeforeYes, required this.onAlreadySaidYes, super.key,
+    required this.result,
+    required this.onPauseBeforeYes,
+    required this.onAlreadySaidYes,
+    super.key,
     this.onQuickSave,
     this.compact = false,
     this.sampleMode = false,
   });
 
   const BeforeYouSayYesCard.test({
-    required this.result, required this.onPauseBeforeYes, required this.onAlreadySaidYes, super.key,
+    required this.result,
+    required this.onPauseBeforeYes,
+    required this.onAlreadySaidYes,
+    super.key,
     this.onQuickSave,
     this.compact = false,
     this.sampleMode = false,

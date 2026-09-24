@@ -10,7 +10,9 @@ import 'package:flutter/material.dart';
 /// Structured beta feedback sheet — lightweight TestFlight feedback.
 class BetaFeedbackSheet extends StatefulWidget {
   const BetaFeedbackSheet({
-    required this.source, required this.entryCount, super.key,
+    required this.source,
+    required this.entryCount,
+    super.key,
     this.controller = const BetaFeedbackController(),
   });
 
@@ -157,7 +159,9 @@ class _BetaFeedbackSheetState extends State<BetaFeedbackSheet> {
 /// Small inline link to open the beta feedback sheet.
 class BetaFeedbackLink extends StatelessWidget {
   const BetaFeedbackLink({
-    required this.source, required this.entryCount, super.key,
+    required this.source,
+    required this.entryCount,
+    super.key,
     this.controller,
     this.align = Alignment.centerLeft,
   });

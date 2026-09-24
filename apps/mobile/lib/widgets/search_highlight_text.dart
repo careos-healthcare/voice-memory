@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 /// Highlights [query] matches inside [text] (case-insensitive).
 class SearchHighlightText extends StatelessWidget {
   const SearchHighlightText({
-    required this.text, required this.query, super.key,
+    required this.text,
+    required this.query,
+    super.key,
     this.style,
     this.maxLines,
   });

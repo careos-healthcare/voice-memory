@@ -12,7 +12,8 @@ import 'package:go_router/go_router.dart';
 /// One precise next recording mission for prove_enough retention.
 class NextEvidenceMissionCard extends StatelessWidget {
   const NextEvidenceMissionCard({
-    required this.mission, super.key,
+    required this.mission,
+    super.key,
     this.onRecordTapped,
   });
 

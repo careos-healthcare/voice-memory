@@ -26,12 +26,23 @@ abstract final class IsolateSafeSqliteDatabaseInitializer {
     RootIsolateToken? rootIsolateToken,
   }) {
     if (initializeTestFfi) {
-      sqfliteFfiInit();
-      databaseFactory = databaseFactoryFfi;
+      final alreadyFfi = _ffiFactoryReady();
+      if (!alreadyFfi) {
+        sqfliteFfiInit();
+        databaseFactory = databaseFactoryFfi;
+      }
       return;
     }
     if (rootIsolateToken != null) {
       BackgroundIsolateBinaryMessenger.ensureInitialized(rootIsolateToken);
+    }
+  }
+
+  static bool _ffiFactoryReady() {
+    try {
+      return databaseFactory == databaseFactoryFfi;
+    } on StateError {
+      return false;
     }
   }
 

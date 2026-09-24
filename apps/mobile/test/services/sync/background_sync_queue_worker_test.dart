@@ -107,24 +107,30 @@ void main() {
   });
 
   group('BackgroundSyncQueueWorker', () {
-    test('needsBackgroundWork detects pending upload and provisional entries', () {
-      final pending = JournalEntry(
-        id: 'a',
-        createdAt: DateTime.utc(2026),
-        transcript: 'hello',
-        durationSeconds: 1,
-        reflection: _reflection(),
-        syncStatus: SyncStatus.pendingUpload,
-      );
-      final provisional = pending.copyWith(
-        transcriptStatus: TranscriptStatus.provisional,
-      );
-      final synced = pending.copyWith(syncStatus: SyncStatus.synced);
+    test(
+      'needsBackgroundWork detects pending upload and provisional entries',
+      () {
+        final pending = JournalEntry(
+          id: 'a',
+          createdAt: DateTime.utc(2026),
+          transcript: 'hello',
+          durationSeconds: 1,
+          reflection: _reflection(),
+          syncStatus: SyncStatus.pendingUpload,
+        );
+        final provisional = pending.copyWith(
+          transcriptStatus: TranscriptStatus.provisional,
+        );
+        final synced = pending.copyWith(syncStatus: SyncStatus.synced);
 
-      expect(BackgroundSyncQueueWorker.needsBackgroundWork(pending), isTrue);
-      expect(BackgroundSyncQueueWorker.needsBackgroundWork(provisional), isTrue);
-      expect(BackgroundSyncQueueWorker.needsBackgroundWork(synced), isFalse);
-    });
+        expect(BackgroundSyncQueueWorker.needsBackgroundWork(pending), isTrue);
+        expect(
+          BackgroundSyncQueueWorker.needsBackgroundWork(provisional),
+          isTrue,
+        );
+        expect(BackgroundSyncQueueWorker.needsBackgroundWork(synced), isFalse);
+      },
+    );
 
     test('DeferredProofAdmissionReconciler detects placeholder reflection', () {
       final needsProof = JournalEntry(
@@ -143,14 +149,19 @@ void main() {
         syncStatus: SyncStatus.pendingUpload,
       );
       expect(
-        DeferredProofAdmissionReconciler.needsDeferredProofAdmission(needsProof),
+        DeferredProofAdmissionReconciler.needsDeferredProofAdmission(
+          needsProof,
+        ),
         isTrue,
       );
     });
 
     test('enqueue and flush attempt cloud sync for pending uploads', () async {
       final dir = Directory.systemTemp.createTempSync('sync_queue_worker_');
-      final journal = await JournalStore.open('${dir.path}/journal.json', encryptAtRest: false);
+      final journal = await JournalStore.open(
+        '${dir.path}/journal.json',
+        encryptAtRest: false,
+      );
       final prefs = await MobilePrefsStore.open('${dir.path}/prefs.json');
       final innerSync = _NoCloudSyncService();
       final syncService = _RecordingSyncService(innerSync);
@@ -227,7 +238,9 @@ void main() {
     });
 
     test('retries vault upload when upload fails', () async {
-      final dir = Directory.systemTemp.createTempSync('sync_queue_vault_retry_');
+      final dir = Directory.systemTemp.createTempSync(
+        'sync_queue_vault_retry_',
+      );
       final journal = await JournalStore.open(
         '${dir.path}/journal.json',
         encryptAtRest: false,
@@ -256,7 +269,10 @@ void main() {
   group('BackgroundSyncQueueGateway', () {
     test('connectivity restore scans pending entries', () async {
       final dir = Directory.systemTemp.createTempSync('sync_queue_gateway_');
-      final journal = await JournalStore.open('${dir.path}/journal.json', encryptAtRest: false);
+      final journal = await JournalStore.open(
+        '${dir.path}/journal.json',
+        encryptAtRest: false,
+      );
       final prefs = await MobilePrefsStore.open('${dir.path}/prefs.json');
       final consentStore = RemoteProcessingConsentStore(prefs);
       await consentStore.grant();
@@ -302,7 +318,10 @@ void main() {
 
     test('consent restore triggers pending scan', () async {
       final dir = Directory.systemTemp.createTempSync('sync_queue_consent_');
-      final journal = await JournalStore.open('${dir.path}/journal.json', encryptAtRest: false);
+      final journal = await JournalStore.open(
+        '${dir.path}/journal.json',
+        encryptAtRest: false,
+      );
       final prefs = await MobilePrefsStore.open('${dir.path}/prefs.json');
       final consentStore = RemoteProcessingConsentStore(prefs);
       await consentStore.withdraw();

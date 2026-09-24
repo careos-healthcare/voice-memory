@@ -46,7 +46,11 @@ class FirstSessionOnboardingStore {
         'dismissedAt': DateTime.now().toUtc().toIso8601String(),
       });
     } catch (e, stackTrace) {
-      AppLogger.error('Unhandled error caught', error: e, stackTrace: stackTrace);
+      AppLogger.error(
+        'Unhandled error caught',
+        error: e,
+        stackTrace: stackTrace,
+      );
       // Persistence failures never block capture — card stays hidden this session.
     }
   }
@@ -61,8 +65,12 @@ class FirstSessionOnboardingStore {
           'dismissed': false,
         });
       } catch (e, stackTrace) {
-        AppLogger.error('Unhandled error caught', error: e, stackTrace: stackTrace);
-        }
+        AppLogger.error(
+          'Unhandled error caught',
+          error: e,
+          stackTrace: stackTrace,
+        );
+      }
     }
   }
 }

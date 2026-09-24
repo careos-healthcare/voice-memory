@@ -265,7 +265,9 @@ extension RecordingControlsWidget on _RecordScreenState {
             EntryDirectionStarters(
               selectedPrompt: _selectedPromptLine,
               onSelect: (prompt) {
-                unawaited(ActivationTracker.trackActivationStarterPromptSelected());
+                unawaited(
+                  ActivationTracker.trackActivationStarterPromptSelected(),
+                );
                 setState(() => _selectedPromptLine = prompt);
               },
             ),
@@ -349,15 +351,17 @@ extension RecordingControlsWidget on _RecordScreenState {
               onSeePro: () {
                 final intent = _purchaseIntentCue!;
                 setState(() => _purchaseIntentCue = null);
-                unawaited(context.push(
-                  '/subscription',
-                  extra: PaywallRouteArgs(
-                    source:
-                        PaywallSource.fromId(intent.source) ??
-                        PaywallSource.generalPro,
-                    sourceRoute: '/record',
+                unawaited(
+                  context.push(
+                    '/subscription',
+                    extra: PaywallRouteArgs(
+                      source:
+                          PaywallSource.fromId(intent.source) ??
+                          PaywallSource.generalPro,
+                      sourceRoute: '/record',
+                    ),
                   ),
-                ));
+                );
               },
               onDismiss: () => setState(() => _purchaseIntentCue = null),
             ),

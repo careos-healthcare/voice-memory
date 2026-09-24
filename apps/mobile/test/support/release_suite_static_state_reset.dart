@@ -18,7 +18,8 @@ import 'package:archiveme_mobile/features/pro_evidence_value/pro_evidence_value_
 import 'package:archiveme_mobile/features/pro_lock_moment/pro_lock_moment_analytics.dart';
 import 'package:archiveme_mobile/features/pro_lock_moment/pro_lock_moment_dismiss_store.dart';
 import 'package:archiveme_mobile/features/quiet_signal/quiet_signal_analytics.dart';
-import 'package:archiveme_mobile/features/recording/recording_dependencies.dart' show AppServices;
+import 'package:archiveme_mobile/features/recording/recording_dependencies.dart'
+    show AppServices;
 import 'package:archiveme_mobile/features/revenue_metrics/revenue_funnel_analytics.dart';
 import 'package:archiveme_mobile/features/voice_capture/microphone_permission_environment.dart';
 import 'package:archiveme_mobile/features/what_changed/what_changed_v2_store.dart';

@@ -102,13 +102,16 @@ abstract class RecordPipelineLog {
       event: 'capture_transcript_lengths',
       category: ReleaseLogCategory.capture,
       fields: {
-        'transcript_length_bucket':
-            ReleaseLogSanitizer.lengthBucket(transcriptLength),
+        'transcript_length_bucket': ReleaseLogSanitizer.lengthBucket(
+          transcriptLength,
+        ),
         'body_length_bucket': ReleaseLogSanitizer.lengthBucket(bodyLength),
-        'observation_length_bucket':
-            ReleaseLogSanitizer.lengthBucket(observationLength),
-        'exact_language_length_bucket':
-            ReleaseLogSanitizer.lengthBucket(exactLanguageLength),
+        'observation_length_bucket': ReleaseLogSanitizer.lengthBucket(
+          observationLength,
+        ),
+        'exact_language_length_bucket': ReleaseLogSanitizer.lengthBucket(
+          exactLanguageLength,
+        ),
       },
     );
   }
@@ -122,8 +125,9 @@ abstract class RecordPipelineLog {
       category: ReleaseLogCategory.capture,
       fields: {
         'success': true,
-        'display_text_length_bucket':
-            ReleaseLogSanitizer.lengthBucket(displayTextLength),
+        'display_text_length_bucket': ReleaseLogSanitizer.lengthBucket(
+          displayTextLength,
+        ),
       },
     );
     ReleaseLogger.debugDetail(
@@ -180,11 +184,13 @@ abstract class RecordPipelineLog {
       event: 'capture_persisted',
       category: ReleaseLogCategory.capture,
       fields: {
-        'transcript_length_bucket':
-            ReleaseLogSanitizer.lengthBucket(transcriptLength),
+        'transcript_length_bucket': ReleaseLogSanitizer.lengthBucket(
+          transcriptLength,
+        ),
         'body_length_bucket': ReleaseLogSanitizer.lengthBucket(bodyLength),
-        'display_text_source':
-            ReleaseLogSanitizer.sanitizeReasonCode(displayTextSource),
+        'display_text_source': ReleaseLogSanitizer.sanitizeReasonCode(
+          displayTextSource,
+        ),
       },
     );
   }
@@ -373,7 +379,10 @@ abstract class RecordPipelineLog {
     );
   }
 
-  static void localSaveCompleted({required bool success, required String kind}) {
+  static void localSaveCompleted({
+    required bool success,
+    required String kind,
+  }) {
     ReleaseLogger.emit(
       event: 'capture_local_save_completed',
       category: ReleaseLogCategory.capture,

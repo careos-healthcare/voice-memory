@@ -6,7 +6,8 @@ import 'package:flutter/material.dart';
 /// Shown while capture pipeline runs — user can leave the Record tab.
 class ProcessingBackgroundCard extends StatelessWidget {
   const ProcessingBackgroundCard({
-    required this.stageLabel, super.key,
+    required this.stageLabel,
+    super.key,
     this.progress,
   });
 

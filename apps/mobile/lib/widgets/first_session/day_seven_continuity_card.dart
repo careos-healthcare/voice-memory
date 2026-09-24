@@ -12,7 +12,8 @@ import 'package:flutter/material.dart';
 /// blocks recording.
 class DaySevenContinuityCard extends StatelessWidget {
   const DaySevenContinuityCard({
-    required this.loop, super.key,
+    required this.loop,
+    super.key,
     this.hasConnectedThread = false,
     this.entryCount = 0,
     this.onViewWeeklyReview,

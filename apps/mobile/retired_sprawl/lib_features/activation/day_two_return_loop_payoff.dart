@@ -5,7 +5,8 @@ import 'package:archiveme_mobile/models/journal_entry.dart';
 
 /// User-facing copy for the day-two / return loop payoff.
 abstract final class DayTwoReturnLoopPayoffCopy {
-  static const String oneEntryBody = VisibleArchiveProofCopy.returnLoopOneEntryBody;
+  static const String oneEntryBody =
+      VisibleArchiveProofCopy.returnLoopOneEntryBody;
 
   static const String twoEntryRelatedBody =
       VisibleArchiveProofCopy.returnLoopTwoEntryRelatedBody;
@@ -13,14 +14,16 @@ abstract final class DayTwoReturnLoopPayoffCopy {
   static const String twoEntryUnrelatedBody =
       VisibleArchiveProofCopy.returnLoopTwoEntryUnrelatedBody;
 
-  static const String twoEntryBody = VisibleArchiveProofCopy.returnLoopTwoEntryBody;
+  static const String twoEntryBody =
+      VisibleArchiveProofCopy.returnLoopTwoEntryBody;
 
   static const String threeEntryBody =
       VisibleArchiveProofCopy.returnLoopThreeEntryBody;
 
   static const String primaryCta = VisibleArchiveProofCopy.returnLoopPrimaryCta;
 
-  static const String secondaryCta = VisibleArchiveProofCopy.returnLoopViewArchiveCta;
+  static const String secondaryCta =
+      VisibleArchiveProofCopy.returnLoopViewArchiveCta;
 }
 
 /// Calm return action after save — no streaks, guilt, or premature patterns.

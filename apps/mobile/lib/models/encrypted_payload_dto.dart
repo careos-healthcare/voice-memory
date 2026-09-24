@@ -23,10 +23,10 @@ class EncryptedPayload {
   final int version;
 
   Map<String, dynamic> toJson() => {
-        'ciphertext': ciphertext,
-        'iv': iv,
-        'version': version,
-      };
+    'ciphertext': ciphertext,
+    'iv': iv,
+    'version': version,
+  };
 }
 
 class EncryptedPayloadDto {
@@ -49,16 +49,16 @@ class EncryptedPayloadDto {
   final int version;
 
   Map<String, dynamic> toJson() => {
-        'ciphertext': ciphertext,
-        'iv': iv,
-        'version': version,
-      };
+    'ciphertext': ciphertext,
+    'iv': iv,
+    'version': version,
+  };
 
   EncryptedPayload toDomain() => EncryptedPayload(
-        ciphertext: ciphertext,
-        iv: iv,
-        version: version,
-      );
+    ciphertext: ciphertext,
+    iv: iv,
+    version: version,
+  );
 
   factory EncryptedPayloadDto.fromDomain(EncryptedPayload payload) =>
       EncryptedPayloadDto(

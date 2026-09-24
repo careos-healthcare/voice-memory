@@ -59,16 +59,19 @@ void main() {
     }
   });
 
-  test('release evidence pack excludes purchase proof when billing disabled', () {
-    expect(
-      ReleaseEvidencePack.requiredEvidenceItems,
-      isNot(contains(ReleaseEvidenceItem.sandboxPurchase)),
-    );
-    expect(
-      ReleaseEvidencePack.requiredEvidenceItems,
-      contains(ReleaseEvidenceItem.voiceSavePath),
-    );
-  });
+  test(
+    'release evidence pack excludes purchase proof when billing disabled',
+    () {
+      expect(
+        ReleaseEvidencePack.requiredEvidenceItems,
+        isNot(contains(ReleaseEvidenceItem.sandboxPurchase)),
+      );
+      expect(
+        ReleaseEvidencePack.requiredEvidenceItems,
+        contains(ReleaseEvidenceItem.voiceSavePath),
+      );
+    },
+  );
 
   test('consumer production graph has no billing imports or CTAs', () {
     final root = Directory.current.path.endsWith('apps/mobile')
@@ -81,16 +84,19 @@ void main() {
     expect(failures, isEmpty, reason: failures.join('\n'));
   });
 
-  test('RevenueCat initialize is inert when billing capability disabled', () async {
-    final stamp = DateTime.now().microsecondsSinceEpoch.toString();
-    await AppServices.resetForTest(
-      journalPath: '/tmp/vm_billing_frozen_journal_$stamp.json',
-      prefsPath: '/tmp/vm_billing_frozen_prefs_$stamp.json',
-      skipRevenueCat: true,
-    );
-    await RevenueCatService.instance.initialize();
-    expect(RevenueCatService.instance.isConfigured, isFalse);
-  });
+  test(
+    'RevenueCat initialize is inert when billing capability disabled',
+    () async {
+      final stamp = DateTime.now().microsecondsSinceEpoch.toString();
+      await AppServices.resetForTest(
+        journalPath: '/tmp/vm_billing_frozen_journal_$stamp.json',
+        prefsPath: '/tmp/vm_billing_frozen_prefs_$stamp.json',
+        skipRevenueCat: true,
+      );
+      await RevenueCatService.instance.initialize();
+      expect(RevenueCatService.instance.isConfigured, isFalse);
+    },
+  );
 
   test('free beta policy copy replaces paid-limit messaging', () {
     expect(

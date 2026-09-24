@@ -18,10 +18,13 @@ extension ArchiveMeSqliteVectorExtension on Sqlite3 {
     ensureExtensionLoaded(
       SqliteExtension(
         Native.addressOf<
-            NativeFunction<
-                Int Function(Pointer<Void>, Pointer<Void>, Pointer<Void>)>>(
-          sqlite3_vector_init,
-        ).cast(),
+              NativeFunction<
+                Int Function(Pointer<Void>, Pointer<Void>, Pointer<Void>)
+              >
+            >(
+              sqlite3_vector_init,
+            )
+            .cast(),
       ),
     );
   }

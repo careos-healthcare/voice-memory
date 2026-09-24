@@ -16,7 +16,11 @@ enum PaywallSurface { blindSpot, discover, archiveContinuity }
 
 class ValueMomentPaywallCard extends StatefulWidget {
   const ValueMomentPaywallCard({
-    required this.surface, required this.reflectionCount, required this.entitlements, required this.shouldShow, super.key,
+    required this.surface,
+    required this.reflectionCount,
+    required this.entitlements,
+    required this.shouldShow,
+    super.key,
     this.onDismissed,
   });
 
@@ -49,9 +53,11 @@ class _ValueMomentPaywallCardState extends State<ValueMomentPaywallCard> {
     if (_seenTracked) return;
     if (!widget.shouldShow || widget.entitlements?.isPro == true) return;
     _seenTracked = true;
-    unawaited(First25UserMetrics.trackPaywallSeen(
-      surface: 'value_moment_${widget.surface.name}',
-    ));
+    unawaited(
+      First25UserMetrics.trackPaywallSeen(
+        surface: 'value_moment_${widget.surface.name}',
+      ),
+    );
   }
 
   Future<void> _markSeen() async {

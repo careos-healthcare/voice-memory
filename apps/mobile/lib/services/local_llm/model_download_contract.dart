@@ -28,4 +28,5 @@ abstract final class ModelDownloadContract {
 }
 
 /// Snapshot emitted on [ModelDownloadService.progressStream].
-typedef ModelDownloadProgressCallback = void Function(ModelDownloadProgress progress);
+typedef ModelDownloadProgressCallback =
+    void Function(ModelDownloadProgress progress);

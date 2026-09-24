@@ -40,7 +40,8 @@ import 'package:flutter/material.dart';
 /// Bottom sheet explaining one confirmed pattern and its evidence.
 class PatternDetailSheet extends StatefulWidget {
   const PatternDetailSheet({
-    required this.detail, super.key,
+    required this.detail,
+    super.key,
     this.buildInput,
     this.entryCount = 0,
     this.isPro = true,

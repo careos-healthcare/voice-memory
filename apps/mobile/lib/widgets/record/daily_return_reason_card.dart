@@ -9,7 +9,9 @@ import 'package:flutter/material.dart';
 /// One grounded reason to record today based on archive gaps.
 class DailyReturnReasonCard extends StatelessWidget {
   const DailyReturnReasonCard({
-    required this.reason, required this.showRecordCta, super.key,
+    required this.reason,
+    required this.showRecordCta,
+    super.key,
     this.onRecord,
   });
 

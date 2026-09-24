@@ -19,7 +19,8 @@ import 'dart:async';
 /// Compact archive clarity card for Archive Home — counts only, no journal text.
 class ArchiveClarityProgressCard extends StatefulWidget {
   const ArchiveClarityProgressCard({
-    required this.entries, super.key,
+    required this.entries,
+    super.key,
     this.onPrimaryAction,
     this.watchlistStore,
     this.engine = const ArchiveClarityEngine(),
@@ -29,7 +30,9 @@ class ArchiveClarityProgressCard extends StatefulWidget {
   });
 
   const ArchiveClarityProgressCard.test({
-    required this.entries, required ArchiveClarityResult this._initialResult, super.key,
+    required this.entries,
+    required ArchiveClarityResult this._initialResult,
+    super.key,
     this.onPrimaryAction,
     this.watchlistStore,
     this.engine = const ArchiveClarityEngine(),

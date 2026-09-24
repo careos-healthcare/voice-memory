@@ -13,7 +13,9 @@ import 'package:flutter/material.dart';
 /// Optional share card after useful aha feedback — compile-time text only.
 class AhaProofShareCard extends StatelessWidget {
   const AhaProofShareCard({
-    required this.entryCount, required this.onDismiss, super.key,
+    required this.entryCount,
+    required this.onDismiss,
+    super.key,
     this.source = 'record',
     this.onShare,
     this.onCopy,

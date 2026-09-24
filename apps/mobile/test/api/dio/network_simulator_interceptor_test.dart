@@ -52,34 +52,48 @@ void main() {
       await dio.get<dynamic>('/health');
       stopwatch.stop();
 
-      expect(stopwatch.elapsed, greaterThanOrEqualTo(const Duration(milliseconds: 100)));
+      expect(
+        stopwatch.elapsed,
+        greaterThanOrEqualTo(const Duration(milliseconds: 100)),
+      );
     });
 
-    test('failNextRequests simulates intermittent connection failures', () async {
-      simulator.failNextRequests(2);
+    test(
+      'failNextRequests simulates intermittent connection failures',
+      () async {
+        simulator.failNextRequests(2);
 
-      for (var attempt = 0; attempt < 2; attempt++) {
-        await expectLater(
-          dio.get<dynamic>('/health'),
-          throwsA(isA<DioException>()),
-        );
-      }
+        for (var attempt = 0; attempt < 2; attempt++) {
+          await expectLater(
+            dio.get<dynamic>('/health'),
+            throwsA(isA<DioException>()),
+          );
+        }
 
-      final response = await dio.get<dynamic>('/health');
-      expect(response.statusCode, 200);
-      expect(simulator.requestCount, 3);
-      expect(simulator.rejectedRequestCount, 2);
-    });
+        final response = await dio.get<dynamic>('/health');
+        expect(response.statusCode, 200);
+        expect(simulator.requestCount, 3);
+        expect(simulator.rejectedRequestCount, 2);
+      },
+    );
 
     test('failNextRequests can inject retryable HTTP status codes', () async {
-      simulator.failNextRequests(1, statusCode: 503, message: 'upstream unavailable');
+      simulator.failNextRequests(
+        1,
+        statusCode: 503,
+        message: 'upstream unavailable',
+      );
 
       await expectLater(
         dio.get<dynamic>('/health'),
         throwsA(
           isA<DioException>()
               .having((error) => error.response?.statusCode, 'statusCode', 503)
-              .having((error) => error.type, 'type', DioExceptionType.badResponse),
+              .having(
+                (error) => error.type,
+                'type',
+                DioExceptionType.badResponse,
+              ),
         ),
       );
 

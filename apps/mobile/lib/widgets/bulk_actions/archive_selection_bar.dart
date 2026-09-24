@@ -9,7 +9,10 @@ import 'package:flutter/material.dart';
 /// bulk actions entry point.
 class ArchiveSelectionBar extends StatelessWidget {
   const ArchiveSelectionBar({
-    required this.controller, required this.allIds, required this.onActions, super.key,
+    required this.controller,
+    required this.allIds,
+    required this.onActions,
+    super.key,
   });
 
   final ArchiveSelectionController controller;

@@ -15,7 +15,8 @@ final class AutomatedGraphService {
   }) : _sqliteFilePath = sqliteFilePath,
        _sqliteKeyAlias = sqliteKeyAlias,
        _sqliteEncryptionPassword = sqliteEncryptionPassword,
-       _embeddingWorker = embeddingWorker ?? EmbeddingIndexWorkerService.instance;
+       _embeddingWorker =
+           embeddingWorker ?? EmbeddingIndexWorkerService.instance;
 
   final String _sqliteFilePath;
   final String? _sqliteKeyAlias;

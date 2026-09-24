@@ -5,7 +5,8 @@ import 'package:flutter/material.dart';
 /// Top-right confidence band badge for evidence-first insight cards.
 class PatternMatchConfidenceBadge extends StatelessWidget {
   const PatternMatchConfidenceBadge({
-    required this.band, super.key,
+    required this.band,
+    super.key,
     this.compact = false,
   });
 

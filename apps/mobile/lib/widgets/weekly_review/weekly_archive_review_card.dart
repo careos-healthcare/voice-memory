@@ -9,7 +9,9 @@ import 'package:flutter/material.dart';
 /// Compact weekly review entry point on Record / Patterns.
 class WeeklyArchiveReviewCard extends StatelessWidget {
   const WeeklyArchiveReviewCard({
-    required this.review, required this.onViewReview, super.key,
+    required this.review,
+    required this.onViewReview,
+    super.key,
   });
 
   final WeeklyArchiveReviewResult review;

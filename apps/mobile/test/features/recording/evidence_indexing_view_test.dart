@@ -27,6 +27,9 @@ void main() {
     );
 
     expect(find.byKey(const Key('evidence_indexing_view')), findsOneWidget);
-    expect(find.textContaining('Work stress spikes on Sundays'), findsOneWidget);
+    expect(
+      find.textContaining('Work stress spikes on Sundays'),
+      findsOneWidget,
+    );
   });
 }

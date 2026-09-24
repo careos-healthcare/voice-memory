@@ -83,8 +83,7 @@ class QuickCaptureOutboxPayload {
 
   static DateTime _parseDate(Object? raw) {
     if (raw is String && raw.isNotEmpty) {
-      return DateTime.tryParse(raw)?.toUtc() ??
-          DateTime.now().toUtc();
+      return DateTime.tryParse(raw)?.toUtc() ?? DateTime.now().toUtc();
     }
     if (raw is int) {
       return DateTime.fromMillisecondsSinceEpoch(raw, isUtc: true);

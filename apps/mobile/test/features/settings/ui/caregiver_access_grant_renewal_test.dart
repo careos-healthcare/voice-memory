@@ -28,7 +28,8 @@ import 'package:intl/intl.dart';
 
 import '../../../helpers/app_provider_scope.dart';
 
-const _widgetSource = 'lib/features/settings/ui/caregiver_access_grant_list.dart';
+const _widgetSource =
+    'lib/features/settings/ui/caregiver_access_grant_list.dart';
 const _outcomeSource = 'lib/features/auth/domain/consent_renewal_outcome.dart';
 
 /// Overrides every method the widget calls, so the base class never reaches
@@ -170,7 +171,9 @@ void main() {
   }
 
   Future<void> openRenewDialog(WidgetTester tester) async {
-    await tester.tap(find.byKey(const Key('caregiver_access_renew_grant-care-1')));
+    await tester.tap(
+      find.byKey(const Key('caregiver_access_renew_grant-care-1')),
+    );
     await tester.pumpAndSettle();
   }
 
@@ -267,7 +270,9 @@ void main() {
             'opposite of revoke, which takes effect here first',
       );
       expect(
-        find.text(CaregiverRenewalCopy.successSnack(_day(DateTime.utc(2026, 6, 15)))),
+        find.text(
+          CaregiverRenewalCopy.successSnack(_day(DateTime.utc(2026, 6, 15))),
+        ),
         findsNothing,
       );
 
@@ -309,7 +314,10 @@ void main() {
         find.text(CaregiverRenewalCopy.successSnack(_day(newExpiry))),
         findsOneWidget,
       );
-      expect(_rowExpiry(tester), contains(DateFormat.yMMMd().format(newExpiry.toLocal())));
+      expect(
+        _rowExpiry(tester),
+        contains(DateFormat.yMMMd().format(newExpiry.toLocal())),
+      );
     });
 
     testWidgets('an unsettled result sends the owner back to the list', (
@@ -333,13 +341,19 @@ void main() {
 
       expect(find.text(CaregiverRenewalCopy.unsettledSnack), findsOneWidget);
       expect(
-        find.text(CaregiverRenewalCopy.successSnack(_day(DateTime.utc(2026, 6, 15)))),
+        find.text(
+          CaregiverRenewalCopy.successSnack(_day(DateTime.utc(2026, 6, 15))),
+        ),
         findsNothing,
         reason:
             'an end date is available here, so only the branch order stops '
             'this being reported as a finished renewal',
       );
-      expect(service.loads, 2, reason: 'the list is the thing to check, so re-read it');
+      expect(
+        service.loads,
+        2,
+        reason: 'the list is the thing to check, so re-read it',
+      );
     });
 
     testWidgets('a renewal with no end date to name is not announced as one', (
@@ -377,9 +391,14 @@ void main() {
         expect(
           find.byKey(CaregiverDisclosureScreen.screenKey),
           findsOneWidget,
-          reason: 'both settled answers lead to granting again, not to asking again',
+          reason:
+              'both settled answers lead to granting again, not to asking again',
         );
-        expect(service.renewals, hasLength(1), reason: 'and never to a second attempt');
+        expect(
+          service.renewals,
+          hasLength(1),
+          reason: 'and never to a second attempt',
+        );
       });
     }
 
@@ -390,11 +409,15 @@ void main() {
         await openRenewDialog(tester);
         await tapConfirm(tester);
 
-        expect(find.text(CaregiverRenewalCopy.unavailableSnack), findsOneWidget);
+        expect(
+          find.text(CaregiverRenewalCopy.unavailableSnack),
+          findsOneWidget,
+        );
         expect(
           find.byKey(CaregiverDisclosureScreen.screenKey),
           findsNothing,
-          reason: 'a window that may still be live is not a reason to grant again',
+          reason:
+              'a window that may still be live is not a reason to grant again',
         );
       });
     }
@@ -512,42 +535,45 @@ void main() {
       );
     });
 
-    testWidgets('a window that closed while the screen sat open is not offered', (
-      tester,
-    ) async {
-      await pumpList(tester);
-      expect(
-        find.byKey(const Key('caregiver_access_renew_grant-care-1')),
-        findsOneWidget,
-      );
+    testWidgets(
+      'a window that closed while the screen sat open is not offered',
+      (
+        tester,
+      ) async {
+        await pumpList(tester);
+        expect(
+          find.byKey(const Key('caregiver_access_renew_grant-care-1')),
+          findsOneWidget,
+        );
 
-      clock = DateTime.utc(2026, 6, 9);
-      await tester.pumpWidget(
-        withAppProviderScope(
-          MaterialApp(
-            theme: AppTheme.light(),
-            home: Scaffold(
-              body: SingleChildScrollView(
-                child: CaregiverAccessGrantList(
-                  accessService: _FakeAccessService(
-                    grants: [_caregiverGrant()],
-                    outcome: _confirmed(),
+        clock = DateTime.utc(2026, 6, 9);
+        await tester.pumpWidget(
+          withAppProviderScope(
+            MaterialApp(
+              theme: AppTheme.light(),
+              home: Scaffold(
+                body: SingleChildScrollView(
+                  child: CaregiverAccessGrantList(
+                    accessService: _FakeAccessService(
+                      grants: [_caregiverGrant()],
+                      outcome: _confirmed(),
+                    ),
+                    nowOverride: () => clock,
                   ),
-                  nowOverride: () => clock,
                 ),
               ),
             ),
           ),
-        ),
-      );
-      await tester.pumpAndSettle();
+        );
+        await tester.pumpAndSettle();
 
-      expect(
-        find.byKey(const Key('caregiver_access_renew_grant-care-1')),
-        findsNothing,
-        reason: 'a lapsed window is granted again, not continued',
-      );
-    });
+        expect(
+          find.byKey(const Key('caregiver_access_renew_grant-care-1')),
+          findsNothing,
+          reason: 'a lapsed window is granted again, not continued',
+        );
+      },
+    );
 
     testWidgets('a grant with no expiry has no window to continue', (
       tester,
@@ -579,7 +605,9 @@ void main() {
       await openRenewDialog(tester);
 
       expect(
-        find.text(CaregiverRenewalCopy.confirmTitle(partyLabel: 'Ada', days: 7)),
+        find.text(
+          CaregiverRenewalCopy.confirmTitle(partyLabel: 'Ada', days: 7),
+        ),
         findsOneWidget,
       );
       expect(
@@ -610,7 +638,9 @@ void main() {
       await openRenewDialog(tester);
 
       expect(
-        find.text(CaregiverRenewalCopy.confirmTitle(partyLabel: 'Ada', days: 14)),
+        find.text(
+          CaregiverRenewalCopy.confirmTitle(partyLabel: 'Ada', days: 14),
+        ),
         findsOneWidget,
       );
       expect(find.text(CaregiverRenewalCopy.confirmCta(14)), findsOneWidget);
@@ -646,18 +676,21 @@ void main() {
       }
     });
 
-    test('ending access keeps the device scope the rest of the surface uses', () {
-      // The server's `verify` route consults no revocation list, so a token
-      // already issued keeps verifying until its own expiry. "You can end it
-      // sooner", unscoped, would be a promise this app cannot keep.
-      final body = CaregiverRenewalCopy.confirmBody(
-        endsOn: '4 March',
-        days: 7,
-      ).toLowerCase();
-      expect(body, contains('on this device'));
-      expect(body, isNot(contains('ends their access')));
-      expect(body, isNot(contains('immediately')));
-    });
+    test(
+      'ending access keeps the device scope the rest of the surface uses',
+      () {
+        // The server's `verify` route consults no revocation list, so a token
+        // already issued keeps verifying until its own expiry. "You can end it
+        // sooner", unscoped, would be a promise this app cannot keep.
+        final body = CaregiverRenewalCopy.confirmBody(
+          endsOn: '4 March',
+          days: 7,
+        ).toLowerCase();
+        expect(body, contains('on this device'));
+        expect(body, isNot(contains('ends their access')));
+        expect(body, isNot(contains('immediately')));
+      },
+    );
 
     test('the settled refusal fits both answers it has to cover', () {
       // `shouldOfferFreshGrant` is true for `grant_expired` and

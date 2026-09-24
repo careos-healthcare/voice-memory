@@ -1,5 +1,6 @@
 import 'package:archiveme_mobile/features/pressure_retention/pressure_check_in_record.dart';
-import 'package:archiveme_mobile/features/recording/recording_dependencies.dart' show ScreenshotMode, TrialMode;
+import 'package:archiveme_mobile/features/recording/recording_dependencies.dart'
+    show ScreenshotMode, TrialMode;
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/models/reflection.dart';
 import 'package:flutter/foundation.dart';

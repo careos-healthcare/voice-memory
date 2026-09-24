@@ -197,7 +197,10 @@ void main() {
         find.text(RecordReturnProCopy.evidenceSecondLine),
         findsOneWidget,
       );
-      expect(find.textContaining('Come back when this shows up again'), findsOneWidget);
+      expect(
+        find.textContaining('Come back when this shows up again'),
+        findsOneWidget,
+      );
       expect(find.textContaining('VoiceMemory'), findsNothing);
       _expectNoBannedCopy([
         RecordReturnProCopy.evidenceTitle,

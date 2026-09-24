@@ -35,7 +35,7 @@ abstract final class V1ProductionAllowlist {
     ),
     V1StartupPhase(
       id: 'v1_navigation',
-      description: 'Record / Archive / Account tabs',
+      description: 'Archive / Insights / Account tabs',
     ),
     V1StartupPhase(
       id: 'optional_async_services',
@@ -49,6 +49,8 @@ abstract final class V1ProductionAllowlist {
     'CaptureScreenHost',
     'CaptureScreen',
     'ArchiveBeliefScreen',
+    'InsightsScreen',
+    'ArchiveChatScreen',
     'BeliefChangesScreen',
     'AccountScreen',
     'SecuritySettingsScreen',
@@ -71,6 +73,7 @@ abstract final class V1ProductionAllowlist {
     'TermsScreen',
     'MainShell',
     'OfflineSyncVerificationScreen',
+    'SyncDashboardScreen',
   };
 
   /// Deferred screens that must never appear as production route builders.

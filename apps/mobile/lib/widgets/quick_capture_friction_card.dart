@@ -11,14 +11,16 @@ import 'package:flutter/material.dart';
 /// Inline friction check after quick yes capture — fixed options only.
 class QuickCaptureFrictionCard extends StatefulWidget {
   const QuickCaptureFrictionCard({
-    required this.result, super.key,
+    required this.result,
+    super.key,
     this.onSaved,
     this.store,
     this.sampleMode = false,
   });
 
   const QuickCaptureFrictionCard.test({
-    required this.result, super.key,
+    required this.result,
+    super.key,
     this.onSaved,
     this.store,
     this.sampleMode = false,

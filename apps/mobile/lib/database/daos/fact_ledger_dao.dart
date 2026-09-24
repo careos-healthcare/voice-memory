@@ -35,40 +35,43 @@ class FactLedgerDao extends DatabaseAccessor<AppDatabase>
   }
 
   Future<List<ArchiveFact>> forEntry(String sourceEntryId) async {
-    final rows = await (select(factLedgerEntries)
-          ..where((t) => t.sourceEntryId.equals(sourceEntryId))
-          ..orderBy([(t) => OrderingTerm.desc(t.updatedAt)]))
-        .get();
+    final rows =
+        await (select(factLedgerEntries)
+              ..where((t) => t.sourceEntryId.equals(sourceEntryId))
+              ..orderBy([(t) => OrderingTerm.desc(t.updatedAt)]))
+            .get();
     return rows.map(_factFromRow).toList(growable: false);
   }
 
   Future<List<ArchiveFact>> loadEvidenceCitations() async {
-    final rows = await (select(factLedgerEntries)
-          ..where((t) => t.factType.equals(FactType.evidenceCitation.id))
-          ..orderBy([(t) => OrderingTerm.desc(t.updatedAt)]))
-        .get();
+    final rows =
+        await (select(factLedgerEntries)
+              ..where((t) => t.factType.equals(FactType.evidenceCitation.id))
+              ..orderBy([(t) => OrderingTerm.desc(t.updatedAt)]))
+            .get();
     return rows.map(_factFromRow).toList(growable: false);
   }
 
   Future<List<ArchiveFact>> citationsForEntry(String sourceEntryId) async {
-    final rows = await (select(factLedgerEntries)
-          ..where(
-            (t) =>
-                t.sourceEntryId.equals(sourceEntryId) &
-                t.factType.equals(FactType.evidenceCitation.id),
-          )
-          ..orderBy([(t) => OrderingTerm.desc(t.updatedAt)]))
-        .get();
+    final rows =
+        await (select(factLedgerEntries)
+              ..where(
+                (t) =>
+                    t.sourceEntryId.equals(sourceEntryId) &
+                    t.factType.equals(FactType.evidenceCitation.id),
+              )
+              ..orderBy([(t) => OrderingTerm.desc(t.updatedAt)]))
+            .get();
     return rows.map(_factFromRow).toList(growable: false);
   }
 
   Future<List<ArchiveFact>> loadAll() async {
-    final rows = await (select(factLedgerEntries)
-          ..orderBy([
-            (t) => OrderingTerm.desc(t.isPinned),
-            (t) => OrderingTerm.desc(t.updatedAt),
-          ]))
-        .get();
+    final rows =
+        await (select(factLedgerEntries)..orderBy([
+              (t) => OrderingTerm.desc(t.isPinned),
+              (t) => OrderingTerm.desc(t.updatedAt),
+            ]))
+            .get();
     return rows.map(_factFromRow).toList(growable: false);
   }
 
@@ -108,8 +111,14 @@ class FactLedgerDao extends DatabaseAccessor<AppDatabase>
       label: row.label,
       value: row.value,
       note: row.note,
-      createdAt: DateTime.fromMillisecondsSinceEpoch(row.createdAt, isUtc: true),
-      updatedAt: DateTime.fromMillisecondsSinceEpoch(row.updatedAt, isUtc: true),
+      createdAt: DateTime.fromMillisecondsSinceEpoch(
+        row.createdAt,
+        isUtc: true,
+      ),
+      updatedAt: DateTime.fromMillisecondsSinceEpoch(
+        row.updatedAt,
+        isUtc: true,
+      ),
       factType: row.factType,
       archivePackId: row.archivePackId,
       archiveThreadId: row.archiveThreadId,

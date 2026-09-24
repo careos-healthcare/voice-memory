@@ -9,7 +9,9 @@ import 'package:flutter/material.dart';
 /// Compact beta mission card on Record ready.
 class BetaTestScriptCard extends StatelessWidget {
   const BetaTestScriptCard({
-    required this.card, required this.onViewSteps, super.key,
+    required this.card,
+    required this.onViewSteps,
+    super.key,
     this.onSendFeedback,
   });
 

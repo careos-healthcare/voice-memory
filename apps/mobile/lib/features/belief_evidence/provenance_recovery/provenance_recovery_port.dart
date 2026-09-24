@@ -78,7 +78,9 @@ class ProvenanceRecoveryOutcome {
     required this.recoveredCount,
   });
 
-  const ProvenanceRecoveryOutcome.none() : requestedCount = 0, recoveredCount = 0;
+  const ProvenanceRecoveryOutcome.none()
+    : requestedCount = 0,
+      recoveredCount = 0;
 
   final int requestedCount;
   final int recoveredCount;

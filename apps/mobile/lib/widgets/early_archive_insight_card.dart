@@ -9,7 +9,8 @@ import 'dart:async';
 /// Surfaces a single early archive win — tentative copy, no AI claims.
 class EarlyArchiveInsightCard extends StatefulWidget {
   const EarlyArchiveInsightCard({
-    required this.insight, super.key,
+    required this.insight,
+    super.key,
     this.surface = 'archive_home',
     this.compact = false,
   });
@@ -38,21 +39,25 @@ class _EarlyArchiveInsightCardState extends State<EarlyArchiveInsightCard> {
     super.didChangeDependencies();
     if (_loggedShown) return;
     _loggedShown = true;
-    unawaited(EarlyArchiveInsightAnalytics.shown(
-      surface: widget.surface,
-      kind: _kindParam,
-      topicLabel: widget.insight.topicLabel,
-    ));
+    unawaited(
+      EarlyArchiveInsightAnalytics.shown(
+        surface: widget.surface,
+        kind: _kindParam,
+        topicLabel: widget.insight.topicLabel,
+      ),
+    );
   }
 
   void _onTap() {
     if (!_loggedOpened) {
       _loggedOpened = true;
-      unawaited(EarlyArchiveInsightAnalytics.opened(
-        surface: widget.surface,
-        kind: _kindParam,
-        topicLabel: widget.insight.topicLabel,
-      ));
+      unawaited(
+        EarlyArchiveInsightAnalytics.opened(
+          surface: widget.surface,
+          kind: _kindParam,
+          topicLabel: widget.insight.topicLabel,
+        ),
+      );
     }
     setState(() => _expanded = !_expanded);
   }
@@ -142,7 +147,8 @@ class _EarlyArchiveInsightCardState extends State<EarlyArchiveInsightCard> {
 /// Loads [buildEarlyArchiveWins] and renders [EarlyArchiveInsightCard] when eligible.
 class EarlyArchiveInsightSection extends StatelessWidget {
   const EarlyArchiveInsightSection({
-    required this.entries, super.key,
+    required this.entries,
+    super.key,
     this.surface = 'archive_home',
     this.compact = false,
   });

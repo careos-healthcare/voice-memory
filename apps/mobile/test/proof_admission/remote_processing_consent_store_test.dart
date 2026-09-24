@@ -53,7 +53,10 @@ void main() {
 
     expect(granted.consented, isTrue);
     expect(granted.consentedAt, now);
-    expect(granted.policyVersion, RemoteProcessingConsentStore.currentPolicyVersion);
+    expect(
+      granted.policyVersion,
+      RemoteProcessingConsentStore.currentPolicyVersion,
+    );
     expect(
       granted.grantedPurposes,
       RemoteProcessingPurposeStorage.onboardingGrant,
@@ -145,7 +148,9 @@ void main() {
 
     final state = await store.current();
 
-    expect(state.grantedPurposes, {RemoteProcessingPurpose.remoteTranscription});
+    expect(state.grantedPurposes, {
+      RemoteProcessingPurpose.remoteTranscription,
+    });
     expect(
       await store.isPurposeGrantedNow(
         RemoteProcessingPurpose.remoteReflection,
@@ -154,58 +159,69 @@ void main() {
     );
   });
 
-  test('ambiguous legacy consented=true with empty categories fails closed',
-      () async {
-    final prefs = await _openPrefs();
-    await _writeRawConsent(prefs, {
-      'consented': true,
-      'permittedCategories': [],
-      'policyVersion': 1,
-    });
-    final store = RemoteProcessingConsentStore(prefs);
+  test(
+    'ambiguous legacy consented=true with empty categories fails closed',
+    () async {
+      final prefs = await _openPrefs();
+      await _writeRawConsent(prefs, {
+        'consented': true,
+        'permittedCategories': [],
+        'policyVersion': 1,
+      });
+      final store = RemoteProcessingConsentStore(prefs);
 
-    final state = await store.current();
+      final state = await store.current();
 
-    expect(state.grantedPurposes, isEmpty);
-    expect(
-      await store.isPurposeGrantedNow(
-        RemoteProcessingPurpose.remoteTranscription,
-      ),
-      isFalse,
-    );
-  });
+      expect(state.grantedPurposes, isEmpty);
+      expect(
+        await store.isPurposeGrantedNow(
+          RemoteProcessingPurpose.remoteTranscription,
+        ),
+        isFalse,
+      );
+    },
+  );
 
-  test('policy version is preserved on withdraw and restored on re-grant',
-      () async {
-    final prefs = await _openPrefs();
-    final store = RemoteProcessingConsentStore(prefs);
-    await store.grant(policyVersion: 2);
-    await store.withdraw();
-    final reGranted = await store.grant();
+  test(
+    'policy version is preserved on withdraw and restored on re-grant',
+    () async {
+      final prefs = await _openPrefs();
+      final store = RemoteProcessingConsentStore(prefs);
+      await store.grant(policyVersion: 2);
+      await store.withdraw();
+      final reGranted = await store.grant();
 
-    expect(reGranted.policyVersion, RemoteProcessingConsentStore.currentPolicyVersion);
-  });
+      expect(
+        reGranted.policyVersion,
+        RemoteProcessingConsentStore.currentPolicyVersion,
+      );
+    },
+  );
 
-  test('restart persistence: a fresh store instance reads back typed purposes',
-      () async {
-    final path =
-        '${Directory.systemTemp.path}/vm_consent_prefs_restart_${_uniqueSuffix()}.json';
-    final first = RemoteProcessingConsentStore(
-      await MobilePrefsStore.open(path),
-    );
-    await first.grant(
-      purposes: {RemoteProcessingPurpose.remoteReflection},
-      now: DateTime.utc(2026, 8, 5),
-    );
+  test(
+    'restart persistence: a fresh store instance reads back typed purposes',
+    () async {
+      final path =
+          '${Directory.systemTemp.path}/vm_consent_prefs_restart_${_uniqueSuffix()}.json';
+      final first = RemoteProcessingConsentStore(
+        await MobilePrefsStore.open(path),
+      );
+      await first.grant(
+        purposes: {RemoteProcessingPurpose.remoteReflection},
+        now: DateTime.utc(2026, 8, 5),
+      );
 
-    final second = RemoteProcessingConsentStore(
-      await MobilePrefsStore.open(path),
-    );
-    final reopened = await second.current();
+      final second = RemoteProcessingConsentStore(
+        await MobilePrefsStore.open(path),
+      );
+      final reopened = await second.current();
 
-    expect(reopened.grantedPurposes, {RemoteProcessingPurpose.remoteReflection});
-    expect(reopened.consentedAt, DateTime.utc(2026, 8, 5));
-  });
+      expect(reopened.grantedPurposes, {
+        RemoteProcessingPurpose.remoteReflection,
+      });
+      expect(reopened.consentedAt, DateTime.utc(2026, 8, 5));
+    },
+  );
 
   test('two namespaces never see each other\'s decision', () async {
     final guestPrefs = await _openPrefs('guest');

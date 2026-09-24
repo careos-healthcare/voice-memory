@@ -36,21 +36,25 @@ class AskArchiveEntryBar extends StatelessWidget {
               ),
               child: Row(
                 children: [
-                  const Icon(Icons.search, color: AppColors.textSecondary, size: 22),
+                  const Icon(
+                    Icons.search,
+                    color: AppColors.textSecondary,
+                    size: 22,
+                  ),
                   const SizedBox(width: AppSpacing.sm),
                   Expanded(
                     child: Text(
                       'Ask My Archive',
                       style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                            fontWeight: FontWeight.w600,
-                          ),
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ),
                   Text(
                     'Search moments',
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: AppColors.textMuted,
-                        ),
+                      color: AppColors.textMuted,
+                    ),
                   ),
                   const SizedBox(width: AppSpacing.xs),
                   const Icon(

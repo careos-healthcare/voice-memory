@@ -60,7 +60,9 @@ class ProductionCandidateChecklist {
     _ChecklistItem.testFlightBuildUploaded,
   ];
 
-  static const List<_ChecklistItem> secretsItems = [_ChecklistItem.productionSecretsRotated];
+  static const List<_ChecklistItem> secretsItems = [
+    _ChecklistItem.productionSecretsRotated,
+  ];
 
   ProductionCandidateStatus resolveStatus() {
     if (!betaResultsPassed) return ProductionCandidateStatus.notReady;

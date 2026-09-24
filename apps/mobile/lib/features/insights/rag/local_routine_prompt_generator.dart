@@ -5,8 +5,9 @@ import 'package:archiveme_mobile/features/reflections/data/local_reflection_data
 /// Feeds RAG context into the local ONNX reflection model and maps outputs
 /// into privacy-first routine prompts.
 class LocalRoutinePromptGenerator {
-  LocalRoutinePromptGenerator({required LocalReflectionDataSource reflectionModel})
-    : _reflectionModel = reflectionModel;
+  LocalRoutinePromptGenerator({
+    required LocalReflectionDataSource reflectionModel,
+  }) : _reflectionModel = reflectionModel;
 
   final LocalReflectionDataSource _reflectionModel;
 
@@ -50,8 +51,7 @@ class LocalRoutinePromptGenerator {
     String? currentMood,
     List<String> recurringThemes = const [],
   }) {
-    final buffer = StringBuffer()
-      ..writeln('Archive context (local only):');
+    final buffer = StringBuffer()..writeln('Archive context (local only):');
 
     for (final chunk in chunks.take(4)) {
       final mood = chunk.mood.trim();

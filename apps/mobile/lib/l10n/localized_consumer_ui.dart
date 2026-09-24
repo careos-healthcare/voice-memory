@@ -72,10 +72,10 @@ class LocalizedValueMomentBridge {
       );
 
   String bodyForCardType(String cardType) => switch (cardType) {
-        'thread_return' => threadReturnBody,
-        'belief_distance' => beliefBody,
-        'weekly_thread_review' => weeklyBody,
-        'archive_proof_counter' => proofCounterBody,
-        _ => fallbackBody,
-      };
+    'thread_return' => threadReturnBody,
+    'belief_distance' => beliefBody,
+    'weekly_thread_review' => weeklyBody,
+    'archive_proof_counter' => proofCounterBody,
+    _ => fallbackBody,
+  };
 }

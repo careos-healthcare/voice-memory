@@ -20,7 +20,8 @@ import 'package:flutter/material.dart';
 /// entries are untouched, memory stays on for everything else).
 class MemoryRelevanceChip extends StatelessWidget {
   const MemoryRelevanceChip({
-    required this.assessment, super.key,
+    required this.assessment,
+    super.key,
     this.marked = false,
     this.onMarkedNotRelated,
   });

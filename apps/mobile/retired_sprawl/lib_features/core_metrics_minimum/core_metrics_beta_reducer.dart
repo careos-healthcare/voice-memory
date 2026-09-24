@@ -30,11 +30,12 @@ abstract final class CoreMetricsBetaReducer {
     CoreMetricsBetaMetricId.crashOrBlocker,
   };
 
-  static const Map<String, CoreMetricsBetaMetricId> _activationCounterCoreMap = {
-    'appOpened': CoreMetricsBetaMetricId.appOpened,
-    'firstMomentSaved': CoreMetricsBetaMetricId.firstSave,
-    'secondMomentSaved': CoreMetricsBetaMetricId.secondSave,
-  };
+  static const Map<String, CoreMetricsBetaMetricId> _activationCounterCoreMap =
+      {
+        'appOpened': CoreMetricsBetaMetricId.appOpened,
+        'firstMomentSaved': CoreMetricsBetaMetricId.firstSave,
+        'secondMomentSaved': CoreMetricsBetaMetricId.secondSave,
+      };
 
   static CoreMetricsBetaReducerResult build() {
     final metrics = [

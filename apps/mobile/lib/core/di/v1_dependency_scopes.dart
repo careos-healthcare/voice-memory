@@ -1,4 +1,5 @@
-import 'package:archiveme_mobile/features/recording/recording_dependencies.dart' show AppServices;
+import 'package:archiveme_mobile/features/recording/recording_dependencies.dart'
+    show AppServices;
 import 'package:archiveme_mobile/services/app_services.dart' show AppServices;
 
 /// Explicit dependency scopes for V1 — replaces implicit [AppServices.instance]

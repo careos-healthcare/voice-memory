@@ -1,6 +1,7 @@
 import 'dart:async';
 
-import 'package:archiveme_mobile/features/live_audio/infrastructure/live_audio_websocket_client.dart' show LiveAudioWebSocketClient;
+import 'package:archiveme_mobile/features/live_audio/infrastructure/live_audio_websocket_client.dart'
+    show LiveAudioWebSocketClient;
 import 'package:web_socket_channel/web_socket_channel.dart';
 
 /// Minimal socket surface used by [LiveAudioWebSocketClient] for test injection.

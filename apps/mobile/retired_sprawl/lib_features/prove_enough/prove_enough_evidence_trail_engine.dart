@@ -135,7 +135,8 @@ class ProveEnoughEvidenceTrailEngine {
 
   bool _isSupporting(
     ProveEnoughPostRecordModel postRecord, {
-    required String entryId, SignalJourney? journey,
+    required String entryId,
+    SignalJourney? journey,
   }) {
     if (journey?.supportingMomentIds.contains(entryId) == true) return true;
     if (postRecord.transcriptWeak) return false;

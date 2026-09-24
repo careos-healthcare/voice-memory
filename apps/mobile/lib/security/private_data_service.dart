@@ -86,8 +86,12 @@ abstract class TempRecordingCleanup {
         try {
           if (entity.existsSync()) await entity.delete();
         } on FileSystemException catch (e, stackTrace) {
-          AppLogger.error('Unhandled error caught', error: e, stackTrace: stackTrace);
-          }
+          AppLogger.error(
+            'Unhandled error caught',
+            error: e,
+            stackTrace: stackTrace,
+          );
+        }
       }
     }
   }
@@ -105,8 +109,12 @@ abstract class TempRecordingCleanup {
       try {
         if (entity.existsSync()) await entity.delete();
       } on FileSystemException catch (e, stackTrace) {
-        AppLogger.error('Unhandled error caught', error: e, stackTrace: stackTrace);
-        }
+        AppLogger.error(
+          'Unhandled error caught',
+          error: e,
+          stackTrace: stackTrace,
+        );
+      }
     }
   }
 
@@ -182,8 +190,12 @@ abstract class TempRecordingCleanup {
           await entity.delete();
         }
       } on FileSystemException catch (e, stackTrace) {
-        AppLogger.error('Unhandled error caught', error: e, stackTrace: stackTrace);
-        }
+        AppLogger.error(
+          'Unhandled error caught',
+          error: e,
+          stackTrace: stackTrace,
+        );
+      }
     }
   }
 
@@ -320,7 +332,8 @@ class PrivateDataService {
     return ArchiveExportPayload(
       entries: entries,
       exportedAt: DateTime.now().toUtc(),
-      insightCorrectionNotes: ArchiveInsightFeedbackStore.exportCorrectionNotes(),
+      insightCorrectionNotes:
+          ArchiveInsightFeedbackStore.exportCorrectionNotes(),
       evidenceTrails: await _readEvidenceTrails(),
     );
   }

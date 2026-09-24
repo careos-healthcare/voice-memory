@@ -23,7 +23,8 @@ class MicPermissionResolution {
   bool get isRecordable => MicrophonePermissionResolver.isRecordable(state);
 }
 
-/// Evaluates and requests microphone permission via permission_handler + record.
+/// One OS microphone request through permission_handler.
+/// The record plugin is not asked to show its own permission dialog.
 class MicrophonePermissionManager {
   MicrophonePermissionManager({
     MicrophonePermissionGateway? permissionGateway,
@@ -38,118 +39,51 @@ class MicrophonePermissionManager {
   final bool _testMode;
   final bool? _hasRecorderOverride;
 
-  Future<bool> _hasRecorderPermission({bool request = false}) async {
-    final override = _hasRecorderOverride;
-    if (override != null) return override;
-    if (_testMode) return true;
-    final recorder = _recorder;
-    if (recorder == null) {
-      throw RecordingException('Recorder not available in test mode.');
-    }
-    return recorder.hasPermission(request: request);
-  }
+  bool _osAllowsCapture(PermissionStatus status) =>
+      status.isGranted || status == PermissionStatus.provisional;
 
-  Future<void> _logMicDiag(PermissionStatus permissionHandler) async {
-    final recordHasPermission = await _hasRecorderPermission();
-    final platform = await MicrophonePermissionEnvironment.platformLabel();
-    MicrophonePermissionEnvironment.logMicDiag(
-      permissionHandler: permissionHandler,
-      recordHasPermission: recordHasPermission,
-      platform: platform,
-    );
-  }
-
-  Future<MicPermissionResolution> _resolveFromPlatform({
-    required PermissionStatus status,
-    required bool hasRecorder,
-    required bool preferRecorderOnIosSimulator,
-    required bool allowPhysicalRecorderMismatch,
+  /// One OS status, with no recorder-plugin prompt and no simulator override.
+  Future<MicPermissionResolution> _resolutionFor(
+    PermissionStatus status, {
     String logPrefix = 'check',
   }) async {
-    final platform = await MicrophonePermissionEnvironment.platformLabel();
-    if (hasRecorder && preferRecorderOnIosSimulator && !status.isGranted) {
-      MicrophonePermissionEnvironment.logMicDiagMismatch(
-        permissionHandler: status,
-        platform: platform,
-      );
-    }
-    if (allowPhysicalRecorderMismatch) {
-      MicrophonePermissionEnvironment.logPhysicalMismatchWarning(
-        status: status,
-      );
-    }
     final state = MicrophonePermissionResolver.resolve(
       status: status,
-      hasRecorder: hasRecorder,
-      preferRecorderOnIosSimulator: preferRecorderOnIosSimulator,
-      allowPhysicalRecorderMismatch: allowPhysicalRecorderMismatch,
+      hasRecorder: _osAllowsCapture(status),
     );
+    final platform = await MicrophonePermissionEnvironment.platformLabel();
     MicrophonePermissionResolver.logPermissionSource(
       permissionHandler: status,
-      recordHasPermission: hasRecorder,
-      preferRecorderOnIosSimulator: preferRecorderOnIosSimulator,
-      allowPhysicalRecorderMismatch: allowPhysicalRecorderMismatch,
+      recordHasPermission: _osAllowsCapture(status),
+      preferRecorderOnIosSimulator: false,
+      allowPhysicalRecorderMismatch: false,
       resolved: state,
       platform: platform,
     );
     final phase = MicrophonePermissionResolver.toRecordingPhase(state);
     RecordPipelineLog.micPermissionResult(
-      channel: 'platform',
+      channel: 'permission_handler',
       detail:
-          'hasRecorder=$hasRecorder status=$status phase=$phase resolved=$state',
+          'status=$status phase=$phase resolved=$state '
+          'recorderPluginPrompt=false '
+          'recorderBound=${_recorder != null} '
+          'recorderOverride=${_hasRecorderOverride != null}',
     );
     RecordPipelineLog.microphonePermission(
-      before: '$status hasRecorder=$hasRecorder',
+      before: '$status',
       after: '$state',
       prefix: logPrefix,
     );
     final resolution = MicPermissionResolution(
       phase: phase,
       state: state,
-      hasRecorder: hasRecorder,
+      hasRecorder: _osAllowsCapture(status),
       permissionHandlerStatus: status,
     );
     if (!resolution.isRecordable) {
       RecordPipelineLog.microphonePermissionBlocked(blocked: true);
     }
     return resolution;
-  }
-
-  Future<bool> _allowPhysicalRecorderMismatch({
-    required PermissionStatus status,
-    required bool hasRecorder,
-  }) {
-    return MicrophonePermissionEnvironment.allowPhysicalRecorderMismatch(
-      status: status,
-      hasRecorder: hasRecorder,
-    );
-  }
-
-  Future<bool> _preferSimulatorRecorderOverride({
-    required PermissionStatus status,
-    required bool hasRecorder,
-  }) {
-    return MicrophonePermissionEnvironment.preferRecorderOnPlatformMismatch(
-      status: status,
-      hasRecorder: hasRecorder,
-    );
-  }
-
-  Future<bool> _hasRecorderPermissionAfterGrant() async {
-    if (await _hasRecorderPermission()) return true;
-
-    const pollInterval = Duration(milliseconds: 16);
-    const maxWait = Duration(milliseconds: 250);
-    final deadline = DateTime.now().add(maxWait);
-
-    while (DateTime.now().isBefore(deadline)) {
-      await Future<void>.delayed(pollInterval);
-      final status = await _permissionGateway.status;
-      if (!status.isGranted) continue;
-      if (await _hasRecorderPermission()) return true;
-    }
-
-    return _hasRecorderPermission();
   }
 
   Future<MicPermissionResolution> evaluateMicrophonePermission() async {
@@ -165,22 +99,7 @@ class MicrophonePermissionManager {
     }
 
     final status = await _permissionGateway.status;
-    await _logMicDiag(status);
-    final hasRecorder = await _hasRecorderPermission();
-    final preferSimulator = await _preferSimulatorRecorderOverride(
-      status: status,
-      hasRecorder: hasRecorder,
-    );
-    final allowPhysical = await _allowPhysicalRecorderMismatch(
-      status: status,
-      hasRecorder: hasRecorder,
-    );
-    return _resolveFromPlatform(
-      status: status,
-      hasRecorder: hasRecorder,
-      preferRecorderOnIosSimulator: preferSimulator,
-      allowPhysicalRecorderMismatch: allowPhysical,
-    );
+    return _resolutionFor(status);
   }
 
   Future<RecordingPhase> checkMicrophone() async {
@@ -200,66 +119,21 @@ class MicrophonePermissionManager {
     }
 
     final beforeStatus = await _permissionGateway.status;
-    await _logMicDiag(beforeStatus);
-    final beforeHas = await _hasRecorderPermission();
-
-    if (await MicrophonePermissionEnvironment.shouldSkipPermissionRequest(
-      status: beforeStatus,
-      hasRecorder: beforeHas,
-    )) {
-      RecordPipelineLog.micPermissionResult(
-        channel: 'platform',
-        detail: 'permission request skipped — recorder verified',
+    if (_osAllowsCapture(beforeStatus)) {
+      final ready = await _resolutionFor(beforeStatus, logPrefix: 'already');
+      return ready.phase;
+    }
+    if (beforeStatus.isPermanentlyDenied || beforeStatus.isRestricted) {
+      final blocked = await _resolutionFor(
+        beforeStatus,
+        logPrefix: 'settings-fallback',
       );
-      final preferSimulator = await _preferSimulatorRecorderOverride(
-        status: beforeStatus,
-        hasRecorder: beforeHas,
-      );
-      final allowPhysical = await _allowPhysicalRecorderMismatch(
-        status: beforeStatus,
-        hasRecorder: beforeHas,
-      );
-      final resolution = await _resolveFromPlatform(
-        status: beforeStatus,
-        hasRecorder: beforeHas,
-        preferRecorderOnIosSimulator: preferSimulator,
-        allowPhysicalRecorderMismatch: allowPhysical,
-        logPrefix: 'skip-request',
-      );
-      return resolution.phase;
+      return blocked.phase;
     }
 
     RecordPipelineLog.microphonePermissionRequestShown(shown: true);
     final result = await _permissionGateway.request();
-    var afterHas = await _hasRecorderPermission();
-    if (result.isGranted && !afterHas) {
-      afterHas = await _hasRecorderPermissionAfterGrant();
-    }
-    await _logMicDiag(result);
-    RecordPipelineLog.micPermissionResult(
-      channel: 'platform',
-      detail: 'permission request=$result hasRecorder=$afterHas',
-    );
-    RecordPipelineLog.microphonePermission(
-      before: '$beforeStatus hasRecorder=$beforeHas',
-      after: '$result hasRecorder=$afterHas',
-      prefix: 'request',
-    );
-    final preferSimulator = await _preferSimulatorRecorderOverride(
-      status: result,
-      hasRecorder: afterHas,
-    );
-    final allowPhysical = await _allowPhysicalRecorderMismatch(
-      status: result,
-      hasRecorder: afterHas,
-    );
-    final resolution = await _resolveFromPlatform(
-      status: result,
-      hasRecorder: afterHas,
-      preferRecorderOnIosSimulator: preferSimulator,
-      allowPhysicalRecorderMismatch: allowPhysical,
-      logPrefix: 'after-request',
-    );
+    final resolution = await _resolutionFor(result, logPrefix: 'after-request');
     return resolution.phase;
   }
 
@@ -283,9 +157,7 @@ class MicrophonePermissionManager {
     }
 
     final status = await _permissionGateway.status;
-    await _logMicDiag(status);
-    final hasRecorder = await _hasRecorderPermission();
-    if (!status.isGranted && !hasRecorder) {
+    if (!_osAllowsCapture(status)) {
       RecordPipelineLog.micPermissionResult(
         channel: 'start',
         detail: 'failed microphone not granted',

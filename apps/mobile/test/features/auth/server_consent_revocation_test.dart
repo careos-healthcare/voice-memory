@@ -150,7 +150,9 @@ void main() {
       MultiPartyAccessService(prefs: prefs, serverRevocations: coordinator);
 
   Future<List<Map<String, Object?>>> auditEntries() async {
-    final raw = await prefs.readJsonMap(MultiPartyAccessService.caregiverAuditKey);
+    final raw = await prefs.readJsonMap(
+      MultiPartyAccessService.caregiverAuditKey,
+    );
     final rows = raw?['entries'];
     if (rows is! List) return const [];
     return rows
@@ -175,31 +177,43 @@ void main() {
   }
 
   group('MultiPartyAccessService.revokeGrant reaches the server', () {
-    test('caregiver grant sends caregiverMonitoring and the held token', () async {
-      await prefs.writeJsonMap(
-        MultiPartyAccessService.caregiverTokenKey,
-        _caregiverToken('token-care-1').toJson(),
-      );
+    test(
+      'caregiver grant sends caregiverMonitoring and the held token',
+      () async {
+        await prefs.writeJsonMap(
+          MultiPartyAccessService.caregiverTokenKey,
+          _caregiverToken('token-care-1').toJson(),
+        );
 
-      final outcome = await service().revokeGrant(
-        _grant('token-care-1', MultiPartyAccessRole.caregiver),
-      );
+        final outcome = await service().revokeGrant(
+          _grant('token-care-1', MultiPartyAccessRole.caregiver),
+        );
 
-      expect(api.calls, hasLength(1));
-      expect(api.calls.single.domain, ConsentRevocationDomain.caregiverMonitoring);
-      expect(api.calls.single.tokenId, 'token-care-1');
-      expect(api.calls.single.token?['signature'], 'server-signature');
+        expect(api.calls, hasLength(1));
+        expect(
+          api.calls.single.domain,
+          ConsentRevocationDomain.caregiverMonitoring,
+        );
+        expect(api.calls.single.tokenId, 'token-care-1');
+        expect(api.calls.single.token?['signature'], 'server-signature');
 
-      expect(outcome.localRevoked, isTrue);
-      expect(outcome.serverConfirmed, isTrue);
-      expect(outcome.queuedForRetry, isFalse);
-      expect(PendingConsentRevocationStore.entries, isEmpty);
-      expect(
-        revocationMetadata(await auditEntries(), 'token-care-1')?['serverRevocationConfirmed'],
-        isTrue,
-      );
-      expect(await service().loadActiveGrants(now: DateTime.utc(2026, 7)), isEmpty);
-    });
+        expect(outcome.localRevoked, isTrue);
+        expect(outcome.serverConfirmed, isTrue);
+        expect(outcome.queuedForRetry, isFalse);
+        expect(PendingConsentRevocationStore.entries, isEmpty);
+        expect(
+          revocationMetadata(
+            await auditEntries(),
+            'token-care-1',
+          )?['serverRevocationConfirmed'],
+          isTrue,
+        );
+        expect(
+          await service().loadActiveGrants(now: DateTime.utc(2026, 7)),
+          isEmpty,
+        );
+      },
+    );
 
     test('coach grant sends coachClient', () async {
       await prefs.writeJsonMap(
@@ -218,46 +232,49 @@ void main() {
   });
 
   group('offline revocation still takes effect locally', () {
-    test('network failure keeps the local revoke and queues the server call', () async {
-      api.respond = _alwaysFail(_offline);
-      await prefs.writeJsonMap(
-        MultiPartyAccessService.caregiverTokenKey,
-        _caregiverToken('token-offline').toJson(),
-      );
-      await prefs.writeJsonMap(MultiPartyAccessService.caregiverSessionKey, {
-        'tokenId': 'token-offline',
-      });
+    test(
+      'network failure keeps the local revoke and queues the server call',
+      () async {
+        api.respond = _alwaysFail(_offline);
+        await prefs.writeJsonMap(
+          MultiPartyAccessService.caregiverTokenKey,
+          _caregiverToken('token-offline').toJson(),
+        );
+        await prefs.writeJsonMap(MultiPartyAccessService.caregiverSessionKey, {
+          'tokenId': 'token-offline',
+        });
 
-      final outcome = await service().revokeGrant(
-        _grant('token-offline', MultiPartyAccessRole.caregiver),
-      );
+        final outcome = await service().revokeGrant(
+          _grant('token-offline', MultiPartyAccessRole.caregiver),
+        );
 
-      expect(ConsentRevocationStore.isRevoked('token-offline'), isTrue);
-      expect(
-        await prefs.readJsonMap(MultiPartyAccessService.caregiverTokenKey),
-        isEmpty,
-      );
-      expect(
-        await prefs.readJsonMap(MultiPartyAccessService.caregiverSessionKey),
-        isEmpty,
-      );
-      expect(
-        revocationMetadata(await auditEntries(), 'token-offline'),
-        isNotNull,
-        reason: 'the local audit row must not depend on the network',
-      );
+        expect(ConsentRevocationStore.isRevoked('token-offline'), isTrue);
+        expect(
+          await prefs.readJsonMap(MultiPartyAccessService.caregiverTokenKey),
+          isEmpty,
+        );
+        expect(
+          await prefs.readJsonMap(MultiPartyAccessService.caregiverSessionKey),
+          isEmpty,
+        );
+        expect(
+          revocationMetadata(await auditEntries(), 'token-offline'),
+          isNotNull,
+          reason: 'the local audit row must not depend on the network',
+        );
 
-      expect(outcome.localRevoked, isTrue);
-      expect(outcome.serverConfirmed, isFalse);
-      expect(outcome.queuedForRetry, isTrue);
-      expect(outcome.isLocalOnly, isTrue);
+        expect(outcome.localRevoked, isTrue);
+        expect(outcome.serverConfirmed, isFalse);
+        expect(outcome.queuedForRetry, isTrue);
+        expect(outcome.isLocalOnly, isTrue);
 
-      final queued = PendingConsentRevocationStore.entries.single;
-      expect(queued.tokenId, 'token-offline');
-      expect(queued.domain, ConsentRevocationDomain.caregiverMonitoring);
-      expect(queued.lastError, ConsentRevocationFailureCode.network);
-      expect(queued.attempts, 1);
-    });
+        final queued = PendingConsentRevocationStore.entries.single;
+        expect(queued.tokenId, 'token-offline');
+        expect(queued.domain, ConsentRevocationDomain.caregiverMonitoring);
+        expect(queued.lastError, ConsentRevocationFailureCode.network);
+        expect(queued.attempts, 1);
+      },
+    );
 
     test('a 503 is queued and cleared once flushPending succeeds', () async {
       api.respond = _alwaysFail(_unavailable);
@@ -311,7 +328,8 @@ void main() {
       expect(
         api.calls.last.token,
         isNull,
-        reason: 'the signed token is deliberately not persisted across a restart',
+        reason:
+            'the signed token is deliberately not persisted across a restart',
       );
     });
   });
@@ -362,92 +380,120 @@ void main() {
       expect(PendingConsentRevocationStore.entries.single.attempts, 2);
     });
 
-    test('persisting merges with a concurrent writer instead of clobbering', () async {
-      await PendingConsentRevocationStore.ensureLoaded();
-      await PendingConsentRevocationStore.enqueue(
-        tokenId: 'token-mine',
-        domain: ConsentRevocationDomain.caregiverMonitoring,
-      );
+    test(
+      'persisting merges with a concurrent writer instead of clobbering',
+      () async {
+        await PendingConsentRevocationStore.ensureLoaded();
+        await PendingConsentRevocationStore.enqueue(
+          tokenId: 'token-mine',
+          domain: ConsentRevocationDomain.caregiverMonitoring,
+        );
 
-      // Stands in for another holder of the key persisting a view this one has
-      // never seen — a second isolate, or a store loaded before this enqueue.
-      final onDisk = await prefs.readJsonMap(
-        PendingConsentRevocationStore.prefsKey,
-      );
-      await prefs.writeJsonMap(PendingConsentRevocationStore.prefsKey, {
-        'entries': <Object?>[
-          ...?(onDisk?['entries'] as List?),
-          {
-            'tokenId': 'token-out-of-band',
-            'domain': 'coachClient',
-            'queuedAt': '2026-08-01T00:00:00.000Z',
-            'attempts': 3,
-          },
-        ],
-      });
+        // Stands in for another holder of the key persisting a view this one has
+        // never seen — a second isolate, or a store loaded before this enqueue.
+        final onDisk = await prefs.readJsonMap(
+          PendingConsentRevocationStore.prefsKey,
+        );
+        await prefs.writeJsonMap(PendingConsentRevocationStore.prefsKey, {
+          'entries': <Object?>[
+            ...?(onDisk?['entries'] as List?),
+            {
+              'tokenId': 'token-out-of-band',
+              'domain': 'coachClient',
+              'queuedAt': '2026-08-01T00:00:00.000Z',
+              'attempts': 3,
+            },
+          ],
+        });
 
-      await PendingConsentRevocationStore.enqueue(
-        tokenId: 'token-later',
-        domain: ConsentRevocationDomain.caregiverMonitoring,
-      );
+        await PendingConsentRevocationStore.enqueue(
+          tokenId: 'token-later',
+          domain: ConsentRevocationDomain.caregiverMonitoring,
+        );
 
-      expect(
-        PendingConsentRevocationStore.entries.map((e) => e.tokenId),
-        containsAll(<String>['token-mine', 'token-out-of-band', 'token-later']),
-      );
-    });
+        expect(
+          PendingConsentRevocationStore.entries.map((e) => e.tokenId),
+          containsAll(<String>[
+            'token-mine',
+            'token-out-of-band',
+            'token-later',
+          ]),
+        );
+      },
+    );
 
-    test('a confirmed entry is not resurrected by a stale on-disk copy', () async {
-      await PendingConsentRevocationStore.enqueue(
-        tokenId: 'token-settled',
-        domain: ConsentRevocationDomain.caregiverMonitoring,
-      );
-      await PendingConsentRevocationStore.confirmRevoked('token-settled');
+    test(
+      'a confirmed entry is not resurrected by a stale on-disk copy',
+      () async {
+        await PendingConsentRevocationStore.enqueue(
+          tokenId: 'token-settled',
+          domain: ConsentRevocationDomain.caregiverMonitoring,
+        );
+        await PendingConsentRevocationStore.confirmRevoked('token-settled');
 
-      // Another writer still holding the pre-confirmation view writes it back.
-      await prefs.writeJsonMap(PendingConsentRevocationStore.prefsKey, {
-        'entries': <Object?>[
-          {
-            'tokenId': 'token-settled',
-            'domain': 'caregiverMonitoring',
-            'queuedAt': '2026-08-01T00:00:00.000Z',
-            'attempts': 1,
-          },
-        ],
-      });
+        // Another writer still holding the pre-confirmation view writes it back.
+        await prefs.writeJsonMap(PendingConsentRevocationStore.prefsKey, {
+          'entries': <Object?>[
+            {
+              'tokenId': 'token-settled',
+              'domain': 'caregiverMonitoring',
+              'queuedAt': '2026-08-01T00:00:00.000Z',
+              'attempts': 1,
+            },
+          ],
+        });
 
-      await PendingConsentRevocationStore.enqueue(
-        tokenId: 'token-other',
-        domain: ConsentRevocationDomain.caregiverMonitoring,
-      );
+        await PendingConsentRevocationStore.enqueue(
+          tokenId: 'token-other',
+          domain: ConsentRevocationDomain.caregiverMonitoring,
+        );
 
-      expect(
-        PendingConsentRevocationStore.entries.map((e) => e.tokenId),
-        ['token-other'],
-      );
-    });
+        expect(
+          PendingConsentRevocationStore.entries.map((e) => e.tokenId),
+          ['token-other'],
+        );
+      },
+    );
   });
 
   group('ConsentAuditService.revokeGrant reaches the server', () {
-    test('caregiver grants revoke with the caregiverMonitoring domain', () async {
-      final store = CaregiverModeStore(prefs);
-      await store.writeStoredToken(_caregiverToken('token-audit-care'));
-      final audit = ConsentAuditService(prefs: prefs, serverRevocations: coordinator);
+    test(
+      'caregiver grants revoke with the caregiverMonitoring domain',
+      () async {
+        final store = CaregiverModeStore(prefs);
+        await store.writeStoredToken(_caregiverToken('token-audit-care'));
+        final audit = ConsentAuditService(
+          prefs: prefs,
+          serverRevocations: coordinator,
+        );
 
-      final record = (await audit.loadGrants(now: DateTime.utc(2026, 7))).single;
-      await audit.revokeGrant(record);
+        final record = (await audit.loadGrants(
+          now: DateTime.utc(2026, 7),
+        )).single;
+        await audit.revokeGrant(record);
 
-      expect(api.calls.single.domain, ConsentRevocationDomain.caregiverMonitoring);
-      expect(api.calls.single.tokenId, 'token-audit-care');
-      expect(api.calls.single.token?['signature'], 'server-signature');
-      expect(ConsentRevocationStore.isRevoked('token-audit-care'), isTrue);
-    });
+        expect(
+          api.calls.single.domain,
+          ConsentRevocationDomain.caregiverMonitoring,
+        );
+        expect(api.calls.single.tokenId, 'token-audit-care');
+        expect(api.calls.single.token?['signature'], 'server-signature');
+        expect(ConsentRevocationStore.isRevoked('token-audit-care'), isTrue);
+      },
+    );
 
     test('coach grants revoke with the coachClient domain', () async {
-      await CoachModeStore(prefs).writeStoredToken(_coachToken('token-audit-coach'));
-      final audit = ConsentAuditService(prefs: prefs, serverRevocations: coordinator);
+      await CoachModeStore(
+        prefs,
+      ).writeStoredToken(_coachToken('token-audit-coach'));
+      final audit = ConsentAuditService(
+        prefs: prefs,
+        serverRevocations: coordinator,
+      );
 
-      final record = (await audit.loadGrants(now: DateTime.utc(2026, 7))).single;
+      final record = (await audit.loadGrants(
+        now: DateTime.utc(2026, 7),
+      )).single;
       await audit.revokeGrant(record);
 
       expect(api.calls.single.domain, ConsentRevocationDomain.coachClient);
@@ -457,10 +503,17 @@ void main() {
 
     test('an offline coach revoke is still queued for the server', () async {
       api.respond = _alwaysFail(_offline);
-      await CoachModeStore(prefs).writeStoredToken(_coachToken('token-audit-offline'));
-      final audit = ConsentAuditService(prefs: prefs, serverRevocations: coordinator);
+      await CoachModeStore(
+        prefs,
+      ).writeStoredToken(_coachToken('token-audit-offline'));
+      final audit = ConsentAuditService(
+        prefs: prefs,
+        serverRevocations: coordinator,
+      );
 
-      final record = (await audit.loadGrants(now: DateTime.utc(2026, 7))).single;
+      final record = (await audit.loadGrants(
+        now: DateTime.utc(2026, 7),
+      )).single;
       await audit.revokeGrant(record);
 
       expect(ConsentRevocationStore.isRevoked('token-audit-offline'), isTrue);

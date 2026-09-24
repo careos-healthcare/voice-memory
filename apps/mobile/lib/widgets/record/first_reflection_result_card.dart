@@ -9,7 +9,9 @@ import 'package:flutter/material.dart';
 /// Immediate post-save result after the user's first recording.
 class FirstReflectionResultCard extends StatelessWidget {
   const FirstReflectionResultCard({
-    required this.onRecordAnother, required this.onViewPatterns, super.key,
+    required this.onRecordAnother,
+    required this.onViewPatterns,
+    super.key,
   });
 
   final VoidCallback onRecordAnother;

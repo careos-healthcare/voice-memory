@@ -37,7 +37,10 @@ void main() {
 
     expect(find.byType(SingleChildScrollView), findsOneWidget);
     expect(find.byKey(const Key('export_and_share_button')), findsOneWidget);
-    expect(find.byKey(const Key('export_and_share_pdf_button')), findsOneWidget);
+    expect(
+      find.byKey(const Key('export_and_share_pdf_button')),
+      findsOneWidget,
+    );
     expect(
       flutterErrors,
       isEmpty,

@@ -5,10 +5,22 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   group('LocalLlmWorkerLoadPolicy', () {
     test('efficiencyCoreThreadCount uses half of CPUs capped at 2', () {
-      expect(LocalLlmWorkerLoadPolicy.efficiencyCoreThreadCount(processorCount: 8), 2);
-      expect(LocalLlmWorkerLoadPolicy.efficiencyCoreThreadCount(processorCount: 4), 2);
-      expect(LocalLlmWorkerLoadPolicy.efficiencyCoreThreadCount(processorCount: 3), 1);
-      expect(LocalLlmWorkerLoadPolicy.efficiencyCoreThreadCount(processorCount: 1), 1);
+      expect(
+        LocalLlmWorkerLoadPolicy.efficiencyCoreThreadCount(processorCount: 8),
+        2,
+      );
+      expect(
+        LocalLlmWorkerLoadPolicy.efficiencyCoreThreadCount(processorCount: 4),
+        2,
+      );
+      expect(
+        LocalLlmWorkerLoadPolicy.efficiencyCoreThreadCount(processorCount: 3),
+        1,
+      );
+      expect(
+        LocalLlmWorkerLoadPolicy.efficiencyCoreThreadCount(processorCount: 1),
+        1,
+      );
     });
 
     test('toWorkerLoadCommand caps context and threads for mobile worker', () {

@@ -1,20 +1,22 @@
-import 'dart:math' as math;
 import 'dart:typed_data';
 
+import 'package:archiveme_mobile/core/execution/isolate_compute_job.dart';
 import 'package:archiveme_mobile/features/insight_engine/hybrid_search_models.dart';
 import 'package:archiveme_mobile/features/insight_engine/reciprocal_rank_fusion.dart';
 import 'package:archiveme_mobile/storage/sqlite/app_sqlite_database.dart';
+import 'package:archiveme_mobile/storage/sqlite/embedding_blob_ranker.dart';
 import 'package:archiveme_mobile/storage/sqlite/migrations/migration_005_hybrid_search.dart';
 import 'package:archiveme_mobile/storage/sqlite/migrations/migration_015_vec_chunks.dart';
 import 'package:archiveme_mobile/storage/sqlite/sqlite_fts_query.dart';
 import 'package:archiveme_mobile/storage/sqlite/sqlite_vec_support.dart';
+import 'package:archiveme_mobile/storage/sqlite/time_capsule_visibility.dart';
 import 'package:archiveme_mobile/storage/sqlite/sqlite_vector_support.dart';
 import 'package:sqflite/sqflite.dart';
 
 /// Keyword and vector retrieval over local memory transcripts.
 class MemoryTranscriptSearchRepository {
   MemoryTranscriptSearchRepository(AppSqliteDatabase sqlite)
-      : _db = sqlite.database;
+    : _db = sqlite.database;
 
   MemoryTranscriptSearchRepository.fromWorkerDatabase(Database db) : _db = db;
 
@@ -104,10 +106,11 @@ class MemoryTranscriptSearchRepository {
       [ftsQuery, limit],
     );
 
-    return rows
+    final ids = rows
         .map((row) => row['entry_id'] as String? ?? '')
         .where((id) => id.isNotEmpty)
         .toList(growable: false);
+    return TimeCapsuleVisibility.withoutLocked(_db, ids, (id) => id);
   }
 
   /// Cosine-similarity vector search. Returns entry ids best-first.
@@ -129,7 +132,13 @@ class MemoryTranscriptSearchRepository {
         queryEmbedding: queryEmbedding,
         limit: limit,
       );
-      if (sqliteVectorHits.isNotEmpty) return sqliteVectorHits;
+      if (sqliteVectorHits.isNotEmpty) {
+        return TimeCapsuleVisibility.withoutLocked(
+          _db,
+          sqliteVectorHits,
+          (id) => id,
+        );
+      }
     }
 
     if (await _hasLegacyVec0Table()) {
@@ -137,14 +146,17 @@ class MemoryTranscriptSearchRepository {
         queryEmbedding: queryEmbedding,
         limit: limit,
       );
-      if (vecHits.isNotEmpty) return vecHits;
+      if (vecHits.isNotEmpty) {
+        return TimeCapsuleVisibility.withoutLocked(_db, vecHits, (id) => id);
+      }
     }
 
     final blobHits = await _vectorSearchBlob(
       queryEmbedding: queryEmbedding,
       limit: limit,
     );
-    return blobHits.map((hit) => hit.entryId).toList(growable: false);
+    final ids = blobHits.map((hit) => hit.entryId).toList(growable: false);
+    return TimeCapsuleVisibility.withoutLocked(_db, ids, (id) => id);
   }
 
   /// Cosine-similarity search with explicit scores (for X-Ray inspection).
@@ -166,7 +178,13 @@ class MemoryTranscriptSearchRepository {
         queryEmbedding: queryEmbedding,
         limit: limit,
       );
-      if (sqliteVectorHits.isNotEmpty) return sqliteVectorHits;
+      if (sqliteVectorHits.isNotEmpty) {
+        return TimeCapsuleVisibility.withoutLocked(
+          _db,
+          sqliteVectorHits,
+          (hit) => hit.entryId,
+        );
+      }
     }
 
     if (await _hasLegacyVec0Table()) {
@@ -174,12 +192,23 @@ class MemoryTranscriptSearchRepository {
         queryEmbedding: queryEmbedding,
         limit: limit,
       );
-      if (vecHits.isNotEmpty) return vecHits;
+      if (vecHits.isNotEmpty) {
+        return TimeCapsuleVisibility.withoutLocked(
+          _db,
+          vecHits,
+          (hit) => hit.entryId,
+        );
+      }
     }
 
-    return _vectorSearchBlob(
+    final blobHits = await _vectorSearchBlob(
       queryEmbedding: queryEmbedding,
       limit: limit,
+    );
+    return TimeCapsuleVisibility.withoutLocked(
+      _db,
+      blobHits,
+      (hit) => hit.entryId,
     );
   }
 
@@ -197,8 +226,9 @@ class MemoryTranscriptSearchRepository {
     if (limit <= 0) return const [];
 
     final trimmed = keywordQuery.trim();
-    final ftsQuery =
-        trimmed.isEmpty ? '' : SqliteFtsQuery.toMatchQuery(trimmed);
+    final ftsQuery = trimmed.isEmpty
+        ? ''
+        : SqliteFtsQuery.toMatchQuery(trimmed);
     final hasKeyword = ftsQuery.isNotEmpty;
     final hasVector =
         queryEmbedding.length == localTranscriptEmbeddingDimensions;
@@ -229,7 +259,14 @@ class MemoryTranscriptSearchRepository {
         candidateLimit: candidateLimit,
         rrfK: rrfK,
       );
-      if (sqlHits.isNotEmpty) return sqlHits;
+      if (sqlHits.isNotEmpty) {
+        final visible = await TimeCapsuleVisibility.withoutLocked(
+          _db,
+          sqlHits,
+          (hit) => hit.entryId,
+        );
+        if (visible.isNotEmpty) return visible;
+      }
     }
 
     if (SqliteVectorSupport.isAvailable) {
@@ -240,7 +277,14 @@ class MemoryTranscriptSearchRepository {
         candidateLimit: candidateLimit,
         rrfK: rrfK,
       );
-      if (sqlHits.isNotEmpty) return sqlHits;
+      if (sqlHits.isNotEmpty) {
+        final visible = await TimeCapsuleVisibility.withoutLocked(
+          _db,
+          sqlHits,
+          (hit) => hit.entryId,
+        );
+        if (visible.isNotEmpty) return visible;
+      }
     }
 
     return _hybridSearchDartFallback(
@@ -490,8 +534,9 @@ class MemoryTranscriptSearchRepository {
       queryEmbedding: queryEmbedding,
       limit: candidateLimit,
     );
-    final vectorIds =
-        vectorHits.map((hit) => hit.entryId).toList(growable: false);
+    final vectorIds = vectorHits
+        .map((hit) => hit.entryId)
+        .toList(growable: false);
 
     if (keywordIds.isEmpty && vectorIds.isEmpty) return const [];
 
@@ -601,11 +646,12 @@ class MemoryTranscriptSearchRepository {
   Future<List<VectorSearchHit>> _vectorSearchSqliteVectorWithScores({
     required List<double> queryEmbedding,
     required int limit,
-  }) async {
-    try {
-      final queryLiteral = _vectorLiteral(queryEmbedding);
-      final rows = await _db.rawQuery(
-        '''
+  }) {
+    return IsolateComputeJob.trace('sqlite.vec.vector_full_scan', () async {
+      try {
+        final queryLiteral = _vectorLiteral(queryEmbedding);
+        final rows = await _db.rawQuery(
+          '''
         SELECT e.entry_id AS entry_id, v.distance AS distance
         FROM $embeddingsTable AS e
         JOIN vector_full_scan(
@@ -616,23 +662,24 @@ class MemoryTranscriptSearchRepository {
         ) AS v ON e.rowid = v.rowid
         ORDER BY v.distance
         ''',
-        [queryLiteral, limit],
-      );
-      return rows
-          .map((row) {
-            final entryId = row['entry_id'] as String? ?? '';
-            final distance = (row['distance'] as num?)?.toDouble() ?? 1;
-            if (entryId.isEmpty) return null;
-            return VectorSearchHit(
-              entryId: entryId,
-              cosineSimilarity: 1 - distance,
-            );
-          })
-          .whereType<VectorSearchHit>()
-          .toList(growable: false);
-    } on Object {
-      return const [];
-    }
+          [queryLiteral, limit],
+        );
+        return rows
+            .map((row) {
+              final entryId = row['entry_id'] as String? ?? '';
+              final distance = (row['distance'] as num?)?.toDouble() ?? 1;
+              if (entryId.isEmpty) return null;
+              return VectorSearchHit(
+                entryId: entryId,
+                cosineSimilarity: 1 - distance,
+              );
+            })
+            .whereType<VectorSearchHit>()
+            .toList(growable: false);
+      } on Object {
+        return const [];
+      }
+    });
   }
 
   Future<List<String>> _vectorSearchLegacyVec0({
@@ -682,26 +729,25 @@ class MemoryTranscriptSearchRepository {
     required List<double> queryEmbedding,
     required int limit,
   }) async {
-    final rows = await _db.query(embeddingsTable, columns: ['entry_id', 'embedding']);
+    final rows = await _db.query(
+      embeddingsTable,
+      columns: ['entry_id', 'embedding'],
+    );
     if (rows.isEmpty) return const [];
 
-    final scored = <VectorSearchHit>[];
+    final blobs = <EmbeddingBlobRow>[];
     for (final row in rows) {
       final entryId = row['entry_id'] as String? ?? '';
       final blob = row['embedding'] as Uint8List?;
       if (entryId.isEmpty || blob == null) continue;
-      final embedding = _blobToEmbedding(blob);
-      final score = _cosineSimilarity(queryEmbedding, embedding);
-      scored.add(VectorSearchHit(entryId: entryId, cosineSimilarity: score));
+      blobs.add(EmbeddingBlobRow(entryId: entryId, blob: blob));
     }
 
-    scored.sort((a, b) {
-      final byScore = b.cosineSimilarity.compareTo(a.cosineSimilarity);
-      if (byScore != 0) return byScore;
-      return a.entryId.compareTo(b.entryId);
-    });
-
-    return scored.take(limit).toList(growable: false);
+    return EmbeddingBlobRanker.rank(
+      queryEmbedding: queryEmbedding,
+      rows: blobs,
+      limit: limit,
+    );
   }
 
   static String _vectorLiteral(List<double> embedding) {
@@ -721,21 +767,5 @@ class MemoryTranscriptSearchRepository {
       blob.lengthInBytes ~/ Float32List.bytesPerElement,
     );
     return floats.toList(growable: false);
-  }
-
-  static double _cosineSimilarity(List<double> a, List<double> b) {
-    final length = math.min(a.length, b.length);
-    if (length == 0) return 0;
-
-    var dot = 0.0;
-    var normA = 0.0;
-    var normB = 0.0;
-    for (var i = 0; i < length; i++) {
-      dot += a[i] * b[i];
-      normA += a[i] * a[i];
-      normB += b[i] * b[i];
-    }
-    if (normA == 0 || normB == 0) return 0;
-    return dot / (math.sqrt(normA) * math.sqrt(normB));
   }
 }

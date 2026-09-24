@@ -1,3 +1,4 @@
+import 'package:archiveme_mobile/core/execution/cancel_token.dart';
 import 'package:archiveme_mobile/services/local_llm/local_llm.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -97,6 +98,18 @@ Here is the graph:
 
       expect(tokens.join(), isNotEmpty);
       expect(tokens.first, isNotEmpty);
+    });
+
+    test('complete respects a cancelled token', () async {
+      final token = ExecutionCancelToken()..cancel();
+
+      expect(
+        () => service.complete(
+          const LocalLlmCompletionRequest(prompt: 'Hello'),
+          cancelToken: token,
+        ),
+        throwsA(isA<ExecutionCancelledException>()),
+      );
     });
 
     test('extractKnowledgeGraphUpdate returns structured graph', () async {

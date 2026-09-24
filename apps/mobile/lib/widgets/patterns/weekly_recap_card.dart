@@ -8,7 +8,8 @@ import 'package:flutter/material.dart';
 /// Patterns-screen weekly payoff: what kept repeating, and what to check next.
 class WeeklyPatternRecapCard extends StatefulWidget {
   const WeeklyPatternRecapCard({
-    required this.recap, super.key,
+    required this.recap,
+    super.key,
     this.onUseNext,
   });
 

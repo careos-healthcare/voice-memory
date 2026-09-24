@@ -62,16 +62,16 @@ class CloudBackupImportResult {
 
   const CloudBackupImportResult.cancelled()
     : failure = null,
-       cancelled = true,
-       byteLength = 0,
-       accountNamespace = null,
-       exportedAt = null;
+      cancelled = true,
+      byteLength = 0,
+      accountNamespace = null,
+      exportedAt = null;
 
   const CloudBackupImportResult.failure(this.failure)
     : cancelled = false,
-       byteLength = 0,
-       accountNamespace = null,
-       exportedAt = null;
+      byteLength = 0,
+      accountNamespace = null,
+      exportedAt = null;
 
   final CloudBackupImportFailure? failure;
   final bool cancelled;
@@ -212,7 +212,8 @@ class CloudBackupDriftSnapshot {
       exportedAt: exportedAt,
       databaseBytes: bytes,
       sha256Base64: sha256,
-      schemaMigrationVersion: (json['schema_migration_version'] as num?)?.toInt(),
+      schemaMigrationVersion: (json['schema_migration_version'] as num?)
+          ?.toInt(),
     );
   }
 }

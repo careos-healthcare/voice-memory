@@ -16,7 +16,6 @@ enum CognitiveDirection {
 
 /// The vectorized assessment output encapsulating cognitive deltas.
 class TrajectoryAssessment {
-
   const TrajectoryAssessment({
     required this.lexicalDelta,
     required this.driftDelta,

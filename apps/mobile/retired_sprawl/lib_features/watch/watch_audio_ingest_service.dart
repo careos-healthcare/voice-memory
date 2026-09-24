@@ -1,7 +1,8 @@
 import 'dart:async';
 
 import 'package:archiveme_mobile/core/utils/app_logger.dart';
-import 'package:archiveme_mobile/features/recording/recording_dependencies.dart' show CapturePipelineService;
+import 'package:archiveme_mobile/features/recording/recording_dependencies.dart'
+    show CapturePipelineService;
 import 'package:archiveme_mobile/features/watch/watch_audio_capture.dart';
 import 'package:archiveme_mobile/features/watch/watch_audio_ingest_store.dart';
 import 'package:archiveme_mobile/services/capture_pipeline_service.dart';
@@ -38,7 +39,8 @@ class WatchIngestEvent {
 /// Serializes watch inbox files through [CapturePipelineService.runWatchCapture].
 class WatchAudioIngestService {
   WatchAudioIngestService({
-    required this._store, this._pipeline,
+    required this._store,
+    this._pipeline,
   });
 
   final CapturePipelineService? _pipeline;
@@ -82,17 +84,19 @@ class WatchAudioIngestService {
         try {
           final result = watchCaptureRunner != null
               ? await watchCaptureRunner!(
-                audioFilePath: capture.path,
-                durationSeconds: capture.durationSeconds,
-              )
+                  audioFilePath: capture.path,
+                  durationSeconds: capture.durationSeconds,
+                )
               : (await _pipeline!.runWatchCapture(
-                audioFilePath: capture.path,
-                durationSeconds: capture.durationSeconds,
-              )).getOrThrow();
+                  audioFilePath: capture.path,
+                  durationSeconds: capture.durationSeconds,
+                )).getOrThrow();
           await _store.markProcessed(capture.ingestKey);
           _events.add(WatchIngestEvent.success(result));
         } catch (error, stackTrace) {
-          AppLogger.debug('[WatchIngest] failed ${capture.path}: $error\n$stackTrace');
+          AppLogger.debug(
+            '[WatchIngest] failed ${capture.path}: $error\n$stackTrace',
+          );
           _events.add(
             WatchIngestEvent.failure(
               capture,

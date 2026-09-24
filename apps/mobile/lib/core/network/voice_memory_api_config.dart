@@ -32,6 +32,8 @@ class VoiceMemoryApiConfig {
   }
 
   /// WebSocket upgrade URL for live audio (maps to `/api/live-audio/ws`).
-  Uri liveAudioWebSocketUri({Map<String, String>? queryParameters}) =>
-      resolve(VoiceMemoryApiRoutes.liveAudioWebSocket, queryParameters: queryParameters);
+  Uri liveAudioWebSocketUri({Map<String, String>? queryParameters}) => resolve(
+    VoiceMemoryApiRoutes.liveAudioWebSocket,
+    queryParameters: queryParameters,
+  );
 }

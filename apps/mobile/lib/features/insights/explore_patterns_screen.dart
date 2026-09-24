@@ -24,8 +24,9 @@ class ExplorePatternsScreen extends ConsumerStatefulWidget {
   static const Key composerFieldKey = Key('explore_patterns_composer_field');
   static const Key sendButtonKey = Key('explore_patterns_send_button');
   static const Key errorBannerKey = Key('explore_patterns_error_banner');
-  static const Key seeHowThisConnectsKey =
-      Key('explore_patterns_see_how_this_connects');
+  static const Key seeHowThisConnectsKey = Key(
+    'explore_patterns_see_how_this_connects',
+  );
 
   static const String screenTitle = 'Explore patterns';
   static const String composerHint = 'Ask about a pattern';
@@ -83,7 +84,9 @@ class _ExplorePatternsScreenState extends ConsumerState<ExplorePatternsScreen> {
     _composer.clear();
     setState(() {});
     unawaited(
-      ref.read(patternExplorationConversationProvider.notifier).sendMessage(text),
+      ref
+          .read(patternExplorationConversationProvider.notifier)
+          .sendMessage(text),
     );
   }
 
@@ -99,8 +102,7 @@ class _ExplorePatternsScreenState extends ConsumerState<ExplorePatternsScreen> {
       },
     );
 
-    final canSend =
-        !conversation.isSending && _composer.text.trim().isNotEmpty;
+    final canSend = !conversation.isSending && _composer.text.trim().isNotEmpty;
 
     return Scaffold(
       key: ExplorePatternsScreen.screenKey,
@@ -272,8 +274,9 @@ class _PatternExplorationErrorBanner extends StatelessWidget {
               child: Text(
                 key: ExplorePatternsScreen.errorBannerKey,
                 message,
-                style: ArchiveMobileTypography.responsiveHelper(context)
-                    .copyWith(color: AppColors.error),
+                style: ArchiveMobileTypography.responsiveHelper(
+                  context,
+                ).copyWith(color: AppColors.error),
               ),
             ),
             IconButton(

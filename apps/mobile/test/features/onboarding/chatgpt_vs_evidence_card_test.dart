@@ -53,7 +53,10 @@ void main() {
       );
 
       expect(find.byKey(const Key('experiment_h_chat_panel')), findsOneWidget);
-      expect(find.byKey(const Key('experiment_h_evidence_panel')), findsOneWidget);
+      expect(
+        find.byKey(const Key('experiment_h_evidence_panel')),
+        findsOneWidget,
+      );
       expect(find.textContaining('Standard Chatbot'), findsOneWidget);
       expect(find.textContaining('ArchiveMe Evidence Engine'), findsOneWidget);
       expect(find.textContaining('exhausted'), findsWidgets);
@@ -83,7 +86,10 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.byKey(const Key('experiment_h_chat_panel')), findsNothing);
-      expect(find.byKey(const Key('experiment_h_evidence_panel')), findsOneWidget);
+      expect(
+        find.byKey(const Key('experiment_h_evidence_panel')),
+        findsOneWidget,
+      );
     });
 
     testWidgets('handles empty initial entry gracefully', (tester) async {
@@ -102,7 +108,10 @@ void main() {
       );
 
       expect(find.textContaining('Save a little more detail'), findsWidgets);
-      expect(find.byKey(const Key('experiment_h_evidence_panel')), findsOneWidget);
+      expect(
+        find.byKey(const Key('experiment_h_evidence_panel')),
+        findsOneWidget,
+      );
     });
 
     test('builder marks short entries without failing', () {

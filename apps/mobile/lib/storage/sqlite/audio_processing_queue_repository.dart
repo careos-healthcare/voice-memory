@@ -18,13 +18,12 @@ class AudioProcessingQueueRepository {
     required String filePath,
     required DateTime timestamp,
     required int durationMs,
-  }) =>
-      _db.queueDao.insertAudioProcessingPending(
-        id: id,
-        filePath: filePath,
-        timestamp: timestamp,
-        durationMs: durationMs,
-      );
+  }) => _db.queueDao.insertAudioProcessingPending(
+    id: id,
+    filePath: filePath,
+    timestamp: timestamp,
+    durationMs: durationMs,
+  );
 
   Future<AudioProcessingQueueItem?> findById(String id) =>
       _db.queueDao.findAudioProcessingById(id);
@@ -35,6 +34,5 @@ class AudioProcessingQueueRepository {
   Future<void> updateStatus({
     required String id,
     required AudioProcessingQueueStatus status,
-  }) =>
-      _db.queueDao.updateAudioProcessingStatus(id: id, status: status);
+  }) => _db.queueDao.updateAudioProcessingStatus(id: id, status: status);
 }

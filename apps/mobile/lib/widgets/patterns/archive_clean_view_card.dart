@@ -9,7 +9,9 @@ import 'package:flutter/material.dart';
 /// search, and older moments without a wall of duplicate cards.
 class ArchiveCleanViewCard extends StatefulWidget {
   const ArchiveCleanViewCard({
-    required this.sections, required this.onSectionTap, super.key,
+    required this.sections,
+    required this.onSectionTap,
+    super.key,
   });
 
   final List<ArchiveCleanSection> sections;

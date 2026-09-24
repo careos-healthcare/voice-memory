@@ -11,7 +11,8 @@ abstract final class PrivacySecurityEngagementAnalytics {
 
   static const trustCardExpandedEvent = 'trust_card_expanded';
   static const trustExplanationViewedEvent = 'trust_explanation_viewed';
-  static const biometricEnforcementToggledEvent = 'biometric_enforcement_toggled';
+  static const biometricEnforcementToggledEvent =
+      'biometric_enforcement_toggled';
   static const caregiverTokenRevokedEvent = 'caregiver_token_revoked';
   static const caregiverAuditLogExpandedEvent = 'caregiver_audit_log_expanded';
 
@@ -20,16 +21,15 @@ abstract final class PrivacySecurityEngagementAnalytics {
 
   @visibleForTesting
   static void Function(String event, Map<String, Object> properties)?
-      captureForTest;
+  captureForTest;
 
   static void trustCardExpanded({
     required String cardId,
     required bool expanded,
-  }) =>
-      _track(trustCardExpandedEvent, {
-        'card_id': cardId,
-        'expanded': expanded,
-      });
+  }) => _track(trustCardExpandedEvent, {
+    'card_id': cardId,
+    'expanded': expanded,
+  });
 
   static void trustExplanationViewed({required String pillarId}) =>
       _track(trustExplanationViewedEvent, {'pillar_id': pillarId});

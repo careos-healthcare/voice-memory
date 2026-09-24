@@ -2,13 +2,15 @@
 abstract final class RouteCatalog {
   static const recordHome = '/record';
   static const archiveHome = '/archive-belief';
+
   /// Legacy deep-link path — not a primary shell destination.
   static const changesHome = '/belief-changes';
+  static const insightsHome = '/insights';
   static const accountHome = '/account';
 
   static const List<String> primaryRoutes = [
-    recordHome,
     archiveHome,
+    insightsHome,
     accountHome,
   ];
 
@@ -25,4 +27,10 @@ abstract final class RouteCatalog {
   /// Professional coach tier (beta + compile-time gated).
   static const coachHome = '/coach';
   static const coachClientConsent = '/coach/client-consent';
+
+  /// Hands-free conversational capture.
+  static const voiceCall = '/voice-call';
+
+  /// People mentioned across saved entries.
+  static const relationships = '/relationships';
 }

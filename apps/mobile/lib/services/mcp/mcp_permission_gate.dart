@@ -100,7 +100,8 @@ class McpPermissionGate {
 
     return McpJsonRpcError(
       code: switch (reason) {
-        McpPermissionBlockReason.sandboxViolation => McpErrorCodes.sandboxViolation,
+        McpPermissionBlockReason.sandboxViolation =>
+          McpErrorCodes.sandboxViolation,
         McpPermissionBlockReason.userConsentMissing =>
           McpErrorCodes.permissionDenied,
         McpPermissionBlockReason.capabilityDisabled =>

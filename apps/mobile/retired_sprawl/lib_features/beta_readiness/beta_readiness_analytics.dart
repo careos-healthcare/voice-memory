@@ -17,7 +17,9 @@ abstract final class BetaReadinessAnalytics {
     captureForTest?.call(openedEvent, props);
     ActivationFunnelAnalytics.track(openedEvent, source: source);
     if (kDebugMode) {
-      AppLogger.debug('ARCHIVEME_BETA_READINESS event=$openedEvent source=$source');
+      AppLogger.debug(
+        'ARCHIVEME_BETA_READINESS event=$openedEvent source=$source',
+      );
     }
   }
 

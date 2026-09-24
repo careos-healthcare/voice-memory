@@ -67,7 +67,9 @@ void main() {
 
     test('denies calendar tool when capability disabled', () async {
       final gate = McpPermissionGate(consentStore: consentStore);
-      final decision = await gate.evaluateTool(McpToolNames.fetchCalendarEvents);
+      final decision = await gate.evaluateTool(
+        McpToolNames.fetchCalendarEvents,
+      );
       expect(decision.permitted, isFalse);
       expect(decision.reason, McpPermissionBlockReason.capabilityDisabled);
     });
@@ -78,7 +80,9 @@ void main() {
         calendarPermission: FakeCalendarPermissionGateway(granted: true),
         enabledCapabilities: {McpOsDataDomain.calendar: true},
       );
-      final decision = await gate.evaluateTool(McpToolNames.fetchCalendarEvents);
+      final decision = await gate.evaluateTool(
+        McpToolNames.fetchCalendarEvents,
+      );
       expect(decision.permitted, isFalse);
       expect(decision.reason, McpPermissionBlockReason.userConsentMissing);
     });
@@ -90,24 +94,29 @@ void main() {
         calendarPermission: FakeCalendarPermissionGateway(granted: false),
         enabledCapabilities: {McpOsDataDomain.calendar: true},
       );
-      final decision = await gate.evaluateTool(McpToolNames.fetchCalendarEvents);
+      final decision = await gate.evaluateTool(
+        McpToolNames.fetchCalendarEvents,
+      );
       expect(decision.permitted, isFalse);
       expect(decision.reason, McpPermissionBlockReason.osPermissionDenied);
     });
 
-    test('permits when consent, capability, and OS permission satisfied', () async {
-      await consentStore.grant(domains: {McpOsDataDomain.health});
-      final gate = McpPermissionGate(
-        consentStore: consentStore,
-        healthPermission: FakeHealthPermissionGateway(granted: true),
-        enabledCapabilities: {McpOsDataDomain.health: true},
-      );
-      final decision = await gate.evaluateTool(
-        McpToolNames.fetchLocalHealthMetrics,
-      );
-      expect(decision.permitted, isTrue);
-      expect(decision.domain, McpOsDataDomain.health);
-    });
+    test(
+      'permits when consent, capability, and OS permission satisfied',
+      () async {
+        await consentStore.grant(domains: {McpOsDataDomain.health});
+        final gate = McpPermissionGate(
+          consentStore: consentStore,
+          healthPermission: FakeHealthPermissionGateway(granted: true),
+          enabledCapabilities: {McpOsDataDomain.health: true},
+        );
+        final decision = await gate.evaluateTool(
+          McpToolNames.fetchLocalHealthMetrics,
+        );
+        expect(decision.permitted, isTrue);
+        expect(decision.domain, McpOsDataDomain.health);
+      },
+    );
   });
 
   group('McpHost tools', () {
@@ -162,8 +171,14 @@ void main() {
 
     test('lists read-only tools', () {
       final tools = host.listTools();
-      expect(tools.map((tool) => tool.name), contains(McpToolNames.fetchCalendarEvents));
-      expect(tools.map((tool) => tool.name), contains(McpToolNames.fetchLocalHealthMetrics));
+      expect(
+        tools.map((tool) => tool.name),
+        contains(McpToolNames.fetchCalendarEvents),
+      );
+      expect(
+        tools.map((tool) => tool.name),
+        contains(McpToolNames.fetchLocalHealthMetrics),
+      );
     });
 
     test('fetchCalendarEvents requires consent', () async {
@@ -208,30 +223,33 @@ void main() {
       expect(calendarGateway.fetchCallCount, 1);
     });
 
-    test('fetchLocalHealthMetrics returns local metrics after consent', () async {
-      await McpOsDataConsentStore(prefs).grant(
-        domains: {McpOsDataDomain.health},
-      );
+    test(
+      'fetchLocalHealthMetrics returns local metrics after consent',
+      () async {
+        await McpOsDataConsentStore(prefs).grant(
+          domains: {McpOsDataDomain.health},
+        );
 
-      final raw = await host.handleJson(
-        jsonEncode({
-          'jsonrpc': '2.0',
-          'method': McpToolNames.fetchLocalHealthMetrics,
-          'params': {
-            'start': '2026-01-01T00:00:00.000Z',
-            'end': '2026-01-31T00:00:00.000Z',
-            'metricTypes': ['steps'],
-          },
-          'id': 'health-1',
-        }),
-      );
-      final decoded = jsonDecode(raw) as Map<String, dynamic>;
-      expect(decoded['error'], isNull);
-      final result = decoded['result'] as Map<String, dynamic>;
-      expect(result['localOnly'], isTrue);
-      expect(result['count'], 1);
-      expect(healthGateway.fetchCallCount, 1);
-    });
+        final raw = await host.handleJson(
+          jsonEncode({
+            'jsonrpc': '2.0',
+            'method': McpToolNames.fetchLocalHealthMetrics,
+            'params': {
+              'start': '2026-01-01T00:00:00.000Z',
+              'end': '2026-01-31T00:00:00.000Z',
+              'metricTypes': ['steps'],
+            },
+            'id': 'health-1',
+          }),
+        );
+        final decoded = jsonDecode(raw) as Map<String, dynamic>;
+        expect(decoded['error'], isNull);
+        final result = decoded['result'] as Map<String, dynamic>;
+        expect(result['localOnly'], isTrue);
+        expect(result['count'], 1);
+        expect(healthGateway.fetchCallCount, 1);
+      },
+    );
 
     test('sandbox blocks network-like params before permission gate', () async {
       await McpOsDataConsentStore(prefs).grant(

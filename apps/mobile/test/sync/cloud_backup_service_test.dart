@@ -24,13 +24,14 @@ void main() {
     const namespace = AccountNamespace.guest;
     const passphrase = 'user-cloud-backup-passphrase';
 
-    final exported = await EncryptedCloudBackupService(
-      sqliteFilePath: dbPath,
-      accountNamespace: namespace,
-    ).exportBackup(
-      passphrase: passphrase,
-      outputDirectory: dir.path,
-    );
+    final exported =
+        await EncryptedCloudBackupService(
+          sqliteFilePath: dbPath,
+          accountNamespace: namespace,
+        ).exportBackup(
+          passphrase: passphrase,
+          outputDirectory: dir.path,
+        );
 
     expect(exported.succeeded, isTrue);
     expect(exported.outputPath, isNotNull);

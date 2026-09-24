@@ -30,7 +30,9 @@ class WeeklyPatternRecap {
     required this.patternTitle,
     required this.headline,
     required this.body,
-    required this.checkInCount, required this.shouldShow, this.usefulLine,
+    required this.checkInCount,
+    required this.shouldShow,
+    this.usefulLine,
     this.nextQuestion,
   });
 

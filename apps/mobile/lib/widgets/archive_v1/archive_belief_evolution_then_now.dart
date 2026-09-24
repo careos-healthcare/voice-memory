@@ -21,9 +21,7 @@ class ArchiveBeliefEvolutionThenNow extends StatelessWidget {
       children: [
         Text(
           ArchiveV1Copy.evolutionSectionTitle,
-          style: VoiceMemoryTypography.sectionLabelStyle(
-            
-          ),
+          style: VoiceMemoryTypography.sectionLabelStyle(),
         ),
         const SizedBox(height: 12),
         _BeliefPhase(

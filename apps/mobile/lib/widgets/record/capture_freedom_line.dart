@@ -8,12 +8,16 @@ import 'package:flutter/material.dart';
 /// Small capture guidance for early users — no CTA, no therapy claims.
 class CaptureFreedomLine extends StatefulWidget {
   const CaptureFreedomLine({
-    required this.source, required this.entryCount, super.key,
+    required this.source,
+    required this.entryCount,
+    super.key,
     this.compact = false,
   });
 
   const CaptureFreedomLine.test({
-    required this.source, required this.entryCount, super.key,
+    required this.source,
+    required this.entryCount,
+    super.key,
     this.compact = false,
   });
 

@@ -64,7 +64,9 @@ class _SecureDatabaseGateState extends State<SecureDatabaseGate>
     switch (state) {
       case AppLifecycleState.paused:
       case AppLifecycleState.hidden:
-        unawaited(_lock.lockDatabaseFromLifecycle().then((_) => _refreshLockedState()));
+        unawaited(
+          _lock.lockDatabaseFromLifecycle().then((_) => _refreshLockedState()),
+        );
       case AppLifecycleState.resumed:
         unawaited(() async {
           await DatabaseBiometricGateStore.ensureLoaded();

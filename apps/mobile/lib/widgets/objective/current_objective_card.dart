@@ -11,7 +11,8 @@ import 'package:flutter/material.dart';
 /// Compact card showing what to do next — today's check or record moment.
 class CurrentObjectiveCard extends StatefulWidget {
   const CurrentObjectiveCard({
-    required this.objective, super.key,
+    required this.objective,
+    super.key,
     this.onPrimaryTap,
     this.onSecondaryTap,
     this.compact = false,

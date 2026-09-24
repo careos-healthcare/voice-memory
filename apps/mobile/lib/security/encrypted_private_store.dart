@@ -1,4 +1,5 @@
-import 'package:archiveme_mobile/storage/encrypted_json_file_store.dart' show EncryptedJsonFileStore;
+import 'package:archiveme_mobile/storage/encrypted_json_file_store.dart'
+    show EncryptedJsonFileStore;
 
 import 'package:archiveme_mobile/storage/secure_storage.dart';
 

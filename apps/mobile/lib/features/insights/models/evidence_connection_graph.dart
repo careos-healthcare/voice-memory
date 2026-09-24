@@ -29,8 +29,7 @@ class EvidenceGraphNode {
   /// False when the cited entry could not be loaded (deleted or lookup fail).
   final bool available;
 
-  bool get isNavigable =>
-      available && entryId != null && entryId!.isNotEmpty;
+  bool get isNavigable => available && entryId != null && entryId!.isNotEmpty;
 }
 
 /// Directed link between two [EvidenceGraphNode]s.

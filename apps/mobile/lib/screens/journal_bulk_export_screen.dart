@@ -31,7 +31,9 @@ class _JournalBulkExportScreenState extends State<JournalBulkExportScreen> {
     });
     try {
       final service = JournalBulkExportService(
-        repository: JournalSqliteRepository(AppServices.instance.sqliteDatabase),
+        repository: JournalSqliteRepository(
+          AppServices.instance.sqliteDatabase,
+        ),
       );
       final payload = await service.buildExport();
       final dir = await getTemporaryDirectory();

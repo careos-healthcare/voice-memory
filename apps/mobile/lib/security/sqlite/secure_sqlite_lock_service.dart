@@ -18,7 +18,8 @@ class SecureSqliteLockService extends ChangeNotifier {
     SecureSqliteSession? session,
     BiometricAuthenticator? biometrics,
     SecureSqliteDatabaseCloser? onLockDatabase,
-  }) : _keyStore = keyStore ??
+  }) : _keyStore =
+           keyStore ??
            SecureSqliteEncryptionKeyStore(store: SecureStorageService()),
        _session = session ?? SecureSqliteSession(),
        _biometrics = biometrics ?? LocalAuthBiometricAuthenticator(),
@@ -50,7 +51,8 @@ class SecureSqliteLockService extends ChangeNotifier {
 
   bool get lockRequired => _lockRequired;
 
-  bool get isLocked => encryptionEnabled && (!_session.isUnlocked || _lockRequired);
+  bool get isLocked =>
+      encryptionEnabled && (!_session.isUnlocked || _lockRequired);
 
   void bindDatabaseCloser(SecureSqliteDatabaseCloser closer) {
     _onLockDatabase = closer;

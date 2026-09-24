@@ -159,7 +159,9 @@ class TheoryConnectionGraphBuilder {
             addMemory(
               entryId: chunk.entryId,
               label: _shortLabel(
-                chunk.recordedAt != null ? _formatDate(chunk.recordedAt!) : null,
+                chunk.recordedAt != null
+                    ? _formatDate(chunk.recordedAt!)
+                    : null,
                 fallback: 'Memory',
               ),
               subtitle: _trim(chunk.excerpt, 72),
@@ -169,7 +171,9 @@ class TheoryConnectionGraphBuilder {
             addCounter(
               entryId: chunk.entryId,
               label: _shortLabel(
-                chunk.recordedAt != null ? _formatDate(chunk.recordedAt!) : null,
+                chunk.recordedAt != null
+                    ? _formatDate(chunk.recordedAt!)
+                    : null,
                 fallback: 'Counter',
               ),
               subtitle: _trim(chunk.excerpt, 72),
@@ -179,7 +183,9 @@ class TheoryConnectionGraphBuilder {
             addMemory(
               entryId: chunk.entryId,
               label: _shortLabel(
-                chunk.recordedAt != null ? _formatDate(chunk.recordedAt!) : null,
+                chunk.recordedAt != null
+                    ? _formatDate(chunk.recordedAt!)
+                    : null,
                 fallback: 'Memory',
               ),
               subtitle: _trim(chunk.excerpt, 72),
@@ -292,8 +298,18 @@ class TheoryConnectionGraphBuilder {
 
   static String _formatDate(DateTime date) {
     const months = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
     ];
     return '${months[date.month - 1]} ${date.day}';
   }

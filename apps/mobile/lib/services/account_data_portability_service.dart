@@ -121,8 +121,12 @@ class AccountDataPortabilityService {
 
     final archive = Archive()
       ..addFile(ArchiveFile('README.md', readmeBytes.length, readmeBytes))
-      ..addFile(ArchiveFile('manifest.json', manifestBytes.length, manifestBytes))
-      ..addFile(ArchiveFile('archive.json', archiveJsonBytes.length, archiveJsonBytes))
+      ..addFile(
+        ArchiveFile('manifest.json', manifestBytes.length, manifestBytes),
+      )
+      ..addFile(
+        ArchiveFile('archive.json', archiveJsonBytes.length, archiveJsonBytes),
+      )
       ..addFile(ArchiveFile('archive.md', markdownBytes.length, markdownBytes));
 
     final zipBytes = Uint8List.fromList(ZipEncoder().encode(archive));

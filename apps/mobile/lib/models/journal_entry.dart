@@ -23,10 +23,11 @@ export 'journal_sync_metadata.dart';
 part 'journal_entry.freezed.dart';
 
 /// Optional hook for callers decoding persisted rows with recoverable issues.
-typedef JournalEntryDataIssueHandler = void Function({
-  required String entryId,
-  required String issue,
-});
+typedef JournalEntryDataIssueHandler =
+    void Function({
+      required String entryId,
+      required String issue,
+    });
 
 /// A persisted voice/text journal entry composed of core content plus
 /// [sync], [display], and [proof] value objects.
@@ -173,7 +174,9 @@ abstract class JournalEntry with _$JournalEntry {
     if (parsedCreatedAt == null) {
       onDataIssue?.call(
         entryId: id,
-        issue: createdAtRaw.isEmpty ? 'missing_created_at' : 'invalid_created_at',
+        issue: createdAtRaw.isEmpty
+            ? 'missing_created_at'
+            : 'invalid_created_at',
       );
     }
     final createdAt = parsedCreatedAt ?? DateTime.now().toUtc();
@@ -183,7 +186,8 @@ abstract class JournalEntry with _$JournalEntry {
       transcript: JsonConverters.stringOrEmpty(json['transcript']),
       durationSeconds: JsonConverters.intOrZero(json['durationSeconds']),
       reflection:
-          proof.verifiedProof?.reflection ?? Reflection.fromJson(reflectionJson),
+          proof.verifiedProof?.reflection ??
+          Reflection.fromJson(reflectionJson),
       localAudioPath: JsonConverters.nullableString(json['localAudioPath']),
       transcriptStatus: TranscriptStatus.fromStorage(
         JsonConverters.nullableString(json['transcriptStatus']),
@@ -206,7 +210,8 @@ abstract class JournalEntry with _$JournalEntry {
     );
   }
 
-  static const int currentSchemaVersion = JournalSyncMetadata.currentSchemaVersion;
+  static const int currentSchemaVersion =
+      JournalSyncMetadata.currentSchemaVersion;
 
   // --- Delegating accessors (preserve existing call-site ergonomics) ---
 
@@ -298,19 +303,19 @@ abstract class JournalEntry with _$JournalEntry {
 
   @override
   int get hashCode => Object.hash(
-        id,
-        createdAt,
-        transcript,
-        durationSeconds,
-        reflection,
-        localAudioPath,
-        transcriptStatus,
-        transcriptProvenance,
-        ownerKey,
-        sync,
-        display,
-        proof,
-      );
+    id,
+    createdAt,
+    transcript,
+    durationSeconds,
+    reflection,
+    localAudioPath,
+    transcriptStatus,
+    transcriptProvenance,
+    ownerKey,
+    sync,
+    display,
+    proof,
+  );
 
   @override
   String toString() =>

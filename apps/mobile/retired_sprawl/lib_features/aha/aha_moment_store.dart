@@ -48,7 +48,11 @@ class AhaMomentStore {
         _firstCompleted = raw['firstCompleted'] == true;
       }
     } catch (e, stackTrace) {
-      AppLogger.error('Unhandled error caught', error: e, stackTrace: stackTrace);
+      AppLogger.error(
+        'Unhandled error caught',
+        error: e,
+        stackTrace: stackTrace,
+      );
       // Fail closed — treat as incomplete so the card can still appear.
     }
     _loaded = true;
@@ -63,7 +67,11 @@ class AhaMomentStore {
         'firstCompleted': true,
       });
     } catch (e, stackTrace) {
-      AppLogger.error('Unhandled error caught', error: e, stackTrace: stackTrace);
+      AppLogger.error(
+        'Unhandled error caught',
+        error: e,
+        stackTrace: stackTrace,
+      );
       // In-memory completion still applies this session.
     }
   }

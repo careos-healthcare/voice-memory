@@ -12,7 +12,10 @@ import 'package:flutter/material.dart';
 /// Post-proof Pro bridge — routes to the existing paywall only.
 class ProBridgeVisibilityCard extends StatefulWidget {
   const ProBridgeVisibilityCard({
-    required this.result, required this.onSeePro, required this.onDismiss, super.key,
+    required this.result,
+    required this.onSeePro,
+    required this.onDismiss,
+    super.key,
   });
 
   final ProBridgeVisibilityResult result;

@@ -43,7 +43,9 @@ class _MidPayloadSyncApiClient implements SyncApiClient {
   bool serverHasBlob = false;
 
   @override
-  Future<ApiResult<Map<String, dynamic>>> syncChanges({required int since}) async {
+  Future<ApiResult<Map<String, dynamic>>> syncChanges({
+    required int since,
+  }) async {
     return const ApiSuccess({'changes': []});
   }
 
@@ -72,7 +74,9 @@ class _MidPayloadSyncApiClient implements SyncApiClient {
     if (pushAttempts == 1) {
       serverHasBlob = true;
       return ApiFailureResult(
-        const ApiFailureOffline('Connection lost while uploading encrypted payload.'),
+        const ApiFailureOffline(
+          'Connection lost while uploading encrypted payload.',
+        ),
       );
     }
 
@@ -107,7 +111,10 @@ void main() {
 
   test('journal store keeps ULID ids assigned at creation time', () async {
     final dir = Directory.systemTemp.createTempSync('vm_sync_ulid_');
-    final store = await JournalStore.open('${dir.path}/journal.json', encryptAtRest: false);
+    final store = await JournalStore.open(
+      '${dir.path}/journal.json',
+      encryptAtRest: false,
+    );
     final ulid = SyncEngine.newOfflineEntryId();
     await store.save(
       JournalEntry(
@@ -125,7 +132,10 @@ void main() {
 
   test('recovers after mid-payload disconnect via idempotent retry', () async {
     final dir = Directory.systemTemp.createTempSync('vm_sync_recovery_');
-    final journal = await JournalStore.open('${dir.path}/journal.json', encryptAtRest: false);
+    final journal = await JournalStore.open(
+      '${dir.path}/journal.json',
+      encryptAtRest: false,
+    );
     final sqlite = await openTestAppSqliteDatabase();
     final outbox = SyncOutboxStore(AppDatabase.fromSqflite(sqlite.database));
     final client = _MidPayloadSyncApiClient();
@@ -175,18 +185,21 @@ void main() {
     expect(await engine.pendingQueue(), isEmpty);
   });
 
-  test('status matrix marks existing blobs as applied without duplicate writes', () {
-    const matrix = SyncPushStatusMatrix([
-      SyncBlobStatusMatrixEntry(
-        id: EncryptedSyncSchema.coreBlobId,
-        type: EncryptedSyncSchema.coreBlobType,
-        status: SyncBlobUpsertStatus.existing,
-      ),
-    ]);
+  test(
+    'status matrix marks existing blobs as applied without duplicate writes',
+    () {
+      const matrix = SyncPushStatusMatrix([
+        SyncBlobStatusMatrixEntry(
+          id: EncryptedSyncSchema.coreBlobId,
+          type: EncryptedSyncSchema.coreBlobType,
+          status: SyncBlobUpsertStatus.existing,
+        ),
+      ]);
 
-    expect(matrix.existingCount, 1);
-    expect(matrix.createdCount, 0);
-    expect(matrix.updatedCount, 0);
-    expect(matrix.blobApplied(EncryptedSyncSchema.coreBlobId), isTrue);
-  });
+      expect(matrix.existingCount, 1);
+      expect(matrix.createdCount, 0);
+      expect(matrix.updatedCount, 0);
+      expect(matrix.blobApplied(EncryptedSyncSchema.coreBlobId), isTrue);
+    },
+  );
 }

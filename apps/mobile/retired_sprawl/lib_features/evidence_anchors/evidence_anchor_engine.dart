@@ -32,7 +32,8 @@ abstract final class EvidenceAnchorEngine {
   static const maxAnchorLength = 72;
   static const recentWindowDays = 7;
 
-  static const Map<EvidenceAnchorType, int> _typePriority = AnchorCalibrationEngine.typePriority;
+  static const Map<EvidenceAnchorType, int> _typePriority =
+      AnchorCalibrationEngine.typePriority;
 
   static EvidenceAnchorExtractionResult build({
     required List<JournalEntry> entries,

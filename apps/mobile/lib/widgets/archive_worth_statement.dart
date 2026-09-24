@@ -6,7 +6,8 @@ import 'package:go_router/go_router.dart';
 /// Archive worth line — mirrors web `ArchiveWorthStatement` (compact).
 class ArchiveWorthStatement extends StatelessWidget {
   const ArchiveWorthStatement({
-    required this.entries, super.key,
+    required this.entries,
+    super.key,
     this.onProtectArchive,
   });
 

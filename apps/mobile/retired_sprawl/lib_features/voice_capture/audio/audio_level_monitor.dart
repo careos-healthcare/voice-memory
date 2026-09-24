@@ -23,6 +23,9 @@ class AudioLevelSummary {
 class AudioLevelMonitor {
   AudioLevelMonitor({this.silentThresholdDb = -45});
 
+  /// Microphone level interval. One sample per frame at 60fps.
+  static const waveformSampleInterval = Duration(milliseconds: 16);
+
   final double silentThresholdDb;
 
   StreamSubscription<Amplitude>? _subscription;
@@ -48,29 +51,29 @@ class AudioLevelMonitor {
     stop(logSummary: false);
     resetStats();
 
-    _subscription = recorder
-        .onAmplitudeChanged(const Duration(milliseconds: 50))
-        .listen((amplitude) {
-          _sampleCount += 1;
-          final current = amplitude.current;
-          _minDb = _min(_minDb, current);
-          _maxDb = _max(_maxDb, amplitude.current);
-          _maxDb = _max(_maxDb, amplitude.max);
-          _sumDb += current;
-          onSample?.call(current);
+    _subscription = recorder.onAmplitudeChanged(waveformSampleInterval).listen((
+      amplitude,
+    ) {
+      _sampleCount += 1;
+      final current = amplitude.current;
+      _minDb = _min(_minDb, current);
+      _maxDb = _max(_maxDb, amplitude.current);
+      _maxDb = _max(_maxDb, amplitude.max);
+      _sumDb += current;
+      onSample?.call(current);
 
-          final now = DateTime.now();
-          if (_lastLogAt == null ||
-              now.difference(_lastLogAt!) >= const Duration(seconds: 1)) {
-            _lastLogAt = now;
-            AudioDiagLog.level(
-              currentDb: current,
-              minDb: currentMinDb,
-              maxDb: currentMaxDb,
-              avgDb: currentAvgDb,
-            );
-          }
-        });
+      final now = DateTime.now();
+      if (_lastLogAt == null ||
+          now.difference(_lastLogAt!) >= const Duration(seconds: 1)) {
+        _lastLogAt = now;
+        AudioDiagLog.level(
+          currentDb: current,
+          minDb: currentMinDb,
+          maxDb: currentMaxDb,
+          avgDb: currentAvgDb,
+        );
+      }
+    });
   }
 
   void resetStats() {
@@ -90,8 +93,7 @@ class AudioLevelMonitor {
     final resolvedAvgDb = _sampleCount > 0
         ? _sumDb / _sampleCount
         : double.negativeInfinity;
-    final likelySilent =
-        _sampleCount == 0 || resolvedMaxDb < silentThresholdDb;
+    final likelySilent = _sampleCount == 0 || resolvedMaxDb < silentThresholdDb;
     final summary = AudioLevelSummary(
       minDb: resolvedMinDb,
       maxDb: resolvedMaxDb,

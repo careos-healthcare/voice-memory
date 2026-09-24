@@ -10,7 +10,8 @@ import 'package:go_router/go_router.dart';
 /// Hero progress card — indigo gradient centerpiece on Discover.
 class ArchiveProgressIdentityCard extends StatefulWidget {
   const ArchiveProgressIdentityCard({
-    required this.identity, super.key,
+    required this.identity,
+    super.key,
     this.previous,
   });
 

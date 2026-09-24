@@ -46,16 +46,21 @@ abstract final class AppleNotesJsonParser {
     required String sourceFile,
   }) {
     final title = row['title']?.toString().trim() ?? '';
-    final body = row['body']?.toString().trim() ??
+    final body =
+        row['body']?.toString().trim() ??
         row['content']?.toString().trim() ??
         row['text']?.toString().trim() ??
         '';
-    final text = title.isEmpty ? body : (body.isEmpty ? title : '$title\n\n$body');
-    final createdRaw = row['createdAt']?.toString() ??
+    final text = title.isEmpty
+        ? body
+        : (body.isEmpty ? title : '$title\n\n$body');
+    final createdRaw =
+        row['createdAt']?.toString() ??
         row['creationDate']?.toString() ??
         row['date']?.toString();
-    final createdAt =
-        createdRaw == null ? null : DateTime.tryParse(createdRaw)?.toUtc();
+    final createdAt = createdRaw == null
+        ? null
+        : DateTime.tryParse(createdRaw)?.toUtc();
 
     return ExternalImportRecord(
       source: ExternalImportSource.appleNotesJson,

@@ -2,7 +2,7 @@
 abstract class ArchiveTheoryCopy {
   ArchiveTheoryCopy._();
 
-  static const String heroTitle = 'Possible patterns ArchiveMe is watching';
+  static const String heroTitle = 'Life Patterns';
 
   static const String notYetConfident =
       'ArchiveMe does not have enough evidence yet.';

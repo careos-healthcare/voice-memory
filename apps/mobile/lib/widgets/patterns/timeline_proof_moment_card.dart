@@ -10,11 +10,15 @@ import 'package:flutter/material.dart';
 /// Concise timeline proof summary — no Pro CTA, no transcript text.
 class TimelineProofMomentCard extends StatefulWidget {
   const TimelineProofMomentCard({
-    required this.result, required this.source, super.key,
+    required this.result,
+    required this.source,
+    super.key,
   });
 
   const TimelineProofMomentCard.test({
-    required this.result, required this.source, super.key,
+    required this.result,
+    required this.source,
+    super.key,
   });
 
   final TimelineProofMomentResult result;

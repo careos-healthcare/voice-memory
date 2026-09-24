@@ -10,7 +10,9 @@ import 'dart:async';
 /// Opens the fact editor for one entry. Creates nothing until the user saves.
 class SaveAsFactButton extends StatefulWidget {
   const SaveAsFactButton({
-    required this.entry, required this.store, super.key,
+    required this.entry,
+    required this.store,
+    super.key,
     this.source = 'entry_detail',
     this.compact = false,
     this.onSaved,

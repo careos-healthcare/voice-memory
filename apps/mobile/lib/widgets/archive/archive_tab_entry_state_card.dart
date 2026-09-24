@@ -8,7 +8,8 @@ import 'package:flutter/material.dart';
 /// Calm Archive tab card for the four early entry-count states.
 class ArchiveTabEntryStateCard extends StatelessWidget {
   const ArchiveTabEntryStateCard({
-    required this.model, super.key,
+    required this.model,
+    super.key,
     this.onPrimary,
   });
 

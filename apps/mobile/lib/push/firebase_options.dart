@@ -1,6 +1,7 @@
 import 'dart:io' show Platform;
 
-import 'package:archiveme_mobile/push/firebase_bootstrap.dart' show FirebaseBootstrap;
+import 'package:archiveme_mobile/push/firebase_bootstrap.dart'
+    show FirebaseBootstrap;
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 

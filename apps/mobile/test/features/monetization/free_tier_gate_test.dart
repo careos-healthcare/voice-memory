@@ -1,0 +1,83 @@
+import 'package:archiveme_mobile/features/monetization/revenuecat_service.dart';
+import 'package:flutter_test/flutter_test.dart';
+
+void main() {
+  test('offline does not grant premium or lock the free archive', () {
+    for (final offline in [false, true]) {
+      expect(FreeTierGate.allowsLocalArchive(offline: offline), isTrue);
+      expect(FreeTierGate.allowsAudioCapture(offline: offline), isTrue);
+      expect(FreeTierGate.allowsTextCapture(offline: offline), isTrue);
+      expect(
+        FreeTierGate.allowsCloudBackup(
+          PremiumEntitlement.free,
+          offline: offline,
+        ),
+        isFalse,
+      );
+      expect(
+        FreeTierGate.allowsObsidianSync(
+          PremiumEntitlement.free,
+          offline: offline,
+        ),
+        isFalse,
+      );
+      expect(
+        FreeTierGate.allowsPatternSynthesis(
+          PremiumEntitlement.free,
+          offline: offline,
+        ),
+        isFalse,
+      );
+      expect(
+        FreeTierGate.allowsCloudBackup(
+          PremiumEntitlement.trial,
+          offline: offline,
+        ),
+        isTrue,
+      );
+      expect(
+        FreeTierGate.allowsMeshOffload(
+          PremiumEntitlement.free,
+          offline: offline,
+        ),
+        isFalse,
+      );
+      expect(
+        FreeTierGate.allowsMultiDeviceSync(
+          PremiumEntitlement.free,
+          offline: offline,
+        ),
+        isFalse,
+      );
+      expect(
+        FreeTierGate.allowsDeeperCoaching(
+          PremiumEntitlement.free,
+          offline: offline,
+        ),
+        isFalse,
+      );
+      expect(
+        FreeTierGate.allowsMeshOffload(
+          PremiumEntitlement.active,
+          offline: offline,
+        ),
+        isTrue,
+      );
+      expect(
+        FreeTierGate.allowsDeeperCoaching(
+          PremiumEntitlement.active,
+          offline: offline,
+        ),
+        isTrue,
+      );
+    }
+  });
+
+  test('the first pattern synthesis is free, then the receipt is required', () {
+    PatternSynthesisTrial.reset();
+    expect(PatternSynthesisTrial.allow(PremiumEntitlement.free), isTrue);
+    expect(PatternSynthesisTrial.allow(PremiumEntitlement.free), isFalse);
+    expect(PatternSynthesisTrial.allow(PremiumEntitlement.trial), isTrue);
+    expect(PatternSynthesisTrial.allow(PremiumEntitlement.active), isTrue);
+  });
+}

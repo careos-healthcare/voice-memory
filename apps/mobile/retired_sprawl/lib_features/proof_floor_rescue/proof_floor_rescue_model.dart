@@ -13,7 +13,11 @@ class ProofFloorRescueInput {
     required this.hasSafeAnchor,
     required this.hasLowMatchQuality,
     required this.usefulFeedbackCount,
-    required this.isRecording, required this.isDegradedTranscriptState, required this.whatChangedQuestionActive, required this.patternReviewInboxHasActiveItems, this.latestFeedbackType,
+    required this.isRecording,
+    required this.isDegradedTranscriptState,
+    required this.whatChangedQuestionActive,
+    required this.patternReviewInboxHasActiveItems,
+    this.latestFeedbackType,
     this.feedbackAnsweredToday = false,
     this.surface = BetaProofFeedbackSurface.timelineProofMoment,
   });
@@ -43,7 +47,12 @@ class ProofFloorRescueResult {
     required this.title,
     required this.body,
     required this.primaryCta,
-    required this.showFeedbackOptions, required this.source, required this.entryCount, required this.confidenceLevel, required this.surface, this.secondaryCta,
+    required this.showFeedbackOptions,
+    required this.source,
+    required this.entryCount,
+    required this.confidenceLevel,
+    required this.surface,
+    this.secondaryCta,
   });
 
   static const hidden = ProofFloorRescueResult(

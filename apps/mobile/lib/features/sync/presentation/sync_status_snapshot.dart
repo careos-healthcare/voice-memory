@@ -13,8 +13,7 @@ class SyncStatusSnapshot {
   final BackgroundSyncState sync;
   final bool isOnline;
 
-  int get pendingUploadCount =>
-      sync.queuedEntryCount + sync.pendingOutboxCount;
+  int get pendingUploadCount => sync.queuedEntryCount + sync.pendingOutboxCount;
 
   bool get showBanner =>
       !isOnline ||
@@ -52,8 +51,7 @@ class SyncStatusSnapshot {
       pendingUploadCount > 0 ? pendingUploadCount.toString() : null;
 
   SyncStatusVisualKind get visualKind {
-    if (!isOnline ||
-        sync.phase == BackgroundSyncPhase.waitingForNetwork) {
+    if (!isOnline || sync.phase == BackgroundSyncPhase.waitingForNetwork) {
       return SyncStatusVisualKind.offline;
     }
     if (sync.phase == BackgroundSyncPhase.failed) {

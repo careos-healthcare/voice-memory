@@ -51,7 +51,11 @@ void main() {
     final stamp = DateTime.now().microsecondsSinceEpoch.toString();
     await _reset(stamp);
     await ActivationEventsStore(AppServices.instance.prefs).write(
-      ActivationEventCounts.fromMap({'firstReflectionSaved': 1, 'tomorrowCheckInCreated': 2, 'tomorrowCheckInDueShown': 2,}),
+      ActivationEventCounts.fromMap({
+        'firstReflectionSaved': 1,
+        'tomorrowCheckInCreated': 2,
+        'tomorrowCheckInDueShown': 2,
+      }),
     );
     final hook = HookDiagnosisStore(AppServices.instance.prefs);
     await hook.append(_missed(HookDiagnosisMissedReason.confusing, 'c1'));
@@ -68,7 +72,12 @@ void main() {
     final stamp = DateTime.now().microsecondsSinceEpoch.toString();
     await _reset(stamp);
     await ActivationEventsStore(AppServices.instance.prefs).write(
-      ActivationEventCounts.fromMap({'firstReflectionSaved': 1, 'tomorrowCheckInCreated': 2, 'tomorrowCheckInDueShown': 2, 'tomorrowCheckInCompleted': 2,}),
+      ActivationEventCounts.fromMap({
+        'firstReflectionSaved': 1,
+        'tomorrowCheckInCreated': 2,
+        'tomorrowCheckInDueShown': 2,
+        'tomorrowCheckInCompleted': 2,
+      }),
     );
     final hook = HookDiagnosisStore(AppServices.instance.prefs);
     await hook.append(_resultRated(HookDiagnosisRating.notReally, 'r1'));
@@ -85,7 +94,11 @@ void main() {
     final stamp = DateTime.now().microsecondsSinceEpoch.toString();
     await _reset(stamp);
     await ActivationEventsStore(AppServices.instance.prefs).write(
-      ActivationEventCounts.fromMap({'firstReflectionSaved': 1, 'tomorrowCheckInCreated': 2, 'tomorrowCheckInDueShown': 2,}),
+      ActivationEventCounts.fromMap({
+        'firstReflectionSaved': 1,
+        'tomorrowCheckInCreated': 2,
+        'tomorrowCheckInDueShown': 2,
+      }),
     );
     final hook = HookDiagnosisStore(AppServices.instance.prefs);
     await hook.append(_missed(HookDiagnosisMissedReason.didNotCare, 'd1'));
@@ -102,7 +115,11 @@ void main() {
     final stamp = DateTime.now().microsecondsSinceEpoch.toString();
     await _reset(stamp);
     await ActivationEventsStore(AppServices.instance.prefs).write(
-      ActivationEventCounts.fromMap({'firstReflectionSaved': 1, 'tomorrowCheckInCreated': 2, 'tomorrowCheckInDueShown': 0,}),
+      ActivationEventCounts.fromMap({
+        'firstReflectionSaved': 1,
+        'tomorrowCheckInCreated': 2,
+        'tomorrowCheckInDueShown': 0,
+      }),
     );
     final hook = HookDiagnosisStore(AppServices.instance.prefs);
     await hook.append(_questionRated(HookDiagnosisRating.yes, 'q1'));
@@ -123,7 +140,10 @@ void main() {
     final stamp = DateTime.now().microsecondsSinceEpoch.toString();
     await _reset(stamp);
     await ActivationEventsStore(AppServices.instance.prefs).write(
-      ActivationEventCounts.fromMap({'trialRecordingStarted': 2, 'firstReflectionSaved': 0,}),
+      ActivationEventCounts.fromMap({
+        'trialRecordingStarted': 2,
+        'firstReflectionSaved': 0,
+      }),
     );
 
     final summary = await const TrialSummaryEngine().build();
@@ -137,7 +157,11 @@ void main() {
     final stamp = DateTime.now().microsecondsSinceEpoch.toString();
     await _reset(stamp);
     await ActivationEventsStore(AppServices.instance.prefs).write(
-      ActivationEventCounts.fromMap({'firstReflectionSaved': 1, 'tomorrowCheckInCreated': 4, 'tomorrowCheckInDueShown': 4,}),
+      ActivationEventCounts.fromMap({
+        'firstReflectionSaved': 1,
+        'tomorrowCheckInCreated': 4,
+        'tomorrowCheckInDueShown': 4,
+      }),
     );
     final hook = HookDiagnosisStore(AppServices.instance.prefs);
     await hook.append(_missed(HookDiagnosisMissedReason.didNotCare, 'd1'));
@@ -155,7 +179,11 @@ void main() {
     final stamp = DateTime.now().microsecondsSinceEpoch.toString();
     await _reset(stamp);
     await ActivationEventsStore(AppServices.instance.prefs).write(
-      ActivationEventCounts.fromMap({'firstReflectionSaved': 1, 'tomorrowCheckInCreated': 5, 'tomorrowCheckInDueShown': 5,}),
+      ActivationEventCounts.fromMap({
+        'firstReflectionSaved': 1,
+        'tomorrowCheckInCreated': 5,
+        'tomorrowCheckInDueShown': 5,
+      }),
     );
     final hook = HookDiagnosisStore(AppServices.instance.prefs);
     await hook.append(_missed(HookDiagnosisMissedReason.didNotCare, 'd1'));
@@ -174,7 +202,11 @@ void main() {
     final stamp = DateTime.now().microsecondsSinceEpoch.toString();
     await _reset(stamp);
     await ActivationEventsStore(AppServices.instance.prefs).write(
-      ActivationEventCounts.fromMap({'firstReflectionSaved': 1, 'tomorrowCheckInCreated': 4, 'tomorrowCheckInDueShown': 4,}),
+      ActivationEventCounts.fromMap({
+        'firstReflectionSaved': 1,
+        'tomorrowCheckInCreated': 4,
+        'tomorrowCheckInDueShown': 4,
+      }),
     );
     final hook = HookDiagnosisStore(AppServices.instance.prefs);
     // Triggers sharper via did-not-care 0.25, escalates via question rate 0.40.
@@ -198,7 +230,12 @@ void main() {
     final stamp = DateTime.now().microsecondsSinceEpoch.toString();
     await _reset(stamp);
     await ActivationEventsStore(AppServices.instance.prefs).write(
-      ActivationEventCounts.fromMap({'firstReflectionSaved': 1, 'tomorrowCheckInCreated': 4, 'tomorrowCheckInDueShown': 4, 'tomorrowCheckInCompleted': 4,}),
+      ActivationEventCounts.fromMap({
+        'firstReflectionSaved': 1,
+        'tomorrowCheckInCreated': 4,
+        'tomorrowCheckInDueShown': 4,
+        'tomorrowCheckInCompleted': 4,
+      }),
     );
     final hook = HookDiagnosisStore(AppServices.instance.prefs);
     await hook.append(_resultRated(HookDiagnosisRating.notReally, 'r1'));
@@ -216,7 +253,12 @@ void main() {
     final stamp = DateTime.now().microsecondsSinceEpoch.toString();
     await _reset(stamp);
     await ActivationEventsStore(AppServices.instance.prefs).write(
-      ActivationEventCounts.fromMap({'firstReflectionSaved': 1, 'tomorrowCheckInCreated': 5, 'tomorrowCheckInDueShown': 5, 'tomorrowCheckInCompleted': 5,}),
+      ActivationEventCounts.fromMap({
+        'firstReflectionSaved': 1,
+        'tomorrowCheckInCreated': 5,
+        'tomorrowCheckInDueShown': 5,
+        'tomorrowCheckInCompleted': 5,
+      }),
     );
     final hook = HookDiagnosisStore(AppServices.instance.prefs);
     await hook.append(_resultRated(HookDiagnosisRating.notReally, 'r1'));
@@ -235,7 +277,12 @@ void main() {
     final stamp = DateTime.now().microsecondsSinceEpoch.toString();
     await _reset(stamp);
     await ActivationEventsStore(AppServices.instance.prefs).write(
-      ActivationEventCounts.fromMap({'firstReflectionSaved': 1, 'tomorrowCheckInCreated': 4, 'tomorrowCheckInDueShown': 4, 'tomorrowCheckInCompleted': 4,}),
+      ActivationEventCounts.fromMap({
+        'firstReflectionSaved': 1,
+        'tomorrowCheckInCreated': 4,
+        'tomorrowCheckInDueShown': 4,
+        'tomorrowCheckInCompleted': 4,
+      }),
     );
     final hook = HookDiagnosisStore(AppServices.instance.prefs);
     await hook.append(
@@ -258,7 +305,12 @@ void main() {
     final stamp = DateTime.now().microsecondsSinceEpoch.toString();
     await _reset(stamp);
     await ActivationEventsStore(AppServices.instance.prefs).write(
-      ActivationEventCounts.fromMap({'firstReflectionSaved': 1, 'tomorrowCheckInCreated': 1, 'tomorrowCheckInDueShown': 1, 'tomorrowCheckInCompleted': 1,}),
+      ActivationEventCounts.fromMap({
+        'firstReflectionSaved': 1,
+        'tomorrowCheckInCreated': 1,
+        'tomorrowCheckInDueShown': 1,
+        'tomorrowCheckInCompleted': 1,
+      }),
     );
 
     final summary = await const TrialSummaryEngine().build();

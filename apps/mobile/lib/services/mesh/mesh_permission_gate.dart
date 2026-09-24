@@ -18,7 +18,8 @@ class MeshPermissionDecision {
 
   const MeshPermissionDecision.permitted() : permitted = true, reason = null;
 
-  const MeshPermissionDecision.denied({required this.reason}) : permitted = false;
+  const MeshPermissionDecision.denied({required this.reason})
+    : permitted = false;
 
   final bool permitted;
   final MeshPermissionBlockReason? reason;
@@ -47,11 +48,12 @@ class RegistryLocalNetworkPermissionGateway
     bool? meshFeatureEnabled,
     bool? localNetworkEnabled,
     bool? p2pEnabled,
-  })  : _meshFeatureEnabled =
-            meshFeatureEnabled ?? MeshComputeFeatureFlags.enableMeshComputeOffload,
-        _localNetworkEnabled =
-            localNetworkEnabled ?? V1CapabilityRegistry.localNetwork,
-        _p2pEnabled = p2pEnabled ?? V1CapabilityRegistry.p2pAndWebRtc;
+  }) : _meshFeatureEnabled =
+           meshFeatureEnabled ??
+           MeshComputeFeatureFlags.enableMeshComputeOffload,
+       _localNetworkEnabled =
+           localNetworkEnabled ?? V1CapabilityRegistry.localNetwork,
+       _p2pEnabled = p2pEnabled ?? V1CapabilityRegistry.p2pAndWebRtc;
 
   final bool _meshFeatureEnabled;
   final bool _localNetworkEnabled;
@@ -73,13 +75,14 @@ class MeshPermissionGate {
   MeshPermissionGate({
     LocalNetworkPermissionGateway? localNetworkPermission,
     bool? meshFeatureEnabled,
-  })  : _localNetworkPermission =
-            localNetworkPermission ??
-            RegistryLocalNetworkPermissionGateway(
-              meshFeatureEnabled: meshFeatureEnabled,
-            ),
-        _meshFeatureEnabled =
-            meshFeatureEnabled ?? MeshComputeFeatureFlags.enableMeshComputeOffload;
+  }) : _localNetworkPermission =
+           localNetworkPermission ??
+           RegistryLocalNetworkPermissionGateway(
+             meshFeatureEnabled: meshFeatureEnabled,
+           ),
+       _meshFeatureEnabled =
+           meshFeatureEnabled ??
+           MeshComputeFeatureFlags.enableMeshComputeOffload;
 
   final LocalNetworkPermissionGateway _localNetworkPermission;
   final bool _meshFeatureEnabled;
@@ -103,7 +106,8 @@ class MeshPermissionGate {
 }
 
 /// Test double for local network permission.
-class FakeLocalNetworkPermissionGateway implements LocalNetworkPermissionGateway {
+class FakeLocalNetworkPermissionGateway
+    implements LocalNetworkPermissionGateway {
   FakeLocalNetworkPermissionGateway({this.granted = false});
 
   bool granted;

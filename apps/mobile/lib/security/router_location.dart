@@ -1,4 +1,5 @@
-import 'package:archiveme_mobile/features/recording/recording_dependencies.dart' show RouteBase;
+import 'package:archiveme_mobile/features/recording/recording_dependencies.dart'
+    show RouteBase;
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 

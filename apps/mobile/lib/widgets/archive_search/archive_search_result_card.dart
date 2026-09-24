@@ -19,7 +19,8 @@ import 'package:flutter/material.dart';
 /// dates, ids, or scores.
 class ArchiveSearchResultCard extends StatelessWidget {
   const ArchiveSearchResultCard({
-    required this.result, super.key,
+    required this.result,
+    super.key,
     this.onTap,
     this.onAddToCollection,
   });

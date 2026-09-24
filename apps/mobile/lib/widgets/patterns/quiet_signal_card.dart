@@ -7,13 +7,16 @@ import 'package:archiveme_mobile/features/quiet_signal/quiet_signal_copy.dart';
 import 'package:archiveme_mobile/features/quiet_signal/quiet_signal_model.dart';
 import 'package:archiveme_mobile/theme/app_colors.dart';
 import 'package:archiveme_mobile/theme/app_spacing.dart';
-import 'package:archiveme_mobile/theme/voicememory_cards.dart';
+import 'package:archiveme_mobile/widgets/cues/emotional_cues.dart';
 import 'package:flutter/material.dart';
 
 /// Quiet / not-seen-recently card on Patterns and related surfaces.
 class QuietSignalCard extends StatefulWidget {
   const QuietSignalCard({
-    required this.signal, required this.entryCount, required this.source, super.key,
+    required this.signal,
+    required this.entryCount,
+    required this.source,
+    super.key,
     this.store,
     this.skipPersist = false,
     this.onKeepWatching,
@@ -23,7 +26,10 @@ class QuietSignalCard extends StatefulWidget {
   });
 
   const QuietSignalCard.test({
-    required this.signal, required this.entryCount, required this.source, super.key,
+    required this.signal,
+    required this.entryCount,
+    required this.source,
+    super.key,
     this.store,
     this.onKeepWatching,
     this.onViewPatternDetails,
@@ -96,37 +102,19 @@ class _QuietSignalCardState extends State<QuietSignalCard> {
 
   @override
   Widget build(BuildContext context) {
-    final bodyStyle = ArchiveMobileTypography.explanationBody(context).copyWith(
-      color: AppColors.textSecondary,
-      height: widget.compact ? 1.4 : 1.45,
-    );
-
-    return Container(
+    return Padding(
       key: const Key('quiet_signal_card'),
-      width: double.infinity,
-      padding: EdgeInsets.all(widget.compact ? AppSpacing.sm : AppSpacing.md),
-      decoration: VoiceMemoryCards.standard(
-        background: const Color(0xFFF7F8FA),
-      ),
+      padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text(
-            widget.signal.title,
-            key: const Key('quiet_signal_card_title'),
-            style: ArchiveMobileTypography.responsiveSectionTitle(context),
-          ),
-          SizedBox(height: widget.compact ? AppSpacing.xs / 2 : AppSpacing.xs),
-          Text(
-            widget.signal.body,
-            key: const Key('quiet_signal_card_body'),
-            style: bodyStyle,
-          ),
-          SizedBox(height: widget.compact ? AppSpacing.xs / 2 : AppSpacing.xs),
-          Text(
-            widget.signal.footer,
-            key: const Key('quiet_signal_card_footer'),
-            style: bodyStyle,
+          HesitationSignalCue(
+            labelKey: const Key('quiet_signal_card_title'),
+            lineKey: const Key('quiet_signal_card_body'),
+            noteKey: const Key('quiet_signal_card_footer'),
+            label: widget.signal.title,
+            line: widget.signal.body,
+            note: widget.signal.footer,
           ),
           SizedBox(height: widget.compact ? AppSpacing.xs : AppSpacing.sm),
           Wrap(

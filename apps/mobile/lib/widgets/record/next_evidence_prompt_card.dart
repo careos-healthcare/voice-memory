@@ -9,7 +9,10 @@ import 'package:flutter/material.dart';
 /// Main post-recording CTA — one sharp next prompt.
 class NextEvidencePromptCard extends StatelessWidget {
   const NextEvidencePromptCard({
-    required this.prompt, required this.onUsePrompt, required this.onChooseAnother, super.key,
+    required this.prompt,
+    required this.onUsePrompt,
+    required this.onChooseAnother,
+    super.key,
     this.accent = true,
   });
 
@@ -52,7 +55,9 @@ class NextEvidencePromptCard extends StatelessWidget {
           const SizedBox(height: AppSpacing.xs),
           OutlinedButton(
             onPressed: onChooseAnother,
-            child: const Text(ConsumerUiCopy.postSaveInsightChooseAnotherPrompt),
+            child: const Text(
+              ConsumerUiCopy.postSaveInsightChooseAnotherPrompt,
+            ),
           ),
         ],
       ),

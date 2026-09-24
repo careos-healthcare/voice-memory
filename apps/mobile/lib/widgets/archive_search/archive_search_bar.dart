@@ -8,7 +8,8 @@ import 'package:flutter/material.dart';
 /// Only a fixed "search opened" event fires, once per session.
 class ArchiveSearchBar extends StatelessWidget {
   const ArchiveSearchBar({
-    required this.onChanged, super.key,
+    required this.onChanged,
+    super.key,
     this.source = 'journal',
     this.focusNode,
     this.controller,

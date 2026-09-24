@@ -17,36 +17,39 @@ class _RebuildCounter extends StatelessWidget {
 }
 
 void main() {
-  testWidgets('RecordingWaveform repaints via CustomPaint without parent rebuilds', (
-    tester,
-  ) async {
-    final controller = RecordingWaveformController(barCount: 12);
-    _RebuildCounter.buildCount = 0;
+  testWidgets(
+    'RecordingWaveform repaints via CustomPaint without parent rebuilds',
+    (
+      tester,
+    ) async {
+      final controller = RecordingWaveformController(barCount: 12);
+      _RebuildCounter.buildCount = 0;
 
-    await tester.pumpWidget(
-      MaterialApp(
-        home: Scaffold(
-          body: _RebuildCounter(
-            child: RecordingWaveform(controller: controller),
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: _RebuildCounter(
+              child: RecordingWaveform(controller: controller),
+            ),
           ),
         ),
-      ),
-    );
+      );
 
-    expect(
-      find.descendant(
-        of: find.byType(RecordingWaveform),
-        matching: find.byType(CustomPaint),
-      ),
-      findsOneWidget,
-    );
-    final initialBuildCount = _RebuildCounter.buildCount;
+      expect(
+        find.descendant(
+          of: find.byType(RecordingWaveform),
+          matching: find.byType(CustomPaint),
+        ),
+        findsOneWidget,
+      );
+      final initialBuildCount = _RebuildCounter.buildCount;
 
-    for (var i = 0; i < 8; i++) {
-      controller.pushNormalized(0.2 + (i * 0.08));
-      await tester.pump(const Duration(milliseconds: 16));
-    }
+      for (var i = 0; i < 8; i++) {
+        controller.pushNormalized(0.2 + (i * 0.08));
+        await tester.pump(const Duration(milliseconds: 16));
+      }
 
-    expect(_RebuildCounter.buildCount, initialBuildCount);
-  });
+      expect(_RebuildCounter.buildCount, initialBuildCount);
+    },
+  );
 }

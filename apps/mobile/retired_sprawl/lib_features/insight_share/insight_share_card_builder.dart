@@ -20,7 +20,8 @@ abstract final class InsightShareCardBuilder {
 
     final weekRangeLabel = _weekRangeLabel(story);
     final referralLink = ReferralInviteAfterValue.inviteLinkFor(referralSource);
-    final id = 'weekly-insight-${story.weekEnd.toIso8601String().substring(0, 10)}';
+    final id =
+        'weekly-insight-${story.weekEnd.toIso8601String().substring(0, 10)}';
 
     final model = InsightShareCardModel(
       id: id,

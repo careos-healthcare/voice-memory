@@ -12,7 +12,11 @@ class PostSaveRepeatDisplay {
   const PostSaveRepeatDisplay({
     required this.show,
     required this.body,
-    required this.tomorrowLine, required this.confidence, required this.phrase, required this.shownKind, this.evidenceLine,
+    required this.tomorrowLine,
+    required this.confidence,
+    required this.phrase,
+    required this.shownKind,
+    this.evidenceLine,
   });
 
   const PostSaveRepeatDisplay.hidden()

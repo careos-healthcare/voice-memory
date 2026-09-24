@@ -45,71 +45,77 @@ void main() {
   });
 
   group('EncryptedSqliteVaultSyncPipeline', () {
-    test('uploads sealed vault without exposing plaintext to transport', () async {
-      final dir = await Directory.systemTemp.createTemp('sqlite_vault_');
-      final dbPath = '${dir.path}/archiveme.db';
-      final db = await databaseFactory.openDatabase(dbPath);
-      await SqliteMigrationManager().run(db);
-      await db.close();
+    test(
+      'uploads sealed vault without exposing plaintext to transport',
+      () async {
+        final dir = await Directory.systemTemp.createTemp('sqlite_vault_');
+        final dbPath = '${dir.path}/archiveme.db';
+        final db = await databaseFactory.openDatabase(dbPath);
+        await SqliteMigrationManager().run(db);
+        await db.close();
 
-      const namespace = AccountNamespace.guest;
-      final keyStore = InMemorySqliteVaultKeyStore();
-      final transport = InMemorySqliteVaultCloudTransport();
+        const namespace = AccountNamespace.guest;
+        final keyStore = InMemorySqliteVaultKeyStore();
+        final transport = InMemorySqliteVaultCloudTransport();
 
-      final pipeline = EncryptedSqliteVaultSyncPipeline(
-        sqliteFilePath: dbPath,
-        accountNamespace: namespace,
-        keyStore: keyStore,
-        cloudTransport: transport,
-      );
+        final pipeline = EncryptedSqliteVaultSyncPipeline(
+          sqliteFilePath: dbPath,
+          accountNamespace: namespace,
+          keyStore: keyStore,
+          cloudTransport: transport,
+        );
 
-      final result = await pipeline.uploadVault();
-      expect(result, isA<SqliteVaultUploadSuccess>());
+        final result = await pipeline.uploadVault();
+        expect(result, isA<SqliteVaultUploadSuccess>());
 
-      final cloudPath = SqliteVaultConfig.vaultRelativePath(namespace.key);
-      expect(transport.hasObject(cloudPath), isTrue);
+        final cloudPath = SqliteVaultConfig.vaultRelativePath(namespace.key);
+        expect(transport.hasObject(cloudPath), isTrue);
 
-      await dir.delete(recursive: true);
-    });
+        await dir.delete(recursive: true);
+      },
+    );
 
-    test('round-trips upload and restore through in-memory iCloud transport', () async {
-      final dir = await Directory.systemTemp.createTemp('sqlite_vault_rt_');
-      final dbPath = '${dir.path}/archiveme.db';
-      final db = await databaseFactory.openDatabase(dbPath);
-      await SqliteMigrationManager().run(db);
-      await db.rawInsert(
-        'CREATE TABLE IF NOT EXISTS vault_marker (id INTEGER PRIMARY KEY, note TEXT)',
-      );
-      await db.insert('vault_marker', {'note': 'before-upload'});
-      await db.close();
+    test(
+      'round-trips upload and restore through in-memory iCloud transport',
+      () async {
+        final dir = await Directory.systemTemp.createTemp('sqlite_vault_rt_');
+        final dbPath = '${dir.path}/archiveme.db';
+        final db = await databaseFactory.openDatabase(dbPath);
+        await SqliteMigrationManager().run(db);
+        await db.rawInsert(
+          'CREATE TABLE IF NOT EXISTS vault_marker (id INTEGER PRIMARY KEY, note TEXT)',
+        );
+        await db.insert('vault_marker', {'note': 'before-upload'});
+        await db.close();
 
-      const namespace = AccountNamespace.guest;
-      final keyStore = InMemorySqliteVaultKeyStore();
-      final transport = InMemorySqliteVaultCloudTransport();
+        const namespace = AccountNamespace.guest;
+        final keyStore = InMemorySqliteVaultKeyStore();
+        final transport = InMemorySqliteVaultCloudTransport();
 
-      final pipeline = EncryptedSqliteVaultSyncPipeline(
-        sqliteFilePath: dbPath,
-        accountNamespace: namespace,
-        keyStore: keyStore,
-        cloudTransport: transport,
-      );
+        final pipeline = EncryptedSqliteVaultSyncPipeline(
+          sqliteFilePath: dbPath,
+          accountNamespace: namespace,
+          keyStore: keyStore,
+          cloudTransport: transport,
+        );
 
-      final upload = await pipeline.uploadVault();
-      expect(upload, isA<SqliteVaultUploadSuccess>());
+        final upload = await pipeline.uploadVault();
+        expect(upload, isA<SqliteVaultUploadSuccess>());
 
-      await File(dbPath).delete();
-      expect(await File(dbPath).exists(), isFalse);
+        await File(dbPath).delete();
+        expect(await File(dbPath).exists(), isFalse);
 
-      final restore = await pipeline.restoreVaultFromCloud();
-      expect(restore, isA<SqliteVaultRestoreSuccess>());
-      expect(await File(dbPath).exists(), isTrue);
+        final restore = await pipeline.restoreVaultFromCloud();
+        expect(restore, isA<SqliteVaultRestoreSuccess>());
+        expect(await File(dbPath).exists(), isTrue);
 
-      final restored = await databaseFactory.openDatabase(dbPath);
-      final rows = await restored.query('vault_marker');
-      expect(rows.single['note'], 'before-upload');
-      await restored.close();
+        final restored = await databaseFactory.openDatabase(dbPath);
+        final rows = await restored.query('vault_marker');
+        expect(rows.single['note'], 'before-upload');
+        await restored.close();
 
-      await dir.delete(recursive: true);
-    });
+        await dir.delete(recursive: true);
+      },
+    );
   });
 }

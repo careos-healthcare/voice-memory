@@ -42,8 +42,12 @@ abstract class ArchiveCompressionCoordinator {
       await _store().markKept(group.id);
       ActivationTracker.trackArchiveCompressionKept();
     } catch (e, stackTrace) {
-      AppLogger.error('Unhandled error caught', error: e, stackTrace: stackTrace);
-      }
+      AppLogger.error(
+        'Unhandled error caught',
+        error: e,
+        stackTrace: stackTrace,
+      );
+    }
   }
 
   static Future<void> markSplit(ArchiveMomentGroup group) async {
@@ -52,8 +56,12 @@ abstract class ArchiveCompressionCoordinator {
       await _store().markSplit(group.id);
       ActivationTracker.trackArchiveCompressionSplit();
     } catch (e, stackTrace) {
-      AppLogger.error('Unhandled error caught', error: e, stackTrace: stackTrace);
-      }
+      AppLogger.error(
+        'Unhandled error caught',
+        error: e,
+        stackTrace: stackTrace,
+      );
+    }
   }
 
   static Future<void> markHidden(ArchiveMomentGroup group) async {
@@ -62,8 +70,12 @@ abstract class ArchiveCompressionCoordinator {
       await _store().markHidden(group.id);
       ActivationTracker.trackArchiveCompressionHidden();
     } catch (e, stackTrace) {
-      AppLogger.error('Unhandled error caught', error: e, stackTrace: stackTrace);
-      }
+      AppLogger.error(
+        'Unhandled error caught',
+        error: e,
+        stackTrace: stackTrace,
+      );
+    }
   }
 
   static Future<void> clear() async {
@@ -71,7 +83,11 @@ abstract class ArchiveCompressionCoordinator {
     try {
       await _store().clear();
     } catch (e, stackTrace) {
-      AppLogger.error('Unhandled error caught', error: e, stackTrace: stackTrace);
-      }
+      AppLogger.error(
+        'Unhandled error caught',
+        error: e,
+        stackTrace: stackTrace,
+      );
+    }
   }
 }

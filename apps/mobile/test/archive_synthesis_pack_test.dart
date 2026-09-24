@@ -145,26 +145,29 @@ void main() {
     expect(hA, isNot(hB));
   });
 
-  test('pack includes primary belief, theory, and reflection index when tracking on', () {
-    final entries = List.generate(
-      50,
-      (i) => _entry(
-        'e$i',
-        'Work reflection about deadlines and stress number $i today.',
-      ),
-    );
-    final pack = ArchiveSynthesisPackBuilder.build(
-      view: _minimalView(entries),
-      monthKey: '2026-05',
-      milestonesReached: {50},
-    );
-    expect(pack['packVersion'], 2);
-    expect(pack['eligibleCount'], 50);
-    expect(pack['primaryBelief'], isNotNull);
-    expect(pack['primaryTheory'], isNotNull);
-    expect(pack['theory'], isNotNull);
-    expect(pack['reflectionIndex'], hasLength(50));
-    final hash = computeArchiveHashFromPack(pack);
-    expect(hash, isNotEmpty);
-  });
+  test(
+    'pack includes primary belief, theory, and reflection index when tracking on',
+    () {
+      final entries = List.generate(
+        50,
+        (i) => _entry(
+          'e$i',
+          'Work reflection about deadlines and stress number $i today.',
+        ),
+      );
+      final pack = ArchiveSynthesisPackBuilder.build(
+        view: _minimalView(entries),
+        monthKey: '2026-05',
+        milestonesReached: {50},
+      );
+      expect(pack['packVersion'], 2);
+      expect(pack['eligibleCount'], 50);
+      expect(pack['primaryBelief'], isNotNull);
+      expect(pack['primaryTheory'], isNotNull);
+      expect(pack['theory'], isNotNull);
+      expect(pack['reflectionIndex'], hasLength(50));
+      final hash = computeArchiveHashFromPack(pack);
+      expect(hash, isNotEmpty);
+    },
+  );
 }

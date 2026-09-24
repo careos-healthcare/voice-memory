@@ -22,7 +22,8 @@ abstract final class ProductLanguageConsistencyGuard {
     'compares later',
   ];
 
-  static const Map<String, ProductLanguageConsistencyReason> blockedRiskyPhrases = {
+  static const Map<String, ProductLanguageConsistencyReason>
+  blockedRiskyPhrases = {
     'full timeline': ProductLanguageConsistencyReason.blockedFullTimeline,
     'longer story': ProductLanguageConsistencyReason.blockedLongerStory,
     'life operating system':
@@ -43,7 +44,8 @@ abstract final class ProductLanguageConsistencyGuard {
         ProductLanguageConsistencyReason.blockedReportPrimaryValue,
   };
 
-  static const Map<String, ProductLanguageConsistencyReason> warnedRiskyPhrases = {
+  static const Map<String, ProductLanguageConsistencyReason>
+  warnedRiskyPhrases = {
     'full pattern timeline':
         ProductLanguageConsistencyReason.warnedFullTimeline,
     'full memory': ProductLanguageConsistencyReason.warnedStorage,

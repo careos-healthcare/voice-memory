@@ -4,7 +4,10 @@ import 'package:archiveme_mobile/features/tomorrow_return/tomorrow_check_in_mode
 
 /// Builds the consumer-visible current objective from loop inputs.
 CurrentObjective buildCurrentObjective({
-  required bool hasAnyMoment, required bool hasClosedLoopToday, required bool hasNextCheckChosen, RetentionState? retentionState,
+  required bool hasAnyMoment,
+  required bool hasClosedLoopToday,
+  required bool hasNextCheckChosen,
+  RetentionState? retentionState,
   TomorrowCheckIn? activeCheckIn,
   String? latestNextCheck,
   String? latestPatternTitle,

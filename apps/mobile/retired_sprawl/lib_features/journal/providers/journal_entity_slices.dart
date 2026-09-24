@@ -67,10 +67,10 @@ class JournalTimelinePaginationState {
   });
 
   const JournalTimelinePaginationState.initial()
-      : orderedEntryIds = const [],
-        cursor = null,
-        hasMore = true,
-        isLoadingMore = false;
+    : orderedEntryIds = const [],
+      cursor = null,
+      hasMore = true,
+      isLoadingMore = false;
 
   final List<String> orderedEntryIds;
   final JournalFeedCursor? cursor;
@@ -103,10 +103,10 @@ class TaskTimelinePaginationState {
   });
 
   const TaskTimelinePaginationState.initial()
-      : orderedTaskIds = const [],
-        cursor = null,
-        hasMore = true,
-        isLoadingMore = false;
+    : orderedTaskIds = const [],
+      cursor = null,
+      hasMore = true,
+      isLoadingMore = false;
 
   final List<String> orderedTaskIds;
   final TaskNodeFeedCursor? cursor;

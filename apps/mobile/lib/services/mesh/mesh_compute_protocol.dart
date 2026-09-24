@@ -80,7 +80,10 @@ class MeshHandshakeResponse {
 }
 
 class MeshInferenceWireRequest {
-  const MeshInferenceWireRequest({required this.request, required this.requestId});
+  const MeshInferenceWireRequest({
+    required this.request,
+    required this.requestId,
+  });
 
   factory MeshInferenceWireRequest.fromJson(Map<String, dynamic> json) {
     return MeshInferenceWireRequest(

@@ -64,3 +64,16 @@
 -dontwarn com.google.android.play.core.splitinstall.**
 -dontwarn com.google.android.play.core.tasks.**
 
+# sherpa-onnx JNI. R8 must not rename these classes or the C++ exports
+# (Java_com_k2fsa_sherpa_onnx_*) stop matching the native library.
+-keep class com.k2fsa.sherpa.onnx.** { *; }
+-keep class com.k2fsa.sherpa.onnx.**$* { *; }
+
+# sqlite-vec / sqlite-vector. Keep every JNI native method name so
+# sqlite3_vec_init and sqlite3_vector_init stay bound after shrinking.
+-keep class org.sqlite.** { *; }
+-keep class io.sqlite.** { *; }
+-keepclasseswithmembernames class * {
+    native <methods>;
+}
+

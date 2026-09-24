@@ -42,7 +42,7 @@ class _TheoryCardState extends State<TheoryCard> {
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
-          color: AppColors.surfaceAlt.withValues(alpha: 0.35),
+        color: AppColors.surfaceAlt.withValues(alpha: 0.35),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: AppColors.warmBorder),
       ),
@@ -104,16 +104,21 @@ class _TheoryCardState extends State<TheoryCard> {
                 padding: const EdgeInsets.only(top: 4),
                 child: Text(
                   line,
-                  style: ArchiveMobileTypography.explanationBody(context).copyWith(
-                    color: AppColors.textSecondary,
-                  ),
+                  style: ArchiveMobileTypography.explanationBody(context)
+                      .copyWith(
+                        color: AppColors.textSecondary,
+                      ),
                 ),
               ),
             ),
           ],
           TextButton(
             onPressed: () => setState(() => _expanded = !_expanded),
-            child: Text(_expanded ? TheoryPageCopy.hideEvidence : TheoryPageCopy.showEvidence),
+            child: Text(
+              _expanded
+                  ? TheoryPageCopy.hideEvidence
+                  : TheoryPageCopy.showEvidence,
+            ),
           ),
           if (_expanded) ...[
             const Divider(),
@@ -136,7 +141,9 @@ class _TheoryCardState extends State<TheoryCard> {
               children: TheoryFeedbackReaction.values.map((option) {
                 final selected = _reaction == option;
                 return ChoiceChip(
-                  label: Text(TheoryPageCopy.feedbackLabels[option] ?? option.name),
+                  label: Text(
+                    TheoryPageCopy.feedbackLabels[option] ?? option.name,
+                  ),
                   selected: selected,
                   onSelected: (_) {
                     setState(() {

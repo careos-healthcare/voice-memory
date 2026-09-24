@@ -5,7 +5,9 @@ import 'package:flutter/material.dart';
 /// Up to 3 archive conversation starters — no scrolling wall.
 class LowEffortPrompts extends StatefulWidget {
   const LowEffortPrompts({
-    required this.promptSet, required this.onSelect, super.key,
+    required this.promptSet,
+    required this.onSelect,
+    super.key,
   });
 
   final ArchivePromptSet promptSet;

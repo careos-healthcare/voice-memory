@@ -162,15 +162,16 @@ void main() {
       );
 
       // The weekly report is the surface that rendered these numbers.
-      final report = TrendAnalysisOnnxSynthesizer(
-        reflectionModel: LocalReflectionDataSource(
-          inference: heuristic,
-        ),
-      ).composeReport(
-        metadata: metadata,
-        synthesis: const ReflectionDto(mood: '', emotionalIntensity: 0),
-        usedOnnx: false,
-      );
+      final report =
+          TrendAnalysisOnnxSynthesizer(
+            reflectionModel: LocalReflectionDataSource(
+              inference: heuristic,
+            ),
+          ).composeReport(
+            metadata: metadata,
+            synthesis: const ReflectionDto(mood: '', emotionalIntensity: 0),
+            usedOnnx: false,
+          );
 
       final rendered = [
         report.summary,

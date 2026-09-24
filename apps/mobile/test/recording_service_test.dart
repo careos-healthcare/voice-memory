@@ -63,7 +63,7 @@ void main() {
   );
 
   test(
-    'simulator policy: permanentlyDenied + hasRecorder starts recording when flagged',
+    'permanentlyDenied does not start recording from a recorder override',
     () async {
       MicrophonePermissionEnvironment.setIosSimulatorForTest(true);
       final recording = RecordingService.create(
@@ -74,13 +74,16 @@ void main() {
         hasRecorderOverride: true,
       );
 
-      await recording.startRecording();
-      expect(recording.recorderStartCallCount, 1);
+      await expectLater(
+        recording.startRecording(),
+        throwsA(isA<RecordingException>()),
+      );
+      expect(recording.recorderStartCallCount, 0);
     },
   );
 
   test(
-    'physical iOS mismatch resolves to ready when recorder grants',
+    'physical iOS uses the OS status when the recorder plugin disagrees',
     () async {
       MicrophonePermissionEnvironment.setIosPhysicalForTest(true);
       final recording = RecordingService.create(
@@ -92,11 +95,11 @@ void main() {
       );
 
       final resolution = await recording.evaluateMicrophonePermission();
+      expect(resolution.state, MicrophonePermissionState.deniedOpenSettings);
       expect(
-        resolution.state,
-        MicrophonePermissionState.grantedWithPermissionHandlerMismatch,
+        resolution.phase,
+        RecordingPhase.permissionPermanentlyDenied,
       );
-      expect(resolution.phase, RecordingPhase.ready);
     },
   );
 

@@ -10,7 +10,8 @@ import 'package:flutter/material.dart';
 /// CTA changes, and the copy never references the user's content.
 class PaywallObjectionFollowUpCard extends StatelessWidget {
   const PaywallObjectionFollowUpCard({
-    required this.reason, super.key,
+    required this.reason,
+    super.key,
     this.source,
   });
 

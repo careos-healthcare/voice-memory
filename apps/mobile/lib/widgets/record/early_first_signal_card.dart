@@ -19,7 +19,9 @@ import 'package:flutter/material.dart';
 /// Early archive card for 1–3 saved moments — receipt, first signal, or confirmation.
 class EarlyFirstSignalCard extends StatelessWidget {
   const EarlyFirstSignalCard({
-    required this.signal, required this.onPrimary, super.key,
+    required this.signal,
+    required this.onPrimary,
+    super.key,
     this.onViewEvidence,
     this.onReturnPrompt,
     this.showPrimaryCta = true,

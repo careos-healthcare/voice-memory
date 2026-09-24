@@ -131,43 +131,47 @@ void main() {
   Future<bool> readAllowed(
     CaregiverModeController controller,
     String streamId,
-  ) =>
-      controller.ensureReadAllowed(
-        streamId: streamId,
-        auditAction: CaregiverAuditAction.evidenceStreamRead,
-      );
+  ) => controller.ensureReadAllowed(
+    streamId: streamId,
+    auditAction: CaregiverAuditAction.evidenceStreamRead,
+  );
 
   group('permission model', () {
-    test('boolean choices resolve through allowsStream, not list membership',
-        () {
-      // `insight_alerts` and `review_summaries` are never written into
-      // `evidenceStreamIds` by any caller, so a membership test alone could
-      // only ever deny them — which is why they were exempted instead.
-      expect(
-        CaregiverPermissions.defaultScopes.evidenceStreamIds,
-        isNot(contains(CaregiverPermissions.insightAlertsStream)),
-      );
-      expect(
-        CaregiverPermissions.defaultScopes.evidenceStreamIds,
-        isNot(contains(CaregiverPermissions.reviewSummariesStream)),
-      );
+    test(
+      'boolean choices resolve through allowsStream, not list membership',
+      () {
+        // `insight_alerts` and `review_summaries` are never written into
+        // `evidenceStreamIds` by any caller, so a membership test alone could
+        // only ever deny them — which is why they were exempted instead.
+        expect(
+          CaregiverPermissions.defaultScopes.evidenceStreamIds,
+          isNot(contains(CaregiverPermissions.insightAlertsStream)),
+        );
+        expect(
+          CaregiverPermissions.defaultScopes.evidenceStreamIds,
+          isNot(contains(CaregiverPermissions.reviewSummariesStream)),
+        );
 
-      expect(
-        CaregiverPermissions.defaultScopes
-            .allowsStream(CaregiverPermissions.insightAlertsStream),
-        isTrue,
-      );
-      expect(
-        _declinedBothBooleans
-            .allowsStream(CaregiverPermissions.insightAlertsStream),
-        isFalse,
-      );
-      expect(
-        _declinedBothBooleans
-            .allowsStream(CaregiverPermissions.reviewSummariesStream),
-        isFalse,
-      );
-    });
+        expect(
+          CaregiverPermissions.defaultScopes.allowsStream(
+            CaregiverPermissions.insightAlertsStream,
+          ),
+          isTrue,
+        );
+        expect(
+          _declinedBothBooleans.allowsStream(
+            CaregiverPermissions.insightAlertsStream,
+          ),
+          isFalse,
+        );
+        expect(
+          _declinedBothBooleans.allowsStream(
+            CaregiverPermissions.reviewSummariesStream,
+          ),
+          isFalse,
+        );
+      },
+    );
 
     test('a declined boolean outranks the stream id appearing in the list', () {
       // The boolean is the answer the owner gave to the prompt. A token that
@@ -204,28 +208,30 @@ void main() {
     // MUST FAIL against the pre-fix controller: the gate carried
     // `&& streamId != CaregiverPermissions.insightAlertsStream`, which let the
     // alerts stream through for every session regardless of the answer given.
-    test('a session that declined alerts cannot read the alerts stream',
-        () async {
-      final controller = await activate(_declinedBothBooleans);
+    test(
+      'a session that declined alerts cannot read the alerts stream',
+      () async {
+        final controller = await activate(_declinedBothBooleans);
 
-      expect(
-        await readAllowed(
-          controller,
-          CaregiverPermissions.insightAlertsStream,
-        ),
-        isFalse,
-      );
+        expect(
+          await readAllowed(
+            controller,
+            CaregiverPermissions.insightAlertsStream,
+          ),
+          isFalse,
+        );
 
-      await controller.auditStore.ensureLoaded();
-      expect(
-        controller.auditStore.entries.where(
-          (e) =>
-              e.action == CaregiverAuditAction.accessDenied &&
-              e.resourceType == CaregiverPermissions.insightAlertsStream,
-        ),
-        isNotEmpty,
-      );
-    });
+        await controller.auditStore.ensureLoaded();
+        expect(
+          controller.auditStore.entries.where(
+            (e) =>
+                e.action == CaregiverAuditAction.accessDenied &&
+                e.resourceType == CaregiverPermissions.insightAlertsStream,
+          ),
+          isNotEmpty,
+        );
+      },
+    );
 
     // MUST FAIL against the pre-fix controller: nothing anywhere read
     // `permissions.reviewSummaries`, so the choice had no gate to fail.
@@ -342,27 +348,29 @@ void main() {
       expect(snapshot.timelineSummaries, isNotEmpty);
     });
 
-    test('declining the timeline stream withholds summaries on its own',
-        () async {
-      const noTimeline = CaregiverPermissions(
-        evidenceStreamIds: [
-          CaregiverPermissions.journalStream,
-          CaregiverPermissions.proofTrailStream,
-        ],
-        reviewSummaries: true,
-        thresholdAlerts: true,
-      );
-      final controller = await activate(noTimeline);
-      final service = CaregiverReadService(
-        journalStore: await seededJournal(),
-        modeController: controller,
-      );
+    test(
+      'declining the timeline stream withholds summaries on its own',
+      () async {
+        const noTimeline = CaregiverPermissions(
+          evidenceStreamIds: [
+            CaregiverPermissions.journalStream,
+            CaregiverPermissions.proofTrailStream,
+          ],
+          reviewSummaries: true,
+          thresholdAlerts: true,
+        );
+        final controller = await activate(noTimeline);
+        final service = CaregiverReadService(
+          journalStore: await seededJournal(),
+          modeController: controller,
+        );
 
-      final snapshot = await service.loadDashboardSnapshot();
+        final snapshot = await service.loadDashboardSnapshot();
 
-      expect(snapshot!.timelineSummaries, isEmpty);
-      expect(snapshot.priorityAlerts, isNotEmpty);
-    });
+        expect(snapshot!.timelineSummaries, isEmpty);
+        expect(snapshot.priorityAlerts, isNotEmpty);
+      },
+    );
 
     test('no valid session returns nothing at all', () async {
       final controller = await activate(CaregiverPermissions.defaultScopes);

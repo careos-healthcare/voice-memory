@@ -36,7 +36,8 @@ Future<bool> showActionItemEditorSheet(
 
 class ActionItemEditorSheet extends StatefulWidget {
   const ActionItemEditorSheet({
-    required this.store, super.key,
+    required this.store,
+    super.key,
     this.existing,
     this.entry,
     this.prefillTitle,

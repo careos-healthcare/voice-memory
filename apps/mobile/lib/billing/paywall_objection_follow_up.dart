@@ -114,7 +114,11 @@ class PaywallObjectionStore {
         'source': ?source,
       });
     } on Exception catch (e, stackTrace) {
-      AppLogger.error('Unhandled error caught', error: e, stackTrace: stackTrace);
+      AppLogger.error(
+        'Unhandled error caught',
+        error: e,
+        stackTrace: stackTrace,
+      );
       // Persistence failures never surface — worst case the next paywall
       // shows no follow-up.
     }

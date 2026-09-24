@@ -36,7 +36,8 @@ import 'package:flutter/material.dart';
 /// Full weekly archive review in a bottom sheet.
 class WeeklyArchiveReviewSheet extends StatelessWidget {
   const WeeklyArchiveReviewSheet({
-    required this.review, super.key,
+    required this.review,
+    super.key,
     this.isPro = true,
     this.onSeePro,
     this.entryCount = 0,

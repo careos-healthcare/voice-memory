@@ -9,7 +9,10 @@ import 'package:flutter/material.dart';
 /// Compact Today card — return guidance on Record for users with saved entries.
 class ReturningUserTodayCard extends StatelessWidget {
   const ReturningUserTodayCard({
-    required this.model, required this.onPrimary, required this.onSecondary, super.key,
+    required this.model,
+    required this.onPrimary,
+    required this.onSecondary,
+    super.key,
   });
 
   final ReturningUserToday model;

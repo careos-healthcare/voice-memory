@@ -87,10 +87,10 @@ abstract final class DerivedClaimRenderGate {
 
   static EvidenceEligibilityOutcome eligibilityForClaim(DerivedClaim claim) =>
       switch (claim.kind) {
-        DerivedClaimKind.savedContent => EvidenceEligibilityPolicy
-            .evaluateSavedContentOnly(
-          EvidenceEligibilityPolicy.admittedMomentCount(claim.evidenceRefs),
-        ),
+        DerivedClaimKind.savedContent =>
+          EvidenceEligibilityPolicy.evaluateSavedContentOnly(
+            EvidenceEligibilityPolicy.admittedMomentCount(claim.evidenceRefs),
+          ),
         DerivedClaimKind.relatedMoments =>
           EvidenceEligibilityPolicy.evaluateRelatedMoments(
             evidenceRefs: claim.evidenceRefs,

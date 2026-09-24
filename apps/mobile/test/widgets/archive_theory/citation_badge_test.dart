@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  testWidgets('CitationBadge renders timestamp and invokes callback', (tester) async {
+  testWidgets('CitationBadge renders timestamp and invokes callback', (
+    tester,
+  ) async {
     TheoryEvidenceQuote? tapped;
     const quote = TheoryEvidenceQuote(
       entryId: 'entry-1',
@@ -33,7 +35,9 @@ void main() {
     expect(tapped, quote);
   });
 
-  testWidgets('CitationBadge hides when citation metadata is incomplete', (tester) async {
+  testWidgets('CitationBadge hides when citation metadata is incomplete', (
+    tester,
+  ) async {
     const quote = TheoryEvidenceQuote(
       entryId: 'entry-1',
       dateLabel: 'Jan 2',
@@ -53,7 +57,13 @@ void main() {
 
     expect(find.byType(CitationBadge), findsOneWidget);
     expect(find.text('0:42'), findsNothing);
-    expect(tester.widget<CitationBadge>(find.byType(CitationBadge)).quote.hasCitationPlayback, isFalse);
+    expect(
+      tester
+          .widget<CitationBadge>(find.byType(CitationBadge))
+          .quote
+          .hasCitationPlayback,
+      isFalse,
+    );
   });
 }
 

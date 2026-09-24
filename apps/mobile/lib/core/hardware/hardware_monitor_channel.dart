@@ -23,6 +23,15 @@ enum DeviceThermalStatus {
 
   bool get isCritical {
     return switch (this) {
+      DeviceThermalStatus.severe || DeviceThermalStatus.critical => true,
+      _ => false,
+    };
+  }
+
+  /// Serious heat and above. Used to pause transcription and local summaries.
+  bool get isHigh {
+    return switch (this) {
+      DeviceThermalStatus.serious ||
       DeviceThermalStatus.severe ||
       DeviceThermalStatus.critical => true,
       _ => false,

@@ -55,60 +55,80 @@ void main() {
   }
 
   group('decision', () {
-    test('capability compiled out resolves to the owner without reading state',
-        () async {
-      CaregiverFeatureFlags.debugOverride = false;
-      CaregiverSessionGuard.debugModeProbe = () async {
-        fail('storage must not be consulted while the capability is off');
-      };
+    test(
+      'capability compiled out resolves to the owner without reading state',
+      () async {
+        CaregiverFeatureFlags.debugOverride = false;
+        CaregiverSessionGuard.debugModeProbe = () async {
+          fail('storage must not be consulted while the capability is off');
+        };
 
-      expect(await CaregiverSessionGuard.evaluate(),
-          CaregiverAccessDecision.allowed);
-    });
+        expect(
+          await CaregiverSessionGuard.evaluate(),
+          CaregiverAccessDecision.allowed,
+        );
+      },
+    );
 
     test('owner persona is allowed', () async {
       asMode(AppMode.selfReflection);
 
-      expect(await CaregiverSessionGuard.evaluate(),
-          CaregiverAccessDecision.allowed);
+      expect(
+        await CaregiverSessionGuard.evaluate(),
+        CaregiverAccessDecision.allowed,
+      );
     });
 
     test('caregiver persona is denied', () async {
       asMode(AppMode.caregiverMonitoring);
 
-      expect(await CaregiverSessionGuard.evaluate(),
-          CaregiverAccessDecision.deniedCaregiverSession);
+      expect(
+        await CaregiverSessionGuard.evaluate(),
+        CaregiverAccessDecision.deniedCaregiverSession,
+      );
     });
 
-    test('a persona that is neither the owner nor readable is denied',
-        () async {
-      asMode(AppMode.professionalCoach);
+    test(
+      'a persona that is neither the owner nor readable is denied',
+      () async {
+        asMode(AppMode.professionalCoach);
 
-      expect(await CaregiverSessionGuard.evaluate(),
-          CaregiverAccessDecision.deniedCaregiverSession);
-    });
+        expect(
+          await CaregiverSessionGuard.evaluate(),
+          CaregiverAccessDecision.deniedCaregiverSession,
+        );
+      },
+    );
   });
 
   group('fail closed', () {
-    test('an absent persona denies rather than defaulting to the owner',
-        () async {
-      CaregiverFeatureFlags.debugOverride = true;
-      CaregiverSessionGuard.debugModeProbe = () async => null;
+    test(
+      'an absent persona denies rather than defaulting to the owner',
+      () async {
+        CaregiverFeatureFlags.debugOverride = true;
+        CaregiverSessionGuard.debugModeProbe = () async => null;
 
-      expect(await CaregiverSessionGuard.evaluate(),
-          CaregiverAccessDecision.deniedUnknownSession);
-      expect(await CaregiverSessionGuard.isOwnerSession(), isFalse);
-    });
+        expect(
+          await CaregiverSessionGuard.evaluate(),
+          CaregiverAccessDecision.deniedUnknownSession,
+        );
+        expect(await CaregiverSessionGuard.isOwnerSession(), isFalse);
+      },
+    );
 
-    test('a lookup that throws denies rather than defaulting to the owner',
-        () async {
-      CaregiverFeatureFlags.debugOverride = true;
-      CaregiverSessionGuard.debugModeProbe = () async =>
-          throw StateError('prefs unavailable');
+    test(
+      'a lookup that throws denies rather than defaulting to the owner',
+      () async {
+        CaregiverFeatureFlags.debugOverride = true;
+        CaregiverSessionGuard.debugModeProbe = () async =>
+            throw StateError('prefs unavailable');
 
-      expect(await CaregiverSessionGuard.evaluate(),
-          CaregiverAccessDecision.deniedUnknownSession);
-    });
+        expect(
+          await CaregiverSessionGuard.evaluate(),
+          CaregiverAccessDecision.deniedUnknownSession,
+        );
+      },
+    );
 
     test(
       'with no probe, no controller and no services, the real lookup denies',
@@ -119,8 +139,10 @@ void main() {
         CaregiverFeatureFlags.debugOverride = true;
         expect(CaregiverModeController.isConfigured, isFalse);
 
-        expect(await CaregiverSessionGuard.evaluate(),
-            CaregiverAccessDecision.deniedUnknownSession);
+        expect(
+          await CaregiverSessionGuard.evaluate(),
+          CaregiverAccessDecision.deniedUnknownSession,
+        );
       },
     );
 
@@ -214,11 +236,12 @@ void main() {
       final db = await openTestAppSqliteDatabase();
 
       for (final export in <Future<Object?> Function()>[
-        () => AccountDataPortabilityService(journalStore: store)
-            .buildZipExport(),
+        () =>
+            AccountDataPortabilityService(journalStore: store).buildZipExport(),
         () => PrivateDataService(journalStore: store).buildSanitizedExport(),
-        () => JournalBulkExportService(repository: JournalSqliteRepository(db))
-            .buildExport(),
+        () => JournalBulkExportService(
+          repository: JournalSqliteRepository(db),
+        ).buildExport(),
         () => JournalService(store).exportJson(),
       ]) {
         await expectLater(
@@ -256,16 +279,18 @@ void main() {
       );
     }
 
-    test('a caregiver session cannot write a moment into the journal',
-        () async {
-      asMode(AppMode.caregiverMonitoring);
-      final capture = await pipeline();
+    test(
+      'a caregiver session cannot write a moment into the journal',
+      () async {
+        asMode(AppMode.caregiverMonitoring);
+        final capture = await pipeline();
 
-      await expectLater(
-        capture.saveTextThought(transcript: 'not the caregivers to write'),
-        throwsA(isA<CaregiverAccessDeniedException>()),
-      );
-    });
+        await expectLater(
+          capture.saveTextThought(transcript: 'not the caregivers to write'),
+          throwsA(isA<CaregiverAccessDeniedException>()),
+        );
+      },
+    );
 
     test('an ambiguous persona cannot write either', () async {
       CaregiverFeatureFlags.debugOverride = true;

@@ -10,7 +10,8 @@ import 'package:go_router/go_router.dart';
 /// Inline evidence list — real entries, dates, and excerpts.
 class ArchiveEvidencePanel extends StatelessWidget {
   const ArchiveEvidencePanel({
-    required this.entries, super.key,
+    required this.entries,
+    super.key,
     this.analyticsContext = 'insight',
     this.initiallyExpanded = false,
   });
@@ -32,7 +33,8 @@ class ArchiveEvidencePanel extends StatelessWidget {
 
 class ArchiveEvidenceExpandable extends StatefulWidget {
   const ArchiveEvidenceExpandable({
-    required this.entries, super.key,
+    required this.entries,
+    super.key,
     this.analyticsContext = 'insight',
     this.buttonLabel = 'Show Evidence',
   });
@@ -118,9 +120,7 @@ class _ArchiveEvidencePanelBody extends StatelessWidget {
           children: [
             Text(
               'Evidence',
-              style: VoiceMemoryTypography.sectionLabelStyle(
-                
-              ),
+              style: VoiceMemoryTypography.sectionLabelStyle(),
             ),
             const SizedBox(height: 8),
             for (final e in sorted.take(8))

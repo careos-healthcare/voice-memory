@@ -51,7 +51,9 @@ class ReachabilityAudit {
   final _failures = <String>[];
 
   int run() {
-    final registryFile = File('$root/lib/core/config/v1_capability_registry.dart');
+    final registryFile = File(
+      '$root/lib/core/config/v1_capability_registry.dart',
+    );
     final catalogFile = File('$root/lib/router/route_catalog.dart');
     final routesFile = File('$root/lib/router/v1_route_registry.dart');
     for (final file in [registryFile, catalogFile, routesFile]) {
@@ -117,7 +119,9 @@ class ReachabilityAudit {
     required String route,
     required _RouteTables tables,
   }) {
-    final rel = site.startsWith('$root/') ? site.substring(root.length + 1) : site;
+    final rel = site.startsWith('$root/')
+        ? site.substring(root.length + 1)
+        : site;
     final quarantined = tables.quarantined.contains(route);
     final allowlisted = tables.isAllowlisted(route);
 
@@ -207,7 +211,8 @@ class ReachabilityAudit {
 
     final env = _followFromEnvironment(file.readAsStringSync(), member[2]!);
     if (env == null) {
-      flag.resolved = 'followed $className.${member[2]} in '
+      flag.resolved =
+          'followed $className.${member[2]} in '
           '${_rel(file.path)} — not fromEnvironment / literal';
       _failures.add(
         '${flag.name} follows $className.${member[2]} in ${_rel(file.path)} '
@@ -225,7 +230,11 @@ class ReachabilityAudit {
         'via $className.${member[2]}';
   }
 
-  _EnvKey? _followFromEnvironment(String source, String member, {int depth = 0}) {
+  _EnvKey? _followFromEnvironment(
+    String source,
+    String member, {
+    int depth = 0,
+  }) {
     if (depth > 6) return null;
 
     final fromEnv = RegExp(
@@ -339,11 +348,7 @@ class ReachabilityAudit {
       final line = _stripLineComment(lines[i]);
       if (!line.contains('if') || !line.contains(needle)) continue;
       if (!line.contains('!')) continue;
-      final window = lines
-          .skip(i)
-          .take(6)
-          .map(_stripLineComment)
-          .join(' ');
+      final window = lines.skip(i).take(6).map(_stripLineComment).join(' ');
       if (RegExp(r'\breturn\b').hasMatch(window)) return true;
     }
     return false;

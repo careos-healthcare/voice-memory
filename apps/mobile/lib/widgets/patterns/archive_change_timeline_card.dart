@@ -10,7 +10,9 @@ import 'package:flutter/material.dart';
 /// Vertical evidence trail tying archive proof moments together over time.
 class ArchiveChangeTimelineCard extends StatelessWidget {
   const ArchiveChangeTimelineCard({
-    required this.timeline, required this.entryCount, super.key,
+    required this.timeline,
+    required this.entryCount,
+    super.key,
   });
 
   final ArchiveChangeTimeline timeline;

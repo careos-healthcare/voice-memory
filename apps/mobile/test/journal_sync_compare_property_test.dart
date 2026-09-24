@@ -33,7 +33,10 @@ JournalEntry _entryWith({
 }
 
 String _randomChangeId(Random random) {
-  final hex = List.generate(8, (_) => random.nextInt(16).toRadixString(16)).join();
+  final hex = List.generate(
+    8,
+    (_) => random.nextInt(16).toRadixString(16),
+  ).join();
   return '${const Uuid().v4()}-$hex';
 }
 
@@ -100,7 +103,9 @@ void main() {
       },
     );
 
-    Glados<(JournalEntry, JournalEntry, JournalEntry)>(_entryTripleGenerator).test(
+    Glados<(JournalEntry, JournalEntry, JournalEntry)>(
+      _entryTripleGenerator,
+    ).test(
       'transitivity: compare(a,b)>0 && compare(b,c)>0 implies compare(a,c)>0',
       (triple) {
         final a = triple.$1;
@@ -165,7 +170,9 @@ void main() {
         generate: (random, size) {
           final revision = random.nextInt(size.clamp(1, 20)) + 1;
           final baseMillis = random.nextInt(100_000);
-          final earlier = DateTime.utc(2026).add(Duration(milliseconds: baseMillis));
+          final earlier = DateTime.utc(
+            2026,
+          ).add(Duration(milliseconds: baseMillis));
           final later = earlier.add(const Duration(milliseconds: 1));
           return (
             _entryWith(
@@ -184,7 +191,9 @@ void main() {
           yield (
             pair.$1,
             pair.$2.copyWith(
-              updatedAt: pair.$2.updatedAt.subtract(const Duration(milliseconds: 1)),
+              updatedAt: pair.$2.updatedAt.subtract(
+                const Duration(milliseconds: 1),
+              ),
             ),
           );
         },

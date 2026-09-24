@@ -36,8 +36,9 @@ abstract class AnalysisLog {
       category: ReleaseLogCategory.analysis,
       fields: {
         'success': true,
-        'observation_length_bucket':
-            ReleaseLogSanitizer.lengthBucket(observationLength),
+        'observation_length_bucket': ReleaseLogSanitizer.lengthBucket(
+          observationLength,
+        ),
       },
     );
   }

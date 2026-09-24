@@ -36,7 +36,10 @@ abstract final class DelayedPaywallProofStore {
 
   /// Proof-first gate: ≥3 evidence milestones, first repeat seen, evidence
   /// trail opened.
-  static bool passesGateFor({int? evidenceMilestoneCount, int? magicMomentsCount}) =>
+  static bool passesGateFor({
+    int? evidenceMilestoneCount,
+    int? magicMomentsCount,
+  }) =>
       bypassGateForTest ||
       (resolveEvidenceMilestoneCount(
                 evidenceMilestoneCount ?? magicMomentsCount,

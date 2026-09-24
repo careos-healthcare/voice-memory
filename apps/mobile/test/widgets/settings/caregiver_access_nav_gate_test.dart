@@ -48,7 +48,8 @@ void main() {
       expect(
         V1CapabilityRegistry.caregiverMonitoring,
         isFalse,
-        reason: 'VOICEMEMORY_ENABLE_CAREGIVER_MODE has no default value, so a '
+        reason:
+            'VOICEMEMORY_ENABLE_CAREGIVER_MODE has no default value, so a '
             'shipped build must report the capability off',
       );
 
@@ -120,9 +121,9 @@ void main() {
       const channel = MethodChannel('dev.fluttercommunity.plus/connectivity');
       TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
           .setMockMethodCallHandler(channel, (call) async {
-        if (call.method == 'check') return ['wifi'];
-        return null;
-      });
+            if (call.method == 'check') return ['wifi'];
+            return null;
+          });
     });
 
     setUp(() async {

@@ -305,9 +305,17 @@ void main() {
       await tester.pump();
 
       final expand = tester.getSize(find.byKey(EvidenceCitationCard.expandKey));
-      final open = tester.getSize(find.byKey(EvidenceCitationCard.openEntryKey));
-      expect(expand.height, greaterThanOrEqualTo(EvidenceCitationCard.minTapTarget));
-      expect(open.height, greaterThanOrEqualTo(EvidenceCitationCard.minTapTarget));
+      final open = tester.getSize(
+        find.byKey(EvidenceCitationCard.openEntryKey),
+      );
+      expect(
+        expand.height,
+        greaterThanOrEqualTo(EvidenceCitationCard.minTapTarget),
+      );
+      expect(
+        open.height,
+        greaterThanOrEqualTo(EvidenceCitationCard.minTapTarget),
+      );
     });
 
     testWidgets('renders in the dark theme without overflow', (tester) async {

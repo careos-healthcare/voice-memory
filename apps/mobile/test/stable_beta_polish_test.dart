@@ -214,9 +214,7 @@ void main() {
       );
       expect(
         BetaRepairLabEngine.shouldShowProPlacement(
-          input: _input(
-            
-          ),
+          input: _input(),
         ),
         isTrue,
       );

@@ -26,9 +26,10 @@ void main() {
         seed: SqliteDatabaseEncryptionKey.generate(),
       );
 
-      final password = await IsolateSafeSqliteDatabaseInitializer.resolvePassword(
-        keyStore: store,
-      );
+      final password =
+          await IsolateSafeSqliteDatabaseInitializer.resolvePassword(
+            keyStore: store,
+          );
 
       expect(password, (await store.readEncryptionKey())!.sqlcipherPassword);
     });
@@ -36,33 +37,39 @@ void main() {
     test('resolvePassword prefers passwordOverride', () async {
       const override = 'explicit-worker-password-override!!';
 
-      final password = await IsolateSafeSqliteDatabaseInitializer.resolvePassword(
-        passwordOverride: override,
-        keyStore: InMemorySqliteEncryptionKeyStore(),
-      );
+      final password =
+          await IsolateSafeSqliteDatabaseInitializer.resolvePassword(
+            passwordOverride: override,
+            keyStore: InMemorySqliteEncryptionKeyStore(),
+          );
 
       expect(password, override);
     });
 
-    test('openWorkerConnection uses singleInstance false WAL connection', () async {
-      final dir = await Directory.systemTemp.createTemp('vm_isolate_sqlite_');
-      addTearDown(() => dir.delete(recursive: true));
-      final filePath = p.join(dir.path, 'worker.db');
+    test(
+      'openWorkerConnection uses singleInstance false WAL connection',
+      () async {
+        final dir = await Directory.systemTemp.createTemp('vm_isolate_sqlite_');
+        addTearDown(() => dir.delete(recursive: true));
+        final filePath = p.join(dir.path, 'worker.db');
 
-      final db = await IsolateSafeSqliteDatabaseInitializer.openWorkerConnection(
-        filePath: filePath,
-        passwordOverride: SqliteDatabaseInitializer.testEncryptionPassword,
-      );
-      addTearDown(db.close);
+        final db =
+            await IsolateSafeSqliteDatabaseInitializer.openWorkerConnection(
+              filePath: filePath,
+              passwordOverride:
+                  SqliteDatabaseInitializer.testEncryptionPassword,
+            );
+        addTearDown(db.close);
 
-      await db.execute(
-        'CREATE TABLE IF NOT EXISTS probe (id INTEGER PRIMARY KEY)',
-      );
-      await db.insert('probe', {'id': 1});
+        await db.execute(
+          'CREATE TABLE IF NOT EXISTS probe (id INTEGER PRIMARY KEY)',
+        );
+        await db.insert('probe', {'id': 1});
 
-      final journalMode = await db.rawQuery('PRAGMA journal_mode');
-      expect(journalMode.first.values.first.toString().toLowerCase(), 'wal');
-    });
+        final journalMode = await db.rawQuery('PRAGMA journal_mode');
+        expect(journalMode.first.values.first.toString().toLowerCase(), 'wal');
+      },
+    );
 
     test('worker isolate opens encrypted database independently', () async {
       final dir = await Directory.systemTemp.createTemp('vm_isolate_spawn_');
@@ -86,9 +93,9 @@ void main() {
 
       final verifyDb =
           await IsolateSafeSqliteDatabaseInitializer.openWorkerConnection(
-        filePath: filePath,
-        passwordOverride: password,
-      );
+            filePath: filePath,
+            passwordOverride: password,
+          );
       addTearDown(verifyDb.close);
 
       final rows = await verifyDb.query(JournalSqliteBulkSync.table);

@@ -35,8 +35,9 @@ class LlmCaptureAnalysisService {
   final ResourceGuard _resourceGuard;
   final LlmExecutionStrategy _llmStrategy;
 
-  final ValueNotifier<Map<String, LlmFeedCardState>> feedStates =
-      ValueNotifier(const {});
+  final ValueNotifier<Map<String, LlmFeedCardState>> feedStates = ValueNotifier(
+    const {},
+  );
 
   final _tokenControllers = <String, StreamController<LlmStreamToken>>{};
 

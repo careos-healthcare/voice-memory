@@ -50,7 +50,9 @@ class SurpriseCoordinator {
 
   Future<ArchiveSurprise?> _resolve({
     required List<JournalEntry> entries,
-    required MobilePrefsStore prefs, required bool useImmediateBaseline, ArchiveStateObjectV3? state,
+    required MobilePrefsStore prefs,
+    required bool useImmediateBaseline,
+    ArchiveStateObjectV3? state,
     ArchiveStateSnapshot? snapshotBaseline,
   }) async {
     final store = SurpriseStore(prefs);

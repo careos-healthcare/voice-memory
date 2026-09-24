@@ -53,7 +53,9 @@ void main() {
       ['Avoidance'],
     );
     expect(
-      report.cognitiveLoops.every((loop) => loop.detail?.contains('LEAK') != true),
+      report.cognitiveLoops.every(
+        (loop) => loop.detail?.contains('LEAK') != true,
+      ),
       isTrue,
     );
     expect(

@@ -119,7 +119,11 @@ abstract class CheckInReminderService {
       await local.initialize();
       if (local.isAvailable) backend = local;
     } catch (e, stackTrace) {
-      AppLogger.error('Unhandled error caught', error: e, stackTrace: stackTrace);
+      AppLogger.error(
+        'Unhandled error caught',
+        error: e,
+        stackTrace: stackTrace,
+      );
       // Stay on the safe no-op backend.
     }
   }

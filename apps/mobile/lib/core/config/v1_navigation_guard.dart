@@ -11,7 +11,8 @@ abstract final class V1NavigationGuard {
   static const String changesHome = RouteCatalog.changesHome;
 
   /// Non-core routes blocked while [V1FeatureFlags.enableV1Only] is true.
-  static Set<String> get blockedFeatureRoutes => V1RouteRegistry.allQuarantinedPaths;
+  static Set<String> get blockedFeatureRoutes =>
+      V1RouteRegistry.allQuarantinedPaths;
 
   /// Returns a redirect target when [path] is outside the V1 allowlist.
   static String? redirectFor(String path) {

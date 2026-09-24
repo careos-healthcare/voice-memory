@@ -11,7 +11,9 @@ enum FirstLoopStatePhase { recordMoment, chooseCheck, ready }
 /// the single next step instead of a full dashboard.
 class FirstLoopStateCard extends StatelessWidget {
   const FirstLoopStateCard({
-    required this.phase, required this.onRecord, super.key,
+    required this.phase,
+    required this.onRecord,
+    super.key,
     this.question,
   });
 

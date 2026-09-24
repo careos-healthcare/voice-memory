@@ -130,8 +130,7 @@ void main() {
       expect(
         ftsRows.any(
           (row) =>
-              row['entry_id'] == 'graph-entry' &&
-              row['label'] == 'late nights',
+              row['entry_id'] == 'graph-entry' && row['label'] == 'late nights',
         ),
         isTrue,
       );

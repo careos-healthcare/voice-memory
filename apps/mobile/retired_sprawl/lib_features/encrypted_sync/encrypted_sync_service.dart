@@ -198,10 +198,7 @@ class EncryptedSyncService {
       final blobs = changesBody['blobs'];
       if (blobs is List) {
         return ApiSuccess((
-          blobs: blobs
-              .whereType<Map>()
-              .map(Map<String, dynamic>.from)
-              .toList(),
+          blobs: blobs.whereType<Map>().map(Map<String, dynamic>.from).toList(),
           latestSequence: latestSequence,
         ));
       }
@@ -228,10 +225,7 @@ class EncryptedSyncService {
       ));
     }
     return ApiSuccess((
-      blobs: blobs
-          .whereType<Map>()
-          .map(Map<String, dynamic>.from)
-          .toList(),
+      blobs: blobs.whereType<Map>().map(Map<String, dynamic>.from).toList(),
       latestSequence: null,
     ));
   }

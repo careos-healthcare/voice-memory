@@ -9,7 +9,9 @@ import 'package:flutter/material.dart';
 /// Compact action plan card — concrete steps to improve archive evidence.
 class ArchiveHealthActionPlanCard extends StatelessWidget {
   const ArchiveHealthActionPlanCard({
-    required this.plan, required this.onPrimary, super.key,
+    required this.plan,
+    required this.onPrimary,
+    super.key,
     this.onSecondary,
   });
 

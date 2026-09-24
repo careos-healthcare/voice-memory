@@ -9,12 +9,16 @@ import 'package:flutter/material.dart';
 
 class PricingValidationCard extends StatefulWidget {
   const PricingValidationCard({
-    required this.result, required this.onSeePro, super.key,
+    required this.result,
+    required this.onSeePro,
+    super.key,
     this.compact = false,
   });
 
   const PricingValidationCard.test({
-    required this.result, required this.onSeePro, super.key,
+    required this.result,
+    required this.onSeePro,
+    super.key,
     this.compact = false,
   });
 

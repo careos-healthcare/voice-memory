@@ -45,9 +45,7 @@ class EvidenceLedgerCounts {
     required this.entryCount,
   });
 
-  const EvidenceLedgerCounts.empty()
-      : citableFactCount = 0,
-        entryCount = 0;
+  const EvidenceLedgerCounts.empty() : citableFactCount = 0, entryCount = 0;
 
   final int citableFactCount;
   final int entryCount;

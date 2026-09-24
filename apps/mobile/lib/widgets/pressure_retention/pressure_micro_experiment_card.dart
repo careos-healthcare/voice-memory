@@ -9,7 +9,9 @@ import 'package:flutter/material.dart';
 /// pattern. Accepting it stores a local flag (no notifications).
 class PressureMicroExperimentCard extends StatelessWidget {
   const PressureMicroExperimentCard({
-    required this.onAccept, required this.onDismiss, super.key,
+    required this.onAccept,
+    required this.onDismiss,
+    super.key,
     this.accepted = false,
   });
 

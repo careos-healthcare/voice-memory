@@ -28,7 +28,9 @@ class HabitProofMoment {
     required this.headline,
     required this.body,
     required this.proofLine,
-    required this.checkInCount, required this.shouldShow, this.nextLine,
+    required this.checkInCount,
+    required this.shouldShow,
+    this.nextLine,
   });
 
   final String id;

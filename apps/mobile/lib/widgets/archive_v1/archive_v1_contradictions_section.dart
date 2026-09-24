@@ -16,7 +16,9 @@ import 'dart:async';
 
 class ArchiveV1ContradictionsSection extends StatelessWidget {
   const ArchiveV1ContradictionsSection({
-    required this.contradictions, required this.entries, super.key,
+    required this.contradictions,
+    required this.entries,
+    super.key,
   });
 
   final List<ArchiveV1Contradiction> contradictions;
@@ -116,18 +118,20 @@ class _ContradictionCard extends StatelessWidget {
                 entries: entries,
               );
               if (payload == null) return;
-              unawaited(showEvidenceTrailSheet(
-                context,
-                payload: payload,
-                surface: 'archive_contradiction',
-                ref: c.entryIds.length >= 2
-                    ? ArchiveInsightRef.contradiction(
-                        entryIdA: c.entryIds[0],
-                        entryIdB: c.entryIds[1],
-                      )
-                    : null,
-                entries: entries,
-              ));
+              unawaited(
+                showEvidenceTrailSheet(
+                  context,
+                  payload: payload,
+                  surface: 'archive_contradiction',
+                  ref: c.entryIds.length >= 2
+                      ? ArchiveInsightRef.contradiction(
+                          entryIdA: c.entryIds[0],
+                          entryIdB: c.entryIds[1],
+                        )
+                      : null,
+                  entries: entries,
+                ),
+              );
             },
           ),
           if (c.entryIds.isNotEmpty) ...[

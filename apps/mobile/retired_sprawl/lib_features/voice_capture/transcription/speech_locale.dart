@@ -45,8 +45,7 @@ final class ConfirmedSpeechLocale {
   /// Matches `IosNativeSpeechTranscription.primaryLanguageSubtag`, which is
   /// what the Swift side compares to decide whether the recogniser it got back
   /// speaks the language that was asked for.
-  String get primaryLanguageSubtag =>
-      identifier.split('-').first.toLowerCase();
+  String get primaryLanguageSubtag => identifier.split('-').first.toLowerCase();
 
   @override
   bool operator ==(Object other) =>

@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 
 class PlaceholderPanel extends StatelessWidget {
   const PlaceholderPanel({
-    required this.title, required this.body, super.key,
+    required this.title,
+    required this.body,
+    super.key,
     this.status,
   });
 

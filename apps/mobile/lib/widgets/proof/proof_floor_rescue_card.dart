@@ -14,7 +14,8 @@ import 'package:flutter/material.dart';
 
 class ProofFloorRescueCard extends StatefulWidget {
   const ProofFloorRescueCard({
-    required this.result, super.key,
+    required this.result,
+    super.key,
     this.onPrimaryCta,
     this.onSecondaryCta,
     this.onChanged,
@@ -26,7 +27,8 @@ class ProofFloorRescueCard extends StatefulWidget {
   });
 
   const ProofFloorRescueCard.test({
-    required this.result, super.key,
+    required this.result,
+    super.key,
     this.onPrimaryCta,
     this.onSecondaryCta,
     this.onChanged,

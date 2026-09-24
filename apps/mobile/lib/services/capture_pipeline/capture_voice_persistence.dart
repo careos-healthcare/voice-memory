@@ -9,6 +9,7 @@ import 'package:archiveme_mobile/models/transcript_status.dart';
 import 'package:archiveme_mobile/security/account_session_guard.dart';
 import 'package:archiveme_mobile/security/private_data_service.dart';
 import 'package:archiveme_mobile/security/user_content_safety.dart';
+import 'package:archiveme_mobile/features/metadata/ambient_metadata_service.dart';
 import 'package:archiveme_mobile/services/capture_pipeline/capture_pipeline_dependencies.dart';
 import 'package:archiveme_mobile/services/capture_save_messages.dart';
 import 'package:archiveme_mobile/services/record_pipeline_log.dart';
@@ -34,6 +35,7 @@ class CaptureVoicePersistence {
       first25Source: first25Source,
       captureKind: captureKind,
     );
+    await AmbientMetadataService.shared.attachToEntry(entry.id);
     await TempRecordingCleanup.purgeRetryRecordings();
     final saved = await TempRecordingCleanup.releaseTempAudioIfSafe(
       entry,
@@ -95,7 +97,8 @@ class CaptureVoicePersistence {
           ),
       syncStatus: SyncStatus.pendingUpload,
       localAudioPath: audioFile.path,
-      transcriptStatus: partialTranscript != null && partialTranscript.trim().isNotEmpty
+      transcriptStatus:
+          partialTranscript != null && partialTranscript.trim().isNotEmpty
           ? TranscriptStatus.finalTranscript
           : TranscriptStatus.pending,
     );

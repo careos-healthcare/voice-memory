@@ -18,7 +18,8 @@ class HttpBillingApiClient implements BillingApiClient {
   Future<ApiResult<PremiumEntitlements>> getEntitlements({
     NetworkCancelToken? cancelToken,
   }) async {
-    if (_transport.tryUri(VoiceMemoryApiRoutes.billingEntitlements.path) == null) {
+    if (_transport.tryUri(VoiceMemoryApiRoutes.billingEntitlements.path) ==
+        null) {
       return ApiSuccess(PremiumEntitlements.free());
     }
     final responseResult = await _transport.get(

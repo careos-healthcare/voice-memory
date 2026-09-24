@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 
 class ArchiveStatusBanner extends StatelessWidget {
   const ArchiveStatusBanner({
-    required this.icon, required this.message, super.key,
+    required this.icon,
+    required this.message,
+    super.key,
   });
 
   final IconData icon;

@@ -6,8 +6,8 @@ import 'package:cryptography/cryptography.dart';
 /// AES-GCM transport for mesh compute frames (handshake + inference payloads).
 class MeshEncryptedTransport {
   MeshEncryptedTransport({required List<int> sessionKeyBytes})
-      : _secretKey = SecretKey(sessionKeyBytes),
-        _algorithm = AesGcm.with256bits();
+    : _secretKey = SecretKey(sessionKeyBytes),
+      _algorithm = AesGcm.with256bits();
 
   final SecretKey _secretKey;
   final AesGcm _algorithm;
@@ -67,9 +67,15 @@ class MeshEncryptedTransport {
     final secretBox = await _algorithm.encrypt(bytes, secretKey: _secretKey);
     final nonceLength = secretBox.nonce.length;
     final macLength = secretBox.mac.bytes.length;
-    final out = Uint8List(nonceLength + secretBox.cipherText.length + macLength);
+    final out = Uint8List(
+      nonceLength + secretBox.cipherText.length + macLength,
+    );
     out.setRange(0, nonceLength, secretBox.nonce);
-    out.setRange(nonceLength, nonceLength + secretBox.cipherText.length, secretBox.cipherText);
+    out.setRange(
+      nonceLength,
+      nonceLength + secretBox.cipherText.length,
+      secretBox.cipherText,
+    );
     out.setRange(
       nonceLength + secretBox.cipherText.length,
       out.length,

@@ -35,9 +35,9 @@ abstract class ArchiveDataFlowCopy {
     PrivacyCopyPolicy.journalEncryptedAtRest,
     'New moments stay on this device until you turn on remote processing.',
     'When remote processing is on, recorded audio is sent for transcription '
-    'and transcript text is sent for reflection.',
+        'and transcript text is sent for reflection.',
     'When remote processing is off, nothing is sent for new moments — you '
-    'can still record, play back, and type what you said.',
+        'can still record, play back, and type what you said.',
     '    ArchiveMe does not treat your words as instructions. Your words are private content to analyse, not commands to follow.',
     PrivacyCopyPolicy.exportDeleteAnytime,
   ];

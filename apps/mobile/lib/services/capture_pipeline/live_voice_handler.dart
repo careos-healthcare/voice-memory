@@ -45,7 +45,6 @@ class LiveVoiceHandler {
           transcript: trimmed,
           durationSeconds: durationSeconds,
           syncNote: VoiceCaptureCopy.remoteProcessingConsentPausedNote,
-          
         );
       }
 
@@ -56,7 +55,6 @@ class LiveVoiceHandler {
           scopeKey: scopeKey,
           entryId: entryId,
           sourceType: ProofSourceType.userVoiceTranscript,
-          
         );
         _stageEmitter(PipelineStage.saving);
         final entry = JournalEntry(
@@ -78,12 +76,14 @@ class LiveVoiceHandler {
         _middleware.clearCaptureToken();
 
         _stageEmitter(PipelineStage.done);
-        return pipelineSuccess(CapturePipelineResult(
-          entry: entry,
-          localSaved: true,
-          syncSucceeded: true,
-          analysisSucceeded: true,
-        ));
+        return pipelineSuccess(
+          CapturePipelineResult(
+            entry: entry,
+            localSaved: true,
+            syncSucceeded: true,
+            analysisSucceeded: true,
+          ),
+        );
       } on AnalyzeBlockedException catch (e, stackTrace) {
         return _saveLiveVoiceLocalOnly(
           transcript: trimmed,
@@ -91,7 +91,6 @@ class LiveVoiceHandler {
           syncNote: e.reason.isNotEmpty
               ? e.reason
               : VoiceCaptureCopy.transcriptionFailedDegraded,
-          
         );
       }
     } catch (e, stackTrace) {
@@ -106,7 +105,6 @@ class LiveVoiceHandler {
         transcript: trimmed,
         durationSeconds: durationSeconds,
         syncNote: CapturePipelineApiErrors.syncNoteFor(e),
-        
       );
     }
   }
@@ -116,7 +114,6 @@ class LiveVoiceHandler {
     required Map<String, dynamic> reflectionJson,
     required int durationSeconds,
     required bool remoteProcessingConsented,
-    
   }) async {
     final session = _deps.sessionGuardFactory();
     final trimmed = transcript.trim();
@@ -177,19 +174,20 @@ class LiveVoiceHandler {
     );
     _middleware.clearCaptureToken();
     _stageEmitter(PipelineStage.done);
-    return pipelineSuccess(CapturePipelineResult(
-      entry: entry,
-      localSaved: true,
-      syncSucceeded: true,
-      analysisSucceeded: true,
-    ));
+    return pipelineSuccess(
+      CapturePipelineResult(
+        entry: entry,
+        localSaved: true,
+        syncSucceeded: true,
+        analysisSucceeded: true,
+      ),
+    );
   }
 
   Future<CapturePipelineOutcome> _saveLiveVoiceLocalOnly({
     required String transcript,
     required int durationSeconds,
     required String syncNote,
-    
   }) async {
     _stageEmitter(PipelineStage.saving);
     final entry = JournalEntry(
@@ -214,11 +212,13 @@ class LiveVoiceHandler {
     );
     _middleware.clearCaptureToken();
     _stageEmitter(PipelineStage.done);
-    return pipelineSuccess(CapturePipelineResult(
-      entry: entry,
-      localSaved: true,
-      syncSucceeded: false,
-      syncNote: syncNote,
-    ));
+    return pipelineSuccess(
+      CapturePipelineResult(
+        entry: entry,
+        localSaved: true,
+        syncSucceeded: false,
+        syncNote: syncNote,
+      ),
+    );
   }
 }

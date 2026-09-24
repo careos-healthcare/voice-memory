@@ -86,8 +86,7 @@ void main() {
   }
 
   group('live audio streaming is refused without permission', () {
-    test('no consent granted: nothing is minted and nothing is sent',
-        () async {
+    test('no consent granted: nothing is minted and nothing is sent', () async {
       await OnDeviceProcessingStore.setEnabled(false);
       // Explicit: neither purpose granted.
       expect(
@@ -143,54 +142,58 @@ void main() {
       await coordinator.dispose();
     });
 
-    test('reflection consent alone does not license the audio stream',
-        () async {
-      // The stream carries audio, so it needs the transcription purpose.
-      // Granting only reflection is the near-miss that a purpose-blind check
-      // would wave through.
-      await consentStore.grant(
-        purposes: {RemoteProcessingPurpose.remoteReflection},
-      );
-      await OnDeviceProcessingStore.setEnabled(false);
+    test(
+      'reflection consent alone does not license the audio stream',
+      () async {
+        // The stream carries audio, so it needs the transcription purpose.
+        // Granting only reflection is the near-miss that a purpose-blind check
+        // would wave through.
+        await consentStore.grant(
+          purposes: {RemoteProcessingPurpose.remoteReflection},
+        );
+        await OnDeviceProcessingStore.setEnabled(false);
 
-      final coordinator = buildCoordinator(
-        sessionApi: _SpySessionApi.failing(),
-        connectionFactory: _failingConnectionFactory,
-        consentGate: gate,
-      );
+        final coordinator = buildCoordinator(
+          sessionApi: _SpySessionApi.failing(),
+          connectionFactory: _failingConnectionFactory,
+          consentGate: gate,
+        );
 
-      await expectLater(
-        coordinator.connect(),
-        throwsA(isA<RemoteProcessingConsentRequired>()),
-      );
-      coordinator.streamPcm16kChunk(const [1, 2, 3, 4]);
+        await expectLater(
+          coordinator.connect(),
+          throwsA(isA<RemoteProcessingConsentRequired>()),
+        );
+        coordinator.streamPcm16kChunk(const [1, 2, 3, 4]);
 
-      await coordinator.dispose();
-    });
+        await coordinator.dispose();
+      },
+    );
 
-    test('an unwired gate is read as refusal, not as absence of opinion',
-        () async {
-      // The composition root has to supply a gate. If it does not, the
-      // coordinator must not fall back to streaming — that is exactly how the
-      // brain-dump pipeline shipped.
-      await consentStore.grant(
-        purposes: {RemoteProcessingPurpose.remoteTranscription},
-      );
-      await OnDeviceProcessingStore.setEnabled(false);
+    test(
+      'an unwired gate is read as refusal, not as absence of opinion',
+      () async {
+        // The composition root has to supply a gate. If it does not, the
+        // coordinator must not fall back to streaming — that is exactly how the
+        // brain-dump pipeline shipped.
+        await consentStore.grant(
+          purposes: {RemoteProcessingPurpose.remoteTranscription},
+        );
+        await OnDeviceProcessingStore.setEnabled(false);
 
-      final coordinator = buildCoordinator(
-        sessionApi: _SpySessionApi.failing(),
-        connectionFactory: _failingConnectionFactory,
-      );
+        final coordinator = buildCoordinator(
+          sessionApi: _SpySessionApi.failing(),
+          connectionFactory: _failingConnectionFactory,
+        );
 
-      await expectLater(
-        coordinator.connect(),
-        throwsA(isA<RemoteProcessingConsentRequired>()),
-      );
-      coordinator.streamPcm16kChunk(const [1, 2, 3, 4]);
+        await expectLater(
+          coordinator.connect(),
+          throwsA(isA<RemoteProcessingConsentRequired>()),
+        );
+        coordinator.streamPcm16kChunk(const [1, 2, 3, 4]);
 
-      await coordinator.dispose();
-    });
+        await coordinator.dispose();
+      },
+    );
 
     test('consent withdrawn mid-session stops the reconnect', () async {
       await consentStore.grant(
@@ -268,7 +271,8 @@ void main() {
     expect(
       spySink.frames,
       isNotEmpty,
-      reason: 'the spy socket must actually observe a frame here, otherwise '
+      reason:
+          'the spy socket must actually observe a frame here, otherwise '
           'the negative cases above are vacuous',
     );
 
@@ -367,8 +371,10 @@ class _SpySessionApi implements LiveAudioSessionApiClient {
     String? systemInstruction,
   }) async {
     if (_failOnMint) {
-      fail('a live audio session was minted without a permitted consent '
-          'decision');
+      fail(
+        'a live audio session was minted without a permitted consent '
+        'decision',
+      );
     }
     mintCalls++;
     return LiveAudioSessionConfig(

@@ -350,16 +350,24 @@ abstract class ActivationTracker {
     try {
       await _events().increment(field);
     } catch (e, stackTrace) {
-      AppLogger.error('Unhandled error caught', error: e, stackTrace: stackTrace);
-      }
+      AppLogger.error(
+        'Unhandled error caught',
+        error: e,
+        stackTrace: stackTrace,
+      );
+    }
   }
 
   static Future<void> _safe(Future<void> Function() action) async {
     try {
       await action();
     } catch (e, stackTrace) {
-      AppLogger.error('Unhandled error caught', error: e, stackTrace: stackTrace);
-      }
+      AppLogger.error(
+        'Unhandled error caught',
+        error: e,
+        stackTrace: stackTrace,
+      );
+    }
   }
 
   /// v1-scoped activation event — increments local counters and mirrors to

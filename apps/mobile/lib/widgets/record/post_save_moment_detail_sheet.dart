@@ -15,7 +15,10 @@ import 'package:flutter/material.dart';
 /// Bottom sheet for adding one short post-save detail to a saved moment.
 class PostSaveMomentDetailSheet extends StatefulWidget {
   const PostSaveMomentDetailSheet({
-    required this.parentEntry, required this.detailType, required this.entryCount, super.key,
+    required this.parentEntry,
+    required this.detailType,
+    required this.entryCount,
+    super.key,
     this.service,
     this.initialText,
     this.saveDetailOverride,

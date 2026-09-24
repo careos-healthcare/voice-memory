@@ -14,14 +14,18 @@ import 'package:flutter/material.dart';
 /// Post-save What Changed v3 — last time vs this time comparison.
 class WhatChangedV2Card extends StatefulWidget {
   const WhatChangedV2Card({
-    required this.prompt, required this.source, super.key,
+    required this.prompt,
+    required this.source,
+    super.key,
     this.store,
     this.onSomethingHelped,
     this.onChanged,
   });
 
   const WhatChangedV2Card.test({
-    required this.prompt, required this.source, super.key,
+    required this.prompt,
+    required this.source,
+    super.key,
     this.store,
     this.onSomethingHelped,
     this.onChanged,

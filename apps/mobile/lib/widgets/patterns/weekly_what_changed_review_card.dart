@@ -9,7 +9,8 @@ import 'package:flutter/material.dart';
 /// Weekly what-changed review for Patterns — calm, non-modal.
 class WeeklyWhatChangedReviewCard extends StatelessWidget {
   const WeeklyWhatChangedReviewCard({
-    required this.review, super.key,
+    required this.review,
+    super.key,
     this.showProContinuity = false,
     this.onSeePro,
   });

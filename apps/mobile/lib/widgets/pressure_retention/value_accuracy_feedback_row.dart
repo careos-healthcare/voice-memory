@@ -19,7 +19,8 @@ import 'package:flutter/material.dart';
 /// to analytics, and never surfaces in share cards.
 class ValueAccuracyFeedbackRow extends StatefulWidget {
   const ValueAccuracyFeedbackRow({
-    required this.cardType, super.key,
+    required this.cardType,
+    super.key,
     this.entryCount,
     this.hasConnectedThread,
     this.testimonialStore,

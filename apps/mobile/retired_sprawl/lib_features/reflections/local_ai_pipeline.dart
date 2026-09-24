@@ -58,13 +58,15 @@ class LocalAiPipeline implements VoiceLocalAiPort {
     LocalAiRemoteFallback? remoteFallback,
     SpeechToTextWorkerService? speechToTextWorker,
     AudioStructuringResolver? audioStructuringResolver,
-    @visibleForTesting Future<WhisperTranscriptionResult?> Function(File audioFile)?
-        localSttOverride,
+    @visibleForTesting
+    Future<WhisperTranscriptionResult?> Function(File audioFile)?
+    localSttOverride,
     this.confidenceThreshold = LocalAiConfidence.remoteFallbackThreshold,
   }) : _reflectionExtractor = reflectionExtractor,
        _whisper = whisper,
        _remoteFallback = remoteFallback,
-       _speechToTextWorker = speechToTextWorker ?? SpeechToTextWorkerService.instance,
+       _speechToTextWorker =
+           speechToTextWorker ?? SpeechToTextWorkerService.instance,
        _audioStructuringResolver = audioStructuringResolver,
        _localSttOverride = localSttOverride;
 
@@ -85,7 +87,8 @@ class LocalAiPipeline implements VoiceLocalAiPort {
     OnnxWhisperSpeechToText? whisperOverride,
     double confidenceThreshold = LocalAiConfidence.remoteFallbackThreshold,
   }) async {
-    final whisper = whisperOverride ?? await OnnxWhisperSpeechToText.tryCreate();
+    final whisper =
+        whisperOverride ?? await OnnxWhisperSpeechToText.tryCreate();
     final reflection =
         reflectionExtractorOverride ?? await LocalReflectionExtractor.create();
     final remote = remoteCaptureApi == null

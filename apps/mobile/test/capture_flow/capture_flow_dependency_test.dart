@@ -6,8 +6,10 @@ import 'package:flutter_test/flutter_test.dart';
 /// or experimental post-save engines.
 void main() {
   test('capture_flow module avoids recording_dependencies barrel', () {
-    final root = File('lib/features/capture_flow/capture_flow_controller.dart')
-            .existsSync()
+    final root =
+        File(
+          'lib/features/capture_flow/capture_flow_controller.dart',
+        ).existsSync()
         ? Directory.current
         : Directory('apps/mobile');
     final captureDir = Directory('${root.path}/lib/features/capture_flow');
@@ -45,11 +47,13 @@ void main() {
   });
 
   test('capture_flow production files stay under UI line budget', () {
-    final root = File('lib/features/capture_flow/ui/capture_screen.dart')
-            .existsSync()
+    final root =
+        File('lib/features/capture_flow/ui/capture_screen.dart').existsSync()
         ? Directory.current
         : Directory('apps/mobile');
-    final screen = File('${root.path}/lib/features/capture_flow/ui/capture_screen.dart');
+    final screen = File(
+      '${root.path}/lib/features/capture_flow/ui/capture_screen.dart',
+    );
     final lines = screen.readAsLinesSync().length;
     expect(lines, lessThan(300));
   });

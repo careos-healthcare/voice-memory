@@ -8,7 +8,8 @@ import 'package:flutter/material.dart';
 /// Post-save payoff: "here is what changed because you kept checking this".
 class PatternProgressAfterSaveCard extends StatefulWidget {
   const PatternProgressAfterSaveCard({
-    required this.progress, super.key,
+    required this.progress,
+    super.key,
     this.onUseNext,
   });
 

@@ -35,7 +35,9 @@ tensionOrContradiction, and nextSmallAction.
     if (conversationHistory.isNotEmpty) {
       buffer.writeln('Recent conversation:');
       for (final turn in conversationHistory.take(4)) {
-        final label = turn.role == CoachConversationRole.user ? 'User' : 'Coach';
+        final label = turn.role == CoachConversationRole.user
+            ? 'User'
+            : 'Coach';
         buffer.writeln('- $label: ${turn.text}');
       }
       buffer.writeln();

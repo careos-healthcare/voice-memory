@@ -23,8 +23,10 @@ class LiveAudioSessionResponseDto {
       LiveAudioSessionResponseDto(
         ok: JsonConverters.boolValue(json['ok'], field: 'ok'),
         sessionId: JsonConverters.string(json['sessionId'], field: 'sessionId'),
-        sessionToken:
-            JsonConverters.string(json['sessionToken'], field: 'sessionToken'),
+        sessionToken: JsonConverters.string(
+          json['sessionToken'],
+          field: 'sessionToken',
+        ),
         expiresAt: _readExpiresAt(json['expiresAt']),
         expiresInSeconds: JsonConverters.intValue(
           json['expiresInSeconds'],
@@ -43,8 +45,9 @@ class LiveAudioSessionResponseDto {
           json['outputAudioMimeType'],
           field: 'outputAudioMimeType',
         ),
-        vaultRecoverySecret:
-            JsonConverters.nullableString(json['vaultRecoverySecret']),
+        vaultRecoverySecret: JsonConverters.nullableString(
+          json['vaultRecoverySecret'],
+        ),
       );
 
   final bool ok;
@@ -91,25 +94,29 @@ class LiveAudioRecoverResponseDto {
     required this.frameCount,
   });
 
-  factory LiveAudioRecoverResponseDto.fromJson(Map<String, dynamic> json) =>
-      LiveAudioRecoverResponseDto(
-        ok: JsonConverters.boolValue(json['ok'], field: 'ok'),
-        recoveryAckId: JsonConverters.string(
-          json['recoveryAckId'],
-          field: 'recoveryAckId',
-        ),
-        duplicate: JsonConverters.boolValue(json['duplicate'], field: 'duplicate'),
-        transcript: JsonConverters.string(json['transcript'], field: 'transcript'),
-        reflection: JsonConverters.requiredStringMap(
-          json['reflection'],
-          field: 'reflection',
-        ),
-        durationSeconds: JsonConverters.intValue(
-          json['durationSeconds'],
-          field: 'durationSeconds',
-        ),
-        frameCount: JsonConverters.intValue(json['frameCount'], field: 'frameCount'),
-      );
+  factory LiveAudioRecoverResponseDto.fromJson(
+    Map<String, dynamic> json,
+  ) => LiveAudioRecoverResponseDto(
+    ok: JsonConverters.boolValue(json['ok'], field: 'ok'),
+    recoveryAckId: JsonConverters.string(
+      json['recoveryAckId'],
+      field: 'recoveryAckId',
+    ),
+    duplicate: JsonConverters.boolValue(json['duplicate'], field: 'duplicate'),
+    transcript: JsonConverters.string(json['transcript'], field: 'transcript'),
+    reflection: JsonConverters.requiredStringMap(
+      json['reflection'],
+      field: 'reflection',
+    ),
+    durationSeconds: JsonConverters.intValue(
+      json['durationSeconds'],
+      field: 'durationSeconds',
+    ),
+    frameCount: JsonConverters.intValue(
+      json['frameCount'],
+      field: 'frameCount',
+    ),
+  );
 
   final bool ok;
   final String recoveryAckId;

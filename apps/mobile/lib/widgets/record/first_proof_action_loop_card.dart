@@ -12,7 +12,10 @@ import 'package:flutter/material.dart';
 /// Next actions after the user answers the first proof truth question.
 class FirstProofActionLoopCard extends StatelessWidget {
   const FirstProofActionLoopCard({
-    required this.content, required this.entryCount, required this.onWatchThisNext, super.key,
+    required this.content,
+    required this.entryCount,
+    required this.onWatchThisNext,
+    super.key,
     this.onViewPatternDetails,
     this.onRenamePattern,
     this.onKeepRecording,

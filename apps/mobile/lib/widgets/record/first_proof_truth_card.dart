@@ -11,7 +11,10 @@ import 'dart:async';
 /// Truth follow-up directly under first proof payoff — local answer only.
 class FirstProofTruthCard extends StatefulWidget {
   const FirstProofTruthCard({
-    required this.proofKey, required this.entryCount, required this.hasSnippets, super.key,
+    required this.proofKey,
+    required this.entryCount,
+    required this.hasSnippets,
+    super.key,
     this.store,
     this.skipPrefsLoad = false,
     this.initialAnswer,
@@ -19,7 +22,10 @@ class FirstProofTruthCard extends StatefulWidget {
   });
 
   const FirstProofTruthCard.test({
-    required this.proofKey, required this.entryCount, required this.hasSnippets, super.key,
+    required this.proofKey,
+    required this.entryCount,
+    required this.hasSnippets,
+    super.key,
     this.store,
     this.initialAnswer,
     this.onAnswered,

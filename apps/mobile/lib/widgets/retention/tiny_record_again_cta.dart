@@ -7,7 +7,9 @@ import 'package:flutter/material.dart';
 /// Compact, always-available record-again affordance after the first save.
 class TinyRecordAgainCta extends StatelessWidget {
   const TinyRecordAgainCta({
-    required this.entryCount, required this.onRecord, super.key,
+    required this.entryCount,
+    required this.onRecord,
+    super.key,
     this.source = 'archive',
   });
 

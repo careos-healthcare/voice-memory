@@ -60,7 +60,10 @@ void main() {
         const bullets = ConsumerUiCopy.paywallBullets;
         expect(bullets, PaywallAlignmentCopy.benefitBullets);
         expect(bullets, contains('Longer evidence history on this device'));
-        expect(bullets, contains('More archived moments over weeks and months'));
+        expect(
+          bullets,
+          contains('More archived moments over weeks and months'),
+        );
         expect(bullets, contains('Continuity when patterns return or change'));
         expect(PaywallSourceCopy.generalPro.bullets, bullets);
       },

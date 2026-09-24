@@ -60,7 +60,11 @@ abstract class InviteAttributionLink {
       try {
         await (store ?? InviteAttributionStore()).recordFirstTouch(attribution);
       } catch (e, stackTrace) {
-        AppLogger.error('Unhandled error caught', error: e, stackTrace: stackTrace);
+        AppLogger.error(
+          'Unhandled error caught',
+          error: e,
+          stackTrace: stackTrace,
+        );
         // Attribution must never break the open path.
       }
     }

@@ -1,5 +1,4 @@
 class WeeklyTelemetrySummary {
-
   const WeeklyTelemetrySummary({
     required this.weekStartDate,
     required this.totalObservations,

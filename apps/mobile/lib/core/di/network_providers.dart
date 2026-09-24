@@ -67,7 +67,8 @@ final apiBaseUrlProvider = Provider<String>(
 );
 
 final voiceMemoryApiConfigProvider = Provider<VoiceMemoryApiConfig>(
-  (ref) => VoiceMemoryApiConfig(baseUrl: ref.watch(voiceMemoryApiBaseUrlProvider)),
+  (ref) =>
+      VoiceMemoryApiConfig(baseUrl: ref.watch(voiceMemoryApiBaseUrlProvider)),
 );
 
 final networkRequestScopeProvider = Provider<NetworkRequestScope>((ref) {

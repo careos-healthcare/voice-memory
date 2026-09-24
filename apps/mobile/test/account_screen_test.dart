@@ -31,6 +31,7 @@ void main() {
       ),
     );
     await tester.pump();
+    await tester.pump(Duration.zero);
 
     expect(find.text(ConsumerUiCopy.accountTitle), findsOneWidget);
     expect(find.text('VoiceMemory account'), findsNothing);

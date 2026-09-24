@@ -1,4 +1,5 @@
-import 'package:archiveme_mobile/design/warm_archive_copy.dart' show WarmArchiveCopy;
+import 'package:archiveme_mobile/design/warm_archive_copy.dart'
+    show WarmArchiveCopy;
 
 import 'package:archiveme_mobile/features/archive_evolution/archive_evolution_models.dart';
 import 'package:archiveme_mobile/features/archive_explanations/explanation_models.dart';
@@ -122,7 +123,8 @@ class DiscoveryStreak {
 class LivingArchiveView {
   const LivingArchiveView({
     required this.mostImportant,
-    required this.discoveryStreak, this.archiveWasWrong,
+    required this.discoveryStreak,
+    this.archiveWasWrong,
     this.beliefUnderReview,
     this.whatChangedToday,
     this.hasMoreDiscoveries = false,

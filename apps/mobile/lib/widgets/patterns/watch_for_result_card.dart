@@ -9,7 +9,8 @@ import 'package:flutter/material.dart';
 /// Patterns card for the latest completed watch-for follow-up.
 class WatchForResultCard extends StatelessWidget {
   const WatchForResultCard({
-    required this.completed, super.key,
+    required this.completed,
+    super.key,
     this.headline,
     this.body,
     this.footer,

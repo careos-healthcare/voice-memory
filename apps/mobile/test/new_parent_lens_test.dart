@@ -22,8 +22,10 @@ void main() {
       ComparisonTemporalWindow.fortnight,
       ComparisonTemporalWindow.recent,
     ]);
-    expect(NewParentLens.defaultComparisonWindow,
-        ComparisonTemporalWindow.fortnight);
+    expect(
+      NewParentLens.defaultComparisonWindow,
+      ComparisonTemporalWindow.fortnight,
+    );
   });
 
   test('matches new parent lens only', () {

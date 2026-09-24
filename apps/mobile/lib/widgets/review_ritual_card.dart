@@ -11,13 +11,15 @@ import 'package:go_router/go_router.dart';
 /// Compact Review Ritual card for Archive Home.
 class ReviewRitualCard extends StatelessWidget {
   const ReviewRitualCard({
-    required this.result, super.key,
+    required this.result,
+    super.key,
     this.onPrimaryAction,
     this.onSecondaryAction,
   });
 
   const ReviewRitualCard.test({
-    required this.result, super.key,
+    required this.result,
+    super.key,
     this.onPrimaryAction,
     this.onSecondaryAction,
   });

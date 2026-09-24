@@ -75,11 +75,31 @@ class _IndicatorIcon extends StatelessWidget {
         height: 16,
         child: CircularProgressIndicator(strokeWidth: 2, color: color),
       ),
-      SyncStatusVisualKind.error => Icon(Icons.error_outline, size: 16, color: color),
-      SyncStatusVisualKind.offline => Icon(Icons.cloud_off_outlined, size: 16, color: color),
-      SyncStatusVisualKind.waiting => Icon(Icons.schedule, size: 16, color: color),
-      SyncStatusVisualKind.pending => Icon(Icons.cloud_upload_outlined, size: 16, color: color),
-      SyncStatusVisualKind.idle => Icon(Icons.cloud_done_outlined, size: 16, color: color),
+      SyncStatusVisualKind.error => Icon(
+        Icons.error_outline,
+        size: 16,
+        color: color,
+      ),
+      SyncStatusVisualKind.offline => Icon(
+        Icons.cloud_off_outlined,
+        size: 16,
+        color: color,
+      ),
+      SyncStatusVisualKind.waiting => Icon(
+        Icons.schedule,
+        size: 16,
+        color: color,
+      ),
+      SyncStatusVisualKind.pending => Icon(
+        Icons.cloud_upload_outlined,
+        size: 16,
+        color: color,
+      ),
+      SyncStatusVisualKind.idle => Icon(
+        Icons.cloud_done_outlined,
+        size: 16,
+        color: color,
+      ),
     };
   }
 }

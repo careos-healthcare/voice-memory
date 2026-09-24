@@ -13,7 +13,8 @@ import 'package:flutter/material.dart';
 /// pressure data, and the archive says when it lacks enough evidence.
 class AskTheArchiveCard extends StatefulWidget {
   const AskTheArchiveCard({
-    required this.records, super.key,
+    required this.records,
+    super.key,
     this.engine = const ArchiveReflectionEngine(),
     this.locked = false,
     this.onUnlock,

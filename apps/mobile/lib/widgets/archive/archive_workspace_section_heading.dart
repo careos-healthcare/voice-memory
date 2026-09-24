@@ -6,7 +6,9 @@ import 'package:flutter/material.dart';
 /// Section heading for grouped Archive/Patterns workspace cards.
 class ArchiveWorkspaceSectionHeading extends StatelessWidget {
   const ArchiveWorkspaceSectionHeading({
-    required this.sectionId, required this.title, super.key,
+    required this.sectionId,
+    required this.title,
+    super.key,
   });
 
   final String sectionId;

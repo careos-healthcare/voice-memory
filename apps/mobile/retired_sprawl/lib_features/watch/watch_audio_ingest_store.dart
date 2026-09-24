@@ -21,7 +21,8 @@ class WatchAudioIngestStore {
   }
 
   Future<void> markProcessed(String ingestKey) async {
-    final keys = await _loadKeys()..add(ingestKey);
+    final keys = await _loadKeys()
+      ..add(ingestKey);
     final trimmed = keys.length <= maxTrackedKeys
         ? keys
         : keys.skip(keys.length - maxTrackedKeys).toSet();

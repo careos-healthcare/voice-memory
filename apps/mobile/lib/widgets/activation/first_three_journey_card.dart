@@ -11,7 +11,8 @@ import 'package:go_router/go_router.dart';
 /// Warm activation card for the first three reflections journey.
 class FirstThreeJourneyCard extends StatelessWidget {
   const FirstThreeJourneyCard({
-    required this.model, super.key,
+    required this.model,
+    super.key,
     this.compact = false,
     this.onCta,
   });

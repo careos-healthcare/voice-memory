@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:archiveme_mobile/core/constants/database_constants.dart';
+import 'package:archiveme_mobile/features/security/private_vault_gate.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/models/reflection.dart';
 import 'package:archiveme_mobile/storage/sqlite/reflection_knowledge_graph_repository.dart';
@@ -11,6 +12,7 @@ import 'package:archiveme_mobile/storage/sqlite/memory_transcript_search_reposit
 import 'package:archiveme_mobile/storage/isolate/local_database_worker_service.dart';
 import 'package:archiveme_mobile/storage/sqlite/journal_sqlite_bulk_sync.dart';
 import 'package:archiveme_mobile/storage/sqlite/journal_sqlite_log.dart';
+import 'package:archiveme_mobile/storage/sqlite/time_capsule_visibility.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -113,7 +115,10 @@ class JournalSqliteRepository {
       return;
     }
 
-    await JournalSqliteBulkSync.mirrorEntireRemoteState(_sqlite.database, entries);
+    await JournalSqliteBulkSync.mirrorEntireRemoteState(
+      _sqlite.database,
+      entries,
+    );
   }
 
   bool _shouldRunInBackgroundIsolate(int entryCount) {
@@ -160,7 +165,9 @@ class JournalSqliteRepository {
       }
     }
 
-    return _drift.journalDao.countActive(likePattern: _likePattern(searchQuery));
+    return _drift.journalDao.countActive(
+      likePattern: _likePattern(searchQuery),
+    );
   }
 
   @Deprecated('Use fetchPageAfter for keyset pagination.')
@@ -172,6 +179,10 @@ class JournalSqliteRepository {
     final ftsQuery = _ftsMatchQuery(searchQuery);
     if (ftsQuery != null) {
       try {
+        final capsule = await TimeCapsuleVisibility.searchWindow(
+          _sqlite.database,
+        );
+        final hidden = await PrivateVaultGate.andSql(_sqlite.database, 'je');
         final rows = await _sqlite.database.rawQuery(
           '''
           SELECT
@@ -187,10 +198,18 @@ class JournalSqliteRepository {
           INNER JOIN (${_unifiedFtsRankSubquery()}) ranked
             ON ranked.entry_id = je.id
           WHERE je.deleted_at IS NULL
+            ${capsule?.andSql('je') ?? ''}
+            $hidden
           ORDER BY ranked.best_rank ASC, je.created_at DESC, je.id DESC
           LIMIT ? OFFSET ?
           ''',
-          [ftsQuery, ftsQuery, limit, offset],
+          [
+            ftsQuery,
+            ftsQuery,
+            ...?capsule?.args,
+            limit,
+            offset,
+          ],
         );
         return _entriesFromRows(rows);
       } on Object catch (error, stackTrace) {
@@ -199,6 +218,7 @@ class JournalSqliteRepository {
     }
 
     final whereClause = _activeWhereClause(searchQuery);
+    final hidden = await PrivateVaultGate.andSql(_sqlite.database, '');
     final rows = await _sqlite.database.rawQuery(
       '''
       SELECT
@@ -211,7 +231,7 @@ class JournalSqliteRepository {
         has_verified_proof,
         payload_json
       FROM $table
-      WHERE $whereClause
+      WHERE $whereClause$hidden
       ORDER BY created_at DESC, id DESC
       LIMIT ? OFFSET ?
       ''',
@@ -412,13 +432,13 @@ class JournalSqliteRepository {
           mood: 'neutral',
           emotionalIntensity: 0,
           recurringThemes: [],
-        exactLanguagePattern: '',
-        concreteObservation: '',
-        repeatedSignal: '',
-      ).toJson(),
-      'isArchived': (row['is_archived'] as int? ?? 0) == 1,
-      if (row['deleted_at'] != null)
-        'deletedAt': _isoFromMillis(row['deleted_at'] as int),
+          exactLanguagePattern: '',
+          concreteObservation: '',
+          repeatedSignal: '',
+        ).toJson(),
+        'isArchived': (row['is_archived'] as int? ?? 0) == 1,
+        if (row['deleted_at'] != null)
+          'deletedAt': _isoFromMillis(row['deleted_at'] as int),
       },
       onDataIssue: _reportEntryDataIssue,
     );

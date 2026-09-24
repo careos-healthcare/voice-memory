@@ -10,7 +10,11 @@ import 'package:flutter/material.dart';
 /// Detail sheet for the forming monthly private report preview.
 class MonthlyPrivateReportPreviewSheet extends StatelessWidget {
   const MonthlyPrivateReportPreviewSheet({
-    required this.surface, required this.entryCount, required this.preview, required this.onSeePro, super.key,
+    required this.surface,
+    required this.entryCount,
+    required this.preview,
+    required this.onSeePro,
+    super.key,
   });
 
   final MonthlyPrivateReportSurface surface;

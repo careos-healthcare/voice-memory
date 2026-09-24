@@ -31,7 +31,8 @@ class TrendAnalysisAggregator {
       moodCounts[mood] = (moodCounts[mood] ?? 0) + 1;
     }
 
-    final pseudoEntries = journalEntriesForPredictions ??
+    final pseudoEntries =
+        journalEntriesForPredictions ??
         records
             .map(
               (record) => JournalEntry(
@@ -128,16 +129,17 @@ class TrendAnalysisAggregator {
       );
     }
 
-    final lines = counts.entries
-        .map(
-          (entry) => TrendTensionLine(
-            label: _titleCase(entry.key),
-            occurrences: entry.value.count,
-            exampleEntryId: entry.value.entryId,
-          ),
-        )
-        .toList(growable: false)
-      ..sort((a, b) => b.occurrences.compareTo(a.occurrences));
+    final lines =
+        counts.entries
+            .map(
+              (entry) => TrendTensionLine(
+                label: _titleCase(entry.key),
+                occurrences: entry.value.count,
+                exampleEntryId: entry.value.entryId,
+              ),
+            )
+            .toList(growable: false)
+          ..sort((a, b) => b.occurrences.compareTo(a.occurrences));
 
     return lines.take(6).toList(growable: false);
   }
@@ -177,16 +179,17 @@ class TrendAnalysisAggregator {
       );
     }
 
-    final lines = counts.entries
-        .map(
-          (entry) => TrendCognitivePatternLine(
-            label: entry.key,
-            occurrences: entry.value.count,
-            exampleEntryId: entry.value.entryId,
-          ),
-        )
-        .toList(growable: false)
-      ..sort((a, b) => b.occurrences.compareTo(a.occurrences));
+    final lines =
+        counts.entries
+            .map(
+              (entry) => TrendCognitivePatternLine(
+                label: entry.key,
+                occurrences: entry.value.count,
+                exampleEntryId: entry.value.entryId,
+              ),
+            )
+            .toList(growable: false)
+          ..sort((a, b) => b.occurrences.compareTo(a.occurrences));
 
     return lines.take(6).toList(growable: false);
   }

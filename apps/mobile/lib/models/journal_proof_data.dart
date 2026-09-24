@@ -87,7 +87,8 @@ abstract class JournalProofData with _$JournalProofData {
     processingUsedLocalStt: identical(processingUsedLocalStt, copyWithUnset)
         ? this.processingUsedLocalStt
         : processingUsedLocalStt as bool?,
-    processingUsedGenerativeLlm: identical(processingUsedGenerativeLlm, copyWithUnset)
+    processingUsedGenerativeLlm:
+        identical(processingUsedGenerativeLlm, copyWithUnset)
         ? this.processingUsedGenerativeLlm
         : processingUsedGenerativeLlm as bool?,
   );
@@ -116,13 +117,13 @@ abstract class JournalProofData with _$JournalProofData {
 
   @override
   int get hashCode => Object.hash(
-        imageEvidence,
-        biomarkers,
-        parentHookId,
-        wasGrounded,
-        _verifiedProofHash(verifiedProof),
-        processingUsedOnnx,
-        processingUsedLocalStt,
-        processingUsedGenerativeLlm,
-      );
+    imageEvidence,
+    biomarkers,
+    parentHookId,
+    wasGrounded,
+    _verifiedProofHash(verifiedProof),
+    processingUsedOnnx,
+    processingUsedLocalStt,
+    processingUsedGenerativeLlm,
+  );
 }

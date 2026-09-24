@@ -71,8 +71,9 @@ class QuickCaptureSharedStorage {
     final existing = await _readPrefsFallback();
     if (existing.isEmpty) return;
     final ids = captureIds.toSet();
-    final remaining =
-        existing.where((item) => !ids.contains(item.captureId)).toList();
+    final remaining = existing
+        .where((item) => !ids.contains(item.captureId))
+        .toList();
     if (remaining.isEmpty) {
       await _prefs.writeString(sharedQueueKey, '[]');
       return;

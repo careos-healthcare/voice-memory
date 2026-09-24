@@ -41,7 +41,9 @@ final class TimelinePerformanceMetrics {
       final phase = event['ph']?.toString() ?? '';
 
       startMicros = startMicros == null ? ts : math.min(startMicros!, ts);
-      endMicros = endMicros == null ? ts + duration : math.max(endMicros!, ts + duration);
+      endMicros = endMicros == null
+          ? ts + duration
+          : math.max(endMicros!, ts + duration);
 
       if (name.startsWith('sqlite:') && phase == 'X' && duration > 0) {
         sqliteMicros += duration;
@@ -69,11 +71,11 @@ final class TimelinePerformanceMetrics {
   double get sqliteOperationMs => sqliteOperationMicros / 1000;
 
   Map<String, dynamic> toJson() => {
-        'wallClockMs': wallClockMs,
-        'sqliteOperationMs': sqliteOperationMs,
-        'sqliteOperationCount': sqliteOperationCount,
-        'eventCount': eventCount,
-      };
+    'wallClockMs': wallClockMs,
+    'sqliteOperationMs': sqliteOperationMs,
+    'sqliteOperationCount': sqliteOperationCount,
+    'eventCount': eventCount,
+  };
 }
 
 /// Maximum allowed duration for a traced workflow phase.
@@ -96,9 +98,9 @@ final class TimelinePerformanceBudget {
   final double? maxSqliteMs;
 
   Map<String, dynamic> toJson() => {
-        'maxWallMs': maxWallMs,
-        if (maxSqliteMs != null) 'maxSqliteMs': maxSqliteMs,
-      };
+    'maxWallMs': maxWallMs,
+    if (maxSqliteMs != null) 'maxSqliteMs': maxSqliteMs,
+  };
 }
 
 /// Loads regression budgets and asserts traced phases stay within them.

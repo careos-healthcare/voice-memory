@@ -71,8 +71,7 @@ JournalEntry _entry(
 
 List<JournalEntry> _entriesWithThemes(int count) => List.generate(
   count,
-  (i) =>
-      _entry('real_$i', createdAt: DateTime(2026).add(Duration(days: i))),
+  (i) => _entry('real_$i', createdAt: DateTime(2026).add(Duration(days: i))),
 );
 
 void _expectNoBannedCopy(Iterable<String> visible) {

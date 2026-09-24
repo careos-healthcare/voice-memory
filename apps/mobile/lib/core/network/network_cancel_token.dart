@@ -1,4 +1,5 @@
-import 'package:archiveme_mobile/core/network/http_transport.dart' show HttpTransport;
+import 'package:archiveme_mobile/core/network/http_transport.dart'
+    show HttpTransport;
 
 /// Cooperative cancellation for in-flight HTTP requests.
 ///

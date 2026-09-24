@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:isolate';
 
+import 'package:archiveme_mobile/core/utils/app_logger.dart';
 import 'package:archiveme_mobile/services/local_llm/local_llm_config.dart';
 import 'package:archiveme_mobile/services/local_llm/local_llm_model_contract.dart';
 import 'package:archiveme_mobile/services/local_llm/local_llm_types.dart';
@@ -10,6 +11,16 @@ import 'package:archiveme_mobile/workers/isolate_worker_client.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:llama_cpp_dart/llama_cpp_dart.dart';
+
+/// Optional work started after the llama isolate is up.
+///
+/// Reflection and insight routes register a quiet stance scan here so the
+/// scan rides the same lazy start as the local model.
+abstract final class LocalLlmWorkerHooks {
+  LocalLlmWorkerHooks._();
+
+  static Future<void> Function()? afterReady;
+}
 
 /// Operations handled by [LocalLlmWorkerService].
 abstract final class LocalLlmWorkerOperations {
@@ -54,6 +65,8 @@ class LocalLlmWorkerService implements PersistentIsolateWorkerClient {
 
   bool get isRunning => workerPort != null;
 
+  var _readyHookArmed = false;
+
   /// Clears cached load state in UI-isolate backends after a background unload.
   final ObserverList<VoidCallback> _modelUnloadedListeners = ObserverList();
 
@@ -76,7 +89,7 @@ class LocalLlmWorkerService implements PersistentIsolateWorkerClient {
     if (workerPort != null) {
       return Future<void>.value();
     }
-    return starting ??= spawnWorker(
+    final pending = starting ??= spawnWorker(
       entryPoint: localLlmWorkerIsolateEntry,
       startup: IsolateWorkerStartup(
         handshakePort: ReceivePort().sendPort,
@@ -85,6 +98,25 @@ class LocalLlmWorkerService implements PersistentIsolateWorkerClient {
         rootIsolateToken: _isFlutterTest ? null : RootIsolateToken.instance,
       ),
     );
+    if (!_readyHookArmed) {
+      _readyHookArmed = true;
+      unawaited(
+        pending
+            .then<void>((_) {
+              final hook = LocalLlmWorkerHooks.afterReady;
+              if (hook == null) return Future<void>.value();
+              return hook();
+            })
+            .catchError((Object error, StackTrace stackTrace) {
+              AppLogger.debug(
+                'Local model ready hook skipped',
+                error: error,
+                stackTrace: stackTrace,
+              );
+            }),
+      );
+    }
+    return pending;
   }
 
   @override
@@ -339,7 +371,9 @@ Future<void> localLlmWorkerIsolateEntry(IsolateWorkerStartup startup) async {
     rootIsolateToken: startup.rootIsolateToken,
   );
 
-  final runtime = _LocalLlmWorkerRuntime(clientResponsePort: startup.clientResponsePort);
+  final runtime = _LocalLlmWorkerRuntime(
+    clientResponsePort: startup.clientResponsePort,
+  );
   final serverPort = ReceivePort();
   startup.handshakePort.send(serverPort.sendPort);
 
@@ -408,12 +442,13 @@ final class _LocalLlmWorkerRuntime {
   }
 
   void startStreamCompletion(IsolateWorkerRequest request) {
-    _activeStreamCompletion = _streamCompletion(
-      requestId: request.requestId,
-      payload: request.payload,
-    ).whenComplete(() {
-      _activeStreamCompletion = null;
-    });
+    _activeStreamCompletion =
+        _streamCompletion(
+          requestId: request.requestId,
+          payload: request.payload,
+        ).whenComplete(() {
+          _activeStreamCompletion = null;
+        });
   }
 
   Future<void> _cancelGeneration(int requestId) async {
@@ -465,7 +500,10 @@ final class _LocalLlmWorkerRuntime {
     }
 
     _formatter = config.useChatMlFormat ? ChatMLFormat() : null;
-    _parent = LlamaParent(LocalLlmWorkerLoadPolicy.toWorkerLoadCommand(config), _formatter);
+    _parent = LlamaParent(
+      LocalLlmWorkerLoadPolicy.toWorkerLoadCommand(config),
+      _formatter,
+    );
     await _parent!.init();
   }
 

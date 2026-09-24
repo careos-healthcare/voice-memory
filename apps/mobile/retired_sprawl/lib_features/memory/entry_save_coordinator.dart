@@ -1,6 +1,7 @@
 import 'package:archiveme_mobile/core/utils/app_logger.dart';
 import 'package:archiveme_mobile/features/archive_packs/archive_pack_store.dart';
 import 'package:archiveme_mobile/features/archive_packs/entry_pack_scope.dart';
+import 'package:archiveme_mobile/features/entries/ambient_entry_provider.dart';
 import 'package:archiveme_mobile/features/memory/archive_thread_store.dart';
 import 'package:archiveme_mobile/features/memory/clean_slate_prompt_store.dart';
 import 'package:archiveme_mobile/features/memory/curated_memory_marker.dart';
@@ -69,7 +70,7 @@ abstract class EntrySaveCoordinator {
     PreserveOriginalSession.resetAfterSave();
     EntryThreadScopeSession.resetAfterSave();
     EntryPackScopeSession.resetAfterSave();
-    return toPersist;
+    return attachAmbientContext(toPersist);
   }
 
   /// Assigns an existing entry to a pack and syncs pressure metadata.
@@ -140,8 +141,12 @@ abstract class EntrySaveCoordinator {
     try {
       await PressureCheckInStore.instance().syncFromJournalEntry(entry);
     } catch (e, stackTrace) {
-      AppLogger.error('Unhandled error caught', error: e, stackTrace: stackTrace);
-      }
+      AppLogger.error(
+        'Unhandled error caught',
+        error: e,
+        stackTrace: stackTrace,
+      );
+    }
   }
 
   /// Only ever used to *assign* (never clear) these fields — every other

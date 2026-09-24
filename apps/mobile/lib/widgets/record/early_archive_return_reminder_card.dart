@@ -10,7 +10,8 @@ import 'package:flutter/material.dart';
 /// Optional tomorrow-return reminder after confirmed repeat / early timeline.
 class EarlyArchiveReturnReminderCard extends StatelessWidget {
   const EarlyArchiveReturnReminderCard({
-    required this.onDismiss, super.key,
+    required this.onDismiss,
+    super.key,
     this.source = 'patterns',
   });
 

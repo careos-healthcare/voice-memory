@@ -28,13 +28,13 @@ class LocalCoachConversationService {
       repository: embeddingRepository,
     );
     return LocalCoachConversationService(
-      retriever: retriever ??
+      retriever:
+          retriever ??
           CoachJournalRagRetriever(
             journalRepository: journalRepository,
             reflectionVectorSearch: vectorSearch,
           ),
-      synthesizer:
-          synthesizer ?? await CoachOnnxResponseSynthesizer.create(),
+      synthesizer: synthesizer ?? await CoachOnnxResponseSynthesizer.create(),
     );
   }
 

@@ -47,8 +47,8 @@ abstract class NativeSpeechTranscriptionPlatform {
 class MethodChannelNativeSpeechTranscriptionPlatform
     implements NativeSpeechTranscriptionPlatform {
   MethodChannelNativeSpeechTranscriptionPlatform({MethodChannel? channel})
-    : _channel = channel ??
-          const MethodChannel(NativeSpeechTranscription.channelName);
+    : _channel =
+          channel ?? const MethodChannel(NativeSpeechTranscription.channelName);
 
   final MethodChannel _channel;
 
@@ -169,7 +169,8 @@ abstract final class NativeSpeechTranscription {
       );
       final transcript = payload?['transcript']?.toString().trim() ?? '';
       if (transcript.isEmpty) {
-        final reason = payload?['reason']?.toString() ?? 'empty_native_transcript';
+        final reason =
+            payload?['reason']?.toString() ?? 'empty_native_transcript';
         TranscriptionLog.failed(reason: reason);
         return null;
       }

@@ -17,7 +17,8 @@ import 'package:flutter/material.dart';
 /// there is no reflection text).
 class KinderAngleCard extends StatefulWidget {
   const KinderAngleCard({
-    required this.reflectionText, super.key,
+    required this.reflectionText,
+    super.key,
     this.patternTitle = '',
     this.specificPrompt = '',
     this.resultHint,

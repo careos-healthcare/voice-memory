@@ -8,7 +8,8 @@ import 'package:intl/intl.dart';
 
 class EvolvingViewCard extends StatelessWidget {
   const EvolvingViewCard({
-    required this.snapshot, super.key,
+    required this.snapshot,
+    super.key,
     this.minReflections = 5,
     this.reflectionCount = 0,
   });
@@ -32,7 +33,7 @@ class EvolvingViewCard extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
-          color: AppColors.surfaceAlt.withValues(alpha: 0.6),
+        color: AppColors.surfaceAlt.withValues(alpha: 0.6),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: AppColors.warmBorder),
       ),
@@ -55,9 +56,21 @@ class EvolvingViewCard extends StatelessWidget {
             spacing: AppSpacing.md,
             runSpacing: AppSpacing.sm,
             children: [
-              _metric(context, EvolvingViewCardCopy.totalTheories, '${snapshot.totalTheories}'),
-              _metric(context, EvolvingViewCardCopy.underReview, '${snapshot.underReviewCount}'),
-              _metric(context, EvolvingViewCardCopy.strengthening, '${snapshot.strengtheningCount}'),
+              _metric(
+                context,
+                EvolvingViewCardCopy.totalTheories,
+                '${snapshot.totalTheories}',
+              ),
+              _metric(
+                context,
+                EvolvingViewCardCopy.underReview,
+                '${snapshot.underReviewCount}',
+              ),
+              _metric(
+                context,
+                EvolvingViewCardCopy.strengthening,
+                '${snapshot.strengtheningCount}',
+              ),
               _metric(
                 context,
                 EvolvingViewCardCopy.weakeningResolved,

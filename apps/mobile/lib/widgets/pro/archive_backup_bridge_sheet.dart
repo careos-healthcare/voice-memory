@@ -9,7 +9,8 @@ import 'package:flutter/material.dart';
 /// Detail sheet for archive preservation — no live cloud backup claims.
 class ArchiveBackupBridgeSheet extends StatelessWidget {
   const ArchiveBackupBridgeSheet({
-    required this.contextData, super.key,
+    required this.contextData,
+    super.key,
     this.onSeePro,
   });
 

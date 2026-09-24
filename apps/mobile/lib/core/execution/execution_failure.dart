@@ -122,7 +122,8 @@ final class SyncFailureOffline extends SyncExecutionFailure {
 
   @override
   String get userMessage =>
-      detail ?? 'You appear to be offline. Your moments stay saved on this device.';
+      detail ??
+      'You appear to be offline. Your moments stay saved on this device.';
 
   @override
   bool get isRetryable => true;
@@ -234,10 +235,12 @@ SyncExecutionFailure mapApiFailureToSyncFailure(ApiFailure failure) {
   return switch (failure) {
     ApiFailureOffline(:final detail) => SyncFailureOffline(detail: detail),
     ApiFailureAuthRequired() => const SyncFailureAuthRequired(),
-    ApiFailureRateLimited(:final message) =>
-      SyncFailureRuntime(detail: message),
-    _ when failure.code == 'NETWORK_ERROR' ||
-        failure.code == 'NETWORK_DISCONNECTED' =>
+    ApiFailureRateLimited(:final message) => SyncFailureRuntime(
+      detail: message,
+    ),
+    _
+        when failure.code == 'NETWORK_ERROR' ||
+            failure.code == 'NETWORK_DISCONNECTED' =>
       SyncFailureOffline(detail: failure.message),
     _ => SyncFailureRuntime(detail: failure.message),
   };
@@ -252,25 +255,23 @@ SyncExecutionFailure mapErrorToSyncFailure(Object error, [StackTrace? _]) {
 
 extension LlmExecutionFailureUi on LlmExecutionFailure {
   LlmAnalysisStatus get analysisStatus => switch (this) {
-        LlmFailureCancelled() => LlmAnalysisStatus.pendingAnalysis,
-        LlmFailureConstraints() ||
-        LlmFailureModelMissing() ||
-        LlmFailureTimeout() =>
-          LlmAnalysisStatus.pendingAnalysis,
-        _ => LlmAnalysisStatus.error,
-      };
+    LlmFailureCancelled() => LlmAnalysisStatus.pendingAnalysis,
+    LlmFailureConstraints() ||
+    LlmFailureModelMissing() ||
+    LlmFailureTimeout() => LlmAnalysisStatus.pendingAnalysis,
+    _ => LlmAnalysisStatus.error,
+  };
 
   bool get shouldQueueForRetry => isRetryable && this is! LlmFailureCancelled;
 }
 
 extension SyncExecutionFailureUi on SyncExecutionFailure {
   BackgroundSyncPhase get suggestedPhase => switch (this) {
-        SyncFailureOffline() => BackgroundSyncPhase.waitingForNetwork,
-        SyncFailureExhausted() ||
-        SyncFailureTimeout() ||
-        SyncFailureRuntime() =>
-          BackgroundSyncPhase.waitingForRetry,
-        SyncFailureAuthRequired() || SyncFailureConflict() =>
-          BackgroundSyncPhase.failed,
-      };
+    SyncFailureOffline() => BackgroundSyncPhase.waitingForNetwork,
+    SyncFailureExhausted() ||
+    SyncFailureTimeout() ||
+    SyncFailureRuntime() => BackgroundSyncPhase.waitingForRetry,
+    SyncFailureAuthRequired() ||
+    SyncFailureConflict() => BackgroundSyncPhase.failed,
+  };
 }

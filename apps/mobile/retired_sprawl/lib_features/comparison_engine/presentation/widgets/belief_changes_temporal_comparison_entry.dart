@@ -9,17 +9,20 @@ import 'package:go_router/go_router.dart';
 /// Prominent Changes-tab entry for New Parent / Grief-Loss temporal comparison.
 class BeliefChangesTemporalComparisonEntry extends StatelessWidget {
   const BeliefChangesTemporalComparisonEntry({
-    required this.activeLens, super.key,
+    required this.activeLens,
+    super.key,
   });
 
   final LifeStageLens activeLens;
 
   @override
   Widget build(BuildContext context) {
-    final title =
-        ComparisonExplorerLensSupport.beliefChangesEntryTitleFor(activeLens);
-    final body =
-        ComparisonExplorerLensSupport.beliefChangesEntryBodyFor(activeLens);
+    final title = ComparisonExplorerLensSupport.beliefChangesEntryTitleFor(
+      activeLens,
+    );
+    final body = ComparisonExplorerLensSupport.beliefChangesEntryBodyFor(
+      activeLens,
+    );
     if (title == null || body == null) {
       return const SizedBox.shrink();
     }
@@ -46,8 +49,9 @@ class BeliefChangesTemporalComparisonEntry extends StatelessWidget {
                 Expanded(
                   child: Text(
                     title,
-                    style: ArchiveMobileTypography.responsiveBody(context)
-                        .copyWith(fontWeight: FontWeight.w600),
+                    style: ArchiveMobileTypography.responsiveBody(
+                      context,
+                    ).copyWith(fontWeight: FontWeight.w600),
                   ),
                 ),
               ],

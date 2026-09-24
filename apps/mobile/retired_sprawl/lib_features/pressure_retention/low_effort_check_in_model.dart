@@ -1,4 +1,5 @@
-import 'package:archiveme_mobile/features/pressure_retention/pressure_check_in_option.dart' show PressureCheckInOption;
+import 'package:archiveme_mobile/features/pressure_retention/pressure_check_in_option.dart'
+    show PressureCheckInOption;
 
 /// The four one-tap answers for the low-effort check-in. Continuity signals
 /// about the tracked thread — not moods, not scores, not diagnoses.

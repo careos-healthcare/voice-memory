@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:archiveme_mobile/config/screenshot_mode.dart';
 import 'package:archiveme_mobile/design/archive_mobile_typography.dart';
+import 'package:archiveme_mobile/features/challenging_questions/challenging_question_card.dart';
 import 'package:archiveme_mobile/features/curiosity_loop/data/models/curiosity_reaction_record.dart';
 import 'package:archiveme_mobile/features/curiosity_loop/data/repositories/curiosity_reaction_repository.dart';
 import 'package:archiveme_mobile/features/curiosity_loop/domain/services/curiosity_prompt_resolver.dart';
@@ -29,7 +30,8 @@ enum _YesterdaysSnapshotPhase { snapshot, recording }
 /// Fast yesterday recap → one-tap reaction → today's voice capture.
 class YesterdaysSnapshotScreen extends StatefulWidget {
   const YesterdaysSnapshotScreen({
-    required this.hook, super.key,
+    required this.hook,
+    super.key,
     this.repository,
     this.journalService,
     this.initialSummaries,
@@ -42,7 +44,8 @@ class YesterdaysSnapshotScreen extends StatefulWidget {
 
   /// Test hook to bypass navigation and assert handoff timing.
   const YesterdaysSnapshotScreen.test({
-    required this.hook, super.key,
+    required this.hook,
+    super.key,
     this.repository,
     this.journalService,
     this.initialSummaries,
@@ -257,6 +260,7 @@ class _YesterdaysSnapshotScreenState extends State<YesterdaysSnapshotScreen> {
           ),
           const SizedBox(height: AppSpacing.lg),
           _MicroReviewCard(summaries: _summaries),
+          const ChallengingQuestionCard(),
           const SizedBox(height: AppSpacing.lg),
           Text(
             YesterdaysSnapshotCopy.reactionTitle,

@@ -72,7 +72,11 @@ List<JournalEntry> journalEntriesFromSnapshot(Map<String, dynamic> snapshot) {
     try {
       parsed.add(JournalEntry.fromJson(entryJson));
     } catch (e, stackTrace) {
-      AppLogger.error('Unhandled error caught', error: e, stackTrace: stackTrace);
+      AppLogger.error(
+        'Unhandled error caught',
+        error: e,
+        stackTrace: stackTrace,
+      );
       // Skip corrupt records — caller verifies coverage separately.
     }
   }

@@ -43,7 +43,10 @@ abstract final class ExcludedNativeCapabilityCleanup {
     for (final key in legacyWidgetSnapshotKeys) {
       await prefs.writeMap(key, {});
     }
-    await prefs.writeString(ObjectiveWidgetPendingRouteStore.pendingRouteKey, '');
+    await prefs.writeString(
+      ObjectiveWidgetPendingRouteStore.pendingRouteKey,
+      '',
+    );
     await prefs.writeString(QuickCaptureSharedStorage.sharedQueueKey, '[]');
     await prefs.writeString(QuickCaptureSharedStorage.pendingRouteKey, '');
   }

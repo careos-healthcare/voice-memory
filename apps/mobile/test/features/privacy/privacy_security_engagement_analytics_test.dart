@@ -15,7 +15,10 @@ void main() {
       expanded: true,
     );
 
-    expect(events.keys, contains(PrivacySecurityEngagementAnalytics.trustCardExpandedEvent));
+    expect(
+      events.keys,
+      contains(PrivacySecurityEngagementAnalytics.trustCardExpandedEvent),
+    );
     expect(
       events[PrivacySecurityEngagementAnalytics.trustCardExpandedEvent],
       {
@@ -47,10 +50,13 @@ void main() {
       events[event] = props;
     };
 
-    PrivacySecurityEngagementAnalytics.biometricEnforcementToggled(enabled: false);
+    PrivacySecurityEngagementAnalytics.biometricEnforcementToggled(
+      enabled: false,
+    );
 
     expect(
-      events[PrivacySecurityEngagementAnalytics.biometricEnforcementToggledEvent],
+      events[PrivacySecurityEngagementAnalytics
+          .biometricEnforcementToggledEvent],
       {'enabled': false},
     );
   });
@@ -77,7 +83,9 @@ void main() {
       events[event] = props;
     };
 
-    PrivacySecurityEngagementAnalytics.caregiverAuditLogExpanded(expanded: true);
+    PrivacySecurityEngagementAnalytics.caregiverAuditLogExpanded(
+      expanded: true,
+    );
 
     expect(
       events[PrivacySecurityEngagementAnalytics.caregiverAuditLogExpandedEvent],

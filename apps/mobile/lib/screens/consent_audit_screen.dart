@@ -97,12 +97,16 @@ class _ConsentAuditScreenState extends State<ConsentAuditScreen> {
                             Text(
                               '${grant.granteeLabel} · '
                               '${ConsentAuditCopy.statusLabel(grant.status)}',
-                              style: ArchiveMobileTypography.listSubtitle(context),
+                              style: ArchiveMobileTypography.listSubtitle(
+                                context,
+                              ),
                             ),
                             Text(
                               'Granted ${ConsentAuditCopy.grantedLabel(grant.grantedAt)} · '
                               'Scope: ${grant.scopeSummary}',
-                              style: ArchiveMobileTypography.listSubtitle(context),
+                              style: ArchiveMobileTypography.listSubtitle(
+                                context,
+                              ),
                             ),
                             if (grant.status == ConsentGrantStatus.active)
                               Align(

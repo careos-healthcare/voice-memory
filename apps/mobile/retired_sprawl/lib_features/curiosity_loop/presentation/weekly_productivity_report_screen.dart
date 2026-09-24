@@ -34,7 +34,8 @@ class WeeklyProductivityReportScreen extends StatefulWidget {
 
   /// Test hook to render a fixed report without async loading.
   const WeeklyProductivityReportScreen.test({
-    required WeeklyProductivityReport report, super.key,
+    required WeeklyProductivityReport report,
+    super.key,
     this.initialTrajectoryPoints = const [],
     this.exporter,
     this.markdownCopyHandler,
@@ -441,7 +442,13 @@ class _ReactionBreakdownRow extends StatelessWidget {
 
 class _AnchorSection extends StatelessWidget {
   const _AnchorSection({
-    required this.title, required this.helper, required this.emptyCopy, required this.anchors, required this.accent, required this.icon, super.key,
+    required this.title,
+    required this.helper,
+    required this.emptyCopy,
+    required this.anchors,
+    required this.accent,
+    required this.icon,
+    super.key,
   });
 
   final String title;

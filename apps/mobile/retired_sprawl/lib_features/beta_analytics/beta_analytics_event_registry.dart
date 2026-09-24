@@ -56,7 +56,8 @@ abstract final class BetaAnalyticsEventRegistry {
         'capture_kind': {'voice', 'typed', 'typed_attach'},
       },
       retention: Duration(days: 365),
-      deletionBehavior: 'Anonymized counts only; timestamp used locally for windows.',
+      deletionBehavior:
+          'Anonymized counts only; timestamp used locally for windows.',
       oncePerInstall: true,
     ),
     BetaAnalyticsEventDefinition(
@@ -116,7 +117,8 @@ abstract final class BetaAnalyticsEventRegistry {
       name: 'possible_pattern_viewed',
       owner: 'evidence',
       purpose: 'Customer saw a possible pattern/change surface.',
-      trigger: 'Verified pattern card or Changes section renders eligible claim.',
+      trigger:
+          'Verified pattern card or Changes section renders eligible claim.',
       allowedPayloadKeys: const {'surface'},
       enumConstraints: const {
         'surface': {
@@ -147,7 +149,8 @@ abstract final class BetaAnalyticsEventRegistry {
       name: 'pattern_reviewed',
       owner: 'evidence',
       purpose: 'Customer validated or rejected a possible pattern/change.',
-      trigger: 'ArchiveCorrectionStore persists correction after durable write.',
+      trigger:
+          'ArchiveCorrectionStore persists correction after durable write.',
       allowedPayloadKeys: const {'review_outcome'},
       enumConstraints: const {
         'review_outcome': {
@@ -184,7 +187,8 @@ abstract final class BetaAnalyticsEventRegistry {
       owner: 'trust',
       purpose:
           'Monitoring — remote I/O attempted without active consent (should be impossible).',
-      trigger: 'Audit hook before remote network I/O when consent is not granted.',
+      trigger:
+          'Audit hook before remote network I/O when consent is not granted.',
       allowedPayloadKeys: const {'purpose'},
       enumConstraints: const {
         'purpose': {'remote_transcription', 'remote_reflection'},
@@ -278,8 +282,7 @@ abstract final class BetaAnalyticsEventRegistry {
       owner: 'retention',
       purpose:
           'Derived retention — second+ capture on or after day 7 from first save.',
-      trigger:
-          'BetaAnalyticsRetentionDeriver evaluates local save timestamps.',
+      trigger: 'BetaAnalyticsRetentionDeriver evaluates local save timestamps.',
       allowedPayloadKeys: const {'cohort_day'},
       enumConstraints: const {},
       retention: Duration(days: 365),
@@ -291,8 +294,7 @@ abstract final class BetaAnalyticsEventRegistry {
       owner: 'retention',
       purpose:
           'Derived retention — second+ capture on or after day 30 from first save.',
-      trigger:
-          'BetaAnalyticsRetentionDeriver evaluates local save timestamps.',
+      trigger: 'BetaAnalyticsRetentionDeriver evaluates local save timestamps.',
       allowedPayloadKeys: const {'cohort_day'},
       enumConstraints: const {},
       retention: Duration(days: 365),

@@ -38,7 +38,9 @@ class SensitivePrefsEncryptedBlob {
     await prefs.writeString(securePrefsKey, encrypted);
     final verified = await _readDecryptedRoot();
     if (!_stringMapsEqual(verified, values)) {
-      throw StateError('Encrypted write verification failed for $securePrefsKey');
+      throw StateError(
+        'Encrypted write verification failed for $securePrefsKey',
+      );
     }
   }
 

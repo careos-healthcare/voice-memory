@@ -66,7 +66,11 @@ class _AccountAuthScreenState extends State<AccountAuthScreen> {
       if (!mounted || last == null || _emailController.text.isNotEmpty) return;
       setState(() => _emailController.text = last);
     } catch (e, stackTrace) {
-      AppLogger.error('Unhandled error caught', error: e, stackTrace: stackTrace);
+      AppLogger.error(
+        'Unhandled error caught',
+        error: e,
+        stackTrace: stackTrace,
+      );
       // Prefill is best-effort only.
     }
   }

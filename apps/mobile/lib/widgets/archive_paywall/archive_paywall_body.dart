@@ -11,7 +11,8 @@ import 'package:flutter/material.dart';
 /// Archive intelligence paywall — Variant B production layout.
 class ArchivePaywallBody extends StatelessWidget {
   const ArchivePaywallBody({
-    required this.stats, super.key,
+    required this.stats,
+    super.key,
     this.variant,
     this.showPurchaseSection = true,
     this.plansSection,

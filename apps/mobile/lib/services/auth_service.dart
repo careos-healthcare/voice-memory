@@ -1,5 +1,6 @@
 import 'package:archiveme_mobile/features/auth/application/auth_session_notifier.dart';
-import 'package:archiveme_mobile/features/recording/recording_dependencies.dart' show AppServices;
+import 'package:archiveme_mobile/features/recording/recording_dependencies.dart'
+    show AppServices;
 import 'package:archiveme_mobile/models/session.dart';
 import 'package:archiveme_mobile/services/app_services.dart' show AppServices;
 import 'package:flutter_riverpod/flutter_riverpod.dart';

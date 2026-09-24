@@ -37,17 +37,17 @@ final journalSqliteRepositoryProvider = Provider<JournalSqliteRepository>(
 
 final memoryTranscriptSearchRepositoryProvider =
     Provider<MemoryTranscriptSearchRepository>(
-  (ref) => MemoryTranscriptSearchRepository(
-    ref.watch(appSqliteDatabaseProvider),
-  ),
-);
+      (ref) => MemoryTranscriptSearchRepository(
+        ref.watch(appSqliteDatabaseProvider),
+      ),
+    );
 
 final imageAttachmentEmbeddingRepositoryProvider =
     Provider<ImageAttachmentEmbeddingRepository>(
-  (ref) => ImageAttachmentEmbeddingRepository(
-    ref.watch(appSqliteDatabaseProvider),
-  ),
-);
+      (ref) => ImageAttachmentEmbeddingRepository(
+        ref.watch(appSqliteDatabaseProvider),
+      ),
+    );
 
 final hybridSearchEngineProvider = Provider<HybridSearchEngine>(
   (ref) => HybridSearchEngine(
@@ -56,8 +56,9 @@ final hybridSearchEngineProvider = Provider<HybridSearchEngine>(
   ),
 );
 
-final hybridLocalSearchDatabaseHelperProvider =
-    FutureProvider<DatabaseHelper>((ref) async {
+final hybridLocalSearchDatabaseHelperProvider = FutureProvider<DatabaseHelper>((
+  ref,
+) async {
   final inference =
       await OnnxReflectionEmbeddingInference.tryCreateFromAsset() ??
       LocalReflectionEmbeddingInference();

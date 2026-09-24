@@ -85,14 +85,15 @@ class VerifiedSourceProofSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bottomInset = MediaQuery.viewInsetsOf(context).bottom;
-    final sorted = [...evidence]..sort((a, b) {
-      final aDate = a.recordedAt;
-      final bDate = b.recordedAt;
-      if (aDate == null && bDate == null) return 0;
-      if (aDate == null) return 1;
-      if (bDate == null) return -1;
-      return aDate.compareTo(bDate);
-    });
+    final sorted = [...evidence]
+      ..sort((a, b) {
+        final aDate = a.recordedAt;
+        final bDate = b.recordedAt;
+        if (aDate == null && bDate == null) return 0;
+        if (aDate == null) return 1;
+        if (bDate == null) return -1;
+        return aDate.compareTo(bDate);
+      });
 
     return DraggableScrollableSheet(
       expand: false,

@@ -6,7 +6,8 @@ import 'package:flutter/material.dart';
 /// Reuses [ArchiveShareActions] for iPad-safe native share with copy fallback.
 class PressureReportShareButton extends StatelessWidget {
   const PressureReportShareButton({
-    required this.reportText, super.key,
+    required this.reportText,
+    super.key,
     this.onShare,
   });
 

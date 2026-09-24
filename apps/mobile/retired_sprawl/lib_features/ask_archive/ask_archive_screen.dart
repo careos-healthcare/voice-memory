@@ -374,35 +374,39 @@ class _AskArchiveScreenState extends State<AskArchiveScreen> {
       return;
     }
 
-    unawaited(showModalBottomSheet<void>(
-      context: context,
-      showDragHandle: true,
-      builder: (context) {
-        return Padding(
-          padding: const EdgeInsets.fromLTRB(
-            AppSpacing.lg,
-            AppSpacing.sm,
-            AppSpacing.lg,
-            AppSpacing.xl,
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                moment!.title,
-                style: ArchiveMobileTypography.responsiveSectionTitle(context),
-              ),
-              const SizedBox(height: AppSpacing.sm),
-              Text(
-                moment.originalText,
-                style: ArchiveMobileTypography.responsiveBody(context),
-              ),
-            ],
-          ),
-        );
-      },
-    ));
+    unawaited(
+      showModalBottomSheet<void>(
+        context: context,
+        showDragHandle: true,
+        builder: (context) {
+          return Padding(
+            padding: const EdgeInsets.fromLTRB(
+              AppSpacing.lg,
+              AppSpacing.sm,
+              AppSpacing.lg,
+              AppSpacing.xl,
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  moment!.title,
+                  style: ArchiveMobileTypography.responsiveSectionTitle(
+                    context,
+                  ),
+                ),
+                const SizedBox(height: AppSpacing.sm),
+                Text(
+                  moment.originalText,
+                  style: ArchiveMobileTypography.responsiveBody(context),
+                ),
+              ],
+            ),
+          );
+        },
+      ),
+    );
   }
 
   void _useCheck(ArchiveSearchResult result) {

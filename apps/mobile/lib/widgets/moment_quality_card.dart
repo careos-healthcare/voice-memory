@@ -11,7 +11,8 @@ import 'package:flutter/material.dart';
 /// Compact local helper for drafting stronger archive evidence.
 class MomentQualityCard extends StatelessWidget {
   const MomentQualityCard({
-    required this.text, super.key,
+    required this.text,
+    super.key,
     this.engine = const MomentQualityEngine(),
     this.onSuggestionTap,
   });
@@ -126,7 +127,9 @@ class _SuggestionChip extends StatelessWidget {
 
     return Material(
       color: Colors.white,
-      shape: const StadiumBorder(side: BorderSide(color: MomentQualityCard._border)),
+      shape: const StadiumBorder(
+        side: BorderSide(color: MomentQualityCard._border),
+      ),
       child: InkWell(
         key: Key('moment_quality_suggestion_tap_${label.hashCode}'),
         onTap: onTap,
@@ -146,7 +149,9 @@ class _SuggestionChip extends StatelessWidget {
 /// Saved-moment variant for post-save surfaces.
 class SavedMomentQualityCard extends StatelessWidget {
   const SavedMomentQualityCard({
-    required this.transcript, required this.entry, super.key,
+    required this.transcript,
+    required this.entry,
+    super.key,
     this.engine = const MomentQualityEngine(),
     this.onSuggestionTap,
   });

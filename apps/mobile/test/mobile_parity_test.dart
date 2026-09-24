@@ -16,6 +16,7 @@ void main() {
       '/archive-debug',
       '/search',
       '/timeline',
+      '/insights',
       '/account',
       '/onboarding',
       '/blind-spots',
@@ -30,7 +31,10 @@ void main() {
     }
     expect(router.contains('/internal'), isFalse);
     expect(router.contains('founder-test'), isFalse);
-    expect(router.contains("initialLocation: '/record'"), isTrue);
+    expect(
+      router.contains('initialLocation: RouteCatalog.archiveHome'),
+      isTrue,
+    );
     expect(
       router.contains("entries.isNotEmpty && state.uri.path == '/record'"),
       isFalse,

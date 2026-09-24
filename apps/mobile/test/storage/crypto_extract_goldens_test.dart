@@ -99,7 +99,8 @@ void main() {
   test(
     'crash mid-write leaves the frozen file-store envelope bytes untouched',
     () async {
-      final section = manifest['encryptedJsonFileStore'] as Map<String, dynamic>;
+      final section =
+          manifest['encryptedJsonFileStore'] as Map<String, dynamic>;
       final envelope = File(
         '${_goldensDir().path}/${section['envelopeFile']}',
       ).readAsStringSync();
@@ -108,8 +109,7 @@ void main() {
         expect(
           await file.readAsString(),
           envelope,
-          reason:
-              'a failed write must not change the last-known-good envelope',
+          reason: 'a failed write must not change the last-known-good envelope',
         );
       }
 
@@ -145,7 +145,8 @@ void main() {
   test(
     'truncated primary recovers the frozen envelope from .bak',
     () async {
-      final section = manifest['encryptedJsonFileStore'] as Map<String, dynamic>;
+      final section =
+          manifest['encryptedJsonFileStore'] as Map<String, dynamic>;
       final envelope = File(
         '${_goldensDir().path}/${section['envelopeFile']}',
       ).readAsStringSync();
@@ -239,7 +240,8 @@ void main() {
       expect(
         vaultBackend.physical.keys.where((k) => k.startsWith('vm_flutter_')),
         isEmpty,
-        reason: 'vault keys must not go through the prefixed SecureStorageService',
+        reason:
+            'vault keys must not go through the prefixed SecureStorageService',
       );
     },
   );

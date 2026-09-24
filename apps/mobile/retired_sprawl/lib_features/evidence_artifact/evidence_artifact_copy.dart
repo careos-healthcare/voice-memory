@@ -7,7 +7,8 @@ abstract final class EvidenceArtifactCopy {
   static const densityLabel = 'Density';
   static const densityUnit = 'per week';
   static const timelineSection = 'Citation timeline';
-  static const noCitations = 'No ledger citations were returned for this insight.';
+  static const noCitations =
+      'No ledger citations were returned for this insight.';
   static const inspectEvidenceMath = 'Inspect Evidence Math';
   static const shareProofCard = 'Share Proof Card';
   static const redactQuotes = 'Redact verbatim quotes';

@@ -10,7 +10,8 @@ import 'package:go_router/go_router.dart';
 /// Proactive return trigger — gold highlight for new discoveries.
 class ArchiveDiscoveryBanner extends StatelessWidget {
   const ArchiveDiscoveryBanner({
-    required this.notice, super.key,
+    required this.notice,
+    super.key,
     this.onViewed,
   });
 

@@ -6,9 +6,11 @@ abstract final class CoachSessionPlanningInsightKinds {
   CoachSessionPlanningInsightKinds._();
 
   static const ArchiveInsightKind beliefs = ArchiveInsightKind.belief;
-  static const ArchiveInsightKind beliefChange = ArchiveInsightKind.beliefChange;
+  static const ArchiveInsightKind beliefChange =
+      ArchiveInsightKind.beliefChange;
   static const ArchiveInsightKind blindSpot = ArchiveInsightKind.blindSpot;
-  static const ArchiveInsightKind contradiction = ArchiveInsightKind.contradiction;
+  static const ArchiveInsightKind contradiction =
+      ArchiveInsightKind.contradiction;
   static const ArchiveInsightKind theme = ArchiveInsightKind.theme;
 
   static const List<ArchiveInsightKind> defaultPlanningKinds = [
@@ -28,21 +30,21 @@ enum CoachClientRelationshipStatus {
 
 extension CoachClientRelationshipStatusWire on CoachClientRelationshipStatus {
   String get wireValue => switch (this) {
-        CoachClientRelationshipStatus.invited => 'invited',
-        CoachClientRelationshipStatus.consentPending => 'consent_pending',
-        CoachClientRelationshipStatus.active => 'active',
-        CoachClientRelationshipStatus.revoked => 'revoked',
-        CoachClientRelationshipStatus.expired => 'expired',
-      };
+    CoachClientRelationshipStatus.invited => 'invited',
+    CoachClientRelationshipStatus.consentPending => 'consent_pending',
+    CoachClientRelationshipStatus.active => 'active',
+    CoachClientRelationshipStatus.revoked => 'revoked',
+    CoachClientRelationshipStatus.expired => 'expired',
+  };
 
   static CoachClientRelationshipStatus? fromWire(String? raw) => switch (raw) {
-        'invited' => CoachClientRelationshipStatus.invited,
-        'consent_pending' => CoachClientRelationshipStatus.consentPending,
-        'active' => CoachClientRelationshipStatus.active,
-        'revoked' => CoachClientRelationshipStatus.revoked,
-        'expired' => CoachClientRelationshipStatus.expired,
-        _ => null,
-      };
+    'invited' => CoachClientRelationshipStatus.invited,
+    'consent_pending' => CoachClientRelationshipStatus.consentPending,
+    'active' => CoachClientRelationshipStatus.active,
+    'revoked' => CoachClientRelationshipStatus.revoked,
+    'expired' => CoachClientRelationshipStatus.expired,
+    _ => null,
+  };
 }
 
 class CoachSharingPermissions {
@@ -56,9 +58,9 @@ class CoachSharingPermissions {
     final kindsRaw = json['insightKinds'];
     final kinds = kindsRaw is List
         ? kindsRaw
-            .map((value) => _insightKindFromWire(value?.toString()))
-            .whereType<ArchiveInsightKind>()
-            .toList()
+              .map((value) => _insightKindFromWire(value?.toString()))
+              .whereType<ArchiveInsightKind>()
+              .toList()
         : CoachSessionPlanningInsightKinds.defaultPlanningKinds;
     return CoachSharingPermissions(
       factLedger: json['factLedger'] == true,
@@ -83,10 +85,10 @@ class CoachSharingPermissions {
       insightKinds.contains(kind);
 
   Map<String, dynamic> toJson() => {
-        'factLedger': factLedger,
-        'confidenceBandedInsights': confidenceBandedInsights,
-        'insightKinds': insightKinds.map(_insightKindWire).toList(),
-      };
+    'factLedger': factLedger,
+    'confidenceBandedInsights': confidenceBandedInsights,
+    'insightKinds': insightKinds.map(_insightKindWire).toList(),
+  };
 }
 
 class CoachClientRelationship {
@@ -108,7 +110,8 @@ class CoachClientRelationship {
       coachId: json['coachId']?.toString() ?? '',
       clientAccountId: json['clientAccountId']?.toString() ?? '',
       clientDisplayName: json['clientDisplayName']?.toString(),
-      status: CoachClientRelationshipStatusWire.fromWire(
+      status:
+          CoachClientRelationshipStatusWire.fromWire(
             json['status']?.toString(),
           ) ??
           CoachClientRelationshipStatus.consentPending,
@@ -134,17 +137,17 @@ class CoachClientRelationship {
   final String? activeConsentTokenId;
 
   Map<String, dynamic> toJson() => {
-        'relationshipId': relationshipId,
-        'coachId': coachId,
-        'clientAccountId': clientAccountId,
-        if (clientDisplayName != null) 'clientDisplayName': clientDisplayName,
-        'status': status.wireValue,
-        'permissions': permissions.toJson(),
-        'createdAt': createdAt.toUtc().toIso8601String(),
-        'updatedAt': updatedAt.toUtc().toIso8601String(),
-        if (activeConsentTokenId != null)
-          'activeConsentTokenId': activeConsentTokenId,
-      };
+    'relationshipId': relationshipId,
+    'coachId': coachId,
+    'clientAccountId': clientAccountId,
+    if (clientDisplayName != null) 'clientDisplayName': clientDisplayName,
+    'status': status.wireValue,
+    'permissions': permissions.toJson(),
+    'createdAt': createdAt.toUtc().toIso8601String(),
+    'updatedAt': updatedAt.toUtc().toIso8601String(),
+    if (activeConsentTokenId != null)
+      'activeConsentTokenId': activeConsentTokenId,
+  };
 }
 
 class CoachConsentToken {
@@ -172,14 +175,16 @@ class CoachConsentToken {
               Map<String, dynamic>.from(json['permissions'] as Map),
             )
           : CoachSharingPermissions.defaults,
-      issuedAt: _parseUtc(json['issuedAt']) ??
+      issuedAt:
+          _parseUtc(json['issuedAt']) ??
           DateTime.fromMillisecondsSinceEpoch(0, isUtc: true),
-      expiresAt: _parseUtc(json['expiresAt']) ??
+      expiresAt:
+          _parseUtc(json['expiresAt']) ??
           DateTime.fromMillisecondsSinceEpoch(0, isUtc: true),
-      policyVersion:
-          json['policyVersion'] is int ? json['policyVersion'] as int : 1,
-      clientAffirmationHash:
-          json['clientAffirmationHash']?.toString() ?? '',
+      policyVersion: json['policyVersion'] is int
+          ? json['policyVersion'] as int
+          : 1,
+      clientAffirmationHash: json['clientAffirmationHash']?.toString() ?? '',
       signature: json['signature']?.toString() ?? '',
     );
   }
@@ -196,17 +201,17 @@ class CoachConsentToken {
   final String signature;
 
   Map<String, dynamic> toJson() => {
-        'tokenId': tokenId,
-        'relationshipId': relationshipId,
-        'clientAccountId': clientAccountId,
-        'coachId': coachId,
-        'permissions': permissions.toJson(),
-        'issuedAt': issuedAt.toUtc().toIso8601String(),
-        'expiresAt': expiresAt.toUtc().toIso8601String(),
-        'policyVersion': policyVersion,
-        'clientAffirmationHash': clientAffirmationHash,
-        'signature': signature,
-      };
+    'tokenId': tokenId,
+    'relationshipId': relationshipId,
+    'clientAccountId': clientAccountId,
+    'coachId': coachId,
+    'permissions': permissions.toJson(),
+    'issuedAt': issuedAt.toUtc().toIso8601String(),
+    'expiresAt': expiresAt.toUtc().toIso8601String(),
+    'policyVersion': policyVersion,
+    'clientAffirmationHash': clientAffirmationHash,
+    'signature': signature,
+  };
 }
 
 class CoachSession {
@@ -226,7 +231,8 @@ class CoachSession {
   factory CoachSession.fromJson(Map<String, dynamic> json) {
     return CoachSession(
       sessionId: json['sessionId']?.toString() ?? '',
-      mode: AppModeJson.fromWire(json['mode']?.toString()) ??
+      mode:
+          AppModeJson.fromWire(json['mode']?.toString()) ??
           AppMode.professionalCoach,
       coachId: json['coachId']?.toString() ?? '',
       clientAccountId: json['clientAccountId']?.toString() ?? '',
@@ -257,17 +263,17 @@ class CoachSession {
   bool get isExpired => DateTime.now().toUtc().isAfter(expiresAt);
 
   Map<String, dynamic> toJson() => {
-        'sessionId': sessionId,
-        'mode': mode.wireValue,
-        'coachId': coachId,
-        'clientAccountId': clientAccountId,
-        'relationshipId': relationshipId,
-        'permissions': permissions.toJson(),
-        'tokenId': tokenId,
-        'startedAt': startedAt.toUtc().toIso8601String(),
-        'expiresAt': expiresAt.toUtc().toIso8601String(),
-        'validatedAt': validatedAt.toUtc().toIso8601String(),
-      };
+    'sessionId': sessionId,
+    'mode': mode.wireValue,
+    'coachId': coachId,
+    'clientAccountId': clientAccountId,
+    'relationshipId': relationshipId,
+    'permissions': permissions.toJson(),
+    'tokenId': tokenId,
+    'startedAt': startedAt.toUtc().toIso8601String(),
+    'expiresAt': expiresAt.toUtc().toIso8601String(),
+    'validatedAt': validatedAt.toUtc().toIso8601String(),
+  };
 }
 
 class CoachTokenVerificationResult {
@@ -283,32 +289,32 @@ class CoachTokenVerificationResult {
 }
 
 String _insightKindWire(ArchiveInsightKind kind) => switch (kind) {
-      ArchiveInsightKind.belief => 'belief',
-      ArchiveInsightKind.beliefChange => 'beliefChange',
-      ArchiveInsightKind.theme => 'theme',
-      ArchiveInsightKind.contradiction => 'contradiction',
-      ArchiveInsightKind.blindSpot => 'blindSpot',
-      ArchiveInsightKind.chapter => 'chapter',
-      ArchiveInsightKind.weeklyStory => 'weeklyStory',
-      ArchiveInsightKind.askArchive => 'askArchive',
-      ArchiveInsightKind.surprise => 'surprise',
-      ArchiveInsightKind.challenge => 'challenge',
-      ArchiveInsightKind.breakthrough => 'breakthrough',
-    };
+  ArchiveInsightKind.belief => 'belief',
+  ArchiveInsightKind.beliefChange => 'beliefChange',
+  ArchiveInsightKind.theme => 'theme',
+  ArchiveInsightKind.contradiction => 'contradiction',
+  ArchiveInsightKind.blindSpot => 'blindSpot',
+  ArchiveInsightKind.chapter => 'chapter',
+  ArchiveInsightKind.weeklyStory => 'weeklyStory',
+  ArchiveInsightKind.askArchive => 'askArchive',
+  ArchiveInsightKind.surprise => 'surprise',
+  ArchiveInsightKind.challenge => 'challenge',
+  ArchiveInsightKind.breakthrough => 'breakthrough',
+};
 
 ArchiveInsightKind? _insightKindFromWire(String? raw) => switch (raw) {
-      'belief' => ArchiveInsightKind.belief,
-      'beliefChange' => ArchiveInsightKind.beliefChange,
-      'theme' => ArchiveInsightKind.theme,
-      'contradiction' => ArchiveInsightKind.contradiction,
-      'blindSpot' => ArchiveInsightKind.blindSpot,
-      'chapter' => ArchiveInsightKind.chapter,
-      'weeklyStory' => ArchiveInsightKind.weeklyStory,
-      'askArchive' => ArchiveInsightKind.askArchive,
-      'surprise' => ArchiveInsightKind.surprise,
-      'challenge' => ArchiveInsightKind.challenge,
-      _ => null,
-    };
+  'belief' => ArchiveInsightKind.belief,
+  'beliefChange' => ArchiveInsightKind.beliefChange,
+  'theme' => ArchiveInsightKind.theme,
+  'contradiction' => ArchiveInsightKind.contradiction,
+  'blindSpot' => ArchiveInsightKind.blindSpot,
+  'chapter' => ArchiveInsightKind.chapter,
+  'weeklyStory' => ArchiveInsightKind.weeklyStory,
+  'askArchive' => ArchiveInsightKind.askArchive,
+  'surprise' => ArchiveInsightKind.surprise,
+  'challenge' => ArchiveInsightKind.challenge,
+  _ => null,
+};
 
 DateTime? _parseUtc(Object? raw) {
   if (raw is! String) return null;

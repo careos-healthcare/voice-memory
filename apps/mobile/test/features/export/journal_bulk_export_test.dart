@@ -52,7 +52,9 @@ void main() {
 
     final service = JournalBulkExportService(repository: repo);
     final payload = await service.buildExport();
-    final roundTrip = JournalBulkExportPayload.fromJsonString(payload.toJsonString());
+    final roundTrip = JournalBulkExportPayload.fromJsonString(
+      payload.toJsonString(),
+    );
 
     expect(roundTrip.entryCount, 2);
     final ids = (roundTrip.entries['entries'] as List)

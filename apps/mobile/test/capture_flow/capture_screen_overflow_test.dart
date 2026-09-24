@@ -279,7 +279,9 @@ void main() {
         expect(find.byType(CaptureScreen), findsOneWidget);
         expect(find.byType(SingleChildScrollView), findsWidgets);
         expect(find.byKey(const Key('capture_start_voice')), findsOneWidget);
-        await tester.ensureVisible(find.byKey(const Key('capture_start_voice')));
+        await tester.ensureVisible(
+          find.byKey(const Key('capture_start_voice')),
+        );
         expect(
           errors,
           isEmpty,

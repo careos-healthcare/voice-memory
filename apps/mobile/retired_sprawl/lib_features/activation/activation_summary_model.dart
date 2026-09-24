@@ -5,7 +5,10 @@ class ActivationSummary {
     required this.firstPatternQualityWeak,
     required this.watchForPromptShownCount,
     required this.watchForPromptAcceptedCount,
-    required this.returnCaptureQuickAnswerSelectedCount, required this.returnCaptureRecordedAfterSelectionCount, required this.returnCaptureSkippedCount, this.watchForPromptAcceptanceRate,
+    required this.returnCaptureQuickAnswerSelectedCount,
+    required this.returnCaptureRecordedAfterSelectionCount,
+    required this.returnCaptureSkippedCount,
+    this.watchForPromptAcceptanceRate,
     this.returnCaptureQuickAnswerSelectionRate,
     this.returnCaptureRecordedAfterQuickAnswerRate,
   });

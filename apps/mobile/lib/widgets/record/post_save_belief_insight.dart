@@ -1,5 +1,6 @@
 import 'package:archiveme_mobile/features/proof_admission/proof_display_gate.dart';
-import 'package:archiveme_mobile/features/proof_admission/verified_proof_view_model.dart' show VerifiedProofViewModel;
+import 'package:archiveme_mobile/features/proof_admission/verified_proof_view_model.dart'
+    show VerifiedProofViewModel;
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/product/belief_product_copy.dart';
 import 'package:archiveme_mobile/theme/app_colors.dart';
@@ -19,7 +20,8 @@ import 'package:go_router/go_router.dart';
 /// admission pipeline, so the card cannot disagree with the receipt it displays.
 class PostSaveBeliefInsight extends StatelessWidget {
   const PostSaveBeliefInsight({
-    required this.entries, super.key,
+    required this.entries,
+    super.key,
     this.gate = const ProofDisplayGate(),
   });
 

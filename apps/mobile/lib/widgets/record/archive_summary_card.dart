@@ -11,7 +11,9 @@ import 'package:flutter/material.dart';
 /// Unified archive overview — one surface for repeat, loop, change, and help.
 class ArchiveSummaryCard extends StatelessWidget {
   const ArchiveSummaryCard({
-    required this.summary, required this.showRecordNextCta, super.key,
+    required this.summary,
+    required this.showRecordNextCta,
+    super.key,
     this.watching,
     this.onRecordNext,
   });

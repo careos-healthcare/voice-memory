@@ -10,12 +10,15 @@ import 'package:flutter/material.dart';
 /// Beta-only invite loop card — generic clipboard copy, no private evidence.
 class BetaInviteCard extends StatefulWidget {
   const BetaInviteCard({
-    required this.result, required this.onDismiss, super.key,
+    required this.result,
+    required this.onDismiss,
+    super.key,
     this.compact = false,
   });
 
   const BetaInviteCard.test({
-    required this.result, super.key,
+    required this.result,
+    super.key,
     this.onDismiss,
     this.compact = false,
   });

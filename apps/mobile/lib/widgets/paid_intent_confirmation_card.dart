@@ -11,7 +11,9 @@ import 'package:flutter/material.dart';
 /// Local paid intent confirmation card — no payment flow.
 class PaidIntentConfirmationCard extends StatefulWidget {
   const PaidIntentConfirmationCard({
-    required this.result, required this.valueSignals, super.key,
+    required this.result,
+    required this.valueSignals,
+    super.key,
     this.store,
     this.compact = false,
     this.onSaved,
@@ -19,7 +21,9 @@ class PaidIntentConfirmationCard extends StatefulWidget {
   });
 
   const PaidIntentConfirmationCard.test({
-    required this.result, required this.valueSignals, super.key,
+    required this.result,
+    required this.valueSignals,
+    super.key,
     this.store,
     this.compact = false,
     this.onSaved,

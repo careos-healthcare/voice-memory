@@ -11,7 +11,12 @@ import 'package:flutter/material.dart';
 /// Compact card for the forming monthly private report preview.
 class MonthlyPrivateReportPreviewCard extends StatefulWidget {
   const MonthlyPrivateReportPreviewCard({
-    required this.surface, required this.entryCount, required this.preview, required this.onSeePro, required this.onDismiss, super.key,
+    required this.surface,
+    required this.entryCount,
+    required this.preview,
+    required this.onSeePro,
+    required this.onDismiss,
+    super.key,
   });
 
   final MonthlyPrivateReportSurface surface;

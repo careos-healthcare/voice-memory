@@ -394,9 +394,7 @@ void main() {
     test('copy passes language guard', () {
       _expectNoBannedCopy(CapacityBetaMissionCopy.allVisibleStrings());
       _expectNoBannedCopy([
-        engine
-            .build(_input(capacityMomentCount: 2))
-            .progressLabel,
+        engine.build(_input(capacityMomentCount: 2)).progressLabel,
       ]);
     });
 

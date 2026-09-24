@@ -46,9 +46,8 @@ const _gatedEntryPoints = <String, List<String>>{
 
 /// Drops the quotes and line breaks Dart puts through a wrapped string literal,
 /// so a phrase can be searched for the way a reader sees it on screen.
-String _flatten(String source) => source
-    .replaceAll(RegExp("['\"]"), '')
-    .replaceAll(RegExp(r'\s+'), ' ');
+String _flatten(String source) =>
+    source.replaceAll(RegExp("['\"]"), '').replaceAll(RegExp(r'\s+'), ' ');
 
 String _read(String path) {
   final file = File(path);

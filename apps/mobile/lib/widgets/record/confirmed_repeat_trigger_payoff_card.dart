@@ -14,7 +14,10 @@ import 'package:flutter/material.dart';
 /// Post-save payoff after the user captures the trigger from the return prompt.
 class ConfirmedRepeatTriggerPayoffCard extends StatelessWidget {
   const ConfirmedRepeatTriggerPayoffCard({
-    required this.payoff, required this.onKeepWatching, required this.onViewEvidence, super.key,
+    required this.payoff,
+    required this.onKeepWatching,
+    required this.onViewEvidence,
+    super.key,
     this.analyticsSurface,
     this.entryCount,
     this.entriesForWhy,

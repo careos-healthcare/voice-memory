@@ -10,8 +10,7 @@ abstract final class BreakthroughShiftDetector {
       SessionMovementKind.beliefChanged ||
       SessionMovementKind.beliefWeakened ||
       SessionMovementKind.beliefStrengthened ||
-      SessionMovementKind.contradictionAppeared =>
-        true,
+      SessionMovementKind.contradictionAppeared => true,
       _ => false,
     };
   }

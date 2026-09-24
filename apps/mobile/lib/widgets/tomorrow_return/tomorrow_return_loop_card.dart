@@ -9,7 +9,8 @@ import 'package:flutter/material.dart';
 /// Surfaces what to notice today, why to return, and what to watch for next time.
 class TomorrowReturnLoopCard extends StatelessWidget {
   const TomorrowReturnLoopCard({
-    required this.loop, super.key,
+    required this.loop,
+    super.key,
     this.compact = false,
   });
 

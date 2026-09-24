@@ -5,8 +5,7 @@ abstract final class EvidenceTrustCopy {
   static const archiveNoticed = 'Your archive noticed';
   static const viewSourceProof = 'View Source Proof';
   static const transcriptExcerptLabel = 'Transcript excerpt';
-  static const sheetLead =
-      'Original transcript excerpts cited for this read.';
+  static const sheetLead = 'Original transcript excerpts cited for this read.';
 
   /// Always-visible inline citation count (e.g. "3 sources").
   static String sourceCount(int count) {

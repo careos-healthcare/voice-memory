@@ -113,8 +113,11 @@ abstract final class JournalEntryBacklinkService {
   }) async {
     if (!archiveHasMinimumEvidence(entries)) return const [];
 
-    final evo = evolutionService ??
-        (AppServices.isInitialized ? AppServices.instance.beliefEvolution : null);
+    final evo =
+        evolutionService ??
+        (AppServices.isInitialized
+            ? AppServices.instance.beliefEvolution
+            : null);
     if (evo == null) return const [];
 
     final view = await const ArchiveV1Builder().build(
@@ -260,7 +263,8 @@ abstract final class JournalEntryBacklinkService {
       final trimmed = raw.trim();
       if (trimmed.isEmpty) continue;
       final leadingWhitespace = raw.indexOf(trimmed);
-      final start = match.start + (leadingWhitespace < 0 ? 0 : leadingWhitespace);
+      final start =
+          match.start + (leadingWhitespace < 0 ? 0 : leadingWhitespace);
       final end = start + trimmed.length;
       spans.add(_SentenceSpan(start, end, trimmed));
     }

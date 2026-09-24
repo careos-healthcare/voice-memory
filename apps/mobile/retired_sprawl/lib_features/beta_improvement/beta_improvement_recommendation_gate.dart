@@ -56,7 +56,9 @@ abstract final class BetaImprovementRecommendationGate {
       return false;
     }
     final outcomes = outcomesOverride ?? BetaTesterOutcomeStore.allOutcomes;
-    final expansionAllowed = outcomes.isNotEmpty && BetaDecisionEngine.build(outcomes: outcomes).expansionAllowed;
+    final expansionAllowed =
+        outcomes.isNotEmpty &&
+        BetaDecisionEngine.build(outcomes: outcomes).expansionAllowed;
     return evidenceAllowsBranch(
       branch: branch,
       entryCount: entryCount,

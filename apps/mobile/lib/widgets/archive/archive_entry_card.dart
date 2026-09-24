@@ -1,13 +1,23 @@
 import 'package:archiveme_mobile/features/archive/v1/archive_entry_hero_tags.dart';
+import 'package:archiveme_mobile/features/metadata/ambient_metadata_service.dart';
+import 'package:archiveme_mobile/features/metadata/entry_metadata_views.dart';
+import 'package:archiveme_mobile/features/sync/presentation/widgets/entry_sync_indicator.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
+import 'package:archiveme_mobile/widgets/archive/ambient_context_pills.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class ArchiveEntryCard extends StatelessWidget {
-  const ArchiveEntryCard({required this.entry, required this.onTap, super.key});
+  const ArchiveEntryCard({
+    required this.entry,
+    required this.onTap,
+    super.key,
+    this.onMoveToPrivateVault,
+  });
 
   final JournalEntry entry;
   final VoidCallback onTap;
+  final VoidCallback? onMoveToPrivateVault;
 
   @override
   Widget build(BuildContext context) {
@@ -33,6 +43,24 @@ class ArchiveEntryCard extends StatelessWidget {
                       ArchiveEntryCardMeta(entry: entry),
                       const SizedBox(height: 10),
                       ArchiveEntryCardPreview(entry: entry),
+                      TextButton(
+                        key: const Key('move_to_private_vault'),
+                        onPressed: onMoveToPrivateVault,
+                        child: const Text('Move to Private Vault'),
+                      ),
+                      EntryCardTile(
+                        transcript: entry.transcript,
+                        metadata: AmbientMetadataService.shared.metadataFor(
+                          entry.id,
+                        ),
+                        showTranscript: false,
+                      ),
+                      if (entry.display.ambientContext != null) ...[
+                        const SizedBox(height: 12),
+                        AmbientContextPills(
+                          ambient: entry.display.ambientContext!,
+                        ),
+                      ],
                     ],
                   ),
                 ),
@@ -46,9 +74,7 @@ class ArchiveEntryCard extends StatelessWidget {
 
   String get _semanticsLabel {
     final source = entry.durationSeconds > 0 ? 'Voice' : 'Text';
-    final date = DateFormat.yMMMMd()
-        .add_jm()
-        .format(entry.createdAt.toLocal());
+    final date = DateFormat.yMMMMd().add_jm().format(entry.createdAt.toLocal());
     return '$source saved moment from $date';
   }
 }
@@ -62,9 +88,7 @@ class ArchiveEntryCardMeta extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final source = entry.durationSeconds > 0 ? 'Voice' : 'Text';
-    final date = DateFormat.yMMMMd()
-        .add_jm()
-        .format(entry.createdAt.toLocal());
+    final date = DateFormat.yMMMMd().add_jm().format(entry.createdAt.toLocal());
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -77,6 +101,8 @@ class ArchiveEntryCardMeta extends StatelessWidget {
             color: theme.colorScheme.primary,
           ),
         ),
+        const SizedBox(height: 4),
+        EntrySyncIndicator(status: entry.syncStatus),
       ],
     );
   }

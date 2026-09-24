@@ -10,7 +10,8 @@ final class ReflectionEmbeddingWorkerStore {
 
   final Database _db;
 
-  static const embeddingsTable = Migration009ReflectionEmbeddings.embeddingsTable;
+  static const embeddingsTable =
+      Migration009ReflectionEmbeddings.embeddingsTable;
   static const vecTable = Migration009ReflectionEmbeddings.vecTable;
 
   Future<String?> readContentHash(String entryId) async {

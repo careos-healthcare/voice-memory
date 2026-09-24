@@ -9,7 +9,8 @@ import 'package:flutter/material.dart';
 /// not part of the main flow.
 class QuickHelpButton extends StatelessWidget {
   const QuickHelpButton({
-    required this.onStartRecording, super.key,
+    required this.onStartRecording,
+    super.key,
     this.languageCode = 'en',
     this.latestReflectionText,
     this.patternTitle,

@@ -11,7 +11,7 @@ class WatchSessionBridge {
 
   final MethodChannel _channel;
   final StreamController<WatchAudioCapture> _capturesController =
-      StreamController<WatchAudioCapture>.broadcast();
+      StreamController<WatchAudioCapture>.broadcast(sync: true);
 
   Stream<WatchAudioCapture> get captures => _capturesController.stream;
 

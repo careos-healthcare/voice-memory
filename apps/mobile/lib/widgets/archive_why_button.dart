@@ -7,7 +7,8 @@ import 'package:flutter/material.dart';
 /// Universal evidence-trail affordance on insight cards.
 class ArchiveWhyButton extends StatelessWidget {
   const ArchiveWhyButton({
-    required this.ref, super.key,
+    required this.ref,
+    super.key,
     this.entries,
     this.state,
     this.askPrompt,

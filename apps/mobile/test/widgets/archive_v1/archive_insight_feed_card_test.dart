@@ -50,7 +50,10 @@ void main() {
         ),
       );
 
-      expect(find.byKey(const Key('pattern_match_confidence_badge_solid')), findsOneWidget);
+      expect(
+        find.byKey(const Key('pattern_match_confidence_badge_solid')),
+        findsOneWidget,
+      );
       expect(find.byKey(const Key('evidence_pill')), findsOneWidget);
       expect(find.textContaining('Backed by 1 verbatim entry'), findsOneWidget);
       expect(find.byKey(const Key('inline_evidence_drawer')), findsNothing);
@@ -59,7 +62,10 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.byKey(const Key('inline_evidence_drawer')), findsOneWidget);
-      expect(find.byKey(const Key('insight_evidence_feedback_bar')), findsOneWidget);
+      expect(
+        find.byKey(const Key('insight_evidence_feedback_bar')),
+        findsOneWidget,
+      );
       expect(find.textContaining('verbatim'), findsOneWidget);
     });
   });

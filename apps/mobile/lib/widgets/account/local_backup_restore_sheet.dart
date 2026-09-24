@@ -130,7 +130,9 @@ Future<void> runRestoreLocalBackupFlowWithConfirmation(
   if (result.failure == LocalBackupRestoreFailure.invalidBackup) {
     ScaffoldMessenger.of(
       context,
-    ).showSnackBar(const SnackBar(content: Text(LocalBackupCopy.invalidBackup)));
+    ).showSnackBar(
+      const SnackBar(content: Text(LocalBackupCopy.invalidBackup)),
+    );
     return;
   }
 

@@ -9,7 +9,8 @@ import 'package:flutter/material.dart';
 /// Capture-first progress card for the first-three recording loop — no extra CTAs.
 class EarlyRepeatProgressCard extends StatelessWidget {
   const EarlyRepeatProgressCard({
-    required this.progress, super.key,
+    required this.progress,
+    super.key,
     this.onViewSavedMoments,
   });
 

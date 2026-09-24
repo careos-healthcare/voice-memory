@@ -49,14 +49,18 @@ void main() {
     test('embeds llmSummary and rejects legacy raw text payloads', () async {
       const llmSummary =
           'Quiet morning walk helped me reset before a busy workday ahead.';
-      expect(llmSummary.length, greaterThanOrEqualTo(ReflectionTextProcessor.minTextChars));
-
-      final indexed = await EmbeddingIndexWorkerService.instance.indexTranscript(
-        filePath: dbPath,
-        entryId: 'entry-summary',
-        llmSummary: llmSummary,
-        encryptionPassword: testSqliteEncryptionPassword,
+      expect(
+        llmSummary.length,
+        greaterThanOrEqualTo(ReflectionTextProcessor.minTextChars),
       );
+
+      final indexed = await EmbeddingIndexWorkerService.instance
+          .indexTranscript(
+            filePath: dbPath,
+            entryId: 'entry-summary',
+            llmSummary: llmSummary,
+            encryptionPassword: testSqliteEncryptionPassword,
+          );
 
       expect(indexed, isTrue);
 
@@ -64,15 +68,17 @@ void main() {
       final embeddings = await repo.loadEmbeddingsFor(['entry-summary']);
       expect(embeddings, contains('entry-summary'));
 
-      final legacyRejected = await EmbeddingIndexWorkerService.instance.dispatch<bool>(
-        operation: EmbeddingIndexWorkerOperations.indexTranscript,
-        payload: {
-          'filePath': dbPath,
-          'encryptionPassword': testSqliteEncryptionPassword,
-          'entryId': 'entry-legacy',
-          'text': 'This raw STT ramble should never be embedded into vec storage anymore.',
-        },
-      );
+      final legacyRejected = await EmbeddingIndexWorkerService.instance
+          .dispatch<bool>(
+            operation: EmbeddingIndexWorkerOperations.indexTranscript,
+            payload: {
+              'filePath': dbPath,
+              'encryptionPassword': testSqliteEncryptionPassword,
+              'entryId': 'entry-legacy',
+              'text':
+                  'This raw STT ramble should never be embedded into vec storage anymore.',
+            },
+          );
       expect(legacyRejected, isFalse);
 
       final rows = await sqlite.database.query(

@@ -45,7 +45,8 @@ abstract final class InsightEvidenceFeedbackActions {
           padding: EdgeInsets.only(
             left: AppSpacing.md,
             right: AppSpacing.md,
-            bottom: MediaQuery.viewInsetsOf(sheetContext).bottom + AppSpacing.md,
+            bottom:
+                MediaQuery.viewInsetsOf(sheetContext).bottom + AppSpacing.md,
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -67,8 +68,11 @@ abstract final class InsightEvidenceFeedbackActions {
               const SizedBox(height: AppSpacing.sm),
               FilledButton(
                 onPressed: () async {
-                  final saved = await ArchiveInsightFeedbackStore
-                      .saveCorrectionNote(insightId, controller.text);
+                  final saved =
+                      await ArchiveInsightFeedbackStore.saveCorrectionNote(
+                        insightId,
+                        controller.text,
+                      );
                   if (!sheetContext.mounted) return;
                   Navigator.of(sheetContext).pop(saved);
                 },

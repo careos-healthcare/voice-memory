@@ -11,7 +11,9 @@ import 'package:flutter/material.dart';
 /// without real plan/suggestion evidence.
 class OneSmallRecordingCard extends StatelessWidget {
   const OneSmallRecordingCard({
-    required this.recording, required this.onRecordThis, super.key,
+    required this.recording,
+    required this.onRecordThis,
+    super.key,
     this.showRecordCta = true,
     this.ctaLabel = OneSmallRecording.recordCtaLabel,
   });

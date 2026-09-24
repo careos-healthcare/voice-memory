@@ -10,7 +10,9 @@ import 'package:flutter/material.dart';
 /// Post-save return guidance after entry 1 or 2 — no extra CTAs.
 class PostSaveReturnHandoffCard extends StatelessWidget {
   const PostSaveReturnHandoffCard({
-    required this.handoff, required this.entryCount, super.key,
+    required this.handoff,
+    required this.entryCount,
+    super.key,
   });
 
   final PostSaveReturnHandoff handoff;

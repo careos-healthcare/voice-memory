@@ -15,7 +15,8 @@ class ConsentVerificationService {
     this._consentApi,
   });
 
-  static const int currentPolicyVersion = AppModeConfigPolicy.currentPolicyVersion;
+  static const int currentPolicyVersion =
+      AppModeConfigPolicy.currentPolicyVersion;
 
   final CaregiverConsentApiClient? _consentApi;
   final Uuid _uuid = const Uuid();
@@ -119,9 +120,9 @@ class ConsentVerificationService {
     return switch (result) {
       ApiSuccess(:final value) => _normalizeServerResult(value, token, clock),
       ApiFailureResult() => const CaregiverTokenVerificationResult(
-          valid: false,
-          reason: 'Server consent verification failed',
-        ),
+        valid: false,
+        reason: 'Server consent verification failed',
+      ),
     };
   }
 
@@ -137,7 +138,8 @@ class ConsentVerificationService {
       );
     }
 
-    final session = serverResult.session ??
+    final session =
+        serverResult.session ??
         CaregiverSession(
           sessionId: _uuid.v4(),
           mode: AppMode.caregiverMonitoring,

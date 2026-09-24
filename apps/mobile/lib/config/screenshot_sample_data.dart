@@ -20,7 +20,8 @@ import 'package:archiveme_mobile/features/pattern_memory/pattern_memory_model.da
 import 'package:archiveme_mobile/features/pattern_memory/pattern_next_action_model.dart';
 import 'package:archiveme_mobile/features/pattern_memory/pattern_progress_model.dart';
 import 'package:archiveme_mobile/features/pattern_memory/pattern_share_recap_model.dart';
-import 'package:archiveme_mobile/features/pattern_memory/weekly_pattern_recap_model.dart' as wkrecap;
+import 'package:archiveme_mobile/features/pattern_memory/weekly_pattern_recap_model.dart'
+    as wkrecap;
 import 'package:archiveme_mobile/features/tomorrow_return/active_pattern_thread_model.dart';
 import 'package:archiveme_mobile/features/tomorrow_return/change_summary_model.dart';
 import 'package:archiveme_mobile/features/tomorrow_return/compelling_check_model.dart';

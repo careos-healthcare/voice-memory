@@ -12,7 +12,9 @@ import 'package:flutter/material.dart';
 /// Local surfacing control for evidence inspection and entry detail.
 class MemorySurfacingEditor extends StatelessWidget {
   const MemorySurfacingEditor({
-    required this.entry, required this.onChanged, super.key,
+    required this.entry,
+    required this.onChanged,
+    super.key,
     this.source = 'entry_detail',
     this.cardType,
   });

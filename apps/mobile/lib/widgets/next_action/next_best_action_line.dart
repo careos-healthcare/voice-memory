@@ -7,7 +7,9 @@ import 'package:flutter/material.dart';
 /// Small subordinate next-step line for Record and Patterns.
 class NextBestActionLine extends StatelessWidget {
   const NextBestActionLine({
-    required this.action, required this.surface, super.key,
+    required this.action,
+    required this.surface,
+    super.key,
   });
 
   final NextBestActionResult action;

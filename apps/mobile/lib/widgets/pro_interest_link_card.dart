@@ -15,7 +15,8 @@ import 'dart:async';
 /// Subtle archive-home link to mark Pro interest — no payment.
 class ProInterestLinkCard extends StatefulWidget {
   const ProInterestLinkCard({
-    required this.entries, super.key,
+    required this.entries,
+    super.key,
     this.watchlistStore,
     this.sampleMode = false,
     this.skipPrefsLoad = false,
@@ -23,7 +24,8 @@ class ProInterestLinkCard extends StatefulWidget {
   });
 
   const ProInterestLinkCard.test({
-    required this.entries, super.key,
+    required this.entries,
+    super.key,
     this.initialWatchlistCount = 0,
     this.sampleMode = false,
   }) : watchlistStore = null,

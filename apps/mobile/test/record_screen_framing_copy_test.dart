@@ -64,7 +64,6 @@ import 'support/memory_pressure_stores.dart';
 import 'support/test_storage_sandbox.dart';
 import 'support/v1_moment_save_receipt_expectations.dart';
 
-
 Widget _wrapRecordScreenTest({required Widget screen}) {
   return withAppProviderScope(
     MaterialApp(
@@ -341,9 +340,9 @@ void main() {
       await tester.pumpWidget(
         _wrapRecordScreenTest(
           screen: RecordScreen(
-              pressureCheckInStore: store,
-              suggestionAttributionStore: MemorySuggestionAttributionStore(),
-              entitlementReader: FakeArchiveEntitlementReader(pro: false),
+            pressureCheckInStore: store,
+            suggestionAttributionStore: MemorySuggestionAttributionStore(),
+            entitlementReader: FakeArchiveEntitlementReader(pro: false),
           ),
         ),
       );
@@ -484,8 +483,8 @@ void main() {
         await tester.pumpWidget(
           _wrapRecordScreenTest(
             screen: RecordScreen(
-                suggestionAttributionStore: MemorySuggestionAttributionStore(),
-                entitlementReader: FakeArchiveEntitlementReader(pro: false),
+              suggestionAttributionStore: MemorySuggestionAttributionStore(),
+              entitlementReader: FakeArchiveEntitlementReader(pro: false),
             ),
           ),
         );
@@ -865,9 +864,9 @@ void main() {
       await tester.pumpWidget(
         _wrapRecordScreenTest(
           screen: RecordScreen(
-              pressureCheckInStore: store,
-              suggestionAttributionStore: MemorySuggestionAttributionStore(),
-              entitlementReader: FakeArchiveEntitlementReader(pro: false),
+            pressureCheckInStore: store,
+            suggestionAttributionStore: MemorySuggestionAttributionStore(),
+            entitlementReader: FakeArchiveEntitlementReader(pro: false),
           ),
         ),
       );
@@ -1125,8 +1124,8 @@ void main() {
       await tester.pumpWidget(
         _wrapRecordScreenTest(
           screen: RecordScreen(
-              suggestionAttributionStore: MemorySuggestionAttributionStore(),
-              entitlementReader: FakeArchiveEntitlementReader(pro: false),
+            suggestionAttributionStore: MemorySuggestionAttributionStore(),
+            entitlementReader: FakeArchiveEntitlementReader(pro: false),
           ),
         ),
       );
@@ -1167,8 +1166,8 @@ void main() {
       await tester.pumpWidget(
         _wrapRecordScreenTest(
           screen: RecordScreen(
-              suggestionAttributionStore: MemorySuggestionAttributionStore(),
-              entitlementReader: FakeArchiveEntitlementReader(pro: false),
+            suggestionAttributionStore: MemorySuggestionAttributionStore(),
+            entitlementReader: FakeArchiveEntitlementReader(pro: false),
           ),
         ),
       );
@@ -1246,8 +1245,8 @@ void main() {
       await tester.pumpWidget(
         _wrapRecordScreenTest(
           screen: RecordScreen(
-              suggestionAttributionStore: MemorySuggestionAttributionStore(),
-              entitlementReader: FakeArchiveEntitlementReader(pro: false),
+            suggestionAttributionStore: MemorySuggestionAttributionStore(),
+            entitlementReader: FakeArchiveEntitlementReader(pro: false),
           ),
         ),
       );
@@ -1303,8 +1302,8 @@ void main() {
       await tester.pumpWidget(
         _wrapRecordScreenTest(
           screen: RecordScreen(
-              suggestionAttributionStore: MemorySuggestionAttributionStore(),
-              entitlementReader: FakeArchiveEntitlementReader(pro: false),
+            suggestionAttributionStore: MemorySuggestionAttributionStore(),
+            entitlementReader: FakeArchiveEntitlementReader(pro: false),
           ),
         ),
       );
@@ -1340,8 +1339,8 @@ void main() {
       await tester.pumpWidget(
         _wrapRecordScreenTest(
           screen: RecordScreen(
-              suggestionAttributionStore: MemorySuggestionAttributionStore(),
-              entitlementReader: FakeArchiveEntitlementReader(pro: false),
+            suggestionAttributionStore: MemorySuggestionAttributionStore(),
+            entitlementReader: FakeArchiveEntitlementReader(pro: false),
           ),
         ),
       );
@@ -1412,8 +1411,8 @@ void main() {
         await tester.pumpWidget(
           _wrapRecordScreenTest(
             screen: RecordScreen(
-                suggestionAttributionStore: MemorySuggestionAttributionStore(),
-                entitlementReader: FakeArchiveEntitlementReader(pro: false),
+              suggestionAttributionStore: MemorySuggestionAttributionStore(),
+              entitlementReader: FakeArchiveEntitlementReader(pro: false),
             ),
           ),
         );
@@ -1451,8 +1450,8 @@ void main() {
       await tester.pumpWidget(
         _wrapRecordScreenTest(
           screen: RecordScreen(
-              suggestionAttributionStore: MemorySuggestionAttributionStore(),
-              entitlementReader: FakeArchiveEntitlementReader(pro: false),
+            suggestionAttributionStore: MemorySuggestionAttributionStore(),
+            entitlementReader: FakeArchiveEntitlementReader(pro: false),
           ),
         ),
       );
@@ -1521,8 +1520,8 @@ void main() {
       await tester.pumpWidget(
         _wrapRecordScreenTest(
           screen: RecordScreen(
-              suggestionAttributionStore: MemorySuggestionAttributionStore(),
-              entitlementReader: FakeArchiveEntitlementReader(pro: false),
+            suggestionAttributionStore: MemorySuggestionAttributionStore(),
+            entitlementReader: FakeArchiveEntitlementReader(pro: false),
           ),
         ),
       );
@@ -1891,8 +1890,8 @@ void main() {
         await tester.pumpWidget(
           _wrapRecordScreenTest(
             screen: RecordScreen(
-                suggestionAttributionStore: MemorySuggestionAttributionStore(),
-                entitlementReader: FakeArchiveEntitlementReader(pro: false),
+              suggestionAttributionStore: MemorySuggestionAttributionStore(),
+              entitlementReader: FakeArchiveEntitlementReader(pro: false),
             ),
           ),
         );
@@ -1937,31 +1936,35 @@ void main() {
     testWidgets(
       'three confirmed-repeat ready state stays capture-first without watch card',
       (tester) async {
-      await tester.runAsync(
-        () => LowFrictionReturnStore.resetForTest(AppServices.instance.prefs),
-      );
-      await seedConfirmedRepeatEntries(tester, 3);
-      await tester.binding.setSurfaceSize(const Size(390, 2800));
-      addTearDown(() => tester.binding.setSurfaceSize(null));
-      await tester.pumpWidget(
-        _wrapRecordScreenTest(
-          screen: RecordScreen(
+        await tester.runAsync(
+          () => LowFrictionReturnStore.resetForTest(AppServices.instance.prefs),
+        );
+        await seedConfirmedRepeatEntries(tester, 3);
+        await tester.binding.setSurfaceSize(const Size(390, 2800));
+        addTearDown(() => tester.binding.setSurfaceSize(null));
+        await tester.pumpWidget(
+          _wrapRecordScreenTest(
+            screen: RecordScreen(
               suggestionAttributionStore: MemorySuggestionAttributionStore(),
               entitlementReader: FakeArchiveEntitlementReader(pro: false),
+            ),
           ),
-        ),
-      );
-      await tester.pump();
-      await tester.runAsync(() async {
-        await Future<void>.delayed(const Duration(milliseconds: 400));
-      });
-      for (var i = 0; i < 30; i++) {
-        await tester.pump(const Duration(milliseconds: 50));
-      }
+        );
+        await tester.pump();
+        await tester.runAsync(() async {
+          await Future<void>.delayed(const Duration(milliseconds: 400));
+        });
+        for (var i = 0; i < 30; i++) {
+          await tester.pump(const Duration(milliseconds: 50));
+        }
 
-      expect(find.byKey(const Key('daily_archive_memory_card')), findsNothing);
-      expect(find.text(ConsumerUiCopy.recordMomentCta), findsOneWidget);
-    });
+        expect(
+          find.byKey(const Key('daily_archive_memory_card')),
+          findsNothing,
+        );
+        expect(find.text(ConsumerUiCopy.recordMomentCta), findsOneWidget);
+      },
+    );
 
     testWidgets('first proof post-save does not show first week loop card', (
       tester,
@@ -1978,8 +1981,8 @@ void main() {
       await tester.pumpWidget(
         _wrapRecordScreenTest(
           screen: RecordScreen(
-              suggestionAttributionStore: MemorySuggestionAttributionStore(),
-              entitlementReader: FakeArchiveEntitlementReader(pro: false),
+            suggestionAttributionStore: MemorySuggestionAttributionStore(),
+            entitlementReader: FakeArchiveEntitlementReader(pro: false),
           ),
         ),
       );
@@ -2011,8 +2014,8 @@ void main() {
       await tester.pumpWidget(
         _wrapRecordScreenTest(
           screen: RecordScreen(
-              suggestionAttributionStore: MemorySuggestionAttributionStore(),
-              entitlementReader: FakeArchiveEntitlementReader(pro: false),
+            suggestionAttributionStore: MemorySuggestionAttributionStore(),
+            entitlementReader: FakeArchiveEntitlementReader(pro: false),
           ),
         ),
       );
@@ -2089,8 +2092,8 @@ void main() {
         await tester.pumpWidget(
           _wrapRecordScreenTest(
             screen: RecordScreen(
-                suggestionAttributionStore: MemorySuggestionAttributionStore(),
-                entitlementReader: FakeArchiveEntitlementReader(pro: false),
+              suggestionAttributionStore: MemorySuggestionAttributionStore(),
+              entitlementReader: FakeArchiveEntitlementReader(pro: false),
             ),
           ),
         );
@@ -2130,8 +2133,8 @@ void main() {
       await tester.pumpWidget(
         _wrapRecordScreenTest(
           screen: RecordScreen(
-              suggestionAttributionStore: MemorySuggestionAttributionStore(),
-              entitlementReader: FakeArchiveEntitlementReader(pro: false),
+            suggestionAttributionStore: MemorySuggestionAttributionStore(),
+            entitlementReader: FakeArchiveEntitlementReader(pro: false),
           ),
         ),
       );
@@ -2145,8 +2148,14 @@ void main() {
 
       V1MomentSaveReceiptExpectations.expectVisible();
       expect(find.byKey(const Key('what_changed_v2_card')), findsNothing);
-      expect(find.byKey(const Key('what_changed_v2_option_softer')), findsNothing);
-      expect(find.byKey(const Key('what_changed_v2_payoff_card')), findsNothing);
+      expect(
+        find.byKey(const Key('what_changed_v2_option_softer')),
+        findsNothing,
+      );
+      expect(
+        find.byKey(const Key('what_changed_v2_payoff_card')),
+        findsNothing,
+      );
       expect(find.byKey(const Key('helped_tracking_card')), findsNothing);
       expect(
         find.byKey(const Key('return_check_payoff_card_softer')),
@@ -2268,8 +2277,8 @@ void main() {
         await tester.pumpWidget(
           _wrapRecordScreenTest(
             screen: RecordScreen(
-                suggestionAttributionStore: MemorySuggestionAttributionStore(),
-                entitlementReader: FakeArchiveEntitlementReader(pro: false),
+              suggestionAttributionStore: MemorySuggestionAttributionStore(),
+              entitlementReader: FakeArchiveEntitlementReader(pro: false),
             ),
           ),
         );
@@ -2281,7 +2290,10 @@ void main() {
           await tester.pump(const Duration(milliseconds: 50));
         }
 
-        expect(find.byKey(const Key('daily_archive_memory_card')), findsNothing);
+        expect(
+          find.byKey(const Key('daily_archive_memory_card')),
+          findsNothing,
+        );
         expect(find.text(ConsumerUiCopy.recordMomentCta), findsOneWidget);
         expect(
           find.byKey(const Key('archive_belief_surface_headline')),
@@ -2322,8 +2334,8 @@ void main() {
         await tester.pumpWidget(
           _wrapRecordScreenTest(
             screen: RecordScreen(
-                suggestionAttributionStore: MemorySuggestionAttributionStore(),
-                entitlementReader: FakeArchiveEntitlementReader(pro: false),
+              suggestionAttributionStore: MemorySuggestionAttributionStore(),
+              entitlementReader: FakeArchiveEntitlementReader(pro: false),
             ),
           ),
         );

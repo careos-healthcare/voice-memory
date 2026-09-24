@@ -8,7 +8,8 @@ import 'package:flutter/material.dart';
 /// Compact local filter chips for archive evidence needing attention.
 class EvidenceAttentionFiltersCard extends StatelessWidget {
   const EvidenceAttentionFiltersCard({
-    required this.filters, super.key,
+    required this.filters,
+    super.key,
     this.onFilterTap,
     this.hideTitle = false,
   });

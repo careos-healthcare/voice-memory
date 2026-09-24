@@ -27,11 +27,16 @@ abstract final class V1RouteRegistry {
   static const accountCreatePath = '/account/create';
   static const accountSignInPath = '/account/sign-in';
   static const guestDataMigrationPath = '/account/guest-data-migration';
+  static const chatPath = '/chat';
+  static const habitsPath = '/habits';
+  static const syncStatusPath = '/sync-status';
+  static const syncDashboardPath = '/sync-dashboard';
 
   static const primaryShellPaths = RouteCatalog.primaryRoutes;
 
   static const supportingPaths = [
     onboardingPath,
+    RouteCatalog.recordHome,
     RouteCatalog.changesHome,
     '${RouteCatalog.archiveHome}/changes',
     '/entry/:id',
@@ -53,6 +58,10 @@ abstract final class V1RouteRegistry {
     accountCreatePath,
     accountSignInPath,
     guestDataMigrationPath,
+    chatPath,
+    habitsPath,
+    syncStatusPath,
+    syncDashboardPath,
   ];
 
   // FOOTGUN — intentionally empty during the focused-beta billing freeze.

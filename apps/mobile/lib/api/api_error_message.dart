@@ -25,15 +25,26 @@ String userFacingErrorMessage(
   return switch (error) {
     ApiFailure failure => userMessageForApiFailure(failure, fallback: fallback),
     BackendNotConfiguredException() => cloudBackendUnavailableMessage,
-    ApiException exception =>
-      userMessageForApiException(exception, fallback: fallback),
-    RecordingException(:final message) => _nonEmptyOrFallback(message, fallback),
-    CapturePipelineFailure(:final message) =>
-      _nonEmptyOrFallback(message, fallback),
-    BillingOperationException(:final cause) =>
-      _messageForBillingOperation(cause, fallback),
-    PlatformException exception =>
-      _messageForPlatformException(exception, fallback),
+    ApiException exception => userMessageForApiException(
+      exception,
+      fallback: fallback,
+    ),
+    RecordingException(:final message) => _nonEmptyOrFallback(
+      message,
+      fallback,
+    ),
+    CapturePipelineFailure(:final message) => _nonEmptyOrFallback(
+      message,
+      fallback,
+    ),
+    BillingOperationException(:final cause) => _messageForBillingOperation(
+      cause,
+      fallback,
+    ),
+    PlatformException exception => _messageForPlatformException(
+      exception,
+      fallback,
+    ),
     SocketException _ => _messageForSocketException(),
     TimeoutException _ => ApiErrorCopy.requestTimedOut,
     String _ => fallback,
@@ -63,8 +74,8 @@ String _messageForPlatformException(PlatformException error, String fallback) {
   }
 
   return switch (error.code) {
-    'UNAVAILABLE' || 'billing_unavailable' =>
-      SubscriptionCopy.temporarilyUnavailable,
+    'UNAVAILABLE' ||
+    'billing_unavailable' => SubscriptionCopy.temporarilyUnavailable,
     _ => fallback,
   };
 }

@@ -33,22 +33,28 @@ void main() {
       expect(await guard.canExecuteInference(), isTrue);
     });
 
-    test('throttles tokens and pauses embeddings on fair thermal status', () async {
-      final guard = ResourceGuard(
-        batteryReader: _FakeBatteryReader(
-          level: 80,
-          state: BatteryState.discharging,
-        ),
-        thermalReader: _FakeThermalReader(DeviceThermalStatus.fair),
-      );
+    test(
+      'throttles tokens and pauses embeddings on fair thermal status',
+      () async {
+        final guard = ResourceGuard(
+          batteryReader: _FakeBatteryReader(
+            level: 80,
+            state: BatteryState.discharging,
+          ),
+          thermalReader: _FakeThermalReader(DeviceThermalStatus.fair),
+        );
 
-      final profile = await guard.buildInferenceProfile();
+        final profile = await guard.buildInferenceProfile();
 
-      expect(profile.canExecute, isTrue);
-      expect(profile.maxTokens, InferenceExecutionProfile.throttled.maxTokens);
-      expect(profile.pauseEmbeddingTasks, isTrue);
-      expect(await guard.shouldDeferEmbeddingWork(), isTrue);
-    });
+        expect(profile.canExecute, isTrue);
+        expect(
+          profile.maxTokens,
+          InferenceExecutionProfile.throttled.maxTokens,
+        );
+        expect(profile.pauseEmbeddingTasks, isTrue);
+        expect(await guard.shouldDeferEmbeddingWork(), isTrue);
+      },
+    );
 
     test('defers embedding below 50% battery', () async {
       final guard = ResourceGuard(

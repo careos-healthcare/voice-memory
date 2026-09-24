@@ -51,23 +51,24 @@ PaymentBlockerSummary _corePassingSummary({int totalTesters = 30}) => _summary(
   understoodNotMoreAiCount: totalTesters == 20 ? 4 : 6,
 );
 
-BetaRepairLabVisibilityInput _repairInput() => const BetaRepairLabVisibilityInput(
-  mode: BetaRepairLabMode.evidenceTrailTimelineClarity,
-  entryCount: 4,
-  source: 'test',
-  isPro: false,
-  isRecording: false,
-  isDegradedTranscriptState: false,
-  whatChangedQuestionActive: false,
-  patternReviewInboxHasActiveItems: false,
-  hasTimelineProofVisible: true,
-  hasConfirmedRepeat: true,
-  confidenceLevel: ProofConfidenceLevel.watchOnly,
-  hasUsefulProofFeedback: false,
-  feedbackType: null,
-  isNegativeFeedback: false,
-  betaMissionEnabled: true,
-);
+BetaRepairLabVisibilityInput _repairInput() =>
+    const BetaRepairLabVisibilityInput(
+      mode: BetaRepairLabMode.evidenceTrailTimelineClarity,
+      entryCount: 4,
+      source: 'test',
+      isPro: false,
+      isRecording: false,
+      isDegradedTranscriptState: false,
+      whatChangedQuestionActive: false,
+      patternReviewInboxHasActiveItems: false,
+      hasTimelineProofVisible: true,
+      hasConfirmedRepeat: true,
+      confidenceLevel: ProofConfidenceLevel.watchOnly,
+      hasUsefulProofFeedback: false,
+      feedbackType: null,
+      isNegativeFeedback: false,
+      betaMissionEnabled: true,
+    );
 
 void main() {
   group('PaymentBlockerDecisionMatrix thresholds', () {

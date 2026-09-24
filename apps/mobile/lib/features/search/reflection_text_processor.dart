@@ -12,7 +12,10 @@ abstract final class ReflectionTextProcessor {
   static int get tensorElementCount => ReflectionEmbeddingContract.maxSeqLen;
 
   static Float32List buildInputTensor(String text) {
-    final normalized = text.replaceAll(RegExp(r'\s+'), ' ').trim().toLowerCase();
+    final normalized = text
+        .replaceAll(RegExp(r'\s+'), ' ')
+        .trim()
+        .toLowerCase();
     final tokens = _tokenize(normalized);
     final out = Float32List(tensorElementCount);
     for (var i = 0; i < min(tokens.length, tensorElementCount); i++) {

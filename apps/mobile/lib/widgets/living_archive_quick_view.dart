@@ -16,7 +16,9 @@ import 'dart:async';
 /// Archive home — one evolution hero, anticipation, optional View More.
 class LivingArchiveQuickView extends StatefulWidget {
   const LivingArchiveQuickView({
-    required this.view, required this.entries, super.key,
+    required this.view,
+    required this.entries,
+    super.key,
     this.onViewAllDiscoveries,
     this.onEvolutionDismissed,
   });
@@ -45,9 +47,7 @@ class _LivingArchiveQuickViewState extends State<LivingArchiveQuickView> {
       children: [
         Text(
           ArchiveEvolutionCopy.archiveQuestion,
-          style: VoiceMemoryTypography.sectionLabelStyle(
-            
-          ),
+          style: VoiceMemoryTypography.sectionLabelStyle(),
         ),
         const SizedBox(height: ArchiveMobileSpacing.md),
         if (evolution != null)
@@ -231,9 +231,7 @@ class _WhatChangedTodayCard extends StatelessWidget {
         children: [
           Text(
             'What changed today?',
-            style: VoiceMemoryTypography.sectionLabelStyle(
-              
-            ),
+            style: VoiceMemoryTypography.sectionLabelStyle(),
           ),
           const SizedBox(height: 8),
           for (final line in changed.lines)

@@ -8,7 +8,9 @@ import 'package:flutter/material.dart';
 /// Compact next-step actions for the Archive/Patterns workspace.
 class ArchiveWorkspaceQuickActionsCard extends StatelessWidget {
   const ArchiveWorkspaceQuickActionsCard({
-    required this.quickActions, required this.onActionTap, super.key,
+    required this.quickActions,
+    required this.onActionTap,
+    super.key,
   });
 
   final ArchiveWorkspaceQuickActions quickActions;

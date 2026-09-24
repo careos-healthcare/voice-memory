@@ -49,7 +49,7 @@ If evidence is thin, say so plainly; never fill gaps with clinical or coaching l
   static const coldStartTitle = 'Capture what happened';
   static const coldStartSubtitle =
       'Neutral mirror only — describe triggers, places, and what you told yourself. '
-      'No advice, just your words for the fact ledger.';
+      'No advice, just your words for core memory.';
 
   static bool matches(LifeStageLens? lens) => lens == LifeStageLens.recovery;
 

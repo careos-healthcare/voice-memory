@@ -52,21 +52,57 @@ void main() {
   test('embedReferralMetadata inserts PNG chunks before IEND', () {
     // Minimal valid PNG: signature + IHDR + IEND
     final png = Uint8List.fromList([
-      0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A,
-      0x00, 0x00, 0x00, 0x0D,
-      0x49, 0x48, 0x44, 0x52,
-      0x00, 0x00, 0x00, 0x01,
-      0x00, 0x00, 0x00, 0x01,
-      0x08, 0x06, 0x00, 0x00, 0x00,
-      0x1F, 0x15, 0xC4, 0x89,
-      0x00, 0x00, 0x00, 0x00,
-      0x49, 0x45, 0x4E, 0x44,
-      0xAE, 0x42, 0x60, 0x82,
+      0x89,
+      0x50,
+      0x4E,
+      0x47,
+      0x0D,
+      0x0A,
+      0x1A,
+      0x0A,
+      0x00,
+      0x00,
+      0x00,
+      0x0D,
+      0x49,
+      0x48,
+      0x44,
+      0x52,
+      0x00,
+      0x00,
+      0x00,
+      0x01,
+      0x00,
+      0x00,
+      0x00,
+      0x01,
+      0x08,
+      0x06,
+      0x00,
+      0x00,
+      0x00,
+      0x1F,
+      0x15,
+      0xC4,
+      0x89,
+      0x00,
+      0x00,
+      0x00,
+      0x00,
+      0x49,
+      0x45,
+      0x4E,
+      0x44,
+      0xAE,
+      0x42,
+      0x60,
+      0x82,
     ]);
 
     final enriched = InsightSharePngMetadata.embedReferralMetadata(
       png,
-      referralUrl: 'https://archiveme.app/invite?ref=archive_invite&source=weekly_review',
+      referralUrl:
+          'https://archiveme.app/invite?ref=archive_invite&source=weekly_review',
       source: 'weekly_review',
     );
 
@@ -118,7 +154,10 @@ void main() {
     await tester.pump();
 
     expect(find.byKey(const Key('insight_share_exporter')), findsOneWidget);
-    expect(find.byKey(const Key('insight_share_view_evidence')), findsOneWidget);
+    expect(
+      find.byKey(const Key('insight_share_view_evidence')),
+      findsOneWidget,
+    );
     expect(find.byKey(const Key('insight_share_card_widget')), findsOneWidget);
 
     await tester.tap(find.byKey(const Key('insight_share_view_evidence')));

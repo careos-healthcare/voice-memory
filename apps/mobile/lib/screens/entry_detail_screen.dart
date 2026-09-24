@@ -1,19 +1,32 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:archiveme_mobile/core/di/v1_account_dependencies.dart';
+import 'package:archiveme_mobile/core/user/progressive_disclosure.dart';
+import 'package:archiveme_mobile/core/user/user_milestone_service.dart';
+import 'package:archiveme_mobile/core/utils/app_logger.dart';
 import 'package:archiveme_mobile/features/archive/v1/archive_entry_hero_tags.dart';
+import 'package:archiveme_mobile/features/audio/transcription/speaker_transcript_view.dart';
 import 'package:archiveme_mobile/features/entry_detail/entry_detail_copy.dart';
 import 'package:archiveme_mobile/features/memory/memory_surfacing_mode.dart';
 import 'package:archiveme_mobile/features/memory/sensitive_surfacing_policy.dart';
+import 'package:archiveme_mobile/features/time_capsule/time_capsule_seal.dart';
+import 'package:archiveme_mobile/features/time_capsule/time_capsule_seal_store.dart';
 import 'package:archiveme_mobile/features/timeline/timeline_entry_display.dart';
+import 'package:archiveme_mobile/features/metadata/ambient_metadata.dart';
+import 'package:archiveme_mobile/features/metadata/ambient_metadata_service.dart';
+import 'package:archiveme_mobile/features/metadata/ambient_metadata_store.dart';
+import 'package:archiveme_mobile/features/metadata/entry_metadata_views.dart';
+import 'package:archiveme_mobile/features/transcript/ui/transcript_detail_view.dart';
 import 'package:archiveme_mobile/features/voice_capture/voice_capture_copy.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
+import 'package:archiveme_mobile/models/time_capsule_lock.dart';
 import 'package:archiveme_mobile/security/private_data_service.dart';
 import 'package:archiveme_mobile/services/app_services.dart';
 import 'package:archiveme_mobile/theme/app_theme.dart';
-import 'package:archiveme_mobile/widgets/entry_detail/entry_processing_trust_chip.dart';
 import 'package:archiveme_mobile/widgets/archive/archive_entry_card.dart';
 import 'package:archiveme_mobile/widgets/archive/entry_context_tag_editor.dart';
+import 'package:archiveme_mobile/widgets/entry_detail/entry_processing_trust_chip.dart';
 import 'package:archiveme_mobile/widgets/entry_detail/entry_read_aloud_button.dart';
 import 'package:archiveme_mobile/widgets/memory/entry_aboutness_editor.dart';
 import 'package:archiveme_mobile/widgets/memory/memory_surfacing_editor.dart';
@@ -22,11 +35,11 @@ import 'package:archiveme_mobile/widgets/pushed_screen_shell.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'dart:async';
 
 class EntryDetailScreen extends StatefulWidget {
   const EntryDetailScreen({
-    required this.entryId, super.key,
+    required this.entryId,
+    super.key,
     this.accountDependencies,
   });
 
@@ -40,7 +53,11 @@ class EntryDetailScreen extends StatefulWidget {
 
 class _EntryDetailScreenState extends State<EntryDetailScreen> {
   JournalEntry? _entry;
+  AmbientMetadata? _metadata;
   bool _advancedExpanded = false;
+  TimeCapsuleLock _capsuleLock = const TimeCapsuleLock(isTimeCapsule: false);
+  UserMilestoneSnapshot _milestones = UserMilestoneSnapshot.empty;
+  DateTime _capsuleNow = DateTime.now().toUtc();
 
   late final V1AccountDependencies _accountDeps =
       widget.accountDependencies ?? V1AccountDependencies.fromAppServices();
@@ -78,6 +95,68 @@ class _EntryDetailScreenState extends State<EntryDetailScreen> {
       }
     }
     if (mounted) setState(() => _entry = e);
+    await _loadCapsule();
+  }
+
+  Future<void> _loadCapsule() async {
+    if (!AppServices.isInitialized) return;
+    try {
+      final milestones = await UserMilestoneService.fromAppServices().load();
+      final lock = await const TimeCapsuleSealStore().read(
+        AppServices.instance.sqliteDatabase.database,
+        widget.entryId,
+      );
+      final metadata = await AmbientMetadataStore.read(
+        AppServices.instance.sqliteDatabase.database,
+        widget.entryId,
+      );
+      if (metadata != null) {
+        AmbientMetadataService.shared.stored[widget.entryId] = metadata;
+      }
+      if (!mounted) return;
+      setState(() {
+        _milestones = milestones;
+        _capsuleLock = lock;
+        _capsuleNow = DateTime.now().toUtc();
+        _metadata = metadata;
+      });
+    } on Object catch (error, stackTrace) {
+      AppLogger.debug(
+        'Time capsule status could not be read',
+        error: error,
+        stackTrace: stackTrace,
+      );
+    }
+  }
+
+  Future<void> _sealCurrentEntry() async {
+    if (!AppServices.isInitialized) return;
+    final unlockDate = DateTime.now().toUtc().add(const Duration(days: 30));
+    final milestone = _milestones.journalEntryCount + 5;
+    try {
+      await const TimeCapsuleSealStore().seal(
+        AppServices.instance.sqliteDatabase.database,
+        entryId: widget.entryId,
+        unlockDate: unlockDate,
+        milestoneEntryCount: milestone,
+      );
+    } on Object catch (error, stackTrace) {
+      AppLogger.debug(
+        'Time capsule could not be sealed',
+        error: error,
+        stackTrace: stackTrace,
+      );
+      return;
+    }
+    if (!mounted) return;
+    setState(() {
+      _capsuleNow = DateTime.now().toUtc();
+      _capsuleLock = TimeCapsuleLock(
+        isTimeCapsule: true,
+        unlockDateMillis: unlockDate.millisecondsSinceEpoch,
+        unlockMilestoneEntryCount: milestone,
+      );
+    });
   }
 
   Future<void> _confirmDelete(JournalEntry entry) async {
@@ -155,7 +234,14 @@ class _EntryDetailScreenState extends State<EntryDetailScreen> {
                     ],
                   ),
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 8),
+                TimeCapsuleSealCard(
+                  lock: _capsuleLock,
+                  milestones: _milestones,
+                  now: _capsuleNow,
+                  onSeal: _sealCurrentEntry,
+                ),
+                const SizedBox(height: 8),
                 EntryContextTagEditor(
                   entry: e,
                   journalStore: _accountDeps.journalStore,
@@ -213,11 +299,17 @@ class _EntryDetailScreenState extends State<EntryDetailScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          view.primary,
-          key: const Key('entry_detail_recorded_body'),
-          style: const TextStyle(height: 1.45),
+        EntryDetailView(
+          transcript: view.primary,
+          metadata:
+              _metadata ?? AmbientMetadataService.shared.metadataFor(entry.id),
         ),
+        TranscriptDetailView(
+          entryId: entry.id,
+          transcript: view.primary,
+          showRawTranscript: false,
+        ),
+        SpeakerTranscriptView(transcript: view.primary),
         if (speakableText != null) ...[
           const SizedBox(height: 8),
           EntryReadAloudButton(

@@ -10,7 +10,11 @@ import 'package:flutter_onnxruntime/flutter_onnxruntime.dart';
 ///
 /// Falls back to callers when the asset is missing — see [tryCreateFromAsset].
 class OnnxImageEmbeddingInference implements ImageEmbeddingInference {
-  OnnxImageEmbeddingInference._(this._session, this._inputName, this._outputName);
+  OnnxImageEmbeddingInference._(
+    this._session,
+    this._inputName,
+    this._outputName,
+  );
 
   final OrtSession _session;
   final String _inputName;
@@ -74,7 +78,9 @@ class OnnxImageEmbeddingInference implements ImageEmbeddingInference {
     }
 
     final raw = await outputTensor.asFlattenedList();
-    final flat = raw.map((value) => (value as num).toDouble()).toList(growable: false);
+    final flat = raw
+        .map((value) => (value as num).toDouble())
+        .toList(growable: false);
     if (flat.length != imageEmbeddingDimensions) {
       throw StateError(
         'ONNX embedding width ${flat.length} != $imageEmbeddingDimensions',

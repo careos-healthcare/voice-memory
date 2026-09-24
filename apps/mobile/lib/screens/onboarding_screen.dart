@@ -13,8 +13,10 @@ import 'package:archiveme_mobile/onboarding/onboarding_visuals.dart';
 import 'package:archiveme_mobile/product/consumer_ui_copy.dart';
 import 'package:archiveme_mobile/router/onboarding_gate.dart';
 import 'package:archiveme_mobile/services/app_services.dart';
+import 'package:archiveme_mobile/core/user/user_milestone_service.dart';
 import 'package:archiveme_mobile/theme/app_colors.dart';
 import 'package:archiveme_mobile/theme/app_spacing.dart';
+import 'package:archiveme_mobile/widgets/onboarding/onboarding_progressive_disclosure_card.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -49,6 +51,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     unawaited(
       RetentionMetricsTracker.track(RetentionMetricsTracker.onboardingStarted),
     );
+    if (AppServices.isInitialized) {
+      unawaited(UserMilestoneService.fromAppServices().recordAppOpen());
+    }
   }
 
   Future<void> _complete() async {
@@ -129,15 +134,15 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                           onDecision: _recordConsentDecision,
                         )
                       : _showingTrustStep
-                          ? const SingleChildScrollView(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: AppSpacing.md,
-                              ),
-                              child: OnboardingTrustPillarsSection(),
-                            )
-                          : _OnboardingPage(
-                              page: OnboardingPages.pages.first,
-                            ),
+                      ? const SingleChildScrollView(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: AppSpacing.md,
+                          ),
+                          child: OnboardingTrustPillarsSection(),
+                        )
+                      : _OnboardingPage(
+                          page: OnboardingPages.pages.first,
+                        ),
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(
@@ -265,6 +270,8 @@ class _OnboardingPage extends StatelessWidget {
                 Text(page.title, style: OnboardingTypography.title(context)),
                 SizedBox(height: OnboardingTypography.sectionGap(context)),
                 Text(page.body, style: OnboardingTypography.body(context)),
+                const SizedBox(height: AppSpacing.md),
+                const OnboardingProgressiveDisclosureCard(),
                 const SizedBox(height: AppSpacing.md),
                 OnboardingPageVisual(page: page),
               ],

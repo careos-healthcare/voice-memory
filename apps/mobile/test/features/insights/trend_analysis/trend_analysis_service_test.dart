@@ -61,7 +61,9 @@ void main() {
   tearDown(AppSqliteDatabase.resetForTest);
 
   test('generates and caches weekly report from drift records', () async {
-    final dir = await Directory.systemTemp.createTemp('trend_analysis_service_');
+    final dir = await Directory.systemTemp.createTemp(
+      'trend_analysis_service_',
+    );
     final prefs = await MobilePrefsStore.open('${dir.path}/prefs.json');
     final sqlite = await openTestAppSqliteDatabase();
     final db = AppDatabase.fromSqflite(sqlite.database);

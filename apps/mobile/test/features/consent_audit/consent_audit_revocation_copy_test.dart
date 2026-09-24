@@ -117,7 +117,8 @@ void main() {
       expect(
         ConsentAuditCopy.revokedSnackFor(outcome),
         ConsentAuditCopy.revokedQueuedSnack,
-        reason: 'telling an offline user the server has stopped honouring the '
+        reason:
+            'telling an offline user the server has stopped honouring the '
             'token is the one claim on this screen they would act on',
       );
     });

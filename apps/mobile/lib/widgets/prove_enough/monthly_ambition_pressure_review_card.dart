@@ -12,7 +12,9 @@ import 'package:flutter/material.dart';
 /// Compact monthly review entry point for prove_enough surfaces.
 class MonthlyAmbitionPressureReviewCard extends StatelessWidget {
   const MonthlyAmbitionPressureReviewCard({
-    required this.review, required this.canViewFull, super.key,
+    required this.review,
+    required this.canViewFull,
+    super.key,
     this.onOpen,
     this.onSeePro,
   });

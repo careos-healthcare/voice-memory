@@ -9,7 +9,9 @@ import 'package:go_router/go_router.dart';
 
 class ArchiveBeliefsHomeSection extends StatelessWidget {
   const ArchiveBeliefsHomeSection({
-    required this.beliefs, required this.hasEnoughEvidence, super.key,
+    required this.beliefs,
+    required this.hasEnoughEvidence,
+    super.key,
   });
 
   final List<ArchiveBeliefCardModel> beliefs;

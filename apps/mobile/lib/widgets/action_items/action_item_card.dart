@@ -13,7 +13,9 @@ import 'package:flutter/material.dart';
 /// and mark done / edit / dismiss actions.
 class ActionItemCard extends StatelessWidget {
   const ActionItemCard({
-    required this.item, required this.store, super.key,
+    required this.item,
+    required this.store,
+    super.key,
     this.sourceEntry,
     this.packLabel,
     this.threadLabel,

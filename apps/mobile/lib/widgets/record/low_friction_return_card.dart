@@ -13,12 +13,20 @@ import 'package:flutter/material.dart';
 /// Permission-first return card — skip, one sentence, or tiny prompt only.
 class LowFrictionReturnCard extends StatefulWidget {
   const LowFrictionReturnCard({
-    required this.source, required this.entryCount, required this.onSaveOneSentence, required this.onPromptSelected, super.key,
+    required this.source,
+    required this.entryCount,
+    required this.onSaveOneSentence,
+    required this.onPromptSelected,
+    super.key,
     this.store,
   });
 
   const LowFrictionReturnCard.test({
-    required this.source, required this.entryCount, required this.onSaveOneSentence, required this.onPromptSelected, super.key,
+    required this.source,
+    required this.entryCount,
+    required this.onSaveOneSentence,
+    required this.onPromptSelected,
+    super.key,
     this.store,
   });
 

@@ -12,12 +12,16 @@ import 'package:flutter/material.dart';
 /// Unified early guidance for saves 1–3 — typed capture only, no fake entries.
 class ThreeMomentCompletionCard extends StatefulWidget {
   const ThreeMomentCompletionCard({
-    required this.result, required this.onPrimaryCta, super.key,
+    required this.result,
+    required this.onPrimaryCta,
+    super.key,
     this.store,
   });
 
   const ThreeMomentCompletionCard.test({
-    required this.result, required this.onPrimaryCta, super.key,
+    required this.result,
+    required this.onPrimaryCta,
+    super.key,
     this.store,
   });
 

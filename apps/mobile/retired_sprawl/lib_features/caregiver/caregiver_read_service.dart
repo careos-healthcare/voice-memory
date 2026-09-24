@@ -55,8 +55,9 @@ class CaregiverReadService {
       auditAction: CaregiverAuditAction.thresholdAlertRead,
       resourceId: 'insight_alerts',
     );
-    final alerts =
-        alertsAllowed ? _buildThresholdAlerts(entries) : const <String>[];
+    final alerts = alertsAllowed
+        ? _buildThresholdAlerts(entries)
+        : const <String>[];
 
     return CaregiverDashboardSnapshot(
       evidenceCount: entries.length,
@@ -74,15 +75,12 @@ class CaregiverReadService {
     if (entries.isEmpty) return const [];
     final sorted = List<JournalEntry>.from(entries)
       ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
-    return sorted
-        .take(3)
-        .map((entry) {
-          final date = entry.createdAt.toLocal().toString().split(' ').first;
-          final label = _safeLabel(entry);
-          if (label.isEmpty) return 'Moment on $date';
-          return '$date — $label';
-        })
-        .toList();
+    return sorted.take(3).map((entry) {
+      final date = entry.createdAt.toLocal().toString().split(' ').first;
+      final label = _safeLabel(entry);
+      if (label.isEmpty) return 'Moment on $date';
+      return '$date — $label';
+    }).toList();
   }
 
   List<String> _buildThresholdAlerts(List<JournalEntry> entries) {

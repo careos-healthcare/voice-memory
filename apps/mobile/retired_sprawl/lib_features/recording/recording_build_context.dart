@@ -470,7 +470,8 @@ class RecordBuildContext {
   final int otherEducationCardsOnRecord;
   final bool showTimelinePositioningOnRecordReady;
   final int patternConfidenceEducationCount;
-  final PatternConfidenceExplanationResult? patternConfidenceExplanationCandidate;
+  final PatternConfidenceExplanationResult?
+  patternConfidenceExplanationCandidate;
   final bool showPatternConfidenceExplanationOnRecordReady;
   final bool showProEvidenceValueOnRecordReady;
   final bool showProBridgeVisibilityOnRecordReady;
@@ -554,7 +555,8 @@ class RecordBuildContext {
   final bool showBetaRepairLabPricingValidationOnRecord;
   final bool showBetaRepairLabEvidenceTrailClarityOnRecord;
   final PricingValidationResult betaRepairLabPricingValidationResult;
-  final ProUnderstandingLiftVisibilityInput proUnderstandingLiftRecordReadyInput;
+  final ProUnderstandingLiftVisibilityInput
+  proUnderstandingLiftRecordReadyInput;
   final bool showProUnderstandingLiftOnRecordReady;
   final bool showProVisibilityLiftOnRecordReady;
   final ProUnderstandingLiftResult? proUnderstandingLiftRecordReadyResult;
@@ -615,7 +617,8 @@ class RecordBuildContext {
   final bool showProofSpecificityOnFirstProofPayoff;
   final ProofSpecificityBoostResult proofSpecificityBoostPostSaveCandidate;
   final ProofQualityResponseResult proofQualityResponseFirstProofCandidate;
-  final ProofQualityResponseResult proofQualityResponseTimelinePostSaveCandidate;
+  final ProofQualityResponseResult
+  proofQualityResponseTimelinePostSaveCandidate;
   final BetaProofLiftResult betaProofLiftFirstProofCandidate;
   final BetaProofLiftResult betaProofLiftTimelinePostSaveCandidate;
   final ReturnAfterProofResult returnAfterProofPostSaveCandidate;
@@ -649,8 +652,10 @@ class RecordBuildContext {
   final MonthlyPrivateReportPreview? monthlyPrivateReportPreviewPostSave;
   final bool showMonthlyPrivateReportPreviewPostSave;
   final List<BetaFeedbackIntelligenceSurface> betaFeedbackRecordSurfaces;
-  final BetaFeedbackIntelligenceSurface? betaFeedbackIntelligenceSurfaceOnRecordReady;
-  final BetaFeedbackIntelligenceSurface? betaFeedbackIntelligenceSurfacePostSave;
+  final BetaFeedbackIntelligenceSurface?
+  betaFeedbackIntelligenceSurfaceOnRecordReady;
+  final BetaFeedbackIntelligenceSurface?
+  betaFeedbackIntelligenceSurfacePostSave;
   final HelpedTrackingPrompt? helpedTrackingPrompt;
   final bool showHelpedTracking;
   final bool showReturnCheckPayoff;

@@ -1,5 +1,6 @@
 import 'package:archiveme_mobile/core/network/api_result.dart';
-import 'package:archiveme_mobile/core/network/http_transport.dart' show HttpTransport;
+import 'package:archiveme_mobile/core/network/http_transport.dart'
+    show HttpTransport;
 import 'package:archiveme_mobile/core/network/network_cancel_token.dart';
 import 'package:archiveme_mobile/models/session.dart';
 

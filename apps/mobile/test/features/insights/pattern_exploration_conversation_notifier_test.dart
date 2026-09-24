@@ -66,23 +66,27 @@ void main() {
     container.dispose();
   });
 
-  test('reset() clears messages, isSending, and error after a prior turn',
-      () async {
-    await notifier.sendMessage('first');
+  test(
+    'reset() clears messages, isSending, and error after a prior turn',
+    () async {
+      await notifier.sendMessage('first');
 
-    final beforeReset = container.read(patternExplorationConversationProvider);
-    expect(beforeReset.messages, hasLength(2));
-    expect(beforeReset.messages.first.content, 'first');
-    expect(beforeReset.messages.last.content, 'assistant reply');
-    expect(beforeReset.isSending, isFalse);
+      final beforeReset = container.read(
+        patternExplorationConversationProvider,
+      );
+      expect(beforeReset.messages, hasLength(2));
+      expect(beforeReset.messages.first.content, 'first');
+      expect(beforeReset.messages.last.content, 'assistant reply');
+      expect(beforeReset.isSending, isFalse);
 
-    notifier.reset();
+      notifier.reset();
 
-    final afterReset = container.read(patternExplorationConversationProvider);
-    expect(afterReset.messages, isEmpty);
-    expect(afterReset.isSending, isFalse);
-    expect(afterReset.errorMessage, isNull);
-  });
+      final afterReset = container.read(patternExplorationConversationProvider);
+      expect(afterReset.messages, isEmpty);
+      expect(afterReset.isSending, isFalse);
+      expect(afterReset.errorMessage, isNull);
+    },
+  );
 
   test(
     'reset() then sendMessage sends empty conversationHistory',

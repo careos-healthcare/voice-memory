@@ -10,7 +10,9 @@ import 'package:flutter/material.dart';
 /// Entry detail control to change entry type after save.
 class EntryAboutnessEditor extends StatelessWidget {
   const EntryAboutnessEditor({
-    required this.entry, required this.onChanged, super.key,
+    required this.entry,
+    required this.onChanged,
+    super.key,
   });
 
   final JournalEntry entry;
@@ -34,7 +36,9 @@ class EntryAboutnessEditor extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final current = EntryAboutness.fromId(entry.displayPresentation.entryAboutness);
+    final current = EntryAboutness.fromId(
+      entry.displayPresentation.entryAboutness,
+    );
     return Column(
       key: const Key('entry_aboutness_editor'),
       crossAxisAlignment: CrossAxisAlignment.start,

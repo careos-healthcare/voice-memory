@@ -19,7 +19,9 @@ abstract final class DatabaseBiometricGateStore {
       return;
     }
     final raw = await AppServices.instance.prefs.readJsonMap(prefsKey);
-    _enabled = raw?['enabled'] is bool ? raw!['enabled'] as bool : defaultEnabled;
+    _enabled = raw?['enabled'] is bool
+        ? raw!['enabled'] as bool
+        : defaultEnabled;
     _loaded = true;
   }
 

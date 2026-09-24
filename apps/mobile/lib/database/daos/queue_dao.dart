@@ -38,12 +38,14 @@ final class EmbeddingDeferredTask {
   final DateTime createdAt;
 }
 
-@DriftAccessor(tables: [
-  EmbeddingDeferredQueueEntries,
-  AudioProcessingQueueEntries,
-  CaptureAudioMetadataEntries,
-  QuickCaptureOutboxEntries,
-])
+@DriftAccessor(
+  tables: [
+    EmbeddingDeferredQueueEntries,
+    AudioProcessingQueueEntries,
+    CaptureAudioMetadataEntries,
+    QuickCaptureOutboxEntries,
+  ],
+)
 class QueueDao extends DatabaseAccessor<AppDatabase> with _$QueueDaoMixin {
   QueueDao(super.db);
 
@@ -56,17 +58,16 @@ class QueueDao extends DatabaseAccessor<AppDatabase> with _$QueueDaoMixin {
     required String sqliteFilePath,
     String? keyAlias,
     String? encryptionPassword,
-  }) =>
-      _enqueueDeferred(
-        operation: Migration014EmbeddingDeferredQueue.operationIndexReflection,
-        entryId: entryId,
-        text: text,
-        contentHash: contentHash,
-        sqliteFilePath: sqliteFilePath,
-        keyAlias: keyAlias,
-        encryptionPassword: encryptionPassword,
-        queueId: 'reflection:$entryId:$contentHash',
-      );
+  }) => _enqueueDeferred(
+    operation: Migration014EmbeddingDeferredQueue.operationIndexReflection,
+    entryId: entryId,
+    text: text,
+    contentHash: contentHash,
+    sqliteFilePath: sqliteFilePath,
+    keyAlias: keyAlias,
+    encryptionPassword: encryptionPassword,
+    queueId: 'reflection:$entryId:$contentHash',
+  );
 
   Future<void> enqueueDeferredLlmSummary({
     required String entryId,
@@ -74,16 +75,15 @@ class QueueDao extends DatabaseAccessor<AppDatabase> with _$QueueDaoMixin {
     required String sqliteFilePath,
     String? keyAlias,
     String? encryptionPassword,
-  }) =>
-      _enqueueDeferred(
-        operation: Migration014EmbeddingDeferredQueue.operationIndexTranscript,
-        entryId: entryId,
-        text: llmSummary,
-        sqliteFilePath: sqliteFilePath,
-        keyAlias: keyAlias,
-        encryptionPassword: encryptionPassword,
-        queueId: 'transcript:$entryId',
-      );
+  }) => _enqueueDeferred(
+    operation: Migration014EmbeddingDeferredQueue.operationIndexTranscript,
+    entryId: entryId,
+    text: llmSummary,
+    sqliteFilePath: sqliteFilePath,
+    keyAlias: keyAlias,
+    encryptionPassword: encryptionPassword,
+    queueId: 'transcript:$entryId',
+  );
 
   Future<List<EmbeddingDeferredTask>> listDeferredPending({int? limit}) async {
     final query = select(embeddingDeferredQueueEntries)
@@ -97,16 +97,17 @@ class QueueDao extends DatabaseAccessor<AppDatabase> with _$QueueDaoMixin {
 
   Future<int> deferredPendingCount() async {
     final count = countAll();
-    final query = selectOnly(embeddingDeferredQueueEntries)..addColumns([count]);
+    final query = selectOnly(embeddingDeferredQueueEntries)
+      ..addColumns([count]);
     final row = await query.getSingle();
     return row.read(count) ?? 0;
   }
 
   Future<void> removeDeferred(String queueId) async {
     if (queueId.isEmpty) return;
-    await (delete(embeddingDeferredQueueEntries)
-          ..where((t) => t.queueId.equals(queueId)))
-        .go();
+    await (delete(
+      embeddingDeferredQueueEntries,
+    )..where((t) => t.queueId.equals(queueId))).go();
   }
 
   Future<void> insertAudioProcessingPending({
@@ -127,9 +128,9 @@ class QueueDao extends DatabaseAccessor<AppDatabase> with _$QueueDaoMixin {
   }
 
   Future<AudioProcessingQueueItem?> findAudioProcessingById(String id) async {
-    final row = await (select(audioProcessingQueueEntries)
-          ..where((t) => t.id.equals(id)))
-        .getSingleOrNull();
+    final row = await (select(
+      audioProcessingQueueEntries,
+    )..where((t) => t.id.equals(id))).getSingleOrNull();
     if (row == null) return null;
     return AudioProcessingQueueItem.fromMap(_audioProcessingToMap(row));
   }
@@ -137,15 +138,20 @@ class QueueDao extends DatabaseAccessor<AppDatabase> with _$QueueDaoMixin {
   Future<List<AudioProcessingQueueItem>> listAudioProcessingPending({
     int limit = 50,
   }) async {
-    final rows = await (select(audioProcessingQueueEntries)
-          ..where(
-            (t) => t.status.equals(AudioProcessingQueueStatus.pending.storageValue),
-          )
-          ..orderBy([(t) => OrderingTerm.asc(t.timestamp)])
-          ..limit(limit))
-        .get();
+    final rows =
+        await (select(audioProcessingQueueEntries)
+              ..where(
+                (t) => t.status.equals(
+                  AudioProcessingQueueStatus.pending.storageValue,
+                ),
+              )
+              ..orderBy([(t) => OrderingTerm.asc(t.timestamp)])
+              ..limit(limit))
+            .get();
     return rows
-        .map((row) => AudioProcessingQueueItem.fromMap(_audioProcessingToMap(row)))
+        .map(
+          (row) => AudioProcessingQueueItem.fromMap(_audioProcessingToMap(row)),
+        )
         .toList(growable: false);
   }
 
@@ -153,8 +159,9 @@ class QueueDao extends DatabaseAccessor<AppDatabase> with _$QueueDaoMixin {
     required String id,
     required AudioProcessingQueueStatus status,
   }) async {
-    await (update(audioProcessingQueueEntries)..where((t) => t.id.equals(id)))
-        .write(
+    await (update(
+      audioProcessingQueueEntries,
+    )..where((t) => t.id.equals(id))).write(
       AudioProcessingQueueEntriesCompanion(
         status: Value(status.storageValue),
       ),
@@ -188,8 +195,9 @@ class QueueDao extends DatabaseAccessor<AppDatabase> with _$QueueDaoMixin {
     required String id,
     required String status,
   }) async {
-    await (update(captureAudioMetadataEntries)..where((t) => t.id.equals(id)))
-        .write(
+    await (update(
+      captureAudioMetadataEntries,
+    )..where((t) => t.id.equals(id))).write(
       CaptureAudioMetadataEntriesCompanion(status: Value(status)),
     );
   }
@@ -197,17 +205,18 @@ class QueueDao extends DatabaseAccessor<AppDatabase> with _$QueueDaoMixin {
   Future<List<CaptureAudioMetadata>> listCaptureMetadataByStatus(
     String status,
   ) async {
-    final rows = await (select(captureAudioMetadataEntries)
-          ..where((t) => t.status.equals(status))
-          ..orderBy([(t) => OrderingTerm.asc(t.createdAt)]))
-        .get();
+    final rows =
+        await (select(captureAudioMetadataEntries)
+              ..where((t) => t.status.equals(status))
+              ..orderBy([(t) => OrderingTerm.asc(t.createdAt)]))
+            .get();
     return rows.map(_captureMetadataFromRow).toList(growable: false);
   }
 
   Future<CaptureAudioMetadata?> findCaptureMetadataById(String id) async {
-    final row = await (select(captureAudioMetadataEntries)
-          ..where((t) => t.id.equals(id)))
-        .getSingleOrNull();
+    final row = await (select(
+      captureAudioMetadataEntries,
+    )..where((t) => t.id.equals(id))).getSingleOrNull();
     if (row == null) return null;
     return _captureMetadataFromRow(row);
   }
@@ -217,19 +226,20 @@ class QueueDao extends DatabaseAccessor<AppDatabase> with _$QueueDaoMixin {
     final nowMillis = now.millisecondsSinceEpoch;
     final payloadJson = jsonEncode(payload.toJson());
 
-    final existing = await (select(quickCaptureOutboxEntries)
-          ..where(
-            (t) =>
-                t.captureId.equals(payload.captureId) &
-                t.status.isIn(['pending', 'processing']),
-          )
-          ..limit(1))
-        .getSingleOrNull();
+    final existing =
+        await (select(quickCaptureOutboxEntries)
+              ..where(
+                (t) =>
+                    t.captureId.equals(payload.captureId) &
+                    t.status.isIn(['pending', 'processing']),
+              )
+              ..limit(1))
+            .getSingleOrNull();
 
     if (existing != null) {
-      await (update(quickCaptureOutboxEntries)
-            ..where((t) => t.outboxId.equals(existing.outboxId)))
-          .write(
+      await (update(
+        quickCaptureOutboxEntries,
+      )..where((t) => t.outboxId.equals(existing.outboxId))).write(
         QuickCaptureOutboxEntriesCompanion(
           payloadJson: Value(payloadJson),
           status: const Value('pending'),
@@ -257,11 +267,12 @@ class QueueDao extends DatabaseAccessor<AppDatabase> with _$QueueDaoMixin {
   Future<List<QuickCaptureOutboxEntry>> listQuickCapturePending({
     int limit = 16,
   }) async {
-    final rows = await (select(quickCaptureOutboxEntries)
-          ..where((t) => t.status.equals('pending'))
-          ..orderBy([(t) => OrderingTerm.asc(t.createdAt)])
-          ..limit(limit))
-        .get();
+    final rows =
+        await (select(quickCaptureOutboxEntries)
+              ..where((t) => t.status.equals('pending'))
+              ..orderBy([(t) => OrderingTerm.asc(t.createdAt)])
+              ..limit(limit))
+            .get();
     return rows.map(_quickCaptureFromRow).toList(growable: false);
   }
 
@@ -276,14 +287,14 @@ class QueueDao extends DatabaseAccessor<AppDatabase> with _$QueueDaoMixin {
 
   Future<void> markQuickCaptureProcessing(String outboxId) async {
     final nowMillis = DateTime.now().toUtc().millisecondsSinceEpoch;
-    final row = await (select(quickCaptureOutboxEntries)
-          ..where((t) => t.outboxId.equals(outboxId)))
-        .getSingleOrNull();
+    final row = await (select(
+      quickCaptureOutboxEntries,
+    )..where((t) => t.outboxId.equals(outboxId))).getSingleOrNull();
     if (row == null) return;
 
-    await (update(quickCaptureOutboxEntries)
-          ..where((t) => t.outboxId.equals(outboxId)))
-        .write(
+    await (update(
+      quickCaptureOutboxEntries,
+    )..where((t) => t.outboxId.equals(outboxId))).write(
       QuickCaptureOutboxEntriesCompanion(
         status: const Value('processing'),
         updatedAt: Value(nowMillis),
@@ -294,9 +305,9 @@ class QueueDao extends DatabaseAccessor<AppDatabase> with _$QueueDaoMixin {
 
   Future<void> markQuickCaptureDone(String outboxId) async {
     final nowMillis = DateTime.now().toUtc().millisecondsSinceEpoch;
-    await (update(quickCaptureOutboxEntries)
-          ..where((t) => t.outboxId.equals(outboxId)))
-        .write(
+    await (update(
+      quickCaptureOutboxEntries,
+    )..where((t) => t.outboxId.equals(outboxId))).write(
       QuickCaptureOutboxEntriesCompanion(
         status: const Value('done'),
         updatedAt: Value(nowMillis),
@@ -307,9 +318,9 @@ class QueueDao extends DatabaseAccessor<AppDatabase> with _$QueueDaoMixin {
 
   Future<void> markQuickCaptureFailed(String outboxId, String error) async {
     final nowMillis = DateTime.now().toUtc().millisecondsSinceEpoch;
-    await (update(quickCaptureOutboxEntries)
-          ..where((t) => t.outboxId.equals(outboxId)))
-        .write(
+    await (update(
+      quickCaptureOutboxEntries,
+    )..where((t) => t.outboxId.equals(outboxId))).write(
       QuickCaptureOutboxEntriesCompanion(
         status: const Value('pending'),
         updatedAt: Value(nowMillis),
@@ -320,9 +331,9 @@ class QueueDao extends DatabaseAccessor<AppDatabase> with _$QueueDaoMixin {
 
   Future<int> requeueQuickCaptureProcessing() async {
     final nowMillis = DateTime.now().toUtc().millisecondsSinceEpoch;
-    return (update(quickCaptureOutboxEntries)
-          ..where((t) => t.status.equals('processing')))
-        .write(
+    return (update(
+      quickCaptureOutboxEntries,
+    )..where((t) => t.status.equals('processing'))).write(
       QuickCaptureOutboxEntriesCompanion(
         status: const Value('pending'),
         updatedAt: Value(nowMillis),
@@ -371,7 +382,10 @@ class QueueDao extends DatabaseAccessor<AppDatabase> with _$QueueDaoMixin {
       sqliteFilePath: row.sqliteFilePath,
       keyAlias: row.keyAlias,
       encryptionPassword: row.encryptionPassword,
-      createdAt: DateTime.fromMillisecondsSinceEpoch(row.createdAt, isUtc: true),
+      createdAt: DateTime.fromMillisecondsSinceEpoch(
+        row.createdAt,
+        isUtc: true,
+      ),
     );
   }
 
@@ -387,7 +401,10 @@ class QueueDao extends DatabaseAccessor<AppDatabase> with _$QueueDaoMixin {
     return CaptureAudioMetadata(
       id: row.id,
       filePath: row.filePath,
-      createdAt: DateTime.fromMillisecondsSinceEpoch(row.createdAt, isUtc: true),
+      createdAt: DateTime.fromMillisecondsSinceEpoch(
+        row.createdAt,
+        isUtc: true,
+      ),
       status: row.status,
     );
   }
@@ -399,8 +416,14 @@ class QueueDao extends DatabaseAccessor<AppDatabase> with _$QueueDaoMixin {
       payload: QuickCaptureOutboxPayload.fromJson(payloadMap),
       status: QuickCaptureOutboxStatus.parse(row.status),
       attemptCount: row.attemptCount,
-      createdAt: DateTime.fromMillisecondsSinceEpoch(row.createdAt, isUtc: true),
-      updatedAt: DateTime.fromMillisecondsSinceEpoch(row.updatedAt, isUtc: true),
+      createdAt: DateTime.fromMillisecondsSinceEpoch(
+        row.createdAt,
+        isUtc: true,
+      ),
+      updatedAt: DateTime.fromMillisecondsSinceEpoch(
+        row.updatedAt,
+        isUtc: true,
+      ),
       lastError: row.lastError,
     );
   }

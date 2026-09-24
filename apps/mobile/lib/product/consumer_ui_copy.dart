@@ -32,7 +32,8 @@ abstract class ConsumerUiCopy {
       'Based on moments across days and weeks.';
   static const String archiveTimelineSubtitle =
       'See how this has changed over time.';
-  static const String patternsEarlyStateBody = 'Record a few real moments. ArchiveMe will look for what repeats across them.';
+  static const String patternsEarlyStateBody =
+      'Record a few real moments. ArchiveMe will look for what repeats across them.';
   static const String onboardingPositioningHeadline =
       OnboardingV1Copy.welcomeTitle;
   static const String onboardingPositioningBody = OnboardingV1Copy.welcomeBody;
@@ -181,7 +182,8 @@ abstract class ConsumerUiCopy {
   static const String patternsEmptyPageBody =
       VisibleArchiveProofCopy.patternsMindMapEmptyBody;
   static const String patternsFirstEntrySavedTitle = 'First moment saved';
-  static const String patternsFirstEntrySavedBody = 'Record one more clear moment and ArchiveMe can compare what repeats.';
+  static const String patternsFirstEntrySavedBody =
+      'Record one more clear moment and ArchiveMe can compare what repeats.';
   static const String patternsFirstEntrySavedHelper =
       VisibleArchiveProofCopy.patternsOneEntryReassurance;
   static const String patternsFirstEntrySavedCta = 'Record another moment';
@@ -213,13 +215,15 @@ abstract class ConsumerUiCopy {
     'ArchiveMe connects moments that keep showing up',
     'You see what is strengthening, fading, or changing',
   ];
-  static const String patternsPrivacyReassurance = 'Private on your device. Nothing is shared without you choosing to.';
+  static const String patternsPrivacyReassurance =
+      'Private on your device. Nothing is shared without you choosing to.';
   static const String viewAllPatterns = 'See all patterns';
   static const String seeWhatChanged = 'See what changed';
 
   // ——— All patterns list ———
   static const String allPatternsTitle = 'All patterns';
-  static const String allPatternsLead = 'Patterns and themes ArchiveMe keeps noticing in your reflections.';
+  static const String allPatternsLead =
+      'Patterns and themes ArchiveMe keeps noticing in your reflections.';
   static const String patternsSectionCurrent = 'Patterns that keep repeating';
   static const String patternsSectionEmerging = 'A pattern is forming';
   static const String patternsSectionChanging = 'This seems to be changing';
@@ -345,8 +349,7 @@ abstract class ConsumerUiCopy {
   static const String postSaveInsightNextPromptSaved = 'Next prompt saved';
   static const String postSaveInsightMomentsProgress =
       '{count} of 3 moments recorded';
-  static const String patternHypothesisTitle =
-      'ArchiveMe has a possible read';
+  static const String patternHypothesisTitle = 'ArchiveMe has a possible read';
   static const String patternHypothesisLead =
       'This may not be final, but these moments seem connected.';
   static const String patternHypothesisMightBe = 'The pattern might be';
@@ -354,11 +357,14 @@ abstract class ConsumerUiCopy {
   static const String patternHypothesisProveWrong = 'What would prove it wrong';
   static const String patternHypothesisWatchNext = 'What to watch next';
   static const String patternHypothesisFeelsRight = 'This feels right';
-  static const String patternsSignalsWaitingTitle = 'Signals waiting for clarity';
+  static const String patternsSignalsWaitingTitle =
+      'Signals waiting for clarity';
   static const String patternsSignalsWaitingClarity =
       'What would make this clearer';
-  static const String patternsWatchingSignalTitle = 'ArchiveMe is watching this signal';
-  static const String patternsWatchingSignalBody = 'Record one more moment to test whether it repeats.';
+  static const String patternsWatchingSignalTitle =
+      'ArchiveMe is watching this signal';
+  static const String patternsWatchingSignalBody =
+      'Record one more moment to test whether it repeats.';
 
   // ——— Signal archive surfaces ———
   static const String signalDetailEmptyTitle = 'No saved signal yet';
@@ -470,7 +476,8 @@ abstract class ConsumerUiCopy {
   static const String signalReviewWhatChanged = 'What changed';
   static const String signalReviewEvidenceSoFar = 'Evidence so far';
   static const String signalReviewWhatToWatchNext = 'What to watch next';
-  static const String signalReviewPossibleWrong = 'What could show this is wrong';
+  static const String signalReviewPossibleWrong =
+      'What could show this is wrong';
   static const String signalReviewFeelsRight = 'This feels right';
   static const String signalReviewCorrectThis = 'Correct this';
   static const String signalReviewKeepWatching = 'Keep watching';
@@ -544,9 +551,11 @@ abstract class ConsumerUiCopy {
   // ——— Account ———
   static const String accountTitle = 'ArchiveMe account';
   static const String syncStatus = 'Sync status';
-  static const String syncNotAvailableTestFlight = 'Sync is not available in this TestFlight build.';
+  static const String syncNotAvailableTestFlight =
+      'Sync is not available in this TestFlight build.';
   static const String syncOnDeviceOnly = 'On this device';
-  static const String accountPrivacyNote = 'Your recordings stay on this device unless you sign in to sync.';
+  static const String accountPrivacyNote =
+      'Your recordings stay on this device unless you sign in to sync.';
   static const String savedPrivatelyOnDevice =
       'Saved privately on this device.';
   static const String addAnotherMomentTomorrow =
@@ -576,7 +585,8 @@ abstract class ConsumerUiCopy {
   static const String paywallHeadline = 'You saw the first useful repeat.';
   static const String paywallSubhead =
       'Free shows the first useful repeat. Pro keeps the longer trail.';
-  static const String paywallPrimaryValueBlock = 'Pro keeps a longer private archive — more moments, more continuity, more evidence over time.';
+  static const String paywallPrimaryValueBlock =
+      'Pro keeps a longer private archive — more moments, more continuity, more evidence over time.';
   static const String paywallTitle = paywallHeadline;
   static const List<String> paywallFallbackBullets = [
     'Longer evidence history on this device',
@@ -584,8 +594,10 @@ abstract class ConsumerUiCopy {
     'Continuity when patterns return or change',
   ];
   static const List<String> paywallBullets = paywallFallbackBullets;
-  static const String paywallDifferentiation = 'ArchiveMe is not trying to answer better than ChatGPT. It is trying to remember differently.';
-  static const String paywallTrust = 'Your saves stay free. Manage or cancel anytime in the App Store.';
+  static const String paywallDifferentiation =
+      'ArchiveMe is not trying to answer better than ChatGPT. It is trying to remember differently.';
+  static const String paywallTrust =
+      'Your saves stay free. Manage or cancel anytime in the App Store.';
   static const String paywallBackupLine =
       'You are building evidence over time. Pro keeps the longer archive trail as moments return, change, or fade.';
   static const String paywallPrimaryCta = 'Keep the longer trail';
@@ -595,7 +607,8 @@ abstract class ConsumerUiCopy {
   static const String paywallProActiveBody =
       'Longer archive trail, what returned or changed, and evidence over time '
       'are available on this device.';
-  static const String paywallSetupUnavailableBody = 'Plans are not available right now.';
+  static const String paywallSetupUnavailableBody =
+      'Plans are not available right now.';
   static const String paywallBillingNotConfigured = paywallSetupUnavailableBody;
   static const String paywallUnavailablePlansLoading = 'Loading plans…';
   static const String plansUnavailable = paywallUnavailablePlansLoading;
@@ -606,6 +619,7 @@ abstract class ConsumerUiCopy {
   static const String freeBetaUnlimitedLocalArchive =
       'During the focused beta, every moment you save stays on this device. '
       'There is no moment cap, no upgrade, and no purchase flow.';
+
   /// Led with a bare "Archive" until `consumer_copy_banned_words_test.dart`
   /// caught it. The word was doing duty as a verb for saving a moment, which
   /// is the one sense the product language never uses it in — "archive" alone
@@ -630,7 +644,8 @@ abstract class ConsumerUiCopy {
       'This may be changing — this pattern appears less often';
   static const String narrativeEmerging =
       'Your archive noticed a possible new pattern';
-  static const String narrativeShifting = 'This may be changing — this pattern is shifting';
+  static const String narrativeShifting =
+      'This may be changing — this pattern is shifting';
 
   // ——— Legacy empty / progress surfaces (still reachable) ———
   static const String progressEmptyTitle = 'Record a few real moments';
@@ -685,7 +700,8 @@ abstract class ConsumerUiCopy {
   static const String tomorrowNoticePrompt =
       'Tomorrow, notice whether this shows up again.';
   static const String patternsComeBackTitle = 'Why come back tomorrow?';
-  static const String patternsComeBackBody = 'ArchiveMe compares what you save over time.';
+  static const String patternsComeBackBody =
+      'ArchiveMe compares what you save over time.';
   static const String patternsComeBackRecordCta = 'Record today\'s reflection';
   static const String postSaveRecordAnotherReflection =
       'Record another reflection';
@@ -958,7 +974,8 @@ abstract class ConsumerUiCopy {
   static const String checkInLoopClosedTitle = 'You closed the loop.';
   static const String checkInResultNotUsefulFollowUp = 'What was wrong?';
   static const String patternsCheckInWaitingTitle = 'Check-in waiting';
-  static const String patternsCheckInWaitingBody = 'ArchiveMe has a question from your last moment.';
+  static const String patternsCheckInWaitingBody =
+      'ArchiveMe has a question from your last moment.';
   static const String patternsCheckInWaitingCta = 'Answer it now';
   static const String patternsLoopClosedTitle = 'Loop closed';
   static const String patternsLoopClosedBody =

@@ -13,15 +13,17 @@ final localAudioStorageServiceProvider = Provider<LocalAudioStorageService>(
 
 final audioProcessingQueueRepositoryProvider =
     Provider<AudioProcessingQueueRepository>(
-  (ref) => AudioProcessingQueueRepository(ref.watch(appSqliteDatabaseProvider)),
-);
+      (ref) =>
+          AudioProcessingQueueRepository(ref.watch(appSqliteDatabaseProvider)),
+    );
 
-final audioProcessingQueueServiceProvider = Provider<AudioProcessingQueueService>(
-  (ref) => AudioProcessingQueueService(
-    storage: ref.watch(localAudioStorageServiceProvider),
-    repository: ref.watch(audioProcessingQueueRepositoryProvider),
-  ),
-);
+final audioProcessingQueueServiceProvider =
+    Provider<AudioProcessingQueueService>(
+      (ref) => AudioProcessingQueueService(
+        storage: ref.watch(localAudioStorageServiceProvider),
+        repository: ref.watch(audioProcessingQueueRepositoryProvider),
+      ),
+    );
 
 /// Enqueues completed recordings into hybrid local storage + SQLite.
 final audioProcessingQueueListenerProvider = Provider<void>((ref) {
@@ -30,15 +32,21 @@ final audioProcessingQueueListenerProvider = Provider<void>((ref) {
     if (completion == null) return;
     if (previous?.recordingCompletion == completion) return;
 
-    unawaited(Future<void>(() async {
-      try {
-        await ref.read(audioProcessingQueueServiceProvider).enqueueRecording(
-          sourceFile: completion.file,
-          durationMs: completion.durationMs,
-        );
-      } finally {
-        ref.read(recordingServiceProvider.notifier).acknowledgeRecordingCompletion();
-      }
-    }));
+    unawaited(
+      Future<void>(() async {
+        try {
+          await ref
+              .read(audioProcessingQueueServiceProvider)
+              .enqueueRecording(
+                sourceFile: completion.file,
+                durationMs: completion.durationMs,
+              );
+        } finally {
+          ref
+              .read(recordingServiceProvider.notifier)
+              .acknowledgeRecordingCompletion();
+        }
+      }),
+    );
   });
 });

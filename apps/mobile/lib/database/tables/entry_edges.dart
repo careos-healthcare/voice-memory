@@ -10,7 +10,8 @@ class EntryEdges extends Table {
 
   TextColumn get sourceEntryId => text().named('source_entry_id')();
   TextColumn get targetEntryId => text().named('target_entry_id')();
-  TextColumn get relation => text().withDefault(const Constant('semantic_similarity'))();
+  TextColumn get relation =>
+      text().withDefault(const Constant('semantic_similarity'))();
   RealColumn get weight => real()();
   IntColumn get createdAt => integer().named('created_at')();
 

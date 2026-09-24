@@ -18,7 +18,13 @@ import 'package:flutter/material.dart';
 /// Repeat-detected post-save — one calm proof card with collapsed transcript.
 class RepeatPostSaveCard extends StatefulWidget {
   const RepeatPostSaveCard({
-    required this.entry, required this.allEntries, required this.mirror, required this.onViewEvidence, required this.onAddOneMoreMoment, required this.onDoneForToday, super.key,
+    required this.entry,
+    required this.allEntries,
+    required this.mirror,
+    required this.onViewEvidence,
+    required this.onAddOneMoreMoment,
+    required this.onDoneForToday,
+    super.key,
     this.onCorrectTranscript,
     this.onViewThoughtMap,
   });

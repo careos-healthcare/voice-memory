@@ -34,7 +34,7 @@ abstract final class CaptureDeepLinkUris {
   };
 
   static String get recordLaunchRoute => Uri(
-        path: recordRoute,
-        queryParameters: recordQueryParameters,
-      ).toString();
+    path: recordRoute,
+    queryParameters: recordQueryParameters,
+  ).toString();
 }

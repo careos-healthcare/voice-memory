@@ -11,7 +11,8 @@ import 'dart:async';
 /// Archive section — evidence-backed "Your Story So Far" narrative.
 class YourStorySoFarSection extends StatefulWidget {
   const YourStorySoFarSection({
-    required this.entries, super.key,
+    required this.entries,
+    super.key,
     this.currentBelief,
     this.themeBaseline,
   });

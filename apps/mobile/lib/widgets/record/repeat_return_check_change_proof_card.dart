@@ -10,7 +10,10 @@ import 'package:flutter/material.dart';
 /// Change-over-time proof from user repeat return checks — ready state only.
 class RepeatReturnCheckChangeProofCard extends StatelessWidget {
   const RepeatReturnCheckChangeProofCard({
-    required this.proof, required this.entryCount, required this.surface, super.key,
+    required this.proof,
+    required this.entryCount,
+    required this.surface,
+    super.key,
     this.onRecordNext,
     this.showRecordNextCta = true,
   });
@@ -79,7 +82,9 @@ class RepeatReturnCheckChangeProofCard extends StatelessWidget {
                   tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                   foregroundColor: AppColors.accentPrimary,
                 ),
-                child: const Text(RepeatReturnCheckCopy.changeProofRecordNextCta),
+                child: const Text(
+                  RepeatReturnCheckCopy.changeProofRecordNextCta,
+                ),
               ),
             ),
           ],

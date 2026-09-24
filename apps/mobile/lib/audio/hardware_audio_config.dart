@@ -75,24 +75,22 @@ final class IOSAudioConfig implements HardwareAudioConfig {
     required bool likelySilent,
     String? portType,
     String? portName,
-  }) =>
-      MicCaptureInputHealth.shouldShowBuiltInSilentGuidance(
-        likelySilent: likelySilent,
-        portType: portType,
-        portName: portName,
-      );
+  }) => MicCaptureInputHealth.shouldShowBuiltInSilentGuidance(
+    likelySilent: likelySilent,
+    portType: portType,
+    portName: portName,
+  );
 
   @override
   String? captureInputRecommendation({
     required bool likelySilent,
     String? portType,
     String? portName,
-  }) =>
-      MicCaptureInputHealth.recommendation(
-        likelySilent: likelySilent,
-        portType: portType,
-        portName: portName,
-      );
+  }) => MicCaptureInputHealth.recommendation(
+    likelySilent: likelySilent,
+    portType: portType,
+    portName: portName,
+  );
 
   @override
   String? captureInputDebugLabel({String? portName, String? portType}) =>
@@ -137,16 +135,14 @@ final class AndroidAudioConfig implements HardwareAudioConfig {
     required bool likelySilent,
     String? portType,
     String? portName,
-  }) =>
-      false;
+  }) => false;
 
   @override
   String? captureInputRecommendation({
     required bool likelySilent,
     String? portType,
     String? portName,
-  }) =>
-      null;
+  }) => null;
 
   @override
   String? captureInputDebugLabel({String? portName, String? portType}) => null;

@@ -451,36 +451,43 @@ void main() {
       expect(InsightQualityNavigation.route, '/insight-quality');
     });
 
-    test('not quite feedback unlocks insight quality link at two entries', () async {
-      await ArchiveInsightFeedbackStore.record(
-        'beliefEvidence',
-        ArchiveInsightFeedbackChoice.notQuite,
-      );
-      final layout = _layout(_distinctWorkEntries(2));
-      expect(layout.showInsightQualityLink, isTrue);
-    });
+    test(
+      'not quite feedback unlocks insight quality link at two entries',
+      () async {
+        await ArchiveInsightFeedbackStore.record(
+          'beliefEvidence',
+          ArchiveInsightFeedbackChoice.notQuite,
+        );
+        final layout = _layout(_distinctWorkEntries(2));
+        expect(layout.showInsightQualityLink, isTrue);
+      },
+    );
 
-    test('correction note and hidden insight do not break quick actions', () async {
-      await ArchiveInsightFeedbackStore.record(
-        'beliefEvidence',
-        ArchiveInsightFeedbackChoice.notQuite,
-      );
-      await ArchiveInsightFeedbackStore.saveCorrectionNote(
-        'beliefEvidence',
-        'This felt more about hurry than pressure.',
-      );
-      await ArchiveInsightFeedbackStore.hide('contextInsight');
+    test(
+      'correction note and hidden insight do not break quick actions',
+      () async {
+        await ArchiveInsightFeedbackStore.record(
+          'beliefEvidence',
+          ArchiveInsightFeedbackChoice.notQuite,
+        );
+        await ArchiveInsightFeedbackStore.saveCorrectionNote(
+          'beliefEvidence',
+          'This felt more about hurry than pressure.',
+        );
+        await ArchiveInsightFeedbackStore.hide('contextInsight');
 
-      final quickActions = _quickActions(_distinctWorkEntries(3));
-      expect(quickActions.showCard, isTrue);
-      expect(
-        quickActions.actions.any(
-          (action) =>
-              action.kind == ArchiveWorkspaceQuickActionKind.reviewCorrections,
-        ),
-        isTrue,
-      );
-    });
+        final quickActions = _quickActions(_distinctWorkEntries(3));
+        expect(quickActions.showCard, isTrue);
+        expect(
+          quickActions.actions.any(
+            (action) =>
+                action.kind ==
+                ArchiveWorkspaceQuickActionKind.reviewCorrections,
+          ),
+          isTrue,
+        );
+      },
+    );
   });
 
   group('Archive workspace share-safe privacy', () {

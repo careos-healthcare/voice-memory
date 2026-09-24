@@ -14,14 +14,18 @@ import 'package:flutter/material.dart';
 /// Post-save helped tracking question — user-reported evidence only.
 class HelpedTrackingCard extends StatefulWidget {
   const HelpedTrackingCard({
-    required this.prompt, required this.source, super.key,
+    required this.prompt,
+    required this.source,
+    super.key,
     this.store,
     this.skipPrefsLoad = false,
     this.onChanged,
   });
 
   const HelpedTrackingCard.test({
-    required this.prompt, required this.source, super.key,
+    required this.prompt,
+    required this.source,
+    super.key,
     this.store,
     this.onChanged,
   }) : skipPrefsLoad = true;

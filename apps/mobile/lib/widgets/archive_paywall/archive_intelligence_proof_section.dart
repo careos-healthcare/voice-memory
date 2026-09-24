@@ -13,7 +13,9 @@ import 'dart:async';
 /// Value proof above paywall CTAs — real theme / theory / change counts only.
 class ArchiveIntelligenceProofSection extends StatefulWidget {
   const ArchiveIntelligenceProofSection({
-    required this.stats, required this.surface, super.key,
+    required this.stats,
+    required this.surface,
+    super.key,
     this.compact = false,
   });
 
@@ -45,13 +47,15 @@ class _ArchiveIntelligenceProofSectionState
   void _logSeenIfNeeded(ArchiveIntelligenceProofView proof) {
     if (_seenLogged) return;
     _seenLogged = true;
-    unawaited(ArchiveIntelligenceProofAnalytics.paywallProofSeen(
-      surface: widget.surface,
-      usedFallback: proof.useFallback,
-      themeCount: proof.recurringThemeCount,
-      theoryCount: proof.activeTheoryCount,
-      changeCount: proof.changeCount,
-    ));
+    unawaited(
+      ArchiveIntelligenceProofAnalytics.paywallProofSeen(
+        surface: widget.surface,
+        usedFallback: proof.useFallback,
+        themeCount: proof.recurringThemeCount,
+        theoryCount: proof.activeTheoryCount,
+        changeCount: proof.changeCount,
+      ),
+    );
   }
 
   @override
@@ -100,7 +104,8 @@ class _ArchiveIntelligenceProofSectionState
 /// Loads journal + Archive V1 and renders [ArchiveIntelligenceProofSection].
 class ArchiveIntelligenceProofLoader extends StatefulWidget {
   const ArchiveIntelligenceProofLoader({
-    required this.surface, super.key,
+    required this.surface,
+    super.key,
     this.compact = false,
   });
 

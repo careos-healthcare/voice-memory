@@ -10,12 +10,16 @@ import 'package:flutter/material.dart';
 /// Positions ArchiveMe as a timeline, not a chat — no subscription CTA.
 class TimelinePositioningCard extends StatefulWidget {
   const TimelinePositioningCard({
-    required this.result, required this.source, super.key,
+    required this.result,
+    required this.source,
+    super.key,
     this.compact = false,
   });
 
   const TimelinePositioningCard.test({
-    required this.result, required this.source, super.key,
+    required this.result,
+    required this.source,
+    super.key,
     this.compact = false,
   });
 

@@ -20,7 +20,15 @@ class CapturePipelineFailure implements Exception {
   String toString() => message;
 }
 
-enum PipelineStage { attesting, transcribing, analyzing, saving, done }
+enum PipelineStage {
+  downloadingLocalModel,
+  processingOnDevice,
+  attesting,
+  transcribing,
+  analyzing,
+  saving,
+  done,
+}
 
 /// Broadcast snapshot of capture pipeline progression.
 class PipelineState {
@@ -62,9 +70,11 @@ class CapturePipelineResult {
 typedef PipelineSuccess = CapturePipelineResult;
 
 /// Functional result for capture pipeline operations.
-typedef CapturePipelineOutcome = Either<CapturePipelineFailure, PipelineSuccess>;
+typedef CapturePipelineOutcome =
+    Either<CapturePipelineFailure, PipelineSuccess>;
 
-typedef PostSaveMomentDetailOutcome = Either<CapturePipelineFailure, JournalEntry>;
+typedef PostSaveMomentDetailOutcome =
+    Either<CapturePipelineFailure, JournalEntry>;
 
 Left<CapturePipelineFailure, PipelineSuccess> pipelineFailure(
   CapturePipelineFailure failure,
@@ -80,11 +90,12 @@ extension CapturePipelineOutcomeX on CapturePipelineOutcome {
     (success) => success,
   );
 
-  Future<void> whenFailed(void Function(CapturePipelineFailure failure) action) =>
-      match(
-        (failure) async => action(failure),
-        (_) async {},
-      );
+  Future<void> whenFailed(
+    void Function(CapturePipelineFailure failure) action,
+  ) => match(
+    (failure) async => action(failure),
+    (_) async {},
+  );
 }
 
 extension PostSaveMomentDetailOutcomeX on PostSaveMomentDetailOutcome {

@@ -12,19 +12,40 @@ class HybridSearchEngine {
     ImageAttachmentEmbeddingRepository? imageRepository,
     ReciprocalRankFusion? fusion,
     bool? vectorFusionEnabled,
+    int defaultCandidateLimit = 50,
   }) : _repository = repository,
        _imageRepository = imageRepository,
        _fusion = fusion ?? const ReciprocalRankFusion(),
-       _vectorFusionEnabled = vectorFusionEnabled;
+       _vectorFusionEnabled = vectorFusionEnabled,
+       _defaultCandidateLimit = defaultCandidateLimit;
+
+  /// Pins ranking knobs after the matching usage milestone is unlocked.
+  factory HybridSearchEngine.withHyperparameters({
+    required MemoryTranscriptSearchRepository repository,
+    ImageAttachmentEmbeddingRepository? imageRepository,
+    required int rrfK,
+    required int candidateLimit,
+    bool? vectorFusionEnabled,
+  }) {
+    return HybridSearchEngine(
+      repository: repository,
+      imageRepository: imageRepository,
+      fusion: ReciprocalRankFusion(k: rrfK),
+      defaultCandidateLimit: candidateLimit,
+      vectorFusionEnabled: vectorFusionEnabled,
+    );
+  }
 
   final MemoryTranscriptSearchRepository _repository;
   final ImageAttachmentEmbeddingRepository? _imageRepository;
   final ReciprocalRankFusion _fusion;
+  final int _defaultCandidateLimit;
 
   /// Null means "ask [SemanticVectorFusion]"; a value pins it for one engine.
   final bool? _vectorFusionEnabled;
 
-  bool get _fuseVectorLeg => _vectorFusionEnabled ?? SemanticVectorFusion.enabled;
+  bool get _fuseVectorLeg =>
+      _vectorFusionEnabled ?? SemanticVectorFusion.enabled;
 
   /// Runs keyword + vector retrieval asynchronously and merges with RRF.
   ///
@@ -35,13 +56,15 @@ class HybridSearchEngine {
     String? keywordQuery,
     List<double>? queryEmbedding,
     int limit = 20,
-    int candidateLimit = 50,
+    int? candidateLimit,
   }) async {
     if (limit <= 0) return const [];
+    final resolvedCandidateLimit = candidateLimit ?? _defaultCandidateLimit;
 
     final trimmedKeyword = keywordQuery?.trim() ?? '';
     final hasKeyword = trimmedKeyword.isNotEmpty;
-    final hasTranscriptVector = queryEmbedding != null &&
+    final hasTranscriptVector =
+        queryEmbedding != null &&
         queryEmbedding.length == localTranscriptEmbeddingDimensions;
 
     // Fusing a leg the encoder cannot rank meaningfully does not dilute the
@@ -50,7 +73,7 @@ class HybridSearchEngine {
     if (hasKeyword && hasTranscriptVector && !_fuseVectorLeg) {
       final keywordIds = await _repository.keywordSearch(
         query: trimmedKeyword,
-        limit: candidateLimit,
+        limit: resolvedCandidateLimit,
       );
       return _hitsFromSingleList(keywordIds, limit, keywordRank: true);
     }
@@ -60,20 +83,23 @@ class HybridSearchEngine {
         keywordQuery: trimmedKeyword,
         queryEmbedding: queryEmbedding,
         limit: limit,
-        candidateLimit: candidateLimit,
+        candidateLimit: resolvedCandidateLimit,
         rrfK: _fusion.k,
       );
     }
 
     final keywordFuture = hasKeyword
-        ? _repository.keywordSearch(query: trimmedKeyword, limit: candidateLimit)
+        ? _repository.keywordSearch(
+            query: trimmedKeyword,
+            limit: resolvedCandidateLimit,
+          )
         : Future<List<String>>.value(const []);
     final vectorFuture = () {
       if (queryEmbedding == null) return Future<List<String>>.value(const []);
       if (queryEmbedding.length == localTranscriptEmbeddingDimensions) {
         return _vectorSearch(
           queryEmbedding: queryEmbedding,
-          limit: candidateLimit,
+          limit: resolvedCandidateLimit,
         );
       }
       final imageRepo = _imageRepository;
@@ -81,7 +107,7 @@ class HybridSearchEngine {
           queryEmbedding.length == imageEmbeddingDimensions) {
         return imageRepo.vectorSearchByEntry(
           queryEmbedding: queryEmbedding,
-          limit: candidateLimit,
+          limit: resolvedCandidateLimit,
         );
       }
       return Future<List<String>>.value(const []);
@@ -104,7 +130,7 @@ class HybridSearchEngine {
       keywordQuery: trimmedKeyword,
       queryEmbedding: queryEmbedding!,
       limit: limit,
-      candidateLimit: candidateLimit,
+      candidateLimit: resolvedCandidateLimit,
       rrfK: _fusion.k,
     );
   }

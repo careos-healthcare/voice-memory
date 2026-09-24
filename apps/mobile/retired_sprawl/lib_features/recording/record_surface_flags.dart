@@ -1,4 +1,5 @@
-import 'package:archiveme_mobile/features/recording/recording_dependencies.dart' show BuildContext;
+import 'package:archiveme_mobile/features/recording/recording_dependencies.dart'
+    show BuildContext;
 import 'package:archiveme_mobile/features/voice_capture/record_microphone_permission_ui.dart';
 import 'package:flutter/cupertino.dart' show BuildContext;
 import 'package:flutter/material.dart' show BuildContext;
@@ -43,10 +44,7 @@ final class RecordSurfaceFlags {
   final bool isError;
 
   bool get showFraming =>
-      isReady ||
-      isIdle ||
-      isRequestingPermission ||
-      isPermissionBlocked;
+      isReady || isIdle || isRequestingPermission || isPermissionBlocked;
 
   bool get canRecord =>
       (isReady || isRecording) &&

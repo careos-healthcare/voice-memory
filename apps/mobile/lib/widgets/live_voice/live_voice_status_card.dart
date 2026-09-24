@@ -6,7 +6,9 @@ import 'package:flutter/material.dart';
 
 class LiveVoiceStatusCard extends StatelessWidget {
   const LiveVoiceStatusCard({
-    required this.visualState, required this.seconds, super.key,
+    required this.visualState,
+    required this.seconds,
+    super.key,
     this.playbackQueueDepth = 0,
   });
 

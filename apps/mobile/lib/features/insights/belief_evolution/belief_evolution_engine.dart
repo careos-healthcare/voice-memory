@@ -41,7 +41,8 @@ class BeliefEvolutionInsightEngine {
             id: 'evo-strong-${item.title}',
             statement: _titleCase(item.title),
             direction: BeliefEvolutionDirection.strengthening,
-            summary: 'This may be changing — mentions of this pattern appear more often in recent entries.',
+            summary:
+                'This may be changing — mentions of this pattern appear more often in recent entries.',
             detail: item.detail,
             entries: eligible,
           ),
@@ -53,7 +54,8 @@ class BeliefEvolutionInsightEngine {
             id: 'evo-weak-${item.title}',
             statement: _titleCase(item.title),
             direction: BeliefEvolutionDirection.weakening,
-            summary: 'This may be changing — mentions of this pattern appear less often recently.',
+            summary:
+                'This may be changing — mentions of this pattern appear less often recently.',
             detail: item.detail,
             entries: eligible,
           ),
@@ -65,7 +67,8 @@ class BeliefEvolutionInsightEngine {
             id: 'evo-new-${item.title}',
             statement: _titleCase(item.title),
             direction: BeliefEvolutionDirection.emerging,
-            summary: 'Your archive noticed a pattern that may be emerging in recent entries.',
+            summary:
+                'Your archive noticed a pattern that may be emerging in recent entries.',
             detail: item.detail,
             entries: eligible,
           ),
@@ -221,22 +224,19 @@ class BeliefEvolutionInsightEngine {
     required String detail,
     required List<JournalEntry> entries,
   }) {
-    final evidence = entries
-        .take(4)
-        .map(
-          (e) {
-            final rawQuote = archiveQuotableStatementText(e) ?? '';
-            return InsightEvidenceLine(
-              entryId: e.id,
-              quote: FactLedgerCitationService.resolve(
-                entryId: e.id,
-                fallback: rawQuote,
-              ),
-              recordedAt: e.createdAt,
-            );
-          },
-        )
-        .toList();
+    final evidence = entries.take(4).map(
+      (e) {
+        final rawQuote = archiveQuotableStatementText(e) ?? '';
+        return InsightEvidenceLine(
+          entryId: e.id,
+          quote: FactLedgerCitationService.resolve(
+            entryId: e.id,
+            fallback: rawQuote,
+          ),
+          recordedAt: e.createdAt,
+        );
+      },
+    ).toList();
     final dates = evidence.map((e) => e.recordedAt).toList()..sort();
     final record = TrackedBeliefRecord(
       beliefId: id,

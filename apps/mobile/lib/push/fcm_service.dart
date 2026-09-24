@@ -87,9 +87,7 @@ class FcmService {
       FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
 
       final messaging = _messaging!;
-      final settings = await messaging.requestPermission(
-        
-      );
+      final settings = await messaging.requestPermission();
       final granted =
           settings.authorizationStatus == AuthorizationStatus.authorized ||
           settings.authorizationStatus == AuthorizationStatus.provisional;

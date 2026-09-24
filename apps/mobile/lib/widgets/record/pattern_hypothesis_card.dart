@@ -10,7 +10,11 @@ import 'package:flutter/material.dart';
 /// Working hypothesis card after 2+ recordings.
 class PatternHypothesisCard extends StatelessWidget {
   const PatternHypothesisCard({
-    required this.hypothesis, required this.onFeelsRight, required this.onNotMe, required this.onRecordNext, super.key,
+    required this.hypothesis,
+    required this.onFeelsRight,
+    required this.onNotMe,
+    required this.onRecordNext,
+    super.key,
     this.onViewArchive,
   });
 

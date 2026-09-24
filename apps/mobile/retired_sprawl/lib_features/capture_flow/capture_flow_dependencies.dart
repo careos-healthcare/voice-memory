@@ -38,7 +38,9 @@ class CaptureFlowDependencies {
     RoutineAnchorLoader? routineAnchors,
     TranscriptionCapabilityPort? transcriptionCapability,
   }) {
-    final consentPolicy = StoreRemoteConsentPolicy(account.pipeline.consentStore);
+    final consentPolicy = StoreRemoteConsentPolicy(
+      account.pipeline.consentStore,
+    );
     return CaptureFlowDependencies(
       audio: audio ?? RecordingServiceAudioAdapter(account.recording),
       moments: PipelineLocalMomentRepository(
@@ -48,16 +50,17 @@ class CaptureFlowDependencies {
       consent: consentPolicy,
       transcription: PipelineRemoteTranscriptionGateway(consentPolicy),
       reflection: PipelineRemoteReflectionGateway(consentPolicy),
-      recovery:
-          recovery ?? PrefsPendingCaptureRecoveryStore(account.prefs),
+      recovery: recovery ?? PrefsPendingCaptureRecoveryStore(account.prefs),
       telemetry: telemetry ?? RecordPipelineCaptureTelemetry(),
-      transcriptCorrection: transcriptCorrection ??
+      transcriptCorrection:
+          transcriptCorrection ??
           JournalTranscriptCorrectionAdapter(account.journalStore),
-      routinePrompts: routinePrompts ??
+      routinePrompts:
+          routinePrompts ??
           AppRoutinePromptAdapter(journalStore: account.journalStore),
-      routineAnchors: routineAnchors ??
-          PrefsRoutineAnchorLoader(account.prefs),
-      transcriptionCapability: transcriptionCapability ??
+      routineAnchors: routineAnchors ?? PrefsRoutineAnchorLoader(account.prefs),
+      transcriptionCapability:
+          transcriptionCapability ??
           StoreTranscriptionCapabilityPolicy(
             consentStore: account.pipeline.consentStore,
             choiceStore: LocalTranscriptionChoiceStore(account.prefs),

@@ -81,26 +81,24 @@ abstract class ArchiveInsightMapper {
   }
 
   static ArchiveInsight fromPrediction(PredictionInsight p) {
-    final lines = p.supportingEvents
-        .map(
-          (e) {
-            final trigger = FactLedgerCitationService.resolve(
-              entryId: e.triggerEntryId,
-              fallback: e.triggerQuote,
-            );
-            final outcome = FactLedgerCitationService.resolve(
-              entryId: e.outcomeEntryId,
-              fallback: e.outcomeQuote,
-            );
-            return InsightEvidenceLine(
-              entryId: e.outcomeEntryId,
-              quote: '$trigger → $outcome',
-              recordedAt: e.recordedAt,
-              label: 'Moment',
-            );
-          },
-        )
-        .toList();
+    final lines = p.supportingEvents.map(
+      (e) {
+        final trigger = FactLedgerCitationService.resolve(
+          entryId: e.triggerEntryId,
+          fallback: e.triggerQuote,
+        );
+        final outcome = FactLedgerCitationService.resolve(
+          entryId: e.outcomeEntryId,
+          fallback: e.outcomeQuote,
+        );
+        return InsightEvidenceLine(
+          entryId: e.outcomeEntryId,
+          quote: '$trigger → $outcome',
+          recordedAt: e.recordedAt,
+          label: 'Moment',
+        );
+      },
+    ).toList();
 
     return ArchiveInsight(
       id: p.id,

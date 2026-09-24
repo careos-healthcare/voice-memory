@@ -11,7 +11,8 @@ import 'package:flutter/material.dart';
 /// Pro-gated export for the prove_enough personal pattern report.
 class ProveEnoughPatternReportExportButton extends StatefulWidget {
   const ProveEnoughPatternReportExportButton({
-    required this.isPro, super.key,
+    required this.isPro,
+    super.key,
     this.initialReport,
     this.onSeePro,
     this.onExport,

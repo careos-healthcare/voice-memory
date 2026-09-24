@@ -9,7 +9,8 @@ import 'package:flutter/material.dart';
 /// Opens Evidence Trail V1 for an insight ref or custom trail opener.
 class WhyAmISeeingThisButton extends StatelessWidget {
   const WhyAmISeeingThisButton({
-    required this.onPressed, super.key,
+    required this.onPressed,
+    super.key,
     this.compact = false,
     this.onDark = false,
   });
@@ -47,7 +48,8 @@ class WhyAmISeeingThisButton extends StatelessWidget {
 /// Standard insight ref → evidence sheet.
 class WhyAmISeeingThisForInsight extends StatelessWidget {
   const WhyAmISeeingThisForInsight({
-    required this.ref, super.key,
+    required this.ref,
+    super.key,
     this.entries,
     this.state,
     this.surface = 'insight',

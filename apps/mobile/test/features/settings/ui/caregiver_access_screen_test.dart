@@ -94,14 +94,22 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.byKey(CaregiverAccessScreen.screenKey), findsOneWidget);
-      expect(find.byKey(const Key('caregiver_access_control_callout')),
-          findsOneWidget);
+      expect(
+        find.byKey(const Key('caregiver_access_control_callout')),
+        findsOneWidget,
+      );
       expect(find.text(CaregiverAccessCopy.controlHeading), findsOneWidget);
       expect(find.text(CaregiverAccessCopy.canSeeHeading), findsOneWidget);
       expect(find.text(CaregiverAccessCopy.cannotSeeHeading), findsOneWidget);
-      expect(find.text(CaregiverAccessCopy.caregiverCanSeeTitle), findsOneWidget);
+      expect(
+        find.text(CaregiverAccessCopy.caregiverCanSeeTitle),
+        findsOneWidget,
+      );
       expect(find.text(CaregiverAccessCopy.coachCanSeeTitle), findsOneWidget);
-      expect(find.text(CaregiverAccessCopy.caregiverCanSeeBody), findsOneWidget);
+      expect(
+        find.text(CaregiverAccessCopy.caregiverCanSeeBody),
+        findsOneWidget,
+      );
       expect(find.text(CaregiverAccessCopy.coachCanSeeBody), findsOneWidget);
       expect(
         find.textContaining(CaregiverGrantCopy.canSeeRecent),
@@ -115,7 +123,9 @@ void main() {
       expect(find.text('coach-ada'), findsOneWidget);
       expect(find.text(CaregiverAccessCopy.revokeAccessCta), findsNWidgets(2));
 
-      await tester.tap(find.byKey(const Key('caregiver_access_revoke_grant-1')));
+      await tester.tap(
+        find.byKey(const Key('caregiver_access_revoke_grant-1')),
+      );
       await tester.pumpAndSettle();
 
       expect(service.revoked, ['grant-1']);
@@ -130,8 +140,8 @@ void main() {
       // Privacy & Security screen links here instead of mounting that widget,
       // this path is the only one left, so the funnel has to survive here.
       final events = <String, Map<String, Object>>{};
-      PrivacySecurityEngagementAnalytics.captureForTest =
-          (event, properties) => events[event] = properties;
+      PrivacySecurityEngagementAnalytics.captureForTest = (event, properties) =>
+          events[event] = properties;
       addTearDown(
         () => PrivacySecurityEngagementAnalytics.captureForTest = null,
       );
@@ -188,8 +198,10 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.byKey(const Key('caregiver_access_grants_empty')),
-          findsOneWidget);
+      expect(
+        find.byKey(const Key('caregiver_access_grants_empty')),
+        findsOneWidget,
+      );
     });
 
     testWidgets('names only the roles the app constructs', (tester) async {
@@ -268,44 +280,48 @@ void main() {
       expect(boundaries, isNot(contains('export')));
     });
 
-    testWidgets('links out to the consent audit trail rather than absorbing it',
-        (tester) async {
-      final service = _StubMultiPartyAccessService(grants: const []);
-      final router = GoRouter(
-        initialLocation: '/caregiver-access',
-        routes: [
-          GoRoute(
-            path: '/caregiver-access',
-            builder: (context, state) =>
-                CaregiverAccessScreen(accessService: service),
-          ),
-          GoRoute(
-            path: '/consent-audit',
-            builder: (context, state) => const Scaffold(
-              key: Key('consent_audit_screen_stub'),
-              body: Text('Consent audit'),
+    testWidgets(
+      'links out to the consent audit trail rather than absorbing it',
+      (tester) async {
+        final service = _StubMultiPartyAccessService(grants: const []);
+        final router = GoRouter(
+          initialLocation: '/caregiver-access',
+          routes: [
+            GoRoute(
+              path: '/caregiver-access',
+              builder: (context, state) =>
+                  CaregiverAccessScreen(accessService: service),
             ),
+            GoRoute(
+              path: '/consent-audit',
+              builder: (context, state) => const Scaffold(
+                key: Key('consent_audit_screen_stub'),
+                body: Text('Consent audit'),
+              ),
+            ),
+          ],
+        );
+
+        useTallSurface(tester);
+        await tester.pumpWidget(
+          withAppProviderScope(
+            MaterialApp.router(theme: AppTheme.light(), routerConfig: router),
           ),
-        ],
-      );
+        );
+        await tester.pumpAndSettle();
 
-      useTallSurface(tester);
-      await tester.pumpWidget(
-        withAppProviderScope(
-          MaterialApp.router(theme: AppTheme.light(), routerConfig: router),
-        ),
-      );
-      await tester.pumpAndSettle();
+        final link = find.byKey(
+          const Key('caregiver_access_consent_audit_link'),
+        );
+        expect(link, findsOneWidget);
+        await tester.tap(link);
+        await tester.pumpAndSettle();
 
-      final link = find.byKey(const Key('caregiver_access_consent_audit_link'));
-      expect(link, findsOneWidget);
-      await tester.tap(link);
-      await tester.pumpAndSettle();
-
-      expect(
-        find.byKey(const Key('consent_audit_screen_stub')),
-        findsOneWidget,
-      );
-    });
+        expect(
+          find.byKey(const Key('consent_audit_screen_stub')),
+          findsOneWidget,
+        );
+      },
+    );
   });
 }

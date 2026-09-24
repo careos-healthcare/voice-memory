@@ -7,7 +7,8 @@ import 'package:archiveme_mobile/features/pressure_retention/daily_return_sugges
 import 'package:archiveme_mobile/features/pressure_retention/shareable_archive_proof_model.dart';
 import 'package:archiveme_mobile/features/record/record_stack_policy.dart';
 import 'package:archiveme_mobile/features/recording/record_surface_flags.dart';
-import 'package:archiveme_mobile/features/recording/record_surface_resolver.dart' show RecordSurfaceResolver;
+import 'package:archiveme_mobile/features/recording/record_surface_resolver.dart'
+    show RecordSurfaceResolver;
 import 'package:archiveme_mobile/features/recording/record_user_pro_state.dart';
 import 'package:archiveme_mobile/features/retention/second_session_signal_model.dart';
 import 'package:archiveme_mobile/features/voice_capture/microphone_permission_state.dart';

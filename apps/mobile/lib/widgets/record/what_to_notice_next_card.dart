@@ -9,12 +9,14 @@ import 'package:flutter/material.dart';
 /// Read-only observation guidance — optional prompt line only, no routing.
 class WhatToNoticeNextCard extends StatefulWidget {
   const WhatToNoticeNextCard({
-    required this.result, super.key,
+    required this.result,
+    super.key,
     this.onPromptSelected,
   });
 
   const WhatToNoticeNextCard.test({
-    required this.result, super.key,
+    required this.result,
+    super.key,
     this.onPromptSelected,
   });
 

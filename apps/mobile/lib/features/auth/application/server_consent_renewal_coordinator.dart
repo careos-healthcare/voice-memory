@@ -48,8 +48,7 @@ class ServerConsentRenewalCoordinator {
 
   static ServerConsentRenewalCoordinator? _override;
 
-  static ServerConsentRenewalCoordinator get instance =>
-      _override ?? _shared;
+  static ServerConsentRenewalCoordinator get instance => _override ?? _shared;
 
   @visibleForTesting
   static set instance(ServerConsentRenewalCoordinator value) =>

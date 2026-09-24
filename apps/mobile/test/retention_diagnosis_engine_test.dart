@@ -14,7 +14,13 @@ Future<void> _reset(String stamp) async {
 void main() {
   test('identifies didNotReturn when return rate is low', () {
     final diagnosis = diagnoseRetentionFromEvents(
-      ActivationEventCounts.fromMap({'firstReflectionSaved': 10, 'tomorrowCheckInCreated': 10, 'returnedNextDay': 2, 'tomorrowCheckInCompleted': 2, 'resultNextCheckUsed': 2,}),
+      ActivationEventCounts.fromMap({
+        'firstReflectionSaved': 10,
+        'tomorrowCheckInCreated': 10,
+        'returnedNextDay': 2,
+        'tomorrowCheckInCompleted': 2,
+        'resultNextCheckUsed': 2,
+      }),
     );
     expect(
       diagnosis.weakestRetentionBucket,
@@ -25,7 +31,13 @@ void main() {
 
   test('identifies didNotChooseNextCheck when next check rate is low', () {
     final diagnosis = diagnoseRetentionFromEvents(
-      ActivationEventCounts.fromMap({'firstReflectionSaved': 10, 'tomorrowCheckInCreated': 10, 'returnedNextDay': 10, 'tomorrowCheckInCompleted': 10, 'resultNextCheckUsed': 2,}),
+      ActivationEventCounts.fromMap({
+        'firstReflectionSaved': 10,
+        'tomorrowCheckInCreated': 10,
+        'returnedNextDay': 10,
+        'tomorrowCheckInCompleted': 10,
+        'resultNextCheckUsed': 2,
+      }),
     );
     expect(
       diagnosis.weakestRetentionBucket,
@@ -39,7 +51,16 @@ void main() {
     await _reset(stamp);
     final store = ActivationEventsStore(AppServices.instance.prefs);
     await store.write(
-      ActivationEventCounts.fromMap({'retentionStateShown': 3, 'retentionDueShown': 1, 'retentionCheckSetShown': 2, 'retentionLoopClosedShown': 1, 'retentionPrimaryCtaTapped': 2, 'retentionNextCheckReady': 1, 'retentionMissedCheck': 1, 'reminderScheduledFromRetention': 1,}),
+      ActivationEventCounts.fromMap({
+        'retentionStateShown': 3,
+        'retentionDueShown': 1,
+        'retentionCheckSetShown': 2,
+        'retentionLoopClosedShown': 1,
+        'retentionPrimaryCtaTapped': 2,
+        'retentionNextCheckReady': 1,
+        'retentionMissedCheck': 1,
+        'reminderScheduledFromRetention': 1,
+      }),
     );
 
     final summary = await const TrialSummaryEngine().build();

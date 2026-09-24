@@ -42,7 +42,11 @@ abstract class ArchiveFeedbackCoordinator {
       await _store().save(feedback);
       ActivationTracker.trackArchiveFeedbackSelected(type);
     } catch (e, stackTrace) {
-      AppLogger.error('Unhandled error caught', error: e, stackTrace: stackTrace);
+      AppLogger.error(
+        'Unhandled error caught',
+        error: e,
+        stackTrace: stackTrace,
+      );
       // Best-effort only.
     }
   }

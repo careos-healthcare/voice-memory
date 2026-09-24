@@ -36,7 +36,9 @@ abstract class CleanSlatePromptCopy {
 /// Compact prompt when recent archive context may not fit this entry.
 class CleanSlatePromptCard extends StatelessWidget {
   const CleanSlatePromptCard({
-    required this.decision, required this.entryCount, super.key,
+    required this.decision,
+    required this.entryCount,
+    super.key,
     this.cardType = MemoryCardType.threadReturn,
     this.source = 'record',
     this.onChanged,

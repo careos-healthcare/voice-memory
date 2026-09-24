@@ -14,7 +14,10 @@ import 'dart:async';
 /// Major payoff when a repeat meaningfully changes — evidence, not advice.
 class PatternChangedCard extends StatefulWidget {
   const PatternChangedCard({
-    required this.result, required this.entryCount, required this.surface, super.key,
+    required this.result,
+    required this.entryCount,
+    required this.surface,
+    super.key,
     this.showRecordCta = true,
     this.onRecord,
     this.onDismissed,
@@ -24,7 +27,10 @@ class PatternChangedCard extends StatefulWidget {
   });
 
   const PatternChangedCard.test({
-    required this.result, required this.entryCount, required this.surface, super.key,
+    required this.result,
+    required this.entryCount,
+    required this.surface,
+    super.key,
     this.showRecordCta = true,
     this.onRecord,
     this.onDismissed,

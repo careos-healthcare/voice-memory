@@ -1,7 +1,8 @@
 import 'package:archiveme_mobile/features/clinical_sandbox/config/clinical_sandbox_feature_flags.dart';
 import 'package:archiveme_mobile/features/clinical_sandbox/gates/clinical_consent_gate.dart';
 import 'package:archiveme_mobile/features/clinical_sandbox/stores/clinical_consent_store.dart';
-import 'package:archiveme_mobile/features/recording/recording_dependencies.dart' show AppServices;
+import 'package:archiveme_mobile/features/recording/recording_dependencies.dart'
+    show AppServices;
 import 'package:archiveme_mobile/services/app_services.dart' show AppServices;
 import 'package:meta/meta.dart';
 

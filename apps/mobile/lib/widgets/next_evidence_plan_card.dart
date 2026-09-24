@@ -20,7 +20,9 @@ import 'dart:async';
 /// Compact next-evidence plan for Archive Home — computed locally, no journal writes.
 class NextEvidencePlanCard extends StatefulWidget {
   const NextEvidencePlanCard({
-    required this.entryCount, required this.entries, super.key,
+    required this.entryCount,
+    required this.entries,
+    super.key,
     this.onAddMoment,
     this.onReviewWatchlist,
     this.watchlistStore,
@@ -31,7 +33,10 @@ class NextEvidencePlanCard extends StatefulWidget {
   });
 
   const NextEvidencePlanCard.test({
-    required this.entryCount, required this.entries, required this._initialWatchlistItems, super.key,
+    required this.entryCount,
+    required this.entries,
+    required this._initialWatchlistItems,
+    super.key,
     this._initialReturnRitual,
     this.onAddMoment,
     this.onReviewWatchlist,

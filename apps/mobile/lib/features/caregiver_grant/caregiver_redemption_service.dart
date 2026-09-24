@@ -34,7 +34,8 @@ class CaregiverRedemptionService {
   ) async {
     final ConsentRedeemResponseDto response;
     try {
-      final VoiceMemoryConsentApi api = _api ??
+      final VoiceMemoryConsentApi api =
+          _api ??
           appProviderContainer.read(voiceMemoryConsentRetrofitApiProvider);
       response = await api.redeemToken(body);
     } on DioException catch (error) {
@@ -69,8 +70,7 @@ class CaregiverRedemptionService {
         'Too many incorrect attempts. Ask them to send a new invitation.',
       'REDEMPTION_CODE_MISMATCH' =>
         "That code doesn't match. Double-check and try again.",
-      'REDEMPTION_ALREADY_USED' =>
-        'This invitation has already been used.',
+      'REDEMPTION_ALREADY_USED' => 'This invitation has already been used.',
       'REDEMPTION_GRANT_REVOKED' =>
         'Access to this archive has been turned off.',
       _ => 'Something went wrong. Please try again.',

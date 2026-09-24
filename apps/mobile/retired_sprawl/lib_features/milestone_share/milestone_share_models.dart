@@ -47,7 +47,10 @@ class MilestoneShareInput {
     required this.firstWeekComplete,
     required this.hasWatchTheme,
     required this.weeklyReviewAvailable,
-    required this.hasRepeatingTheme, required this.thenVsNowAvailable, required this.archiveCalendarActiveAcrossDays, this.weeklyReviewCompleted = false,
+    required this.hasRepeatingTheme,
+    required this.thenVsNowAvailable,
+    required this.archiveCalendarActiveAcrossDays,
+    this.weeklyReviewCompleted = false,
     this.sampleMode = false,
   });
 

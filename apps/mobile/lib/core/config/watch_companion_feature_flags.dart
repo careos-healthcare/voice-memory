@@ -29,6 +29,5 @@ abstract final class WatchCompanionFeatureFlags {
   @visibleForTesting
   static bool? debugOverride;
 
-  static bool get enableWatchCompanion =>
-      debugOverride ?? _compileTimeDefault;
+  static bool get enableWatchCompanion => debugOverride ?? _compileTimeDefault;
 }

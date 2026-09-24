@@ -44,8 +44,7 @@ class LiveVoiceCaptureService implements Listenable, LiveVoiceTelemetrySource {
            playback ??
            playbackProviderContainer.read(playbackServiceProvider.notifier),
        _transcripts = transcriptCollector ?? LiveAudioTranscriptCollector(),
-       _pipelineFactory =
-           pipelineFactory ?? IsolateAudioPipeline.new,
+       _pipelineFactory = pipelineFactory ?? IsolateAudioPipeline.new,
        _localVault = offlineAudioVault ?? LocalAudioVault(),
        _recoveryStore = recoveryStore ?? OfflineVaultRecoveryStore() {
     _controller.addListener(_emitDiagnostics);

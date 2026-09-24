@@ -12,7 +12,8 @@ import 'package:archiveme_mobile/services/local_llm/local_llm_types.dart';
 /// This service never performs network I/O — all inference runs on-device through
 /// [LocalLlmService] and the llama.cpp worker isolate.
 final class AudioStructuringService {
-  AudioStructuringService({required LocalLlmService localLlm}) : _localLlm = localLlm;
+  AudioStructuringService({required LocalLlmService localLlm})
+    : _localLlm = localLlm;
 
   static const structuringMaxTokens = 384;
 
@@ -52,7 +53,9 @@ final class AudioStructuringService {
     return _runOffline(() => _structureTranscript(rawTranscript));
   }
 
-  Future<AudioStructuringResult> _structureTranscript(String rawTranscript) async {
+  Future<AudioStructuringResult> _structureTranscript(
+    String rawTranscript,
+  ) async {
     if (!_localLlm.isLoaded) {
       throw AudioStructuringException('Local LLM is not loaded.');
     }
@@ -64,7 +67,9 @@ final class AudioStructuringService {
       );
     }
 
-    final chatMlPrompt = AudioStructuringPrompt.buildChatMlPrompt(verdict.normalized);
+    final chatMlPrompt = AudioStructuringPrompt.buildChatMlPrompt(
+      verdict.normalized,
+    );
     final completion = await _localLlm.complete(
       LocalLlmCompletionRequest(
         prompt: chatMlPrompt,
@@ -75,7 +80,9 @@ final class AudioStructuringService {
 
     final structured = _sanitizeStructuredEntry(completion.text);
     if (structured.isEmpty) {
-      throw AudioStructuringException('Local LLM returned an empty structured entry.');
+      throw AudioStructuringException(
+        'Local LLM returned an empty structured entry.',
+      );
     }
 
     return AudioStructuringResult(
@@ -89,7 +96,10 @@ final class AudioStructuringService {
     var text = rawCompletion.trim();
     if (text.isEmpty) return '';
 
-    text = text.replaceAll(RegExp(r'<\|im_start\|>[\s\S]*?(?:<\|im_end\|>|$)'), '');
+    text = text.replaceAll(
+      RegExp(r'<\|im_start\|>[\s\S]*?(?:<\|im_end\|>|$)'),
+      '',
+    );
     text = text.replaceAll(RegExp(r'<\|im_end\|>'), '');
     text = text.replaceAll(RegExp(r'^assistant\s*:', caseSensitive: false), '');
     text = _stripMarkdownFence(text);

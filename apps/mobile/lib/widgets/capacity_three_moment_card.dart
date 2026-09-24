@@ -12,13 +12,15 @@ import 'dart:async';
 /// Archive Home card for the capacity 3-moment activation path.
 class CapacityThreeMomentCard extends StatelessWidget {
   const CapacityThreeMomentCard({
-    required this.result, super.key,
+    required this.result,
+    super.key,
     this.onPrimaryDismiss,
     this.sampleMode = false,
   });
 
   const CapacityThreeMomentCard.test({
-    required this.result, super.key,
+    required this.result,
+    super.key,
     this.onPrimaryDismiss,
     this.sampleMode = false,
   });

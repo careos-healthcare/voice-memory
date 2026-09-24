@@ -9,7 +9,8 @@ abstract final class PrivacyDataControlsCopy {
 
   static const sectionTitle = 'Privacy & data';
 
-  static const String dataStaysOnDeviceTitle = PrivacyCopyPolicy.privateByDefault;
+  static const String dataStaysOnDeviceTitle =
+      PrivacyCopyPolicy.privateByDefault;
   static const dataStaysOnDeviceBody =
       'ArchiveMe stores your journal file encrypted on this device. Archive '
       'metadata and prefs remain in plaintext JSON. Share cards do not include '
@@ -23,7 +24,8 @@ abstract final class PrivacyDataControlsCopy {
   static const viewSampleArchiveSubtitle =
       'Example data only — your private archive stays untouched.';
 
-  static const clearLocalArchiveTitle = PrivacyClaimCatalogue.clearArchiveAction;
+  static const clearLocalArchiveTitle =
+      PrivacyClaimCatalogue.clearArchiveAction;
   static const clearLocalArchiveSubtitle =
       'Remove saved moments and archive evidence from this device.';
 

@@ -22,7 +22,8 @@ class SecureDatabaseUnlockScreen extends StatefulWidget {
       _SecureDatabaseUnlockScreenState();
 }
 
-class _SecureDatabaseUnlockScreenState extends State<SecureDatabaseUnlockScreen> {
+class _SecureDatabaseUnlockScreenState
+    extends State<SecureDatabaseUnlockScreen> {
   SecureSqliteLockService get _lock =>
       widget.lockService ?? SecureSqliteLockService.instance;
 

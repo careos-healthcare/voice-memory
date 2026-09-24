@@ -49,46 +49,52 @@ class _FakeSynthesizer implements CoachResponseSynthesizer {
 }
 
 void main() {
-  test('respond retrieves context and synthesizes offline coaching reply', () async {
-    final service = LocalCoachConversationService(
-      retriever: _FakeRetriever([
-        CoachRagContextChunk(
-          entryId: 'entry-1',
-          createdAt: DateTime.utc(2026, 8, 15),
-          excerpt: 'I avoided the hard conversation again.',
-          relevanceScore: 0.88,
-          mood: 'anxious',
-        ),
-      ]),
-      synthesizer: _FakeSynthesizer(),
-    );
-
-    final response = await service.respond(
-      userQuery: 'Why do I keep avoiding this?',
-      liveVoicePrompt: 'I shut down in the meeting.',
-      archiveEntries: [
-        JournalEntry(
-          id: 'entry-1',
-          createdAt: DateTime.utc(2026, 8, 15),
-          transcript: 'I avoided the hard conversation again.',
-          durationSeconds: 0,
-          reflection: const Reflection(
+  test(
+    'respond retrieves context and synthesizes offline coaching reply',
+    () async {
+      final service = LocalCoachConversationService(
+        retriever: _FakeRetriever([
+          CoachRagContextChunk(
+            entryId: 'entry-1',
+            createdAt: DateTime.utc(2026, 8, 15),
+            excerpt: 'I avoided the hard conversation again.',
+            relevanceScore: 0.88,
             mood: 'anxious',
-            emotionalIntensity: 7,
-            recurringThemes: ['work'],
-            exactLanguagePattern: '',
-            concreteObservation: 'Avoidance again',
-            repeatedSignal: '',
           ),
-        ),
-      ],
-    );
+        ]),
+        synthesizer: _FakeSynthesizer(),
+      );
 
-    expect(response.primaryFollowUp, contains('Why do I keep avoiding this?'));
-    expect(response.hadRetrieval, isTrue);
-    expect(response.citedEntryIds, ['entry-1']);
-    expect(response.coachingPrompts, isNotEmpty);
-  });
+      final response = await service.respond(
+        userQuery: 'Why do I keep avoiding this?',
+        liveVoicePrompt: 'I shut down in the meeting.',
+        archiveEntries: [
+          JournalEntry(
+            id: 'entry-1',
+            createdAt: DateTime.utc(2026, 8, 15),
+            transcript: 'I avoided the hard conversation again.',
+            durationSeconds: 0,
+            reflection: const Reflection(
+              mood: 'anxious',
+              emotionalIntensity: 7,
+              recurringThemes: ['work'],
+              exactLanguagePattern: '',
+              concreteObservation: 'Avoidance again',
+              repeatedSignal: '',
+            ),
+          ),
+        ],
+      );
+
+      expect(
+        response.primaryFollowUp,
+        contains('Why do I keep avoiding this?'),
+      );
+      expect(response.hadRetrieval, isTrue);
+      expect(response.citedEntryIds, ['entry-1']);
+      expect(response.coachingPrompts, isNotEmpty);
+    },
+  );
 
   test('respond rejects empty user query', () async {
     final service = LocalCoachConversationService(

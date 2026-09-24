@@ -17,9 +17,9 @@ class MeshPeerTransport {
     MeshSocketConnector? connect,
     Random? random,
     String Function()? requestIdFactory,
-  })  : _connect = connect ?? ((host, port) => Socket.connect(host, port)),
-        _random = random ?? Random.secure(),
-        _requestIdFactory = requestIdFactory ?? const Uuid().v4;
+  }) : _connect = connect ?? ((host, port) => Socket.connect(host, port)),
+       _random = random ?? Random.secure(),
+       _requestIdFactory = requestIdFactory ?? const Uuid().v4;
 
   final MeshSocketConnector _connect;
   final Random _random;
@@ -58,8 +58,7 @@ class MeshPeerTransport {
       socket.write('${jsonEncode(request.toJson())}\n');
       final responseLine = await readSocketLine(socket, timeout: timeout);
 
-      final responseJson =
-          jsonDecode(responseLine) as Map<String, dynamic>;
+      final responseJson = jsonDecode(responseLine) as Map<String, dynamic>;
       final response = MeshHandshakeResponse.fromJson(responseJson);
       if (!response.accepted || !response.capabilities.isDesktopLlamaPeer) {
         return null;

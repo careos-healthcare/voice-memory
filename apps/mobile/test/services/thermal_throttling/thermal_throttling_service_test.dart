@@ -6,24 +6,27 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   group('ThermalThrottlingService', () {
-    test('defers embedding when battery is below 50% and not charging', () async {
-      final service = ThermalThrottlingService(
-        resourceGuard: ResourceGuard(
-          batteryReader: _FakeBatteryReader(
-            level: 35,
-            state: BatteryState.discharging,
+    test(
+      'defers embedding when battery is below 50% and not charging',
+      () async {
+        final service = ThermalThrottlingService(
+          resourceGuard: ResourceGuard(
+            batteryReader: _FakeBatteryReader(
+              level: 35,
+              state: BatteryState.discharging,
+            ),
+            thermalReader: _FakeThermalReader(DeviceThermalStatus.nominal),
           ),
-          thermalReader: _FakeThermalReader(DeviceThermalStatus.nominal),
-        ),
-      );
+        );
 
-      final snapshot = await service.currentSnapshot();
+        final snapshot = await service.currentSnapshot();
 
-      expect(snapshot.level, 35);
-      expect(snapshot.isCharging, isFalse);
-      expect(snapshot.shouldDeferEmbedding, isTrue);
-      expect(await service.shouldDeferEmbeddingWork(), isTrue);
-    });
+        expect(snapshot.level, 35);
+        expect(snapshot.isCharging, isFalse);
+        expect(snapshot.shouldDeferEmbedding, isTrue);
+        expect(await service.shouldDeferEmbeddingWork(), isTrue);
+      },
+    );
 
     test('allows embedding when charging even below 50%', () async {
       final service = ThermalThrottlingService(
@@ -43,19 +46,22 @@ void main() {
       expect(await service.shouldDeferEmbeddingWork(), isFalse);
     });
 
-    test('allows embedding when plugged in but not actively charging', () async {
-      final service = ThermalThrottlingService(
-        resourceGuard: ResourceGuard(
-          batteryReader: _FakeBatteryReader(
-            level: 30,
-            state: BatteryState.connectedNotCharging,
+    test(
+      'allows embedding when plugged in but not actively charging',
+      () async {
+        final service = ThermalThrottlingService(
+          resourceGuard: ResourceGuard(
+            batteryReader: _FakeBatteryReader(
+              level: 30,
+              state: BatteryState.connectedNotCharging,
+            ),
+            thermalReader: _FakeThermalReader(DeviceThermalStatus.nominal),
           ),
-          thermalReader: _FakeThermalReader(DeviceThermalStatus.nominal),
-        ),
-      );
+        );
 
-      expect(await service.shouldDeferEmbeddingWork(), isFalse);
-    });
+        expect(await service.shouldDeferEmbeddingWork(), isFalse);
+      },
+    );
 
     test('allows embedding when battery is at or above 50%', () async {
       final service = ThermalThrottlingService(

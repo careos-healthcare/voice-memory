@@ -11,13 +11,25 @@ abstract final class V1RouteInventory {
 
   static const primaryShell = [
     V1RouteEntry('/record', V1RouteClass.v1Core, 'Fast voice capture'),
-    V1RouteEntry('/archive-belief', V1RouteClass.v1Core, 'Original archive + search'),
-    V1RouteEntry('/belief-changes', V1RouteClass.v1Core, 'Cautious verified changes'),
+    V1RouteEntry(
+      '/archive-belief',
+      V1RouteClass.v1Core,
+      'Original archive + search',
+    ),
+    V1RouteEntry(
+      '/belief-changes',
+      V1RouteClass.v1Core,
+      'Cautious verified changes',
+    ),
     V1RouteEntry('/account', V1RouteClass.v1Core, 'Account and settings hub'),
   ];
 
   static const supporting = [
-    V1RouteEntry('/onboarding', V1RouteClass.v1Supporting, 'First launch consent'),
+    V1RouteEntry(
+      '/onboarding',
+      V1RouteClass.v1Supporting,
+      'First launch consent',
+    ),
     V1RouteEntry('/entry/:id', V1RouteClass.v1Supporting, 'Entry detail'),
     V1RouteEntry(
       '/belief-evidence',
@@ -25,7 +37,11 @@ abstract final class V1RouteInventory {
       'Exact supporting evidence',
     ),
     V1RouteEntry('/belief-detail', V1RouteClass.v1Supporting, 'Change detail'),
-    V1RouteEntry('/quick-capture', V1RouteClass.v1Supporting, 'Fast text capture'),
+    V1RouteEntry(
+      '/quick-capture',
+      V1RouteClass.v1Supporting,
+      'Fast text capture',
+    ),
     V1RouteEntry('/settings', V1RouteClass.v1Supporting, 'Settings'),
     V1RouteEntry('/security', V1RouteClass.v1Supporting, 'Security'),
     V1RouteEntry(
@@ -47,15 +63,34 @@ abstract final class V1RouteInventory {
     V1RouteEntry('/terms', V1RouteClass.v1Supporting, 'Terms'),
     V1RouteEntry('/about', V1RouteClass.v1Supporting, 'About'),
     V1RouteEntry('/export', V1RouteClass.v1Supporting, 'Export'),
-    V1RouteEntry('/delete-account', V1RouteClass.v1Supporting, 'Account deletion'),
-    V1RouteEntry('/support-feedback', V1RouteClass.v1Supporting, 'Required support'),
-    V1RouteEntry('/account/create', V1RouteClass.v1Supporting, 'Authentication'),
-    V1RouteEntry('/account/sign-in', V1RouteClass.v1Supporting, 'Authentication'),
+    V1RouteEntry(
+      '/delete-account',
+      V1RouteClass.v1Supporting,
+      'Account deletion',
+    ),
+    V1RouteEntry(
+      '/support-feedback',
+      V1RouteClass.v1Supporting,
+      'Required support',
+    ),
+    V1RouteEntry(
+      '/account/create',
+      V1RouteClass.v1Supporting,
+      'Authentication',
+    ),
+    V1RouteEntry(
+      '/account/sign-in',
+      V1RouteClass.v1Supporting,
+      'Authentication',
+    ),
     V1RouteEntry(
       '/account/guest-data-migration',
       V1RouteClass.v1Supporting,
       'Guest migration',
     ),
+    V1RouteEntry('/chat', V1RouteClass.v1Supporting, 'Archive chat'),
+    V1RouteEntry('/habits', V1RouteClass.v1Supporting, 'Habit velocity'),
+    V1RouteEntry('/sync-status', V1RouteClass.v1Supporting, 'System health'),
   ];
 
   static const paid = [
@@ -69,9 +104,17 @@ abstract final class V1RouteInventory {
     V1RouteEntry('/capacity-loop', V1RouteClass.quarantine, 'Capacity lab'),
     V1RouteEntry('/beta-feedback', V1RouteClass.quarantine, 'Beta laboratory'),
     V1RouteEntry('/journal', V1RouteClass.quarantine, 'Legacy journal surface'),
-    V1RouteEntry('/pattern-map', V1RouteClass.quarantine, 'Competing pattern system'),
+    V1RouteEntry(
+      '/pattern-map',
+      V1RouteClass.quarantine,
+      'Competing pattern system',
+    ),
     V1RouteEntry('/archive-packs', V1RouteClass.quarantine, 'Archive packs'),
-    V1RouteEntry('/testing-archiveme', V1RouteClass.quarantine, 'Tester dashboard'),
+    V1RouteEntry(
+      '/testing-archiveme',
+      V1RouteClass.quarantine,
+      'Tester dashboard',
+    ),
   ];
 
   static int get productionRouteCountBeforeConsolidation => 105;

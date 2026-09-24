@@ -75,7 +75,10 @@ void main() {
         changeId: 'remote-change',
       );
 
-      final result = JournalConflictResolver.resolve(local: local, remote: remote);
+      final result = JournalConflictResolver.resolve(
+        local: local,
+        remote: remote,
+      );
 
       expect(result.shouldPersist, isFalse);
       expect(result.kind, JournalConflictResolutionKind.localWinner);
@@ -96,7 +99,10 @@ void main() {
         changeId: 'remote-change',
       );
 
-      final result = JournalConflictResolver.resolve(local: local, remote: remote);
+      final result = JournalConflictResolver.resolve(
+        local: local,
+        remote: remote,
+      );
 
       expect(result.shouldPersist, isTrue);
       expect(result.kind, JournalConflictResolutionKind.fieldMerged);
@@ -122,40 +128,56 @@ void main() {
         changeId: 'remote-change',
       );
 
-      final result = JournalConflictResolver.resolve(local: local, remote: remote);
+      final result = JournalConflictResolver.resolve(
+        local: local,
+        remote: remote,
+      );
 
       expect(result.entry.transcript, 'shared transcript');
       expect(result.entry.isPinned, isFalse);
       expect(result.entry.revision, 3);
     });
 
-    test('same revision collision uses changeId tie-breaker, not updatedAt', () {
-      final ts = DateTime.utc(2026, 3);
-      final local = _entry(id: 'a', revision: 5, changeId: 'zzz-winner').copyWith(
-        updatedAt: ts.add(const Duration(hours: 1)),
-        transcript: 'local transcript',
-      );
-      final remote = _entry(id: 'a', revision: 5, changeId: 'aaa-loser').copyWith(
-        updatedAt: ts,
-        transcript: 'remote transcript',
-      );
+    test(
+      'same revision collision uses changeId tie-breaker, not updatedAt',
+      () {
+        final ts = DateTime.utc(2026, 3);
+        final local = _entry(id: 'a', revision: 5, changeId: 'zzz-winner')
+            .copyWith(
+              updatedAt: ts.add(const Duration(hours: 1)),
+              transcript: 'local transcript',
+            );
+        final remote = _entry(id: 'a', revision: 5, changeId: 'aaa-loser')
+            .copyWith(
+              updatedAt: ts,
+              transcript: 'remote transcript',
+            );
 
-      final result = JournalConflictResolver.resolve(local: local, remote: remote);
+        final result = JournalConflictResolver.resolve(
+          local: local,
+          remote: remote,
+        );
 
-      expect(result.shouldPersist, isFalse);
-      expect(result.entry.transcript, 'local transcript');
-      expect(result.collisions, isNotEmpty);
-    });
+        expect(result.shouldPersist, isFalse);
+        expect(result.entry.transcript, 'local transcript');
+        expect(result.collisions, isNotEmpty);
+      },
+    );
 
     test('same revision remote wins when changeId is higher', () {
-      final local = _entry(id: 'a', revision: 5, changeId: 'aaa-loser').copyWith(
-        transcript: 'local transcript',
-      );
-      final remote = _entry(id: 'a', revision: 5, changeId: 'zzz-winner').copyWith(
-        transcript: 'remote transcript',
-      );
+      final local = _entry(id: 'a', revision: 5, changeId: 'aaa-loser')
+          .copyWith(
+            transcript: 'local transcript',
+          );
+      final remote = _entry(id: 'a', revision: 5, changeId: 'zzz-winner')
+          .copyWith(
+            transcript: 'remote transcript',
+          );
 
-      final result = JournalConflictResolver.resolve(local: local, remote: remote);
+      final result = JournalConflictResolver.resolve(
+        local: local,
+        remote: remote,
+      );
 
       expect(result.shouldPersist, isTrue);
       expect(result.entry.transcript, 'remote transcript');
@@ -163,14 +185,16 @@ void main() {
     });
 
     test('markConflict policy flags review and sets conflict status', () {
-      final local = _entry(id: 'a', revision: 2, changeId: 'local-change').copyWith(
-        transcript: 'local transcript',
-        isPinned: true,
-      );
-      final remote = _entry(id: 'a', revision: 2, changeId: 'remote-change').copyWith(
-        transcript: 'remote transcript',
-        isPinned: false,
-      );
+      final local = _entry(id: 'a', revision: 2, changeId: 'local-change')
+          .copyWith(
+            transcript: 'local transcript',
+            isPinned: true,
+          );
+      final remote = _entry(id: 'a', revision: 2, changeId: 'remote-change')
+          .copyWith(
+            transcript: 'remote transcript',
+            isPinned: false,
+          );
 
       final result = JournalConflictResolver.resolve(
         local: local,
@@ -194,7 +218,10 @@ void main() {
         changeId: 'remote-delete',
       );
 
-      final result = JournalConflictResolver.resolve(local: local, remote: remote);
+      final result = JournalConflictResolver.resolve(
+        local: local,
+        remote: remote,
+      );
 
       expect(result.entry.isDeleted, isTrue);
       expect(result.entry.deletedAt, deletedAt);
@@ -202,14 +229,19 @@ void main() {
 
     test('stale non-deleted remote does not resurrect local tombstone', () {
       final deletedAt = DateTime.utc(2026, 6);
-      final local = _entry(id: 'a', revision: 3, changeId: 'local-tomb').copyWith(
-        deletedAt: deletedAt,
-      );
-      final remote = _entry(id: 'a', revision: 2, changeId: 'stale-live').copyWith(
-        deletedAt: null,
-      );
+      final local = _entry(id: 'a', revision: 3, changeId: 'local-tomb')
+          .copyWith(
+            deletedAt: deletedAt,
+          );
+      final remote = _entry(id: 'a', revision: 2, changeId: 'stale-live')
+          .copyWith(
+            deletedAt: null,
+          );
 
-      final result = JournalConflictResolver.resolve(local: local, remote: remote);
+      final result = JournalConflictResolver.resolve(
+        local: local,
+        remote: remote,
+      );
 
       expect(result.shouldPersist, isFalse);
       expect(result.entry.isDeleted, isTrue);
@@ -219,11 +251,15 @@ void main() {
       final local = _entry(id: 'a', revision: 2).copyWith(
         localAudioPath: '/tmp/local.m4a',
       );
-      final remote = _entry(id: 'a', revision: 3, changeId: 'remote-change').copyWith(
-        transcript: 'remote transcript',
-      );
+      final remote = _entry(id: 'a', revision: 3, changeId: 'remote-change')
+          .copyWith(
+            transcript: 'remote transcript',
+          );
 
-      final result = JournalConflictResolver.resolve(local: local, remote: remote);
+      final result = JournalConflictResolver.resolve(
+        local: local,
+        remote: remote,
+      );
 
       expect(result.entry.localAudioPath, '/tmp/local.m4a');
       expect(result.entry.transcript, 'remote transcript');
@@ -231,7 +267,10 @@ void main() {
 
     test('identical entries produce no-op merge', () {
       final entry = _entry(id: 'a', revision: 2, changeId: 'same');
-      final result = JournalConflictResolver.resolve(local: entry, remote: entry);
+      final result = JournalConflictResolver.resolve(
+        local: entry,
+        remote: entry,
+      );
 
       expect(result.kind, JournalConflictResolutionKind.noConflict);
       expect(result.shouldPersist, isTrue);

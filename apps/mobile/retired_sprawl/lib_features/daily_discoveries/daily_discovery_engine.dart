@@ -129,7 +129,8 @@ class DailyDiscoveryEngine {
   /// All evidence-backed discoveries for priority picking (e.g. surprise pipeline).
   List<DailyDiscovery> detectAllDiscoveries({
     required List<JournalEntry> entries,
-    required Set<String> viewedIds, ArchiveStateObjectV3? state,
+    required Set<String> viewedIds,
+    ArchiveStateObjectV3? state,
     DailyDiscoveryBaseline? baseline,
   }) {
     if (archiveEvidenceReflectionCount(entries) < minEligibleEntries) {
@@ -158,7 +159,8 @@ class DailyDiscoveryEngine {
   /// Pure detection — compare [baseline] to current archive; skip [viewedIds].
   DailyDiscovery? detectDiscovery({
     required List<JournalEntry> entries,
-    required Set<String> viewedIds, ArchiveStateObjectV3? state,
+    required Set<String> viewedIds,
+    ArchiveStateObjectV3? state,
     DailyDiscoveryBaseline? baseline,
   }) {
     if (archiveEvidenceReflectionCount(entries) < minEligibleEntries) {

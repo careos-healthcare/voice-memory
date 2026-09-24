@@ -60,8 +60,7 @@ abstract final class LegacyTranscriptRegistry {
     _records[record.entryId] = record;
   }
 
-  static LegacyTranscriptRecord? recordFor(String entryId) =>
-      _records[entryId];
+  static LegacyTranscriptRecord? recordFor(String entryId) => _records[entryId];
 
   static bool isLegacy(String entryId) => _records.containsKey(entryId);
 

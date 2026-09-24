@@ -4,20 +4,24 @@ import 'package:archiveme_mobile/features/come_back_tomorrow/come_back_tomorrow_
 import 'package:archiveme_mobile/features/come_back_tomorrow/come_back_tomorrow_v2_store.dart';
 import 'package:archiveme_mobile/theme/app_colors.dart';
 import 'package:archiveme_mobile/theme/app_spacing.dart';
-import 'package:archiveme_mobile/theme/voicememory_cards.dart';
+import 'package:archiveme_mobile/widgets/cues/emotional_cues.dart';
 import 'package:flutter/material.dart';
 
 /// Quiet signal when an active watch target has not appeared recently.
 class ComeBackTomorrowQuietSignalCard extends StatefulWidget {
   const ComeBackTomorrowQuietSignalCard({
-    required this.signal, required this.entryCount, super.key,
+    required this.signal,
+    required this.entryCount,
+    super.key,
     this.store,
     this.skipPersist = false,
     this.onKeepWatching,
   });
 
   const ComeBackTomorrowQuietSignalCard.test({
-    required this.signal, required this.entryCount, super.key,
+    required this.signal,
+    required this.entryCount,
+    super.key,
     this.store,
     this.onKeepWatching,
   }) : skipPersist = true;
@@ -63,36 +67,19 @@ class _ComeBackTomorrowQuietSignalCardState
 
   @override
   Widget build(BuildContext context) {
-    final bodyStyle = ArchiveMobileTypography.explanationBody(
-      context,
-    ).copyWith(color: AppColors.textSecondary);
-
-    return Container(
+    return Padding(
       key: const Key('come_back_tomorrow_quiet_signal_card'),
-      width: double.infinity,
-      padding: const EdgeInsets.all(AppSpacing.md),
-      decoration: VoiceMemoryCards.standard(
-        background: const Color(0xFFF7F8FA),
-      ),
+      padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text(
-            widget.signal.title,
-            key: const Key('come_back_tomorrow_quiet_signal_title'),
-            style: ArchiveMobileTypography.responsiveSectionTitle(context),
-          ),
-          const SizedBox(height: AppSpacing.xs),
-          Text(
-            widget.signal.body,
-            key: const Key('come_back_tomorrow_quiet_signal_body'),
-            style: bodyStyle,
-          ),
-          const SizedBox(height: AppSpacing.xs),
-          Text(
-            widget.signal.footer,
-            key: const Key('come_back_tomorrow_quiet_signal_footer'),
-            style: bodyStyle,
+          HesitationSignalCue(
+            labelKey: const Key('come_back_tomorrow_quiet_signal_title'),
+            lineKey: const Key('come_back_tomorrow_quiet_signal_body'),
+            noteKey: const Key('come_back_tomorrow_quiet_signal_footer'),
+            label: widget.signal.title,
+            line: widget.signal.body,
+            note: widget.signal.footer,
           ),
           const SizedBox(height: AppSpacing.sm),
           Align(

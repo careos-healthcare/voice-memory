@@ -27,7 +27,11 @@ class CuriosityPromptResolver {
       final trimmed = synthesized.trim();
       if (trimmed.isNotEmpty) return trimmed;
     } catch (e, stackTrace) {
-      AppLogger.error('Unhandled error caught', error: e, stackTrace: stackTrace);
+      AppLogger.error(
+        'Unhandled error caught',
+        error: e,
+        stackTrace: stackTrace,
+      );
       // Fall back to the stored hook prompt when synthesis fails.
     }
 

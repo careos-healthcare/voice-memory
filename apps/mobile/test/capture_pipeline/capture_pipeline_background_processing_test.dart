@@ -36,9 +36,9 @@ class ThrowingImageEmbeddingService extends ImageEmbeddingService {
   ThrowingImageEmbeddingService({
     required ImageAttachmentEmbeddingRepository repository,
   }) : super(
-          inference: LocalVisualProjectionInference(),
-          repository: repository,
-        );
+         inference: LocalVisualProjectionInference(),
+         repository: repository,
+       );
 
   @override
   Future<void> indexJournalAttachment({
@@ -65,7 +65,9 @@ void main() {
 
   group('capture background processing failures', () {
     test('_relatedSources logs and degrades when journal load fails', () async {
-      final dir = await Directory.systemTemp.createTemp('related_sources_test_');
+      final dir = await Directory.systemTemp.createTemp(
+        'related_sources_test_',
+      );
       final prefs = await MobilePrefsStore.open('${dir.path}/prefs.json');
       final consentStore = RemoteProcessingConsentStore(prefs);
       await OnDeviceProcessingStore.resetForTest();
@@ -82,7 +84,8 @@ void main() {
       final analyzer = CaptureProofAnalyzer(built.facade.dependencies);
 
       final proof = await analyzer.postAndAdmit(
-        transcript: 'I keep saying I want more balance but I still take on extra work.',
+        transcript:
+            'I keep saying I want more balance but I still take on extra work.',
         captureToken: 'capture-token',
         idempotencyKey: 'idem-related-sources',
         entryId: 'entry-related-sources',
@@ -101,7 +104,9 @@ void main() {
     });
 
     test('_indexImageEmbedding logs and does not block caption save', () async {
-      final dir = await Directory.systemTemp.createTemp('image_embed_fail_test_');
+      final dir = await Directory.systemTemp.createTemp(
+        'image_embed_fail_test_',
+      );
       final prefs = await MobilePrefsStore.open('${dir.path}/prefs.json');
       final consentStore = RemoteProcessingConsentStore(prefs);
       await consentStore.withdraw();

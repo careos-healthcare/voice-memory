@@ -1,4 +1,5 @@
-import 'package:archiveme_mobile/billing/paywall_attribution_store.dart' show PaywallAttributionStore;
+import 'package:archiveme_mobile/billing/paywall_attribution_store.dart'
+    show PaywallAttributionStore;
 import 'package:archiveme_mobile/billing/suggestion_attribution_event.dart';
 import 'package:archiveme_mobile/services/app_services.dart';
 import 'package:archiveme_mobile/storage/mobile_prefs_store.dart';

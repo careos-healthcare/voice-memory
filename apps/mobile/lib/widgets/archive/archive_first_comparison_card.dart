@@ -10,7 +10,10 @@ import 'package:flutter/material.dart';
 /// Archive tab — calm first-comparison proof surface for two saved moments.
 class ArchiveFirstComparisonCard extends StatelessWidget {
   const ArchiveFirstComparisonCard({
-    required this.display, required this.onViewEvidence, required this.onAddAnotherMoment, super.key,
+    required this.display,
+    required this.onViewEvidence,
+    required this.onAddAnotherMoment,
+    super.key,
   });
 
   final ArchiveFirstComparisonDisplay display;

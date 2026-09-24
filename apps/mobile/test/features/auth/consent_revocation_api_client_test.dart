@@ -30,7 +30,10 @@ void main() {
       baseUrl: 'http://test.invalid',
     );
     addTearDown(transport.dispose);
-    return (client: HttpCaregiverConsentApiClient(transport), requests: requests);
+    return (
+      client: HttpCaregiverConsentApiClient(transport),
+      requests: requests,
+    );
   }
 
   http.Response confirmed({bool alreadyRevoked = false}) => http.Response(
@@ -53,41 +56,47 @@ void main() {
     headers: const {'content-type': 'application/json'},
   );
 
-  test('caregiver revoke posts the canonical domain and the held token', () async {
-    final harness = clientReturning(confirmed);
+  test(
+    'caregiver revoke posts the canonical domain and the held token',
+    () async {
+      final harness = clientReturning(confirmed);
 
-    final result = await harness.client.revokeConsent(
-      domain: ConsentRevocationDomain.caregiverMonitoring,
-      tokenId: 'token-1',
-      token: const {'tokenId': 'token-1', 'signature': 'server-signature'},
-    );
+      final result = await harness.client.revokeConsent(
+        domain: ConsentRevocationDomain.caregiverMonitoring,
+        tokenId: 'token-1',
+        token: const {'tokenId': 'token-1', 'signature': 'server-signature'},
+      );
 
-    expect(result.isSuccess, isTrue);
-    final request = harness.requests.single;
-    expect(request.method, 'POST');
-    expect(request.url.path, '/api/coach/consent/revoke');
-    expect(jsonDecode(request.body), {
-      'consentDomain': 'caregiverMonitoring',
-      'tokenId': 'token-1',
-      'reason': 'user_revoked',
-      'token': {'tokenId': 'token-1', 'signature': 'server-signature'},
-    });
-  });
+      expect(result.isSuccess, isTrue);
+      final request = harness.requests.single;
+      expect(request.method, 'POST');
+      expect(request.url.path, '/api/coach/consent/revoke');
+      expect(jsonDecode(request.body), {
+        'consentDomain': 'caregiverMonitoring',
+        'tokenId': 'token-1',
+        'reason': 'user_revoked',
+        'token': {'tokenId': 'token-1', 'signature': 'server-signature'},
+      });
+    },
+  );
 
-  test('coach revoke posts coachClient and omits token when none is held', () async {
-    final harness = clientReturning(confirmed);
+  test(
+    'coach revoke posts coachClient and omits token when none is held',
+    () async {
+      final harness = clientReturning(confirmed);
 
-    await harness.client.revokeConsent(
-      domain: ConsentRevocationDomain.coachClient,
-      tokenId: 'token-coach-9',
-    );
+      await harness.client.revokeConsent(
+        domain: ConsentRevocationDomain.coachClient,
+        tokenId: 'token-coach-9',
+      );
 
-    expect(jsonDecode(harness.requests.single.body), {
-      'consentDomain': 'coachClient',
-      'tokenId': 'token-coach-9',
-      'reason': 'user_revoked',
-    });
-  });
+      expect(jsonDecode(harness.requests.single.body), {
+        'consentDomain': 'coachClient',
+        'tokenId': 'token-coach-9',
+        'reason': 'user_revoked',
+      });
+    },
+  );
 
   test('a 200 with revoked true is a confirmation', () async {
     final harness = clientReturning(confirmed);
@@ -97,8 +106,8 @@ void main() {
       tokenId: 'token-1',
     );
 
-    final confirmation = (result as ApiSuccess<ConsentRevocationConfirmation>)
-        .value;
+    final confirmation =
+        (result as ApiSuccess<ConsentRevocationConfirmation>).value;
     expect(confirmation.isConfirmed, isTrue);
     expect(confirmation.alreadyRevoked, isFalse);
     expect(confirmation.revokedAt, DateTime.utc(2026, 8, 22, 15, 4, 5));
@@ -112,8 +121,8 @@ void main() {
       tokenId: 'token-1',
     );
 
-    final confirmation = (result as ApiSuccess<ConsentRevocationConfirmation>)
-        .value;
+    final confirmation =
+        (result as ApiSuccess<ConsentRevocationConfirmation>).value;
     expect(confirmation.isConfirmed, isTrue);
     expect(confirmation.alreadyRevoked, isTrue);
   });

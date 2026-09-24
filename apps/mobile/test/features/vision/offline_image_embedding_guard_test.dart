@@ -19,14 +19,17 @@ void main() {
       expect(OfflineImageEmbeddingGuard.isActive, isFalse);
     });
 
-    test('HttpTransport rejects requests during offline embedding scope', () async {
-      final transport = HttpTransport(baseUrl: 'https://example.test');
+    test(
+      'HttpTransport rejects requests during offline embedding scope',
+      () async {
+        final transport = HttpTransport(baseUrl: 'https://example.test');
 
-      await OfflineImageEmbeddingGuard.runOffline(() async {
-        final result = await transport.get('/health');
-        expect(result.isFailure, isTrue);
-      });
-    });
+        await OfflineImageEmbeddingGuard.runOffline(() async {
+          final result = await transport.get('/health');
+          expect(result.isFailure, isTrue);
+        });
+      },
+    );
 
     test('vision sources do not import network clients', () {
       final visionDir = Directory('lib/features/vision');

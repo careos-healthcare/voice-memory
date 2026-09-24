@@ -43,7 +43,9 @@ void main() {
       facade: built.facade,
     );
     final sqlite = await openTestAppSqliteDatabase();
-    final outbox = QuickCaptureOutboxStore(AppDatabase.fromSqflite(sqlite.database));
+    final outbox = QuickCaptureOutboxStore(
+      AppDatabase.fromSqflite(sqlite.database),
+    );
     await outbox.enqueue(
       QuickCaptureOutboxPayload(
         captureId: generateUlid(),
@@ -61,7 +63,10 @@ void main() {
     expect(result.processed, 1);
     expect(result.failed, 0);
     expect(await outbox.pendingCount(), 0);
-    expect((await journal.loadAll()).single.transcript, 'Background widget note');
+    expect(
+      (await journal.loadAll()).single.transcript,
+      'Background widget note',
+    );
 
     await dir.delete(recursive: true);
   });

@@ -22,7 +22,8 @@ abstract final class ConsentRevocationFailureCode {
   /// Codes the server will keep rejecting no matter how often we ask.
   static const permanent = <String>{forbidden, invalidRequest};
 
-  static bool isPermanent(String? code) => code != null && permanent.contains(code);
+  static bool isPermanent(String? code) =>
+      code != null && permanent.contains(code);
 }
 
 /// One grant whose local revocation has not yet been mirrored to the server.
@@ -82,7 +83,9 @@ class PendingConsentRevocation {
       PendingConsentRevocation(
         tokenId: tokenId,
         domain: domain,
-        queuedAt: queuedAt.isBefore(stored.queuedAt) ? queuedAt : stored.queuedAt,
+        queuedAt: queuedAt.isBefore(stored.queuedAt)
+            ? queuedAt
+            : stored.queuedAt,
         attempts: attempts > stored.attempts ? attempts : stored.attempts,
         lastError: lastError ?? stored.lastError,
       );
@@ -149,7 +152,8 @@ abstract final class PendingConsentRevocationStore {
 
   /// Oldest first, so a flush retries in the order the user revoked.
   static List<PendingConsentRevocation> get entries =>
-      _pending.values.toList()..sort((a, b) => a.queuedAt.compareTo(b.queuedAt));
+      _pending.values.toList()
+        ..sort((a, b) => a.queuedAt.compareTo(b.queuedAt));
 
   static PendingConsentRevocation? entryFor(String tokenId) =>
       _pending[tokenId.trim()];

@@ -25,7 +25,8 @@ abstract final class WeeklySynthesisBackgroundConstraints {
     final battery = Battery();
     final level = await battery.batteryLevel;
     final state = await battery.batteryState;
-    final charging = state == BatteryState.charging || state == BatteryState.full;
+    final charging =
+        state == BatteryState.charging || state == BatteryState.full;
     if (level >= 0 && level < _backgroundBatteryThreshold && !charging) {
       return false;
     }
@@ -57,18 +58,17 @@ enum WeeklySynthesisBackgroundOutcome {
   failed,
 }
 
-extension WeeklySynthesisBackgroundOutcomeX on WeeklySynthesisBackgroundOutcome {
+extension WeeklySynthesisBackgroundOutcomeX
+    on WeeklySynthesisBackgroundOutcome {
   /// WorkManager should retry deferred/failed outcomes; skip others are success.
   bool get workmanagerSuccess => switch (this) {
-        WeeklySynthesisBackgroundOutcome.success ||
-        WeeklySynthesisBackgroundOutcome.skippedAlreadyGenerated ||
-        WeeklySynthesisBackgroundOutcome.skippedNoRecurrentTopics ||
-        WeeklySynthesisBackgroundOutcome.skippedNoDatabase =>
-          true,
-        WeeklySynthesisBackgroundOutcome.deferredConstraints ||
-        WeeklySynthesisBackgroundOutcome.deferredModelMissing ||
-        WeeklySynthesisBackgroundOutcome.deferredInferenceTimeout ||
-        WeeklySynthesisBackgroundOutcome.failed =>
-          false,
-      };
+    WeeklySynthesisBackgroundOutcome.success ||
+    WeeklySynthesisBackgroundOutcome.skippedAlreadyGenerated ||
+    WeeklySynthesisBackgroundOutcome.skippedNoRecurrentTopics ||
+    WeeklySynthesisBackgroundOutcome.skippedNoDatabase => true,
+    WeeklySynthesisBackgroundOutcome.deferredConstraints ||
+    WeeklySynthesisBackgroundOutcome.deferredModelMissing ||
+    WeeklySynthesisBackgroundOutcome.deferredInferenceTimeout ||
+    WeeklySynthesisBackgroundOutcome.failed => false,
+  };
 }

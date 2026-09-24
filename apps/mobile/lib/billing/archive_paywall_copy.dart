@@ -11,7 +11,8 @@ abstract class ArchivePaywallCopy {
 
   static const String subheadline = ConsumerUiCopy.paywallSubhead;
   static const String subheadlineBParagraph1 = subheadline;
-  static const String subheadlineBParagraph2 = ConsumerUiCopy.paywallDifferentiation;
+  static const String subheadlineBParagraph2 =
+      ConsumerUiCopy.paywallDifferentiation;
 
   static const String differentiation = ConsumerUiCopy.paywallDifferentiation;
   static const String trust = ConsumerUiCopy.paywallTrust;
@@ -55,19 +56,19 @@ abstract class ArchivePaywallCopy {
   static const String paywallBackupLine = ConsumerUiCopy.paywallBackupLine;
 
   static List<String> get purchaseConfidenceCopy => [
-        checkingProAccess,
-        purchaseStarting,
-        purchaseSuccess,
-        restoreChecking,
-        restoreSuccess,
-        restoreEmpty,
-        primaryCta,
-        headline,
-        subheadline,
-        differentiation,
-        trust,
-        paywallBackupLine,
-      ];
+    checkingProAccess,
+    purchaseStarting,
+    purchaseSuccess,
+    restoreChecking,
+    restoreSuccess,
+    restoreEmpty,
+    primaryCta,
+    headline,
+    subheadline,
+    differentiation,
+    trust,
+    paywallBackupLine,
+  ];
 
   static const String socialProofTitleA = 'People return to ArchiveMe to see';
   static const List<String> socialProofBulletsA = [
@@ -98,15 +99,14 @@ abstract class ArchivePaywallVariantConfig {
 
   static List<ArchivePaywallLockedCard> lockedCards(
     ArchivePaywallVariant variant,
-  ) =>
-      ArchivePaywallCopy.benefits
-          .map(
-            (b) => ArchivePaywallLockedCard(
-              title: b,
-              subtitle: ArchivePaywallCopy.subheadline,
-            ),
-          )
-          .toList();
+  ) => ArchivePaywallCopy.benefits
+      .map(
+        (b) => ArchivePaywallLockedCard(
+          title: b,
+          subtitle: ArchivePaywallCopy.subheadline,
+        ),
+      )
+      .toList();
 
   static bool useKeyValueSection(ArchivePaywallVariant variant) => true;
 

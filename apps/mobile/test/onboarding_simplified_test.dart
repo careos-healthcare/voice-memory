@@ -22,6 +22,8 @@ Future<void> _pumpFrames(WidgetTester tester, {int frames = 5}) async {
 Future<void> _advanceToConsent(WidgetTester tester) async {
   await tester.tap(find.text(ConsumerUiCopy.onboardingContinueCta));
   await _pumpFrames(tester);
+  await tester.tap(find.text(ConsumerUiCopy.onboardingContinueCta));
+  await _pumpFrames(tester);
 }
 
 void main() {

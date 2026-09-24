@@ -12,11 +12,17 @@ import 'package:flutter/material.dart';
 
 class ReturnAfterProofLiftV2Card extends StatefulWidget {
   const ReturnAfterProofLiftV2Card({
-    required this.result, required this.onPrimaryCta, required this.onPromptSelected, super.key,
+    required this.result,
+    required this.onPrimaryCta,
+    required this.onPromptSelected,
+    super.key,
   });
 
   const ReturnAfterProofLiftV2Card.test({
-    required this.result, required this.onPrimaryCta, required this.onPromptSelected, super.key,
+    required this.result,
+    required this.onPrimaryCta,
+    required this.onPromptSelected,
+    super.key,
   });
 
   final ReturnAfterProofLiftV2Result result;

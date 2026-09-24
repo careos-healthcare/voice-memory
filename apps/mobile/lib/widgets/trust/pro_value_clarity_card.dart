@@ -12,7 +12,11 @@ import 'package:flutter/material.dart';
 /// Never interrupts recording; dismissible once per session.
 class ProValueClarityCard extends StatelessWidget {
   const ProValueClarityCard({
-    required this.entryCount, required this.source, required this.onSeePro, required this.onNotNow, super.key,
+    required this.entryCount,
+    required this.source,
+    required this.onSeePro,
+    required this.onNotNow,
+    super.key,
   });
 
   final int entryCount;

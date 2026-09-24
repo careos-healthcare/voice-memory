@@ -65,7 +65,8 @@ class MemoryTransparencyStoreForTest {
   final MobilePrefsStore _prefs;
 
   Future<void> suppress(String insightId) async {
-    final raw = await _prefs.readJsonMap(MemoryTransparencyStore.prefsKey) ?? {};
+    final raw =
+        await _prefs.readJsonMap(MemoryTransparencyStore.prefsKey) ?? {};
     final ids = {...?((raw['suppressedIds'] as List?)?.whereType<String>())};
     ids.add(insightId);
     await _prefs.writeJsonMap(MemoryTransparencyStore.prefsKey, {

@@ -96,32 +96,39 @@ void main() {
     );
   });
 
-  test('known HTTP status codes map to explicit copy or trusted server text', () {
-    expect(
-      userFacingErrorMessage(
-        ApiException('Invalid JSON body.', statusCode: 400, code: 'INVALID_BODY'),
-      ),
-      'Invalid JSON body.',
-    );
-    expect(
-      userFacingErrorMessage(
-        ApiException('Forbidden.', statusCode: 403, code: 'FORBIDDEN'),
-      ),
-      'Forbidden.',
-    );
-    expect(
-      userFacingErrorMessage(
-        ApiException('Not found.', statusCode: 404, code: 'NOT_FOUND'),
-      ),
-      'Not found.',
-    );
-    expect(
-      userFacingErrorMessage(
-        ApiException('internal', statusCode: 500, code: 'INTERNAL'),
-      ),
-      ApiErrorCopy.genericFallback,
-    );
-  });
+  test(
+    'known HTTP status codes map to explicit copy or trusted server text',
+    () {
+      expect(
+        userFacingErrorMessage(
+          ApiException(
+            'Invalid JSON body.',
+            statusCode: 400,
+            code: 'INVALID_BODY',
+          ),
+        ),
+        'Invalid JSON body.',
+      );
+      expect(
+        userFacingErrorMessage(
+          ApiException('Forbidden.', statusCode: 403, code: 'FORBIDDEN'),
+        ),
+        'Forbidden.',
+      );
+      expect(
+        userFacingErrorMessage(
+          ApiException('Not found.', statusCode: 404, code: 'NOT_FOUND'),
+        ),
+        'Not found.',
+      );
+      expect(
+        userFacingErrorMessage(
+          ApiException('internal', statusCode: 500, code: 'INTERNAL'),
+        ),
+        ApiErrorCopy.genericFallback,
+      );
+    },
+  );
 
   test('stringified exception class names are masked', () {
     expect(

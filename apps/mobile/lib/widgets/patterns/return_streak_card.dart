@@ -8,7 +8,8 @@ import 'package:go_router/go_router.dart';
 
 class ReturnStreakCard extends StatelessWidget {
   const ReturnStreakCard({
-    required this.streak, super.key,
+    required this.streak,
+    super.key,
     this.showCta = true,
   });
 

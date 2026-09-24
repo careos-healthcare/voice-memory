@@ -65,7 +65,8 @@ class ArchiveStateDeltaView {
     required this.hasChanges,
     required this.rows,
     required this.headline,
-    required this.awayReturn, this.subheadline,
+    required this.awayReturn,
+    this.subheadline,
   });
 
   final bool hasChanges;

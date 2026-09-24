@@ -2,7 +2,6 @@ import 'dart:convert';
 
 /// Validated, versioned weights for canonical proof-candidate scoring.
 final class ProofAdmissionConfig {
-
   factory ProofAdmissionConfig.fromJsonString(String source) {
     final Object? decoded;
     try {

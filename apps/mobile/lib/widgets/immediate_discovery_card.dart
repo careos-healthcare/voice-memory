@@ -12,7 +12,8 @@ import 'dart:async';
 /// Shown on Record after a successful save — one evidence-backed archive discovery.
 class ImmediateDiscoveryCard extends StatefulWidget {
   const ImmediateDiscoveryCard({
-    required this.entries, super.key,
+    required this.entries,
+    super.key,
     this.discovery,
     this.loading = false,
   });
@@ -70,9 +71,11 @@ class _ImmediateDiscoveryCardState extends State<ImmediateDiscoveryCard> {
   void _openWhy() {
     final d = widget.discovery;
     if (d == null) return;
-    unawaited(ProductAnalytics.trackStrings('immediate_discovery_why_opened', {
-      'type': d.type.name,
-    }));
+    unawaited(
+      ProductAnalytics.trackStrings('immediate_discovery_why_opened', {
+        'type': d.type.name,
+      }),
+    );
     openArchiveExplanation(
       context,
       ref: d.insightRef,
@@ -83,9 +86,11 @@ class _ImmediateDiscoveryCardState extends State<ImmediateDiscoveryCard> {
   void _openEvidence() {
     if (_evidenceEntries.isEmpty) return;
     setState(() => _evidenceOpen = true);
-    unawaited(ProductAnalytics.trackStrings('immediate_discovery_evidence_opened', {
-      'type': widget.discovery?.type.name ?? 'none',
-    }));
+    unawaited(
+      ProductAnalytics.trackStrings('immediate_discovery_evidence_opened', {
+        'type': widget.discovery?.type.name ?? 'none',
+      }),
+    );
   }
 
   @override

@@ -79,7 +79,7 @@ class BacklogImportNotifier extends Notifier<BacklogImportProgress> {
         onProgress: (progress) => state = progress,
         activeLens: activeLens,
       );
-    } catch (error, stackTrace) {
+    } catch (error) {
       state = BacklogImportProgress(
         phase: BacklogImportPhase.error,
         totalChunks: state.totalChunks,

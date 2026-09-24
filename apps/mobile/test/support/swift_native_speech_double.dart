@@ -146,7 +146,10 @@ class SwiftContractNativeSpeechPlatform
     return deviceLocaleIdentifiers;
   }
 
-  static Map<Object?, Object?> _failure(String reason, String localeIdentifier) {
+  static Map<Object?, Object?> _failure(
+    String reason,
+    String localeIdentifier,
+  ) {
     // The Swift `channelPayload` hard-codes an empty transcript on the failure
     // arm, so an uncertain recognition can never reach the caller as text.
     return {

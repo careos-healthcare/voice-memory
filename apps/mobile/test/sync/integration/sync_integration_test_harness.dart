@@ -165,7 +165,10 @@ final class SyncIntegrationTestHarness {
 
     final prefs = await MobilePrefsStore.open(sandbox.prefsPath);
     await prefs.writeString(JournalOwnershipGuard.ownerKeyPrefsKey, ownerKey);
-    await prefs.writeBool(JournalOwnershipGuard.migrationPendingPrefsKey, false);
+    await prefs.writeBool(
+      JournalOwnershipGuard.migrationPendingPrefsKey,
+      false,
+    );
     await markLegacyMigrationComplete(prefs);
 
     final sqliteDb = await openTestAppSqliteDatabase();
@@ -251,10 +254,11 @@ final class SyncIntegrationTestHarness {
     return rows.single;
   }
 
-  Future<void> expectSqliteMirrorMatchesJournal({required String entryId}) async {
+  Future<void> expectSqliteMirrorMatchesJournal({
+    required String entryId,
+  }) async {
     await mirrorJournalToSqlite();
-    final journalEntry =
-        await journal.getByIdIncludingTombstones(entryId);
+    final journalEntry = await journal.getByIdIncludingTombstones(entryId);
     final sqliteRow = await sqliteJournalRow(entryId);
 
     if (journalEntry == null || journalEntry.isDeleted) {

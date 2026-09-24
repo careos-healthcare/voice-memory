@@ -86,7 +86,10 @@ abstract final class RecordProofStackPolicy {
     required bool whyMattersEligible,
     required bool thoughtMapEligible,
     required bool positiveReinforcementEligible,
-    required bool changeProofEligible, required bool firstWeekLoopEligible, required bool proBridgeEligible, bool helpfulActionAppearedEligible = false,
+    required bool changeProofEligible,
+    required bool firstWeekLoopEligible,
+    required bool proBridgeEligible,
+    bool helpfulActionAppearedEligible = false,
     bool archiveCurrentBeliefEligible = false,
   }) {
     if (!loaded || !isReady || isRecording || isPostSave) {

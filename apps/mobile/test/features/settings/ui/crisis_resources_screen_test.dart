@@ -8,8 +8,9 @@ void main() {
     return MaterialApp(home: child);
   }
 
-  testWidgets('renders the intro, disclaimer, and every resource card',
-      (tester) async {
+  testWidgets('renders the intro, disclaimer, and every resource card', (
+    tester,
+  ) async {
     await tester.pumpWidget(wrap(const CrisisResourcesScreen()));
 
     expect(find.text(CrisisResourcesCopy.intro), findsOneWidget);
@@ -20,8 +21,9 @@ void main() {
     expect(find.text(CrisisResourcesCopy.internationalTitle), findsOneWidget);
   });
 
-  testWidgets('every resource action key is present and tappable',
-      (tester) async {
+  testWidgets('every resource action key is present and tappable', (
+    tester,
+  ) async {
     await tester.pumpWidget(wrap(const CrisisResourcesScreen()));
 
     for (final key in [
@@ -45,6 +47,9 @@ void main() {
     await tester.pumpWidget(wrap(const CrisisResourcesScreen()));
 
     expect(find.text(CrisisResourcesCopy.emergencyBody), findsOneWidget);
-    expect(find.byType(OutlinedButton), findsNWidgets(5)); // 4 resource actions + PushedScreenShell's own bottom Done button
+    expect(
+      find.byType(OutlinedButton),
+      findsNWidgets(5),
+    ); // 4 resource actions + PushedScreenShell's own bottom Done button
   });
 }

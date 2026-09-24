@@ -11,7 +11,9 @@ import 'package:flutter/material.dart';
 /// Preservation bridge when the archive has become meaningfully valuable.
 class ArchiveBackupBridgeCard extends StatefulWidget {
   const ArchiveBackupBridgeCard({
-    required this.contextData, required this.onDismiss, super.key,
+    required this.contextData,
+    required this.onDismiss,
+    super.key,
     this.onSeePro,
     this.compact = false,
   });

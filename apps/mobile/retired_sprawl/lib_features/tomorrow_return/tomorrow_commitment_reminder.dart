@@ -10,7 +10,11 @@ abstract class TomorrowCommitmentReminder {
       if (commitment.promptText.isEmpty) return;
       // No local notification plugin in consumer build yet.
     } catch (e, stackTrace) {
-      AppLogger.error('Unhandled error caught', error: e, stackTrace: stackTrace);
+      AppLogger.error(
+        'Unhandled error caught',
+        error: e,
+        stackTrace: stackTrace,
+      );
       // Ignore — retention still works via in-app status card.
     }
   }

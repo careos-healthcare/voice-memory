@@ -43,7 +43,10 @@ void main() {
     },
   );
 
-  test('trackFeedbackShown does not throw', ArchiveFeedbackCoordinator.trackFeedbackShown);
+  test(
+    'trackFeedbackShown does not throw',
+    ArchiveFeedbackCoordinator.trackFeedbackShown,
+  );
 
   test('store-backed summary finds dominant issue after two taps', () async {
     final stamp = DateTime.now().microsecondsSinceEpoch.toString();

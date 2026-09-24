@@ -134,39 +134,43 @@ void main() {
       expect(entry.processingUsedOnnx, isNot(false));
     });
 
-    test('an unconfirmed language saves the audio and no invented text',
-        () async {
-      final platform = SwiftContractNativeSpeechPlatform(transcript: _spoken);
-      NativeSpeechTranscription.testPlatform = platform;
+    test(
+      'an unconfirmed language saves the audio and no invented text',
+      () async {
+        final platform = SwiftContractNativeSpeechPlatform(transcript: _spoken);
+        NativeSpeechTranscription.testPlatform = platform;
 
-      final result = await run();
-      final entry = (await result.journal.loadAll()).single;
+        final result = await run();
+        final entry = (await result.journal.loadAll()).single;
 
-      expect(
-        platform.callCount,
-        0,
-        reason: 'nothing may pick a language on the customer’s behalf',
-      );
-      expect(entry.transcript, isNot(contains('said yes again')));
-      expect(entry.localAudioPath, isNotNull);
-      expect(result.api.transcribeCalls, 0);
-    });
+        expect(
+          platform.callCount,
+          0,
+          reason: 'nothing may pick a language on the customer’s behalf',
+        );
+        expect(entry.transcript, isNot(contains('said yes again')));
+        expect(entry.localAudioPath, isNotNull);
+        expect(result.api.transcribeCalls, 0);
+      },
+    );
 
-    test('a truncated recognition saves the audio and no partial text',
-        () async {
-      NativeSpeechTranscription.testPlatform =
-          SwiftContractNativeSpeechPlatform(
-        transcript: _spoken,
-        coverage: NativeSpeechCoverageVerdict.truncated,
-      );
-      await localeStore.confirm(ConfirmedSpeechLocale.confirmed('en-GB')!);
+    test(
+      'a truncated recognition saves the audio and no partial text',
+      () async {
+        NativeSpeechTranscription.testPlatform =
+            SwiftContractNativeSpeechPlatform(
+              transcript: _spoken,
+              coverage: NativeSpeechCoverageVerdict.truncated,
+            );
+        await localeStore.confirm(ConfirmedSpeechLocale.confirmed('en-GB')!);
 
-      final result = await run();
-      final entry = (await result.journal.loadAll()).single;
+        final result = await run();
+        final entry = (await result.journal.loadAll()).single;
 
-      expect(entry.transcript, isNot(contains('said yes again')));
-      expect(entry.localAudioPath, isNotNull);
-      expect(result.api.transcribeCalls, 0);
-    });
+        expect(entry.transcript, isNot(contains('said yes again')));
+        expect(entry.localAudioPath, isNotNull);
+        expect(result.api.transcribeCalls, 0);
+      },
+    );
   });
 }

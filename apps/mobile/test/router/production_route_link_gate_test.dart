@@ -19,14 +19,17 @@ void main() {
     expect(V1RouteRegistry.allQuarantinedPaths, contains('/archive-export'));
   });
 
-  test('quarantined archive-export deep link redirects to canonical export', () {
-    expect(
-      V1NavigationGuard.redirectFor('/archive-export'),
-      V1RouteRegistry.exportPath,
-    );
-    expect(V1NavigationGuard.isAllowed('/archive-export'), isFalse);
-    expect(V1NavigationGuard.isNavRouteVisible('/archive-export'), isFalse);
-  });
+  test(
+    'quarantined archive-export deep link redirects to canonical export',
+    () {
+      expect(
+        V1NavigationGuard.redirectFor('/archive-export'),
+        V1RouteRegistry.exportPath,
+      );
+      expect(V1NavigationGuard.isAllowed('/archive-export'), isFalse);
+      expect(V1NavigationGuard.isNavRouteVisible('/archive-export'), isFalse);
+    },
+  );
 
   test('CTA registry routes are allowlisted', () {
     final failures = ProductionRouteLinkGate.validateCtaRegistry();
@@ -50,7 +53,8 @@ void main() {
   });
 
   test('fixture file excludes marked prohibited CTA examples', () {
-    final fixturePath = 'test/router/fixtures/prohibited_route_link_examples.dart';
+    final fixturePath =
+        'test/router/fixtures/prohibited_route_link_examples.dart';
     final lines = File(fixturePath).readAsLinesSync();
     final failures = ProductionRouteLinkGate.scanSource(
       path: fixturePath,

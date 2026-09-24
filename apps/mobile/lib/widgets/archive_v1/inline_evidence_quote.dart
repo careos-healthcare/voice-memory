@@ -50,7 +50,8 @@ class InlineEvidenceQuote {
   static List<InlineEvidenceQuote> fromJournalEntries(
     List<JournalEntry> entries,
   ) {
-    final sorted = [...entries]..sort((a, b) => b.createdAt.compareTo(a.createdAt));
+    final sorted = [...entries]
+      ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
     return [
       for (final entry in sorted.take(12))
         InlineEvidenceQuote(

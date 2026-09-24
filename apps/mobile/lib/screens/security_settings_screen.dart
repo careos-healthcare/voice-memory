@@ -73,7 +73,8 @@ class _SecuritySettingsScreenState extends State<SecuritySettingsScreen> {
     var signedIn = false;
     try {
       signedIn = await _auth.refreshSession() != null;
-    } catch (_, stackTrace) { // ignore: silent_catch_audit — settings refresh session fallback
+    } catch (_, stackTrace) {
+      // ignore: silent_catch_audit — settings refresh session fallback
       signedIn = _auth.currentSession != null;
     }
     if (!mounted) return;
@@ -82,7 +83,8 @@ class _SecuritySettingsScreenState extends State<SecuritySettingsScreen> {
       hideSwitcher = await SensitiveScreenPrivacySettings.hideInAppSwitcher(
         AppServices.instance.prefs,
       );
-    } catch (_, stackTrace) { // ignore: silent_catch_audit — settings refresh session fallback
+    } catch (_, stackTrace) {
+      // ignore: silent_catch_audit — settings refresh session fallback
       hideSwitcher = false;
     }
     var hasMigratableGuestData = false;
@@ -92,7 +94,8 @@ class _SecuritySettingsScreenState extends State<SecuritySettingsScreen> {
             await AccountDataMigrationCoordinator.forActiveAccount().then(
               (coordinator) => coordinator.hasMigratableGuestData(),
             );
-      } catch (_, stackTrace) { // ignore: silent_catch_audit — settings refresh session fallback
+      } catch (_, stackTrace) {
+        // ignore: silent_catch_audit — settings refresh session fallback
         hasMigratableGuestData = false;
       }
     }
@@ -366,8 +369,7 @@ class _SecuritySettingsScreenState extends State<SecuritySettingsScreen> {
           title: ConsumerUiCopy.restorePurchases,
           onTap: _restoreBusy ? null : _restorePurchases,
         ),
-      if (V1BillingCapability.isProductionReachable &&
-          _restoreFeedback != null)
+      if (V1BillingCapability.isProductionReachable && _restoreFeedback != null)
         Padding(
           key: const Key('security_restore_feedback'),
           padding: const EdgeInsets.only(
@@ -404,7 +406,8 @@ class _SecuritySettingsScreenState extends State<SecuritySettingsScreen> {
   }
 
   Widget _tile({
-    required String title, Key? key,
+    required String title,
+    Key? key,
     String? subtitle,
     VoidCallback? onTap,
     Widget? trailing,

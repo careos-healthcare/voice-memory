@@ -1,13 +1,12 @@
 import 'dart:async';
 
-import 'package:archiveme_mobile/billing/billing_async_guard.dart';
 import 'package:archiveme_mobile/billing/billing_service.dart';
 import 'package:archiveme_mobile/billing/store_billing_port.dart';
 import 'package:archiveme_mobile/core/di/network_providers.dart';
 import 'package:archiveme_mobile/core/di/storage_providers.dart';
-import 'package:archiveme_mobile/core/network/api_failure.dart';
-import 'package:archiveme_mobile/data/repositories/billing_repository.dart';
-import 'package:archiveme_mobile/features/auth/application/auth_session_notifier.dart' show AuthSessionNotifier;
+import 'package:archiveme_mobile/features/monetization/subscription_manager.dart';
+import 'package:archiveme_mobile/features/auth/application/auth_session_notifier.dart'
+    show AuthSessionNotifier;
 import 'package:archiveme_mobile/features/billing/application/billing_startup_result.dart';
 import 'package:archiveme_mobile/features/billing/application/billing_state.dart';
 import 'package:archiveme_mobile/features/paywall/archive_loop_entitlements.dart';
@@ -28,9 +27,13 @@ class BillingNotifier extends Notifier<BillingState> {
     return const BillingState();
   }
 
-  BillingRepository get _repository => ref.read(billingRepositoryProvider);
   EntitlementCache get _cache => ref.read(entitlementCacheProvider);
   StoreBillingPort get _revenueCat => ref.read(storeBillingPortProvider);
+
+  SubscriptionManager get _subscriptions => SubscriptionManager(
+    store: _revenueCat,
+    cache: _cache,
+  );
 
   StreamSubscription<PremiumEntitlements>? _rcSub;
 
@@ -161,49 +164,16 @@ class BillingNotifier extends Notifier<BillingState> {
         clearLastFailure: true,
       );
 
-      final storeEnt = _revenueCat.isConfigured
-          ? await _revenueCat.refreshEntitlements()
-          : PremiumEntitlements.free();
-
-      PremiumEntitlements serverEnt;
-      final serverResult = await withBillingTimeout(
-        _repository.fetchEntitlements(),
-        label: 'loadEntitlements.fetchEntitlements',
+      final entitlements = await _subscriptions.refresh(
+        force: true,
+        memory: state.entitlements,
       );
-
-      if (serverResult == null) {
-        ReleaseLogger.logFailure(
-          event: 'billing_load_entitlements_timeout',
-          category: ReleaseLogCategory.billing,
-          errorCode: 'timeout',
-        );
-        serverEnt = await _cache.load() ?? PremiumEntitlements.free();
-      } else {
-        serverEnt = await serverResult.when(
-          success: (entitlements) async {
-            try {
-              await _cache.save(entitlements);
-            } catch (e) {
-              _logException('cache_save_skipped', e);
-            }
-            return entitlements;
-          },
-          onFailure: (failure) async {
-            _logFailure('loadEntitlements', failure);
-            state = state.copyWith(lastFailure: failure);
-            return await _cache.load() ?? PremiumEntitlements.free();
-          },
-        );
-      }
-
-      final merged = BillingService.mergeEntitlements(
-        server: serverEnt,
-        store: storeEnt,
-        revenueCatConfigured: _revenueCat.isConfigured,
+      state = state.copyWith(
+        entitlements: entitlements,
+        phase: BillingPhase.ready,
       );
-      state = state.copyWith(entitlements: merged, phase: BillingPhase.ready);
-      await _persistEntitlements(merged);
-      return merged;
+      await _persistEntitlements(entitlements, syncedFrom: 'revenuecat');
+      return entitlements;
     } catch (e, st) {
       _logException('load_entitlements_failed', e, st);
       final free = PremiumEntitlements.free();
@@ -213,14 +183,14 @@ class BillingNotifier extends Notifier<BillingState> {
   }
 
   Future<PremiumEntitlements> purchaseNative(Package package) async {
-    final ent = await _revenueCat.purchasePackage(package);
+    final ent = await _subscriptions.purchase(package);
     state = state.copyWith(entitlements: ent, phase: BillingPhase.ready);
     await _persistEntitlements(ent);
     return ent;
   }
 
   Future<PremiumEntitlements> restoreNative() async {
-    final restored = await _revenueCat.restorePurchases();
+    final restored = await _subscriptions.restore();
     state = state.copyWith(entitlements: restored, phase: BillingPhase.ready);
     await _persistEntitlements(restored);
     if (_revenueCat.isConfigured) {
@@ -291,18 +261,12 @@ class BillingNotifier extends Notifier<BillingState> {
   Future<void> _syncLoopProFlag({required bool isPro}) async {
     if (!isPro || !AppServices.isInitialized) return;
     try {
-      await ArchiveLoopEntitlementStore(AppServices.instance.prefs).setPro(true);
+      await ArchiveLoopEntitlementStore(
+        AppServices.instance.prefs,
+      ).setPro(true);
     } catch (e) {
       _logException('loop_pro_flag_sync_skipped', e);
     }
-  }
-
-  void _logFailure(String operation, ApiFailure failure) {
-    ReleaseLogger.apiFailure(
-      event: 'billing_${operation}_failed',
-      category: ReleaseLogCategory.billing,
-      failure: failure,
-    );
   }
 
   void _logException(String operation, Object error, [StackTrace? stackTrace]) {

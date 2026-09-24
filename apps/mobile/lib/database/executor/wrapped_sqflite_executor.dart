@@ -11,6 +11,9 @@ class WrappedSqfliteExecutor extends QueryExecutor {
 
   final sqflite.Database _database;
 
+  /// The sqflite connection this executor forwards to.
+  sqflite.Database get database => _database;
+
   @override
   SqlDialect get dialect => SqlDialect.sqlite;
 

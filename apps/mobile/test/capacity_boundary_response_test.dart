@@ -257,9 +257,7 @@ void main() {
         expect(
           engine
               .build(
-                _eligibleInput(
-                  
-                ),
+                _eligibleInput(),
               )
               .showOnArchiveHome,
           isTrue,

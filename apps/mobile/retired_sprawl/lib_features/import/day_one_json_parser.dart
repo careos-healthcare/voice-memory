@@ -42,7 +42,8 @@ abstract final class DayOneJsonParser {
   }) {
     final text = _readText(row);
     final createdAt = _readDate(row);
-    final externalId = row['uuid']?.toString() ??
+    final externalId =
+        row['uuid']?.toString() ??
         row['id']?.toString() ??
         row['identifier']?.toString();
 

@@ -66,9 +66,7 @@ abstract final class BetaAnalyticsMilestoneCoordinator {
     if (activeCountAfter == 3 && !state.hasEmitted('third_moment_saved_7d')) {
       final withinWindow = elapsed <= thirdSaveWindow;
       await store.write(
-        state
-            .copyWith(saveCount: 3)
-            .markEmitted('third_moment_saved_7d'),
+        state.copyWith(saveCount: 3).markEmitted('third_moment_saved_7d'),
       );
       await BetaAnalyticsTracker.track(
         'third_moment_saved_7d',

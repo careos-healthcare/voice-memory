@@ -9,21 +9,20 @@ JournalEntry _entry(
   String id, {
   required String transcript,
   DateTime? createdAt,
-}) =>
-    JournalEntry(
-      id: id,
-      createdAt: createdAt ?? DateTime(2026, 6, 12, 10),
-      transcript: transcript,
-      durationSeconds: 20,
-      reflection: const Reflection(
-        mood: 'neutral',
-        emotionalIntensity: 2,
-        recurringThemes: ['work'],
-        exactLanguagePattern: '',
-        concreteObservation: 'Work pressure showed up again.',
-        repeatedSignal: 'Same thread returning.',
-      ),
-    );
+}) => JournalEntry(
+  id: id,
+  createdAt: createdAt ?? DateTime(2026, 6, 12, 10),
+  transcript: transcript,
+  durationSeconds: 20,
+  reflection: const Reflection(
+    mood: 'neutral',
+    emotionalIntensity: 2,
+    recurringThemes: ['work'],
+    exactLanguagePattern: '',
+    concreteObservation: 'Work pressure showed up again.',
+    repeatedSignal: 'Same thread returning.',
+  ),
+);
 
 List<JournalEntry> _threeRelatedRepeatEntries() => [
   _entry(
@@ -52,14 +51,13 @@ PressureCheckInRecord _pressureRecord({
   required String id,
   int daysAgo = 0,
   List<String> contextIds = const [],
-}) =>
-    PressureCheckInRecord(
-      entryId: id,
-      createdAt: _pressureBase.subtract(Duration(days: daysAgo)),
-      optionId: 'could_not_stop',
-      contextIds: contextIds,
-      transcript: 'pressure moment',
-    );
+}) => PressureCheckInRecord(
+  entryId: id,
+  createdAt: _pressureBase.subtract(Duration(days: daysAgo)),
+  optionId: 'could_not_stop',
+  contextIds: contextIds,
+  transcript: 'pressure moment',
+);
 
 void main() {
   group('MagicMomentsCounter', () {
@@ -73,30 +71,51 @@ void main() {
       expect(MagicMomentsCounter.countFromJournalEntries(const []), 0);
     });
 
-    test('confirmed repeat path counts distinct milestones without stacking', () {
-      final entries = _threeRelatedRepeatEntries();
-      expect(
-        EarlyFirstSignalEngine.build(entries: entries)?.kind,
-        EarlyFirstSignalKind.threeEntryConfirmedRepeat,
-      );
-      expect(MagicMomentsCounter.countFromJournalEntries(entries), 3);
-    });
+    test(
+      'confirmed repeat path counts distinct milestones without stacking',
+      () {
+        final entries = _threeRelatedRepeatEntries();
+        expect(
+          EarlyFirstSignalEngine.build(entries: entries)?.kind,
+          EarlyFirstSignalKind.threeEntryConfirmedRepeat,
+        );
+        expect(MagicMomentsCounter.countFromJournalEntries(entries), 3);
+      },
+    );
 
-    test('pressure records do not double-count connected archive with thread', () {
-      final records = [
-        _pressureRecord(id: 'a', daysAgo: 5, contextIds: const ['work']),
-        _pressureRecord(id: 'b', contextIds: const ['work']),
-      ];
-      expect(MagicMomentsCounter.countFromPressureRecords(records, now: _pressureBase), 2);
-    });
+    test(
+      'pressure records do not double-count connected archive with thread',
+      () {
+        final records = [
+          _pressureRecord(id: 'a', daysAgo: 5, contextIds: const ['work']),
+          _pressureRecord(id: 'b', contextIds: const ['work']),
+        ];
+        expect(
+          MagicMomentsCounter.countFromPressureRecords(
+            records,
+            now: _pressureBase,
+          ),
+          2,
+        );
+      },
+    );
 
-    test('strong thread depth adds a second thread milestone at three appearances', () {
-      final records = [
-        _pressureRecord(id: 'a', daysAgo: 7, contextIds: const ['work']),
-        _pressureRecord(id: 'b', daysAgo: 3, contextIds: const ['work']),
-        _pressureRecord(id: 'c', contextIds: const ['work']),
-      ];
-      expect(MagicMomentsCounter.countFromPressureRecords(records, now: _pressureBase), 3);
-    });
+    test(
+      'strong thread depth adds a second thread milestone at three appearances',
+      () {
+        final records = [
+          _pressureRecord(id: 'a', daysAgo: 7, contextIds: const ['work']),
+          _pressureRecord(id: 'b', daysAgo: 3, contextIds: const ['work']),
+          _pressureRecord(id: 'c', contextIds: const ['work']),
+        ];
+        expect(
+          MagicMomentsCounter.countFromPressureRecords(
+            records,
+            now: _pressureBase,
+          ),
+          3,
+        );
+      },
+    );
   });
 }

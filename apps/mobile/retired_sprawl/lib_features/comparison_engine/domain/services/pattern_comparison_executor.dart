@@ -3,11 +3,11 @@ import 'package:archiveme_mobile/features/comparison_engine/domain/models/archiv
 import 'package:archiveme_mobile/features/comparison_engine/domain/models/pattern_comparison_plan.dart';
 import 'package:archiveme_mobile/features/comparison_engine/domain/models/pattern_evidence_view_state.dart';
 import 'package:archiveme_mobile/features/comparison_engine/domain/services/comparison_output_parser.dart';
-import 'package:archiveme_mobile/features/comparison_engine/domain/services/historical_context_pruner.dart' as historical_context_pruner;
+import 'package:archiveme_mobile/features/comparison_engine/domain/services/historical_context_pruner.dart'
+    as historical_context_pruner;
 import 'package:archiveme_mobile/features/comparison_engine/domain/services/pro_trail_gate.dart';
 
 class PatternComparisonExecutor {
-
   const PatternComparisonExecutor({
     this._config = const ComparisonEngineConfig(),
     this._parser = const ComparisonOutputParser(),

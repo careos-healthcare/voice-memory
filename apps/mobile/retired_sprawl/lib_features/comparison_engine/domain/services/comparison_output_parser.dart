@@ -1,7 +1,6 @@
 import 'package:archiveme_mobile/features/comparison_engine/domain/models/archive_moment_record.dart';
 
 class ParsedComparisonOutput {
-
   const ParsedComparisonOutput({
     required this.state,
     required this.connectionText,

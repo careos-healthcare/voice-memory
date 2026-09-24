@@ -79,7 +79,8 @@ Existing themes: $themeHint
 
 Transcript:
 $transcript
-'''.trim();
+'''
+        .trim();
   }
 
   static LocalLlmGraphUpdate parseGraphJson({
@@ -92,7 +93,10 @@ $transcript
         ? decoded['entryId'] as String
         : entryId;
 
-    final nodes = _parseNodes(decoded['nodes'], fallbackEntryId: resolvedEntryId);
+    final nodes = _parseNodes(
+      decoded['nodes'],
+      fallbackEntryId: resolvedEntryId,
+    );
     final edges = _parseEdges(decoded['edges']);
     final themes = _parseStringList(decoded['recurringThemes']);
 

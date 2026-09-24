@@ -8,7 +8,8 @@ import 'package:go_router/go_router.dart';
 /// Patterns surface: the clear payoff of repeated check-ins.
 class PatternProgressCard extends StatelessWidget {
   const PatternProgressCard({
-    required this.progress, super.key,
+    required this.progress,
+    super.key,
     this.showRecordCta = true,
   });
 

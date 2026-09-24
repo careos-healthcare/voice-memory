@@ -11,7 +11,8 @@ import 'package:flutter/material.dart';
 /// Post-save transition showing live fact-ledger indexing.
 class EvidenceIndexingView extends StatefulWidget {
   const EvidenceIndexingView({
-    required this.controller, super.key,
+    required this.controller,
+    super.key,
     this.onInspectEvidenceTrail,
     this.onReturnToArchive,
   });
@@ -89,9 +90,7 @@ class _EvidenceIndexingViewState extends State<EvidenceIndexingView> {
             const SizedBox(height: AppSpacing.sm),
             Text(
               EvidenceIndexingCopy.liveFeedLabel,
-              style: VoiceMemoryTypography.sectionLabelStyle(
-                
-              ),
+              style: VoiceMemoryTypography.sectionLabelStyle(),
             ),
             const SizedBox(height: AppSpacing.xs),
             _LiveFeed(chips: controller.visibleChips, phase: controller.phase),
@@ -106,7 +105,9 @@ class _EvidenceIndexingViewState extends State<EvidenceIndexingView> {
                     child: OutlinedButton(
                       key: const Key('evidence_indexing_inspect_trail'),
                       onPressed: widget.onInspectEvidenceTrail,
-                      child: const Text(EvidenceIndexingCopy.inspectEvidenceTrail),
+                      child: const Text(
+                        EvidenceIndexingCopy.inspectEvidenceTrail,
+                      ),
                     ),
                   ),
                   const SizedBox(width: AppSpacing.sm),
@@ -130,8 +131,7 @@ class _EvidenceIndexingViewState extends State<EvidenceIndexingView> {
     return switch (phase) {
       EvidenceIndexingPhase.listening => EvidenceIndexingCopy.listeningBody,
       EvidenceIndexingPhase.extracting ||
-      EvidenceIndexingPhase.committing =>
-        EvidenceIndexingCopy.extractingBody,
+      EvidenceIndexingPhase.committing => EvidenceIndexingCopy.extractingBody,
       EvidenceIndexingPhase.complete => EvidenceIndexingCopy.extractingBody,
       EvidenceIndexingPhase.skipped => EvidenceIndexingCopy.emptyBody,
     };
@@ -202,7 +202,9 @@ class _LiveFeed extends StatelessWidget {
 
 class _AnimatedEvidenceChip extends StatelessWidget {
   const _AnimatedEvidenceChip({
-    required this.chip, required this.index, super.key,
+    required this.chip,
+    required this.index,
+    super.key,
   });
 
   final EvidenceIndexingChip chip;

@@ -62,8 +62,10 @@ abstract final class HelpReviewerGuideCopy {
   static const String helpBetaOutcomesTitle = BetaOutcomesCopy.helpSectionTitle;
   static const String helpBetaOutcomesBody = BetaOutcomesCopy.helpSectionBody;
 
-  static const String helpFirstWeekPathTitle = FirstWeekPathCopy.helpSectionTitle;
-  static const String helpFirstWeekPathBullet = FirstWeekPathCopy.helpSectionBullet;
+  static const String helpFirstWeekPathTitle =
+      FirstWeekPathCopy.helpSectionTitle;
+  static const String helpFirstWeekPathBullet =
+      FirstWeekPathCopy.helpSectionBullet;
 
   static const String helpBetaInviteTitle = BetaInviteCopy.helpTitle;
   static const String helpBetaInviteBody = BetaInviteCopy.helpBody;

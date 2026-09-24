@@ -15,7 +15,8 @@ import 'package:flutter/material.dart';
 /// Dominant return-day card: answer yesterday's locked check-in, then record.
 class TomorrowCheckInDueCard extends StatefulWidget {
   const TomorrowCheckInDueCard({
-    required this.checkIn, super.key,
+    required this.checkIn,
+    super.key,
     this.onRecord,
     this.onSelectOption,
     this.guided = false,

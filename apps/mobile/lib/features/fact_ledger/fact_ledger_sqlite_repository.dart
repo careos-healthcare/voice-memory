@@ -13,8 +13,7 @@ class FactLedgerSqliteRepository {
   AppDatabase? _drift;
   FactLedgerDao? _dao;
 
-  FactLedgerDao get _factLedgerDao =>
-      _dao ??= FactLedgerDao(_driftDb);
+  FactLedgerDao get _factLedgerDao => _dao ??= FactLedgerDao(_driftDb);
 
   AppDatabase get _driftDb =>
       _drift ??= AppDatabase.fromSqflite(_sqlite.database);

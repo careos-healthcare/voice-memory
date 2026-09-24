@@ -13,7 +13,8 @@ abstract final class ProofDetailRepairCopy {
   static const similarMomentsLead =
       'This appeared because similar saved moments mention:';
 
-  static const String whyThisOneLine = ProofSelectionPrincipleCopy.whyThisOneLine;
+  static const String whyThisOneLine =
+      ProofSelectionPrincipleCopy.whyThisOneLine;
 
   static const String notRankingOrMostImportantLine =
       ProofSelectionPrincipleCopy.notRankingOrMostImportantLine;
@@ -22,7 +23,8 @@ abstract final class ProofDetailRepairCopy {
       'Why it may matter: it showed up more than once, and the wording was '
       'specific enough to compare safely.';
 
-  static const String correctionLine = ProofSelectionPrincipleCopy.correctionLine;
+  static const String correctionLine =
+      ProofSelectionPrincipleCopy.correctionLine;
 
   static const bannedDetailPhrases = [
     'ranked list',

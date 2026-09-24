@@ -10,7 +10,11 @@ import 'package:flutter/material.dart';
 /// entries exist but no real returned/faded/changed insight is ready yet.
 class ChangeStartsCard extends StatefulWidget {
   const ChangeStartsCard({
-    required this.entryCount, required this.onViewArchive, required this.onSearchArchive, required this.onSeen, super.key,
+    required this.entryCount,
+    required this.onViewArchive,
+    required this.onSearchArchive,
+    required this.onSeen,
+    super.key,
   });
 
   final int entryCount;

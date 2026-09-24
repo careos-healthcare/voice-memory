@@ -109,7 +109,8 @@ class _AccountPrivacyControlsSectionState
           key: const Key('account_control_export_button'),
           label: AccountPrivacyControlsCopy.export,
           onPressed:
-              widget.onExportTap ?? () => context.push(V1RouteRegistry.exportPath),
+              widget.onExportTap ??
+              () => context.push(V1RouteRegistry.exportPath),
         ),
         _button(
           key: const Key('account_control_clear_archive_button'),

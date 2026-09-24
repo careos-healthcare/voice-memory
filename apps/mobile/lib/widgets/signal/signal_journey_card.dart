@@ -13,7 +13,8 @@ import 'package:flutter/material.dart';
 /// Compact signal journey card for Record and Patterns tabs.
 class SignalJourneyCard extends StatelessWidget {
   const SignalJourneyCard({
-    required this.journey, super.key,
+    required this.journey,
+    super.key,
     this.activeLoop,
     this.compact = false,
     this.onViewJourney,

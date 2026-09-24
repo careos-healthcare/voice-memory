@@ -1,10 +1,12 @@
 import 'dart:async';
 
+import 'package:archiveme_mobile/billing/utility/usage_progress_bar.dart';
 import 'package:archiveme_mobile/config/developer_settings_gate.dart';
 import 'package:archiveme_mobile/config/production_navigation.dart';
 import 'package:archiveme_mobile/core/config/v1_navigation_guard.dart';
 import 'package:archiveme_mobile/core/config/v1_capability_registry.dart';
 import 'package:archiveme_mobile/core/config/v1_feature_flags.dart';
+import 'package:archiveme_mobile/core/diagnostics/system_diagnostics_screen.dart';
 import 'package:archiveme_mobile/design/archive_mobile_typography.dart';
 import 'package:archiveme_mobile/design/archive_responsive_layout.dart';
 import 'package:archiveme_mobile/features/action_items/archive_action_item.dart';
@@ -29,6 +31,7 @@ import 'package:archiveme_mobile/features/pro_evidence_value/pro_evidence_value_
 import 'package:archiveme_mobile/features/revenue_metrics/revenue_readiness_engine.dart';
 import 'package:archiveme_mobile/features/auth/domain/caregiver_access_copy.dart';
 import 'package:archiveme_mobile/features/settings/ui/trust_status_footer.dart';
+import 'package:archiveme_mobile/features/sync/sync_status_center_screen.dart';
 import 'package:archiveme_mobile/features/tomorrow_return/check_in_reminder_service.dart';
 import 'package:archiveme_mobile/features/tomorrow_return/tomorrow_check_in_coordinator.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
@@ -45,6 +48,7 @@ import 'package:archiveme_mobile/widgets/beta/testflight_metrics_dashboard_card.
 import 'package:archiveme_mobile/widgets/debug/revenue_readiness_card.dart';
 import 'package:archiveme_mobile/widgets/memory/memory_scope_settings_section.dart';
 import 'package:archiveme_mobile/widgets/pushed_screen_shell.dart';
+import 'package:archiveme_mobile/widgets/settings/advanced_tools_settings_section.dart';
 import 'package:archiveme_mobile/widgets/settings/app_review_access_settings_section.dart';
 import 'package:archiveme_mobile/widgets/settings/privacy_data_controls_section.dart';
 import 'package:archiveme_mobile/widgets/settings/privacy_security_trust_section.dart';
@@ -73,19 +77,25 @@ class _SettingsScreenState extends State<SettingsScreen> {
     super.initState();
     unawaited(BetaFeedbackIntelligenceStore.ensureLoaded());
     unawaited(_loadJournalEntries());
-    unawaited(PackageInfo.fromPlatform().then((info) {
-      if (mounted) setState(() => _packageInfo = info);
-    }));
+    unawaited(
+      PackageInfo.fromPlatform().then((info) {
+        if (mounted) setState(() => _packageInfo = info);
+      }),
+    );
     if (V1CapabilityRegistry.notifications) {
-      unawaited(CheckInReminderService.remindersEnabled().then((value) {
-        if (mounted) setState(() => _remindersEnabled = value);
-      }));
+      unawaited(
+        CheckInReminderService.remindersEnabled().then((value) {
+          if (mounted) setState(() => _remindersEnabled = value);
+        }),
+      );
     }
-    unawaited(OnDeviceProcessingStore.ensureLoaded().then((_) {
-      if (mounted) {
-        setState(() => _onDeviceProcessing = OnDeviceProcessingStore.enabled);
-      }
-    }));
+    unawaited(
+      OnDeviceProcessingStore.ensureLoaded().then((_) {
+        if (mounted) {
+          setState(() => _onDeviceProcessing = OnDeviceProcessingStore.enabled);
+        }
+      }),
+    );
   }
 
   String get _reminderStateLabel {
@@ -195,8 +205,27 @@ class _SettingsScreenState extends State<SettingsScreen> {
         child: ListView(
           padding: EdgeInsets.zero,
           children: [
+            const UsageProgressBarSlot(),
+            const SizedBox(height: AppSpacing.md),
             const AccountPrivacyControlsSection(),
             const SizedBox(height: AppSpacing.md),
+            ListTile(
+              key: const Key('settings_mesh_sync_tile'),
+              contentPadding: EdgeInsets.zero,
+              title: Text(
+                'Mesh sync',
+                style: ArchiveMobileTypography.listTitle(context),
+              ),
+              subtitle: const Text('Devices, indexing, and key status'),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute<void>(
+                    builder: (context) => const SyncStatusCenterScreen(),
+                  ),
+                );
+              },
+            ),
             ListTile(
               key: const Key('settings_privacy_trust_centre_tile'),
               contentPadding: EdgeInsets.zero,
@@ -257,9 +286,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               const SizedBox(height: AppSpacing.sm),
               RevenueReadinessCard(dashboard: RevenueReadinessEngine.build()),
               const SizedBox(height: AppSpacing.sm),
-              const TestFlightMetricsDashboardCard(
-                
-              ),
+              const TestFlightMetricsDashboardCard(),
               const SizedBox(height: AppSpacing.sm),
               const BetaConversionDiagnosisCard(),
             ],
@@ -396,6 +423,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               padding: EdgeInsets.symmetric(vertical: AppSpacing.xs),
               child: MemoryScopeSettingsSection(),
             ),
+            const AdvancedToolsSettingsSection(),
             if (V1FeatureFlags.enableCustomReports)
               ListTile(
                 key: const Key('settings_insight_quality_tile'),
@@ -522,6 +550,25 @@ class _SettingsScreenState extends State<SettingsScreen> {
             const TrustStatusFooter(),
             if (DeveloperSettingsGate.canShowDeveloperSettings) ...[
               const Divider(height: 28),
+              ListTile(
+                key: const Key('settings_system_health_tile'),
+                contentPadding: EdgeInsets.zero,
+                title: Text(
+                  'System health',
+                  style: ArchiveMobileTypography.listTitle(context),
+                ),
+                subtitle: const Text('Backups, index, and background tasks'),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () {
+                  unawaited(
+                    Navigator.of(context).push(
+                      MaterialPageRoute<void>(
+                        builder: (context) => const SystemDiagnosticsScreen(),
+                      ),
+                    ),
+                  );
+                },
+              ),
               _tile(
                 'Developer diagnostics',
                 onTap: () => context.push('/developer-diagnostics'),

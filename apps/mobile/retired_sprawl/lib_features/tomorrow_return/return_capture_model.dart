@@ -34,7 +34,10 @@ class ReturnCaptureModel {
   const ReturnCaptureModel({
     required this.watchForId,
     required this.promptText,
-    required this.suggestedStarters, required this.quickAnswers, required this.quality, this.checkInQuestion,
+    required this.suggestedStarters,
+    required this.quickAnswers,
+    required this.quality,
+    this.checkInQuestion,
     this.situationHint,
   });
 

@@ -237,7 +237,10 @@ void main() {
       expect(payoff, isNotNull);
       expect(payoff!.evidenceThin, isTrue);
       expect(payoff.thinEvidenceNote, contains('distinct moment'));
-      expect(payoff.thinEvidenceAction, ThirdEntryBeliefPayoffCopy.evidenceThinAction);
+      expect(
+        payoff.thinEvidenceAction,
+        ThirdEntryBeliefPayoffCopy.evidenceThinAction,
+      );
     });
 
     test('analysis unavailable still allows local third-entry payoff', () {
@@ -275,16 +278,20 @@ void main() {
         secondaryCta: ThirdEntryBeliefPayoffCopy.secondaryCta,
       );
 
-      await tester.pumpWidget(withAppProviderScope(MaterialApp(
-          theme: AppTheme.light(),
-          home: Scaffold(
-            body: ThirdEntryBeliefPayoffCard(
-              payoff: payoff,
-              onAddAnother: () {},
-              onViewArchive: () {},
+      await tester.pumpWidget(
+        withAppProviderScope(
+          MaterialApp(
+            theme: AppTheme.light(),
+            home: Scaffold(
+              body: ThirdEntryBeliefPayoffCard(
+                payoff: payoff,
+                onAddAnother: () {},
+                onViewArchive: () {},
+              ),
             ),
           ),
-        )));
+        ),
+      );
       await tester.pump();
 
       expect(
@@ -298,7 +305,10 @@ void main() {
       expect(find.textContaining('saved words suggest so far'), findsOneWidget);
       expect(find.text(ThirdEntryBeliefPayoffCopy.bodySource), findsOneWidget);
       expect(find.text(ThirdEntryBeliefPayoffCopy.primaryCta), findsOneWidget);
-      expect(find.text(ThirdEntryBeliefPayoffCopy.secondaryCta), findsOneWidget);
+      expect(
+        find.text(ThirdEntryBeliefPayoffCopy.secondaryCta),
+        findsOneWidget,
+      );
       expect(
         find.byKey(const Key('third_entry_belief_payoff_evidence_0')),
         findsOneWidget,
@@ -341,14 +351,18 @@ void main() {
       );
       await tester.binding.setSurfaceSize(const Size(390, 3200));
       addTearDown(() => tester.binding.setSurfaceSize(null));
-      await tester.pumpWidget(withAppProviderScope(MaterialApp(
-          theme: AppTheme.light(),
-          home: Scaffold(
-            body: RecordScreen(
-              entitlementReader: FakeArchiveEntitlementReader(pro: false),
+      await tester.pumpWidget(
+        withAppProviderScope(
+          MaterialApp(
+            theme: AppTheme.light(),
+            home: Scaffold(
+              body: RecordScreen(
+                entitlementReader: FakeArchiveEntitlementReader(pro: false),
+              ),
             ),
           ),
-        )));
+        ),
+      );
       await tester.pump();
       await tester.runAsync(() async {
         await Future<void>.delayed(const Duration(milliseconds: 400));

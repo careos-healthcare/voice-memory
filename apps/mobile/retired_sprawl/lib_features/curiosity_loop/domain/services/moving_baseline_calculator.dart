@@ -3,12 +3,12 @@ import 'package:archiveme_mobile/features/curiosity_loop/domain/models/cognitive
 /// Calculates an Exponentially Weighted Moving Average (EWMA) baseline
 /// across sequential biomarker tracking points to reveal long-term shifts.
 class MovingBaselineCalculator {
-
   const MovingBaselineCalculator({this.alpha = 0.30})
     : assert(
         alpha > 0.0 && alpha <= 1.0,
         'Alpha smoothing factor must fall within (0.0, 1.0]',
       );
+
   /// The smoothing factor parameter (alpha).
   /// Closer to 1.0 weights recent entries heavily; closer to 0.0 prioritizes long-term history.
   final double alpha;

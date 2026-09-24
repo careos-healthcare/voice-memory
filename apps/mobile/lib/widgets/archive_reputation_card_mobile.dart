@@ -7,7 +7,8 @@ import 'package:flutter/material.dart';
 /// Archive reputation on mobile archive surfaces.
 class ArchiveReputationCardMobile extends StatelessWidget {
   const ArchiveReputationCardMobile({
-    required this.entries, super.key,
+    required this.entries,
+    super.key,
     this.compact = false,
   });
 

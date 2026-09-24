@@ -18,7 +18,9 @@ import 'package:share_plus/share_plus.dart';
 /// Fixed-size proof card for PNG export via [RepaintBoundary].
 class EvidenceShareCard extends StatelessWidget {
   const EvidenceShareCard({
-    required this.artifact, required this.redactQuotes, super.key,
+    required this.artifact,
+    required this.redactQuotes,
+    super.key,
     this.exportKey,
     this.fixedWidth = exportWidth,
   });
@@ -82,7 +84,10 @@ class EvidenceShareCard extends StatelessWidget {
               ),
               const SizedBox(height: 16),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 8,
+                ),
                 decoration: BoxDecoration(
                   color: VoiceMemoryColors.primaryIndigo.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(999),
@@ -97,7 +102,10 @@ class EvidenceShareCard extends StatelessWidget {
               ),
               const SizedBox(height: 12),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 6,
+                ),
                 decoration: BoxDecoration(
                   color: bandPalette.background,
                   borderRadius: BorderRadius.circular(8),
@@ -145,9 +153,10 @@ class EvidenceShareCard extends StatelessWidget {
                       children: [
                         Text(
                           dateFormat.format(citation.recordedAt),
-                          style: VoiceMemoryTypography.secondaryStyle().copyWith(
-                            fontWeight: FontWeight.w600,
-                          ),
+                          style: VoiceMemoryTypography.secondaryStyle()
+                              .copyWith(
+                                fontWeight: FontWeight.w600,
+                              ),
                         ),
                         const SizedBox(height: 4),
                         Text(

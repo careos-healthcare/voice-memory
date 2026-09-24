@@ -14,7 +14,11 @@ void main() {
 
     test('every path starts with /api/', () {
       for (final endpoint in VoiceMemoryApiRoutes.all) {
-        expect(endpoint.path.startsWith('/api/'), isTrue, reason: endpoint.path);
+        expect(
+          endpoint.path.startsWith('/api/'),
+          isTrue,
+          reason: endpoint.path,
+        );
       }
     });
 
@@ -74,7 +78,10 @@ void main() {
       );
       addTearDown(container.dispose);
 
-      expect(container.read(voiceMemoryApiBaseUrlProvider), 'http://127.0.0.1:3000');
+      expect(
+        container.read(voiceMemoryApiBaseUrlProvider),
+        'http://127.0.0.1:3000',
+      );
       expect(
         container.read(voiceMemoryApiConfigProvider).baseUrl,
         'http://127.0.0.1:3000',

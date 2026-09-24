@@ -12,7 +12,9 @@ abstract final class BreakthroughTrackingEngine {
 
   static const confidenceDeltaThreshold = 10;
 
-  static BreakthroughShift? detectFromMovement(SessionMovementSummaryView? summary) {
+  static BreakthroughShift? detectFromMovement(
+    SessionMovementSummaryView? summary,
+  ) {
     if (summary == null) return null;
     if (!BreakthroughShiftDetector.isBreakthroughSummary(summary)) {
       return null;
@@ -45,7 +47,8 @@ abstract final class BreakthroughTrackingEngine {
 class BreakthroughShift {
   const BreakthroughShift({
     required this.headline,
-    required this.movementKind, this.detailLine,
+    required this.movementKind,
+    this.detailLine,
     this.theoryId,
   });
 

@@ -11,7 +11,9 @@ import 'package:flutter/material.dart';
 /// Patterns / Archive longitudinal return comparison — no CTAs.
 class WhatChangedSinceLastTimeCard extends StatelessWidget {
   const WhatChangedSinceLastTimeCard({
-    required this.result, required this.entryCount, super.key,
+    required this.result,
+    required this.entryCount,
+    super.key,
   });
 
   final WhatChangedSinceLastTime result;

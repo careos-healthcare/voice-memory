@@ -51,9 +51,7 @@ class ArchiveSurprisesSection extends StatelessWidget {
   Widget _title() {
     return Text(
       ArchiveSurprisesCopy.sectionTitle,
-      style: VoiceMemoryTypography.sectionLabelStyle(
-        
-      ),
+      style: VoiceMemoryTypography.sectionLabelStyle(),
     );
   }
 

@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 /// Shared card shell for immediate archive value sections.
 class ArchiveInsightCardShell extends StatelessWidget {
   const ArchiveInsightCardShell({
-    required this.sectionTitle, required this.children, super.key,
+    required this.sectionTitle,
+    required this.children,
+    super.key,
     this.headline,
   });
 
@@ -56,7 +58,9 @@ class ArchiveInsightCardShell extends StatelessWidget {
 
 class ArchiveInsightField extends StatelessWidget {
   const ArchiveInsightField({
-    required this.label, required this.value, super.key,
+    required this.label,
+    required this.value,
+    super.key,
   });
 
   final String label;

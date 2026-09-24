@@ -98,6 +98,9 @@ abstract class PaywallAccess {
     if (!await canOpenPaywall()) return;
     if (!context.mounted) return;
     ActivationTracker.trackPaywallTriggerShown();
-    await context.push('/subscription', extra: PaywallRouteArgs.fromContext(trigger));
+    await context.push(
+      '/subscription',
+      extra: PaywallRouteArgs.fromContext(trigger),
+    );
   }
 }

@@ -18,3 +18,13 @@ final class ExecutionCancelledException implements Exception {
   @override
   String toString() => 'ExecutionCancelledException';
 }
+
+/// Thrown when battery/thermal guards refuse local inference or embedding.
+final class LocalInferenceDeferredException implements Exception {
+  const LocalInferenceDeferredException(this.reason);
+
+  final String reason;
+
+  @override
+  String toString() => 'LocalInferenceDeferredException: $reason';
+}

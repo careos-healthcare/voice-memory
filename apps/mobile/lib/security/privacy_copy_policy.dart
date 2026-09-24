@@ -282,7 +282,9 @@ abstract class PrivacyCopyPolicy {
   /// claim shape that is unsafe even when a condition is nearby: "never
   /// uploaded when you are offline" is still a promise nothing can keep.
   static final RegExp _neverSentPattern = RegExp(
-    r'\bnever\s+(?:be\s+|ever\s+|get\s+|gets\s+)?(?:' '$_egressVerbs' r')\b'
+    r'\bnever\s+(?:be\s+|ever\s+|get\s+|gets\s+)?(?:'
+    '$_egressVerbs'
+    r')\b'
     r'|\bnothing\s+(?:ever\s+)?leaves\b',
     caseSensitive: false,
   );
@@ -376,7 +378,8 @@ abstract class PrivacyCopyPolicy {
   /// to land. The vocabulary is deliberately different from
   /// [_productWideSubjectPattern], which has to carry "no one" and "anyone" to
   /// read a sentence like "no one can view your transcripts".
-  static bool isTrustCopy(String text) => _trustVocabularyPattern.hasMatch(text);
+  static bool isTrustCopy(String text) =>
+      _trustVocabularyPattern.hasMatch(text);
 
   static final RegExp _trustVocabularyPattern = RegExp(
     r'\bprivacy\b|\bprivate\b|\bsecure\b|\bsecurity\b|\bencrypt(?:ed|ion|s)?\b'
@@ -445,8 +448,10 @@ abstract class PrivacyCopyPolicy {
   static final List<RegExp> _approvedAbsoluteClaims = [
     // `SecureStorageService` holds both 32-byte keys in the Keychain and in
     // `EncryptedSharedPreferences`; no call site puts either on the wire.
-    RegExp('Keys stay in secure storage on this device and are never '
-        'transmitted'),
+    RegExp(
+      'Keys stay in secure storage on this device and are never '
+      'transmitted',
+    ),
   ];
 
   /// Whether [line] is an absolute privacy claim with no condition attached.
@@ -685,7 +690,9 @@ abstract class PrivacyCopyPolicy {
           'plaintext',
         );
       } else if (!_allowedEncryptedContexts.any((p) => p.hasMatch(line))) {
-        violations.add('encryption claim without supported backup/sync context');
+        violations.add(
+          'encryption claim without supported backup/sync context',
+        );
       }
     }
 
@@ -858,7 +865,8 @@ abstract class PrivacyCopyPolicy {
       final value = chain
           .map((line) => _wholeLineLiteral.firstMatch(line)!.group(1)!)
           .join();
-      if (value.contains(r'${') || chain.any((l) => _allowlistedLine(path, l))) {
+      if (value.contains(r'${') ||
+          chain.any((l) => _allowlistedLine(path, l))) {
         joined.addAll(chain);
       } else {
         joined.add("'$value'");

@@ -8,7 +8,9 @@ import 'package:flutter/material.dart';
 /// Dismissible first-session loop explainer — Record tab, zero entries only.
 class FirstSessionOnboardingCard extends StatelessWidget {
   const FirstSessionOnboardingCard({
-    required this.onStartMoment, required this.onExploreFirst, super.key,
+    required this.onStartMoment,
+    required this.onExploreFirst,
+    super.key,
   });
 
   final VoidCallback onStartMoment;

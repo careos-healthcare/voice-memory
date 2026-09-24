@@ -9,7 +9,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class LiveVoiceErrorBoundaryOverlay extends ConsumerWidget {
   const LiveVoiceErrorBoundaryOverlay({
-    required this.errorState, required this.onRetry, required this.onCancel, super.key,
+    required this.errorState,
+    required this.onRetry,
+    required this.onCancel,
+    super.key,
     this.busy = false,
   });
 

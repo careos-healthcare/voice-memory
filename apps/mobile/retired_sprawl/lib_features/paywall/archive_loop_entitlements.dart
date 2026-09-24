@@ -281,7 +281,8 @@ abstract class ArchiveLoopEntitlementGate {
         : await entitlementStore.load();
     final entitlementReader =
         reader ?? ArchiveEntitlementReader.forAccessCheck();
-    final billingPro = entitlementStore != null && await entitlementReader.isPro;
+    final billingPro =
+        entitlementStore != null && await entitlementReader.isPro;
     final isPro = billingPro || state.isPro;
     if (billingPro && store != null && !state.isPro) {
       await store.setPro(true);

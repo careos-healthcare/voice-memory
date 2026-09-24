@@ -82,17 +82,20 @@ void main() {
         {'id': 'b', 'note': 'beta'},
       ];
 
-      final encrypted = await LocalDatabaseWorkerService.instance.encryptJsonBatch(
-        masterKeyBytes: keyBytes,
-        payloadMaps: payloads,
-      );
+      final encrypted = await LocalDatabaseWorkerService.instance
+          .encryptJsonBatch(
+            masterKeyBytes: keyBytes,
+            payloadMaps: payloads,
+          );
       expect(encrypted, hasLength(2));
 
-      final decrypted =
-          await LocalDatabaseWorkerService.instance.decryptJsonBatch(
-        masterKeyBytes: keyBytes,
-        encryptedPayloadMaps: encrypted.map((item) => item.toJson()).toList(),
-      );
+      final decrypted = await LocalDatabaseWorkerService.instance
+          .decryptJsonBatch(
+            masterKeyBytes: keyBytes,
+            encryptedPayloadMaps: encrypted
+                .map((item) => item.toJson())
+                .toList(),
+          );
 
       expect(jsonEncode(decrypted), jsonEncode(payloads));
     });

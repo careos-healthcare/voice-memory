@@ -39,7 +39,9 @@ String _findProjectRoot() {
     if (File('${dir.path}/pubspec.yaml').existsSync()) return dir.path;
     final parent = dir.parent;
     if (parent.path == dir.path) {
-      throw StateError('Could not find pubspec.yaml from ${Directory.current.path}');
+      throw StateError(
+        'Could not find pubspec.yaml from ${Directory.current.path}',
+      );
     }
     dir = parent;
   }
@@ -112,7 +114,9 @@ void _checkSecretPatterns(String root, List<String> failures) {
     failures.add('secret scan roots missing: ${missingDirs.join(', ')}');
   }
   if (filesScanned == 0) {
-    failures.add('secret scan matched 0 files — scan set empty, not a clean pass');
+    failures.add(
+      'secret scan matched 0 files — scan set empty, not a clean pass',
+    );
   }
 }
 
@@ -142,7 +146,9 @@ bool _isScannableFile(String path) {
 
 void _checkDebugFlags(String root, List<String> failures) {
   _checksRun++;
-  final screenshot = File('$root/lib/config/screenshot_mode.dart').readAsStringSync();
+  final screenshot = File(
+    '$root/lib/config/screenshot_mode.dart',
+  ).readAsStringSync();
   if (screenshot.contains('defaultValue: true')) {
     failures.add('Screenshot mode dart-define defaults to true');
   }
@@ -171,7 +177,9 @@ void _checkConsumerBranding(String root, List<String> failures) {
 
 void _checkPipelineLogging(String root, List<String> failures) {
   _checksRun++;
-  final log = File('$root/lib/services/record_pipeline_log.dart').readAsStringSync();
+  final log = File(
+    '$root/lib/services/record_pipeline_log.dart',
+  ).readAsStringSync();
   const forbidden = [
     'debugPrint(transcript',
     'print(transcript',

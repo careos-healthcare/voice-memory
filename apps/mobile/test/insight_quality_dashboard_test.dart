@@ -133,7 +133,10 @@ void main() {
         beliefId,
         ArchiveInsightFeedbackChoice.notQuite,
       );
-      await ArchiveInsightFeedbackStore.saveCorrectionNote(beliefId, _privateNote);
+      await ArchiveInsightFeedbackStore.saveCorrectionNote(
+        beliefId,
+        _privateNote,
+      );
 
       final entries = InsightQualityDashboardEngine.correctionNoteEntries();
       expect(entries.map((entry) => entry.insightId), contains(beliefId));

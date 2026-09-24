@@ -10,7 +10,10 @@ import 'package:flutter/material.dart';
 /// Structured beta feedback sheet — safe buckets only, no journal content.
 class BetaFeedbackIntelligenceSheet extends StatefulWidget {
   const BetaFeedbackIntelligenceSheet({
-    required this.source, required this.entryCount, required this.reachedFirstProof, super.key,
+    required this.source,
+    required this.entryCount,
+    required this.reachedFirstProof,
+    super.key,
     this.onSubmitted,
   });
 

@@ -10,7 +10,9 @@ import 'dart:async';
 /// Quiet trust line on emotionally strong archive surfaces.
 class ContextualPrivacyReassurance extends StatefulWidget {
   const ContextualPrivacyReassurance({
-    required this.source, required this.entryCount, super.key,
+    required this.source,
+    required this.entryCount,
+    super.key,
     this.compact = true,
     this.onDeleteMoment,
     this.onRemoveFromPattern,
@@ -41,12 +43,14 @@ class _ContextualPrivacyReassuranceState
   }
 
   void _openControls() {
-    unawaited(ContextualPrivacyControlsSheet.show(
-      context,
-      source: widget.source,
-      onDeleteMoment: widget.onDeleteMoment,
-      onRemoveFromPattern: widget.onRemoveFromPattern,
-    ));
+    unawaited(
+      ContextualPrivacyControlsSheet.show(
+        context,
+        source: widget.source,
+        onDeleteMoment: widget.onDeleteMoment,
+        onRemoveFromPattern: widget.onRemoveFromPattern,
+      ),
+    );
   }
 
   @override

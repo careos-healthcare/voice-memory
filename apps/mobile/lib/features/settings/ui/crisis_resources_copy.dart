@@ -22,7 +22,8 @@ abstract final class CrisisResourcesCopy {
       'these organizations can.';
 
   static const String emergencyTitle = 'In an immediate emergency';
-  static const String emergencyBody = 'Call 911, or your local emergency number.';
+  static const String emergencyBody =
+      'Call 911, or your local emergency number.';
 
   static const String lifelineTitle = '988 Suicide & Crisis Lifeline';
   static const String lifelineDescription =

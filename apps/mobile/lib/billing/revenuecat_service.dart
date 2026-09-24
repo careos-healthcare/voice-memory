@@ -9,6 +9,7 @@ import 'package:archiveme_mobile/billing/revenuecat_diagnostics_log.dart';
 import 'package:archiveme_mobile/billing/revenuecat_offerings_debug_log.dart';
 import 'package:archiveme_mobile/billing/store_billing_port.dart';
 import 'package:archiveme_mobile/config/app_config.dart';
+import 'package:archiveme_mobile/features/monetization/revenuecat_initializer.dart';
 import 'package:archiveme_mobile/models/entitlement.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
@@ -28,6 +29,7 @@ class RevenueCatService implements StoreBillingPort {
 
   bool _configured = false;
   PremiumEntitlements _latest = PremiumEntitlements.free();
+  PremiumEntitlements? _lastConfirmedPro;
   RevenueCatDiagnostics _diagnostics = RevenueCatDiagnostics.initial();
 
   @override
@@ -109,11 +111,27 @@ class RevenueCatService implements StoreBillingPort {
     }
     try {
       await Purchases.setLogLevel(kDebugMode ? LogLevel.debug : LogLevel.warn);
-      final config = PurchasesConfiguration(apiKey);
+      final configured = await RevenueCatInitializer.ensureConfigured(
+        apiKey: apiKey,
+        timeout: billingOperationTimeout,
+      );
+      if (!configured) {
+        _configured = false;
+        _diagnostics = _diagnostics.copyWith(
+          revenueCatConfigured: false,
+          apiKeyMissing: false,
+          lastRevenueCatError: 'configure_failed',
+        );
+        RevenueCatDiagnosticsLog.configureFinished(
+          success: false,
+          reason: 'configure_failed',
+        );
+        _emit(PremiumEntitlements.free());
+        return;
+      }
       if (AppConfig.bundleId.isNotEmpty) {
         // App user id can be linked after sign-in via logIn().
       }
-      await Purchases.configure(config).timeout(billingOperationTimeout);
       Purchases.addCustomerInfoUpdateListener(_onCustomerInfo);
       _configured = true;
       _diagnostics = _diagnostics.copyWith(
@@ -341,7 +359,8 @@ class RevenueCatService implements StoreBillingPort {
     } on BillingOperationException catch (e, stackTrace) {
       RevenueCatDiagnosticsLog.operationFailed(
         operation: 'syncPurchases',
-        error: e, stackTrace: stackTrace,
+        error: e,
+        stackTrace: stackTrace,
       );
     }
     return refreshEntitlements();
@@ -362,12 +381,18 @@ class RevenueCatService implements StoreBillingPort {
       label: 'refreshEntitlements',
     );
     if (info == null) {
+      final cached = _lastConfirmedPro;
+      if (cached != null) {
+        _emit(cached);
+        return cached;
+      }
       RevenueCatDiagnosticsLog.refreshUnavailableUsingFreeTier();
       final free = PremiumEntitlements.free();
       _emit(free);
       return free;
     }
     final mapped = _mapCustomerInfo(info);
+    _lastConfirmedPro = mapped.isPro ? mapped : null;
     _emit(mapped);
     return mapped;
   }
@@ -378,7 +403,11 @@ class RevenueCatService implements StoreBillingPort {
       final result = await Purchases.logIn(appUserId);
       _emit(_mapCustomerInfo(result.customerInfo));
     } on PlatformException catch (e, stackTrace) {
-      RevenueCatDiagnosticsLog.operationFailed(operation: 'logIn', error: e, stackTrace: stackTrace);
+      RevenueCatDiagnosticsLog.operationFailed(
+        operation: 'logIn',
+        error: e,
+        stackTrace: stackTrace,
+      );
     }
   }
 
@@ -388,7 +417,11 @@ class RevenueCatService implements StoreBillingPort {
       final info = await Purchases.logOut();
       _emit(_mapCustomerInfo(info));
     } on PlatformException catch (e, stackTrace) {
-      RevenueCatDiagnosticsLog.operationFailed(operation: 'logOut', error: e, stackTrace: stackTrace);
+      RevenueCatDiagnosticsLog.operationFailed(
+        operation: 'logOut',
+        error: e,
+        stackTrace: stackTrace,
+      );
     }
   }
 

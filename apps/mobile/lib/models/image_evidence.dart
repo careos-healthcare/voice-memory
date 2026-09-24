@@ -57,18 +57,18 @@ class ImageEvidence {
   }
 
   Map<String, dynamic> toJson() => {
-        'evidenceId': evidenceId,
-        'caption': caption,
-        'mimeType': mimeType,
-        'attachedAt': attachedAt.toIso8601String(),
-        if (filename != null) 'filename': filename,
-        if (byteLength != null) 'byteLength': byteLength,
-        if (width != null) 'width': width,
-        if (height != null) 'height': height,
-        if (contentHash != null) 'contentHash': contentHash,
-        if (source != null) 'source': source,
-        if (localPath != null) 'localPath': localPath,
-      };
+    'evidenceId': evidenceId,
+    'caption': caption,
+    'mimeType': mimeType,
+    'attachedAt': attachedAt.toIso8601String(),
+    if (filename != null) 'filename': filename,
+    if (byteLength != null) 'byteLength': byteLength,
+    if (width != null) 'width': width,
+    if (height != null) 'height': height,
+    if (contentHash != null) 'contentHash': contentHash,
+    if (source != null) 'source': source,
+    if (localPath != null) 'localPath': localPath,
+  };
 
   ImageEvidence copyWith({
     String? evidenceId,
@@ -116,16 +116,16 @@ class ImageEvidence {
 
   @override
   int get hashCode => Object.hash(
-        evidenceId,
-        caption,
-        mimeType,
-        attachedAt,
-        filename,
-        byteLength,
-        width,
-        height,
-        contentHash,
-        source,
-        localPath,
-      );
+    evidenceId,
+    caption,
+    mimeType,
+    attachedAt,
+    filename,
+    byteLength,
+    width,
+    height,
+    contentHash,
+    source,
+    localPath,
+  );
 }

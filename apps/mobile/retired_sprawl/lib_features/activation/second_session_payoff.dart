@@ -8,13 +8,16 @@ import 'package:archiveme_mobile/models/journal_entry.dart';
 abstract final class SecondSessionPayoffCopy {
   static const String title = VisibleArchiveProofCopy.twoEntryCompareTitle;
 
-  static const String bodyUngrounded = VisibleArchiveProofCopy.twoEntryBodyUngrounded;
+  static const String bodyUngrounded =
+      VisibleArchiveProofCopy.twoEntryBodyUngrounded;
 
-  static const String bodyGrounded = VisibleArchiveProofCopy.twoEntryBodyGrounded;
+  static const String bodyGrounded =
+      VisibleArchiveProofCopy.twoEntryBodyGrounded;
 
   static const String primaryCta = VisibleArchiveProofCopy.twoEntryPrimaryCta;
 
-  static const String secondaryCta = VisibleArchiveProofCopy.twoEntryViewArchiveCta;
+  static const String secondaryCta =
+      VisibleArchiveProofCopy.twoEntryViewArchiveCta;
 
   static const String analysisDeferredFootnote =
       VoiceCaptureCopy.analysisUnavailableNote;

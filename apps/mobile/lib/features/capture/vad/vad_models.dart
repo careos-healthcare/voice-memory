@@ -45,8 +45,7 @@ class VadStreamConfig {
   final int maxSegmentMs;
   final int preSpeechPaddingMs;
 
-  int get frameSampleCount =>
-      (sampleRateHz * frameDurationMs / 1000).round();
+  int get frameSampleCount => (sampleRateHz * frameDurationMs / 1000).round();
 }
 
 /// Snapshot emitted when a thought segment closes.

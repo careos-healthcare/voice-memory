@@ -13,9 +13,9 @@ class AuthUserDto {
   const AuthUserDto({required this.id, required this.email});
 
   factory AuthUserDto.fromJson(Map<String, dynamic> json) => AuthUserDto(
-        id: JsonConverters.string(json['id'], field: 'id'),
-        email: JsonConverters.string(json['email'], field: 'email'),
-      );
+    id: JsonConverters.string(json['id'], field: 'id'),
+    email: JsonConverters.string(json['email'], field: 'email'),
+  );
 
   final String id;
   final String email;
@@ -28,13 +28,13 @@ class AuthSessionDto {
   const AuthSessionDto({required this.user, this.signedInAt});
 
   factory AuthSessionDto.fromJson(Map<String, dynamic> json) => AuthSessionDto(
-        user: JsonConverters.requiredObject(
-          json['user'],
-          AuthUserDto.fromJson,
-          field: 'user',
-        ),
-        signedInAt: JsonConverters.nullableString(json['signedInAt']),
-      );
+    user: JsonConverters.requiredObject(
+      json['user'],
+      AuthUserDto.fromJson,
+      field: 'user',
+    ),
+    signedInAt: JsonConverters.nullableString(json['signedInAt']),
+  );
 
   final AuthUserDto user;
   final String? signedInAt;
@@ -42,11 +42,12 @@ class AuthSessionDto {
   Map<String, dynamic> toJson() => _$AuthSessionDtoToJson(this);
 
   UserSession toDomain() => UserSession(
-        userId: user.id,
-        email: user.email,
-        signedInAt:
-            signedInAt == null ? null : DateTime.tryParse(signedInAt!)?.toUtc(),
-      );
+    userId: user.id,
+    email: user.email,
+    signedInAt: signedInAt == null
+        ? null
+        : DateTime.tryParse(signedInAt!)?.toUtc(),
+  );
 }
 
 /// Payload for `POST /api/auth/verify`.
