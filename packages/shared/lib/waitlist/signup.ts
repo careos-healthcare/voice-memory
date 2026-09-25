@@ -5,6 +5,9 @@ import { MARKETING_SITE_URL, WAITLIST_EMAIL_FROM } from "../site/marketing-site"
 export const WAITLIST_IP_MAX = 5;
 export const WAITLIST_IP_WINDOW_MS = 60 * 60 * 1000;
 
+/** Sign-ups close at the start of 30 September 2026 UTC. */
+export const WAITLIST_CLOSES_AT_MS = Date.UTC(2026, 8, 30);
+
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 type IpBucket = { count: number; resetAt: number };
@@ -70,6 +73,12 @@ export async function signupForWaitlist(input: {
   store: WaitlistStore;
   sendConfirmation?: (email: string, unsubscribeUrl: string) => Promise<void>;
 }): Promise<WaitlistSignupResult> {
+  if ((input.nowMs ?? Date.now()) >= WAITLIST_CLOSES_AT_MS) {
+    return {
+      status: 403,
+      body: { ok: false, error: "The waitlist closed on September 30." },
+    };
+  }
   if (!isValidWaitlistEmail(input.email)) {
     return { status: 400, body: { ok: false, error: "Enter a valid email address." } };
   }

@@ -31,10 +31,11 @@ const promises = [
   "Free tier stays free",
 ];
 
-const proofPoints = [
-  "Transcribed on your phone.",
-  "Every insight cites your own words.",
-  "You can export or delete everything.",
+const features = [
+  "Live cross-device sync",
+  "Apple Voice Memo import",
+  "Rich mood and location tracking",
+  "Pattern exploration with direct verbatim voice citations",
 ];
 
 export default function HomePage() {
@@ -54,11 +55,14 @@ export default function HomePage() {
               <li key={point}>{point}</li>
             ))}
           </ul>
-          <p className="mt-6 text-base font-medium text-white">
+          <p
+            className="mt-6 rounded-2xl border border-white/15 bg-white/5 px-4 py-3 text-base font-medium text-white"
+            role="status"
+          >
             Android follows the iOS beta, once purchase and restore are proven.
           </p>
-          <ul className="mt-8 space-y-3 text-sm leading-relaxed text-zinc-300">
-            {proofPoints.map((point) => (
+          <ul className="mt-8 space-y-3 text-base leading-relaxed text-zinc-200">
+            {features.map((point) => (
               <li key={point}>{point}</li>
             ))}
           </ul>
