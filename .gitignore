@@ -29,6 +29,7 @@ node_modules/
 *.pem
 **/IFR/
 flutter_*.log
+*.log
 **/pwrun/
 **/.pwrun/
 **/test/tmp/
