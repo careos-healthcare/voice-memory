@@ -34,6 +34,17 @@ void main() {
     );
     expect(open?.when, DateTime(2026, 3, 15, 9, 30));
 
+    final slots = GentleReminderSchedule.dailySlots(
+      enabled: true,
+      now: now,
+      hour: 9,
+      minute: 30,
+    );
+    expect(slots, hasLength(GentleReminderSchedule.dailySlotCount));
+    expect(slots.first.when, DateTime(2026, 3, 15, 9, 30));
+    expect(slots.last.when, DateTime(2026, 3, 28, 9, 30));
+    expect(slots.map((notice) => notice.id).toSet(), hasLength(slots.length));
+
     final quiet = GentleReminderSchedule.daily(
       enabled: true,
       now: now,

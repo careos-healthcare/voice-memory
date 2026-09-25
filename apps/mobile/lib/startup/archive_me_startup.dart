@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:archiveme_mobile/app.dart';
 import 'package:archiveme_mobile/core/utils/app_logger.dart';
+import 'package:archiveme_mobile/features/reminders/gentle_reminders_service.dart';
 import 'package:archiveme_mobile/product/consumer_ui_copy.dart';
 import 'package:archiveme_mobile/startup/v1_startup_coordinator.dart';
 import 'package:archiveme_mobile/theme/app_colors.dart';
@@ -31,6 +32,7 @@ class _ThoughtprintBootstrapAppState extends State<ThoughtprintBootstrapApp> {
       if (mounted) {
         setState(() => _ready = true);
       }
+      unawaited(GentleRemindersService().rescheduleReminders());
       unawaited(V1StartupCoordinator.runOptionalPhases());
     } catch (e, stackTrace) {
       AppLogger.debug('ARCHIVEME_STARTUP: essential phase failed: $e');

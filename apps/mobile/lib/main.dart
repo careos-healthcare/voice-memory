@@ -6,6 +6,7 @@ import 'package:archiveme_mobile/config/app_config.dart';
 import 'package:archiveme_mobile/config/force_screenshot_repeat_card.dart';
 import 'package:archiveme_mobile/core/config/v1_capability_registry.dart';
 import 'package:archiveme_mobile/core/utils/app_logger.dart';
+import 'package:archiveme_mobile/features/reminders/gentle_reminders_service.dart';
 import 'package:archiveme_mobile/features/weekly_synthesis/background/weekly_synthesis_workmanager.dart';
 import 'package:archiveme_mobile/startup/archive_me_startup.dart';
 import 'package:archiveme_mobile/storage/app_storage_paths.dart';
@@ -33,10 +34,52 @@ Future<void> main() async {
   }
 
   if (await AppStoragePaths.shouldDeferLocalStorageUntilFirstFrame()) {
-    runApp(const ThoughtprintBootstrapApp());
+    runApp(
+      const GentleRemindersLifecycleHost(child: ThoughtprintBootstrapApp()),
+    );
     return;
   }
 
   await completeThoughtprintStartup();
-  runApp(const ThoughtprintApp());
+  await GentleRemindersService().rescheduleReminders();
+  runApp(const GentleRemindersLifecycleHost(child: ThoughtprintApp()));
+}
+
+/// Refreshes local reminders when the app opens and whenever it returns
+/// to the foreground.
+class GentleRemindersLifecycleHost extends StatefulWidget {
+  const GentleRemindersLifecycleHost({required this.child, super.key});
+
+  final Widget child;
+
+  @override
+  State<GentleRemindersLifecycleHost> createState() =>
+      _GentleRemindersLifecycleHostState();
+}
+
+class _GentleRemindersLifecycleHostState
+    extends State<GentleRemindersLifecycleHost>
+    with WidgetsBindingObserver {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    unawaited(GentleRemindersService().rescheduleReminders());
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      unawaited(GentleRemindersService().rescheduleReminders());
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) => widget.child;
 }

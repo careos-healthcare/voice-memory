@@ -1,6 +1,7 @@
 import 'package:archiveme_mobile/core/config/v1_capability_registry.dart';
 import 'package:archiveme_mobile/features/reminders/gentle_reminders_schedule.dart';
 import 'package:archiveme_mobile/features/tomorrow_return/check_in_reminder_service.dart';
+import 'package:archiveme_mobile/services/app_services.dart';
 
 class GentleReminderSettings {
   const GentleReminderSettings({
@@ -38,15 +39,14 @@ class GentleRemindersService {
       await cancel(previouslyScheduledIds);
       return const [];
     }
-    final daily = GentleReminderSchedule.daily(
-      enabled: settings.dailyEnabled,
-      now: now,
-      hour: settings.dailyHour,
-      minute: settings.dailyMinute,
-      quietHours: settings.quietHours,
-    );
     final notices = <GentleReminderNotice>[
-      ?daily,
+      ...GentleReminderSchedule.dailySlots(
+        enabled: settings.dailyEnabled,
+        now: now,
+        hour: settings.dailyHour,
+        minute: settings.dailyMinute,
+        quietHours: settings.quietHours,
+      ),
       ...GentleReminderSchedule.onThisDay(
         enabled: settings.onThisDayEnabled,
         now: now,
@@ -89,6 +89,41 @@ class GentleRemindersService {
       payload: notice.id,
     );
     return {...previouslyScheduledIds, notice.id}.toList();
+  }
+
+  /// Reloads saved reminder settings and refreshes the next 14 daily slots.
+  Future<void> rescheduleReminders({DateTime? now}) async {
+    if (!V1CapabilityRegistry.gentleReminders || !AppServices.isInitialized) {
+      return;
+    }
+    await CheckInReminderService.ensureInitialized();
+    final prefs = AppServices.instance.prefs;
+    final start = int.tryParse(
+      await prefs.readString('gentle_quiet_start') ?? '',
+    );
+    final end = int.tryParse(await prefs.readString('gentle_quiet_end') ?? '');
+    final stored = await prefs.readString('gentle_scheduled_ids');
+    final previous = (stored == null || stored.isEmpty)
+        ? const <String>[]
+        : stored.split(',');
+    final settings = GentleReminderSettings(
+      dailyEnabled: await prefs.readBool('gentle_daily') ?? false,
+      onThisDayEnabled: await prefs.readBool('gentle_on_this_day') ?? false,
+      checkBackEnabled: await prefs.readBool('gentle_check_back') ?? false,
+      dailyHour: int.tryParse(await prefs.readString('gentle_hour') ?? '') ?? 9,
+      dailyMinute:
+          int.tryParse(await prefs.readString('gentle_minute') ?? '') ?? 0,
+      quietHours: QuietHours(
+        startMinute: start ?? 0,
+        endMinute: end ?? 0,
+      ),
+    );
+    final ids = await sync(
+      settings: settings,
+      previouslyScheduledIds: previous,
+      now: now ?? DateTime.now(),
+    );
+    await prefs.writeString('gentle_scheduled_ids', ids.join(','));
   }
 
   Future<void> cancel(List<String> ids) async {

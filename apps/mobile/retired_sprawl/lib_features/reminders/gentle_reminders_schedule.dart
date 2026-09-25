@@ -63,6 +63,9 @@ abstract final class GentleReminderSchedule {
   GentleReminderSchedule._();
 
   static const dailyId = 'gentle.daily';
+  static const dailySlotCount = 14;
+
+  static String dailySlotId(int index) => '$dailyId.$index';
 
   static String onThisDayId(String entryId) => 'gentle.on_this_day.$entryId';
 
@@ -79,6 +82,36 @@ abstract final class GentleReminderSchedule {
       when = when.add(const Duration(days: 1));
     }
     return quietHours.place(when);
+  }
+
+  /// The next [dailySlotCount] days at the chosen time.
+  ///
+  /// One-shot alarms do not repeat, so each day is its own notification.
+  /// [GentleRemindersService.rescheduleReminders] replaces the window on
+  /// launch and resume.
+  static List<GentleReminderNotice> dailySlots({
+    required bool enabled,
+    required DateTime now,
+    required int hour,
+    required int minute,
+    QuietHours quietHours = QuietHours.off,
+  }) {
+    if (!enabled) return const [];
+    final first = nextDaily(
+      now: now,
+      hour: hour,
+      minute: minute,
+      quietHours: quietHours,
+    );
+    return [
+      for (var index = 0; index < dailySlotCount; index++)
+        GentleReminderNotice(
+          id: dailySlotId(index),
+          title: GentleRemindersCopy.dailyNotificationTitle,
+          body: GentleRemindersCopy.dailyNotificationBody,
+          when: first.add(Duration(days: index)),
+        ),
+    ];
   }
 
   static GentleReminderNotice? daily({
