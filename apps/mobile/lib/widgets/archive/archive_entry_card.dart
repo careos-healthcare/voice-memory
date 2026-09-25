@@ -1,12 +1,10 @@
 import 'dart:io';
 
-import 'package:archiveme_mobile/core/config/v1_capability_registry.dart';
 import 'package:archiveme_mobile/design/archive_mobile_typography.dart';
 import 'package:archiveme_mobile/design/locale_date_format.dart';
 import 'package:archiveme_mobile/features/archive/v1/archive_entry_hero_tags.dart';
-import 'package:archiveme_mobile/features/health/state_of_mind_reader.dart';
+import 'package:archiveme_mobile/features/health/health_state_of_mind_chip.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
-import 'package:archiveme_mobile/services/app_services.dart';
 import 'package:archiveme_mobile/widgets/entry/entry_audio_player.dart';
 import 'package:flutter/material.dart';
 
@@ -79,6 +77,13 @@ class ArchiveEntryCardMeta extends StatelessWidget {
 
   final JournalEntry entry;
 
+  bool get _showsMood {
+    final value = entry.reflection.mood.trim();
+    return value.isNotEmpty && value.toLowerCase() != 'neutral';
+  }
+
+  String get _healthLabel => (entry.reflection.healthStateOfMind ?? '').trim();
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -122,10 +127,28 @@ class ArchiveEntryCardMeta extends StatelessWidget {
             'Voice memo',
             key: Key('archive_voice_memo_${entry.id}'),
           ),
-        if ((entry.reflection.healthStateOfMind ?? '').isNotEmpty)
+        if (_showsMood || _healthLabel.isNotEmpty)
           Padding(
             padding: const EdgeInsets.only(top: 8),
-            child: _StateOfMindChip(entry: entry),
+            child: Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: [
+                if (_showsMood)
+                  Chip(
+                    key: Key('archive_mood_${entry.id}'),
+                    avatar: const Icon(Icons.mood_outlined, size: 18),
+                    label: Text(entry.reflection.mood.trim()),
+                    visualDensity: VisualDensity.compact,
+                    materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  ),
+                if (_healthLabel.isNotEmpty)
+                  HealthStateOfMindChip(
+                    label: _healthLabel,
+                    entryId: entry.id,
+                  ),
+              ],
+            ),
           ),
       ],
     );
@@ -209,64 +232,3 @@ class _EntryPhoto extends StatelessWidget {
   }
 }
 
-/// Reads Apple Health for this moment when tapped. Saving a moment does not.
-class _StateOfMindChip extends StatefulWidget {
-  const _StateOfMindChip({required this.entry});
-
-  final JournalEntry entry;
-
-  @override
-  State<_StateOfMindChip> createState() => _StateOfMindChipState();
-}
-
-class _StateOfMindChipState extends State<_StateOfMindChip> {
-  late String _label;
-  var _busy = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _label = widget.entry.reflection.healthStateOfMind ?? '';
-  }
-
-  @override
-  void didUpdateWidget(_StateOfMindChip oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    final next = widget.entry.reflection.healthStateOfMind ?? '';
-    if (next.isNotEmpty && next != _label && !_busy) {
-      _label = next;
-    }
-  }
-
-  Future<void> _sync() async {
-    if (_busy || !V1CapabilityRegistry.appleHealth) return;
-    setState(() => _busy = true);
-    try {
-      final updated = await StateOfMindReader.attach(widget.entry);
-      final label = updated.reflection.healthStateOfMind ?? '';
-      if (label.isNotEmpty &&
-          label != widget.entry.reflection.healthStateOfMind &&
-          AppServices.isInitialized) {
-        await AppServices.instance.journalStore.save(updated);
-      }
-      if (!mounted) return;
-      if (label.isNotEmpty) {
-        setState(() => _label = label);
-      }
-    } finally {
-      if (mounted) setState(() => _busy = false);
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return ActionChip(
-      key: Key('archive_state_of_mind_${widget.entry.id}'),
-      avatar: Icon(StateOfMindMood.icon(_label), size: 18),
-      label: Text('State of Mind · $_label'),
-      visualDensity: VisualDensity.compact,
-      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-      onPressed: V1CapabilityRegistry.appleHealth && !_busy ? _sync : null,
-    );
-  }
-}

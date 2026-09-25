@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:archiveme_mobile/features/health/health_state_of_mind_chip.dart';
 import 'package:archiveme_mobile/features/trust/privacy_screen_copy.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/widgets/entry_detail/current_place_lookup.dart';
@@ -40,6 +41,7 @@ class EntryContextPlaceholders extends StatelessWidget {
   Widget build(BuildContext context) {
     final place = entry.display.locationLabel?.trim();
     final mood = entry.reflection.mood;
+    final health = (entry.reflection.healthStateOfMind ?? '').trim();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -54,10 +56,13 @@ class EntryContextPlaceholders extends StatelessWidget {
               onTap: onPlace == null ? null : () => _pickPlace(context),
             ),
             _Chip(
+              key: Key('entry_mood_${entry.id}'),
               icon: Icons.mood_outlined,
               label: moodIsAssigned(mood) ? mood.trim() : 'State of mind',
               onTap: onMood == null ? null : () => _pickMood(context),
             ),
+            if (health.isNotEmpty)
+              HealthStateOfMindChip(label: health, entryId: entry.id),
           ],
         ),
         const SizedBox(height: 8),
@@ -171,7 +176,12 @@ class _PlaceSheetState extends State<_PlaceSheet> {
 }
 
 class _Chip extends StatelessWidget {
-  const _Chip({required this.icon, required this.label, required this.onTap});
+  const _Chip({
+    required this.icon,
+    required this.label,
+    required this.onTap,
+    super.key,
+  });
 
   final IconData icon;
   final String label;
