@@ -181,6 +181,7 @@ class _RecordScreenState extends ConsumerState<RecordScreen>
   String _detectedLanguageCode = ScreenshotMode.languageCode;
 
   late final RecordingService _recording;
+  bool _capturePaused = false;
   LiveVoiceCaptureService? _liveVoice;
   late final MicrophonePermissionGateway _microphonePermissionGateway;
   late final OnboardingMicStateStore _onboardingMicStateStore;

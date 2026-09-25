@@ -1,9 +1,9 @@
 import 'package:archiveme_mobile/design/archive_mobile_typography.dart';
+import 'package:archiveme_mobile/design/locale_date_format.dart';
 import 'package:archiveme_mobile/features/archive/v1/archive_entry_hero_tags.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/widgets/entry/entry_audio_player.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 
 class ArchiveEntryCard extends StatelessWidget {
   const ArchiveEntryCard({required this.entry, required this.onTap, super.key});
@@ -32,16 +32,15 @@ class ArchiveEntryCard extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      ArchiveEntryCardPreview(entry: entry),
+                      const SizedBox(height: 10),
                       ArchiveEntryCardMeta(entry: entry),
-                      if (_hasPlayableAudio(entry)) ...[
+                      if (_hasPlayableAudio(entry))
                         EntryAudioPlayer(
                           audioPath: entry.localAudioPath,
                           durationSeconds: entry.durationSeconds,
                           compact: true,
                         ),
-                      ],
-                      const SizedBox(height: 10),
-                      ArchiveEntryCardPreview(entry: entry),
                     ],
                   ),
                 ),
@@ -59,8 +58,7 @@ class ArchiveEntryCard extends StatelessWidget {
 
   String get _semanticsLabel {
     final source = entry.durationSeconds > 0 ? 'Voice' : 'Typed';
-    final date = DateFormat.yMMMMd().add_jm().format(entry.createdAt.toLocal());
-    return '$source saved moment from $date';
+    return '$source saved moment';
   }
 }
 
@@ -73,7 +71,7 @@ class ArchiveEntryCardMeta extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final voice = entry.durationSeconds > 0;
-    final date = DateFormat.yMMMMd().add_jm().format(entry.createdAt.toLocal());
+    final time = LocaleDateFormat.time(context, entry.createdAt);
     final minutes = entry.durationSeconds ~/ 60;
     final seconds = entry.durationSeconds % 60;
     final duration = '$minutes:${seconds.toString().padLeft(2, '0')}';
@@ -81,7 +79,13 @@ class ArchiveEntryCardMeta extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(date, style: theme.textTheme.labelLarge),
+        Text(
+          time,
+          style: theme.textTheme.labelMedium?.copyWith(
+            color: theme.colorScheme.onSurfaceVariant,
+            fontWeight: FontWeight.w400,
+          ),
+        ),
         const SizedBox(height: 4),
         Row(
           children: [

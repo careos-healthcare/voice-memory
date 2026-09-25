@@ -16,6 +16,8 @@ extension RecordCaptureStateSection on _RecordScreenState {
         _RecordingStatusCard(
           stageLabel: ctx.stageLabel,
           onStop: _stopAndProcess,
+          onPause: _toggleCapturePause,
+          paused: _capturePaused,
         ),
         if (_selectedPromptLine != null) ...[
           const SizedBox(height: 12),

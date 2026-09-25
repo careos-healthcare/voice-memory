@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:archiveme_mobile/core/di/v1_account_dependencies.dart';
 import 'package:archiveme_mobile/design/archive_mobile_typography.dart';
+import 'package:archiveme_mobile/design/locale_date_format.dart';
 import 'package:archiveme_mobile/features/archive/v1/archive_entry_hero_tags.dart';
 import 'package:archiveme_mobile/features/entry_detail/entry_detail_copy.dart';
 import 'package:archiveme_mobile/features/entry_detail/entry_detail_edits.dart';
@@ -25,7 +26,6 @@ import 'package:archiveme_mobile/widgets/pushed_screen_shell.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:intl/intl.dart';
 
 class EntryDetailScreen extends StatefulWidget {
   const EntryDetailScreen({
@@ -186,7 +186,9 @@ class _EntryDetailScreenState extends State<EntryDetailScreen> {
   Widget build(BuildContext context) {
     final e = _entry;
     return PushedScreenShell(
-      title: EntryDetailCopy.title,
+      title: e == null
+          ? EntryDetailCopy.title
+          : LocaleDateFormat.dateTime(context, e.createdAt),
       showBottomDone: false,
       actions: e == null
           ? null
@@ -292,13 +294,7 @@ class _EntryDetailScreenState extends State<EntryDetailScreen> {
             fontSize: 32,
             height: 1.2,
           ),
-          decoration: InputDecoration(
-            hintText: EntryDetailCopy.titleField,
-            hintStyle: ArchiveMobileTypography.userWords(context).copyWith(
-              fontSize: 32,
-              height: 1.2,
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
-            ),
+          decoration: const InputDecoration(
             border: InputBorder.none,
             enabledBorder: InputBorder.none,
             focusedBorder: InputBorder.none,
@@ -362,11 +358,10 @@ class _EntryDetailScreenState extends State<EntryDetailScreen> {
   }
 
   String _quietMeta(BuildContext context, JournalEntry entry) {
-    final date = DateFormat.yMMMd().add_jm().format(entry.createdAt.toLocal());
     final minutes = entry.durationSeconds ~/ 60;
     final seconds = entry.durationSeconds % 60;
     final duration = '$minutes:${seconds.toString().padLeft(2, '0')}';
-    return '$date · $duration · ${_languageName(context)}';
+    return '$duration · ${_languageName(context)}';
   }
 
   String _languageName(BuildContext context) {

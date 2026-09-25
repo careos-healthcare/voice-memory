@@ -4,6 +4,7 @@ import 'package:archiveme_mobile/config/app_config.dart';
 import 'package:archiveme_mobile/core/config/beta_surfaces_feature_flags.dart';
 import 'package:archiveme_mobile/core/config/v1_capability_registry.dart';
 import 'package:archiveme_mobile/design/archive_responsive_layout.dart';
+import 'package:archiveme_mobile/design/locale_date_format.dart';
 import 'package:archiveme_mobile/features/activation/capture_context_tags.dart';
 import 'package:archiveme_mobile/router/route_catalog.dart';
 import 'package:archiveme_mobile/features/archive/ui/trust_status_footer.dart';
@@ -144,7 +145,7 @@ class _ArchiveDashboardScrollViewState
                 SliverPadding(
                   padding: EdgeInsets.fromLTRB(
                     sliverPadding.left,
-                    0,
+                    MediaQuery.paddingOf(context).top + 24,
                     sliverPadding.right,
                     sliverPadding.bottom + 80,
                   ),
@@ -414,13 +415,12 @@ class _MonthStrip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final today = DateTime.now();
-    final start = DateTime(
-      today.year,
-      today.month,
-      today.day,
-    ).subtract(const Duration(days: 34));
-    final days = List.generate(35, (index) => start.add(Duration(days: index)));
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final days = [
+      for (var offset = 13; offset >= 0; offset--)
+        today.subtract(Duration(days: offset)),
+    ];
     final marked = {
       for (final entry in entries)
         DateTime(
@@ -432,12 +432,29 @@ class _MonthStrip extends StatelessWidget {
     return ExcludeSemantics(
       child: SizedBox(
         key: const Key('archive_calendar_strip'),
-        height: 96,
+        height: 112,
         child: SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           padding: const EdgeInsets.symmetric(horizontal: 12),
           child: Row(
             children: [
+              Padding(
+                padding: const EdgeInsets.only(right: 8),
+                child: TextButton(
+                  key: const Key('archive_calendar_month'),
+                  onPressed: () async {
+                    final picked = await showDatePicker(
+                      context: context,
+                      initialDate: selectedDay ?? today,
+                      firstDate: DateTime(1970),
+                      lastDate: today,
+                    );
+                    if (picked == null) return;
+                    onSelect(DateTime(picked.year, picked.month, picked.day));
+                  },
+                  child: Text(LocaleDateFormat.month(context, today)),
+                ),
+              ),
               Padding(
                 padding: const EdgeInsets.only(right: 8),
                 child: ActionChip(
@@ -457,6 +474,13 @@ class _MonthStrip extends StatelessWidget {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
+                          Text(
+                            LocaleDateFormat.weekdayInitial(context, day),
+                            style: TextStyle(
+                              fontSize: 11,
+                              color: context.palette.textMuted,
+                            ),
+                          ),
                           Text(
                             '${day.day}',
                             maxLines: 1,

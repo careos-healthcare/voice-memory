@@ -14,7 +14,7 @@ abstract class EntryDetailCopy {
       TranscriptPendingCopy.transcriptPendingTitle;
   static const String transcriptPendingBody =
       TranscriptPendingCopy.transcriptPendingBody;
-  static const String advancedDetails = 'Advanced entry details';
+  static const String advancedDetails = 'More';
   static const String delete = 'Delete';
   static const String deleteConfirmTitle = 'Delete this moment?';
   static const String deleteConfirmBody =

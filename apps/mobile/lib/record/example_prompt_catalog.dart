@@ -10,9 +10,9 @@ abstract class ExamplePromptCatalog {
       ConsumerUiCopy.continueBuildingPatterns;
 
   static const List<String> prompts = [
-    "I'm worried about changing jobs.",
-    'Today was better than expected.',
-    'I keep putting this off.',
-    "I'm excited about this idea.",
+    "What's on your mind about work?",
+    'What made today better than you expected?',
+    'What have you been putting off?',
+    'What idea are you excited about?',
   ];
 }

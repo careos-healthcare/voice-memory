@@ -1,5 +1,6 @@
 import 'package:archiveme_mobile/core/config/v1_capability_registry.dart';
 import 'package:archiveme_mobile/design/archive_mobile_typography.dart';
+import 'package:archiveme_mobile/design/locale_date_format.dart';
 import 'package:archiveme_mobile/features/evidence_contract/evidence_eligibility_policy.dart';
 import 'package:archiveme_mobile/features/insights/pattern_exploration_conversation_state.dart';
 import 'package:archiveme_mobile/features/post_save/moment_save_receipt_copy.dart';
@@ -88,6 +89,12 @@ class MomentSaveReceiptCard extends StatelessWidget {
     );
     final heardText = postSaveRecordedSummary(entry);
 
+  String receiptDuration(JournalEntry value) {
+    final minutes = value.durationSeconds ~/ 60;
+    final seconds = value.durationSeconds % 60;
+    return '$minutes:${seconds.toString().padLeft(2, '0')}';
+  }
+
     return Semantics(
       container: true,
       label: MomentSaveReceiptCopy.savedOnDeviceTitle,
@@ -107,6 +114,12 @@ class MomentSaveReceiptCard extends StatelessWidget {
                 key: const Key('moment_save_receipt_transcript'),
                 text: heardText,
                 fontSize: 28,
+              ),
+              const SizedBox(height: AppSpacing.xs),
+              Text(
+                '${LocaleDateFormat.time(context, entry.createdAt)} · ${receiptDuration(entry)}',
+                key: const Key('moment_save_receipt_when'),
+                style: secondaryStyle,
               ),
               const SizedBox(height: AppSpacing.md),
             ],

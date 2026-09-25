@@ -93,7 +93,7 @@ void main() {
     testWidgets('shows user-facing header and sections', (tester) async {
       await _saveAndPump(tester, entry: _entry(id: 'e1'));
 
-      expect(find.text(EntryDetailCopy.title), findsOneWidget);
+      expect(find.text(EntryDetailCopy.title), findsNothing);
       expect(find.byKey(const Key('entry_detail_meta')), findsOneWidget);
       expect(find.text(EntryDetailCopy.whatYouRecorded), findsNothing);
       expect(find.byKey(const Key('entry_detail_title')), findsOneWidget);

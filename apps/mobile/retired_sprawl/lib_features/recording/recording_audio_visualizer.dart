@@ -16,10 +16,17 @@ AppLocalizations? _appLocalizations(BuildContext context) =>
     Localizations.of<AppLocalizations>(context, AppLocalizations);
 
 class _RecordingStatusCard extends ConsumerWidget {
-  const _RecordingStatusCard({required this.stageLabel, required this.onStop});
+  const _RecordingStatusCard({
+    required this.stageLabel,
+    required this.onStop,
+    required this.onPause,
+    required this.paused,
+  });
 
   final String stageLabel;
   final VoidCallback onStop;
+  final VoidCallback onPause;
+  final bool paused;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -37,7 +44,7 @@ class _RecordingStatusCard extends ConsumerWidget {
         : stageLabel;
     final stopHint =
         l10n?.recordingStopAndSaveHint ?? _recordingStopAndSaveHintFallback;
-    final height = MediaQuery.sizeOf(context).height * 0.72;
+    final height = MediaQuery.sizeOf(context).height;
 
     return Semantics(
       label: semanticsLabel,
@@ -45,11 +52,8 @@ class _RecordingStatusCard extends ConsumerWidget {
         key: const Key('recording_fullscreen'),
         height: height,
         width: double.infinity,
-        child: DecoratedBox(
-          decoration: const BoxDecoration(
-            color: Color(0xFF0F1419),
-            borderRadius: BorderRadius.all(Radius.circular(28)),
-          ),
+        child: ColoredBox(
+          color: const Color(0xFF0F1419),
           child: Padding(
             padding: const EdgeInsets.fromLTRB(20, 28, 20, 20),
             child: Column(
@@ -83,22 +87,49 @@ class _RecordingStatusCard extends ConsumerWidget {
                   style: const TextStyle(fontSize: 13, color: Color(0xFF8E99A8)),
                 ),
                 const SizedBox(height: 16),
-                SizedBox(
-                  width: double.infinity,
-                  height: 64,
-                  child: FilledButton.icon(
-                    key: const Key('recording_stop'),
-                    style: FilledButton.styleFrom(
-                      backgroundColor: const Color(0xFFF8F6F1),
-                      foregroundColor: const Color(0xFF0F1419),
+                Row(
+                  children: [
+                    Expanded(
+                      child: SizedBox(
+                        height: 64,
+                        child: OutlinedButton.icon(
+                          key: const Key('recording_pause'),
+                          style: OutlinedButton.styleFrom(
+                            foregroundColor: const Color(0xFFF8F6F1),
+                            side: const BorderSide(color: Color(0xFFF8F6F1)),
+                          ),
+                          onPressed: onPause,
+                          icon: Icon(
+                            paused ? Icons.play_arrow_rounded : Icons.pause_rounded,
+                            size: 28,
+                          ),
+                          label: Text(
+                            paused ? 'Resume' : 'Pause',
+                            style: const TextStyle(fontSize: 18),
+                          ),
+                        ),
+                      ),
                     ),
-                    onPressed: onStop,
-                    icon: const Icon(Icons.stop_rounded, size: 28),
-                    label: Text(
-                      ConsumerUiCopy.stopRecordingCta,
-                      style: const TextStyle(fontSize: 18),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: SizedBox(
+                        height: 64,
+                        child: FilledButton.icon(
+                          key: const Key('recording_stop'),
+                          style: FilledButton.styleFrom(
+                            backgroundColor: const Color(0xFFF8F6F1),
+                            foregroundColor: const Color(0xFF0F1419),
+                          ),
+                          onPressed: onStop,
+                          icon: const Icon(Icons.stop_rounded, size: 28),
+                          label: Text(
+                            ConsumerUiCopy.stopRecordingCta,
+                            style: const TextStyle(fontSize: 18),
+                          ),
+                        ),
+                      ),
                     ),
-                  ),
+                  ],
                 ),
               ],
             ),
@@ -111,6 +142,16 @@ class _RecordingStatusCard extends ConsumerWidget {
 
 /// Screen actions owned by the audio responsibility.
 extension _RecordingAudioStateActions on _RecordScreenState {
+  Future<void> _toggleCapturePause() async {
+    if (_capturePaused) {
+      await _recording.resumeActiveRecording();
+    } else {
+      await _recording.pauseActiveRecording();
+    }
+    if (!mounted) return;
+    _setRecordingState(() => _capturePaused = !_capturePaused);
+  }
+
   Future<void> _beginRecording() async {
     if (AppConfig.enableLiveVoiceCapture && _liveVoice != null) {
       await _openLiveVoiceSession();
@@ -118,6 +159,7 @@ extension _RecordingAudioStateActions on _RecordScreenState {
     }
     _recordLog('start requested');
     _stopAndProcessInFlight = false;
+    _capturePaused = false;
     _navigationActivity.update(RecordNavigationActivity.recording);
     try {
       await _recording.startRecording(permissionVerified: true);

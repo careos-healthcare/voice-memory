@@ -44,7 +44,7 @@ class _IdleResurfacingPromptState extends State<IdleResurfacingPrompt> {
     if (snippet.isEmpty) return const SizedBox.shrink();
     final days = DateTime.now().difference(entry.createdAt).inDays;
     final lead = days >= 14
-        ? 'Three weeks ago you said…'
+        ? '3 weeks ago you said…'
         : 'From an earlier moment…';
     return Padding(
       padding: const EdgeInsets.only(bottom: 20),
