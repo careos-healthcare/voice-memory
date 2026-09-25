@@ -24,21 +24,38 @@ class ArchiveEntryCard extends StatelessWidget {
           child: Card(
             margin: const EdgeInsets.only(bottom: 12),
             clipBehavior: Clip.antiAlias,
-            child: InkWell(
-              onTap: onTap,
-              child: ExcludeSemantics(
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      ArchiveEntryCardPreview(entry: entry),
-                      const SizedBox(height: 10),
-                      ArchiveEntryCardMeta(entry: entry),
-                    ],
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: InkWell(
+                    onTap: onTap,
+                    child: ExcludeSemantics(
+                      child: Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            ArchiveEntryCardPreview(entry: entry),
+                            const SizedBox(height: 10),
+                            ArchiveEntryCardMeta(entry: entry),
+                          ],
+                        ),
+                      ),
+                    ),
                   ),
                 ),
-              ),
+                if (entry.durationSeconds > 0 ||
+                    (entry.localAudioPath?.trim().isNotEmpty ?? false))
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8, right: 4),
+                    child: EntryAudioPlayer(
+                      audioPath: entry.localAudioPath,
+                      durationSeconds: entry.durationSeconds,
+                      compact: true,
+                    ),
+                  ),
+              ],
             ),
           ),
         ),
@@ -70,7 +87,8 @@ class ArchiveEntryCardMeta extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          time,
+          voice ? '$time · $duration' : time,
+          key: voice ? Key('archive_entry_duration_${entry.id}') : null,
           style: theme.textTheme.labelMedium?.copyWith(
             color: theme.colorScheme.onSurfaceVariant,
             fontWeight: FontWeight.w400,
@@ -92,22 +110,6 @@ class ArchiveEntryCardMeta extends StatelessWidget {
                 color: theme.colorScheme.primary,
               ),
             ),
-            if (voice) ...[
-              const SizedBox(width: 8),
-              Text(
-                duration,
-                key: Key('archive_entry_duration_${entry.id}'),
-                style: theme.textTheme.labelMedium?.copyWith(
-                  color: theme.colorScheme.onSurfaceVariant,
-                  fontSize: 12,
-                ),
-              ),
-              EntryAudioPlayer(
-                audioPath: entry.localAudioPath,
-                durationSeconds: entry.durationSeconds,
-                compact: true,
-              ),
-            ],
           ],
         ),
       ],
