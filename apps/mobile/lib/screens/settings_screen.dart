@@ -209,6 +209,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
         child: ListView(
           padding: EdgeInsets.zero,
           children: [
+            Text(
+              ConsumerUiCopy.coreIsFreeForever,
+              key: const Key('settings_core_is_free'),
+              style: ArchiveMobileTypography.listSubtitle(context),
+            ),
+            const SizedBox(height: AppSpacing.md),
             const AccountPrivacyControlsSection(),
             const SizedBox(height: AppSpacing.md),
             ListTile(

@@ -227,9 +227,27 @@ final class VoiceMemoInbox {
   }
 
   func take() -> [String: String]? {
-    let value = pending
-    pending = nil
-    return value
+    if let value = pending {
+      pending = nil
+      return value
+    }
+    return Self.takeSharedFile()
+  }
+
+  private static func takeSharedFile() -> [String: String]? {
+    guard let root = FileManager.default.containerURL(
+      forSecurityApplicationGroupIdentifier: "group.com.voicememory.mobile"
+    ) else { return nil }
+    let marker = root
+      .appendingPathComponent("voice-memo-inbox", isDirectory: true)
+      .appendingPathComponent("pending.json")
+    guard let data = try? Data(contentsOf: marker),
+          let json = try? JSONSerialization.jsonObject(with: data) as? [String: String],
+          let path = json["path"],
+          let createdAt = json["createdAt"]
+    else { return nil }
+    try? FileManager.default.removeItem(at: marker)
+    return ["path": path, "createdAt": createdAt]
   }
 }
 

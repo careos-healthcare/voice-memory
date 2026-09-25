@@ -24,8 +24,6 @@ enum ArchiveFeature {
 abstract class ArchiveProFeatureMap {
   ArchiveProFeatureMap._();
 
-  static const int freeKeyMomentsLimit = 7;
-
   static const Set<ArchiveFeature> freeFeatures = {
     ArchiveFeature.recordMoment,
     ArchiveFeature.firstPattern,
@@ -76,7 +74,7 @@ abstract class ArchiveProFeatureMap {
 
   static String featureBenefit(ArchiveFeature feature) => switch (feature) {
     ArchiveFeature.lastSevenKeyMoments =>
-      ConsumerUiCopy.freeKeepsSevenKeyMoments,
+      'Every saved moment stays on this device. Core is free forever - no usage limits.',
     ArchiveFeature.whatThoughtprintRemembers =>
       'See what keeps repeating across weeks and months.',
     ArchiveFeature.patternMap =>

@@ -4,7 +4,6 @@ library;
 import 'package:archiveme_mobile/billing/archive_pro_feature_map.dart';
 import 'package:archiveme_mobile/billing/paywall_trigger_engine.dart';
 import 'package:archiveme_mobile/billing/paywall_trigger_model.dart';
-import 'package:archiveme_mobile/product/consumer_ui_copy.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -46,7 +45,7 @@ void main() {
     );
   });
 
-  test('key moments triggers after 7 moments', () {
+  test('key moments search is not blocked by how many moments exist', () {
     expect(
       buildPaywallTrigger(
         feature: ArchiveFeature.keyMomentsSearch,
@@ -57,17 +56,16 @@ void main() {
       ),
       isNull,
     );
-    final trigger = buildPaywallTrigger(
-      feature: ArchiveFeature.keyMomentsSearch,
-      isPro: false,
-      firstLoopClosed: true,
-      momentCount: 8,
-      magicMomentsCount: 3,
+    expect(
+      buildPaywallTrigger(
+        feature: ArchiveFeature.keyMomentsSearch,
+        isPro: false,
+        firstLoopClosed: true,
+        momentCount: 8,
+        magicMomentsCount: 3,
+      ),
+      isNull,
     );
-    expect(trigger?.trigger, PaywallTrigger.keyMomentsLimit);
-    expect(trigger?.previewTitle, 'Your pattern memory is growing');
-    expect(trigger?.previewBody, contains('longer proof trail'));
-    expect(trigger?.ctaLabel, ConsumerUiCopy.unlockFullMemoryCta);
   });
 
   test('full history triggers after 7 moments', () {

@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:archiveme_mobile/l10n/localized_consumer_ui.dart';
 import 'package:archiveme_mobile/api/api_error_message.dart';
+import 'package:archiveme_mobile/billing/core_access.dart';
 import 'package:archiveme_mobile/billing/archive_paywall_copy.dart';
 import 'package:archiveme_mobile/billing/archive_paywall_plans.dart';
 import 'package:archiveme_mobile/billing/paywall_attribution_event.dart';
@@ -983,6 +984,13 @@ class _PaywallScreenState extends State<PaywallScreen> {
             textAlign: TextAlign.center,
           ),
           if (includeTrustLine) ...[
+            const SizedBox(height: 8),
+            Text(
+              CoreAccess.statement,
+              key: const Key('paywall_core_is_free'),
+              style: ArchiveMobileTypography.responsiveHelper(context),
+              textAlign: TextAlign.center,
+            ),
             const SizedBox(height: 8),
             Text(
               context.l10n.paywallTrust,

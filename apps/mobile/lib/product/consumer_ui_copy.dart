@@ -616,6 +616,9 @@ abstract class ConsumerUiCopy {
       'Saving to your archive, plus search, export, correction, and deletion, '
       'are fully available in the beta without a subscription.';
 
+  static const String coreIsFreeForever =
+      'Core is free forever - no usage limits.';
+
   /// Legacy paid-limit copy — retained for billing re-entry tests only.
   static const String freeKeepsSevenKeyMoments =
       'Free keeps your first 7 key entries.';

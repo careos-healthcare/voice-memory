@@ -2,11 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:archiveme_mobile/billing/archive_entitlement_reader.dart';
-import 'package:archiveme_mobile/billing/archive_pro_feature_map.dart';
-import 'package:archiveme_mobile/billing/paywall_access.dart';
-import 'package:archiveme_mobile/billing/paywall_trigger_model.dart';
-import 'package:archiveme_mobile/billing/pro_value_preview_engine.dart';
-import 'package:archiveme_mobile/billing/pro_value_preview_model.dart';
 import 'package:archiveme_mobile/config/screenshot_mode.dart';
 import 'package:archiveme_mobile/config/screenshot_sample_data.dart';
 import 'package:archiveme_mobile/features/activation/activation_tracker.dart';
@@ -17,7 +12,6 @@ import 'package:archiveme_mobile/product/consumer_ui_copy.dart';
 import 'package:archiveme_mobile/theme/app_colors.dart';
 import 'package:archiveme_mobile/theme/app_spacing.dart';
 import 'package:archiveme_mobile/theme/voicememory_typography.dart';
-import 'package:archiveme_mobile/widgets/billing/pro_value_preview_card.dart';
 
 enum _MomentFilter { today, yesterday, thisWeek, search }
 
@@ -66,35 +60,8 @@ class _KeyMomentsScreenState extends State<KeyMomentsScreen> {
   MomentTag? _tagFilter;
   String _query = '';
   bool _loading = true;
-  bool _isPro = false;
-  bool _firstLoopClosed = false;
-  bool _previewDismissed = false;
 
-  ArchiveEntitlementReader get _entitlementReader =>
-      widget.entitlementReader ?? ArchiveEntitlementReader.forAccessCheck();
-
-  bool get _overFreeLimit =>
-      _all.length > ArchiveProFeatureMap.freeKeyMomentsLimit;
-
-  bool get _showMemoryLimitCard =>
-      !_isPro && _overFreeLimit && !_previewDismissed;
-
-  ProValuePreview _memoryLimitPreview() => buildProValuePreview(
-    PaywallTriggerContext(
-      trigger: PaywallTrigger.fullHistory,
-      sourceRoute: '/moments',
-      momentCount: _all.length,
-      previewTitle: '',
-      previewBody: '',
-      ctaLabel: '',
-    ),
-  );
-
-  List<KeyMoment> get _accessPool {
-    if (_isPro || !_overFreeLimit) return _all;
-    final sorted = [..._all]..sort((a, b) => b.date.compareTo(a.date));
-    return sorted.take(ArchiveProFeatureMap.freeKeyMomentsLimit).toList();
-  }
+  List<KeyMoment> get _accessPool => _all;
 
   @override
   void initState() {
@@ -113,22 +80,15 @@ class _KeyMomentsScreenState extends State<KeyMomentsScreen> {
       setState(() {
         _all = ScreenshotSampleData.keyMomentsSample;
         _loading = false;
-        _isPro = true;
-        _firstLoopClosed = true;
       });
       return;
     }
     final loader = widget.loader ?? () => KeyMomentStore.instance().loadAll();
     final moments = await loader();
-    final isPro = await _entitlementReader.isPro;
-    final loopClosed =
-        widget.firstLoopClosed ?? await PaywallAccess.isFirstLoopClosed();
     if (!mounted) return;
     setState(() {
       _all = moments;
       _loading = false;
-      _isPro = isPro;
-      _firstLoopClosed = loopClosed;
     });
   }
 
@@ -172,33 +132,10 @@ class _KeyMomentsScreenState extends State<KeyMomentsScreen> {
   }
 
   Future<void> _selectFilter(_MomentFilter filter) async {
-    if (filter == _MomentFilter.search && !_isPro && _overFreeLimit) {
-      final allowed = await PaywallAccess.ensureAccess(
-        context,
-        feature: ArchiveFeature.keyMomentsSearch,
-        entitlementReader: _entitlementReader,
-        firstLoopClosed: _firstLoopClosed,
-        momentCount: _all.length,
-        sourceRoute: '/moments',
-      );
-      if (!allowed || !mounted) return;
-    }
     setState(() => _filter = filter);
     if (filter == _MomentFilter.search) {
       ActivationTracker.trackKeyMomentSearchUsed();
     }
-  }
-
-  Future<void> _openUnlockPaywall() async {
-    final trigger = await PaywallAccess.check(
-      feature: ArchiveFeature.fullHistory,
-      entitlementReader: _entitlementReader,
-      firstLoopClosed: _firstLoopClosed,
-      momentCount: _all.length,
-      sourceRoute: '/moments',
-    );
-    if (trigger == null || !mounted) return;
-    PaywallAccess.openPaywall(context, trigger);
   }
 
   String _dateLabel(DateTime date) {
@@ -371,25 +308,11 @@ class _KeyMomentsScreenState extends State<KeyMomentsScreen> {
 
   Widget _list() {
     final items = _visible;
-    if (items.isEmpty && !_showMemoryLimitCard) return _emptyState();
+    if (items.isEmpty) return _emptyState();
     return ListView(
       padding: const EdgeInsets.all(AppSpacing.md),
       children: [
-        if (_showMemoryLimitCard) ...[
-          ProValuePreviewCard(
-            preview: _memoryLimitPreview(),
-            onUnlock: _openUnlockPaywall,
-            onDismiss: () => setState(() => _previewDismissed = true),
-          ),
-          const SizedBox(height: AppSpacing.sm),
-        ],
-        if (items.isEmpty)
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: AppSpacing.lg),
-            child: _emptyState(),
-          )
-        else
-          ...items.expand((moment) sync* {
+        ...items.expand((moment) sync* {
             yield _momentCard(moment);
             yield const SizedBox(height: AppSpacing.sm);
           }),

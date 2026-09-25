@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:archiveme_mobile/design/archive_mobile_typography.dart';
 import 'package:archiveme_mobile/design/locale_date_format.dart';
 import 'package:archiveme_mobile/features/archive/v1/archive_entry_hero_tags.dart';
+import 'package:archiveme_mobile/features/health/state_of_mind_reader.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/widgets/entry/entry_audio_player.dart';
 import 'package:flutter/material.dart';
@@ -120,9 +121,20 @@ class ArchiveEntryCardMeta extends StatelessWidget {
             key: Key('archive_voice_memo_${entry.id}'),
           ),
         if ((entry.reflection.healthStateOfMind ?? '').isNotEmpty)
-          Text(
-            'State of Mind · ${entry.reflection.healthStateOfMind}',
-            key: Key('archive_state_of_mind_${entry.id}'),
+          Padding(
+            padding: const EdgeInsets.only(top: 8),
+            child: Chip(
+              key: Key('archive_state_of_mind_${entry.id}'),
+              avatar: Icon(
+                StateOfMindMood.icon(entry.reflection.healthStateOfMind!),
+                size: 18,
+              ),
+              label: Text(
+                'State of Mind · ${entry.reflection.healthStateOfMind}',
+              ),
+              visualDensity: VisualDensity.compact,
+              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            ),
           ),
       ],
     );
