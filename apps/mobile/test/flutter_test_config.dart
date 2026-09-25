@@ -15,6 +15,7 @@ const _connectivityChannel = MethodChannel(
 
 Future<void> testExecutable(Future<void> Function() testMain) async {
   TestWidgetsFlutterBinding.ensureInitialized();
+  await _loadBundledFonts();
   configureSqliteTestFfi();
 
   setUp(() async {
@@ -36,4 +37,16 @@ Future<void> testExecutable(Future<void> Function() testMain) async {
     await ReleaseSuiteStaticStateReset.resetCachedState();
   });
   await testMain();
+}
+
+/// Registers the same Inter and Newsreader files the app bundles, so golden
+/// text is real type instead of fallback boxes.
+Future<void> _loadBundledFonts() async {
+  final inter = FontLoader('Inter')
+    ..addFont(rootBundle.load('assets/fonts/Inter-Variable.ttf'));
+  await inter.load();
+  final newsreader = FontLoader('Newsreader')
+    ..addFont(rootBundle.load('assets/fonts/Newsreader-Regular.ttf'))
+    ..addFont(rootBundle.load('assets/fonts/Newsreader-Italic.ttf'));
+  await newsreader.load();
 }
