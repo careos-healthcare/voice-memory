@@ -46,6 +46,7 @@ import 'package:archiveme_mobile/product/consumer_ui_copy.dart';
 import 'package:archiveme_mobile/router/route_catalog.dart';
 import 'package:archiveme_mobile/security/security_settings_copy.dart';
 import 'package:archiveme_mobile/services/app_services.dart';
+import 'package:archiveme_mobile/theme/app_colors.dart';
 import 'package:archiveme_mobile/theme/app_palette.dart';
 import 'package:archiveme_mobile/theme/app_spacing.dart';
 import 'package:archiveme_mobile/widgets/account/account_privacy_controls_section.dart';
@@ -183,6 +184,121 @@ class _SettingsScreenState extends State<SettingsScreen> {
     });
   }
 
+  Future<void> _setCloudSync(bool enabled) async {
+    await UserPreferences.setCloudSyncEnabled(
+      AppServices.instance.prefs,
+      enabled,
+    );
+    if (mounted) setState(() => _cloudSyncEnabled = enabled);
+  }
+
+  Future<bool> _deleteCloudCopy() async {
+    final result = await AppServices.instance.httpTransport.delete(
+      '/api/ledger/user',
+    );
+    return result.when(
+      success: (response) {
+        final decoded = AppServices.instance.httpTransport.decodeEnvelopeOk(
+          response,
+        );
+        return decoded.when(
+          success: (_) => true,
+          onFailure: (_) => false,
+        );
+      },
+      onFailure: (_) => false,
+    );
+  }
+
+  void _showCloudDeleteResult(bool deleted) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          deleted
+              ? 'Your cloud copy has been deleted.'
+              : 'The cloud copy could not be deleted. Try again.',
+        ),
+      ),
+    );
+  }
+
+  Future<void> _confirmDeleteCloudCopy() async {
+    if (!AppServices.isInitialized) return;
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) {
+        return AlertDialog(
+          key: const Key('settings_delete_cloud_copy_confirm'),
+          title: const Text('Delete my cloud copy?'),
+          content: const Text(
+            "This removes the journal text stored on Thoughtprint's servers. "
+            'The copy on this device stays.',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(false),
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              key: const Key('settings_delete_cloud_copy_confirm_accept'),
+              onPressed: () => Navigator.of(dialogContext).pop(true),
+              child: const Text('Delete cloud copy'),
+            ),
+          ],
+        );
+      },
+    );
+    if (confirmed != true || !mounted) return;
+    _showCloudDeleteResult(await _deleteCloudCopy());
+  }
+
+  Future<void> _onCloudSyncChanged(bool enabled) async {
+    if (!AppServices.isInitialized) return;
+    if (enabled) {
+      await _setCloudSync(true);
+      return;
+    }
+
+    final deleteCloudData = await showModalBottomSheet<bool>(
+      context: context,
+      builder: (sheetContext) {
+        return SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const Padding(
+                padding: EdgeInsets.fromLTRB(24, 20, 24, 8),
+                child: Text(
+                  'Disable only, or Disable & Delete Cloud Data?',
+                  key: Key('settings_cloud_off_prompt'),
+                ),
+              ),
+              ListTile(
+                key: const Key('settings_cloud_disable_only'),
+                title: const Text('Disable only'),
+                onTap: () => Navigator.of(sheetContext).pop(false),
+              ),
+              ListTile(
+                key: const Key('settings_cloud_disable_and_delete'),
+                title: const Text('Disable & Delete Cloud Data'),
+                onTap: () => Navigator.of(sheetContext).pop(true),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+    if (deleteCloudData == null || !mounted) return;
+    if (deleteCloudData) {
+      final deleted = await _deleteCloudCopy();
+      _showCloudDeleteResult(deleted);
+      if (!deleted) return;
+    }
+    await _setCloudSync(false);
+  }
+
   Future<void> _loadJournalEntries() async {
     if (!AppServices.isInitialized) return;
     final entries = await AppServices.instance.journal.loadAll();
@@ -243,14 +359,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 style: ArchiveMobileTypography.listSubtitle(context),
               ),
               value: _cloudSyncEnabled,
-              onChanged: (value) async {
-                if (!AppServices.isInitialized) return;
-                await UserPreferences.setCloudSyncEnabled(
-                  AppServices.instance.prefs,
-                  value,
-                );
-                if (mounted) setState(() => _cloudSyncEnabled = value);
-              },
+              onChanged: (value) => unawaited(_onCloudSyncChanged(value)),
+            ),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: TextButton(
+                key: const Key('settings_delete_cloud_copy'),
+                style: TextButton.styleFrom(
+                  foregroundColor: AppColors.destructive,
+                ),
+                onPressed: () => unawaited(_confirmDeleteCloudCopy()),
+                child: const Text('Delete my cloud copy'),
+              ),
             ),
             if (V1CapabilityRegistry.appleHealth)
               SwitchListTile(
@@ -422,22 +542,22 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
             if (V1CapabilityRegistry.e2eeSync)
               E2eeSyncSettings(
-              readEnabled: () async {
-                if (!AppServices.isInitialized) return false;
-                return await AppServices.instance.prefs.readBool(
-                      E2eeSyncSettings.preferenceKey,
-                    ) ??
-                    false;
-              },
-              writeEnabled: (enabled) async {
-                if (!AppServices.isInitialized) return;
-                await AppServices.instance.prefs.writeBool(
-                  E2eeSyncSettings.preferenceKey,
-                  enabled,
-                );
-              },
-              storePassphrase: E2eeSyncSettings.storeInVault,
-            ),
+                readEnabled: () async {
+                  if (!AppServices.isInitialized) return false;
+                  return await AppServices.instance.prefs.readBool(
+                        E2eeSyncSettings.preferenceKey,
+                      ) ??
+                      false;
+                },
+                writeEnabled: (enabled) async {
+                  if (!AppServices.isInitialized) return;
+                  await AppServices.instance.prefs.writeBool(
+                    E2eeSyncSettings.preferenceKey,
+                    enabled,
+                  );
+                },
+                storePassphrase: E2eeSyncSettings.storeInVault,
+              ),
             JournalReminderPreferences(
               readEnabled: (key) async {
                 if (!AppServices.isInitialized) return false;
@@ -449,20 +569,21 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 final daily = key == JournalReminderPreferences.dailyKey
                     ? value
                     : await AppServices.instance.prefs.readBool(
-                          JournalReminderPreferences.dailyKey,
-                        ) ??
-                        false;
+                            JournalReminderPreferences.dailyKey,
+                          ) ??
+                          false;
                 final weekly = key == JournalReminderPreferences.weeklyKey
                     ? value
                     : await AppServices.instance.prefs.readBool(
-                          JournalReminderPreferences.weeklyKey,
-                        ) ??
-                        false;
-                JournalReminderPlan.scheduled = JournalReminderPlan.fromSettings(
-                  now: DateTime.now(),
-                  dailyEnabled: daily,
-                  weeklyEnabled: weekly,
-                );
+                            JournalReminderPreferences.weeklyKey,
+                          ) ??
+                          false;
+                JournalReminderPlan.scheduled =
+                    JournalReminderPlan.fromSettings(
+                      now: DateTime.now(),
+                      dailyEnabled: daily,
+                      weeklyEnabled: weekly,
+                    );
               },
             ),
             const PrivacyDataControlsSection(),
@@ -725,7 +846,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
       title: Text(
         title,
         style: ArchiveMobileTypography.listTitle(context).copyWith(
-          color: destructive ? context.palette.error : context.palette.textPrimary,
+          color: destructive
+              ? context.palette.error
+              : context.palette.textPrimary,
         ),
       ),
       trailing: trailing ?? const Icon(Icons.chevron_right),
