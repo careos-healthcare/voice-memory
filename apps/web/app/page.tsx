@@ -41,48 +41,66 @@ const features = [
 
 export default function HomePage() {
   return (
-    <div className="min-h-screen bg-zinc-950">
+    <div className="min-h-screen bg-[#FDFBF7] text-[#172033]">
       <div className="mx-auto max-w-3xl px-4 pb-20 sm:px-6">
-        <SiteHeader />
+        <SiteHeader tone="cream" />
         <PrimaryMain className="mt-6">
-          <h1 className="mt-3 text-4xl font-semibold tracking-tight text-white sm:text-5xl">
+          <h1 className="mt-3 font-serif text-4xl font-semibold tracking-tight text-[#172033] sm:text-5xl">
             A private voice journal that remembers what you actually said.
           </h1>
-          <p className="mt-5 text-lg leading-relaxed text-zinc-200">
+          <WaitlistForm />
+          <p className="mt-3 text-sm leading-relaxed text-[#4B5568]">
+            Core is free forever. Pro (optional) is about $7/month.
+          </p>
+          <p className="mt-5 text-lg leading-relaxed text-[#3F4757]">
             Free core, forever. Transcribed on your phone by default. Never metered.
           </p>
-          <ul className="mt-8 space-y-3 text-base font-medium leading-relaxed text-white">
+          <ul className="mt-8 space-y-3 text-base font-medium leading-relaxed text-[#172033]">
             {promises.map((point) => (
               <li key={point}>{point}</li>
             ))}
           </ul>
-          <p
-            className="mt-6 rounded-2xl border border-white/15 bg-white/5 px-4 py-3 text-base font-medium text-white"
-            role="status"
-          >
-            Coming to Android October 2026.
-          </p>
-          <ul className="mt-8 space-y-3 text-base leading-relaxed text-zinc-200">
+          <ul className="mt-8 space-y-3 text-base leading-relaxed text-[#3F4757]">
             {features.map((point) => (
               <li key={point}>{point}</li>
             ))}
           </ul>
           <Roadmap />
-          <WaitlistForm />
-          <section className="mt-12">
-            <h2 className="text-lg font-medium text-white">Coming from another journal?</h2>
-            <p className="mt-2 text-sm leading-relaxed text-zinc-400">
-              Import your Day One or Apple Notes export.
+          <section className="mt-12" aria-labelledby="import-heading">
+            <h2 id="import-heading" className="font-serif text-lg font-medium text-[#172033]">
+              Coming from another journal?
+            </h2>
+            <p className="mt-2 text-sm leading-relaxed text-[#4B5568]">
+              <a href="#import-day-one" className="text-[#2563EB] underline-offset-4 hover:underline">
+                Export from Day One
+              </a>
+              {" · "}
+              <a href="#import-apple-notes" className="text-[#2563EB] underline-offset-4 hover:underline">
+                Export from Apple Notes
+              </a>
             </p>
+            <div id="import-day-one" className="mt-6 scroll-mt-6">
+              <h3 className="font-serif text-base font-medium text-[#172033]">Day One</h3>
+              <p className="mt-1 text-sm leading-relaxed text-[#4B5568]">
+                In Day One, open Settings, then Import/Export, and export your journal as JSON.
+                Thoughtprint reads that file.
+              </p>
+            </div>
+            <div id="import-apple-notes" className="mt-4 scroll-mt-6">
+              <h3 className="font-serif text-base font-medium text-[#172033]">Apple Notes</h3>
+              <p className="mt-1 text-sm leading-relaxed text-[#4B5568]">
+                Export the notes as JSON or CSV. Thoughtprint reads Apple Notes JSON and CSV exports.
+              </p>
+            </div>
           </section>
           <p className="mt-10 text-sm">
-            <Link href="/privacy" className="text-zinc-400 underline-offset-4 hover:text-zinc-200 hover:underline">
+            <Link href="/privacy" className="text-[#2563EB] underline-offset-4 hover:underline">
               Privacy
             </Link>
           </p>
-          <p className="mt-6 text-xs leading-relaxed text-zinc-600">{NOT_THERAPY_LINE}</p>
+          <p className="mt-6 text-xs leading-relaxed text-[#667085]">{NOT_THERAPY_LINE}</p>
         </PrimaryMain>
-        <SiteFooter className="mt-12" />
+        <SiteFooter tone="cream" className="mt-12" />
       </div>
     </div>
   );

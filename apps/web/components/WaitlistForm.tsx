@@ -45,17 +45,17 @@ export function WaitlistForm() {
         value={email}
         onChange={(event) => setEmail(event.target.value)}
         placeholder="you@example.com"
-        className="w-full rounded-full border border-white/15 bg-zinc-900 px-5 py-3 text-white placeholder:text-zinc-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-400/60"
+        className="w-full rounded-full border border-[#E5E0D8] bg-white px-5 py-3 text-[#172033] placeholder:text-[#667085] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2563EB]/50"
       />
       <button
         type="submit"
         disabled={pending}
-        className="rounded-full bg-violet-600 px-5 py-3 text-sm font-medium text-white transition-colors hover:bg-violet-500 disabled:opacity-60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-400/60"
+        className="rounded-full bg-[#2563EB] px-5 py-3 text-sm font-medium text-white transition-colors hover:bg-[#1D4ED8] disabled:opacity-60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2563EB]/50"
       >
         {pending ? "Joining…" : "Join the waitlist"}
       </button>
       {message ? (
-        <p className="basis-full text-sm text-zinc-300" role="status">
+        <p className="basis-full text-sm text-[#3F4757]" role="status">
           {message}
         </p>
       ) : null}

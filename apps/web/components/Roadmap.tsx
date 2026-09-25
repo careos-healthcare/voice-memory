@@ -7,13 +7,13 @@ const milestones = [
 export function Roadmap() {
   return (
     <section className="mt-12" aria-labelledby="roadmap-heading">
-      <h2 id="roadmap-heading" className="text-lg font-medium text-white">
+      <h2 id="roadmap-heading" className="font-serif text-lg font-medium text-[#172033]">
         Roadmap
       </h2>
-      <p className="mt-2 text-sm leading-relaxed text-zinc-400">
+      <p className="mt-2 text-sm leading-relaxed text-[#667085]">
         Coming to Android October 2026.
       </p>
-      <ul className="mt-4 space-y-2 text-base leading-relaxed text-zinc-200">
+      <ul className="mt-4 space-y-2 text-base leading-relaxed text-[#3F4757]">
         {milestones.map((item) => (
           <li key={item}>{item}</li>
         ))}

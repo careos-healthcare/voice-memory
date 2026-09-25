@@ -3,12 +3,25 @@ import Link from "next/link";
 import { FOOTER_TRUST_LINE } from "@/lib/product-copy";
 import { TRUST_FOOTER_LINKS } from "@/lib/trust-copy";
 
-export function SiteFooter({ className }: { className?: string }) {
+export function SiteFooter({
+  className,
+  tone = "dark",
+}: {
+  className?: string;
+  tone?: "dark" | "cream";
+}) {
+  const cream = tone === "cream";
   return (
-    <footer className={`pt-12 text-center text-xs text-zinc-600 ${className ?? ""}`}>
+    <footer
+      className={`pt-12 text-center text-xs ${cream ? "text-[#667085]" : "text-zinc-600"} ${className ?? ""}`}
+    >
       <nav className="flex flex-wrap justify-center gap-x-4 gap-y-2">
         {TRUST_FOOTER_LINKS.map((link) => (
-          <Link key={link.href} href={link.href} className="hover:text-zinc-400">
+          <Link
+            key={link.href}
+            href={link.href}
+            className={cream ? "hover:text-[#172033]" : "hover:text-zinc-400"}
+          >
             {link.label}
           </Link>
         ))}
