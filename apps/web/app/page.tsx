@@ -11,7 +11,7 @@ import { NOT_THERAPY_LINE } from "@/lib/trust-copy";
 
 const title = "Thoughtprint — A private voice journal";
 const description =
-  "A private voice journal that remembers what you actually said. Free core, forever. Transcribed on your phone. Never metered.";
+  "A private voice journal that remembers what you actually said. Free core, forever. Transcribed on your phone by default. Never metered.";
 
 export const metadata: Metadata = {
   title,
@@ -26,7 +26,7 @@ export const metadata: Metadata = {
 };
 
 const promises = [
-  "Data Not Linked to You",
+  "We can't see your journal. Nothing is linked to your identity.",
   "Private by Design",
   "No usage meters",
   "Free tier stays free",
@@ -35,7 +35,7 @@ const promises = [
 const features = [
   "Live cross-device sync",
   "Apple Voice Memos import",
-  "Rich mood and location tracking",
+  "Add a mood or a place to any moment",
   "Pattern exploration with direct verbatim voice citations",
 ];
 
@@ -49,7 +49,7 @@ export default function HomePage() {
             A private voice journal that remembers what you actually said.
           </h1>
           <p className="mt-5 text-lg leading-relaxed text-zinc-200">
-            Free core, forever. Transcribed on your phone. Never metered.
+            Free core, forever. Transcribed on your phone by default. Never metered.
           </p>
           <ul className="mt-8 space-y-3 text-base font-medium leading-relaxed text-white">
             {promises.map((point) => (

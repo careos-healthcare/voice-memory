@@ -22,19 +22,6 @@ function memoryStore(): WaitlistStore & { rows: Map<string, string>; inserts: nu
   };
 }
 
-test("closes the waitlist on September 30", async () => {
-  resetWaitlistIpBucketsForTest();
-  const store = memoryStore();
-  const result = await signupForWaitlist({
-    email: "late@example.com",
-    ip: "203.0.113.30",
-    nowMs: Date.UTC(2026, 8, 30),
-    store,
-  });
-  assert.equal(result.status, 403);
-  assert.equal(store.rows.size, 0);
-});
-
 test("rejects an invalid email", async () => {
   resetWaitlistIpBucketsForTest();
   const store = memoryStore();

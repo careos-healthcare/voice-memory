@@ -32,9 +32,7 @@ export function WaitlistForm() {
   }
 
   return (
-    <>
-      <p className="mt-8 text-sm text-zinc-300">Join before September 30.</p>
-      <form onSubmit={onSubmit} className="mt-3 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+    <form onSubmit={onSubmit} className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
       <label className="sr-only" htmlFor="waitlist-email">
         Email address
       </label>
@@ -62,6 +60,5 @@ export function WaitlistForm() {
         </p>
       ) : null}
     </form>
-    </>
   );
 }
