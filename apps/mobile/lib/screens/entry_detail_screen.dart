@@ -17,6 +17,7 @@ import 'package:archiveme_mobile/services/app_services.dart';
 import 'package:archiveme_mobile/theme/app_palette.dart';
 import 'package:archiveme_mobile/widgets/archive/entry_context_tag_editor.dart';
 import 'package:archiveme_mobile/widgets/entry/entry_audio_player.dart';
+import 'package:archiveme_mobile/widgets/entry_detail/entry_context_placeholders.dart';
 import 'package:archiveme_mobile/widgets/entry_detail/entry_processing_trust_chip.dart';
 import 'package:archiveme_mobile/widgets/entry_detail/entry_read_aloud_button.dart';
 import 'package:archiveme_mobile/widgets/memory/entry_aboutness_editor.dart';
@@ -112,6 +113,26 @@ class _EntryDetailScreenState extends State<EntryDetailScreen> {
   void dispose() {
     _titleController.dispose();
     super.dispose();
+  }
+
+  Future<void> _savePlace(JournalEntry entry, String place) async {
+    if (widget.previewEntry != null) return;
+    await saveEntryPlace(
+      store: _accountDeps.journalStore,
+      entry: entry,
+      place: place,
+    );
+    await _load();
+  }
+
+  Future<void> _saveMood(JournalEntry entry, String mood) async {
+    if (widget.previewEntry != null) return;
+    await saveEntryMood(
+      store: _accountDeps.journalStore,
+      entry: entry,
+      mood: mood,
+    );
+    await _load();
   }
 
   Future<void> _saveTitle(JournalEntry entry) async {
@@ -231,6 +252,16 @@ class _EntryDetailScreenState extends State<EntryDetailScreen> {
                   ),
                 ),
                 EntryProcessingTrustChip(entry: e),
+                const SizedBox(height: 12),
+                EntryContextPlaceholders(
+                  entry: e,
+                  onPlace: widget.previewEntry == null
+                      ? (place) => unawaited(_savePlace(e, place))
+                      : null,
+                  onMood: widget.previewEntry == null
+                      ? (mood) => unawaited(_saveMood(e, mood))
+                      : null,
+                ),
                 const SizedBox(height: 16),
                 Hero(
                   tag: ArchiveEntryHeroTags.surface(widget.entryId),

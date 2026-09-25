@@ -14,7 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$JournalDisplayMetadata {
 
- bool get treatAsNew; bool get connectionApproved; bool get keepExactDetails; bool get keepSeparate; String? get archiveThreadId; String? get archivePackId; bool get isPinned; DateTime? get pinnedAt; bool get isArchived; DateTime? get archivedAt; String get entryAboutness; String get memorySurfacing; bool get preserveOriginal; String? get captureContextTag; String? get captureSource; String? get title;
+ bool get treatAsNew; bool get connectionApproved; bool get keepExactDetails; bool get keepSeparate; String? get archiveThreadId; String? get archivePackId; bool get isPinned; DateTime? get pinnedAt; bool get isArchived; DateTime? get archivedAt; String get entryAboutness; String get memorySurfacing; bool get preserveOriginal; String? get captureContextTag; String? get captureSource; String? get title; String? get locationLabel; double? get latitude; double? get longitude;
 
 
 
@@ -165,7 +165,7 @@ return $default(_that.treatAsNew,_that.connectionApproved,_that.keepExactDetails
 
 
 class _JournalDisplayMetadata extends JournalDisplayMetadata {
-  const _JournalDisplayMetadata({this.treatAsNew = false, this.connectionApproved = false, this.keepExactDetails = false, this.keepSeparate = false, this.archiveThreadId, this.archivePackId, this.isPinned = false, this.pinnedAt, this.isArchived = false, this.archivedAt, this.entryAboutness = 'about_me', this.memorySurfacing = 'normal', this.preserveOriginal = false, this.captureContextTag, this.captureSource, this.title}): super._();
+  const _JournalDisplayMetadata({this.treatAsNew = false, this.connectionApproved = false, this.keepExactDetails = false, this.keepSeparate = false, this.archiveThreadId, this.archivePackId, this.isPinned = false, this.pinnedAt, this.isArchived = false, this.archivedAt, this.entryAboutness = 'about_me', this.memorySurfacing = 'normal', this.preserveOriginal = false, this.captureContextTag, this.captureSource, this.title, this.locationLabel, this.latitude, this.longitude}): super._();
   
 
 @override@JsonKey() final  bool treatAsNew;
@@ -184,6 +184,9 @@ class _JournalDisplayMetadata extends JournalDisplayMetadata {
 @override final  String? captureContextTag;
 @override final  String? captureSource;
 @override final  String? title;
+@override final  String? locationLabel;
+@override final  double? latitude;
+@override final  double? longitude;
 
 
 

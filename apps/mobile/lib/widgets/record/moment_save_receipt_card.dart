@@ -17,6 +17,7 @@ import 'package:archiveme_mobile/router/route_catalog.dart';
 import 'package:archiveme_mobile/theme/app_palette.dart';
 import 'package:archiveme_mobile/theme/app_spacing.dart';
 import 'package:archiveme_mobile/theme/voicememory_cards.dart';
+import 'package:archiveme_mobile/widgets/record/post_save_follow_up.dart';
 import 'package:archiveme_mobile/widgets/record/remote_processing_skipped_card.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -181,6 +182,10 @@ class MomentSaveReceiptCard extends StatelessWidget {
                 case final status?) ...[
               const SizedBox(height: AppSpacing.sm),
               status,
+            ],
+            if (!_isDegraded && heardText.isNotEmpty) ...[
+              const SizedBox(height: AppSpacing.sm),
+              PostSaveFollowUp(entry: entry),
             ],
             const SizedBox(height: AppSpacing.md),
             FilledButton(

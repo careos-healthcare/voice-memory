@@ -19,6 +19,7 @@ import 'package:archiveme_mobile/theme/app_palette.dart';
 import 'package:archiveme_mobile/widgets/archive/archive_changes_section.dart';
 import 'package:archiveme_mobile/widgets/archive/archive_changes_unavailable_notice.dart';
 import 'package:archiveme_mobile/widgets/archive/archive_empty_state.dart';
+import 'package:archiveme_mobile/widgets/archive/archive_weekly_recap_banner.dart';
 import 'package:archiveme_mobile/widgets/archive/archive_entry_card.dart';
 import 'package:archiveme_mobile/widgets/archive/archive_search_field.dart';
 import 'package:archiveme_mobile/widgets/archive/archive_status_banner.dart';
@@ -161,6 +162,24 @@ class _ArchiveDashboardScrollViewState
                     onSelect: (day) => setState(() => _selectedDay = day),
                   ),
                 ),
+                SliverToBoxAdapter(
+                  child: ArchiveWeeklyRecapBanner(entries: visibleEntries),
+                ),
+                if (V1CapabilityRegistry.trendPatternSummary)
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: sliverPadding.left,
+                      ),
+                      child: TrendPatternSummaryCard(
+                        citedEntryIds: [
+                          for (final entry in visibleEntries)
+                            if (DateTime.now().difference(entry.createdAt).inDays <= 7)
+                              entry.id,
+                        ],
+                      ),
+                    ),
+                  ),
                 SliverToBoxAdapter(
                   child: _FilterChips(
                     entries: visibleEntries,
@@ -599,9 +618,6 @@ class _NoticedCarousel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cards = <Widget>[];
-    if (V1CapabilityRegistry.trendPatternSummary) {
-      cards.add(const SizedBox(width: 280, child: TrendPatternSummaryCard()));
-    }
     if (feed.verifiedProofEntries.isNotEmpty) {
       cards.add(
         SizedBox(

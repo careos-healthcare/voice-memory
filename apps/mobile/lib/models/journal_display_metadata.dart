@@ -29,6 +29,9 @@ abstract class JournalDisplayMetadata with _$JournalDisplayMetadata {
     String? captureContextTag,
     String? captureSource,
     String? title,
+    String? locationLabel,
+    double? latitude,
+    double? longitude,
   }) = _JournalDisplayMetadata;
 
   factory JournalDisplayMetadata.fromJson(Map<String, dynamic> json) {
@@ -58,6 +61,9 @@ abstract class JournalDisplayMetadata with _$JournalDisplayMetadata {
       captureContextTag: JsonConverters.nullableString(json['captureContextTag']),
       captureSource: JsonConverters.nullableString(json['captureSource']),
       title: JsonConverters.nullableString(json['title']),
+      locationLabel: JsonConverters.nullableString(json['locationLabel']),
+      latitude: (json['latitude'] as num?)?.toDouble(),
+      longitude: (json['longitude'] as num?)?.toDouble(),
     );
   }
 
@@ -78,6 +84,10 @@ abstract class JournalDisplayMetadata with _$JournalDisplayMetadata {
     if (captureContextTag != null) 'captureContextTag': captureContextTag,
     if (captureSource != null) 'captureSource': captureSource,
     if (title != null && title!.trim().isNotEmpty) 'title': title,
+    if (locationLabel != null && locationLabel!.trim().isNotEmpty)
+      'locationLabel': locationLabel,
+    if (latitude != null) 'latitude': latitude,
+    if (longitude != null) 'longitude': longitude,
   };
 
   JournalDisplayMetadata copyWith({
@@ -97,6 +107,9 @@ abstract class JournalDisplayMetadata with _$JournalDisplayMetadata {
     Object? captureContextTag = copyWithUnset,
     Object? captureSource = copyWithUnset,
     Object? title = copyWithUnset,
+    Object? locationLabel = copyWithUnset,
+    Object? latitude = copyWithUnset,
+    Object? longitude = copyWithUnset,
   }) => JournalDisplayMetadata(
     treatAsNew: treatAsNew ?? this.treatAsNew,
     connectionApproved: connectionApproved ?? this.connectionApproved,
@@ -126,6 +139,15 @@ abstract class JournalDisplayMetadata with _$JournalDisplayMetadata {
         ? this.captureSource
         : captureSource as String?,
     title: identical(title, copyWithUnset) ? this.title : title as String?,
+    locationLabel: identical(locationLabel, copyWithUnset)
+        ? this.locationLabel
+        : locationLabel as String?,
+    latitude: identical(latitude, copyWithUnset)
+        ? this.latitude
+        : latitude as double?,
+    longitude: identical(longitude, copyWithUnset)
+        ? this.longitude
+        : longitude as double?,
   );
 
   @override
@@ -147,7 +169,10 @@ abstract class JournalDisplayMetadata with _$JournalDisplayMetadata {
           other.preserveOriginal == preserveOriginal &&
           other.captureContextTag == captureContextTag &&
           other.captureSource == captureSource &&
-          other.title == title;
+          other.title == title &&
+          other.locationLabel == locationLabel &&
+          other.latitude == latitude &&
+          other.longitude == longitude;
 
   @override
   int get hashCode => Object.hash(
@@ -167,5 +192,8 @@ abstract class JournalDisplayMetadata with _$JournalDisplayMetadata {
         captureContextTag,
         captureSource,
         title,
+        locationLabel,
+        latitude,
+        longitude,
       );
 }

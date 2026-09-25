@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:archiveme_mobile/core/config/v1_capability_registry.dart';
+import 'package:archiveme_mobile/widgets/archive/view_evidence_inline_link.dart';
 import 'package:archiveme_mobile/design/archive_mobile_typography.dart';
 import 'package:archiveme_mobile/design/archive_relative_date.dart';
 import 'package:archiveme_mobile/design/archive_responsive_layout.dart';
@@ -17,7 +18,11 @@ class TrendPatternSummaryCard extends StatefulWidget {
   const TrendPatternSummaryCard({
     super.key,
     this.reportLoader,
+    this.citedEntryIds = const [],
   });
+
+  /// Entries the trend claim is drawn from. Empty hides the evidence link.
+  final List<String> citedEntryIds;
 
   static const Key cardKey = Key('trend_pattern_summary_card');
   static const Key emptyKey = Key('trend_pattern_summary_empty');
@@ -108,7 +113,10 @@ class _TrendPatternSummaryCardState extends State<TrendPatternSummaryCard> {
                   )
                 : showEmpty
                     ? _EmptyState()
-                    : _ReportBody(report: report!),
+                    : _ReportBody(
+                        report: report!,
+                        citedEntryIds: widget.citedEntryIds,
+                      ),
           ),
         ),
       ),
@@ -140,9 +148,10 @@ class _EmptyState extends StatelessWidget {
 }
 
 class _ReportBody extends StatelessWidget {
-  const _ReportBody({required this.report});
+  const _ReportBody({required this.report, required this.citedEntryIds});
 
   final WeeklySelfReflectionReport report;
+  final List<String> citedEntryIds;
 
   @override
   Widget build(BuildContext context) {
@@ -206,6 +215,14 @@ class _ReportBody extends StatelessWidget {
           '${report.reflectionCount} $entryLabel · $generatedLabel',
           style: detailStyle,
         ),
+        if (citedEntryIds.isNotEmpty)
+          ViewEvidenceInlineLink(
+            entryIds: citedEntryIds,
+            surface: 'trend_pattern_summary',
+            claimContext: summary.isEmpty
+                ? TrendPatternSummaryCard.title
+                : summary,
+          ),
       ],
     );
   }

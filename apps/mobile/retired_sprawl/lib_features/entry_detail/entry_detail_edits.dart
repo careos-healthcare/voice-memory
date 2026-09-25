@@ -1,4 +1,5 @@
 import 'package:archiveme_mobile/models/journal_entry.dart';
+import 'package:archiveme_mobile/models/reflection.dart';
 import 'package:archiveme_mobile/storage/journal_store.dart';
 
 /// Writes a new [createdAt] and bumps the entry revision.
@@ -21,6 +22,47 @@ Future<void> saveEntryTitle({
     entry.copyWith(
       display: entry.display.copyWith(
         title: trimmed.isEmpty ? null : trimmed,
+      ),
+    ),
+  );
+}
+
+/// Writes a place name onto display metadata.
+Future<void> saveEntryPlace({
+  required JournalStore store,
+  required JournalEntry entry,
+  required String place,
+}) {
+  final trimmed = place.trim();
+  return store.saveEdit(
+    entry.copyWith(
+      display: entry.display.copyWith(
+        locationLabel: trimmed.isEmpty ? null : trimmed,
+      ),
+    ),
+  );
+}
+
+/// Writes a state-of-mind label onto the entry reflection.
+Future<void> saveEntryMood({
+  required JournalStore store,
+  required JournalEntry entry,
+  required String mood,
+}) {
+  final current = entry.reflection;
+  return store.saveEdit(
+    entry.copyWith(
+      reflection: Reflection(
+        mood: mood.trim(),
+        emotionalIntensity: current.emotionalIntensity,
+        recurringThemes: current.recurringThemes,
+        exactLanguagePattern: current.exactLanguagePattern,
+        concreteObservation: current.concreteObservation,
+        repeatedSignal: current.repeatedSignal,
+        tensionOrContradiction: current.tensionOrContradiction,
+        avoidedOrVagueArea: current.avoidedOrVagueArea,
+        nextSmallAction: current.nextSmallAction,
+        patternObservations: current.patternObservations,
       ),
     ),
   );
