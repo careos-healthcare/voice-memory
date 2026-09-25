@@ -1,8 +1,10 @@
+import 'package:archiveme_mobile/core/config/v1_capability_registry.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 
 /// Resolves the device's current GPS fix into a short place name.
 Future<String?> lookupCurrentPlaceName() async {
+  if (!V1CapabilityRegistry.location) return null;
   var permission = await Geolocator.checkPermission();
   if (permission == LocationPermission.denied) {
     permission = await Geolocator.requestPermission();
@@ -11,7 +13,12 @@ Future<String?> lookupCurrentPlaceName() async {
       permission == LocationPermission.deniedForever) {
     return null;
   }
-  final position = await Geolocator.getCurrentPosition();
+  final position = await Geolocator.getCurrentPosition(
+    locationSettings: const LocationSettings(
+      accuracy: LocationAccuracy.low,
+      timeLimit: Duration(seconds: 10),
+    ),
+  );
   final marks = await placemarkFromCoordinates(
     position.latitude,
     position.longitude,

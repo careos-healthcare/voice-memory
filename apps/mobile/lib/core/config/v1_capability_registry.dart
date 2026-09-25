@@ -31,7 +31,13 @@ abstract final class V1CapabilityRegistry {
   static const bool bluetooth = false;
   static const bool localNetwork = false;
   static const bool nearbyWifi = false;
-  static const bool location = true;
+
+  /// When-in-use place lookup. Beta builds turn this on from
+  /// `config/launch_profile.json` (`VOICEMEMORY_ENABLE_LOCATION`).
+  static const bool location = bool.fromEnvironment(
+    'VOICEMEMORY_ENABLE_LOCATION',
+    defaultValue: true,
+  );
   static const bool calendar = false;
   static const bool cameraAndPhotos = false;
   static const bool activityRecognition = false;

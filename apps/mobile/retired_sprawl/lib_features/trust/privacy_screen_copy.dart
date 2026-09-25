@@ -49,6 +49,11 @@ abstract class PrivacyScreenCopy {
       '${PrivacyClaimCatalogue.momentsStayLocal} '
       '${PrivacyClaimCatalogue.storageProtectionReportedLive}';
 
+  static const String placeLookupDisclosure =
+      'The place name is looked up by Apple or Google; the location itself is stored only on your phone.';
+
+  static const String placeLookupTitle = 'Place names';
+
   static const String onDeviceTitle = 'What stays on your device';
   static const String onDeviceBody =
       'Your archive entries, recorded details, action items, surfacing choices, '
@@ -153,6 +158,7 @@ abstract class PrivacyScreenCopy {
   static const List<PrivacySection> sections = [
     PrivacySection(title: privateByDefaultTitle, body: privateByDefaultBody),
     PrivacySection(title: onDeviceTitle, body: onDeviceBody),
+    PrivacySection(title: placeLookupTitle, body: placeLookupDisclosure),
     PrivacySection(title: aiProcessingTitle, body: aiProcessingBody),
     PrivacySection(title: encryptedBackupTitle, body: encryptedBackupBody),
     PrivacySection(title: doesNotDoTitle, body: doesNotDoBody),
@@ -168,6 +174,8 @@ abstract class PrivacyScreenCopy {
     privateByDefaultBody,
     onDeviceTitle,
     onDeviceBody,
+    placeLookupTitle,
+    placeLookupDisclosure,
     aiProcessingTitle,
     aiProcessingBody,
     encryptedBackupTitle,

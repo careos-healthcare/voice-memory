@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:archiveme_mobile/features/trust/privacy_screen_copy.dart';
 import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/widgets/entry_detail/current_place_lookup.dart';
 import 'package:flutter/material.dart';
@@ -39,20 +40,31 @@ class EntryContextPlaceholders extends StatelessWidget {
   Widget build(BuildContext context) {
     final place = entry.display.locationLabel?.trim();
     final mood = entry.reflection.mood;
-    return Wrap(
-      key: const Key('entry_context_placeholders'),
-      spacing: 8,
-      runSpacing: 8,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _Chip(
-          icon: Icons.place_outlined,
-          label: (place == null || place.isEmpty) ? 'Place' : place,
-          onTap: onPlace == null ? null : () => _pickPlace(context),
+        Wrap(
+          key: const Key('entry_context_placeholders'),
+          spacing: 8,
+          runSpacing: 8,
+          children: [
+            _Chip(
+              icon: Icons.place_outlined,
+              label: (place == null || place.isEmpty) ? 'Place' : place,
+              onTap: onPlace == null ? null : () => _pickPlace(context),
+            ),
+            _Chip(
+              icon: Icons.mood_outlined,
+              label: moodIsAssigned(mood) ? mood.trim() : 'State of mind',
+              onTap: onMood == null ? null : () => _pickMood(context),
+            ),
+          ],
         ),
-        _Chip(
-          icon: Icons.mood_outlined,
-          label: moodIsAssigned(mood) ? mood.trim() : 'State of mind',
-          onTap: onMood == null ? null : () => _pickMood(context),
+        const SizedBox(height: 8),
+        Text(
+          PrivacyScreenCopy.placeLookupDisclosure,
+          key: const Key('place_lookup_disclosure'),
+          style: Theme.of(context).textTheme.bodySmall,
         ),
       ],
     );
@@ -130,16 +142,28 @@ class _PlaceSheetState extends State<_PlaceSheet> {
     return SafeArea(
       child: Padding(
         padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
-        child: FilledButton(
-          key: const Key('use_current_location'),
-          onPressed: _busy ? null : _useCurrentLocation,
-          child: _busy
-              ? const SizedBox(
-                  width: 18,
-                  height: 18,
-                  child: CircularProgressIndicator(strokeWidth: 2),
-                )
-              : const Text('Use current location'),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              PrivacyScreenCopy.placeLookupDisclosure,
+              key: const Key('place_sheet_lookup_disclosure'),
+              style: Theme.of(context).textTheme.bodySmall,
+            ),
+            const SizedBox(height: 12),
+            FilledButton(
+              key: const Key('use_current_location'),
+              onPressed: _busy ? null : _useCurrentLocation,
+              child: _busy
+                  ? const SizedBox(
+                      width: 18,
+                      height: 18,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
+                  : const Text('Use current location'),
+            ),
+          ],
         ),
       ),
     );

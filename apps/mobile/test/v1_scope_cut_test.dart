@@ -110,7 +110,7 @@ void main() {
       'notifications = true',
       'health = false',
       'bluetooth = false',
-      'location = true',
+      "'VOICEMEMORY_ENABLE_LOCATION'",
       'calendar = false',
       'cameraAndPhotos = false',
       'p2pAndWebRtc = false',
