@@ -132,3 +132,14 @@ apps/mobile/*_prefs.json
 apps/mobile/_journal.json
 apps/mobile/_prefs.json
 *.tsbuildinfo
+
+test-results/
+npx_tsc.out
+tsconfig.tsbuildinfo
+.data/
+.vercel/
+build/
+.symlinks/
+Pods/
+*.zip
+.dart_tool/
