@@ -66,6 +66,7 @@ class _ThoughtprintBootstrapAppState extends State<ThoughtprintBootstrapApp> {
     if (_ready && _startupFailed && _needsBackupRestore) {
       return const MaterialApp(
         debugShowCheckedModeBanner: false,
+        themeMode: ThemeMode.light,
         home: Scaffold(
           backgroundColor: AppColors.backgroundPrimary,
           body: Center(
@@ -96,6 +97,7 @@ class _ThoughtprintBootstrapAppState extends State<ThoughtprintBootstrapApp> {
     if (_ready && _startupFailed) {
       return const MaterialApp(
         debugShowCheckedModeBanner: false,
+        themeMode: ThemeMode.light,
         home: Scaffold(
           backgroundColor: AppColors.backgroundPrimary,
           body: Center(
@@ -112,6 +114,7 @@ class _ThoughtprintBootstrapAppState extends State<ThoughtprintBootstrapApp> {
     }
     return const MaterialApp(
       debugShowCheckedModeBanner: false,
+      themeMode: ThemeMode.light,
       home: Scaffold(
         backgroundColor: AppColors.backgroundPrimary,
         body: SizedBox.shrink(),
@@ -140,6 +143,7 @@ class ThoughtprintBackupRestoreApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return const MaterialApp(
       debugShowCheckedModeBanner: false,
+      themeMode: ThemeMode.light,
       home: Scaffold(
         backgroundColor: AppColors.backgroundPrimary,
         body: Center(

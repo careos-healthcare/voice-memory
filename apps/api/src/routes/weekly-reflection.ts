@@ -1,3 +1,5 @@
+import { z } from "zod";
+
 export interface WeeklyReflectionEntry {
   entryId: string;
   text: string;
@@ -16,6 +18,82 @@ export interface WeeklyRecap {
   keyThemes: string[];
   emotionalArc: string;
   verbatimCitations: VerbatimCitation[];
+}
+
+const controlChars = /[\u0000-\u001f]/g;
+
+function sanitizedText(max: number) {
+  return z
+    .string()
+    .transform((value) => value.replace(controlChars, "").trim().slice(0, max))
+    .refine((value) => value.length > 0);
+}
+
+const weeklyEntrySchema = z.object({
+  entryId: sanitizedText(80),
+  text: sanitizedText(2000),
+  timestamp: sanitizedText(40),
+  embedding: z.array(z.number().finite()).optional(),
+});
+
+const weeklyAggregateSchema = z.object({
+  weekEndingKey: sanitizedText(40),
+  entryCount: z.number().finite(),
+  lastWeekEntryCount: z.number().finite(),
+  dominantEmotions: z.array(sanitizedText(200)),
+  repeatedConcerns: z.array(sanitizedText(200)),
+  repeatedEntities: z.array(sanitizedText(200)),
+  recurringThemes: z.array(sanitizedText(200)),
+  observationHighlights: z.array(sanitizedText(200)),
+  avgIntensityThisWeek: z.number().finite().nullable().optional(),
+  avgIntensityLastWeek: z.number().finite().nullable().optional(),
+  emotionalShiftLabel: sanitizedText(80).optional(),
+});
+
+export type ParsedWeeklyReflection =
+  | { kind: "entries"; entries: WeeklyReflectionEntry[] }
+  | { kind: "aggregate"; aggregate: SanitizedWeeklyAggregate };
+
+/** Requires every list and string, then strips control characters and trims. */
+export function parseWeeklyReflectionBody(input: unknown): ParsedWeeklyReflection | string {
+  if (!input || typeof input !== "object" || Array.isArray(input)) {
+    return "Weekly reflection body must be an object.";
+  }
+  const body = input as Record<string, unknown>;
+  if ("transcripts" in body && body.transcripts !== undefined && !Array.isArray(body.transcripts)) {
+    return "transcripts must be an array.";
+  }
+  if ("entries" in body) {
+    if (!Array.isArray(body.entries)) return "entries must be an array.";
+    const parsed = z
+      .object({
+        entries: z.array(weeklyEntrySchema),
+        transcripts: z.array(sanitizedText(4000)).optional(),
+      })
+      .safeParse({ entries: body.entries, transcripts: body.transcripts });
+    if (!parsed.success) return "Each entry needs an id, text, and timestamp.";
+    return { kind: "entries", entries: parsed.data.entries };
+  }
+
+  const parsed = weeklyAggregateSchema.safeParse(body);
+  if (!parsed.success) return "Weekly reflection list fields must be arrays.";
+  const data = parsed.data;
+  return {
+    kind: "aggregate",
+    aggregate: {
+      weekEndingKey: data.weekEndingKey,
+      entryCount: data.entryCount,
+      lastWeekEntryCount: data.lastWeekEntryCount,
+      dominantEmotions: data.dominantEmotions,
+      repeatedConcerns: data.repeatedConcerns,
+      repeatedEntities: data.repeatedEntities,
+      recurringThemes: data.recurringThemes,
+      observationHighlights: data.observationHighlights,
+      avgIntensityThisWeek: data.avgIntensityThisWeek ?? null,
+      avgIntensityLastWeek: data.avgIntensityLastWeek ?? null,
+      emotionalShiftLabel: data.emotionalShiftLabel ?? "unchanged",
+    },
+  };
 }
 
 const STOP = new Set([

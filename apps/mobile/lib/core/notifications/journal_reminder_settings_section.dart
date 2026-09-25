@@ -51,47 +51,22 @@ class _JournalReminderPreferencesState extends State<JournalReminderPreferences>
 
   @override
   Widget build(BuildContext context) {
-    return JournalReminderSettingsSection(
-      dailyEnabled: _daily,
-      weeklyEnabled: _weekly,
-      onDailyChanged: (value) => _set(JournalReminderPreferences.dailyKey, value),
-      onWeeklyChanged: (value) =>
-          _set(JournalReminderPreferences.weeklyKey, value),
-    );
-  }
-}
-
-class JournalReminderSettingsSection extends StatelessWidget {
-  const JournalReminderSettingsSection({
-    required this.dailyEnabled,
-    required this.weeklyEnabled,
-    required this.onDailyChanged,
-    required this.onWeeklyChanged,
-    super.key,
-  });
-
-  final bool dailyEnabled;
-  final bool weeklyEnabled;
-  final ValueChanged<bool> onDailyChanged;
-  final ValueChanged<bool> onWeeklyChanged;
-
-  @override
-  Widget build(BuildContext context) {
     return Column(
       children: [
         SwitchListTile(
           key: const Key('settings_daily_reflection'),
           contentPadding: EdgeInsets.zero,
           title: const Text('Daily reflection at 8:00 PM'),
-          value: dailyEnabled,
-          onChanged: onDailyChanged,
+          value: _daily,
+          onChanged: (value) => _set(JournalReminderPreferences.dailyKey, value),
         ),
         SwitchListTile(
           key: const Key('settings_weekly_recap'),
           contentPadding: EdgeInsets.zero,
           title: const Text('Weekly recap on Sunday morning'),
-          value: weeklyEnabled,
-          onChanged: onWeeklyChanged,
+          value: _weekly,
+          onChanged: (value) =>
+              _set(JournalReminderPreferences.weeklyKey, value),
         ),
       ],
     );

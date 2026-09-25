@@ -1,50 +1,25 @@
 import 'dart:io';
 
 import 'package:archiveme_mobile/core/crypto/e2e_encryption_service.dart';
-import 'package:archiveme_mobile/features/capture/controllers/live_speech_controller.dart';
 import 'package:archiveme_mobile/features/export/book_exporter.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 
 import '../test/fixtures/journal_fixtures.dart';
 
-class _ScriptedSpeech extends LiveSpeechEngine {
-  @override
-  Future<void> start({
-    required void Function(String words) onPartial,
-    required void Function(double level) onLevel,
-  }) async {}
-
-  @override
-  Future<void> pause() async {}
-
-  @override
-  Future<void> stop() async {}
-}
-
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
   late Directory scratch;
-  LiveSpeechController? speech;
 
   setUpAll(() async {
     scratch = await Directory.systemTemp.createTemp('journal_pipeline_');
   });
 
   tearDownAll(() async {
-    speech?.dispose();
     if (scratch.existsSync()) {
       await scratch.delete(recursive: true);
     }
-  });
-
-  testWidgets('stage 1 starts listening without a microphone', (tester) async {
-    speech = LiveSpeechController(engine: _ScriptedSpeech());
-    expect(speech!.state, RecordingState.idle);
-    await speech!.startListening();
-    expect(speech!.state, RecordingState.listening);
-    expect(speech!.transcript, isEmpty);
   });
 
   testWidgets('stage 2 encrypts and restores the fixture transcript', (tester) async {

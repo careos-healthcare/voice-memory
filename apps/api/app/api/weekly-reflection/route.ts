@@ -8,12 +8,9 @@ import {
 import { safeOpenAiRouteError } from "@/lib/server/openai-budget-guard";
 import { PRODUCT_WEDGE_LINE } from "@/lib/product-copy";
 import { getOpenAIClient } from "@/lib/openai";
-import type { WeeklyReflectionPayload } from "@/types/weekly";
 import {
-  sanitizeWeeklyAggregate,
-  sanitizeWeeklyEntries,
+  parseWeeklyReflectionBody,
   synthesizeWeeklyRecap,
-  weeklyInputError,
 } from "../../../src/routes/weekly-reflection";
 
 export const runtime = "nodejs";
@@ -40,44 +37,22 @@ function parseSummary(raw: string): string {
 
 export async function POST(request: Request) {
   try {
-    const body = (await request.json()) as WeeklyReflectionPayload & {
-      entries?: unknown;
-      transcripts?: unknown;
-    };
-
-    const inputError = weeklyInputError(body);
-    if (inputError) {
+    const parsed = parseWeeklyReflectionBody(await request.json());
+    if (typeof parsed === "string") {
       return apiErrorResponse({
         code: "WEEKLY_REFLECTION_NO_ENTRIES",
-        message: inputError,
+        message: parsed,
         status: 400,
         route: "weekly-reflection",
       });
     }
 
-    if (Array.isArray(body.entries)) {
-      const entries = sanitizeWeeklyEntries(body.entries);
-      if (!entries) {
-        return apiErrorResponse({
-          code: "WEEKLY_REFLECTION_NO_ENTRIES",
-          message: "Each entry needs an id, text, and timestamp.",
-          status: 400,
-          route: "weekly-reflection",
-        });
-      }
-      const recap = await synthesizeWeeklyRecap(entries);
+    if (parsed.kind === "entries") {
+      const recap = await synthesizeWeeklyRecap(parsed.entries);
       return NextResponse.json(recap);
     }
 
-    const aggregate = sanitizeWeeklyAggregate(body as Record<string, unknown>);
-    if (typeof aggregate === "string") {
-      return apiErrorResponse({
-        code: "WEEKLY_REFLECTION_NO_ENTRIES",
-        message: aggregate,
-        status: 400,
-        route: "weekly-reflection",
-      });
-    }
+    const aggregate = parsed.aggregate;
     if (aggregate.entryCount === 0) {
       return apiErrorResponse({ code: "WEEKLY_REFLECTION_NO_ENTRIES", route: "weekly-reflection" });
     }
