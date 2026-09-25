@@ -33,6 +33,9 @@ class JournalReminderPlan {
     required this.weeklyEpoch,
   });
 
+  /// Last plan built from the Settings reminder switches.
+  static JournalReminderPlan? scheduled;
+
   final int? dailyEpoch;
   final int? weeklyEpoch;
 

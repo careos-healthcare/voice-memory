@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
-import 'package:speech_to_text/speech_to_text.dart';
 
 enum RecordingState { idle, listening, paused, silenceDetected }
 
@@ -17,31 +16,22 @@ abstract class LiveSpeechEngine {
   Future<void> stop();
 }
 
-/// `speech_to_text` adapter. A quiet stretch of 2500ms ends the phrase.
+/// Placeholder until native speech-to-text is the only recognizer.
+/// Callers inject a [LiveSpeechEngine] when a partial transcript is available.
 class SpeechToTextEngine implements LiveSpeechEngine {
-  SpeechToTextEngine([SpeechToText? speech]) : _speech = speech ?? SpeechToText();
-
-  final SpeechToText _speech;
   static const silenceWindow = Duration(milliseconds: 2500);
 
   @override
   Future<void> start({
     required void Function(String words) onPartial,
     required void Function(double level) onLevel,
-  }) async {
-    await _speech.initialize();
-    await _speech.listen(
-      onResult: (result) => onPartial(result.recognizedWords),
-      onSoundLevelChange: onLevel,
-      pauseFor: silenceWindow,
-    );
-  }
+  }) async {}
 
   @override
-  Future<void> pause() => _speech.stop();
+  Future<void> pause() async {}
 
   @override
-  Future<void> stop() => _speech.cancel();
+  Future<void> stop() async {}
 }
 
 class LiveSpeechController extends ChangeNotifier {

@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:archiveme_mobile/features/export/import_guides.dart';
 import 'package:archiveme_mobile/features/voice_capture/transcription/speech_locale.dart';
 import 'package:flutter/material.dart';
 
@@ -94,10 +93,6 @@ class SpeechLanguageSettings extends StatelessWidget {
               if (value != null) onSelected(value);
             },
           ),
-        const SizedBox(height: 12),
-        Text(ImportGuides.dayOne, key: const Key('import_guide_day_one')),
-        const SizedBox(height: 8),
-        Text(ImportGuides.appleNotes, key: const Key('import_guide_apple_notes')),
       ],
     );
   }

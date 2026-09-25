@@ -1,6 +1,8 @@
 import 'dart:async';
 
 import 'package:archiveme_mobile/api/models/sync_dto.dart';
+import 'package:archiveme_mobile/core/crypto/e2e_encryption_service.dart';
+import 'package:archiveme_mobile/core/crypto/passphrase_vault.dart';
 import 'package:archiveme_mobile/core/execution/execution.dart';
 import 'package:archiveme_mobile/core/network/api_failure.dart';
 import 'package:archiveme_mobile/core/network/api_result.dart';
@@ -121,17 +123,34 @@ class SyncEngine {
     SyncOutboxStore? outbox,
     SyncBackoffPolicy backoff = const SyncBackoffPolicy(),
     SyncExecutionStrategy? syncStrategy,
+    E2EEncryptionService? encryption,
+    Future<PassphraseVault> Function(String passphrase)? openVault,
   }) : _syncApi = syncApi,
        _journal = journal,
        _outbox = outbox,
        _backoff = backoff,
-       _syncStrategy = syncStrategy ?? SyncExecutionStrategy(backoff: backoff);
+       _syncStrategy = syncStrategy ?? SyncExecutionStrategy(backoff: backoff),
+       encryption = encryption ?? E2EEncryptionService(),
+       _openVault = openVault ??
+           ((passphrase) => PassphraseVault.open(
+                 passphrase: passphrase,
+                 store: SaltStore.secureStorage(),
+               ));
 
   final SyncApiClient _syncApi;
   final JournalStore _journal;
   final SyncOutboxStore? _outbox;
   final SyncBackoffPolicy _backoff;
   final SyncExecutionStrategy _syncStrategy;
+  final E2EEncryptionService encryption;
+  final Future<PassphraseVault> Function(String passphrase) _openVault;
+  PassphraseVault? vault;
+
+  Future<PassphraseVault> openPassphraseVault(String passphrase) async {
+    final opened = await _openVault(passphrase);
+    vault = opened;
+    return opened;
+  }
 
   bool get hasOutbox => _outbox != null;
 

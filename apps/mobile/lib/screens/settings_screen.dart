@@ -13,7 +13,8 @@ import 'package:archiveme_mobile/features/archive_packs/archive_pack.dart';
 import 'package:archiveme_mobile/features/archive_proof/visible_archive_proof_copy.dart';
 import 'package:archiveme_mobile/features/backup/encrypted_archive_backup_actions.dart';
 import 'package:archiveme_mobile/features/settings/speech_language_settings.dart';
-import 'package:archiveme_mobile/features/reminders/gentle_reminders_settings_section.dart';
+import 'package:archiveme_mobile/core/notifications/journal_notification_plan.dart';
+import 'package:archiveme_mobile/features/export/archive_transfer_screen.dart';
 import 'package:archiveme_mobile/features/beta/archive_beta_mission_gate.dart';
 import 'package:archiveme_mobile/features/beta_feedback_intelligence/beta_feedback_intelligence_engine.dart';
 import 'package:archiveme_mobile/features/beta_feedback_intelligence/beta_feedback_intelligence_model.dart';
@@ -339,7 +340,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 );
               },
             ),
-            const GentleRemindersSettingsSection(),
             JournalReminderPreferences(
               readEnabled: (key) async {
                 if (!AppServices.isInitialized) return false;
@@ -348,6 +348,23 @@ class _SettingsScreenState extends State<SettingsScreen> {
               writeEnabled: (key, value) async {
                 if (!AppServices.isInitialized) return;
                 await AppServices.instance.prefs.writeBool(key, value);
+                final daily = key == JournalReminderPreferences.dailyKey
+                    ? value
+                    : await AppServices.instance.prefs.readBool(
+                          JournalReminderPreferences.dailyKey,
+                        ) ??
+                        false;
+                final weekly = key == JournalReminderPreferences.weeklyKey
+                    ? value
+                    : await AppServices.instance.prefs.readBool(
+                          JournalReminderPreferences.weeklyKey,
+                        ) ??
+                        false;
+                JournalReminderPlan.scheduled = JournalReminderPlan.fromSettings(
+                  now: DateTime.now(),
+                  dailyEnabled: daily,
+                  weeklyEnabled: weekly,
+                );
               },
             ),
             const PrivacyDataControlsSection(),
@@ -396,6 +413,25 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
               trailing: const Icon(Icons.chevron_right),
               onTap: () => context.push('/consent-audit'),
+            ),
+            ListTile(
+              key: const Key('settings_export_import'),
+              contentPadding: EdgeInsets.zero,
+              title: const Text('Export / Import'),
+              subtitle: Text(
+                'Day One, Apple Notes, and a passphrase-sealed archive',
+                style: ArchiveMobileTypography.listSubtitle(context),
+              ),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () {
+                unawaited(
+                  Navigator.of(context).push(
+                    MaterialPageRoute<void>(
+                      builder: (_) => const ArchiveTransferScreen(),
+                    ),
+                  ),
+                );
+              },
             ),
             ListTile(
               key: const Key('settings_journal_export_tile'),

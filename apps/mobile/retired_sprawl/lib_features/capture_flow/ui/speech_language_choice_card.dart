@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:archiveme_mobile/features/settings/speech_language_settings.dart';
 import 'package:archiveme_mobile/features/voice_capture/transcription/native_speech_transcription.dart';
 import 'package:archiveme_mobile/features/voice_capture/transcription/speech_language_choice_copy.dart';
 import 'package:archiveme_mobile/features/voice_capture/transcription/speech_locale.dart';
@@ -101,6 +102,17 @@ class _SpeechLanguageChoiceCardState extends State<SpeechLanguageChoiceCard> {
           ),
           const SizedBox(height: AppSpacing.xs),
           const _Body(SpeechLanguageChoiceCopy.body),
+          const SizedBox(height: AppSpacing.sm),
+          SpeechLanguageSettings(
+            selected: selected?.identifier,
+            onSelected: (identifier) {
+              for (final entry in _offered) {
+                if (entry.identifier != identifier) continue;
+                setState(() => _selected = entry);
+                return;
+              }
+            },
+          ),
           const SizedBox(height: AppSpacing.sm),
           DropdownButtonFormField<OfferedSpeechLocale>(
             key: const Key('speech_language_choice_picker'),
