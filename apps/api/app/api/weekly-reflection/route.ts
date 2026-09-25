@@ -36,6 +36,22 @@ export async function POST(request: Request) {
   try {
     const body = (await request.json()) as WeeklyReflectionPayload;
 
+    const listFields = [
+      body.dominantEmotions,
+      body.recurringThemes,
+      body.repeatedConcerns,
+      body.repeatedEntities,
+      body.observationHighlights,
+    ];
+    if (listFields.some((field) => !Array.isArray(field))) {
+      return apiErrorResponse({
+        code: "WEEKLY_REFLECTION_NO_ENTRIES",
+        message: "Weekly reflection list fields must be arrays.",
+        status: 400,
+        route: "weekly-reflection",
+      });
+    }
+
     if (!body.weekEndingKey || body.entryCount === 0) {
       return apiErrorResponse({ code: "WEEKLY_REFLECTION_NO_ENTRIES", route: "weekly-reflection" });
     }

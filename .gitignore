@@ -23,6 +23,7 @@ node_modules/
 
 # turborepo per-workspace task caches and logs (recreated by every `turbo run`)
 .turbo/
+apps/api/.turbo/turbo-lint.log
 
 # misc
 .DS_Store
@@ -77,6 +78,7 @@ yarn-error.log*
 
 # typescript
 *.tsbuildinfo
+**/*.tsbuildinfo
 next-env.d.ts
 
 # Capacitor / native build artifacts (commit ios/ and android/ sources, not caches)
