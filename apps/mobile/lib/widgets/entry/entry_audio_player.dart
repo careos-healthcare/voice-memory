@@ -102,8 +102,7 @@ class _EntryAudioPlayerState extends State<EntryAudioPlayer> {
   @override
   Widget build(BuildContext context) {
     if (!_fileReady) {
-      final path = widget.audioPath?.trim() ?? '';
-      final audioExpected = path.isNotEmpty || widget.durationSeconds > 0;
+      final audioExpected = widget.audioPath != null;
       if (widget.compact || !audioExpected) return const SizedBox.shrink();
       return Text(
         EntryDetailCopy.audioMissing,

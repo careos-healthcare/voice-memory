@@ -98,7 +98,7 @@ void main() {
       expect(find.text(EntryDetailCopy.whatYouRecorded), findsNothing);
       expect(find.byKey(const Key('entry_detail_title')), findsOneWidget);
       expect(find.text('Archive note'), findsNothing);
-      expect(find.text(EntryDetailCopy.audioMissing), findsOneWidget);
+      expect(find.text(EntryDetailCopy.audioMissing), findsNothing);
       expect(find.byKey(const Key('entry_detail_audio_player')), findsNothing);
     });
 
