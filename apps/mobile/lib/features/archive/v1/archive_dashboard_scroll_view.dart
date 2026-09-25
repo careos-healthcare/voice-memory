@@ -421,7 +421,7 @@ class _StatusBanners extends StatelessWidget {
   }
 }
 
-class _MonthStrip extends StatelessWidget {
+class _MonthStrip extends StatefulWidget {
   const _MonthStrip({
     required this.entries,
     required this.selectedDay,
@@ -433,6 +433,39 @@ class _MonthStrip extends StatelessWidget {
   final ValueChanged<DateTime?> onSelect;
 
   @override
+  State<_MonthStrip> createState() => _MonthStripState();
+}
+
+class _MonthStripState extends State<_MonthStrip> {
+  final ScrollController _scroll = ScrollController();
+
+  var _scrolledToRecent = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _showRecentDays());
+  }
+
+  @override
+  void dispose() {
+    _scroll.dispose();
+    super.dispose();
+  }
+
+  void _showRecentDays() {
+    if (!mounted || !_scroll.hasClients) return;
+    final max = _scroll.position.maxScrollExtent;
+    if (max <= 0) {
+      if (_scrolledToRecent) return;
+      _scrolledToRecent = true;
+      WidgetsBinding.instance.addPostFrameCallback((_) => _showRecentDays());
+      return;
+    }
+    _scroll.jumpTo(max);
+  }
+
+  @override
   Widget build(BuildContext context) {
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
@@ -441,7 +474,7 @@ class _MonthStrip extends StatelessWidget {
         today.subtract(Duration(days: offset)),
     ];
     final marked = {
-      for (final entry in entries)
+      for (final entry in widget.entries)
         DateTime(
           entry.createdAt.year,
           entry.createdAt.month,
@@ -453,6 +486,7 @@ class _MonthStrip extends StatelessWidget {
         key: const Key('archive_calendar_strip'),
         height: 112,
         child: SingleChildScrollView(
+          controller: _scroll,
           scrollDirection: Axis.horizontal,
           padding: const EdgeInsets.symmetric(horizontal: 12),
           child: Row(
@@ -464,12 +498,14 @@ class _MonthStrip extends StatelessWidget {
                   onPressed: () async {
                     final picked = await showDatePicker(
                       context: context,
-                      initialDate: selectedDay ?? today,
+                      initialDate: widget.selectedDay ?? today,
                       firstDate: DateTime(1970),
                       lastDate: today,
                     );
                     if (picked == null) return;
-                    onSelect(DateTime(picked.year, picked.month, picked.day));
+                    widget.onSelect(
+                      DateTime(picked.year, picked.month, picked.day),
+                    );
                   },
                   child: Text(LocaleDateFormat.month(context, today)),
                 ),
@@ -479,7 +515,7 @@ class _MonthStrip extends StatelessWidget {
                 child: ActionChip(
                   key: const Key('archive_calendar_today'),
                   label: const Text('Today'),
-                  onPressed: () => onSelect(null),
+                  onPressed: () => widget.onSelect(null),
                 ),
               ),
               for (final day in days)
@@ -487,7 +523,7 @@ class _MonthStrip extends StatelessWidget {
                   padding: const EdgeInsets.only(right: 6),
                   child: InkWell(
                     key: Key('archive_day_${_dayKey(day)}'),
-                    onTap: () => onSelect(day),
+                    onTap: () => widget.onSelect(day),
                     child: SizedBox(
                       width: 36,
                       child: Column(
@@ -505,26 +541,30 @@ class _MonthStrip extends StatelessWidget {
                             maxLines: 1,
                             style: TextStyle(
                               fontWeight:
-                                  selectedDay != null &&
-                                      _sameDay(selectedDay!, day)
+                                  widget.selectedDay != null &&
+                                      _sameDay(widget.selectedDay!, day)
                                   ? FontWeight.w700
                                   : FontWeight.w400,
                               color:
-                                  selectedDay != null &&
-                                      _sameDay(selectedDay!, day)
+                                  widget.selectedDay != null &&
+                                      _sameDay(widget.selectedDay!, day)
                                   ? context.palette.accentPrimary
                                   : context.palette.textSecondary,
                             ),
                           ),
                           if (marked.contains(day))
                             Container(
+                              key: Key('archive_day_dot_${_dayKey(day)}'),
                               width: 5,
                               height: 5,
+                              margin: const EdgeInsets.only(top: 4),
                               decoration: BoxDecoration(
                                 color: context.palette.accentPrimary,
                                 shape: BoxShape.circle,
                               ),
-                            ),
+                            )
+                          else
+                            const SizedBox(height: 9),
                         ],
                       ),
                     ),
