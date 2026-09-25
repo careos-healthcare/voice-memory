@@ -12,7 +12,6 @@ import 'package:archiveme_mobile/security/security_settings_copy.dart';
 import 'package:archiveme_mobile/security/sensitive_screen_guard.dart';
 import 'package:archiveme_mobile/services/app_services.dart';
 import 'package:archiveme_mobile/services/auth_service.dart';
-import 'package:archiveme_mobile/theme/app_colors.dart';
 import 'package:archiveme_mobile/theme/app_spacing.dart';
 import 'package:archiveme_mobile/widgets/pushed_screen_shell.dart';
 import 'package:archiveme_mobile/widgets/security/archive_privacy_controls_card.dart';
@@ -198,7 +197,7 @@ class _SecuritySettingsScreenState extends State<SecuritySettingsScreen> {
               key: const Key('security_subtitle'),
               style: ArchiveMobileTypography.responsiveHelper(
                 context,
-              ).copyWith(color: AppColors.textSecondary),
+              ).copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
             ),
             const SizedBox(height: AppSpacing.md),
             ArchivePrivacyControlsCard(
@@ -299,7 +298,7 @@ class _SecuritySettingsScreenState extends State<SecuritySettingsScreen> {
           AccountAuthCopy.signOutKeepsArchive,
           style: ArchiveMobileTypography.responsiveHelper(
             context,
-          ).copyWith(color: AppColors.textSecondary),
+          ).copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
         ),
       ];
     }
@@ -378,7 +377,7 @@ class _SecuritySettingsScreenState extends State<SecuritySettingsScreen> {
             _restoreFeedback!,
             style: ArchiveMobileTypography.listSubtitle(
               context,
-            ).copyWith(color: AppColors.textSecondary),
+            ).copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
           ),
         ),
       _tile(
@@ -397,7 +396,7 @@ class _SecuritySettingsScreenState extends State<SecuritySettingsScreen> {
         label,
         style: ArchiveMobileTypography.cardLabel(
           context,
-          color: AppColors.textSecondary,
+          color: Theme.of(context).colorScheme.onSurfaceVariant,
         ),
       ),
     );
@@ -416,7 +415,7 @@ class _SecuritySettingsScreenState extends State<SecuritySettingsScreen> {
       title: Text(
         title,
         style: ArchiveMobileTypography.listTitle(context).copyWith(
-          color: destructive ? AppColors.error : AppColors.textPrimary,
+          color: destructive ? Theme.of(context).colorScheme.error : Theme.of(context).colorScheme.onSurface,
         ),
       ),
       subtitle: subtitle != null

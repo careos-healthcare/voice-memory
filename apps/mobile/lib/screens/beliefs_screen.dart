@@ -10,7 +10,6 @@ import 'package:archiveme_mobile/models/journal_entry.dart';
 import 'package:archiveme_mobile/product/belief_product_copy.dart';
 import 'package:archiveme_mobile/product/consumer_ui_copy.dart';
 import 'package:archiveme_mobile/services/app_services.dart';
-import 'package:archiveme_mobile/theme/app_colors.dart';
 import 'package:archiveme_mobile/theme/app_spacing.dart';
 import 'package:archiveme_mobile/theme/voicememory_typography.dart';
 import 'package:archiveme_mobile/widgets/archive_belief_summary_card.dart';
@@ -89,7 +88,7 @@ class _BeliefsScreenState extends State<BeliefsScreen> {
   Widget build(BuildContext context) {
     if (_loading) {
       return Scaffold(
-        backgroundColor: AppColors.backgroundPrimary,
+        backgroundColor: Theme.of(context).colorScheme.surface,
         body: SafeArea(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -107,7 +106,7 @@ class _BeliefsScreenState extends State<BeliefsScreen> {
 
     if (isIntentionalEmptyArchive(_entries)) {
       return Scaffold(
-        backgroundColor: AppColors.backgroundPrimary,
+        backgroundColor: Theme.of(context).colorScheme.surface,
         body: SafeArea(
           child: RefreshIndicator(
             onRefresh: _load,
@@ -135,7 +134,7 @@ class _BeliefsScreenState extends State<BeliefsScreen> {
 
     final s = _snapshot!;
     return Scaffold(
-      backgroundColor: AppColors.backgroundPrimary,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       body: SafeArea(
         child: RefreshIndicator(
           onRefresh: _load,
@@ -151,7 +150,7 @@ class _BeliefsScreenState extends State<BeliefsScreen> {
               Text(
                 ConsumerUiCopy.allPatternsLead,
                 style: VoiceMemoryTypography.bodyStyle(
-                  color: AppColors.textSecondary,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
               ),
               const SizedBox(height: AppSpacing.lg),

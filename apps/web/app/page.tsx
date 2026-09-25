@@ -54,6 +54,9 @@ export default function HomePage() {
               <li key={point}>{point}</li>
             ))}
           </ul>
+          <p className="mt-6 text-base font-medium text-white">
+            Android follows the iOS beta, once purchase and restore are proven.
+          </p>
           <ul className="mt-8 space-y-3 text-sm leading-relaxed text-zinc-300">
             {proofPoints.map((point) => (
               <li key={point}>{point}</li>

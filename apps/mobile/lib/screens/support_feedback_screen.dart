@@ -10,7 +10,6 @@ import 'package:archiveme_mobile/features/share/archive_share_actions.dart';
 import 'package:archiveme_mobile/features/support/support_feedback_copy.dart';
 import 'package:archiveme_mobile/features/then_now/then_now_copy.dart';
 import 'package:archiveme_mobile/product/consumer_ui_copy.dart';
-import 'package:archiveme_mobile/theme/app_colors.dart';
 import 'package:archiveme_mobile/theme/app_spacing.dart';
 import 'package:archiveme_mobile/widgets/pushed_screen_shell.dart';
 import 'package:flutter/material.dart';
@@ -147,7 +146,7 @@ class SupportFeedbackScreen extends StatelessWidget {
                 ConsumerUiCopy.paywallSubhead,
                 style: ArchiveMobileTypography.explanationBody(
                   context,
-                  color: AppColors.textSecondary,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
               ),
               trailing: const Icon(Icons.chevron_right),
@@ -221,7 +220,7 @@ class SupportFeedbackScreen extends StatelessWidget {
             body,
             style: ArchiveMobileTypography.explanationBody(
               context,
-              color: AppColors.textSecondary,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),
           ),
         ],
@@ -253,7 +252,7 @@ class SupportFeedbackScreen extends StatelessWidget {
                     '\u2022 ',
                     style: ArchiveMobileTypography.explanationBody(
                       context,
-                      color: AppColors.textSecondary,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
                     ),
                   ),
                   Expanded(
@@ -261,7 +260,7 @@ class SupportFeedbackScreen extends StatelessWidget {
                       bullet,
                       style: ArchiveMobileTypography.explanationBody(
                         context,
-                        color: AppColors.textSecondary,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
                       ),
                     ),
                   ),

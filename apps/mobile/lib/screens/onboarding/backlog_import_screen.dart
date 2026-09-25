@@ -47,7 +47,7 @@ class BacklogImportScreen extends ConsumerWidget {
     final isBusy = progress.isActive;
 
     return Scaffold(
-      backgroundColor: AppColors.backgroundPrimary,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       body: SafeArea(
         child: Stack(
           children: [
@@ -95,7 +95,7 @@ class BacklogImportScreen extends ConsumerWidget {
                     Text(
                       BacklogImportCopy.progressLabel,
                       style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                        color: AppColors.textSecondary,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
                       ),
                     ),
                     const SizedBox(height: AppSpacing.xs),
@@ -107,8 +107,8 @@ class BacklogImportScreen extends ConsumerWidget {
                             ? progress.fraction
                             : null,
                         minHeight: 8,
-                        backgroundColor: AppColors.surfaceAlt,
-                        color: AppColors.accentPrimary,
+                        backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
+                        color: Theme.of(context).colorScheme.primary,
                       ),
                     ),
                     const SizedBox(height: AppSpacing.xs),
@@ -118,7 +118,7 @@ class BacklogImportScreen extends ConsumerWidget {
                       textAlign: TextAlign.center,
                       style: OnboardingTypography.body(context).copyWith(
                         fontSize: OnboardingTypography.bodySize(context) - 1,
-                        color: AppColors.textSecondary,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
                       ),
                     ),
                     if (progress.phase == BacklogImportPhase.complete &&
@@ -145,7 +145,7 @@ class BacklogImportScreen extends ConsumerWidget {
                       BacklogImportCopy.idleHint,
                       textAlign: TextAlign.center,
                       style: OnboardingTypography.body(context).copyWith(
-                        color: AppColors.textSecondary,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
                       ),
                     ),
                   const Spacer(),

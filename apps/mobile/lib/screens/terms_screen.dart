@@ -1,7 +1,6 @@
 import 'package:archiveme_mobile/core/config/v1_capability_registry.dart';
 import 'package:archiveme_mobile/design/archive_mobile_typography.dart';
 import 'package:archiveme_mobile/features/trust/terms_screen_copy.dart';
-import 'package:archiveme_mobile/theme/app_colors.dart';
 import 'package:archiveme_mobile/theme/app_spacing.dart';
 import 'package:archiveme_mobile/widgets/pushed_screen_shell.dart';
 import 'package:flutter/material.dart';
@@ -24,7 +23,7 @@ class TermsScreen extends StatelessWidget {
               key: const Key('terms_last_updated'),
               style: ArchiveMobileTypography.responsiveHelper(
                 context,
-                color: AppColors.textSecondary,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
               ),
             ),
             const SizedBox(height: AppSpacing.sm),
@@ -47,7 +46,7 @@ class TermsScreen extends StatelessWidget {
                 section.body,
                 style: ArchiveMobileTypography.explanationBody(
                   context,
-                ).copyWith(color: AppColors.textSecondary),
+                ).copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
               ),
               const SizedBox(height: AppSpacing.lg),
             ],

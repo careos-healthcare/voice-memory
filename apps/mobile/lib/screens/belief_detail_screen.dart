@@ -1,7 +1,6 @@
 import 'package:archiveme_mobile/design/archive_mobile_spacing.dart';
 import 'package:archiveme_mobile/features/archive_beliefs/archive_belief_models.dart';
 import 'package:archiveme_mobile/product/consumer_ui_copy.dart';
-import 'package:archiveme_mobile/theme/app_colors.dart';
 import 'package:archiveme_mobile/theme/app_spacing.dart';
 import 'package:archiveme_mobile/theme/voicememory_typography.dart';
 import 'package:archiveme_mobile/widgets/consumer/consumer_screen_back_header.dart';
@@ -15,7 +14,7 @@ class BeliefDetailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.backgroundPrimary,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       body: SafeArea(
         child: ListView(
           padding: ArchiveMobileSpacing.pagePadding,
@@ -25,7 +24,7 @@ class BeliefDetailScreen extends StatelessWidget {
             Text(
               ConsumerUiCopy.patternDetailTitle,
               style: VoiceMemoryTypography.metadataStyle(
-                color: AppColors.accentPrimary,
+                color: Theme.of(context).colorScheme.primary,
               ).copyWith(fontWeight: FontWeight.w600),
             ),
             const SizedBox(height: AppSpacing.sm),
@@ -44,7 +43,7 @@ class BeliefDetailScreen extends StatelessWidget {
             Text(
               belief.evidenceSummary,
               style: VoiceMemoryTypography.bodyStyle(
-                color: AppColors.textSecondary,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
               ),
             ),
             const SizedBox(height: AppSpacing.md),
@@ -56,7 +55,7 @@ class BeliefDetailScreen extends StatelessWidget {
             Text(
               belief.whyExplanation,
               style: VoiceMemoryTypography.bodyStyle(
-                color: AppColors.textSecondary,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
               ),
             ),
             if (belief.timeline.isNotEmpty) ...[
@@ -75,7 +74,7 @@ class BeliefDetailScreen extends StatelessWidget {
                       Text(
                         q.periodLabel,
                         style: VoiceMemoryTypography.metadataStyle(
-                          color: AppColors.accentPrimary,
+                          color: Theme.of(context).colorScheme.primary,
                         ),
                       ),
                       const SizedBox(height: 4),
@@ -94,7 +93,7 @@ class BeliefDetailScreen extends StatelessWidget {
               Text(
                 belief.conclusion!,
                 style: VoiceMemoryTypography.bodyStyle(
-                  color: AppColors.textSecondary,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
               ),
             ],
