@@ -12,6 +12,7 @@ import 'package:archiveme_mobile/features/action_items/archive_action_item.dart'
 import 'package:archiveme_mobile/features/archive_packs/archive_pack.dart';
 import 'package:archiveme_mobile/features/archive_proof/visible_archive_proof_copy.dart';
 import 'package:archiveme_mobile/features/backup/encrypted_archive_backup_actions.dart';
+import 'package:archiveme_mobile/features/history/history_hub.dart';
 import 'package:archiveme_mobile/features/reminders/gentle_reminders_settings_section.dart';
 import 'package:archiveme_mobile/features/beta/archive_beta_mission_gate.dart';
 import 'package:archiveme_mobile/features/beta_feedback_intelligence/beta_feedback_intelligence_engine.dart';
@@ -323,6 +324,20 @@ class _SettingsScreenState extends State<SettingsScreen> {
               onTap: () => context.push('/privacy-security'),
             ),
             const EncryptedArchiveBackupSettingsTile(),
+            ListTile(
+              key: const Key('settings_history_hub'),
+              contentPadding: EdgeInsets.zero,
+              title: const Text('On This Day, Calendar, Map'),
+              subtitle: const Text('Export Printable Journal'),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute<void>(
+                    builder: (_) => const HistoryHub(entries: []),
+                  ),
+                );
+              },
+            ),
             const GentleRemindersSettingsSection(),
             JournalReminderPreferences(
               readEnabled: (key) async {
