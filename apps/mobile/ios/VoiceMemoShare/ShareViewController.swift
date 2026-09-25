@@ -52,6 +52,9 @@ enum VoiceMemoShareStore {
       forSecurityApplicationGroupIdentifier: groupId
     ) else { return }
     let folder = root.appendingPathComponent(folderName, isDirectory: true)
+    guard let created = (try? url.resourceValues(forKeys: [.creationDateKey]))?.creationDate else {
+      return
+    }
     do {
       try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
       let dest = folder.appendingPathComponent("\(UUID().uuidString).m4a")
@@ -59,7 +62,6 @@ enum VoiceMemoShareStore {
         try FileManager.default.removeItem(at: dest)
       }
       try FileManager.default.copyItem(at: url, to: dest)
-      let created = (try? url.resourceValues(forKeys: [.creationDateKey]).creationDate) ?? Date()
       let payload: [String: String] = [
         "path": dest.path,
         "createdAt": ISO8601DateFormatter().string(from: created),

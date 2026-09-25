@@ -31,11 +31,12 @@ abstract final class VoiceMemoImporter {
               file,
               locale: chosen,
             ));
+    final recordedAt = createdAt?.toUtc();
+    if (recordedAt == null) return null;
     final chosen = locale;
     final transcript = chosen == null
         ? ''
         : ((await spoken(audio, chosen))?.trim() ?? '');
-    final recordedAt = (createdAt ?? audio.lastModifiedSync()).toUtc();
     final entry = JournalEntry(
       id: generateUlid(),
       createdAt: recordedAt,
@@ -65,10 +66,10 @@ abstract final class VoiceMemoImportInbox {
     'archive_me/voice_memo_import',
   );
 
-  static Future<JournalEntry?> consume({
+  /// Transcribes a pending memo and leaves saving to the receipt.
+  static Future<JournalEntry?> transcribePending({
     Map<Object?, Object?>? pending,
     required Future<ConfirmedSpeechLocale?> Function() readLocale,
-    required Future<void> Function(JournalEntry entry) save,
     Future<String?> Function(File audio, ConfirmedSpeechLocale locale)?
         transcribe,
   }) async {
@@ -79,10 +80,27 @@ abstract final class VoiceMemoImportInbox {
     final createdRaw = payload['createdAt'];
     final created =
         createdRaw is String ? DateTime.tryParse(createdRaw)?.toUtc() : null;
+    if (created == null) return null;
     final entry = await VoiceMemoImporter.importFile(
       audio: File(path),
       locale: await readLocale(),
       createdAt: created,
+      transcribe: transcribe,
+    );
+    if (entry == null) return null;
+    return entry;
+  }
+
+  static Future<JournalEntry?> consume({
+    Map<Object?, Object?>? pending,
+    required Future<ConfirmedSpeechLocale?> Function() readLocale,
+    required Future<void> Function(JournalEntry entry) save,
+    Future<String?> Function(File audio, ConfirmedSpeechLocale locale)?
+        transcribe,
+  }) async {
+    final entry = await transcribePending(
+      pending: pending,
+      readLocale: readLocale,
       transcribe: transcribe,
     );
     if (entry == null) return null;

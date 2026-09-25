@@ -29,6 +29,12 @@ void main() {
     expect(entry?.transcript, 'el rio estaba alto');
     expect(entry?.createdAt, recorded);
     expect(entry?.captureSource, VoiceMemoImporter.captureSource);
+    final undated = await VoiceMemoImporter.importFile(
+      audio: audio,
+      locale: ConfirmedSpeechLocale.confirmed('es-ES')!,
+      transcribe: (file, locale) async => 'should not date itself today',
+    );
+    expect(undated, isNull);
     expect(VoiceMemoImporter.accepts('note.wav'), isFalse);
     await dir.delete(recursive: true);
   });

@@ -199,7 +199,9 @@ final class VoiceMemoInbox {
     defer {
       if accessed { url.stopAccessingSecurityScopedResource() }
     }
-    let created = (try? url.resourceValues(forKeys: [.creationDateKey]).creationDate) ?? Date()
+    guard let created = (try? url.resourceValues(forKeys: [.creationDateKey]))?.creationDate else {
+      return
+    }
     let stored = Self.copyIntoAppSupport(url) ?? url
     pending = [
       "path": stored.path,
