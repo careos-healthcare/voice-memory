@@ -32,6 +32,13 @@ const MAX_SYNC_PUSH_BLOBS = 32;
 const MAX_SYNC_PUSH_BODY_BYTES = 8 * 1024 * 1024;
 const MAX_SYNC_BLOB_BYTES = 2 * 1024 * 1024;
 
+const plaintextKeys = ["text", "transcript", "audio", "plaintext"] as const;
+
+function carriesPlaintext(blob: object): boolean {
+  const record = blob as Record<string, unknown>;
+  return plaintextKeys.some((key) => record[key] != null);
+}
+
 function isValidIsoTimestamp(value: string | undefined): boolean {
   if (!value?.trim()) return false;
   const time = new Date(value).getTime();
@@ -103,6 +110,14 @@ export async function POST(request: Request) {
   log(summary);
 
   for (const blob of blobs) {
+    if (carriesPlaintext(blob)) {
+      log({
+        ok: false,
+        errorCode: "PLAINTEXT_NOT_ACCEPTED",
+        responseShape: "plaintext_blob",
+      });
+      return syncApiFailure("PLAINTEXT_NOT_ACCEPTED", { status: 400, requestId });
+    }
     if (!blob.id || !blob.type || !blob.encrypted?.ciphertext || !blob.encrypted?.iv) {
       log({
         ok: false,
