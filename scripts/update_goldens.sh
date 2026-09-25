@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
-# Refresh Flutter golden images after a recording-screen change.
+# Refresh Flutter golden images for the release suite.
 set -e
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT/apps/mobile"
 
-echo "Review the images in failures/ visually before committing to ensure the new recording redesign is captured."
-flutter test --update-goldens
+flutter test test/release/ --update-goldens
+echo "Visually review failures/ before committing."
