@@ -76,7 +76,10 @@ class _ArchiveTransferScreenState extends State<ArchiveTransferScreen> {
         bytes: bytes,
       );
       if (!mounted) return;
-      setState(() => _status = 'Read ${bundle.entries.length} entries from the archive.');
+      setState(
+        () =>
+            _status = 'Read ${bundle.entries.length} entries from the archive.',
+      );
     } finally {
       if (mounted) setState(() => _busy = false);
     }
@@ -90,8 +93,16 @@ class _ArchiveTransferScreenState extends State<ArchiveTransferScreen> {
         padding: const EdgeInsets.all(20),
         children: [
           Text(ImportGuides.dayOne, key: const Key('import_guide_day_one')),
+          const SizedBox(height: 8),
+          Text(
+            ImportGuides.dayOnePhotos,
+            key: const Key('import_guide_day_one_photos'),
+          ),
           const SizedBox(height: 12),
-          Text(ImportGuides.appleNotes, key: const Key('import_guide_apple_notes')),
+          Text(
+            ImportGuides.appleNotes,
+            key: const Key('import_guide_apple_notes'),
+          ),
           const SizedBox(height: 20),
           TextField(
             key: const Key('archive_transfer_passphrase'),

@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:archiveme_mobile/features/export/import_guides.dart';
 import 'package:archiveme_mobile/features/onboarding/backlog_import_copy.dart';
 import 'package:archiveme_mobile/features/onboarding/cloud_consent_modal.dart';
 import 'package:archiveme_mobile/features/onboarding/backlog_import_notifier.dart';
@@ -64,6 +65,18 @@ class _OnboardingImportFirstStepState
         const SizedBox(height: AppSpacing.sm),
         Text(
           BacklogImportCopy.subtitle,
+          textAlign: TextAlign.center,
+        ),
+        const SizedBox(height: AppSpacing.sm),
+        const Text(
+          ImportGuides.dayOne,
+          key: Key('import_guide_day_one'),
+          textAlign: TextAlign.center,
+        ),
+        const SizedBox(height: AppSpacing.sm),
+        const Text(
+          ImportGuides.dayOnePhotos,
+          key: Key('import_guide_day_one_photos'),
           textAlign: TextAlign.center,
         ),
         const SizedBox(height: AppSpacing.md),

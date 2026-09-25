@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:archiveme_mobile/features/archive_explanations/explanation_models.dart';
 import 'package:archiveme_mobile/features/evidence_method/insight.dart';
+import 'package:archiveme_mobile/features/export/import_guides.dart';
 import 'package:archiveme_mobile/features/import/import_consent_view.dart';
 import 'package:archiveme_mobile/features/onboarding/backlog_import_copy.dart';
 import 'package:archiveme_mobile/features/onboarding/cloud_consent_modal.dart';
@@ -96,6 +97,20 @@ class _BacklogImportScreenState extends ConsumerState<BacklogImportScreen> {
                   SizedBox(height: OnboardingTypography.sectionGap(context)),
                   Text(
                     BacklogImportCopy.subtitle,
+                    textAlign: TextAlign.center,
+                    style: OnboardingTypography.body(context),
+                  ),
+                  const SizedBox(height: AppSpacing.md),
+                  Text(
+                    ImportGuides.dayOne,
+                    key: const Key('import_guide_day_one'),
+                    textAlign: TextAlign.center,
+                    style: OnboardingTypography.body(context),
+                  ),
+                  const SizedBox(height: AppSpacing.sm),
+                  Text(
+                    ImportGuides.dayOnePhotos,
+                    key: const Key('import_guide_day_one_photos'),
                     textAlign: TextAlign.center,
                     style: OnboardingTypography.body(context),
                   ),
