@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:archiveme_mobile/core/config/v1_capability_registry.dart';
 import 'package:archiveme_mobile/core/di/archive_feed_providers.dart';
+import 'package:archiveme_mobile/core/user/user_preferences.dart';
 import 'package:archiveme_mobile/design/archive_mobile_typography.dart';
 import 'package:archiveme_mobile/features/insights/pattern_exploration_conversation_notifier.dart';
 import 'package:archiveme_mobile/features/insights/pattern_exploration_conversation_state.dart';
@@ -44,26 +45,31 @@ class _ExplorePatternsScreenState extends ConsumerState<ExplorePatternsScreen> {
   final _composer = TextEditingController();
   final _scrollController = ScrollController();
   List<JournalEntry> _journalEntries = const [];
+  bool _cloudOn = false;
 
   @override
   void initState() {
     super.initState();
-    if (AppServices.isInitialized) {
-      unawaited(
-        AppServices.instance.journal.loadAll().then((rows) {
-          if (mounted) setState(() => _journalEntries = rows);
-        }),
-      );
-    }
-    // Same once-on-mount guard as CaregiverInvitationLinkListenerHost.bind():
-    // initState, not build(), so a seeded send cannot re-fire on rebuild.
+    unawaited(_loadGate());
+  }
+
+  Future<void> _loadGate() async {
+    final override = UserPreferences.debugCloudSyncOverride;
+    final enabled = override ??
+        (AppServices.isInitialized &&
+            (await UserPreferences.load(AppServices.instance.prefs))
+                .isCloudSyncEnabled);
+    if (!mounted) return;
+    setState(() => _cloudOn = enabled);
+    if (!enabled || !AppServices.isInitialized) return;
+    final rows = await AppServices.instance.journal.loadAll();
+    if (mounted) setState(() => _journalEntries = rows);
     final seed = widget.seed;
-    if (seed != null) {
-      final notifier = ref.read(patternExplorationConversationProvider.notifier)
-        ..reset();
-      if (seed.transcript.trim().isNotEmpty) {
-        unawaited(notifier.sendMessage(seed.transcript));
-      }
+    if (seed == null) return;
+    final notifier = ref.read(patternExplorationConversationProvider.notifier)
+      ..reset();
+    if (seed.transcript.trim().isNotEmpty) {
+      await notifier.sendMessage(seed.transcript);
     }
   }
 
@@ -111,6 +117,27 @@ class _ExplorePatternsScreenState extends ConsumerState<ExplorePatternsScreen> {
 
     final canSend =
         !conversation.isSending && _composer.text.trim().isNotEmpty;
+
+    if (!_cloudOn) {
+      return Scaffold(
+        key: ExplorePatternsScreen.screenKey,
+        backgroundColor: AppColors.backgroundPrimary,
+        appBar: AppBar(
+          backgroundColor: AppColors.backgroundPrimary,
+          title: const Text(ExplorePatternsScreen.screenTitle),
+        ),
+        body: const Center(
+          child: Padding(
+            padding: EdgeInsets.all(24),
+            child: Text(
+              PatternExplorationConversationState.cloudLockedMessage,
+              key: Key('pattern_exploration_cloud_locked'),
+              textAlign: TextAlign.center,
+            ),
+          ),
+        ),
+      );
+    }
 
     return Scaffold(
       key: ExplorePatternsScreen.screenKey,

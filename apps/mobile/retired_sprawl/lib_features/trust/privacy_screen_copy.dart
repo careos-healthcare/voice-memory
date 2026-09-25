@@ -62,10 +62,10 @@ abstract class PrivacyScreenCopy {
 
   static const String aiProcessingTitle = 'Cloud transcription and analysis';
   static const String aiProcessingBody =
-      'When remote processing is on, Thoughtprint sends recorded audio for '
-      'transcription and transcript text for reflection. When it is off, '
-      'new entries are recorded on this device only. Anything already recorded '
-      'stays exactly as it is.';
+      'When you record, Thoughtprint may send audio or transcript text to the '
+      'app backend so it can transcribe and organize what you said. The result '
+      'is returned to your archive. Google Gemini is the AI processor used for '
+      'cloud features.';
 
   static const String encryptedBackupTitle = 'Optional encrypted backup';
   static const String encryptedBackupBody =
@@ -91,52 +91,17 @@ abstract class PrivacyScreenCopy {
       'You can mark entries as Hypothetical, Not about me, Sensitive, '
       'Do not surface, Preserve original, Keep separate, or Treat as new.';
 
-  /// Names the companies that receive content, and what each one gets.
+  /// Names the AI processor for cloud features.
   ///
-  /// This used to read "Thoughtprint may use trusted processing providers […]
-  /// Provider names may appear in the full privacy policy where required",
-  /// which named nobody and pointed at a document to name them later. It has
-  /// always had a home: `PrivacyScreen` renders it in the
-  /// `privacy_processing_providers` tile, under a visible heading, collapsed
-  /// until tapped. That placement is kept — a reader who wants to know who
-  /// sees their recordings goes to Privacy and finds the heading, and a reader
-  /// who does not is not handed a list of vendors mid-scroll.
-  ///
-  /// Each sentence is checkable against a request the backend actually makes:
-  ///
-  /// * audio to OpenAI — `apps/api/app/api/transcribe/route.ts` posts the
-  ///   recorded file to `whisper-1`;
-  /// * transcript to OpenAI — `apps/api/app/api/analyze/route.ts` posts the
-  ///   transcript to `gpt-4o-mini`;
-  /// * live audio to Google — `packages/shared/lib/live-audio/upstream-url.ts`
-  ///   streams to Gemini, behind `VOICEMEMORY_ENABLE_LIVE_CONVERSATION` and
-  ///   `V1CapabilityRegistry.liveVoice`, both off, which is why the sentence
-  ///   says "where that feature is available" rather than describing it as
-  ///   something the reader has;
-  /// * sync — `encrypted_sync_service.dart` uploads ciphertext.
-  ///
-  /// Google embedding of fact-ledger text is deliberately *not* listed.
-  /// `packages/shared/lib/gemini-embeddings.ts` does send transcript text to
-  /// `text-embedding-004`, but only from `/api/ledger/bulk-import`, and this
-  /// app never calls it: `bulkImportJson` and `bulkImportMultipart` exist in
-  /// the generated Retrofit client with no call site in `lib/`. Naming a
-  /// processor that receives nothing is the same failure as hiding one that
-  /// does — it makes the list unverifiable. Add the sentence when a caller
-  /// lands.
-  ///
-  /// Anthropic is deliberately absent. Nothing in this repository calls it,
-  /// and listing vendors you do not use to say you do not use them only
-  /// raises the question about the ones you do.
+  /// The first sentence is the website `AI_TRANSCRIPTION_ANALYSIS_SUMMARY`:
+  /// a recording may be sent to the backend, and Google Gemini is the
+  /// processor used for cloud features. The ciphertext sentence stays
+  /// separate because encrypted backup uploads data the server cannot read.
+  /// The tile stays collapsed until tapped.
   static const String processingProvidersTitle = 'Processing providers';
   static const String processingProvidersBody =
-      'Remote processing is off until you turn it on, and these companies '
-      'receive nothing before then. If you turn it on: OpenAI receives a '
-      "moment's recorded audio to transcribe it, then the transcript text — "
-      'along with structured details of the earlier entries it is compared '
-      'against — to draft a reflection. Google receives streamed audio during '
-      'a live conversation, where that feature is available. Encrypted backup '
-      'is separate: sync uploads ciphertext, so the server holds backup data '
-      'it cannot read.';
+      '$aiProcessingBody Encrypted backup is separate: sync uploads ciphertext, '
+      'so the server holds backup data it cannot read.';
 
   static const String fullPolicyLink = 'Full privacy policy online';
 

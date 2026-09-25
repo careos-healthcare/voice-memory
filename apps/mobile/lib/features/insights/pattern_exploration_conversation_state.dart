@@ -43,6 +43,9 @@ class PatternExplorationConversationState {
     this.errorMessage,
   });
 
+  static const cloudLockedMessage =
+      'Turn on Cloud Features in Settings to unlock AI Pattern Exploration.';
+
   final List<PatternExplorationMessage> messages;
   final bool isSending;
   final String? errorMessage;

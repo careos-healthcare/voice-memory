@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:archiveme_mobile/core/user/user_preferences.dart';
 import 'package:archiveme_mobile/config/developer_settings_gate.dart';
 import 'package:archiveme_mobile/config/production_navigation.dart';
 import 'package:archiveme_mobile/core/config/v1_navigation_guard.dart';
@@ -74,6 +75,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   bool _remindersBusy = false;
   bool _onDeviceProcessing = OnDeviceProcessingStore.defaultEnabled;
   bool _onDeviceBusy = false;
+  bool _cloudSyncEnabled = false;
   List<JournalEntry> _journalEntries = const [];
   final GlobalKey _onDeviceToggleKey = GlobalKey();
   @override
@@ -81,6 +83,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     super.initState();
     unawaited(BetaFeedbackIntelligenceStore.ensureLoaded());
     unawaited(_loadJournalEntries());
+    unawaited(_loadCloudSync());
     unawaited(
       PackageInfo.fromPlatform().then((info) {
         if (mounted) setState(() => _packageInfo = info);
@@ -168,6 +171,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
+  Future<void> _loadCloudSync() async {
+    if (!AppServices.isInitialized) return;
+    final preferences = await UserPreferences.load(AppServices.instance.prefs);
+    if (!mounted) return;
+    setState(() => _cloudSyncEnabled = preferences.isCloudSyncEnabled);
+  }
+
   Future<void> _loadJournalEntries() async {
     if (!AppServices.isInitialized) return;
     final entries = await AppServices.instance.journal.loadAll();
@@ -215,6 +225,28 @@ class _SettingsScreenState extends State<SettingsScreen> {
               style: ArchiveMobileTypography.listSubtitle(context),
             ),
             const SizedBox(height: AppSpacing.md),
+            SwitchListTile(
+              key: const Key('settings_cloud_sync'),
+              contentPadding: EdgeInsets.zero,
+              title: Text(
+                'Cloud features',
+                style: ArchiveMobileTypography.listTitle(context),
+              ),
+              subtitle: Text(
+                'Off keeps imports and pattern exploration on this device. '
+                'On encrypts a backup and allows AI pattern exploration.',
+                style: ArchiveMobileTypography.listSubtitle(context),
+              ),
+              value: _cloudSyncEnabled,
+              onChanged: (value) async {
+                if (!AppServices.isInitialized) return;
+                await UserPreferences.setCloudSyncEnabled(
+                  AppServices.instance.prefs,
+                  value,
+                );
+                if (mounted) setState(() => _cloudSyncEnabled = value);
+              },
+            ),
             const AccountPrivacyControlsSection(),
             const SizedBox(height: AppSpacing.md),
             ListTile(

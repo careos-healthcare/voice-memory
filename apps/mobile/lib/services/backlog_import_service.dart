@@ -191,7 +191,16 @@ class BacklogImportService {
     List<BacklogImportChunk> chunks, {
     void Function(BacklogImportProgress progress)? onProgress,
     String? activeLens,
+    bool cloudSyncEnabled = false,
+    Future<void> Function(BacklogImportChunk chunk)? saveLocally,
   }) async {
+    if (!cloudSyncEnabled) {
+      return _saveLocallyOnly(
+        chunks,
+        onProgress: onProgress,
+        saveLocally: saveLocally,
+      );
+    }
     if (chunks.isEmpty) {
       const progress = BacklogImportProgress(
         phase: BacklogImportPhase.complete,
@@ -346,6 +355,45 @@ class BacklogImportService {
     );
     emit(complete);
     return complete;
+  }
+
+  Future<BacklogImportProgress> _saveLocallyOnly(
+    List<BacklogImportChunk> chunks, {
+    void Function(BacklogImportProgress progress)? onProgress,
+    Future<void> Function(BacklogImportChunk chunk)? saveLocally,
+  }) async {
+    if (chunks.isEmpty) {
+      const progress = BacklogImportProgress(
+        phase: BacklogImportPhase.complete,
+        statusMessage: 'No entries found in the selected files.',
+      );
+      onProgress?.call(progress);
+      return progress;
+    }
+
+    var imported = 0;
+    var failed = 0;
+    final total = chunks.length;
+    for (final chunk in chunks) {
+      try {
+        if (saveLocally != null) {
+          await saveLocally(chunk);
+        }
+        imported += 1;
+      } catch (_) {
+        failed += 1;
+      }
+    }
+    final progress = BacklogImportProgress(
+      phase: BacklogImportPhase.complete,
+      totalChunks: total,
+      processedChunks: total,
+      importedCount: imported,
+      failedCount: failed,
+      statusMessage: 'Saved on this device.',
+    );
+    onProgress?.call(progress);
+    return progress;
   }
 
   Future<

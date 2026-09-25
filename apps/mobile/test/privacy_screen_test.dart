@@ -236,6 +236,9 @@ void main() {
     });
 
     testWidgets('settings opens in-app privacy route', (tester) async {
+      await tester.binding.setSurfaceSize(const Size(800, 2400));
+      addTearDown(() => tester.binding.setSurfaceSize(null));
+
       final router = GoRouter(
         routes: [
           GoRoute(

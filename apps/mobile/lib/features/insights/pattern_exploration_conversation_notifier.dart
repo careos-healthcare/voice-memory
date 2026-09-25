@@ -1,6 +1,8 @@
 import 'package:archiveme_mobile/core/di/network_providers.dart';
+import 'package:archiveme_mobile/core/user/user_preferences.dart';
 import 'package:archiveme_mobile/data/network/insights_conversation_api_client.dart';
 import 'package:archiveme_mobile/features/insights/pattern_exploration_conversation_state.dart';
+import 'package:archiveme_mobile/services/app_services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 /// Sends pattern-exploration turns and keeps the running chat in memory.
@@ -18,6 +20,15 @@ class PatternExplorationConversationNotifier
   Future<void> sendMessage(String text) async {
     final trimmed = text.trim();
     if (trimmed.isEmpty || state.isSending) return;
+
+    final cloudSyncEnabled = await _cloudSyncEnabled();
+    if (!cloudSyncEnabled) {
+      state = state.copyWith(
+        isSending: false,
+        errorMessage: PatternExplorationConversationState.cloudLockedMessage,
+      );
+      return;
+    }
 
     final history = [
       for (final message in state.messages)
@@ -72,6 +83,14 @@ class PatternExplorationConversationNotifier
 
   void reset() {
     state = const PatternExplorationConversationState();
+  }
+
+  Future<bool> _cloudSyncEnabled() async {
+    final override = UserPreferences.debugCloudSyncOverride;
+    if (override != null) return override;
+    if (!AppServices.isInitialized) return false;
+    final preferences = await UserPreferences.load(AppServices.instance.prefs);
+    return preferences.isCloudSyncEnabled;
   }
 }
 

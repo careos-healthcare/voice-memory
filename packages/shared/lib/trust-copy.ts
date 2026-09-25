@@ -18,7 +18,7 @@ export const LOCAL_FIRST_SUMMARY =
   "Your reflections, transcripts, mood notes, and memory patterns are stored in this browser (localStorage and IndexedDB for audio). Thoughtprint does not operate a cloud journal database for your entries.";
 
 export const AI_TRANSCRIPTION_ANALYSIS_SUMMARY =
-  "When you record, Thoughtprint may send audio or transcript text to the app backend so it can transcribe and organize what you said. The result is returned to your archive.";
+  "When you record, Thoughtprint may send audio or transcript text to the app backend so it can transcribe and organize what you said. The result is returned to your archive. Google Gemini is the AI processor used for cloud features.";
 
 export const PROCESSING_PROVIDERS_SUMMARY =
   "Thoughtprint may use trusted processing providers for transcription, analysis, account, billing, or crash diagnostics. Provider names may appear in the full privacy policy where required.";

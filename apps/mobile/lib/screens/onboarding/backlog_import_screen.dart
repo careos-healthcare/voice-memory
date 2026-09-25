@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:archiveme_mobile/features/archive_explanations/explanation_models.dart';
 import 'package:archiveme_mobile/features/evidence_method/insight.dart';
+import 'package:archiveme_mobile/features/import/import_consent_view.dart';
 import 'package:archiveme_mobile/features/onboarding/backlog_import_copy.dart';
 import 'package:archiveme_mobile/features/onboarding/backlog_import_notifier.dart';
 import 'package:archiveme_mobile/features/onboarding/experiment_h_onboarding_coordinator.dart';
@@ -18,10 +19,18 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 /// Optional onboarding step — import historical notes with upload progress.
-class BacklogImportScreen extends ConsumerWidget {
+class BacklogImportScreen extends ConsumerStatefulWidget {
   const BacklogImportScreen({super.key});
 
-  Future<void> _continueAfterImport(BuildContext context) async {
+  @override
+  ConsumerState<BacklogImportScreen> createState() =>
+      _BacklogImportScreenState();
+}
+
+class _BacklogImportScreenState extends ConsumerState<BacklogImportScreen> {
+  bool _consentAccepted = false;
+
+  Future<void> _continueAfterImport() async {
     final entries = await AppServices.instance.journal.loadAll();
     if (ExperimentHOnboardingCoordinator.shouldInsertProofStep(
       entryCount: entries.length,
@@ -41,7 +50,27 @@ class BacklogImportScreen extends ConsumerWidget {
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
+    if (!_consentAccepted) {
+      return Scaffold(
+        backgroundColor: Theme.of(context).colorScheme.surface,
+        body: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(AppSpacing.md),
+            child: Column(
+              children: [
+                const Spacer(),
+                ImportConsentView(
+                  onContinue: () => setState(() => _consentAccepted = true),
+                ),
+                const Spacer(),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
+
     final progress = ref.watch(backlogImportNotifierProvider);
     final notifier = ref.read(backlogImportNotifierProvider.notifier);
     final isBusy = progress.isActive;
@@ -154,7 +183,7 @@ class BacklogImportScreen extends ConsumerWidget {
                       key: const Key('backlog_import_continue_button'),
                       onPressed: isBusy
                           ? null
-                          : () => _continueAfterImport(context),
+                          : () => _continueAfterImport(),
                       child: const Text(BacklogImportCopy.continueCta),
                     )
                   else if (progress.phase == BacklogImportPhase.error) ...[
@@ -172,7 +201,7 @@ class BacklogImportScreen extends ConsumerWidget {
                       key: const Key('backlog_import_continue_after_error'),
                       onPressed: isBusy
                           ? null
-                          : () => _continueAfterImport(context),
+                          : () => _continueAfterImport(),
                       child: const Text(BacklogImportCopy.continueCta),
                     ),
                   ] else
@@ -187,7 +216,7 @@ class BacklogImportScreen extends ConsumerWidget {
                       key: const Key('backlog_import_skip_button'),
                       onPressed: isBusy
                           ? null
-                          : () => _continueAfterImport(context),
+                          : () => _continueAfterImport(),
                       child: const Text(BacklogImportCopy.skipCta),
                     ),
                   const SizedBox(height: AppSpacing.sm),

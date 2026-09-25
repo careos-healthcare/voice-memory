@@ -54,6 +54,11 @@ void main() {
         ArchiveDataFlowCopy.bodySections.join(' '),
       ]) {
         expect(copy.toLowerCase(), isNot(contains('never sent')));
+      }
+      for (final copy in [
+        PrivacyScreenCopy.remoteProcessingSwitchBodyOff,
+        ArchiveDataFlowCopy.bodySections.join(' '),
+      ]) {
         expect(copy.toLowerCase(), contains('device'));
       }
 
