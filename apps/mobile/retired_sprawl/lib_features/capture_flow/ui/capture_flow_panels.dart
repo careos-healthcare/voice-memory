@@ -4,7 +4,6 @@ import 'package:archiveme_mobile/features/voice_capture/transcription/live_draft
 import 'package:archiveme_mobile/features/capture_flow/capture_flow_phase.dart';
 import 'package:archiveme_mobile/features/insights/rag/routine_rag_models.dart';
 import 'package:archiveme_mobile/features/voice_capture/microphone_permission_copy.dart';
-import 'package:archiveme_mobile/product/consumer_ui_copy.dart';
 import 'package:archiveme_mobile/record/example_prompt_catalog.dart';
 import 'package:archiveme_mobile/record/quick_text_capture_copy.dart';
 import 'package:archiveme_mobile/theme/app_palette.dart';
@@ -337,85 +336,82 @@ class CaptureRecordingPanel extends StatelessWidget {
     final minutes = duration.inMinutes.remainder(60).toString().padLeft(2, '0');
     final seconds = duration.inSeconds.remainder(60).toString().padLeft(2, '0');
     final reduceMotion = MediaQuery.disableAnimationsOf(context);
+    final thumbInset = MediaQuery.paddingOf(context).bottom + 16;
 
-    return Container(
-      decoration: VoiceMemoryCards.standard(context: context),
-      padding: const EdgeInsets.all(AppSpacing.md),
-      child: Column(
-        children: [
-          Text(
-            '$minutes:$seconds',
-            key: const Key('capture_recording_timer'),
-            style: ArchiveMobileTypography.responsiveSectionTitle(context),
-          ),
-          const SizedBox(height: AppSpacing.md),
-          SizedBox(
-            key: const Key('capture_level_meter'),
-            height: 64,
-            width: double.infinity,
-            child: CustomPaint(
-              painter: _CaptureLevelPainter(
-                levels: levels,
-                color: context.palette.accentPrimary,
-                reduceMotion: reduceMotion,
-              ),
-            ),
-          ),
-          if (_showDraft) ...[
-            const SizedBox(height: AppSpacing.sm),
-            Text(
-              'Draft — final text is saved after you stop',
-              key: const Key('capture_draft_label'),
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: context.palette.textMuted,
-                fontStyle: FontStyle.italic,
-              ),
-            ),
-            if (draftText != null && draftText!.trim().isNotEmpty)
-              Text(
-                draftText!,
-                key: const Key('capture_draft_text'),
-                textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: context.palette.textMuted,
-                  fontStyle: FontStyle.italic,
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final height = constraints.maxHeight.isFinite
+            ? constraints.maxHeight
+            : MediaQuery.sizeOf(context).height;
+        return SizedBox(
+          key: const Key('capture_recording_fullscreen'),
+          height: height,
+          width: double.infinity,
+          child: Padding(
+            padding: EdgeInsets.fromLTRB(20, 24, 20, thumbInset),
+            child: Column(
+              children: [
+                Text(
+                  '$minutes:$seconds',
+                  key: const Key('capture_recording_timer'),
+                  style: TextStyle(
+                    fontSize: 56,
+                    fontWeight: FontWeight.w500,
+                    color: Theme.of(context).colorScheme.onSurface,
+                    fontFeatures: const [FontFeature.tabularFigures()],
+                  ),
                 ),
-              ),
-          ],
-          const SizedBox(height: AppSpacing.md),
-          Semantics(
-            button: true,
-            label: paused ? 'Resume recording' : 'Pause recording',
-            child: IconButton(
-              key: const Key('capture_pause_voice'),
-              onPressed: paused ? onResume : onPause,
-              icon: Icon(paused ? Icons.play_arrow : Icons.pause),
+                Expanded(
+                  child: Align(
+                    child: SizedBox(
+                      key: const Key('capture_level_meter'),
+                      height: 96,
+                      width: double.infinity,
+                      child: CustomPaint(
+                        painter: _CaptureLevelPainter(
+                          levels: levels,
+                          color: context.palette.accentPrimary,
+                          reduceMotion: reduceMotion,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                if (_showDraft)
+                  _BoundedDraft(
+                    text: draftText?.trim() ?? '',
+                  ),
+                Row(
+                  children: [
+                    Expanded(
+                      child: OutlinedButton.icon(
+                        key: const Key('capture_pause_voice'),
+                        onPressed: paused ? onResume : onPause,
+                        icon: Icon(paused ? Icons.play_arrow : Icons.pause),
+                        label: Text(paused ? 'Resume' : 'Pause'),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: FilledButton.icon(
+                        key: const Key('capture_stop_voice'),
+                        onPressed: onStop,
+                        icon: const Icon(Icons.stop),
+                        label: const Text('Stop'),
+                      ),
+                    ),
+                  ],
+                ),
+                TextButton(
+                  key: const Key('capture_cancel_voice'),
+                  onPressed: () => _cancel(context),
+                  child: const Text('Cancel'),
+                ),
+              ],
             ),
           ),
-          Semantics(
-            button: true,
-            label: 'Stop recording',
-            child: FilledButton(
-              key: const Key('capture_stop_voice'),
-              style: FilledButton.styleFrom(
-                minimumSize: const Size.fromHeight(64),
-              ),
-              onPressed: onStop,
-              child: Text(ConsumerUiCopy.stopRecordingCta),
-            ),
-          ),
-          Semantics(
-            button: true,
-            label: 'Cancel recording',
-            child: TextButton(
-              key: const Key('capture_cancel_voice'),
-              onPressed: () => _cancel(context),
-              child: const Text('Cancel'),
-            ),
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 
@@ -443,6 +439,59 @@ class CaptureRecordingPanel extends StatelessWidget {
       ),
     );
     if (discard == true) onCancel();
+  }
+}
+
+class _BoundedDraft extends StatefulWidget {
+  const _BoundedDraft({required this.text});
+
+  final String text;
+
+  @override
+  State<_BoundedDraft> createState() => _BoundedDraftState();
+}
+
+class _BoundedDraftState extends State<_BoundedDraft> {
+  final _scroll = ScrollController();
+
+  @override
+  void didUpdateWidget(covariant _BoundedDraft oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.text == widget.text) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!_scroll.hasClients) return;
+      _scroll.jumpTo(_scroll.position.maxScrollExtent);
+    });
+  }
+
+  @override
+  void dispose() {
+    _scroll.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final waiting = widget.text.isEmpty;
+    return SizedBox(
+      key: const Key('capture_draft_text'),
+      height: 110,
+      width: double.infinity,
+      child: SingleChildScrollView(
+        controller: _scroll,
+        child: Text(
+          waiting
+              ? 'Draft — final text is saved after you stop'
+              : widget.text,
+          key: const Key('capture_draft_label'),
+          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+            color: context.palette.textMuted,
+            fontStyle: FontStyle.italic,
+            height: 1.4,
+          ),
+        ),
+      ),
+    );
   }
 }
 
